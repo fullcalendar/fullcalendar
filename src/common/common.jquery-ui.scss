@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------------------------*/
 
 .ui-widget .fc-disabled-day {
-	background-image: none;
+  background-image: none;
 }
 
 
@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------------------------*/
 
 .fc-popover > .ui-widget-header + .ui-widget-content {
-	border-top: 0; /* where they meet, let the header have the border */
+  border-top: 0; /* where they meet, let the header have the border */
 }
 
 
@@ -19,12 +19,12 @@
 --------------------------------------------------------------------------------------------------*/
 
 .ui-widget .fc-event {
-	/* overpower jqui's styles on <a> tags. TODO: more DRY */
-	color: #fff; /* default TEXT color */
-	text-decoration: none; /* if <a> has an href */
+  /* overpower jqui's styles on <a> tags. TODO: more DRY */
+  color: #fff; /* default TEXT color */
+  text-decoration: none; /* if <a> has an href */
 
-	/* undo ui-widget-header bold */
-	font-weight: normal;
+  /* undo ui-widget-header bold */
+  font-weight: normal;
 }
 
 
@@ -32,7 +32,7 @@
 --------------------------------------------------------------------------------------------------*/
 
 .ui-widget td.fc-axis {
-	font-weight: normal; /* overcome bold */
+  font-weight: normal; /* overcome bold */
 }
 
 
@@ -40,5 +40,5 @@
 --------------------------------------------------------------------------------------------------*/
 
 .fc-time-grid .fc-slats .ui-widget-content { 
-	background: none; /* see through to fc-bg */
+  background: none; /* see through to fc-bg */
 }

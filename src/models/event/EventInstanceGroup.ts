@@ -8,80 +8,80 @@ OR that an explicitEventDef is assigned.
 */
 export default class EventInstanceGroup {
 
-	eventInstances: any
-	explicitEventDef: any // optional
+  eventInstances: any
+  explicitEventDef: any // optional
 
 
-	constructor(eventInstances?) {
-		this.eventInstances = eventInstances || [];
-	}
+  constructor(eventInstances?) {
+    this.eventInstances = eventInstances || [];
+  }
 
 
-	getAllEventRanges(constraintRange) {
-		if (constraintRange) {
-			return this.sliceNormalRenderRanges(constraintRange);
-		}
-		else {
-			return this.eventInstances.map(eventInstanceToEventRange);
-		}
-	}
+  getAllEventRanges(constraintRange) {
+    if (constraintRange) {
+      return this.sliceNormalRenderRanges(constraintRange);
+    }
+    else {
+      return this.eventInstances.map(eventInstanceToEventRange);
+    }
+  }
 
 
-	sliceRenderRanges(constraintRange) {
-		if (this.isInverse()) {
-			return this.sliceInverseRenderRanges(constraintRange);
-		}
-		else {
-			return this.sliceNormalRenderRanges(constraintRange);
-		}
-	}
+  sliceRenderRanges(constraintRange) {
+    if (this.isInverse()) {
+      return this.sliceInverseRenderRanges(constraintRange);
+    }
+    else {
+      return this.sliceNormalRenderRanges(constraintRange);
+    }
+  }
 
 
-	sliceNormalRenderRanges(constraintRange) {
-		var eventInstances = this.eventInstances;
-		var i, eventInstance;
-		var slicedRange;
-		var slicedEventRanges = [];
+  sliceNormalRenderRanges(constraintRange) {
+    var eventInstances = this.eventInstances;
+    var i, eventInstance;
+    var slicedRange;
+    var slicedEventRanges = [];
 
-		for (i = 0; i < eventInstances.length; i++) {
-			eventInstance = eventInstances[i];
+    for (i = 0; i < eventInstances.length; i++) {
+      eventInstance = eventInstances[i];
 
-			slicedRange = eventInstance.dateProfile.unzonedRange.intersect(constraintRange);
+      slicedRange = eventInstance.dateProfile.unzonedRange.intersect(constraintRange);
 
-			if (slicedRange) {
-				slicedEventRanges.push(
-					new EventRange(
-						slicedRange,
-						eventInstance.def,
-						eventInstance
-					)
-				);
-			}
-		}
+      if (slicedRange) {
+        slicedEventRanges.push(
+          new EventRange(
+            slicedRange,
+            eventInstance.def,
+            eventInstance
+          )
+        );
+      }
+    }
 
-		return slicedEventRanges;
-	}
-
-
-	sliceInverseRenderRanges(constraintRange) {
-		var unzonedRanges = this.eventInstances.map(eventInstanceToUnzonedRange);
-		var ownerDef = this.getEventDef();
-
-		unzonedRanges = UnzonedRange.invertRanges(unzonedRanges, constraintRange);
-
-		return unzonedRanges.map(function(unzonedRange) {
-			return new EventRange(unzonedRange, ownerDef); // don't give an EventInstance
-		});
-	}
+    return slicedEventRanges;
+  }
 
 
-	isInverse() {
-		return this.getEventDef().hasInverseRendering();
-	}
+  sliceInverseRenderRanges(constraintRange) {
+    var unzonedRanges = this.eventInstances.map(eventInstanceToUnzonedRange);
+    var ownerDef = this.getEventDef();
+
+    unzonedRanges = UnzonedRange.invertRanges(unzonedRanges, constraintRange);
+
+    return unzonedRanges.map(function(unzonedRange) {
+      return new EventRange(unzonedRange, ownerDef); // don't give an EventInstance
+    });
+  }
 
 
-	getEventDef() {
-		return this.explicitEventDef || this.eventInstances[0].def;
-	}
+  isInverse() {
+    return this.getEventDef().hasInverseRendering();
+  }
+
+
+  getEventDef() {
+    return this.explicitEventDef || this.eventInstances[0].def;
+  }
 
 }

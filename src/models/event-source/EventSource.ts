@@ -1,7 +1,7 @@
 import * as $ from 'jquery'
 import {
-	default as ParsableModelMixin,
-	ParsableModelInterface
+  default as ParsableModelMixin,
+  ParsableModelInterface
 } from '../../common/ParsableModelMixin'
 import Class from '../../common/Class'
 import EventDefParser from '../event/EventDefParser'
@@ -9,142 +9,142 @@ import EventDefParser from '../event/EventDefParser'
 
 export default class EventSource extends Class {
 
-	applyProps: ParsableModelInterface['applyProps']
-	isStandardProp: ParsableModelInterface['isStandardProp']
-	static defineStandardProps = ParsableModelMixin.defineStandardProps
-	static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
+  applyProps: ParsableModelInterface['applyProps']
+  isStandardProp: ParsableModelInterface['isStandardProp']
+  static defineStandardProps = ParsableModelMixin.defineStandardProps
+  static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
 
-	calendar: any
+  calendar: any
 
-	id: any // can stay null
-	uid: any
-	color: any
-	backgroundColor: any
-	borderColor: any
-	textColor: any
-	className: any // array
-	editable: any
-	startEditable: any
-	durationEditable: any
-	rendering: any
-	overlap: any
-	constraint: any
-	allDayDefault: any
-	eventDataTransform: any // optional function
-
-
-	// can we do away with calendar? at least for the abstract?
-	// useful for buildEventDef
-	constructor(calendar) {
-		super();
-		this.calendar = calendar;
-		this.className = [];
-		this.uid = String(EventSource.uuid++);
-	}
+  id: any // can stay null
+  uid: any
+  color: any
+  backgroundColor: any
+  borderColor: any
+  textColor: any
+  className: any // array
+  editable: any
+  startEditable: any
+  durationEditable: any
+  rendering: any
+  overlap: any
+  constraint: any
+  allDayDefault: any
+  eventDataTransform: any // optional function
 
 
-	fetch(start, end, timezone) {
-		// subclasses must implement. must return a promise.
-	}
+  // can we do away with calendar? at least for the abstract?
+  // useful for buildEventDef
+  constructor(calendar) {
+    super();
+    this.calendar = calendar;
+    this.className = [];
+    this.uid = String(EventSource.uuid++);
+  }
 
 
-	removeEventDefsById(eventDefId) {
-		// optional for subclasses to implement
-	}
+  fetch(start, end, timezone) {
+    // subclasses must implement. must return a promise.
+  }
 
 
-	removeAllEventDefs() {
-		// optional for subclasses to implement
-	}
+  removeEventDefsById(eventDefId) {
+    // optional for subclasses to implement
+  }
 
 
-	/*
-	For compairing/matching
-	*/
-	getPrimitive(otherSource) {
-		// subclasses must implement
-	}
+  removeAllEventDefs() {
+    // optional for subclasses to implement
+  }
 
 
-	parseEventDefs(rawEventDefs) {
-		var i;
-		var eventDef;
-		var eventDefs = [];
-
-		for (i = 0; i < rawEventDefs.length; i++) {
-			eventDef = this.parseEventDef(rawEventDefs[i]);
-
-			if (eventDef) {
-				eventDefs.push(eventDef);
-			}
-		}
-
-		return eventDefs;
-	}
+  /*
+  For compairing/matching
+  */
+  getPrimitive(otherSource) {
+    // subclasses must implement
+  }
 
 
-	parseEventDef(rawInput) {
-		var calendarTransform = this.calendar.opt('eventDataTransform');
-		var sourceTransform = this.eventDataTransform;
+  parseEventDefs(rawEventDefs) {
+    var i;
+    var eventDef;
+    var eventDefs = [];
 
-		if (calendarTransform) {
-			rawInput = calendarTransform(rawInput);
-		}
-		if (sourceTransform) {
-			rawInput = sourceTransform(rawInput);
-		}
+    for (i = 0; i < rawEventDefs.length; i++) {
+      eventDef = this.parseEventDef(rawEventDefs[i]);
 
-		return EventDefParser.parse(rawInput, this);
-	}
+      if (eventDef) {
+        eventDefs.push(eventDef);
+      }
+    }
 
-
-	applyManualStandardProps(rawProps) {
-
-		if (rawProps.id != null) {
-			this.id = EventSource.normalizeId(rawProps.id);
-		}
-
-		// TODO: converge with EventDef
-		if ($.isArray(rawProps.className)) {
-			this.className = rawProps.className;
-		}
-		else if (typeof rawProps.className === 'string') {
-			this.className = rawProps.className.split(/\s+/);
-		}
-
-		return true;
-	}
+    return eventDefs;
+  }
 
 
-	/*
-	rawInput can be any data type!
-	*/
-	static parse(rawInput, calendar) {
-		var source = new this(calendar);
+  parseEventDef(rawInput) {
+    var calendarTransform = this.calendar.opt('eventDataTransform');
+    var sourceTransform = this.eventDataTransform;
 
-		if (typeof rawInput === 'object') {
-			if (source.applyProps(rawInput)) {
-				return source;
-			}
-		}
+    if (calendarTransform) {
+      rawInput = calendarTransform(rawInput);
+    }
+    if (sourceTransform) {
+      rawInput = sourceTransform(rawInput);
+    }
 
-		return false;
-	}
+    return EventDefParser.parse(rawInput, this);
+  }
 
 
-	// IDs
-	// -----------------------------------------------------------------------------------------------------------------
-	// TODO: converge with EventDef
+  applyManualStandardProps(rawProps) {
 
-	static uuid: number = 0
+    if (rawProps.id != null) {
+      this.id = EventSource.normalizeId(rawProps.id);
+    }
 
-	static normalizeId(id) {
-		if (id) {
-			return String(id);
-		}
+    // TODO: converge with EventDef
+    if ($.isArray(rawProps.className)) {
+      this.className = rawProps.className;
+    }
+    else if (typeof rawProps.className === 'string') {
+      this.className = rawProps.className.split(/\s+/);
+    }
 
-		return null;
-	}
+    return true;
+  }
+
+
+  /*
+  rawInput can be any data type!
+  */
+  static parse(rawInput, calendar) {
+    var source = new this(calendar);
+
+    if (typeof rawInput === 'object') {
+      if (source.applyProps(rawInput)) {
+        return source;
+      }
+    }
+
+    return false;
+  }
+
+
+  // IDs
+  // -----------------------------------------------------------------------------------------------------------------
+  // TODO: converge with EventDef
+
+  static uuid: number = 0
+
+  static normalizeId(id) {
+    if (id) {
+      return String(id);
+    }
+
+    return null;
+  }
 
 }
 
@@ -156,21 +156,21 @@ ParsableModelMixin.mixInto(EventSource);
 
 
 EventSource.defineStandardProps({
-	// manually process...
-	id: false,
-	className: false,
+  // manually process...
+  id: false,
+  className: false,
 
-	// automatically transfer...
-	color: true,
-	backgroundColor: true,
-	borderColor: true,
-	textColor: true,
-	editable: true,
-	startEditable: true,
-	durationEditable: true,
-	rendering: true,
-	overlap: true,
-	constraint: true,
-	allDayDefault: true,
-	eventDataTransform: true
+  // automatically transfer...
+  color: true,
+  backgroundColor: true,
+  borderColor: true,
+  textColor: true,
+  editable: true,
+  startEditable: true,
+  durationEditable: true,
+  rendering: true,
+  overlap: true,
+  constraint: true,
+  allDayDefault: true,
+  eventDataTransform: true
 });

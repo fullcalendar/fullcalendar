@@ -7,88 +7,88 @@ import EventDateProfile from './EventDateProfile'
 
 export default class RecurringEventDef extends EventDef {
 
-	startTime: any // duration
-	endTime: any // duration, or null
-	dowHash: any // object hash, or null
+  startTime: any // duration
+  endTime: any // duration, or null
+  dowHash: any // object hash, or null
 
 
-	isAllDay() {
-		return !this.startTime && !this.endTime;
-	}
+  isAllDay() {
+    return !this.startTime && !this.endTime;
+  }
 
 
-	buildInstances(unzonedRange) {
-		var calendar = this.source.calendar;
-		var unzonedDate = unzonedRange.getStart();
-		var unzonedEnd = unzonedRange.getEnd();
-		var zonedDayStart;
-		var instanceStart, instanceEnd;
-		var instances = [];
+  buildInstances(unzonedRange) {
+    var calendar = this.source.calendar;
+    var unzonedDate = unzonedRange.getStart();
+    var unzonedEnd = unzonedRange.getEnd();
+    var zonedDayStart;
+    var instanceStart, instanceEnd;
+    var instances = [];
 
-		while (unzonedDate.isBefore(unzonedEnd)) {
+    while (unzonedDate.isBefore(unzonedEnd)) {
 
-			// if everyday, or this particular day-of-week
-			if (!this.dowHash || this.dowHash[unzonedDate.day()]) {
+      // if everyday, or this particular day-of-week
+      if (!this.dowHash || this.dowHash[unzonedDate.day()]) {
 
-				zonedDayStart = calendar.applyTimezone(unzonedDate);
-				instanceStart = zonedDayStart.clone();
-				instanceEnd = null;
+        zonedDayStart = calendar.applyTimezone(unzonedDate);
+        instanceStart = zonedDayStart.clone();
+        instanceEnd = null;
 
-				if (this.startTime) {
-					instanceStart.time(this.startTime);
-				}
-				else {
-					instanceStart.stripTime();
-				}
+        if (this.startTime) {
+          instanceStart.time(this.startTime);
+        }
+        else {
+          instanceStart.stripTime();
+        }
 
-				if (this.endTime) {
-					instanceEnd = zonedDayStart.clone().time(this.endTime);
-				}
+        if (this.endTime) {
+          instanceEnd = zonedDayStart.clone().time(this.endTime);
+        }
 
-				instances.push(
-					new EventInstance(
-						this, // definition
-						new EventDateProfile(instanceStart, instanceEnd, calendar)
-					)
-				);
-			}
+        instances.push(
+          new EventInstance(
+            this, // definition
+            new EventDateProfile(instanceStart, instanceEnd, calendar)
+          )
+        );
+      }
 
-			unzonedDate.add(1, 'days');
-		}
+      unzonedDate.add(1, 'days');
+    }
 
-		return instances;
-	}
-
-
-	setDow(dowNumbers) {
-
-		if (!this.dowHash) {
-			this.dowHash = {};
-		}
-
-		for (var i = 0; i < dowNumbers.length; i++) {
-			this.dowHash[dowNumbers[i]] = true;
-		}
-	}
+    return instances;
+  }
 
 
-	clone() {
-		var def = super.clone();
+  setDow(dowNumbers) {
 
-		if (def.startTime) {
-			def.startTime = moment.duration(this.startTime);
-		}
+    if (!this.dowHash) {
+      this.dowHash = {};
+    }
 
-		if (def.endTime) {
-			def.endTime = moment.duration(this.endTime);
-		}
+    for (var i = 0; i < dowNumbers.length; i++) {
+      this.dowHash[dowNumbers[i]] = true;
+    }
+  }
 
-		if (this.dowHash) {
-			def.dowHash = $.extend({}, this.dowHash);
-		}
 
-		return def;
-	}
+  clone() {
+    var def = super.clone();
+
+    if (def.startTime) {
+      def.startTime = moment.duration(this.startTime);
+    }
+
+    if (def.endTime) {
+      def.endTime = moment.duration(this.endTime);
+    }
+
+    if (this.dowHash) {
+      def.dowHash = $.extend({}, this.dowHash);
+    }
+
+    return def;
+  }
 
 }
 
@@ -98,21 +98,21 @@ HACK to work with TypeScript mixins
 NOTE: if super-method fails, should still attempt to apply
 */
 RecurringEventDef.prototype.applyProps = function(rawProps) {
-	var superSuccess = EventDef.prototype.applyProps.call(this, rawProps);
+  var superSuccess = EventDef.prototype.applyProps.call(this, rawProps);
 
-	if (rawProps.start) {
-		this.startTime = moment.duration(rawProps.start);
-	}
+  if (rawProps.start) {
+    this.startTime = moment.duration(rawProps.start);
+  }
 
-	if (rawProps.end) {
-		this.endTime = moment.duration(rawProps.end);
-	}
+  if (rawProps.end) {
+    this.endTime = moment.duration(rawProps.end);
+  }
 
-	if (rawProps.dow) {
-		this.setDow(rawProps.dow);
-	}
+  if (rawProps.dow) {
+    this.setDow(rawProps.dow);
+  }
 
-	return superSuccess;
+  return superSuccess;
 }
 
 
@@ -121,7 +121,7 @@ RecurringEventDef.prototype.applyProps = function(rawProps) {
 
 
 RecurringEventDef.defineStandardProps({ // false = manually process
-	start: false,
-	end: false,
-	dow: false
+  start: false,
+  end: false,
+  dow: false
 });

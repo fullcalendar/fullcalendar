@@ -6,10 +6,10 @@ export const viewHash = {};
 
 
 export function defineView(viewName, viewConfig) {
-	viewHash[viewName] = viewConfig;
+  viewHash[viewName] = viewConfig;
 }
 
 
 export function getViewConfig(viewName) {
-	return viewHash[viewName];
+  return viewHash[viewName];
 }

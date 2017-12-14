@@ -5,62 +5,62 @@ import EventSource from './EventSource'
 
 export default class FuncEventSource extends EventSource {
 
-	func: any
+  func: any
 
 
-	fetch(start, end, timezone) {
-		this.calendar.pushLoading();
+  fetch(start, end, timezone) {
+    this.calendar.pushLoading();
 
-		return Promise.construct((onResolve) => {
-			this.func.call(
-				this.calendar,
-				start.clone(),
-				end.clone(),
-				timezone,
-				(rawEventDefs) => {
-					this.calendar.popLoading();
+    return Promise.construct((onResolve) => {
+      this.func.call(
+        this.calendar,
+        start.clone(),
+        end.clone(),
+        timezone,
+        (rawEventDefs) => {
+          this.calendar.popLoading();
 
-					onResolve(this.parseEventDefs(rawEventDefs));
-				}
-			);
-		});
-	}
-
-
-	getPrimitive() {
-		return this.func;
-	}
+          onResolve(this.parseEventDefs(rawEventDefs));
+        }
+      );
+    });
+  }
 
 
-	applyManualStandardProps(rawProps) {
-		var superSuccess = super.applyManualStandardProps(rawProps);
-
-		this.func = rawProps.events;
-
-		return superSuccess;
-	}
+  getPrimitive() {
+    return this.func;
+  }
 
 
-	static parse(rawInput, calendar) {
-		var rawProps;
+  applyManualStandardProps(rawProps) {
+    var superSuccess = super.applyManualStandardProps(rawProps);
 
-		// normalize raw input
-		if ($.isFunction(rawInput.events)) { // extended form
-			rawProps = rawInput;
-		}
-		else if ($.isFunction(rawInput)) { // short form
-			rawProps = { events: rawInput };
-		}
+    this.func = rawProps.events;
 
-		if (rawProps) {
-			return EventSource.parse.call(this, rawProps, calendar);
-		}
+    return superSuccess;
+  }
 
-		return false;
-	}
+
+  static parse(rawInput, calendar) {
+    var rawProps;
+
+    // normalize raw input
+    if ($.isFunction(rawInput.events)) { // extended form
+      rawProps = rawInput;
+    }
+    else if ($.isFunction(rawInput)) { // short form
+      rawProps = { events: rawInput };
+    }
+
+    if (rawProps) {
+      return EventSource.parse.call(this, rawProps, calendar);
+    }
+
+    return false;
+  }
 
 }
 
 FuncEventSource.defineStandardProps({
-	events: false // don't automatically transfer
+  events: false // don't automatically transfer
 });

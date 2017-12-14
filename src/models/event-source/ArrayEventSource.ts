@@ -7,99 +7,99 @@ import SingleEventDef from '../event/SingleEventDef'
 
 export default class ArrayEventSource extends EventSource {
 
-	rawEventDefs: any // unparsed
-	eventDefs: any
-	currentTimezone: any
+  rawEventDefs: any // unparsed
+  eventDefs: any
+  currentTimezone: any
 
 
-	constructor(calendar) {
-		super(calendar)
-		this.eventDefs = []; // for if setRawEventDefs is never called
-	}
+  constructor(calendar) {
+    super(calendar)
+    this.eventDefs = []; // for if setRawEventDefs is never called
+  }
 
 
-	setRawEventDefs(rawEventDefs) {
-		this.rawEventDefs = rawEventDefs;
-		this.eventDefs = this.parseEventDefs(rawEventDefs);
-	}
+  setRawEventDefs(rawEventDefs) {
+    this.rawEventDefs = rawEventDefs;
+    this.eventDefs = this.parseEventDefs(rawEventDefs);
+  }
 
 
-	fetch(start, end, timezone) {
-		var eventDefs = this.eventDefs;
-		var i;
+  fetch(start, end, timezone) {
+    var eventDefs = this.eventDefs;
+    var i;
 
-		if (
-			this.currentTimezone != null &&
-			this.currentTimezone !== timezone
-		) {
-			for (i = 0; i < eventDefs.length; i++) {
-				if (eventDefs[i] instanceof SingleEventDef) {
-					eventDefs[i].rezone();
-				}
-			}
-		}
+    if (
+      this.currentTimezone != null &&
+      this.currentTimezone !== timezone
+    ) {
+      for (i = 0; i < eventDefs.length; i++) {
+        if (eventDefs[i] instanceof SingleEventDef) {
+          eventDefs[i].rezone();
+        }
+      }
+    }
 
-		this.currentTimezone = timezone;
+    this.currentTimezone = timezone;
 
-		return Promise.resolve(eventDefs);
-	}
-
-
-	addEventDef(eventDef) {
-		this.eventDefs.push(eventDef);
-	}
+    return Promise.resolve(eventDefs);
+  }
 
 
-	/*
-	eventDefId already normalized to a string
-	*/
-	removeEventDefsById(eventDefId) {
-		return removeMatching(this.eventDefs, function(eventDef) {
-			return eventDef.id === eventDefId;
-		});
-	}
+  addEventDef(eventDef) {
+    this.eventDefs.push(eventDef);
+  }
 
 
-	removeAllEventDefs() {
-		this.eventDefs = [];
-	}
+  /*
+  eventDefId already normalized to a string
+  */
+  removeEventDefsById(eventDefId) {
+    return removeMatching(this.eventDefs, function(eventDef) {
+      return eventDef.id === eventDefId;
+    });
+  }
 
 
-	getPrimitive() {
-		return this.rawEventDefs;
-	}
+  removeAllEventDefs() {
+    this.eventDefs = [];
+  }
 
 
-	applyManualStandardProps(rawProps) {
-		var superSuccess = super.applyManualStandardProps(rawProps);
-
-		this.setRawEventDefs(rawProps.events);
-
-		return superSuccess;
-	}
+  getPrimitive() {
+    return this.rawEventDefs;
+  }
 
 
-	static parse(rawInput, calendar) {
-		var rawProps;
+  applyManualStandardProps(rawProps) {
+    var superSuccess = super.applyManualStandardProps(rawProps);
 
-		// normalize raw input
-		if ($.isArray(rawInput.events)) { // extended form
-			rawProps = rawInput;
-		}
-		else if ($.isArray(rawInput)) { // short form
-			rawProps = { events: rawInput };
-		}
+    this.setRawEventDefs(rawProps.events);
 
-		if (rawProps) {
-			return EventSource.parse.call(this, rawProps, calendar);
-		}
+    return superSuccess;
+  }
 
-		return false;
-	}
+
+  static parse(rawInput, calendar) {
+    var rawProps;
+
+    // normalize raw input
+    if ($.isArray(rawInput.events)) { // extended form
+      rawProps = rawInput;
+    }
+    else if ($.isArray(rawInput)) { // short form
+      rawProps = { events: rawInput };
+    }
+
+    if (rawProps) {
+      return EventSource.parse.call(this, rawProps, calendar);
+    }
+
+    return false;
+  }
 
 }
 
 
 ArrayEventSource.defineStandardProps({
-	events: false // don't automatically transfer
+  events: false // don't automatically transfer
 });

@@ -12,247 +12,247 @@ options:
 */
 export default class CoordCache {
 
-	els: any // jQuery set (assumed to be siblings)
-	forcedOffsetParentEl: any // options can override the natural offsetParent
-	origin: any // {left,top} position of offsetParent of els
-	boundingRect: any // constrain cordinates to this rectangle. {left,right,top,bottom} or null
-	isHorizontal: boolean = false // whether to query for left/right/width
-	isVertical: boolean = false // whether to query for top/bottom/height
+  els: any // jQuery set (assumed to be siblings)
+  forcedOffsetParentEl: any // options can override the natural offsetParent
+  origin: any // {left,top} position of offsetParent of els
+  boundingRect: any // constrain cordinates to this rectangle. {left,right,top,bottom} or null
+  isHorizontal: boolean = false // whether to query for left/right/width
+  isVertical: boolean = false // whether to query for top/bottom/height
 
-	// arrays of coordinates (offsets from topleft of document)
-	lefts: any
-	rights: any
-	tops: any
-	bottoms: any
-
-
-	constructor(options) {
-		this.els = $(options.els);
-		this.isHorizontal = options.isHorizontal;
-		this.isVertical = options.isVertical;
-		this.forcedOffsetParentEl = options.offsetParent ? $(options.offsetParent) : null;
-	}
+  // arrays of coordinates (offsets from topleft of document)
+  lefts: any
+  rights: any
+  tops: any
+  bottoms: any
 
 
-	// Queries the els for coordinates and stores them.
-	// Call this method before using and of the get* methods below.
-	build() {
-		var offsetParentEl = this.forcedOffsetParentEl;
-		if (!offsetParentEl && this.els.length > 0) {
-			offsetParentEl = this.els.eq(0).offsetParent();
-		}
-
-		this.origin = offsetParentEl ?
-			offsetParentEl.offset() :
-			null;
-
-		this.boundingRect = this.queryBoundingRect();
-
-		if (this.isHorizontal) {
-			this.buildElHorizontals();
-		}
-		if (this.isVertical) {
-			this.buildElVerticals();
-		}
-	}
+  constructor(options) {
+    this.els = $(options.els);
+    this.isHorizontal = options.isHorizontal;
+    this.isVertical = options.isVertical;
+    this.forcedOffsetParentEl = options.offsetParent ? $(options.offsetParent) : null;
+  }
 
 
-	// Destroys all internal data about coordinates, freeing memory
-	clear() {
-		this.origin = null;
-		this.boundingRect = null;
-		this.lefts = null;
-		this.rights = null;
-		this.tops = null;
-		this.bottoms = null;
-	}
+  // Queries the els for coordinates and stores them.
+  // Call this method before using and of the get* methods below.
+  build() {
+    var offsetParentEl = this.forcedOffsetParentEl;
+    if (!offsetParentEl && this.els.length > 0) {
+      offsetParentEl = this.els.eq(0).offsetParent();
+    }
+
+    this.origin = offsetParentEl ?
+      offsetParentEl.offset() :
+      null;
+
+    this.boundingRect = this.queryBoundingRect();
+
+    if (this.isHorizontal) {
+      this.buildElHorizontals();
+    }
+    if (this.isVertical) {
+      this.buildElVerticals();
+    }
+  }
 
 
-	// When called, if coord caches aren't built, builds them
-	ensureBuilt() {
-		if (!this.origin) {
-			this.build();
-		}
-	}
+  // Destroys all internal data about coordinates, freeing memory
+  clear() {
+    this.origin = null;
+    this.boundingRect = null;
+    this.lefts = null;
+    this.rights = null;
+    this.tops = null;
+    this.bottoms = null;
+  }
 
 
-	// Populates the left/right internal coordinate arrays
-	buildElHorizontals() {
-		var lefts = [];
-		var rights = [];
-
-		this.els.each(function(i, node) {
-			var el = $(node);
-			var left = el.offset().left;
-			var width = el.outerWidth();
-
-			lefts.push(left);
-			rights.push(left + width);
-		});
-
-		this.lefts = lefts;
-		this.rights = rights;
-	}
+  // When called, if coord caches aren't built, builds them
+  ensureBuilt() {
+    if (!this.origin) {
+      this.build();
+    }
+  }
 
 
-	// Populates the top/bottom internal coordinate arrays
-	buildElVerticals() {
-		var tops = [];
-		var bottoms = [];
+  // Populates the left/right internal coordinate arrays
+  buildElHorizontals() {
+    var lefts = [];
+    var rights = [];
 
-		this.els.each(function(i, node) {
-			var el = $(node);
-			var top = el.offset().top;
-			var height = el.outerHeight();
+    this.els.each(function(i, node) {
+      var el = $(node);
+      var left = el.offset().left;
+      var width = el.outerWidth();
 
-			tops.push(top);
-			bottoms.push(top + height);
-		});
+      lefts.push(left);
+      rights.push(left + width);
+    });
 
-		this.tops = tops;
-		this.bottoms = bottoms;
-	}
-
-
-	// Given a left offset (from document left), returns the index of the el that it horizontally intersects.
-	// If no intersection is made, returns undefined.
-	getHorizontalIndex(leftOffset) {
-		this.ensureBuilt();
-
-		var lefts = this.lefts;
-		var rights = this.rights;
-		var len = lefts.length;
-		var i;
-
-		for (i = 0; i < len; i++) {
-			if (leftOffset >= lefts[i] && leftOffset < rights[i]) {
-				return i;
-			}
-		}
-	}
+    this.lefts = lefts;
+    this.rights = rights;
+  }
 
 
-	// Given a top offset (from document top), returns the index of the el that it vertically intersects.
-	// If no intersection is made, returns undefined.
-	getVerticalIndex(topOffset) {
-		this.ensureBuilt();
+  // Populates the top/bottom internal coordinate arrays
+  buildElVerticals() {
+    var tops = [];
+    var bottoms = [];
 
-		var tops = this.tops;
-		var bottoms = this.bottoms;
-		var len = tops.length;
-		var i;
+    this.els.each(function(i, node) {
+      var el = $(node);
+      var top = el.offset().top;
+      var height = el.outerHeight();
 
-		for (i = 0; i < len; i++) {
-			if (topOffset >= tops[i] && topOffset < bottoms[i]) {
-				return i;
-			}
-		}
-	}
+      tops.push(top);
+      bottoms.push(top + height);
+    });
 
-
-	// Gets the left offset (from document left) of the element at the given index
-	getLeftOffset(leftIndex) {
-		this.ensureBuilt();
-		return this.lefts[leftIndex];
-	}
+    this.tops = tops;
+    this.bottoms = bottoms;
+  }
 
 
-	// Gets the left position (from offsetParent left) of the element at the given index
-	getLeftPosition(leftIndex) {
-		this.ensureBuilt();
-		return this.lefts[leftIndex] - this.origin.left;
-	}
+  // Given a left offset (from document left), returns the index of the el that it horizontally intersects.
+  // If no intersection is made, returns undefined.
+  getHorizontalIndex(leftOffset) {
+    this.ensureBuilt();
+
+    var lefts = this.lefts;
+    var rights = this.rights;
+    var len = lefts.length;
+    var i;
+
+    for (i = 0; i < len; i++) {
+      if (leftOffset >= lefts[i] && leftOffset < rights[i]) {
+        return i;
+      }
+    }
+  }
 
 
-	// Gets the right offset (from document left) of the element at the given index.
-	// This value is NOT relative to the document's right edge, like the CSS concept of "right" would be.
-	getRightOffset(leftIndex) {
-		this.ensureBuilt();
-		return this.rights[leftIndex];
-	}
+  // Given a top offset (from document top), returns the index of the el that it vertically intersects.
+  // If no intersection is made, returns undefined.
+  getVerticalIndex(topOffset) {
+    this.ensureBuilt();
+
+    var tops = this.tops;
+    var bottoms = this.bottoms;
+    var len = tops.length;
+    var i;
+
+    for (i = 0; i < len; i++) {
+      if (topOffset >= tops[i] && topOffset < bottoms[i]) {
+        return i;
+      }
+    }
+  }
 
 
-	// Gets the right position (from offsetParent left) of the element at the given index.
-	// This value is NOT relative to the offsetParent's right edge, like the CSS concept of "right" would be.
-	getRightPosition(leftIndex) {
-		this.ensureBuilt();
-		return this.rights[leftIndex] - this.origin.left;
-	}
+  // Gets the left offset (from document left) of the element at the given index
+  getLeftOffset(leftIndex) {
+    this.ensureBuilt();
+    return this.lefts[leftIndex];
+  }
 
 
-	// Gets the width of the element at the given index
-	getWidth(leftIndex) {
-		this.ensureBuilt();
-		return this.rights[leftIndex] - this.lefts[leftIndex];
-	}
+  // Gets the left position (from offsetParent left) of the element at the given index
+  getLeftPosition(leftIndex) {
+    this.ensureBuilt();
+    return this.lefts[leftIndex] - this.origin.left;
+  }
 
 
-	// Gets the top offset (from document top) of the element at the given index
-	getTopOffset(topIndex) {
-		this.ensureBuilt();
-		return this.tops[topIndex];
-	}
+  // Gets the right offset (from document left) of the element at the given index.
+  // This value is NOT relative to the document's right edge, like the CSS concept of "right" would be.
+  getRightOffset(leftIndex) {
+    this.ensureBuilt();
+    return this.rights[leftIndex];
+  }
 
 
-	// Gets the top position (from offsetParent top) of the element at the given position
-	getTopPosition(topIndex) {
-		this.ensureBuilt();
-		return this.tops[topIndex] - this.origin.top;
-	}
-
-	// Gets the bottom offset (from the document top) of the element at the given index.
-	// This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
-	getBottomOffset(topIndex) {
-		this.ensureBuilt();
-		return this.bottoms[topIndex];
-	}
+  // Gets the right position (from offsetParent left) of the element at the given index.
+  // This value is NOT relative to the offsetParent's right edge, like the CSS concept of "right" would be.
+  getRightPosition(leftIndex) {
+    this.ensureBuilt();
+    return this.rights[leftIndex] - this.origin.left;
+  }
 
 
-	// Gets the bottom position (from the offsetParent top) of the element at the given index.
-	// This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
-	getBottomPosition(topIndex) {
-		this.ensureBuilt();
-		return this.bottoms[topIndex] - this.origin.top;
-	}
+  // Gets the width of the element at the given index
+  getWidth(leftIndex) {
+    this.ensureBuilt();
+    return this.rights[leftIndex] - this.lefts[leftIndex];
+  }
 
 
-	// Gets the height of the element at the given index
-	getHeight(topIndex) {
-		this.ensureBuilt();
-		return this.bottoms[topIndex] - this.tops[topIndex];
-	}
+  // Gets the top offset (from document top) of the element at the given index
+  getTopOffset(topIndex) {
+    this.ensureBuilt();
+    return this.tops[topIndex];
+  }
 
 
-	// Bounding Rect
-	// TODO: decouple this from CoordCache
+  // Gets the top position (from offsetParent top) of the element at the given position
+  getTopPosition(topIndex) {
+    this.ensureBuilt();
+    return this.tops[topIndex] - this.origin.top;
+  }
 
-	// Compute and return what the elements' bounding rectangle is, from the user's perspective.
-	// Right now, only returns a rectangle if constrained by an overflow:scroll element.
-	// Returns null if there are no elements
-	queryBoundingRect() {
-		var scrollParentEl;
+  // Gets the bottom offset (from the document top) of the element at the given index.
+  // This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
+  getBottomOffset(topIndex) {
+    this.ensureBuilt();
+    return this.bottoms[topIndex];
+  }
 
-		if (this.els.length > 0) {
-			scrollParentEl = getScrollParent(this.els.eq(0));
 
-			if (!scrollParentEl.is(document)) {
-				return getClientRect(scrollParentEl);
-			}
-		}
+  // Gets the bottom position (from the offsetParent top) of the element at the given index.
+  // This value is NOT relative to the offsetParent's bottom edge, like the CSS concept of "bottom" would be.
+  getBottomPosition(topIndex) {
+    this.ensureBuilt();
+    return this.bottoms[topIndex] - this.origin.top;
+  }
 
-		return null;
-	}
 
-	isPointInBounds(leftOffset, topOffset) {
-		return this.isLeftInBounds(leftOffset) && this.isTopInBounds(topOffset);
-	}
+  // Gets the height of the element at the given index
+  getHeight(topIndex) {
+    this.ensureBuilt();
+    return this.bottoms[topIndex] - this.tops[topIndex];
+  }
 
-	isLeftInBounds(leftOffset) {
-		return !this.boundingRect || (leftOffset >= this.boundingRect.left && leftOffset < this.boundingRect.right);
-	}
 
-	isTopInBounds(topOffset) {
-		return !this.boundingRect || (topOffset >= this.boundingRect.top && topOffset < this.boundingRect.bottom);
-	}
+  // Bounding Rect
+  // TODO: decouple this from CoordCache
+
+  // Compute and return what the elements' bounding rectangle is, from the user's perspective.
+  // Right now, only returns a rectangle if constrained by an overflow:scroll element.
+  // Returns null if there are no elements
+  queryBoundingRect() {
+    var scrollParentEl;
+
+    if (this.els.length > 0) {
+      scrollParentEl = getScrollParent(this.els.eq(0));
+
+      if (!scrollParentEl.is(document)) {
+        return getClientRect(scrollParentEl);
+      }
+    }
+
+    return null;
+  }
+
+  isPointInBounds(leftOffset, topOffset) {
+    return this.isLeftInBounds(leftOffset) && this.isTopInBounds(topOffset);
+  }
+
+  isLeftInBounds(leftOffset) {
+    return !this.boundingRect || (leftOffset >= this.boundingRect.left && leftOffset < this.boundingRect.right);
+  }
+
+  isTopInBounds(topOffset) {
+    return !this.boundingRect || (topOffset >= this.boundingRect.top && topOffset < this.boundingRect.bottom);
+  }
 
 }

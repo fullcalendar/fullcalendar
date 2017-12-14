@@ -3,93 +3,93 @@ import * as $ from 'jquery'
 
 export default class Theme {
 
-	optionsManager: any
+  optionsManager: any
 
-	// settings. default values are set after the class
-	classes: any
-	iconClasses: any
-	baseIconClass: string
-	iconOverrideOption: any
-	iconOverrideCustomButtonOption: any
-	iconOverridePrefix: string
-
-
-	constructor(optionsManager) {
-		this.optionsManager = optionsManager;
-		this.processIconOverride();
-	}
+  // settings. default values are set after the class
+  classes: any
+  iconClasses: any
+  baseIconClass: string
+  iconOverrideOption: any
+  iconOverrideCustomButtonOption: any
+  iconOverridePrefix: string
 
 
-	processIconOverride() {
-		if (this.iconOverrideOption) {
-			this.setIconOverride(
-				this.optionsManager.get(this.iconOverrideOption)
-			);
-		}
-	}
+  constructor(optionsManager) {
+    this.optionsManager = optionsManager;
+    this.processIconOverride();
+  }
 
 
-	setIconOverride(iconOverrideHash) {
-		var iconClassesCopy;
-		var buttonName;
-
-		if ($.isPlainObject(iconOverrideHash)) {
-			iconClassesCopy = $.extend({}, this.iconClasses);
-
-			for (buttonName in iconOverrideHash) {
-				iconClassesCopy[buttonName] = this.applyIconOverridePrefix(
-					iconOverrideHash[buttonName]
-				);
-			}
-
-			this.iconClasses = iconClassesCopy;
-		}
-		else if (iconOverrideHash === false) {
-			this.iconClasses = {};
-		}
-	}
+  processIconOverride() {
+    if (this.iconOverrideOption) {
+      this.setIconOverride(
+        this.optionsManager.get(this.iconOverrideOption)
+      );
+    }
+  }
 
 
-	applyIconOverridePrefix(className) {
-		var prefix = this.iconOverridePrefix;
+  setIconOverride(iconOverrideHash) {
+    var iconClassesCopy;
+    var buttonName;
 
-		if (prefix && className.indexOf(prefix) !== 0) { // if not already present
-			className = prefix + className;
-		}
+    if ($.isPlainObject(iconOverrideHash)) {
+      iconClassesCopy = $.extend({}, this.iconClasses);
 
-		return className;
-	}
+      for (buttonName in iconOverrideHash) {
+        iconClassesCopy[buttonName] = this.applyIconOverridePrefix(
+          iconOverrideHash[buttonName]
+        );
+      }
 
-
-	getClass(key) {
-		return this.classes[key] || '';
-	}
-
-
-	getIconClass(buttonName) {
-		var className = this.iconClasses[buttonName];
-
-		if (className) {
-			return this.baseIconClass + ' ' + className;
-		}
-
-		return '';
-	}
+      this.iconClasses = iconClassesCopy;
+    }
+    else if (iconOverrideHash === false) {
+      this.iconClasses = {};
+    }
+  }
 
 
-	getCustomButtonIconClass(customButtonProps) {
-		var className;
+  applyIconOverridePrefix(className) {
+    var prefix = this.iconOverridePrefix;
 
-		if (this.iconOverrideCustomButtonOption) {
-			className = customButtonProps[this.iconOverrideCustomButtonOption];
+    if (prefix && className.indexOf(prefix) !== 0) { // if not already present
+      className = prefix + className;
+    }
 
-			if (className) {
-				return this.baseIconClass + ' ' + this.applyIconOverridePrefix(className);
-			}
-		}
+    return className;
+  }
 
-		return '';
-	}
+
+  getClass(key) {
+    return this.classes[key] || '';
+  }
+
+
+  getIconClass(buttonName) {
+    var className = this.iconClasses[buttonName];
+
+    if (className) {
+      return this.baseIconClass + ' ' + className;
+    }
+
+    return '';
+  }
+
+
+  getCustomButtonIconClass(customButtonProps) {
+    var className;
+
+    if (this.iconOverrideCustomButtonOption) {
+      className = customButtonProps[this.iconOverrideCustomButtonOption];
+
+      if (className) {
+        return this.baseIconClass + ' ' + this.applyIconOverridePrefix(className);
+      }
+    }
+
+    return '';
+  }
 
 }
 

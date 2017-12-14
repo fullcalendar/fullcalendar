@@ -1,18 +1,18 @@
 
 .fc.fc-bootstrap3 a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 .fc.fc-bootstrap3 a[data-goto]:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 
 .fc-bootstrap3 hr.fc-divider {
-	border-color: inherit;
+  border-color: inherit;
 }
 
 .fc-bootstrap3 .fc-today.alert {
-	border-radius: 0;
+  border-radius: 0;
 }
 
 
@@ -20,7 +20,7 @@
 --------------------------------------------------------------------------------------------------*/
 
 .fc-bootstrap3 .fc-popover .panel-body {
-	padding: 0; /* undo built-in padding */
+  padding: 0; /* undo built-in padding */
 }
 
 
@@ -28,6 +28,6 @@
 --------------------------------------------------------------------------------------------------*/
 
 .fc-bootstrap3 .fc-time-grid .fc-slats table {
-	/* some themes have background color. see through to slats */
-	background: none;
+  /* some themes have background color. see through to slats */
+  background: none;
 }

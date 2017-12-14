@@ -7,117 +7,117 @@ Embodies a div that has potential scrollbars
 */
 export default class Scroller extends Class {
 
-	el: any // the guaranteed outer element
-	scrollEl: any // the element with the scrollbars
-	overflowX: any
-	overflowY: any
+  el: any // the guaranteed outer element
+  scrollEl: any // the element with the scrollbars
+  overflowX: any
+  overflowY: any
 
 
-	constructor(options?) {
-		super();
-		options = options || {};
-		this.overflowX = options.overflowX || options.overflow || 'auto';
-		this.overflowY = options.overflowY || options.overflow || 'auto';
-	}
+  constructor(options?) {
+    super();
+    options = options || {};
+    this.overflowX = options.overflowX || options.overflow || 'auto';
+    this.overflowY = options.overflowY || options.overflow || 'auto';
+  }
 
 
-	render() {
-		this.el = this.renderEl();
-		this.applyOverflow();
-	}
+  render() {
+    this.el = this.renderEl();
+    this.applyOverflow();
+  }
 
 
-	renderEl() {
-		return (this.scrollEl = $('<div class="fc-scroller"></div>'));
-	}
+  renderEl() {
+    return (this.scrollEl = $('<div class="fc-scroller"></div>'));
+  }
 
 
-	// sets to natural height, unlocks overflow
-	clear() {
-		this.setHeight('auto');
-		this.applyOverflow();
-	}
+  // sets to natural height, unlocks overflow
+  clear() {
+    this.setHeight('auto');
+    this.applyOverflow();
+  }
 
 
-	destroy() {
-		this.el.remove();
-	}
+  destroy() {
+    this.el.remove();
+  }
 
 
-	// Overflow
-	// -----------------------------------------------------------------------------------------------------------------
+  // Overflow
+  // -----------------------------------------------------------------------------------------------------------------
 
 
-	applyOverflow() {
-		this.scrollEl.css({
-			'overflow-x': this.overflowX,
-			'overflow-y': this.overflowY
-		});
-	}
+  applyOverflow() {
+    this.scrollEl.css({
+      'overflow-x': this.overflowX,
+      'overflow-y': this.overflowY
+    });
+  }
 
 
-	// Causes any 'auto' overflow values to resolves to 'scroll' or 'hidden'.
-	// Useful for preserving scrollbar widths regardless of future resizes.
-	// Can pass in scrollbarWidths for optimization.
-	lockOverflow(scrollbarWidths) {
-		var overflowX = this.overflowX;
-		var overflowY = this.overflowY;
+  // Causes any 'auto' overflow values to resolves to 'scroll' or 'hidden'.
+  // Useful for preserving scrollbar widths regardless of future resizes.
+  // Can pass in scrollbarWidths for optimization.
+  lockOverflow(scrollbarWidths) {
+    var overflowX = this.overflowX;
+    var overflowY = this.overflowY;
 
-		scrollbarWidths = scrollbarWidths || this.getScrollbarWidths();
+    scrollbarWidths = scrollbarWidths || this.getScrollbarWidths();
 
-		if (overflowX === 'auto') {
-			overflowX = (
-					scrollbarWidths.top || scrollbarWidths.bottom || // horizontal scrollbars?
-					// OR scrolling pane with massless scrollbars?
-					this.scrollEl[0].scrollWidth - 1 > this.scrollEl[0].clientWidth
-						// subtract 1 because of IE off-by-one issue
-				) ? 'scroll' : 'hidden';
-		}
+    if (overflowX === 'auto') {
+      overflowX = (
+          scrollbarWidths.top || scrollbarWidths.bottom || // horizontal scrollbars?
+          // OR scrolling pane with massless scrollbars?
+          this.scrollEl[0].scrollWidth - 1 > this.scrollEl[0].clientWidth
+            // subtract 1 because of IE off-by-one issue
+        ) ? 'scroll' : 'hidden';
+    }
 
-		if (overflowY === 'auto') {
-			overflowY = (
-					scrollbarWidths.left || scrollbarWidths.right || // vertical scrollbars?
-					// OR scrolling pane with massless scrollbars?
-					this.scrollEl[0].scrollHeight - 1 > this.scrollEl[0].clientHeight
-						// subtract 1 because of IE off-by-one issue
-				) ? 'scroll' : 'hidden';
-		}
+    if (overflowY === 'auto') {
+      overflowY = (
+          scrollbarWidths.left || scrollbarWidths.right || // vertical scrollbars?
+          // OR scrolling pane with massless scrollbars?
+          this.scrollEl[0].scrollHeight - 1 > this.scrollEl[0].clientHeight
+            // subtract 1 because of IE off-by-one issue
+        ) ? 'scroll' : 'hidden';
+    }
 
-		this.scrollEl.css({ 'overflow-x': overflowX, 'overflow-y': overflowY });
-	}
-
-
-	// Getters / Setters
-	// -----------------------------------------------------------------------------------------------------------------
+    this.scrollEl.css({ 'overflow-x': overflowX, 'overflow-y': overflowY });
+  }
 
 
-	setHeight(height) {
-		this.scrollEl.height(height);
-	}
+  // Getters / Setters
+  // -----------------------------------------------------------------------------------------------------------------
 
 
-	getScrollTop() {
-		return this.scrollEl.scrollTop();
-	}
+  setHeight(height) {
+    this.scrollEl.height(height);
+  }
 
 
-	setScrollTop(top) {
-		this.scrollEl.scrollTop(top);
-	}
+  getScrollTop() {
+    return this.scrollEl.scrollTop();
+  }
 
 
-	getClientWidth() {
-		return this.scrollEl[0].clientWidth;
-	}
+  setScrollTop(top) {
+    this.scrollEl.scrollTop(top);
+  }
 
 
-	getClientHeight() {
-		return this.scrollEl[0].clientHeight;
-	}
+  getClientWidth() {
+    return this.scrollEl[0].clientWidth;
+  }
 
 
-	getScrollbarWidths() {
-		return getScrollbarWidths(this.scrollEl);
-	}
+  getClientHeight() {
+    return this.scrollEl[0].clientHeight;
+  }
+
+
+  getScrollbarWidths() {
+    return getScrollbarWidths(this.scrollEl);
+  }
 
 }

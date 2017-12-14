@@ -13,180 +13,180 @@ import Interaction from './Interaction'
 
 export default class ExternalDropping extends Interaction {
 
-	listenTo: ListenerInterface['listenTo']
-	stopListeningTo: ListenerInterface['stopListeningTo']
+  listenTo: ListenerInterface['listenTo']
+  stopListeningTo: ListenerInterface['stopListeningTo']
 
-	dragListener: any
-	isDragging: boolean = false // jqui-dragging an external element? boolean
-
-
-	/*
-	component impements:
-		- eventRangesToEventFootprints
-		- isEventInstanceGroupAllowed
-		- isExternalInstanceGroupAllowed
-		- renderDrag
-		- unrenderDrag
-	*/
+  dragListener: any
+  isDragging: boolean = false // jqui-dragging an external element? boolean
 
 
-	end() {
-		if (this.dragListener) {
-			this.dragListener.endInteraction();
-		}
-	}
+  /*
+  component impements:
+    - eventRangesToEventFootprints
+    - isEventInstanceGroupAllowed
+    - isExternalInstanceGroupAllowed
+    - renderDrag
+    - unrenderDrag
+  */
 
 
-	bindToDocument() {
-		this.listenTo($(document), {
-			dragstart: this.handleDragStart, // jqui
-			sortstart: this.handleDragStart // jqui
-		});
-	}
+  end() {
+    if (this.dragListener) {
+      this.dragListener.endInteraction();
+    }
+  }
 
 
-	unbindFromDocument() {
-		this.stopListeningTo($(document));
-	}
+  bindToDocument() {
+    this.listenTo($(document), {
+      dragstart: this.handleDragStart, // jqui
+      sortstart: this.handleDragStart // jqui
+    });
+  }
 
 
-	// Called when a jQuery UI drag is initiated anywhere in the DOM
-	handleDragStart(ev, ui) {
-		var el;
-		var accept;
-
-		if (this.opt('droppable')) { // only listen if this setting is on
-			el = $((ui ? ui.item : null) || ev.target);
-
-			// Test that the dragged element passes the dropAccept selector or filter function.
-			// FYI, the default is "*" (matches all)
-			accept = this.opt('dropAccept');
-			if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
-				if (!this.isDragging) { // prevent double-listening if fired twice
-					this.listenToExternalDrag(el, ev, ui);
-				}
-			}
-		}
-	}
+  unbindFromDocument() {
+    this.stopListeningTo($(document));
+  }
 
 
-	// Called when a jQuery UI drag starts and it needs to be monitored for dropping
-	listenToExternalDrag(el, ev, ui) {
-		var component = this.component;
-		var view = this.view;
-		var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
-		var singleEventDef; // a null value signals an unsuccessful drag
+  // Called when a jQuery UI drag is initiated anywhere in the DOM
+  handleDragStart(ev, ui) {
+    var el;
+    var accept;
 
-		// listener that tracks mouse movement over date-associated pixel regions
-		var dragListener = this.dragListener = new HitDragListener(component, {
-			interactionStart: () => {
-				this.isDragging = true;
-			},
-			hitOver: (hit) => {
-				var isAllowed = true;
-				var hitFootprint = hit.component.getSafeHitFootprint(hit); // hit might not belong to this grid
-				var mutatedEventInstanceGroup;
+    if (this.opt('droppable')) { // only listen if this setting is on
+      el = $((ui ? ui.item : null) || ev.target);
 
-				if (hitFootprint) {
-					singleEventDef = this.computeExternalDrop(hitFootprint, meta);
-
-					if (singleEventDef) {
-						mutatedEventInstanceGroup = new EventInstanceGroup(
-							singleEventDef.buildInstances()
-						);
-						isAllowed = meta.eventProps ? // isEvent?
-							component.isEventInstanceGroupAllowed(mutatedEventInstanceGroup) :
-							component.isExternalInstanceGroupAllowed(mutatedEventInstanceGroup);
-					}
-					else {
-						isAllowed = false;
-					}
-				}
-				else {
-					isAllowed = false;
-				}
-
-				if (!isAllowed) {
-					singleEventDef = null;
-					disableCursor();
-				}
-
-				if (singleEventDef) {
-					component.renderDrag( // called without a seg parameter
-						component.eventRangesToEventFootprints(
-							mutatedEventInstanceGroup.sliceRenderRanges(component.dateProfile.renderUnzonedRange, view.calendar)
-						)
-					);
-				}
-			},
-			hitOut: () => {
-				singleEventDef = null; // signal unsuccessful
-			},
-			hitDone: () => { // Called after a hitOut OR before a dragEnd
-				enableCursor();
-				component.unrenderDrag();
-			},
-			interactionEnd: (ev) => {
-
-				if (singleEventDef) { // element was dropped on a valid hit
-					view.reportExternalDrop(
-						singleEventDef,
-						Boolean(meta.eventProps), // isEvent
-						Boolean(meta.stick), // isSticky
-						el, ev, ui
-					);
-				}
-
-				this.isDragging = false;
-				this.dragListener = null;
-			}
-		});
-
-		dragListener.startDrag(ev); // start listening immediately
-	}
+      // Test that the dragged element passes the dropAccept selector or filter function.
+      // FYI, the default is "*" (matches all)
+      accept = this.opt('dropAccept');
+      if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
+        if (!this.isDragging) { // prevent double-listening if fired twice
+          this.listenToExternalDrag(el, ev, ui);
+        }
+      }
+    }
+  }
 
 
-	// Given a hit to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
-	// returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
-	// Returning a null value signals an invalid drop hit.
-	// DOES NOT consider overlap/constraint.
-	// Assumes both footprints are non-open-ended.
-	computeExternalDrop(componentFootprint, meta) {
-		var calendar = this.view.calendar;
-		var start = momentExt.utc(componentFootprint.unzonedRange.startMs).stripZone();
-		var end;
-		var eventDef;
+  // Called when a jQuery UI drag starts and it needs to be monitored for dropping
+  listenToExternalDrag(el, ev, ui) {
+    var component = this.component;
+    var view = this.view;
+    var meta = getDraggedElMeta(el); // extra data about event drop, including possible event to create
+    var singleEventDef; // a null value signals an unsuccessful drag
 
-		if (componentFootprint.isAllDay) {
-			// if dropped on an all-day span, and element's metadata specified a time, set it
-			if (meta.startTime) {
-				start.time(meta.startTime);
-			}
-			else {
-				start.stripTime();
-			}
-		}
+    // listener that tracks mouse movement over date-associated pixel regions
+    var dragListener = this.dragListener = new HitDragListener(component, {
+      interactionStart: () => {
+        this.isDragging = true;
+      },
+      hitOver: (hit) => {
+        var isAllowed = true;
+        var hitFootprint = hit.component.getSafeHitFootprint(hit); // hit might not belong to this grid
+        var mutatedEventInstanceGroup;
 
-		if (meta.duration) {
-			end = start.clone().add(meta.duration);
-		}
+        if (hitFootprint) {
+          singleEventDef = this.computeExternalDrop(hitFootprint, meta);
 
-		start = calendar.applyTimezone(start);
+          if (singleEventDef) {
+            mutatedEventInstanceGroup = new EventInstanceGroup(
+              singleEventDef.buildInstances()
+            );
+            isAllowed = meta.eventProps ? // isEvent?
+              component.isEventInstanceGroupAllowed(mutatedEventInstanceGroup) :
+              component.isExternalInstanceGroupAllowed(mutatedEventInstanceGroup);
+          }
+          else {
+            isAllowed = false;
+          }
+        }
+        else {
+          isAllowed = false;
+        }
 
-		if (end) {
-			end = calendar.applyTimezone(end);
-		}
+        if (!isAllowed) {
+          singleEventDef = null;
+          disableCursor();
+        }
 
-		eventDef = SingleEventDef.parse(
-			$.extend({}, meta.eventProps, {
-				start: start,
-				end: end
-			}),
-			new EventSource(calendar)
-		);
+        if (singleEventDef) {
+          component.renderDrag( // called without a seg parameter
+            component.eventRangesToEventFootprints(
+              mutatedEventInstanceGroup.sliceRenderRanges(component.dateProfile.renderUnzonedRange, view.calendar)
+            )
+          );
+        }
+      },
+      hitOut: () => {
+        singleEventDef = null; // signal unsuccessful
+      },
+      hitDone: () => { // Called after a hitOut OR before a dragEnd
+        enableCursor();
+        component.unrenderDrag();
+      },
+      interactionEnd: (ev) => {
 
-		return eventDef;
-	}
+        if (singleEventDef) { // element was dropped on a valid hit
+          view.reportExternalDrop(
+            singleEventDef,
+            Boolean(meta.eventProps), // isEvent
+            Boolean(meta.stick), // isSticky
+            el, ev, ui
+          );
+        }
+
+        this.isDragging = false;
+        this.dragListener = null;
+      }
+    });
+
+    dragListener.startDrag(ev); // start listening immediately
+  }
+
+
+  // Given a hit to be dropped upon, and misc data associated with the jqui drag (guaranteed to be a plain object),
+  // returns the zoned start/end dates for the event that would result from the hypothetical drop. end might be null.
+  // Returning a null value signals an invalid drop hit.
+  // DOES NOT consider overlap/constraint.
+  // Assumes both footprints are non-open-ended.
+  computeExternalDrop(componentFootprint, meta) {
+    var calendar = this.view.calendar;
+    var start = momentExt.utc(componentFootprint.unzonedRange.startMs).stripZone();
+    var end;
+    var eventDef;
+
+    if (componentFootprint.isAllDay) {
+      // if dropped on an all-day span, and element's metadata specified a time, set it
+      if (meta.startTime) {
+        start.time(meta.startTime);
+      }
+      else {
+        start.stripTime();
+      }
+    }
+
+    if (meta.duration) {
+      end = start.clone().add(meta.duration);
+    }
+
+    start = calendar.applyTimezone(start);
+
+    if (end) {
+      end = calendar.applyTimezone(end);
+    }
+
+    eventDef = SingleEventDef.parse(
+      $.extend({}, meta.eventProps, {
+        start: start,
+        end: end
+      }),
+      new EventSource(calendar)
+    );
+
+    return eventDef;
+  }
 
 }
 
@@ -204,44 +204,44 @@ ListenerMixin.mixInto(ExternalDropping);
 // to be used for Event Object creation.
 // A defined `.eventProps`, even when empty, indicates that an event should be created.
 function getDraggedElMeta(el) {
-	var prefix = (exportHooks as any).dataAttrPrefix;
-	var eventProps; // properties for creating the event, not related to date/time
-	var startTime; // a Duration
-	var duration;
-	var stick;
+  var prefix = (exportHooks as any).dataAttrPrefix;
+  var eventProps; // properties for creating the event, not related to date/time
+  var startTime; // a Duration
+  var duration;
+  var stick;
 
-	if (prefix) { prefix += '-'; }
-	eventProps = el.data(prefix + 'event') || null;
+  if (prefix) { prefix += '-'; }
+  eventProps = el.data(prefix + 'event') || null;
 
-	if (eventProps) {
-		if (typeof eventProps === 'object') {
-			eventProps = $.extend({}, eventProps); // make a copy
-		}
-		else { // something like 1 or true. still signal event creation
-			eventProps = {};
-		}
+  if (eventProps) {
+    if (typeof eventProps === 'object') {
+      eventProps = $.extend({}, eventProps); // make a copy
+    }
+    else { // something like 1 or true. still signal event creation
+      eventProps = {};
+    }
 
-		// pluck special-cased date/time properties
-		startTime = eventProps.start;
-		if (startTime == null) { startTime = eventProps.time; } // accept 'time' as well
-		duration = eventProps.duration;
-		stick = eventProps.stick;
-		delete eventProps.start;
-		delete eventProps.time;
-		delete eventProps.duration;
-		delete eventProps.stick;
-	}
+    // pluck special-cased date/time properties
+    startTime = eventProps.start;
+    if (startTime == null) { startTime = eventProps.time; } // accept 'time' as well
+    duration = eventProps.duration;
+    stick = eventProps.stick;
+    delete eventProps.start;
+    delete eventProps.time;
+    delete eventProps.duration;
+    delete eventProps.stick;
+  }
 
-	// fallback to standalone attribute values for each of the date/time properties
-	if (startTime == null) { startTime = el.data(prefix + 'start'); }
-	if (startTime == null) { startTime = el.data(prefix + 'time'); } // accept 'time' as well
-	if (duration == null) { duration = el.data(prefix + 'duration'); }
-	if (stick == null) { stick = el.data(prefix + 'stick'); }
+  // fallback to standalone attribute values for each of the date/time properties
+  if (startTime == null) { startTime = el.data(prefix + 'start'); }
+  if (startTime == null) { startTime = el.data(prefix + 'time'); } // accept 'time' as well
+  if (duration == null) { duration = el.data(prefix + 'duration'); }
+  if (stick == null) { stick = el.data(prefix + 'stick'); }
 
-	// massage into correct data types
-	startTime = startTime != null ? moment.duration(startTime) : null;
-	duration = duration != null ? moment.duration(duration) : null;
-	stick = Boolean(stick);
+  // massage into correct data types
+  startTime = startTime != null ? moment.duration(startTime) : null;
+  duration = duration != null ? moment.duration(duration) : null;
+  stick = Boolean(stick);
 
-	return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
+  return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick };
 }

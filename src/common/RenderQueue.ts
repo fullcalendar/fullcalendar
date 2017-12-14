@@ -3,137 +3,137 @@ import TaskQueue from './TaskQueue'
 
 export default class RenderQueue extends TaskQueue {
 
-	waitsByNamespace: any
-	waitNamespace: any
-	waitId: any
+  waitsByNamespace: any
+  waitNamespace: any
+  waitId: any
 
 
-	constructor(waitsByNamespace) {
-		super()
-		this.waitsByNamespace = waitsByNamespace || {};
-	}
+  constructor(waitsByNamespace) {
+    super()
+    this.waitsByNamespace = waitsByNamespace || {};
+  }
 
 
-	queue(taskFunc, namespace, type) {
-		var task = {
-			func: taskFunc,
-			namespace: namespace,
-			type: type
-		};
-		var waitMs;
+  queue(taskFunc, namespace, type) {
+    var task = {
+      func: taskFunc,
+      namespace: namespace,
+      type: type
+    };
+    var waitMs;
 
-		if (namespace) {
-			waitMs = this.waitsByNamespace[namespace];
-		}
+    if (namespace) {
+      waitMs = this.waitsByNamespace[namespace];
+    }
 
-		if (this.waitNamespace) {
-			if (namespace === this.waitNamespace && waitMs != null) {
-				this.delayWait(waitMs);
-			}
-			else {
-				this.clearWait();
-				this.tryStart();
-			}
-		}
+    if (this.waitNamespace) {
+      if (namespace === this.waitNamespace && waitMs != null) {
+        this.delayWait(waitMs);
+      }
+      else {
+        this.clearWait();
+        this.tryStart();
+      }
+    }
 
-		if (this.compoundTask(task)) { // appended to queue?
+    if (this.compoundTask(task)) { // appended to queue?
 
-			if (!this.waitNamespace && waitMs != null) {
-				this.startWait(namespace, waitMs);
-			}
-			else {
-				this.tryStart();
-			}
-		}
-	}
-
-
-	startWait(namespace, waitMs) {
-		this.waitNamespace = namespace;
-		this.spawnWait(waitMs);
-	}
+      if (!this.waitNamespace && waitMs != null) {
+        this.startWait(namespace, waitMs);
+      }
+      else {
+        this.tryStart();
+      }
+    }
+  }
 
 
-	delayWait(waitMs) {
-		clearTimeout(this.waitId);
-		this.spawnWait(waitMs);
-	}
+  startWait(namespace, waitMs) {
+    this.waitNamespace = namespace;
+    this.spawnWait(waitMs);
+  }
 
 
-	spawnWait(waitMs) {
-		this.waitId = setTimeout(() => {
-			this.waitNamespace = null;
-			this.tryStart();
-		}, waitMs);
-	}
+  delayWait(waitMs) {
+    clearTimeout(this.waitId);
+    this.spawnWait(waitMs);
+  }
 
 
-	clearWait() {
-		if (this.waitNamespace) {
-			clearTimeout(this.waitId);
-			this.waitId = null;
-			this.waitNamespace = null;
-		}
-	}
+  spawnWait(waitMs) {
+    this.waitId = setTimeout(() => {
+      this.waitNamespace = null;
+      this.tryStart();
+    }, waitMs);
+  }
 
 
-	canRunNext() {
-		if (!super.canRunNext()) {
-			return false;
-		}
-
-		// waiting for a certain namespace to stop receiving tasks?
-		if (this.waitNamespace) {
-
-			// if there was a different namespace task in the meantime,
-			// that forces all previously-waiting tasks to suddenly execute.
-			// TODO: find a way to do this in constant time.
-			for (var q = this.q, i = 0; i < q.length; i++) {
-				if (q[i].namespace !== this.waitNamespace) {
-					return true; // allow execution
-				}
-			}
-
-			return false;
-		}
-
-		return true;
-	}
+  clearWait() {
+    if (this.waitNamespace) {
+      clearTimeout(this.waitId);
+      this.waitId = null;
+      this.waitNamespace = null;
+    }
+  }
 
 
-	runTask(task) {
-		task.func();
-	}
+  canRunNext() {
+    if (!super.canRunNext()) {
+      return false;
+    }
+
+    // waiting for a certain namespace to stop receiving tasks?
+    if (this.waitNamespace) {
+
+      // if there was a different namespace task in the meantime,
+      // that forces all previously-waiting tasks to suddenly execute.
+      // TODO: find a way to do this in constant time.
+      for (var q = this.q, i = 0; i < q.length; i++) {
+        if (q[i].namespace !== this.waitNamespace) {
+          return true; // allow execution
+        }
+      }
+
+      return false;
+    }
+
+    return true;
+  }
 
 
-	compoundTask(newTask) {
-		var q = this.q;
-		var shouldAppend = true;
-		var i, task;
+  runTask(task) {
+    task.func();
+  }
 
-		if (newTask.namespace && newTask.type === 'destroy') {
 
-			// remove all init/add/remove ops with same namespace, regardless of order
-			for (i = q.length - 1; i >= 0; i--) {
-				task = q[i];
+  compoundTask(newTask) {
+    var q = this.q;
+    var shouldAppend = true;
+    var i, task;
 
-				switch (task.type) {
-					case 'init':
-						shouldAppend = false;
-						// the latest destroy is cancelled out by not doing the init
-						// and fallthrough....
-					case 'add':
-					case 'remove':
-						q.splice(i, 1); // remove task
-				}
-			}
-		}
+    if (newTask.namespace && newTask.type === 'destroy') {
 
-		if (shouldAppend) {
-			q.push(newTask);
-		}
+      // remove all init/add/remove ops with same namespace, regardless of order
+      for (i = q.length - 1; i >= 0; i--) {
+        task = q[i];
 
-		return shouldAppend;
-	}
+        switch (task.type) {
+          case 'init':
+            shouldAppend = false;
+            // the latest destroy is cancelled out by not doing the init
+            // and fallthrough....
+          case 'add':
+          case 'remove':
+            q.splice(i, 1); // remove task
+        }
+      }
+    }
+
+    if (shouldAppend) {
+      q.push(newTask);
+    }
+
+    return shouldAppend;
+  }
 
 }

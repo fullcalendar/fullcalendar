@@ -2,83 +2,83 @@ import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
 
 export default class TaskQueue {
 
-	on: EmitterInterface['on']
-	one: EmitterInterface['one']
-	off: EmitterInterface['off']
-	trigger: EmitterInterface['trigger']
-	triggerWith: EmitterInterface['triggerWith']
-	hasHandlers: EmitterInterface['hasHandlers']
+  on: EmitterInterface['on']
+  one: EmitterInterface['one']
+  off: EmitterInterface['off']
+  trigger: EmitterInterface['trigger']
+  triggerWith: EmitterInterface['triggerWith']
+  hasHandlers: EmitterInterface['hasHandlers']
 
-	q: any = []
-	isPaused: boolean = false
-	isRunning: boolean = false
-
-
-	queue(...args) {
-		this.q.push.apply(this.q, args); // append
-		this.tryStart();
-	}
+  q: any = []
+  isPaused: boolean = false
+  isRunning: boolean = false
 
 
-	pause() {
-		this.isPaused = true;
-	}
+  queue(...args) {
+    this.q.push.apply(this.q, args); // append
+    this.tryStart();
+  }
 
 
-	resume() {
-		this.isPaused = false;
-		this.tryStart();
-	}
+  pause() {
+    this.isPaused = true;
+  }
 
 
-	getIsIdle() {
-		return !this.isRunning && !this.isPaused;
-	}
+  resume() {
+    this.isPaused = false;
+    this.tryStart();
+  }
 
 
-	tryStart() {
-		if (!this.isRunning && this.canRunNext()) {
-			this.isRunning = true;
-			this.trigger('start');
-			this.runRemaining();
-		}
-	}
+  getIsIdle() {
+    return !this.isRunning && !this.isPaused;
+  }
 
 
-	canRunNext() {
-		return !this.isPaused && this.q.length;
-	}
+  tryStart() {
+    if (!this.isRunning && this.canRunNext()) {
+      this.isRunning = true;
+      this.trigger('start');
+      this.runRemaining();
+    }
+  }
 
 
-	runRemaining() { // assumes at least one task in queue. does not check canRunNext for first task.
-		var task;
-		var res;
-
-		do {
-			task = this.q.shift(); // always freshly reference q. might have been reassigned.
-			res = this.runTask(task);
-
-			if (res && res.then) {
-				res.then(() => {
-					if (this.canRunNext()) {
-						this.runRemaining();
-					}
-				});
-				return; // prevent marking as stopped
-			}
-		} while (this.canRunNext());
-
-		this.trigger('stop'); // not really a 'stop' ... more of a 'drained'
-		this.isRunning = false;
-
-		// if 'stop' handler added more tasks.... TODO: write test for this
-		this.tryStart();
-	}
+  canRunNext() {
+    return !this.isPaused && this.q.length;
+  }
 
 
-	runTask(task) {
-		return task(); // task *is* the function, but subclasses can change the format of a task
-	}
+  runRemaining() { // assumes at least one task in queue. does not check canRunNext for first task.
+    var task;
+    var res;
+
+    do {
+      task = this.q.shift(); // always freshly reference q. might have been reassigned.
+      res = this.runTask(task);
+
+      if (res && res.then) {
+        res.then(() => {
+          if (this.canRunNext()) {
+            this.runRemaining();
+          }
+        });
+        return; // prevent marking as stopped
+      }
+    } while (this.canRunNext());
+
+    this.trigger('stop'); // not really a 'stop' ... more of a 'drained'
+    this.isRunning = false;
+
+    // if 'stop' handler added more tasks.... TODO: write test for this
+    this.tryStart();
+  }
+
+
+  runTask(task) {
+    return task(); // task *is* the function, but subclasses can change the format of a task
+  }
 
 }
 

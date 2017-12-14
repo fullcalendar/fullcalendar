@@ -7,42 +7,42 @@ export const version = "<%= version %>";
 export const internalApiVersion = 12;
 
 export {
-	applyAll,
-	debounce,
-	isInt,
-	htmlEscape,
-	cssToStr,
-	proxy,
-	capitaliseFirstLetter,
-	getOuterRect,
-	getClientRect,
-	getContentRect,
-	getScrollbarWidths,
-	preventDefault,
-	parseFieldSpecs,
-	compareByFieldSpecs,
-	compareByFieldSpec,
-	flexibleCompare,
-	computeGreatestUnit,
-	divideRangeByDuration,
-	divideDurationByDuration,
-	multiplyDuration,
-	durationHasTime,
-	log,
-	warn,
-	removeExact,
-	intersectRects
+  applyAll,
+  debounce,
+  isInt,
+  htmlEscape,
+  cssToStr,
+  proxy,
+  capitaliseFirstLetter,
+  getOuterRect,
+  getClientRect,
+  getContentRect,
+  getScrollbarWidths,
+  preventDefault,
+  parseFieldSpecs,
+  compareByFieldSpecs,
+  compareByFieldSpec,
+  flexibleCompare,
+  computeGreatestUnit,
+  divideRangeByDuration,
+  divideDurationByDuration,
+  multiplyDuration,
+  durationHasTime,
+  log,
+  warn,
+  removeExact,
+  intersectRects
 } from './util'
 
 export {
-	formatDate,
-	formatRange,
-	queryMostGranularFormatUnit
+  formatDate,
+  formatRange,
+  queryMostGranularFormatUnit
 } from './date-formatting'
 
 export {
-	datepickerLocale,
-	locale
+  datepickerLocale,
+  locale
 } from './locale'
 
 export { default as moment } from './moment-ext';

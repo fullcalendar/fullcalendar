@@ -1,21 +1,21 @@
 
 export default class Iterator {
 
-	items: any
+  items: any
 
-	constructor(items) {
-		this.items = items || [];
-	}
+  constructor(items) {
+    this.items = items || [];
+  }
 
-	/* Calls a method on every item passing the arguments through */
-	proxyCall(methodName, ...args) {
-		var results = [];
+  /* Calls a method on every item passing the arguments through */
+  proxyCall(methodName, ...args) {
+    var results = [];
 
-		this.items.forEach(function(item) {
-			results.push(item[methodName].apply(item, args));
-		});
+    this.items.forEach(function(item) {
+      results.push(item[methodName].apply(item, args));
+    });
 
-		return results;
-	}
+    return results;
+  }
 
 }
