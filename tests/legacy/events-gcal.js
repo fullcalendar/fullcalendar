@@ -1,5 +1,5 @@
 
-fdescribe('Google Calendar plugin', function() {
+xdescribe('Google Calendar plugin', function() {
 
 	var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE';
 	var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com';
@@ -29,7 +29,7 @@ fdescribe('Google Calendar plugin', function() {
 		console.warn = oldConsoleWarn;
 	});
 
-	fit('request/receives correctly when local timezone', function(done) {
+	it('request/receives correctly when local timezone', function(done) {
 		options.googleCalendarApiKey = API_KEY;
 		options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID };
 		options.timezone = 'local';
@@ -49,7 +49,7 @@ fdescribe('Google Calendar plugin', function() {
 
 			done();
 		};
-		options.googleCalendarError = function(calendar, message) {
+		options.googleCalendarError = function(xhr, message) {
 			console.log('GCAL ERROR', message);
 		};
 		$('#cal').fullCalendar(options);
