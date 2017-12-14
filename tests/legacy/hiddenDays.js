@@ -82,7 +82,7 @@ describe('hiddenDays', function() {
       }
       expect(function() {
         $('#cal').fullCalendar(options)
-      }).toThrow('invalid hiddenDays')
+      }).toThrow(new Error('invalid hiddenDays'))
     })
   })
 })

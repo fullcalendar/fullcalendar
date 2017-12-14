@@ -1,6 +1,9 @@
 tmp
 dist
 
+# awesome-typescript-loader
+.awcache
+
 # npm
 node_modules
 npm-debug.log

@@ -24,11 +24,14 @@ gulp.task('ts-types:raw', function() {
   })
 })
 
+/*
+if this task is run at the same time as webpack:watch, it forces webpack:watch to wait
+for this to be done for some reason. wait for the initial fullcalendar.js file to be
+written (which is when webpack:watch resolves) so that gulp.watch has something to grab
+onto, and then watch for changes in the *output* of fullcalendar.js, guaranteeing that
+webpack goes first.
+*/
 gulp.task('ts-types:watch', [ 'webpack:watch' ], function() {
-  // HACK
-  // if we watched src/**/*.js files,
-  // it blocked webpack compilation until dts-generator finished for some reason.
-  // instead, wait until we know core compilation has finished before rerunning dts-generator.
   gulp.watch('dist/fullcalendar.js', [ 'ts-types' ])
 })
 

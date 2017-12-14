@@ -15,20 +15,24 @@ gulp.task('webpack:dev', function() {
   return createStream(true)
 })
 
-gulp.task('webpack:watch', function() {
-  createStream(true, true)
+/*
+this task will be considered done after initial compile
+*/
+gulp.task('webpack:watch', function(done) {
+  createStream(true, true, done)
 })
 
 
 const jsFilter = filter([ '**/*.js' ], { restore: true })
 const localeFilter = filter([ '**/locale-all.js', '**/locale/*.js' ], { restore: true })
 
-function createStream(enableDev, enableWatch) {
+function createStream(isDev, isWatch, doneCallback) {
+  let doneCallbackCalled = false
   let stream = gulp.src([]) // don't pass in any files. webpack handles that
     .pipe(
       webpack(Object.assign({}, webpackConfig, {
-        devtool: enableDev ? 'source-map' : false, // also 'inline-source-map'
-        watch: enableWatch || false
+        devtool: isDev ? 'source-map' : false, // also 'inline-source-map'
+        watch: isWatch ? true : false
       }))
     )
     .pipe(
@@ -62,7 +66,7 @@ function createStream(enableDev, enableWatch) {
     }))
     .pipe(jsFilter.restore)
 
-  if (!enableDev) {
+  if (!isDev) {
     stream = stream
       .pipe(localeFilter)
       .pipe(uglify()) // uglify only the locale files, then bring back other files to stream
@@ -72,4 +76,10 @@ function createStream(enableDev, enableWatch) {
   return stream.pipe(
     gulp.dest(webpackConfig.output.path)
   )
+  .on('data', function() {
+    if (doneCallback && !doneCallbackCalled) {
+      doneCallbackCalled = true
+      setTimeout(doneCallback, 100) // HACK: for some reason files not written an this point, so wait
+    }
+  })
 }

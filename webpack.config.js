@@ -61,7 +61,10 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|js)$/,
-        loader: 'awesome-typescript-loader'
+        loader: 'awesome-typescript-loader',
+        options: {
+          useCache: true
+        }
       },
       {
         test: /\.css$/,
@@ -82,6 +85,11 @@ module.exports = {
     }),
     new webpack.BannerPlugin(BANNER)
   ],
+
+  watchOptions: {
+    aggregateTimeout: 100,
+    ignored: /node_modules/
+  },
 
   output: {
     library: 'FullCalendar', // gulp will strip this out for plugins
