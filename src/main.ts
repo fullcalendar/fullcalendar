@@ -22,7 +22,7 @@ declare global {
 }
 
 
-($).fullCalendar = exportHooks
+($ as any).fullCalendar = exportHooks
 export = exportHooks
 
 
