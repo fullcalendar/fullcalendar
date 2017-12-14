@@ -23,11 +23,11 @@ gulp.task('webpack:watch', function() {
 const jsFilter = filter([ '**/*.js' ], { restore: true })
 const localeFilter = filter([ '**/locale-all.js', '**/locale/*.js' ], { restore: true })
 
-function createStream(enableSourceMaps, enableWatch) {
-	return gulp.src([]) // don't pass in any files. webpack handles that
+function createStream(enableDev, enableWatch) {
+	let stream = gulp.src([]) // don't pass in any files. webpack handles that
 		.pipe(
 			webpack(Object.assign({}, webpackConfig, {
-				devtool: enableSourceMaps ? 'source-map' : false, // also 'inline-source-map'
+				devtool: enableDev ? 'source-map' : false, // also 'inline-source-map'
 				watch: enableWatch || false,
 			}))
 		)
@@ -60,9 +60,16 @@ function createStream(enableSourceMaps, enableWatch) {
 
 			return content
 		}))
-		.pipe(jsFilter.restore)
-		.pipe(localeFilter)
-		.pipe(uglify()) // uglify only the locale files, then bring back other files to stream
-		.pipe(localeFilter.restore)
-		.pipe(gulp.dest(webpackConfig.output.path))
+		.pipe(jsFilter.restore);
+
+	if (!enableDev) {
+		stream = stream
+			.pipe(localeFilter)
+			.pipe(uglify()) // uglify only the locale files, then bring back other files to stream
+			.pipe(localeFilter.restore)
+	}
+
+	return stream.pipe(
+		gulp.dest(webpackConfig.output.path)
+	);
 }
