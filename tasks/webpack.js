@@ -32,7 +32,7 @@ function createStream(isDev, isWatch, doneCallback) {
     .pipe(
       webpack(Object.assign({}, webpackConfig, {
         devtool: isDev ? 'source-map' : false, // also 'inline-source-map'
-        watch: isWatch ? true : false
+        watch: isWatch || false
       }))
     )
     .pipe(
@@ -75,8 +75,7 @@ function createStream(isDev, isWatch, doneCallback) {
 
   return stream.pipe(
     gulp.dest(webpackConfig.output.path)
-  )
-  .on('data', function() {
+  ).on('data', function() {
     if (doneCallback && !doneCallbackCalled) {
       doneCallbackCalled = true
       setTimeout(doneCallback, 100) // HACK: for some reason files not written an this point, so wait
