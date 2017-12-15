@@ -52,6 +52,7 @@
     "gulp-tslint": "^8.1.2",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
+    "gulp-watch": "^4.3.11",
     "gulp-zip": "^3.2.0",
     "jasmine-core": "2.5.2",
     "jasmine-fixture": "^2.0.0",

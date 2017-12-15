@@ -1,40 +1,36 @@
+const fs = require('fs')
 const gulp = require('gulp')
+const gutil = require('gulp-util')
+const watch = require('gulp-watch') // better than gulp.watch because detects new files
 const generateDts = require('dts-generator').default
-const modify = require('gulp-modify-file')
 
+gulp.task('ts-types', exec)
 
-gulp.task('ts-types', [ 'ts-types:raw' ], function() {
-  return gulp.src('tmp/fullcalendar.d.ts')
-    .pipe(
-      modify(function(content) {
-        return filterModuleDeclaration(content)
-      })
-    )
-    .pipe(
-      gulp.dest('dist/')
-    )
+/*
+Waits for fullcalendar.js to be created/modified before computing,
+to avoid competing with and slowing down main build watcher.
+*/
+gulp.task('ts-types:watch', function() {
+  watch('dist/fullcalendar.js', exec)
 })
 
-gulp.task('ts-types:raw', function() {
+function exec() {
+  gutil.log('Computing TypeScript definitions file...')
   return generateDts({
     project: '.', // where the tsconfig is
     name: 'fullcalendar',
     main: 'fullcalendar/src/main',
     out: 'tmp/fullcalendar.d.ts'
+  }).then(function() {
+    let content = fs.readFileSync('tmp/fullcalendar.d.ts', { encoding: 'utf8' })
+    content = filterModuleDeclaration(content)
+    if (!fs.existsSync('dist')) {
+      fs.mkdirSync('dist')
+    }
+    fs.writeFileSync('dist/fullcalendar.d.ts', content, { encoding: 'utf8' })
+    gutil.log('Wrote TypeScript definitions file.')
   })
-})
-
-/*
-if this task is run at the same time as webpack:watch, it forces webpack:watch to wait
-for this to be done for some reason. wait for the initial fullcalendar.js file to be
-written (which is when webpack:watch resolves) so that gulp.watch has something to grab
-onto, and then watch for changes in the *output* of fullcalendar.js, guaranteeing that
-webpack goes first.
-*/
-gulp.task('ts-types:watch', [ 'webpack:watch' ], function() {
-  gulp.watch('dist/fullcalendar.js', [ 'ts-types' ])
-})
-
+}
 
 // Typedef Source Code Transformation Hacks
 // ----------------------------------------
