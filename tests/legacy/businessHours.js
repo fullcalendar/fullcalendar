@@ -1,6 +1,9 @@
 // most other businessHours tests are in background-events.js
 
-import { doElsMatchSegs, getBoundingRect } from '../lib/dom-utils'
+import { getBoundingRect } from '../lib/dom-geom'
+import { doElsMatchSegs } from '../lib/segs'
+import { getTimeGridTop, getTimeGridDayEls } from '../lib/time-grid'
+
 
 describe('businessHours', function() {
   pushOptions({
@@ -217,55 +220,6 @@ describe('businessHours', function() {
       right: dayRect.right,
       top: getTimeGridTop(startTime),
       bottom: getTimeGridTop(endTime)
-    }
-  }
-
-  /* copied from other proj...
-  ------------------------------------------------------------------------------------------------------------------ */
-
-  function getTimeGridTop(targetTime) {
-    var i, j, len, prevSlotEl, prevSlotTime, slotEl, slotEls, slotMsDuration, slotTime, topBorderWidth
-    targetTime = moment.duration(targetTime)
-    slotEls = getTimeGridSlotEls(targetTime)
-    topBorderWidth = 1
-    if (slotEls.length === 1) {
-      return slotEls.eq(0).offset().top + topBorderWidth
-    }
-    slotEls = $('.fc-time-grid .fc-slats tr[data-time]')
-    slotTime = null
-    prevSlotTime = null
-    for (i = j = 0, len = slotEls.length; j < len; i = ++j) {
-      slotEl = slotEls[i]
-      slotEl = $(slotEl)
-      prevSlotTime = slotTime
-      slotTime = moment.duration(slotEl.data('time'))
-      if (targetTime < slotTime) {
-        if (!prevSlotTime) {
-          return slotEl.offset().top + topBorderWidth
-        } else {
-          prevSlotEl = slotEls.eq(i - 1)
-          return prevSlotEl.offset().top + topBorderWidth +
-            prevSlotEl.outerHeight() * ((targetTime - prevSlotTime) / (slotTime - prevSlotTime))
-        }
-      }
-    }
-    slotMsDuration = slotTime - prevSlotTime
-    return slotEl.offset().top + topBorderWidth +
-      slotEl.outerHeight() * Math.min(1, (targetTime - slotTime) / slotMsDuration)
-  }
-
-  function getTimeGridDayEls(date) {
-    date = $.fullCalendar.moment.parseZone(date)
-    return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]')
-  }
-
-  function getTimeGridSlotEls(timeDuration) {
-    timeDuration = moment.duration(timeDuration)
-    var date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration)
-    if (date.date() === 1) { // ensure no time overflow/underflow
-      return $('.fc-time-grid .fc-slats tr[data-time="' + date.format('HH:mm:ss') + '"]')
-    } else {
-      return $()
     }
   }
 

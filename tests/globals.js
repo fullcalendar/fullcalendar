@@ -180,3 +180,25 @@ window.oneCall = function(func) {
     }
   }
 }
+
+window.spyOnMethod = function(Class, methodName, dontCallThrough) {
+  var origMethod = Class.prototype.hasOwnProperty(methodName)
+    ? Class.prototype[methodName]
+    : null
+
+  var spy = spyOn(Class.prototype, methodName)
+
+  if (!dontCallThrough) {
+    spy = spy.and.callThrough()
+  }
+
+  spy.restore = function() {
+    if (origMethod) {
+      Class.prototype[methodName] = origMethod
+    } else {
+      delete Class.prototype[methodName]
+    }
+  }
+
+  return spy
+}

@@ -1,6 +1,4 @@
-// TODO: consolidate with scheduler
-
-import { getBoundingRect } from '../lib/dom-utils'
+import { getBoundingRect } from '../lib/dom-geom'
 
 
 export function dragTimeGridEvent(eventEl, dropDate) {
@@ -47,7 +45,7 @@ export function selectTimeGrid(start, inclusiveEnd) {
 }
 
 
-function getTimeGridPoint(date) {
+export function getTimeGridPoint(date) {
   date = $.fullCalendar.moment.parseZone(date)
   var top = getTimeGridTop(date.time())
   var dayEls = getTimeGridDayEls(date)
@@ -81,13 +79,56 @@ export function getTimeGridLine(date) { // not in Scheduler
 }
 
 
-export function getTimeGridTop(time) {
-  time = moment.duration(time)
-  var slotEls = getTimeGridSlotEls(time)
+/*
+targetTime is a time (duration) that can be in between slots
+*/
+export function getTimeGridTop(targetTime) {
+  let slotEl
+  targetTime = moment.duration(targetTime)
+  let slotEls = getTimeGridSlotEls(targetTime)
+  const topBorderWidth = 1 // TODO: kill
 
-  expect(slotEls.length).toBe(1)
+  // exact slot match
+  if (slotEls.length === 1) {
+    return slotEls.eq(0).offset().top + topBorderWidth
+  }
 
-  return slotEls.offset().top + 1 // +1 make sure after border
+  slotEls = $('.fc-time-grid .fc-slats tr[data-time]') // all slots
+  let slotTime = null
+  let prevSlotTime = null
+
+  for (let i = 0; i < slotEls.length; i++) { // traverse earlier to later
+    slotEl = slotEls[i]
+    slotEl = $(slotEl)
+
+    prevSlotTime = slotTime
+    slotTime = moment.duration(slotEl.data('time'))
+
+    // is target time between start of previous slot but before this one?
+    if (targetTime < slotTime) {
+      // before first slot
+      if (!prevSlotTime) {
+        return slotEl.offset().top + topBorderWidth
+      } else {
+        const prevSlotEl = slotEls.eq(i - 1)
+        return prevSlotEl.offset().top + // previous slot top
+          topBorderWidth +
+          (prevSlotEl.outerHeight() *
+          ((targetTime - prevSlotTime) / (slotTime - prevSlotTime)))
+      }
+    }
+  }
+
+  // target time must be after the start time of the last slot.
+  // `slotTime` is set to the start time of the last slot.
+
+  // guess the duration of the last slot, based on previous duration
+  const slotMsDuration = slotTime - prevSlotTime
+
+  return slotEl.offset().top + // last slot's top
+    topBorderWidth +
+    (slotEl.outerHeight() *
+    Math.min(1, (targetTime - slotTime) / slotMsDuration)) // don't go past end of last slot
 }
 
 
@@ -100,7 +141,10 @@ export function getTimeGridDayEls(date) {
 
 export function getTimeGridSlotEls(timeDuration) {
   timeDuration = moment.duration(timeDuration)
-  var date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration)
-
-  return $('.fc-time-grid .fc-slats tr[data-time="' + date.format('HH:mm:ss') + '"]')
+  const date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration)
+  if (date.date() === 1) { // ensure no time overflow/underflow
+    return $(`.fc-time-grid .fc-slats tr[data-time="${date.format('HH:mm:ss')}"]`)
+  } else {
+    return $()
+  }
 }
