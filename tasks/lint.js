@@ -24,7 +24,7 @@ gulp.task('lint:src', function() {
     .pipe(tslint.report())
 })
 
-gulp.task('lint:built', [ 'webpack' ], function() {
+gulp.task('lint:built', [ 'webpack:dev' ], function() {
   return gulp.src([
     'dist/*.js',
     '!dist/*.min.js'
