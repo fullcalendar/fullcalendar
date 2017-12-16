@@ -19,7 +19,7 @@ import {
 
 
 export function getBoundingRects(els) {
-  return $(el).map(function(i, node) {
+  return $(els).map(function(i, node) {
     return getBoundingRect(node)
   })
 }

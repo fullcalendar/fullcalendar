@@ -24,17 +24,6 @@ export function joinRects(rect1, rect2) {
   }
 }
 
-function buildRectViaDims(left, top, width, height) {
-  return {
-    left: left,
-    top: top,
-    width: width,
-    height: height,
-    right: left + width,
-    bottom: top + height
-  }
-}
-
 function buildRectViaEdges(left, top, right, bottom) {
   return {
     left: left,
@@ -72,7 +61,7 @@ export function getRectTopLeft(rect) {
 }
 
 export function isRect(input) {
-  return 'left' in input && 'right' in input && 'top' in input && 'bottom' in input
+  return typeof input === 'object' && 'left' in input && 'right' in input && 'top' in input && 'bottom' in input
 }
 
 export function isRectMostlyAbove(subjectRect, otherRect) {
