@@ -19,16 +19,15 @@ gulp.task('webpack:dev', function() {
 /*
 this task will be considered done after initial compile
 */
-gulp.task('webpack:watch', function(done) {
-  createStream(true, true, done)
+gulp.task('webpack:watch', function() {
+  createStream(true, true)
 })
 
 
 const jsFilter = filter([ '**/*.js' ], { restore: true })
 const localeFilter = filter([ '**/locale-all.js', '**/locale/*.js' ], { restore: true })
 
-function createStream(isDev, isWatch, doneCallback) {
-  let doneCallbackCalled = false
+function createStream(isDev, isWatch) {
   let stream = gulp.src([]) // don't pass in any files. webpack handles that
     .pipe(
       webpack(
@@ -80,12 +79,7 @@ function createStream(isDev, isWatch, doneCallback) {
 
   return stream.pipe(
     gulp.dest(webpackConfig.output.path)
-  ).on('data', function() {
-    if (doneCallback && !doneCallbackCalled) {
-      doneCallbackCalled = true
-      setTimeout(doneCallback, 100) // HACK: for some reason files not written an this point, so wait
-    }
-  })
+  )
 }
 
 /*
