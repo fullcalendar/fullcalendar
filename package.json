@@ -62,6 +62,7 @@
     "karma": "^0.13.22",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sourcemap-loader": "^0.3.7",
     "karma-verbose-reporter": "0.0.6",
     "moment-timezone": "^0.5.5",
     "native-promise-only": "^0.8.1",

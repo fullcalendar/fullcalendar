@@ -44,6 +44,10 @@ module.exports = function(config) {
       }
     ],
 
+    preprocessors: {
+      '**/*.js': [ 'sourcemap' ]
+    },
+
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage', 'verbose'
     reporters: [ 'dots' ],
