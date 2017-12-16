@@ -202,3 +202,11 @@ window.spyOnMethod = function(Class, methodName, dontCallThrough) {
 
   return spy
 }
+
+// wraps an existing function in a spy, calling through to the function
+window.spyCall = function(func) {
+  func = func || function() {}
+  const obj = { func }
+  spyOn(obj, 'func').and.callThrough()
+  return obj.func
+}

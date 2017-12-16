@@ -148,3 +148,9 @@ export function getTimeGridSlotEls(timeDuration) {
     return $()
   }
 }
+
+
+// TODO: discourage use
+export function getTimeGridDowEls(dayAbbrev) {
+  return $(`.fc-time-grid .fc-day.fc-${dayAbbrev}`)
+}
