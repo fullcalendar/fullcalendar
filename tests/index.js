@@ -1,6 +1,6 @@
 
 require('./globals')
-require('./jasmine-ext')
+require('./hacks')
 
 var context = require.context(
   '.',

@@ -1,4 +1,4 @@
-import { RED_REGEX } from '../lib/dom-utils'
+import { RED_REGEX } from '../lib/dom-misc'
 
 describe('event coloring', function() {
 

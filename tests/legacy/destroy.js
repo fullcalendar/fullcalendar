@@ -1,4 +1,4 @@
-import { countHandlers } from '../lib/dom-utils'
+import { countHandlers } from '../lib/dom-misc'
 
 describe('destroy', function() {
 

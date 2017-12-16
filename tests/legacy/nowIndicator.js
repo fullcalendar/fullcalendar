@@ -1,5 +1,5 @@
 import { getBoundingRect } from '../lib/dom-geom'
-import { isElWithinRtl } from '../lib/dom-utils'
+import { isElWithinRtl } from '../lib/dom-misc'
 import { getTimeGridLine } from '../lib/time-grid'
 
 describe('now indicator', function() {
