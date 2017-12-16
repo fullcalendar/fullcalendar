@@ -92,39 +92,43 @@ function createStream(isDev, isWatch, doneCallback) {
 Purpose is to filter out the poorly formatted stats for locale files
 */
 function reporterFunc(err, stats) {
-  let assets = stats.compilation.assets
-  let filteredAssets = {}
-  let localeModuleCnt = 0
+  if (err) {
+    gutil.log('Problem compiling!')
+  } else {
+    let assets = stats.compilation.assets
+    let filteredAssets = {}
+    let localeModuleCnt = 0
 
-  for (let moduleName in assets) {
-    if (moduleName.match(/^dist\/locale/)) {
-      localeModuleCnt++
-    } else {
-      filteredAssets[moduleName] = assets[moduleName]
+    for (let moduleName in assets) {
+      if (moduleName.match(/^dist\/locale/)) {
+        localeModuleCnt++
+      } else {
+        filteredAssets[moduleName] = assets[moduleName]
+      }
     }
-  }
 
-  stats.compilation.assets = filteredAssets
-  gutil.log(
-    stats.toString({
-      // from https://github.com/shama/webpack-stream/blob/v4.0.0/index.js#L12
-      colors: true,
-      hash: false,
-      timings: false,
-      chunks: false,
-      chunkModules: false,
-      modules: false,
-      children: true,
-      version: true,
-      cached: false,
-      cachedAssets: false,
-      reasons: false,
-      source: false,
-      errorDetails: false
-    })
-  )
+    stats.compilation.assets = filteredAssets
+    gutil.log(
+      stats.toString({
+        // from https://github.com/shama/webpack-stream/blob/v4.0.0/index.js#L12
+        colors: true,
+        hash: false,
+        timings: false,
+        chunks: false,
+        chunkModules: false,
+        modules: false,
+        children: true,
+        version: true,
+        cached: false,
+        cachedAssets: false,
+        reasons: false,
+        source: false,
+        errorDetails: false
+      })
+    )
 
-  if (localeModuleCnt) {
-    gutil.log(`Also compiled ${localeModuleCnt} locale-related files.`)
+    if (localeModuleCnt) {
+      gutil.log(`Also compiled ${localeModuleCnt} locale-related files.`)
+    }
   }
 }
