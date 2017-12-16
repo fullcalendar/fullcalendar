@@ -2,9 +2,7 @@
 
   [ 'height', 'contentHeight' ].forEach(function(heightProp) {
     describe(heightProp, function() {
-
       var calendarEl
-      var options
       var heightElm
       var asAMethod
       var heightPropDescriptions = [
@@ -16,13 +14,16 @@
         heightPropDescriptions.push({ description: 'as "parent"', height: 'parent', heightWrapper: true })
       }
 
+      pushOptions({
+        defaultDate: '2014-08-01'
+      })
+
       beforeEach(function() {
-        affix('#cal')
-        calendarEl = $('#cal')
-        calendarEl.width(900)
-        options = {
-          defaultDate: '2014-08-01'
-        }
+        calendarEl = $('<div />').appendTo('body').width(900)
+      })
+
+      afterEach(function() {
+        calendarEl.remove()
       })
 
       function getParentHeight() {
@@ -33,17 +34,16 @@
       // otherOptions: other calendar options to dynamically set (assumes asAMethod)
       function init(heightVal, otherOptions) {
         if (asAMethod) {
-          calendarEl.fullCalendar(options)
+          initCalendar({}, calendarEl)
 
           if (otherOptions === undefined) {
-            calendarEl.fullCalendar('option', heightProp, heightVal)
+            currentCalendar.option(heightProp, heightVal)
           } else {
             otherOptions[heightProp] = heightVal // reuse same object. insert height option
-            calendarEl.fullCalendar('option', otherOptions)
+            currentCalendar.option(otherOptions)
           }
         } else {
-          options[heightProp] = heightVal
-          calendarEl.fullCalendar(options)
+          initCalendar({ [heightProp]: heightVal }, calendarEl)
         }
 
         if (heightProp === 'height') {
@@ -70,8 +70,8 @@
 
           describe('for ' + heightProp, function() {
             describe('when in month view', function() {
-              beforeEach(function() {
-                options.defaultView = 'month'
+              pushOptions({
+                defaultView: 'month'
               })
 
               heightPropDescriptions.forEach(function(testInfo) {
@@ -93,8 +93,8 @@
                   })
 
                   describe('when there is one tall row of events', function() {
-                    beforeEach(function() {
-                      options.events = repeatClone({ title: 'event', start: '2014-08-04' }, 9)
+                    pushOptions({
+                      events: repeatClone({ title: 'event', start: '2014-08-04' }, 9)
                     })
 
                     it('should take away height from other rows, but not do scrollbars', function() {
@@ -118,8 +118,8 @@
                   })
 
                   describe('when there are many tall rows of events', function() {
-                    beforeEach(function() {
-                      options.events = [].concat(
+                    pushOptions({
+                      events: [].concat(
                         repeatClone({ title: 'event0', start: '2014-07-28' }, 9),
                         repeatClone({ title: 'event1', start: '2014-08-04' }, 9),
                         repeatClone({ title: 'event2', start: '2014-08-11' }, 9),
@@ -137,8 +137,10 @@
                   })
 
                   describe('when setting height, contentHeight option with other options', function() {
+                    pushOptions({
+                      [heightProp]: 600 // initialize with another height
+                    })
                     beforeEach(function() {
-                      options[heightProp] = 600 // initialize with another height
                       init(250, { minTime: '00:00' }) // then change height, providing other opts to set too
                     })
 
@@ -150,8 +152,8 @@
               })
 
               describe('as "auto", when there are many tall rows of events', function() {
-                beforeEach(function() {
-                  options.events = [].concat(
+                pushOptions({
+                  events: [].concat(
                     repeatClone({ title: 'event0', start: '2014-07-28' }, 9),
                     repeatClone({ title: 'event1', start: '2014-08-04' }, 9),
                     repeatClone({ title: 'event2', start: '2014-08-11' }, 9),
@@ -170,8 +172,8 @@
 
             [ 'basicWeek', 'basicDay' ].forEach(function(viewName) {
               describe('in ' + viewName + ' view', function() {
-                beforeEach(function() {
-                  options.defaultView = viewName
+                pushOptions({
+                  defaultView: viewName
                 })
 
                 heightPropDescriptions.forEach(function(testInfo) {
@@ -191,8 +193,8 @@
                     })
 
                     describe('when there are many events', function() {
-                      beforeEach(function() {
-                        options.events = repeatClone({ title: 'event', start: '2014-08-01' }, 100)
+                      pushOptions({
+                        events: repeatClone({ title: 'event', start: '2014-08-01' }, 100)
                       })
                       it('should have the correct height, with scrollbars', function() {
                         init(testInfo.height)
@@ -204,8 +206,8 @@
                 })
 
                 describe('as "auto", when there are many events', function() {
-                  beforeEach(function() {
-                    options.events = repeatClone({ title: 'event', start: '2014-08-01' }, 100)
+                  pushOptions({
+                    events: repeatClone({ title: 'event', start: '2014-08-01' }, 100)
                   })
                   it('should be really tall with no scrollbars', function() {
                     init('auto')
@@ -218,79 +220,74 @@
 
             [ 'agendaWeek', 'agendaDay' ].forEach(function(viewName) {
               describe('in ' + viewName + ' view', function() {
-                beforeEach(function() {
-                  options.defaultView = viewName
+                pushOptions({
+                  defaultView: viewName
                 })
 
-                $.each({
+                describeOptions({
                   'with no all-day section': { allDaySlot: false },
                   'with no all-day events': { },
                   'with some all-day events': { events: repeatClone({ title: 'event', start: '2014-08-01' }, 6) }
-                }, function(desc, moreOptions) {
-                  describe(desc, function() {
-                    beforeEach(function() {
-                      $.extend(options, moreOptions)
-                    })
+                }, function() {
 
-                    heightPropDescriptions.forEach(function(testInfo) {
-                      describe(testInfo.description, function() {
-                        if (testInfo.heightWrapper) {
-                          beforeEach(function() {
-                            calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
-                          })
-                        }
-
-                        describe('with only a few slots', function() {
-                          beforeEach(function() {
-                            options.minTime = '06:00:00'
-                            options.maxTime = '10:00:00'
-                          })
-                          it('should be the correct height, with a horizontal rule to occupy space', function() {
-                            init(testInfo.height)
-                            expectHeight(600)
-                            expect($('.fc-time-grid > hr')).toBeVisible()
-                          })
+                  heightPropDescriptions.forEach(function(testInfo) {
+                    describe(testInfo.description, function() {
+                      if (testInfo.heightWrapper) {
+                        beforeEach(function() {
+                          calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
                         })
+                      }
 
-                        describe('with many slots', function() {
-                          beforeEach(function() {
-                            options.minTime = '00:00:00'
-                            options.maxTime = '24:00:00'
-                          })
-                          it('should be the correct height, with scrollbars and no filler hr', function() {
-                            init(testInfo.height)
-                            expectHeight(600)
-                            expect($('.fc-time-grid-container')).toHaveScrollbars()
-                            expect($('.fc-time-grid > hr')).not.toBeVisible()
-                          })
+                      describe('with only a few slots', function() {
+                        pushOptions({
+                          minTime: '06:00:00',
+                          maxTime: '10:00:00'
+                        })
+                        it('should be the correct height, with a horizontal rule to occupy space', function() {
+                          init(testInfo.height)
+                          expectHeight(600)
+                          expect($('.fc-time-grid > hr')).toBeVisible()
+                        })
+                      })
+
+                      describe('with many slots', function() {
+                        pushOptions({
+                          minTime: '00:00:00',
+                          maxTime: '24:00:00'
+                        })
+                        it('should be the correct height, with scrollbars and no filler hr', function() {
+                          init(testInfo.height)
+                          expectHeight(600)
+                          expect($('.fc-time-grid-container')).toHaveScrollbars()
+                          expect($('.fc-time-grid > hr')).not.toBeVisible()
                         })
                       })
                     })
+                  })
 
-                    describe('as "auto", with only a few slots', function() {
-                      beforeEach(function() {
-                        options.minTime = '06:00:00'
-                        options.maxTime = '10:00:00'
-                      })
-                      it('should be really short with no scrollbars nor horizontal rule', function() {
-                        init('auto')
-                        expect(heightElm.outerHeight()).toBeLessThan(500) // pretty short
-                        expect($('.fc-time-grid-container')).not.toHaveScrollbars()
-                        expect($('.fc-time-grid > hr')).not.toBeVisible()
-                      })
+                  describe('as "auto", with only a few slots', function() {
+                    pushOptions({
+                      minTime: '06:00:00',
+                      maxTime: '10:00:00'
                     })
+                    it('should be really short with no scrollbars nor horizontal rule', function() {
+                      init('auto')
+                      expect(heightElm.outerHeight()).toBeLessThan(500) // pretty short
+                      expect($('.fc-time-grid-container')).not.toHaveScrollbars()
+                      expect($('.fc-time-grid > hr')).not.toBeVisible()
+                    })
+                  })
 
-                    describe('as a "auto", with many slots', function() {
-                      beforeEach(function() {
-                        options.minTime = '00:00:00'
-                        options.maxTime = '24:00:00'
-                      })
-                      it('should be really tall with no scrollbars nor horizontal rule', function() {
-                        init('auto')
-                        expect(heightElm.outerHeight()).toBeGreaterThan(900) // pretty tall
-                        expect($('.fc-time-grid-container')).not.toHaveScrollbars()
-                        expect($('.fc-time-grid > hr')).not.toBeVisible()
-                      })
+                  describe('as a "auto", with many slots', function() {
+                    pushOptions({
+                      minTime: '00:00:00',
+                      maxTime: '24:00:00'
+                    })
+                    it('should be really tall with no scrollbars nor horizontal rule', function() {
+                      init('auto')
+                      expect(heightElm.outerHeight()).toBeGreaterThan(900) // pretty tall
+                      expect($('.fc-time-grid-container')).not.toHaveScrollbars()
+                      expect($('.fc-time-grid > hr')).not.toBeVisible()
                     })
                   })
                 })
