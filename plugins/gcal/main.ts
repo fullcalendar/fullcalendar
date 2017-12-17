@@ -1,6 +1,6 @@
-import * as exportHooks from 'fullcalendar';
-import GcalEventSource from './GcalEventSource';
+import * as exportHooks from 'fullcalendar'
+import GcalEventSource from './GcalEventSource'
 
 exportHooks.EventSourceParser.registerClass(GcalEventSource);
 
-(exportHooks as any).GcalEventSource = GcalEventSource;
+(exportHooks as any).GcalEventSource = GcalEventSource

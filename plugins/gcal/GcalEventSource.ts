@@ -1,10 +1,10 @@
-import * as $ from 'jquery';
-import { EventSource, Promise, JsonFeedEventSource, warn, applyAll } from 'fullcalendar';
+import * as $ from 'jquery'
+import { EventSource, Promise, JsonFeedEventSource, warn, applyAll } from 'fullcalendar'
 
 
 export default class GcalEventSource extends EventSource {
 
-  static API_BASE = 'https://www.googleapis.com/calendar/v3/calendars';
+  static API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
 
   // TODO: eventually remove "googleCalendar" prefix (API-breaking)
   googleCalendarApiKey: any
@@ -14,16 +14,16 @@ export default class GcalEventSource extends EventSource {
 
 
   fetch(start, end, timezone) {
-    var url = this.buildUrl();
-    var requestParams = this.buildRequestParams(start, end, timezone);
-    var ajaxSettings = this.ajaxSettings || {};
-    var onSuccess = ajaxSettings.success;
+    let url = this.buildUrl()
+    let requestParams = this.buildRequestParams(start, end, timezone)
+    let ajaxSettings = this.ajaxSettings || {}
+    let onSuccess = ajaxSettings.success
 
     if (!requestParams) { // could have failed
-      return Promise.reject();
+      return Promise.reject()
     }
 
-    this.calendar.pushLoading();
+    this.calendar.pushLoading()
 
     return Promise.construct((onResolve, onReject) => {
       $.ajax($.extend(
@@ -34,57 +34,56 @@ export default class GcalEventSource extends EventSource {
           url: url,
           data: requestParams,
           success: (responseData, status, xhr) => {
-            var rawEventDefs;
-            var successRes;
+            let rawEventDefs
+            let successRes
 
-            this.calendar.popLoading();
+            this.calendar.popLoading()
 
             if (responseData.error) {
-              this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors);
-              onReject();
-            }
-            else if (responseData.items) {
+              this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors)
+              onReject()
+            } else if (responseData.items) {
               rawEventDefs = this.gcalItemsToRawEventDefs(
                 responseData.items,
                 requestParams.timeZone
-              );
+              )
 
-              successRes = applyAll(onSuccess, this, [ responseData, status, xhr ]); // passthru
+              successRes = applyAll(onSuccess, this, [ responseData, status, xhr ]) // passthru
 
               if ($.isArray(successRes)) {
-                rawEventDefs = successRes;
+                rawEventDefs = successRes
               }
 
-              onResolve(this.parseEventDefs(rawEventDefs));
+              onResolve(this.parseEventDefs(rawEventDefs))
             }
           },
           error: (xhr, statusText, errorThrown) => {
             this.reportError(
               'Google Calendar network failure: ' + statusText,
               [ xhr, errorThrown ]
-            );
-            this.calendar.popLoading();
-            onReject();
+            )
+            this.calendar.popLoading()
+            onReject()
           }
         }
-      ));
-    });
+      ))
+    })
   }
 
 
   gcalItemsToRawEventDefs(items, gcalTimezone) {
     return items.map((item) => {
-      return this.gcalItemToRawEventDef(item, gcalTimezone);
-    });
+      return this.gcalItemToRawEventDef(item, gcalTimezone)
+    })
   }
 
 
   gcalItemToRawEventDef(item, gcalTimezone) {
-    var url = item.htmlLink || null;
+    let url = item.htmlLink || null
 
     // make the URLs for each event show times in the correct timezone
     if (url && gcalTimezone) {
-      url = injectQsComponent(url, 'ctz=' + gcalTimezone);
+      url = injectQsComponent(url, 'ctz=' + gcalTimezone)
     }
 
     return {
@@ -95,24 +94,24 @@ export default class GcalEventSource extends EventSource {
       url: url,
       location: item.location,
       description: item.description
-    };
+    }
   }
 
 
   buildUrl() {
     return GcalEventSource.API_BASE + '/' +
       encodeURIComponent(this.googleCalendarId) +
-      '/events?callback=?'; // jsonp
+      '/events?callback=?' // jsonp
   }
 
 
   buildRequestParams(start, end, timezone) {
-    var apiKey = this.googleCalendarApiKey || this.calendar.opt('googleCalendarApiKey');
-    var params;
+    let apiKey = this.googleCalendarApiKey || this.calendar.opt('googleCalendarApiKey')
+    let params
 
     if (!apiKey) {
-      this.reportError("Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/");
-      return null;
+      this.reportError('Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/')
+      return null
     }
 
     // The API expects an ISO8601 datetime with a time and timezone part.
@@ -120,10 +119,10 @@ export default class GcalEventSource extends EventSource {
     // side, guaranteeing we will receive all events in the desired range, albeit a superset.
     // .utc() will set a zone and give it a 00:00:00 time.
     if (!start.hasZone()) {
-      start = start.clone().utc().add(-1, 'day');
+      start = start.clone().utc().add(-1, 'day')
     }
     if (!end.hasZone()) {
-      end = end.clone().utc().add(1, 'day');
+      end = end.clone().utc().add(1, 'day')
     }
 
     params = $.extend(
@@ -135,81 +134,80 @@ export default class GcalEventSource extends EventSource {
         singleEvents: true,
         maxResults: 9999
       }
-    );
+    )
 
     if (timezone && timezone !== 'local') {
       // when sending timezone names to Google, only accepts underscores, not spaces
-      params.timeZone = timezone.replace(' ', '_');
+      params.timeZone = timezone.replace(' ', '_')
     }
 
-    return params;
+    return params
   }
 
 
   reportError(message, apiErrorObjs?) {
-    var calendar = this.calendar;
-    var calendarOnError = calendar.opt('googleCalendarError');
-    var errorObjs = apiErrorObjs || [ { message: message } ]; // to be passed into error handlers
+    let calendar = this.calendar
+    let calendarOnError = calendar.opt('googleCalendarError')
+    let errorObjs = apiErrorObjs || [ { message: message } ] // to be passed into error handlers
 
     if (this.googleCalendarError) {
-      this.googleCalendarError.apply(calendar, errorObjs);
+      this.googleCalendarError.apply(calendar, errorObjs)
     }
 
     if (calendarOnError) {
-      calendarOnError.apply(calendar, errorObjs);
+      calendarOnError.apply(calendar, errorObjs)
     }
 
     // print error to debug console
-    warn.apply(null, [ message ].concat(apiErrorObjs || []));
+    warn.apply(null, [ message ].concat(apiErrorObjs || []))
   }
 
 
   getPrimitive() {
-    return this.googleCalendarId;
+    return this.googleCalendarId
   }
 
 
   applyManualStandardProps(rawProps) {
-    var superSuccess = EventSource.prototype.applyManualStandardProps.apply(this, arguments);
-    var googleCalendarId = rawProps.googleCalendarId;
+    let superSuccess = EventSource.prototype.applyManualStandardProps.apply(this, arguments)
+    let googleCalendarId = rawProps.googleCalendarId
 
     if (googleCalendarId == null && rawProps.url) {
-      googleCalendarId = parseGoogleCalendarId(rawProps.url);
+      googleCalendarId = parseGoogleCalendarId(rawProps.url)
     }
 
     if (googleCalendarId != null) {
-      this.googleCalendarId = googleCalendarId;
+      this.googleCalendarId = googleCalendarId
 
-      return superSuccess;
+      return superSuccess
     }
 
-    return false;
+    return false
   }
 
 
   applyMiscProps(rawProps) {
     if (!this.ajaxSettings) {
-      this.ajaxSettings = {};
+      this.ajaxSettings = {}
     }
-    $.extend(this.ajaxSettings, rawProps);
+    $.extend(this.ajaxSettings, rawProps)
   }
 
 
   static parse(rawInput, calendar) {
-    var rawProps;
+    let rawProps
 
     if (typeof rawInput === 'object') { // long form. might fail in applyManualStandardProps
-      rawProps = rawInput;
-    }
-    else if (typeof rawInput === 'string') { // short form
-      rawProps = { url: rawInput }; // url will be parsed with parseGoogleCalendarId
+      rawProps = rawInput
+    } else if (typeof rawInput === 'string') { // short form
+      rawProps = { url: rawInput } // url will be parsed with parseGoogleCalendarId
     }
 
     if (rawProps) {
-      return EventSource.parse.call(this, rawProps, calendar);
+      return EventSource.parse.call(this, rawProps, calendar)
     }
 
-    return false;
+    return false
   }
 
 }
@@ -223,23 +221,21 @@ GcalEventSource.defineStandardProps({
   // automatically transfer...
   googleCalendarApiKey: true,
   googleCalendarError: true
-});
+})
 
 
 function parseGoogleCalendarId(url) {
-  var match;
+  let match
 
   // detect if the ID was specified as a single string.
   // will match calendars like "asdf1234@calendar.google.com" in addition to person email calendars.
   if (/^[^\/]+@([^\/\.]+\.)*(google|googlemail|gmail)\.com$/.test(url)) {
-    return url;
-  }
-  // try to scrape it out of a V1 or V3 API feed URL
-  else if (
+    return url
+  } else if (
     (match = /^https:\/\/www.googleapis.com\/calendar\/v3\/calendars\/([^\/]*)/.exec(url)) ||
     (match = /^https?:\/\/www.google.com\/calendar\/feeds\/([^\/]*)/.exec(url))
   ) {
-    return decodeURIComponent(match[1]);
+    return decodeURIComponent(match[1])
   }
 }
 
@@ -248,6 +244,6 @@ function parseGoogleCalendarId(url) {
 function injectQsComponent(url, component) {
   // inject it after the querystring but before the fragment
   return url.replace(/(\?.*?)?(#|$)/, function(whole, qs, hash) {
-    return (qs ? qs + '&' : '?') + component + hash;
-  });
+    return (qs ? qs + '&' : '?') + component + hash
+  })
 }
