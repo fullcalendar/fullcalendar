@@ -1,4 +1,6 @@
 
+// HACK: in TravisCI, requests to the gcal api were failing for some reason
+// (requests to other services were working however)
 // eslint-disable-next-line
 karmaConfig.isTravis ? console.log('skipping gcal') :
 

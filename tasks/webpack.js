@@ -16,9 +16,6 @@ gulp.task('webpack:dev', function() {
   return createStream(true)
 })
 
-/*
-this task will be considered done after initial compile
-*/
 gulp.task('webpack:watch', function() {
   createStream(true, true)
 })

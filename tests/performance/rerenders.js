@@ -1,4 +1,5 @@
 
+// HACK: we know Scheduler introduces an extra rerender :(
 // eslint-disable-next-line
 $.fullCalendar.schedulerVersion ? console.log('skipping rerenders') :
 
