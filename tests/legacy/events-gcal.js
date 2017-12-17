@@ -1,4 +1,7 @@
 
+// eslint-disable-next-line
+karmaConfig.skip.gcal ? console.log('skipping gcal') :
+
 describe('Google Calendar plugin', function() {
 
   var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE'
