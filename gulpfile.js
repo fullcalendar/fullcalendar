@@ -40,5 +40,5 @@ gulp.task('release', [
 ])
 
 gulp.task('clean', function() {
-  return del([ 'dist/', 'tmp/' ])
+  return del([ 'dist/', 'tmp/', '.awcache/' ])
 })
