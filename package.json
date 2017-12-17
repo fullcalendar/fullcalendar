@@ -69,7 +69,6 @@
     "node-sass": "^4.7.2",
     "phantomjs-prebuilt": "^2.1.7",
     "sass-loader": "^6.0.6",
-    "socket.io": "1.4.5",
     "tslib": "^1.8.0",
     "tslint": "^5.8.0",
     "tslint-config-standard": "^7.0.0",
