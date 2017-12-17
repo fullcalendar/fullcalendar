@@ -13,6 +13,23 @@ export default class GcalEventSource extends EventSource {
   ajaxSettings: any
 
 
+  static parse(rawInput, calendar) {
+    let rawProps
+
+    if (typeof rawInput === 'object') { // long form. might fail in applyManualStandardProps
+      rawProps = rawInput
+    } else if (typeof rawInput === 'string') { // short form
+      rawProps = { url: rawInput } // url will be parsed with parseGoogleCalendarId
+    }
+
+    if (rawProps) {
+      return EventSource.parse.call(this, rawProps, calendar)
+    }
+
+    return false
+  }
+
+
   fetch(start, end, timezone) {
     let url = this.buildUrl()
     let requestParams = this.buildRequestParams(start, end, timezone)
@@ -191,23 +208,6 @@ export default class GcalEventSource extends EventSource {
       this.ajaxSettings = {}
     }
     $.extend(this.ajaxSettings, rawProps)
-  }
-
-
-  static parse(rawInput, calendar) {
-    let rawProps
-
-    if (typeof rawInput === 'object') { // long form. might fail in applyManualStandardProps
-      rawProps = rawInput
-    } else if (typeof rawInput === 'string') { // short form
-      rawProps = { url: rawInput } // url will be parsed with parseGoogleCalendarId
-    }
-
-    if (rawProps) {
-      return EventSource.parse.call(this, rawProps, calendar)
-    }
-
-    return false
   }
 
 }
