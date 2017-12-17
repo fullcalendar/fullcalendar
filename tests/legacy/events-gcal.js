@@ -1,6 +1,6 @@
 
 // eslint-disable-next-line
-karmaConfig.skip.gcal ? console.log('skipping gcal') :
+karmaConfig.isTravis ? console.log('skipping gcal') :
 
 describe('Google Calendar plugin', function() {
 

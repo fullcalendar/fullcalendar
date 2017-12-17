@@ -1,6 +1,6 @@
 
 // eslint-disable-next-line
-karmaConfig.skip.rerenders ? console.log('skipping rerenders') :
+$.fullCalendar.schedulerVersion ? console.log('skipping rerenders') :
 
 describe('rerender performance', function() {
   var FC = $.fullCalendar

@@ -7,7 +7,7 @@ cache:
     - node_modules
 
 env:
-  - CMD=test -- --skip=gcal
+  - CMD=test
   - CMD=lint
 
-script: npm run $CMD
+script: npm run $CMD -- --travis

@@ -91,12 +91,8 @@ module.exports = function(config) {
 }
 
 function writeConfig() {
-  let config = { skip: {} }
-
-  if (argv.skip) {
-    for (let name of argv.skip.split(',')) {
-      config.skip[name] = true
-    }
+  let config = {
+    isTravis: ('travis' in argv)
   }
 
   if (!fs.existsSync('tmp')) {
