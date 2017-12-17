@@ -6,15 +6,18 @@ const eslint = require('gulp-eslint')
 const tslintProgram = tsLintLib.Linter.createProgram('./tsconfig.json')
 
 gulp.task('lint', [
-  'lint:src',
-  'lint:built',
-  'lint:node',
-  'lint:tests',
+  'lint:ts',
+  'lint:js:built',
+  'lint:js:node',
+  'lint:js:tests',
   'ts-types' // make sure typescript defs compile without errors
 ])
 
-gulp.task('lint:src', function() {
-  return gulp.src('src/**/*.ts')
+gulp.task('lint:ts', function() {
+  return gulp.src([
+    'src/**/*.ts',
+    'plugins/**/*.ts'
+  ])
     .pipe(
       tslint({ // will use tslint.json
         formatter: 'verbose',
@@ -24,7 +27,7 @@ gulp.task('lint:src', function() {
     .pipe(tslint.report())
 })
 
-gulp.task('lint:built', [ 'webpack:dev' ], function() {
+gulp.task('lint:js:built', [ 'webpack:dev' ], function() {
   return gulp.src([
     'dist/*.js',
     '!dist/*.min.js'
@@ -40,7 +43,7 @@ gulp.task('lint:built', [ 'webpack:dev' ], function() {
     .pipe(eslint.failAfterError())
 })
 
-gulp.task('lint:node', function() {
+gulp.task('lint:js:node', function() {
   return gulp.src([
     '*.js', // config files in root
     'tasks/**/*.js'
@@ -55,7 +58,7 @@ gulp.task('lint:node', function() {
     .pipe(eslint.failAfterError())
 })
 
-gulp.task('lint:tests', function() {
+gulp.task('lint:js:tests', function() {
   return gulp.src([
     'tests/**/*.js',
     '!tests/manual/themeswitcher/**'
