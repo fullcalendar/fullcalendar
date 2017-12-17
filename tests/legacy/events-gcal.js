@@ -1,9 +1,13 @@
 
 // HACK: in TravisCI, requests to the gcal api were failing for some reason
 // (requests to other services were working however)
-// eslint-disable-next-line
-karmaConfig.isTravis ? console.log('skipping gcal') :
+const SKIP_GCAL = karmaConfig.isTravis
+if (SKIP_GCAL) {
+  console.log('skipping gcal')
+}
 
+// eslint-disable-next-line
+SKIP_GCAL ||
 describe('Google Calendar plugin', function() {
 
   var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE'

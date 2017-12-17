@@ -1,8 +1,12 @@
 
 // HACK: we know Scheduler introduces an extra rerender :(
-// eslint-disable-next-line
-$.fullCalendar.schedulerVersion ? console.log('skipping rerenders') :
+const SKIP_RERENDERS = Boolean($.fullCalendar.schedulerVersion)
+if (SKIP_RERENDERS) {
+  console.log('skipping rerenders')
+}
 
+// eslint-disable-next-line
+SKIP_RERENDERS ||
 describe('rerender performance', function() {
   var FC = $.fullCalendar
 

@@ -100,7 +100,7 @@ function writeConfig() {
   }
   fs.writeFileSync(
     'tmp/test-config.js',
-    "window.karmaConfig = " + JSON.stringify(config),
+    'window.karmaConfig = ' + JSON.stringify(config),
     { encoding: 'utf8' }
   )
 }

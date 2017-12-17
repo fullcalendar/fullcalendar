@@ -66,6 +66,7 @@ gulp.task('lint:tests', function() {
         envs: [ 'browser', 'jasmine', 'jquery' ],
         globals: [
           'moment',
+          'karmaConfig',
           'pushOptions',
           'describeOptions',
           'describeTimezones',
