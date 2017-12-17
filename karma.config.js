@@ -1,3 +1,7 @@
+const fs = require('fs')
+const argv = require('yargs').argv
+
+writeConfig()
 
 module.exports = function(config) {
   config.set({
@@ -22,6 +26,9 @@ module.exports = function(config) {
       'dist/fullcalendar.css',
       'dist/gcal.js',
       'dist/locale-all.js',
+
+      // a way to dump variables into the test environment
+      'tmp/test-config.js',
 
       // so plugins can dump files into here and test side effects
       'tmp/test-side-effects/*.js',
@@ -81,4 +88,23 @@ module.exports = function(config) {
       }
     }
   })
+}
+
+function writeConfig() {
+  let config = { skip: {} }
+
+  if (argv.skip) {
+    for (let name of argv.skip.split(',')) {
+      config.skip[name] = true
+    }
+  }
+
+  if (!fs.existsSync('tmp')) {
+    fs.mkdirSync('tmp')
+  }
+  fs.writeFileSync(
+    'tmp/test-config.js',
+    "window.karmaConfig = " + JSON.stringify(config),
+    { encoding: 'utf8' }
+  )
 }

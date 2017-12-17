@@ -1,8 +1,6 @@
 
-// HACK to prevent tests from running if Scheduler plugin is present.
-// When Scheduler plugin present, views rerender +1 more time.
 // eslint-disable-next-line
-$.fullCalendar.schedulerVersion ||
+karmaConfig.skips.rerenders ||
 
 describe('rerender performance', function() {
   var FC = $.fullCalendar
