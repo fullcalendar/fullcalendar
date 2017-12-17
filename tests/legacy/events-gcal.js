@@ -52,9 +52,6 @@ describe('Google Calendar plugin', function() {
 
       done()
     }
-    options.googleCalendarError = function(xhr, message) {
-      console.log('GCAL ERROR', message)
-    }
     $('#cal').fullCalendar(options)
   })
 
