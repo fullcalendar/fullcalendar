@@ -157,7 +157,7 @@ export default class Model extends Class {
     }
   }
 
-  watch(name, depList, startFunc, stopFunc) {
+  watch(name, depList, startFunc, stopFunc?) {
     this.unwatch(name)
 
     this._watchers[name] = this._watchDeps(depList, (deps) => {

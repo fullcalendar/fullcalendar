@@ -1,4 +1,5 @@
 import * as $ from 'jquery'
+import * as moment from 'moment'
 import { removeExact, removeMatching } from '../util'
 import Promise from '../common/Promise'
 import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
@@ -15,11 +16,11 @@ export default class EventPeriod {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  start: any
-  end: any
+  start: moment.Moment
+  end: moment.Moment
   timezone: any
 
-  unzonedRange: any
+  unzonedRange: UnzonedRange
 
   requestsByUid: any
   pendingCnt: number = 0

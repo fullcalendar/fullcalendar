@@ -9,6 +9,15 @@ with the NOTABLE EXCEOPTION of start/end dates that live on *Event Objects*.
 Ambiguously-TIMED moments are assumed to be ambiguously-zoned by nature.
 */
 
+declare module 'moment' {
+  interface Moment {
+    hasTime(): boolean
+    time(): moment.Duration
+    stripZone()
+    stripTime()
+  }
+}
+
 let ambigDateOfMonthRegex = /^\s*\d{4}-\d\d$/
 let ambigTimeOrZoneRegex =
   /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/

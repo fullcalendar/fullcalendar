@@ -9,6 +9,8 @@ import { default as ListenerMixin, ListenerInterface } from './common/ListenerMi
 import Toolbar from './Toolbar'
 import OptionsManager from './OptionsManager'
 import ViewSpecManager from './ViewSpecManager'
+import View from './View'
+import Theme from './theme/Theme'
 import Constraints from './Constraints'
 import { getMomentLocaleData } from './locale'
 import momentExt from './moment-ext'
@@ -23,6 +25,7 @@ import SingleEventDef from './models/event/SingleEventDef'
 import EventDefMutation from './models/event/EventDefMutation'
 import EventSource from './models/event-source/EventSource'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
+import { RangeInput, MomentInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
 
 
 export default class Calendar {
@@ -41,34 +44,34 @@ export default class Calendar {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
-  view: any // current View object
-  viewsByType: any // holds all instantiated view instances, current or not
-  currentDate: any // unzoned moment. private (public API should use getDate instead)
-  theme: any
-  eventManager: any
-  constraints: any
-  optionsManager: any
-  viewSpecManager: any
-  businessHourGenerator: any
+  view: View // current View object
+  viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
+  currentDate: moment.Moment // unzoned moment. private (public API should use getDate instead)
+  theme: Theme
+  eventManager: EventManager
+  constraints: Constraints
+  optionsManager: OptionsManager
+  viewSpecManager: ViewSpecManager
+  businessHourGenerator: BusinessHourGenerator
   loadingLevel: number = 0 // number of simultaneous loading tasks
 
-  defaultAllDayEventDuration: any
-  defaultTimedEventDuration: any
-  localeData: any
+  defaultAllDayEventDuration: moment.Duration
+  defaultTimedEventDuration: moment.Duration
+  localeData: object
 
-  el: any
-  contentEl: any
-  suggestedViewHeight: any
+  el: JQuery
+  contentEl: JQuery
+  suggestedViewHeight: number
   ignoreUpdateViewSize: number = 0
   freezeContentHeightDepth: number = 0
   windowResizeProxy: any
 
-  header: any
-  footer: any
-  toolbarsManager: any
+  header: Toolbar
+  footer: Toolbar
+  toolbarsManager: Iterator
 
 
-  constructor(el, overrides) {
+  constructor(el: JQuery, overrides: OptionsInput) {
 
     // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
     // unneeded() is called in destroy.
@@ -93,12 +96,12 @@ export default class Calendar {
   }
 
 
-  getView() {
+  getView(): View {
     return this.view
   }
 
 
-  publiclyTrigger(name, triggerInfo) {
+  publiclyTrigger(name: string, triggerInfo) {
     let optHandler = this.opt(name)
     let context
     let args
@@ -126,7 +129,7 @@ export default class Calendar {
   }
 
 
-  hasPublicHandlers(name) {
+  hasPublicHandlers(name: string): boolean {
     return this.hasHandlers(name) ||
       this.opt(name) // handler specified in options
   }
@@ -137,7 +140,7 @@ export default class Calendar {
 
 
   // public getter/setter
-  option(name, value) {
+  option(name: string | object, value?) {
     let newOptionHash
 
     if (typeof name === 'string') {
@@ -155,7 +158,7 @@ export default class Calendar {
 
 
   // private getter
-  opt(name) {
+  opt(name: string) {
     return this.optionsManager.get(name)
   }
 
@@ -165,7 +168,7 @@ export default class Calendar {
 
 
   // Given a view name for a custom view or a standard view, creates a ready-to-go View object
-  instantiateView(viewType) {
+  instantiateView(viewType: string): View {
     let spec = this.viewSpecManager.getViewSpec(viewType)
 
     return new spec['class'](this, spec)
@@ -173,16 +176,15 @@ export default class Calendar {
 
 
   // Returns a boolean about whether the view is okay to instantiate at some point
-  isValidViewType(viewType) {
+  isValidViewType(viewType: string): boolean {
     return Boolean(this.viewSpecManager.getViewSpec(viewType))
   }
 
 
-  changeView(viewName, dateOrRange) {
+  changeView(viewName: string, dateOrRange: RangeInput | MomentInput) {
 
     if (dateOrRange) {
-
-      if (dateOrRange.start && dateOrRange.end) { // a range
+      if ((dateOrRange as RangeInput).start && (dateOrRange as RangeInput).end) { // a range
         this.optionsManager.recordOverrides({ // will not rerender
           visibleRange: dateOrRange
         })
@@ -197,7 +199,7 @@ export default class Calendar {
 
   // Forces navigation to a view for the given date.
   // `viewType` can be a specific view name or a generic one like "week" or "day".
-  zoomTo(newDate, viewType) {
+  zoomTo(newDate: moment.Moment, viewType?: string) {
     let spec
 
     viewType = viewType || 'day' // day is default zoom
@@ -278,7 +280,7 @@ export default class Calendar {
 
 
   // for external API
-  getDate() {
+  getDate(): moment.Moment {
     return this.applyTimezone(this.currentDate) // infuse the calendar's timezone
   }
 
@@ -423,7 +425,7 @@ export default class Calendar {
   }
 
 
-  elementVisible() {
+  elementVisible(): boolean {
     return this.el.is(':visible')
   }
 
@@ -462,7 +464,7 @@ export default class Calendar {
   // Renders a view because of a date change, view-type change, or for the first time.
   // If not given a viewType, keep the current view but render different dates.
   // Accepts an optional scroll state to restore to.
-  renderView(viewType?) {
+  renderView(viewType?: string) {
     let oldView = this.view
     let newView
 
@@ -543,7 +545,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------
 
 
-  getSuggestedViewHeight() {
+  getSuggestedViewHeight(): number {
     if (this.suggestedViewHeight == null) {
       this.calcSize()
     }
@@ -551,12 +553,12 @@ export default class Calendar {
   }
 
 
-  isHeightAuto() {
+  isHeightAuto(): boolean {
     return this.opt('contentHeight') === 'auto' || this.opt('height') === 'auto'
   }
 
 
-  updateViewSize(isResize= false) {
+  updateViewSize(isResize: boolean = false) {
     let view = this.view
     let scroll
 
@@ -616,9 +618,11 @@ export default class Calendar {
   }
 
 
-  windowResize(ev) {
+  windowResize(ev: JQueryEventObject) {
     if (
-      ev.target === window && // so we don't process jqui "resize" events that have bubbled up
+      // the purpose: so we don't process jqui "resize" events that have bubbled up
+      // cast to any because .target, which is Element, can't be compared to window for some reason.
+      (ev as any).target === window &&
       this.view &&
       this.view.isDatesRendered
     ) {
@@ -719,7 +723,7 @@ export default class Calendar {
   }
 
 
-  setToolbarsTitle(title) {
+  setToolbarsTitle(title: string) {
     this.toolbarsManager.proxyCall('updateTitle', title)
   }
 
@@ -767,7 +771,7 @@ export default class Calendar {
 
 
   // this public method receives start/end dates in any format, with any timezone
-  select(zonedStartInput, zonedEndInput) {
+  select(zonedStartInput: MomentInput, zonedEndInput?: MomentInput) {
     this.view.select(
       this.buildSelectFootprint.apply(this, arguments)
     )
@@ -782,7 +786,7 @@ export default class Calendar {
 
 
   // Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-  buildSelectFootprint(zonedStartInput, zonedEndInput) {
+  buildSelectFootprint(zonedStartInput: MomentInput, zonedEndInput?: MomentInput): ComponentFootprint {
     let start = this.moment(zonedStartInput).stripZone()
     let end
 
@@ -872,7 +876,7 @@ export default class Calendar {
 
   // Builds a moment using the settings of the current calendar: timezone and locale.
   // Accepts anything the vanilla moment() constructor accepts.
-  moment(...args) {
+  moment(...args): moment.Moment {
     let mom
 
     if (this.opt('timezone') === 'local') {
@@ -894,7 +898,7 @@ export default class Calendar {
   }
 
 
-  msToMoment(ms, forceAllDay) {
+  msToMoment(ms: number, forceAllDay: boolean): moment.Moment {
     let mom = momentExt.utc(ms) // TODO: optimize by using Date.UTC
 
     if (forceAllDay) {
@@ -909,7 +913,7 @@ export default class Calendar {
   }
 
 
-  msToUtcMoment(ms, forceAllDay) {
+  msToUtcMoment(ms: number, forceAllDay: boolean): moment.Moment {
     let mom = momentExt.utc(ms) // TODO: optimize by using Date.UTC
 
     if (forceAllDay) {
@@ -930,25 +934,25 @@ export default class Calendar {
 
   // Returns a boolean about whether or not the calendar knows how to calculate
   // the timezone offset of arbitrary dates in the current timezone.
-  getIsAmbigTimezone() {
+  getIsAmbigTimezone(): boolean {
     return this.opt('timezone') !== 'local' && this.opt('timezone') !== 'UTC'
   }
 
 
   // Returns a copy of the given date in the current timezone. Has no effect on dates without times.
-  applyTimezone(date) {
+  applyTimezone(date: moment.Moment): moment.Moment {
     if (!date.hasTime()) {
       return date.clone()
     }
 
     let zonedDate = this.moment(date.toArray())
-    let timeAdjust = date.time() - zonedDate.time()
+    let timeAdjust = date.time().asMilliseconds() - zonedDate.time().asMilliseconds()
     let adjustedZonedDate
 
     // Safari sometimes has problems with this coersion when near DST. Adjust if necessary. (bug #2396)
     if (timeAdjust) { // is the time result different than expected?
       adjustedZonedDate = zonedDate.clone().add(timeAdjust) // add milliseconds
-      if (date.time() - adjustedZonedDate.time() === 0) { // does it match perfectly now?
+      if (date.time().asMilliseconds() - adjustedZonedDate.time().asMilliseconds() === 0) { // does it match perfectly now?
         zonedDate = adjustedZonedDate
       }
     }
@@ -960,7 +964,7 @@ export default class Calendar {
   /*
   Assumes the footprint is non-open-ended.
   */
-  footprintToDateProfile(componentFootprint, ignoreEnd) {
+  footprintToDateProfile(componentFootprint, ignoreEnd = false) {
     let start = momentExt.utc(componentFootprint.unzonedRange.startMs)
     let end
 
@@ -988,7 +992,7 @@ export default class Calendar {
 
   // Returns a moment for the current date, as defined by the client's computer or from the `now` option.
   // Will return an moment with an ambiguous timezone.
-  getNow() {
+  getNow(): moment.Moment {
     let now = this.opt('now')
     if (typeof now === 'function') {
       now = now()
@@ -999,13 +1003,13 @@ export default class Calendar {
 
   // Produces a human-readable string for the given duration.
   // Side-effect: changes the locale of the given duration.
-  humanizeDuration(duration) {
+  humanizeDuration(duration: moment.Duration): string {
     return duration.locale(this.opt('locale')).humanize()
   }
 
 
   // will return `null` if invalid range
-  parseUnzonedRange(rangeInput) {
+  parseUnzonedRange(rangeInput: RangeInput): UnzonedRange {
     let start = null
     let end = null
 
@@ -1062,7 +1066,7 @@ export default class Calendar {
   }
 
 
-  requestEvents(start, end) {
+  requestEvents(start: moment.Moment, end: moment.Moment) {
     return this.eventManager.requestEvents(
       start,
       end,
@@ -1073,7 +1077,7 @@ export default class Calendar {
 
 
   // Get an event's normalized end date. If not present, calculate it from the defaults.
-  getEventEnd(event) {
+  getEventEnd(event): moment.Moment {
     if (event.end) {
       return event.end.clone()
     } else {
@@ -1084,7 +1088,7 @@ export default class Calendar {
 
   // Given an event's allDay status and start date, return what its fallback end date should be.
   // TODO: rename to computeDefaultEventEnd
-  getDefaultEventEnd(allDay, zonedStart) {
+  getDefaultEventEnd(allDay: boolean, zonedStart: moment.Moment) {
     let end = zonedStart.clone()
 
     if (allDay) {
@@ -1115,7 +1119,7 @@ export default class Calendar {
   }
 
 
-  renderEvents(eventInputs, isSticky) {
+  renderEvents(eventInputs: EventObjectInput[], isSticky?: boolean) {
     this.eventManager.freeze()
 
     for (let i = 0; i < eventInputs.length; i++) {
@@ -1126,7 +1130,7 @@ export default class Calendar {
   }
 
 
-  renderEvent(eventInput, isSticky) {
+  renderEvent(eventInput: EventObjectInput, isSticky: boolean = false) {
     let eventManager = this.eventManager
     let eventDef = EventDefParser.parse(
       eventInput,
@@ -1148,7 +1152,7 @@ export default class Calendar {
     let i
 
     if (legacyQuery == null) { // shortcut for removing all
-      eventManager.removeAllEventDefs(true) // persist=true
+      eventManager.removeAllEventDefs() // persist=true
     } else {
       eventManager.getEventInstances().forEach(function(eventInstance) {
         legacyInstances.push(eventInstance.toLegacy())
@@ -1165,7 +1169,7 @@ export default class Calendar {
       eventManager.freeze()
 
       for (i in idMap) { // reuse `i` as an "id"
-        eventManager.removeEventDefsById(i, true) // persist=true
+        eventManager.removeEventDefsById(i) // persist=true
       }
 
       eventManager.thaw()
@@ -1185,7 +1189,7 @@ export default class Calendar {
   }
 
 
-  updateEvents(eventPropsArray) {
+  updateEvents(eventPropsArray: EventObjectInput[]) {
     this.eventManager.freeze()
 
     for (let i = 0; i < eventPropsArray.length; i++) {
@@ -1196,7 +1200,7 @@ export default class Calendar {
   }
 
 
-  updateEvent(eventProps) {
+  updateEvent(eventProps: EventObjectInput) {
     let eventDef = this.eventManager.getEventDefByUid(eventProps._id)
     let eventInstance
     let eventDefMutation
@@ -1219,19 +1223,19 @@ export default class Calendar {
   // ------------------------------------------------------------------------------------
 
 
-  getEventSources() {
+  getEventSources(): EventSource {
     return this.eventManager.otherSources.slice() // clone
   }
 
 
-  getEventSourceById(id) {
+  getEventSourceById(id): EventSource {
     return this.eventManager.getSourceById(
       EventSource.normalizeId(id)
     )
   }
 
 
-  addEventSource(sourceInput) {
+  addEventSource(sourceInput: EventSourceInput) {
     let source = EventSourceParser.parse(sourceInput, this)
 
     if (source) {

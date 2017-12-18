@@ -11,15 +11,7 @@ import './theme/config'
 import './basic/config'
 import './agenda/config'
 import './list/config'
-
-declare global {
-  interface JQueryStatic {
-    fullCalendar: object
-  }
-  interface JQuery {
-    fullCalendar(...args): (JQuery | any)
-  }
-}
+import './types/jquery-hooks'
 
 
 ($ as any).fullCalendar = exportHooks

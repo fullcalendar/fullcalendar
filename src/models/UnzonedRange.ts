@@ -3,8 +3,8 @@ import momentExt from '../moment-ext'
 
 export default class UnzonedRange {
 
-  startMs: any // if null, no start constraint
-  endMs: any // if null, no end constraint
+  startMs: number // if null, no start constraint
+  endMs: number // if null, no end constraint
 
   // TODO: move these into footprint.
   // Especially, doesn't make sense for null startMs/endMs.

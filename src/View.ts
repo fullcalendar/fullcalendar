@@ -2,10 +2,12 @@ import * as $ from 'jquery'
 import * as moment from 'moment'
 import { parseFieldSpecs, proxy, isPrimaryMouseButton } from './util'
 import RenderQueue from './common/RenderQueue'
+import Calendar from './Calendar'
 import DateProfileGenerator from './DateProfileGenerator'
 import InteractiveDateComponent from './component/InteractiveDateComponent'
 import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
+import EventInstance from './models/event/EventInstance'
 
 
 /* An abstract class from which other views inherit from
@@ -13,30 +15,30 @@ import UnzonedRange from './models/UnzonedRange'
 
 export default abstract class View extends InteractiveDateComponent {
 
-  type: any // subclass' view name (string)
-  name: any // deprecated. use `type` instead
-  title: any // the text that will be displayed in the header's title
+  type: string // subclass' view name (string)
+  name: string // deprecated. use `type` instead
+  title: string // the text that will be displayed in the header's title
 
-  calendar: any // owner Calendar object
+  calendar: Calendar // owner Calendar object
   viewSpec: any
   options: any // hash containing all options. already merged with view-specific-options
 
-  renderQueue: any
+  renderQueue: RenderQueue
   batchRenderDepth: number = 0
-  queuedScroll: any
+  queuedScroll: object
 
   isSelected: boolean = false // boolean whether a range of time is user-selected or not
-  selectedEventInstance: any
+  selectedEventInstance: EventInstance
 
   eventOrderSpecs: any // criteria for ordering events when they have same date/time
 
   // for date utils, computed from options
-  isHiddenDayHash: any
+  isHiddenDayHash: boolean[]
 
   // now indicator
-  isNowIndicatorRendered: any
-  initialNowDate: any // result first getNow call
-  initialNowQueriedMs: any // ms time the getNow was called
+  isNowIndicatorRendered: boolean
+  initialNowDate: moment.Moment // result first getNow call
+  initialNowQueriedMs: number // ms time the getNow was called
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
 
@@ -48,10 +50,10 @@ export default abstract class View extends InteractiveDateComponent {
   usesMinMaxTime: boolean
 
   // DEPRECATED
-  start: any // use activeUnzonedRange
-  end: any // use activeUnzonedRange
-  intervalStart: any // use currentUnzonedRange
-  intervalEnd: any // use currentUnzonedRange
+  start: moment.Moment // use activeUnzonedRange
+  end: moment.Moment // use activeUnzonedRange
+  intervalStart: moment.Moment // use currentUnzonedRange
+  intervalEnd: moment.Moment // use currentUnzonedRange
 
 
   constructor(calendar, viewSpec) {
@@ -419,10 +421,10 @@ export default abstract class View extends InteractiveDateComponent {
         update = proxy(this, 'updateNowIndicator') // bind to `this`
 
         this.initialNowDate = this.calendar.getNow()
-        this.initialNowQueriedMs = +new Date()
+        this.initialNowQueriedMs = new Date().valueOf()
 
         // wait until the beginning of the next interval
-        delay = this.initialNowDate.clone().startOf(unit).add(1, unit) - this.initialNowDate
+        delay = this.initialNowDate.clone().startOf(unit).add(1, unit).valueOf() - this.initialNowDate.valueOf()
         this.nowIndicatorTimeoutID = setTimeout(() => {
           this.nowIndicatorTimeoutID = null
           update()
@@ -558,8 +560,7 @@ export default abstract class View extends InteractiveDateComponent {
     let eventManager = this.calendar.eventManager
     let undoFunc = eventManager.mutateEventsWithId(
       eventInstance.def.id,
-      eventMutation,
-      this.calendar
+      eventMutation
     )
     let dateMutation = eventMutation.dateMutation
 
@@ -650,8 +651,7 @@ export default abstract class View extends InteractiveDateComponent {
     let eventManager = this.calendar.eventManager
     let undoFunc = eventManager.mutateEventsWithId(
       eventInstance.def.id,
-      eventMutation,
-      this.calendar
+      eventMutation
     )
 
     // update the EventInstance, for handlers
@@ -691,7 +691,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Selects a date span on the view. `start` and `end` are both Moments.
   // `ev` is the native mouse event that begin the interaction.
-  select(footprint, ev) {
+  select(footprint, ev?) {
     this.unselect(ev)
     this.renderSelectionFootprint(footprint)
     this.reportSelection(footprint, ev)
@@ -710,14 +710,14 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   // Called when a new selection is made. Updates internal state and triggers handlers.
-  reportSelection(footprint, ev) {
+  reportSelection(footprint, ev?) {
     this.isSelected = true
     this.triggerSelect(footprint, ev)
   }
 
 
   // Triggers handlers to 'select'
-  triggerSelect(footprint, ev) {
+  triggerSelect(footprint, ev?) {
     let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
     this.publiclyTrigger('select', {
@@ -734,7 +734,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Undoes a selection. updates in the internal state and triggers handlers.
   // `ev` is the native mouse event that began the interaction.
-  unselect(ev= null) {
+  unselect(ev?) {
     if (this.isSelected) {
       this.isSelected = false
       if (this['destroySelection']) {

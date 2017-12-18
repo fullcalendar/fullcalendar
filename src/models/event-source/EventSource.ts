@@ -4,6 +4,7 @@ import {
   ParsableModelInterface
 } from '../../common/ParsableModelMixin'
 import Class from '../../common/Class'
+import Calendar from '../../Calendar'
 import EventDefParser from '../event/EventDefParser'
 
 
@@ -16,22 +17,22 @@ export default class EventSource extends Class {
   applyProps: ParsableModelInterface['applyProps']
   isStandardProp: ParsableModelInterface['isStandardProp']
 
-  calendar: any
+  calendar: Calendar
 
-  id: any // can stay null
-  uid: any
-  color: any
-  backgroundColor: any
-  borderColor: any
-  textColor: any
-  className: any // array
-  editable: any
-  startEditable: any
-  durationEditable: any
-  rendering: any
-  overlap: any
+  id: string // can stay null
+  uid: string
+  color: string
+  backgroundColor: string
+  borderColor: string
+  textColor: string
+  className: string[]
+  editable: boolean
+  startEditable: boolean
+  durationEditable: boolean
+  rendering: string | null
+  overlap: boolean
   constraint: any
-  allDayDefault: any
+  allDayDefault: boolean
   eventDataTransform: any // optional function
 
 
