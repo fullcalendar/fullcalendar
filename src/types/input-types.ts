@@ -15,6 +15,8 @@ export interface RangeInput {
   end?: MomentInput
 }
 
+export type ConstraintInput = RangeInput | BusinessHoursInput | 'businessHours'
+
 export interface EventOptionsBase {
   className?: string | string[]
   editable?: boolean
@@ -22,7 +24,7 @@ export interface EventOptionsBase {
   durationEditable?: boolean
   rendering?: string
   overlap?: boolean
-  constraint?: RangeInput | BusinessHoursInput
+  constraint?: ConstraintInput
   color?: string
   backgroundColor?: string
   borderColor?: string
@@ -183,7 +185,7 @@ export interface OptionsInputBase {
   unselectAuto?: boolean
   unselectCancel?: string
   selectOverlap?: boolean | ((event: EventObjectInput) => boolean)
-  selectConstraint?: RangeInput | BusinessHoursInput
+  selectConstraint?: ConstraintInput
   events?: EventSourceInput
   eventSources?: EventSourceInput[]
   allDayDefault?: boolean
@@ -204,7 +206,7 @@ export interface OptionsInputBase {
   dragOpacity?: number
   dragScroll?: boolean
   eventOverlap?: boolean | ((stillEvent: EventObjectInput, movingEvent: EventObjectInput) => boolean)
-  eventConstraint?: 'businessHours' | BusinessHoursInput | RangeInput
+  eventConstraint?: ConstraintInput
   eventAllow?: ((dropInfo: DropInfo, draggedEvent: Event) => boolean)
   longPressDelay?: number
   eventLongPressDelay?: number

@@ -6,7 +6,11 @@ export const version = '<%= version %>'
 // and the below integer should be incremented.
 export const internalApiVersion = 12
 
-export { EventObjectInput, BusinessHoursInput } from './types/input-types'
+export {
+  EventObjectInput,
+  BusinessHoursInput,
+  EventOptionsBase
+} from './types/input-types'
 
 export {
   applyAll,
