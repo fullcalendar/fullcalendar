@@ -1,15 +1,11 @@
 describe('event feed params', function() {
 
-  var options
+  pushOptions({
+    defaultDate: '2014-05-01',
+    defaultView: 'month'
+  })
 
   beforeEach(function() {
-    affix('#cal')
-
-    options = {
-      defaultDate: '2014-05-01',
-      defaultView: 'month'
-    }
-
     $.mockjax({
       url: '*',
       contentType: 'text/json',
@@ -28,12 +24,13 @@ describe('event feed params', function() {
   })
 
   it('utilizes custom startParam, endParam, and timezoneParam names', function() {
-    options.events = 'my-feed.php'
-    options.timezone = 'America/Los_Angeles'
-    options.startParam = 'mystart'
-    options.endParam = 'myend'
-    options.timezoneParam = 'currtz'
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      events: 'my-feed.php',
+      timezone: 'America/Los_Angeles',
+      startParam: 'mystart',
+      endParam: 'myend',
+      timezoneParam: 'currtz'
+    })
     var request = $.mockjax.mockedAjaxCalls()[0]
     expect(request.data.start).toBeUndefined()
     expect(request.data.end).toBeUndefined()
@@ -44,19 +41,20 @@ describe('event feed params', function() {
   })
 
   it('utilizes event-source-specific startParam, endParam, and timezoneParam names', function() {
-    options.timezone = 'America/Los_Angeles'
-    options.startParam = 'mystart'
-    options.endParam = 'myend'
-    options.timezoneParam = 'currtz'
-    options.eventSources = [
-      {
-        url: 'my-feed.php',
-        startParam: 'feedstart',
-        endParam: 'feedend',
-        timezoneParam: 'feedctz'
-      }
-    ]
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      timezone: 'America/Los_Angeles',
+      startParam: 'mystart',
+      endParam: 'myend',
+      timezoneParam: 'currtz',
+      eventSources: [
+        {
+          url: 'my-feed.php',
+          startParam: 'feedstart',
+          endParam: 'feedend',
+          timezoneParam: 'feedctz'
+        }
+      ]
+    })
     var request = $.mockjax.mockedAjaxCalls()[0]
     expect(request.data.start).toBeUndefined()
     expect(request.data.end).toBeUndefined()
