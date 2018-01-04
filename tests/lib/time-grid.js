@@ -3,15 +3,14 @@ import { getBoundingRect } from '../lib/dom-geom'
 
 export function dragTimeGridEvent(eventEl, dropDate) {
   return new Promise(function(resolve) {
-    var calendar = $('#cal').fullCalendar('getCalendar')
     var modifiedEvent = null
 
-    calendar.on('eventDragStop', function() {
+    currentCalendar.on('eventDragStop', function() {
       setTimeout(function() { // wait for eventDrop to be called
         resolve(modifiedEvent)
       })
     })
-    calendar.on('eventDrop', function(event) {
+    currentCalendar.on('eventDrop', function(event) {
       modifiedEvent = event
     })
 
