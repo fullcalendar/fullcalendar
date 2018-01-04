@@ -1,4 +1,4 @@
-import 'moment/locale/ba';
+import 'moment/locale/bs';
 import * as FullCalendar from 'fullcalendar';
 
 
