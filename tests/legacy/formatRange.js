@@ -1,4 +1,3 @@
-
 describe('formatRange', function() {
 
   it('doesn\'t do any splitting when dates have different years', function() {
@@ -135,8 +134,7 @@ describe('formatRange', function() {
   describe('when calendar has isRTL', function() {
 
     it('splits correctly on day when dates have same month', function() {
-      affix('#cal')
-      $('#cal').fullCalendar({
+      initCalendar({
         defaultView: 'basicWeek',
         defaultDate: '2014-05-20',
         isRTL: true,
@@ -151,8 +149,7 @@ describe('formatRange', function() {
   describe('when calendar has a customized locale', function() {
 
     it('uses locale and splits correctly on day when dates have same month', function() {
-      affix('#cal')
-      $('#cal').fullCalendar({
+      initCalendar({
         defaultView: 'basicWeek',
         defaultDate: '2014-05-20',
         locale: 'fr',
