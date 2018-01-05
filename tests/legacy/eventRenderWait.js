@@ -13,8 +13,7 @@ describe('eventRenderWait', function() {
     var extraEvent2 = { title: 'event6', start: '2016-12-04T06:00:00', className: 'event6', id: '6' }
     var eventRenderCnt = 0
 
-    affix('#cal')
-    $('#cal').fullCalendar({
+    initCalendar({
       defaultDate: '2016-12-04',
       defaultView: 'agendaDay',
       events: eventSource1,
@@ -39,7 +38,6 @@ describe('eventRenderWait', function() {
       }
     })
 
-    initCalendar()
     expect($('.fc-event').length).toBe(0)
 
     currentCalendar.addEventSource(eventSource2)
