@@ -37,18 +37,11 @@ describe('moment constructor', function() {
     ]
       .forEach(function(scenario) {
         describe(scenario.description, function() {
-          var calendarObj
-
-          beforeEach(function() {
-            affix('#cal')
-            $('#cal').fullCalendar({
+          scenario.testMethod(function() {
+            initCalendar({
               timezone: scenario.timezone
             })
-            calendarObj = $('#cal').fullCalendar('getCalendar')
-          })
-
-          scenario.testMethod(function() {
-            return calendarObj.moment.apply(calendarObj, arguments)
+            return currentCalendar.moment.apply(currentCalendar, arguments)
           })
         })
       })
