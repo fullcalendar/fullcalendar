@@ -39,19 +39,19 @@ describe('eventRenderWait', function() {
       }
     })
 
-    var calendar = $('#cal').fullCalendar('getCalendar')
+    initCalendar()
     expect($('.fc-event').length).toBe(0)
 
-    calendar.addEventSource(eventSource2)
+    currentCalendar.addEventSource(eventSource2)
     expect($('.fc-event').length).toBe(0)
 
-    calendar.renderEvent(extraEvent1)
+    currentCalendar.renderEvent(extraEvent1)
     expect($('.fc-event').length).toBe(0)
 
-    calendar.renderEvent(extraEvent2)
+    currentCalendar.renderEvent(extraEvent2)
     expect($('.fc-event').length).toBe(0)
 
-    calendar.removeEvents(extraEvent2.id) // only works with id!?
+    currentCalendar.removeEvents(extraEvent2.id) // only works with id!?
     expect($('.fc-event').length).toBe(0)
   })
 })
