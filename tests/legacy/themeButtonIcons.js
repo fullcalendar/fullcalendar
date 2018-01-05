@@ -1,6 +1,13 @@
 describe('themeButtonIcons', function() {
 
-  var options
+  pushOptions({
+    header: {
+      left: 'prevYear,prev,next,nextYear today',
+      center: 'title',
+      right: 'month,agendaWeek,agendaDay'
+    }
+  })
+
   var defaultSelectors = [
     '.ui-icon-circle-triangle-w',
     '.ui-icon-circle-triangle-e',
@@ -8,23 +15,14 @@ describe('themeButtonIcons', function() {
     '.ui-icon-seek-next'
   ]
 
-  beforeEach(function() {
-    affix('#cal')
-    options = {
-      header: {
-        left: 'prevYear,prev,next,nextYear today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay'
-      }
-    }
-  })
-
   describe('when theme is off', function() {
-    beforeEach(function() {
-      options.theme = false
+
+    pushOptions({
+      theme: false
     })
+
     it('should not have any of the default theme icon classes', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar()
       defaultSelectors.forEach(function(selector) {
         expect($(selector)).not.toBeInDOM()
       })
@@ -33,23 +31,24 @@ describe('themeButtonIcons', function() {
 
   describe('when theme is on', function() {
 
-    beforeEach(function() {
-      options.theme = true
+    pushOptions({
+      theme: true
     })
 
     it('should have all of the deafult theme icon classes', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar()
       defaultSelectors.forEach(function(selector) {
         expect($(selector)).toBeInDOM()
       })
     })
 
     it('should accept values that override the individual defaults', function() {
-      options.themeButtonIcons = {
-        prev: 'arrowthickstop-1-w',
-        next: 'arrowthickstop-1-e'
-      }
-      $('#cal').fullCalendar(options);
+      initCalendar({
+        themeButtonIcons: {
+          prev: 'arrowthickstop-1-w',
+          next: 'arrowthickstop-1-e'
+        }
+      });
       [
         '.ui-icon-arrowthickstop-1-w',
         '.ui-icon-arrowthickstop-1-e',
