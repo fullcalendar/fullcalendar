@@ -32,16 +32,20 @@ gulp.task('lint:ts', function() {
 // lints the TypeScript definitions file
 // from https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
 gulp.task('lint:dts', [ 'ts-types' ], function(done) {
-  let program = ts.createProgram([ './dist/fullcalendar.d.ts' ], {
+  let program = ts.createProgram([ 'dist/fullcalendar.d.ts' ], {
     noEmitOnError: true,
     noImplicitAny: true // makes sure all types are defined. the whole point!
   })
   let emitResult = program.emit()
   if (emitResult.emitSkipped) { // error?
     emitResult.diagnostics.forEach(function(diagnostic) {
-      let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start)
-      let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
-      gutil.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`)
+      if (diagnostic.file) {
+        let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start)
+        let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
+        gutil.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`)
+      } else {
+        gutil.log(`${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`)
+      }
     })
     done('There are .d.ts linting problems.')
   } else {
