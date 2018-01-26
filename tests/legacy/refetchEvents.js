@@ -113,11 +113,10 @@ describe('refetchEvents', function() {
             expect($('.fetch0').length).toEqual(3) // original events still on the calendar
             expect($('.fetch1').length).toEqual(0) // new events not yet refetched
 
-            setTimeout(function() { // wait until refetch+rerender is over
-              expect($('.fetch0').length).toEqual(0)
-              expect($('.fetch1').length).toEqual(3)
-              done()
-            }, 200)
+          } else if (fetchCount === 2) { // after refetch+rerender is over
+            expect($('.fetch0').length).toEqual(0)
+            expect($('.fetch1').length).toEqual(3)
+            done()
           }
         }
 
