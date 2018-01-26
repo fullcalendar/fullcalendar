@@ -79,8 +79,10 @@ describe('locale', function() {
     expect($('.fc h2')).toHaveText('julio 2016')
     expect($('.fc')).not.toHaveClass('fc-rtl')
 
-    $('#cal').fullCalendar('option', 'locale', 'ar')
-    expect($('.fc h2')).toHaveText('تموز يوليو ٢٠١٦')
+    $('#cal').fullCalendar('option', 'locale', 'fr')
+    expect($('.fc h2')).toHaveText('juillet 2016')
+
+    $('#cal').fullCalendar('option', 'locale', 'ar') // NOTE: we had problems testing for RTL title text
     expect($('.fc')).toHaveClass('fc-rtl')
   })
 
