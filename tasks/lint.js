@@ -1,16 +1,18 @@
 const gulp = require('gulp')
+const gutil = require('gulp-util')
+const eslint = require('gulp-eslint')
 const tslint = require('gulp-tslint')
 const tsLintLib = require('tslint')
-const eslint = require('gulp-eslint')
+const ts = require('typescript')
 
 const tslintProgram = tsLintLib.Linter.createProgram('./tsconfig.json')
 
 gulp.task('lint', [
   'lint:ts',
+  'lint:dts',
   'lint:js:built',
   'lint:js:node',
-  'lint:js:tests',
-  'ts-types' // make sure typescript defs compile without errors
+  'lint:js:tests'
 ])
 
 gulp.task('lint:ts', function() {
@@ -25,6 +27,26 @@ gulp.task('lint:ts', function() {
       })
     )
     .pipe(tslint.report())
+})
+
+// lints the TypeScript definitions file
+// from https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
+gulp.task('lint:dts', [ 'ts-types' ], function(done) {
+  let program = ts.createProgram([ './dist/fullcalendar.d.ts' ], {
+    noEmitOnError: true,
+    noImplicitAny: true // makes sure all types are defined. the whole point!
+  })
+  let emitResult = program.emit()
+  if (emitResult.emitSkipped) { // error?
+    emitResult.diagnostics.forEach(function(diagnostic) {
+      let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start)
+      let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
+      gutil.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`)
+    })
+    done('There are .d.ts linting problems.')
+  } else {
+    done() // success
+  }
 })
 
 gulp.task('lint:js:built', [ 'webpack' ], function() {
