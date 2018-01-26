@@ -30,8 +30,8 @@ export default class GlobalEmitter {
 
   isTouching: boolean = false
   mouseIgnoreDepth: number = 0
-  handleScrollProxy: (ev) => void
-  handleTouchMoveProxy: (ev) => void
+  handleScrollProxy: (ev: Event) => void
+  handleTouchMoveProxy: (ev: Event) => void
 
 
   // gets the singleton
@@ -82,7 +82,7 @@ export default class GlobalEmitter {
     window.addEventListener(
       'touchmove',
       this.handleTouchMoveProxy = (ev) => {
-        this.handleTouchMove($.Event(ev))
+        this.handleTouchMove($.Event(ev as any))
       },
       { passive: false } as any // allows preventDefault()
     )
@@ -93,7 +93,7 @@ export default class GlobalEmitter {
     window.addEventListener(
       'scroll',
       this.handleScrollProxy = (ev) => {
-        this.handleScroll($.Event(ev))
+        this.handleScroll($.Event(ev as any))
       },
       true // useCapture
     )
