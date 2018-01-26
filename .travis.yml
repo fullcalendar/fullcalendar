@@ -1,3 +1,6 @@
+
+sudo: false # route build to the container-based infrastructure for a faster build
+
 language: node_js
 node_js:
   - 'node' # implies latest version
