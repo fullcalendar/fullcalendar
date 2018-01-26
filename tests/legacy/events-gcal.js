@@ -12,6 +12,13 @@ describe('Google Calendar plugin', function() {
 
   var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE'
   var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
+
+  // Google sometimes stops returning old events. Will need to update this sometimes.
+  var DEFAULT_MONTH = '2018-01'
+  var REQUEST_START = '2017-12-30T00:00:00Z' // one day before, by design
+  var REQUEST_END = '2018-02-12T00:00:00Z' // one day before, by design
+  var NUM_EVENTS = 3
+
   var options
   var currentWarnArgs
   var oldConsoleWarn
@@ -21,7 +28,7 @@ describe('Google Calendar plugin', function() {
 
     options = {
       defaultView: 'month',
-      defaultDate: '2016-11-01'
+      defaultDate: DEFAULT_MONTH + '-01'
     }
 
     // Intercept calls to console.warn
@@ -47,11 +54,11 @@ describe('Google Calendar plugin', function() {
       var events = $('#cal').fullCalendar('clientEvents')
       var i
 
-      expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z') // one day before, by design
-      expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z') // one day after, by design
+      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
+      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
       expect(currentRequest.data.timeZone).toBeUndefined()
 
-      expect(events.length).toBe(5)
+      expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
         expect(events[i].url).not.toMatch('ctz=')
       }
@@ -70,11 +77,11 @@ describe('Google Calendar plugin', function() {
       var events = $('#cal').fullCalendar('clientEvents')
       var i
 
-      expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z') // one day before, by design
-      expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z') // one day after, by design
+      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
+      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
       expect(currentRequest.data.timeZone).toEqual('UTC')
 
-      expect(events.length).toBe(5)
+      expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
         expect(events[i].url).toMatch('ctz=UTC')
       }
@@ -93,11 +100,11 @@ describe('Google Calendar plugin', function() {
       var events = $('#cal').fullCalendar('clientEvents')
       var i
 
-      expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z') // one day before, by design
-      expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z') // one day after, by design
+      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
+      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
       expect(currentRequest.data.timeZone).toEqual('America/New_York') // space should be escaped
 
-      expect(events.length).toBe(5)
+      expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
         expect(events[i].url).toMatch('ctz=America/New_York')
       }
@@ -116,16 +123,16 @@ describe('Google Calendar plugin', function() {
       var eventEls = $('.fc-event')
       var i
 
-      expect(currentRequest.data.timeMin).toEqual('2016-10-29T00:00:00Z') // one day before, by design
-      expect(currentRequest.data.timeMax).toEqual('2016-12-12T00:00:00Z') // one day after, by design
+      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
+      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
       expect(currentRequest.data.timeZone).toBeUndefined()
 
-      expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       for (i = 0; i < events.length; i++) {
         expect(events[i].url).not.toMatch('ctz=')
       }
 
-      expect(eventEls.length).toBe(5)
+      expect(eventEls.length).toBe(NUM_EVENTS)
       expect(eventEls.find('.fc-resizer').length).toBe(0) // not editable
 
       done()
@@ -141,7 +148,7 @@ describe('Google Calendar plugin', function() {
     }
     options.eventAfterAllRender = function() {
       var eventEls = $('.fc-event')
-      expect(eventEls.length).toBe(5)
+      expect(eventEls.length).toBe(NUM_EVENTS)
       expect(eventEls.find('.fc-resizer').length).toBeGreaterThan(0) // editable!
       done()
     }
@@ -155,7 +162,7 @@ describe('Google Calendar plugin', function() {
     }
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -223,7 +230,7 @@ describe('Google Calendar plugin', function() {
     options.events = HOLIDAY_CALENDAR_ID
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -278,7 +285,7 @@ describe('Google Calendar plugin', function() {
     options.events = 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -289,7 +296,7 @@ describe('Google Calendar plugin', function() {
     options.events = 'https://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -301,7 +308,7 @@ describe('Google Calendar plugin', function() {
       'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events'
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -341,7 +348,7 @@ describe('Google Calendar plugin', function() {
         called = true
 
         events = $('#cal').fullCalendar('clientEvents')
-        expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+        expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
         setTimeout(function() {
           $('#cal').fullCalendar('removeEventSource', HOLIDAY_CALENDAR_ID)
@@ -367,7 +374,7 @@ describe('Google Calendar plugin', function() {
         called = true
 
         events = $('#cal').fullCalendar('clientEvents')
-        expect(events.length).toBe(5) // 5 holidays in November 2016 (and end of Oct)
+        expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
         setTimeout(function() {
           $('#cal').fullCalendar('removeEventSource', googleSource)
