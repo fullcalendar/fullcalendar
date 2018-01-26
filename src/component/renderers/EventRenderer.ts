@@ -268,6 +268,9 @@ export default class EventRenderer {
   // If not specified, formatStr will default to the eventTimeFormat setting,
   // and displayEnd will default to the displayEventEnd setting.
   getTimeText(eventFootprint, formatStr?, displayEnd?) {
+    if (eventFootprint.eventDef.miscProps.displayEventEnd !== 'undefined') {
+      displayEnd = eventFootprint.eventDef.miscProps.displayEventEnd;
+    }
     return this._getTimeText(
       eventFootprint.eventInstance.dateProfile.start,
       eventFootprint.eventInstance.dateProfile.end,

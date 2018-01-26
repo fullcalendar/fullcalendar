@@ -84,7 +84,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
       if (seg.isStart || seg.isEnd) {
         let zonedStart = calendar.msToMoment(seg.startMs)
         let zonedEnd = calendar.msToMoment(seg.endMs)
-        timeText = this._getTimeText(zonedStart, zonedEnd, isAllDay)
+        timeText = this._getTimeText(zonedStart, zonedEnd, isAllDay, null, eventDef.miscProps.displayEventEnd)
         fullTimeText = this._getTimeText(zonedStart, zonedEnd, isAllDay, 'LT')
         startTimeText = this._getTimeText(zonedStart, zonedEnd, isAllDay, null, false) // displayEnd=false
       }
