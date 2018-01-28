@@ -171,6 +171,10 @@ export default class Calendar {
   instantiateView(viewType: string): View {
     let spec = this.viewSpecManager.getViewSpec(viewType)
 
+    if (!spec) {
+      throw new Error(`View type "${viewType}" is not valid`)
+    }
+
     return new spec['class'](this, spec)
   }
 
