@@ -5,7 +5,8 @@ import {
   uncompensateScroll,
   compensateScroll,
   subtractInnerElHeight,
-  htmlEscape
+  htmlEscape,
+  copyOwnProps
 } from '../util'
 import Scroller from '../common/Scroller'
 import View from '../View'
@@ -13,6 +14,9 @@ import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
+
+let agendaTimeGridMethods
+let agendaDayGridMethods
 
 
 /* An abstract class for all agenda-related views. Displays one more columns with time slots running vertically.
@@ -54,17 +58,17 @@ export default class AgendaView extends View {
 
   // Instantiates the TimeGrid object this view needs. Draws from this.timeGridClass
   instantiateTimeGrid() {
-    let SubClass: any = makeTimeGridSubclass(this.timeGridClass)
-
-    return new SubClass(this)
+    let timeGrid = new this.timeGridClass(this)
+    copyOwnProps(agendaTimeGridMethods, timeGrid)
+    return timeGrid
   }
 
 
   // Instantiates the DayGrid object this view might need. Draws from this.dayGridClass
   instantiateDayGrid() {
-    let SubClass: any = makeDayGridSubclass(this.dayGridClass)
-
-    return new SubClass(this)
+    let dayGrid = new this.dayGridClass(this)
+    copyOwnProps(agendaDayGridMethods, dayGrid)
+    return dayGrid
   }
 
 
@@ -367,80 +371,74 @@ AgendaView.prototype.dayGridClass = DayGrid
 
 
 // Will customize the rendering behavior of the AgendaView's timeGrid
-function makeTimeGridSubclass(SuperClass) {
+agendaTimeGridMethods = {
 
-  return class SubClass extends SuperClass {
+  // Generates the HTML that will go before the day-of week header cells
+  renderHeadIntroHtml() {
+    let view = this.view
+    let calendar = view.calendar
+    let weekStart = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true)
+    let weekText
 
-    // Generates the HTML that will go before the day-of week header cells
-    renderHeadIntroHtml() {
-      let view = this.view
-      let calendar = view.calendar
-      let weekStart = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true)
-      let weekText
+    if (this.opt('weekNumbers')) {
+      weekText = weekStart.format(this.opt('smallWeekFormat'))
 
-      if (this.opt('weekNumbers')) {
-        weekText = weekStart.format(this.opt('smallWeekFormat'))
-
-        return '' +
-          '<th class="fc-axis fc-week-number ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +
-            view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-              { date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
-              htmlEscape(weekText) // inner HTML
-            ) +
-          '</th>'
-      } else {
-        return '<th class="fc-axis ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '></th>'
-      }
+      return '' +
+        '<th class="fc-axis fc-week-number ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +
+          view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
+            { date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
+            htmlEscape(weekText) // inner HTML
+          ) +
+        '</th>'
+    } else {
+      return '<th class="fc-axis ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '></th>'
     }
+  },
 
 
-    // Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
-    renderBgIntroHtml() {
-      let view = this.view
+  // Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
+  renderBgIntroHtml() {
+    let view = this.view
 
-      return '<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '></td>'
-    }
+    return '<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '></td>'
+  },
 
 
-    // Generates the HTML that goes before all other types of cells.
-    // Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
-    renderIntroHtml() {
-      let view = this.view
+  // Generates the HTML that goes before all other types of cells.
+  // Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+  renderIntroHtml() {
+    let view = this.view
 
-      return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>'
-    }
-
+    return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>'
   }
+
 }
 
 
 // Will customize the rendering behavior of the AgendaView's dayGrid
-function makeDayGridSubclass(SuperClass) {
+agendaDayGridMethods = {
 
-  return class SubClass extends SuperClass {
+  // Generates the HTML that goes before the all-day cells
+  renderBgIntroHtml() {
+    let view = this.view
 
-    // Generates the HTML that goes before the all-day cells
-    renderBgIntroHtml() {
-      let view = this.view
-
-      return '' +
-        '<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
-          '<span>' + // needed for matchCellWidths
-            view.getAllDayHtml() +
-          '</span>' +
-        '</td>'
-    }
+    return '' +
+      '<td class="fc-axis ' + view.calendar.theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
+        '<span>' + // needed for matchCellWidths
+          view.getAllDayHtml() +
+        '</span>' +
+      '</td>'
+  },
 
 
-    // Generates the HTML that goes before all other types of cells.
-    // Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
-    renderIntroHtml() {
-      let view = this.view
+  // Generates the HTML that goes before all other types of cells.
+  // Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+  renderIntroHtml() {
+    let view = this.view
 
-      return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>'
-    }
-
+    return '<td class="fc-axis" ' + view.axisStyleAttr() + '></td>'
   }
+
 }
 
 
