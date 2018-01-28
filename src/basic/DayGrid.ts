@@ -268,7 +268,7 @@ export default class DayGrid extends InteractiveDateComponent {
       html += view.buildGotoAnchorHtml(
         date,
         { 'class': 'fc-day-number' },
-        date.date() // inner HTML
+        date.format('D') // inner HTML
       )
     }
 
