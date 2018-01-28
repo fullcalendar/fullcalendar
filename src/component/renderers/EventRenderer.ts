@@ -427,18 +427,22 @@ export default class EventRenderer {
 
   // A cmp function for determining which segments should take visual priority
   compareEventSegs(seg1, seg2) {
-    let f1 = seg1.footprint.componentFootprint
-    let r1 = f1.unzonedRange
-    let f2 = seg2.footprint.componentFootprint
-    let r2 = f2.unzonedRange
+    let f1 = seg1.footprint
+    let f2 = seg2.footprint
+    let cf1 = f1.componentFootprint
+    let cf2 = f2.componentFootprint
+    let r1 = cf1.unzonedRange
+    let r2 = cf2.unzonedRange
 
     return r1.startMs - r2.startMs || // earlier events go first
       (r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
-      f2.isAllDay - f1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
+      cf2.isAllDay - cf1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
       compareByFieldSpecs(
-        seg1.footprint.eventDef,
-        seg2.footprint.eventDef,
-        this.view.eventOrderSpecs
+        f1.eventDef,
+        f2.eventDef,
+        this.view.eventOrderSpecs,
+        f1.eventDef.miscProps,
+        f2.eventDef.miscProps
       )
   }
 

@@ -431,12 +431,12 @@ export function parseFieldSpecs(input) {
 }
 
 
-export function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
+export function compareByFieldSpecs(obj1, obj2, fieldSpecs, obj1fallback?, obj2fallback?) {
   let i
   let cmp
 
   for (i = 0; i < fieldSpecs.length; i++) {
-    cmp = compareByFieldSpec(obj1, obj2, fieldSpecs[i])
+    cmp = compareByFieldSpec(obj1, obj2, fieldSpecs[i], obj1fallback, obj2fallback)
     if (cmp) {
       return cmp
     }
@@ -446,12 +446,23 @@ export function compareByFieldSpecs(obj1, obj2, fieldSpecs) {
 }
 
 
-export function compareByFieldSpec(obj1, obj2, fieldSpec) {
+export function compareByFieldSpec(obj1, obj2, fieldSpec, obj1fallback, obj2fallback) {
   if (fieldSpec.func) {
     return fieldSpec.func(obj1, obj2)
   }
-  return flexibleCompare(obj1[fieldSpec.field], obj2[fieldSpec.field]) *
-    (fieldSpec.order || 1)
+
+  let val1 = obj1[fieldSpec.field]
+  let val2 = obj2[fieldSpec.field]
+
+  if (val1 == undefined && obj1fallback) {
+    val1 = obj1fallback[fieldSpec.field]
+  }
+
+  if (val2 == undefined && obj2fallback) {
+    val2 = obj2fallback[fieldSpec.field]
+  }
+
+  return flexibleCompare(val1, val2) * (fieldSpec.order || 1)
 }
 
 
