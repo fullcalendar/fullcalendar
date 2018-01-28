@@ -354,14 +354,16 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   unrenderContentSkeleton() {
-    this.contentSkeletonEl.remove()
-    this.contentSkeletonEl = null
-    this.colContainerEls = null
-    this.helperContainerEls = null
-    this.fgContainerEls = null
-    this.bgContainerEls = null
-    this.highlightContainerEls = null
-    this.businessContainerEls = null
+    if (this.contentSkeletonEl) { // defensive :(
+      this.contentSkeletonEl.remove()
+      this.contentSkeletonEl = null
+      this.colContainerEls = null
+      this.helperContainerEls = null
+      this.fgContainerEls = null
+      this.bgContainerEls = null
+      this.highlightContainerEls = null
+      this.businessContainerEls = null
+    }
   }
 
 
