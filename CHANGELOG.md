@@ -11,6 +11,10 @@ Bugfixes:
 - eventOrder doesn't work on custom fields (#3950)
 - dynamic option changes to select/overlap/allow doesn't cause rerender
 
+Locales:
+- added Georgian
+- added Bosnian
+
 
 v3.8.0 (2017-12-18)
 -------------------
