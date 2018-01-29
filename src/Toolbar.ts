@@ -80,6 +80,7 @@ export default class Toolbar {
           let buttonInnerHtml
           let buttonClasses
           let buttonEl
+          let buttonAriaAttr
 
           if (buttonName === 'title') {
             groupChildren = groupChildren.add($('<h2>&nbsp;</h2>')) // we always want it to take up height
@@ -123,12 +124,15 @@ export default class Toolbar {
 
               if (buttonText) {
                 buttonInnerHtml = htmlEscape(buttonText)
+                buttonAriaAttr = ''
               } else if (buttonIcon) {
                 buttonInnerHtml = "<span class='" + buttonIcon + "'></span>"
+                buttonAriaAttr = '" aria-label="' + buttonName
               }
 
               buttonEl = $( // type="button" so that it doesn't submit a form
-                '<button type="button" class="' + buttonClasses.join(' ') + '">' +
+                '<button type="button" class="' + buttonClasses.join(' ') +
+                  buttonAriaAttr + '">' +
                   buttonInnerHtml +
                 '</button>'
                 )
