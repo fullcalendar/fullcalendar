@@ -1,4 +1,17 @@
 
+v3.8.1
+------
+
+Bugfixes:
+- Typescript definition file not compatible with noImplicitAny (#4017)
+- ES6 classes are not supported for grid class (#3437)
+- day numbers in month view should be localized (#3339)
+- select helper is resizable, causes js error (#3764)
+- selecting over existing select helper causes js error (#4031)
+- eventOrder doesn't work on custom fields (#3950)
+- dynamic option changes to select/overlap/allow doesn't cause rerender
+
+
 v3.8.0 (2017-12-18)
 -------------------
 
@@ -1063,7 +1076,7 @@ v1.4.3 (2009-12-22)
 
 - added destroy method
 - Google Calendar event pages respect currentTimezone
-- caching now handled by jQuery's ajax	
+- caching now handled by jQuery's ajax
 - protection from setting aspectRatio to zero
 - bugfixes
 	- parseISO8601 and DST caused certain events to display day before
