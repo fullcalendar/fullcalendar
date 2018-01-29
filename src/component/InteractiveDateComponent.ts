@@ -114,8 +114,8 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     this.el.on(name, (ev) => {
       if (
         !$(ev.target).is(
-          this.segSelector + ',' + // directly on an event element
-          this.segSelector + ' *,' + // within an event element
+          this.segSelector + ':not(.fc-helper),' + // directly on an event element
+          this.segSelector + ':not(.fc-helper) *,' + // within an event element
           '.fc-more,' + // a "more.." link
           'a[data-goto]' // a clickable nav link
         )
@@ -141,10 +141,12 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
   bindSegHandlerToEl(el, name, handler) {
     el.on(name, this.segSelector, (ev) => {
-      let seg = $(ev.currentTarget).data('fc-seg') // grab segment data. put there by View::renderEventsPayload
-
-      if (seg && !this.shouldIgnoreEventPointing()) {
-        return handler.call(this, seg, ev) // context will be the Grid
+      let segEl = $(ev.currentTarget)
+      if (!segEl.is('.fc-helper')) {
+        let seg = segEl.data('fc-seg') // grab segment data. put there by View::renderEventsPayload
+        if (seg && !this.shouldIgnoreEventPointing()) {
+          return handler.call(this, seg, ev) // context will be the Grid
+        }
       }
     })
   }
