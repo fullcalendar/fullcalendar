@@ -13,8 +13,8 @@ Bugfixes:
 - dynamic option changes to select/overlap/allow doesn't cause rerender
 
 Locales:
-- added Georgian
-- added Bosnian
+- added Georgian (#3994)
+- added Bosnian (#4029)
 
 
 v3.8.0 (2017-12-18)
