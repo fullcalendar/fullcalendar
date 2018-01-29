@@ -454,11 +454,11 @@ export function compareByFieldSpec(obj1, obj2, fieldSpec, obj1fallback, obj2fall
   let val1 = obj1[fieldSpec.field]
   let val2 = obj2[fieldSpec.field]
 
-  if (val1 == undefined && obj1fallback) {
+  if (val1 == null && obj1fallback) {
     val1 = obj1fallback[fieldSpec.field]
   }
 
-  if (val2 == undefined && obj2fallback) {
+  if (val2 == null && obj2fallback) {
     val2 = obj2fallback[fieldSpec.field]
   }
 
