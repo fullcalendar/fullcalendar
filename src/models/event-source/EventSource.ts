@@ -116,10 +116,10 @@ export default class EventSource extends Class {
     let sourceTransform = this.eventDataTransform
 
     if (calendarTransform) {
-      rawInput = calendarTransform(rawInput)
+      rawInput = calendarTransform(rawInput, this.calendar)
     }
     if (sourceTransform) {
-      rawInput = sourceTransform(rawInput)
+      rawInput = sourceTransform(rawInput, this.calendar)
     }
 
     return EventDefParser.parse(rawInput, this)
