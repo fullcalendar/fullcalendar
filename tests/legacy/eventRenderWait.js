@@ -13,8 +13,7 @@ describe('eventRenderWait', function() {
     var extraEvent2 = { title: 'event6', start: '2016-12-04T06:00:00', className: 'event6', id: '6' }
     var eventRenderCnt = 0
 
-    affix('#cal')
-    $('#cal').fullCalendar({
+    initCalendar({
       defaultDate: '2016-12-04',
       defaultView: 'agendaDay',
       events: eventSource1,
@@ -39,19 +38,18 @@ describe('eventRenderWait', function() {
       }
     })
 
-    var calendar = $('#cal').fullCalendar('getCalendar')
     expect($('.fc-event').length).toBe(0)
 
-    calendar.addEventSource(eventSource2)
+    currentCalendar.addEventSource(eventSource2)
     expect($('.fc-event').length).toBe(0)
 
-    calendar.renderEvent(extraEvent1)
+    currentCalendar.renderEvent(extraEvent1)
     expect($('.fc-event').length).toBe(0)
 
-    calendar.renderEvent(extraEvent2)
+    currentCalendar.renderEvent(extraEvent2)
     expect($('.fc-event').length).toBe(0)
 
-    calendar.removeEvents(extraEvent2.id) // only works with id!?
+    currentCalendar.removeEvents(extraEvent2.id) // only works with id!?
     expect($('.fc-event').length).toBe(0)
   })
 })

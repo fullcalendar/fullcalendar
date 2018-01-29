@@ -11,22 +11,15 @@ describe('event object creation', function() {
 
   */
 
-  var event
-
-  beforeEach(function() {
-    affix('#cal')
-    event = null
-  })
-
   function init(singleEventData) {
-    $('#cal').fullCalendar({
+    initCalendar({
       events: [ singleEventData ]
     })
-    event = $('#cal').fullCalendar('clientEvents')[0]
+    return currentCalendar.clientEvents()[0]
   }
 
   it('accepts `date` property as alias for `start`', function() {
-    init({
+    var event = init({
       date: '2014-05-05'
     })
     expect(moment.isMoment(event.start)).toEqual(true)
@@ -34,14 +27,14 @@ describe('event object creation', function() {
   })
 
   it('doesn\'t produce an event when an invalid start', function() {
-    init({
+    var event = init({
       start: new Date('asdf') // we use Date constructor to avoid annoying momentjs warning
     })
     expect(event).toBeUndefined()
   })
 
   it('produces null end when given an invalid date', function() {
-    init({
+    var event = init({
       start: '2014-05-01',
       end: new Date('asdf') // we use Date constructor to avoid annoying momentjs warning
     })
@@ -50,7 +43,7 @@ describe('event object creation', function() {
   })
 
   it('produces null end when given a timed end before the start', function() {
-    init({
+    var event = init({
       start: '2014-05-02T00:00:00',
       end: '2014-05-01T23:00:00'
     })
@@ -59,7 +52,7 @@ describe('event object creation', function() {
   })
 
   it('produces null end when given a timed end equal to the start', function() {
-    init({
+    var event = init({
       start: '2014-05-02T00:00:00',
       end: '2014-05-01T00:00:00'
     })
@@ -68,7 +61,7 @@ describe('event object creation', function() {
   })
 
   it('produces null end when given an all-day end before the start', function() {
-    init({
+    var event = init({
       start: '2014-05-02',
       end: '2014-05-02'
     })
@@ -77,7 +70,7 @@ describe('event object creation', function() {
   })
 
   it('produces null end when given an all-day end equal to the start', function() {
-    init({
+    var event = init({
       start: '2014-05-02T00:00:00',
       end: '2014-05-02T00:00:00'
     })
@@ -86,7 +79,7 @@ describe('event object creation', function() {
   })
 
   it('allows ASP dates for start', function() {
-    init({
+    var event = init({
       start: '/Date(1239018869048)/',
       end: '/Date(1239105269048)/'
     })
@@ -97,7 +90,7 @@ describe('event object creation', function() {
   })
 
   it('produces null end when given an invalid ASP date end', function() {
-    init({
+    var event = init({
       start: '/Date(1239018869048)/',
       end: '/Date(1239018869048)/' // same as start
     })
@@ -107,7 +100,7 @@ describe('event object creation', function() {
   })
 
   it('strips times of dates when event is all-day', function() {
-    init({
+    var event = init({
       start: '2014-05-01T01:00:00-12:00',
       end: '2014-05-02T01:00:00-12:00',
       allDay: true
@@ -119,7 +112,7 @@ describe('event object creation', function() {
   })
 
   it('gives 00:00 times to ambiguously-timed dates when event is timed', function() {
-    init({
+    var event = init({
       start: '2014-05-01',
       end: '2014-05-03',
       allDay: false
@@ -131,14 +124,14 @@ describe('event object creation', function() {
   })
 
   it('sets the source', function() {
-    init({
+    var event = init({
       start: '2014-05-01'
     })
     expect(typeof event.source).toEqual('object')
   })
 
   it('accepts an array `className`', function() {
-    init({
+    var event = init({
       start: '2014-05-01',
       className: [ 'class1', 'class2' ]
     })
@@ -147,7 +140,7 @@ describe('event object creation', function() {
   })
 
   it('accepts a string `className`', function() {
-    init({
+    var event = init({
       start: '2014-05-01',
       className: 'class1 class2'
     })
@@ -156,7 +149,7 @@ describe('event object creation', function() {
   })
 
   it('copies over custom properties', function() {
-    init({
+    var event = init({
       start: '2014-05-01',
       prop1: 'prop1val',
       prop2: [ 'a', 'b' ]
