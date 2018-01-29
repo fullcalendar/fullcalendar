@@ -1,6 +1,6 @@
 
-v3.8.1
-------
+v3.8.1 (2018-01-28)
+-------------------
 
 Bugfixes:
 - Typescript definition file not compatible with noImplicitAny (#4017)
@@ -9,6 +9,7 @@ Bugfixes:
 - select helper is resizable, causes js error (#3764)
 - selecting over existing select helper causes js error (#4031)
 - eventOrder doesn't work on custom fields (#3950)
+- aria label on button icons (#4023)
 - dynamic option changes to select/overlap/allow doesn't cause rerender
 
 Locales:
