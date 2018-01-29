@@ -4,6 +4,7 @@ import EventDefDateMutation from '../../models/event/EventDefDateMutation'
 import DragListener from '../../common/DragListener'
 import HitDragListener from '../../common/HitDragListener'
 import MouseFollower from '../../common/MouseFollower'
+import GlobalEmitter from '../../common/GlobalEmitter'
 import Interaction from './Interaction'
 
 
@@ -55,7 +56,10 @@ export default class EventDragging extends Interaction {
 
 
   handleMousedown(seg, ev) {
-    if (this.component.canStartDrag(seg, ev)) {
+    if (
+      !GlobalEmitter.get().shouldIgnoreMouse() && // TODO: move to a deeper level
+      this.component.canStartDrag(seg, ev)
+    ) {
       this.buildDragListener(seg).startInteraction(ev, { distance: 5 })
     }
   }
@@ -68,10 +72,12 @@ export default class EventDragging extends Interaction {
         0 : this.getSelectionDelay()
     }
 
-    if (component.canStartDrag(seg, ev)) {
-      this.buildDragListener(seg).startInteraction(ev, settings)
-    } else if (component.canStartSelection(seg, ev)) {
-      this.buildSelectListener(seg).startInteraction(ev, settings)
+    if (!GlobalEmitter.get().shouldIgnoreMouse()) { // TODO: move to a deeper level
+      if (component.canStartDrag(seg, ev)) {
+        this.buildDragListener(seg).startInteraction(ev, settings)
+      } else if (component.canStartSelection(seg, ev)) {
+        this.buildSelectListener(seg).startInteraction(ev, settings)
+      }
     }
   }
 
