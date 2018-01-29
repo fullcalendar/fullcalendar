@@ -127,15 +127,14 @@ export default class Toolbar {
                 buttonAriaAttr = ''
               } else if (buttonIcon) {
                 buttonInnerHtml = "<span class='" + buttonIcon + "'></span>"
-                buttonAriaAttr = '" aria-label="' + buttonName
+                buttonAriaAttr = ' aria-label="' + buttonName + '"'
               }
 
               buttonEl = $( // type="button" so that it doesn't submit a form
-                '<button type="button" class="' + buttonClasses.join(' ') +
-                  buttonAriaAttr + '">' +
-                  buttonInnerHtml +
-                '</button>'
-                )
+                '<button type="button" class="' + buttonClasses.join(' ') + '"' +
+                  buttonAriaAttr +
+                '>' + buttonInnerHtml + '</button>'
+              )
                 .click(function(ev) {
                   // don't process clicks for disabled buttons
                   if (!buttonEl.hasClass(theme.getClass('stateDisabled'))) {
