@@ -5,7 +5,9 @@ require('./hacks')
 var context = require.context(
   '.',
   true, // recursive?
-  /[^/]+\/[^/]+\.(js|ts)$/ // inside subdirectory
+  // inside a subdirectory that is not blacklisted
+  // paths start with a "./"
+  /^\.\/(?!(manual|examples)\/)([^\/]+)\/(.*)\.(js|ts)$/
 )
 
 context.keys().forEach(context)
