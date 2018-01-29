@@ -3,25 +3,17 @@ import { RED_REGEX } from '../lib/dom-misc'
 describe('background events', function() {
 
   // SEE ALSO: event-color.js
-
-  var options
-
-  beforeEach(function() {
-    options = {
-      defaultDate: '2014-11-04',
-      scrollTime: '00:00'
-    }
-    affix('#cal')
-    $('#cal').width(1100)
+  pushOptions({
+    defaultDate: '2014-11-04',
+    scrollTime: '00:00'
   })
 
   describe('when in month view', function() {
-    beforeEach(function() {
-      options.defaultView = 'month'
-    })
+    pushOptions({ defaultView: 'month' })
 
     describe('when LTR', function() {
       it('render correctly on a single day', function(done) {
+        var options = {}
         options.events = [ {
           title: 'hi',
           start: '2014-11-04',
@@ -35,9 +27,10 @@ describe('background events', function() {
           expect($('.fc-bgevent .fc-resizer').length).toBe(0) // can't resize
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       it('render correctly spanning multiple weeks', function(done) {
+        var options = {}
         options.events = [ {
           title: 'hi',
           start: '2014-11-04',
@@ -53,9 +46,10 @@ describe('background events', function() {
           expect($('.fc-event').length).toBe(0)
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       it('render correctly when two span on top of each other', function(done) {
+        var options = {}
         options.events = [
           {
             start: '2014-11-04',
@@ -76,10 +70,11 @@ describe('background events', function() {
           expect($('.fc-event').length).toBe(0)
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       describe('when weekNumbers', function() {
         it('renders to right of week numbers', function(done) {
+          var options = {}
           options.weekNumbers = true
           options.events = [ {
             start: '2014-11-02',
@@ -93,10 +88,11 @@ describe('background events', function() {
             expect($('.fc-event').length).toBe(0)
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
       })
       it('renders "business hours" on whole days', function(done) {
+        var options = {}
         options.businessHours = true
         options.eventAfterAllRender = function() {
           setTimeout(function() { // no trigger when business hours renders. this will have to do.
@@ -104,15 +100,15 @@ describe('background events', function() {
             done()
           }, 0)
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
     })
 
     describe('when RTL', function() {
-      beforeEach(function() {
-        options.isRTL = true
-      })
+      pushOptions({isRTL: true})
+
       it('render correctly on a single day', function(done) {
+        var options = {}
         options.events = [ {
           title: 'hi',
           start: '2014-11-04',
@@ -125,9 +121,10 @@ describe('background events', function() {
           expect($('.fc-event').length).toBe(0)
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       it('render correctly spanning multiple weeks', function(done) {
+        var options = {}
         options.events = [ {
           title: 'hi',
           start: '2014-11-04',
@@ -143,10 +140,11 @@ describe('background events', function() {
           expect($('.fc-event').length).toBe(0)
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       describe('when weekNumbers', function() {
         it('renders to left of week numbers', function(done) {
+          var options = {}
           options.weekNumbers = true
           options.events = [ {
             start: '2014-11-02',
@@ -160,7 +158,7 @@ describe('background events', function() {
             expect($('.fc-event').length).toBe(0)
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
       })
     })
@@ -169,6 +167,7 @@ describe('background events', function() {
 
       describe('when LTR', function() {
         it('render correctly on a single day', function(done) {
+          var options = {}
           options.events = [ {
             title: 'hi',
             start: '2014-11-04',
@@ -191,9 +190,10 @@ describe('background events', function() {
             expect($('.fc-event').length).toBe(0)
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
         it('render correctly spanning multiple weeks', function(done) {
+          var options = {}
           options.events = [ {
             title: 'hi',
             start: '2014-11-04',
@@ -218,9 +218,10 @@ describe('background events', function() {
             expect($('.fc-event').length).toBe(0)
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
         it('render correctly when starts before start of month', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-10-24',
             end: '2014-11-06',
@@ -240,9 +241,10 @@ describe('background events', function() {
 
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
         it('render correctly when ends after end of month', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-11-27',
             end: '2014-12-08',
@@ -262,9 +264,10 @@ describe('background events', function() {
 
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
         it('render correctly with two related events, in reverse order', function(done) {
+          var options = {}
           options.events = [
             {
               id: 'hi',
@@ -288,21 +291,22 @@ describe('background events', function() {
 
             /* order in DOM is reversed
             expect($('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(0)'))
-              .toBeLeftOf('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(1)');
+              .toBeLeftOf('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(1)')
             expect($('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(1)'))
-              .toBeLeftOf('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(2)'); */
+              .toBeLeftOf('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(2)')
+            */
 
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
       })
 
       describe('when RTL', function() {
-        beforeEach(function() {
-          options.isRTL = true
-        })
+        pushOptions({ isRTL: true })
+
         it('render correctly on a single day', function(done) {
+          var options = {}
           options.events = [ {
             title: 'hi',
             start: '2014-11-04',
@@ -319,19 +323,21 @@ describe('background events', function() {
 
             /* order in DOM is reversed
             expect($('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(0)'))
-              .toBeLeftOf('.fc-day[data-date="2014-11-03"]');
+              .toBeLeftOf('.fc-day[data-date="2014-11-03"]')
             expect($('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(1)'))
-              .toBeRightOf('.fc-day[data-date="2014-11-05"]'); */
+              .toBeRightOf('.fc-day[data-date="2014-11-05"]')
+            */
 
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
       })
     })
 
     describe('when in month view', function() {
       it('can be activated when rendering set on the source', function(done) {
+        var options = {}
         options.defaultView = 'month'
         options.eventSources = [ {
           rendering: 'background',
@@ -344,12 +350,13 @@ describe('background events', function() {
           expect($('.fc-event').length).toBe(0)
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
     })
 
     describe('when in agenda view and timed event', function() {
       it('can be activated when rendering set on the source', function(done) {
+        var options = {}
         options.defaultView = 'agendaWeek'
         options.eventSources = [ {
           rendering: 'background',
@@ -362,18 +369,17 @@ describe('background events', function() {
           expect($('.fc-event').length).toBe(0)
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
     })
   })
 
   describe('when in agendaWeek view', function() {
-    beforeEach(function() {
-      options.defaultView = 'agendaWeek'
-    })
+    pushOptions({ defaultView: 'agendaWeek' })
 
     describe('when LTR', function() {
       it('render correctly on one day', function(done) {
+        var options = {}
         options.events = [ {
           start: '2014-11-04T01:00:00',
           end: '2014-11-04T05:00:00',
@@ -388,9 +394,10 @@ describe('background events', function() {
           expect($('.fc-bgevent .fc-resizer').length).toBe(0) // can't resize
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       it('render correctly spanning multiple days', function(done) {
+        var options = {}
         options.events = [ {
           start: '2014-11-04T01:00:00',
           end: '2014-11-05T05:00:00',
@@ -403,9 +410,10 @@ describe('background events', function() {
           // TODO: maybe check y coords
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       it('render correctly when two span on top of each other', function(done) {
+        var options = {}
         options.events = [
           {
             start: '2014-11-04T01:00:00',
@@ -425,22 +433,24 @@ describe('background events', function() {
           // TODO: maybe check y coords
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       describe('when businessHours', function() {
         it('renders correctly if assumed default', function() {
+          var options = {}
           options.businessHours = true
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
           expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2) // whole days in the day area
           expect($('.fc-time-grid .fc-nonbusiness').length).toBe(12) // strips of gray on the timed area
         })
         it('renders correctly if custom', function() {
+          var options = {}
           options.businessHours = {
             start: '02:00',
             end: '06:00',
             dow: [ 1, 2, 3, 4 ] // Mon-Thu
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
 
           // whole days
           expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2) // each multi-day stretch is one element
@@ -458,10 +468,9 @@ describe('background events', function() {
       })
     })
     describe('when RTL', function() {
-      beforeEach(function() {
-        options.isRTL = true
-      })
+      pushOptions({ isRTL: true })
       it('render correctly on one day', function(done) {
+        var options = {}
         options.events = [ {
           start: '2014-11-04T01:00:00',
           end: '2014-11-04T05:00:00',
@@ -474,9 +483,10 @@ describe('background events', function() {
           expect($('.fc-bgevent')).toBeAbove('.fc-slats tr:eq(10)') // 5am
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       it('render correctly spanning multiple days', function(done) {
+        var options = {}
         options.events = [ {
           start: '2014-11-04T01:00:00',
           end: '2014-11-05T05:00:00',
@@ -488,16 +498,17 @@ describe('background events', function() {
           expect(queryBgEventsInCol(4).length).toBe(1)
           done()
         }
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
       })
       describe('when businessHours', function() {
         it('renders correctly if custom', function() {
+          var options = {}
           options.businessHours = {
             start: '02:00',
             end: '06:00',
             dow: [ 1, 2, 3, 4 ] // Mon-Thu
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
 
           // whole days
           expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2) // each stretch of days is one element
@@ -520,6 +531,7 @@ describe('background events', function() {
       describe('when LTR', function() {
 
         it('render correctly on one day', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
@@ -537,10 +549,11 @@ describe('background events', function() {
             // TODO: maybe check y coords
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
 
         it('render correctly spanning multiple days', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-05T05:00:00',
@@ -558,10 +571,11 @@ describe('background events', function() {
             // TODO: maybe check y coords
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
 
         it('render correctly when starts before start of week', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-10-30T01:00:00',
             end: '2014-11-04T05:00:00',
@@ -579,10 +593,11 @@ describe('background events', function() {
             // TODO: maybe check y coords
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
 
         it('render correctly when ends after end of week', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-12T05:00:00',
@@ -596,10 +611,11 @@ describe('background events', function() {
             // TODO: maybe check y coords
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
 
         it('render correctly with two related events, in reverse order', function(done) {
+          var options = {}
           options.events = [
             {
               id: 'hello',
@@ -626,10 +642,11 @@ describe('background events', function() {
             // TODO: maybe check y coords
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
 
         it('render correctly with two related events, nested', function(done) {
+          var options = {}
           options.events = [
             {
               id: 'hello',
@@ -659,16 +676,15 @@ describe('background events', function() {
 
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
 
       })
 
       describe('when RTL', function() {
-        beforeEach(function() {
-          options.isRTL = true
-        })
+        pushOptions({ isRTL: true })
         it('render correctly on one day', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
@@ -686,12 +702,13 @@ describe('background events', function() {
             // TODO: maybe check y coords
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
       })
 
       describe('when out of view range', function() {
         it('should still render', function(done) {
+          var options = {}
           options.events = [ {
             start: '2014-01-01T01:00:00',
             end: '2014-01-01T05:00:00',
@@ -701,12 +718,13 @@ describe('background events', function() {
             expect($('.fc-bgevent').length).toBe(7)
             done()
           }
-          $('#cal').fullCalendar(options)
+          initCalendar(options)
         })
       })
     })
 
     it('can have custom Event Object color', function(done) {
+      var options = {}
       options.events = [ {
         start: '2014-11-04T01:00:00',
         rendering: 'background',
@@ -716,10 +734,11 @@ describe('background events', function() {
         expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX)
         done()
       }
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
 
     it('can have custom Event Object backgroundColor', function(done) {
+      var options = {}
       options.events = [ {
         start: '2014-11-04T01:00:00',
         rendering: 'background',
@@ -729,10 +748,11 @@ describe('background events', function() {
         expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX)
         done()
       }
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
 
     it('can have custom Event Source color', function(done) {
+      var options = {}
       options.eventSources = [ {
         color: 'red',
         events: [ {
@@ -744,10 +764,11 @@ describe('background events', function() {
         expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX)
         done()
       }
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
 
     it('can have custom Event Source backgroundColor', function(done) {
+      var options = {}
       options.eventSources = [ {
         backgroundColor: 'red',
         events: [ {
@@ -759,10 +780,11 @@ describe('background events', function() {
         expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX)
         done()
       }
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
 
     it('is affected by global eventColor', function(done) {
+      var options = {}
       options.eventColor = 'red'
       options.eventSources = [ {
         events: [ {
@@ -774,10 +796,11 @@ describe('background events', function() {
         expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX)
         done()
       }
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
 
     it('is affected by global eventBackgroundColor', function(done) {
+      var options = {}
       options.eventBackgroundColor = 'red'
       options.eventSources = [ {
         events: [ {
@@ -789,10 +812,9 @@ describe('background events', function() {
         expect($('.fc-bgevent').css('background-color')).toMatch(RED_REGEX)
         done()
       }
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
   })
-
 
   function queryBgEventsInCol(col) {
     return $('.fc-time-grid .fc-content-skeleton td:not(.fc-axis):eq(' + col + ') .fc-bgevent')
@@ -801,5 +823,4 @@ describe('background events', function() {
   function queryNonBusinessSegsInCol(col) {
     return $('.fc-time-grid .fc-content-skeleton td:not(.fc-axis):eq(' + col + ') .fc-nonbusiness')
   }
-
 })
