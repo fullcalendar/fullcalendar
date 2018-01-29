@@ -43,6 +43,8 @@ export default class OptionsManager extends Model {
         return // can't change date this way. use gotoDate instead
       } else if (optionName === 'businessHours') {
         return // this model already reacts to this
+      } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(optionName)) {
+        return // doesn't affect rendering. only interactions.
       } else if (optionName === 'timezone') {
         this._calendar.view.flash('initialEvents')
         return
