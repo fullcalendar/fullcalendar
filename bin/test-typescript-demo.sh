@@ -17,14 +17,14 @@ else
   use_current=1
 fi
 
-if [[ ! -d 'tests/examples/typescript-example' ]]
+if [[ ! -d 'tests/example-repos/typescript-example' ]]
 then
   echo "Checking out the typescript-example git submodule..."
   git submodule init
   git submodule update
 fi
 
-cd 'tests/examples/typescript-example'
+cd 'tests/example-repos/typescript-example'
 
 npm install
 
