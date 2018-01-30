@@ -66,8 +66,7 @@ gulp.task('lint:js:node', function() {
 
 gulp.task('lint:js:tests', function() {
   return gulp.src([
-    'tests/**/*.js',
-    '!tests/manual/themeswitcher/**'
+    'tests/automated/**/*.js'
   ])
     .pipe(
       eslint({
