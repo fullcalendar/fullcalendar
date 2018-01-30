@@ -49,6 +49,7 @@
     "gulp-filter": "^4.0.0",
     "gulp-modify-file": "^1.0.0",
     "gulp-rename": "^1.2.2",
+    "gulp-shell": "^0.6.5",
     "gulp-tslint": "^8.1.2",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
@@ -93,6 +94,6 @@
     "clean": "gulp clean",
     "dist": "gulp dist",
     "lint": "gulp lint",
-    "test": "gulp test:single && ./bin/test-typescript-example.sh"
+    "test": "gulp test:single example-repos:test"
   }
 }
