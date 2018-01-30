@@ -85,7 +85,7 @@ export interface ButtonTextCompoundInput {
   month?: string
   week?: string
   day?: string
-  [viewId: string]: string
+  [viewId: string]: string | undefined // needed b/c of other optional types
 }
 
 export interface BusinessHoursInput {
