@@ -8,7 +8,6 @@ require('./tasks/archive')
 require('./tasks/test')
 require('./tasks/lint')
 require('./tasks/bump')
-require('./tasks/example-repos')
 
 // when running just `gulp`
 gulp.task('default', [ 'dist' ])

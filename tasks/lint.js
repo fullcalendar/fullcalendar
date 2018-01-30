@@ -8,11 +8,11 @@ const tslintProgram = tslintLib.Linter.createProgram('./tsconfig.json')
 
 gulp.task('lint', [
   'lint:ts',
-  'lint:dts',
   'lint:js:built',
   'lint:js:node',
   'lint:js:tests',
-  'example-repos:build'
+  'lint:dts',
+  'lint:example-repos'
 ])
 
 gulp.task('lint:ts', function() {
@@ -28,12 +28,6 @@ gulp.task('lint:ts', function() {
     )
     .pipe(tslint.report())
 })
-
-// runs the definitions file through the typescript compiler with strict settings
-// tho we don't do a require('typescript'), we need the tsc executable
-gulp.task('lint:dts', [ 'ts-types' ], shell.task(
-  './node_modules/typescript/bin/tsc dist/fullcalendar.d.ts --noImplicitAny --strictNullChecks'
-))
 
 gulp.task('lint:js:built', [ 'webpack' ], function() {
   return gulp.src([
@@ -96,3 +90,14 @@ gulp.task('lint:js:tests', function() {
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
 })
+
+// runs the definitions file through the typescript compiler with strict settings
+// tho we don't do a require('typescript'), we need the tsc executable
+gulp.task('lint:dts', [ 'ts-types' ], shell.task(
+  './node_modules/typescript/bin/tsc dist/fullcalendar.d.ts --noImplicitAny --strictNullChecks'
+))
+
+// try to build example repos
+gulp.task('lint:example-repos', [ 'webpack', 'ts-types' ], shell.task(
+  './bin/build-typescript-example.sh'
+))
