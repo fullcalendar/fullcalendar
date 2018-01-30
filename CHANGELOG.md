@@ -3,7 +3,7 @@ v3.8.1 (2018-01-28)
 -------------------
 
 Bugfixes:
-- Typescript definition file not compatible with noImplicitAny (#4017)
+- TypeScript definition file not compatible with noImplicitAny (#4017)
 - ES6 classes are not supported for grid class (#3437)
 - day numbers in month view should be localized (#3339)
 - select helper is resizable, causes js error (#3764)
@@ -24,7 +24,7 @@ v3.8.0 (2017-12-18)
   - `columnHeaderFormat` (renamed from `columnFormat`)
   - `columnHeaderText`
   - `columnHeaderHtml`
-- TypeScript definition file (scheduler.d.ts) included in npm package (#3889)
+- TypeScript definition file (fullcalendar.d.ts) included in npm package (#3889)
 - codebase using SASS, though not taking advantage of it yet (#3463)
 - codebase fully ported to TypeScript / Webpack
 - Afrikaans locale fix (#3862)
