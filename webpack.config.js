@@ -14,7 +14,7 @@ const MODULES = {
   'dist/fullcalendar.css': './src/main.scss',
   'dist/fullcalendar.print.css': './src/common/print.scss',
   'dist/gcal': './plugins/gcal/main.ts',
-  'tmp/compiled-tests': './tests/index'
+  'tmp/automated-tests': './tests/automated/index'
 }
 
 const BANNER =

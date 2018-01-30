@@ -28,7 +28,7 @@ module.exports = function(config) {
       'dist/locale-all.js',
 
       // a way to dump variables into the test environment
-      'tmp/test-config.js',
+      'tmp/automated-test-config.js',
 
       // so plugins can dump files into here and test side effects
       'tmp/test-side-effects/*.js',
@@ -40,8 +40,8 @@ module.exports = function(config) {
       'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
       'node_modules/jquery-simulate/jquery.simulate.js',
 
-      'tests/base.css',
-      'tmp/compiled-tests.js',
+      'tests/automated/base.css',
+      'tmp/automated-tests.js',
 
       { // serve all other files
         pattern: '**/*',
@@ -99,7 +99,7 @@ function writeConfig() {
     fs.mkdirSync('tmp')
   }
   fs.writeFileSync(
-    'tmp/test-config.js',
+    'tmp/automated-test-config.js',
     'window.karmaConfig = ' + JSON.stringify(config),
     { encoding: 'utf8' }
   )
