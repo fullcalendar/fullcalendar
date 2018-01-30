@@ -44,6 +44,7 @@ then
   sleep 5
 
   ./bin/verify-npm.sh
+  ./bin/test-typescript-example.sh --recent-release
   echo "Success."
 else
   echo "Failure."
