@@ -11,7 +11,8 @@ gulp.task('lint', [
   'lint:dts',
   'lint:js:built',
   'lint:js:node',
-  'lint:js:tests'
+  'lint:js:tests',
+  'example-repos:build'
 ])
 
 gulp.task('lint:ts', function() {

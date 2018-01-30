@@ -94,6 +94,6 @@
     "clean": "gulp clean",
     "dist": "gulp dist",
     "lint": "gulp lint",
-    "test": "gulp test:single example-repos:test"
+    "test": "gulp test:single"
   }
 }
