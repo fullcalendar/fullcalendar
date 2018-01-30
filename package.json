@@ -25,8 +25,8 @@
     "jquery": "2 - 3",
     "moment": "^2.9.0"
   },
-  "version": "0.0.0",
-  "releaseDate": "1970-01-01",
+  "version": "3.8.2",
+  "releaseDate": "2018-01-30",
   "devDependencies": {
     "@types/jquery": "2.0.47",
     "awesome-typescript-loader": "^3.3.0",
