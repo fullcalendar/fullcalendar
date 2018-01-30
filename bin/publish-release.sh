@@ -40,11 +40,11 @@ git reset --quiet -- dist
 
 if [[ "$success" == "1" ]]
 then
-  echo "Waiting for changes to propagate..."
+  echo "Waiting for release to propagate to NPM..."
   sleep 5
 
   ./bin/verify-npm.sh
-  ./bin/test-typescript-example.sh --recent-release
+  ./bin/build-typescript-example.sh --recent-release
   echo "Success."
 else
   echo "Failure."
