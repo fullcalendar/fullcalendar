@@ -7,9 +7,10 @@ export const version = '<%= version %>'
 export const internalApiVersion = 12
 
 export {
-  EventObjectInput,
   BusinessHoursInput,
-  EventOptionsBase
+  EventObjectInput,
+  EventOptionsBase,
+  OptionsInput
 } from './types/input-types'
 
 export {
