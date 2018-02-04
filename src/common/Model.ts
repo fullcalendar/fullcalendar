@@ -5,328 +5,323 @@ import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export default class Model extends Class {
 
-	on: EmitterInterface['on']
-	one: EmitterInterface['one']
-	off: EmitterInterface['off']
-	trigger: EmitterInterface['trigger']
-	triggerWith: EmitterInterface['triggerWith']
-	hasHandlers: EmitterInterface['hasHandlers']
-	listenTo: ListenerInterface['listenTo']
-	stopListeningTo: ListenerInterface['stopListeningTo']
+  on: EmitterInterface['on']
+  one: EmitterInterface['one']
+  off: EmitterInterface['off']
+  trigger: EmitterInterface['trigger']
+  triggerWith: EmitterInterface['triggerWith']
+  hasHandlers: EmitterInterface['hasHandlers']
+  listenTo: ListenerInterface['listenTo']
+  stopListeningTo: ListenerInterface['stopListeningTo']
 
-	_props: any
-	_watchers: any
-	_globalWatchArgs: any // initialized after class
+  _props: any
+  _watchers: any
+  _globalWatchArgs: any // initialized after class
 
-	constructor() {
-		super()
-		this._watchers = {};
-		this._props = {};
-		this.applyGlobalWatchers();
-		this.constructed();
-	}
+  constructor() {
+    super()
+    this._watchers = {}
+    this._props = {}
+    this.applyGlobalWatchers()
+    this.constructed()
+  }
 
-	// useful for monkeypatching. TODO: BaseClass?
-	constructed() {
-	}
+  static watch(name, ...args) {
+    // subclasses should make a masked-copy of the superclass's map
+    // TODO: write test
+    if (!this.prototype.hasOwnProperty('_globalWatchArgs')) {
+      this.prototype._globalWatchArgs = Object.create(this.prototype._globalWatchArgs)
+    }
 
-	applyGlobalWatchers() {
-		var map = this._globalWatchArgs;
-		var name;
+    this.prototype._globalWatchArgs[name] = args
+  }
 
-		for (name in map) {
-			this.watch.apply(this, [ name ].concat(map[name]));
-		}
-	}
+  constructed() {
+    // useful for monkeypatching. TODO: BaseClass?
+  }
 
-	has(name) {
-		return name in this._props;
-	}
+  applyGlobalWatchers() {
+    let map = this._globalWatchArgs
+    let name
 
-	get(name) {
-		if (name === undefined) {
-			return this._props;
-		}
+    for (name in map) {
+      this.watch.apply(this, [ name ].concat(map[name]))
+    }
+  }
 
-		return this._props[name];
-	}
+  has(name) {
+    return name in this._props
+  }
 
-	set(name, val) {
-		var newProps;
+  get(name) {
+    if (name === undefined) {
+      return this._props
+    }
 
-		if (typeof name === 'string') {
-			newProps = {};
-			newProps[name] = val === undefined ? null : val;
-		}
-		else {
-			newProps = name;
-		}
+    return this._props[name]
+  }
 
-		this.setProps(newProps);
-	}
+  set(name, val) {
+    let newProps
 
-	reset(newProps) {
-		var oldProps = this._props;
-		var changeset = {}; // will have undefined's to signal unsets
-		var name;
+    if (typeof name === 'string') {
+      newProps = {}
+      newProps[name] = val === undefined ? null : val
+    } else {
+      newProps = name
+    }
 
-		for (name in oldProps) {
-			changeset[name] = undefined;
-		}
+    this.setProps(newProps)
+  }
 
-		for (name in newProps) {
-			changeset[name] = newProps[name];
-		}
+  reset(newProps) {
+    let oldProps = this._props
+    let changeset = {} // will have undefined's to signal unsets
+    let name
 
-		this.setProps(changeset);
-	}
+    for (name in oldProps) {
+      changeset[name] = undefined
+    }
 
-	unset(name) { // accepts a string or array of strings
-		var newProps = {};
-		var names;
-		var i;
+    for (name in newProps) {
+      changeset[name] = newProps[name]
+    }
 
-		if (typeof name === 'string') {
-			names = [ name ];
-		}
-		else {
-			names = name;
-		}
+    this.setProps(changeset)
+  }
 
-		for (i = 0; i < names.length; i++) {
-			newProps[names[i]] = undefined;
-		}
+  unset(name) { // accepts a string or array of strings
+    let newProps = {}
+    let names
+    let i
 
-		this.setProps(newProps);
-	}
+    if (typeof name === 'string') {
+      names = [ name ]
+    } else {
+      names = name
+    }
 
-	setProps(newProps) {
-		var changedProps = {};
-		var changedCnt = 0;
-		var name, val;
+    for (i = 0; i < names.length; i++) {
+      newProps[names[i]] = undefined
+    }
 
-		for (name in newProps) {
-			val = newProps[name];
+    this.setProps(newProps)
+  }
 
-			// a change in value?
-			// if an object, don't check equality, because might have been mutated internally.
-			// TODO: eventually enforce immutability.
-			if (
-				typeof val === 'object' ||
-				val !== this._props[name]
-			) {
-				changedProps[name] = val;
-				changedCnt++;
-			}
-		}
+  setProps(newProps) {
+    let changedProps = {}
+    let changedCnt = 0
+    let name
+    let val
 
-		if (changedCnt) {
+    for (name in newProps) {
+      val = newProps[name]
 
-			this.trigger('before:batchChange', changedProps);
+      // a change in value?
+      // if an object, don't check equality, because might have been mutated internally.
+      // TODO: eventually enforce immutability.
+      if (
+        typeof val === 'object' ||
+        val !== this._props[name]
+      ) {
+        changedProps[name] = val
+        changedCnt++
+      }
+    }
 
-			for (name in changedProps) {
-				val = changedProps[name];
+    if (changedCnt) {
 
-				this.trigger('before:change', name, val);
-				this.trigger('before:change:' + name, val);
-			}
+      this.trigger('before:batchChange', changedProps)
 
-			for (name in changedProps) {
-				val = changedProps[name];
+      for (name in changedProps) {
+        val = changedProps[name]
 
-				if (val === undefined) {
-					delete this._props[name];
-				}
-				else {
-					this._props[name] = val;
-				}
+        this.trigger('before:change', name, val)
+        this.trigger('before:change:' + name, val)
+      }
 
-				this.trigger('change:' + name, val);
-				this.trigger('change', name, val);
-			}
+      for (name in changedProps) {
+        val = changedProps[name]
 
-			this.trigger('batchChange', changedProps);
-		}
-	}
+        if (val === undefined) {
+          delete this._props[name]
+        } else {
+          this._props[name] = val
+        }
 
-	watch(name, depList, startFunc, stopFunc) {
-		this.unwatch(name);
+        this.trigger('change:' + name, val)
+        this.trigger('change', name, val)
+      }
 
-		this._watchers[name] = this._watchDeps(depList, (deps) => {
-			var res = startFunc.call(this, deps);
+      this.trigger('batchChange', changedProps)
+    }
+  }
 
-			if (res && res.then) {
-				this.unset(name); // put in an unset state while resolving
-				res.then((val) => {
-					this.set(name, val);
-				});
-			}
-			else {
-				this.set(name, res);
-			}
-		}, (deps) => {
-			this.unset(name);
+  watch(name, depList, startFunc, stopFunc?) {
+    this.unwatch(name)
 
-			if (stopFunc) {
-				stopFunc.call(this, deps);
-			}
-		});
-	}
+    this._watchers[name] = this._watchDeps(depList, (deps) => {
+      let res = startFunc.call(this, deps)
 
-	unwatch(name) {
-		var watcher = this._watchers[name];
+      if (res && res.then) {
+        this.unset(name) // put in an unset state while resolving
+        res.then((val) => {
+          this.set(name, val)
+        })
+      } else {
+        this.set(name, res)
+      }
+    }, (deps) => {
+      this.unset(name)
 
-		if (watcher) {
-			delete this._watchers[name];
-			watcher.teardown();
-		}
-	}
+      if (stopFunc) {
+        stopFunc.call(this, deps)
+      }
+    })
+  }
 
-	_watchDeps(depList, startFunc, stopFunc) {
-		var queuedChangeCnt = 0;
-		var depCnt = depList.length;
-		var satisfyCnt = 0;
-		var values = {}; // what's passed as the `deps` arguments
-		var bindTuples = []; // array of [ eventName, handlerFunc ] arrays
-		var isCallingStop = false;
+  unwatch(name) {
+    let watcher = this._watchers[name]
 
-		const onBeforeDepChange = (depName, val, isOptional) => {
-			queuedChangeCnt++;
-			if (queuedChangeCnt === 1) { // first change to cause a "stop" ?
-				if (satisfyCnt === depCnt) { // all deps previously satisfied?
-					isCallingStop = true;
-					stopFunc(values);
-					isCallingStop = false;
-				}
-			}
-		}
+    if (watcher) {
+      delete this._watchers[name]
+      watcher.teardown()
+    }
+  }
 
-		const onDepChange = (depName, val, isOptional) => {
+  _watchDeps(depList, startFunc, stopFunc) {
+    let queuedChangeCnt = 0
+    let depCnt = depList.length
+    let satisfyCnt = 0
+    let values = {} // what's passed as the `deps` arguments
+    let bindTuples = [] // array of [ eventName, handlerFunc ] arrays
+    let isCallingStop = false
 
-			if (val === undefined) { // unsetting a value?
+    const onBeforeDepChange = (depName, val, isOptional) => {
+      queuedChangeCnt++
+      if (queuedChangeCnt === 1) { // first change to cause a "stop" ?
+        if (satisfyCnt === depCnt) { // all deps previously satisfied?
+          isCallingStop = true
+          stopFunc(values)
+          isCallingStop = false
+        }
+      }
+    }
 
-				// required dependency that was previously set?
-				if (!isOptional && values[depName] !== undefined) {
-					satisfyCnt--;
-				}
+    const onDepChange = (depName, val, isOptional) => {
 
-				delete values[depName];
-			}
-			else { // setting a value?
+      if (val === undefined) { // unsetting a value?
 
-				// required dependency that was previously unset?
-				if (!isOptional && values[depName] === undefined) {
-					satisfyCnt++;
-				}
+        // required dependency that was previously set?
+        if (!isOptional && values[depName] !== undefined) {
+          satisfyCnt--
+        }
 
-				values[depName] = val;
-			}
+        delete values[depName]
+      } else { // setting a value?
 
-			queuedChangeCnt--;
-			if (!queuedChangeCnt) { // last change to cause a "start"?
+        // required dependency that was previously unset?
+        if (!isOptional && values[depName] === undefined) {
+          satisfyCnt++
+        }
 
-				// now finally satisfied or satisfied all along?
-				if (satisfyCnt === depCnt) {
+        values[depName] = val
+      }
 
-					// if the stopFunc initiated another value change, ignore it.
-					// it will be processed by another change event anyway.
-					if (!isCallingStop) {
-						startFunc(values);
-					}
-				}
-			}
-		}
+      queuedChangeCnt--
+      if (!queuedChangeCnt) { // last change to cause a "start"?
 
-		// intercept for .on() that remembers handlers
-		const bind = (eventName, handler) => {
-			this.on(eventName, handler);
-			bindTuples.push([ eventName, handler ]);
-		}
+        // now finally satisfied or satisfied all along?
+        if (satisfyCnt === depCnt) {
 
-		// listen to dependency changes
-		depList.forEach((depName) => {
-			var isOptional = false;
+          // if the stopFunc initiated another value change, ignore it.
+          // it will be processed by another change event anyway.
+          if (!isCallingStop) {
+            startFunc(values)
+          }
+        }
+      }
+    }
 
-			if (depName.charAt(0) === '?') { // TODO: more DRY
-				depName = depName.substring(1);
-				isOptional = true;
-			}
+    // intercept for .on() that remembers handlers
+    const bind = (eventName, handler) => {
+      this.on(eventName, handler)
+      bindTuples.push([ eventName, handler ])
+    }
 
-			bind('before:change:' + depName, function(val) {
-				onBeforeDepChange(depName, val, isOptional);
-			});
+    // listen to dependency changes
+    depList.forEach((depName) => {
+      let isOptional = false
 
-			bind('change:' + depName, function(val) {
-				onDepChange(depName, val, isOptional);
-			});
-		});
+      if (depName.charAt(0) === '?') { // TODO: more DRY
+        depName = depName.substring(1)
+        isOptional = true
+      }
 
-		// process current dependency values
-		depList.forEach((depName) => {
-			var isOptional = false;
+      bind('before:change:' + depName, function(val) {
+        onBeforeDepChange(depName, val, isOptional)
+      })
 
-			if (depName.charAt(0) === '?') { // TODO: more DRY
-				depName = depName.substring(1);
-				isOptional = true;
-			}
+      bind('change:' + depName, function(val) {
+        onDepChange(depName, val, isOptional)
+      })
+    })
 
-			if (this.has(depName)) {
-				values[depName] = this.get(depName);
-				satisfyCnt++;
-			}
-			else if (isOptional) {
-				satisfyCnt++;
-			}
-		});
+    // process current dependency values
+    depList.forEach((depName) => {
+      let isOptional = false
 
-		// initially satisfied
-		if (satisfyCnt === depCnt) {
-			startFunc(values);
-		}
+      if (depName.charAt(0) === '?') { // TODO: more DRY
+        depName = depName.substring(1)
+        isOptional = true
+      }
 
-		return {
-			teardown: () => {
-				// remove all handlers
-				for (var i = 0; i < bindTuples.length; i++) {
-					this.off(bindTuples[i][0], bindTuples[i][1]);
-				}
-				bindTuples = null;
+      if (this.has(depName)) {
+        values[depName] = this.get(depName)
+        satisfyCnt++
+      } else if (isOptional) {
+        satisfyCnt++
+      }
+    })
 
-				// was satisfied, so call stopFunc
-				if (satisfyCnt === depCnt) {
-					stopFunc();
-				}
-			},
-			flash: () => {
-				if (satisfyCnt === depCnt) {
-					stopFunc();
-					startFunc(values);
-				}
-			}
-		};
-	}
+    // initially satisfied
+    if (satisfyCnt === depCnt) {
+      startFunc(values)
+    }
 
-	flash(name) {
-		var watcher = this._watchers[name];
+    return {
+      teardown: () => {
+        // remove all handlers
+        for (let i = 0; i < bindTuples.length; i++) {
+          this.off(bindTuples[i][0], bindTuples[i][1])
+        }
+        bindTuples = null
 
-		if (watcher) {
-			watcher.flash();
-		}
-	}
+        // was satisfied, so call stopFunc
+        if (satisfyCnt === depCnt) {
+          stopFunc()
+        }
+      },
+      flash: () => {
+        if (satisfyCnt === depCnt) {
+          stopFunc()
+          startFunc(values)
+        }
+      }
+    }
+  }
 
+  flash(name) {
+    let watcher = this._watchers[name]
 
-	static watch(name, ...args) {
-		// subclasses should make a masked-copy of the superclass's map
-		// TODO: write test
-		if (!this.prototype.hasOwnProperty('_globalWatchArgs')) {
-			this.prototype._globalWatchArgs = Object.create(this.prototype._globalWatchArgs);
-		}
+    if (watcher) {
+      watcher.flash()
+    }
+  }
 
-		this.prototype._globalWatchArgs[name] = args;
-	}
 }
 
-Model.prototype._globalWatchArgs = {}; // mutation protection in Model.watch
+Model.prototype._globalWatchArgs = {} // mutation protection in Model.watch
 
 EmitterMixin.mixInto(Model)
 ListenerMixin.mixInto(Model)

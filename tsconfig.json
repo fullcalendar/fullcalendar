@@ -1,6 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs"
-  }
+    "target": "es5",
+    "module": "commonjs",
+    "allowJs": true,
+    "noUnusedLocals": true,
+    "noImplicitUseStrict": true,
+    "importHelpers": true,
+    "baseUrl": ".",
+    "paths": {
+      "fullcalendar": ["src/main"]
+    }
+  },
+  "include": [
+    "src/main.ts",
+    "plugins/**/main.ts"
+  ]
 }

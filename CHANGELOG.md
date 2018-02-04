@@ -1,4 +1,57 @@
 
+v3.8.2 (2018-01-30)
+-------------------
+
+Bugfixes:
+- Fix TypeScript definitions file with strictNullChecks (#4035)
+
+
+v3.8.1 (2018-01-28)
+-------------------
+
+Bugfixes:
+- TypeScript definition file not compatible with noImplicitAny (#4017)
+- ES6 classes are not supported for grid class (#3437)
+- day numbers in month view should be localized (#3339)
+- select helper is resizable, causes js error (#3764)
+- selecting over existing select helper causes js error (#4031)
+- eventOrder doesn't work on custom fields (#3950)
+- aria label on button icons (#4023)
+- dynamic option changes to select/overlap/allow doesn't cause rerender
+
+Locales:
+- added Georgian (#3994)
+- added Bosnian (#4029)
+
+
+v3.8.0 (2017-12-18)
+-------------------
+
+- new settings for month/agenda/basic views (#3078):
+  - `columnHeaderFormat` (renamed from `columnFormat`)
+  - `columnHeaderText`
+  - `columnHeaderHtml`
+- TypeScript definition file (fullcalendar.d.ts) included in npm package (#3889)
+- codebase using SASS, though not taking advantage of it yet (#3463)
+- codebase fully ported to TypeScript / Webpack
+- Afrikaans locale fix (#3862)
+
+
+v3.7.0 (2017-11-13)
+-------------------
+
+Bugfixes:
+- `render` method does not re-adjust calendar dimension (#3893)
+- when custom view navigates completely into hidden weekends, JS error ([scheduler-375])
+
+Other:
+- in themes.html demo, fixed broken Bootswatch themes (#3917)
+- moved JavaScript codebase over to TypeScript
+  (same external API; embedded typedefs coming soon)
+
+[scheduler-375]: https://github.com/fullcalendar/fullcalendar-scheduler/issues/375
+
+
 v3.6.2 (2017-10-23)
 -------------------
 
@@ -1035,7 +1088,7 @@ v1.4.3 (2009-12-22)
 
 - added destroy method
 - Google Calendar event pages respect currentTimezone
-- caching now handled by jQuery's ajax	
+- caching now handled by jQuery's ajax
 - protection from setting aspectRatio to zero
 - bugfixes
 	- parseISO8601 and DST caused certain events to display day before

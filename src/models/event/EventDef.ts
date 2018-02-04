@@ -1,250 +1,236 @@
+import * as $ from 'jquery'
 import {
-	default as ParsableModelMixin,
-	ParsableModelInterface
+  default as ParsableModelMixin,
+  ParsableModelInterface
 } from '../../common/ParsableModelMixin'
 
 
 export default abstract class EventDef {
 
-	applyProps: ParsableModelInterface['applyProps']
-	isStandardProp: ParsableModelInterface['isStandardProp']
-	static defineStandardProps = ParsableModelMixin.defineStandardProps
-	static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
+  static uuid: number = 0
+  static defineStandardProps = ParsableModelMixin.defineStandardProps
+  static copyVerbatimStandardProps = ParsableModelMixin.copyVerbatimStandardProps
 
-	source: any // required
+  applyProps: ParsableModelInterface['applyProps']
+  isStandardProp: ParsableModelInterface['isStandardProp']
 
-	id: any // normalized supplied ID
-	rawId: any // unnormalized supplied ID
-	uid: any // internal ID. new ID for every definition
+  source: any // required
 
-	// NOTE: eventOrder sorting relies on these
-	title: any
-	url: any
-	rendering: any
-	constraint: any
-	overlap: any
-	editable: any
-	startEditable: any
-	durationEditable: any
-	color: any
-	backgroundColor: any
-	borderColor: any
-	textColor: any
+  id: any // normalized supplied ID
+  rawId: any // unnormalized supplied ID
+  uid: any // internal ID. new ID for every definition
 
-	className: any // an array. TODO: rename to className*s* (API breakage)
-	miscProps: any
+  // NOTE: eventOrder sorting relies on these
+  title: any
+  url: any
+  rendering: any
+  constraint: any
+  overlap: any
+  editable: any
+  startEditable: any
+  durationEditable: any
+  color: any
+  backgroundColor: any
+  borderColor: any
+  textColor: any
 
+  className: any // an array. TODO: rename to className*s* (API breakage)
+  miscProps: any
 
-	constructor(source) {
-		this.source = source;
-		this.className = [];
-		this.miscProps = {};
-	}
 
+  constructor(source) {
+    this.source = source
+    this.className = []
+    this.miscProps = {}
+  }
 
-	abstract isAllDay() // subclasses must implement
 
+  static parse(rawInput, source) {
+    let def = new (this as any)(source)
 
-	abstract buildInstances(unzonedRange) // subclasses must implement
+    if (def.applyProps(rawInput)) {
+      return def
+    }
 
+    return false
+  }
 
-	clone() {
-		var copy = new (this.constructor as any)(this.source);
 
-		copy.id = this.id;
-		copy.rawId = this.rawId;
-		copy.uid = this.uid; // not really unique anymore :(
+  static normalizeId(id) { // TODO: converge with EventSource
+    return String(id)
+  }
 
-		EventDef.copyVerbatimStandardProps(this, copy);
 
-		copy.className = this.className.slice(); // copy
-		copy.miscProps = $.extend({}, this.miscProps);
+  static generateId() {
+    return '_fc' + (EventDef.uuid++)
+  }
 
-		return copy;
-	}
 
+  abstract isAllDay() // subclasses must implement
 
-	hasInverseRendering() {
-		return this.getRendering() === 'inverse-background';
-	}
+  abstract buildInstances(unzonedRange) // subclasses must implement
 
 
-	hasBgRendering() {
-		var rendering = this.getRendering();
+  clone() {
+    let copy = new (this.constructor as any)(this.source)
 
-		return rendering === 'inverse-background' || rendering === 'background';
-	}
+    copy.id = this.id
+    copy.rawId = this.rawId
+    copy.uid = this.uid // not really unique anymore :(
 
+    EventDef.copyVerbatimStandardProps(this, copy)
 
-	getRendering() {
-		if (this.rendering != null) {
-			return this.rendering;
-		}
+    copy.className = this.className.slice() // copy
+    copy.miscProps = $.extend({}, this.miscProps)
 
-		return this.source.rendering;
-	}
+    return copy
+  }
 
 
-	getConstraint() {
-		if (this.constraint != null) {
-			return this.constraint;
-		}
+  hasInverseRendering() {
+    return this.getRendering() === 'inverse-background'
+  }
 
-		if (this.source.constraint != null) {
-			return this.source.constraint;
-		}
 
-		return this.source.calendar.opt('eventConstraint'); // what about View option?
-	}
+  hasBgRendering() {
+    let rendering = this.getRendering()
 
+    return rendering === 'inverse-background' || rendering === 'background'
+  }
 
-	getOverlap() {
-		if (this.overlap != null) {
-			return this.overlap;
-		}
 
-		if (this.source.overlap != null) {
-			return this.source.overlap;
-		}
+  getRendering() {
+    if (this.rendering != null) {
+      return this.rendering
+    }
 
-		return this.source.calendar.opt('eventOverlap'); // what about View option?
-	}
+    return this.source.rendering
+  }
 
 
-	isStartExplicitlyEditable() {
-		if (this.startEditable != null) {
-			return this.startEditable;
-		}
+  getConstraint() {
+    if (this.constraint != null) {
+      return this.constraint
+    }
 
-		return this.source.startEditable;
-	}
+    if (this.source.constraint != null) {
+      return this.source.constraint
+    }
 
+    return this.source.calendar.opt('eventConstraint') // what about View option?
+  }
 
-	isDurationExplicitlyEditable() {
-		if (this.durationEditable != null) {
-			return this.durationEditable;
-		}
 
-		return this.source.durationEditable;
-	}
+  getOverlap() {
+    if (this.overlap != null) {
+      return this.overlap
+    }
 
+    if (this.source.overlap != null) {
+      return this.source.overlap
+    }
 
-	isExplicitlyEditable() {
-		if (this.editable != null) {
-			return this.editable;
-		}
+    return this.source.calendar.opt('eventOverlap') // what about View option?
+  }
 
-		return this.source.editable;
-	}
 
+  isStartExplicitlyEditable() {
+    if (this.startEditable != null) {
+      return this.startEditable
+    }
 
-	toLegacy() {
-		var obj = $.extend({}, this.miscProps);
+    return this.source.startEditable
+  }
 
-		obj._id = this.uid;
-		obj.source = this.source;
-		obj.className = this.className.slice(); // copy
-		obj.allDay = this.isAllDay();
 
-		if (this.rawId != null) {
-			obj.id = this.rawId;
-		}
+  isDurationExplicitlyEditable() {
+    if (this.durationEditable != null) {
+      return this.durationEditable
+    }
 
-		EventDef.copyVerbatimStandardProps(this, obj);
+    return this.source.durationEditable
+  }
 
-		return obj;
-	}
 
+  isExplicitlyEditable() {
+    if (this.editable != null) {
+      return this.editable
+    }
 
-	applyManualStandardProps(rawProps) {
+    return this.source.editable
+  }
 
-		if (rawProps.id != null) {
-			this.id = EventDef.normalizeId((this.rawId = rawProps.id));
-		}
-		else {
-			this.id = EventDef.generateId();
-		}
 
-		if (rawProps._id != null) { // accept this prop, even tho somewhat internal
-			this.uid = String(rawProps._id);
-		}
-		else {
-			this.uid = EventDef.generateId();
-		}
+  toLegacy() {
+    let obj = $.extend({}, this.miscProps)
 
-		// TODO: converge with EventSource
-		if ($.isArray(rawProps.className)) {
-			this.className = rawProps.className;
-		}
-		if (typeof rawProps.className === 'string') {
-			this.className = rawProps.className.split(/\s+/);
-		}
+    obj._id = this.uid
+    obj.source = this.source
+    obj.className = this.className.slice() // copy
+    obj.allDay = this.isAllDay()
 
-		return true;
-	}
+    if (this.rawId != null) {
+      obj.id = this.rawId
+    }
 
+    EventDef.copyVerbatimStandardProps(this, obj)
 
-	applyMiscProps(rawProps) {
-		$.extend(this.miscProps, rawProps);
-	}
+    return obj
+  }
 
 
-	static parse(rawInput, source) {
-		var def = new (this as any)(source);
-	
-		if (def.applyProps(rawInput)) {
-			return def;
-		}
-	
-		return false;
-	}
+  applyManualStandardProps(rawProps) {
 
+    if (rawProps.id != null) {
+      this.id = EventDef.normalizeId((this.rawId = rawProps.id))
+    } else {
+      this.id = EventDef.generateId()
+    }
 
-	// IDs
-	// ---------------------------------------------------------------------------------------------------------------------
-	// TODO: converge with EventSource
+    if (rawProps._id != null) { // accept this prop, even tho somewhat internal
+      this.uid = String(rawProps._id)
+    } else {
+      this.uid = EventDef.generateId()
+    }
 
+    // TODO: converge with EventSource
+    if ($.isArray(rawProps.className)) {
+      this.className = rawProps.className
+    }
+    if (typeof rawProps.className === 'string') {
+      this.className = rawProps.className.split(/\s+/)
+    }
 
-	static uuid: number = 0
+    return true
+  }
 
 
-	static normalizeId(id) {
-		return String(id);
-	}
-
-
-	static generateId() {
-		return '_fc' + (EventDef.uuid++);
-	}
+  applyMiscProps(rawProps) {
+    $.extend(this.miscProps, rawProps)
+  }
 
 }
 
-
 ParsableModelMixin.mixInto(EventDef)
 
-
-// Parsing
-// ---------------------------------------------------------------------------------------------------------------------
-
-
 EventDef.defineStandardProps({
-	// not automatically assigned (`false`)
-	_id: false,
-	id: false,
-	className: false,
-	source: false, // will ignored
+  // not automatically assigned (`false`)
+  _id: false,
+  id: false,
+  className: false,
+  source: false, // will ignored
 
-	// automatically assigned (`true`)
-	title: true,
-	url: true,
-	rendering: true,
-	constraint: true,
-	overlap: true,
-	editable: true,
-	startEditable: true,
-	durationEditable: true,
-	color: true,
-	backgroundColor: true,
-	borderColor: true,
-	textColor: true
-});
+  // automatically assigned (`true`)
+  title: true,
+  url: true,
+  rendering: true,
+  constraint: true,
+  overlap: true,
+  editable: true,
+  startEditable: true,
+  durationEditable: true,
+  color: true,
+  backgroundColor: true,
+  borderColor: true,
+  textColor: true
+})

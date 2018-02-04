@@ -1,65 +1,65 @@
+import * as $ from 'jquery'
 import Promise from '../../common/Promise'
 import EventSource from './EventSource'
 
 
 export default class FuncEventSource extends EventSource {
 
-	func: any
+  func: any
 
 
-	fetch(start, end, timezone) {
-		this.calendar.pushLoading();
+  static parse(rawInput, calendar) {
+    let rawProps
 
-		return Promise.construct((onResolve) => {
-			this.func.call(
-				this.calendar,
-				start.clone(),
-				end.clone(),
-				timezone,
-				(rawEventDefs) => {
-					this.calendar.popLoading();
+    // normalize raw input
+    if ($.isFunction(rawInput.events)) { // extended form
+      rawProps = rawInput
+    } else if ($.isFunction(rawInput)) { // short form
+      rawProps = { events: rawInput }
+    }
 
-					onResolve(this.parseEventDefs(rawEventDefs));
-				}
-			);
-		});
-	}
+    if (rawProps) {
+      return EventSource.parse.call(this, rawProps, calendar)
+    }
 
-
-	getPrimitive() {
-		return this.func;
-	}
+    return false
+  }
 
 
-	applyManualStandardProps(rawProps) {
-		var superSuccess = super.applyManualStandardProps(rawProps);
+  fetch(start, end, timezone) {
+    this.calendar.pushLoading()
 
-		this.func = rawProps.events;
+    return Promise.construct((onResolve) => {
+      this.func.call(
+        this.calendar,
+        start.clone(),
+        end.clone(),
+        timezone,
+        (rawEventDefs) => {
+          this.calendar.popLoading()
 
-		return superSuccess;
-	}
+          onResolve(this.parseEventDefs(rawEventDefs))
+        }
+      )
+    })
+  }
 
 
-	static parse(rawInput, calendar) {
-		var rawProps;
-	
-		// normalize raw input
-		if ($.isFunction(rawInput.events)) { // extended form
-			rawProps = rawInput;
-		}
-		else if ($.isFunction(rawInput)) { // short form
-			rawProps = { events: rawInput };
-		}
-	
-		if (rawProps) {
-			return EventSource.parse.call(this, rawProps, calendar);
-		}
-	
-		return false;
-	}
+  getPrimitive() {
+    return this.func
+  }
+
+
+  applyManualStandardProps(rawProps) {
+    let superSuccess = super.applyManualStandardProps(rawProps)
+
+    this.func = rawProps.events
+
+    return superSuccess
+  }
 
 }
 
 FuncEventSource.defineStandardProps({
-	events: false // don't automatically transfer
-});
+  events: false // don't automatically transfer
+})

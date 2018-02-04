@@ -1,0 +1,44 @@
+
+/* Colors
+--------------------------------------------------------------------------------------------------*/
+
+.ui-widget .fc-disabled-day {
+  background-image: none;
+}
+
+
+/* Popover
+--------------------------------------------------------------------------------------------------*/
+
+.fc-popover > .ui-widget-header + .ui-widget-content {
+  border-top: 0; /* where they meet, let the header have the border */
+}
+
+
+/* Global Event Styles
+--------------------------------------------------------------------------------------------------*/
+
+.ui-widget .fc-event {
+  /* overpower jqui's styles on <a> tags. TODO: more DRY */
+  color: #fff; /* default TEXT color */
+  text-decoration: none; /* if <a> has an href */
+
+  /* undo ui-widget-header bold */
+  font-weight: normal;
+}
+
+
+/* TimeGrid axis running down the side (for both the all-day area and the slot area)
+--------------------------------------------------------------------------------------------------*/
+
+.ui-widget td.fc-axis {
+  font-weight: normal; /* overcome bold */
+}
+
+
+/* TimeGrid Slats (lines that run horizontally)
+--------------------------------------------------------------------------------------------------*/
+
+.fc-time-grid .fc-slats .ui-widget-content { 
+  background: none; /* see through to fc-bg */
+}

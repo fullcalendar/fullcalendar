@@ -1,16 +1,17 @@
+import * as $ from 'jquery'
 import {
-	firstDefined,
-	preventSelection,
-	getEvIsTouch,
-	getEvX,
-	getEvY,
-	getScrollParent,
-	isPrimaryMouseButton,
-	allowSelection,
-	preventDefault,
-	debounce,
-	getOuterRect,
-	proxy
+  firstDefined,
+  preventSelection,
+  getEvIsTouch,
+  getEvX,
+  getEvY,
+  getScrollParent,
+  isPrimaryMouseButton,
+  allowSelection,
+  preventDefault,
+  debounce,
+  getOuterRect,
+  proxy
 } from '../util'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 import GlobalEmitter from './GlobalEmitter'
@@ -22,489 +23,482 @@ import GlobalEmitter from './GlobalEmitter'
 
 export default class DragListener {
 
-	listenTo: ListenerInterface['listenTo']
-	stopListeningTo: ListenerInterface['stopListeningTo']
+  listenTo: ListenerInterface['listenTo']
+  stopListeningTo: ListenerInterface['stopListeningTo']
 
-	options: any
-	subjectEl: any
+  options: any
+  subjectEl: any
 
-	// coordinates of the initial mousedown
-	originX: any
-	originY: any
+  // coordinates of the initial mousedown
+  originX: any
+  originY: any
 
-	// the wrapping element that scrolls, or MIGHT scroll if there's overflow.
-	// TODO: do this for wrappers that have overflow:hidden as well.
-	scrollEl: any
+  // the wrapping element that scrolls, or MIGHT scroll if there's overflow.
+  // TODO: do this for wrappers that have overflow:hidden as well.
+  scrollEl: any
 
-	isInteracting: boolean = false
-	isDistanceSurpassed: boolean = false
-	isDelayEnded: boolean = false
-	isDragging: boolean = false
-	isTouch: boolean = false
-	isGeneric: boolean = false // initiated by 'dragstart' (jqui)
+  isInteracting: boolean = false
+  isDistanceSurpassed: boolean = false
+  isDelayEnded: boolean = false
+  isDragging: boolean = false
+  isTouch: boolean = false
+  isGeneric: boolean = false // initiated by 'dragstart' (jqui)
 
-	delay: any
-	delayTimeoutId: any
-	minDistance: any
+  delay: any
+  delayTimeoutId: any
+  minDistance: any
 
-	shouldCancelTouchScroll: boolean = true
-	scrollAlwaysKills: boolean = false
+  shouldCancelTouchScroll: boolean = true
+  scrollAlwaysKills: boolean = false
 
-	isAutoScroll: boolean = false
+  isAutoScroll: boolean = false
 
-	scrollBounds: any // { top, bottom, left, right }
-	scrollTopVel: any // pixels per second
-	scrollLeftVel: any // pixels per second
-	scrollIntervalId: any // ID of setTimeout for scrolling animation loop
+  scrollBounds: any // { top, bottom, left, right }
+  scrollTopVel: any // pixels per second
+  scrollLeftVel: any // pixels per second
+  scrollIntervalId: any // ID of setTimeout for scrolling animation loop
 
-	// defaults
-	scrollSensitivity: number = 30 // pixels from edge for scrolling to start
-	scrollSpeed: number = 200 // pixels per second, at maximum speed
-	scrollIntervalMs: number = 50 // millisecond wait between scroll increment
+  // defaults
+  scrollSensitivity: number = 30 // pixels from edge for scrolling to start
+  scrollSpeed: number = 200 // pixels per second, at maximum speed
+  scrollIntervalMs: number = 50 // millisecond wait between scroll increment
 
 
-	constructor(options) {
-		this.options = options || {};
-	}
+  constructor(options) {
+    this.options = options || {}
+  }
 
 
-	// Interaction (high-level)
-	// -----------------------------------------------------------------------------------------------------------------
+  // Interaction (high-level)
+  // -----------------------------------------------------------------------------------------------------------------
 
 
-	startInteraction(ev, extraOptions:any={}) {
+  startInteraction(ev, extraOptions: any= {}) {
 
-		if (ev.type === 'mousedown') {
-			if (GlobalEmitter.get().shouldIgnoreMouse()) {
-				return;
-			}
-			else if (!isPrimaryMouseButton(ev)) {
-				return;
-			}
-			else {
-				ev.preventDefault(); // prevents native selection in most browsers
-			}
-		}
+    if (ev.type === 'mousedown') {
+      if (GlobalEmitter.get().shouldIgnoreMouse()) {
+        return
+      } else if (!isPrimaryMouseButton(ev)) {
+        return
+      } else {
+        ev.preventDefault() // prevents native selection in most browsers
+      }
+    }
 
-		if (!this.isInteracting) {
-
-			// process options
-			this.delay = firstDefined(extraOptions.delay, this.options.delay, 0);
-			this.minDistance = firstDefined(extraOptions.distance, this.options.distance, 0);
-			this.subjectEl = this.options.subjectEl;
+    if (!this.isInteracting) {
 
-			preventSelection($('body'));
+      // process options
+      this.delay = firstDefined(extraOptions.delay, this.options.delay, 0)
+      this.minDistance = firstDefined(extraOptions.distance, this.options.distance, 0)
+      this.subjectEl = this.options.subjectEl
 
-			this.isInteracting = true;
-			this.isTouch = getEvIsTouch(ev);
-			this.isGeneric = ev.type === 'dragstart';
-			this.isDelayEnded = false;
-			this.isDistanceSurpassed = false;
+      preventSelection($('body'))
 
-			this.originX = getEvX(ev);
-			this.originY = getEvY(ev);
-			this.scrollEl = getScrollParent($(ev.target));
+      this.isInteracting = true
+      this.isTouch = getEvIsTouch(ev)
+      this.isGeneric = ev.type === 'dragstart'
+      this.isDelayEnded = false
+      this.isDistanceSurpassed = false
 
-			this.bindHandlers();
-			this.initAutoScroll();
-			this.handleInteractionStart(ev);
-			this.startDelay(ev);
+      this.originX = getEvX(ev)
+      this.originY = getEvY(ev)
+      this.scrollEl = getScrollParent($(ev.target))
 
-			if (!this.minDistance) {
-				this.handleDistanceSurpassed(ev);
-			}
-		}
-	}
+      this.bindHandlers()
+      this.initAutoScroll()
+      this.handleInteractionStart(ev)
+      this.startDelay(ev)
 
+      if (!this.minDistance) {
+        this.handleDistanceSurpassed(ev)
+      }
+    }
+  }
 
-	handleInteractionStart(ev) {
-		this.trigger('interactionStart', ev);
-	}
 
+  handleInteractionStart(ev) {
+    this.trigger('interactionStart', ev)
+  }
 
-	endInteraction(ev, isCancelled) {
-		if (this.isInteracting) {
-			this.endDrag(ev);
-
-			if (this.delayTimeoutId) {
-				clearTimeout(this.delayTimeoutId);
-				this.delayTimeoutId = null;
-			}
 
-			this.destroyAutoScroll();
-			this.unbindHandlers();
-
-			this.isInteracting = false;
-			this.handleInteractionEnd(ev, isCancelled);
+  endInteraction(ev, isCancelled) {
+    if (this.isInteracting) {
+      this.endDrag(ev)
 
-			allowSelection($('body'));
-		}
-	}
-
-
-	handleInteractionEnd(ev, isCancelled) {
-		this.trigger('interactionEnd', ev, isCancelled || false);
-	}
+      if (this.delayTimeoutId) {
+        clearTimeout(this.delayTimeoutId)
+        this.delayTimeoutId = null
+      }
 
+      this.destroyAutoScroll()
+      this.unbindHandlers()
 
-	// Binding To DOM
-	// -----------------------------------------------------------------------------------------------------------------
+      this.isInteracting = false
+      this.handleInteractionEnd(ev, isCancelled)
 
+      allowSelection($('body'))
+    }
+  }
 
-	bindHandlers() {
-		// some browsers (Safari in iOS 10) don't allow preventDefault on touch events that are bound after touchstart,
-		// so listen to the GlobalEmitter singleton, which is always bound, instead of the document directly.
-		var globalEmitter = GlobalEmitter.get();
 
-		if (this.isGeneric) {
-			this.listenTo($(document), { // might only work on iOS because of GlobalEmitter's bind :(
-				drag: this.handleMove,
-				dragstop: this.endInteraction
-			});
-		}
-		else if (this.isTouch) {
-			this.listenTo(globalEmitter, {
-				touchmove: this.handleTouchMove,
-				touchend: this.endInteraction,
-				scroll: this.handleTouchScroll
-			});
-		}
-		else {
-			this.listenTo(globalEmitter, {
-				mousemove: this.handleMouseMove,
-				mouseup: this.endInteraction
-			});
-		}
+  handleInteractionEnd(ev, isCancelled) {
+    this.trigger('interactionEnd', ev, isCancelled || false)
+  }
 
-		this.listenTo(globalEmitter, {
-			selectstart: preventDefault, // don't allow selection while dragging
-			contextmenu: preventDefault // long taps would open menu on Chrome dev tools
-		});
-	}
 
+  // Binding To DOM
+  // -----------------------------------------------------------------------------------------------------------------
 
-	unbindHandlers() {
-		this.stopListeningTo(GlobalEmitter.get());
-		this.stopListeningTo($(document)); // for isGeneric
-	}
 
+  bindHandlers() {
+    // some browsers (Safari in iOS 10) don't allow preventDefault on touch events that are bound after touchstart,
+    // so listen to the GlobalEmitter singleton, which is always bound, instead of the document directly.
+    let globalEmitter = GlobalEmitter.get()
 
-	// Drag (high-level)
-	// -----------------------------------------------------------------------------------------------------------------
+    if (this.isGeneric) {
+      this.listenTo($(document), { // might only work on iOS because of GlobalEmitter's bind :(
+        drag: this.handleMove,
+        dragstop: this.endInteraction
+      })
+    } else if (this.isTouch) {
+      this.listenTo(globalEmitter, {
+        touchmove: this.handleTouchMove,
+        touchend: this.endInteraction,
+        scroll: this.handleTouchScroll
+      })
+    } else {
+      this.listenTo(globalEmitter, {
+        mousemove: this.handleMouseMove,
+        mouseup: this.endInteraction
+      })
+    }
 
+    this.listenTo(globalEmitter, {
+      selectstart: preventDefault, // don't allow selection while dragging
+      contextmenu: preventDefault // long taps would open menu on Chrome dev tools
+    })
+  }
 
-	// extraOptions ignored if drag already started
-	startDrag(ev, extraOptions?) {
-		this.startInteraction(ev, extraOptions); // ensure interaction began
 
-		if (!this.isDragging) {
-			this.isDragging = true;
-			this.handleDragStart(ev);
-		}
-	}
+  unbindHandlers() {
+    this.stopListeningTo(GlobalEmitter.get())
+    this.stopListeningTo($(document)) // for isGeneric
+  }
 
 
-	handleDragStart(ev) {
-		this.trigger('dragStart', ev);
-	}
+  // Drag (high-level)
+  // -----------------------------------------------------------------------------------------------------------------
 
 
-	handleMove(ev) {
-		var dx = getEvX(ev) - this.originX;
-		var dy = getEvY(ev) - this.originY;
-		var minDistance = this.minDistance;
-		var distanceSq; // current distance from the origin, squared
+  // extraOptions ignored if drag already started
+  startDrag(ev, extraOptions?) {
+    this.startInteraction(ev, extraOptions) // ensure interaction began
 
-		if (!this.isDistanceSurpassed) {
-			distanceSq = dx * dx + dy * dy;
-			if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
-				this.handleDistanceSurpassed(ev);
-			}
-		}
+    if (!this.isDragging) {
+      this.isDragging = true
+      this.handleDragStart(ev)
+    }
+  }
 
-		if (this.isDragging) {
-			this.handleDrag(dx, dy, ev);
-		}
-	}
 
+  handleDragStart(ev) {
+    this.trigger('dragStart', ev)
+  }
 
-	// Called while the mouse is being moved and when we know a legitimate drag is taking place
-	handleDrag(dx, dy, ev) {
-		this.trigger('drag', dx, dy, ev);
-		this.updateAutoScroll(ev); // will possibly cause scrolling
-	}
 
+  handleMove(ev) {
+    let dx = getEvX(ev) - this.originX
+    let dy = getEvY(ev) - this.originY
+    let minDistance = this.minDistance
+    let distanceSq // current distance from the origin, squared
 
-	endDrag(ev) {
-		if (this.isDragging) {
-			this.isDragging = false;
-			this.handleDragEnd(ev);
-		}
-	}
+    if (!this.isDistanceSurpassed) {
+      distanceSq = dx * dx + dy * dy
+      if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
+        this.handleDistanceSurpassed(ev)
+      }
+    }
 
+    if (this.isDragging) {
+      this.handleDrag(dx, dy, ev)
+    }
+  }
 
-	handleDragEnd(ev) {
-		this.trigger('dragEnd', ev);
-	}
 
+  // Called while the mouse is being moved and when we know a legitimate drag is taking place
+  handleDrag(dx, dy, ev) {
+    this.trigger('drag', dx, dy, ev)
+    this.updateAutoScroll(ev) // will possibly cause scrolling
+  }
 
-	// Delay
-	// -----------------------------------------------------------------------------------------------------------------
 
+  endDrag(ev) {
+    if (this.isDragging) {
+      this.isDragging = false
+      this.handleDragEnd(ev)
+    }
+  }
 
-	startDelay(initialEv) {
-		if (this.delay) {
-			this.delayTimeoutId = setTimeout(() => {
-				this.handleDelayEnd(initialEv);
-			}, this.delay);
-		}
-		else {
-			this.handleDelayEnd(initialEv);
-		}
-	}
 
+  handleDragEnd(ev) {
+    this.trigger('dragEnd', ev)
+  }
 
-	handleDelayEnd(initialEv) {
-		this.isDelayEnded = true;
 
-		if (this.isDistanceSurpassed) {
-			this.startDrag(initialEv);
-		}
-	}
+  // Delay
+  // -----------------------------------------------------------------------------------------------------------------
 
 
-	// Distance
-	// -----------------------------------------------------------------------------------------------------------------
+  startDelay(initialEv) {
+    if (this.delay) {
+      this.delayTimeoutId = setTimeout(() => {
+        this.handleDelayEnd(initialEv)
+      }, this.delay)
+    } else {
+      this.handleDelayEnd(initialEv)
+    }
+  }
 
 
-	handleDistanceSurpassed(ev) {
-		this.isDistanceSurpassed = true;
+  handleDelayEnd(initialEv) {
+    this.isDelayEnded = true
 
-		if (this.isDelayEnded) {
-			this.startDrag(ev);
-		}
-	}
+    if (this.isDistanceSurpassed) {
+      this.startDrag(initialEv)
+    }
+  }
 
 
-	// Mouse / Touch
-	// -----------------------------------------------------------------------------------------------------------------
+  // Distance
+  // -----------------------------------------------------------------------------------------------------------------
 
 
-	handleTouchMove(ev) {
+  handleDistanceSurpassed(ev) {
+    this.isDistanceSurpassed = true
 
-		// prevent inertia and touchmove-scrolling while dragging
-		if (this.isDragging && this.shouldCancelTouchScroll) {
-			ev.preventDefault();
-		}
+    if (this.isDelayEnded) {
+      this.startDrag(ev)
+    }
+  }
 
-		this.handleMove(ev);
-	}
 
+  // Mouse / Touch
+  // -----------------------------------------------------------------------------------------------------------------
 
-	handleMouseMove(ev) {
-		this.handleMove(ev);
-	}
 
+  handleTouchMove(ev) {
 
-	// Scrolling (unrelated to auto-scroll)
-	// -----------------------------------------------------------------------------------------------------------------
+    // prevent inertia and touchmove-scrolling while dragging
+    if (this.isDragging && this.shouldCancelTouchScroll) {
+      ev.preventDefault()
+    }
 
+    this.handleMove(ev)
+  }
 
-	handleTouchScroll(ev) {
-		// if the drag is being initiated by touch, but a scroll happens before
-		// the drag-initiating delay is over, cancel the drag
-		if (!this.isDragging || this.scrollAlwaysKills) {
-			this.endInteraction(ev, true); // isCancelled=true
-		}
-	}
 
+  handleMouseMove(ev) {
+    this.handleMove(ev)
+  }
 
-	// Utils
-	// -----------------------------------------------------------------------------------------------------------------
 
+  // Scrolling (unrelated to auto-scroll)
+  // -----------------------------------------------------------------------------------------------------------------
 
-	// Triggers a callback. Calls a function in the option hash of the same name.
-	// Arguments beyond the first `name` are forwarded on.
-	trigger(name, ...args) {
-		if (this.options[name]) {
-			this.options[name].apply(this, args);
-		}
-		// makes _methods callable by event name. TODO: kill this
-		if (this['_' + name]) {
-			this['_' + name].apply(this, args);
-		}
-	}
 
+  handleTouchScroll(ev) {
+    // if the drag is being initiated by touch, but a scroll happens before
+    // the drag-initiating delay is over, cancel the drag
+    if (!this.isDragging || this.scrollAlwaysKills) {
+      this.endInteraction(ev, true) // isCancelled=true
+    }
+  }
 
-	// Auto-scroll
-	// -----------------------------------------------------------------------------------------------------------------
 
+  // Utils
+  // -----------------------------------------------------------------------------------------------------------------
 
-	initAutoScroll() {
-		var scrollEl = this.scrollEl;
 
-		this.isAutoScroll =
-			this.options.scroll &&
-			scrollEl &&
-			!scrollEl.is(window) &&
-			!scrollEl.is(document);
+  // Triggers a callback. Calls a function in the option hash of the same name.
+  // Arguments beyond the first `name` are forwarded on.
+  trigger(name, ...args) {
+    if (this.options[name]) {
+      this.options[name].apply(this, args)
+    }
+    // makes _methods callable by event name. TODO: kill this
+    if (this['_' + name]) {
+      this['_' + name].apply(this, args)
+    }
+  }
 
-		if (this.isAutoScroll) {
-			// debounce makes sure rapid calls don't happen
-			this.listenTo(scrollEl, 'scroll', debounce(this.handleDebouncedScroll, 100));
-		}
-	}
 
+  // Auto-scroll
+  // -----------------------------------------------------------------------------------------------------------------
 
-	destroyAutoScroll() {
-		this.endAutoScroll(); // kill any animation loop
 
-		// remove the scroll handler if there is a scrollEl
-		if (this.isAutoScroll) {
-			this.stopListeningTo(this.scrollEl, 'scroll'); // will probably get removed by unbindHandlers too :(
-		}
-	}
+  initAutoScroll() {
+    let scrollEl = this.scrollEl
 
+    this.isAutoScroll =
+      this.options.scroll &&
+      scrollEl &&
+      !scrollEl.is(window) &&
+      !scrollEl.is(document)
 
-	// Computes and stores the bounding rectangle of scrollEl
-	computeScrollBounds() {
-		if (this.isAutoScroll) {
-			this.scrollBounds = getOuterRect(this.scrollEl);
-			// TODO: use getClientRect in future. but prevents auto scrolling when on top of scrollbars
-		}
-	}
+    if (this.isAutoScroll) {
+      // debounce makes sure rapid calls don't happen
+      this.listenTo(scrollEl, 'scroll', debounce(this.handleDebouncedScroll, 100))
+    }
+  }
 
 
-	// Called when the dragging is in progress and scrolling should be updated
-	updateAutoScroll(ev) {
-		var sensitivity = this.scrollSensitivity;
-		var bounds = this.scrollBounds;
-		var topCloseness, bottomCloseness;
-		var leftCloseness, rightCloseness;
-		var topVel = 0;
-		var leftVel = 0;
+  destroyAutoScroll() {
+    this.endAutoScroll() // kill any animation loop
 
-		if (bounds) { // only scroll if scrollEl exists
+    // remove the scroll handler if there is a scrollEl
+    if (this.isAutoScroll) {
+      this.stopListeningTo(this.scrollEl, 'scroll') // will probably get removed by unbindHandlers too :(
+    }
+  }
 
-			// compute closeness to edges. valid range is from 0.0 - 1.0
-			topCloseness = (sensitivity - (getEvY(ev) - bounds.top)) / sensitivity;
-			bottomCloseness = (sensitivity - (bounds.bottom - getEvY(ev))) / sensitivity;
-			leftCloseness = (sensitivity - (getEvX(ev) - bounds.left)) / sensitivity;
-			rightCloseness = (sensitivity - (bounds.right - getEvX(ev))) / sensitivity;
 
-			// translate vertical closeness into velocity.
-			// mouse must be completely in bounds for velocity to happen.
-			if (topCloseness >= 0 && topCloseness <= 1) {
-				topVel = topCloseness * this.scrollSpeed * -1; // negative. for scrolling up
-			}
-			else if (bottomCloseness >= 0 && bottomCloseness <= 1) {
-				topVel = bottomCloseness * this.scrollSpeed;
-			}
+  // Computes and stores the bounding rectangle of scrollEl
+  computeScrollBounds() {
+    if (this.isAutoScroll) {
+      this.scrollBounds = getOuterRect(this.scrollEl)
+      // TODO: use getClientRect in future. but prevents auto scrolling when on top of scrollbars
+    }
+  }
 
-			// translate horizontal closeness into velocity
-			if (leftCloseness >= 0 && leftCloseness <= 1) {
-				leftVel = leftCloseness * this.scrollSpeed * -1; // negative. for scrolling left
-			}
-			else if (rightCloseness >= 0 && rightCloseness <= 1) {
-				leftVel = rightCloseness * this.scrollSpeed;
-			}
-		}
 
-		this.setScrollVel(topVel, leftVel);
-	}
+  // Called when the dragging is in progress and scrolling should be updated
+  updateAutoScroll(ev) {
+    let sensitivity = this.scrollSensitivity
+    let bounds = this.scrollBounds
+    let topCloseness
+    let bottomCloseness
+    let leftCloseness
+    let rightCloseness
+    let topVel = 0
+    let leftVel = 0
 
+    if (bounds) { // only scroll if scrollEl exists
 
-	// Sets the speed-of-scrolling for the scrollEl
-	setScrollVel(topVel, leftVel) {
+      // compute closeness to edges. valid range is from 0.0 - 1.0
+      topCloseness = (sensitivity - (getEvY(ev) - bounds.top)) / sensitivity
+      bottomCloseness = (sensitivity - (bounds.bottom - getEvY(ev))) / sensitivity
+      leftCloseness = (sensitivity - (getEvX(ev) - bounds.left)) / sensitivity
+      rightCloseness = (sensitivity - (bounds.right - getEvX(ev))) / sensitivity
 
-		this.scrollTopVel = topVel;
-		this.scrollLeftVel = leftVel;
+      // translate vertical closeness into velocity.
+      // mouse must be completely in bounds for velocity to happen.
+      if (topCloseness >= 0 && topCloseness <= 1) {
+        topVel = topCloseness * this.scrollSpeed * -1 // negative. for scrolling up
+      } else if (bottomCloseness >= 0 && bottomCloseness <= 1) {
+        topVel = bottomCloseness * this.scrollSpeed
+      }
 
-		this.constrainScrollVel(); // massages into realistic values
+      // translate horizontal closeness into velocity
+      if (leftCloseness >= 0 && leftCloseness <= 1) {
+        leftVel = leftCloseness * this.scrollSpeed * -1 // negative. for scrolling left
+      } else if (rightCloseness >= 0 && rightCloseness <= 1) {
+        leftVel = rightCloseness * this.scrollSpeed
+      }
+    }
 
-		// if there is non-zero velocity, and an animation loop hasn't already started, then START
-		if ((this.scrollTopVel || this.scrollLeftVel) && !this.scrollIntervalId) {
-			this.scrollIntervalId = setInterval(
-				proxy(this, 'scrollIntervalFunc'), // scope to `this`
-				this.scrollIntervalMs
-			);
-		}
-	}
+    this.setScrollVel(topVel, leftVel)
+  }
 
 
-	// Forces scrollTopVel and scrollLeftVel to be zero if scrolling has already gone all the way
-	constrainScrollVel() {
-		var el = this.scrollEl;
+  // Sets the speed-of-scrolling for the scrollEl
+  setScrollVel(topVel, leftVel) {
 
-		if (this.scrollTopVel < 0) { // scrolling up?
-			if (el.scrollTop() <= 0) { // already scrolled all the way up?
-				this.scrollTopVel = 0;
-			}
-		}
-		else if (this.scrollTopVel > 0) { // scrolling down?
-			if (el.scrollTop() + el[0].clientHeight >= el[0].scrollHeight) { // already scrolled all the way down?
-				this.scrollTopVel = 0;
-			}
-		}
+    this.scrollTopVel = topVel
+    this.scrollLeftVel = leftVel
 
-		if (this.scrollLeftVel < 0) { // scrolling left?
-			if (el.scrollLeft() <= 0) { // already scrolled all the left?
-				this.scrollLeftVel = 0;
-			}
-		}
-		else if (this.scrollLeftVel > 0) { // scrolling right?
-			if (el.scrollLeft() + el[0].clientWidth >= el[0].scrollWidth) { // already scrolled all the way right?
-				this.scrollLeftVel = 0;
-			}
-		}
-	}
+    this.constrainScrollVel() // massages into realistic values
 
+    // if there is non-zero velocity, and an animation loop hasn't already started, then START
+    if ((this.scrollTopVel || this.scrollLeftVel) && !this.scrollIntervalId) {
+      this.scrollIntervalId = setInterval(
+        proxy(this, 'scrollIntervalFunc'), // scope to `this`
+        this.scrollIntervalMs
+      )
+    }
+  }
 
-	// This function gets called during every iteration of the scrolling animation loop
-	scrollIntervalFunc() {
-		var el = this.scrollEl;
-		var frac = this.scrollIntervalMs / 1000; // considering animation frequency, what the vel should be mult'd by
 
-		// change the value of scrollEl's scroll
-		if (this.scrollTopVel) {
-			el.scrollTop(el.scrollTop() + this.scrollTopVel * frac);
-		}
-		if (this.scrollLeftVel) {
-			el.scrollLeft(el.scrollLeft() + this.scrollLeftVel * frac);
-		}
+  // Forces scrollTopVel and scrollLeftVel to be zero if scrolling has already gone all the way
+  constrainScrollVel() {
+    let el = this.scrollEl
 
-		this.constrainScrollVel(); // since the scroll values changed, recompute the velocities
+    if (this.scrollTopVel < 0) { // scrolling up?
+      if (el.scrollTop() <= 0) { // already scrolled all the way up?
+        this.scrollTopVel = 0
+      }
+    } else if (this.scrollTopVel > 0) { // scrolling down?
+      if (el.scrollTop() + el[0].clientHeight >= el[0].scrollHeight) { // already scrolled all the way down?
+        this.scrollTopVel = 0
+      }
+    }
 
-		// if scrolled all the way, which causes the vels to be zero, stop the animation loop
-		if (!this.scrollTopVel && !this.scrollLeftVel) {
-			this.endAutoScroll();
-		}
-	}
+    if (this.scrollLeftVel < 0) { // scrolling left?
+      if (el.scrollLeft() <= 0) { // already scrolled all the left?
+        this.scrollLeftVel = 0
+      }
+    } else if (this.scrollLeftVel > 0) { // scrolling right?
+      if (el.scrollLeft() + el[0].clientWidth >= el[0].scrollWidth) { // already scrolled all the way right?
+        this.scrollLeftVel = 0
+      }
+    }
+  }
 
 
-	// Kills any existing scrolling animation loop
-	endAutoScroll() {
-		if (this.scrollIntervalId) {
-			clearInterval(this.scrollIntervalId);
-			this.scrollIntervalId = null;
+  // This function gets called during every iteration of the scrolling animation loop
+  scrollIntervalFunc() {
+    let el = this.scrollEl
+    let frac = this.scrollIntervalMs / 1000 // considering animation frequency, what the vel should be mult'd by
 
-			this.handleScrollEnd();
-		}
-	}
+    // change the value of scrollEl's scroll
+    if (this.scrollTopVel) {
+      el.scrollTop(el.scrollTop() + this.scrollTopVel * frac)
+    }
+    if (this.scrollLeftVel) {
+      el.scrollLeft(el.scrollLeft() + this.scrollLeftVel * frac)
+    }
 
+    this.constrainScrollVel() // since the scroll values changed, recompute the velocities
 
-	// Get called when the scrollEl is scrolled (NOTE: this is delayed via debounce)
-	handleDebouncedScroll() {
-		// recompute all coordinates, but *only* if this is *not* part of our scrolling animation
-		if (!this.scrollIntervalId) {
-			this.handleScrollEnd();
-		}
-	}
+    // if scrolled all the way, which causes the vels to be zero, stop the animation loop
+    if (!this.scrollTopVel && !this.scrollLeftVel) {
+      this.endAutoScroll()
+    }
+  }
 
 
-	// Called when scrolling has stopped, whether through auto scroll, or the user scrolling
-	handleScrollEnd() {
-	}
+  // Kills any existing scrolling animation loop
+  endAutoScroll() {
+    if (this.scrollIntervalId) {
+      clearInterval(this.scrollIntervalId)
+      this.scrollIntervalId = null
+
+      this.handleScrollEnd()
+    }
+  }
+
+
+  // Get called when the scrollEl is scrolled (NOTE: this is delayed via debounce)
+  handleDebouncedScroll() {
+    // recompute all coordinates, but *only* if this is *not* part of our scrolling animation
+    if (!this.scrollIntervalId) {
+      this.handleScrollEnd()
+    }
+  }
+
+
+  handleScrollEnd() {
+    // Called when scrolling has stopped, whether through auto scroll, or the user scrolling
+  }
 
 }
 

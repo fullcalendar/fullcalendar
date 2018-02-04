@@ -9,133 +9,133 @@
 <script src='../../dist/gcal.js'></script>
 <script>
 
-	var cal, staticEvents;
-	
-	var date = new Date();
-	var d = date.getDate();
-	var m = date.getMonth();
-	var y = date.getFullYear();
+  var cal, staticEvents;
+  
+  var date = new Date();
+  var d = date.getDate();
+  var m = date.getMonth();
+  var y = date.getFullYear();
 
-	$(document).ready(function() {
-		cal = $('#calendar').fullCalendar({
-			editable: true,
-			weekends: false,
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
-			},
-			loading: function(bool) {
-				if (bool) {
-					$('#loading').show();
-				}else{
-					$('#loading').hide();
-				}
-			},
-			events: staticEvents = [
-				{
-					title: 'All Day Event',
-					start: new Date(y, m, 1)
-				},
-				{
-					title: 'Long Event',
-					start: new Date(y, m, d-5),
-					end: new Date(y, m, d-2)
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d-3, 16, 0),
-					allDay: false
-				},
-				{
-					id: 999,
-					title: 'Repeating Event',
-					start: new Date(y, m, d+4, 16, 0),
-					allDay: false
-				},
-				{
-					title: 'Meeting',
-					start: new Date(y, m, d, 10, 30),
-					allDay: false
-				},
-				{
-					id: 777,
-					title: 'Lunch',
-					start: new Date(y, m, d, 12, 0),
-					end: new Date(y, m, d, 14, 0),
-					allDay: false
-				},
-				{
-					title: 'Birthday Party',
-					start: new Date(y, m, d+1, 19, 0),
-					end: new Date(y, m, d+1, 22, 30),
-					allDay: false
-				},
-				{
-					title: 'Click for Google',
-					start: new Date(y, m, 28),
-					end: new Date(y, m, 29),
-					url: 'http://google.com/'
-				}
-			]
-		});
-	});
-	
-	function updateEventStart() {
-		var event = cal.fullCalendar('clientEvents', 777)[0];
-		event.start = new Date(y, m, d, 13, 30);
-		event.end = new Date(y, m, d, 14, 50);
-		//event.start = new Date(y, m, 25, 10, 30); // move big days
-		//event.end = new Date(y, m, 26);
-		//event.allDay = true;
-		cal.fullCalendar('updateEvent', event);
-	}
-	
-	function updateRepeatingEvent() {
-		var event = cal.fullCalendar('clientEvents', 999)[0];
-		event.start = new Date(y, m, 4, 13, 30);
-		event.end = new Date(y, m, 5, 2, 0);
-		event.allDay = true;
-		event.title = "repeat yo";
-		//event.editable = false;
-		event.url = "http://google.com/";
-		event.color = 'red';
-		event.textColor = 'green';
-		cal.fullCalendar('updateEvent', event);
-		//console.log(cal.fullCalendar('clientEvents', 2));
-	}
-	
-	function renderEvent(stick) {
-		cal.fullCalendar('renderEvent', {
-			start: new Date(y, m, 17),
-			title: 'heyman'
-		}, stick);
-	}
-	
-	function getView() {
-		var view = cal.fullCalendar('getView');
-		console.log(view.start + ' --- ' + view.end + ' "' + view.title + '"');
-	}
-	
-	function getDate() {
-		console.log(cal.fullCalendar('getDate'));
-	}
-	
-	function optionGetter() {
-		console.log(cal.fullCalendar('option', 'editable'));
-	}
-	
-	var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
-	
-	var jsonFeed = "../demos/json-events.php";
+  $(document).ready(function() {
+    cal = $('#calendar').fullCalendar({
+      editable: true,
+      weekends: false,
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+      },
+      loading: function(bool) {
+        if (bool) {
+          $('#loading').show();
+        }else{
+          $('#loading').hide();
+        }
+      },
+      events: staticEvents = [
+        {
+          title: 'All Day Event',
+          start: new Date(y, m, 1)
+        },
+        {
+          title: 'Long Event',
+          start: new Date(y, m, d-5),
+          end: new Date(y, m, d-2)
+        },
+        {
+          id: 999,
+          title: 'Repeating Event',
+          start: new Date(y, m, d-3, 16, 0),
+          allDay: false
+        },
+        {
+          id: 999,
+          title: 'Repeating Event',
+          start: new Date(y, m, d+4, 16, 0),
+          allDay: false
+        },
+        {
+          title: 'Meeting',
+          start: new Date(y, m, d, 10, 30),
+          allDay: false
+        },
+        {
+          id: 777,
+          title: 'Lunch',
+          start: new Date(y, m, d, 12, 0),
+          end: new Date(y, m, d, 14, 0),
+          allDay: false
+        },
+        {
+          title: 'Birthday Party',
+          start: new Date(y, m, d+1, 19, 0),
+          end: new Date(y, m, d+1, 22, 30),
+          allDay: false
+        },
+        {
+          title: 'Click for Google',
+          start: new Date(y, m, 28),
+          end: new Date(y, m, 29),
+          url: 'http://google.com/'
+        }
+      ]
+    });
+  });
+  
+  function updateEventStart() {
+    var event = cal.fullCalendar('clientEvents', 777)[0];
+    event.start = new Date(y, m, d, 13, 30);
+    event.end = new Date(y, m, d, 14, 50);
+    //event.start = new Date(y, m, 25, 10, 30); // move big days
+    //event.end = new Date(y, m, 26);
+    //event.allDay = true;
+    cal.fullCalendar('updateEvent', event);
+  }
+  
+  function updateRepeatingEvent() {
+    var event = cal.fullCalendar('clientEvents', 999)[0];
+    event.start = new Date(y, m, 4, 13, 30);
+    event.end = new Date(y, m, 5, 2, 0);
+    event.allDay = true;
+    event.title = "repeat yo";
+    //event.editable = false;
+    event.url = "http://google.com/";
+    event.color = 'red';
+    event.textColor = 'green';
+    cal.fullCalendar('updateEvent', event);
+    //console.log(cal.fullCalendar('clientEvents', 2));
+  }
+  
+  function renderEvent(stick) {
+    cal.fullCalendar('renderEvent', {
+      start: new Date(y, m, 17),
+      title: 'heyman'
+    }, stick);
+  }
+  
+  function getView() {
+    var view = cal.fullCalendar('getView');
+    console.log(view.start + ' --- ' + view.end + ' "' + view.title + '"');
+  }
+  
+  function getDate() {
+    console.log(cal.fullCalendar('getDate'));
+  }
+  
+  function optionGetter() {
+    console.log(cal.fullCalendar('option', 'editable'));
+  }
+  
+  var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
+  
+  var jsonFeed = "../demos/json-events.php";
 
 </script>
 <style>
 
-	button {
-		font-size: 11px;
-	}
+  button {
+    font-size: 11px;
+  }
 
 </style>
 </head>

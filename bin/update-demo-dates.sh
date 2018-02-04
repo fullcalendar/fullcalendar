@@ -16,8 +16,8 @@ read -p "Is that ok? (y/N): " yn
 
 if [[ "$yn" != "y" ]]
 then
-	echo "Aborting."
-	exit 1
+  echo "Aborting."
+  exit 1
 fi
 
 find demos -type f \( -name '*.html' -o -name '*.json' \) -print0 \

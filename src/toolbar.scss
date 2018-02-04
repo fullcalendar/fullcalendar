@@ -1,0 +1,68 @@
+
+/* Toolbar
+--------------------------------------------------------------------------------------------------*/
+
+.fc-toolbar {
+  text-align: center;
+}
+
+.fc-toolbar.fc-header-toolbar {
+  margin-bottom: 1em;
+}
+
+.fc-toolbar.fc-footer-toolbar {
+  margin-top: 1em;
+}
+
+.fc-toolbar .fc-left {
+  float: left;
+}
+
+.fc-toolbar .fc-right {
+  float: right;
+}
+
+.fc-toolbar .fc-center {
+  display: inline-block;
+}
+
+/* the things within each left/right/center section */
+.fc .fc-toolbar > * > * { /* extra precedence to override button border margins */
+  float: left;
+  margin-left: .75em;
+}
+
+/* the first thing within each left/center/right section */
+.fc .fc-toolbar > * > :first-child { /* extra precedence to override button border margins */
+  margin-left: 0;
+}
+  
+/* title text */
+
+.fc-toolbar h2 {
+  margin: 0;
+}
+
+/* button layering (for border precedence) */
+
+.fc-toolbar button {
+  position: relative;
+}
+
+.fc-toolbar .fc-state-hover,
+.fc-toolbar .ui-state-hover {
+  z-index: 2;
+}
+  
+.fc-toolbar .fc-state-down {
+  z-index: 3;
+}
+
+.fc-toolbar .fc-state-active,
+.fc-toolbar .ui-state-active {
+  z-index: 4;
+}
+
+.fc-toolbar button:focus {
+  z-index: 5;
+}

@@ -11,93 +11,93 @@
 
 function initCalendar() {
 
-	$('#calendar').fullCalendar({
-		theme: true,
-		header: {
-			left: 'prev,next today',
-			center: 'title',
-			right: 'month,agendaWeek,agendaDay,listWeek'
-		},
-		defaultDate: '2017-07-12',
-		weekNumbers: true,
-		navLinks: true, // can click day/week names to navigate views
-		editable: true,
-		eventLimit: true, // allow "more" link when too many events
-		events: [
-			{
-				title: 'All Day Event',
-				start: '2017-07-01'
-			},
-			{
-				title: 'Long Event',
-				start: '2017-07-07',
-				end: '2017-07-10'
-			},
-			{
-				id: 999,
-				title: 'Repeating Event',
-				start: '2017-07-09T16:00:00'
-			},
-			{
-				id: 999,
-				title: 'Repeating Event',
-				start: '2017-07-16T16:00:00'
-			},
-			{
-				title: 'Conference',
-				start: '2017-07-11',
-				end: '2017-07-13'
-			},
-			{
-				title: 'Meeting',
-				start: '2017-07-12'
-			},
-			{
-				title: 'Lunch',
-				start: '2017-07-12'
-			},
-			{
-				title: 'Meeting',
-				start: '2017-07-12'
-			},
-			{
-				title: 'Happy Hour',
-				start: '2017-07-12'
-			},
-			{
-				title: 'Dinner',
-				start: '2017-07-12'
-			},
-			{
-				title: 'Birthday Party',
-				start: '2017-07-13T07:00:00'
-			},
-			{
-				title: 'Click for Google',
-				url: 'http://google.com/',
-				start: '2017-07-28'
-			}
-		]
-	});
+  $('#calendar').fullCalendar({
+    theme: true,
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'month,agendaWeek,agendaDay,listWeek'
+    },
+    defaultDate: '2017-07-12',
+    weekNumbers: true,
+    navLinks: true, // can click day/week names to navigate views
+    editable: true,
+    eventLimit: true, // allow "more" link when too many events
+    events: [
+      {
+        title: 'All Day Event',
+        start: '2017-07-01'
+      },
+      {
+        title: 'Long Event',
+        start: '2017-07-07',
+        end: '2017-07-10'
+      },
+      {
+        id: 999,
+        title: 'Repeating Event',
+        start: '2017-07-09T16:00:00'
+      },
+      {
+        id: 999,
+        title: 'Repeating Event',
+        start: '2017-07-16T16:00:00'
+      },
+      {
+        title: 'Conference',
+        start: '2017-07-11',
+        end: '2017-07-13'
+      },
+      {
+        title: 'Meeting',
+        start: '2017-07-12'
+      },
+      {
+        title: 'Lunch',
+        start: '2017-07-12'
+      },
+      {
+        title: 'Meeting',
+        start: '2017-07-12'
+      },
+      {
+        title: 'Happy Hour',
+        start: '2017-07-12'
+      },
+      {
+        title: 'Dinner',
+        start: '2017-07-12'
+      },
+      {
+        title: 'Birthday Party',
+        start: '2017-07-13T07:00:00'
+      },
+      {
+        title: 'Click for Google',
+        url: 'http://google.com/',
+        start: '2017-07-28'
+      }
+    ]
+  });
 
 }
 
 
 $(document).ready(function() {
 
-	initCalendar();
-	
-	$('#switcher').themeswitcher({
-		imgPath: 'themeswitcher/images/',
-		loadTheme: 'Cupertino',
-		height: 400,
-		onSelect: function(theme) {
-			setTimeout(function() {
-				$('#calendar').fullCalendar('render');
-			},1000);
-		}
-	});
-	
+  initCalendar();
+  
+  $('#switcher').themeswitcher({
+    imgPath: 'themeswitcher/images/',
+    loadTheme: 'Cupertino',
+    height: 400,
+    onSelect: function(theme) {
+      setTimeout(function() {
+        $('#calendar').fullCalendar('render');
+      },1000);
+    }
+  });
+  
 });
 
 </script>

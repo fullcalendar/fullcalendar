@@ -8,45 +8,45 @@
 <script src='../../dist/fullcalendar.js'></script>
 <script>
 
-	$(document).ready(function() {
-	
-		var date = new Date();
-		var d = date.getDate();
-		var m = date.getMonth();
-		var y = date.getFullYear();
-		
-		$('#calendar').fullCalendar({
-			header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
-			},
-			editable: true,
-			events: [
-				{
-					title: 'All Day Event',
-					start: new Date(y, m, 1),
-					end: '' // shouldn't choke on empty string
-				}
-			]
-		});
-		
-	});
+  $(document).ready(function() {
+  
+    var date = new Date();
+    var d = date.getDate();
+    var m = date.getMonth();
+    var y = date.getFullYear();
+    
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+      },
+      editable: true,
+      events: [
+        {
+          title: 'All Day Event',
+          start: new Date(y, m, 1),
+          end: '' // shouldn't choke on empty string
+        }
+      ]
+    });
+    
+  });
 
 </script>
 <style>
 
-	body {
-		margin-top: 40px;
-		text-align: center;
-		font-size: 13px;
-		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
+  body {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    }
 
-	#calendar {
-		width: 900px;
-		margin: 0 auto;
-		}
+  #calendar {
+    width: 900px;
+    margin: 0 auto;
+    }
 
 </style>
 </head>

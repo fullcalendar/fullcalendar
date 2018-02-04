@@ -1,0 +1,27 @@
+ddescribe('', function() {
+
+  var options;
+
+  beforeEach(function() {
+    //affix('#cal');
+    $('body').append('<div id="cal"></div>');
+    options = {
+      defaultDate: ''
+    };
+  });
+
+  afterEach(function() {
+    //$('#cal').fullCalendar('destroy');
+  });
+
+  describe('', function() {
+    beforeEach(function() {
+      options.defaultView = '';
+    });
+
+    iit('', function() {
+      $('#cal').fullCalendar(options);
+    });
+  });
+
+});

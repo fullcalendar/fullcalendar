@@ -1,0 +1,9 @@
+{
+  "extends": "eslint-config-standard",
+  "rules": {
+    "no-multiple-empty-lines": 0,
+    "padded-blocks": 0,
+    "space-before-function-paren": 0,
+    "standard/no-callback-literal": 0
+  }
+}

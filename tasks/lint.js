@@ -1,76 +1,103 @@
-var gulp = require('gulp');
-var jshint = require('gulp-jshint');
-var jscs = require('gulp-jscs');
+const gulp = require('gulp')
+const shell = require('gulp-shell')
+const eslint = require('gulp-eslint')
+const tslint = require('gulp-tslint')
+const tslintLib = require('tslint')
 
-// different types of jshint configs
-var jshintConfig = require('../.jshint.js');
-var jshintBase = jshintConfig.base;
-var jshintBrowser = jshintConfig.browser;
-var jshintBuilt = jshintConfig.built;
-
-// don't let gulp-jshint search for .jshintrc files
-jshintBase.lookup = false;
-jshintBrowser.lookup = false;
-jshintBuilt.lookup = false;
+const tslintProgram = tslintLib.Linter.createProgram('./tsconfig.json')
 
 gulp.task('lint', [
-	'jshint:base',
-	'jshint:browser',
-	'jscs:strict',
-	'jscs:relaxed'
-]);
+  'lint:ts',
+  'lint:js:built',
+  'lint:js:node',
+  'lint:js:tests',
+  'lint:dts',
+  'lint:example-repos'
+])
 
-// for non-browser JS
-gulp.task('jshint:base', function() {
-	return gulp.src([
-			'tasks/*.js',
-			'tests/automated/*.js',
-			'tests/automated-better/*.js'
-		])
-		.pipe(jshint(jshintBase))
-		.pipe(jshint.reporter('default'))
-		.pipe(jshint.reporter('fail'));
-});
+gulp.task('lint:ts', function() {
+  return gulp.src([
+    'src/**/*.ts',
+    'plugins/**/*.ts'
+  ])
+    .pipe(
+      tslint({ // will use tslint.json
+        formatter: 'verbose',
+        program: tslintProgram // for type-checking rules
+      })
+    )
+    .pipe(tslint.report())
+})
 
-// for browser JS, before concat
-gulp.task('jshint:browser', function() {
-	return gulp.src([
-			'src/**/*.js',
-			'!src/**/intro.js', // exclude
-			'!src/**/outro.js', // "
-			'locale/*.js',
-		])
-		.pipe(jshint(jshintBrowser))
-		.pipe(jshint.reporter('default'))
-		.pipe(jshint.reporter('fail'));
-});
+gulp.task('lint:js:built', [ 'webpack' ], function() {
+  return gulp.src([
+    'dist/*.js',
+    '!dist/*.min.js'
+  ])
+    .pipe(
+      eslint({ // only checks that globals are properly accessed
+        parserOptions: { 'ecmaVersion': 3 }, // for IE9
+        envs: [ 'browser', 'commonjs', 'amd' ],
+        rules: { 'no-undef': 2 }
+      })
+    )
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+})
 
-// files we want to lint to a higher standard
-gulp.task('jscs:strict', function() {
-	return gulp.src([
-			'tests/automated/*.js',
-			'tests/automated-better/*.js'
-		])
-		.pipe(jscs({
-			configPath: '.jscs.strict.js' // needs to be an external config
-		}))
-		.pipe(jscs.reporter())
-		.pipe(jscs.reporter('fail'));
-});
+gulp.task('lint:js:node', function() {
+  return gulp.src([
+    '*.js', // config files in root
+    'tasks/**/*.js'
+  ])
+    .pipe(
+      eslint({
+        configFile: 'eslint.json',
+        envs: [ 'node' ]
+      })
+    )
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+})
 
-// more relaxed linting. eventually move these to strict
-gulp.task('jscs:relaxed', function() {
-	return gulp.src([
-			'*.js', // like gulpfile and root configs
-			'tasks/*.js',
-			'src/**/*.js',
-			'!src/**/intro.js', // exclude
-			'!src/**/outro.js', // "
-			'locale/*.js'
-		])
-		.pipe(jscs({
-			configPath: '.jscs.js' // needs to be an external config
-		}))
-		.pipe(jscs.reporter())
-		.pipe(jscs.reporter('fail'));
-});
+gulp.task('lint:js:tests', function() {
+  return gulp.src([
+    'tests/automated/**/*.js'
+  ])
+    .pipe(
+      eslint({
+        configFile: 'eslint.json',
+        envs: [ 'browser', 'jasmine', 'jquery' ],
+        globals: [
+          'moment',
+          'karmaConfig',
+          'pushOptions',
+          'describeOptions',
+          'describeTimezones',
+          'describeValues',
+          'pit',
+          'affix',
+          'getCurrentOptions',
+          'initCalendar',
+          'currentCalendar',
+          'spyOnMethod',
+          'spyOnCalendarCallback',
+          'spyCall',
+          'oneCall'
+        ]
+      })
+    )
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+})
+
+// runs the definitions file through the typescript compiler with strict settings
+// tho we don't do a require('typescript'), we need the tsc executable
+gulp.task('lint:dts', [ 'ts-types' ], shell.task(
+  './node_modules/typescript/bin/tsc --strict dist/fullcalendar.d.ts'
+))
+
+// try to build example repos
+gulp.task('lint:example-repos', [ 'webpack', 'ts-types' ], shell.task(
+  './bin/build-typescript-example.sh'
+))

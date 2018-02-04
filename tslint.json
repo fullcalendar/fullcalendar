@@ -1,0 +1,12 @@
+{
+  "extends": "tslint-config-standard",
+  "rules": {
+    "no-conditional-assignment": false,
+    "no-consecutive-blank-lines": false,
+    "no-unnecessary-type-assertion": false,
+    "space-before-function-paren": false,
+    "space-within-parens": false,
+    "strict-type-predicates": false,
+    "unified-signatures": false
+  }
+}
