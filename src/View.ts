@@ -684,6 +684,36 @@ export default abstract class View extends InteractiveDateComponent {
     })
   }
 
+  // Must be called when an event in the view has been resized to a new length
+  reportEventResizing(eventInstance, eventMutation, el, ev) {
+    const dateProfile = eventMutation.dateMutation.buildNewDateProfile(
+      eventInstance.dateProfile,
+      this.calendar
+    )
+
+    this.triggerEventResizing(
+      eventInstance,
+      eventMutation.dateMutation,
+      dateProfile,
+      el
+    )
+  }
+
+
+  // Triggers event-resizing handlers that have subscribed via the API
+  triggerEventResizing(eventInstance, durationDelta, dateProfile, el) {
+    this.publiclyTrigger('eventResizing', {
+      context: el[0],
+      args: [
+        eventInstance.toLegacy(),
+        durationDelta,
+        dateProfile,
+        {}, // {} = jqui dummy
+        this
+      ]
+    })
+  }
+
 
   /* Selection (time range)
   ------------------------------------------------------------------------------------------------------------------*/
