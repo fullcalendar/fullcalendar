@@ -70,6 +70,14 @@ function initThemeChooser(settings) {
         return 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
       }
     }
+    else if (themeSystem === 'bootstrap4') {
+      if (themeName) {
+        return 'https://bootswatch.com/4/' + themeName + '/bootstrap.min.css';
+      }
+      else { // the default bootstrap4 theme
+        return 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css';
+      }
+    }
   }
 
 

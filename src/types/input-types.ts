@@ -120,7 +120,7 @@ export interface OptionsInputBase {
   footer?: boolean | ToolbarInput
   customButtons?: { [name: string]: CustomButtonInput }
   buttonIcons?: boolean | ButtonIconsInput
-  themeSystem?: 'standard' | 'bootstrap3' | 'jquery-ui'
+  themeSystem?: 'standard' | 'bootstrap3' | 'bootstrap4' | 'jquery-ui'
   themeButtonIcons?: boolean | ButtonIconsInput
   bootstrapGlyphicons?: boolean | ButtonIconsInput
   firstDay?: number
