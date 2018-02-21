@@ -26,6 +26,7 @@ FullCalendar.datepickerLocale('nl', 'nl', {
 
 FullCalendar.locale("nl", {
   buttonText: {
+    year: "Jaar",
     month: "Maand",
     week: "Week",
     day: "Dag",
