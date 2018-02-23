@@ -51,7 +51,7 @@ describe('customButtons', function() {
     initCalendar({
       themeSystem: 'bootstrap4',
       customButtons: {
-        mybutton: { bootstrapGlyphicon: 'asdf' }
+        mybutton: { bootstrapFontAwesome: 'asdf' }
       },
       header: { left: 'mybutton', center: '', right: '' }
     })

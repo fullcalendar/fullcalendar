@@ -21,8 +21,8 @@ Bootstrap4Theme.prototype.classes = {
   popoverContent: 'card-body',
 
   // day grid
-  headerRow: 'border-primary', // avoid `panel` class b/c don't want margins/radius. only border color
-  dayRow: 'border-primary', // "
+  headerRow: 'table-bordered', // avoid `panel` class b/c don't want margins/radius. only border color
+  dayRow: 'table-bordered', // "
 
   // list view
   listView: 'card card-primary'
@@ -37,6 +37,6 @@ Bootstrap4Theme.prototype.iconClasses = {
   nextYear: 'fa-angle-double-right'
 }
 
-Bootstrap4Theme.prototype.iconOverrideOption = 'bootstrapGlyphicons'
-Bootstrap4Theme.prototype.iconOverrideCustomButtonOption = 'bootstrapGlyphicon'
+Bootstrap4Theme.prototype.iconOverrideOption = 'bootstrapFontAwesome'
+Bootstrap4Theme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
 Bootstrap4Theme.prototype.iconOverridePrefix = 'fa-'

@@ -14,7 +14,7 @@ describe('bootstrap4 theme', function() {
 
     it('renders a customized icon', function() {
       initCalendar({
-        bootstrapGlyphicons: {
+        bootstrapFontAwesome: {
           next: 'asdf'
         }
       })
@@ -23,7 +23,7 @@ describe('bootstrap4 theme', function() {
 
     it('renders text when specified as false', function() {
       initCalendar({
-        bootstrapGlyphicons: false
+        bootstrapFontAwesome: false
       })
       expect($('.fa')).not.toBeInDOM()
       expect($('.fc-next-button')).toHaveText('next')
