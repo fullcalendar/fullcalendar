@@ -15,7 +15,7 @@ describe('button text', function() {
       it('should contain default text values', function() {
         initCalendar()
 
-        // will have button icons, to text will be empty
+        // will have button icons, so text will be empty
         expect($('.fc-next-button')).toHaveText('')
         expect($('.fc-nextYear-button')).toHaveText('')
         expect($('.fc-prev-button')).toHaveText('')
