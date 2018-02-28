@@ -1,58 +1,77 @@
 #!/usr/bin/env bash
-
-# always immediately exit upon error
-set -e
-
-# start in project root
-cd "`dirname $0`/.."
-
 #
 # Give a --recent-release flag to test against the currently live release
 #
+set -e # always immediately exit upon error
+cd "`dirname $0`/.." # start in project root
+
+proj_dir="$PWD"
 
 if [[ "$1" == '--recent-release' ]]
 then
   use_current=0
 else
   use_current=1
+
+  # temporarily make this fullcalendar project global
+  npm link
 fi
 
-if [[ ! -d 'tests/example-repos/typescript-example' ]]
-then
-  echo "Checking out the typescript-example git submodule..."
-  git submodule init
-  git submodule update
-fi
+success=1
 
-cd 'tests/example-repos/typescript-example'
+for example_path in tests/example-repos/*
+do
+  # has npm build system? then build
+  if [[ -f "$example_path/package.json" ]]
+  then
+    cd "$example_path"
 
-npm install
+    npm install
 
+    # link to the globally linked fullcalendar
+    if [[ "$use_current" == '1' ]]
+    then
+      npm link fullcalendar
+    fi
+
+    if npm run build
+    then
+      echo
+      echo "Successfully built `basename $example_path`"
+      echo
+    else
+      echo
+      echo "Failed to build `basename $example_path`"
+      echo
+      success=0
+    fi
+
+    # unlink from the globally linked fullcalendar
+    # don't use npm-unlink because it will remove entry from package.json
+    if [[ "$use_current" == '1' ]]
+    then
+      rm 'node_modules/fullcalendar'
+    fi
+  fi
+
+  # return to project root, for next iteraion, and for after loop
+  cd "$proj_dir"
+done
+
+# unlink global fullcalendar
 if [[ "$use_current" == '1' ]]
 then
-  echo "Linking to fullcalendar current working directory..."
-  npm link ../../../
-fi
-
-success=0
-
-if npm run build
-then
-  success=1
-fi
-
-# undo the link regardless of success/failure.
-# IMPORTANT, otherwise other tasks trip up on infinite directory recursion
-if [[ "$use_current" == '1' ]]
-then
-  echo "Unlinking fullcalendar..."
-  npm unlink fullcalendar
+  npm unlink
 fi
 
 if [[ "$success" == '1' ]]
 then
-  echo "Success."
+  echo
+  echo "Successfully built all example repos."
+  echo
 else
-  echo "Failure."
+  echo
+  echo "Failed to build all example repos."
+  echo
   exit 1
 fi
