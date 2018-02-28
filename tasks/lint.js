@@ -99,5 +99,5 @@ gulp.task('lint:dts', [ 'ts-types' ], shell.task(
 
 // try to build example repos
 gulp.task('lint:example-repos', [ 'webpack', 'ts-types' ], shell.task(
-  './bin/build-typescript-example.sh'
+  './bin/build-example-repos.sh'
 ))
