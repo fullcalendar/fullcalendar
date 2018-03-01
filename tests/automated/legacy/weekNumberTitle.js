@@ -2,11 +2,8 @@ describe('weekNumberTitle', function() {
 
   var options
 
-  beforeEach(function() {
-    affix('#cal')
-    options = {
-      weekNumbers: true
-    }
+  pushOptions({
+    weekNumbers: true
   })
 
   function getRenderedWeekNumberTitle() {
@@ -23,27 +20,27 @@ describe('weekNumberTitle', function() {
       })
 
       it('renders correctly by default', function() {
-        $('#cal').fullCalendar(options)
+        initCalendar(options);
         expect(getRenderedWeekNumberTitle()).toBe('W')
       })
 
       it('renders correctly when unspecified and when locale is customized', function() {
         options.locale = 'es'
-        $('#cal').fullCalendar(options)
+        initCalendar(options);
         expect(getRenderedWeekNumberTitle()).toBe('Sm')
       })
 
       it('renders correctly when customized and LTR', function() {
         options.isRTL = false
         options.weekNumberTitle = 'YO'
-        $('#cal').fullCalendar(options)
+        initCalendar(options);
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })
 
       it('renders correctly when customized and RTL', function() {
         options.isRTL = true
         options.weekNumberTitle = 'YO'
-        $('#cal').fullCalendar(options)
+        initCalendar(options);
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })
     })
