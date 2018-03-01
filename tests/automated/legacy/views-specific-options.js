@@ -1,5 +1,17 @@
+
 describe('view-specific options', function() {
   var options
+
+  pushOptions({
+    header: {
+      left: 'prev,next',
+      center: 'title',
+      right: 'month,basicWeek,basicDay,agendaWeek,agendaDay'
+    },
+    defaultView: 'month',
+    titleFormat: '[default]',
+    views: { }
+  })
 
   beforeEach(function() {
     options = {
@@ -16,9 +28,9 @@ describe('view-specific options', function() {
   })
 
   function testEachView(viewsAndVals) {
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
     $.each(viewsAndVals, function(view, val) {
-      $('#cal').fullCalendar('changeView', view)
+      currentCalendar.changeView(view)
       expect($('h2')).toHaveText(val)
     })
   }
