@@ -15,20 +15,21 @@
   border-radius: 0;
 }
 
-.fc-bootstrap4 .fc-event-container {
-  color: #fff !important;
+.fc-bootstrap4 a.fc-event:not([href]):not([tabindex]) {
+  // bootstrap has a rule that sets these links to color:inherit. override.
+  color: #fff;
 }
 
 .fc-bootstrap4 .fc-popover.card {
-  position: absolute;
+  position: absolute; // because .card sets it to position:relative
 }
 
 
 /* Popover
 --------------------------------------------------------------------------------------------------*/
 
-.fc-bootstrap4 .fc-popover .panel-body {
-  padding: 0; /* undo built-in padding */
+.fc-bootstrap4 .fc-popover .card-body {
+  padding: 0; // undo built-in padding
 }
 
 

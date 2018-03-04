@@ -7,7 +7,8 @@ Bootstrap4Theme.prototype.classes = {
   widget: 'fc-bootstrap4',
 
   tableGrid: 'table-bordered', // avoid `table` class b/c don't want margins. only border color
-  tableList: 'table table-striped', // `table` class creates bottom margin but who cares
+  tableList: 'table', // `table` class creates bottom margin but who cares
+  tableListHeading: 'table-active',
 
   buttonGroup: 'btn-group',
   button: 'btn btn-primary',
@@ -21,8 +22,10 @@ Bootstrap4Theme.prototype.classes = {
   popoverContent: 'card-body',
 
   // day grid
-  headerRow: 'table-bordered', // avoid `panel` class b/c don't want margins/radius. only border color
-  dayRow: 'table-bordered', // "
+  // for left/right border color when border is inset from edges (all-day in agenda view)
+  // avoid `table` class b/c don't want margins/padding/structure. only border color.
+  headerRow: 'table-bordered',
+  dayRow: 'table-bordered',
 
   // list view
   listView: 'card card-primary'

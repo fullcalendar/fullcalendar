@@ -193,7 +193,10 @@ export default class ListView extends View {
     let altFormat = this.opt('listDayAltFormat')
 
     return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
-      '<td class="' + this.calendar.theme.getClass('widgetHeader') + '" colspan="3">' +
+      '<td class="' + (
+        this.calendar.theme.getClass('tableListHeading') ||
+        this.calendar.theme.getClass('widgetHeader')
+      ) + '" colspan="3">' +
         (mainFormat ?
           this.buildGotoAnchorHtml(
             dayDate,
