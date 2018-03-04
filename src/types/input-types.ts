@@ -168,7 +168,10 @@ export interface OptionsInputBase {
   dayCount?: number
   locale?: string
   timeFormat?: string
-  columnFormat?: string
+  columnHeader?: boolean
+  columnHeaderFormat?: string
+  columnHeaderText?: string | ((date: MomentInput) => string)
+  columnHeaderHtml?: string | ((date: MomentInput) => string)
   titleFormat?: string
   monthNames?: string[]
   monthNamesShort?: string[]
