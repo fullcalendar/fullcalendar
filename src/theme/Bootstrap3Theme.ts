@@ -1,9 +1,9 @@
 import Theme from './Theme'
 
-export default class BootstrapTheme extends Theme {
+export default class Bootstrap3Theme extends Theme {
 }
 
-BootstrapTheme.prototype.classes = {
+Bootstrap3Theme.prototype.classes = {
   widget: 'fc-bootstrap3',
 
   tableGrid: 'table-bordered', // avoid `table` class b/c don't want margins. only border color
@@ -31,8 +31,8 @@ BootstrapTheme.prototype.classes = {
   listView: 'panel panel-default'
 }
 
-BootstrapTheme.prototype.baseIconClass = 'glyphicon'
-BootstrapTheme.prototype.iconClasses = {
+Bootstrap3Theme.prototype.baseIconClass = 'glyphicon'
+Bootstrap3Theme.prototype.iconClasses = {
   close: 'glyphicon-remove',
   prev: 'glyphicon-chevron-left',
   next: 'glyphicon-chevron-right',
@@ -40,6 +40,6 @@ BootstrapTheme.prototype.iconClasses = {
   nextYear: 'glyphicon-forward'
 }
 
-BootstrapTheme.prototype.iconOverrideOption = 'bootstrapGlyphicons'
-BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapGlyphicon'
-BootstrapTheme.prototype.iconOverridePrefix = 'glyphicon-'
+Bootstrap3Theme.prototype.iconOverrideOption = 'bootstrapGlyphicons'
+Bootstrap3Theme.prototype.iconOverrideCustomButtonOption = 'bootstrapGlyphicon'
+Bootstrap3Theme.prototype.iconOverridePrefix = 'glyphicon-'
