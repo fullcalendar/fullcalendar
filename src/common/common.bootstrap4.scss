@@ -1,25 +1,34 @@
 
-.fc.fc-bootstrap3 a {
+.fc.fc-bootstrap4 a {
   text-decoration: none;
 }
 
-.fc.fc-bootstrap3 a[data-goto]:hover {
+.fc.fc-bootstrap4 a[data-goto]:hover {
   text-decoration: underline;
 }
 
-.fc-bootstrap3 hr.fc-divider {
+.fc-bootstrap4 hr.fc-divider {
   border-color: inherit;
 }
 
-.fc-bootstrap3 .fc-today.alert {
+.fc-bootstrap4 .fc-today.alert {
   border-radius: 0;
+}
+
+.fc-bootstrap4 a.fc-event:not([href]):not([tabindex]) {
+  // bootstrap has a rule that sets these links to color:inherit. override.
+  color: #fff;
+}
+
+.fc-bootstrap4 .fc-popover.card {
+  position: absolute; // because .card sets it to position:relative
 }
 
 
 /* Popover
 --------------------------------------------------------------------------------------------------*/
 
-.fc-bootstrap3 .fc-popover .panel-body {
+.fc-bootstrap4 .fc-popover .card-body {
   padding: 0; // undo built-in padding
 }
 
@@ -27,7 +36,7 @@
 /* TimeGrid Slats (lines that run horizontally)
 --------------------------------------------------------------------------------------------------*/
 
-.fc-bootstrap3 .fc-time-grid .fc-slats table {
+.fc-bootstrap4 .fc-time-grid .fc-slats table {
   /* some themes have background color. see through to slats */
   background: none;
 }

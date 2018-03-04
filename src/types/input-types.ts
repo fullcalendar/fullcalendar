@@ -65,7 +65,8 @@ export interface CustomButtonInput {
   text: string
   icon?: string
   themeIcon?: string
-  bootstrapGlyphicon?: string
+  bootstrapGlyphicon?: string,
+  bootstrapFontAwesome?: string,
   click(element: JQuery): void
 }
 
@@ -120,9 +121,10 @@ export interface OptionsInputBase {
   footer?: boolean | ToolbarInput
   customButtons?: { [name: string]: CustomButtonInput }
   buttonIcons?: boolean | ButtonIconsInput
-  themeSystem?: 'standard' | 'bootstrap3' | 'jquery-ui'
+  themeSystem?: 'standard' | 'bootstrap3' | 'bootstrap4' | 'jquery-ui'
   themeButtonIcons?: boolean | ButtonIconsInput
-  bootstrapGlyphicons?: boolean | ButtonIconsInput
+  bootstrapGlyphicons?: boolean | ButtonIconsInput,
+  bootstrapFontAwesome?: boolean | ButtonIconsInput,
   firstDay?: number
   isRTL?: boolean
   weekends?: boolean

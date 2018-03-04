@@ -15,6 +15,13 @@ describe('theme switching', function() {
     verifyBootstrapTheme()
   })
 
+  it('can switch from jquery-ui to boostrap4', function() {
+    initCalendar({ themeSystem: 'jquery-ui' })
+    verifyJqueryUiTheme()
+    currentCalendar.option('themeSystem', 'bootstrap4')
+    verifyBootstrap4Theme()
+  })
+
 
   function verifyStandardTheme() {
     expect($('.fc-unthemed')).toBeInDOM()
@@ -28,6 +35,11 @@ describe('theme switching', function() {
 
   function verifyBootstrapTheme() {
     expect($('.fc-bootstrap3')).toBeInDOM()
+    expect($('.fc .table-bordered')).toBeInDOM()
+  }
+
+  function verifyBootstrap4Theme() {
+    expect($('.fc-bootstrap4')).toBeInDOM()
     expect($('.fc .table-bordered')).toBeInDOM()
   }
 
