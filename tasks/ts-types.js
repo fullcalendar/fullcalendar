@@ -47,7 +47,7 @@ function filterModuleDeclaration(s) {
 function filterModuleId(id) {
   // fullcalendar/src/something/MyClass -> fullcalendar/MyClass
   return id.replace(
-    /\/src\/([^/]*\/)*([A-Z][A-Za-z]*)$/,
+    /\/src\/([^/]*\/)*([A-Z][A-Za-z0-9]*)$/,
     '/$2'
   )
 }
@@ -58,7 +58,7 @@ function filterModuleBody(s) {
   // changes the name of the default export to `Default` and exports it as a *named* export.
   // this allows ambient declaration merging to grab onto it.
   // workaround for https://github.com/Microsoft/TypeScript/issues/14080
-  s = s.replace(/export default( abstract)? class ([A-Z][A-Za-z]*)/, function(m0, m1, m2) {
+  s = s.replace(/export default( abstract)? class ([A-Z][A-Za-z0-9]*)/, function(m0, m1, m2) {
     defaultExportName = m2
     return 'export' + (m1 || '') + ' class Default'
   })
