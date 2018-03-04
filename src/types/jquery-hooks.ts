@@ -17,7 +17,7 @@ declare global {
     fullCalendar(method: 'destroy'): JQuery
     fullCalendar(method: 'option', name: string | object, value?: any): any
     fullCalendar(method: 'isValidViewType', viewType: string): boolean
-    fullCalendar(method: 'changeView', viewName: string, dateOrRange: RangeInput | MomentInput): JQuery
+    fullCalendar(method: 'changeView', viewName: string, dateOrRange?: RangeInput | MomentInput): JQuery
     fullCalendar(method: 'zoomTo', newDate: moment.Moment, viewType?: string): JQuery
     fullCalendar(method: 'prev'): JQuery
     fullCalendar(method: 'next'): JQuery
@@ -36,7 +36,7 @@ declare global {
     fullCalendar(method: 'refetchEvents'): JQuery
     fullCalendar(method: 'renderEvents', eventInputs: EventObjectInput[], isSticky?: boolean): JQuery
     fullCalendar(method: 'renderEvent', eventInput: EventObjectInput, isSticky?: boolean): JQuery
-    fullCalendar(method: 'removeEvents', legacyQuery: any): JQuery
+    fullCalendar(method: 'removeEvents', legacyQuery?: any): JQuery
     fullCalendar(method: 'clientEvents', legacyQuery: any): any
     fullCalendar(method: 'updateEvents', eventPropsArray: EventObjectInput[]): JQuery
     fullCalendar(method: 'updateEvent', eventProps: EventObjectInput): JQuery
