@@ -402,6 +402,7 @@ describe('ListView rendering', function() {
       ).toBeGreaterThan(
         $scrollEl[0].clientHeight + 100
       )
+      $el.remove()
     })
 
     it('doesn\'t have scrollbars when height is \'auto\'', function() {
@@ -414,6 +415,7 @@ describe('ListView rendering', function() {
       expect(
         Math.abs($scrollEl[0].scrollHeight - $scrollEl[0].clientHeight)
       ).toBeLessThan(2)
+      $el.remove()
     })
   })
 
