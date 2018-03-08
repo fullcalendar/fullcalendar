@@ -13,7 +13,7 @@ describe('footer navigation', function() {
     it('should change view to next month', function() {
       initCalendar()
       $('.fc-footer-toolbar .fc-next-button').simulate('click')
-      var newDate = currentCalendar.getDate();
+      var newDate = currentCalendar.getDate()
       expect(newDate).toEqualMoment('2010-03-01')
     })
   })
@@ -22,7 +22,7 @@ describe('footer navigation', function() {
     it('should change view to prev month', function() {
       initCalendar()
       $('.fc-footer-toolbar .fc-prev-button').simulate('click')
-      var newDate = currentCalendar.getDate();
+      var newDate = currentCalendar.getDate()
       expect(newDate).toEqualMoment('2010-01-01')
     })
   })
@@ -31,7 +31,7 @@ describe('footer navigation', function() {
     it('should change view to prev year', function() {
       initCalendar()
       $('.fc-footer-toolbar .fc-prevYear-button').simulate('click')
-      var newDate = currentCalendar.getDate();
+      var newDate = currentCalendar.getDate()
       expect(newDate).toEqualMoment('2009-02-01')
     })
   })
@@ -40,7 +40,7 @@ describe('footer navigation', function() {
     it('should change view to next year', function() {
       initCalendar()
       $('.fc-footer-toolbar .fc-nextYear-button').simulate('click')
-      var newDate = currentCalendar.getDate();
+      var newDate = currentCalendar.getDate()
       expect(newDate).toEqualMoment('2011-02-01')
     })
   })
@@ -48,12 +48,12 @@ describe('footer navigation', function() {
   describe('and click today', function() {
     it('should change view to today', function() {
       var options = {}
-      options.defaultDate = '2010-03-15'; // something other than the `now` date
+      options.defaultDate = '2010-03-15' // something other than the `now` date
 
-      initCalendar(options);
+      initCalendar(options)
 
       $('.fc-footer-toolbar .fc-today-button').simulate('click');
-      var newDate = currentCalendar.getDate(); // will be ambig zone
+      var newDate = currentCalendar.getDate() // will be ambig zone
       expect(newDate).toEqualMoment('2010-02-01')
     })
   })

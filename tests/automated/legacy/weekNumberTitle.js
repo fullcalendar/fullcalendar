@@ -20,27 +20,27 @@ describe('weekNumberTitle', function() {
       })
 
       it('renders correctly by default', function() {
-        initCalendar(options);
+        initCalendar(options)
         expect(getRenderedWeekNumberTitle()).toBe('W')
       })
 
       it('renders correctly when unspecified and when locale is customized', function() {
         options.locale = 'es'
-        initCalendar(options);
+        initCalendar(options)
         expect(getRenderedWeekNumberTitle()).toBe('Sm')
       })
 
       it('renders correctly when customized and LTR', function() {
         options.isRTL = false
         options.weekNumberTitle = 'YO'
-        initCalendar(options);
+        initCalendar(options)
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })
 
       it('renders correctly when customized and RTL', function() {
         options.isRTL = true
         options.weekNumberTitle = 'YO'
-        initCalendar(options);
+        initCalendar(options)
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })
     })
