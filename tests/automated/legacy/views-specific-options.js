@@ -13,20 +13,6 @@ describe('view-specific options', function() {
     views: { }
   })
 
-  beforeEach(function() {
-    options = {
-      header: {
-        left: 'prev,next',
-        center: 'title',
-        right: 'month,basicWeek,basicDay,agendaWeek,agendaDay'
-      },
-      defaultView: 'month',
-      titleFormat: '[default]',
-      views: { }
-    }
-    affix('#cal')
-  })
-
   function testEachView(viewsAndVals) {
     initCalendar(options)
     $.each(viewsAndVals, function(view, val) {
