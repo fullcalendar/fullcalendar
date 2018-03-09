@@ -125,7 +125,7 @@ export default class EventDefDateMutation {
 
     // TODO: okay to access calendar option?
     if (!end && calendar.opt('forceEventDuration')) {
-      end = calendar.getDefaultEventEnd(eventDateProfile.isAllDay(), start)
+      end = calendar.getDefaultEventEnd(!start.hasTime(), start)
     }
 
     return new EventDateProfile(start, end, calendar)
