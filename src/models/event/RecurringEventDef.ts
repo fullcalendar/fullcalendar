@@ -1,5 +1,5 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
+import { assignTo } from '../../util/object'
 import EventDef from './EventDef'
 import EventInstance from './EventInstance'
 import EventDateProfile from './EventDateProfile'
@@ -84,7 +84,7 @@ export default class RecurringEventDef extends EventDef {
     }
 
     if (this.dowHash) {
-      def.dowHash = $.extend({}, this.dowHash)
+      def.dowHash = assignTo({}, this.dowHash)
     }
 
     return def

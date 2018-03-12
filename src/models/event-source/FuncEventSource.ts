@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import Promise from '../../common/Promise'
 import EventSource from './EventSource'
 
@@ -12,9 +11,9 @@ export default class FuncEventSource extends EventSource {
     let rawProps
 
     // normalize raw input
-    if ($.isFunction(rawInput.events)) { // extended form
+    if (typeof rawInput.events === 'function') { // extended form
       rawProps = rawInput
-    } else if ($.isFunction(rawInput)) { // short form
+    } else if (typeof rawInput === 'function') { // short form
       rawProps = { events: rawInput }
     }
 

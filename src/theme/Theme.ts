@@ -1,4 +1,4 @@
-import * as $ from 'jquery'
+import { assignTo } from '../util/object'
 
 
 export default class Theme {
@@ -33,8 +33,8 @@ export default class Theme {
     let iconClassesCopy
     let buttonName
 
-    if ($.isPlainObject(iconOverrideHash)) {
-      iconClassesCopy = $.extend({}, this.iconClasses)
+    if (typeof iconOverrideHash === 'object') {
+      iconClassesCopy = assignTo({}, this.iconClasses)
 
       for (buttonName in iconOverrideHash) {
         iconClassesCopy[buttonName] = this.applyIconOverridePrefix(

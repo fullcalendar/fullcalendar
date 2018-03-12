@@ -106,11 +106,11 @@ export default class Calendar {
     let context
     let args
 
-    if ($.isPlainObject(triggerInfo)) {
+    if (Array.isArray(triggerInfo)) {
+      args = triggerInfo
+    } else if (typeof triggerInfo === 'object') {
       context = triggerInfo.context
       args = triggerInfo.args
-    } else if ($.isArray(triggerInfo)) {
-      args = triggerInfo
     }
 
     if (context == null) {
@@ -1308,7 +1308,7 @@ ListenerMixin.mixInto(Calendar)
 function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {
   if (legacyQuery == null) {
     return legacyEventInstances
-  } else if ($.isFunction(legacyQuery)) {
+  } else if (typeof legacyQuery === 'function') {
     return legacyEventInstances.filter(legacyQuery)
   } else { // an event ID
     legacyQuery += '' // normalize to string

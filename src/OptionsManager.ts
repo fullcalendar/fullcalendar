@@ -1,5 +1,5 @@
-import * as $ from 'jquery'
 import { firstDefined } from './util'
+import { assignTo } from './util/object'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
 import { localeOptionHash, populateInstanceComputableOptions } from './locale'
 import Model from './common/Model'
@@ -17,7 +17,7 @@ export default class OptionsManager extends Model {
   constructor(_calendar, overrides) {
     super()
     this._calendar = _calendar
-    this.overrides = $.extend({}, overrides) // make a copy
+    this.overrides = assignTo({}, overrides) // make a copy
     this.dynamicOverrides = {}
     this.compute()
   }

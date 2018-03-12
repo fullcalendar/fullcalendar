@@ -66,12 +66,12 @@ export default class Toolbar {
     let calendarButtonText = optionsManager.get('buttonText') || {}
 
     if (buttonStr) {
-      $.each(buttonStr.split(' '), (i, buttonGroupStr) => {
+      buttonStr.split(' ').forEach((buttonGroupStr, i) => {
         let groupChildren = $()
         let isOnlyButtons = true
         let groupEl
 
-        $.each(buttonGroupStr.split(','), (j, buttonName) => {
+        buttonGroupStr.split(',').forEach((buttonName, j) => {
           let customButtonProps
           let viewSpec
           let buttonClick

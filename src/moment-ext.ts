@@ -1,6 +1,6 @@
 import * as moment from 'moment'
-import * as $ from 'jquery'
 import { isNativeDate } from './util'
+import { assignTo } from './util/object'
 
 /*
 GENERAL NOTE on moments throughout the *entire rest* of the codebase:
@@ -22,7 +22,7 @@ let ambigDateOfMonthRegex = /^\s*\d{4}-\d\d$/
 let ambigTimeOrZoneRegex =
   /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?)?$/
 let newMomentProto: any = moment.fn // where we will attach our new methods
-let oldMomentProto = $.extend({}, newMomentProto) // copy of original moment methods
+let oldMomentProto = assignTo({}, newMomentProto) // copy of original moment methods
 
 // tell momentjs to transfer these properties upon clone
 let momentProperties = (moment as any).momentProperties
@@ -102,7 +102,7 @@ function makeMoment(args, parseAsUTC= false, parseZone= false) {
         isAmbigTime = !ambigMatch[5] // no time part?
         isAmbigZone = true
       }
-    } else if ($.isArray(input)) {
+    } else if (Array.isArray(input)) {
       // arrays have no timezone information, so assume ambiguous zone
       isAmbigZone = true
     }

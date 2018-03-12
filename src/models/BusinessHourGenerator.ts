@@ -1,4 +1,4 @@
-import * as $ from 'jquery'
+import { assignTo } from '../util/object'
 import { eventDefsToEventInstances } from '../models/event/util'
 import EventInstanceGroup from './event/EventInstanceGroup'
 import RecurringEventDef from './event/RecurringEventDef'
@@ -52,11 +52,11 @@ export default class BusinessHourGenerator {
 
     if (rawComplexDef === true) {
       rawDefs = [ {} ] // will get BUSINESS_HOUR_EVENT_DEFAULTS verbatim
-    } else if ($.isPlainObject(rawComplexDef)) {
-      rawDefs = [ rawComplexDef ]
-    } else if ($.isArray(rawComplexDef)) {
+    } else if (Array.isArray(rawComplexDef)) {
       rawDefs = rawComplexDef
       requireDow = true // every sub-definition NEEDS a day-of-week
+    } else if (typeof rawComplexDef === 'object') {
+      rawDefs = [ rawComplexDef ]
     }
 
     for (i = 0; i < rawDefs.length; i++) {
@@ -72,7 +72,7 @@ export default class BusinessHourGenerator {
 
 
   buildEventDef(isAllDay, rawDef) {
-    let fullRawDef = $.extend({}, BUSINESS_HOUR_EVENT_DEFAULTS, rawDef)
+    let fullRawDef = assignTo({}, BUSINESS_HOUR_EVENT_DEFAULTS, rawDef)
 
     if (isAllDay) {
       fullRawDef.start = null

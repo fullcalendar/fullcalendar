@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import { removeMatching } from '../../util'
 import Promise from '../../common/Promise'
 import EventSource from './EventSource'
@@ -22,9 +21,9 @@ export default class ArrayEventSource extends EventSource {
     let rawProps
 
     // normalize raw input
-    if ($.isArray(rawInput.events)) { // extended form
+    if (Array.isArray(rawInput.events)) { // extended form
       rawProps = rawInput
-    } else if ($.isArray(rawInput)) { // short form
+    } else if (Array.isArray(rawInput)) { // short form
       rawProps = { events: rawInput }
     }
 

@@ -41,7 +41,7 @@ $.fn.fullCalendar = function(options?): (JQuery | any) {
         }
       } else if (!calendar) {
         warn('Attempting to call a FullCalendar method on an element with no calendar.')
-      } else if ($.isFunction(calendar[options])) {
+      } else if (typeof calendar[options] === 'function') {
         singleRes = calendar[options].apply(calendar, args)
 
         if (!i) {

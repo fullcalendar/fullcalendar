@@ -118,11 +118,12 @@ const instanceComputableOptions = {
 
 // TODO: make these computable properties in optionsManager
 export function populateInstanceComputableOptions(options) {
-  $.each(instanceComputableOptions, function(name, func) {
+  for (let name in instanceComputableOptions) {
+    let func = instanceComputableOptions[name]
     if (options[name] == null) {
       options[name] = func(options)
     }
-  })
+  }
 }
 
 
@@ -138,9 +139,10 @@ export function datepickerLocale(localeCode, dpLocaleCode, dpOptions) {
   fcOptions.weekNumberTitle = dpOptions.weekHeader
 
   // compute some more complex options from datepicker
-  $.each(dpComputableOptions, function(name, func) {
+  for (let name in dpComputableOptions) {
+    let func = dpComputableOptions[name]
     fcOptions[name] = func(dpOptions)
-  })
+  }
 
   let jqDatePicker = ($ as any).datepicker
 
@@ -181,11 +183,12 @@ export function locale(localeCode, newFcOptions) {
   // always do this. newFcOptions can be undefined when initializing from i18n file,
   // so no way to tell if this is an initialization or a default-setting.
   momOptions = getMomentLocaleData(localeCode) // will fall back to en
-  $.each(momComputableOptions, function(name, func) {
+  for (let name in momComputableOptions) {
+    let func = momComputableOptions[name]
     if (fcOptions[name] == null) {
       fcOptions[name] = (func)(momOptions, fcOptions)
     }
-  })
+  }
 
   // set it as the default locale for FullCalendar
   globalDefaults.locale = localeCode

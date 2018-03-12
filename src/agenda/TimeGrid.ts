@@ -144,7 +144,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     // might be an array value (for TimelineView).
     // if so, getting the most granular entry (the last one probably).
     input = this.opt('slotLabelFormat')
-    if ($.isArray(input)) {
+    if (Array.isArray(input)) {
       input = input[input.length - 1]
     }
 

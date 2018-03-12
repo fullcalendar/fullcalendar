@@ -301,7 +301,7 @@ export function isPrimaryMouseButton(ev) {
 
 
 export function getEvX(ev) {
-  let touches = ev.originalEvent.touches
+  let touches = ev.touches
 
   // on mobile FF, pageX for touch events is present, but incorrect,
   // so, look at touch coordinates first.
@@ -314,7 +314,7 @@ export function getEvX(ev) {
 
 
 export function getEvY(ev) {
-  let touches = ev.originalEvent.touches
+  let touches = ev.touches
 
   // on mobile FF, pageX for touch events is present, but incorrect,
   // so, look at touch coordinates first.
@@ -409,7 +409,7 @@ export function parseFieldSpecs(input) {
     tokens = input.split(/\s*,\s*/)
   } else if (typeof input === 'function') {
     tokens = [ input ]
-  } else if ($.isArray(input)) {
+  } else if (Array.isArray(input)) {
     tokens = input
   }
 
@@ -476,7 +476,7 @@ export function flexibleCompare(a, b) {
   if (a == null) {
     return 1
   }
-  if ($.type(a) === 'string' || $.type(b) === 'string') {
+  if (typeof a === 'string' || typeof b === 'string') {
     return String(a).localeCompare(String(b))
   }
   return a - b
@@ -729,7 +729,7 @@ export function hasOwnProp(obj, name) {
 
 
 export function applyAll(functions, thisObj, args) {
-  if ($.isFunction(functions)) {
+  if (typeof functions === 'function') { // supplied a single function
     functions = [ functions ]
   }
   if (functions) {
@@ -825,11 +825,12 @@ export function stripHtmlEntities(text) {
 export function cssToStr(cssProps) {
   let statements = []
 
-  $.each(cssProps, function(name, val) {
+  for (let name in cssProps) {
+    let val = cssProps[name]
     if (val != null) {
       statements.push(name + ':' + val)
     }
-  })
+  }
 
   return statements.join(';')
 }
@@ -840,11 +841,12 @@ export function cssToStr(cssProps) {
 export function attrsToStr(attrs) {
   let parts = []
 
-  $.each(attrs, function(name, val) {
+  for (let name in attrs) {
+    let val = attrs[name]
     if (val != null) {
       parts.push(name + '="' + htmlEscape(val) + '"')
     }
-  })
+  }
 
   return parts.join(' ')
 }

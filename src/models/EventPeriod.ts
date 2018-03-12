@@ -1,6 +1,6 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import { removeExact, removeMatching } from '../util'
+import { isEmpty } from '../util/object'
 import Promise from '../common/Promise'
 import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
 import UnzonedRange from './UnzonedRange'
@@ -192,13 +192,13 @@ export default class EventPeriod {
 
 
   removeAllEventDefs() {
-    let isEmpty = $.isEmptyObject(this.eventDefsByUid)
+    let hasEventDefs = !isEmpty(this.eventDefsByUid)
 
     this.eventDefsByUid = {}
     this.eventDefsById = {}
     this.eventInstanceGroupsById = {}
 
-    if (!isEmpty) {
+    if (hasEventDefs) {
       this.tryRelease()
     }
   }

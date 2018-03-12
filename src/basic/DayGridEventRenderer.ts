@@ -20,7 +20,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
   renderBgRanges(eventRanges) {
     // don't render timed background events
-    eventRanges = $.grep(eventRanges, function(eventRange: any) {
+    eventRanges = eventRanges.filter(function(eventRange: any) {
       return eventRange.eventDef.isAllDay()
     })
 

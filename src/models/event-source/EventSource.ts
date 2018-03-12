@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import {
   default as ParsableModelMixin,
   ParsableModelInterface
@@ -133,7 +132,7 @@ export default class EventSource extends Class {
     }
 
     // TODO: converge with EventDef
-    if ($.isArray(rawProps.className)) {
+    if (Array.isArray(rawProps.className)) {
       this.className = rawProps.className
     } else if (typeof rawProps.className === 'string') {
       this.className = rawProps.className.split(/\s+/)

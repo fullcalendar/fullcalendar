@@ -2,6 +2,7 @@ import * as $ from 'jquery'
 import * as moment from 'moment'
 import * as exportHooks from '../../exports'
 import { disableCursor, enableCursor } from '../../util'
+import { assignTo } from '../../util/object'
 import momentExt from '../../moment-ext'
 import { default as ListenerMixin, ListenerInterface } from '../../common/ListenerMixin'
 import HitDragListener from '../../common/HitDragListener'
@@ -61,7 +62,7 @@ export default class ExternalDropping extends Interaction {
       // Test that the dragged element passes the dropAccept selector or filter function.
       // FYI, the default is "*" (matches all)
       accept = this.opt('dropAccept')
-      if ($.isFunction(accept) ? accept.call(el[0], el) : el.is(accept)) {
+      if (typeof accept === 'function' ? accept.call(el[0], el) : el.is(accept)) {
         if (!this.isDragging) { // prevent double-listening if fired twice
           this.listenToExternalDrag(el, ev, ui)
         }
@@ -175,7 +176,7 @@ export default class ExternalDropping extends Interaction {
     }
 
     eventDef = SingleEventDef.parse(
-      $.extend({}, meta.eventProps, {
+      assignTo({}, meta.eventProps, {
         start: start,
         end: end
       }),
@@ -212,7 +213,7 @@ function getDraggedElMeta(el) {
 
   if (eventProps) {
     if (typeof eventProps === 'object') {
-      eventProps = $.extend({}, eventProps) // make a copy
+      eventProps = assignTo({}, eventProps) // make a copy
     } else { // something like 1 or true. still signal event creation
       eventProps = {}
     }

@@ -82,7 +82,7 @@ export default class GlobalEmitter {
     window.addEventListener(
       'touchmove',
       this.handleTouchMoveProxy = (ev) => {
-        this.handleTouchMove($.Event(ev as any))
+        this.handleTouchMove(ev)
       },
       { passive: false } as any // allows preventDefault()
     )
@@ -93,7 +93,7 @@ export default class GlobalEmitter {
     window.addEventListener(
       'scroll',
       this.handleScrollProxy = (ev) => {
-        this.handleScroll($.Event(ev as any))
+        this.handleScroll(ev)
       },
       true // useCapture
     )

@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import { attrsToStr, htmlEscape, dayIDs } from '../util'
 import momentExt from '../moment-ext'
@@ -663,12 +662,12 @@ export default abstract class DateComponent extends Component {
     let forceOff
     let finalOptions
 
-    if ($.isPlainObject(gotoOptions)) {
+    if (moment.isMoment(gotoOptions) || typeof gotoOptions !== 'object') {
+      date = gotoOptions // a single moment input
+    } else {
       date = gotoOptions.date
       type = gotoOptions.type
       forceOff = gotoOptions.forceOff
-    } else {
-      date = gotoOptions // a single moment input
     }
     date = momentExt(date) // if a string, parse it
 

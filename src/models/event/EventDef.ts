@@ -1,4 +1,4 @@
-import * as $ from 'jquery'
+import { assignTo } from '../../util/object'
 import {
   default as ParsableModelMixin,
   ParsableModelInterface
@@ -81,7 +81,7 @@ export default abstract class EventDef {
     EventDef.copyVerbatimStandardProps(this, copy)
 
     copy.className = this.className.slice() // copy
-    copy.miscProps = $.extend({}, this.miscProps)
+    copy.miscProps = assignTo({}, this.miscProps)
 
     return copy
   }
@@ -162,7 +162,7 @@ export default abstract class EventDef {
 
 
   toLegacy() {
-    let obj = $.extend({}, this.miscProps)
+    let obj = assignTo({}, this.miscProps)
 
     obj._id = this.uid
     obj.source = this.source
@@ -194,7 +194,7 @@ export default abstract class EventDef {
     }
 
     // TODO: converge with EventSource
-    if ($.isArray(rawProps.className)) {
+    if (Array.isArray(rawProps.className)) {
       this.className = rawProps.className
     }
     if (typeof rawProps.className === 'string') {
@@ -206,7 +206,7 @@ export default abstract class EventDef {
 
 
   applyMiscProps(rawProps) {
-    $.extend(this.miscProps, rawProps)
+    assignTo(this.miscProps, rawProps)
   }
 
 }
