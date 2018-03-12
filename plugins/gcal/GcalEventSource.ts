@@ -1,5 +1,5 @@
 import * as $ from 'jquery'
-import { EventSource, Promise, JsonFeedEventSource, warn, applyAll } from 'fullcalendar'
+import { EventSource, JsonFeedEventSource, warn, applyAll } from 'fullcalendar'
 
 
 export default class GcalEventSource extends EventSource {
@@ -30,61 +30,60 @@ export default class GcalEventSource extends EventSource {
   }
 
 
-  fetch(start, end, timezone) {
+  fetch(start, end, timezone, onSuccess, onFailure) {
     let url = this.buildUrl()
     let requestParams = this.buildRequestParams(start, end, timezone)
     let ajaxSettings = this.ajaxSettings || {}
-    let onSuccess = ajaxSettings.success
+    let origAjaxSuccess = ajaxSettings.success
 
     if (!requestParams) { // could have failed
-      return Promise.reject()
+      onFailure()
+      return
     }
 
     this.calendar.pushLoading()
 
-    return Promise.construct((onResolve, onReject) => {
-      $.ajax($.extend(
-        {}, // destination
-        JsonFeedEventSource.AJAX_DEFAULTS,
-        ajaxSettings,
-        {
-          url: url,
-          data: requestParams,
-          success: (responseData, status, xhr) => {
-            let rawEventDefs
-            let successRes
+    $.ajax($.extend(
+      {}, // destination
+      JsonFeedEventSource.AJAX_DEFAULTS,
+      ajaxSettings,
+      {
+        url: url,
+        data: requestParams,
+        success: (responseData, status, xhr) => {
+          let rawEventDefs
+          let successRes
 
-            this.calendar.popLoading()
+          this.calendar.popLoading()
 
-            if (responseData.error) {
-              this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors)
-              onReject()
-            } else if (responseData.items) {
-              rawEventDefs = this.gcalItemsToRawEventDefs(
-                responseData.items,
-                requestParams.timeZone
-              )
-
-              successRes = applyAll(onSuccess, this, [ responseData, status, xhr ]) // passthru
-
-              if ($.isArray(successRes)) {
-                rawEventDefs = successRes
-              }
-
-              onResolve(this.parseEventDefs(rawEventDefs))
-            }
-          },
-          error: (xhr, statusText, errorThrown) => {
-            this.reportError(
-              'Google Calendar network failure: ' + statusText,
-              [ xhr, errorThrown ]
+          if (responseData.error) {
+            this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors)
+            onFailure()
+          } else if (responseData.items) {
+            rawEventDefs = this.gcalItemsToRawEventDefs(
+              responseData.items,
+              requestParams.timeZone
             )
-            this.calendar.popLoading()
-            onReject()
+
+            successRes = applyAll(origAjaxSuccess, this, [ responseData, status, xhr ]) // passthru
+
+            if ($.isArray(successRes)) {
+              rawEventDefs = successRes
+            }
+
+            onSuccess(this.parseEventDefs(rawEventDefs))
           }
+        },
+        error: (xhr, statusText, errorThrown) => {
+          this.reportError(
+            'Google Calendar network failure: ' + statusText,
+            [ xhr, errorThrown ]
+          )
+          this.calendar.popLoading()
+          onFailure()
         }
-      ))
-    })
+      }
+    ))
   }
 
 

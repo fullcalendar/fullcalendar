@@ -1,7 +1,6 @@
 import * as $ from 'jquery'
 import { applyAll } from '../../util'
 import { assignTo } from '../../util/object'
-import Promise from '../../common/Promise'
 import EventSource from './EventSource'
 
 
@@ -38,10 +37,10 @@ export default class JsonFeedEventSource extends EventSource {
   }
 
 
-  fetch(start, end, timezone) {
+  fetch(start, end, timezone, onSuccess, onFailure) {
     let ajaxSettings = this.ajaxSettings
-    let onSuccess = ajaxSettings.success
-    let onError = ajaxSettings.error
+    let origAjaxSuccess = ajaxSettings.success
+    let origAjaxError = ajaxSettings.error
     let requestParams = this.buildRequestParams(start, end, timezone)
 
     // todo: eventually handle the promise's then,
@@ -50,40 +49,38 @@ export default class JsonFeedEventSource extends EventSource {
 
     this.calendar.pushLoading()
 
-    return Promise.construct((onResolve, onReject) => {
-      $.ajax(assignTo(
-        {}, // destination
-        JsonFeedEventSource.AJAX_DEFAULTS,
-        ajaxSettings,
-        {
-          url: this.url,
-          data: requestParams,
-          success: (rawEventDefs, status, xhr) => {
-            let callbackRes
+    $.ajax(assignTo(
+      {}, // destination
+      JsonFeedEventSource.AJAX_DEFAULTS,
+      ajaxSettings,
+      {
+        url: this.url,
+        data: requestParams,
+        success: (rawEventDefs, status, xhr) => {
+          let callbackRes
 
-            this.calendar.popLoading()
+          this.calendar.popLoading()
 
-            if (rawEventDefs) {
-              callbackRes = applyAll(onSuccess, this, [ rawEventDefs, status, xhr ]) // redirect `this`
+          if (rawEventDefs) {
+            callbackRes = applyAll(origAjaxSuccess, this, [ rawEventDefs, status, xhr ]) // redirect `this`
 
-              if (Array.isArray(callbackRes)) {
-                rawEventDefs = callbackRes
-              }
-
-              onResolve(this.parseEventDefs(rawEventDefs))
-            } else {
-              onReject()
+            if (Array.isArray(callbackRes)) {
+              rawEventDefs = callbackRes
             }
-          },
-          error: (xhr, statusText, errorThrown) => {
-            this.calendar.popLoading()
 
-            applyAll(onError, this, [ xhr, statusText, errorThrown ]) // redirect `this`
-            onReject()
+            onSuccess(this.parseEventDefs(rawEventDefs))
+          } else {
+            onFailure()
           }
+        },
+        error: (xhr, statusText, errorThrown) => {
+          this.calendar.popLoading()
+
+          applyAll(origAjaxError, this, [ xhr, statusText, errorThrown ]) // redirect `this`
+          onFailure()
         }
-      ))
-    })
+      }
+    ))
   }
 
 

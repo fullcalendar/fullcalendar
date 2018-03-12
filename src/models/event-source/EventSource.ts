@@ -70,8 +70,8 @@ export default class EventSource extends Class {
   }
 
 
-  fetch(start, end, timezone) {
-    // subclasses must implement. must return a promise.
+  fetch(start, end, timezone, onSuccess, onFailure) {
+    // subclasses must implement. must call the `onSuccess` or `onFailure` func.
   }
 
 

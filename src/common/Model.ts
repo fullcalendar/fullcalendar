@@ -157,23 +157,20 @@ export default class Model extends Class {
     }
   }
 
-  watch(name, depList, startFunc, stopFunc?) {
+  watch(name, depList, startFunc, stopFunc?, isAsync = false) {
     this.unwatch(name)
-
     this._watchers[name] = this._watchDeps(depList, (deps) => {
-      let res = startFunc.call(this, deps)
-
-      if (res && res.then) {
+      if (isAsync) { // means startFunc accepts a callback function that it will call
         this.unset(name) // put in an unset state while resolving
-        res.then((val) => {
+        startFunc.call(this, deps, (val) => {
           this.set(name, val)
         })
       } else {
+        let res = startFunc.call(this, deps)
         this.set(name, res)
       }
     }, (deps) => {
       this.unset(name)
-
       if (stopFunc) {
         stopFunc.call(this, deps)
       }

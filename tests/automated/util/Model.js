@@ -423,13 +423,11 @@ describe('Model', function() {
 
             var m = new Model()
             m.set('myvar', 5)
-            m.watch('myothervar', [ 'myvar' ], function(deps) {
-              var deferred = $.Deferred()
+            m.watch('myothervar', [ 'myvar' ], function(deps, callback) {
               setTimeout(function() {
-                deferred.resolve(deps.myvar * 2)
+                callback(deps.myvar * 2)
               }, 100)
-              return deferred.promise()
-            })
+            }, null, true) // async=true
 
             m.watch('myid', [ 'myvar', 'myothervar' ], funcs.generator)
             expect(spy).not.toHaveBeenCalled()
@@ -455,13 +453,11 @@ describe('Model', function() {
             var spy = spyOn(funcs, 'generator').and.callThrough()
 
             var MyClass = Model.extend()
-            MyClass.watch('myothervar', [ 'myvar' ], function(deps) {
-              var deferred = $.Deferred()
+            MyClass.watch('myothervar', [ 'myvar' ], function(deps, callback) {
               setTimeout(function() {
-                deferred.resolve(deps.myvar * 2)
+                callback(deps.myvar * 2)
               }, 100)
-              return deferred.promise()
-            })
+            }, null, true) // async=true
             MyClass.watch('myid', [ 'myvar', 'myothervar' ], funcs.generator)
 
             var m = new MyClass()

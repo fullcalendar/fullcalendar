@@ -1,5 +1,4 @@
 import { removeMatching } from '../../util'
-import Promise from '../../common/Promise'
 import EventSource from './EventSource'
 import SingleEventDef from '../event/SingleEventDef'
 
@@ -41,7 +40,7 @@ export default class ArrayEventSource extends EventSource {
   }
 
 
-  fetch(start, end, timezone) {
+  fetch(start, end, timezone, onSuccess, onFailure) {
     let eventDefs = this.eventDefs
     let i
 
@@ -58,7 +57,7 @@ export default class ArrayEventSource extends EventSource {
 
     this.currentTimezone = timezone
 
-    return Promise.resolve(eventDefs)
+    onSuccess(eventDefs)
   }
 
 

@@ -223,13 +223,14 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  fetchInitialEvents(dateProfile) {
+  fetchInitialEvents(dateProfile, callback) {
     let calendar = this.calendar
     let forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime
 
-    return calendar.requestEvents(
+    calendar.requestEvents(
       calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
-      calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay)
+      calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay),
+      callback
     )
   }
 
@@ -996,9 +997,9 @@ View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerato
 })
 
 
-View.watch('initialEvents', [ 'dateProfile' ], function(deps) {
-  return this.fetchInitialEvents(deps.dateProfile)
-})
+View.watch('initialEvents', [ 'dateProfile' ], function(deps, callback) {
+  this.fetchInitialEvents(deps.dateProfile, callback)
+}, null, true) // async=true
 
 
 View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {

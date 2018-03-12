@@ -20,7 +20,7 @@ export default class EventManager {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
-  currentPeriod: any
+  currentPeriod: EventPeriod
 
   calendar: any
   stickySource: any
@@ -34,7 +34,7 @@ export default class EventManager {
   }
 
 
-  requestEvents(start, end, timezone, force) {
+  requestEvents(start, end, timezone, force, callback) {
     if (
       force ||
       !this.currentPeriod ||
@@ -46,7 +46,7 @@ export default class EventManager {
       )
     }
 
-    return this.currentPeriod.whenReleased()
+    this.currentPeriod.whenReleased(callback)
   }
 
 

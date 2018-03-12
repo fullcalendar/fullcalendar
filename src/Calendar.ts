@@ -1070,12 +1070,13 @@ export default class Calendar {
   }
 
 
-  requestEvents(start: moment.Moment, end: moment.Moment) {
+  requestEvents(start: moment.Moment, end: moment.Moment, callback) {
     return this.eventManager.requestEvents(
       start,
       end,
       this.opt('timezone'),
-      !this.opt('lazyFetching')
+      !this.opt('lazyFetching'),
+      callback
     )
   }
 

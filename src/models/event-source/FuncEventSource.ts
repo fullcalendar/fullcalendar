@@ -1,4 +1,4 @@
-import Promise from '../../common/Promise'
+import { unpromisify } from '../../util/promise'
 import EventSource from './EventSource'
 
 
@@ -25,22 +25,16 @@ export default class FuncEventSource extends EventSource {
   }
 
 
-  fetch(start, end, timezone) {
+  fetch(start, end, timezone, onSuccess, onFailure) {
     this.calendar.pushLoading()
 
-    return Promise.construct((onResolve) => {
-      this.func.call(
-        this.calendar,
-        start.clone(),
-        end.clone(),
-        timezone,
-        (rawEventDefs) => {
-          this.calendar.popLoading()
-
-          onResolve(this.parseEventDefs(rawEventDefs))
-        }
-      )
-    })
+    unpromisify( // allow the func to return a promise
+      this.func.bind(this.calendar, start.clone(), end.clone(), timezone),
+      (rawEventDefs) => {
+        this.calendar.popLoading()
+        onSuccess(this.parseEventDefs(rawEventDefs))
+      }
+    )
   }
 
 

@@ -1,7 +1,6 @@
 import * as moment from 'moment'
 import { removeExact, removeMatching } from '../util'
 import { isEmpty } from '../util/object'
-import Promise from '../common/Promise'
 import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
 import UnzonedRange from './UnzonedRange'
 import EventInstanceGroup from './event/EventInstanceGroup'
@@ -78,7 +77,7 @@ export default class EventPeriod {
     this.requestsByUid[source.uid] = request
     this.pendingCnt += 1
 
-    source.fetch(this.start, this.end, this.timezone).then((eventDefs) => {
+    source.fetch(this.start, this.end, this.timezone, (eventDefs) => {
       if (request.status !== 'cancelled') {
         request.status = 'completed'
         request.eventDefs = eventDefs
@@ -322,13 +321,11 @@ export default class EventPeriod {
   }
 
 
-  whenReleased() {
+  whenReleased(callback) {
     if (this.releaseCnt) {
-      return Promise.resolve(this.eventInstanceGroupsById)
+      callback(this.eventInstanceGroupsById)
     } else {
-      return Promise.construct((onResolve) => {
-        this.one('release', onResolve)
-      })
+      this.one('release', callback)
     }
   }
 
