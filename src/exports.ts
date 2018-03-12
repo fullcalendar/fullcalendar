@@ -42,6 +42,10 @@ export {
 } from './util'
 
 export {
+  assignTo
+} from './util/object'
+
+export {
   formatDate,
   formatRange,
   queryMostGranularFormatUnit
