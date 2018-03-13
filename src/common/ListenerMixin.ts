@@ -49,7 +49,7 @@ export default class ListenerMixin extends Mixin implements ListenerInterface {
         other.on(arg, callback)
       }
 
-      ;(this._listeners || (this._listeners = []))
+      (this._listeners || (this._listeners = []))
         .push([ other, arg, callback ])
     }
   }

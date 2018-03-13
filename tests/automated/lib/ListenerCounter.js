@@ -35,14 +35,13 @@ export default class ListenerCounter {
   }
 
   computeDelta() {
-    return this.delta // + (countJqueryListeners(this.el) - this.jQueryStartCount)
+    return this.delta + (countJqueryListeners(this.el) - this.jQueryStartCount)
   }
 
 }
 
 
 function countJqueryListeners(el) {
-  return 0
   var hash = getJqueryHandlerHash(el)
   var cnt = 0
 
