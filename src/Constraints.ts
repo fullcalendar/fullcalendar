@@ -171,7 +171,7 @@ export default class Constraints {
 
     if (constraintVal === 'businessHours') {
       return this.buildCurrentBusinessFootprints(isAllDay)
-    } else if (typeof constraintVal === 'object') {
+    } else if (typeof constraintVal === 'object' && constraintVal) { // non-null object
       eventInstances = this.parseEventDefToInstances(constraintVal) // handles recurring events
 
       if (!eventInstances) { // invalid input. fallback to parsing footprint directly

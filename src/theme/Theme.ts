@@ -33,7 +33,7 @@ export default class Theme {
     let iconClassesCopy
     let buttonName
 
-    if (typeof iconOverrideHash === 'object') {
+    if (typeof iconOverrideHash === 'object' && iconOverrideHash) { // non-null object
       iconClassesCopy = assignTo({}, this.iconClasses)
 
       for (buttonName in iconOverrideHash) {

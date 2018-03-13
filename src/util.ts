@@ -543,7 +543,7 @@ export function computeDurationGreatestUnit(duration, durationInput) {
   let unit = computeGreatestUnit(duration)
 
   // prevent days:7 from being interpreted as a week
-  if (unit === 'week' && typeof durationInput === 'object' && durationInput.days) {
+  if (unit === 'week' && typeof durationInput === 'object' && durationInput && durationInput.days) { // non-null object
     unit = 'day'
   }
 
@@ -684,7 +684,7 @@ export function mergeProps(propObjs, complexProps?) {
       for (j = propObjs.length - 1; j >= 0; j--) {
         val = propObjs[j][name]
 
-        if (typeof val === 'object') {
+        if (typeof val === 'object' && val) { // non-null object
           complexObjs.unshift(val)
         } else if (val !== undefined) {
           dest[name] = val // if there were no objects, this value will be used

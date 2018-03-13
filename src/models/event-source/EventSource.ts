@@ -51,7 +51,7 @@ export default class EventSource extends Class {
   static parse(rawInput, calendar) {
     let source = new this(calendar)
 
-    if (typeof rawInput === 'object') {
+    if (typeof rawInput === 'object' && rawInput) { // non-null object
       if (source.applyProps(rawInput)) {
         return source
       }

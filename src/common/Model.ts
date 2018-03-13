@@ -121,7 +121,7 @@ export default class Model extends Class {
       // if an object, don't check equality, because might have been mutated internally.
       // TODO: eventually enforce immutability.
       if (
-        typeof val === 'object' ||
+        (typeof val === 'object' && val) || // non-null object
         val !== this._props[name]
       ) {
         changedProps[name] = val

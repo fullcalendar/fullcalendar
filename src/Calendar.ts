@@ -108,7 +108,7 @@ export default class Calendar {
 
     if (Array.isArray(triggerInfo)) {
       args = triggerInfo
-    } else if (typeof triggerInfo === 'object') {
+    } else if (typeof triggerInfo === 'object' && triggerInfo) { // non-null object
       context = triggerInfo.context
       args = triggerInfo.args
     }
@@ -151,7 +151,7 @@ export default class Calendar {
         newOptionHash[name] = value
         this.optionsManager.add(newOptionHash)
       }
-    } else if (typeof name === 'object') { // compound setter with object input
+    } else if (typeof name === 'object' && name) { // compound setter with object input (non-null)
       this.optionsManager.add(name)
     }
   }

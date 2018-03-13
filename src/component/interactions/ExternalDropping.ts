@@ -212,7 +212,7 @@ function getDraggedElMeta(el) {
   eventProps = el.data(prefix + 'event') || null
 
   if (eventProps) {
-    if (typeof eventProps === 'object') {
+    if (typeof eventProps === 'object' && eventProps) { // non-null object
       eventProps = assignTo({}, eventProps) // make a copy
     } else { // something like 1 or true. still signal event creation
       eventProps = {}

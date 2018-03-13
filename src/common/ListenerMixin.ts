@@ -36,7 +36,7 @@ export default class ListenerMixin extends Mixin implements ListenerInterface {
     })
   */
   listenTo(other, arg, callback?) {
-    if (typeof arg === 'object') { // given dictionary of callbacks
+    if (typeof arg === 'object' && arg) { // given dictionary of callbacks (non-null)
       for (let eventName in arg) {
         if (arg.hasOwnProperty(eventName)) {
           this.listenTo(other, eventName, arg[eventName])
