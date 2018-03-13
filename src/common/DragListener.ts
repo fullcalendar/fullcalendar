@@ -26,6 +26,7 @@ export default class DragListener {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
+  $document: any
   options: any
   subjectEl: any
 
@@ -156,10 +157,15 @@ export default class DragListener {
     let globalEmitter = GlobalEmitter.get()
 
     if (this.isGeneric) {
-      this.listenTo($(document), { // might only work on iOS because of GlobalEmitter's bind :(
-        drag: this.handleMove,
-        dragstop: this.endInteraction
-      })
+      if (!this.$document && window['jQuery']) {
+        this.$document = window['jQuery'](document)
+      }
+      if (this.$document) { // we can only attach jQueryUI drag handlers to a jQuery element reference
+        this.listenTo(this.$document, { // might only work on iOS because of GlobalEmitter's bind :(
+          drag: this.handleMove,
+          dragstop: this.endInteraction
+        })
+      }
     } else if (this.isTouch) {
       this.listenTo(globalEmitter, {
         touchmove: this.handleTouchMove,
@@ -182,7 +188,9 @@ export default class DragListener {
 
   unbindHandlers() {
     this.stopListeningTo(GlobalEmitter.get())
-    this.stopListeningTo($(document)) // for isGeneric
+    if (this.$document) {
+      this.stopListeningTo(this.$document) // for isGeneric
+    }
   }
 
 

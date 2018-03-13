@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import * as exportHooks from '../exports'
 import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
@@ -54,17 +53,18 @@ export default class GlobalEmitter {
 
   // called when the object that originally called needed() doesn't need a GlobalEmitter anymore.
   static unneeded() {
-    neededCount--
-
-    if (!neededCount) { // nobody else needs it
-      globalEmitter.unbind()
-      globalEmitter = null
+    if (neededCount > 0) {
+      neededCount--
+      if (!neededCount) { // nobody else needs it
+        globalEmitter.unbind()
+        globalEmitter = null
+      }
     }
   }
 
 
   bind() {
-    this.listenTo($(document), {
+    this.listenTo(document, {
       touchstart: this.handleTouchStart,
       touchcancel: this.handleTouchCancel,
       touchend: this.handleTouchEnd,
@@ -100,7 +100,7 @@ export default class GlobalEmitter {
   }
 
   unbind() {
-    this.stopListeningTo($(document))
+    this.stopListeningTo(document)
 
     window.removeEventListener(
       'touchmove',

@@ -78,7 +78,7 @@ export default class Popover {
     })
 
     if (options.autoHide) {
-      this.listenTo($(document), 'mousedown', this.documentMousedown)
+      this.listenTo(document, 'mousedown', this.documentMousedown)
     }
   }
 
@@ -101,7 +101,7 @@ export default class Popover {
       this.el = null
     }
 
-    this.stopListeningTo($(document), 'mousedown')
+    this.stopListeningTo(document, 'mousedown')
   }
 
 

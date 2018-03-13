@@ -17,6 +17,7 @@ export default class ExternalDropping extends Interaction {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
+  $document: any
   dragListener: any
   isDragging: boolean = false // jqui-dragging an external element? boolean
 
@@ -39,15 +40,22 @@ export default class ExternalDropping extends Interaction {
 
 
   bindToDocument() {
-    this.listenTo($(document), {
-      dragstart: this.handleDragStart, // jqui
-      sortstart: this.handleDragStart // jqui
-    })
+    if (!this.$document && window['jQuery']) {
+      this.$document = window['jQuery'](document)
+    }
+    if (this.$document) { // need jquery for attaching jqui handlers
+      this.listenTo(this.$document, {
+        dragstart: this.handleDragStart, // jqui
+        sortstart: this.handleDragStart // jqui
+      })
+    }
   }
 
 
   unbindFromDocument() {
-    this.stopListeningTo($(document))
+    if (this.$document) {
+      this.stopListeningTo(this.$document)
+    }
   }
 
 

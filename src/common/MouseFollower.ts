@@ -59,9 +59,9 @@ export default class MouseFollower {
       }
 
       if (getEvIsTouch(ev)) {
-        this.listenTo($(document), 'touchmove', this.handleMove)
+        this.listenTo(document, 'touchmove', this.handleMove)
       } else {
-        this.listenTo($(document), 'mousemove', this.handleMove)
+        this.listenTo(document, 'mousemove', this.handleMove)
       }
     }
   }
@@ -86,7 +86,7 @@ export default class MouseFollower {
     if (this.isFollowing && !this.isAnimating) { // disallow more than one stop animation at a time
       this.isFollowing = false
 
-      this.stopListeningTo($(document))
+      this.stopListeningTo(document)
 
       if (shouldRevert && revertDuration && !this.isHidden) { // do a revert animation?
         this.isAnimating = true

@@ -18,14 +18,12 @@ export interface ListenerInterface {
   stopListeningTo(other, eventName?)
 }
 
-let guid = 0
-
 export default class ListenerMixin extends Mixin implements ListenerInterface {
 
-  listenerId: any
+  _listeners: any // array of [ otherObject, eventName, callbackFunc ]
 
   /*
-  Given an `other` object that has on/off methods, bind the given `callback` to an event by the given name.
+  Given an `other` object that has on/off or addEventListener/removeEventListener methods, bind the given `callback` to an event by the given name.
   The `callback` will be called with the `this` context of the object that .listenTo is being called on.
   Can be called:
     .listenTo(other, eventName, callback)
@@ -42,11 +40,17 @@ export default class ListenerMixin extends Mixin implements ListenerInterface {
           this.listenTo(other, eventName, arg[eventName])
         }
       }
-    } else if (typeof arg === 'string') {
-      other.on(
-        arg + '.' + this.getListenerNamespace(), // use event namespacing to identify this object
-        callback.bind(this) // always use `this` context
-      )
+    } else if (typeof arg === 'string' && callback) {
+      callback = callback.bind(this) // always use `this` context)
+
+      if (other.addEventListener) {
+        other.addEventListener(arg, callback)
+      } else {
+        other.on(arg, callback)
+      }
+
+      ;(this._listeners || (this._listeners = []))
+        .push([ other, arg, callback ])
     }
   }
 
@@ -55,17 +59,24 @@ export default class ListenerMixin extends Mixin implements ListenerInterface {
   `eventName` is optional. If omitted, will stop listening to ALL events on `other`.
   */
   stopListeningTo(other, eventName?) {
-    other.off((eventName || '') + '.' + this.getListenerNamespace())
-  }
+    if (this._listeners) {
+      this._listeners = this._listeners.filter(function(listener) {
+        if (
+          listener[0] === other &&
+          (!eventName || eventName === listener[1])
+        ) {
+          if (other.removeEventListener) {
+            other.removeEventListener(listener[1], listener[2])
+          } else {
+            other.off(listener[1], listener[2])
+          }
 
-  /*
-  Returns a string, unique to this object, to be used for event namespacing
-  */
-  getListenerNamespace() {
-    if (this.listenerId == null) {
-      this.listenerId = guid++
+          return false // remove from array
+        } else {
+          return true // keep in array
+        }
+      })
     }
-    return '_listener' + this.listenerId
   }
 
 }
