@@ -33,6 +33,10 @@ export default class FuncEventSource extends EventSource {
       (rawEventDefs) => {
         this.calendar.popLoading()
         onSuccess(this.parseEventDefs(rawEventDefs))
+      },
+      () => {
+        this.calendar.popLoading()
+        onFailure()
       }
     )
   }
