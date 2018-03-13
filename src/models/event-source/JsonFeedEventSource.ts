@@ -43,10 +43,6 @@ export default class JsonFeedEventSource extends EventSource {
     let origAjaxError = ajaxSettings.error
     let requestParams = this.buildRequestParams(start, end, timezone)
 
-    // todo: eventually handle the promise's then,
-    // don't intercept success/error
-    // tho will be a breaking API change
-
     this.calendar.pushLoading()
 
     $.ajax(assignTo(
