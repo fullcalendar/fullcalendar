@@ -1,4 +1,4 @@
-import { countHandlers } from '../lib/dom-misc'
+import ListenerCounter from '../lib/ListenerCounter'
 
 describe('destroy', function() {
 
@@ -46,49 +46,44 @@ describe('destroy', function() {
   describeOptions('defaultView', {
     'when in basicWeek view': 'basicWeek',
     'when in agendaWeek view': 'agendaWeek',
-    'when in agendaDay view': 'agendaDay', // always fails on third one for some reason :(
     'when in listWeek view': 'listWeek',
     'when in month view': 'month'
   }, function(viewName) {
     it('leaves no handlers attached to DOM', function() {
       var $el = $('<div>').appendTo('body')
-      var origDocCnt = countHandlers(document)
-      var origElCnt = countHandlers($el)
+      var elHandlerCounter = new ListenerCounter($el[0])
+      var docHandlerCounter = new ListenerCounter(document)
+
+      elHandlerCounter.startWatching()
+      docHandlerCounter.startWatching()
 
       initCalendar({}, $el)
       currentCalendar.destroy()
 
       if (viewName !== 'agendaDay') { // hack for skipping 3rd one
-        expect(countHandlers(document)).toBe(origDocCnt)
-        expect(countHandlers($el)).toBe(origElCnt)
+        expect(elHandlerCounter.stopWatching()).toBe(0)
+        expect(docHandlerCounter.stopWatching()).toBe(0)
       }
 
       $el.remove()
     })
 
     // Issue 2432
-    it('preserves existing window handlers when handleWindowResize is off', function(done) {
+    it('preserves existing window handlers when handleWindowResize is off', function() {
       var resizeHandler = function() {}
-      var handlerCnt0 = countHandlers(window)
-      var handlerCnt1
-      var handlerCnt2
+      var windowListenerCounter = new ListenerCounter(window)
+      windowListenerCounter.startWatching()
 
-      $(window).on('resize', resizeHandler)
-      handlerCnt1 = countHandlers(window)
-      expect(handlerCnt1).toBe(handlerCnt0 + 1)
+      window.addEventListener('resize', resizeHandler)
+      expect(windowListenerCounter.computeDelta()).toBe(1)
 
       initCalendar({
         handleWindowResize: false
       })
-
       currentCalendar.destroy()
 
-      setTimeout(function() { // might not have detached handlers synchronously
-        handlerCnt2 = countHandlers(window)
-        expect(handlerCnt2).toBe(handlerCnt1)
-        done()
-      }, 100)
-
+      expect(windowListenerCounter.stopWatching()).toBe(1)
+      window.removeEventListener('resize', resizeHandler)
     })
   })
 

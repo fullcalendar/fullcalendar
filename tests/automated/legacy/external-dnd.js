@@ -1,4 +1,4 @@
-import { countHandlers } from '../lib/dom-misc'
+import ListenerCounter from '../lib/ListenerCounter'
 
 describe('external drag and drop', function() {
 
@@ -331,19 +331,17 @@ describe('external drag and drop', function() {
 
       // Issue 2433
       it('should not have drag handlers cleared when other calendar navigates', function() {
-
         init()
         var el1 = $('#cal')
 
         $('#cal').after('<div id="cal2"/>')
         var el2 = $('#cal2').fullCalendar(options)
 
-        var beforeCnt = countHandlers(document)
-        var afterCnt
+        var docListenerCounter = new ListenerCounter(document)
+        docListenerCounter.startWatching()
 
         el1.fullCalendar('next')
-        afterCnt = countHandlers(document)
-        expect(beforeCnt).toBe(afterCnt)
+        expect(docListenerCounter.stopWatching()).toBe(0)
 
         el1.remove()
         el2.remove()
