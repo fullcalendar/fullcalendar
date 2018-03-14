@@ -1,14 +1,8 @@
 
 describe('weekNumbers', function() {
 
-  var options
-  var counts
-
-  beforeEach(function() {
-    affix('#cal')
-    counts = {}
-    options = {}
-  })
+  var options = {}
+  var counts = {}
 
   afterEach(function() {
     $('#cal').fullCalendar('destroy')
@@ -16,9 +10,9 @@ describe('weekNumbers', function() {
 
   describe('when using month view', function() {
 
-    beforeEach(function() {
-      options.defaultView = 'month'
-      options.fixedWeekCount = true // will make 6 rows
+    pushOptions({
+      defaultView: 'month',
+      fixedWeekCount: true // will make 6 rows
     })
 
     describe('with default weekNumbers', function() { // which is false!
@@ -33,6 +27,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -41,6 +36,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -50,8 +46,8 @@ describe('weekNumbers', function() {
 
     describe('with weekNumbers to false', function() {
 
-      beforeEach(function() {
-        options.weekNumbers = false
+      pushOptions({
+        weekNumbers: false
       })
 
       describe('and default weekNumbersWithinDays', function() {
@@ -64,6 +60,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -72,6 +69,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -81,8 +79,8 @@ describe('weekNumbers', function() {
 
     describe('with weekNumbers to true', function() {
 
-      beforeEach(function() {
-        options.weekNumbers = true
+      pushOptions({
+        weekNumbers: true
       })
 
       describe('and default weekNumbersWithinDays', function() {
@@ -99,6 +97,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should display week numbers along the side only', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           // TODO: Is it possible to remove class fc-week-number from
           // headers and fillers, bringing allWeekNumbers down to 6?
@@ -111,6 +110,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should display week numbers in the day cells only', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.colWeekNumbers).toEqual(0)
           expect(counts.cellWeekNumbers).toEqual(6)
@@ -124,8 +124,8 @@ describe('weekNumbers', function() {
 
   describe('when using basicWeek view', function() {
 
-    beforeEach(function() {
-      options.defaultView = 'basicWeek'
+    pushOptions({
+      defaultView: 'basicWeek'
     })
 
     describe('with default weekNumbers', function() {
@@ -140,6 +140,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -148,6 +149,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -157,8 +159,8 @@ describe('weekNumbers', function() {
 
     describe('with weekNumbers to false', function() {
 
-      beforeEach(function() {
-        options.weekNumbers = false
+      pushOptions({
+        weekNumbers: false
       })
 
       describe('and default weekNumbersWithinDays', function() {
@@ -171,6 +173,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -179,6 +182,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -188,8 +192,8 @@ describe('weekNumbers', function() {
 
     describe('with weekNumbers to true', function() {
 
-      beforeEach(function() {
-        options.weekNumbers = true
+      pushOptions({
+        weekNumbers: true
       })
 
       describe('and default weekNumbersWithinDays', function() {
@@ -206,6 +210,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should display week numbers along the side only', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           // TODO: Is it possible to remove class fc-week-number from
           // headers and fillers, bringing allWeekNumbers down to 1?
@@ -218,6 +223,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should display week numbers in the day cells only', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.colWeekNumbers).toEqual(0)
           expect(counts.cellWeekNumbers).toEqual(1)
@@ -231,8 +237,8 @@ describe('weekNumbers', function() {
 
   describe('when using an agenda view', function() {
 
-    beforeEach(function() {
-      options.defaultView = 'agendaWeek'
+    pushOptions({
+      defaultView: 'agendaWeek'
     })
 
     describe('with default weekNumbers', function() {
@@ -247,6 +253,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -255,6 +262,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -264,8 +272,8 @@ describe('weekNumbers', function() {
 
     describe('with weekNumbers to false', function() {
 
-      beforeEach(function() {
-        options.weekNumbers = false
+      pushOptions({
+        weekNumbers: false
       })
 
       describe('and default weekNumbersWithinDays', function() {
@@ -278,6 +286,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -286,6 +295,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should not display week numbers at all', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
@@ -295,8 +305,8 @@ describe('weekNumbers', function() {
 
     describe('with weekNumbers to true', function() {
 
-      beforeEach(function() {
-        options.weekNumbers = true
+      pushOptions({
+        weekNumbers: true
       })
 
       describe('and default weekNumbersWithinDays', function() {
@@ -312,6 +322,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to false', function() {
         it('should display week numbers in the top left corner only', function() {
           options.weekNumbersWithinDays = false
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(1)
           expect(counts.colWeekNumbers).toEqual(0)
@@ -323,6 +334,7 @@ describe('weekNumbers', function() {
       describe('and weekNumbersWithinDays set to true', function() {
         it('should display week numbers in the top left corner only', function() {
           options.weekNumbersWithinDays = true
+          initCalendar(options)
           counts = getCounts()
           expect(counts.allWeekNumbers).toEqual(1)
           expect(counts.colWeekNumbers).toEqual(0)
@@ -338,7 +350,7 @@ describe('weekNumbers', function() {
   function getCounts() {
     var t = {}
 
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
 
     t.allWeekNumbers = $('.fc-week-number').length
     t.colWeekNumbers = $('.fc-content-skeleton thead td.fc-week-number').length
