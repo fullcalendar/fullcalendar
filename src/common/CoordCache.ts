@@ -49,16 +49,23 @@ export default class CoordCache {
       offsetParentEl = this.els[0].offsetParent as HTMLElement
     }
 
-    let offsetParentRect = offsetParentEl.getBoundingClientRect()
-    this.origin = { top: offsetParentRect.top, left: offsetParentRect.left }
+    if (offsetParentEl) {
+      let offsetParentRect = offsetParentEl.getBoundingClientRect()
+      this.origin = { top: offsetParentRect.top, left: offsetParentRect.left }
 
-    this.boundingRect = this.queryBoundingRect()
+      this.boundingRect = this.queryBoundingRect()
 
-    if (this.isHorizontal) {
-      this.buildElHorizontals()
-    }
-    if (this.isVertical) {
-      this.buildElVerticals()
+      if (this.isHorizontal) {
+        this.buildElHorizontals()
+      }
+      if (this.isVertical) {
+        this.buildElVerticals()
+      }
+    } else {
+      this.lefts = []
+      this.rights = []
+      this.tops = []
+      this.bottoms = []
     }
   }
 
