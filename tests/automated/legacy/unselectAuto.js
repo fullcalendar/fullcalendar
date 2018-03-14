@@ -9,8 +9,14 @@ describe('unselectAuto', function() {
       defaultDate: '2014-12-25',
       defaultView: 'month'
     }
-    affix('#cal')
-    affix('#otherthing')
+    $('<div id="cal" />').appendTo('body')
+    $('<div id="otherthing" />').appendTo('body')
+  })
+
+  afterEach(function() {
+    $('#cal').fullCalendar('destroy')
+    $('#cal').remove()
+    $('#otherthing').remove()
   })
 
   describe('when enabled', function() {

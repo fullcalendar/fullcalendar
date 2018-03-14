@@ -25,6 +25,7 @@ describe('external drag and drop', function() {
   })
 
   afterEach(function() {
+    $('#cal').fullCalendar('destroy')
     $('#cal').remove()
     $('#sidebar').remove()
   })
@@ -333,9 +334,8 @@ describe('external drag and drop', function() {
       it('should not have drag handlers cleared when other calendar navigates', function() {
         init()
         var el1 = $('#cal')
-
-        $('#cal').after('<div id="cal2"/>')
-        var el2 = $('#cal2').fullCalendar(options)
+        var el2 = $('<div id="cal2"/>').insertAfter(el1)
+        el2.fullCalendar(options)
 
         var docListenerCounter = new ListenerCounter(document)
         docListenerCounter.startWatching()
@@ -343,7 +343,7 @@ describe('external drag and drop', function() {
         el1.fullCalendar('next')
         expect(docListenerCounter.stopWatching()).toBe(0)
 
-        el1.remove()
+        el2.fullCalendar('destroy')
         el2.remove()
       })
     })
