@@ -9,7 +9,7 @@ export default class Toolbar {
 
   calendar: any
   toolbarOptions: any
-  el: any = null // mirrors local `el`
+  el: JQuery = null // mirrors local `el`
   viewsWithButtons: any = []
 
 

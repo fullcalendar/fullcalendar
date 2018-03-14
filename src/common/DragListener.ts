@@ -26,9 +26,9 @@ export default class DragListener {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
-  $document: any
+  $document: JQuery
   options: any
-  subjectEl: any
+  subjectEl: JQuery
 
   // coordinates of the initial mousedown
   originX: any
@@ -36,7 +36,7 @@ export default class DragListener {
 
   // the wrapping element that scrolls, or MIGHT scroll if there's overflow.
   // TODO: do this for wrappers that have overflow:hidden as well.
-  scrollEl: any
+  scrollEl: JQuery
 
   isInteracting: boolean = false
   isDistanceSurpassed: boolean = false

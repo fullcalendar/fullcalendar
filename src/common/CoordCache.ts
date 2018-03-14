@@ -12,8 +12,8 @@ options:
 */
 export default class CoordCache {
 
-  els: any // jQuery set (assumed to be siblings)
-  forcedOffsetParentEl: any // options can override the natural offsetParent
+  els: JQuery // jQuery set (assumed to be siblings)
+  forcedOffsetParentEl: JQuery // options can override the natural offsetParent
   origin: any // {left,top} position of offsetParent of els
   boundingRect: any // constrain cordinates to this rectangle. {left,right,top,bottom} or null
   isHorizontal: boolean = false // whether to query for left/right/width

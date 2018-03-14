@@ -18,7 +18,7 @@ export default class ListView extends View {
   segSelector: any = '.fc-list-item' // which elements accept event actions
 
   scroller: any
-  contentEl: any
+  contentEl: JQuery
 
   dayDates: any // localized ambig-time moment array
   dayRanges: any // UnzonedRange[], of start-end of each day

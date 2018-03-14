@@ -2,7 +2,7 @@ import Model from '../common/Model'
 
 export default class Component extends Model {
 
-  el: any
+  el: JQuery
 
 
   setElement(el) {

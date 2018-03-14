@@ -3,12 +3,12 @@ import EventFootprint from '../../models/event/EventFootprint'
 import EventSource from '../../models/event-source/EventSource'
 
 
-export default class HelperRenderer {
+export default abstract class HelperRenderer {
 
   view: any
   component: any
   eventRenderer: any
-  helperEls: any
+  helperEls: JQuery
 
 
   constructor(component, eventRenderer) {
@@ -69,9 +69,7 @@ export default class HelperRenderer {
   /*
   Must return all mock event elements
   */
-  renderSegs(segs, sourceSeg?) {
-    // Subclasses must implement
-  }
+  abstract renderSegs(segs, sourceSeg?): JQuery
 
 
   unrender() {

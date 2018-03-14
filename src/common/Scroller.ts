@@ -7,8 +7,8 @@ Embodies a div that has potential scrollbars
 */
 export default class Scroller extends Class {
 
-  el: any // the guaranteed outer element
-  scrollEl: any // the element with the scrollbars
+  el: JQuery // the guaranteed outer element
+  scrollEl: JQuery // the element with the scrollbars
   overflowX: any
   overflowY: any
 

@@ -16,9 +16,9 @@ export default class MouseFollower {
 
   options: any
 
-  sourceEl: any // the element that will be cloned and made to look like it is dragging
-  el: any // the clone of `sourceEl` that will track the mouse
-  parentEl: any // the element that `el` (the clone) will be attached to
+  sourceEl: JQuery // the element that will be cloned and made to look like it is dragging
+  el: JQuery // the clone of `sourceEl` that will track the mouse
+  parentEl: JQuery // the element that `el` (the clone) will be attached to
 
   // the initial position of el, relative to the offset parent. made to match the initial offset of sourceEl
   top0: any

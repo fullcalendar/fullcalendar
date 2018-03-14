@@ -39,9 +39,9 @@ export default class DayGrid extends InteractiveDateComponent {
 
   bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
-  headContainerEl: any // div that hold's the date header
-  rowEls: any // set of fake row elements
-  cellEls: any // set of whole-day elements comprising the row's background
+  headContainerEl: JQuery // div that hold's the date header
+  rowEls: JQuery // set of fake row elements
+  cellEls: JQuery // set of whole-day elements comprising the row's background
 
   rowCoordCache: any
   colCoordCache: any

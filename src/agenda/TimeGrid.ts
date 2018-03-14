@@ -47,25 +47,25 @@ export default class TimeGrid extends InteractiveDateComponent {
   labelFormat: any // formatting string for times running along vertical axis
   labelInterval: any // duration of how often a label should be displayed for a slot
 
-  headContainerEl: any // div that hold's the date header
-  colEls: any // cells elements in the day-row background
-  slatContainerEl: any // div that wraps all the slat rows
-  slatEls: any // elements running horizontally across all columns
-  nowIndicatorEls: any
+  headContainerEl: JQuery // div that hold's the date header
+  colEls: JQuery // cells elements in the day-row background
+  slatContainerEl: JQuery // div that wraps all the slat rows
+  slatEls: JQuery // elements running horizontally across all columns
+  nowIndicatorEls: JQuery
 
   colCoordCache: any
   slatCoordCache: any
 
-  bottomRuleEl: any // hidden by default
-  contentSkeletonEl: any
-  colContainerEls: any // containers for each column
+  bottomRuleEl: JQuery // hidden by default
+  contentSkeletonEl: JQuery
+  colContainerEls: JQuery // containers for each column
 
   // inner-containers for each column where different types of segs live
-  fgContainerEls: any
-  bgContainerEls: any
-  helperContainerEls: any
-  highlightContainerEls: any
-  businessContainerEls: any
+  fgContainerEls: JQuery
+  bgContainerEls: JQuery
+  helperContainerEls: JQuery
+  highlightContainerEls: JQuery
+  businessContainerEls: JQuery
 
   // arrays of different types of displayed segments
   helperSegs: any

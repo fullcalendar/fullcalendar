@@ -8,7 +8,7 @@ import * as $ from 'jquery'
 
 // Given the scrollbar widths of some other container, create borders/margins on rowEls in order to match the left
 // and right space that was offset by the scrollbars. A 1-pixel border first, then margin beyond that.
-export function compensateScroll(rowEls, scrollbarWidths) {
+export function compensateScroll(rowEls: JQuery, scrollbarWidths) {
   if (scrollbarWidths.left) {
     rowEls.css({
       'border-left-width': 1,
@@ -25,7 +25,7 @@ export function compensateScroll(rowEls, scrollbarWidths) {
 
 
 // Undoes compensateScroll and restores all borders/margins
-export function uncompensateScroll(rowEls) {
+export function uncompensateScroll(rowEls: JQuery) {
   rowEls.css({
     'margin-left': '',
     'margin-right': '',
@@ -51,7 +51,7 @@ export function enableCursor() {
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
 // any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
-export function distributeHeight(els, availableHeight, shouldRedistribute) {
+export function distributeHeight(els: JQuery, availableHeight, shouldRedistribute) {
 
   // *FLOORING NOTE*: we floor in certain places because zoom can give inaccurate floating-point dimensions,
   // and it is better to be shorter than taller, to avoid creating unnecessary scrollbars.
@@ -103,7 +103,7 @@ export function distributeHeight(els, availableHeight, shouldRedistribute) {
 
 
 // Undoes distrubuteHeight, restoring all els to their natural height
-export function undistributeHeight(els) {
+export function undistributeHeight(els: JQuery) {
   els.height('')
 }
 
@@ -111,7 +111,7 @@ export function undistributeHeight(els) {
 // Given `els`, a jQuery set of <td> cells, find the cell with the largest natural width and set the widths of all the
 // cells to be that width.
 // PREREQUISITE: if you want a cell to take up width, it needs to have a single inner element w/ display:inline
-export function matchCellWidths(els) {
+export function matchCellWidths(els: JQuery) {
   let maxInnerWidth = 0
 
   els.find('> *').each(function(i, innerEl) {
@@ -131,7 +131,7 @@ export function matchCellWidths(els) {
 
 // Given one element that resides inside another,
 // Subtracts the height of the inner element from the outer element.
-export function subtractInnerElHeight(outerEl, innerEl) {
+export function subtractInnerElHeight(outerEl: JQuery, innerEl: JQuery) {
   let both = outerEl.add(innerEl)
   let diff
 
@@ -152,7 +152,7 @@ export function subtractInnerElHeight(outerEl, innerEl) {
 
 
 // borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
-export function getScrollParent(el) {
+export function getScrollParent(el: JQuery) {
   let position = el.css('position')
   let scrollParent = el.parents().filter(function() {
     let parent = $(this)
@@ -168,7 +168,7 @@ export function getScrollParent(el) {
 // Queries the outer bounding area of a jQuery element.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
 // Origin is optional.
-export function getOuterRect(el, origin?) {
+export function getOuterRect(el: JQuery, origin?) {
   let offset = el.offset()
   let left = offset.left - (origin ? origin.left : 0)
   let top = offset.top - (origin ? origin.top : 0)
@@ -187,7 +187,7 @@ export function getOuterRect(el, origin?) {
 // Origin is optional.
 // WARNING: given element can't have borders
 // NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
-export function getClientRect(el, origin?) {
+export function getClientRect(el: JQuery, origin?) {
   let offset = el.offset()
   let scrollbarWidths = getScrollbarWidths(el)
   let left = offset.left + getCssFloat(el, 'border-left-width') + scrollbarWidths.left - (origin ? origin.left : 0)
@@ -205,7 +205,7 @@ export function getClientRect(el, origin?) {
 // Queries the area within the margin/border/padding of a jQuery element. Assumed not to have scrollbars.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
 // Origin is optional.
-export function getContentRect(el, origin) {
+export function getContentRect(el: JQuery, origin) {
   let offset = el.offset() // just outside of border, margin not included
   let left = offset.left + getCssFloat(el, 'border-left-width') + getCssFloat(el, 'padding-left') -
     (origin ? origin.left : 0)
@@ -224,7 +224,7 @@ export function getContentRect(el, origin) {
 // Returns the computed left/right/top/bottom scrollbar widths for the given jQuery element.
 // WARNING: given element can't have borders (which will cause offsetWidth/offsetHeight to be larger).
 // NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
-export function getScrollbarWidths(el) {
+export function getScrollbarWidths(el: JQuery) {
   let leftRightWidth = el[0].offsetWidth - el[0].clientWidth
   let bottomWidth = el[0].offsetHeight - el[0].clientHeight
   let widths
@@ -285,7 +285,7 @@ function computeIsLeftRtlScrollbars() { // creates an offscreen test element, th
 
 // Retrieves a jQuery element's computed CSS value as a floating-point number.
 // If the queried value is non-numeric (ex: IE can return "medium" for border width), will just return zero.
-function getCssFloat(el, prop) {
+function getCssFloat(el: JQuery, prop) {
   return parseFloat(el.css(prop)) || 0
 }
 
@@ -331,13 +331,13 @@ export function getEvIsTouch(ev) {
 }
 
 
-export function preventSelection(el) {
+export function preventSelection(el: JQuery) {
   el.addClass('fc-unselectable')
     .on('selectstart', preventDefault)
 }
 
 
-export function allowSelection(el) {
+export function allowSelection(el: JQuery) {
   el.removeClass('fc-unselectable')
     .off('selectstart', preventDefault)
 }
