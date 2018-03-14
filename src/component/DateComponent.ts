@@ -371,7 +371,7 @@ export default abstract class DateComponent extends Component {
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
   // Must return elements used for any mock events.
-  renderDrag(eventFootprints, seg, isTouch) {
+  renderDrag(eventFootprints, seg?, isTouch=false) {
     let renderedHelper = false
 
     this.iterChildren(function(child) {

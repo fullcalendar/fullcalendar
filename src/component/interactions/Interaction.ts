@@ -1,8 +1,9 @@
+import InteractiveDateComponent from '../InteractiveDateComponent';
 
 export default class Interaction {
 
   view: any
-  component: any
+  component: InteractiveDateComponent
 
 
   constructor(component) {
