@@ -6,18 +6,21 @@ import {
   getRectCenter,
   diffPoints
 } from '../util'
-import DragListener from './DragListener'
+import { default as DragListener, DragListenerOptions } from './DragListener'
+
+
+export interface HitDragListenerOptions extends DragListenerOptions {
+  subjectCenter?: boolean
+}
 
 
 /* Tracks mouse movements over a component and raises events about which hit the mouse is over.
 ------------------------------------------------------------------------------------------------------------------------
-options:
-- subjectEl
-- subjectCenter
 */
 
 export default class HitDragListener extends DragListener {
 
+  options: HitDragListenerOptions
   component: any // converts coordinates to hits
     // methods: hitsNeeded, hitsNotNeeded, queryHit
 
@@ -26,7 +29,7 @@ export default class HitDragListener extends DragListener {
   coordAdjust: any // delta that will be added to the mouse coordinates when computing collisions
 
 
-  constructor(component, options) {
+  constructor(component, options: HitDragListenerOptions) {
     super(options)
     this.component = component
   }
@@ -48,7 +51,7 @@ export default class HitDragListener extends DragListener {
 
       // constrain the point to bounds of the element being dragged
       if (subjectEl) {
-        subjectRect = subjectEl[0].getBoundingClientRect() // used for centering as well
+        subjectRect = subjectEl.getBoundingClientRect() // used for centering as well
         point = constrainPoint(point, subjectRect)
       }
 

@@ -16,6 +16,14 @@ import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 import GlobalEmitter from './GlobalEmitter'
 
 
+export interface DragListenerOptions {
+  delay?: number
+  distance?: number
+  subjectEl?: HTMLElement
+  scroll?: boolean
+  [handlerName: string]: any
+}
+
 /* Tracks a drag's mouse movement, firing various handlers
 ----------------------------------------------------------------------------------------------------------------------*/
 // TODO: use Emitter
@@ -26,8 +34,8 @@ export default class DragListener {
   stopListeningTo: ListenerInterface['stopListeningTo']
 
   $document: JQuery
-  options: any
-  subjectEl: JQuery
+  options: DragListenerOptions
+  subjectEl: HTMLElement
 
   // coordinates of the initial mousedown
   originX: any
@@ -35,7 +43,7 @@ export default class DragListener {
 
   // the wrapping element that scrolls, or MIGHT scroll if there's overflow.
   // TODO: do this for wrappers that have overflow:hidden as well.
-  scrollEl: JQuery
+  scrollEl: HTMLElement
 
   isInteracting: boolean = false
   isDistanceSurpassed: boolean = false
@@ -64,7 +72,7 @@ export default class DragListener {
   scrollIntervalMs: number = 50 // millisecond wait between scroll increment
 
 
-  constructor(options) {
+  constructor(options: DragListenerOptions) {
     this.options = options || {}
   }
 
@@ -102,7 +110,7 @@ export default class DragListener {
 
       this.originX = getEvX(ev)
       this.originY = getEvY(ev)
-      this.scrollEl = getScrollParent($(ev.target))
+      this.scrollEl = getScrollParent($(ev.target))[0]
 
       this.bindHandlers()
       this.initAutoScroll()
@@ -349,8 +357,8 @@ export default class DragListener {
     this.isAutoScroll =
       this.options.scroll &&
       scrollEl &&
-      !scrollEl.is(window) &&
-      !scrollEl.is(document)
+      scrollEl !== (window as any) &&
+      scrollEl !== (document as any)
 
     if (this.isAutoScroll) {
       // debounce makes sure rapid calls don't happen
@@ -372,7 +380,7 @@ export default class DragListener {
   // Computes and stores the bounding rectangle of scrollEl
   computeScrollBounds() {
     if (this.isAutoScroll) {
-      this.scrollBounds = this.scrollEl[0].getBoundingClientRect()
+      this.scrollBounds = this.scrollEl.getBoundingClientRect()
       // TODO: use getClientRect in future. but prevents auto scrolling when on top of scrollbars
     }
   }
@@ -440,21 +448,21 @@ export default class DragListener {
     let el = this.scrollEl
 
     if (this.scrollTopVel < 0) { // scrolling up?
-      if (el.scrollTop() <= 0) { // already scrolled all the way up?
+      if (el.scrollTop <= 0) { // already scrolled all the way up?
         this.scrollTopVel = 0
       }
     } else if (this.scrollTopVel > 0) { // scrolling down?
-      if (el.scrollTop() + el[0].clientHeight >= el[0].scrollHeight) { // already scrolled all the way down?
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) { // already scrolled all the way down?
         this.scrollTopVel = 0
       }
     }
 
     if (this.scrollLeftVel < 0) { // scrolling left?
-      if (el.scrollLeft() <= 0) { // already scrolled all the left?
+      if (el.scrollLeft <= 0) { // already scrolled all the left?
         this.scrollLeftVel = 0
       }
     } else if (this.scrollLeftVel > 0) { // scrolling right?
-      if (el.scrollLeft() + el[0].clientWidth >= el[0].scrollWidth) { // already scrolled all the way right?
+      if (el.scrollLeft + el.clientWidth >= el.scrollWidth) { // already scrolled all the way right?
         this.scrollLeftVel = 0
       }
     }
@@ -468,10 +476,10 @@ export default class DragListener {
 
     // change the value of scrollEl's scroll
     if (this.scrollTopVel) {
-      el.scrollTop(el.scrollTop() + this.scrollTopVel * frac)
+      el.scrollTop = el.scrollTop + this.scrollTopVel * frac
     }
     if (this.scrollLeftVel) {
-      el.scrollLeft(el.scrollLeft() + this.scrollLeftVel * frac)
+      el.scrollLeft = el.scrollLeft + this.scrollLeftVel * frac
     }
 
     this.constrainScrollVel() // since the scroll values changed, recompute the velocities

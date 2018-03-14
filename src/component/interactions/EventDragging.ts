@@ -134,7 +134,7 @@ export default class EventDragging extends Interaction {
     // of the view.
     let dragListener = this.dragListener = new HitDragListener(view, {
       scroll: this.opt('dragScroll'),
-      subjectEl: el,
+      subjectEl: el[0],
       subjectCenter: true,
       interactionStart: (ev) => {
         seg.component = component // for renderDrag

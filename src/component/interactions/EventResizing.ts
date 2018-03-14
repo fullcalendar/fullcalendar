@@ -77,7 +77,7 @@ export default class EventResizing extends Interaction {
     // Tracks mouse movement over the *grid's* coordinate map
     let dragListener = this.dragListener = new HitDragListener(component, {
       scroll: this.opt('dragScroll'),
-      subjectEl: el,
+      subjectEl: el[0],
       interactionStart: () => {
         isDragging = false
       },
