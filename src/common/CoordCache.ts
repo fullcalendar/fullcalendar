@@ -1,6 +1,13 @@
 import * as $ from 'jquery'
 import { getClientRect, getScrollParent } from '../util'
 
+export interface CoordCacheOptions {
+  els: HTMLElement[]
+  isHorizontal?: boolean
+  isVertical?: boolean
+  offsetParent?: HTMLElement
+}
+
 /*
 A cache for the left/right/top/bottom/width/height values for one or more elements.
 Works with both offset (from topleft document) and position (from offsetParent).
@@ -12,8 +19,8 @@ options:
 */
 export default class CoordCache {
 
-  els: JQuery // jQuery set (assumed to be siblings)
-  forcedOffsetParentEl: JQuery // options can override the natural offsetParent
+  els: HTMLElement[] // jQuery set (assumed to be siblings)
+  forcedOffsetParentEl: HTMLElement // options can override the natural offsetParent
   origin: any // {left,top} position of offsetParent of els
   boundingRect: any // constrain cordinates to this rectangle. {left,right,top,bottom} or null
   isHorizontal: boolean = false // whether to query for left/right/width
@@ -26,11 +33,11 @@ export default class CoordCache {
   bottoms: any
 
 
-  constructor(options) {
-    this.els = $(options.els)
+  constructor(options: CoordCacheOptions) {
+    this.els = options.els
     this.isHorizontal = options.isHorizontal
     this.isVertical = options.isVertical
-    this.forcedOffsetParentEl = options.offsetParent ? $(options.offsetParent) : null
+    this.forcedOffsetParentEl = options.offsetParent
   }
 
 
@@ -39,12 +46,11 @@ export default class CoordCache {
   build() {
     let offsetParentEl = this.forcedOffsetParentEl
     if (!offsetParentEl && this.els.length > 0) {
-      offsetParentEl = this.els.eq(0).offsetParent()
+      offsetParentEl = this.els[0].offsetParent as HTMLElement
     }
 
-    this.origin = offsetParentEl ?
-      offsetParentEl.offset() :
-      null
+    let offsetParentRect = offsetParentEl.getBoundingClientRect()
+    this.origin = { top: offsetParentRect.top, left: offsetParentRect.left }
 
     this.boundingRect = this.queryBoundingRect()
 
@@ -81,13 +87,10 @@ export default class CoordCache {
     let lefts = []
     let rights = []
 
-    this.els.each(function(i, node) {
-      let el = $(node)
-      let left = el.offset().left
-      let width = el.outerWidth()
-
-      lefts.push(left)
-      rights.push(left + width)
+    this.els.forEach(function(node) {
+      let rect = node.getBoundingClientRect()
+      lefts.push(rect.left)
+      rights.push(rect.right)
     })
 
     this.lefts = lefts
@@ -100,13 +103,10 @@ export default class CoordCache {
     let tops = []
     let bottoms = []
 
-    this.els.each(function(i, node) {
-      let el = $(node)
-      let top = el.offset().top
-      let height = el.outerHeight()
-
-      tops.push(top)
-      bottoms.push(top + height)
+    this.els.forEach(function(node) {
+      let rect = node.getBoundingClientRect()
+      tops.push(rect.top)
+      bottoms.push(rect.bottom)
     })
 
     this.tops = tops
@@ -233,7 +233,7 @@ export default class CoordCache {
     let scrollParentEl
 
     if (this.els.length > 0) {
-      scrollParentEl = getScrollParent(this.els.eq(0))
+      scrollParentEl = getScrollParent($(this.els[0]))
 
       if (!scrollParentEl.is(document)) {
         return getClientRect(scrollParentEl)

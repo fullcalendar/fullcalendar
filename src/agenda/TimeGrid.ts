@@ -221,7 +221,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     this.slatEls = this.slatContainerEl.find('tr')
 
     this.slatCoordCache = new CoordCache({
-      els: this.slatEls,
+      els: this.slatEls.toArray(),
       isVertical: true
     })
   }
@@ -297,7 +297,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     this.colEls = this.el.find('.fc-day, .fc-disabled-day')
 
     this.colCoordCache = new CoordCache({
-      els: this.colEls,
+      els: this.colEls.toArray(),
       isHorizontal: true
     })
 

@@ -121,11 +121,11 @@ export default class DayGrid extends InteractiveDateComponent {
     this.cellEls = this.el.find('.fc-day, .fc-disabled-day')
 
     this.rowCoordCache = new CoordCache({
-      els: this.rowEls,
+      els: this.rowEls.toArray(),
       isVertical: true
     })
     this.colCoordCache = new CoordCache({
-      els: this.cellEls.slice(0, this.colCnt), // only the first row
+      els: this.cellEls.toArray().slice(0, this.colCnt), // only the first row
       isHorizontal: true
     })
 
