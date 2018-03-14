@@ -21,7 +21,6 @@ export {
   cssToStr,
   proxy,
   capitaliseFirstLetter,
-  getOuterRect,
   getClientRect,
   getContentRect,
   getScrollbarWidths,

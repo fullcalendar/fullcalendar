@@ -1,7 +1,6 @@
 import {
   getEvX,
   getEvY,
-  getOuterRect,
   constrainPoint,
   intersectRects,
   getRectCenter,
@@ -49,7 +48,7 @@ export default class HitDragListener extends DragListener {
 
       // constrain the point to bounds of the element being dragged
       if (subjectEl) {
-        subjectRect = getOuterRect(subjectEl) // used for centering as well
+        subjectRect = subjectEl[0].getBoundingClientRect() // used for centering as well
         point = constrainPoint(point, subjectRect)
       }
 

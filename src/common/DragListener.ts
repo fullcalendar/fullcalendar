@@ -10,7 +10,6 @@ import {
   allowSelection,
   preventDefault,
   debounce,
-  getOuterRect,
   proxy
 } from '../util'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
@@ -373,7 +372,7 @@ export default class DragListener {
   // Computes and stores the bounding rectangle of scrollEl
   computeScrollBounds() {
     if (this.isAutoScroll) {
-      this.scrollBounds = getOuterRect(this.scrollEl)
+      this.scrollBounds = this.scrollEl[0].getBoundingClientRect()
       // TODO: use getClientRect in future. but prevents auto scrolling when on top of scrollbars
     }
   }

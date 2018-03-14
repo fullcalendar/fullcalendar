@@ -165,23 +165,6 @@ export function getScrollParent(el: JQuery) {
 }
 
 
-// Queries the outer bounding area of a jQuery element.
-// Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
-// Origin is optional.
-export function getOuterRect(el: JQuery, origin?) {
-  let offset = el.offset()
-  let left = offset.left - (origin ? origin.left : 0)
-  let top = offset.top - (origin ? origin.top : 0)
-
-  return {
-    left: left,
-    right: left + el.outerWidth(),
-    top: top,
-    bottom: top + el.outerHeight()
-  }
-}
-
-
 // Queries the area within the margin/border/scrollbars of a jQuery element. Does not go within the padding.
 // Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
 // Origin is optional.
