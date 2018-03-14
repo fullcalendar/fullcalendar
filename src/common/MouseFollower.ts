@@ -6,6 +6,14 @@ import {
 } from '../util'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
+export interface MouseFollowerOptions {
+  parentEl?: HTMLElement
+  revertDuration?: number
+  additionalClass?: string
+  opacity?: number
+  zIndex?: number
+}
+
 /* Creates a clone of an element and lets it track the mouse as it moves
 ----------------------------------------------------------------------------------------------------------------------*/
 
@@ -14,11 +22,11 @@ export default class MouseFollower {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
-  options: any
+  options: MouseFollowerOptions
 
-  sourceEl: JQuery // the element that will be cloned and made to look like it is dragging
-  el: JQuery // the clone of `sourceEl` that will track the mouse
-  parentEl: JQuery // the element that `el` (the clone) will be attached to
+  sourceEl: HTMLElement // the element that will be cloned and made to look like it is dragging
+  el: HTMLElement // the clone of `sourceEl` that will track the mouse
+  parentEl: HTMLElement // the element that `el` (the clone) will be attached to
 
   // the initial position of el, relative to the offset parent. made to match the initial offset of sourceEl
   top0: any
@@ -37,10 +45,10 @@ export default class MouseFollower {
   isAnimating: boolean = false // doing the revert animation?
 
 
-  constructor(sourceEl, options) {
+  constructor(sourceEl: HTMLElement, options: MouseFollowerOptions) {
     this.options = options = options || {}
     this.sourceEl = sourceEl
-    this.parentEl = options.parentEl ? $(options.parentEl) : sourceEl.parent() // default to sourceEl's parent
+    this.parentEl = options.parentEl || (sourceEl.parentNode as HTMLElement) // default to sourceEl's parent
   }
 
 
@@ -90,7 +98,7 @@ export default class MouseFollower {
 
       if (shouldRevert && revertDuration && !this.isHidden) { // do a revert animation?
         this.isAnimating = true
-        this.el.animate({
+        $(this.el).animate({
           top: this.top0,
           left: this.left0
         }, {
@@ -109,26 +117,24 @@ export default class MouseFollower {
     let el = this.el
 
     if (!el) {
-      el = this.el = this.sourceEl.clone()
-        .addClass(this.options.additionalClass || '')
-        .css({
-          position: 'absolute',
-          visibility: '', // in case original element was hidden (commonly through hideEvents())
-          display: this.isHidden ? 'none' : '', // for when initially hidden
-          margin: 0,
-          right: 'auto', // erase and set width instead
-          bottom: 'auto', // erase and set height instead
-          width: this.sourceEl.width(), // explicit height in case there was a 'right' value
-          height: this.sourceEl.height(), // explicit width in case there was a 'bottom' value
-          opacity: this.options.opacity || '',
-          zIndex: this.options.zIndex
-        })
+      el = this.el = this.sourceEl.cloneNode(true) as HTMLElement // cloneChildren=true
+      el.classList.add(this.options.additionalClass || '')
+      el.style.position = 'absolute'
+      el.style.visibility = '' // in case original element was hidden (commonly through hideEvents())
+      el.style.display = this.isHidden ? 'none' : '' // for when initially hidden
+      el.style.margin = '0'
+      el.style.right = 'auto' // erase and set width instead
+      el.style.bottom = 'auto' // erase and set height instead
+      el.style.width = this.sourceEl.offsetWidth + 'px' // explicit height in case there was a 'right' value
+      el.style.height = this.sourceEl.offsetHeight + 'px' // explicit width in case there was a 'bottom' value
+      el.style.opacity = String(this.options.opacity || '')
+      el.style.zIndex = String(this.options.zIndex)
 
       // we don't want long taps or any mouse interaction causing selection/menus.
       // would use preventSelection(), but that prevents selectstart, causing problems.
-      el.addClass('fc-unselectable')
+      el.classList.add('fc-unselectable')
 
-      el.appendTo(this.parentEl)
+      this.parentEl.appendChild(el)
     }
 
     return el
@@ -146,23 +152,20 @@ export default class MouseFollower {
 
   // Update the CSS position of the tracking element
   updatePosition() {
-    let sourceOffset
+    let sourceRect
     let origin
-
-    this.getEl() // ensure this.el
+    let el = this.getEl() // ensure this.el
 
     // make sure origin info was computed
     if (this.top0 == null) {
-      sourceOffset = this.sourceEl.offset()
-      origin = this.el.offsetParent().offset()
-      this.top0 = sourceOffset.top - origin.top
-      this.left0 = sourceOffset.left - origin.left
+      sourceRect = this.sourceEl.getBoundingClientRect()
+      origin = el.offsetParent.getBoundingClientRect()
+      this.top0 = sourceRect.top - origin.top
+      this.left0 = sourceRect.left - origin.left
     }
 
-    this.el.css({
-      top: this.top0 + this.topDelta,
-      left: this.left0 + this.leftDelta
-    })
+    el.style.top = (this.top0 + this.topDelta) + 'px'
+    el.style.left = (this.left0 + this.leftDelta) + 'px'
   }
 
 
@@ -182,7 +185,7 @@ export default class MouseFollower {
     if (!this.isHidden) {
       this.isHidden = true
       if (this.el) {
-        this.el.hide()
+        this.el.style.display = 'none'
       }
     }
   }
@@ -193,7 +196,7 @@ export default class MouseFollower {
     if (this.isHidden) {
       this.isHidden = false
       this.updatePosition()
-      this.getEl().show()
+      this.getEl().style.display = ''
     }
   }
 

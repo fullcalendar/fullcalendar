@@ -139,9 +139,9 @@ export default class EventDragging extends Interaction {
       interactionStart: (ev) => {
         seg.component = component // for renderDrag
         isDragging = false
-        mouseFollower = new MouseFollower(seg.el, {
+        mouseFollower = new MouseFollower(seg.el[0], {
           additionalClass: 'fc-dragging',
-          parentEl: view.el,
+          parentEl: view.el[0],
           opacity: dragListener.isTouch ? null : this.opt('dragOpacity'),
           revertDuration: this.opt('dragRevertDuration'),
           zIndex: 2 // one above the .fc-view
