@@ -1,5 +1,6 @@
 import * as $ from 'jquery'
 import { htmlEscape, subtractInnerElHeight } from '../util'
+import { htmlToElement } from '../util/dom'
 import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'
 import Scroller from '../common/Scroller'
@@ -18,7 +19,7 @@ export default class ListView extends View {
   segSelector: any = '.fc-list-item' // which elements accept event actions
 
   scroller: Scroller
-  contentEl: JQuery
+  contentEl: HTMLElement
 
   dayDates: any // localized ambig-time moment array
   dayRanges: any // UnzonedRange[], of start-end of each day
@@ -43,7 +44,7 @@ export default class ListView extends View {
     this.scroller.render()
     this.el.append(this.scroller.el)
 
-    this.contentEl = $(this.scroller.scrollEl) // shortcut
+    this.contentEl = this.scroller.scrollEl // shortcut
   }
 
 
@@ -136,7 +137,7 @@ export default class ListView extends View {
 
 
   renderEmptyMessage() {
-    this.contentEl.html(
+    this.contentEl.innerHTML =
       '<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
       '<div class="fc-list-empty-wrap1">' +
       '<div class="fc-list-empty">' +
@@ -144,7 +145,6 @@ export default class ListView extends View {
       '</div>' +
       '</div>' +
       '</div>'
-    )
   }
 
 
@@ -154,8 +154,8 @@ export default class ListView extends View {
     let dayIndex
     let daySegs
     let i
-    let tableEl = $('<table class="fc-list-table ' + this.calendar.theme.getClass('tableList') + '"><tbody/></table>')
-    let tbodyEl = tableEl.find('tbody')
+    let tableEl = htmlToElement('<table class="fc-list-table ' + this.calendar.theme.getClass('tableList') + '"><tbody/></table>')
+    let tbodyEl = tableEl.getElementsByTagName('tbody')[0]
 
     for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
       daySegs = segsByDay[dayIndex]
@@ -163,17 +163,18 @@ export default class ListView extends View {
       if (daySegs) { // sparse array, so might be undefined
 
         // append a day header
-        tbodyEl.append(this.dayHeaderHtml(this.dayDates[dayIndex]))
+        tbodyEl.appendChild(this.buildDayHeaderRow(this.dayDates[dayIndex]))
 
         this.eventRenderer.sortEventSegs(daySegs)
 
         for (i = 0; i < daySegs.length; i++) {
-          tbodyEl.append(daySegs[i].el) // append event row
+          tbodyEl.appendChild(daySegs[i].el[0]) // append event row
         }
       }
     }
 
-    this.contentEl.empty().append(tableEl)
+    this.contentEl.innerHTML = ''
+    this.contentEl.appendChild(tableEl)
   }
 
 
@@ -194,11 +195,14 @@ export default class ListView extends View {
 
 
   // generates the HTML for the day headers that live amongst the event rows
-  dayHeaderHtml(dayDate) {
+  buildDayHeaderRow(dayDate) {
     let mainFormat = this.opt('listDayFormat')
     let altFormat = this.opt('listDayAltFormat')
 
-    return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
+    let tr = document.createElement('tr')
+    tr.classList.add('fc-list-heading')
+    tr.setAttribute('data-date', dayDate.format('YYYY-MM-DD'))
+    tr.innerHTML =
       '<td class="' + (
         this.calendar.theme.getClass('tableListHeading') ||
         this.calendar.theme.getClass('widgetHeader')
@@ -217,8 +221,9 @@ export default class ListView extends View {
             htmlEscape(dayDate.format(altFormat)) // inner HTML
           ) :
           '') +
-      '</td>' +
-    '</tr>'
+      '</td>'
+
+    return tr
   }
 
 }

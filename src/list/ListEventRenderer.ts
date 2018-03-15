@@ -1,7 +1,11 @@
 import { htmlEscape } from '../util'
 import EventRenderer from '../component/renderers/EventRenderer'
+import ListView from './ListView'
 
 export default class ListEventRenderer extends EventRenderer {
+
+  component: ListView
+
 
   renderFgSegs(segs) {
     if (!segs.length) {
