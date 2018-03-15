@@ -1,4 +1,4 @@
-import InteractiveDateComponent from '../InteractiveDateComponent';
+import InteractiveDateComponent from '../InteractiveDateComponent'
 
 export default class Interaction {
 
