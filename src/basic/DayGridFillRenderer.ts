@@ -44,7 +44,7 @@ export default class DayGridFillRenderer extends FillRenderer {
 
     skeletonEl = htmlToElement(
       '<div class="fc-' + className + '-skeleton">' +
-        '<table><tr/></table>' +
+        '<table><tr></tr></table>' +
       '</div>'
     )
     trEl = skeletonEl.getElementsByTagName('tr')[0]

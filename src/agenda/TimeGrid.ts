@@ -262,7 +262,7 @@ export default class TimeGrid extends InteractiveDateComponent {
           (isLabeled ? '' : ' class="fc-minor"') +
           '>' +
           (!isRTL ? axisHtml : '') +
-          '<td class="' + theme.getClass('widgetContent') + '"/>' +
+          '<td class="' + theme.getClass('widgetContent') + '"></td>' +
           (isRTL ? axisHtml : '') +
         '</tr>'
 
