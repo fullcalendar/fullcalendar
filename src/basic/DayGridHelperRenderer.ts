@@ -36,7 +36,7 @@ export default class DayGridHelperRenderer extends HelperRenderer {
       }
 
       skeletonEl.style.top = skeletonTop + 'px'
-      skeletonEl.getElementsByTagName('table')[0].appendChild(rowStructs[row].tbodyEl[0])
+      skeletonEl.getElementsByTagName('table')[0].appendChild(rowStructs[row].tbodyEl)
 
       rowNode.appendChild(skeletonEl)
       helperNodes.push(skeletonEl)

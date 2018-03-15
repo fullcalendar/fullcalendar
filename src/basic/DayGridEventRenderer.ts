@@ -1,5 +1,6 @@
 import * as $ from 'jquery'
 import { htmlEscape, cssToStr } from '../util'
+import { makeElement } from '../util/dom'
 import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'
 
@@ -83,17 +84,17 @@ export default class DayGridEventRenderer extends EventRenderer {
     let colCnt = this.dayGrid.colCnt
     let segLevels = this.buildSegLevels(rowSegs) // group into sub-arrays of levels
     let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
-    let tbody = $('<tbody/>')
+    let tbody = document.createElement('tbody')
     let segMatrix = [] // lookup for which segments are rendered into which level+col cells
     let cellMatrix = [] // lookup for all <td> elements of the level+col matrix
     let loneCellMatrix = [] // lookup for <td> elements that only take up a single column
     let i
     let levelSegs
     let col
-    let tr
+    let tr: HTMLTableRowElement
     let j
     let seg
-    let td
+    let td: HTMLTableCellElement
 
     // populates empty cells from the current column (`col`) to `endCol`
     function emptyCellsUntil(endCol) {
@@ -101,13 +102,10 @@ export default class DayGridEventRenderer extends EventRenderer {
         // try to grab a cell from the level above and extend its rowspan. otherwise, create a fresh cell
         td = (loneCellMatrix[i - 1] || [])[col]
         if (td) {
-          td.attr(
-            'rowspan',
-            parseInt(td.attr('rowspan') || 1, 10) + 1
-          )
+          td.rowSpan = (td.rowSpan || 1) + 1
         } else {
-          td = $('<td/>')
-          tr.append(td)
+          td = document.createElement('td')
+          tr.appendChild(td)
         }
         cellMatrix[i][col] = td
         loneCellMatrix[i][col] = td
@@ -118,7 +116,7 @@ export default class DayGridEventRenderer extends EventRenderer {
     for (i = 0; i < levelCnt; i++) { // iterate through all levels
       levelSegs = segLevels[i]
       col = 0
-      tr = $('<tr/>')
+      tr = document.createElement('tr')
 
       segMatrix.push([])
       cellMatrix.push([])
@@ -133,9 +131,9 @@ export default class DayGridEventRenderer extends EventRenderer {
           emptyCellsUntil(seg.leftCol)
 
           // create a container that occupies or more columns. append the event element.
-          td = $('<td class="fc-event-container"/>').append(seg.el)
+          td = makeElement('td', { className: 'fc-event-container' }, seg.el) as HTMLTableCellElement
           if (seg.leftCol !== seg.rightCol) {
-            td.attr('colspan', seg.rightCol - seg.leftCol + 1)
+            td.colSpan = seg.rightCol - seg.leftCol + 1
           } else { // a single-column segment
             loneCellMatrix[i][col] = td
           }
@@ -146,13 +144,13 @@ export default class DayGridEventRenderer extends EventRenderer {
             col++
           }
 
-          tr.append(td)
+          tr.appendChild(td)
         }
       }
 
       emptyCellsUntil(colCnt) // finish off the row
-      this.dayGrid.bookendCells(tr)
-      tbody.append(tr)
+      this.dayGrid.bookendCells($(tr))
+      tbody.appendChild(tr)
     }
 
     return { // a "rowStruct"

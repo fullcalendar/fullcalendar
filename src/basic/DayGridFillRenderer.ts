@@ -50,14 +50,14 @@ export default class DayGridFillRenderer extends FillRenderer {
     trEl = skeletonEl.getElementsByTagName('tr')[0]
 
     if (startCol > 0) {
-      trEl.appendChild(makeElement('td', { colspan: startCol }))
+      trEl.appendChild(makeElement('td', { colSpan: startCol }))
     }
 
-    seg.el[0].setAttribute('colspan', endCol - startCol)
+    (seg.el[0] as HTMLTableCellElement).colSpan = endCol - startCol
     trEl.appendChild(seg.el[0])
 
     if (endCol < colCnt) {
-      trEl.appendChild(makeElement('td', { colspan: colCnt - endCol }))
+      trEl.appendChild(makeElement('td', { colSpan: colCnt - endCol }))
     }
 
     this.component.bookendCells($(trEl))

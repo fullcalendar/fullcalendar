@@ -15,12 +15,12 @@ Options:
 
 import * as $ from 'jquery'
 import { getScrollParent } from '../util'
-import { listenViaDelegation } from '../util/dom'
+import { listenViaDelegation, appendContentTo, ElementContent } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {
   className?: string
-  content?: HTMLElement[]
+  content?: ElementContent
   parentEl: HTMLElement
   autoHide?: boolean
   top?: number
@@ -81,9 +81,7 @@ export default class Popover {
     el.style.top = '0'
     el.style.left = '0'
 
-    options.content.forEach(function(node) {
-      el.appendChild(node)
-    })
+    appendContentTo(el, options.content)
 
     options.parentEl.appendChild(el)
 

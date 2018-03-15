@@ -13,6 +13,7 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
+import { makeElement, htmlToElements } from '../util/dom'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
@@ -457,26 +458,17 @@ export default class DayGrid extends InteractiveDateComponent {
   // `row` is the row number.
   computeRowLevelLimit(row): (number | false) {
     let rowEl = this.rowEls[row] // the containing "fake" row div
-    let rowHeight = rowEl.offsetHeight // TODO: cache somehow?
-    let trEls = this.eventRenderer.rowStructs[row].tbodyEl.children()
+    let rowBottom = rowEl.getBoundingClientRect().bottom
+    let trEls: HTMLTableRowElement[] = this.eventRenderer.rowStructs[row].tbodyEl.childNodes
     let i
-    let trEl
-    let trHeight
-
-    function iterInnerHeights(i, childNode) {
-      trHeight = Math.max(trHeight, $(childNode).outerHeight())
-    }
+    let trEl: HTMLTableRowElement
 
     // Reveal one level <tr> at a time and stop when we find one out of bounds
     for (i = 0; i < trEls.length; i++) {
-      trEl = trEls.eq(i).removeClass('fc-limited') // reset to original state (reveal)
+      trEl = trEls[i]
+      trEl.classList.remove('fc-limited') // reset to original state (reveal)
 
-      // with rowspans>1 and IE8, trEl.outerHeight() would return the height of the largest cell,
-      // so instead, find the tallest inner content element.
-      trHeight = 0
-      trEl.find('> td > :first-child').each(iterInnerHeights)
-
-      if (trEl.position().top + trHeight > rowHeight) {
+      if (trEl.getBoundingClientRect().bottom > rowBottom) {
         return i
       }
     }
@@ -500,11 +492,11 @@ export default class DayGrid extends InteractiveDateComponent {
     let segsBelow // array of segment objects below `seg` in the current `col`
     let totalSegsBelow // total number of segments below `seg` in any of the columns `seg` occupies
     let colSegsBelow // array of segment arrays, below seg, one for each column (offset from segs's first column)
-    let td
+    let td: HTMLTableCellElement
     let rowspan
     let segMoreNodes // array of "more" <td> cells that will stand-in for the current seg's cell
     let j
-    let moreTd
+    let moreTd: HTMLTableCellElement
     let moreWrap
     let moreLink
 
@@ -515,8 +507,8 @@ export default class DayGrid extends InteractiveDateComponent {
         if (segsBelow.length) {
           td = cellMatrix[levelLimit - 1][col]
           moreLink = this.renderMoreLink(row, col, segsBelow)
-          moreWrap = $('<div/>').append(moreLink)
-          td.append(moreWrap)
+          moreWrap = makeElement('div', null, moreLink)
+          td.appendChild(moreWrap)
           moreNodes.push(moreWrap[0])
         }
         col++
@@ -527,8 +519,13 @@ export default class DayGrid extends InteractiveDateComponent {
       levelSegs = rowStruct.segLevels[levelLimit - 1]
       cellMatrix = rowStruct.cellMatrix
 
-      limitedNodes = rowStruct.tbodyEl.children().slice(levelLimit) // get level <tr> elements past the limit
-        .addClass('fc-limited').get() // hide elements and get a simple DOM-nodes array
+      limitedNodes = Array.prototype.slice.call( // get level <tr> elements past the limit
+        rowStruct.tbodyEl.childNodes,
+        levelLimit
+      )
+      limitedNodes.forEach(function(node) {
+        node.classList.add('fc-limited') // hide elements and get a simple DOM-nodes array
+      })
 
       // iterate though segments in the last allowable level
       for (i = 0; i < levelSegs.length; i++) {
@@ -547,32 +544,39 @@ export default class DayGrid extends InteractiveDateComponent {
 
         if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
           td = cellMatrix[levelLimit - 1][seg.leftCol] // the segment's parent cell
-          rowspan = td.attr('rowspan') || 1
+          rowspan = td.rowSpan || 1
           segMoreNodes = []
 
           // make a replacement <td> for each column the segment occupies. will be one for each colspan
           for (j = 0; j < colSegsBelow.length; j++) {
-            moreTd = $('<td class="fc-more-cell"/>').attr('rowspan', rowspan)
+            moreTd = makeElement('td', { className: 'fc-more-cell', rowSpan: rowspan }) as HTMLTableCellElement
             segsBelow = colSegsBelow[j]
             moreLink = this.renderMoreLink(
               row,
               seg.leftCol + j,
               [ seg ].concat(segsBelow) // count seg as hidden too
             )
-            moreWrap = $('<div/>').append(moreLink)
-            moreTd.append(moreWrap)
-            segMoreNodes.push(moreTd[0])
-            moreNodes.push(moreTd[0])
+            moreWrap = makeElement('div', null, moreLink)
+            moreTd.appendChild(moreWrap)
+            segMoreNodes.push(moreTd)
+            moreNodes.push(moreTd)
           }
 
-          td.addClass('fc-limited').after($(segMoreNodes)) // hide original <td> and inject replacements
-          limitedNodes.push(td[0])
+          td.classList.add('fc-limited')
+
+          // inject replacements
+          let nextTdNode = td.nextSibling || null
+          for (let j = 0; j < segMoreNodes.length; j++) {
+            td.parentNode.insertBefore(segMoreNodes[j], nextTdNode)
+          }
+
+          limitedNodes.push(td)
         }
       }
 
       emptyCellsUntil(this.colCnt) // finish off the level
-      rowStruct.moreEls = $(moreNodes) // for easy undoing later
-      rowStruct.limitedEls = $(limitedNodes) // for easy undoing later
+      rowStruct.moreEls = moreNodes // for easy undoing later
+      rowStruct.limitedEls = limitedNodes // for easy undoing later
     }
   }
 
@@ -583,12 +587,16 @@ export default class DayGrid extends InteractiveDateComponent {
     let rowStruct = this.eventRenderer.rowStructs[row]
 
     if (rowStruct.moreEls) {
-      rowStruct.moreEls.remove()
+      rowStruct.moreEls.forEach(function(moreEl) {
+        moreEl.parentNode.removeChild(moreEl)
+      })
       rowStruct.moreEls = null
     }
 
     if (rowStruct.limitedEls) {
-      rowStruct.limitedEls.removeClass('fc-limited')
+      rowStruct.limitedEls.forEach(function(limitedEl) {
+        limitedEl.classList.remove('fc-limited')
+      })
       rowStruct.limitedEls = null
     }
   }
@@ -599,52 +607,52 @@ export default class DayGrid extends InteractiveDateComponent {
   renderMoreLink(row, col, hiddenSegs) {
     let view = this.view
 
-    return $('<a class="fc-more"/>')
-      .text(
-        this.getMoreLinkText(hiddenSegs.length)
-      )
-      .on('click', (ev) => {
-        let clickOption = this.opt('eventLimitClick')
-        let date = this.getCellDate(row, col)
-        let moreEl = $(ev.currentTarget)
-        let dayEl = this.getCellEl(row, col)
-        let allSegs = this.getCellSegs(row, col)
+    let a = makeElement('a', { className: 'fc-more' })
+    a.innerText = this.getMoreLinkText(hiddenSegs.length)
+    a.addEventListener('click', (ev) => {
+      let clickOption = this.opt('eventLimitClick')
+      let date = this.getCellDate(row, col)
+      let moreEl = ev.currentTarget as HTMLElement
+      let dayEl = this.getCellEl(row, col)
+      let allSegs = this.getCellSegs(row, col)
 
-        // rescope the segments to be within the cell's date
-        let reslicedAllSegs = this.resliceDaySegs(allSegs, date)
-        let reslicedHiddenSegs = this.resliceDaySegs(hiddenSegs, date)
+      // rescope the segments to be within the cell's date
+      let reslicedAllSegs = this.resliceDaySegs(allSegs, date)
+      let reslicedHiddenSegs = this.resliceDaySegs(hiddenSegs, date)
 
-        if (typeof clickOption === 'function') {
-          // the returned value can be an atomic option
-          clickOption = this.publiclyTrigger('eventLimitClick', {
-            context: view,
-            args: [
-              {
-                date: date.clone(),
-                dayEl: dayEl,
-                moreEl: moreEl,
-                segs: reslicedAllSegs,
-                hiddenSegs: reslicedHiddenSegs
-              },
-              ev,
-              view
-            ]
-          })
-        }
+      if (typeof clickOption === 'function') {
+        // the returned value can be an atomic option
+        clickOption = this.publiclyTrigger('eventLimitClick', {
+          context: view,
+          args: [
+            {
+              date: date.clone(),
+              dayEl: dayEl,
+              moreEl: $(moreEl),
+              segs: reslicedAllSegs,
+              hiddenSegs: reslicedHiddenSegs
+            },
+            ev,
+            view
+          ]
+        })
+      }
 
-        if (clickOption === 'popover') {
-          this.showSegPopover(row, col, moreEl, reslicedAllSegs)
-        } else if (typeof clickOption === 'string') { // a view name
-          view.calendar.zoomTo(date, clickOption)
-        }
-      })
+      if (clickOption === 'popover') {
+        this.showSegPopover(row, col, moreEl, reslicedAllSegs)
+      } else if (typeof clickOption === 'string') { // a view name
+        view.calendar.zoomTo(date, clickOption)
+      }
+    })
+
+    return a
   }
 
 
   // Reveals the popover that displays all events within a cell
-  showSegPopover(row, col, moreLink, segs) {
+  showSegPopover(row, col, moreLink: HTMLElement, segs) {
     let view = this.view
-    let moreWrap = moreLink.parent() // the <div> wrapper around the <a>
+    let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
     let themeClass = view.calendar.theme.getClass('popover')
@@ -657,7 +665,7 @@ export default class DayGrid extends InteractiveDateComponent {
 
     options = {
       className: 'fc-more-popover' + (themeClass ? ' ' + themeClass : ''),
-      content: this.renderSegPopoverContent(row, col, segs).toArray(),
+      content: this.renderSegPopoverContent(row, col, segs),
       parentEl: view.el[0], // attach to root of view. guarantees outside of scrollbars.
       top: topEl.getBoundingClientRect().top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
@@ -677,9 +685,9 @@ export default class DayGrid extends InteractiveDateComponent {
     // Determine horizontal coordinate.
     // We use the moreWrap instead of the <td> to avoid border confusion.
     if (this.isRTL) {
-      options.right = moreWrap.offset().left + moreWrap.outerWidth() + 1 // +1 to be over cell border
+      options.right = moreWrap.getBoundingClientRect().right + 1 // +1 to be over cell border
     } else {
-      options.left = moreWrap.offset().left - 1 // -1 to be over cell border
+      options.left = moreWrap.getBoundingClientRect().left - 1 // -1 to be over cell border
     }
 
     this.segPopover = new Popover(options)
@@ -698,19 +706,19 @@ export default class DayGrid extends InteractiveDateComponent {
     let view = this.view
     let theme = view.calendar.theme
     let title = this.getCellDate(row, col).format(this.opt('dayPopoverFormat'))
-    let content = $(
+    let content = htmlToElements(
       '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
         '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
         '<span class="fc-title">' +
           htmlEscape(title) +
         '</span>' +
-        '<div class="fc-clear"/>' +
+        '<div class="fc-clear"></div>' +
       '</div>' +
       '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
         '<div class="fc-event-container"></div>' +
       '</div>'
     )
-    let segContainer = content.find('.fc-event-container')
+    let segContainer = content[1].querySelector('.fc-event-container')
     let i
 
     // render each seg's `el` and only return the visible segs
@@ -725,7 +733,7 @@ export default class DayGrid extends InteractiveDateComponent {
       segs[i].hit = this.getCellHit(row, col)
       this.hitsNotNeeded()
 
-      segContainer.append(segs[i].el)
+      segContainer.appendChild(segs[i].el[0])
     }
 
     return content

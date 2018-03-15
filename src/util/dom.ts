@@ -1,27 +1,47 @@
 
 // TODO: use in other places
-export function makeElement(tagName, attrs, innerHtml?): HTMLElement {
+export function makeElement(tagName, attrs, content?): HTMLElement {
   let el: HTMLElement = document.createElement(tagName)
 
-  for (let attrName in attrs) {
-    if (attrName === 'className') {
-      el.className = attrs[attrName]
-    } else {
-      el.setAttribute(attrName, attrs[attrName])
+  if (attrs) {
+    for (let attrName in attrs) {
+      if (attrName === 'className' || attrName === 'colSpan' || attrName === 'rowSpan') {
+        el[attrName] = attrs[attrName]
+      } else {
+        el.setAttribute(attrName, attrs[attrName])
+      }
     }
   }
 
-  if (typeof innerHtml === 'string') {
-    el.innerHTML = innerHtml
-  }
+  appendContentTo(el, content)
 
   return el
+}
+
+export type ElementContent = string | Node | Node[]
+
+export function appendContentTo(el: HTMLElement, content: ElementContent) {
+  if (typeof content === 'string') {
+    el.innerHTML = content
+  } else if (content instanceof Node) {
+    el.appendChild(content)
+  } else if (content && content.length) {
+    for (let i = 0; i < content.length; i++) {
+      el.appendChild(content[i])
+    }
+  }
 }
 
 export function htmlToElement(htmlString): HTMLElement {
   let div = document.createElement('div')
   div.innerHTML = htmlString.trim()
   return div.firstChild as HTMLElement
+}
+
+export function htmlToElements(htmlString): HTMLElement {
+  let div = document.createElement('div')
+  div.innerHTML = htmlString.trim()
+  return Array.prototype.slice.call(div.childNodes)
 }
 
 export function listenViaDelegation(container: HTMLElement, eventType, childClassName, handler) {
