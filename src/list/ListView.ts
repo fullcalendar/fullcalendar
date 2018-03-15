@@ -36,13 +36,15 @@ export default class ListView extends View {
 
 
   renderSkeleton() {
-    this.el.addClass(
-      'fc-list-view ' +
-      this.calendar.theme.getClass('listView')
-    )
+    this.el.classList.add('fc-list-view')
+
+    let themeClass = this.calendar.theme.getClass('listView')
+    if (themeClass) {
+      this.el.classList.add(themeClass)
+    }
 
     this.scroller.render()
-    this.el.append(this.scroller.el)
+    this.el.appendChild(this.scroller.el)
 
     this.contentEl = this.scroller.scrollEl // shortcut
   }
@@ -66,7 +68,7 @@ export default class ListView extends View {
 
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight(this.el, $(this.scroller.el)) // everything that's NOT the scroller
+      subtractInnerElHeight($(this.el), $(this.scroller.el)) // everything that's NOT the scroller
   }
 
 

@@ -65,14 +65,14 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     super.setElement(el)
 
     if (this.dateClicking) {
-      this.dateClicking.bindToEl(el)
+      this.dateClicking.bindToEl($(el))
     }
 
     if (this.dateSelecting) {
-      this.dateSelecting.bindToEl(el)
+      this.dateSelecting.bindToEl($(el))
     }
 
-    this.bindAllSegHandlersToEl(el)
+    this.bindAllSegHandlersToEl($(el))
   }
 
 
@@ -111,7 +111,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
   bindDateHandlerToEl(el, name, handler) {
     // attach a handler to the grid's root element.
     // jQuery will take care of unregistering them when removeElement gets called.
-    this.el.on(name, (ev) => {
+    this.el.addEventListener(name, (ev) => {
       if (
         !$(ev.target).is(
           this.segSelector + ':not(.fc-helper),' + // directly on an event element

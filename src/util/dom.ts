@@ -60,3 +60,9 @@ export function findElsWithin(container: HTMLElement, selector: string): HTMLEle
     container.querySelectorAll(selector)
   )
 }
+
+export function removeElement(el: HTMLElement) {
+  if (el.parentNode) {
+    el.parentNode.removeChild(el)
+  }
+}

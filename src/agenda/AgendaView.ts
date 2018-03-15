@@ -8,6 +8,7 @@ import {
   htmlEscape,
   copyOwnProps
 } from '../util'
+import { findElsWithin, makeElement } from '../util/dom'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import TimeGrid from './TimeGrid'
@@ -80,24 +81,26 @@ export default class AgendaView extends View {
     let timeGridWrapEl
     let timeGridEl
 
-    this.el.addClass('fc-agenda-view').html(this.renderSkeletonHtml())
+    this.el.classList.add('fc-agenda-view')
+    this.el.innerHTML = this.renderSkeletonHtml()
 
     this.scroller.render()
 
     timeGridWrapEl = this.scroller.el
     timeGridWrapEl.classList.add('fc-time-grid-container')
-    timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl)
+    timeGridEl = makeElement('div', { className: 'fc-time-grid' })
+    timeGridWrapEl.appendChild(timeGridEl)
 
-    this.el.find('.fc-body > tr > td').append(timeGridWrapEl)
+    this.el.querySelector('.fc-body > tr > td').appendChild(timeGridWrapEl)
 
-    this.timeGrid.headContainerEl = this.el[0].querySelector('.fc-head-container')
+    this.timeGrid.headContainerEl = this.el.querySelector('.fc-head-container')
     this.timeGrid.setElement(timeGridEl)
 
     if (this.dayGrid) {
-      this.dayGrid.setElement(this.el.find('.fc-day-grid'))
+      this.dayGrid.setElement(this.el.querySelector('.fc-day-grid'))
 
       // have the day-grid extend it's coordinate area over the <hr> dividing the two grids
-      this.dayGrid.bottomCoordPadding = this.dayGrid.el.next('hr').outerHeight()
+      this.dayGrid.bottomCoordPadding = (this.el.querySelector('.fc-divider') as HTMLElement).offsetHeight
     }
   }
 
@@ -174,7 +177,7 @@ export default class AgendaView extends View {
     super.updateSize(totalHeight, isAuto, isResize)
 
     // make all axis cells line up, and record the width so newly created axis cells will have it
-    this.axisWidth = matchCellWidths(this.el.find('.fc-axis'))
+    this.axisWidth = matchCellWidths($(this.el.querySelectorAll('.fc-axis')))
 
     // hack to give the view some height prior to timeGrid's columns being rendered
     // TODO: separate setting height from scroller VS timeGrid.
@@ -187,12 +190,14 @@ export default class AgendaView extends View {
     }
 
     // set of fake row elements that must compensate when scroller has scrollbars
-    let noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)')
+    let noScrollRowEls: HTMLElement[] = findElsWithin(this.el, '.fc-row').filter((node) => {
+      return !this.scroller.el.contains(node)
+    })
 
     // reset all dimensions back to the original state
     this.timeGrid.bottomRuleEl.style.display = 'none' // will be shown later if this <hr> is necessary
     this.scroller.clear() // sets height to 'auto' and clears overflow
-    uncompensateScroll(noScrollRowEls)
+    uncompensateScroll($(noScrollRowEls))
 
     // limit number of events in the all-day area
     if (this.dayGrid) {
@@ -216,7 +221,7 @@ export default class AgendaView extends View {
       if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
         // make the all-day and header rows lines up
-        compensateScroll(noScrollRowEls, scrollbarWidths)
+        compensateScroll($(noScrollRowEls), scrollbarWidths)
 
         // the scrollbar compensation might have changed text flow, which might affect height, so recalculate
         // and reapply the desired height to the scroller.
@@ -239,7 +244,7 @@ export default class AgendaView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight(this.el, $(this.scroller.el)) // everything that's NOT the scroller
+      subtractInnerElHeight($(this.el), $(this.scroller.el)) // everything that's NOT the scroller
   }
 
 

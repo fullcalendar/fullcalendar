@@ -15,7 +15,7 @@ Options:
 
 import * as $ from 'jquery'
 import { getScrollParent } from '../util'
-import { listenViaDelegation, appendContentTo, ElementContent } from '../util/dom'
+import { listenViaDelegation, appendContentTo, ElementContent, removeElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {
@@ -110,7 +110,7 @@ export default class Popover {
     this.hide()
 
     if (this.el) {
-      this.el.remove()
+      removeElement(this.el)
       this.el = null
     }
 

@@ -488,7 +488,7 @@ export default class Calendar {
 
       newView.startBatchRender() // so that setElement+setDate rendering are joined
       newView.setElement(
-        $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)
+        $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)[0]
       )
 
       this.toolbarsManager.proxyCall('activateButton', viewType)

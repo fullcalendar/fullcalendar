@@ -1,6 +1,6 @@
 import * as $ from 'jquery'
 import { htmlEscape, cssToStr } from '../util'
-import { makeElement } from '../util/dom'
+import { makeElement, removeElement } from '../util/dom'
 import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'
 
@@ -49,7 +49,7 @@ export default class DayGridEventRenderer extends EventRenderer {
     let rowStruct
 
     while ((rowStruct = rowStructs.pop())) {
-      rowStruct.tbodyEl.remove()
+      removeElement(rowStruct.tbodyEl)
     }
 
     this.rowStructs = null

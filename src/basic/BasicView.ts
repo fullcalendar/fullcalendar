@@ -8,6 +8,7 @@ import {
   undistributeHeight,
   htmlEscape
 } from '../util'
+import { makeElement } from '../util/dom'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
@@ -78,17 +79,19 @@ export default class BasicView extends View {
     let dayGridContainerEl
     let dayGridEl
 
-    this.el.addClass('fc-basic-view').html(this.renderSkeletonHtml())
+    this.el.classList.add('fc-basic-view')
+    this.el.innerHTML = this.renderSkeletonHtml()
 
     this.scroller.render()
 
     dayGridContainerEl = this.scroller.el
     dayGridContainerEl.classList.add('fc-day-grid-container')
-    dayGridEl = $('<div class="fc-day-grid" />').appendTo(dayGridContainerEl)
+    dayGridEl = makeElement('div', { className: 'fc-day-grid' })
+    dayGridContainerEl.appendChild(dayGridEl)
 
-    this.el.find('.fc-body > tr > td').append(dayGridContainerEl)
+    this.el.querySelector('.fc-body > tr > td').appendChild(dayGridContainerEl)
 
-    this.dayGrid.headContainerEl = this.el.find('.fc-head-container')[0]
+    this.dayGrid.headContainerEl = this.el.querySelector('.fc-head-container')
     this.dayGrid.setElement(dayGridEl)
   }
 
@@ -171,7 +174,7 @@ export default class BasicView extends View {
       // Make sure all week number cells running down the side have the same width.
       // Record the width for cells created later.
       this.weekNumberWidth = matchCellWidths(
-        this.el.find('.fc-week-number')
+        $(this.el.querySelectorAll('.fc-week-number'))
       )
     }
 
@@ -223,7 +226,7 @@ export default class BasicView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight(this.el, $(this.scroller.el)) // everything that's NOT the scroller
+      subtractInnerElHeight($(this.el), $(this.scroller.el)) // everything that's NOT the scroller
   }
 
 

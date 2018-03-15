@@ -4,6 +4,7 @@ import {
   getEvX,
   getEvIsTouch
 } from '../util'
+import { removeElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface MouseFollowerOptions {
@@ -144,7 +145,7 @@ export default class MouseFollower {
   // Removes the tracking element if it has already been created
   removeElement() {
     if (this.el) {
-      this.el.remove()
+      removeElement(this.el)
       this.el = null
     }
   }

@@ -13,7 +13,7 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
-import { makeElement, htmlToElements } from '../util/dom'
+import { makeElement, htmlToElements, findElsWithin, removeElement } from '../util/dom'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
@@ -116,10 +116,10 @@ export default class DayGrid extends InteractiveDateComponent {
     for (row = 0; row < rowCnt; row++) {
       html += this.renderDayRowHtml(row, this.isRigid)
     }
-    this.el.html(html)
+    this.el.innerHTML = html
 
-    this.rowEls = this.el.find('.fc-row').toArray()
-    this.cellEls = this.el.find('.fc-day, .fc-disabled-day').toArray()
+    this.rowEls = findElsWithin(this.el, '.fc-row')
+    this.cellEls = findElsWithin(this.el, '.fc-day, .fc-disabled-day')
 
     this.rowCoordCache = new CoordCache({
       els: this.rowEls,
@@ -587,9 +587,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let rowStruct = this.eventRenderer.rowStructs[row]
 
     if (rowStruct.moreEls) {
-      rowStruct.moreEls.forEach(function(moreEl) {
-        moreEl.parentNode.removeChild(moreEl)
-      })
+      rowStruct.moreEls.forEach(removeElement)
       rowStruct.moreEls = null
     }
 
@@ -658,7 +656,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let themeClass = view.calendar.theme.getClass('popover')
 
     if (this.rowCnt === 1) {
-      topEl = view.el[0] // will cause the popover to cover any sort of header
+      topEl = view.el // will cause the popover to cover any sort of header
     } else {
       topEl = this.rowEls[row] // will align with top of row
     }
@@ -666,7 +664,7 @@ export default class DayGrid extends InteractiveDateComponent {
     options = {
       className: 'fc-more-popover' + (themeClass ? ' ' + themeClass : ''),
       content: this.renderSegPopoverContent(row, col, segs),
-      parentEl: view.el[0], // attach to root of view. guarantees outside of scrollbars.
+      parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
       top: topEl.getBoundingClientRect().top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       viewportConstrain: this.opt('popoverViewportConstrain'),

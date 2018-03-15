@@ -1,11 +1,12 @@
+import { removeElement } from '../util/dom'
 import Model from '../common/Model'
 
 export default class Component extends Model {
 
-  el: JQuery
+  el: HTMLElement
 
 
-  setElement(el) {
+  setElement(el: HTMLElement) {
     this.el = el
     this.bindGlobalHandlers()
     this.renderSkeleton()
@@ -18,7 +19,7 @@ export default class Component extends Model {
     this.unrenderSkeleton()
     this.unbindGlobalHandlers()
 
-    this.el.remove()
+    removeElement(this.el)
     // NOTE: don't null-out this.el in case the View was destroyed within an API callback.
     // We don't null-out the View's other jQuery element references upon destroy,
     //  so we shouldn't kill this.el either.

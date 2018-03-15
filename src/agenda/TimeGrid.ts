@@ -1,6 +1,7 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
 import { isInt, divideDurationByDuration, htmlEscape } from '../util'
+import { htmlToElement, findElsWithin, makeElement, removeElement } from '../util/dom'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
@@ -11,7 +12,6 @@ import ComponentFootprint from '../models/ComponentFootprint'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
-import { htmlToElement, findElsWithin } from '../util/dom';
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -57,6 +57,7 @@ export default class TimeGrid extends InteractiveDateComponent {
   colCoordCache: any
   slatCoordCache: any
 
+  rootBgContainerEl: HTMLElement
   bottomRuleEl: HTMLElement // hidden by default
   contentSkeletonEl: HTMLElement
   colContainerEls: HTMLElement[] // containers for each column
@@ -199,20 +200,20 @@ export default class TimeGrid extends InteractiveDateComponent {
   renderSkeleton() {
     let theme = this.view.calendar.theme
 
-    this.el.html(
+    this.el.innerHTML =
       '<div class="fc-bg"></div>' +
       '<div class="fc-slats"></div>' +
       '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
-    )
 
-    this.bottomRuleEl = this.el[0].querySelector('hr')
+    this.rootBgContainerEl = this.el.querySelector('.fc-bg')
+    this.slatContainerEl = this.el.querySelector('.fc-slats')
+    this.bottomRuleEl = this.el.querySelector('.fc-divider')
   }
 
 
   renderSlats() {
     let theme = this.view.calendar.theme
 
-    this.slatContainerEl = this.el[0].querySelector('.fc-slats')
     this.slatContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
         this.renderSlatRowHtml() +
@@ -288,13 +289,12 @@ export default class TimeGrid extends InteractiveDateComponent {
       this.headContainerEl.innerHTML = this.renderHeadHtml()
     }
 
-    this.el.find('> .fc-bg').html(
+    this.rootBgContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
         this.renderBgTrHtml(0) + // row=0
       '</table>'
-    )
 
-    this.colEls = findElsWithin(this.el[0], '.fc-day, .fc-disabled-day')
+    this.colEls = findElsWithin(this.el, '.fc-day, .fc-disabled-day')
 
     this.colCoordCache = new CoordCache({
       els: this.colEls,
@@ -349,13 +349,13 @@ export default class TimeGrid extends InteractiveDateComponent {
     this.businessContainerEls = findElsWithin(skeletonEl, '.fc-business-container')
 
     this.bookendCells($(skeletonEl.getElementsByTagName('tr'))) // TODO: do this on string level
-    this.el.append(skeletonEl)
+    this.el.appendChild(skeletonEl)
   }
 
 
   unrenderContentSkeleton() {
     if (this.contentSkeletonEl) { // defensive :(
-      this.contentSkeletonEl.remove()
+      removeElement(this.contentSkeletonEl)
       this.contentSkeletonEl = null
       this.colContainerEls = null
       this.helperContainerEls = null
@@ -438,9 +438,10 @@ export default class TimeGrid extends InteractiveDateComponent {
 
     // render an arrow over the axis
     if (segs.length > 0) { // is the current time in view?
-      nodes.push($('<div class="fc-now-indicator fc-now-indicator-arrow"></div>')
-        .css('top', top)
-        .appendTo(this.el.find('.fc-content-skeleton'))[0])
+      let arrowEl = makeElement('div', { className: 'fc-now-indicator fc-now-indicator-arrow' })
+      arrowEl.style.top = top + 'px'
+      this.contentSkeletonEl.appendChild(arrowEl)
+      nodes.push(arrowEl)
     }
 
     this.nowIndicatorEls = nodes
@@ -450,7 +451,7 @@ export default class TimeGrid extends InteractiveDateComponent {
   unrenderNowIndicator() {
     if (this.nowIndicatorEls) {
       this.nowIndicatorEls.forEach(function(el) {
-        el.parentNode.removeChild(el)
+        removeElement(el)
       })
       this.nowIndicatorEls = null
     }
