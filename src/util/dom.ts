@@ -54,3 +54,9 @@ export function listenViaDelegation(container: HTMLElement, eventType, childClas
     }
   })
 }
+
+export function findElsWithin(container: HTMLElement, selector: string): HTMLElement[] {
+  return Array.prototype.slice.call(
+    container.querySelectorAll(selector)
+  )
+}

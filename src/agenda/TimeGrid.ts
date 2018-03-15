@@ -11,6 +11,7 @@ import ComponentFootprint from '../models/ComponentFootprint'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
+import { htmlToElement, findElsWithin } from '../util/dom';
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -47,25 +48,25 @@ export default class TimeGrid extends InteractiveDateComponent {
   labelFormat: any // formatting string for times running along vertical axis
   labelInterval: any // duration of how often a label should be displayed for a slot
 
-  headContainerEl: JQuery // div that hold's the date header
-  colEls: JQuery // cells elements in the day-row background
-  slatContainerEl: JQuery // div that wraps all the slat rows
-  slatEls: JQuery // elements running horizontally across all columns
-  nowIndicatorEls: JQuery
+  headContainerEl: HTMLElement // div that hold's the date header
+  colEls: HTMLElement[] // cells elements in the day-row background
+  slatContainerEl: HTMLElement // div that wraps all the slat rows
+  slatEls: HTMLElement[] // elements running horizontally across all columns
+  nowIndicatorEls: HTMLElement[]
 
   colCoordCache: any
   slatCoordCache: any
 
-  bottomRuleEl: JQuery // hidden by default
-  contentSkeletonEl: JQuery
-  colContainerEls: JQuery // containers for each column
+  bottomRuleEl: HTMLElement // hidden by default
+  contentSkeletonEl: HTMLElement
+  colContainerEls: HTMLElement[] // containers for each column
 
   // inner-containers for each column where different types of segs live
-  fgContainerEls: JQuery
-  bgContainerEls: JQuery
-  helperContainerEls: JQuery
-  highlightContainerEls: JQuery
-  businessContainerEls: JQuery
+  fgContainerEls: HTMLElement[]
+  bgContainerEls: HTMLElement[]
+  helperContainerEls: HTMLElement[]
+  highlightContainerEls: HTMLElement[]
+  businessContainerEls: HTMLElement[]
 
   // arrays of different types of displayed segments
   helperSegs: any
@@ -204,24 +205,23 @@ export default class TimeGrid extends InteractiveDateComponent {
       '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
     )
 
-    this.bottomRuleEl = this.el.find('hr')
+    this.bottomRuleEl = this.el[0].querySelector('hr')
   }
 
 
   renderSlats() {
     let theme = this.view.calendar.theme
 
-    this.slatContainerEl = this.el.find('> .fc-slats')
-      .html( // avoids needing ::unrenderSlats()
-        '<table class="' + theme.getClass('tableGrid') + '">' +
-          this.renderSlatRowHtml() +
-        '</table>'
-      )
+    this.slatContainerEl = this.el[0].querySelector('.fc-slats')
+    this.slatContainerEl.innerHTML =
+      '<table class="' + theme.getClass('tableGrid') + '">' +
+        this.renderSlatRowHtml() +
+      '</table>'
 
-    this.slatEls = this.slatContainerEl.find('tr')
+    this.slatEls = findElsWithin(this.slatContainerEl, 'tr')
 
     this.slatCoordCache = new CoordCache({
-      els: this.slatEls.toArray(),
+      els: this.slatEls,
       isVertical: true
     })
   }
@@ -285,7 +285,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     })
 
     if (this.headContainerEl) {
-      this.headContainerEl.html(this.renderHeadHtml())
+      this.headContainerEl.innerHTML = this.renderHeadHtml()
     }
 
     this.el.find('> .fc-bg').html(
@@ -294,10 +294,10 @@ export default class TimeGrid extends InteractiveDateComponent {
       '</table>'
     )
 
-    this.colEls = this.el.find('.fc-day, .fc-disabled-day')
+    this.colEls = findElsWithin(this.el[0], '.fc-day, .fc-disabled-day')
 
     this.colCoordCache = new CoordCache({
-      els: this.colEls.toArray(),
+      els: this.colEls,
       isHorizontal: true
     })
 
@@ -318,7 +318,7 @@ export default class TimeGrid extends InteractiveDateComponent {
   renderContentSkeleton() {
     let cellHtml = ''
     let i
-    let skeletonEl
+    let skeletonEl: HTMLElement
 
     for (i = 0; i < this.colCnt; i++) {
       cellHtml +=
@@ -333,7 +333,7 @@ export default class TimeGrid extends InteractiveDateComponent {
         '</td>'
     }
 
-    skeletonEl = this.contentSkeletonEl = $(
+    skeletonEl = this.contentSkeletonEl = htmlToElement(
       '<div class="fc-content-skeleton">' +
         '<table>' +
           '<tr>' + cellHtml + '</tr>' +
@@ -341,14 +341,14 @@ export default class TimeGrid extends InteractiveDateComponent {
       '</div>'
     )
 
-    this.colContainerEls = skeletonEl.find('.fc-content-col')
-    this.helperContainerEls = skeletonEl.find('.fc-helper-container')
-    this.fgContainerEls = skeletonEl.find('.fc-event-container:not(.fc-helper-container)')
-    this.bgContainerEls = skeletonEl.find('.fc-bgevent-container')
-    this.highlightContainerEls = skeletonEl.find('.fc-highlight-container')
-    this.businessContainerEls = skeletonEl.find('.fc-business-container')
+    this.colContainerEls = findElsWithin(skeletonEl, '.fc-content-col')
+    this.helperContainerEls = findElsWithin(skeletonEl, '.fc-helper-container')
+    this.fgContainerEls = findElsWithin(skeletonEl, '.fc-event-container:not(.fc-helper-container)')
+    this.bgContainerEls = findElsWithin(skeletonEl, '.fc-bgevent-container')
+    this.highlightContainerEls = findElsWithin(skeletonEl, '.fc-highlight-container')
+    this.businessContainerEls = findElsWithin(skeletonEl, '.fc-business-container')
 
-    this.bookendCells(skeletonEl.find('tr')) // TODO: do this on string level
+    this.bookendCells($(skeletonEl.getElementsByTagName('tr'))) // TODO: do this on string level
     this.el.append(skeletonEl)
   }
 
@@ -386,7 +386,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
   // Given segments grouped by column, insert the segments' elements into a parallel array of container
   // elements, each living within a column.
-  attachSegsByCol(segsByCol, containerEls) {
+  attachSegsByCol(segsByCol, containerEls: HTMLElement[]) {
     let col
     let segs
     let i
@@ -395,7 +395,7 @@ export default class TimeGrid extends InteractiveDateComponent {
       segs = segsByCol[col]
 
       for (i = 0; i < segs.length; i++) {
-        containerEls.eq(col).append(segs[i].el)
+        containerEls[col].appendChild(segs[i].el[0])
       }
     }
   }
@@ -433,7 +433,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     for (i = 0; i < segs.length; i++) {
       nodes.push($('<div class="fc-now-indicator fc-now-indicator-line"></div>')
         .css('top', top)
-        .appendTo(this.colContainerEls.eq(segs[i].col))[0])
+        .appendTo(this.colContainerEls[segs[i].col])[0])
     }
 
     // render an arrow over the axis
@@ -443,13 +443,15 @@ export default class TimeGrid extends InteractiveDateComponent {
         .appendTo(this.el.find('.fc-content-skeleton'))[0])
     }
 
-    this.nowIndicatorEls = $(nodes)
+    this.nowIndicatorEls = nodes
   }
 
 
   unrenderNowIndicator() {
     if (this.nowIndicatorEls) {
-      this.nowIndicatorEls.remove()
+      this.nowIndicatorEls.forEach(function(el) {
+        el.parentNode.removeChild(el)
+      })
       this.nowIndicatorEls = null
     }
   }
@@ -473,7 +475,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   getTotalSlatHeight() {
-    return this.slatContainerEl.outerHeight()
+    return this.slatContainerEl.offsetHeight
   }
 
 
@@ -637,7 +639,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   getHitEl(hit) {
-    return this.colEls.eq(hit.col)
+    return $(this.colEls[hit.col])
   }
 
 

@@ -30,8 +30,8 @@ export default class AgendaView extends View {
   timeGridClass: any // class used to instantiate the timeGrid. subclasses can override
   dayGridClass: any // class used to instantiate the dayGrid. subclasses can override
 
-  timeGrid: any // the main time-grid subcomponent of this view
-  dayGrid: any // the "all-day" subcomponent. if all-day is turned off, this will be null
+  timeGrid: TimeGrid // the main time-grid subcomponent of this view
+  dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
 
   scroller: Scroller
   axisWidth: any // the width of the time axis running down the side
@@ -90,7 +90,7 @@ export default class AgendaView extends View {
 
     this.el.find('.fc-body > tr > td').append(timeGridWrapEl)
 
-    this.timeGrid.headContainerEl = this.el.find('.fc-head-container')
+    this.timeGrid.headContainerEl = this.el[0].querySelector('.fc-head-container')
     this.timeGrid.setElement(timeGridEl)
 
     if (this.dayGrid) {
@@ -190,7 +190,7 @@ export default class AgendaView extends View {
     let noScrollRowEls = this.el.find('.fc-row:not(.fc-scroller *)')
 
     // reset all dimensions back to the original state
-    this.timeGrid.bottomRuleEl.hide() // .show() will be called later if this <hr> is necessary
+    this.timeGrid.bottomRuleEl.style.display = 'none' // will be shown later if this <hr> is necessary
     this.scroller.clear() // sets height to 'auto' and clears overflow
     uncompensateScroll(noScrollRowEls)
 
@@ -230,7 +230,7 @@ export default class AgendaView extends View {
       // if there's any space below the slats, show the horizontal rule.
       // this won't cause any new overflow, because lockOverflow already called.
       if (this.timeGrid.getTotalSlatHeight() < scrollerHeight) {
-        this.timeGrid.bottomRuleEl.show()
+        this.timeGrid.bottomRuleEl.style.display = ''
       }
     }
   }
