@@ -45,6 +45,10 @@ export {
 } from './util/object'
 
 export {
+  findElsWithin
+} from './util/dom'
+
+export {
   formatDate,
   formatRange,
   queryMostGranularFormatUnit
