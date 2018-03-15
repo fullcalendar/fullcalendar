@@ -647,6 +647,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let moreWrap = moreLink.parent() // the <div> wrapper around the <a>
     let topEl // the element we want to match the top coordinate of
     let options
+    let themeClass = view.calendar.theme.getClass('popover')
 
     if (this.rowCnt === 1) {
       topEl = view.el // will cause the popover to cover any sort of header
@@ -655,9 +656,9 @@ export default class DayGrid extends InteractiveDateComponent {
     }
 
     options = {
-      className: 'fc-more-popover ' + view.calendar.theme.getClass('popover'),
-      content: this.renderSegPopoverContent(row, col, segs),
-      parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
+      className: 'fc-more-popover' + (themeClass ? ' ' + themeClass : ''),
+      content: this.renderSegPopoverContent(row, col, segs).toArray(),
+      parentEl: view.el[0], // attach to root of view. guarantees outside of scrollbars.
       top: topEl.offset().top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       viewportConstrain: this.opt('popoverViewportConstrain'),
@@ -686,7 +687,7 @@ export default class DayGrid extends InteractiveDateComponent {
 
     // the popover doesn't live within the grid's container element, and thus won't get the event
     // delegated-handlers for free. attach event-related handlers to the popover.
-    this.bindAllSegHandlersToEl(this.segPopover.el)
+    this.bindAllSegHandlersToEl($(this.segPopover.el))
 
     this.triggerAfterEventSegsRendered(segs)
   }

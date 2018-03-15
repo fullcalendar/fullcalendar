@@ -152,6 +152,7 @@ export function subtractInnerElHeight(outerEl: JQuery, innerEl: JQuery) {
 
 
 // borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
+// TODO: normalize window/document?
 export function getScrollParent(el: JQuery) {
   let position = el.css('position')
   let scrollParent = el.parents().filter(function() {
