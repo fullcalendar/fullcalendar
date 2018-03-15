@@ -33,7 +33,7 @@ export default class AgendaView extends View {
   timeGrid: any // the main time-grid subcomponent of this view
   dayGrid: any // the "all-day" subcomponent. if all-day is turned off, this will be null
 
-  scroller: any
+  scroller: Scroller
   axisWidth: any // the width of the time axis running down the side
   usesMinMaxTime: boolean = true // indicates that minTime/maxTime affects rendering
 
@@ -84,7 +84,8 @@ export default class AgendaView extends View {
 
     this.scroller.render()
 
-    timeGridWrapEl = this.scroller.el.addClass('fc-time-grid-container')
+    timeGridWrapEl = this.scroller.el
+    timeGridWrapEl.classList.add('fc-time-grid-container')
     timeGridEl = $('<div class="fc-time-grid" />').appendTo(timeGridWrapEl)
 
     this.el.find('.fc-body > tr > td').append(timeGridWrapEl)
@@ -238,7 +239,7 @@ export default class AgendaView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
+      subtractInnerElHeight(this.el, $(this.scroller.el)) // everything that's NOT the scroller
   }
 
 

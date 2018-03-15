@@ -25,7 +25,7 @@ export default class BasicView extends View {
   dateProfileGeneratorClass: any
   dayGridClass: any // class the dayGrid will be instantiated from (overridable by subclasses)
 
-  scroller: any
+  scroller: Scroller
   dayGrid: any // the main subcomponent that does most of the heavy lifting
 
   weekNumberWidth: any // width of all the week-number cells running down the side
@@ -81,7 +81,8 @@ export default class BasicView extends View {
 
     this.scroller.render()
 
-    dayGridContainerEl = this.scroller.el.addClass('fc-day-grid-container')
+    dayGridContainerEl = this.scroller.el
+    dayGridContainerEl.classList.add('fc-day-grid-container')
     dayGridEl = $('<div class="fc-day-grid" />').appendTo(dayGridContainerEl)
 
     this.el.find('.fc-body > tr > td').append(dayGridContainerEl)
@@ -213,7 +214,7 @@ export default class BasicView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
+      subtractInnerElHeight(this.el, $(this.scroller.el)) // everything that's NOT the scroller
   }
 
 

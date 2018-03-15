@@ -17,7 +17,7 @@ export default class ListView extends View {
 
   segSelector: any = '.fc-list-item' // which elements accept event actions
 
-  scroller: any
+  scroller: Scroller
   contentEl: JQuery
 
   dayDates: any // localized ambig-time moment array
@@ -41,9 +41,9 @@ export default class ListView extends View {
     )
 
     this.scroller.render()
-    this.scroller.el.appendTo(this.el)
+    this.el.append(this.scroller.el)
 
-    this.contentEl = this.scroller.scrollEl // shortcut
+    this.contentEl = $(this.scroller.scrollEl) // shortcut
   }
 
 
@@ -65,7 +65,7 @@ export default class ListView extends View {
 
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
+      subtractInnerElHeight(this.el, $(this.scroller.el)) // everything that's NOT the scroller
   }
 
 

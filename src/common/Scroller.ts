@@ -7,8 +7,8 @@ Embodies a div that has potential scrollbars
 */
 export default class Scroller extends Class {
 
-  el: JQuery // the guaranteed outer element
-  scrollEl: JQuery // the element with the scrollbars
+  el: HTMLElement // the guaranteed outer element
+  scrollEl: HTMLElement // the element with the scrollbars
   overflowX: any
   overflowY: any
 
@@ -28,7 +28,10 @@ export default class Scroller extends Class {
 
 
   renderEl() {
-    return (this.scrollEl = $('<div class="fc-scroller"></div>'))
+    let scrollEl = document.createElement('div')
+    scrollEl.classList.add('fc-scroller')
+    this.scrollEl = scrollEl
+    return scrollEl
   }
 
 
@@ -49,10 +52,8 @@ export default class Scroller extends Class {
 
 
   applyOverflow() {
-    this.scrollEl.css({
-      'overflow-x': this.overflowX,
-      'overflow-y': this.overflowY
-    })
+    this.scrollEl.style.overflowX = this.overflowX
+    this.scrollEl.style.overflowY = this.overflowY
   }
 
 
@@ -60,6 +61,7 @@ export default class Scroller extends Class {
   // Useful for preserving scrollbar widths regardless of future resizes.
   // Can pass in scrollbarWidths for optimization.
   lockOverflow(scrollbarWidths) {
+    let { scrollEl } = this
     let overflowX = this.overflowX
     let overflowY = this.overflowY
 
@@ -69,7 +71,7 @@ export default class Scroller extends Class {
       overflowX = (
           scrollbarWidths.top || scrollbarWidths.bottom || // horizontal scrollbars?
           // OR scrolling pane with massless scrollbars?
-          this.scrollEl[0].scrollWidth - 1 > this.scrollEl[0].clientWidth
+          scrollEl.scrollWidth - 1 > scrollEl.clientWidth
             // subtract 1 because of IE off-by-one issue
         ) ? 'scroll' : 'hidden'
     }
@@ -78,12 +80,13 @@ export default class Scroller extends Class {
       overflowY = (
           scrollbarWidths.left || scrollbarWidths.right || // vertical scrollbars?
           // OR scrolling pane with massless scrollbars?
-          this.scrollEl[0].scrollHeight - 1 > this.scrollEl[0].clientHeight
+          scrollEl.scrollHeight - 1 > scrollEl.clientHeight
             // subtract 1 because of IE off-by-one issue
         ) ? 'scroll' : 'hidden'
     }
 
-    this.scrollEl.css({ 'overflow-x': overflowX, 'overflow-y': overflowY })
+    scrollEl.style.overflowX = overflowX
+    scrollEl.style.overflowY = overflowY
   }
 
 
@@ -92,32 +95,35 @@ export default class Scroller extends Class {
 
 
   setHeight(height) {
-    this.scrollEl.height(height)
+    this.scrollEl.style.height =
+      typeof height === 'number' ?
+        height + 'px' :
+        height
   }
 
 
   getScrollTop() {
-    return this.scrollEl.scrollTop()
+    return this.scrollEl.scrollTop
   }
 
 
   setScrollTop(top) {
-    this.scrollEl.scrollTop(top)
+    this.scrollEl.scrollTop = top
   }
 
 
   getClientWidth() {
-    return this.scrollEl[0].clientWidth
+    return this.scrollEl.clientWidth
   }
 
 
   getClientHeight() {
-    return this.scrollEl[0].clientHeight
+    return this.scrollEl.clientHeight
   }
 
 
   getScrollbarWidths() {
-    return getScrollbarWidths(this.scrollEl)
+    return getScrollbarWidths($(this.scrollEl))
   }
 
 }
