@@ -1,4 +1,23 @@
 
+// TODO: use in other places
+export function makeElement(tagName, attrs, innerHtml?): HTMLElement {
+  let el: HTMLElement = document.createElement(tagName)
+
+  for (let attrName in attrs) {
+    if (attrName === 'className') {
+      el.className = attrs[attrName]
+    } else {
+      el.setAttribute(attrName, attrs[attrName])
+    }
+  }
+
+  if (typeof innerHtml === 'string') {
+    el.innerHTML = innerHtml
+  }
+
+  return el
+}
+
 export function htmlToElement(htmlString): HTMLElement {
   let div = document.createElement('div')
   div.innerHTML = htmlString.trim()

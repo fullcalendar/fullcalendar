@@ -1,6 +1,7 @@
 import * as $ from 'jquery'
 import { htmlEscape, cssToStr } from '../util'
 import EventRenderer from '../component/renderers/EventRenderer'
+import DayGrid from './DayGrid'
 
 
 /* Event-rendering methods for the DayGrid class
@@ -8,7 +9,7 @@ import EventRenderer from '../component/renderers/EventRenderer'
 
 export default class DayGridEventRenderer extends EventRenderer {
 
-  dayGrid: any
+  dayGrid: DayGrid
   rowStructs: any // an array of objects, each holding information about a row's foreground event-rendering
 
 
@@ -33,7 +34,7 @@ export default class DayGridEventRenderer extends EventRenderer {
     let rowStructs = this.rowStructs = this.renderSegRows(segs)
 
     // append to each row's content skeleton
-    this.dayGrid.rowEls.each(function(i, rowNode) {
+    this.dayGrid.rowEls.forEach(function(rowNode, i) {
       $(rowNode).find('.fc-content-skeleton > table').append(
         rowStructs[i].tbodyEl
       )

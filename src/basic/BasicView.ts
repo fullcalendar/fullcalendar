@@ -26,7 +26,8 @@ export default class BasicView extends View {
   dayGridClass: any // class the dayGrid will be instantiated from (overridable by subclasses)
 
   scroller: Scroller
-  dayGrid: any // the main subcomponent that does most of the heavy lifting
+  dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
+  colWeekNumbersVisible: boolean = false
 
   weekNumberWidth: any // width of all the week-number cells running down the side
 
@@ -40,10 +41,10 @@ export default class BasicView extends View {
     if (this.opt('weekNumbers')) {
       if (this.opt('weekNumbersWithinDays')) {
         this.dayGrid.cellWeekNumbersVisible = true
-        this.dayGrid.colWeekNumbersVisible = false
+        this.colWeekNumbersVisible = false
       } else {
         this.dayGrid.cellWeekNumbersVisible = false
-        this.dayGrid.colWeekNumbersVisible = true
+        this.colWeekNumbersVisible = true
       }
     }
 
@@ -87,7 +88,7 @@ export default class BasicView extends View {
 
     this.el.find('.fc-body > tr > td').append(dayGridContainerEl)
 
-    this.dayGrid.headContainerEl = this.el.find('.fc-head-container')
+    this.dayGrid.headContainerEl = this.el.find('.fc-head-container')[0]
     this.dayGrid.setElement(dayGridEl)
   }
 
@@ -146,7 +147,7 @@ export default class BasicView extends View {
   // Refreshes the horizontal dimensions of the view
   updateSize(totalHeight, isAuto, isResize) {
     let eventLimit = this.opt('eventLimit')
-    let headRowEl = this.dayGrid.headContainerEl.find('.fc-row')
+    let headRowEl = this.dayGrid.headContainerEl.querySelector('.fc-row')
     let scrollerHeight
     let scrollbarWidths
 
@@ -162,7 +163,7 @@ export default class BasicView extends View {
 
     super.updateSize(totalHeight, isAuto, isResize)
 
-    if (this.dayGrid.colWeekNumbersVisible) {
+    if (this.colWeekNumbersVisible) {
       // Make sure all week number cells running down the side have the same width.
       // Record the width for cells created later.
       this.weekNumberWidth = matchCellWidths(
@@ -172,7 +173,7 @@ export default class BasicView extends View {
 
     // reset all heights to be natural
     this.scroller.clear()
-    uncompensateScroll(headRowEl)
+    uncompensateScroll($(headRowEl))
 
     this.dayGrid.removeSegPopover() // kill the "more" popover if displayed
 
@@ -198,7 +199,7 @@ export default class BasicView extends View {
 
       if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
-        compensateScroll(headRowEl, scrollbarWidths)
+        compensateScroll($(headRowEl), scrollbarWidths)
 
         // doing the scrollbar compensation might have created text overflow which created more height. redo
         scrollerHeight = this.computeScrollerHeight(totalHeight)
@@ -221,9 +222,9 @@ export default class BasicView extends View {
   // Sets the height of just the DayGrid component in this view
   setGridHeight(height, isAuto) {
     if (isAuto) {
-      undistributeHeight(this.dayGrid.rowEls) // let the rows be their natural height with no expanding
+      undistributeHeight($(this.dayGrid.rowEls)) // let the rows be their natural height with no expanding
     } else {
-      distributeHeight(this.dayGrid.rowEls, height, true) // true = compensate for height-hogging rows
+      distributeHeight($(this.dayGrid.rowEls), height, true) // true = compensate for height-hogging rows
     }
   }
 
@@ -260,14 +261,12 @@ function makeDayGridSubclass(SuperClass) {
 
   return class SubClass extends SuperClass {
 
-    colWeekNumbersVisible: boolean = false // display week numbers along the side?
-
 
     // Generates the HTML that will go before the day-of week header cells
     renderHeadIntroHtml() {
       let view = this.view
 
-      if (this.colWeekNumbersVisible) {
+      if (view.colWeekNumbersVisible) {
         return '' +
           '<th class="fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.weekNumberStyleAttr() + '>' +
             '<span>' + // needed for matchCellWidths
@@ -285,7 +284,7 @@ function makeDayGridSubclass(SuperClass) {
       let view = this.view
       let weekStart = this.getCellDate(row, 0)
 
-      if (this.colWeekNumbersVisible) {
+      if (view.colWeekNumbersVisible) {
         return '' +
           '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '>' +
             view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
@@ -303,7 +302,7 @@ function makeDayGridSubclass(SuperClass) {
     renderBgIntroHtml() {
       let view = this.view
 
-      if (this.colWeekNumbersVisible) {
+      if (view.colWeekNumbersVisible) {
         return '<td class="fc-week-number ' + view.calendar.theme.getClass('widgetContent') + '" ' +
           view.weekNumberStyleAttr() + '></td>'
       }
@@ -317,7 +316,7 @@ function makeDayGridSubclass(SuperClass) {
     renderIntroHtml() {
       let view = this.view
 
-      if (this.colWeekNumbersVisible) {
+      if (view.colWeekNumbersVisible) {
         return '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '></td>'
       }
 
@@ -326,7 +325,8 @@ function makeDayGridSubclass(SuperClass) {
 
 
     getIsNumbersVisible() {
-      return DayGrid.prototype.getIsNumbersVisible.apply(this, arguments) || this.colWeekNumbersVisible
+      let view = this.view
+      return DayGrid.prototype.getIsNumbersVisible.apply(this, arguments) || view.colWeekNumbersVisible
     }
 
   }

@@ -156,10 +156,6 @@ export default class Popover {
       viewportRect = viewportEl.getBoundingClientRect()
     }
 
-    // if the window is scrolled, it causes the visible area to be further down
-    viewportRect.top += window.scrollY
-    viewportRect.left += window.scrollX
-
     // constrain to the view port. if constrained by two edges, give precedence to top/left
     if (options.viewportConstrain !== false) {
       top = Math.min(top, viewportRect.top + viewportRect.height - rect.height - this.margin)

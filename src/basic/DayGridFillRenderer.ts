@@ -1,9 +1,12 @@
 import * as $ from 'jquery'
+import { htmlToElement, makeElement } from '../util/dom'
 import FillRenderer from '../component/renderers/FillRenderer'
+import DayGrid from './DayGrid'
 
 
 export default class DayGridFillRenderer extends FillRenderer {
 
+  component: DayGrid
   fillSegTag: string = 'td' // override the default tag name
 
 
@@ -11,13 +14,13 @@ export default class DayGridFillRenderer extends FillRenderer {
     let nodes = []
     let i
     let seg
-    let skeletonEl
+    let skeletonEl: HTMLElement
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
       skeletonEl = this.renderFillRow(type, seg)
-      this.component.rowEls.eq(seg.row).append(skeletonEl)
-      nodes.push(skeletonEl[0])
+      this.component.rowEls[seg.row].appendChild(skeletonEl)
+      nodes.push(skeletonEl)
     }
 
     return nodes
@@ -25,13 +28,13 @@ export default class DayGridFillRenderer extends FillRenderer {
 
 
   // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-  renderFillRow(type, seg) {
+  renderFillRow(type, seg): HTMLElement {
     let colCnt = this.component.colCnt
     let startCol = seg.leftCol
     let endCol = seg.rightCol + 1
     let className
-    let skeletonEl
-    let trEl
+    let skeletonEl: HTMLElement
+    let trEl: HTMLTableRowElement
 
     if (type === 'businessHours') {
       className = 'bgevent'
@@ -39,26 +42,25 @@ export default class DayGridFillRenderer extends FillRenderer {
       className = type.toLowerCase()
     }
 
-    skeletonEl = $(
+    skeletonEl = htmlToElement(
       '<div class="fc-' + className + '-skeleton">' +
         '<table><tr/></table>' +
       '</div>'
     )
-    trEl = skeletonEl.find('tr')
+    trEl = skeletonEl.getElementsByTagName('tr')[0]
 
     if (startCol > 0) {
-      trEl.append('<td colspan="' + startCol + '"/>')
+      trEl.appendChild(makeElement('td', { colspan: startCol }))
     }
 
-    trEl.append(
-      seg.el.attr('colspan', endCol - startCol)
-    )
+    seg.el[0].setAttribute('colspan', endCol - startCol)
+    trEl.appendChild(seg.el[0])
 
     if (endCol < colCnt) {
-      trEl.append('<td colspan="' + (colCnt - endCol) + '"/>')
+      trEl.appendChild(makeElement('td', { colspan: colCnt - endCol }))
     }
 
-    this.component.bookendCells(trEl)
+    this.component.bookendCells($(trEl))
 
     return skeletonEl
   }

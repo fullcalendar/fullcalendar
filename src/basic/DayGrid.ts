@@ -31,6 +31,8 @@ export default class DayGrid extends InteractiveDateComponent {
   renderIntroHtml: DayTableInterface['renderIntroHtml']
   getCellRange: DayTableInterface['getCellRange']
   sliceRangeByDay: DayTableInterface['sliceRangeByDay']
+  bookendCells: DayTableInterface['bookendCells']
+  breakOnWeeks: DayTableInterface['breakOnWeeks']
 
   view: any // TODO: make more general and/or remove
   helperRenderer: any
@@ -39,9 +41,9 @@ export default class DayGrid extends InteractiveDateComponent {
 
   bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
-  headContainerEl: JQuery // div that hold's the date header
-  rowEls: JQuery // set of fake row elements
-  cellEls: JQuery // set of whole-day elements comprising the row's background
+  headContainerEl: HTMLElement // div that hold's the date header
+  rowEls: HTMLElement[] // set of fake row elements
+  cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
 
   rowCoordCache: any
   colCoordCache: any
@@ -64,11 +66,9 @@ export default class DayGrid extends InteractiveDateComponent {
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   componentFootprintToSegs(componentFootprint) {
     let segs = this.sliceRangeByRow(componentFootprint.unzonedRange)
-    let i
-    let seg
 
-    for (i = 0; i < segs.length; i++) {
-      seg = segs[i]
+    for (let i = 0; i < segs.length; i++) {
+      let seg = segs[i]
 
       if (this.isRTL) {
         seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex
@@ -109,7 +109,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let col
 
     if (this.headContainerEl) {
-      this.headContainerEl.html(this.renderHeadHtml())
+      this.headContainerEl.innerHTML = this.renderHeadHtml()
     }
 
     for (row = 0; row < rowCnt; row++) {
@@ -117,15 +117,15 @@ export default class DayGrid extends InteractiveDateComponent {
     }
     this.el.html(html)
 
-    this.rowEls = this.el.find('.fc-row')
-    this.cellEls = this.el.find('.fc-day, .fc-disabled-day')
+    this.rowEls = this.el.find('.fc-row').toArray()
+    this.cellEls = this.el.find('.fc-day, .fc-disabled-day').toArray()
 
     this.rowCoordCache = new CoordCache({
-      els: this.rowEls.toArray(),
+      els: this.rowEls,
       isVertical: true
     })
     this.colCoordCache = new CoordCache({
-      els: this.cellEls.toArray().slice(0, this.colCnt), // only the first row
+      els: this.cellEls.slice(0, this.colCnt), // only the first row
       isHorizontal: true
     })
 
@@ -342,7 +342,7 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   getCellEl(row, col) {
-    return this.cellEls.eq(row * this.colCnt + col)
+    return $(this.cellEls[row * this.colCnt + col])
   }
 
 
@@ -456,8 +456,8 @@ export default class DayGrid extends InteractiveDateComponent {
   // Assumes the row is "rigid" (maintains a constant height regardless of what is inside).
   // `row` is the row number.
   computeRowLevelLimit(row): (number | false) {
-    let rowEl = this.rowEls.eq(row) // the containing "fake" row div
-    let rowHeight = rowEl.height() // TODO: cache somehow?
+    let rowEl = this.rowEls[row] // the containing "fake" row div
+    let rowHeight = rowEl.offsetHeight // TODO: cache somehow?
     let trEls = this.eventRenderer.rowStructs[row].tbodyEl.children()
     let i
     let trEl
@@ -645,21 +645,21 @@ export default class DayGrid extends InteractiveDateComponent {
   showSegPopover(row, col, moreLink, segs) {
     let view = this.view
     let moreWrap = moreLink.parent() // the <div> wrapper around the <a>
-    let topEl // the element we want to match the top coordinate of
+    let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
     let themeClass = view.calendar.theme.getClass('popover')
 
     if (this.rowCnt === 1) {
-      topEl = view.el // will cause the popover to cover any sort of header
+      topEl = view.el[0] // will cause the popover to cover any sort of header
     } else {
-      topEl = this.rowEls.eq(row) // will align with top of row
+      topEl = this.rowEls[row] // will align with top of row
     }
 
     options = {
       className: 'fc-more-popover' + (themeClass ? ' ' + themeClass : ''),
       content: this.renderSegPopoverContent(row, col, segs).toArray(),
       parentEl: view.el[0], // attach to root of view. guarantees outside of scrollbars.
-      top: topEl.offset().top,
+      top: topEl.getBoundingClientRect().top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       viewportConstrain: this.opt('popoverViewportConstrain'),
       hide: () => {

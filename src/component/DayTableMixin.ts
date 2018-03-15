@@ -6,6 +6,7 @@ export interface DayTableInterface {
   daysPerRow: any
   rowCnt: any
   colCnt: any
+  breakOnWeeks: boolean
   updateDayTable()
   renderHeadHtml()
   renderBgTrHtml(row)
