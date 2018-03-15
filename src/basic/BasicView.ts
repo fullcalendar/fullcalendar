@@ -146,14 +146,18 @@ export default class BasicView extends View {
 
   // Refreshes the horizontal dimensions of the view
   updateSize(totalHeight, isAuto, isResize) {
+    let { dayGrid } = this
     let eventLimit = this.opt('eventLimit')
-    let headRowEl = this.dayGrid.headContainerEl.querySelector('.fc-row')
+    let headRowEl =
+      dayGrid.headContainerEl ?
+        dayGrid.headContainerEl.querySelector('.fc-row') :
+        null
     let scrollerHeight
     let scrollbarWidths
 
     // hack to give the view some height prior to dayGrid's columns being rendered
     // TODO: separate setting height from scroller VS dayGrid.
-    if (!this.dayGrid.rowEls) {
+    if (!dayGrid.rowEls) {
       if (!isAuto) {
         scrollerHeight = this.computeScrollerHeight(totalHeight)
         this.scroller.setHeight(scrollerHeight)
@@ -173,13 +177,15 @@ export default class BasicView extends View {
 
     // reset all heights to be natural
     this.scroller.clear()
-    uncompensateScroll($(headRowEl))
+    if (headRowEl) {
+      uncompensateScroll($(headRowEl))
+    }
 
-    this.dayGrid.removeSegPopover() // kill the "more" popover if displayed
+    dayGrid.removeSegPopover() // kill the "more" popover if displayed
 
     // is the event limit a constant level number?
     if (eventLimit && typeof eventLimit === 'number') {
-      this.dayGrid.limitRows(eventLimit) // limit the levels first so the height can redistribute after
+      dayGrid.limitRows(eventLimit) // limit the levels first so the height can redistribute after
     }
 
     // distribute the height to the rows
@@ -189,7 +195,7 @@ export default class BasicView extends View {
 
     // is the event limit dynamically calculated?
     if (eventLimit && typeof eventLimit !== 'number') {
-      this.dayGrid.limitRows(eventLimit) // limit the levels after the grid's row heights have been set
+      dayGrid.limitRows(eventLimit) // limit the levels after the grid's row heights have been set
     }
 
     if (!isAuto) { // should we force dimensions of the scroll container?
@@ -199,7 +205,9 @@ export default class BasicView extends View {
 
       if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
-        compensateScroll($(headRowEl), scrollbarWidths)
+        if (headRowEl) {
+          compensateScroll($(headRowEl), scrollbarWidths)
+        }
 
         // doing the scrollbar compensation might have created text overflow which created more height. redo
         scrollerHeight = this.computeScrollerHeight(totalHeight)
