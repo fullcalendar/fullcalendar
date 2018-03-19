@@ -493,7 +493,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let totalSegsBelow // total number of segments below `seg` in any of the columns `seg` occupies
     let colSegsBelow // array of segment arrays, below seg, one for each column (offset from segs's first column)
     let td: HTMLTableCellElement
-    let rowspan
+    let rowSpan
     let segMoreNodes // array of "more" <td> cells that will stand-in for the current seg's cell
     let j
     let moreTd: HTMLTableCellElement
@@ -544,12 +544,12 @@ export default class DayGrid extends InteractiveDateComponent {
 
         if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
           td = cellMatrix[levelLimit - 1][seg.leftCol] // the segment's parent cell
-          rowspan = td.rowSpan || 1
+          rowSpan = td.rowSpan || 1
           segMoreNodes = []
 
           // make a replacement <td> for each column the segment occupies. will be one for each colspan
           for (j = 0; j < colSegsBelow.length; j++) {
-            moreTd = makeElement('td', { className: 'fc-more-cell', rowSpan: rowspan }) as HTMLTableCellElement
+            moreTd = makeElement('td', { className: 'fc-more-cell', rowSpan }) as HTMLTableCellElement
             segsBelow = colSegsBelow[j]
             moreLink = this.renderMoreLink(
               row,

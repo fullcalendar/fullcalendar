@@ -15,7 +15,7 @@ Options:
 
 import * as $ from 'jquery'
 import { getScrollParent } from '../util'
-import { listenViaDelegation, appendContentTo, ElementContent, removeElement } from '../util/dom'
+import { listenViaDelegation, ElementContent, removeElement, makeElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {
@@ -72,16 +72,13 @@ export default class Popover {
   // Creates `this.el` and renders content inside of it
   render() {
     let options = this.options
-
-    let el = this.el = document.createElement('div')
-    el.classList.add('fc-popover')
-    if (options.className) {
-      el.classList.add(options.className)
-    }
-    el.style.top = '0'
-    el.style.left = '0'
-
-    appendContentTo(el, options.content)
+    let el = this.el = makeElement('div', {
+      className: 'fc-popover ' + (options.className || ''),
+      style: {
+        top: '0',
+        left: '0'
+      }
+    }, options.content)
 
     options.parentEl.appendChild(el)
 

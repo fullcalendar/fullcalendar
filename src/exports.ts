@@ -45,7 +45,14 @@ export {
 } from './util/object'
 
 export {
-  findElsWithin
+  findElsWithin,
+  htmlToElement,
+  makeElement,
+  insertAfterEl,
+  prependWithinEl,
+  removeElement,
+  listenViaDelegation,
+  appendContentTo
 } from './util/dom'
 
 export {
