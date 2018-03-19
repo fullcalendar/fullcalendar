@@ -1,4 +1,3 @@
-import { assignTo } from '../util/object'
 
 // TODO: use in other places
 // TODO: rename to createElement
@@ -8,7 +7,7 @@ export function makeElement(tagName, attrs, content?): HTMLElement {
   if (attrs) {
     for (let attrName in attrs) {
       if (attrName === 'style') {
-        assignTo(el.style, attrs[attrName])
+        applyStyle(el, attrs[attrName])
       } else if (attrName === 'className' || attrName === 'colSpan' || attrName === 'rowSpan') { // TODO: do hash
         el[attrName] = attrs[attrName]
       } else {
@@ -22,6 +21,29 @@ export function makeElement(tagName, attrs, content?): HTMLElement {
   }
 
   return el
+}
+
+const PIXEL_PROP_RE = /(top|left|right|bottom|width|height)$/i
+
+// find other places to do this
+export function applyStyle(el: HTMLElement, props: object | string, propVal?: any) {
+  if (typeof props === 'object') {
+    for (let propName in props) {
+      applyStyleProp(el, propName, props[propName])
+    }
+  } else if (typeof props === 'string') {
+    applyStyleProp(el, props, propVal)
+  }
+}
+
+function applyStyleProp(el, name, val) {
+  if (val == null) {
+    el.style[name] = ''
+  } else if (typeof val === 'number' && PIXEL_PROP_RE.test(name)) {
+    el.style[name] = val + 'px'
+  } else {
+    el.style[name] = val
+  }
 }
 
 export type ElementContent = string | Node | NodeList | Node[]
@@ -109,4 +131,12 @@ function normalizeContent(content: ElementContent): NodeList | Node[] {
     els = content
   }
   return els
+}
+
+export function toggleClassName(el, className, bool) {
+  if (bool) {
+    el.classList.add(className)
+  } else {
+    el.classList.remove(className)
+  }
 }

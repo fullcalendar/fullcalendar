@@ -52,7 +52,9 @@ export {
   prependWithinEl,
   removeElement,
   listenViaDelegation,
-  appendContentTo
+  appendContentTo,
+  toggleClassName,
+  applyStyle
 } from './util/dom'
 
 export {
