@@ -78,7 +78,9 @@ export {
   stripHtmlEntities,
   subtractInnerElHeight,
   uncompensateScroll,
-  undistributeHeight
+  undistributeHeight,
+  dayIDs,
+  unitsDesc
 } from './util'
 
 export {
