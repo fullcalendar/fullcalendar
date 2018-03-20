@@ -22,9 +22,9 @@ $.fn.fullCalendar = function(options?): (JQuery | any) {
   let args = Array.prototype.slice.call(arguments, 1) // for a possible method call
   let res = this // what this function will return (this jQuery object by default)
 
-  this.each(function(i, _element) { // loop each DOM element involved
-    let element = $(_element)
-    let calendar = element.data('fullCalendar') // get the existing calendar object (if any)
+  this.each(function(i, el) { // loop each DOM element involved
+    let $el = $(el)
+    let calendar = $el.data('fullCalendar') // get the existing calendar object (if any)
     let singleRes // the returned value of this single method call
 
     // a method call
@@ -37,7 +37,7 @@ $.fn.fullCalendar = function(options?): (JQuery | any) {
       } else if (options === 'destroy') { // don't warn if no calendar object
         if (calendar) {
           calendar.destroy()
-          element.removeData('fullCalendar')
+          $el.removeData('fullCalendar')
         }
       } else if (!calendar) {
         warn('Attempting to call a FullCalendar method on an element with no calendar.')
@@ -48,14 +48,14 @@ $.fn.fullCalendar = function(options?): (JQuery | any) {
           res = singleRes // record the first method call result
         }
         if (options === 'destroy') { // for the destroy method, must remove Calendar object data
-          element.removeData('fullCalendar')
+          $el.removeData('fullCalendar')
         }
       } else {
         warn("'" + options + "' is an unknown FullCalendar method.")
       }
     } else if (!calendar) { // don't initialize twice
-      calendar = new Calendar(element, options)
-      element.data('fullCalendar', calendar)
+      calendar = new Calendar(el, options)
+      $el.data('fullCalendar', calendar)
       calendar.render()
     }
   })

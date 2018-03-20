@@ -1,5 +1,6 @@
 import * as $ from 'jquery'
 import { getScrollbarWidths } from '../util'
+import { removeElement } from '../util/dom'
 import Class from '../common/Class'
 
 /*
@@ -43,7 +44,7 @@ export default class Scroller extends Class {
 
 
   destroy() {
-    this.el.remove()
+    removeElement(this.el)
   }
 
 

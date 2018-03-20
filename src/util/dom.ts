@@ -79,6 +79,38 @@ export function listenViaDelegation(container: HTMLElement, eventType, childClas
   })
 }
 
+// from https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+const matchesMethod = Element.prototype.matches || Element.prototype.msMatchesSelector
+const closestMethod = Element.prototype.closest || function(selector) {
+  let el = this
+  if (!document.documentElement.contains(el)) {
+    return null
+  }
+  do {
+    if (matchesMethod.call(el, selector)) {
+      return el
+    }
+    el = el.parentElement || el.parentNode
+  } while (el !== null && el.nodeType === 1)
+  return null;
+}
+
+export function listenBySelector(container: HTMLElement, eventType: string, selector: string, handler: (ev: Event, matchedTarget: Element) => void) {
+
+  function realHandler(ev: Event) {
+    let matchedChild = closestMethod.call(ev.target, selector)
+    if (matchedChild) {
+      handler.call(matchedChild, ev, matchedChild)
+    }
+  }
+
+  container.addEventListener(eventType, realHandler)
+
+  return function() {
+    container.removeEventListener(eventType, realHandler)
+  }
+}
+
 // TODO: user new signature in other places
 export function findElsWithin(containers: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
   if (containers instanceof HTMLElement) {

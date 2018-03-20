@@ -1,6 +1,7 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
 import { capitaliseFirstLetter, debounce } from './util'
+import { listenBySelector, toggleClassName, makeElement, removeElement, applyStyle, prependWithinEl } from './util/dom'
 import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
@@ -59,11 +60,12 @@ export default class Calendar {
   defaultTimedEventDuration: moment.Duration
   localeData: object
 
-  el: JQuery
-  contentEl: JQuery
+  el: HTMLElement
+  contentEl: HTMLElement
   suggestedViewHeight: number
   ignoreUpdateViewSize: number = 0
   freezeContentHeightDepth: number = 0
+  removeNavLinkListener: any
   windowResizeProxy: any
 
   header: Toolbar
@@ -71,7 +73,7 @@ export default class Calendar {
   toolbarsManager: Iterator
 
 
-  constructor(el: JQuery, overrides: OptionsInput) {
+  constructor(el: HTMLElement, overrides: OptionsInput) {
 
     // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
     // unneeded() is called in destroy.
@@ -114,7 +116,7 @@ export default class Calendar {
     }
 
     if (context == null) {
-      context = this.el[0] // fallback context
+      context = this.el // fallback context
     }
 
     if (!args) {
@@ -323,16 +325,16 @@ export default class Calendar {
     }
   }
 
-
   initialRender() {
     let el = this.el
 
-    el.addClass('fc')
+    el.classList.add('fc')
 
     // event delegation for nav links
-    el.on('click.fc', 'a[data-goto]', (ev) => {
-      let anchorEl = $(ev.currentTarget)
-      let gotoOptions = anchorEl.data('goto') // will automatically parse JSON
+    this.removeNavLinkListener = listenBySelector(el, 'click', 'a[data-goto]', (ev, anchorEl) => {
+      let gotoOptions: any = anchorEl.getAttribute('data-goto')
+      gotoOptions = gotoOptions ? JSON.parse(gotoOptions) : {}
+
       let date = this.moment(gotoOptions.date)
       let viewType = gotoOptions.type
 
@@ -358,7 +360,7 @@ export default class Calendar {
       this.theme = theme
 
       if (widgetClass) {
-        el.addClass(widgetClass)
+        el.classList.add(widgetClass)
       }
     }, () => {
       let widgetClass = this.theme.getClass('widget')
@@ -366,7 +368,7 @@ export default class Calendar {
       this.theme = null
 
       if (widgetClass) {
-        el.removeClass(widgetClass)
+        el.classList.remove(widgetClass)
       }
     })
 
@@ -383,11 +385,11 @@ export default class Calendar {
     // called immediately, and upon option change.
     // HACK: locale often affects isRTL, so we explicitly listen to that too.
     this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], (opts) => {
-      el.toggleClass('fc-ltr', !opts.isRTL)
-      el.toggleClass('fc-rtl', opts.isRTL)
+      toggleClassName(el, 'fc-ltr', !opts.isRTL)
+      toggleClassName(el, 'fc-rtl', opts.isRTL)
     })
 
-    this.contentEl = $("<div class='fc-view-container'></div>").prependTo(el)
+    prependWithinEl(el, this.contentEl = makeElement('div', { className: 'fc-view-container' }))
 
     this.initToolbars()
     this.renderHeader()
@@ -411,14 +413,19 @@ export default class Calendar {
     }
 
     this.toolbarsManager.proxyCall('removeElement')
-    this.contentEl.remove()
-    this.el.removeClass('fc fc-ltr fc-rtl')
+    removeElement(this.contentEl)
+    this.el.classList.remove('fc')
+    this.el.classList.remove('fc-ltr')
+    this.el.classList.remove('fc-rtl')
 
     // removes theme-related root className
     this.optionsManager.unwatch('settingTheme')
     this.optionsManager.unwatch('settingBusinessHourGenerator')
 
-    this.el.off('.fc') // unbind nav link handlers
+    if (this.removeNavLinkListener) {
+      this.removeNavLinkListener()
+      this.removeNavLinkListener = null
+    }
 
     if (this.windowResizeProxy) {
       $(window).unbind('resize', this.windowResizeProxy)
@@ -430,7 +437,7 @@ export default class Calendar {
 
 
   elementVisible(): boolean {
-    return this.el.is(':visible')
+    return Boolean(this.el.offsetWidth)
   }
 
 
@@ -612,10 +619,10 @@ export default class Calendar {
     } else if (typeof heightInput === 'function') { // exists and is a function
       this.suggestedViewHeight = heightInput() - this.queryToolbarsHeight()
     } else if (heightInput === 'parent') { // set to height of parent element
-      this.suggestedViewHeight = this.el.parent().height() - this.queryToolbarsHeight()
+      this.suggestedViewHeight = (this.el.parentNode as HTMLElement).offsetHeight - this.queryToolbarsHeight()
     } else {
       this.suggestedViewHeight = Math.round(
-        this.contentEl.width() /
+        this.contentEl.offsetWidth /
         Math.max(this.opt('aspectRatio'), .5)
       )
     }
@@ -649,9 +656,9 @@ export default class Calendar {
 
 
   forceFreezeContentHeight() {
-    this.contentEl.css({
+    applyStyle(this.contentEl, {
       width: '100%',
-      height: this.contentEl.height(),
+      height: this.contentEl.offsetHeight,
       overflow: 'hidden'
     })
   }
@@ -661,7 +668,7 @@ export default class Calendar {
     this.freezeContentHeightDepth--
 
     // always bring back to natural height
-    this.contentEl.css({
+    applyStyle(this.contentEl, {
       width: '',
       height: '',
       overflow: ''
@@ -709,7 +716,7 @@ export default class Calendar {
     header.render()
 
     if (header.el) {
-      this.el.prepend(header.el)
+      prependWithinEl(this.el, header.el)
     }
   }
 
@@ -722,7 +729,7 @@ export default class Calendar {
     footer.render()
 
     if (footer.el) {
-      this.el.append(footer.el)
+      this.el.appendChild(footer.el)
     }
   }
 

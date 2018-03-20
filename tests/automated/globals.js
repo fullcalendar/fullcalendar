@@ -66,7 +66,7 @@ window.initCalendar = function(options, el) {
     $el = $('<div id="calendar">').appendTo('body')
   }
 
-  window.currentCalendar = new Calendar($el, getCurrentOptions()) // set the global
+  window.currentCalendar = new Calendar($el[0], getCurrentOptions()) // set the global
 
   return window.currentCalendar.render()
 }

@@ -20,7 +20,7 @@ describe('columnHeaderFormat', function() {
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
         currentCalendar.changeView(crtView.view)
-        expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected)
+        expect($(currentCalendar.el).find(crtView.selector).text()).toBe(crtView.expected)
       };
     })
   })
@@ -51,7 +51,7 @@ describe('columnHeaderFormat', function() {
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
         currentCalendar.changeView(crtView.view)
-        expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected)
+        expect($(currentCalendar.el).find(crtView.selector).text()).toBe(crtView.expected)
       };
     })
   })
@@ -76,7 +76,7 @@ describe('columnHeaderFormat', function() {
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
         currentCalendar.changeView(crtView.view)
-        expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected)
+        expect($(currentCalendar.el).find(crtView.selector).text()).toBe(crtView.expected)
       };
     })
   })
@@ -101,7 +101,7 @@ describe('columnHeaderFormat', function() {
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
         currentCalendar.changeView(crtView.view)
-        expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected)
+        expect($(currentCalendar.el).find(crtView.selector).text()).toBe(crtView.expected)
       };
     })
   })
@@ -125,7 +125,7 @@ describe('columnHeaderFormat', function() {
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
         currentCalendar.changeView(crtView.view)
-        expect(currentCalendar.el.find(crtView.selector).text()).toBe(crtView.expected)
+        expect($(currentCalendar.el).find(crtView.selector).text()).toBe(crtView.expected)
       };
     })
   })
