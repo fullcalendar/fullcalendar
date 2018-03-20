@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import { htmlEscape } from './util'
 import { htmlToElement, appendContentTo, removeElement, findElsWithin } from './util/dom'
 

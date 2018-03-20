@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import * as moment from 'moment'
 import { distributeHeight } from '../util'
 import BasicView from './BasicView'
