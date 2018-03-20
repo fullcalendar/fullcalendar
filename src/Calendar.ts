@@ -764,7 +764,18 @@ export default class Calendar {
 
   queryToolbarsHeight() {
     return this.toolbarsManager.items.reduce(function(accumulator, toolbar) {
-      let toolbarHeight = toolbar.el ? toolbar.el.outerHeight(true) : 0 // includes margin
+      let toolbarHeight
+
+      if (toolbar.el) {
+        let computed = window.getComputedStyle(toolbar.el)
+        toolbarHeight =
+          toolbar.el.offsetHeight +
+          parseInt(computed.marginTop, 10) +
+          parseInt(computed.marginBottom, 10)
+      } else {
+        toolbarHeight = 0
+      }
+
       return accumulator + toolbarHeight
     }, 0)
   }

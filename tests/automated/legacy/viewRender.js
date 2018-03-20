@@ -27,7 +27,7 @@ describe('viewRender', function() {
           var viewEl = $('.fc-view', currentCalendar.el)
 
           expect(viewObj).toBe(givenViewObj)
-          expect(viewEl[0]).toBe(givenViewEl[0])
+          expect(viewEl[0]).toBe(givenViewEl)
           expect(viewEl.children().length >= 1).toBe(true) // has it rendered content?
           done()
         }
