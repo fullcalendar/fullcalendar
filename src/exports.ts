@@ -54,7 +54,8 @@ export {
   listenViaDelegation,
   appendContentTo,
   toggleClassName,
-  applyStyle
+  applyStyle,
+  computeHeightAndMargins
 } from './util/dom'
 
 export {

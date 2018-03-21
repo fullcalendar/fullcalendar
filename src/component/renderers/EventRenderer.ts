@@ -1,5 +1,5 @@
-import * as $ from 'jquery'
 import { compareByFieldSpecs, proxy } from '../../util'
+import { htmlToElements } from '../../util/dom'
 
 export default class EventRenderer {
 
@@ -188,16 +188,15 @@ export default class EventRenderer {
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
       // Then, compute the 'el' for each segment. An el might be null if the eventRender callback returned false.
-      $(html).each((i, node) => {
+      htmlToElements(html).forEach((el, i) => {
         let seg = segs[i]
-        let el = $(node)
 
         if (hasEventRenderHandlers) { // optimization
           el = this.filterEventRenderEl(seg.footprint, el)
         }
 
         if (el) {
-          el.data('fc-seg', seg) // used by handlers
+          (el as any).fcSeg = seg // used by handlers
           seg.el = el
           renderedSegs.push(seg)
         }
@@ -255,7 +254,7 @@ export default class EventRenderer {
     if (custom === false) { // means don't render at all
       el = null
     } else if (custom && custom !== true) {
-      el = $(custom)
+      el = custom
     }
 
     return el

@@ -1,3 +1,4 @@
+import { removeElement } from '../../util/dom'
 import SingleEventDef from '../../models/event/SingleEventDef'
 import EventFootprint from '../../models/event/EventFootprint'
 import EventSource from '../../models/event-source/EventSource'
@@ -8,7 +9,7 @@ export default abstract class HelperRenderer {
   view: any
   component: any
   eventRenderer: any
-  helperEls: JQuery
+  helperEls: HTMLElement[]
 
 
   constructor(component, eventRenderer) {
@@ -44,21 +45,24 @@ export default abstract class HelperRenderer {
   }
 
 
-  renderEventFootprints(eventFootprints, sourceSeg?, extraClassNames?, opacity?) {
+  renderEventFootprints(eventFootprints, sourceSeg?, extraClassName?, opacity?) {
     let segs = this.component.eventFootprintsToSegs(eventFootprints)
-    let classNames = 'fc-helper ' + (extraClassNames || '')
     let i
 
     // assigns each seg's el and returns a subset of segs that were rendered
     segs = this.eventRenderer.renderFgSegEls(segs)
 
     for (i = 0; i < segs.length; i++) {
-      segs[i].el.addClass(classNames)
+      let classList = segs[i].el.classList
+      classList.add('fc-helper')
+      if (extraClassName) {
+        classList.add(extraClassName)
+      }
     }
 
     if (opacity != null) {
       for (i = 0; i < segs.length; i++) {
-        segs[i].el.css('opacity', opacity)
+        segs[i].el.style.opacity = opacity
       }
     }
 
@@ -69,12 +73,12 @@ export default abstract class HelperRenderer {
   /*
   Must return all mock event elements
   */
-  abstract renderSegs(segs, sourceSeg?): JQuery
+  abstract renderSegs(segs, sourceSeg?): HTMLElement[]
 
 
   unrender() {
     if (this.helperEls) {
-      this.helperEls.remove()
+      this.helperEls.forEach(removeElement)
       this.helperEls = null
     }
   }

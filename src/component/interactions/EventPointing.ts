@@ -17,14 +17,18 @@ export default class EventPointing extends Interaction {
     let component = this.component
 
     component.bindSegHandlerToEl(el, 'click', this.handleClick.bind(this))
-    component.bindSegHandlerToEl(el, 'mouseenter', this.handleMouseover.bind(this))
-    component.bindSegHandlerToEl(el, 'mouseleave', this.handleMouseout.bind(this))
+
+    component.bindSegHoverHandlersToEl(
+      el,
+      this.handleMouseover.bind(this),
+      this.handleMouseout.bind(this)
+    )
   }
 
 
   handleClick(seg, ev) {
     let res = this.component.publiclyTrigger('eventClick', { // can return `false` to cancel
-      context: seg.el[0],
+      context: seg.el,
       args: [ seg.footprint.getEventLegacy(), ev, this.view ]
     })
 
@@ -44,11 +48,11 @@ export default class EventPointing extends Interaction {
 
       // TODO: move to EventSelecting's responsibility
       if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
-        seg.el.addClass('fc-allow-mouse-resize')
+        seg.el.classList.add('fc-allow-mouse-resize')
       }
 
       this.component.publiclyTrigger('eventMouseover', {
-        context: seg.el[0],
+        context: seg.el,
         args: [ seg.footprint.getEventLegacy(), ev, this.view ]
       })
     }
@@ -63,11 +67,11 @@ export default class EventPointing extends Interaction {
 
       // TODO: move to EventSelecting's responsibility
       if (this.view.isEventDefResizable(seg.footprint.eventDef)) {
-        seg.el.removeClass('fc-allow-mouse-resize')
+        seg.el.classList.remove('fc-allow-mouse-resize')
       }
 
       this.component.publiclyTrigger('eventMouseout', {
-        context: seg.el[0],
+        context: seg.el,
         args: [
           seg.footprint.getEventLegacy(),
           ev || {}, // if given no arg, make a mock mouse event

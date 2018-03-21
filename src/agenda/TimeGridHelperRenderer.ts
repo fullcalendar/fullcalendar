@@ -1,4 +1,4 @@
-import * as $ from 'jquery'
+import { applyStyle } from '../util/dom'
 import HelperRenderer from '../component/renderers/HelperRenderer'
 
 
@@ -9,6 +9,7 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
     let i
     let seg
     let sourceEl
+    let computedStyle
 
     // TODO: not good to call eventRenderer this way
     this.eventRenderer.renderFgSegsIntoContainers(
@@ -22,18 +23,19 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
 
       if (sourceSeg && sourceSeg.col === seg.col) {
         sourceEl = sourceSeg.el
-        seg.el.css({
-          left: sourceEl.css('left'),
-          right: sourceEl.css('right'),
-          'margin-left': sourceEl.css('margin-left'),
-          'margin-right': sourceEl.css('margin-right')
+        computedStyle = window.getComputedStyle(sourceEl)
+        applyStyle(seg.el, {
+          left: computedStyle.left,
+          right: computedStyle.right,
+          marginLeft: computedStyle.marginLeft,
+          marginRight: computedStyle.marginRight
         })
       }
 
-      helperNodes.push(seg.el[0])
+      helperNodes.push(seg.el)
     }
 
-    return $(helperNodes) // must return the elements rendered
+    return helperNodes // must return the elements rendered
   }
 
 }

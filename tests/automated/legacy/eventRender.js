@@ -26,10 +26,9 @@ describe('eventRender', function() {
               expect(typeof event).toBe('object')
               expect(event.rendering).toBeUndefined()
               expect(event.start).toBeDefined()
-              expect(typeof element).toBe('object')
-              expect(element.length).toBe(1)
+              expect(element instanceof HTMLElement).toBe(true)
               expect(typeof view).toBe('object')
-              element.css('font-size', '20px')
+              $(element).css('font-size', '20px')
             },
             eventAfterAllRender: function() {
               expect($(gridSelector).find('.fc-event').css('font-size')).toBe('20px')
@@ -58,7 +57,7 @@ describe('eventRender', function() {
       it('can return a new element', function(done) {
         var options = {
           eventRender: function(event, element, view) {
-            return $('<div class="fc-event sup" style="background-color:green">sup g</div>')
+            return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .sup').length).toBe(1)
@@ -101,10 +100,9 @@ describe('eventRender', function() {
             expect(typeof event).toBe('object')
             expect(event.rendering).toBe('background')
             expect(event.start).toBeDefined()
-            expect(typeof element).toBe('object')
-            expect(element.length).toBe(1)
+            expect(element instanceof HTMLElement).toBe(true)
             expect(typeof view).toBe('object')
-            element.css('font-size', '20px')
+            $(element).css('font-size', '20px')
           },
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .fc-bgevent').css('font-size')).toBe('20px')
@@ -119,7 +117,7 @@ describe('eventRender', function() {
       it('can return a new element', function(done) {
         var options = {
           eventRender: function(event, element, view) {
-            return $('<td class="sup" style="background-color:green">sup g</td>')
+            return $('<td class="sup" style="background-color:green">sup g</td>')[0]
           },
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .sup').length).toBe(1)
@@ -130,10 +128,11 @@ describe('eventRender', function() {
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
       })
+
       it('won\'t rendering when returning a new element of the wrong type', function(done) {
         var options = {
           eventRender: function(event, element, view) {
-            return $('<div class="sup" style="background-color:green">sup g</div>')
+            return $('<div class="sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .sup').length).toBe(0)
@@ -144,6 +143,7 @@ describe('eventRender', function() {
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
       })
+
       it('can return false and cancel rendering', function(done) {
         var options = {
           eventRender: function(event, element, view) {
@@ -203,7 +203,7 @@ describe('eventRender', function() {
       it('can return a new element', function(done) {
         var options = {
           eventRender: function(event, element, view) {
-            return $('<div class="fc-event sup" style="background-color:green">sup g</div>')
+            return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
             expect($('.fc-time-grid .sup').length).toBe(1)
@@ -214,6 +214,7 @@ describe('eventRender', function() {
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
       })
+
       it('can return false and cancel rendering', function(done) {
         var options = {
           eventRender: function(event, element, view) {
@@ -246,10 +247,9 @@ describe('eventRender', function() {
             expect(typeof event).toBe('object')
             expect(event.rendering).toBe('background')
             expect(event.start).toBeDefined()
-            expect(typeof element).toBe('object')
-            expect(element.length).toBe(1)
+            expect(element instanceof HTMLElement).toBe(true)
             expect(typeof view).toBe('object')
-            element.css('font-size', '20px')
+            $(element).css('font-size', '20px')
           },
           eventAfterAllRender: function() {
             expect($('.fc-time-grid .fc-bgevent').css('font-size')).toBe('20px')
@@ -260,10 +260,11 @@ describe('eventRender', function() {
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
       })
+
       it('can return a new element', function(done) {
         var options = {
           eventRender: function(event, element, view) {
-            return $('<div class="fc-bgevent sup" style="background-color:green">sup g</div>')
+            return $('<div class="fc-bgevent sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
             expect($('.fc-time-grid .sup').length).toBe(1)
@@ -274,10 +275,11 @@ describe('eventRender', function() {
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
       })
+
       it('won\'t rendering when returning a new element of the wrong type', function(done) {
         var options = {
           eventRender: function(event, element, view) {
-            return $('<p class="fc-bgevent sup" style="background-color:green">sup g</p>')
+            return $('<p class="fc-bgevent sup" style="background-color:green">sup g</p>')[0]
           },
           eventAfterAllRender: function() {
             expect($('.fc-time-grid .sup').length).toBe(0)

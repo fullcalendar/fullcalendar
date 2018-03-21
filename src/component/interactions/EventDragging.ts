@@ -134,12 +134,12 @@ export default class EventDragging extends Interaction {
     // of the view.
     let dragListener = this.dragListener = new HitDragListener(view, {
       scroll: this.opt('dragScroll'),
-      subjectEl: el[0],
+      subjectEl: el,
       subjectCenter: true,
       interactionStart: (ev) => {
         seg.component = component // for renderDrag
         isDragging = false
-        mouseFollower = new MouseFollower(seg.el[0], {
+        mouseFollower = new MouseFollower(seg.el, {
           additionalClass: 'fc-dragging',
           parentEl: view.el,
           opacity: dragListener.isTouch ? null : this.opt('dragOpacity'),
@@ -261,7 +261,7 @@ export default class EventDragging extends Interaction {
   segDragStart(seg, ev) {
     this.isDragging = true
     this.component.publiclyTrigger('eventDragStart', {
-      context: seg.el[0],
+      context: seg.el,
       args: [
         seg.footprint.getEventLegacy(),
         ev,
@@ -276,7 +276,7 @@ export default class EventDragging extends Interaction {
   segDragStop(seg, ev) {
     this.isDragging = false
     this.component.publiclyTrigger('eventDragStop', {
-      context: seg.el[0],
+      context: seg.el,
       args: [
         seg.footprint.getEventLegacy(),
         ev,

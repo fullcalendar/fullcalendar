@@ -11,7 +11,7 @@ export default class DayGridFillRenderer extends FillRenderer {
 
 
   attachSegEls(type, segs) {
-    let nodes = []
+    let els = []
     let i
     let seg
     let skeletonEl: HTMLElement
@@ -20,10 +20,10 @@ export default class DayGridFillRenderer extends FillRenderer {
       seg = segs[i]
       skeletonEl = this.renderFillRow(type, seg)
       this.component.rowEls[seg.row].appendChild(skeletonEl)
-      nodes.push(skeletonEl)
+      els.push(skeletonEl)
     }
 
-    return nodes
+    return els
   }
 
 
@@ -53,8 +53,8 @@ export default class DayGridFillRenderer extends FillRenderer {
       trEl.appendChild(makeElement('td', { colSpan: startCol }))
     }
 
-    (seg.el[0] as HTMLTableCellElement).colSpan = endCol - startCol
-    trEl.appendChild(seg.el[0])
+    (seg.el as HTMLTableCellElement).colSpan = endCol - startCol
+    trEl.appendChild(seg.el)
 
     if (endCol < colCnt) {
       trEl.appendChild(makeElement('td', { colSpan: colCnt - endCol }))

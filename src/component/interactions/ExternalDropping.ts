@@ -1,8 +1,8 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import * as exportHooks from '../../exports'
 import { disableCursor, enableCursor } from '../../util'
 import { assignTo } from '../../util/object'
+import { elementMatches } from '../../util/dom'
 import momentExt from '../../moment-ext'
 import { default as ListenerMixin, ListenerInterface } from '../../common/ListenerMixin'
 import HitDragListener from '../../common/HitDragListener'
@@ -65,12 +65,12 @@ export default class ExternalDropping extends Interaction {
     let accept
 
     if (this.opt('droppable')) { // only listen if this setting is on
-      el = $((ui ? ui.item : null) || ev.target)
+      el = ((ui && ui.item) ? ui.item[0] : null) || ev.target
 
       // Test that the dragged element passes the dropAccept selector or filter function.
       // FYI, the default is "*" (matches all)
       accept = this.opt('dropAccept')
-      if (typeof accept === 'function' ? accept.call(el[0], el) : el.is(accept)) {
+      if (typeof accept === 'function' ? accept.call(el, el) : elementMatches(el, accept)) {
         if (!this.isDragging) { // prevent double-listening if fired twice
           this.listenToExternalDrag(el, ev, ui)
         }
@@ -210,19 +210,17 @@ ListenerMixin.mixInto(ExternalDropping);
 // to be used for Event Object creation.
 // A defined `.eventProps`, even when empty, indicates that an event should be created.
 function getDraggedElMeta(el) {
-  let prefix = (exportHooks as any).dataAttrPrefix
   let eventProps // properties for creating the event, not related to date/time
   let startTime // a Duration
   let duration
   let stick
 
-  if (prefix) { prefix += '-' }
-  eventProps = el.data(prefix + 'event') || null
+  eventProps = getEmbeddedElData(el, 'event', true)
 
   if (eventProps) {
-    if (typeof eventProps === 'object' && eventProps) { // non-null object
-      eventProps = assignTo({}, eventProps) // make a copy
-    } else { // something like 1 or true. still signal event creation
+
+    // something like 1 or true. still signal event creation
+    if (typeof eventProps !== 'object') {
       eventProps = {}
     }
 
@@ -238,10 +236,10 @@ function getDraggedElMeta(el) {
   }
 
   // fallback to standalone attribute values for each of the date/time properties
-  if (startTime == null) { startTime = el.data(prefix + 'start') }
-  if (startTime == null) { startTime = el.data(prefix + 'time') } // accept 'time' as well
-  if (duration == null) { duration = el.data(prefix + 'duration') }
-  if (stick == null) { stick = el.data(prefix + 'stick') }
+  if (startTime == null) { startTime = getEmbeddedElData(el, 'start') }
+  if (startTime == null) { startTime = getEmbeddedElData(el, 'time') } // accept 'time' as well
+  if (duration == null) { duration = getEmbeddedElData(el, 'duration') }
+  if (stick == null) { stick = getEmbeddedElData(el, 'stick') }
 
   // massage into correct data types
   startTime = startTime != null ? moment.duration(startTime) : null
@@ -249,4 +247,22 @@ function getDraggedElMeta(el) {
   stick = Boolean(stick)
 
   return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick }
+}
+
+
+function getEmbeddedElData(el, name, shouldParseJson = false) {
+  let prefix = (exportHooks as any).dataAttrPrefix
+  let prefixedName = (prefix ? prefix + '-' : '') + name
+
+  let data = el.getAttribute('data-' + prefixedName) || null
+  if (data && shouldParseJson) {
+    data = JSON.parse(data)
+  }
+
+  if (data === null && window['jQuery']) {
+    // jQuery will automatically parse JSON
+    data = window['jQuery'](el).data(prefixedName)
+  }
+
+  return data
 }

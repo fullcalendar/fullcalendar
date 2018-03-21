@@ -1,6 +1,6 @@
 import * as $ from 'jquery'
 import { htmlEscape, subtractInnerElHeight } from '../util'
-import { htmlToElement } from '../util/dom'
+import { htmlToElement, makeElement } from '../util/dom'
 import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'
 import Scroller from '../common/Scroller'
@@ -170,7 +170,7 @@ export default class ListView extends View {
         this.eventRenderer.sortEventSegs(daySegs)
 
         for (i = 0; i < daySegs.length; i++) {
-          tbodyEl.appendChild(daySegs[i].el[0]) // append event row
+          tbodyEl.appendChild(daySegs[i].el) // append event row
         }
       }
     }
@@ -201,31 +201,28 @@ export default class ListView extends View {
     let mainFormat = this.opt('listDayFormat')
     let altFormat = this.opt('listDayAltFormat')
 
-    let tr = document.createElement('tr')
-    tr.classList.add('fc-list-heading')
-    tr.setAttribute('data-date', dayDate.format('YYYY-MM-DD'))
-    tr.innerHTML =
-      '<td class="' + (
-        this.calendar.theme.getClass('tableListHeading') ||
-        this.calendar.theme.getClass('widgetHeader')
-      ) + '" colspan="3">' +
-        (mainFormat ?
-          this.buildGotoAnchorHtml(
-            dayDate,
-            { 'class': 'fc-list-heading-main' },
-            htmlEscape(dayDate.format(mainFormat)) // inner HTML
-          ) :
-          '') +
-        (altFormat ?
-          this.buildGotoAnchorHtml(
-            dayDate,
-            { 'class': 'fc-list-heading-alt' },
-            htmlEscape(dayDate.format(altFormat)) // inner HTML
-          ) :
-          '') +
-      '</td>'
-
-    return tr
+    return makeElement('tr', {
+      className: 'fc-list-heading',
+      'data-date': dayDate.format('YYYY-MM-DD')
+    }, '<td class="' + (
+      this.calendar.theme.getClass('tableListHeading') ||
+      this.calendar.theme.getClass('widgetHeader')
+    ) + '" colspan="3">' +
+      (mainFormat ?
+        this.buildGotoAnchorHtml(
+          dayDate,
+          { 'class': 'fc-list-heading-main' },
+          htmlEscape(dayDate.format(mainFormat)) // inner HTML
+        ) :
+        '') +
+      (altFormat ?
+        this.buildGotoAnchorHtml(
+          dayDate,
+          { 'class': 'fc-list-heading-alt' },
+          htmlEscape(dayDate.format(altFormat)) // inner HTML
+        ) :
+        '') +
+    '</td>') as HTMLTableRowElement
   }
 
 }

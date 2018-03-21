@@ -16,7 +16,9 @@ export function makeElement(tagName, attrs, content?): HTMLElement {
     }
   }
 
-  if (content != null) {
+  if (typeof content === 'string') {
+    el.innerHTML = content
+  } else if (content != null) {
     appendContentTo(el, content)
   }
 
@@ -36,6 +38,7 @@ export function applyStyle(el: HTMLElement, props: object | string, propVal?: an
   }
 }
 
+// TODO: just expose this?
 function applyStyleProp(el, name, val) {
   if (val == null) {
     el.style[name] = ''
@@ -56,16 +59,33 @@ export function appendContentTo(el: HTMLElement, content: ElementContent) {
 }
 
 export function htmlToElement(htmlString): HTMLElement {
-  let div = document.createElement('div')
-  div.innerHTML = htmlString.trim()
-  return div.firstChild as HTMLElement
+  htmlString = htmlString.trim()
+  let container = document.createElement(computeContainerTag(htmlString))
+  container.innerHTML = htmlString
+  return container.firstChild as HTMLElement
 }
 
-export function htmlToElements(htmlString): HTMLElement {
-  let div = document.createElement('div')
-  div.innerHTML = htmlString.trim()
-  return Array.prototype.slice.call(div.childNodes)
+export function htmlToElements(htmlString): HTMLElement[] {
+  htmlString = htmlString.trim()
+  let container = document.createElement(computeContainerTag(htmlString))
+  container.innerHTML = htmlString
+  return Array.prototype.slice.call(container.childNodes)
 }
+
+// assumes html already trimmed
+// assumes html tags are lowercase
+// TODO: use hash?
+function computeContainerTag(html: string) {
+  let first3 = html.substr(0, 3) // faster than using regex
+  if (first3 === '<tr') {
+    return 'tbody'
+  } else if (first3 === '<td') {
+    return 'tr'
+  } else {
+    return 'div'
+  }
+}
+
 
 // TODO: rename to listenByClassName
 export function listenViaDelegation(container: HTMLElement, eventType, childClassName, handler) {
@@ -95,8 +115,16 @@ const closestMethod = Element.prototype.closest || function(selector) {
   return null;
 }
 
-export function listenBySelector(container: HTMLElement, eventType: string, selector: string, handler: (ev: Event, matchedTarget: Element) => void) {
+export function elementMatches(el: HTMLElement, selector: string) {
+  return matchesMethod.call(el, selector)
+}
 
+export function listenBySelector(
+  container: HTMLElement,
+  eventType: string,
+  selector: string,
+  handler: (ev: Event, matchedTarget: HTMLElement) => void
+) {
   function realHandler(ev: Event) {
     let matchedChild = closestMethod.call(ev.target, selector)
     if (matchedChild) {
@@ -111,6 +139,31 @@ export function listenBySelector(container: HTMLElement, eventType: string, sele
   }
 }
 
+export function listenToHoverBySelector(
+  container: HTMLElement,
+  selector: string,
+  onMouseEnter: (ev: Event, matchedTarget: HTMLElement) => void,
+  onMouseLeave: (ev: Event, matchedTarget: HTMLElement) => void
+) {
+  let currentMatchedChild
+
+  return listenBySelector(container, 'mouseover', selector, function(ev, matchedChild) {
+    if (matchedChild !== currentMatchedChild) {
+      currentMatchedChild = matchedChild
+      onMouseEnter(ev, matchedChild)
+
+      let realOnMouseLeave = (ev) => {
+        currentMatchedChild = null
+        onMouseLeave(ev, matchedChild)
+        matchedChild.removeEventListener('mouseleave', realOnMouseLeave)
+      }
+
+      matchedChild.addEventListener('mouseleave', realOnMouseLeave)
+    }
+  })
+}
+
+
 // TODO: user new signature in other places
 export function findElsWithin(containers: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
   if (containers instanceof HTMLElement) {
@@ -120,7 +173,6 @@ export function findElsWithin(containers: HTMLElement[] | HTMLElement, selector:
 
   for (let i = 0; i < containers.length; i++) {
     let childEls = containers[i].querySelectorAll(selector)
-
     for (let j = 0; j < childEls.length; j++) {
       allChildEls.push(childEls[j] as HTMLElement)
     }
@@ -165,10 +217,18 @@ function normalizeContent(content: ElementContent): NodeList | Node[] {
   return els
 }
 
+// TODO: switch to tokenList.toggle
 export function toggleClassName(el, className, bool) {
   if (bool) {
     el.classList.add(className)
   } else {
     el.classList.remove(className)
   }
+}
+
+export function computeHeightAndMargins(el: HTMLElement) {
+  let computed = window.getComputedStyle(el)
+  return el.offsetHeight +
+    parseInt(computed.marginTop, 10) +
+    parseInt(computed.marginBottom, 10)
 }

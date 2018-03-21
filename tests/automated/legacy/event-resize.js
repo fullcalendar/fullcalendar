@@ -372,7 +372,7 @@ describe('eventResize', function() {
       it('should run the temporarily rendered event through eventRender', function(done) {
         var options = {}
         options.eventRender = function(event, element) {
-          element.addClass('didEventRender')
+          $(element).addClass('didEventRender')
         }
 
         options.eventAfterAllRender = function() {

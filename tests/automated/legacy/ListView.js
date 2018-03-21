@@ -40,7 +40,7 @@ describe('ListView rendering', function() {
       it('filters events through eventRender', function() {
         var options = {}
         options.eventRender = function(event, el) {
-          el.find('.fc-event-dot').replaceWith('<span class="custom-icon" />')
+          $(el).find('.fc-event-dot').replaceWith('<span class="custom-icon" />')
         }
 
         initCalendar(options)

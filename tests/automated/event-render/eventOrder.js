@@ -9,7 +9,7 @@ describe('eventOrder', function() {
       { id: 'x', title: 'c', start: '2018-01-01T09:00:00', myOrder: 2 }
     ],
     eventRender: function(eventObj, el) {
-      el.data('event-id', eventObj.id)
+      el.setAttribute('data-event-id', eventObj.id)
     }
   })
 

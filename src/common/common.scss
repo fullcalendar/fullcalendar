@@ -55,7 +55,7 @@ body .fc { /* extra precedence to overcome jqui */
 
 /* Firefox has an annoying inner border */
 .fc button::-moz-focus-inner { margin: 0; padding: 0; }
-  
+
 .fc-state-default { /* non-theme */
   border: 1px solid;
 }
@@ -78,7 +78,7 @@ body .fc { /* extra precedence to overcome jqui */
   margin: 0 .2em;
   vertical-align: middle;
 }
-  
+
 /*
   button states
   borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
@@ -281,7 +281,7 @@ a[data-goto]:hover {
   border-right: 0 hidden transparent;
 
   /* no bottom borders on rows */
-  border-bottom: 0 hidden transparent; 
+  border-bottom: 0 hidden transparent;
 }
 
 .fc-row:first-child table {
@@ -570,6 +570,9 @@ be a descendant of the grid when it is being dragged.
 
 tr:first-child > td > .fc-day-grid-event {
   margin-top: 2px; /* a little bit more space before the first event */
+}
+.fc-helper-skeleton tr:first-child > td > .fc-day-grid-event {
+  margin-top: 0; /* except for helper skeleton */
 }
 
 .fc-day-grid-event.fc-selected:after {

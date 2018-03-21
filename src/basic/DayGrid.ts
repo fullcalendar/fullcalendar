@@ -693,7 +693,7 @@ export default class DayGrid extends InteractiveDateComponent {
 
     // the popover doesn't live within the grid's container element, and thus won't get the event
     // delegated-handlers for free. attach event-related handlers to the popover.
-    this.bindAllSegHandlersToEl($(this.segPopover.el))
+    this.bindAllSegHandlersToEl(this.segPopover.el)
 
     this.triggerAfterEventSegsRendered(segs)
   }
@@ -731,7 +731,7 @@ export default class DayGrid extends InteractiveDateComponent {
       segs[i].hit = this.getCellHit(row, col)
       this.hitsNotNeeded()
 
-      segContainer.appendChild(segs[i].el[0])
+      segContainer.appendChild(segs[i].el)
     }
 
     return content

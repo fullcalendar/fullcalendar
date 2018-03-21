@@ -1,4 +1,5 @@
 import { htmlEscape, cssToStr, proxy } from '../util'
+import { removeElement, applyStyle } from '../util/dom'
 import EventRenderer from '../component/renderers/EventRenderer'
 
 /*
@@ -40,7 +41,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
   unrenderFgSegs() {
     if (this.fgSegs) { // hack
       this.fgSegs.forEach(function(seg) {
-        seg.el.remove()
+        removeElement(seg.el)
       })
     }
   }
@@ -238,11 +239,11 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      seg.el.css(this.generateFgSegHorizontalCss(seg))
+      applyStyle(seg.el, this.generateFgSegHorizontalCss(seg))
 
       // if the height is short, add a className for alternate styling
       if (seg.bottom - seg.top < 30) {
-        seg.el.addClass('fc-short')
+        seg.el.classList.add('fc-short')
       }
     }
   }

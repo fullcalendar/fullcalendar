@@ -10,7 +10,7 @@ describe('selectHelper', function() {
   it('goes through eventRender', function() {
     initCalendar({
       eventRender: function(event, element, view) {
-        element.addClass('didEventRender')
+        $(element).addClass('didEventRender')
       }
     })
     currentCalendar.select('2014-08-04T01:00:00', '2014-08-04T04:00:00')

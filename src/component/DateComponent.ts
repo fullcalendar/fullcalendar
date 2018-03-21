@@ -339,7 +339,7 @@ export default abstract class DateComponent extends Component {
         seg.footprint.eventDef.id === eventDefId &&
         seg.el // necessary?
       ) {
-        seg.el.css('visibility', '')
+        seg.el.style.visibility = ''
       }
     })
 
@@ -356,7 +356,7 @@ export default abstract class DateComponent extends Component {
         seg.footprint.eventDef.id === eventDefId &&
         seg.el // necessary?
       ) {
-        seg.el.css('visibility', 'hidden')
+        seg.el.style.visibility = 'hidden'
       }
     })
 

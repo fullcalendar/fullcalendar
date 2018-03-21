@@ -1,6 +1,7 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
 import { getEvIsTouch, diffByUnit, diffDayTime } from '../util'
+import { listenBySelector, listenToHoverBySelector } from '../util/dom'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
 
@@ -65,14 +66,14 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     super.setElement(el)
 
     if (this.dateClicking) {
-      this.dateClicking.bindToEl($(el))
+      this.dateClicking.bindToEl(el)
     }
 
     if (this.dateSelecting) {
-      this.dateSelecting.bindToEl($(el))
+      this.dateSelecting.bindToEl(el)
     }
 
-    this.bindAllSegHandlersToEl($(el))
+    this.bindAllSegHandlersToEl(el)
   }
 
 
@@ -109,9 +110,10 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   bindDateHandlerToEl(el, name, handler) {
+    // TODO: use event delegation for this? to prevent multiple calls because of bubbling?
     // attach a handler to the grid's root element.
     // jQuery will take care of unregistering them when removeElement gets called.
-    this.el.addEventListener(name, (ev) => {
+    el.addEventListener(name, (ev) => {
       if (
         !$(ev.target).is(
           this.segSelector + ':not(.fc-helper),' + // directly on an event element
@@ -140,15 +142,34 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   bindSegHandlerToEl(el, name, handler) {
-    el.on(name, this.segSelector, (ev) => {
-      let segEl = $(ev.currentTarget)
-      if (!segEl.is('.fc-helper')) {
-        let seg = segEl.data('fc-seg') // grab segment data. put there by View::renderEventsPayload
+    listenBySelector(
+      el,
+      name,
+      this.segSelector,
+      this.makeSegMouseHandler(handler)
+    )
+  }
+
+
+  bindSegHoverHandlersToEl(el, onMouseEnter, onMouseLeave) {
+    listenToHoverBySelector(
+      el,
+      this.segSelector,
+      this.makeSegMouseHandler(onMouseEnter),
+      this.makeSegMouseHandler(onMouseLeave)
+    )
+  }
+
+
+  makeSegMouseHandler(handler) {
+    return (ev, segEl) => {
+      if (!segEl.classList.contains('fc-helper')) {
+        let seg = (segEl as any).fcSeg // grab segment data. put there by View::renderEventsPayload
         if (seg && !this.shouldIgnoreEventPointing()) {
           return handler.call(this, seg, ev) // context will be the Grid
         }
       }
-    })
+    }
   }
 
 

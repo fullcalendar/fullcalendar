@@ -20,7 +20,7 @@ export default class TimeGridFillRenderer extends FillRenderer {
     timeGrid.attachSegsByCol(timeGrid.groupSegsByCol(segs), containerEls)
 
     return segs.map(function(seg) {
-      return seg.el[0]
+      return seg.el
     })
   }
 

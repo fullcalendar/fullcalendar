@@ -1,7 +1,7 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
 import { capitaliseFirstLetter, debounce } from './util'
-import { listenBySelector, toggleClassName, makeElement, removeElement, applyStyle, prependWithinEl } from './util/dom'
+import { listenBySelector, toggleClassName, makeElement, removeElement, applyStyle, prependWithinEl, computeHeightAndMargins } from './util/dom'
 import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
@@ -774,11 +774,7 @@ export default class Calendar {
       let toolbarHeight
 
       if (toolbar.el) {
-        let computed = window.getComputedStyle(toolbar.el)
-        toolbarHeight =
-          toolbar.el.offsetHeight +
-          parseInt(computed.marginTop, 10) +
-          parseInt(computed.marginBottom, 10)
+        toolbarHeight = computeHeightAndMargins(toolbar.el)
       } else {
         toolbarHeight = 0
       }

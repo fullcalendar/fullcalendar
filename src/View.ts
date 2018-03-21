@@ -587,7 +587,7 @@ export default abstract class View extends InteractiveDateComponent {
   // Triggers event-drop handlers that have subscribed via the API
   triggerEventDrop(eventInstance, dateDelta, undoFunc, el, ev) {
     this.publiclyTrigger('eventDrop', {
-      context: el[0],
+      context: el,
       args: [
         eventInstance.toLegacy(),
         dateDelta,
@@ -622,7 +622,7 @@ export default abstract class View extends InteractiveDateComponent {
 
     // trigger 'drop' regardless of whether element represents an event
     this.publiclyTrigger('drop', {
-      context: el[0],
+      context: el,
       args: [
         singleEventDef.dateProfile.start.clone(),
         ev,
@@ -674,7 +674,7 @@ export default abstract class View extends InteractiveDateComponent {
   // Triggers event-resize handlers that have subscribed via the API
   triggerEventResize(eventInstance, durationDelta, undoFunc, el, ev) {
     this.publiclyTrigger('eventResize', {
-      context: el[0],
+      context: el,
       args: [
         eventInstance.toLegacy(),
         durationDelta,
@@ -767,7 +767,7 @@ export default abstract class View extends InteractiveDateComponent {
           seg.footprint.eventInstance === eventInstance &&
           seg.el // necessary?
         ) {
-          seg.el.addClass('fc-selected')
+          seg.el.classList.add('fc-selected')
         }
       })
 
@@ -781,7 +781,7 @@ export default abstract class View extends InteractiveDateComponent {
 
       this.getEventSegs().forEach(function(seg) {
         if (seg.el) { // necessary?
-          seg.el.removeClass('fc-selected')
+          seg.el.classList.remove('fc-selected')
         }
       })
 

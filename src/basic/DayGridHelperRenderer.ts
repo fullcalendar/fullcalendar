@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import HelperRenderer from '../component/renderers/HelperRenderer'
 import DayGrid from './DayGrid'
 import { htmlToElement } from '../util/dom'
@@ -25,24 +24,25 @@ export default class DayGridHelperRenderer extends HelperRenderer {
 
       // If there is an original segment, match the top position. Otherwise, put it at the row's top level
       if (sourceSeg && sourceSeg.row === row) {
-        skeletonTop = sourceSeg.el[0].getBoundingClientRect().top
+        skeletonTopEl = sourceSeg.el
       } else {
         skeletonTopEl = rowNode.querySelector('.fc-content-skeleton tbody')
         if (!skeletonTopEl) { // when no events
           skeletonTopEl = rowNode.querySelector('.fc-content-skeleton table')
         }
-
-        skeletonTop = skeletonTopEl.getBoundingClientRect().top
       }
 
+      skeletonTop = skeletonTopEl.getBoundingClientRect().top -
+        rowNode.getBoundingClientRect().top // the offsetParent origin
+
       skeletonEl.style.top = skeletonTop + 'px'
-      skeletonEl.getElementsByTagName('table')[0].appendChild(rowStructs[row].tbodyEl)
+      skeletonEl.querySelector('table').appendChild(rowStructs[row].tbodyEl)
 
       rowNode.appendChild(skeletonEl)
       helperNodes.push(skeletonEl)
     })
 
-    return $(helperNodes) // must return the elements rendered
+    return helperNodes // must return the elements rendered
   }
 
 }

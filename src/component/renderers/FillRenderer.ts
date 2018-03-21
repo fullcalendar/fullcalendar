@@ -1,5 +1,5 @@
-import * as $ from 'jquery'
 import { cssToStr } from '../../util'
+import { htmlToElements, removeElement } from '../../util/dom'
 
 
 export default class FillRenderer { // use for highlight, background events, business hours
@@ -40,10 +40,9 @@ export default class FillRenderer { // use for highlight, background events, bus
 
   // Unrenders a specific type of fill that is currently rendered on the grid
   unrender(type) {
-    let el = this.elsByFill[type]
-
-    if (el) {
-      el.remove()
+    let els = this.elsByFill[type]
+    if (els) {
+      els.forEach(removeElement)
       delete this.elsByFill[type]
     }
   }
@@ -65,23 +64,20 @@ export default class FillRenderer { // use for highlight, background events, bus
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
       // Then, compute the 'el' for each segment.
-      $(html).each((i, node) => {
+      htmlToElements(html).forEach((el, i) => {
         let seg = segs[i]
-        let el = $(node)
 
         // allow custom filter methods per-type
         if (props.filterEl) {
           el = props.filterEl(seg, el)
         }
 
-        if (el) { // custom filters did not cancel the render
-          el = $(el) // allow custom filter to return raw DOM node
-
-          // correct element type? (would be bad if a non-TD were inserted into a table for example)
-          if (el.is(this.fillSegTag)) {
-            seg.el = el
-            renderedSegs.push(seg)
-          }
+        if (
+          el instanceof HTMLElement && // non-null (from filter func) and correct object type
+          el.nodeName.toLocaleLowerCase() === this.fillSegTag // correct element type? (would be bad if a non-TD were inserted into a table for example)
+        ) {
+          seg.el = el
+          renderedSegs.push(seg)
         }
       })
     }
@@ -109,12 +105,9 @@ export default class FillRenderer { // use for highlight, background events, bus
   }
 
 
-  reportEls(type, nodes) {
-    if (this.elsByFill[type]) {
-      this.elsByFill[type] = this.elsByFill[type].add(nodes)
-    } else {
-      this.elsByFill[type] = $(nodes)
-    }
+  reportEls(type, els) {
+    (this.elsByFill[type] || (this.elsByFill[type] = []))
+      .push(...els)
   }
 
 }

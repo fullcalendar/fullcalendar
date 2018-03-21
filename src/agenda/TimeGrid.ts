@@ -1,7 +1,7 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
 import { isInt, divideDurationByDuration, htmlEscape } from '../util'
-import { htmlToElement, findElsWithin, makeElement, removeElement } from '../util/dom'
+import { htmlToElement, findElsWithin, makeElement, removeElement, applyStyle } from '../util/dom'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
@@ -395,7 +395,7 @@ export default class TimeGrid extends InteractiveDateComponent {
       segs = segsByCol[col]
 
       for (i = 0; i < segs.length; i++) {
-        containerEls[col].appendChild(segs[i].el[0])
+        containerEls[col].appendChild(segs[i].el)
       }
     }
   }
@@ -556,7 +556,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      seg.el.css(this.generateSegVerticalCss(seg))
+      applyStyle(seg.el, this.generateSegVerticalCss(seg))
     }
   }
 

@@ -128,9 +128,8 @@ describe('external drag and drop', function() {
           })
 
           it('works with a filter function that returns true', function(done) {
-            options.dropAccept = function(jqEl) {
-              expect(typeof jqEl).toBe('object')
-              expect(jqEl.length).toBe(1)
+            options.dropAccept = function(el) {
+              expect(el instanceof HTMLElement).toBe(true)
               return true
             }
             options.drop = function() { }
@@ -150,9 +149,8 @@ describe('external drag and drop', function() {
           })
 
           it('prevents a drop with a filter function that returns false', function(done) {
-            options.dropAccept = function(jqEl) {
-              expect(typeof jqEl).toBe('object')
-              expect(jqEl.length).toBe(1)
+            options.dropAccept = function(el) {
+              expect(el instanceof HTMLElement).toBe(true)
               return false
             }
             options.drop = function() { }
@@ -285,9 +283,8 @@ describe('external drag and drop', function() {
           })
 
           it('works with a filter function that returns true', function(done) {
-            options.dropAccept = function(jqEl) {
-              expect(typeof jqEl).toBe('object')
-              expect(jqEl.length).toBe(1)
+            options.dropAccept = function(el) {
+              expect(el instanceof HTMLElement).toBe(true)
               return true
             }
             options.drop = function() { }
@@ -307,9 +304,8 @@ describe('external drag and drop', function() {
           })
 
           it('prevents a drop with a filter function that returns false', function(done) {
-            options.dropAccept = function(jqEl) {
-              expect(typeof jqEl).toBe('object')
-              expect(jqEl.length).toBe(1)
+            options.dropAccept = function(el) {
+              expect(el instanceof HTMLElement).toBe(true)
               return false
             }
             options.drop = function() { }
