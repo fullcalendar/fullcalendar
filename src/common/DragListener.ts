@@ -31,7 +31,7 @@ export default class DragListener {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
-  $document: JQuery
+  $document: any // jQuery object
   options: DragListenerOptions
   subjectEl: HTMLElement
 

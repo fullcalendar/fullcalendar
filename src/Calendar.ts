@@ -629,7 +629,7 @@ export default class Calendar {
   }
 
 
-  windowResize(ev: JQueryEventObject) {
+  windowResize(ev: Event) {
     if (
       // the purpose: so we don't process jqui "resize" events that have bubbled up
       // cast to any because .target, which is Element, can't be compared to window for some reason.

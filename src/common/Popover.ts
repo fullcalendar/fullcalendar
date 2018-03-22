@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------------------------------------------------------
 Options:
   - className (string)
-  - content (HTML string or jQuery element set)
+  - content (HTML string, element, or element array)
   - parentEl
   - top
   - left

@@ -67,7 +67,7 @@ export interface CustomButtonInput {
   themeIcon?: string
   bootstrapGlyphicon?: string,
   bootstrapFontAwesome?: string,
-  click(element: JQuery): void
+  click(element: HTMLElement): void
 }
 
 export interface ButtonIconsInput {
@@ -105,8 +105,8 @@ export interface EventSegment {
 
 export interface CellInfo {
   date: moment.Moment
-  dayEl: JQuery
-  moreEl: JQuery
+  dayEl: HTMLElement
+  moreEl: HTMLElement
   segs: EventSegment[]
   hiddenSegs: EventSegment[]
 }
@@ -218,9 +218,9 @@ export interface OptionsInputBase {
   droppable?: boolean
   dropAccept?: string | ((draggable: any) => boolean)
 
-  viewRender?(view: View, element: JQuery): void
-  viewDestroy?(view: View, element: JQuery): void
-  dayRender?(date: moment.Moment, cell: JQuery): void
+  viewRender?(view: View, element: HTMLElement): void
+  viewDestroy?(view: View, element: HTMLElement): void
+  dayRender?(date: moment.Moment, cell: HTMLElement): void
   windowResize?(view: View): void
   dayClick?(date: moment.Moment, jsEvent: MouseEvent, view: View, resourceObj?): void // resourceObj for Scheduler
   eventClick?(event: EventObjectInput, jsEvent: MouseEvent, view: View): boolean | void
@@ -230,10 +230,10 @@ export interface OptionsInputBase {
   unselect?(view: View, jsEvent: Event): void
   eventDataTransform?(eventData: any): EventObjectInput
   loading?(isLoading: boolean, view: View): void
-  eventRender?(event: EventObjectInput, element: JQuery, view: View): void
-  eventAfterRender?(event: EventObjectInput, element: JQuery, view: View): void
+  eventRender?(event: EventObjectInput, element: HTMLElement, view: View): void
+  eventAfterRender?(event: EventObjectInput, element: HTMLElement, view: View): void
   eventAfterAllRender?(view: View): void
-  eventDestroy?(event: EventObjectInput, element: JQuery, view: View): void
+  eventDestroy?(event: EventObjectInput, element: HTMLElement, view: View): void
   eventDragStart?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
   eventDragStop?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
   eventDrop?(event: EventObjectInput, delta: moment.Duration, revertFunc: Function, jsEvent: Event, ui: any, view: View): void

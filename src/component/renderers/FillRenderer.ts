@@ -6,7 +6,7 @@ export default class FillRenderer { // use for highlight, background events, bus
 
   fillSegTag: string = 'div'
   component: any
-  elsByFill: any // a hash of jQuery element sets used for rendering each fill. Keyed by fill name.
+  elsByFill: any // a hash of element sets used for rendering each fill. Keyed by fill name.
 
 
   constructor(component) {

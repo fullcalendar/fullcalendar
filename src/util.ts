@@ -110,7 +110,7 @@ export function undistributeHeight(els: HTMLElement[]) {
 }
 
 
-// Given `els`, a jQuery set of <td> cells, find the cell with the largest natural width and set the widths of all the
+// Given `els`, a set of <td> cells, find the cell with the largest natural width and set the widths of all the
 // cells to be that width.
 // PREREQUISITE: if you want a cell to take up width, it needs to have a single inner element w/ display:inline
 export function matchCellWidths(els: HTMLElement[]) {

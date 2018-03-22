@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import * as exportHooks from './exports'
 import { mergeOptions, globalDefaults, englishDefaults } from './options'
@@ -144,7 +143,7 @@ export function datepickerLocale(localeCode, dpLocaleCode, dpOptions) {
     fcOptions[name] = func(dpOptions)
   }
 
-  let jqDatePicker = ($ as any).datepicker
+  let jqDatePicker = window['jQuery'] && window['jQuery'].datepicker
 
   // is jQuery UI Datepicker is on the page?
   if (jqDatePicker) {

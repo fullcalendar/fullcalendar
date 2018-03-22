@@ -18,7 +18,7 @@ options:
 */
 export default class CoordCache {
 
-  els: HTMLElement[] // jQuery set (assumed to be siblings)
+  els: HTMLElement[] // assumed to be siblings
   forcedOffsetParentEl: HTMLElement // options can override the natural offsetParent
   origin: any // {left,top} position of offsetParent of els
   boundingRect: any // constrain cordinates to this rectangle. {left,right,top,bottom} or null

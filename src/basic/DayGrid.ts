@@ -484,7 +484,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let moreNodes = [] // array of "more" <a> links and <td> DOM nodes
     let col = 0 // col #, left-to-right (not chronologically)
     let levelSegs // array of segment objects in the last allowable level, ordered left-to-right
-    let cellMatrix // a matrix (by level, then column) of all <td> jQuery elements in the row
+    let cellMatrix // a matrix (by level, then column) of all <td> elements in the row
     let limitedNodes // array of temporarily hidden level <tr> and segment <td> DOM nodes
     let i
     let seg
