@@ -9,7 +9,7 @@ describe('dayRender', function() {
       dayRender: function(date, cell) {
         expect(moment.isMoment(date)).toEqual(true)
         expect(date.hasTime()).toEqual(false)
-        expect(date.format()).toEqual(cell.data('date'))
+        expect(date.format()).toEqual(cell.getAttribute('data-date'))
         expect(cell).toBeInDOM()
       }
     }
@@ -70,7 +70,7 @@ describe('dayRender', function() {
       defaultDate: '2014-05-01',
       dayRender: function(date, cell) {
         if (date.format() === '2014-05-01') {
-          cell.addClass('mycustomclass')
+          cell.classList.add('mycustomclass')
         }
       }
     }

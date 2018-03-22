@@ -431,6 +431,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     // render lines within the columns
     for (i = 0; i < segs.length; i++) {
       let lineEl = makeElement('div', { className: 'fc-now-indicator fc-now-indicator-line' })
+      lineEl.style.top = top + 'px'
       this.colContainerEls[segs[i].col].appendChild(lineEl)
       nodes.push(lineEl)
     }

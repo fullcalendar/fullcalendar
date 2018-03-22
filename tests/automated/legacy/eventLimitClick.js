@@ -115,7 +115,7 @@ describe('eventLimitClick', function() { // simulate a click
         expect(typeof cellInfo).toBe('object')
         expect(typeof jsEvent).toBe('object')
         expect(cellInfo.date).toEqualMoment('2014-07-29')
-        expect(cellInfo.dayEl.data('date')).toBe('2014-07-29')
+        expect(cellInfo.dayEl.getAttribute('data-date')).toBe('2014-07-29')
         expect(cellInfo.hiddenSegs.length).toBe(2)
         expect(cellInfo.segs.length).toBe(4)
         expect(cellInfo.moreEl).toHaveClass('fc-more')
