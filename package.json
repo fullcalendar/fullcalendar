@@ -93,7 +93,7 @@
   "scripts": {
     "clean": "gulp clean",
     "dist": "gulp dist",
-    "lint": "gulp lint",
+    "lint": "gulp lint-and-example-repos",
     "test": "gulp test:single"
   }
 }
