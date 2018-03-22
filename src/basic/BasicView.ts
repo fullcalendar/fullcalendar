@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import {
   matchCellWidths,
   uncompensateScroll,
@@ -8,7 +7,7 @@ import {
   undistributeHeight,
   htmlEscape
 } from '../util'
-import { makeElement } from '../util/dom'
+import { makeElement, findElsWithin } from '../util/dom'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
@@ -153,7 +152,7 @@ export default class BasicView extends View {
     let eventLimit = this.opt('eventLimit')
     let headRowEl =
       dayGrid.headContainerEl ?
-        dayGrid.headContainerEl.querySelector('.fc-row') :
+        dayGrid.headContainerEl.querySelector('.fc-row') as HTMLElement :
         null
     let scrollerHeight
     let scrollbarWidths
@@ -174,14 +173,14 @@ export default class BasicView extends View {
       // Make sure all week number cells running down the side have the same width.
       // Record the width for cells created later.
       this.weekNumberWidth = matchCellWidths(
-        $(this.el.querySelectorAll('.fc-week-number'))
+        findElsWithin(this.el, '.fc-week-number')
       )
     }
 
     // reset all heights to be natural
     this.scroller.clear()
     if (headRowEl) {
-      uncompensateScroll($(headRowEl))
+      uncompensateScroll(headRowEl)
     }
 
     dayGrid.removeSegPopover() // kill the "more" popover if displayed
@@ -209,7 +208,7 @@ export default class BasicView extends View {
       if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
         if (headRowEl) {
-          compensateScroll($(headRowEl), scrollbarWidths)
+          compensateScroll(headRowEl, scrollbarWidths)
         }
 
         // doing the scrollbar compensation might have created text overflow which created more height. redo
@@ -226,16 +225,16 @@ export default class BasicView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight($(this.el), $(this.scroller.el)) // everything that's NOT the scroller
+      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
   }
 
 
   // Sets the height of just the DayGrid component in this view
   setGridHeight(height, isAuto) {
     if (isAuto) {
-      undistributeHeight($(this.dayGrid.rowEls)) // let the rows be their natural height with no expanding
+      undistributeHeight(this.dayGrid.rowEls) // let the rows be their natural height with no expanding
     } else {
-      distributeHeight($(this.dayGrid.rowEls), height, true) // true = compensate for height-hogging rows
+      distributeHeight(this.dayGrid.rowEls, height, true) // true = compensate for height-hogging rows
     }
   }
 

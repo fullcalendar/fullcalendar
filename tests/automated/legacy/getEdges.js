@@ -1,8 +1,8 @@
 import { getStockScrollbarWidths } from '../lib/dom-misc'
 
-describe('getScrollbarWidths', function() {
+describe('getEdges', function() {
 
-  var getScrollbarWidths = $.fullCalendar.getScrollbarWidths
+  var getEdges = $.fullCalendar.getEdges
 
   defineTests(
     'when margin',
@@ -13,15 +13,14 @@ describe('getScrollbarWidths', function() {
     { padding: '5px 10px' }
   )
 
-  /// / getScrollbarWidths doesn't work with borders anymore
-  // defineTests(
-  //  'when border',
-  //  { border: '5px solid red' }
-  // );
-  // defineTests(
-  //  'when border and padding',
-  //  { border: '5px solid red', padding: '5px 10px' }
-  // );
+  defineTests(
+   'when border',
+   { border: '5px solid red' }
+  );
+  defineTests(
+   'when border and padding',
+   { border: '5px solid red', padding: '5px 10px' }
+  );
 
   function defineTests(description, cssProps) {
     describe(description, function() {
@@ -55,19 +54,18 @@ describe('getScrollbarWidths', function() {
         .append('<div style="position:relative;width:100px;height:100px" />')
         .appendTo('body')
 
-      var widths = getScrollbarWidths(el)
+      var edges = getEdges(el[0])
       var correctWidths
 
       if (isScrolling) {
         correctWidths = getStockScrollbarWidths(dir)
       } else {
-        correctWidths = { left: 0, right: 0, top: 0, bottom: 0 }
+        correctWidths = { left: 0, right: 0, bottom: 0 }
       }
 
-      expect(widths.left).toBe(correctWidths.left)
-      expect(widths.right).toBe(correctWidths.right)
-      expect(widths.top).toBe(correctWidths.top)
-      expect(widths.bottom).toBe(correctWidths.bottom)
+      expect(edges.scrollbarLeft).toBe(correctWidths.left)
+      expect(edges.scrollbarRight).toBe(correctWidths.right)
+      expect(edges.scrollbarBottom).toBe(correctWidths.bottom)
 
       el.remove()
     })

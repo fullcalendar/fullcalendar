@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import * as $ from 'jquery'
+import { applyStyle, computeHeightAndMargins } from './util/dom'
 
 
 /* FullCalendar-specific DOM Utilities
@@ -8,42 +8,42 @@ import * as $ from 'jquery'
 
 // Given the scrollbar widths of some other container, create borders/margins on rowEls in order to match the left
 // and right space that was offset by the scrollbars. A 1-pixel border first, then margin beyond that.
-export function compensateScroll(rowEls: JQuery, scrollbarWidths) {
+export function compensateScroll(rowEl: HTMLElement, scrollbarWidths) {
   if (scrollbarWidths.left) {
-    rowEls.css({
-      'border-left-width': 1,
-      'margin-left': scrollbarWidths.left - 1
+    applyStyle(rowEl, {
+      borderLeftWidth: 1,
+      marginLeft: scrollbarWidths.left - 1
     })
   }
   if (scrollbarWidths.right) {
-    rowEls.css({
-      'border-right-width': 1,
-      'margin-right': scrollbarWidths.right - 1
+    applyStyle(rowEl, {
+      borderRightWidth: 1,
+      marginRight: scrollbarWidths.right - 1
     })
   }
 }
 
 
 // Undoes compensateScroll and restores all borders/margins
-export function uncompensateScroll(rowEls: JQuery) {
-  rowEls.css({
-    'margin-left': '',
-    'margin-right': '',
-    'border-left-width': '',
-    'border-right-width': ''
+export function uncompensateScroll(rowEl: HTMLElement) {
+  applyStyle(rowEl, {
+    marginLeft: '',
+    marginRight: '',
+    borderLeftWidth: '',
+    borderRightWidth: ''
   })
 }
 
 
 // Make the mouse cursor express that an event is not allowed in the current area
 export function disableCursor() {
-  $('body').addClass('fc-not-allowed')
+  document.body.classList.add('fc-not-allowed')
 }
 
 
 // Returns the mouse cursor to its original look
 export function enableCursor() {
-  $('body').removeClass('fc-not-allowed')
+  document.body.classList.remove('fc-not-allowed')
 }
 
 
@@ -51,7 +51,7 @@ export function enableCursor() {
 // By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
 // any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
 // reduces the available height.
-export function distributeHeight(els: JQuery, availableHeight, shouldRedistribute) {
+export function distributeHeight(els: HTMLElement[], availableHeight, shouldRedistribute) {
 
   // *FLOORING NOTE*: we floor in certain places because zoom can give inaccurate floating-point dimensions,
   // and it is better to be shorter than taller, to avoid creating unnecessary scrollbars.
@@ -67,14 +67,14 @@ export function distributeHeight(els: JQuery, availableHeight, shouldRedistribut
 
   // find elements that are below the recommended height (expandable).
   // important to query for heights in a single first pass (to avoid reflow oscillation).
-  els.each(function(i, el) {
+  els.forEach(function(el, i) {
     let minOffset = i === els.length - 1 ? minOffset2 : minOffset1
-    let naturalOffset = $(el).outerHeight(true)
+    let naturalOffset = computeHeightAndMargins(el)
 
     if (naturalOffset < minOffset) {
       flexEls.push(el)
       flexOffsets.push(naturalOffset)
-      flexHeights.push($(el).height())
+      flexHeights.push(el.offsetHeight)
     } else {
       // this element stretches past recommended height (non-expandable). mark the space as occupied.
       usedHeight += naturalOffset
@@ -89,41 +89,48 @@ export function distributeHeight(els: JQuery, availableHeight, shouldRedistribut
   }
 
   // assign heights to all expandable elements
-  $(flexEls).each(function(i, el) {
+  flexEls.forEach(function(el, i) {
     let minOffset = i === flexEls.length - 1 ? minOffset2 : minOffset1
     let naturalOffset = flexOffsets[i]
     let naturalHeight = flexHeights[i]
     let newHeight = minOffset - (naturalOffset - naturalHeight) // subtract the margin/padding
 
     if (naturalOffset < minOffset) { // we check this again because redistribution might have changed things
-      $(el).height(newHeight)
+      el.style.height = newHeight + 'px'
     }
   })
 }
 
 
 // Undoes distrubuteHeight, restoring all els to their natural height
-export function undistributeHeight(els: JQuery) {
-  els.height('')
+export function undistributeHeight(els: HTMLElement[]) {
+  els.forEach(function(el) {
+    el.style.height = ''
+  })
 }
 
 
 // Given `els`, a jQuery set of <td> cells, find the cell with the largest natural width and set the widths of all the
 // cells to be that width.
 // PREREQUISITE: if you want a cell to take up width, it needs to have a single inner element w/ display:inline
-export function matchCellWidths(els: JQuery) {
+export function matchCellWidths(els: HTMLElement[]) {
   let maxInnerWidth = 0
 
-  els.find('> *').each(function(i, innerEl) {
-    let innerWidth = $(innerEl).outerWidth()
-    if (innerWidth > maxInnerWidth) {
-      maxInnerWidth = innerWidth
+  els.forEach(function(el) {
+    let innerEl = el.firstChild // hopefully an element
+    if (innerEl instanceof HTMLElement) {
+      let innerWidth = innerEl.offsetWidth
+      if (innerWidth > maxInnerWidth) {
+        maxInnerWidth = innerWidth
+      }
     }
   })
 
   maxInnerWidth++ // sometimes not accurate of width the text needs to stay on one line. insurance
 
-  els.width(maxInnerWidth)
+  els.forEach(function(el) {
+    el.style.width = maxInnerWidth + 'px'
+  })
 
   return maxInnerWidth
 }
@@ -131,17 +138,22 @@ export function matchCellWidths(els: JQuery) {
 
 // Given one element that resides inside another,
 // Subtracts the height of the inner element from the outer element.
-export function subtractInnerElHeight(outerEl: JQuery, innerEl: JQuery) {
-  let both = outerEl.add(innerEl)
-  let diff
+export function subtractInnerElHeight(outerEl: HTMLElement, innerEl: HTMLElement) {
 
   // effin' IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
-  both.css({
+  let reflowStyleProps = {
     position: 'relative', // cause a reflow, which will force fresh dimension recalculation
     left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
-  })
-  diff = outerEl.outerHeight() - innerEl.outerHeight() // grab the dimensions
-  both.css({ position: '', left: '' }) // undo hack
+  }
+  applyStyle(outerEl, reflowStyleProps)
+  applyStyle(innerEl, reflowStyleProps)
+
+  let diff = outerEl.offsetHeight - innerEl.offsetHeight // grab the dimensions
+
+  // undo hack
+  let resetStyleProps = { position: '', left: '' }
+  applyStyle(outerEl, resetStyleProps)
+  applyStyle(innerEl, resetStyleProps)
 
   return diff
 }
@@ -151,84 +163,97 @@ export function subtractInnerElHeight(outerEl: JQuery, innerEl: JQuery) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-// borrowed from https://github.com/jquery/jquery-ui/blob/1.11.0/ui/core.js#L51
-// TODO: normalize window/document?
-export function getScrollParent(el: JQuery) {
-  let position = el.css('position')
-  let scrollParent = el.parents().filter(function() {
-    let parent = $(this)
-    return (/(auto|scroll)/).test(
-      parent.css('overflow') + parent.css('overflow-y') + parent.css('overflow-x')
-    )
-  }).eq(0)
+// will return null of no scroll parent. will NOT return window/body
+export function getScrollParent(el: HTMLElement): HTMLElement | null {
 
-  return position === 'fixed' || !scrollParent.length ? $(el[0].ownerDocument || document) : scrollParent
-}
+  while (el instanceof HTMLElement) { // will stop when gets to document or null
+    let computedStyle = window.getComputedStyle(el)
 
+    if (computedStyle.position === 'fixed') {
+      break
+    }
 
-// Queries the area within the margin/border/scrollbars of a jQuery element. Does not go within the padding.
-// Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
-// Origin is optional.
-// WARNING: given element can't have borders
-// NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
-export function getClientRect(el: JQuery, origin?) {
-  let offset = el.offset()
-  let scrollbarWidths = getScrollbarWidths(el)
-  let left = offset.left + getCssFloat(el, 'border-left-width') + scrollbarWidths.left - (origin ? origin.left : 0)
-  let top = offset.top + getCssFloat(el, 'border-top-width') + scrollbarWidths.top - (origin ? origin.top : 0)
+    if ((/(auto|scroll)/).test(computedStyle.overflow + computedStyle.overflowY + computedStyle.overflowX)) {
+      return el
+    }
 
-  return {
-    left: left,
-    right: left + el[0].clientWidth, // clientWidth includes padding but NOT scrollbars
-    top: top,
-    bottom: top + el[0].clientHeight // clientHeight includes padding but NOT scrollbars
+    el = el.parentNode as HTMLElement
   }
+
+  return null
 }
 
 
-// Queries the area within the margin/border/padding of a jQuery element. Assumed not to have scrollbars.
-// Returns a rectangle with absolute coordinates: left, right (exclusive), top, bottom (exclusive).
-// Origin is optional.
-export function getContentRect(el: JQuery, origin) {
-  let offset = el.offset() // just outside of border, margin not included
-  let left = offset.left + getCssFloat(el, 'border-left-width') + getCssFloat(el, 'padding-left') -
-    (origin ? origin.left : 0)
-  let top = offset.top + getCssFloat(el, 'border-top-width') + getCssFloat(el, 'padding-top') -
-    (origin ? origin.top : 0)
+export interface EdgeInfo {
+  borderLeft: number
+  borderRight: number
+  borderTop: number
+  borderBottom: number
+  scrollbarLeft: number
+  scrollbarRight: number
+  scrollbarBottom: number
+  paddingLeft?: number
+  paddingRight?: number
+  paddingTop?: number
+  paddingBottom?: number
+}
 
-  return {
-    left: left,
-    right: left + el.width(),
-    top: top,
-    bottom: top + el.height()
+export function getEdges(el, getPadding = false): EdgeInfo {
+  let computedStyle = window.getComputedStyle(el)
+  let borderLeft = parseInt(computedStyle.borderLeftWidth, 10) || 0
+  let borderRight = parseInt(computedStyle.borderRightWidth, 10) || 0
+  let borderTop = parseInt(computedStyle.borderTopWidth, 10) || 0
+  let borderBottom = parseInt(computedStyle.borderBottomWidth, 10) || 0
+  let scrollbarLeftRight = sanitizeScrollbarWidth(el.offsetWidth - el.clientWidth - borderLeft - borderRight)
+  let scrollbarBottom = sanitizeScrollbarWidth(el.offsetHeight - el.clientHeight - borderTop - borderBottom)
+  let res: EdgeInfo = {
+    borderLeft,
+    borderRight,
+    borderTop,
+    borderBottom,
+    scrollbarBottom,
+    scrollbarLeft: 0,
+    scrollbarRight: 0
   }
-}
 
-
-// Returns the computed left/right/top/bottom scrollbar widths for the given jQuery element.
-// WARNING: given element can't have borders (which will cause offsetWidth/offsetHeight to be larger).
-// NOTE: should use clientLeft/clientTop, but very unreliable cross-browser.
-export function getScrollbarWidths(el: JQuery) {
-  let leftRightWidth = el[0].offsetWidth - el[0].clientWidth
-  let bottomWidth = el[0].offsetHeight - el[0].clientHeight
-  let widths
-
-  leftRightWidth = sanitizeScrollbarWidth(leftRightWidth)
-  bottomWidth = sanitizeScrollbarWidth(bottomWidth)
-
-  widths = { left: 0, right: 0, top: 0, bottom: bottomWidth }
-
-  if (getIsLeftRtlScrollbars() && el.css('direction') === 'rtl') { // is the scrollbar on the left side?
-    widths.left = leftRightWidth
+  if (getIsLeftRtlScrollbars() && computedStyle.direction === 'rtl') { // is the scrollbar on the left side?
+    res.scrollbarLeft = scrollbarLeftRight
   } else {
-    widths.right = leftRightWidth
+    res.scrollbarRight = scrollbarLeftRight
   }
 
-  return widths
+  if (getPadding) {
+    res.paddingLeft = parseInt(computedStyle.paddingLeft, 10) || 0
+    res.paddingRight = parseInt(computedStyle.paddingRight, 10) || 0
+    res.paddingTop = parseInt(computedStyle.paddingTop, 10) || 0
+    res.paddingBottom = parseInt(computedStyle.paddingBottom, 10) || 0
+  }
+
+  return res
+}
+
+export function getInnerRect(el, goWithinPadding = false) {
+  let outerRect = el.getBoundingClientRect()
+  let edges = getEdges(el, goWithinPadding)
+  let res = {
+    left: outerRect.left + edges.borderLeft + edges.scrollbarLeft,
+    right: outerRect.right - edges.borderRight - edges.scrollbarRight,
+    top: outerRect.top + edges.borderTop,
+    bottom: outerRect.bottom - edges.borderBottom - edges.scrollbarBottom
+  }
+
+  if (goWithinPadding) {
+    res.left += edges.paddingLeft
+    res.right -= edges.paddingRight
+    res.top += edges.paddingTop
+    res.bottom -= edges.paddingBottom
+  }
+
+  return res
 }
 
 
-// The scrollbar width computations in getScrollbarWidths are sometimes flawed when it comes to
+// The scrollbar width computations in getEdges are sometimes flawed when it comes to
 // retina displays, rounding, and IE11. Massage them into a usable value.
 function sanitizeScrollbarWidth(width) {
   width = Math.max(0, width) // no negatives
@@ -264,13 +289,6 @@ function computeIsLeftRtlScrollbars() { // creates an offscreen test element, th
   let res = innerEl.offset().left > el.offset().left // is the inner div shifted to accommodate a left scrollbar?
   el.remove()
   return res
-}
-
-
-// Retrieves a jQuery element's computed CSS value as a floating-point number.
-// If the queried value is non-numeric (ex: IE can return "medium" for border width), will just return zero.
-function getCssFloat(el: JQuery, prop) {
-  return parseFloat(el.css(prop)) || 0
 }
 
 

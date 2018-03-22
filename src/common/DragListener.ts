@@ -42,7 +42,7 @@ export default class DragListener {
   originY: any
 
   // the wrapping element that scrolls, or MIGHT scroll if there's overflow.
-  // TODO: do this for wrappers that have overflow:hidden as well.
+  // within the body. so, can't be the body/document/window. might be null
   scrollEl: HTMLElement
 
   isInteracting: boolean = false
@@ -110,7 +110,7 @@ export default class DragListener {
 
       this.originX = getEvX(ev)
       this.originY = getEvY(ev)
-      this.scrollEl = getScrollParent($(ev.target))[0]
+      this.scrollEl = getScrollParent(ev.target)
 
       this.bindHandlers()
       this.initAutoScroll()
@@ -354,11 +354,7 @@ export default class DragListener {
   initAutoScroll() {
     let scrollEl = this.scrollEl
 
-    this.isAutoScroll =
-      this.options.scroll &&
-      scrollEl &&
-      scrollEl !== (window as any) &&
-      scrollEl !== (document as any)
+    this.isAutoScroll = Boolean(this.options.scroll && scrollEl)
 
     if (this.isAutoScroll) {
       // debounce makes sure rapid calls don't happen
@@ -381,7 +377,7 @@ export default class DragListener {
   computeScrollBounds() {
     if (this.isAutoScroll) {
       this.scrollBounds = this.scrollEl.getBoundingClientRect()
-      // TODO: use getClientRect in future. but prevents auto scrolling when on top of scrollbars
+      // TODO: use getInnerRect in future. but prevents auto scrolling when on top of scrollbars
     }
   }
 

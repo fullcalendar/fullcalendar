@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import { htmlEscape, subtractInnerElHeight } from '../util'
 import { htmlToElement, makeElement } from '../util/dom'
 import UnzonedRange from '../models/UnzonedRange'
@@ -68,7 +67,7 @@ export default class ListView extends View {
 
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight($(this.el), $(this.scroller.el)) // everything that's NOT the scroller
+      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
   }
 
 

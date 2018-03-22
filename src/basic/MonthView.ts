@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import { distributeHeight } from '../util'
 import BasicView from './BasicView'
@@ -18,7 +17,7 @@ export default class MonthView extends BasicView {
       height *= this.dayGrid.rowCnt / 6
     }
 
-    distributeHeight($(this.dayGrid.rowEls), height, !isAuto) // if auto, don't compensate for height-hogging rows
+    distributeHeight(this.dayGrid.rowEls, height, !isAuto) // if auto, don't compensate for height-hogging rows
   }
 
 

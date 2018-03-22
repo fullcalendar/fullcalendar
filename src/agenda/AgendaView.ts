@@ -1,5 +1,4 @@
 import * as moment from 'moment'
-import * as $ from 'jquery'
 import {
   matchCellWidths,
   uncompensateScroll,
@@ -177,7 +176,7 @@ export default class AgendaView extends View {
     super.updateSize(totalHeight, isAuto, isResize)
 
     // make all axis cells line up, and record the width so newly created axis cells will have it
-    this.axisWidth = matchCellWidths($(this.el.querySelectorAll('.fc-axis')))
+    this.axisWidth = matchCellWidths(findElsWithin(this.el, '.fc-axis'))
 
     // hack to give the view some height prior to timeGrid's columns being rendered
     // TODO: separate setting height from scroller VS timeGrid.
@@ -197,7 +196,7 @@ export default class AgendaView extends View {
     // reset all dimensions back to the original state
     this.timeGrid.bottomRuleEl.style.display = 'none' // will be shown later if this <hr> is necessary
     this.scroller.clear() // sets height to 'auto' and clears overflow
-    uncompensateScroll($(noScrollRowEls))
+    noScrollRowEls.forEach(uncompensateScroll)
 
     // limit number of events in the all-day area
     if (this.dayGrid) {
@@ -221,7 +220,9 @@ export default class AgendaView extends View {
       if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
         // make the all-day and header rows lines up
-        compensateScroll($(noScrollRowEls), scrollbarWidths)
+        noScrollRowEls.forEach(function(rowEl) {
+          compensateScroll(rowEl, scrollbarWidths)
+        })
 
         // the scrollbar compensation might have changed text flow, which might affect height, so recalculate
         // and reapply the desired height to the scroller.
@@ -244,7 +245,7 @@ export default class AgendaView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(totalHeight) {
     return totalHeight -
-      subtractInnerElHeight($(this.el), $(this.scroller.el)) // everything that's NOT the scroller
+      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
   }
 
 

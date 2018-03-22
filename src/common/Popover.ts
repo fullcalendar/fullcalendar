@@ -120,7 +120,7 @@ export default class Popover {
     let options = this.options
     let el = this.el
     let rect = el.getBoundingClientRect()
-    let viewportEl = getScrollParent($(el))[0]
+    let scrollEl = getScrollParent(el)
     let viewportRect
     let top // the "position" (not "offset") values for the popover
     let left //
@@ -135,20 +135,15 @@ export default class Popover {
       left = 0
     }
 
-    // normalize getScrollParent's result
-    if (viewportEl === (document as any)) {
-      viewportEl = (window as any)
-    }
-
-    if (viewportEl === (window as any)) {
+    if (scrollEl) {
+      viewportRect = scrollEl.getBoundingClientRect()
+    } else {
       viewportRect = {
         top: 0,
         left: 0,
         width: document.documentElement.clientWidth,
         height: document.documentElement.clientHeight
       }
-    } else {
-      viewportRect = viewportEl.getBoundingClientRect()
     }
 
     // constrain to the view port. if constrained by two edges, give precedence to top/left

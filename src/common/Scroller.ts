@@ -1,5 +1,4 @@
-import * as $ from 'jquery'
-import { getScrollbarWidths } from '../util'
+import { getEdges } from '../util'
 import { removeElement } from '../util/dom'
 import Class from '../common/Class'
 
@@ -124,7 +123,12 @@ export default class Scroller extends Class {
 
 
   getScrollbarWidths() {
-    return getScrollbarWidths($(this.scrollEl))
+    let edges = getEdges(this.scrollEl)
+    return {
+      left: edges.scrollbarLeft,
+      right: edges.scrollbarRight,
+      bottom: edges.scrollbarBottom
+    }
   }
 
 }

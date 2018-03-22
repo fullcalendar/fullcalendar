@@ -1,5 +1,4 @@
-import * as $ from 'jquery'
-import { getClientRect, getScrollParent } from '../util'
+import { getInnerRect, getScrollParent } from '../util'
 
 export interface CoordCacheOptions {
   els: HTMLElement[]
@@ -237,13 +236,13 @@ export default class CoordCache {
   // Right now, only returns a rectangle if constrained by an overflow:scroll element.
   // Returns null if there are no elements
   queryBoundingRect() {
-    let scrollParentEl
+    let scrollParentEl: HTMLElement
 
     if (this.els.length > 0) {
-      scrollParentEl = getScrollParent($(this.els[0]))
+      scrollParentEl = getScrollParent(this.els[0])
 
-      if (!scrollParentEl.is(document)) {
-        return getClientRect(scrollParentEl)
+      if (scrollParentEl) {
+        return getInnerRect(scrollParentEl)
       }
     }
 
