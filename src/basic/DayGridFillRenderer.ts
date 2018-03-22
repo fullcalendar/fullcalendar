@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import { htmlToElement, makeElement } from '../util/dom'
 import FillRenderer from '../component/renderers/FillRenderer'
 import DayGrid from './DayGrid'
@@ -60,7 +59,7 @@ export default class DayGridFillRenderer extends FillRenderer {
       trEl.appendChild(makeElement('td', { colSpan: colCnt - endCol }))
     }
 
-    this.component.bookendCells($(trEl))
+    this.component.bookendCells(trEl)
 
     return skeletonEl
   }

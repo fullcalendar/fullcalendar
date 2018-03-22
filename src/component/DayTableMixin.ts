@@ -11,7 +11,7 @@ export interface DayTableInterface {
   updateDayTable()
   renderHeadHtml()
   renderBgTrHtml(row)
-  bookendCells(trEl)
+  bookendCells(trEl: HTMLElement)
   getCellDate(row, col)
   getCellRange(row, col)
   sliceRangeByDay(unzonedRange)
@@ -441,7 +441,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
   // Applies the generic "intro" and "outro" HTML to the given cells.
   // Intro means the leftmost cell when the calendar is LTR and the rightmost cell when RTL. Vice-versa for outro.
-  bookendCells(trEl) {
+  bookendCells(trEl: HTMLElement) {
     let introHtml = this.renderIntroHtml()
 
     if (introHtml) {

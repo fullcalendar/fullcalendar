@@ -149,7 +149,7 @@ export default class DayGridEventRenderer extends EventRenderer {
       }
 
       emptyCellsUntil(colCnt) // finish off the row
-      this.dayGrid.bookendCells($(tr))
+      this.dayGrid.bookendCells(tr)
       tbody.appendChild(tr)
     }
 

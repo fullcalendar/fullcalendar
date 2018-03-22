@@ -348,7 +348,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     this.highlightContainerEls = findElsWithin(skeletonEl, '.fc-highlight-container')
     this.businessContainerEls = findElsWithin(skeletonEl, '.fc-business-container')
 
-    this.bookendCells($(skeletonEl.getElementsByTagName('tr'))) // TODO: do this on string level
+    this.bookendCells(skeletonEl.querySelector('tr')) // TODO: do this on string level
     this.el.appendChild(skeletonEl)
   }
 
