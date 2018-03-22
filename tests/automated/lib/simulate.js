@@ -24,11 +24,25 @@ var origSimulateEvent = $.simulate.prototype.simulateEvent
 var touchUID = Date.now()
 
 $.simulate.prototype.simulateEvent = function(elem, type, options) {
-  if (/^touch/.test(type)) {
+  if (elem === window && type === 'resize') {
+    return this.simulateWindowResize()
+  } else if (/^touch/.test(type)) {
     return this.simulateTouchEvent(elem, type, options)
   } else {
     return origSimulateEvent.apply(this, arguments)
   }
+}
+
+$.simulate.prototype.simulateWindowResize = function() {
+  // from https://stackoverflow.com/a/1818513/96342
+  let event
+  if (typeof Event !== 'undefined') {
+    event = new Event('resize')
+  } else {
+    event = document.createEvent('UIEvents')
+    event.initUIEvent('resize', true, false, window, 0)
+  }
+  this.dispatchEvent(window, 'resize', event)
 }
 
 $.simulate.prototype.simulateTouchEvent = function(elem, type, options) {

@@ -70,7 +70,7 @@ describe('rerender performance', function() {
           expect(executeEventRender.calls.count()).toBe(3) // +1
           expect(updateSize.calls.count()).toBe(5) // +2, TODO: get to just +1
 
-          $(window).trigger('resize')
+          $(window).simulate('resize')
 
           setTimeout(function() {
 

@@ -45,7 +45,7 @@ describe('scroll state', function() {
       setTimeout(function() { // wait until after browser's scroll state is applied
         scrollEl.scrollTop(9999) // all the way
         scroll0 = scrollEl.scrollTop()
-        $(window).trigger('resize')
+        $(window).simulate('resize')
       }, 0)
     })
 
