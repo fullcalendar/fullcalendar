@@ -1,4 +1,5 @@
 import { htmlEscape, dayIDs } from '../util'
+import { prependWithinEl, appendContentTo } from '../util/dom'
 import Mixin from '../common/Mixin'
 
 export interface DayTableInterface {
@@ -423,8 +424,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderIntroHtml() {
-    // Generates the default HTML intro for any row. User classes should override
+  // Generates the default HTML intro for any row. User classes should override
+  renderIntroHtml(): string {
+    return ''
   }
 
 
@@ -444,9 +446,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
     if (introHtml) {
       if ((this as any).isRTL) {
-        trEl.append(introHtml)
+        appendContentTo(trEl, introHtml)
       } else {
-        trEl.prepend(introHtml)
+        prependWithinEl(trEl, introHtml)
       }
     }
   }
