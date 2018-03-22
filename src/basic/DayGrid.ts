@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import { htmlEscape } from '../util'
 import { assignTo } from '../util/object'
 import CoordCache from '../common/CoordCache'
@@ -343,7 +342,7 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   getCellEl(row, col) {
-    return $(this.cellEls[row * this.colCnt + col])
+    return this.cellEls[row * this.colCnt + col]
   }
 
 
@@ -626,7 +625,7 @@ export default class DayGrid extends InteractiveDateComponent {
             {
               date: date.clone(),
               dayEl: dayEl,
-              moreEl: $(moreEl),
+              moreEl: moreEl,
               segs: reslicedAllSegs,
               hiddenSegs: reslicedHiddenSegs
             },

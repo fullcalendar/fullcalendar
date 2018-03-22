@@ -1,4 +1,4 @@
-import * as $ from 'jquery'
+import { elementClosest } from '../util/dom'
 import EventPointing from '../component/interactions/EventPointing'
 
 
@@ -12,7 +12,7 @@ export default class ListEventPointing extends EventPointing {
     super.handleClick(seg, ev) // might prevent the default action
 
     // not clicking on or within an <a> with an href
-    if (!$(ev.target).closest('a[href]').length) {
+    if (!elementClosest(ev.target, 'a[href]')) {
       url = seg.footprint.eventDef.url
 
       if (url && !ev.isDefaultPrevented()) { // jsEvent not cancelled in handler

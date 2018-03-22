@@ -1,7 +1,7 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import { parseFieldSpecs, isPrimaryMouseButton } from './util'
 import { assignTo } from './util/object'
+import { elementClosest } from './util/dom'
 import RenderQueue from './common/RenderQueue'
 import Calendar from './Calendar'
 import DateProfileGenerator from './DateProfileGenerator'
@@ -823,7 +823,7 @@ export default abstract class View extends InteractiveDateComponent {
     if (this.isSelected && this.opt('unselectAuto')) {
       // only unselect if the clicked element is not identical to or inside of an 'unselectCancel' element
       ignore = this.opt('unselectCancel')
-      if (!ignore || !$(ev.target).closest(ignore).length) {
+      if (!ignore || !elementClosest(ev.target, ignore)) {
         this.unselect(ev)
       }
     }
@@ -832,7 +832,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   processEventUnselect(ev) {
     if (this.selectedEventInstance) {
-      if (!$(ev.target).closest('.fc-selected').length) {
+      if (!elementClosest(ev.target, '.fc-selected')) {
         this.unselectEventInstance()
       }
     }

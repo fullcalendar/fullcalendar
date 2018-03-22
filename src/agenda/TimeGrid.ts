@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import { isInt, divideDurationByDuration, htmlEscape } from '../util'
 import { htmlToElement, findElsWithin, makeElement, removeElement, applyStyle } from '../util/dom'
@@ -431,9 +430,9 @@ export default class TimeGrid extends InteractiveDateComponent {
 
     // render lines within the columns
     for (i = 0; i < segs.length; i++) {
-      nodes.push($('<div class="fc-now-indicator fc-now-indicator-line"></div>')
-        .css('top', top)
-        .appendTo(this.colContainerEls[segs[i].col])[0])
+      let lineEl = makeElement('div', { className: 'fc-now-indicator fc-now-indicator-line' })
+      this.colContainerEls[segs[i].col].appendChild(lineEl)
+      nodes.push(lineEl)
     }
 
     // render an arrow over the axis
@@ -640,7 +639,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   getHitEl(hit) {
-    return $(this.colEls[hit.col])
+    return this.colEls[hit.col]
   }
 
 

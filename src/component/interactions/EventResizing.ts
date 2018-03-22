@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import { disableCursor, enableCursor } from '../../util'
 import EventDefMutation from '../../models/event/EventDefMutation'
 import EventDefDateMutation from '../../models/event/EventDefDateMutation'
@@ -47,7 +46,7 @@ export default class EventResizing extends Interaction {
 
   handleMouseDown(seg, ev) {
     if (this.component.canStartResize(seg, ev)) {
-      this.buildDragListener(seg, $(ev.target).is('.fc-start-resizer'))
+      this.buildDragListener(seg, ev.target.classList.contains('fc-start-resizer'))
         .startInteraction(ev, { distance: 5 })
     }
   }
@@ -55,7 +54,7 @@ export default class EventResizing extends Interaction {
 
   handleTouchStart(seg, ev) {
     if (this.component.canStartResize(seg, ev)) {
-      this.buildDragListener(seg, $(ev.target).is('.fc-start-resizer'))
+      this.buildDragListener(seg, ev.target.classList.contains('fc-start-resizer'))
         .startInteraction(ev)
     }
   }

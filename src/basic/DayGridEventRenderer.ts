@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import { htmlEscape, cssToStr } from '../util'
 import { makeElement, removeElement } from '../util/dom'
 import EventRenderer from '../component/renderers/EventRenderer'
@@ -36,7 +35,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
     // append to each row's content skeleton
     this.dayGrid.rowEls.forEach(function(rowNode, i) {
-      $(rowNode).find('.fc-content-skeleton > table').append(
+      rowNode.querySelector('.fc-content-skeleton > table').appendChild(
         rowStructs[i].tbodyEl
       )
     })

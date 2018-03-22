@@ -1,4 +1,3 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import { capitaliseFirstLetter, debounce } from './util'
 import { listenBySelector, toggleClassName, makeElement, removeElement, applyStyle, prependWithinEl, computeHeightAndMargins } from './util/dom'
@@ -397,7 +396,7 @@ export default class Calendar {
     this.renderView(this.opt('defaultView'))
 
     if (this.opt('handleWindowResize')) {
-      $(window).resize(
+      window.addEventListener('resize',
         this.windowResizeProxy = debounce( // prevents rapid calls
           this.windowResize.bind(this),
           this.opt('windowResizeDelay')
@@ -428,7 +427,7 @@ export default class Calendar {
     }
 
     if (this.windowResizeProxy) {
-      $(window).unbind('resize', this.windowResizeProxy)
+      window.removeEventListener('resize', this.windowResizeProxy)
       this.windowResizeProxy = null
     }
 
@@ -494,9 +493,10 @@ export default class Calendar {
       this.bindViewHandlers(newView)
 
       newView.startBatchRender() // so that setElement+setDate rendering are joined
-      newView.setElement(
-        $("<div class='fc-view fc-" + viewType + "-view'></div>").appendTo(this.contentEl)[0]
-      )
+
+      let viewEl = makeElement('div', { className: 'fc-view fc-' + viewType + '-view' })
+      this.contentEl.appendChild(viewEl)
+      newView.setElement(viewEl)
 
       this.toolbarsManager.proxyCall('activateButton', viewType)
     }

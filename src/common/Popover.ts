@@ -13,7 +13,6 @@ Options:
   - hide (callback)
 */
 
-import * as $ from 'jquery'
 import { getScrollParent } from '../util'
 import { listenViaDelegation, ElementContent, removeElement, makeElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
@@ -96,7 +95,7 @@ export default class Popover {
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
   documentMousedown(ev) {
     // only hide the popover if the click happened outside the popover
-    if (this.el && !$(ev.target).closest(this.el).length) {
+    if (this.el && !this.el.contains(ev.target)) {
       this.hide()
     }
   }

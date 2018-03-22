@@ -1,7 +1,6 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
 import { getEvIsTouch, diffByUnit, diffDayTime } from '../util'
-import { listenBySelector, listenToHoverBySelector } from '../util/dom'
+import { listenBySelector, listenToHoverBySelector, elementClosest } from '../util/dom'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
 
@@ -110,14 +109,11 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   bindDateHandlerToEl(el, name, handler) {
-    // TODO: use event delegation for this? to prevent multiple calls because of bubbling?
-    // attach a handler to the grid's root element.
-    // jQuery will take care of unregistering them when removeElement gets called.
     el.addEventListener(name, (ev) => {
       if (
-        !$(ev.target).is(
-          this.segSelector + ':not(.fc-helper),' + // directly on an event element
-          this.segSelector + ':not(.fc-helper) *,' + // within an event element
+        !elementClosest(
+          ev.target,
+          this.segSelector + ':not(.fc-helper),' + // on or within an event segment
           '.fc-more,' + // a "more.." link
           'a[data-goto]' // a clickable nav link
         )
@@ -218,7 +214,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
     return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&
       this.isEventDefResizable(eventDef) &&
-      $(ev.target).is('.fc-resizer')
+      ev.target.classList.contains('fc-resizer')
   }
 
 

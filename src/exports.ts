@@ -53,7 +53,10 @@ export {
   appendContentTo,
   toggleClassName,
   applyStyle,
-  computeHeightAndMargins
+  computeHeightAndMargins,
+  elementMatches,
+  queryChild,
+  queryChildren
 } from './util/dom'
 
 export {
