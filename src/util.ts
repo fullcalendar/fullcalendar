@@ -872,18 +872,6 @@ export function isInt(n) {
 }
 
 
-// Returns a method bound to the given object context.
-// Just like one of the jQuery.proxy signatures, but without the undesired behavior of treating the same method with
-// different contexts as identical when binding/unbinding events.
-export function proxy(obj, methodName) {
-  let method = obj[methodName]
-
-  return function() {
-    return method.apply(obj, arguments)
-  }
-}
-
-
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the

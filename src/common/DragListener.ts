@@ -8,8 +8,7 @@ import {
   isPrimaryMouseButton,
   allowSelection,
   preventDefault,
-  debounce,
-  proxy
+  debounce
 } from '../util'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 import GlobalEmitter from './GlobalEmitter'
@@ -431,7 +430,7 @@ export default class DragListener {
     // if there is non-zero velocity, and an animation loop hasn't already started, then START
     if ((this.scrollTopVel || this.scrollLeftVel) && !this.scrollIntervalId) {
       this.scrollIntervalId = setInterval(
-        proxy(this, 'scrollIntervalFunc'), // scope to `this`
+        this.scrollIntervalFunc.bind(this),
         this.scrollIntervalMs
       )
     }

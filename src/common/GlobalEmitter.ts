@@ -29,8 +29,6 @@ export default class GlobalEmitter {
 
   isTouching: boolean = false
   mouseIgnoreDepth: number = 0
-  handleScrollProxy: (ev: Event) => void
-  handleTouchMoveProxy: (ev: Event) => void
 
 
   // gets the singleton
@@ -81,9 +79,7 @@ export default class GlobalEmitter {
     // TODO: investigate performance because this is a global handler
     window.addEventListener(
       'touchmove',
-      this.handleTouchMoveProxy = (ev) => {
-        this.handleTouchMove(ev)
-      },
+      this.handleTouchMove, // always bound to `this`
       { passive: false } as any // allows preventDefault()
     )
 
@@ -92,9 +88,7 @@ export default class GlobalEmitter {
     // http://stackoverflow.com/a/32954565/96342
     window.addEventListener(
       'scroll',
-      this.handleScrollProxy = (ev) => {
-        this.handleScroll(ev)
-      },
+      this.handleScroll, // always bound to `this`
       true // useCapture
     )
   }
@@ -104,12 +98,12 @@ export default class GlobalEmitter {
 
     window.removeEventListener(
       'touchmove',
-      this.handleTouchMoveProxy
+      this.handleTouchMove
     )
 
     window.removeEventListener(
       'scroll',
-      this.handleScrollProxy,
+      this.handleScroll,
       true // useCapture
     )
   }
@@ -128,7 +122,7 @@ export default class GlobalEmitter {
     this.trigger('touchstart', ev)
   }
 
-  handleTouchMove(ev) {
+  handleTouchMove = (ev) => {
     if (this.isTouching) {
       this.trigger('touchmove', ev)
     }
@@ -188,7 +182,7 @@ export default class GlobalEmitter {
     this.trigger('contextmenu', ev)
   }
 
-  handleScroll(ev) {
+  handleScroll = (ev) => {
     this.trigger('scroll', ev)
   }
 

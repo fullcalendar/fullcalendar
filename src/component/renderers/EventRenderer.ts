@@ -1,4 +1,4 @@
-import { compareByFieldSpecs, proxy } from '../../util'
+import { compareByFieldSpecs } from '../../util'
 import { htmlToElements } from '../../util/dom'
 
 export default class EventRenderer {
@@ -420,7 +420,7 @@ export default class EventRenderer {
 
 
   sortEventSegs(segs) {
-    segs.sort(proxy(this, 'compareEventSegs'))
+    segs.sort(this.compareEventSegs.bind(this))
   }
 
 

@@ -1,6 +1,6 @@
 import * as $ from 'jquery'
 import * as moment from 'moment'
-import { parseFieldSpecs, proxy, isPrimaryMouseButton } from './util'
+import { parseFieldSpecs, isPrimaryMouseButton } from './util'
 import { assignTo } from './util/object'
 import RenderQueue from './common/RenderQueue'
 import Calendar from './Calendar'
@@ -420,7 +420,7 @@ export default abstract class View extends InteractiveDateComponent {
     if (this.opt('nowIndicator')) {
       unit = this.getNowIndicatorUnit()
       if (unit) {
-        update = proxy(this, 'updateNowIndicator') // bind to `this`
+        update = this.updateNowIndicator.bind(this)
 
         this.initialNowDate = this.calendar.getNow()
         this.initialNowQueriedMs = new Date().valueOf()

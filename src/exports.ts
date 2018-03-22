@@ -19,7 +19,6 @@ export {
   isInt,
   htmlEscape,
   cssToStr,
-  proxy,
   capitaliseFirstLetter,
   getInnerRect,
   getEdges,

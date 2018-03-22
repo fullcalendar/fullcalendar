@@ -1,4 +1,4 @@
-import { htmlEscape, cssToStr, proxy } from '../util'
+import { htmlEscape, cssToStr } from '../util'
 import { removeElement, applyStyle } from '../util/dom'
 import EventRenderer from '../component/renderers/EventRenderer'
 
@@ -216,7 +216,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
 
   sortForwardSegs(forwardSegs) {
-    forwardSegs.sort(proxy(this, 'compareForwardSegs'))
+    forwardSegs.sort(this.compareForwardSegs.bind(this))
   }
 
 
