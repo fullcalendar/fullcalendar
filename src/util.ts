@@ -1,6 +1,5 @@
-import * as $ from 'jquery'
 import * as moment from 'moment'
-import { applyStyle, computeHeightAndMargins } from './util/dom'
+import { applyStyle, computeHeightAndMargins, makeElement, removeElement } from './util/dom'
 
 
 /* FullCalendar-specific DOM Utilities
@@ -275,8 +274,8 @@ function getIsLeftRtlScrollbars() { // responsible for caching the computation
 }
 
 function computeIsLeftRtlScrollbars() { // creates an offscreen test element, then removes it
-  let el = $('<div><div></div></div>')
-    .css({
+  let outerEl = makeElement('div', {
+    style: {
       position: 'absolute',
       top: -1000,
       left: 0,
@@ -284,11 +283,14 @@ function computeIsLeftRtlScrollbars() { // creates an offscreen test element, th
       padding: 0,
       overflow: 'scroll',
       direction: 'rtl'
-    })
-    .appendTo('body')
-  let innerEl = el.children()
-  let res = innerEl.offset().left > el.offset().left // is the inner div shifted to accommodate a left scrollbar?
-  el.remove()
+    }
+  }, '<div></div>')
+
+  document.body.appendChild(outerEl)
+  let innerEl = outerEl.firstChild as HTMLElement
+  let res = innerEl.getBoundingClientRect().left > outerEl.getBoundingClientRect().left
+
+  removeElement(outerEl)
   return res
 }
 
@@ -298,13 +300,13 @@ function computeIsLeftRtlScrollbars() { // creates an offscreen test element, th
 
 
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
-export function isPrimaryMouseButton(ev) {
-  return ev.which === 1 && !ev.ctrlKey
+export function isPrimaryMouseButton(ev: MouseEvent) {
+  return ev.button === 0 && !ev.ctrlKey
 }
 
 
-export function getEvX(ev) {
-  let touches = ev.touches
+export function getEvX(ev: UIEvent) {
+  let touches = (ev as TouchEvent).touches
 
   // on mobile FF, pageX for touch events is present, but incorrect,
   // so, look at touch coordinates first.
@@ -312,12 +314,12 @@ export function getEvX(ev) {
     return touches[0].pageX
   }
 
-  return ev.pageX
+  return (ev as MouseEvent).pageX
 }
 
 
 export function getEvY(ev) {
-  let touches = ev.touches
+  let touches = (ev as TouchEvent).touches
 
   // on mobile FF, pageX for touch events is present, but incorrect,
   // so, look at touch coordinates first.
@@ -325,7 +327,7 @@ export function getEvY(ev) {
     return touches[0].pageY
   }
 
-  return ev.pageY
+  return (ev as MouseEvent).pageY
 }
 
 
@@ -334,15 +336,15 @@ export function getEvIsTouch(ev) {
 }
 
 
-export function preventSelection(el: JQuery) {
-  el.addClass('fc-unselectable')
-    .on('selectstart', preventDefault)
+export function preventSelection(el: HTMLElement) {
+  el.classList.add('fc-unselectable')
+  el.addEventListener('selectstart', preventDefault)
 }
 
 
-export function allowSelection(el: JQuery) {
-  el.removeClass('fc-unselectable')
-    .off('selectstart', preventDefault)
+export function allowSelection(el: HTMLElement) {
+  el.classList.remove('fc-unselectable')
+  el.removeEventListener('selectstart', preventDefault)
 }
 
 

@@ -60,7 +60,7 @@ export default class DateSelecting extends Interaction {
       }
     })
 
-    preventSelection($(el))
+    preventSelection(el)
   }
 
 

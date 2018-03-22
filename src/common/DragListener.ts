@@ -100,7 +100,7 @@ export default class DragListener {
       this.minDistance = firstDefined(extraOptions.distance, this.options.distance, 0)
       this.subjectEl = this.options.subjectEl
 
-      preventSelection($('body'))
+      preventSelection(document.body)
 
       this.isInteracting = true
       this.isTouch = getEvIsTouch(ev)
@@ -144,7 +144,7 @@ export default class DragListener {
       this.isInteracting = false
       this.handleInteractionEnd(ev, isCancelled)
 
-      allowSelection($('body'))
+      allowSelection(document.body)
     }
   }
 
