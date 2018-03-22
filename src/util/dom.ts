@@ -100,7 +100,30 @@ export function listenViaDelegation(container: HTMLElement, eventType, childClas
 }
 
 // from https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
-const matchesMethod = Element.prototype.matches || Element.prototype.msMatchesSelector
+// TODO: research leaner fallback
+const matchesMethod =
+  Element.prototype.matches ||
+  (Element.prototype as any).matchesSelector ||
+  (Element.prototype as any).mozMatchesSelector ||
+  (Element.prototype as any).msMatchesSelector ||
+  (Element.prototype as any).oMatchesSelector ||
+  (Element.prototype as any).webkitMatchesSelector
+
+;[
+  'matches',
+  'matchesSelector',
+  'mozMatchesSelector',
+  'msMatchesSelector',
+  'oMatchesSelector',
+  'webkitMatchesSelector'
+].forEach(function(name) {
+  if (Element.prototype[name]) {
+    console.log(name + ' exists')
+  } else {
+    console.log(name + ' does NOT exist')
+  }
+})
+
 const closestMethod = Element.prototype.closest || function(selector) {
   let el = this
   if (!document.documentElement.contains(el)) {
