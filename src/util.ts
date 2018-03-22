@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import * as moment from 'moment'
 import { applyStyle, computeHeightAndMargins } from './util/dom'
 

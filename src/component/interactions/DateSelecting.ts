@@ -1,3 +1,4 @@
+import * as $ from 'jquery'
 import { enableCursor, disableCursor, preventSelection, compareNumbers } from '../../util'
 import HitDragListener from '../../common/HitDragListener'
 import ComponentFootprint from '../../models/ComponentFootprint'

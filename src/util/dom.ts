@@ -112,7 +112,7 @@ const closestMethod = Element.prototype.closest || function(selector) {
     }
     el = el.parentElement || el.parentNode
   } while (el !== null && el.nodeType === 1)
-  return null;
+  return null
 }
 
 export function elementMatches(el: HTMLElement, selector: string) {
