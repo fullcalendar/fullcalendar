@@ -69,7 +69,7 @@ export default class Scroller extends Class {
 
     if (overflowX === 'auto') {
       overflowX = (
-          scrollbarWidths.top || scrollbarWidths.bottom || // horizontal scrollbars?
+          scrollbarWidths.bottom || // horizontal scrollbars?
           // OR scrolling pane with massless scrollbars?
           scrollEl.scrollWidth - 1 > scrollEl.clientWidth
             // subtract 1 because of IE off-by-one issue
