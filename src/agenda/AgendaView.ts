@@ -5,8 +5,8 @@ import {
   compensateScroll,
   subtractInnerElHeight,
   htmlEscape,
-  copyOwnProps
 } from '../util'
+import { copyOwnProps } from '../util/object'
 import { findElements, createElement } from '../util/dom'
 import Scroller from '../common/Scroller'
 import View from '../View'

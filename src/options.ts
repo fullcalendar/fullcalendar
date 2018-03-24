@@ -1,4 +1,4 @@
-import { mergeProps } from './util'
+import { mergeProps } from './util/object'
 
 
 export const globalDefaults = {

@@ -12,7 +12,7 @@ after class:
   ParsableModelMixin.mixInto(TheClass)
 */
 
-import { copyOwnProps } from '../util'
+import { copyOwnProps } from '../util/object'
 import Mixin from './Mixin'
 
 export interface ParsableModelInterface {

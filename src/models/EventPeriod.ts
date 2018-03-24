@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import { removeExact, removeMatching } from '../util'
-import { isEmpty } from '../util/object'
+import { isEmptyObject } from '../util/object'
 import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
 import UnzonedRange from './UnzonedRange'
 import EventInstanceGroup from './event/EventInstanceGroup'
@@ -191,7 +191,7 @@ export default class EventPeriod {
 
 
   removeAllEventDefs() {
-    let hasEventDefs = !isEmpty(this.eventDefsByUid)
+    let hasEventDefs = !isEmptyObject(this.eventDefsByUid)
 
     this.eventDefsByUid = {}
     this.eventDefsById = {}
