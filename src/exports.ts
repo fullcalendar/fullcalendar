@@ -20,7 +20,6 @@ export {
   htmlEscape,
   cssToStr,
   capitaliseFirstLetter,
-  preventDefault,
   parseFieldSpecs,
   compareByFieldSpecs,
   compareByFieldSpec,
@@ -57,6 +56,10 @@ export {
   queryChildren,
   whenTransitionDone
 } from './util/dom'
+
+export {
+  preventDefault
+} from './util/dom-event'
 
 export {
   getInnerRect,

@@ -1,11 +1,13 @@
 import {
-  getEvX,
-  getEvY,
   constrainPoint,
   intersectRects,
   getRectCenter,
   diffPoints
 } from '../util'
+import {
+  getEvX,
+  getEvY,
+} from '../util/dom-event'
 import { default as DragListener, DragListenerOptions } from './DragListener'
 
 

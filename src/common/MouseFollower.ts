@@ -3,7 +3,7 @@ import {
   getEvY,
   getEvX,
   getEvIsTouch
-} from '../util'
+} from '../util/dom-event'
 import { removeElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 

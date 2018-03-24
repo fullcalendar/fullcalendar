@@ -1,5 +1,6 @@
 import * as moment from 'moment'
-import { getEvIsTouch, diffByUnit, diffDayTime } from '../util'
+import { diffByUnit, diffDayTime } from '../util'
+import { getEvIsTouch } from '../util/dom-event'
 import { listenBySelector, listenToHoverBySelector, elementClosest } from '../util/dom'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
