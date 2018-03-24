@@ -4,10 +4,7 @@ import {
   getRectCenter,
   diffPoints
 } from '../util/geom'
-import {
-  getEvX,
-  getEvY,
-} from '../util/dom-event'
+import { getEvX, getEvY } from '../util/dom-event'
 import { default as DragListener, DragListenerOptions } from './DragListener'
 
 

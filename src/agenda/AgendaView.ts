@@ -6,7 +6,7 @@ import {
   matchCellWidths,
   uncompensateScroll,
   compensateScroll,
-  subtractInnerElHeight,
+  subtractInnerElHeight
 } from '../util/misc'
 import Scroller from '../common/Scroller'
 import View from '../View'
