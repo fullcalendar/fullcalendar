@@ -531,7 +531,7 @@ export default abstract class DateComponent extends Component {
 
 
   // Given position-level information about a date-related area within the grid,
-  // should return a jQuery element that best represents it. passed to dayClick callback.
+  // should return an element that best represents it. passed to dayClick callback.
   getHitEl(hit): HTMLElement | null {
     return null
   }

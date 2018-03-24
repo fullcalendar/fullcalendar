@@ -12,7 +12,7 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
-import { makeElement, htmlToElements, findElsWithin, removeElement } from '../util/dom'
+import { makeElement, htmlToElements, findElsWithin, removeElement, queryChildren } from '../util/dom'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
@@ -458,7 +458,7 @@ export default class DayGrid extends InteractiveDateComponent {
   computeRowLevelLimit(row): (number | false) {
     let rowEl = this.rowEls[row] // the containing "fake" row div
     let rowBottom = rowEl.getBoundingClientRect().bottom
-    let trEls: HTMLTableRowElement[] = this.eventRenderer.rowStructs[row].tbodyEl.childNodes
+    let trEls = queryChildren(this.eventRenderer.rowStructs[row].tbodyEl) as HTMLTableRowElement[]
     let i
     let trEl: HTMLTableRowElement
 
@@ -518,10 +518,7 @@ export default class DayGrid extends InteractiveDateComponent {
       levelSegs = rowStruct.segLevels[levelLimit - 1]
       cellMatrix = rowStruct.cellMatrix
 
-      limitedNodes = Array.prototype.slice.call( // get level <tr> elements past the limit
-        rowStruct.tbodyEl.childNodes,
-        levelLimit
-      )
+      limitedNodes = queryChildren(rowStruct.tbodyEl).slice(levelLimit) // get level <tr> elements past the limit
       limitedNodes.forEach(function(node) {
         node.classList.add('fc-limited') // hide elements and get a simple DOM-nodes array
       })

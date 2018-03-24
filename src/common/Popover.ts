@@ -14,7 +14,7 @@ Options:
 */
 
 import { getScrollParent } from '../util'
-import { listenViaDelegation, ElementContent, removeElement, makeElement } from '../util/dom'
+import { listenBySelector, ElementContent, removeElement, makeElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {
@@ -82,7 +82,7 @@ export default class Popover {
     options.parentEl.appendChild(el)
 
     // when a click happens on anything inside with a 'fc-close' className, hide the popover
-    listenViaDelegation(el, 'click', 'fc-close', (ev) => {
+    listenBySelector(el, 'click', '.fc-close', (ev) => {
       this.hide()
     })
 

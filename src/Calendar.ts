@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import { capitaliseFirstLetter, debounce } from './util'
-import { listenBySelector, toggleClassName, makeElement, removeElement, applyStyle, prependWithinEl, computeHeightAndMargins } from './util/dom'
+import { listenBySelector, makeElement, removeElement, applyStyle, prependWithinEl, computeHeightAndMargins } from './util/dom'
 import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
@@ -384,8 +384,8 @@ export default class Calendar {
     // called immediately, and upon option change.
     // HACK: locale often affects isRTL, so we explicitly listen to that too.
     this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], (opts) => {
-      toggleClassName(el, 'fc-ltr', !opts.isRTL)
-      toggleClassName(el, 'fc-rtl', opts.isRTL)
+      el.classList.toggle('fc-ltr', !opts.isRTL)
+      el.classList.toggle('fc-rtl', opts.isRTL)
     })
 
     prependWithinEl(el, this.contentEl = makeElement('div', { className: 'fc-view-container' }))
