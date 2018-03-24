@@ -61,7 +61,6 @@ export {
   appendToElement,
   applyStyle,
   applyStyleProp,
-  computeHeightAndMargins,
   elementMatches,
   queryChild,
   queryChildren
@@ -75,7 +74,8 @@ export {
 
 export {
   getInnerRect,
-  getEdges
+  getEdges,
+  computeHeightAndMargins
 } from './util/dom-geom'
 
 export {

@@ -1,6 +1,7 @@
 import * as moment from 'moment'
 import { capitaliseFirstLetter, debounce } from './util/misc'
-import { createElement, removeElement, applyStyle, prependToElement, computeHeightAndMargins } from './util/dom'
+import { createElement, removeElement, applyStyle, prependToElement } from './util/dom'
+import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'

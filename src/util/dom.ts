@@ -219,14 +219,3 @@ export function applyStyleProp(el: HTMLElement, name: string, val) {
     el.style[name] = val
   }
 }
-
-
-// Dimensions
-// ----------------------------------------------------------------------------------------------------------------
-
-export function computeHeightAndMargins(el: HTMLElement) {
-  let computed = window.getComputedStyle(el)
-  return el.offsetHeight +
-    parseInt(computed.marginTop, 10) +
-    parseInt(computed.marginBottom, 10)
-}

@@ -1,27 +1,5 @@
 import { createElement, removeElement } from './dom'
 
-
-// will return null of no scroll parent. will NOT return window/body
-export function getScrollParent(el: HTMLElement): HTMLElement | null {
-
-  while (el instanceof HTMLElement) { // will stop when gets to document or null
-    let computedStyle = window.getComputedStyle(el)
-
-    if (computedStyle.position === 'fixed') {
-      break
-    }
-
-    if ((/(auto|scroll)/).test(computedStyle.overflow + computedStyle.overflowY + computedStyle.overflowX)) {
-      return el
-    }
-
-    el = el.parentNode as HTMLElement
-  }
-
-  return null
-}
-
-
 export interface EdgeInfo {
   borderLeft: number
   borderRight: number
@@ -35,6 +13,7 @@ export interface EdgeInfo {
   paddingTop?: number
   paddingBottom?: number
 }
+
 
 export function getEdges(el, getPadding = false): EdgeInfo {
   let computedStyle = window.getComputedStyle(el)
@@ -70,6 +49,7 @@ export function getEdges(el, getPadding = false): EdgeInfo {
   return res
 }
 
+
 export function getInnerRect(el, goWithinPadding = false) {
   let outerRect = el.getBoundingClientRect()
   let edges = getEdges(el, goWithinPadding)
@@ -88,6 +68,35 @@ export function getInnerRect(el, goWithinPadding = false) {
   }
 
   return res
+}
+
+
+export function computeHeightAndMargins(el: HTMLElement) {
+  let computed = window.getComputedStyle(el)
+  return el.offsetHeight +
+    parseInt(computed.marginTop, 10) +
+    parseInt(computed.marginBottom, 10)
+}
+
+
+// will return null of no scroll parent. will NOT return window/body
+export function getScrollParent(el: HTMLElement): HTMLElement | null {
+
+  while (el instanceof HTMLElement) { // will stop when gets to document or null
+    let computedStyle = window.getComputedStyle(el)
+
+    if (computedStyle.position === 'fixed') {
+      break
+    }
+
+    if ((/(auto|scroll)/).test(computedStyle.overflow + computedStyle.overflowY + computedStyle.overflowX)) {
+      return el
+    }
+
+    el = el.parentNode as HTMLElement
+  }
+
+  return null
 }
 
 

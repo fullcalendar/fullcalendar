@@ -1,4 +1,5 @@
-import { applyStyle, computeHeightAndMargins } from './dom'
+import { applyStyle } from './dom'
+import { computeHeightAndMargins } from './dom-geom'
 import { preventDefault } from './dom-event'
 
 
