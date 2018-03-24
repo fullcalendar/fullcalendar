@@ -1,20 +1,21 @@
 
-// TODO: util for animation end
-
-
 // Creating
 // ----------------------------------------------------------------------------------------------------------------
 
-// TODO: use in other places
-// TODO: rename to createElement
-export function createElement(tagName, attrs, content?): HTMLElement {
+const elementPropHash = { // when props given to createElement should be treated as props, not attributes
+  className: true,
+  colSpan: true,
+  rowSpan: true
+}
+
+export function createElement(tagName: string, attrs: object | null, content?: ElementContent): HTMLElement {
   let el: HTMLElement = document.createElement(tagName)
 
   if (attrs) {
     for (let attrName in attrs) {
       if (attrName === 'style') {
-        applyStyle(el as HTMLElement, attrs[attrName])
-      } else if (attrName === 'className' || attrName === 'colSpan' || attrName === 'rowSpan') { // TODO: do hash
+        applyStyle(el, attrs[attrName])
+      } else if (elementPropHash[attrName]) {
         el[attrName] = attrs[attrName]
       } else {
         el.setAttribute(attrName, attrs[attrName])
@@ -23,7 +24,7 @@ export function createElement(tagName, attrs, content?): HTMLElement {
   }
 
   if (typeof content === 'string') {
-    el.innerHTML = content
+    el.innerHTML = content // shortcut. no need to process HTML in any way
   } else if (content != null) {
     appendToElement(el, content)
   }
@@ -31,18 +32,22 @@ export function createElement(tagName, attrs, content?): HTMLElement {
   return el
 }
 
-export function htmlToElement(htmlString): HTMLElement {
-  htmlString = htmlString.trim()
-  let container = document.createElement(computeContainerTag(htmlString))
-  container.innerHTML = htmlString
+export function htmlToElement(html: string): HTMLElement {
+  html = html.trim()
+  let container = document.createElement(computeContainerTag(html))
+  container.innerHTML = html
   return container.firstChild as HTMLElement
 }
 
-export function htmlToElements(htmlString): HTMLElement[] {
-  htmlString = htmlString.trim()
-  let container = document.createElement(computeContainerTag(htmlString))
-  container.innerHTML = htmlString
-  return Array.prototype.slice.call(container.childNodes)
+export function htmlToElements(html: string): HTMLElement[] {
+  return Array.prototype.slice.call(htmlToNodeList(html))
+}
+
+function htmlToNodeList(html: string): NodeList {
+  html = html.trim()
+  let container = document.createElement(computeContainerTag(html))
+  container.innerHTML = html
+  return container.childNodes
 }
 
 // assumes html already trimmed
@@ -93,10 +98,10 @@ export function insertAfterElement(refEl: HTMLElement, content: ElementContent) 
 function normalizeContent(content: ElementContent): NodeList | Node[] {
   let els
   if (typeof content === 'string') {
-    els = htmlToElements(content) // TODO: optimization, htmlToNodeList
+    els = htmlToNodeList(content)
   } else if (content instanceof Node) {
     els = [ content ]
-  } else { // assumed to be HTMLElement[]
+  } else { // assumed to be NodeList or Node[]
     els = content
   }
   return els
@@ -143,24 +148,24 @@ export function elementMatches(el: HTMLElement, selector: string) {
   return matchesMethod.call(el, selector)
 }
 
-// TODO: user new signature in other places
-// this is only func that accepts array :(
+// only func that accepts multiple subject els (in this case, the 'containers')
 export function findElements(containers: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
   if (containers instanceof HTMLElement) {
     containers = [ containers ]
   }
-  let allChildEls: HTMLElement[] = []
+  let allMatches: HTMLElement[] = []
 
   for (let i = 0; i < containers.length; i++) {
-    let childEls = containers[i].querySelectorAll(selector)
-    for (let j = 0; j < childEls.length; j++) {
-      allChildEls.push(childEls[j] as HTMLElement)
+    let matches = containers[i].querySelectorAll(selector)
+    for (let j = 0; j < matches.length; j++) {
+      allMatches.push(matches[j] as HTMLElement)
     }
   }
 
-  return allChildEls
+  return allMatches
 }
 
+// only queries direct child elements
 export function queryChildren(parent: HTMLElement, selector?: string): HTMLElement[] {
   let childNodes = parent.childNodes
   let a = []
@@ -178,6 +183,7 @@ export function queryChildren(parent: HTMLElement, selector?: string): HTMLEleme
   return a
 }
 
+// queries for the first matching direct child element
 export function queryChild(parent: HTMLElement, selector?: string): HTMLElement | null {
   let childNodes = parent.childNodes
 
@@ -237,6 +243,7 @@ export function listenToHoverBySelector(
         matchedChild.removeEventListener('mouseleave', realOnMouseLeave)
       }
 
+      // listen to the next mouseleave, and then unattach
       matchedChild.addEventListener('mouseleave', realOnMouseLeave)
     }
   })
@@ -248,7 +255,6 @@ export function listenToHoverBySelector(
 
 const PIXEL_PROP_RE = /(top|left|right|bottom|width|height)$/i
 
-// find other places to do this
 export function applyStyle(el: HTMLElement, props: object, propVal?: any) {
   for (let propName in props) {
     applyStyleProp(el, propName, props[propName])
@@ -288,6 +294,7 @@ const transitionEventNames = [
   'transitionend'
 ]
 
+// triggered only when the next single subsequent transition finishes
 export function whenTransitionDone(el: HTMLElement, callback: (ev: Event) => void) {
   let realCallback = function(ev) {
     callback(ev)
