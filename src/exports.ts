@@ -24,11 +24,6 @@ export {
   compareByFieldSpecs,
   compareByFieldSpec,
   flexibleCompare,
-  computeGreatestUnit,
-  divideRangeByDuration,
-  divideDurationByDuration,
-  multiplyDuration,
-  durationHasTime,
   log,
   warn,
   removeExact
@@ -41,6 +36,14 @@ export {
 export {
   assignTo
 } from './util/object'
+
+export {
+  computeGreatestUnit,
+  divideRangeByDuration,
+  divideDurationByDuration,
+  multiplyDuration,
+  durationHasTime
+} from './util/date'
 
 export {
   findElements,

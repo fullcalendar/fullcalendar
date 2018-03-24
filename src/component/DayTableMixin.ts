@@ -1,4 +1,5 @@
-import { htmlEscape, dayIDs } from '../util'
+import { htmlEscape } from '../util'
+import { dayIDs } from '../util/date'
 import { prependToElement, appendToElement } from '../util/dom'
 import Mixin from '../common/Mixin'
 

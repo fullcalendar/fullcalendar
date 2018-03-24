@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { isNativeDate } from './util'
+import { isNativeDate } from './util/date'
 import { assignTo } from './util/object'
 
 /*

@@ -1,6 +1,7 @@
 import * as moment from 'moment'
 import { viewHash } from './ViewRegistry'
-import { mergeProps, unitsDesc, computeDurationGreatestUnit } from './util'
+import { mergeProps } from './util'
+import { unitsDesc, computeDurationGreatestUnit } from './util/date'
 import { mergeOptions, globalDefaults } from './options'
 import { populateInstanceComputableOptions } from './locale'
 

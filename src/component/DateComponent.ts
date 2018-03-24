@@ -1,5 +1,6 @@
 import * as moment from 'moment'
-import { attrsToStr, htmlEscape, dayIDs } from '../util'
+import { attrsToStr, htmlEscape } from '../util'
+import { dayIDs } from '../util/date'
 import momentExt from '../moment-ext'
 import { formatRange } from '../date-formatting'
 import Component from './Component'

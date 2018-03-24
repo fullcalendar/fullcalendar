@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { isTimeString } from '../../util'
+import { isTimeString } from '../../util/date'
 import SingleEventDef from './SingleEventDef'
 import RecurringEventDef from './RecurringEventDef'
 

@@ -1,4 +1,4 @@
-import { diffByUnit, diffDay, diffDayTime } from '../../util'
+import { diffByUnit, diffDay, diffDayTime } from '../../util/date'
 import EventDateProfile from './EventDateProfile'
 
 

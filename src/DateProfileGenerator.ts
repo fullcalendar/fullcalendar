@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { computeGreatestUnit, computeDurationGreatestUnit } from './util'
+import { computeGreatestUnit, computeDurationGreatestUnit } from './util/date'
 import UnzonedRange from './models/UnzonedRange'
 
 
