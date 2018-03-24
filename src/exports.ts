@@ -31,9 +31,12 @@ export {
   durationHasTime,
   log,
   warn,
-  removeExact,
-  intersectRects
+  removeExact
 } from './util'
+
+export {
+  intersectRects
+} from './util/geom'
 
 export {
   assignTo

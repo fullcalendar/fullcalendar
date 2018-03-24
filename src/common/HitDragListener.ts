@@ -3,7 +3,7 @@ import {
   intersectRects,
   getRectCenter,
   diffPoints
-} from '../util'
+} from '../util/geom'
 import {
   getEvX,
   getEvY,
