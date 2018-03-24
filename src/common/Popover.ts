@@ -14,7 +14,8 @@ Options:
 */
 
 import { getScrollParent } from '../util/dom-geom'
-import { listenBySelector, ElementContent, removeElement, createElement } from '../util/dom'
+import { ElementContent, removeElement, createElement } from '../util/dom'
+import { listenBySelector } from '../util/dom-event'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {

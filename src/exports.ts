@@ -58,19 +58,19 @@ export {
   insertAfterElement,
   prependToElement,
   removeElement,
-  listenBySelector,
   appendToElement,
   applyStyle,
   applyStyleProp,
   computeHeightAndMargins,
   elementMatches,
   queryChild,
-  queryChildren,
-  whenTransitionDone
+  queryChildren
 } from './util/dom'
 
 export {
-  preventDefault
+  preventDefault,
+  listenBySelector,
+  whenTransitionDone
 } from './util/dom-event'
 
 export {
