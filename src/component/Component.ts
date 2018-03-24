@@ -1,4 +1,4 @@
-import { removeElement } from '../util/dom'
+import { removeElement } from '../util/dom-manip'
 import Model from '../common/Model'
 
 export default class Component extends Model {

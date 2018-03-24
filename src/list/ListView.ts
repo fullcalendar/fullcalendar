@@ -1,4 +1,4 @@
-import { htmlToElement, createElement } from '../util/dom'
+import { htmlToElement, createElement } from '../util/dom-manip'
 import { htmlEscape } from '../util/html'
 import { subtractInnerElHeight } from '../util/misc'
 import UnzonedRange from '../models/UnzonedRange'

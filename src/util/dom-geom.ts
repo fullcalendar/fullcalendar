@@ -1,4 +1,4 @@
-import { createElement, removeElement } from './dom'
+import { createElement, removeElement } from './dom-manip'
 
 export interface EdgeInfo {
   borderLeft: number

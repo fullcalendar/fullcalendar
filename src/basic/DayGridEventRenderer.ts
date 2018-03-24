@@ -1,5 +1,5 @@
 import { htmlEscape, cssToStr } from '../util/html'
-import { createElement, removeElement } from '../util/dom'
+import { createElement, removeElement } from '../util/dom-manip'
 import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'
 

@@ -1,4 +1,4 @@
-import { applyStyle } from '../util/dom'
+import { applyStyle } from '../util/dom-manip'
 import HelperRenderer from '../component/renderers/HelperRenderer'
 
 

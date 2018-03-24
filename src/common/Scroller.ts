@@ -1,5 +1,5 @@
 import { getEdges } from '../util/dom-geom'
-import { removeElement } from '../util/dom'
+import { removeElement } from '../util/dom-manip'
 import Class from '../common/Class'
 
 /*

@@ -1,4 +1,4 @@
-import { applyStyle } from './dom'
+import { applyStyle } from './dom-manip'
 import { computeHeightAndMargins } from './dom-geom'
 import { preventDefault } from './dom-event'
 

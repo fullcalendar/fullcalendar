@@ -1,5 +1,5 @@
 import { cssToStr } from '../../util/html'
-import { htmlToElements, removeElement } from '../../util/dom'
+import { htmlToElements, removeElement } from '../../util/dom-manip'
 
 
 export default class FillRenderer { // use for highlight, background events, business hours

@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import { htmlEscape } from '../util/html'
 import { copyOwnProps } from '../util/object'
-import { findElements, createElement } from '../util/dom'
+import { findElements, createElement } from '../util/dom-manip'
 import {
   matchCellWidths,
   uncompensateScroll,

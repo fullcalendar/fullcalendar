@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import * as exportHooks from '../../exports'
 import { assignTo } from '../../util/object'
-import { elementMatches } from '../../util/dom'
+import { elementMatches } from '../../util/dom-manip'
 import { disableCursor, enableCursor } from '../../util/misc'
 import momentExt from '../../moment-ext'
 import { default as ListenerMixin, ListenerInterface } from '../../common/ListenerMixin'

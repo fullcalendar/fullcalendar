@@ -4,7 +4,7 @@ import {
   getEvX,
   getEvIsTouch
 } from '../util/dom-event'
-import { removeElement } from '../util/dom'
+import { removeElement } from '../util/dom-manip'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface MouseFollowerOptions {

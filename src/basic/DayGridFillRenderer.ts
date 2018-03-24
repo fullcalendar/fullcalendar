@@ -1,4 +1,4 @@
-import { htmlToElement, createElement } from '../util/dom'
+import { htmlToElement, createElement } from '../util/dom-manip'
 import FillRenderer from '../component/renderers/FillRenderer'
 import DayGrid from './DayGrid'
 

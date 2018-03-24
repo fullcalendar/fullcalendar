@@ -64,7 +64,7 @@ export {
   elementMatches,
   queryChild,
   queryChildren
-} from './util/dom'
+} from './util/dom-manip'
 
 export {
   preventDefault,

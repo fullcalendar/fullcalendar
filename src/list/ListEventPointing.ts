@@ -1,4 +1,4 @@
-import { elementClosest } from '../util/dom'
+import { elementClosest } from '../util/dom-manip'
 import EventPointing from '../component/interactions/EventPointing'
 
 

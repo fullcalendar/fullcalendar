@@ -1,6 +1,6 @@
 import { htmlEscape } from '../util/html'
 import { dayIDs } from '../util/date'
-import { prependToElement, appendToElement } from '../util/dom'
+import { prependToElement, appendToElement } from '../util/dom-manip'
 import Mixin from '../common/Mixin'
 
 export interface DayTableInterface {

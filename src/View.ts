@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import { assignTo } from './util/object'
-import { elementClosest } from './util/dom'
+import { elementClosest } from './util/dom-manip'
 import { isPrimaryMouseButton } from './util/dom-event'
 import { parseFieldSpecs } from './util/misc'
 import RenderQueue from './common/RenderQueue'

@@ -1,5 +1,5 @@
 import { htmlEscape } from './util/html'
-import { htmlToElement, appendToElement, removeElement, findElements } from './util/dom'
+import { htmlToElement, appendToElement, removeElement, findElements } from './util/dom-manip'
 
 
 /* Toolbar with buttons and title

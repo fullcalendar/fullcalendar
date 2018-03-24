@@ -1,4 +1,4 @@
-import { htmlToElements } from '../../util/dom'
+import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
 
 export default class EventRenderer {

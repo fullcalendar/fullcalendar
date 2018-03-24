@@ -12,7 +12,7 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
-import { createElement, htmlToElements, findElements, removeElement, queryChildren } from '../util/dom'
+import { createElement, htmlToElements, findElements, removeElement, queryChildren } from '../util/dom-manip'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.

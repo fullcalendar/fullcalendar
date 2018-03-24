@@ -1,5 +1,5 @@
 import { htmlEscape } from '../util/html'
-import { createElement, findElements } from '../util/dom'
+import { createElement, findElements } from '../util/dom-manip'
 import {
   matchCellWidths,
   uncompensateScroll,

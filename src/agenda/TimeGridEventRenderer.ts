@@ -1,5 +1,5 @@
 import { htmlEscape, cssToStr } from '../util/html'
-import { removeElement, applyStyle } from '../util/dom'
+import { removeElement, applyStyle } from '../util/dom-manip'
 import EventRenderer from '../component/renderers/EventRenderer'
 
 /*

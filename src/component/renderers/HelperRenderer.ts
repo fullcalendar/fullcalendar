@@ -1,4 +1,4 @@
-import { removeElement } from '../../util/dom'
+import { removeElement } from '../../util/dom-manip'
 import SingleEventDef from '../../models/event/SingleEventDef'
 import EventFootprint from '../../models/event/EventFootprint'
 import EventSource from '../../models/event-source/EventSource'
