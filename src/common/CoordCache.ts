@@ -1,4 +1,4 @@
-import { getInnerRect, getScrollParent } from '../util'
+import { getInnerRect, getScrollParent } from '../util/dom-geom'
 
 export interface CoordCacheOptions {
   els: HTMLElement[]

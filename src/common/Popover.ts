@@ -13,7 +13,7 @@ Options:
   - hide (callback)
 */
 
-import { getScrollParent } from '../util'
+import { getScrollParent } from '../util/dom-geom'
 import { listenBySelector, ElementContent, removeElement, createElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 

@@ -20,8 +20,6 @@ export {
   htmlEscape,
   cssToStr,
   capitaliseFirstLetter,
-  getInnerRect,
-  getEdges,
   preventDefault,
   parseFieldSpecs,
   compareByFieldSpecs,
@@ -59,6 +57,11 @@ export {
   queryChildren,
   whenTransitionDone
 } from './util/dom'
+
+export {
+  getInnerRect,
+  getEdges
+} from './util/dom-geom'
 
 export {
   formatDate,

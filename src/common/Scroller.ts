@@ -1,4 +1,4 @@
-import { getEdges } from '../util'
+import { getEdges } from '../util/dom-geom'
 import { removeElement } from '../util/dom'
 import Class from '../common/Class'
 
