@@ -1,4 +1,4 @@
-import { isArraysEqual } from '../../util'
+import { isArraysEqual } from '../../util/array'
 import EventDateProfile from './EventDateProfile'
 import EventDef from './EventDef'
 import EventDefDateMutation from './EventDefDateMutation'

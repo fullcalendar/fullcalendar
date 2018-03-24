@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { removeExact, removeMatching } from '../util'
+import { removeExact, removeMatching } from '../util/array'
 import { isEmptyObject } from '../util/object'
 import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
 import UnzonedRange from './UnzonedRange'

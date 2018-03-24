@@ -1,4 +1,4 @@
-import { removeExact } from '../util'
+import { removeExact } from '../util/array'
 import EventPeriod from './EventPeriod'
 import ArrayEventSource from './event-source/ArrayEventSource'
 import EventSource from './event-source/EventSource'

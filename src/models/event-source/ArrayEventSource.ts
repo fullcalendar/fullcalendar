@@ -1,4 +1,4 @@
-import { removeMatching } from '../../util'
+import { removeMatching } from '../../util/array'
 import EventSource from './EventSource'
 import SingleEventDef from '../event/SingleEventDef'
 

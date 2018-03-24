@@ -25,9 +25,12 @@ export {
   compareByFieldSpec,
   flexibleCompare,
   log,
-  warn,
-  removeExact
+  warn
 } from './util'
+
+export {
+  removeExact
+} from './util/array'
 
 export {
   intersectRects
