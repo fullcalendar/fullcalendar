@@ -1,5 +1,5 @@
-import { compareByFieldSpecs } from '../../util'
 import { htmlToElements } from '../../util/dom'
+import { compareByFieldSpecs } from '../../util/misc'
 
 export default class EventRenderer {
 

@@ -1,6 +1,6 @@
 import * as $ from 'jquery'
 import * as exportHooks from './exports'
-import { warn } from './util'
+import { warn } from './util/misc'
 import Calendar from './Calendar'
 
 // for intentional side-effects

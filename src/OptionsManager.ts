@@ -1,5 +1,5 @@
-import { firstDefined } from './util'
 import { assignTo } from './util/object'
+import { firstDefined } from './util/misc'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
 import { localeOptionHash, populateInstanceComputableOptions } from './locale'
 import Model from './common/Model'

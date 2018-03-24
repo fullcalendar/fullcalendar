@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { isInt } from '../util'
+import { isInt } from '../util/misc'
 
 export const dayIDs = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ]
 export const unitsDesc = [ 'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond' ] // descending

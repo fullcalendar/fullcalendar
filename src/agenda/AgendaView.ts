@@ -1,13 +1,13 @@
 import * as moment from 'moment'
+import { htmlEscape } from '../util/html'
+import { copyOwnProps } from '../util/object'
+import { findElements, createElement } from '../util/dom'
 import {
   matchCellWidths,
   uncompensateScroll,
   compensateScroll,
   subtractInnerElHeight,
-} from '../util'
-import { htmlEscape } from '../util/html'
-import { copyOwnProps } from '../util/object'
-import { findElements, createElement } from '../util/dom'
+} from '../util/misc'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import TimeGrid from './TimeGrid'

@@ -1,5 +1,5 @@
-import { applyStyle, computeHeightAndMargins } from './util/dom'
-import { preventDefault } from './util/dom-event'
+import { applyStyle, computeHeightAndMargins } from './dom'
+import { preventDefault } from './dom-event'
 
 
 /* FullCalendar-specific DOM Utilities

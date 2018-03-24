@@ -1,6 +1,6 @@
 import * as $ from 'jquery'
-import { applyAll } from '../../util'
 import { assignTo } from '../../util/object'
+import { applyAll } from '../../util/misc'
 import EventSource from './EventSource'
 
 

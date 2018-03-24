@@ -24,7 +24,7 @@ export {
   flexibleCompare,
   log,
   warn
-} from './util'
+} from './util/misc'
 
 export {
   htmlEscape,

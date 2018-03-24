@@ -1,4 +1,4 @@
-import { disableCursor, enableCursor } from '../../util'
+import { disableCursor, enableCursor } from '../../util/misc'
 import EventDefMutation from '../../models/event/EventDefMutation'
 import EventDefDateMutation from '../../models/event/EventDefDateMutation'
 import HitDragListener from '../../common/HitDragListener'

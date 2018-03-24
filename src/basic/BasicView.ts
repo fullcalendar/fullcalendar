@@ -1,3 +1,5 @@
+import { htmlEscape } from '../util/html'
+import { createElement, findElements } from '../util/dom'
 import {
   matchCellWidths,
   uncompensateScroll,
@@ -5,9 +7,7 @@ import {
   subtractInnerElHeight,
   distributeHeight,
   undistributeHeight
-} from '../util'
-import { htmlEscape } from '../util/html'
-import { createElement, findElements } from '../util/dom'
+} from '../util/misc'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'

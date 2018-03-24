@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { capitaliseFirstLetter, debounce } from './util'
+import { capitaliseFirstLetter, debounce } from './util/misc'
 import { listenBySelector, createElement, removeElement, applyStyle, prependToElement, computeHeightAndMargins } from './util/dom'
 import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'

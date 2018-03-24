@@ -1,6 +1,6 @@
-import { subtractInnerElHeight } from '../util'
-import { htmlEscape } from '../util/html'
 import { htmlToElement, createElement } from '../util/dom'
+import { htmlEscape } from '../util/html'
+import { subtractInnerElHeight } from '../util/misc'
 import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'
 import Scroller from '../common/Scroller'

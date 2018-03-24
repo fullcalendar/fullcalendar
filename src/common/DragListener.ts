@@ -1,9 +1,4 @@
-import {
-  firstDefined,
-  preventSelection,
-  allowSelection,
-  debounce
-} from '../util'
+import { getScrollParent } from '../util/dom-geom'
 import {
   getEvIsTouch,
   getEvX,
@@ -11,7 +6,12 @@ import {
   isPrimaryMouseButton,
   preventDefault
 } from '../util/dom-event'
-import { getScrollParent } from '../util/dom-geom'
+import {
+  firstDefined,
+  preventSelection,
+  allowSelection,
+  debounce
+} from '../util/misc'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 import GlobalEmitter from './GlobalEmitter'
 

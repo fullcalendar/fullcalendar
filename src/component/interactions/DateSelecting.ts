@@ -1,4 +1,4 @@
-import { enableCursor, disableCursor, preventSelection, compareNumbers } from '../../util'
+import { enableCursor, disableCursor, preventSelection, compareNumbers } from '../../util/misc'
 import HitDragListener from '../../common/HitDragListener'
 import ComponentFootprint from '../../models/ComponentFootprint'
 import UnzonedRange from '../../models/UnzonedRange'

@@ -12,7 +12,7 @@ after class:
   EmitterMixin.mixInto(TheClass)
 */
 
-import { applyAll } from '../util'
+import { applyAll } from '../util/misc'
 import Mixin from './Mixin'
 
 export interface EmitterInterface {

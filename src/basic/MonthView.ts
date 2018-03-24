@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { distributeHeight } from '../util'
+import { distributeHeight } from '../util/misc'
 import BasicView from './BasicView'
 import MonthViewDateProfileGenerator from './MonthViewDateProfileGenerator'
 
