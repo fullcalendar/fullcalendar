@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { applyStyle, computeHeightAndMargins, makeElement, removeElement } from './util/dom'
+import { applyStyle, computeHeightAndMargins, createElement, removeElement } from './util/dom'
 
 
 /* FullCalendar-specific DOM Utilities
@@ -274,7 +274,7 @@ function getIsLeftRtlScrollbars() { // responsible for caching the computation
 }
 
 function computeIsLeftRtlScrollbars() { // creates an offscreen test element, then removes it
-  let outerEl = makeElement('div', {
+  let outerEl = createElement('div', {
     style: {
       position: 'absolute',
       top: -1000,

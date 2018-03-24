@@ -1,5 +1,5 @@
 import { htmlEscape } from './util'
-import { htmlToElement, appendContentTo, removeElement, findElsWithin } from './util/dom'
+import { htmlToElement, appendToElement, removeElement, findElements } from './util/dom'
 
 
 /* Toolbar with buttons and title
@@ -36,10 +36,10 @@ export default class Toolbar {
       } else {
         el.innerHTML = ''
       }
-      appendContentTo(el, this.renderSection('left'))
-      appendContentTo(el, this.renderSection('right'))
-      appendContentTo(el, this.renderSection('center'))
-      appendContentTo(el, '<div class="fc-clear"></div>')
+      appendToElement(el, this.renderSection('left'))
+      appendToElement(el, this.renderSection('right'))
+      appendToElement(el, this.renderSection('center'))
+      appendToElement(el, '<div class="fc-clear"></div>')
     } else {
       this.removeElement()
     }
@@ -228,10 +228,10 @@ export default class Toolbar {
             groupEl.classList.add(buttonGroupClassName)
           }
 
-          appendContentTo(groupEl, groupChildren)
+          appendToElement(groupEl, groupChildren)
           sectionEl.appendChild(groupEl)
         } else {
-          appendContentTo(sectionEl, groupChildren) // 1 or 0 children
+          appendToElement(sectionEl, groupChildren) // 1 or 0 children
         }
       })
     }
@@ -242,7 +242,7 @@ export default class Toolbar {
 
   updateTitle(text) {
     if (this.el) {
-      findElsWithin(this.el, 'h2').forEach(function(titleEl) {
+      findElements(this.el, 'h2').forEach(function(titleEl) {
         titleEl.innerText = text
       })
     }
@@ -251,7 +251,7 @@ export default class Toolbar {
 
   activateButton(buttonName) {
     if (this.el) {
-      findElsWithin(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
+      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
         buttonEl.classList.add(this.calendar.theme.getClass('stateActive'))
       })
     }
@@ -260,7 +260,7 @@ export default class Toolbar {
 
   deactivateButton(buttonName) {
     if (this.el) {
-      findElsWithin(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
+      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
         buttonEl.classList.remove(this.calendar.theme.getClass('stateActive'))
       })
     }
@@ -269,7 +269,7 @@ export default class Toolbar {
 
   disableButton(buttonName) {
     if (this.el) {
-      findElsWithin(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
+      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
         buttonEl.disabled = true
         buttonEl.classList.add(this.calendar.theme.getClass('stateDisabled'))
       })
@@ -279,7 +279,7 @@ export default class Toolbar {
 
   enableButton(buttonName) {
     if (this.el) {
-      findElsWithin(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
+      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
         buttonEl.disabled = false
         buttonEl.classList.remove(this.calendar.theme.getClass('stateDisabled'))
       })

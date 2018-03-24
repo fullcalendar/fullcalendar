@@ -1,5 +1,5 @@
 import { htmlEscape, subtractInnerElHeight } from '../util'
-import { htmlToElement, makeElement } from '../util/dom'
+import { htmlToElement, createElement } from '../util/dom'
 import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'
 import Scroller from '../common/Scroller'
@@ -200,7 +200,7 @@ export default class ListView extends View {
     let mainFormat = this.opt('listDayFormat')
     let altFormat = this.opt('listDayAltFormat')
 
-    return makeElement('tr', {
+    return createElement('tr', {
       className: 'fc-list-heading',
       'data-date': dayDate.format('YYYY-MM-DD')
     }, '<td class="' + (

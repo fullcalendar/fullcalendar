@@ -1,5 +1,5 @@
 import { htmlEscape, cssToStr } from '../util'
-import { makeElement, removeElement } from '../util/dom'
+import { createElement, removeElement } from '../util/dom'
 import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'
 
@@ -130,7 +130,7 @@ export default class DayGridEventRenderer extends EventRenderer {
           emptyCellsUntil(seg.leftCol)
 
           // create a container that occupies or more columns. append the event element.
-          td = makeElement('td', { className: 'fc-event-container' }, seg.el) as HTMLTableCellElement
+          td = createElement('td', { className: 'fc-event-container' }, seg.el) as HTMLTableCellElement
           if (seg.leftCol !== seg.rightCol) {
             td.colSpan = seg.rightCol - seg.leftCol + 1
           } else { // a single-column segment

@@ -7,7 +7,7 @@ import {
   undistributeHeight,
   htmlEscape
 } from '../util'
-import { makeElement, findElsWithin } from '../util/dom'
+import { createElement, findElements } from '../util/dom'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
@@ -85,7 +85,7 @@ export default class BasicView extends View {
 
     dayGridContainerEl = this.scroller.el
     dayGridContainerEl.classList.add('fc-day-grid-container')
-    dayGridEl = makeElement('div', { className: 'fc-day-grid' })
+    dayGridEl = createElement('div', { className: 'fc-day-grid' })
     dayGridContainerEl.appendChild(dayGridEl)
 
     this.el.querySelector('.fc-body > tr > td').appendChild(dayGridContainerEl)
@@ -173,7 +173,7 @@ export default class BasicView extends View {
       // Make sure all week number cells running down the side have the same width.
       // Record the width for cells created later.
       this.weekNumberWidth = matchCellWidths(
-        findElsWithin(this.el, '.fc-week-number')
+        findElements(this.el, '.fc-week-number')
       )
     }
 

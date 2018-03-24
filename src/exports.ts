@@ -43,20 +43,21 @@ export {
 } from './util/object'
 
 export {
-  findElsWithin,
+  findElements,
   htmlToElement,
-  makeElement,
-  insertAfterEl,
-  prependWithinEl,
+  createElement,
+  insertAfterElement,
+  prependToElement,
   removeElement,
   listenBySelector,
-  appendContentTo,
+  appendToElement,
   applyStyle,
   applyStyleProp,
   computeHeightAndMargins,
   elementMatches,
   queryChild,
-  queryChildren
+  queryChildren,
+  whenTransitionDone
 } from './util/dom'
 
 export {

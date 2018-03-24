@@ -7,7 +7,7 @@ import {
   htmlEscape,
   copyOwnProps
 } from '../util'
-import { findElsWithin, makeElement } from '../util/dom'
+import { findElements, createElement } from '../util/dom'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import TimeGrid from './TimeGrid'
@@ -87,7 +87,7 @@ export default class AgendaView extends View {
 
     timeGridWrapEl = this.scroller.el
     timeGridWrapEl.classList.add('fc-time-grid-container')
-    timeGridEl = makeElement('div', { className: 'fc-time-grid' })
+    timeGridEl = createElement('div', { className: 'fc-time-grid' })
     timeGridWrapEl.appendChild(timeGridEl)
 
     this.el.querySelector('.fc-body > tr > td').appendChild(timeGridWrapEl)
@@ -176,7 +176,7 @@ export default class AgendaView extends View {
     super.updateSize(totalHeight, isAuto, isResize)
 
     // make all axis cells line up, and record the width so newly created axis cells will have it
-    this.axisWidth = matchCellWidths(findElsWithin(this.el, '.fc-axis'))
+    this.axisWidth = matchCellWidths(findElements(this.el, '.fc-axis'))
 
     // hack to give the view some height prior to timeGrid's columns being rendered
     // TODO: separate setting height from scroller VS timeGrid.
@@ -189,7 +189,7 @@ export default class AgendaView extends View {
     }
 
     // set of fake row elements that must compensate when scroller has scrollbars
-    let noScrollRowEls: HTMLElement[] = findElsWithin(this.el, '.fc-row').filter((node) => {
+    let noScrollRowEls: HTMLElement[] = findElements(this.el, '.fc-row').filter((node) => {
       return !this.scroller.el.contains(node)
     })
 

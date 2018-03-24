@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import { capitaliseFirstLetter, debounce } from './util'
-import { listenBySelector, makeElement, removeElement, applyStyle, prependWithinEl, computeHeightAndMargins } from './util/dom'
+import { listenBySelector, createElement, removeElement, applyStyle, prependToElement, computeHeightAndMargins } from './util/dom'
 import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
@@ -388,7 +388,7 @@ export default class Calendar {
       el.classList.toggle('fc-rtl', opts.isRTL)
     })
 
-    prependWithinEl(el, this.contentEl = makeElement('div', { className: 'fc-view-container' }))
+    prependToElement(el, this.contentEl = createElement('div', { className: 'fc-view-container' }))
 
     this.initToolbars()
     this.renderHeader()
@@ -494,7 +494,7 @@ export default class Calendar {
 
       newView.startBatchRender() // so that setElement+setDate rendering are joined
 
-      let viewEl = makeElement('div', { className: 'fc-view fc-' + viewType + '-view' })
+      let viewEl = createElement('div', { className: 'fc-view fc-' + viewType + '-view' })
       this.contentEl.appendChild(viewEl)
       newView.setElement(viewEl)
 
@@ -716,7 +716,7 @@ export default class Calendar {
     header.render()
 
     if (header.el) {
-      prependWithinEl(this.el, header.el)
+      prependToElement(this.el, header.el)
     }
   }
 

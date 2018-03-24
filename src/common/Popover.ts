@@ -14,7 +14,7 @@ Options:
 */
 
 import { getScrollParent } from '../util'
-import { listenBySelector, ElementContent, removeElement, makeElement } from '../util/dom'
+import { listenBySelector, ElementContent, removeElement, createElement } from '../util/dom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {
@@ -71,7 +71,7 @@ export default class Popover {
   // Creates `this.el` and renders content inside of it
   render() {
     let options = this.options
-    let el = this.el = makeElement('div', {
+    let el = this.el = createElement('div', {
       className: 'fc-popover ' + (options.className || ''),
       style: {
         top: '0',

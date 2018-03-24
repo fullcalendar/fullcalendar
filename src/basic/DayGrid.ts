@@ -12,7 +12,7 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
-import { makeElement, htmlToElements, findElsWithin, removeElement, queryChildren } from '../util/dom'
+import { createElement, htmlToElements, findElements, removeElement, queryChildren } from '../util/dom'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
@@ -117,8 +117,8 @@ export default class DayGrid extends InteractiveDateComponent {
     }
     this.el.innerHTML = html
 
-    this.rowEls = findElsWithin(this.el, '.fc-row')
-    this.cellEls = findElsWithin(this.el, '.fc-day, .fc-disabled-day')
+    this.rowEls = findElements(this.el, '.fc-row')
+    this.cellEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
     this.rowCoordCache = new CoordCache({
       els: this.rowEls,
@@ -506,7 +506,7 @@ export default class DayGrid extends InteractiveDateComponent {
         if (segsBelow.length) {
           td = cellMatrix[levelLimit - 1][col]
           moreLink = this.renderMoreLink(row, col, segsBelow)
-          moreWrap = makeElement('div', null, moreLink)
+          moreWrap = createElement('div', null, moreLink)
           td.appendChild(moreWrap)
           moreNodes.push(moreWrap[0])
         }
@@ -545,14 +545,14 @@ export default class DayGrid extends InteractiveDateComponent {
 
           // make a replacement <td> for each column the segment occupies. will be one for each colspan
           for (j = 0; j < colSegsBelow.length; j++) {
-            moreTd = makeElement('td', { className: 'fc-more-cell', rowSpan }) as HTMLTableCellElement
+            moreTd = createElement('td', { className: 'fc-more-cell', rowSpan }) as HTMLTableCellElement
             segsBelow = colSegsBelow[j]
             moreLink = this.renderMoreLink(
               row,
               seg.leftCol + j,
               [ seg ].concat(segsBelow) // count seg as hidden too
             )
-            moreWrap = makeElement('div', null, moreLink)
+            moreWrap = createElement('div', null, moreLink)
             moreTd.appendChild(moreWrap)
             segMoreNodes.push(moreTd)
             moreNodes.push(moreTd)
@@ -601,7 +601,7 @@ export default class DayGrid extends InteractiveDateComponent {
   renderMoreLink(row, col, hiddenSegs) {
     let view = this.view
 
-    let a = makeElement('a', { className: 'fc-more' })
+    let a = createElement('a', { className: 'fc-more' })
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
     a.addEventListener('click', (ev) => {
       let clickOption = this.opt('eventLimitClick')

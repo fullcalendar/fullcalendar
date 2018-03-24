@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import { isInt, divideDurationByDuration, htmlEscape } from '../util'
-import { htmlToElement, findElsWithin, makeElement, removeElement, applyStyle } from '../util/dom'
+import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
@@ -218,7 +218,7 @@ export default class TimeGrid extends InteractiveDateComponent {
         this.renderSlatRowHtml() +
       '</table>'
 
-    this.slatEls = findElsWithin(this.slatContainerEl, 'tr')
+    this.slatEls = findElements(this.slatContainerEl, 'tr')
 
     this.slatCoordCache = new CoordCache({
       els: this.slatEls,
@@ -293,7 +293,7 @@ export default class TimeGrid extends InteractiveDateComponent {
         this.renderBgTrHtml(0) + // row=0
       '</table>'
 
-    this.colEls = findElsWithin(this.el, '.fc-day, .fc-disabled-day')
+    this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
     this.colCoordCache = new CoordCache({
       els: this.colEls,
@@ -340,12 +340,12 @@ export default class TimeGrid extends InteractiveDateComponent {
       '</div>'
     )
 
-    this.colContainerEls = findElsWithin(skeletonEl, '.fc-content-col')
-    this.helperContainerEls = findElsWithin(skeletonEl, '.fc-helper-container')
-    this.fgContainerEls = findElsWithin(skeletonEl, '.fc-event-container:not(.fc-helper-container)')
-    this.bgContainerEls = findElsWithin(skeletonEl, '.fc-bgevent-container')
-    this.highlightContainerEls = findElsWithin(skeletonEl, '.fc-highlight-container')
-    this.businessContainerEls = findElsWithin(skeletonEl, '.fc-business-container')
+    this.colContainerEls = findElements(skeletonEl, '.fc-content-col')
+    this.helperContainerEls = findElements(skeletonEl, '.fc-helper-container')
+    this.fgContainerEls = findElements(skeletonEl, '.fc-event-container:not(.fc-helper-container)')
+    this.bgContainerEls = findElements(skeletonEl, '.fc-bgevent-container')
+    this.highlightContainerEls = findElements(skeletonEl, '.fc-highlight-container')
+    this.businessContainerEls = findElements(skeletonEl, '.fc-business-container')
 
     this.bookendCells(skeletonEl.querySelector('tr')) // TODO: do this on string level
     this.el.appendChild(skeletonEl)
@@ -430,7 +430,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
     // render lines within the columns
     for (i = 0; i < segs.length; i++) {
-      let lineEl = makeElement('div', { className: 'fc-now-indicator fc-now-indicator-line' })
+      let lineEl = createElement('div', { className: 'fc-now-indicator fc-now-indicator-line' })
       lineEl.style.top = top + 'px'
       this.colContainerEls[segs[i].col].appendChild(lineEl)
       nodes.push(lineEl)
@@ -438,7 +438,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
     // render an arrow over the axis
     if (segs.length > 0) { // is the current time in view?
-      let arrowEl = makeElement('div', { className: 'fc-now-indicator fc-now-indicator-arrow' })
+      let arrowEl = createElement('div', { className: 'fc-now-indicator fc-now-indicator-arrow' })
       arrowEl.style.top = top + 'px'
       this.contentSkeletonEl.appendChild(arrowEl)
       nodes.push(arrowEl)

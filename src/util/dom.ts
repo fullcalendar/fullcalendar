@@ -1,6 +1,5 @@
 
 // TODO: util for animation end
-// TODO: get straight the distinction between HTMLElement and Element
 
 
 // Creating
@@ -8,13 +7,13 @@
 
 // TODO: use in other places
 // TODO: rename to createElement
-export function makeElement(tagName, attrs, content?): HTMLElement {
+export function createElement(tagName, attrs, content?): HTMLElement {
   let el: HTMLElement = document.createElement(tagName)
 
   if (attrs) {
     for (let attrName in attrs) {
       if (attrName === 'style') {
-        applyStyle(el, attrs[attrName])
+        applyStyle(el as HTMLElement, attrs[attrName])
       } else if (attrName === 'className' || attrName === 'colSpan' || attrName === 'rowSpan') { // TODO: do hash
         el[attrName] = attrs[attrName]
       } else {
@@ -26,7 +25,7 @@ export function makeElement(tagName, attrs, content?): HTMLElement {
   if (typeof content === 'string') {
     el.innerHTML = content
   } else if (content != null) {
-    appendContentTo(el, content)
+    appendToElement(el, content)
   }
 
   return el
@@ -66,14 +65,14 @@ function computeContainerTag(html: string) {
 
 export type ElementContent = string | Node | NodeList | Node[]
 
-export function appendContentTo(el: HTMLElement, content: ElementContent) {
+export function appendToElement(el: HTMLElement, content: ElementContent) {
   let childNodes = normalizeContent(content)
   for (let i = 0; i < childNodes.length; i++) {
     el.appendChild(childNodes[i])
   }
 }
 
-export function prependWithinEl(parent: HTMLElement, content: ElementContent) {
+export function prependToElement(parent: HTMLElement, content: ElementContent) {
   let newEls = normalizeContent(content)
   let afterEl = parent.firstChild || null // if no firstChild, will append to end, but that's okay, b/c there were no children
 
@@ -82,7 +81,7 @@ export function prependWithinEl(parent: HTMLElement, content: ElementContent) {
   }
 }
 
-export function insertAfterEl(refEl: HTMLElement, content: ElementContent) {
+export function insertAfterElement(refEl: HTMLElement, content: ElementContent) {
   let newEls = normalizeContent(content)
   let afterEl = refEl.nextSibling || null
 
@@ -146,7 +145,7 @@ export function elementMatches(el: HTMLElement, selector: string) {
 
 // TODO: user new signature in other places
 // this is only func that accepts array :(
-export function findElsWithin(containers: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
+export function findElements(containers: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
   if (containers instanceof HTMLElement) {
     containers = [ containers ]
   }
@@ -275,4 +274,29 @@ export function computeHeightAndMargins(el: HTMLElement) {
   return el.offsetHeight +
     parseInt(computed.marginTop, 10) +
     parseInt(computed.marginBottom, 10)
+}
+
+
+// Animation
+// ----------------------------------------------------------------------------------------------------------------
+
+const transitionEventNames = [
+  'webkitTransitionEnd',
+  'otransitionend',
+  'oTransitionEnd',
+  'msTransitionEnd',
+  'transitionend'
+]
+
+export function whenTransitionDone(el: HTMLElement, callback: (ev: Event) => void) {
+  let realCallback = function(ev) {
+    callback(ev)
+    transitionEventNames.forEach(function(eventName) {
+      el.removeEventListener(eventName, realCallback)
+    })
+  }
+
+  transitionEventNames.forEach(function(eventName) {
+    el.addEventListener(eventName, realCallback) // cross-browser way to determine when the transition finishes
+  })
 }

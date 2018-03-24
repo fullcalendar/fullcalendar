@@ -1,5 +1,5 @@
 import { htmlEscape, dayIDs } from '../util'
-import { prependWithinEl, appendContentTo } from '../util/dom'
+import { prependToElement, appendToElement } from '../util/dom'
 import Mixin from '../common/Mixin'
 
 export interface DayTableInterface {
@@ -446,9 +446,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
     if (introHtml) {
       if ((this as any).isRTL) {
-        appendContentTo(trEl, introHtml)
+        appendToElement(trEl, introHtml)
       } else {
-        prependWithinEl(trEl, introHtml)
+        prependToElement(trEl, introHtml)
       }
     }
   }

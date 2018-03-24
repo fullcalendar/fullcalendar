@@ -1,4 +1,4 @@
-import { htmlToElement, makeElement } from '../util/dom'
+import { htmlToElement, createElement } from '../util/dom'
 import FillRenderer from '../component/renderers/FillRenderer'
 import DayGrid from './DayGrid'
 
@@ -49,14 +49,14 @@ export default class DayGridFillRenderer extends FillRenderer {
     trEl = skeletonEl.getElementsByTagName('tr')[0]
 
     if (startCol > 0) {
-      trEl.appendChild(makeElement('td', { colSpan: startCol }))
+      trEl.appendChild(createElement('td', { colSpan: startCol }))
     }
 
     (seg.el as HTMLTableCellElement).colSpan = endCol - startCol
     trEl.appendChild(seg.el)
 
     if (endCol < colCnt) {
-      trEl.appendChild(makeElement('td', { colSpan: colCnt - endCol }))
+      trEl.appendChild(createElement('td', { colSpan: colCnt - endCol }))
     }
 
     this.component.bookendCells(trEl)
