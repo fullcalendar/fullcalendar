@@ -1,4 +1,4 @@
-import { htmlEscape } from '../util'
+import { htmlEscape } from '../util/html'
 import { assignTo } from '../util/object'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'

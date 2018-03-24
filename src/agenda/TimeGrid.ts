@@ -1,5 +1,6 @@
 import * as moment from 'moment'
-import { isInt, htmlEscape } from '../util'
+import { isInt } from '../util'
+import { htmlEscape } from '../util/html'
 import { divideDurationByDuration } from '../util/date'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'

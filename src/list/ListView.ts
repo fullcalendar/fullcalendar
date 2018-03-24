@@ -1,4 +1,5 @@
-import { htmlEscape, subtractInnerElHeight } from '../util'
+import { subtractInnerElHeight } from '../util'
+import { htmlEscape } from '../util/html'
 import { htmlToElement, createElement } from '../util/dom'
 import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'

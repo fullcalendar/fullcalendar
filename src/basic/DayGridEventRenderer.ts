@@ -1,4 +1,4 @@
-import { htmlEscape, cssToStr } from '../util'
+import { htmlEscape, cssToStr } from '../util/html'
 import { createElement, removeElement } from '../util/dom'
 import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'

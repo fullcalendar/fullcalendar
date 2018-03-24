@@ -1,4 +1,4 @@
-import { htmlEscape } from './util'
+import { htmlEscape } from './util/html'
 import { htmlToElement, appendToElement, removeElement, findElements } from './util/dom'
 
 

@@ -1,4 +1,4 @@
-import { cssToStr } from '../../util'
+import { cssToStr } from '../../util/html'
 import { htmlToElements, removeElement } from '../../util/dom'
 
 

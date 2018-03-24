@@ -4,8 +4,8 @@ import {
   uncompensateScroll,
   compensateScroll,
   subtractInnerElHeight,
-  htmlEscape,
 } from '../util'
+import { htmlEscape } from '../util/html'
 import { copyOwnProps } from '../util/object'
 import { findElements, createElement } from '../util/dom'
 import Scroller from '../common/Scroller'

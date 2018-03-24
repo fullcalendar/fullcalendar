@@ -4,9 +4,9 @@ import {
   compensateScroll,
   subtractInnerElHeight,
   distributeHeight,
-  undistributeHeight,
-  htmlEscape
+  undistributeHeight
 } from '../util'
+import { htmlEscape } from '../util/html'
 import { createElement, findElements } from '../util/dom'
 import Scroller from '../common/Scroller'
 import View from '../View'

@@ -1,7 +1,7 @@
 import * as moment from 'moment'
 import * as exportHooks from './exports'
 import { mergeOptions, globalDefaults, englishDefaults } from './options'
-import { stripHtmlEntities } from './util'
+import { stripHtmlEntities } from './util/html'
 
 export const localeOptionHash = {};
 (exportHooks as any).locales = localeOptionHash

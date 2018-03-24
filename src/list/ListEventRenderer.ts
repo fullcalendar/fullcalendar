@@ -1,4 +1,4 @@
-import { htmlEscape } from '../util'
+import { htmlEscape } from '../util/html'
 import EventRenderer from '../component/renderers/EventRenderer'
 import ListView from './ListView'
 

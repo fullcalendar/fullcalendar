@@ -17,8 +17,6 @@ export {
   applyAll,
   debounce,
   isInt,
-  htmlEscape,
-  cssToStr,
   capitaliseFirstLetter,
   parseFieldSpecs,
   compareByFieldSpecs,
@@ -27,6 +25,11 @@ export {
   log,
   warn
 } from './util'
+
+export {
+  htmlEscape,
+  cssToStr
+} from './util/html'
 
 export {
   removeExact
