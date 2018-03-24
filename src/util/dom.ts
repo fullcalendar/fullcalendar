@@ -8,6 +8,11 @@ const elementPropHash = { // when props given to createElement should be treated
   rowSpan: true
 }
 
+const containerTagHash = {
+  '<tr': 'tbody',
+  '<td': 'tr'
+}
+
 export function createElement(tagName: string, attrs: object | null, content?: ElementContent): HTMLElement {
   let el: HTMLElement = document.createElement(tagName)
 
@@ -50,18 +55,11 @@ function htmlToNodeList(html: string): NodeList {
   return container.childNodes
 }
 
-// assumes html already trimmed
-// assumes html tags are lowercase
-// TODO: use hash?
+// assumes html already trimmed and tag names are lowercase
 function computeContainerTag(html: string) {
-  let first3 = html.substr(0, 3) // faster than using regex
-  if (first3 === '<tr') {
-    return 'tbody'
-  } else if (first3 === '<td') {
-    return 'tr'
-  } else {
-    return 'div'
-  }
+  return containerTagHash[
+    html.substr(0, 3) // faster than using regex
+  ] || 'div'
 }
 
 
