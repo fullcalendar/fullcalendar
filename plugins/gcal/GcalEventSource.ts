@@ -110,7 +110,8 @@ export default class GcalEventSource extends EventSource {
       end: item.end.dateTime || item.end.date, // same
       url: url,
       location: item.location,
-      description: item.description
+      description: item.description,
+      meta_data: item.extendedProperties.shared
     }
   }
 
