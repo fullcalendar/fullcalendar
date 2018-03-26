@@ -62,7 +62,8 @@ export {
   appendToElement,
   applyStyle,
   applyStyleProp,
-  elementMatches
+  elementMatches,
+  forceClassName
 } from './util/dom-manip'
 
 export {

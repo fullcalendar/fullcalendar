@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { createElement, removeElement, applyStyle, prependToElement } from './util/dom-manip'
+import { createElement, removeElement, applyStyle, prependToElement, forceClassName } from './util/dom-manip'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
@@ -386,8 +386,8 @@ export default class Calendar {
     // called immediately, and upon option change.
     // HACK: locale often affects isRTL, so we explicitly listen to that too.
     this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], (opts) => {
-      el.classList.toggle('fc-ltr', !opts.isRTL)
-      el.classList.toggle('fc-rtl', opts.isRTL)
+      forceClassName(el, 'fc-ltr', !opts.isRTL)
+      forceClassName(el, 'fc-rtl', opts.isRTL)
     })
 
     prependToElement(el, this.contentEl = createElement('div', { className: 'fc-view-container' }))
