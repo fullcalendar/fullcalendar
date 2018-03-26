@@ -70,6 +70,7 @@ export type ElementContent = string | Node | NodeList | Node[]
 
 export function appendToElement(el: HTMLElement, content: ElementContent) {
   let childNodes = normalizeContent(content)
+
   for (let i = 0; i < childNodes.length; i++) {
     el.appendChild(childNodes[i])
   }
@@ -125,6 +126,7 @@ const matchesMethod =
   (Element.prototype as any).webkitMatchesSelector
 
 const closestMethod = Element.prototype.closest || function(selector) {
+  // polyfill
   let el = this
   if (!document.documentElement.contains(el)) {
     return null
@@ -147,6 +149,7 @@ export function elementMatches(el: HTMLElement, selector: string) {
 }
 
 // only func that accepts multiple subject els (in this case, the 'containers')
+// returns a real array. good for methods like forEach
 export function findElements(containers: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
   if (containers instanceof HTMLElement) {
     containers = [ containers ]

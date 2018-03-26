@@ -15,7 +15,7 @@ export interface EdgeInfo {
 }
 
 
-export function getEdges(el, getPadding = false): EdgeInfo {
+export function computeEdges(el, getPadding = false): EdgeInfo {
   let computedStyle = window.getComputedStyle(el)
   let borderLeft = parseInt(computedStyle.borderLeftWidth, 10) || 0
   let borderRight = parseInt(computedStyle.borderRightWidth, 10) || 0
@@ -50,9 +50,9 @@ export function getEdges(el, getPadding = false): EdgeInfo {
 }
 
 
-export function getInnerRect(el, goWithinPadding = false) {
+export function computeInnerRect(el, goWithinPadding = false) {
   let outerRect = el.getBoundingClientRect()
-  let edges = getEdges(el, goWithinPadding)
+  let edges = computeEdges(el, goWithinPadding)
   let res = {
     left: outerRect.left + edges.borderLeft + edges.scrollbarLeft,
     right: outerRect.right - edges.borderRight - edges.scrollbarRight,
@@ -100,7 +100,7 @@ export function getScrollParent(el: HTMLElement): HTMLElement | null {
 }
 
 
-// The scrollbar width computations in getEdges are sometimes flawed when it comes to
+// The scrollbar width computations in computeEdges are sometimes flawed when it comes to
 // retina displays, rounding, and IE11. Massage them into a usable value.
 function sanitizeScrollbarWidth(width) {
   width = Math.max(0, width) // no negatives

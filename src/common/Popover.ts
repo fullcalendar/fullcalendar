@@ -13,9 +13,9 @@ Options:
   - hide (callback)
 */
 
-import { getScrollParent } from '../util/dom-geom'
-import { ElementContent, removeElement, createElement } from '../util/dom-manip'
+import { ElementContent, removeElement, createElement, applyStyle } from '../util/dom-manip'
 import { listenBySelector } from '../util/dom-event'
+import { getScrollParent } from '../util/dom-geom'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {
@@ -154,8 +154,10 @@ export default class Popover {
       left = Math.max(left, viewportRect.left + this.margin)
     }
 
-    el.style.top = (top - rect.top) + 'px'
-    el.style.left = (left - rect.left) + 'px'
+    applyStyle(el, {
+      top: top - rect.top,
+      left: left - rect.left
+    })
   }
 
 

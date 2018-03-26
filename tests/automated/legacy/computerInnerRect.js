@@ -1,6 +1,6 @@
 import { getStockScrollbarWidths } from '../lib/dom-misc'
 
-describe('getInnerRect', function() {
+describe('computeInnerRect', function() {
   var INNER_WIDTH = 150
   var INNER_HEIGHT = 100
   var BORDER_LEFT = 1
@@ -11,7 +11,7 @@ describe('getInnerRect', function() {
   var PADDING_RIGHT = 6
   var PADDING_TOP = 7
   var PADDING_BOTTOM = 8
-  var getInnerRect = $.fullCalendar.getInnerRect
+  var computeInnerRect = $.fullCalendar.computeInnerRect
 
   describeValues({
     'when LTR': 'ltr',
@@ -56,7 +56,7 @@ describe('getInnerRect', function() {
       })
 
       it('goes within border', function() {
-        expect(getInnerRect(el[0])).toEqual({
+        expect(computeInnerRect(el[0])).toEqual({
           left: BORDER_LEFT,
           right: BORDER_LEFT + PADDING_LEFT + INNER_WIDTH + PADDING_RIGHT,
           top: BORDER_TOP,
@@ -65,7 +65,7 @@ describe('getInnerRect', function() {
       })
 
       it('can go within padding', function() {
-        expect(getInnerRect(el[0], true)).toEqual({
+        expect(computeInnerRect(el[0], true)).toEqual({
           left: BORDER_LEFT + PADDING_LEFT,
           right: BORDER_LEFT + PADDING_LEFT + INNER_WIDTH,
           top: BORDER_TOP + PADDING_TOP,
@@ -83,7 +83,7 @@ describe('getInnerRect', function() {
       var stockScrollbars = getStockScrollbarWidths(dir)
 
       it('goes within border and scrollbars', function() {
-        expect(getInnerRect(el[0])).toEqual({
+        expect(computeInnerRect(el[0])).toEqual({
           left: BORDER_LEFT + stockScrollbars.left,
           right: BORDER_LEFT + stockScrollbars.left + PADDING_LEFT + INNER_WIDTH + PADDING_RIGHT,
           top: BORDER_TOP,
@@ -92,7 +92,7 @@ describe('getInnerRect', function() {
       })
 
       it('can go within padding', function() {
-        expect(getInnerRect(el[0], true)).toEqual({
+        expect(computeInnerRect(el[0], true)).toEqual({
           left: BORDER_LEFT + stockScrollbars.left + PADDING_LEFT,
           right: BORDER_LEFT + stockScrollbars.left + PADDING_LEFT + INNER_WIDTH,
           top: BORDER_TOP + PADDING_TOP,

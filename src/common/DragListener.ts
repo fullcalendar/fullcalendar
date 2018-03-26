@@ -377,7 +377,7 @@ export default class DragListener {
   computeScrollBounds() {
     if (this.isAutoScroll) {
       this.scrollBounds = this.scrollEl.getBoundingClientRect()
-      // TODO: use getInnerRect in future. but prevents auto scrolling when on top of scrollbars
+      // TODO: use computeInnerRect in future. but prevents auto scrolling when on top of scrollbars
     }
   }
 

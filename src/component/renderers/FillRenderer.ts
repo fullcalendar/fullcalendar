@@ -1,5 +1,5 @@
 import { cssToStr } from '../../util/html'
-import { htmlToElements, removeElement } from '../../util/dom-manip'
+import { htmlToElements, removeElement, elementMatches } from '../../util/dom-manip'
 
 
 export default class FillRenderer { // use for highlight, background events, business hours
@@ -69,13 +69,11 @@ export default class FillRenderer { // use for highlight, background events, bus
 
         // allow custom filter methods per-type
         if (props.filterEl) {
-          el = props.filterEl(seg, el)
+          el = props.filterEl(seg, el) // might return null/undefined
         }
 
-        if (
-          el instanceof HTMLElement && // non-null (from filter func) and correct object type
-          el.nodeName.toLocaleLowerCase() === this.fillSegTag // correct element type? (would be bad if a non-TD were inserted into a table for example)
-        ) {
+        // correct element type? (would be bad if a non-TD were inserted into a table for example)
+        if (el && elementMatches(el, this.fillSegTag)) {
           seg.el = el
           renderedSegs.push(seg)
         }

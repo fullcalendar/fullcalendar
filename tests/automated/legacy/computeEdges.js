@@ -1,8 +1,8 @@
 import { getStockScrollbarWidths } from '../lib/dom-misc'
 
-describe('getEdges', function() {
+describe('computeEdges', function() {
 
-  var getEdges = $.fullCalendar.getEdges
+  var computeEdges = $.fullCalendar.computeEdges
 
   defineTests(
     'when margin',
@@ -54,7 +54,7 @@ describe('getEdges', function() {
         .append('<div style="position:relative;width:100px;height:100px" />')
         .appendTo('body')
 
-      var edges = getEdges(el[0])
+      var edges = computeEdges(el[0])
       var correctWidths
 
       if (isScrolling) {

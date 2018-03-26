@@ -157,7 +157,7 @@ export default class ListView extends View {
     let daySegs
     let i
     let tableEl = htmlToElement('<table class="fc-list-table ' + this.calendar.theme.getClass('tableList') + '"><tbody></tbody></table>')
-    let tbodyEl = tableEl.getElementsByTagName('tbody')[0]
+    let tbodyEl = tableEl.querySelector('tbody')
 
     for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
       daySegs = segsByDay[dayIndex]

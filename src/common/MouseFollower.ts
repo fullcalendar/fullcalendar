@@ -4,7 +4,7 @@ import {
   getEvX,
   getEvIsTouch
 } from '../util/dom-event'
-import { removeElement } from '../util/dom-manip'
+import { removeElement, applyStyle } from '../util/dom-manip'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface MouseFollowerOptions {
@@ -119,21 +119,27 @@ export default class MouseFollower {
 
     if (!el) {
       el = this.el = this.sourceEl.cloneNode(true) as HTMLElement // cloneChildren=true
-      el.classList.add(this.options.additionalClass || '')
-      el.style.position = 'absolute'
-      el.style.visibility = '' // in case original element was hidden (commonly through hideEvents())
-      el.style.display = this.isHidden ? 'none' : '' // for when initially hidden
-      el.style.margin = '0'
-      el.style.right = 'auto' // erase and set width instead
-      el.style.bottom = 'auto' // erase and set height instead
-      el.style.width = this.sourceEl.offsetWidth + 'px' // explicit height in case there was a 'right' value
-      el.style.height = this.sourceEl.offsetHeight + 'px' // explicit width in case there was a 'bottom' value
-      el.style.opacity = String(this.options.opacity || '')
-      el.style.zIndex = String(this.options.zIndex)
 
       // we don't want long taps or any mouse interaction causing selection/menus.
       // would use preventSelection(), but that prevents selectstart, causing problems.
       el.classList.add('fc-unselectable')
+
+      if (this.options.additionalClass) {
+        el.classList.add(this.options.additionalClass)
+      }
+
+      applyStyle(el, {
+        position: 'absolute',
+        visibility: '', // in case original element was hidden (commonly through hideEvents())
+        display: this.isHidden ? 'none' : '', // for when initially hidden
+        margin: 0,
+        right: 'auto', // erase and set width instead
+        bottom: 'auto', // erase and set height instead
+        width: this.sourceEl.offsetWidth, // explicit height in case there was a 'right' value
+        height: this.sourceEl.offsetHeight, // explicit width in case there was a 'bottom' value
+        opacity: this.options.opacity || '',
+        zIndex: this.options.zIndex
+      })
 
       this.parentEl.appendChild(el)
     }
@@ -165,8 +171,11 @@ export default class MouseFollower {
       this.left0 = sourceRect.left - origin.left
     }
 
-    el.style.top = (this.top0 + this.topDelta) + 'px'
-    el.style.left = (this.left0 + this.leftDelta) + 'px'
+    applyStyle(el, {
+      top: this.top0 + this.topDelta,
+      left: this.left0 + this.leftDelta
+    })
+
   }
 
 

@@ -69,7 +69,7 @@ export default class EmitterMixin extends Mixin implements EmitterInterface {
     }
     if (this._oneHandlers) {
       applyAll(this._oneHandlers[type], context, args)
-      delete this._oneHandlers[type]
+      delete this._oneHandlers[type] // will never fire again
     }
     return this // for chaining
   }
@@ -94,6 +94,6 @@ function removeFromHash(hash, type, handler?) {
       })
     }
   } else {
-    delete hash[type]
+    delete hash[type] // remove all handler funcs for this type
   }
 }

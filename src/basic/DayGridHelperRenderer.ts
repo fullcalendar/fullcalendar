@@ -1,6 +1,6 @@
+import { htmlToElement } from '../util/dom-manip'
 import HelperRenderer from '../component/renderers/HelperRenderer'
 import DayGrid from './DayGrid'
-import { htmlToElement } from '../util/dom-manip'
 
 
 export default class DayGridHelperRenderer extends HelperRenderer {

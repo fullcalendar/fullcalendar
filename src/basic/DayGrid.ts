@@ -1,5 +1,14 @@
-import { htmlEscape } from '../util/html'
 import { assignTo } from '../util/object'
+import { htmlEscape } from '../util/html'
+import {
+  createElement,
+  htmlToElements,
+  insertAfterElement,
+  findElements,
+  removeElement,
+  queryChildren,
+  ElementContent
+} from '../util/dom-manip'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
 import UnzonedRange from '../models/UnzonedRange'
@@ -12,7 +21,6 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
-import { createElement, htmlToElements, findElements, removeElement, queryChildren } from '../util/dom-manip'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
@@ -559,12 +567,7 @@ export default class DayGrid extends InteractiveDateComponent {
           }
 
           td.classList.add('fc-limited')
-
-          // inject replacements
-          let nextTdNode = td.nextSibling || null
-          for (let j = 0; j < segMoreNodes.length; j++) {
-            td.parentNode.insertBefore(segMoreNodes[j], nextTdNode)
-          }
+          insertAfterElement(td, segMoreNodes)
 
           limitedNodes.push(td)
         }
@@ -649,7 +652,6 @@ export default class DayGrid extends InteractiveDateComponent {
     let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
-    let themeClass = view.calendar.theme.getClass('popover')
 
     if (this.rowCnt === 1) {
       topEl = view.el // will cause the popover to cover any sort of header
@@ -658,7 +660,7 @@ export default class DayGrid extends InteractiveDateComponent {
     }
 
     options = {
-      className: 'fc-more-popover' + (themeClass ? ' ' + themeClass : ''),
+      className: 'fc-more-popover ' + view.calendar.theme.getClass('popover'),
       content: this.renderSegPopoverContent(row, col, segs),
       parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
       top: topEl.getBoundingClientRect().top,
@@ -696,7 +698,7 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   // Builds the inner DOM contents of the segment popover
-  renderSegPopoverContent(row, col, segs) {
+  renderSegPopoverContent(row, col, segs): ElementContent {
     let view = this.view
     let theme = view.calendar.theme
     let title = this.getCellDate(row, col).format(this.opt('dayPopoverFormat'))

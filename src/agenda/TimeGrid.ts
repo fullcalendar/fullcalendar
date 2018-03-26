@@ -452,9 +452,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
   unrenderNowIndicator() {
     if (this.nowIndicatorEls) {
-      this.nowIndicatorEls.forEach(function(el) {
-        removeElement(el)
-      })
+      this.nowIndicatorEls.forEach(removeElement)
       this.nowIndicatorEls = null
     }
   }

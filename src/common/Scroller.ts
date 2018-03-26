@@ -1,5 +1,5 @@
-import { getEdges } from '../util/dom-geom'
-import { removeElement } from '../util/dom-manip'
+import { computeEdges } from '../util/dom-geom'
+import { removeElement, createElement, applyStyle, applyStyleProp } from '../util/dom-manip'
 import Class from '../common/Class'
 
 /*
@@ -28,10 +28,9 @@ export default class Scroller extends Class {
 
 
   renderEl() {
-    let scrollEl = document.createElement('div')
-    scrollEl.classList.add('fc-scroller')
-    this.scrollEl = scrollEl
-    return scrollEl
+    return this.scrollEl = createElement('div', {
+      className: 'fc-scroller'
+    })
   }
 
 
@@ -52,8 +51,10 @@ export default class Scroller extends Class {
 
 
   applyOverflow() {
-    this.scrollEl.style.overflowX = this.overflowX
-    this.scrollEl.style.overflowY = this.overflowY
+    applyStyle(this.scrollEl, {
+      overflowX: this.overflowX,
+      overflowY: this.overflowY
+    })
   }
 
 
@@ -85,8 +86,7 @@ export default class Scroller extends Class {
         ) ? 'scroll' : 'hidden'
     }
 
-    scrollEl.style.overflowX = overflowX
-    scrollEl.style.overflowY = overflowY
+    applyStyle(this.scrollEl, { overflowX, overflowY })
   }
 
 
@@ -95,10 +95,7 @@ export default class Scroller extends Class {
 
 
   setHeight(height) {
-    this.scrollEl.style.height =
-      typeof height === 'number' ?
-        height + 'px' :
-        height
+    applyStyleProp(this.scrollEl, 'height', height)
   }
 
 
@@ -123,7 +120,7 @@ export default class Scroller extends Class {
 
 
   getScrollbarWidths() {
-    let edges = getEdges(this.scrollEl)
+    let edges = computeEdges(this.scrollEl)
     return {
       left: edges.scrollbarLeft,
       right: edges.scrollbarRight,

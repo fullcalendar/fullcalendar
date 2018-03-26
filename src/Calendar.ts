@@ -1,8 +1,8 @@
 import * as moment from 'moment'
-import { capitaliseFirstLetter, debounce } from './util/misc'
 import { createElement, removeElement, applyStyle, prependToElement } from './util/dom-manip'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
+import { capitaliseFirstLetter, debounce } from './util/misc'
 import { globalDefaults, englishDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
@@ -773,13 +773,9 @@ export default class Calendar {
 
   queryToolbarsHeight() {
     return this.toolbarsManager.items.reduce(function(accumulator, toolbar) {
-      let toolbarHeight
-
-      if (toolbar.el) {
-        toolbarHeight = computeHeightAndMargins(toolbar.el)
-      } else {
-        toolbarHeight = 0
-      }
+      let toolbarHeight = toolbar.el ?
+        computeHeightAndMargins(toolbar.el) :
+        0
 
       return accumulator + toolbarHeight
     }, 0)

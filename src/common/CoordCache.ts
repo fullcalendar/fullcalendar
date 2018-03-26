@@ -1,4 +1,4 @@
-import { getInnerRect, getScrollParent } from '../util/dom-geom'
+import { computeInnerRect, getScrollParent } from '../util/dom-geom'
 
 export interface CoordCacheOptions {
   els: HTMLElement[]
@@ -242,7 +242,7 @@ export default class CoordCache {
       scrollParentEl = getScrollParent(this.els[0])
 
       if (scrollParentEl) {
-        return getInnerRect(scrollParentEl)
+        return computeInnerRect(scrollParentEl)
       }
     }
 

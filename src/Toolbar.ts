@@ -1,5 +1,5 @@
 import { htmlEscape } from './util/html'
-import { htmlToElement, appendToElement, removeElement, findElements } from './util/dom-manip'
+import { htmlToElement, appendToElement, removeElement, findElements, createElement } from './util/dom-manip'
 
 
 /* Toolbar with buttons and title
@@ -32,7 +32,7 @@ export default class Toolbar {
 
     if (sections) {
       if (!el) {
-        el = this.el = htmlToElement("<div class='fc-toolbar " + this.toolbarOptions.extraClasses + "'></div>")
+        el = this.el = createElement('div', { className: 'fc-toolbar ' + this.toolbarOptions.extraClasses })
       } else {
         el.innerHTML = ''
       }
@@ -59,7 +59,7 @@ export default class Toolbar {
     let theme = calendar.theme
     let optionsManager = calendar.optionsManager
     let viewSpecManager = calendar.viewSpecManager
-    let sectionEl = htmlToElement('<div class="fc-' + position + '"></div>')
+    let sectionEl = createElement('div', { className: 'fc-' + position })
     let buttonStr = this.toolbarOptions.layout[position]
     let calendarCustomButtons = optionsManager.get('customButtons') || {}
     let calendarButtonTextOverrides = optionsManager.overrides.buttonText || {}

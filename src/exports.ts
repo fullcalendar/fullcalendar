@@ -73,8 +73,8 @@ export {
 } from './util/dom-event'
 
 export {
-  getInnerRect,
-  getEdges,
+  computeInnerRect,
+  computeEdges,
   computeHeightAndMargins
 } from './util/dom-geom'
 
