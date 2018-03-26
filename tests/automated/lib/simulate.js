@@ -36,12 +36,18 @@ $.simulate.prototype.simulateEvent = function(elem, type, options) {
 $.simulate.prototype.simulateWindowResize = function() {
   // from https://stackoverflow.com/a/1818513/96342
   let event
+
   if (typeof Event !== 'undefined') {
-    event = new Event('resize')
-  } else {
+    try {
+      event = new Event('resize')
+    } catch (ex) {}
+  }
+
+  if (!event) {
     event = document.createEvent('UIEvents')
     event.initUIEvent('resize', true, false, window, 0)
   }
+
   this.dispatchEvent(window, 'resize', event)
 }
 
