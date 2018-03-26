@@ -148,16 +148,15 @@ export function elementMatches(el: HTMLElement, selector: string) {
   return matchesMethod.call(el, selector)
 }
 
-// only func that accepts multiple subject els (in this case, the 'containers')
+// accepts multiple subject els
 // returns a real array. good for methods like forEach
-export function findElements(containers: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
-  if (containers instanceof HTMLElement) {
-    containers = [ containers ]
-  }
+export function findElements(container: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
+  let containers = container instanceof HTMLElement ? [ container ] : container
   let allMatches: HTMLElement[] = []
 
   for (let i = 0; i < containers.length; i++) {
     let matches = containers[i].querySelectorAll(selector)
+
     for (let j = 0; j < matches.length; j++) {
       allMatches.push(matches[j] as HTMLElement)
     }
@@ -166,39 +165,25 @@ export function findElements(containers: HTMLElement[] | HTMLElement, selector: 
   return allMatches
 }
 
+// accepts multiple subject els
 // only queries direct child elements
-export function queryChildren(parent: HTMLElement, selector?: string): HTMLElement[] {
-  let childNodes = parent.childNodes
-  let a = []
+export function findChildren(parent: HTMLElement[] | HTMLElement, selector?: string): HTMLElement[] {
+  let parents = parent instanceof HTMLElement ? [ parent ] : parent
+  let allMatches = []
 
-  for (let i = 0; i < childNodes.length; i++) {
-    let childNode = childNodes[i]
-    if (
-      childNode.nodeType === 1 && // an element
-      (!selector || elementMatches(childNode as HTMLElement, selector))
-    ) {
-      a.push(childNode)
+  for (let i = 0; i < parents.length; i++) {
+    let childNodes = parents[i].children // only ever elements
+
+    for (let j = 0; j < childNodes.length; j++) {
+      let childNode = childNodes[j]
+
+      if (!selector || elementMatches(childNode as HTMLElement, selector)) {
+        allMatches.push(childNode)
+      }
     }
   }
 
-  return a
-}
-
-// queries for the first matching direct child element
-export function queryChild(parent: HTMLElement, selector?: string): HTMLElement | null {
-  let childNodes = parent.childNodes
-
-  for (let i = 0; i < childNodes.length; i++) {
-    let childNode = childNodes[i]
-    if (
-      childNode.nodeType === 1 && // an element
-      (!selector || elementMatches(childNode as HTMLElement, selector))
-    ) {
-      return childNode as HTMLElement
-    }
-  }
-
-  return null
+  return allMatches
 }
 
 

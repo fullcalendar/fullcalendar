@@ -53,6 +53,7 @@ export {
 
 export {
   findElements,
+  findChildren,
   htmlToElement,
   createElement,
   insertAfterElement,
@@ -61,9 +62,7 @@ export {
   appendToElement,
   applyStyle,
   applyStyleProp,
-  elementMatches,
-  queryChild,
-  queryChildren
+  elementMatches
 } from './util/dom-manip'
 
 export {

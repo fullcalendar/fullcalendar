@@ -5,8 +5,8 @@ import {
   htmlToElements,
   insertAfterElement,
   findElements,
+  findChildren,
   removeElement,
-  queryChildren,
   ElementContent
 } from '../util/dom-manip'
 import CoordCache from '../common/CoordCache'
@@ -466,7 +466,7 @@ export default class DayGrid extends InteractiveDateComponent {
   computeRowLevelLimit(row): (number | false) {
     let rowEl = this.rowEls[row] // the containing "fake" row div
     let rowBottom = rowEl.getBoundingClientRect().bottom
-    let trEls = queryChildren(this.eventRenderer.rowStructs[row].tbodyEl) as HTMLTableRowElement[]
+    let trEls = findChildren(this.eventRenderer.rowStructs[row].tbodyEl) as HTMLTableRowElement[]
     let i
     let trEl: HTMLTableRowElement
 
@@ -526,7 +526,7 @@ export default class DayGrid extends InteractiveDateComponent {
       levelSegs = rowStruct.segLevels[levelLimit - 1]
       cellMatrix = rowStruct.cellMatrix
 
-      limitedNodes = queryChildren(rowStruct.tbodyEl).slice(levelLimit) // get level <tr> elements past the limit
+      limitedNodes = findChildren(rowStruct.tbodyEl).slice(levelLimit) // get level <tr> elements past the limit
       limitedNodes.forEach(function(node) {
         node.classList.add('fc-limited') // hide elements and get a simple DOM-nodes array
       })
