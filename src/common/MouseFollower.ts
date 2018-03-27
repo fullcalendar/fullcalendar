@@ -1,8 +1,8 @@
-import * as $ from 'jquery'
 import {
   getEvY,
   getEvX,
-  getEvIsTouch
+  getEvIsTouch,
+  whenTransitionDone
 } from '../util/dom-event'
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
@@ -79,6 +79,7 @@ export default class MouseFollower {
   // Causes the element to stop following the mouse. If shouldRevert is true, will animate back to original position.
   // `callback` gets invoked when the animation is complete. If no animation, it is invoked immediately.
   stop(shouldRevert, callback) {
+    let { el } = this
     let revertDuration = this.options.revertDuration
 
     const complete = () => { // might be called by .animate(), which might change `this` context
@@ -99,12 +100,18 @@ export default class MouseFollower {
 
       if (shouldRevert && revertDuration && !this.isHidden) { // do a revert animation?
         this.isAnimating = true
-        $(this.el).animate({
+
+        // do before position change
+        el.style.transition = 'top ' + revertDuration + 'ms, left ' + revertDuration + 'ms'
+
+        applyStyle(el, {
           top: this.top0,
           left: this.left0
-        }, {
-          duration: revertDuration,
-          complete: complete
+        })
+
+        whenTransitionDone(el, function() {
+          el.style.transition = ''
+          complete()
         })
       } else {
         complete()
