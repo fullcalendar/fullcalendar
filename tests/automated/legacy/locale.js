@@ -1,4 +1,3 @@
-
 describe('locale', function() {
 
   afterEach(function() {
@@ -80,7 +79,7 @@ describe('locale', function() {
     expect($('h2', calendar_el)).toHaveText('juillet 2016')
 
     calendar_el.fullCalendar('option', 'locale', 'ar')
-    expect($(calendar_el).toHaveClass('fc-rtl')
+    expect($(calendar_el)).toHaveClass('fc-rtl')
 
   })
 
