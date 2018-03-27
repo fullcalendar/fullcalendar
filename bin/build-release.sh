@@ -35,6 +35,15 @@ then
   exit 1
 fi
 
+read -p "The example repos will update their deps and commit. Is that okay?" update_example_repos
+if [[ "$update_example_repos" == "y" ]]
+then
+  ./bin/update-example-repo-deps.sh "$version"
+else
+  echo "Aborting."
+  exit 1
+fi
+
 success=0
 if {
   # ensures stray files stay out of the release

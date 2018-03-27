@@ -16,7 +16,7 @@ then
 fi
 
 # push the current branch (assumes tracking is set up) and the tag
-git push
+git push --recurse-submodules=on-demand
 git push origin "v$version"
 
 success=0
