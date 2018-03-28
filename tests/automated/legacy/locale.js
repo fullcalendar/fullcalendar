@@ -1,4 +1,4 @@
-describe('locale', function() {
+fdescribe('locale', function() {
 
   afterEach(function() {
     moment.locale('en')
@@ -61,26 +61,23 @@ describe('locale', function() {
     expect($('.fc-event .fc-time')).toHaveText('10:00')
   })
 
-  // @todo dynamic setting of locale not working
-  xit('allows dynamic setting', function() {
-
+  it('allows dynamic setting', function() {
     initCalendar({
       locale: 'es',
       defaultDate: '2016-07-10',
       defaultView: 'month'
     })
 
-    var calendar_el = window.currentCalendar.el
+    var calendar_el = currentCalendar.el
 
     expect($('h2', calendar_el)).toHaveText('julio 2016')
     expect($(calendar_el)).not.toHaveClass('fc-rtl')
 
-    calendar_el.fullCalendar('option', 'locale', 'fr')
+    currentCalendar.option('locale', 'fr')
     expect($('h2', calendar_el)).toHaveText('juillet 2016')
 
-    calendar_el.fullCalendar('option', 'locale', 'ar')
+    currentCalendar.option('locale', 'ar')
     expect($(calendar_el)).toHaveClass('fc-rtl')
-
   })
 
 })
