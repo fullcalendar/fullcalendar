@@ -34,6 +34,7 @@ gulp.task('dist', [
 
 // like dist, but runs tests and linting, and generates archive
 gulp.task('release', [
+  'example-repos:build',
   'lint',
   'dist',
   'archive',
