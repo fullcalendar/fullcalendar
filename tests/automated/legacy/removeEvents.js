@@ -1,4 +1,4 @@
-describe('removeEvents', function() {
+fdescribe('removeEvents', function() {
   var options
 
   beforeEach(function() {

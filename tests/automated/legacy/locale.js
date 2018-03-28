@@ -68,16 +68,16 @@ describe('locale', function() {
       defaultView: 'month'
     })
 
-    var calendar_el = currentCalendar.el
+    var calendarEl = currentCalendar.el
 
-    expect($('h2', calendar_el)).toHaveText('julio 2016')
-    expect($(calendar_el)).not.toHaveClass('fc-rtl')
+    expect($('h2', calendarEl)).toHaveText('julio 2016')
+    expect($(calendarEl)).not.toHaveClass('fc-rtl')
 
     currentCalendar.option('locale', 'fr')
-    expect($('h2', calendar_el)).toHaveText('juillet 2016')
+    expect($('h2', calendarEl)).toHaveText('juillet 2016')
 
     currentCalendar.option('locale', 'ar')
-    expect($(calendar_el)).toHaveClass('fc-rtl')
+    expect($(calendarEl)).toHaveClass('fc-rtl')
   })
 
 })
