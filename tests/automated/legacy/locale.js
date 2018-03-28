@@ -1,4 +1,4 @@
-fdescribe('locale', function() {
+describe('locale', function() {
 
   afterEach(function() {
     moment.locale('en')
