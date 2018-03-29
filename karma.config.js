@@ -27,6 +27,9 @@ module.exports = function(config) {
       'dist/gcal.js',
       'dist/locale-all.js',
 
+      // temporary. needs to go first.
+      'tests/automated/lib/fullcalendar-jquery-plugin.js',
+
       // a way to dump variables into the test environment
       'tmp/automated-test-config.js',
 
