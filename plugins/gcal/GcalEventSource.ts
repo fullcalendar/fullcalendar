@@ -69,7 +69,7 @@ export default class GcalEventSource extends EventSource {
 
             successRes = applyAll(origAjaxSuccess, this, [ responseData, status, xhr ]) // passthru
 
-            if ($.isArray(successRes)) {
+            if (Array.isArray(successRes)) {
               rawEventDefs = successRes
             }
 
@@ -141,7 +141,7 @@ export default class GcalEventSource extends EventSource {
       end = end.clone().utc().add(1, 'day')
     }
 
-    params = $.extend(
+    params = assignTo(
       this.ajaxSettings.data || {},
       {
         key: apiKey,
@@ -206,7 +206,7 @@ export default class GcalEventSource extends EventSource {
     if (!this.ajaxSettings) {
       this.ajaxSettings = {}
     }
-    $.extend(this.ajaxSettings, rawProps)
+    assignTo(this.ajaxSettings, rawProps)
   }
 
 }
