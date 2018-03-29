@@ -1,4 +1,4 @@
-import * as $ from 'jquery'
+import * as reqwest from 'reqwest'
 import { assignTo } from '../../util/object'
 import { applyAll } from '../../util/misc'
 import EventSource from './EventSource'
@@ -7,8 +7,7 @@ import EventSource from './EventSource'
 export default class JsonFeedEventSource extends EventSource {
 
   static AJAX_DEFAULTS = {
-    dataType: 'json',
-    cache: false
+    method: 'GET'
   }
 
   // these props must all be manually set before calling fetch
@@ -45,7 +44,7 @@ export default class JsonFeedEventSource extends EventSource {
 
     this.calendar.pushLoading()
 
-    $.ajax(assignTo(
+    reqwest(assignTo(
       {}, // destination
       JsonFeedEventSource.AJAX_DEFAULTS,
       ajaxSettings,
@@ -53,12 +52,14 @@ export default class JsonFeedEventSource extends EventSource {
         url: this.url,
         data: requestParams,
         success: (rawEventDefs, status, xhr) => {
-          let callbackRes
+          this.calendar.popLoading() // good to do this before onSuccess
 
-          this.calendar.popLoading()
+          if (typeof rawEventDefs === 'string') {
+            rawEventDefs = JSON.parse(rawEventDefs)
+          }
 
           if (rawEventDefs) {
-            callbackRes = applyAll(origAjaxSuccess, this, [ rawEventDefs, status, xhr ]) // redirect `this`
+            let callbackRes = applyAll(origAjaxSuccess, this, [ rawEventDefs, status, xhr ]) // redirect `this`
 
             if (Array.isArray(callbackRes)) {
               rawEventDefs = callbackRes
@@ -70,7 +71,7 @@ export default class JsonFeedEventSource extends EventSource {
           }
         },
         error: (xhr, statusText, errorThrown) => {
-          this.calendar.popLoading()
+          this.calendar.popLoading() // good to do this before onFailure
 
           applyAll(origAjaxError, this, [ xhr, statusText, errorThrown ]) // redirect `this`
           onFailure()
@@ -104,7 +105,7 @@ export default class JsonFeedEventSource extends EventSource {
       timezoneParam = calendar.opt('timezoneParam')
     }
 
-    // retrieve any outbound GET/POST $.ajax data from the options
+    // retrieve any outbound GET/POST data from the options
     if (typeof ajaxSettings.data === 'function') {
       // supplied as a function that returns a key/value object
       customRequestParams = ajaxSettings.data()

@@ -15,11 +15,11 @@
   var d = date.getDate();
   var m = date.getMonth();
   var y = date.getFullYear();
-  
+
   var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
-  
+
   var jsonFeed = "../demos/json-events.php";
-  
+
   var staticEvents = [
     {
       title: 'All Day Event',
@@ -98,7 +98,7 @@
       start: '1295078400.0'
     }
   ];
-  
+
   var customSource = function(start, end, callback) {
     callback([
       {
@@ -111,12 +111,6 @@
       }
     ]);
   };
-  
-  /* TODO: doesn't work anymore
-  $.ajaxSetup({
-    cache: true // should NOT insert an extra _ parameter
-  });
-  */
 
   $(document).ready(function() {
     cal = $('#calendar').fullCalendar({
@@ -156,11 +150,11 @@
   .red-event {
     background: red !important;
   }
-  
+
   .yellow-event {
     background: yellow !important;
   }
-  
+
   .black-text-event {
     color: #000 !important;
   }

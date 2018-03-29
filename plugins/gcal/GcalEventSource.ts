@@ -1,5 +1,5 @@
-import * as $ from 'jquery'
-import { EventSource, JsonFeedEventSource, warn, applyAll } from 'fullcalendar'
+import * as reqwest from 'reqwest'
+import { EventSource, JsonFeedEventSource, warn, applyAll, assignTo } from 'fullcalendar'
 
 
 export default class GcalEventSource extends EventSource {
@@ -43,12 +43,14 @@ export default class GcalEventSource extends EventSource {
 
     this.calendar.pushLoading()
 
-    $.ajax($.extend(
+    reqwest(assignTo(
       {}, // destination
       JsonFeedEventSource.AJAX_DEFAULTS,
       ajaxSettings,
       {
         url: url,
+        type: 'jsonp',
+        jsonpCallback: 'callback',
         data: requestParams,
         success: (responseData, status, xhr) => {
           let rawEventDefs
@@ -115,9 +117,7 @@ export default class GcalEventSource extends EventSource {
 
 
   buildUrl() {
-    return GcalEventSource.API_BASE + '/' +
-      encodeURIComponent(this.googleCalendarId) +
-      '/events?callback=?' // jsonp
+    return GcalEventSource.API_BASE + '/' + encodeURIComponent(this.googleCalendarId) + '/events'
   }
 
 
