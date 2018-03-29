@@ -1,3 +1,4 @@
+
 describe('event feed params', function() {
 
   pushOptions({
@@ -6,24 +7,24 @@ describe('event feed params', function() {
   })
 
   beforeEach(function() {
-    $.mockjax({
-      url: '*',
-      contentType: 'text/json',
-      responseText: [
-        {
-          title: 'my event',
-          start: '2014-05-21'
-        }
-      ]
-    })
-    $.mockjaxSettings.log = function() { } // don't console.log
+    XHRMock.setup()
   })
-
   afterEach(function() {
-    $.mockjax.clear()
+    XHRMock.teardown()
   })
 
-  it('utilizes custom startParam, endParam, and timezoneParam names', function() {
+  it('utilizes custom startParam, endParam, and timezoneParam names', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        mystart: '2014-04-27',
+        myend: '2014-06-08',
+        currtz: 'America/Los_Angeles'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
       events: 'my-feed.php',
       timezone: 'America/Los_Angeles',
@@ -31,16 +32,20 @@ describe('event feed params', function() {
       endParam: 'myend',
       timezoneParam: 'currtz'
     })
-    var request = $.mockjax.mockedAjaxCalls()[0]
-    expect(request.data.start).toBeUndefined()
-    expect(request.data.end).toBeUndefined()
-    expect(request.data.timezone).toBeUndefined()
-    expect(request.data.mystart).toEqual('2014-04-27')
-    expect(request.data.myend).toEqual('2014-06-08')
-    expect(request.data.currtz).toEqual('America/Los_Angeles')
   })
 
-  it('utilizes event-source-specific startParam, endParam, and timezoneParam names', function() {
+  it('utilizes event-source-specific startParam, endParam, and timezoneParam names', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        feedstart: '2014-04-27',
+        feedend: '2014-06-08',
+        feedctz: 'America/Los_Angeles'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
       timezone: 'America/Los_Angeles',
       startParam: 'mystart',
@@ -55,16 +60,6 @@ describe('event feed params', function() {
         }
       ]
     })
-    var request = $.mockjax.mockedAjaxCalls()[0]
-    expect(request.data.start).toBeUndefined()
-    expect(request.data.end).toBeUndefined()
-    expect(request.data.timezone).toBeUndefined()
-    expect(request.data.mystart).toBeUndefined()
-    expect(request.data.myend).toBeUndefined()
-    expect(request.data.currtz).toBeUndefined()
-    expect(request.data.feedstart).toEqual('2014-04-27')
-    expect(request.data.feedend).toEqual('2014-06-08')
-    expect(request.data.feedctz).toEqual('America/Los_Angeles')
   })
 
 })

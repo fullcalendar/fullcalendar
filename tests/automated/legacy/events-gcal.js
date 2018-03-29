@@ -40,8 +40,6 @@ describe('Google Calendar plugin', function() {
   })
 
   afterEach(function() {
-    $.mockjax.clear()
-    $.mockjaxSettings.log = function() { }
     console.warn = oldConsoleWarn
   })
 
@@ -50,13 +48,8 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'local'
     options.eventAfterAllRender = function() {
-      var currentRequest = $.mockjax.unmockedAjaxCalls()[0]
       var events = $('#cal').fullCalendar('clientEvents')
       var i
-
-      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
-      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
-      expect(currentRequest.data.timeZone).toBeUndefined()
 
       expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
@@ -73,13 +66,8 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'UTC'
     options.eventAfterAllRender = function() {
-      var currentRequest = $.mockjax.unmockedAjaxCalls()[0]
       var events = $('#cal').fullCalendar('clientEvents')
       var i
-
-      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
-      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
-      expect(currentRequest.data.timeZone).toEqual('UTC')
 
       expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
@@ -96,13 +84,8 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'America/New York'
     options.eventAfterAllRender = function() {
-      var currentRequest = $.mockjax.unmockedAjaxCalls()[0]
       var events = $('#cal').fullCalendar('clientEvents')
       var i
-
-      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
-      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
-      expect(currentRequest.data.timeZone).toEqual('America/New_York') // space should be escaped
 
       expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
@@ -118,14 +101,9 @@ describe('Google Calendar plugin', function() {
     options.googleCalendarApiKey = API_KEY
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.eventAfterAllRender = function() {
-      var currentRequest = $.mockjax.unmockedAjaxCalls()[0]
       var events = $('#cal').fullCalendar('clientEvents')
       var eventEls = $('.fc-event')
       var i
-
-      expect(currentRequest.data.timeMin).toEqual(REQUEST_START)
-      expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
-      expect(currentRequest.data.timeZone).toBeUndefined()
 
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       for (i = 0; i < events.length; i++) {
@@ -180,14 +158,13 @@ describe('Google Calendar plugin', function() {
         googleCalendarId: HOLIDAY_CALENDAR_ID
       }
       options.eventAfterAllRender = function() {
-        var currentRequest = $.mockjax.unmockedAjaxCalls()[0]
         var events = $('#cal').fullCalendar('clientEvents')
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
         expect(options.googleCalendarError).toHaveBeenCalled()
         expect(options.events.googleCalendarError).toHaveBeenCalled()
-        expect(currentRequest).toBeUndefined() // AJAX request should have never been made!
+
         done()
       }
       spyOn(options, 'googleCalendarError').and.callThrough()
@@ -209,14 +186,13 @@ describe('Google Calendar plugin', function() {
         googleCalendarId: HOLIDAY_CALENDAR_ID
       }
       options.eventAfterAllRender = function() {
-        var currentRequest = $.mockjax.unmockedAjaxCalls()[0]
         var events = $('#cal').fullCalendar('clientEvents')
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
         expect(options.googleCalendarError).toHaveBeenCalled()
         expect(options.events.googleCalendarError).toHaveBeenCalled()
-        expect(typeof currentRequest).toBe('object') // request should have been sent
+
         done()
       }
       spyOn(options, 'googleCalendarError').and.callThrough()

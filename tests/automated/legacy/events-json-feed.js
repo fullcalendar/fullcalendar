@@ -6,78 +6,107 @@ describe('events as a json feed', function() {
   })
 
   beforeEach(function() {
-    $.mockjax({
-      url: '/my-feed.php',
-      contentType: 'text/json',
-      responseText: [
-        {
-          title: 'my event',
-          start: '2014-05-21'
-        }
-      ]
-    })
-    $.mockjaxSettings.log = function() { } // don't console.log
+    XHRMock.setup()
   })
 
   afterEach(function() {
-    $.mockjax.clear()
+    XHRMock.teardown()
   })
 
-  it('requests correctly when no timezone', function() {
-    initCalendar({
-      events: '/my-feed.php'
+  it('requests correctly when no timezone', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        start: '2014-04-27',
+        end: '2014-06-08'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
     })
-    var request = $.mockjax.mockedAjaxCalls()[0]
-    expect(request.data.start).toEqual('2014-04-27')
-    expect(request.data.end).toEqual('2014-06-08')
-    expect(request.data.timezone).toBeUndefined()
+
+    initCalendar({
+      events: 'my-feed.php'
+    })
   })
 
-  it('requests correctly when local timezone', function() {
+  it('requests correctly when local timezone', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        start: '2014-04-27',
+        end: '2014-06-08'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
-      events: '/my-feed.php',
+      events: 'my-feed.php',
       timezone: 'local'
     })
-    var request = $.mockjax.mockedAjaxCalls()[0]
-    expect(request.data.start).toEqual('2014-04-27')
-    expect(request.data.end).toEqual('2014-06-08')
-    expect(request.data.timezone).toBeUndefined()
   })
 
-  it('requests correctly when UTC timezone', function() {
+  it('requests correctly when UTC timezone', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        start: '2014-04-27',
+        end: '2014-06-08',
+        timezone: 'UTC'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
-      events: '/my-feed.php',
+      events: 'my-feed.php',
       timezone: 'UTC'
     })
-    var request = $.mockjax.mockedAjaxCalls()[0]
-    expect(request.data.start).toEqual('2014-04-27')
-    expect(request.data.end).toEqual('2014-06-08')
-    expect(request.data.timezone).toEqual('UTC')
   })
 
-  it('requests correctly when custom timezone', function() {
+  it('requests correctly when custom timezone', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        start: '2014-04-27',
+        end: '2014-06-08',
+        timezone: 'America/Chicago'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
-      events: '/my-feed.php',
+      events: 'my-feed.php',
       timezone: 'America/Chicago'
     })
-    var request = $.mockjax.mockedAjaxCalls()[0]
-    expect(request.data.start).toEqual('2014-04-27')
-    expect(request.data.end).toEqual('2014-06-08')
-    expect(request.data.timezone).toEqual('America/Chicago')
   })
 
   it('requests correctly with event source extended form', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        start: '2014-04-27',
+        end: '2014-06-08',
+        timezone: 'America/Chicago'
+      })
+      return res.status(200).header('content-type', 'application/json').body(
+        JSON.stringify([
+          {
+            title: 'my event',
+            start: '2014-05-21'
+          }
+        ])
+      )
+    })
+
     initCalendar({
       eventSources: [ {
-        url: '/my-feed.php',
+        url: 'my-feed.php',
         className: 'customeventclass'
       } ],
       timezone: 'America/Chicago',
       eventRender: function(eventObj, eventElm) {
-        var request = $.mockjax.mockedAjaxCalls()[0]
-        expect(request.data.start).toEqual('2014-04-27')
-        expect(request.data.end).toEqual('2014-06-08')
-        expect(request.data.timezone).toEqual('America/Chicago')
         expect(eventElm).toHaveClass('customeventclass')
         done()
       }
@@ -85,43 +114,60 @@ describe('events as a json feed', function() {
   })
 
   it('accepts jQuery.ajax params', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        start: '2014-04-27',
+        end: '2014-06-08',
+        customParam: 'yes'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
       eventSources: [ {
-        url: '/my-feed.php',
+        url: 'my-feed.php',
         data: {
           customParam: 'yes'
         },
-        success: function() {
-          var request = $.mockjax.mockedAjaxCalls()[0]
-          expect(request.data.customParam).toMatch('yes')
-          done()
-        }
       } ]
     })
   })
 
   it('accepts a dynamic data function', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        start: '2014-04-27',
+        end: '2014-06-08',
+        customParam: 'heckyeah'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
       eventSources: [ {
-        url: '/my-feed.php',
+        url: 'my-feed.php',
         data: function() {
           return {
             customParam: 'heckyeah'
           }
         }
-      } ],
-      eventAfterAllRender: function() {
-        var request = $.mockjax.mockedAjaxCalls()[0]
-        expect(request.data.customParam).toMatch('heckyeah')
-        done()
-      }
+      } ]
     })
   })
 
   it('calls loading callback', function(done) {
     var loadingCallArgs = []
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
     initCalendar({
-      events: { url: '/my-feed.php' },
+      events: { url: 'my-feed.php' },
       loading: function(bool) {
         loadingCallArgs.push(bool)
       },
@@ -133,11 +179,15 @@ describe('events as a json feed', function() {
   })
 
   it('has and Event Source object with certain props', function() {
-    var url = '/my-feed.php'
-    initCalendar({
-      events: { url: url }
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      return res.status(200).header('content-type', 'application/json').body('[]')
     })
-    expect(currentCalendar.getEventSources()[0].url).toBe(url)
+
+    initCalendar({
+      events: { url: 'my-feed.php' }
+    })
+    expect(currentCalendar.getEventSources()[0].url).toBe('my-feed.php')
   })
 
 })

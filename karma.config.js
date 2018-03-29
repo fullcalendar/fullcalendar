@@ -34,8 +34,8 @@ module.exports = function(config) {
       'tmp/test-side-effects/*.js',
 
       // dependencies for tests
+      'node_modules/xhr-mock/dist/xhr-mock.js', // TODO: should include this via require(), but .d.ts problems
       'node_modules/native-promise-only/lib/npo.src.js',
-      'node_modules/jquery-mockjax/dist/jquery.mockjax.js',
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
       'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
       'node_modules/jquery-simulate/jquery.simulate.js',

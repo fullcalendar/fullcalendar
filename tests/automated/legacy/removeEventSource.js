@@ -6,16 +6,17 @@ describe('removeEventSource', function() {
     options = {
       defaultDate: '2014-08-01'
     }
-    $.mockjax({
-      url: '*',
-      contentType: 'text/json',
-      responseText: buildEventArray()
+
+    XHRMock.setup()
+    XHRMock.get(/.*/, {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(buildEventArray())
     })
-    $.mockjaxSettings.log = function() { } // don't console.log
   })
 
   afterEach(function() {
-    $.mockjax.clear()
+    XHRMock.teardown()
   })
 
   describe('with a URL', function() {
