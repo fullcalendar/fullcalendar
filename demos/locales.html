@@ -5,15 +5,16 @@
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../node_modules/moment/moment.js'></script>
-<script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../dist/fullcalendar.js'></script>
 <script src='../dist/locale-all.js'></script>
 <script>
 
-  $(document).ready(function() {
+  document.addEventListener('DOMContentLoaded', function() {
     var initialLocaleCode = 'en';
+    var localeSelectorEl = document.getElementById('locale-selector');
+    var calendarEl = document.getElementById('calendar');
 
-    $('#calendar').fullCalendar({
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -84,22 +85,27 @@
       ]
     });
 
+    calendar.render();
+
     // build the locale selector's options
-    $.each($.fullCalendar.locales, function(localeCode) {
-      $('#locale-selector').append(
-        $('<option/>')
-          .attr('value', localeCode)
-          .prop('selected', localeCode == initialLocaleCode)
-          .text(localeCode)
-      );
-    });
+    var localeHash = FullCalendar.locales;
+    var localeCode;
+    var optionEl;
+    for (localeCode in localeHash) {
+      optionEl = document.createElement('option');
+      optionEl.value = localeCode;
+      optionEl.selected = localeCode == initialLocaleCode;
+      optionEl.innerText = localeCode;
+      localeSelectorEl.appendChild(optionEl);
+    }
 
     // when the selected option changes, dynamically change the calendar option
-    $('#locale-selector').on('change', function() {
+    localeSelectorEl.addEventListener('change', function() {
       if (this.value) {
-        $('#calendar').fullCalendar('option', 'locale', this.value);
+        calendar.option('locale', this.value);
       }
     });
+
   });
 
 </script>

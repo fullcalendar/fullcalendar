@@ -2,7 +2,7 @@ import { getStockScrollbarWidths } from '../lib/dom-misc'
 
 describe('computeEdges', function() {
 
-  var computeEdges = $.fullCalendar.computeEdges
+  var computeEdges = FullCalendar.computeEdges
 
   defineTests(
     'when margin',

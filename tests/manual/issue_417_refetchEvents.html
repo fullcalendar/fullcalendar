@@ -17,12 +17,12 @@
   */
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
       year: 2010,
       month: 9,
@@ -33,9 +33,9 @@
         right: 'month,agendaDay'
       },
       editable: true,
-      events: $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic')
+      events: FullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic')
     });
-    
+
   });
 
 </script>

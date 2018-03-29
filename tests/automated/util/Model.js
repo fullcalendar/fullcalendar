@@ -1,6 +1,6 @@
 
 describe('Model', function() {
-  var Model = $.fullCalendar.Model
+  var Model = FullCalendar.Model
 
   describe('set/get', function() {
 

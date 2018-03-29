@@ -18,8 +18,8 @@ beforeEach(function() {
     toEqualMoment() {
       return {
         compare: function(actual, expected) {
-          var actualStr = $.fullCalendar.moment.parseZone(actual).format()
-          var expectedStr = $.fullCalendar.moment.parseZone(expected).format()
+          var actualStr = FullCalendar.moment.parseZone(actual).format()
+          var expectedStr = FullCalendar.moment.parseZone(expected).format()
           var result = {
             pass: actualStr === expectedStr
           }
@@ -33,7 +33,7 @@ beforeEach(function() {
     toEqualNow() {
       return {
         compare: function(actual) {
-          var actualMoment = $.fullCalendar.moment.parseZone(actual)
+          var actualMoment = FullCalendar.moment.parseZone(actual)
           var result = {
             pass: Math.abs(actualMoment - new Date()) < 1000 // within a second of current datetime
           }

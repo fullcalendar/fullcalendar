@@ -1,15 +1,15 @@
 describe('moment constructor', function() {
 
-  describe('$.fullCalendar.moment', function() {
-    testDefaultProcessing($.fullCalendar.moment)
+  describe('FullCalendar.moment', function() {
+    testDefaultProcessing(FullCalendar.moment)
   })
 
-  describe('$.fullCalendar.moment.utc', function() {
-    testForcedUTCProcessing($.fullCalendar.moment.utc)
+  describe('FullCalendar.moment.utc', function() {
+    testForcedUTCProcessing(FullCalendar.moment.utc)
   })
 
-  describe('$.fullCalendar.moment.parseZone', function() {
-    testLiteralProcessing($.fullCalendar.moment.parseZone)
+  describe('FullCalendar.moment.parseZone', function() {
+    testLiteralProcessing(FullCalendar.moment.parseZone)
   })
 
   describe('Calendar::moment', function() {
@@ -136,7 +136,7 @@ describe('moment constructor', function() {
     describe('when given an existing FullCalendar moment', function() {
 
       it('remains ambiguously-zoned', function() {
-        var noTzMoment = $.fullCalendar.moment.parseZone('2014-05-28T00:00:00')
+        var noTzMoment = FullCalendar.moment.parseZone('2014-05-28T00:00:00')
         var newMoment = construct(noTzMoment)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
         expect(newMoment.hasTime()).toBe(true)
@@ -145,7 +145,7 @@ describe('moment constructor', function() {
       })
 
       it('remains ambiguously-timed', function() {
-        var noTimeMoment = $.fullCalendar.moment('2014-05-28')
+        var noTimeMoment = FullCalendar.moment('2014-05-28')
         var newMoment = construct(noTimeMoment)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
         expect(newMoment.hasTime()).toBe(false)
@@ -155,7 +155,7 @@ describe('moment constructor', function() {
     });
 
     [
-      { description: 'when given an existing FullCalendar moment', moment: $.fullCalendar.moment },
+      { description: 'when given an existing FullCalendar moment', moment: FullCalendar.moment },
       { description: 'when given an existing basic moment', moment: moment }
     ]
       .forEach(function(scenario) {
@@ -289,7 +289,7 @@ describe('moment constructor', function() {
     describe('when given an existing FullCalendar moment', function() {
 
       it('converts to local when ambiguously-zoned', function() {
-        var noTzMoment = $.fullCalendar.moment.parseZone('2014-05-28T00:00:00')
+        var noTzMoment = FullCalendar.moment.parseZone('2014-05-28T00:00:00')
         var newMoment = construct(noTzMoment)
         var dateEquiv = new Date(2014, 4, 28)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
@@ -299,7 +299,7 @@ describe('moment constructor', function() {
       })
 
       it('remains ambiguously-timed', function() {
-        var noTimeMoment = $.fullCalendar.moment('2014-05-28')
+        var noTimeMoment = FullCalendar.moment('2014-05-28')
         var newMoment = construct(noTimeMoment)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
         expect(newMoment.hasTime()).toBe(false)
@@ -309,7 +309,7 @@ describe('moment constructor', function() {
     });
 
     [
-      { description: 'when given an existing FullCalendar moment', moment: $.fullCalendar.moment },
+      { description: 'when given an existing FullCalendar moment', moment: FullCalendar.moment },
       { description: 'when given an existing basic moment', moment: moment }
     ]
       .forEach(function(scenario) {
@@ -439,7 +439,7 @@ describe('moment constructor', function() {
     describe('when given an existing FullCalendar moment', function() {
 
       it('converts to UTC when ambiguously-zoned', function() {
-        var noTzMoment = $.fullCalendar.moment.utc('2014-05-28T00:00:00')
+        var noTzMoment = FullCalendar.moment.utc('2014-05-28T00:00:00')
         var newMoment = construct(noTzMoment)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
         expect(newMoment.hasTime()).toBe(true)
@@ -448,7 +448,7 @@ describe('moment constructor', function() {
       })
 
       it('remains ambiguously-timed', function() {
-        var noTimeMoment = $.fullCalendar.moment('2014-05-28')
+        var noTimeMoment = FullCalendar.moment('2014-05-28')
         var newMoment = construct(noTimeMoment)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
         expect(newMoment.hasTime()).toBe(false)
@@ -458,7 +458,7 @@ describe('moment constructor', function() {
     });
 
     [
-      { description: 'when given an existing FullCalendar moment', moment: $.fullCalendar.moment },
+      { description: 'when given an existing FullCalendar moment', moment: FullCalendar.moment },
       { description: 'when given an existing basic moment', moment: moment }
     ]
       .forEach(function(scenario) {
@@ -588,7 +588,7 @@ describe('moment constructor', function() {
     describe('when given an existing FullCalendar moment', function() {
 
       it('remains ambiguously-zoned', function() {
-        var noTzMoment = $.fullCalendar.moment.parseZone('2014-05-28T00:00:00')
+        var noTzMoment = FullCalendar.moment.parseZone('2014-05-28T00:00:00')
         var newMoment = construct(noTzMoment)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
         expect(newMoment.hasTime()).toBe(true)
@@ -597,7 +597,7 @@ describe('moment constructor', function() {
       })
 
       it('remains ambiguously-timed', function() {
-        var noTimeMoment = $.fullCalendar.moment('2014-05-28')
+        var noTimeMoment = FullCalendar.moment('2014-05-28')
         var newMoment = construct(noTimeMoment)
         expect(newMoment.toArray()).toEqual([ 2014, 4, 28, 0, 0, 0, 0 ])
         expect(newMoment.hasTime()).toBe(false)
@@ -607,7 +607,7 @@ describe('moment constructor', function() {
     });
 
     [
-      { description: 'when given an existing FullCalendar moment', moment: $.fullCalendar.moment },
+      { description: 'when given an existing FullCalendar moment', moment: FullCalendar.moment },
       { description: 'when given an existing basic moment', moment: moment }
     ]
       .forEach(function(scenario) {

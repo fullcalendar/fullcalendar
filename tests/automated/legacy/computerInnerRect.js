@@ -11,7 +11,7 @@ describe('computeInnerRect', function() {
   var PADDING_RIGHT = 6
   var PADDING_TOP = 7
   var PADDING_BOTTOM = 8
-  var computeInnerRect = $.fullCalendar.computeInnerRect
+  var computeInnerRect = FullCalendar.computeInnerRect
 
   describeValues({
     'when LTR': 'ltr',

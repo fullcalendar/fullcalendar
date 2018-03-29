@@ -150,7 +150,7 @@ describe('navLinks', function() {
   ------------------------------------------------------------------------------------------------------------------ */
 
   function expectDayView(viewName, dayDate) {
-    dayDate = $.fullCalendar.moment(dayDate)
+    dayDate = FullCalendar.moment(dayDate)
     expect(getCurrentViewName()).toBe(viewName)
     var dates = getDayGridDates()
     expect(dates.length).toBe(1)
@@ -158,7 +158,7 @@ describe('navLinks', function() {
   }
 
   function expectWeekView(viewName, firstDayDate) {
-    firstDayDate = $.fullCalendar.moment(firstDayDate)
+    firstDayDate = FullCalendar.moment(firstDayDate)
     expect(getCurrentViewName()).toBe(viewName)
     var dates = getDayGridDates()
     expect(dates.length).toBe(7)
@@ -172,7 +172,7 @@ describe('navLinks', function() {
   // day headers (for both day grid and time grid)
 
   function getDayHeaderLink(dayDate) {
-    dayDate = $.fullCalendar.moment(dayDate)
+    dayDate = FullCalendar.moment(dayDate)
     return $('.fc-day-header[data-date="' + dayDate.format('YYYY-MM-DD') + '"] a')
   }
 
@@ -183,7 +183,7 @@ describe('navLinks', function() {
   // day grid
 
   function getDayGridNumberEl(dayDate) {
-    dayDate = $.fullCalendar.moment(dayDate)
+    dayDate = FullCalendar.moment(dayDate)
     return $('.fc-day-top[data-date="' + dayDate.format('YYYY-MM-DD') + '"] .fc-day-number')
   }
 
@@ -197,14 +197,14 @@ describe('navLinks', function() {
 
   function getDayGridDates() {
     return $('.fc-day-grid .fc-day').map(function(i, el) {
-      return $.fullCalendar.moment($(el).data('date'))
+      return FullCalendar.moment($(el).data('date'))
     }).get()
   }
 
   // list view
 
   function getListDayHeaderLink(dayDate) {
-    dayDate = $.fullCalendar.moment(dayDate)
+    dayDate = FullCalendar.moment(dayDate)
     return $('.fc-list-heading[data-date="' + dayDate.format('YYYY-MM-DD') + '"] a.fc-list-heading-main')
   }
 

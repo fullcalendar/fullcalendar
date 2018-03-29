@@ -1,6 +1,6 @@
 
 describe('TaskQueue', function() {
-  var TaskQueue = $.fullCalendar.TaskQueue
+  var TaskQueue = FullCalendar.TaskQueue
 
   it('executes first task immediately', function() {
     var q = new TaskQueue()

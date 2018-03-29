@@ -30,7 +30,7 @@ export function expectDay(date, bool) {
 
 
 function processWholeDay(date) {
-  date = $.fullCalendar.moment.parseZone(date)
+  date = FullCalendar.moment.parseZone(date)
   expect(date.hasTime()).toBe(false)
   expect(date.hasZone()).toBe(false)
   return date

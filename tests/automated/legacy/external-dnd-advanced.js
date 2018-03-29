@@ -389,7 +389,7 @@ describe('advanced external dnd', function() {
       expect(typeof ui).toBe('object')
     }
     options.eventReceive = function(event) {
-      if ($.fullCalendar.moment.parseZone(date).hasTime()) { // dropped on an all-day slot
+      if (FullCalendar.moment.parseZone(date).hasTime()) { // dropped on an all-day slot
         expect(event.start).toEqualMoment(date)
       } else { // event might have a time, which it is allowed to keep
         expect(event.start.clone().stripTime()).toEqualMoment(date)

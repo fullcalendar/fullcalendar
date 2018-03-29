@@ -8,11 +8,11 @@
 <script src='../../dist/fullcalendar.js'></script>
 <script src='../../dist/gcal.js'></script>
 <script>
-  
-  var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
+
+  var gcalFeed = FullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
 
   $(document).ready(function() {
-  
+
     var cal = $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
@@ -27,12 +27,12 @@
         }
       }
     });
-    
+
     cal.fullCalendar('addEventSource', gcalFeed);
     cal.fullCalendar('removeEventSource', gcalFeed);
-    
+
     // events should not be rendered when jsonp returns!
-    
+
   });
 
 </script>
@@ -41,11 +41,11 @@
   .red-event a {
     background: red;
   }
-  
+
   .yellow-event a {
     background: yellow;
   }
-  
+
   .black-text-event a {
     color: #000;
   }

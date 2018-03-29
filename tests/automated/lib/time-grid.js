@@ -44,7 +44,7 @@ export function selectTimeGrid(start, inclusiveEnd) {
 
 
 export function getTimeGridPoint(date) {
-  date = $.fullCalendar.moment.parseZone(date)
+  date = FullCalendar.moment.parseZone(date)
   var top = getTimeGridTop(date.time())
   var dayEls = getTimeGridDayEls(date)
   var dayRect
@@ -60,7 +60,7 @@ export function getTimeGridPoint(date) {
 
 
 export function getTimeGridLine(date) { // not in Scheduler
-  date = $.fullCalendar.moment.parseZone(date)
+  date = FullCalendar.moment.parseZone(date)
   var top = getTimeGridTop(date.time())
   var dayEls = getTimeGridDayEls(date)
   var dayRect
@@ -131,7 +131,7 @@ export function getTimeGridTop(targetTime) {
 
 
 export function getTimeGridDayEls(date) {
-  date = $.fullCalendar.moment.parseZone(date)
+  date = FullCalendar.moment.parseZone(date)
 
   return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]')
 }
@@ -139,7 +139,7 @@ export function getTimeGridDayEls(date) {
 
 export function getTimeGridSlotEls(timeDuration) {
   timeDuration = moment.duration(timeDuration)
-  const date = $.fullCalendar.moment.utc('2016-01-01').time(timeDuration)
+  const date = FullCalendar.moment.utc('2016-01-01').time(timeDuration)
   if (date.date() === 1) { // ensure no time overflow/underflow
     return $(`.fc-time-grid .fc-slats tr[data-time="${date.format('HH:mm:ss')}"]`)
   } else {

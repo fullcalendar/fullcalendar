@@ -9,9 +9,10 @@
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
-  $(document).ready(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
 
-    $('#calendar').fullCalendar({
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -34,7 +35,7 @@
       eventRender: function(event, el) {
         // render the timezone offset below the event title
         if (event.start.hasZone()) {
-          el.find('.fc-title').after(
+          $(el).find('.fc-title').after(
             $('<div class="tzo"/>').text(event.start.format('Z'))
           );
         }
@@ -46,6 +47,8 @@
         console.log('select', startDate.format(), endDate.format());
       }
     });
+
+    calendar.render();
 
     // load the list of available timezones, build the <select> options
     $.getJSON('php/get-timezones.php', function(timezones) {
@@ -60,7 +63,7 @@
 
     // when the timezone selector changes, dynamically change the calendar option
     $('#timezone-selector').on('change', function() {
-      $('#calendar').fullCalendar('option', 'timezone', this.value || false);
+      calendar.option('timezone', this.value || false);
     });
   });
 

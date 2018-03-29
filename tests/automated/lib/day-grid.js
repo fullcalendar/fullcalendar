@@ -1,6 +1,6 @@
 
 export function getDayGridDayEls(date) {
-  date = $.fullCalendar.moment.parseZone(date)
+  date = FullCalendar.moment.parseZone(date)
   return $(`.fc-day-grid .fc-day[data-date="${date.format('YYYY-MM-DD')}"]`)
 }
 

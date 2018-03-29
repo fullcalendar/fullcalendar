@@ -10,7 +10,7 @@
 <script>
 
   var cal, staticEvents;
-  
+
   var date = new Date();
   var d = date.getDate();
   var m = date.getMonth();
@@ -81,7 +81,7 @@
       ]
     });
   });
-  
+
   function updateEventStart() {
     var event = cal.fullCalendar('clientEvents', 777)[0];
     event.start = new Date(y, m, d, 13, 30);
@@ -91,7 +91,7 @@
     //event.allDay = true;
     cal.fullCalendar('updateEvent', event);
   }
-  
+
   function updateRepeatingEvent() {
     var event = cal.fullCalendar('clientEvents', 999)[0];
     event.start = new Date(y, m, 4, 13, 30);
@@ -105,29 +105,29 @@
     cal.fullCalendar('updateEvent', event);
     //console.log(cal.fullCalendar('clientEvents', 2));
   }
-  
+
   function renderEvent(stick) {
     cal.fullCalendar('renderEvent', {
       start: new Date(y, m, 17),
       title: 'heyman'
     }, stick);
   }
-  
+
   function getView() {
     var view = cal.fullCalendar('getView');
     console.log(view.start + ' --- ' + view.end + ' "' + view.title + '"');
   }
-  
+
   function getDate() {
     console.log(cal.fullCalendar('getDate'));
   }
-  
+
   function optionGetter() {
     console.log(cal.fullCalendar('option', 'editable'));
   }
-  
-  var gcalFeed = $.fullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
-  
+
+  var gcalFeed = FullCalendar.gcalFeed("http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic");
+
   var jsonFeed = "../demos/json-events.php";
 
 </script>

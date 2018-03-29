@@ -6,17 +6,18 @@
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../node_modules/moment/moment.js'></script>
-<script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../dist/fullcalendar.js'></script>
 <script src='js/theme-chooser.js'></script>
 <script>
 
-  $(document).ready(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar;
 
     initThemeChooser({
 
       init: function(themeSystem) {
-        $('#calendar').fullCalendar({
+        calendar = new FullCalendar.Calendar(calendarEl, {
           themeSystem: themeSystem,
           header: {
             left: 'prev,next today',
@@ -85,10 +86,11 @@
             }
           ]
         });
+        calendar.render();
       },
 
       change: function(themeSystem) {
-        $('#calendar').fullCalendar('option', 'themeSystem', themeSystem);
+        calendar.option('themeSystem', themeSystem);
       }
 
     });

@@ -13,8 +13,8 @@ describe('visibleRange', function() {
 
       describeOptions('visibleRange', {
         'of moment objects': {
-          start: $.fullCalendar.moment(startInput),
-          end: $.fullCalendar.moment(endInput)
+          start: FullCalendar.moment(startInput),
+          end: FullCalendar.moment(endInput)
         },
         'of strings': {
           start: startInput,
@@ -22,8 +22,8 @@ describe('visibleRange', function() {
         },
         'of a function that returns moment objects': function() {
           return {
-            start: $.fullCalendar.moment(startInput),
-            end: $.fullCalendar.moment(endInput)
+            start: FullCalendar.moment(startInput),
+            end: FullCalendar.moment(endInput)
           }
         },
         'of a function that returns strings': function() {

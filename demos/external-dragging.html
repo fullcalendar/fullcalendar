@@ -10,8 +10,7 @@
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
-  $(document).ready(function() {
-
+  document.addEventListener('DOMContentLoaded', function() {
 
     /* initialize the external events
     -----------------------------------------------------------------*/
@@ -33,11 +32,11 @@
 
     });
 
-
     /* initialize the calendar
     -----------------------------------------------------------------*/
 
-    $('#calendar').fullCalendar({
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -53,7 +52,7 @@
         }
       }
     });
-
+    calendar.render();
 
   });
 

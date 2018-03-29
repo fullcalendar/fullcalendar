@@ -52,7 +52,7 @@ $(document).ready(function() {
   var d = date.getDate();
   var m = date.getMonth();
   var y = date.getFullYear();
-  
+
   $('#calendar').fullCalendar({
     header: {
       left: 'prev,next today',
@@ -70,7 +70,7 @@ $(document).ready(function() {
     selectHelper: true,
     dragOpacity: .5,
     eventSources: [
-    
+
       {
         url: 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic',
         color: 'orange',
@@ -80,14 +80,14 @@ $(document).ready(function() {
         },
         editable: true
       },
-      
+
       /*
-      $.fullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic', {
+      FullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic', {
         color: 'orange',
         className: 'gcal'
       }),
       */
-      
+
       {
         url: "../demos/json-events.php",
         //editable: false,
@@ -99,7 +99,7 @@ $(document).ready(function() {
           console.log('json-events.php is done!!!', arguments);
         }
       },
-    
+
       {
         color: 'purple',
         //editable: false,
@@ -131,7 +131,7 @@ $(document).ready(function() {
           }
         ]
       },
-      
+
       {
         events: [
           {
@@ -159,7 +159,7 @@ $(document).ready(function() {
           }
         ]
       }
-      
+
     ],
     eventClick: function(event) {
       if (event.url) {
@@ -168,7 +168,7 @@ $(document).ready(function() {
       return false;
     }
   });
-  
+
 });
 
 </script>

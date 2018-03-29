@@ -443,7 +443,7 @@ describe('ListView rendering', function() {
       return {
         mainText: el.find('.fc-list-heading-main').text() || '',
         altText: el.find('.fc-list-heading-alt').text() || '',
-        date: $.fullCalendar.moment(el.data('date'))
+        date: FullCalendar.moment(el.data('date'))
       }
     }).get()
   }

@@ -1,6 +1,6 @@
 
 describe('RenderQueue', function() {
-  var RenderQueue = $.fullCalendar.RenderQueue
+  var RenderQueue = FullCalendar.RenderQueue
 
   it('executes atomic events in sequence', function() {
     var ops = []

@@ -1,8 +1,7 @@
 describe('custom view class', function() {
 
   it('calls all standard methods with correct parameters', function() {
-    var FC = $.fullCalendar
-    var View = FC.View
+    var View = FullCalendar.View
     var CustomView
 
     var methods = {
@@ -40,7 +39,7 @@ describe('custom view class', function() {
     spyOn(methods, 'destroySelection').and.callThrough()
 
     CustomView = View.extend(methods)
-    FC.views.custom = CustomView
+    FullCalendar.views.custom = CustomView
 
     initCalendar({
       defaultView: 'custom',
@@ -71,7 +70,7 @@ describe('custom view class', function() {
 
     expect(methods.destroySelection).toHaveBeenCalled()
 
-    delete FC.views.custom
+    delete FullCalendar.views.custom
   })
 
 })

@@ -1,6 +1,6 @@
 
 // HACK: we know Scheduler introduces an extra rerender :(
-const SKIP_RERENDERS = Boolean($.fullCalendar.schedulerVersion)
+const SKIP_RERENDERS = Boolean(FullCalendar.schedulerVersion)
 if (SKIP_RERENDERS) {
   console.log('skipping rerenders')
 }
@@ -8,7 +8,6 @@ if (SKIP_RERENDERS) {
 // eslint-disable-next-line
 SKIP_RERENDERS ||
 describe('rerender performance', function() {
-  var FC = $.fullCalendar
 
   pushOptions({
     defaultDate: '2017-10-04',
@@ -37,7 +36,7 @@ describe('rerender performance', function() {
   ].forEach(function(settings) {
     settings.classes.forEach(function(className) {
       describe('for ' + className + ' in ' + settings.defaultView + ' view', function() {
-        var Class = FC[className]
+        var Class = FullCalendar[className]
 
         it('calls methods a limited number of times', function(done) {
           var executeDateRender = spyOnMethod(Class, 'executeDateRender')

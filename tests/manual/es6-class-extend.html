@@ -9,7 +9,7 @@
 <script src='../../dist/fullcalendar.js'></script>
 <script>
 
-  let { AgendaView, TimeGrid } = $.fullCalendar;
+  let { AgendaView, TimeGrid } = FullCalendar;
 
   class CustomTimeGrid extends TimeGrid {
     constructor(...args) {
@@ -29,9 +29,9 @@
   }
 
   // ugly, because of https://github.com/fullcalendar/fullcalendar/issues/3657
-  $.fullCalendar.views.custom = {
+  FullCalendar.views.custom = {
     class: CustomView,
-    defaults: $.fullCalendar.views.agenda.defaults
+    defaults: FullCalendar.views.agenda.defaults
   };
 
   $(document).ready(function() {

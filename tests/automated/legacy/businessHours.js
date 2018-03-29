@@ -200,8 +200,8 @@ describe('businessHours', function() {
       end = obj.end
     }
 
-    start = $.fullCalendar.moment.parseZone(start)
-    end = $.fullCalendar.moment.parseZone(end)
+    start = FullCalendar.moment.parseZone(start)
+    end = FullCalendar.moment.parseZone(end)
 
     var startTime = start.time()
     var endTime

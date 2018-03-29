@@ -1,6 +1,6 @@
 describe('weekViewRender', function() {
 
-  var nowStr = $.fullCalendar.moment(new Date()).format('YYYY-MM-DD')
+  var nowStr = FullCalendar.moment(new Date()).format('YYYY-MM-DD')
 
   pushOptions({
     defaultDate: nowStr,

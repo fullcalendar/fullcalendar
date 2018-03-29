@@ -12,8 +12,8 @@ TODO: check isStart/isEnd.
 */
 export function checkEventRendering(start, end) {
 
-  start = $.fullCalendar.moment.parseZone(start)
-  end = $.fullCalendar.moment.parseZone(end)
+  start = FullCalendar.moment.parseZone(start)
+  end = FullCalendar.moment.parseZone(end)
 
   var expectedRects = computeSpanRects(start, end)
   var eventEls = $('.fc-event') // sorted by DOM order. not good for RTL
@@ -132,7 +132,7 @@ function computeDays() {
   var days = dayEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
-      date: $.fullCalendar.moment.parseZone(
+      date: FullCalendar.moment.parseZone(
         $(node).data('date')
       )
     })

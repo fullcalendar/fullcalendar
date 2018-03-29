@@ -102,7 +102,7 @@ describe('validRange', function() {
 
       it('can return a range object with moments', function() {
         var validRangeSpy = spyOnCalendarCallback('validRange', function() {
-          return { start: $.fullCalendar.moment.parseZone('2017-06-06') }
+          return { start: FullCalendar.moment.parseZone('2017-06-06') }
         })
 
         initCalendar()

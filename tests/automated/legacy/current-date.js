@@ -29,7 +29,7 @@ describe('current date', function() {
       })
       it('should initialize at the date, given a Moment object', function() {
         var options = {}
-        options.defaultDate = $.fullCalendar.moment('2011-03-10')
+        options.defaultDate = FullCalendar.moment('2011-03-10')
         initCalendar(options)
         expectViewDates('2011-03-06', '2011-03-13')
         expect(currentCalendar.getDate()).toEqualMoment('2011-03-10')
@@ -67,7 +67,7 @@ describe('current date', function() {
       })
       it('should go to a date when given a moment object', function() {
         initCalendar()
-        currentCalendar.gotoDate($.fullCalendar.moment('2015-04-01'))
+        currentCalendar.gotoDate(FullCalendar.moment('2015-04-01'))
         expectViewDates('2015-03-29', '2015-04-05')
       })
     })
@@ -247,16 +247,16 @@ describe('current date', function() {
     var calculatedEnd
     var title
 
-    start = $.fullCalendar.moment(start)
-    calculatedEnd = end ? $.fullCalendar.moment(end) : start.clone().add(1, 'days')
+    start = FullCalendar.moment(start)
+    calculatedEnd = end ? FullCalendar.moment(end) : start.clone().add(1, 'days')
     expect(start).toEqualMoment(view.start)
     expect(calculatedEnd).toEqualMoment(view.end)
 
-    titleStart = titleStart ? $.fullCalendar.moment(titleStart) : start
-    titleEnd = titleEnd ? $.fullCalendar.moment(titleEnd) : calculatedEnd
+    titleStart = titleStart ? FullCalendar.moment(titleStart) : start
+    titleEnd = titleEnd ? FullCalendar.moment(titleEnd) : calculatedEnd
 
     if (titleEnd) {
-      title = $.fullCalendar.formatRange(
+      title = FullCalendar.formatRange(
         titleStart,
         titleEnd.clone().add(-1, 'ms'),
         TITLE_FORMAT,

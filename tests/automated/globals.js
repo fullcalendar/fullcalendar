@@ -53,7 +53,6 @@ window.spyOnCalendarCallback = function(name, func) {
 }
 
 window.initCalendar = function(options, el) {
-  var Calendar = $.fullCalendar.Calendar
   var $el
 
   if (options) {
@@ -66,7 +65,7 @@ window.initCalendar = function(options, el) {
     $el = $('<div id="calendar">').appendTo('body')
   }
 
-  window.currentCalendar = new Calendar($el[0], getCurrentOptions()) // set the global
+  window.currentCalendar = new FullCalendar.Calendar($el[0], getCurrentOptions()) // set the global
 
   return window.currentCalendar.render()
 }
@@ -125,7 +124,7 @@ const timezoneScenarios = {
     description: 'when no timezone',
     value: null,
     moment: function(str) {
-      return $.fullCalendar.moment.parseZone(str)
+      return FullCalendar.moment.parseZone(str)
     }
   },
   local: {

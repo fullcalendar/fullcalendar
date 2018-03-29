@@ -1,6 +1,6 @@
 
 describe('emitter', function() {
-  var EmitterMixin = $.fullCalendar.EmitterMixin
+  var EmitterMixin = FullCalendar.EmitterMixin
 
   it('calls a handler', function() {
     var o = new EmitterMixin()

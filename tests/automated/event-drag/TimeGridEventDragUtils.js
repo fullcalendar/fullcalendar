@@ -4,8 +4,8 @@ import { computeSpanRects } from '../event-render/TimeGridEventRenderUtils'
 
 export function drag(startDate, endDate, debug) {
 
-  startDate = $.fullCalendar.moment.parseZone(startDate)
-  endDate = $.fullCalendar.moment.parseZone(endDate)
+  startDate = FullCalendar.moment.parseZone(startDate)
+  endDate = FullCalendar.moment.parseZone(endDate)
 
   var startRect = computeSpanRects(
     startDate,

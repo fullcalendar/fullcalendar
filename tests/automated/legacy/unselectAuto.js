@@ -1,6 +1,6 @@
 
 describe('unselectAuto', function() {
-  var View = $.fullCalendar.View
+  var View = FullCalendar.View
   var options
 
   beforeEach(function() {

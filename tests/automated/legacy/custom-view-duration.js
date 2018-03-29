@@ -383,7 +383,7 @@ describe('custom view', function() {
     })
 
     it('falls back to view name when view lacks metadata', function() {
-      $.fullCalendar.views.crazy = $.fullCalendar.View.extend()
+      FullCalendar.views.crazy = FullCalendar.View.extend()
       var options = {
         views: {}
       }
@@ -393,7 +393,7 @@ describe('custom view', function() {
       options.defaultView = 'crazy'
       initCalendar(options)
       expect($('.fc-crazy-button')).toHaveText('crazy')
-      delete $.fullCalendar.views.crazy
+      delete FullCalendar.views.crazy
     })
   })
 })
