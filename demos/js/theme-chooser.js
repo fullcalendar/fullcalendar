@@ -1,32 +1,55 @@
 
 function initThemeChooser(settings) {
   var isInitialized = false;
-  var $currentStylesheet = $();
-  var $loading = $('#loading');
-  var $systemSelect = $('#theme-system-selector select')
-    .on('change', function() {
-      setThemeSystem(this.value);
-    });
+  var currentThemeSystem; // don't set this directly. use setThemeSystem
+  var currentStylesheetEl;
+  var loadingEl = document.getElementById('loading');
+  var systemSelectEl = document.querySelector('#theme-system-selector select');
+  var themeSelectWrapEls = Array.prototype.slice.call( // convert to real array
+    document.querySelectorAll('.selector[data-theme-system]')
+  );
 
-  setThemeSystem($systemSelect.val());
+  systemSelectEl.addEventListener('change', function() {
+    setThemeSystem(this.value);
+  });
+
+  setThemeSystem(systemSelectEl.value);
+
+  themeSelectWrapEls.forEach(function(themeSelectWrapEl) {
+    var themeSelectEl = themeSelectWrapEl.querySelector('select');
+
+    themeSelectWrapEl.addEventListener('change', function() {
+      setTheme(
+        currentThemeSystem,
+        themeSelectEl.options[themeSelectEl.selectedIndex].value
+      );
+    });
+  });
 
 
   function setThemeSystem(themeSystem) {
-    var $allSelectWraps = $('.selector[data-theme-system]').hide();
-    var $selectWrap = $allSelectWraps.filter('[data-theme-system="' + themeSystem +'"]').show();
-    var $select = $selectWrap.find('select')
-      .off('change') // avoid duplicate handlers :(
-      .on('change', function() {
-        setTheme(themeSystem, this.value);
-      });
+    var selectedTheme;
 
-    setTheme(themeSystem, $select.val());
+    currentThemeSystem = themeSystem;
+
+    themeSelectWrapEls.forEach(function(themeSelectWrapEl) {
+      var themeSelectEl = themeSelectWrapEl.querySelector('select');
+
+      if (themeSelectWrapEl.getAttribute('data-theme-system') === themeSystem) {
+        selectedTheme = themeSelectEl.options[themeSelectEl.selectedIndex].value;
+        themeSelectWrapEl.style.display = 'inline-block';
+      } else {
+        themeSelectWrapEl.style.display = 'none';
+      }
+    });
+
+    setTheme(themeSystem, selectedTheme);
   }
 
 
   function setTheme(themeSystem, themeName) {
     var stylesheetUrl = generateStylesheetUrl(themeSystem, themeName);
-    var $stylesheet;
+    var stylesheetEl;
 
     function done() {
       if (!isInitialized) {
@@ -41,18 +64,26 @@ function initThemeChooser(settings) {
     }
 
     if (stylesheetUrl) {
-      $stylesheet = $('<link rel="stylesheet" type="text/css" href="' + stylesheetUrl + '"/>').appendTo('head');
-      $loading.show();
+      stylesheetEl = document.createElement('link');
+      stylesheetEl.setAttribute('rel', 'stylesheet');
+      stylesheetEl.setAttribute('href', stylesheetUrl);
+      document.querySelector('head').appendChild(stylesheetEl);
 
-      whenStylesheetLoaded($stylesheet[0], function() {
-        $currentStylesheet.remove();
-        $currentStylesheet = $stylesheet;
-        $loading.hide();
+      loadingEl.style.display = 'inline';
+
+      whenStylesheetLoaded(stylesheetEl, function() {
+        if (currentStylesheetEl) {
+          currentStylesheetEl.parentNode.removeChild(currentStylesheetEl);
+        }
+        currentStylesheetEl = stylesheetEl;
+        loadingEl.style.display = 'none';
         done();
       });
     } else {
-      $currentStylesheet.remove();
-      $currentStylesheet = $();
+      if (currentStylesheetEl) {
+        currentStylesheetEl.parentNode.removeChild(currentStylesheetEl);
+        currentStylesheetEl = null
+      }
       done();
     }
   }
@@ -87,7 +118,7 @@ function initThemeChooser(settings) {
     if (themeSystem === 'jquery-ui') {
       creditId = 'jquery-ui';
     }
-    else if (themeSystem === 'bootstrap3') {
+    else if (themeSystem.match('bootstrap')) {
       if (themeName) {
         creditId = 'bootstrap-custom';
       }
@@ -96,8 +127,15 @@ function initThemeChooser(settings) {
       }
     }
 
-    $('.credits').hide()
-      .filter('[data-credit-id="' + creditId + '"]').show();
+    Array.prototype.slice.call( // convert to real array
+      document.querySelectorAll('.credits')
+    ).forEach(function(creditEl) {
+      if (creditEl.getAttribute('data-credit-id') === creditId) {
+        creditEl.style.display = 'block';
+      } else {
+        creditEl.style.display = 'none';
+      }
+    })
   }
 
 
