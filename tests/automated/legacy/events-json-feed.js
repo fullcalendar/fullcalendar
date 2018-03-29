@@ -130,7 +130,7 @@ describe('events as a json feed', function() {
         url: 'my-feed.php',
         data: {
           customParam: 'yes'
-        },
+        }
       } ]
     })
   })

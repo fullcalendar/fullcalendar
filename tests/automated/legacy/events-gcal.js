@@ -15,8 +15,8 @@ describe('Google Calendar plugin', function() {
 
   // Google sometimes stops returning old events. Will need to update this sometimes.
   var DEFAULT_MONTH = '2018-01'
-  var REQUEST_START = '2017-12-30T00:00:00Z' // one day before, by design
-  var REQUEST_END = '2018-02-12T00:00:00Z' // one day before, by design
+  // var REQUEST_START = '2017-12-30T00:00:00Z' // one day before, by design
+  // var REQUEST_END = '2018-02-12T00:00:00Z' // one day before, by design
   var NUM_EVENTS = 3
 
   var options

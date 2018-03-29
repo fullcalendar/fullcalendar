@@ -37,7 +37,8 @@ gulp.task('lint:js:built', [ 'webpack' ], function() {
       eslint({ // only checks that globals are properly accessed
         parserOptions: { 'ecmaVersion': 3 }, // for IE9
         envs: [ 'browser', 'commonjs', 'amd' ],
-        rules: { 'no-undef': 2 }
+        rules: { 'no-undef': 2 },
+        globals: [ 'ActiveXObject' ] // for reqwest
       })
     )
     .pipe(eslint.format())
@@ -82,7 +83,8 @@ gulp.task('lint:js:tests', function() {
           'spyOnMethod',
           'spyOnCalendarCallback',
           'spyCall',
-          'oneCall'
+          'oneCall',
+          'XHRMock'
         ]
       })
     )
