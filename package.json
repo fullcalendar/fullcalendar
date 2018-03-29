@@ -23,7 +23,8 @@
   "copyright": "2018 Adam Shaw",
   "dependencies": {
     "jquery": "2 - 3",
-    "moment": "^2.20.1"
+    "moment": "^2.20.1",
+    "reqwest": "^2.0.5"
   },
   "version": "0.0.0",
   "releaseDate": "1970-01-01",
@@ -58,7 +59,6 @@
     "jasmine-core": "2.5.2",
     "jasmine-fixture": "^2.0.0",
     "jasmine-jquery": "^2.1.1",
-    "jquery-mockjax": "^2.2.0",
     "jquery-simulate": "github:jquery/jquery-simulate",
     "karma": "^0.13.22",
     "karma-jasmine": "^1.0.2",
@@ -76,6 +76,7 @@
     "typescript": "^2.7.2",
     "webpack": "^3.11.0",
     "webpack-stream": "^4.0.2",
+    "xhr-mock": "^2.3.1",
     "yargs": "^4.8.1"
   },
   "main": "dist/fullcalendar.js",
