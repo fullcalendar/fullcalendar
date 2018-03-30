@@ -1,14 +1,10 @@
-import * as reqwest from 'reqwest'
+import * as request from 'superagent'
 import { assignTo } from '../../util/object'
 import { applyAll } from '../../util/misc'
 import EventSource from './EventSource'
 
 
 export default class JsonFeedEventSource extends EventSource {
-
-  static AJAX_DEFAULTS = {
-    method: 'GET'
-  }
 
   // these props must all be manually set before calling fetch
   url: any
@@ -38,46 +34,43 @@ export default class JsonFeedEventSource extends EventSource {
 
   fetch(start, end, timezone, onSuccess, onFailure) {
     let ajaxSettings = this.ajaxSettings
-    let origAjaxSuccess = ajaxSettings.success
-    let origAjaxError = ajaxSettings.error
     let requestParams = this.buildRequestParams(start, end, timezone)
+    let theRequest
 
     this.calendar.pushLoading()
 
-    reqwest(assignTo(
-      {}, // destination
-      JsonFeedEventSource.AJAX_DEFAULTS,
-      ajaxSettings,
-      {
-        url: this.url,
-        data: requestParams,
-        success: (rawEventDefs, status, xhr) => {
-          this.calendar.popLoading() // good to do this before onSuccess
+    if (!ajaxSettings.method || ajaxSettings.method.toUpperCase() === 'GET') {
+      theRequest = request.get(this.url).query(requestParams) // querystring params
+    } else {
+      theRequest = request(ajaxSettings.method, this.url).send(requestParams) // body data
+    }
 
-          if (typeof rawEventDefs === 'string') {
-            rawEventDefs = JSON.parse(rawEventDefs)
-          }
+    theRequest.end((error, res) => {
+      let rawEventDefs
 
-          if (rawEventDefs) {
-            let callbackRes = applyAll(origAjaxSuccess, this, [ rawEventDefs, status, xhr ]) // redirect `this`
+      this.calendar.popLoading()
 
-            if (Array.isArray(callbackRes)) {
-              rawEventDefs = callbackRes
-            }
-
-            onSuccess(this.parseEventDefs(rawEventDefs))
-          } else {
-            onFailure()
-          }
-        },
-        error: (xhr, statusText, errorThrown) => {
-          this.calendar.popLoading() // good to do this before onFailure
-
-          applyAll(origAjaxError, this, [ xhr, statusText, errorThrown ]) // redirect `this`
-          onFailure()
+      if (!error) {
+        if (res.body) {
+          rawEventDefs = res.body
+        } else if (res.text) {
+          rawEventDefs = JSON.parse(res.text)
         }
       }
-    ))
+
+      if (rawEventDefs) {
+        let callbackRes = applyAll(ajaxSettings.success, null, [ rawEventDefs, res ])
+
+        if (Array.isArray(callbackRes)) {
+          rawEventDefs = callbackRes
+        }
+
+        onSuccess(this.parseEventDefs(rawEventDefs))
+      } else {
+        applyAll(ajaxSettings.error, null, [ error, res ])
+        onFailure()
+      }
+    })
   }
 
 

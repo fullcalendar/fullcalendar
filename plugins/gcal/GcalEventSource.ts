@@ -1,5 +1,5 @@
-import * as reqwest from 'reqwest'
-import { EventSource, JsonFeedEventSource, warn, applyAll, assignTo } from 'fullcalendar'
+import * as request from 'superagent'
+import { EventSource, warn, applyAll, assignTo } from 'fullcalendar'
 
 
 export default class GcalEventSource extends EventSource {
@@ -34,7 +34,6 @@ export default class GcalEventSource extends EventSource {
     let url = this.buildUrl()
     let requestParams = this.buildRequestParams(start, end, timezone)
     let ajaxSettings = this.ajaxSettings || {}
-    let origAjaxSuccess = ajaxSettings.success
 
     if (!requestParams) { // could have failed
       onFailure()
@@ -43,49 +42,38 @@ export default class GcalEventSource extends EventSource {
 
     this.calendar.pushLoading()
 
-    reqwest(assignTo(
-      {}, // destination
-      JsonFeedEventSource.AJAX_DEFAULTS,
-      ajaxSettings,
-      {
-        url: url,
-        type: 'jsonp',
-        jsonpCallback: 'callback',
-        data: requestParams,
-        success: (responseData, status, xhr) => {
-          let rawEventDefs
-          let successRes
+    request.get(url)
+      .query(requestParams)
+      .end((error, res) => {
+        let rawEventDefs
 
-          this.calendar.popLoading()
+        this.calendar.popLoading()
 
-          if (responseData.error) {
-            this.reportError('Google Calendar API: ' + responseData.error.message, responseData.error.errors)
-            onFailure()
-          } else if (responseData.items) {
+        if (!error) {
+          let resData = res.body
+          if (resData.error) {
+            this.reportError('Google Calendar API: ' + resData.error.message, resData.error.errors)
+          } else if (resData.items) {
             rawEventDefs = this.gcalItemsToRawEventDefs(
-              responseData.items,
+              resData.items,
               requestParams.timeZone
             )
-
-            successRes = applyAll(origAjaxSuccess, this, [ responseData, status, xhr ]) // passthru
-
-            if (Array.isArray(successRes)) {
-              rawEventDefs = successRes
-            }
-
-            onSuccess(this.parseEventDefs(rawEventDefs))
           }
-        },
-        error: (xhr, statusText, errorThrown) => {
-          this.reportError(
-            'Google Calendar network failure: ' + statusText,
-            [ xhr, errorThrown ]
-          )
-          this.calendar.popLoading()
+        }
+
+        if (rawEventDefs) {
+          let callbackRes = applyAll(ajaxSettings.success, null, [ rawEventDefs, res ])
+
+          if (Array.isArray(callbackRes)) {
+            rawEventDefs = callbackRes
+          }
+
+          onSuccess(this.parseEventDefs(rawEventDefs))
+        } else {
+          applyAll(ajaxSettings.error, null, [ error, res ])
           onFailure()
         }
-      }
-    ))
+      })
   }
 
 

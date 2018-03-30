@@ -23,7 +23,7 @@
   "copyright": "2018 Adam Shaw",
   "dependencies": {
     "moment": "^2.20.1",
-    "reqwest": "^2.0.5"
+    "superagent": "^3.8.2"
   },
   "version": "0.0.0",
   "releaseDate": "1970-01-01",
