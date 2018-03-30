@@ -38,7 +38,7 @@ gulp.task('lint:js:built', [ 'webpack' ], function() {
         parserOptions: { 'ecmaVersion': 3 }, // for IE9
         envs: [ 'browser', 'commonjs', 'amd' ],
         rules: { 'no-undef': 2 },
-        globals: [ 'ActiveXObject' ] // for reqwest
+        globals: [ 'Promise', 'ActiveXObject' ] // for superagent
       })
     )
     .pipe(eslint.format())

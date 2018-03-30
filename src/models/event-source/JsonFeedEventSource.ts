@@ -51,9 +51,10 @@ export default class JsonFeedEventSource extends EventSource {
       this.calendar.popLoading()
 
       if (!error) {
-        if (res.body) {
+        if (res.body) { // parsed JSON
           rawEventDefs = res.body
         } else if (res.text) {
+          // if the server doesn't set Content-Type, won't be parsed as JSON. parse anyway.
           rawEventDefs = JSON.parse(res.text)
         }
       }

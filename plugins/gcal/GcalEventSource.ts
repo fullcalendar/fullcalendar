@@ -49,16 +49,15 @@ export default class GcalEventSource extends EventSource {
 
         this.calendar.popLoading()
 
-        if (!error) {
-          let resData = res.body
-          if (resData.error) {
-            this.reportError('Google Calendar API: ' + resData.error.message, resData.error.errors)
-          } else if (resData.items) {
-            rawEventDefs = this.gcalItemsToRawEventDefs(
-              resData.items,
-              requestParams.timeZone
-            )
-          }
+        if (res.body && res.body.error) {
+          this.reportError('Google Calendar API: ' + res.body.error.message, res.body.error.errors)
+        } else if (error) {
+          this.reportError('Google Calendar API', error)
+        } else {
+          rawEventDefs = this.gcalItemsToRawEventDefs(
+            res.body.items,
+            requestParams.timeZone
+          )
         }
 
         if (rawEventDefs) {
