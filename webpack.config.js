@@ -27,12 +27,6 @@ module.exports = {
   entry: Object.assign({}, MODULES, generateLocaleMap()),
 
   externals: {
-    jquery: {
-      commonjs: 'jquery',
-      commonjs2: 'jquery',
-      amd: 'jquery',
-      root: 'jQuery'
-    },
     moment: 'moment',
     superagent: 'superagent',
 
