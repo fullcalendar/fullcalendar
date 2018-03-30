@@ -120,10 +120,7 @@ export function removeElement(el: HTMLElement) {
 const matchesMethod =
   Element.prototype.matches ||
   (Element.prototype as any).matchesSelector ||
-  (Element.prototype as any).mozMatchesSelector ||
-  (Element.prototype as any).msMatchesSelector ||
-  (Element.prototype as any).oMatchesSelector ||
-  (Element.prototype as any).webkitMatchesSelector
+  (Element.prototype as any).msMatchesSelector
 
 const closestMethod = Element.prototype.closest || function(selector) {
   // polyfill

@@ -82,17 +82,8 @@ module.exports = function(config) {
     customLaunchers: {
       ChromeHeadless_custom: {
         base: 'ChromeHeadless',
-        flags: [ '--no-sandbox' ] // https://docs.travis-ci.com/user/chrome#Sandboxing
+        flags: [ '--no-sandbox' ] // needed for TravisCI: https://docs.travis-ci.com/user/chrome#Sandboxing
       }
-      // PhantomJS_custom: {
-      //   base: 'PhantomJS',
-      //   options: {
-      //     viewportSize: {
-      //       width: 1024,
-      //       height: 768
-      //     }
-      //   }
-      // }
     }
   })
 }
