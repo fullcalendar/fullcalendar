@@ -9,6 +9,7 @@ require('./tasks/archive')
 require('./tasks/test')
 require('./tasks/lint')
 require('./tasks/bump')
+require('./tasks/example-repos')
 
 // when running just `gulp`
 gulp.task('default', [ 'dist' ])
@@ -34,19 +35,15 @@ gulp.task('dist', [
 
 // like dist, but runs tests and linting, and generates archive
 gulp.task('release', [
+  'example-repos:build',
   'lint',
   'dist',
   'archive',
   'test:single' // headless, single run
 ])
 
-// try to build example repos
-gulp.task('example-repos', [ 'webpack', 'ts-types' ], shell.task(
-  './bin/build-example-repos.sh'
-))
-
 // group these somewhat unrelated tasks together for CI
-gulp.task('lint-and-example-repos', [ 'lint', 'example-repos' ])
+gulp.task('lint-and-example-repos', [ 'lint', 'example-repos:build' ])
 
 gulp.task('clean', function() {
   return del([ 'dist/', 'tmp/', '.awcache/' ])

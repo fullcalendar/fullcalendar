@@ -16,7 +16,7 @@ then
 fi
 
 # push the current branch (assumes tracking is set up) and the tag
-git push
+git push --recurse-submodules=on-demand
 git push origin "v$version"
 
 success=0
@@ -41,12 +41,20 @@ git reset --quiet -- dist
 if [[ "$success" == "1" ]]
 then
   echo "Waiting for release to propagate to NPM..."
-  sleep 5
+  sleep 10
 
   ./bin/verify-npm.sh
-  ./bin/build-example-repos.sh --recent-release
-  echo "Success."
+
+  echo
+  echo 'Success.'
+  echo 'You can now run:'
+  echo '  ./bin/update-example-repo-deps.sh &&'
+  echo '  git push --recurse-submodules=on-demand &&'
+  echo '  ./bin/build-example-repos.sh --recent-release'
+  echo
 else
-  echo "Failure."
+  echo
+  echo 'Failure.'
+  echo
   exit 1
 fi
