@@ -1,6 +1,5 @@
 const gulp = require('gulp')
 const del = require('del')
-const shell = require('gulp-shell')
 
 require('./tasks/webpack')
 require('./tasks/ts-types')
