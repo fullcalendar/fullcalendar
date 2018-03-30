@@ -81,7 +81,8 @@ module.exports = function(config) {
     // force a window size for PhantomJS, because it's usually unreasonably small, resulting in offset problems
     customLaunchers: {
       ChromeHeadless_custom: {
-        base: 'ChromeHeadless'
+        base: 'ChromeHeadless',
+        flags: [ '--no-sandbox' ] // https://docs.travis-ci.com/user/chrome#Sandboxing
       }
       // PhantomJS_custom: {
       //   base: 'PhantomJS',
