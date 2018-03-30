@@ -34,6 +34,7 @@ module.exports = {
       root: 'jQuery'
     },
     moment: 'moment',
+    superagent: 'superagent',
 
     // moment locale files reference the moment lib with a relative require.
     // use our external reference instead.

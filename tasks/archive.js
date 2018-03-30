@@ -44,8 +44,9 @@ gulp.task('archive:misc', function() {
 gulp.task('archive:deps', function() {
   return gulp.src([
     'node_modules/moment/min/moment.min.js',
-    'node_modules/jquery/dist/jquery.min.js',
-    'node_modules/components-jqueryui/jquery-ui.min.js'
+    'node_modules/superagent/superagent.js',
+    'node_modules/jquery/dist/jquery.min.js', // only for draggable example
+    'node_modules/components-jqueryui/jquery-ui.min.js' // "
   ])
     .pipe(gulp.dest('tmp/' + packageId + '/lib/'))
 })
@@ -72,6 +73,7 @@ const demoPathModify = modify(function(content) {
 function transformDemoPath(path) {
   // reroot 3rd party libs
   path = path.replace('../node_modules/moment/', '../lib/')
+  path = path.replace('../node_modules/superagent/', '../lib/')
   path = path.replace('../node_modules/jquery/dist/', '../lib/')
   path = path.replace('../node_modules/components-jqueryui/', '../lib/')
 
@@ -81,7 +83,8 @@ function transformDemoPath(path) {
   if (
     !/\.min\.(js|css)$/.test(path) && // not already minified
     !/^\w/.test(path) && // reference to demo util js/css file
-    path !== '../locale-all.js' // this file is already minified
+    path !== '../locale-all.js' && // this file is already minified
+    path !== '../lib/superagent.js' // doesn't have a .min.js, but that's okay
   ) {
     // use minified
     path = path.replace(/\/([^/]*)\.(js|css)$/, '/$1.min.$2')
