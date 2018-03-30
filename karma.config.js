@@ -80,15 +80,18 @@ module.exports = function(config) {
 
     // force a window size for PhantomJS, because it's usually unreasonably small, resulting in offset problems
     customLaunchers: {
-      PhantomJS_custom: {
-        base: 'PhantomJS',
-        options: {
-          viewportSize: {
-            width: 1024,
-            height: 768
-          }
-        }
+      ChromeHeadless_custom: {
+        base: 'ChromeHeadless'
       }
+      // PhantomJS_custom: {
+      //   base: 'PhantomJS',
+      //   options: {
+      //     viewportSize: {
+      //       width: 1024,
+      //       height: 768
+      //     }
+      //   }
+      // }
     }
   })
 }
