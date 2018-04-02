@@ -1,8 +1,8 @@
 describe('removeEvents', function() {
 
   pushOptions({
-      defaultDate: '2014-06-24',
-      defaultView: 'month'
+    defaultDate: '2014-06-24',
+    defaultView: 'month'
   })
 
   function buildEventsWithoutIds() {
