@@ -1,4 +1,4 @@
-fdescribe('updateEvent', function() {
+describe('updateEvent', function() {
 
   pushOptions({
     defaultDate: '2014-05-01',
@@ -229,7 +229,7 @@ fdescribe('updateEvent', function() {
           initCalendar({
             defaultTimedEventDuration: { hours: 1 },
             events: [
-            { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' }
+              { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' }
             ]
           })
 
