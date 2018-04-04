@@ -43,37 +43,37 @@ describe('refetchEvents', function() {
 
   describe('when there are multiple event sources', function() {
     var fetchCount // affects events created in createEventGenerator
-    var eventSources = [
-      {
-        events: createEventGenerator(),
-        color: 'green',
-        id: 'source1'
-      },
-      {
-        events: createEventGenerator(),
-        color: 'blue',
-        id: 'source2'
-      },
-      {
-        events: createEventGenerator(),
-        color: 'red',
-        id: 'source3'
-      }
-    ]
+    var eventSources
 
     pushOptions({
       now: '2015-08-07',
-      defaultView: 'agendaWeek',
-      eventSources: eventSources
+      defaultView: 'agendaWeek'
     })
 
     beforeEach(function() {
       fetchCount = 0
+      eventSources = [
+        {
+          events: createEventGenerator(),
+          color: 'green',
+          id: 'source1'
+        },
+        {
+          events: createEventGenerator(),
+          color: 'blue',
+          id: 'source2'
+        },
+        {
+          events: createEventGenerator(),
+          color: 'red',
+          id: 'source3'
+        }
+      ]
     })
 
     describe('and all events are fetched synchronously', function() {
       it('all events are immediately updated', function(done) {
-        initCalendar()
+        initCalendar({ eventSources })
         fetchCount++
         currentCalendar.refetchEvents()
         expect($('.fetch0').length).toEqual(0)

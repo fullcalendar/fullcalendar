@@ -7,7 +7,7 @@ describe('locale', function() {
   it('is not affected by global moment locale when unset', function() {
     moment.locale('fr')
     initCalendar()
-    var mom = window.currentCalendar.moment('2014-05-01')
+    var mom = currentCalendar.moment('2014-05-01')
     var s = mom.format('dddd MMMM Do YYYY')
     expect(s).toEqual('Thursday May 1st 2014')
   })
@@ -17,7 +17,7 @@ describe('locale', function() {
     initCalendar({
       locale: 'es'
     })
-    var mom = window.currentCalendar.moment('2014-05-01')
+    var mom = currentCalendar.moment('2014-05-01')
     var s = mom.format('dddd MMMM Do YYYY')
     expect(s).toEqual('jueves mayo 1º 2014')
   })
@@ -76,7 +76,7 @@ describe('locale', function() {
     currentCalendar.option('locale', 'fr')
     expect($('h2', calendarEl)).toHaveText('juillet 2016')
 
-    currentCalendar.option('locale', 'ar')
+    currentCalendar.option('locale', 'ar') // NOTE: we had problems testing for RTL title text
     expect($(calendarEl)).toHaveClass('fc-rtl')
   })
 

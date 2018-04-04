@@ -1,9 +1,18 @@
 describe('scroll state', function() {
+  var calendarEl
+
+  beforeEach(function() {
+    calendarEl = $('<div id="calendar">').width(800).appendTo('body')
+  })
+  afterEach(function() {
+    calendarEl.remove()
+    calendarEl = null
+  })
+
   pushOptions({
     defaultDate: '2015-02-20',
     contentHeight: 200
   })
-  var calendarEl = $('<div id="calendar">').width(800).appendTo('body')
 
   describe('when in month view', function() {
     pushOptions({

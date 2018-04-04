@@ -261,7 +261,6 @@ describe('updateEvent', function() {
         var event, relatedEvent
 
         initCalendar({
-          defaultTimedEventDuration: { hours: 1 },
           events: [
             { id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T14:00:00', allDay: false, className: 'mainEvent' },
             { id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }

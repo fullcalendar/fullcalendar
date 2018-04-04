@@ -99,11 +99,12 @@ describe('header rendering', function() {
   })
 
   describe('when calendar is within a form', function() {
-    var el = $('<div id="calendar"/>')
-      .wrap('<form action="https://google.com/"></form>')
-      .appendTo('body')
+
     it('should not submit the form when clicking the button', function(done) {
       var unloadCalled = false
+      var el = $('<div id="calendar"/>')
+        .wrap('<form action="https://google.com/"></form>')
+        .appendTo('body')
 
       function beforeUnloadHandler() {
         console.log('when calendar is within a form, it submits!!!')
@@ -114,6 +115,7 @@ describe('header rendering', function() {
       $(window).on('beforeunload', beforeUnloadHandler)
 
       function cleanup() {
+        el.remove()
         $(window).off('beforeunload', beforeUnloadHandler)
       }
 
