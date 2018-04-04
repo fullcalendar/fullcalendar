@@ -1,12 +1,8 @@
 describe('removeEvents', function() {
-  var options
 
-  beforeEach(function() {
-    affix('#cal')
-    options = {
-      defaultDate: '2014-06-24',
-      defaultView: 'month'
-    }
+  pushOptions({
+    defaultDate: '2014-06-24',
+    defaultView: 'month'
   })
 
   function buildEventsWithoutIds() {
@@ -38,10 +34,10 @@ describe('removeEvents', function() {
         go(
           eventGenerator(),
           function() {
-            $('#cal').fullCalendar('removeEvents')
+            currentCalendar.removeEvents()
           },
           function() {
-            expect($('#cal').fullCalendar('clientEvents').length).toEqual(0)
+            expect(currentCalendar.clientEvents().length).toEqual(0)
             expect($('.fc-event').length).toEqual(0)
           },
           done
@@ -52,12 +48,12 @@ describe('removeEvents', function() {
         go(
           eventGenerator(),
           function() {
-            $('#cal').fullCalendar('removeEvents', function(event) {
+            currentCalendar.removeEvents(function(event) {
               return $.inArray('event-one', event.className) !== -1
             })
           },
           function() {
-            expect($('#cal').fullCalendar('clientEvents').length).toEqual(2)
+            expect(currentCalendar.clientEvents().length).toEqual(2)
             expect($('.fc-event').length).toEqual(2)
             expect($('.event-zero').length).toEqual(1)
             expect($('.event-two').length).toEqual(1)
@@ -73,10 +69,10 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        $('#cal').fullCalendar('removeEvents', 1)
+        currentCalendar.removeEvents(1)
       },
       function() {
-        expect($('#cal').fullCalendar('clientEvents').length).toEqual(2)
+        expect(currentCalendar.clientEvents().length).toEqual(2)
         expect($('.fc-event').length).toEqual(2)
         expect($('.event-zero').length).toEqual(1)
         expect($('.event-two').length).toEqual(1)
@@ -89,10 +85,10 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        $('#cal').fullCalendar('removeEvents', '1')
+        currentCalendar.removeEvents('1')
       },
       function() {
-        expect($('#cal').fullCalendar('clientEvents').length).toEqual(2)
+        expect(currentCalendar.clientEvents().length).toEqual(2)
         expect($('.fc-event').length).toEqual(2)
         expect($('.event-zero').length).toEqual(1)
         expect($('.event-two').length).toEqual(1)
@@ -105,10 +101,10 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        $('#cal').fullCalendar('removeEvents', 0)
+        currentCalendar.removeEvents(0)
       },
       function() {
-        expect($('#cal').fullCalendar('clientEvents').length).toEqual(2)
+        expect(currentCalendar.clientEvents().length).toEqual(2)
         expect($('.fc-event').length).toEqual(2)
         expect($('.event-zero').length).toEqual(0)
         expect($('.event-non-zero').length).toEqual(2)
@@ -137,42 +133,43 @@ describe('removeEvents', function() {
   // Verifies the actions in removeFunc executed correctly by calling checkFunc.
   function go(events, removeFunc, checkFunc, doneFunc) {
     var called = false
-    options.events = events
-    options.eventAfterAllRender = function() {
-      if (!called) { // don't execute on subsequent removeEvents/next/prev
-        called = true
+    initCalendar({
+      events: events,
+      eventAfterAllRender: function() {
+        if (!called) { // don't execute on subsequent removeEvents/next/prev
+          called = true
 
-        checkAllEvents() // make sure all events initially rendered correctly
+          checkAllEvents() // make sure all events initially rendered correctly
 
-        removeFunc() // remove the events
-        setTimeout(function() { // because the event rerender will be queued because we're a level deep
+          removeFunc() // remove the events
+          setTimeout(function() { // because the event rerender will be queued because we're a level deep
 
-          checkFunc() // check correctness
+            checkFunc() // check correctness
 
-          // move the calendar back out of view, then back in
-          $('#cal').fullCalendar('next')
-          $('#cal').fullCalendar('prev')
+            // move the calendar back out of view, then back in
+            currentCalendar.next()
+            currentCalendar.prev()
 
-          // array event sources should maintain the same state
-          // whereas "dynamic" event sources should refetch and reset the state
-          if ($.isArray(events)) {
-            checkFunc() // for issue 2187
-          } else {
-            checkAllEvents()
-          }
+            // array event sources should maintain the same state
+            // whereas "dynamic" event sources should refetch and reset the state
+            if ($.isArray(events)) {
+              checkFunc() // for issue 2187
+            } else {
+              checkAllEvents()
+            }
 
-          doneFunc()
-        }, 0)
+            doneFunc()
+          }, 0)
+        }
       }
-    }
-    $('#cal').fullCalendar(options)
+    })
   }
 
 
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
   function checkAllEvents() {
-    expect($('#cal').fullCalendar('clientEvents').length).toEqual(3)
+    expect(currentCalendar.clientEvents().length).toEqual(3)
     expect($('.fc-event').length).toEqual(3)
   }
 
