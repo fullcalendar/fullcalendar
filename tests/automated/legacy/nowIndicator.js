@@ -7,7 +7,6 @@ describe('now indicator', function() {
   var options
 
   beforeEach(function() {
-    affix('#cal')
     options = {
       now: '2015-12-26T06:00:00',
       scrollTime: '00:00'
@@ -20,7 +19,7 @@ describe('now indicator', function() {
     })
 
     it('doesn\'t render even when activated', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       expect(isNowIndicatorRendered()).toBe(false)
     })
   })
@@ -31,7 +30,7 @@ describe('now indicator', function() {
     })
 
     it('doesn\'t render by default', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       expect(isNowIndicatorRendered()).toBe(false)
     })
 
@@ -49,18 +48,18 @@ describe('now indicator', function() {
 
           it('doesn\'t render when out of view', function() {
             options.defaultDate = '2015-12-27' // sun of next week
-            $('#cal').fullCalendar(options)
+            initCalendar(options)
             expect(isNowIndicatorRendered()).toBe(false)
           })
 
           it('renders on correct time', function() {
-            $('#cal').fullCalendar(options)
+            initCalendar(options)
             isNowIndicatorRenderedAt('2015-12-26T06:00:00')
           })
 
           it('renders on correct time2', function() {
             options.now = '2015-12-20T02:30:00'
-            $('#cal').fullCalendar(options)
+            initCalendar(options)
             isNowIndicatorRenderedAt('2015-12-20T02:30:00')
           })
         })
@@ -76,8 +75,8 @@ describe('now indicator', function() {
 
       options.defaultDate = '2016-01-01' // does NOT have "now" in view
       options.nowIndicator = true
-      $('#cal').fullCalendar(options)
-      $('#cal').fullCalendar('today') // the bug only happens after navigate
+      initCalendar(options)
+      currentCalendar.today() // the bug only happens after navigate
 
       setTimeout(function() {
         expect($('.fc-now-indicator-arrow').length).toBe(1)
