@@ -1,7 +1,7 @@
 describe('scroll state', function() {
   pushOptions({
-      defaultDate: '2015-02-20',
-      contentHeight: 200
+    defaultDate: '2015-02-20',
+    contentHeight: 200
   })
   var calendarEl = $('<div id="calendar">').width(800).appendTo('body')
 
