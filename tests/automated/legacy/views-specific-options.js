@@ -1,24 +1,22 @@
+
 describe('view-specific options', function() {
   var options
 
-  beforeEach(function() {
-    options = {
-      header: {
-        left: 'prev,next',
-        center: 'title',
-        right: 'month,basicWeek,basicDay,agendaWeek,agendaDay'
-      },
-      defaultView: 'month',
-      titleFormat: '[default]',
-      views: { }
-    }
-    affix('#cal')
+  pushOptions({
+    header: {
+      left: 'prev,next',
+      center: 'title',
+      right: 'month,basicWeek,basicDay,agendaWeek,agendaDay'
+    },
+    defaultView: 'month',
+    titleFormat: '[default]',
+    views: { }
   })
 
   function testEachView(viewsAndVals) {
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
     $.each(viewsAndVals, function(view, val) {
-      $('#cal').fullCalendar('changeView', view)
+      currentCalendar.changeView(view)
       expect($('h2')).toHaveText(val)
     })
   }

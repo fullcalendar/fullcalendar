@@ -6,29 +6,26 @@ describe('timezone', function() {
 
   var options
 
-  beforeEach(function() {
-    affix('#cal')
-    options = {
-      defaultView: 'month',
-      defaultDate: '2014-05-01',
-      events: [
-        {
-          id: '1',
-          title: 'all day event',
-          start: '2014-05-02'
-        },
-        {
-          id: '2',
-          title: 'timed event',
-          start: '2014-05-10T12:00:00'
-        },
-        {
-          id: '3',
-          title: 'timed and zoned event',
-          start: '2014-05-10T14:00:00+11:00'
-        }
-      ]
-    }
+  pushOptions({
+    defaultView: 'month',
+    defaultDate: '2014-05-01',
+    events: [
+      {
+        id: '1',
+        title: 'all day event',
+        start: '2014-05-02'
+      },
+      {
+        id: '2',
+        title: 'timed event',
+        start: '2014-05-10T12:00:00'
+      },
+      {
+        id: '3',
+        title: 'timed and zoned event',
+        start: '2014-05-10T14:00:00+11:00'
+      }
+    ]
   })
 
 
@@ -37,13 +34,13 @@ describe('timezone', function() {
       expectNoTimezone()
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   function expectNoTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -62,13 +59,13 @@ describe('timezone', function() {
       expectLocalTimezone()
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   function expectLocalTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -87,13 +84,13 @@ describe('timezone', function() {
       expectUtcTimezone()
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   function expectUtcTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -112,13 +109,13 @@ describe('timezone', function() {
       expectCustomTimezone()
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   function expectCustomTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -142,7 +139,7 @@ describe('timezone', function() {
         expectNoTimezone()
         rootEl = $('.fc-view > *:first')
         expect(rootEl.length).toBe(1)
-        $('#cal').fullCalendar('option', 'timezone', 'UTC') // will cause second call...
+        currentCalendar.option('timezone', 'UTC') // will cause second call...
       } else if (callCnt === 2) {
         expectUtcTimezone()
         expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // ensure didn't rerender whole calendar
@@ -150,7 +147,7 @@ describe('timezone', function() {
       }
     }
 
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
 })
