@@ -35,14 +35,14 @@ describe('forceEventDuration', function() {
     it('allows a null end date for all-day and timed events', function() {
       initCalendar({
         events: [
-        {
-          id: '1',
-          start: '2014-05-10'
-        },
-        {
-          id: '2',
-          start: '2014-05-10T14:00:00'
-        }
+          {
+            id: '1',
+            start: '2014-05-10'
+          },
+          {
+            id: '2',
+            start: '2014-05-10T14:00:00'
+          }
         ]
       })
       var events = currentCalendar.clientEvents()
