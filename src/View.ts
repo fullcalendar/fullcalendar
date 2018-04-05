@@ -660,9 +660,12 @@ export default abstract class View extends InteractiveDateComponent {
       this.calendar
     )
 
+    // endDelta is equal to the durationDelta but startDelta is the inverse to the durationDelta
+    let durationDelta = (-eventMutation.dateMutation.startDelta) + eventMutation.dateMutation.endDelta;
+
     this.triggerEventResize(
       eventInstance,
-      eventMutation.dateMutation.endDelta,
+      durationDelta,
       undoFunc,
       el, ev
     )
