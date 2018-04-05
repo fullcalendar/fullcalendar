@@ -663,7 +663,7 @@ export default abstract class View extends InteractiveDateComponent {
     let durationDelta = this.diffDates(
       eventInstance.dateProfile.end,
       eventInstance.dateProfile.start
-    ) 
+    )
 
     this.triggerEventResize(
       eventInstance,
