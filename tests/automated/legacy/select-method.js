@@ -3,7 +3,6 @@ describe('select method', function() {
   var options
 
   beforeEach(function() {
-    affix('#cal')
     options = {
       defaultDate: '2014-05-25',
       selectable: true
@@ -11,7 +10,7 @@ describe('select method', function() {
   })
 
   afterEach(function() {
-    $('#cal').fullCalendar('destroy')
+    currentCalendar.destroy()
   });
 
   /*
@@ -34,13 +33,13 @@ describe('select method', function() {
         describe('when called with all-day moments', function() {
           describe('when in bounds', function() {
             it('renders a selection', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-07', '2014-05-09')
+              initCalendar(options)
+              currentCalendar.select('2014-05-07', '2014-05-09')
               expect($('.fc-highlight')).toBeVisible()
             })
             it('renders a selection when called with one argument', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-07')
+              initCalendar(options)
+              currentCalendar.select('2014-05-07')
               expect($('.fc-highlight')).toBeVisible()
             })
             it('fires a selection event', function() {
@@ -51,15 +50,15 @@ describe('select method', function() {
                 expect(end).toEqualMoment('2014-05-09')
               }
               spyOn(options, 'select').and.callThrough()
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-07', '2014-05-09')
+              initCalendar(options)
+              currentCalendar.select('2014-05-07', '2014-05-09')
               expect(options.select).toHaveBeenCalled()
             })
           })
           describe('when out of bounds', function() {
             it('doesn\'t render a selection', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2015-05-07', '2015-05-09')
+              initCalendar(options)
+              currentCalendar.select('2015-05-07', '2015-05-09')
               expect($('.fc-highlight')).not.toBeVisible()
             })
             /*
@@ -70,8 +69,8 @@ describe('select method', function() {
                 expect(end).toEqualMoment('2014-05-09');
               };
               spyOn(options, 'select').and.callThrough();
-              $('#cal').fullCalendar(options);
-              $('#cal').fullCalendar('select', '2015-05-07', '2015-05-09');
+              initCalendar(options);
+              currentCalendar.select('2015-05-07', '2015-05-09');
               expect(options.select).not.toHaveBeenCalled();
             });
             */
@@ -79,8 +78,8 @@ describe('select method', function() {
         })
         describe('when called with timed moments', function() {
           it('renders a selection', function() {
-            $('#cal').fullCalendar(options)
-            $('#cal').fullCalendar('select', '2014-05-07T06:00:00', '2014-05-09T07:00:00')
+            initCalendar(options)
+            currentCalendar.select('2014-05-07T06:00:00', '2014-05-09T07:00:00')
             expect($('.fc-highlight')).toBeVisible()
           })
           it('fires a selection event', function() {
@@ -91,8 +90,8 @@ describe('select method', function() {
               expect(end).toEqualMoment('2014-05-09T06:00:00')
             }
             spyOn(options, 'select').and.callThrough()
-            $('#cal').fullCalendar(options)
-            $('#cal').fullCalendar('select', '2014-05-07T06:00:00', '2014-05-09T06:00:00')
+            initCalendar(options)
+            currentCalendar.select('2014-05-07T06:00:00', '2014-05-09T06:00:00')
             expect(options.select).toHaveBeenCalled()
           })
         })
@@ -106,13 +105,13 @@ describe('select method', function() {
         describe('when called with timed moments', function() {
           describe('when in bounds', function() {
             it('renders a selection when called with one argument', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-26T06:00:00')
+              initCalendar(options)
+              currentCalendar.select('2014-05-26T06:00:00')
               expect($('.fc-highlight')).toBeVisible()
             })
             it('renders a selection over the slot area', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-26T06:00:00', '2014-05-26T08:00:00')
+              initCalendar(options)
+              currentCalendar.select('2014-05-26T06:00:00', '2014-05-26T08:00:00')
               expect($('.fc-highlight')).toBeVisible()
               var slotAreaTop = $('.fc-time-grid-container').offset().top
               var overlayTop = $('.fc-highlight').offset().top
@@ -121,8 +120,8 @@ describe('select method', function() {
           })
           describe('when out of bounds', function() {
             it('doesn\'t render a selection', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2015-05-26T06:00:00', '2015-05-26T07:00:00')
+              initCalendar(options)
+              currentCalendar.select('2015-05-26T06:00:00', '2015-05-26T07:00:00')
               expect($('.fc-highlight')).not.toBeVisible()
             })
             /*
@@ -133,8 +132,8 @@ describe('select method', function() {
                 expect(end).toEqualMoment('2015-05-09T07:00:00');
               };
               spyOn(options, 'select').and.callThrough();
-              $('#cal').fullCalendar(options);
-              $('#cal').fullCalendar('select', '2015-05-07T06:00:00', '2015-05-09T07:00:00');
+              initCalendar(options);
+              currentCalendar.select('2015-05-07T06:00:00', '2015-05-09T07:00:00');
               expect(options.select).not.toHaveBeenCalled();
             });
             */
@@ -146,8 +145,8 @@ describe('select method', function() {
               options.allDaySlot = true
             })
             it('renders a selection over the day area', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-26', '2014-05-28')
+              initCalendar(options)
+              currentCalendar.select('2014-05-26', '2014-05-28')
               expect($('.fc-highlight')).toBeVisible()
               var slotAreaTop = $('.fc-time-grid-container').offset().top
               var overlayTop = $('.fc-highlight').offset().top
@@ -161,8 +160,8 @@ describe('select method', function() {
                 expect(end).toEqualMoment('2014-05-28')
               }
               spyOn(options, 'select').and.callThrough()
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-26', '2014-05-28')
+              initCalendar(options)
+              currentCalendar.select('2014-05-26', '2014-05-28')
               expect(options.select).toHaveBeenCalled()
             })
           })
@@ -171,8 +170,8 @@ describe('select method', function() {
               options.allDaySlot = false
             })
             it('doesn\'t render', function() {
-              $('#cal').fullCalendar(options)
-              $('#cal').fullCalendar('select', '2014-05-26', '2014-05-28')
+              initCalendar(options)
+              currentCalendar.select('2014-05-26', '2014-05-28')
               expect($('.fc-highlight')).not.toBeVisible()
             })
             /*
@@ -185,8 +184,8 @@ describe('select method', function() {
                 expect(end).toEqualMoment('2014-05-28');
               };
               spyOn(options, 'select').and.callThrough();
-              $('#cal').fullCalendar(options);
-              $('#cal').fullCalendar('select', '2014-05-26', '2014-05-28');
+              initCalendar(options);
+              currentCalendar.select('2014-05-26', '2014-05-28');
               expect(options.select).not.toHaveBeenCalled();
             });
             */

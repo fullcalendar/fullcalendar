@@ -1,6 +1,6 @@
 import ListenerCounter from '../lib/ListenerCounter'
 
-describe('external drag and drop', function() {
+fdescribe('external drag and drop', function() {
 
   // TODO: fill out tests for droppable/drop, with RTL
 
@@ -25,8 +25,9 @@ describe('external drag and drop', function() {
   })
 
   afterEach(function() {
-    $('#cal').fullCalendar('destroy')
-    $('#cal').remove()
+    var el = currentCalendar.el
+    currentCalendar.destroy()
+    $(el).remove()
     $('#sidebar').remove()
   })
 
@@ -36,8 +37,7 @@ describe('external drag and drop', function() {
     } else {
       $('#sidebar a').draggable()
     }
-
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   }
 
   function getMonthCell(row, col) {
@@ -63,8 +63,8 @@ describe('external drag and drop', function() {
             if (callCnt === 0) {
               expect(date).toEqualMoment('2014-08-06')
 
-              $('#cal').fullCalendar('next')
-              $('#cal').fullCalendar('prev')
+              currentCalendar.next()
+              currentCalendar.prev()
 
               setTimeout(function() {
                 $('#sidebar .event1').remove()
@@ -186,8 +186,8 @@ describe('external drag and drop', function() {
             if (callCnt === 0) {
               expect(date).toEqualMoment('2014-08-20T01:00:00')
 
-              $('#cal').fullCalendar('next')
-              $('#cal').fullCalendar('prev')
+              currentCalendar.next()
+              currentCalendar.prev()
 
               setTimeout(function() { // needed for IE8, for firing the second time, for some reason
                 $('#sidebar .event1').remove()
@@ -329,14 +329,14 @@ describe('external drag and drop', function() {
       // Issue 2433
       it('should not have drag handlers cleared when other calendar navigates', function() {
         init()
-        var el1 = $('#cal')
+        var el1 = currentCalendar.el
         var el2 = $('<div id="cal2"/>').insertAfter(el1)
         el2.fullCalendar(options)
 
         var docListenerCounter = new ListenerCounter(document)
         docListenerCounter.startWatching()
 
-        el1.fullCalendar('next')
+        currentCalendar.next()
         expect(docListenerCounter.stopWatching()).toBe(0)
 
         el2.fullCalendar('destroy')
