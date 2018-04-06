@@ -1,6 +1,6 @@
 import ListenerCounter from '../lib/ListenerCounter'
 
-fdescribe('external drag and drop', function() {
+describe('external drag and drop', function() {
 
   // TODO: fill out tests for droppable/drop, with RTL
 
