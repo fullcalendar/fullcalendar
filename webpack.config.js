@@ -14,6 +14,7 @@ const MODULES = {
   'dist/fullcalendar.css': './src/main.scss',
   'dist/fullcalendar.print.css': './src/common/print.scss',
   'dist/gcal': './plugins/gcal/main.ts',
+  'dist/jquery-ui-draggable': './plugins/jquery-ui-draggable/main.ts',
   'tmp/automated-tests': './tests/automated/index'
 }
 
@@ -33,6 +34,14 @@ module.exports = {
     // moment locale files reference the moment lib with a relative require.
     // use our external reference instead.
     '../moment': 'moment',
+
+    // for plugins that might need jQuery
+    jquery: {
+      commonjs: 'jquery',
+      commonjs2: 'jquery',
+      amd: 'jquery',
+      root: 'jQuery'
+    },
 
     // plugins reference the root 'fullcalendar' namespace
     fullcalendar: {
