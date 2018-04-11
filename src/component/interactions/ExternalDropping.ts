@@ -225,7 +225,7 @@ function getDraggedElMeta(el) {
   if (startTime == null) { startTime = getEmbeddedElData(el, 'start') }
   if (startTime == null) { startTime = getEmbeddedElData(el, 'time') } // accept 'time' as well
   if (duration == null) { duration = getEmbeddedElData(el, 'duration') }
-  if (stick == null) { stick = getEmbeddedElData(el, 'stick') }
+  if (stick == null) { stick = getEmbeddedElData(el, 'stick', true) }
 
   // massage into correct data types
   startTime = startTime != null ? moment.duration(startTime) : null
@@ -243,11 +243,6 @@ function getEmbeddedElData(el, name, shouldParseJson = false) {
   let data = el.getAttribute('data-' + prefixedName) || null
   if (data && shouldParseJson) {
     data = JSON.parse(data)
-  }
-
-  if (data === null && window['jQuery']) {
-    // jQuery will automatically parse JSON
-    data = window['jQuery'](el).data(prefixedName)
   }
 
   return data

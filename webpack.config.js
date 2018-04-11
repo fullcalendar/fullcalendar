@@ -15,6 +15,7 @@ const MODULES = {
   'dist/fullcalendar.print.css': './src/common/print.scss',
   'dist/gcal': './plugins/gcal/main.ts',
   'dist/jquery-ui-draggable': './plugins/jquery-ui-draggable/main.ts',
+  'dist/dragula': './plugins/dragula/main.ts',
   'tmp/automated-tests': './tests/automated/index'
 }
 
@@ -42,6 +43,9 @@ module.exports = {
       amd: 'jquery',
       root: 'jQuery'
     },
+
+    // for plugins
+    dragula: 'dragula',
 
     // plugins reference the root 'fullcalendar' namespace
     fullcalendar: {

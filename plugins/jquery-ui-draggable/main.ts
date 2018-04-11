@@ -31,7 +31,7 @@ Calendar.on('initialRender', function(calendar) {
 
   $document.on('dragstart sortstart', handleDragStart)
 
-  calendar.on('destroy', function(calendar) {
+  calendar.one('destroy', function(calendar) {
     $document.off('dragstart sortstart', handleDragStart)
   })
 })
