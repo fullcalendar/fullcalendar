@@ -37,6 +37,11 @@ export default class Calendar {
   static englishDefaults: any = englishDefaults
   static rtlDefaults: any = rtlDefaults
 
+  // global handler registry
+  static on: EmitterInterface['on']
+  static off: EmitterInterface['off']
+  static trigger: EmitterInterface['trigger']
+
   on: EmitterInterface['on']
   one: EmitterInterface['one']
   off: EmitterInterface['off']
@@ -61,7 +66,6 @@ export default class Calendar {
   defaultTimedEventDuration: moment.Duration
   localeData: object
 
-  $document: any // jQuery
   el: HTMLElement
   contentEl: HTMLElement
   suggestedViewHeight: number
@@ -407,51 +411,13 @@ export default class Calendar {
       )
     }
 
-    if (!this.$document && window['jQuery']) {
-      this.$document = window['jQuery'](document)
-    }
-    if (this.$document) { // we can only attach jQueryUI drag handlers to a jQuery element reference
-      this.$document.on('dragstart sortstart', this.handleJqUiDragStart)
-    }
-  }
-
-
-  handleJqUiDragStart = (ev, ui) => {
-
-    const handleJqUiDragMove = (ev, ui) => {
-      if (this.view) {
-        this.view.handleExternalDragMove(ev)
-      }
-    }
-    const handleJqUiDragStop = (ev, ui) => {
-      if (this.view) {
-        this.view.handleExternalDragStop(ev)
-      }
-      this.$document
-        .off('drag', handleJqUiDragMove)
-        .off('dragstop', handleJqUiDragStop)
-    }
-
-    this.$document
-      .on('drag', handleJqUiDragMove)
-      .on('dragstop', handleJqUiDragStop)
-
-    if (this.view) {
-      const el = ((ui && ui.item) ? ui.item[0] : null) || ev.target
-      this.view.handlExternalDragStart(
-        ev.originalEvent,
-        el,
-        ev.name === 'dragstart' // don't watch mouse/touch movements if doing jqui drag (not sort)
-      )
-    }
+    this.trigger('initialRender')
+    Calendar.trigger('initialRender', this)
   }
 
 
   destroy() {
-
-    if (this.$document) {
-      this.$document.off('dragstart sortstart', this.handleJqUiDragStart)
-    }
+    let wasRendered = Boolean(this.contentEl && this.contentEl.parentNode)
 
     if (this.view) {
       this.clearView()
@@ -477,7 +443,12 @@ export default class Calendar {
       this.windowResizeProxy = null
     }
 
-    GlobalEmitter.unneeded()
+    if (wasRendered) {
+      GlobalEmitter.unneeded()
+
+      this.trigger('destroy')
+      Calendar.trigger('destroy', this)
+    }
   }
 
 
@@ -1358,6 +1329,7 @@ export default class Calendar {
 
 }
 
+EmitterMixin.mixIntoObj(Calendar) // for global registry
 EmitterMixin.mixInto(Calendar)
 ListenerMixin.mixInto(Calendar)
 
@@ -1377,4 +1349,52 @@ function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {
         legacyEventInstance._id === legacyQuery // can specify internal id, but must exactly match
     })
   }
+}
+
+
+// jQuery UI dragging
+
+if (window['jQuery']) {
+  let $document = window['jQuery'](document)
+
+  Calendar.on('initialRender', function(calendar) {
+
+    const handleDragStart = function(ev, ui) {
+
+      const handleDragMove = (ev, ui) => {
+        if (calendar.view) {
+          calendar.view.handleExternalDragMove(ev)
+        }
+      }
+      const handleDragStop = (ev, ui) => {
+        if (calendar.view) {
+          calendar.view.handleExternalDragStop(ev)
+        }
+        $document
+          .off('drag', handleDragMove)
+          .off('dragstop', handleDragStop)
+      }
+
+      $document
+        .on('drag', handleDragMove)
+        .on('dragstop', handleDragStop)
+
+      if (calendar.view) {
+        const el = ((ui && ui.item) ? ui.item[0] : null) || ev.target
+        calendar.view.handlExternalDragStart(
+          ev.originalEvent,
+          el,
+          ev.name === 'dragstart' // don't watch mouse/touch movements if doing jqui drag (not sort)
+        )
+      }
+
+    }
+
+    $document.on('dragstart sortstart', handleDragStart)
+
+    calendar.on('destroy', function(calendar) {
+      $document.off('dragstart sortstart', handleDragStart)
+    })
+  })
+
 }
