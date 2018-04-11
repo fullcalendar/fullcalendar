@@ -836,6 +836,31 @@ export default class Calendar {
   }
 
 
+  // External Dragging
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  handlExternalDragStart(ev, el, skipBinding) {
+    if (this.view) {
+      this.view.handlExternalDragStart(ev, el, skipBinding)
+    }
+  }
+
+
+  handleExternalDragMove(ev) {
+    if (this.view) {
+      this.view.handleExternalDragMove(ev)
+    }
+  }
+
+
+  handleExternalDragStop(ev) {
+    if (this.view) {
+      this.view.handleExternalDragStop(ev)
+    }
+  }
+
+
   // Date Utils
   // -----------------------------------------------------------------------------------------------------------------
 
