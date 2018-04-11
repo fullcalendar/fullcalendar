@@ -61,6 +61,7 @@ export default class Calendar {
   defaultTimedEventDuration: moment.Duration
   localeData: object
 
+  $document: any // jQuery
   el: HTMLElement
   contentEl: HTMLElement
   suggestedViewHeight: number
@@ -405,10 +406,53 @@ export default class Calendar {
         )
       )
     }
+
+    if (!this.$document && window['jQuery']) {
+      this.$document = window['jQuery'](document)
+    }
+    if (this.$document) { // we can only attach jQueryUI drag handlers to a jQuery element reference
+      this.$document.on('dragstart sortstart', this.handleJqUiDragStart)
+    }
+  }
+
+
+  handleJqUiDragStart = (ev, ui) => {
+
+    const handleJqUiDragMove = (ev, ui) => {
+      if (this.view) {
+        this.view.handleExternalDragMove(ev)
+      }
+    }
+    const handleJqUiDragStop = (ev, ui) => {
+      if (this.view) {
+        this.view.handleExternalDragStop(ev)
+      }
+      this.$document
+        .off('drag', handleJqUiDragMove)
+        .off('dragstop', handleJqUiDragStop)
+    }
+
+    this.$document
+      .on('drag', handleJqUiDragMove)
+      .on('dragstop', handleJqUiDragStop)
+
+    if (this.view) {
+      const el = ((ui && ui.item) ? ui.item[0] : null) || ev.target
+      this.view.handlExternalDragStart(
+        ev.originalEvent,
+        el,
+        ev.name === 'dragstart' // don't watch mouse/touch movements if doing jqui drag (not sort)
+      )
+    }
   }
 
 
   destroy() {
+
+    if (this.$document) {
+      this.$document.off('dragstart sortstart', this.handleJqUiDragStart)
+    }
+
     if (this.view) {
       this.clearView()
     }

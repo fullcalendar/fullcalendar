@@ -33,7 +33,6 @@ export default class DragListener {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
-  $document: any // jQuery object
   options: DragListenerOptions
   subjectEl: HTMLElement
 
@@ -50,7 +49,7 @@ export default class DragListener {
   isDelayEnded: boolean = false
   isDragging: boolean = false
   isTouch: boolean = false
-  isGeneric: boolean = false // initiated by 'dragstart' (jqui)
+  skipBinding: boolean = false // if true, don't watch mouse/touch events
 
   delay: any
   delayTimeoutId: any
@@ -81,7 +80,7 @@ export default class DragListener {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  startInteraction(ev, extraOptions: any= {}) {
+  startInteraction(ev, extraOptions: any = {}) {
 
     if (ev.type === 'mousedown') {
       if (GlobalEmitter.get().shouldIgnoreMouse()) {
@@ -104,7 +103,6 @@ export default class DragListener {
 
       this.isInteracting = true
       this.isTouch = getEvIsTouch(ev)
-      this.isGeneric = ev.type === 'dragstart'
       this.isDelayEnded = false
       this.isDistanceSurpassed = false
 
@@ -163,16 +161,8 @@ export default class DragListener {
     // so listen to the GlobalEmitter singleton, which is always bound, instead of the document directly.
     let globalEmitter = GlobalEmitter.get()
 
-    if (this.isGeneric) {
-      if (!this.$document && window['jQuery']) {
-        this.$document = window['jQuery'](document)
-      }
-      if (this.$document) { // we can only attach jQueryUI drag handlers to a jQuery element reference
-        this.listenTo(this.$document, { // might only work on iOS because of GlobalEmitter's bind :(
-          drag: this.handleMove,
-          dragstop: this.endInteraction
-        })
-      }
+    if (this.skipBinding) {
+      ;
     } else if (this.isTouch) {
       this.listenTo(globalEmitter, {
         touchmove: this.handleTouchMove,
@@ -195,9 +185,6 @@ export default class DragListener {
 
   unbindHandlers() {
     this.stopListeningTo(GlobalEmitter.get())
-    if (this.$document) {
-      this.stopListeningTo(this.$document) // for isGeneric
-    }
   }
 
 

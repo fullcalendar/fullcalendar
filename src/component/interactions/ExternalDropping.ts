@@ -4,7 +4,6 @@ import { assignTo } from '../../util/object'
 import { elementMatches } from '../../util/dom-manip'
 import { disableCursor, enableCursor } from '../../util/misc'
 import momentExt from '../../moment-ext'
-import { default as ListenerMixin, ListenerInterface } from '../../common/ListenerMixin'
 import HitDragListener from '../../common/HitDragListener'
 import SingleEventDef from '../../models/event/SingleEventDef'
 import EventInstanceGroup from '../../models/event/EventInstanceGroup'
@@ -14,10 +13,6 @@ import Interaction from './Interaction'
 
 export default class ExternalDropping extends Interaction {
 
-  listenTo: ListenerInterface['listenTo']
-  stopListeningTo: ListenerInterface['stopListeningTo']
-
-  $document: any
   dragListener: any
   isDragging: boolean = false // jqui-dragging an external element? boolean
 
@@ -39,48 +34,40 @@ export default class ExternalDropping extends Interaction {
   }
 
 
-  bindToDocument() {
-    if (!this.$document && window['jQuery']) {
-      this.$document = window['jQuery'](document)
-    }
-    if (this.$document) { // need jquery for attaching jqui handlers
-      this.listenTo(this.$document, {
-        dragstart: this.handleDragStart, // jqui
-        sortstart: this.handleDragStart // jqui
-      })
-    }
-  }
-
-
-  unbindFromDocument() {
-    if (this.$document) {
-      this.stopListeningTo(this.$document)
-    }
-  }
-
-
   // Called when a jQuery UI drag is initiated anywhere in the DOM
-  handleDragStart(ev, ui) {
-    let el
+  handleDragStart(ev, el, skipBinding) {
     let accept
 
     if (this.opt('droppable')) { // only listen if this setting is on
-      el = ((ui && ui.item) ? ui.item[0] : null) || ev.target
 
       // Test that the dragged element passes the dropAccept selector or filter function.
       // FYI, the default is "*" (matches all)
       accept = this.opt('dropAccept')
       if (typeof accept === 'function' ? accept.call(el, el) : elementMatches(el, accept)) {
         if (!this.isDragging) { // prevent double-listening if fired twice
-          this.listenToExternalDrag(el, ev, ui)
+          this.listenToExternalDrag(ev, el, skipBinding)
         }
       }
     }
   }
 
 
-  // Called when a jQuery UI drag starts and it needs to be monitored for dropping
-  listenToExternalDrag(el, ev, ui) {
+  handleDragMove(ev) {
+    if (this.dragListener) {
+      this.dragListener.handleMove(ev)
+    }
+  }
+
+
+  handleDragStop(ev) {
+    if (this.dragListener) {
+      this.dragListener.endInteraction(ev)
+    }
+  }
+
+
+  // Called when a 3rd-party draggable starts and it needs to be monitored for dropping
+  listenToExternalDrag(ev, el, skipBinding) {
     let component = this.component
     let view = this.view
     let meta = getDraggedElMeta(el) // extra data about event drop, including possible event to create
@@ -140,7 +127,7 @@ export default class ExternalDropping extends Interaction {
             singleEventDef,
             Boolean(meta.eventProps), // isEvent
             Boolean(meta.stick), // isSticky
-            el, ev, ui
+            el, ev
           )
         }
 
@@ -149,6 +136,7 @@ export default class ExternalDropping extends Interaction {
       }
     })
 
+    dragListener.skipBinding = skipBinding
     dragListener.startDrag(ev) // start listening immediately
   }
 
@@ -195,8 +183,6 @@ export default class ExternalDropping extends Interaction {
   }
 
 }
-
-ListenerMixin.mixInto(ExternalDropping);
 
 
 /* External-Dragging-Element Data
