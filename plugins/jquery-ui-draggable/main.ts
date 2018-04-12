@@ -1,5 +1,5 @@
 import * as $ from 'jquery'
-import { Calendar } from 'fullcalendar'
+import { Calendar, ExternalDropping } from 'fullcalendar'
 
 let $document = $(document)
 
@@ -35,3 +35,16 @@ Calendar.on('initialRender', function(calendar) {
     $document.off('dragstart sortstart', handleDragStart)
   })
 })
+
+
+const origGetEmbeddedElData = ExternalDropping.getEmbeddedElData
+
+ExternalDropping.getEmbeddedElData = function(el, name, shouldParseJson = false) {
+  let val = $(el).data(name) // will automatically parse JSON
+
+  if (val != null) {
+    return val
+  }
+
+  return origGetEmbeddedElData.apply(ExternalDropping, arguments)
+}

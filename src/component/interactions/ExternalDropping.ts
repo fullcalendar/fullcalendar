@@ -1,5 +1,4 @@
 import * as moment from 'moment'
-import * as exportHooks from '../../exports'
 import { assignTo } from '../../util/object'
 import { elementMatches } from '../../util/dom-manip'
 import { disableCursor, enableCursor } from '../../util/misc'
@@ -15,6 +14,64 @@ export default class ExternalDropping extends Interaction {
 
   dragListener: any
   isDragging: boolean = false // jqui-dragging an external element? boolean
+
+
+  static dataAttrPrefix: string = ''
+
+  // Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
+  // to be used for Event Object creation.
+  // A defined `.eventProps`, even when empty, indicates that an event should be created.
+  static getDraggedElMeta(el) {
+    let eventProps // properties for creating the event, not related to date/time
+    let startTime // a Duration
+    let duration
+    let stick
+
+    eventProps = ExternalDropping.getEmbeddedElData(el, 'event', true)
+
+    if (eventProps) {
+
+      // something like 1 or true. still signal event creation
+      if (typeof eventProps !== 'object') {
+        eventProps = {}
+      }
+
+      // pluck special-cased date/time properties
+      startTime = eventProps.start
+      if (startTime == null) { startTime = eventProps.time } // accept 'time' as well
+      duration = eventProps.duration
+      stick = eventProps.stick
+      delete eventProps.start
+      delete eventProps.time
+      delete eventProps.duration
+      delete eventProps.stick
+    }
+
+    // fallback to standalone attribute values for each of the date/time properties
+    if (startTime == null) { startTime = ExternalDropping.getEmbeddedElData(el, 'start') }
+    if (startTime == null) { startTime = ExternalDropping.getEmbeddedElData(el, 'time') } // accept 'time' as well
+    if (duration == null) { duration = ExternalDropping.getEmbeddedElData(el, 'duration') }
+    if (stick == null) { stick = ExternalDropping.getEmbeddedElData(el, 'stick', true) }
+
+    // massage into correct data types
+    startTime = startTime != null ? moment.duration(startTime) : null
+    duration = duration != null ? moment.duration(duration) : null
+    stick = Boolean(stick)
+
+    return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick }
+  }
+
+  static getEmbeddedElData(el, name, shouldParseJson = false) {
+    let prefix = ExternalDropping.dataAttrPrefix
+    let prefixedName = (prefix ? prefix + '-' : '') + name
+
+    let data = el.getAttribute('data-' + prefixedName) || null
+    if (data && shouldParseJson) {
+      data = JSON.parse(data)
+    }
+
+    return data
+  }
 
 
   /*
@@ -70,7 +127,7 @@ export default class ExternalDropping extends Interaction {
   listenToExternalDrag(ev, el, skipBinding) {
     let component = this.component
     let view = this.view
-    let meta = getDraggedElMeta(el) // extra data about event drop, including possible event to create
+    let meta = ExternalDropping.getDraggedElMeta(el) // extra data about event drop, including possible event to create
     let singleEventDef // a null value signals an unsuccessful drag
 
     // listener that tracks mouse movement over date-associated pixel regions
@@ -182,68 +239,4 @@ export default class ExternalDropping extends Interaction {
     return eventDef
   }
 
-}
-
-
-/* External-Dragging-Element Data
-----------------------------------------------------------------------------------------------------------------------*/
-
-// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
-// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
-(exportHooks as any).dataAttrPrefix = ''
-
-// Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
-// to be used for Event Object creation.
-// A defined `.eventProps`, even when empty, indicates that an event should be created.
-function getDraggedElMeta(el) {
-  let eventProps // properties for creating the event, not related to date/time
-  let startTime // a Duration
-  let duration
-  let stick
-
-  eventProps = getEmbeddedElData(el, 'event', true)
-
-  if (eventProps) {
-
-    // something like 1 or true. still signal event creation
-    if (typeof eventProps !== 'object') {
-      eventProps = {}
-    }
-
-    // pluck special-cased date/time properties
-    startTime = eventProps.start
-    if (startTime == null) { startTime = eventProps.time } // accept 'time' as well
-    duration = eventProps.duration
-    stick = eventProps.stick
-    delete eventProps.start
-    delete eventProps.time
-    delete eventProps.duration
-    delete eventProps.stick
-  }
-
-  // fallback to standalone attribute values for each of the date/time properties
-  if (startTime == null) { startTime = getEmbeddedElData(el, 'start') }
-  if (startTime == null) { startTime = getEmbeddedElData(el, 'time') } // accept 'time' as well
-  if (duration == null) { duration = getEmbeddedElData(el, 'duration') }
-  if (stick == null) { stick = getEmbeddedElData(el, 'stick', true) }
-
-  // massage into correct data types
-  startTime = startTime != null ? moment.duration(startTime) : null
-  duration = duration != null ? moment.duration(duration) : null
-  stick = Boolean(stick)
-
-  return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick }
-}
-
-
-function getEmbeddedElData(el, name, shouldParseJson = false) {
-  let prefix = (exportHooks as any).dataAttrPrefix
-  let prefixedName = (prefix ? prefix + '-' : '') + name
-
-  let data = el.getAttribute('data-' + prefixedName) || null
-  if (data && shouldParseJson) {
-    data = JSON.parse(data)
-  }
-
-  return data
 }

@@ -26,6 +26,7 @@ module.exports = function(config) {
       'dist/fullcalendar.js',
       'dist/fullcalendar.css',
       'dist/gcal.js',
+      'dist/jquery-ui-draggable.js',
       'dist/locale-all.js',
 
       // temporary. needs to go first.
