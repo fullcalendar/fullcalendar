@@ -12,11 +12,11 @@ import Interaction from './Interaction'
 
 export default class ExternalDropping extends Interaction {
 
+  static dataAttrPrefix: string = ''
+
   dragListener: any
   isDragging: boolean = false // jqui-dragging an external element? boolean
 
-
-  static dataAttrPrefix: string = ''
 
   // Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
   // to be used for Event Object creation.

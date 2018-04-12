@@ -162,7 +162,7 @@ export default class DragListener {
     let globalEmitter = GlobalEmitter.get()
 
     if (this.skipBinding) {
-      ;
+      //
     } else if (this.isTouch) {
       this.listenTo(globalEmitter, {
         touchmove: this.handleTouchMove,
