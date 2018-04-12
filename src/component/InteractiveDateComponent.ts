@@ -264,7 +264,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
       this.externalDropping.handleDragStart(ev, el, skipBinding)
     }
 
-    this.callChildren('handlExternalDragStart', arguments)
+    super.handlExternalDragStart(ev, el, skipBinding)
   }
 
 
@@ -273,7 +273,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
       this.externalDropping.handleDragMove(ev)
     }
 
-    this.callChildren('handleExternalDragMove', arguments)
+    super.handleExternalDragMove(ev)
   }
 
 
@@ -282,7 +282,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
       this.externalDropping.handleDragStop(ev)
     }
 
-    this.callChildren('handleExternalDragStop', arguments)
+    super.handleExternalDragStop(ev)
   }
 
 

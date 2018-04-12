@@ -391,6 +391,26 @@ export default abstract class DateComponent extends Component {
   }
 
 
+  // EXTERNAL Drag-n-Drop
+  // ---------------------------------------------------------------------------------------------------------------
+  // Doesn't need to implement a response, but must pass to children
+
+
+  handlExternalDragStart(ev, el, skipBinding) {
+    this.callChildren('handlExternalDragStart', arguments)
+  }
+
+
+  handleExternalDragMove(ev) {
+    this.callChildren('handleExternalDragMove', arguments)
+  }
+
+
+  handleExternalDragStop(ev) {
+    this.callChildren('handleExternalDragStop', arguments)
+  }
+
+
   // Event Resizing
   // ---------------------------------------------------------------------------------------------------------------
 
