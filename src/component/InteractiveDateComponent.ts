@@ -121,7 +121,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   bindSegHandlerToEl(el, name, handler) {
-    return listenBySelector(
+    listenBySelector(
       el,
       name,
       this.segSelector,
