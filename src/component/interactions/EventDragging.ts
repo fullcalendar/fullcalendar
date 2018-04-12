@@ -12,6 +12,8 @@ export default class EventDragging extends Interaction {
   eventPointing: any
   dragListener: any
   isDragging: boolean = false
+  removeMouseDownHandler: any
+  removeTouchStartHandler: any
 
 
   /*
@@ -29,6 +31,16 @@ export default class EventDragging extends Interaction {
 
 
   end() {
+    if (this.removeMouseDownHandler) {
+      this.removeMouseDownHandler()
+      this.removeMouseDownHandler = null
+    }
+
+    if (this.removeTouchStartHandler) {
+      this.removeTouchStartHandler()
+      this.removeTouchStartHandler = null
+    }
+
     if (this.dragListener) {
       this.dragListener.endInteraction()
     }
@@ -49,8 +61,8 @@ export default class EventDragging extends Interaction {
   bindToEl(el) {
     let component = this.component
 
-    component.bindSegHandlerToEl(el, 'mousedown', this.handleMousedown.bind(this))
-    component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this))
+    this.removeMouseDownHandler = component.bindSegHandlerToEl(el, 'mousedown', this.handleMousedown.bind(this))
+    this.removeTouchStartHandler = component.bindSegHandlerToEl(el, 'touchstart', this.handleTouchStart.bind(this))
   }
 
 

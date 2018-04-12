@@ -49,7 +49,7 @@ export default class GcalEventSource extends EventSource {
 
         this.calendar.popLoading()
 
-        if (res.body && res.body.error) {
+        if (res && res.body && res.body.error) {
           this.reportError('Google Calendar API: ' + res.body.error.message, res.body.error.errors)
         } else if (error) {
           this.reportError('Google Calendar API', error)
