@@ -25,8 +25,11 @@ success=0
 current_branch=$(git symbolic-ref --quiet --short HEAD)
 
 # temporarily checkout the tag's commit, publish to NPM
+echo
+echo 'NOTE!!! publishing with "alpha" tag (whereas default is "latest")'
+echo
 git checkout --quiet "v$version"
-if npm publish
+if npm publish --tag alpha
 then
   success=1
 fi
