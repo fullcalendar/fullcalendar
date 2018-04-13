@@ -25,8 +25,8 @@
     "moment": "^2.20.1",
     "superagent": "^3.8.2"
   },
-  "version": "0.0.0",
-  "releaseDate": "1970-01-01",
+  "version": "4.0.0-alpha",
+  "releaseDate": "2018-04-13",
   "devDependencies": {
     "awesome-typescript-loader": "^3.5.0",
     "bootstrap": "^3.3.7",
