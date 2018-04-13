@@ -58,8 +58,8 @@ export interface EventSourceExtendedInput extends EventOptionsBase {
   startParam?: string
   endParam?: string
   timezoneParam?: string
-  success?: (eventDefs: EventObjectInput[], ajaxRes) => void
-  error?: (error, ajaxRes) => void
+  success?: (eventDefs: EventObjectInput[], ajaxRes: any) => void
+  error?: (error: any, ajaxRes: any) => void
 
   // general
   allDayDefault?: boolean
