@@ -1219,7 +1219,7 @@ export default class Calendar {
 
       // compute unique IDs
       for (i = 0; i < legacyInstances.length; i++) {
-        eventDef = this.eventManager.getEventDefByUid(legacyInstances[i]._id)
+        eventDef = eventManager.getEventDefByUid(legacyInstances[i]._id)
         idMap[eventDef.id] = true
       }
 
@@ -1307,7 +1307,7 @@ export default class Calendar {
     let i
 
     if (sourceMultiQuery == null) {
-      this.eventManager.removeAllSources()
+      eventManager.removeAllSources()
     } else {
       sources = eventManager.multiQuerySources(sourceMultiQuery)
 
