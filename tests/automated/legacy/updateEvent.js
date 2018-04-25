@@ -1,23 +1,18 @@
-
 describe('updateEvent', function() {
-  var options
 
-  beforeEach(function() {
-    affix('#cal')
-    options = {
-      defaultDate: '2014-05-01',
-      defaultView: 'month'
-    }
+  pushOptions({
+    defaultDate: '2014-05-01',
+    defaultView: 'month'
   })
 
   function getMainEvent() {
-    return $('#cal').fullCalendar('clientEvents', function(event) {
+    return currentCalendar.clientEvents(function(event) {
       return event.className[0] === 'mainEvent'
     })[0]
   }
 
   function getRelatedEvent() {
-    return $('#cal').fullCalendar('clientEvents', function(event) {
+    return currentCalendar.clientEvents(function(event) {
       return event.className[0] === 'relatedEvent'
     })[0]
   }
@@ -27,15 +22,16 @@ describe('updateEvent', function() {
       it('should move the start by the delta and leave the end as null', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.start.add(2, 'days')
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.start).toEqualMoment('2014-05-03')
@@ -50,17 +46,18 @@ describe('updateEvent', function() {
       it('should move the start and end by the delta', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10', end: '2014-05-12', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10', end: '2014-05-12', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.start.add(2, 'days')
         expect(event.start).toEqualMoment('2014-05-03')
         expect(event.end).toBeNull()
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         relatedEvent = getRelatedEvent()
         expect(relatedEvent.start).toEqualMoment('2014-05-12')
@@ -74,15 +71,16 @@ describe('updateEvent', function() {
       it('should move the start by the delta and leave the end as null', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10T06:00:00', allDay: false, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10T06:00:00', allDay: false, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.start.add({ days: 2, hours: 2 })
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
         expect(event.start).toEqualMoment('2014-05-03T14:00:00')
         expect(event.end).toBeNull()
 
@@ -95,15 +93,16 @@ describe('updateEvent', function() {
       it('should move the start and end by the delta', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-12T08:00:00', allDay: false, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-12T08:00:00', allDay: false, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.start.add({ days: 2, hours: 2 })
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.start).toEqualMoment('2014-05-03T14:00:00')
@@ -121,16 +120,17 @@ describe('updateEvent', function() {
       it('should give the end a default duration plus the delta', function() {
         var event, relatedEvent
 
-        options.defaultAllDayEventDuration = { days: 2 }
-        options.events = [
-          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          defaultAllDayEventDuration: { days: 2 },
+          events: [
+            { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.end.add(1, 'days')
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.start).toEqualMoment('2014-05-01')
@@ -145,15 +145,16 @@ describe('updateEvent', function() {
       it('should move the end by the delta', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.end.add(1, 'days')
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.start).toEqualMoment('2014-05-01')
@@ -172,17 +173,18 @@ describe('updateEvent', function() {
         it('should give the end a default duration plus the delta', function() {
           var event, relatedEvent
 
-          options.forceEventDuration = false
-          options.defaultTimedEventDuration = { hours: 2 }
-          options.events = [
-            { id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false, className: 'mainEvent' },
-            { id: '1', start: '2014-05-10T16:00:00', allDay: false, className: 'relatedEvent' }
-          ]
-          $('#cal').fullCalendar(options)
+          initCalendar({
+            forceEventDuration: false,
+            defaultTimedEventDuration: { hours: 2 },
+            events: [
+              { id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false, className: 'mainEvent' },
+              { id: '1', start: '2014-05-10T16:00:00', allDay: false, className: 'relatedEvent' }
+            ]
+          })
 
           event = getMainEvent()
           event.end.add({ days: 1, hours: 1 })
-          $('#cal').fullCalendar('updateEvent', event)
+          currentCalendar.updateEvent(event)
 
           event = getMainEvent()
           expect(event.start).toEqualMoment('2014-05-01T12:00:00')
@@ -197,18 +199,19 @@ describe('updateEvent', function() {
         it('should reset end based on defaultTimedEventDuration', function() {
           var event, relatedEvent
 
-          options.forceEventDuration = true
-          options.defaultTimedEventDuration = { hours: 2 }
-          options.events = [
-            { id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false, className: 'mainEvent' },
-            { id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }
-          ]
-          $('#cal').fullCalendar(options)
+          initCalendar({
+            forceEventDuration: true,
+            defaultTimedEventDuration: { hours: 2 },
+            events: [
+              { id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T15:00:00', allDay: false, className: 'mainEvent' },
+              { id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }
+            ]
+          })
 
           event = getMainEvent()
           event.start.add({ days: 1, hours: -12 })
           event.end = null
-          $('#cal').fullCalendar('updateEvent', event)
+          currentCalendar.updateEvent(event)
 
           event = getMainEvent()
           expect(event.start).toEqualMoment('2014-05-02T00:00:00')
@@ -223,17 +226,18 @@ describe('updateEvent', function() {
         it('should force a duration when updateEvent called', function() {
           var event
 
-          options.defaultTimedEventDuration = { hours: 1 }
-          options.events = [
-            { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' }
-          ]
-          $('#cal').fullCalendar(options)
+          initCalendar({
+            defaultTimedEventDuration: { hours: 1 },
+            events: [
+              { id: '1', start: '2014-05-01T12:00:00', allDay: false, className: 'mainEvent' }
+            ]
+          })
 
           event = getMainEvent()
           expect(event.start).toEqualMoment('2014-05-01T12:00:00')
           expect(event.end).toBeNull()
 
-          $('#cal').fullCalendar('option', {
+          currentCalendar.option({
             forceEventDuration: true
           })
 
@@ -243,7 +247,7 @@ describe('updateEvent', function() {
           expect(event.end).toBeNull()
 
           event.start.add({ days: 1, hours: -12 })
-          $('#cal').fullCalendar('updateEvent', event)
+          currentCalendar.updateEvent(event)
 
           // should generate an end
           event = getMainEvent()
@@ -256,15 +260,16 @@ describe('updateEvent', function() {
       it('should move the end by the delta', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T14:00:00', allDay: false, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01T12:00:00', end: '2014-05-01T14:00:00', allDay: false, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10T16:00:00', end: '2014-05-10T19:00:00', allDay: false, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.end.add({ days: 1, hours: 1 })
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.start).toEqualMoment('2014-05-01T12:00:00')
@@ -281,16 +286,17 @@ describe('updateEvent', function() {
     it('should move the start and end of related events', function() {
       var event, relatedEvent
 
-      options.events = [
-        { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-        { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-      ]
-      $('#cal').fullCalendar(options)
+      initCalendar({
+        events: [
+          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+          { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+        ]
+      })
 
       event = getMainEvent()
       event.start.add(2, 'days')
       event.end.add(3, 'day')
-      $('#cal').fullCalendar('updateEvent', event)
+      currentCalendar.updateEvent(event)
 
       event = getMainEvent()
       expect(event.start).toEqualMoment('2014-05-03')
@@ -306,16 +312,17 @@ describe('updateEvent', function() {
     it('should move the start and end of related events', function() {
       var event, relatedEvent
 
-      options.events = [
-        { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
-        { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
-      ]
-      $('#cal').fullCalendar(options)
+      initCalendar({
+        events: [
+          { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+          { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
+        ]
+      })
 
       event = getMainEvent()
       event.start.add({ days: 2, hours: 1 })
       event.end.add({ days: 3, hours: 2 })
-      $('#cal').fullCalendar('updateEvent', event)
+      currentCalendar.updateEvent(event)
 
       event = getMainEvent()
       expect(event.start).toEqualMoment('2014-05-03T07:00:00')
@@ -331,15 +338,16 @@ describe('updateEvent', function() {
     it('should erase the start\'s time and keep the event all-day', function() {
       var event, relatedEvent
 
-      options.events = [
-        { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-        { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-      ]
-      $('#cal').fullCalendar(options)
+      initCalendar({
+        events: [
+          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+          { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+        ]
+      })
 
       event = getMainEvent()
       event.start.time('18:00')
-      $('#cal').fullCalendar('updateEvent', event)
+      currentCalendar.updateEvent(event)
 
       event = getMainEvent()
       expect(event.allDay).toEqual(true)
@@ -358,15 +366,16 @@ describe('updateEvent', function() {
     it('should erase the start and end\'s times and keep the event all-day', function() {
       var event
 
-      options.events = [
-        { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' }
-      ]
-      $('#cal').fullCalendar(options)
+      initCalendar({
+        events: [
+          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' }
+        ]
+      })
 
       event = getMainEvent()
       event.start = moment('2014-05-01') // won't have an ambig time
       event.end = moment('2014-05-03') // "
-      $('#cal').fullCalendar('updateEvent', event)
+      currentCalendar.updateEvent(event)
 
       event = getMainEvent()
       expect(event.allDay).toEqual(true)
@@ -380,15 +389,16 @@ describe('updateEvent', function() {
       it('should make the event and related events allDay=false and 00:00', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.allDay = false
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.allDay).toEqual(false)
@@ -405,16 +415,17 @@ describe('updateEvent', function() {
       it('should adjust the event and related event\'s allDay/start/end', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.allDay = false
         event.start.time('14:00')
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.allDay).toEqual(false)
@@ -431,16 +442,17 @@ describe('updateEvent', function() {
       it('should adjust the event and related event\'s allDay/start/end', function() {
         var event, relatedEvent
 
-        options.events = [
-          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.allDay = false
         event.start.add(1, 'days')
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
 
         event = getMainEvent()
         expect(event.allDay).toEqual(false)
@@ -459,15 +471,16 @@ describe('updateEvent', function() {
     it('should adjust the event and related event\'s allDay/start/end', function() {
       var event, relatedEvent
 
-      options.events = [
-        { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
-        { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
-      ]
-      $('#cal').fullCalendar(options)
+      initCalendar({
+        events: [
+          { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+          { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
+        ]
+      })
 
       event = getMainEvent()
       event.allDay = true
-      $('#cal').fullCalendar('updateEvent', event)
+      currentCalendar.updateEvent(event)
 
       event = getMainEvent()
       expect(event.allDay).toEqual(true)
@@ -482,16 +495,17 @@ describe('updateEvent', function() {
     it('should adjust the event and related event\'s allDay/start/end and account for a new start', function() {
       var event, relatedEvent
 
-      options.events = [
-        { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
-        { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
-      ]
-      $('#cal').fullCalendar(options)
+      initCalendar({
+        events: [
+          { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+          { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
+        ]
+      })
 
       event = getMainEvent()
       event.allDay = true
       event.start.add(1, 'days')
-      $('#cal').fullCalendar('updateEvent', event)
+      currentCalendar.updateEvent(event)
 
       event = getMainEvent()
       expect(event.allDay).toEqual(true)
@@ -508,16 +522,17 @@ describe('updateEvent', function() {
   it('should accept moments that have unnormalized start/end', function() {
     var event, relatedEvent
 
-    options.events = [
-      { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
-      { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
-    ]
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      events: [
+        { id: '1', start: '2014-05-01T06:00:00', end: '2014-05-03T06:00:00', allDay: false, className: 'mainEvent' },
+        { id: '1', start: '2014-05-10T06:00:00', end: '2014-05-13T06:00:00', allDay: false, className: 'relatedEvent' }
+      ]
+    })
 
     event = getMainEvent()
     event.start = '2014-05-02T06:00:00' // move by 1 day
     event.end = '2014-05-05T06:00:00' // increase duration by 1 day
-    $('#cal').fullCalendar('updateEvent', event)
+    currentCalendar.updateEvent(event)
 
     event = getMainEvent()
     expect(event.allDay).toEqual(false)
@@ -537,15 +552,16 @@ describe('updateEvent', function() {
   it('should copy color-related properties to related events', function() {
     var event, relatedEvent
 
-    options.events = [
-      { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-      { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-    ]
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      events: [
+        { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+        { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+      ]
+    })
 
     event = getMainEvent()
     event.color = 'red'
-    $('#cal').fullCalendar('updateEvent', event)
+    currentCalendar.updateEvent(event)
 
     relatedEvent = getRelatedEvent()
     expect(relatedEvent.color).toBe('red')
@@ -555,16 +571,17 @@ describe('updateEvent', function() {
     var event, relatedEvent
     var specialObj = {}
 
-    options.events = [
-      { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-      { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-    ]
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      events: [
+        { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+        { id: '1', start: '2014-05-10', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+      ]
+    })
 
     event = getMainEvent()
     event.someForeignKey = '123'
     event.myObj = specialObj
-    $('#cal').fullCalendar('updateEvent', event)
+    currentCalendar.updateEvent(event)
 
     relatedEvent = getRelatedEvent()
     expect(relatedEvent.someForeignKey).toBe('123')
@@ -576,15 +593,16 @@ describe('updateEvent', function() {
       beforeEach(function() {
         var event
 
-        options.events = [
-          { id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
-          { id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
+            { id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.start.add(2, 'hours')
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
       })
       should()
     })
@@ -595,15 +613,16 @@ describe('updateEvent', function() {
       beforeEach(function() {
         var event
 
-        options.events = [
-          { id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
-          { id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01T06:00:00+05:00', end: '2014-05-03T06:00:00+05:00', allDay: false, className: 'mainEvent' },
+            { id: '1', start: '2014-05-11T06:00:00+05:00', end: '2014-05-13T06:00:00+05:00', allDay: false, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.end.add(2, 'hours')
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
       })
       should()
     })
@@ -614,15 +633,16 @@ describe('updateEvent', function() {
       beforeEach(function() {
         var event
 
-        options.events = [
-          { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
-          { id: '1', start: '2014-05-11', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
-        ]
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          events: [
+            { id: '1', start: '2014-05-01', end: '2014-05-03', allDay: true, className: 'mainEvent' },
+            { id: '1', start: '2014-05-11', end: '2014-05-13', allDay: true, className: 'relatedEvent' }
+          ]
+        })
 
         event = getMainEvent()
         event.allDay = false
-        $('#cal').fullCalendar('updateEvent', event)
+        currentCalendar.updateEvent(event)
       })
       should()
     })
@@ -688,8 +708,8 @@ describe('updateEvent', function() {
   }
 
   describe('when calendar has no timezone', function() {
-    beforeEach(function() {
-      options.timezone = false
+    pushOptions({
+      timezone: false
     })
     whenMovingStart(shouldBeAmbiguouslyZoned)
     whenMovingEnd(shouldBeAmbiguouslyZoned)
@@ -697,8 +717,8 @@ describe('updateEvent', function() {
   })
 
   describe('when calendar has a local timezone', function() {
-    beforeEach(function() {
-      options.timezone = 'local'
+    pushOptions({
+      timezone: 'local'
     })
     whenMovingStart(shouldBeLocal)
     whenMovingEnd(shouldBeLocal)
@@ -706,8 +726,8 @@ describe('updateEvent', function() {
   })
 
   describe('when calendar has a UTC timezone', function() {
-    beforeEach(function() {
-      options.timezone = 'UTC'
+    pushOptions({
+      timezone: 'UTC'
     })
     whenMovingStart(shouldBeUTC)
     whenMovingEnd(shouldBeUTC)
@@ -715,8 +735,8 @@ describe('updateEvent', function() {
   })
 
   describe('when calendar has a custom timezone', function() {
-    beforeEach(function() {
-      options.timezone = 'America/Chicago'
+    pushOptions({
+      timezone: 'America/Chicago'
     })
     whenMovingStart(shouldBeAmbiguouslyZoned)
     whenMovingEnd(shouldBeAmbiguouslyZoned)

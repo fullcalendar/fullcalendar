@@ -46,7 +46,9 @@ gulp.task('archive:deps', function() {
     'node_modules/moment/min/moment.min.js',
     'node_modules/superagent/superagent.js',
     'node_modules/jquery/dist/jquery.min.js', // only for draggable example
-    'node_modules/components-jqueryui/jquery-ui.min.js' // "
+    'node_modules/components-jqueryui/jquery-ui.min.js', // "
+    'node_modules/dragula/dist/dragula.min.js', // "
+    'node_modules/dragula/dist/dragula.min.css' // "
   ])
     .pipe(gulp.dest('tmp/' + packageId + '/lib/'))
 })
@@ -76,6 +78,7 @@ function transformDemoPath(path) {
   path = path.replace('../node_modules/superagent/', '../lib/')
   path = path.replace('../node_modules/jquery/dist/', '../lib/')
   path = path.replace('../node_modules/components-jqueryui/', '../lib/')
+  path = path.replace('../node_modules/dragula/dist/', '../lib/')
 
   // reroot dist files to archive root
   path = path.replace('../dist/', '../')

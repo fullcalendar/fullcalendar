@@ -1,10 +1,8 @@
 import * as moment from 'moment'
-import * as exportHooks from '../../exports'
 import { assignTo } from '../../util/object'
 import { elementMatches } from '../../util/dom-manip'
 import { disableCursor, enableCursor } from '../../util/misc'
 import momentExt from '../../moment-ext'
-import { default as ListenerMixin, ListenerInterface } from '../../common/ListenerMixin'
 import HitDragListener from '../../common/HitDragListener'
 import SingleEventDef from '../../models/event/SingleEventDef'
 import EventInstanceGroup from '../../models/event/EventInstanceGroup'
@@ -14,12 +12,66 @@ import Interaction from './Interaction'
 
 export default class ExternalDropping extends Interaction {
 
-  listenTo: ListenerInterface['listenTo']
-  stopListeningTo: ListenerInterface['stopListeningTo']
+  static dataAttrPrefix: string = ''
 
-  $document: any
   dragListener: any
   isDragging: boolean = false // jqui-dragging an external element? boolean
+
+
+  // Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
+  // to be used for Event Object creation.
+  // A defined `.eventProps`, even when empty, indicates that an event should be created.
+  static getDraggedElMeta(el) {
+    let eventProps // properties for creating the event, not related to date/time
+    let startTime // a Duration
+    let duration
+    let stick
+
+    eventProps = ExternalDropping.getEmbeddedElData(el, 'event', true)
+
+    if (eventProps) {
+
+      // something like 1 or true. still signal event creation
+      if (typeof eventProps !== 'object') {
+        eventProps = {}
+      }
+
+      // pluck special-cased date/time properties
+      startTime = eventProps.start
+      if (startTime == null) { startTime = eventProps.time } // accept 'time' as well
+      duration = eventProps.duration
+      stick = eventProps.stick
+      delete eventProps.start
+      delete eventProps.time
+      delete eventProps.duration
+      delete eventProps.stick
+    }
+
+    // fallback to standalone attribute values for each of the date/time properties
+    if (startTime == null) { startTime = ExternalDropping.getEmbeddedElData(el, 'start') }
+    if (startTime == null) { startTime = ExternalDropping.getEmbeddedElData(el, 'time') } // accept 'time' as well
+    if (duration == null) { duration = ExternalDropping.getEmbeddedElData(el, 'duration') }
+    if (stick == null) { stick = ExternalDropping.getEmbeddedElData(el, 'stick', true) }
+
+    // massage into correct data types
+    startTime = startTime != null ? moment.duration(startTime) : null
+    duration = duration != null ? moment.duration(duration) : null
+    stick = Boolean(stick)
+
+    return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick }
+  }
+
+  static getEmbeddedElData(el, name, shouldParseJson = false) {
+    let prefix = ExternalDropping.dataAttrPrefix
+    let prefixedName = (prefix ? prefix + '-' : '') + name
+
+    let data = el.getAttribute('data-' + prefixedName) || null
+    if (data && shouldParseJson) {
+      data = JSON.parse(data)
+    }
+
+    return data
+  }
 
 
   /*
@@ -39,51 +91,43 @@ export default class ExternalDropping extends Interaction {
   }
 
 
-  bindToDocument() {
-    if (!this.$document && window['jQuery']) {
-      this.$document = window['jQuery'](document)
-    }
-    if (this.$document) { // need jquery for attaching jqui handlers
-      this.listenTo(this.$document, {
-        dragstart: this.handleDragStart, // jqui
-        sortstart: this.handleDragStart // jqui
-      })
-    }
-  }
-
-
-  unbindFromDocument() {
-    if (this.$document) {
-      this.stopListeningTo(this.$document)
-    }
-  }
-
-
   // Called when a jQuery UI drag is initiated anywhere in the DOM
-  handleDragStart(ev, ui) {
-    let el
+  handleDragStart(ev, el, skipBinding) {
     let accept
 
     if (this.opt('droppable')) { // only listen if this setting is on
-      el = ((ui && ui.item) ? ui.item[0] : null) || ev.target
 
       // Test that the dragged element passes the dropAccept selector or filter function.
       // FYI, the default is "*" (matches all)
       accept = this.opt('dropAccept')
       if (typeof accept === 'function' ? accept.call(el, el) : elementMatches(el, accept)) {
         if (!this.isDragging) { // prevent double-listening if fired twice
-          this.listenToExternalDrag(el, ev, ui)
+          this.listenToExternalDrag(ev, el, skipBinding)
         }
       }
     }
   }
 
 
-  // Called when a jQuery UI drag starts and it needs to be monitored for dropping
-  listenToExternalDrag(el, ev, ui) {
+  handleDragMove(ev) {
+    if (this.dragListener) {
+      this.dragListener.handleMove(ev)
+    }
+  }
+
+
+  handleDragStop(ev) {
+    if (this.dragListener) {
+      this.dragListener.endInteraction(ev)
+    }
+  }
+
+
+  // Called when a 3rd-party draggable starts and it needs to be monitored for dropping
+  listenToExternalDrag(ev, el, skipBinding) {
     let component = this.component
     let view = this.view
-    let meta = getDraggedElMeta(el) // extra data about event drop, including possible event to create
+    let meta = ExternalDropping.getDraggedElMeta(el) // extra data about event drop, including possible event to create
     let singleEventDef // a null value signals an unsuccessful drag
 
     // listener that tracks mouse movement over date-associated pixel regions
@@ -140,7 +184,7 @@ export default class ExternalDropping extends Interaction {
             singleEventDef,
             Boolean(meta.eventProps), // isEvent
             Boolean(meta.stick), // isSticky
-            el, ev, ui
+            el, ev
           )
         }
 
@@ -149,6 +193,7 @@ export default class ExternalDropping extends Interaction {
       }
     })
 
+    dragListener.skipBinding = skipBinding
     dragListener.startDrag(ev) // start listening immediately
   }
 
@@ -194,75 +239,4 @@ export default class ExternalDropping extends Interaction {
     return eventDef
   }
 
-}
-
-ListenerMixin.mixInto(ExternalDropping);
-
-
-/* External-Dragging-Element Data
-----------------------------------------------------------------------------------------------------------------------*/
-
-// Require all HTML5 data-* attributes used by FullCalendar to have this prefix.
-// A value of '' will query attributes like data-event. A value of 'fc' will query attributes like data-fc-event.
-(exportHooks as any).dataAttrPrefix = ''
-
-// Given a jQuery element that might represent a dragged FullCalendar event, returns an intermediate data structure
-// to be used for Event Object creation.
-// A defined `.eventProps`, even when empty, indicates that an event should be created.
-function getDraggedElMeta(el) {
-  let eventProps // properties for creating the event, not related to date/time
-  let startTime // a Duration
-  let duration
-  let stick
-
-  eventProps = getEmbeddedElData(el, 'event', true)
-
-  if (eventProps) {
-
-    // something like 1 or true. still signal event creation
-    if (typeof eventProps !== 'object') {
-      eventProps = {}
-    }
-
-    // pluck special-cased date/time properties
-    startTime = eventProps.start
-    if (startTime == null) { startTime = eventProps.time } // accept 'time' as well
-    duration = eventProps.duration
-    stick = eventProps.stick
-    delete eventProps.start
-    delete eventProps.time
-    delete eventProps.duration
-    delete eventProps.stick
-  }
-
-  // fallback to standalone attribute values for each of the date/time properties
-  if (startTime == null) { startTime = getEmbeddedElData(el, 'start') }
-  if (startTime == null) { startTime = getEmbeddedElData(el, 'time') } // accept 'time' as well
-  if (duration == null) { duration = getEmbeddedElData(el, 'duration') }
-  if (stick == null) { stick = getEmbeddedElData(el, 'stick') }
-
-  // massage into correct data types
-  startTime = startTime != null ? moment.duration(startTime) : null
-  duration = duration != null ? moment.duration(duration) : null
-  stick = Boolean(stick)
-
-  return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick }
-}
-
-
-function getEmbeddedElData(el, name, shouldParseJson = false) {
-  let prefix = (exportHooks as any).dataAttrPrefix
-  let prefixedName = (prefix ? prefix + '-' : '') + name
-
-  let data = el.getAttribute('data-' + prefixedName) || null
-  if (data && shouldParseJson) {
-    data = JSON.parse(data)
-  }
-
-  if (data === null && window['jQuery']) {
-    // jQuery will automatically parse JSON
-    data = window['jQuery'](el).data(prefixedName)
-  }
-
-  return data
 }

@@ -31,7 +31,9 @@ export interface EventOptionsBase {
   textColor?: string
 }
 
-export interface EventObjectInput extends EventOptionsBase, RangeInput { // used for input and toLegacy output
+// used for input and toLegacy output
+// when we expose the real EventObject, will need lots of changes
+export interface EventObjectInput extends EventOptionsBase, RangeInput {
   _id?: string
   id?: string | number
   title: string
@@ -44,12 +46,23 @@ export interface EventObjectInput extends EventOptionsBase, RangeInput { // used
 export type EventSourceFunction = (start: moment.Moment, end: moment.Moment, timezone: string, callback: ((events: EventObjectInput[]) => void)) => void
 export type EventSourceSimpleInput = EventObjectInput[] | EventSourceFunction | string
 
-export interface EventSourceExtendedInput extends EventOptionsBase, JQueryAjaxSettings {
-  url?: string
+export interface EventSourceExtendedInput extends EventOptionsBase {
+
+  // array
   events?: EventSourceSimpleInput
-  allDayDefault?: boolean
+
+  // json feed
+  url?: string
+  method?: string
+  data?: object | (() => object)
   startParam?: string
   endParam?: string
+  timezoneParam?: string
+  success?: (eventDefs: EventObjectInput[], ajaxRes: any) => void
+  error?: (error: any, ajaxRes: any) => void
+
+  // general
+  allDayDefault?: boolean
   eventDataTransform?(eventData: any): EventObjectInput
 }
 

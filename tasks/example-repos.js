@@ -1,15 +1,19 @@
 const gulp = require('gulp')
 const gutil = require('gulp-util')
-const shell = require('gulp-shell')
 const modify = require('gulp-modify-file')
 
 // parsed command line arguments
 const { argv } = require('yargs')
 
-// try to build all example repos
-gulp.task('example-repos:build', [ 'webpack', 'ts-types' ], shell.task(
-  './bin/build-example-repos.sh'
-))
+// const shell = require('gulp-shell')
+// // try to build all example repos
+// gulp.task('example-repos:build', [ 'webpack', 'ts-types' ], shell.task(
+//   './bin/build-example-repos.sh'
+// ))
+
+gulp.task('example-repos:build', [ 'webpack', 'ts-types' ], function() {
+  gutil.log('\n\nTODO!!! fix example-repos for jquery removal\n\n')
+})
 
 // does a SINGLE example repo
 gulp.task('example-repo:bump', function(done) {

@@ -37,6 +37,11 @@ export default class Calendar {
   static englishDefaults: any = englishDefaults
   static rtlDefaults: any = rtlDefaults
 
+  // global handler registry
+  static on: EmitterInterface['on']
+  static off: EmitterInterface['off']
+  static trigger: EmitterInterface['trigger']
+
   on: EmitterInterface['on']
   one: EmitterInterface['one']
   off: EmitterInterface['off']
@@ -405,10 +410,15 @@ export default class Calendar {
         )
       )
     }
+
+    this.trigger('initialRender')
+    Calendar.trigger('initialRender', this)
   }
 
 
   destroy() {
+    let wasRendered = Boolean(this.contentEl && this.contentEl.parentNode)
+
     if (this.view) {
       this.clearView()
     }
@@ -433,7 +443,12 @@ export default class Calendar {
       this.windowResizeProxy = null
     }
 
-    GlobalEmitter.unneeded()
+    if (wasRendered) {
+      GlobalEmitter.unneeded()
+
+      this.trigger('destroy')
+      Calendar.trigger('destroy', this)
+    }
   }
 
 
@@ -818,6 +833,31 @@ export default class Calendar {
       new UnzonedRange(start, end),
       !start.hasTime()
     )
+  }
+
+
+  // External Dragging
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  handlExternalDragStart(ev, el, skipBinding) {
+    if (this.view) {
+      this.view.handlExternalDragStart(ev, el, skipBinding)
+    }
+  }
+
+
+  handleExternalDragMove(ev) {
+    if (this.view) {
+      this.view.handleExternalDragMove(ev)
+    }
+  }
+
+
+  handleExternalDragStop(ev) {
+    if (this.view) {
+      this.view.handleExternalDragStop(ev)
+    }
   }
 
 
@@ -1314,6 +1354,7 @@ export default class Calendar {
 
 }
 
+EmitterMixin.mixIntoObj(Calendar) // for global registry
 EmitterMixin.mixInto(Calendar)
 ListenerMixin.mixInto(Calendar)
 

@@ -608,18 +608,18 @@ export default abstract class View extends InteractiveDateComponent {
   // Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
   // `meta` is the parsed data that has been embedded into the dragging event.
   // `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-  reportExternalDrop(singleEventDef, isEvent, isSticky, el, ev, ui) {
+  reportExternalDrop(singleEventDef, isEvent, isSticky, el, ev) {
 
     if (isEvent) {
       this.calendar.eventManager.addEventDef(singleEventDef, isSticky)
     }
 
-    this.triggerExternalDrop(singleEventDef, isEvent, el, ev, ui)
+    this.triggerExternalDrop(singleEventDef, isEvent, el, ev)
   }
 
 
   // Triggers external-drop handlers that have subscribed via the API
-  triggerExternalDrop(singleEventDef, isEvent, el, ev, ui) {
+  triggerExternalDrop(singleEventDef, isEvent, el, ev) {
 
     // trigger 'drop' regardless of whether element represents an event
     this.publiclyTrigger('drop', {
@@ -627,7 +627,6 @@ export default abstract class View extends InteractiveDateComponent {
       args: [
         singleEventDef.dateProfile.start.clone(),
         ev,
-        ui,
         this
       ]
     })

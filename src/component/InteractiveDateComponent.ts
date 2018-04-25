@@ -91,24 +91,6 @@ export default abstract class InteractiveDateComponent extends DateComponent {
   }
 
 
-  bindGlobalHandlers() {
-    super.bindGlobalHandlers()
-
-    if (this.externalDropping) {
-      this.externalDropping.bindToDocument()
-    }
-  }
-
-
-  unbindGlobalHandlers() {
-    super.unbindGlobalHandlers()
-
-    if (this.externalDropping) {
-      this.externalDropping.unbindFromDocument()
-    }
-  }
-
-
   bindDateHandlerToEl(el, name, handler) {
     el.addEventListener(name, (ev) => {
       if (
@@ -270,6 +252,37 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     }
 
     return isEditable
+  }
+
+
+  // EXTERNAL Drag-n-Drop
+  // ---------------------------------------------------------------------------------------------------------------
+
+
+  handlExternalDragStart(ev, el, skipBinding) {
+    if (this.externalDropping) {
+      this.externalDropping.handleDragStart(ev, el, skipBinding)
+    }
+
+    super.handlExternalDragStart(ev, el, skipBinding)
+  }
+
+
+  handleExternalDragMove(ev) {
+    if (this.externalDropping) {
+      this.externalDropping.handleDragMove(ev)
+    }
+
+    super.handleExternalDragMove(ev)
+  }
+
+
+  handleExternalDragStop(ev) {
+    if (this.externalDropping) {
+      this.externalDropping.handleDragStop(ev)
+    }
+
+    super.handleExternalDragStop(ev)
   }
 
 

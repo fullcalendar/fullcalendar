@@ -123,7 +123,8 @@ describe('advanced external dnd', function() {
         })
         describe('through the `start` data attribute', function() {
           beforeEach(function() {
-            $('.drag').data('event', true)
+            $('.drag')
+              .data('event', true)
               .data('start', '05:00')
           })
           defineTests()

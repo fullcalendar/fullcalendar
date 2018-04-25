@@ -1,4 +1,3 @@
-
 describe('locale', function() {
 
   afterEach(function() {
@@ -7,30 +6,25 @@ describe('locale', function() {
 
   it('is not affected by global moment locale when unset', function() {
     moment.locale('fr')
-    affix('#cal')
-    $('#cal').fullCalendar()
-    var calendar = $('#cal').fullCalendar('getCalendar')
-    var mom = calendar.moment('2014-05-01')
+    initCalendar()
+    var mom = currentCalendar.moment('2014-05-01')
     var s = mom.format('dddd MMMM Do YYYY')
     expect(s).toEqual('Thursday May 1st 2014')
   })
 
   it('is not affected by global moment locale when unset', function() {
     moment.locale('fr')
-    affix('#cal')
-    $('#cal').fullCalendar({
+    initCalendar({
       locale: 'es'
     })
-    var calendar = $('#cal').fullCalendar('getCalendar')
-    var mom = calendar.moment('2014-05-01')
+    var mom = currentCalendar.moment('2014-05-01')
     var s = mom.format('dddd MMMM Do YYYY')
     expect(s).toEqual('jueves mayo 1º 2014')
   })
 
   it('doesn\'t side-effect the global moment locale when customized', function() {
     moment.locale('fr')
-    affix('#cal')
-    $('#cal').fullCalendar({
+    initCalendar({
       locale: 'es'
     })
     var mom = moment.utc('2014-05-01')
@@ -44,11 +38,10 @@ describe('locale', function() {
   // needs to be fixed to the developer.
   /*
   xit('defaults to English when configured to locale that isn\'t loaded', function() {
-    affix('#cal');
-    $('#cal').fullCalendar({
+    pushOptions({
       locale: 'zz'
     });
-    var calendar = $('#cal').fullCalendar('getCalendar');
+    var calendar = initCalendar();
     var mom = calendar.moment('2014-05-01');
     var s = mom.format('dddd MMMM Do YYYY');
     expect(s).toEqual('Thursday May 1st 2014');
@@ -56,8 +49,7 @@ describe('locale', function() {
   */
 
   it('works when certain locale has no FC settings defined', function() {
-    affix('#cal')
-    $('#cal').fullCalendar({
+    initCalendar({
       locale: 'en-ca',
       defaultView: 'agendaWeek',
       defaultDate: '2014-12-25',
@@ -70,20 +62,22 @@ describe('locale', function() {
   })
 
   it('allows dynamic setting', function() {
-    affix('#cal')
-    $('#cal').fullCalendar({
+    initCalendar({
       locale: 'es',
       defaultDate: '2016-07-10',
       defaultView: 'month'
     })
-    expect($('.fc h2')).toHaveText('julio 2016')
-    expect($('.fc')).not.toHaveClass('fc-rtl')
 
-    $('#cal').fullCalendar('option', 'locale', 'fr')
-    expect($('.fc h2')).toHaveText('juillet 2016')
+    var calendarEl = currentCalendar.el
 
-    $('#cal').fullCalendar('option', 'locale', 'ar') // NOTE: we had problems testing for RTL title text
-    expect($('.fc')).toHaveClass('fc-rtl')
+    expect($('h2', calendarEl)).toHaveText('julio 2016')
+    expect($(calendarEl)).not.toHaveClass('fc-rtl')
+
+    currentCalendar.option('locale', 'fr')
+    expect($('h2', calendarEl)).toHaveText('juillet 2016')
+
+    currentCalendar.option('locale', 'ar') // NOTE: we had problems testing for RTL title text
+    expect($(calendarEl)).toHaveClass('fc-rtl')
   })
 
 })
