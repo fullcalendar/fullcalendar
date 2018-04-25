@@ -47,7 +47,10 @@ export default class DayGridFillRenderer extends FillRenderer {
     trEl = skeletonEl.find('tr')
 
     if (startCol > 0) {
-      trEl.append('<td colspan="' + startCol + '"/>')
+      trEl.append(
+        // will create (startCol + 1) td's
+        new Array(startCol + 1).join('<td/>')
+      )
     }
 
     trEl.append(
@@ -55,7 +58,10 @@ export default class DayGridFillRenderer extends FillRenderer {
     )
 
     if (endCol < colCnt) {
-      trEl.append('<td colspan="' + (colCnt - endCol) + '"/>')
+      trEl.append(
+        // will create (colCnt - endCol) td's
+        new Array(colCnt - endCol + 1).join('<td/>')
+      )
     }
 
     this.component.bookendCells(trEl)
