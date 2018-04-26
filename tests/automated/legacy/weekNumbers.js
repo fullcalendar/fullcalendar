@@ -1,17 +1,16 @@
-
 describe('weekNumbers', function() {
 
   var options
   var counts
 
   beforeEach(function() {
-    affix('#cal')
+
     counts = {}
     options = {}
   })
 
   afterEach(function() {
-    $('#cal').fullCalendar('destroy')
+    initCalendar('destroy')
   })
 
   describe('when using month view', function() {
@@ -338,7 +337,7 @@ describe('weekNumbers', function() {
   function getCounts() {
     var t = {}
 
-    $('#cal').fullCalendar(options)
+    initCalendar()
 
     t.allWeekNumbers = $('.fc-week-number').length
     t.colWeekNumbers = $('.fc-content-skeleton thead td.fc-week-number').length
