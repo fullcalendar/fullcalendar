@@ -1,6 +1,6 @@
 import ListenerCounter from '../lib/ListenerCounter'
 
-describe('external drag and drop', function() {
+fdescribe('external drag and drop', function() {
 
   // TODO: fill out tests for droppable/drop, with RTL
 
@@ -327,11 +327,12 @@ describe('external drag and drop', function() {
       })
 
       // Issue 2433
-      it('should not have drag handlers cleared when other calendar navigates', function() {
+      fit('should not have drag handlers cleared when other calendar navigates', function() {
         init()
         var el1 = currentCalendar.el
-        var el2 = $('<div id="cal2"/>').insertAfter(el1)
-        el2.fullCalendar(options)
+        var el2 = $('<div id="calendar2">').insertAfter(el1)
+        var currentCalendar2 = new FullCalendar.Calendar(el2[0], options)
+        currentCalendar2.render()
 
         var docListenerCounter = new ListenerCounter(document)
         docListenerCounter.startWatching()
@@ -339,7 +340,7 @@ describe('external drag and drop', function() {
         currentCalendar.next()
         expect(docListenerCounter.stopWatching()).toBe(0)
 
-        el2.fullCalendar('destroy')
+        currentCalendar2.destroy()
         el2.remove()
       })
     })
