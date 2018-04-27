@@ -1,6 +1,6 @@
 import ListenerCounter from '../lib/ListenerCounter'
 
-fdescribe('external drag and drop', function() {
+describe('external drag and drop', function() {
 
   // TODO: fill out tests for droppable/drop, with RTL
 
@@ -327,7 +327,7 @@ fdescribe('external drag and drop', function() {
       })
 
       // Issue 2433
-      fit('should not have drag handlers cleared when other calendar navigates', function() {
+      it('should not have drag handlers cleared when other calendar navigates', function() {
         init()
         var el1 = currentCalendar.el
         var el2 = $('<div id="calendar2">').insertAfter(el1)
