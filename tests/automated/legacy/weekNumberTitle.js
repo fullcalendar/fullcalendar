@@ -1,12 +1,7 @@
 describe('weekNumberTitle', function() {
 
-  var options
-
-  beforeEach(function() {
-
-    options = {
-      weekNumbers: true
-    }
+  pushOptions({
+    weekNumbers: true
   })
 
   function getRenderedWeekNumberTitle() {
@@ -18,8 +13,8 @@ describe('weekNumberTitle', function() {
   [ 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {
     describe('when views is ' + viewName, function() {
 
-      beforeEach(function() {
-        options.defaultView = viewName
+      pushOptions({
+        defaultView: viewName
       })
 
       it('renders correctly by default', function() {
@@ -28,22 +23,25 @@ describe('weekNumberTitle', function() {
       })
 
       it('renders correctly when unspecified and when locale is customized', function() {
-        options.locale = 'es'
-        initCalendar()
+        initCalendar({
+          locale: 'es'
+        })
         expect(getRenderedWeekNumberTitle()).toBe('Sm')
       })
 
       it('renders correctly when customized and LTR', function() {
-        options.isRTL = false
-        options.weekNumberTitle = 'YO'
-        initCalendar()
+        initCalendar({
+          isRTL: false,
+          weekNumberTitle: 'YO'
+        })
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })
 
       it('renders correctly when customized and RTL', function() {
-        options.isRTL = true
-        options.weekNumberTitle = 'YO'
-        initCalendar()
+        initCalendar({
+          isRTL: true,
+          weekNumberTitle: 'YO'
+        })
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })
     })
