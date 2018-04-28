@@ -176,7 +176,7 @@ export default class BasicView extends View {
     this.dayGrid.removeSegPopover() // kill the "more" popover if displayed
 
     // is the event limit a constant level number?
-    if (eventLimit && typeof eventLimit === 'number') {
+    if (typeof eventLimit === 'number') {
       this.dayGrid.limitRows(eventLimit) // limit the levels first so the height can redistribute after
     }
 

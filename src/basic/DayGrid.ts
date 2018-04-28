@@ -436,10 +436,10 @@ export default class DayGrid extends InteractiveDateComponent {
     for (row = 0; row < rowStructs.length; row++) {
       this.unlimitRow(row)
 
-      if (!levelLimit) {
-        rowLevelLimit = false
-      } else if (typeof levelLimit === 'number') {
+      if (typeof levelLimit === 'number') {
         rowLevelLimit = levelLimit
+      } else if (!levelLimit) {
+        rowLevelLimit = false
       } else {
         rowLevelLimit = this.computeRowLevelLimit(row)
       }
@@ -512,7 +512,7 @@ export default class DayGrid extends InteractiveDateComponent {
       while (col < endCol) {
         segsBelow = this.getCellSegs(row, col, levelLimit)
         if (segsBelow.length) {
-          td = cellMatrix[levelLimit - 1][col]
+          td = cellMatrix[levelLimit][col]
           moreLink = this.renderMoreLink(row, col, segsBelow)
           moreWrap = $('<div/>').append(moreLink)
           td.append(moreWrap)
@@ -522,11 +522,11 @@ export default class DayGrid extends InteractiveDateComponent {
       }
     }
 
-    if (levelLimit && levelLimit < rowStruct.segLevels.length) { // is it actually over the limit?
-      levelSegs = rowStruct.segLevels[levelLimit - 1]
+    if (levelLimit < rowStruct.segLevels.length) { // is it actually over the limit?
+      levelSegs = rowStruct.segLevels[levelLimit]
       cellMatrix = rowStruct.cellMatrix
 
-      limitedNodes = rowStruct.tbodyEl.children().slice(levelLimit) // get level <tr> elements past the limit
+      limitedNodes = rowStruct.tbodyEl.children().slice(levelLimit + 1) // get level <tr> elements past the limit
         .addClass('fc-limited').get() // hide elements and get a simple DOM-nodes array
 
       // iterate though segments in the last allowable level
@@ -545,7 +545,7 @@ export default class DayGrid extends InteractiveDateComponent {
         }
 
         if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
-          td = cellMatrix[levelLimit - 1][seg.leftCol] // the segment's parent cell
+          td = cellMatrix[levelLimit][seg.leftCol] // the segment's parent cell
           rowspan = td.attr('rowspan') || 1
           segMoreNodes = []
 
@@ -556,7 +556,7 @@ export default class DayGrid extends InteractiveDateComponent {
             moreLink = this.renderMoreLink(
               row,
               seg.leftCol + j,
-              [ seg ].concat(segsBelow) // count seg as hidden too
+              segsBelow
             )
             moreWrap = $('<div/>').append(moreLink)
             moreTd.append(moreWrap)

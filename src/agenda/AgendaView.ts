@@ -201,7 +201,7 @@ export default class AgendaView extends View {
       if (eventLimit && typeof eventLimit !== 'number') {
         eventLimit = AGENDA_ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
       }
-      if (eventLimit) {
+      if (eventLimit !== false) {
         this.dayGrid.limitRows(eventLimit)
       }
     }
