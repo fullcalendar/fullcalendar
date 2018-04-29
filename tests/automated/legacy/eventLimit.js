@@ -2,7 +2,7 @@ describe('eventLimit', function() {
 
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
-    eventLimit: 3
+    eventLimit: 2
   })
 
   describe('as a number', function() {
@@ -16,8 +16,7 @@ describe('eventLimit', function() {
       it('doesn\'t display a more link when limit is more than the # of events', function() {
         initCalendar({
           events: [
-            { title: 'event1', start: '2014-07-29' },
-            { title: 'event2', start: '2014-07-29' }
+            { title: 'event1', start: '2014-07-29' }
           ]
         })
         expect($('.fc-more').length).toBe(0)
@@ -27,7 +26,6 @@ describe('eventLimit', function() {
         initCalendar({
           events: [
             { title: 'event1', start: '2014-07-29' },
-            { title: 'event2', start: '2014-07-29' },
             { title: 'event2', start: '2014-07-29' }
           ]
         })

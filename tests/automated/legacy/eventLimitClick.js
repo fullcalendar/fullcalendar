@@ -3,7 +3,7 @@ describe('eventLimitClick', function() { // simulate a click
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'month',
-    eventLimit: 3,
+    eventLimit: 2,
     events: [
       { title: 'event1', start: '2014-07-29' },
       { title: 'event2', start: '2014-07-29' },
