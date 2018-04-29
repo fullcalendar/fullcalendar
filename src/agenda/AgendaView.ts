@@ -13,7 +13,7 @@ import View from '../View'
 import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 
-const AGENDA_ALL_DAY_EVENT_LIMIT = 5
+const AGENDA_ALL_DAY_EVENT_LIMIT = 4
 
 let agendaTimeGridMethods
 let agendaDayGridMethods
