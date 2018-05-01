@@ -137,3 +137,8 @@ export { default as DayGrid } from './basic/DayGrid'
 export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
+
+export { DateEnv } from './datelib/env'
+export { createDuration, durationsEqual } from './datelib/duration'
+export { nowMarker } from './datelib/util' // might not need
+export { createFormatter } from './datelib/formatting'
