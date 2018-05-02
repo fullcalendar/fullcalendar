@@ -175,8 +175,12 @@ export class DateEnv {
     )
   }
 
-  // returns an object that wraps the marker!
   createMarker(input) {
+    return this.createMarkerMeta(input).marker
+  }
+
+  // returns an object that wraps the marker!
+  createMarkerMeta(input) {
     if (typeof input === 'string') {
       return this.parse(input)
     } else if (typeof input === 'number') {
