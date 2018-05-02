@@ -4,7 +4,66 @@ describe('datelib', function() {
   var createFormatter = FullCalendar.createFormatter
   var createDuration = FullCalendar.createDuration
 
-  // todo: accept a date object, as well as ms timestamp
+
+  describe('computeWeekNumber', function() {
+
+    it('works with local', function() {
+      var env = new DateEnv({
+        timeZone: 'UTC',
+        calendarSystem: 'gregorian',
+        locale: 'en'
+      })
+      var m1 = env.createMarker('2018-04-07').marker
+      var m2 = env.createMarker('2018-04-08').marker
+      expect(env.computeWeekNumber(m1)).toBe(14)
+      expect(env.computeWeekNumber(m2)).toBe(15)
+    })
+
+    it('works with ISO', function() {
+      var env = new DateEnv({
+        timeZone: 'UTC',
+        calendarSystem: 'gregorian',
+        locale: 'en',
+        weekNumberCalculation: 'ISO'
+      })
+      var m1 = env.createMarker('2018-04-01').marker
+      var m2 = env.createMarker('2018-04-02').marker
+      expect(env.computeWeekNumber(m1)).toBe(13)
+      expect(env.computeWeekNumber(m2)).toBe(14)
+    })
+
+    it('works with custom function', function() {
+      var env = new DateEnv({
+        timeZone: 'UTC',
+        calendarSystem: 'gregorian',
+        locale: 'en',
+        weekNumberCalculation: function(date) {
+          expect(date instanceof Date).toBe(true)
+          expect(date.valueOf()).toBe(Date.UTC(2018, 3, 1))
+          return 99
+        }
+      })
+      var m1 = env.createMarker('2018-04-01').marker
+      expect(env.computeWeekNumber(m1)).toBe(99)
+    })
+
+  })
+
+  it('startOfWeek with different firstDay', function() {
+    var env = new DateEnv({
+      timeZone: 'UTC',
+      calendarSystem: 'gregorian',
+      locale: 'en',
+      firstDay: 2 // tues
+    })
+    var m = env.createMarker('2018-04-19').marker
+    var w = env.startOfWeek(m)
+
+    expect(env.toDate(w)).toEqual(
+      new Date(Date.UTC(2018, 3, 17))
+    )
+  })
+
 
   describe('when UTC', function() {
     var env
@@ -17,54 +76,94 @@ describe('datelib', function() {
       })
     })
 
+    describe('createMarker', function() {
+
+      it('with date', function() {
+        expect(
+          env.toDate(
+            env.createMarker(
+              new Date(2017, 5, 8)
+            ).marker
+          )
+        ).toEqual(
+          new Date(2017, 5, 8)
+        )
+      })
+
+      it('with timestamp', function() {
+        expect(
+          env.toDate(
+            env.createMarker(
+              new Date(2017, 5, 8).valueOf()
+            ).marker
+          )
+        ).toEqual(
+          new Date(2017, 5, 8)
+        )
+      })
+
+      it('with array', function() {
+        expect(
+          env.toDate(
+            env.createMarker(
+              [ 2017, 5, 8 ]
+            ).marker
+          )
+        ).toEqual(
+          new Date(Date.UTC(2017, 5, 8))
+        )
+      })
+
+    })
+
     describe('ISO8601 parsing', function() {
 
       it('parses non-tz as UTC', function() {
-        var res = env.parse('2018-06-08')
+        var res = env.createMarker('2018-06-08')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 8)))
         expect(res.forcedTimeZoneOffset).toBeNull()
       })
 
       it('parses a date already in UTC', function() {
-        var res = env.parse('2018-06-08T00:00:00Z')
+        var res = env.createMarker('2018-06-08T00:00:00Z')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 8)))
         expect(res.forcedTimeZoneOffset).toBeNull()
       })
 
       it('parses timezones into UTC', function() {
-        var res = env.parse('2018-06-08T00:00:00+12:00')
+        var res = env.createMarker('2018-06-08T00:00:00+12:00')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 7, 12)))
         expect(res.forcedTimeZoneOffset).toBeNull()
       })
 
       it('detects lack of time', function() {
-        var res = env.parse('2018-06-08')
+        var res = env.createMarker('2018-06-08')
         expect(res.hasTime).toBe(false)
       })
 
       it('detects presence of time', function() {
-        var res = env.parse('2018-06-08T00:00:00')
+        var res = env.createMarker('2018-06-08T00:00:00')
         expect(res.hasTime).toBe(true)
       })
 
       it('detects presence of time even if timezone', function() {
-        var res = env.parse('2018-06-08T00:00:00+12:00')
+        var res = env.createMarker('2018-06-08T00:00:00+12:00')
         expect(res.hasTime).toBe(true)
       })
 
     })
 
     it('outputs ISO8601 formatting', function() {
-      var marker = env.parse('2018-06-08T00:00:00').marker
+      var marker = env.createMarker('2018-06-08T00:00:00').marker
       var s = env.toIso(marker)
       expect(s).toBe('2018-06-08T00:00:00Z')
     })
 
     it('outputs pretty format with UTC timezone', function() {
-      var marker = env.parse('2018-06-08').marker
+      var marker = env.createMarker('2018-06-08').marker
       var formatter = createFormatter({
         weekday: 'long',
         day: 'numeric',
@@ -85,22 +184,22 @@ describe('datelib', function() {
       })
 
       it('works with different days of same month', function() {
-        var m0 = env.parse('2018-06-08').marker
-        var m1 = env.parse('2018-06-09').marker
+        var m0 = env.createMarker('2018-06-08').marker
+        var m1 = env.createMarker('2018-06-09').marker
         var s = env.toRangeFormat(m0, m1, formatter)
         expect(s).toBe('June 8 - 9, 2018')
       })
 
       it('works with different day/month of same year', function() {
-        var m0 = env.parse('2018-06-08').marker
-        var m1 = env.parse('2018-07-09').marker
+        var m0 = env.createMarker('2018-06-08').marker
+        var m1 = env.createMarker('2018-07-09').marker
         var s = env.toRangeFormat(m0, m1, formatter)
         expect(s).toBe('June 8 - July 9, 2018')
       })
 
       it('works with completely different dates', function() {
-        var m0 = env.parse('2018-06-08').marker
-        var m1 = env.parse('2020-07-09').marker
+        var m0 = env.createMarker('2018-06-08').marker
+        var m1 = env.createMarker('2020-07-09').marker
         var s = env.toRangeFormat(m0, m1, formatter)
         expect(s).toBe('June 8, 2018 - July 9, 2020')
       })
@@ -164,9 +263,7 @@ describe('datelib', function() {
       )
     })
 
-    //!!!!!!!!!!!!!
-    // TODO: test other locales
-    xit('startOfWeek', function() {
+    it('startOfWeek', function() {
       var d0 = env.dateToMarker(new Date(Date.UTC(2018, 5, 5, 12)))
       var d1 = env.toDate(env.startOfWeek(d0))
       expect(d1).toEqual(
@@ -368,14 +465,14 @@ describe('datelib', function() {
     describe('ISO8601 parsing', function() {
 
       it('parses non-tz as local', function() {
-        var res = env.parse('2018-06-08')
+        var res = env.createMarker('2018-06-08')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(2018, 5, 8))
         expect(res.forcedTimeZoneOffset).toBeNull()
       })
 
       it('parses timezones into local', function() {
-        var res = env.parse('2018-06-08T00:00:00+12:00')
+        var res = env.createMarker('2018-06-08T00:00:00+12:00')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 7, 12)))
         expect(res.forcedTimeZoneOffset).toBeNull()
@@ -384,14 +481,14 @@ describe('datelib', function() {
     })
 
     it('outputs ISO8601 formatting', function() {
-      var marker = env.parse('2018-06-08T00:00:00').marker
+      var marker = env.createMarker('2018-06-08T00:00:00').marker
       var s = env.toIso(marker)
       var realTzo = getFormattedTimzoneOffset(new Date(2018, 5, 8))
       expect(s).toBe('2018-06-08T00:00:00' + realTzo)
     })
 
     it('outputs pretty format with local timezone', function() {
-      var marker = env.parse('2018-06-08').marker
+      var marker = env.createMarker('2018-06-08').marker
       var formatter = createFormatter({
         weekday: 'long',
         day: 'numeric',
@@ -429,14 +526,14 @@ describe('datelib', function() {
     describe('ISO8601 parsing', function() {
 
       it('parses non-tz as UTC with no forcedTimeZoneOffset', function() {
-        var res = env.parse('2018-06-08')
+        var res = env.createMarker('2018-06-08')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 8)))
         expect(res.forcedTimeZoneOffset).toBeNull()
       })
 
       it('parses as UTC after stripping and with a forcedTimeZoneOffset', function() {
-        var res = env.parse('2018-06-08T00:00:00+12:00')
+        var res = env.createMarker('2018-06-08T00:00:00+12:00')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 8)))
         expect(res.forcedTimeZoneOffset).toBe(12 * 60)
@@ -445,7 +542,7 @@ describe('datelib', function() {
     })
 
     it('outputs pretty format with no timezone even tho specified', function() {
-      var marker = env.parse('2018-06-08').marker
+      var marker = env.createMarker('2018-06-08').marker
       var formatter = createFormatter({
         weekday: 'long',
         day: 'numeric',

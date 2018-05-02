@@ -7,8 +7,8 @@ let localeMap: { [name: string]: LocaleData } = {}
 
 const EN_LOCALE = {
   week: {
-    dow: 1,
-    doy: 4
+    dow: 0, // Sunday is the first day of the week
+    doy: 4 // 4 days need to be within the year to be considered the first week
   }
 }
 

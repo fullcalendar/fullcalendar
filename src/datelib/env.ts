@@ -1,17 +1,27 @@
-import { DateMarker, arrayToUtcDate, weekOfYear, dayOfYearFromWeeks, dateToUtcArray, arrayToLocalDate, dateToLocalArray  } from './util'
+import { DateMarker, arrayToUtcDate, dateToUtcArray, arrayToLocalDate, dateToLocalArray  } from './util'
 import { CalendarSystem, createCalendarSystem } from './calendar-system'
 import { namedTimeZoneOffsetGenerator, getNamedTimeZoneOffsetGenerator } from './timezone'
 import { getLocale } from './locale'
 import { Duration } from './duration'
 import { DateFormatter, buildIsoString } from './formatting'
 import { parse } from './parsing'
+import { assignTo } from '../util/object'
 
 export interface DateEnvSettings {
   timeZone: string
   timeZoneImpl?: string
   calendarSystem: string
   locale: string
+  weekNumberCalculation?: any
+  firstDay?: any
 }
+
+
+const MS_IN_DAY = 864e5
+
+// TODO: locale: 'auto'
+// TODO: separate locale object from dateenv. but keep separate from locale name
+
 
 export class DateEnv {
 
@@ -20,13 +30,25 @@ export class DateEnv {
   calendarSystem: CalendarSystem
   locale: string
   weekMeta: any
+  weekNumberFunc: any
 
   constructor(settings: DateEnvSettings) {
     this.timeZone = settings.timeZone
     this.namedTimeZoneOffsetGenerator = getNamedTimeZoneOffsetGenerator(settings.timeZoneImpl)
     this.calendarSystem = createCalendarSystem(settings.calendarSystem)
     this.locale = settings.locale
-    this.weekMeta = getLocale(settings.locale).week
+    this.weekMeta = assignTo({}, getLocale(settings.locale).week)
+
+    if (settings.weekNumberCalculation === 'ISO') {
+      this.weekMeta.dow = 1
+      this.weekMeta.doy = 4
+    } else if (typeof settings.firstDay === 'number') {
+      this.weekMeta.dow = settings.firstDay
+    }
+
+    if (typeof settings.weekNumberCalculation === 'function') {
+      this.weekNumberFunc = settings.weekNumberCalculation
+    }
   }
 
   add(marker: DateMarker, dur: Duration): DateMarker {
@@ -61,19 +83,20 @@ export class DateEnv {
   }
 
   startOfWeek(marker: DateMarker): DateMarker {
-    let { dow, doy } = this.weekMeta
-    let weekInfo = weekOfYear(marker, dow, doy)
-    let dayOfYear = dayOfYearFromWeeks(weekInfo.year, weekInfo.week, 0, dow, doy)
-
-    return arrayToUtcDate([ dayOfYear.year, 0, dayOfYear.dayOfYear ]) // weeks are always in gregorian, i think
-  }
-
-  startOfDay(marker: DateMarker): DateMarker {
     return arrayToUtcDate([
       marker.getUTCFullYear(),
       marker.getUTCMonth(),
-      marker.getUTCDate()
+      marker.getUTCDate() - (marker.getUTCDay() - this.weekMeta.dow + 7) % 7
     ])
+  }
+
+  computeWeekNumber(marker: DateMarker): number {
+    if (this.weekNumberFunc) {
+      return this.weekNumberFunc(this.toDate(marker))
+    } else {
+      let { dow, doy } = this.weekMeta
+      return weekOfYear(marker, dow, doy)
+    }
   }
 
   toDate(marker: DateMarker): Date {
@@ -150,6 +173,20 @@ export class DateEnv {
         extraOptions.forcedTimeZoneOffset :
         this.computeTimeZoneOffset(marker)
     )
+  }
+
+  // returns an object that wraps the marker!
+  createMarker(input) {
+    if (typeof input === 'string') {
+      return this.parse(input)
+    } else if (typeof input === 'number') {
+      return { marker: this.timestampToMarker(input), hasTime: false, forcedTimeZoneOffset: null }
+    } else if (isNativeDate(input)) {
+      return { marker: this.dateToMarker(input), hasTime: false, forcedTimeZoneOffset: null }
+    } else if (Array.isArray(input)) {
+      return { marker: arrayToUtcDate(input), hasTime: false, forcedTimeZoneOffset: null }
+    }
+    return null
   }
 
   parse(str: string) {
@@ -231,7 +268,7 @@ export class DateEnv {
       m0.getUTCMinutes() === m1.getUTCMinutes() &&
       m0.getUTCHours() === m1.getUTCHours()
     ) {
-      return Math.round((m1.valueOf() - m0.valueOf()) / 864e5)
+      return diffDays(m0, m1)
     }
     return null
   }
@@ -243,9 +280,67 @@ export class DateEnv {
     return {
       year: 0,
       month: 0,
-      day: Math.round((m1day.valueOf() - m0day.valueOf()) / 864e5),
+      day: Math.round((m1day.valueOf() - m0day.valueOf()) / MS_IN_DAY),
       time: (m1.valueOf() - m1day.valueOf()) - (m0.valueOf() - m0day.valueOf())
     }
   }
 
+  startOfDay: (marker: DateMarker) => DateMarker
+
+}
+
+DateEnv.prototype.startOfDay = startOfDay
+
+
+function weekOfYear(marker, dow, doy) {
+  let y = marker.getUTCFullYear()
+  let w = weekOfGivenYear(marker, y, dow, doy)
+
+  if (w < 1) {
+    return weekOfGivenYear(marker, y - 1, dow, doy)
+  }
+
+  let nextW = weekOfGivenYear(marker, y + 1, dow, doy)
+  if (nextW >= 1) {
+    return Math.min(w, nextW)
+  }
+
+  return w
+}
+
+
+function weekOfGivenYear(marker, year, dow, doy) {
+  let firstWeekStart = arrayToUtcDate([ year, 0, 1 + firstWeekOffset(year, dow, doy) ])
+  let dayStart = startOfDay(marker)
+
+  return Math.floor(diffDays(firstWeekStart, dayStart) / 7) + 1 // zero-indexed
+}
+
+
+function startOfDay(marker: DateMarker): DateMarker {
+  return arrayToUtcDate([
+    marker.getUTCFullYear(),
+    marker.getUTCMonth(),
+    marker.getUTCDate()
+  ])
+}
+
+
+function diffDays(m0, m1) { // will round
+  return Math.round((m1.valueOf() - m0.valueOf()) / MS_IN_DAY)
+}
+
+
+// start-of-first-week - start-of-year
+function firstWeekOffset(year, dow, doy) {
+  var // first-week day -- which january is always in the first week (4 for iso, 1 for other)
+      fwd = 7 + dow - doy,
+      // first-week day local weekday -- which local weekday is fwd
+      fwdlw = (7 + arrayToUtcDate([ year, 0, fwd ]).getUTCDay() - dow) % 7;
+  return -fwdlw + fwd - 1;
+}
+
+
+function isNativeDate(input) {
+  return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date
 }
