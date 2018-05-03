@@ -1,3 +1,4 @@
+import { Moment } from 'moment'
 import UnzonedRange from '../UnzonedRange'
 
 /*
@@ -5,8 +6,8 @@ Meant to be immutable
 */
 export default class EventDateProfile {
 
-  start: any
-  end: any
+  start: Moment
+  end: Moment
   unzonedRange: any
 
 

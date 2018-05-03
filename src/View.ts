@@ -45,7 +45,7 @@ export default abstract class View extends InteractiveDateComponent {
   nowIndicatorIntervalID: any // "
 
   dateProfileGeneratorClass: any // initialized after class
-  dateProfileGenerator: any
+  dateProfileGenerator: DateProfileGenerator
 
   // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
   // initialized after class
@@ -202,7 +202,7 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  setDate(date) {
+  setDate(date: moment.Moment) {
     let currentDateProfile = this.get('dateProfile')
     let newDateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
 

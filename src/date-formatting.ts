@@ -1,3 +1,4 @@
+import { Moment } from 'moment'
 import {
   default as momentExt,
   newMomentProto,
@@ -127,7 +128,7 @@ Using a formatting string meant for a single date, generate a range string, like
 If the dates are the same as far as the format string is concerned, just return a single
 rendering of one date, without any separator.
 */
-export function formatRange(date1, date2, formatStr, separator, isRTL) {
+export function formatRange(date1: Moment, date2: Moment, formatStr, separator, isRTL) {
   let localeData
 
   date1 = momentExt.parseZone(date1)

@@ -3,6 +3,21 @@ import { computeGreatestUnit, computeDurationGreatestUnit } from './util/date'
 import UnzonedRange from './models/UnzonedRange'
 
 
+export interface DateProfile {
+  validUnzonedRange: UnzonedRange
+  currentUnzonedRange: UnzonedRange
+  currentRangeUnit: string
+  isRangeAllDay: boolean
+  activeUnzonedRange: UnzonedRange
+  renderUnzonedRange: UnzonedRange
+  minTime: moment.Duration
+  maxTime: moment.Duration
+  isValid: boolean
+  date: moment.Moment
+  dateIncrement: moment.Duration
+}
+
+
 export default class DateProfileGenerator {
 
   _view: any // discourage
@@ -33,7 +48,7 @@ export default class DateProfileGenerator {
 
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
-  buildPrev(currentDateProfile) {
+  buildPrev(currentDateProfile): DateProfile {
     let prevDate = currentDateProfile.date.clone()
       .startOf(currentDateProfile.currentRangeUnit)
       .subtract(currentDateProfile.dateIncrement)
@@ -43,7 +58,7 @@ export default class DateProfileGenerator {
 
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
-  buildNext(currentDateProfile) {
+  buildNext(currentDateProfile): DateProfile {
     let nextDate = currentDateProfile.date.clone()
       .startOf(currentDateProfile.currentRangeUnit)
       .add(currentDateProfile.dateIncrement)
@@ -55,7 +70,7 @@ export default class DateProfileGenerator {
   // Builds a structure holding dates/ranges for rendering around the given date.
   // Optional direction param indicates whether the date is being incremented/decremented
   // from its previous value. decremented = -1, incremented = 1 (default).
-  build(date, direction, forceToValid= false) {
+  build(date, direction?, forceToValid = false): DateProfile {
     let isDateAllDay = !date.hasTime()
     let validUnzonedRange
     let minTime = null

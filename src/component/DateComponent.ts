@@ -6,6 +6,7 @@ import { formatRange } from '../date-formatting'
 import Component from './Component'
 import { eventRangeToEventFootprint } from '../models/event/util'
 import EventFootprint from '../models/event/EventFootprint'
+import { DateProfile } from '../DateProfileGenerator'
 
 
 export default abstract class DateComponent extends Component {
@@ -666,7 +667,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  _getDateProfile() {
+  _getDateProfile(): DateProfile {
     return this._getView().get('dateProfile')
   }
 
@@ -760,7 +761,7 @@ export default abstract class DateComponent extends Component {
   // Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
   // Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
   // The timezones of the dates within `range` will be respected.
-  formatRange(range, isAllDay, formatStr, separator) {
+  formatRange(range: { start: moment.Moment, end: moment.Moment }, isAllDay, formatStr, separator) {
     let end = range.end
 
     if (isAllDay) {
@@ -780,7 +781,7 @@ export default abstract class DateComponent extends Component {
 
   // Returns the date range of the full days the given range visually appears to occupy.
   // Returns a plain object with start/end, NOT an UnzonedRange!
-  computeDayRange(unzonedRange) {
+  computeDayRange(unzonedRange): { start: moment.Moment, end: moment.Moment } {
     let calendar = this._getCalendar()
     let startDay = calendar.msToUtcMoment(unzonedRange.startMs, true) // the beginning of the day the range starts
     let end = calendar.msToUtcMoment(unzonedRange.endMs)
