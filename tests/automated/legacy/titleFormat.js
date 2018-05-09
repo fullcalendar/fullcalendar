@@ -2,10 +2,6 @@ describe('titleFormat', function() {
 
   var SELECTOR = '.fc-toolbar h2'
 
-  beforeEach(function() {
-    affix('#cal')
-  })
-
   describe('when default', function() {
 
     var viewWithFormat = [
@@ -17,18 +13,18 @@ describe('titleFormat', function() {
     ]
 
     beforeEach(function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         defaultDate: '2014-06-12',
         titleRangeSeparator: ' - '
       })
     })
 
     it('should have default values', function() {
-      var cal = $('#cal')
+      var cal = $(currentCalendar.el)
 
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
-        cal.fullCalendar('changeView', crtView.view)
+        currentCalendar.changeView(crtView.view)
         expect(cal.find(SELECTOR).text()).toMatch(crtView.expected)
       };
     })
@@ -45,7 +41,7 @@ describe('titleFormat', function() {
     ]
 
     beforeEach(function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         defaultDate: '2014-06-12',
         titleRangeSeparator: ' - ',
         views: {
@@ -59,11 +55,11 @@ describe('titleFormat', function() {
     })
 
     it('should have the correct values', function() {
-      var cal = $('#cal')
+      var cal = $(currentCalendar.el)
 
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
-        cal.fullCalendar('changeView', crtView.view)
+        currentCalendar.changeView(crtView.view)
         expect(cal.find(SELECTOR).text()).toBe(crtView.expected)
       };
     })
@@ -80,7 +76,7 @@ describe('titleFormat', function() {
     ]
 
     beforeEach(function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         defaultDate: '2014-06-12',
         titleRangeSeparator: ' - ',
         locale: 'fr'
@@ -88,11 +84,11 @@ describe('titleFormat', function() {
     })
 
     it('should have the translated dates', function() {
-      var cal = $('#cal')
+      var cal = $(currentCalendar.el)
 
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
-        cal.fullCalendar('changeView', crtView.view)
+        currentCalendar.changeView(crtView.view)
         expect(cal.find(SELECTOR).text()).toBe(crtView.expected)
       };
     })
@@ -101,7 +97,7 @@ describe('titleFormat', function() {
   describe('using custom views', function() {
 
     it('multi-year default only displays year', function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         views: {
           multiYear: {
             type: 'basic',
@@ -116,7 +112,7 @@ describe('titleFormat', function() {
     })
 
     it('multi-month default only displays month/year', function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         views: {
           multiMonth: {
             type: 'basic',
@@ -131,7 +127,7 @@ describe('titleFormat', function() {
     })
 
     it('multi-week default displays short full date', function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         views: {
           multiWeek: {
             type: 'basic',
@@ -146,7 +142,7 @@ describe('titleFormat', function() {
     })
 
     it('multi-day default displays short full date', function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         views: {
           multiDay: {
             type: 'basic',
@@ -164,7 +160,7 @@ describe('titleFormat', function() {
   describe('when not all days are shown', function() {
 
     it('doesn\'t include hidden days in the title', function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         defaultView: 'agendaWeek',
         defaultDate: '2017-02-13',
         weekends: false,

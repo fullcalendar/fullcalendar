@@ -24,7 +24,6 @@ describe('Google Calendar plugin', function() {
   var oldConsoleWarn
 
   beforeEach(function() {
-    affix('#cal')
 
     options = {
       defaultView: 'month',
@@ -48,7 +47,7 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'local'
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       var i
 
       expect(events.length).toBe(NUM_EVENTS)
@@ -58,7 +57,7 @@ describe('Google Calendar plugin', function() {
 
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('request/receives correctly when UTC timezone', function(done) {
@@ -66,7 +65,7 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'UTC'
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       var i
 
       expect(events.length).toBe(NUM_EVENTS)
@@ -76,7 +75,7 @@ describe('Google Calendar plugin', function() {
 
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('request/receives correctly when custom timezone', function(done) {
@@ -84,7 +83,7 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'America/New York'
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       var i
 
       expect(events.length).toBe(NUM_EVENTS)
@@ -94,14 +93,14 @@ describe('Google Calendar plugin', function() {
 
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('requests/receives correctly when no timezone, defaults to not editable', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       var eventEls = $('.fc-event')
       var i
 
@@ -115,7 +114,7 @@ describe('Google Calendar plugin', function() {
 
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('allows editable to explicitly be set to true', function(done) {
@@ -130,7 +129,7 @@ describe('Google Calendar plugin', function() {
       expect(eventEls.find('.fc-resizer').length).toBeGreaterThan(0) // editable!
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('fetches events correctly when API key is in the event source', function(done) {
@@ -139,11 +138,11 @@ describe('Google Calendar plugin', function() {
       googleCalendarApiKey: API_KEY
     }
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   describe('when not given an API key', function() {
@@ -158,7 +157,7 @@ describe('Google Calendar plugin', function() {
         googleCalendarId: HOLIDAY_CALENDAR_ID
       }
       options.eventAfterAllRender = function() {
-        var events = $('#cal').fullCalendar('clientEvents')
+        var events = currentCalendar.clientEvents()
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
@@ -169,7 +168,7 @@ describe('Google Calendar plugin', function() {
       }
       spyOn(options, 'googleCalendarError').and.callThrough()
       spyOn(options.events, 'googleCalendarError').and.callThrough()
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
   })
 
@@ -186,7 +185,7 @@ describe('Google Calendar plugin', function() {
         googleCalendarId: HOLIDAY_CALENDAR_ID
       }
       options.eventAfterAllRender = function() {
-        var events = $('#cal').fullCalendar('clientEvents')
+        var events = currentCalendar.clientEvents()
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
@@ -197,7 +196,7 @@ describe('Google Calendar plugin', function() {
       }
       spyOn(options, 'googleCalendarError').and.callThrough()
       spyOn(options.events, 'googleCalendarError').and.callThrough()
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
   })
 
@@ -205,11 +204,11 @@ describe('Google Calendar plugin', function() {
     options.googleCalendarApiKey = API_KEY
     options.events = HOLIDAY_CALENDAR_ID
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('detects a gcal when `events` is the actual calendar ID, with complicated characters (1)', function(done) {
@@ -220,7 +219,7 @@ describe('Google Calendar plugin', function() {
       expect(typeof currentWarnArgs[1]).toBe('object') // sent the request to google, but not-found warning
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('detects a gcal when `events` is the actual calendar ID, with complicated characters (2)', function(done) {
@@ -231,7 +230,7 @@ describe('Google Calendar plugin', function() {
       expect(typeof currentWarnArgs[1]).toBe('object') // sent the request to google, but not-found warning
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('detects a gcal when `events` is the actual calendar ID, person gmail', function(done) {
@@ -242,7 +241,7 @@ describe('Google Calendar plugin', function() {
       expect(typeof currentWarnArgs[1]).toBe('object') // sent the request to google, but not-found warning
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('detects a gcal when `events` is the actual calendar ID, person googlemail', function(done) {
@@ -253,29 +252,29 @@ describe('Google Calendar plugin', function() {
       expect(typeof currentWarnArgs[1]).toBe('object') // sent the request to google, but not-found warning
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('works with requesting an HTTP V1 API feed URL', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('works with requesting an HTTPS V1 API feed URL', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = 'https://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('works with requesting an V3 API feed URL', function(done) {
@@ -283,11 +282,11 @@ describe('Google Calendar plugin', function() {
     options.events =
       'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events'
     options.eventAfterAllRender = function() {
-      var events = $('#cal').fullCalendar('clientEvents')
+      var events = currentCalendar.clientEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   it('calls loading with true then false', function(done) {
@@ -307,7 +306,7 @@ describe('Google Calendar plugin', function() {
         done()
       }
     }
-    $('#cal').fullCalendar(options)
+    initCalendar(options)
   })
 
   describe('removeEventSource', function() {
@@ -323,18 +322,18 @@ describe('Google Calendar plugin', function() {
         if (called) { return } // only the first time
         called = true
 
-        events = $('#cal').fullCalendar('clientEvents')
+        events = currentCalendar.clientEvents()
         expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
         setTimeout(function() {
-          $('#cal').fullCalendar('removeEventSource', HOLIDAY_CALENDAR_ID)
-          events = $('#cal').fullCalendar('clientEvents')
+          currentCalendar.removeEventSource(HOLIDAY_CALENDAR_ID)
+          events = currentCalendar.clientEvents()
           expect(events.length).toBe(0)
           done()
         }, 0)
       }
 
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
 
     it('works when specifying a raw Google Calendar source object', function(done) {
@@ -349,18 +348,18 @@ describe('Google Calendar plugin', function() {
         if (called) { return } // only the first time
         called = true
 
-        events = $('#cal').fullCalendar('clientEvents')
+        events = currentCalendar.clientEvents()
         expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
         setTimeout(function() {
-          $('#cal').fullCalendar('removeEventSource', googleSource)
-          events = $('#cal').fullCalendar('clientEvents')
+          currentCalendar.removeEventSource(googleSource)
+          events = currentCalendar.clientEvents()
           expect(events.length).toBe(0)
           done()
         }, 0)
       }
 
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     })
   })
 

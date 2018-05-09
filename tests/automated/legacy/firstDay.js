@@ -1,28 +1,19 @@
-
 describe('First Day', function() {
 
-  beforeEach(function() {
-    affix('#cal')
-  })
-
   describe('when using default settings', function() {
-    beforeEach(function() {
-      $('#cal').fullCalendar()
-    })
     it('should make Sunday the first day of the week', function() {
+      initCalendar()
       var dayFirst = $('.fc-day-header')[0]
       expect(dayFirst).toHaveClass('fc-sun')
     })
   })
 
   describe('when setting firstDay to 0', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 0
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 0
     })
     it('should make Sunday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-sun')
       expect(daysOfWeek[1]).toHaveClass('fc-mon')
@@ -35,13 +26,11 @@ describe('First Day', function() {
   })
 
   describe('when setting firstDay to 1', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 1
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 1
     })
     it('should make Monday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-mon')
       expect(daysOfWeek[1]).toHaveClass('fc-tue')
@@ -54,13 +43,11 @@ describe('First Day', function() {
   })
 
   describe('when setting weekNumberCalculation to ISO', function() {
-    beforeEach(function() {
-      var options = {
-        weekNumberCalculation: 'ISO'
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      weekNumberCalculation: 'ISO'
     })
     it('should make Monday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-mon')
       expect(daysOfWeek[1]).toHaveClass('fc-tue')
@@ -73,13 +60,11 @@ describe('First Day', function() {
   })
 
   describe('when setting firstDay to 2', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 2
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 2
     })
     it('should make Tuesday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-tue')
       expect(daysOfWeek[1]).toHaveClass('fc-wed')
@@ -92,13 +77,11 @@ describe('First Day', function() {
   })
 
   describe('when setting firstDay to 3', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 3
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 3
     })
     it('should make Wednesday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-wed')
       expect(daysOfWeek[1]).toHaveClass('fc-thu')
@@ -111,13 +94,11 @@ describe('First Day', function() {
   })
 
   describe('when setting firstDay to 4', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 4
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 4
     })
     it('should make Thursday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-thu')
       expect(daysOfWeek[1]).toHaveClass('fc-fri')
@@ -130,13 +111,11 @@ describe('First Day', function() {
   })
 
   describe('when setting firstDay to 5', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 5
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 5
     })
     it('should make Friday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-fri')
       expect(daysOfWeek[1]).toHaveClass('fc-sat')
@@ -149,13 +128,11 @@ describe('First Day', function() {
   })
 
   describe('when setting firstDay to 6', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 6
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 6
     })
     it('should make Saturday the first day of the week', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-sat')
       expect(daysOfWeek[1]).toHaveClass('fc-sun')
@@ -169,13 +146,13 @@ describe('First Day', function() {
 
   describe('when new firstDay options are set', function() {
     it('should change the first day of week to Monday', function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         firstDay: 1
       })
       expect($('.fc-day-header')[0]).toHaveClass('fc-mon')
     })
-    it('shoule change the first day of week to Thursday', function() {
-      $('#cal').fullCalendar({
+    it('should change the first day of week to Thursday', function() {
+      initCalendar({
         firstDay: 4
       })
       expect($('.fc-day-header')[0]).toHaveClass('fc-thu')
@@ -183,14 +160,12 @@ describe('First Day', function() {
   })
 
   describe('when first day is set to Tuesday and isRTL is true', function() {
-    beforeEach(function() {
-      var options = {
-        firstDay: 2,
-        isRTL: true
-      }
-      $('#cal').fullCalendar(options)
+    pushOptions({
+      firstDay: 2,
+      isRTL: true
     })
     it('should put days mon, sun, sat ...', function() {
+      initCalendar()
       var daysOfWeek = $('.fc-day-header')
       expect(daysOfWeek[0]).toHaveClass('fc-mon')
       expect(daysOfWeek[1]).toHaveClass('fc-sun')
@@ -203,7 +178,7 @@ describe('First Day', function() {
   })
 
   it('should have a different default value based on the locale', function() {
-    $('#cal').fullCalendar({
+    initCalendar({
       locale: 'en-gb'
     })
     // firstDay will be 1 (Monday) in Great Britain

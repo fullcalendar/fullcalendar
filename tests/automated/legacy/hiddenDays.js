@@ -1,13 +1,8 @@
-
 describe('hiddenDays', function() {
-
-  beforeEach(function() {
-    affix('#cal')
-  })
 
   describe('when using default', function() {
     beforeEach(function() {
-      $('#cal').fullCalendar()
+      initCalendar()
     })
     it('should show 7 days of the week', function() {
       var daysCount = $('.fc-day-header').length
@@ -17,7 +12,7 @@ describe('hiddenDays', function() {
 
   describe('when setting an empty hiddenDays', function() {
     beforeEach(function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         hiddenDays: []
       })
     })
@@ -29,7 +24,7 @@ describe('hiddenDays', function() {
 
   describe('when setting hiddenDays with 1', function() {
     beforeEach(function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         hiddenDays: [ 1 ]
       })
     })
@@ -51,7 +46,7 @@ describe('hiddenDays', function() {
 
   describe('when setting hiddenDays with 3,5', function() {
     beforeEach(function() {
-      $('#cal').fullCalendar({
+      initCalendar({
         hiddenDays: [ 3, 5 ]
       })
     })
@@ -77,11 +72,10 @@ describe('hiddenDays', function() {
 
   describe('when setting all hiddenDays', function() {
     it('should expect to throw an exception', function() {
-      var options = {
-        hiddenDays: [ 0, 1, 2, 3, 4, 5, 6 ]
-      }
       expect(function() {
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          hiddenDays: [ 0, 1, 2, 3, 4, 5, 6 ]
+        })
       }).toThrow(new Error('invalid hiddenDays'))
     })
   })

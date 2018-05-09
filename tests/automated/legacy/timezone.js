@@ -1,49 +1,43 @@
-
 describe('timezone', function() {
 
   // NOTE: Only deals with the processing of *received* events.
   // Verification of a correct AJAX *request* is done in events-json-feed.js
 
-  var options
-
-  beforeEach(function() {
-    affix('#cal')
-    options = {
-      defaultView: 'month',
-      defaultDate: '2014-05-01',
-      events: [
-        {
-          id: '1',
-          title: 'all day event',
-          start: '2014-05-02'
-        },
-        {
-          id: '2',
-          title: 'timed event',
-          start: '2014-05-10T12:00:00'
-        },
-        {
-          id: '3',
-          title: 'timed and zoned event',
-          start: '2014-05-10T14:00:00+11:00'
-        }
-      ]
-    }
+  pushOptions({
+    defaultView: 'month',
+    defaultDate: '2014-05-01',
+    events: [
+      {
+        id: '1',
+        title: 'all day event',
+        start: '2014-05-02'
+      },
+      {
+        id: '2',
+        title: 'timed event',
+        start: '2014-05-10T12:00:00'
+      },
+      {
+        id: '3',
+        title: 'timed and zoned event',
+        start: '2014-05-10T14:00:00+11:00'
+      }
+    ]
   })
 
-
   it('receives events correctly when no timezone', function(done) {
-    options.eventAfterAllRender = function() {
-      expectNoTimezone()
-      done()
-    }
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      eventAfterAllRender: function() {
+        expectNoTimezone()
+        done()
+      }
+    })
   })
 
   function expectNoTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -57,18 +51,19 @@ describe('timezone', function() {
 
 
   it('receives events correctly when local timezone', function(done) {
-    options.timezone = 'local'
-    options.eventAfterAllRender = function() {
-      expectLocalTimezone()
-      done()
-    }
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      timezone: 'local',
+      eventAfterAllRender: function() {
+        expectLocalTimezone()
+        done()
+      }
+    })
   })
 
   function expectLocalTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -82,18 +77,19 @@ describe('timezone', function() {
 
 
   it('receives events correctly when UTC timezone', function(done) {
-    options.timezone = 'UTC'
-    options.eventAfterAllRender = function() {
-      expectUtcTimezone()
-      done()
-    }
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      timezone: 'UTC',
+      eventAfterAllRender: function() {
+        expectUtcTimezone()
+        done()
+      }
+    })
   })
 
   function expectUtcTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -107,18 +103,19 @@ describe('timezone', function() {
 
 
   it('receives events correctly when custom timezone', function(done) {
-    options.timezone = 'America/Chicago'
-    options.eventAfterAllRender = function() {
-      expectCustomTimezone()
-      done()
-    }
-    $('#cal').fullCalendar(options)
+    initCalendar({
+      timezone: 'America/Chicago',
+      eventAfterAllRender: function() {
+        expectCustomTimezone()
+        done()
+      }
+    })
   })
 
   function expectCustomTimezone() {
-    var allDayEvent = $('#cal').fullCalendar('clientEvents', '1')[0]
-    var timedEvent = $('#cal').fullCalendar('clientEvents', '2')[0]
-    var zonedEvent = $('#cal').fullCalendar('clientEvents', '3')[0]
+    var allDayEvent = currentCalendar.clientEvents('1')[0]
+    var timedEvent = currentCalendar.clientEvents('2')[0]
+    var zonedEvent = currentCalendar.clientEvents('3')[0]
     expect(allDayEvent.start.hasZone()).toEqual(false)
     expect(allDayEvent.start.hasTime()).toEqual(false)
     expect(allDayEvent.start.format()).toEqual('2014-05-02')
@@ -135,22 +132,22 @@ describe('timezone', function() {
     var callCnt = 0
     var rootEl
 
-    options.timezone = false
-    options.eventAfterAllRender = function() {
-      callCnt++
-      if (callCnt === 1) {
-        expectNoTimezone()
-        rootEl = $('.fc-view > *:first')
-        expect(rootEl.length).toBe(1)
-        $('#cal').fullCalendar('option', 'timezone', 'UTC') // will cause second call...
-      } else if (callCnt === 2) {
-        expectUtcTimezone()
-        expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // ensure didn't rerender whole calendar
-        done()
+    initCalendar({
+      timezone: false,
+      eventAfterAllRender: function() {
+        callCnt++
+        if (callCnt === 1) {
+          expectNoTimezone()
+          rootEl = $('.fc-view > *:first')
+          expect(rootEl.length).toBe(1)
+          currentCalendar.option('timezone', 'UTC') // will cause second call...
+        } else if (callCnt === 2) {
+          expectUtcTimezone()
+          expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // ensure didn't rerender whole calendar
+          done()
+        }
       }
-    }
-
-    $('#cal').fullCalendar(options)
+    })
   })
 
 })

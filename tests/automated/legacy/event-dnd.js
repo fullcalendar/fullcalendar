@@ -8,11 +8,10 @@ describe('eventDrop', function() {
       dragScroll: false,
       longPressDelay: 100
     }
-    affix('#cal')
   })
 
   afterEach(function() {
-    $('#cal').fullCalendar('destroy')
+    currentCalendar.destroy()
   })
 
   describe('when in month view', function() {
@@ -54,7 +53,7 @@ describe('eventDrop', function() {
                 expect(event.end).toBeNull()
 
                 revertFunc()
-                event = $('#cal').fullCalendar('clientEvents')[0]
+                event = currentCalendar.clientEvents()[0]
 
                 expect(event.start).toEqualMoment('2014-06-11')
                 expect(event.end).toBeNull()
@@ -93,7 +92,7 @@ describe('eventDrop', function() {
             expect(event.end).toBeNull()
 
             revertFunc()
-            event = $('#cal').fullCalendar('clientEvents')[0]
+            event = currentCalendar.clientEvents()[0]
 
             expect(event.start).toEqualMoment('2014-06-11T06:00:00')
             expect(event.end).toBeNull()
@@ -189,7 +188,7 @@ describe('eventDrop', function() {
                 expect(event.end).toBeNull()
 
                 revertFunc()
-                event = $('#cal').fullCalendar('clientEvents')[0]
+                event = currentCalendar.clientEvents()[0]
 
                 expect(event.start).toEqualMoment('2014-06-11T06:00:00')
                 expect(event.end).toBeNull()
@@ -227,7 +226,7 @@ describe('eventDrop', function() {
             expect(event.end).toBeNull()
 
             revertFunc()
-            event = $('#cal').fullCalendar('clientEvents')[0]
+            event = currentCalendar.clientEvents()[0]
 
             expect(event.start).toEqualMoment('2014-06-11')
             expect(event.end).toBeNull()
@@ -269,7 +268,7 @@ describe('eventDrop', function() {
             expect(event.allDay).toBe(false)
 
             revertFunc()
-            event = $('#cal').fullCalendar('clientEvents')[0]
+            event = currentCalendar.clientEvents()[0]
 
             expect(event.start).toEqualMoment('2014-06-11')
             expect(event.end).toBeNull()
@@ -325,7 +324,7 @@ describe('eventDrop', function() {
             expect(event.allDay).toBe(true)
 
             revertFunc()
-            event = $('#cal').fullCalendar('clientEvents')[0]
+            event = currentCalendar.clientEvents()[0]
 
             expect(event.start).toEqualMoment('2014-06-11T01:00:00')
             expect(event.end).toBeNull()
@@ -447,7 +446,7 @@ describe('eventDrop', function() {
     spyOn(options, 'eventDragStop').and.callThrough()
 
     setTimeout(function() { // hack. agenda view scroll state would get messed up between tests
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
     }, 0)
   }
 })
