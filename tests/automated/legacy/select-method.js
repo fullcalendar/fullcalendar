@@ -7,10 +7,6 @@ describe('select method', function() {
       defaultDate: '2014-05-25',
       selectable: true
     }
-  })
-
-  afterEach(function() {
-    currentCalendar.destroy()
   });
 
   /*

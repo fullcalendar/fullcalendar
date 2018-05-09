@@ -55,12 +55,10 @@ describe('titleFormat', function() {
     })
 
     it('should have the correct values', function() {
-      var cal = $(currentCalendar.el)
-
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
         currentCalendar.changeView(crtView.view)
-        expect(cal.find(SELECTOR).text()).toBe(crtView.expected)
+        expect($(currentCalendar.el).find(SELECTOR).text()).toBe(crtView.expected)
       };
     })
   })
@@ -84,12 +82,10 @@ describe('titleFormat', function() {
     })
 
     it('should have the translated dates', function() {
-      var cal = $(currentCalendar.el)
-
       for (var i = 0; i < viewWithFormat.length; i++) {
         var crtView = viewWithFormat[i]
         currentCalendar.changeView(crtView.view)
-        expect(cal.find(SELECTOR).text()).toBe(crtView.expected)
+        expect($(currentCalendar.el).find(SELECTOR).text()).toBe(crtView.expected)
       };
     })
   })
