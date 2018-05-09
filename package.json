@@ -56,7 +56,6 @@
     "gulp-watch": "^4.3.11",
     "gulp-zip": "^3.2.0",
     "jasmine-core": "2.5.2",
-    "jasmine-fixture": "^2.0.0",
     "jasmine-jquery": "^2.1.1",
     "jquery": "^3.3.1",
     "jquery-simulate": "github:jquery/jquery-simulate",
