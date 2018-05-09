@@ -1,12 +1,9 @@
 describe('removeEventSource', function() {
-  var options
+  pushOptions({
+    defaultDate: '2014-08-01'
+  })
 
   beforeEach(function() {
-    affix('#cal')
-    options = {
-      defaultDate: '2014-08-01'
-    }
-
     XHRMock.setup()
     XHRMock.get(/.*/, {
       status: 200,
@@ -75,21 +72,21 @@ describe('removeEventSource', function() {
       }, 100)
     }
 
-    options.eventSources = [ source1 ]
-
-    options.eventAfterAllRender = function() {
-      if (!$('.fc-event').length) {
-        ; // might have rendered no events after removeEventSource call
-      } else {
-        expect($('.event1').length).toBe(0)
-        expect($('.event2').length).toBe(1)
-        done()
+    initCalendar({
+      eventSources: [ source1 ],
+      eventAfterAllRender() {
+        if (!$('.fc-event').length) {
+          ; // might have rendered no events after removeEventSource call
+        } else {
+          expect($('.event1').length).toBe(0)
+          expect($('.event2').length).toBe(1)
+          done()
+        }
       }
-    }
+    })
 
-    $('#cal').fullCalendar(options)
-    $('#cal').fullCalendar('removeEventSource', source1)
-    $('#cal').fullCalendar('addEventSource', source2)
+    currentCalendar.removeEventSource(source1)
+    currentCalendar.addEventSource(source2)
   })
 
   describe('when multiple sources share the same fetching function', function() {
@@ -99,8 +96,9 @@ describe('removeEventSource', function() {
         start: '2014-08-01T02:00:00'
       } ])
     }
-    beforeEach(function() {
-      options.eventSources = [
+
+    pushOptions({
+      eventSources: [
         { events: fetchFunc, className: 'event1', id: 'source1' },
         { events: fetchFunc, className: 'event2', id: 'source2' }
       ]
@@ -109,12 +107,12 @@ describe('removeEventSource', function() {
     describe('when called with the raw function', function() {
       it('removes events from all matching sources', function() {
 
-        $('#cal').fullCalendar(options)
+        initCalendar()
         expect($('.fc-event').length).toBe(2)
         expect($('.event1').length).toBe(1)
         expect($('.event2').length).toBe(1)
 
-        $('#cal').fullCalendar('removeEventSource', fetchFunc)
+        currentCalendar.removeEventSource(fetchFunc)
         expect($('.fc-event').length).toBe(0)
       })
     })
@@ -122,13 +120,13 @@ describe('removeEventSource', function() {
     describe('when called with proper source object', function() {
       it('removes events only from the specific source', function() {
 
-        $('#cal').fullCalendar(options)
+        initCalendar()
         expect($('.fc-event').length).toBe(2)
         expect($('.event1').length).toBe(1)
         expect($('.event2').length).toBe(1)
 
-        var source = $('#cal').fullCalendar('getEventSourceById', 'source2')
-        $('#cal').fullCalendar('removeEventSource', source)
+        var source = currentCalendar.getEventSourceById('source2')
+        currentCalendar.removeEventSource(source)
         expect($('.fc-event').length).toBe(1)
         expect($('.event1').length).toBe(1)
         expect($('.event2').length).toBe(0)
@@ -140,51 +138,57 @@ describe('removeEventSource', function() {
 
     it('correctly removes events provided via `events` at initialization', function(done) {
       var callCnt = 0
-      options.eventAfterAllRender = function() {
-        callCnt++
-        if (callCnt === 1) {
-          expectEventCnt(2)
-          $('#cal').fullCalendar('removeEventSource', eventInput)
-        } else if (callCnt === 2) {
-          expectEventCnt(0)
-          done()
+
+      initCalendar({
+        events: eventInput,
+        eventAfterAllRender() {
+          callCnt++
+          if (callCnt === 1) {
+            expectEventCnt(2)
+            currentCalendar.removeEventSource(eventInput)
+          } else if (callCnt === 2) {
+            expectEventCnt(0)
+            done()
+          }
         }
-      }
-      options.events = eventInput
-      $('#cal').fullCalendar(options)
+      })
     })
 
     it('correctly removes events provided via `eventSources` at initialization', function(done) {
       var callCnt = 0
-      options.eventAfterAllRender = function() {
-        callCnt++
-        if (callCnt === 1) {
-          expectEventCnt(2)
-          $('#cal').fullCalendar('removeEventSource', eventInput)
-        } else if (callCnt === 2) {
-          expectEventCnt(0)
-          done()
+
+      initCalendar({
+        eventSources: [ eventInput ],
+        eventAfterAllRender() {
+          callCnt++
+          if (callCnt === 1) {
+            expectEventCnt(2)
+            currentCalendar.removeEventSource(eventInput)
+          } else if (callCnt === 2) {
+            expectEventCnt(0)
+            done()
+          }
         }
-      }
-      options.eventSources = [ eventInput ]
-      $('#cal').fullCalendar(options)
+      })
     })
 
     it('correctly removes events provided via `addEventSource` method', function(done) {
       var callCnt = 0
-      options.eventAfterAllRender = function() {
-        callCnt++
-        if (callCnt === 1) {
-          $('#cal').fullCalendar('addEventSource', eventInput)
-        } else if (callCnt === 2) {
-          expectEventCnt(2)
-          $('#cal').fullCalendar('removeEventSource', eventInput)
-        } else if (callCnt === 3) {
-          expectEventCnt(0)
-          done()
+
+      initCalendar({
+        eventAfterAllRender() {
+          callCnt++
+          if (callCnt === 1) {
+            currentCalendar.addEventSource(eventInput)
+          } else if (callCnt === 2) {
+            expectEventCnt(2)
+            currentCalendar.removeEventSource(eventInput)
+          } else if (callCnt === 3) {
+            expectEventCnt(0)
+            done()
+          }
         }
-      }
-      $('#cal').fullCalendar(options)
+      })
     })
   }
 
@@ -197,6 +201,6 @@ describe('removeEventSource', function() {
 
   function expectEventCnt(cnt) {
     expect($('.fc-event').length).toBe(cnt)
-    expect($('#cal').fullCalendar('clientEvents').length).toBe(cnt)
+    expect(currentCalendar.clientEvents().length).toBe(cnt)
   }
 })
