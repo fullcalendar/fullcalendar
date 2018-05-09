@@ -1,18 +1,24 @@
 import { testEventDrag } from '../lib/dnd-resize-utils'
 
 describe('advanced external dnd', function() {
+  var dragEl
 
   beforeEach(function() {
-    affix('.drag')
-    $('.drag')
-      .text('yo')
+    dragEl = $('<div class="drag">yo</div>')
       .css({
         width: 200,
         background: 'blue',
         color: 'white'
       })
+      .appendTo('body')
       .draggable()
   })
+
+  afterEach(function() {
+    dragEl.remove()
+    dragEl = null
+  })
+
   pushOptions({
     defaultDate: '2014-11-13',
     scrollTime: '00:00:00',
@@ -28,7 +34,7 @@ describe('advanced external dnd', function() {
       })
       describe('when given duration through data-duration', function() {
         beforeEach(function() {
-          $('.drag').data('duration', '2:30')
+          dragEl.data('duration', '2:30')
         })
         defineTests()
       })
@@ -104,26 +110,26 @@ describe('advanced external dnd', function() {
       it('fires correctly', function(done) {
         var options = {}
 
-        $('.drag').data('event', { title: 'hey' })
+        dragEl.data('event', { title: 'hey' })
         testExternalEventDrag(options, '2014-11-13T02:00:00', true, done)
       })
 
       describe('when given a start time', function() {
         describe('through the event object\'s start property', function() {
           beforeEach(function() {
-            $('.drag').data('event', { start: '05:00' })
+            dragEl.data('event', { start: '05:00' })
           })
           defineTests()
         })
         describe('through the event object\'s time property', function() {
           beforeEach(function() {
-            $('.drag').data('event', { time: '05:00' })
+            dragEl.data('event', { time: '05:00' })
           })
           defineTests()
         })
         describe('through the `start` data attribute', function() {
           beforeEach(function() {
-            $('.drag')
+            dragEl
               .data('event', true)
               .data('start', '05:00')
           })
@@ -131,7 +137,7 @@ describe('advanced external dnd', function() {
         })
         describe('through the `time` data attribute', function() {
           beforeEach(function() {
-            $('.drag').data('event', true)
+            dragEl.data('event', true)
               .data('time', '05:00')
           })
           defineTests()
@@ -149,13 +155,13 @@ describe('advanced external dnd', function() {
       describe('when given a duration', function() {
         describe('through the event object\'s duration property', function() {
           beforeEach(function() {
-            $('.drag').data('event', { duration: '05:00' })
+            dragEl.data('event', { duration: '05:00' })
           })
           defineTests()
         })
         describe('through the `duration` data attribute', function() {
           beforeEach(function() {
-            $('.drag').data('event', true)
+            dragEl.data('event', true)
               .data('duration', '05:00')
           })
           defineTests()
@@ -177,13 +183,13 @@ describe('advanced external dnd', function() {
       describe('when given stick:true', function() {
         describe('through the event object', function() {
           beforeEach(function() {
-            $('.drag').data('event', { stick: true })
+            dragEl.data('event', { stick: true })
           })
           defineTests()
         })
         describe('through the data attribute', function() {
           beforeEach(function() {
-            $('.drag').data('event', true)
+            dragEl.data('event', true)
               .data('stick', true)
           })
           defineTests()
@@ -216,7 +222,7 @@ describe('advanced external dnd', function() {
             } ]
           })
           beforeEach(function() {
-            $('.drag').data('event', true)
+            dragEl.data('event', true)
           })
           defineTests()
         })
@@ -228,7 +234,7 @@ describe('advanced external dnd', function() {
             }]
           })
           beforeEach(function() {
-            $('.drag').data('event', {
+            dragEl.data('event', {
               overlap: false
             })
           })
@@ -243,7 +249,7 @@ describe('advanced external dnd', function() {
             }]
           })
           beforeEach(function() {
-            $('.drag').data('event', true)
+            dragEl.data('event', true)
           })
           defineTests()
         })
@@ -268,13 +274,13 @@ describe('advanced external dnd', function() {
             }
           })
           beforeEach(function() {
-            $('.drag').data('event', { duration: '02:00' })
+            dragEl.data('event', { duration: '02:00' })
           })
           defineTests()
         })
         describe('via the event object\'s constraint property', function() {
           beforeEach(function() {
-            $('.drag').data('event', {
+            dragEl.data('event', {
               duration: '02:00',
               constraint: {
                 start: '04:00',
@@ -310,33 +316,33 @@ describe('advanced external dnd', function() {
       it('fires correctly', function(done) {
         var options = {}
 
-        $('.drag').data('event', { title: 'hey' })
+        dragEl.data('event', { title: 'hey' })
         testExternalEventDrag(options, '2014-11-13', true, done)
       })
 
       describe('when given a start time', function() {
         describe('through the event object\'s start property', function() {
           beforeEach(function() {
-            $('.drag').data('event', { start: '05:00' })
+            dragEl.data('event', { start: '05:00' })
           })
           defineTests()
         })
         describe('through the event object\'s time property', function() {
           beforeEach(function() {
-            $('.drag').data('event', { time: '05:00' })
+            dragEl.data('event', { time: '05:00' })
           })
           defineTests()
         })
         describe('through the `start` data attribute', function() {
           beforeEach(function() {
-            $('.drag').data('event', true)
+            dragEl.data('event', true)
               .data('start', '05:00')
           })
           defineTests()
         })
         describe('through the `time` data attribute', function() {
           beforeEach(function() {
-            $('.drag').data('event', true)
+            dragEl.data('event', true)
               .data('time', '05:00')
           })
           defineTests()

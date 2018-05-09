@@ -9,8 +9,6 @@ describe('event overlap', function() {
       defaultView: 'agendaWeek',
       scrollTime: '00:00'
     }
-    affix('#cal')
-    $('#cal').width(1100)
   })
 
   describe('when other event overlap is false', function() {
@@ -827,8 +825,6 @@ describe('selectOverlap', function() {
       defaultView: 'agendaWeek',
       scrollTime: '00:00'
     }
-    affix('#cal')
-    $('#cal').width(1100)
   })
 
   describe('as false', function() {
