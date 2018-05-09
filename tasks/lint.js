@@ -77,7 +77,6 @@ gulp.task('lint:js:tests', function() {
           'describeTimezones',
           'describeValues',
           'pit',
-          'affix',
           'getCurrentOptions',
           'initCalendar',
           'currentCalendar',
