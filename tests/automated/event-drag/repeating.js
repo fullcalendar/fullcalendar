@@ -63,7 +63,6 @@ describe('event dragging on repeating events', function() {
 
   // inverse of above test
   it('doesnt accidentally hide all non-id events when dragging', function(done) {
-
     initCalendar({
       events: [
         {
