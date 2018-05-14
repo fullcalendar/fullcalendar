@@ -53,7 +53,13 @@ export default class ListView extends View {
 
 
   updateSize(totalHeight, isAuto, isResize) {
-    this.scroller.setHeight(this.computeScrollerHeight(totalHeight))
+    super.updateSize(totalHeight, isAuto, isResize)
+
+    this.scroller.clear() // sets height to 'auto' and clears overflow
+
+    if (!isAuto) {
+      this.scroller.setHeight(this.computeScrollerHeight(totalHeight))
+    }
   }
 
 
@@ -193,7 +199,10 @@ export default class ListView extends View {
     let altFormat = this.opt('listDayAltFormat')
 
     return '<tr class="fc-list-heading" data-date="' + dayDate.format('YYYY-MM-DD') + '">' +
-      '<td class="' + this.calendar.theme.getClass('widgetHeader') + '" colspan="3">' +
+      '<td class="' + (
+        this.calendar.theme.getClass('tableListHeading') ||
+        this.calendar.theme.getClass('widgetHeader')
+      ) + '" colspan="3">' +
         (mainFormat ?
           this.buildGotoAnchorHtml(
             dayDate,

@@ -46,4 +46,16 @@ describe('customButtons', function() {
 
     expect($('.fc-mybutton-button .glyphicon')).toHaveClass('glyphicon-asdf')
   })
+
+  it('can specify a bootstrap4 font-awesome icon', function() {
+    initCalendar({
+      themeSystem: 'bootstrap4',
+      customButtons: {
+        mybutton: { bootstrapFontAwesome: 'asdf' }
+      },
+      header: { left: 'mybutton', center: '', right: '' }
+    })
+
+    expect($('.fc-mybutton-button .fa')).toHaveClass('fa-asdf')
+  })
 })

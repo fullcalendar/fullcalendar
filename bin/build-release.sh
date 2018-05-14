@@ -8,6 +8,13 @@ cd "`dirname $0`/.."
 
 ./bin/require-clean-working-tree.sh
 
+read -p 'Have you already ran `npm update` and committed the package-lock.json? (y/N): ' updated_npm_deps
+if [[ "$updated_npm_deps" != "y" ]]
+then
+  echo "Go do that!"
+  exit 1
+fi
+
 read -p "Have you already updated the changelog? (y/N): " updated_changelog
 if [[ "$updated_changelog" != "y" ]]
 then
@@ -30,9 +37,6 @@ fi
 
 success=0
 if {
-  # make sure deps are as new as possible for bundle
-  npm update &&
-
   # ensures stray files stay out of the release
   gulp clean &&
 

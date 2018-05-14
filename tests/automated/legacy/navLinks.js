@@ -2,7 +2,6 @@ describe('navLinks', function() {
   var options
 
   beforeEach(function() {
-    affix('#cal')
     options = {
       now: '2016-08-20',
       navLinks: true,
@@ -22,7 +21,7 @@ describe('navLinks', function() {
     })
 
     it('moves to day', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
       expectDayView('agendaDay', '2016-08-09')
       expect(options.dayClick).not.toHaveBeenCalled()
@@ -30,18 +29,18 @@ describe('navLinks', function() {
 
     // https://github.com/fullcalendar/fullcalendar/issues/3869
     it('moves to two different days', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
       expectDayView('agendaDay', '2016-08-09')
       expect(options.dayClick).not.toHaveBeenCalled()
-      $('#cal').fullCalendar('changeView', 'month')
+      currentCalendar.changeView('month')
       $.simulateMouseClick(getDayGridNumberEl('2016-08-10'))
       expectDayView('agendaDay', '2016-08-10')
     })
 
     it('moves to agendaDay specifically', function() {
       options.navLinkDayClick = 'agendaDay'
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
       expectDayView('agendaDay', '2016-08-09')
       expect(options.dayClick).not.toHaveBeenCalled()
@@ -49,7 +48,7 @@ describe('navLinks', function() {
 
     it('moves to basicDay specifically', function() {
       options.navLinkDayClick = 'basicDay'
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
       expectDayView('basicDay', '2016-08-09')
       expect(options.dayClick).not.toHaveBeenCalled()
@@ -61,7 +60,7 @@ describe('navLinks', function() {
         expect(typeof ev).toBe('object')
       }
       spyOn(options, 'navLinkDayClick').and.callThrough()
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
       expect(options.navLinkDayClick).toHaveBeenCalled()
       expect(options.dayClick).not.toHaveBeenCalled()
@@ -73,7 +72,7 @@ describe('navLinks', function() {
       })
 
       it('moves to week', function() {
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
         $.simulateMouseClick(getDayGridClassicWeekLinks().eq(1))
         expectWeekView('agendaWeek', '2016-08-07')
         expect(options.dayClick).not.toHaveBeenCalled()
@@ -81,7 +80,7 @@ describe('navLinks', function() {
 
       it('moves to week with within-day rendering', function() {
         options.weekNumbersWithinDays = true
-        $('#cal').fullCalendar(options)
+        initCalendar(options)
         $.simulateMouseClick(getDayGridEmbeddedWeekLinks().eq(1))
         expectWeekView('agendaWeek', '2016-08-07')
         expect(options.dayClick).not.toHaveBeenCalled()
@@ -89,7 +88,7 @@ describe('navLinks', function() {
     })
 
     it('does not have clickable day header', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       expect(getDayHeaderLinks().length).toBe(0)
     })
   })
@@ -100,7 +99,7 @@ describe('navLinks', function() {
     })
 
     it('moves to day view', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getDayHeaderLink('2016-08-15'))
       expectDayView('agendaDay', '2016-08-15')
       expect(options.dayClick).not.toHaveBeenCalled()
@@ -119,7 +118,7 @@ describe('navLinks', function() {
     })
 
     it('moves to day view', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getListDayHeaderLink('2016-08-20'))
       expectDayView('agendaDay', '2016-08-20')
       expect(options.dayClick).not.toHaveBeenCalled()
@@ -133,14 +132,14 @@ describe('navLinks', function() {
 
     it('moves to week view', function() {
       options.weekNumbers = true
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       $.simulateMouseClick(getAgendaWeekNumberLink())
       expectWeekView('agendaWeek', '2016-08-14')
       expect(options.dayClick).not.toHaveBeenCalled()
     })
 
     it('does not have a clickable day header', function() {
-      $('#cal').fullCalendar(options)
+      initCalendar(options)
       expect(getDayHeaderLinks().length).toBe(0)
     })
   })

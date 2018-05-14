@@ -1,12 +1,7 @@
-
 describe('weekNumberCalculation', function() {
 
-  var options
-
-  beforeEach(function() {
-    options = {
-      weekNumbers: true
-    }
+  pushOptions({
+    weekNumbers: true
   })
 
   function getRenderedWeekText() {
@@ -19,52 +14,52 @@ describe('weekNumberCalculation', function() {
     return parseInt(text.replace(/\D/g, ''), 10)
   }
 
-  beforeEach(function() {
-    affix('#cal')
-  });
-
   [ 'basicDay', 'agendaDay' ].forEach(function(viewType) {
     describe('when in ' + viewType + ' view', function() {
-
-      beforeEach(function() {
-        options.defaultView = viewType
+      pushOptions({
+        defaultView: viewType
       })
 
       it('should display the American standard when using \'local\'', function() {
-        options.defaultDate = '2013-11-23' // a Saturday
-        options.weekNumberCalculation = 'local'
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          defaultDate: '2013-11-23', // a Saturday
+          weekNumberCalculation: 'local'
+        })
         expect(getRenderedWeekNumber()).toBe(47)
       })
 
       it('should display a locale-specific local week number', function() {
-        options.defaultDate = '2013-11-23' // a Saturday
-        options.locale = 'ar'
-        options.weekNumberCalculation = 'local'
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          defaultDate: '2013-11-23', // a Saturday
+          locale: 'ar',
+          weekNumberCalculation: 'local'
+        })
         expect(getRenderedWeekText()).toMatch(/٤٨|48/)
       })
 
       // another local test, but to make sure it is different from ISO
       it('should display the American standard when using \'local\'', function() {
-        options.defaultDate = '2013-11-17' // a Sunday
-        options.weekNumberCalculation = 'local'
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          defaultDate: '2013-11-17', // a Sunday
+          weekNumberCalculation: 'local'
+        })
         expect(getRenderedWeekNumber()).toBe(47)
       })
 
       it('should display ISO standard when using \'ISO\'', function() {
-        options.defaultDate = '2013-11-17' // a Sunday
-        options.weekNumberCalculation = 'ISO'
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          defaultDate: '2013-11-17', // a Sunday
+          weekNumberCalculation: 'ISO'
+        })
         expect(getRenderedWeekNumber()).toBe(46)
       })
 
       it('should display the calculated number when a custom function', function() {
-        options.weekNumberCalculation = function() {
-          return 4
-        }
-        $('#cal').fullCalendar(options)
+        initCalendar({
+          weekNumberCalculation: function() {
+            return 4
+          }
+        })
         expect(getRenderedWeekNumber()).toBe(4)
       })
     })

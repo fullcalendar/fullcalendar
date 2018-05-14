@@ -21,7 +21,7 @@
   "require": {
     "robloach/component-installer": "*",
     "components/jquery": "2 - 3",
-    "moment/moment": "^2.9.0"
+    "moment/moment": "^2.20.1"
   },
   "extra": {
     "component": {

@@ -302,91 +302,121 @@ describe('ListView rendering', function() {
     })
   })
 
-  it('sorts events correctly', function() {
-    var options = {}
-    options.now = '2016-08-29'
-    options.events = [
-      {
-        title: 'All Day Event',
-        start: '2016-08-29'
-      },
-      {
-        title: 'Long Event',
-        start: '2016-08-28',
-        end: '2016-09-04'
-      },
-      {
-        title: 'Meeting',
-        start: '2016-08-29T10:30:00'
-      },
-      {
-        title: 'Lunch',
-        start: '2016-08-30T12:00:00'
-      },
-      {
-        title: 'Meeting',
-        start: '2016-08-30T14:30:00'
-      },
-      {
-        title: 'Happy Hour',
-        start: '2014-11-12T17:30:00'
-      },
-      {
-        title: 'Dinner',
-        start: '2014-11-12T20:00:00'
-      },
-      {
-        title: 'Birthday Party',
-        start: '2016-08-29T07:00:00'
-      },
-      {
-        title: 'Click for Google',
-        url: 'http://google.com/',
-        start: '2016-08-31'
-      }
-    ]
+  describe('with lots of events', function() {
+    pushOptions({
+      now: '2016-08-29',
+      events: [
+        {
+          title: 'All Day Event',
+          start: '2016-08-29'
+        },
+        {
+          title: 'Long Event',
+          start: '2016-08-28',
+          end: '2016-09-04'
+        },
+        {
+          title: 'Meeting',
+          start: '2016-08-29T10:30:00'
+        },
+        {
+          title: 'Lunch',
+          start: '2016-08-30T12:00:00'
+        },
+        {
+          title: 'Meeting',
+          start: '2016-08-30T14:30:00'
+        },
+        {
+          title: 'Happy Hour',
+          start: '2014-11-12T17:30:00'
+        },
+        {
+          title: 'Dinner',
+          start: '2014-11-12T20:00:00'
+        },
+        {
+          title: 'Birthday Party',
+          start: '2016-08-29T07:00:00'
+        },
+        {
+          title: 'Click for Google',
+          url: 'http://google.com/',
+          start: '2016-08-31'
+        }
+      ]
+    })
 
-    initCalendar(options)
+    it('sorts events correctly', function() {
+      initCalendar()
 
-    var days = getDayInfo()
-    var events = getEventInfo()
+      var days = getDayInfo()
+      var events = getEventInfo()
 
-    expect(days.length).toBe(7)
-    expect(days[0].date.format()).toEqual('2016-08-28')
-    expect(days[1].date.format()).toEqual('2016-08-29')
-    expect(days[2].date.format()).toEqual('2016-08-30')
-    expect(days[3].date.format()).toEqual('2016-08-31')
-    expect(days[4].date.format()).toEqual('2016-09-01')
-    expect(days[5].date.format()).toEqual('2016-09-02')
-    expect(days[6].date.format()).toEqual('2016-09-03')
+      expect(days.length).toBe(7)
+      expect(days[0].date.format()).toEqual('2016-08-28')
+      expect(days[1].date.format()).toEqual('2016-08-29')
+      expect(days[2].date.format()).toEqual('2016-08-30')
+      expect(days[3].date.format()).toEqual('2016-08-31')
+      expect(days[4].date.format()).toEqual('2016-09-01')
+      expect(days[5].date.format()).toEqual('2016-09-02')
+      expect(days[6].date.format()).toEqual('2016-09-03')
 
-    expect(events.length).toBe(13)
-    expect(events[0].title).toBe('Long Event')
-    expect(events[0].timeText).toBe('all-day')
-    expect(events[1].title).toBe('Long Event')
-    expect(events[1].timeText).toBe('all-day')
-    expect(events[2].title).toBe('All Day Event')
-    expect(events[2].timeText).toBe('all-day')
-    expect(events[3].title).toBe('Birthday Party')
-    expect(events[3].timeText).toBe('7:00am')
-    expect(events[4].title).toBe('Meeting')
-    expect(events[4].timeText).toBe('10:30am')
-    expect(events[5].title).toBe('Long Event')
-    expect(events[5].timeText).toBe('all-day')
-    expect(events[6].title).toBe('Lunch')
-    expect(events[6].timeText).toBe('12:00pm')
-    expect(events[7].title).toBe('Meeting')
-    expect(events[7].timeText).toBe('2:30pm')
-    expect(events[8].title).toBe('Long Event')
-    expect(events[8].timeText).toBe('all-day')
-    expect(events[9].title).toBe('Click for Google')
-    expect(events[9].timeText).toBe('all-day')
-    expect(events[10].title).toBe('Long Event')
-    expect(events[10].timeText).toBe('all-day')
-    expect(events[11].title).toBe('Long Event')
-    expect(events[11].timeText).toBe('all-day')
-    expect(events[12].title).toBe('Long Event')
-    expect(events[12].timeText).toBe('all-day')
+      expect(events.length).toBe(13)
+      expect(events[0].title).toBe('Long Event')
+      expect(events[0].timeText).toBe('all-day')
+      expect(events[1].title).toBe('Long Event')
+      expect(events[1].timeText).toBe('all-day')
+      expect(events[2].title).toBe('All Day Event')
+      expect(events[2].timeText).toBe('all-day')
+      expect(events[3].title).toBe('Birthday Party')
+      expect(events[3].timeText).toBe('7:00am')
+      expect(events[4].title).toBe('Meeting')
+      expect(events[4].timeText).toBe('10:30am')
+      expect(events[5].title).toBe('Long Event')
+      expect(events[5].timeText).toBe('all-day')
+      expect(events[6].title).toBe('Lunch')
+      expect(events[6].timeText).toBe('12:00pm')
+      expect(events[7].title).toBe('Meeting')
+      expect(events[7].timeText).toBe('2:30pm')
+      expect(events[8].title).toBe('Long Event')
+      expect(events[8].timeText).toBe('all-day')
+      expect(events[9].title).toBe('Click for Google')
+      expect(events[9].timeText).toBe('all-day')
+      expect(events[10].title).toBe('Long Event')
+      expect(events[10].timeText).toBe('all-day')
+      expect(events[11].title).toBe('Long Event')
+      expect(events[11].timeText).toBe('all-day')
+      expect(events[12].title).toBe('Long Event')
+      expect(events[12].timeText).toBe('all-day')
+    })
+
+    it('makes scrollbars', function() {
+      let $el = $('<div style="width:300px" />').appendTo('body')
+      initCalendar({
+        header: false
+      }, $el)
+      let $scrollEl = $('.fc-view .fc-scroller')
+      expect(
+        $scrollEl[0].scrollHeight
+      ).toBeGreaterThan(
+        $scrollEl[0].clientHeight + 100
+      )
+      $el.remove()
+    })
+
+    it('doesn\'t have scrollbars when height is \'auto\'', function() {
+      let $el = $('<div style="width:300px" />').appendTo('body')
+      initCalendar({
+        header: false,
+        height: 'auto'
+      }, $el)
+      let $scrollEl = $('.fc-view .fc-scroller')
+      expect(
+        Math.abs($scrollEl[0].scrollHeight - $scrollEl[0].clientHeight)
+      ).toBeLessThan(2)
+      $el.remove()
+    })
   })
 
   it('updates rendered events despite fetch range being lazy', function() {

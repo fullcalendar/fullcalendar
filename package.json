@@ -23,21 +23,21 @@
   "copyright": "2018 Adam Shaw",
   "dependencies": {
     "jquery": "2 - 3",
-    "moment": "^2.9.0"
+    "moment": "^2.20.1"
   },
   "version": "0.0.0",
   "releaseDate": "1970-01-01",
   "devDependencies": {
     "@types/jquery": "2.0.47",
-    "awesome-typescript-loader": "^3.3.0",
+    "awesome-typescript-loader": "^3.5.0",
     "bootstrap": "^3.3.7",
     "components-jqueryui": "github:components/jqueryui",
-    "css-loader": "^0.28.7",
+    "css-loader": "^0.28.10",
     "del": "^2.2.1",
     "dts-generator": "^2.1.0",
-    "eslint": "^4.13.1",
-    "eslint-config-standard": "^11.0.0-beta.0",
-    "eslint-plugin-import": "^2.8.0",
+    "eslint": "^4.18.2",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
@@ -50,7 +50,7 @@
     "gulp-modify-file": "^1.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.6.5",
-    "gulp-tslint": "^8.1.2",
+    "gulp-tslint": "^8.1.3",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.11",
@@ -69,13 +69,13 @@
     "native-promise-only": "^0.8.1",
     "node-sass": "^4.7.2",
     "phantomjs-prebuilt": "^2.1.7",
-    "sass-loader": "^6.0.6",
+    "sass-loader": "^6.0.7",
     "tslib": "^1.8.0",
     "tslint": "^5.8.0",
     "tslint-config-standard": "^7.0.0",
-    "typescript": "^2.6.2",
-    "webpack": "^3.8.1",
-    "webpack-stream": "^4.0.0",
+    "typescript": "^2.7.2",
+    "webpack": "^3.11.0",
+    "webpack-stream": "^4.0.2",
     "yargs": "^4.8.1"
   },
   "main": "dist/fullcalendar.js",
@@ -93,7 +93,7 @@
   "scripts": {
     "clean": "gulp clean",
     "dist": "gulp dist",
-    "lint": "gulp lint",
+    "lint": "gulp lint-and-example-repos",
     "test": "gulp test:single"
   }
 }

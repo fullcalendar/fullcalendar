@@ -24,8 +24,10 @@ npm init --yes
 # restore stdout
 exec 1<&4
 
+npm install --save "fullcalendar"
+
 # will print out tree
-npm install --loglevel=error --save-dev "fullcalendar"
+npm ls
 
 # remove the test project directory
 cd ..

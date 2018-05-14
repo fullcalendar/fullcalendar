@@ -220,7 +220,7 @@ beforeEach(function() {
           var result = {
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.right) <= Math.round(otherBounds.left) + 2
-              // need to round because IE was giving weird fractions
+            // need to round because IE was giving weird fractions
           }
           if (!result.pass) {
             result.message = 'Element is not to the left of the other element'
@@ -238,7 +238,7 @@ beforeEach(function() {
           var result = {
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.left) >= Math.round(otherBounds.right) - 2
-              // need to round because IE was giving weird fractions
+            // need to round because IE was giving weird fractions
           }
           if (!result.pass) {
             result.message = 'Element is not to the right of the other element'
@@ -256,7 +256,7 @@ beforeEach(function() {
           var result = {
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.bottom) <= Math.round(otherBounds.top) + 2
-              // need to round because IE was giving weird fractions
+            // need to round because IE was giving weird fractions
           }
           if (!result.pass) {
             result.message = 'Element is not above the other element'
@@ -274,7 +274,7 @@ beforeEach(function() {
           var result = {
             pass: subjectBounds && otherBounds &&
               Math.round(subjectBounds.top) >= Math.round(otherBounds.bottom) - 2
-              // need to round because IE was giving weird fractions
+            // need to round because IE was giving weird fractions
           }
           if (!result.pass) {
             result.message = 'Element is not below the other element'
@@ -295,7 +295,7 @@ beforeEach(function() {
               subjectBounds.left + 1 < otherBounds.right &&
               subjectBounds.bottom - 1 > otherBounds.top &&
               subjectBounds.top + 1 < otherBounds.bottom
-              // +/-1 because of zoom
+            // +/-1 because of zoom
           }
           if (!result.pass) {
             result.message = 'Element does not intersect with other element'
