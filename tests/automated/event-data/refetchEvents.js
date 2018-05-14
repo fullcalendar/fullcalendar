@@ -3,7 +3,6 @@ import { findFcEvent, findScroller, createCalElement } from '../lib/events'
 describe('refetchEvents', function() {
 
   it('retains scroll when in month view', function() {
-    // var el = $('<div id="calendar" style="width:300px"/>').appendTo('body')    
     var el = createCalElement({style:"width:300px"}).appendTo('body')
     var scrollEl
     var scrollTop
