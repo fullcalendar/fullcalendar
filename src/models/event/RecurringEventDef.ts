@@ -1,14 +1,16 @@
-import * as moment from 'moment'
 import { assignTo } from '../../util/object'
 import EventDef from './EventDef'
 import EventInstance from './EventInstance'
 import EventDateProfile from './EventDateProfile'
+import { createDuration, Duration } from '../../datelib/duration'
+import { DateMarker } from '../../datelib/util'
 
+const ONE_DAY = createDuration({ days: 1 })
 
 export default class RecurringEventDef extends EventDef {
 
-  startTime: any // duration
-  endTime: any // duration, or null
+  startTime: Duration // duration
+  endTime: Duration // duration, or null
   dowHash: any // object hash, or null
 
 
@@ -19,41 +21,39 @@ export default class RecurringEventDef extends EventDef {
 
   buildInstances(unzonedRange) {
     let calendar = this.source.calendar
-    let unzonedDate = unzonedRange.getStart()
-    let unzonedEnd = unzonedRange.getEnd()
-    let zonedDayStart
-    let instanceStart
-    let instanceEnd
+    const dateEnv = calendar.dateEnv
+    let dateMarker: DateMarker = dateEnv.startOfDay(unzonedRange.start)
+    let endMarker: DateMarker = unzonedRange.end
+    let instanceStart: DateMarker
+    let instanceEnd: DateMarker
     let instances = []
 
-    while (unzonedDate.isBefore(unzonedEnd)) {
+    while (dateMarker < endMarker) {
 
       // if everyday, or this particular day-of-week
-      if (!this.dowHash || this.dowHash[unzonedDate.day()]) {
-
-        zonedDayStart = calendar.applyTimezone(unzonedDate)
-        instanceStart = zonedDayStart.clone()
-        instanceEnd = null
+      if (!this.dowHash || this.dowHash[dateMarker.getUTCDay()]) {
 
         if (this.startTime) {
-          instanceStart.time(this.startTime)
+          instanceStart = dateEnv.add(dateMarker, this.startTime)
         } else {
-          instanceStart.stripTime()
+          instanceStart = null
         }
 
         if (this.endTime) {
-          instanceEnd = zonedDayStart.clone().time(this.endTime)
+          instanceEnd = dateEnv.add(dateMarker, this.endTime)
+        } else {
+          instanceEnd = null
         }
 
         instances.push(
           new EventInstance(
             this, // definition
-            new EventDateProfile(instanceStart, instanceEnd, calendar)
+            new EventDateProfile(instanceStart, instanceEnd, !(this.startTime || this.endTime), calendar)
           )
         )
       }
 
-      unzonedDate.add(1, 'days')
+      dateMarker = dateEnv.add(dateMarker, ONE_DAY) // wish we didnt have to recreate each time
     }
 
     return instances
@@ -76,11 +76,11 @@ export default class RecurringEventDef extends EventDef {
     let def = super.clone()
 
     if (def.startTime) {
-      def.startTime = moment.duration(this.startTime)
+      def.startTime = createDuration(this.startTime)
     }
 
     if (def.endTime) {
-      def.endTime = moment.duration(this.endTime)
+      def.endTime = createDuration(this.endTime)
     }
 
     if (this.dowHash) {
@@ -101,11 +101,11 @@ RecurringEventDef.prototype.applyProps = function(rawProps) {
   let superSuccess = EventDef.prototype.applyProps.call(this, rawProps)
 
   if (rawProps.start) {
-    this.startTime = moment.duration(rawProps.start)
+    this.startTime = createDuration(rawProps.start)
   }
 
   if (rawProps.end) {
-    this.endTime = moment.duration(rawProps.end)
+    this.endTime = createDuration(rawProps.end)
   }
 
   if (rawProps.dow) {

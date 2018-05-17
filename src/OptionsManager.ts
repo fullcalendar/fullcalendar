@@ -1,7 +1,7 @@
 import { assignTo } from './util/object'
 import { firstDefined } from './util/misc'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
-import { localeOptionHash, populateInstanceComputableOptions } from './locale'
+import { localeOptionHash } from './locale'
 import Model from './common/Model'
 
 
@@ -100,7 +100,6 @@ export default class OptionsManager extends Model {
       this.overrides,
       this.dynamicOverrides
     ])
-    populateInstanceComputableOptions(rawOptions) // fill in gaps with computed options
 
     this.reset(rawOptions)
   }

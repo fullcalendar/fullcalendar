@@ -25,7 +25,7 @@ export default class SingleEventDef extends EventDef {
 
 
   isAllDay() {
-    return this.dateProfile.isAllDay()
+    return this.dateProfile.isAllDay
   }
 
 
@@ -35,18 +35,6 @@ export default class SingleEventDef extends EventDef {
     def.dateProfile = this.dateProfile
 
     return def
-  }
-
-
-  rezone() {
-    let calendar = this.source.calendar
-    let dateProfile = this.dateProfile
-
-    this.dateProfile = new EventDateProfile(
-      calendar.moment(dateProfile.start),
-      dateProfile.end ? calendar.moment(dateProfile.end) : null,
-      calendar
-    )
   }
 
 

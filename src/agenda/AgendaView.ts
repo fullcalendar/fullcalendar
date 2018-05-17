@@ -1,4 +1,3 @@
-import * as moment from 'moment'
 import { htmlEscape } from '../util/html'
 import { copyOwnProps } from '../util/object'
 import { findElements, createElement } from '../util/dom-manip'
@@ -12,6 +11,7 @@ import Scroller from '../common/Scroller'
 import View from '../View'
 import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
+import { createDuration } from '../datelib/duration'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 
@@ -255,8 +255,8 @@ export default class AgendaView extends View {
 
   // Computes the initial pre-configured scroll state prior to allowing the user to change it
   computeInitialDateScroll() {
-    let scrollTime = moment.duration(this.opt('scrollTime'))
-    let top = this.timeGrid.computeTimeTop(scrollTime)
+    let scrollTime = createDuration(this.opt('scrollTime'))
+    let top = this.timeGrid.computeTimeTop(scrollTime.time)
 
     // zoom can give weird floating-point values. rather scroll a little bit further
     top = Math.ceil(top)
@@ -384,11 +384,12 @@ agendaTimeGridMethods = {
   renderHeadIntroHtml() {
     let view = this.view
     let calendar = view.calendar
-    let weekStart = calendar.msToUtcMoment(this.dateProfile.renderUnzonedRange.startMs, true)
+    let dateEnv = calendar.dateEnv
+    let weekStart = this.dateProfile.renderUnzonedRange.start
     let weekText
 
     if (this.opt('weekNumbers')) {
-      weekText = weekStart.format(this.opt('smallWeekFormat'))
+      weekText = dateEnv.formatWeek(weekStart, true)
 
       return '' +
         '<th class="fc-axis fc-week-number ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +

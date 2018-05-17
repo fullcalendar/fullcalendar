@@ -11,12 +11,15 @@ export default class EventInstance {
   }
 
 
-  toLegacy() {
+  toLegacy(calendar) {
+    const dateEnv = calendar.dateEnv
     let dateProfile = this.dateProfile
     let obj = this.def.toLegacy()
 
-    obj.start = dateProfile.start.clone()
-    obj.end = dateProfile.end ? dateProfile.end.clone() : null
+    obj.start = dateEnv.toDate(dateProfile.unzonedRange.start)
+    obj.end = dateProfile.hasEnd ?
+      dateEnv.toDate(dateProfile.unzonedRange.end) :
+      null
 
     return obj
   }

@@ -361,15 +361,16 @@ function pad(n) {
 }
 
 
-export function buildIsoString(marker: DateMarker, timeZoneOffset?: number) {
-  let s = marker.toISOString().replace('.000', '')
+export function buildIsoString(marker: DateMarker, timeZoneOffset?: number, stripZeroTime: boolean = false) {
+  let s = marker.toISOString()
 
-  if (timeZoneOffset !== 0) {
-    s = s.replace('Z', '')
+  s = s.replace('.000', '')
+  s = s.replace('Z', '')
 
-    if (timeZoneOffset != null) {
-      s += formatIsoTimeZoneOffset(timeZoneOffset)
-    }
+  if (timeZoneOffset != null) { // provided?
+    s += formatIsoTimeZoneOffset(timeZoneOffset)
+  } else if (stripZeroTime) {
+    s = s.replace('T00:00:00', '')
   }
 
   return s

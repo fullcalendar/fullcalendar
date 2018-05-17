@@ -44,14 +44,6 @@ export {
 } from './util/object'
 
 export {
-  computeGreatestUnit,
-  divideRangeByDuration,
-  divideDurationByDuration,
-  multiplyDuration,
-  durationHasTime
-} from './util/date'
-
-export {
   findElements,
   findChildren,
   htmlToElement,
@@ -79,17 +71,9 @@ export {
 } from './util/dom-geom'
 
 export {
-  formatDate,
-  formatRange,
-  queryMostGranularFormatUnit
-} from './date-formatting'
-
-export {
-  datepickerLocale,
   locale
 } from './locale'
 
-export { default as moment } from './moment-ext'
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 export { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
 export { default as Model } from './common/Model'
@@ -138,7 +122,9 @@ export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
 
+export { DateMarker, addDays, startOfDay, addMs } from './datelib/util'
 export { DateEnv } from './datelib/env'
-export { createDuration, durationsEqual } from './datelib/duration'
-export { nowMarker } from './datelib/util' // might not need
-export { createFormatter } from './datelib/formatting'
+export {
+  wholeDivideDurationByDuration, isSingleDay, createDuration, multiplyDuration,
+  asRoughMinutes, asRoughSeconds
+} from './datelib/duration'

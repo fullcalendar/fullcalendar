@@ -2,6 +2,8 @@ import * as request from 'superagent'
 import { assignTo } from '../../util/object'
 import { applyAll } from '../../util/misc'
 import EventSource from './EventSource'
+import { DateMarker } from '../../datelib/util'
+import { DateEnv } from '../../datelib/env'
 
 
 export default class JsonFeedEventSource extends EventSource {
@@ -32,9 +34,9 @@ export default class JsonFeedEventSource extends EventSource {
   }
 
 
-  fetch(start, end, timezone, onSuccess, onFailure) {
+  fetch(start: DateMarker, end: DateMarker, dateEnv: DateEnv, onSuccess, onFailure) {
     let ajaxSettings = this.ajaxSettings
-    let requestParams = this.buildRequestParams(start, end, timezone)
+    let requestParams = this.buildRequestParams(start, end, dateEnv)
     let theRequest
 
     this.calendar.pushLoading()
@@ -75,7 +77,7 @@ export default class JsonFeedEventSource extends EventSource {
   }
 
 
-  buildRequestParams(start, end, timezone) {
+  buildRequestParams(start: DateMarker, end: DateMarker, dateEnv: DateEnv) {
     let calendar = this.calendar
     let ajaxSettings = this.ajaxSettings
     let startParam
@@ -110,11 +112,11 @@ export default class JsonFeedEventSource extends EventSource {
 
     assignTo(params, customRequestParams)
 
-    params[startParam] = start.format()
-    params[endParam] = end.format()
+    params[startParam] = dateEnv.toIso(start)
+    params[endParam] = dateEnv.toIso(end)
 
-    if (timezone && timezone !== 'local') {
-      params[timezoneParam] = timezone
+    if (dateEnv.timeZone !== 'local') {
+      params[timezoneParam] = dateEnv.timeZone
     }
 
     return params

@@ -3,16 +3,16 @@ Huge thanks to these people:
 https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalendar/index.d.ts
 */
 
-import * as moment from 'moment'
 import View from '../View'
 import EventSource from '../models/event-source/EventSource'
+import { Duration } from '../datelib/duration'
+import { DateInput } from '../datelib/env'
 
-export type MomentInput = moment.Moment | Date | object | string | number
-export type DurationInput = moment.Duration | object | string | number
+export type DurationInput = Duration | object | string | number
 
 export interface RangeInput {
-  start?: MomentInput
-  end?: MomentInput
+  start?: DateInput
+  end?: DateInput
 }
 
 export type ConstraintInput = RangeInput | BusinessHoursInput | 'businessHours'
@@ -43,7 +43,7 @@ export interface EventObjectInput extends EventOptionsBase, RangeInput {
   [customField: string]: any // non-standard fields
 }
 
-export type EventSourceFunction = (start: moment.Moment, end: moment.Moment, timezone: string, callback: ((events: EventObjectInput[]) => void)) => void
+export type EventSourceFunction = (start: Date, end: Date, timezone: string, callback: ((events: EventObjectInput[]) => void)) => void
 export type EventSourceSimpleInput = EventObjectInput[] | EventSourceFunction | string
 
 export interface EventSourceExtendedInput extends EventOptionsBase {
@@ -103,21 +103,21 @@ export interface ButtonTextCompoundInput {
 }
 
 export interface BusinessHoursInput {
-  start?: MomentInput
-  end?: MomentInput
+  start?: DateInput
+  end?: DateInput
   dow?: number[]
 }
 
 export interface EventSegment {
   event: EventObjectInput
-  start: moment.Moment
-  end: moment.Moment
+  start: Date
+  end: Date
   isStart: boolean
   isEnd: boolean
 }
 
 export interface CellInfo {
-  date: moment.Moment
+  date: Date
   dayEl: HTMLElement
   moreEl: HTMLElement
   segs: EventSegment[]
@@ -125,8 +125,8 @@ export interface CellInfo {
 }
 
 export interface DropInfo {
-  start: moment.Moment
-  end: moment.Moment
+  start: Date
+  end: Date
 }
 
 export interface OptionsInputBase {
@@ -145,7 +145,7 @@ export interface OptionsInputBase {
   fixedWeekCount?: boolean
   weekNumbers?: boolean
   weekNumbersWithinDays?: boolean
-  weekNumberCalculation?: 'local' | 'ISO' | ((m: moment.Moment) => number)
+  weekNumberCalculation?: 'local' | 'ISO' | ((m: Date) => number)
   businessHours?: boolean | BusinessHoursInput | BusinessHoursInput[]
   showNonCurrentDates?: boolean
   height?: number | 'auto' | 'parent' | (() => number)
@@ -156,7 +156,7 @@ export interface OptionsInputBase {
   eventLimit?: boolean | number
   eventLimitClick?: 'popover' | 'week' | 'day' | string | ((cellinfo: CellInfo, jsevent: Event) => void)
   timezone?: string | boolean
-  now?: MomentInput | (() => MomentInput)
+  now?: DateInput | (() => DateInput)
   defaultView?: string
   allDaySlot?: boolean
   allDayText?: string
@@ -171,9 +171,9 @@ export interface OptionsInputBase {
   listDayFormat?: string | boolean
   listDayAltFormat?: string | boolean
   noEventsMessage?: string
-  defaultDate?: MomentInput
+  defaultDate?: DateInput
   nowIndicator?: boolean
-  visibleRange?: ((currentDate: moment.Moment) => RangeInput) | RangeInput
+  visibleRange?: ((currentDate: Date) => RangeInput) | RangeInput
   validRange?: RangeInput
   dateIncrement?: DurationInput
   dateAlignment?: string
@@ -183,8 +183,8 @@ export interface OptionsInputBase {
   timeFormat?: string
   columnHeader?: boolean
   columnHeaderFormat?: string
-  columnHeaderText?: string | ((date: MomentInput) => string)
-  columnHeaderHtml?: string | ((date: MomentInput) => string)
+  columnHeaderText?: string | ((date: DateInput) => string)
+  columnHeaderHtml?: string | ((date: DateInput) => string)
   titleFormat?: string
   monthNames?: string[]
   monthNamesShort?: string[]
@@ -196,7 +196,7 @@ export interface OptionsInputBase {
   eventLimitText?: string | ((eventCnt: number) => string)
   dayPopoverFormat?: string
   navLinks?: boolean
-  navLinkDayClick?: string | ((date: moment.Moment, jsEvent: Event) => void)
+  navLinkDayClick?: string | ((date: Date, jsEvent: Event) => void)
   navLinkWeekClick?: string | ((weekStart: any, jsEvent: Event) => void)
   selectable?: boolean
   selectHelper?: boolean
@@ -233,13 +233,13 @@ export interface OptionsInputBase {
 
   viewRender?(view: View, element: HTMLElement): void
   viewDestroy?(view: View, element: HTMLElement): void
-  dayRender?(date: moment.Moment, cell: HTMLElement): void
+  dayRender?(date: DateInput, cell: HTMLElement): void
   windowResize?(view: View): void
-  dayClick?(date: moment.Moment, jsEvent: MouseEvent, view: View, resourceObj?): void // resourceObj for Scheduler
+  dayClick?(date: DateInput, jsEvent: MouseEvent, view: View, resourceObj?): void // resourceObj for Scheduler
   eventClick?(event: EventObjectInput, jsEvent: MouseEvent, view: View): boolean | void
   eventMouseover?(event: EventObjectInput, jsEvent: MouseEvent, view: View): void
   eventMouseout?(event: EventObjectInput, jsEvent: MouseEvent, view: View): void
-  select?(start: moment.Moment, end: moment.Moment, jsEvent: MouseEvent, view: View, resource?: any): void
+  select?(start: DateInput, end: DateInput, jsEvent: MouseEvent, view: View, resource?: any): void
   unselect?(view: View, jsEvent: Event): void
   eventDataTransform?(eventData: any): EventObjectInput
   loading?(isLoading: boolean, view: View): void
@@ -249,11 +249,11 @@ export interface OptionsInputBase {
   eventDestroy?(event: EventObjectInput, element: HTMLElement, view: View): void
   eventDragStart?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
   eventDragStop?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
-  eventDrop?(event: EventObjectInput, delta: moment.Duration, revertFunc: Function, jsEvent: Event, ui: any, view: View): void
+  eventDrop?(event: EventObjectInput, delta: Duration, revertFunc: Function, jsEvent: Event, ui: any, view: View): void
   eventResizeStart?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
   eventResizeStop?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
-  eventResize?(event: EventObjectInput, delta: moment.Duration, revertFunc: Function, jsEvent: Event, ui: any, view: View): void
-  drop?(date: moment.Moment, jsEvent: MouseEvent, ui: any): void
+  eventResize?(event: EventObjectInput, delta: Duration, revertFunc: Function, jsEvent: Event, ui: any, view: View): void
+  drop?(date: DateInput, jsEvent: MouseEvent, ui: any): void
   eventReceive?(event: EventObjectInput): void
 }
 

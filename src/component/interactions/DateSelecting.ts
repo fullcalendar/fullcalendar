@@ -137,10 +137,10 @@ export default class DateSelecting extends Interaction {
   // Assumes both footprints are non-open-ended.
   computeSelectionFootprint(footprint0, footprint1) {
     let ms = [
-      footprint0.unzonedRange.startMs,
-      footprint0.unzonedRange.endMs,
-      footprint1.unzonedRange.startMs,
-      footprint1.unzonedRange.endMs
+      footprint0.unzonedRange.start,
+      footprint0.unzonedRange.end,
+      footprint1.unzonedRange.start,
+      footprint1.unzonedRange.end
     ]
 
     ms.sort(compareNumbers)

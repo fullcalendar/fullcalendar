@@ -16,8 +16,8 @@ export default class EventFootprint {
   }
 
 
-  getEventLegacy() {
-    return (this.eventInstance || this.eventDef).toLegacy()
+  getEventLegacy(calendar) {
+    return (this.eventInstance || this.eventDef).toLegacy(calendar)
   }
 
 }

@@ -1,4 +1,3 @@
-import * as moment from 'moment'
 import { assignTo } from './util/object'
 import { elementClosest } from './util/dom-manip'
 import { isPrimaryMouseButton } from './util/dom-event'
@@ -10,6 +9,10 @@ import InteractiveDateComponent from './component/InteractiveDateComponent'
 import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
 import EventInstance from './models/event/EventInstance'
+import { DateMarker, addDays, addMs } from './datelib/util'
+import { createDuration } from './datelib/duration'
+import { createFormatter } from './datelib/formatting'
+import { diffDays } from './datelib/env'
 
 
 /* An abstract class from which other views inherit from
@@ -39,7 +42,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   // now indicator
   isNowIndicatorRendered: boolean
-  initialNowDate: moment.Moment // result first getNow call
+  initialNowDate: DateMarker // result first getNow call
   initialNowQueriedMs: number // ms time the getNow was called
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
@@ -52,10 +55,10 @@ export default abstract class View extends InteractiveDateComponent {
   usesMinMaxTime: boolean
 
   // DEPRECATED
-  start: moment.Moment // use activeUnzonedRange
-  end: moment.Moment // use activeUnzonedRange
-  intervalStart: moment.Moment // use currentUnzonedRange
-  intervalEnd: moment.Moment // use currentUnzonedRange
+  start: Date // use activeUnzonedRange
+  end: Date // use activeUnzonedRange
+  intervalStart: Date // use currentUnzonedRange
+  intervalEnd: Date // use currentUnzonedRange
 
 
   constructor(calendar, viewSpec) {
@@ -169,14 +172,21 @@ export default abstract class View extends InteractiveDateComponent {
       unzonedRange = dateProfile.activeUnzonedRange
     }
 
-    return this.formatRange(
-      {
-        start: this.calendar.msToMoment(unzonedRange.startMs, dateProfile.isRangeAllDay),
-        end: this.calendar.msToMoment(unzonedRange.endMs, dateProfile.isRangeAllDay)
-      },
-      dateProfile.isRangeAllDay,
-      this.opt('titleFormat') || this.computeTitleFormat(dateProfile),
-      this.opt('titleRangeSeparator')
+    // TODO: precompute
+    // TODO: how will moment plugin deal with this?
+    let rawTitleFormat = this.opt('titleFormat') || this.computeTitleFormat(dateProfile)
+    if (typeof rawTitleFormat === 'object') {
+      rawTitleFormat = assignTo(
+        { separator: this.opt('titleRangeSeparator') },
+        rawTitleFormat
+      )
+    }
+
+    return this.calendar.dateEnv.toRangeFormat(
+      unzonedRange.start,
+      unzonedRange.end,
+      createFormatter(rawTitleFormat),
+      { isExclusive: dateProfile.isRangeAllDay }
     )
   }
 
@@ -187,13 +197,21 @@ export default abstract class View extends InteractiveDateComponent {
     let currentRangeUnit = dateProfile.currentRangeUnit
 
     if (currentRangeUnit === 'year') {
-      return 'YYYY'
+      return { year: 'numeric' }
     } else if (currentRangeUnit === 'month') {
-      return this.opt('monthYearFormat') // like "September 2014"
-    } else if (dateProfile.currentUnzonedRange.as('days') > 1) {
-      return 'll' // multi-day range. shorter, like "Sep 9 - 10 2014"
+      return { year: 'numeric', month: 'long' } // like "September 2014"
     } else {
-      return 'LL' // one day. longer, like "September 9 2014"
+      let days = diffDays(
+        dateProfile.currentUnzonedRange.start,
+        dateProfile.currentUnzonedRange.end
+      )
+      if (days !== null && days > 1) {
+        // multi-day range. shorter, like "Sep 9 - 10 2014"
+        return { year: 'numeric', month: 'short', date: 'numeric' }
+      } else {
+        // one day. longer, like "September 9 2014"
+        return { year: 'numeric', month: 'long', date: 'numeric' }
+      }
     }
   }
 
@@ -202,7 +220,7 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  setDate(date: moment.Moment) {
+  setDate(date: DateMarker) {
     let currentDateProfile = this.get('dateProfile')
     let newDateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
 
@@ -225,12 +243,9 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   fetchInitialEvents(dateProfile, callback) {
-    let calendar = this.calendar
-    let forceAllDay = dateProfile.isRangeAllDay && !this.usesMinMaxTime
-
-    calendar.requestEvents(
-      calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, forceAllDay),
-      calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, forceAllDay),
+    this.calendar.requestEvents(
+      dateProfile.activeUnzonedRange.start,
+      dateProfile.activeUnzonedRange.end,
       callback
     )
   }
@@ -414,6 +429,7 @@ export default abstract class View extends InteractiveDateComponent {
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
   startNowIndicator() {
+    const dateEnv = this.calendar.dateEnv
     let unit
     let update
     let delay // ms wait value
@@ -427,12 +443,22 @@ export default abstract class View extends InteractiveDateComponent {
         this.initialNowQueriedMs = new Date().valueOf()
 
         // wait until the beginning of the next interval
-        delay = this.initialNowDate.clone().startOf(unit).add(1, unit).valueOf() - this.initialNowDate.valueOf()
+        delay = dateEnv.add(
+          dateEnv.startOf(this.initialNowDate, unit),
+          createDuration(1, unit)
+        ).valueOf() - this.initialNowDate.valueOf()
+
+        // TODO: maybe always use setTimeout, waiting until start of next unit
         this.nowIndicatorTimeoutID = setTimeout(() => {
           this.nowIndicatorTimeoutID = null
           update()
-          delay = +moment.duration(1, unit)
-          delay = Math.max(100, delay) // prevent too frequent
+
+          if (unit === 'second') {
+            delay = 1000 * 60 // every second
+          } else {
+            delay = 1000 * 60 * 60 // otherwise, every minute
+          }
+
           this.nowIndicatorIntervalID = setInterval(update, delay) // update every interval
         }, delay)
       }
@@ -451,7 +477,7 @@ export default abstract class View extends InteractiveDateComponent {
     ) {
       this.unrenderNowIndicator() // won't unrender if unnecessary
       this.renderNowIndicator(
-        this.initialNowDate.clone().add(new Date().valueOf() - this.initialNowQueriedMs) // add ms
+        addMs(this.initialNowDate, new Date().valueOf() - this.initialNowQueriedMs)
       )
       this.isNowIndicatorRendered = true
     }
@@ -578,7 +604,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.triggerEventDrop(
       eventInstance,
       // a drop doesn't necessarily mean a date mutation (ex: resource change)
-      (dateMutation && dateMutation.dateDelta) || moment.duration(),
+      (dateMutation && dateMutation.dateDelta) || createDuration(0),
       undoFunc,
       el, ev
     )
@@ -590,7 +616,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.publiclyTrigger('eventDrop', {
       context: el,
       args: [
-        eventInstance.toLegacy(),
+        eventInstance.toLegacy(this.calendar),
         dateDelta,
         undoFunc,
         ev,
@@ -625,7 +651,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.publiclyTrigger('drop', {
       context: el,
       args: [
-        singleEventDef.dateProfile.start.clone(),
+        singleEventDef.dateProfile.start,
         ev,
         this
       ]
@@ -636,7 +662,7 @@ export default abstract class View extends InteractiveDateComponent {
       this.publiclyTrigger('eventReceive', {
         context: this,
         args: [
-          singleEventDef.buildInstance().toLegacy(),
+          singleEventDef.buildInstance().toLegacy(this.calendar),
           this
         ]
       })
@@ -676,7 +702,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.publiclyTrigger('eventResize', {
       context: el,
       args: [
-        eventInstance.toLegacy(),
+        eventInstance.toLegacy(this.calendar),
         durationDelta,
         undoFunc,
         ev,
@@ -720,13 +746,14 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Triggers handlers to 'select'
   triggerSelect(footprint, ev?) {
+    const dateEnv = this.calendar.dateEnv
     let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
     this.publiclyTrigger('select', {
       context: this,
       args: [
-        dateProfile.start,
-        dateProfile.end,
+        dateEnv.toDate(dateProfile.unzonedRange.start),
+        dateEnv.toDate(dateProfile.unzonedRange.end),
         ev,
         this
       ]
@@ -862,11 +889,16 @@ export default abstract class View extends InteractiveDateComponent {
   // Triggers handlers to 'dayClick'
   // Span has start/end of the clicked area. Only the start is useful.
   triggerDayClick(footprint, dayEl, ev) {
+    const dateEnv = this.calendar.dateEnv
     let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
     this.publiclyTrigger('dayClick', {
       context: dayEl,
-      args: [ dateProfile.start, ev, this ]
+      args: [
+        dateEnv.toDate(dateProfile.unzonedRange.start),
+        ev,
+        this
+      ]
     })
   }
 
@@ -876,7 +908,7 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   // For DateComponent::getDayClasses
-  isDateInOtherMonth(date, dateProfile) {
+  isDateInOtherMonth(date: DateMarker, dateProfile) {
     return false
   }
 
@@ -884,14 +916,11 @@ export default abstract class View extends InteractiveDateComponent {
   // Arguments after name will be forwarded to a hypothetical function value
   // WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
   // Always clone your objects if you fear mutation.
-  getUnzonedRangeOption(name) {
+  getUnzonedRangeOption(name, ...otherArgs) {
     let val = this.opt(name)
 
     if (typeof val === 'function') {
-      val = val.apply(
-        null,
-        Array.prototype.slice.call(arguments, 1)
-      )
+      val = val.apply(null, otherArgs)
     }
 
     if (val) {
@@ -934,8 +963,8 @@ export default abstract class View extends InteractiveDateComponent {
   // Remove days from the beginning and end of the range that are computed as hidden.
   // If the whole range is trimmed off, returns null
   trimHiddenDays(inputUnzonedRange) {
-    let start = inputUnzonedRange.getStart()
-    let end = inputUnzonedRange.getEnd()
+    let start = inputUnzonedRange.start
+    let end = inputUnzonedRange.end
 
     if (start) {
       start = this.skipHiddenDays(start)
@@ -948,15 +977,16 @@ export default abstract class View extends InteractiveDateComponent {
     if (start === null || end === null || start < end) {
       return new UnzonedRange(start, end)
     }
+
     return null
   }
 
 
   // Is the current day hidden?
-  // `day` is a day-of-week index (0-6), or a Moment
+  // `day` is a day-of-week index (0-6), or a Date (used for UTC)
   isHiddenDay(day) {
-    if (moment.isMoment(day)) {
-      day = day.day()
+    if (day instanceof Date) {
+      day = day.getUTCDay()
     }
     return this.isHiddenDayHash[day]
   }
@@ -967,14 +997,13 @@ export default abstract class View extends InteractiveDateComponent {
   // If the initial value of `date` is not a hidden day, don't do anything.
   // Pass `isExclusive` as `true` if you are dealing with an end date.
   // `inc` defaults to `1` (increment one day forward each time)
-  skipHiddenDays(date, inc= 1, isExclusive= false) {
-    let out = date.clone()
+  skipHiddenDays(date: DateMarker, inc = 1, isExclusive = false) {
     while (
-      this.isHiddenDayHash[(out.day() + (isExclusive ? inc : 0) + 7) % 7]
+      this.isHiddenDayHash[(date.getUTCDay() + (isExclusive ? inc : 0) + 7) % 7]
     ) {
-      out.add(inc, 'days')
+      date = addDays(date, inc)
     }
-    return out
+    return date
   }
 
 }
@@ -1025,11 +1054,12 @@ View.watch('title', [ 'dateProfile' ], function(deps) {
 
 View.watch('legacyDateProps', [ 'dateProfile' ], function(deps) {
   let calendar = this.calendar
+  let dateEnv = calendar.dateEnv
   let dateProfile = deps.dateProfile
 
   // DEPRECATED, but we need to keep it updated...
-  this.start = calendar.msToMoment(dateProfile.activeUnzonedRange.startMs, dateProfile.isRangeAllDay)
-  this.end = calendar.msToMoment(dateProfile.activeUnzonedRange.endMs, dateProfile.isRangeAllDay)
-  this.intervalStart = calendar.msToMoment(dateProfile.currentUnzonedRange.startMs, dateProfile.isRangeAllDay)
-  this.intervalEnd = calendar.msToMoment(dateProfile.currentUnzonedRange.endMs, dateProfile.isRangeAllDay)
+  this.start = dateEnv.toDate(dateProfile.activeUnzonedRange.start)
+  this.end = dateEnv.toDate(dateProfile.activeUnzonedRange.end)
+  this.intervalStart = dateEnv.toDate(dateProfile.currentUnzonedRange.start)
+  this.intervalEnd = dateEnv.toDate(dateProfile.currentUnzonedRange.end)
 })

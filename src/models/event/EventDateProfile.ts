@@ -1,20 +1,28 @@
-import { Moment } from 'moment'
 import UnzonedRange from '../UnzonedRange'
+import Calendar from '../../Calendar'
+import { DateMarker } from '../../datelib/util'
 
 /*
 Meant to be immutable
 */
 export default class EventDateProfile {
 
-  start: Moment
-  end: Moment
   unzonedRange: any
+  hasEnd: boolean
+  isAllDay: boolean
+  forcedStartTimeZoneOffset: number
+  forcedEndTimeZoneOffset: number
 
 
-  constructor(start, end, calendar) {
-    this.start = start
-    this.end = end || null
-    this.unzonedRange = this.buildUnzonedRange(calendar)
+  constructor(startMarker: DateMarker, endMarker: DateMarker, isAllDay: boolean, calendar: Calendar, forcedStartTimeZoneOffset?: number, forcedEndTimeZoneOffset?: number) {
+    this.unzonedRange = new UnzonedRange(
+      startMarker,
+      endMarker || calendar.getDefaultEventEnd(isAllDay, startMarker)
+    )
+    this.hasEnd = Boolean(endMarker)
+    this.isAllDay = isAllDay
+    this.forcedStartTimeZoneOffset = forcedStartTimeZoneOffset
+    this.forcedEndTimeZoneOffset = forcedEndTimeZoneOffset
   }
 
 
@@ -30,17 +38,15 @@ export default class EventDateProfile {
     }
 
     let calendar = source.calendar
-    let start = calendar.moment(startInput)
-    let end = endInput ? calendar.moment(endInput) : null
+    let startMeta = calendar.dateEnv.createMarkerMeta(startInput)
+    let startMarker = startMeta.marker
+    let endMeta = endInput ? calendar.dateEnv.createMarkerMeta(endInput) : null
+    let endMarker = endMeta ? endMeta.marker : null
     let forcedAllDay = rawProps.allDay
     let forceEventDuration = calendar.opt('forceEventDuration')
 
-    if (!start.isValid()) {
+    if (!startMarker) {
       return false
-    }
-
-    if (end && (!end.isValid() || !end.isAfter(start))) {
-      end = null
     }
 
     if (forcedAllDay == null) {
@@ -51,59 +57,33 @@ export default class EventDateProfile {
     }
 
     if (forcedAllDay === true) {
-      start.stripTime()
-      if (end) {
-        end.stripTime()
-      }
-    } else if (forcedAllDay === false) {
-      if (!start.hasTime()) {
-        start.time(0)
-      }
-      if (end && !end.hasTime()) {
-        end.time(0)
+      startMarker = calendar.dateEnv.startOfDay(startMarker)
+
+      if (endMarker) {
+        endMarker = calendar.dateEnv.startOfDay(endMarker)
       }
     }
 
-    if (!end && forceEventDuration) {
-      end = calendar.getDefaultEventEnd(!start.hasTime(), start)
+    if (!endMarker && forceEventDuration) {
+      endMarker = calendar.getDefaultEventEnd(
+        startMeta.isTimeUnspecified,
+        startMarker
+      )
     }
 
-    return new EventDateProfile(start, end, calendar)
+    return new EventDateProfile(
+      startMarker,
+      endMarker,
+      startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified),
+      calendar,
+      startMeta.forcedTimeZoneOffset,
+      endMeta ? endMeta.forcedTimeZoneOffset : null
+    )
   }
 
 
   static isStandardProp(propName) {
     return propName === 'start' || propName === 'date' || propName === 'end' || propName === 'allDay'
-  }
-
-
-  isAllDay() { // why recompute this every time?
-    return !(this.start.hasTime() || (this.end && this.end.hasTime()))
-  }
-
-
-  /*
-  Needs a Calendar object
-  */
-  buildUnzonedRange(calendar) {
-    let startMs = this.start.clone().stripZone().valueOf()
-    let endMs = this.getEnd(calendar).stripZone().valueOf()
-
-    return new UnzonedRange(startMs, endMs)
-  }
-
-
-  /*
-  Needs a Calendar object
-  */
-  getEnd(calendar) {
-    return this.end ?
-      this.end.clone() :
-      // derive the end from the start and allDay. compute allDay if necessary
-      calendar.getDefaultEventEnd(
-        this.isAllDay(),
-        this.start
-      )
   }
 
 }

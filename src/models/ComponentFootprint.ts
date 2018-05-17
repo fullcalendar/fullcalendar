@@ -19,8 +19,8 @@ export default class ComponentFootprint {
   */
   toLegacy(calendar) {
     return {
-      start: calendar.msToMoment(this.unzonedRange.startMs, this.isAllDay),
-      end: calendar.msToMoment(this.unzonedRange.endMs, this.isAllDay)
+      start: calendar.dateEnv.toDate(this.unzonedRange.start),
+      end: calendar.dateEnv.toDate(this.unzonedRange.end)
     }
   }
 

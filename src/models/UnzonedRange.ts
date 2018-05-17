@@ -1,32 +1,23 @@
-import * as moment from 'moment'
-import momentExt from '../moment-ext'
+import { DateMarker } from '../datelib/util'
 
 export default class UnzonedRange {
 
-  startMs: number // if null, no start constraint
-  endMs: number // if null, no end constraint
+  start: DateMarker // if null, no start constraint
+  end: DateMarker // if null, no end constraint
 
   // TODO: move these into footprint.
-  // Especially, doesn't make sense for null startMs/endMs.
+  // Especially, doesn't make sense for null start/end
   isStart: boolean = true
   isEnd: boolean = true
 
-  constructor(startInput?, endInput?) {
+  constructor(start?: DateMarker, end?: DateMarker) {
 
-    if (moment.isMoment(startInput)) {
-      startInput = (startInput.clone() as any).stripZone()
+    if (start) {
+      this.start = start
     }
 
-    if (moment.isMoment(endInput)) {
-      endInput = (endInput.clone() as any).stripZone()
-    }
-
-    if (startInput) {
-      this.startMs = startInput.valueOf()
-    }
-
-    if (endInput) {
-      this.endMs = endInput.valueOf()
+    if (end) {
+      this.end = end
     }
   }
 
@@ -36,9 +27,9 @@ export default class UnzonedRange {
   Will return a new array result.
   Only works for non-open-ended ranges.
   */
-  static invertRanges(ranges, constraintRange) {
+  static invertRanges(ranges: UnzonedRange[], constraintRange: UnzonedRange) {
     let invertedRanges = []
-    let startMs = constraintRange.startMs // the end of the previous range. the start of the new range
+    let start = constraintRange.start // the end of the previous range. the start of the new range
     let i
     let dateRange
 
@@ -49,21 +40,21 @@ export default class UnzonedRange {
       dateRange = ranges[i]
 
       // add the span of time before the event (if there is any)
-      if (dateRange.startMs > startMs) { // compare millisecond time (skip any ambig logic)
+      if (dateRange.start > start) { // compare millisecond time (skip any ambig logic)
         invertedRanges.push(
-          new UnzonedRange(startMs, dateRange.startMs)
+          new UnzonedRange(start, dateRange.start)
         )
       }
 
-      if (dateRange.endMs > startMs) {
-        startMs = dateRange.endMs
+      if (dateRange.end > start) {
+        start = dateRange.end
       }
     }
 
     // add the span of time after the last event (if there is any)
-    if (startMs < constraintRange.endMs) { // compare millisecond time (skip any ambig logic)
+    if (start < constraintRange.end) { // compare millisecond time (skip any ambig logic)
       invertedRanges.push(
-        new UnzonedRange(startMs, constraintRange.endMs)
+        new UnzonedRange(start, constraintRange.end)
       )
     }
 
@@ -71,119 +62,85 @@ export default class UnzonedRange {
   }
 
 
-  intersect(otherRange) {
-    let startMs = this.startMs
-    let endMs = this.endMs
+  intersect(otherRange: UnzonedRange) {
+    let start = this.start
+    let end = this.end
     let newRange = null
 
-    if (otherRange.startMs != null) {
-      if (startMs == null) {
-        startMs = otherRange.startMs
+    if (otherRange.start != null) {
+      if (start === null) {
+        start = otherRange.start
       } else {
-        startMs = Math.max(startMs, otherRange.startMs)
+        start = new Date(Math.max(start.valueOf(), otherRange.start.valueOf()))
       }
     }
 
-    if (otherRange.endMs != null) {
-      if (endMs == null) {
-        endMs = otherRange.endMs
+    if (otherRange.end != null) {
+      if (end == null) {
+        end = otherRange.end
       } else {
-        endMs = Math.min(endMs, otherRange.endMs)
+        end = new Date(Math.min(end.valueOf(), otherRange.end.valueOf()))
       }
     }
 
-    if (startMs == null || endMs == null || startMs < endMs) {
-      newRange = new UnzonedRange(startMs, endMs)
-      newRange.isStart = this.isStart && startMs === this.startMs
-      newRange.isEnd = this.isEnd && endMs === this.endMs
+    if (start == null || end == null || start < end) {
+      newRange = new UnzonedRange(start, end)
+      newRange.isStart = this.isStart && start.valueOf() === this.start.valueOf()
+      newRange.isEnd = this.isEnd && end.valueOf() === this.end.valueOf()
     }
 
     return newRange
   }
 
 
-  intersectsWith(otherRange) {
-    return (this.endMs == null || otherRange.startMs == null || this.endMs > otherRange.startMs) &&
-      (this.startMs == null || otherRange.endMs == null || this.startMs < otherRange.endMs)
+  intersectsWith(otherRange: UnzonedRange) {
+    return (this.end == null || otherRange.start == null || this.end > otherRange.start) &&
+      (this.start == null || otherRange.end == null || this.start < otherRange.end)
   }
 
 
-  containsRange(innerRange) {
-    return (this.startMs == null || (innerRange.startMs != null && innerRange.startMs >= this.startMs)) &&
-      (this.endMs == null || (innerRange.endMs != null && innerRange.endMs <= this.endMs))
+  containsRange(innerRange: UnzonedRange) {
+    return (this.start == null || (innerRange.start != null && innerRange.start >= this.start)) &&
+      (this.end == null || (innerRange.end != null && innerRange.end <= this.end))
   }
 
 
-  // `date` can be a moment, a Date, or a millisecond time.
-  containsDate(date) {
-    let ms = date.valueOf()
-
-    return (this.startMs == null || ms >= this.startMs) &&
-      (this.endMs == null || ms < this.endMs)
+  // `date` can be a Date, or a millisecond time.
+  containsDate(date: Date) {
+    return (this.start == null || date >= this.start) &&
+      (this.end == null || date < this.end)
   }
 
 
   // If the given date is not within the given range, move it inside.
   // (If it's past the end, make it one millisecond before the end).
-  // `date` can be a moment, a Date, or a millisecond time.
-  // Returns a MS-time.
-  constrainDate(date) {
-    let ms = date.valueOf()
+  constrainDate(date: Date): Date {
 
-    if (this.startMs != null && ms < this.startMs) {
-      ms = this.startMs
+    if (this.start != null && date < this.start) {
+      return this.start
     }
 
-    if (this.endMs != null && ms >= this.endMs) {
-      ms = this.endMs - 1
+    if (this.end != null && date >= this.end) {
+      return new Date(this.end.valueOf() - 1)
     }
 
-    return ms
+    return date
   }
 
 
   equals(otherRange) {
-    return this.startMs === otherRange.startMs && this.endMs === otherRange.endMs
+    return (this.start == null ? null : this.start.valueOf()) === (otherRange.start == null ? null : otherRange.start.valueOf()) &&
+      (this.end == null ? null : this.end.valueOf()) === (otherRange.end == null ? null : otherRange.end.valueOf())
   }
 
 
   clone() {
-    let range = new UnzonedRange(this.startMs, this.endMs)
+    let range = new UnzonedRange(this.start, this.end)
 
     range.isStart = this.isStart
     range.isEnd = this.isEnd
 
     return range
-  }
-
-
-  // Returns an ambig-zoned moment from startMs.
-  // BEWARE: returned moment is not localized.
-  // Formatting and start-of-week will be default.
-  getStart() {
-    if (this.startMs != null) {
-      return momentExt.utc(this.startMs).stripZone()
-    }
-    return null
-  }
-
-  // Returns an ambig-zoned moment from startMs.
-  // BEWARE: returned moment is not localized.
-  // Formatting and start-of-week will be default.
-  getEnd() {
-    if (this.endMs != null) {
-      return momentExt.utc(this.endMs).stripZone()
-    }
-    return null
-  }
-
-
-  as(unit) {
-    return moment.utc(this.endMs).diff(
-      moment.utc(this.startMs),
-      unit,
-      true
-    )
   }
 
 }
@@ -192,6 +149,6 @@ export default class UnzonedRange {
 /*
 Only works for non-open-ended ranges.
 */
-function compareUnzonedRanges(range1, range2) {
-  return range1.startMs - range2.startMs // earlier ranges go first
+function compareUnzonedRanges(range1: UnzonedRange, range2: UnzonedRange) {
+  return range1.start.valueOf() - range2.start.valueOf() // earlier ranges go first
 }

@@ -19,7 +19,7 @@ export default class EventDefMutation {
   miscProps: any
 
 
-  static createFromRawProps(eventInstance, rawProps, largeUnit) {
+  static createFromRawProps(eventInstance, rawProps, largeUnit, calendar) {
     let eventDef = eventInstance.def
     let dateProps: any = {}
     let standardProps: any = {}
@@ -48,7 +48,8 @@ export default class EventDefMutation {
       dateMutation = EventDefDateMutation.createFromDiff(
         eventInstance.dateProfile,
         dateProfile,
-        largeUnit
+        largeUnit,
+        calendar
       )
     }
 

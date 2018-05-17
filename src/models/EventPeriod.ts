@@ -1,10 +1,10 @@
-import * as moment from 'moment'
 import { removeExact, removeMatching } from '../util/array'
 import { isEmptyObject } from '../util/object'
 import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixin'
 import UnzonedRange from './UnzonedRange'
 import EventInstanceGroup from './event/EventInstanceGroup'
-
+import { DateEnv } from '../datelib/env'
+import { DateMarker } from '../datelib/util'
 
 export default class EventPeriod {
 
@@ -15,9 +15,9 @@ export default class EventPeriod {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  start: moment.Moment
-  end: moment.Moment
-  timezone: any
+  start: DateMarker
+  end: DateMarker
+  dateEnv: DateEnv
 
   unzonedRange: UnzonedRange
 
@@ -33,15 +33,12 @@ export default class EventPeriod {
   eventInstanceGroupsById: any
 
 
-  constructor(start, end, timezone) {
+  constructor(start: DateMarker, end: DateMarker, dateEnv: DateEnv) {
     this.start = start
     this.end = end
-    this.timezone = timezone
+    this.dateEnv = dateEnv
 
-    this.unzonedRange = new UnzonedRange(
-      start.clone().stripZone(),
-      end.clone().stripZone()
-    )
+    this.unzonedRange = new UnzonedRange(start, end)
 
     this.requestsByUid = {}
     this.eventDefsByUid = {}
@@ -77,7 +74,7 @@ export default class EventPeriod {
     this.requestsByUid[source.uid] = request
     this.pendingCnt += 1
 
-    source.fetch(this.start, this.end, this.timezone, (eventDefs) => {
+    source.fetch(this.start, this.end, this.dateEnv, (eventDefs) => {
       if (request.status !== 'cancelled') {
         request.status = 'completed'
         request.eventDefs = eventDefs

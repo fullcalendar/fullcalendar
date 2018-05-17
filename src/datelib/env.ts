@@ -1,4 +1,4 @@
-import { DateMarker, arrayToUtcDate, dateToUtcArray, arrayToLocalDate, dateToLocalArray  } from './util'
+import { DateMarker, arrayToUtcDate, dateToUtcArray, arrayToLocalDate, dateToLocalArray, startOfHour, startOfMinute, startOfSecond, addMs  } from './util'
 import { CalendarSystem, createCalendarSystem } from './calendar-system'
 import { namedTimeZoneOffsetGenerator, getNamedTimeZoneOffsetGenerator } from './timezone'
 import { getLocale } from './locale'
@@ -11,10 +11,14 @@ export interface DateEnvSettings {
   timeZone: string
   timeZoneImpl?: string
   calendarSystem: string
-  locale: string
+  locale: string // TODO: accept a list
   weekNumberCalculation?: any
   firstDay?: any
 }
+
+
+
+export type DateInput = Date | number[] | number | string
 
 
 const MS_IN_DAY = 864e5
@@ -31,6 +35,7 @@ export class DateEnv {
   locale: string
   weekMeta: any
   weekNumberFunc: any
+  simpleNumberFormat: Intl.NumberFormat
 
   constructor(settings: DateEnvSettings) {
     this.timeZone = settings.timeZone
@@ -38,6 +43,8 @@ export class DateEnv {
     this.calendarSystem = createCalendarSystem(settings.calendarSystem)
     this.locale = settings.locale
     this.weekMeta = assignTo({}, getLocale(settings.locale).week)
+
+    this.simpleNumberFormat = new Intl.NumberFormat(settings.locale)
 
     if (settings.weekNumberCalculation === 'ISO') {
       this.weekMeta.dow = 1
@@ -63,6 +70,56 @@ export class DateEnv {
       marker.getUTCSeconds(),
       marker.getUTCMilliseconds() + dur.time
     ])
+  }
+
+  getMonth(marker: DateMarker): number {
+   return this.calendarSystem.getMarkerMonth(marker)
+  }
+
+  subtract(marker: DateMarker, dur: Duration): DateMarker {
+    let { calendarSystem } = this
+
+    return calendarSystem.arrayToMarker([
+      calendarSystem.getMarkerYear(marker) - dur.year,
+      calendarSystem.getMarkerMonth(marker) - dur.month,
+      calendarSystem.getMarkerDay(marker) - dur.day,
+      marker.getUTCHours(),
+      marker.getUTCMinutes(),
+      marker.getUTCSeconds(),
+      marker.getUTCMilliseconds() - dur.time
+    ])
+  }
+
+  addYears(marker: DateMarker, n: number): DateMarker {
+    let { calendarSystem } = this
+
+    return calendarSystem.arrayToMarker([
+      calendarSystem.getMarkerYear(marker) + n,
+      calendarSystem.getMarkerMonth(marker),
+      calendarSystem.getMarkerDay(marker),
+      marker.getUTCHours(),
+      marker.getUTCMinutes(),
+      marker.getUTCSeconds(),
+      marker.getUTCMilliseconds()
+    ])
+  }
+
+  startOf(marker: DateMarker, unit: string) {
+    if (unit === 'year') {
+      return this.startOfYear(marker)
+    } else if (unit === 'month') {
+      return this.startOfMonth(marker)
+    } else if (unit === 'week') {
+      return this.startOfWeek(marker)
+    } else if (unit === 'day') {
+      return this.startOfDay(marker)
+    } else if (unit === 'hour') {
+      return startOfHour(marker)
+    } else if (unit === 'minute') {
+      return startOfMinute(marker)
+    } else if (unit === 'second') {
+      return startOfSecond(marker)
+    }
   }
 
   startOfYear(marker: DateMarker): DateMarker {
@@ -97,6 +154,19 @@ export class DateEnv {
       let { dow, doy } = this.weekMeta
       return weekOfYear(marker, dow, doy)
     }
+  }
+
+  // TODO: make i18n friendly
+  // use weekNumberTitle?
+  formatWeek(marker: DateMarker, includeLabel: boolean = false): string {
+    let w = this.computeWeekNumber(marker)
+    let s = this.simpleNumberFormat.format(w)
+
+    if (includeLabel) {
+      s = 'Wk ' + s
+    }
+
+    return s
   }
 
   toDate(marker: DateMarker): Date {
@@ -135,21 +205,27 @@ export class DateEnv {
     }
   }
 
-  toRangeFormat(start: DateMarker, end: DateMarker, formatter: DateFormatter, extraOptions: any = {}) {
+  toRangeFormat(start: DateMarker, end: DateMarker, formatter: DateFormatter, dateOptions: any = {}) {
+
+    // yuck
+    if (dateOptions.isExclusive) {
+      end = addMs(end, -1)
+    }
+
     return formatter.format(
       {
         marker: start,
-        timeZoneOffset: extraOptions.forcedStartTimeZoneOffset != null ?
-          extraOptions.forcedStartTimeZoneOffset :
+        timeZoneOffset: dateOptions.forcedStartTimeZoneOffset != null ?
+          dateOptions.forcedStartTimeZoneOffset :
           this.computeTimeZoneOffset(start)
       },
       {
         marker: end,
-        timeZoneOffset: extraOptions.forcedEndTimeZoneOffset != null ?
-          extraOptions.forcedEndTimeZoneOffset :
+        timeZoneOffset: dateOptions.forcedEndTimeZoneOffset != null ?
+          dateOptions.forcedEndTimeZoneOffset :
           this.computeTimeZoneOffset(end)
       },
-      this
+      this // yuck
     )
   }
 
@@ -171,24 +247,25 @@ export class DateEnv {
       marker,
       extraOptions.forcedTimeZoneOffset != null ?
         extraOptions.forcedTimeZoneOffset :
-        this.computeTimeZoneOffset(marker)
+        this.computeTimeZoneOffset(marker),
+      extraOptions.omitTime
     )
   }
 
-  createMarker(input) {
+  createMarker(input: DateInput) {
     return this.createMarkerMeta(input).marker
   }
 
   // returns an object that wraps the marker!
-  createMarkerMeta(input) {
+  createMarkerMeta(input: DateInput) {
     if (typeof input === 'string') {
       return this.parse(input)
     } else if (typeof input === 'number') {
-      return { marker: this.timestampToMarker(input), hasTime: false, forcedTimeZoneOffset: null }
+      return { marker: this.timestampToMarker(input), isTimeUnspecified: false, forcedTimeZoneOffset: null }
     } else if (isNativeDate(input)) {
-      return { marker: this.dateToMarker(input), hasTime: false, forcedTimeZoneOffset: null }
+      return { marker: this.dateToMarker(input as Date), isTimeUnspecified: false, forcedTimeZoneOffset: null }
     } else if (Array.isArray(input)) {
-      return { marker: arrayToUtcDate(input), hasTime: false, forcedTimeZoneOffset: null }
+      return { marker: arrayToUtcDate(input), isTimeUnspecified: false, forcedTimeZoneOffset: null }
     }
     return null
   }
@@ -206,7 +283,7 @@ export class DateEnv {
       }
     }
 
-    return { marker, hasTime: parts.hasTime, forcedTimeZoneOffset } // TODO: timeNotSpecified
+    return { marker, isTimeUnspecified: parts.isTimeUnspecified, forcedTimeZoneOffset }
   }
 
   dateToMarker(date: Date) {
@@ -221,6 +298,63 @@ export class DateEnv {
     } else {
       throw 'need tz system!!!'
     }
+  }
+
+  computeGreatestDenominator(m0: DateMarker, m1: DateMarker) {
+    let n = this.diffWholeYears(m0, m1)
+
+    if (n !== null) {
+      return { unit: 'year', value: n }
+    }
+
+    n = this.diffWholeMonths(m0, m1)
+
+    if (n !== null) {
+      return { unit: 'month', value: n }
+    }
+
+    n = this.diffWholeWeeks(m0, m1)
+
+    if (n !== null) {
+      return { unit: 'week', value: n / 7 }
+    }
+
+    n = this.diffWholeDays(m0, m1)
+
+    if (n !== null) {
+      return { unit: 'day', value: n }
+    }
+
+    n = diffHours(m0, m1)
+
+    if (n !== null) {
+      return { unit: 'hour', value: n }
+    }
+
+    n = diffMinutes(m0, m1)
+
+    if (n !== null) {
+      return  { unit: 'minute', value: n }
+    }
+
+    n = diffSeconds(m0, m1)
+
+    if (n !== null) {
+      return { unit: 'second', value: n }
+    }
+
+    return { unit: 'millisecond', value: m1.valueOf() - m0.valueOf() }
+  }
+
+  divideRangeByWholeDuration(m0: DateMarker, m1: DateMarker, d: Duration) {
+    let cnt = 0
+
+    while (m0 < m1) { // not optimal
+      m0 = this.add(m0, d)
+      cnt++
+    }
+
+    return cnt
   }
 
   diffWholeYears(m0: DateMarker, m1: DateMarker): number {
@@ -249,17 +383,17 @@ export class DateEnv {
       m0.getUTCHours() === m1.getUTCHours() &&
       calendarSystem.getMarkerDay(m0) === calendarSystem.getMarkerDay(m1)
     ) {
-      return calendarSystem.getMarkerMonth(m1) - calendarSystem.getMarkerMonth(m0) +
-       (calendarSystem.getMarkerYear(m1) - calendarSystem.getMarkerYear(m0)) * 12
+      return (calendarSystem.getMarkerMonth(m1) - calendarSystem.getMarkerMonth(m0)) +
+          (calendarSystem.getMarkerYear(m1) - calendarSystem.getMarkerYear(m0)) * 12
     }
     return null
   }
 
   diffWholeWeeks(m0: DateMarker, m1: DateMarker): number {
-    let days = this.diffWholeDays(m0, m1)
+    let d = this.diffWholeDays(m0, m1)
 
-    if (days !== null && days % 7 === 0) {
-      return days / 7
+    if (d !== null && d % 7 === 0) {
+      return d / 7
     }
 
     return null
@@ -272,7 +406,7 @@ export class DateEnv {
       m0.getUTCMinutes() === m1.getUTCMinutes() &&
       m0.getUTCHours() === m1.getUTCHours()
     ) {
-      return diffDays(m0, m1)
+      return Math.round(diffDays(m0, m1))
     }
     return null
   }
@@ -316,8 +450,9 @@ function weekOfYear(marker, dow, doy) {
 function weekOfGivenYear(marker, year, dow, doy) {
   let firstWeekStart = arrayToUtcDate([ year, 0, 1 + firstWeekOffset(year, dow, doy) ])
   let dayStart = startOfDay(marker)
+  let days = Math.round(diffDays(firstWeekStart, dayStart))
 
-  return Math.floor(diffDays(firstWeekStart, dayStart) / 7) + 1 // zero-indexed
+  return Math.floor(days / 7) + 1 // zero-indexed
 }
 
 
@@ -330,8 +465,12 @@ function startOfDay(marker: DateMarker): DateMarker {
 }
 
 
-function diffDays(m0, m1) { // will round
-  return Math.round((m1.valueOf() - m0.valueOf()) / MS_IN_DAY)
+export function diffDays(m0, m1) { // will give float
+  return (m1.valueOf() - m0.valueOf()) / MS_IN_DAY
+}
+
+export function diffWeeks(m0, m1) { // will give float
+  return Math.round(diffDays(m0, m1)) / 7
 }
 
 
@@ -347,4 +486,42 @@ function firstWeekOffset(year, dow, doy) {
 
 function isNativeDate(input) {
   return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date
+}
+
+
+
+const MS_IN_HOUR = 1000 * 60 * 60
+const MS_IN_MINUTE = 1000 * 60
+
+
+function diffHours(m0, m1) {
+  let ms = m1.valueOf() - m0.valueOf()
+
+  if (ms % MS_IN_HOUR === 0) {
+    return ms / MS_IN_HOUR
+  }
+
+  return null
+}
+
+
+function diffMinutes(m0, m1) {
+  let ms = m1.valueOf() - m0.valueOf()
+
+  if (ms % MS_IN_MINUTE === 0) {
+    return ms / MS_IN_MINUTE
+  }
+
+  return null
+}
+
+
+function diffSeconds(m0, m1) {
+  let ms = m1.valueOf() - m0.valueOf()
+
+  if (ms % 1000 === 0) {
+    return ms / 1000
+  }
+
+  return null
 }

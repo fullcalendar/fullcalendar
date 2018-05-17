@@ -1,9 +1,8 @@
-import * as moment from 'moment'
 import { createElement, removeElement, applyStyle, prependToElement, forceClassName } from './util/dom-manip'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
-import { globalDefaults, englishDefaults, rtlDefaults } from './options'
+import { globalDefaults, rtlDefaults } from './options'
 import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
@@ -14,8 +13,6 @@ import ViewSpecManager from './ViewSpecManager'
 import View from './View'
 import Theme from './theme/Theme'
 import Constraints from './Constraints'
-import { getMomentLocaleData } from './locale'
-import momentExt from './moment-ext'
 import UnzonedRange from './models/UnzonedRange'
 import ComponentFootprint from './models/ComponentFootprint'
 import EventDateProfile from './models/event/EventDateProfile'
@@ -27,14 +24,15 @@ import SingleEventDef from './models/event/SingleEventDef'
 import EventDefMutation from './models/event/EventDefMutation'
 import EventSource from './models/event-source/EventSource'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
-import { RangeInput, MomentInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
-
+import { RangeInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
+import { DateEnv, DateInput } from './datelib/env'
+import { DateMarker } from './datelib/util'
+import { Duration, createDuration } from './datelib/duration'
 
 export default class Calendar {
 
   // not for internal use. use options module directly instead.
   static defaults: any = globalDefaults
-  static englishDefaults: any = englishDefaults
   static rtlDefaults: any = rtlDefaults
 
   // global handler registry
@@ -53,7 +51,7 @@ export default class Calendar {
 
   view: View // current View object
   viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
-  currentDate: moment.Moment // unzoned moment. private (public API should use getDate instead)
+  currentDate: DateMarker // private (public API should use getDate instead)
   theme: Theme
   eventManager: EventManager
   constraints: Constraints
@@ -62,9 +60,9 @@ export default class Calendar {
   businessHourGenerator: BusinessHourGenerator
   loadingLevel: number = 0 // number of simultaneous loading tasks
 
-  defaultAllDayEventDuration: moment.Duration
-  defaultTimedEventDuration: moment.Duration
-  localeData: object
+  defaultAllDayEventDuration: Duration
+  defaultTimedEventDuration: Duration
+  dateEnv: DateEnv
 
   el: HTMLElement
   contentEl: HTMLElement
@@ -90,7 +88,7 @@ export default class Calendar {
 
     this.optionsManager = new OptionsManager(this, overrides)
     this.viewSpecManager = new ViewSpecManager(this.optionsManager, this)
-    this.initMomentInternals() // needs to happen after options hash initialized
+    this.initDateEnv() // needs to happen after options hash initialized
     this.initCurrentDate()
     this.initEventManager()
     this.constraints = new Constraints(this.eventManager, this)
@@ -193,7 +191,7 @@ export default class Calendar {
   }
 
 
-  changeView(viewName: string, dateOrRange: RangeInput | MomentInput) {
+  changeView(viewName: string, dateOrRange: RangeInput | DateInput) {
 
     if (dateOrRange) {
       if ((dateOrRange as RangeInput).start && (dateOrRange as RangeInput).end) { // a range
@@ -201,7 +199,7 @@ export default class Calendar {
           visibleRange: dateOrRange
         })
       } else { // a date
-        this.currentDate = this.moment(dateOrRange).stripZone() // just like gotoDate
+        this.currentDate = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate
       }
     }
 
@@ -211,14 +209,15 @@ export default class Calendar {
 
   // Forces navigation to a view for the given date.
   // `viewType` can be a specific view name or a generic one like "week" or "day".
-  zoomTo(newDate: moment.Moment, viewType?: string) {
+  // needs to change
+  zoomTo(newDate: DateMarker, viewType?: string) {
     let spec
 
     viewType = viewType || 'day' // day is default zoom
     spec = this.viewSpecManager.getViewSpec(viewType) ||
       this.viewSpecManager.getUnitViewSpec(viewType)
 
-    this.currentDate = newDate.clone()
+    this.currentDate = newDate
     this.renderView(spec ? spec.type : null)
   }
 
@@ -232,7 +231,7 @@ export default class Calendar {
 
     // compute the initial ambig-timezone date
     if (defaultDateInput != null) {
-      this.currentDate = this.moment(defaultDateInput).stripZone()
+      this.currentDate = this.dateEnv.createMarker(defaultDateInput)
     } else {
       this.currentDate = this.getNow() // getNow already returns unzoned
     }
@@ -262,13 +261,13 @@ export default class Calendar {
 
 
   prevYear() {
-    this.currentDate.add(-1, 'years')
+    this.currentDate = this.dateEnv.addYears(this.currentDate, -1)
     this.renderView()
   }
 
 
   nextYear() {
-    this.currentDate.add(1, 'years')
+    this.currentDate = this.dateEnv.addYears(this.currentDate, 1)
     this.renderView()
   }
 
@@ -280,20 +279,20 @@ export default class Calendar {
 
 
   gotoDate(zonedDateInput) {
-    this.currentDate = this.moment(zonedDateInput).stripZone()
+    this.currentDate = this.dateEnv.createMarker(zonedDateInput)
     this.renderView()
   }
 
 
-  incrementDate(delta) {
-    this.currentDate.add(moment.duration(delta))
+  incrementDate(delta) { // is public facing
+    this.currentDate = this.dateEnv.add(this.currentDate, createDuration(delta))
     this.renderView()
   }
 
 
   // for external API
-  getDate(): moment.Moment {
-    return this.applyTimezone(this.currentDate) // infuse the calendar's timezone
+  getDate(): Date {
+    return this.dateEnv.toDate(this.currentDate)
   }
 
 
@@ -341,7 +340,7 @@ export default class Calendar {
       let gotoOptions: any = anchorEl.getAttribute('data-goto')
       gotoOptions = gotoOptions ? JSON.parse(gotoOptions) : {}
 
-      let date = this.moment(gotoOptions.date)
+      let date = this.dateEnv.createMarker(gotoOptions.date)
       let viewType = gotoOptions.type
 
       // property like "navLinkDayClick". might be a string or a function
@@ -802,7 +801,7 @@ export default class Calendar {
 
 
   // this public method receives start/end dates in any format, with any timezone
-  select(zonedStartInput: MomentInput, zonedEndInput?: MomentInput) {
+  select(zonedStartInput: DateInput, zonedEndInput?: DateInput) {
     this.view.select(
       this.buildSelectFootprint.apply(this, arguments)
     )
@@ -817,21 +816,22 @@ export default class Calendar {
 
 
   // Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-  buildSelectFootprint(zonedStartInput: MomentInput, zonedEndInput?: MomentInput): ComponentFootprint {
-    let start = this.moment(zonedStartInput).stripZone()
+  buildSelectFootprint(zonedStartInput: DateInput, zonedEndInput?: DateInput): ComponentFootprint {
+    let startMeta = this.dateEnv.createMarkerMeta(zonedStartInput)
+    let start = startMeta.marker
     let end
 
     if (zonedEndInput) {
-      end = this.moment(zonedEndInput).stripZone()
-    } else if (start.hasTime()) {
-      end = start.clone().add(this.defaultTimedEventDuration)
+      end = this.dateEnv.createMarker(zonedEndInput)
+    } else if (startMeta.isTimeUnspecified) {
+      end = this.dateEnv.add(start, this.defaultAllDayEventDuration)
     } else {
-      end = start.clone().add(this.defaultAllDayEventDuration)
+      end = this.dateEnv.add(start, this.defaultTimedEventDuration)
     }
 
     return new ComponentFootprint(
       new UnzonedRange(start, end),
-      !start.hasTime()
+      startMeta.isTimeUnspecified
     )
   }
 
@@ -865,155 +865,24 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  initMomentInternals() {
+  initDateEnv() {
 
-    this.defaultAllDayEventDuration = moment.duration(this.opt('defaultAllDayEventDuration'))
-    this.defaultTimedEventDuration = moment.duration(this.opt('defaultTimedEventDuration'))
+    // not really date-env
+    this.defaultAllDayEventDuration = createDuration(this.opt('defaultAllDayEventDuration'))
+    this.defaultTimedEventDuration = createDuration(this.opt('defaultTimedEventDuration'))
 
-    // Called immediately, and when any of the options change.
-    // Happens before any internal objects rebuild or rerender, because this is very core.
-    this.optionsManager.watch('buildingMomentLocale', [
-      '?locale', '?monthNames', '?monthNamesShort', '?dayNames', '?dayNamesShort',
+    this.optionsManager.watch('buildDateEnv', [
+      '?locale', '?timezone',
       '?firstDay', '?weekNumberCalculation'
     ], (opts) => {
-      let weekNumberCalculation = opts.weekNumberCalculation
-      let firstDay = opts.firstDay
-      let _week
-
-      // normalize
-      if (weekNumberCalculation === 'iso') {
-        weekNumberCalculation = 'ISO' // normalize
-      }
-
-      let localeData = Object.create( // make a cheap copy
-        getMomentLocaleData(opts.locale) // will fall back to en
-      )
-
-      if (opts.monthNames) {
-        localeData._months = opts.monthNames
-      }
-      if (opts.monthNamesShort) {
-        localeData._monthsShort = opts.monthNamesShort
-      }
-      if (opts.dayNames) {
-        localeData._weekdays = opts.dayNames
-      }
-      if (opts.dayNamesShort) {
-        localeData._weekdaysShort = opts.dayNamesShort
-      }
-
-      if (firstDay == null && weekNumberCalculation === 'ISO') {
-        firstDay = 1
-      }
-      if (firstDay != null) {
-        _week = Object.create(localeData._week) // _week: { dow: # }
-        _week.dow = firstDay
-        localeData._week = _week
-      }
-
-      if ( // whitelist certain kinds of input
-        weekNumberCalculation === 'ISO' ||
-        weekNumberCalculation === 'local' ||
-        typeof weekNumberCalculation === 'function'
-      ) {
-        localeData._fullCalendar_weekCalc = weekNumberCalculation // moment-ext will know what to do with it
-      }
-
-      this.localeData = localeData
-
-      // If the internal current date object already exists, move to new locale.
-      // We do NOT need to do this technique for event dates, because this happens when converting to "segments".
-      if (this.currentDate) {
-        this.localizeMoment(this.currentDate) // sets to localeData
-      }
+      this.dateEnv = new DateEnv({
+        calendarSystem: 'gregorian',
+        timeZone: opts.timezone,
+        locale: opts.locale,
+        weekNumberCalculation: opts.weekNumberCalculation,
+        firstDay: opts.firstDay
+      })
     })
-  }
-
-
-  // Builds a moment using the settings of the current calendar: timezone and locale.
-  // Accepts anything the vanilla moment() constructor accepts.
-  moment(...args): moment.Moment {
-    let mom
-
-    if (this.opt('timezone') === 'local') {
-      mom = momentExt.apply(null, args)
-
-      // Force the moment to be local, because momentExt doesn't guarantee it.
-      if (mom.hasTime()) { // don't give ambiguously-timed moments a local zone
-        mom.local()
-      }
-    } else if (this.opt('timezone') === 'UTC') {
-      mom = momentExt.utc.apply(null, args) // process as UTC
-    } else {
-      mom = momentExt.parseZone.apply(null, args) // let the input decide the zone
-    }
-
-    this.localizeMoment(mom) // TODO
-
-    return mom
-  }
-
-
-  msToMoment(ms: number, forceAllDay: boolean): moment.Moment {
-    let mom = momentExt.utc(ms) // TODO: optimize by using Date.UTC
-
-    if (forceAllDay) {
-      mom.stripTime()
-    } else {
-      mom = this.applyTimezone(mom) // may or may not apply locale
-    }
-
-    this.localizeMoment(mom)
-
-    return mom
-  }
-
-
-  msToUtcMoment(ms: number, forceAllDay: boolean): moment.Moment {
-    let mom = momentExt.utc(ms) // TODO: optimize by using Date.UTC
-
-    if (forceAllDay) {
-      mom.stripTime()
-    }
-
-    this.localizeMoment(mom)
-
-    return mom
-  }
-
-
-  // Updates the given moment's locale settings to the current calendar locale settings.
-  localizeMoment(mom) {
-    mom._locale = this.localeData
-  }
-
-
-  // Returns a boolean about whether or not the calendar knows how to calculate
-  // the timezone offset of arbitrary dates in the current timezone.
-  getIsAmbigTimezone(): boolean {
-    return this.opt('timezone') !== 'local' && this.opt('timezone') !== 'UTC'
-  }
-
-
-  // Returns a copy of the given date in the current timezone. Has no effect on dates without times.
-  applyTimezone(date: moment.Moment): moment.Moment {
-    if (!date.hasTime()) {
-      return date.clone()
-    }
-
-    let zonedDate = this.moment(date.toArray())
-    let timeAdjust = date.time().asMilliseconds() - zonedDate.time().asMilliseconds()
-    let adjustedZonedDate
-
-    // Safari sometimes has problems with this coersion when near DST. Adjust if necessary. (bug #2396)
-    if (timeAdjust) { // is the time result different than expected?
-      adjustedZonedDate = zonedDate.clone().add(timeAdjust) // add milliseconds
-      if (date.time().asMilliseconds() - adjustedZonedDate.time().asMilliseconds() === 0) { // does it match perfectly now?
-        zonedDate = adjustedZonedDate
-      }
-    }
-
-    return zonedDate
   }
 
 
@@ -1021,46 +890,33 @@ export default class Calendar {
   Assumes the footprint is non-open-ended.
   */
   footprintToDateProfile(componentFootprint, ignoreEnd = false) {
-    let start = momentExt.utc(componentFootprint.unzonedRange.startMs)
-    let end
+    const dateEnv = this.dateEnv
+    let startMarker = componentFootprint.unzonedRange.start
+    let endMarker
 
     if (!ignoreEnd) {
-      end = momentExt.utc(componentFootprint.unzonedRange.endMs)
+      endMarker = componentFootprint.unzonedRange.end
     }
 
     if (componentFootprint.isAllDay) {
-      start.stripTime()
+      startMarker = dateEnv.startOfDay(startMarker)
 
-      if (end) {
-        end.stripTime()
-      }
-    } else {
-      start = this.applyTimezone(start)
-
-      if (end) {
-        end = this.applyTimezone(end)
+      if (endMarker) {
+        endMarker = dateEnv.startOfDay(endMarker)
       }
     }
 
-    return new EventDateProfile(start, end, this)
+    return new EventDateProfile(startMarker, endMarker, componentFootprint.isAllDay, this)
   }
 
 
-  // Returns a moment for the current date, as defined by the client's computer or from the `now` option.
-  // Will return an moment with an ambiguous timezone.
-  getNow(): moment.Moment {
+  // Returns a DateMarker for the current date, as defined by the client's computer or from the `now` option
+  getNow(): DateMarker {
     let now = this.opt('now')
     if (typeof now === 'function') {
       now = now()
     }
-    return this.moment(now).stripZone()
-  }
-
-
-  // Produces a human-readable string for the given duration.
-  // Side-effect: changes the locale of the given duration.
-  humanizeDuration(duration: moment.Duration): string {
-    return duration.locale(this.opt('locale')).humanize()
+    return this.dateEnv.createMarker(now)
   }
 
 
@@ -1070,11 +926,11 @@ export default class Calendar {
     let end = null
 
     if (rangeInput.start) {
-      start = this.moment(rangeInput.start).stripZone()
+      start = this.dateEnv.createMarker(rangeInput.start)
     }
 
     if (rangeInput.end) {
-      end = this.moment(rangeInput.end).stripZone()
+      end = this.dateEnv.createMarker(rangeInput.end)
     }
 
     if (!start && !end) {
@@ -1122,40 +978,27 @@ export default class Calendar {
   }
 
 
-  requestEvents(start: moment.Moment, end: moment.Moment, callback) {
+  requestEvents(start: DateMarker, end: DateMarker, callback) {
     return this.eventManager.requestEvents(
       start,
       end,
-      this.opt('timezone'),
+      this.dateEnv,
       !this.opt('lazyFetching'),
       callback
     )
   }
 
 
-  // Get an event's normalized end date. If not present, calculate it from the defaults.
-  getEventEnd(event): moment.Moment {
-    if (event.end) {
-      return event.end.clone()
-    } else {
-      return this.getDefaultEventEnd(event.allDay, event.start)
-    }
-  }
-
-
   // Given an event's allDay status and start date, return what its fallback end date should be.
   // TODO: rename to computeDefaultEventEnd
-  getDefaultEventEnd(allDay: boolean, zonedStart: moment.Moment) {
-    let end = zonedStart.clone()
+  getDefaultEventEnd(allDay: boolean, marker: DateMarker): DateMarker {
+    let end = marker
 
     if (allDay) {
-      end.stripTime().add(this.defaultAllDayEventDuration)
+      end = this.dateEnv.startOfDay(end)
+      end = this.dateEnv.add(end, this.defaultAllDayEventDuration)
     } else {
-      end.add(this.defaultTimedEventDuration)
-    }
-
-    if (this.getIsAmbigTimezone()) {
-      end.stripZone() // we don't know what the tzo should be
+      end = this.dateEnv.add(end, this.defaultTimedEventDuration)
     }
 
     return end
@@ -1211,8 +1054,8 @@ export default class Calendar {
     if (legacyQuery == null) { // shortcut for removing all
       eventManager.removeAllEventDefs() // persist=true
     } else {
-      eventManager.getEventInstances().forEach(function(eventInstance) {
-        legacyInstances.push(eventInstance.toLegacy())
+      eventManager.getEventInstances().forEach((eventInstance) => {
+        legacyInstances.push(eventInstance.toLegacy(this))
       })
 
       legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery)
@@ -1238,8 +1081,8 @@ export default class Calendar {
   clientEvents(legacyQuery) {
     let legacyEventInstances = []
 
-    this.eventManager.getEventInstances().forEach(function(eventInstance) {
-      legacyEventInstances.push(eventInstance.toLegacy())
+    this.eventManager.getEventInstances().forEach((eventInstance) => {
+      legacyEventInstances.push(eventInstance.toLegacy(this))
     })
 
     return filterLegacyEventInstances(legacyEventInstances, legacyQuery)
@@ -1268,7 +1111,8 @@ export default class Calendar {
       eventDefMutation = EventDefMutation.createFromRawProps(
         eventInstance,
         eventProps, // raw props
-        null // largeUnit -- who uses it?
+        null, // largeUnit -- who uses it?
+        this
       )
 
       this.eventManager.mutateEventsWithId(eventDef.id, eventDefMutation) // will release

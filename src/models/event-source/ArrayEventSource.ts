@@ -1,13 +1,11 @@
 import { removeMatching } from '../../util/array'
 import EventSource from './EventSource'
-import SingleEventDef from '../event/SingleEventDef'
 
 
 export default class ArrayEventSource extends EventSource {
 
   rawEventDefs: any // unparsed
   eventDefs: any
-  currentTimezone: any
 
 
   constructor(calendar) {
@@ -40,24 +38,8 @@ export default class ArrayEventSource extends EventSource {
   }
 
 
-  fetch(start, end, timezone, onSuccess, onFailure) {
-    let eventDefs = this.eventDefs
-    let i
-
-    if (
-      this.currentTimezone != null &&
-      this.currentTimezone !== timezone
-    ) {
-      for (i = 0; i < eventDefs.length; i++) {
-        if (eventDefs[i] instanceof SingleEventDef) {
-          eventDefs[i].rezone()
-        }
-      }
-    }
-
-    this.currentTimezone = timezone
-
-    onSuccess(eventDefs)
+  fetch(start, end, dateEnv, onSuccess, onFailure) {
+    onSuccess(this.eventDefs)
   }
 
 

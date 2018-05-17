@@ -1,8 +1,5 @@
-import * as moment from 'moment'
 import { htmlEscape } from '../util/html'
-import { divideDurationByDuration } from '../util/date'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
-import { isInt } from '../util/misc'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
@@ -13,6 +10,9 @@ import ComponentFootprint from '../models/ComponentFootprint'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
+import { Duration, createDuration, addDurations, wholeDivideDurationByDuration, asRoughMs } from '../datelib/duration'
+import { startOfDay, DateMarker, addMs } from '../datelib/util'
+import { createFormatter, DateFormatter } from '../datelib/formatting'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -20,13 +20,15 @@ import TimeGridFillRenderer from './TimeGridFillRenderer'
 
 // potential nice values for the slot-duration and interval-duration
 // from largest to smallest
-let AGENDA_STOCK_SUB_DURATIONS = [
+const AGENDA_STOCK_SUB_DURATIONS = [
   { hours: 1 },
   { minutes: 30 },
   { minutes: 15 },
   { seconds: 30 },
   { seconds: 15 }
 ]
+
+const HMS_FORMAT = createFormatter({ hour: '2-digit', minute: '2-digit', second: '2-digit' })
 
 export default class TimeGrid extends InteractiveDateComponent {
 
@@ -43,11 +45,11 @@ export default class TimeGrid extends InteractiveDateComponent {
   helperRenderer: any
 
   dayRanges: any // UnzonedRange[], of start-end of each day
-  slotDuration: any // duration of a "slot", a distinct time segment on given day, visualized by lines
-  snapDuration: any // granularity of time for dragging and selecting
+  slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
+  snapDuration: Duration // granularity of time for dragging and selecting
   snapsPerSlot: any
-  labelFormat: any // formatting string for times running along vertical axis
-  labelInterval: any // duration of how often a label should be displayed for a slot
+  labelFormat: DateFormatter // formatting string for times running along vertical axis
+  labelInterval: Duration // duration of how often a label should be displayed for a slot
 
   headContainerEl: HTMLElement // div that hold's the date header
   colEls: HTMLElement[] // cells elements in the day-row background
@@ -114,8 +116,8 @@ export default class TimeGrid extends InteractiveDateComponent {
 
       if (segRange) {
         segs.push({
-          startMs: segRange.startMs,
-          endMs: segRange.endMs,
+          start: segRange.start,
+          end: segRange.end,
           isStart: segRange.isStart,
           isEnd: segRange.isEnd,
           dayIndex: dayIndex
@@ -137,8 +139,8 @@ export default class TimeGrid extends InteractiveDateComponent {
     let snapDuration = this.opt('snapDuration')
     let input
 
-    slotDuration = moment.duration(slotDuration)
-    snapDuration = snapDuration ? moment.duration(snapDuration) : slotDuration
+    slotDuration = createDuration(slotDuration)
+    snapDuration = snapDuration ? createDuration(snapDuration) : slotDuration
 
     this.slotDuration = slotDuration
     this.snapDuration = snapDuration
@@ -151,12 +153,19 @@ export default class TimeGrid extends InteractiveDateComponent {
       input = input[input.length - 1]
     }
 
-    this.labelFormat = input ||
-      this.opt('smallTimeFormat') // the computed default
+    this.labelFormat = createFormatter(
+      input ||
+      {
+        // like "h(:mm)a" -> "6pm" / "6:30pm"
+        hour: 'numeric',
+        minute: '2-digit',
+        // TODO: omit minute if possible
+      }
+    )
 
     input = this.opt('slotLabelInterval')
     this.labelInterval = input ?
-      moment.duration(input) :
+      createDuration(input) :
       this.computeLabelInterval(slotDuration)
   }
 
@@ -169,14 +178,14 @@ export default class TimeGrid extends InteractiveDateComponent {
 
     // find the smallest stock label interval that results in more than one slots-per-label
     for (i = AGENDA_STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
-      labelInterval = moment.duration(AGENDA_STOCK_SUB_DURATIONS[i])
-      slotsPerLabel = divideDurationByDuration(labelInterval, slotDuration)
-      if (isInt(slotsPerLabel) && slotsPerLabel > 1) {
+      labelInterval = createDuration(AGENDA_STOCK_SUB_DURATIONS[i])
+      slotsPerLabel = wholeDivideDurationByDuration(labelInterval, slotDuration)
+      if (slotsPerLabel !== null && slotsPerLabel > 1) {
         return labelInterval
       }
     }
 
-    return moment.duration(slotDuration) // fall back. clone
+    return slotDuration // fall back
   }
 
 
@@ -233,33 +242,35 @@ export default class TimeGrid extends InteractiveDateComponent {
   renderSlatRowHtml() {
     let view = this.view
     let calendar = view.calendar
+    let dateEnv = calendar.dateEnv
     let theme = calendar.theme
     let isRTL = this.isRTL
     let dateProfile = this.dateProfile
     let html = ''
-    let slotTime = moment.duration(+dateProfile.minTime) // wish there was .clone() for durations
-    let slotIterator = moment.duration(0)
+    let dayStart = startOfDay(dateProfile.renderUnzonedRange.start)
+    let slotTime = dateProfile.minTime
+    let slotIterator = createDuration(0)
     let slotDate // will be on the view's first day, but we only care about its time
     let isLabeled
     let axisHtml
 
     // Calculate the time for each slot
-    while (slotTime < dateProfile.maxTime) {
-      slotDate = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs).time(slotTime)
-      isLabeled = isInt(divideDurationByDuration(slotIterator, this.labelInterval))
+    while (asRoughMs(slotTime) < asRoughMs(dateProfile.maxTime)) {
+      slotDate = dateEnv.add(dayStart, slotTime)
+      isLabeled = wholeDivideDurationByDuration(slotIterator, this.labelInterval) !== null
 
       axisHtml =
         '<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
           (isLabeled ?
             '<span>' + // for matchCellWidths
-              htmlEscape(slotDate.format(this.labelFormat)) +
+              htmlEscape(dateEnv.toFormat(slotDate, this.labelFormat)) +
             '</span>' :
             ''
             ) +
         '</td>'
 
       html +=
-        '<tr data-time="' + slotDate.format('HH:mm:ss') + '"' +
+        '<tr data-time="' + dateEnv.toFormat(slotDate, HMS_FORMAT) + '"' +
           (isLabeled ? '' : ' class="fc-minor"') +
           '>' +
           (!isRTL ? axisHtml : '') +
@@ -267,8 +278,8 @@ export default class TimeGrid extends InteractiveDateComponent {
           (isRTL ? axisHtml : '') +
         '</tr>'
 
-      slotTime.add(this.slotDuration)
-      slotIterator.add(this.slotDuration)
+      slotTime = addDurations(slotTime, this.slotDuration)
+      slotIterator = addDurations(slotIterator, this.slotDuration)
     }
 
     return html
@@ -278,11 +289,12 @@ export default class TimeGrid extends InteractiveDateComponent {
   renderColumns() {
     let dateProfile = this.dateProfile
     let theme = this.view.calendar.theme
+    const dateEnv = this.view.calendar.dateEnv
 
     this.dayRanges = this.dayDates.map(function(dayDate) {
       return new UnzonedRange(
-        dayDate.clone().add(dateProfile.minTime),
-        dayDate.clone().add(dateProfile.maxTime)
+        dateEnv.add(dayDate, dateProfile.minTime),
+        dateEnv.add(dayDate, dateProfile.maxTime)
       )
     })
 
@@ -422,7 +434,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     //  more than once because of columns with the same date (resources columns for example)
     let segs = this.componentFootprintToSegs(
       new ComponentFootprint(
-        new UnzonedRange(date, date.valueOf() + 1), // protect against null range
+        new UnzonedRange(date, addMs(date, 1)), // protect against null range
         false // all-day
       )
     )
@@ -481,22 +493,17 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given date.
-  // `ms` can be a millisecond UTC time OR a UTC moment.
   // A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
-  computeDateTop(ms, startOfDayDate) {
-    return this.computeTimeTop(
-      moment.duration(
-        ms - startOfDayDate.clone().stripTime()
-      )
-    )
+  computeDateTop(when: DateMarker, startOfDayDate: DateMarker) {
+    return this.computeTimeTop(when.valueOf() - startOfDayDate.valueOf())
   }
 
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
-  computeTimeTop(time) {
+  computeTimeTop(timeMs: number) {
     let len = this.slatEls.length
     let dateProfile = this.dateProfile
-    let slatCoverage = (time - dateProfile.minTime) / this.slotDuration // floating-point value of # of slots covered
+    let slatCoverage = (timeMs - asRoughMs(dateProfile.minTime)) / asRoughMs(this.slotDuration) // floating-point value of # of slots covered
     let slatIndex
     let slatRemainder
 
@@ -539,10 +546,10 @@ export default class TimeGrid extends InteractiveDateComponent {
       seg = segs[i]
       dayDate = this.dayDates[seg.dayIndex]
 
-      seg.top = this.computeDateTop(seg.startMs, dayDate)
+      seg.top = this.computeDateTop(seg.start, dayDate)
       seg.bottom = Math.max(
         seg.top + eventMinHeight,
-        this.computeDateTop(seg.endMs, dayDate)
+        this.computeDateTop(seg.end, dayDate)
       )
     }
   }
@@ -619,12 +626,13 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   getHitFootprint(hit) {
+    const dateEnv = this.view.calendar.dateEnd
     let start = this.getCellDate(0, hit.col) // row=0
-    let time = this.computeSnapTime(hit.snap) // pass in the snap-index
+    let timeMs = this.computeSnapTime(hit.snap) // pass in the snap-index
     let end
 
-    start.time(time)
-    end = start.clone().add(this.snapDuration)
+    start = addMs(start, timeMs)
+    end = dateEnv.add(start, this.snapDuration)
 
     return new ComponentFootprint(
       new UnzonedRange(start, end),
@@ -634,8 +642,8 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   // Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
-  computeSnapTime(snapIndex) {
-    return moment.duration(this.dateProfile.minTime + this.snapDuration * snapIndex)
+  computeSnapTime(snapIndex): number {
+    return asRoughMs(this.dateProfile.minTime) + asRoughMs(this.snapDuration) * snapIndex
   }
 
 

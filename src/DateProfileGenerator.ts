@@ -1,6 +1,7 @@
-import * as moment from 'moment'
-import { computeGreatestUnit, computeDurationGreatestUnit } from './util/date'
+import View from './View'
 import UnzonedRange from './models/UnzonedRange'
+import { Duration, createDuration, getWeeksFromInput, asRoughDays, computeGreatestUnit } from './datelib/duration'
+import { computeGreatestDurationDenominator, DateMarker, startOfDay, addDays } from './datelib/util'
 
 
 export interface DateProfile {
@@ -10,17 +11,17 @@ export interface DateProfile {
   isRangeAllDay: boolean
   activeUnzonedRange: UnzonedRange
   renderUnzonedRange: UnzonedRange
-  minTime: moment.Duration
-  maxTime: moment.Duration
+  minTime: Duration
+  maxTime: Duration
   isValid: boolean
-  date: moment.Moment
-  dateIncrement: moment.Duration
+  date: DateMarker
+  dateIncrement: Duration
 }
 
 
 export default class DateProfileGenerator {
 
-  _view: any // discourage
+  _view: View // discourage
 
 
   constructor(_view) {
@@ -38,20 +39,18 @@ export default class DateProfileGenerator {
   }
 
 
-  msToUtcMoment(ms, forceAllDay) {
-    return this._view.calendar.msToUtcMoment(ms, forceAllDay)
-  }
-
-
   /* Date Range Computation
   ------------------------------------------------------------------------------------------------------------------*/
 
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
   buildPrev(currentDateProfile): DateProfile {
-    let prevDate = currentDateProfile.date.clone()
-      .startOf(currentDateProfile.currentRangeUnit)
-      .subtract(currentDateProfile.dateIncrement)
+    const dateEnv = this._view.calendar.dateEnv
+
+    let prevDate = dateEnv.subtract(
+      dateEnv.startOf(currentDateProfile.date, currentDateProfile.currentRangeUnit),
+      currentDateProfile.dateIncrement
+    )
 
     return this.build(prevDate, -1)
   }
@@ -59,9 +58,12 @@ export default class DateProfileGenerator {
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
   buildNext(currentDateProfile): DateProfile {
-    let nextDate = currentDateProfile.date.clone()
-      .startOf(currentDateProfile.currentRangeUnit)
-      .add(currentDateProfile.dateIncrement)
+    const dateEnv = this._view.calendar.dateEnv
+
+    let nextDate = dateEnv.add(
+      dateEnv.startOf(currentDateProfile.date, currentDateProfile.currentRangeUnit),
+      currentDateProfile.dateIncrement
+    )
 
     return this.build(nextDate, 1)
   }
@@ -70,8 +72,7 @@ export default class DateProfileGenerator {
   // Builds a structure holding dates/ranges for rendering around the given date.
   // Optional direction param indicates whether the date is being incremented/decremented
   // from its previous value. decremented = -1, incremented = 1 (default).
-  build(date, direction?, forceToValid = false): DateProfile {
-    let isDateAllDay = !date.hasTime()
+  build(date: DateMarker, direction?, forceToValid = false): DateProfile {
     let validUnzonedRange
     let minTime = null
     let maxTime = null
@@ -85,10 +86,7 @@ export default class DateProfileGenerator {
     validUnzonedRange = this.trimHiddenDays(validUnzonedRange)
 
     if (forceToValid) {
-      date = this.msToUtcMoment(
-        validUnzonedRange.constrainDate(date), // returns MS
-        isDateAllDay
-      )
+      date = validUnzonedRange.constrainDate(date)
     }
 
     currentInfo = this.buildCurrentRangeInfo(date, direction)
@@ -105,16 +103,13 @@ export default class DateProfileGenerator {
       activeUnzonedRange = activeUnzonedRange.intersect(currentInfo.unzonedRange)
     }
 
-    minTime = moment.duration(this.opt('minTime'))
-    maxTime = moment.duration(this.opt('maxTime'))
+    minTime = createDuration(this.opt('minTime'))
+    maxTime = createDuration(this.opt('maxTime'))
     activeUnzonedRange = this.adjustActiveRange(activeUnzonedRange, minTime, maxTime)
     activeUnzonedRange = activeUnzonedRange.intersect(validUnzonedRange) // might return null
 
     if (activeUnzonedRange) {
-      date = this.msToUtcMoment(
-        activeUnzonedRange.constrainDate(date), // returns MS
-        isDateAllDay
-      )
+      date = activeUnzonedRange.constrainDate(date)
     }
 
     // it's invalid if the originally requested date is not contained,
@@ -173,8 +168,8 @@ export default class DateProfileGenerator {
   // highlighted as being the current month for example.
   // See build() for a description of `direction`.
   // Guaranteed to have `range` and `unit` properties. `duration` is optional.
-  // TODO: accept a MS-time instead of a moment `date`?
-  buildCurrentRangeInfo(date, direction) {
+  buildCurrentRangeInfo(date: DateMarker, direction) {
+    const dateEnv = this._view.calendar.dateEnv
     let viewSpec = this._view.viewSpec
     let duration = null
     let unit = null
@@ -189,7 +184,7 @@ export default class DateProfileGenerator {
       unit = 'day'
       unzonedRange = this.buildRangeFromDayCount(date, direction, dayCount)
     } else if ((unzonedRange = this.buildCustomVisibleRange(date))) {
-      unit = computeGreatestUnit(unzonedRange.getStart(), unzonedRange.getEnd())
+      unit = dateEnv.computeGreatestDenominator(unzonedRange.start, unzonedRange.end).unit
     } else {
       duration = this.getFallbackDuration()
       unit = computeGreatestUnit(duration)
@@ -200,25 +195,31 @@ export default class DateProfileGenerator {
   }
 
 
-  getFallbackDuration() {
-    return moment.duration({ days: 1 })
+  getFallbackDuration(): Duration {
+    return createDuration({ day: 1 })
   }
 
 
   // Returns a new activeUnzonedRange to have time values (un-ambiguate)
   // minTime or maxTime causes the range to expand.
-  adjustActiveRange(unzonedRange, minTime, maxTime) {
-    let start = unzonedRange.getStart()
-    let end = unzonedRange.getEnd()
+  adjustActiveRange(unzonedRange: UnzonedRange, minTime: Duration, maxTime: Duration) {
+    const dateEnv = this._view.calendar.dateEnv
+    let start = unzonedRange.start
+    let end = unzonedRange.end
 
     if (this._view.usesMinMaxTime) {
 
-      if (minTime < 0) {
-        start.time(0).add(minTime)
+      // expand active range if minTime is negative (why not when positive?)
+      if (asRoughDays(minTime) < 0) {
+        start = dateEnv.startOfDay(start) // necessary?
+        start = dateEnv.add(start, minTime)
       }
 
-      if (maxTime > 24 * 60 * 60 * 1000) { // beyond 24 hours?
-        end.time(maxTime - (24 * 60 * 60 * 1000))
+      // expand active range if maxTime is beyond one day (why not when positive?)
+      if (asRoughDays(maxTime) > 1) {
+        end = dateEnv.startOfDay(end) // necessary?
+        end = addDays(end, -1)
+        end = dateEnv.add(end, maxTime)
       }
     }
 
@@ -228,13 +229,13 @@ export default class DateProfileGenerator {
 
   // Builds the "current" range when it is specified as an explicit duration.
   // `unit` is the already-computed computeGreatestUnit value of duration.
-  // TODO: accept a MS-time instead of a moment `date`?
-  buildRangeFromDuration(date, direction, duration, unit) {
+  buildRangeFromDuration(date: DateMarker, direction, duration: Duration, unit) {
+    const dateEnv = this._view.calendar.dateEnv
     let alignment = this.opt('dateAlignment')
     let dateIncrementInput
     let dateIncrementDuration
-    let start
-    let end
+    let start: DateMarker
+    let end: DateMarker
     let res
 
     // compute what the alignment should be
@@ -242,11 +243,14 @@ export default class DateProfileGenerator {
       dateIncrementInput = this.opt('dateIncrement')
 
       if (dateIncrementInput) {
-        dateIncrementDuration = moment.duration(dateIncrementInput)
+        dateIncrementDuration = createDuration(dateIncrementInput)
 
         // use the smaller of the two units
         if (dateIncrementDuration < duration) {
-          alignment = computeDurationGreatestUnit(dateIncrementDuration, dateIncrementInput)
+          alignment = computeGreatestDurationDenominator(
+            dateIncrementDuration,
+            Boolean(getWeeksFromInput(dateIncrementInput))
+          ).unit
         } else {
           alignment = unit
         }
@@ -256,16 +260,16 @@ export default class DateProfileGenerator {
     }
 
     // if the view displays a single day or smaller
-    if (duration.as('days') <= 1) {
+    if (asRoughDays(duration) <= 1) {
       if (this._view.isHiddenDay(start)) {
         start = this._view.skipHiddenDays(start, direction)
-        start.startOf('day')
+        start = startOfDay(start)
       }
     }
 
     function computeRes() {
-      start = date.clone().startOf(alignment)
-      end = start.clone().add(duration)
+      start = dateEnv.startOf(date, alignment)
+      end = dateEnv.add(date, duration)
       res = new UnzonedRange(start, end)
     }
 
@@ -282,23 +286,23 @@ export default class DateProfileGenerator {
 
 
   // Builds the "current" range when a dayCount is specified.
-  // TODO: accept a MS-time instead of a moment `date`?
-  buildRangeFromDayCount(date, direction, dayCount) {
+  buildRangeFromDayCount(date: DateMarker, direction, dayCount) {
+    const dateEnv = this._view.calendar.dateEnv
     let customAlignment = this.opt('dateAlignment')
     let runningCount = 0
-    let start = date.clone()
-    let end
+    let start: DateMarker = date
+    let end: DateMarker
 
     if (customAlignment) {
-      start.startOf(customAlignment)
+      start = dateEnv.startOf(start, customAlignment)
     }
 
-    start.startOf('day')
+    start = startOfDay(start)
     start = this._view.skipHiddenDays(start, direction)
 
-    end = start.clone()
+    end = start
     do {
-      end.add(1, 'day')
+      end = addDays(end, 1)
       if (!this._view.isHiddenDay(end)) {
         runningCount++
       }
@@ -310,14 +314,11 @@ export default class DateProfileGenerator {
 
   // Builds a normalized range object for the "visible" range,
   // which is a way to define the currentUnzonedRange and activeUnzonedRange at the same time.
-  // TODO: accept a MS-time instead of a moment `date`?
-  buildCustomVisibleRange(date) {
-    let visibleUnzonedRange = this._view.getUnzonedRangeOption(
-      'visibleRange',
-      this._view.calendar.applyTimezone(date) // correct zone. also generates new obj that avoids mutations
-    )
+  buildCustomVisibleRange(date: DateMarker) {
+    const dateEnv = this._view.calendar.dateEnv
+    let visibleUnzonedRange = this._view.getUnzonedRangeOption('visibleRange', dateEnv.toDate(date))
 
-    if (visibleUnzonedRange && (visibleUnzonedRange.startMs == null || visibleUnzonedRange.endMs == null)) {
+    if (visibleUnzonedRange && (visibleUnzonedRange.start == null || visibleUnzonedRange.end == null)) {
       return null
     }
 
@@ -328,25 +329,25 @@ export default class DateProfileGenerator {
   // Computes the range that will represent the element/cells for *rendering*,
   // but which may have voided days/times.
   // not responsible for trimming hidden days.
-  buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
+  buildRenderRange(currentUnzonedRange: UnzonedRange, currentRangeUnit, isRangeAllDay) {
     return currentUnzonedRange.clone()
   }
 
 
   // Compute the duration value that should be added/substracted to the current date
   // when a prev/next operation happens.
-  buildDateIncrement(fallback) {
+  buildDateIncrement(fallback): Duration {
     let dateIncrementInput = this.opt('dateIncrement')
     let customAlignment
 
     if (dateIncrementInput) {
-      return moment.duration(dateIncrementInput)
+      return createDuration(dateIncrementInput)
     } else if ((customAlignment = this.opt('dateAlignment'))) {
-      return moment.duration(1, customAlignment)
+      return createDuration(1, customAlignment)
     } else if (fallback) {
       return fallback
     } else {
-      return moment.duration({ days: 1 })
+      return createDuration({ days: 1 })
     }
   }
 

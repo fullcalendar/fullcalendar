@@ -1,6 +1,10 @@
 import { htmlEscape, cssToStr } from '../util/html'
 import { removeElement, applyStyle } from '../util/dom-manip'
+import { createFormatter } from '../datelib/formatting'
 import EventRenderer from '../component/renderers/EventRenderer'
+import EventDef from '../models/event/EventDef'
+
+const FULL_TIME_FORMAT = createFormatter({ hour: 'numeric', minute: '2-digit' })
 
 /*
 Only handles foreground segs.
@@ -49,7 +53,11 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
   // Computes a default event time formatting string if `timeFormat` is not explicitly defined
   computeEventTimeFormat() {
-    return this.opt('noMeridiemTimeFormat') // like "6:30" (no AM/PM)
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      // TODO: remove am/pm
+    }
   }
 
 
@@ -62,10 +70,9 @@ export default class TimeGridEventRenderer extends EventRenderer {
   // Renders the HTML for a single event segment's default rendering
   fgSegHtml(seg, disableResizing) {
     let view = this.view
-    let calendar = view.calendar
     let componentFootprint = seg.footprint.componentFootprint
     let isAllDay = componentFootprint.isAllDay
-    let eventDef = seg.footprint.eventDef
+    let eventDef: EventDef = seg.footprint.eventDef
     let isDraggable = view.isEventDefDraggable(eventDef)
     let isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef)
     let isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventDefResizableFromEnd(eventDef)
@@ -83,16 +90,16 @@ export default class TimeGridEventRenderer extends EventRenderer {
       // That would appear as midnight-midnight and would look dumb.
       // Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
       if (seg.isStart || seg.isEnd) {
-        let zonedStart = calendar.msToMoment(seg.startMs)
-        let zonedEnd = calendar.msToMoment(seg.endMs)
-        timeText = this._getTimeText(zonedStart, zonedEnd, isAllDay)
-        fullTimeText = this._getTimeText(zonedStart, zonedEnd, isAllDay, 'LT')
-        startTimeText = this._getTimeText(zonedStart, zonedEnd, isAllDay, null, false) // displayEnd=false
+        let unzonedStart = seg.start
+        let unzonedEnd = seg.end
+        timeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay) // TODO: give the timezones
+        fullTimeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay, FULL_TIME_FORMAT)
+        startTimeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay, null, false) // displayEnd=false
       }
     } else {
       // Display the normal time text for the *event's* times
       timeText = this.getTimeText(seg.footprint)
-      fullTimeText = this.getTimeText(seg.footprint, 'LT')
+      fullTimeText = this.getTimeText(seg.footprint, FULL_TIME_FORMAT)
       startTimeText = this.getTimeText(seg.footprint, null, false) // displayEnd=false
     }
 

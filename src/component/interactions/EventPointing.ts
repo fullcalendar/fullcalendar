@@ -29,7 +29,7 @@ export default class EventPointing extends Interaction {
   handleClick(seg, ev) {
     let res = this.component.publiclyTrigger('eventClick', { // can return `false` to cancel
       context: seg.el,
-      args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+      args: [ seg.footprint.getEventLegacy(this.view.calendar), ev, this.view ]
     })
 
     if (res === false) {
@@ -53,7 +53,7 @@ export default class EventPointing extends Interaction {
 
       this.component.publiclyTrigger('eventMouseover', {
         context: seg.el,
-        args: [ seg.footprint.getEventLegacy(), ev, this.view ]
+        args: [ seg.footprint.getEventLegacy(this.view.calendar), ev, this.view ]
       })
     }
   }
@@ -73,7 +73,7 @@ export default class EventPointing extends Interaction {
       this.component.publiclyTrigger('eventMouseout', {
         context: seg.el,
         args: [
-          seg.footprint.getEventLegacy(),
+          seg.footprint.getEventLegacy(this.view.calendar),
           ev || {}, // if given no arg, make a mock mouse event
           this.view
         ]

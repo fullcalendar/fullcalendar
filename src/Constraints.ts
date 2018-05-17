@@ -64,7 +64,7 @@ export default class Constraints {
         if (
           eventAllowFunc(
             eventFootprints[i].componentFootprint.toLegacy(this._calendar),
-            eventFootprints[i].getEventLegacy()
+            eventFootprints[i].getEventLegacy(this._calendar)
           ) === false
         ) {
           return false
@@ -140,7 +140,7 @@ export default class Constraints {
     }
 
     if (subjectEventInstance) {
-      if (!isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance)) {
+      if (!isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance, this._calendar)) {
         return false
       }
     }
@@ -283,29 +283,22 @@ export default class Constraints {
   Very similar to EventDateProfile::parse :(
   */
   parseFootprints(rawInput) {
-    let start
-    let end
+    const dateEnv = this._calendar.dateEnv
+    let startMeta
+    let endMeta
 
     if (rawInput.start) {
-      start = this._calendar.moment(rawInput.start)
-
-      if (!start.isValid()) {
-        start = null
-      }
+      startMeta = dateEnv.createMarkerMeta(rawInput.start)
     }
 
     if (rawInput.end) {
-      end = this._calendar.moment(rawInput.end)
-
-      if (!end.isValid()) {
-        end = null
-      }
+      endMeta = dateEnv.createMarkerMeta(rawInput.end)
     }
 
     return [
       new ComponentFootprint(
-        new UnzonedRange(start, end),
-        (start && !start.hasTime()) || (end && !end.hasTime()) // isAllDay
+        new UnzonedRange(startMeta ? startMeta.marker : null, endMeta ? endMeta.marker : null),
+        (startMeta && startMeta.isTimeUnspecified || (endMeta && endMeta.isTimeUnspecified)) // isAllDay
       )
     ]
   }
@@ -334,8 +327,8 @@ function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEve
   for (i = 0; i < overlapEventFootprints.length; i++) {
     if (
       !overlapFunc(
-        overlapEventFootprints[i].eventInstance.toLegacy(),
-        subjectEventInstance ? subjectEventInstance.toLegacy() : null
+        overlapEventFootprints[i].eventInstance.toLegacy(this._calendar),
+        subjectEventInstance ? subjectEventInstance.toLegacy(this._calendar) : null
       )
     ) {
       return false
@@ -346,8 +339,8 @@ function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEve
 }
 
 
-function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance) {
-  let subjectLegacyInstance = subjectEventInstance.toLegacy()
+function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInstance, calendar) {
+  let subjectLegacyInstance = subjectEventInstance.toLegacy(calendar)
   let i
   let overlapEventInstance
   let overlapEventDef
@@ -366,7 +359,7 @@ function isOverlapEventInstancesAllowed(overlapEventFootprints, subjectEventInst
     } else if (typeof overlapVal === 'function') {
       if (
         !overlapVal(
-          overlapEventInstance.toLegacy(),
+          overlapEventInstance.toLegacy(calendar),
           subjectLegacyInstance
         )
       ) {

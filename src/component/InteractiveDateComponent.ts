@@ -1,9 +1,8 @@
-import * as moment from 'moment'
-import { diffByUnit, diffDayTime } from '../util/date'
 import { elementClosest } from '../util/dom-manip'
 import { getEvIsTouch, listenBySelector, listenToHoverBySelector } from '../util/dom-event'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
+import { Duration, createDuration } from '../datelib/duration'
 
 
 export default abstract class InteractiveDateComponent extends DateComponent {
@@ -323,11 +322,15 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
   // Diffs the two dates, returning a duration, based on granularity of the grid
   // TODO: port isTimeScale into this system?
-  diffDates(a, b): moment.Duration {
-    if (this.largeUnit) {
-      return diffByUnit(a, b, this.largeUnit)
-    } else {
-      return diffDayTime(a, b)
+  diffDates(a, b): Duration {
+    const dateEnv = this._getCalendar().dateEnv
+
+    if (!this.largeUnit) {
+      return dateEnv.diffDayAndTime(a, b) // returns a duration
+    } else if (this.largeUnit === 'year') {
+      return createDuration(dateEnv.diffWholeYears(a, b), 'year')
+    } else if (this.largeUnit === 'month') {
+      return createDuration(dateEnv.diffWholeMonths(a, b), 'month')
     }
   }
 

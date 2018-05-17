@@ -1,5 +1,7 @@
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import UnzonedRange from '../models/UnzonedRange'
+import { diffWeeks } from '../datelib/env'
+import { addWeeks } from '../datelib/util'
 
 
 export default class MonthViewDateProfileGenerator extends BasicViewDateProfileGenerator {
@@ -7,16 +9,16 @@ export default class MonthViewDateProfileGenerator extends BasicViewDateProfileG
   // Computes the date range that will be rendered.
   buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
     let renderUnzonedRange = super.buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay)
-    let start = this.msToUtcMoment(renderUnzonedRange.startMs, isRangeAllDay)
-    let end = this.msToUtcMoment(renderUnzonedRange.endMs, isRangeAllDay)
+    let start = renderUnzonedRange.start
+    let end = renderUnzonedRange.end
     let rowCnt
 
     // ensure 6 weeks
     if (this.opt('fixedWeekCount')) {
       rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
-        end.diff(start, 'weeks', true) // dontRound=true
+        diffWeeks(start, end)
       )
-      end.add(6 - rowCnt, 'weeks')
+      end = addWeeks(end, 6 - rowCnt)
     }
 
     return new UnzonedRange(start, end)

@@ -1,12 +1,11 @@
-import * as moment from 'moment'
 import { attrsToStr, htmlEscape } from '../util/html'
-import { dayIDs } from '../util/date'
-import momentExt from '../moment-ext'
-import { formatRange } from '../date-formatting'
 import Component from './Component'
 import { eventRangeToEventFootprint } from '../models/event/util'
 import EventFootprint from '../models/event/EventFootprint'
 import { DateProfile } from '../DateProfileGenerator'
+import { addDays, DateMarker, startOfDay, dayIDs } from '../datelib/util'
+import { diffDays } from '../datelib/env'
+import { Duration, createDuration, asRoughMs } from '../datelib/duration'
 
 
 export default abstract class DateComponent extends Component {
@@ -21,8 +20,8 @@ export default abstract class DateComponent extends Component {
   uid: any
   childrenByUid: any
   isRTL: boolean = false // frequently accessed options
-  nextDayThreshold: any // "
-  dateProfile: any // hack
+  nextDayThreshold: Duration // "
+  dateProfile: DateProfile // hack
 
   eventRenderer: any
   helperRenderer: any
@@ -50,7 +49,7 @@ export default abstract class DateComponent extends Component {
     this.uid = String(DateComponent.guid++)
     this.childrenByUid = {}
 
-    this.nextDayThreshold = moment.duration(this.opt('nextDayThreshold'))
+    this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
     this.isRTL = this.opt('isRTL')
 
     if (this.fillRendererClass) {
@@ -210,7 +209,7 @@ export default abstract class DateComponent extends Component {
       this.eventRenderer.rangeUpdated() // poorly named now
       this.eventRenderer.render(eventsPayload)
     } else if (this['renderEvents']) { // legacy
-      this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload))
+      this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload, this._getCalendar()))
     }
 
     this.callChildren('executeEventRender', arguments)
@@ -291,7 +290,7 @@ export default abstract class DateComponent extends Component {
         let legacy
 
         if (seg.el) { // necessary?
-          legacy = seg.footprint.getEventLegacy()
+          legacy = seg.footprint.getEventLegacy(this._getCalendar())
 
           this.publiclyTrigger('eventAfterRender', {
             context: legacy,
@@ -316,7 +315,7 @@ export default abstract class DateComponent extends Component {
         let legacy
 
         if (seg.el) { // necessary?
-          legacy = seg.footprint.getEventLegacy()
+          legacy = seg.footprint.getEventLegacy(this._getCalendar())
 
           this.publiclyTrigger('eventDestroy', {
             context: legacy,
@@ -674,27 +673,28 @@ export default abstract class DateComponent extends Component {
 
   // Generates HTML for an anchor to another view into the calendar.
   // Will either generate an <a> tag or a non-clickable <span> tag, depending on enabled settings.
-  // `gotoOptions` can either be a moment input, or an object with the form:
+  // `gotoOptions` can either be a date input, or an object with the form:
   // { date, type, forceOff }
   // `type` is a view-type like "day" or "week". default value is "day".
   // `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
   buildGotoAnchorHtml(gotoOptions, attrs, innerHtml) {
+    const dateEnv = this._getCalendar().dateEnv
     let date
     let type
     let forceOff
     let finalOptions
 
-    if (moment.isMoment(gotoOptions) || typeof gotoOptions !== 'object') {
-      date = gotoOptions // a single moment input
+    if (gotoOptions instanceof Date || typeof gotoOptions !== 'object') {
+      date = gotoOptions // a single date-like input
     } else {
       date = gotoOptions.date
       type = gotoOptions.type
       forceOff = gotoOptions.forceOff
     }
-    date = momentExt(date) // if a string, parse it
+    date = dateEnv.createMarker(date) // if a string, parse it
 
     finalOptions = { // for serialization into the link
-      date: date.format('YYYY-MM-DD'),
+      date: dateEnv.toIso(date, { omitTime: true }),
       type: type || 'day'
     }
 
@@ -725,32 +725,34 @@ export default abstract class DateComponent extends Component {
 
 
   // Computes HTML classNames for a single-day element
-  getDayClasses(date, noThemeHighlight?) {
+  getDayClasses(date: DateMarker, noThemeHighlight?) {
     let view = this._getView()
     let classes = []
-    let today
+    let todayStart: DateMarker
+    let todayEnd: DateMarker
 
     if (!this.dateProfile.activeUnzonedRange.containsDate(date)) {
       classes.push('fc-disabled-day') // TODO: jQuery UI theme?
     } else {
-      classes.push('fc-' + dayIDs[date.day()])
+      classes.push('fc-' + dayIDs[date.getUTCDay()])
 
       if (view.isDateInOtherMonth(date, this.dateProfile)) { // TODO: use DateComponent subclass somehow
         classes.push('fc-other-month')
       }
 
-      today = view.calendar.getNow()
+      todayStart = startOfDay(view.calendar.getNow())
+      todayEnd = addDays(todayStart, 1)
 
-      if (date.isSame(today, 'day')) {
+      if (date < todayStart) {
+        classes.push('fc-past')
+      } else if (date >= todayEnd) {
+        classes.push('fc-future')
+      } else {
         classes.push('fc-today')
 
         if (noThemeHighlight !== true) {
           classes.push(view.calendar.theme.getClass('today'))
         }
-      } else if (date < today) {
-        classes.push('fc-past')
-      } else {
-        classes.push('fc-future')
       }
     }
 
@@ -758,49 +760,49 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  // Utility for formatting a range. Accepts a range object, formatting string, and optional separator.
-  // Displays all-day ranges naturally, with an inclusive end. Takes the current isRTL into account.
-  // The timezones of the dates within `range` will be respected.
-  formatRange(range: { start: moment.Moment, end: moment.Moment }, isAllDay, formatStr, separator) {
-    let end = range.end
+  // Compute the number of the give units in the "current" range.
+  // Will return `0` if there's not a clean whole interval.
+  currentRangeAs(unit) {
+    const dateEnv = this._getCalendar().dateEnv
+    let range = this._getDateProfile().currentUnzonedRange
+    let res = null
 
-    if (isAllDay) {
-      end = end.clone().subtract(1) // convert to inclusive. last ms of previous day
+    if (unit === 'year') {
+      res = dateEnv.diffWholeYears(range.start, range.end)
+    } else if (unit === 'month') {
+      res = dateEnv.diffWholeMonths(range.start, range.end)
+    } else if (unit === 'week') {
+      res = dateEnv.diffWholeMonths(range.start, range.end)
+    } else if (unit === 'day') {
+      res = dateEnv.diffWholeDays(range.start, range.end)
     }
 
-    return formatRange(range.start, end, formatStr, separator, this.isRTL)
-  }
-
-
-  // Compute the number of the give units in the "current" range.
-  // Will return a floating-point number. Won't round.
-  currentRangeAs(unit) {
-    return this._getDateProfile().currentUnzonedRange.as(unit)
+    return res || 0
   }
 
 
   // Returns the date range of the full days the given range visually appears to occupy.
   // Returns a plain object with start/end, NOT an UnzonedRange!
-  computeDayRange(unzonedRange): { start: moment.Moment, end: moment.Moment } {
-    let calendar = this._getCalendar()
-    let startDay = calendar.msToUtcMoment(unzonedRange.startMs, true) // the beginning of the day the range starts
-    let end = calendar.msToUtcMoment(unzonedRange.endMs)
-    let endTimeMS = +end.time() // # of milliseconds into `endDay`
-    let endDay = end.clone().stripTime() // the beginning of the day the range exclusively ends
+  computeDayRange(unzonedRange): { start: DateMarker, end: DateMarker } {
+    const dateEnv = this._getCalendar().dateEnv
+    let startDay: DateMarker = dateEnv.startOfDay(unzonedRange.start) // the beginning of the day the range starts
+    let end: DateMarker = unzonedRange.end
+    let endDay: DateMarker = dateEnv.startOfDay(end)
+    let endTimeMS: number = end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
 
     // If the end time is actually inclusively part of the next day and is equal to or
     // beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
     // Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-    if (endTimeMS && endTimeMS >= this.nextDayThreshold) {
-      endDay.add(1, 'days')
+    if (endTimeMS && endTimeMS >= asRoughMs(this.nextDayThreshold)) {
+      endDay = addDays(endDay, 1)
     }
 
     // If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
     if (endDay <= startDay) {
-      endDay = startDay.clone().add(1, 'days')
+      endDay = addDays(startDay, 1)
     }
 
-    return { start: startDay, end: endDay }
+    return { start: startDay, end: endDay } // TODO: eventually use UnzonedRange?
   }
 
 
@@ -808,7 +810,7 @@ export default abstract class DateComponent extends Component {
   isMultiDayRange(unzonedRange) {
     let dayRange = this.computeDayRange(unzonedRange)
 
-    return dayRange.end.diff(dayRange.start, 'days') > 1
+    return diffDays(dayRange.start, dayRange.end) > 1
   }
 
 }
@@ -816,7 +818,7 @@ export default abstract class DateComponent extends Component {
 
 // legacy
 
-function convertEventsPayloadToLegacyArray(eventsPayload) {
+function convertEventsPayloadToLegacyArray(eventsPayload, calendar) {
   let eventDefId
   let eventInstances
   let legacyEvents = []
@@ -827,7 +829,7 @@ function convertEventsPayloadToLegacyArray(eventsPayload) {
 
     for (i = 0; i < eventInstances.length; i++) {
       legacyEvents.push(
-        eventInstances[i].toLegacy()
+        eventInstances[i].toLegacy(calendar)
       )
     }
   }

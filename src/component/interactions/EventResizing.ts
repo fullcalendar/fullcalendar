@@ -162,7 +162,7 @@ export default class EventResizing extends Interaction {
     this.component.publiclyTrigger('eventResizeStart', {
       context: seg.el,
       args: [
-        seg.footprint.getEventLegacy(),
+        seg.footprint.getEventLegacy(this.view.calendar),
         ev,
         {}, // jqui dummy
         this.view
@@ -177,7 +177,7 @@ export default class EventResizing extends Interaction {
     this.component.publiclyTrigger('eventResizeStop', {
       context: seg.el,
       args: [
-        seg.footprint.getEventLegacy(),
+        seg.footprint.getEventLegacy(this.view.calendar),
         ev,
         {}, // jqui dummy
         this.view
@@ -188,15 +188,16 @@ export default class EventResizing extends Interaction {
 
   // Returns new date-information for an event segment being resized from its start
   computeEventStartResizeMutation(startFootprint, endFootprint, origEventFootprint) {
+    const dateEnv = this.component._getCalendar().dateEnv
     let origRange = origEventFootprint.componentFootprint.unzonedRange
     let startDelta = this.component.diffDates(
-      endFootprint.unzonedRange.getStart(),
-      startFootprint.unzonedRange.getStart()
+      startFootprint.unzonedRange.start,
+      endFootprint.unzonedRange.start
     )
     let dateMutation
     let eventDefMutation
 
-    if (origRange.getStart().add(startDelta) < origRange.getEnd()) {
+    if (dateEnv.add(origRange.start, startDelta) < origRange.end) {
 
       dateMutation = new EventDefDateMutation()
       dateMutation.setStartDelta(startDelta)
@@ -213,15 +214,16 @@ export default class EventResizing extends Interaction {
 
   // Returns new date-information for an event segment being resized from its end
   computeEventEndResizeMutation(startFootprint, endFootprint, origEventFootprint) {
+    const dateEnv = this.component._getCalendar().dateEnv
     let origRange = origEventFootprint.componentFootprint.unzonedRange
     let endDelta = this.component.diffDates(
-      endFootprint.unzonedRange.getEnd(),
-      startFootprint.unzonedRange.getEnd()
+      startFootprint.unzonedRange.end,
+      endFootprint.unzonedRange.end
     )
     let dateMutation
     let eventDefMutation
 
-    if (origRange.getEnd().add(endDelta) > origRange.getStart()) {
+    if (dateEnv.add(origRange.end, endDelta) > origRange.start) {
 
       dateMutation = new EventDefDateMutation()
       dateMutation.setEndDelta(endDelta)

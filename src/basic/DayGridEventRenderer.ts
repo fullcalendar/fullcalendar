@@ -219,7 +219,12 @@ export default class DayGridEventRenderer extends EventRenderer {
 
   // Computes a default event time formatting string if `timeFormat` is not explicitly defined
   computeEventTimeFormat() {
-    return this.opt('extraSmallTimeFormat') // like "6p" or "6:30p"
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      // TODO: remove :00
+      // TODO: convert am/pm -> a/p
+    }
   }
 
 

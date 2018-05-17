@@ -263,7 +263,7 @@ export default class EventDragging extends Interaction {
     this.component.publiclyTrigger('eventDragStart', {
       context: seg.el,
       args: [
-        seg.footprint.getEventLegacy(),
+        seg.footprint.getEventLegacy(this.component._getCalendar()),
         ev,
         {}, // jqui dummy
         this.view
@@ -278,7 +278,7 @@ export default class EventDragging extends Interaction {
     this.component.publiclyTrigger('eventDragStop', {
       context: seg.el,
       args: [
-        seg.footprint.getEventLegacy(),
+        seg.footprint.getEventLegacy(this.component._getCalendar()),
         ev,
         {}, // jqui dummy
         this.view
@@ -300,8 +300,8 @@ export default class EventDragging extends Interaction {
 
 
   computeEventDateMutation(startFootprint, endFootprint) {
-    let date0 = startFootprint.unzonedRange.getStart()
-    let date1 = endFootprint.unzonedRange.getStart()
+    let date0 = startFootprint.unzonedRange.start
+    let date1 = endFootprint.unzonedRange.start
     let clearEnd = false
     let forceTimed = false
     let forceAllDay = false
@@ -313,13 +313,13 @@ export default class EventDragging extends Interaction {
 
       if (endFootprint.isAllDay) {
         forceAllDay = true
-        date0.stripTime()
+        date0 = this.view.calendar.dateEnv.startOfDay(date0)
       } else {
         forceTimed = true
       }
     }
 
-    dateDelta = this.component.diffDates(date1, date0)
+    dateDelta = this.component.diffDates(date0, date1)
 
     dateMutation = new EventDefDateMutation()
     dateMutation.clearEnd = clearEnd

@@ -21,6 +21,10 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
+import { addDays } from '../datelib/util'
+import { createFormatter } from '../datelib/formatting'
+
+const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
@@ -231,6 +235,7 @@ export default class DayGrid extends InteractiveDateComponent {
   // The number row will only exist if either day numbers or week numbers are turned on.
   renderNumberCellHtml(date) {
     let view = this.view
+    const dateEnv = view.calendar.dateEnv
     let html = ''
     let isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
@@ -246,21 +251,12 @@ export default class DayGrid extends InteractiveDateComponent {
     classes.unshift('fc-day-top')
 
     if (this.cellWeekNumbersVisible) {
-      // To determine the day of week number change under ISO, we cannot
-      // rely on moment.js methods such as firstDayOfWeek() or weekday(),
-      // because they rely on the locale's dow (possibly overridden by
-      // our firstDay option), which may not be Monday. We cannot change
-      // dow, because that would affect the calendar start day as well.
-      if (date._locale._fullCalendar_weekCalc === 'ISO') {
-        weekCalcFirstDoW = 1  // Monday by ISO 8601 definition
-      } else {
-        weekCalcFirstDoW = date._locale.firstDayOfWeek()
-      }
+      weekCalcFirstDoW = dateEnv.weekMeta.dow
     }
 
     html += '<td class="' + classes.join(' ') + '"' +
       (isDateValid ?
-        ' data-date="' + date.format() + '"' :
+        ' data-date="' + dateEnv.toIso(date, { omitTime: true }) + '"' :
         ''
         ) +
       '>'
@@ -269,7 +265,7 @@ export default class DayGrid extends InteractiveDateComponent {
       html += view.buildGotoAnchorHtml(
         { date: date, type: 'week' },
         { 'class': 'fc-week-number' },
-        date.format('w') // inner HTML
+        dateEnv.formatWeek(date) // inner HTML
       )
     }
 
@@ -277,7 +273,7 @@ export default class DayGrid extends InteractiveDateComponent {
       html += view.buildGotoAnchorHtml(
         date,
         { 'class': 'fc-day-number' },
-        date.format('D') // inner HTML
+        dateEnv.toFormat(date, DAY_NUM_FORMAT) // inner HTML
       )
     }
 
@@ -623,7 +619,7 @@ export default class DayGrid extends InteractiveDateComponent {
           context: view,
           args: [
             {
-              date: date.clone(),
+              date: date,
               dayEl: dayEl,
               moreEl: moreEl,
               segs: reslicedAllSegs,
@@ -700,8 +696,13 @@ export default class DayGrid extends InteractiveDateComponent {
   // Builds the inner DOM contents of the segment popover
   renderSegPopoverContent(row, col, segs): ElementContent {
     let view = this.view
+    const dateEnv = view.calendar.dateEnv
     let theme = view.calendar.theme
-    let title = this.getCellDate(row, col).format(this.opt('dayPopoverFormat'))
+    let title = dateEnv.toFormat(
+      this.getCellDate(row, col),
+      createFormatter(this.opt('dayPopoverFormat')) // TODO: cache
+    )
+
     let content = htmlToElements(
       '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
         '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
@@ -738,8 +739,8 @@ export default class DayGrid extends InteractiveDateComponent {
 
   // Given the events within an array of segment objects, reslice them to be in a single day
   resliceDaySegs(segs, dayDate) {
-    let dayStart = dayDate.clone()
-    let dayEnd = dayStart.clone().add(1, 'days')
+    let dayStart = dayDate
+    let dayEnd = addDays(dayStart, 1)
     let dayRange = new UnzonedRange(dayStart, dayEnd)
     let newSegs = []
     let i

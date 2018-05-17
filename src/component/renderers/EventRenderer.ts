@@ -1,9 +1,12 @@
+import View from '../../View'
+import { DateMarker } from '../../datelib/util'
+import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
 
 export default class EventRenderer {
 
-  view: any
+  view: View
   component: any
   fillRenderer: any // might remain null
 
@@ -11,9 +14,9 @@ export default class EventRenderer {
   bgSegs: any
 
   // derived from options
-  eventTimeFormat: any
-  displayEventTime: any
-  displayEventEnd: any
+  eventTimeFormat: DateFormatter
+  displayEventTime: boolean
+  displayEventEnd: boolean
 
 
   constructor(component, fillRenderer) { // fillRenderer is optional
@@ -33,10 +36,11 @@ export default class EventRenderer {
     let displayEventTime
     let displayEventEnd
 
-    this.eventTimeFormat =
+    this.eventTimeFormat = createFormatter(
       this.opt('eventTimeFormat') ||
       this.opt('timeFormat') || // deprecated
       this.computeEventTimeFormat()
+    )
 
     displayEventTime = this.opt('displayEventTime')
     if (displayEventTime == null) {
@@ -244,7 +248,7 @@ export default class EventRenderer {
   // Given an event and the default element used for rendering, returns the element that should actually be used.
   // Basically runs events and elements through the eventRender hook.
   filterEventRenderEl(eventFootprint, el) {
-    let legacy = eventFootprint.getEventLegacy()
+    let legacy = eventFootprint.getEventLegacy(this.view.calendar)
 
     let custom = this.view.publiclyTrigger('eventRender', {
       context: legacy,
@@ -264,22 +268,36 @@ export default class EventRenderer {
   // Compute the text that should be displayed on an event's element.
   // `range` can be the Event object itself, or something range-like, with at least a `start`.
   // If event times are disabled, or the event has no time, will return a blank string.
-  // If not specified, formatStr will default to the eventTimeFormat setting,
+  // If not specified, formatter will default to the eventTimeFormat setting,
   // and displayEnd will default to the displayEventEnd setting.
-  getTimeText(eventFootprint, formatStr?, displayEnd?) {
+  getTimeText(eventFootprint, formatter?, displayEnd?) {
+    let eventDateProfile = eventFootprint.eventInstance.dateProfile
+
     return this._getTimeText(
-      eventFootprint.eventInstance.dateProfile.start,
-      eventFootprint.eventInstance.dateProfile.end,
+      eventDateProfile.unzonedRange.start,
+      eventDateProfile.unzonedRange.end,
       eventFootprint.componentFootprint.isAllDay,
-      formatStr,
-      displayEnd
+      formatter,
+      displayEnd,
+      eventDateProfile.forcedStartTimeZoneOffset,
+      eventDateProfile.forcedEndTimeZoneOffset
     )
   }
 
 
-  _getTimeText(start, end, isAllDay, formatStr?, displayEnd?) {
-    if (formatStr == null) {
-      formatStr = this.eventTimeFormat
+  _getTimeText(
+    start: DateMarker,
+    end: DateMarker,
+    isAllDay,
+    formatter?,
+    displayEnd?,
+    forcedStartTimeZoneOffset?: number,
+    forcedEndTimeZoneOffset?: number
+) {
+    const dateEnv = this.view.calendar.dateEnv
+
+    if (formatter == null) {
+      formatter = this.eventTimeFormat
     }
 
     if (displayEnd == null) {
@@ -288,13 +306,14 @@ export default class EventRenderer {
 
     if (this.displayEventTime && !isAllDay) {
       if (displayEnd && end) {
-        return this.view.formatRange(
-          { start: start, end: end },
-          false, // allDay
-          formatStr
-        )
+        return dateEnv.toRangeFormat(start, end, formatter, {
+          forcedStartTimeZoneOffset,
+          forcedEndTimeZoneOffset
+        })
       } else {
-        return start.format(formatStr)
+        return dateEnv.toFormat(start, formatter, {
+          forcedTimeZoneOffset: forcedStartTimeZoneOffset
+        })
       }
     }
 
@@ -303,7 +322,11 @@ export default class EventRenderer {
 
 
   computeEventTimeFormat() {
-    return this.opt('smallTimeFormat')
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      // TODO: remove :00
+    }
   }
 
 
@@ -433,8 +456,8 @@ export default class EventRenderer {
     let r1 = cf1.unzonedRange
     let r2 = cf2.unzonedRange
 
-    return r1.startMs - r2.startMs || // earlier events go first
-      (r2.endMs - r2.startMs) - (r1.endMs - r1.startMs) || // tie? longer events go first
+    return r1.start.valueOf() - r2.start.valueOf() || // earlier events go first
+      (r2.end.valueOf() - r2.start.valueOf()) - (r1.end.valueOf() - r1.start.valueOf()) || // tie? longer events go first
       cf2.isAllDay - cf1.isAllDay || // tie? put all-day events first (booleans cast to 0/1)
       compareByFieldSpecs(
         f1.eventDef,

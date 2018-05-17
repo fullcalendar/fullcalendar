@@ -1,6 +1,5 @@
-import { diffByUnit, diffDay, diffDayTime } from '../../util/date'
 import EventDateProfile from './EventDateProfile'
-
+import { diffDurations, Duration } from '../../datelib/duration'
 
 export default class EventDefDateMutation {
 
@@ -10,40 +9,43 @@ export default class EventDefDateMutation {
 
   // Durations. if 0-ms duration, will be null instead.
   // Callers should not set this directly.
-  dateDelta: any
-  startDelta: any
-  endDelta: any
+  dateDelta: Duration
+  startDelta: Duration
+  endDelta: Duration
 
 
-  static createFromDiff(dateProfile0, dateProfile1, largeUnit) {
+  static createFromDiff(dateProfile0, dateProfile1, largeUnit, calendar) {
+    const dateEnv = calendar.dateEnv
     let clearEnd = dateProfile0.end && !dateProfile1.end
-    let forceTimed = dateProfile0.isAllDay() && !dateProfile1.isAllDay()
-    let forceAllDay = !dateProfile0.isAllDay() && dateProfile1.isAllDay()
+    let forceTimed = dateProfile0.isAllDay && !dateProfile1.isAllDay
+    let forceAllDay = !dateProfile0.isAllDay && dateProfile1.isAllDay
     let dateDelta
     let endDiff
     let endDelta
     let mutation
 
     // subtracts the dates in the appropriate way, returning a duration
-    function subtractDates(date1, date0) { // date1 - date0
-      if (largeUnit) {
-        return diffByUnit(date1, date0, largeUnit) // poorly named
-      } else if (dateProfile1.isAllDay()) {
-        return diffDay(date1, date0) // poorly named
+    function diffDates(date0, date1) {
+      if (largeUnit === 'year') {
+        return dateEnv.diffWholeYears(date0, date1)
+      } else if (largeUnit === 'month') {
+        return dateEnv.diffWholeMonths(date0, date1)
+      } else if (dateProfile1.isAllDay) {
+        return dateEnv.diffWholeDays(date0, date1)
       } else {
-        return diffDayTime(date1, date0) // poorly named
+        return dateEnv.diffDayAndTime(date0, date1)
       }
     }
 
-    dateDelta = subtractDates(dateProfile1.start, dateProfile0.start)
+    dateDelta = diffDates(dateProfile0.start, dateProfile1.start)
 
     if (dateProfile1.end) {
       // use unzonedRanges because dateProfile0.end might be null
-      endDiff = subtractDates(
-        dateProfile1.unzonedRange.getEnd(),
-        dateProfile0.unzonedRange.getEnd()
+      endDiff = diffDates(
+        dateProfile0.unzonedRange.end,
+        dateProfile1.unzonedRange.end
       )
-      endDelta = endDiff.subtract(dateDelta)
+      endDelta = diffDurations(dateDelta, endDiff)
     }
 
     mutation = new EventDefDateMutation()
@@ -61,74 +63,54 @@ export default class EventDefDateMutation {
   returns an undo function.
   */
   buildNewDateProfile(eventDateProfile, calendar) {
-    let start = eventDateProfile.start.clone()
-    let end = null
-    let shouldRezone = false
+    const dateEnv = calendar.dateEnv
+    let isAllDay = eventDateProfile.isAllDay
+    let startMarker = eventDateProfile.unzonedRange.start
+    let endMarker = null
 
-    if (eventDateProfile.end && !this.clearEnd) {
-      end = eventDateProfile.end.clone()
-    } else if (this.endDelta && !end) {
-      end = calendar.getDefaultEventEnd(eventDateProfile.isAllDay(), start)
+    if (this.forceAllDay) {
+      isAllDay = true
+    } else if (this.forceTimed) {
+      isAllDay = false
     }
 
-    if (this.forceTimed) {
-      shouldRezone = true
+    if (eventDateProfile.hasEnd && !this.clearEnd) {
+      endMarker = eventDateProfile.unzonedRange.end
+    } else if (this.endDelta && !endMarker) { // won't always be null?
+      endMarker = calendar.getDefaultEventEnd(isAllDay, startMarker)
+    }
 
-      if (!start.hasTime()) {
-        start.time(0)
-      }
+    if (this.forceAllDay) {
+      startMarker = dateEnv.startOfDay(startMarker)
 
-      if (end && !end.hasTime()) {
-        end.time(0)
-      }
-    } else if (this.forceAllDay) {
-
-      if (start.hasTime()) {
-        start.stripTime()
-      }
-
-      if (end && end.hasTime()) {
-        end.stripTime()
+      if (endMarker) {
+        endMarker = dateEnv.startOfDay(endMarker)
       }
     }
 
     if (this.dateDelta) {
-      shouldRezone = true
+      startMarker = dateEnv.add(startMarker, this.dateDelta)
 
-      start.add(this.dateDelta)
-
-      if (end) {
-        end.add(this.dateDelta)
+      if (endMarker) {
+        endMarker = dateEnv.add(endMarker, this.dateDelta)
       }
     }
 
     // do this before adding startDelta to start, so we can work off of start
     if (this.endDelta) {
-      shouldRezone = true
-
-      end.add(this.endDelta)
+      endMarker = dateEnv.add(endMarker, this.endDelta)
     }
 
     if (this.startDelta) {
-      shouldRezone = true
-
-      start.add(this.startDelta)
-    }
-
-    if (shouldRezone) {
-      start = calendar.applyTimezone(start)
-
-      if (end) {
-        end = calendar.applyTimezone(end)
-      }
+      startMarker = dateEnv.add(startMarker, this.startDelta)
     }
 
     // TODO: okay to access calendar option?
-    if (!end && calendar.opt('forceEventDuration')) {
-      end = calendar.getDefaultEventEnd(eventDateProfile.isAllDay(), start)
+    if (!endMarker && calendar.opt('forceEventDuration')) {
+      endMarker = calendar.getDefaultEventEnd(isAllDay, startMarker)
     }
 
-    return new EventDateProfile(start, end, calendar)
+    return new EventDateProfile(startMarker, endMarker, isAllDay, calendar)
   }
 
 

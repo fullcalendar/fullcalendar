@@ -1,13 +1,13 @@
-import * as moment from 'moment'
 import { assignTo } from '../../util/object'
 import { elementMatches } from '../../util/dom-manip'
 import { disableCursor, enableCursor } from '../../util/misc'
-import momentExt from '../../moment-ext'
 import HitDragListener from '../../common/HitDragListener'
 import SingleEventDef from '../../models/event/SingleEventDef'
 import EventInstanceGroup from '../../models/event/EventInstanceGroup'
 import EventSource from '../../models/event-source/EventSource'
 import Interaction from './Interaction'
+import { startOfDay } from '../../datelib/util'
+import { createDuration } from '../../datelib/duration'
 
 
 export default class ExternalDropping extends Interaction {
@@ -54,8 +54,8 @@ export default class ExternalDropping extends Interaction {
     if (stick == null) { stick = ExternalDropping.getEmbeddedElData(el, 'stick', true) }
 
     // massage into correct data types
-    startTime = startTime != null ? moment.duration(startTime) : null
-    duration = duration != null ? moment.duration(duration) : null
+    startTime = startTime != null ? createDuration(startTime) : null
+    duration = duration != null ? createDuration(duration) : null
     stick = Boolean(stick)
 
     return { eventProps: eventProps, startTime: startTime, duration: duration, stick: stick }
@@ -205,33 +205,28 @@ export default class ExternalDropping extends Interaction {
   // Assumes both footprints are non-open-ended.
   computeExternalDrop(componentFootprint, meta) {
     let calendar = this.view.calendar
-    let start = momentExt.utc(componentFootprint.unzonedRange.startMs).stripZone()
+    const dateEnv = calendar.dateEnv
+    let start = componentFootprint.unzonedRange.start
     let end
     let eventDef
 
     if (componentFootprint.isAllDay) {
+      start = startOfDay(start)
+
       // if dropped on an all-day span, and element's metadata specified a time, set it
       if (meta.startTime) {
-        start.time(meta.startTime)
-      } else {
-        start.stripTime()
+        start = dateEnv.add(start, meta.startTime)
       }
     }
 
     if (meta.duration) {
-      end = start.clone().add(meta.duration)
-    }
-
-    start = calendar.applyTimezone(start)
-
-    if (end) {
-      end = calendar.applyTimezone(end)
+      end = dateEnv.add(start, meta.duration)
     }
 
     eventDef = SingleEventDef.parse(
       assignTo({}, meta.eventProps, {
-        start: start,
-        end: end
+        start: dateEnv.toDate(start), // inefficient to convert back
+        end: dateEnv.toDate(end) // inefficient to convert back
       }),
       new EventSource(calendar)
     )

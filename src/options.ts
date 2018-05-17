@@ -4,10 +4,9 @@ import { mergeProps } from './util/object'
 export const globalDefaults = {
 
   titleRangeSeparator: ' \u2013 ', // en dash
-  monthYearFormat: 'MMMM YYYY', // required for en. other locales rely on datepicker computable option
 
   defaultTimedEventDuration: '02:00:00',
-  defaultAllDayEventDuration: { days: 1 },
+  defaultAllDayEventDuration: { day: 1 },
   forceEventDuration: false,
   nextDayThreshold: '09:00:00', // 9am
 
@@ -87,18 +86,13 @@ export const globalDefaults = {
   eventLimit: false,
   eventLimitText: 'more',
   eventLimitClick: 'popover',
-  dayPopoverFormat: 'LL',
+  dayPopoverFormat: { month: 'long', day: 'numeric', year: 'numeric' },
 
   handleWindowResize: true,
   windowResizeDelay: 100, // milliseconds before an updateSize happens
 
   longPressDelay: 1000
 
-}
-
-
-export const englishDefaults = { // used by locale.js
-  dayPopoverFormat: 'dddd, MMMM D'
 }
 
 

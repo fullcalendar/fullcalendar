@@ -5,6 +5,8 @@ import {
 import Class from '../../common/Class'
 import Calendar from '../../Calendar'
 import EventDefParser from '../event/EventDefParser'
+import { DateMarker } from '../../datelib/util'
+import { DateEnv } from '../../datelib/env'
 
 
 export default class EventSource extends Class {
@@ -70,7 +72,7 @@ export default class EventSource extends Class {
   }
 
 
-  fetch(start, end, timezone, onSuccess, onFailure) {
+  fetch(start: DateMarker, end: DateMarker, dateEnv: DateEnv, onSuccess, onFailure) {
     // subclasses must implement. must call the `onSuccess` or `onFailure` func.
   }
 

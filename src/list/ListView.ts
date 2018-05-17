@@ -6,6 +6,8 @@ import View from '../View'
 import Scroller from '../common/Scroller'
 import ListEventRenderer from './ListEventRenderer'
 import ListEventPointing from './ListEventPointing'
+import { addDays, DateMarker } from '../datelib/util'
+import { createFormatter } from '../datelib/formatting'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -21,8 +23,8 @@ export default class ListView extends View {
   scroller: Scroller
   contentEl: HTMLElement
 
-  dayDates: any // localized ambig-time moment array
-  dayRanges: any // UnzonedRange[], of start-end of each day
+  dayDates: DateMarker[]
+  dayRanges: UnzonedRange[] // start/end of each day
 
 
   constructor(calendar, viewSpec) {
@@ -74,21 +76,21 @@ export default class ListView extends View {
 
   renderDates(dateProfile) {
     let calendar = this.calendar
-    let dayStart = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.startMs, true)
-    let viewEnd = calendar.msToUtcMoment(dateProfile.renderUnzonedRange.endMs, true)
+    let dayStart = calendar.dateEnv.startOfDay(dateProfile.renderUnzonedRange.start)
+    let viewEnd = dateProfile.renderUnzonedRange.end
     let dayDates = []
     let dayRanges = []
 
     while (dayStart < viewEnd) {
 
-      dayDates.push(dayStart.clone())
+      dayDates.push(dayStart)
 
       dayRanges.push(new UnzonedRange(
         dayStart,
-        dayStart.clone().add(1, 'day')
+        addDays(dayStart, 1)
       ))
 
-      dayStart.add(1, 'day')
+      dayStart = addDays(dayStart, 1)
     }
 
     this.dayDates = dayDates
@@ -100,6 +102,7 @@ export default class ListView extends View {
 
   // slices by day
   componentFootprintToSegs(footprint) {
+    const dateEnv = this.calendar.dateEnv
     let dayRanges = this.dayRanges
     let dayIndex
     let segRange
@@ -111,8 +114,8 @@ export default class ListView extends View {
 
       if (segRange) {
         seg = {
-          startMs: segRange.startMs,
-          endMs: segRange.endMs,
+          start: segRange.start,
+          end: segRange.end,
           isStart: segRange.isStart,
           isEnd: segRange.isEnd,
           dayIndex: dayIndex
@@ -125,9 +128,13 @@ export default class ListView extends View {
         if (
           !seg.isEnd && !footprint.isAllDay &&
           dayIndex + 1 < dayRanges.length &&
-          footprint.unzonedRange.endMs < dayRanges[dayIndex + 1].startMs + this.nextDayThreshold
+          footprint.unzonedRange.end <
+            dateEnv.add(
+              dayRanges[dayIndex + 1].start,
+              this.nextDayThreshold
+            )
         ) {
-          seg.endMs = footprint.unzonedRange.endMs
+          seg.end = footprint.unzonedRange.end
           seg.isEnd = true
           break
         }
@@ -198,12 +205,13 @@ export default class ListView extends View {
 
   // generates the HTML for the day headers that live amongst the event rows
   buildDayHeaderRow(dayDate) {
-    let mainFormat = this.opt('listDayFormat')
-    let altFormat = this.opt('listDayAltFormat')
+    const dateEnv = this.calendar.dateEnv
+    let mainFormat = createFormatter(this.opt('listDayFormat')) // TODO: cache
+    let altFormat = createFormatter(this.opt('listDayAltFormat')) // TODO: cache
 
     return createElement('tr', {
       className: 'fc-list-heading',
-      'data-date': dayDate.format('YYYY-MM-DD')
+      'data-date': dateEnv.toIso(dayDate, { omitTime: true })
     }, '<td class="' + (
       this.calendar.theme.getClass('tableListHeading') ||
       this.calendar.theme.getClass('widgetHeader')
@@ -212,14 +220,14 @@ export default class ListView extends View {
         this.buildGotoAnchorHtml(
           dayDate,
           { 'class': 'fc-list-heading-main' },
-          htmlEscape(dayDate.format(mainFormat)) // inner HTML
+          htmlEscape(dateEnv.toFormat(dayDate, mainFormat)) // inner HTML
         ) :
         '') +
       (altFormat ?
         this.buildGotoAnchorHtml(
           dayDate,
           { 'class': 'fc-list-heading-alt' },
-          htmlEscape(dayDate.format(altFormat)) // inner HTML
+          htmlEscape(dateEnv.toFormat(dayDate, altFormat)) // inner HTML
         ) :
         '') +
     '</td>') as HTMLTableRowElement

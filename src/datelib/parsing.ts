@@ -4,13 +4,15 @@ const ISO_TZO_RE = /(?:(Z)|([-+])(\d\d)(?::(\d\d))?)$/
 
 export function parse(str) {
   let timeZoneOffset = null
-  let hasTime = false
+  let isTimeUnspecified = false
   let m = ISO_START.exec(str)
 
   if (m) {
-    hasTime = Boolean(m[1])
+    isTimeUnspecified = !m[1]
 
-    if (hasTime) {
+    if (isTimeUnspecified) {
+      str += 'T00:00:00Z'
+    } else {
       str = str.replace(ISO_TZO_RE, function(whole, z, sign, minutes, seconds) {
         if (z) {
           timeZoneOffset = 0
@@ -22,15 +24,12 @@ export function parse(str) {
         }
         return ''
       }) + 'Z' // otherwise will parse in local
-
-    } else {
-      str += 'T00:00:00Z'
     }
   }
 
   return {
     marker: new Date(str),
-    hasTime,
+    isTimeUnspecified,
     timeZoneOffset
   }
 }

@@ -1,5 +1,5 @@
 import * as request from 'superagent'
-import { EventSource, warn, applyAll, assignTo } from 'fullcalendar'
+import { EventSource, warn, applyAll, assignTo, DateEnv, DateMarker, addDays } from 'fullcalendar'
 
 
 export default class GcalEventSource extends EventSource {
@@ -30,9 +30,9 @@ export default class GcalEventSource extends EventSource {
   }
 
 
-  fetch(start, end, timezone, onSuccess, onFailure) {
+  fetch(start: DateMarker, end: DateMarker, dateEnv: DateEnv, onSuccess, onFailure) {
     let url = this.buildUrl()
-    let requestParams = this.buildRequestParams(start, end, timezone)
+    let requestParams = this.buildRequestParams(start, end, dateEnv)
     let ajaxSettings = this.ajaxSettings || {}
 
     if (!requestParams) { // could have failed
@@ -108,7 +108,7 @@ export default class GcalEventSource extends EventSource {
   }
 
 
-  buildRequestParams(start, end, timezone) {
+  buildRequestParams(start: DateMarker, end: DateMarker, dateEnv: DateEnv) {
     let apiKey = this.googleCalendarApiKey || this.calendar.opt('googleCalendarApiKey')
     let params
 
@@ -117,31 +117,27 @@ export default class GcalEventSource extends EventSource {
       return null
     }
 
-    // The API expects an ISO8601 datetime with a time and timezone part.
-    // Since the calendar's timezone offset isn't always known, request the date in UTC and pad it by a day on each
-    // side, guaranteeing we will receive all events in the desired range, albeit a superset.
-    // .utc() will set a zone and give it a 00:00:00 time.
-    if (!start.hasZone()) {
-      start = start.clone().utc().add(-1, 'day')
-    }
-    if (!end.hasZone()) {
-      end = end.clone().utc().add(1, 'day')
+    // when timezone isn't known, we don't know what the UTC offset should be, so ask for +/- 1 day
+    // from the UTC day-start to guarantee we're getting all the events
+    if (!dateEnv.canComputeTimeZoneOffset()) {
+      start = addDays(start, -1)
+      end = addDays(end, 1)
     }
 
     params = assignTo(
       this.ajaxSettings.data || {},
       {
         key: apiKey,
-        timeMin: start.format(),
-        timeMax: end.format(),
+        timeMin: dateEnv.toIso(start),
+        timeMax: dateEnv.toIso(end),
         singleEvents: true,
         maxResults: 9999
       }
     )
 
-    if (timezone && timezone !== 'local') {
-      // when sending timezone names to Google, only accepts underscores, not spaces
-      params.timeZone = timezone.replace(' ', '_')
+    // when sending timezone names to Google, only accepts underscores, not spaces
+    if (dateEnv.timeZone !== 'local') {
+      params.timeZone = dateEnv.timeZone.replace(' ', '_')
     }
 
     return params

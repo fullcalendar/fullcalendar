@@ -33,8 +33,8 @@ export default class ListEventRenderer extends EventRenderer {
     } else if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
       if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
         timeHtml = htmlEscape(this._getTimeText(
-          calendar.msToMoment(seg.startMs),
-          calendar.msToMoment(seg.endMs),
+          seg.start,
+          seg.end,
           componentFootprint.isAllDay
         ))
       } else { // inner segment that lasts the whole day
@@ -73,7 +73,10 @@ export default class ListEventRenderer extends EventRenderer {
 
   // like "4:00am"
   computeEventTimeFormat() {
-    return this.opt('mediumTimeFormat')
+    return {
+      hour: 'numeric',
+      minute: '2-digit'
+    }
   }
 
 }

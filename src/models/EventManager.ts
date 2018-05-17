@@ -34,15 +34,15 @@ export default class EventManager {
   }
 
 
-  requestEvents(start, end, timezone, force, callback) {
+  requestEvents(start, end, dateEnv, force, callback) {
     if (
       force ||
       !this.currentPeriod ||
       !this.currentPeriod.isWithinRange(start, end) ||
-      timezone !== this.currentPeriod.timezone
+      dateEnv !== this.currentPeriod.dateEnv
     ) {
       this.setPeriod( // will change this.currentPeriod
-        new EventPeriod(start, end, timezone)
+        new EventPeriod(start, end, dateEnv)
       )
     }
 

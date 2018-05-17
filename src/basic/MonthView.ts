@@ -1,7 +1,7 @@
-import * as moment from 'moment'
 import { distributeHeight } from '../util/misc'
 import BasicView from './BasicView'
 import MonthViewDateProfileGenerator from './MonthViewDateProfileGenerator'
+import { DateMarker } from '../datelib/util'
 
 
 /* A month view with day cells running in rows (one-per-week) and columns
@@ -21,8 +21,10 @@ export default class MonthView extends BasicView {
   }
 
 
-  isDateInOtherMonth(date, dateProfile) {
-    return date.month() !== moment.utc(dateProfile.currentUnzonedRange.startMs).month() // TODO: optimize
+  isDateInOtherMonth(date: DateMarker, dateProfile) {
+    const dateEnv = this.calendar.dateEnv
+
+    return dateEnv.getMonth(date) !== dateEnv.getMonth(dateProfile.currentUnzonedRange.start)
   }
 
 }

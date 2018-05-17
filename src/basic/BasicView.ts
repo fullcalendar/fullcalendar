@@ -291,6 +291,7 @@ function makeDayGridSubclass(SuperClass) {
 
     // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
     renderNumberIntroHtml(row) {
+      const dateEnv = this.calendar.dateEnv
       let view = this.view
       let weekStart = this.getCellDate(row, 0)
 
@@ -299,7 +300,7 @@ function makeDayGridSubclass(SuperClass) {
           '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '>' +
             view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
               { date: weekStart, type: 'week', forceOff: this.colCnt === 1 },
-              weekStart.format('w') // inner HTML
+              dateEnv.formatWeek(weekStart) // inner HTML
             ) +
           '</td>'
       }
