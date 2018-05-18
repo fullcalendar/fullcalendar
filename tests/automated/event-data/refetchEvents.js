@@ -1,9 +1,9 @@
-import { findFcEvent, findScroller, createCalElement } from '../lib/events'
+import { getScrollerEl, getEventEls } from '../lib/MonthViewUtils';
 
 describe('refetchEvents', function() {
 
   it('retains scroll when in month view', function() {
-    var el = createCalElement({style:"width:300px"}).appendTo('body')
+    var el = $("<div style='width:300px;' id='calendar'>").appendTo('body')
     var scrollEl
     var scrollTop
 
@@ -22,9 +22,9 @@ describe('refetchEvents', function() {
       ]
     }, el)
 
-    expect(findFcEvent().length).toBe(8)
+    expect(getEventEls().length).toBe(8)
 
-    scrollEl = findScroller(el)
+    scrollEl = getScrollerEl()
     scrollEl.scrollTop(1000)
     scrollTop = scrollEl.scrollTop()
 
@@ -32,7 +32,7 @@ describe('refetchEvents', function() {
     expect(scrollTop).toBeGreaterThan(10)
 
     currentCalendar.refetchEvents()
-    expect(findFcEvent().length).toBe(8)
+    expect(getEventEls().length).toBe(8)
     expect(scrollEl.scrollTop()).toBe(scrollTop)
   })
 })

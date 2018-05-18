@@ -23,14 +23,3 @@ export function drag(startDate, endDate, debug) {
   )
 }
 
-export function filterEl(selector, cb){
-  return $(selector).filter(cb)
-}
-
-export function simulateEvent(selector, event, cfg){
-  return $(selector).simulate(event, cfg)
-}
-
-export function simulateDrag(selector, cfg){
-  return simulateEvent(selector, 'drag', cfg)
-}

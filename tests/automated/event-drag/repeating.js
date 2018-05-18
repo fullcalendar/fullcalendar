@@ -1,4 +1,5 @@
 import * as TimeGridEventDragUtils from './TimeGridEventDragUtils'
+import { getVisibleEventEls, getEventEls } from '../lib/MonthViewUtils';
 
 describe('event dragging on repeating events', function() {
   pushOptions({
@@ -40,11 +41,9 @@ describe('event dragging on repeating events', function() {
       eventDragStart: function() {
         setTimeout(function() { // try go execute DURING the drag
           expect(
-            TimeGridEventDragUtils.filterEl('.fc-event:visible', 
-              function(i, node) {
-                return $(node).css('visibility') !== 'hidden'
-              }
-            ).length
+            getVisibleEventEls().filter(function(i, node) {
+              return $(node).css('visibility') !== 'hidden'
+            }).length
           ).toBe(1)
         }, 0)
       },
@@ -55,7 +54,7 @@ describe('event dragging on repeating events', function() {
       }
     })
 
-    TimeGridEventDragUtils.simulateDrag('.fc-event:first', {
+    getEventEls().first().simulate('drag',{
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
@@ -78,9 +77,8 @@ describe('event dragging on repeating events', function() {
       eventDragStart: function() {
         setTimeout(function() { // try go execute DURING the drag
           expect(
-            TimeGridEventDragUtils.filterEl('.fc-event:visible', 
-              function(i, node) {
-                return $(node).css('visibility') !== 'hidden'
+            getVisibleEventEls().filter(function(i, node) {
+              return $(node).css('visibility') !== 'hidden'
             }).length
           ).toBe(2) // the dragging event AND the other regular event
         }, 0)
@@ -91,7 +89,8 @@ describe('event dragging on repeating events', function() {
         }, 10)
       }
     })
-    TimeGridEventDragUtils.simulateDrag('.fc-event:first', {
+
+    getEventEls().first().simulate('drag',{
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
