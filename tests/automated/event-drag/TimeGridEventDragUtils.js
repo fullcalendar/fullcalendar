@@ -22,4 +22,3 @@ export function drag(startDate, endDate, debug) {
     debug
   )
 }
-
