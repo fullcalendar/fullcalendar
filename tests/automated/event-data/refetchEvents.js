@@ -3,7 +3,7 @@ import { getScrollerEl, getEventEls } from '../lib/MonthViewUtils';
 describe('refetchEvents', function() {
 
   it('retains scroll when in month view', function() {
-    var el = $("<div style='width:300px;' id='calendar'>").appendTo('body')
+    var el = $('<div id="calendar" style="width:300px"/>').appendTo('body')
     var scrollEl
     var scrollTop
 
