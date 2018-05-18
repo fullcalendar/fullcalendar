@@ -18,7 +18,7 @@ export function drag(startDate, endDate, debug) {
 
   return EventDragUtils.drag(
     startRect,
-    endRect,  
+    endRect,
     debug
   )
 }
