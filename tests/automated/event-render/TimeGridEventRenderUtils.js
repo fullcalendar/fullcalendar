@@ -1,7 +1,9 @@
+import {getDayEls, getEventEls, getEventElTime} from '../lib/MonthViewUtils'
+import {getAllTimeGridSlotEls} from '../lib/time-grid'
 
 export function getTimeTexts() {
-  return $('.fc-event').map(function(i, eventEl) {
-    return $(eventEl).find('.fc-time').text()
+  return getEventEls().map(function(i, eventEl) {
+    return getEventElTime(eventEl)
   }).get()
 }
 
@@ -16,7 +18,7 @@ export function checkEventRendering(start, end) {
   end = FullCalendar.moment.parseZone(end)
 
   var expectedRects = computeSpanRects(start, end)
-  var eventEls = $('.fc-event') // sorted by DOM order. not good for RTL
+  var eventEls = getEventEls() // sorted by DOM order. not good for RTL
   var isMatch = checkEventRenderingMatch(expectedRects, eventEls)
 
   return {
@@ -127,7 +129,7 @@ export function computeSpanRects(start, end) {
 
 
 function computeDays() {
-  var dayEls = $('.fc-day-header[data-date]')
+  var dayEls = getDayEls()
 
   var days = dayEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
@@ -143,7 +145,7 @@ function computeDays() {
 
 
 function computeSlots() {
-  var slotEls = $('.fc-time-grid .fc-slats tr[data-time]')
+  var slotEls = getAllTimeGridSlotEls()
 
   var slots = slotEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()

@@ -1,3 +1,4 @@
+import { getEventEls } from '../lib/MonthViewUtils'
 
 export function expectIsStart(bool) {
   var el = getSingleEl()
@@ -20,7 +21,7 @@ export function expectIsEnd(bool) {
 }
 
 export function getSingleEl() {
-  var els = $('.fc-event')
+  var els = getEventEls()
   expect(els).toHaveLength(1)
   return els
 }

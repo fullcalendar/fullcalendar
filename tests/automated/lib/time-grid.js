@@ -136,6 +136,9 @@ export function getTimeGridDayEls(date) {
   return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]')
 }
 
+export function getAllTimeGridSlotEls() {
+  return  $('.fc-time-grid .fc-slats tr[data-time]')
+}
 
 export function getTimeGridSlotEls(timeDuration) {
   timeDuration = moment.duration(timeDuration)

@@ -1,3 +1,11 @@
+export function getEventElTime(el){
+  return $(el).find('.fc-time').text()
+}
+
+export function getDayEls(){
+  return $('.fc-day-header[data-date]')
+}
+
 export function getVisibleEventEls(){
   return $('.fc-event:visible')
 }
