@@ -14,6 +14,7 @@ defineLocale("bs", {
     day: "Dan",
     list: "Raspored"
   },
+  weekHeader: "Sed",
   allDayText: "Cijeli dan",
   eventLimitText: function(n) {
     return "+ još " + n;

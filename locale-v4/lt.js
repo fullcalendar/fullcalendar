@@ -14,6 +14,7 @@ defineLocale("lt", {
     day: "Diena",
     list: "Darbotvarkė"
   },
+  weekHeader: "SAV",
   allDayText: "Visą dieną",
   eventLimitText: "daugiau",
   noEventsMessage: "Nėra įvykių rodyti"

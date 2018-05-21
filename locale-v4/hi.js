@@ -14,6 +14,7 @@ defineLocale("hi", {
     day: "दिन",
     list: "कार्यसूची"
   },
+  weekHeader: "हफ्ता",
   allDayText: "सभी दिन",
   eventLimitText: function(n) {
     return "+अधिक " + n;

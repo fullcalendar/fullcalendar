@@ -14,6 +14,7 @@ defineLocale("vi", {
     day: "Ngày",
     list: "Lịch biểu"
   },
+  weekHeader: "Tu",
   allDayText: "Cả ngày",
   eventLimitText: function(n) {
     return "+ thêm " + n;

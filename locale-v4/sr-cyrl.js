@@ -14,6 +14,7 @@ defineLocale("sr-cyrl", {
     day: "Дан",
     list: "Планер"
   },
+  weekHeader: "Сед",
   allDayText: "Цео дан",
   eventLimitText: function(n) {
     return "+ још " + n;

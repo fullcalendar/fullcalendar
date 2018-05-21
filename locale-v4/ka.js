@@ -14,6 +14,7 @@ defineLocale("ka", {
     day: "დღე",
     list: "დღის წესრიგი"
   },
+  weekHeader: "კვ",
   allDayText: "მთელი დღე",
   eventLimitText: function(n) {
     return "+ კიდევ " + n;

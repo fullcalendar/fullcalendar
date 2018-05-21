@@ -14,6 +14,7 @@ defineLocale("sk", {
     day: "Deň",
     list: "Rozvrh"
   },
+  weekHeader: "Ty",
   allDayText: "Celý deň",
   eventLimitText: function(n) {
     return "+ďalšie: " + n;

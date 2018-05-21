@@ -14,6 +14,7 @@ defineLocale("kk", {
     day: "Күн",
     list: "Күн тәртібі"
   },
+  weekHeader: "Не",
   allDayText: "Күні бойы",
   eventLimitText: function(n) {
     return "+ тағы " + n;

@@ -10,6 +10,7 @@ defineLocale("ja", {
     day: "日",
     list: "予定リスト"
   },
+  weekHeader: "週",
   allDayText: "終日",
   eventLimitText: function(n) {
     return "他 " + n + " 件";

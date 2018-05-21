@@ -14,6 +14,7 @@ defineLocale("hu", {
     day: "Nap",
     list: "Napló"
   },
+  weekHeader: "Hét",
   allDayText: "Egész nap",
   eventLimitText: "további",
   noEventsMessage: "Nincs megjeleníthető események"

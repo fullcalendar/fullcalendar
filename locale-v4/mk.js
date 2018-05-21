@@ -10,6 +10,7 @@ defineLocale("mk", {
     day: "Ден",
     list: "График"
   },
+  weekHeader: "Сед",
   allDayText: "Цел ден",
   eventLimitText: function(n) {
     return "+повеќе " + n;

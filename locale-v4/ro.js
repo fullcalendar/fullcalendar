@@ -14,6 +14,7 @@ defineLocale("ro", {
     day: "Zi",
     list: "Agendă"
   },
+  weekHeader: "Săpt",
   allDayText: "Toată ziua",
   eventLimitText: function(n) {
     return "+alte " + n;

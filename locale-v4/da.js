@@ -14,6 +14,7 @@ defineLocale("da", {
     day: "Dag",
     list: "Agenda"
   },
+  weekHeader: "Uge",
   allDayText: "Hele dagen",
   eventLimitText: "flere",
   noEventsMessage: "Ingen arrangementer at vise"

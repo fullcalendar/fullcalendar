@@ -14,6 +14,7 @@ defineLocale("lv", {
     day: "Diena",
     list: "Dienas kārtība"
   },
+  weekHeader: "Ned.",
   allDayText: "Visu dienu",
   eventLimitText: function(n) {
     return "+vēl " + n;

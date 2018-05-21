@@ -14,6 +14,7 @@ defineLocale("hr", {
     day: "Dan",
     list: "Raspored"
   },
+  weekHeader: "Tje",
   allDayText: "Cijeli dan",
   eventLimitText: function(n) {
     return "+ još " + n;

@@ -15,6 +15,7 @@ defineLocale("fa", {
     day: "روز",
     list: "برنامه"
   },
+  weekHeader: "هف",
   allDayText: "تمام روز",
   eventLimitText: function(n) {
     return "بیش از " + n;

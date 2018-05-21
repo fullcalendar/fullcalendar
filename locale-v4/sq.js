@@ -14,6 +14,7 @@ defineLocale("sq", {
     day: "Ditë",
     list: "Listë"
   },
+  weekHeader: "Ja",
   allDayHtml: "Gjithë<br/>ditën",
   eventLimitText: function(n) {
     return "+më tepër " + n;

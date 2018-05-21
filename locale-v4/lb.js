@@ -14,6 +14,7 @@ defineLocale("lb", {
     day: "Dag",
     list: "Terminiwwersiicht"
   },
+  weekHeader: "W",
   allDayText: "Ganzen Dag",
   eventLimitText: "méi",
   noEventsMessage: "Nee Evenementer ze affichéieren"

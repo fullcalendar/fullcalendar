@@ -14,6 +14,7 @@ defineLocale("gl", {
     day: "Día",
     list: "Axenda"
   },
+  weekHeader: "Sm",
   allDayHtml: "Todo<br/>o día",
   eventLimitText: "máis",
   noEventsMessage: "Non hai eventos para amosar"

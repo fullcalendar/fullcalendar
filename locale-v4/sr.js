@@ -14,6 +14,7 @@ defineLocale("sr", {
     day: "Dan",
     list: "Planеr"
   },
+  weekHeader: "Sed",
   allDayText: "Cеo dan",
   eventLimitText: function(n) {
     return "+ još " + n;

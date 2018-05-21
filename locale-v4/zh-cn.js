@@ -15,6 +15,7 @@ defineLocale("zh-cn", {
     day: "日",
     list: "日程"
   },
+  weekHeader: "周",
   allDayText: "全天",
   eventLimitText: function(n) {
     return "另外 " + n + " 个";

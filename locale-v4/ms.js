@@ -14,6 +14,7 @@ defineLocale("ms", {
     day: "Hari",
     list: "Agenda"
   },
+  weekHeader: "Mg",
   allDayText: "Sepanjang hari",
   eventLimitText: function(n) {
     return "masih ada " + n + " acara";

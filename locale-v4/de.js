@@ -14,6 +14,7 @@ defineLocale("de", {
     day: "Tag",
     list: "Terminübersicht"
   },
+  weekHeader: "KW",
   allDayText: "Ganztägig",
   eventLimitText: function(n) {
     return "+ weitere " + n;
