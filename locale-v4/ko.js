@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("ko", {
+defineLocale("ko", {
   buttonText: {
     prev: "이전달",
     next: "다음달",

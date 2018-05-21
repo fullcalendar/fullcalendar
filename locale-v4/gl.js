@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("gl", {
+defineLocale("gl", {
   week: {
     dow: 1, // Monday is the first day of the week.
     doy: 4  // The week that contains Jan 4th is the first week of the year.

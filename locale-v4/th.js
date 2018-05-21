@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("th", {
+defineLocale("th", {
   buttonText: {
     prev: "ย้อน",
     next: "ถัดไป",

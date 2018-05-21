@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("ar-dz", {
+defineLocale("ar-dz", {
   week: {
     dow: 0, // Sunday is the first day of the week.
     doy: 4  // The week that contains Jan 1st is the first week of the year.

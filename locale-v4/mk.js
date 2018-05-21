@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("mk", {
+defineLocale("mk", {
   buttonText: {
     prev: "претходно",
     next: "следно",

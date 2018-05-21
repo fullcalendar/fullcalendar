@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("ka", {
+defineLocale("ka", {
   week: {
     dow: 1,
     doy: 7

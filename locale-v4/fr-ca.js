@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("fr", {
+defineLocale("fr", {
   buttonText: {
     prev: "Précédent",
     next: "Suivant",

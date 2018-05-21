@@ -1,6 +1,6 @@
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-FullCalendar.locale("ja", {
+defineLocale("ja", {
   buttonText: {
     prev: "前",
     next: "次",
