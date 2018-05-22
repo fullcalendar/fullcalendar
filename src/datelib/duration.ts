@@ -1,5 +1,5 @@
 
-export interface DurationObjInput {
+export interface DurationInput {
   years?: number
   year?: number
   months?: number
@@ -26,7 +26,10 @@ export interface Duration {
   time: number
 }
 
-let re = /^(?:(\d+)\.)?(\d\d):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
+
+// Parsing and Creation
+
+const PARSE_RE = /^(?:(\d+)\.)?(\d\d):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
 
 export function createDuration(input, unit?: string) {
   if (typeof input === 'string') {
@@ -34,48 +37,30 @@ export function createDuration(input, unit?: string) {
   } else if (typeof input === 'object') {
     return normalizeObject(input)
   } else if (typeof input === 'number') {
-    return {
-      year: (unit === 'year' || unit === 'years') ? input : 0,
-      month: (unit === 'month' || unit === 'months') ? input : 0,
-      day: (unit === 'day' || unit === 'days') ? input : 0,
-      time:
-        ((unit === 'hour' || unit === 'hours') ? input * 60 * 60 * 1000 : 0) +
-        ((unit === 'minute' || unit === 'minutes') ? input * 60 * 1000 : 0) +
-        ((unit === 'seconds' || unit === 'second') ? input * 1000 : 0) +
-        ((!unit || unit === 'millisecond' || unit === 'milliseconds') ? input : 0)
-    }
+    return normalizeObject({ [unit || 'millisecond']: input })
   } else {
     return null
   }
 }
 
-export function addDurations(d0: Duration, d1: Duration) {
-  return {
-    year: d0.year + d1.year,
-    month: d0.month + d1.month,
-    day: d0.day + d1.day,
-    time: d0.time + d1.time
-  }
-}
-
 function parseString(s: string): Duration {
-  let m = re.exec(s)
+  let m = PARSE_RE.exec(s)
   if (m) {
     return {
       year: 0,
       month: 0,
-      day: m[1] ? parseInt(m[1], 10) : 0, // todo: do this for others
+      day: m[1] ? parseInt(m[1], 10) : 0,
       time:
-        (parseInt(m[2], 10) || 0) * 60 * 60 * 1000 + // hours
-        (parseInt(m[3], 10) || 0) * 60 * 1000 + // minutes
-        (parseInt(m[4], 10) || 0) * 1000 + // seconds
-        (parseInt(m[5], 10) || 0) // ms
+        (m[2] ? parseInt(m[2], 10) : 0) * 60 * 60 * 1000 + // hours
+        (m[3] ? parseInt(m[3], 10) : 0) * 60 * 1000 + // minutes
+        (m[4] ? parseInt(m[4], 10) : 0) * 1000 + // seconds
+        (m[5] ? parseInt(m[5], 10) : 0) // ms
     }
   }
   return null
 }
 
-function normalizeObject(obj: DurationObjInput): Duration {
+function normalizeObject(obj: DurationInput): Duration {
   return {
     year: obj.years || obj.year || 0,
     month: obj.months || obj.month || 0,
@@ -90,15 +75,34 @@ function normalizeObject(obj: DurationObjInput): Duration {
   }
 }
 
-export function getWeeksFromInput(obj: DurationObjInput) {
+export function getWeeksFromInput(obj: DurationInput) {
   return obj.weeks || obj.week || 0
 }
+
+
+// Equality
 
 export function durationsEqual(d0: Duration, d1: Duration): boolean {
   return d0.year === d1.year &&
     d0.month === d1.month &&
     d0.day === d1.day &&
     d0.time === d1.time
+}
+
+export function isSingleDay(dur: Duration) {
+  return dur.year === 0 && dur.month === 0 && dur.day === 1 && dur.time === 0
+}
+
+
+// Simple Math
+
+export function addDurations(d0: Duration, d1: Duration) {
+  return {
+    year: d0.year + d1.year,
+    month: d0.month + d1.month,
+    day: d0.day + d1.day,
+    time: d0.time + d1.time
+  }
 }
 
 export function diffDurations(d0: Duration, d1: Duration): Duration {
@@ -110,7 +114,46 @@ export function diffDurations(d0: Duration, d1: Duration): Duration {
   }
 }
 
-export function wholeDivideDurationByDuration(numerator: Duration, denominator: Duration): number {
+export function multiplyDuration(d: Duration, n: number) {
+  return {
+    year: d.year * n,
+    month: d.month * n,
+    day: d.day * n,
+    time: d.time * n
+  }
+}
+
+
+// Conversions
+// "Rough" because they are based on average-case Gregorian months/years
+
+export function asRoughDays(dur: Duration) {
+  return asRoughMs(dur) / 864e5
+}
+
+export function asRoughHours(dur: Duration) {
+  return asRoughMs(dur) / (1000 * 60 * 60)
+}
+
+export function asRoughMinutes(dur: Duration) {
+  return asRoughMs(dur) / (1000 * 60)
+}
+
+export function asRoughSeconds(dur: Duration) {
+  return asRoughMs(dur) / 1000
+}
+
+export function asRoughMs(dur: Duration) {
+  return dur.year * (365 * 864e5) +
+    dur.month * (30 * 864e5) +
+    dur.day * 864e5 +
+    dur.time
+}
+
+
+// Advanced Math
+
+export function wholeDivideDurations(numerator: Duration, denominator: Duration): number {
   let res0 = null
   let res1 = null
 
@@ -121,7 +164,7 @@ export function wholeDivideDurationByDuration(numerator: Duration, denominator: 
   if (denominator.month) {
     res1 = numerator.month / denominator.month
 
-    if (res0 === null || res0 === res1) {
+    if (res0 === null || res0 === res1) { // must match any previous division results
       res0 = res1
     } else {
       return null
@@ -131,7 +174,7 @@ export function wholeDivideDurationByDuration(numerator: Duration, denominator: 
   if (denominator.day) {
     res1 = numerator.day / denominator.day
 
-    if (res0 === null || res0 === res1) {
+    if (res0 === null || res0 === res1) { // must match any previous division results
       res0 = res1
     } else {
       return null
@@ -141,7 +184,7 @@ export function wholeDivideDurationByDuration(numerator: Duration, denominator: 
   if (denominator.time) {
     res1 = numerator.time / denominator.time
 
-    if (res0 === null || res0 === res1) {
+    if (res0 === null || res0 === res1) { // must match any previous division results
       res0 = res1
     } else {
       return null
@@ -151,63 +194,30 @@ export function wholeDivideDurationByDuration(numerator: Duration, denominator: 
   return res0
 }
 
-export function isSingleDay(dur: Duration) {
-  return dur.year === 0 && dur.month === 0 && dur.day === 1 && dur.time === 0
-}
-
-
-export function computeGreatestUnit(dur: Duration) { // can return null?
-  if (dur.time % 1000 !== 0) {
-    return 'millisecond'
-  }
-  if (dur.time % 1000 * 60 !== 0) {
-    return 'second'
-  }
-  if (dur.time % 1000 * 60 * 60 !== 0) {
-    return 'minute'
-  }
-  if (dur.time) { // correct???
-    return 'hour'
+export function greatestDurationDenominator(dur: Duration, considerWeeks: boolean = false) {
+  let time = dur.time
+  if (time) {
+    if (time % 1000 !== 0) {
+      return { unit: 'millisecond', value: time }
+    }
+    if (time % (1000 * 60) ! == 0) {
+      return { unit: 'second', value: time / 1000 }
+    }
+    if (time % (1000 * 60 * 60) !== 0) {
+      return { unit: 'minute', value: time / (1000 * 60) }
+    }
+    if (time) {
+      return { unit: 'hour', value: time / (1000 * 60 * 60) }
+    }
   }
   if (dur.day) {
-    return 'day'
+    return { unit: 'day', value: dur.day }
   }
   if (dur.month) {
-    return 'month'
+    return { unit: 'month', value: dur.month }
   }
   if (dur.year) {
-    return 'year'
+    return { unit: 'year', value: dur.year }
   }
-}
-
-
-export function multiplyDuration(dur: Duration, n: number) {
-  return {
-    year: dur.year * n,
-    month: dur.month * n,
-    day: dur.day * n,
-    time: dur.time * n
-  }
-}
-
-
-const MS_IN_DAY = 864e5
-
-export function asRoughDays(dur: Duration) { // TODO: use asRoughMs
-  return dur.year * 365 + dur.month * 30 + dur.day + dur.time / MS_IN_DAY
-}
-
-export function asRoughMs(dur: Duration) {
-  return dur.year * (365 * MS_IN_DAY) +
-    dur.month * (30 * MS_IN_DAY) +
-    dur.day * MS_IN_DAY +
-    dur.time
-}
-
-export function asRoughMinutes(dur: Duration) {
-  return asRoughMs(dur) / 1000 / 60
-}
-
-export function asRoughSeconds(dur: Duration) {
-  return asRoughMs(dur) / 1000
+  return { unit: 'millisecond', value: 0 }
 }

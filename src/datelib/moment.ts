@@ -1,19 +1,21 @@
 import * as moment from 'moment'
-import { registerCmdStrProcessor } from './formatting'
+import { VerboseFormattingArg } from './formatting'
+import { registerCmdFormatter } from './formatting-cmd'
 
-registerCmdStrProcessor('moment', function(cmdStr: string, marker, params) {
+// TODO: what about range!!??
+
+registerCmdFormatter('moment', function(cmdStr: string, arg: VerboseFormattingArg) {
   let mom: moment.Moment
-  let arr = params.calendarSystem.markerToArray(marker)
 
-  if (params.timeZone === 'local') {
-    mom = moment(arr)
-  } else if (params.timeZone === 'UTC' || !(moment as any).tz) {
-    mom = moment.utc(arr)
+  if (arg.timeZone === 'local') {
+    mom = moment(arg.date.array)
+  } else if (arg.timeZone === 'UTC' || !(moment as any).tz) {
+    mom = moment.utc(arg.date.array)
   } else {
-    mom = (moment as any).tz(arr, params.timeZone)
+    mom = (moment as any).tz(arg.date.array, arg.timeZone)
   }
 
-  mom.locale(params.locale)
+  mom.locale(arg.localeIds[0])
 
   return mom.format(cmdStr)
 })

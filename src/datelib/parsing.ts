@@ -27,8 +27,14 @@ export function parse(str) {
     }
   }
 
+  let marker = new Date(str)
+
+  if (isNaN(marker.valueOf())) {
+    return null
+  }
+
   return {
-    marker: new Date(str),
+    marker,
     isTimeUnspecified,
     timeZoneOffset
   }

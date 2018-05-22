@@ -1,5 +1,4 @@
-import { DateMarker, arrayToUtcDate, dateToUtcArray } from './util'
-
+import { DateMarker, arrayToUtcDate, dateToUtcArray } from './marker'
 
 export interface CalendarSystem {
   getMarkerYear(d: DateMarker): number;
@@ -12,11 +11,9 @@ export interface CalendarSystem {
 
 let calendarSystemClassMap = {}
 
-
 export function registerCalendarSystem(name, theClass) {
   calendarSystemClassMap[name] = theClass
 }
-
 
 export function createCalendarSystem(name) {
   return new calendarSystemClassMap[name]()
@@ -47,4 +44,4 @@ class GregorianCalendarSystem implements CalendarSystem {
 
 }
 
-registerCalendarSystem('gregorian', GregorianCalendarSystem)
+registerCalendarSystem('gregory', GregorianCalendarSystem)

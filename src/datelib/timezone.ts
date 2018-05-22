@@ -1,16 +1,29 @@
 
+export abstract class NamedTimeZoneImpl {
 
+  name: string
 
-export type namedTimeZoneOffsetGenerator = (timeZoneName: string, array: number[]) => number
+  constructor(name: string) {
+    this.name = name
+  }
 
-let namedTimeZoneOffsetGeneratorMap = {}
-
-
-export function registerNamedTimeZoneOffsetGenerator(name, timeZoneOffsetGenerator: namedTimeZoneOffsetGenerator) {
-  namedTimeZoneOffsetGeneratorMap[name] = timeZoneOffsetGenerator
+  abstract offsetForArray(a: number[]): number
+  abstract timestampToArray(ms: number): number[]
 }
 
 
-export function getNamedTimeZoneOffsetGenerator(name) {
-  return namedTimeZoneOffsetGeneratorMap[name]
+let namedTimeZonedImpls = {}
+
+export function registerNamedTimeZoneImpl(implName, theClass) {
+  namedTimeZonedImpls[implName] = theClass
+}
+
+export function createNamedTimeZoneImpl(implName, tzName) {
+  let theClass = namedTimeZonedImpls[implName]
+
+  if (theClass) {
+    return theClass(tzName)
+  }
+
+  return null
 }
