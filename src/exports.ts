@@ -122,7 +122,7 @@ export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
 
-export { DateMarker, addDays, startOfDay, addMs } from './datelib/marker'
+export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime } from './datelib/marker'
 export {
   Duration, createDuration,
   isSingleDay, multiplyDuration,
@@ -130,3 +130,5 @@ export {
   wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
 export { DateEnv } from './datelib/env'
+export { getLocale } from './datelib/locale'
+export { createFormatter } from './datelib/formatting'

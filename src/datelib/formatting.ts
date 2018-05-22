@@ -65,7 +65,7 @@ export function buildIsoString(marker: DateMarker, timeZoneOffset?: number, stri
   s = s.replace('Z', '')
 
   if (timeZoneOffset != null) { // provided?
-    s += formatTimeZoneOffset(timeZoneOffset, true)
+    s += timeZoneOffset ? formatTimeZoneOffset(timeZoneOffset, true) : 'Z'
   } else if (stripZeroTime) {
     s = s.replace('T00:00:00', '')
   }

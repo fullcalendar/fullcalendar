@@ -51,7 +51,7 @@ export class DateEnv {
     this.calendarSystem = createCalendarSystem(settings.calendarSystem)
     this.locale = settings.locale
     this.weekDow = settings.locale.week.dow
-    this.weekDoy = settings.locale.week.dow
+    this.weekDoy = settings.locale.week.doy
 
     if (settings.weekNumberCalculation === 'ISO') {
       this.weekDow = 1
@@ -287,7 +287,11 @@ export class DateEnv {
   }
 
   startOfWeek(m: DateMarker): DateMarker {
-    return addDays(m, -((m.getUTCDay() - this.weekDow + 7) % 7))
+    return this.calendarSystem.arrayToMarker([
+      this.calendarSystem.getMarkerYear(m),
+      this.calendarSystem.getMarkerMonth(m),
+      m.getUTCDate() - ((m.getUTCDay() - this.weekDow + 7) % 7)
+    ])
   }
 
 
@@ -383,7 +387,7 @@ export class DateEnv {
     if (this.timeZone === 'local') {
       return arrayToLocalDate(dateToUtcArray(m)).getTimezoneOffset()
     } else if (this.timeZone === 'UTC') {
-      return m.getTimezoneOffset()
+      return 0
     } else if (this.namedTimeZoneImpl) {
       return this.namedTimeZoneImpl.offsetForArray(dateToUtcArray(m))
     }
