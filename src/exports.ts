@@ -122,9 +122,11 @@ export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
 
-export { DateMarker, addDays, startOfDay, addMs } from './datelib/util'
-export { DateEnv } from './datelib/env'
+export { DateMarker, addDays, startOfDay, addMs } from './datelib/marker'
 export {
-  wholeDivideDurationByDuration, isSingleDay, createDuration, multiplyDuration,
-  asRoughMinutes, asRoughSeconds
+  Duration, createDuration,
+  isSingleDay, multiplyDuration,
+  asRoughMinutes, asRoughSeconds,
+  wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
+export { DateEnv } from './datelib/env'

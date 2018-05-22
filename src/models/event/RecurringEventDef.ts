@@ -3,7 +3,7 @@ import EventDef from './EventDef'
 import EventInstance from './EventInstance'
 import EventDateProfile from './EventDateProfile'
 import { createDuration, Duration } from '../../datelib/duration'
-import { DateMarker } from '../../datelib/util'
+import { DateMarker, startOfDay } from '../../datelib/marker'
 
 const ONE_DAY = createDuration({ days: 1 })
 
@@ -22,7 +22,7 @@ export default class RecurringEventDef extends EventDef {
   buildInstances(unzonedRange) {
     let calendar = this.source.calendar
     const dateEnv = calendar.dateEnv
-    let dateMarker: DateMarker = dateEnv.startOfDay(unzonedRange.start)
+    let dateMarker: DateMarker = startOfDay(unzonedRange.start)
     let endMarker: DateMarker = unzonedRange.end
     let instanceStart: DateMarker
     let instanceEnd: DateMarker

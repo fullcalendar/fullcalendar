@@ -1,8 +1,8 @@
 import { viewHash } from './ViewRegistry'
 import { mergeProps } from './util/object'
 import { mergeOptions, globalDefaults } from './options'
-import { Duration, createDuration, getWeeksFromInput } from './datelib/duration'
-import { computeGreatestDurationDenominator, unitsDesc } from './datelib/util'
+import { Duration, createDuration, getWeeksFromInput, greatestDurationDenominator } from './datelib/duration'
+import { unitsDesc } from './datelib/util'
 
 
 export default class ViewSpecManager {
@@ -112,9 +112,9 @@ export default class ViewSpecManager {
 
       if (duration) { // valid?
 
-        let denom = computeGreatestDurationDenominator(
+        let denom = greatestDurationDenominator(
           duration,
-          Boolean(getWeeksFromInput(durationInput))
+          !getWeeksFromInput(durationInput)
         )
 
         spec.duration = duration

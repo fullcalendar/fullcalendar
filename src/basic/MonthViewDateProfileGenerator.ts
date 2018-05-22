@@ -1,7 +1,6 @@
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import UnzonedRange from '../models/UnzonedRange'
-import { diffWeeks } from '../datelib/env'
-import { addWeeks } from '../datelib/util'
+import { addWeeks, diffWeeks } from '../datelib/marker'
 
 
 export default class MonthViewDateProfileGenerator extends BasicViewDateProfileGenerator {

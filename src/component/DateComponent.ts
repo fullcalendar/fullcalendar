@@ -1,10 +1,12 @@
 import { attrsToStr, htmlEscape } from '../util/html'
 import Component from './Component'
+import Calendar from '../Calendar'
+import View from '../View'
 import { eventRangeToEventFootprint } from '../models/event/util'
 import EventFootprint from '../models/event/EventFootprint'
 import { DateProfile } from '../DateProfileGenerator'
-import { addDays, DateMarker, startOfDay, dayIDs } from '../datelib/util'
-import { diffDays } from '../datelib/env'
+import { DateMarker, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
+import { dayIDs } from '../datelib/util'
 import { Duration, createDuration, asRoughMs } from '../datelib/duration'
 
 
@@ -655,13 +657,13 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  _getCalendar() { // TODO: strip out. move to generic parent.
+  _getCalendar(): Calendar { // TODO: strip out. move to generic parent.
     let t = (this as any)
     return t.calendar || t.view.calendar
   }
 
 
-  _getView() { // TODO: strip out. move to generic parent.
+  _getView(): View { // TODO: strip out. move to generic parent.
     return (this as any).view
   }
 
@@ -694,7 +696,7 @@ export default abstract class DateComponent extends Component {
     date = dateEnv.createMarker(date) // if a string, parse it
 
     finalOptions = { // for serialization into the link
-      date: dateEnv.toIso(date, { omitTime: true }),
+      date: dateEnv.formatIso(date, { omitTime: true }),
       type: type || 'day'
     }
 
@@ -774,7 +776,7 @@ export default abstract class DateComponent extends Component {
     } else if (unit === 'week') {
       res = dateEnv.diffWholeMonths(range.start, range.end)
     } else if (unit === 'day') {
-      res = dateEnv.diffWholeDays(range.start, range.end)
+      res = diffWholeDays(range.start, range.end)
     }
 
     return res || 0
@@ -784,10 +786,9 @@ export default abstract class DateComponent extends Component {
   // Returns the date range of the full days the given range visually appears to occupy.
   // Returns a plain object with start/end, NOT an UnzonedRange!
   computeDayRange(unzonedRange): { start: DateMarker, end: DateMarker } {
-    const dateEnv = this._getCalendar().dateEnv
-    let startDay: DateMarker = dateEnv.startOfDay(unzonedRange.start) // the beginning of the day the range starts
+    let startDay: DateMarker = startOfDay(unzonedRange.start) // the beginning of the day the range starts
     let end: DateMarker = unzonedRange.end
-    let endDay: DateMarker = dateEnv.startOfDay(end)
+    let endDay: DateMarker = startOfDay(end)
     let endTimeMS: number = end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
 
     // If the end time is actually inclusively part of the next day and is equal to or

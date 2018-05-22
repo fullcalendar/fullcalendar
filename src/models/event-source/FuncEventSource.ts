@@ -1,6 +1,6 @@
 import { unpromisify } from '../../util/promise'
 import EventSource from './EventSource'
-import { DateMarker } from '../../datelib/util'
+import { DateMarker } from '../../datelib/marker'
 import { DateEnv } from '../../datelib/env'
 
 export default class FuncEventSource extends EventSource {

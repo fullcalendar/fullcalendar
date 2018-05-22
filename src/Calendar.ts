@@ -25,8 +25,9 @@ import EventDefMutation from './models/event/EventDefMutation'
 import EventSource from './models/event-source/EventSource'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
 import { RangeInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
+import { getLocale } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
-import { DateMarker } from './datelib/util'
+import { DateMarker, startOfDay } from './datelib/marker'
 import { Duration, createDuration } from './datelib/duration'
 
 export default class Calendar {
@@ -876,9 +877,9 @@ export default class Calendar {
       '?firstDay', '?weekNumberCalculation'
     ], (opts) => {
       this.dateEnv = new DateEnv({
-        calendarSystem: 'gregorian',
+        calendarSystem: 'gregory',
         timeZone: opts.timezone,
-        locale: opts.locale,
+        locale: getLocale(opts.locale),
         weekNumberCalculation: opts.weekNumberCalculation,
         firstDay: opts.firstDay
       })
@@ -890,7 +891,6 @@ export default class Calendar {
   Assumes the footprint is non-open-ended.
   */
   footprintToDateProfile(componentFootprint, ignoreEnd = false) {
-    const dateEnv = this.dateEnv
     let startMarker = componentFootprint.unzonedRange.start
     let endMarker
 
@@ -899,10 +899,10 @@ export default class Calendar {
     }
 
     if (componentFootprint.isAllDay) {
-      startMarker = dateEnv.startOfDay(startMarker)
+      startMarker = startOfDay(startMarker)
 
       if (endMarker) {
-        endMarker = dateEnv.startOfDay(endMarker)
+        endMarker = startOfDay(endMarker)
       }
     }
 
@@ -913,9 +913,15 @@ export default class Calendar {
   // Returns a DateMarker for the current date, as defined by the client's computer or from the `now` option
   getNow(): DateMarker {
     let now = this.opt('now')
+
     if (typeof now === 'function') {
       now = now()
     }
+
+    if (now == null) {
+      return this.dateEnv.createNowMarker()
+    }
+
     return this.dateEnv.createMarker(now)
   }
 
@@ -995,7 +1001,7 @@ export default class Calendar {
     let end = marker
 
     if (allDay) {
-      end = this.dateEnv.startOfDay(end)
+      end = startOfDay(end)
       end = this.dateEnv.add(end, this.defaultAllDayEventDuration)
     } else {
       end = this.dateEnv.add(end, this.defaultTimedEventDuration)

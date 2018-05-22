@@ -2,6 +2,7 @@ import { elementClosest } from '../util/dom-manip'
 import { getEvIsTouch, listenBySelector, listenToHoverBySelector } from '../util/dom-event'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
+import { diffDayAndTime } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 
 
@@ -165,7 +166,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     // the touchend never fires because the elements gets removed mid-touch-interaction (my theory).
     // HACK: simply don't allow this to happen.
     // ALSO: prevent selection when an *event* is already raised.
-    return view.isSelected || view.selectedEvent
+    return view.isSelected || Boolean(view.selectedEventInstance)
   }
 
 
@@ -326,7 +327,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
     const dateEnv = this._getCalendar().dateEnv
 
     if (!this.largeUnit) {
-      return dateEnv.diffDayAndTime(a, b) // returns a duration
+      return diffDayAndTime(a, b) // returns a duration
     } else if (this.largeUnit === 'year') {
       return createDuration(dateEnv.diffWholeYears(a, b), 'year')
     } else if (this.largeUnit === 'month') {

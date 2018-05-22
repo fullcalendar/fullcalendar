@@ -1,8 +1,9 @@
 import { mergeProps } from '../util/object'
 
-export type LocaleQuery = string | string[]
+export type LocaleQuery = string | string[] | null
 
 export interface Locale {
+  query: LocaleQuery
   ids: string[]
   week: { dow: number, doy: number }
   simpleNumberFormat: Intl.NumberFormat
@@ -36,13 +37,15 @@ const RAW_EN_LOCALE = {
 let rawMap = {}
 
 export function getLocale(query: LocaleQuery): Locale {
-  let nativeQuery = query === 'auto' ? null : query // for instantiating Intl objects
+  if (query === 'auto') {
+    query = null
+  }
 
   let ids
-  if (Array.isArray(nativeQuery)) {
-    ids = nativeQuery
-  } else if (typeof nativeQuery === 'string') {
-    ids = [ nativeQuery ]
+  if (Array.isArray(query)) {
+    ids = query
+  } else if (typeof query === 'string') {
+    ids = [ query ]
   } else {
     ids = []
   }
@@ -54,9 +57,10 @@ export function getLocale(query: LocaleQuery): Locale {
   delete merged.week
 
   return {
+    query,
     ids,
     week,
-    simpleNumberFormat: new Intl.NumberFormat(nativeQuery),
+    simpleNumberFormat: new Intl.NumberFormat(query),
     options: merged
   }
 }

@@ -42,7 +42,7 @@ function hasOwnProp(obj, name) {
 
 // Merges an array of objects into a single object.
 // The second argument allows for an array of property names who's object values will be merged together.
-export function mergeProps(propObjs, complexProps?) {
+export function mergeProps(propObjs, complexProps?): any {
   let dest = {}
   let i
   let name

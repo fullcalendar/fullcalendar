@@ -194,7 +194,7 @@ export function wholeDivideDurations(numerator: Duration, denominator: Duration)
   return res0
 }
 
-export function greatestDurationDenominator(dur: Duration, considerWeeks: boolean = false) {
+export function greatestDurationDenominator(dur: Duration, dontReturnWeeks?: boolean) {
   let time = dur.time
   if (time) {
     if (time % 1000 !== 0) {
@@ -211,6 +211,9 @@ export function greatestDurationDenominator(dur: Duration, considerWeeks: boolea
     }
   }
   if (dur.day) {
+    if (!dontReturnWeeks && dur.day % 7 === 0) {
+      return { unit: 'week', value: dur.day / 7 }
+    }
     return { unit: 'day', value: dur.day }
   }
   if (dur.month) {

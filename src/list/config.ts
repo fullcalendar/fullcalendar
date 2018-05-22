@@ -5,9 +5,7 @@ defineView('list', {
   'class': ListView,
   buttonTextKey: 'list', // what to lookup in locale files
   defaults: {
-    buttonText: 'list', // text to display for English
-    listDayFormat: { month: 'long', day: 'numeric', year: 'numeric' }, // like "January 1, 2016"
-    noEventsMessage: 'No events to display'
+    listDayFormat: { month: 'long', day: 'numeric', year: 'numeric' } // like "January 1, 2016"
   }
 })
 

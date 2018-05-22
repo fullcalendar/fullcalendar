@@ -1,5 +1,7 @@
+import Calendar from '../../Calendar'
 import EventDateProfile from './EventDateProfile'
-import { diffDurations, Duration } from '../../datelib/duration'
+import { startOfDay, diffWholeDays, diffDayAndTime } from '../../datelib/marker'
+import { Duration, diffDurations } from '../../datelib/duration'
 
 export default class EventDefDateMutation {
 
@@ -14,7 +16,7 @@ export default class EventDefDateMutation {
   endDelta: Duration
 
 
-  static createFromDiff(dateProfile0, dateProfile1, largeUnit, calendar) {
+  static createFromDiff(dateProfile0, dateProfile1, largeUnit, calendar: Calendar) {
     const dateEnv = calendar.dateEnv
     let clearEnd = dateProfile0.end && !dateProfile1.end
     let forceTimed = dateProfile0.isAllDay && !dateProfile1.isAllDay
@@ -31,9 +33,9 @@ export default class EventDefDateMutation {
       } else if (largeUnit === 'month') {
         return dateEnv.diffWholeMonths(date0, date1)
       } else if (dateProfile1.isAllDay) {
-        return dateEnv.diffWholeDays(date0, date1)
+        return diffWholeDays(date0, date1)
       } else {
-        return dateEnv.diffDayAndTime(date0, date1)
+        return diffDayAndTime(date0, date1)
       }
     }
 
@@ -62,7 +64,7 @@ export default class EventDefDateMutation {
   /*
   returns an undo function.
   */
-  buildNewDateProfile(eventDateProfile, calendar) {
+  buildNewDateProfile(eventDateProfile, calendar: Calendar) {
     const dateEnv = calendar.dateEnv
     let isAllDay = eventDateProfile.isAllDay
     let startMarker = eventDateProfile.unzonedRange.start
@@ -81,10 +83,10 @@ export default class EventDefDateMutation {
     }
 
     if (this.forceAllDay) {
-      startMarker = dateEnv.startOfDay(startMarker)
+      startMarker = startOfDay(startMarker)
 
       if (endMarker) {
-        endMarker = dateEnv.startOfDay(endMarker)
+        endMarker = startOfDay(endMarker)
       }
     }
 

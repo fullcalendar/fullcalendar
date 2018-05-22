@@ -1,8 +1,8 @@
 import { htmlEscape } from '../util/html'
 import { prependToElement, appendToElement } from '../util/dom-manip'
 import Mixin from '../common/Mixin'
-import { DateMarker, addDays, dayIDs } from '../datelib/util'
-import { diffDays } from '../datelib/env'
+import { DateMarker, addDays, diffDays } from '../datelib/marker'
+import { dayIDs } from '../datelib/util'
 import { createFormatter } from '../datelib/formatting'
 
 export interface DayTableInterface {
@@ -334,7 +334,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
         t.opt('columnHeaderText')(date)
       )
     } else {
-      innerHtml = htmlEscape(dateEnv.toFormat(date, t.colHeadFormat))
+      innerHtml = htmlEscape(dateEnv.format(date, t.colHeadFormat))
     }
 
     // if only one row of days, the classNames on the header can represent the specific days beneath
@@ -351,7 +351,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     return '' +
       '<th class="' + classNames.join(' ') + '"' +
         ((isDateValid && t.rowCnt) === 1 ?
-          ' data-date="' + dateEnv.toIso(date, { omitTime: true }) + '"' :
+          ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' :
           '') +
         (colspan > 1 ?
           ' colspan="' + colspan + '"' :
@@ -417,7 +417,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
     return '<td class="' + classes.join(' ') + '"' +
       (isDateValid ?
-        ' data-date="' + dateEnv.toIso(date, { omitTime: true }) + '"' : // if date has a time, won't format it
+        ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' : // if date has a time, won't format it
         '') +
       (otherAttrs ?
         ' ' + otherAttrs :

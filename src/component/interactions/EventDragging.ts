@@ -5,6 +5,7 @@ import DragListener from '../../common/DragListener'
 import HitDragListener from '../../common/HitDragListener'
 import MouseFollower from '../../common/MouseFollower'
 import Interaction from './Interaction'
+import { startOfDay } from '../../datelib/marker'
 
 
 export default class EventDragging extends Interaction {
@@ -313,7 +314,7 @@ export default class EventDragging extends Interaction {
 
       if (endFootprint.isAllDay) {
         forceAllDay = true
-        date0 = this.view.calendar.dateEnv.startOfDay(date0)
+        date0 = startOfDay(date0)
       } else {
         forceTimed = true
       }

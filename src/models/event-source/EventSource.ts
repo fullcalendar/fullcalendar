@@ -5,7 +5,7 @@ import {
 import Class from '../../common/Class'
 import Calendar from '../../Calendar'
 import EventDefParser from '../event/EventDefParser'
-import { DateMarker } from '../../datelib/util'
+import { DateMarker } from '../../datelib/marker'
 import { DateEnv } from '../../datelib/env'
 
 

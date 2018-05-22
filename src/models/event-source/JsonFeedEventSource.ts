@@ -2,7 +2,7 @@ import * as request from 'superagent'
 import { assignTo } from '../../util/object'
 import { applyAll } from '../../util/misc'
 import EventSource from './EventSource'
-import { DateMarker } from '../../datelib/util'
+import { DateMarker } from '../../datelib/marker'
 import { DateEnv } from '../../datelib/env'
 
 
@@ -112,8 +112,8 @@ export default class JsonFeedEventSource extends EventSource {
 
     assignTo(params, customRequestParams)
 
-    params[startParam] = dateEnv.toIso(start)
-    params[endParam] = dateEnv.toIso(end)
+    params[startParam] = dateEnv.formatIso(start)
+    params[endParam] = dateEnv.formatIso(end)
 
     if (dateEnv.timeZone !== 'local') {
       params[timezoneParam] = dateEnv.timeZone

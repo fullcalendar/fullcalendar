@@ -1,7 +1,7 @@
 import View from './View'
 import UnzonedRange from './models/UnzonedRange'
-import { Duration, createDuration, getWeeksFromInput, asRoughDays, computeGreatestUnit } from './datelib/duration'
-import { computeGreatestDurationDenominator, DateMarker, startOfDay, addDays } from './datelib/util'
+import { DateMarker, startOfDay, addDays } from './datelib/marker'
+import { Duration, createDuration, getWeeksFromInput, asRoughDays, greatestDurationDenominator } from './datelib/duration'
 
 
 export interface DateProfile {
@@ -184,10 +184,10 @@ export default class DateProfileGenerator {
       unit = 'day'
       unzonedRange = this.buildRangeFromDayCount(date, direction, dayCount)
     } else if ((unzonedRange = this.buildCustomVisibleRange(date))) {
-      unit = dateEnv.computeGreatestDenominator(unzonedRange.start, unzonedRange.end).unit
+      unit = dateEnv.greatestWholeUnit(unzonedRange.start, unzonedRange.end).unit
     } else {
       duration = this.getFallbackDuration()
-      unit = computeGreatestUnit(duration)
+      unit = greatestDurationDenominator(duration).unit
       unzonedRange = this.buildRangeFromDuration(date, direction, duration, unit)
     }
 
@@ -211,13 +211,13 @@ export default class DateProfileGenerator {
 
       // expand active range if minTime is negative (why not when positive?)
       if (asRoughDays(minTime) < 0) {
-        start = dateEnv.startOfDay(start) // necessary?
+        start = startOfDay(start) // necessary?
         start = dateEnv.add(start, minTime)
       }
 
       // expand active range if maxTime is beyond one day (why not when positive?)
       if (asRoughDays(maxTime) > 1) {
-        end = dateEnv.startOfDay(end) // necessary?
+        end = startOfDay(end) // necessary?
         end = addDays(end, -1)
         end = dateEnv.add(end, maxTime)
       }
@@ -228,7 +228,7 @@ export default class DateProfileGenerator {
 
 
   // Builds the "current" range when it is specified as an explicit duration.
-  // `unit` is the already-computed computeGreatestUnit value of duration.
+  // `unit` is the already-computed greatestDurationDenominator unit of duration.
   buildRangeFromDuration(date: DateMarker, direction, duration: Duration, unit) {
     const dateEnv = this._view.calendar.dateEnv
     let alignment = this.opt('dateAlignment')
@@ -247,9 +247,9 @@ export default class DateProfileGenerator {
 
         // use the smaller of the two units
         if (dateIncrementDuration < duration) {
-          alignment = computeGreatestDurationDenominator(
+          alignment = greatestDurationDenominator(
             dateIncrementDuration,
-            Boolean(getWeeksFromInput(dateIncrementInput))
+            !getWeeksFromInput(dateIncrementInput)
           ).unit
         } else {
           alignment = unit

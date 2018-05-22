@@ -6,7 +6,7 @@ import View from '../View'
 import Scroller from '../common/Scroller'
 import ListEventRenderer from './ListEventRenderer'
 import ListEventPointing from './ListEventPointing'
-import { addDays, DateMarker } from '../datelib/util'
+import { DateMarker, addDays, startOfDay } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 
 /*
@@ -75,8 +75,7 @@ export default class ListView extends View {
 
 
   renderDates(dateProfile) {
-    let calendar = this.calendar
-    let dayStart = calendar.dateEnv.startOfDay(dateProfile.renderUnzonedRange.start)
+    let dayStart = startOfDay(dateProfile.renderUnzonedRange.start)
     let viewEnd = dateProfile.renderUnzonedRange.end
     let dayDates = []
     let dayRanges = []
@@ -211,7 +210,7 @@ export default class ListView extends View {
 
     return createElement('tr', {
       className: 'fc-list-heading',
-      'data-date': dateEnv.toIso(dayDate, { omitTime: true })
+      'data-date': dateEnv.formatIso(dayDate, { omitTime: true })
     }, '<td class="' + (
       this.calendar.theme.getClass('tableListHeading') ||
       this.calendar.theme.getClass('widgetHeader')
@@ -220,14 +219,14 @@ export default class ListView extends View {
         this.buildGotoAnchorHtml(
           dayDate,
           { 'class': 'fc-list-heading-main' },
-          htmlEscape(dateEnv.toFormat(dayDate, mainFormat)) // inner HTML
+          htmlEscape(dateEnv.format(dayDate, mainFormat)) // inner HTML
         ) :
         '') +
       (altFormat ?
         this.buildGotoAnchorHtml(
           dayDate,
           { 'class': 'fc-list-heading-alt' },
-          htmlEscape(dateEnv.toFormat(dayDate, altFormat)) // inner HTML
+          htmlEscape(dateEnv.format(dayDate, altFormat)) // inner HTML
         ) :
         '') +
     '</td>') as HTMLTableRowElement

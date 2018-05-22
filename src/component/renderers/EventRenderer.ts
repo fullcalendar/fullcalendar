@@ -1,5 +1,5 @@
 import View from '../../View'
-import { DateMarker } from '../../datelib/util'
+import { DateMarker } from '../../datelib/marker'
 import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
@@ -306,12 +306,12 @@ export default class EventRenderer {
 
     if (this.displayEventTime && !isAllDay) {
       if (displayEnd && end) {
-        return dateEnv.toRangeFormat(start, end, formatter, {
+        return dateEnv.formatRange(start, end, formatter, {
           forcedStartTimeZoneOffset,
           forcedEndTimeZoneOffset
         })
       } else {
-        return dateEnv.toFormat(start, formatter, {
+        return dateEnv.format(start, formatter, {
           forcedTimeZoneOffset: forcedStartTimeZoneOffset
         })
       }

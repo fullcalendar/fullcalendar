@@ -158,7 +158,7 @@ describe('datelib', function() {
 
     it('outputs ISO8601 formatting', function() {
       var marker = env.createMarker('2018-06-08T00:00:00')
-      var s = env.toIso(marker)
+      var s = env.formatIso(marker)
       expect(s).toBe('2018-06-08T00:00:00Z')
     })
 
@@ -171,7 +171,7 @@ describe('datelib', function() {
         year: 'numeric',
         timeZoneName: 'short'
       })
-      var s = env.toFormat(marker, formatter)
+      var s = env.format(marker, formatter)
       expect(s).toBe('Friday, June 8, 2018, UTC')
     })
 
@@ -186,21 +186,21 @@ describe('datelib', function() {
       it('works with different days of same month', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-06-09')
-        var s = env.toRangeFormat(m0, m1, formatter)
+        var s = env.formatRange(m0, m1, formatter)
         expect(s).toBe('June 8 - 9, 2018')
       })
 
       it('works with different day/month of same year', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-07-09')
-        var s = env.toRangeFormat(m0, m1, formatter)
+        var s = env.formatRange(m0, m1, formatter)
         expect(s).toBe('June 8 - July 9, 2018')
       })
 
       it('works with completely different dates', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2020-07-09')
-        var s = env.toRangeFormat(m0, m1, formatter)
+        var s = env.formatRange(m0, m1, formatter)
         expect(s).toBe('June 8, 2018 - July 9, 2020')
       })
 
@@ -482,7 +482,7 @@ describe('datelib', function() {
 
     it('outputs ISO8601 formatting', function() {
       var marker = env.createMarker('2018-06-08T00:00:00')
-      var s = env.toIso(marker)
+      var s = env.formatIso(marker)
       var realTzo = getFormattedTimzoneOffset(new Date(2018, 5, 8))
       expect(s).toBe('2018-06-08T00:00:00' + realTzo)
     })
@@ -496,7 +496,7 @@ describe('datelib', function() {
         year: 'numeric',
         timeZoneName: 'short'
       })
-      var s = env.toFormat(marker, formatter)
+      var s = env.format(marker, formatter)
       expect(s).toBe('Friday, June 8, 2018, ' + getFormattedTimzoneOffset2(new Date(2018, 5, 8)))
     })
 
@@ -550,7 +550,7 @@ describe('datelib', function() {
         year: 'numeric',
         timeZoneName: 'short'
       })
-      var s = env.toFormat(marker, formatter)
+      var s = env.format(marker, formatter)
       expect(s).toBe('Friday, June 8, 2018')
     })
 

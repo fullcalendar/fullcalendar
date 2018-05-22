@@ -9,10 +9,9 @@ import InteractiveDateComponent from './component/InteractiveDateComponent'
 import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
 import EventInstance from './models/event/EventInstance'
-import { DateMarker, addDays, addMs } from './datelib/util'
+import { DateMarker, addDays, addMs, diffDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
-import { diffDays } from './datelib/env'
 
 
 /* An abstract class from which other views inherit from
@@ -163,6 +162,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Computes what the title at the top of the calendar should be for this view
   computeTitle(dateProfile) {
+    const dateEnv = this.calendar.dateEnv
     let unzonedRange
 
     // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
@@ -182,11 +182,11 @@ export default abstract class View extends InteractiveDateComponent {
       )
     }
 
-    return this.calendar.dateEnv.toRangeFormat(
+    return dateEnv.formatRange(
       unzonedRange.start,
       unzonedRange.end,
       createFormatter(rawTitleFormat),
-      { isExclusive: dateProfile.isRangeAllDay }
+      { isEndExclusive: dateProfile.isRangeAllDay }
     )
   }
 

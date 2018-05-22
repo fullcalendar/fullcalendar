@@ -389,7 +389,7 @@ agendaTimeGridMethods = {
     let weekText
 
     if (this.opt('weekNumbers')) {
-      weekText = dateEnv.formatWeek(weekStart, true)
+      weekText = dateEnv.formatWeek(weekStart, 'short')
 
       return '' +
         '<th class="fc-axis fc-week-number ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +

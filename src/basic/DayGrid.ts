@@ -9,6 +9,7 @@ import {
   removeElement,
   ElementContent
 } from '../util/dom-manip'
+import View from '../View'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
 import UnzonedRange from '../models/UnzonedRange'
@@ -21,7 +22,7 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
-import { addDays } from '../datelib/util'
+import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
@@ -46,7 +47,7 @@ export default class DayGrid extends InteractiveDateComponent {
   bookendCells: DayTableInterface['bookendCells']
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
-  view: any // TODO: make more general and/or remove
+  view: View // TODO: make more general and/or remove
   helperRenderer: any
 
   cellWeekNumbersVisible: boolean = false // display week numbers in day cell?
@@ -240,7 +241,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
     let classes
-    let weekCalcFirstDoW
+    let weekCalcFirstDow
 
     if (!isDayNumberVisible && !this.cellWeekNumbersVisible) {
       // no numbers in day cell (week number must be along the side)
@@ -251,17 +252,17 @@ export default class DayGrid extends InteractiveDateComponent {
     classes.unshift('fc-day-top')
 
     if (this.cellWeekNumbersVisible) {
-      weekCalcFirstDoW = dateEnv.weekMeta.dow
+      weekCalcFirstDow = dateEnv.weekDow
     }
 
     html += '<td class="' + classes.join(' ') + '"' +
       (isDateValid ?
-        ' data-date="' + dateEnv.toIso(date, { omitTime: true }) + '"' :
+        ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' :
         ''
         ) +
       '>'
 
-    if (this.cellWeekNumbersVisible && (date.day() === weekCalcFirstDoW)) {
+    if (this.cellWeekNumbersVisible && (date.day() === weekCalcFirstDow)) {
       html += view.buildGotoAnchorHtml(
         { date: date, type: 'week' },
         { 'class': 'fc-week-number' },
@@ -273,7 +274,7 @@ export default class DayGrid extends InteractiveDateComponent {
       html += view.buildGotoAnchorHtml(
         date,
         { 'class': 'fc-day-number' },
-        dateEnv.toFormat(date, DAY_NUM_FORMAT) // inner HTML
+        dateEnv.format(date, DAY_NUM_FORMAT) // inner HTML
       )
     }
 
@@ -698,7 +699,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let view = this.view
     const dateEnv = view.calendar.dateEnv
     let theme = view.calendar.theme
-    let title = dateEnv.toFormat(
+    let title = dateEnv.format(
       this.getCellDate(row, col),
       createFormatter(this.opt('dayPopoverFormat')) // TODO: cache
     )

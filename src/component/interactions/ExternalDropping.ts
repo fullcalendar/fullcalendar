@@ -6,7 +6,7 @@ import SingleEventDef from '../../models/event/SingleEventDef'
 import EventInstanceGroup from '../../models/event/EventInstanceGroup'
 import EventSource from '../../models/event-source/EventSource'
 import Interaction from './Interaction'
-import { startOfDay } from '../../datelib/util'
+import { startOfDay } from '../../datelib/marker'
 import { createDuration } from '../../datelib/duration'
 
 

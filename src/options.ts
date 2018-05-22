@@ -45,22 +45,9 @@ export const globalDefaults = {
   // allDayDefault: undefined,
 
   // locale
-  locale: null,
+  locale: 'en',
   isRTL: false,
-  buttonText: {
-    prev: 'prev',
-    next: 'next',
-    prevYear: 'prev year',
-    nextYear: 'next year',
-    year: 'year', // TODO: locale files need to specify this
-    today: 'today',
-    month: 'month',
-    week: 'week',
-    day: 'day'
-  },
   // buttonIcons: null,
-
-  allDayText: 'all-day',
 
   // allows setting a min-height to the event segment to prevent short events overlapping each other
   agendaEventMinHeight: 0,
@@ -84,7 +71,6 @@ export const globalDefaults = {
   // eventRenderWait: null,
 
   eventLimit: false,
-  eventLimitText: 'more',
   eventLimitClick: 'popover',
   dayPopoverFormat: { month: 'long', day: 'numeric', year: 'numeric' },
 

@@ -1,6 +1,6 @@
 import UnzonedRange from '../UnzonedRange'
 import Calendar from '../../Calendar'
-import { DateMarker } from '../../datelib/util'
+import { DateMarker, startOfDay } from '../../datelib/marker'
 
 /*
 Meant to be immutable
@@ -37,7 +37,7 @@ export default class EventDateProfile {
       return false
     }
 
-    let calendar = source.calendar
+    let calendar: Calendar = source.calendar
     let startMeta = calendar.dateEnv.createMarkerMeta(startInput)
     let startMarker = startMeta.marker
     let endMeta = endInput ? calendar.dateEnv.createMarkerMeta(endInput) : null
@@ -57,10 +57,10 @@ export default class EventDateProfile {
     }
 
     if (forcedAllDay === true) {
-      startMarker = calendar.dateEnv.startOfDay(startMarker)
+      startMarker = startOfDay(startMarker)
 
       if (endMarker) {
-        endMarker = calendar.dateEnv.startOfDay(endMarker)
+        endMarker = startOfDay(endMarker)
       }
     }
 

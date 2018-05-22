@@ -10,8 +10,8 @@ import ComponentFootprint from '../models/ComponentFootprint'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
-import { Duration, createDuration, addDurations, wholeDivideDurationByDuration, asRoughMs } from '../datelib/duration'
-import { startOfDay, DateMarker, addMs } from '../datelib/util'
+import { Duration, createDuration, addDurations, wholeDivideDurations, asRoughMs } from '../datelib/duration'
+import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { createFormatter, DateFormatter } from '../datelib/formatting'
 
 /* A component that renders one or more columns of vertical time slots
@@ -179,7 +179,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     // find the smallest stock label interval that results in more than one slots-per-label
     for (i = AGENDA_STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
       labelInterval = createDuration(AGENDA_STOCK_SUB_DURATIONS[i])
-      slotsPerLabel = wholeDivideDurationByDuration(labelInterval, slotDuration)
+      slotsPerLabel = wholeDivideDurations(labelInterval, slotDuration)
       if (slotsPerLabel !== null && slotsPerLabel > 1) {
         return labelInterval
       }
@@ -257,20 +257,20 @@ export default class TimeGrid extends InteractiveDateComponent {
     // Calculate the time for each slot
     while (asRoughMs(slotTime) < asRoughMs(dateProfile.maxTime)) {
       slotDate = dateEnv.add(dayStart, slotTime)
-      isLabeled = wholeDivideDurationByDuration(slotIterator, this.labelInterval) !== null
+      isLabeled = wholeDivideDurations(slotIterator, this.labelInterval) !== null
 
       axisHtml =
         '<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
           (isLabeled ?
             '<span>' + // for matchCellWidths
-              htmlEscape(dateEnv.toFormat(slotDate, this.labelFormat)) +
+              htmlEscape(dateEnv.format(slotDate, this.labelFormat)) +
             '</span>' :
             ''
             ) +
         '</td>'
 
       html +=
-        '<tr data-time="' + dateEnv.toFormat(slotDate, HMS_FORMAT) + '"' +
+        '<tr data-time="' + dateEnv.format(slotDate, HMS_FORMAT) + '"' +
           (isLabeled ? '' : ' class="fc-minor"') +
           '>' +
           (!isRTL ? axisHtml : '') +

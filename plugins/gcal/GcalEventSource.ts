@@ -119,7 +119,7 @@ export default class GcalEventSource extends EventSource {
 
     // when timezone isn't known, we don't know what the UTC offset should be, so ask for +/- 1 day
     // from the UTC day-start to guarantee we're getting all the events
-    if (!dateEnv.canComputeTimeZoneOffset()) {
+    if (!dateEnv.canComputeOffset) {
       start = addDays(start, -1)
       end = addDays(end, 1)
     }
@@ -128,8 +128,8 @@ export default class GcalEventSource extends EventSource {
       this.ajaxSettings.data || {},
       {
         key: apiKey,
-        timeMin: dateEnv.toIso(start),
-        timeMax: dateEnv.toIso(end),
+        timeMin: dateEnv.formatIso(start),
+        timeMax: dateEnv.formatIso(end),
         singleEvents: true,
         maxResults: 9999
       }

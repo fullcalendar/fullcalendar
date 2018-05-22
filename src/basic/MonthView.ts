@@ -1,7 +1,7 @@
 import { distributeHeight } from '../util/misc'
 import BasicView from './BasicView'
 import MonthViewDateProfileGenerator from './MonthViewDateProfileGenerator'
-import { DateMarker } from '../datelib/util'
+import { DateMarker } from '../datelib/marker'
 
 
 /* A month view with day cells running in rows (one-per-week) and columns

@@ -346,13 +346,13 @@ export class DateEnv {
     )
   }
 
-  formatWeek(marker: DateMarker, fit?: 'numeric' | 'narrow' | 'short'): string {
+  formatWeek(marker: DateMarker, display?: 'numeric' | 'narrow' | 'short'): string {
     let { locale } = this
     let parts = []
 
-    if (fit === 'narrow') {
+    if (display === 'narrow') {
       parts.push(locale.options.weekHeader)
-    } else if (fit === 'short') {
+    } else if (display === 'short') {
       parts.push(locale.options.weekHeader, ' ')
     }
     // otherwise, considered 'numeric'

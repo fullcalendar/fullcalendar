@@ -4,7 +4,7 @@ import { default as EmitterMixin, EmitterInterface } from '../common/EmitterMixi
 import UnzonedRange from './UnzonedRange'
 import EventInstanceGroup from './event/EventInstanceGroup'
 import { DateEnv } from '../datelib/env'
-import { DateMarker } from '../datelib/util'
+import { DateMarker } from '../datelib/marker'
 
 export default class EventPeriod {
 
