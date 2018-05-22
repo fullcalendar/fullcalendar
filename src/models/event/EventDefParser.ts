@@ -6,7 +6,7 @@ import { createDuration } from '../../datelib/duration'
 export default {
 
   parse: function(eventInput, source) {
-    let startTime, endTime
+    let startTime, endTime // for testing if given object is a duration
 
     if (typeof eventInput.start !== 'number') { // because numbers should be parsed as dates
       startTime = createDuration(eventInput.start)

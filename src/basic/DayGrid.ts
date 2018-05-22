@@ -115,6 +115,7 @@ export default class DayGrid extends InteractiveDateComponent {
   // Renders the rows and columns into the component's `this.el`, which should already be assigned.
   renderGrid() {
     let view = this.view
+    const dateEnv = view.calendar.dateEnv
     let rowCnt = this.rowCnt
     let colCnt = this.colCnt
     let html = ''
@@ -148,7 +149,7 @@ export default class DayGrid extends InteractiveDateComponent {
         this.publiclyTrigger('dayRender', {
           context: view,
           args: [
-            this.getCellDate(row, col),
+            dateEnv.toDate(this.getCellDate(row, col)),
             this.getCellEl(row, col),
             view
           ]
@@ -262,7 +263,7 @@ export default class DayGrid extends InteractiveDateComponent {
         ) +
       '>'
 
-    if (this.cellWeekNumbersVisible && (date.day() === weekCalcFirstDow)) {
+    if (this.cellWeekNumbersVisible && (date.getUTCDay() === weekCalcFirstDow)) {
       html += view.buildGotoAnchorHtml(
         { date: date, type: 'week' },
         { 'class': 'fc-week-number' },
@@ -600,6 +601,7 @@ export default class DayGrid extends InteractiveDateComponent {
   // Responsible for attaching click handler as well.
   renderMoreLink(row, col, hiddenSegs) {
     let view = this.view
+    const dateEnv = view.calendar.dateEnv
 
     let a = createElement('a', { className: 'fc-more' })
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
@@ -620,7 +622,7 @@ export default class DayGrid extends InteractiveDateComponent {
           context: view,
           args: [
             {
-              date: date,
+              date: dateEnv.toDate(date),
               dayEl: dayEl,
               moreEl: moreEl,
               segs: reslicedAllSegs,

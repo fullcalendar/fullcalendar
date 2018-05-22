@@ -1,6 +1,5 @@
 import {
-  DateMarker,
-  addDays, addMs,
+  DateMarker, addMs,
   diffHours, diffMinutes, diffSeconds, diffWholeWeeks, diffWholeDays,
   startOfDay, startOfHour, startOfMinute, startOfSecond,
   weekOfYear, arrayToUtcDate, dateToUtcArray, dateToLocalArray, arrayToLocalDate, timeAsMs

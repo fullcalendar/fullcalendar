@@ -49,6 +49,10 @@ export default class EventDateProfile {
       return false
     }
 
+    if (endMarker && endMarker <= startMarker) {
+      return false
+    }
+
     if (forcedAllDay == null) {
       forcedAllDay = source.allDayDefault
       if (forcedAllDay == null) {

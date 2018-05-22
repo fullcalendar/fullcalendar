@@ -70,10 +70,6 @@ export {
   computeHeightAndMargins
 } from './util/dom-geom'
 
-export {
-  locale
-} from './locale'
-
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 export { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
 export { default as Model } from './common/Model'

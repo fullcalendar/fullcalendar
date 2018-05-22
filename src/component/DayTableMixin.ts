@@ -417,7 +417,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
     return '<td class="' + classes.join(' ') + '"' +
       (isDateValid ?
-        ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' : // if date has a time, won't format it
+        ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' :
         '') +
       (otherAttrs ?
         ' ' + otherAttrs :

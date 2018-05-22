@@ -1,7 +1,7 @@
 import Calendar from '../../Calendar'
 import EventDateProfile from './EventDateProfile'
 import { startOfDay, diffWholeDays, diffDayAndTime } from '../../datelib/marker'
-import { Duration, diffDurations } from '../../datelib/duration'
+import { Duration, createDuration, diffDurations } from '../../datelib/duration'
 
 export default class EventDefDateMutation {
 
@@ -29,13 +29,13 @@ export default class EventDefDateMutation {
     // subtracts the dates in the appropriate way, returning a duration
     function diffDates(date0, date1) {
       if (largeUnit === 'year') {
-        return dateEnv.diffWholeYears(date0, date1)
+        return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')
       } else if (largeUnit === 'month') {
-        return dateEnv.diffWholeMonths(date0, date1)
+        return createDuration(dateEnv.diffWholeMonths(date0, date1), 'month')
       } else if (dateProfile1.isAllDay) {
-        return diffWholeDays(date0, date1)
+        return createDuration(diffWholeDays(date0, date1), 'day')
       } else {
-        return diffDayAndTime(date0, date1)
+        return diffDayAndTime(date0, date1) // returns a duration
       }
     }
 

@@ -298,7 +298,7 @@ export default class Constraints {
     return [
       new ComponentFootprint(
         new UnzonedRange(startMeta ? startMeta.marker : null, endMeta ? endMeta.marker : null),
-        (startMeta && startMeta.isTimeUnspecified || (endMeta && endMeta.isTimeUnspecified)) // isAllDay
+        (startMeta && startMeta.isTimeUnspecified) && (!endMeta || endMeta.isTimeUnspecified) // isAllDay
       )
     ]
   }

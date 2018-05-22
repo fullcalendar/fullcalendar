@@ -36,7 +36,7 @@ export default class RecurringEventDef extends EventDef {
         if (this.startTime) {
           instanceStart = dateEnv.add(dateMarker, this.startTime)
         } else {
-          instanceStart = null
+          instanceStart = dateMarker
         }
 
         if (this.endTime) {
@@ -53,7 +53,7 @@ export default class RecurringEventDef extends EventDef {
         )
       }
 
-      dateMarker = dateEnv.add(dateMarker, ONE_DAY) // wish we didnt have to recreate each time
+      dateMarker = dateEnv.add(dateMarker, ONE_DAY)
     }
 
     return instances

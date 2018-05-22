@@ -9,7 +9,7 @@ import InteractiveDateComponent from './component/InteractiveDateComponent'
 import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
 import EventInstance from './models/event/EventInstance'
-import { DateMarker, addDays, addMs, diffDays } from './datelib/marker'
+import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
 
@@ -201,7 +201,7 @@ export default abstract class View extends InteractiveDateComponent {
     } else if (currentRangeUnit === 'month') {
       return { year: 'numeric', month: 'long' } // like "September 2014"
     } else {
-      let days = diffDays(
+      let days = diffWholeDays(
         dateProfile.currentUnzonedRange.start,
         dateProfile.currentUnzonedRange.end
       )
@@ -646,12 +646,13 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Triggers external-drop handlers that have subscribed via the API
   triggerExternalDrop(singleEventDef, isEvent, el, ev) {
+    const dateEnv = this.calendar.dateEnv
 
     // trigger 'drop' regardless of whether element represents an event
     this.publiclyTrigger('drop', {
       context: el,
       args: [
-        singleEventDef.dateProfile.start,
+        dateEnv.toDate(singleEventDef.dateProfile.start),
         ev,
         this
       ]

@@ -1,8 +1,8 @@
 import { assignTo } from './util/object'
 import { firstDefined } from './util/misc'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
-import { localeOptionHash } from './locale'
 import Model from './common/Model'
+import { getLocale } from './datelib/locale'
 
 
 export default class OptionsManager extends Model {
@@ -76,11 +76,7 @@ export default class OptionsManager extends Model {
       this.dynamicOverrides.locale,
       this.overrides.locale
     )
-    localeDefaults = localeOptionHash[locale]
-    if (!localeDefaults) { // explicit locale option not given or invalid?
-      locale = globalDefaults.locale
-      localeDefaults = localeOptionHash[locale] || {}
-    }
+    localeDefaults = getLocale(locale) // TODO: not efficient bc calendar already queries this
 
     isRTL = firstDefined( // based on options computed so far, is direction RTL?
       this.dynamicOverrides.isRTL,

@@ -68,7 +68,7 @@ export default class UnzonedRange {
     let newRange = null
 
     if (otherRange.start != null) {
-      if (start === null) {
+      if (start == null) {
         start = otherRange.start
       } else {
         start = new Date(Math.max(start.valueOf(), otherRange.start.valueOf()))

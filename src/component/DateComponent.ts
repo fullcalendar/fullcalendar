@@ -763,6 +763,7 @@ export default abstract class DateComponent extends Component {
 
 
   // Compute the number of the give units in the "current" range.
+  // Won't go more precise than days.
   // Will return `0` if there's not a clean whole interval.
   currentRangeAs(unit) {
     const dateEnv = this._getCalendar().dateEnv

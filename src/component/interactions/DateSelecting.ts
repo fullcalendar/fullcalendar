@@ -136,17 +136,17 @@ export default class DateSelecting extends Interaction {
   // TODO: do this separation of concerns (combining VS validation) for event dnd/resize too.
   // Assumes both footprints are non-open-ended.
   computeSelectionFootprint(footprint0, footprint1) {
-    let ms = [
+    let markers = [
       footprint0.unzonedRange.start,
       footprint0.unzonedRange.end,
       footprint1.unzonedRange.start,
       footprint1.unzonedRange.end
     ]
 
-    ms.sort(compareNumbers)
+    markers.sort(compareNumbers)
 
     return new ComponentFootprint(
-      new UnzonedRange(ms[0], ms[3]),
+      new UnzonedRange(markers[0], markers[3]),
       footprint0.isAllDay
     )
   }
