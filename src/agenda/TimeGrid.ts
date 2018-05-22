@@ -626,7 +626,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   getHitFootprint(hit) {
-    const dateEnv = this.view.calendar.dateEnd
+    const dateEnv = this.view.calendar.dateEnv
     let start = this.getCellDate(0, hit.col) // row=0
     let timeMs = this.computeSnapTime(hit.snap) // pass in the snap-index
     let end

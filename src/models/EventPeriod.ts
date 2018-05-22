@@ -48,8 +48,7 @@ export default class EventPeriod {
 
 
   isWithinRange(start, end) {
-    // TODO: use a range util function?
-    return !start.isBefore(this.start) && !end.isAfter(this.end)
+    return start >= this.start && end <= this.end
   }
 
 

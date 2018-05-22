@@ -943,7 +943,7 @@ export default class Calendar {
       return null
     }
 
-    if (start && end && end.isBefore(start)) {
+    if (start && end && end < start) {
       return null
     }
 

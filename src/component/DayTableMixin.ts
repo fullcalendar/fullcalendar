@@ -63,9 +63,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
     if (this.breakOnWeeks) {
       // count columns until the day-of-week repeats
-      firstDay = dayDates[0].getUTCDate()
+      firstDay = dayDates[0].getUTCDay()
       for (daysPerRow = 1; daysPerRow < dayDates.length; daysPerRow++) {
-        if (dayDates[daysPerRow].getUTCDate() === firstDay) {
+        if (dayDates[daysPerRow].getUTCDay() === firstDay) {
           break
         }
       }

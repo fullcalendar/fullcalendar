@@ -76,7 +76,7 @@ export default class OptionsManager extends Model {
       this.dynamicOverrides.locale,
       this.overrides.locale
     )
-    localeDefaults = getLocale(locale) // TODO: not efficient bc calendar already queries this
+    localeDefaults = getLocale(locale).options // TODO: not efficient bc calendar already queries this
 
     isRTL = firstDefined( // based on options computed so far, is direction RTL?
       this.dynamicOverrides.isRTL,

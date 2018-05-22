@@ -291,8 +291,8 @@ function makeDayGridSubclass(SuperClass) {
 
     // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
     renderNumberIntroHtml(row) {
-      const dateEnv = this.calendar.dateEnv
       let view = this.view
+      const dateEnv = view.calendar.dateEnv
       let weekStart = this.getCellDate(row, 0)
 
       if (view.colWeekNumbersVisible) {

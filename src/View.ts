@@ -975,7 +975,7 @@ export default abstract class View extends InteractiveDateComponent {
       end = this.skipHiddenDays(end, -1, true)
     }
 
-    if (start === null || end === null || start < end) {
+    if (start == null || end == null || start < end) {
       return new UnzonedRange(start, end)
     }
 

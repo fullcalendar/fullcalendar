@@ -269,7 +269,7 @@ export default class DateProfileGenerator {
 
     function computeRes() {
       start = dateEnv.startOf(date, alignment)
-      end = dateEnv.add(date, duration)
+      end = dateEnv.add(start, duration)
       res = new UnzonedRange(start, end)
     }
 
