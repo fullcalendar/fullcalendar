@@ -1,3 +1,5 @@
+const EVENT_CLASS = '.fc-event'
+
 export function getEventElTime(el){
   return $(el).find('.fc-time').text()
 }
@@ -7,7 +9,7 @@ export function getDayEls(){
 }
 
 export function getVisibleEventEls(){
-  return $('.fc-event:visible')
+  return $(`${EVENT_CLASS}:visible`)
 }
 
 export function getScrollerEl(){
@@ -15,6 +17,9 @@ export function getScrollerEl(){
 }
 
 export function getEventEls(){
-  return $('.fc-event')
+  return $(`${EVENT_CLASS}`)
 }
 
+export function getDayTdEls(date){
+  return $(`td[data-date="${date}"]`)
+}
