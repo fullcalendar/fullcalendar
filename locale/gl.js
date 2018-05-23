@@ -1,36 +1,20 @@
-import 'moment/locale/gl';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Galician localization for 'UI date picker' jQuery extension. */
-/* Translated by Jorge Barreiro <yortx.barry@gmail.com>. */
-FullCalendar.datepickerLocale('gl', 'gl', {
-  closeText: "Pechar",
-  prevText: "&#x3C;Ant",
-  nextText: "Seg&#x3E;",
-  currentText: "Hoxe",
-  monthNames: [ "Xaneiro","Febreiro","Marzo","Abril","Maio","Xuño",
-  "Xullo","Agosto","Setembro","Outubro","Novembro","Decembro" ],
-  monthNamesShort: [ "Xan","Feb","Mar","Abr","Mai","Xuñ",
-  "Xul","Ago","Set","Out","Nov","Dec" ],
-  dayNames: [ "Domingo","Luns","Martes","Mércores","Xoves","Venres","Sábado" ],
-  dayNamesShort: [ "Dom","Lun","Mar","Mér","Xov","Ven","Sáb" ],
-  dayNamesMin: [ "Do","Lu","Ma","Mé","Xo","Ve","Sá" ],
-  weekHeader: "Sm",
-  dateFormat: "dd/mm/yy",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("gl", {
+defineLocale("gl", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // The week that contains Jan 4th is the first week of the year.
+  },
   buttonText: {
+    prevText: "Ant",
+    nextText: "Seg",
+    currentText: "Hoxe",
     month: "Mes",
     week: "Semana",
     day: "Día",
     list: "Axenda"
   },
+  weekHeader: "Sm",
   allDayHtml: "Todo<br/>o día",
   eventLimitText: "máis",
   noEventsMessage: "Non hai eventos para amosar"

@@ -1,35 +1,20 @@
-import 'moment/locale/hu';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Hungarian initialisation for the jQuery UI date picker plugin. */
-FullCalendar.datepickerLocale('hu', 'hu', {
-  closeText: "bezár",
-  prevText: "vissza",
-  nextText: "előre",
-  currentText: "ma",
-  monthNames: [ "Január", "Február", "Március", "Április", "Május", "Június",
-  "Július", "Augusztus", "Szeptember", "Október", "November", "December" ],
-  monthNamesShort: [ "Jan", "Feb", "Már", "Ápr", "Máj", "Jún",
-  "Júl", "Aug", "Szep", "Okt", "Nov", "Dec" ],
-  dayNames: [ "Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat" ],
-  dayNamesShort: [ "Vas", "Hét", "Ked", "Sze", "Csü", "Pén", "Szo" ],
-  dayNamesMin: [ "V", "H", "K", "Sze", "Cs", "P", "Szo" ],
-  weekHeader: "Hét",
-  dateFormat: "yy.mm.dd.",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: true,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("hu", {
+defineLocale("hu", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // The week that contains Jan 4th is the first week of the year.
+  },
   buttonText: {
+    prev: "vissza",
+    next: "előre",
+    today: "ma",
     month: "Hónap",
     week: "Hét",
     day: "Nap",
     list: "Napló"
   },
+  weekHeader: "Hét",
   allDayText: "Egész nap",
   eventLimitText: "további",
   noEventsMessage: "Nincs megjeleníthető események"

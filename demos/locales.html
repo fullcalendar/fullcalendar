@@ -88,16 +88,13 @@
     calendar.render();
 
     // build the locale selector's options
-    var localeHash = FullCalendar.locales;
-    var localeCode;
-    var optionEl;
-    for (localeCode in localeHash) {
-      optionEl = document.createElement('option');
+    FullCalendar.getLocaleCodes().forEach(function(localeCode) {
+      var optionEl = document.createElement('option');
       optionEl.value = localeCode;
       optionEl.selected = localeCode == initialLocaleCode;
       optionEl.innerText = localeCode;
       localeSelectorEl.appendChild(optionEl);
-    }
+    })
 
     // when the selected option changes, dynamically change the calendar option
     localeSelectorEl.addEventListener('change', function() {

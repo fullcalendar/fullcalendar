@@ -32,10 +32,6 @@ module.exports = {
     moment: 'moment',
     superagent: 'superagent',
 
-    // moment locale files reference the moment lib with a relative require.
-    // use our external reference instead.
-    '../moment': 'moment',
-
     // for plugins that might need jQuery
     jquery: {
       commonjs: 'jquery',
@@ -116,14 +112,11 @@ function generateLocaleMap() {
   const map = {}
 
   glob.sync('locale/*.js').forEach(function(path) {
-    if (path !== 'locale/_reset.js') {
-      // strip out .js to get module name. also, path must start with ./
-      map['dist/' + path.replace(/\.js$/, '')] = './' + path
-    }
+    // strip out .js to get module name. also, path must start with ./
+    map['dist/' + path.replace(/\.js$/, '')] = './' + path
   })
 
   map['dist/locale-all'] = Object.values(map) // all locales combined
-    .concat([ './locale/_reset.js' ]) // for resetting back to English
 
   return map
 }

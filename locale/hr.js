@@ -1,38 +1,20 @@
-import 'moment/locale/hr';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Croatian i18n for the jQuery UI date picker plugin. */
-/* Written by Vjekoslav Nesek. */
-FullCalendar.datepickerLocale('hr', 'hr', {
-  closeText: "Zatvori",
-  prevText: "&#x3C;",
-  nextText: "&#x3E;",
-  currentText: "Danas",
-  monthNames: [ "Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj",
-  "Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac" ],
-  monthNamesShort: [ "Sij","Velj","Ožu","Tra","Svi","Lip",
-  "Srp","Kol","Ruj","Lis","Stu","Pro" ],
-  dayNames: [ "Nedjelja","Ponedjeljak","Utorak","Srijeda","Četvrtak","Petak","Subota" ],
-  dayNamesShort: [ "Ned","Pon","Uto","Sri","Čet","Pet","Sub" ],
-  dayNamesMin: [ "Ne","Po","Ut","Sr","Če","Pe","Su" ],
-  weekHeader: "Tje",
-  dateFormat: "dd.mm.yy.",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("hr", {
+defineLocale("hr", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 7  // The week that contains Jan 1st is the first week of the year.
+  },
   buttonText: {
-    prev: "Prijašnji", // jqui datepicker has weird html entities. override.
-    next: "Sljedeći", // "
+    prev: "Prijašnji",
+    next: "Sljedeći",
+    today: "Danas",
     month: "Mjesec",
     week: "Tjedan",
     day: "Dan",
     list: "Raspored"
   },
+  weekHeader: "Tje",
   allDayText: "Cijeli dan",
   eventLimitText: function(n) {
     return "+ još " + n;

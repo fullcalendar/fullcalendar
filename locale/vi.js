@@ -1,36 +1,20 @@
-import 'moment/locale/vi';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Vietnamese initialisation for the jQuery UI date picker plugin. */
-/* Translated by Le Thanh Huy (lthanhhuy@cit.ctu.edu.vn). */
-FullCalendar.datepickerLocale('vi', 'vi', {
-  closeText: "Đóng",
-  prevText: "&#x3C;Trước",
-  nextText: "Tiếp&#x3E;",
-  currentText: "Hôm nay",
-  monthNames: [ "Tháng Một", "Tháng Hai", "Tháng Ba", "Tháng Tư", "Tháng Năm", "Tháng Sáu",
-  "Tháng Bảy", "Tháng Tám", "Tháng Chín", "Tháng Mười", "Tháng Mười Một", "Tháng Mười Hai" ],
-  monthNamesShort: [ "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-  "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" ],
-  dayNames: [ "Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy" ],
-  dayNamesShort: [ "CN", "T2", "T3", "T4", "T5", "T6", "T7" ],
-  dayNamesMin: [ "CN", "T2", "T3", "T4", "T5", "T6", "T7" ],
-  weekHeader: "Tu",
-  dateFormat: "dd/mm/yy",
-  firstDay: 0,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("vi", {
+defineLocale("vi", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // The week that contains Jan 4th is the first week of the year.
+  },
   buttonText: {
+    prev: "Trước",
+    next: "Tiếp",
+    today: "Hôm nay",
     month: "Tháng",
     week: "Tuần",
     day: "Ngày",
     list: "Lịch biểu"
   },
+  weekHeader: "Tu",
   allDayText: "Cả ngày",
   eventLimitText: function(n) {
     return "+ thêm " + n;

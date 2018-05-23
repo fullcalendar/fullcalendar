@@ -1,38 +1,20 @@
-import 'moment/locale/sr-cyrl';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Serbian i18n for the jQuery UI date picker plugin. */
-/* Written by Dejan Dimić. */
-FullCalendar.datepickerLocale('sr-cyrl', 'sr', {
-  closeText: "Затвори",
-  prevText: "&#x3C;",
-  nextText: "&#x3E;",
-  currentText: "Данас",
-  monthNames: [ "Јануар","Фебруар","Март","Април","Мај","Јун",
-  "Јул","Август","Септембар","Октобар","Новембар","Децембар" ],
-  monthNamesShort: [ "Јан","Феб","Мар","Апр","Мај","Јун",
-  "Јул","Авг","Сеп","Окт","Нов","Дец" ],
-  dayNames: [ "Недеља","Понедељак","Уторак","Среда","Четвртак","Петак","Субота" ],
-  dayNamesShort: [ "Нед","Пон","Уто","Сре","Чет","Пет","Суб" ],
-  dayNamesMin: [ "Не","По","Ут","Ср","Че","Пе","Су" ],
-  weekHeader: "Сед",
-  dateFormat: "dd.mm.yy",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("sr-cyrl", {
+defineLocale("sr-cyrl", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 7  // The week that contains Jan 1st is the first week of the year.
+  },
   buttonText: {
     prev: "Претходна",
     next: "следећи",
+    today: "Данас",
     month: "Месец",
     week: "Недеља",
     day: "Дан",
     list: "Планер"
   },
+  weekHeader: "Сед",
   allDayText: "Цео дан",
   eventLimitText: function(n) {
     return "+ још " + n;

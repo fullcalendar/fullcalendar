@@ -1,35 +1,20 @@
-import 'moment/locale/eu';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Karrikas-ek itzulia (karrikas@karrikas.com) */
-FullCalendar.datepickerLocale('eu', 'eu', {
-  closeText: "Egina",
-  prevText: "&#x3C;Aur",
-  nextText: "Hur&#x3E;",
-  currentText: "Gaur",
-  monthNames: [ "urtarrila","otsaila","martxoa","apirila","maiatza","ekaina",
-    "uztaila","abuztua","iraila","urria","azaroa","abendua" ],
-  monthNamesShort: [ "urt.","ots.","mar.","api.","mai.","eka.",
-    "uzt.","abu.","ira.","urr.","aza.","abe." ],
-  dayNames: [ "igandea","astelehena","asteartea","asteazkena","osteguna","ostirala","larunbata" ],
-  dayNamesShort: [ "ig.","al.","ar.","az.","og.","ol.","lr." ],
-  dayNamesMin: [ "ig","al","ar","az","og","ol","lr" ],
-  weekHeader: "As",
-  dateFormat: "yy-mm-dd",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("eu", {
+defineLocale("eu", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 7  // The week that contains Jan 1st is the first week of the year.
+  },
   buttonText: {
+    prev: "Aur",
+    next: "Hur",
+    today: "Gaur",
     month: "Hilabetea",
     week: "Astea",
     day: "Eguna",
     list: "Agenda"
   },
+  weekHeader: "As",
   allDayHtml: "Egun<br/>osoa",
   eventLimitText: "gehiago",
   noEventsMessage: "Ez dago ekitaldirik erakusteko"

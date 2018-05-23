@@ -1,31 +1,11 @@
-import 'moment/locale/he';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Hebrew initialisation for the UI Datepicker extension. */
-/* Written by Amir Hardon (ahardon at gmail dot com). */
-FullCalendar.datepickerLocale('he', 'he', {
-  closeText: "סגור",
-  prevText: "&#x3C;הקודם",
-  nextText: "הבא&#x3E;",
-  currentText: "היום",
-  monthNames: [ "ינואר","פברואר","מרץ","אפריל","מאי","יוני",
-  "יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר" ],
-  monthNamesShort: [ "ינו","פבר","מרץ","אפר","מאי","יוני",
-  "יולי","אוג","ספט","אוק","נוב","דצמ" ],
-  dayNames: [ "ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת" ],
-  dayNamesShort: [ "א'","ב'","ג'","ד'","ה'","ו'","שבת" ],
-  dayNamesMin: [ "א'","ב'","ג'","ד'","ה'","ו'","שבת" ],
-  weekHeader: "Wk",
-  dateFormat: "dd/mm/yy",
-  firstDay: 0,
+defineLocale("he", {
   isRTL: true,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("he", {
   buttonText: {
+    prev: "הקודם",
+    next: "הבא",
+    today: "היום",
     month: "חודש",
     week: "שבוע",
     day: "יום",

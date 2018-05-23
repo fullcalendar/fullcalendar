@@ -1,44 +1,20 @@
-import 'moment/locale/et';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Estonian initialisation for the jQuery UI date picker plugin. */
-/* Written by Mart Sõmermaa (mrts.pydev at gmail com). */
-FullCalendar.datepickerLocale('et', 'et', {
-  closeText: "Sulge",
-  prevText: "Eelnev",
-  nextText: "Järgnev",
-  currentText: "Täna",
-  monthNames: [ "Jaanuar","Veebruar","Märts","Aprill","Mai","Juuni",
-  "Juuli","August","September","Oktoober","November","Detsember" ],
-  monthNamesShort: [ "Jaan", "Veebr", "Märts", "Apr", "Mai", "Juuni",
-  "Juuli", "Aug", "Sept", "Okt", "Nov", "Dets" ],
-  dayNames: [
-    "Pühapäev",
-    "Esmaspäev",
-    "Teisipäev",
-    "Kolmapäev",
-    "Neljapäev",
-    "Reede",
-    "Laupäev"
-  ],
-  dayNamesShort: [ "Pühap", "Esmasp", "Teisip", "Kolmap", "Neljap", "Reede", "Laup" ],
-  dayNamesMin: [ "P","E","T","K","N","R","L" ],
-  weekHeader: "näd",
-  dateFormat: "dd.mm.yy",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("et", {
+defineLocale("et", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // The week that contains Jan 4th is the first week of the year.
+  },
   buttonText: {
+    prev: "Eelnev",
+    next: "Järgnev",
+    today: "Täna",
     month: "Kuu",
     week: "Nädal",
     day: "Päev",
     list: "Päevakord"
   },
+  weekHeader: "näd",
   allDayText: "Kogu päev",
   eventLimitText: function(n) {
     return "+ veel " + n;

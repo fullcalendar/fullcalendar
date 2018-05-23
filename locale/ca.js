@@ -1,36 +1,20 @@
-import 'moment/locale/ca';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Inicialització en català per a l'extensió 'UI date picker' per jQuery. */
-/* Writers: (joan.leon@gmail.com). */
-FullCalendar.datepickerLocale('ca', 'ca', {
-  closeText: "Tanca",
-  prevText: "Anterior",
-  nextText: "Següent",
-  currentText: "Avui",
-  monthNames: [ "gener","febrer","març","abril","maig","juny",
-  "juliol","agost","setembre","octubre","novembre","desembre" ],
-  monthNamesShort: [ "gen","feb","març","abr","maig","juny",
-  "jul","ag","set","oct","nov","des" ],
-  dayNames: [ "diumenge","dilluns","dimarts","dimecres","dijous","divendres","dissabte" ],
-  dayNamesShort: [ "dg","dl","dt","dc","dj","dv","ds" ],
-  dayNamesMin: [ "dg","dl","dt","dc","dj","dv","ds" ],
-  weekHeader: "Set",
-  dateFormat: "dd/mm/yy",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("ca", {
+defineLocale("ca", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // The week that contains Jan 4th is the first week of the year.
+  },
   buttonText: {
+    prev: "Anterior",
+    next: "Següent",
+    today: "Avui",
     month: "Mes",
     week: "Setmana",
     day: "Dia",
     list: "Agenda"
   },
+  weekHeader: "Set",
   allDayText: "Tot el dia",
   eventLimitText: "més",
   noEventsMessage: "No hi ha esdeveniments per mostrar"

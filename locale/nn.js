@@ -1,47 +1,20 @@
-import 'moment/locale/nn';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Norwegian Nynorsk initialisation for the jQuery UI date picker plugin. */
-/* Written by Bjørn Johansen (post@bjornjohansen.no). */
-FullCalendar.datepickerLocale('nn', 'nn', {
-  closeText: "Lukk",
-  prevText: "&#xAB;Førre",
-  nextText: "Neste&#xBB;",
-  currentText: "I dag",
-  monthNames: [
-    "januar",
-    "februar",
-    "mars",
-    "april",
-    "mai",
-    "juni",
-    "juli",
-    "august",
-    "september",
-    "oktober",
-    "november",
-    "desember"
-  ],
-  monthNamesShort: [ "jan","feb","mar","apr","mai","jun","jul","aug","sep","okt","nov","des" ],
-  dayNamesShort: [ "sun","mån","tys","ons","tor","fre","lau" ],
-  dayNames: [ "sundag","måndag","tysdag","onsdag","torsdag","fredag","laurdag" ],
-  dayNamesMin: [ "su","må","ty","on","to","fr","la" ],
-  weekHeader: "Veke",
-  dateFormat: "dd.mm.yy",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: ""
-});
-
-FullCalendar.locale("nn", {
+defineLocale("nn", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // The week that contains Jan 4th is the first week of the year.
+  },
   buttonText: {
+    prev: "Førre",
+    next: "Neste",
+    today: "I dag",
     month: "Månad",
     week: "Veke",
     day: "Dag",
     list: "Agenda"
   },
+  weekHeader: "Veke",
   allDayText: "Heile dagen",
   eventLimitText: "til",
   noEventsMessage: "Ingen hendelser å vise"

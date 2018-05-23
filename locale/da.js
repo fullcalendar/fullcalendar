@@ -1,36 +1,20 @@
-import 'moment/locale/da';
-import * as FullCalendar from 'fullcalendar';
+import { defineLocale } from 'fullcalendar';
 
-
-/* Danish initialisation for the jQuery UI date picker plugin. */
-/* Written by Jan Christensen ( deletestuff@gmail.com). */
-FullCalendar.datepickerLocale('da', 'da', {
-  closeText: "Luk",
-  prevText: "&#x3C;Forrige",
-  nextText: "Næste&#x3E;",
-  currentText: "Idag",
-  monthNames: [ "Januar","Februar","Marts","April","Maj","Juni",
-  "Juli","August","September","Oktober","November","December" ],
-  monthNamesShort: [ "Jan","Feb","Mar","Apr","Maj","Jun",
-  "Jul","Aug","Sep","Okt","Nov","Dec" ],
-  dayNames: [ "Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag" ],
-  dayNamesShort: [ "Søn","Man","Tir","Ons","Tor","Fre","Lør" ],
-  dayNamesMin: [ "Sø","Ma","Ti","On","To","Fr","Lø" ],
-  weekHeader: "Uge",
-  dateFormat: "dd-mm-yy",
-  firstDay: 1,
-  isRTL: false,
-  showMonthAfterYear: false,
-  yearSuffix: "" });
-
-
-FullCalendar.locale("da", {
+defineLocale("da", {
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // The week that contains Jan 4th is the first week of the year.
+  },
   buttonText: {
+    prev: "Forrige",
+    next: "Næste",
+    today: "Idag",
     month: "Måned",
     week: "Uge",
     day: "Dag",
     list: "Agenda"
   },
+  weekHeader: "Uge",
   allDayText: "Hele dagen",
   eventLimitText: "flere",
   noEventsMessage: "Ingen arrangementer at vise"
