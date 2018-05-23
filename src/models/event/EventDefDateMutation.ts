@@ -112,7 +112,14 @@ export default class EventDefDateMutation {
       endMarker = calendar.getDefaultEventEnd(isAllDay, startMarker)
     }
 
-    return new EventDateProfile(startMarker, endMarker, isAllDay, calendar)
+    return new EventDateProfile(
+      startMarker,
+      endMarker,
+      isAllDay,
+      calendar,
+      eventDateProfile.forcedStartTimeZoneOffset,
+      eventDateProfile.forcedEndTimeZoneOffset
+    )
   }
 
 
