@@ -5,8 +5,7 @@ import View from '../View'
 import { eventRangeToEventFootprint } from '../models/event/util'
 import EventFootprint from '../models/event/EventFootprint'
 import { DateProfile } from '../DateProfileGenerator'
-import { DateMarker, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
-import { dayIDs } from '../datelib/util'
+import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration, asRoughMs } from '../datelib/duration'
 
 
@@ -736,7 +735,7 @@ export default abstract class DateComponent extends Component {
     if (!this.dateProfile.activeUnzonedRange.containsDate(date)) {
       classes.push('fc-disabled-day') // TODO: jQuery UI theme?
     } else {
-      classes.push('fc-' + dayIDs[date.getUTCDay()])
+      classes.push('fc-' + DAY_IDS[date.getUTCDay()])
 
       if (view.isDateInOtherMonth(date, this.dateProfile)) { // TODO: use DateComponent subclass somehow
         classes.push('fc-other-month')

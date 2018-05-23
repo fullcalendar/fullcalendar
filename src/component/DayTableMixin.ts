@@ -1,8 +1,7 @@
 import { htmlEscape } from '../util/html'
 import { prependToElement, appendToElement } from '../util/dom-manip'
 import Mixin from '../common/Mixin'
-import { DateMarker, addDays, diffDays } from '../datelib/marker'
-import { dayIDs } from '../datelib/util'
+import { DateMarker, DAY_IDS, addDays, diffDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 
 export interface DayTableInterface {
@@ -345,7 +344,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
         t.getDayClasses(date, true)
       )
     } else {
-      classNames.push('fc-' + dayIDs[date.getUTCDay()]) // only add the day-of-week class
+      classNames.push('fc-' + DAY_IDS[date.getUTCDay()]) // only add the day-of-week class
     }
 
     return '' +

@@ -1,3 +1,4 @@
+import { isInt } from '../util/misc'
 
 export interface DurationInput {
   years?: number
@@ -26,10 +27,11 @@ export interface Duration {
   time: number
 }
 
+const INTERNAL_UNITS = [ 'year', 'month', 'day', 'time' ]
+const PARSE_RE = /^(?:(\d+)\.)?(\d\d):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
+
 
 // Parsing and Creation
-
-const PARSE_RE = /^(?:(\d+)\.)?(\d\d):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
 
 export function createDuration(input, unit?: string) {
   if (typeof input === 'string') {
@@ -154,44 +156,23 @@ export function asRoughMs(dur: Duration) {
 // Advanced Math
 
 export function wholeDivideDurations(numerator: Duration, denominator: Duration): number {
-  let res0 = null
-  let res1 = null
+  let res = null
 
-  if (denominator.year) {
-    res0 = numerator.year / denominator.year
-  }
+  for (let i = 0; i < INTERNAL_UNITS.length; i++) {
+    let unit = INTERNAL_UNITS[i]
 
-  if (denominator.month) {
-    res1 = numerator.month / denominator.month
+    if (denominator[unit]) {
+      let localRes = numerator[unit] / denominator[unit]
 
-    if (res0 === null || res0 === res1) { // must match any previous division results
-      res0 = res1
-    } else {
-      return null
+      if (!isInt(localRes) || (res !== null && res !== localRes)) {
+        return null
+      }
+
+      res = localRes
     }
   }
 
-  if (denominator.day) {
-    res1 = numerator.day / denominator.day
-
-    if (res0 === null || res0 === res1) { // must match any previous division results
-      res0 = res1
-    } else {
-      return null
-    }
-  }
-
-  if (denominator.time) {
-    res1 = numerator.time / denominator.time
-
-    if (res0 === null || res0 === res1) { // must match any previous division results
-      res0 = res1
-    } else {
-      return null
-    }
-  }
-
-  return res0
+  return res
 }
 
 export function greatestDurationDenominator(dur: Duration, dontReturnWeeks?: boolean) {

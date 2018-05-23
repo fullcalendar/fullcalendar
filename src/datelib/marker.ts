@@ -2,6 +2,8 @@ import { Duration } from './duration'
 
 export type DateMarker = Date
 
+export const DAY_IDS = [ 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat' ]
+
 
 // Adding
 

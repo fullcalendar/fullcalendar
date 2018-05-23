@@ -2,7 +2,6 @@ import { viewHash } from './ViewRegistry'
 import { mergeProps } from './util/object'
 import { mergeOptions, globalDefaults } from './options'
 import { Duration, createDuration, getWeeksFromInput, greatestDurationDenominator } from './datelib/duration'
-import { unitsDesc } from './datelib/util'
 
 
 export default class ViewSpecManager {
@@ -40,20 +39,17 @@ export default class ViewSpecManager {
     let i
     let spec
 
-    if (unitsDesc.indexOf(unit) !== -1) {
+    // put views that have buttons first. there will be duplicates, but oh well
+    viewTypes = this._calendar.header.getViewsWithButtons() // TODO: include footer as well?
+    for (let viewType in viewHash) {
+      viewTypes.push(viewType)
+    }
 
-      // put views that have buttons first. there will be duplicates, but oh well
-      viewTypes = this._calendar.header.getViewsWithButtons() // TODO: include footer as well?
-      for (let viewType in viewHash) {
-        viewTypes.push(viewType)
-      }
-
-      for (i = 0; i < viewTypes.length; i++) {
-        spec = this.getViewSpec(viewTypes[i])
-        if (spec) {
-          if (spec.singleUnit === unit) {
-            return spec
-          }
+    for (i = 0; i < viewTypes.length; i++) {
+      spec = this.getViewSpec(viewTypes[i])
+      if (spec) {
+        if (spec.singleUnit === unit) {
+          return spec
         }
       }
     }
