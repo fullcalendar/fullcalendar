@@ -137,14 +137,22 @@ export default class TimeGrid extends InteractiveDateComponent {
   processOptions() {
     let slotDuration = this.opt('slotDuration')
     let snapDuration = this.opt('snapDuration')
+    let snapsPerSlot
     let input
 
     slotDuration = createDuration(slotDuration)
     snapDuration = snapDuration ? createDuration(snapDuration) : slotDuration
+    snapsPerSlot = wholeDivideDurations(slotDuration, snapDuration)
+
+    if (snapsPerSlot === null) {
+      snapDuration = slotDuration
+      snapsPerSlot = 1
+      // TODO: say warning?
+    }
 
     this.slotDuration = slotDuration
     this.snapDuration = snapDuration
-    this.snapsPerSlot = slotDuration / snapDuration // TODO: ensure an integer multiple?
+    this.snapsPerSlot = snapsPerSlot
 
     // might be an array value (for TimelineView).
     // if so, getting the most granular entry (the last one probably).
