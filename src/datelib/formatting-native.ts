@@ -42,9 +42,15 @@ export class NativeFormatter implements DateFormatter {
 
     let full0 = formatZonedMarker(start, context, standardSettings)
     let full1 = formatZonedMarker(end, context, standardSettings)
+
+    if (full0 === full1) {
+      return full0
+    }
+
     let partialFormatSettings = computePartialFormattingOptions(standardSettings, biggestUnitForPartial)
     let partial0 = formatZonedMarker(start, context, partialFormatSettings)
     let partial1 = formatZonedMarker(end, context, partialFormatSettings)
+
     let insertion = findCommonInsertion(full0, partial0, full1, partial1)
     let separator = this.extendedSettings.separator || DEFAULT_SEPARATOR
 

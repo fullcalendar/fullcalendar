@@ -194,6 +194,17 @@ fdescribe('datelib', function() {
         expect(s).toBe('June 8 - 9, 2018')
       })
 
+      it('works with different days of same month, with inprecise formatter', function() {
+        var formatter = createFormatter({
+          month: 'long',
+          year: 'numeric'
+        })
+        var m0 = env.createMarker('2018-06-08')
+        var m1 = env.createMarker('2018-06-09')
+        var s = env.formatRange(m0, m1, formatter)
+        expect(s).toBe('June 2018')
+      })
+
       it('works with different day/month of same year', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-07-09')
