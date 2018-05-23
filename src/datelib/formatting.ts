@@ -26,7 +26,7 @@ export interface VerboseFormattingArg {
   start: ExpandedZoneMarker
   end?: ExpandedZoneMarker
   timeZone: string
-  localeIds: string[]
+  localeCodes: string[]
 }
 
 export interface DateFormattingContext {
@@ -102,7 +102,7 @@ export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker,
     start: startInfo,
     end: endInfo,
     timeZone: context.timeZone,
-    localeIds: context.locale.ids
+    localeCodes: context.locale.codes
   }
 }
 

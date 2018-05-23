@@ -126,5 +126,5 @@ export {
   wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
 export { DateEnv } from './datelib/env'
-export { getLocale } from './datelib/locale'
+export { getLocale, getLocaleCodes } from './datelib/locale'
 export { createFormatter } from './datelib/formatting'

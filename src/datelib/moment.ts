@@ -15,7 +15,7 @@ registerCmdFormatter('moment', function(cmdStr: string, arg: VerboseFormattingAr
     mom = (moment as any).tz(arg.date.array, arg.timeZone)
   }
 
-  mom.locale(arg.localeIds[0])
+  mom.locale(arg.localeCodes[0])
 
   return mom.format(cmdStr)
 })

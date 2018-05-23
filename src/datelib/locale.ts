@@ -1,10 +1,10 @@
 import { mergeProps } from '../util/object'
 
-export type LocaleQuery = string | string[] | null
+export type LocaleCodeArg = string | string[] | null
 
 export interface Locale {
-  query: LocaleQuery
-  ids: string[]
+  codeArg: LocaleCodeArg
+  codes: string[]
   week: { dow: number, doy: number }
   simpleNumberFormat: Intl.NumberFormat
   options: any
@@ -36,38 +36,38 @@ const RAW_EN_LOCALE = {
 
 let rawMap = {}
 
-export function getLocale(query: LocaleQuery): Locale {
-  if (query === 'auto') {
-    query = null
+export function getLocale(codeArg: LocaleCodeArg): Locale {
+  if (codeArg === 'auto') {
+    codeArg = null
   }
 
-  let ids
-  if (Array.isArray(query)) {
-    ids = query
-  } else if (typeof query === 'string') {
-    ids = [ query ]
+  let codes
+  if (Array.isArray(codeArg)) {
+    codes = codeArg
+  } else if (typeof codeArg === 'string') {
+    codes = [ codeArg ]
   } else {
-    ids = []
+    codes = []
   }
 
-  let raw = getRawLocale(ids) || {}
+  let raw = getRawLocale(codes) || {}
   let merged = mergeProps([ RAW_EN_LOCALE, raw ], [ 'buttonText' ])
 
   let week = merged.week
   delete merged.week
 
   return {
-    query,
-    ids,
+    codeArg,
+    codes,
     week,
-    simpleNumberFormat: new Intl.NumberFormat(query),
+    simpleNumberFormat: new Intl.NumberFormat(codeArg),
     options: merged
   }
 }
 
-function getRawLocale(ids: string[]) {
-  for (let i = 0; i < ids.length; i++) {
-    let parts = ids[i].toLocaleLowerCase().split('-')
+function getRawLocale(codes: string[]) {
+  for (let i = 0; i < codes.length; i++) {
+    let parts = codes[i].toLocaleLowerCase().split('-')
 
     for (let j = parts.length; j > 0; j--) {
       let simpleId = parts.slice(0, j).join('-')
@@ -82,6 +82,10 @@ function getRawLocale(ids: string[]) {
 
 export function defineLocale(simpleId: string, rawData) {
   rawMap[simpleId] = rawData
+}
+
+export function getLocaleCodes() {
+  return Object.keys(rawMap)
 }
 
 defineLocale('en', RAW_EN_LOCALE)

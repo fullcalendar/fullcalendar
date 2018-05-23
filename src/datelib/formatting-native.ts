@@ -82,7 +82,7 @@ function separateExtendedSettings(settings) {
 // General Formatting Utils
 
 function formatZonedMarker(date: ZonedMarker, context: DateFormattingContext, standardSettings) {
-  let s = date.marker.toLocaleString(context.locale.query, standardSettings)
+  let s = date.marker.toLocaleString(context.locale.codeArg, standardSettings)
 
   if (standardSettings.timeZoneName && date.timeZoneOffset != null && context.timeZone !== 'UTC') {
     s = s.replace(/UTC|GMT/, formatTimeZoneOffset(date.timeZoneOffset))
