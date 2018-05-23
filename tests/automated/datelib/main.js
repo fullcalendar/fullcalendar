@@ -556,20 +556,31 @@ fdescribe('datelib', function() {
 
     })
 
-    // it('outputs pretty format with no timezone even tho specified', function() {
-    //   var marker = env.createMarker('2018-06-08')
-    //   var formatter = createFormatter({
-    //     weekday: 'long',
-    //     day: 'numeric',
-    //     month: 'long',
-    //     year: 'numeric',
-    //     timeZoneName: 'short'
-    //   })
-    //   var s = env.format(marker, formatter)
-    //   expect(s).toBe('Friday, June 8, 2018')
-    // })
+    it('outputs pretty format with no timezone even tho specified', function() {
+      var marker = env.createMarker('2018-06-08')
+      var formatter = createFormatter({
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZoneName: 'short'
+      })
+      var s = env.format(marker, formatter)
+      expect(s).toBe('Friday, June 8, 2018')
+    })
 
-    // TODO: when trying to do 'long' timezone
+    it('outputs pretty format with no timezone even tho specified as long', function() {
+      var marker = env.createMarker('2018-06-08')
+      var formatter = createFormatter({
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZoneName: 'long'
+      })
+      var s = env.format(marker, formatter)
+      expect(s).toBe('Friday, June 8, 2018')
+    })
 
   })
 

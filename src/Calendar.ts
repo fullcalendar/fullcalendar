@@ -325,12 +325,6 @@ export default class Calendar {
   }
 
 
-  formatWeek(d: Date, display?: string) {
-    const { dateEnv } = this
-    return dateEnv.formatWeek(dateEnv.createMarker(d), display as any)
-  }
-
-
   // Loading Triggering
   // -----------------------------------------------------------------------------------------------------------------
 

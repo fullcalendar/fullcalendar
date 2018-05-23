@@ -305,7 +305,6 @@ export class DateEnv {
   }
 
   // TODO: choke on timeZoneName: long
-  // TODO: accept just { timeZoneName: 'short' } and do the right thing
   format(marker: DateMarker, formatter: DateFormatter, dateOptions: any = {}) {
     return formatter.format(
       {
@@ -349,27 +348,6 @@ export class DateEnv {
         this.offsetForMarker(marker),
       extraOptions.omitTime
     )
-  }
-
-  // TODO: somehow roll this into format() ?
-  formatWeek(marker: DateMarker, display?: 'numeric' | 'narrow' | 'short'): string {
-    let { locale } = this
-    let parts = []
-
-    if (display === 'narrow') {
-      parts.push(locale.options.weekHeader)
-    } else if (display === 'short') {
-      parts.push(locale.options.weekHeader, ' ')
-    }
-    // otherwise, considered 'numeric'
-
-    parts.push(this.computeWeekNumber(marker))
-
-    if (locale.options.isRTL) {
-      parts.reverse()
-    }
-
-    return parts.join('')
   }
 
 

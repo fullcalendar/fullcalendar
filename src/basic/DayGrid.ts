@@ -26,6 +26,7 @@ import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
+const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
@@ -267,7 +268,7 @@ export default class DayGrid extends InteractiveDateComponent {
       html += view.buildGotoAnchorHtml(
         { date: date, type: 'week' },
         { 'class': 'fc-week-number' },
-        dateEnv.formatWeek(date) // inner HTML
+        dateEnv.format(date, WEEK_NUM_FORMAT) // inner HTML
       )
     }
 

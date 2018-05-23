@@ -12,8 +12,10 @@ import View from '../View'
 import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
+import { createFormatter } from '../datelib/formatting'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
+const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
 
 let agendaTimeGridMethods
 let agendaDayGridMethods
@@ -389,7 +391,7 @@ agendaTimeGridMethods = {
     let weekText
 
     if (this.opt('weekNumbers')) {
-      weekText = dateEnv.formatWeek(weekStart, 'short')
+      weekText = dateEnv.format(weekStart, WEEK_HEADER_FORMAT)
 
       return '' +
         '<th class="fc-axis fc-week-number ' + calendar.theme.getClass('widgetHeader') + '" ' + view.axisStyleAttr() + '>' +

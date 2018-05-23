@@ -8,10 +8,13 @@ import {
   distributeHeight,
   undistributeHeight
 } from '../util/misc'
+import { createFormatter } from '../datelib/formatting'
 import Scroller from '../common/Scroller'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import DayGrid from './DayGrid'
+
+const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
 
 /* An abstract class for the "basic" views, as well as month view. Renders one or more rows of day cells.
@@ -300,7 +303,7 @@ function makeDayGridSubclass(SuperClass) {
           '<td class="fc-week-number" ' + view.weekNumberStyleAttr() + '>' +
             view.buildGotoAnchorHtml( // aside from link, important for matchCellWidths
               { date: weekStart, type: 'week', forceOff: this.colCnt === 1 },
-              dateEnv.formatWeek(weekStart) // inner HTML
+              dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
             ) +
           '</td>'
       }

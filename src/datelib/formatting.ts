@@ -33,6 +33,7 @@ export interface DateFormattingContext {
   timeZone: string,
   locale: Locale,
   calendarSystem: CalendarSystem
+  computeWeekNumber: (d: DateMarker) => number
 }
 
 export interface DateFormatter {

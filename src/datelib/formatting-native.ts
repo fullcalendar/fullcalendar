@@ -1,25 +1,98 @@
+import { assignTo } from '../util/object'
 import { DateMarker, timeAsMs } from './marker'
 import { CalendarSystem } from './calendar-system'
+import { Locale } from './locale'
 import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset } from './formatting'
 
 
+const STANDARD_DATE_PROP_RE = /^(weekday|era|year|month|day|hour|minute|second|timeZoneName)$/
 const DEFAULT_SEPARATOR = ' - '
+const EXTENDED_SETTINGS = {
+  separator: null,
+  fake: function(s) {
+    return s.toLowerCase() + ' --- test'
+  }
+}
 
 
 export class NativeFormatter implements DateFormatter {
 
   standardSettings: any
   extendedSettings: any
+  transformations: any
+  datePropCnt: number
 
   constructor(formatSettings) {
-    let groups = separateExtendedSettings(formatSettings)
-    this.standardSettings = groups.standard
-    this.standardSettings.timeZone = 'UTC'
-    this.extendedSettings = groups.extended
+    let standardSettings: any = {}
+    let extendedSettings: any = {}
+    let transformations = []
+    let datePropCnt = 0
+
+    for (let name in formatSettings) {
+      if (typeof EXTENDED_SETTINGS[name] === 'function') {
+        transformations.push(formatSettings[name])
+      } else if (EXTENDED_SETTINGS[name]) {
+        extendedSettings[name] = formatSettings[name]
+      } else {
+        standardSettings[name] = formatSettings[name]
+
+        if (STANDARD_DATE_PROP_RE.test(name)) {
+          datePropCnt++
+        }
+      }
+    }
+
+    standardSettings.timeZone = 'UTC'
+
+    this.standardSettings = standardSettings
+    this.extendedSettings = extendedSettings
+    this.transformations = transformations
+    this.datePropCnt = datePropCnt
   }
 
-  format(date: ZonedMarker, context: DateFormattingContext) {
-    return formatZonedMarker(date, context, this.standardSettings)
+  format(date: ZonedMarker, context: DateFormattingContext, standardOverrides?) {
+    let standardSettings = standardOverrides || this.standardSettings
+    let { extendedSettings, transformations } = this
+
+    if (this.datePropCnt === 1) {
+      if (standardSettings.timeZoneName === 'short') {
+        return formatTimeZoneOffset(date.timeZoneOffset)
+      }
+      if (extendedSettings.week) {
+        return formatWeekNumber(
+          context.computeWeekNumber(date.marker),
+          context.locale,
+          extendedSettings.week
+        )
+      }
+    }
+
+    // if trying to display a timezone but don't have enough information, don't try
+    if (
+      context.timeZone !== 'UTC' && (
+        standardSettings.timeZoneName === 'long' ||
+        standardSettings.timeZoneName === 'short' && date.timeZoneOffset == null
+      )
+    ) {
+      standardSettings = assignTo({}, standardSettings) // copy
+      delete standardSettings.timeZoneName
+    }
+
+    let s = date.marker.toLocaleString(context.locale.codeArg, standardSettings)
+
+    if (
+      context.timeZone !== 'UTC' && // the current timezone is something other than UTC
+      standardSettings.timeZoneName === 'short' // and want to display the timezone offset
+    ) {
+      // then inject the timezone offset into the string
+      s = s.replace(/UTC|GMT/, formatTimeZoneOffset(date.timeZoneOffset))
+    }
+
+    transformations.forEach(function(transformation) {
+      s = transformation(s)
+    })
+
+    return s
   }
 
   formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
@@ -27,7 +100,7 @@ export class NativeFormatter implements DateFormatter {
 
     let diffSeverity = computeMarkerDiffSeverity(start.marker, end.marker, context.calendarSystem)
     if (!diffSeverity) {
-      return formatZonedMarker(start, context, standardSettings)
+      return this.format(start, context)
     }
 
     let biggestUnitForPartial = diffSeverity
@@ -40,16 +113,16 @@ export class NativeFormatter implements DateFormatter {
       biggestUnitForPartial = 1 // make it look like the dates are only different in terms of time
     }
 
-    let full0 = formatZonedMarker(start, context, standardSettings)
-    let full1 = formatZonedMarker(end, context, standardSettings)
+    let full0 = this.format(start, context)
+    let full1 = this.format(end, context)
 
     if (full0 === full1) {
       return full0
     }
 
     let partialFormatSettings = computePartialFormattingOptions(standardSettings, biggestUnitForPartial)
-    let partial0 = formatZonedMarker(start, context, partialFormatSettings)
-    let partial1 = formatZonedMarker(end, context, partialFormatSettings)
+    let partial0 = this.format(start, context, partialFormatSettings)
+    let partial1 = this.format(end, context, partialFormatSettings)
 
     let insertion = findCommonInsertion(full0, partial0, full1, partial1)
     let separator = this.extendedSettings.separator || DEFAULT_SEPARATOR
@@ -63,32 +136,24 @@ export class NativeFormatter implements DateFormatter {
 
 }
 
-function separateExtendedSettings(settings) {
-  let standardSettings = {}
-  let extendedSettings = {}
 
-  for (let name in settings) {
-    if (name === 'separator') {
-      extendedSettings[name] = settings[name]
-    } else {
-      standardSettings[name] = settings[name]
-    }
+function formatWeekNumber(num: number, locale: Locale, display?: 'numeric' | 'narrow' | 'short'): string {
+  let parts = []
+
+  if (display === 'narrow') {
+    parts.push(locale.options.weekHeader)
+  } else if (display === 'short') {
+    parts.push(locale.options.weekHeader, ' ')
+  }
+  // otherwise, considered 'numeric'
+
+  parts.push(locale.simpleNumberFormat.format(num))
+
+  if (locale.options.isRTL) {
+    parts.reverse()
   }
 
-  return { standard: standardSettings, extended: extendedSettings }
-}
-
-
-// General Formatting Utils
-
-function formatZonedMarker(date: ZonedMarker, context: DateFormattingContext, standardSettings) {
-  let s = date.marker.toLocaleString(context.locale.codeArg, standardSettings)
-
-  if (standardSettings.timeZoneName && date.timeZoneOffset != null && context.timeZone !== 'UTC') {
-    s = s.replace(/UTC|GMT/, formatTimeZoneOffset(date.timeZoneOffset))
-  }
-
-  return s
+  return parts.join('')
 }
 
 
