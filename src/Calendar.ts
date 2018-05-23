@@ -313,7 +313,7 @@ export default class Calendar {
     return dateEnv.formatRange(
       dateEnv.createMarker(d0),
       dateEnv.createMarker(d1),
-      formatter,
+      createFormatter(formatter),
       { isEndExclusive }
     )
   }

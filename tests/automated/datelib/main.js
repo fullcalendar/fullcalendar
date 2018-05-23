@@ -180,6 +180,31 @@ fdescribe('datelib', function() {
     })
 
 
+    describe('week number formatting', function() {
+
+      it('can output only number', function() {
+        var marker = env.createMarker('2018-06-08')
+        var formatter = createFormatter({ week: 'numeric' })
+        var s = env.format(marker, formatter)
+        expect(s).toBe('23')
+      })
+
+      it('can output narrow', function() {
+        var marker = env.createMarker('2018-06-08')
+        var formatter = createFormatter({ week: 'narrow' })
+        var s = env.format(marker, formatter)
+        expect(s).toBe('Wk23')
+      })
+
+      it('can output short', function() {
+        var marker = env.createMarker('2018-06-08')
+        var formatter = createFormatter({ week: 'short' })
+        var s = env.format(marker, formatter)
+        expect(s).toBe('Wk 23')
+      })
+    })
+
+
     describe('range formatting', function() {
       var formatter = createFormatter({
         day: 'numeric',
@@ -513,6 +538,13 @@ fdescribe('datelib', function() {
       })
       var s = env.format(marker, formatter)
       expect(s).toBe('Friday, June 8, 2018, ' + getFormattedTimzoneOffset2(new Date(2018, 5, 8)))
+    })
+
+    it('can output a timezone only', function() {
+      var marker = env.createMarker('2018-06-08')
+      var formatter = createFormatter({ timeZoneName: 'short' })
+      var s = env.format(marker, formatter)
+      expect(s).toBe(getFormattedTimzoneOffset2(new Date(2018, 5, 8)))
     })
 
 

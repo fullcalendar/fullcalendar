@@ -8,36 +8,30 @@ import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset
 const STANDARD_DATE_PROP_RE = /^(weekday|era|year|month|day|hour|minute|second|timeZoneName)$/
 const DEFAULT_SEPARATOR = ' - '
 const EXTENDED_SETTINGS = {
-  separator: null,
-  fake: function(s) {
-    return s.toLowerCase() + ' --- test'
-  }
+  week: true,
+  separator: true
 }
 
 
 export class NativeFormatter implements DateFormatter {
 
   standardSettings: any
+  standardDatePropCnt: number
   extendedSettings: any
-  transformations: any
-  datePropCnt: number
 
   constructor(formatSettings) {
     let standardSettings: any = {}
     let extendedSettings: any = {}
-    let transformations = []
-    let datePropCnt = 0
+    let standardDatePropCnt = 0
 
     for (let name in formatSettings) {
-      if (typeof EXTENDED_SETTINGS[name] === 'function') {
-        transformations.push(formatSettings[name])
-      } else if (EXTENDED_SETTINGS[name]) {
+      if (EXTENDED_SETTINGS[name]) {
         extendedSettings[name] = formatSettings[name]
       } else {
         standardSettings[name] = formatSettings[name]
 
         if (STANDARD_DATE_PROP_RE.test(name)) {
-          datePropCnt++
+          standardDatePropCnt++
         }
       }
     }
@@ -45,26 +39,23 @@ export class NativeFormatter implements DateFormatter {
     standardSettings.timeZone = 'UTC'
 
     this.standardSettings = standardSettings
+    this.standardDatePropCnt = standardDatePropCnt
     this.extendedSettings = extendedSettings
-    this.transformations = transformations
-    this.datePropCnt = datePropCnt
   }
 
   format(date: ZonedMarker, context: DateFormattingContext, standardOverrides?) {
     let standardSettings = standardOverrides || this.standardSettings
-    let { extendedSettings, transformations } = this
+    let { extendedSettings } = this
 
-    if (this.datePropCnt === 1) {
-      if (standardSettings.timeZoneName === 'short') {
-        return formatTimeZoneOffset(date.timeZoneOffset)
-      }
-      if (extendedSettings.week) {
-        return formatWeekNumber(
-          context.computeWeekNumber(date.marker),
-          context.locale,
-          extendedSettings.week
-        )
-      }
+    if (this.standardDatePropCnt === 1 && standardSettings.timeZoneName === 'short') {
+      return formatTimeZoneOffset(date.timeZoneOffset)
+    }
+    if (this.standardDatePropCnt === 0 && extendedSettings.week) {
+      return formatWeekNumber(
+        context.computeWeekNumber(date.marker),
+        context.locale,
+        extendedSettings.week
+      )
     }
 
     // if trying to display a timezone but don't have enough information, don't try
@@ -87,10 +78,6 @@ export class NativeFormatter implements DateFormatter {
       // then inject the timezone offset into the string
       s = s.replace(/UTC|GMT/, formatTimeZoneOffset(date.timeZoneOffset))
     }
-
-    transformations.forEach(function(transformation) {
-      s = transformation(s)
-    })
 
     return s
   }
