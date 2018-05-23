@@ -207,10 +207,10 @@ export default abstract class View extends InteractiveDateComponent {
       )
       if (days !== null && days > 1) {
         // multi-day range. shorter, like "Sep 9 - 10 2014"
-        return { year: 'numeric', month: 'short', date: 'numeric' }
+        return { year: 'numeric', month: 'short', day: 'numeric' }
       } else {
         // one day. longer, like "September 9 2014"
-        return { year: 'numeric', month: 'long', date: 'numeric' }
+        return { year: 'numeric', month: 'long', day: 'numeric' }
       }
     }
   }
