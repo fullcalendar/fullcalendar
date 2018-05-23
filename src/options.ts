@@ -40,7 +40,7 @@ export const globalDefaults = {
   endParam: 'end',
   timezoneParam: 'timezone',
 
-  timezone: false,
+  timezone: 'UTC', // TODO: throw error if given falsy value?
 
   // allDayDefault: undefined,
 

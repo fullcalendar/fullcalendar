@@ -6,6 +6,7 @@
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../node_modules/moment/moment.js'></script>
 <script src='../node_modules/jquery/dist/jquery.js'></script>
+<script src='../node_modules/superagent/superagent.js'></script><!-- TODO: use this all the way -->
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
@@ -32,14 +33,15 @@
       loading: function(bool) {
         $('#loading').toggle(bool);
       },
-      eventRender: function(event, el) {
-        // render the timezone offset below the event title
-        if (event.start.hasZone()) {
-          $(el).find('.fc-title').after(
-            $('<div class="tzo"/>').text(event.start.format('Z'))
-          );
-        }
-      },
+
+      timeFormat: { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' },
+      // TODO: once event API is better:
+      // eventRender: function(event, el) {
+      //   $(el).find('.fc-title').after(
+      //     $('<div class="tzo"/>').text(tz)
+      //   );
+      // },
+
       dayClick: function(date) {
         console.log('dayClick', date.format());
       },

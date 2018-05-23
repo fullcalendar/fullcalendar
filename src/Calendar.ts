@@ -28,6 +28,7 @@ import { RangeInput, OptionsInput, EventObjectInput, EventSourceInput } from './
 import { getLocale } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
+import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 
 export default class Calendar {
@@ -294,6 +295,39 @@ export default class Calendar {
   // for external API
   getDate(): Date {
     return this.dateEnv.toDate(this.currentDate)
+  }
+
+
+  // Date Formatting Utils
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  formatDate(d: Date, formatter): string {
+    const { dateEnv } = this
+    return dateEnv.format(dateEnv.createMarker(d), createFormatter(formatter))
+  }
+
+
+  formatRange(d0: Date, d1: Date, formatter, isEndExclusive?: boolean) {
+    const { dateEnv } = this
+    return dateEnv.formatRange(
+      dateEnv.createMarker(d0),
+      dateEnv.createMarker(d1),
+      formatter,
+      { isEndExclusive }
+    )
+  }
+
+
+  formatIso(d: Date, omitTime?: boolean) {
+    const { dateEnv } = this
+    return dateEnv.formatIso(dateEnv.createMarker(d), { omitTime })
+  }
+
+
+  formatWeek(d: Date, display?: string) {
+    const { dateEnv } = this
+    return dateEnv.formatWeek(dateEnv.createMarker(d), display as any)
   }
 
 

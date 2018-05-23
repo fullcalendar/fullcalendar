@@ -304,6 +304,8 @@ export class DateEnv {
     }
   }
 
+  // TODO: choke on timeZoneName: long
+  // TODO: accept just { timeZoneName: 'short' } and do the right thing
   format(marker: DateMarker, formatter: DateFormatter, dateOptions: any = {}) {
     return formatter.format(
       {
@@ -349,6 +351,7 @@ export class DateEnv {
     )
   }
 
+  // TODO: somehow roll this into format() ?
   formatWeek(marker: DateMarker, display?: 'numeric' | 'narrow' | 'short'): string {
     let { locale } = this
     let parts = []
