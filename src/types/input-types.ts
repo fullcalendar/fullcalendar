@@ -7,6 +7,7 @@ import View from '../View'
 import EventSource from '../models/event-source/EventSource'
 import { Duration } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
+import { FormatterInput } from '../datelib/formatting'
 
 export type DurationInput = Duration | object | string | number
 
@@ -161,15 +162,15 @@ export interface OptionsInputBase {
   allDaySlot?: boolean
   allDayText?: string
   slotDuration?: DurationInput
-  slotLabelFormat?: string
+  slotLabelFormat?: FormatterInput
   slotLabelInterval?: DurationInput
   snapDuration?: DurationInput
   scrollTime?: DurationInput
   minTime?: DurationInput
   maxTime?: DurationInput
   slotEventOverlap?: boolean
-  listDayFormat?: string | boolean
-  listDayAltFormat?: string | boolean
+  listDayFormat?: FormatterInput | boolean
+  listDayAltFormat?: FormatterInput | boolean
   noEventsMessage?: string
   defaultDate?: DateInput
   nowIndicator?: boolean
@@ -180,12 +181,12 @@ export interface OptionsInputBase {
   duration?: DurationInput
   dayCount?: number
   locale?: string
-  timeFormat?: string
+  timeFormat?: FormatterInput
   columnHeader?: boolean
-  columnHeaderFormat?: string
+  columnHeaderFormat?: FormatterInput
   columnHeaderText?: string | ((date: DateInput) => string)
   columnHeaderHtml?: string | ((date: DateInput) => string)
-  titleFormat?: string
+  titleFormat?: FormatterInput
   monthNames?: string[]
   monthNamesShort?: string[]
   dayNames?: string[]
@@ -194,7 +195,7 @@ export interface OptionsInputBase {
   displayEventTime?: boolean
   displayEventEnd?: boolean
   eventLimitText?: string | ((eventCnt: number) => string)
-  dayPopoverFormat?: string
+  dayPopoverFormat?: FormatterInput
   navLinks?: boolean
   navLinkDayClick?: string | ((date: Date, jsEvent: Event) => void)
   navLinkWeekClick?: string | ((weekStart: any, jsEvent: Event) => void)

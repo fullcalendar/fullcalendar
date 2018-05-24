@@ -4,7 +4,7 @@ import { CalendarSystem } from './calendar-system'
 import { Locale } from './locale'
 import { NativeFormatter } from './formatting-native'
 import { CmdFormatter } from './formatting-cmd'
-import { FuncFormatter } from './formatting-func'
+import { FuncFormatter, FuncFormatterFunc } from './formatting-func'
 
 export interface ZonedMarker {
   marker: DateMarker,
@@ -42,10 +42,12 @@ export interface DateFormatter {
   formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext)
 }
 
+export type FormatterInput = object | string | FuncFormatterFunc
+
 
 // Formatter Object Creation
 
-export function createFormatter(input): DateFormatter {
+export function createFormatter(input: FormatterInput): DateFormatter {
   if (typeof input === 'object') {
     return new NativeFormatter(input)
   }
