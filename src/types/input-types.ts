@@ -232,29 +232,29 @@ export interface OptionsInputBase {
   droppable?: boolean
   dropAccept?: string | ((draggable: any) => boolean)
 
-  viewRender?(view: View, element: HTMLElement): void
-  viewDestroy?(view: View, element: HTMLElement): void
-  dayRender?(date: DateInput, cell: HTMLElement): void
+  viewRender?(arg: { view: View, el: HTMLElement }): void
+  viewDestroy?(arg: { view: View, el: HTMLElement }): void
+  dayRender?(arg: { date: Date, isAllDay: boolean, el: HTMLElement }): void
   windowResize?(view: View): void
-  dayClick?(date: DateInput, jsEvent: MouseEvent, view: View, resourceObj?): void // resourceObj for Scheduler
-  eventClick?(event: EventObjectInput, jsEvent: MouseEvent, view: View): boolean | void
-  eventMouseover?(event: EventObjectInput, jsEvent: MouseEvent, view: View): void
-  eventMouseout?(event: EventObjectInput, jsEvent: MouseEvent, view: View): void
-  select?(start: DateInput, end: DateInput, jsEvent: MouseEvent, view: View, resource?: any): void
-  unselect?(view: View, jsEvent: Event): void
+  dayClick?(arg: { date: Date, isAllDay: boolean, resource, el: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
+  eventClick?(arg: { el: HTMLElement, event: EventObjectInput, jsEvent: MouseEvent, view: View }): boolean | void
+  eventMouseover?(arg: { el: HTMLElement, event: EventObjectInput, jsEvent: MouseEvent, view: View }): void
+  eventMouseout?(arg: { el: HTMLElement, event: EventObjectInput, jsEvent: MouseEvent, view: View }): void
+  select?(arg: { start: Date, end: Date, isAllDay: boolean, resource, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
+  unselect?(arg: { view: View, jsEvent: Event }): void
   eventDataTransform?(eventData: any): EventObjectInput
   loading?(isLoading: boolean, view: View): void
-  eventRender?(event: EventObjectInput, element: HTMLElement, view: View): void
-  eventAfterRender?(event: EventObjectInput, element: HTMLElement, view: View): void
-  eventAfterAllRender?(view: View): void
-  eventDestroy?(event: EventObjectInput, element: HTMLElement, view: View): void
-  eventDragStart?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
-  eventDragStop?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
-  eventDrop?(event: EventObjectInput, delta: Duration, revertFunc: Function, jsEvent: Event, ui: any, view: View): void
-  eventResizeStart?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
-  eventResizeStop?(event: EventObjectInput, jsEvent: MouseEvent, ui: any, view: View): void
-  eventResize?(event: EventObjectInput, delta: Duration, revertFunc: Function, jsEvent: Event, ui: any, view: View): void
-  drop?(date: DateInput, jsEvent: MouseEvent, ui: any): void
+  eventRender?(arg: { event: EventObjectInput, el: HTMLElement, view: View }): void
+  eventAfterRender?(arg: { event: EventObjectInput, el: HTMLElement, view: View }): void
+  eventAfterAllRender?(arg: { view: View }): void
+  eventDestroy?(arg: { event: EventObjectInput, el: HTMLElement, view: View }): void
+  eventDragStart?(arg: { event: EventObjectInput, el: HTMLElement, jsEvent: MouseEvent, view: View }): void
+  eventDragStop?(arg: { event: EventObjectInput, el: HTMLElement, jsEvent: MouseEvent, view: View }): void
+  eventDrop?(arg: { el: HTMLElement, event: EventObjectInput, delta: Duration, revertFunc: Function, jsEvent: Event, view: View }): void
+  eventResizeStart?(arg: { el: HTMLElement, event: EventObjectInput, jsEvent: MouseEvent, view: View }): void
+  eventResizeStop?(arg: { el: HTMLElement, event: EventObjectInput, jsEvent: MouseEvent, view: View }): void
+  eventResize?(arg: { el: HTMLElement, event: EventObjectInput, delta: Duration, revertFunc: Function, jsEvent: Event, view: View }): void
+  drop?(arg: { date: DateInput, isAllDay: boolean, jsEvent: MouseEvent }): void
   eventReceive?(event: EventObjectInput): void
 }
 
