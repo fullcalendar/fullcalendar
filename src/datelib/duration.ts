@@ -36,7 +36,7 @@ const PARSE_RE = /^(?:(\d+)\.)?(\d\d):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
 export function createDuration(input, unit?: string) {
   if (typeof input === 'string') {
     return parseString(input)
-  } else if (typeof input === 'object') {
+  } else if (typeof input === 'object' && input) { // non-null object
     return normalizeObject(input)
   } else if (typeof input === 'number') {
     return normalizeObject({ [unit || 'millisecond']: input })
@@ -107,7 +107,7 @@ export function addDurations(d0: Duration, d1: Duration) {
   }
 }
 
-export function diffDurations(d0: Duration, d1: Duration): Duration {
+export function subtractDurations(d1: Duration, d0: Duration): Duration {
   return {
     year: d1.year - d0.year,
     month: d1.month - d0.month,

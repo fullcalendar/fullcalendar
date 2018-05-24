@@ -16,19 +16,11 @@ describe('recurring events', function() {
 
       var events = currentCalendar.clientEvents()
 
-      expect(events[0].start.format()).toBe(
-        moment('2017-07-04T09:00:00').format() // local
-      )
-      expect(events[0].end.format()).toBe(
-        moment('2017-07-04T11:00:00').format() // local
-      )
+      expect(events[0].start).toEqualDate('2017-07-04T09:00:00') // local
+      expect(events[0].end).toEqualDate('2017-07-04T11:00:00') // local
 
-      expect(events[1].start.format()).toBe(
-        moment('2017-07-06T09:00:00').format() // local
-      )
-      expect(events[1].end.format()).toBe(
-        moment('2017-07-06T11:00:00').format() // local
-      )
+      expect(events[1].start).toEqualDate('2017-07-06T09:00:00') // local
+      expect(events[1].end).toEqualDate('2017-07-06T11:00:00') // local
     })
   })
 

@@ -15,6 +15,8 @@ registerCmdFormatter('moment', function(cmdStr: string, arg: VerboseFormattingAr
     mom = (moment as any).tz(arg.date.array, arg.timeZone)
   }
 
+  // what about accepting a forced timezone if .tz isn't present?
+
   mom.locale(arg.localeCodes[0])
 
   return mom.format(cmdStr)

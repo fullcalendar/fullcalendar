@@ -1,5 +1,8 @@
 
 describe('updateEvent', function() {
+  pushOptions({
+    timezone: 'UTC'
+  })
 
   describe('when changing an event\'s ID', function() {
     pushOptions({
@@ -44,9 +47,9 @@ describe('updateEvent', function() {
       var renderCnt = 0
 
       initCalendar({
-        eventRender: function(eventObj) {
+        eventRender: function(arg) {
           if (allRenderCnt === 1) {
-            expect(eventObj.id).toBe('3')
+            expect(arg.event.id).toBe('3')
             renderCnt++
           }
         },
@@ -103,8 +106,8 @@ describe('updateEvent', function() {
             eventObj = currentCalendar.clientEvents('2')[0]
 
             expect(eventObj.allDay).toBe(true)
-            expect(eventObj.start.format()).toBe('2017-07-14')
-            expect(eventObj.end.format()).toBe('2017-07-15')
+            expect(eventObj.start).toEqualDate('2017-07-14T00:00:00Z')
+            expect(eventObj.end).toEqualDate('2017-07-15T00:00:00Z')
 
             done()
           }
@@ -138,10 +141,8 @@ describe('updateEvent', function() {
 
       event = currentCalendar.clientEvents()[0]
       expect(event.allDay).toBe(false)
-      expect(moment.isMoment(event.start)).toBe(true)
-      expect(moment.isMoment(event.end)).toBe(true)
-      expect(event.start).toEqualMoment('2016-04-29T12:00:00')
-      expect(event.end).toEqualMoment('2016-04-29T14:00:00')
+      expect(event.start).toEqualDate('2016-04-29T12:00:00Z')
+      expect(event.end).toEqualDate('2016-04-29T14:00:00Z')
     })
   })
 

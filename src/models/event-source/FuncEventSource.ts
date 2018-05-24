@@ -32,9 +32,11 @@ export default class FuncEventSource extends EventSource {
     unpromisify( // allow the func to return a promise
       this.func.bind(
         this.calendar,
-        dateEnv.toDate(start),
-        dateEnv.toDate(end),
-        dateEnv.timeZone
+        {
+          start: dateEnv.toDate(start),
+          end: dateEnv.toDate(end),
+          timeZone: dateEnv.timeZone
+        }
       ),
       (rawEventDefs) => {
         this.calendar.popLoading()

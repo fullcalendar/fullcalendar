@@ -1,4 +1,43 @@
 
+beforeEach(function() {
+  jasmine.addMatchers({
+    toEqualDate() {
+      return {
+        compare: function(actual, expected) {
+          var result;
+
+          if (typeof expected === 'string') {
+            expected = new Date(expected)
+          }
+
+          if (!(actual instanceof Date)) {
+            result = {
+              pass: false,
+              message: 'Actual value ' + actual + 'needs to be an instance of a Date'
+            }
+          } else if (!(expected instanceof Date)) {
+            result = {
+              pass: false,
+              message: 'Expected value ' + expected + 'needs to be an instance of a Date'
+            }
+          } else if (actual.valueOf() !== expected.valueOf()) {
+            result = {
+              pass: false,
+              message: 'Date ' + actual.toUTCString() + ' does not equal ' + expected.toUTCString()
+            }
+          } else {
+            result = { pass: true }
+          }
+
+          return result
+        }
+      }
+    }
+  })
+})
+
+// kill all this...
+
 function serializeDuration(duration) {
   return Math.floor(duration.asDays()) + '.' +
     pad(duration.hours(), 2) + ':' +

@@ -1,5 +1,8 @@
 
 describe('events as a function', function() {
+  pushOptions({
+    timeZone: 'UTC'
+  })
 
   it('requests the correct dates when days at the start/end of the month are hidden', function(done) {
     initCalendar({
@@ -7,9 +10,11 @@ describe('events as a function', function() {
       defaultDate: '2013-06-01', // June 2013 has first day as Saturday, and last as Sunday!
       weekends: false,
       fixedWeekCount: false,
-      events: function(start, end, timezone, callback) {
-        expect(start).toEqualMoment('2013-06-03')
-        expect(end).toEqualMoment('2013-06-29')
+      events: function(arg, callback) {
+        expect(arg.start).toEqualDate('2013-06-03T00:00:00Z')
+        expect(arg.end).toEqualDate('2013-06-29T00:00:00Z')
+        expect(arg.timeZone).toBe('UTC')
+        expect(typeof callback).toBe('function')
         done()
       }
     })
@@ -20,9 +25,9 @@ describe('events as a function', function() {
       defaultView: 'month',
       defaultDate: '2013-06-01',
       showNonCurrentDates: false,
-      events: function(start, end, timezone, callback) {
-        expect(start).toEqualMoment('2013-06-01')
-        expect(end).toEqualMoment('2013-07-01')
+      events: function(arg, callback) {
+        expect(arg.start).toEqualDate('2013-06-01T00:00:00Z')
+        expect(arg.end).toEqualDate('2013-07-01T00:00:00Z')
         done()
       }
     })
@@ -33,9 +38,9 @@ describe('events as a function', function() {
       defaultView: 'agendaWeek',
       defaultDate: '2017-06-08',
       minTime: { hours: -2 },
-      events: function(start, end, timezone, callback) {
-        expect(start).toEqualMoment('2017-06-03T22:00:00')
-        expect(end).toEqualMoment('2017-06-11T00:00:00')
+      events: function(arg, callback) {
+        expect(arg.start).toEqualDate('2017-06-03T22:00:00Z')
+        expect(arg.end).toEqualDate('2017-06-11T00:00:00Z')
         done()
       }
     })
@@ -46,9 +51,9 @@ describe('events as a function', function() {
       defaultView: 'agendaWeek',
       defaultDate: '2017-06-08',
       maxTime: '26:00',
-      events: function(start, end, timezone, callback) {
-        expect(start).toEqualMoment('2017-06-04T00:00:00')
-        expect(end).toEqualMoment('2017-06-11T02:00:00')
+      events: function(arg, callback) {
+        expect(arg.start).toEqualDate('2017-06-04T00:00:00Z')
+        expect(arg.end).toEqualDate('2017-06-11T02:00:00Z')
         done()
       }
     })
@@ -61,7 +66,7 @@ describe('events as a function', function() {
       loading: function(bool) {
         loadingCallArgs.push(bool)
       },
-      events: function(start, end, timezone, callback) {
+      events: function(arg, callback) {
         setTimeout(function() {
           expect(loadingCallArgs).toEqual([ true ])
           callback([])
@@ -82,12 +87,12 @@ describe('events as a function', function() {
         loadingCallArgs.push(bool)
       },
       eventSources: [
-        function(start, end, timezone, callback) {
+        function(arg, callback) {
           setTimeout(function() {
             callback([])
           }, 0)
         },
-        function(start, end, timezone, callback) {
+        function(arg, callback) {
           setTimeout(function() {
             callback([])
           }, 10)

@@ -1,6 +1,7 @@
 
 describe('lazyFetching', function() {
   pushOptions({
+    timezone: 'UTC',
     defaultView: 'month',
     defaultDate: '2017-10-04'
   })
@@ -10,10 +11,10 @@ describe('lazyFetching', function() {
       lazyFetching: true
     })
 
-    it('won\'t fetch weeks already queryied', function() {
-      var args
+    it('won\'t fetch weeks already queried', function() {
+      var arg
       var options = {
-        events: function(start, end, timezone, callback) {
+        events: function(arg, callback) {
           callback([])
         }
       }
@@ -27,9 +28,9 @@ describe('lazyFetching', function() {
 
       expect(options.events.calls.count()).toBe(1)
 
-      args = options.events.calls.argsFor(0)
-      expect(args[0]).toEqualMoment('2017-10-01')
-      expect(args[1]).toEqualMoment('2017-11-12')
+      arg = options.events.calls.argsFor(0)[0]
+      expect(arg.start).toEqualDate('2017-10-01T00:00:00Z')
+      expect(arg.end).toEqualDate('2017-11-12T00:00:00Z')
     })
   })
 
@@ -39,9 +40,9 @@ describe('lazyFetching', function() {
     })
 
     it('will fetch each new week range', function() {
-      var args
+      var arg
       var options = {
-        events: function(start, end, timezone, callback) {
+        events: function(arg, callback) {
           callback([])
         }
       }
@@ -55,25 +56,25 @@ describe('lazyFetching', function() {
 
       expect(options.events.calls.count()).toBe(5)
 
-      args = options.events.calls.argsFor(0)
-      expect(args[0]).toEqualMoment('2017-10-01')
-      expect(args[1]).toEqualMoment('2017-11-12')
+      arg = options.events.calls.argsFor(0)[0]
+      expect(arg.start).toEqualDate('2017-10-01T00:00:00Z')
+      expect(arg.end).toEqualDate('2017-11-12T00:00:00Z')
 
-      args = options.events.calls.argsFor(1)
-      expect(args[0]).toEqualMoment('2017-10-01T00:00:00')
-      expect(args[1]).toEqualMoment('2017-10-08T00:00:00')
+      arg = options.events.calls.argsFor(1)[0]
+      expect(arg.start).toEqualDate('2017-10-01T00:00:00Z')
+      expect(arg.end).toEqualDate('2017-10-08T00:00:00Z')
 
-      args = options.events.calls.argsFor(2)
-      expect(args[0]).toEqualMoment('2017-10-08T00:00:00')
-      expect(args[1]).toEqualMoment('2017-10-15T00:00:00')
+      arg = options.events.calls.argsFor(2)[0]
+      expect(arg.start).toEqualDate('2017-10-08T00:00:00Z')
+      expect(arg.end).toEqualDate('2017-10-15T00:00:00Z')
 
-      args = options.events.calls.argsFor(3)
-      expect(args[0]).toEqualMoment('2017-10-15T00:00:00')
-      expect(args[1]).toEqualMoment('2017-10-22T00:00:00')
+      arg = options.events.calls.argsFor(3)[0]
+      expect(arg.start).toEqualDate('2017-10-15T00:00:00Z')
+      expect(arg.end).toEqualDate('2017-10-22T00:00:00Z')
 
-      args = options.events.calls.argsFor(4)
-      expect(args[0]).toEqualMoment('2017-10-22T00:00:00')
-      expect(args[1]).toEqualMoment('2017-10-29T00:00:00')
+      arg = options.events.calls.argsFor(4)[0]
+      expect(arg.start).toEqualDate('2017-10-22T00:00:00Z')
+      expect(arg.end).toEqualDate('2017-10-29T00:00:00Z')
     })
   })
 })
