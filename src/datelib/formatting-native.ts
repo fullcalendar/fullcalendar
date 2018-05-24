@@ -5,11 +5,21 @@ import { Locale } from './locale'
 import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset } from './formatting'
 
 
-const STANDARD_DATE_PROP_RE = /^(weekday|era|year|month|day|hour|minute|second|timeZoneName)$/
 const DEFAULT_SEPARATOR = ' - '
-const EXTENDED_SETTINGS = {
-  week: true,
-  separator: true
+const EXTENDED_SETTINGS_AND_SEVERITIES = {
+  week: 3,
+  separator: 0 // not applicable
+}
+const STANDARD_DATE_PROP_SEVERITIES = {
+  timeZoneName: 7,
+  era: 6,
+  year: 5,
+  month: 4,
+  day: 2,
+  weekday: 2,
+  hour: 1,
+  minute: 1,
+  second: 1
 }
 
 
@@ -18,20 +28,24 @@ export class NativeFormatter implements DateFormatter {
   standardSettings: any
   standardDatePropCnt: number
   extendedSettings: any
+  severity: number
 
   constructor(formatSettings) {
     let standardSettings: any = {}
     let extendedSettings: any = {}
     let standardDatePropCnt = 0
+    let severity = 0
 
     for (let name in formatSettings) {
-      if (EXTENDED_SETTINGS[name]) {
+      if (name in EXTENDED_SETTINGS_AND_SEVERITIES) {
         extendedSettings[name] = formatSettings[name]
+        severity = Math.max(EXTENDED_SETTINGS_AND_SEVERITIES[name], severity)
       } else {
         standardSettings[name] = formatSettings[name]
 
-        if (STANDARD_DATE_PROP_RE.test(name)) {
+        if (name in STANDARD_DATE_PROP_SEVERITIES) {
           standardDatePropCnt++
+          severity = Math.max(STANDARD_DATE_PROP_SEVERITIES[name], severity)
         }
       }
     }
@@ -41,6 +55,7 @@ export class NativeFormatter implements DateFormatter {
     this.standardSettings = standardSettings
     this.standardDatePropCnt = standardDatePropCnt
     this.extendedSettings = extendedSettings
+    this.severity = severity
   }
 
   format(date: ZonedMarker, context: DateFormattingContext, standardOverrides?) {
@@ -121,6 +136,21 @@ export class NativeFormatter implements DateFormatter {
     return full0 + separator + full1
   }
 
+  getLargestUnit() {
+    switch (this.severity) {
+      case 7:
+      case 6:
+      case 5:
+        return 'year'
+      case 4:
+        return 'month'
+      case 3:
+        return 'week'
+      default:
+        return 'day'
+    }
+  }
+
 }
 
 
@@ -146,27 +176,15 @@ function formatWeekNumber(num: number, locale: Locale, display?: 'numeric' | 'na
 
 // Range Formatting Utils
 
-const SEVERITIES_FOR_PARTS = {
-  year: 4,
-  month: 3,
-  day: 2,
-  weekday: 2,
-  hour: 1,
-  minute: 1,
-  second: 1
-}
-
 // 0 = exactly the same
 // 1 = different by time
-// 2 = different by day
-// 3 = different by month
-// 4 = different by year
+// and bigger
 function computeMarkerDiffSeverity(d0: DateMarker, d1: DateMarker, ca: CalendarSystem) {
   if (ca.getMarkerYear(d0) !== ca.getMarkerYear(d1)) {
-    return 4
+    return 5
   }
   if (ca.getMarkerMonth(d0) !== ca.getMarkerMonth(d1)) {
-    return 3
+    return 4
   }
   if (ca.getMarkerDay(d0) !== ca.getMarkerDay(d1)) {
     return 2
@@ -182,8 +200,8 @@ function computePartialFormattingOptions(options, biggestUnit) {
 
   for (let name in options) {
     if (
-      name === 'timeZone' ||
-      SEVERITIES_FOR_PARTS[name] <= biggestUnit // if undefined, will always be false
+      !(name in STANDARD_DATE_PROP_SEVERITIES) || // not a date part prop (like timeZone)
+      STANDARD_DATE_PROP_SEVERITIES[name] <= biggestUnit
     ) {
       partialOptions[name] = options[name]
     }

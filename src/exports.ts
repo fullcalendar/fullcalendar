@@ -117,6 +117,7 @@ export { default as DayGrid } from './basic/DayGrid'
 export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
+export { DateProfile } from './DateProfileGenerator'
 
 export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime } from './datelib/marker'
 export {
@@ -127,4 +128,4 @@ export {
 } from './datelib/duration'
 export { DateEnv } from './datelib/env'
 export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
-export { createFormatter } from './datelib/formatting'
+export { DateFormatter, createFormatter } from './datelib/formatting'

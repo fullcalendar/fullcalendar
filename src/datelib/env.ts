@@ -7,7 +7,7 @@ import {
 import { CalendarSystem, createCalendarSystem } from './calendar-system'
 import { Locale } from './locale'
 import { NamedTimeZoneImpl, createNamedTimeZoneImpl } from './timezone'
-import { Duration } from './duration'
+import { Duration, asRoughYears, asRoughMonths, asRoughDays, asRoughMs } from './duration'
 import { DateFormatter, buildIsoString } from './formatting'
 import { parse } from './parsing'
 import { isInt } from '../util/misc'
@@ -241,14 +241,31 @@ export class DateEnv {
   }
 
   countDurationsBetween(m0: DateMarker, m1: DateMarker, d: Duration) {
-    let cnt = 0
+    // TODO: can use greatestWholeUnit
+    let diff
 
-    while (m0 < m1) { // better way to do this without iterating?
-      m0 = this.add(m0, d)
-      cnt++
+    if (d.year) {
+      diff = this.diffWholeYears(m0, m1)
+      if (diff !== null) {
+        return diff / asRoughYears(d)
+      }
     }
 
-    return cnt
+    if (d.month) {
+      diff = this.diffWholeMonths(m0, m1)
+      if (diff !== null) {
+        return diff / asRoughMonths(d)
+      }
+    }
+
+    if (d.day) {
+      diff = diffWholeDays(m0, m1)
+      if (diff !== null) {
+        return diff / asRoughDays(d)
+      }
+    }
+
+    return (m1.valueOf() - m0.valueOf()) / asRoughMs(d)
   }
 
 

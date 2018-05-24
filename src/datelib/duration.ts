@@ -129,6 +129,14 @@ export function multiplyDuration(d: Duration, n: number) {
 // Conversions
 // "Rough" because they are based on average-case Gregorian months/years
 
+export function asRoughYears(dur: Duration) {
+  return asRoughDays(dur) / 365
+}
+
+export function asRoughMonths(dur: Duration) {
+  return asRoughDays(dur) / 30
+}
+
 export function asRoughDays(dur: Duration) {
   return asRoughMs(dur) / 864e5
 }
