@@ -261,30 +261,28 @@ export default class EventDragging extends Interaction {
   // Called before event segment dragging starts
   segDragStart(seg, ev) {
     this.isDragging = true
-    this.component.publiclyTrigger('eventDragStart', {
-      context: seg.el,
-      args: [
-        seg.footprint.getEventLegacy(this.component._getCalendar()),
-        ev,
-        {}, // jqui dummy
-        this.view
-      ]
-    })
+    this.component.publiclyTrigger('eventDragStart', [
+      {
+        el: seg.el,
+        event: seg.footprint.getEventLegacy(this.component._getCalendar()),
+        jsEvent: ev,
+        view: this.view
+      }
+    ])
   }
 
 
   // Called after event segment dragging stops
   segDragStop(seg, ev) {
     this.isDragging = false
-    this.component.publiclyTrigger('eventDragStop', {
-      context: seg.el,
-      args: [
-        seg.footprint.getEventLegacy(this.component._getCalendar()),
-        ev,
-        {}, // jqui dummy
-        this.view
-      ]
-    })
+    this.component.publiclyTrigger('eventDragStop', [
+      {
+        el: seg.el,
+        event: seg.footprint.getEventLegacy(this.component._getCalendar()),
+        jsEvent: ev,
+        view: this.view
+      }
+    ])
   }
 
 

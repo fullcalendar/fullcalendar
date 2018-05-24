@@ -109,30 +109,13 @@ export default class Calendar {
   }
 
 
-  publiclyTrigger(name: string, triggerInfo) {
+  publiclyTrigger(name: string, args) {
     let optHandler = this.opt(name)
-    let context
-    let args
 
-    if (Array.isArray(triggerInfo)) {
-      args = triggerInfo
-    } else if (typeof triggerInfo === 'object' && triggerInfo) { // non-null object
-      context = triggerInfo.context
-      args = triggerInfo.args
-    }
-
-    if (context == null) {
-      context = this.el // fallback context
-    }
-
-    if (!args) {
-      args = []
-    }
-
-    this.triggerWith(name, context, args) // Emitter's method
+    this.triggerWith(name, this, args) // Emitter's method
 
     if (optHandler) {
-      return optHandler.apply(context, args)
+      return optHandler.apply(this, args)
     }
   }
 

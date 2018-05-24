@@ -250,10 +250,13 @@ export default class EventRenderer {
   filterEventRenderEl(eventFootprint, el) {
     let legacy = eventFootprint.getEventLegacy(this.view.calendar)
 
-    let custom = this.view.publiclyTrigger('eventRender', {
-      context: legacy,
-      args: [ legacy, el, this.view ]
-    })
+    let custom = this.view.publiclyTrigger('eventRender', [
+      {
+        event: legacy,
+        el,
+        view: this.view
+      }
+    ])
 
     if (custom === false) { // means don't render at all
       el = null

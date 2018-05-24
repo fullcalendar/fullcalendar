@@ -159,30 +159,28 @@ export default class EventResizing extends Interaction {
   // Called before event segment resizing starts
   segResizeStart(seg, ev) {
     this.isResizing = true
-    this.component.publiclyTrigger('eventResizeStart', {
-      context: seg.el,
-      args: [
-        seg.footprint.getEventLegacy(this.view.calendar),
-        ev,
-        {}, // jqui dummy
-        this.view
-      ]
-    })
+    this.component.publiclyTrigger('eventResizeStart', [
+      {
+        el: seg.el,
+        event: seg.footprint.getEventLegacy(this.view.calendar),
+        jsEvent: ev,
+        view: this.view
+      }
+    ])
   }
 
 
   // Called after event segment resizing stops
   segResizeStop(seg, ev) {
     this.isResizing = false
-    this.component.publiclyTrigger('eventResizeStop', {
-      context: seg.el,
-      args: [
-        seg.footprint.getEventLegacy(this.view.calendar),
-        ev,
-        {}, // jqui dummy
-        this.view
-      ]
-    })
+    this.component.publiclyTrigger('eventResizeStop', [
+      {
+        el: seg.el,
+        event: seg.footprint.getEventLegacy(this.view.calendar),
+        jsEvent: ev,
+        view: this.view
+      }
+    ])
   }
 
 

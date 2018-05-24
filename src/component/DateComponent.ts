@@ -277,10 +277,7 @@ export default abstract class DateComponent extends Component {
       this.getEventSegs()
     )
 
-    this.publiclyTrigger('eventAfterAllRender', {
-      context: this,
-      args: [ this ]
-    })
+    this.publiclyTrigger('eventAfterAllRender', [ { view: this } ])
   }
 
 
@@ -293,10 +290,13 @@ export default abstract class DateComponent extends Component {
         if (seg.el) { // necessary?
           legacy = seg.footprint.getEventLegacy(this._getCalendar())
 
-          this.publiclyTrigger('eventAfterRender', {
-            context: legacy,
-            args: [ legacy, seg.el, this ]
-          })
+          this.publiclyTrigger('eventAfterRender', [
+            {
+              event: legacy,
+              el: seg.el,
+              view: this
+            }
+          ])
         }
       })
     }
@@ -318,10 +318,13 @@ export default abstract class DateComponent extends Component {
         if (seg.el) { // necessary?
           legacy = seg.footprint.getEventLegacy(this._getCalendar())
 
-          this.publiclyTrigger('eventDestroy', {
-            context: legacy,
-            args: [ legacy, seg.el, this ]
-          })
+          this.publiclyTrigger('eventDestroy', [
+            {
+              event: legacy,
+              el: seg.el,
+              view: this
+            }
+          ])
         }
       })
     }

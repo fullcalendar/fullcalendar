@@ -147,14 +147,13 @@ export default class DayGrid extends InteractiveDateComponent {
     // trigger dayRender with each cell's element
     for (row = 0; row < rowCnt; row++) {
       for (col = 0; col < colCnt; col++) {
-        this.publiclyTrigger('dayRender', {
-          context: view,
-          args: [
-            dateEnv.toDate(this.getCellDate(row, col)),
-            this.getCellEl(row, col),
+        this.publiclyTrigger('dayRender', [
+          {
+            date: dateEnv.toDate(this.getCellDate(row, col)),
+            isAllDay: true,
             view
-          ]
-        })
+          }
+        ])
       }
     }
   }
@@ -619,20 +618,18 @@ export default class DayGrid extends InteractiveDateComponent {
 
       if (typeof clickOption === 'function') {
         // the returned value can be an atomic option
-        clickOption = this.publiclyTrigger('eventLimitClick', {
-          context: view,
-          args: [
-            {
-              date: dateEnv.toDate(date),
-              dayEl: dayEl,
-              moreEl: moreEl,
-              segs: reslicedAllSegs,
-              hiddenSegs: reslicedHiddenSegs
-            },
-            ev,
+        clickOption = this.publiclyTrigger('eventLimitClick', [
+          {
+            date: dateEnv.toDate(date),
+            isAllDay: true,
+            dayEl: dayEl,
+            moreEl: moreEl,
+            segs: reslicedAllSegs,
+            hiddenSegs: reslicedHiddenSegs,
+            jsEvent: ev,
             view
-          ]
-        })
+          }
+        ])
       }
 
       if (clickOption === 'popover') {

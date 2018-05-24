@@ -344,18 +344,22 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   triggerViewRender() {
-    this.publiclyTrigger('viewRender', {
-      context: this,
-      args: [ this, this.el ]
-    })
+    this.publiclyTrigger('viewRender', [
+      {
+        view: this,
+        el: this.el
+      }
+    ])
   }
 
 
   triggerViewDestroy() {
-    this.publiclyTrigger('viewDestroy', {
-      context: this,
-      args: [ this, this.el ]
-    })
+    this.publiclyTrigger('viewDestroy', [
+      {
+        view: this,
+        el: this.el
+      }
+    ])
   }
 
 
@@ -613,17 +617,16 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Triggers event-drop handlers that have subscribed via the API
   triggerEventDrop(eventInstance, dateDelta, undoFunc, el, ev) {
-    this.publiclyTrigger('eventDrop', {
-      context: el,
-      args: [
-        eventInstance.toLegacy(this.calendar),
+    this.publiclyTrigger('eventDrop', [
+      {
+        el,
+        event: eventInstance.toLegacy(this.calendar),
         dateDelta,
         undoFunc,
-        ev,
-        {}, // {} = jqui dummy
-        this
-      ]
-    })
+        jsEvent: ev,
+        view: this
+      }
+    ])
   }
 
 
@@ -649,24 +652,23 @@ export default abstract class View extends InteractiveDateComponent {
     const dateEnv = this.calendar.dateEnv
 
     // trigger 'drop' regardless of whether element represents an event
-    this.publiclyTrigger('drop', {
-      context: el,
-      args: [
-        dateEnv.toDate(singleEventDef.dateProfile.start),
-        ev,
-        this
-      ]
-    })
+    this.publiclyTrigger('drop', [
+      {
+        date: dateEnv.toDate(singleEventDef.dateProfile.start),
+        isAllDay: singleEventDef.dateProfile.isAllDay,
+        jsEvent: ev,
+        view: this
+      }
+    ])
 
     if (isEvent) {
       // signal an external event landed
-      this.publiclyTrigger('eventReceive', {
-        context: this,
-        args: [
-          singleEventDef.buildInstance().toLegacy(this.calendar),
-          this
-        ]
-      })
+      this.publiclyTrigger('eventReceive', [
+        {
+          event: singleEventDef.buildInstance().toLegacy(this.calendar),
+          view: this
+        }
+      ])
     }
   }
 
@@ -700,17 +702,16 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Triggers event-resize handlers that have subscribed via the API
   triggerEventResize(eventInstance, durationDelta, undoFunc, el, ev) {
-    this.publiclyTrigger('eventResize', {
-      context: el,
-      args: [
-        eventInstance.toLegacy(this.calendar),
+    this.publiclyTrigger('eventResize', [
+      {
+        el,
+        event: eventInstance.toLegacy(this.calendar),
         durationDelta,
         undoFunc,
-        ev,
-        {}, // {} = jqui dummy
-        this
-      ]
-    })
+        jsEvent: ev,
+        view: this
+      }
+    ])
   }
 
 
@@ -750,15 +751,15 @@ export default abstract class View extends InteractiveDateComponent {
     const dateEnv = this.calendar.dateEnv
     let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
-    this.publiclyTrigger('select', {
-      context: this,
-      args: [
-        dateEnv.toDate(dateProfile.unzonedRange.start),
-        dateEnv.toDate(dateProfile.unzonedRange.end),
-        ev,
-        this
-      ]
-    })
+    this.publiclyTrigger('select', [
+      {
+        start: dateEnv.toDate(dateProfile.unzonedRange.start),
+        end: dateEnv.toDate(dateProfile.unzonedRange.end),
+        isAllDay: dateProfile.isAllDay,
+        jsEvent: ev,
+        view: this
+      }
+    ])
   }
 
 
@@ -771,10 +772,12 @@ export default abstract class View extends InteractiveDateComponent {
         this['destroySelection']() // TODO: deprecate
       }
       this.unrenderSelection()
-      this.publiclyTrigger('unselect', {
-        context: this,
-        args: [ ev, this ]
-      })
+      this.publiclyTrigger('unselect', [
+        {
+          jsEvent: ev,
+          view: this
+        }
+      ])
     }
   }
 
@@ -872,18 +875,22 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   triggerBaseRendered() {
-    this.publiclyTrigger('viewRender', {
-      context: this,
-      args: [ this, this.el ]
-    })
+    this.publiclyTrigger('viewRender', [
+      {
+        view: this,
+        el: this.el
+      }
+    ])
   }
 
 
   triggerBaseUnrendered() {
-    this.publiclyTrigger('viewDestroy', {
-      context: this,
-      args: [ this, this.el ]
-    })
+    this.publiclyTrigger('viewDestroy', [
+      {
+        view: this,
+        el: this.el
+      }
+    ])
   }
 
 
@@ -893,14 +900,15 @@ export default abstract class View extends InteractiveDateComponent {
     const dateEnv = this.calendar.dateEnv
     let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
-    this.publiclyTrigger('dayClick', {
-      context: dayEl,
-      args: [
-        dateEnv.toDate(dateProfile.unzonedRange.start),
-        ev,
-        this
-      ]
-    })
+    this.publiclyTrigger('dayClick', [
+      {
+        date: dateEnv.toDate(dateProfile.unzonedRange.start),
+        isAllDay: dateProfile.isAllDay,
+        el: dayEl,
+        jsEvent: ev,
+        view: this
+      }
+    ])
   }
 
 
