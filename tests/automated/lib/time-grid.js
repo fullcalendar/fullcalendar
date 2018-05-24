@@ -129,6 +129,9 @@ export function getTimeGridTop(targetTime) {
     Math.min(1, (targetTime - slotTime) / slotMsDuration)) // don't go past end of last slot
 }
 
+export function getElTime(el) {
+  return el.find('.fc-time')
+}
 
 export function getTimeGridDayEls(date) {
   date = FullCalendar.moment.parseZone(date)
@@ -138,6 +141,13 @@ export function getTimeGridDayEls(date) {
 
 export function getAllTimeGridSlotEls() {
   return  $('.fc-time-grid .fc-slats tr[data-time]')
+}
+
+
+export function getTimeGridSlotElByIndex(index) {
+  const slot = $(`.fc-slats tr:eq(${index})`)
+  expect(slot).toHaveLength(1)
+  return slot
 }
 
 export function getTimeGridSlotEls(timeDuration) {
