@@ -764,18 +764,18 @@ export default abstract class DateComponent extends Component {
   // Compute the number of the give units in the "current" range.
   // Won't go more precise than days.
   // Will return `0` if there's not a clean whole interval.
-  currentRangeAs(unit) {
+  currentRangeAs(unit) { // PLURAL :(
     const dateEnv = this._getCalendar().dateEnv
     let range = this._getDateProfile().currentUnzonedRange
     let res = null
 
-    if (unit === 'year') {
+    if (unit === 'years') {
       res = dateEnv.diffWholeYears(range.start, range.end)
-    } else if (unit === 'month') {
+    } else if (unit === 'months') {
       res = dateEnv.diffWholeMonths(range.start, range.end)
-    } else if (unit === 'week') {
+    } else if (unit === 'weeks') {
       res = dateEnv.diffWholeMonths(range.start, range.end)
-    } else if (unit === 'day') {
+    } else if (unit === 'days') {
       res = diffWholeDays(range.start, range.end)
     }
 

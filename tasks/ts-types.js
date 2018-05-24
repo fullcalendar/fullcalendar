@@ -65,7 +65,7 @@ function filterModuleBody(s) {
 
   if (defaultExportName) {
     // replace any references to the original class' name
-    s = s.replace(new RegExp('\\b' + defaultExportName + '\\b'), 'Default')
+    s = s.replace(new RegExp('\\b' + defaultExportName + '\\b', 'g'), 'Default')
 
     // still needs to be exported as default
     s += '\n\texport default Default;'

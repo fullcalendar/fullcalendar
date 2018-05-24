@@ -123,7 +123,7 @@ export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, 
 export {
   Duration, createDuration,
   isSingleDay, multiplyDuration,
-  asRoughMinutes, asRoughSeconds,
+  asRoughMinutes, asRoughSeconds, asRoughMs,
   wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
 export { DateEnv } from './datelib/env'

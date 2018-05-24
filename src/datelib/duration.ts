@@ -189,7 +189,7 @@ export function greatestDurationDenominator(dur: Duration, dontReturnWeeks?: boo
     if (time % 1000 !== 0) {
       return { unit: 'millisecond', value: time }
     }
-    if (time % (1000 * 60) ! == 0) {
+    if (time % (1000 * 60) !== 0) {
       return { unit: 'second', value: time / 1000 }
     }
     if (time % (1000 * 60 * 60) !== 0) {
