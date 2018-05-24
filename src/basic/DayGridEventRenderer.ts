@@ -222,8 +222,8 @@ export default class DayGridEventRenderer extends EventRenderer {
     return {
       hour: 'numeric',
       minute: '2-digit',
-      // TODO: remove :00
-      // TODO: convert am/pm -> a/p
+      omitZeroTime: true,
+      meridiem: 'narrow'
     }
   }
 

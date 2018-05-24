@@ -275,7 +275,7 @@ export default class EventRenderer {
 
     return this._getTimeText(
       eventDateProfile.unzonedRange.start,
-      eventDateProfile.unzonedRange.end,
+      eventDateProfile.hasEnd ? eventDateProfile.unzonedRange.end : null,
       eventFootprint.componentFootprint.isAllDay,
       formatter,
       displayEnd,
@@ -321,11 +321,11 @@ export default class EventRenderer {
   }
 
 
-  computeEventTimeFormat() {
+  computeEventTimeFormat(): any {
     return {
       hour: 'numeric',
       minute: '2-digit',
-      // TODO: remove :00
+      omitZeroTime: true
     }
   }
 

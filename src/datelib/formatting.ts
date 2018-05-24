@@ -1,3 +1,4 @@
+import { padStart } from '../util/misc'
 import { DateMarker } from './marker'
 import { CalendarSystem } from './calendar-system'
 import { Locale } from './locale'
@@ -81,14 +82,10 @@ export function formatTimeZoneOffset(minutes: number, doIso = false) {
   let mins = Math.round(abs % 60)
 
   if (doIso) {
-    return sign + pad(hours) + ':' + pad(mins)
+    return sign + padStart(hours, 2) + ':' + padStart(mins, 2)
   } else {
-    return 'GMT' + sign + hours + (mins ? ':' + pad(mins) : '')
+    return 'GMT' + sign + hours + (mins ? ':' + padStart(mins, 2) : '')
   }
-}
-
-function pad(n) {
-  return n < 10 ? '0' + n : '' + n
 }
 
 

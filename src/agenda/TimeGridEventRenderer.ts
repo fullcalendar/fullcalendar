@@ -56,7 +56,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
     return {
       hour: 'numeric',
       minute: '2-digit',
-      // TODO: remove am/pm
+      meridiem: false
     }
   }
 

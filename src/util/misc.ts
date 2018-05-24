@@ -286,7 +286,36 @@ export function warn(...args) {
 }
 
 
-/* General Utilities
+/* String Utilities
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+export function capitaliseFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+
+export function padStart(val, len) { // doesn't work with total length more than 3
+  let s = String(val)
+  return '000'.substr(0, val.length - len) + s
+}
+
+
+/* Number Utilities
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+export function compareNumbers(a, b) { // for .sort()
+  return a - b
+}
+
+
+export function isInt(n) {
+  return n % 1 === 0
+}
+
+
+/* Weird Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -311,21 +340,6 @@ export function firstDefined(...args) {
       return args[i]
     }
   }
-}
-
-
-export function capitaliseFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-
-export function compareNumbers(a, b) { // for .sort()
-  return a - b
-}
-
-
-export function isInt(n) {
-  return n % 1 === 0
 }
 
 

@@ -75,7 +75,8 @@ export default class ListEventRenderer extends EventRenderer {
   computeEventTimeFormat() {
     return {
       hour: 'numeric',
-      minute: '2-digit'
+      minute: '2-digit',
+      meridiem: 'short'
     }
   }
 

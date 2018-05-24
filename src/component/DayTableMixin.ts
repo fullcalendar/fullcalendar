@@ -161,7 +161,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     if (this.rowCnt > 1 || this.colCnt > 10) {
       return { weekday: 'short' } // "Sat"
     } else if (this.colCnt > 1) {
-      return { weekday: 'short', month: 'numeric', day: 'numeric' } // "Sat 11/12"
+      return { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true } // "Sat 11/12"
     } else {
       return { weekday: 'long' } // "Saturday"
     }

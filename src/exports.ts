@@ -16,6 +16,7 @@ export {
 export {
   applyAll,
   debounce,
+  padStart,
   isInt,
   capitaliseFirstLetter,
   parseFieldSpecs,

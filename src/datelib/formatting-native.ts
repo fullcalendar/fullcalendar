@@ -8,7 +8,10 @@ import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset
 const DEFAULT_SEPARATOR = ' - '
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
-  separator: 0 // not applicable
+  separator: 0, // 0 = not applicable
+  omitZeroTime: 0,
+  meridiem: 0,
+  omitCommas: 0
 }
 const STANDARD_DATE_PROP_SEVERITIES = {
   timeZoneName: 7,
@@ -21,7 +24,8 @@ const STANDARD_DATE_PROP_SEVERITIES = {
   minute: 1,
   second: 1
 }
-
+const MERIDIEM_RE = /\s*([ap])\.?m\.?/i // eats up leading spaces too
+const COMMA_RE = /,/g // we need re for globalness
 
 export class NativeFormatter implements DateFormatter {
 
@@ -59,7 +63,7 @@ export class NativeFormatter implements DateFormatter {
   }
 
   format(date: ZonedMarker, context: DateFormattingContext, standardOverrides?) {
-    let standardSettings = standardOverrides || this.standardSettings
+    let standardSettings = assignTo({}, standardOverrides || this.standardSettings) // always copy (efficient?)
     let { extendedSettings } = this
 
     if (this.standardDatePropCnt === 1 && standardSettings.timeZoneName === 'short') {
@@ -80,8 +84,16 @@ export class NativeFormatter implements DateFormatter {
         standardSettings.timeZoneName === 'short' && date.timeZoneOffset == null
       )
     ) {
-      standardSettings = assignTo({}, standardSettings) // copy
       delete standardSettings.timeZoneName
+    }
+
+    if (extendedSettings.omitZeroTime) {
+      if (standardSettings.minute && !date.marker.getUTCMinutes()) {
+        delete standardSettings.minute
+      }
+      if (standardSettings.second && !date.marker.getUTCSeconds()) {
+        delete standardSettings.second
+      }
     }
 
     let s = date.marker.toLocaleString(context.locale.codeArg, standardSettings)
@@ -92,6 +104,26 @@ export class NativeFormatter implements DateFormatter {
     ) {
       // then inject the timezone offset into the string
       s = s.replace(/UTC|GMT/, formatTimeZoneOffset(date.timeZoneOffset))
+    }
+
+    if (extendedSettings.meridiem === false) {
+      s = s.replace(MERIDIEM_RE, '').trim()
+    } else if (extendedSettings.meridiem === 'narrow') { // a/p
+      s = s.replace(MERIDIEM_RE, function(m0, m1) {
+        return m1.toLocaleLowerCase()
+      })
+    } else if (extendedSettings.meridiem === 'short') { // am/pm
+      s = s.replace(MERIDIEM_RE, function(m0, m1) {
+        return m1.toLocaleLowerCase() + 'm'
+      })
+    } else if (extendedSettings.meridiem === 'lowercase') { // other meridiem transformers already converted to lowercase
+      s = s.replace(MERIDIEM_RE, function(m0) {
+        return m0.toLocaleLowerCase()
+      })
+    }
+
+    if (extendedSettings.omitCommas) {
+      s = s.replace(COMMA_RE, '').trim()
     }
 
     return s

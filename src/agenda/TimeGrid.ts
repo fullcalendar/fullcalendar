@@ -161,15 +161,12 @@ export default class TimeGrid extends InteractiveDateComponent {
       input = input[input.length - 1]
     }
 
-    this.labelFormat = createFormatter(
-      input ||
-      {
-        // like "h(:mm)a" -> "6pm" / "6:30pm"
+    this.labelFormat = createFormatter(input || {
         hour: 'numeric',
         minute: '2-digit',
-        // TODO: omit minute if possible
-      }
-    )
+        omitZeroTime: true,
+        meridiem: 'short'
+    })
 
     input = this.opt('slotLabelInterval')
     this.labelInterval = input ?
