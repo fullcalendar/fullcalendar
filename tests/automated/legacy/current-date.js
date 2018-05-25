@@ -1,10 +1,16 @@
 describe('current date', function() {
+  var TITLE_FORMAT = {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    separator: ' - '
+  }
 
-  var TITLE_FORMAT = 'MMMM D YYYY'
   pushOptions({
     titleFormat: TITLE_FORMAT,
     titleRangeSeparator: ' - ',
-    defaultDate: '2014-06-01'
+    defaultDate: '2014-06-01',
+    timezone: 'UTC'
   })
 
   describe('defaultDate & getDate', function() { // keep getDate
@@ -15,8 +21,8 @@ describe('current date', function() {
         initCalendar(options)
         expectViewDates('2011-02-27', '2011-04-10', '2011-03-01', '2011-04-01')
         var currentDate = currentCalendar.getDate()
-        expect(moment.isMoment(currentDate)).toEqual(true) // test the type, but only here
-        expect(currentDate).toEqualMoment('2011-03-10')
+        expect(currentDate instanceof Date).toEqual(true) // test the type, but only here
+        expect(currentDate).toEqualDate('2011-03-10')
       })
     })
     describeWhenInWeek(function() {
@@ -25,14 +31,14 @@ describe('current date', function() {
         options.defaultDate = '2011-03-10'
         initCalendar(options)
         expectViewDates('2011-03-06', '2011-03-13')
-        expect(currentCalendar.getDate()).toEqualMoment('2011-03-10')
+        expect(currentCalendar.getDate()).toEqualDate('2011-03-10')
       })
-      it('should initialize at the date, given a Moment object', function() {
+      it('should initialize at the date, given a Date object', function() {
         var options = {}
-        options.defaultDate = FullCalendar.moment('2011-03-10')
+        options.defaultDate = new Date('2011-03-10')
         initCalendar(options)
         expectViewDates('2011-03-06', '2011-03-13')
-        expect(currentCalendar.getDate()).toEqualMoment('2011-03-10')
+        expect(currentCalendar.getDate()).toEqualDate('2011-03-10')
       })
     })
     describeWhenInDay(function() {
@@ -41,7 +47,7 @@ describe('current date', function() {
         options.defaultDate = '2011-03-10'
         initCalendar(options)
         expectViewDates('2011-03-10')
-        expect(currentCalendar.getDate()).toEqualMoment('2011-03-10')
+        expect(currentCalendar.getDate()).toEqualDate('2011-03-10')
       })
     })
   })
@@ -65,9 +71,9 @@ describe('current date', function() {
         currentCalendar.gotoDate('2015-04-01T12:00:00')
         expectViewDates('2015-03-29', '2015-04-05')
       })
-      it('should go to a date when given a moment object', function() {
+      it('should go to a date when given a Date object', function() {
         initCalendar()
-        currentCalendar.gotoDate(FullCalendar.moment('2015-04-01'))
+        currentCalendar.gotoDate(new Date('2015-04-01'))
         expectViewDates('2015-03-29', '2015-04-05')
       })
     })
@@ -170,10 +176,10 @@ describe('current date', function() {
         options.weekends = false
         initCalendar(options)
         var view = currentCalendar.getView()
-        expect(view.start).toEqualMoment('2014-06-02')
-        expect(view.end).toEqualMoment('2014-07-12')
-        expect(view.intervalStart).toEqualMoment('2014-06-01')
-        expect(view.intervalEnd).toEqualMoment('2014-07-01')
+        expect(view.start).toEqualDate('2014-06-02')
+        expect(view.end).toEqualDate('2014-07-12')
+        expect(view.intervalStart).toEqualDate('2014-06-01')
+        expect(view.intervalEnd).toEqualDate('2014-07-01')
       })
       it('should display the current month', function() {
         var options = {}
@@ -181,10 +187,10 @@ describe('current date', function() {
         options.weekends = false
         initCalendar(options)
         var view = currentCalendar.getView()
-        expect(view.start).toEqualMoment('2014-04-28')
-        expect(view.end).toEqualMoment('2014-06-07')
-        expect(view.intervalStart).toEqualMoment('2014-05-01')
-        expect(view.intervalEnd).toEqualMoment('2014-06-01')
+        expect(view.start).toEqualDate('2014-04-28')
+        expect(view.end).toEqualDate('2014-06-07')
+        expect(view.intervalStart).toEqualDate('2014-05-01')
+        expect(view.intervalEnd).toEqualDate('2014-06-01')
       })
       describe('when navigating back a month', function() {
         it('should not skip months', function() {
@@ -193,12 +199,12 @@ describe('current date', function() {
           options.weekends = false
           initCalendar(options)
           var view = currentCalendar.getView()
-          expect(view.intervalStart).toEqualMoment('2014-07-01')
-          expect(view.intervalEnd).toEqualMoment('2014-08-01')
+          expect(view.intervalStart).toEqualDate('2014-07-01')
+          expect(view.intervalEnd).toEqualDate('2014-08-01')
           currentCalendar.prev() // will move to Jun 1, which is a Sunday
           view = currentCalendar.getView()
-          expect(view.intervalStart).toEqualMoment('2014-06-01')
-          expect(view.intervalEnd).toEqualMoment('2014-07-01')
+          expect(view.intervalStart).toEqualDate('2014-06-01')
+          expect(view.intervalEnd).toEqualDate('2014-07-01')
         })
       })
     })
@@ -209,10 +215,10 @@ describe('current date', function() {
         options.weekends = false
         initCalendar(options)
         var view = currentCalendar.getView()
-        expect(view.start).toEqualMoment('2014-06-02')
-        expect(view.end).toEqualMoment('2014-06-03')
-        expect(view.intervalStart).toEqualMoment('2014-06-02')
-        expect(view.intervalEnd).toEqualMoment('2014-06-03')
+        expect(view.start).toEqualDate('2014-06-02')
+        expect(view.end).toEqualDate('2014-06-03')
+        expect(view.intervalStart).toEqualDate('2014-06-02')
+        expect(view.intervalEnd).toEqualDate('2014-06-03')
       })
     })
   })
@@ -247,20 +253,33 @@ describe('current date', function() {
     var calculatedEnd
     var title
 
-    start = FullCalendar.moment(start)
-    calculatedEnd = end ? FullCalendar.moment(end) : start.clone().add(1, 'days')
-    expect(start).toEqualMoment(view.start)
-    expect(calculatedEnd).toEqualMoment(view.end)
+    if (typeof start === 'string') {
+      start = new Date(start)
+    }
+    if (typeof end === 'string') {
+      end = new Date(end)
+    }
+    if (typeof titleStart === 'string') {
+      titleStart = new Date(titleStart)
+    }
+    if (typeof titleEnd === 'string') {
+      titleEnd = new Date(titleEnd)
+    }
 
-    titleStart = titleStart ? FullCalendar.moment(titleStart) : start
-    titleEnd = titleEnd ? FullCalendar.moment(titleEnd) : calculatedEnd
+    calculatedEnd = end || FullCalendar.addDays(start, 1)
+
+    expect(start).toEqualDate(view.start)
+    expect(calculatedEnd).toEqualDate(view.end)
+
+    titleStart = titleStart || start
+    titleEnd = titleEnd || calculatedEnd
 
     if (titleEnd) {
-      title = FullCalendar.formatRange(
+      title = currentCalendar.formatRange(
         titleStart,
-        titleEnd.clone().add(-1, 'ms'),
+        titleEnd,
         TITLE_FORMAT,
-        ' - '
+        true // isEndExclusive
       )
     } else {
       title = titleStart.format(TITLE_FORMAT)

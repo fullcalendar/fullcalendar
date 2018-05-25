@@ -16,15 +16,15 @@ describe('custom view class', function() {
       renderEvents: function(events) {
         expect($.type(events)).toBe('array')
         expect(events.length).toBe(1)
-        expect(moment.isMoment(events[0].start)).toBe(true)
-        expect(moment.isMoment(events[0].end)).toBe(true)
+        expect(events[0].start instanceof Date).toBe(true)
+        expect(events[0].end instanceof Date).toBe(true)
       },
       destroyEvents: function() {
       },
       renderSelection: function(range) {
         expect($.type(range)).toBe('object')
-        expect(moment.isMoment(range.start)).toBe(true)
-        expect(moment.isMoment(range.end)).toBe(true)
+        expect(range.start instanceof Date).toBe(true)
+        expect(range.end instanceof Date).toBe(true)
       },
       destroySelection: function() {
       }

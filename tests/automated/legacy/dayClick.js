@@ -1,26 +1,29 @@
 describe('dayClick', function() {
   pushOptions({
     defaultDate: '2014-05-27',
-    selectable: false
+    selectable: false,
+    timezone: 'UTC'
   });
+
   [ false, true ].forEach(function(isRTL) {
     describe('when isRTL is ' + isRTL, function() {
 
-      pushOptions({isRTL: isRTL});
+      pushOptions({ isRTL: isRTL });
 
       [ false, true ].forEach(function(selectable) {
         describe('when selectable is ' + selectable, function() {
           pushOptions({selectable: selectable})
           describe('when in month view', function() {
             pushOptions({defaultView: 'month'})
+
             it('fires correctly when clicking on a cell', function(done) {
               var options = {}
-              options.dayClick = function(date, jsEvent, view) {
-                expect(moment.isMoment(date)).toEqual(true)
-                expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-                expect(typeof view).toEqual('object') // "
-                expect(date.hasTime()).toEqual(false)
-                expect(date).toEqualMoment('2014-05-07')
+              options.dayClick = function(arg) {
+                expect(arg.date instanceof Date).toEqual(true)
+                expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+                expect(typeof arg.view).toEqual('object') // "
+                expect(arg.isAllDay).toEqual(true)
+                expect(arg.date).toEqualDate('2014-05-07')
               }
               spyOn(options, 'dayClick').and.callThrough()
               initCalendar(options)
@@ -39,14 +42,15 @@ describe('dayClick', function() {
 
           describe('when in agendaWeek view', function() {
             pushOptions({defaultView: 'agendaWeek'})
+
             it('fires correctly when clicking on an all-day slot', function(done) {
               var options = {}
-              options.dayClick = function(date, jsEvent, view) {
-                expect(moment.isMoment(date)).toEqual(true)
-                expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-                expect(typeof view).toEqual('object') // "
-                expect(date.hasTime()).toEqual(false)
-                expect(date).toEqualMoment('2014-05-28')
+              options.dayClick = function(arg) {
+                expect(arg.date instanceof Date).toEqual(true)
+                expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+                expect(typeof arg.view).toEqual('object') // "
+                expect(arg.isAllDay).toEqual(true)
+                expect(arg.date).toEqualDate('2014-05-28')
               }
               spyOn(options, 'dayClick').and.callThrough()
               initCalendar(options)
@@ -62,18 +66,19 @@ describe('dayClick', function() {
                 }
               })
             })
+
             it('fires correctly when clicking on a timed slot', function(done) {
               var options = {}
               // make sure the click slot will be in scroll view
               options.contentHeight = 500
               options.scrollTime = '07:00:00'
 
-              options.dayClick = function(date, jsEvent, view) {
-                expect(moment.isMoment(date)).toEqual(true)
-                expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-                expect(typeof view).toEqual('object') // "
-                expect(date.hasTime()).toEqual(true)
-                expect(date).toEqualMoment('2014-05-28T09:00:00')
+              options.dayClick = function(arg) {
+                expect(arg.date instanceof Date).toEqual(true)
+                expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+                expect(typeof arg.view).toEqual('object') // "
+                expect(arg.isAllDay).toEqual(false)
+                expect(arg.date).toEqualDate('2014-05-28T09:00:00Z')
               }
               spyOn(options, 'dayClick').and.callThrough()
               initCalendar(options)
@@ -98,12 +103,12 @@ describe('dayClick', function() {
               options.scrollTime = '07:00:00'
               options.minTime = '02:00:00'
 
-              options.dayClick = function(date, jsEvent, view) {
-                expect(moment.isMoment(date)).toEqual(true)
-                expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-                expect(typeof view).toEqual('object') // "
-                expect(date.hasTime()).toEqual(true)
-                expect(date).toEqualMoment('2014-05-28T11:00:00')
+              options.dayClick = function(arg) {
+                expect(arg.date instanceof Date).toEqual(true)
+                expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+                expect(typeof arg.view).toEqual('object') // "
+                expect(arg.isAllDay).toEqual(false)
+                expect(arg.date).toEqualDate('2014-05-28T11:00:00Z')
               }
               spyOn(options, 'dayClick').and.callThrough()
               initCalendar(options)
@@ -129,12 +134,12 @@ describe('dayClick', function() {
 
     it('fires correctly when simulated short drag on a cell', function(done) {
       var options = {}
-      options.dayClick = function(date, jsEvent, view) {
-        expect(moment.isMoment(date)).toEqual(true)
-        expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-        expect(typeof view).toEqual('object') // "
-        expect(date.hasTime()).toEqual(false)
-        expect(date).toEqualMoment('2014-05-07')
+      options.dayClick = function(arg) {
+        expect(arg.date instanceof Date).toEqual(true)
+        expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+        expect(typeof arg.view).toEqual('object') // "
+        expect(arg.isAllDay).toEqual(true)
+        expect(arg.date).toEqualDate('2014-05-07')
       }
       spyOn(options, 'dayClick').and.callThrough()
       initCalendar(options)
@@ -153,7 +158,7 @@ describe('dayClick', function() {
 
     it('won\'t fire if touch moves outside of date cell', function(done) {
       var options = {}
-      options.dayClick = function(date, jsEvent, view) {}
+      options.dayClick = function(arg) {}
       spyOn(options, 'dayClick').and.callThrough()
 
       initCalendar(options)
@@ -175,12 +180,12 @@ describe('dayClick', function() {
 
     it('fires correctly when simulated click on a cell', function(done) {
       var options = {}
-      options.dayClick = function(date, jsEvent, view) {
-        expect(moment.isMoment(date)).toEqual(true)
-        expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-        expect(typeof view).toEqual('object') // "
-        expect(date.hasTime()).toEqual(false)
-        expect(date).toEqualMoment('2014-05-07')
+      options.dayClick = function(arg) {
+        expect(arg.date instanceof Date).toEqual(true)
+        expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+        expect(typeof arg.view).toEqual('object') // "
+        expect(arg.isAllDay).toEqual(true)
+        expect(arg.date).toEqualDate('2014-05-07')
       }
       spyOn(options, 'dayClick').and.callThrough()
       initCalendar(options)

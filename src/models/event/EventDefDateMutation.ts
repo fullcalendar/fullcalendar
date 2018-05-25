@@ -1,6 +1,6 @@
 import Calendar from '../../Calendar'
 import EventDateProfile from './EventDateProfile'
-import { startOfDay, diffWholeDays, diffDayAndTime } from '../../datelib/marker'
+import { startOfDay, diffDayAndTime } from '../../datelib/marker'
 import { Duration, createDuration, subtractDurations } from '../../datelib/duration'
 
 export default class EventDefDateMutation {

@@ -22,7 +22,6 @@ describe('next', function() {
 
     describeOptions('dateIncrement', {
       'when two week dateIncrement specified as a plain object': { weeks: 2 },
-      'when two week dateIncrement specified as a Duration object': moment.duration({ weeks: 2 }),
       'when two week dateIncrement specified as a string': '14.00:00:00'
     }, function() {
       it('moves forward by two weeks', function() {

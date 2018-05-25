@@ -1,7 +1,8 @@
+import { formatIsoDay } from '../datelib/utils'
+
 
 export function getSingleDayEl(date) {
-  date = FullCalendar.moment.parseZone(date)
-  var els = $('.fc-day-grid .fc-bg .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]')
+  var els = $('.fc-day-grid .fc-bg .fc-day[data-date="' + formatIsoDay(date) + '"]')
   expect(els).toHaveLength(1)
   return els
 }

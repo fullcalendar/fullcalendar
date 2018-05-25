@@ -12,18 +12,18 @@ describe('visibleRange', function() {
       var endInput = '2017-06-29'
 
       describeOptions('visibleRange', {
-        'of moment objects': {
-          start: FullCalendar.moment(startInput),
-          end: FullCalendar.moment(endInput)
+        'of Date objects': {
+          start: new Date(startInput),
+          end: new Date(endInput)
         },
         'of strings': {
           start: startInput,
           end: endInput
         },
-        'of a function that returns moment objects': function() {
+        'of a function that returns date objects': function() {
           return {
-            start: FullCalendar.moment(startInput),
-            end: FullCalendar.moment(endInput)
+            start: new Date(startInput),
+            end: new Date(endInput)
           }
         },
         'of a function that returns strings': function() {
@@ -81,15 +81,16 @@ describe('visibleRange', function() {
     describe('when a function', function() {
       var defaultDateInput = '2017-06-08T12:30:00'
 
-      it('receives the calendar\'s defaultDate, timezoneless', function() {
+      it('receives the calendar\'s defaultDate, with local timezone', function() {
         var matched = false
 
         initCalendar({
+          timezone: 'local',
           defaultDate: defaultDateInput,
           visibleRange: function(date) {
             // this function will receive the date for prev/next,
             // which should be ignored. make sure just one call matches.
-            if (date.format() === defaultDateInput) {
+            if (date.valueOf() === new Date(defaultDateInput).valueOf()) {
               matched = true
             }
           }
@@ -107,7 +108,7 @@ describe('visibleRange', function() {
           visibleRange: function(date) {
             // this function will receive the date for prev/next,
             // which should be ignored. make sure just one call matches.
-            if (date.format() === defaultDateInput + 'Z') {
+            if (date.valueOf() === new Date(defaultDateInput + 'Z').valueOf()) {
               matched = true
             }
           }
@@ -116,15 +117,6 @@ describe('visibleRange', function() {
         expect(matched).toBe(true)
       })
 
-      it('does not cause side effects when given date is mutated', function() {
-        initCalendar({
-          defaultDate: defaultDateInput,
-          visibleRange: function(date) {
-            date.add(1, 'year')
-          }
-        })
-        expect(currentCalendar.getDate()).toEqualMoment(defaultDateInput)
-      })
     })
 
     describe('when given an invalid range', function() {

@@ -2,6 +2,7 @@ import { expectActiveRange, expectRenderRange } from './ViewDateUtils'
 
 describe('validRange', function() {
   pushOptions({
+    timezone: 'UTC',
     defaultDate: '2017-06-08'
   })
 
@@ -63,8 +64,8 @@ describe('validRange', function() {
 
       it('receives the nowDate, timezoneless', function() {
         var validRangeSpy = spyOnCalendarCallback('validRange', function(date) {
-          expect(moment.isMoment(date)).toBe(true)
-          expect(date).toEqualMoment(nowInput)
+          expect(date instanceof Date).toBe(true)
+          expect(date).toEqualDate(nowInput + 'Z')
         })
 
         initCalendar({
@@ -73,20 +74,6 @@ describe('validRange', function() {
 
         expect(validRangeSpy).toHaveBeenCalled()
       })
-
-      /* getNow() always returns ambig zone for some reason. intentional?
-      xit('receives the nowDate, with UTC timezone', function() {
-        var validRangeSpy = spyOnCalendarCallback('validRange', function(date) {
-          expect(date).toEqualMoment(nowInput + 'Z');
-        });
-
-        initCalendar({
-          timezone: 'UTC',
-          now: nowInput
-        });
-
-        expect(validRangeSpy).toHaveBeenCalled();
-      }); */
 
       it('can return a range object with strings', function() {
         var validRangeSpy = spyOnCalendarCallback('validRange', function() {
@@ -100,9 +87,9 @@ describe('validRange', function() {
         expectActiveRange('2017-06-06', '2017-06-11')
       })
 
-      it('can return a range object with moments', function() {
+      it('can return a range object with Date objects', function() {
         var validRangeSpy = spyOnCalendarCallback('validRange', function() {
-          return { start: FullCalendar.moment.parseZone('2017-06-06') }
+          return { start: new Date('2017-06-06') }
         })
 
         initCalendar()
@@ -110,16 +97,6 @@ describe('validRange', function() {
         expect(validRangeSpy).toHaveBeenCalled()
         expectRenderRange('2017-06-04', '2017-06-11')
         expectActiveRange('2017-06-06', '2017-06-11')
-      })
-
-      it('does not cause side effects when given date is mutated', function() {
-        initCalendar({
-          now: nowInput,
-          validRange: function(nowDate) {
-            nowDate.add(2, 'years')
-          }
-        })
-        expect(currentCalendar.getNow().year()).toBe(2017)
       })
     })
   })
