@@ -50,7 +50,8 @@ export default class EventDateProfile {
     }
 
     if (endMarker && endMarker <= startMarker) {
-      return false
+      endMarker = null
+      // TODO: warning?
     }
 
     if (forcedAllDay == null) {

@@ -12,7 +12,7 @@ import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
 import { Duration, createDuration, addDurations, wholeDivideDurations, asRoughMs } from '../datelib/duration'
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
-import { createFormatter, DateFormatter } from '../datelib/formatting'
+import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -27,8 +27,6 @@ const AGENDA_STOCK_SUB_DURATIONS = [
   { seconds: 30 },
   { seconds: 15 }
 ]
-
-const HMS_FORMAT = createFormatter({ hour: '2-digit', minute: '2-digit', second: '2-digit' })
 
 export default class TimeGrid extends InteractiveDateComponent {
 
@@ -275,7 +273,7 @@ export default class TimeGrid extends InteractiveDateComponent {
         '</td>'
 
       html +=
-        '<tr data-time="' + dateEnv.format(slotDate, HMS_FORMAT) + '"' +
+        '<tr data-time="' + formatIsoTimeString(slotDate) + '"' +
           (isLabeled ? '' : ' class="fc-minor"') +
           '>' +
           (!isRTL ? axisHtml : '') +

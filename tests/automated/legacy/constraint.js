@@ -37,8 +37,8 @@ describe('event constraint', function() {
             } ]
             testEventDrag(options, '2014-11-14', true, function() {
               var event = currentCalendar.clientEvents()[0]
-              expect(event.start).toEqualMoment('2014-11-14T05:00:00')
-              expect(event.end).toEqualMoment('2014-11-14T07:00:00')
+              expect(event.start).toEqualDate('2014-11-14T05:00:00Z')
+              expect(event.end).toEqualDate('2014-11-14T07:00:00Z')
               done()
             })
           })

@@ -123,10 +123,11 @@ export { DateProfile } from './DateProfileGenerator'
 export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime } from './datelib/marker'
 export {
   Duration, createDuration,
-  isSingleDay, multiplyDuration,
+  isSingleDay, multiplyDuration, addDurations,
   asRoughMinutes, asRoughSeconds, asRoughMs,
   wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
 export { DateEnv } from './datelib/env'
 export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
 export { DateFormatter, createFormatter } from './datelib/formatting'
+export { parse as parseMarker } from './datelib/parsing'

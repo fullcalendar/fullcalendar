@@ -297,7 +297,7 @@ export function capitaliseFirstLetter(str) {
 
 export function padStart(val, len) { // doesn't work with total length more than 3
   let s = String(val)
-  return '000'.substr(0, val.length - len) + s
+  return '000'.substr(0, len - s.length) + s
 }
 
 

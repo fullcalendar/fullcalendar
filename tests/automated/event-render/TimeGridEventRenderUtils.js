@@ -12,8 +12,8 @@ TODO: check isStart/isEnd.
 */
 export function checkEventRendering(start, end) {
 
-  start = FullCalendar.moment.parseZone(start)
-  end = FullCalendar.moment.parseZone(end)
+  start = FullCalendar.parseMarker(start).marker
+  end = FullCalendar.parseMarker(end).marker
 
   var expectedRects = computeSpanRects(start, end)
   var eventEls = $('.fc-event') // sorted by DOM order. not good for RTL
@@ -63,6 +63,7 @@ export function computeSpanRects(start, end) {
   var slotStructs = computeSlots()
   var dayI, dayStruct
   var slotI, slotStruct
+  var slotDayStart
   var slotStart
   var slotEnd
   var coverage
@@ -76,13 +77,20 @@ export function computeSpanRects(start, end) {
     for (slotI = 0; slotI < slotStructs.length; slotI++) {
       slotStruct = slotStructs[slotI]
 
-      slotStart = dayStruct.date.clone().time(0)
-        .add(slotStruct.dayOffset, 'days')
-        .add(slotStruct.startTime)
+      slotDayStart = FullCalendar.addDays(
+        dayStruct.date,
+        slotStruct.dayOffset
+      )
 
-      slotEnd = dayStruct.date.clone().time(0)
-        .add(slotStruct.dayOffset, 'days')
-        .add(slotStruct.endTime)
+      slotStart = FullCalendar.addMs(
+        slotDayStart,
+        slotStruct.startTime.time
+      )
+
+      slotEnd = FullCalendar.addMs(
+        slotDayStart,
+        slotStruct.endTime.time
+      )
 
       if (startTop === null) { // looking for the start
         coverage = (start - slotStart) / (slotEnd - slotStart)
@@ -132,9 +140,9 @@ function computeDays() {
   var days = dayEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
-      date: FullCalendar.moment.parseZone(
+      date: FullCalendar.parseMarker(
         $(node).data('date')
-      )
+      ).marker
     })
   }).get()
 
@@ -148,7 +156,7 @@ function computeSlots() {
   var slots = slotEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
-      startTime: moment.duration(
+      startTime: FullCalendar.createDuration(
         $(node).data('time')
       )
     })
@@ -173,9 +181,12 @@ function computeSlots() {
     // big deviation? assume moved to previous day (b/c of special minTime)
     if (Math.abs(ms - standardMs) > standardMs * 2) {
       dayOffset--
-      slots[i].endTime = moment.duration(slots[i].startTime).add(standardMs)
+      slots[i].endTime = FullCalendar.addDurations(
+        slots[i].startTime,
+        FullCalendar.createDuration(standardMs)
+      )
     } else { // otherwise, current slot's end is next slot's beginning
-      slots[i].endTime = moment.duration(slots[i + 1].startTime)
+      slots[i].endTime = slots[i + 1].startTime
     }
 
     slots[i].dayOffset = dayOffset
@@ -192,19 +203,25 @@ function computeSlots() {
     // big deviation? assume moved to next day (b/c of special maxTime)
     if (Math.abs(ms - standardMs) > standardMs * 2) {
       dayOffset++ // will apply to the next slotStruct
-      slots[i].endTime = moment.duration(slots[i].startTime).add(standardMs)
+      slots[i].endTime = FullCalendar.addDurations(
+        slots[i].startTime,
+        FullCalendar.createDuration(standardMs)
+      )
     } else { // otherwise, current slot's end is next slot's beginning
-      slots[i].endTime = moment.duration(slots[i + 1].startTime)
+      slots[i].endTime = slots[i + 1].startTime
     }
   }
 
   // assume last slot has the standard duration
-  slots[i].endTime = moment.duration(slots[i].startTime).add(standardMs)
+  slots[i].endTime = FullCalendar.addDurations(
+    slots[i].startTime,
+    FullCalendar.createDuration(standardMs)
+  )
   slots[i].dayOffset = dayOffset
 
   // if last slot went over the day threshold
-  if (slots[i].endTime.as('days') > 1) {
-    slots[i].endTime.subtract(1, 'day')
+  if (slots[i].endTime.time > 1000 * 60 * 60 * 24) {
+    slots[i].endTime.time -= 1000 * 60 * 60 * 24
     slots[i].dayOffset++
   }
 

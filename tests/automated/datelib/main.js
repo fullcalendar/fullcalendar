@@ -1,5 +1,6 @@
+import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset } from './utils'
 
-fdescribe('datelib', function() {
+describe('datelib', function() {
   var DateEnv = FullCalendar.DateEnv
   var createFormatter = FullCalendar.createFormatter
   var createDuration = FullCalendar.createDuration
@@ -523,7 +524,7 @@ fdescribe('datelib', function() {
     it('outputs ISO8601 formatting', function() {
       var marker = env.createMarker('2018-06-08T00:00:00')
       var s = env.formatIso(marker)
-      var realTzo = getFormattedTimzoneOffset(new Date(2018, 5, 8))
+      var realTzo = formatIsoTimeZoneOffset(new Date(2018, 5, 8))
       expect(s).toBe('2018-06-08T00:00:00' + realTzo)
     })
 
@@ -537,14 +538,14 @@ fdescribe('datelib', function() {
         timeZoneName: 'short'
       })
       var s = env.format(marker, formatter)
-      expect(s).toBe('Friday, June 8, 2018, ' + getFormattedTimzoneOffset2(new Date(2018, 5, 8)))
+      expect(s).toBe('Friday, June 8, 2018, ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)))
     })
 
     it('can output a timezone only', function() {
       var marker = env.createMarker('2018-06-08')
       var formatter = createFormatter({ timeZoneName: 'short' })
       var s = env.format(marker, formatter)
-      expect(s).toBe(getFormattedTimzoneOffset2(new Date(2018, 5, 8)))
+      expect(s).toBe(formatPrettyTimeZoneOffset(new Date(2018, 5, 8)))
     })
 
 
@@ -655,32 +656,5 @@ fdescribe('datelib', function() {
     })
 
   })
-
-
-  // utils
-
-  function getFormattedTimzoneOffset(date) {
-    let minutes = date.getTimezoneOffset()
-    let sign = minutes < 0 ? '+' : '-' // whaaa
-    let abs = Math.abs(minutes)
-    let hours = Math.floor(abs / 60)
-    let mins = Math.round(abs % 60)
-
-    return sign + pad(hours) + ':' + pad(mins)
-  }
-
-  function getFormattedTimzoneOffset2(date) {
-    let minutes = date.getTimezoneOffset()
-    let sign = minutes < 0 ? '+' : '-' // whaaa
-    let abs = Math.abs(minutes)
-    let hours = Math.floor(abs / 60)
-    let mins = Math.round(abs % 60)
-
-    return 'GMT' + sign + hours + (mins ? ':' + pad(mins) : '')
-  }
-
-  function pad(n) {
-    return n < 10 ? '0' + n : '' + n
-  }
 
 })

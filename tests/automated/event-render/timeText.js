@@ -1,3 +1,4 @@
+import { formatIsoTimeZoneOffset } from '../datelib/utils'
 import { getTimeTexts } from './TimeGridEventRenderUtils'
 
 describe('the time text on events', function() {
@@ -10,9 +11,11 @@ describe('the time text on events', function() {
     })
 
     it('renders segs with correct local timezone', function() {
+      var FORMAT = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }
+
       initCalendar({
         timezone: 'local',
-        timeFormat: 'h:mm Z',
+        timeFormat: FORMAT,
         events: [
           { start: '2017-07-03T23:00:00', end: '2017-07-04T13:00:00' }
         ]
@@ -21,10 +24,16 @@ describe('the time text on events', function() {
       expect(
         getTimeTexts()
       ).toEqual([
-        moment('2017-07-03T23:00:00').format('h:mm Z') + ' - ' +
-        moment('2017-07-04T00:00:00').format('h:mm Z'),
-        moment('2017-07-04T00:00:00').format('h:mm Z') + ' - ' +
-        moment('2017-07-04T13:00:00').format('h:mm Z')
+        currentCalendar.formatRange(
+          new Date('2017-07-03T23:00:00'),
+          new Date('2017-07-04T00:00:00'),
+          FORMAT
+        ),
+        currentCalendar.formatRange(
+          new Date('2017-07-04T00:00:00'),
+          new Date('2017-07-04T13:00:00'),
+          FORMAT
+        )
       ])
     })
   })
