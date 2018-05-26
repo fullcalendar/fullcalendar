@@ -1,27 +1,18 @@
-ddescribe('', function() {
-
-  var options;
-
-  beforeEach(function() {
-    //affix('#cal');
-    $('body').append('<div id="cal"></div>');
-    options = {
-      defaultDate: ''
-    };
-  });
-
-  afterEach(function() {
-    //$('#cal').fullCalendar('destroy');
-  });
+fdescribe('', function() {
+  pushOptions({
+    defaultDate: ''
+  })
 
   describe('', function() {
-    beforeEach(function() {
-      options.defaultView = '';
-    });
+    pushOptions({
+      defaultView: ''
+    })
 
-    iit('', function() {
-      $('#cal').fullCalendar(options);
-    });
-  });
+    fit('', function() {
+      initCalendar({
+        // other options
+      })
+    })
+  })
 
-});
+})

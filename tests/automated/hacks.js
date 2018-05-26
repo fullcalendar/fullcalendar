@@ -13,10 +13,3 @@ beforeEach(function() {
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
 
 })
-
-
-// Destroy all calendars afterwards, to prevent memory leaks
-// (not the best place for this)
-afterEach(function() {
-  $('.fc').fullCalendar('destroy')
-})

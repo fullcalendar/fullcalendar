@@ -29,9 +29,6 @@ module.exports = function(config) {
       'dist/jquery-ui-draggable.js',
       'dist/locale-all.js',
 
-      // temporary. needs to go first.
-      'tests/automated/lib/fullcalendar-jquery-plugin.js',
-
       // a way to dump variables into the test environment
       'tmp/automated-test-config.js',
 
@@ -42,7 +39,6 @@ module.exports = function(config) {
       'node_modules/xhr-mock/dist/xhr-mock.js', // TODO: should include this via require(), but .d.ts problems
       'node_modules/native-promise-only/lib/npo.src.js',
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-      'node_modules/jasmine-fixture/dist/jasmine-fixture.js',
       'node_modules/jquery-simulate/jquery.simulate.js',
 
       'tests/automated/base.css',

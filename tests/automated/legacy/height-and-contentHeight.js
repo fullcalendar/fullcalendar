@@ -23,7 +23,6 @@
       })
 
       afterEach(function() {
-        calendarEl.fullCalendar('destroy') // best to destroy before removing element
         calendarEl.remove()
       })
 
