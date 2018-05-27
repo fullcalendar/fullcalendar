@@ -59,9 +59,9 @@ describe('external drag and drop', function() {
         it('works after the view is changed', function(done) { // issue 2240
           var callCnt = 0
 
-          options.drop = function(date, jsEvent, ui) {
+          options.drop = function(arg) {
             if (callCnt === 0) {
-              expect(date).toEqualMoment('2014-08-06')
+              expect(arg.date).toEqualDate('2014-08-06')
 
               currentCalendar.next()
               currentCalendar.prev()
@@ -74,7 +74,7 @@ describe('external drag and drop', function() {
                 })
               }, 0)
             } else if (callCnt === 1) {
-              expect(date).toEqualMoment('2014-08-06')
+              expect(arg.date).toEqualDate('2014-08-06')
               done()
             }
             callCnt++
@@ -182,9 +182,9 @@ describe('external drag and drop', function() {
         it('works after the view is changed', function(done) {
           var callCnt = 0
 
-          options.drop = function(date, jsEvent, ui) {
+          options.drop = function(arg) {
             if (callCnt === 0) {
-              expect(date).toEqualMoment('2014-08-20T01:00:00')
+              expect(arg.date).toEqualDate('2014-08-20T01:00:00Z')
 
               currentCalendar.next()
               currentCalendar.prev()
@@ -197,7 +197,7 @@ describe('external drag and drop', function() {
                 })
               }, 0)
             } else if (callCnt === 1) {
-              expect(date).toEqualMoment('2014-08-20T01:00:00')
+              expect(arg.date).toEqualDate('2014-08-20T01:00:00Z')
               done()
             }
             callCnt++
@@ -214,8 +214,8 @@ describe('external drag and drop', function() {
 
         it('works with timezone as "local"', function(done) { // for issue 2225
           options.timezone = 'local'
-          options.drop = function(date, jsEvent) {
-            expect(date).toEqualMoment(moment('2014-08-20T01:00:00')) // compate it to a local moment
+          options.drop = function(arg) {
+            expect(arg.date).toEqualDate('2014-08-20T01:00:00') // local
             done()
           }
 
@@ -230,8 +230,8 @@ describe('external drag and drop', function() {
 
         it('works with timezone as "UTC"', function(done) { // for issue 2225
           options.timezone = 'UTC'
-          options.drop = function(date, jsEvent) {
-            expect(date).toEqualMoment('2014-08-20T01:00:00+00:00')
+          options.drop = function(arg) {
+            expect(arg.date).toEqualDate('2014-08-20T01:00:00Z')
             done()
           }
 

@@ -29,7 +29,9 @@ describe('advanced external dnd', function() {
     pushOptions({defaultView: 'agendaWeek'})
     describe('when no element event data', function() {
       describe('when given duration through defaultTimedEventDuration', function() {
-        pushOptions({defaultTimedEventDuration: '2:30'})
+        pushOptions({
+          defaultTimedEventDuration: '2:30'
+        })
         defineTests()
       })
       describe('when given duration through data-duration', function() {
@@ -42,7 +44,7 @@ describe('advanced external dnd', function() {
       function defineTests() {
         it('fires correctly', function(done) {
           var options = {}
-          testExternalElDrag(options, '2014-11-13T03:00:00', true, done)
+          testExternalElDrag(options, '2014-11-13T03:00:00Z', '2014-11-13T03:00:00Z', true, done)
         })
         it('is not affected by eventOverlap:false', function(done) {
           var options = {}
@@ -51,7 +53,7 @@ describe('advanced external dnd', function() {
             start: '2014-11-13T01:00:00',
             end: '2014-11-13T05:00:00'
           } ]
-          testExternalElDrag(options, '2014-11-13T03:00:00', true, done)
+          testExternalElDrag(options, '2014-11-13T03:00:00Z', '2014-11-13T03:00:00Z', true, done)
         })
         it('is not affected by an event object\'s overlap:false', function(done) {
           var options = {}
@@ -60,7 +62,7 @@ describe('advanced external dnd', function() {
             end: '2014-11-13T05:00:00',
             overlap: false
           } ]
-          testExternalElDrag(options, '2014-11-13T03:00:00', true, done)
+          testExternalElDrag(options, '2014-11-13T03:00:00Z', '2014-11-13T03:00:00Z', true, done)
         })
         it('is not affected by eventConstraint', function(done) {
           var options = {}
@@ -69,7 +71,7 @@ describe('advanced external dnd', function() {
             start: '03:00',
             end: '10:00'
           }
-          testExternalElDrag(options, '2014-11-13T02:00:00', true, done)
+          testExternalElDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, done)
         })
         describe('with selectOverlap:false', function() {
           pushOptions({
@@ -81,7 +83,7 @@ describe('advanced external dnd', function() {
           })
           it('is not allowed to overlap an event', function(done) {
             var options = {}
-            testExternalElDrag(options, '2014-11-13T02:00:00', false, done)
+            testExternalElDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', false, done)
           })
         })
         describe('with a selectConstraint', function() {
@@ -94,12 +96,12 @@ describe('advanced external dnd', function() {
           it('can be dropped within', function(done) {
             var options = {}
 
-            testExternalElDrag(options, '2014-11-13T05:30:00', true, done)
+            testExternalElDrag(options, '2014-11-13T05:30:00Z', '2014-11-13T05:30:00Z', true, done)
           })
           it('cannot be dropped when not fully contained', function(done) {
             var options = {}
 
-            testExternalElDrag(options, '2014-11-13T06:00:00', false, done)
+            testExternalElDrag(options, '2014-11-13T06:00:00Z', '2014-11-13T06:00:00Z', false, done)
           })
         })
       }
@@ -111,7 +113,7 @@ describe('advanced external dnd', function() {
         var options = {}
 
         dragEl.data('event', { title: 'hey' })
-        testExternalEventDrag(options, '2014-11-13T02:00:00', true, done)
+        testExternalEventDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, done)
       })
 
       describe('when given a start time', function() {
@@ -146,7 +148,7 @@ describe('advanced external dnd', function() {
           it('voids the given time when dropped on a timed slot', function(done) {
             var options = {}
 
-            testExternalEventDrag(options, '2014-11-13T02:00:00', true, done)
+            testExternalEventDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, done)
             // will test the resulting event object's start
           })
         }
@@ -170,10 +172,10 @@ describe('advanced external dnd', function() {
           it('accepts the given duration when dropped on a timed slot', function(done) {
             var options = {}
 
-            testExternalEventDrag(options, '2014-11-13T02:00:00', true, function() {
+            testExternalEventDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, function() {
               var event = currentCalendar.clientEvents()[0]
-              expect(event.start).toEqualMoment('2014-11-13T02:00:00')
-              expect(event.end).toEqualMoment('2014-11-13T07:00:00')
+              expect(event.start).toEqualDate('2014-11-13T02:00:00Z')
+              expect(event.end).toEqualDate('2014-11-13T07:00:00Z')
               done()
             })
           })
@@ -198,7 +200,7 @@ describe('advanced external dnd', function() {
           it('keeps the event when navigating away and back', function(done) {
             var options = {}
 
-            testExternalEventDrag(options, '2014-11-13T02:00:00', true, function() {
+            testExternalEventDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, function() {
               setTimeout(function() { // make sure to escape handlers
                 expect($('.fc-event').length).toBe(1)
                 currentCalendar.next()
@@ -256,11 +258,11 @@ describe('advanced external dnd', function() {
         function defineTests() {
           it('allows a drop when not colliding with the other event', function(done) {
             var options = {}
-            testExternalEventDrag(options, '2014-11-13T08:00:00', true, done)
+            testExternalEventDrag(options, '2014-11-13T08:00:00Z', '2014-11-13T08:00:00Z', true, done)
           })
           it('prevents a drop when colliding with the other event', function(done) {
             var options = {}
-            testExternalEventDrag(options, '2014-11-13T06:00:00', false, done)
+            testExternalEventDrag(options, '2014-11-13T06:00:00Z', '2014-11-13T06:00:00Z', false, done)
           })
         }
       })
@@ -293,11 +295,11 @@ describe('advanced external dnd', function() {
         function defineTests() {
           it('allows a drop when inside the constraint', function(done) {
             var options = {}
-            testExternalEventDrag(options, '2014-11-13T05:00:00', true, done)
+            testExternalEventDrag(options, '2014-11-13T05:00:00Z', '2014-11-13T05:00:00Z', true, done)
           })
           it('disallows a drop when partially outside of the constraint', function(done) {
             var options = {}
-            testExternalEventDrag(options, '2014-11-13T07:00:00', false, done)
+            testExternalEventDrag(options, '2014-11-13T07:00:00Z', '2014-11-13T07:00:00Z', false, done)
           })
         }
       })
@@ -317,22 +319,25 @@ describe('advanced external dnd', function() {
         var options = {}
 
         dragEl.data('event', { title: 'hey' })
-        testExternalEventDrag(options, '2014-11-13', true, done)
+        testExternalEventDrag(options, '2014-11-13', '2014-11-13', true, done)
       })
 
       describe('when given a start time', function() {
+
         describe('through the event object\'s start property', function() {
           beforeEach(function() {
             dragEl.data('event', { start: '05:00' })
           })
           defineTests()
         })
+
         describe('through the event object\'s time property', function() {
           beforeEach(function() {
             dragEl.data('event', { time: '05:00' })
           })
           defineTests()
         })
+
         describe('through the `start` data attribute', function() {
           beforeEach(function() {
             dragEl.data('event', true)
@@ -340,6 +345,7 @@ describe('advanced external dnd', function() {
           })
           defineTests()
         })
+
         describe('through the `time` data attribute', function() {
           beforeEach(function() {
             dragEl.data('event', true)
@@ -347,14 +353,15 @@ describe('advanced external dnd', function() {
           })
           defineTests()
         })
+
         function defineTests() {
           it('accepts the given start time for the dropped day', function(done) {
             var options = {}
 
-            testExternalEventDrag(options, '2014-11-13', true, function() {
+            testExternalEventDrag(options, '2014-11-13', '2014-11-13T05:00:00Z', true, function() {
               // the whole-day start was already checked. we still need to check the exact time
               var event = currentCalendar.clientEvents()[0]
-              expect(event.start).toEqualMoment('2014-11-13T05:00:00')
+              expect(event.start).toEqualDate('2014-11-13T05:00:00Z')
               done()
             })
           })
@@ -364,18 +371,18 @@ describe('advanced external dnd', function() {
   })
 
 
-  function testExternalElDrag(options, date, expectSuccess, callback) {
+  function testExternalElDrag(options, dragToDate, expectedDate, expectSuccess, callback) {
     options.droppable = true
-    options.drop = function(date, jsEvent, ui) {
-      expect(moment.isMoment(date)).toBe(true)
-      expect(date).toEqualMoment(date)
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof ui).toBe('object')
+    options.drop = function(arg) {
+      expect(arg.date instanceof Date).toBe(true)
+      expect(arg.date).toEqualDate(expectedDate)
+      expect(typeof arg.jsEvent).toBe('object')
     }
     options.eventReceive = function() { }
     spyOn(options, 'drop').and.callThrough()
     spyOn(options, 'eventReceive').and.callThrough()
-    testEventDrag(options, date, expectSuccess, function() {
+
+    testEventDrag(options, dragToDate, expectSuccess, function() {
       if (expectSuccess) {
         expect(options.drop).toHaveBeenCalled()
       } else {
@@ -387,24 +394,20 @@ describe('advanced external dnd', function() {
   }
 
 
-  function testExternalEventDrag(options, date, expectSuccess, callback) {
+  function testExternalEventDrag(options, dragToDate, expectedDate, expectSuccess, callback) {
     options.droppable = true
-    options.drop = function(date, jsEvent, ui) {
-      expect(moment.isMoment(date)).toBe(true)
-      expect(date).toEqualMoment(date)
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof ui).toBe('object')
+    options.drop = function(arg) {
+      expect(arg.date instanceof Date).toBe(true)
+      expect(arg.date).toEqualDate(expectedDate)
+      expect(typeof arg.jsEvent).toBe('object')
     }
-    options.eventReceive = function(event) {
-      if (FullCalendar.moment.parseZone(date).hasTime()) { // dropped on an all-day slot
-        expect(event.start).toEqualMoment(date)
-      } else { // event might have a time, which it is allowed to keep
-        expect(event.start.clone().stripTime()).toEqualMoment(date)
-      }
+    options.eventReceive = function(arg) {
+      expect(arg.event.start).toEqualDate(expectedDate)
     }
     spyOn(options, 'drop').and.callThrough()
     spyOn(options, 'eventReceive').and.callThrough()
-    testEventDrag(options, date, expectSuccess, function() {
+
+    testEventDrag(options, dragToDate, expectSuccess, function() {
       if (expectSuccess) {
         expect(options.drop).toHaveBeenCalled()
         expect(options.eventReceive).toHaveBeenCalled()

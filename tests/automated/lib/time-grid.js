@@ -11,8 +11,8 @@ export function dragTimeGridEvent(eventEl, dropDate) {
         resolve(modifiedEvent)
       })
     })
-    currentCalendar.on('eventDrop', function(event) {
-      modifiedEvent = event
+    currentCalendar.on('eventDrop', function(arg) {
+      modifiedEvent = arg.event
     })
 
     eventEl.simulate('drag', {

@@ -13,12 +13,12 @@ beforeEach(function() {
           if (!(actual instanceof Date)) {
             result = {
               pass: false,
-              message: 'Actual value ' + actual + 'needs to be an instance of a Date'
+              message: 'Actual value ' + actual + ' needs to be an instance of a Date'
             }
           } else if (!(expected instanceof Date)) {
             result = {
               pass: false,
-              message: 'Expected value ' + expected + 'needs to be an instance of a Date'
+              message: 'Expected value ' + expected + ' needs to be an instance of a Date'
             }
           } else if (actual.valueOf() !== expected.valueOf()) {
             result = {

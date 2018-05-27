@@ -22,13 +22,13 @@ describe('eventRender', function() {
       describe('with foreground event', function() {
         it('receives correct args AND can modify the element', function(done) {
           var options = {
-            eventRender: function(event, element, view) {
-              expect(typeof event).toBe('object')
-              expect(event.rendering).toBeUndefined()
-              expect(event.start).toBeDefined()
-              expect(element instanceof HTMLElement).toBe(true)
-              expect(typeof view).toBe('object')
-              $(element).css('font-size', '20px')
+            eventRender: function(arg) {
+              expect(typeof arg.event).toBe('object')
+              expect(arg.event.rendering).toBeUndefined()
+              expect(arg.event.start).toBeDefined()
+              expect(arg.el instanceof HTMLElement).toBe(true)
+              expect(typeof arg.view).toBe('object')
+              $(arg.el).css('font-size', '20px')
             },
             eventAfterAllRender: function() {
               expect($(gridSelector).find('.fc-event').css('font-size')).toBe('20px')
@@ -56,7 +56,7 @@ describe('eventRender', function() {
     describe('with a foreground event', function() {
       it('can return a new element', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function(arg) {
             return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
@@ -70,7 +70,7 @@ describe('eventRender', function() {
       })
       it('can return false and cancel rendering', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function(arg) {
             return false
           },
           eventAfterAllRender: function() {
@@ -96,13 +96,13 @@ describe('eventRender', function() {
 
       it('receives correct args AND can modify the element', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
-            expect(typeof event).toBe('object')
-            expect(event.rendering).toBe('background')
-            expect(event.start).toBeDefined()
-            expect(element instanceof HTMLElement).toBe(true)
-            expect(typeof view).toBe('object')
-            $(element).css('font-size', '20px')
+          eventRender: function(arg) {
+            expect(typeof arg.event).toBe('object')
+            expect(arg.event.rendering).toBe('background')
+            expect(arg.event.start).toBeDefined()
+            expect(arg.el instanceof HTMLElement).toBe(true)
+            expect(typeof arg.view).toBe('object')
+            $(arg.el).css('font-size', '20px')
           },
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .fc-bgevent').css('font-size')).toBe('20px')
@@ -116,7 +116,7 @@ describe('eventRender', function() {
 
       it('can return a new element', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function(arg) {
             return $('<td class="sup" style="background-color:green">sup g</td>')[0]
           },
           eventAfterAllRender: function() {
@@ -131,7 +131,7 @@ describe('eventRender', function() {
 
       it('won\'t rendering when returning a new element of the wrong type', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function(arg) {
             return $('<div class="sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
@@ -146,7 +146,7 @@ describe('eventRender', function() {
 
       it('can return false and cancel rendering', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function(arg) {
             return false
           },
           eventAfterAllRender: function() {
@@ -172,7 +172,7 @@ describe('eventRender', function() {
 
       it('won\'t render or call eventRender', function(done) {
         var options = {
-          eventRender: function(event, element, view) {},
+          eventRender: function(arg) {},
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
             expect(options.eventRender).not.toHaveBeenCalled()
@@ -202,7 +202,7 @@ describe('eventRender', function() {
 
       it('can return a new element', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function(arg) {
             return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
@@ -217,7 +217,7 @@ describe('eventRender', function() {
 
       it('can return false and cancel rendering', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function(arg) {
             return false
           },
           eventAfterAllRender: function() {
@@ -243,13 +243,13 @@ describe('eventRender', function() {
 
       it('receives correct args AND can modify the element', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
-            expect(typeof event).toBe('object')
-            expect(event.rendering).toBe('background')
-            expect(event.start).toBeDefined()
-            expect(element instanceof HTMLElement).toBe(true)
-            expect(typeof view).toBe('object')
-            $(element).css('font-size', '20px')
+          eventRender: function(arg) {
+            expect(typeof arg.event).toBe('object')
+            expect(arg.event.rendering).toBe('background')
+            expect(arg.event.start).toBeDefined()
+            expect(arg.el instanceof HTMLElement).toBe(true)
+            expect(typeof arg.view).toBe('object')
+            $(arg.el).css('font-size', '20px')
           },
           eventAfterAllRender: function() {
             expect($('.fc-time-grid .fc-bgevent').css('font-size')).toBe('20px')
@@ -263,7 +263,7 @@ describe('eventRender', function() {
 
       it('can return a new element', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function() {
             return $('<div class="fc-bgevent sup" style="background-color:green">sup g</div>')[0]
           },
           eventAfterAllRender: function() {
@@ -278,7 +278,7 @@ describe('eventRender', function() {
 
       it('won\'t rendering when returning a new element of the wrong type', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function() {
             return $('<p class="fc-bgevent sup" style="background-color:green">sup g</p>')[0]
           },
           eventAfterAllRender: function() {
@@ -292,7 +292,7 @@ describe('eventRender', function() {
       })
       it('can return false and cancel rendering', function(done) {
         var options = {
-          eventRender: function(event, element, view) {
+          eventRender: function() {
             return false
           },
           eventAfterAllRender: function() {
@@ -318,7 +318,7 @@ describe('eventRender', function() {
 
       it('will render in the all-day slot', function(done) {
         var options = {
-          eventRender: function(event, element, view) {},
+          eventRender: function() {},
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .fc-bgevent').length).toBe(1)
             expect($('.fc-time-grid .fc-bgevent').length).toBe(0)

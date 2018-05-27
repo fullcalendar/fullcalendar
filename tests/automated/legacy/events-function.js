@@ -5,35 +5,20 @@ describe('events as a function', function() {
     defaultDate: '2014-05-01'
   })
 
-  function testEventFunctionParams(start, end, timezone, callback) {
-    expect(moment.isMoment(start)).toEqual(true)
-    expect(start.hasTime()).toEqual(false)
-    expect(start.hasZone()).toEqual(false)
-    expect(start.format()).toEqual('2014-04-27')
-    expect(moment.isMoment(end)).toEqual(true)
-    expect(end.hasTime()).toEqual(false)
-    expect(end.hasZone()).toEqual(false)
-    expect(end.format()).toEqual('2014-06-08')
+  function testEventFunctionParams(arg, callback) {
+    expect(arg.start instanceof Date).toEqual(true)
+    expect(arg.end instanceof Date).toEqual(true)
     expect(typeof callback).toEqual('function')
   }
-
-  it('requests correctly when no timezone', function(done) {
-    initCalendar({
-      events: function(start, end, timezone, callback) {
-        testEventFunctionParams(start, end, timezone, callback)
-        expect(timezone).toEqual(false)
-        callback([])
-        done()
-      }
-    })
-  })
 
   it('requests correctly when local timezone', function(done) {
     initCalendar({
       timezone: 'local',
-      events: function(start, end, timezone, callback) {
-        testEventFunctionParams(start, end, timezone, callback)
-        expect(timezone).toEqual('local')
+      events: function(arg, callback) {
+        testEventFunctionParams(arg, callback)
+        expect(arg.timeZone).toEqual('local')
+        expect(arg.start).toEqualDate('2014-04-27T00:00:00') // local
+        expect(arg.end).toEqualDate('2014-06-08T00:00:00') // local
         callback([])
         done()
       }
@@ -43,9 +28,11 @@ describe('events as a function', function() {
   it('requests correctly when UTC timezone', function(done) {
     initCalendar({
       timezone: 'UTC',
-      events: function(start, end, timezone, callback) {
-        testEventFunctionParams(start, end, timezone, callback)
-        expect(timezone).toEqual('UTC')
+      events: function(arg, callback) {
+        testEventFunctionParams(arg, callback)
+        expect(arg.timeZone).toEqual('UTC')
+        expect(arg.start).toEqualDate('2014-04-27')
+        expect(arg.end).toEqualDate('2014-06-08')
         callback([])
         done()
       }
@@ -55,9 +42,11 @@ describe('events as a function', function() {
   it('requests correctly when custom timezone', function(done) {
     initCalendar({
       timezone: 'America/Chicago',
-      events: function(start, end, timezone, callback) {
-        testEventFunctionParams(start, end, timezone, callback)
-        expect(timezone).toEqual('America/Chicago')
+      events: function(arg, callback) {
+        testEventFunctionParams(arg, callback)
+        expect(arg.timeZone).toEqual('America/Chicago')
+        expect(arg.start).toEqualDate('2014-04-27')
+        expect(arg.end).toEqualDate('2014-06-08')
         callback([])
         done()
       }
@@ -68,16 +57,20 @@ describe('events as a function', function() {
     var callCnt = 0
     var options = {
       timezone: 'America/Chicago',
-      events: function(start, end, timezone, callback) {
-        testEventFunctionParams(start, end, timezone, callback)
+      events: function(arg, callback) {
+        testEventFunctionParams(arg, callback)
         callCnt++
         if (callCnt === 1) {
-          expect(timezone).toEqual('America/Chicago')
+          expect(arg.timeZone).toEqual('America/Chicago')
+          expect(arg.start).toEqualDate('2014-04-27')
+          expect(arg.end).toEqualDate('2014-06-08')
           setTimeout(function() {
             currentCalendar.option('timezone', 'UTC')
           }, 0)
         } else if (callCnt === 2) {
-          expect(timezone).toEqual('UTC')
+          expect(arg.timeZone).toEqual('UTC')
+          expect(arg.start).toEqualDate('2014-04-27')
+          expect(arg.end).toEqualDate('2014-06-08')
           done()
         }
       }
@@ -89,9 +82,11 @@ describe('events as a function', function() {
   it('requests correctly with event source extended form', function(done) {
     var eventSource = {
       className: 'customeventclass',
-      events: function(start, end, timezone, callback) {
-        testEventFunctionParams(start, end, timezone, callback)
-        expect(timezone).toEqual(false)
+      events: function(arg, callback) {
+        testEventFunctionParams(arg, callback)
+        expect(arg.timeZone).toEqual('UTC')
+        expect(arg.start).toEqualDate('2014-04-27')
+        expect(arg.end).toEqualDate('2014-06-08')
         callback([
           {
             title: 'event1',
@@ -103,10 +98,11 @@ describe('events as a function', function() {
     spyOn(eventSource, 'events').and.callThrough()
 
     initCalendar({
+      timezone: 'UTC',
       eventSources: [ eventSource ],
-      eventRender: function(eventObj, eventElm) {
+      eventRender: function(arg) {
         expect(eventSource.events.calls.count()).toEqual(1)
-        expect(eventElm).toHaveClass('customeventclass')
+        expect(arg.el).toHaveClass('customeventclass')
         done()
       }
     })

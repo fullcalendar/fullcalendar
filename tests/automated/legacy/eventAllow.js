@@ -19,8 +19,8 @@ describe('eventAllow', function() {
     var options = {
       eventAllow: function(dropInfo, event) {
         expect(typeof dropInfo).toBe('object')
-        expect(moment.isMoment(dropInfo.start)).toBe(true)
-        expect(moment.isMoment(dropInfo.end)).toBe(true)
+        expect(dropInfo.start instanceof Date).toBe(true)
+        expect(dropInfo.end instanceof Date).toBe(true)
         expect(typeof event).toBe('object')
         expect(event.title).toBe('event 1')
         return false
@@ -48,9 +48,9 @@ describe('eventAllow', function() {
 
     initCalendar(options)
 
-    dragTimeGridEvent($('.fc-event'), '2016-09-04T03:00:00')
+    dragTimeGridEvent($('.fc-event'), '2016-09-04T03:00:00Z')
       .then(function(modifiedEvent) {
-        expect(modifiedEvent.start.format()).toBe('2016-09-04T03:00:00')
+        expect(modifiedEvent.start).toEqualDate('2016-09-04T03:00:00Z')
         expect(options.eventAllow).toHaveBeenCalled()
         done()
       })

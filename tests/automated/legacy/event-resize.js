@@ -26,20 +26,16 @@ describe('eventResize', function() {
               dy: $('.fc-day').height()
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.asDays()).toBe(5)
-            expect(delta.hours()).toBe(0)
-            expect(delta.minutes()).toBe(0)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 5 }))
 
-            expect(event.start).toEqualMoment('2014-06-11')
-            expect(event.end).toEqualMoment('2014-06-17')
+            expect(arg.event.start).toEqualDate('2014-06-11')
+            expect(arg.event.end).toEqualDate('2014-06-17')
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11')
+            expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
 
             done()
@@ -79,20 +75,16 @@ describe('eventResize', function() {
                   }
                 })
               },
-              function(event, delta, revertFunc) {
-                expect(delta.asDays()).toBe(5)
-                expect(delta.hours()).toBe(0)
-                expect(delta.minutes()).toBe(0)
-                expect(delta.seconds()).toBe(0)
-                expect(delta.milliseconds()).toBe(0)
+              function(arg) {
+                expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 5 }))
 
-                expect(event.start).toEqualMoment('2014-06-11')
-                expect(event.end).toEqualMoment('2014-06-17')
+                expect(arg.event.start).toEqualDate('2014-06-11')
+                expect(arg.event.end).toEqualDate('2014-06-17')
 
-                revertFunc()
-                event = currentCalendar.clientEvents()[0]
+                arg.revertFunc()
+                var event = currentCalendar.clientEvents()[0]
 
-                expect(event.start).toEqualMoment('2014-06-11')
+                expect(event.start).toEqualDate('2014-06-11')
                 expect(event.end).toBeNull()
 
                 done()
@@ -140,20 +132,16 @@ describe('eventResize', function() {
               dx: $('th.fc-wed').width() * 1.5 // two days
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.asDays()).toBe(2)
-            expect(delta.hours()).toBe(0)
-            expect(delta.minutes()).toBe(0)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 2 }))
 
-            expect(event.start).toEqualMoment('2014-06-11')
-            expect(event.end).toEqualMoment('2014-06-14')
+            expect(arg.event.start).toEqualDate('2014-06-11')
+            expect(arg.event.end).toEqualDate('2014-06-14')
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11')
+            expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
 
             done()
@@ -182,21 +170,17 @@ describe('eventResize', function() {
               dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(0)
-            expect(delta.hours()).toBe(2)
-            expect(delta.minutes()).toBe(30)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00')
-            expect(event.end).toEqualMoment('2014-06-11T09:30:00')
+            expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
+            expect(arg.event.end).toEqualDate('2014-06-11T09:30:00Z')
 
-            revertFunc()
+            arg.revertFunc()
             event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00')
-            expect(event.end).toEqualMoment('2014-06-11T07:00:00')
+            expect(event.start).toEqualDate('2014-06-11T05:00:00Z')
+            expect(event.end).toEqualDate('2014-06-11T07:00:00Z')
 
             done()
           }
@@ -222,21 +206,17 @@ describe('eventResize', function() {
               })
             }, 0)
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(0)
-            expect(delta.hours()).toBe(2)
-            expect(delta.minutes()).toBe(30)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00')
-            expect(event.end).toEqualMoment('2014-06-11T09:30:00')
+            expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
+            expect(arg.event.end).toEqualDate('2014-06-11T09:30:00Z')
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00')
-            expect(event.end).toEqualMoment('2014-06-11T07:00:00')
+            expect(event.start).toEqualDate('2014-06-11T05:00:00Z')
+            expect(event.end).toEqualDate('2014-06-11T07:00:00Z')
 
             done()
           }
@@ -255,21 +235,17 @@ describe('eventResize', function() {
               dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(1)
-            expect(delta.hours()).toBe(2)
-            expect(delta.minutes()).toBe(30)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 1, hour: 2, minute: 30 }))
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00')
-            expect(event.end).toEqualMoment('2014-06-12T09:30:00')
+            expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
+            expect(arg.event.end).toEqualDate('2014-06-12T09:30:00Z')
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00')
-            expect(event.end).toEqualMoment('2014-06-11T07:00:00')
+            expect(event.start).toEqualDate('2014-06-11T05:00:00Z')
+            expect(event.end).toEqualDate('2014-06-11T07:00:00Z')
 
             done()
           }
@@ -287,21 +263,17 @@ describe('eventResize', function() {
               dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(0)
-            expect(delta.hours()).toBe(2)
-            expect(delta.minutes()).toBe(30)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
 
-            expect(event.start).toEqualMoment(moment('2014-06-11T05:00:00')) // compate to local moment
-            expect(event.end).toEqualMoment(moment('2014-06-11T09:30:00'))
+            expect(arg.event.start).toEqualDate('2014-06-11T05:00:00') // local
+            expect(arg.event.end).toEqualDate('2014-06-11T09:30:00') // local
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment(moment('2014-06-11T05:00:00'))
-            expect(event.end).toEqualMoment(moment('2014-06-11T07:00:00'))
+            expect(event.start).toEqualDate('2014-06-11T05:00:00') // local
+            expect(event.end).toEqualDate('2014-06-11T07:00:00') // local
 
             done()
           }
@@ -319,21 +291,17 @@ describe('eventResize', function() {
               dy: $('.fc-slats tr:eq(1)').height() * 4.5 // 5 slots, so 2.5 hours
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(0)
-            expect(delta.hours()).toBe(2)
-            expect(delta.minutes()).toBe(30)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00+00:00')
-            expect(event.end).toEqualMoment('2014-06-11T09:30:00+00:00')
+            expect(arg.event.start).toEqualDate('2014-06-11T05:00:00+00:00')
+            expect(arg.event.end).toEqualDate('2014-06-11T09:30:00+00:00')
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11T05:00:00+00:00')
-            expect(event.end).toEqualMoment('2014-06-11T07:00:00+00:00')
+            expect(event.start).toEqualDate('2014-06-11T05:00:00+00:00')
+            expect(event.end).toEqualDate('2014-06-11T07:00:00+00:00')
 
             done()
           }
@@ -371,8 +339,8 @@ describe('eventResize', function() {
 
       it('should run the temporarily rendered event through eventRender', function(done) {
         var options = {}
-        options.eventRender = function(event, element) {
-          $(element).addClass('didEventRender')
+        options.eventRender = function(arg) {
+          $(arg.el).addClass('didEventRender')
         }
 
         options.eventAfterAllRender = function() {
@@ -490,35 +458,32 @@ describe('eventResize', function() {
         eventsRendered = true
       }
     }
-    options.eventResizeStart = function(event, jsEvent, uiEvent, view) {
-      expect(this instanceof Element).toBe(true)
-      expect(this).toHaveClass('fc-event')
-      expect(typeof event).toBe('object')
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof uiEvent).toBe('object')
-      expect(typeof view).toBe('object')
+    options.eventResizeStart = function(arg) {
+      expect(arg.el instanceof Element).toBe(true)
+      expect(arg.el).toHaveClass('fc-event')
+      expect(typeof arg.event).toBe('object')
+      expect(typeof arg.jsEvent).toBe('object')
+      expect(typeof arg.view).toBe('object')
     }
-    options.eventResizeStop = function(event, jsEvent, uiEvent, view) {
+    options.eventResizeStop = function(arg) {
       expect(options.eventResizeStart).toHaveBeenCalled()
 
-      expect(this instanceof Element).toBe(true)
-      expect(this).toHaveClass('fc-event')
-      expect(typeof event).toBe('object')
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof uiEvent).toBe('object')
-      expect(typeof view).toBe('object')
+      expect(arg.el instanceof Element).toBe(true)
+      expect(arg.el).toHaveClass('fc-event')
+      expect(typeof arg.event).toBe('object')
+      expect(typeof arg.jsEvent).toBe('object')
+      expect(typeof arg.view).toBe('object')
     }
-    options.eventResize = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
+    options.eventResize = function(arg) {
       expect(options.eventResizeStop).toHaveBeenCalled()
 
-      expect(this instanceof Element).toBe(true)
-      expect(this).toHaveClass('fc-event')
-      expect(typeof event).toBe('object')
-      expect(moment.isDuration(delta)).toBe(true)
-      expect(typeof revertFunc).toBe('function')
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof uiEvent).toBe('object') // might be a non-jqui dummy object
-      expect(typeof view).toBe('object')
+      expect(arg.el instanceof Element).toBe(true)
+      expect(arg.el).toHaveClass('fc-event')
+      expect(typeof arg.event).toBe('object')
+      expect(typeof arg.delta).toBe('object')
+      expect(typeof arg.revertFunc).toBe('function')
+      expect(typeof arg.jsEvent).toBe('object')
+      expect(typeof arg.view).toBe('object')
 
       resizeDoneFunc.apply(this, arguments)
     }

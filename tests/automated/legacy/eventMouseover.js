@@ -14,9 +14,9 @@ describe('eventMouseover', function() {
 
       it('will trigger a eventMouseout with updateEvent', function(done) {
 
-        spyOnCalendarCallback('eventMouseout', function(event, ev) {
-          expect(typeof event).toBe('object')
-          expect(typeof ev).toBe('object')
+        spyOnCalendarCallback('eventMouseout', function(arg) {
+          expect(typeof arg.event).toBe('object')
+          expect(typeof arg.jsEvent).toBe('object')
           done()
         })
 
@@ -26,11 +26,11 @@ describe('eventMouseover', function() {
             start: '2014-08-02T01:00:00',
             className: 'event'
           } ],
-          eventMouseover: function(event, ev) {
-            expect(typeof event).toBe('object')
-            expect(typeof ev).toBe('object')
-            event.title = 'YO'
-            currentCalendar.updateEvent(event)
+          eventMouseover: function(arg) {
+            expect(typeof arg.event).toBe('object')
+            expect(typeof arg.jsEvent).toBe('object')
+            arg.event.title = 'YO'
+            currentCalendar.updateEvent(arg.event)
           }
         })
 
