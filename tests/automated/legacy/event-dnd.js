@@ -3,6 +3,7 @@ describe('eventDrop', function() {
 
   beforeEach(function() {
     options = {
+      timezone: 'UTC',
       defaultDate: '2014-06-11',
       editable: true,
       dragScroll: false,
@@ -42,20 +43,16 @@ describe('eventDrop', function() {
                   delay: isTouch ? 200 : 0
                 })
               },
-              function(event, delta, revertFunc) {
-                expect(delta.asDays()).toBe(9)
-                expect(delta.hours()).toBe(0)
-                expect(delta.minutes()).toBe(0)
-                expect(delta.seconds()).toBe(0)
-                expect(delta.milliseconds()).toBe(0)
+              function(arg) {
+                expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 9 }))
 
-                expect(event.start).toEqualMoment('2014-06-20')
-                expect(event.end).toBeNull()
+                expect(arg.event.start).toEqualDate('2014-06-20')
+                expect(arg.event.end).toBeNull()
 
-                revertFunc()
-                event = currentCalendar.clientEvents()[0]
+                arg.revertFunc()
+                var event = currentCalendar.clientEvents()[0]
 
-                expect(event.start).toEqualMoment('2014-06-11')
+                expect(event.start).toEqualDate('2014-06-11')
                 expect(event.end).toBeNull()
 
                 done()
@@ -81,20 +78,16 @@ describe('eventDrop', function() {
               dy: $('.fc-day').height()
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.asDays()).toBe(5)
-            expect(delta.hours()).toBe(0)
-            expect(delta.minutes()).toBe(0)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 5 }))
 
-            expect(event.start).toEqualMoment('2014-06-16T06:00:00')
-            expect(event.end).toBeNull()
+            expect(arg.event.start).toEqualDate('2014-06-16T06:00:00Z')
+            expect(arg.event.end).toBeNull()
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11T06:00:00')
+            expect(event.start).toEqualDate('2014-06-11T06:00:00Z')
             expect(event.end).toBeNull()
 
             done()
@@ -140,7 +133,7 @@ describe('eventDrop', function() {
               .simulate('mouseleave')
           }, 500)
         },
-        function(event, delta, revertFunc) {
+        function(arg) {
           expect(options.eventMouseover).not.toHaveBeenCalled()
           expect(options.eventMouseout).not.toHaveBeenCalled()
           done()
@@ -177,20 +170,16 @@ describe('eventDrop', function() {
                   })
                 }, 0)
               },
-              function(event, delta, revertFunc) {
-                expect(delta.days()).toBe(1)
-                expect(delta.hours()).toBe(1)
-                expect(delta.minutes()).toBe(30)
-                expect(delta.seconds()).toBe(0)
-                expect(delta.milliseconds()).toBe(0)
+              function(arg) {
+                expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 1, hour: 1, minute: 30 }))
 
-                expect(event.start).toEqualMoment('2014-06-12T07:30:00')
-                expect(event.end).toBeNull()
+                expect(arg.event.start).toEqualDate('2014-06-12T07:30:00Z')
+                expect(arg.event.end).toBeNull()
 
-                revertFunc()
-                event = currentCalendar.clientEvents()[0]
+                arg.revertFunc()
+                var event = currentCalendar.clientEvents()[0]
 
-                expect(event.start).toEqualMoment('2014-06-11T06:00:00')
+                expect(event.start).toEqualDate('2014-06-11T06:00:00Z')
                 expect(event.end).toBeNull()
 
                 done()
@@ -215,20 +204,16 @@ describe('eventDrop', function() {
               dx: $('th.fc-wed').width() * 2 // 2 days
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(2)
-            expect(delta.hours()).toBe(0)
-            expect(delta.minutes()).toBe(0)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 2 }))
 
-            expect(event.start).toEqualMoment('2014-06-13')
-            expect(event.end).toBeNull()
+            expect(arg.event.start).toEqualDate('2014-06-13')
+            expect(arg.event.end).toBeNull()
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11')
+            expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
 
             done()
@@ -256,21 +241,17 @@ describe('eventDrop', function() {
               dy: allDayGrid.outerHeight() + hr.outerHeight()
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(0)
-            expect(delta.hours()).toBe(-23)
-            expect(delta.minutes()).toBe(0)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: -1, hour: 1 }))
 
-            expect(event.start).toEqualMoment('2014-06-10T01:00:00')
-            expect(event.end).toBeNull()
-            expect(event.allDay).toBe(false)
+            expect(arg.event.start).toEqualDate('2014-06-10T01:00:00Z')
+            expect(arg.event.end).toBeNull()
+            expect(arg.event.allDay).toBe(false)
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11')
+            expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
             expect(event.allDay).toBe(true)
 
@@ -312,21 +293,17 @@ describe('eventDrop', function() {
               }
             })
           },
-          function(event, delta, revertFunc) {
-            expect(delta.days()).toBe(-1)
-            expect(delta.hours()).toBe(0)
-            expect(delta.minutes()).toBe(0)
-            expect(delta.seconds()).toBe(0)
-            expect(delta.milliseconds()).toBe(0)
+          function(arg) {
+            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: -1 }))
 
-            expect(event.start).toEqualMoment('2014-06-10')
-            expect(event.end).toBeNull()
-            expect(event.allDay).toBe(true)
+            expect(arg.event.start).toEqualDate('2014-06-10')
+            expect(arg.event.end).toBeNull()
+            expect(arg.event.allDay).toBe(true)
 
-            revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revertFunc()
+            var event = currentCalendar.clientEvents()[0]
 
-            expect(event.start).toEqualMoment('2014-06-11T01:00:00')
+            expect(event.start).toEqualDate('2014-06-11T01:00:00Z')
             expect(event.end).toBeNull()
             expect(event.allDay).toBe(false)
 
@@ -409,35 +386,31 @@ describe('eventDrop', function() {
         eventsRendered = true
       }
     }
-    options.eventDragStart = function(event, jsEvent, uiEvent, view) {
-      expect(this instanceof Element).toBe(true)
-      expect(this).toHaveClass('fc-event')
-      expect(typeof event).toBe('object')
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof uiEvent).toBe('object')
-      expect(typeof view).toBe('object')
+    options.eventDragStart = function(arg) {
+      expect(arg.el instanceof Element).toBe(true)
+      expect(arg.el).toHaveClass('fc-event')
+      expect(typeof arg.event).toBe('object')
+      expect(typeof arg.jsEvent).toBe('object')
+      expect(typeof arg.view).toBe('object')
     }
-    options.eventDragStop = function(event, jsEvent, uiEvent, view) {
+    options.eventDragStop = function(arg) {
       expect(options.eventDragStart).toHaveBeenCalled()
 
-      expect(this instanceof Element).toBe(true)
-      expect(this).toHaveClass('fc-event')
-      expect(typeof event).toBe('object')
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof uiEvent).toBe('object')
-      expect(typeof view).toBe('object')
+      expect(arg.el instanceof Element).toBe(true)
+      expect(arg.el).toHaveClass('fc-event')
+      expect(typeof arg.event).toBe('object')
+      expect(typeof arg.jsEvent).toBe('object')
+      expect(typeof arg.view).toBe('object')
     }
-    options.eventDrop = function(event, delta, revertFunc, jsEvent, uiEvent, view) {
+    options.eventDrop = function(arg) {
       expect(options.eventDragStop).toHaveBeenCalled()
 
-      expect(this instanceof Element).toBe(true)
-      expect(this).toHaveClass('fc-event')
-      expect(typeof event).toBe('object')
-      expect(moment.isDuration(delta)).toBe(true)
-      expect(typeof revertFunc).toBe('function')
-      expect(typeof jsEvent).toBe('object')
-      expect(typeof uiEvent).toBe('object')
-      expect(typeof view).toBe('object')
+      expect(arg.el instanceof Element).toBe(true)
+      expect(arg.el).toHaveClass('fc-event')
+      expect(typeof arg.delta).toBe('object')
+      expect(typeof arg.revertFunc).toBe('function')
+      expect(typeof arg.jsEvent).toBe('object')
+      expect(typeof arg.view).toBe('object')
 
       dropHandler.apply(this, arguments)
     }

@@ -13,10 +13,10 @@ describe('dayPopoverFormat', function() {
 
   it('can be set to a custom value', function() {
     initCalendar({
-      dayPopoverFormat: 'ddd, MMMM'
+      dayPopoverFormat: { month: 'long', day: 'numeric' }
     })
     $('.fc-more').simulate('click')
-    expect($('.fc-more-popover > .fc-header .fc-title')).toHaveText('Tue, July')
+    expect($('.fc-more-popover > .fc-header .fc-title')).toHaveText('July 29')
   })
 
   it('is affected by the current locale when the value is default', function() {
@@ -30,7 +30,7 @@ describe('dayPopoverFormat', function() {
   it('still maintains the same format when explicitly set, and there is a locale', function() {
     initCalendar({
       locale: 'fr',
-      dayPopoverFormat: 'YYYY'
+      dayPopoverFormat: { year: 'numeric' }
     })
     $('.fc-more').simulate('click')
     expect($('.fc-more-popover > .fc-header .fc-title')).toHaveText('2014')

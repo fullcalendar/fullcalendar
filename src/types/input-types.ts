@@ -234,7 +234,7 @@ export interface OptionsInputBase {
 
   viewRender?(arg: { view: View, el: HTMLElement }): void
   viewDestroy?(arg: { view: View, el: HTMLElement }): void
-  dayRender?(arg: { date: Date, isAllDay: boolean, el: HTMLElement }): void
+  dayRender?(arg: { view: View, date: Date, isAllDay: boolean, el: HTMLElement }): void
   windowResize?(view: View): void
   dayClick?(arg: { date: Date, isAllDay: boolean, resource, el: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   eventClick?(arg: { el: HTMLElement, event: EventObjectInput, jsEvent: MouseEvent, view: View }): boolean | void

@@ -2,7 +2,8 @@ describe('defaultTimedEventDuration', function() {
 
   pushOptions({
     defaultDate: '2014-05-01',
-    defaultView: 'month'
+    defaultView: 'month',
+    timezone: 'UTC'
   })
 
   describe('when forceEventDuration is on', function() {
@@ -22,7 +23,7 @@ describe('defaultTimedEventDuration', function() {
         ]
       })
       var event = currentCalendar.clientEvents()[0]
-      expect(event.end).toEqualMoment('2014-05-05T06:30:00')
+      expect(event.end).toEqualDate('2014-05-05T06:30:00Z')
     })
 
     it('correctly calculates an unspecified end when using a string Duration input', function() {
@@ -36,7 +37,7 @@ describe('defaultTimedEventDuration', function() {
         ]
       })
       var event = currentCalendar.clientEvents()[0]
-      expect(event.end).toEqualMoment('2014-05-05T07:15:00')
+      expect(event.end).toEqualDate('2014-05-05T07:15:00Z')
     })
   })
 

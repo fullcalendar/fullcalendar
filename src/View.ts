@@ -591,7 +591,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   reportEventDrop(eventInstance, eventMutation, el, ev) {
     let eventManager = this.calendar.eventManager
-    let undoFunc = eventManager.mutateEventsWithId(
+    let revertFunc = eventManager.mutateEventsWithId(
       eventInstance.def.id,
       eventMutation
     )
@@ -609,20 +609,20 @@ export default abstract class View extends InteractiveDateComponent {
       eventInstance,
       // a drop doesn't necessarily mean a date mutation (ex: resource change)
       (dateMutation && dateMutation.dateDelta) || createDuration(0),
-      undoFunc,
+      revertFunc,
       el, ev
     )
   }
 
 
   // Triggers event-drop handlers that have subscribed via the API
-  triggerEventDrop(eventInstance, dateDelta, undoFunc, el, ev) {
+  triggerEventDrop(eventInstance, delta, revertFunc, el, ev) {
     this.publiclyTrigger('eventDrop', [
       {
         el,
         event: eventInstance.toLegacy(this.calendar),
-        dateDelta,
-        undoFunc,
+        delta,
+        revertFunc,
         jsEvent: ev,
         view: this
       }
@@ -680,7 +680,7 @@ export default abstract class View extends InteractiveDateComponent {
   // Must be called when an event in the view has been resized to a new length
   reportEventResize(eventInstance, eventMutation, el, ev) {
     let eventManager = this.calendar.eventManager
-    let undoFunc = eventManager.mutateEventsWithId(
+    let revertFunc = eventManager.mutateEventsWithId(
       eventInstance.def.id,
       eventMutation
     )
@@ -694,20 +694,20 @@ export default abstract class View extends InteractiveDateComponent {
     this.triggerEventResize(
       eventInstance,
       eventMutation.dateMutation.endDelta,
-      undoFunc,
+      revertFunc,
       el, ev
     )
   }
 
 
   // Triggers event-resize handlers that have subscribed via the API
-  triggerEventResize(eventInstance, durationDelta, undoFunc, el, ev) {
+  triggerEventResize(eventInstance, delta, revertFunc, el, ev) {
     this.publiclyTrigger('eventResize', [
       {
         el,
         event: eventInstance.toLegacy(this.calendar),
-        durationDelta,
-        undoFunc,
+        delta,
+        revertFunc,
         jsEvent: ev,
         view: this
       }

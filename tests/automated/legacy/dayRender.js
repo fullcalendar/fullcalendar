@@ -1,3 +1,4 @@
+import { formatIsoDay } from '../datelib/utils'
 
 describe('dayRender', function() {
 
@@ -6,11 +7,11 @@ describe('dayRender', function() {
       defaultView: 'month',
       fixedWeekCount: true,
       defaultDate: '2014-05-01',
-      dayRender: function(date, cell) {
-        expect(moment.isMoment(date)).toEqual(true)
-        expect(date.hasTime()).toEqual(false)
-        expect(date.format()).toEqual(cell.getAttribute('data-date'))
-        expect(cell).toBeInDOM()
+      dayRender: function(arg) {
+        expect(arg.date instanceof Date).toEqual(true)
+        expect(arg.isAllDay).toEqual(true)
+        expect(formatIsoDay(arg.date)).toEqual(arg.el.getAttribute('data-date'))
+        expect(arg.el).toBeInDOM()
       }
     }
 
@@ -24,7 +25,7 @@ describe('dayRender', function() {
       defaultView: 'month',
       fixedWeekCount: true,
       defaultDate: '2014-05-01',
-      dayRender: function(date, cell) { }
+      dayRender: function(arg) { }
     }
 
     spyOn(options, 'dayRender').and.callThrough()
@@ -39,7 +40,7 @@ describe('dayRender', function() {
     var options = {
       defaultView: 'basicWeek',
       defaultDate: '2014-05-01',
-      dayRender: function(date, cell) { }
+      dayRender: function(arg) { }
     }
 
     spyOn(options, 'dayRender').and.callThrough()
@@ -53,7 +54,7 @@ describe('dayRender', function() {
     var options = {
       defaultView: 'basicWeek',
       defaultDate: '2014-05-01',
-      dayRender: function(date, cell) { }
+      dayRender: function(arg) { }
     }
 
     spyOn(options, 'dayRender').and.callThrough()
@@ -68,9 +69,9 @@ describe('dayRender', function() {
       defaultView: 'month',
       fixedWeekCount: true,
       defaultDate: '2014-05-01',
-      dayRender: function(date, cell) {
-        if (date.format() === '2014-05-01') {
-          cell.classList.add('mycustomclass')
+      dayRender: function(arg) {
+        if (formatIsoDay(arg.date) === '2014-05-01') {
+          arg.el.classList.add('mycustomclass')
         }
       }
     }

@@ -2,7 +2,8 @@ describe('defaultAllDayEventDuration', function() {
 
   pushOptions({
     defaultDate: '2014-05-01',
-    defaultView: 'month'
+    defaultView: 'month',
+    timezone: 'UTC'
   })
 
   describe('when forceEventDuration is on', function() {
@@ -24,7 +25,7 @@ describe('defaultAllDayEventDuration', function() {
       })
 
       var event = currentCalendar.clientEvents()[0]
-      expect(event.end).toEqualMoment('2014-05-07')
+      expect(event.end).toEqualDate('2014-05-07')
     })
 
     it('correctly calculates an unspecified end when using a string Duration input', function() {
@@ -40,7 +41,7 @@ describe('defaultAllDayEventDuration', function() {
       })
 
       var event = currentCalendar.clientEvents()[0]
-      expect(event.end).toEqualMoment('2014-05-08')
+      expect(event.end).toEqualDate('2014-05-08')
     })
   })
 

@@ -2,7 +2,8 @@ describe('displayEventEnd', function() {
 
   pushOptions({
     defaultDate: '2014-06-13',
-    timeFormat: 'H:mm'
+    timezone: 'UTC',
+    timeFormat: { hour: 'numeric', minute: '2-digit' }
   })
 
   describeOptions('defaultView', {
@@ -42,7 +43,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00')
+              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
               done()
             }
           })
@@ -59,7 +60,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00')
+              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
               done()
             }
           })
@@ -99,7 +100,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00')
+              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
               done()
             }
           })
@@ -116,7 +117,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00')
+              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
               done()
             }
           })
@@ -133,7 +134,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00 - 2:00')
+              expect($('.fc-event .fc-time')).toHaveText('1:00 AM - 2:00 AM')
               done()
             }
           })

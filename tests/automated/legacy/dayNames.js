@@ -12,11 +12,12 @@ describe('day names', function() {
     '.fc-fri',
     '.fc-sat'
   ]
-  var referenceDate = '2014-05-25 06:00' // A sunday
+  var sundayDate = new Date('2014-05-25T06:00:00Z')
   var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ]
 
   pushOptions({
-    now: moment(referenceDate).toISOString()
+    now: sundayDate,
+    timezone: 'UTC'
   })
 
   afterEach(function() {
@@ -33,53 +34,33 @@ describe('day names', function() {
           locale: 'en'
         })
         dayClasses.forEach(function(cls, index, classes) {
-          var weekdays = moment.weekdays()
-          it('should be ' + weekdays[index], function() {
+          var dayDate = FullCalendar.addDays(sundayDate, index)
+          var dayText = dayDate.toLocaleString('en', { weekday: 'long' })
+
+          it('should be ' + dayText, function() {
             initCalendar({
-              now: moment(referenceDate).add(index, 'days')
+              now: dayDate
             })
-            expect($('.fc-view thead ' + dayClasses[index])).toHaveText(weekdays[index])
+            expect($('.fc-view thead ' + dayClasses[index])).toHaveText(dayText)
           })
         })
       })
 
       $.each(locales, function(index, locale) {
         describe('when locale is ' + locale, function() {
-          beforeEach(function() {
-            moment.locale(locale)
-          })
-
           dayClasses.forEach(function(cls, index, classes) {
-            it('should be the translation for ' + moment.weekdays()[index], function() {
+            var dayDate = FullCalendar.addDays(sundayDate, index)
+            var dayText = dayDate.toLocaleString(locale, { weekday: 'long' })
+
+            it('should be the translation for ' + dayText, function() {
+
               initCalendar({
                 locale: locale,
-                now: moment(referenceDate).add(index, 'days')
+                now: dayDate
               })
 
-              expect($('.fc-view thead ' + dayClasses[index])).toHaveText(moment.weekdays()[index])
+              expect($('.fc-view thead ' + dayClasses[index])).toHaveText(dayText)
             })
-          })
-        })
-      })
-
-      describe('when daynames are specified', function() {
-        var weekdays = [
-          'Hovjaj',
-          'maSjaj',
-          'veSjaj',
-          'mechjaj',
-          'jevjaj',
-          'parmaqjaj',
-          'HoSjaj'
-        ]
-
-        dayClasses.forEach(function(cls, idx, classes) {
-          it('should be ' + weekdays[idx], function() {
-            initCalendar({
-              dayNames: [].slice.call(weekdays), // copy. in case there is a mutation
-              now: moment(referenceDate).add(idx, 'days')
-            })
-            expect($('.fc-view thead ' + cls)).toHaveText(weekdays[idx])
           })
         })
       })

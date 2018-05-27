@@ -151,6 +151,7 @@ export default class DayGrid extends InteractiveDateComponent {
           {
             date: dateEnv.toDate(this.getCellDate(row, col)),
             isAllDay: true,
+            el: this.getCellEl(row, col),
             view
           }
         ])
