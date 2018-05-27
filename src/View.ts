@@ -654,7 +654,7 @@ export default abstract class View extends InteractiveDateComponent {
     // trigger 'drop' regardless of whether element represents an event
     this.publiclyTrigger('drop', [
       {
-        date: dateEnv.toDate(singleEventDef.dateProfile.start),
+        date: dateEnv.toDate(singleEventDef.dateProfile.unzonedRange.start),
         isAllDay: singleEventDef.dateProfile.isAllDay,
         jsEvent: ev,
         view: this

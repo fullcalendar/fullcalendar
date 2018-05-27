@@ -226,7 +226,7 @@ export default class ExternalDropping extends Interaction {
     eventDef = SingleEventDef.parse(
       assignTo({}, meta.eventProps, {
         start: dateEnv.toDate(start), // inefficient to convert back
-        end: dateEnv.toDate(end) // inefficient to convert back
+        end: end ? dateEnv.toDate(end) : null // inefficient to convert back
       }),
       new EventSource(calendar)
     )

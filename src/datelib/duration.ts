@@ -28,7 +28,7 @@ export interface Duration {
 }
 
 const INTERNAL_UNITS = [ 'year', 'month', 'day', 'time' ]
-const PARSE_RE = /^(?:(\d+)\.)?(\d\d):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
+const PARSE_RE = /^(?:(\d+)\.)?(\d+):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
 
 
 // Parsing and Creation

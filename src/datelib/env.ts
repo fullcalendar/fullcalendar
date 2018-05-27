@@ -90,12 +90,16 @@ export class DateEnv {
     if (typeof input === 'number') {
       marker = this.timestampToMarker(input)
     } else if (input instanceof Date) {
-      marker = this.timestampToMarker(input.valueOf())
+      input = input.valueOf()
+
+      if (!isNaN(input)) {
+        marker = this.timestampToMarker(input)
+      }
     } else if (Array.isArray(input)) {
       marker = arrayToUtcDate(input)
     }
 
-    if (marker === null) {
+    if (marker === null || isNaN(marker.valueOf())) {
       return null
     }
 
@@ -104,6 +108,10 @@ export class DateEnv {
 
   parse(s: string) {
     let parts = parse(s)
+    if (parts === null) {
+      return null
+    }
+
     let marker = parts.marker
     let forcedTimeZoneOffset = null
 

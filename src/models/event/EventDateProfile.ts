@@ -39,9 +39,9 @@ export default class EventDateProfile {
 
     let calendar: Calendar = source.calendar
     let startMeta = calendar.dateEnv.createMarkerMeta(startInput)
-    let startMarker = startMeta.marker
-    let endMeta = endInput ? calendar.dateEnv.createMarkerMeta(endInput) : null
-    let endMarker = endMeta ? endMeta.marker : null
+    let startMarker = startMeta && startMeta.marker
+    let endMeta = endInput && calendar.dateEnv.createMarkerMeta(endInput)
+    let endMarker = endMeta && endMeta.marker
     let forcedAllDay = rawProps.allDay
     let forceEventDuration = calendar.opt('forceEventDuration')
 
