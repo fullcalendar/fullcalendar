@@ -44,6 +44,7 @@ export default class EventDateProfile {
     let endMarker = endMeta && endMeta.marker
     let forcedAllDay = rawProps.allDay
     let forceEventDuration = calendar.opt('forceEventDuration')
+    let isAllDay
 
     if (!startMarker) {
       return false
@@ -56,16 +57,23 @@ export default class EventDateProfile {
 
     if (forcedAllDay == null) {
       forcedAllDay = source.allDayDefault
+
       if (forcedAllDay == null) {
         forcedAllDay = calendar.opt('allDayDefault')
       }
     }
 
-    if (forcedAllDay === true) {
-      startMarker = startOfDay(startMarker)
+    if (forcedAllDay == null) {
+      isAllDay = startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified)
+    } else {
+      isAllDay = forcedAllDay
 
-      if (endMarker) {
-        endMarker = startOfDay(endMarker)
+      if (forcedAllDay === true) {
+        startMarker = startOfDay(startMarker)
+
+        if (endMarker) {
+          endMarker = startOfDay(endMarker)
+        }
       }
     }
 
@@ -79,7 +87,7 @@ export default class EventDateProfile {
     return new EventDateProfile(
       startMarker,
       endMarker,
-      startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified),
+      isAllDay,
       calendar,
       startMeta.forcedTimeZoneOffset,
       endMeta ? endMeta.forcedTimeZoneOffset : null

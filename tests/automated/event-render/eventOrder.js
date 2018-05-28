@@ -8,8 +8,8 @@ describe('eventOrder', function() {
       { id: 'y', title: 'b', start: '2018-01-01T09:00:00', myOrder: 1 },
       { id: 'x', title: 'c', start: '2018-01-01T09:00:00', myOrder: 2 }
     ],
-    eventRender: function(eventObj, el) {
-      el.setAttribute('data-event-id', eventObj.id)
+    eventRender: function(arg) {
+      arg.el.setAttribute('data-event-id', arg.event.id)
     }
   })
 

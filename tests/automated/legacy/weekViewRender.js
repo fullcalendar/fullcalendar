@@ -1,6 +1,6 @@
 describe('weekViewRender', function() {
 
-  var nowStr = new Date().toISOString()
+  var nowStr = '2018-05-28'
 
   pushOptions({
     defaultDate: nowStr,

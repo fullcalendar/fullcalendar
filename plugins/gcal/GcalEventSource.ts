@@ -111,25 +111,32 @@ export default class GcalEventSource extends EventSource {
   buildRequestParams(start: DateMarker, end: DateMarker, dateEnv: DateEnv) {
     let apiKey = this.googleCalendarApiKey || this.calendar.opt('googleCalendarApiKey')
     let params
+    let startStr
+    let endStr
 
     if (!apiKey) {
       this.reportError('Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/')
       return null
     }
 
-    // when timezone isn't known, we don't know what the UTC offset should be, so ask for +/- 1 day
-    // from the UTC day-start to guarantee we're getting all the events
-    if (!dateEnv.canComputeOffset) {
-      start = addDays(start, -1)
-      end = addDays(end, 1)
+    if (dateEnv.canComputeOffset) {
+      // strings will naturally have offsets, which GCal needs
+      startStr = dateEnv.formatIso(start)
+      endStr = dateEnv.formatIso(end)
+    } else {
+      // when timezone isn't known, we don't know what the UTC offset should be, so ask for +/- 1 day
+      // from the UTC day-start to guarantee we're getting all the events
+      // (start/end will be UTC-coerced dates, so toISOString is okay)
+      startStr = addDays(start, -1).toISOString()
+      endStr = addDays(end, 1).toISOString()
     }
 
     params = assignTo(
       this.ajaxSettings.data || {},
       {
         key: apiKey,
-        timeMin: dateEnv.formatIso(start),
-        timeMax: dateEnv.formatIso(end),
+        timeMin: startStr,
+        timeMax: endStr,
         singleEvents: true,
         maxResults: 9999
       }

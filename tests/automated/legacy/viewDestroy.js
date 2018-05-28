@@ -26,7 +26,7 @@ describe('viewDestroy', function() {
         viewRender: function() {
           ++viewRenderCalls
         },
-        viewDestroy: function(givenViewObj, givenViewEl) {
+        viewDestroy: function(arg) {
           if (++viewDestroyCalls === 1) { // because done() calls destroy
 
             // the viewDestroy should be called before the next viewRender
@@ -35,8 +35,8 @@ describe('viewDestroy', function() {
             var viewObj = currentCalendar.getView()
             var viewEl = $('.fc-view', currentCalendar.el)
 
-            expect(viewObj).toBe(givenViewObj)
-            expect(viewEl[0]).toBe(givenViewEl)
+            expect(viewObj).toBe(arg.view)
+            expect(viewEl[0]).toBe(arg.el)
             expect(viewEl.children().length >= 1).toBe(true) // is the content still rendered?
             done()
           }

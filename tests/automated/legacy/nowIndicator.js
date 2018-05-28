@@ -53,13 +53,13 @@ describe('now indicator', function() {
 
           it('renders on correct time', function() {
             initCalendar(options)
-            isNowIndicatorRenderedAt('2015-12-26T06:00:00')
+            isNowIndicatorRenderedAt('2015-12-26T06:00:00Z')
           })
 
           it('renders on correct time2', function() {
             options.now = '2015-12-20T02:30:00'
             initCalendar(options)
-            isNowIndicatorRenderedAt('2015-12-20T02:30:00')
+            isNowIndicatorRenderedAt('2015-12-20T02:30:00Z')
           })
         })
       })

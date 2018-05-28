@@ -41,7 +41,7 @@ describe('custom view', function() {
     options.views.basicFourDay = {
       type: 'basic',
       duration: { days: 4 },
-      titleFormat: '[special]'
+      titleFormat: function() { return 'special' }
     }
     options.defaultView = 'basicFourDay'
     initCalendar(options)
@@ -53,7 +53,7 @@ describe('custom view', function() {
       views: {}
     }
     options.views.basic = {
-      titleFormat: '[basictitle]'
+      titleFormat: function() { return 'basictitle' }
     }
     options.views.basicFourDay = {
       type: 'basic',
@@ -69,12 +69,12 @@ describe('custom view', function() {
       views: {}
     }
     options.views.basic = {
-      titleFormat: '[basictitle]'
+      titleFormat: function() { return 'basictitle' }
     }
     options.views.basicFourDay = {
       type: 'basic',
       duration: { days: 4 },
-      titleFormat: '[basicfourweekttitle]'
+      titleFormat: function() { return 'basicfourweekttitle' }
     }
     options.defaultView = 'basicFourDay'
     initCalendar(options)
@@ -86,7 +86,7 @@ describe('custom view', function() {
       views: {}
     }
     options.views.week = {
-      titleFormat: '[weektitle]'
+      titleFormat: function() { return 'weektitle' }
     }
     options.views.basicOneWeek = {
       type: 'basic',
@@ -102,10 +102,10 @@ describe('custom view', function() {
       views: {}
     }
     options.views.week = {
-      titleFormat: '[weektitle]'
+      titleFormat: function() { return 'weektitle' }
     }
     options.views.basic = {
-      titleFormat: '[basictitle]'
+      titleFormat: function() { return 'basictitle' }
     }
     options.views.basicOneWeek = {
       type: 'basic',
@@ -120,9 +120,9 @@ describe('custom view', function() {
     var options = {
       views: {}
     }
-    options.titleFormat = '[defaultitle]'
+    options.titleFormat = function() { return 'defaultitle' }
     options.views.week = {
-      titleFormat: '[weektitle]'
+      titleFormat: function() { return 'weektitle' }
     }
     options.views.basicTwoWeek = {
       type: 'basic',
@@ -346,40 +346,6 @@ describe('custom view', function() {
       options.defaultView = 'basicFourDay'
       initCalendar(options)
       expect($('.fc-basicFourDay-button')).toHaveText('awesome')
-    })
-
-    it('falls back to humanized duration when not given', function() {
-      var options = {
-        views: {}
-      }
-      options.views.custom = {
-        type: 'basic',
-        duration: { days: 4 }
-      }
-      options.header = {
-        center: 'custom,month'
-      }
-      options.defaultView = 'custom'
-      initCalendar(options)
-      expect($('.fc-custom-button')).toHaveText('4 days')
-    })
-
-    it('falls back to humanized duration and respects locale', function() {
-      var options = {
-        views: {}
-      }
-      options.locale = 'fr'
-      options.views.custom = {
-        type: 'basic',
-        duration: { days: 4 }
-      }
-      options.header = {
-        center: 'custom,month'
-      }
-      options.defaultView = 'custom'
-      initCalendar(options)
-      expect($('.fc-custom-button')).toHaveText('4 jours')
-      expect($('.fc-month-button')).toHaveText('Mois') // test for the heck of it
     })
 
     it('falls back to view name when view lacks metadata', function() {

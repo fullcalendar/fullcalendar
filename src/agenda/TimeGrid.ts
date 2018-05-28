@@ -441,7 +441,7 @@ export default class TimeGrid extends InteractiveDateComponent {
         false // all-day
       )
     )
-    let top = this.computeDateTop(date, date)
+    let top = this.computeDateTop(date)
     let nodes = []
     let i
 
@@ -497,7 +497,10 @@ export default class TimeGrid extends InteractiveDateComponent {
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given date.
   // A `startOfDayDate` must be given for avoiding ambiguity over how to treat midnight.
-  computeDateTop(when: DateMarker, startOfDayDate: DateMarker) {
+  computeDateTop(when: DateMarker, startOfDayDate?: DateMarker) {
+    if (!startOfDayDate) {
+      startOfDayDate = startOfDay(when)
+    }
     return this.computeTimeTop(when.valueOf() - startOfDayDate.valueOf())
   }
 

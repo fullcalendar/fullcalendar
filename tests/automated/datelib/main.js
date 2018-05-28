@@ -194,14 +194,14 @@ describe('datelib', function() {
         var marker = env.createMarker('2018-06-08')
         var formatter = createFormatter({ week: 'narrow' })
         var s = env.format(marker, formatter)
-        expect(s).toBe('Wk23')
+        expect(s).toBe('W23')
       })
 
       it('can output short', function() {
         var marker = env.createMarker('2018-06-08')
         var formatter = createFormatter({ week: 'short' })
         var s = env.format(marker, formatter)
-        expect(s).toBe('Wk 23')
+        expect(s).toBe('W 23')
       })
     })
 

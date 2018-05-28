@@ -17,8 +17,8 @@ describe('event feed params', function() {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({
-        mystart: '2014-04-27',
-        myend: '2014-06-08',
+        mystart: '2014-04-27T00:00:00',
+        myend: '2014-06-08T00:00:00',
         currtz: 'America/Los_Angeles'
       })
       done()
@@ -38,8 +38,8 @@ describe('event feed params', function() {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({
-        feedstart: '2014-04-27',
-        feedend: '2014-06-08',
+        feedstart: '2014-04-27T00:00:00',
+        feedend: '2014-06-08T00:00:00',
         feedctz: 'America/Los_Angeles'
       })
       done()

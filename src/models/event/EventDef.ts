@@ -167,7 +167,7 @@ export default abstract class EventDef {
     obj._id = this.uid
     obj.source = this.source
     obj.className = this.className.slice() // copy
-    obj.allDay = this.isAllDay()
+    obj.isAllDay = this.isAllDay()
 
     if (this.rawId != null) {
       obj.id = this.rawId

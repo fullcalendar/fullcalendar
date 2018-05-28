@@ -183,20 +183,24 @@ export function testSelection(options, start, end, expectSuccess, callback) {
   var allowed
 
   var isAllDay = false
+  var meta
   if (typeof start === 'string') {
-    isAllDay = isAllDay || start.indexOf('T') === -1
-    start = new Date(start)
+    meta = FullCalendar.parseMarker(start)
+    isAllDay = isAllDay || meta.isTimeUnspecified
+    start = meta.marker
   }
   if (typeof end === 'string') {
-    isAllDay = isAllDay || end.indexOf('T') === -1
-    end = new Date(end)
+    meta = FullCalendar.parseMarker(end)
+    isAllDay = isAllDay || meta.isTimeUnspecified
+    end = meta.marker
   }
 
   options.selectable = true
-  options.select = function(selectionStart, selectionEnd) {
+  options.select = function(arg) {
     successfulSelection =
-      selectionStart.valueOf() === start.valueOf() &&
-        selectionEnd.valueOf() === end.valueOf()
+      arg.isAllDay === isAllDay &&
+      arg.start.valueOf() === start.valueOf() &&
+      arg.end.valueOf() === end.valueOf()
   }
   spyOn(options, 'select').and.callThrough()
   initCalendar(options)

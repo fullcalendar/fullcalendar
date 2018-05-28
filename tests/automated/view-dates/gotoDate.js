@@ -3,7 +3,7 @@ describe('gotoDate', function() {
 
   describe('when asynchronicity', function() {
     pushOptions({
-      events: function(start, end, timezone, callback) {
+      events: function(arg, callback) {
         setTimeout(function() {
           callback([])
         }, 0)

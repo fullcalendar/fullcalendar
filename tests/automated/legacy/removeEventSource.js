@@ -25,7 +25,7 @@ describe('removeEventSource', function() {
   })
 
   describe('with a function', function() {
-    testInput(function(start, end, timezone, callback) {
+    testInput(function(arg, callback) {
       callback(buildEventArray())
     })
   })
@@ -44,7 +44,7 @@ describe('removeEventSource', function() {
 
   describe('with an object+function', function() {
     testInput({
-      events: function(start, end, timezone, callback) {
+      events: function(arg, callback) {
         callback(buildEventArray())
       }
     })
@@ -52,7 +52,7 @@ describe('removeEventSource', function() {
 
   it('won\'t render removed events when subsequent addEventSource', function(done) {
 
-    var source1 = function(start, end, timezone, callback) {
+    var source1 = function(arg, callback) {
       setTimeout(function() {
         callback([ {
           title: 'event1',
@@ -62,7 +62,7 @@ describe('removeEventSource', function() {
       }, 100)
     }
 
-    var source2 = function(start, end, timezone, callback) {
+    var source2 = function(arg, callback) {
       setTimeout(function() {
         callback([ {
           title: 'event2',
@@ -90,7 +90,7 @@ describe('removeEventSource', function() {
   })
 
   describe('when multiple sources share the same fetching function', function() {
-    var fetchFunc = function(start, end, timezone, callback) {
+    var fetchFunc = function(arg, callback) {
       callback([ {
         title: 'event',
         start: '2014-08-01T02:00:00'

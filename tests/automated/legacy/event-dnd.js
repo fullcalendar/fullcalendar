@@ -246,14 +246,14 @@ describe('eventDrop', function() {
 
             expect(arg.event.start).toEqualDate('2014-06-10T01:00:00Z')
             expect(arg.event.end).toBeNull()
-            expect(arg.event.allDay).toBe(false)
+            expect(arg.event.isAllDay).toBe(false)
 
             arg.revertFunc()
             var event = currentCalendar.clientEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
-            expect(event.allDay).toBe(true)
+            expect(event.isAllDay).toBe(true)
 
             done()
           }
@@ -298,14 +298,14 @@ describe('eventDrop', function() {
 
             expect(arg.event.start).toEqualDate('2014-06-10')
             expect(arg.event.end).toBeNull()
-            expect(arg.event.allDay).toBe(true)
+            expect(arg.event.isAllDay).toBe(true)
 
             arg.revertFunc()
             var event = currentCalendar.clientEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T01:00:00Z')
             expect(event.end).toBeNull()
-            expect(event.allDay).toBe(false)
+            expect(event.isAllDay).toBe(false)
 
             done()
           }

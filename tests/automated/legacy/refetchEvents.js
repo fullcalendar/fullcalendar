@@ -11,7 +11,7 @@ describe('refetchEvents', function() {
         scrollTime: '00:00',
         height: 400, // makes this test more consistent across viewports
         defaultView: 'agendaDay',
-        events: function(start, end, timezone, callback) {
+        events: function(arg, callback) {
           setTimeout(function() {
             callback([
               { id: '1', resourceId: 'b', start: '2015-08-07T02:00:00', end: '2015-08-07T07:00:00', title: 'event 1' },
@@ -85,7 +85,7 @@ describe('refetchEvents', function() {
     describe('and one event source is asynchronous', function() {
       it('original events remain on the calendar until all events have been refetched', function(done) {
         // set a 100ms timeout on this event source
-        eventSources[0].events = function(start, end, timezone, callback) {
+        eventSources[0].events = function(arg, callback) {
           var events = [
             { id: '1',
               start: '2015-08-07T02:00:00',
@@ -119,7 +119,7 @@ describe('refetchEvents', function() {
 
     // relies on fetchCount
     function createEventGenerator() {
-      return function(start, end, timezone, callback) {
+      return function(arg, callback) {
         var events = [
           {
             id: 1,

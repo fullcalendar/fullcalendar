@@ -192,7 +192,7 @@ describe('refetchEventSources', function() {
   })
 
   function createEventGenerator(classNamePrefix) {
-    return function(start, end, timezone, callback) {
+    return function(arg, callback) {
       var events = []
 
       for (var i = 0; i < eventCount; i++) {

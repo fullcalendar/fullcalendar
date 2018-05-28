@@ -22,12 +22,12 @@ describe('viewRender', function() {
 
     it('fires after the view is rendered, with correct arguments', function(done) {
       initCalendar({
-        viewRender: function(givenViewObj, givenViewEl) {
+        viewRender: function(arg) {
           var viewObj = currentCalendar.getView()
           var viewEl = $('.fc-view', currentCalendar.el)
 
-          expect(viewObj).toBe(givenViewObj)
-          expect(viewEl[0]).toBe(givenViewEl)
+          expect(viewObj).toBe(arg.view)
+          expect(viewEl[0]).toBe(arg.el)
           expect(viewEl.children().length >= 1).toBe(true) // has it rendered content?
           done()
         }

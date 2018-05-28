@@ -24,7 +24,7 @@ describe('addEventSource', function() {
   it('correctly adds a function source', function(done) {
     go(
       function() {
-        currentCalendar.addEventSource(function(start, end, timezone, callback) {
+        currentCalendar.addEventSource(function(arg, callback) {
           callback(eventArray)
         })
       },
@@ -53,7 +53,7 @@ describe('addEventSource', function() {
       function() {
         currentCalendar.addEventSource({
           className: 'funcsource',
-          events: function(start, end, timezone, callback) {
+          events: function(arg, callback) {
             callback(eventArray)
           }
         })

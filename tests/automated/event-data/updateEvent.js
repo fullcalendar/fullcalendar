@@ -96,16 +96,16 @@ describe('updateEvent', function() {
           if (allRenderCnt === 1) {
             eventObj = currentCalendar.clientEvents('2')[0]
 
-            expect(eventObj.allDay).toBe(false)
+            expect(eventObj.isAllDay).toBe(false)
 
-            eventObj.allDay = true
+            eventObj.isAllDay = true
             eventObj.start = '2017-07-14'
             eventObj.end = '2017-07-15'
             currentCalendar.updateEvent(eventObj)
 
             eventObj = currentCalendar.clientEvents('2')[0]
 
-            expect(eventObj.allDay).toBe(true)
+            expect(eventObj.isAllDay).toBe(true)
             expect(eventObj.start).toEqualDate('2017-07-14T00:00:00Z')
             expect(eventObj.end).toEqualDate('2017-07-15T00:00:00Z')
 
@@ -134,13 +134,13 @@ describe('updateEvent', function() {
 
       event = currentCalendar.clientEvents()[0]
 
-      event.allDay = false
+      event.isAllDay = false
       event.start = '2016-04-29T12:00:00' // 12 noon
       event.end = '2016-04-29T14:00:00' // 2pm
       currentCalendar.updateEvent(event)
 
       event = currentCalendar.clientEvents()[0]
-      expect(event.allDay).toBe(false)
+      expect(event.isAllDay).toBe(false)
       expect(event.start).toEqualDate('2016-04-29T12:00:00Z')
       expect(event.end).toEqualDate('2016-04-29T14:00:00Z')
     })

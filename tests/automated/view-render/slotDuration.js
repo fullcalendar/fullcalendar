@@ -6,7 +6,7 @@ describe('slotDuration', function() {
     defaultDate: '2017-07-17',
     defaultView: 'agendaDay',
     scrollTime: 0,
-    slotLabelFormat: 'HH:mm'
+    slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false }
   })
 
   describe('when only major slots', function() {

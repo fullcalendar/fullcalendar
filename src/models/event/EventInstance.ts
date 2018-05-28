@@ -16,7 +16,6 @@ export default class EventInstance {
     let dateProfile = this.dateProfile
     let obj = this.def.toLegacy()
 
-    obj.isAllDay = dateProfile.isAllDay
     obj.start = dateEnv.toDate(dateProfile.unzonedRange.start)
     obj.end = dateProfile.hasEnd ?
       dateEnv.toDate(dateProfile.unzonedRange.end) :

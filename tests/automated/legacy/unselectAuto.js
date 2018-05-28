@@ -25,11 +25,11 @@ describe('unselectAuto', function() {
       it('unselects the current selection when clicking elsewhere in DOM', function(done) {
 
         initCalendar({
-          unselect: function(ev, view) {
+          unselect: function(arg) {
             expect($('.fc-highlight').length).toBe(0)
 
-            expect('currentTarget' in ev).toBe(true) // a JS event
-            expect(view instanceof View).toBe(true)
+            expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
+            expect(arg.view instanceof View).toBe(true)
 
             done()
           }
@@ -49,11 +49,11 @@ describe('unselectAuto', function() {
       it('unselects the current selection when clicking elsewhere in DOM', function(done) {
 
         initCalendar({
-          unselect: function(ev, view) {
+          unselect: function(arg) {
             expect($('.fc-highlight').length).toBe(0)
 
-            expect('currentTarget' in ev).toBe(true) // a JS event
-            expect(view instanceof View).toBe(true)
+            expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
+            expect(arg.view instanceof View).toBe(true)
 
             done()
           }

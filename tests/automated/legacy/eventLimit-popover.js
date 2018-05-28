@@ -278,7 +278,7 @@ describe('eventLimit popover', function() {
         initCalendar({
           eventDrop: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-28')
-            expect(arg.event.allDay).toBe(true)
+            expect(arg.event.isAllDay).toBe(true)
             done()
           }
         })
@@ -307,7 +307,7 @@ describe('eventLimit popover', function() {
           events: testEvents,
           eventDrop: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-28T13:00:00Z')
-            expect(arg.event.allDay).toBe(false)
+            expect(arg.event.isAllDay).toBe(false)
             done()
           }
         })
@@ -331,7 +331,7 @@ describe('eventLimit popover', function() {
           scrollTime: '00:00:00',
           eventDrop: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-30T03:00:00Z')
-            expect(arg.event.allDay).toBe(false)
+            expect(arg.event.isAllDay).toBe(false)
             done()
           }
         })

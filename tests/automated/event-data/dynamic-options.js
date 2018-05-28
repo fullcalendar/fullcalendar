@@ -6,7 +6,7 @@ describe('setting option dynamically', function() {
 
     initCalendar({
       defaultView: 'month',
-      events: function(start, end, timezone, callback) {
+      events: function(arg, callback) {
         fetchCnt++
         callback([])
       }

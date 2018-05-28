@@ -100,9 +100,8 @@ describe('event object creation', function() {
       end: '2014-05-02T01:00:00-12:00',
       allDay: true
     })
-    expect(event.start.hasTime()).toEqual(false)
+    expect(event.isAllDay).toEqual(true)
     expect(event.start).toEqualDate('2014-05-01')
-    expect(event.end.hasTime()).toEqual(false)
     expect(event.end).toEqualDate('2014-05-02')
   })
 
@@ -112,9 +111,8 @@ describe('event object creation', function() {
       end: '2014-05-03',
       allDay: false
     })
-    expect(event.start.hasTime()).toEqual(true)
+    expect(event.isAllDay).toEqual(false)
     expect(event.start).toEqualDate('2014-05-01T00:00:00Z')
-    expect(event.end.hasTime()).toEqual(true)
     expect(event.end).toEqualDate('2014-05-03T00:00:00Z')
   })
 

@@ -3,7 +3,7 @@ describe('columnHeaderHtml', function() {
   pushOptions({
     defaultDate: '2014-05-11',
     columnHeaderHtml: function(date) {
-      return '<div class="test">' + date.format('dddd') + '</div>'
+      return '<div class="test">' + currentCalendar.formatDate(date, { weekday: 'long' }) + '</div>'
     }
   })
 

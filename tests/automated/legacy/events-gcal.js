@@ -78,35 +78,18 @@ describe('Google Calendar plugin', function() {
     initCalendar(options)
   })
 
-  it('request/receives correctly when custom timezone', function(done) {
+  it('request/receives correctly when named timezone, defaults to not editable', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'America/New York'
     options.eventAfterAllRender = function() {
       var events = currentCalendar.clientEvents()
+      var eventEls = $('.fc-event')
       var i
 
       expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
         expect(events[i].url).toMatch('ctz=America/New_York')
-      }
-
-      done()
-    }
-    initCalendar(options)
-  })
-
-  it('requests/receives correctly when no timezone, defaults to not editable', function(done) {
-    options.googleCalendarApiKey = API_KEY
-    options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
-    options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
-      var eventEls = $('.fc-event')
-      var i
-
-      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
-      for (i = 0; i < events.length; i++) {
-        expect(events[i].url).not.toMatch('ctz=')
       }
 
       expect(eventEls.length).toBe(NUM_EVENTS)

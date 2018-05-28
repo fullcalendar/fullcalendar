@@ -36,7 +36,7 @@ describe('removeEventSources', function() {
   function buildEventSource(id) {
     return {
       id: id,
-      events: function(start, end, timezone, callback) {
+      events: function(arg, callback) {
         callback([ {
           title: 'event' + id,
           className: 'event' + id,
