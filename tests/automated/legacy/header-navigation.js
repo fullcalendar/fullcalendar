@@ -17,7 +17,7 @@ describe('header navigation', function() {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-next-button').simulate('click')
       var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualMoment('2010-03-01')
+      expect(newDate).toEqualDate('2010-03-01')
     })
   })
 
@@ -26,7 +26,7 @@ describe('header navigation', function() {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-prev-button').simulate('click')
       var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualMoment('2010-01-01')
+      expect(newDate).toEqualDate('2010-01-01')
     })
   })
 
@@ -35,7 +35,7 @@ describe('header navigation', function() {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-prevYear-button').simulate('click')
       var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualMoment('2009-02-01')
+      expect(newDate).toEqualDate('2009-02-01')
     })
   })
 
@@ -44,7 +44,7 @@ describe('header navigation', function() {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-nextYear-button').simulate('click')
       var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualMoment('2011-02-01')
+      expect(newDate).toEqualDate('2011-02-01')
     })
   })
 
@@ -53,7 +53,6 @@ describe('header navigation', function() {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-today-button').simulate('click')
       var newDate = currentCalendar.getDate() // will be ambig zone
-      newDate.local() // assign the local timezone
       expect(newDate).toEqualNow()
     })
   })

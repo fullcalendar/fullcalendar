@@ -33,9 +33,9 @@ describe('timeFormat', function() {
 
     it('renders correctly when customized', function() {
       initCalendar({
-        timeFormat: 'Hh:mm:mm'
+        timeFormat: { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }
       })
-      expect(getRenderedEventTime()).toBe('153:00:00')
+      expect(getRenderedEventTime()).toBe('15:00:00')
     })
   })
 
@@ -59,9 +59,9 @@ describe('timeFormat', function() {
 
     it('renders correctly when customized', function() {
       initCalendar({
-        timeFormat: 'Hh:mm:mm'
+        timeFormat: { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }
       })
-      expect(getRenderedEventTime()).toBe('153:00:00 - 175:00:00')
+      expect(getRenderedEventTime()).toBe('15:00:00 - 17:00:00')
     })
   })
 

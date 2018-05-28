@@ -27,8 +27,8 @@ describe('ListView rendering', function() {
         var events = getEventInfo()
 
         expect(days.length).toBe(2)
-        expect(days[0].date.format()).toEqual('2016-08-15')
-        expect(days[1].date.format()).toEqual('2016-08-17')
+        expect(days[0].date).toEqualDate('2016-08-15')
+        expect(days[1].date).toEqualDate('2016-08-17')
 
         expect(events.length).toBe(2)
         expect(events[0].title).toBe('event 1')
@@ -39,8 +39,8 @@ describe('ListView rendering', function() {
 
       it('filters events through eventRender', function() {
         var options = {}
-        options.eventRender = function(event, el) {
-          $(el).find('.fc-event-dot').replaceWith('<span class="custom-icon" />')
+        options.eventRender = function(arg) {
+          $(arg.el).find('.fc-event-dot').replaceWith('<span class="custom-icon" />')
         }
 
         initCalendar(options)
@@ -143,10 +143,10 @@ describe('ListView rendering', function() {
         var events = getEventInfo()
 
         expect(days.length).toBe(2)
-        expect(days[0].date.format()).toEqual('2016-08-15')
+        expect(days[0].date).toEqualDate('2016-08-15')
         expect(days[0].mainText).toEqual('lundi')
         expect(days[0].altText).toEqual('15 août 2016')
-        expect(days[1].date.format()).toEqual('2016-08-17')
+        expect(days[1].date).toEqualDate('2016-08-17')
         expect(days[1].mainText).toEqual('mercredi')
         expect(days[1].altText).toEqual('17 août 2016')
 
@@ -354,13 +354,13 @@ describe('ListView rendering', function() {
       var events = getEventInfo()
 
       expect(days.length).toBe(7)
-      expect(days[0].date.format()).toEqual('2016-08-28')
-      expect(days[1].date.format()).toEqual('2016-08-29')
-      expect(days[2].date.format()).toEqual('2016-08-30')
-      expect(days[3].date.format()).toEqual('2016-08-31')
-      expect(days[4].date.format()).toEqual('2016-09-01')
-      expect(days[5].date.format()).toEqual('2016-09-02')
-      expect(days[6].date.format()).toEqual('2016-09-03')
+      expect(days[0].date).toEqualDate('2016-08-28')
+      expect(days[1].date).toEqualDate('2016-08-29')
+      expect(days[2].date).toEqualDate('2016-08-30')
+      expect(days[3].date).toEqualDate('2016-08-31')
+      expect(days[4].date).toEqualDate('2016-09-01')
+      expect(days[5].date).toEqualDate('2016-09-02')
+      expect(days[6].date).toEqualDate('2016-09-03')
 
       expect(events.length).toBe(13)
       expect(events[0].title).toBe('Long Event')
@@ -443,7 +443,7 @@ describe('ListView rendering', function() {
       return {
         mainText: el.find('.fc-list-heading-main').text() || '',
         altText: el.find('.fc-list-heading-alt').text() || '',
-        date: FullCalendar.moment(el.data('date'))
+        date: new Date(el.data('date'))
       }
     }).get()
   }

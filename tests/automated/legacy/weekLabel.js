@@ -1,4 +1,4 @@
-describe('weekNumberTitle', function() {
+describe('weekLabel', function() {
 
   pushOptions({
     weekNumbers: true
@@ -7,7 +7,7 @@ describe('weekNumberTitle', function() {
   function getRenderedWeekNumberTitle() {
     // works for both kinds of views
     var text = $('th.fc-week-number').text()
-    return text.replace(/\d/g, '')
+    return text.replace(/\d/g, '').trim()
   }
 
   [ 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {
@@ -32,7 +32,7 @@ describe('weekNumberTitle', function() {
       it('renders correctly when customized and LTR', function() {
         initCalendar({
           isRTL: false,
-          weekNumberTitle: 'YO'
+          weekLabel: 'YO'
         })
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })
@@ -40,7 +40,7 @@ describe('weekNumberTitle', function() {
       it('renders correctly when customized and RTL', function() {
         initCalendar({
           isRTL: true,
-          weekNumberTitle: 'YO'
+          weekLabel: 'YO'
         })
         expect(getRenderedWeekNumberTitle()).toBe('YO')
       })

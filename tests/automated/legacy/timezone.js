@@ -25,30 +25,6 @@ describe('timezone', function() {
     ]
   })
 
-  it('receives events correctly when no timezone', function(done) {
-    initCalendar({
-      eventAfterAllRender: function() {
-        expectNoTimezone()
-        done()
-      }
-    })
-  })
-
-  function expectNoTimezone() {
-    var allDayEvent = currentCalendar.clientEvents('1')[0]
-    var timedEvent = currentCalendar.clientEvents('2')[0]
-    var zonedEvent = currentCalendar.clientEvents('3')[0]
-    expect(allDayEvent.start.hasZone()).toEqual(false)
-    expect(allDayEvent.start.hasTime()).toEqual(false)
-    expect(allDayEvent.start.format()).toEqual('2014-05-02')
-    expect(timedEvent.start.hasZone()).toEqual(false)
-    expect(timedEvent.start.hasTime()).toEqual(true)
-    expect(timedEvent.start.format()).toEqual('2014-05-10T12:00:00')
-    expect(zonedEvent.start.hasZone()).toEqual(true)
-    expect(zonedEvent.start.hasTime()).toEqual(true)
-    expect(zonedEvent.start.format()).toEqual('2014-05-10T14:00:00+11:00')
-  }
-
 
   it('receives events correctly when local timezone', function(done) {
     initCalendar({
@@ -64,15 +40,12 @@ describe('timezone', function() {
     var allDayEvent = currentCalendar.clientEvents('1')[0]
     var timedEvent = currentCalendar.clientEvents('2')[0]
     var zonedEvent = currentCalendar.clientEvents('3')[0]
-    expect(allDayEvent.start.hasZone()).toEqual(false)
-    expect(allDayEvent.start.hasTime()).toEqual(false)
-    expect(allDayEvent.start.format()).toEqual('2014-05-02')
-    expect(timedEvent.start.hasZone()).toEqual(true)
-    expect(timedEvent.start.hasTime()).toEqual(true)
-    expect(timedEvent.start.utcOffset()).toEqual(-new Date(2014, 4, 10, 12).getTimezoneOffset())
-    expect(zonedEvent.start.hasZone()).toEqual(true)
-    expect(zonedEvent.start.hasTime()).toEqual(true)
-    expect(zonedEvent.start.utcOffset()).toEqual(-new Date('Sat May 10 2014 14:00:00 GMT+1100').getTimezoneOffset())
+    expect(allDayEvent.isAllDay).toEqual(true)
+    expect(allDayEvent.start).toEqualDate('2014-05-02T00:00:00') // local
+    expect(timedEvent.isAllDay).toEqual(false)
+    expect(timedEvent.start).toEqualDate('2014-05-10T12:00:00') // local
+    expect(zonedEvent.isAllDay).toEqual(false)
+    expect(zonedEvent.start).toEqualDate('2014-05-10T14:00:00+11:00')
   }
 
 
@@ -90,15 +63,12 @@ describe('timezone', function() {
     var allDayEvent = currentCalendar.clientEvents('1')[0]
     var timedEvent = currentCalendar.clientEvents('2')[0]
     var zonedEvent = currentCalendar.clientEvents('3')[0]
-    expect(allDayEvent.start.hasZone()).toEqual(false)
-    expect(allDayEvent.start.hasTime()).toEqual(false)
-    expect(allDayEvent.start.format()).toEqual('2014-05-02')
-    expect(timedEvent.start.hasZone()).toEqual(true)
-    expect(timedEvent.start.hasTime()).toEqual(true)
-    expect(timedEvent.start.format()).toEqual('2014-05-10T12:00:00Z')
-    expect(zonedEvent.start.hasZone()).toEqual(true)
-    expect(zonedEvent.start.hasTime()).toEqual(true)
-    expect(zonedEvent.start.format()).toEqual('2014-05-10T03:00:00Z')
+    expect(allDayEvent.isAllDay).toEqual(true)
+    expect(allDayEvent.start).toEqualDate('2014-05-02')
+    expect(timedEvent.isAllDay).toEqual(false)
+    expect(timedEvent.start).toEqualDate('2014-05-10T12:00:00Z')
+    expect(zonedEvent.isAllDay).toEqual(false)
+    expect(zonedEvent.start).toEqualDate('2014-05-10T14:00:00+11:00')
   }
 
 
@@ -116,15 +86,12 @@ describe('timezone', function() {
     var allDayEvent = currentCalendar.clientEvents('1')[0]
     var timedEvent = currentCalendar.clientEvents('2')[0]
     var zonedEvent = currentCalendar.clientEvents('3')[0]
-    expect(allDayEvent.start.hasZone()).toEqual(false)
-    expect(allDayEvent.start.hasTime()).toEqual(false)
-    expect(allDayEvent.start.format()).toEqual('2014-05-02')
-    expect(timedEvent.start.hasZone()).toEqual(false)
-    expect(timedEvent.start.hasTime()).toEqual(true)
-    expect(timedEvent.start.format()).toEqual('2014-05-10T12:00:00')
-    expect(zonedEvent.start.hasZone()).toEqual(true)
-    expect(zonedEvent.start.hasTime()).toEqual(true)
-    expect(zonedEvent.start.format()).toEqual('2014-05-10T14:00:00+11:00')
+    expect(allDayEvent.isAllDay).toEqual(true)
+    expect(allDayEvent.start).toEqualDate('2014-05-02')
+    expect(timedEvent.isAllDay).toEqual(false)
+    expect(timedEvent.start).toEqualDate('2014-05-10T12:00:00Z')
+    expect(zonedEvent.isAllDay).toEqual(false)
+    expect(zonedEvent.start).toEqualDate('2014-05-10T14:00:00Z') // coerced to UTC
   }
 
 
@@ -133,11 +100,11 @@ describe('timezone', function() {
     var rootEl
 
     initCalendar({
-      timezone: false,
+      timezone: 'local',
       eventAfterAllRender: function() {
         callCnt++
         if (callCnt === 1) {
-          expectNoTimezone()
+          expectLocalTimezone()
           rootEl = $('.fc-view > *:first')
           expect(rootEl.length).toBe(1)
           currentCalendar.option('timezone', 'UTC') // will cause second call...

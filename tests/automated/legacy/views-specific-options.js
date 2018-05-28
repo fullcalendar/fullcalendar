@@ -7,7 +7,7 @@ describe('view-specific options', function() {
       right: 'month,basicWeek,basicDay,agendaWeek,agendaDay'
     },
     defaultView: 'month',
-    titleFormat: '[default]',
+    titleFormat: function() { return 'default' },
     views: { }
   })
 
@@ -22,7 +22,7 @@ describe('view-specific options', function() {
     initCalendar({
       views: {
         month: {
-          titleFormat: '[special!!!]'
+          titleFormat: function() { return 'special!!!' }
         }
       }
     })
@@ -39,7 +39,7 @@ describe('view-specific options', function() {
     initCalendar({
       views: {
         agendaWeek: {
-          titleFormat: '[special!!!]'
+          titleFormat: function() { return 'special!!!' }
         }
       }
     })
@@ -56,7 +56,7 @@ describe('view-specific options', function() {
     initCalendar({
       views: {
         basic: {
-          titleFormat: '[special!!!]'
+          titleFormat: function() { return 'special!!!' }
         }
       }
     })
@@ -73,7 +73,7 @@ describe('view-specific options', function() {
     initCalendar({
       views: {
         agenda: {
-          titleFormat: '[special!!!]'
+          titleFormat: function() { return 'special!!!' }
         }
       }
     })
@@ -90,7 +90,7 @@ describe('view-specific options', function() {
     initCalendar({
       views: {
         week: {
-          titleFormat: '[special!!!]'
+          titleFormat: function() { return 'special!!!' }
         }
       }
     })
@@ -107,7 +107,7 @@ describe('view-specific options', function() {
     initCalendar({
       views: {
         day: {
-          titleFormat: '[special!!!]'
+          titleFormat: function() { return 'special!!!' }
         }
       }
     })

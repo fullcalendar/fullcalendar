@@ -26,7 +26,7 @@ describe('select method', function() {
         beforeEach(function() {
           options.defaultView = 'month'
         })
-        describe('when called with all-day moments', function() {
+        describe('when called with all-day date strings', function() {
           describe('when in bounds', function() {
             it('renders a selection', function() {
               initCalendar(options)
@@ -39,11 +39,10 @@ describe('select method', function() {
               expect($('.fc-highlight')).toBeVisible()
             })
             it('fires a selection event', function() {
-              options.select = function(start, end) {
-                expect(start.hasTime()).toEqual(false)
-                expect(end.hasTime()).toEqual(false)
-                expect(start).toEqualMoment('2014-05-07')
-                expect(end).toEqualMoment('2014-05-09')
+              options.select = function(arg) {
+                expect(arg.isAllDay).toEqual(true)
+                expect(arg.start).toEqualDate('2014-05-07')
+                expect(arg.end).toEqualDate('2014-05-09')
               }
               spyOn(options, 'select').and.callThrough()
               initCalendar(options)
@@ -60,9 +59,9 @@ describe('select method', function() {
             /*
             TODO: implement this behavior
             it('doesn\'t fire a selection event', function() {
-              options.select = function(start, end) {
-                expect(start).toEqualMoment('2014-05-07');
-                expect(end).toEqualMoment('2014-05-09');
+              options.select = function(arg) {
+                expect(arg.start).toEqualDate('2014-05-07');
+                expect(arg.end).toEqualDate('2014-05-09');
               };
               spyOn(options, 'select').and.callThrough();
               initCalendar(options);
@@ -72,18 +71,17 @@ describe('select method', function() {
             */
           })
         })
-        describe('when called with timed moments', function() {
+        describe('when called with timed date strings', function() {
           it('renders a selection', function() {
             initCalendar(options)
             currentCalendar.select('2014-05-07T06:00:00', '2014-05-09T07:00:00')
             expect($('.fc-highlight')).toBeVisible()
           })
           it('fires a selection event', function() {
-            options.select = function(start, end) {
-              expect(start.hasTime()).toEqual(true)
-              expect(end.hasTime()).toEqual(true)
-              expect(start).toEqualMoment('2014-05-07T06:00:00')
-              expect(end).toEqualMoment('2014-05-09T06:00:00')
+            options.select = function(arg) {
+              expect(arg.isAllDay).toEqual(false)
+              expect(arg.start).toEqualDate('2014-05-07T06:00:00Z')
+              expect(arg.end).toEqualDate('2014-05-09T06:00:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -98,7 +96,7 @@ describe('select method', function() {
           options.scrollTime = '01:00:00' // so that most events will be below the divider
           options.height = 400 // short enought to make scrolling happen
         })
-        describe('when called with timed moments', function() {
+        describe('when called with timed date strings', function() {
           describe('when in bounds', function() {
             it('renders a selection when called with one argument', function() {
               initCalendar(options)
@@ -123,9 +121,9 @@ describe('select method', function() {
             /*
             TODO: implement this behavior
             it('doesn\'t fire a selection event', function() {
-              options.select = function(start, end) {
-                expect(start).toEqualMoment('2015-05-07T06:00:00');
-                expect(end).toEqualMoment('2015-05-09T07:00:00');
+              options.select = function(arg) {
+                expect(arg.start).toEqualDate('2015-05-07T06:00:00Z');
+                expect(arg.end).toEqualDate('2015-05-09T07:00:00Z');
               };
               spyOn(options, 'select').and.callThrough();
               initCalendar(options);
@@ -135,7 +133,7 @@ describe('select method', function() {
             */
           })
         })
-        describe('when called with all-day moments', function() { // forget about in/out bounds for this :)
+        describe('when called with all-day date strings', function() { // forget about in/out bounds for this :)
           describe('when allDaySlot is on', function() {
             beforeEach(function() {
               options.allDaySlot = true
@@ -149,11 +147,10 @@ describe('select method', function() {
               expect(overlayTop).toBeLessThan(slotAreaTop)
             })
             it('fires a selection event', function() {
-              options.select = function(start, end) {
-                expect(start.hasTime()).toEqual(false)
-                expect(end.hasTime()).toEqual(false)
-                expect(start).toEqualMoment('2014-05-26')
-                expect(end).toEqualMoment('2014-05-28')
+              options.select = function(arg) {
+                expect(arg.isAllDay).toEqual(true)
+                expect(arg.start).toEqualDate('2014-05-26')
+                expect(arg.end).toEqualDate('2014-05-28')
               }
               spyOn(options, 'select').and.callThrough()
               initCalendar(options)
@@ -173,11 +170,10 @@ describe('select method', function() {
             /*
             TODO: implement
             it('doesn\'t fire a selection event', function() {
-              options.select = function(start, end) {
-                expect(start.hasTime()).toEqual(false);
-                expect(end.hasTime()).toEqual(false);
-                expect(start).toEqualMoment('2014-05-26');
-                expect(end).toEqualMoment('2014-05-28');
+              options.select = function(arg) {
+                expect(arg.isAllDay).toEqual(true);
+                expect(arg.start).toEqualDate('2014-05-26');
+                expect(arg.end).toEqualDate('2014-05-28');
               };
               spyOn(options, 'select').and.callThrough();
               initCalendar(options);

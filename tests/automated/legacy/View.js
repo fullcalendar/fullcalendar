@@ -17,8 +17,8 @@ describe('View object', function() {
     })
 
     it('is available in the viewRender callback', function() {
-      var viewRenderSpy = spyOnCalendarCallback('viewRender', function(view) {
-        expect(view.title).toBe('January 2015')
+      var viewRenderSpy = spyOnCalendarCallback('viewRender', function(arg) {
+        expect(arg.view.title).toBe('January 2015')
       })
       initCalendar()
       expect(viewRenderSpy).toHaveBeenCalled()

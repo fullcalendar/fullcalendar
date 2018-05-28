@@ -27,8 +27,8 @@ export function selectTimeGrid(start, inclusiveEnd) {
   return new Promise(function(resolve) {
     var selectInfo = null
 
-    currentCalendar.on('select', function(start, end) {
-      selectInfo = { start: start, end: end }
+    currentCalendar.on('select', function(arg) {
+      selectInfo = arg
     })
 
     getTimeGridDayEls(start).simulate('drag', {

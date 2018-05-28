@@ -9,16 +9,16 @@
 <script>
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
 
       weekNumbers: true,
-      weekNumberTitle: 'Wk ',
+      weekLabel: 'Wk',
 
       //weekNumberCalculation: function(date) {
       //  return date.getMonth(); // inappropriate. but just for testing
@@ -82,7 +82,7 @@
         }
       ]
     });
-    
+
   });
 
 </script>

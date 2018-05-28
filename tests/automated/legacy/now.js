@@ -31,11 +31,11 @@ describe('now', function() {
     })
   })
 
-  it('accepts a function that returns a moment', function() {
+  it('accepts a function that returns a Date', function() {
     initCalendar({
       defaultView: 'month',
       now: function() {
-        return moment.utc('2014-05-01')
+        return new Date('2014-05-01')
       }
     })
     var todayCell = $('td.fc-today', currentCalendar.el)
@@ -43,7 +43,7 @@ describe('now', function() {
     expect(todayDate).toEqual('2014-05-01')
   })
 
-  it('accepts a function that returns a moment-ish string', function() {
+  it('accepts a function that returns a date string', function() {
     initCalendar({
       defaultView: 'month',
       now: function() {

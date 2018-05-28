@@ -24,15 +24,14 @@ describe('select callback', function() {
           options.defaultView = 'month'
         })
         it('gets fired correctly when the user selects cells', function(done) {
-          options.select = function(start, end, jsEvent, view) {
-            expect(moment.isMoment(start)).toEqual(true)
-            expect(moment.isMoment(end)).toEqual(true)
-            expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-            expect(typeof view).toEqual('object') // "
-            expect(start.hasTime()).toEqual(false)
-            expect(end.hasTime()).toEqual(false)
-            expect(start).toEqualMoment('2014-04-28')
-            expect(end).toEqualMoment('2014-05-07')
+          options.select = function(arg) {
+            expect(arg.start instanceof Date).toEqual(true)
+            expect(arg.end instanceof Date).toEqual(true)
+            expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+            expect(typeof arg.view).toEqual('object') // "
+            expect(arg.isAllDay).toEqual(true)
+            expect(arg.start).toEqualDate('2014-04-28')
+            expect(arg.end).toEqualDate('2014-05-07')
           }
           spyOn(options, 'select').and.callThrough()
           initCalendar(options)
@@ -45,15 +44,14 @@ describe('select callback', function() {
           })
         })
         it('gets fired correctly when the user selects cells via touch', function(done) {
-          options.select = function(start, end, jsEvent, view) {
-            expect(moment.isMoment(start)).toEqual(true)
-            expect(moment.isMoment(end)).toEqual(true)
-            expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-            expect(typeof view).toEqual('object') // "
-            expect(start.hasTime()).toEqual(false)
-            expect(end.hasTime()).toEqual(false)
-            expect(start).toEqualMoment('2014-04-28')
-            expect(end).toEqualMoment('2014-05-07')
+          options.select = function(arg) {
+            expect(arg.start instanceof Date).toEqual(true)
+            expect(arg.end instanceof Date).toEqual(true)
+            expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+            expect(typeof arg.view).toEqual('object') // "
+            expect(arg.isAllDay).toEqual(true)
+            expect(arg.start).toEqualDate('2014-04-28')
+            expect(arg.end).toEqualDate('2014-05-07')
           }
           spyOn(options, 'select').and.callThrough()
           initCalendar(options)
@@ -68,15 +66,14 @@ describe('select callback', function() {
           })
         })
         it('gets fired correctly when the user selects just one cell', function(done) {
-          options.select = function(start, end, jsEvent, view) {
-            expect(moment.isMoment(start)).toEqual(true)
-            expect(moment.isMoment(end)).toEqual(true)
-            expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-            expect(typeof view).toEqual('object') // "
-            expect(start.hasTime()).toEqual(false)
-            expect(end.hasTime()).toEqual(false)
-            expect(start).toEqualMoment('2014-04-28')
-            expect(end).toEqualMoment('2014-04-29')
+          options.select = function(arg) {
+            expect(arg.start instanceof Date).toEqual(true)
+            expect(arg.end instanceof Date).toEqual(true)
+            expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+            expect(typeof arg.view).toEqual('object') // "
+            expect(arg.isAllDay).toEqual(true)
+            expect(arg.start).toEqualDate('2014-04-28')
+            expect(arg.end).toEqualDate('2014-04-29')
           }
           spyOn(options, 'select').and.callThrough()
           initCalendar(options)
@@ -96,15 +93,14 @@ describe('select callback', function() {
         })
         describe('when selecting all-day slots', function() {
           it('gets fired correctly when the user selects cells', function(done) {
-            options.select = function(start, end, jsEvent, view) {
-              expect(moment.isMoment(start)).toEqual(true)
-              expect(moment.isMoment(end)).toEqual(true)
-              expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-              expect(typeof view).toEqual('object') // "
-              expect(start.hasTime()).toEqual(false)
-              expect(end.hasTime()).toEqual(false)
-              expect(start).toEqualMoment('2014-05-28')
-              expect(end).toEqualMoment('2014-05-30')
+            options.select = function(arg) {
+              expect(arg.start instanceof Date).toEqual(true)
+              expect(arg.end instanceof Date).toEqual(true)
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.view).toEqual('object') // "
+              expect(arg.isAllDay).toEqual(true)
+              expect(arg.start).toEqualDate('2014-05-28')
+              expect(arg.end).toEqualDate('2014-05-30')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -117,15 +113,14 @@ describe('select callback', function() {
             })
           })
           it('gets fired correctly when the user selects a single cell', function(done) {
-            options.select = function(start, end, jsEvent, view) {
-              expect(moment.isMoment(start)).toEqual(true)
-              expect(moment.isMoment(end)).toEqual(true)
-              expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-              expect(typeof view).toEqual('object') // "
-              expect(start.hasTime()).toEqual(false)
-              expect(end.hasTime()).toEqual(false)
-              expect(start).toEqualMoment('2014-05-28')
-              expect(end).toEqualMoment('2014-05-29')
+            options.select = function(arg) {
+              expect(arg.start instanceof Date).toEqual(true)
+              expect(arg.end instanceof Date).toEqual(true)
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.view).toEqual('object') // "
+              expect(arg.isAllDay).toEqual(true)
+              expect(arg.start).toEqualDate('2014-05-28')
+              expect(arg.end).toEqualDate('2014-05-29')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -139,15 +134,14 @@ describe('select callback', function() {
         })
         describe('when selecting timed slots', function() {
           it('gets fired correctly when the user selects slots', function(done) {
-            options.select = function(start, end, jsEvent, view) {
-              expect(moment.isMoment(start)).toEqual(true)
-              expect(moment.isMoment(end)).toEqual(true)
-              expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-              expect(typeof view).toEqual('object') // "
-              expect(start.hasTime()).toEqual(true)
-              expect(end.hasTime()).toEqual(true)
-              expect(start).toEqualMoment('2014-05-28T09:00:00')
-              expect(end).toEqualMoment('2014-05-28T10:30:00')
+            options.select = function(arg) {
+              expect(arg.start instanceof Date).toEqual(true)
+              expect(arg.end instanceof Date).toEqual(true)
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.view).toEqual('object') // "
+              expect(arg.isAllDay).toEqual(false)
+              expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.end).toEqualDate('2014-05-28T10:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -160,15 +154,14 @@ describe('select callback', function() {
             })
           })
           it('gets fired correctly when the user selects slots via touch', function(done) {
-            options.select = function(start, end, jsEvent, view) {
-              expect(moment.isMoment(start)).toEqual(true)
-              expect(moment.isMoment(end)).toEqual(true)
-              expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-              expect(typeof view).toEqual('object') // "
-              expect(start.hasTime()).toEqual(true)
-              expect(end.hasTime()).toEqual(true)
-              expect(start).toEqualMoment('2014-05-28T09:00:00')
-              expect(end).toEqualMoment('2014-05-28T10:30:00')
+            options.select = function(arg) {
+              expect(arg.start instanceof Date).toEqual(true)
+              expect(arg.end instanceof Date).toEqual(true)
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.view).toEqual('object') // "
+              expect(arg.isAllDay).toEqual(false)
+              expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.end).toEqualDate('2014-05-28T10:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -185,15 +178,14 @@ describe('select callback', function() {
             }, 0)
           })
           it('gets fired correctly when the user selects slots in a different day', function(done) {
-            options.select = function(start, end, jsEvent, view) {
-              expect(moment.isMoment(start)).toEqual(true)
-              expect(moment.isMoment(end)).toEqual(true)
-              expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-              expect(typeof view).toEqual('object') // "
-              expect(start.hasTime()).toEqual(true)
-              expect(end.hasTime()).toEqual(true)
-              expect(start).toEqualMoment('2014-05-28T09:00:00')
-              expect(end).toEqualMoment('2014-05-29T10:30:00')
+            options.select = function(arg) {
+              expect(arg.start instanceof Date).toEqual(true)
+              expect(arg.end instanceof Date).toEqual(true)
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.view).toEqual('object') // "
+              expect(arg.isAllDay).toEqual(false)
+              expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.end).toEqualDate('2014-05-29T10:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -207,15 +199,14 @@ describe('select callback', function() {
             })
           })
           it('gets fired correctly when the user selects a single slot', function(done) {
-            options.select = function(start, end, jsEvent, view) {
-              expect(moment.isMoment(start)).toEqual(true)
-              expect(moment.isMoment(end)).toEqual(true)
-              expect(typeof jsEvent).toEqual('object') // TODO: more descrimination
-              expect(typeof view).toEqual('object') // "
-              expect(start.hasTime()).toEqual(true)
-              expect(end.hasTime()).toEqual(true)
-              expect(start).toEqualMoment('2014-05-28T09:00:00')
-              expect(end).toEqualMoment('2014-05-28T09:30:00')
+            options.select = function(arg) {
+              expect(arg.start instanceof Date).toEqual(true)
+              expect(arg.end instanceof Date).toEqual(true)
+              expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+              expect(typeof arg.view).toEqual('object') // "
+              expect(arg.isAllDay).toEqual(false)
+              expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.end).toEqualDate('2014-05-28T09:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)

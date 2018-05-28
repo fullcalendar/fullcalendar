@@ -13,8 +13,8 @@ describe('selectAllow', function() {
     var options = {
       selectAllow: function(selectInfo) {
         expect(typeof selectInfo).toBe('object')
-        expect(moment.isMoment(selectInfo.start)).toBe(true)
-        expect(moment.isMoment(selectInfo.end)).toBe(true)
+        expect(selectInfo.start instanceof Date).toBe(true)
+        expect(selectInfo.end instanceof Date).toBe(true)
         return false
       }
     }
@@ -22,7 +22,7 @@ describe('selectAllow', function() {
 
     initCalendar(options)
 
-    selectTimeGrid('2016-09-04T01:00:00', '2016-09-04T05:00:00')
+    selectTimeGrid('2016-09-04T01:00:00Z', '2016-09-04T05:00:00Z')
       .then(function(selectInfo) {
         expect(selectInfo).toBeFalsy()
         expect(options.selectAllow).toHaveBeenCalled()
@@ -40,11 +40,11 @@ describe('selectAllow', function() {
 
     initCalendar(options)
 
-    selectTimeGrid('2016-09-04T01:00:00', '2016-09-04T05:00:00')
+    selectTimeGrid('2016-09-04T01:00:00Z', '2016-09-04T05:00:00Z')
       .then(function(selectInfo) {
         expect(typeof selectInfo).toBe('object')
-        expect(selectInfo.start.format()).toBe('2016-09-04T01:00:00')
-        expect(selectInfo.end.format()).toBe('2016-09-04T05:30:00')
+        expect(selectInfo.start).toEqualDate('2016-09-04T01:00:00Z')
+        expect(selectInfo.end).toEqualDate('2016-09-04T05:30:00Z')
         expect(options.selectAllow).toHaveBeenCalled()
         done()
       })

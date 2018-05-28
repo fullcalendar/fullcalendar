@@ -6,10 +6,10 @@ describe('titleFormat', function() {
 
     var viewWithFormat = [
       { view: 'month', expected: 'June 2014' },
-      { view: 'basicWeek', expected: /Jun 8 - 14,? 2014/ }, // moment changed LL defaults after 2.8
-      { view: 'agendaWeek', expected: /Jun 8 - 14,? 2014/ }, // "
-      { view: 'basicDay', expected: /June 12,? 2014/ }, // "
-      { view: 'agendaDay', expected: /June 12,? 2014/ } // "
+      { view: 'basicWeek', expected: /Jun 8 - 14,? 2014/ },
+      { view: 'agendaWeek', expected: /Jun 8 - 14,? 2014/ },
+      { view: 'basicDay', expected: /June 12,? 2014/ },
+      { view: 'agendaDay', expected: /June 12,? 2014/ }
     ]
 
     beforeEach(function() {
@@ -33,11 +33,10 @@ describe('titleFormat', function() {
   describe('when set on a per-view basis', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: '2014, June' },
-      { view: 'basicWeek', expected: '8 - 14 6 2014' },
-      { view: 'agendaWeek', expected: '8 - 14, 6, 2014' },
-      { view: 'basicDay', expected: 'Thursday June 12 2014' },
-      { view: 'agendaDay', expected: 'Thursday, June, 12, 2014' }
+      { view: 'month', expected: 'June 2014' },
+      { view: 'basicWeek', expected: 'Jun 8 - 14, 2014' },
+      { view: 'agendaWeek', expected: 'June 8 - 14, 2014' },
+      { view: 'basicDay', expected: 'Thursday, June 12, 2014' },
     ]
 
     beforeEach(function() {
@@ -45,11 +44,10 @@ describe('titleFormat', function() {
         defaultDate: '2014-06-12',
         titleRangeSeparator: ' - ',
         views: {
-          month: { titleFormat: 'YYYY, MMMM' },
-          basicWeek: { titleFormat: 'D M YYYY' },
-          agendaWeek: { titleFormat: 'D, M, YYYY' },
-          basicDay: { titleFormat: 'dddd MMMM D YYYY' },
-          agendaDay: { titleFormat: 'dddd, MMMM, D, YYYY' }
+          month: { titleFormat: { year: 'numeric', month: 'long' } },
+          basicWeek: { titleFormat: { day: 'numeric', month: 'short', year: 'numeric' } },
+          agendaWeek: { titleFormat: { day: 'numeric', month: 'long', year: 'numeric' } },
+          basicDay: { titleFormat: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' } }
         }
       })
     })
