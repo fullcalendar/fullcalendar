@@ -14,7 +14,7 @@ defineLocale("is", {
     day: "Dagur",
     list: "Dagskrá"
   },
-  weekHeader: "Vika",
+  weekLabel: "Vika",
   allDayHtml: "Allan<br/>daginn",
   eventLimitText: "meira",
   noEventsMessage: "Engir viðburðir til að sýna"

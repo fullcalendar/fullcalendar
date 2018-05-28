@@ -14,7 +14,7 @@ defineLocale("cs", {
     day: "Den",
     list: "Agenda"
   },
-  weekHeader: "Týd",
+  weekLabel: "Týd",
   allDayText: "Celý den",
   eventLimitText: function(n) {
     return "+další: " + n;

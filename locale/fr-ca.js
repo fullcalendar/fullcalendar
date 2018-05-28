@@ -11,7 +11,7 @@ defineLocale("fr", {
     day: "Jour",
     list: "Mon planning"
   },
-  weekHeader: "Sem.",
+  weekLabel: "Sem.",
   allDayHtml: "Toute la<br/>journée",
   eventLimitText: "en plus",
   noEventsMessage: "Aucun événement à afficher"

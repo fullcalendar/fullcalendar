@@ -14,7 +14,7 @@ defineLocale("it", {
     day: "Giorno",
     list: "Agenda"
   },
-  weekHeader: "Sm",
+  weekLabel: "Sm",
   allDayHtml: "Tutto il<br/>giorno",
   eventLimitText: function(n) {
     return "+altri " + n;

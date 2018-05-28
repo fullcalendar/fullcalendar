@@ -15,7 +15,7 @@ defineLocale("ar", {
     day: "يوم",
     list: "أجندة"
   },
-  weekHeader: "أسبوع",
+  weekLabel: "أسبوع",
   allDayText: "اليوم كله",
   eventLimitText: "أخرى",
   noEventsMessage: "أي أحداث لعرض"

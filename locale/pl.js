@@ -14,7 +14,7 @@ defineLocale("pl", {
     day: "Dzień",
     list: "Plan dnia"
   },
-  weekHeader: "Tydz",
+  weekLabel: "Tydz",
   allDayText: "Cały dzień",
   eventLimitText: "więcej",
   noEventsMessage: "Brak wydarzeń do wyświetlenia"

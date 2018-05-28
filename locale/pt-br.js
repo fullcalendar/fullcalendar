@@ -10,7 +10,7 @@ defineLocale("pt-br", {
     day: "Dia",
     list: "Compromissos"
   },
-  weekHeader: "Sm",
+  weekLabel: "Sm",
   allDayText: "dia inteiro",
   eventLimitText: function(n) {
     return "mais +" + n;

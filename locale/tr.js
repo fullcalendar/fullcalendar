@@ -14,7 +14,7 @@ defineLocale("tr", {
     day: "Gün",
     list: "Ajanda"
   },
-  weekHeader: "Hf",
+  weekLabel: "Hf",
   allDayText: "Tüm gün",
   eventLimitText: "daha fazla",
   noEventsMessage: "Herhangi bir etkinlik görüntülemek için"

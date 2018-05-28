@@ -14,7 +14,7 @@ defineLocale("eu", {
     day: "Eguna",
     list: "Agenda"
   },
-  weekHeader: "As",
+  weekLabel: "As",
   allDayHtml: "Egun<br/>osoa",
   eventLimitText: "gehiago",
   noEventsMessage: "Ez dago ekitaldirik erakusteko"

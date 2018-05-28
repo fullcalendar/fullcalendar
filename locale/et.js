@@ -14,7 +14,7 @@ defineLocale("et", {
     day: "Päev",
     list: "Päevakord"
   },
-  weekHeader: "näd",
+  weekLabel: "näd",
   allDayText: "Kogu päev",
   eventLimitText: function(n) {
     return "+ veel " + n;

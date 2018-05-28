@@ -14,7 +14,7 @@ defineLocale("fi", {
     day: "Päivä",
     list: "Tapahtumat"
   },
-  weekHeader: "Vk",
+  weekLabel: "Vk",
   allDayText: "Koko päivä",
   eventLimitText: "lisää",
   noEventsMessage: "Ei näytettäviä tapahtumia"

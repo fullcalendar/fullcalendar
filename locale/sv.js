@@ -14,7 +14,7 @@ defineLocale("sv", {
     day: "Dag",
     list: "Program"
   },
-  weekHeader: "v.",
+  weekLabel: "v.",
   allDayText: "Heldag",
   eventLimitText: "till",
   noEventsMessage: "Inga händelser att visa"

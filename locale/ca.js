@@ -14,7 +14,7 @@ defineLocale("ca", {
     day: "Dia",
     list: "Agenda"
   },
-  weekHeader: "Set",
+  weekLabel: "Set",
   allDayText: "Tot el dia",
   eventLimitText: "més",
   noEventsMessage: "No hi ha esdeveniments per mostrar"

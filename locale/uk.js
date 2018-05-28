@@ -14,7 +14,7 @@ defineLocale("uk", {
     day: "День",
     list: "Порядок денний"
   },
-  weekHeader: "Тиж",
+  weekLabel: "Тиж",
   allDayText: "Увесь день",
   eventLimitText: function(n) {
     return "+ще " + n + "...";

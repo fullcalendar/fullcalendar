@@ -14,7 +14,7 @@ defineLocale("ru", {
     day: "День",
     list: "Повестка дня"
   },
-  weekHeader: "Нед",
+  weekLabel: "Нед",
   allDayText: "Весь день",
   eventLimitText: function(n) {
     return "+ ещё " + n;

@@ -14,7 +14,7 @@ defineLocale("sl", {
     day: "Dan",
     list: "Dnevni red"
   },
-  weekHeader: "Teden",
+  weekLabel: "Teden",
   allDayText: "Ves dan",
   eventLimitText: "več",
   noEventsMessage: "Ni dogodkov za prikaz"

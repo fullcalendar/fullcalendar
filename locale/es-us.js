@@ -14,7 +14,7 @@ defineLocale("es", {
     day: "Día",
     list: "Agenda"
   },
-  weekHeader: "Sm",
+  weekLabel: "Sm",
   allDayHtml: "Todo<br/>el día",
   eventLimitText: "más",
   noEventsMessage: "No hay eventos para mostrar"

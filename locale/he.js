@@ -14,5 +14,5 @@ defineLocale("he", {
   allDayText: "כל היום",
   eventLimitText: "אחר",
   noEventsMessage: "אין אירועים להצגה",
-  weekNumberTitle: "שבוע"
+  weekLabel: "שבוע"
 });

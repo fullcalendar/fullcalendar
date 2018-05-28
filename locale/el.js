@@ -14,7 +14,7 @@ defineLocale("el", {
     day: "Ημέρα",
     list: "Ατζέντα"
   },
-  weekHeader: "Εβδ",
+  weekLabel: "Εβδ",
   allDayText: "Ολοήμερο",
   eventLimitText: "περισσότερα",
   noEventsMessage: "Δεν υπάρχουν γεγονότα για να εμφανιστεί"
