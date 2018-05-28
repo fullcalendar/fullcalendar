@@ -4,7 +4,7 @@ const TITLE_CLASS = 'fc-title'
 const RESIZER_CLASS = 'fc-resizer'
 const TIME_CLASS = 'fc-time'
 
-export function getEventElTime(el){
+export function getEventElTimeText(el){
   return $(el).find(`.${TIME_CLASS}`).text()
 }
 
@@ -41,10 +41,10 @@ export function getDayTdEls(date){
   return $(`td[data-date="${date}"]`)
 }
 
-export function getEventTitleEl(eventEl) {
+export function getEventElTitleEl(eventEl) {
   return eventEl.find(`.${TITLE_CLASS}`)
 }
 
-export function getEventResizerEl(eventEl) {
+export function getEventElResizerEl(eventEl) {
   return eventEl.find(`.${RESIZER_CLASS}`)
 }

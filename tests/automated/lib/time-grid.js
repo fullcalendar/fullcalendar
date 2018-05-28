@@ -83,7 +83,7 @@ targetTime is a time (duration) that can be in between slots
 export function getTimeGridTop(targetTime) {
   let slotEl
   targetTime = moment.duration(targetTime)
-  let slotEls = getTimeGridSlotEls(targetTime)
+  let slotEls = getTimeGridDurationSlotEls(targetTime)
   const topBorderWidth = 1 // TODO: kill
 
   // exact slot match
@@ -91,7 +91,7 @@ export function getTimeGridTop(targetTime) {
     return slotEls.eq(0).offset().top + topBorderWidth
   }
 
-  slotEls = $('.fc-time-grid .fc-slats tr[data-time]') // all slots
+  slotEls = getTimeGridSlotEls() // all slots
   let slotTime = null
   let prevSlotTime = null
 
@@ -129,7 +129,7 @@ export function getTimeGridTop(targetTime) {
     Math.min(1, (targetTime - slotTime) / slotMsDuration)) // don't go past end of last slot
 }
 
-export function getElTime(el) {
+export function getEventElTimeEl(el) {
   return el.find('.fc-time')
 }
 
@@ -139,7 +139,7 @@ export function getTimeGridDayEls(date) {
   return $('.fc-time-grid .fc-day[data-date="' + date.format('YYYY-MM-DD') + '"]')
 }
 
-export function getAllTimeGridSlotEls() {
+export function getTimeGridSlotEls() {
   return  $('.fc-time-grid .fc-slats tr[data-time]')
 }
 
@@ -150,7 +150,7 @@ export function getTimeGridSlotElByIndex(index) {
   return slot
 }
 
-export function getTimeGridSlotEls(timeDuration) {
+export function getTimeGridDurationSlotEls(timeDuration) {
   timeDuration = moment.duration(timeDuration)
   const date = FullCalendar.moment.utc('2016-01-01').time(timeDuration)
   if (date.date() === 1) { // ensure no time overflow/underflow

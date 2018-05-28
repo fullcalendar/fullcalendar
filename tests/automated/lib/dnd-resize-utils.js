@@ -1,7 +1,7 @@
 
 // this function has been mangled to work with external jqui draggables as well
-import {getElTime, getTimeGridDayEls, getTimeGridSlotElByIndex} from "./time-grid";
-import {getEventResizerEl, getEventTitleEl, getFirstEventEl, getLastEventEl} from "./MonthViewUtils";
+import {getEventElTimeEl, getTimeGridDayEls, getTimeGridSlotElByIndex} from "./time-grid";
+import {getEventElResizerEl, getEventElTitleEl, getFirstEventEl, getLastEventEl} from "./MonthViewUtils";
 import {getSingleDayEl} from "../view-render/DayGridRenderUtils";
 
 
@@ -27,13 +27,13 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
     eventEl = getFirstEventEl(eventClassName)
 
     if (dropDate.hasTime()) {
-      dragEl = getElTime(eventEl)
+      dragEl = getEventElTimeEl(eventEl)
       dayEl = getTimeGridDayEls(dropDate)
       slatIndex = dropDate.hours() * 2 + (dropDate.minutes() / 30) // assumes slotDuration:'30:00'
       slatEl = getTimeGridSlotElByIndex(slatIndex)
       dy = slatEl.offset().top - eventEl.offset().top
     } else {
-      dragEl = getEventTitleEl(eventEl)
+      dragEl = getEventElTitleEl(eventEl)
       dayEl = getSingleDayEl(dropDate.clone(), bg=false)
       dy = dayEl.offset().top - eventEl.offset().top
     }
@@ -105,7 +105,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
 
     resizeDate = calendar.moment(resizeDate)
     eventEl = getLastEventEl(eventClassName)
-    dragEl = getEventResizerEl(eventEl)
+    dragEl = getEventElResizerEl(eventEl)
 
     if (resizeDate.hasTime()) {
       lastDayEl = getTimeGridDayEls(resizeDate.clone())

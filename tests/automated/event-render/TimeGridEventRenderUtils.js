@@ -1,9 +1,9 @@
-import {getDayEls, getEventEls, getEventElTime} from '../lib/MonthViewUtils'
-import {getAllTimeGridSlotEls} from '../lib/time-grid'
+import {getDayEls, getEventEls, getEventElTimeText} from '../lib/MonthViewUtils';
+import {getTimeGridSlotEls} from '../lib/time-grid';
 
 export function getTimeTexts() {
   return getEventEls().map(function(i, eventEl) {
-    return getEventElTime(eventEl)
+    return getEventElTimeText(eventEl)
   }).get()
 }
 
@@ -145,7 +145,7 @@ function computeDays() {
 
 
 function computeSlots() {
-  var slotEls = getAllTimeGridSlotEls()
+  var slotEls = getTimeGridSlotEls()
 
   var slots = slotEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
