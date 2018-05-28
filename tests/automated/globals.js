@@ -118,20 +118,29 @@ window.describeValues = function(hash, callback) {
 
 // Timezone Tests (needed?)
 // ---------------------------------------------------------------------------------------------------------------------
+// NOTE:
+// new Date('YYYY-MM-DD') --- parsed as UTC
+// new Date('YYYY-MM-DDT00:00:00') --- parsed as local
 
 const timezoneScenarios = {
   local: {
     description: 'when local timezone',
     value: 'local',
-    moment: function(str) {
-      return moment(str)
+    date: function(str) {
+      if (str.length <= 10) { // doesn't have a time part?
+        str += 'T00:00:00' // will force it to parse as local
+      }
+      return new Date(str)
     }
   },
   UTC: {
     description: 'when UTC timezone',
     value: 'UTC',
-    moment: function(str) {
-      return moment.utc(str)
+    date: function(str) {
+      if (str.length > 10) { // has a time part?
+        str += 'Z' // will force it to parse as UTC
+      }
+      return new Date(str)
     }
   }
 }

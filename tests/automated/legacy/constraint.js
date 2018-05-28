@@ -664,7 +664,7 @@ describe('selectConstraint', function() {
           start: '2014-11-12T01:00:00',
           end: '2014-11-12T20:00:00'
         }
-        testSelection(options, '03:00', '2014-11-12T10:00:00', true, done)
+        testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T10:00:00Z', true, done)
       })
     })
 
@@ -676,7 +676,7 @@ describe('selectConstraint', function() {
           start: '2014-11-12T01:00:00',
           end: '2014-11-12T20:00:00'
         }
-        testSelection(options, '01:00', '2014-11-12T05:00:00', true, done)
+        testSelection(options, '2014-11-12T01:00:00Z', '2014-11-12T05:00:00Z', true, done)
       })
     })
 
@@ -688,7 +688,7 @@ describe('selectConstraint', function() {
           start: '2014-11-12T01:00:00',
           end: '2014-11-12T05:00:00'
         }
-        testSelection(options, '03:00', '2014-11-12T05:00:00', true, done)
+        testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T05:00:00Z', true, done)
       })
     })
 
@@ -700,7 +700,7 @@ describe('selectConstraint', function() {
           start: '2014-11-12T03:00:00',
           end: '2014-11-12T20:00:00'
         }
-        testSelection(options, '02:00', '2014-11-12T04:00:00', false, done)
+        testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', false, done)
       })
     })
 
@@ -712,7 +712,7 @@ describe('selectConstraint', function() {
           start: '2014-11-12T03:00:00',
           end: '2014-11-12T07:00:00'
         }
-        testSelection(options, '04:00', '2014-11-12T08:00:00', false, done)
+        testSelection(options, '2014-11-12T04:00:00Z', '2014-11-12T08:00:00Z', false, done)
       })
     })
 
@@ -725,7 +725,7 @@ describe('selectConstraint', function() {
             start: '2014-11-12T03:00:00',
             end: '2014-11-12T05:00:00'
           }
-          testSelection(options, '05:00', '2014-11-12T07:00:00', false, done)
+          testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T07:00:00Z', false, done)
         })
       })
       describe('when in month view', function() {
@@ -738,7 +738,7 @@ describe('selectConstraint', function() {
               start: '2014-11-13',
               end: '2014-11-14'
             }
-            testSelection(options, null, '2014-11-14', false, done)
+            testSelection(options, '2014-11-12', '2014-11-14', false, done)
           })
         })
         describe('when a timed constraint, out of bounds', function() {
@@ -749,7 +749,7 @@ describe('selectConstraint', function() {
               start: '2014-11-12T01:00:00',
               end: '2014-11-14T00:00:00'
             }
-            testSelection(options, null, '2014-11-14', false, done)
+            testSelection(options, '2014-11-12', '2014-11-14', false, done)
           })
         })
         describe('when a timed constraint, in bounds', function() {
@@ -760,7 +760,7 @@ describe('selectConstraint', function() {
               start: '2014-11-12T00:00:00',
               end: '2014-11-14T00:00:00'
             }
-            testSelection(options, null, '2014-11-14', true, done)
+            testSelection(options, '2014-11-12', '2014-11-14', true, done)
           })
         })
       })
@@ -777,7 +777,7 @@ describe('selectConstraint', function() {
           start: '01:00:00',
           end: '05:00:00'
         }
-        testSelection(options, '02:00', '2014-11-12T04:00:00', true, done)
+        testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
     })
 
@@ -789,7 +789,7 @@ describe('selectConstraint', function() {
           start: '01:00:00',
           end: '05:00:00'
         }
-        testSelection(options, '02:00', '2014-11-12T06:00:00', false, done)
+        testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T06:00:00Z', false, done)
       })
       it('does not allow a selection when multiday', function(done) {
         var options = {}
@@ -798,7 +798,7 @@ describe('selectConstraint', function() {
           start: '01:00:00',
           end: '05:00:00'
         }
-        testSelection(options, '02:00', '2014-11-14T04:00:00', false, done)
+        testSelection(options, '2014-11-12T02:00:00Z', '2014-11-14T04:00:00Z', false, done)
       })
     })
   })
@@ -814,7 +814,7 @@ describe('selectConstraint', function() {
           end: '05:00:00'
         }
         options.selectConstraint = 'businessHours'
-        testSelection(options, '02:00', '2014-11-12T04:00:00', true, done)
+        testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
     })
 
@@ -827,7 +827,7 @@ describe('selectConstraint', function() {
           end: '05:00:00'
         }
         options.selectConstraint = 'businessHours'
-        testSelection(options, '02:00', '2014-11-12T06:00:00', false, done)
+        testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T06:00:00Z', false, done)
       })
     })
 
@@ -841,7 +841,7 @@ describe('selectConstraint', function() {
           dow: [ 1, 2, 4, 5 ] // Mon,Tue,Thu,Fri
         }
         options.selectConstraint = 'businessHours'
-        testSelection(options, '02:00', '2014-11-12T04:00:00', false, done) // Wed
+        testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', false, done) // Wed
       })
     })
   })
@@ -859,7 +859,7 @@ describe('selectConstraint', function() {
           rendering: 'background'
         } ]
         options.selectConstraint = 'yo'
-        testSelection(options, '03:00', '2014-11-12T04:00:00', true, done)
+        testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
     })
 
@@ -874,7 +874,7 @@ describe('selectConstraint', function() {
           rendering: 'background'
         } ]
         options.selectConstraint = 'yo'
-        testSelection(options, '03:00', '2014-11-12T06:00:00', false, done)
+        testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T06:00:00Z', false, done)
       })
     })
 
@@ -884,7 +884,7 @@ describe('selectConstraint', function() {
           var options = {}
 
           options.selectConstraint = 'yooo'
-          testSelection(options, '03:00', '2014-11-12T06:00:00', false, done)
+          testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T06:00:00Z', false, done)
         })
       })
       describe('when in month view', function() {
@@ -893,7 +893,7 @@ describe('selectConstraint', function() {
 
           options.defaultView = 'month'
           options.selectConstraint = 'yooo'
-          testSelection(options, null, '2014-11-15', false, done)
+          testSelection(options, '2014-11-12', '2014-11-15', false, done)
         })
       })
     })

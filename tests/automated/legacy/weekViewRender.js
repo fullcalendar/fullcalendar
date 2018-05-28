@@ -1,6 +1,6 @@
 describe('weekViewRender', function() {
 
-  var nowStr = FullCalendar.moment(new Date()).format('YYYY-MM-DD')
+  var nowStr = new Date().toISOString()
 
   pushOptions({
     defaultDate: nowStr,

@@ -1,7 +1,11 @@
+import { formatIsoDay } from '../datelib/utils'
+
 
 export function getDayGridDayEls(date) {
-  date = FullCalendar.moment.parseZone(date)
-  return $(`.fc-day-grid .fc-day[data-date="${date.format('YYYY-MM-DD')}"]`)
+  if (typeof date === 'string') {
+    date = new Date(date)
+  }
+  return $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(date) + '"]')
 }
 
 

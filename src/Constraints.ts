@@ -134,7 +134,7 @@ export default class Constraints {
         return false
       }
     } else if (typeof overlapVal === 'function') {
-      if (!isOverlapsAllowedByFunc(overlapEventFootprints, overlapVal, subjectEventInstance)) {
+      if (!isOverlapsAllowedByFunc(overlapEventFootprints, overlapVal, subjectEventInstance, this._calendar)) {
         return false
       }
     }
@@ -321,14 +321,14 @@ export default class Constraints {
 
 
 // optional subjectEventInstance
-function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEventInstance) {
+function isOverlapsAllowedByFunc(overlapEventFootprints, overlapFunc, subjectEventInstance, calendar) {
   let i
 
   for (i = 0; i < overlapEventFootprints.length; i++) {
     if (
       !overlapFunc(
-        overlapEventFootprints[i].eventInstance.toLegacy(this._calendar),
-        subjectEventInstance ? subjectEventInstance.toLegacy(this._calendar) : null
+        overlapEventFootprints[i].eventInstance.toLegacy(calendar),
+        subjectEventInstance ? subjectEventInstance.toLegacy(calendar) : null
       )
     ) {
       return false

@@ -16,12 +16,7 @@ describe('day names', function() {
   var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ]
 
   pushOptions({
-    now: sundayDate,
-    timezone: 'UTC'
-  })
-
-  afterEach(function() {
-    moment.locale('en') // reset moment's global locale
+    now: sundayDate
   })
 
   testableClasses.forEach(function(viewClass, index, viewClasses) {

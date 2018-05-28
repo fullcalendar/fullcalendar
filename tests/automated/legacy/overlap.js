@@ -838,7 +838,7 @@ describe('selectOverlap', function() {
           start: '2014-11-12T04:00:00',
           end: '2014-11-12T06:00:00'
         } ]
-        testSelection(options, '01:00', '2014-11-12T04:00:00', true, done)
+        testSelection(options, '2014-11-12T01:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
     })
     describe('when dragged adjacently after an event', function() {
@@ -848,20 +848,10 @@ describe('selectOverlap', function() {
           start: '2014-11-12T04:00:00',
           end: '2014-11-12T06:00:00'
         } ]
-        testSelection(options, '06:00', '2014-11-12T12:00:00', true, done)
+        testSelection(options, '2014-11-12T06:00:00Z', '2014-11-12T12:00:00Z', true, done)
       })
     })
     describe('when dragged intersecting an event\'s start', function() {
-      describe('when no timezone', function() {
-        it('does not allow selection', function(done) {
-          options.events = [ {
-            title: 'Event A',
-            start: '2014-11-12T04:00:00',
-            end: '2014-11-12T06:00:00'
-          } ]
-          testSelection(options, '01:00', '2014-11-12T05:00:00', false, done)
-        })
-      })
       describe('when UTC timezone', function() {
         it('does not allow selection', function(done) {
           options.timezone = 'UTC'
@@ -870,7 +860,18 @@ describe('selectOverlap', function() {
             start: '2014-11-12T04:00:00+00:00',
             end: '2014-11-12T06:00:00+00:00'
           } ]
-          testSelection(options, '01:00', '2014-11-12T05:00:00+00:00', false, done)
+          testSelection(options, '2014-11-12T01:00:00Z', '2014-11-12T05:00:00Z', false, done)
+        })
+      })
+      describe('when local timezone', function() {
+        it('does not allow selection', function(done) {
+          options.timezone = 'local'
+          options.events = [ {
+            title: 'Event A',
+            start: '2014-11-12T04:00:00',
+            end: '2014-11-12T06:00:00'
+          } ]
+          testSelection(options, '2014-11-12T01:00:00', '2014-11-12T05:00:00', false, done)
         })
       })
     })
@@ -883,7 +884,7 @@ describe('selectOverlap', function() {
               start: '2014-11-12T04:00:00',
               end: '2014-11-12T06:00:00'
             } ]
-            testSelection(options, '05:00', '2014-11-12T08:00:00', false, done)
+            testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T08:00:00Z', false, done)
           })
         })
         describe('when UTC timezone', function() {
@@ -894,7 +895,18 @@ describe('selectOverlap', function() {
               start: '2014-11-12T04:00:00+00:00',
               end: '2014-11-12T06:00:00+00:00'
             } ]
-            testSelection(options, '05:00', '2014-11-12T08:00:00+00:00', false, done)
+            testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T08:00:00Z', false, done)
+          })
+        })
+        describe('when local timezone', function() {
+          it('does not allow selection', function(done) {
+            options.timezone = 'local'
+            options.events = [ {
+              title: 'Event A',
+              start: '2014-11-12T04:00:00',
+              end: '2014-11-12T06:00:00'
+            } ]
+            testSelection(options, '2014-11-12T05:00:00', '2014-11-12T08:00:00', false, done)
           })
         })
       })
@@ -909,7 +921,7 @@ describe('selectOverlap', function() {
               start: '2014-11-12',
               end: '2014-11-14'
             } ]
-            testSelection(options, null, '2014-11-13', false, done)
+            testSelection(options, '2014-11-12', '2014-11-13', false, done)
           })
         })
         describe('with timed event', function() {
@@ -919,7 +931,7 @@ describe('selectOverlap', function() {
               start: '2014-11-12T05:00:00',
               end: '2014-11-14T20:00:00'
             } ]
-            testSelection(options, null, '2014-11-13', false, done)
+            testSelection(options, '2014-11-12', '2014-11-13', false, done)
           })
         })
       })
@@ -931,7 +943,7 @@ describe('selectOverlap', function() {
           start: '2014-11-12T04:00:00',
           end: '2014-11-12T10:00:00'
         } ]
-        testSelection(options, '05:00', '2014-11-12T08:00:00', false, done)
+        testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T08:00:00Z', false, done)
       })
     })
   })
@@ -946,7 +958,7 @@ describe('selectOverlap', function() {
           end: '2014-11-12T06:00:00'
         } ]
         spyOn(options, 'selectOverlap').and.callThrough()
-        testSelection(options, '08:00', '2014-11-12T10:00:00', true, function() {
+        testSelection(options, '2014-11-12T08:00:00Z', '2014-11-12T10:00:00Z', true, function() {
           expect(options.selectOverlap).not.toHaveBeenCalled()
           done()
         })
@@ -966,7 +978,7 @@ describe('selectOverlap', function() {
           end: '2014-11-12T06:00:00'
         } ]
         spyOn(options, 'selectOverlap').and.callThrough()
-        testSelection(options, '05:00', '2014-11-12T07:00:00', true, function() {
+        testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T07:00:00Z', true, function() {
           expect(options.selectOverlap).toHaveBeenCalled()
           done()
         })
@@ -983,7 +995,7 @@ describe('selectOverlap', function() {
           end: '2014-11-12T06:00:00'
         } ]
         spyOn(options, 'selectOverlap').and.callThrough()
-        testSelection(options, '05:00', '2014-11-12T07:00:00', false, function() {
+        testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T07:00:00Z', false, function() {
           expect(options.selectOverlap).toHaveBeenCalled()
           done()
         })
@@ -1000,7 +1012,7 @@ describe('selectOverlap', function() {
         end: '2014-11-12T06:00:00',
         overlap: false
       } ]
-      testSelection(options, '05:00', '2014-11-12T07:00:00', true, done)
+      testSelection(options, '2014-11-12T05:00:00Z', '2014-11-12T07:00:00', true, done)
     })
   })
 })

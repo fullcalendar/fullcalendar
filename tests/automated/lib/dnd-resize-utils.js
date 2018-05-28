@@ -173,11 +173,8 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
 }
 
 
-// always starts at 2014-11-12
-export function testSelection(options, startTime, end, expectSuccess, callback) {
+export function testSelection(options, start, end, expectSuccess, callback) {
   var successfulSelection = false
-  var calendar
-  var start
   var firstDayEl, lastDayEl
   var firstSlatIndex, lastSlatIndex
   var firstSlatEl, lastSlatEl
@@ -185,25 +182,30 @@ export function testSelection(options, startTime, end, expectSuccess, callback) 
   var dragEl
   var allowed
 
+  var isAllDay = false
+  if (typeof start === 'string') {
+    isAllDay = isAllDay || start.indexOf('T') === -1
+    start = new Date(start)
+  }
+  if (typeof end === 'string') {
+    isAllDay = isAllDay || end.indexOf('T') === -1
+    end = new Date(end)
+  }
+
   options.selectable = true
   options.select = function(selectionStart, selectionEnd) {
     successfulSelection =
-      selectionStart.format() === start.format() &&
-        selectionEnd.format() === end.format()
+      selectionStart.valueOf() === start.valueOf() &&
+        selectionEnd.valueOf() === end.valueOf()
   }
   spyOn(options, 'select').and.callThrough()
   initCalendar(options)
 
-  calendar = currentCalendar
-  start = calendar.moment('2014-11-12')
-  end = calendar.moment(end)
-
-  if (startTime) {
-    start.time(startTime)
-    firstDayEl = $('.fc-time-grid .fc-day[data-date="' + start.format('YYYY-MM-DD') + '"]')
-    lastDayEl = $('.fc-time-grid .fc-day[data-date="' + end.format('YYYY-MM-DD') + '"]')
-    firstSlatIndex = start.hours() * 2 + (start.minutes() / 30) // assumes slotDuration:'30:00'
-    lastSlatIndex = end.hours() * 2 + (end.minutes() / 30) - 1 // assumes slotDuration:'30:00'
+  if (!isAllDay) {
+    firstDayEl = $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(start) + '"]')
+    lastDayEl = $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(end) + '"]')
+    firstSlatIndex = start.getUTCHours() * 2 + (start.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
+    lastSlatIndex = end.getUTCHours() * 2 + (end.getUTCMinutes() / 30) - 1 // assumes slotDuration:'30:00'
     firstSlatEl = $('.fc-slats tr:eq(' + firstSlatIndex + ')')
     lastSlatEl = $('.fc-slats tr:eq(' + lastSlatIndex + ')')
     expect(firstSlatEl.length).toBe(1)
@@ -211,9 +213,8 @@ export function testSelection(options, startTime, end, expectSuccess, callback) 
     dy = lastSlatEl.offset().top - firstSlatEl.offset().top
     dragEl = firstSlatEl
   } else {
-    end.stripTime()
-    firstDayEl = $('.fc-day-grid .fc-day[data-date="' + start.format('YYYY-MM-DD') + '"]')
-    lastDayEl = $('.fc-day-grid .fc-day[data-date="' + end.clone().add(-1, 'day').format('YYYY-MM-DD') + '"]')
+    firstDayEl = $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(start) + '"]')
+    lastDayEl = $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(new Date(end.valueOf() - 1)) + '"]') // inclusive
     dy = lastDayEl.offset().top - firstDayEl.offset().top
     dragEl = firstDayEl
   }
