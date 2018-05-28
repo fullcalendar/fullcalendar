@@ -72,6 +72,7 @@ export class NativeFormatter implements DateFormatter {
     if (this.standardDatePropCnt === 0 && extendedSettings.week) {
       return formatWeekNumber(
         context.computeWeekNumber(date.marker),
+        context.weekLabel,
         context.locale,
         extendedSettings.week
       )
@@ -186,13 +187,13 @@ export class NativeFormatter implements DateFormatter {
 }
 
 
-function formatWeekNumber(num: number, locale: Locale, display?: 'numeric' | 'narrow' | 'short'): string {
+function formatWeekNumber(num: number, weekLabel: string, locale: Locale, display?: 'numeric' | 'narrow' | 'short'): string {
   let parts = []
 
   if (display === 'narrow') {
-    parts.push(locale.options.weekHeader)
+    parts.push(weekLabel)
   } else if (display === 'short') {
-    parts.push(locale.options.weekHeader, ' ')
+    parts.push(weekLabel, ' ')
   }
   // otherwise, considered 'numeric'
 

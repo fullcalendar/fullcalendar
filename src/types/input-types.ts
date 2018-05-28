@@ -191,7 +191,7 @@ export interface OptionsInputBase {
   monthNamesShort?: string[]
   dayNames?: string[]
   dayNamesShort?: string[]
-  weekNumberTitle?: string
+  weekLabel?: string
   displayEventTime?: boolean
   displayEventEnd?: boolean
   eventLimitText?: string | ((eventCnt: number) => string)

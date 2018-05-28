@@ -18,7 +18,8 @@ export interface DateEnvSettings {
   calendarSystem: string
   locale: Locale
   weekNumberCalculation?: any
-  firstDay?: any
+  firstDay?: any,
+  weekLabel: string
 }
 
 export type DateInput = Date | string | number | number[]
@@ -35,6 +36,7 @@ export class DateEnv {
   weekDow: number
   weekDoy: number
   weekNumberFunc: any
+  weekLabel: string // DON'T LIKE how options are confused with local
 
 
   constructor(settings: DateEnvSettings) {
@@ -62,6 +64,8 @@ export class DateEnv {
     if (typeof settings.weekNumberCalculation === 'function') {
       this.weekNumberFunc = settings.weekNumberCalculation
     }
+
+    this.weekLabel = settings.weekLabel != null ? settings.weekLabel : settings.locale.options.weekLabel
   }
 
 

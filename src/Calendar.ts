@@ -813,9 +813,9 @@ export default class Calendar {
 
 
   // this public method receives start/end dates in any format, with any timezone
-  select(zonedStartInput: DateInput, zonedEndInput?: DateInput) {
+  select(zonedStartInput: DateInput, zonedEndInput?: DateInput, otherProps: any = {}) {
     this.view.select(
-      this.buildSelectFootprint.apply(this, arguments)
+      this.buildSelectFootprint.call(this, zonedStartInput, zonedEndInput, otherProps)
     )
   }
 
@@ -828,7 +828,7 @@ export default class Calendar {
 
 
   // Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-  buildSelectFootprint(zonedStartInput: DateInput, zonedEndInput?: DateInput): ComponentFootprint {
+  buildSelectFootprint(zonedStartInput: DateInput, zonedEndInput?: DateInput, otherProps?): ComponentFootprint {
     let startMeta = this.dateEnv.createMarkerMeta(zonedStartInput)
     let start = startMeta.marker
     let end
@@ -843,7 +843,7 @@ export default class Calendar {
 
     return new ComponentFootprint(
       new UnzonedRange(start, end),
-      startMeta.isTimeUnspecified
+      otherProps.isAllDay != null ? otherProps.isAllDay : startMeta.isTimeUnspecified
     )
   }
 
@@ -884,15 +884,15 @@ export default class Calendar {
     this.defaultTimedEventDuration = createDuration(this.opt('defaultTimedEventDuration'))
 
     this.optionsManager.watch('buildDateEnv', [
-      '?locale', '?timezone',
-      '?firstDay', '?weekNumberCalculation'
+      '?locale', '?timezone', '?firstDay', '?weekNumberCalculation', '?weekLabel'
     ], (opts) => {
       this.dateEnv = new DateEnv({
         calendarSystem: 'gregory',
         timeZone: opts.timezone,
         locale: getLocale(opts.locale),
         weekNumberCalculation: opts.weekNumberCalculation,
-        firstDay: opts.firstDay
+        firstDay: opts.firstDay,
+        weekLabel: opts.weekLabel
       })
     })
   }

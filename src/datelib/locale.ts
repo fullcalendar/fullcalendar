@@ -28,7 +28,7 @@ const RAW_EN_LOCALE = {
     day: 'day',
     list: 'list',
   },
-  weekHeader: 'Wk',
+  weekLabel: 'W',
   allDayText: 'all-day',
   eventLimitText: 'more',
   noEventsMessage: 'No events to display'

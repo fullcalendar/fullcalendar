@@ -21,8 +21,6 @@ export const globalDefaults = {
   },
   weekends: true,
   weekNumbers: false,
-
-  weekNumberTitle: 'W',
   weekNumberCalculation: 'local',
 
   // editable: false,

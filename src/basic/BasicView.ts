@@ -283,7 +283,7 @@ function makeDayGridSubclass(SuperClass) {
         return '' +
           '<th class="fc-week-number ' + view.calendar.theme.getClass('widgetHeader') + '" ' + view.weekNumberStyleAttr() + '>' +
             '<span>' + // needed for matchCellWidths
-              htmlEscape(this.opt('weekNumberTitle')) +
+              htmlEscape(this.opt('weekLabel')) +
             '</span>' +
           '</th>'
       }
