@@ -4,14 +4,10 @@ import EventSource from './EventSource'
 
 export default class ArrayEventSource extends EventSource {
 
-  rawEventDefs: any // unparsed
+  rawEventDefs: any = [] // unparsed. initialized here in the case of no parsing
+  dynamicEventDefs: any = [] // parsed
   eventDefs: any
-
-
-  constructor(calendar) {
-    super(calendar)
-    this.eventDefs = [] // for if setRawEventDefs is never called
-  }
+  currentDateEnv: any
 
 
   static parse(rawInput, calendar) {
@@ -32,19 +28,26 @@ export default class ArrayEventSource extends EventSource {
   }
 
 
-  setRawEventDefs(rawEventDefs) {
-    this.rawEventDefs = rawEventDefs
-    this.eventDefs = this.parseEventDefs(rawEventDefs)
-  }
-
-
   fetch(start, end, dateEnv, onSuccess, onFailure) {
+
+    if (
+      !this.eventDefs || // first time
+      this.currentDateEnv !== dateEnv
+    ) {
+      this.eventDefs = this.parseEventDefs(this.rawEventDefs).concat(this.dynamicEventDefs)
+      this.currentDateEnv = dateEnv
+    }
+
     onSuccess(this.eventDefs)
   }
 
 
   addEventDef(eventDef) {
-    this.eventDefs.push(eventDef)
+    this.dynamicEventDefs.push(eventDef)
+
+    if (this.eventDefs) {
+      this.eventDefs.push(eventDef)
+    }
   }
 
 
@@ -71,7 +74,7 @@ export default class ArrayEventSource extends EventSource {
   applyManualStandardProps(rawProps) {
     let superSuccess = super.applyManualStandardProps(rawProps)
 
-    this.setRawEventDefs(rawProps.events)
+    this.rawEventDefs = rawProps.events
 
     return superSuccess
   }
