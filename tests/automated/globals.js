@@ -120,13 +120,6 @@ window.describeValues = function(hash, callback) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 const timezoneScenarios = {
-  none: {
-    description: 'when no timezone',
-    value: null,
-    moment: function(str) {
-      return FullCalendar.moment.parseZone(str)
-    }
-  },
   local: {
     description: 'when local timezone',
     value: 'local',
@@ -209,3 +202,11 @@ window.spyCall = function(func) {
   spyOn(obj, 'func').and.callThrough()
   return obj.func
 }
+
+
+// Defaults that apply to all tests
+// ---------------------------------------------------------------------------------------------------------------------
+
+window.pushOptions({
+  timezone: 'UTC'
+})
