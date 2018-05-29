@@ -26,7 +26,7 @@ FullCalendar.datepickerLocale('de-at', 'de', {
 
 FullCalendar.locale("de-at", {
   buttonText: {
-	year: "Jahr",
+	  year: "Jahr",
     month: "Monat",
     week: "Woche",
     day: "Tag",
