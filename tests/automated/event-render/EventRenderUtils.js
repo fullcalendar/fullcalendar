@@ -1,10 +1,10 @@
-const EVENT_CLASS = 'fc-event';
-const TITLE_CLASS = 'fc-title';
-const RESIZER_CLASS = 'fc-resizer';
-const TIME_CLASS = 'fc-time';
+const EVENT_CLASS = 'fc-event'
+const TITLE_CLASS = 'fc-title'
+const RESIZER_CLASS = 'fc-resizer'
+const TIME_CLASS = 'fc-time'
 
 export function expectIsStart(bool) {
-  var el = getSingleEl();
+  var el = getSingleEl()
 
   if (bool) {
     expect(el).toHaveClass('fc-start')
@@ -14,7 +14,7 @@ export function expectIsStart(bool) {
 }
 
 export function expectIsEnd(bool) {
-  var el = getSingleEl();
+  var el = getSingleEl()
 
   if (bool) {
     expect(el).toHaveClass('fc-end')

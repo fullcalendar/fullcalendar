@@ -140,7 +140,7 @@ export function getTimeGridDayEls(date) {
 }
 
 export function getTimeGridSlotEls() {
-  return  $('.fc-time-grid .fc-slats tr[data-time]')
+  return $('.fc-time-grid .fc-slats tr[data-time]')
 }
 
 

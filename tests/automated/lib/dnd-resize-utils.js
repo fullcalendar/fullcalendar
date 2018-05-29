@@ -1,12 +1,12 @@
 // this function has been mangled to work with external jqui draggables as well
-import {getEventElTimeEl, getTimeGridDayEls, getTimeGridSlotElByIndex} from "./time-grid";
-import {getSingleDayEl} from "../view-render/DayGridRenderUtils";
+import {getEventElTimeEl, getTimeGridDayEls, getTimeGridSlotElByIndex} from './time-grid'
+import {getSingleDayEl} from '../view-render/DayGridRenderUtils'
 import {
-  getEventElResizerEl, 
-  getEventElTitleEl, 
-  getFirstEventEl, 
+  getEventElResizerEl,
+  getEventElTitleEl,
+  getFirstEventEl,
   getLastEventEl
-} from "../event-render/EventRenderUtils";
+} from '../event-render/EventRenderUtils'
 
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
@@ -38,7 +38,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dy = slatEl.offset().top - eventEl.offset().top
     } else {
       dragEl = getEventElTitleEl(eventEl)
-      dayEl = getSingleDayEl(dropDate.clone(), bg=false)
+      dayEl = getSingleDayEl(dropDate.clone())
       dy = dayEl.offset().top - eventEl.offset().top
     }
 
@@ -117,7 +117,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       lastSlatEl = getTimeGridSlotElByIndex(lastSlatIndex - 1)
       dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())
     } else {
-      lastDayEl = getSingleDayEl(resizeDate.clone().add(-1, 'day'), bg=false)
+      lastDayEl = getSingleDayEl(resizeDate.clone().add(-1, 'day'))
       dy = lastDayEl.offset().top - eventEl.offset().top
     }
 
@@ -194,8 +194,8 @@ export function testSelection(options, startTime, end, expectSuccess, callback) 
     dragEl = firstSlatEl
   } else {
     end.stripTime()
-    firstDayEl = getSingleDayEl(start, bg=false)
-    lastDayEl = getSingleDayEl(end.clone().add(-1, 'day'), bg=false)
+    firstDayEl = getSingleDayEl(start)
+    lastDayEl = getSingleDayEl(end.clone().add(-1, 'day'))
     dy = lastDayEl.offset().top - firstDayEl.offset().top
     dragEl = firstDayEl
   }

@@ -1,5 +1,5 @@
-import * as TimeGridEventDragUtils from './TimeGridEventDragUtils';
-import {getEventEls, getVisibleEventEls} from "../event-render/EventRenderUtils";
+import * as TimeGridEventDragUtils from './TimeGridEventDragUtils'
+import {getEventEls, getVisibleEventEls} from '../event-render/EventRenderUtils'
 
 describe('event dragging on repeating events', function() {
   pushOptions({
@@ -54,7 +54,7 @@ describe('event dragging on repeating events', function() {
       }
     })
 
-    getEventEls().first().simulate('drag',{
+    getEventEls().first().simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
@@ -90,7 +90,7 @@ describe('event dragging on repeating events', function() {
       }
     })
 
-    getEventEls().first().simulate('drag',{
+    getEventEls().first().simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })

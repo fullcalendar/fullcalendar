@@ -1,4 +1,4 @@
-import {getEventEls} from "./EventRenderUtils";
+import {getEventEls} from './EventRenderUtils'
 
 describe('eventOrder', function() {
   pushOptions({

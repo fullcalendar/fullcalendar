@@ -1,6 +1,6 @@
-import {getDayEls} from '../view-render/DayGridRenderUtils';
-import {getTimeGridSlotEls} from '../lib/time-grid';
-import {getEventEls, getEventElTimeText} from "./EventRenderUtils";
+import {getDayEls} from '../view-render/DayGridRenderUtils'
+import {getTimeGridSlotEls} from '../lib/time-grid'
+import {getEventEls, getEventElTimeText} from './EventRenderUtils'
 
 export function getTimeTexts() {
   return getEventEls().map(function(i, eventEl) {
