@@ -458,9 +458,9 @@ export default abstract class View extends InteractiveDateComponent {
           update()
 
           if (unit === 'second') {
-            delay = 1000 * 60 // every second
+            delay = 1000 // every second
           } else {
-            delay = 1000 * 60 * 60 // otherwise, every minute
+            delay = 1000 * 60 // otherwise, every minute
           }
 
           this.nowIndicatorIntervalID = setInterval(update, delay) // update every interval

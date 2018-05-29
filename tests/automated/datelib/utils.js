@@ -32,3 +32,36 @@ export function formatIsoTime(date) {
     pad(date.getUTCMinutes(), 2) + ':' +
     pad(date.getUTCSeconds(), 2)
 }
+
+export function formatIsoWithoutTz(date) {
+  return date.toISOString().replace(/(Z|[-+]\d\d:\d\d)$/, '').replace('.000', '')
+}
+
+export function parseIsoAsUtc(s) {
+
+  if (s.length <= 10) {
+    s += 'T00:00:00Z'
+  } else if (s.indexOf('Z') === -1) {
+    s += 'Z'
+  }
+
+  var d = new Date(s)
+
+  if (isNaN(d.valueOf())) {
+    throw s + ' is not valid date input'
+  }
+
+  return d
+}
+
+export function ensureDate(input) {
+  if (input instanceof Date) {
+    return input
+  } else if (typeof input === 'string') {
+    return parseIsoAsUtc(input)
+  } else if (typeof input === 'number') {
+    return new Date(input)
+  }
+
+  throw input + ' is invalid date input'
+}

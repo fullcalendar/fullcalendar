@@ -2,7 +2,7 @@ import { elementClosest } from '../util/dom-manip'
 import { getEvIsTouch, listenBySelector, listenToHoverBySelector } from '../util/dom-event'
 import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
-import { diffDayAndTime } from '../datelib/marker'
+import { diffDayAndTime, diffWholeWeeks } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 
 
@@ -328,10 +328,12 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
     if (!this.largeUnit) {
       return diffDayAndTime(a, b) // returns a duration
-    } else if (this.largeUnit === 'year') {
-      return createDuration(dateEnv.diffWholeYears(a, b), 'year')
+    } else if (this.largeUnit === 'week') {
+      return createDuration(diffWholeWeeks(a, b), 'week')
     } else if (this.largeUnit === 'month') {
       return createDuration(dateEnv.diffWholeMonths(a, b), 'month')
+    } else if (this.largeUnit === 'year') {
+      return createDuration(dateEnv.diffWholeYears(a, b), 'year')
     }
   }
 

@@ -370,13 +370,17 @@ export class DateEnv {
   }
 
   formatIso(marker: DateMarker, extraOptions: any = {}) {
-    return buildIsoString(
-      marker,
-      extraOptions.forcedTimeZoneOffset != null ?
-        extraOptions.forcedTimeZoneOffset :
-        this.offsetForMarker(marker),
-      extraOptions.omitTime
-    )
+    let timeZoneOffset = null
+
+    if (!extraOptions.omitTimeZoneOffset) {
+      if (extraOptions.forcedTimeZoneOffset != null) {
+        timeZoneOffset = extraOptions.forcedTimeZoneOffset
+      } else {
+        timeZoneOffset = this.offsetForMarker(marker)
+      }
+    }
+
+    return buildIsoString(marker, timeZoneOffset, extraOptions.omitTime)
   }
 
 

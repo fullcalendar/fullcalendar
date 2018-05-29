@@ -28,7 +28,7 @@ export interface Duration {
 }
 
 const INTERNAL_UNITS = [ 'year', 'month', 'day', 'time' ]
-const PARSE_RE = /^(?:(\d+)\.)?(\d+):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
+const PARSE_RE = /^(-?)(?:(\d+)\.)?(\d+):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
 
 
 // Parsing and Creation
@@ -48,15 +48,17 @@ export function createDuration(input, unit?: string) {
 function parseString(s: string): Duration {
   let m = PARSE_RE.exec(s)
   if (m) {
+    let sign = m[1] ? -1 : 1
     return {
       year: 0,
       month: 0,
-      day: m[1] ? parseInt(m[1], 10) : 0,
-      time:
-        (m[2] ? parseInt(m[2], 10) : 0) * 60 * 60 * 1000 + // hours
-        (m[3] ? parseInt(m[3], 10) : 0) * 60 * 1000 + // minutes
-        (m[4] ? parseInt(m[4], 10) : 0) * 1000 + // seconds
-        (m[5] ? parseInt(m[5], 10) : 0) // ms
+      day: sign * (m[2] ? parseInt(m[2], 10) : 0),
+      time: sign * (
+        (m[3] ? parseInt(m[3], 10) : 0) * 60 * 60 * 1000 + // hours
+        (m[4] ? parseInt(m[4], 10) : 0) * 60 * 1000 + // minutes
+        (m[5] ? parseInt(m[5], 10) : 0) * 1000 + // seconds
+        (m[6] ? parseInt(m[6], 10) : 0) // ms
+      )
     }
   }
   return null
@@ -177,6 +179,10 @@ export function wholeDivideDurations(numerator: Duration, denominator: Duration)
       }
 
       res = localRes
+    }
+    else if (numerator[unit]) {
+      // needs to divide by something but can't!
+      return null
     }
   }
 

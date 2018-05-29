@@ -126,7 +126,7 @@ const timezoneScenarios = {
   local: {
     description: 'when local timezone',
     value: 'local',
-    date: function(str) {
+    createDate: function(str) {
       if (str.length <= 10) { // doesn't have a time part?
         str += 'T00:00:00' // will force it to parse as local
       }
@@ -136,7 +136,7 @@ const timezoneScenarios = {
   UTC: {
     description: 'when UTC timezone',
     value: 'UTC',
-    date: function(str) {
+    createDate: function(str) {
       if (str.length > 10) { // has a time part?
         str += 'Z' // will force it to parse as UTC
       }

@@ -3,6 +3,7 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { doElsMatchSegs } from '../lib/segs'
 import { getTimeGridTop, getTimeGridDayEls } from '../lib/time-grid'
+import { ensureDate } from '../datelib/utils'
 
 
 describe('businessHours', function() {
@@ -25,24 +26,24 @@ describe('businessHours', function() {
     // timed area
     expect(isTimeGridNonBusinessSegsRendered([
       // sun
-      { start: '2014-12-07T00:00Z', end: '2014-12-08T00:00Z' },
+      { start: '2014-12-07T00:00', end: '2014-12-08T00:00' },
       // mon
-      { start: '2014-12-08T00:00Z', end: '2014-12-08T09:00Z' },
-      { start: '2014-12-08T17:00Z', end: '2014-12-09T00:00Z' },
+      { start: '2014-12-08T00:00', end: '2014-12-08T09:00' },
+      { start: '2014-12-08T17:00', end: '2014-12-09T00:00' },
       // tue
-      { start: '2014-12-09T00:00Z', end: '2014-12-09T09:00Z' },
-      { start: '2014-12-09T17:00Z', end: '2014-12-10T00:00Z' },
+      { start: '2014-12-09T00:00', end: '2014-12-09T09:00' },
+      { start: '2014-12-09T17:00', end: '2014-12-10T00:00' },
       // wed
-      { start: '2014-12-10T00:00Z', end: '2014-12-10T09:00Z' },
-      { start: '2014-12-10T17:00Z', end: '2014-12-11T00:00Z' },
+      { start: '2014-12-10T00:00', end: '2014-12-10T09:00' },
+      { start: '2014-12-10T17:00', end: '2014-12-11T00:00' },
       // thu
-      { start: '2014-12-11T00:00Z', end: '2014-12-11T09:00Z' },
-      { start: '2014-12-11T17:00Z', end: '2014-12-12T00:00Z' },
+      { start: '2014-12-11T00:00', end: '2014-12-11T09:00' },
+      { start: '2014-12-11T17:00', end: '2014-12-12T00:00' },
       // fri
-      { start: '2014-12-12T00:00Z', end: '2014-12-12T09:00Z' },
-      { start: '2014-12-12T17:00Z', end: '2014-12-13T00:00Z' },
+      { start: '2014-12-12T00:00', end: '2014-12-12T09:00' },
+      { start: '2014-12-12T17:00', end: '2014-12-13T00:00' },
       // sat
-      { start: '2014-12-13T00:00Z', end: '2014-12-14T00:00Z' }
+      { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
     ])).toBe(true)
   })
 
@@ -106,24 +107,24 @@ describe('businessHours', function() {
       // timed area
       expect(isTimeGridNonBusinessSegsRendered([
         // sun
-        { start: '2014-12-07T00:00Z', end: '2014-12-08T00:00Z' },
+        { start: '2014-12-07T00:00', end: '2014-12-08T00:00' },
         // mon
-        { start: '2014-12-08T00:00Z', end: '2014-12-08T08:00Z' },
-        { start: '2014-12-08T18:00Z', end: '2014-12-09T00:00Z' },
+        { start: '2014-12-08T00:00', end: '2014-12-08T08:00' },
+        { start: '2014-12-08T18:00', end: '2014-12-09T00:00' },
         // tue
-        { start: '2014-12-09T00:00Z', end: '2014-12-09T08:00Z' },
-        { start: '2014-12-09T18:00Z', end: '2014-12-10T00:00Z' },
+        { start: '2014-12-09T00:00', end: '2014-12-09T08:00' },
+        { start: '2014-12-09T18:00', end: '2014-12-10T00:00' },
         // wed
-        { start: '2014-12-10T00:00Z', end: '2014-12-10T08:00Z' },
-        { start: '2014-12-10T18:00Z', end: '2014-12-11T00:00Z' },
+        { start: '2014-12-10T00:00', end: '2014-12-10T08:00' },
+        { start: '2014-12-10T18:00', end: '2014-12-11T00:00' },
         // thu
-        { start: '2014-12-11T00:00Z', end: '2014-12-11T10:00Z' },
-        { start: '2014-12-11T16:00Z', end: '2014-12-12T00:00Z' },
+        { start: '2014-12-11T00:00', end: '2014-12-11T10:00' },
+        { start: '2014-12-11T16:00', end: '2014-12-12T00:00' },
         // fri
-        { start: '2014-12-12T00:00Z', end: '2014-12-12T10:00Z' },
-        { start: '2014-12-12T16:00Z', end: '2014-12-13T00:00Z' },
+        { start: '2014-12-12T00:00', end: '2014-12-12T10:00' },
+        { start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
         // sat
-        { start: '2014-12-13T00:00Z', end: '2014-12-14T00:00Z' }
+        { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
       ])).toBe(true)
     })
 
@@ -148,21 +149,21 @@ describe('businessHours', function() {
       // timed area
       expect(isTimeGridNonBusinessSegsRendered([
         // sun
-        { start: '2014-12-07T00:00Z', end: '2014-12-08T00:00Z' },
+        { start: '2014-12-07T00:00', end: '2014-12-08T00:00' },
         // mon
-        { start: '2014-12-08T00:00Z', end: '2014-12-09T00:00Z' },
+        { start: '2014-12-08T00:00', end: '2014-12-09T00:00' },
         // tue
-        { start: '2014-12-09T00:00Z', end: '2014-12-10T00:00Z' },
+        { start: '2014-12-09T00:00', end: '2014-12-10T00:00' },
         // wed
-        { start: '2014-12-10T00:00Z', end: '2014-12-11T00:00Z' },
+        { start: '2014-12-10T00:00', end: '2014-12-11T00:00' },
         // thu
-        { start: '2014-12-11T00:00Z', end: '2014-12-11T10:00Z' },
-        { start: '2014-12-11T16:00Z', end: '2014-12-12T00:00Z' },
+        { start: '2014-12-11T00:00', end: '2014-12-11T10:00' },
+        { start: '2014-12-11T16:00', end: '2014-12-12T00:00' },
         // fri
-        { start: '2014-12-12T00:00Z', end: '2014-12-12T10:00Z' },
-        { start: '2014-12-12T16:00Z', end: '2014-12-13T00:00Z' },
+        { start: '2014-12-12T00:00', end: '2014-12-12T10:00' },
+        { start: '2014-12-12T16:00', end: '2014-12-13T00:00' },
         // sat
-        { start: '2014-12-13T00:00Z', end: '2014-12-14T00:00Z' }
+        { start: '2014-12-13T00:00', end: '2014-12-14T00:00' }
       ])).toBe(true)
     })
   })
@@ -177,7 +178,7 @@ describe('businessHours', function() {
 
     // timed area
     expect(isTimeGridNonBusinessSegsRendered([
-      { start: '2016-07-23T00:00Z', end: '2016-07-24T00:00Z' }
+      { start: '2016-07-23T00:00', end: '2016-07-24T00:00' }
     ])).toBe(true)
   })
 
@@ -201,12 +202,8 @@ describe('businessHours', function() {
       end = obj.end
     }
 
-    if (typeof start === 'string') {
-      start = new Date(start)
-    }
-    if (typeof end === 'string') {
-      end = new Date(end)
-    }
+    start = ensureDate(start)
+    end = ensureDate(end)
 
     var startDay = FullCalendar.startOfDay(start)
     var endDay = FullCalendar.startOfDay(end)

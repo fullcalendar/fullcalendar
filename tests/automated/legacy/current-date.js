@@ -282,7 +282,7 @@ describe('current date', function() {
         true // isEndExclusive
       )
     } else {
-      title = titleStart.format(TITLE_FORMAT)
+      title = currentCalendar.formatDate(titleStart, TITLE_FORMAT)
     }
 
     expect($('.fc-toolbar h2')).toContainText(title)

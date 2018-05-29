@@ -1,7 +1,7 @@
 import View from './View'
 import UnzonedRange from './models/UnzonedRange'
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
-import { Duration, createDuration, getWeeksFromInput, asRoughDays, greatestDurationDenominator } from './datelib/duration'
+import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
 
 
 export interface DateProfile {
@@ -246,7 +246,7 @@ export default class DateProfileGenerator {
         dateIncrementDuration = createDuration(dateIncrementInput)
 
         // use the smaller of the two units
-        if (dateIncrementDuration < duration) {
+        if (asRoughMs(dateIncrementDuration) < asRoughMs(duration)) {
           alignment = greatestDurationDenominator(
             dateIncrementDuration,
             !getWeeksFromInput(dateIncrementInput)

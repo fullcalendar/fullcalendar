@@ -1,4 +1,5 @@
 import { assignTo } from '../../util/object'
+import Calendar from '../../Calendar'
 import {
   default as ParsableModelMixin,
   ParsableModelInterface

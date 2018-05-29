@@ -3,7 +3,7 @@ describe('weekViewRender', function() {
   var nowStr = '2018-05-28'
 
   pushOptions({
-    defaultDate: nowStr,
+    now: nowStr,
     defaultView: 'agendaWeek'
   })
 

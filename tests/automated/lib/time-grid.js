@@ -1,5 +1,5 @@
 import { getBoundingRect } from '../lib/dom-geom'
-import { formatIsoDay, formatIsoTime } from '../datelib/utils'
+import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib/utils'
 
 
 export function dragTimeGridEvent(eventEl, dropDate) {
@@ -45,10 +45,7 @@ export function selectTimeGrid(start, inclusiveEnd) {
 
 
 export function getTimeGridPoint(date) {
-
-  if (typeof date === 'string') {
-    date = new Date(date)
-  }
+  date = ensureDate(date)
 
   var day = FullCalendar.startOfDay(date)
   var timeMs = date.valueOf() - day.valueOf()
@@ -67,10 +64,7 @@ export function getTimeGridPoint(date) {
 
 
 export function getTimeGridLine(date) { // not in Scheduler
-
-  if (typeof date === 'string') {
-    date = new Date(date)
-  }
+  date = ensureDate(date)
 
   var day = FullCalendar.startOfDay(date)
   var timeMs = date.valueOf() - day.valueOf()
@@ -140,11 +134,7 @@ export function getTimeGridTop(targetTimeMs) {
 
 
 export function getTimeGridDayEls(date) {
-
-  if (typeof date === 'string') {
-    date = new Date(date)
-  }
-
+  date = ensureDate(date)
   return $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(date) + '"]')
 }
 
