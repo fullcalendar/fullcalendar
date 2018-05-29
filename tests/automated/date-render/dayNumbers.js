@@ -1,4 +1,4 @@
-import { getDayTdEls } from "../lib/MonthViewUtils";
+import { getDayTdEls } from "../view-render/DayGridRenderUtils";
 
 describe('dayNumbers', function() {
   pushOptions({

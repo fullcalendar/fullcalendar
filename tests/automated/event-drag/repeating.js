@@ -1,5 +1,5 @@
-import * as TimeGridEventDragUtils from './TimeGridEventDragUtils'
-import { getVisibleEventEls, getEventEls } from '../lib/MonthViewUtils';
+import * as TimeGridEventDragUtils from './TimeGridEventDragUtils';
+import {getEventEls, getVisibleEventEls} from "../event-render/EventRenderUtils";
 
 describe('event dragging on repeating events', function() {
   pushOptions({

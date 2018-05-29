@@ -1,8 +1,12 @@
-
 // this function has been mangled to work with external jqui draggables as well
 import {getEventElTimeEl, getTimeGridDayEls, getTimeGridSlotElByIndex} from "./time-grid";
-import {getEventElResizerEl, getEventElTitleEl, getFirstEventEl, getLastEventEl} from "./MonthViewUtils";
 import {getSingleDayEl} from "../view-render/DayGridRenderUtils";
+import {
+  getEventElResizerEl, 
+  getEventElTitleEl, 
+  getFirstEventEl, 
+  getLastEventEl
+} from "../event-render/EventRenderUtils";
 
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {

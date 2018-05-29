@@ -1,4 +1,4 @@
-import {getEventEls} from "../lib/MonthViewUtils";
+import {getEventEls} from "./EventRenderUtils";
 
 describe('eventOrder', function() {
   pushOptions({

@@ -12,3 +12,11 @@ export function getDisabledEl(i) {
   expect(el).toHaveLength(1)
   return el
 }
+
+export function getDayEls() {
+  return $('.fc-day-header[data-date]')
+}
+
+export function getDayTdEls(date) {
+  return $(`td[data-date="${date}"]`)
+}
