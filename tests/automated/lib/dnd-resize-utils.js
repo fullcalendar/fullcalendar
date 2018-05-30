@@ -29,12 +29,14 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
 
     dropDate = calendar.moment(dropDate)
     eventEl = getFirstEventEl(eventClassName)
+    expect(eventEl.length).toBe(1)
 
     if (dropDate.hasTime()) {
       dragEl = getEventElTimeEl(eventEl)
       dayEl = getTimeGridDayEls(dropDate)
       slatIndex = dropDate.hours() * 2 + (dropDate.minutes() / 30) // assumes slotDuration:'30:00'
       slatEl = getTimeGridSlotElByIndex(slatIndex)
+      expect(slatEl.length).toBe(1)
       dy = slatEl.offset().top - eventEl.offset().top
     } else {
       dragEl = getEventElTitleEl(eventEl)
@@ -48,6 +50,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
     }
 
     expect(dragEl.length).toBe(1)
+    expect(dayEl.length).toBe(1)
     dx = dayEl.offset().left - eventEl.offset().left
 
     dragEl.simulate('drag', {
@@ -115,7 +118,8 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       lastDayEl = getTimeGridDayEls(resizeDate.clone())
       lastSlatIndex = resizeDate.hours() * 2 + (resizeDate.minutes() / 30) // assumes slotDuration:'30:00'
       lastSlatEl = getTimeGridSlotElByIndex(lastSlatIndex - 1)
-      dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())
+      expect(lastSlatEl.length).toBe(1)
+      dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())      
     } else {
       lastDayEl = getSingleDayEl(resizeDate.clone().add(-1, 'day'))
       dy = lastDayEl.offset().top - eventEl.offset().top
