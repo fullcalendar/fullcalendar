@@ -145,9 +145,7 @@ export function getTimeGridSlotEls() {
 
 
 export function getTimeGridSlotElByIndex(index) {
-  const slot = $(`.fc-slats tr:eq(${index})`)
-  expect(slot).toHaveLength(1)
-  return slot
+  return $(`.fc-slats tr:eq(${index})`)
 }
 
 export function getTimeGridDurationSlotEls(timeDuration) {

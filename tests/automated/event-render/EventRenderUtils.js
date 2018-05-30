@@ -35,17 +35,12 @@ export function getEventEls(eventClassName = EVENT_CLASS) {
   return $(`.${eventClassName}`)
 }
 
-export function getSingleEventEl(eventEl) {
-  expect(eventEl.length).toBe(1)
-  return eventEl
-}
-
 export function getFirstEventEl(eventClassName) {
-  return getSingleEventEl(getEventEls(eventClassName).first())
+  return getEventEls(eventClassName).first()
 }
 
 export function getLastEventEl(eventClassName) {
-  return getSingleEventEl(getEventEls(eventClassName).last())
+  return getEventEls(eventClassName).last()
 }
 
 export function getEventElTitleEl(eventEl) {

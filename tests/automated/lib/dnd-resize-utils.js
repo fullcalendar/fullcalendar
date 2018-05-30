@@ -122,6 +122,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
     }
 
     expect(lastDayEl.length).toBe(1)
+    expect(eventEl.length).toBe(1)
     expect(dragEl.length).toBe(1)
     dx = lastDayEl.offset().left + lastDayEl.outerWidth() - 2 - (eventEl.offset().left + eventEl.outerWidth())
 
@@ -190,6 +191,8 @@ export function testSelection(options, startTime, end, expectSuccess, callback) 
     lastSlatIndex = end.hours() * 2 + (end.minutes() / 30) - 1 // assumes slotDuration:'30:00'
     firstSlatEl = getTimeGridSlotElByIndex(firstSlatIndex)
     lastSlatEl = getTimeGridSlotElByIndex(lastSlatIndex)
+    expect(firstSlatEl.length).toBe(1)
+    expect(lastSlatEl.length).toBe(1)
     dy = lastSlatEl.offset().top - firstSlatEl.offset().top
     dragEl = firstSlatEl
   } else {
@@ -200,6 +203,8 @@ export function testSelection(options, startTime, end, expectSuccess, callback) 
     dragEl = firstDayEl
   }
 
+  expect(firstDayEl.length).toBe(1)
+  expect(lastDayEl.length).toBe(1)
   dx = lastDayEl.offset().left - firstDayEl.offset().left
 
   dragEl.simulate('drag', {
