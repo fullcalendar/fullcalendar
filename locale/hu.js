@@ -32,5 +32,5 @@ FullCalendar.locale("hu", {
   },
   allDayText: "Egész nap",
   eventLimitText: "további",
-  noEventsMessage: "Nincs megjeleníthető események"
+  noEventsMessage: "Nincs megjeleníthető esemény"
 });
