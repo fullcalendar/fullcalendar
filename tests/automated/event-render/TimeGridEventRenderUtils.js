@@ -1,6 +1,6 @@
-import {getDayEls} from '../view-render/DayGridRenderUtils'
-import {getTimeGridSlotEls} from '../lib/time-grid'
-import {getEventEls, getEventElTimeText} from './EventRenderUtils'
+import { getDayEls } from '../view-render/DayGridRenderUtils'
+import { getSlotEls } from '../lib/time-grid'
+import { getEventEls, getEventElTimeText } from './EventRenderUtils'
 
 export function getTimeTexts() {
   return getEventEls().map(function(i, eventEl) {
@@ -146,7 +146,7 @@ function computeDays() {
 
 
 function computeSlots() {
-  var slotEls = getTimeGridSlotEls()
+  var slotEls = getSlotEls()
 
   var slots = slotEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()

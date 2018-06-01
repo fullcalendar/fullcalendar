@@ -1,6 +1,6 @@
 // this function has been mangled to work with external jqui draggables as well
-import {getEventElTimeEl, getTimeGridDayEls, getTimeGridSlotElByIndex} from './time-grid'
-import {getSingleDayEl} from '../view-render/DayGridRenderUtils'
+import { getEventElTimeEl, getTimeGridDayEls, getSlotElByIndex } from './time-grid'
+import { getDayEl } from '../view-render/DayGridRenderUtils'
 import {
   getEventElResizerEl,
   getEventElTitleEl,
@@ -35,12 +35,12 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dragEl = getEventElTimeEl(eventEl)
       dayEl = getTimeGridDayEls(dropDate)
       slatIndex = dropDate.hours() * 2 + (dropDate.minutes() / 30) // assumes slotDuration:'30:00'
-      slatEl = getTimeGridSlotElByIndex(slatIndex)
+      slatEl = getSlotElByIndex(slatIndex)
       expect(slatEl.length).toBe(1)
       dy = slatEl.offset().top - eventEl.offset().top
     } else {
       dragEl = getEventElTitleEl(eventEl)
-      dayEl = getSingleDayEl(dropDate.clone())
+      dayEl = getDayEl(dropDate.clone())
       dy = dayEl.offset().top - eventEl.offset().top
     }
 
@@ -117,11 +117,11 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
     if (resizeDate.hasTime()) {
       lastDayEl = getTimeGridDayEls(resizeDate.clone())
       lastSlatIndex = resizeDate.hours() * 2 + (resizeDate.minutes() / 30) // assumes slotDuration:'30:00'
-      lastSlatEl = getTimeGridSlotElByIndex(lastSlatIndex - 1)
+      lastSlatEl = getSlotElByIndex(lastSlatIndex - 1)
       expect(lastSlatEl.length).toBe(1)
-      dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())      
+      dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())
     } else {
-      lastDayEl = getSingleDayEl(resizeDate.clone().add(-1, 'day'))
+      lastDayEl = getDayEl(resizeDate.clone().add(-1, 'day'))
       dy = lastDayEl.offset().top - eventEl.offset().top
     }
 
@@ -193,16 +193,16 @@ export function testSelection(options, startTime, end, expectSuccess, callback) 
     lastDayEl = getTimeGridDayEls(end)
     firstSlatIndex = start.hours() * 2 + (start.minutes() / 30) // assumes slotDuration:'30:00'
     lastSlatIndex = end.hours() * 2 + (end.minutes() / 30) - 1 // assumes slotDuration:'30:00'
-    firstSlatEl = getTimeGridSlotElByIndex(firstSlatIndex)
-    lastSlatEl = getTimeGridSlotElByIndex(lastSlatIndex)
+    firstSlatEl = getSlotElByIndex(firstSlatIndex)
+    lastSlatEl = getSlotElByIndex(lastSlatIndex)
     expect(firstSlatEl.length).toBe(1)
     expect(lastSlatEl.length).toBe(1)
     dy = lastSlatEl.offset().top - firstSlatEl.offset().top
     dragEl = firstSlatEl
   } else {
     end.stripTime()
-    firstDayEl = getSingleDayEl(start)
-    lastDayEl = getSingleDayEl(end.clone().add(-1, 'day'))
+    firstDayEl = getDayEl(start)
+    lastDayEl = getDayEl(end.clone().add(-1, 'day'))
     dy = lastDayEl.offset().top - firstDayEl.offset().top
     dragEl = firstDayEl
   }
