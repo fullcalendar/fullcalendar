@@ -30,6 +30,7 @@ import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
+import { CalendarState, INITIAL_STATE, reduce } from './reducers/main'
 
 export default class Calendar {
 
@@ -78,6 +79,10 @@ export default class Calendar {
   footer: Toolbar
   toolbarsManager: Iterator
 
+  state: CalendarState = INITIAL_STATE
+  isReducing: boolean = false
+  actionQueue = []
+
 
   constructor(el: HTMLElement, overrides: OptionsInput) {
 
@@ -96,6 +101,7 @@ export default class Calendar {
     this.constraints = new Constraints(this.eventManager, this)
 
     this.constructed()
+    this.hydrate()
   }
 
 
@@ -123,6 +129,56 @@ export default class Calendar {
   hasPublicHandlers(name: string): boolean {
     return this.hasHandlers(name) ||
       this.opt(name) // handler specified in options
+  }
+
+
+  // Dispatcher
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  dispatch(action) {
+    this.actionQueue.push(action)
+
+    if (!this.isReducing) {
+      this.isReducing = true
+      let oldState = this.state
+
+      while (this.actionQueue.length) {
+        this.state = this.reduce(
+          this.state,
+          this.actionQueue.shift(),
+          this
+        )
+      }
+
+      let newState = this.state
+      this.isReducing = false
+
+      if (!oldState.loadingLevel && newState.loadingLevel) {
+        console.log('start loading...')
+      } else if (oldState.loadingLevel && !newState.loadingLevel) {
+        console.log('...stopped loading')
+      }
+    }
+  }
+
+
+  reduce(state: CalendarState, action: object, calendar: Calendar): CalendarState {
+    return reduce(state, action, calendar)
+  }
+
+
+  hydrate() {
+    let rawSources = this.opt('eventSources') || []
+    let singleRawSource = this.opt('events')
+
+    if (singleRawSource) {
+      rawSources.unshift(singleRawSource)
+    }
+
+    rawSources.forEach((rawSource) => {
+      this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource })
+    })
   }
 
 
@@ -482,8 +538,14 @@ export default class Calendar {
 
     view.watch('dateProfileForCalendar', [ 'dateProfile' ], (deps) => {
       if (view === this.view) { // hack
-        this.currentDate = deps.dateProfile.date // might have been constrained by view dates
-        this.updateToolbarButtons(deps.dateProfile)
+        let dateProfile = deps.dateProfile
+        this.currentDate = dateProfile.date // might have been constrained by view dates
+        this.updateToolbarButtons(dateProfile)
+
+        this.dispatch({
+          type: 'SET_ACTIVE_RANGE',
+          range: dateProfile.activeUnzonedRange
+        })
       }
     })
   }
