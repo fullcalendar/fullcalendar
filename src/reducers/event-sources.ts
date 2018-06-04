@@ -79,7 +79,7 @@ const SIMPLE_SOURCE_PROPS = {
   textColor: String
 }
 
-let sourceTypes: { [sourceTypeName: string]: EventSourceTypeSettings} = {}
+let sourceTypes: { [sourceTypeName: string]: EventSourceTypeSettings } = {}
 let guid = 0
 
 // reducers

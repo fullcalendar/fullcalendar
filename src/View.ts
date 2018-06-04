@@ -12,6 +12,8 @@ import EventInstance from './models/event/EventInstance'
 import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
+import { EventStore } from './reducers/event-store'
+import { EventRenderSegment, sliceEventSegments } from './reducers/event-rendering'
 
 
 /* An abstract class from which other views inherit from
@@ -382,6 +384,13 @@ export default abstract class View extends InteractiveDateComponent {
       this.triggerBeforeEventsDestroyed()
       this.executeEventUnrender()
     }, 'event', 'destroy')
+  }
+
+
+  renderEventStore(eventStore: EventStore) {
+    let dateProfile = this.get('dateProfile')
+    let segs = sliceEventSegments(eventStore.instances, eventStore, dateProfile.activeUnzonedRange)
+    this.renderEventSegs(segs)
   }
 
 

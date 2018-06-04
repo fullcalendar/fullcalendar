@@ -7,6 +7,7 @@ import EventFootprint from '../models/event/EventFootprint'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration, asRoughMs } from '../datelib/duration'
+import { EventRenderSegment } from '../reducers/event-rendering'
 
 
 export default abstract class DateComponent extends Component {

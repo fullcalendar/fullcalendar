@@ -7,10 +7,10 @@ import { registerSourceType } from './event-sources'
 interface JsonFeedMeta {
   url: string
   method: string
-  extraData: any
-  startParam: string | null
-  endParam: string | null
-  timezoneParam: string | null
+  extraData?: any
+  startParam?: string
+  endParam?: string
+  timezoneParam?: string
 }
 
 registerSourceType('json-feed', {
@@ -26,9 +26,9 @@ registerSourceType('json-feed', {
       url: raw.url,
       method: (raw.method || 'GET').toUpperCase(),
       extraData: raw.data,
-      startParam: raw.startParam || null,
-      endParam: raw.endParam || null,
-      timezoneParam: raw.timezoneParam || null
+      startParam: raw.startParam,
+      endParam: raw.endParam,
+      timezoneParam: raw.timezoneParam
     }
   },
 

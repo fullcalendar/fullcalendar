@@ -154,6 +154,10 @@ export default class Calendar {
       let newState = this.state
       this.isReducing = false
 
+      if (oldState.eventStore !== newState.eventStore) {
+        this.view.renderEventStore(newState.eventStore)
+      }
+
       if (!oldState.loadingLevel && newState.loadingLevel) {
         console.log('start loading...')
       } else if (oldState.loadingLevel && !newState.loadingLevel) {

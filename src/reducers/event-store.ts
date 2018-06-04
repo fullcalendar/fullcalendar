@@ -59,9 +59,12 @@ export interface EventInstance {
   forcedEndTzo: number | null
 }
 
+export type EventInstanceHash = { [instanceId: string]: EventInstance }
+export type EventDefHash = { [defId: string]: EventDef }
+
 export interface EventStore {
-  defs: { [defId: string]: EventDef }
-  instances: { [instanceId: string]: EventInstance }
+  defs: EventDefHash
+  instances: EventInstanceHash
 }
 
 interface EventDateInfo {

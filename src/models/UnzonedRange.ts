@@ -62,7 +62,7 @@ export default class UnzonedRange {
   }
 
 
-  intersect(otherRange: UnzonedRange) {
+  intersect(otherRange: UnzonedRange): UnzonedRange {
     let start = this.start
     let end = this.end
     let newRange = null
