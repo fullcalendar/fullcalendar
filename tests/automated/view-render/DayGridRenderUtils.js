@@ -20,18 +20,18 @@ export function getDayTdEls(date) {
   return $(`td[data-date="${date}"]`)
 }
 
-export function getHeaderEl(){
+export function getHeaderEl() {
   return $('.fc-view > table > .fc-head')
 }
 
 export function hasHeaderEl() {
-    return getHeaderEl().length === 1
+  return getHeaderEl().length === 1
 }
 
-export function getFirstDayEl(){
+export function getFirstDayEl() {
   return getDayEls().first()
 }
 
-export function getLastDayEl(){
+export function getLastDayEl() {
   return getDayEls().last()
 }
