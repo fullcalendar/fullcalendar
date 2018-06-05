@@ -1,17 +1,17 @@
 import UnzonedRange from '../models/UnzonedRange'
 import { EventInstanceHash, EventStore, EventDef, EventInstance } from './event-store'
 
-export interface EventRenderSegment {
+export interface EventRenderRange {
   eventDef: EventDef
   eventInstance: EventInstance
   range: UnzonedRange
 }
 
-export function sliceEventSegments(instances: EventInstanceHash, store: EventStore, sliceRange: UnzonedRange): EventRenderSegment[] {
+export function sliceEventRanges(instances: EventInstanceHash, store: EventStore, sliceRange: UnzonedRange): EventRenderRange[] {
   let groupedInverseBg = {}
   let ungroupedInverseBg: EventInstance[] = []
   let normal: EventInstance[] = []
-  let segs: EventRenderSegment[] = []
+  let segs: EventRenderRange[] = []
 
   for (let instanceId in instances) {
     let instance = instances[instanceId]
@@ -75,8 +75,8 @@ function getInstanceRange(eventInstance: EventInstance) {
   return eventInstance.range
 }
 
-export function furtherSliceEventSegments(segs: EventRenderSegment[], sliceRange: UnzonedRange): EventRenderSegment[] {
-  let newSegs: EventRenderSegment[] = []
+export function furtherSliceEventSegments(segs: EventRenderRange[], sliceRange: UnzonedRange): EventRenderRange[] {
+  let newSegs: EventRenderRange[] = []
 
   for (let seg of segs) {
     let newRange = seg.range.intersect(sliceRange)

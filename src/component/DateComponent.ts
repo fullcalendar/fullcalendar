@@ -7,7 +7,7 @@ import EventFootprint from '../models/event/EventFootprint'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration, asRoughMs } from '../datelib/duration'
-import { EventRenderSegment } from '../reducers/event-rendering'
+import { EventRenderRange } from '../reducers/event-rendering'
 
 
 export default abstract class DateComponent extends Component {
@@ -206,20 +206,22 @@ export default abstract class DateComponent extends Component {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  executeEventRender(eventsPayload) {
+  renderEventRanges(eventRanges: EventRenderRange[]) {
+
     if (this.eventRenderer) {
       this.eventRenderer.rangeUpdated() // poorly named now
-      this.eventRenderer.render(eventsPayload)
+      this.eventRenderer.renderRanges(eventRanges)
     } else if (this['renderEvents']) { // legacy
-      this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload, this._getCalendar()))
+      // TODO
+      // this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload, this._getCalendar()))
     }
 
-    this.callChildren('executeEventRender', arguments)
+    this.callChildren('renderEventRanges', arguments)
   }
 
 
-  executeEventUnrender() {
-    this.callChildren('executeEventUnrender', arguments)
+  unrenderEvents() {
+    this.callChildren('unrenderEvents', arguments)
 
     if (this.eventRenderer) {
       this.eventRenderer.unrender()

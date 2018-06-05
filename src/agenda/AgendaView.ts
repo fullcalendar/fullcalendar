@@ -13,6 +13,8 @@ import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
+import { EventStore } from '../reducers/event-store'
+import { sliceEventRanges } from '../reducers/event-rendering'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -304,27 +306,30 @@ export default class AgendaView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  executeEventRender(eventsPayload) {
-    let dayEventsPayload = {}
-    let timedEventsPayload = {}
-    let id
-    let eventInstanceGroup
+  renderEventStore(eventStore: EventStore) {
+    let activeUnzonedRange = this.get('dateProfile').activeUnzonedRange
+    let { instances, defs } = eventStore
+    let allDayInstances = {}
+    let timedInstances = {}
 
-    // separate the events into all-day and timed
-    for (id in eventsPayload) {
-      eventInstanceGroup = eventsPayload[id]
+    for (let instanceId in instances) {
+      let instance = instances[instanceId]
 
-      if (eventInstanceGroup.getEventDef().isAllDay()) {
-        dayEventsPayload[id] = eventInstanceGroup
+      if (defs[instance.defId].isAllDay) {
+        allDayInstances[instanceId] = instance
       } else {
-        timedEventsPayload[id] = eventInstanceGroup
+        timedInstances[instanceId] = instance
       }
     }
 
-    this.timeGrid.executeEventRender(timedEventsPayload)
+    this.timeGrid.renderEventRanges(
+      sliceEventRanges(timedInstances, eventStore, activeUnzonedRange)
+    )
 
     if (this.dayGrid) {
-      this.dayGrid.executeEventRender(dayEventsPayload)
+      this.dayGrid.renderEventRanges(
+        sliceEventRanges(allDayInstances, eventStore, activeUnzonedRange)
+      )
     }
   }
 

@@ -13,7 +13,7 @@ import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
 import { EventStore } from './reducers/event-store'
-import { EventRenderSegment, sliceEventSegments } from './reducers/event-rendering'
+import { sliceEventRanges } from './reducers/event-rendering'
 
 
 /* An abstract class from which other views inherit from
@@ -369,9 +369,9 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  requestEventsRender(eventsPayload) {
+  requestEventStoreRender(eventStore) {
     this.requestRender(() => {
-      this.executeEventRender(eventsPayload)
+      this.renderEventStore(eventStore)
       this.whenSizeUpdated(
         this.triggerAfterEventsRendered
       )
@@ -382,15 +382,15 @@ export default abstract class View extends InteractiveDateComponent {
   requestEventsUnrender() {
     this.requestRender(() => {
       this.triggerBeforeEventsDestroyed()
-      this.executeEventUnrender()
+      this.unrenderEvents()
     }, 'event', 'destroy')
   }
 
 
   renderEventStore(eventStore: EventStore) {
-    let dateProfile = this.get('dateProfile')
-    let segs = sliceEventSegments(eventStore.instances, eventStore, dateProfile.activeUnzonedRange)
-    this.renderEventSegs(segs)
+    let activeUnzonedRange = this.get('dateProfile').activeUnzonedRange
+    let eventRanges = sliceEventRanges(eventStore.instances, eventStore, activeUnzonedRange)
+    this.renderEventRanges(eventRanges)
   }
 
 
@@ -1044,24 +1044,10 @@ View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerato
 })
 
 
-View.watch('initialEvents', [ 'dateProfile' ], function(deps, callback) {
-  this.fetchInitialEvents(deps.dateProfile, callback)
-}, null, true) // async=true
-
-
-View.watch('bindingEvents', [ 'initialEvents' ], function(deps) {
-  this.setEvents(deps.initialEvents)
-  this.bindEventChanges()
+View.watch('displayingEvents', [ 'displayingDates', 'eventStore' ], function(deps) {
+  this.requestEventStoreRender(deps.eventStore)
 }, function() {
-  this.unbindEventChanges()
-  this.unsetEvents()
-})
-
-
-View.watch('displayingEvents', [ 'displayingDates', 'hasEvents' ], function() {
-  this.requestEventsRender(this.get('currentEvents'))
-}, function() {
-  this.requestEventsUnrender()
+  this.requestEventStoreUnrender()
 })
 
 

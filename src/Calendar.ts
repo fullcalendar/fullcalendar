@@ -61,7 +61,6 @@ export default class Calendar {
   optionsManager: OptionsManager
   viewSpecManager: ViewSpecManager
   businessHourGenerator: BusinessHourGenerator
-  loadingLevel: number = 0 // number of simultaneous loading tasks
 
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
@@ -155,13 +154,13 @@ export default class Calendar {
       this.isReducing = false
 
       if (oldState.eventStore !== newState.eventStore) {
-        this.view.renderEventStore(newState.eventStore)
+        this.view.set('eventStore', newState.eventStore)
       }
 
       if (!oldState.loadingLevel && newState.loadingLevel) {
-        console.log('start loading...')
+        this.publiclyTrigger('loading', [ true, this.view ])
       } else if (oldState.loadingLevel && !newState.loadingLevel) {
-        console.log('...stopped loading')
+        this.publiclyTrigger('loading', [ false, this.view ])
       }
     }
   }
@@ -368,26 +367,6 @@ export default class Calendar {
   }
 
 
-  // Loading Triggering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  // Should be called when any type of async data fetching begins
-  pushLoading() {
-    if (!(this.loadingLevel++)) {
-      this.publiclyTrigger('loading', [ true, this.view ])
-    }
-  }
-
-
-  // Should be called when any type of async data fetching completes
-  popLoading() {
-    if (!(--this.loadingLevel)) {
-      this.publiclyTrigger('loading', [ false, this.view ])
-    }
-  }
-
-
   // High-level Rendering
   // -----------------------------------------------------------------------------------
 
@@ -546,6 +525,7 @@ export default class Calendar {
         this.currentDate = dateProfile.date // might have been constrained by view dates
         this.updateToolbarButtons(dateProfile)
 
+        view.unset('eventStore')
         this.dispatch({
           type: 'SET_ACTIVE_RANGE',
           range: dateProfile.activeUnzonedRange
