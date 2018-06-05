@@ -13,9 +13,25 @@ export function getDisabledEl(i) {
 }
 
 export function getDayEls() {
-  return $('.fc-day-header[data-date]')
+  return $('.fc-day-header')
 }
 
 export function getDayTdEls(date) {
   return $(`td[data-date="${date}"]`)
+}
+
+export function getHeaderEl(){
+  return $('.fc-view > table > .fc-head')
+}
+
+export function hasHeaderEl() {
+    return getHeaderEl().length === 1
+}
+
+export function getFirstDayEl(){
+  return getDayEls().first()
+}
+
+export function getLastDayEl(){
+  return getDayEls().last()
 }

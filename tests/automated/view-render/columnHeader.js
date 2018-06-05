@@ -1,3 +1,4 @@
+import { hasHeaderEl } from './DayGridRenderUtils'
 
 describe('columnHeader', function() {
   pushOptions({
@@ -17,7 +18,7 @@ describe('columnHeader', function() {
 
       it('should show header', function() {
         initCalendar()
-        expect(hasHeader()).toBe(true)
+        expect(hasHeaderEl()).toBe(true)
       })
     })
 
@@ -28,13 +29,8 @@ describe('columnHeader', function() {
 
       it('should not show header', function() {
         initCalendar()
-        expect(hasHeader()).toBe(false)
+        expect(hasHeaderEl()).toBe(false)
       })
     })
   })
-
-  function hasHeader() {
-    return $('.fc-view > table > .fc-head').length === 1
-  }
-
 })
