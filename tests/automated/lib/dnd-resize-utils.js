@@ -1,9 +1,10 @@
 // this function has been mangled to work with external jqui draggables as well
-import { getEventElTimeEl, getTimeGridDayEls, getSlotElByIndex } from './time-grid'
+import { getTimeGridDayEls, getSlotElByIndex } from './time-grid'
 import { getDayEl } from '../view-render/DayGridRenderUtils'
 import {
   getEventElResizerEl,
   getEventElTitleEl,
+  getEventElTimeEl,
   getFirstEventEl,
   getLastEventEl
 } from '../event-render/EventRenderUtils'
@@ -28,7 +29,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
     eventsRendered = true
 
     dropDate = calendar.moment(dropDate)
-    eventEl = getFirstEventEl(eventClassName)
+    eventEl = eventClassName ? $(`.${eventClassName}:first`) : getFirstEventEl()
     expect(eventEl.length).toBe(1)
 
     if (dropDate.hasTime()) {
@@ -111,7 +112,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
     eventsRendered = true
 
     resizeDate = calendar.moment(resizeDate)
-    eventEl = getLastEventEl(eventClassName)
+    eventEl = eventClassName ? $(`.${eventClassName}:first`) : getLastEventEl(eventClassName)
     dragEl = getEventElResizerEl(eventEl)
 
     if (resizeDate.hasTime()) {

@@ -31,16 +31,16 @@ export function getVisibleEventEls() {
   return $(`.${EVENT_CLASS}:visible`)
 }
 
-export function getEventEls(eventClassName = EVENT_CLASS) {
-  return $(`.${eventClassName}`)
+export function getEventEls() {
+  return $(`.${EVENT_CLASS}`)
 }
 
-export function getFirstEventEl(eventClassName) {
-  return getEventEls(eventClassName).first()
+export function getFirstEventEl() {
+  return getEventEls().first()
 }
 
-export function getLastEventEl(eventClassName) {
-  return getEventEls(eventClassName).last()
+export function getLastEventEl() {
+  return getEventEls().last()
 }
 
 export function getEventElTitleEl(eventEl) {
@@ -55,4 +55,8 @@ export function getSingleEl() {
   var els = getEventEls()
   expect(els).toHaveLength(1)
   return els
+}
+
+export function getEventElTimeEl(el) {
+  return el.find('.fc-time')
 }

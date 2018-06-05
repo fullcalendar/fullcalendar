@@ -129,9 +129,6 @@ export function getTimeGridTop(targetTime) {
     Math.min(1, (targetTime - slotTime) / slotMsDuration)) // don't go past end of last slot
 }
 
-export function getEventElTimeEl(el) {
-  return el.find('.fc-time')
-}
 
 export function getTimeGridDayEls(date) {
   date = FullCalendar.moment.parseZone(date)

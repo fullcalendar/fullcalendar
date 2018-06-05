@@ -16,8 +16,8 @@ export function getDayEls() {
   return $('.fc-day-header')
 }
 
-export function getDayTdEls(date) {
-  return $(`td[data-date="${date}"]`)
+export function getDayElTopElText(date) {
+  return $(`td.fc-day-top[data-date="${date}"]`).text()
 }
 
 export function getHeaderEl() {

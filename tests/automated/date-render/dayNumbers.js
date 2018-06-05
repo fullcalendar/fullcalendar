@@ -1,4 +1,4 @@
-import { getDayTdEls } from '../view-render/DayGridRenderUtils'
+import { getDayElTopElText } from '../view-render/DayGridRenderUtils'
 
 describe('dayNumbers', function() {
   pushOptions({
@@ -10,7 +10,7 @@ describe('dayNumbers', function() {
       defaultView: 'month',
       locale: 'ar'
     })
-    expect(getDayTdEls('2018-01-01')).toContainText('١') // an Arabic 1
+    expect(getDayElTopElText('2018-01-01')).toEqual('١') // an Arabic 1
   })
 
 })
