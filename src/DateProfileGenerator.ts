@@ -271,23 +271,41 @@ export default class DateProfileGenerator {
   buildRangeFromDayCount(date, direction, dayCount) {
     let customAlignment = this.opt('dateAlignment')
     let runningCount = 0
-    let start = date.clone()
-    let end
+    let start, end
 
-    if (customAlignment) {
-      start.startOf(customAlignment)
-    }
+    if (customAlignment || direction !== -1) {
 
-    start.startOf('day')
-    start = this._view.skipHiddenDays(start, direction)
+      start = date.clone()
 
-    end = start.clone()
-    do {
-      end.add(1, 'day')
-      if (!this._view.isHiddenDay(end)) {
-        runningCount++
+      if (customAlignment) {
+        start.startOf(customAlignment)
       }
-    } while (runningCount < dayCount)
+
+      start.startOf('day')
+      start = this._view.skipHiddenDays(start)
+
+      end = start.clone()
+      do {
+        end.add(1, 'day')
+        if (!this._view.isHiddenDay(end)) {
+          runningCount++
+        }
+      } while (runningCount < dayCount)
+
+    } else {
+
+      end = date.clone().startOf('day').add(1, 'day')
+      end = this._view.skipHiddenDays(end, -1, true)
+
+      start = end.clone()
+      do {
+        start.add(-1, 'day')
+        if (!this._view.isHiddenDay(start)) {
+          runningCount++
+        }
+      } while (runningCount < dayCount)
+
+    }
 
     return new UnzonedRange(start, end)
   }
