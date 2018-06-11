@@ -1,3 +1,5 @@
+import { getScrollerEl } from '../lib/MonthViewUtils'
+import { getEventEls } from '../event-render/EventRenderUtils'
 
 describe('refetchEvents', function() {
 
@@ -21,9 +23,9 @@ describe('refetchEvents', function() {
       ]
     }, el)
 
-    expect($('.fc-event').length).toBe(8)
+    expect(getEventEls().length).toBe(8)
 
-    scrollEl = el.find('.fc-scroller')
+    scrollEl = getScrollerEl()
     scrollEl.scrollTop(1000)
     scrollTop = scrollEl.scrollTop()
 
@@ -31,7 +33,7 @@ describe('refetchEvents', function() {
     expect(scrollTop).toBeGreaterThan(10)
 
     currentCalendar.refetchEvents()
-    expect($('.fc-event').length).toBe(8)
+    expect(getEventEls().length).toBe(8)
     expect(scrollEl.scrollTop()).toBe(scrollTop)
   })
 })

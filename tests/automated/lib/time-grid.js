@@ -86,7 +86,7 @@ export function getTimeGridLine(date) { // not in Scheduler
 
 export function getTimeGridTop(targetTimeMs) {
   const topBorderWidth = 1 // TODO: kill
-  let slotEls = getTimeGridSlotEls(targetTimeMs)
+  let slotEls = getSlotElByTime(targetTimeMs)
   let slotEl
 
   // exact slot match
@@ -94,7 +94,7 @@ export function getTimeGridTop(targetTimeMs) {
     return slotEls.eq(0).offset().top + topBorderWidth
   }
 
-  slotEls = $('.fc-time-grid .fc-slats tr[data-time]') // all slots
+  slotEls = getSlotEls() // all slots
   let slotTimeMs = null
   let prevSlotTimeMs = null
 
@@ -138,8 +138,16 @@ export function getTimeGridDayEls(date) {
   return $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(date) + '"]')
 }
 
+export function getSlotEls() {
+  return $('.fc-time-grid .fc-slats tr[data-time]')
+}
 
-export function getTimeGridSlotEls(timeMs) {
+
+export function getSlotElByIndex(index) {
+  return $(`.fc-slats tr:eq(${index})`)
+}
+
+export function getSlotElByTime(timeMs) {
   const date = new Date('2016-01-01')
   date = new Date(date.valueOf() + timeMs)
 

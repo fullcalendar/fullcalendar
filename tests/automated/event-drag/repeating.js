@@ -1,4 +1,5 @@
 import * as TimeGridEventDragUtils from './TimeGridEventDragUtils'
+import { getVisibleEventEls, getFirstEventEl } from '../event-render/EventRenderUtils'
 
 describe('event dragging on repeating events', function() {
   pushOptions({
@@ -40,7 +41,7 @@ describe('event dragging on repeating events', function() {
       eventDragStart: function() {
         setTimeout(function() { // try go execute DURING the drag
           expect(
-            $('.fc-event:visible').filter(function(i, node) {
+            getVisibleEventEls().filter(function(i, node) {
               return $(node).css('visibility') !== 'hidden'
             }).length
           ).toBe(1)
@@ -53,7 +54,7 @@ describe('event dragging on repeating events', function() {
       }
     })
 
-    $('.fc-event:first').simulate('drag', {
+    getFirstEventEl().simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
@@ -76,7 +77,7 @@ describe('event dragging on repeating events', function() {
       eventDragStart: function() {
         setTimeout(function() { // try go execute DURING the drag
           expect(
-            $('.fc-event:visible').filter(function(i, node) {
+            getVisibleEventEls().filter(function(i, node) {
               return $(node).css('visibility') !== 'hidden'
             }).length
           ).toBe(2) // the dragging event AND the other regular event
@@ -89,7 +90,7 @@ describe('event dragging on repeating events', function() {
       }
     })
 
-    $('.fc-event:first').simulate('drag', {
+    getFirstEventEl().simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })

@@ -1,3 +1,4 @@
+import { getFirstDayEl } from './DayGridRenderUtils'
 
 describe('columnHeaderHtml', function() {
   pushOptions({
@@ -20,7 +21,7 @@ describe('columnHeaderHtml', function() {
   })
 
   function hasCustomHtml() {
-    var firstHeader = $('.fc-day-header:first')
+    var firstHeader = getFirstDayEl()
 
     return firstHeader.find('.test').length === 1 && firstHeader.text() === 'Sunday'
   }
