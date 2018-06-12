@@ -100,7 +100,7 @@ export default class ListView extends View {
 
 
   // slices by day
-  componentFootprintToSegs(footprint) {
+  rangeToSegs(range: UnzonedRange, isAllDay: boolean) {
     const dateEnv = this.calendar.dateEnv
     let dayRanges = this.dayRanges
     let dayIndex
@@ -109,7 +109,7 @@ export default class ListView extends View {
     let segs = []
 
     for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex++) {
-      segRange = footprint.unzonedRange.intersect(dayRanges[dayIndex])
+      segRange = range.intersect(dayRanges[dayIndex])
 
       if (segRange) {
         seg = {
@@ -122,18 +122,18 @@ export default class ListView extends View {
 
         segs.push(seg)
 
-        // detect when footprint won't go fully into the next day,
+        // detect when range won't go fully into the next day,
         // and mutate the latest seg to the be the end.
         if (
-          !seg.isEnd && !footprint.isAllDay &&
+          !seg.isEnd && !isAllDay &&
           dayIndex + 1 < dayRanges.length &&
-          footprint.unzonedRange.end <
+          range.end <
             dateEnv.add(
               dayRanges[dayIndex + 1].start,
               this.nextDayThreshold
             )
         ) {
-          seg.end = footprint.unzonedRange.end
+          seg.end = range.end
           seg.isEnd = true
           break
         }

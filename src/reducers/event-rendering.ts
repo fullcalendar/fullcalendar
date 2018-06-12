@@ -1,5 +1,5 @@
 import UnzonedRange from '../models/UnzonedRange'
-import { EventInstanceHash, EventStore, EventDef, EventInstance } from './event-store'
+import { EventDef, EventInstance } from './event-store'
 
 export interface EventRenderRange {
   eventDef: EventDef
@@ -7,88 +7,60 @@ export interface EventRenderRange {
   range: UnzonedRange
 }
 
-export function sliceEventRanges(instances: EventInstanceHash, store: EventStore, sliceRange: UnzonedRange): EventRenderRange[] {
-  let groupedInverseBg = {}
-  let ungroupedInverseBg: EventInstance[] = []
-  let normal: EventInstance[] = []
-  let segs: EventRenderRange[] = []
 
-  for (let instanceId in instances) {
-    let instance = instances[instanceId]
-    let def = store.defs[instance.defId]
-    let groupId = def.groupId
+export function sliceEventRanges(origRanges: EventRenderRange[], windowRange: UnzonedRange): EventRenderRange[] {
+  let renderRanges: EventRenderRange[] = []
+  let inverseBgGroups: { [groupId: string]: EventRenderRange[] } = {}
 
-    if (def.rendering === 'inverse-background') {
+  for (let origRange of origRanges) {
+    let { eventDef, eventInstance } = origRange
+
+    if (eventDef.rendering === 'inverse-background') {
+      let groupId = eventDef.groupId
+
       if (groupId) {
-        (groupedInverseBg[groupId] || (groupedInverseBg[groupId] = []))
-          .push(instance)
+        (inverseBgGroups[groupId] || (inverseBgGroups[groupId] = []))
+          .push(origRange)
+
       } else {
-        ungroupedInverseBg.push(instance)
+        let invertedRanges = UnzonedRange.invertRanges([ eventInstance.range ], windowRange)
+
+        for (let invertedRange of invertedRanges) {
+          renderRanges.push({
+            eventDef,
+            eventInstance,
+            range: invertedRange
+          })
+        }
       }
     } else {
-      normal.push(instance)
-    }
-  }
-
-  for (let groupId in groupedInverseBg) {
-    let inverseBgInstances = groupedInverseBg[groupId]
-    let ranges = inverseBgInstances.map(getInstanceRange)
-    let invertedRanges = UnzonedRange.invertRanges(ranges, sliceRange)
-
-    for (let range of invertedRanges) {
-      segs.push({
-        eventDef: store.defs[inverseBgInstances[0].defId],
-        eventInstance: inverseBgInstances[0],
-        range
+      renderRanges.push({
+        eventDef,
+        eventInstance,
+        range: eventInstance.range.intersect(windowRange)
       })
     }
   }
 
-  for (let instance of ungroupedInverseBg) {
-    let invertedRanges = UnzonedRange.invertRanges([ instance.range ], sliceRange)
+  for (let groupId in inverseBgGroups) {
+    let inverseBgGroup = inverseBgGroups[groupId]
+    let { eventDef, eventInstance } = inverseBgGroup[0]
+    let origRanges = inverseBgGroup.map(getRange)
+    let invertedRanges = UnzonedRange.invertRanges(origRanges, windowRange)
 
-    for (let range of invertedRanges) {
-      segs.push({
-        eventDef: store.defs[instance.defId],
-        eventInstance: instance,
-        range
+    for (let invertedRange of invertedRanges) {
+      renderRanges.push({
+        eventDef,
+        eventInstance,
+        range: invertedRange
       })
     }
   }
 
-  for (let instance of normal) {
-    let slicedRange = instance.range.intersect(sliceRange)
-
-    if (slicedRange) {
-      segs.push({
-        eventDef: store.defs[instance.defId],
-        eventInstance: instance,
-        range: slicedRange
-      })
-    }
-  }
-
-  return segs
+  return renderRanges
 }
 
-function getInstanceRange(eventInstance: EventInstance) {
-  return eventInstance.range
-}
 
-export function furtherSliceEventSegments(segs: EventRenderRange[], sliceRange: UnzonedRange): EventRenderRange[] {
-  let newSegs: EventRenderRange[] = []
-
-  for (let seg of segs) {
-    let newRange = seg.range.intersect(sliceRange)
-
-    if (newRange) {
-      newSegs.push({
-        eventDef: seg.eventDef,
-        eventInstance: seg.eventInstance,
-        range: newRange
-      })
-    }
-  }
-
-  return newSegs
+function getRange(eventRange: EventRenderRange) {
+  return eventRange.range
 }

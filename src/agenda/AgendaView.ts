@@ -13,8 +13,8 @@ import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
-import { EventStore } from '../reducers/event-store'
-import { sliceEventRanges } from '../reducers/event-rendering'
+import { EventRenderRange } from '../reducers/event-rendering'
+import { Selection } from '../reducers/selection'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -305,31 +305,13 @@ export default class AgendaView extends View {
   /* Event Rendering
   ------------------------------------------------------------------------------------------------------------------*/
 
+  renderEventRanges(eventRanges: EventRenderRange[]) {
+    let groups = groupEventRangesByAllDay(eventRanges)
 
-  renderEventStore(eventStore: EventStore) {
-    let activeUnzonedRange = this.get('dateProfile').activeUnzonedRange
-    let { instances, defs } = eventStore
-    let allDayInstances = {}
-    let timedInstances = {}
-
-    for (let instanceId in instances) {
-      let instance = instances[instanceId]
-
-      if (defs[instance.defId].isAllDay) {
-        allDayInstances[instanceId] = instance
-      } else {
-        timedInstances[instanceId] = instance
-      }
-    }
-
-    this.timeGrid.renderEventRanges(
-      sliceEventRanges(timedInstances, eventStore, activeUnzonedRange)
-    )
+    this.timeGrid.renderEventRanges(groups.timed)
 
     if (this.dayGrid) {
-      this.dayGrid.renderEventRanges(
-        sliceEventRanges(allDayInstances, eventStore, activeUnzonedRange)
-      )
+      this.dayGrid.renderEventRanges(groups.allDay)
     }
   }
 
@@ -339,27 +321,27 @@ export default class AgendaView extends View {
 
 
   // A returned value of `true` signals that a mock "helper" event has been rendered.
-  renderDrag(eventFootprints, seg, isTouch) {
-    let groups = groupEventFootprintsByAllDay(eventFootprints)
+  renderDrag(eventRanges: EventRenderRange[], origSeg, isTouch) {
+    let groups = groupEventRangesByAllDay(eventRanges)
     let renderedHelper = false
 
-    renderedHelper = this.timeGrid.renderDrag(groups.timed, seg, isTouch)
+    renderedHelper = this.timeGrid.renderDrag(groups.timed, origSeg, isTouch)
 
     if (this.dayGrid) {
-      renderedHelper = this.dayGrid.renderDrag(groups.allDay, seg, isTouch) || renderedHelper
+      renderedHelper = this.dayGrid.renderDrag(groups.allDay, origSeg, isTouch) || renderedHelper
     }
 
     return renderedHelper
   }
 
 
-  renderEventResize(eventFootprints, seg, isTouch) {
-    let groups = groupEventFootprintsByAllDay(eventFootprints)
+  renderEventResize(eventRanges: EventRenderRange[], origSeg, isTouch) {
+    let groups = groupEventRangesByAllDay(eventRanges)
 
-    this.timeGrid.renderEventResize(groups.timed, seg, isTouch)
+    this.timeGrid.renderEventResize(groups.timed, origSeg, isTouch)
 
     if (this.dayGrid) {
-      this.dayGrid.renderEventResize(groups.allDay, seg, isTouch)
+      this.dayGrid.renderEventResize(groups.allDay, origSeg, isTouch)
     }
   }
 
@@ -369,11 +351,11 @@ export default class AgendaView extends View {
 
 
   // Renders a visual indication of a selection
-  renderSelectionFootprint(componentFootprint) {
-    if (!componentFootprint.isAllDay) {
-      this.timeGrid.renderSelectionFootprint(componentFootprint)
+  renderSelection(selection: Selection) {
+    if (!selection.isAllDay) {
+      this.timeGrid.renderSelection(selection)
     } else if (this.dayGrid) {
-      this.dayGrid.renderSelectionFootprint(componentFootprint)
+      this.dayGrid.renderSelection(selection)
     }
   }
 
@@ -457,18 +439,17 @@ agendaDayGridMethods = {
 }
 
 
-function groupEventFootprintsByAllDay(eventFootprints) {
+function groupEventRangesByAllDay(eventRanges: EventRenderRange[]) {
   let allDay = []
   let timed = []
-  let i
 
-  for (i = 0; i < eventFootprints.length; i++) {
-    if (eventFootprints[i].componentFootprint.isAllDay) {
-      allDay.push(eventFootprints[i])
+  for (let eventRange of eventRanges) {
+    if (eventRange.eventDef.isAllDay) {
+      allDay.push(eventRange)
     } else {
-      timed.push(eventFootprints[i])
+      timed.push(eventRange)
     }
   }
 
-  return { allDay: allDay, timed: timed }
+  return { allDay, timed }
 }

@@ -13,6 +13,9 @@ import TimeGridFillRenderer from './TimeGridFillRenderer'
 import { Duration, createDuration, addDurations, wholeDivideDurations, asRoughMs } from '../datelib/duration'
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
+import { Seg } from '../reducers/seg'
+import { EventRenderRange } from '../reducers/event-rendering'
+import { Selection } from '../reducers/selection'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -83,8 +86,8 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  componentFootprintToSegs(componentFootprint) {
-    let segs = this.sliceRangeByTimes(componentFootprint.unzonedRange)
+  rangeToSegs(range: UnzonedRange): Seg[] {
+    let segs = this.sliceRangeByTimes(range)
     let i
 
     for (i = 0; i < segs.length; i++) {
@@ -435,11 +438,8 @@ export default class TimeGrid extends InteractiveDateComponent {
 
     // seg system might be overkill, but it handles scenario where line needs to be rendered
     //  more than once because of columns with the same date (resources columns for example)
-    let segs = this.componentFootprintToSegs(
-      new ComponentFootprint(
-        new UnzonedRange(date, addMs(date, 1)), // protect against null range
-        false // all-day
-      )
+    let segs = this.rangeToSegs(
+      new UnzonedRange(date, addMs(date, 1)), // protect against null range
     )
     let top = this.computeDateTop(date)
     let nodes = []
@@ -664,22 +664,19 @@ export default class TimeGrid extends InteractiveDateComponent {
 
   // Renders a visual indication of an event being dragged over the specified date(s).
   // A returned value of `true` signals that a mock "helper" event has been rendered.
-  renderDrag(eventFootprints, seg, isTouch) {
-    let i
+  renderDrag(eventRanges: EventRenderRange[], origSeg, isTouch) {
+    let segs = this.eventRangesToSegs(eventRanges)
 
-    if (seg) { // if there is event information for this drag, render a helper event
+    if (origSeg) { // if there is event information for this drag, render a helper event
 
-      if (eventFootprints.length) {
-        this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch)
+      if (eventRanges.length) {
+        this.helperRenderer.renderEventDraggingSegs(segs, origSeg, isTouch)
 
         // signal that a helper has been rendered
         return true
       }
     } else { // otherwise, just render a highlight
-
-      for (i = 0; i < eventFootprints.length; i++) {
-        this.renderHighlight(eventFootprints[i].componentFootprint)
-      }
+      this.renderHighlightSegs(segs)
     }
   }
 
@@ -696,8 +693,10 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventFootprints, seg, isTouch) {
-    this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch)
+  renderEventResize(eventRanges: EventRenderRange[], origSeg, isTouch) {
+    let segs = this.eventRangesToSegs(eventRanges)
+
+    this.helperRenderer.renderEventResizingSegs(segs, origSeg, isTouch)
   }
 
 
@@ -712,11 +711,13 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-  renderSelectionFootprint(componentFootprint) {
+  renderSelection(selection: Selection) {
+    let segs = this.selectionToSegs(selection)
+
     if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-      this.helperRenderer.renderComponentFootprint(componentFootprint)
+      this.helperRenderer.renderEventSegs(segs)
     } else {
-      this.renderHighlight(componentFootprint)
+      this.renderHighlightSegs(segs)
     }
   }
 

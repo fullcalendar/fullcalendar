@@ -14,7 +14,6 @@ import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
 import UnzonedRange from '../models/UnzonedRange'
 import ComponentFootprint from '../models/ComponentFootprint'
-import EventFootprint from '../models/event/EventFootprint'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
@@ -24,6 +23,8 @@ import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
+import { Seg } from '../reducers/seg'
+import { EventRenderRange } from '../reducers/event-rendering'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -78,8 +79,8 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  componentFootprintToSegs(componentFootprint) {
-    let segs = this.sliceRangeByRow(componentFootprint.unzonedRange)
+  rangeToSegs(range: UnzonedRange): Seg[] {
+    let segs = this.sliceRangeByRow(range)
 
     for (let i = 0; i < segs.length; i++) {
       let seg = segs[i]
@@ -358,9 +359,9 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   // Unrenders all events currently rendered on the grid
-  executeEventUnrender() {
+  unrenderEvents() {
     this.removeSegPopover() // removes the "more.." events popover
-    super.executeEventUnrender()
+    super.unrenderEvents()
   }
 
 
@@ -377,16 +378,14 @@ export default class DayGrid extends InteractiveDateComponent {
 
   // Renders a visual indication of an event or external element being dragged.
   // `eventLocation` has zoned start and end (optional)
-  renderDrag(eventFootprints, seg, isTouch) {
-    let i
+  renderDrag(eventRanges: EventRenderRange[], origSeg, isTouch) {
+    let segs = this.eventRangesToSegs(eventRanges)
 
-    for (i = 0; i < eventFootprints.length; i++) {
-      this.renderHighlight(eventFootprints[i].componentFootprint)
-    }
+    this.renderHighlightSegs(segs)
 
     // render drags from OTHER components as helpers
-    if (eventFootprints.length && seg && seg.component !== this) {
-      this.helperRenderer.renderEventDraggingFootprints(eventFootprints, seg, isTouch)
+    if (eventRanges.length && origSeg && origSeg.component !== this) {
+      this.helperRenderer.renderEventDraggingSegs(segs, origSeg, isTouch)
 
       return true // signal helpers rendered
     }
@@ -405,14 +404,12 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventFootprints, seg, isTouch) {
-    let i
+  renderEventResize(eventRanges: EventRenderRange[], origSeg, isTouch) {
+    let segs = this.eventRangesToSegs(eventRanges)
 
-    for (i = 0; i < eventFootprints.length; i++) {
-      this.renderHighlight(eventFootprints[i].componentFootprint)
-    }
+    this.renderHighlightSegs(segs)
 
-    this.helperRenderer.renderEventResizingFootprints(eventFootprints, seg, isTouch)
+    this.helperRenderer.renderEventResizingSegs(segs, origSeg, isTouch)
   }
 
 
@@ -751,19 +748,16 @@ export default class DayGrid extends InteractiveDateComponent {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      slicedRange = seg.footprint.componentFootprint.unzonedRange.intersect(dayRange)
+      slicedRange = seg.eventRange.intersect(dayRange)
 
       if (slicedRange) {
         newSegs.push(
           assignTo({}, seg, {
-            footprint: new EventFootprint(
-              new ComponentFootprint(
-                slicedRange,
-                seg.footprint.componentFootprint.isAllDay
-              ),
-              seg.footprint.eventDef,
-              seg.footprint.eventInstance
-            ),
+            eventRange: {
+              eventDef: seg.eventRange.eventDef,
+              eventInstance: seg.eventRange.eventInstance,
+              range: slicedRange
+            },
             isStart: seg.isStart && slicedRange.isStart,
             isEnd: seg.isEnd && slicedRange.isEnd
           })

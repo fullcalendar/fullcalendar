@@ -8,12 +8,12 @@ import DateProfileGenerator from './DateProfileGenerator'
 import InteractiveDateComponent from './component/InteractiveDateComponent'
 import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
-import EventInstance from './models/event/EventInstance'
 import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
-import { EventStore } from './reducers/event-store'
-import { sliceEventRanges } from './reducers/event-rendering'
+import { EventStore, EventInstance } from './reducers/event-store'
+import { EventRenderRange } from './reducers/event-rendering'
+import { Selection } from './reducers/selection'
 
 
 /* An abstract class from which other views inherit from
@@ -388,8 +388,18 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   renderEventStore(eventStore: EventStore) {
-    let activeUnzonedRange = this.get('dateProfile').activeUnzonedRange
-    let eventRanges = sliceEventRanges(eventStore.instances, eventStore, activeUnzonedRange)
+    let eventRanges: EventRenderRange[] = []
+
+    for (let instanceId in eventStore.instances) {
+      let eventInstance = eventStore.instances[instanceId]
+
+      eventRanges.push({
+        eventDef: eventStore.defs[eventInstance.defId],
+        eventInstance,
+        range: eventInstance.range
+      })
+    }
+
     this.renderEventRanges(eventRanges)
   }
 
@@ -730,41 +740,29 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Selects a date span on the view. `start` and `end` are both Moments.
   // `ev` is the native mouse event that begin the interaction.
-  select(footprint, ev?) {
+  select(selection: Selection, ev?) {
     this.unselect(ev)
-    this.renderSelectionFootprint(footprint)
-    this.reportSelection(footprint, ev)
-  }
-
-
-  renderSelectionFootprint(footprint) {
-    if (this['renderSelection']) { // legacy method in custom view classes
-      this['renderSelection'](
-        footprint.toLegacy(this.calendar)
-      )
-    } else {
-      super.renderSelectionFootprint(footprint)
-    }
+    this.renderSelection(selection)
+    this.reportSelection(selection, ev)
   }
 
 
   // Called when a new selection is made. Updates internal state and triggers handlers.
-  reportSelection(footprint, ev?) {
+  reportSelection(selection: Selection, ev?) {
     this.isSelected = true
-    this.triggerSelect(footprint, ev)
+    this.triggerSelect(selection, ev)
   }
 
 
   // Triggers handlers to 'select'
-  triggerSelect(footprint, ev?) {
+  triggerSelect(selection: Selection, ev?) {
     const dateEnv = this.calendar.dateEnv
-    let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
 
     this.publiclyTrigger('select', [
       {
-        start: dateEnv.toDate(dateProfile.unzonedRange.start),
-        end: dateEnv.toDate(dateProfile.unzonedRange.end),
-        isAllDay: dateProfile.isAllDay,
+        start: dateEnv.toDate(selection.range.start),
+        end: dateEnv.toDate(selection.range.end),
+        isAllDay: selection.isAllDay,
         jsEvent: ev,
         view: this
       }
@@ -1047,7 +1045,7 @@ View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerato
 View.watch('displayingEvents', [ 'displayingDates', 'eventStore' ], function(deps) {
   this.requestEventStoreRender(deps.eventStore)
 }, function() {
-  this.requestEventStoreUnrender()
+  this.requestEventsUnrender()
 })
 
 

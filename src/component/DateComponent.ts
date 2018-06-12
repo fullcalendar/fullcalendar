@@ -2,12 +2,14 @@ import { attrsToStr, htmlEscape } from '../util/html'
 import Component from './Component'
 import Calendar from '../Calendar'
 import View from '../View'
-import { eventRangeToEventFootprint } from '../models/event/util'
-import EventFootprint from '../models/event/EventFootprint'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration, asRoughMs } from '../datelib/duration'
-import { EventRenderRange } from '../reducers/event-rendering'
+import { EventRenderRange, sliceEventRanges } from '../reducers/event-rendering'
+import { Selection } from '../reducers/selection'
+import UnzonedRange from '../models/UnzonedRange'
+import { Seg } from '../reducers/seg'
+import { EventDef, EventInstance, parseDef, createInstance } from '../reducers/event-store'
 
 
 export default abstract class DateComponent extends Component {
@@ -202,35 +204,6 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  // Event Displaying
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  renderEventRanges(eventRanges: EventRenderRange[]) {
-
-    if (this.eventRenderer) {
-      this.eventRenderer.rangeUpdated() // poorly named now
-      this.eventRenderer.renderRanges(eventRanges)
-    } else if (this['renderEvents']) { // legacy
-      // TODO
-      // this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload, this._getCalendar()))
-    }
-
-    this.callChildren('renderEventRanges', arguments)
-  }
-
-
-  unrenderEvents() {
-    this.callChildren('unrenderEvents', arguments)
-
-    if (this.eventRenderer) {
-      this.eventRenderer.unrender()
-    } else if (this['destroyEvents']) { // legacy
-      this['destroyEvents']()
-    }
-  }
-
-
   getBusinessHourSegs() { // recursive
     let segs = this.getOwnBusinessHourSegs()
 
@@ -248,6 +221,37 @@ export default abstract class DateComponent extends Component {
     }
 
     return []
+  }
+
+
+  // Event Displaying
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  renderEventRanges(eventRanges: EventRenderRange[]) {
+
+    if (this.eventRenderer) {
+      this.eventRenderer.rangeUpdated() // poorly named now
+      this.eventRenderer.renderSegs(
+        this.eventRangesToSegs(eventRanges)
+      )
+    }
+    // else if (this['renderEvents']) { // legacy
+    //   this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload, this._getCalendar()))
+    // }
+
+    this.callChildren('renderEventRanges', arguments)
+  }
+
+
+  unrenderEvents() {
+    this.callChildren('unrenderEvents', arguments)
+
+    if (this.eventRenderer) {
+      this.eventRenderer.unrender()
+    } else if (this['destroyEvents']) { // legacy
+      this['destroyEvents']()
+    }
   }
 
 
@@ -288,14 +292,10 @@ export default abstract class DateComponent extends Component {
     // an optimization, because getEventLegacy is expensive
     if (this.hasPublicHandlers('eventAfterRender')) {
       segs.forEach((seg) => {
-        let legacy
-
         if (seg.el) { // necessary?
-          legacy = seg.footprint.getEventLegacy(this._getCalendar())
-
           this.publiclyTrigger('eventAfterRender', [
             {
-              event: legacy,
+              event: seg.eventRange, // what to do here?
               el: seg.el,
               view: this
             }
@@ -319,11 +319,9 @@ export default abstract class DateComponent extends Component {
         let legacy
 
         if (seg.el) { // necessary?
-          legacy = seg.footprint.getEventLegacy(this._getCalendar())
-
           this.publiclyTrigger('eventDestroy', [
             {
-              event: legacy,
+              event: seg.eventRange, // what to do here?
               el: seg.el,
               view: this
             }
@@ -344,7 +342,7 @@ export default abstract class DateComponent extends Component {
 
     this.getEventSegs().forEach(function(seg) {
       if (
-        seg.footprint.eventDef.id === eventDefId &&
+        seg.eventRange.eventDef.id === eventDefId &&
         seg.el // necessary?
       ) {
         seg.el.style.visibility = ''
@@ -361,7 +359,7 @@ export default abstract class DateComponent extends Component {
 
     this.getEventSegs().forEach(function(seg) {
       if (
-        seg.footprint.eventDef.id === eventDefId &&
+        seg.eventRange.eventDef.id === eventDefId &&
         seg.el // necessary?
       ) {
         seg.el.style.visibility = 'hidden'
@@ -379,11 +377,11 @@ export default abstract class DateComponent extends Component {
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
   // Must return elements used for any mock events.
-  renderDrag(eventFootprints, seg?, isTouch = false) {
+  renderDrag(eventRanges: EventRenderRange[], origSeg?, isTouch = false) {
     let renderedHelper = false
 
     this.iterChildren(function(child) {
-      if (child.renderDrag(eventFootprints, seg, isTouch)) {
+      if (child.renderDrag(eventRanges, origSeg, isTouch)) {
         renderedHelper = true
       }
     })
@@ -423,7 +421,7 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders a visual indication of an event being resized.
-  renderEventResize(eventFootprints, seg, isTouch) {
+  renderEventResize(eventRanges: EventRenderRange[], seg, isTouch) {
     this.callChildren('renderEventResize', arguments)
   }
 
@@ -440,10 +438,10 @@ export default abstract class DateComponent extends Component {
 
   // Renders a visual indication of the selection
   // TODO: rename to `renderSelection` after legacy is gone
-  renderSelectionFootprint(componentFootprint) {
-    this.renderHighlight(componentFootprint)
+  renderSelection(selection: Selection) {
+    this.renderHighlightSegs(this.selectionToSegs(selection))
 
-    this.callChildren('renderSelectionFootprint', arguments)
+    this.callChildren('renderSelection', arguments)
   }
 
 
@@ -460,11 +458,11 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
-  renderHighlight(componentFootprint) {
+  renderHighlightSegs(segs) {
     if (this.fillRenderer) {
-      this.fillRenderer.renderFootprint(
+      this.fillRenderer.renderSegs(
         'highlight',
-        componentFootprint,
+        segs,
         {
           getClasses() {
             return [ 'fc-highlight' ]
@@ -472,8 +470,6 @@ export default abstract class DateComponent extends Component {
         }
       )
     }
-
-    this.callChildren('renderHighlight', arguments)
   }
 
 
@@ -482,8 +478,6 @@ export default abstract class DateComponent extends Component {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('highlight')
     }
-
-    this.callChildren('unrenderHighlight', arguments)
   }
 
 
@@ -565,78 +559,35 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  /* Converting eventRange -> eventFootprint
+  /* Converting selection/eventRanges -> segs
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  eventRangesToEventFootprints(eventRanges) {
-    let eventFootprints = []
-    let i
-
-    for (i = 0; i < eventRanges.length; i++) {
-      eventFootprints.push.apply( // append
-        eventFootprints,
-        this.eventRangeToEventFootprints(eventRanges[i])
-      )
-    }
-
-    return eventFootprints
+  selectionToSegs(selection: Selection): Seg[] {
+    return this.rangeToSegs(selection.range, selection.isAllDay)
   }
 
 
-  eventRangeToEventFootprints(eventRange): EventFootprint[] {
-    return [ eventRangeToEventFootprint(eventRange) ]
-  }
+  eventRangesToSegs(eventRanges: EventRenderRange[]): Seg[] {
+    let activeUnzonedRange = this.dateProfile.activeUnzonedRange
+    let eventRenderRanges = sliceEventRanges(eventRanges, activeUnzonedRange)
+    let allSegs: Seg[] = []
 
+    for (let eventRenderRange of eventRenderRanges) {
+      let segs = this.rangeToSegs(eventRenderRange.range, eventRenderRange.eventDef.isAllDay)
 
-  /* Converting componentFootprint/eventFootprint -> segs
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  eventFootprintsToSegs(eventFootprints) {
-    let segs = []
-    let i
-
-    for (i = 0; i < eventFootprints.length; i++) {
-      segs.push.apply(segs,
-        this.eventFootprintToSegs(eventFootprints[i])
-      )
-    }
-
-    return segs
-  }
-
-
-  // Given an event's span (unzoned start/end and other misc data), and the event itself,
-  // slices into segments and attaches event-derived properties to them.
-  // eventSpan - { start, end, isStart, isEnd, otherthings... }
-  eventFootprintToSegs(eventFootprint) {
-    let unzonedRange = eventFootprint.componentFootprint.unzonedRange
-    let segs
-    let i
-    let seg
-
-    segs = this.componentFootprintToSegs(eventFootprint.componentFootprint)
-
-    for (i = 0; i < segs.length; i++) {
-      seg = segs[i]
-
-      if (!unzonedRange.isStart) {
-        seg.isStart = false
+      for (let seg of segs) {
+        seg.eventRange = eventRenderRange
+        allSegs.push(seg)
       }
-      if (!unzonedRange.isEnd) {
-        seg.isEnd = false
-      }
-
-      seg.footprint = eventFootprint
-      // TODO: rename to seg.eventFootprint
     }
 
-    return segs
+    return allSegs
   }
 
 
-  componentFootprintToSegs(componentFootprint) {
+  // must implement if want to use many of the rendering utils
+  rangeToSegs(range: UnzonedRange, isAllDay: boolean): Seg[] {
     return []
   }
 
@@ -823,23 +774,9 @@ export default abstract class DateComponent extends Component {
 }
 
 
-// legacy
+export function fabricateEventRange(range: UnzonedRange, isAllDay: boolean): EventRenderRange {
+  let eventDef: EventDef = parseDef(null, {}, isAllDay, true)
+  let eventInstance: EventInstance = createInstance(eventDef.defId, range)
 
-function convertEventsPayloadToLegacyArray(eventsPayload, calendar) {
-  let eventDefId
-  let eventInstances
-  let legacyEvents = []
-  let i
-
-  for (eventDefId in eventsPayload) {
-    eventInstances = eventsPayload[eventDefId].eventInstances
-
-    for (i = 0; i < eventInstances.length; i++) {
-      legacyEvents.push(
-        eventInstances[i].toLegacy(calendar)
-      )
-    }
-  }
-
-  return legacyEvents
+  return { eventDef, eventInstance, range }
 }
