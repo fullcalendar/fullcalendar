@@ -6,41 +6,9 @@ export default class BusinessHourRenderer {
   segs: any
 
 
-  /*
-  component implements:
-    - eventRangesToEventFootprints
-    - eventFootprintsToSegs
-  */
   constructor(component, fillRenderer) {
     this.component = component
     this.fillRenderer = fillRenderer
-  }
-
-
-  render(businessHourGenerator) {
-    let component = this.component
-    let unzonedRange = component._getDateProfile().activeUnzonedRange
-
-    let eventInstanceGroup = businessHourGenerator.buildEventInstanceGroup(
-      component.hasAllDayBusinessHours,
-      unzonedRange
-    )
-
-    let eventFootprints = eventInstanceGroup ?
-      component.eventRangesToEventFootprints(
-        eventInstanceGroup.sliceRenderRanges(unzonedRange)
-      ) :
-      []
-
-    this.renderEventFootprints(eventFootprints)
-  }
-
-
-  renderEventFootprints(eventFootprints) {
-    let segs = this.component.eventFootprintsToSegs(eventFootprints)
-
-    this.renderSegs(segs)
-    this.segs = segs
   }
 
 
