@@ -1,9 +1,10 @@
 import FillRenderer from '../component/renderers/FillRenderer'
+import { Seg } from '../reducers/seg'
 
 
 export default class TimeGridFillRenderer extends FillRenderer {
 
-  attachSegEls(type, segs) {
+  attachSegEls(type, segs: Seg[]) {
     let timeGrid = this.component
     let containerEls
 

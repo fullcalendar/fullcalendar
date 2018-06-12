@@ -1,6 +1,7 @@
 import { htmlToElement, createElement } from '../util/dom-manip'
 import FillRenderer from '../component/renderers/FillRenderer'
 import DayGrid from './DayGrid'
+import { Seg } from '../reducers/seg'
 
 
 export default class DayGridFillRenderer extends FillRenderer {
@@ -9,7 +10,7 @@ export default class DayGridFillRenderer extends FillRenderer {
   fillSegTag: string = 'td' // override the default tag name
 
 
-  attachSegEls(type, segs) {
+  attachSegEls(type, segs: Seg[]) {
     let els = []
     let i
     let seg
@@ -27,7 +28,7 @@ export default class DayGridFillRenderer extends FillRenderer {
 
 
   // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-  renderFillRow(type, seg): HTMLElement {
+  renderFillRow(type, seg: Seg): HTMLElement {
     let colCnt = this.component.colCnt
     let startCol = seg.leftCol
     let endCol = seg.rightCol + 1

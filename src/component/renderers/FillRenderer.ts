@@ -1,5 +1,6 @@
 import { cssToStr } from '../../util/html'
 import { htmlToElements, removeElement, elementMatches } from '../../util/dom-manip'
+import { Seg } from '../../reducers/seg'
 
 
 export default class FillRenderer { // use for highlight, background events, business hours
@@ -15,16 +16,7 @@ export default class FillRenderer { // use for highlight, background events, bus
   }
 
 
-  renderFootprint(type, componentFootprint, props) {
-    this.renderSegs(
-      type,
-      this.component.componentFootprintToSegs(componentFootprint),
-      props
-    )
-  }
-
-
-  renderSegs(type, segs, props) {
+  renderSegs(type, segs: Seg[], props) {
     let els
 
     segs = this.buildSegEls(type, segs, props) // assignes `.el` to each seg. returns successfully rendered segs
@@ -50,7 +42,7 @@ export default class FillRenderer { // use for highlight, background events, bus
 
   // Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
   // Only returns segments that successfully rendered.
-  buildSegEls(type, segs, props) {
+  buildSegEls(type, segs: Seg[], props) {
     let html = ''
     let renderedSegs = []
     let i
@@ -85,7 +77,7 @@ export default class FillRenderer { // use for highlight, background events, bus
 
 
   // Builds the HTML needed for one fill segment. Generic enough to work with different types.
-  buildSegHtml(type, seg, props) {
+  buildSegHtml(type, seg: Seg, props) {
     // custom hooks per-type
     let classes = props.getClasses ? props.getClasses(seg) : []
     let css = cssToStr(props.getCss ? props.getCss(seg) : {})
@@ -98,7 +90,7 @@ export default class FillRenderer { // use for highlight, background events, bus
 
 
   // Should return wrapping DOM structure
-  attachSegEls(type, segs) {
+  attachSegEls(type, segs: Seg[]) {
     // subclasses must implement
   }
 
