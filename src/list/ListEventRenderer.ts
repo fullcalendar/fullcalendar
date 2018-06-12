@@ -1,13 +1,14 @@
 import { htmlEscape } from '../util/html'
 import EventRenderer from '../component/renderers/EventRenderer'
 import ListView from './ListView'
+import { Seg } from '../reducers/seg'
 
 export default class ListEventRenderer extends EventRenderer {
 
   component: ListView
 
 
-  renderFgSegs(segs) {
+  renderFgSegs(segs: Seg[]) {
     if (!segs.length) {
       this.component.renderEmptyMessage()
     } else {
@@ -16,33 +17,32 @@ export default class ListEventRenderer extends EventRenderer {
   }
 
   // generates the HTML for a single event row
-  fgSegHtml(seg) {
+  fgSegHtml(seg: Seg) {
     let view = this.view
     let calendar = view.calendar
     let theme = calendar.theme
-    let eventFootprint = seg.footprint
-    let eventDef = eventFootprint.eventDef
-    let componentFootprint = eventFootprint.componentFootprint
+    let eventRange = seg.eventRange
+    let eventDef = eventRange.eventDef
     let url = eventDef.url
     let classes = [ 'fc-list-item' ].concat(this.getClasses(eventDef))
     let bgColor = this.getBgColor(eventDef)
     let timeHtml
 
-    if (componentFootprint.isAllDay) {
+    if (eventDef.isAllDay) {
       timeHtml = view.getAllDayHtml()
-    } else if (view.isMultiDayRange(componentFootprint.unzonedRange)) {
+    } else if (view.isMultiDayRange(eventRange.range)) {
       if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
         timeHtml = htmlEscape(this._getTimeText(
           seg.start,
           seg.end,
-          componentFootprint.isAllDay
+          false // isAllDay
         ))
       } else { // inner segment that lasts the whole day
         timeHtml = view.getAllDayHtml()
       }
     } else {
       // Display the normal time text for the *event's* times
-      timeHtml = htmlEscape(this.getTimeText(eventFootprint))
+      timeHtml = htmlEscape(this.getTimeText(eventRange))
     }
 
     if (url) {

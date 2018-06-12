@@ -2,6 +2,7 @@ import { htmlEscape, cssToStr } from '../util/html'
 import { createElement, removeElement } from '../util/dom-manip'
 import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'
+import { Seg } from '../reducers/seg'
 
 
 /* Event-rendering methods for the DayGrid class
@@ -19,18 +20,18 @@ export default class DayGridEventRenderer extends EventRenderer {
   }
 
 
-  renderBgRanges(eventRanges) {
+  renderSegs(segs: Seg[]) {
     // don't render timed background events
-    eventRanges = eventRanges.filter(function(eventRange: any) {
-      return eventRange.eventDef.isAllDay()
+    segs = segs.filter(function(seg) {
+      return seg.eventRange.eventDef.isAllDay
     })
 
-    super.renderBgRanges(eventRanges)
+    super.renderSegs(segs)
   }
 
 
   // Renders the given foreground event segments onto the grid
-  renderFgSegs(segs) {
+  renderFgSegs(segs: Seg[]) {
     let rowStructs = this.rowStructs = this.renderSegRows(segs)
 
     // append to each row's content skeleton
@@ -58,7 +59,7 @@ export default class DayGridEventRenderer extends EventRenderer {
   // Uses the given events array to generate <tbody> elements that should be appended to each row's content skeleton.
   // Returns an array of rowStruct objects (see the bottom of `renderSegRow`).
   // PRECONDITION: each segment shoud already have a rendered and assigned `.el`
-  renderSegRows(segs) {
+  renderSegRows(segs: Seg[]) {
     let rowStructs = []
     let segRows
     let row
@@ -165,7 +166,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
   // Stacks a flat array of segments, which are all assumed to be in the same row, into subarrays of vertical levels.
   // NOTE: modifies segs
-  buildSegLevels(segs) {
+  buildSegLevels(segs: Seg[]) {
     let levels = []
     let i
     let seg
@@ -201,7 +202,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
 
   // Given a flat array of segments, return an array of sub-arrays, grouped by each segment's row
-  groupSegRows(segs) {
+  groupSegRows(segs: Seg[]) {
     let segRows = []
     let i
 
@@ -235,10 +236,11 @@ export default class DayGridEventRenderer extends EventRenderer {
 
 
   // Builds the HTML to be used for the default element for an individual segment
-  fgSegHtml(seg, disableResizing) {
+  fgSegHtml(seg: Seg, disableResizing) {
     let view = this.view
-    let eventDef = seg.footprint.eventDef
-    let isAllDay = seg.footprint.componentFootprint.isAllDay
+    let eventRange = seg.eventRange
+    let eventDef = eventRange.eventDef
+    let isAllDay = eventDef.isAllDay
     let isDraggable = view.isEventDefDraggable(eventDef)
     let isResizableFromStart = !disableResizing && isAllDay &&
       seg.isStart && view.isEventDefResizableFromStart(eventDef)
@@ -254,7 +256,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
     // Only display a timed events time if it is the starting segment
     if (seg.isStart) {
-      timeText = this.getTimeText(seg.footprint)
+      timeText = this.getTimeText(eventRange)
       if (timeText) {
         timeHtml = '<span class="fc-time">' + htmlEscape(timeText) + '</span>'
       }
@@ -296,7 +298,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
 
 // Computes whether two segments' columns collide. They are assumed to be in the same row.
-function isDaySegCollision(seg, otherSegs) {
+function isDaySegCollision(seg: Seg, otherSegs: Seg) {
   let i
   let otherSeg
 
@@ -316,6 +318,6 @@ function isDaySegCollision(seg, otherSegs) {
 
 
 // A cmp function for determining the leftmost event
-function compareDaySegCols(a, b) {
+function compareDaySegCols(a: Seg, b: Seg) {
   return a.leftCol - b.leftCol
 }
