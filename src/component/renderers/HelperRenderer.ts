@@ -1,7 +1,5 @@
 import { removeElement } from '../../util/dom-manip'
-import SingleEventDef from '../../models/event/SingleEventDef'
-import EventFootprint from '../../models/event/EventFootprint'
-import EventSource from '../../models/event-source/EventSource'
+import { Seg } from '../../reducers/seg'
 
 
 export default abstract class HelperRenderer {
@@ -19,16 +17,9 @@ export default abstract class HelperRenderer {
   }
 
 
-  renderComponentFootprint(componentFootprint) {
-    this.renderEventFootprints([
-      this.fabricateEventFootprint(componentFootprint)
-    ])
-  }
-
-
-  renderEventDraggingFootprints(eventFootprints, sourceSeg, isTouch) {
-    this.renderEventFootprints(
-      eventFootprints,
+  renderEventDraggingSegs(segs: Seg[], sourceSeg, isTouch) {
+    this.renderEventSegs(
+      segs,
       sourceSeg,
       'fc-dragging',
       isTouch ? null : this.view.opt('dragOpacity')
@@ -36,17 +27,16 @@ export default abstract class HelperRenderer {
   }
 
 
-  renderEventResizingFootprints(eventFootprints, sourceSeg, isTouch) {
-    this.renderEventFootprints(
-      eventFootprints,
+  renderEventResizingSegs(segs: Seg[], sourceSeg, isTouch) {
+    this.renderEventSegs(
+      segs,
       sourceSeg,
       'fc-resizing'
     )
   }
 
 
-  renderEventFootprints(eventFootprints, sourceSeg?, extraClassName?, opacity?) {
-    let segs = this.component.eventFootprintsToSegs(eventFootprints)
+  renderEventSegs(segs: Seg[], sourceSeg?, extraClassName?, opacity?) {
     let i
 
     // assigns each seg's el and returns a subset of segs that were rendered
@@ -73,7 +63,7 @@ export default abstract class HelperRenderer {
   /*
   Must return all mock event elements
   */
-  abstract renderSegs(segs, sourceSeg?): HTMLElement[]
+  abstract renderSegs(segs: Seg[], sourceSeg?): HTMLElement[]
 
 
   unrender() {
@@ -81,19 +71,6 @@ export default abstract class HelperRenderer {
       this.helperEls.forEach(removeElement)
       this.helperEls = null
     }
-  }
-
-
-  fabricateEventFootprint(componentFootprint) {
-    let calendar = this.view.calendar
-    let eventDateProfile = calendar.footprintToDateProfile(componentFootprint)
-    let dummyEvent = new SingleEventDef(new EventSource(calendar))
-    let dummyInstance
-
-    dummyEvent.dateProfile = eventDateProfile
-    dummyInstance = dummyEvent.buildInstance()
-
-    return new EventFootprint(componentFootprint, dummyEvent, dummyInstance)
   }
 
 }

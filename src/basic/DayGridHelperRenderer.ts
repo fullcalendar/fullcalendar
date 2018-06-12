@@ -1,6 +1,7 @@
 import { htmlToElement } from '../util/dom-manip'
 import HelperRenderer from '../component/renderers/HelperRenderer'
 import DayGrid from './DayGrid'
+import { Seg } from '../reducers/seg'
 
 
 export default class DayGridHelperRenderer extends HelperRenderer {
@@ -9,7 +10,7 @@ export default class DayGridHelperRenderer extends HelperRenderer {
 
 
   // Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
-  renderSegs(segs, sourceSeg) {
+  renderSegs(segs: Seg[], sourceSeg) {
     let helperNodes = []
     let rowStructs
 

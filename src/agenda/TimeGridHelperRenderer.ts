@@ -1,13 +1,14 @@
 import { applyStyle } from '../util/dom-manip'
 import HelperRenderer from '../component/renderers/HelperRenderer'
+import { Seg } from '../reducers/seg'
 
 
 export default class TimeGridHelperRenderer extends HelperRenderer {
 
-  renderSegs(segs, sourceSeg) {
+  renderSegs(segs: Seg[], sourceSeg) {
     let helperNodes = []
     let i
-    let seg
+    let seg: Seg
     let sourceEl
     let computedStyle
 
