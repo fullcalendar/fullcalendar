@@ -58,7 +58,7 @@ registerSourceType('json-feed', {
       if (rawEvents) {
         success(rawEvents)
       } else {
-        failure()
+        failure('No response')
       }
     })
   }
