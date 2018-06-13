@@ -240,49 +240,6 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  // Event Data
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  fetchInitialEvents(dateProfile, callback) {
-    this.calendar.requestEvents(
-      dateProfile.activeUnzonedRange.start,
-      dateProfile.activeUnzonedRange.end,
-      callback
-    )
-  }
-
-
-  bindEventChanges() {
-    this.listenTo(this.calendar, 'eventsReset', this.resetEvents) // TODO: make this a real event
-  }
-
-
-  unbindEventChanges() {
-    this.stopListeningTo(this.calendar, 'eventsReset')
-  }
-
-
-  setEvents(eventsPayload) {
-    this.set('currentEvents', eventsPayload)
-    this.set('hasEvents', true)
-  }
-
-
-  unsetEvents() {
-    this.unset('currentEvents')
-    this.unset('hasEvents')
-  }
-
-
-  resetEvents(eventsPayload) {
-    this.startBatchRender()
-    this.unsetEvents()
-    this.setEvents(eventsPayload)
-    this.stopBatchRender()
-  }
-
-
   // Date High-level Rendering
   // -----------------------------------------------------------------------------------------------------------------
 

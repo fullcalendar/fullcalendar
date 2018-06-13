@@ -14,15 +14,7 @@ import View from './View'
 import Theme from './theme/Theme'
 import Constraints from './Constraints'
 import UnzonedRange from './models/UnzonedRange'
-import ComponentFootprint from './models/ComponentFootprint'
-import EventDateProfile from './models/event/EventDateProfile'
-import EventManager from './models/EventManager'
 import BusinessHourGenerator from './models/BusinessHourGenerator'
-import EventSourceParser from './models/event-source/EventSourceParser'
-import EventDefParser from './models/event/EventDefParser'
-import SingleEventDef from './models/event/SingleEventDef'
-import EventDefMutation from './models/event/EventDefMutation'
-import EventSource from './models/event-source/EventSource'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
 import { RangeInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
 import { getLocale } from './datelib/locale'
@@ -31,6 +23,7 @@ import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import { CalendarState, INITIAL_STATE, reduce } from './reducers/main'
+import { parseSelection, SelectionInput } from './reducers/selection'
 
 export default class Calendar {
 
@@ -56,7 +49,6 @@ export default class Calendar {
   viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
   currentDate: DateMarker // private (public API should use getDate instead)
   theme: Theme
-  eventManager: EventManager
   constraints: Constraints
   optionsManager: OptionsManager
   viewSpecManager: ViewSpecManager
@@ -96,8 +88,7 @@ export default class Calendar {
     this.viewSpecManager = new ViewSpecManager(this.optionsManager, this)
     this.initDateEnv() // needs to happen after options hash initialized
     this.initCurrentDate()
-    this.initEventManager()
-    this.constraints = new Constraints(this.eventManager, this)
+    this.constraints = new Constraints(this)
 
     this.constructed()
     this.hydrate()
@@ -525,7 +516,6 @@ export default class Calendar {
         this.currentDate = dateProfile.date // might have been constrained by view dates
         this.updateToolbarButtons(dateProfile)
 
-        view.unset('eventStore')
         this.dispatch({
           type: 'SET_ACTIVE_RANGE',
           range: dateProfile.activeUnzonedRange
@@ -859,10 +849,26 @@ export default class Calendar {
 
 
   // this public method receives start/end dates in any format, with any timezone
-  select(zonedStartInput: DateInput, zonedEndInput?: DateInput, otherProps: any = {}) {
-    this.view.select(
-      this.buildSelectFootprint.call(this, zonedStartInput, zonedEndInput, otherProps)
-    )
+  //
+  // args were changed
+  //
+  select(dateOrObj: DateInput | object, endDate?: DateInput) {
+    let selectionInput: SelectionInput
+
+    if (endDate == null) {
+      selectionInput = dateOrObj as SelectionInput
+    } else {
+      selectionInput = {
+        start: dateOrObj,
+        end: endDate
+      } as SelectionInput
+    }
+
+    let selection = parseSelection(selectionInput, this.dateEnv)
+
+    if (selection) {
+      this.view.select(selection)
+    }
   }
 
 
@@ -870,27 +876,6 @@ export default class Calendar {
     if (this.view) {
       this.view.unselect()
     }
-  }
-
-
-  // Given arguments to the select method in the API, returns a span (unzoned start/end and other info)
-  buildSelectFootprint(zonedStartInput: DateInput, zonedEndInput?: DateInput, otherProps?): ComponentFootprint {
-    let startMeta = this.dateEnv.createMarkerMeta(zonedStartInput)
-    let start = startMeta.marker
-    let end
-
-    if (zonedEndInput) {
-      end = this.dateEnv.createMarker(zonedEndInput)
-    } else if (startMeta.isTimeUnspecified) {
-      end = this.dateEnv.add(start, this.defaultAllDayEventDuration)
-    } else {
-      end = this.dateEnv.add(start, this.defaultTimedEventDuration)
-    }
-
-    return new ComponentFootprint(
-      new UnzonedRange(start, end),
-      otherProps.isAllDay != null ? otherProps.isAllDay : startMeta.isTimeUnspecified
-    )
   }
 
 
@@ -944,29 +929,6 @@ export default class Calendar {
   }
 
 
-  /*
-  Assumes the footprint is non-open-ended.
-  */
-  footprintToDateProfile(componentFootprint, ignoreEnd = false) {
-    let startMarker = componentFootprint.unzonedRange.start
-    let endMarker
-
-    if (!ignoreEnd) {
-      endMarker = componentFootprint.unzonedRange.end
-    }
-
-    if (componentFootprint.isAllDay) {
-      startMarker = startOfDay(startMarker)
-
-      if (endMarker) {
-        endMarker = startOfDay(endMarker)
-      }
-    }
-
-    return new EventDateProfile(startMarker, endMarker, componentFootprint.isAllDay, this)
-  }
-
-
   // Returns a DateMarker for the current date, as defined by the client's computer or from the `now` option
   getNow(): DateMarker {
     let now = this.opt('now')
@@ -1012,46 +974,6 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  initEventManager() {
-    let eventManager = new EventManager(this)
-    let rawSources = this.opt('eventSources') || []
-    let singleRawSource = this.opt('events')
-
-    this.eventManager = eventManager
-
-    if (singleRawSource) {
-      rawSources.unshift(singleRawSource)
-    }
-
-    eventManager.on('release', (eventsPayload) => {
-      this.trigger('eventsReset', eventsPayload)
-    })
-
-    eventManager.freeze()
-
-    rawSources.forEach((rawSource) => {
-      let source = EventSourceParser.parse(rawSource, this)
-
-      if (source) {
-        eventManager.addSource(source)
-      }
-    })
-
-    eventManager.thaw()
-  }
-
-
-  requestEvents(start: DateMarker, end: DateMarker, callback) {
-    return this.eventManager.requestEvents(
-      start,
-      end,
-      this.dateEnv,
-      !this.opt('lazyFetching'),
-      callback
-    )
-  }
-
-
   // Given an event's allDay status and start date, return what its fallback end date should be.
   // TODO: rename to computeDefaultEventEnd
   getDefaultEventEnd(allDay: boolean, marker: DateMarker): DateMarker {
@@ -1078,108 +1000,41 @@ export default class Calendar {
 
 
   refetchEvents() {
-    this.eventManager.refetchAllSources()
-  }
-
-
-  renderEvents(eventInputs: EventObjectInput[], isSticky?: boolean) {
-    this.eventManager.freeze()
-
-    for (let i = 0; i < eventInputs.length; i++) {
-      this.renderEvent(eventInputs[i], isSticky)
-    }
-
-    this.eventManager.thaw()
+    // TODO
   }
 
 
   renderEvent(eventInput: EventObjectInput, isSticky: boolean = false) {
-    let eventManager = this.eventManager
-    let eventDef = EventDefParser.parse(
-      eventInput,
-      eventInput.source || eventManager.stickySource
-    )
-
-    if (eventDef) {
-      eventManager.addEventDef(eventDef, isSticky)
-    }
+    // TODO
   }
 
 
   // legacyQuery operates on legacy event instance objects
   removeEvents(legacyQuery) {
-    let eventManager = this.eventManager
-    let legacyInstances = []
-    let idMap = {}
-    let eventDef
-    let i
-
-    if (legacyQuery == null) { // shortcut for removing all
-      eventManager.removeAllEventDefs() // persist=true
-    } else {
-      eventManager.getEventInstances().forEach((eventInstance) => {
-        legacyInstances.push(eventInstance.toLegacy(this))
-      })
-
-      legacyInstances = filterLegacyEventInstances(legacyInstances, legacyQuery)
-
-      // compute unique IDs
-      for (i = 0; i < legacyInstances.length; i++) {
-        eventDef = eventManager.getEventDefByUid(legacyInstances[i]._id)
-        idMap[eventDef.id] = true
-      }
-
-      eventManager.freeze()
-
-      for (i in idMap) { // reuse `i` as an "id"
-        eventManager.removeEventDefsById(i) // persist=true
-      }
-
-      eventManager.thaw()
-    }
+    // TODO
   }
 
 
   // legacyQuery operates on legacy event instance objects
   clientEvents(legacyQuery) {
-    let legacyEventInstances = []
-
-    this.eventManager.getEventInstances().forEach((eventInstance) => {
-      legacyEventInstances.push(eventInstance.toLegacy(this))
-    })
-
-    return filterLegacyEventInstances(legacyEventInstances, legacyQuery)
+    // TODO
   }
 
 
-  updateEvents(eventPropsArray: EventObjectInput[]) {
-    this.eventManager.freeze()
-
-    for (let i = 0; i < eventPropsArray.length; i++) {
-      this.updateEvent(eventPropsArray[i])
-    }
-
-    this.eventManager.thaw()
+  buildMutatedEventRanges(eventDefId, eventDefMutation) { // do it FOR the given def
+    return [] // TODO
   }
 
 
-  updateEvent(eventProps: EventObjectInput) {
-    let eventDef = this.eventManager.getEventDefByUid(eventProps._id)
-    let eventInstance
-    let eventDefMutation
+  getEventInstances() {
+  }
 
-    if (eventDef instanceof SingleEventDef) {
-      eventInstance = eventDef.buildInstance()
 
-      eventDefMutation = EventDefMutation.createFromRawProps(
-        eventInstance,
-        eventProps, // raw props
-        null, // largeUnit -- who uses it?
-        this
-      )
+  getEventInstancesWithoutId(id) {
+  }
 
-      this.eventManager.mutateEventsWithId(eventDef.id, eventDefMutation) // will release
-    }
+
+  getEventInstancesWithId(id) {
   }
 
 
@@ -1188,74 +1043,32 @@ export default class Calendar {
 
 
   getEventSources(): EventSource {
-    return this.eventManager.otherSources.slice() // clone
+    return null // TODO
   }
 
 
   getEventSourceById(id): EventSource {
-    return this.eventManager.getSourceById(
-      EventSource.normalizeId(id)
-    )
+    return null // TODO
   }
 
 
   addEventSource(sourceInput: EventSourceInput) {
-    let source = EventSourceParser.parse(sourceInput, this)
-
-    if (source) {
-      this.eventManager.addSource(source)
-    }
+    // TODO
   }
 
 
   removeEventSources(sourceMultiQuery) {
-    let eventManager = this.eventManager
-    let sources
-    let i
-
-    if (sourceMultiQuery == null) {
-      eventManager.removeAllSources()
-    } else {
-      sources = eventManager.multiQuerySources(sourceMultiQuery)
-
-      eventManager.freeze()
-
-      for (i = 0; i < sources.length; i++) {
-        eventManager.removeSource(sources[i])
-      }
-
-      eventManager.thaw()
-    }
+    // TODO
   }
 
 
   removeEventSource(sourceQuery) {
-    let eventManager = this.eventManager
-    let sources = eventManager.querySources(sourceQuery)
-    let i
-
-    eventManager.freeze()
-
-    for (i = 0; i < sources.length; i++) {
-      eventManager.removeSource(sources[i])
-    }
-
-    eventManager.thaw()
+    // TODO
   }
 
 
   refetchEventSources(sourceMultiQuery) {
-    let eventManager = this.eventManager
-    let sources = eventManager.multiQuerySources(sourceMultiQuery)
-    let i
-
-    eventManager.freeze()
-
-    for (i = 0; i < sources.length; i++) {
-      eventManager.refetchSource(sources[i])
-    }
-
-    eventManager.thaw()
+    // TODO
   }
 
 
@@ -1264,21 +1077,3 @@ export default class Calendar {
 EmitterMixin.mixIntoObj(Calendar) // for global registry
 EmitterMixin.mixInto(Calendar)
 ListenerMixin.mixInto(Calendar)
-
-
-function filterLegacyEventInstances(legacyEventInstances, legacyQuery) {
-  if (legacyQuery == null) {
-    return legacyEventInstances
-  } else if (typeof legacyQuery === 'function') {
-    return legacyEventInstances.filter(legacyQuery)
-  } else { // an event ID
-    legacyQuery += '' // normalize to string
-
-    return legacyEventInstances.filter(function(legacyEventInstance) {
-      // soft comparison because id not be normalized to string
-      // tslint:disable-next-line
-      return legacyEventInstance.id == legacyQuery ||
-        legacyEventInstance._id === legacyQuery // can specify internal id, but must exactly match
-    })
-  }
-}

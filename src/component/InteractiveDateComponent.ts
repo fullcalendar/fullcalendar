@@ -4,6 +4,7 @@ import DateComponent from './DateComponent'
 import GlobalEmitter from '../common/GlobalEmitter'
 import { diffDayAndTime, diffWholeWeeks } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
+import { EventRenderRange } from '../reducers/event-rendering'
 
 
 export default abstract class InteractiveDateComponent extends DateComponent {
@@ -84,10 +85,10 @@ export default abstract class InteractiveDateComponent extends DateComponent {
   }
 
 
-  executeEventUnrender() {
+  unrenderEvents() {
     this.endInteractions()
 
-    super.executeEventUnrender()
+    super.unrenderEvents()
   }
 
 
@@ -339,49 +340,55 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   // is it allowed, in relation to the view's validRange?
-  // NOTE: very similar to isExternalInstanceGroupAllowed
-  isEventInstanceGroupAllowed(eventInstanceGroup) {
+  isEventRangesAllowed(eventRanges: EventRenderRange[]) {
     let view = this._getView()
     let dateProfile = this.dateProfile
-    let eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges())
-    let i
 
-    for (i = 0; i < eventFootprints.length; i++) {
-      // TODO: just use getAllEventRanges directly
-      if (!dateProfile.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
+    for (let eventRange of eventRanges) {
+      if (!dateProfile.validUnzonedRange.containsRange(eventRange.range)) {
         return false
       }
     }
 
-    return view.calendar.constraints.isEventInstanceGroupAllowed(eventInstanceGroup)
+    return view.calendar.constraints.isEventRangesAllowed(eventRanges)
   }
 
 
-  // NOTE: very similar to isEventInstanceGroupAllowed
+  // NOTE: very similar to isEventRangesAllowed
   // when it's a completely anonymous external drag, no event.
-  isExternalInstanceGroupAllowed(eventInstanceGroup) {
-    let view = this._getView()
+  isExternalRangesAllowed(eventRanges: EventRenderRange[]) {
     let dateProfile = this.dateProfile
-    let eventFootprints = this.eventRangesToEventFootprints(eventInstanceGroup.getAllEventRanges())
-    let i
 
-    for (i = 0; i < eventFootprints.length; i++) {
-      if (!dateProfile.validUnzonedRange.containsRange(eventFootprints[i].componentFootprint.unzonedRange)) {
+    for (let eventRange of eventRanges) {
+      if (!dateProfile.validUnzonedRange.containsRange(eventRange.range)) {
         return false
       }
     }
 
-    for (i = 0; i < eventFootprints.length; i++) {
-      // treat it as a selection
-      // TODO: pass in eventInstanceGroup instead
-      //  because we don't want calendar's constraint system to depend on a component's
-      //  determination of footprints.
-      if (!view.calendar.constraints.isSelectionFootprintAllowed(eventFootprints[i].componentFootprint)) {
-        return false
-      }
-    }
+    // let view = this._getView()
+    //
+    // for (let eventRange of eventRanges) {
+    //   // treat it as a selection
+    //   // TODO: pass in eventRanges instead
+    //   //  because we don't want calendar's constraint system to depend on a component's
+    //   //  determination of footprints.
+    //   if (!view.calendar.constraints.isSelectionFootprintAllowed(WHAT)) {
+    //     return false
+    //   }
+    // }
 
     return true
+  }
+
+
+  // TODO: constraint API
+
+  isSelectionAllowed(selection) {
+    return false
+  }
+
+  isRangeAllowed(range, overlap, constraint, eventDef, selection) {
+    return false
   }
 
 }
