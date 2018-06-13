@@ -2,11 +2,9 @@ import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
-import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import CoordCache from '../common/CoordCache'
 import UnzonedRange from '../models/UnzonedRange'
-import ComponentFootprint from '../models/ComponentFootprint'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
@@ -583,81 +581,6 @@ export default class TimeGrid extends InteractiveDateComponent {
   }
 
 
-  /* Hit System
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  prepareHits() {
-    this.colCoordCache.build()
-    this.slatCoordCache.build()
-  }
-
-
-  releaseHits() {
-    this.colCoordCache.clear()
-    // NOTE: don't clear slatCoordCache because we rely on it for computeTimeTop
-  }
-
-
-  queryHit(leftOffset, topOffset): any {
-    let snapsPerSlot = this.snapsPerSlot
-    let colCoordCache = this.colCoordCache
-    let slatCoordCache = this.slatCoordCache
-
-    if (colCoordCache.isLeftInBounds(leftOffset) && slatCoordCache.isTopInBounds(topOffset)) {
-      let colIndex = colCoordCache.getHorizontalIndex(leftOffset)
-      let slatIndex = slatCoordCache.getVerticalIndex(topOffset)
-
-      if (colIndex != null && slatIndex != null) {
-        let slatTop = slatCoordCache.getTopOffset(slatIndex)
-        let slatHeight = slatCoordCache.getHeight(slatIndex)
-        let partial = (topOffset - slatTop) / slatHeight // floating point number between 0 and 1
-        let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
-        let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
-        let snapTop = slatTop + (localSnapIndex / snapsPerSlot) * slatHeight
-        let snapBottom = slatTop + ((localSnapIndex + 1) / snapsPerSlot) * slatHeight
-
-        return {
-          col: colIndex,
-          snap: snapIndex,
-          component: this, // needed unfortunately :(
-          left: colCoordCache.getLeftOffset(colIndex),
-          right: colCoordCache.getRightOffset(colIndex),
-          top: snapTop,
-          bottom: snapBottom
-        }
-      }
-    }
-  }
-
-
-  getHitFootprint(hit) {
-    const dateEnv = this.view.calendar.dateEnv
-    let start = this.getCellDate(0, hit.col) // row=0
-    let timeMs = this.computeSnapTime(hit.snap) // pass in the snap-index
-    let end
-
-    start = addMs(start, timeMs)
-    end = dateEnv.add(start, this.snapDuration)
-
-    return new ComponentFootprint(
-      new UnzonedRange(start, end),
-      false // all-day?
-    )
-  }
-
-
-  // Given a row number of the grid, representing a "snap", returns a time (Duration) from its start-of-day
-  computeSnapTime(snapIndex): number {
-    return asRoughMs(this.dateProfile.minTime) + asRoughMs(this.snapDuration) * snapIndex
-  }
-
-
-  getHitEl(hit) {
-    return this.colEls[hit.col]
-  }
-
-
   /* Event Drag Visualization
   ------------------------------------------------------------------------------------------------------------------*/
 
@@ -735,5 +658,4 @@ TimeGrid.prototype.businessHourRendererClass = BusinessHourRenderer
 TimeGrid.prototype.helperRendererClass = TimeGridHelperRenderer
 TimeGrid.prototype.fillRendererClass = TimeGridFillRenderer
 
-StandardInteractionsMixin.mixInto(TimeGrid)
 DayTableMixin.mixInto(TimeGrid)

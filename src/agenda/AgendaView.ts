@@ -285,23 +285,6 @@ export default class AgendaView extends View {
   }
 
 
-  /* Hit Areas
-  ------------------------------------------------------------------------------------------------------------------*/
-  // forward all hit-related method calls to the grids (dayGrid might not be defined)
-
-
-  getHitFootprint(hit) {
-    // TODO: hit.component is set as a hack to identify where the hit came from
-    return hit.component.getHitFootprint(hit)
-  }
-
-
-  getHitEl(hit) {
-    // TODO: hit.component is set as a hack to identify where the hit came from
-    return hit.component.getHitEl(hit)
-  }
-
-
   /* Event Rendering
   ------------------------------------------------------------------------------------------------------------------*/
 

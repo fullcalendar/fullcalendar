@@ -32,8 +32,6 @@ export default abstract class DateComponent extends Component {
   businessHourRenderer: any
   fillRenderer: any
 
-  hitsNeededDepth: number = 0 // necessary because multiple callers might need the same hits
-
   hasAllDayBusinessHours: boolean = false // TODO: unify with largeUnit and isTimeScale?
 
   isDatesRendered: boolean = false
@@ -478,84 +476,6 @@ export default abstract class DateComponent extends Component {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('highlight')
     }
-  }
-
-
-  // Hit Areas
-  // ---------------------------------------------------------------------------------------------------------------
-  // just because all DateComponents support this interface
-  // doesn't mean they need to have their own internal coord system. they can defer to sub-components.
-
-
-  hitsNeeded() {
-    if (!(this.hitsNeededDepth++)) {
-      this.prepareHits()
-    }
-
-    this.callChildren('hitsNeeded', arguments)
-  }
-
-
-  hitsNotNeeded() {
-    if (this.hitsNeededDepth && !(--this.hitsNeededDepth)) {
-      this.releaseHits()
-    }
-
-    this.callChildren('hitsNotNeeded', arguments)
-  }
-
-
-  prepareHits() {
-    // subclasses can implement
-  }
-
-
-  releaseHits() {
-    // subclasses can implement
-  }
-
-
-  // Given coordinates from the topleft of the document, return data about the date-related area underneath.
-  // Can return an object with arbitrary properties (although top/right/left/bottom are encouraged).
-  // Must have a `grid` property, a reference to this current grid. TODO: avoid this
-  // The returned object will be processed by getHitFootprint and getHitEl.
-  queryHit(leftOffset, topOffset) {
-    let childrenByUid = this.childrenByUid
-    let uid
-    let hit
-
-    for (uid in childrenByUid) {
-      hit = childrenByUid[uid].queryHit(leftOffset, topOffset)
-
-      if (hit) {
-        break
-      }
-    }
-
-    return hit
-  }
-
-
-  getSafeHitFootprint(hit) {
-    let footprint = this.getHitFootprint(hit)
-
-    if (!this.dateProfile.activeUnzonedRange.containsRange(footprint.unzonedRange)) {
-      return null
-    }
-
-    return footprint
-  }
-
-
-  getHitFootprint(hit): any {
-    // what about being abstract!?
-  }
-
-
-  // Given position-level information about a date-related area within the grid,
-  // should return an element that best represents it. passed to dayClick callback.
-  getHitEl(hit): HTMLElement | null {
-    return null
   }
 
 

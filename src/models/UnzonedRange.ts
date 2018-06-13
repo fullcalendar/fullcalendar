@@ -5,7 +5,7 @@ export default class UnzonedRange {
   start: DateMarker // if null, no start constraint
   end: DateMarker // if null, no end constraint
 
-  // TODO: move these into footprint.
+  // TODO: move these into some other objects.
   // Especially, doesn't make sense for null start/end
   isStart: boolean = true
   isEnd: boolean = true

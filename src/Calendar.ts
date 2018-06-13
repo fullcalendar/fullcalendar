@@ -12,7 +12,6 @@ import OptionsManager from './OptionsManager'
 import ViewSpecManager from './ViewSpecManager'
 import View from './View'
 import Theme from './theme/Theme'
-import Constraints from './Constraints'
 import UnzonedRange from './models/UnzonedRange'
 import BusinessHourGenerator from './models/BusinessHourGenerator'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
@@ -49,7 +48,6 @@ export default class Calendar {
   viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
   currentDate: DateMarker // private (public API should use getDate instead)
   theme: Theme
-  constraints: Constraints
   optionsManager: OptionsManager
   viewSpecManager: ViewSpecManager
   businessHourGenerator: BusinessHourGenerator
@@ -88,7 +86,6 @@ export default class Calendar {
     this.viewSpecManager = new ViewSpecManager(this.optionsManager, this)
     this.initDateEnv() // needs to happen after options hash initialized
     this.initCurrentDate()
-    this.constraints = new Constraints(this)
 
     this.constructed()
     this.hydrate()

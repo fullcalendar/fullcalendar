@@ -561,136 +561,6 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  /* Event Drag-n-Drop
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  reportEventDrop(eventInstance, eventMutation, el, ev) {
-    let eventManager = this.calendar.eventManager
-    let revertFunc = eventManager.mutateEventsWithId(
-      eventInstance.def.id,
-      eventMutation
-    )
-    let dateMutation = eventMutation.dateMutation
-
-    // update the EventInstance, for handlers
-    if (dateMutation) {
-      eventInstance.dateProfile = dateMutation.buildNewDateProfile(
-        eventInstance.dateProfile,
-        this.calendar
-      )
-    }
-
-    this.triggerEventDrop(
-      eventInstance,
-      // a drop doesn't necessarily mean a date mutation (ex: resource change)
-      (dateMutation && dateMutation.dateDelta) || createDuration(0),
-      revertFunc,
-      el, ev
-    )
-  }
-
-
-  // Triggers event-drop handlers that have subscribed via the API
-  triggerEventDrop(eventInstance, delta, revertFunc, el, ev) {
-    this.publiclyTrigger('eventDrop', [
-      {
-        el,
-        event: eventInstance.toLegacy(this.calendar),
-        delta,
-        revertFunc,
-        jsEvent: ev,
-        view: this
-      }
-    ])
-  }
-
-
-  /* External Element Drag-n-Drop
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Must be called when an external element, via jQuery UI, has been dropped onto the calendar.
-  // `meta` is the parsed data that has been embedded into the dragging event.
-  // `dropLocation` is an object that contains the new zoned start/end/allDay values for the event.
-  reportExternalDrop(singleEventDef, isEvent, isSticky, el, ev) {
-
-    if (isEvent) {
-      this.calendar.eventManager.addEventDef(singleEventDef, isSticky)
-    }
-
-    this.triggerExternalDrop(singleEventDef, isEvent, el, ev)
-  }
-
-
-  // Triggers external-drop handlers that have subscribed via the API
-  triggerExternalDrop(singleEventDef, isEvent, el, ev) {
-    const dateEnv = this.calendar.dateEnv
-
-    // trigger 'drop' regardless of whether element represents an event
-    this.publiclyTrigger('drop', [
-      {
-        date: dateEnv.toDate(singleEventDef.dateProfile.unzonedRange.start),
-        isAllDay: singleEventDef.dateProfile.isAllDay,
-        jsEvent: ev,
-        view: this
-      }
-    ])
-
-    if (isEvent) {
-      // signal an external event landed
-      this.publiclyTrigger('eventReceive', [
-        {
-          event: singleEventDef.buildInstance().toLegacy(this.calendar),
-          view: this
-        }
-      ])
-    }
-  }
-
-
-  /* Event Resizing
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Must be called when an event in the view has been resized to a new length
-  reportEventResize(eventInstance, eventMutation, el, ev) {
-    let eventManager = this.calendar.eventManager
-    let revertFunc = eventManager.mutateEventsWithId(
-      eventInstance.def.id,
-      eventMutation
-    )
-
-    // update the EventInstance, for handlers
-    eventInstance.dateProfile = eventMutation.dateMutation.buildNewDateProfile(
-      eventInstance.dateProfile,
-      this.calendar
-    )
-
-    this.triggerEventResize(
-      eventInstance,
-      eventMutation.dateMutation.endDelta,
-      revertFunc,
-      el, ev
-    )
-  }
-
-
-  // Triggers event-resize handlers that have subscribed via the API
-  triggerEventResize(eventInstance, delta, revertFunc, el, ev) {
-    this.publiclyTrigger('eventResize', [
-      {
-        el,
-        event: eventInstance.toLegacy(this.calendar),
-        delta,
-        revertFunc,
-        jsEvent: ev,
-        view: this
-      }
-    ])
-  }
-
-
   /* Selection (time range)
   ------------------------------------------------------------------------------------------------------------------*/
 
@@ -753,13 +623,13 @@ export default abstract class View extends InteractiveDateComponent {
   selectEventInstance(eventInstance) {
     if (
       !this.selectedEventInstance ||
-      this.selectedEventInstance !== eventInstance
+      this.selectedEventInstance.instanceId !== eventInstance.instanceId
     ) {
       this.unselectEventInstance()
 
       this.getEventSegs().forEach(function(seg) {
         if (
-          seg.footprint.eventInstance === eventInstance &&
+          seg.eventRange.eventInstance.instanceId === eventInstance.instanceId &&
           seg.el // necessary?
         ) {
           seg.el.classList.add('fc-selected')
@@ -788,7 +658,7 @@ export default abstract class View extends InteractiveDateComponent {
   isEventDefSelected(eventDef) {
     // event references might change on refetchEvents(), while selectedEventInstance doesn't,
     // so compare IDs
-    return this.selectedEventInstance && this.selectedEventInstance.def.id === eventDef.id
+    return this.selectedEventInstance && this.selectedEventInstance.defId === eventDef.defId
   }
 
 
@@ -853,24 +723,6 @@ export default abstract class View extends InteractiveDateComponent {
       {
         view: this,
         el: this.el
-      }
-    ])
-  }
-
-
-  // Triggers handlers to 'dayClick'
-  // Span has start/end of the clicked area. Only the start is useful.
-  triggerDayClick(footprint, dayEl, ev) {
-    const dateEnv = this.calendar.dateEnv
-    let dateProfile = this.calendar.footprintToDateProfile(footprint) // abuse of "Event"DateProfile?
-
-    this.publiclyTrigger('dayClick', [
-      {
-        date: dateEnv.toDate(dateProfile.unzonedRange.start),
-        isAllDay: dateProfile.isAllDay,
-        el: dayEl,
-        jsEvent: ev,
-        view: this
       }
     ])
   }

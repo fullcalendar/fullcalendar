@@ -40,7 +40,7 @@ describe('rerender performance', function() {
 
         it('calls methods a limited number of times', function(done) {
           var executeDateRender = spyOnMethod(Class, 'executeDateRender')
-          var executeEventRender = spyOnMethod(Class, 'executeEventRender')
+          var renderEventRanges = spyOnMethod(Class, 'renderEventRanges')
           var updateSize = spyOnMethod(Class, 'updateSize')
 
           initCalendar({
@@ -48,25 +48,25 @@ describe('rerender performance', function() {
           })
 
           expect(executeDateRender.calls.count()).toBe(1)
-          expect(executeEventRender.calls.count()).toBe(1)
+          expect(renderEventRanges.calls.count()).toBe(1)
           expect(updateSize.calls.count()).toBe(1)
 
           currentCalendar.changeView(settings.changeToView)
 
           expect(executeDateRender.calls.count()).toBe(1)
-          expect(executeEventRender.calls.count()).toBe(1)
+          expect(renderEventRanges.calls.count()).toBe(1)
           expect(updateSize.calls.count()).toBe(2) // +1
 
           currentCalendar.changeView(settings.defaultView)
 
           expect(executeDateRender.calls.count()).toBe(2) // +1
-          expect(executeEventRender.calls.count()).toBe(2) // +1
+          expect(renderEventRanges.calls.count()).toBe(2) // +1
           expect(updateSize.calls.count()).toBe(3) // +1
 
           currentCalendar.rerenderEvents()
 
           expect(executeDateRender.calls.count()).toBe(2)
-          expect(executeEventRender.calls.count()).toBe(3) // +1
+          expect(renderEventRanges.calls.count()).toBe(3) // +1
           expect(updateSize.calls.count()).toBe(5) // +2, TODO: get to just +1
 
           $(window).simulate('resize')
@@ -74,11 +74,11 @@ describe('rerender performance', function() {
           setTimeout(function() {
 
             expect(executeDateRender.calls.count()).toBe(2)
-            expect(executeEventRender.calls.count()).toBe(3)
+            expect(renderEventRanges.calls.count()).toBe(3)
             expect(updateSize.calls.count()).toBe(6) // +1
 
             executeDateRender.restore()
-            executeEventRender.restore()
+            renderEventRanges.restore()
             updateSize.restore()
 
             done()

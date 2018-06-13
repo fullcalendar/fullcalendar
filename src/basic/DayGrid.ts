@@ -13,9 +13,7 @@ import View from '../View'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
 import UnzonedRange from '../models/UnzonedRange'
-import ComponentFootprint from '../models/ComponentFootprint'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
-import StandardInteractionsMixin from '../component/interactions/StandardInteractionsMixin'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import DayGridEventRenderer from './DayGridEventRenderer'
@@ -287,66 +285,9 @@ export default class DayGrid extends InteractiveDateComponent {
   }
 
 
-  /* Hit System
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  prepareHits() {
-    this.colCoordCache.build()
-    this.rowCoordCache.build()
-    this.rowCoordCache.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
-  }
-
-
-  releaseHits() {
-    this.colCoordCache.clear()
-    this.rowCoordCache.clear()
-  }
-
-
-  queryHit(leftOffset, topOffset) {
-    if (this.colCoordCache.isLeftInBounds(leftOffset) && this.rowCoordCache.isTopInBounds(topOffset)) {
-      let col = this.colCoordCache.getHorizontalIndex(leftOffset)
-      let row = this.rowCoordCache.getVerticalIndex(topOffset)
-
-      if (row != null && col != null) {
-        return this.getCellHit(row, col)
-      }
-    }
-  }
-
-
-  getHitFootprint(hit) {
-    let range = this.getCellRange(hit.row, hit.col)
-
-    return new ComponentFootprint(
-      new UnzonedRange(range.start, range.end),
-      true // all-day?
-    )
-  }
-
-
-  getHitEl(hit) {
-    return this.getCellEl(hit.row, hit.col)
-  }
-
-
   /* Cell System
   ------------------------------------------------------------------------------------------------------------------*/
   // FYI: the first column is the leftmost column, regardless of date
-
-
-  getCellHit(row, col): any {
-    return {
-      row: row,
-      col: col,
-      component: this, // needed unfortunately :(
-      left: this.colCoordCache.getLeftOffset(col),
-      right: this.colCoordCache.getRightOffset(col),
-      top: this.rowCoordCache.getTopOffset(row),
-      bottom: this.rowCoordCache.getBottomOffset(row)
-    }
-  }
 
 
   getCellEl(row, col) {
@@ -725,9 +666,9 @@ export default class DayGrid extends InteractiveDateComponent {
 
       // because segments in the popover are not part of a grid coordinate system, provide a hint to any
       // grids that want to do drag-n-drop about which cell it came from
-      this.hitsNeeded()
-      segs[i].hit = this.getCellHit(row, col)
-      this.hitsNotNeeded()
+      ////this.hitsNeeded()
+      ////segs[i].hit = this.getCellHit(row, col)
+      ////this.hitsNotNeeded()
 
       segContainer.appendChild(segs[i].el)
     }
@@ -811,5 +752,4 @@ DayGrid.prototype.businessHourRendererClass = BusinessHourRenderer
 DayGrid.prototype.helperRendererClass = DayGridHelperRenderer
 DayGrid.prototype.fillRendererClass = DayGridFillRenderer
 
-StandardInteractionsMixin.mixInto(DayGrid)
 DayTableMixin.mixInto(DayGrid)
