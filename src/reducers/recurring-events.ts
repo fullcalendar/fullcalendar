@@ -32,10 +32,10 @@ let recurringTypes: { [recurringType: string]: RecurringExpandFunc } = {}
 
 // expanding API
 
-export function expandRecurring(rawEvent: EventInput, range: UnzonedRange, calendar: Calendar, leftoverProps: object): RecurringEventDateInfo {
+export function expandRecurring(rawEvent: EventInput, range: UnzonedRange, calendar: Calendar, leftoverProps?: object): RecurringEventDateInfo {
   for (let recurringType in recurringTypes) {
     let expandFunc = recurringTypes[recurringType]
-    let dateInfo = expandFunc(rawEvent, range, calendar, leftoverProps)
+    let dateInfo = expandFunc(rawEvent, range, calendar, leftoverProps || {})
 
     if (dateInfo) {
       return dateInfo

@@ -114,3 +114,6 @@ export { DateEnv } from './datelib/env'
 export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
 export { DateFormatter, createFormatter } from './datelib/formatting'
 export { parse as parseMarker } from './datelib/parsing'
+
+export { registerSourceType } from './reducers/event-sources'
+export { refineProps } from './reducers/utils'

@@ -4,7 +4,7 @@ import { EventInput } from './event-store'
 
 registerSourceType('function', {
 
-  parse(raw: any): EventInput[] {
+  parseMeta(raw: any): EventInput[] {
     if (typeof raw === 'function') { // short form
       return raw
     } else if (typeof raw.events === 'function') {

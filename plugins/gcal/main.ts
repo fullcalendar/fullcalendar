@@ -13,7 +13,7 @@ const STANDARD_PROPS = {
 
 registerSourceType('google-calendar', {
 
-  parse(raw) {
+  parseMeta(raw) {
     if (typeof raw === 'string') {
       raw = { url: raw }
     }

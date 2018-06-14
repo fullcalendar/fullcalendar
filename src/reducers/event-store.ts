@@ -3,11 +3,15 @@ import { DateInput } from '../datelib/env'
 import Calendar from '../Calendar'
 import { filterHash, parseClassName, refineProps, ClassNameInput } from './utils'
 import { expandRecurring } from './recurring-events'
+import { applyMutation } from './event-mutation'
 
 // types
 
+type RenderingChoices = '' | 'background' | 'inverse-background' | 'none'
+
 export interface EventInput {
   id?: string | number
+  groupId?: string | number
   start?: DateInput
   end?: DateInput
   date?: DateInput
@@ -19,7 +23,7 @@ export interface EventInput {
   durationEditable?: boolean
   constraint?: any
   overlap?: any
-  rendering?: '' | 'background' | 'inverse-background' | 'none'
+  rendering?: RenderingChoices
   className?: ClassNameInput
   color?: string
   backgroundColor?: string
@@ -42,7 +46,7 @@ export interface EventDef {
   durationEditable: boolean | null
   constraint: any
   overlap: any
-  rendering: '' | 'background' | 'inverse-background' | 'none'
+  rendering: RenderingChoices
   className: string[]
   color: string | null
   backgroundColor: string | null
@@ -106,15 +110,25 @@ let guid = 0
 // reducing
 
 export function reduceEventStore(eventStore: EventStore, action: any, calendar: Calendar): EventStore {
+  let eventSource
+
   switch(action.type) {
 
     case 'RECEIVE_EVENT_SOURCE':
-      eventStore = excludeSource(eventStore, action.sourceId)
-      addRawEvents(eventStore, action.sourceId, action.fetchRange, action.rawEvents, calendar)
+      eventSource = calendar.state.eventSources[action.sourceId]
+
+      if (eventSource.latestFetchId === action.fetchId) { // this is checked in event-sources too :(
+        eventStore = excludeSource(eventStore, action.sourceId)
+        addRawEvents(eventStore, action.sourceId, action.fetchRange, action.rawEvents, calendar)
+      }
+
       return eventStore
 
     case 'CLEAR_EVENT_SOURCE': // TODO: wire up
       return excludeSource(eventStore, action.sourceId)
+
+    case 'MUTATE_EVENT':
+      return applyMutation(eventStore, action.instanceId, action.mutation, calendar)
 
     default:
       return eventStore
@@ -138,28 +152,33 @@ function addRawEvents(eventStore: EventStore, sourceId: string, fetchRange: Unzo
     let recurringDateInfo = expandRecurring(rawEvent, fetchRange, calendar, leftoverProps)
 
     if (recurringDateInfo) {
-      let def = addDef(eventStore, sourceId, leftoverProps, recurringDateInfo.isAllDay, recurringDateInfo.hasEnd)
+      let def = parseDef(leftoverProps, sourceId, recurringDateInfo.isAllDay, recurringDateInfo.hasEnd)
+      eventStore.defs[def.defId] = def
 
       for (let range of recurringDateInfo.ranges) {
-        addInstance(eventStore, def.defId, range)
+        let instance = createInstance(def.defId, range)
+        eventStore.instances[instance.instanceId] = instance
       }
+
     } else {
       let dateInfo = parseDateInfo(rawEvent, sourceId, calendar, leftoverProps)
 
       if (dateInfo) {
-        let def = addDef(eventStore, sourceId, leftoverProps, dateInfo.isAllDay, dateInfo.hasEnd)
-        addInstance(eventStore, def.defId, dateInfo.range, dateInfo.forcedStartTzo, dateInfo.forcedEndTzo)
+        let def = parseDef(leftoverProps, sourceId, dateInfo.isAllDay, dateInfo.hasEnd)
+        let instance = createInstance(def.defId, dateInfo.range, dateInfo.forcedStartTzo, dateInfo.forcedEndTzo)
+
+        eventStore.defs[def.defId] = def
+        eventStore.instances[instance.instanceId] = instance
       }
     }
   })
 }
 
-// parsing + adding
+// parsing + creating
 
-function addDef(eventStore: EventStore, sourceId: string, raw: EventInput, isAllDay: boolean, hasEnd: boolean): EventDef {
+export function parseDef(raw: EventInput, sourceId: string, isAllDay: boolean, hasEnd: boolean): EventDef {
   let leftovers = {} as any
   let def = refineProps(raw, SIMPLE_DEF_PROPS, leftovers)
-  let defId = String(guid++)
 
   if (leftovers.id != null) {
     def.publicId = String(leftovers.id)
@@ -168,28 +187,23 @@ function addDef(eventStore: EventStore, sourceId: string, raw: EventInput, isAll
     def.publicId = null
   }
 
-  def.defId = defId
+  def.defId = String(guid++)
   def.sourceId = sourceId
   def.isAllDay = isAllDay
   def.hasEnd = hasEnd
   def.extendedProps = leftovers
 
-  eventStore.defs[defId] = def
   return def
 }
 
-function addInstance(
-  eventStore: EventStore,
+export function createInstance(
   defId: string,
   range: UnzonedRange,
   forcedStartTzo: number = null,
   forcedEndTzo: number = null
 ): EventInstance {
   let instanceId = String(guid++)
-  let instance = { instanceId, defId, range, forcedStartTzo, forcedEndTzo }
-
-  eventStore.instances[instanceId] = instance
-  return instance
+  return { instanceId, defId, range, forcedStartTzo, forcedEndTzo }
 }
 
 function parseDateInfo(rawEvent: EventInput, sourceId: string, calendar: Calendar, leftoverProps: any): EventDateInfo {
@@ -238,7 +252,8 @@ function parseDateInfo(rawEvent: EventInput, sourceId: string, calendar: Calenda
   if (endMarker) {
     hasEnd = true
   } else {
-    hasEnd = false
+    hasEnd = calendar.opt('forceEventDuration') || false
+
     endMarker = calendar.dateEnv.add(
       startMeta.marker,
       isAllDay ?

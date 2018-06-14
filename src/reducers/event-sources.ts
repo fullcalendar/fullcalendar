@@ -3,10 +3,11 @@ import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
 import { EventInput } from './event-store'
 import { ClassNameInput, parseClassName, refineProps } from './utils'
+import { warn } from '../util/misc'
 
 // types
 
-export interface AbstractEventSourceInput {
+export interface EventSourceInput {
   id?: string | number
   allDayDefault?: boolean
   eventDataTransform?: any
@@ -21,6 +22,9 @@ export interface AbstractEventSourceInput {
   backgroundColor?: string
   borderColor?: string
   textColor?: string
+  success?: (eventInputs: EventInput[]) => void
+  failure?: (errorObj: any) => void
+  [otherProp: string]: any
 }
 
 export interface EventSource {
@@ -44,12 +48,14 @@ export interface EventSource {
   backgroundColor: string | null
   borderColor: string | null
   textColor: string | null
+  success?: (eventInputs: EventInput[]) => void
+  failure?: (errorObj: any) => void
 }
 
 export type EventSourceHash = { [sourceId: string]: EventSource }
 
 export interface EventSourceTypeSettings {
-  parse: (raw: any) => any
+  parseMeta: (raw: any) => any
   fetch: (
     arg: {
       eventSource: EventSource
@@ -57,7 +63,7 @@ export interface EventSourceTypeSettings {
       range: UnzonedRange
     },
     success: (rawEvents: EventInput) => void,
-    failure: () => void
+    failure: (errorObj: any) => void
   ) => void
 }
 
@@ -76,7 +82,9 @@ const SIMPLE_SOURCE_PROPS = {
   color: String,
   backgroundColor: String,
   borderColor: String,
-  textColor: String
+  textColor: String,
+  success: null,
+  failure: null
 }
 
 let sourceTypes: { [sourceTypeName: string]: EventSourceTypeSettings } = {}
@@ -126,12 +134,21 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
             rawEvents
           })
         },
-        function() {
+        function(errorInput) {
+          let errorObj
+
+          if (typeof errorInput === 'string') {
+            errorObj = { message: errorInput }
+          } else {
+            errorObj = errorInput || {}
+          }
+
           calendar.dispatch({
             type: 'ERROR_EVENT_SOURCE',
             sourceId: eventSource.sourceId,
             fetchId,
-            fetchRange: action.range
+            fetchRange: action.range,
+            error: errorObj
           })
         }
       )
@@ -144,10 +161,23 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
       })
 
     case 'RECEIVE_EVENT_SOURCE':
-    case 'ERROR_EVENT_SOURCE': // TODO: call calendar's/source's error handlers maybe
+    case 'ERROR_EVENT_SOURCE':
       eventSource = sourceHash[action.sourceId]
 
       if (eventSource.latestFetchId === action.fetchId) {
+
+        if (action.type === 'RECEIVE_EVENT_SOURCE') {
+          if (typeof eventSource.success === 'function') {
+            eventSource.success(action.rawEvents)
+          }
+        } else { // failure
+          warn(action.error.message, action.error)
+
+          if (typeof eventSource.failure === 'function') {
+            eventSource.failure(action.error)
+          }
+        }
+
         return assignTo({}, sourceHash, {
           [eventSource.sourceId]: assignTo({}, eventSource, {
             isFetching: false,
@@ -163,6 +193,7 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
         eventSource = sourceHash[sourceId]
 
         if (
+          !calendar.opt('lazyFetching') ||
           !eventSource.fetchRange ||
           eventSource.fetchRange.start < action.range.start ||
           eventSource.fetchRange.end > action.range.end
@@ -188,13 +219,14 @@ export function registerSourceType(type: string, settings: EventSourceTypeSettin
   sourceTypes[type] = settings
 }
 
-function parseSource(raw: AbstractEventSourceInput): EventSource {
+function parseSource(raw: EventSourceInput): EventSource {
   for (let sourceTypeName in sourceTypes) {
+    let leftovers = {}
+    let source: EventSource = refineProps(raw, SIMPLE_SOURCE_PROPS, leftovers)
     let sourceTypeSettings = sourceTypes[sourceTypeName]
-    let sourceTypeMeta = sourceTypeSettings.parse(raw)
+    let sourceTypeMeta = sourceTypeSettings.parseMeta(leftovers)
 
     if (sourceTypeMeta) {
-      let source: EventSource = refineProps(raw, SIMPLE_SOURCE_PROPS)
       source.sourceId = String(guid++)
       source.sourceType = sourceTypeName
       source.sourceTypeMeta = sourceTypeMeta

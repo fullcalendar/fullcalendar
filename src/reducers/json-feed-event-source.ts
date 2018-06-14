@@ -15,7 +15,7 @@ interface JsonFeedMeta {
 
 registerSourceType('json-feed', {
 
-  parse(raw: any): JsonFeedMeta {
+  parseMeta(raw: any): JsonFeedMeta {
     if (typeof raw === 'string') { // short form
       raw = { url: raw }
     } else if (!raw || typeof raw !== 'object' || !raw.url) {

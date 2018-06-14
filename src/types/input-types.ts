@@ -4,7 +4,7 @@ https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalenda
 */
 
 import View from '../View'
-import EventSource from '../models/event-source/EventSource'
+import { EventSourceInput } from '../reducers/event-sources'
 import { Duration } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
 import { FormatterInput } from '../datelib/formatting'
@@ -40,7 +40,7 @@ export interface EventObjectInput extends EventOptionsBase, RangeInput {
   title: string
   allDay?: boolean
   url?: string
-  source?: EventSource
+  source?: EventSourceInput
   [customField: string]: any // non-standard fields
 }
 
