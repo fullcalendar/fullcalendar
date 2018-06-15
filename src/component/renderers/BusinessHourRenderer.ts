@@ -16,7 +16,7 @@ export default class BusinessHourRenderer {
     if (this.fillRenderer) {
       this.fillRenderer.renderSegs('businessHours', segs, {
         getClasses(seg) {
-          return [ 'fc-nonbusiness', 'fc-bgevent' ]
+          return [ 'fc-bgevent' ].concat(seg.eventRange.eventDef.className)
         }
       })
     }

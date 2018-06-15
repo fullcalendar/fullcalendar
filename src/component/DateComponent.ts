@@ -10,6 +10,7 @@ import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
 import { Seg } from '../reducers/seg'
 import { EventDef, EventInstance, parseDef, createInstance } from '../reducers/event-store'
+import { BusinessHourDef, buildBusinessHourEventRenderRanges } from '../reducers/business-hours'
 
 
 export default abstract class DateComponent extends Component {
@@ -183,9 +184,18 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderBusinessHours(businessHourGenerator) {
+  renderBusinessHours(businessHoursDef: BusinessHourDef) {
     if (this.businessHourRenderer) {
-      this.businessHourRenderer.render(businessHourGenerator)
+      this.businessHourRenderer.renderSegs(
+        this.eventRangesToSegs(
+          buildBusinessHourEventRenderRanges(
+            businessHoursDef,
+            this.hasAllDayBusinessHours,
+            this.dateProfile.activeUnzonedRange,
+            this._getCalendar()
+          )
+        )
+      )
     }
 
     this.callChildren('renderBusinessHours', arguments)
@@ -458,15 +468,11 @@ export default abstract class DateComponent extends Component {
   // Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
   renderHighlightSegs(segs) {
     if (this.fillRenderer) {
-      this.fillRenderer.renderSegs(
-        'highlight',
-        segs,
-        {
-          getClasses() {
-            return [ 'fc-highlight' ]
-          }
+      this.fillRenderer.renderSegs('highlight', segs, {
+        getClasses() {
+          return [ 'fc-highlight' ]
         }
-      )
+      })
     }
   }
 

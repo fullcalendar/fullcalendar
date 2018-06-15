@@ -365,9 +365,9 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  requestBusinessHoursRender(businessHourGenerator) {
+  requestBusinessHoursRender() {
     this.requestRender(() => {
-      this.renderBusinessHours(businessHourGenerator)
+      this.renderBusinessHours(this.opt('businessHours'))
     }, 'businessHours', 'init')
   }
 
@@ -844,8 +844,8 @@ View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
 })
 
 
-View.watch('displayingBusinessHours', [ 'displayingDates', 'businessHourGenerator' ], function(deps) {
-  this.requestBusinessHoursRender(deps.businessHourGenerator)
+View.watch('displayingBusinessHours', [ 'displayingDates' ], function() {
+  this.requestBusinessHoursRender()
 }, function() {
   this.requestBusinessHoursUnrender()
 })

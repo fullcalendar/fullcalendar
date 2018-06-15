@@ -13,7 +13,6 @@ import ViewSpecManager from './ViewSpecManager'
 import View from './View'
 import Theme from './theme/Theme'
 import UnzonedRange from './models/UnzonedRange'
-import BusinessHourGenerator from './models/BusinessHourGenerator'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
 import { RangeInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
 import { getLocale } from './datelib/locale'
@@ -50,7 +49,6 @@ export default class Calendar {
   theme: Theme
   optionsManager: OptionsManager
   viewSpecManager: ViewSpecManager
-  businessHourGenerator: BusinessHourGenerator
 
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
@@ -416,16 +414,6 @@ export default class Calendar {
       }
     })
 
-    this.optionsManager.watch('settingBusinessHourGenerator', [ '?businessHours' ], (deps) => {
-      this.businessHourGenerator = new BusinessHourGenerator(deps.businessHours, this)
-
-      if (this.view) {
-        this.view.set('businessHourGenerator', this.businessHourGenerator)
-      }
-    }, () => {
-      this.businessHourGenerator = null
-    })
-
     // called immediately, and upon option change.
     // HACK: locale often affects isRTL, so we explicitly listen to that too.
     this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], (opts) => {
@@ -469,7 +457,6 @@ export default class Calendar {
 
     // removes theme-related root className
     this.optionsManager.unwatch('settingTheme')
-    this.optionsManager.unwatch('settingBusinessHourGenerator')
 
     if (this.removeNavLinkListener) {
       this.removeNavLinkListener()
@@ -563,12 +550,6 @@ export default class Calendar {
     }
 
     if (this.view) {
-
-      // prevent unnecessary change firing
-      if (this.view.get('businessHourGenerator') !== this.businessHourGenerator) {
-        this.view.set('businessHourGenerator', this.businessHourGenerator)
-      }
-
       this.view.setDate(this.currentDate)
 
       if (newView) {
