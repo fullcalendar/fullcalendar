@@ -5,7 +5,6 @@ import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'
 import Scroller from '../common/Scroller'
 import ListEventRenderer from './ListEventRenderer'
-import ListEventPointing from './ListEventPointing'
 import { DateMarker, addDays, startOfDay } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 
@@ -235,7 +234,6 @@ export default class ListView extends View {
 }
 
 ListView.prototype.eventRendererClass = ListEventRenderer
-ListView.prototype.eventPointingClass = ListEventPointing
 
 /*
 export default class ListEventPointing extends EventPointing {

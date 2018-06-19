@@ -139,8 +139,9 @@ export default class Calendar {
       let newState = this.state
       this.isReducing = false
 
-      if (oldState.eventStore !== newState.eventStore) {
+      if (this.view) {
         this.view.set('eventStore', newState.eventStore)
+        // TODO: when to unset?
       }
 
       if (!oldState.loadingLevel && newState.loadingLevel) {
@@ -160,6 +161,9 @@ export default class Calendar {
   hydrate() {
     let rawSources = this.opt('eventSources') || []
     let singleRawSource = this.opt('events')
+
+    // TODO: prevent rerenders for each thing
+    // should pause rendering
 
     if (singleRawSource) {
       rawSources.unshift(singleRawSource)

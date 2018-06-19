@@ -6,7 +6,7 @@ import { assignTo } from '../util/object'
 import { expandRecurring } from './recurring-events'
 import { parseDef, createInstance } from './event-store'
 
-export type BusinessHourDef = true | EventInput | EventInput[] // TODO: rename to plural?
+export type BusinessHourDef = boolean | EventInput | EventInput[] // TODO: rename to plural?
 
 const BUSINESS_HOUR_EVENT_DEFAULTS = {
   startTime: '09:00',
@@ -40,10 +40,14 @@ export function buildBusinessHourEventRanges(
   let eventRanges: EventRenderRange[] = []
 
   for (let eventInput of eventInputs) {
-    let dateInfo = expandRecurring(eventInput, framingRange, calendar)
+    let ranges = expandRecurring(eventInput, framingRange, calendar).ranges
     let def = parseDef(eventInput, null, isAllDay, true)
 
-    for (let range of dateInfo.ranges) {
+    // if (!ranges.length) {
+    //   ranges.push(new UnzonedRange(framingRange.end, framingRange.end))
+    // }
+
+    for (let range of ranges) {
       let instance = createInstance(def.defId, range)
 
       eventRanges.push({
@@ -70,6 +74,8 @@ function refineEventInputs(input: BusinessHourDef, isAllDay: boolean): EventInpu
     })
   } else if (typeof input === 'object' && input) { // non-null object
     rawDefs = [ input ]
+  } else {
+    rawDefs = []
   }
 
   rawDefs = rawDefs.map(function(rawDef) {

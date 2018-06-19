@@ -7,7 +7,7 @@ import { applyMutation } from './event-mutation'
 
 // types
 
-type RenderingChoices = '' | 'background' | 'inverse-background' | 'none'
+export type RenderingChoices = '' | 'background' | 'inverse-background' | 'none'
 
 export interface EventInput {
   id?: string | number

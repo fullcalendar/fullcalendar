@@ -221,12 +221,11 @@ export function registerSourceType(type: string, settings: EventSourceTypeSettin
 
 function parseSource(raw: EventSourceInput): EventSource {
   for (let sourceTypeName in sourceTypes) {
-    let leftovers = {}
-    let source: EventSource = refineProps(raw, SIMPLE_SOURCE_PROPS, leftovers)
     let sourceTypeSettings = sourceTypes[sourceTypeName]
-    let sourceTypeMeta = sourceTypeSettings.parseMeta(leftovers)
+    let sourceTypeMeta = sourceTypeSettings.parseMeta(raw)
 
     if (sourceTypeMeta) {
+      let source: EventSource = refineProps(raw, SIMPLE_SOURCE_PROPS)
       source.sourceId = String(guid++)
       source.sourceType = sourceTypeName
       source.sourceTypeMeta = sourceTypeMeta

@@ -34,11 +34,15 @@ export function sliceEventRanges(origRanges: EventRenderRange[], windowRange: Un
         }
       }
     } else {
-      renderRanges.push({
-        eventDef,
-        eventInstance,
-        range: eventInstance.range.intersect(windowRange)
-      })
+      let range = eventInstance.range.intersect(windowRange)
+
+      if (range) {
+        renderRanges.push({
+          eventDef,
+          eventInstance,
+          range
+        })
+      }
     }
   }
 

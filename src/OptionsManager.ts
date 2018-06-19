@@ -46,9 +46,6 @@ export default class OptionsManager extends Model {
         return
       } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(optionName)) {
         return // doesn't affect rendering. only interactions.
-      } else if (optionName === 'timezone') {
-        this._calendar.view.flash('initialEvents')
-        return
       }
     }
 

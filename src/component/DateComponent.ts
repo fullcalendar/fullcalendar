@@ -324,8 +324,6 @@ export default abstract class DateComponent extends Component {
   triggerBeforeEventSegsDestroyed(segs) {
     if (this.hasPublicHandlers('eventDestroy')) {
       segs.forEach((seg) => {
-        let legacy
-
         if (seg.el) { // necessary?
           this.publiclyTrigger('eventDestroy', [
             {
@@ -701,7 +699,7 @@ export default abstract class DateComponent extends Component {
 
 
 export function fabricateEventRange(range: UnzonedRange, isAllDay: boolean): EventRenderRange {
-  let eventDef: EventDef = parseDef(null, {}, isAllDay, true)
+  let eventDef: EventDef = parseDef({}, null, isAllDay, true)
   let eventInstance: EventInstance = createInstance(eventDef.defId, range)
 
   return { eventDef, eventInstance, range }

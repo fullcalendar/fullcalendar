@@ -28,8 +28,8 @@ export function createMutation(
 ): EventMutation {
   let startDelta: Duration = null
   let endDelta: Duration = null
-  let hasEnd: boolean = null // TODO: use this!!!
-  let isAllDay: boolean = null // TODO: use this!!!
+  // let hasEnd: boolean = null // TODO: use this!!!
+  // let isAllDay: boolean = null // TODO: use this!!!
 
   // subtracts the dates in the appropriate way, returning a duration
   function diffDates(date0, date1) {
@@ -45,13 +45,13 @@ export function createMutation(
   startDelta = diffDates(range0.start, range1.start)
   endDelta = diffDates(range0.end, range1.end)
 
-  if (isAllDay0 !== isAllDay1) {
-    isAllDay = isAllDay1
-  }
+  // if (isAllDay0 !== isAllDay1) {
+  //   isAllDay = isAllDay1
+  // }
 
-  if (hasEnd0 !== hasEnd1) {
-    hasEnd = hasEnd1
-  }
+  // if (hasEnd0 !== hasEnd1) {
+  //   hasEnd = hasEnd1
+  // }
 
   return {
     startDelta,

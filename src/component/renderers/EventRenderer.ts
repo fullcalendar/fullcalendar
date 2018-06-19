@@ -222,7 +222,7 @@ export default class EventRenderer {
 
     let custom = this.view.publiclyTrigger('eventRender', [
       {
-        event: legacy,
+        event: eventRange, // what to do here?
         el,
         view: this.view
       }
@@ -428,8 +428,8 @@ export default class EventRenderer {
   compareEventSegs(seg1: Seg, seg2: Seg) {
     let eventDef1 = seg1.eventRange.eventDef
     let eventDef2 = seg2.eventRange.eventDef
-    let r1 = seg1.range
-    let r2 = seg2.range
+    let r1 = seg1.eventRange.range
+    let r2 = seg2.eventRange.range
 
     return r1.start.valueOf() - r2.start.valueOf() || // earlier events go first
       (r2.end.valueOf() - r2.start.valueOf()) - (r1.end.valueOf() - r1.start.valueOf()) || // tie? longer events go first
