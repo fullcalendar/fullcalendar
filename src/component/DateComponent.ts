@@ -438,7 +438,6 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders a visual indication of the selection
-  // TODO: rename to `renderSelection` after legacy is gone
   renderSelection(selection: Selection) {
     this.renderHighlightSegs(this.selectionToSegs(selection))
 

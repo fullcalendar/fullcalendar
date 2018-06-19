@@ -101,11 +101,11 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
       eventSource = parseSource(action.rawSource)
 
       if (eventSource) {
-        if (calendar.state.activeRange) {
+        if (calendar.state.dateProfile) {
           calendar.dispatch({
             type: 'FETCH_EVENT_SOURCE',
             sourceId: eventSource.sourceId,
-            range: calendar.state.activeRange
+            range: calendar.state.dateProfile.activeUnzonedRange
           })
         }
         return assignTo({}, sourceHash, {
@@ -188,20 +188,22 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
         return sourceHash
       }
 
-    case 'SET_ACTIVE_RANGE':
+    case 'SET_DATE_PROFILE':
+      let activeRange = action.dateProfile.activeUnzonedRange
+
       for (let sourceId in sourceHash) {
         eventSource = sourceHash[sourceId]
 
         if (
           !calendar.opt('lazyFetching') ||
           !eventSource.fetchRange ||
-          eventSource.fetchRange.start < action.range.start ||
-          eventSource.fetchRange.end > action.range.end
+          eventSource.fetchRange.start < activeRange.start ||
+          eventSource.fetchRange.end > activeRange.end
         ) {
           calendar.dispatch({
             type: 'FETCH_EVENT_SOURCE',
             sourceId: eventSource.sourceId,
-            range: action.range
+            range: activeRange
           })
         }
       }

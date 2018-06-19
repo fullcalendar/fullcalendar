@@ -526,8 +526,8 @@ export default class Calendar {
         this.currentDate = newDateProfile.date // might have been constrained by view dates
         this.updateToolbarButtons(newDateProfile)
         this.dispatch({
-          type: 'SET_ACTIVE_RANGE',
-          range: newDateProfile.activeUnzonedRange
+          type: 'SET_DATE_PROFILE',
+          dateProfile: newDateProfile
         })
       }
 

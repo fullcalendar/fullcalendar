@@ -1,40 +1,62 @@
-import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
+import { DateProfile } from '../DateProfileGenerator'
 import { EventSourceHash, reduceEventSourceHash } from './event-sources'
 import { EventStore, reduceEventStore } from './event-store'
+import { Selection } from './selection'
+import { BusinessHourDef } from './business-hours'
 
 export interface CalendarState {
   loadingLevel: number
-  activeRange: UnzonedRange
+  dateProfile: DateProfile
   eventSources: EventSourceHash
   eventStore: EventStore
+  selection: Selection | null,
+  dragState: {
+    eventStore: EventStore
+    origSeg: any
+    isTouch: boolean
+  } | null
+  eventResizeState: {
+    eventStore: EventStore
+    origSeg: any
+    isTouch: boolean
+  } | null
+  businessHoursDef: BusinessHourDef
 }
 
 export const INITIAL_STATE: CalendarState = {
   loadingLevel: 0,
-  activeRange: null,
+  dateProfile: null,
   eventSources: {},
   eventStore: {
     defs: {},
     instances: {}
-  }
+  },
+  selection: null,
+  dragState: null,
+  eventResizeState: null,
+  businessHoursDef: false
 }
 
 export function reduce(state: CalendarState, action: any, calendar: Calendar): CalendarState {
   return {
     loadingLevel: reduceLoadingLevel(state.loadingLevel, action),
-    activeRange: reduceActiveRange(state.activeRange, action),
+    dateProfile: reduceDateProfile(state.dateProfile, action),
     eventSources: reduceEventSourceHash(state.eventSources, action, calendar),
-    eventStore: reduceEventStore(state.eventStore, action, calendar)
+    eventStore: reduceEventStore(state.eventStore, action, calendar),
+    selection: state.selection,
+    dragState: state.dragState,
+    eventResizeState: state.eventResizeState,
+    businessHoursDef: state.businessHoursDef
   }
 }
 
-function reduceActiveRange(currentActiveRange, action: any) {
+function reduceDateProfile(currentDateProfile, action: any) {
   switch (action.type) {
-    case 'SET_ACTIVE_RANGE':
-      return action.range
+    case 'SET_DATE_PROFILE':
+      return action.dateProfile
     default:
-      return currentActiveRange
+      return currentDateProfile
   }
 }
 
