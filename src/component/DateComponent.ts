@@ -5,12 +5,12 @@ import View from '../View'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration, asRoughMs } from '../datelib/duration'
-import { EventRenderRange, sliceEventRanges } from '../reducers/event-rendering'
+import { sliceEventStore } from '../reducers/event-rendering'
 import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
 import { Seg } from '../reducers/seg'
-import { EventDef, EventInstance, parseDef, createInstance } from '../reducers/event-store'
-import { BusinessHourDef, buildBusinessHourEventRenderRanges } from '../reducers/business-hours'
+import { EventStore } from '../reducers/event-store'
+import { BusinessHourDef, buildBusinessHourEventStore } from '../reducers/business-hours'
 
 
 export default abstract class DateComponent extends Component {
@@ -187,8 +187,8 @@ export default abstract class DateComponent extends Component {
   renderBusinessHours(businessHoursDef: BusinessHourDef) {
     if (this.businessHourRenderer) {
       this.businessHourRenderer.renderSegs(
-        this.eventRangesToSegs(
-          buildBusinessHourEventRenderRanges(
+        this.eventStoreToSegs(
+          buildBusinessHourEventStore(
             businessHoursDef,
             this.hasAllDayBusinessHours,
             this.dateProfile.activeUnzonedRange,
@@ -236,19 +236,16 @@ export default abstract class DateComponent extends Component {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  renderEventRanges(eventRanges: EventRenderRange[]) {
+  renderEvents(eventStore: EventStore) {
 
     if (this.eventRenderer) {
       this.eventRenderer.rangeUpdated() // poorly named now
       this.eventRenderer.renderSegs(
-        this.eventRangesToSegs(eventRanges)
+        this.eventStoreToSegs(eventStore)
       )
     }
-    // else if (this['renderEvents']) { // legacy
-    //   this['renderEvents'](convertEventsPayloadToLegacyArray(eventsPayload, this._getCalendar()))
-    // }
 
-    this.callChildren('renderEventRanges', arguments)
+    this.callChildren('renderEvents', arguments)
   }
 
 
@@ -383,11 +380,11 @@ export default abstract class DateComponent extends Component {
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
   // Must return elements used for any mock events.
-  renderDrag(eventRanges: EventRenderRange[], origSeg?, isTouch = false) {
+  renderDrag(eventStore: EventStore, origSeg?, isTouch = false) {
     let renderedHelper = false
 
     this.iterChildren(function(child) {
-      if (child.renderDrag(eventRanges, origSeg, isTouch)) {
+      if (child.renderDrag(eventStore, origSeg, isTouch)) {
         renderedHelper = true
       }
     })
@@ -427,7 +424,7 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders a visual indication of an event being resized.
-  renderEventResize(eventRanges: EventRenderRange[], seg, isTouch) {
+  renderEventResize(eventStore: EventStore, seg, isTouch) {
     this.callChildren('renderEventResize', arguments)
   }
 
@@ -487,14 +484,9 @@ export default abstract class DateComponent extends Component {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  selectionToSegs(selection: Selection): Seg[] {
-    return this.rangeToSegs(selection.range, selection.isAllDay)
-  }
-
-
-  eventRangesToSegs(eventRanges: EventRenderRange[]): Seg[] {
+  eventStoreToSegs(eventStore: EventStore): Seg[] {
     let activeUnzonedRange = this.dateProfile.activeUnzonedRange
-    let eventRenderRanges = sliceEventRanges(eventRanges, activeUnzonedRange)
+    let eventRenderRanges = sliceEventStore(eventStore, activeUnzonedRange)
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
@@ -507,6 +499,11 @@ export default abstract class DateComponent extends Component {
     }
 
     return allSegs
+  }
+
+
+  selectionToSegs(selection: Selection): Seg[] {
+    return this.rangeToSegs(selection.range, selection.isAllDay)
   }
 
 
@@ -695,12 +692,4 @@ export default abstract class DateComponent extends Component {
     return diffDays(dayRange.start, dayRange.end) > 1
   }
 
-}
-
-
-export function fabricateEventRange(range: UnzonedRange, isAllDay: boolean): EventRenderRange {
-  let eventDef: EventDef = parseDef({}, null, isAllDay, true)
-  let eventInstance: EventInstance = createInstance(eventDef.defId, range)
-
-  return { eventDef, eventInstance, range }
 }

@@ -13,7 +13,7 @@ import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
-import { EventRenderRange } from '../reducers/event-rendering'
+import { EventStore } from '../reducers/event-store'
 import { Selection } from '../reducers/selection'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
@@ -288,13 +288,13 @@ export default class AgendaView extends View {
   /* Event Rendering
   ------------------------------------------------------------------------------------------------------------------*/
 
-  renderEventRanges(eventRanges: EventRenderRange[]) {
-    let groups = groupEventRangesByAllDay(eventRanges)
+  renderEvents(eventStore: EventStore) {
+    let groups = divideEventStoreByAllDay(eventStore)
 
-    this.timeGrid.renderEventRanges(groups.timed)
+    this.timeGrid.renderEvents(groups.timed)
 
     if (this.dayGrid) {
-      this.dayGrid.renderEventRanges(groups.allDay)
+      this.dayGrid.renderEvents(groups.allDay)
     }
   }
 
@@ -304,8 +304,8 @@ export default class AgendaView extends View {
 
 
   // A returned value of `true` signals that a mock "helper" event has been rendered.
-  renderDrag(eventRanges: EventRenderRange[], origSeg, isTouch) {
-    let groups = groupEventRangesByAllDay(eventRanges)
+  renderDrag(eventStore: EventStore, origSeg, isTouch) {
+    let groups = divideEventStoreByAllDay(eventStore)
     let renderedHelper = false
 
     renderedHelper = this.timeGrid.renderDrag(groups.timed, origSeg, isTouch)
@@ -318,8 +318,8 @@ export default class AgendaView extends View {
   }
 
 
-  renderEventResize(eventRanges: EventRenderRange[], origSeg, isTouch) {
-    let groups = groupEventRangesByAllDay(eventRanges)
+  renderEventResize(eventStore: EventStore, origSeg, isTouch) {
+    let groups = divideEventStoreByAllDay(eventStore)
 
     this.timeGrid.renderEventResize(groups.timed, origSeg, isTouch)
 
@@ -422,15 +422,28 @@ agendaDayGridMethods = {
 }
 
 
-function groupEventRangesByAllDay(eventRanges: EventRenderRange[]) {
-  let allDay = []
-  let timed = []
+function divideEventStoreByAllDay(eventStore: EventStore) {
+  let allDay: EventStore = { defs: {}, instances: {} }
+  let timed: EventStore = { defs: {}, instances: {} }
 
-  for (let eventRange of eventRanges) {
-    if (eventRange.eventDef.isAllDay) {
-      allDay.push(eventRange)
+  for (let defId in eventStore.defs) {
+    let def = eventStore.defs[defId]
+
+    if (def.isAllDay) {
+      allDay.defs[defId] = def
     } else {
-      timed.push(eventRange)
+      timed.defs[defId] = def
+    }
+  }
+
+  for (let instanceId in eventStore.instances) {
+    let instance = eventStore.instances[instanceId]
+    let def = eventStore.defs[instance.defId]
+
+    if (def.isAllDay) {
+      allDay.instances[instanceId] = instance
+    } else {
+      timed.instances[instanceId] = instance
     }
   }
 

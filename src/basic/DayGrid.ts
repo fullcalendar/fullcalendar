@@ -22,7 +22,7 @@ import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { Seg } from '../reducers/seg'
-import { EventRenderRange } from '../reducers/event-rendering'
+import { EventStore } from '../reducers/event-store'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -319,13 +319,13 @@ export default class DayGrid extends InteractiveDateComponent {
 
   // Renders a visual indication of an event or external element being dragged.
   // `eventLocation` has zoned start and end (optional)
-  renderDrag(eventRanges: EventRenderRange[], origSeg, isTouch) {
-    let segs = this.eventRangesToSegs(eventRanges)
+  renderDrag(eventStore: EventStore, origSeg, isTouch) {
+    let segs = this.eventStoreToSegs(eventStore)
 
     this.renderHighlightSegs(segs)
 
     // render drags from OTHER components as helpers
-    if (eventRanges.length && origSeg && origSeg.component !== this) {
+    if (segs.length && origSeg && origSeg.component !== this) {
       this.helperRenderer.renderEventDraggingSegs(segs, origSeg, isTouch)
 
       return true // signal helpers rendered
@@ -345,8 +345,8 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventRanges: EventRenderRange[], origSeg, isTouch) {
-    let segs = this.eventRangesToSegs(eventRanges)
+  renderEventResize(eventStore: EventStore, origSeg, isTouch) {
+    let segs = this.eventStoreToSegs(eventStore)
 
     this.renderHighlightSegs(segs)
 

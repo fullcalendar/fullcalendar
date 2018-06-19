@@ -11,8 +11,7 @@ import UnzonedRange from './models/UnzonedRange'
 import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
-import { EventStore, EventInstance } from './reducers/event-store'
-import { EventRenderRange } from './reducers/event-rendering'
+import { EventInstance } from './reducers/event-store'
 import { Selection } from './reducers/selection'
 
 
@@ -326,9 +325,9 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  requestEventStoreRender(eventStore) {
+  requestRenderEvents(eventStore) {
     this.requestRender(() => {
-      this.renderEventStore(eventStore)
+      this.renderEvents(eventStore)
       this.whenSizeUpdated(
         this.triggerAfterEventsRendered
       )
@@ -336,28 +335,11 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  requestEventsUnrender() {
+  requestUnrenderEvents() {
     this.requestRender(() => {
       this.triggerBeforeEventsDestroyed()
       this.unrenderEvents()
     }, 'event', 'destroy')
-  }
-
-
-  renderEventStore(eventStore: EventStore) {
-    let eventRanges: EventRenderRange[] = []
-
-    for (let instanceId in eventStore.instances) {
-      let eventInstance = eventStore.instances[instanceId]
-
-      eventRanges.push({
-        eventDef: eventStore.defs[eventInstance.defId],
-        eventInstance,
-        range: eventInstance.range
-      })
-    }
-
-    this.renderEventRanges(eventRanges)
   }
 
 
@@ -852,9 +834,9 @@ View.watch('displayingBusinessHours', [ 'displayingDates' ], function() {
 
 
 View.watch('displayingEvents', [ 'displayingDates', 'eventStore' ], function(deps) {
-  this.requestEventStoreRender(deps.eventStore)
+  this.requestRenderEvents(deps.eventStore)
 }, function() {
-  this.requestEventsUnrender()
+  this.requestUnrenderEvents()
 })
 
 

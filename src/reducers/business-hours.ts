@@ -1,10 +1,9 @@
 import Calendar from '../Calendar'
-import { EventRenderRange, sliceEventRanges } from '../reducers/event-rendering'
 import UnzonedRange from '../models/UnzonedRange'
 import { EventInput } from './event-store'
 import { assignTo } from '../util/object'
 import { expandRecurring } from './recurring-events'
-import { parseDef, createInstance } from './event-store'
+import { EventStore, parseDef, createInstance } from './event-store'
 
 export type BusinessHourDef = boolean | EventInput | EventInput[] // TODO: rename to plural?
 
@@ -13,52 +12,36 @@ const BUSINESS_HOUR_EVENT_DEFAULTS = {
   endTime: '17:00',
   daysOfWeek: [ 1, 2, 3, 4, 5 ], // monday - friday
   rendering: 'inverse-background',
-  groupId: 'business-hours', // for inverse-rendering
   className: 'fc-nonbusiness'
 }
 
 
-export function buildBusinessHourEventRenderRanges(
+export function buildBusinessHourEventStore(
   input: BusinessHourDef,
   isAllDay: boolean,
   framingRange: UnzonedRange,
   calendar: Calendar
-): EventRenderRange[] {
-  let eventRanges = buildBusinessHourEventRanges(input, isAllDay, framingRange, calendar)
-
-  return sliceEventRanges(eventRanges, framingRange)
-}
-
-
-export function buildBusinessHourEventRanges(
-  input: BusinessHourDef,
-  isAllDay: boolean,
-  framingRange: UnzonedRange,
-  calendar: Calendar
-): EventRenderRange[] {
+): EventStore {
   let eventInputs = refineEventInputs(input, isAllDay)
-  let eventRanges: EventRenderRange[] = []
+  let eventStore: EventStore = {
+    defs: {},
+    instances: {}
+  }
 
   for (let eventInput of eventInputs) {
-    let ranges = expandRecurring(eventInput, framingRange, calendar).ranges
     let def = parseDef(eventInput, null, isAllDay, true)
+    let ranges = expandRecurring(eventInput, framingRange, calendar).ranges
 
-    // if (!ranges.length) {
-    //   ranges.push(new UnzonedRange(framingRange.end, framingRange.end))
-    // }
+    eventStore.defs[def.defId] = def
 
     for (let range of ranges) {
       let instance = createInstance(def.defId, range)
 
-      eventRanges.push({
-        eventDef: def,
-        eventInstance: instance,
-        range
-      })
+      eventStore.instances[instance.instanceId] = instance
     }
   }
 
-  return eventRanges
+  return eventStore
 }
 
 

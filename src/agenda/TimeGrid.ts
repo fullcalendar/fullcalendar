@@ -12,8 +12,8 @@ import { Duration, createDuration, addDurations, wholeDivideDurations, asRoughMs
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import { Seg } from '../reducers/seg'
-import { EventRenderRange } from '../reducers/event-rendering'
 import { Selection } from '../reducers/selection'
+import { EventStore } from '../reducers/event-store'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -587,12 +587,12 @@ export default class TimeGrid extends InteractiveDateComponent {
 
   // Renders a visual indication of an event being dragged over the specified date(s).
   // A returned value of `true` signals that a mock "helper" event has been rendered.
-  renderDrag(eventRanges: EventRenderRange[], origSeg, isTouch) {
-    let segs = this.eventRangesToSegs(eventRanges)
+  renderDrag(eventStore: EventStore, origSeg, isTouch) {
+    let segs = this.eventStoreToSegs(eventStore)
 
     if (origSeg) { // if there is event information for this drag, render a helper event
 
-      if (eventRanges.length) {
+      if (segs.length) {
         this.helperRenderer.renderEventDraggingSegs(segs, origSeg, isTouch)
 
         // signal that a helper has been rendered
@@ -616,8 +616,8 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventRanges: EventRenderRange[], origSeg, isTouch) {
-    let segs = this.eventRangesToSegs(eventRanges)
+  renderEventResize(eventStore: EventStore, origSeg, isTouch) {
+    let segs = this.eventStoreToSegs(eventStore)
 
     this.helperRenderer.renderEventResizingSegs(segs, origSeg, isTouch)
   }

@@ -1,70 +1,79 @@
 import UnzonedRange from '../models/UnzonedRange'
-import { EventDef, EventInstance } from './event-store'
+import { EventStore, EventDef, EventInstance } from './event-store'
 
 export interface EventRenderRange {
   eventDef: EventDef
-  eventInstance: EventInstance
+  eventInstance?: EventInstance
   range: UnzonedRange
 }
 
 
-export function sliceEventRanges(origRanges: EventRenderRange[], windowRange: UnzonedRange): EventRenderRange[] {
+export function sliceEventStore(eventStore: EventStore, windowRange: UnzonedRange) {
+  let inverseBgByGroupId: { [groupId: string]: UnzonedRange[] } = {}
+  let inverseBgByDefId: { [defId: string]: UnzonedRange[] } = {}
+  let defByGroupId: { [groupId: string]: EventDef } = {}
   let renderRanges: EventRenderRange[] = []
-  let inverseBgGroups: { [groupId: string]: EventRenderRange[] } = {}
 
-  for (let origRange of origRanges) {
-    let { eventDef, eventInstance } = origRange
+  for (let defId in eventStore.defs) {
+    let def = eventStore.defs[defId]
 
-    if (eventDef.rendering === 'inverse-background') {
-      let groupId = eventDef.groupId
+    if (def.rendering === 'inverse-background') {
+      if (def.groupId) {
+        inverseBgByGroupId[def.groupId] = []
 
-      if (groupId) {
-        (inverseBgGroups[groupId] || (inverseBgGroups[groupId] = []))
-          .push(origRange)
-
-      } else {
-        let invertedRanges = UnzonedRange.invertRanges([ eventInstance.range ], windowRange)
-
-        for (let invertedRange of invertedRanges) {
-          renderRanges.push({
-            eventDef,
-            eventInstance,
-            range: invertedRange
-          })
+        if (!defByGroupId[def.groupId]) {
+          defByGroupId[def.groupId] = def
         }
-      }
-    } else {
-      let range = eventInstance.range.intersect(windowRange)
-
-      if (range) {
-        renderRanges.push({
-          eventDef,
-          eventInstance,
-          range
-        })
+      } else {
+        inverseBgByDefId[defId] = []
       }
     }
   }
 
-  for (let groupId in inverseBgGroups) {
-    let inverseBgGroup = inverseBgGroups[groupId]
-    let { eventDef, eventInstance } = inverseBgGroup[0]
-    let origRanges = inverseBgGroup.map(getRange)
-    let invertedRanges = UnzonedRange.invertRanges(origRanges, windowRange)
+  for (let instanceId in eventStore.instances) {
+    let instance = eventStore.instances[instanceId]
+    let def = eventStore.defs[instance.defId]
+
+    if (def.rendering === 'inverse-background') {
+      if (def.groupId) {
+        inverseBgByGroupId[def.groupId].push(instance.range)
+      } else {
+        inverseBgByDefId[instance.defId].push(instance.range)
+      }
+    } else {
+      renderRanges.push({
+        eventDef: def,
+        eventInstance: instance,
+        range: instance.range
+      })
+    }
+  }
+
+  for (let groupId in inverseBgByGroupId) {
+    let ranges = inverseBgByGroupId[groupId]
+    let invertedRanges = UnzonedRange.invertRanges(ranges, windowRange)
+
+    for (let invertedRange of invertedRanges) {
+      let def = defByGroupId[groupId]
+
+      renderRanges.push({
+        eventDef: def,
+        range: invertedRange
+      })
+    }
+  }
+
+  for (let defId in inverseBgByDefId) {
+    let ranges = inverseBgByDefId[defId]
+    let invertedRanges = UnzonedRange.invertRanges(ranges, windowRange)
 
     for (let invertedRange of invertedRanges) {
       renderRanges.push({
-        eventDef,
-        eventInstance,
+        eventDef: eventStore.defs[defId],
         range: invertedRange
       })
     }
   }
 
   return renderRanges
-}
-
-
-function getRange(eventRange: EventRenderRange) {
-  return eventRange.range
 }
