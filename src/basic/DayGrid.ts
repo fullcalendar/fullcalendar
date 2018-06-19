@@ -100,8 +100,7 @@ export default class DayGrid extends InteractiveDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderDates(dateProfile) {
-    this.dateProfile = dateProfile
+  renderDates() {
     this.updateDayTable()
     this.renderGrid()
   }
@@ -115,7 +114,7 @@ export default class DayGrid extends InteractiveDateComponent {
   // Renders the rows and columns into the component's `this.el`, which should already be assigned.
   renderGrid() {
     let view = this.view
-    const dateEnv = view.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
     let rowCnt = this.rowCnt
     let colCnt = this.colCnt
     let html = ''
@@ -162,7 +161,7 @@ export default class DayGrid extends InteractiveDateComponent {
   // Generates the HTML for a single row, which is a div that wraps a table.
   // `row` is the row number.
   renderDayRowHtml(row, isRigid) {
-    let theme = this.view.calendar.theme
+    let theme = this.getTheme()
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
     if (isRigid) {
@@ -237,9 +236,9 @@ export default class DayGrid extends InteractiveDateComponent {
   // The number row will only exist if either day numbers or week numbers are turned on.
   renderNumberCellHtml(date) {
     let view = this.view
-    const dateEnv = view.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
     let html = ''
-    let isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
+    let isDateValid = this.getDateProfile().activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
     let classes
     let weekCalcFirstDow
@@ -540,7 +539,7 @@ export default class DayGrid extends InteractiveDateComponent {
   // Responsible for attaching click handler as well.
   renderMoreLink(row, col, hiddenSegs) {
     let view = this.view
-    const dateEnv = view.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
 
     let a = createElement('a', { className: 'fc-more' })
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
@@ -635,9 +634,8 @@ export default class DayGrid extends InteractiveDateComponent {
 
   // Builds the inner DOM contents of the segment popover
   renderSegPopoverContent(row, col, segs): ElementContent {
-    let view = this.view
-    const dateEnv = view.calendar.dateEnv
-    let theme = view.calendar.theme
+    let theme = this.getTheme()
+    let dateEnv = this.getDateEnv()
     let title = dateEnv.format(
       this.getCellDate(row, col),
       createFormatter(this.opt('dayPopoverFormat')) // TODO: cache

@@ -122,7 +122,7 @@ export default class AgendaView extends View {
   // Builds the HTML skeleton for the view.
   // The day-grid and time-grid components will render inside containers defined by this HTML.
   renderSkeletonHtml() {
-    let theme = this.calendar.theme
+    let theme = this.getTheme()
 
     return '' +
       '<table class="' + theme.getClass('tableGrid') + '">' +
@@ -357,7 +357,7 @@ agendaTimeGridMethods = {
     let view = this.view
     let calendar = view.calendar
     let dateEnv = calendar.dateEnv
-    let weekStart = this.dateProfile.renderUnzonedRange.start
+    let weekStart = this.getDateProfile().renderUnzonedRange.start
     let weekText
 
     if (this.opt('weekNumbers')) {

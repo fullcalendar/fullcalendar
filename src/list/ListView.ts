@@ -73,7 +73,8 @@ export default class ListView extends View {
   }
 
 
-  renderDates(dateProfile) {
+  renderDates() {
+    let dateProfile = this.getDateProfile()
     let dayStart = startOfDay(dateProfile.renderUnzonedRange.start)
     let viewEnd = dateProfile.renderUnzonedRange.end
     let dayDates = []
@@ -100,7 +101,7 @@ export default class ListView extends View {
 
   // slices by day
   rangeToSegs(range: UnzonedRange, isAllDay: boolean) {
-    const dateEnv = this.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
     let dayRanges = this.dayRanges
     let dayIndex
     let segRange
@@ -203,7 +204,7 @@ export default class ListView extends View {
 
   // generates the HTML for the day headers that live amongst the event rows
   buildDayHeaderRow(dayDate) {
-    const dateEnv = this.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
     let mainFormat = createFormatter(this.opt('listDayFormat')) // TODO: cache
     let altFormat = createFormatter(this.opt('listDayAltFormat')) // TODO: cache
 

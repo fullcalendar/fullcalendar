@@ -23,7 +23,7 @@ export default class EventRenderer {
 
 
   constructor(component, fillRenderer) { // fillRenderer is optional
-    this.view = component._getView()
+    this.view = component.view
     this.component = component
     this.fillRenderer = fillRenderer
   }

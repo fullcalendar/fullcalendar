@@ -7,7 +7,7 @@ export default class BasicViewDateProfileGenerator extends DateProfileGenerator 
 
   // Computes the date range that will be rendered.
   buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
-    const dateEnv = this._view.calendar.dateEnv
+    let dateEnv = this._view.calendar.dateEnv
     let renderUnzonedRange = super.buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) // an UnzonedRange
     let start = renderUnzonedRange.start
     let end = renderUnzonedRange.end

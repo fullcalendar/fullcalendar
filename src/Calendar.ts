@@ -274,7 +274,7 @@ export default class Calendar {
 
   prev() {
     let view = this.view
-    let prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'))
+    let prevInfo = view.dateProfileGenerator.buildPrev(view.dateProfile)
 
     if (prevInfo.isValid) {
       this.currentDate = prevInfo.date
@@ -285,7 +285,7 @@ export default class Calendar {
 
   next() {
     let view = this.view
-    let nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'))
+    let nextInfo = view.dateProfileGenerator.buildNext(view.dateProfile)
 
     if (nextInfo.isValid) {
       this.currentDate = nextInfo.date
@@ -486,39 +486,6 @@ export default class Calendar {
   }
 
 
-  // Render Queue
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  bindViewHandlers(view) {
-
-    view.watch('titleForCalendar', [ 'title' ], (deps) => { // TODO: better system
-      if (view === this.view) { // hack
-        this.setToolbarsTitle(deps.title)
-      }
-    })
-
-    view.watch('dateProfileForCalendar', [ 'dateProfile' ], (deps) => {
-      if (view === this.view) { // hack
-        let dateProfile = deps.dateProfile
-        this.currentDate = dateProfile.date // might have been constrained by view dates
-        this.updateToolbarButtons(dateProfile)
-
-        this.dispatch({
-          type: 'SET_ACTIVE_RANGE',
-          range: dateProfile.activeUnzonedRange
-        })
-      }
-    })
-  }
-
-
-  unbindViewHandlers(view) {
-    view.unwatch('titleForCalendar')
-    view.unwatch('dateProfileForCalendar')
-  }
-
-
   // View Rendering
   // -----------------------------------------------------------------------------------
 
@@ -542,9 +509,7 @@ export default class Calendar {
         this.viewsByType[viewType] ||
         (this.viewsByType[viewType] = this.instantiateView(viewType))
 
-      this.bindViewHandlers(newView)
-
-      newView.startBatchRender() // so that setElement+setDate rendering are joined
+      newView.startBatchRender() // so that setElement+setDateProfile rendering are joined
 
       let viewEl = createElement('div', { className: 'fc-view fc-' + viewType + '-view' })
       this.contentEl.appendChild(viewEl)
@@ -554,7 +519,17 @@ export default class Calendar {
     }
 
     if (this.view) {
-      this.view.setDate(this.currentDate)
+      let newDateProfile = this.view.computeNewDateProfile(this.currentDate)
+      if (newDateProfile) {
+        this.view.setDateProfile(newDateProfile)
+        this.setToolbarsTitle(this.view.title)
+        this.currentDate = newDateProfile.date // might have been constrained by view dates
+        this.updateToolbarButtons(newDateProfile)
+        this.dispatch({
+          type: 'SET_ACTIVE_RANGE',
+          range: newDateProfile.activeUnzonedRange
+        })
+      }
 
       if (newView) {
         newView.stopBatchRender()
@@ -572,10 +547,8 @@ export default class Calendar {
 
     this.toolbarsManager.proxyCall('deactivateButton', currentView.type)
 
-    this.unbindViewHandlers(currentView)
-
     currentView.removeElement()
-    currentView.unsetDate() // so bindViewHandlers doesn't fire with old values next time
+    currentView.unsetDateProfile()
 
     this.view = null
   }
@@ -789,8 +762,8 @@ export default class Calendar {
     let now = this.getNow()
     let view = this.view
     let todayInfo = view.dateProfileGenerator.build(now)
-    let prevInfo = view.dateProfileGenerator.buildPrev(view.get('dateProfile'))
-    let nextInfo = view.dateProfileGenerator.buildNext(view.get('dateProfile'))
+    let prevInfo = view.dateProfileGenerator.buildPrev(view.dateProfile)
+    let nextInfo = view.dateProfileGenerator.buildNext(view.dateProfile)
 
     this.toolbarsManager.proxyCall(
       (todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now)) ?

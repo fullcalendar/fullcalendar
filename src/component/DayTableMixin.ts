@@ -40,8 +40,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   updateDayTable() {
     let t = (this as any)
     let view = t.view
-    let date: DateMarker = t.dateProfile.renderUnzonedRange.start
-    let end: DateMarker = t.dateProfile.renderUnzonedRange.end
+    let dateProfile = t.getDateProfile()
+    let date: DateMarker = dateProfile.renderUnzonedRange.start
+    let end: DateMarker = dateProfile.renderUnzonedRange.end
     let dayIndex = -1
     let dayIndices = []
     let dayDates: DateMarker[] = []
@@ -270,7 +271,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 
   renderHeadHtml() {
-    let theme = (this as any).view.calendar.theme
+    let theme = (this as any).getTheme()
 
     return '' +
       '<div class="fc-row ' + theme.getClass('headerRow') + '">' +
@@ -317,9 +318,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   renderHeadDateCellHtml(date: DateMarker, colspan, otherAttrs) {
     let t = (this as any)
     let view = t.view
-    let calendar = view.calendar
-    let dateEnv = calendar.dateEnv
-    let isDateValid = t.dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
+    let dateEnv = t.getDateEnv()
+    let dateProfile = t.getDateProfile()
+    let isDateValid = dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let classNames = [
       'fc-day-header',
       view.calendar.theme.getClass('widgetHeader')
@@ -408,8 +409,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   renderBgCellHtml(date: DateMarker, otherAttrs) {
     let t = (this as any)
     let view = t.view
-    const dateEnv = view.calendar.dateEnv
-    let isDateValid = t.dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
+    let dateEnv = t.getDateEnv()
+    let dateProfile = t.getDateProfile()
+    let isDateValid = dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let classes = t.getDayClasses(date)
 
     classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'))

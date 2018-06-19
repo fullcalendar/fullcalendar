@@ -11,7 +11,7 @@ export default abstract class HelperRenderer {
 
 
   constructor(component, eventRenderer) {
-    this.view = component._getView()
+    this.view = component.view
     this.component = component
     this.eventRenderer = eventRenderer
   }

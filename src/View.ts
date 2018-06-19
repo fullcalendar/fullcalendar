@@ -4,7 +4,7 @@ import { isPrimaryMouseButton } from './util/dom-event'
 import { parseFieldSpecs } from './util/misc'
 import RenderQueue from './common/RenderQueue'
 import Calendar from './Calendar'
-import DateProfileGenerator from './DateProfileGenerator'
+import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import InteractiveDateComponent from './component/InteractiveDateComponent'
 import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
@@ -27,6 +27,7 @@ export default abstract class View extends InteractiveDateComponent {
   calendar: Calendar // owner Calendar object
   viewSpec: any
   options: any // hash containing all options. already merged with view-specific-options
+  dateProfile: DateProfile
 
   renderQueue: RenderQueue
   batchRenderDepth: number = 0
@@ -83,11 +84,6 @@ export default abstract class View extends InteractiveDateComponent {
     if (this['initialize']) {
       this['initialize']()
     }
-  }
-
-
-  _getView() {
-    return this
   }
 
 
@@ -163,7 +159,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Computes what the title at the top of the calendar should be for this view
   computeTitle(dateProfile) {
-    const dateEnv = this.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
     let unzonedRange
 
     // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
@@ -221,21 +217,37 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  setDate(date: DateMarker) {
-    let currentDateProfile = this.get('dateProfile')
+  computeNewDateProfile(date: DateMarker) {
+    let currentDateProfile = this.dateProfile
     let newDateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
 
     if (
       !currentDateProfile ||
       !currentDateProfile.activeUnzonedRange.equals(newDateProfile.activeUnzonedRange)
     ) {
-      this.set('dateProfile', newDateProfile)
+      return newDateProfile
     }
   }
 
 
-  unsetDate() {
+  setDateProfile(dateProfile) {
+    let dateEnv = this.getDateEnv()
+
+    this.title = this.computeTitle(dateProfile)
+    // DEPRECATED, but we need to keep it updated...
+    this.start = dateEnv.toDate(dateProfile.activeUnzonedRange.start)
+    this.end = dateEnv.toDate(dateProfile.activeUnzonedRange.end)
+    this.intervalStart = dateEnv.toDate(dateProfile.currentUnzonedRange.start)
+    this.intervalEnd = dateEnv.toDate(dateProfile.currentUnzonedRange.end)
+
+    this.dateProfile = dateProfile
+    this.set('dateProfile', dateProfile) // for rendering watchers
+  }
+
+
+  unsetDateProfile() {
     this.unset('dateProfile')
+    this.dateProfile = null
   }
 
 
@@ -243,9 +255,9 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  requestDateRender(dateProfile) {
+  requestDateRender() {
     this.requestRender(() => {
-      this.executeDateRender(dateProfile)
+      this.executeDateRender()
     }, 'date', 'init')
   }
 
@@ -258,8 +270,8 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   // if dateProfile not specified, uses current
-  executeDateRender(dateProfile) {
-    super.executeDateRender(dateProfile)
+  executeDateRender() {
+    super.executeDateRender()
 
     if (this['render']) {
       this['render']() // TODO: deprecate
@@ -391,7 +403,7 @@ export default abstract class View extends InteractiveDateComponent {
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
   startNowIndicator() {
-    const dateEnv = this.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
     let unit
     let update
     let delay // ms wait value
@@ -565,7 +577,7 @@ export default abstract class View extends InteractiveDateComponent {
 
   // Triggers handlers to 'select'
   triggerSelect(selection: Selection, ev?) {
-    const dateEnv = this.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
 
     this.publiclyTrigger('select', [
       {
@@ -820,7 +832,7 @@ View.prototype.dateProfileGeneratorClass = DateProfileGenerator
 
 
 View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
-  this.requestDateRender(deps.dateProfile)
+  this.requestDateRender()
 }, function() {
   this.requestDateUnrender()
 })
@@ -837,22 +849,4 @@ View.watch('displayingEvents', [ 'displayingDates', 'eventStore' ], function(dep
   this.requestRenderEvents(deps.eventStore)
 }, function() {
   this.requestUnrenderEvents()
-})
-
-
-View.watch('title', [ 'dateProfile' ], function(deps) {
-  return (this.title = this.computeTitle(deps.dateProfile)) // assign to View for legacy reasons
-})
-
-
-View.watch('legacyDateProps', [ 'dateProfile' ], function(deps) {
-  let calendar = this.calendar
-  let dateEnv = calendar.dateEnv
-  let dateProfile = deps.dateProfile
-
-  // DEPRECATED, but we need to keep it updated...
-  this.start = dateEnv.toDate(dateProfile.activeUnzonedRange.start)
-  this.end = dateEnv.toDate(dateProfile.activeUnzonedRange.end)
-  this.intervalStart = dateEnv.toDate(dateProfile.currentUnzonedRange.start)
-  this.intervalEnd = dateEnv.toDate(dateProfile.currentUnzonedRange.end)
 })

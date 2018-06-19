@@ -70,10 +70,12 @@ export default class BasicView extends View {
   }
 
 
-  executeDateRender(dateProfile) {
-    this.dayGrid.breakOnWeeks = /year|month|week/.test(dateProfile.currentRangeUnit)
+  executeDateRender() {
+    this.dayGrid.breakOnWeeks = /year|month|week/.test(
+      this.getDateProfile().currentRangeUnit
+    )
 
-    super.executeDateRender(dateProfile)
+    super.executeDateRender()
   }
 
 
@@ -107,7 +109,7 @@ export default class BasicView extends View {
   // Builds the HTML skeleton for the view.
   // The day-grid component will render inside of a container defined by this HTML.
   renderSkeletonHtml() {
-    let theme = this.calendar.theme
+    let theme = this.getTheme()
 
     return '' +
       '<table class="' + theme.getClass('tableGrid') + '">' +
@@ -295,7 +297,7 @@ function makeDayGridSubclass(SuperClass) {
     // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
     renderNumberIntroHtml(row) {
       let view = this.view
-      const dateEnv = view.calendar.dateEnv
+      let dateEnv = this.getDateEnv()
       let weekStart = this.getCellDate(row, 0)
 
       if (view.colWeekNumbersVisible) {

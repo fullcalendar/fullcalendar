@@ -22,7 +22,7 @@ export default class MonthView extends BasicView {
 
 
   isDateInOtherMonth(date: DateMarker, dateProfile) {
-    const dateEnv = this.calendar.dateEnv
+    let dateEnv = this.getDateEnv()
 
     return dateEnv.getMonth(date) !== dateEnv.getMonth(dateProfile.currentUnzonedRange.start)
   }

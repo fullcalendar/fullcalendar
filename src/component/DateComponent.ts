@@ -11,6 +11,8 @@ import UnzonedRange from '../models/UnzonedRange'
 import { Seg } from '../reducers/seg'
 import { EventStore } from '../reducers/event-store'
 import { BusinessHourDef, buildBusinessHourEventStore } from '../reducers/business-hours'
+import { DateEnv } from '../datelib/env'
+import Theme from '../theme/Theme'
 
 
 export default abstract class DateComponent extends Component {
@@ -26,7 +28,7 @@ export default abstract class DateComponent extends Component {
   childrenByUid: any
   isRTL: boolean = false // frequently accessed options
   nextDayThreshold: Duration // "
-  dateProfile: DateProfile // hack
+  view: View
 
   eventRenderer: any
   helperRenderer: any
@@ -38,13 +40,11 @@ export default abstract class DateComponent extends Component {
   isDatesRendered: boolean = false
 
 
-  constructor(_view?, _options?) {
+  constructor(_view, _options?) {
     super()
 
     // hack to set options prior to the this.opt calls
-    if (_view) {
-      this['view'] = _view
-    }
+    this.view = _view || this
     if (_options) {
       this['options'] = _options
     }
@@ -107,19 +107,19 @@ export default abstract class DateComponent extends Component {
 
 
   opt(name) {
-    return this._getView().opt(name) // default implementation
+    return this.view.options[name]
   }
 
 
   publiclyTrigger(...args) {
-    let calendar = this._getCalendar()
+    let calendar = this.getCalendar()
 
     return calendar.publiclyTrigger.apply(calendar, args)
   }
 
 
   hasPublicHandlers(...args) {
-    let calendar = this._getCalendar()
+    let calendar = this.getCalendar()
 
     return calendar.hasPublicHandlers.apply(calendar, args)
   }
@@ -129,9 +129,8 @@ export default abstract class DateComponent extends Component {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  executeDateRender(dateProfile) {
-    this.dateProfile = dateProfile // for rendering
-    this.renderDates(dateProfile)
+  executeDateRender() {
+    this.renderDates()
     this.isDatesRendered = true
     this.callChildren('executeDateRender', arguments)
   }
@@ -139,14 +138,13 @@ export default abstract class DateComponent extends Component {
 
   executeDateUnrender() { // wrapper
     this.callChildren('executeDateUnrender', arguments)
-    this.dateProfile = null
     this.unrenderDates()
     this.isDatesRendered = false
   }
 
 
   // date-cell content only
-  renderDates(dateProfile) {
+  renderDates() {
     // subclasses should implement
   }
 
@@ -191,8 +189,8 @@ export default abstract class DateComponent extends Component {
           buildBusinessHourEventStore(
             businessHoursDef,
             this.hasAllDayBusinessHours,
-            this.dateProfile.activeUnzonedRange,
-            this._getCalendar()
+            this.getDateProfile().activeUnzonedRange,
+            this.getCalendar()
           )
         )
       )
@@ -485,7 +483,7 @@ export default abstract class DateComponent extends Component {
 
 
   eventStoreToSegs(eventStore: EventStore): Seg[] {
-    let activeUnzonedRange = this.dateProfile.activeUnzonedRange
+    let activeUnzonedRange = this.getDateProfile().activeUnzonedRange
     let eventRenderRanges = sliceEventStore(eventStore, activeUnzonedRange)
     let allSegs: Seg[] = []
 
@@ -534,19 +532,23 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  _getCalendar(): Calendar { // TODO: strip out. move to generic parent.
-    let t = (this as any)
-    return t.calendar || t.view.calendar
+  getCalendar(): Calendar {
+    return this.view.calendar
   }
 
 
-  _getView(): View { // TODO: strip out. move to generic parent.
-    return (this as any).view
+  getDateEnv(): DateEnv {
+    return this.getCalendar().dateEnv
   }
 
 
-  _getDateProfile(): DateProfile {
-    return this._getView().get('dateProfile')
+  getDateProfile(): DateProfile {
+    return this.view.dateProfile
+  }
+
+
+  getTheme(): Theme {
+    return this.getCalendar().theme
   }
 
 
@@ -557,7 +559,7 @@ export default abstract class DateComponent extends Component {
   // `type` is a view-type like "day" or "week". default value is "day".
   // `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
   buildGotoAnchorHtml(gotoOptions, attrs, innerHtml) {
-    const dateEnv = this._getCalendar().dateEnv
+    let dateEnv = this.getDateEnv()
     let date
     let type
     let forceOff
@@ -605,17 +607,17 @@ export default abstract class DateComponent extends Component {
 
   // Computes HTML classNames for a single-day element
   getDayClasses(date: DateMarker, noThemeHighlight?) {
-    let view = this._getView()
+    let view = this.view
     let classes = []
     let todayStart: DateMarker
     let todayEnd: DateMarker
 
-    if (!this.dateProfile.activeUnzonedRange.containsDate(date)) {
+    if (!this.getDateProfile().activeUnzonedRange.containsDate(date)) {
       classes.push('fc-disabled-day') // TODO: jQuery UI theme?
     } else {
       classes.push('fc-' + DAY_IDS[date.getUTCDay()])
 
-      if (view.isDateInOtherMonth(date, this.dateProfile)) { // TODO: use DateComponent subclass somehow
+      if (view.isDateInOtherMonth(date, this.getDateProfile())) { // TODO: use DateComponent subclass somehow
         classes.push('fc-other-month')
       }
 
@@ -643,8 +645,8 @@ export default abstract class DateComponent extends Component {
   // Won't go more precise than days.
   // Will return `0` if there's not a clean whole interval.
   currentRangeAs(unit) { // PLURAL :(
-    const dateEnv = this._getCalendar().dateEnv
-    let range = this._getDateProfile().currentUnzonedRange
+    let dateEnv = this.getDateEnv()
+    let range = this.getDateProfile().currentUnzonedRange
     let res = null
 
     if (unit === 'years') {

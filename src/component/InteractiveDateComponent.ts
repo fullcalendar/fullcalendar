@@ -102,7 +102,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   shouldIgnoreTouch() {
-    let view = this._getView()
+    let view = this.view
 
     // On iOS (and Android?) when a new selection is initiated overtop another selection,
     // the touchend never fires because the elements gets removed mid-touch-interaction (my theory).
@@ -136,7 +136,7 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   canStartResize(seg, ev) {
-    let view = this._getView()
+    let view = this.view
     let eventDef = seg.eventRange.eventDef
 
     return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&

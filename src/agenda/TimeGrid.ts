@@ -197,8 +197,7 @@ export default class TimeGrid extends InteractiveDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderDates(dateProfile) {
-    this.dateProfile = dateProfile
+  renderDates() {
     this.updateDayTable()
     this.renderSlats()
     this.renderColumns()
@@ -212,7 +211,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   renderSkeleton() {
-    let theme = this.view.calendar.theme
+    let theme = this.getTheme()
 
     this.el.innerHTML =
       '<div class="fc-bg"></div>' +
@@ -226,7 +225,7 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   renderSlats() {
-    let theme = this.view.calendar.theme
+    let theme = this.getTheme()
 
     this.slatContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
@@ -245,11 +244,10 @@ export default class TimeGrid extends InteractiveDateComponent {
   // Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
   renderSlatRowHtml() {
     let view = this.view
-    let calendar = view.calendar
-    let dateEnv = calendar.dateEnv
-    let theme = calendar.theme
+    let dateEnv = this.getDateEnv()
+    let theme = this.getTheme()
     let isRTL = this.isRTL
-    let dateProfile = this.dateProfile
+    let dateProfile = this.getDateProfile()
     let html = ''
     let dayStart = startOfDay(dateProfile.renderUnzonedRange.start)
     let slotTime = dateProfile.minTime
@@ -291,9 +289,9 @@ export default class TimeGrid extends InteractiveDateComponent {
 
 
   renderColumns() {
-    let dateProfile = this.dateProfile
-    let theme = this.view.calendar.theme
-    const dateEnv = this.view.calendar.dateEnv
+    let dateProfile = this.getDateProfile()
+    let theme = this.getTheme()
+    let dateEnv = this.getDateEnv()
 
     this.dayRanges = this.dayDates.map(function(dayDate) {
       return new UnzonedRange(
@@ -506,7 +504,7 @@ export default class TimeGrid extends InteractiveDateComponent {
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
   computeTimeTop(timeMs: number) {
     let len = this.slatEls.length
-    let dateProfile = this.dateProfile
+    let dateProfile = this.getDateProfile()
     let slatCoverage = (timeMs - asRoughMs(dateProfile.minTime)) / asRoughMs(this.slotDuration) // floating-point value of # of slots covered
     let slatIndex
     let slatRemainder
