@@ -98,9 +98,7 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   initRenderQueue() {
-    this.renderQueue = new RenderQueue({
-      event: this.opt('eventRenderWait')
-    })
+    this.renderQueue = new RenderQueue(this.opt('eventRenderWait'))
 
     this.renderQueue.on('start', this.onRenderQueueStart.bind(this))
     this.renderQueue.on('stop', this.onRenderQueueStop.bind(this))
@@ -138,8 +136,8 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  requestRender(func, namespace, actionType) {
-    this.renderQueue.queue(func, namespace, actionType)
+  requestRender(func) {
+    this.renderQueue.queue(func)
   }
 
 
@@ -245,12 +243,6 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  unsetDateProfile() {
-    this.unset('dateProfile')
-    this.dateProfile = null
-  }
-
-
   // Date High-level Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
@@ -258,14 +250,14 @@ export default abstract class View extends InteractiveDateComponent {
   requestDateRender() {
     this.requestRender(() => {
       this.executeDateRender()
-    }, 'date', 'init')
+    })
   }
 
 
   requestDateUnrender() {
     this.requestRender(() => {
       this.executeDateUnrender()
-    }, 'date', 'destroy')
+    })
   }
 
 
@@ -343,7 +335,7 @@ export default abstract class View extends InteractiveDateComponent {
       this.whenSizeUpdated(
         this.triggerAfterEventsRendered
       )
-    }, 'event', 'init')
+    })
   }
 
 
@@ -351,7 +343,7 @@ export default abstract class View extends InteractiveDateComponent {
     this.requestRender(() => {
       this.triggerBeforeEventsDestroyed()
       this.unrenderEvents()
-    }, 'event', 'destroy')
+    })
   }
 
 
@@ -362,13 +354,13 @@ export default abstract class View extends InteractiveDateComponent {
   requestBusinessHoursRender() {
     this.requestRender(() => {
       this.renderBusinessHours(this.opt('businessHours'))
-    }, 'businessHours', 'init')
+    })
   }
 
   requestBusinessHoursUnrender() {
     this.requestRender(() => {
       this.unrenderBusinessHours()
-    }, 'businessHours', 'destroy')
+    })
   }
 
 

@@ -548,7 +548,6 @@ export default class Calendar {
     this.toolbarsManager.proxyCall('deactivateButton', currentView.type)
 
     currentView.removeElement()
-    currentView.unsetDateProfile()
 
     this.view = null
   }
