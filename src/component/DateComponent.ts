@@ -13,6 +13,10 @@ import { EventStore } from '../reducers/event-store'
 import { BusinessHourDef, buildBusinessHourEventStore } from '../reducers/business-hours'
 import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
+import { DragState } from '../reducers/drag'
+import { EventResizeState } from '../reducers/event-resize'
+import { DateComponentRenderState } from '../reducers/main'
+import { assignTo } from '../util/object'
 
 
 export default abstract class DateComponent extends Component {
@@ -37,7 +41,20 @@ export default abstract class DateComponent extends Component {
 
   hasAllDayBusinessHours: boolean = false // TODO: unify with largeUnit and isTimeScale?
 
+  isSkeletonRendered: boolean = false
   isDatesRendered: boolean = false
+  isBusinessHoursRendered: boolean = false
+  isSelectionRendered: boolean = false
+  isEventsRendered: boolean = false
+  isDragRendered: boolean = false
+  isEventResizeRendered: boolean = false
+  isSizeDirty: boolean = false
+  dateProfile: DateProfile
+  businessHoursDef: BusinessHourDef
+  selection: Selection
+  eventStore: EventStore
+  dragState: DragState
+  eventResizeState: EventResizeState
 
 
   constructor(_view, _options?) {
@@ -125,22 +142,139 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  // Date
+  // Root Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  executeDateRender() {
-    this.renderDates()
-    this.isDatesRendered = true
-    this.callChildren('executeDateRender', arguments)
+  render(renderState: DateComponentRenderState, forces: any) {
+    if (!forces) {
+      forces = {}
+    }
+
+    let isSkeletonDirty = forces === true ||
+      !this.isSkeletonRendered
+    let isDatesDirty = forces === true ||
+      isSkeletonDirty ||
+      renderState.dateProfile !== this.dateProfile
+    let isBusinessHoursDirty = forces === true ||
+      isDatesDirty ||
+      renderState.businessHoursDef !== this.businessHoursDef
+    let isSelectionDirty = forces === true ||
+      isDatesDirty ||
+      renderState.selection !== this.selection
+    let isEventsDirty = forces === true || forces.events ||
+      isDatesDirty ||
+      renderState.eventStore !== this.eventStore
+    let isDragDirty = forces === true ||
+      isDatesDirty ||
+      renderState.dragState !== this.dragState
+    let isEventResizeDirty = forces === true ||
+      isDatesDirty ||
+      renderState.eventResizeState !== this.eventResizeState
+
+    // unrendering
+    if (isEventResizeDirty && this.isEventResizeRendered) {
+      this.unrenderEventResize()
+      this.isEventResizeRendered = false
+      this.isSizeDirty = false
+    }
+    if (isDragDirty && this.isDatesRendered) {
+      this.unrenderDrag()
+      this.isDragRendered = false
+      this.isSizeDirty = true
+    }
+    if (isEventsDirty && this.isEventsRendered) {
+      this.unrenderEvents()
+      this.isEventsRendered = false
+      this.isSizeDirty = true
+    }
+    if (isSelectionDirty && this.isSkeletonRendered) {
+      this.unrenderSelection()
+      this.isSkeletonRendered = false
+      this.isSizeDirty = true
+    }
+    if (isBusinessHoursDirty && this.isBusinessHoursRendered) {
+      this.unrenderBusinessHours()
+      this.isBusinessHoursRendered = false
+      this.isSizeDirty = true
+    }
+    if (isDatesDirty && this.isDatesRendered) {
+      this.unrenderDates()
+      this.isDatesRendered = false
+      this.isSizeDirty = true
+    }
+    if (isSkeletonDirty && this.isSkeletonRendered) {
+      this.unrenderSkeleton()
+      this.isSkeletonRendered = false
+      this.isSizeDirty = true
+    }
+
+    assignTo(this, renderState)
+
+    // rendering
+    if (isSkeletonDirty) {
+      this.renderSkeleton()
+      this.isSkeletonRendered = true
+      this.isSizeDirty = true
+    }
+    if (isDatesDirty && renderState.dateProfile) {
+      this.renderDates() // pass in dateProfile too?
+      this.isDatesRendered = true
+      this.isSizeDirty = true
+    }
+    if (isBusinessHoursDirty && renderState.businessHoursDef && this.isDatesRendered) {
+      this.renderBusinessHours(renderState.businessHoursDef)
+      this.isBusinessHoursRendered = true
+      this.isSizeDirty = true
+    }
+    if (isSelectionDirty && renderState.selection && this.isDatesRendered) {
+      this.renderSelection(renderState.selection)
+      this.isSelectionRendered = true
+      this.isSizeDirty = true
+    }
+    if (isEventsDirty && renderState.eventStore && this.isDatesRendered) {
+      this.renderEvents(renderState.eventStore)
+      this.isEventsRendered = true
+      this.isSizeDirty = true
+    }
+    if (isDragDirty && renderState.dragState && this.isDatesRendered) {
+      let { dragState } = renderState
+      this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.isTouch)
+      this.isDragRendered = true
+      this.isSizeDirty = true
+    }
+    if (isEventResizeDirty && renderState.eventResizeState && this.isDatesRendered) {
+      let { eventResizeState } = renderState
+      this.renderEventResize(eventResizeState.eventStore, eventResizeState.origSeg, eventResizeState.isTouch)
+      this.isEventResizeRendered = true
+      this.isSizeDirty = true
+    }
+
+    this.renderChildren(renderState, forces)
   }
 
 
-  executeDateUnrender() { // wrapper
-    this.callChildren('executeDateUnrender', arguments)
-    this.unrenderDates()
-    this.isDatesRendered = false
+  renderChildren(renderState: DateComponentRenderState, forces: any) {
+    this.callChildren('render', arguments)
   }
+
+
+  // Skeleton
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  renderSkeleton() {
+    // subclasses should implement
+  }
+
+
+  unrenderSkeleton() {
+    // subclasses should implement
+  }
+
+
+  // Date
+  // -----------------------------------------------------------------------------------------------------------------
 
 
   // date-cell content only
@@ -189,21 +323,17 @@ export default abstract class DateComponent extends Component {
           buildBusinessHourEventStore(
             businessHoursDef,
             this.hasAllDayBusinessHours,
-            this.getDateProfile().activeUnzonedRange,
+            this.dateProfile.activeUnzonedRange,
             this.getCalendar()
           )
         )
       )
     }
-
-    this.callChildren('renderBusinessHours', arguments)
   }
 
 
   // Unrenders previously-rendered business-hours
   unrenderBusinessHours() {
-    this.callChildren('unrenderBusinessHours', arguments)
-
     if (this.businessHourRenderer) {
       this.businessHourRenderer.unrender()
     }
@@ -235,25 +365,18 @@ export default abstract class DateComponent extends Component {
 
 
   renderEvents(eventStore: EventStore) {
-
     if (this.eventRenderer) {
       this.eventRenderer.rangeUpdated() // poorly named now
       this.eventRenderer.renderSegs(
         this.eventStoreToSegs(eventStore)
       )
     }
-
-    this.callChildren('renderEvents', arguments)
   }
 
 
   unrenderEvents() {
-    this.callChildren('unrenderEvents', arguments)
-
     if (this.eventRenderer) {
       this.eventRenderer.unrender()
-    } else if (this['destroyEvents']) { // legacy
-      this['destroyEvents']()
     }
   }
 
@@ -379,21 +502,13 @@ export default abstract class DateComponent extends Component {
   // If an external-element, seg will be `null`.
   // Must return elements used for any mock events.
   renderDrag(eventStore: EventStore, origSeg?, isTouch = false) {
-    let renderedHelper = false
-
-    this.iterChildren(function(child) {
-      if (child.renderDrag(eventStore, origSeg, isTouch)) {
-        renderedHelper = true
-      }
-    })
-
-    return renderedHelper
+    // subclasses can implement
   }
 
 
   // Unrenders a visual indication of an event or external-element being dragged.
   unrenderDrag() {
-    this.callChildren('unrenderDrag', arguments)
+    // subclasses can implement
   }
 
 
@@ -422,14 +537,14 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders a visual indication of an event being resized.
-  renderEventResize(eventStore: EventStore, seg, isTouch) {
-    this.callChildren('renderEventResize', arguments)
+  renderEventResize(eventStore: EventStore, origSeg: any, isTouch: boolean) {
+    // subclasses can implement
   }
 
 
   // Unrenders a visual indication of an event being resized.
   unrenderEventResize() {
-    this.callChildren('unrenderEventResize', arguments)
+    // subclasses can implement
   }
 
 
@@ -440,16 +555,12 @@ export default abstract class DateComponent extends Component {
   // Renders a visual indication of the selection
   renderSelection(selection: Selection) {
     this.renderHighlightSegs(this.selectionToSegs(selection))
-
-    this.callChildren('renderSelection', arguments)
   }
 
 
   // Unrenders a visual indication of selection
   unrenderSelection() {
     this.unrenderHighlight()
-
-    this.callChildren('unrenderSelection', arguments)
   }
 
 
@@ -482,7 +593,7 @@ export default abstract class DateComponent extends Component {
 
 
   eventStoreToSegs(eventStore: EventStore): Seg[] {
-    let activeUnzonedRange = this.getDateProfile().activeUnzonedRange
+    let activeUnzonedRange = this.dateProfile.activeUnzonedRange
     let eventRenderRanges = sliceEventStore(eventStore, activeUnzonedRange)
     let allSegs: Seg[] = []
 
@@ -538,11 +649,6 @@ export default abstract class DateComponent extends Component {
 
   getDateEnv(): DateEnv {
     return this.getCalendar().dateEnv
-  }
-
-
-  getDateProfile(): DateProfile {
-    return this.view.dateProfile
   }
 
 
@@ -611,12 +717,12 @@ export default abstract class DateComponent extends Component {
     let todayStart: DateMarker
     let todayEnd: DateMarker
 
-    if (!this.getDateProfile().activeUnzonedRange.containsDate(date)) {
+    if (!this.dateProfile.activeUnzonedRange.containsDate(date)) {
       classes.push('fc-disabled-day') // TODO: jQuery UI theme?
     } else {
       classes.push('fc-' + DAY_IDS[date.getUTCDay()])
 
-      if (view.isDateInOtherMonth(date, this.getDateProfile())) { // TODO: use DateComponent subclass somehow
+      if (view.isDateInOtherMonth(date, this.dateProfile)) { // TODO: use DateComponent subclass somehow
         classes.push('fc-other-month')
       }
 
@@ -645,7 +751,7 @@ export default abstract class DateComponent extends Component {
   // Will return `0` if there's not a clean whole interval.
   currentRangeAs(unit) { // PLURAL :(
     let dateEnv = this.getDateEnv()
-    let range = this.getDateProfile().currentUnzonedRange
+    let range = this.dateProfile.currentUnzonedRange
     let res = null
 
     if (unit === 'years') {

@@ -2,9 +2,8 @@ import { assignTo } from './util/object'
 import { elementClosest } from './util/dom-manip'
 import { isPrimaryMouseButton } from './util/dom-event'
 import { parseFieldSpecs } from './util/misc'
-import RenderQueue from './common/RenderQueue'
 import Calendar from './Calendar'
-import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
+import { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import InteractiveDateComponent from './component/InteractiveDateComponent'
 import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
@@ -27,10 +26,7 @@ export default abstract class View extends InteractiveDateComponent {
   calendar: Calendar // owner Calendar object
   viewSpec: any
   options: any // hash containing all options. already merged with view-specific-options
-  dateProfile: DateProfile
 
-  renderQueue: RenderQueue
-  batchRenderDepth: number = 0
   queuedScroll: object
 
   isSelected: boolean = false // boolean whether a range of time is user-selected or not
@@ -74,7 +70,6 @@ export default abstract class View extends InteractiveDateComponent {
     // .name is deprecated
     this.name = this.type
 
-    this.initRenderQueue()
     this.initHiddenDays()
     this.dateProfileGenerator = new this.dateProfileGeneratorClass(this)
     this.bindBaseRenderHandlers()
@@ -97,57 +92,8 @@ export default abstract class View extends InteractiveDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  initRenderQueue() {
-    this.renderQueue = new RenderQueue(this.opt('eventRenderWait'))
-
-    this.renderQueue.on('start', this.onRenderQueueStart.bind(this))
-    this.renderQueue.on('stop', this.onRenderQueueStop.bind(this))
-
-    this.on('before:change', this.startBatchRender)
-    this.on('change', this.stopBatchRender)
-  }
-
-
-  onRenderQueueStart() {
-    this.calendar.freezeContentHeight()
-    this.addScroll(this.queryScroll())
-  }
-
-
-  onRenderQueueStop() {
-    if (this.calendar.updateViewSize()) { // success?
-      this.popScroll()
-    }
-    this.calendar.thawContentHeight()
-  }
-
-
-  startBatchRender() {
-    if (!(this.batchRenderDepth++)) {
-      this.renderQueue.pause()
-    }
-  }
-
-
-  stopBatchRender() {
-    if (!(--this.batchRenderDepth)) {
-      this.renderQueue.resume()
-    }
-  }
-
-
-  requestRender(func) {
-    this.renderQueue.queue(func)
-  }
-
-
   // given func will auto-bind to `this`
   whenSizeUpdated(func) {
-    if (this.renderQueue.isRunning) {
-      this.renderQueue.one('stop', func.bind(this))
-    } else {
-      func.call(this)
-    }
   }
 
 
@@ -215,7 +161,7 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  computeNewDateProfile(date: DateMarker) {
+  computeNewDateProfile(date: DateMarker): DateProfile {
     let currentDateProfile = this.dateProfile
     let newDateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
 
@@ -228,7 +174,7 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  setDateProfile(dateProfile) {
+  updateMiscDateProps(dateProfile) {
     let dateEnv = this.getDateEnv()
 
     this.title = this.computeTitle(dateProfile)
@@ -237,54 +183,27 @@ export default abstract class View extends InteractiveDateComponent {
     this.end = dateEnv.toDate(dateProfile.activeUnzonedRange.end)
     this.intervalStart = dateEnv.toDate(dateProfile.currentUnzonedRange.start)
     this.intervalEnd = dateEnv.toDate(dateProfile.currentUnzonedRange.end)
-
-    this.dateProfile = dateProfile
-    this.set('dateProfile', dateProfile) // for rendering watchers
   }
 
 
-  // Date High-level Rendering
+  // Date Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  requestDateRender() {
-    this.requestRender(() => {
-      this.executeDateRender()
-    })
-  }
-
-
-  requestDateUnrender() {
-    this.requestRender(() => {
-      this.executeDateUnrender()
-    })
-  }
-
-
   // if dateProfile not specified, uses current
-  executeDateRender() {
-    super.executeDateRender()
-
-    if (this['render']) {
-      this['render']() // TODO: deprecate
-    }
-
+  renderDates() {
+    super.renderDates()
     this.trigger('datesRendered')
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
   }
 
 
-  executeDateUnrender() {
+  unrenderDates() {
     this.unselect()
     this.stopNowIndicator()
     this.trigger('before:datesUnrendered')
-
-    if (this['destroy']) {
-      this['destroy']() // TODO: deprecate
-    }
-
-    super.executeDateUnrender()
+    super.unrenderDates()
   }
 
 
@@ -322,45 +241,6 @@ export default abstract class View extends InteractiveDateComponent {
         el: this.el
       }
     ])
-  }
-
-
-  // Event High-level Rendering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  requestRenderEvents(eventStore) {
-    this.requestRender(() => {
-      this.renderEvents(eventStore)
-      this.whenSizeUpdated(
-        this.triggerAfterEventsRendered
-      )
-    })
-  }
-
-
-  requestUnrenderEvents() {
-    this.requestRender(() => {
-      this.triggerBeforeEventsDestroyed()
-      this.unrenderEvents()
-    })
-  }
-
-
-  // Business Hour High-level Rendering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  requestBusinessHoursRender() {
-    this.requestRender(() => {
-      this.renderBusinessHours(this.opt('businessHours'))
-    })
-  }
-
-  requestBusinessHoursUnrender() {
-    this.requestRender(() => {
-      this.unrenderBusinessHours()
-    })
   }
 
 
@@ -821,24 +701,3 @@ export default abstract class View extends InteractiveDateComponent {
 
 View.prototype.usesMinMaxTime = false
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator
-
-
-View.watch('displayingDates', [ 'isInDom', 'dateProfile' ], function(deps) {
-  this.requestDateRender()
-}, function() {
-  this.requestDateUnrender()
-})
-
-
-View.watch('displayingBusinessHours', [ 'displayingDates' ], function() {
-  this.requestBusinessHoursRender()
-}, function() {
-  this.requestBusinessHoursUnrender()
-})
-
-
-View.watch('displayingEvents', [ 'displayingDates', 'eventStore' ], function(deps) {
-  this.requestRenderEvents(deps.eventStore)
-}, function() {
-  this.requestUnrenderEvents()
-})

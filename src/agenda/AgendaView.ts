@@ -14,7 +14,10 @@ import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
 import { EventStore } from '../reducers/event-store'
-import { Selection } from '../reducers/selection'
+import { DateComponentRenderState } from '../reducers/main'
+import { DragState } from '../reducers/drag'
+import { EventResizeState } from '../reducers/event-resize'
+import reselector from '../util/reselector'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -41,6 +44,9 @@ export default class AgendaView extends View {
   axisWidth: any // the width of the time axis running down the side
   usesMinMaxTime: boolean = true // indicates that minTime/maxTime affects rendering
 
+  splitEventStore: any
+  splitUiState: any
+
 
   constructor(calendar, viewSpec) {
     super(calendar, viewSpec)
@@ -57,6 +63,9 @@ export default class AgendaView extends View {
       overflowX: 'hidden',
       overflowY: 'auto'
     })
+
+    this.splitEventStore = reselector(splitEventStore)
+    this.splitUiState = reselector(splitUiState)
   }
 
 
@@ -155,6 +164,47 @@ export default class AgendaView extends View {
       return 'style="width:' + this.axisWidth + 'px"'
     }
     return ''
+  }
+
+
+  /* Render Delegation
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  renderChildren(renderState: DateComponentRenderState, forces: any) {
+    let allDaySeletion = null
+    let timedSelection = null
+    let eventStoreGroups = this.splitEventStore(renderState.eventStore)
+    let dragStateGroups = this.splitUiState(renderState.dragState)
+    let eventResizeStateGroups = this.splitUiState(renderState.eventResizeState)
+
+    if (renderState.selection) {
+      if (renderState.selection.isAllDay) {
+        allDaySeletion = renderState.selection
+      } else {
+        timedSelection = renderState.selection
+      }
+    }
+
+    this.timeGrid.render({
+      dateProfile: renderState.dateProfile,
+      eventStore: eventStoreGroups.timed,
+      selection: timedSelection,
+      dragState: dragStateGroups.timed,
+      eventResizeState: eventResizeStateGroups.timed,
+      businessHoursDef: renderState.businessHoursDef
+    }, forces)
+
+    if (this.dayGrid) {
+      this.dayGrid.render({
+        dateProfile: renderState.dateProfile,
+        eventStore: eventStoreGroups.allDay,
+        selection: allDaySeletion,
+        dragState: dragStateGroups.allDay,
+        eventResizeState: eventResizeStateGroups.allDay,
+        businessHoursDef: renderState.businessHoursDef
+      }, forces)
+    }
   }
 
 
@@ -284,64 +334,6 @@ export default class AgendaView extends View {
     }
   }
 
-
-  /* Event Rendering
-  ------------------------------------------------------------------------------------------------------------------*/
-
-  renderEvents(eventStore: EventStore) {
-    let groups = divideEventStoreByAllDay(eventStore)
-
-    this.timeGrid.renderEvents(groups.timed)
-
-    if (this.dayGrid) {
-      this.dayGrid.renderEvents(groups.allDay)
-    }
-  }
-
-
-  /* Dragging/Resizing Routing
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // A returned value of `true` signals that a mock "helper" event has been rendered.
-  renderDrag(eventStore: EventStore, origSeg, isTouch) {
-    let groups = divideEventStoreByAllDay(eventStore)
-    let renderedHelper = false
-
-    renderedHelper = this.timeGrid.renderDrag(groups.timed, origSeg, isTouch)
-
-    if (this.dayGrid) {
-      renderedHelper = this.dayGrid.renderDrag(groups.allDay, origSeg, isTouch) || renderedHelper
-    }
-
-    return renderedHelper
-  }
-
-
-  renderEventResize(eventStore: EventStore, origSeg, isTouch) {
-    let groups = divideEventStoreByAllDay(eventStore)
-
-    this.timeGrid.renderEventResize(groups.timed, origSeg, isTouch)
-
-    if (this.dayGrid) {
-      this.dayGrid.renderEventResize(groups.allDay, origSeg, isTouch)
-    }
-  }
-
-
-  /* Selection
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Renders a visual indication of a selection
-  renderSelection(selection: Selection) {
-    if (!selection.isAllDay) {
-      this.timeGrid.renderSelection(selection)
-    } else if (this.dayGrid) {
-      this.dayGrid.renderSelection(selection)
-    }
-  }
-
 }
 
 
@@ -357,7 +349,7 @@ agendaTimeGridMethods = {
     let view = this.view
     let calendar = view.calendar
     let dateEnv = calendar.dateEnv
-    let weekStart = this.getDateProfile().renderUnzonedRange.start
+    let weekStart = this.dateProfile.renderUnzonedRange.start
     let weekText
 
     if (this.opt('weekNumbers')) {
@@ -422,7 +414,7 @@ agendaDayGridMethods = {
 }
 
 
-function divideEventStoreByAllDay(eventStore: EventStore) {
+function splitEventStore(eventStore: EventStore) {
   let allDay: EventStore = { defs: {}, instances: {} }
   let timed: EventStore = { defs: {}, instances: {} }
 
@@ -444,6 +436,30 @@ function divideEventStoreByAllDay(eventStore: EventStore) {
       allDay.instances[instanceId] = instance
     } else {
       timed.instances[instanceId] = instance
+    }
+  }
+
+  return { allDay, timed }
+}
+
+
+function splitUiState(state: DragState | EventResizeState) {
+  let allDay = null
+  let timed = null
+
+  if (state) {
+    let eventStoreGroups = splitEventStore(state.eventStore)
+
+    allDay = {
+      eventStore: eventStoreGroups.allDay,
+      origSeg: state.origSeg,
+      isTouch: state.isTouch
+    }
+
+    timed = {
+      eventStore: eventStoreGroups.timed,
+      origSeg: state.origSeg,
+      isTouch: state.isTouch
     }
   }
 

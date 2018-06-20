@@ -40,7 +40,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   updateDayTable() {
     let t = (this as any)
     let view = t.view
-    let dateProfile = t.getDateProfile()
+    let dateProfile = t.dateProfile
     let date: DateMarker = dateProfile.renderUnzonedRange.start
     let end: DateMarker = dateProfile.renderUnzonedRange.end
     let dayIndex = -1
@@ -319,7 +319,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let t = (this as any)
     let view = t.view
     let dateEnv = t.getDateEnv()
-    let dateProfile = t.getDateProfile()
+    let dateProfile = t.dateProfile
     let isDateValid = dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let classNames = [
       'fc-day-header',
@@ -410,7 +410,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let t = (this as any)
     let view = t.view
     let dateEnv = t.getDateEnv()
-    let dateProfile = t.getDateProfile()
+    let dateProfile = t.dateProfile
     let isDateValid = dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let classes = t.getDayClasses(date)
 

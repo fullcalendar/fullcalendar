@@ -20,7 +20,7 @@ import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
-import { CalendarState, INITIAL_STATE, reduce } from './reducers/main'
+import { CalendarState, reduce } from './reducers/main'
 import { parseSelection, SelectionInput } from './reducers/selection'
 
 export default class Calendar {
@@ -45,7 +45,6 @@ export default class Calendar {
 
   view: View // current View object
   viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
-  currentDate: DateMarker // private (public API should use getDate instead)
   theme: Theme
   optionsManager: OptionsManager
   viewSpecManager: ViewSpecManager
@@ -66,9 +65,11 @@ export default class Calendar {
   footer: Toolbar
   toolbarsManager: Iterator
 
-  state: CalendarState = INITIAL_STATE
+  state: CalendarState
   isReducing: boolean = false
   actionQueue = []
+  isSkeletonRendered: boolean = false
+  renderingPauseDepth: number = 0
 
 
   constructor(el: HTMLElement, overrides: OptionsInput) {
@@ -83,7 +84,7 @@ export default class Calendar {
     this.optionsManager = new OptionsManager(this, overrides)
     this.viewSpecManager = new ViewSpecManager(this.optionsManager, this)
     this.initDateEnv() // needs to happen after options hash initialized
-    this.initCurrentDate()
+    this.initToolbars()
 
     this.constructed()
     this.hydrate()
@@ -121,6 +122,46 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  hydrate() {
+    this.state = this.buildInitialState()
+
+    let rawSources = this.opt('eventSources') || []
+    let singleRawSource = this.opt('events')
+
+    if (singleRawSource) {
+      rawSources.unshift(singleRawSource)
+    }
+
+    this.pauseRendering()
+
+    for (let rawSource of rawSources) {
+      this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource })
+    }
+
+    this.dispatch({ type: 'SET_VIEW_TYPE', viewType: this.opt('defaultView') })
+
+    this.resumeRendering()
+  }
+
+
+  buildInitialState(): CalendarState {
+    return {
+      loadingLevel: 0,
+      currentDate: this.getInitialDate(),
+      dateProfile: null,
+      eventSources: {},
+      eventStore: {
+        defs: {},
+        instances: {}
+      },
+      selection: null,
+      dragState: null,
+      eventResizeState: null,
+      businessHoursDef: false
+    }
+  }
+
+
   dispatch(action) {
     this.actionQueue.push(action)
 
@@ -139,39 +180,33 @@ export default class Calendar {
       let newState = this.state
       this.isReducing = false
 
-      if (this.view) {
-        this.view.set('eventStore', newState.eventStore)
-        // TODO: when to unset?
-      }
-
       if (!oldState.loadingLevel && newState.loadingLevel) {
         this.publiclyTrigger('loading', [ true, this.view ])
       } else if (oldState.loadingLevel && !newState.loadingLevel) {
         this.publiclyTrigger('loading', [ false, this.view ])
       }
+
+      if (!this.renderingPauseDepth) {
+        this.renderView()
+      }
+    }
+  }
+
+
+  pauseRendering() {
+    this.renderingPauseDepth++
+  }
+
+
+  resumeRendering() {
+    if (!(--this.renderingPauseDepth)) {
+      this.renderView()
     }
   }
 
 
   reduce(state: CalendarState, action: object, calendar: Calendar): CalendarState {
     return reduce(state, action, calendar)
-  }
-
-
-  hydrate() {
-    let rawSources = this.opt('eventSources') || []
-    let singleRawSource = this.opt('events')
-
-    // TODO: prevent rerenders for each thing
-    // should pause rendering
-
-    if (singleRawSource) {
-      rawSources.unshift(singleRawSource)
-    }
-
-    rawSources.forEach((rawSource) => {
-      this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource })
-    })
   }
 
 
@@ -207,6 +242,19 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  installNewView(viewType) {
+
+    if (this.view) {
+      this.view.removeElement()
+      this.toolbarsManager.proxyCall('deactivateButton', this.view.type)
+    }
+
+    this.view =
+      this.viewsByType[viewType] ||
+      (this.viewsByType[viewType] = this.instantiateView(viewType))
+  }
+
+
   // Given a view name for a custom view or a standard view, creates a ready-to-go View object
   instantiateView(viewType: string): View {
     let spec = this.viewSpecManager.getViewSpec(viewType)
@@ -225,7 +273,8 @@ export default class Calendar {
   }
 
 
-  changeView(viewName: string, dateOrRange: RangeInput | DateInput) {
+  changeView(viewType: string, dateOrRange: RangeInput | DateInput) {
+    let dateMarker = null
 
     if (dateOrRange) {
       if ((dateOrRange as RangeInput).start && (dateOrRange as RangeInput).end) { // a range
@@ -233,26 +282,29 @@ export default class Calendar {
           visibleRange: dateOrRange
         })
       } else { // a date
-        this.currentDate = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate
+        dateMarker = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate
       }
     }
 
-    this.renderView(viewName)
+    this.dispatch({ type: 'SET_VIEW_TYPE', viewType, dateMarker })
   }
 
 
   // Forces navigation to a view for the given date.
   // `viewType` can be a specific view name or a generic one like "week" or "day".
   // needs to change
-  zoomTo(newDate: DateMarker, viewType?: string) {
+  zoomTo(dateMarker: DateMarker, viewType?: string) {
     let spec
 
     viewType = viewType || 'day' // day is default zoom
     spec = this.viewSpecManager.getViewSpec(viewType) ||
       this.viewSpecManager.getUnitViewSpec(viewType)
 
-    this.currentDate = newDate
-    this.renderView(spec ? spec.type : null)
+    if (spec) {
+      this.dispatch({ type: 'SET_VIEW_TYPE', viewType: spec.type, dateMarker })
+    } else {
+      this.dispatch({ type: 'NAVIGATE_DATE', dateMarker })
+    }
   }
 
 
@@ -260,73 +312,62 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  initCurrentDate() {
+  getInitialDate() {
     let defaultDateInput = this.opt('defaultDate')
 
     // compute the initial ambig-timezone date
     if (defaultDateInput != null) {
-      this.currentDate = this.dateEnv.createMarker(defaultDateInput)
+      return this.dateEnv.createMarker(defaultDateInput)
     } else {
-      this.currentDate = this.getNow() // getNow already returns unzoned
+      return this.getNow() // getNow already returns unzoned
     }
   }
 
 
   prev() {
-    let view = this.view
-    let prevInfo = view.dateProfileGenerator.buildPrev(view.dateProfile)
-
-    if (prevInfo.isValid) {
-      this.currentDate = prevInfo.date
-      this.renderView()
-    }
+    this.dispatch({ type: 'NAVIGATE_PREV' })
   }
 
 
   next() {
-    let view = this.view
-    let nextInfo = view.dateProfileGenerator.buildNext(view.dateProfile)
-
-    if (nextInfo.isValid) {
-      this.currentDate = nextInfo.date
-      this.renderView()
-    }
+    this.dispatch({ type: 'NAVIGATE_NEXT' })
   }
 
 
   prevYear() {
-    this.currentDate = this.dateEnv.addYears(this.currentDate, -1)
-    this.renderView()
+    this.dispatch({ type: 'NAVIGATE_PREV_YEAR' })
   }
 
 
   nextYear() {
-    this.currentDate = this.dateEnv.addYears(this.currentDate, 1)
-    this.renderView()
+    this.dispatch({ type: 'NAVIGATE_NEXT_YEAR' })
   }
 
 
   today() {
-    this.currentDate = this.getNow() // should deny like prev/next?
-    this.renderView()
+    this.dispatch({ type: 'NAVIGATE_TODAY' })
   }
 
 
   gotoDate(zonedDateInput) {
-    this.currentDate = this.dateEnv.createMarker(zonedDateInput)
-    this.renderView()
+    this.dispatch({
+      type: 'NAVIGATE_DATE',
+      dateMarker: this.dateEnv.createMarker(zonedDateInput)
+    })
   }
 
 
   incrementDate(delta) { // is public facing
-    this.currentDate = this.dateEnv.add(this.currentDate, createDuration(delta))
-    this.renderView()
+    this.dispatch({
+      type: 'NAVIGATE_DELTA',
+      delta: createDuration(delta)
+    })
   }
 
 
   // for external API
   getDate(): Date {
-    return this.dateEnv.toDate(this.currentDate)
+    return this.dateEnv.toDate(this.state.currentDate)
   }
 
 
@@ -357,13 +398,19 @@ export default class Calendar {
   }
 
 
-  // High-level Rendering
+  // Rendering
   // -----------------------------------------------------------------------------------
 
 
   render() {
-    if (!this.contentEl) {
-      this.initialRender()
+    if (!this.isSkeletonRendered) {
+      this.renderSkeleton()
+      this.renderHeader()
+      this.renderFooter()
+      this.isSkeletonRendered = true
+      this.renderView()
+      this.trigger('initialRender')
+      Calendar.trigger('initialRender', this)
     } else if (this.elementVisible()) {
       // mainly for the public API
       this.calcSize()
@@ -371,7 +418,57 @@ export default class Calendar {
     }
   }
 
-  initialRender() {
+
+  renderView(forces?) {
+    let { view } = this
+
+    if (view && this.isSkeletonRendered) {
+      let viewScroll
+
+      if (!view.el) {
+        view.setElement(
+          createElement('div', { className: 'fc-view fc-' + view.type + '-view' })
+        )
+      }
+
+      if (!view.el.parentNode) {
+        this.contentEl.appendChild(view.el)
+      } else {
+        viewScroll = view.queryScroll()
+      }
+
+      this.freezeContentHeight()
+
+      // toolbar (updates every time unforunately)
+      this.setToolbarsTitle(this.view.title) // view.title set via updateMiscDateProps
+      this.updateToolbarButtons(this.state.dateProfile)
+      this.toolbarsManager.proxyCall('activateButton', view.type)
+
+      view.render(this.state, forces)
+
+      this.thawContentHeight()
+      this.updateViewSize() // TODO: respect isSizeDirty
+
+      if (viewScroll) {
+        this.view.applyScroll(viewScroll)
+      }
+    }
+  }
+
+
+  destroy() {
+    if (this.isSkeletonRendered) {
+      this.unrenderSkeleton()
+      this.isSkeletonRendered = false
+      this.view.removeElement()
+      this.view = null
+      this.trigger('destroy')
+      Calendar.trigger('destroy', this)
+    }
+  }
+
+
+  renderSkeleton() {
     let el = this.el
 
     el.classList.add('fc')
@@ -427,11 +524,6 @@ export default class Calendar {
 
     prependToElement(el, this.contentEl = createElement('div', { className: 'fc-view-container' }))
 
-    this.initToolbars()
-    this.renderHeader()
-    this.renderFooter()
-    this.renderView(this.opt('defaultView'))
-
     if (this.opt('handleWindowResize')) {
       window.addEventListener('resize',
         this.windowResizeProxy = debounce( // prevents rapid calls
@@ -440,18 +532,10 @@ export default class Calendar {
         )
       )
     }
-
-    this.trigger('initialRender')
-    Calendar.trigger('initialRender', this)
   }
 
 
-  destroy() {
-    let wasRendered = Boolean(this.contentEl && this.contentEl.parentNode)
-
-    if (this.view) {
-      this.clearView()
-    }
+  unrenderSkeleton() {
 
     this.toolbarsManager.proxyCall('removeElement')
     removeElement(this.contentEl)
@@ -472,101 +556,12 @@ export default class Calendar {
       this.windowResizeProxy = null
     }
 
-    if (wasRendered) {
-      GlobalEmitter.unneeded()
-
-      this.trigger('destroy')
-      Calendar.trigger('destroy', this)
-    }
+    GlobalEmitter.unneeded()
   }
 
 
   elementVisible(): boolean {
     return Boolean(this.el.offsetWidth)
-  }
-
-
-  // View Rendering
-  // -----------------------------------------------------------------------------------
-
-
-  // Renders a view because of a date change, view-type change, or for the first time.
-  // If not given a viewType, keep the current view but render different dates.
-  // Accepts an optional scroll state to restore to.
-  renderView(viewType?: string) {
-    let oldView = this.view
-    let newView
-
-    this.freezeContentHeight()
-
-    if (oldView && viewType && oldView.type !== viewType) {
-      this.clearView()
-    }
-
-    // if viewType changed, or the view was never created, create a fresh view
-    if (!this.view && viewType) {
-      newView = this.view =
-        this.viewsByType[viewType] ||
-        (this.viewsByType[viewType] = this.instantiateView(viewType))
-
-      newView.startBatchRender() // so that setElement+setDateProfile rendering are joined
-
-      let viewEl = createElement('div', { className: 'fc-view fc-' + viewType + '-view' })
-      this.contentEl.appendChild(viewEl)
-      newView.setElement(viewEl)
-
-      this.toolbarsManager.proxyCall('activateButton', viewType)
-    }
-
-    if (this.view) {
-      let newDateProfile = this.view.computeNewDateProfile(this.currentDate)
-      if (newDateProfile) {
-        this.view.setDateProfile(newDateProfile)
-        this.setToolbarsTitle(this.view.title)
-        this.currentDate = newDateProfile.date // might have been constrained by view dates
-        this.updateToolbarButtons(newDateProfile)
-        this.dispatch({
-          type: 'SET_DATE_PROFILE',
-          dateProfile: newDateProfile
-        })
-      }
-
-      if (newView) {
-        newView.stopBatchRender()
-      }
-    }
-
-    this.thawContentHeight()
-  }
-
-
-  // Unrenders the current view and reflects this change in the Header.
-  // Unregsiters the `view`, but does not remove from viewByType hash.
-  clearView() {
-    let currentView = this.view
-
-    this.toolbarsManager.proxyCall('deactivateButton', currentView.type)
-
-    currentView.removeElement()
-
-    this.view = null
-  }
-
-
-  // Destroys the view, including the view object. Then, re-instantiates it and renders it.
-  // Maintains the same scroll state.
-  // TODO: maintain any other user-manipulated state.
-  reinitView() {
-    let oldView = this.view
-    let scroll = oldView.queryScroll() // wouldn't be so complicated if Calendar owned the scroll
-    this.freezeContentHeight()
-
-    this.clearView()
-    this.calcSize()
-    this.renderView(oldView.type) // needs the type to freshly render
-
-    this.view.applyScroll(scroll)
-    this.thawContentHeight()
   }
 
 
@@ -667,13 +662,6 @@ export default class Calendar {
 
 
   freezeContentHeight() {
-    if (!(this.freezeContentHeightDepth++)) {
-      this.forceFreezeContentHeight()
-    }
-  }
-
-
-  forceFreezeContentHeight() {
     applyStyle(this.contentEl, {
       width: '100%',
       height: this.contentEl.offsetHeight,
@@ -683,19 +671,11 @@ export default class Calendar {
 
 
   thawContentHeight() {
-    this.freezeContentHeightDepth--
-
-    // always bring back to natural height
     applyStyle(this.contentEl, {
       width: '',
       height: '',
       overflow: ''
     })
-
-    // but if there are future thaws, re-freeze
-    if (this.freezeContentHeightDepth) {
-      this.forceFreezeContentHeight()
-    }
   }
 
 
@@ -761,8 +741,8 @@ export default class Calendar {
     let now = this.getNow()
     let view = this.view
     let todayInfo = view.dateProfileGenerator.build(now)
-    let prevInfo = view.dateProfileGenerator.buildPrev(view.dateProfile)
-    let nextInfo = view.dateProfileGenerator.buildNext(view.dateProfile)
+    let prevInfo = view.dateProfileGenerator.buildPrev(dateProfile)
+    let nextInfo = view.dateProfileGenerator.buildNext(dateProfile)
 
     this.toolbarsManager.proxyCall(
       (todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now)) ?
@@ -863,7 +843,6 @@ export default class Calendar {
 
 
   initDateEnv() {
-
     // not really date-env
     this.defaultAllDayEventDuration = createDuration(this.opt('defaultAllDayEventDuration'))
     this.defaultTimedEventDuration = createDuration(this.opt('defaultTimedEventDuration'))

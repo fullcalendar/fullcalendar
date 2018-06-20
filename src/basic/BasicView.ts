@@ -70,12 +70,12 @@ export default class BasicView extends View {
   }
 
 
-  executeDateRender() {
+  renderDates() {
     this.dayGrid.breakOnWeeks = /year|month|week/.test(
-      this.getDateProfile().currentRangeUnit
+      this.dateProfile.currentRangeUnit
     )
 
-    super.executeDateRender()
+    super.renderDates()
   }
 
 

@@ -238,7 +238,7 @@ export default class DayGrid extends InteractiveDateComponent {
     let view = this.view
     let dateEnv = this.getDateEnv()
     let html = ''
-    let isDateValid = this.getDateProfile().activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
+    let isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
     let classes
     let weekCalcFirstDow
