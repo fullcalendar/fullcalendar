@@ -5,19 +5,26 @@ import { parseFieldSpecs } from './util/misc'
 import Calendar from './Calendar'
 import { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import InteractiveDateComponent from './component/InteractiveDateComponent'
-import GlobalEmitter from './common/GlobalEmitter'
 import UnzonedRange from './models/UnzonedRange'
 import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
 import { EventInstance } from './reducers/event-store'
 import { Selection } from './reducers/selection'
+import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 
 
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export default abstract class View extends InteractiveDateComponent {
+
+  on: EmitterInterface['on']
+  one: EmitterInterface['one']
+  off: EmitterInterface['off']
+  trigger: EmitterInterface['trigger']
+  triggerWith: EmitterInterface['triggerWith']
+  hasHandlers: EmitterInterface['hasHandlers']
 
   type: string // subclass' view name (string)
   name: string // deprecated. use `type` instead
@@ -241,29 +248,6 @@ export default abstract class View extends InteractiveDateComponent {
         el: this.el
       }
     ])
-  }
-
-
-  // Misc view rendering utils
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  // Binds DOM handlers to elements that reside outside the view container, such as the document
-  bindGlobalHandlers() {
-    super.bindGlobalHandlers()
-
-    this.listenTo(GlobalEmitter.get(), {
-      touchstart: this.processUnselect,
-      mousedown: this.handleDocumentMousedown
-    })
-  }
-
-
-  // Unbinds DOM handlers from elements that reside outside the view container
-  unbindGlobalHandlers() {
-    super.unbindGlobalHandlers()
-
-    this.stopListeningTo(GlobalEmitter.get())
   }
 
 
@@ -696,6 +680,8 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 }
+
+EmitterMixin.mixInto(View)
 
 View.prototype.usesMinMaxTime = false
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator

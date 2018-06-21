@@ -1,9 +1,8 @@
-import { createElement, removeElement, applyStyle, prependToElement, forceClassName } from './util/dom-manip'
+import { createElement, removeElement, applyStyle, prependToElement } from './util/dom-manip'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
 import { globalDefaults, rtlDefaults } from './options'
-import Iterator from './common/Iterator'
 import GlobalEmitter from './common/GlobalEmitter'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
@@ -22,6 +21,8 @@ import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import { CalendarState, reduce } from './reducers/main'
 import { parseSelection, SelectionInput } from './reducers/selection'
+import reselector from './util/reselector'
+import { assignTo } from './util/object'
 
 export default class Calendar {
 
@@ -43,50 +44,51 @@ export default class Calendar {
   listenTo: ListenerInterface['listenTo']
   stopListeningTo: ListenerInterface['stopListeningTo']
 
-  view: View // current View object
-  viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
-  theme: Theme
+  buildDateEnv: any
+  buildTheme: any
+
   optionsManager: OptionsManager
   viewSpecManager: ViewSpecManager
-
+  theme: Theme
+  dateEnv: DateEnv
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
-  dateEnv: DateEnv
 
   el: HTMLElement
+  elThemeClassName: string
+  elDirClassName: string
   contentEl: HTMLElement
+
   suggestedViewHeight: number
   ignoreUpdateViewSize: number = 0
-  freezeContentHeightDepth: number = 0
   removeNavLinkListener: any
   windowResizeProxy: any
 
+  isRendered: boolean = false
+  isSkeletonRendered: boolean = false
+
+  view: View // current View object
+  viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
   header: Toolbar
   footer: Toolbar
-  toolbarsManager: Iterator
 
   state: CalendarState
-  isReducing: boolean = false
   actionQueue = []
-  isSkeletonRendered: boolean = false
+  isReducing: boolean = false
   renderingPauseDepth: number = 0
 
 
   constructor(el: HTMLElement, overrides: OptionsInput) {
-
-    // declare the current calendar instance relies on GlobalEmitter. needed for garbage collection.
-    // unneeded() is called in destroy.
-    GlobalEmitter.needed()
-
     this.el = el
     this.viewsByType = {}
 
-    this.optionsManager = new OptionsManager(this, overrides)
-    this.viewSpecManager = new ViewSpecManager(this.optionsManager, this)
-    this.initDateEnv() // needs to happen after options hash initialized
-    this.watchTheme()
-    this.initToolbars()
+    this.optionsManager = new OptionsManager(overrides)
+    this.viewSpecManager = new ViewSpecManager(this.optionsManager)
 
+    this.buildDateEnv = reselector(buildDateEnv)
+    this.buildTheme = reselector(buildTheme)
+
+    this.handleOptions(this.optionsManager.computed)
     this.constructed()
     this.hydrate()
   }
@@ -102,24 +104,221 @@ export default class Calendar {
   }
 
 
-  publiclyTrigger(name: string, args) {
-    let optHandler = this.opt(name)
+  // Public API for rendering
+  // -----------------------------------------------------------------------------------------------------------------
 
-    this.triggerWith(name, this, args) // Emitter's method
 
-    if (optHandler) {
-      return optHandler.apply(this, args)
+  render() {
+    if (!this.isRendered) {
+      this.bindGlobalHandlers()
+      this.el.classList.add('fc')
+      this._render()
+      this.isRendered = true
+      this.trigger('initialRender')
+      Calendar.trigger('initialRender', this)
+    } else if (this.elementVisible()) {
+      // mainly for the public API
+      this.calcSize()
+      this.updateViewSize()
     }
   }
 
 
-  hasPublicHandlers(name: string): boolean {
-    return this.hasHandlers(name) ||
-      this.opt(name) // handler specified in options
+  destroy() {
+    if (this.isRendered) {
+      this._destroy()
+      this.el.classList.remove('fc')
+      this.isRendered = false
+      this.unbindGlobalHandlers()
+      this.trigger('destroy')
+      Calendar.trigger('destroy', this)
+    }
   }
 
 
-  // Dispatcher
+  // General Rendering
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  _render(forces?) {
+    if (!forces) {
+      forces = {}
+    }
+
+    this.applyElClassNames()
+
+    if (!this.isSkeletonRendered) {
+      this.renderSkeleton()
+      this.isSkeletonRendered = true
+    }
+
+    this.freezeContentHeight() // do after contentEl is created in renderSkeleton
+
+    this.renderToolbars(forces)
+
+    let view = this.view
+
+    if (!view.el) {
+      view.setElement(
+        createElement('div', { className: 'fc-view fc-' + view.type + '-view' })
+      )
+    }
+
+    if (!view.el.parentNode) {
+      this.contentEl.appendChild(view.el)
+    } else {
+      this.view.addScroll(view.queryScroll())
+    }
+
+    this.view.render(this.state, forces)
+
+    if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
+      view.popScroll()
+    }
+
+    this.thawContentHeight()
+  }
+
+
+  _destroy() {
+    if (this.view) {
+      this.view.removeElement()
+      this.view = null
+    }
+
+    if (this.header) {
+      this.header.removeElement()
+      this.header = null
+    }
+
+    if (this.footer) {
+      this.footer.removeElement()
+      this.footer = null
+    }
+
+    this.unrenderSkeleton()
+    this.isSkeletonRendered = false
+
+    this.removeElClassNames()
+  }
+
+
+  elementVisible(): boolean {
+    return Boolean(this.el.offsetWidth)
+  }
+
+
+  // Classnames on root elements
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  applyElClassNames() {
+    let classList = this.el.classList
+    let elDirClassName = this.opt('isRTL') ? 'fc-rtl' : 'fc-ltr'
+    let elThemeClassName = this.theme.getClass('widget')
+
+    if (elDirClassName !== this.elDirClassName) {
+      if (this.elDirClassName) {
+        classList.remove(this.elDirClassName)
+      }
+      classList.add(elDirClassName)
+      this.elDirClassName = elDirClassName
+    }
+
+    if (elThemeClassName !== this.elThemeClassName) {
+      if (this.elThemeClassName) {
+        classList.remove(this.elThemeClassName)
+      }
+      classList.add(elThemeClassName)
+      this.elThemeClassName = elThemeClassName
+    }
+  }
+
+
+  removeElClassNames() {
+    let classList = this.el.classList
+
+    if (this.elDirClassName) {
+      classList.remove(this.elDirClassName)
+      this.elDirClassName = null
+    }
+
+    if (this.elThemeClassName) {
+      classList.remove(this.elThemeClassName)
+      this.elThemeClassName = null
+    }
+  }
+
+
+  // Skeleton Rendering
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  renderSkeleton() {
+
+    prependToElement(
+      this.el,
+      this.contentEl = createElement('div', { className: 'fc-view-container' })
+    )
+
+    // event delegation for nav links
+    this.removeNavLinkListener = listenBySelector(this.el, 'click', 'a[data-goto]', (ev, anchorEl) => {
+      let gotoOptions: any = anchorEl.getAttribute('data-goto')
+      gotoOptions = gotoOptions ? JSON.parse(gotoOptions) : {}
+
+      let date = this.dateEnv.createMarker(gotoOptions.date)
+      let viewType = gotoOptions.type
+
+      // property like "navLinkDayClick". might be a string or a function
+      let customAction = this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
+
+      if (typeof customAction === 'function') {
+        customAction(date, ev)
+      } else {
+        if (typeof customAction === 'string') {
+          viewType = customAction
+        }
+        this.zoomTo(date, viewType)
+      }
+    })
+  }
+
+  unrenderSkeleton() {
+    removeElement(this.contentEl)
+    this.contentEl = null
+
+    this.removeNavLinkListener()
+  }
+
+
+  // Global Handlers
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  bindGlobalHandlers() {
+    GlobalEmitter.needed()
+
+    if (this.opt('handleWindowResize')) {
+      window.addEventListener('resize',
+        this.windowResizeProxy = debounce( // prevents rapid calls
+          this.windowResize.bind(this),
+          this.opt('windowResizeDelay')
+        )
+      )
+    }
+  }
+
+  unbindGlobalHandlers() {
+    GlobalEmitter.unneeded()
+
+    if (this.windowResizeProxy) {
+      window.removeEventListener('resize', this.windowResizeProxy)
+      this.windowResizeProxy = null
+    }
+  }
+
+
+  // Dispatcher / Render Queue
   // -----------------------------------------------------------------------------------------------------------------
 
 
@@ -188,7 +387,7 @@ export default class Calendar {
       }
 
       if (!this.renderingPauseDepth) {
-        this.renderView()
+        this._render()
       }
     }
   }
@@ -201,7 +400,7 @@ export default class Calendar {
 
   resumeRendering() {
     if (!(--this.renderingPauseDepth)) {
-      this.renderView()
+      this._render()
     }
   }
 
@@ -211,31 +410,93 @@ export default class Calendar {
   }
 
 
-  // Options Public API
+  // Options
   // -----------------------------------------------------------------------------------------------------------------
 
 
   // public getter/setter
   option(name: string | object, value?) {
-    let newOptionHash
-
     if (typeof name === 'string') {
       if (value === undefined) { // getter
-        return this.optionsManager.get(name)
+        return this.opt(name)
       } else { // setter for individual option
-        newOptionHash = {}
-        newOptionHash[name] = value
-        this.optionsManager.add(newOptionHash)
+        this.setOptions({
+          [name]: value
+        })
       }
     } else if (typeof name === 'object' && name) { // compound setter with object input (non-null)
-      this.optionsManager.add(name)
+      this.setOptions(name)
     }
   }
 
 
-  // private getter
-  opt(name: string) {
-    return this.optionsManager.get(name)
+  setOptions(optionsHash) {
+    this.optionsManager.add(optionsHash)
+    this.handleOptions(this.optionsManager.computed)
+
+    let optionCnt = 0
+    let optionName
+
+    for (optionName in optionsHash) {
+      optionCnt++
+    }
+
+    if (optionCnt === 1) {
+      if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
+        this.updateViewSize(true) // isResize=true
+        return
+      } else if (optionName === 'defaultDate') {
+        return // can't change date this way. use gotoDate instead
+      } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(optionName)) {
+        return // doesn't affect rendering. only interactions.
+      }
+    }
+
+    this._render(true) // force rerender
+  }
+
+
+  handleOptions(options) {
+    this.defaultAllDayEventDuration = createDuration(options.defaultAllDayEventDuration)
+    this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
+
+    this.dateEnv = this.buildDateEnv(
+      options.locale,
+      options.timezone,
+      options.firstDay,
+      options.weekNumberCalculation,
+      options.weekLabel
+    )
+
+    this.theme = this.buildTheme(options)
+
+    this.viewSpecManager.clearCache()
+  }
+
+
+  opt(optName) {
+    return this.optionsManager.computed[optName]
+  }
+
+
+  // Trigger
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  publiclyTrigger(name: string, args) {
+    let optHandler = this.opt(name)
+
+    this.triggerWith(name, this, args) // Emitter's method
+
+    if (optHandler) {
+      return optHandler.apply(this, args)
+    }
+  }
+
+
+  hasPublicHandlers(name: string): boolean {
+    return this.hasHandlers(name) ||
+      this.opt(name) // handler specified in options
   }
 
 
@@ -243,16 +504,19 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  installNewView(viewType) {
+  installNewView(viewType: string) {
 
-    if (this.view) {
+    if (this.view && this.view.type !== viewType) {
+      this.freezeContentHeight() // hack
       this.view.removeElement()
-      this.toolbarsManager.proxyCall('deactivateButton', this.view.type)
+      this.view = null
     }
 
-    this.view =
-      this.viewsByType[viewType] ||
-      (this.viewsByType[viewType] = this.instantiateView(viewType))
+    if (!this.view) {
+      this.view =
+        this.viewsByType[viewType] ||
+        (this.viewsByType[viewType] = this.instantiateView(viewType))
+    }
   }
 
 
@@ -279,7 +543,7 @@ export default class Calendar {
 
     if (dateOrRange) {
       if ((dateOrRange as RangeInput).start && (dateOrRange as RangeInput).end) { // a range
-        this.optionsManager.recordOverrides({ // will not rerender
+        this.optionsManager.add({ // will not rerender
           visibleRange: dateOrRange
         })
       } else { // a date
@@ -299,7 +563,7 @@ export default class Calendar {
 
     viewType = viewType || 'day' // day is default zoom
     spec = this.viewSpecManager.getViewSpec(viewType) ||
-      this.viewSpecManager.getUnitViewSpec(viewType)
+      this.viewSpecManager.getUnitViewSpec(viewType, this)
 
     if (spec) {
       this.dispatch({ type: 'SET_VIEW_TYPE', viewType: spec.type, dateMarker })
@@ -399,167 +663,8 @@ export default class Calendar {
   }
 
 
-  // Rendering
-  // -----------------------------------------------------------------------------------
-
-
-  watchTheme() {
-    this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], (opts) => {
-      let themeClass = getThemeSystemClass(opts.themeSystem || opts.theme)
-      let theme = new themeClass(this.optionsManager)
-      this.theme = theme
-    })
-  }
-
-
-  render() {
-    if (!this.isSkeletonRendered) {
-      this.renderSkeleton()
-      this.attachHeader()
-      this.attachFooter()
-      this.isSkeletonRendered = true
-      this.renderView()
-      this.trigger('initialRender')
-      Calendar.trigger('initialRender', this)
-    } else if (this.elementVisible()) {
-      // mainly for the public API
-      this.calcSize()
-      this.updateViewSize()
-    }
-  }
-
-
-  renderView(forces?) {
-    let { view } = this
-
-    if (view && this.isSkeletonRendered) {
-
-      if (!view.el) {
-        view.setElement(
-          createElement('div', { className: 'fc-view fc-' + view.type + '-view' })
-        )
-      }
-
-      if (!view.el.parentNode) {
-        this.contentEl.appendChild(view.el)
-      } else {
-        view.addScroll(view.queryScroll())
-      }
-
-      this.freezeContentHeight()
-      view.render(this.state, forces)
-      this.thawContentHeight()
-
-      if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
-        view.popScroll()
-      }
-    }
-  }
-
-
-  destroy() {
-    if (this.isSkeletonRendered) {
-      this.unrenderSkeleton()
-      this.isSkeletonRendered = false
-      this.view.removeElement()
-      this.view = null
-      this.trigger('destroy')
-      Calendar.trigger('destroy', this)
-    }
-  }
-
-
-  renderSkeleton() {
-    let el = this.el
-
-    el.classList.add('fc')
-
-    // event delegation for nav links
-    this.removeNavLinkListener = listenBySelector(el, 'click', 'a[data-goto]', (ev, anchorEl) => {
-      let gotoOptions: any = anchorEl.getAttribute('data-goto')
-      gotoOptions = gotoOptions ? JSON.parse(gotoOptions) : {}
-
-      let date = this.dateEnv.createMarker(gotoOptions.date)
-      let viewType = gotoOptions.type
-
-      // property like "navLinkDayClick". might be a string or a function
-      let customAction = this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
-
-      if (typeof customAction === 'function') {
-        customAction(date, ev)
-      } else {
-        if (typeof customAction === 'string') {
-          viewType = customAction
-        }
-        this.zoomTo(date, viewType)
-      }
-    })
-
-    // called immediately, and upon option change
-    this.optionsManager.watch('applyingThemeClasses', [ '?theme', '?themeSystem' ], (opts) => {
-      let widgetClass = this.theme.getClass('widget')
-      if (widgetClass) {
-        el.classList.add(widgetClass)
-      }
-    }, () => {
-      let widgetClass = this.theme.getClass('widget')
-      if (widgetClass) {
-        el.classList.remove(widgetClass)
-      }
-    })
-
-    // called immediately, and upon option change.
-    // HACK: locale often affects isRTL, so we explicitly listen to that too.
-    this.optionsManager.watch('applyingDirClasses', [ '?isRTL', '?locale' ], (opts) => {
-      forceClassName(el, 'fc-ltr', !opts.isRTL)
-      forceClassName(el, 'fc-rtl', opts.isRTL)
-    })
-
-    prependToElement(el, this.contentEl = createElement('div', { className: 'fc-view-container' }))
-
-    if (this.opt('handleWindowResize')) {
-      window.addEventListener('resize',
-        this.windowResizeProxy = debounce( // prevents rapid calls
-          this.windowResize.bind(this),
-          this.opt('windowResizeDelay')
-        )
-      )
-    }
-  }
-
-
-  unrenderSkeleton() {
-
-    this.toolbarsManager.proxyCall('removeElement')
-    removeElement(this.contentEl)
-    this.el.classList.remove('fc')
-    this.el.classList.remove('fc-ltr')
-    this.el.classList.remove('fc-rtl')
-
-    // removes theme-related root className
-    this.optionsManager.unwatch('applyingThemeClasses')
-
-    if (this.removeNavLinkListener) {
-      this.removeNavLinkListener()
-      this.removeNavLinkListener = null
-    }
-
-    if (this.windowResizeProxy) {
-      window.removeEventListener('resize', this.windowResizeProxy)
-      this.windowResizeProxy = null
-    }
-
-    GlobalEmitter.unneeded()
-  }
-
-
-  elementVisible(): boolean {
-    return Boolean(this.el.offsetWidth)
-  }
-
-
   // Resizing
-  // -----------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------------------------
 
 
   getSuggestedViewHeight(): number {
@@ -650,8 +755,8 @@ export default class Calendar {
   }
 
 
-  /* Height "Freezing"
-  -----------------------------------------------------------------------------*/
+  // Height "Freezing"
+  // -----------------------------------------------------------------------------------------------------------------
 
 
   freezeContentHeight() {
@@ -676,100 +781,69 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  initToolbars() {
-    this.header = new Toolbar(this, this.computeHeaderOptions())
-    this.header.render()
-
-    this.footer = new Toolbar(this, this.computeFooterOptions())
-    this.footer.render()
-
-    this.toolbarsManager = new Iterator([ this.header, this.footer ])
-  }
-
-
-  computeHeaderOptions() {
-    return {
-      extraClasses: 'fc-header-toolbar',
-      layout: this.opt('header')
-    }
-  }
-
-
-  computeFooterOptions() {
-    return {
-      extraClasses: 'fc-footer-toolbar',
-      layout: this.opt('footer')
-    }
-  }
-
-
-  // can be called repeatedly and Header will rerender
-  attachHeader() {
-    if (this.header.el) {
-      prependToElement(this.el, this.header.el)
-    }
-  }
-
-
-  // can be called repeatedly and Footer will rerender
-  attachFooter() {
-    if (this.footer.el) {
-      this.el.appendChild(this.footer.el)
-    }
-  }
-
-
-  onDateProfileChange(dateProfile) {
-    this.view.updateMiscDateProps(dateProfile)
-    this.setToolbarsTitle(this.view.title) // view.title set via updateMiscDateProps
-    this.updateToolbarButtons(dateProfile)
-    this.toolbarsManager.proxyCall('activateButton', this.view.type)
-  }
-
-
-  setToolbarsTitle(title: string) {
-    this.toolbarsManager.proxyCall('updateTitle', title)
-  }
-
-
-  updateToolbarButtons(dateProfile) {
+  renderToolbars(forces) {
+    let headerLayout = this.opt('header')
+    let footerLayout = this.opt('footer')
     let now = this.getNow()
+    let dateProfile = this.state.dateProfile
     let view = this.view
     let todayInfo = view.dateProfileGenerator.build(now)
     let prevInfo = view.dateProfileGenerator.buildPrev(dateProfile)
     let nextInfo = view.dateProfileGenerator.buildNext(dateProfile)
+    let props = {
+      title: this.view.title,
+      activeButton: this.view.type,
+      isTodayEnabled: todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now),
+      isPrevEnabled: prevInfo.isValid,
+      isNextEnabled: nextInfo.isValid
+    }
 
-    this.toolbarsManager.proxyCall(
-      (todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now)) ?
-        'enableButton' :
-        'disableButton',
-      'today'
-    )
+    if ((!headerLayout || forces === true) && this.header) {
+      this.header.removeElement()
+      this.header = null
+    }
 
-    this.toolbarsManager.proxyCall(
-      prevInfo.isValid ?
-        'enableButton' :
-        'disableButton',
-      'prev'
-    )
+    if (headerLayout) {
+      if (!this.header) {
+        this.header = new Toolbar(this, 'fc-header-toolbar')
+        prependToElement(this.el, this.header.el)
+      }
+      this.header.render(
+        assignTo({ layout: headerLayout }, props),
+        forces
+      )
+    }
 
-    this.toolbarsManager.proxyCall(
-      nextInfo.isValid ?
-        'enableButton' :
-        'disableButton',
-      'next'
-    )
+    if ((!footerLayout || forces === true) && this.footer) {
+      this.footer.removeElement()
+      this.footer = null
+    }
+
+    if (footerLayout) {
+      if (!this.footer) {
+        this.footer = new Toolbar(this, 'fc-footer-toolbar')
+        prependToElement(this.el, this.footer.el)
+      }
+      this.footer.render(
+        assignTo({ layout: footerLayout }, props),
+        forces
+      )
+    }
   }
 
 
   queryToolbarsHeight() {
-    return this.toolbarsManager.items.reduce(function(accumulator, toolbar) {
-      let toolbarHeight = toolbar.el ?
-        computeHeightAndMargins(toolbar.el) :
-        0
+    let height = 0
 
-      return accumulator + toolbarHeight
-    }, 0)
+    if (this.header) {
+      height += computeHeightAndMargins(this.header.el)
+    }
+
+    if (this.footer) {
+      height += computeHeightAndMargins(this.footer.el)
+    }
+
+    return height
   }
 
 
@@ -835,26 +909,6 @@ export default class Calendar {
 
   // Date Utils
   // -----------------------------------------------------------------------------------------------------------------
-
-
-  initDateEnv() {
-    // not really date-env
-    this.defaultAllDayEventDuration = createDuration(this.opt('defaultAllDayEventDuration'))
-    this.defaultTimedEventDuration = createDuration(this.opt('defaultTimedEventDuration'))
-
-    this.optionsManager.watch('buildDateEnv', [
-      '?locale', '?timezone', '?firstDay', '?weekNumberCalculation', '?weekLabel'
-    ], (opts) => {
-      this.dateEnv = new DateEnv({
-        calendarSystem: 'gregory',
-        timeZone: opts.timezone,
-        locale: getLocale(opts.locale),
-        weekNumberCalculation: opts.weekNumberCalculation,
-        firstDay: opts.firstDay,
-        weekLabel: opts.weekLabel
-      })
-    })
-  }
 
 
   // Returns a DateMarker for the current date, as defined by the client's computer or from the `now` option
@@ -923,7 +977,7 @@ export default class Calendar {
 
 
   rerenderEvents() { // API method. destroys old events if previously rendered.
-    this.view.flash('displayingEvents')
+    this._render({ events: true }) // TODO: test this
   }
 
 
@@ -1005,3 +1059,22 @@ export default class Calendar {
 EmitterMixin.mixIntoObj(Calendar) // for global registry
 EmitterMixin.mixInto(Calendar)
 ListenerMixin.mixInto(Calendar)
+
+
+
+function buildDateEnv(locale, timezone, firstDay, weekNumberCalculation, weekLabel) {
+  return new DateEnv({
+    calendarSystem: 'gregory',
+    timeZone: timezone,
+    locale: getLocale(locale),
+    weekNumberCalculation: weekNumberCalculation,
+    firstDay: firstDay,
+    weekLabel: weekLabel
+  })
+}
+
+
+function buildTheme(calendarOptions) {
+  let themeClass = getThemeSystemClass(calendarOptions.themeSystem || calendarOptions.theme)
+  return new themeClass(calendarOptions)
+}

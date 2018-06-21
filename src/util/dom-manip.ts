@@ -187,7 +187,7 @@ export function findChildren(parent: HTMLElement[] | HTMLElement, selector?: str
 // Attributes
 // ----------------------------------------------------------------------------------------------------------------
 
-export function forceClassName(el: HTMLElement, className: string, bool) {
+export function forceClassName(el: HTMLElement, className: string, bool) { // might not be used anywhere
   if (bool) {
     el.classList.add(className)
   } else {

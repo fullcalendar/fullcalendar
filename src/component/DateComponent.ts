@@ -211,7 +211,7 @@ export default abstract class DateComponent extends Component {
     assignTo(this, renderState)
 
     // rendering
-    if (isSkeletonDirty || !this.isSelectionRendered) {
+    if ((isSkeletonDirty || !this.isSkeletonRendered) || !this.isSkeletonRendered) {
       this.renderSkeleton()
       this.isSkeletonRendered = true
       this.isSizeDirty = true

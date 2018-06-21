@@ -73,7 +73,6 @@ export {
 
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 export { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
-export { default as Model } from './common/Model'
 export { default as UnzonedRange } from './models/UnzonedRange'
 export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Class } from './common/Class'

@@ -8,56 +8,128 @@ import { htmlToElement, appendToElement, removeElement, findElements, createElem
 export default class Toolbar {
 
   calendar: any
-  toolbarOptions: any
-  el: HTMLElement = null // mirrors local `el`
-  viewsWithButtons: any = []
+  el: HTMLElement = null
+  viewsWithButtons: any
+
+  isLayoutRendered: boolean
+  layout: any
+  title: string
+  activeButton: string
+  isTodayEnabled: boolean
+  isPrevEnabled: boolean
+  isNextEnabled: boolean
 
 
-  constructor(calendar, toolbarOptions) {
+  constructor(calendar, extraClassName) {
     this.calendar = calendar
-    this.toolbarOptions = toolbarOptions
+    this.el = createElement('div', { className: 'fc-toolbar ' + extraClassName })
   }
 
 
-  // can be called repeatedly and will rerender
-  render() {
-    let sections = this.toolbarOptions.layout
+  /*
+    renderProps: {
+      layout
+      title
+      activeButton
+      isTodayEnabled
+      isPrevEnabled
+      isNextEnabled
+    }
+  */
+  render(renderProps, forces) {
+
+    if (renderProps.layout !== this.layout || forces === true) {
+      if (this.isLayoutRendered) {
+        this.unrenderLayout()
+      }
+      this.renderLayout(renderProps.layout)
+      this.layout = renderProps.layout
+      this.isLayoutRendered = true
+    }
+
+    if (renderProps.title !== this.title || forces === true) {
+      this.updateTitle(renderProps.title)
+      this.title = renderProps.title
+    }
+
+    if (renderProps.activeButton !== this.activeButton || forces === true) {
+      if (this.activeButton) {
+        this.deactivateButton(this.activeButton)
+      }
+      this.activateButton(renderProps.activeButton)
+      this.activeButton = renderProps.activeButton
+    }
+
+    if (renderProps.isTodayEnabled !== this.isTodayEnabled || forces === true) {
+      if (renderProps.isTodayEnabled) {
+        this.enableButton('today')
+      } else {
+        this.disableButton('today')
+      }
+      this.isTodayEnabled = renderProps.isTodayEnabled
+    }
+
+    if (renderProps.isPrevEnabled !== this.isPrevEnabled || forces === true) {
+      if (renderProps.isPrevEnabled) {
+        this.enableButton('today')
+      } else {
+        this.disableButton('today')
+      }
+      this.isPrevEnabled = renderProps.isPrevEnabled
+    }
+
+    if (renderProps.isNextEnabled !== this.isNextEnabled || forces === true) {
+      if (renderProps.isNextEnabled) {
+        this.enableButton('today')
+      } else {
+        this.disableButton('today')
+      }
+      this.isNextEnabled = renderProps.isNextEnabled
+    }
+  }
+
+
+  renderLayout(layout) {
     let el = this.el
 
-    if (sections) {
-      if (!el) {
-        el = this.el = createElement('div', { className: 'fc-toolbar ' + this.toolbarOptions.extraClasses })
-      } else {
-        el.innerHTML = ''
-      }
-      appendToElement(el, this.renderSection('left'))
-      appendToElement(el, this.renderSection('right'))
-      appendToElement(el, this.renderSection('center'))
-      appendToElement(el, '<div class="fc-clear"></div>')
-    } else {
-      this.removeElement()
-    }
+    this.viewsWithButtons = []
+
+    appendToElement(el, this.renderSection('left', layout.left))
+    appendToElement(el, this.renderSection('right', layout.right))
+    appendToElement(el, this.renderSection('center', layout.center))
+    appendToElement(el, '<div class="fc-clear"></div>')
+  }
+
+
+  unrenderLayout() {
+    this.el.innerHTML = ''
   }
 
 
   removeElement() {
-    if (this.el) {
-      removeElement(this.el)
-      this.el = null
-    }
+    this.unrenderLayout()
+    this.isLayoutRendered = false
+
+    removeElement(this.el)
+
+    this.layout = null
+    this.title = null
+    this.activeButton = null
+    this.isTodayEnabled = null
+    this.isPrevEnabled = null
+    this.isNextEnabled = null
   }
 
 
-  renderSection(position) {
+  renderSection(position, buttonStr) {
     let calendar = this.calendar
     let theme = calendar.theme
     let optionsManager = calendar.optionsManager
     let viewSpecManager = calendar.viewSpecManager
     let sectionEl = createElement('div', { className: 'fc-' + position })
-    let buttonStr = this.toolbarOptions.layout[position]
-    let calendarCustomButtons = optionsManager.get('customButtons') || {}
+    let calendarCustomButtons = optionsManager.computed.customButtons || {}
     let calendarButtonTextOverrides = optionsManager.overrides.buttonText || {}
-    let calendarButtonText = optionsManager.get('buttonText') || {}
+    let calendarButtonText = optionsManager.computed.buttonText || {}
 
     if (buttonStr) {
       buttonStr.split(' ').forEach((buttonGroupStr, i) => {
@@ -235,49 +307,39 @@ export default class Toolbar {
 
 
   updateTitle(text) {
-    if (this.el) {
-      findElements(this.el, 'h2').forEach(function(titleEl) {
-        titleEl.innerText = text
-      })
-    }
+    findElements(this.el, 'h2').forEach(function(titleEl) {
+      titleEl.innerText = text
+    })
   }
 
 
   activateButton(buttonName) {
-    if (this.el) {
-      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
-        buttonEl.classList.add(this.calendar.theme.getClass('stateActive'))
-      })
-    }
+    findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
+      buttonEl.classList.add(this.calendar.theme.getClass('stateActive'))
+    })
   }
 
 
   deactivateButton(buttonName) {
-    if (this.el) {
-      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
-        buttonEl.classList.remove(this.calendar.theme.getClass('stateActive'))
-      })
-    }
+    findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl) => {
+      buttonEl.classList.remove(this.calendar.theme.getClass('stateActive'))
+    })
   }
 
 
   disableButton(buttonName) {
-    if (this.el) {
-      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
-        buttonEl.disabled = true
-        buttonEl.classList.add(this.calendar.theme.getClass('stateDisabled'))
-      })
-    }
+    findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
+      buttonEl.disabled = true
+      buttonEl.classList.add(this.calendar.theme.getClass('stateDisabled'))
+    })
   }
 
 
   enableButton(buttonName) {
-    if (this.el) {
-      findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
-        buttonEl.disabled = false
-        buttonEl.classList.remove(this.calendar.theme.getClass('stateDisabled'))
-      })
-    }
+    findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
+      buttonEl.disabled = false
+      buttonEl.classList.remove(this.calendar.theme.getClass('stateDisabled'))
+    })
   }
 
 

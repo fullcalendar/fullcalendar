@@ -6,15 +6,12 @@ import { Duration, createDuration, getWeeksFromInput, greatestDurationDenominato
 
 export default class ViewSpecManager {
 
-  _calendar: any // avoid
   optionsManager: any
   viewSpecCache: any // cache of view definitions (initialized in Calendar.js)
 
 
-  constructor(optionsManager, _calendar) {
+  constructor(optionsManager) {
     this.optionsManager = optionsManager
-    this._calendar = _calendar
-
     this.clearCache()
   }
 
@@ -34,13 +31,13 @@ export default class ViewSpecManager {
 
   // Given a duration singular unit, like "week" or "day", finds a matching view spec.
   // Preference is given to views that have corresponding buttons.
-  getUnitViewSpec(unit) {
+  getUnitViewSpec(unit, calendar) {
     let viewTypes
     let i
     let spec
 
     // put views that have buttons first. there will be duplicates, but oh well
-    viewTypes = this._calendar.header.getViewsWithButtons() // TODO: include footer as well?
+    viewTypes = calendar.header.getViewsWithButtons() // TODO: include footer as well?
     for (let viewType in viewHash) {
       viewTypes.push(viewType)
     }

@@ -56,7 +56,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
         newState.dateProfile = action.dateProfile
         newState.currentDate = action.dateProfile.date // might have been constrained by view dates
 
-        calendar.onDateProfileChange(action.dateProfile)
+        calendar.view.updateMiscDateProps(action.dateProfile)
       }
       break
 
