@@ -384,9 +384,7 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   applyQueuedScroll() {
-    if (this.queuedScroll) {
-      this.applyScroll(this.queuedScroll)
-    }
+    this.applyScroll(this.queuedScroll || {})
   }
 
 

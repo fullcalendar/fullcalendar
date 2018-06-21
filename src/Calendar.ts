@@ -433,7 +433,6 @@ export default class Calendar {
     let { view } = this
 
     if (view && this.isSkeletonRendered) {
-      let viewScroll
 
       if (!view.el) {
         view.setElement(
@@ -444,16 +443,15 @@ export default class Calendar {
       if (!view.el.parentNode) {
         this.contentEl.appendChild(view.el)
       } else {
-        viewScroll = view.queryScroll()
+        view.addScroll(view.queryScroll())
       }
 
       this.freezeContentHeight()
       view.render(this.state, forces)
       this.thawContentHeight()
-      this.updateViewSize() // TODO: respect isSizeDirty
 
-      if (viewScroll) {
-        this.view.applyScroll(viewScroll)
+      if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
+        view.popScroll()
       }
     }
   }

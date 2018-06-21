@@ -33,7 +33,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     selection: state.selection,
     dragState: state.dragState,
     eventResizeState: state.eventResizeState,
-    businessHoursDef: state.businessHoursDef,
+    businessHoursDef: state.businessHoursDef
   }
 
   switch(action.type) {
@@ -47,6 +47,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
             action.dateMarker || state.currentDate
           ) || calendar.view.dateProfile // ummmm.... to get same reference
         })
+        newState.businessHoursDef = calendar.view.opt('businessHours') // hack
       }
       break
 

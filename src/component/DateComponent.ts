@@ -151,8 +151,7 @@ export default abstract class DateComponent extends Component {
       forces = {}
     }
 
-    let isSkeletonDirty = forces === true ||
-      !this.isSkeletonRendered
+    let isSkeletonDirty = forces === true
     let isDatesDirty = forces === true ||
       isSkeletonDirty ||
       renderState.dateProfile !== this.dateProfile
@@ -178,7 +177,7 @@ export default abstract class DateComponent extends Component {
       this.isEventResizeRendered = false
       this.isSizeDirty = false
     }
-    if (isDragDirty && this.isDatesRendered) {
+    if (isDragDirty && this.isDragRendered) {
       this.unrenderDrag()
       this.isDragRendered = false
       this.isSizeDirty = true
@@ -188,9 +187,9 @@ export default abstract class DateComponent extends Component {
       this.isEventsRendered = false
       this.isSizeDirty = true
     }
-    if (isSelectionDirty && this.isSkeletonRendered) {
+    if (isSelectionDirty && this.isSelectionRendered) {
       this.unrenderSelection()
-      this.isSkeletonRendered = false
+      this.isSelectionRendered = false
       this.isSizeDirty = true
     }
     if (isBusinessHoursDirty && this.isBusinessHoursRendered) {
@@ -212,38 +211,38 @@ export default abstract class DateComponent extends Component {
     assignTo(this, renderState)
 
     // rendering
-    if (isSkeletonDirty) {
+    if (isSkeletonDirty || !this.isSelectionRendered) {
       this.renderSkeleton()
       this.isSkeletonRendered = true
       this.isSizeDirty = true
     }
-    if (isDatesDirty && renderState.dateProfile) {
+    if ((isDatesDirty || !this.isDatesRendered) && renderState.dateProfile) {
       this.renderDates() // pass in dateProfile too?
       this.isDatesRendered = true
       this.isSizeDirty = true
     }
-    if (isBusinessHoursDirty && renderState.businessHoursDef && this.isDatesRendered) {
+    if ((isBusinessHoursDirty || !this.isBusinessHoursRendered) && renderState.businessHoursDef && this.isDatesRendered) {
       this.renderBusinessHours(renderState.businessHoursDef)
       this.isBusinessHoursRendered = true
       this.isSizeDirty = true
     }
-    if (isSelectionDirty && renderState.selection && this.isDatesRendered) {
+    if ((isSelectionDirty || !this.isSelectionRendered) && renderState.selection && this.isDatesRendered) {
       this.renderSelection(renderState.selection)
       this.isSelectionRendered = true
       this.isSizeDirty = true
     }
-    if (isEventsDirty && renderState.eventStore && this.isDatesRendered) {
+    if ((isEventsDirty || !this.isEventsRendered) && renderState.eventStore && this.isDatesRendered) {
       this.renderEvents(renderState.eventStore)
       this.isEventsRendered = true
       this.isSizeDirty = true
     }
-    if (isDragDirty && renderState.dragState && this.isDatesRendered) {
+    if ((isDragDirty || !this.isDragRendered) && renderState.dragState && this.isDatesRendered) {
       let { dragState } = renderState
       this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.isTouch)
       this.isDragRendered = true
       this.isSizeDirty = true
     }
-    if (isEventResizeDirty && renderState.eventResizeState && this.isDatesRendered) {
+    if ((isEventResizeDirty || !this.isEventResizeRendered) && renderState.eventResizeState && this.isDatesRendered) {
       let { eventResizeState } = renderState
       this.renderEventResize(eventResizeState.eventStore, eventResizeState.origSeg, eventResizeState.isTouch)
       this.isEventResizeRendered = true
@@ -256,6 +255,40 @@ export default abstract class DateComponent extends Component {
 
   renderChildren(renderState: DateComponentRenderState, forces: any) {
     this.callChildren('render', arguments)
+  }
+
+
+  removeElement() {
+    if (this.isEventResizeRendered) {
+      this.unrenderEventResize()
+      this.isEventResizeRendered = false
+    }
+    if (this.isDragRendered) {
+      this.unrenderDrag()
+      this.isDragRendered = false
+    }
+    if (this.isEventsRendered) {
+      this.unrenderEvents()
+      this.isEventsRendered = false
+    }
+    if (this.isSelectionRendered) {
+      this.unrenderSelection()
+      this.isSelectionRendered = false
+    }
+    if (this.isBusinessHoursRendered) {
+      this.unrenderBusinessHours()
+      this.isBusinessHoursRendered = false
+    }
+    if (this.isDatesRendered) {
+      this.unrenderDates()
+      this.isDatesRendered = false
+    }
+    if (this.isSkeletonRendered) {
+      this.unrenderSkeleton()
+      this.isSkeletonRendered = false
+    }
+
+    super.removeElement()
   }
 
 
