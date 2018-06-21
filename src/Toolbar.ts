@@ -19,12 +19,6 @@ export default class Toolbar {
   }
 
 
-  // method to update toolbar-specific options, not calendar-wide options
-  setToolbarOptions(newToolbarOptions) {
-    this.toolbarOptions = newToolbarOptions
-  }
-
-
   // can be called repeatedly and will rerender
   render() {
     let sections = this.toolbarOptions.layout

@@ -84,6 +84,7 @@ export default class Calendar {
     this.optionsManager = new OptionsManager(this, overrides)
     this.viewSpecManager = new ViewSpecManager(this.optionsManager, this)
     this.initDateEnv() // needs to happen after options hash initialized
+    this.watchTheme()
     this.initToolbars()
 
     this.constructed()
@@ -402,11 +403,20 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------
 
 
+  watchTheme() {
+    this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], (opts) => {
+      let themeClass = getThemeSystemClass(opts.themeSystem || opts.theme)
+      let theme = new themeClass(this.optionsManager)
+      this.theme = theme
+    })
+  }
+
+
   render() {
     if (!this.isSkeletonRendered) {
       this.renderSkeleton()
-      this.renderHeader()
-      this.renderFooter()
+      this.attachHeader()
+      this.attachFooter()
       this.isSkeletonRendered = true
       this.renderView()
       this.trigger('initialRender')
@@ -438,14 +448,7 @@ export default class Calendar {
       }
 
       this.freezeContentHeight()
-
-      // toolbar (updates every time unforunately)
-      this.setToolbarsTitle(this.view.title) // view.title set via updateMiscDateProps
-      this.updateToolbarButtons(this.state.dateProfile)
-      this.toolbarsManager.proxyCall('activateButton', view.type)
-
       view.render(this.state, forces)
-
       this.thawContentHeight()
       this.updateViewSize() // TODO: respect isSizeDirty
 
@@ -495,21 +498,13 @@ export default class Calendar {
     })
 
     // called immediately, and upon option change
-    this.optionsManager.watch('settingTheme', [ '?theme', '?themeSystem' ], (opts) => {
-      let themeClass = getThemeSystemClass(opts.themeSystem || opts.theme)
-      let theme = new themeClass(this.optionsManager)
-      let widgetClass = theme.getClass('widget')
-
-      this.theme = theme
-
+    this.optionsManager.watch('applyingThemeClasses', [ '?theme', '?themeSystem' ], (opts) => {
+      let widgetClass = this.theme.getClass('widget')
       if (widgetClass) {
         el.classList.add(widgetClass)
       }
     }, () => {
       let widgetClass = this.theme.getClass('widget')
-
-      this.theme = null
-
       if (widgetClass) {
         el.classList.remove(widgetClass)
       }
@@ -544,7 +539,7 @@ export default class Calendar {
     this.el.classList.remove('fc-rtl')
 
     // removes theme-related root className
-    this.optionsManager.unwatch('settingTheme')
+    this.optionsManager.unwatch('applyingThemeClasses')
 
     if (this.removeNavLinkListener) {
       this.removeNavLinkListener()
@@ -685,7 +680,11 @@ export default class Calendar {
 
   initToolbars() {
     this.header = new Toolbar(this, this.computeHeaderOptions())
+    this.header.render()
+
     this.footer = new Toolbar(this, this.computeFooterOptions())
+    this.footer.render()
+
     this.toolbarsManager = new Iterator([ this.header, this.footer ])
   }
 
@@ -707,28 +706,26 @@ export default class Calendar {
 
 
   // can be called repeatedly and Header will rerender
-  renderHeader() {
-    let header = this.header
-
-    header.setToolbarOptions(this.computeHeaderOptions())
-    header.render()
-
-    if (header.el) {
-      prependToElement(this.el, header.el)
+  attachHeader() {
+    if (this.header.el) {
+      prependToElement(this.el, this.header.el)
     }
   }
 
 
   // can be called repeatedly and Footer will rerender
-  renderFooter() {
-    let footer = this.footer
-
-    footer.setToolbarOptions(this.computeFooterOptions())
-    footer.render()
-
-    if (footer.el) {
-      this.el.appendChild(footer.el)
+  attachFooter() {
+    if (this.footer.el) {
+      this.el.appendChild(this.footer.el)
     }
+  }
+
+
+  onDateProfileChange(dateProfile) {
+    this.view.updateMiscDateProps(dateProfile)
+    this.setToolbarsTitle(this.view.title) // view.title set via updateMiscDateProps
+    this.updateToolbarButtons(dateProfile)
+    this.toolbarsManager.proxyCall('activateButton', this.view.type)
   }
 
 
