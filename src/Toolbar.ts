@@ -38,9 +38,9 @@ export default class Toolbar extends Component {
   }
 
 
-  render(renderProps: ToolbarRenderProps, forces: RenderForceFlags) {
+  render(renderProps: ToolbarRenderProps, forceFlags: RenderForceFlags) {
 
-    if (renderProps.layout !== this.layout || forces === true) {
+    if (renderProps.layout !== this.layout || forceFlags === true) {
       if (this.isLayoutRendered) {
         this.unrenderLayout()
       }
@@ -49,12 +49,12 @@ export default class Toolbar extends Component {
       this.isLayoutRendered = true
     }
 
-    if (renderProps.title !== this.title || forces === true) {
+    if (renderProps.title !== this.title || forceFlags === true) {
       this.updateTitle(renderProps.title)
       this.title = renderProps.title
     }
 
-    if (renderProps.activeButton !== this.activeButton || forces === true) {
+    if (renderProps.activeButton !== this.activeButton || forceFlags === true) {
       if (this.activeButton) {
         this.deactivateButton(this.activeButton)
       }
@@ -62,7 +62,7 @@ export default class Toolbar extends Component {
       this.activeButton = renderProps.activeButton
     }
 
-    if (renderProps.isTodayEnabled !== this.isTodayEnabled || forces === true) {
+    if (renderProps.isTodayEnabled !== this.isTodayEnabled || forceFlags === true) {
       if (renderProps.isTodayEnabled) {
         this.enableButton('today')
       } else {
@@ -71,7 +71,7 @@ export default class Toolbar extends Component {
       this.isTodayEnabled = renderProps.isTodayEnabled
     }
 
-    if (renderProps.isPrevEnabled !== this.isPrevEnabled || forces === true) {
+    if (renderProps.isPrevEnabled !== this.isPrevEnabled || forceFlags === true) {
       if (renderProps.isPrevEnabled) {
         this.enableButton('today')
       } else {
@@ -80,7 +80,7 @@ export default class Toolbar extends Component {
       this.isPrevEnabled = renderProps.isPrevEnabled
     }
 
-    if (renderProps.isNextEnabled !== this.isNextEnabled || forces === true) {
+    if (renderProps.isNextEnabled !== this.isNextEnabled || forceFlags === true) {
       if (renderProps.isNextEnabled) {
         this.enableButton('today')
       } else {

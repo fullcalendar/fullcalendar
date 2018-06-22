@@ -8,7 +8,7 @@ import { Duration, createDuration, asRoughMs } from '../datelib/duration'
 import { sliceEventStore } from '../reducers/event-rendering'
 import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
-import { Seg } from '../reducers/seg'
+import { EventRenderRange } from '../reducers/event-rendering'
 import { EventStore } from '../reducers/event-store'
 import { BusinessHourDef, buildBusinessHourEventStore } from '../reducers/business-hours'
 import { DateEnv } from '../datelib/env'
@@ -24,6 +24,14 @@ export interface DateComponentRenderState {
   dragState: EventInteractionState | null
   eventResizeState: EventInteractionState | null
   businessHoursDef: BusinessHourDef
+}
+
+export interface Seg {
+  isStart: boolean
+  isEnd: boolean
+  eventRange?: EventRenderRange
+  el?: HTMLElement
+  [otherProp: string]: any
 }
 
 
@@ -154,25 +162,25 @@ export default abstract class DateComponent extends Component {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  render(renderState: DateComponentRenderState, forces: RenderForceFlags) {
+  render(renderState: DateComponentRenderState, forceFlags: RenderForceFlags) {
 
-    let isSkeletonDirty = forces === true
-    let isDatesDirty = forces === true ||
+    let isSkeletonDirty = forceFlags === true
+    let isDatesDirty = forceFlags === true ||
       isSkeletonDirty ||
       renderState.dateProfile !== this.dateProfile
-    let isBusinessHoursDirty = forces === true ||
+    let isBusinessHoursDirty = forceFlags === true ||
       isDatesDirty ||
       renderState.businessHoursDef !== this.businessHoursDef
-    let isSelectionDirty = forces === true ||
+    let isSelectionDirty = forceFlags === true ||
       isDatesDirty ||
       renderState.selection !== this.selection
-    let isEventsDirty = forces === true || forces.events ||
+    let isEventsDirty = forceFlags === true || forceFlags.events ||
       isDatesDirty ||
       renderState.eventStore !== this.eventStore
-    let isDragDirty = forces === true ||
+    let isDragDirty = forceFlags === true ||
       isDatesDirty ||
       renderState.dragState !== this.dragState
-    let isEventResizeDirty = forces === true ||
+    let isEventResizeDirty = forceFlags === true ||
       isDatesDirty ||
       renderState.eventResizeState !== this.eventResizeState
 
@@ -254,11 +262,11 @@ export default abstract class DateComponent extends Component {
       this.isSizeDirty = true
     }
 
-    this.renderChildren(renderState, forces)
+    this.renderChildren(renderState, forceFlags)
   }
 
 
-  renderChildren(renderState: DateComponentRenderState, forces: RenderForceFlags) {
+  renderChildren(renderState: DateComponentRenderState, forceFlags: RenderForceFlags) {
     this.callChildren('render', arguments)
   }
 

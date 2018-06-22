@@ -1,5 +1,5 @@
 import { removeElement } from '../../util/dom-manip'
-import { Seg } from '../../reducers/seg'
+import { Seg } from '../DateComponent'
 
 
 export default abstract class HelperRenderer {

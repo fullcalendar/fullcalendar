@@ -1,7 +1,7 @@
 import { htmlEscape } from '../util/html'
 import EventRenderer from '../component/renderers/EventRenderer'
 import ListView from './ListView'
-import { Seg } from '../reducers/seg'
+import { Seg } from '../component/DateComponent'
 
 export default class ListEventRenderer extends EventRenderer {
 

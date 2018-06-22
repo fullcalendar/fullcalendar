@@ -1,6 +1,7 @@
 import { removeElement } from '../util/dom-manip'
 
 
+// a force flag of `true` means rerender everything
 export type RenderForceFlags = true | { [entity: string]: boolean }
 
 
@@ -22,6 +23,6 @@ export default abstract class Component {
   }
 
 
-  abstract render(state: any, forces: RenderForceFlags)
+  abstract render(state: any, forceFlags: RenderForceFlags)
 
 }

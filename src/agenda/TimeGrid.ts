@@ -11,7 +11,7 @@ import TimeGridFillRenderer from './TimeGridFillRenderer'
 import { Duration, createDuration, addDurations, wholeDivideDurations, asRoughMs } from '../datelib/duration'
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
-import { Seg } from '../reducers/seg'
+import { Seg } from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
 import { EventStore } from '../reducers/event-store'
 

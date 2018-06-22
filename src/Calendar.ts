@@ -145,7 +145,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  _render(forces: RenderForceFlags = {}) {
+  _render(forceFlags: RenderForceFlags = {}) {
     this.applyElClassNames()
 
     if (!this.isSkeletonRendered) {
@@ -154,8 +154,8 @@ export default class Calendar {
     }
 
     this.freezeContentHeight() // do after contentEl is created in renderSkeleton
-    this.renderToolbars(forces)
-    this.renderView(forces)
+    this.renderToolbars(forceFlags)
+    this.renderView(forceFlags)
     this.thawContentHeight()
   }
 
@@ -373,11 +373,11 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  requestRerender(forces: RenderForceFlags = {}) {
-    if (forces === true || !this.rerenderFlags) {
-      this.rerenderFlags = forces // true, or the first object
+  requestRerender(forceFlags: RenderForceFlags = {}) {
+    if (forceFlags === true || !this.rerenderFlags) {
+      this.rerenderFlags = forceFlags // true, or the first object
     } else if (this.rerenderFlags) {
-      assignTo(this.rerenderFlags, forces) // merge the objects
+      assignTo(this.rerenderFlags, forceFlags) // merge the objects
     }
 
     this.delayedRerender()
@@ -501,7 +501,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  renderView(forces: RenderForceFlags) {
+  renderView(forceFlags: RenderForceFlags) {
     let { state, renderedView } = this
 
     if (renderedView !== this.view) {
@@ -530,7 +530,7 @@ export default class Calendar {
       dragState: state.dragState,
       eventResizeState: state.eventResizeState,
       businessHoursDef: renderedView.opt('businessHours')
-    }, forces)
+    }, forceFlags)
 
     if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
       renderedView.popScroll()
@@ -810,7 +810,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  renderToolbars(forces: RenderForceFlags) {
+  renderToolbars(forceFlags: RenderForceFlags) {
     let headerLayout = this.opt('header')
     let footerLayout = this.opt('footer')
     let now = this.getNow()
@@ -827,7 +827,7 @@ export default class Calendar {
       isNextEnabled: nextInfo.isValid
     }
 
-    if ((!headerLayout || forces === true) && this.header) {
+    if ((!headerLayout || forceFlags === true) && this.header) {
       this.header.removeElement()
       this.header = null
     }
@@ -839,11 +839,11 @@ export default class Calendar {
       }
       this.header.render(
         assignTo({ layout: headerLayout }, props),
-        forces
+        forceFlags
       )
     }
 
-    if ((!footerLayout || forces === true) && this.footer) {
+    if ((!footerLayout || forceFlags === true) && this.footer) {
       this.footer.removeElement()
       this.footer = null
     }
@@ -855,7 +855,7 @@ export default class Calendar {
       }
       this.footer.render(
         assignTo({ layout: footerLayout }, props),
-        forces
+        forceFlags
       )
     }
   }

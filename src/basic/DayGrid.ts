@@ -21,7 +21,7 @@ import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
-import { Seg } from '../reducers/seg'
+import { Seg } from '../component/DateComponent'
 import { EventStore } from '../reducers/event-store'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })

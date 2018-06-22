@@ -171,7 +171,7 @@ export default class AgendaView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderChildren(renderState: DateComponentRenderState, forces: RenderForceFlags) {
+  renderChildren(renderState: DateComponentRenderState, forceFlags: RenderForceFlags) {
     let allDaySeletion = null
     let timedSelection = null
     let eventStoreGroups = this.splitEventStore(renderState.eventStore)
@@ -193,7 +193,7 @@ export default class AgendaView extends View {
       dragState: dragStateGroups.timed,
       eventResizeState: eventResizeStateGroups.timed,
       businessHoursDef: renderState.businessHoursDef
-    }, forces)
+    }, forceFlags)
 
     if (this.dayGrid) {
       this.dayGrid.render({
@@ -203,7 +203,7 @@ export default class AgendaView extends View {
         dragState: dragStateGroups.allDay,
         eventResizeState: eventResizeStateGroups.allDay,
         businessHoursDef: renderState.businessHoursDef
-      }, forces)
+      }, forceFlags)
     }
   }
 

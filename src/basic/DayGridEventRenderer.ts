@@ -2,7 +2,7 @@ import { htmlEscape, cssToStr } from '../util/html'
 import { createElement, removeElement } from '../util/dom-manip'
 import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'
-import { Seg } from '../reducers/seg'
+import { Seg } from '../component/DateComponent'
 
 
 /* Event-rendering methods for the DayGrid class

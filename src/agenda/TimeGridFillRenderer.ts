@@ -1,5 +1,5 @@
 import FillRenderer from '../component/renderers/FillRenderer'
-import { Seg } from '../reducers/seg'
+import { Seg } from '../component/DateComponent'
 
 
 export default class TimeGridFillRenderer extends FillRenderer {

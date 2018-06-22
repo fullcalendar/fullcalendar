@@ -1,6 +1,6 @@
 import { applyStyle } from '../util/dom-manip'
 import HelperRenderer from '../component/renderers/HelperRenderer'
-import { Seg } from '../reducers/seg'
+import { Seg } from '../component/DateComponent'
 
 
 export default class TimeGridHelperRenderer extends HelperRenderer {

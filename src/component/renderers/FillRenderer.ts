@@ -1,6 +1,6 @@
 import { cssToStr } from '../../util/html'
 import { htmlToElements, removeElement, elementMatches } from '../../util/dom-manip'
-import { Seg } from '../../reducers/seg'
+import { Seg } from '../DateComponent'
 
 
 export default class FillRenderer { // use for highlight, background events, business hours

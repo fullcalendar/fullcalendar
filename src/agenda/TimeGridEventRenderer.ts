@@ -2,7 +2,7 @@ import { htmlEscape, cssToStr } from '../util/html'
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { createFormatter } from '../datelib/formatting'
 import EventRenderer from '../component/renderers/EventRenderer'
-import { Seg } from '../reducers/seg'
+import { Seg } from '../component/DateComponent'
 
 const FULL_TIME_FORMAT = createFormatter({ hour: 'numeric', minute: '2-digit' })
 
