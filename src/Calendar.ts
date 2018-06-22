@@ -67,8 +67,8 @@ export default class Calendar {
   isSkeletonRendered: boolean = false
 
   viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
-  view: View // currently rendered View object
-  latestView: View // most up-to-date view, but not necessarily rendered yet. the reducer works with this one
+  view: View // the latest view, internal state, regardless of whether rendered or not
+  renderedView: View // the view that is currently RENDERED, though it might not be most recent from internal state
   header: Toolbar
   footer: Toolbar
 
@@ -156,11 +156,11 @@ export default class Calendar {
 
 
   _destroy() {
-    this.latestView = null
+    this.view = null
 
-    if (this.view) {
-      this.view.removeElement()
-      this.view = null
+    if (this.renderedView) {
+      this.renderedView.removeElement()
+      this.renderedView = null
     }
 
     if (this.header) {
@@ -247,7 +247,7 @@ export default class Calendar {
       let viewType = gotoOptions.type
 
       // property like "navLinkDayClick". might be a string or a function
-      let customAction = this.view.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
+      let customAction = this.renderedView.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
 
       if (typeof customAction === 'function') {
         customAction(date, ev)
@@ -483,38 +483,38 @@ export default class Calendar {
 
 
   renderView(forces: RenderForceFlags) {
-    let { state, view } = this
+    let { state, renderedView } = this
 
-    if (view !== this.latestView) {
-      if (view) {
-        view.removeElement()
+    if (renderedView !== this.view) {
+      if (renderedView) {
+        renderedView.removeElement()
       }
-      view = this.view = this.latestView
+      renderedView = this.renderedView = this.view
     }
 
-    if (!view.el) {
-      view.setElement(
-        createElement('div', { className: 'fc-view fc-' + view.type + '-view' })
+    if (!renderedView.el) {
+      renderedView.setElement(
+        createElement('div', { className: 'fc-view fc-' + renderedView.type + '-view' })
       )
     }
 
-    if (!view.el.parentNode) {
-      this.contentEl.appendChild(view.el)
+    if (!renderedView.el.parentNode) {
+      this.contentEl.appendChild(renderedView.el)
     } else {
-      view.addScroll(view.queryScroll())
+      renderedView.addScroll(renderedView.queryScroll())
     }
 
-    view.render({
+    renderedView.render({
       dateProfile: state.dateProfile,
       eventStore: state.eventStore,
       selection: state.selection,
       dragState: state.dragState,
       eventResizeState: state.eventResizeState,
-      businessHoursDef: view.opt('businessHours')
+      businessHoursDef: renderedView.opt('businessHours')
     }, forces)
 
     if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
-      view.popScroll()
+      renderedView.popScroll()
     }
   }
 
@@ -686,19 +686,19 @@ export default class Calendar {
 
 
   updateViewSize(isResize: boolean = false) {
-    let view = this.view
+    let { renderedView } = this
     let scroll
 
-    if (!this.ignoreUpdateViewSize && view) {
+    if (!this.ignoreUpdateViewSize && renderedView) {
 
       if (isResize) {
         this.calcSize()
-        scroll = view.queryScroll()
+        scroll = renderedView.queryScroll()
       }
 
       this.ignoreUpdateViewSize++
 
-      view.updateSize(
+      renderedView.updateSize(
         this.getSuggestedViewHeight(),
         this.isHeightAuto(),
         isResize
@@ -707,7 +707,7 @@ export default class Calendar {
       this.ignoreUpdateViewSize--
 
       if (isResize) {
-        view.applyScroll(scroll)
+        renderedView.applyScroll(scroll)
       }
 
       return true // signal success
@@ -750,11 +750,11 @@ export default class Calendar {
       // the purpose: so we don't process jqui "resize" events that have bubbled up
       // cast to any because .target, which is Element, can't be compared to window for some reason.
       (ev as any).target === window &&
-      this.view &&
-      this.view.isDatesRendered
+      this.renderedView &&
+      this.renderedView.isDatesRendered
     ) {
       if (this.updateViewSize(true)) { // isResize=true, returns true on success
-        this.publiclyTrigger('windowResize', [ this.view ])
+        this.publiclyTrigger('windowResize', [ this.renderedView ])
       }
     }
   }
@@ -791,7 +791,7 @@ export default class Calendar {
     let footerLayout = this.opt('footer')
     let now = this.getNow()
     let dateProfile = this.state.dateProfile
-    let view = this.latestView
+    let view = this.view // use the view that intends to be rendered
     let todayInfo = view.dateProfileGenerator.build(now)
     let prevInfo = view.dateProfileGenerator.buildPrev(dateProfile)
     let nextInfo = view.dateProfileGenerator.buildNext(dateProfile)
@@ -874,16 +874,13 @@ export default class Calendar {
 
     let selection = parseSelection(selectionInput, this.dateEnv)
 
-    if (selection) {
-      this.view.select(selection)
-    }
+    // TODO: use dispatch
+    console.log(selection)
   }
 
 
   unselect() { // safe to be called before renderView
-    if (this.view) {
-      this.view.unselect()
-    }
+    // TODO: use dispatch
   }
 
 
@@ -892,22 +889,22 @@ export default class Calendar {
 
 
   handlExternalDragStart(ev, el, skipBinding) {
-    if (this.view) {
-      this.view.handlExternalDragStart(ev, el, skipBinding)
+    if (this.renderedView) {
+      this.renderedView.handlExternalDragStart(ev, el, skipBinding)
     }
   }
 
 
   handleExternalDragMove(ev) {
-    if (this.view) {
-      this.view.handleExternalDragMove(ev)
+    if (this.renderedView) {
+      this.renderedView.handleExternalDragMove(ev)
     }
   }
 
 
   handleExternalDragStop(ev) {
-    if (this.view) {
-      this.view.handleExternalDragStop(ev)
+    if (this.renderedView) {
+      this.renderedView.handleExternalDragStop(ev)
     }
   }
 
