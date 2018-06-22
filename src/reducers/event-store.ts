@@ -1,7 +1,8 @@
 import UnzonedRange from '../models/UnzonedRange'
 import { DateInput } from '../datelib/env'
 import Calendar from '../Calendar'
-import { filterHash, parseClassName, refineProps, ClassNameInput } from './utils'
+import { filterHash } from '../util/object'
+import { parseClassName, refineProps, ClassNameInput } from './utils'
 import { expandRecurring } from './recurring-events'
 import { applyMutation } from './event-mutation'
 

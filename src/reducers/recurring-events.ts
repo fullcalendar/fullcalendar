@@ -2,7 +2,8 @@ import { startOfDay, addDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
-import { refineProps, arrayToHash } from './utils'
+import { arrayToHash } from '../util/object'
+import { refineProps } from './utils'
 import { EventInput } from './event-store'
 
 // types

@@ -88,3 +88,27 @@ export function mergeProps(propObjs, complexProps?): any {
 
   return dest
 }
+
+
+export function filterHash(hash, func) {
+  let filtered = {}
+
+  for (let key in hash) {
+    if (func(hash[key], key)) {
+      filtered[key] = hash[key]
+    }
+  }
+
+  return filtered
+}
+
+
+export function arrayToHash(a) {
+  let hash = {}
+
+  for (let item of a) {
+    hash[item] = true
+  }
+
+  return hash
+}

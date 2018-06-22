@@ -4,7 +4,7 @@ import { diffDayAndTime } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import { EventStore, EventDef, EventInstance } from './event-store'
 import { assignTo } from '../util/object'
-import { filterHash } from './utils'
+import { filterHash } from '../util/object'
 import Calendar from '../Calendar'
 
 export interface EventMutation {

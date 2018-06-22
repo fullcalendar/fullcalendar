@@ -1,16 +1,4 @@
 
-export function filterHash(hash, func) {
-  let filtered = {}
-
-  for (let key in hash) {
-    if (func(hash[key], key)) {
-      filtered[key] = hash[key]
-    }
-  }
-
-  return filtered
-}
-
 export function refineProps(rawProps, processorFuncs, leftoverProps?): any {
   let refined = {}
 
@@ -45,14 +33,4 @@ export function parseClassName(raw: ClassNameInput) {
   } else {
     return []
   }
-}
-
-export function arrayToHash(a) {
-  let hash = {}
-
-  for (let item of a) {
-    hash[item] = true
-  }
-
-  return hash
 }
