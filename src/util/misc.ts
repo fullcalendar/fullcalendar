@@ -348,7 +348,7 @@ export function firstDefined(...args) {
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
 // https://github.com/jashkenas/underscore/blob/1.6.0/underscore.js#L714
-export function debounce(func, wait, immediate= false) {
+export function debounce(func, wait) {
   let timeout
   let args
   let context
@@ -356,29 +356,22 @@ export function debounce(func, wait, immediate= false) {
   let result
 
   let later = function() {
-    let last = +new Date() - timestamp
+    let last = new Date().valueOf() - timestamp
     if (last < wait) {
       timeout = setTimeout(later, wait - last)
     } else {
       timeout = null
-      if (!immediate) {
-        result = func.apply(context, args)
-        context = args = null
-      }
+      result = func.apply(context, args)
+      context = args = null
     }
   }
 
   return function() {
     context = this
     args = arguments
-    timestamp = +new Date()
-    let callNow = immediate && !timeout
+    timestamp = new Date().valueOf()
     if (!timeout) {
       timeout = setTimeout(later, wait)
-    }
-    if (callNow) {
-      result = func.apply(context, args)
-      context = args = null
     }
     return result
   }

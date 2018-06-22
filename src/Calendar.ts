@@ -75,7 +75,11 @@ export default class Calendar {
   state: CalendarState
   actionQueue = []
   isReducing: boolean = false
+
   renderingPauseDepth: number = 0
+  rerenderFlags: RenderForceFlags
+  buildDelayedRerender: any
+  delayedRerender: any
 
 
   constructor(el: HTMLElement, overrides: OptionsInput) {
@@ -87,6 +91,7 @@ export default class Calendar {
 
     this.buildDateEnv = reselector(buildDateEnv)
     this.buildTheme = reselector(buildTheme)
+    this.buildDelayedRerender = reselector(buildDelayedRerender)
 
     this.handleOptions(this.optionsManager.computed)
     this.constructed()
@@ -290,7 +295,7 @@ export default class Calendar {
   }
 
 
-  // Dispatcher / Render Queue
+  // Dispatcher
   // -----------------------------------------------------------------------------------------------------------------
 
 
@@ -354,7 +359,39 @@ export default class Calendar {
         this.publiclyTrigger('loading', [ false, this.view ])
       }
 
-      this.tryRerender()
+      this.requestRerender()
+    }
+  }
+
+
+  reduce(state: CalendarState, action: object, calendar: Calendar): CalendarState {
+    return reduce(state, action, calendar)
+  }
+
+
+  // Render Queue
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  requestRerender(forces: RenderForceFlags = {}) {
+    if (forces === true || !this.rerenderFlags) {
+      this.rerenderFlags = forces // true, or the first object
+    } else if (this.rerenderFlags) {
+      assignTo(this.rerenderFlags, forces) // merge the objects
+    }
+
+    this.delayedRerender()
+  }
+
+
+  tryRerender() {
+    if (
+      !this.renderingPauseDepth && // not paused
+      this.isRendered && // must be currently rendered
+      this.rerenderFlags // indicates that a rerender was requested
+    ) {
+      this._render(this.rerenderFlags)
+      this.rerenderFlags = null
     }
   }
 
@@ -366,19 +403,7 @@ export default class Calendar {
 
   resumeRendering() {
     this.renderingPauseDepth--
-    this.tryRerender()
-  }
-
-
-  tryRerender(forces?) {
-    if (!this.renderingPauseDepth && this.isRendered) {
-      this._render(forces)
-    }
-  }
-
-
-  reduce(state: CalendarState, action: object, calendar: Calendar): CalendarState {
-    return reduce(state, action, calendar)
+    this.requestRerender()
   }
 
 
@@ -425,14 +450,15 @@ export default class Calendar {
     }
 
     this.viewsByType = {}
-    this.tryRerender(true) // force=true
+    this.requestRerender(true) // force=true
   }
 
 
   handleOptions(options) {
     this.defaultAllDayEventDuration = createDuration(options.defaultAllDayEventDuration)
     this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
-
+    this.delayedRerender = this.buildDelayedRerender(options.eventRenderWait) // TODO: rename settings
+    this.theme = this.buildTheme(options)
     this.dateEnv = this.buildDateEnv(
       options.locale,
       options.timezone,
@@ -440,8 +466,6 @@ export default class Calendar {
       options.weekNumberCalculation,
       options.weekLabel
     )
-
-    this.theme = this.buildTheme(options)
 
     this.viewSpecManager.clearCache()
   }
@@ -979,7 +1003,7 @@ export default class Calendar {
 
 
   rerenderEvents() { // API method. destroys old events if previously rendered.
-    this.tryRerender({ events: true }) // TODO: test this
+    this.requestRerender({ events: true }) // TODO: test this
   }
 
 
@@ -1023,7 +1047,7 @@ export default class Calendar {
 
 
   // Public Event Sources API
-  // ------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------------------------
 
 
   getEventSources(): EventSource {
@@ -1062,6 +1086,9 @@ EmitterMixin.mixIntoObj(Calendar) // for global registry
 EmitterMixin.mixInto(Calendar)
 
 
+// for reselectors
+// -----------------------------------------------------------------------------------------------------------------
+
 
 function buildDateEnv(locale, timezone, firstDay, weekNumberCalculation, weekLabel) {
   return new DateEnv({
@@ -1078,4 +1105,15 @@ function buildDateEnv(locale, timezone, firstDay, weekNumberCalculation, weekLab
 function buildTheme(calendarOptions) {
   let themeClass = getThemeSystemClass(calendarOptions.themeSystem || calendarOptions.theme)
   return new themeClass(calendarOptions)
+}
+
+
+function buildDelayedRerender(this: Calendar, wait) {
+  let func = this.tryRerender.bind(this)
+
+  if (wait != null) {
+    func = debounce(func, wait)
+  }
+
+  return func
 }
