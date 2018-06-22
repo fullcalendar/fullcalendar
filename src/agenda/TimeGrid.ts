@@ -71,11 +71,6 @@ export default class TimeGrid extends InteractiveDateComponent {
   highlightContainerEls: HTMLElement[]
   businessContainerEls: HTMLElement[]
 
-  // arrays of different types of displayed segments
-  helperSegs: any
-  highlightSegs: any
-  businessSegs: any
-
 
   constructor(view) {
     super(view)
@@ -479,9 +474,7 @@ export default class TimeGrid extends InteractiveDateComponent {
     this.slatCoordCache.build()
 
     if (isResize) {
-      this.updateSegVerticals(
-        [].concat(this.eventRenderer.getSegs(), this.businessSegs || [])
-      )
+      this.updateSegVerticals(this.eventRenderer.getSegs())
     }
   }
 
