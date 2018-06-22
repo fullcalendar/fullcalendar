@@ -5,7 +5,6 @@ import {
   whenTransitionDone
 } from '../util/dom-event'
 import { removeElement, applyStyle } from '../util/dom-manip'
-import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface MouseFollowerOptions {
   parentEl?: HTMLElement
@@ -19,9 +18,6 @@ export interface MouseFollowerOptions {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export default class MouseFollower {
-
-  listenTo: ListenerInterface['listenTo']
-  stopListeningTo: ListenerInterface['stopListeningTo']
 
   options: MouseFollowerOptions
 
@@ -67,11 +63,11 @@ export default class MouseFollower {
         this.updatePosition()
       }
 
-      if (getEvIsTouch(ev)) {
-        this.listenTo(document, 'touchmove', this.handleMove)
-      } else {
-        this.listenTo(document, 'mousemove', this.handleMove)
-      }
+      // if (getEvIsTouch(ev)) {
+      //   this.listenTo(document, 'touchmove', this.handleMove)
+      // } else {
+      //   this.listenTo(document, 'mousemove', this.handleMove)
+      // }
     }
   }
 
@@ -96,7 +92,7 @@ export default class MouseFollower {
     if (this.isFollowing && !this.isAnimating) { // disallow more than one stop animation at a time
       this.isFollowing = false
 
-      this.stopListeningTo(document)
+      // this.stopListeningTo(document)
 
       if (shouldRevert && revertDuration && !this.isHidden) { // do a revert animation?
         this.isAnimating = true
@@ -218,5 +214,3 @@ export default class MouseFollower {
   }
 
 }
-
-ListenerMixin.mixInto(MouseFollower)

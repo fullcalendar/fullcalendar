@@ -16,7 +16,6 @@ Options:
 import { ElementContent, removeElement, createElement, applyStyle } from '../util/dom-manip'
 import { listenBySelector } from '../util/dom-event'
 import { getScrollParent } from '../util/dom-geom'
-import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 export interface PopoverOptions {
   className?: string
@@ -30,9 +29,6 @@ export interface PopoverOptions {
 }
 
 export default class Popover {
-
-  listenTo: ListenerInterface['listenTo']
-  stopListeningTo: ListenerInterface['stopListeningTo']
 
   isHidden: boolean = true
   options: PopoverOptions
@@ -88,13 +84,13 @@ export default class Popover {
     })
 
     if (options.autoHide) {
-      this.listenTo(document, 'mousedown', this.documentMousedown)
+      document.addEventListener('mousedown', this.documentMousedown)
     }
   }
 
 
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
-  documentMousedown(ev) {
+  documentMousedown = (ev) => {
     // only hide the popover if the click happened outside the popover
     if (this.el && !this.el.contains(ev.target)) {
       this.hide()
@@ -111,7 +107,7 @@ export default class Popover {
       this.el = null
     }
 
-    this.stopListeningTo(document, 'mousedown')
+    document.removeEventListener('mousedown', this.documentMousedown)
   }
 
 
@@ -171,5 +167,3 @@ export default class Popover {
   }
 
 }
-
-ListenerMixin.mixInto(Popover)

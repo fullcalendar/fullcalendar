@@ -93,12 +93,6 @@ export default class UnzonedRange {
   }
 
 
-  containsRange(innerRange: UnzonedRange) {
-    return (this.start == null || (innerRange.start != null && innerRange.start >= this.start)) &&
-      (this.end == null || (innerRange.end != null && innerRange.end <= this.end))
-  }
-
-
   // `date` can be a Date, or a millisecond time.
   containsDate(date: Date) {
     return (this.start == null || date >= this.start) &&

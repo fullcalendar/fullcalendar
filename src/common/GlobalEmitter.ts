@@ -1,6 +1,5 @@
 import * as exportHooks from '../exports'
 import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
-import { default as ListenerMixin, ListenerInterface } from './ListenerMixin'
 
 (exportHooks as any).touchMouseIgnoreWait = 500
 
@@ -24,8 +23,6 @@ export default class GlobalEmitter {
   trigger: EmitterInterface['trigger']
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
-  listenTo: ListenerInterface['listenTo']
-  stopListeningTo: ListenerInterface['stopListeningTo']
 
   isTouching: boolean = false
   mouseIgnoreDepth: number = 0
@@ -62,17 +59,17 @@ export default class GlobalEmitter {
 
 
   bind() {
-    this.listenTo(document, {
-      touchstart: this.handleTouchStart,
-      touchcancel: this.handleTouchCancel,
-      touchend: this.handleTouchEnd,
-      mousedown: this.handleMouseDown,
-      mousemove: this.handleMouseMove,
-      mouseup: this.handleMouseUp,
-      click: this.handleClick,
-      selectstart: this.handleSelectStart,
-      contextmenu: this.handleContextMenu
-    })
+    // this.listenTo(document, {
+    //   touchstart: this.handleTouchStart,
+    //   touchcancel: this.handleTouchCancel,
+    //   touchend: this.handleTouchEnd,
+    //   mousedown: this.handleMouseDown,
+    //   mousemove: this.handleMouseMove,
+    //   mouseup: this.handleMouseUp,
+    //   click: this.handleClick,
+    //   selectstart: this.handleSelectStart,
+    //   contextmenu: this.handleContextMenu
+    // })
 
     // because we need to call preventDefault
     // because https://www.chromestatus.com/features/5093566007214080
@@ -94,7 +91,7 @@ export default class GlobalEmitter {
   }
 
   unbind() {
-    this.stopListeningTo(document)
+    // this.stopListeningTo(document)
 
     window.removeEventListener(
       'touchmove',
@@ -218,5 +215,4 @@ export default class GlobalEmitter {
 
 }
 
-ListenerMixin.mixInto(GlobalEmitter)
 EmitterMixin.mixInto(GlobalEmitter)

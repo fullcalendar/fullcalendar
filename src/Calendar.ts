@@ -5,7 +5,6 @@ import { capitaliseFirstLetter, debounce } from './util/misc'
 import { globalDefaults, rtlDefaults } from './options'
 import GlobalEmitter from './common/GlobalEmitter'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-import { default as ListenerMixin, ListenerInterface } from './common/ListenerMixin'
 import Toolbar from './Toolbar'
 import OptionsManager from './OptionsManager'
 import ViewSpecManager from './ViewSpecManager'
@@ -43,8 +42,6 @@ export default class Calendar {
   trigger: EmitterInterface['trigger']
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
-  listenTo: ListenerInterface['listenTo']
-  stopListeningTo: ListenerInterface['stopListeningTo']
 
   buildDateEnv: any
   buildTheme: any
@@ -1066,7 +1063,6 @@ export default class Calendar {
 
 EmitterMixin.mixIntoObj(Calendar) // for global registry
 EmitterMixin.mixInto(Calendar)
-ListenerMixin.mixInto(Calendar)
 
 
 

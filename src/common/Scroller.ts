@@ -1,11 +1,10 @@
 import { computeEdges } from '../util/dom-geom'
 import { removeElement, createElement, applyStyle, applyStyleProp } from '../util/dom-manip'
-import Class from '../common/Class'
 
 /*
 Embodies a div that has potential scrollbars
 */
-export default class Scroller extends Class {
+export default class Scroller {
 
   el: HTMLElement // the guaranteed outer element
   scrollEl: HTMLElement // the element with the scrollbars
@@ -14,7 +13,6 @@ export default class Scroller extends Class {
 
 
   constructor(options?) {
-    super()
     options = options || {}
     this.overflowX = options.overflowX || options.overflow || 'auto'
     this.overflowY = options.overflowY || options.overflow || 'auto'
