@@ -67,8 +67,9 @@ export default class Calendar {
   isRendered: boolean = false
   isSkeletonRendered: boolean = false
 
-  view: View // current View object
   viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
+  view: View // currently rendered View object
+  latestView: View // most up-to-date view, but not necessarily rendered yet. the reducer works with this one
   header: Toolbar
   footer: Toolbar
 
@@ -153,34 +154,15 @@ export default class Calendar {
     }
 
     this.freezeContentHeight() // do after contentEl is created in renderSkeleton
-
     this.renderToolbars(forces)
-
-    let view = this.view
-
-    if (!view.el) {
-      view.setElement(
-        createElement('div', { className: 'fc-view fc-' + view.type + '-view' })
-      )
-    }
-
-    if (!view.el.parentNode) {
-      this.contentEl.appendChild(view.el)
-    } else {
-      this.view.addScroll(view.queryScroll())
-    }
-
-    this.view.render(this.state, forces)
-
-    if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
-      view.popScroll()
-    }
-
+    this.renderView(forces)
     this.thawContentHeight()
   }
 
 
   _destroy() {
+    this.latestView = null
+
     if (this.view) {
       this.view.removeElement()
       this.view = null
@@ -452,6 +434,7 @@ export default class Calendar {
       }
     }
 
+    this.viewsByType = {}
     this._render(true) // force rerender
   }
 
@@ -504,19 +487,39 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  installNewView(viewType: string) {
+  renderView(forces) {
+    let view = this.view
 
-    if (this.view && this.view.type !== viewType) {
-      this.freezeContentHeight() // hack
-      this.view.removeElement()
-      this.view = null
+    if (view !== this.latestView) {
+      if (view) {
+        view.removeElement()
+      }
+      view = this.view = this.latestView
     }
 
-    if (!this.view) {
-      this.view =
-        this.viewsByType[viewType] ||
-        (this.viewsByType[viewType] = this.instantiateView(viewType))
+    if (!view.el) {
+      view.setElement(
+        createElement('div', { className: 'fc-view fc-' + view.type + '-view' })
+      )
     }
+
+    if (!view.el.parentNode) {
+      this.contentEl.appendChild(view.el)
+    } else {
+      view.addScroll(view.queryScroll())
+    }
+
+    view.render(this.state, forces)
+
+    if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
+      view.popScroll()
+    }
+  }
+
+
+  getViewByType(viewType: string) {
+    return this.viewsByType[viewType] ||
+      (this.viewsByType[viewType] = this.instantiateView(viewType))
   }
 
 
@@ -786,13 +789,13 @@ export default class Calendar {
     let footerLayout = this.opt('footer')
     let now = this.getNow()
     let dateProfile = this.state.dateProfile
-    let view = this.view
+    let view = this.latestView
     let todayInfo = view.dateProfileGenerator.build(now)
     let prevInfo = view.dateProfileGenerator.buildPrev(dateProfile)
     let nextInfo = view.dateProfileGenerator.buildNext(dateProfile)
     let props = {
-      title: this.view.title,
-      activeButton: this.view.type,
+      title: view.title,
+      activeButton: view.type,
       isTodayEnabled: todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now),
       isPrevEnabled: prevInfo.isValid,
       isNextEnabled: nextInfo.isValid

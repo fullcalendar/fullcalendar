@@ -168,16 +168,17 @@ export default abstract class View extends InteractiveDateComponent {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  computeNewDateProfile(date: DateMarker): DateProfile {
-    let currentDateProfile = this.dateProfile
-    let newDateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
+  computeDateProfile(date: DateMarker): DateProfile {
+    let dateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
 
-    if (
-      !currentDateProfile ||
-      !currentDateProfile.activeUnzonedRange.equals(newDateProfile.activeUnzonedRange)
+    if ( // reuse current reference if possible, for rendering optimization
+      this.dateProfile &&
+      this.dateProfile.activeUnzonedRange.equals(dateProfile.activeUnzonedRange)
     ) {
-      return newDateProfile
+      return this.dateProfile
     }
+
+    return dateProfile
   }
 
 

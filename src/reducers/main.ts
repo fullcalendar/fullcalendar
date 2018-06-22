@@ -39,13 +39,14 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
   switch(action.type) {
 
     case 'SET_VIEW_TYPE':
-      if (!calendar.view || calendar.view.type !== action.viewType) {
-        calendar.installNewView(action.viewType)
+      if (!calendar.latestView || calendar.latestView.type !== action.viewType) {
+        let latestView = calendar.getViewByType(action.viewType)
+        calendar.latestView = latestView
         calendar.dispatch({
           type: 'SET_DATE_PROFILE',
-          dateProfile: calendar.view.computeNewDateProfile(
+          dateProfile: latestView.computeDateProfile(
             action.dateMarker || state.currentDate
-          ) || calendar.view.dateProfile // ummmm.... to get same reference
+          )
         })
         newState.businessHoursDef = calendar.view.opt('businessHours') // hack
       }
@@ -55,36 +56,35 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
       if (action.dateProfile.isValid) {
         newState.dateProfile = action.dateProfile
         newState.currentDate = action.dateProfile.date // might have been constrained by view dates
-
-        calendar.view.updateMiscDateProps(action.dateProfile)
+        calendar.latestView.updateMiscDateProps(action.dateProfile)
       }
       break
 
     case 'NAVIGATE_PREV':
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
-        dateProfile: calendar.view.dateProfileGenerator.buildPrev(newState.dateProfile)
+        dateProfile: calendar.latestView.dateProfileGenerator.buildPrev(newState.dateProfile)
       })
       break
 
     case 'NAVIGATE_NEXT':
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
-        dateProfile: calendar.view.dateProfileGenerator.buildNext(newState.dateProfile)
+        dateProfile: calendar.latestView.dateProfileGenerator.buildNext(newState.dateProfile)
       })
       break
 
     case 'NAVIGATE_TODAY':
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
-        dateProfile: calendar.view.computeNewDateProfile(calendar.getNow())
+        dateProfile: calendar.latestView.computeDateProfile(calendar.getNow())
       })
       break
 
     case 'NAVIGATE_PREV_YEAR':
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
-        dateProfile: calendar.view.computeNewDateProfile(
+        dateProfile: calendar.latestView.computeDateProfile(
           calendar.dateEnv.addYears(newState.currentDate, -1)
         )
       })
@@ -93,7 +93,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     case 'NAVIGATE_NEXT_YEAR':
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
-        dateProfile: calendar.view.computeNewDateProfile(
+        dateProfile: calendar.latestView.computeDateProfile(
           calendar.dateEnv.addYears(newState.currentDate, 1)
         )
       })
@@ -102,14 +102,14 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     case 'NAVIGATE_DATE':
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
-        dateProfile: calendar.view.computeNewDateProfile(action.dateMarker)
+        dateProfile: calendar.latestView.computeDateProfile(action.dateMarker)
       })
       break
 
     case 'NAVIGATE_DELTA':
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
-        dateProfile: calendar.view.computeNewDateProfile(
+        dateProfile: calendar.latestView.computeDateProfile(
           calendar.dateEnv.add(newState.currentDate, action.delta)
         )
       })
