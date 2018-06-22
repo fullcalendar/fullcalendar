@@ -376,7 +376,7 @@ export default class Calendar {
   requestRerender(forceFlags: RenderForceFlags = {}) {
     if (forceFlags === true || !this.rerenderFlags) {
       this.rerenderFlags = forceFlags // true, or the first object
-    } else if (this.rerenderFlags) {
+    } else {
       assignTo(this.rerenderFlags, forceFlags) // merge the objects
     }
 
@@ -532,7 +532,7 @@ export default class Calendar {
       businessHoursDef: renderedView.opt('businessHours')
     }, forceFlags)
 
-    if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
+    if (this.updateViewSize()) { // success?
       renderedView.popScroll()
     }
   }

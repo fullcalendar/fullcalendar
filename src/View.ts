@@ -79,7 +79,6 @@ export default abstract class View extends InteractiveDateComponent {
 
     this.initHiddenDays()
     this.dateProfileGenerator = new this.dateProfileGeneratorClass(this)
-    this.bindBaseRenderHandlers()
     this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'))
 
     // legacy
@@ -92,15 +91,6 @@ export default abstract class View extends InteractiveDateComponent {
   // Retrieves an option with the given name
   opt(name) {
     return this.options[name]
-  }
-
-
-  /* Render Queue
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // given func will auto-bind to `this`
-  whenSizeUpdated(func) {
   }
 
 
@@ -201,7 +191,6 @@ export default abstract class View extends InteractiveDateComponent {
   // if dateProfile not specified, uses current
   renderDates() {
     super.renderDates()
-    this.trigger('datesRendered')
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
   }
@@ -210,12 +199,11 @@ export default abstract class View extends InteractiveDateComponent {
   unrenderDates() {
     this.unselect()
     this.stopNowIndicator()
-    this.trigger('before:datesUnrendered')
     super.unrenderDates()
   }
 
 
-  // "Base" rendering
+  // Triggering
   // -----------------------------------------------------------------------------------------------------------------
 
 
@@ -340,13 +328,7 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   updateSize(totalHeight, isAuto, isResize) {
-
-    if (this['setHeight']) { // for legacy API
-      this['setHeight'](totalHeight, isAuto)
-    } else {
-      super.updateSize(totalHeight, isAuto, isResize)
-    }
-
+    super.updateSize(totalHeight, isAuto, isResize)
     this.updateNowIndicator()
   }
 
