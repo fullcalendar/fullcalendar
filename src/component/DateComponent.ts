@@ -1,5 +1,5 @@
 import { attrsToStr, htmlEscape } from '../util/html'
-import Component from './Component'
+import { default as Component, RenderForceFlags } from './Component'
 import Calendar from '../Calendar'
 import View from '../View'
 import { DateProfile } from '../DateProfileGenerator'
@@ -13,10 +13,18 @@ import { EventStore } from '../reducers/event-store'
 import { BusinessHourDef, buildBusinessHourEventStore } from '../reducers/business-hours'
 import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
-import { DragState } from '../reducers/drag'
-import { EventResizeState } from '../reducers/event-resize'
-import { DateComponentRenderState } from '../reducers/main'
+import { EventInteractionState } from '../reducers/event-interaction'
 import { assignTo } from '../util/object'
+
+
+export interface DateComponentRenderState {
+  dateProfile: DateProfile
+  eventStore: EventStore
+  selection: Selection | null
+  dragState: EventInteractionState | null
+  eventResizeState: EventInteractionState | null
+  businessHoursDef: BusinessHourDef
+}
 
 
 export default abstract class DateComponent extends Component {
@@ -53,8 +61,8 @@ export default abstract class DateComponent extends Component {
   businessHoursDef: BusinessHourDef
   selection: Selection
   eventStore: EventStore
-  dragState: DragState
-  eventResizeState: EventResizeState
+  dragState: EventInteractionState
+  eventResizeState: EventInteractionState
 
 
   constructor(_view, _options?) {
@@ -146,10 +154,7 @@ export default abstract class DateComponent extends Component {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  render(renderState: DateComponentRenderState, forces: any) {
-    if (!forces) {
-      forces = {}
-    }
+  render(renderState: DateComponentRenderState, forces: RenderForceFlags) {
 
     let isSkeletonDirty = forces === true
     let isDatesDirty = forces === true ||
@@ -253,7 +258,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  renderChildren(renderState: DateComponentRenderState, forces: any) {
+  renderChildren(renderState: DateComponentRenderState, forces: RenderForceFlags) {
     this.callChildren('render', arguments)
   }
 

@@ -1,7 +1,10 @@
 import { removeElement } from '../util/dom-manip'
 
 
-export default class Component {
+export type RenderForceFlags = true | { [entity: string]: boolean }
+
+
+export default abstract class Component {
 
   el: HTMLElement
 
@@ -17,5 +20,8 @@ export default class Component {
     // We don't null-out the View's other element references upon destroy,
     //  so we shouldn't kill this.el either.
   }
+
+
+  abstract render(state: any, forces: RenderForceFlags)
 
 }

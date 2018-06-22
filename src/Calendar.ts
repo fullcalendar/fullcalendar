@@ -23,6 +23,8 @@ import { CalendarState, reduce } from './reducers/main'
 import { parseSelection, SelectionInput } from './reducers/selection'
 import reselector from './util/reselector'
 import { assignTo } from './util/object'
+import { RenderForceFlags } from './component/Component'
+
 
 export default class Calendar {
 
@@ -141,11 +143,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  _render(forces?) {
-    if (!forces) {
-      forces = {}
-    }
-
+  _render(forces: RenderForceFlags = {}) {
     this.applyElClassNames()
 
     if (!this.isSkeletonRendered) {
@@ -487,8 +485,8 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  renderView(forces) {
-    let view = this.view
+  renderView(forces: RenderForceFlags) {
+    let { state, view } = this
 
     if (view !== this.latestView) {
       if (view) {
@@ -509,7 +507,14 @@ export default class Calendar {
       view.addScroll(view.queryScroll())
     }
 
-    view.render(this.state, forces)
+    view.render({
+      dateProfile: state.dateProfile,
+      eventStore: state.eventStore,
+      selection: state.selection,
+      dragState: state.dragState,
+      eventResizeState: state.eventResizeState,
+      businessHoursDef: view.opt('businessHours')
+    }, forces)
 
     if (this.updateViewSize()) { // success? // TODO: respect isSizeDirty
       view.popScroll()
@@ -784,7 +789,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  renderToolbars(forces) {
+  renderToolbars(forces: RenderForceFlags) {
     let headerLayout = this.opt('header')
     let footerLayout = this.opt('footer')
     let now = this.getNow()

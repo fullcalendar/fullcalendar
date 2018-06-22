@@ -1,11 +1,20 @@
 import { htmlEscape } from './util/html'
-import { htmlToElement, appendToElement, removeElement, findElements, createElement } from './util/dom-manip'
-
+import { htmlToElement, appendToElement, findElements, createElement } from './util/dom-manip'
+import { default as Component, RenderForceFlags } from './component/Component'
 
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export default class Toolbar {
+export interface ToolbarRenderProps {
+  layout: any
+  title: string
+  activeButton: string
+  isTodayEnabled: boolean
+  isPrevEnabled: boolean
+  isNextEnabled: boolean
+}
+
+export default class Toolbar extends Component {
 
   calendar: any
   el: HTMLElement = null
@@ -21,22 +30,15 @@ export default class Toolbar {
 
 
   constructor(calendar, extraClassName) {
+    super()
     this.calendar = calendar
-    this.el = createElement('div', { className: 'fc-toolbar ' + extraClassName })
+    this.setElement(
+      createElement('div', { className: 'fc-toolbar ' + extraClassName })
+    )
   }
 
 
-  /*
-    renderProps: {
-      layout
-      title
-      activeButton
-      isTodayEnabled
-      isPrevEnabled
-      isNextEnabled
-    }
-  */
-  render(renderProps, forces) {
+  render(renderProps: ToolbarRenderProps, forces: RenderForceFlags) {
 
     if (renderProps.layout !== this.layout || forces === true) {
       if (this.isLayoutRendered) {
@@ -109,15 +111,14 @@ export default class Toolbar {
   removeElement() {
     this.unrenderLayout()
     this.isLayoutRendered = false
-
-    removeElement(this.el)
-
     this.layout = null
     this.title = null
     this.activeButton = null
     this.isTodayEnabled = null
     this.isPrevEnabled = null
     this.isNextEnabled = null
+
+    super.removeElement()
   }
 
 

@@ -1,21 +1,8 @@
 import Calendar from '../Calendar'
-import { DateProfile } from '../DateProfileGenerator'
+import { DateComponentRenderState } from '../component/DateComponent'
 import { EventSourceHash, reduceEventSourceHash } from './event-sources'
-import { EventStore, reduceEventStore } from './event-store'
-import { Selection } from './selection'
-import { BusinessHourDef } from './business-hours'
-import { DragState } from './drag'
-import { EventResizeState } from './event-resize'
+import { reduceEventStore } from './event-store'
 import { DateMarker } from '../datelib/marker'
-
-export interface DateComponentRenderState {
-  dateProfile: DateProfile
-  eventStore: EventStore
-  selection: Selection | null
-  dragState: DragState | null
-  eventResizeState: EventResizeState | null
-  businessHoursDef: BusinessHourDef
-}
 
 export interface CalendarState extends DateComponentRenderState {
   loadingLevel: number
@@ -48,7 +35,6 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
             action.dateMarker || state.currentDate
           )
         })
-        newState.businessHoursDef = calendar.view.opt('businessHours') // hack
       }
       break
 

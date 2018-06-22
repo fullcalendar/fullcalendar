@@ -14,9 +14,9 @@ import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
 import { EventStore } from '../reducers/event-store'
-import { DateComponentRenderState } from '../reducers/main'
-import { DragState } from '../reducers/drag'
-import { EventResizeState } from '../reducers/event-resize'
+import { RenderForceFlags } from '../component/Component'
+import { DateComponentRenderState } from '../component/DateComponent'
+import { EventInteractionState } from '../reducers/event-interaction'
 import reselector from '../util/reselector'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
@@ -45,7 +45,7 @@ export default class AgendaView extends View {
   usesMinMaxTime: boolean = true // indicates that minTime/maxTime affects rendering
 
   splitEventStore: any
-  splitUiState: any
+  splitInteractionState: any
 
 
   constructor(calendar, viewSpec) {
@@ -65,7 +65,7 @@ export default class AgendaView extends View {
     })
 
     this.splitEventStore = reselector(splitEventStore)
-    this.splitUiState = reselector(splitUiState)
+    this.splitInteractionState = reselector(splitInteractionState)
   }
 
 
@@ -171,12 +171,12 @@ export default class AgendaView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderChildren(renderState: DateComponentRenderState, forces: any) {
+  renderChildren(renderState: DateComponentRenderState, forces: RenderForceFlags) {
     let allDaySeletion = null
     let timedSelection = null
     let eventStoreGroups = this.splitEventStore(renderState.eventStore)
-    let dragStateGroups = this.splitUiState(renderState.dragState)
-    let eventResizeStateGroups = this.splitUiState(renderState.eventResizeState)
+    let dragStateGroups = this.splitInteractionState(renderState.dragState)
+    let eventResizeStateGroups = this.splitInteractionState(renderState.eventResizeState)
 
     if (renderState.selection) {
       if (renderState.selection.isAllDay) {
@@ -443,7 +443,7 @@ function splitEventStore(eventStore: EventStore) {
 }
 
 
-function splitUiState(state: DragState | EventResizeState) {
+function splitInteractionState(state: EventInteractionState) {
   let allDay = null
   let timed = null
 
