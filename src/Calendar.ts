@@ -180,11 +180,6 @@ export default class Calendar {
   }
 
 
-  elementVisible(): boolean {
-    return Boolean(this.el.offsetWidth)
-  }
-
-
   // Classnames on root elements
   // -----------------------------------------------------------------------------------------------------------------
 
@@ -309,15 +304,11 @@ export default class Calendar {
       rawSources.unshift(singleRawSource)
     }
 
-    this.pauseRendering()
-
     for (let rawSource of rawSources) {
       this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource })
     }
 
     this.dispatch({ type: 'SET_VIEW_TYPE', viewType: this.opt('defaultView') })
-
-    this.resumeRendering()
   }
 
 
@@ -363,9 +354,7 @@ export default class Calendar {
         this.publiclyTrigger('loading', [ false, this.view ])
       }
 
-      if (!this.renderingPauseDepth) {
-        this._render()
-      }
+      this.tryRerender()
     }
   }
 
@@ -376,8 +365,14 @@ export default class Calendar {
 
 
   resumeRendering() {
-    if (!(--this.renderingPauseDepth)) {
-      this._render()
+    this.renderingPauseDepth--
+    this.tryRerender()
+  }
+
+
+  tryRerender(forces?) {
+    if (!this.renderingPauseDepth && this.isRendered) {
+      this._render(forces)
     }
   }
 
@@ -430,7 +425,7 @@ export default class Calendar {
     }
 
     this.viewsByType = {}
-    this._render(true) // force rerender
+    this.tryRerender(true) // force=true
   }
 
 
@@ -745,6 +740,11 @@ export default class Calendar {
   }
 
 
+  elementVisible(): boolean {
+    return Boolean(this.el.offsetWidth)
+  }
+
+
   windowResize(ev: Event) {
     if (
       // the purpose: so we don't process jqui "resize" events that have bubbled up
@@ -979,7 +979,7 @@ export default class Calendar {
 
 
   rerenderEvents() { // API method. destroys old events if previously rendered.
-    this._render({ events: true }) // TODO: test this
+    this.tryRerender({ events: true }) // TODO: test this
   }
 
 
