@@ -20,13 +20,13 @@ export default class DayGridEventRenderer extends EventRenderer {
   }
 
 
-  renderSegs(segs: Seg[]) {
+  renderBgSegs(segs: Seg[]) {
     // don't render timed background events
     segs = segs.filter(function(seg) {
       return seg.eventRange.eventDef.isAllDay
     })
 
-    super.renderSegs(segs)
+    return super.renderBgSegs(segs)
   }
 
 

@@ -5,10 +5,6 @@ export default class UnzonedRange {
   start: DateMarker // if null, no start constraint
   end: DateMarker // if null, no end constraint
 
-  // TODO: move these into some other objects.
-  // Especially, doesn't make sense for null start/end
-  isStart: boolean = true
-  isEnd: boolean = true
 
   constructor(start?: DateMarker, end?: DateMarker) {
 
@@ -85,8 +81,6 @@ export default class UnzonedRange {
 
     if (start == null || end == null || start < end) {
       newRange = new UnzonedRange(start, end)
-      newRange.isStart = this.isStart && start.valueOf() === this.start.valueOf()
-      newRange.isEnd = this.isEnd && end.valueOf() === this.end.valueOf()
     }
 
     return newRange
@@ -135,12 +129,7 @@ export default class UnzonedRange {
 
 
   clone() {
-    let range = new UnzonedRange(this.start, this.end)
-
-    range.isStart = this.isStart
-    range.isEnd = this.isEnd
-
-    return range
+    return new UnzonedRange(this.start, this.end)
   }
 
 }

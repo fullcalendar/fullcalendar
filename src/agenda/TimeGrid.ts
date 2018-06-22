@@ -117,8 +117,8 @@ export default class TimeGrid extends InteractiveDateComponent {
         segs.push({
           start: segRange.start,
           end: segRange.end,
-          isStart: segRange.isStart,
-          isEnd: segRange.isEnd,
+          isStart: segRange.start.valueOf() === unzonedRange.start.valueOf(),
+          isEnd: segRange.end.valueOf() === unzonedRange.end.valueOf(),
           dayIndex: dayIndex
         })
       }

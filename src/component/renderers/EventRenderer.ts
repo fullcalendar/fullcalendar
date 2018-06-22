@@ -117,7 +117,7 @@ export default class EventRenderer {
   }
 
 
-  renderBgSegs(segs: Seg[]) {
+  renderBgSegs(segs: Seg[]): false | void {
     if (this.fillRenderer) {
       this.fillRenderer.renderSegs('bgEvent', segs, {
         getClasses: (seg) => {

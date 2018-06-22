@@ -681,24 +681,22 @@ export default class DayGrid extends InteractiveDateComponent {
     let dayEnd = addDays(dayStart, 1)
     let dayRange = new UnzonedRange(dayStart, dayEnd)
     let newSegs = []
-    let i
-    let seg
-    let slicedRange
 
-    for (i = 0; i < segs.length; i++) {
-      seg = segs[i]
-      slicedRange = seg.eventRange.intersect(dayRange)
+    for (let seg of segs) {
+      let eventRange = seg.eventRange
+      let origRange = eventRange.range
+      let slicedRange = origRange.intersect(dayRange)
 
       if (slicedRange) {
         newSegs.push(
           assignTo({}, seg, {
             eventRange: {
-              eventDef: seg.eventRange.eventDef,
-              eventInstance: seg.eventRange.eventInstance,
+              eventDef: eventRange.eventDef,
+              eventInstance: eventRange.eventInstance,
               range: slicedRange
             },
-            isStart: seg.isStart && slicedRange.isStart,
-            isEnd: seg.isEnd && slicedRange.isEnd
+            isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
+            isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
           })
         )
       }
