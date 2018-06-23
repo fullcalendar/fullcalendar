@@ -80,6 +80,7 @@ export default class Calendar {
   rerenderFlags: RenderForceFlags
   buildDelayedRerender: any
   delayedRerender: any
+  afterSizingTriggers: any = {}
 
 
   constructor(el: HTMLElement, overrides: OptionsInput) {
@@ -392,6 +393,7 @@ export default class Calendar {
     ) {
       this._render(this.rerenderFlags)
       this.rerenderFlags = null
+      this.releaseAfterSizingTriggers()
     }
   }
 
@@ -480,10 +482,16 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  hasPublicHandlers(name: string): boolean {
+    return this.hasHandlers(name) ||
+      this.opt(name) // handler specified in options
+  }
+
+
   publiclyTrigger(name: string, args) {
     let optHandler = this.opt(name)
 
-    this.triggerWith(name, this, args) // Emitter's method
+    this.triggerWith(name, this, args)
 
     if (optHandler) {
       return optHandler.apply(this, args)
@@ -491,9 +499,23 @@ export default class Calendar {
   }
 
 
-  hasPublicHandlers(name: string): boolean {
-    return this.hasHandlers(name) ||
-      this.opt(name) // handler specified in options
+  publiclyTriggerAfterSizing(name, args) {
+    let { afterSizingTriggers } = this;
+
+    (afterSizingTriggers[name] || (afterSizingTriggers[name] = [])).push(args)
+  }
+
+
+  releaseAfterSizingTriggers() {
+    let { afterSizingTriggers } = this
+
+    for (let name in afterSizingTriggers) {
+      for (let args of afterSizingTriggers[name]) {
+        this.publiclyTrigger(name, args)
+      }
+    }
+
+    this.afterSizingTriggers = {}
   }
 
 

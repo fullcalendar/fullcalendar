@@ -19,8 +19,8 @@ export interface EmitterInterface {
   on(types, handler)
   one(types, handler)
   off(types, handler)
-  trigger(types, ...args)
-  triggerWith(types, context, args)
+  trigger(type, ...args)
+  triggerWith(type, context, args)
   hasHandlers(type)
 }
 

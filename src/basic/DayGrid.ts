@@ -605,7 +605,7 @@ export default class DayGrid extends InteractiveDateComponent {
         // kill everything when the popover is hidden
         // notify events to be removed
         if (this.popoverSegs) {
-          this.triggerBeforeEventSegsDestroyed(this.popoverSegs)
+          this.triggerWillRemoveSegs(this.popoverSegs)
         }
         this.segPopover.removeElement()
         this.segPopover = null
@@ -628,7 +628,7 @@ export default class DayGrid extends InteractiveDateComponent {
     // delegated-handlers for free. attach event-related handlers to the popover.
     this.bindAllSegHandlersToEl(this.segPopover.el)
 
-    this.triggerAfterEventSegsRendered(segs)
+    this.triggerRenderedSegs(segs)
   }
 
 

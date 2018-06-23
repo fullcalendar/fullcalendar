@@ -141,17 +141,58 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  publiclyTrigger(...args) {
+  // Triggering
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  publiclyTrigger(name, args) {
     let calendar = this.getCalendar()
 
-    return calendar.publiclyTrigger.apply(calendar, args)
+    return calendar.publiclyTrigger(name, args)
   }
 
 
-  hasPublicHandlers(...args) {
+  publiclyTriggerAfterSizing(name, args) {
     let calendar = this.getCalendar()
 
-    return calendar.hasPublicHandlers.apply(calendar, args)
+    return calendar.publiclyTriggerAfterSizing(name, args)
+  }
+
+
+  hasPublicHandlers(name) {
+    let calendar = this.getCalendar()
+
+    return calendar.hasPublicHandlers(name)
+  }
+
+
+  triggerRenderedSegs(segs: Seg[]) {
+    if (this.hasPublicHandlers('eventAfterRender')) {
+      for (let seg of segs) {
+        this.publiclyTriggerAfterSizing('eventAfterRender', [
+          {
+            event: seg.eventRange, // what to do here?
+            el: seg.el,
+            view: this
+          }
+        ])
+      }
+    }
+  }
+
+
+  triggerWillRemoveSegs(segs: Seg[]) {
+    if (this.hasPublicHandlers('eventDestroy')) {
+      for (let seg of segs) {
+        this.publiclyTrigger('eventDestroy', [
+          {
+            event: seg.eventRange, // what to do here?
+            el: seg.el,
+            view: this
+          }
+        ])
+      }
+    }
   }
 
 
@@ -399,12 +440,14 @@ export default abstract class DateComponent extends Component {
       this.eventRenderer.renderSegs(
         this.eventStoreToSegs(eventStore)
       )
+      this.triggerRenderedSegs(this.eventRenderer.getSegs())
     }
   }
 
 
   unrenderEvents() {
     if (this.eventRenderer) {
+      this.triggerWillRemoveSegs(this.eventRenderer.getSegs())
       this.eventRenderer.unrender()
     }
   }
@@ -427,61 +470,6 @@ export default abstract class DateComponent extends Component {
     }
 
     return []
-  }
-
-
-  // Event Rendering Triggering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  triggerAfterEventsRendered() {
-    this.triggerAfterEventSegsRendered(
-      this.getEventSegs()
-    )
-
-    this.publiclyTrigger('eventAfterAllRender', [ { view: this } ])
-  }
-
-
-  triggerAfterEventSegsRendered(segs) {
-    // an optimization, because getEventLegacy is expensive
-    if (this.hasPublicHandlers('eventAfterRender')) {
-      segs.forEach((seg) => {
-        if (seg.el) { // necessary?
-          this.publiclyTrigger('eventAfterRender', [
-            {
-              event: seg.eventRange, // what to do here?
-              el: seg.el,
-              view: this
-            }
-          ])
-        }
-      })
-    }
-  }
-
-
-  triggerBeforeEventsDestroyed() {
-    this.triggerBeforeEventSegsDestroyed(
-      this.getEventSegs()
-    )
-  }
-
-
-  triggerBeforeEventSegsDestroyed(segs) {
-    if (this.hasPublicHandlers('eventDestroy')) {
-      segs.forEach((seg) => {
-        if (seg.el) { // necessary?
-          this.publiclyTrigger('eventDestroy', [
-            {
-              event: seg.eventRange, // what to do here?
-              el: seg.el,
-              view: this
-            }
-          ])
-        }
-      })
-    }
   }
 
 

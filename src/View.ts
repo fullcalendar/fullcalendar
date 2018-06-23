@@ -193,35 +193,20 @@ export default abstract class View extends InteractiveDateComponent {
     super.renderDates()
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
+    this.triggerRenderedDates()
   }
 
 
   unrenderDates() {
+    this.triggerWillRemoveDates()
     this.unselect()
     this.stopNowIndicator()
     super.unrenderDates()
   }
 
 
-  // Triggering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  bindBaseRenderHandlers() {
-    this.on('datesRendered', () => {
-      this.whenSizeUpdated(
-        this.triggerViewRender
-      )
-    })
-
-    this.on('before:datesUnrendered', () => {
-      this.triggerViewDestroy()
-    })
-  }
-
-
-  triggerViewRender() {
-    this.publiclyTrigger('viewRender', [
+  triggerRenderedDates() {
+    this.publiclyTriggerAfterSizing('viewRender', [
       {
         view: this,
         el: this.el
@@ -230,7 +215,7 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  triggerViewDestroy() {
+  triggerWillRemoveDates() {
     this.publiclyTrigger('viewDestroy', [
       {
         view: this,
@@ -532,30 +517,6 @@ export default abstract class View extends InteractiveDateComponent {
         this.unselectEventInstance()
       }
     }
-  }
-
-
-  /* Triggers
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  triggerBaseRendered() {
-    this.publiclyTrigger('viewRender', [
-      {
-        view: this,
-        el: this.el
-      }
-    ])
-  }
-
-
-  triggerBaseUnrendered() {
-    this.publiclyTrigger('viewDestroy', [
-      {
-        view: this,
-        el: this.el
-      }
-    ])
   }
 
 
