@@ -1032,11 +1032,6 @@ export default class Calendar {
   }
 
 
-  refetchEvents() {
-    // TODO
-  }
-
-
   renderEvent(eventInput: EventObjectInput, isSticky: boolean = false) {
     // TODO
   }
@@ -1051,23 +1046,6 @@ export default class Calendar {
   // legacyQuery operates on legacy event instance objects
   clientEvents(legacyQuery) {
     // TODO
-  }
-
-
-  buildMutatedEventRanges(eventDefId, eventDefMutation) { // do it FOR the given def
-    return [] // TODO
-  }
-
-
-  getEventInstances() {
-  }
-
-
-  getEventInstancesWithoutId(id) {
-  }
-
-
-  getEventInstancesWithId(id) {
   }
 
 
@@ -1096,6 +1074,11 @@ export default class Calendar {
 
 
   removeEventSource(sourceQuery) {
+    // TODO
+  }
+
+
+  refetchEvents() {
     // TODO
   }
 
