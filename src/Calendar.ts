@@ -1064,7 +1064,7 @@ export default class Calendar {
 
 
   addEventSource(sourceInput: EventSourceInput) {
-    // TODO
+    this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource: sourceInput })
   }
 
 
