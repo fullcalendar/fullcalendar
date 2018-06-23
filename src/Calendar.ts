@@ -394,6 +394,7 @@ export default class Calendar {
       this._render(this.rerenderFlags)
       this.rerenderFlags = null
       this.releaseAfterSizingTriggers()
+      this.trigger('_rendered')
     }
   }
 

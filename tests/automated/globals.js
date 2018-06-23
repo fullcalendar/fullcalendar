@@ -219,3 +219,38 @@ window.spyCall = function(func) {
 window.pushOptions({
   timezone: 'UTC'
 })
+
+
+// Convoluted triggers that are really useful
+// ---------------------------------------------------------------------------------------------------------------------
+
+window.afterViewEventsRendered = function(calendar, callback) {
+
+  function monitor() {
+    var sourceHash = calendar.state.eventSources
+    var pendingSourceCnt = 0
+
+    for (var sourceId in sourceHash) {
+      if (sourceHash[sourceId].isFetching) {
+        pendingSourceCnt++
+      }
+    }
+
+    if (!pendingSourceCnt) {
+      callback()
+    } else {
+      calendar.one('RECEIVE_EVENT_SOURCE', function() {
+        pendingSourceCnt--
+        if (!pendingSourceCnt) {
+          calendar.one('_rendered', callback)
+        }
+      })
+    }
+  }
+
+  calendar.one('_rendered', monitor) // wait for calendar.render() to be called
+
+  calendar.on('SET_DATE_PROFILE', function() {
+    calendar.one('_rendered', monitor) // wait for the render after a view/date switch
+  })
+}

@@ -23,6 +23,8 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     businessHoursDef: state.businessHoursDef
   }
 
+  calendar.trigger(action.type, action) // for testing hooks
+
   switch(action.type) {
 
     case 'SET_VIEW_TYPE':
