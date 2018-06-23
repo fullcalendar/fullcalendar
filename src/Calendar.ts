@@ -1079,7 +1079,7 @@ export default class Calendar {
 
 
   refetchEvents() {
-    // TODO
+    this.dispatch({ type: 'FETCH_ALL_EVENT_SOURCES' })
   }
 
 

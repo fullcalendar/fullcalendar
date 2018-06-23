@@ -115,6 +115,16 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
         return sourceHash
       }
 
+    case 'FETCH_ALL_EVENT_SOURCES':
+      for (let sourceId in sourceHash) {
+        calendar.dispatch({
+          type: 'FETCH_EVENT_SOURCE',
+          sourceId,
+          range: calendar.state.dateProfile.activeUnzonedRange
+        })
+      }
+      return sourceHash
+
     case 'FETCH_EVENT_SOURCE':
       eventSource = sourceHash[action.sourceId]
 
