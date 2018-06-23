@@ -20,7 +20,8 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     selection: state.selection,
     dragState: state.dragState,
     eventResizeState: state.eventResizeState,
-    businessHoursDef: state.businessHoursDef
+    businessHoursDef: state.businessHoursDef,
+    selectedEventInstanceId: state.selectedEventInstanceId
   }
 
   calendar.trigger(action.type, action) // for testing hooks

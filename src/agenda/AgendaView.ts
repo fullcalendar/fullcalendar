@@ -192,7 +192,8 @@ export default class AgendaView extends View {
       selection: timedSelection,
       dragState: dragStateGroups.timed,
       eventResizeState: eventResizeStateGroups.timed,
-      businessHoursDef: renderState.businessHoursDef
+      businessHoursDef: renderState.businessHoursDef,
+      selectedEventInstanceId: renderState.selectedEventInstanceId
     }, forceFlags)
 
     if (this.dayGrid) {
@@ -202,7 +203,8 @@ export default class AgendaView extends View {
         selection: allDaySeletion,
         dragState: dragStateGroups.allDay,
         eventResizeState: eventResizeStateGroups.allDay,
-        businessHoursDef: renderState.businessHoursDef
+        businessHoursDef: renderState.businessHoursDef,
+        selectedEventInstanceId: renderState.selectedEventInstanceId
       }, forceFlags)
     }
   }

@@ -331,7 +331,8 @@ export default class Calendar {
       selection: null,
       dragState: null,
       eventResizeState: null,
-      businessHoursDef: false
+      businessHoursDef: false,
+      selectedEventInstanceId: null
     }
   }
 
@@ -552,7 +553,8 @@ export default class Calendar {
       selection: state.selection,
       dragState: state.dragState,
       eventResizeState: state.eventResizeState,
-      businessHoursDef: renderedView.opt('businessHours')
+      businessHoursDef: renderedView.opt('businessHours'),
+      selectedEventInstanceId: state.selectedEventInstanceId
     }, forceFlags)
 
     if (this.updateViewSize()) { // success?

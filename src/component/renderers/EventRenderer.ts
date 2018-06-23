@@ -208,7 +208,7 @@ export default class EventRenderer {
     }
 
     // event is currently selected? attach a className.
-    if (this.view.isEventDefSelected(seg.eventRange.eventDef)) {
+    if (seg.eventRange.eventInstance.instanceId === this.component.selectedEventInstanceId) {
       classes.push('fc-selected')
     }
 

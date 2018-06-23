@@ -24,6 +24,7 @@ export interface DateComponentRenderState {
   dragState: EventInteractionState | null
   eventResizeState: EventInteractionState | null
   businessHoursDef: BusinessHourDef
+  selectedEventInstanceId: string
 }
 
 export interface Seg {
@@ -70,6 +71,8 @@ export default abstract class DateComponent extends Component {
   eventStore: EventStore
   dragState: EventInteractionState
   eventResizeState: EventInteractionState
+  interactingEventDefId: string
+  selectedEventInstanceId: string
 
 
   constructor(_view, _options?) {
@@ -224,11 +227,11 @@ export default abstract class DateComponent extends Component {
 
     // unrendering
     if (isEventResizeDirty && this.isEventResizeRendered) {
-      this.unrenderEventResize()
+      this.unrenderEventResizeState()
       this.isEventResizeRendered = false
     }
     if (isDragDirty && this.isDragRendered) {
-      this.unrenderDrag()
+      this.unrenderDragState()
       this.isDragRendered = false
     }
     if (isEventsDirty && this.isEventsRendered) {
@@ -277,14 +280,16 @@ export default abstract class DateComponent extends Component {
     }
     if ((isDragDirty || !this.isDragRendered) && renderState.dragState && this.isDatesRendered) {
       let { dragState } = renderState
-      this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.isTouch)
+      this.renderDragState(dragState)
       this.isDragRendered = true
     }
     if ((isEventResizeDirty || !this.isEventResizeRendered) && renderState.eventResizeState && this.isDatesRendered) {
       let { eventResizeState } = renderState
-      this.renderEventResize(eventResizeState.eventStore, eventResizeState.origSeg, eventResizeState.isTouch)
+      this.renderEventResizeState(eventResizeState)
       this.isEventResizeRendered = true
     }
+
+    this.updateSelectedEventInstance(renderState.selectedEventInstanceId)
 
     this.renderChildren(renderState, forceFlags)
   }
@@ -296,12 +301,14 @@ export default abstract class DateComponent extends Component {
 
 
   removeElement() {
+    this.updateSelectedEventInstance()
+
     if (this.isEventResizeRendered) {
-      this.unrenderEventResize()
+      this.unrenderEventResizeState()
       this.isEventResizeRendered = false
     }
     if (this.isDragRendered) {
-      this.unrenderDrag()
+      this.unrenderDragState()
       this.isDragRendered = false
     }
     if (this.isEventsRendered) {
@@ -410,26 +417,6 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  getBusinessHourSegs() { // recursive
-    let segs = this.getOwnBusinessHourSegs()
-
-    this.iterChildren(function(child) {
-      segs.push.apply(segs, child.getBusinessHourSegs())
-    })
-
-    return segs
-  }
-
-
-  getOwnBusinessHourSegs() {
-    if (this.businessHourRenderer) {
-      return this.businessHourRenderer.getSegs()
-    }
-
-    return []
-  }
-
-
   // Event Displaying
   // -----------------------------------------------------------------------------------------------------------------
 
@@ -453,66 +440,20 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  getEventSegs() { // recursive
-    let segs = this.getOwnEventSegs()
-
-    this.iterChildren(function(child) {
-      segs.push.apply(segs, child.getEventSegs())
-    })
-
-    return segs
-  }
-
-
-  getOwnEventSegs() { // just for itself
-    if (this.eventRenderer) {
-      return this.eventRenderer.getSegs()
-    }
-
-    return []
-  }
-
-
-  // Event Rendering Utils
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  // Hides all rendered event segments linked to the given event
-  // RECURSIVE with subcomponents
-  showEventsWithId(eventDefId) {
-
-    this.getEventSegs().forEach(function(seg) {
-      if (
-        seg.eventRange.eventDef.id === eventDefId &&
-        seg.el // necessary?
-      ) {
-        seg.el.style.visibility = ''
-      }
-    })
-
-    this.callChildren('showEventsWithId', arguments)
-  }
-
-
-  // Shows all rendered event segments linked to the given event
-  // RECURSIVE with subcomponents
-  hideEventsWithId(eventDefId) {
-
-    this.getEventSegs().forEach(function(seg) {
-      if (
-        seg.eventRange.eventDef.id === eventDefId &&
-        seg.el // necessary?
-      ) {
-        seg.el.style.visibility = 'hidden'
-      }
-    })
-
-    this.callChildren('hideEventsWithId', arguments)
-  }
-
-
   // Drag-n-Drop Rendering (for both events and external elements)
   // ---------------------------------------------------------------------------------------------------------------
+
+
+  renderDragState(dragState: EventInteractionState) {
+    this.updateEventInteractionState(dragState)
+    this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.isTouch)
+  }
+
+
+  unrenderDragState() {
+    this.updateEventInteractionState()
+    this.unrenderDrag()
+  }
 
 
   // Renders a visual indication of a event or external-element drag over the given drop zone.
@@ -520,6 +461,7 @@ export default abstract class DateComponent extends Component {
   // Must return elements used for any mock events.
   renderDrag(eventStore: EventStore, origSeg?, isTouch = false) {
     // subclasses can implement
+    // TODO: how to determine if just one child rendered the drag so we don't have to render the helper?
   }
 
 
@@ -527,6 +469,128 @@ export default abstract class DateComponent extends Component {
   unrenderDrag() {
     // subclasses can implement
   }
+
+
+  // Event Resizing
+  // ---------------------------------------------------------------------------------------------------------------
+
+
+  renderEventResizeState(dragState: EventInteractionState) {
+    this.updateEventInteractionState(dragState)
+    this.renderEventResize(dragState.eventStore, dragState.origSeg, dragState.isTouch)
+  }
+
+
+  unrenderEventResizeState() {
+    this.updateEventInteractionState()
+    this.unrenderEventResize()
+  }
+
+
+  // Renders a visual indication of an event being resized.
+  renderEventResize(eventStore: EventStore, origSeg: any, isTouch: boolean) {
+    // subclasses can implement
+  }
+
+
+  // Unrenders a visual indication of an event being resized.
+  unrenderEventResize() {
+    // subclasses can implement
+  }
+
+
+  // Event Interaction Utils
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  updateEventInteractionState(dragState?: EventInteractionState) {
+    let eventDefId = (dragState && dragState.origSeg) ? dragState.origSeg.eventRange.eventDef.defId : null
+
+    if (this.interactingEventDefId && this.interactingEventDefId !== eventDefId) {
+      this.showEventByDefId(this.interactingEventDefId)
+      this.interactingEventDefId = null
+    }
+
+    if (eventDefId && !this.interactingEventDefId) {
+      this.hideEventsByDefId(eventDefId)
+      this.interactingEventDefId = eventDefId
+    }
+  }
+
+
+  // Hides all rendered event segments linked to the given event
+  showEventByDefId(eventDefId) {
+    this.getAllEventSegs().forEach(function(seg) {
+      if (
+        seg.eventRange.eventDef.id === eventDefId &&
+        seg.el // necessary?
+      ) {
+        seg.el.style.visibility = ''
+      }
+    })
+  }
+
+
+  // Shows all rendered event segments linked to the given event
+  hideEventsByDefId(eventDefId) {
+    this.getAllEventSegs().forEach(function(seg) {
+      if (
+        seg.eventRange.eventDef.id === eventDefId &&
+        seg.el // necessary?
+      ) {
+        seg.el.style.visibility = 'hidden'
+      }
+    })
+  }
+
+
+  getAllEventSegs() {
+    if (this.eventRenderer) {
+      return this.eventRenderer.getSegs()
+    } else {
+      return []
+    }
+  }
+
+
+  // Event Instance Selection (aka long-touch focus)
+  // -----------------------------------------------------------------------------------------------------------------
+  // TODO: show/hide according to groupId?
+
+
+  updateSelectedEventInstance(instanceId?) {
+    if (this.selectedEventInstanceId && this.selectedEventInstanceId !== instanceId) {
+      this.unselectAllEvents()
+      this.selectEventsByInstanceId = null
+    }
+
+    if (instanceId && !this.selectedEventInstanceId) {
+      this.selectEventsByInstanceId(instanceId)
+      this.selectedEventInstanceId = instanceId
+    }
+  }
+
+
+  selectEventsByInstanceId(instanceId) {
+    this.getAllEventSegs().forEach(function(seg) {
+      if (
+        seg.eventRange.eventInstance.instanceId === instanceId &&
+        seg.el // necessary?
+      ) {
+        seg.el.classList.add('fc-selected')
+      }
+    })
+  }
+
+
+  unselectAllEvents() {
+    this.getAllEventSegs().forEach(function(seg) {
+      if (seg.el) { // necessary?
+        seg.el.classList.remove('fc-selected')
+      }
+    })
+  }
+
 
 
   // EXTERNAL Drag-n-Drop
@@ -546,22 +610,6 @@ export default abstract class DateComponent extends Component {
 
   handleExternalDragStop(ev) {
     this.callChildren('handleExternalDragStop', arguments)
-  }
-
-
-  // Event Resizing
-  // ---------------------------------------------------------------------------------------------------------------
-
-
-  // Renders a visual indication of an event being resized.
-  renderEventResize(eventStore: EventStore, origSeg: any, isTouch: boolean) {
-    // subclasses can implement
-  }
-
-
-  // Unrenders a visual indication of an event being resized.
-  unrenderEventResize() {
-    // subclasses can implement
   }
 
 

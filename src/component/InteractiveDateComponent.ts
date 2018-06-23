@@ -136,10 +136,9 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
 
   canStartResize(seg, ev) {
-    let view = this.view
-    let eventDef = seg.eventRange.eventDef
+    let { eventDef, eventInstance } = seg.eventRange
 
-    return (!getEvIsTouch(ev) || view.isEventDefSelected(eventDef)) &&
+    return (!getEvIsTouch(ev) || this.selectedEventInstanceId === eventInstance.instanceId) &&
       this.isEventDefResizable(eventDef) &&
       ev.target.classList.contains('fc-resizer')
   }

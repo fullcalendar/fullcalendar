@@ -306,9 +306,9 @@ export default class DayGrid extends InteractiveDateComponent {
 
 
   // Retrieves all rendered segment objects currently rendered on the grid
-  getOwnEventSegs() {
+  getAllEventSegs() {
     // append the segments from the "more..." popover
-    return super.getOwnEventSegs().concat(this.popoverSegs || [])
+    return super.getAllEventSegs().concat(this.popoverSegs || [])
   }
 
 

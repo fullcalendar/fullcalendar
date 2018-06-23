@@ -432,52 +432,6 @@ export default abstract class View extends InteractiveDateComponent {
   }
 
 
-  /* Event Selection
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  selectEventInstance(eventInstance) {
-    if (
-      !this.selectedEventInstance ||
-      this.selectedEventInstance.instanceId !== eventInstance.instanceId
-    ) {
-      this.unselectEventInstance()
-
-      this.getEventSegs().forEach(function(seg) {
-        if (
-          seg.eventRange.eventInstance.instanceId === eventInstance.instanceId &&
-          seg.el // necessary?
-        ) {
-          seg.el.classList.add('fc-selected')
-        }
-      })
-
-      this.selectedEventInstance = eventInstance
-    }
-  }
-
-
-  unselectEventInstance() {
-    if (this.selectedEventInstance) {
-
-      this.getEventSegs().forEach(function(seg) {
-        if (seg.el) { // necessary?
-          seg.el.classList.remove('fc-selected')
-        }
-      })
-
-      this.selectedEventInstance = null
-    }
-  }
-
-
-  isEventDefSelected(eventDef) {
-    // event references might change on refetchEvents(), while selectedEventInstance doesn't,
-    // so compare IDs
-    return this.selectedEventInstance && this.selectedEventInstance.defId === eventDef.defId
-  }
-
-
   /* Mouse / Touch Unselecting (time range & event unselection)
   ------------------------------------------------------------------------------------------------------------------*/
   // TODO: move consistently to down/start or up/end?
@@ -514,7 +468,7 @@ export default abstract class View extends InteractiveDateComponent {
   processEventUnselect(ev) {
     if (this.selectedEventInstance) {
       if (!elementClosest(ev.target, '.fc-selected')) {
-        this.unselectEventInstance()
+        // TODO: use dispatch to change selectedEventInstanceId
       }
     }
   }
