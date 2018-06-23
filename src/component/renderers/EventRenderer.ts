@@ -157,7 +157,6 @@ export default class EventRenderer {
 
       // build a large concatenation of event segment HTML
       for (i = 0; i < segs.length; i++) {
-        this.beforeFgSegHtml(segs[i])
         html += this.fgSegHtml(segs[i], disableResizing)
       }
 
@@ -179,10 +178,6 @@ export default class EventRenderer {
     }
 
     return renderedSegs
-  }
-
-
-  beforeFgSegHtml(seg: Seg) { // hack
   }
 
 
