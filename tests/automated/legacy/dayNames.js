@@ -34,7 +34,7 @@ describe('day names', function() {
           var dayDate = FullCalendar.addDays(sundayDate, index)
           var dayText = dayDate.toLocaleString('en', { weekday: 'long' })
 
-          it(cls + ' should be ' + dayText, function() {
+          it(' should be ' + dayText, function() {
             initCalendar({
               now: dayDate
             })
@@ -56,7 +56,7 @@ describe('day names', function() {
                 now: dayDate
               })
 
-              expect($('.fc-view thead ' + cls)).toHaveText(dayText)
+              expect(getHeaderEl().find(cls)).toHaveText(dayText)
             })
           })
         })
