@@ -34,7 +34,7 @@ describe('day names', function() {
           var dayDate = FullCalendar.addDays(sundayDate, index)
           var dayText = dayDate.toLocaleString('en', { weekday: 'long' })
 
-          it(' should be ' + dayText, function() {
+          it('should be ' + dayText, function() {
             initCalendar({
               now: dayDate
             })
