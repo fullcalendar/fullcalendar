@@ -1,3 +1,5 @@
+import { getHeaderEl } from './../view-render/DayGridRenderUtils'
+
 describe('day names', function() {
   var testableClasses = [
     'basicDay',
@@ -12,7 +14,7 @@ describe('day names', function() {
     '.fc-fri',
     '.fc-sat'
   ]
-  var sundayDate = new Date('2014-05-25T06:00:00Z')
+  var sundayDate = new Date('2014-05-25T06:00:00')
   var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ]
 
   pushOptions({
@@ -32,11 +34,11 @@ describe('day names', function() {
           var dayDate = FullCalendar.addDays(sundayDate, index)
           var dayText = dayDate.toLocaleString('en', { weekday: 'long' })
 
-          it('should be ' + dayText, function() {
+          it(cls + ' should be ' + dayText, function() {
             initCalendar({
               now: dayDate
             })
-            expect($('.fc-view thead ' + dayClasses[index])).toHaveText(dayText)
+            expect(getHeaderEl().find(cls)).toHaveText(dayText)
           })
         })
       })
@@ -54,7 +56,7 @@ describe('day names', function() {
                 now: dayDate
               })
 
-              expect($('.fc-view thead ' + dayClasses[index])).toHaveText(dayText)
+              expect($('.fc-view thead ' + cls)).toHaveText(dayText)
             })
           })
         })
