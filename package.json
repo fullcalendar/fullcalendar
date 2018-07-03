@@ -21,7 +21,7 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2018 Adam Shaw",
-  "dependencies": {
+  "peerDependencies": {
     "jquery": "2 - 3",
     "moment": "^2.20.1"
   },
