@@ -1,3 +1,4 @@
+import { getHeaderEl } from './../view-render/DayGridRenderUtils'
 
 describe('agenda view rendering', function() {
 
@@ -9,7 +10,7 @@ describe('agenda view rendering', function() {
 
     it('should have have days ordered sun to sat', function() {
       initCalendar()
-      var headers = $('.fc-view > table > thead th')
+      var headers = getHeaderEl().find('th')
       expect(headers[0]).toHaveClass('fc-axis')
       expect(headers[1]).toHaveClass('fc-sun')
       expect(headers[2]).toHaveClass('fc-mon')
@@ -29,7 +30,7 @@ describe('agenda view rendering', function() {
 
     it('should have have days ordered sat to sun', function() {
       initCalendar()
-      var headers = $('.fc-view > table > thead th')
+      var headers = getHeaderEl().find('th')
       expect(headers[0]).toHaveClass('fc-sat')
       expect(headers[1]).toHaveClass('fc-fri')
       expect(headers[2]).toHaveClass('fc-thu')

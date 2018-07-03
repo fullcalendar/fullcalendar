@@ -1,3 +1,5 @@
+import { getHeaderEl } from './../view-render/DayGridRenderUtils'
+import { getSlotEls } from '../lib/time-grid'
 
 describe('Agenda view rendering', function() {
   pushOptions({
@@ -11,8 +13,8 @@ describe('Agenda view rendering', function() {
 
     it('renders the axis on the left', function() {
       initCalendar()
-      var header = $('.fc-view > table > thead')
-      var firstSlat = $('.fc-slats tr:first')
+      var header = getHeaderEl()
+      var firstSlat = getSlotEls().first()
       expect(header.find('.fc-axis')).toBeLeftOf(header.find('.fc-day-header:first'))
       expect($('.fc-day-grid .fc-axis')).toBeLeftOf($('.fc-day-grid .fc-day:first'))
       expect(firstSlat.find('.fc-axis')).toBeLeftOf(firstSlat.find('td:not(.fc-axis)'))
@@ -26,8 +28,8 @@ describe('Agenda view rendering', function() {
 
     it('renders the axis on the right', function() {
       initCalendar()
-      var header = $('.fc-view > table > thead')
-      var firstSlat = $('.fc-slats tr:first')
+      var header = getHeaderEl()
+      var firstSlat = getSlotEls().first()
       expect(header.find('.fc-axis')).toBeRightOf(header.find('.fc-day-header:first'))
       expect($('.fc-day-grid .fc-axis')).toBeRightOf($('.fc-day-grid .fc-day:first'))
       expect(firstSlat.find('.fc-axis')).toBeRightOf(firstSlat.find('td:not(.fc-axis)'))
