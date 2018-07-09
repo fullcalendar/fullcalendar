@@ -1,15 +1,13 @@
-const EVENT_CLASS = 'fc-event'
-const TITLE_CLASS = 'fc-title'
-const RESIZER_CLASS = 'fc-resizer'
-const TIME_CLASS = 'fc-time'
+import { TIME_CLASS, EVENT_CLASS, TITLE_CLASS, RESIZER_CLASS, START_CLASS, END_CLASS } from "../lib/constants"
+
 
 export function expectIsStart(bool) {
   var el = getSingleEl()
 
   if (bool) {
-    expect(el).toHaveClass('fc-start')
+    expect(el).toHaveClass(START_CLASS)
   } else {
-    expect(el).not.toHaveClass('fc-start')
+    expect(el).not.toHaveClass(START_CLASS)
   }
 }
 
@@ -17,9 +15,9 @@ export function expectIsEnd(bool) {
   var el = getSingleEl()
 
   if (bool) {
-    expect(el).toHaveClass('fc-end')
+    expect(el).toHaveClass(END_CLASS)
   } else {
-    expect(el).not.toHaveClass('fc-end')
+    expect(el).not.toHaveClass(END_CLASS)
   }
 }
 
@@ -58,5 +56,5 @@ export function getSingleEl() {
 }
 
 export function getEventElTimeEl(el) {
-  return el.find('.fc-time')
+  return el.find(`.${TIME_CLASS}`)
 }

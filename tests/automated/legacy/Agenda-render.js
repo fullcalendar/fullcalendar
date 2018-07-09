@@ -1,5 +1,6 @@
-import { getHeaderEl } from './../view-render/DayGridRenderUtils'
+import { getHeaderEl, getFirstDayEl } from './../view-render/DayGridRenderUtils'
 import { getSlotEls } from '../lib/time-grid'
+import { AXIS_CLASS, DAY_GRID_CLASS, DAY_CLASS } from '../lib/constants'
 
 describe('Agenda view rendering', function() {
   pushOptions({
@@ -15,9 +16,9 @@ describe('Agenda view rendering', function() {
       initCalendar()
       var header = getHeaderEl()
       var firstSlat = getSlotEls().first()
-      expect(header.find('.fc-axis')).toBeLeftOf(header.find('.fc-day-header:first'))
-      expect($('.fc-day-grid .fc-axis')).toBeLeftOf($('.fc-day-grid .fc-day:first'))
-      expect(firstSlat.find('.fc-axis')).toBeLeftOf(firstSlat.find('td:not(.fc-axis)'))
+      expect(header.find(`.${AXIS_CLASS}`)).toBeLeftOf(getFirstDayEl())
+      expect($(`.${DAY_GRID_CLASS} .${AXIS_CLASS}`)).toBeLeftOf($(`.${DAY_GRID_CLASS} .${DAY_CLASS}`).first())
+      expect(firstSlat.find(`.${AXIS_CLASS}`)).toBeLeftOf(firstSlat.find(`td:not(.${AXIS_CLASS})`))
     })
   })
 
@@ -30,9 +31,15 @@ describe('Agenda view rendering', function() {
       initCalendar()
       var header = getHeaderEl()
       var firstSlat = getSlotEls().first()
-      expect(header.find('.fc-axis')).toBeRightOf(header.find('.fc-day-header:first'))
-      expect($('.fc-day-grid .fc-axis')).toBeRightOf($('.fc-day-grid .fc-day:first'))
-      expect(firstSlat.find('.fc-axis')).toBeRightOf(firstSlat.find('td:not(.fc-axis)'))
+      expect(
+        header.find(`.${AXIS_CLASS}`)
+      ).toBeRightOf(getFirstDayEl())
+      expect(
+        $(`.${DAY_GRID_CLASS} .${AXIS_CLASS}`)
+      ).toBeRightOf($(`.${DAY_GRID_CLASS} .${DAY_CLASS}`).first())
+      expect(
+        firstSlat.find(`.${AXIS_CLASS}`)
+      ).toBeRightOf(firstSlat.find(`td:not(.${AXIS_CLASS})`))
     })
   })
 })
