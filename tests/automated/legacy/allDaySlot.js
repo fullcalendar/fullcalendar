@@ -1,3 +1,5 @@
+import { DAY_GRID_CLASS } from '../lib/constants'
+
 
 describe('allDaySlots', function() {
 
@@ -8,7 +10,7 @@ describe('allDaySlots', function() {
           defaultView: 'agendaWeek'
         }
         initCalendar(options)
-        var allDaySlotCount = $('.fc-day-grid').length
+        var allDaySlotCount = $(`.${DAY_GRID_CLASS}`).length
         expect(allDaySlotCount).toEqual(1)
       })
     })
@@ -18,7 +20,7 @@ describe('allDaySlots', function() {
           defaultView: 'agendaDay'
         }
         initCalendar(options)
-        var allDaySlotCount = $('.fc-day-grid').length
+        var allDaySlotCount = $(`.${DAY_GRID_CLASS}`).length
         expect(allDaySlotCount).toEqual(1)
       })
     })
@@ -32,7 +34,7 @@ describe('allDaySlots', function() {
           allDaySlot: true
         }
         initCalendar(options)
-        var allDaySlotCount = $('.fc-day-grid').length
+        var allDaySlotCount = $(`.${DAY_GRID_CLASS}`).length
         expect(allDaySlotCount).toEqual(1)
       })
     })
@@ -43,7 +45,7 @@ describe('allDaySlots', function() {
           allDaySlot: true
         }
         initCalendar(options)
-        var allDaySlotCount = $('.fc-day-grid').length
+        var allDaySlotCount = $(`.${DAY_GRID_CLASS}`).length
         expect(allDaySlotCount).toEqual(1)
       })
     })
@@ -57,7 +59,7 @@ describe('allDaySlots', function() {
           allDaySlot: false
         }
         initCalendar(options)
-        var allDaySlotCount = $('.fc-day-grid').length
+        var allDaySlotCount = $(`.${DAY_GRID_CLASS}`).length
         expect(allDaySlotCount).toEqual(0)
       })
     })
@@ -68,7 +70,7 @@ describe('allDaySlots', function() {
           allDaySlot: false
         }
         initCalendar(options)
-        var allDaySlotCount = $('.fc-day-grid').length
+        var allDaySlotCount = $(`.${DAY_GRID_CLASS}`).length
         expect(allDaySlotCount).toEqual(0)
       })
     })
