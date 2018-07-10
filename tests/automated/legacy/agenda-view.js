@@ -1,9 +1,14 @@
 import { getHeaderEl } from './../view-render/DayGridRenderUtils'
-import { 
-  AXIS_CLASS, SUNDAY_CLASS, 
-  MONDAY_CLASS, TUESDAY_CLASS, 
+import { DAY_CLASSES } from '../lib/constants'
+import { AXIS_CLASS } from './../lib/constants';
+
+const {
+  SUNDAY_CLASS, MONDAY_CLASS, TUESDAY_CLASS, 
   WEDNESDAY_CLASS, THURSDAY_CLASS, 
-  FRIDAY_CLASS, SATURDY_CLASS } from '../lib/constants'
+  FRIDAY_CLASS, SATURDY_CLASS 
+} = DAY_CLASSES 
+
+const AXIS_CLASS = 'fc-axis'
 
 describe('agenda view rendering', function() {
 

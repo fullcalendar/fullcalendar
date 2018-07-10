@@ -1,24 +1,17 @@
-export const EVENT_CLASS = 'fc-event'
-export const TITLE_CLASS = 'fc-title'
-export const RESIZER_CLASS = 'fc-resizer'
-export const TIME_CLASS = 'fc-time'
-export const AXIS_CLASS = 'fc-axis'
-export const DAY_GRID_CLASS = 'fc-day-grid'
-export const DAY_CLASS = 'fc-day'
-export const DAY_DISABLED_CLASS = 'fc-disabled-day'
-export const DAY_HEADER_CLASS = 'fc-day-header'
-export const DAY_TOP_CLASS = 'fc-day-top'
-export const START_CLASS = 'fc-start'
-export const END_CLASS = 'fc-end'
-export const SUNDAY_CLASS = 'fc-sun'
-export const MONDAY_CLASS = 'fc-mon'
-export const TUESDAY_CLASS = 'fc-tue'
-export const WEDNESDAY_CLASS = 'fc-wed'
-export const THURSDAY_CLASS = 'fc-thu'
-export const FRIDAY_CLASS = 'fc-fri'
-export const SATURDY_CLASS = 'fc-sat'
-export const ROW_CLASS = 'fc-row'
-export const BG_CLASS = 'fc-bg'
-export const HEAD_CLASS = 'fc-head'
-export const VIEW_CLASS = 'fc-view'
+const SUNDAY_CLASS = 'fc-sun'
+const MONDAY_CLASS = 'fc-mon'
+const TUESDAY_CLASS = 'fc-tue'
+const WEDNESDAY_CLASS = 'fc-wed'
+const THURSDAY_CLASS = 'fc-thu'
+const FRIDAY_CLASS = 'fc-fri'
+const SATURDY_CLASS = 'fc-sat'
 
+export const DAY_CLASSES = [
+  SUNDAY_CLASS,
+  MONDAY_CLASS,
+  TUESDAY_CLASS,
+  WEDNESDAY_CLASS,
+  THURSDAY_CLASS,
+  FRIDAY_CLASS,
+  SATURDY_CLASS,
+]

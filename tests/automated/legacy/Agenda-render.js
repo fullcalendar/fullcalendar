@@ -1,6 +1,8 @@
-import { getHeaderEl, getFirstDayEl } from './../view-render/DayGridRenderUtils'
+import { 
+  getFirstDayEl, getTimeGridHeaderAxisEl, 
+  getDayGridAxisEl, getSlatElAxisEl, 
+  getSlatElGridEls } from './../view-render/DayGridRenderUtils'
 import { getSlotEls } from '../lib/time-grid'
-import { AXIS_CLASS, DAY_GRID_CLASS, DAY_CLASS } from '../lib/constants'
 
 describe('Agenda view rendering', function() {
   pushOptions({
@@ -13,12 +15,11 @@ describe('Agenda view rendering', function() {
     })
 
     it('renders the axis on the left', function() {
-      initCalendar()
-      var header = getHeaderEl()
+      initCalendar()      
       var firstSlat = getSlotEls().first()
-      expect(header.find(`.${AXIS_CLASS}`)).toBeLeftOf(getFirstDayEl())
-      expect($(`.${DAY_GRID_CLASS} .${AXIS_CLASS}`)).toBeLeftOf($(`.${DAY_GRID_CLASS} .${DAY_CLASS}`).first())
-      expect(firstSlat.find(`.${AXIS_CLASS}`)).toBeLeftOf(firstSlat.find(`td:not(.${AXIS_CLASS})`))
+      expect(getTimeGridHeaderAxisEl()).toBeLeftOf(getFirstDayEl())
+      expect(getDayGridAxisEl()).toBeLeftOf(getFirstDayGridDayEl())
+      expect(getSlatElAxisEl(firstSlat)).toBeLeftOf(getSlatElGridEls(firstSlat))
     })
   })
 
@@ -28,18 +29,11 @@ describe('Agenda view rendering', function() {
     })
 
     it('renders the axis on the right', function() {
-      initCalendar()
-      var header = getHeaderEl()
+      initCalendar()      
       var firstSlat = getSlotEls().first()
-      expect(
-        header.find(`.${AXIS_CLASS}`)
-      ).toBeRightOf(getFirstDayEl())
-      expect(
-        $(`.${DAY_GRID_CLASS} .${AXIS_CLASS}`)
-      ).toBeRightOf($(`.${DAY_GRID_CLASS} .${DAY_CLASS}`).first())
-      expect(
-        firstSlat.find(`.${AXIS_CLASS}`)
-      ).toBeRightOf(firstSlat.find(`td:not(.${AXIS_CLASS})`))
+      expect(getTimeGridHeaderAxisEl()).toBeRightOf(getFirstDayEl())
+      expect(getDayGridAxisEl()).toBeRightOf(getFirstDayGridDayEl())
+      expect(getSlatElAxisEl(firstSlat)).toBeRightOf(getSlatElGridEls(firstSlat))
     })
   })
 })

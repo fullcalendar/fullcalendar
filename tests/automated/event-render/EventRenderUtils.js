@@ -1,5 +1,9 @@
-import { TIME_CLASS, EVENT_CLASS, TITLE_CLASS, RESIZER_CLASS, START_CLASS, END_CLASS } from "../lib/constants"
-
+const TIME_CLASS = 'fc-time'
+const EVENT_CLASS = 'fc-event'
+const TITLE_CLASS = 'fc-title'
+const RESIZER_CLASS = 'fc-resizer'
+const START_CLASS = 'fc-start'
+const END_CLASS = 'fc-end'
 
 export function expectIsStart(bool) {
   var el = getSingleEl()
