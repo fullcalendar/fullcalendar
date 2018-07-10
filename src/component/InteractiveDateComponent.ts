@@ -1,4 +1,6 @@
 import DateComponent from './DateComponent'
+import { Selection } from '../reducers/selection'
+import GlobalContext from '../common/GlobalContext'
 
 
 /*
@@ -9,7 +11,26 @@ export default abstract class InteractiveDateComponent extends DateComponent {
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
   // of the date areas. if not defined, assumes to be day and time granularity.
   // TODO: port isTimeScale into same system?
-  largeUnit: any // used still ?
+  largeUnit: any
+
+
+  queryHit(leftOffset, topOffset): Selection {
+    return null // this should be abstract
+  }
+
+
+  buildCoordCaches() {
+  }
+
+
+  bindGlobalHandlers() {
+    GlobalContext.registerComponent(this)
+  }
+
+
+  unbindGlobalHandlers() {
+    GlobalContext.unregisterComponent(this)
+  }
 
 
   // Event Drag-n-Drop

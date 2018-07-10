@@ -8,7 +8,7 @@ import UnzonedRange from '../models/UnzonedRange'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
-import { Duration, createDuration, addDurations, wholeDivideDurations, asRoughMs } from '../datelib/duration'
+import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDurations, asRoughMs } from '../datelib/duration'
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import { Seg } from '../component/DateComponent'
@@ -471,7 +471,7 @@ export default class TimeGrid extends InteractiveDateComponent {
   updateSize(totalHeight, isAuto, isResize) {
     super.updateSize(totalHeight, isAuto, isResize)
 
-    this.slatCoordCache.build()
+    this.buildCoordCaches()
 
     if (isResize) {
       this.updateSegVerticals(this.eventRenderer.getSegs())
@@ -570,6 +570,53 @@ export default class TimeGrid extends InteractiveDateComponent {
       bottom: -seg.bottom // flipped because needs to be space beyond bottom edge of event container
     }
   }
+
+
+  /* Hit System
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  queryHit(leftOffset, topOffset): Selection {
+    let snapsPerSlot = this.snapsPerSlot
+    let colCoordCache = this.colCoordCache
+    let slatCoordCache = this.slatCoordCache
+
+    if (colCoordCache.isLeftInBounds(leftOffset) && slatCoordCache.isTopInBounds(topOffset)) {
+      let colIndex = colCoordCache.getHorizontalIndex(leftOffset)
+      let slatIndex = slatCoordCache.getVerticalIndex(topOffset)
+
+      if (colIndex != null && slatIndex != null) {
+        let slatTop = slatCoordCache.getTopOffset(slatIndex)
+        let slatHeight = slatCoordCache.getHeight(slatIndex)
+        let partial = (topOffset - slatTop) / slatHeight // floating point number between 0 and 1
+        let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
+        let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
+
+        let dayDate = this.getCellDate(0, colIndex) // row=0
+        let time = addDurations(
+          this.dateProfile.minTime,
+          multiplyDuration(this.snapDuration, snapIndex)
+        )
+
+        let dateEnv = this.getDateEnv()
+        let start = dateEnv.add(dayDate, time)
+        let end = dateEnv.add(start, this.snapDuration)
+
+        return {
+          range: new UnzonedRange(start, end),
+          isAllDay: false,
+          // el: this.colEls[colIndex]
+        }
+      }
+    }
+  }
+
+
+  buildCoordCaches() {
+    this.colCoordCache.build()
+    this.slatCoordCache.build()
+  }
+
 
 
   /* Event Drag Visualization

@@ -229,8 +229,6 @@ export default class AgendaView extends View {
     let scrollerHeight
     let scrollbarWidths
 
-    super.updateSize(totalHeight, isAuto, isResize)
-
     // make all axis cells line up, and record the width so newly created axis cells will have it
     this.axisWidth = matchCellWidths(findElements(this.el, '.fc-axis'))
 
@@ -295,6 +293,8 @@ export default class AgendaView extends View {
         this.timeGrid.bottomRuleEl.style.display = ''
       }
     }
+
+    super.updateSize(totalHeight, isAuto, isResize) // children and now-indicator
   }
 
 

@@ -23,6 +23,7 @@ import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { Seg } from '../component/DateComponent'
 import { EventStore } from '../reducers/event-store'
+import { Selection } from '../reducers/selection'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -281,6 +282,42 @@ export default class DayGrid extends InteractiveDateComponent {
     html += '</td>'
 
     return html
+  }
+
+
+  /* Sizing
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  updateSize(totalHeight, isAuto, isResize) {
+    super.updateSize(totalHeight, isAuto, isResize)
+    this.buildCoordCaches()
+  }
+
+
+  /* Hit System
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  queryHit(leftOffset, topOffset): Selection {
+    if (this.colCoordCache.isLeftInBounds(leftOffset) && this.rowCoordCache.isTopInBounds(topOffset)) {
+      let col = this.colCoordCache.getHorizontalIndex(leftOffset)
+      let row = this.rowCoordCache.getVerticalIndex(topOffset)
+
+      if (row != null && col != null) {
+        return {
+          range: this.getCellRange(row, col),
+          isAllDay: true,
+          // el: this.getCellEl(row, col)
+        }
+      }
+    }
+  }
+
+
+  buildCoordCaches() {
+    this.colCoordCache.build()
+    this.rowCoordCache.build()
   }
 
 

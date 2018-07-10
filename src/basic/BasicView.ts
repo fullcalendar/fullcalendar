@@ -172,8 +172,6 @@ export default class BasicView extends View {
       return
     }
 
-    super.updateSize(totalHeight, isAuto, isResize)
-
     if (this.colWeekNumbersVisible) {
       // Make sure all week number cells running down the side have the same width.
       // Record the width for cells created later.
@@ -224,6 +222,8 @@ export default class BasicView extends View {
       // guarantees the same scrollbar widths
       this.scroller.lockOverflow(scrollbarWidths)
     }
+
+    super.updateSize(totalHeight, isAuto, isResize) // children and now-indicator
   }
 
 

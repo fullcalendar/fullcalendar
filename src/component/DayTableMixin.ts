@@ -3,6 +3,7 @@ import { prependToElement, appendToElement } from '../util/dom-manip'
 import Mixin from '../common/Mixin'
 import { DateMarker, DAY_IDS, addDays, diffDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
+import UnzonedRange from '../models/UnzonedRange'
 
 export interface DayTableInterface {
   dayDates: DateMarker[]
@@ -15,7 +16,7 @@ export interface DayTableInterface {
   renderBgTrHtml(row)
   bookendCells(trEl: HTMLElement)
   getCellDate(row, col)
-  getCellRange(row, col)
+  getCellRange(row, col): UnzonedRange
   sliceRangeByDay(unzonedRange)
   sliceRangeByRow(unzonedRange)
   renderIntroHtml()
@@ -112,7 +113,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let start = this.getCellDate(row, col)
     let end = addDays(start, 1)
 
-    return { start: start, end: end }
+    return new UnzonedRange(start, end)
   }
 
 
