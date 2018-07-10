@@ -9,10 +9,11 @@ with the NOTABLE EXCEOPTION of start/end dates that live on *Event Objects*.
 Ambiguously-TIMED moments are assumed to be ambiguously-zoned by nature.
 */
 
+type MomentExtDuration = moment.Duration
 declare module 'moment' {
   interface Moment {
     hasTime(): boolean
-    time(): moment.Duration
+    time(): MomentExtDuration
     stripZone()
     stripTime()
   }
