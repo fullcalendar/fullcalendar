@@ -8,7 +8,7 @@ const HEAD_CLASS = 'fc-head'
 const VIEW_CLASS = 'fc-view'
 const DAY_HEADER_CLASS = 'fc-day-header' 
 const DAY_TOP_CLASS = 'fc-day-top'
-const DAY_DISABLED_CLASS  = 'fc-day-disabled'
+const DAY_DISABLED_CLASS  = 'fc-disabled-day'
 const AXIS_CLASS = 'fc-axis'
 const DAY_CLASS = 'fc-day'
 
@@ -62,7 +62,7 @@ export function getSlatElAxisEl(slatEl){
 }
 
 export function getSlatElGridEls(slatEl){
-  return slatEl.find(`td:not(${AXIS_CLASS})`)
+  return slatEl.find(`td:not(.${AXIS_CLASS})`)
 }
 
 export function getDayGridAxisEl(){

@@ -31,7 +31,7 @@ describe('day names', function() {
             initCalendar({
               now: dayDate
             })
-            expect(getHeaderEl().find(cls)).toHaveText(dayText)
+            expect(getHeaderEl().find(`.${cls}`)).toHaveText(dayText)
           })
         })
       })
@@ -49,7 +49,7 @@ describe('day names', function() {
                 now: dayDate
               })
 
-              expect(getHeaderEl().find(cls)).toHaveText(dayText)
+              expect(getHeaderEl().find(`.${cls}`)).toHaveText(dayText)
             })
           })
         })
