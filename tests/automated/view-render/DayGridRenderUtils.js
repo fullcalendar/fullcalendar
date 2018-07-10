@@ -4,9 +4,9 @@ import { getHeaderEl } from './DayGridRenderUtils'
 const DAY_GRID_CLASS = 'fc-day-grid'
 const ROW_CLASS = 'fc-row'
 const BG_CLASS = 'fc-bg'
-const HEAD_CLASS = 'fc-head' 
+const HEAD_CLASS = 'fc-head'
 const VIEW_CLASS = 'fc-view'
-const DAY_HEADER_CLASS = 'fc-day-header' 
+const DAY_HEADER_CLASS = 'fc-day-header'
 const DAY_TOP_CLASS = 'fc-day-top'
 const DAY_DISABLED_CLASS  = 'fc-disabled-day'
 const AXIS_CLASS = 'fc-axis'
@@ -25,11 +25,11 @@ export function getDisabledEl(i) {
   return el
 }
 
-export function getDayEls() {
+export function getDayOfWeekHeaderEls() {
   return $(`.${DAY_HEADER_CLASS}`)
 }
 
-export function getDayElTopElText(date) {
+export function getDayOfWeekHeaderElTopElText(date) {
   return $(`td.${DAY_TOP_CLASS}[data-date="${date}"]`).text()
 }
 
@@ -42,11 +42,11 @@ export function hasHeaderEl() {
 }
 
 export function getFirstDayEl() {
-  return getDayEls().first()
+  return getDayOfWeekHeaderEls().first()
 }
 
 export function getLastDayEl() {
-  return getDayEls().last()
+  return getDayOfWeekHeaderEls().last()
 }
 
 export function getAllDayAxisEl(){
@@ -54,7 +54,7 @@ export function getAllDayAxisEl(){
 }
 
 export function getTimeGridHeaderAxisEl(){
-  return getHeaderEl().find(`.${AXIS_CLASS}`) 
+  return getHeaderEl().find(`.${AXIS_CLASS}`)
 }
 
 export function getSlatElAxisEl(slatEl){

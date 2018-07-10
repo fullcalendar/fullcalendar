@@ -1,4 +1,4 @@
-import { getDayEls } from '../view-render/DayGridRenderUtils'
+import { getDayOfWeekHeaderEls } from '../view-render/DayGridRenderUtils'
 import { getSlotEls } from '../lib/time-grid'
 import { getEventEls, getEventElTimeText } from './EventRenderUtils'
 
@@ -142,9 +142,9 @@ export function computeSpanRects(start, end) {
 
 
 function computeDays() {
-  var dayEls = getDayEls()
+  var dayOfWeekHeaderEls = getDayOfWeekHeaderEls()
 
-  var days = dayEls.map(function(i, node) {
+  var days = dayOfWeekHeaderEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
       date: FullCalendar.parseMarker(
