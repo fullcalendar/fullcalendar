@@ -3,7 +3,7 @@ import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
 import { globalDefaults, rtlDefaults } from './options'
-import GlobalEmitter from './common/GlobalEmitter'
+import GlobalContext from './common/GlobalContext'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import Toolbar from './Toolbar'
 import OptionsManager from './OptionsManager'
@@ -274,7 +274,7 @@ export default class Calendar {
 
 
   bindGlobalHandlers() {
-    GlobalEmitter.needed()
+    GlobalContext.registerCalendar(this)
 
     if (this.opt('handleWindowResize')) {
       window.addEventListener('resize',
@@ -287,7 +287,7 @@ export default class Calendar {
   }
 
   unbindGlobalHandlers() {
-    GlobalEmitter.unneeded()
+    GlobalContext.unregisterCalendar(this)
 
     if (this.windowResizeProxy) {
       window.removeEventListener('resize', this.windowResizeProxy)

@@ -17,8 +17,6 @@ export default class ListView extends View {
   eventRendererClass: any
   eventPointingClass: any
 
-  segSelector: any = '.fc-list-item' // which elements accept event actions
-
   scroller: Scroller
   contentEl: HTMLElement
 
