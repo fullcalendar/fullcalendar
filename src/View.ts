@@ -1,6 +1,4 @@
 import { assignTo } from './util/object'
-import { elementClosest } from './util/dom-manip'
-import { isPrimaryMouseButton } from './util/dom-event'
 import { parseFieldSpecs } from './util/misc'
 import Calendar from './Calendar'
 import { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
@@ -428,48 +426,6 @@ export default abstract class View extends InteractiveDateComponent {
           view: this
         }
       ])
-    }
-  }
-
-
-  /* Mouse / Touch Unselecting (time range & event unselection)
-  ------------------------------------------------------------------------------------------------------------------*/
-  // TODO: move consistently to down/start or up/end?
-  // TODO: don't kill previous selection if touch scrolling
-
-
-  handleDocumentMousedown(ev) {
-    if (isPrimaryMouseButton(ev)) {
-      this.processUnselect(ev)
-    }
-  }
-
-
-  processUnselect(ev) {
-    this.processRangeUnselect(ev)
-    this.processEventUnselect(ev)
-  }
-
-
-  processRangeUnselect(ev) {
-    let ignore
-
-    // is there a time-range selection?
-    if (this.isSelected && this.opt('unselectAuto')) {
-      // only unselect if the clicked element is not identical to or inside of an 'unselectCancel' element
-      ignore = this.opt('unselectCancel')
-      if (!ignore || !elementClosest(ev.target, ignore)) {
-        this.unselect(ev)
-      }
-    }
-  }
-
-
-  processEventUnselect(ev) {
-    if (this.selectedEventInstance) {
-      if (!elementClosest(ev.target, '.fc-selected')) {
-        // TODO: use dispatch to change selectedEventInstanceId
-      }
     }
   }
 

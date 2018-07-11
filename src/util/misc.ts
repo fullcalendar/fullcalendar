@@ -176,6 +176,20 @@ export function allowSelection(el: HTMLElement) {
 }
 
 
+/* Context Menu
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+export function preventContextMenu(el: HTMLElement) {
+  el.addEventListener('contextmenu', preventDefault)
+}
+
+
+export function allowContextMenu(el: HTMLElement) {
+  el.removeEventListener('contextmenu', preventDefault)
+}
+
+
 /* Object Ordering by Field
 ----------------------------------------------------------------------------------------------------------------------*/
 

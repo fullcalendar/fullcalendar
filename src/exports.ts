@@ -110,3 +110,6 @@ export { parse as parseMarker } from './datelib/parsing'
 
 export { registerSourceType } from './reducers/event-sources'
 export { refineProps } from './reducers/utils'
+
+export { default as PointerDragListener } from './dnd/PointerDragListener'
+export { default as IntentfulDragListener } from './dnd/IntentfulDragListener'
