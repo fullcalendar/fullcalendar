@@ -21,6 +21,7 @@ export default class PointerDragListener {
   selector: string
   ignoreMove: any
   subjectEl: HTMLElement
+  downEl: HTMLElement
   emitter: EmitterMixin
 
   isDragging: boolean = false
@@ -55,9 +56,10 @@ export default class PointerDragListener {
     }
   }
 
-  maybeStart(ev) {
+  maybeStart(ev: UIEvent) {
     if ((this.subjectEl = this.queryValidSubjectEl(ev))) {
       this.isDragging = true // do this first so cancelTouchScroll will work
+      this.downEl = ev.target as HTMLElement
       return true
     }
   }
@@ -67,6 +69,7 @@ export default class PointerDragListener {
     this.isDragging = false
     this.isTouchScroll = false
     this.subjectEl = null
+    this.downEl = null
   }
 
   onTouchScroll = () => {

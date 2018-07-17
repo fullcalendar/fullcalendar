@@ -10,7 +10,6 @@ export default class DateSelecting {
 
   componentHash: InteractiveDateComponentHash
   pointerListener: PointerDragListener
-  pointerDownEl: HTMLElement
   hitListener: HitDragListener
   dragComponent: InteractiveDateComponent
   dragSelection: Selection
@@ -28,10 +27,18 @@ export default class DateSelecting {
     this.pointerListener.on('pointerup', this.onPointerUp)
   }
 
+  destroy() {
+    this.pointerListener.destroy()
+  }
+
   onPointerDown = (ev: PointerDragEvent) => {
     let component = this.queryComponent(ev)
 
-    if (component && component.opt('selectable')) {
+    if (
+      component &&
+      component.opt('selectable') &&
+      component.isValidDateInteraction(ev.origEvent.target as HTMLElement)
+    ) {
 
       this.hitListener = new HitDragListener({
         containerEl: component.el,
@@ -47,8 +54,6 @@ export default class DateSelecting {
       this.hitListener.on('hitout', this.onHitOut)
       this.hitListener.dragListener.pointerListener.simulateStart(ev)
     }
-
-    this.pointerDownEl = ev.origEvent.target as any // TODO: better
   }
 
   queryComponent(ev: PointerDragEvent): InteractiveDateComponent {
@@ -106,7 +111,6 @@ export default class DateSelecting {
 
     this.dragComponent = null
     this.dragSelection = null
-    this.pointerDownEl = null
   }
 
   maybeUnfocus(ev: PointerDragEvent) {
@@ -115,7 +119,7 @@ export default class DateSelecting {
       let unselectAuto = view.opt('unselectAuto')
       let unselectCancel = view.opt('unselectCancel')
 
-      if (unselectAuto && (!unselectCancel || !elementClosest(this.pointerDownEl, unselectCancel))) {
+      if (unselectAuto && (!unselectCancel || !elementClosest(this.pointerListener.downEl, unselectCancel))) {
         this.clearActiveSelection(ev)
       }
     }

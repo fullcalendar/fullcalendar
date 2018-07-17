@@ -33,22 +33,22 @@ export default {
   },
 
   bind() {
-    this.dateSelector = new DateSelecting(componentHash)
+    this.dateSelecting = new DateSelecting(componentHash)
   },
 
   unbind() {
-    this.dateSelector.destroy()
+    this.dateSelecting.destroy()
   },
 
   bindComponent(component: InteractiveDateComponent) {
     listenerHash[component.uid] = {
-      dateClicker: new DateClicking(component)
+      dateClicking: new DateClicking(component)
     }
   },
 
   unbindComponent(component: InteractiveDateComponent) {
     let listeners = listenerHash[component.uid]
-    listeners.dateClicker.destroy()
+    listeners.dateClicking.destroy()
     delete listenerHash[component.uid]
   }
 

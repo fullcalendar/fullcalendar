@@ -7,7 +7,6 @@ import UnzonedRange from './models/UnzonedRange'
 import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
-import { EventInstance } from './reducers/event-store'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 
 

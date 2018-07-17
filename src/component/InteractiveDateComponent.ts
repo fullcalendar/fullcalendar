@@ -1,3 +1,4 @@
+import { elementClosest } from '../util/dom-manip'
 import DateComponent from './DateComponent'
 import { Selection } from '../reducers/selection'
 import GlobalContext from '../common/GlobalContext'
@@ -7,6 +8,9 @@ export type InteractiveDateComponentHash = {
 }
 
 export default abstract class InteractiveDateComponent extends DateComponent {
+
+  // self-config, overridable by subclasses
+  segSelector: string = '.fc-event-container > *' // what constitutes an event element?
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
   // of the date areas. if not defined, assumes to be day and time granularity.
@@ -30,6 +34,20 @@ export default abstract class InteractiveDateComponent extends DateComponent {
 
   unbindGlobalHandlers() {
     GlobalContext.unregisterComponent(this)
+  }
+
+
+  isValidSegInteraction(evTarget: HTMLElement) {
+    return !elementClosest(evTarget, '.fc-helper') &&
+      !this.dragState &&
+      !this.eventResizeState
+  }
+
+
+  isValidDateInteraction(evTarget: HTMLElement) {
+    return !elementClosest(evTarget, this.segSelector) &&
+      !elementClosest(evTarget, '.fc-more') && // a "more.." link
+      !elementClosest(evTarget, 'a[data-goto]') // a clickable nav link
   }
 
 

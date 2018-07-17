@@ -18,11 +18,16 @@ export default class DateClicking {
   }
 
   onDragEnd = (ev: PointerDragEvent) => {
-    if (!this.hitListener.dragListener.pointerListener.isTouchScroll) {
+    let { component } = this
+    let pointerListener = this.hitListener.dragListener.pointerListener
+
+    if (
+      !pointerListener.isTouchScroll &&
+      component.isValidDateInteraction(pointerListener.downEl)
+    ) {
       let { initialHit, finalHit } = this.hitListener
 
       if (initialHit && finalHit && isHitsEqual(initialHit, finalHit)) {
-        let component = initialHit.component
         component.getCalendar().triggerDayClick(initialHit, component.view, ev.origEvent)
       }
     }
