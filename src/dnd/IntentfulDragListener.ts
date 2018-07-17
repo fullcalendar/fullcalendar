@@ -1,18 +1,34 @@
 import { default as EmitterMixin } from '../common/EmitterMixin'
-import { default as PointerDragListener, PointerEvent } from './PointerDragListener'
+import { default as PointerDragListener, PointerDragEvent } from './PointerDragListener'
 import { preventSelection, allowSelection, preventContextMenu, allowContextMenu } from '../util/misc'
 
 export interface IntentfulDragOptions {
+  containerEl: HTMLElement
+  selector?: string
+  ignoreMove?: any // set to false if you don't need to track moves, for performance reasons
   touchMinDistance?: number
   mouseMinDistance?: number
-  touchDelay?: number | [() => number]
-  mouseDelay?: number | [() => number]
+  touchDelay?: number | ((ev: PointerDragEvent) => number)
+  mouseDelay?: number | ((ev: PointerDragEvent) => number)
+
+  // if set to false, if there's a touch scroll after pointdown but before the drag begins,
+  // it won't be considered a drag and dragstart/dragmove/dragend won't be fired.
+  // if the drag initiates and this value is set to false, touch dragging will be prevented.
   touchScrollAllowed?: boolean
 }
 
+/*
+fires:
+- pointerdown
+- dragstart
+- dragmove
+- pointermove
+- dragend
+- pointerup
+*/
 export default class IntentfulDragListener {
 
-  pointer: PointerDragListener
+  pointerListener: PointerDragListener
   emitter: EmitterMixin
 
   options: IntentfulDragOptions
@@ -20,7 +36,6 @@ export default class IntentfulDragListener {
   isDragging: boolean = false // is it INTENTFULLY dragging?
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
-  isTouchScroll: boolean = false
 
   delay: number
   delayTimeoutId: number
@@ -29,61 +44,50 @@ export default class IntentfulDragListener {
   origX: number
   origY: number
 
-  constructor(options) {
+  constructor(options: IntentfulDragOptions) {
     this.options = options
-    this.pointer = new PointerDragListener(options.containerEl, options.selector)
+    this.pointerListener = new PointerDragListener(options.containerEl, options.selector, options.ignoreMove)
     this.emitter = new EmitterMixin()
 
-    this.pointer.on('down', this.handleDown)
-    this.pointer.on('move', this.handleMove)
-    this.pointer.on('up', this.handleUp)
+    this.pointerListener.on('pointerdown', this.onPointerDown)
+    this.pointerListener.on('pointermove', this.onPointerMove)
+    this.pointerListener.on('pointerup', this.onPointerUp)
   }
 
   destroy() {
-    this.pointer.destroy()
+    this.pointerListener.destroy()
   }
 
   on(name, handler) {
     this.emitter.on(name, handler)
   }
 
-  handleDown = (ev: PointerEvent) => {
+  onPointerDown = (ev: PointerDragEvent) => {
+    this.emitter.trigger('pointerdown', ev)
+
     preventSelection(document.body)
     preventContextMenu(document.body)
 
     let minDistance = this.options[ev.isTouch ? 'touchMinDistance' : 'mouseMinDistance']
     let delay = this.options[ev.isTouch ? 'touchDelay' : 'mouseDelay']
 
-    this.minDistance = minDistance
-    this.delay = typeof delay === 'function' ? (delay as any)() : delay
+    this.minDistance = minDistance || 0
+    this.delay = typeof delay === 'function' ? (delay as any)(ev) : delay
 
     this.origX = ev.pageX
     this.origY = ev.pageY
 
     this.isDelayEnded = false
     this.isDistanceSurpassed = false
-    this.isTouchScroll = false
 
-    this.emitter.trigger('pointerdown', ev)
     this.startDelay(ev)
 
     if (!this.minDistance) {
       this.handleDistanceSurpassed(ev)
     }
-
-    if (ev.isTouch) {
-      // attach a handler to get called when ANY scroll action happens on the page.
-      // this was impossible to do with normal on/off because 'scroll' doesn't bubble.
-      // http://stackoverflow.com/a/32954565/96342
-      window.addEventListener(
-        'scroll',
-        this.handleTouchScroll, // always bound to `this`
-        true // useCapture
-      )
-    }
   }
 
-  handleMove = (ev: PointerEvent) => {
+  onPointerMove = (ev: PointerDragEvent) => {
     this.emitter.trigger('pointermove', ev)
 
     if (!this.isDistanceSurpassed) {
@@ -103,7 +107,7 @@ export default class IntentfulDragListener {
     }
   }
 
-  handleUp = (ev: PointerEvent) => {
+  onPointerUp = (ev: PointerDragEvent) => {
     if (this.isDragging) {
       this.stopDrag(ev)
     }
@@ -116,18 +120,10 @@ export default class IntentfulDragListener {
       this.delayTimeoutId = null
     }
 
-    if (ev.isTouch) {
-      window.removeEventListener('scroll', this.handleTouchScroll)
-    }
-
     this.emitter.trigger('pointerup', ev)
   }
 
-  handleTouchScroll = () => {
-    this.isTouchScroll = true
-  }
-
-  startDelay(ev: PointerEvent) {
+  startDelay(ev: PointerDragEvent) {
     if (typeof this.delay === 'number') {
       this.delayTimeoutId = setTimeout(() => {
         this.delayTimeoutId = null
@@ -138,27 +134,27 @@ export default class IntentfulDragListener {
     }
   }
 
-  handleDelayEnd(ev: PointerEvent) {
+  handleDelayEnd(ev: PointerDragEvent) {
     this.isDelayEnded = true
     this.startDrag(ev)
   }
 
-  handleDistanceSurpassed(ev: PointerEvent) {
+  handleDistanceSurpassed(ev: PointerDragEvent) {
     this.isDistanceSurpassed = true
     this.startDrag(ev)
   }
 
-  startDrag(ev: PointerEvent) { // will only start if appropriate
-    if (
-      this.isDelayEnded &&
-      this.isDistanceSurpassed &&
-      (!this.isTouchScroll || this.options.touchScrollAllowed !== false)
-    ) {
-      this.emitter.trigger('dragstart', ev)
-      this.isDragging = true
+  startDrag(ev: PointerDragEvent) { // will only start if appropriate
+    if (this.isDelayEnded && this.isDistanceSurpassed) {
+      let touchScrollAllowed = this.options.touchScrollAllowed
 
-      if (this.options.touchScrollAllowed === false) {
-        this.pointer.cancelTouchScroll()
+      if (!this.pointerListener.isTouchScroll || touchScrollAllowed) {
+        this.emitter.trigger('dragstart', ev)
+        this.isDragging = true
+
+        if (touchScrollAllowed === false) {
+          this.pointerListener.cancelTouchScroll()
+        }
       }
     }
   }

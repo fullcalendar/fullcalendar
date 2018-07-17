@@ -8,7 +8,6 @@ import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
 import { EventInstance } from './reducers/event-store'
-import { Selection } from './reducers/selection'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 
 
@@ -33,9 +32,6 @@ export default abstract class View extends InteractiveDateComponent {
   options: any // hash containing all options. already merged with view-specific-options
 
   queuedScroll: object
-
-  isSelected: boolean = false // boolean whether a range of time is user-selected or not
-  selectedEventInstance: EventInstance
 
   eventOrderSpecs: any // criteria for ordering events when they have same date/time
 
@@ -197,7 +193,6 @@ export default abstract class View extends InteractiveDateComponent {
 
   unrenderDates() {
     this.triggerWillRemoveDates()
-    this.unselect()
     this.stopNowIndicator()
     super.unrenderDates()
   }
@@ -372,61 +367,6 @@ export default abstract class View extends InteractiveDateComponent {
 
   applyDateScroll(scroll) {
      // subclasses must implement
-  }
-
-
-  /* Selection (time range)
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Selects a date span on the view. `start` and `end` are both Moments.
-  // `ev` is the native mouse event that begin the interaction.
-  select(selection: Selection, ev?) {
-    this.unselect(ev)
-    this.renderSelection(selection)
-    this.reportSelection(selection, ev)
-  }
-
-
-  // Called when a new selection is made. Updates internal state and triggers handlers.
-  reportSelection(selection: Selection, ev?) {
-    this.isSelected = true
-    this.triggerSelect(selection, ev)
-  }
-
-
-  // Triggers handlers to 'select'
-  triggerSelect(selection: Selection, ev?) {
-    let dateEnv = this.getDateEnv()
-
-    this.publiclyTrigger('select', [
-      {
-        start: dateEnv.toDate(selection.range.start),
-        end: dateEnv.toDate(selection.range.end),
-        isAllDay: selection.isAllDay,
-        jsEvent: ev,
-        view: this
-      }
-    ])
-  }
-
-
-  // Undoes a selection. updates in the internal state and triggers handlers.
-  // `ev` is the native mouse event that began the interaction.
-  unselect(ev?) {
-    if (this.isSelected) {
-      this.isSelected = false
-      if (this['destroySelection']) {
-        this['destroySelection']() // TODO: deprecate
-      }
-      this.unrenderSelection()
-      this.publiclyTrigger('unselect', [
-        {
-          jsEvent: ev,
-          view: this
-        }
-      ])
-    }
   }
 
 

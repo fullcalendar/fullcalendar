@@ -3,6 +3,7 @@ import { DateComponentRenderState } from '../component/DateComponent'
 import { EventSourceHash, reduceEventSourceHash } from './event-sources'
 import { reduceEventStore } from './event-store'
 import { DateMarker } from '../datelib/marker'
+import { assignTo } from '../util/object'
 
 export interface CalendarState extends DateComponentRenderState {
   loadingLevel: number
@@ -103,6 +104,18 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
         )
       })
       break
+
+    case 'SELECT':
+      return assignTo({}, state, {
+        selection: action.selection
+      })
+
+    case 'UNSELECT':
+      if (state.selection) { // if already no selection, don't bother
+        return assignTo({}, state, {
+          selection: null
+        })
+      }
 
   }
 

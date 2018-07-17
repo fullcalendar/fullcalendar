@@ -1,55 +1,55 @@
-import { removeExact } from '../util/array'
-import Calendar from '../Calendar'
 import InteractiveDateComponent from '../component/InteractiveDateComponent'
+import DateClicking from '../interactions/DateClicking'
+import DateSelecting from '../interactions/DateSelecting'
 
-let activeCalendars: Calendar[] = []
-let activeComponents: InteractiveDateComponent[] = []
+let componentCnt = 0
+let componentHash = {}
+let listenerHash = {}
 
 export default {
 
-  registerCalendar(calendar: Calendar) {
-    activeCalendars.push(calendar)
-
-    if (activeCalendars.length === 1) {
-      this.bind()
-    }
-  },
-
-  unregisterCalendar(calendar: Calendar) {
-    if (
-      removeExact(activeCalendars, calendar) && // any removed?
-      !activeCalendars.length // no more left
-    ) {
-      this.unbind()
-    }
-  },
+  // TODO: event hovering
 
   registerComponent(component: InteractiveDateComponent) {
-    activeComponents.push(component)
+    componentHash[component.uid] = component
+    componentCnt++
+
+    if (componentCnt === 1) {
+      this.bind()
+    }
+
+    this.bindComponent(component)
   },
 
   unregisterComponent(component: InteractiveDateComponent) {
-    removeExact(activeComponents, component)
+    delete componentHash[component.uid]
+    componentCnt--
+
+    if (componentCnt === 0) {
+      this.unbind()
+    }
+
+    this.unbindComponent(component)
   },
 
   bind() {
-    document.addEventListener('click', this.documentClick = function(ev) {
-      for (let component of activeComponents) {
-        component.buildCoordCaches()
-        let hit = component.queryHit(ev.pageX, ev.pageY)
-        if (hit) {
-          console.log(
-            hit.range.start.toUTCString(),
-            hit.range.end.toUTCString(),
-            hit.isAllDay
-          )
-        }
-      }
-    })
+    this.dateSelector = new DateSelecting(componentHash)
   },
 
   unbind() {
-    document.removeEventListener('click', this.documentClick)
+    this.dateSelector.destroy()
+  },
+
+  bindComponent(component: InteractiveDateComponent) {
+    listenerHash[component.uid] = {
+      dateClicker: new DateClicking(component)
+    }
+  },
+
+  unbindComponent(component: InteractiveDateComponent) {
+    let listeners = listenerHash[component.uid]
+    listeners.dateClicker.destroy()
+    delete listenerHash[component.uid]
   }
 
 }

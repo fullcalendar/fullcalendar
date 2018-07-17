@@ -2,10 +2,10 @@ import DateComponent from './DateComponent'
 import { Selection } from '../reducers/selection'
 import GlobalContext from '../common/GlobalContext'
 
+export type InteractiveDateComponentHash = {
+  [uid: string]: InteractiveDateComponent
+}
 
-/*
-NOTE: still needed for event element clicking and drag initiation
-*/
 export default abstract class InteractiveDateComponent extends DateComponent {
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity

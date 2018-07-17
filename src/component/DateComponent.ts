@@ -107,6 +107,12 @@ export default abstract class DateComponent extends Component {
   }
 
 
+  setElement(el) {
+    el.setAttribute('data-fc-com-uid', this.uid)
+    super.setElement(el)
+  }
+
+
   addChild(child) {
     if (!this.childrenByUid[child.uid]) {
       this.childrenByUid[child.uid] = child

@@ -3,7 +3,6 @@ import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
 import { globalDefaults, rtlDefaults } from './options'
-import GlobalContext from './common/GlobalContext'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import Toolbar from './Toolbar'
 import OptionsManager from './OptionsManager'
@@ -19,7 +18,7 @@ import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import { CalendarState, reduce } from './reducers/main'
-import { parseSelection, SelectionInput } from './reducers/selection'
+import { parseSelection, SelectionInput, Selection } from './reducers/selection'
 import reselector from './util/reselector'
 import { assignTo } from './util/object'
 import { RenderForceFlags } from './component/Component'
@@ -274,8 +273,6 @@ export default class Calendar {
 
 
   bindGlobalHandlers() {
-    GlobalContext.registerCalendar(this)
-
     if (this.opt('handleWindowResize')) {
       window.addEventListener('resize',
         this.windowResizeProxy = debounce( // prevents rapid calls
@@ -287,8 +284,6 @@ export default class Calendar {
   }
 
   unbindGlobalHandlers() {
-    GlobalContext.unregisterCalendar(this)
-
     if (this.windowResizeProxy) {
       window.removeEventListener('resize', this.windowResizeProxy)
       this.windowResizeProxy = null
@@ -361,7 +356,9 @@ export default class Calendar {
         this.publiclyTrigger('loading', [ false, this.view ])
       }
 
-      this.requestRerender()
+      if (oldState !== newState) {
+        this.requestRerender()
+      }
     }
   }
 
@@ -901,14 +898,12 @@ export default class Calendar {
   }
 
 
-  // Selection
+  // Selection / DayClick
   // -----------------------------------------------------------------------------------------------------------------
 
 
   // this public method receives start/end dates in any format, with any timezone
-  //
-  // args were changed
-  //
+  // NOTE: args were changed from v3
   select(dateOrObj: DateInput | object, endDate?: DateInput) {
     let selectionInput: SelectionInput
 
@@ -922,39 +917,68 @@ export default class Calendar {
     }
 
     let selection = parseSelection(selectionInput, this.dateEnv)
-
-    // TODO: use dispatch
-    console.log(selection)
+    if (selection) {
+      this.setSelectionState(selection)
+      this.triggerSelect(selection, this.view)
+    } // otherwise, throw error?
   }
 
 
-  unselect() { // safe to be called before renderView
-    // TODO: use dispatch
+  // public method
+  unselect() {
+    this.clearSelectionState()
+    this.triggerUnselect(this.view)
   }
 
 
-  // External Dragging
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  handlExternalDragStart(ev, el, skipBinding) {
-    if (this.renderedView) {
-      this.renderedView.handlExternalDragStart(ev, el, skipBinding)
-    }
+  setSelectionState(selection) {
+    this.dispatch({
+      type: 'SELECT',
+      selection: selection
+    })
   }
 
 
-  handleExternalDragMove(ev) {
-    if (this.renderedView) {
-      this.renderedView.handleExternalDragMove(ev)
-    }
+  clearSelectionState() {
+    this.dispatch({
+      type: 'UNSELECT'
+    })
   }
 
 
-  handleExternalDragStop(ev) {
-    if (this.renderedView) {
-      this.renderedView.handleExternalDragStop(ev)
-    }
+  // Triggers handlers to 'select'
+  triggerSelect(selection: Selection, view: View, ev?: UIEvent) {
+    this.publiclyTrigger('select', [
+      {
+        start: this.dateEnv.toDate(selection.range.start),
+        end: this.dateEnv.toDate(selection.range.end),
+        isAllDay: selection.isAllDay,
+        jsEvent: ev,
+        view
+      }
+    ])
+  }
+
+
+  triggerUnselect(view, ev?: UIEvent) {
+    this.publiclyTrigger('unselect', [
+      {
+        jsEvent: ev,
+        view
+      }
+    ])
+  }
+
+
+  triggerDayClick(selection: Selection, view: View, ev: UIEvent) {
+    this.publiclyTrigger('dayClick', [
+      {
+        date: this.dateEnv.toDate(selection.range.start),
+        isAllDay: selection.isAllDay,
+        jsEvent: ev,
+        view
+      }
+    ])
   }
 
 
