@@ -3,7 +3,6 @@ export default class BusinessHourRenderer {
 
   component: any
   fillRenderer: any
-  segs: any
 
 
   constructor(component, fillRenderer) {
@@ -27,13 +26,6 @@ export default class BusinessHourRenderer {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('businessHours')
     }
-
-    this.segs = null
-  }
-
-
-  getSegs() {
-    return this.segs || []
   }
 
 }

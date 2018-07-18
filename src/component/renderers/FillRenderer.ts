@@ -7,36 +7,42 @@ export default class FillRenderer { // use for highlight, background events, bus
 
   fillSegTag: string = 'div'
   component: any
-  elsByFill: any // a hash of element sets used for rendering each fill. Keyed by fill name.
+  containerElsByType: any // a hash of element sets used for rendering each fill. Keyed by fill name.
+  renderedSegsByType: any
 
 
   constructor(component) {
     this.component = component
-    this.elsByFill = {}
+    this.containerElsByType = {}
+    this.renderedSegsByType = {}
   }
 
 
   renderSegs(type, segs: Seg[], props) {
-    let els
+    let renderedSegs = this.buildSegEls(type, segs, props) // assignes `.el` to each seg. returns successfully rendered segs
+    let containerEls = this.attachSegEls(type, renderedSegs)
 
-    segs = this.buildSegEls(type, segs, props) // assignes `.el` to each seg. returns successfully rendered segs
-    els = this.attachSegEls(type, segs)
-
-    if (els) {
-      this.reportEls(type, els)
+    if (containerEls) {
+      (this.containerElsByType[type] || (this.containerElsByType[type] = []))
+        .push(...containerEls)
     }
 
-    return segs
+    this.renderedSegsByType[type] = renderedSegs
+
+    return renderedSegs
   }
 
 
   // Unrenders a specific type of fill that is currently rendered on the grid
   unrender(type) {
-    let els = this.elsByFill[type]
-    if (els) {
-      els.forEach(removeElement)
-      delete this.elsByFill[type]
+    let containerEls = this.containerElsByType[type]
+
+    if (containerEls) {
+      containerEls.forEach(removeElement)
+      delete this.containerElsByType[type]
     }
+
+    delete this.renderedSegsByType[type]
   }
 
 
@@ -90,14 +96,21 @@ export default class FillRenderer { // use for highlight, background events, bus
 
 
   // Should return wrapping DOM structure
-  attachSegEls(type, segs: Seg[]) {
+  attachSegEls(type, segs: Seg[]): HTMLElement[] {
     // subclasses must implement
+    return null
   }
 
 
-  reportEls(type, els) {
-    (this.elsByFill[type] || (this.elsByFill[type] = []))
-      .push(...els)
+  getSegs() {
+    let { renderedSegsByType } = this
+    let segs = []
+
+    for (let type in renderedSegsByType) {
+      segs.push(...renderedSegsByType[type])
+    }
+
+    return segs
   }
 
 }

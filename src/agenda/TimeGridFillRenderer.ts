@@ -17,12 +17,19 @@ export default class TimeGridFillRenderer extends FillRenderer {
       containerEls = timeGrid.highlightContainerEls
     }
 
-    timeGrid.updateSegVerticals(segs)
     timeGrid.attachSegsByCol(timeGrid.groupSegsByCol(segs), containerEls)
 
     return segs.map(function(seg) {
       return seg.el
     })
+  }
+
+  computeSizes() {
+    this.component.computeSegVerticals(this.getSegs())
+  }
+
+  assignSizes() {
+    this.component.assignSegVerticals(this.getSegs())
   }
 
 }

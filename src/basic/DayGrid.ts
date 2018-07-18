@@ -740,7 +740,7 @@ export default class DayGrid extends DateComponent {
 
     // force an order because eventsToSegs doesn't guarantee one
     // TODO: research if still needed
-    this.eventRenderer.sortEventSegs(newSegs)
+    newSegs = this.eventRenderer.sortEventSegs(newSegs)
 
     return newSegs
   }

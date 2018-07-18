@@ -13,6 +13,7 @@ Does not own rendering. Use for low-level util methods by TimeGrid.
 export default class TimeGridEventRenderer extends EventRenderer {
 
   timeGrid: any
+  segsByCol: any
 
 
   constructor(timeGrid, fillRenderer) {
@@ -29,16 +30,8 @@ export default class TimeGridEventRenderer extends EventRenderer {
   // Given an array of foreground segments, render a DOM element for each, computes position,
   // and attaches to the column inner-container elements.
   renderFgSegsIntoContainers(segs: Seg[], containerEls) {
-    let segsByCol
-    let col
-
-    segsByCol = this.timeGrid.groupSegsByCol(segs)
-
-    for (col = 0; col < this.timeGrid.colCnt; col++) {
-      this.updateFgSegCoords(segsByCol[col])
-    }
-
-    this.timeGrid.attachSegsByCol(segsByCol, containerEls)
+    this.segsByCol = this.timeGrid.groupSegsByCol(segs)
+    this.timeGrid.attachSegsByCol(this.segsByCol, containerEls)
   }
 
 
@@ -47,6 +40,32 @@ export default class TimeGridEventRenderer extends EventRenderer {
       this.fgSegs.forEach(function(seg) {
         removeElement(seg.el)
       })
+    }
+
+    this.segsByCol = null
+  }
+
+
+  computeFgSizes() {
+    let { timeGrid } = this
+
+    for (let col = 0; col < timeGrid.colCnt; col++) {
+      let segs = this.segsByCol[col]
+
+      timeGrid.computeSegVerticals(segs) // horizontals relies on this
+      this.computeFgSegHorizontals(segs) // compute horizontal coordinates, z-index's, and reorder the array
+    }
+  }
+
+
+  assignFgSizes() {
+    let { timeGrid } = this
+
+    for (let col = 0; col < timeGrid.colCnt; col++) {
+      let segs = this.segsByCol[col]
+
+      timeGrid.assignSegVerticals(segs)
+      this.assignFgSegHorizontals(segs)
     }
   }
 
@@ -145,16 +164,6 @@ export default class TimeGridEventRenderer extends EventRenderer {
   }
 
 
-  // Given segments that are assumed to all live in the *same column*,
-  // compute their verical/horizontal coordinates and assign to their elements.
-  updateFgSegCoords(segs: Seg[]) {
-    this.timeGrid.computeSegVerticals(segs) // horizontals relies on this
-    this.computeFgSegHorizontals(segs) // compute horizontal coordinates, z-index's, and reorder the array
-    this.timeGrid.assignSegVerticals(segs)
-    this.assignFgSegHorizontals(segs)
-  }
-
-
   // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
   // NOTE: Also reorders the given array by date!
   computeFgSegHorizontals(segs: Seg[]) {
@@ -162,7 +171,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
     let level0
     let i
 
-    this.sortEventSegs(segs) // order by certain criteria
+    segs = this.sortEventSegs(segs) // order by certain criteria
     levels = buildSlotSegLevels(segs)
     computeForwardSlotSegs(levels)
 

@@ -414,8 +414,10 @@ export default class EventRenderer {
   }
 
 
-  sortEventSegs(segs) {
+  sortEventSegs(segs): Seg[] {
+    segs = segs.slice() // copy
     segs.sort(this.compareEventSegs.bind(this))
+    return segs
   }
 
 

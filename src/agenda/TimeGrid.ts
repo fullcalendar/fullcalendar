@@ -473,12 +473,13 @@ export default class TimeGrid extends DateComponent {
 
   updateSize(totalHeight, isAuto, isResize) {
     super.updateSize(totalHeight, isAuto, isResize)
-
     this.buildCoordCaches()
 
-    if (isResize) {
-      this.updateSegVerticals(this.eventRenderer.getSegs())
-    }
+    this.eventRenderer.computeFgSizes()
+    this.fillRenderer.computeSizes()
+
+    this.eventRenderer.assignFgSizes()
+    this.fillRenderer.assignSizes()
   }
 
 
@@ -522,14 +523,6 @@ export default class TimeGrid extends DateComponent {
 
     return this.slatCoordCache.getTopPosition(slatIndex) +
       this.slatCoordCache.getHeight(slatIndex) * slatRemainder
-  }
-
-
-  // Refreshes the CSS top/bottom coordinates for each segment element.
-  // Works when called after initial render, after a window resize/zoom for example.
-  updateSegVerticals(segs) {
-    this.computeSegVerticals(segs)
-    this.assignSegVerticals(segs)
   }
 
 
