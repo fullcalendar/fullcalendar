@@ -1,6 +1,5 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
-import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import CoordCache from '../common/CoordCache'
@@ -11,7 +10,7 @@ import TimeGridFillRenderer from './TimeGridFillRenderer'
 import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDurations, asRoughMs } from '../datelib/duration'
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
-import { Seg } from '../component/DateComponent'
+import DateComponent, { Seg } from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
 import { EventStore } from '../reducers/event-store'
 
@@ -29,7 +28,7 @@ const AGENDA_STOCK_SUB_DURATIONS = [
   { seconds: 15 }
 ]
 
-export default class TimeGrid extends InteractiveDateComponent {
+export default class TimeGrid extends DateComponent {
 
   dayDates: DayTableInterface['dayDates']
   daysPerRow: DayTableInterface['daysPerRow']
@@ -39,6 +38,8 @@ export default class TimeGrid extends InteractiveDateComponent {
   renderBgTrHtml: DayTableInterface['renderBgTrHtml']
   bookendCells: DayTableInterface['bookendCells']
   getCellDate: DayTableInterface['getCellDate']
+
+  isInteractable = true
 
   view: any // TODO: make more general and/or remove
   helperRenderer: any

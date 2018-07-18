@@ -1,4 +1,4 @@
-import InteractiveDateComponent from '../component/InteractiveDateComponent'
+import DateComponent from '../component/DateComponent'
 import DateClicking from '../interactions/DateClicking'
 import DateSelecting from '../interactions/DateSelecting'
 import EventClicking from '../interactions/EventClicking'
@@ -11,7 +11,7 @@ export default {
 
   // TODO: event hovering
 
-  registerComponent(component: InteractiveDateComponent) {
+  registerComponent(component: DateComponent) {
     componentHash[component.uid] = component
     componentCnt++
 
@@ -22,7 +22,7 @@ export default {
     this.bindComponent(component)
   },
 
-  unregisterComponent(component: InteractiveDateComponent) {
+  unregisterComponent(component: DateComponent) {
     delete componentHash[component.uid]
     componentCnt--
 
@@ -41,14 +41,14 @@ export default {
     this.dateSelecting.destroy()
   },
 
-  bindComponent(component: InteractiveDateComponent) {
+  bindComponent(component: DateComponent) {
     listenerHash[component.uid] = {
       dateClicking: new DateClicking(component),
       eventClicking: new EventClicking(component)
     }
   },
 
-  unbindComponent(component: InteractiveDateComponent) {
+  unbindComponent(component: DateComponent) {
     let listeners = listenerHash[component.uid]
     listeners.dateClicking.destroy()
     listeners.eventClicking.destroy()

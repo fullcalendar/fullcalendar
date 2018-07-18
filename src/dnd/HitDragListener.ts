@@ -1,11 +1,11 @@
 import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from './PointerDragListener'
 import { default as IntentfulDragListener, IntentfulDragOptions } from './IntentfulDragListener'
-import InteractiveDateComponent from '../component/InteractiveDateComponent'
+import DateComponent from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
 
 export interface Hit extends Selection {
-  component: InteractiveDateComponent
+  component: DateComponent
 }
 
 /*
@@ -17,14 +17,14 @@ fires:
 */
 export default class HitDragListener {
 
-  droppableComponents: InteractiveDateComponent[]
+  droppableComponents: DateComponent[]
   emitter: EmitterMixin
   dragListener: IntentfulDragListener
   initialHit: Hit
   movingHit: Hit
   finalHit: Hit // won't ever be populated if options.ignoreMove is false
 
-  constructor(options: IntentfulDragOptions, droppableComponents: InteractiveDateComponent[]) {
+  constructor(options: IntentfulDragOptions, droppableComponents: DateComponent[]) {
     this.droppableComponents = droppableComponents
     this.emitter = new EmitterMixin()
     this.dragListener = new IntentfulDragListener(options)

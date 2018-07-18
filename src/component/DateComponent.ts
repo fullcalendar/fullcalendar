@@ -1,4 +1,5 @@
 import { attrsToStr, htmlEscape } from '../util/html'
+import { elementClosest } from '../util/dom-manip'
 import { default as Component, RenderForceFlags } from './Component'
 import Calendar from '../Calendar'
 import View from '../View'
@@ -14,6 +15,7 @@ import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
 import { EventInteractionState } from '../reducers/event-interaction'
 import { assignTo } from '../util/object'
+import GlobalContext from '../common/GlobalContext'
 
 
 export interface DateComponentRenderState {
@@ -34,10 +36,21 @@ export interface Seg {
   [otherProp: string]: any
 }
 
+export type DateComponentHash = { [id: string]: DateComponent }
+
+let uid = 0
+
 
 export default abstract class DateComponent extends Component {
 
-  static guid: number = 0 // TODO: better system for this?
+  // self-config, overridable by subclasses
+  isInteractable: boolean = false
+  segSelector: string = '.fc-event-container > *' // what constitutes an event element?
+
+  // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
+  // of the date areas. if not defined, assumes to be day and time granularity.
+  // TODO: port isTimeScale into same system?
+  largeUnit: any
 
   eventRendererClass: any
   helperRendererClass: any
@@ -83,7 +96,7 @@ export default abstract class DateComponent extends Component {
       this['options'] = _options
     }
 
-    this.uid = String(DateComponent.guid++)
+    this.uid = String(uid++)
     this.childrenByUid = {}
 
     this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
@@ -137,6 +150,29 @@ export default abstract class DateComponent extends Component {
 
   updateSize(totalHeight, isAuto, isResize) {
     this.callChildren('updateSize', arguments)
+  }
+
+
+  queryHit(leftOffset, topOffset): Selection {
+    return null // this should be abstract
+  }
+
+
+  buildCoordCaches() {
+  }
+
+
+  bindGlobalHandlers() {
+    if (this.isInteractable) {
+      GlobalContext.registerComponent(this)
+    }
+  }
+
+
+  unbindGlobalHandlers() {
+    if (this.isInteractable) {
+      GlobalContext.unregisterComponent(this)
+    }
   }
 
 
@@ -867,6 +903,20 @@ export default abstract class DateComponent extends Component {
     let dayRange = this.computeDayRange(unzonedRange)
 
     return diffDays(dayRange.start, dayRange.end) > 1
+  }
+
+
+  isValidSegInteraction(evTarget: HTMLElement) {
+    return !elementClosest(evTarget, '.fc-helper') &&
+      !this.dragState &&
+      !this.eventResizeState
+  }
+
+
+  isValidDateInteraction(evTarget: HTMLElement) {
+    return !elementClosest(evTarget, this.segSelector) &&
+      !elementClosest(evTarget, '.fc-more') && // a "more.." link
+      !elementClosest(evTarget, 'a[data-goto]') // a clickable nav link
   }
 
 }

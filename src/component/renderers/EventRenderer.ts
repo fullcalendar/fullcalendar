@@ -438,4 +438,38 @@ export default class EventRenderer {
       )
   }
 
+
+  // Computes if the given event is allowed to be dragged by the user
+  isEventDefDraggable(eventDef) {
+    return this.isEventDefStartEditable(eventDef)
+  }
+
+
+  isEventDefStartEditable(eventDef) {
+    return false // TODO
+  }
+
+
+  isEventDefGenerallyEditable(eventDef) {
+    return false // TODO
+  }
+
+
+  // Computes if the given event is allowed to be resized from its starting edge
+  isEventDefResizableFromStart(eventDef) {
+    return this.opt('eventResizableFromStart') && this.isEventDefResizable(eventDef)
+  }
+
+
+  // Computes if the given event is allowed to be resized from its ending edge
+  isEventDefResizableFromEnd(eventDef) {
+    return this.isEventDefResizable(eventDef)
+  }
+
+
+  // Computes if the given event is allowed to be resized by the user at all
+  isEventDefResizable(eventDef) {
+    return false // TODO
+  }
+
 }

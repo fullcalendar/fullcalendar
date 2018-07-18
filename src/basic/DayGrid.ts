@@ -14,14 +14,13 @@ import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
 import UnzonedRange from '../models/UnzonedRange'
 import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
-import InteractiveDateComponent from '../component/InteractiveDateComponent'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
-import { Seg } from '../component/DateComponent'
+import DateComponent, { Seg } from '../component/DateComponent'
 import { EventStore } from '../reducers/event-store'
 import { Selection } from '../reducers/selection'
 
@@ -32,7 +31,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export default class DayGrid extends InteractiveDateComponent {
+export default class DayGrid extends DateComponent {
 
   rowCnt: DayTableInterface['rowCnt']
   colCnt: DayTableInterface['colCnt']
@@ -47,6 +46,8 @@ export default class DayGrid extends InteractiveDateComponent {
   sliceRangeByDay: DayTableInterface['sliceRangeByDay']
   bookendCells: DayTableInterface['bookendCells']
   breakOnWeeks: DayTableInterface['breakOnWeeks']
+
+  isInteractable = true
 
   view: View // TODO: make more general and/or remove
   helperRenderer: any

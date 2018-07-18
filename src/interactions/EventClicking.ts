@@ -1,12 +1,12 @@
-import InteractiveDateComponent from '../component/InteractiveDateComponent'
+import DateComponent from '../component/DateComponent'
 import { listenBySelector } from '../util/dom-event'
 
 export default class EventClicking {
 
-  component: InteractiveDateComponent
+  component: DateComponent
   destroy: () => void
 
-  constructor(component: InteractiveDateComponent) {
+  constructor(component: DateComponent) {
     this.component = component
     this.destroy = listenBySelector(component.el, 'click', component.segSelector, this.onSegClick)
   }

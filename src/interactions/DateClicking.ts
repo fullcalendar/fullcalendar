@@ -1,13 +1,13 @@
-import InteractiveDateComponent from '../component/InteractiveDateComponent'
+import DateComponent from '../component/DateComponent'
 import HitDragListener, { isHitsEqual } from '../dnd/HitDragListener'
 import { PointerDragEvent } from '../dnd/PointerDragListener'
 
 export default class DateClicking {
 
-  component: InteractiveDateComponent
+  component: DateComponent
   hitListener: HitDragListener
 
-  constructor(component: InteractiveDateComponent) {
+  constructor(component: DateComponent) {
     this.component = component
     this.hitListener = new HitDragListener({
       containerEl: component.el

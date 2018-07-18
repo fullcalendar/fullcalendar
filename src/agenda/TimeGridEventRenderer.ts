@@ -73,9 +73,9 @@ export default class TimeGridEventRenderer extends EventRenderer {
     let eventRange = seg.eventRange
     let eventDef = eventRange.eventDef
     let isAllDay = eventDef.isAllDay
-    let isDraggable = view.isEventDefDraggable(eventDef)
-    let isResizableFromStart = !disableResizing && seg.isStart && view.isEventDefResizableFromStart(eventDef)
-    let isResizableFromEnd = !disableResizing && seg.isEnd && view.isEventDefResizableFromEnd(eventDef)
+    let isDraggable = this.isEventDefDraggable(eventDef)
+    let isResizableFromStart = !disableResizing && seg.isStart && this.isEventDefResizableFromStart(eventDef)
+    let isResizableFromEnd = !disableResizing && seg.isEnd && this.isEventDefResizableFromEnd(eventDef)
     let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
     let skinCss = cssToStr(this.getSkinCss(eventDef))
     let timeText

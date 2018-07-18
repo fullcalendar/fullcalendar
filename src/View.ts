@@ -2,7 +2,7 @@ import { assignTo } from './util/object'
 import { parseFieldSpecs } from './util/misc'
 import Calendar from './Calendar'
 import { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
-import InteractiveDateComponent from './component/InteractiveDateComponent'
+import DateComponent from './component/DateComponent'
 import UnzonedRange from './models/UnzonedRange'
 import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
@@ -13,7 +13,7 @@ import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export default abstract class View extends InteractiveDateComponent {
+export default abstract class View extends DateComponent {
 
   on: EmitterInterface['on']
   one: EmitterInterface['one']

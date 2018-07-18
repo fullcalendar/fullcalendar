@@ -1,6 +1,6 @@
 import { compareNumbers } from '../util/misc'
 import { elementClosest } from '../util/dom-manip'
-import InteractiveDateComponent, { InteractiveDateComponentHash } from '../component/InteractiveDateComponent'
+import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import HitDragListener, { Hit } from '../dnd/HitDragListener'
 import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
@@ -8,15 +8,15 @@ import PointerDragListener, { PointerDragEvent } from '../dnd/PointerDragListene
 
 export default class DateSelecting {
 
-  componentHash: InteractiveDateComponentHash
+  componentHash: DateComponentHash
   pointerListener: PointerDragListener
   hitListener: HitDragListener
-  dragComponent: InteractiveDateComponent
+  dragComponent: DateComponent
   dragSelection: Selection
-  activeComponent: InteractiveDateComponent
+  activeComponent: DateComponent
   activeSelection: Selection
 
-  constructor(componentHash: InteractiveDateComponentHash) {
+  constructor(componentHash: DateComponentHash) {
     this.componentHash = componentHash
     this.pointerListener = new PointerDragListener(
       document as any, // TODO: better
@@ -56,7 +56,7 @@ export default class DateSelecting {
     }
   }
 
-  queryComponent(ev: PointerDragEvent): InteractiveDateComponent {
+  queryComponent(ev: PointerDragEvent): DateComponent {
     let componentEl = elementClosest(
       ev.origEvent.target as any, // TODO: better
       '[data-fc-com-uid]'
@@ -125,7 +125,7 @@ export default class DateSelecting {
     }
   }
 
-  setActiveSelection(component: InteractiveDateComponent, selection: Selection, ev: PointerDragEvent) {
+  setActiveSelection(component: DateComponent, selection: Selection, ev: PointerDragEvent) {
     this.clearActiveSelection(ev)
     this.activeComponent = component
     this.activeSelection = selection
