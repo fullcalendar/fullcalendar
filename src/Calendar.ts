@@ -741,8 +741,7 @@ export default class Calendar {
 
       renderedView.updateSize(
         this.getSuggestedViewHeight(),
-        this.isHeightAuto(),
-        isResize
+        this.isHeightAuto()
       )
 
       this.ignoreUpdateViewSize--

@@ -152,7 +152,7 @@ export default class BasicView extends View {
 
 
   // Refreshes the horizontal dimensions of the view
-  updateSize(totalHeight, isAuto, isResize) {
+  updateSize(totalHeight, isAuto) {
     let { dayGrid } = this
     let eventLimit = this.opt('eventLimit')
     let headRowEl =
@@ -223,7 +223,7 @@ export default class BasicView extends View {
       this.scroller.lockOverflow(scrollbarWidths)
     }
 
-    super.updateSize(totalHeight, isAuto, isResize) // children and now-indicator
+    super.updateSize(totalHeight, isAuto) // children and now-indicator
   }
 
 

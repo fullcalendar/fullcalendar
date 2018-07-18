@@ -148,7 +148,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  updateSize(totalHeight, isAuto, isResize) {
+  updateSize(totalHeight, isAuto) {
     this.callChildren('updateSize', arguments)
   }
 

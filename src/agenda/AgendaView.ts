@@ -224,7 +224,7 @@ export default class AgendaView extends View {
 
 
   // Adjusts the vertical dimensions of the view to the specified values
-  updateSize(totalHeight, isAuto, isResize) {
+  updateSize(totalHeight, isAuto) {
     let eventLimit
     let scrollerHeight
     let scrollbarWidths
@@ -294,7 +294,7 @@ export default class AgendaView extends View {
       }
     }
 
-    super.updateSize(totalHeight, isAuto, isResize) // children and now-indicator
+    super.updateSize(totalHeight, isAuto) // children and now-indicator
   }
 
 
