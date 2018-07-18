@@ -231,6 +231,7 @@ export default class TimeGrid extends DateComponent {
     this.slatEls = findElements(this.slatContainerEl, 'tr')
 
     this.slatCoordCache = new CoordCache({
+      originEl: this.slatContainerEl,
       els: this.slatEls,
       isVertical: true
     })
@@ -308,6 +309,7 @@ export default class TimeGrid extends DateComponent {
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
     this.colCoordCache = new CoordCache({
+      originEl: this.rootBgContainerEl,
       els: this.colEls,
       isHorizontal: true
     })

@@ -136,10 +136,12 @@ export default class DayGrid extends DateComponent {
     this.cellEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
     this.rowCoordCache = new CoordCache({
+      originEl: this.el,
       els: this.rowEls,
       isVertical: true
     })
     this.colCoordCache = new CoordCache({
+      originEl: this.el,
       els: this.cellEls.slice(0, this.colCnt), // only the first row
       isHorizontal: true
     })
