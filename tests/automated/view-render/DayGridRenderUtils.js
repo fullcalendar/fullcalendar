@@ -11,6 +11,10 @@ const DAY_TOP_CLASS = 'fc-day-top'
 const DAY_DISABLED_CLASS  = 'fc-disabled-day'
 const AXIS_CLASS = 'fc-axis'
 const DAY_CLASS = 'fc-day'
+const MORE_CLASS = 'fc-more'
+const HEADER_CLASS = 'fc-header'
+const TITLE_CLASS = 'fc-title'
+const MORE_POPOVER_CLASS = 'fc-more-popover'
 
 export function getDayEl(date) {
   if (typeof date === 'string') {
@@ -19,8 +23,12 @@ export function getDayEl(date) {
   return $(`.${DAY_GRID_CLASS} .${BG_CLASS} .${DAY_CLASS}[data-date="${formatIsoDay(date)}"]`)
 }
 
-export function getDisabledEl(i) {
-  var el = $(`.${DAY_GRID_CLASS} .${BG_CLASS} .${DAY_DISABLED_CLASS}:eq(${i})`)
+export function getDisabledDayEls(){
+  return  $(`.${DAY_GRID_CLASS} .${BG_CLASS} .${DAY_DISABLED_CLASS}`)
+}
+
+export function getDisabledDayElAtIndex(i) {
+  var el = getDisabledDayEls().eq(i)
   expect(el).toHaveLength(1)
   return el
 }
@@ -76,3 +84,16 @@ export function getDayGridDayEl(){
 export function getFirstDayGridDayEl(){
   return getDayGridDayEl().first()
 }
+
+export function getGetMoreEl(){
+  return $(`.${MORE_CLASS}`)
+}
+
+export function getGetMorePopoverEl(){
+  return $(`.${MORE_POPOVER_CLASS}`)
+}
+
+export function getGetMorePopoverElTitleEl(){
+  return getGetMorePopoverEl().find(`.${HEADER_CLASS} .${TITLE_CLASS}`)
+}
+

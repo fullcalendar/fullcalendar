@@ -4,6 +4,7 @@ const TITLE_CLASS = 'fc-title'
 const RESIZER_CLASS = 'fc-resizer'
 const START_CLASS = 'fc-start'
 const END_CLASS = 'fc-end'
+const DAY_CLASS = 'fc-day'
 
 export function expectIsStart(bool) {
   var el = getSingleEl()
@@ -31,6 +32,10 @@ export function getEventElTimeText(el) {
 
 export function getVisibleEventEls() {
   return $(`.${EVENT_CLASS}:visible`)
+}
+
+export function getDayEls(){
+  return $(`.${DAY_CLASS}`)
 }
 
 export function getEventEls() {
@@ -61,4 +66,8 @@ export function getSingleEl() {
 
 export function getEventElTimeEl(el) {
   return el.find(`.${TIME_CLASS}`)
+}
+
+export function getEventElsWithCustomClass(customClass){
+  return $(`.${customClass}`)
 }

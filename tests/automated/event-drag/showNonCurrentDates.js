@@ -18,7 +18,7 @@ describe('showNonCurrentDates event dragging', function() {
       initCalendar()
       return EventDragUtils.drag(
         DayGridRenderUtils.getDayEl('2017-06-08')[0].getBoundingClientRect(),
-        DayGridRenderUtils.getDisabledEl(3)[0].getBoundingClientRect() // the cell before Jun 1
+        DayGridRenderUtils.getDisabledDayElAtIndex(3)[0].getBoundingClientRect() // the cell before Jun 1
       ).then(function(res) {
         expect(res.isSuccess).toBe(false)
       })

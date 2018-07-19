@@ -1,3 +1,5 @@
+import { getEventEls } from '../event-render/EventRenderUtils'
+
 describe('defaultTimedEventDuration', function() {
 
   pushOptions({
@@ -72,7 +74,7 @@ describe('defaultTimedEventDuration', function() {
             }
           ],
           eventAfterAllRender: function() {
-            var eventElms = $('.fc-event', currentCalendar.el)
+            var eventElms = getEventEls()
             var height0 = eventElms.eq(0).outerHeight()
             var height1 = eventElms.eq(1).outerHeight()
             expect(height0).toBeGreaterThan(0)
@@ -109,7 +111,7 @@ describe('defaultTimedEventDuration', function() {
             }
           ],
           eventAfterAllRender: function() {
-            var eventElms = $('.fc-event', currentCalendar.el)
+            var eventElms = getEventEls()
             var width0 = eventElms.eq(0).outerWidth()
             var width1 = eventElms.eq(1).outerWidth()
             expect(width0).toBeGreaterThan(0)
