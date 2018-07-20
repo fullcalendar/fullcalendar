@@ -55,9 +55,7 @@ export default class ListView extends View {
   }
 
 
-  updateSize(totalHeight, isAuto) {
-    super.updateSize(totalHeight, isAuto)
-
+  updateBaseSize(totalHeight, isAuto) {
     this.scroller.clear() // sets height to 'auto' and clears overflow
 
     if (!isAuto) {

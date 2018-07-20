@@ -13,7 +13,6 @@ import View from '../View'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
 import UnzonedRange from '../models/UnzonedRange'
-import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
@@ -285,16 +284,6 @@ export default class DayGrid extends DateComponent {
     html += '</td>'
 
     return html
-  }
-
-
-  /* Sizing
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  updateSize(totalHeight, isAuto) {
-    super.updateSize(totalHeight, isAuto)
-    this.buildCoordCaches()
   }
 
 
@@ -780,7 +769,6 @@ export default class DayGrid extends DateComponent {
 }
 
 DayGrid.prototype.eventRendererClass = DayGridEventRenderer
-DayGrid.prototype.businessHourRendererClass = BusinessHourRenderer
 DayGrid.prototype.helperRendererClass = DayGridHelperRenderer
 DayGrid.prototype.fillRendererClass = DayGridFillRenderer
 

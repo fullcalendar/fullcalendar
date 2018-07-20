@@ -1,6 +1,5 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
-import BusinessHourRenderer from '../component/renderers/BusinessHourRenderer'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import CoordCache from '../common/CoordCache'
 import UnzonedRange from '../models/UnzonedRange'
@@ -471,18 +470,6 @@ export default class TimeGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(totalHeight, isAuto) {
-    super.updateSize(totalHeight, isAuto)
-    this.buildCoordCaches()
-
-    this.eventRenderer.computeFgSizes()
-    this.fillRenderer.computeSizes()
-
-    this.eventRenderer.assignFgSizes()
-    this.fillRenderer.assignSizes()
-  }
-
-
   getTotalSlatHeight() {
     return this.slatContainerEl.offsetHeight
   }
@@ -688,7 +675,6 @@ export default class TimeGrid extends DateComponent {
 }
 
 TimeGrid.prototype.eventRendererClass = TimeGridEventRenderer
-TimeGrid.prototype.businessHourRendererClass = BusinessHourRenderer
 TimeGrid.prototype.helperRendererClass = TimeGridHelperRenderer
 TimeGrid.prototype.fillRendererClass = TimeGridFillRenderer
 

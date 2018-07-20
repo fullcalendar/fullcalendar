@@ -224,7 +224,7 @@ export default class AgendaView extends View {
 
 
   // Adjusts the vertical dimensions of the view to the specified values
-  updateSize(totalHeight, isAuto) {
+  updateBaseSize(totalHeight, isAuto) {
     let eventLimit
     let scrollerHeight
     let scrollbarWidths
@@ -293,8 +293,6 @@ export default class AgendaView extends View {
         this.timeGrid.bottomRuleEl.style.display = ''
       }
     }
-
-    super.updateSize(totalHeight, isAuto) // children and now-indicator
   }
 
 

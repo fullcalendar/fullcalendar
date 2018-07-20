@@ -54,7 +54,6 @@ export default abstract class DateComponent extends Component {
 
   eventRendererClass: any
   helperRendererClass: any
-  businessHourRendererClass: any
   fillRendererClass: any
 
   uid: any
@@ -65,18 +64,13 @@ export default abstract class DateComponent extends Component {
 
   eventRenderer: any
   helperRenderer: any
-  businessHourRenderer: any
   fillRenderer: any
 
   hasAllDayBusinessHours: boolean = false // TODO: unify with largeUnit and isTimeScale?
 
-  isSkeletonRendered: boolean = false
-  isDatesRendered: boolean = false
-  isBusinessHoursRendered: boolean = false
-  isSelectionRendered: boolean = false
-  isEventsRendered: boolean = false
-  isDragRendered: boolean = false
-  isEventResizeRendered: boolean = false
+  renderedFlags: any = {}
+  dirtySizeFlags: any = {}
+
   dateProfile: DateProfile
   businessHoursDef: BusinessHourDef
   selection: Selection
@@ -113,10 +107,6 @@ export default abstract class DateComponent extends Component {
     if (this.helperRendererClass && this.eventRenderer) {
       this.helperRenderer = new this.helperRendererClass(this, this.eventRenderer)
     }
-
-    if (this.businessHourRendererClass && this.fillRenderer) {
-      this.businessHourRenderer = new this.businessHourRendererClass(this, this.fillRenderer)
-    }
   }
 
 
@@ -148,8 +138,46 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  updateSize(totalHeight, isAuto) {
-    this.callChildren('updateSize', arguments)
+  updateSize(totalHeight, isAuto, force) {
+    let flags = this.dirtySizeFlags
+
+    if (force || flags.skeleton || flags.dates) {
+      this.updateBaseSize(totalHeight, isAuto)
+    }
+
+    this.buildCoordCaches() // do this every time?
+
+    if (force || flags.businessHours) {
+      this.computeBusinessHoursSize()
+    }
+
+    // don't worry about updating the resize of the helper
+    if (force || flags.selection || flags.drag || flags.eventResize) {
+      this.computeHighlightSize()
+    }
+
+    if (force || flags.events) {
+      this.computeEventsSize()
+    }
+
+    if (force || flags.businessHours) {
+      this.assignBusinessHoursSize()
+    }
+
+    if (force || flags.selection || flags.drag || flags.eventResize) {
+      this.assignHighlightSize()
+    }
+
+    if (force || flags.events) {
+      this.assignEventsSize()
+    }
+
+    this.dirtySizeFlags = {}
+    this.callChildren('updateSize', arguments) // always do this at end?
+  }
+
+
+  updateBaseSize(totalHeight, isAuto) {
   }
 
 
@@ -245,94 +273,146 @@ export default abstract class DateComponent extends Component {
 
 
   render(renderState: DateComponentRenderState, forceFlags: RenderForceFlags) {
-
-    let isSkeletonDirty = forceFlags === true
-    let isDatesDirty = forceFlags === true ||
-      isSkeletonDirty ||
-      renderState.dateProfile !== this.dateProfile
-    let isBusinessHoursDirty = forceFlags === true ||
-      isDatesDirty ||
-      renderState.businessHoursDef !== this.businessHoursDef
-    let isSelectionDirty = forceFlags === true ||
-      isDatesDirty ||
-      renderState.selection !== this.selection
-    let isEventsDirty = forceFlags === true || forceFlags.events ||
-      isDatesDirty ||
-      renderState.eventStore !== this.eventStore
-    let isDragDirty = forceFlags === true ||
-      isDatesDirty ||
-      renderState.dragState !== this.dragState
-    let isEventResizeDirty = forceFlags === true ||
-      isDatesDirty ||
-      renderState.eventResizeState !== this.eventResizeState
-
-    // unrendering
-    if (isEventResizeDirty && this.isEventResizeRendered) {
-      this.unrenderEventResizeState()
-      this.isEventResizeRendered = false
-    }
-    if (isDragDirty && this.isDragRendered) {
-      this.unrenderDragState()
-      this.isDragRendered = false
-    }
-    if (isEventsDirty && this.isEventsRendered) {
-      this.unrenderEvents()
-      this.isEventsRendered = false
-    }
-    if (isSelectionDirty && this.isSelectionRendered) {
-      this.unrenderSelection()
-      this.isSelectionRendered = false
-    }
-    if (isBusinessHoursDirty && this.isBusinessHoursRendered) {
-      this.unrenderBusinessHours()
-      this.isBusinessHoursRendered = false
-    }
-    if (isDatesDirty && this.isDatesRendered) {
-      this.unrenderDates()
-      this.isDatesRendered = false
-    }
-    if (isSkeletonDirty && this.isSkeletonRendered) {
-      this.unrenderSkeleton()
-      this.isSkeletonRendered = false
+    let { renderedFlags } = this
+    let dirtyFlags = {
+      skeleton: false,
+      dates: renderState.dateProfile !== this.dateProfile,
+      businessHours: renderState.businessHoursDef !== this.businessHoursDef,
+      selection: renderState.selection !== this.selection,
+      events: renderState.eventStore !== this.eventStore,
+      selectedEvent: renderState.selectedEventInstanceId !== this.selectedEventInstanceId,
+      drag: renderState.dragState !== this.dragState,
+      eventResize: renderState.eventResizeState !== this.eventResizeState
     }
 
-    assignTo(this, renderState)
+    assignTo(dirtyFlags, forceFlags)
 
-    // rendering
-    if ((isSkeletonDirty || !this.isSkeletonRendered) || !this.isSkeletonRendered) {
-      this.renderSkeleton()
-      this.isSkeletonRendered = true
-    }
-    if ((isDatesDirty || !this.isDatesRendered) && renderState.dateProfile) {
-      this.renderDates() // pass in dateProfile too?
-      this.isDatesRendered = true
-    }
-    if ((isBusinessHoursDirty || !this.isBusinessHoursRendered) && renderState.businessHoursDef && this.isDatesRendered) {
-      this.renderBusinessHours(renderState.businessHoursDef)
-      this.isBusinessHoursRendered = true
-    }
-    if ((isSelectionDirty || !this.isSelectionRendered) && renderState.selection && this.isDatesRendered) {
-      this.renderSelection(renderState.selection)
-      this.isSelectionRendered = true
-    }
-    if ((isEventsDirty || !this.isEventsRendered) && renderState.eventStore && this.isDatesRendered) {
-      this.renderEvents(renderState.eventStore)
-      this.isEventsRendered = true
-    }
-    if ((isDragDirty || !this.isDragRendered) && renderState.dragState && this.isDatesRendered) {
-      let { dragState } = renderState
-      this.renderDragState(dragState)
-      this.isDragRendered = true
-    }
-    if ((isEventResizeDirty || !this.isEventResizeRendered) && renderState.eventResizeState && this.isDatesRendered) {
-      let { eventResizeState } = renderState
-      this.renderEventResizeState(eventResizeState)
-      this.isEventResizeRendered = true
+    if (forceFlags === true) {
+      // everthing must be marked as dirty when doing a forced resize
+      for (let name in dirtyFlags) {
+        dirtyFlags[name] = true
+      }
+    } else {
+
+      // mark things that are still not rendered as dirty
+      for (let name in dirtyFlags) {
+        if (!renderedFlags[name]) {
+          dirtyFlags[name] = true
+        }
+      }
+
+      // when the dates are dirty, mark nearly everything else as dirty too
+      if (dirtyFlags.dates) {
+        for (let name in dirtyFlags) {
+          if (name !== 'skeleton') {
+            forceFlags = true
+          }
+        }
+      }
     }
 
-    this.updateSelectedEventInstance(renderState.selectedEventInstanceId)
-
+    this.unrender(dirtyFlags) // only unrender dirty things
+    assignTo(this, renderState) // assign incoming state to local state
+    this.renderByFlag(renderState, dirtyFlags) // only render dirty things
     this.renderChildren(renderState, forceFlags)
+  }
+
+
+  renderByFlag(renderState: DateComponentRenderState, flags) {
+    let { renderedFlags, dirtySizeFlags } = this
+
+    if (flags.skeleton) {
+      this.renderSkeleton()
+      renderedFlags.skeleton = true
+      dirtySizeFlags.skeleton = true
+    }
+
+    if (flags.dates && renderState.dateProfile) {
+      this.renderDates() // pass in dateProfile too?
+      renderedFlags.dates = true
+      dirtySizeFlags.dates = true
+    }
+
+    if (flags.businessHours && renderState.businessHoursDef) {
+      this.renderBusinessHours(renderState.businessHoursDef)
+      renderedFlags.businessHours = true
+      dirtySizeFlags.businessHours = true
+    }
+
+    if (flags.selection && renderState.selection) {
+      this.renderSelection(renderState.selection)
+      renderedFlags.selection = true
+      dirtySizeFlags.selection = true
+    }
+
+    if (flags.events && renderState.eventStore) {
+      this.renderEvents(renderState.eventStore)
+      renderedFlags.events = true
+      dirtySizeFlags.events = true
+    }
+
+    if (flags.selectedEvent) {
+      this.selectEventsByInstanceId(renderState.selectedEventInstanceId)
+      renderedFlags.selectedEvent = true
+      dirtySizeFlags.selectedEvent = true
+    }
+
+    if (flags.drag && renderState.dragState) {
+      this.renderDragState(renderState.dragState)
+      renderedFlags.drag = true
+      dirtySizeFlags.drag = true
+    }
+
+    if (flags.eventResize && renderState.eventResizeState) {
+      this.renderEventResizeState(renderState.eventResizeState)
+      renderedFlags.eventResize = true
+      dirtySizeFlags.eventResize = true
+    }
+  }
+
+
+  unrender(flags?: any) {
+    let { renderedFlags } = this
+
+    if ((!flags || flags.eventResize) && renderedFlags.eventResize) {
+      this.unrenderEventResize()
+      renderedFlags.eventResize = false
+    }
+
+    if ((!flags || flags.drag) && renderedFlags.drag) {
+      this.unrenderDragState()
+      renderedFlags.drag = false
+    }
+
+    if ((!flags || flags.selectedEvent) && renderedFlags.selectedEvent) {
+      this.unselectAllEvents()
+      renderedFlags.selectedEvent = false
+    }
+
+    if ((!flags || flags.events) && renderedFlags.events) {
+      this.unrenderEvents()
+      renderedFlags.events = false
+    }
+
+    if ((!flags || flags.selection) && renderedFlags.selection) {
+      this.unrenderSelection()
+      renderedFlags.selection = false
+    }
+
+    if ((!flags || flags.businessHours) && renderedFlags.businessHours) {
+      this.unrenderBusinessHours()
+      renderedFlags.businessHours = false
+    }
+
+    if ((!flags || flags.dates) && renderedFlags.dates) {
+      this.unrenderDates()
+      renderedFlags.dates = false
+    }
+
+    if ((!flags || flags.skeleton) && renderedFlags.skeleton) {
+      this.unrenderSkeleton()
+      renderedFlags.skeleton = false
+    }
   }
 
 
@@ -342,37 +422,8 @@ export default abstract class DateComponent extends Component {
 
 
   removeElement() {
-    this.updateSelectedEventInstance()
-
-    if (this.isEventResizeRendered) {
-      this.unrenderEventResizeState()
-      this.isEventResizeRendered = false
-    }
-    if (this.isDragRendered) {
-      this.unrenderDragState()
-      this.isDragRendered = false
-    }
-    if (this.isEventsRendered) {
-      this.unrenderEvents()
-      this.isEventsRendered = false
-    }
-    if (this.isSelectionRendered) {
-      this.unrenderSelection()
-      this.isSelectionRendered = false
-    }
-    if (this.isBusinessHoursRendered) {
-      this.unrenderBusinessHours()
-      this.isBusinessHoursRendered = false
-    }
-    if (this.isDatesRendered) {
-      this.unrenderDates()
-      this.isDatesRendered = false
-    }
-    if (this.isSkeletonRendered) {
-      this.unrenderSkeleton()
-      this.isSkeletonRendered = false
-    }
-
+    this.unrender()
+    this.dirtySizeFlags = {}
     super.removeElement()
   }
 
@@ -435,8 +486,9 @@ export default abstract class DateComponent extends Component {
 
 
   renderBusinessHours(businessHoursDef: BusinessHourDef) {
-    if (this.businessHourRenderer) {
-      this.businessHourRenderer.renderSegs(
+    if (this.fillRenderer) {
+      this.fillRenderer.renderSegs(
+        'businessHours',
         this.eventStoreToSegs(
           buildBusinessHourEventStore(
             businessHoursDef,
@@ -444,7 +496,12 @@ export default abstract class DateComponent extends Component {
             this.dateProfile.activeUnzonedRange,
             this.getCalendar()
           )
-        )
+        ),
+        {
+          getClasses(seg) {
+            return [ 'fc-bgevent' ].concat(seg.eventRange.eventDef.className)
+          }
+        }
       )
     }
   }
@@ -452,8 +509,22 @@ export default abstract class DateComponent extends Component {
 
   // Unrenders previously-rendered business-hours
   unrenderBusinessHours() {
-    if (this.businessHourRenderer) {
-      this.businessHourRenderer.unrender()
+    if (this.fillRenderer) {
+      this.fillRenderer.unrender('businessHours')
+    }
+  }
+
+
+  computeBusinessHoursSize() {
+    if (this.fillRenderer) {
+      this.fillRenderer.computeSize('businessHours')
+    }
+  }
+
+
+  assignBusinessHoursSize() {
+    if (this.fillRenderer) {
+      this.fillRenderer.assignSize('businessHours')
     }
   }
 
@@ -481,6 +552,20 @@ export default abstract class DateComponent extends Component {
   }
 
 
+  computeEventsSize() {
+    if (this.eventRenderer) {
+      this.eventRenderer.computeFgSize()
+    }
+  }
+
+
+  assignEventsSize() {
+    if (this.eventRenderer) {
+      this.eventRenderer.assignFgSize()
+    }
+  }
+
+
   // Drag-n-Drop Rendering (for both events and external elements)
   // ---------------------------------------------------------------------------------------------------------------
 
@@ -502,7 +587,6 @@ export default abstract class DateComponent extends Component {
   // Must return elements used for any mock events.
   renderDrag(eventStore: EventStore, origSeg?, isTouch = false) {
     // subclasses can implement
-    // TODO: how to determine if just one child rendered the drag so we don't have to render the helper?
   }
 
 
@@ -599,19 +683,6 @@ export default abstract class DateComponent extends Component {
   // TODO: show/hide according to groupId?
 
 
-  updateSelectedEventInstance(instanceId?) {
-    if (this.selectedEventInstanceId && this.selectedEventInstanceId !== instanceId) {
-      this.unselectAllEvents()
-      this.selectEventsByInstanceId = null
-    }
-
-    if (instanceId && !this.selectedEventInstanceId) {
-      this.selectEventsByInstanceId(instanceId)
-      this.selectedEventInstanceId = instanceId
-    }
-  }
-
-
   selectEventsByInstanceId(instanceId) {
     this.getAllEventSegs().forEach(function(seg) {
       if (
@@ -690,6 +761,20 @@ export default abstract class DateComponent extends Component {
   unrenderHighlight() {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('highlight')
+    }
+  }
+
+
+  computeHighlightSize() {
+    if (this.fillRenderer) {
+      this.fillRenderer.computeSize('highlight')
+    }
+  }
+
+
+  assignHighlightSize() {
+    if (this.fillRenderer) {
+      this.fillRenderer.assignSize('highlight')
     }
   }
 

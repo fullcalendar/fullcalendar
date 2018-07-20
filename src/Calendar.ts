@@ -124,7 +124,7 @@ export default class Calendar {
     } else if (this.elementVisible()) {
       // mainly for the public API
       this.calcSize()
-      this.updateViewSize()
+      this.updateViewSize(true) // force=true
     }
   }
 
@@ -441,7 +441,7 @@ export default class Calendar {
 
     if (optionCnt === 1) {
       if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
-        this.updateViewSize(true) // isResize=true
+        this.updateViewSize(true) // force=true
         return
       } else if (optionName === 'defaultDate') {
         return // can't change date this way. use gotoDate instead
@@ -726,13 +726,13 @@ export default class Calendar {
   }
 
 
-  updateViewSize(isResize: boolean = false) {
+  updateViewSize(force: boolean = false) {
     let { renderedView } = this
     let scroll
 
     if (!this.ignoreUpdateViewSize && renderedView) {
 
-      if (isResize) {
+      if (force) {
         this.calcSize()
         scroll = renderedView.queryScroll()
       }
@@ -741,12 +741,13 @@ export default class Calendar {
 
       renderedView.updateSize(
         this.getSuggestedViewHeight(),
-        this.isHeightAuto()
+        this.isHeightAuto(),
+        force
       )
 
       this.ignoreUpdateViewSize--
 
-      if (isResize) {
+      if (force) {
         renderedView.applyScroll(scroll)
       }
 
@@ -796,9 +797,9 @@ export default class Calendar {
       // cast to any because .target, which is Element, can't be compared to window for some reason.
       (ev as any).target === window &&
       this.renderedView &&
-      this.renderedView.isDatesRendered
+      this.renderedView.renderedFlags.dates
     ) {
-      if (this.updateViewSize(true)) { // isResize=true, returns true on success
+      if (this.updateViewSize(true)) { // force=true, returns true on success
         this.publiclyTrigger('windowResize', [ this.renderedView ])
       }
     }

@@ -474,4 +474,12 @@ export default class EventRenderer {
     return false // TODO
   }
 
+
+  computeFgSize() {
+  }
+
+
+  assignFgSize() {
+  }
+
 }

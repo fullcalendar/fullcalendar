@@ -46,7 +46,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
   }
 
 
-  computeFgSizes() {
+  computeFgSize() {
     let { timeGrid } = this
 
     for (let col = 0; col < timeGrid.colCnt; col++) {
@@ -58,7 +58,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
   }
 
 
-  assignFgSizes() {
+  assignFgSize() {
     let { timeGrid } = this
 
     for (let col = 0; col < timeGrid.colCnt; col++) {

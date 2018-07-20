@@ -102,15 +102,10 @@ export default class FillRenderer { // use for highlight, background events, bus
   }
 
 
-  getSegs() {
-    let { renderedSegsByType } = this
-    let segs = []
+  computeSize(type: string) {
+  }
 
-    for (let type in renderedSegsByType) {
-      segs.push(...renderedSegsByType[type])
-    }
-
-    return segs
+  assignSize(type: string) {
   }
 
 }

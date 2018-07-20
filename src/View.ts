@@ -268,7 +268,7 @@ export default abstract class View extends DateComponent {
   // since the initial getNow call.
   updateNowIndicator() {
     if (
-      this.isDatesRendered &&
+      this.renderedFlags.dates &&
       this.initialNowDate // activated before?
     ) {
       this.unrenderNowIndicator() // won't unrender if unnecessary
@@ -304,8 +304,8 @@ export default abstract class View extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(totalHeight, isAuto) {
-    super.updateSize(totalHeight, isAuto)
+  updateSize(totalHeight, isAuto, force) {
+    super.updateSize(totalHeight, isAuto, force)
     this.updateNowIndicator()
   }
 
@@ -335,7 +335,7 @@ export default abstract class View extends DateComponent {
   queryScroll() {
     let scroll = {}
 
-    if (this.isDatesRendered) {
+    if (this.renderedFlags.dates) {
       assignTo(scroll, this.queryDateScroll())
     }
 
@@ -344,11 +344,11 @@ export default abstract class View extends DateComponent {
 
 
   applyScroll(scroll) {
-    if (scroll.isDateInit && this.isDatesRendered) {
+    if (scroll.isDateInit && this.renderedFlags.dates) {
       assignTo(scroll, this.computeInitialDateScroll())
     }
 
-    if (this.isDatesRendered) {
+    if (this.renderedFlags.dates) {
       this.applyDateScroll(scroll)
     }
   }
