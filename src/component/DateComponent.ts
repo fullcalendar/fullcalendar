@@ -24,8 +24,8 @@ export interface DateComponentRenderState {
   selection: Selection | null
   dragState: EventInteractionState | null
   eventResizeState: EventInteractionState | null
-  businessHoursDef: BusinessHourDef
-  selectedEventInstanceId: string
+  businessHoursDef: BusinessHourDef // BusinessHourDef's `false` is the empty state
+  selectedEventInstanceId: string | null
 }
 
 export interface Seg {
@@ -71,14 +71,14 @@ export default abstract class DateComponent extends Component {
   renderedFlags: any = {}
   dirtySizeFlags: any = {}
 
-  dateProfile: DateProfile
-  businessHoursDef: BusinessHourDef
-  selection: Selection
-  eventStore: EventStore
-  dragState: EventInteractionState
-  eventResizeState: EventInteractionState
-  interactingEventDefId: string
-  selectedEventInstanceId: string
+  dateProfile: DateProfile = null
+  businessHoursDef: BusinessHourDef = false
+  selection: Selection = null
+  eventStore: EventStore = null
+  dragState: EventInteractionState = null
+  eventResizeState: EventInteractionState = null
+  interactingEventDefId: string = null
+  selectedEventInstanceId: string = null
 
 
   constructor(_view, _options?) {
@@ -141,11 +141,12 @@ export default abstract class DateComponent extends Component {
   updateSize(totalHeight, isAuto, force) {
     let flags = this.dirtySizeFlags
 
-    if (force || flags.skeleton || flags.dates) {
+    if (force || flags.skeleton || flags.dates || flags.events) {
+      // sort of the catch-all sizing
+      // anything that might cause dimension changes
       this.updateBaseSize(totalHeight, isAuto)
+      this.buildCoordCaches()
     }
-
-    this.buildCoordCaches() // do this every time?
 
     if (force || flags.businessHours) {
       this.computeBusinessHoursSize()
@@ -181,12 +182,12 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  queryHit(leftOffset, topOffset): Selection {
-    return null // this should be abstract
+  buildCoordCaches() {
   }
 
 
-  buildCoordCaches() {
+  queryHit(leftOffset, topOffset): Selection {
+    return null // this should be abstract
   }
 
 
