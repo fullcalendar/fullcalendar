@@ -992,9 +992,9 @@ export default abstract class DateComponent extends Component {
 
 
   isValidSegInteraction(evTarget: HTMLElement) {
-    return !elementClosest(evTarget, '.fc-helper') &&
-      !this.dragState &&
-      !this.eventResizeState
+    return !this.dragState &&
+      !this.eventResizeState &&
+      !elementClosest(evTarget, '.fc-helper')
   }
 
 

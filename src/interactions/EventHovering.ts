@@ -1,37 +1,33 @@
 import DateComponent from '../component/DateComponent'
-import { listenBySelector } from '../util/dom-event'
+import { listenToHoverBySelector } from '../util/dom-event'
 
-export default class EventClicking {
+export default class EventHovering {
 
   component: DateComponent
   destroy: () => void
 
   constructor(component: DateComponent) {
     this.component = component
-    this.destroy = listenBySelector(
+    this.destroy = listenToHoverBySelector(
       component.el,
-      'click',
       component.segSelector,
-      this.onSegClick
+      this.handleSegEv.bind(this, 'eventMouseover'),
+      this.handleSegEv.bind(this, 'eventMouseout')
     )
   }
 
-  onSegClick = (ev: UIEvent, segEl: HTMLElement) => {
+  handleSegEv(triggerType: string, ev: UIEvent, segEl: HTMLElement) {
     let { component } = this
     let seg = (segEl as any).fcSeg // put there by EventRenderer
 
     if (component.isValidSegInteraction(segEl as HTMLElement)) {
-      let res = component.publiclyTrigger('eventClick', [ // can return `false` to cancel
+      component.publiclyTrigger(triggerType, [
         {
           event: seg.eventRange.eventInstance, // TODO: correct arg!
           jsEvent: ev,
           view: component.view
         }
       ])
-
-      if (res === false) {
-        ev.preventDefault() // don't visit link
-      }
     }
   }
 
