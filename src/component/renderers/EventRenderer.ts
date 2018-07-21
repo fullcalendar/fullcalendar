@@ -147,7 +147,7 @@ export default class EventRenderer {
 
   // Renders and assigns an `el` property for each foreground event segment.
   // Only returns segments that successfully rendered.
-  renderFgSegEls(segs: Seg[], disableResizing= false) {
+  renderFgSegEls(segs: Seg[]) {
     let hasEventRenderHandlers = this.view.hasPublicHandlers('eventRender')
     let html = ''
     let renderedSegs = []
@@ -157,7 +157,7 @@ export default class EventRenderer {
 
       // build a large concatenation of event segment HTML
       for (i = 0; i < segs.length; i++) {
-        html += this.fgSegHtml(segs[i], disableResizing)
+        html += this.fgSegHtml(segs[i])
       }
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -182,7 +182,7 @@ export default class EventRenderer {
 
 
   // Generates the HTML for the default rendering of a foreground event segment. Used by renderFgSegEls()
-  fgSegHtml(seg: Seg, disableResizing) {
+  fgSegHtml(seg: Seg) {
     // subclasses should implement
   }
 

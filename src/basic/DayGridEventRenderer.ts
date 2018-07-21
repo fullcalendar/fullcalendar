@@ -236,15 +236,13 @@ export default class DayGridEventRenderer extends EventRenderer {
 
 
   // Builds the HTML to be used for the default element for an individual segment
-  fgSegHtml(seg: Seg, disableResizing) {
+  fgSegHtml(seg: Seg) {
     let eventRange = seg.eventRange
     let eventDef = eventRange.eventDef
     let isAllDay = eventDef.isAllDay
     let isDraggable = this.isEventDefDraggable(eventDef)
-    let isResizableFromStart = !disableResizing && isAllDay &&
-      seg.isStart && this.isEventDefResizableFromStart(eventDef)
-    let isResizableFromEnd = !disableResizing && isAllDay &&
-      seg.isEnd && this.isEventDefResizableFromEnd(eventDef)
+    let isResizableFromStart = isAllDay && seg.isStart && this.isEventDefResizableFromStart(eventDef)
+    let isResizableFromEnd = isAllDay && seg.isEnd && this.isEventDefResizableFromEnd(eventDef)
     let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
     let skinCss = cssToStr(this.getSkinCss(eventDef))
     let timeHtml = ''
