@@ -51,7 +51,7 @@ export function computeEdges(el, getPadding = false): EdgeInfo {
 
 
 export function computeInnerRect(el, goWithinPadding = false) {
-  let outerRect = el.getBoundingClientRect()
+  let outerRect = computeRect(el)
   let edges = computeEdges(el, goWithinPadding)
   let res = {
     left: outerRect.left + edges.borderLeft + edges.scrollbarLeft,
@@ -68,6 +68,28 @@ export function computeInnerRect(el, goWithinPadding = false) {
   }
 
   return res
+}
+
+
+export function computeRect(el) {
+  let rect = el.getBoundingClientRect()
+
+  return {
+    left: rect.left + window.scrollX,
+    top: rect.top + window.scrollY,
+    right: rect.right + window.scrollX,
+    bottom: rect.bottom + window.scrollY
+  }
+}
+
+
+export function computeViewportRect() {
+  return {
+    top: window.scrollY,
+    left: window.scrollX,
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight
+  }
 }
 
 

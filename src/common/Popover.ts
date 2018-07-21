@@ -15,7 +15,7 @@ Options:
 
 import { ElementContent, removeElement, createElement, applyStyle } from '../util/dom-manip'
 import { listenBySelector } from '../util/dom-event'
-import { getScrollParent } from '../util/dom-geom'
+import { getScrollParent, computeRect, computeViewportRect } from '../util/dom-geom'
 
 export interface PopoverOptions {
   className?: string
@@ -115,7 +115,8 @@ export default class Popover {
   position() {
     let options = this.options
     let el = this.el
-    let rect = el.getBoundingClientRect()
+    let elDims = el.getBoundingClientRect() // only used for width,height
+    let origin = computeRect(el.offsetParent)
     let scrollEl = getScrollParent(el)
     let viewportRect
     let top // the "position" (not "offset") values for the popover
@@ -126,33 +127,28 @@ export default class Popover {
     if (options.left !== undefined) {
       left = options.left
     } else if (options.right !== undefined) {
-      left = options.right - rect.width // derive the left value from the right value
+      left = options.right - elDims.width // derive the left value from the right value
     } else {
       left = 0
     }
 
     if (scrollEl) {
-      viewportRect = scrollEl.getBoundingClientRect()
+      viewportRect = computeRect(scrollEl)
     } else {
-      viewportRect = {
-        top: 0,
-        left: 0,
-        width: document.documentElement.clientWidth,
-        height: document.documentElement.clientHeight
-      }
+      viewportRect = computeViewportRect()
     }
 
     // constrain to the view port. if constrained by two edges, give precedence to top/left
     if (options.viewportConstrain !== false) {
-      top = Math.min(top, viewportRect.top + viewportRect.height - rect.height - this.margin)
+      top = Math.min(top, viewportRect.top + viewportRect.height - elDims.height - this.margin)
       top = Math.max(top, viewportRect.top + this.margin)
-      left = Math.min(left, viewportRect.left + viewportRect.width - rect.width - this.margin)
+      left = Math.min(left, viewportRect.left + viewportRect.width - elDims.width - this.margin)
       left = Math.max(left, viewportRect.left + this.margin)
     }
 
     applyStyle(el, {
-      top: top - rect.top,
-      left: left - rect.left
+      top: top - origin.top,
+      left: left - origin.left
     })
   }
 
@@ -160,6 +156,7 @@ export default class Popover {
   // Triggers a callback. Calls a function in the option hash of the same name.
   // Arguments beyond the first `name` are forwarded on.
   // TODO: better code reuse for this. Repeat code
+  // can kill this???
   trigger(name) {
     if (this.options[name]) {
       this.options[name].apply(this, Array.prototype.slice.call(arguments, 1))

@@ -9,6 +9,7 @@ import {
   removeElement,
   ElementContent
 } from '../util/dom-manip'
+import { computeRect } from '../util/dom-geom'
 import View from '../View'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
@@ -430,7 +431,7 @@ export default class DayGrid extends DateComponent {
   // `row` is the row number.
   computeRowLevelLimit(row): (number | false) {
     let rowEl = this.rowEls[row] // the containing "fake" row div
-    let rowBottom = rowEl.getBoundingClientRect().bottom
+    let rowBottom = rowEl.getBoundingClientRect().bottom // relative to viewport!
     let trEls = findChildren(this.eventRenderer.rowStructs[row].tbodyEl) as HTMLTableRowElement[]
     let i
     let trEl: HTMLTableRowElement
@@ -627,7 +628,7 @@ export default class DayGrid extends DateComponent {
       className: 'fc-more-popover ' + view.calendar.theme.getClass('popover'),
       content: this.renderSegPopoverContent(row, col, segs),
       parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
-      top: topEl.getBoundingClientRect().top,
+      top: computeRect(topEl).top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       viewportConstrain: this.opt('popoverViewportConstrain'),
       hide: () => {
@@ -645,9 +646,9 @@ export default class DayGrid extends DateComponent {
     // Determine horizontal coordinate.
     // We use the moreWrap instead of the <td> to avoid border confusion.
     if (this.isRTL) {
-      options.right = moreWrap.getBoundingClientRect().right + 1 // +1 to be over cell border
+      options.right = computeRect(moreWrap).right + 1 // +1 to be over cell border
     } else {
-      options.left = moreWrap.getBoundingClientRect().left - 1 // -1 to be over cell border
+      options.left = computeRect(moreWrap).left - 1 // -1 to be over cell border
     }
 
     this.segPopover = new Popover(options)
