@@ -448,7 +448,7 @@ export default class EventRenderer {
 
 
   isEventDefStartEditable(eventDef) {
-    return false // TODO
+    return true // TODO
   }
 
 

@@ -1,7 +1,7 @@
 import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from './PointerDragListener'
 import { default as IntentfulDragListener, IntentfulDragOptions } from './IntentfulDragListener'
-import DateComponent from '../component/DateComponent'
+import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
 
 export interface Hit extends Selection {
@@ -17,15 +17,21 @@ fires:
 */
 export default class HitDragListener {
 
-  droppableComponents: DateComponent[]
+  droppableComponentHash: DateComponentHash
   emitter: EmitterMixin
   dragListener: IntentfulDragListener
   initialHit: Hit
   movingHit: Hit
   finalHit: Hit // won't ever be populated if options.ignoreMove is false
 
-  constructor(options: IntentfulDragOptions, droppableComponents: DateComponent[]) {
-    this.droppableComponents = droppableComponents
+  constructor(options: IntentfulDragOptions, droppableComponent: DateComponent, droppableComponentHash?: DateComponentHash) {
+
+    if (droppableComponent) {
+      this.droppableComponentHash = { [droppableComponent.uid]: droppableComponent }
+    } else {
+      this.droppableComponentHash = droppableComponentHash
+    }
+
     this.emitter = new EmitterMixin()
     this.dragListener = new IntentfulDragListener(options)
     this.dragListener.on('pointerdown', this.onPointerDown)
@@ -95,13 +101,15 @@ export default class HitDragListener {
   }
 
   prepareComponents() {
-    for (let component of this.droppableComponents) {
+    for (let id in this.droppableComponentHash) {
+      let component = this.droppableComponentHash[id]
       component.buildCoordCaches()
     }
   }
 
   queryHit(x, y): Hit {
-    for (let component of this.droppableComponents) {
+    for (let id in this.droppableComponentHash) {
+      let component = this.droppableComponentHash[id]
       let hit = component.queryHit(x, y) as Hit
 
       if (hit) {

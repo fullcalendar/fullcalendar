@@ -3,6 +3,7 @@ import DateClicking from '../interactions/DateClicking'
 import DateSelecting from '../interactions/DateSelecting'
 import EventClicking from '../interactions/EventClicking'
 import EventHovering from '../interactions/EventHovering'
+import EventDragging from '../interactions/EventDragging'
 
 let componentCnt = 0
 let componentHash = {}
@@ -34,10 +35,12 @@ export default {
 
   bind() {
     this.dateSelecting = new DateSelecting(componentHash)
+    this.eventDragging = new EventDragging(componentHash)
   },
 
   unbind() {
     this.dateSelecting.destroy()
+    this.eventDragging.destroy()
   },
 
   bindComponent(component: DateComponent) {

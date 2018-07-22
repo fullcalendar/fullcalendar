@@ -12,7 +12,7 @@ export default class DateClicking {
     this.hitListener = new HitDragListener({
       containerEl: component.el
       // don't do ignoreMove:false because finalHit needs it
-    }, [ component ])
+    }, component)
 
     this.hitListener.on('dragend', this.onDragEnd)
   }

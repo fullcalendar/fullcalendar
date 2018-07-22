@@ -44,7 +44,7 @@ export default class DateSelecting {
         containerEl: component.el,
         touchDelay: getComponentDelay(component),
         touchScrollAllowed: false
-      }, [ component ])
+      }, component)
 
       this.dragComponent = component
       this.dragSelection = null
