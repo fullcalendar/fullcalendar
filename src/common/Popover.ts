@@ -13,13 +13,13 @@ Options:
   - hide (callback)
 */
 
-import { ElementContent, removeElement, createElement, applyStyle } from '../util/dom-manip'
+import { removeElement, createElement, applyStyle } from '../util/dom-manip'
 import { listenBySelector } from '../util/dom-event'
 import { getScrollParent, computeRect, computeViewportRect } from '../util/dom-geom'
 
 export interface PopoverOptions {
   className?: string
-  content?: ElementContent
+  content?: (HTMLElement) => void
   parentEl: HTMLElement
   autoHide?: boolean
   top?: number
@@ -74,7 +74,11 @@ export default class Popover {
         top: '0',
         left: '0'
       }
-    }, options.content)
+    })
+
+    if (typeof options.content === 'function') {
+      options.content(el)
+    }
 
     options.parentEl.appendChild(el)
 

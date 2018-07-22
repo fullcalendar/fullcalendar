@@ -8,6 +8,10 @@ export interface EventRenderRange {
 }
 
 
+/*
+Does not slice ranges via windowRange into new ranges, but instead,
+keeps fg event ranges intact but more importantly slices inverse-BG events.
+*/
 export function sliceEventStore(eventStore: EventStore, windowRange: UnzonedRange) {
   let inverseBgByGroupId: { [groupId: string]: UnzonedRange[] } = {}
   let inverseBgByDefId: { [defId: string]: UnzonedRange[] } = {}

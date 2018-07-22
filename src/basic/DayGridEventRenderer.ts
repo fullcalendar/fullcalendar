@@ -275,7 +275,7 @@ export default class DayGridEventRenderer extends EventRenderer {
           ) +
       '>' +
         '<div class="fc-content">' +
-          (this.dayGrid.isRTL ?
+          (this.component.opt('isRTL') ?
             titleHtml + ' ' + timeHtml : // put a natural space in between
             timeHtml + ' ' + titleHtml   //
             ) +

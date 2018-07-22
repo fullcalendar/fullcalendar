@@ -1,13 +1,10 @@
 import { assignTo } from '../util/object'
-import { htmlEscape } from '../util/html'
 import {
   createElement,
-  htmlToElements,
   insertAfterElement,
   findElements,
   findChildren,
-  removeElement,
-  ElementContent
+  removeElement
 } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'
 import View from '../View'
@@ -23,6 +20,7 @@ import { createFormatter } from '../datelib/formatting'
 import DateComponent, { Seg } from '../component/DateComponent'
 import { EventStore } from '../reducers/event-store'
 import { Selection } from '../reducers/selection'
+import DayTile from './DayTile'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -69,8 +67,8 @@ export default class DayGrid extends DateComponent {
 
   hasAllDayBusinessHours: boolean = true
 
-  segPopover: any // the Popover that holds events that can't fit in a cell. null when not visible
-  popoverSegs: any // an array of segment objects that the segPopover holds. null when not visible
+  segPopover: Popover // the Popover that holds events that can't fit in a cell. null when not visible
+  segPopoverTile: DayTile
 
 
   constructor(view) { // view is required, unlike superclass
@@ -338,7 +336,11 @@ export default class DayGrid extends DateComponent {
   // Retrieves all rendered segment objects currently rendered on the grid
   getAllEventSegs() {
     // append the segments from the "more..." popover
-    return super.getAllEventSegs().concat(this.popoverSegs || [])
+    return super.getAllEventSegs().concat(
+      this.segPopoverTile ?
+        this.segPopoverTile.getAllEventSegs() :
+        []
+    )
   }
 
 
@@ -626,20 +628,23 @@ export default class DayGrid extends DateComponent {
 
     options = {
       className: 'fc-more-popover ' + view.calendar.theme.getClass('popover'),
-      content: this.renderSegPopoverContent(row, col, segs),
       parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
       top: computeRect(topEl).top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       viewportConstrain: this.opt('popoverViewportConstrain'),
+      content: (el) => {
+        this.segPopoverTile.setElement(el)
+
+        // it would be more proper to call render() with a full render state,
+        // but hackily rendering segs directly is much easier
+        this.segPopoverTile.renderSkeleton()
+        this.segPopoverTile.eventRenderer.renderSegs(segs)
+        this.segPopoverTile.renderedFlags.events = true // so unrendering works
+      },
       hide: () => {
-        // kill everything when the popover is hidden
-        // notify events to be removed
-        if (this.popoverSegs) {
-          this.triggerWillRemoveSegs(this.popoverSegs)
-        }
+        this.segPopoverTile.removeElement()
         this.segPopover.removeElement()
         this.segPopover = null
-        this.popoverSegs = null
       }
     }
 
@@ -651,53 +656,9 @@ export default class DayGrid extends DateComponent {
       options.left = computeRect(moreWrap).left - 1 // -1 to be over cell border
     }
 
+    this.segPopoverTile = new DayTile(this.view, this.getCellDate(row, col))
     this.segPopover = new Popover(options)
     this.segPopover.show()
-
-    this.triggerRenderedSegs(segs)
-  }
-
-
-  // Builds the inner DOM contents of the segment popover
-  renderSegPopoverContent(row, col, segs): ElementContent {
-    let theme = this.getTheme()
-    let dateEnv = this.getDateEnv()
-    let title = dateEnv.format(
-      this.getCellDate(row, col),
-      createFormatter(this.opt('dayPopoverFormat')) // TODO: cache
-    )
-
-    let content = htmlToElements(
-      '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
-        '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
-        '<span class="fc-title">' +
-          htmlEscape(title) +
-        '</span>' +
-        '<div class="fc-clear"></div>' +
-      '</div>' +
-      '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
-        '<div class="fc-event-container"></div>' +
-      '</div>'
-    )
-    let segContainer = content[1].querySelector('.fc-event-container')
-    let i
-
-    // render each seg's `el` and only return the visible segs
-    segs = this.eventRenderer.renderFgSegEls(segs, true) // disableResizing=true
-    this.popoverSegs = segs
-
-    for (i = 0; i < segs.length; i++) {
-
-      // because segments in the popover are not part of a grid coordinate system, provide a hint to any
-      // grids that want to do drag-n-drop about which cell it came from
-      ////this.hitsNeeded()
-      ////segs[i].hit = this.getCellHit(row, col)
-      ////this.hitsNotNeeded()
-
-      segContainer.appendChild(segs[i].el)
-    }
-
-    return content
   }
 
 

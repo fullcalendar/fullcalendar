@@ -28,6 +28,8 @@ export interface DateComponentRenderState {
   selectedEventInstanceId: string | null
 }
 
+// NOTE: for fg-events, eventRange.range is NOT sliced,
+// thus, we need isStart/isEnd
 export interface Seg {
   isStart: boolean
   isEnd: boolean
