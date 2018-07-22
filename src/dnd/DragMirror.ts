@@ -67,16 +67,23 @@ export default class DragMirror {
   }
 
   onDragEnd = (ev: PointerDragEvent) => {
-    if (this.needsRevert && (this.deltaX || this.deltaY)) { // needs delta otherwise revert wont work
-      this.doRevert()
-    } else {
-      this.cleanup()
+
+    if (this.mirrorEl) {
+
+      if (this.needsRevert && (this.deltaX || this.deltaY)) {
+        this.revertAndRemove(this.mirrorEl)
+      } else {
+        removeElement(this.mirrorEl)
+      }
+
+      this.mirrorEl = null
     }
+
+    this.sourceEl = null
   }
 
-  doRevert() {
-    let { mirrorEl } = this
-
+  // can happen after drag has finished and a new one begins
+  revertAndRemove(mirrorEl) {
     mirrorEl.style.transition =
       'top ' + this.revertDuration + 'ms,' +
       'left ' + this.revertDuration + 'ms'
@@ -88,17 +95,8 @@ export default class DragMirror {
 
     whenTransitionDone(mirrorEl, () => {
       mirrorEl.style.transition = ''
-      this.cleanup()
+      removeElement(mirrorEl)
     })
-  }
-
-  cleanup() {
-    if (this.mirrorEl) {
-      removeElement(this.mirrorEl)
-      this.mirrorEl = null
-    }
-
-    this.sourceEl = null
   }
 
   handleDragEvent(ev: PointerDragEvent) {
