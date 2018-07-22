@@ -157,6 +157,7 @@ export default class Calendar {
     this.renderToolbars(forceFlags)
     this.renderView(forceFlags)
     this.thawContentHeight()
+    this.releaseAfterSizingTriggers()
   }
 
 
@@ -391,7 +392,6 @@ export default class Calendar {
     ) {
       this._render(this.rerenderFlags)
       this.rerenderFlags = null
-      this.releaseAfterSizingTriggers()
       this.trigger('_rendered')
     }
   }
