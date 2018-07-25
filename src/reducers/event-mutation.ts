@@ -18,17 +18,15 @@ export interface EventMutation {
 export function createMutation(
   range0: UnzonedRange,
   isAllDay0: boolean,
-  hasEnd0: boolean,
   range1: UnzonedRange,
   isAllDay1: boolean,
-  hasEnd1: boolean,
+  hasEnd: boolean,
   largeUnit: string,
   dateEnv: DateEnv
 ): EventMutation {
   let startDelta: Duration = null
   let endDelta: Duration = null
-  // let hasEnd: boolean = null // TODO: use this!!!
-  // let isAllDay: boolean = null // TODO: use this!!!
+  let standardProps = {} as any
 
   // subtracts the dates in the appropriate way, returning a duration
   function diffDates(date0, date1) {
@@ -44,25 +42,25 @@ export function createMutation(
   startDelta = diffDates(range0.start, range1.start)
   endDelta = diffDates(range0.end, range1.end)
 
-  // if (isAllDay0 !== isAllDay1) {
-  //   isAllDay = isAllDay1
-  // }
+  if (isAllDay0 !== isAllDay1) {
+    standardProps.isAllDay = isAllDay1
 
-  // if (hasEnd0 !== hasEnd1) {
-  //   hasEnd = hasEnd1
-  // }
+    if (hasEnd) {
+      standardProps.hasEnd = false
+    }
+  }
 
   return {
     startDelta,
     endDelta,
-    standardProps: null,
-    extendedProps: null
+    standardProps: standardProps,
+    extendedProps: {}
   }
 }
 
-// Applying
+export function computeEventDisplacement(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
+  let newStore = { defs: {}, instances: {} } // TODO: better name
 
-export function applyMutation(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
   const dateEnv = calendar.dateEnv
   let eventInstance = eventStore.instances[instanceId]
   let eventDef = eventStore.defs[eventInstance.defId]
@@ -70,23 +68,37 @@ export function applyMutation(eventStore: EventStore, instanceId: string, mutati
   if (eventDef && eventInstance) {
     let matchGroupId = eventDef.groupId
 
-    return {
-      defs: filterHash(eventStore.defs, function(def) {
-        if (def === eventDef || matchGroupId && matchGroupId === def.groupId) {
-          return applyMutationToDef(def, mutation)
-        }
-      }),
-      instances: filterHash(eventStore.instances, function(instance) {
-        if (
-          instance === eventInstance ||
-          matchGroupId && matchGroupId === eventStore.defs[instance.defId].groupId
-        ) {
-          return applyMutationToInstance(instance, mutation, dateEnv)
-        }
-      })
+    for (let defId in eventStore.defs) {
+      let def = eventStore.defs[defId]
+
+      if (def === eventDef || matchGroupId && matchGroupId === def.groupId) {
+        newStore.defs[defId] = applyMutationToDef(def, mutation)
+      }
     }
-  } else {
-    return eventStore
+
+    for (let instanceId in eventStore.instances) {
+      let instance = eventStore.instances[instanceId]
+
+      if (
+        instance === eventInstance ||
+        matchGroupId && matchGroupId === eventStore.defs[instance.defId].groupId
+      ) {
+        newStore.instances[instanceId] = applyMutationToInstance(instance, mutation, dateEnv)
+      }
+    }
+  }
+
+  return newStore
+}
+
+// Applying
+
+export function applyMutation(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
+  let displacement = computeEventDisplacement(eventStore, instanceId, mutation, calendar)
+
+  return {
+    defs: assignTo({}, eventStore.defs, displacement.defs),
+    instances: assignTo({}, eventStore.instances, displacement.instances)
   }
 }
 

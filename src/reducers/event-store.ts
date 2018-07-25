@@ -128,7 +128,7 @@ export function reduceEventStore(eventStore: EventStore, action: any, calendar: 
     case 'CLEAR_EVENT_SOURCE': // TODO: wire up
       return excludeSource(eventStore, action.sourceId)
 
-    case 'MUTATE_EVENT':
+    case 'MUTATE_EVENTS':
       return applyMutation(eventStore, action.instanceId, action.mutation, calendar)
 
     default:
