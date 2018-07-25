@@ -17,13 +17,15 @@ export default class DragMirror {
   sourceElRect: any
   needsRevert: boolean = true
   revertDuration: number = 1000
+  isReverting: boolean = false
+  revertDoneCallback: any
 
   constructor(dragListener: IntentfulDragListener) {
     this.dragListener = dragListener
     dragListener.on('pointerdown', this.onPointerDown)
     dragListener.on('dragstart', this.onDragStart)
     dragListener.on('dragmove', this.onDragMove)
-    dragListener.on('dragend', this.onDragEnd)
+    dragListener.on('pointerup', this.onPointerUp)
   }
 
   enable() {
@@ -58,7 +60,6 @@ export default class DragMirror {
   }
 
   onDragStart = (ev: PointerDragEvent) => {
-    this.sourceElRect = computeRect(this.sourceEl)
     this.handleDragEvent(ev)
   }
 
@@ -66,11 +67,11 @@ export default class DragMirror {
     this.handleDragEvent(ev)
   }
 
-  onDragEnd = (ev: PointerDragEvent) => {
+  onPointerUp = (ev: PointerDragEvent) => {
 
     if (this.mirrorEl) {
 
-      if (this.needsRevert && (this.deltaX || this.deltaY)) {
+      if (this.isEnabled && this.needsRevert && (this.deltaX || this.deltaY)) {
         this.revertAndRemove(this.mirrorEl)
       } else {
         removeElement(this.mirrorEl)
@@ -80,10 +81,13 @@ export default class DragMirror {
     }
 
     this.sourceEl = null
+    this.sourceElRect = null // so knows to recompute next time
   }
 
   // can happen after drag has finished and a new one begins
   revertAndRemove(mirrorEl) {
+    this.isReverting = true
+
     mirrorEl.style.transition =
       'top ' + this.revertDuration + 'ms,' +
       'left ' + this.revertDuration + 'ms'
@@ -96,6 +100,12 @@ export default class DragMirror {
     whenTransitionDone(mirrorEl, () => {
       mirrorEl.style.transition = ''
       removeElement(mirrorEl)
+      this.isReverting = false
+
+      if (this.revertDoneCallback) {
+        this.revertDoneCallback()
+        this.revertDoneCallback = null
+      }
     })
   }
 
@@ -107,6 +117,11 @@ export default class DragMirror {
 
   updateElPosition() {
     if (this.isEnabled) {
+
+      if (!this.sourceElRect) {
+        this.sourceElRect = computeRect(this.sourceEl)
+      }
+
       applyStyle(this.getMirrorEl(), {
         left: this.sourceElRect.left + this.deltaX,
         top: this.sourceElRect.top + this.deltaY
@@ -129,6 +144,7 @@ export default class DragMirror {
 
       // TODO: do fixed positioning?
       // TODO: how would that work with auto-scrolling?
+      // TODO: attache to .fc so that `.fc fc-not-end` will work
 
       applyStyle(mirrorEl, {
         position: 'absolute',

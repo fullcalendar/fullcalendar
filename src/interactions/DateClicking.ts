@@ -9,21 +9,26 @@ export default class DateClicking {
 
   constructor(component: DateComponent) {
     this.component = component
-    this.hitListener = new HitDragListener({
-      containerEl: component.el
-      // don't do ignoreMove:false because finalHit needs it
-    }, component)
-
+    this.hitListener = new HitDragListener(component)
+    this.hitListener.on('pointerdown', this.onPointerDown)
     this.hitListener.on('dragend', this.onDragEnd)
+  }
+
+  onPointerDown = (ev: PointerDragEvent) => {
+    let { component } = this
+    let { pointerListener } = this.hitListener.dragListener
+
+    // do this in pointerdown (not dragend) because DOM might be mutated by the time dragend is fired
+    pointerListener.ignoreMove = !component.isValidDateInteraction(pointerListener.downEl)
   }
 
   onDragEnd = (ev: PointerDragEvent) => {
     let { component } = this
-    let pointerListener = this.hitListener.dragListener.pointerListener
+    let { pointerListener } = this.hitListener.dragListener
 
     if (
-      !pointerListener.isTouchScroll &&
-      component.isValidDateInteraction(pointerListener.downEl)
+      !pointerListener.ignoreMove && // not ignored in onPointerDown
+      !pointerListener.isTouchScroll
     ) {
       let { initialHit, finalHit } = this.hitListener
 

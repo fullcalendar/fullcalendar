@@ -8,6 +8,7 @@ export default abstract class HelperRenderer {
   component: any
   eventRenderer: any
   helperEls: HTMLElement[]
+  segs: Seg[]
 
 
   constructor(component, eventRenderer) {
@@ -57,6 +58,15 @@ export default abstract class HelperRenderer {
     }
 
     this.helperEls = this.renderSegs(segs, sourceSeg)
+    this.segs = segs
+  }
+
+
+  computeSize() {
+  }
+
+
+  assignSize() {
   }
 
 

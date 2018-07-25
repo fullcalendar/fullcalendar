@@ -8,30 +8,36 @@ import { isPrimaryMouseButton } from '../util/dom-event'
 export interface PointerDragEvent {
   origEvent: UIEvent
   isTouch: boolean
-  el: HTMLElement
+  el: HTMLElement // rename to target?
   pageX: number
   pageY: number
 }
 
 export type PointerEventHandler = (ev: PointerDragEvent) => void
 
+/*
+events:
+- pointerdown
+- pointermove
+- pointerup
+*/
 export default class PointerDragListener {
 
   containerEl: HTMLElement
-  selector: string
-  ignoreMove: any
   subjectEl: HTMLElement
   downEl: HTMLElement
   emitter: EmitterMixin
+
+  // options
+  selector: string
+  ignoreMove: boolean = false // bad name?
 
   isDragging: boolean = false
   isDraggingTouch: boolean = false
   isTouchScroll: boolean = false
 
-  constructor(containerEl: HTMLElement, selector: string, ignoreMove: any) {
+  constructor(containerEl: HTMLElement) {
     this.containerEl = containerEl
-    this.selector = selector
-    this.ignoreMove = ignoreMove
     this.emitter = new EmitterMixin()
     containerEl.addEventListener('mousedown', this.onMouseDown)
     containerEl.addEventListener('touchstart', this.onTouchStart)
@@ -48,28 +54,21 @@ export default class PointerDragListener {
     this.emitter.on(name, handler)
   }
 
-  simulateStart(pev: PointerDragEvent) {
-    if (pev.isTouch) {
-      this.onTouchStart(pev.origEvent as TouchEvent)
-    } else {
-      this.onMouseDown(pev.origEvent as MouseEvent)
-    }
-  }
-
   maybeStart(ev: UIEvent) {
     if ((this.subjectEl = this.queryValidSubjectEl(ev))) {
-      this.isDragging = true // do this first so cancelTouchScroll will work
       this.downEl = ev.target as HTMLElement
+      this.isDragging = true // do this first so cancelTouchScroll will work
+      this.isTouchScroll = false
       return true
     }
   }
 
-  cleanupDrag() { // do this last, so that pointerup has access to props
+  cleanup() { // do this last, so that pointerup has access to props
     isWindowTouchMoveCancelled = false
     this.isDragging = false
-    this.isTouchScroll = false
     this.subjectEl = null
     this.downEl = null
+    // keep isTouchScroll around for later access
   }
 
   onTouchScroll = () => {
@@ -107,13 +106,16 @@ export default class PointerDragListener {
   onMouseUp = (ev: MouseEvent) => {
     document.removeEventListener('mousemove', this.onMouseMove)
     document.removeEventListener('mouseup', this.onMouseUp)
+
     this.emitter.trigger('pointerup', this.createMouseEvent(ev))
-    this.cleanupDrag()
+
+    this.cleanup()
   }
 
   onTouchStart = (ev: TouchEvent) => {
     if (this.maybeStart(ev)) {
       this.isDraggingTouch = true
+
       this.emitter.trigger('pointerdown', this.createTouchEvent(ev))
 
       // unlike mouse, need to attach to target, not document
@@ -143,31 +145,24 @@ export default class PointerDragListener {
   }
 
   onTouchEnd = (ev: TouchEvent) => {
-    if (this.isDragging) { // guard against touchend followed by touchcancel
+    if (this.isDragging) { // done to guard against touchend followed by touchcancel
       let target = ev.target
+
       target.removeEventListener('touchmove', this.onTouchMove)
       target.removeEventListener('touchend', this.onTouchEnd)
       target.removeEventListener('touchcancel', this.onTouchEnd)
-
       window.removeEventListener('scroll', this.onTouchScroll)
 
       this.emitter.trigger('pointerup', this.createTouchEvent(ev))
-      this.cleanupDrag()
+
+      this.cleanup()
       this.isDraggingTouch = false
-      this.startIgnoringMouse()
+      startIgnoringMouse()
     }
   }
 
   shouldIgnoreMouse() {
     return ignoreMouseDepth || this.isDraggingTouch
-  }
-
-  startIgnoringMouse() {
-    ignoreMouseDepth++
-
-    setTimeout(() => {
-      ignoreMouseDepth--
-    }, (exportHooks as any).touchMouseIgnoreWait)
   }
 
   cancelTouchScroll() {
@@ -187,29 +182,38 @@ export default class PointerDragListener {
   }
 
   createTouchEvent(ev): PointerDragEvent {
-    let obj = {
+    let pev = {
       origEvent: ev,
       isTouch: true,
       el: this.subjectEl
     } as PointerDragEvent
+
     let touches = ev.touches
 
     // if touch coords available, prefer,
     // because FF would give bad ev.pageX ev.pageY
     if (touches && touches.length) {
-      obj.pageX = touches[0].pageX
-      obj.pageY = touches[0].pageY
+      pev.pageX = touches[0].pageX
+      pev.pageY = touches[0].pageY
     } else {
-      obj.pageX = ev.pageX
-      obj.pageY = ev.pageY
+      pev.pageX = ev.pageX
+      pev.pageY = ev.pageY
     }
 
-    return obj
+    return pev
   }
 
 }
 
 let ignoreMouseDepth = 0
+
+function startIgnoringMouse() { // can be made non-class function
+  ignoreMouseDepth++
+
+  setTimeout(() => {
+    ignoreMouseDepth--
+  }, (exportHooks as any).touchMouseIgnoreWait)
+}
 
 // we want to attach touchmove as early as possible for safari
 

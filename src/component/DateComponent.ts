@@ -31,6 +31,7 @@ export interface DateComponentRenderState {
 // NOTE: for fg-events, eventRange.range is NOT sliced,
 // thus, we need isStart/isEnd
 export interface Seg {
+  component: DateComponent
   isStart: boolean
   isEnd: boolean
   eventRange?: EventRenderRange
@@ -109,12 +110,6 @@ export default abstract class DateComponent extends Component {
     if (this.helperRendererClass && this.eventRenderer) {
       this.helperRenderer = new this.helperRendererClass(this, this.eventRenderer)
     }
-  }
-
-
-  setElement(el) {
-    el.setAttribute('data-fc-com-uid', this.uid)
-    super.setElement(el)
   }
 
 
@@ -574,13 +569,17 @@ export default abstract class DateComponent extends Component {
 
 
   renderDragState(dragState: EventInteractionState) {
-    this.updateEventInteractionState(dragState)
+    if (dragState.origSeg) {
+      this.hideRelatedSegs(dragState.origSeg)
+    }
     this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.isTouch)
   }
 
 
   unrenderDragState() {
-    this.updateEventInteractionState()
+    if (this.dragState.origSeg) {
+      this.showRelatedSegs(this.dragState.origSeg)
+    }
     this.unrenderDrag()
   }
 
@@ -603,14 +602,18 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderEventResizeState(dragState: EventInteractionState) {
-    this.updateEventInteractionState(dragState)
-    this.renderEventResize(dragState.eventStore, dragState.origSeg, dragState.isTouch)
+  renderEventResizeState(eventResizeState: EventInteractionState) {
+    if (eventResizeState.origSeg) {
+      this.hideRelatedSegs(eventResizeState.origSeg)
+    }
+    this.renderEventResize(eventResizeState.eventStore, eventResizeState.origSeg, eventResizeState.isTouch)
   }
 
 
   unrenderEventResizeState() {
-    this.updateEventInteractionState()
+    if (this.eventResizeState.origSeg) {
+      this.showRelatedSegs(this.eventResizeState.origSeg)
+    }
     this.unrenderEventResize()
   }
 
@@ -627,47 +630,32 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  // Event Interaction Utils
+  // Seg Utils
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  updateEventInteractionState(dragState?: EventInteractionState) {
-    let eventDefId = (dragState && dragState.origSeg) ? dragState.origSeg.eventRange.eventDef.defId : null
-
-    if (this.interactingEventDefId && this.interactingEventDefId !== eventDefId) {
-      this.showEventByDefId(this.interactingEventDefId)
-      this.interactingEventDefId = null
-    }
-
-    if (eventDefId && !this.interactingEventDefId) {
-      this.hideEventsByDefId(eventDefId)
-      this.interactingEventDefId = eventDefId
-    }
-  }
-
-
-  // Hides all rendered event segments linked to the given event
-  showEventByDefId(eventDefId) {
-    this.getAllEventSegs().forEach(function(seg) {
-      if (
-        seg.eventRange.eventDef.id === eventDefId &&
-        seg.el // necessary?
-      ) {
-        seg.el.style.visibility = ''
-      }
+  hideRelatedSegs(targetSeg: Seg) {
+    this.getRelatedSegs(targetSeg).forEach(function(seg) {
+      seg.el.style.visibility = 'hidden'
     })
   }
 
 
-  // Shows all rendered event segments linked to the given event
-  hideEventsByDefId(eventDefId) {
-    this.getAllEventSegs().forEach(function(seg) {
-      if (
-        seg.eventRange.eventDef.id === eventDefId &&
-        seg.el // necessary?
-      ) {
-        seg.el.style.visibility = 'hidden'
-      }
+  showRelatedSegs(targetSeg: Seg) {
+    this.getRelatedSegs(targetSeg).forEach(function(seg) {
+      seg.el.style.visibility = ''
+    })
+  }
+
+
+  getRelatedSegs(targetSeg: Seg) {
+    let targetEventDef = targetSeg.eventRange.eventDef
+
+    return this.getAllEventSegs().filter(function(seg: Seg) {
+      let segEventDef = seg.eventRange.eventDef
+
+      return segEventDef.defId === targetEventDef.defId || // include defId as well???
+        segEventDef.groupId && segEventDef.groupId === targetEventDef.groupId
     })
   }
 
@@ -778,6 +766,24 @@ export default abstract class DateComponent extends Component {
   assignHighlightSize() {
     if (this.fillRenderer) {
       this.fillRenderer.assignSize('highlight')
+    }
+  }
+
+
+  /*
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  computeHelperSize() {
+    if (this.helperRenderer) {
+      this.helperRenderer.computeSize()
+    }
+  }
+
+
+  assignHelperSize() {
+    if (this.helperRenderer) {
+      this.helperRenderer.assignSize()
     }
   }
 

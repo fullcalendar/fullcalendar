@@ -1,145 +1,111 @@
 import { compareNumbers } from '../util/misc'
 import { elementClosest } from '../util/dom-manip'
-import DateComponent, { DateComponentHash } from '../component/DateComponent'
+import DateComponent from '../component/DateComponent'
 import HitDragListener, { Hit } from '../dnd/HitDragListener'
 import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
-import PointerDragListener, { PointerDragEvent } from '../dnd/PointerDragListener'
+import { PointerDragEvent } from '../dnd/PointerDragListener'
+import { GlobalContext } from '../common/GlobalContext'
 
 export default class DateSelecting {
 
-  componentHash: DateComponentHash
-  pointerListener: PointerDragListener
+  component: DateComponent
+  globalContext: GlobalContext
   hitListener: HitDragListener
-  dragComponent: DateComponent
   dragSelection: Selection
-  activeComponent: DateComponent
-  activeSelection: Selection
 
-  constructor(componentHash: DateComponentHash) {
-    this.componentHash = componentHash
-    this.pointerListener = new PointerDragListener(
-      document as any, // TODO: better
-      null, // selector
-      true // ignoreMove
-    )
-    this.pointerListener.on('pointerdown', this.onPointerDown)
-    this.pointerListener.on('pointerup', this.onPointerUp)
+  constructor(component: DateComponent, globalContext: GlobalContext) {
+    this.component = component
+    this.globalContext = globalContext
+
+    let hitListener = this.hitListener = new HitDragListener(component)
+    hitListener.dragListener.touchScrollAllowed = false
+    hitListener.on('pointerdown', this.onPointerDown)
+    hitListener.on('dragstart', this.onDragStart)
+    hitListener.on('hitover', this.onHitOver)
+    hitListener.on('hitout', this.onHitOut)
   }
 
   destroy() {
-    this.pointerListener.destroy()
+    this.hitListener.destroy()
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    let component = this.queryComponent(ev)
-
-    if (
-      component &&
-      component.opt('selectable') &&
+    let { component } = this
+    let { dragListener } = this.hitListener
+    let isValid = component.opt('selectable') &&
       component.isValidDateInteraction(ev.origEvent.target as HTMLElement)
-    ) {
 
-      this.hitListener = new HitDragListener({
-        containerEl: component.el,
-        touchDelay: getComponentDelay(component),
-        touchScrollAllowed: false
-      }, component)
+    // don't bother to watch expensive moves if component won't do selection
+    dragListener.pointerListener.ignoreMove = !isValid
 
-      this.dragComponent = component
-      this.dragSelection = null
-
-      this.hitListener.on('dragstart', this.onDragStart)
-      this.hitListener.on('hitover', this.onHitOver)
-      this.hitListener.on('hitout', this.onHitOut)
-      this.hitListener.dragListener.pointerListener.simulateStart(ev)
-    }
-  }
-
-  queryComponent(ev: PointerDragEvent): DateComponent {
-    let componentEl = elementClosest(
-      ev.origEvent.target as any, // TODO: better
-      '[data-fc-com-uid]'
-    )
-    if (componentEl) {
-      return this.componentHash[componentEl.getAttribute('data-fc-com-uid')]
-    }
+    dragListener.delay = (isValid && ev.isTouch) ?
+      getComponentDelay(component) :
+      null
   }
 
   onDragStart = (ev: PointerDragEvent) => {
-    if (this.hitListener.initialHit) {
-      this.clearActiveSelection(ev)
+    let { globalContext } = this
+
+    if (globalContext.selectedCalendar) {
+      globalContext.selectedCalendar.unselect(ev.origEvent)
+      globalContext.selectedCalendar = null
     }
   }
 
-  onHitOver = (overHit: Hit) => {
-    let { initialHit } = this.hitListener
-    let initialComponent = initialHit.component
-    let calendar = initialComponent.getCalendar()
-    let dragSelection = computeSelection(initialHit, overHit)
+  onHitOver = (overHit: Hit) => { // TODO: do a onHitChange instead?
+    let { globalContext } = this
+    let calendar = this.component.getCalendar()
+    let dragSelection = computeSelection(this.hitListener.initialHit, overHit)
 
     if (dragSelection) {
+      globalContext.selectedCalendar = calendar
       this.dragSelection = dragSelection
-      calendar.setSelectionState(dragSelection)
+
+      calendar.dispatch({
+        type: 'SELECT',
+        selection: dragSelection
+      })
     }
   }
 
-  onHitOut = (hit: Selection) => {
-    let { initialHit, finalHit } = this.hitListener
-    let initialComponent = initialHit.component
-    let calendar = initialComponent.getCalendar()
+  onHitOut = (hit: Selection, ev) => {
+    let { globalContext } = this
+    let calendar = this.component.getCalendar()
 
-    if (!finalHit) { // still dragging? a hitout means it went out of bounds
-      this.dragSelection = null
-      calendar.clearSelectionState()
-    }
-  }
-
-  onPointerUp = (ev: PointerDragEvent) => {
-    if (this.dragSelection) {
-      this.setActiveSelection(this.dragComponent, this.dragSelection, ev)
-    } else if (!this.pointerListener.isTouchScroll) {
-      // if there was a pointerup that did not result in a selection and was
-      // not merely a touchmove-scroll, then possibly unselect the current selection
-      this.maybeUnfocus(ev)
-    }
-
-    if (this.hitListener) {
-      this.hitListener.destroy()
-      this.hitListener = null
-    }
-
-    this.dragComponent = null
+    globalContext.selectedCalendar = null
     this.dragSelection = null
+
+    calendar.dispatch({
+      type: 'UNSELECT'
+    })
   }
 
-  maybeUnfocus(ev: PointerDragEvent) {
-    if (this.activeSelection) {
-      let view = this.activeComponent.view
-      let unselectAuto = view.opt('unselectAuto')
-      let unselectCancel = view.opt('unselectCancel')
+  onDocumentPointerUp = (ev: PointerDragEvent, isTouchScroll: boolean, downEl: HTMLElement) => {
+    let { component } = this
 
-      if (unselectAuto && (!unselectCancel || !elementClosest(this.pointerListener.downEl, unselectCancel))) {
-        this.clearActiveSelection(ev)
+    if (this.dragSelection) {
+
+      // the selection is already rendered, so just need to fire
+      component.getCalendar().triggerSelect(
+        this.dragSelection,
+        component.view,
+        ev.origEvent
+      )
+
+      this.dragSelection = null
+
+    } else if (!isTouchScroll) {
+      // if there was a pointerup that did not result in a selection and was
+      // not merely a touchmove-scroll, then possibly unselect the current selection.
+      // won't do anything if already unselected (OR, leverage selectedCalendar?)
+
+      let unselectAuto = component.opt('unselectAuto')
+      let unselectCancel = component.opt('unselectCancel')
+
+      if (unselectAuto && (!unselectAuto || !elementClosest(downEl, unselectCancel))) {
+        component.getCalendar().unselect()
       }
-    }
-  }
-
-  setActiveSelection(component: DateComponent, selection: Selection, ev: PointerDragEvent) {
-    this.clearActiveSelection(ev)
-    this.activeComponent = component
-    this.activeSelection = selection
-    let view = component.view
-    view.calendar.triggerSelect(selection, view, ev.origEvent)
-  }
-
-  clearActiveSelection(ev: PointerDragEvent) {
-    if (this.activeSelection) {
-      let component = this.activeComponent
-      let calendar = component.getCalendar()
-      calendar.clearSelectionState()
-      calendar.triggerUnselect(component.view, ev.origEvent)
-      this.activeSelection = null
     }
   }
 

@@ -918,31 +918,23 @@ export default class Calendar {
 
     let selection = parseSelection(selectionInput, this.dateEnv)
     if (selection) {
-      this.setSelectionState(selection)
+      this.dispatch({
+        type: 'SELECT',
+        selection: selection
+      })
       this.triggerSelect(selection, this.view)
     } // otherwise, throw error?
   }
 
 
   // public method
-  unselect() {
-    this.clearSelectionState()
-    this.triggerUnselect(this.view)
-  }
-
-
-  setSelectionState(selection) {
-    this.dispatch({
-      type: 'SELECT',
-      selection: selection
-    })
-  }
-
-
-  clearSelectionState() {
-    this.dispatch({
-      type: 'UNSELECT'
-    })
+  unselect(ev?: UIEvent) {
+    if (this.state.selection) {
+      this.dispatch({
+        type: 'UNSELECT'
+      })
+      this.triggerUnselect(this.view, ev)
+    }
   }
 
 

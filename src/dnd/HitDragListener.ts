@@ -1,44 +1,56 @@
 import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from './PointerDragListener'
-import { default as IntentfulDragListener, IntentfulDragOptions } from './IntentfulDragListener'
+import IntentfulDragListener from './IntentfulDragListener'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
+import { computeRect } from '../util/dom-geom'
+import { constrainPoint, intersectRects, getRectCenter, diffPoints } from '../util/geom'
 
 export interface Hit extends Selection {
   component: DateComponent
 }
 
 /*
-fires:
+fires (none will be fired if no initial hit):
+- pointerdown
 - dragstart
-- hitover
-- hitout
+- hitover - always fired in beginning
+- hitout - only fired when pointer moves away. not fired at drag end
+- pointerup
 - dragend
 */
 export default class HitDragListener {
 
+  component: DateComponent
   droppableComponentHash: DateComponentHash
-  emitter: EmitterMixin
   dragListener: IntentfulDragListener
+  emitter: EmitterMixin
   initialHit: Hit
   movingHit: Hit
-  finalHit: Hit // won't ever be populated if options.ignoreMove is false
+  finalHit: Hit // won't ever be populated if ignoreMove
+  coordAdjust: any
 
-  constructor(options: IntentfulDragOptions, droppableComponent: DateComponent, droppableComponentHash?: DateComponentHash) {
+  // options
+  subjectCenter: boolean = false
 
-    if (droppableComponent) {
-      this.droppableComponentHash = { [droppableComponent.uid]: droppableComponent }
-    } else {
+  constructor(component: DateComponent, droppableComponentHash?: DateComponentHash) {
+    this.component = component
+    this.droppableComponentHash = droppableComponentHash
+
+    if (droppableComponentHash) {
       this.droppableComponentHash = droppableComponentHash
+    } else {
+      this.droppableComponentHash = { [component.uid]: component }
     }
 
+    let dragListener = this.dragListener = new IntentfulDragListener(component.el)
+    dragListener.on('pointerdown', this.onPointerDown)
+    dragListener.on('dragstart', this.onDragStart)
+    dragListener.on('dragmove', this.onDragMove)
+    dragListener.on('pointerup', this.onPointerUp)
+    dragListener.on('dragend', this.onDragEnd)
+
     this.emitter = new EmitterMixin()
-    this.dragListener = new IntentfulDragListener(options)
-    this.dragListener.on('pointerdown', this.onPointerDown)
-    this.dragListener.on('dragstart', this.onDragStart)
-    this.dragListener.on('dragmove', this.onDragMove)
-    this.dragListener.on('dragend', this.onDragEnd)
-    this.dragListener.on('pointerup', this.onPointerUp)
   }
 
   destroy() {
@@ -50,53 +62,91 @@ export default class HitDragListener {
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    this.emitter.trigger('pointerdown', ev)
-    this.prepareComponents()
-    this.initialHit = this.queryHit(ev.pageX, ev.pageY)
+    this.initialHit = null
+    this.movingHit = null
     this.finalHit = null
+
+    this.prepareComponents()
+    this.processFirstCoord(ev)
+
+    let { pointerListener } = this.dragListener
+
+    if (this.initialHit) {
+      pointerListener.ignoreMove = false
+      this.emitter.trigger('pointerdown', ev)
+    } else {
+      pointerListener.ignoreMove = true
+    }
+  }
+
+  // sets initialHit
+  // sets coordAdjust
+  processFirstCoord(ev: PointerDragEvent) {
+    let origPoint = { left: ev.pageX, top: ev.pageY }
+    let adjustedPoint = origPoint
+    let subjectEl = ev.el as HTMLElement
+    let subjectRect
+
+    if (subjectEl !== (document as any)) {
+      subjectRect = computeRect(subjectEl)
+      adjustedPoint = constrainPoint(adjustedPoint, subjectRect)
+    }
+
+    let initialHit = this.initialHit = this.queryHit(adjustedPoint.left, adjustedPoint.top)
+
+    if (initialHit) {
+      if (this.subjectCenter && subjectRect) {
+        let slicedSubjectRect = intersectRects(subjectRect, initialHit.rect)
+        if (slicedSubjectRect) {
+          adjustedPoint = getRectCenter(slicedSubjectRect)
+        }
+      }
+
+      this.coordAdjust = diffPoints(adjustedPoint, origPoint)
+    }
   }
 
   onDragStart = (ev: PointerDragEvent) => {
     this.emitter.trigger('dragstart', ev)
-
-    // querying the first hovered hit is considered a 'move', so ignore if necessary
-    if (!this.dragListener.pointerListener.ignoreMove) {
-      this.handleMove(ev)
-    }
+    this.handleMove(ev)
   }
 
   onDragMove = (ev: PointerDragEvent) => {
-    this.emitter.trigger('pointermove', ev)
+    this.emitter.trigger('dragmove', ev)
     this.handleMove(ev)
+  }
+
+  onPointerUp = (ev: PointerDragEvent) => {
+    let { pointerListener } = this.dragListener
+
+    if (!pointerListener.ignoreMove) { // cancelled in onPointerDown?
+      this.emitter.trigger('pointerup', ev)
+    }
   }
 
   onDragEnd = (ev: PointerDragEvent) => {
     this.finalHit = this.movingHit
-    this.clearMovingHit()
+    this.movingHit = null
     this.emitter.trigger('dragend', ev)
   }
 
-  onPointerUp = (ev: PointerDragEvent) => {
-    this.emitter.trigger('pointerup', ev)
-  }
-
   handleMove(ev: PointerDragEvent) {
-    let hit = this.queryHit(ev.pageX, ev.pageY)
+    let hit = this.queryHit(
+      ev.pageX + this.coordAdjust.left,
+      ev.pageY + this.coordAdjust.top
+    )
 
     if (!this.movingHit || !isHitsEqual(this.movingHit, hit)) {
-      this.clearMovingHit()
+
+      if (this.movingHit) {
+        this.emitter.trigger('hitout', this.movingHit, ev)
+        this.movingHit = null
+      }
 
       if (hit) {
         this.movingHit = hit
-        this.emitter.trigger('hitover', hit)
+        this.emitter.trigger('hitover', hit, ev)
       }
-    }
-  }
-
-  clearMovingHit() {
-    if (this.movingHit) {
-      this.emitter.trigger('hitout', this.movingHit)
-      this.movingHit = null
     }
   }
 
@@ -117,8 +167,6 @@ export default class HitDragListener {
         return hit
       }
     }
-
-    return null
   }
 
 }
@@ -137,7 +185,7 @@ export function isHitsEqual(hit0: Selection, hit1: Selection) {
   }
 
   for (let propName in hit1) {
-    if (propName !== 'range') {
+    if (propName !== 'range' && propName !== 'component' && propName !== 'rect') {
       if (hit0[propName] !== hit1[propName]) {
         return false
       }

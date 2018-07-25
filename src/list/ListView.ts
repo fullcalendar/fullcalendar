@@ -110,6 +110,7 @@ export default class ListView extends View {
 
       if (segRange) {
         seg = {
+          component: this,
           start: segRange.start,
           end: segRange.end,
           isStart: segRange.start.valueOf() === range.start.valueOf(),

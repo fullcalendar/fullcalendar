@@ -1,62 +1,87 @@
 import DateComponent from '../component/DateComponent'
+import PointerDragListener from '../dnd/PointerDragListener'
 import DateClicking from '../interactions/DateClicking'
 import DateSelecting from '../interactions/DateSelecting'
 import EventClicking from '../interactions/EventClicking'
 import EventHovering from '../interactions/EventHovering'
 import EventDragging from '../interactions/EventDragging'
+import Calendar from '../Calendar'
 
-let componentCnt = 0
-let componentHash = {}
-let listenerHash = {}
+// TODO: how to accept external drags?
 
-export default {
+export class GlobalContext { // TODO: rename file to something better
+
+  pointerUpListener: PointerDragListener
+  componentCnt: number = 0
+  componentHash = {}
+  listenerHash = {}
+  selectedCalendar: Calendar // *date* selection
+  eventSelectedCalendar: Calendar
 
   registerComponent(component: DateComponent) {
-    componentHash[component.uid] = component
-    componentCnt++
+    this.componentHash[component.uid] = component
 
-    if (componentCnt === 1) {
+    if (!(this.componentCnt++)) {
       this.bind()
     }
 
     this.bindComponent(component)
-  },
+  }
 
   unregisterComponent(component: DateComponent) {
-    delete componentHash[component.uid]
-    componentCnt--
+    delete this.componentHash[component.uid]
 
-    if (componentCnt === 0) {
+    if (!(--this.componentCnt)) {
       this.unbind()
     }
 
     this.unbindComponent(component)
-  },
+  }
 
   bind() {
-    this.dateSelecting = new DateSelecting(componentHash)
-    this.eventDragging = new EventDragging(componentHash)
-  },
+    this.pointerUpListener = new PointerDragListener(document as any)
+    this.pointerUpListener.ignoreMove = true
+    this.pointerUpListener.on('pointerup', this.onPointerUp)
+  }
 
   unbind() {
-    this.dateSelecting.destroy()
-    this.eventDragging.destroy()
-  },
+    this.pointerUpListener.destroy()
+    this.pointerUpListener = null
+  }
 
   bindComponent(component: DateComponent) {
-    listenerHash[component.uid] = {
+    this.listenerHash[component.uid] = {
       dateClicking: new DateClicking(component),
+      dateSelecting: new DateSelecting(component, globalContext),
       eventClicking: new EventClicking(component),
-      eventHovering: new EventHovering(component)
+      eventHovering: new EventHovering(component),
+      eventDragging: new EventDragging(component, globalContext)
     }
-  },
+  }
 
   unbindComponent(component: DateComponent) {
-    let listeners = listenerHash[component.uid]
+    let listeners = this.listenerHash[component.uid]
+
     listeners.dateClicking.destroy()
+    listeners.dateSelecting.destroy()
     listeners.eventClicking.destroy()
     listeners.eventHovering.destroy()
-    delete listenerHash[component.uid]
+    listeners.eventDragging.destroy()
+
+    delete this.listenerHash[component.uid]
+  }
+
+  onPointerUp = (ev) => {
+    let { listenerHash } = this
+    let { isTouchScroll, downEl } = this.pointerUpListener
+
+    for (let id in listenerHash) {
+      listenerHash[id].dateSelecting.onDocumentPointerUp(ev, isTouchScroll, downEl)
+      listenerHash[id].eventDragging.onDocumentPointerUp(ev, isTouchScroll, downEl)
+    }
   }
 
 }
+
+let globalContext = new GlobalContext()
+export default globalContext

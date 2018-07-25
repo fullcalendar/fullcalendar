@@ -39,4 +39,12 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
     return helperNodes // must return the elements rendered
   }
 
+  computeSize() {
+    this.component.computeSegVerticals(this.segs)
+  }
+
+  assignSize() {
+    this.component.assignSegVerticals(this.segs)
+  }
+
 }

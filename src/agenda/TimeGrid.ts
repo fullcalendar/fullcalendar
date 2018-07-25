@@ -56,8 +56,8 @@ export default class TimeGrid extends DateComponent {
   slatEls: HTMLElement[] // elements running horizontally across all columns
   nowIndicatorEls: HTMLElement[]
 
-  colCoordCache: any
-  slatCoordCache: any
+  colCoordCache: CoordCache
+  slatCoordCache: CoordCache
 
   rootBgContainerEl: HTMLElement
   bottomRuleEl: HTMLElement // hidden by default
@@ -89,6 +89,8 @@ export default class TimeGrid extends DateComponent {
       } else {
         segs[i].col = segs[i].dayIndex
       }
+
+      segs[i].component = this
     }
 
     return segs
@@ -588,7 +590,13 @@ export default class TimeGrid extends DateComponent {
         return {
           range: new UnzonedRange(start, end),
           isAllDay: false,
-          // el: this.colEls[colIndex]
+          el: this.colEls[colIndex],
+          rect: {
+            left: colCoordCache.getLeftOffset(colIndex),
+            right: colCoordCache.getRightOffset(colIndex),
+            top: slatTop,
+            bottom: slatTop + slatHeight
+          }
         }
       }
     }

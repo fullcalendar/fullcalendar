@@ -58,8 +58,8 @@ export default class DayGrid extends DateComponent {
   rowEls: HTMLElement[] // set of fake row elements
   cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
 
-  rowCoordCache: any
-  colCoordCache: any
+  rowCoordCache: CoordCache
+  colCoordCache: CoordCache
 
   // isRigid determines whether the individual rows should ignore the contents and be a constant height.
   // Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
@@ -82,6 +82,7 @@ export default class DayGrid extends DateComponent {
 
     for (let i = 0; i < segs.length; i++) {
       let seg = segs[i]
+      seg.component = this
 
       if (this.isRTL) {
         seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex
@@ -290,16 +291,24 @@ export default class DayGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  queryHit(leftOffset, topOffset): Selection {
-    if (this.colCoordCache.isLeftInBounds(leftOffset) && this.rowCoordCache.isTopInBounds(topOffset)) {
-      let col = this.colCoordCache.getHorizontalIndex(leftOffset)
-      let row = this.rowCoordCache.getVerticalIndex(topOffset)
+  queryHit(leftOffset, topOffset): Selection { // why is this a Selection?
+    let { colCoordCache, rowCoordCache } = this
+
+    if (colCoordCache.isLeftInBounds(leftOffset) && rowCoordCache.isTopInBounds(topOffset)) {
+      let col = colCoordCache.getHorizontalIndex(leftOffset)
+      let row = rowCoordCache.getVerticalIndex(topOffset)
 
       if (row != null && col != null) {
         return {
           range: this.getCellRange(row, col),
           isAllDay: true,
-          // el: this.getCellEl(row, col)
+          el: this.getCellEl(row, col),
+          rect: {
+            left: colCoordCache.getLeftOffset(col),
+            right: colCoordCache.getRightOffset(col),
+            top: rowCoordCache.getTopOffset(row),
+            bottom: rowCoordCache.getBottomOffset(row)
+          }
         }
       }
     }

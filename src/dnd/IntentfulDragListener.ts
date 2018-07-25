@@ -1,21 +1,7 @@
 import { default as EmitterMixin } from '../common/EmitterMixin'
 import { default as PointerDragListener, PointerDragEvent } from './PointerDragListener'
 import { preventSelection, allowSelection, preventContextMenu, allowContextMenu } from '../util/misc'
-
-export interface IntentfulDragOptions {
-  containerEl: HTMLElement
-  selector?: string
-  ignoreMove?: any // set to false if you don't need to track moves, for performance reasons
-  touchMinDistance?: number
-  mouseMinDistance?: number
-  touchDelay?: number | ((ev: PointerDragEvent) => number)
-  mouseDelay?: number | ((ev: PointerDragEvent) => number)
-
-  // if set to false, if there's a touch scroll after pointdown but before the drag begins,
-  // it won't be considered a drag and dragstart/dragmove/dragend won't be fired.
-  // if the drag initiates and this value is set to false, touch dragging will be prevented.
-  touchScrollAllowed?: boolean
-}
+import DragMirror from './DragMirror'
 
 /*
 fires:
@@ -23,35 +9,37 @@ fires:
 - dragstart
 - dragmove
 - pointermove
-- dragend
-- pointerup
+- pointerup (always happens before dragend!)
+- dragend (happens after any revert animation)
 */
 export default class IntentfulDragListener {
 
   pointerListener: PointerDragListener
   emitter: EmitterMixin
+  dragMirror: DragMirror // TODO: move out of here?
 
-  options: IntentfulDragOptions
+  // options
+  delay: number
+  minDistance: number = 0
+  touchScrollAllowed: boolean = true
 
-  isDragging: boolean = false // is it INTENTFULLY dragging?
+  isWatchingPointer: boolean = false
+  isDragging: boolean = false // is it INTENTFULLY dragging? lasts until after revert animation // TODO: exclude revert anim?
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
 
-  delay: number
   delayTimeoutId: number
-
-  minDistance: number
   origX: number
   origY: number
 
-  constructor(options: IntentfulDragOptions) {
-    this.options = options
-    this.pointerListener = new PointerDragListener(options.containerEl, options.selector, options.ignoreMove)
+  constructor(containerEl: HTMLElement) {
     this.emitter = new EmitterMixin()
+    this.dragMirror = new DragMirror(this)
 
-    this.pointerListener.on('pointerdown', this.onPointerDown)
-    this.pointerListener.on('pointermove', this.onPointerMove)
-    this.pointerListener.on('pointerup', this.onPointerUp)
+    let pointerListener = this.pointerListener = new PointerDragListener(containerEl)
+    pointerListener.on('pointerdown', this.onPointerDown)
+    pointerListener.on('pointermove', this.onPointerMove)
+    pointerListener.on('pointerup', this.onPointerUp)
   }
 
   destroy() {
@@ -63,64 +51,72 @@ export default class IntentfulDragListener {
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    this.emitter.trigger('pointerdown', ev)
+    if (!this.isDragging) { // mainly so new drag doesn't happen while revert animation is going
+      this.isWatchingPointer = true
+      this.isDelayEnded = false
+      this.isDistanceSurpassed = false
 
-    preventSelection(document.body)
-    preventContextMenu(document.body)
+      preventSelection(document.body)
+      preventContextMenu(document.body)
 
-    let minDistance = this.options[ev.isTouch ? 'touchMinDistance' : 'mouseMinDistance']
-    let delay = this.options[ev.isTouch ? 'touchDelay' : 'mouseDelay']
+      this.origX = ev.pageX
+      this.origY = ev.pageY
 
-    this.minDistance = minDistance || 0
-    this.delay = typeof delay === 'function' ? (delay as any)(ev) : delay
+      this.emitter.trigger('pointerdown', ev)
 
-    this.origX = ev.pageX
-    this.origY = ev.pageY
+      // if moving is being ignored, don't fire any initial drag events
+      if (!this.pointerListener.ignoreMove) {
+        // actions that could fire dragstart...
 
-    this.isDelayEnded = false
-    this.isDistanceSurpassed = false
+        this.startDelay(ev)
 
-    this.startDelay(ev)
-
-    if (!this.minDistance) {
-      this.handleDistanceSurpassed(ev)
+        if (!this.minDistance) {
+          this.handleDistanceSurpassed(ev)
+        }
+      }
     }
   }
 
   onPointerMove = (ev: PointerDragEvent) => {
-    this.emitter.trigger('pointermove', ev)
+    if (this.isWatchingPointer) { // if false, still waiting for previous drag's revert
+      this.emitter.trigger('pointermove', ev)
 
-    if (!this.isDistanceSurpassed) {
-      let dx = ev.pageX - this.origX
-      let dy = ev.pageY - this.origY
-      let minDistance = this.minDistance
-      let distanceSq // current distance from the origin, squared
+      if (!this.isDistanceSurpassed) {
+        let dx = ev.pageX - this.origX
+        let dy = ev.pageY - this.origY
+        let minDistance = this.minDistance
+        let distanceSq // current distance from the origin, squared
 
-      distanceSq = dx * dx + dy * dy
-      if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
-        this.handleDistanceSurpassed(ev)
+        distanceSq = dx * dx + dy * dy
+        if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
+          this.handleDistanceSurpassed(ev)
+        }
       }
-    }
 
-    if (this.isDragging) {
-      this.emitter.trigger('dragmove', ev)
+      if (this.isDragging) {
+        this.emitter.trigger('dragmove', ev)
+      }
     }
   }
 
   onPointerUp = (ev: PointerDragEvent) => {
-    if (this.isDragging) {
-      this.stopDrag(ev)
+    if (this.isWatchingPointer) { // if false, still waiting for previous drag's revert
+      this.isWatchingPointer = false
+
+      this.emitter.trigger('pointerup', ev) // can potentially set needsRevert
+
+      if (this.isDragging) {
+        this.tryStopDrag(ev)
+      }
+
+      allowSelection(document.body)
+      allowContextMenu(document.body)
+
+      if (this.delayTimeoutId) {
+        clearTimeout(this.delayTimeoutId)
+        this.delayTimeoutId = null
+      }
     }
-
-    allowSelection(document.body)
-    allowContextMenu(document.body)
-
-    if (this.delayTimeoutId) {
-      clearTimeout(this.delayTimeoutId)
-      this.delayTimeoutId = null
-    }
-
-    this.emitter.trigger('pointerup', ev)
   }
 
   startDelay(ev: PointerDragEvent) {
@@ -136,26 +132,37 @@ export default class IntentfulDragListener {
 
   handleDelayEnd(ev: PointerDragEvent) {
     this.isDelayEnded = true
-    this.startDrag(ev)
+    this.tryStartDrag(ev)
   }
 
   handleDistanceSurpassed(ev: PointerDragEvent) {
     this.isDistanceSurpassed = true
-    this.startDrag(ev)
+    this.tryStartDrag(ev)
   }
 
-  startDrag(ev: PointerDragEvent) { // will only start if appropriate
+  tryStartDrag(ev: PointerDragEvent) {
     if (this.isDelayEnded && this.isDistanceSurpassed) {
-      let touchScrollAllowed = this.options.touchScrollAllowed
-
-      if (!this.pointerListener.isTouchScroll || touchScrollAllowed) {
-        this.emitter.trigger('dragstart', ev)
+      if (!this.pointerListener.isTouchScroll || this.touchScrollAllowed) {
         this.isDragging = true
+        this.emitter.trigger('dragstart', ev)
 
-        if (touchScrollAllowed === false) {
+        if (this.touchScrollAllowed === false) {
           this.pointerListener.cancelTouchScroll()
         }
       }
+    }
+  }
+
+  tryStopDrag(ev) {
+    let stopDrag = this.stopDrag.bind(this, ev) // bound with args
+
+    if (this.dragMirror.isReverting) {
+      this.dragMirror.revertDoneCallback = stopDrag // will clear itself
+    } else {
+      // HACK - we want to make sure dragend fires after all pointerup events.
+      // Without doing this hack, pointer-up event propogation might reach an ancestor
+      // node after dragend
+      setTimeout(stopDrag, 0)
     }
   }
 
