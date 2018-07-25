@@ -154,6 +154,10 @@ export default abstract class DateComponent extends Component {
       this.computeHighlightSize()
     }
 
+    if (force || flags.drag || flags.eventResize) {
+      this.computeHelperSize()
+    }
+
     if (force || flags.events) {
       this.computeEventsSize()
     }
@@ -164,6 +168,10 @@ export default abstract class DateComponent extends Component {
 
     if (force || flags.selection || flags.drag || flags.eventResize) {
       this.assignHighlightSize()
+    }
+
+    if (force || flags.drag || flags.eventResize) {
+      this.assignHelperSize()
     }
 
     if (force || flags.events) {

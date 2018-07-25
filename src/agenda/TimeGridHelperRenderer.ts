@@ -31,6 +31,11 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
           marginLeft: computedStyle.marginLeft,
           marginRight: computedStyle.marginRight
         })
+      } else {
+        applyStyle(seg.el, {
+          left: 0,
+          right: 0
+        })
       }
 
       helperNodes.push(seg.el)
@@ -40,11 +45,11 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
   }
 
   computeSize() {
-    this.component.computeSegVerticals(this.segs)
+    this.component.computeSegVerticals(this.segs || [])
   }
 
   assignSize() {
-    this.component.assignSegVerticals(this.segs)
+    this.component.assignSegVerticals(this.segs || [])
   }
 
 }
