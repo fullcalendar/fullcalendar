@@ -58,24 +58,29 @@ export default class EventDragging {
     let { globalContext } = this
     let calendar = this.component.getCalendar()
 
-    if (globalContext.eventSelectedCalendar && globalContext.eventSelectedCalendar !== calendar) {
-      globalContext.eventSelectedCalendar.dispatch({
-        type: 'CLEAR_SELECTED_EVENT'
-      })
-      globalContext.eventSelectedCalendar = null
+    // TODO: nicer accessors in GlobalContext for this?
+    if (globalContext.eventSelectedComponent) {
+      let selectedCalendar = globalContext.eventSelectedComponent.getCalendar()
+
+      if (selectedCalendar !== calendar) {
+        selectedCalendar.dispatch({
+          type: 'CLEAR_SELECTED_EVENT'
+        })
+        globalContext.eventSelectedComponent = null
+      }
     }
 
     this.draggingSeg = (ev.el as any).fcSeg
 
     if (ev.isTouch) {
-      globalContext.eventSelectedCalendar = calendar
-
       let eventInstanceId = this.draggingSeg.eventRange.eventInstance.instanceId
 
       calendar.dispatch({
         type: 'SELECT_EVENT',
         eventInstanceId
       })
+
+      this.globalContext.eventSelectedComponent = this.component
     }
   }
 
@@ -138,7 +143,11 @@ export default class EventDragging {
   }
 
   onDocumentPointerUp = (ev, isTouchScroll) => {
-    if (!this.mutation && !isTouchScroll) {
+    if (
+      !this.mutation &&
+      !isTouchScroll &&
+      this.globalContext.eventSelectedComponent === this.component
+    ) {
       this.component.getCalendar().dispatch({
         type: 'CLEAR_SELECTED_EVENT'
       })

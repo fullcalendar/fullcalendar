@@ -8,6 +8,7 @@ import EventDragging from '../interactions/EventDragging'
 import Calendar from '../Calendar'
 
 // TODO: how to accept external drags?
+// TODO: rename to BrowserContext?
 
 export class GlobalContext { // TODO: rename file to something better
 
@@ -15,8 +16,8 @@ export class GlobalContext { // TODO: rename file to something better
   componentCnt: number = 0
   componentHash = {}
   listenerHash = {}
-  selectedCalendar: Calendar // *date* selection
-  eventSelectedCalendar: Calendar
+  selectedCalendar: Calendar // *date* selection // TODO: move to component just like eventSelected?
+  eventSelectedComponent: DateComponent
 
   registerComponent(component: DateComponent) {
     this.componentHash[component.uid] = component
