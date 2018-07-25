@@ -95,7 +95,7 @@ export default class DateSelecting {
 
       this.dragSelection = null
 
-    } else if (!isTouchScroll) {
+    } else if (!isTouchScroll && component.selection) {
       // if there was a pointerup that did not result in a selection and was
       // not merely a touchmove-scroll, then possibly unselect the current selection.
       // won't do anything if already unselected (OR, leverage selectedCalendar?)

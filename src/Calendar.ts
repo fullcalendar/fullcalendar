@@ -929,12 +929,10 @@ export default class Calendar {
 
   // public method
   unselect(ev?: UIEvent) {
-    if (this.state.selection) {
-      this.dispatch({
-        type: 'UNSELECT'
-      })
-      this.triggerUnselect(this.view, ev)
-    }
+    this.dispatch({
+      type: 'UNSELECT'
+    })
+    this.triggerUnselect(this.view, ev)
   }
 
 
