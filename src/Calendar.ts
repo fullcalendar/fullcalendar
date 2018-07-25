@@ -960,11 +960,12 @@ export default class Calendar {
   }
 
 
-  triggerDayClick(selection: Selection, view: View, ev: UIEvent) {
+  triggerDayClick(selection: Selection, dayEl: HTMLElement, view: View, ev: UIEvent) {
     this.publiclyTrigger('dayClick', [
       {
         date: this.dateEnv.toDate(selection.range.start),
         isAllDay: selection.isAllDay,
+        dayEl,
         jsEvent: ev,
         view
       }

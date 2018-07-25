@@ -33,7 +33,7 @@ export default class DateClicking {
       let { initialHit, finalHit } = this.hitListener
 
       if (initialHit && finalHit && isHitsEqual(initialHit, finalHit)) {
-        component.getCalendar().triggerDayClick(initialHit, component.view, ev.origEvent)
+        component.getCalendar().triggerDayClick(initialHit, initialHit.el, component.view, ev.origEvent)
       }
     }
   }
