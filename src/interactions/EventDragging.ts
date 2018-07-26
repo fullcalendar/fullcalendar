@@ -1,8 +1,9 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
 import { PointerDragEvent } from '../dnd/PointerDragListener'
-import HitDragListener, { isHitsEqual } from '../dnd/HitDragListener'
-import { createMutation, EventMutation, computeEventDisplacement } from '../reducers/event-mutation'
+import HitDragListener, { isHitsEqual, Hit } from '../dnd/HitDragListener'
+import { EventMutation, computeEventDisplacement, diffDates } from '../reducers/event-mutation'
 import { GlobalContext } from '../common/GlobalContext'
+import { startOfDay } from '../datelib/marker'
 
 export default class EventDragging {
 
@@ -87,17 +88,7 @@ export default class EventDragging {
   onHitOver = (hit, ev) => {
     let { initialHit } = this.hitListener
 
-    this.mutation = createMutation(
-      initialHit.range,
-      initialHit.isAllDay,
-      hit.range,
-      hit.isAllDay,
-      this.draggingSeg.eventRange.eventDef.hasEnd,
-      hit.component === initialHit.component ?
-        hit.component.largeUnit :
-        null,
-      hit.component.getDateEnv()
-    )
+    this.mutation = computeEventMutation(initialHit, hit)
 
     let calendar = hit.component.getCalendar()
     let displacement = computeEventDisplacement(
@@ -174,4 +165,36 @@ export default class EventDragging {
     this.draggingSeg = null
   }
 
+}
+
+function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
+  let date0 = hit0.range.start
+  let date1 = hit1.range.start
+  let standardProps = null
+
+  if (hit0.isAllDay !== hit1.isAllDay) {
+    standardProps = {
+      hasEnd: false, // TODO: make this a setting
+      isAllDay: hit1.isAllDay
+    }
+
+    if (hit1.isAllDay) {
+      // means date1 is already start-of-day,
+      // but date0 needs to be converted
+      date0 = startOfDay(date0)
+    }
+  }
+
+  let dateDelta = diffDates(
+    date0, date1,
+    hit0.component.getDateEnv(),
+    hit0.component === hit1.component ?
+      hit0.component.largeUnit :
+      null
+  )
+
+  return {
+    dateDelta,
+    standardProps
+  }
 }

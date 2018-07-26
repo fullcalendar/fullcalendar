@@ -978,25 +978,8 @@ export default abstract class DateComponent extends Component {
 
   // Returns the date range of the full days the given range visually appears to occupy.
   // Returns a plain object with start/end, NOT an UnzonedRange!
-  computeDayRange(unzonedRange): { start: DateMarker, end: DateMarker } {
-    let startDay: DateMarker = startOfDay(unzonedRange.start) // the beginning of the day the range starts
-    let end: DateMarker = unzonedRange.end
-    let endDay: DateMarker = startOfDay(end)
-    let endTimeMS: number = end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
-
-    // If the end time is actually inclusively part of the next day and is equal to or
-    // beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
-    // Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-    if (endTimeMS && endTimeMS >= asRoughMs(this.nextDayThreshold)) {
-      endDay = addDays(endDay, 1)
-    }
-
-    // If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
-    if (endDay <= startDay) {
-      endDay = addDays(startDay, 1)
-    }
-
-    return { start: startDay, end: endDay } // TODO: eventually use UnzonedRange?
+  computeDayRange(unzonedRange): UnzonedRange {
+    return computeDayRange(unzonedRange, this.nextDayThreshold)
   }
 
 
@@ -1021,4 +1004,26 @@ export default abstract class DateComponent extends Component {
       !elementClosest(evTarget, 'a[data-goto]') // a clickable nav link
   }
 
+}
+
+
+function computeDayRange(unzonedRange: UnzonedRange, nextDayThreshold: Duration): UnzonedRange {
+  let startDay: DateMarker = startOfDay(unzonedRange.start) // the beginning of the day the range starts
+  let end: DateMarker = unzonedRange.end
+  let endDay: DateMarker = startOfDay(end)
+  let endTimeMS: number = end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
+
+  // If the end time is actually inclusively part of the next day and is equal to or
+  // beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
+  // Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
+  if (endTimeMS && endTimeMS >= asRoughMs(nextDayThreshold)) {
+    endDay = addDays(endDay, 1)
+  }
+
+  // If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
+  if (endDay <= startDay) {
+    endDay = addDays(startDay, 1)
+  }
+
+  return new UnzonedRange(startDay, endDay)
 }

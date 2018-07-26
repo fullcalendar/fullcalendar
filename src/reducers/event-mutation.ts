@@ -1,67 +1,19 @@
 import UnzonedRange from '../models/UnzonedRange'
-import { DateEnv } from '../datelib/env'
-import { diffDayAndTime } from '../datelib/marker'
+import { diffDayAndTime, diffDays, startOfDay, addDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import { EventStore, EventDef, EventInstance } from './event-store'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 
 export interface EventMutation {
-  startDelta?: Duration
+  dateDelta?: Duration
   endDelta?: Duration
-  standardProps: object // for the def
-  extendedProps: object // for the def
-}
-
-// Creating
-
-export function createMutation(
-  range0: UnzonedRange,
-  isAllDay0: boolean,
-  range1: UnzonedRange,
-  isAllDay1: boolean,
-  hasEnd: boolean,
-  largeUnit: string,
-  dateEnv: DateEnv
-): EventMutation {
-  let startDelta: Duration = null
-  let endDelta: Duration = null
-  let standardProps = {} as any
-
-  // subtracts the dates in the appropriate way, returning a duration
-  function diffDates(date0, date1) {
-    if (largeUnit === 'year') {
-      return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')
-    } else if (largeUnit === 'month') {
-      return createDuration(dateEnv.diffWholeMonths(date0, date1), 'month')
-    } else {
-      return diffDayAndTime(date0, date1) // returns a duration
-    }
-  }
-
-  startDelta = diffDates(range0.start, range1.start)
-  endDelta = diffDates(range0.end, range1.end)
-
-  if (isAllDay0 !== isAllDay1) {
-    standardProps.isAllDay = isAllDay1
-
-    if (hasEnd) {
-      standardProps.hasEnd = false
-    }
-  }
-
-  return {
-    startDelta,
-    endDelta,
-    standardProps: standardProps,
-    extendedProps: {}
-  }
+  standardProps?: any // for the def
+  extendedProps?: any // for the def
 }
 
 export function computeEventDisplacement(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
   let newStore = { defs: {}, instances: {} } // TODO: better name
-
-  const dateEnv = calendar.dateEnv
   let eventInstance = eventStore.instances[instanceId]
   let eventDef = eventStore.defs[eventInstance.defId]
 
@@ -78,12 +30,13 @@ export function computeEventDisplacement(eventStore: EventStore, instanceId: str
 
     for (let instanceId in eventStore.instances) {
       let instance = eventStore.instances[instanceId]
+      let def = newStore.defs[instance.defId] // the already-modified version
 
       if (
         instance === eventInstance ||
         matchGroupId && matchGroupId === eventStore.defs[instance.defId].groupId
       ) {
-        newStore.instances[instanceId] = applyMutationToInstance(instance, mutation, dateEnv)
+        newStore.instances[instanceId] = applyMutationToInstance(instance, def, mutation, calendar)
       }
     }
   }
@@ -103,41 +56,66 @@ export function applyMutation(eventStore: EventStore, instanceId: string, mutati
 }
 
 function applyMutationToDef(eventDef: EventDef, mutation: EventMutation) {
+  let copy = assignTo({}, eventDef)
 
-  if (mutation.standardProps != null || mutation.extendedProps != null) {
-    eventDef = assignTo({}, eventDef)
-
-    if (mutation.standardProps != null) {
-      assignTo(eventDef, mutation.standardProps)
-    }
-
-    if (mutation.extendedProps != null) {
-      eventDef.extendedProps = assignTo({}, eventDef.extendedProps, mutation.extendedProps)
-    }
+  if (mutation.standardProps) {
+    assignTo(copy, mutation.standardProps)
   }
 
-  return eventDef
+  if (mutation.extendedProps) {
+    copy.extendedProps = assignTo({}, copy.extendedProps, mutation.extendedProps)
+  }
+
+  return copy
 }
 
-function applyMutationToInstance(eventInstance: EventInstance, mutation: EventMutation, dateEnv: DateEnv) {
+function applyMutationToInstance(
+  eventInstance: EventInstance,
+  eventDef: EventDef, // after already having been modified
+  mutation: EventMutation,
+  calendar: Calendar
+) {
+  let dateEnv = calendar.dateEnv
+  let forceIsAllDay = mutation.standardProps && mutation.standardProps.isAllDay === true
+  let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
+  let copy = assignTo({}, eventInstance)
 
-  if (mutation.startDelta || mutation.endDelta) {
-    eventInstance = assignTo({}, eventInstance)
-
-    if (mutation.startDelta) {
-      eventInstance.range = new UnzonedRange(
-        dateEnv.add(eventInstance.range.start, mutation.startDelta),
-        eventInstance.range.end
-      )
-    }
-
-    if (mutation.endDelta) {
-      eventInstance.range = new UnzonedRange(
-        eventInstance.range.start,
-        dateEnv.add(eventInstance.range.end, mutation.endDelta),
-      )
-    }
+  if (forceIsAllDay) {
+    // TODO: make a util for this?
+    let dayCnt = Math.floor(diffDays(copy.range.start, copy.range.end)) || 1
+    let start = startOfDay(copy.range.start)
+    let end = addDays(start, dayCnt)
+    copy.range = new UnzonedRange(start, end)
   }
 
-  return eventInstance
+  if (mutation.dateDelta) {
+    copy.range = new UnzonedRange(
+      dateEnv.add(copy.range.start, mutation.dateDelta),
+      dateEnv.add(copy.range.end, mutation.dateDelta)
+    )
+  }
+
+  if (clearEnd) {
+    copy.range = new UnzonedRange(
+      copy.range.start,
+      calendar.getDefaultEventEnd(eventDef.isAllDay, copy.range.start)
+    )
+  } else if (mutation.endDelta) {
+    copy.range = new UnzonedRange(
+      copy.range.end,
+      dateEnv.add(copy.range.end, mutation.endDelta),
+    )
+  }
+
+  return copy
+}
+
+export function diffDates(date0, date1, dateEnv, largeUnit) {
+  if (largeUnit === 'year') {
+    return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')
+  } else if (largeUnit === 'month') {
+    return createDuration(dateEnv.diffWholeMonths(date0, date1), 'month')
+  } else {
+    return diffDayAndTime(date0, date1) // returns a duration
+  }
 }
