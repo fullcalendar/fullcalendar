@@ -318,6 +318,7 @@ export default class DayGrid extends DateComponent {
   buildCoordCaches() {
     this.colCoordCache.build()
     this.rowCoordCache.build()
+    this.rowCoordCache.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
   }
 
 
