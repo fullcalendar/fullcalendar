@@ -3,10 +3,12 @@ import HitDragListener, { isHitsEqual, Hit } from '../dnd/HitDragListener'
 import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
 import { elementClosest } from '../util/dom-manip'
 import UnzonedRange from '../models/UnzonedRange'
+import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
 
 export default class EventDragging {
 
   component: DateComponent
+  dragListener: IntentfulDragListenerImpl
   hitListener: HitDragListener
   draggingSeg: Seg
   mutation: EventMutation
@@ -14,9 +16,11 @@ export default class EventDragging {
   constructor(component: DateComponent) {
     this.component = component
 
-    let hitListener = this.hitListener = new HitDragListener(component)
-    hitListener.dragListener.pointerListener.selector = '.fc-resizer'
-    hitListener.dragListener.touchScrollAllowed = false
+    this.dragListener = new IntentfulDragListenerImpl(component.el)
+    this.dragListener.pointerListener.selector = '.fc-resizer'
+    this.dragListener.touchScrollAllowed = false
+
+    let hitListener = this.hitListener = new HitDragListener(this.dragListener, component)
     hitListener.on('pointerdown', this.onPointerDown)
     hitListener.on('dragstart', this.onDragStart)
     hitListener.on('hitover', this.onHitOver)
@@ -33,7 +37,7 @@ export default class EventDragging {
     let eventInstanceId = seg.eventRange.eventInstance.instanceId
 
     // if touch, need to be working with a selected event
-    this.hitListener.dragListener.pointerListener.ignoreMove =
+    this.dragListener.pointerListener.ignoreMove =
       !this.component.isValidSegInteraction(ev.origEvent.target) ||
       (ev.isTouch && this.component.selectedEventInstanceId !== eventInstanceId)
   }

@@ -7,7 +7,7 @@
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../node_modules/dragula/dist/dragula.js'></script>
 <script src='../dist/fullcalendar.js'></script>
-<script src='../dist/dragula.js'></script>
+<script src='../dist/generic-dragging.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -27,10 +27,14 @@
       }));
     });
 
-    FullCalendar.dragula({
+    var drake = dragula({
       containers: [ containerEl ],
       copy: true
     });
+
+    FullCalendarGenericDragging.enable({
+      mirrorSelector: '.gu-mirror'
+    })
 
     /* initialize the calendar
     -----------------------------------------------------------------*/

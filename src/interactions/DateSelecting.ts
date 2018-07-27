@@ -5,12 +5,14 @@ import HitDragListener, { Hit } from '../dnd/HitDragListener'
 import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
 import { PointerDragEvent } from '../dnd/PointerDragListener'
+import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
 import { GlobalContext } from '../common/GlobalContext'
 
 export default class DateSelecting {
 
   component: DateComponent
   globalContext: GlobalContext
+  dragListener: IntentfulDragListenerImpl
   hitListener: HitDragListener
   dragSelection: Selection
 
@@ -18,8 +20,10 @@ export default class DateSelecting {
     this.component = component
     this.globalContext = globalContext
 
-    let hitListener = this.hitListener = new HitDragListener(component)
-    hitListener.dragListener.touchScrollAllowed = false
+    this.dragListener = new IntentfulDragListenerImpl(component.el)
+    this.dragListener.touchScrollAllowed = false
+
+    let hitListener = this.hitListener = new HitDragListener(this.dragListener, component)
     hitListener.on('pointerdown', this.onPointerDown)
     hitListener.on('dragstart', this.onDragStart)
     hitListener.on('hitover', this.onHitOver)
@@ -31,8 +35,7 @@ export default class DateSelecting {
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    let { component } = this
-    let { dragListener } = this.hitListener
+    let { component, dragListener } = this
     let isValid = component.opt('selectable') &&
       component.isValidDateInteraction(ev.origEvent.target as HTMLElement)
 

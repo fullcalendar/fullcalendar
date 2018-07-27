@@ -89,7 +89,7 @@ export default class PointerDragListener {
       isPrimaryMouseButton(ev) &&
       this.maybeStart(ev)
     ) {
-      this.emitter.trigger('pointerdown', this.createMouseEvent(ev))
+      this.emitter.trigger('pointerdown', createMouseEvent(ev, this.subjectEl))
 
       if (!this.ignoreMove) {
         document.addEventListener('mousemove', this.onMouseMove)
@@ -100,14 +100,14 @@ export default class PointerDragListener {
   }
 
   onMouseMove = (ev: MouseEvent) => {
-    this.emitter.trigger('pointermove', this.createMouseEvent(ev))
+    this.emitter.trigger('pointermove', createMouseEvent(ev, this.subjectEl))
   }
 
   onMouseUp = (ev: MouseEvent) => {
     document.removeEventListener('mousemove', this.onMouseMove)
     document.removeEventListener('mouseup', this.onMouseUp)
 
-    this.emitter.trigger('pointerup', this.createMouseEvent(ev))
+    this.emitter.trigger('pointerup', createMouseEvent(ev, this.subjectEl))
 
     this.cleanup()
   }
@@ -116,7 +116,7 @@ export default class PointerDragListener {
     if (this.maybeStart(ev)) {
       this.isDraggingTouch = true
 
-      this.emitter.trigger('pointerdown', this.createTouchEvent(ev))
+      this.emitter.trigger('pointerdown', createTouchEvent(ev, this.subjectEl))
 
       // unlike mouse, need to attach to target, not document
       // https://stackoverflow.com/a/45760014
@@ -141,7 +141,7 @@ export default class PointerDragListener {
   }
 
   onTouchMove = (ev: TouchEvent) => {
-    this.emitter.trigger('pointermove', this.createTouchEvent(ev))
+    this.emitter.trigger('pointermove', createTouchEvent(ev, this.subjectEl))
   }
 
   onTouchEnd = (ev: TouchEvent) => {
@@ -153,7 +153,7 @@ export default class PointerDragListener {
       target.removeEventListener('touchcancel', this.onTouchEnd)
       window.removeEventListener('scroll', this.onTouchScroll)
 
-      this.emitter.trigger('pointerup', this.createTouchEvent(ev))
+      this.emitter.trigger('pointerup', createTouchEvent(ev, this.subjectEl))
 
       this.cleanup()
       this.isDraggingTouch = false
@@ -171,39 +171,41 @@ export default class PointerDragListener {
     }
   }
 
-  createMouseEvent(ev): PointerDragEvent {
-    return {
-      origEvent: ev,
-      isTouch: false,
-      el: this.subjectEl,
-      pageX: ev.pageX,
-      pageY: ev.pageY
-    }
-  }
-
-  createTouchEvent(ev): PointerDragEvent {
-    let pev = {
-      origEvent: ev,
-      isTouch: true,
-      el: this.subjectEl
-    } as PointerDragEvent
-
-    let touches = ev.touches
-
-    // if touch coords available, prefer,
-    // because FF would give bad ev.pageX ev.pageY
-    if (touches && touches.length) {
-      pev.pageX = touches[0].pageX
-      pev.pageY = touches[0].pageY
-    } else {
-      pev.pageX = ev.pageX
-      pev.pageY = ev.pageY
-    }
-
-    return pev
-  }
-
 }
+
+function createMouseEvent(ev, el: HTMLElement): PointerDragEvent {
+  return {
+    origEvent: ev,
+    isTouch: false,
+    el: el,
+    pageX: ev.pageX,
+    pageY: ev.pageY
+  }
+}
+
+function createTouchEvent(ev, el: HTMLElement): PointerDragEvent {
+  let pev = {
+    origEvent: ev,
+    isTouch: true,
+    el: el
+  } as PointerDragEvent
+
+  let touches = ev.touches
+
+  // if touch coords available, prefer,
+  // because FF would give bad ev.pageX ev.pageY
+  if (touches && touches.length) {
+    pev.pageX = touches[0].pageX
+    pev.pageY = touches[0].pageY
+  } else {
+    pev.pageX = ev.pageX
+    pev.pageY = ev.pageY
+  }
+
+  return pev
+}
+
+
 
 let ignoreMouseDepth = 0
 

@@ -1,4 +1,4 @@
-import IntentfulDragListener from '../dnd/IntentfulDragListener'
+import { IntentfulDragListener } from '../dnd/IntentfulDragListener'
 import { PointerDragEvent } from '../dnd/PointerDragListener'
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'

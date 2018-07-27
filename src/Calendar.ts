@@ -119,8 +119,6 @@ export default class Calendar {
       this.el.classList.add('fc')
       this._render()
       this.isRendered = true
-      this.trigger('initialRender')
-      Calendar.trigger('initialRender', this)
     } else if (this.elementVisible()) {
       // mainly for the public API
       this.calcSize()

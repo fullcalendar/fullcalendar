@@ -1,6 +1,6 @@
 import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from './PointerDragListener'
-import IntentfulDragListener from './IntentfulDragListener'
+import { IntentfulDragListener } from './IntentfulDragListener'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
 import { computeRect } from '../util/dom-geom'
@@ -21,40 +21,39 @@ fires (none will be fired if no initial hit):
 */
 export default class HitDragListener {
 
-  component: DateComponent
-  droppableComponentHash: DateComponentHash
+  droppableHash: DateComponentHash
   dragListener: IntentfulDragListener
   emitter: EmitterMixin
   initialHit: Hit
   movingHit: Hit
   finalHit: Hit // won't ever be populated if ignoreMove
   coordAdjust: any
+  dieIfNoInitial: boolean = true
+  isIgnoringMove: boolean = false
 
   // options
   subjectCenter: boolean = false
 
-  constructor(component: DateComponent, droppableComponentHash?: DateComponentHash) {
-    this.component = component
-    this.droppableComponentHash = droppableComponentHash
+  constructor(dragListener: IntentfulDragListener, droppable: DateComponent | DateComponentHash) {
 
-    if (droppableComponentHash) {
-      this.droppableComponentHash = droppableComponentHash
+    if (droppable instanceof DateComponent) {
+      this.droppableHash = { [droppable.uid]: droppable }
     } else {
-      this.droppableComponentHash = { [component.uid]: component }
+      this.droppableHash = droppable
     }
 
-    let dragListener = this.dragListener = new IntentfulDragListener(component.el)
     dragListener.on('pointerdown', this.onPointerDown)
     dragListener.on('dragstart', this.onDragStart)
     dragListener.on('dragmove', this.onDragMove)
     dragListener.on('pointerup', this.onPointerUp)
     dragListener.on('dragend', this.onDragEnd)
 
+    this.dragListener = dragListener
     this.emitter = new EmitterMixin()
   }
 
   destroy() {
-    this.dragListener.destroy()
+    this.dragListener.destroy() // should not be responsible for destroying!
   }
 
   on(name, handler) {
@@ -69,13 +68,15 @@ export default class HitDragListener {
     this.prepareComponents()
     this.processFirstCoord(ev)
 
-    let { pointerListener } = this.dragListener
+    let { dragListener } = this
 
-    if (this.initialHit) {
-      pointerListener.ignoreMove = false
+    if (this.initialHit || !this.dieIfNoInitial) {
+      this.isIgnoringMove = false
+      dragListener.setIgnoreMove(false)
       this.emitter.trigger('pointerdown', ev)
     } else {
-      pointerListener.ignoreMove = true
+      this.isIgnoringMove = true
+      dragListener.setIgnoreMove(true)
     }
   }
 
@@ -103,23 +104,27 @@ export default class HitDragListener {
       }
 
       this.coordAdjust = diffPoints(adjustedPoint, origPoint)
+    } else {
+      this.coordAdjust = { left: 0, top: 0 }
     }
   }
 
   onDragStart = (ev: PointerDragEvent) => {
-    this.emitter.trigger('dragstart', ev)
-    this.handleMove(ev)
+    if (!this.isIgnoringMove) {
+      this.emitter.trigger('dragstart', ev)
+      this.handleMove(ev)
+    }
   }
 
   onDragMove = (ev: PointerDragEvent) => {
-    this.emitter.trigger('dragmove', ev)
-    this.handleMove(ev)
+    if (!this.isIgnoringMove) {
+      this.emitter.trigger('dragmove', ev)
+      this.handleMove(ev)
+    }
   }
 
   onPointerUp = (ev: PointerDragEvent) => {
-    let { pointerListener } = this.dragListener
-
-    if (!pointerListener.ignoreMove) { // cancelled in onPointerDown?
+    if (!this.isIgnoringMove) { // cancelled in onPointerDown?
       this.emitter.trigger('pointerup', ev)
     }
   }
@@ -151,15 +156,15 @@ export default class HitDragListener {
   }
 
   prepareComponents() {
-    for (let id in this.droppableComponentHash) {
-      let component = this.droppableComponentHash[id]
+    for (let id in this.droppableHash) {
+      let component = this.droppableHash[id]
       component.buildCoordCaches()
     }
   }
 
   queryHit(x, y): Hit {
-    for (let id in this.droppableComponentHash) {
-      let component = this.droppableComponentHash[id]
+    for (let id in this.droppableHash) {
+      let component = this.droppableHash[id]
       let hit = component.queryHit(x, y) as Hit
 
       if (hit) {

@@ -3,6 +3,23 @@ import { default as PointerDragListener, PointerDragEvent } from './PointerDragL
 import { preventSelection, allowSelection, preventContextMenu, allowContextMenu } from '../util/misc'
 import DragMirror from './DragMirror'
 
+/* needs events:
+- pointerdown
+- dragstart
+- dragmove
+- pointerup
+- dragend
+*/
+export interface IntentfulDragListener {
+  isDragging: boolean
+  on(evName: string, callback: (ev: PointerDragEvent) => void)
+  setMirrorNeedsRevert(bool: boolean)
+  enableMirror()
+  disableMirror()
+  setIgnoreMove(bool: boolean)
+  destroy()
+}
+
 /*
 fires:
 - pointerdown
@@ -12,7 +29,7 @@ fires:
 - pointerup (always happens before dragend!)
 - dragend (happens after any revert animation)
 */
-export default class IntentfulDragListener {
+export class IntentfulDragListenerImpl implements IntentfulDragListener {
 
   pointerListener: PointerDragListener
   emitter: EmitterMixin
@@ -169,6 +186,23 @@ export default class IntentfulDragListener {
   stopDrag(ev) {
     this.emitter.trigger('dragend', ev)
     this.isDragging = false
+  }
+
+
+  enableMirror() {
+    this.dragMirror.enable()
+  }
+
+  disableMirror() {
+    this.dragMirror.disable()
+  }
+
+  setMirrorNeedsRevert(bool: boolean) {
+    this.dragMirror.needsRevert = bool
+  }
+
+  setIgnoreMove(bool: boolean) {
+    this.pointerListener.ignoreMove = bool
   }
 
 }

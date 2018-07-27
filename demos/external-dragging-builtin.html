@@ -2,39 +2,38 @@
 <html>
 <head>
 <meta charset='utf-8' />
+<link href='../node_modules/dragula/dist/dragula.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
-<script src='../node_modules/jquery/dist/jquery.js'></script>
-<script src='../node_modules/components-jqueryui/jquery-ui.js'></script>
 <script src='../dist/fullcalendar.js'></script>
-<script src='../dist/generic-dragging.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
 
-    FullCalendarGenericDragging.enable({
-      mirrorSelector: '.ui-draggable-dragging'
-    })
-
     /* initialize the external events
     -----------------------------------------------------------------*/
 
-    $('#external-events .fc-event').each(function() {
+    var containerEl = document.getElementById('external-events-list');
+    var eventEls = Array.prototype.slice.call(
+      containerEl.querySelectorAll('.fc-event')
+    );
 
-      // store data so the calendar knows to render an event upon drop
-      $(this).attr('data-event', JSON.stringify({
-        title: $.trim($(this).text()), // use the element's text as the event title
-        stick: true // maintain when user navigates (see docs on the renderEvent method)
-      }));
+    eventEls.forEach(function(eventEl) {
+      new FullCalendar.ExternalDraggableEvent(
+        eventEl,
+        {}
+      )
 
-      // make the event draggable using jQuery UI
-      $(this).draggable({
-        zIndex: 999,
-        revert: true,      // will cause the event to go back to its
-        revertDuration: 0  //  original position after the drag
-      });
-
+      // eventEl.setAttribute('data-event', JSON.stringify({
+      //   title: eventEl.innerText.trim(),
+      //   stick: true
+      // }));
     });
+
+    // FullCalendar.dragula({
+    //   containers: [ containerEl ],
+    //   copy: true
+    // });
 
     /* initialize the calendar
     -----------------------------------------------------------------*/
@@ -50,9 +49,9 @@
       droppable: true, // this allows things to be dropped onto the calendar
       drop: function() {
         // is the "remove after drop" checkbox checked?
-        if ($('#drop-remove').is(':checked')) {
+        if (document.getElementById('drop-remove').checked) {
           // if so, remove the element from the "Draggable Events" list
-          $(this).remove();
+          this.parentNode.removeChild(this);
         }
       }
     });
@@ -118,11 +117,15 @@
 
     <div id='external-events'>
       <h4>Draggable Events</h4>
-      <div class='fc-event'>My Event 1</div>
-      <div class='fc-event'>My Event 2</div>
-      <div class='fc-event'>My Event 3</div>
-      <div class='fc-event'>My Event 4</div>
-      <div class='fc-event'>My Event 5</div>
+
+      <div id='external-events-list'>
+        <div class='fc-event'>My Event 1</div>
+        <div class='fc-event'>My Event 2</div>
+        <div class='fc-event'>My Event 3</div>
+        <div class='fc-event'>My Event 4</div>
+        <div class='fc-event'>My Event 5</div>
+      </div>
+
       <p>
         <input type='checkbox' id='drop-remove' />
         <label for='drop-remove'>remove after drop</label>
