@@ -29,7 +29,7 @@ export function applyMutationToAll(eventStore: EventStore, mutation: EventMutati
 
   for (let instanceId in eventStore.instances) {
     let instance = eventStore.instances[instanceId]
-    let def = eventStore.defs[instance.defId]
+    let def = newStore.defs[instance.defId] // the newly MODIFIED def
 
     newStore.instances[instanceId] = applyMutationToInstance(instance, def, mutation, calendar)
   }
@@ -82,10 +82,6 @@ function applyMutationToDef(eventDef: EventDef, mutation: EventMutation) {
     assignTo(copy, mutation.standardProps)
   }
 
-  if (mutation.startDelta || mutation.endDelta) {
-    copy.hasEnd = true
-  }
-
   if (mutation.extendedProps) {
     copy.extendedProps = assignTo({}, copy.extendedProps, mutation.extendedProps)
   }
@@ -100,11 +96,11 @@ function applyMutationToInstance(
   calendar: Calendar
 ) {
   let dateEnv = calendar.dateEnv
-  let forceIsAllDay = mutation.standardProps && mutation.standardProps.isAllDay === true
+  let forceAllDay = mutation.standardProps && mutation.standardProps.isAllDay === true
   let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
   let copy = assignTo({}, eventInstance)
 
-  if (forceIsAllDay) {
+  if (forceAllDay) {
     // TODO: make a util for this?
     let dayCnt = Math.floor(diffDays(copy.range.start, copy.range.end)) || 1
     let start = startOfDay(copy.range.start)
