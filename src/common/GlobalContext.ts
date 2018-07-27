@@ -5,6 +5,7 @@ import DateSelecting from '../interactions/DateSelecting'
 import EventClicking from '../interactions/EventClicking'
 import EventHovering from '../interactions/EventHovering'
 import EventDragging from '../interactions/EventDragging'
+import EventResizing from '../interactions/EventResizing'
 import Calendar from '../Calendar'
 
 // TODO: how to accept external drags?
@@ -56,7 +57,8 @@ export class GlobalContext { // TODO: rename file to something better
       dateSelecting: new DateSelecting(component, globalContext),
       eventClicking: new EventClicking(component),
       eventHovering: new EventHovering(component),
-      eventDragging: new EventDragging(component, globalContext)
+      eventDragging: new EventDragging(component, globalContext),
+      eventResizing: new EventResizing(component)
     }
   }
 
@@ -68,6 +70,7 @@ export class GlobalContext { // TODO: rename file to something better
     listeners.eventClicking.destroy()
     listeners.eventHovering.destroy()
     listeners.eventDragging.destroy()
+    listeners.eventResizing.destroy()
 
     delete this.listenerHash[component.uid]
   }

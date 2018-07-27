@@ -381,7 +381,7 @@ export default abstract class DateComponent extends Component {
     let { renderedFlags } = this
 
     if ((!flags || flags.eventResize) && renderedFlags.eventResize) {
-      this.unrenderEventResize()
+      this.unrenderEventResizeState()
       renderedFlags.eventResize = false
     }
 

@@ -20,6 +20,12 @@ export default class EventHovering {
     let { component } = this
     let seg = (segEl as any).fcSeg // put there by EventRenderer
 
+    if (triggerType === 'eventMouseover') { // LAME way to test
+      segEl.classList.add('fc-allow-mouse-resize')
+    } else {
+      segEl.classList.remove('fc-allow-mouse-resize')
+    }
+
     if (component.isValidSegInteraction(segEl as HTMLElement)) {
       component.publiclyTrigger(triggerType, [
         {

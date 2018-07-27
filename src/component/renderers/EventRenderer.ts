@@ -452,7 +452,7 @@ export default class EventRenderer {
   }
 
 
-  isEventDefGenerallyEditable(eventDef) {
+  isEventDefGenerallyEditable(eventDef) { // NOT USED YET
     return false // TODO
   }
 
@@ -471,7 +471,7 @@ export default class EventRenderer {
 
   // Computes if the given event is allowed to be resized by the user at all
   isEventDefResizable(eventDef) {
-    return false // TODO
+    return true // TODO
   }
 
 

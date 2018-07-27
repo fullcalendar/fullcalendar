@@ -143,6 +143,16 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
         selectedEventInstanceId: null
       })
 
+    case 'SET_EVENT_RESIZE':
+      return assignTo({}, state, {
+        eventResizeState: action.eventResizeState
+      })
+
+    case 'CLEAR_EVENT_RESIZE':
+      return assignTo({}, state, {
+        eventResizeState: null
+      })
+
   }
 
   return newState

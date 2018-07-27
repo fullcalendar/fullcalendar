@@ -1,9 +1,10 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
 import { PointerDragEvent } from '../dnd/PointerDragListener'
 import HitDragListener, { isHitsEqual, Hit } from '../dnd/HitDragListener'
-import { EventMutation, computeEventDisplacement, diffDates } from '../reducers/event-mutation'
+import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
 import { GlobalContext } from '../common/GlobalContext'
 import { startOfDay } from '../datelib/marker'
+import { elementClosest } from '../util/dom-manip'
 
 export default class EventDragging {
 
@@ -42,6 +43,12 @@ export default class EventDragging {
 
     // to prevent from cloning the sourceEl before it is selected
     dragListener.dragMirror.disable()
+
+    let origTarget = ev.origEvent.target as HTMLElement
+
+    this.hitListener.dragListener.pointerListener.ignoreMove =
+      !this.component.isValidSegInteraction(origTarget) ||
+      elementClosest(origTarget, '.fc-resizer')
   }
 
   computeDragDelay(ev: PointerDragEvent): number {
@@ -87,20 +94,18 @@ export default class EventDragging {
 
   onHitOver = (hit, ev) => {
     let { initialHit } = this.hitListener
-
-    this.mutation = computeEventMutation(initialHit, hit)
-
     let calendar = hit.component.getCalendar()
-    let displacement = computeEventDisplacement(
+
+    let mutation = computeEventMutation(initialHit, hit)
+    let related = getRelatedEvents(
       calendar.state.eventStore,
-      this.draggingSeg.eventRange.eventInstance.instanceId,
-      this.mutation,
-      calendar
+      this.draggingSeg.eventRange.eventInstance.instanceId
     )
+    let mutatedRelated = applyMutationToAll(related, mutation, calendar)
 
     calendar.dispatch({
       type: 'SET_DRAG',
-      displacement,
+      displacement: mutatedRelated,
       origSeg: this.draggingSeg,
       isTouch: ev.isTouch
     })
@@ -114,12 +119,19 @@ export default class EventDragging {
       dragMirror.disable()
     }
 
-    dragMirror.needsRevert = isHitsEqual(initialHit, hit)
+    let isSame = isHitsEqual(initialHit, hit)
+    dragMirror.needsRevert = isSame
+
+    if (!isSame) {
+      this.mutation = mutation
+    }
   }
 
   onHitOut = (hit, ev) => { // TODO: onHitChange?
     this.mutation = null
 
+    // we still want to notify calendar about invalid drag
+    // because we want related events to stay hidden
     hit.component.getCalendar().dispatch({
       type: 'SET_DRAG',
       displacement: { defs: {}, instances: {} }, // TODO: better way to make empty event-store
@@ -133,6 +145,10 @@ export default class EventDragging {
     dragMirror.needsRevert = true
   }
 
+  /*
+  TODO: rethinking ordering of onDocumentPointerUp firing,
+  we want something that will always fire LAST, in case drag never activated
+  */
   onDocumentPointerUp = (ev, isTouchScroll) => {
     if (
       !this.mutation &&
@@ -148,6 +164,8 @@ export default class EventDragging {
   onDragEnd = () => {
     let { initialHit } = this.hitListener
     let initialCalendar = initialHit.component.getCalendar()
+
+    // TODO: what about across calendars?
 
     initialCalendar.dispatch({
       type: 'CLEAR_DRAG'
@@ -185,7 +203,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
     }
   }
 
-  let dateDelta = diffDates(
+  let delta = diffDates(
     date0, date1,
     hit0.component.getDateEnv(),
     hit0.component === hit1.component ?
@@ -194,7 +212,8 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
   )
 
   return {
-    dateDelta,
+    startDelta: delta,
+    endDelta: delta,
     standardProps
   }
 }
