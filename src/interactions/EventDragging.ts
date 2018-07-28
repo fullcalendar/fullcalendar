@@ -93,7 +93,7 @@ export default class EventDragging {
     }
   }
 
-  onHitOver = (hit, ev) => {
+  onHitOver = (hit) => {
     let { initialHit } = this.hitListener
     let calendar = hit.component.getCalendar()
 
@@ -106,9 +106,10 @@ export default class EventDragging {
 
     calendar.dispatch({
       type: 'SET_DRAG',
-      displacement: mutatedRelated,
-      origSeg: this.draggingSeg,
-      isTouch: ev.isTouch
+      dragState: {
+        eventStore: mutatedRelated,
+        origSeg: this.draggingSeg
+      }
     })
 
     let { dragMirror } = this.dragListener
@@ -128,16 +129,17 @@ export default class EventDragging {
     }
   }
 
-  onHitOut = (hit, ev) => { // TODO: onHitChange?
+  onHitOut = (hit) => { // TODO: onHitChange?
     this.mutation = null
 
     // we still want to notify calendar about invalid drag
     // because we want related events to stay hidden
     hit.component.getCalendar().dispatch({
       type: 'SET_DRAG',
-      displacement: { defs: {}, instances: {} }, // TODO: better way to make empty event-store
-      origSeg: this.draggingSeg,
-      isTouch: ev.isTouch
+      dragState: {
+        eventStore: { defs: {}, instances: {} }, // TODO: better way to make empty event-store
+        origSeg: this.draggingSeg
+      }
     })
 
     let { dragMirror } = this.dragListener

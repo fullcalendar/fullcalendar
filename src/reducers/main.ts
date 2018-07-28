@@ -121,11 +121,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
 
     case 'SET_DRAG':
       return assignTo({}, state, {
-        dragState: {
-          eventStore: action.displacement, // pass these in as one drag state?
-          isTouch: action.isTouch,
-          origSeg: action.origSeg
-        }
+        dragState: action.dragState
       })
 
     case 'CLEAR_DRAG':

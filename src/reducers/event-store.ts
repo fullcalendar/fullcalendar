@@ -4,7 +4,7 @@ import Calendar from '../Calendar'
 import { filterHash } from '../util/object'
 import { parseClassName, refineProps, ClassNameInput } from './utils'
 import { expandRecurring } from './recurring-events'
-import { applyMutationToRelated } from './event-mutation'
+import { applyMutationToRelated, mergeStores } from './event-mutation' // TODO: move mergeStores here
 
 // types
 
@@ -130,6 +130,9 @@ export function reduceEventStore(eventStore: EventStore, action: any, calendar: 
 
     case 'MUTATE_EVENTS':
       return applyMutationToRelated(eventStore, action.instanceId, action.mutation, calendar)
+
+    case 'ADD_EVENTS':
+      return mergeStores(eventStore, action.eventStore)
 
     default:
       return eventStore

@@ -580,7 +580,7 @@ export default abstract class DateComponent extends Component {
     if (dragState.origSeg) {
       this.hideRelatedSegs(dragState.origSeg)
     }
-    this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.isTouch)
+    this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.willCreateEvent)
   }
 
 
@@ -595,7 +595,7 @@ export default abstract class DateComponent extends Component {
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
   // Must return elements used for any mock events.
-  renderDrag(eventStore: EventStore, origSeg?, isTouch = false) {
+  renderDrag(eventStore: EventStore, origSeg, willCreateEvent) {
     // subclasses can implement
   }
 
@@ -614,7 +614,7 @@ export default abstract class DateComponent extends Component {
     if (eventResizeState.origSeg) {
       this.hideRelatedSegs(eventResizeState.origSeg)
     }
-    this.renderEventResize(eventResizeState.eventStore, eventResizeState.origSeg, eventResizeState.isTouch)
+    this.renderEventResize(eventResizeState.eventStore, eventResizeState.origSeg)
   }
 
 
@@ -627,7 +627,7 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders a visual indication of an event being resized.
-  renderEventResize(eventStore: EventStore, origSeg: any, isTouch: boolean) {
+  renderEventResize(eventStore: EventStore, origSeg: any) {
     // subclasses can implement
   }
 

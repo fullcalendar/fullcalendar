@@ -453,13 +453,13 @@ function splitInteractionState(state: EventInteractionState) {
     allDay = {
       eventStore: eventStoreGroups.allDay,
       origSeg: state.origSeg,
-      isTouch: state.isTouch
+      willCreateEvent: state.willCreateEvent
     }
 
     timed = {
       eventStore: eventStoreGroups.timed,
       origSeg: state.origSeg,
-      isTouch: state.isTouch
+      willCreateEvent: state.willCreateEvent
     }
   }
 

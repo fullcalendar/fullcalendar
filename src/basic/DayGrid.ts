@@ -360,16 +360,14 @@ export default class DayGrid extends DateComponent {
 
   // Renders a visual indication of an event or external element being dragged.
   // `eventLocation` has zoned start and end (optional)
-  renderDrag(eventStore: EventStore, origSeg, isTouch) {
+  renderDrag(eventStore: EventStore, origSeg) {
     let segs = this.eventStoreToSegs(eventStore)
 
     this.renderHighlightSegs(segs)
 
     // render drags from OTHER components as helpers
     if (segs.length && origSeg && origSeg.component !== this) {
-      this.helperRenderer.renderEventDraggingSegs(segs, origSeg, isTouch)
-
-      return true // signal helpers rendered
+      this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
     }
   }
 
@@ -386,12 +384,12 @@ export default class DayGrid extends DateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventStore: EventStore, origSeg, isTouch) {
+  renderEventResize(eventStore: EventStore, origSeg) {
     let segs = this.eventStoreToSegs(eventStore)
 
     this.renderHighlightSegs(segs)
 
-    this.helperRenderer.renderEventResizingSegs(segs, origSeg, isTouch)
+    this.helperRenderer.renderEventResizingSegs(segs, origSeg)
   }
 
 

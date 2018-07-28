@@ -184,8 +184,8 @@ export class IntentfulDragListenerImpl implements IntentfulDragListener {
   }
 
   stopDrag(ev) {
+    this.isDragging = false // go first because DragMirror::enable relies on it :(
     this.emitter.trigger('dragend', ev)
-    this.isDragging = false
   }
 
 

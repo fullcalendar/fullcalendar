@@ -616,16 +616,13 @@ export default class TimeGrid extends DateComponent {
 
   // Renders a visual indication of an event being dragged over the specified date(s).
   // A returned value of `true` signals that a mock "helper" event has been rendered.
-  renderDrag(eventStore: EventStore, origSeg, isTouch) {
+  renderDrag(eventStore: EventStore, origSeg, willCreateEvent) {
     let segs = this.eventStoreToSegs(eventStore)
 
-    if (origSeg) { // if there is event information for this drag, render a helper event
-
+    // if from within the calendar OR external element that will create an event, render helper
+    if (origSeg || willCreateEvent) {
       if (segs.length) {
-        this.helperRenderer.renderEventDraggingSegs(segs, origSeg, isTouch)
-
-        // signal that a helper has been rendered
-        return true
+        this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
       }
     } else { // otherwise, just render a highlight
       this.renderHighlightSegs(segs)
@@ -645,10 +642,10 @@ export default class TimeGrid extends DateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventStore: EventStore, origSeg, isTouch) {
+  renderEventResize(eventStore: EventStore, origSeg) {
     let segs = this.eventStoreToSegs(eventStore)
 
-    this.helperRenderer.renderEventResizingSegs(segs, origSeg, isTouch)
+    this.helperRenderer.renderEventResizingSegs(segs, origSeg)
   }
 
 

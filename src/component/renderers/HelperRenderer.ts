@@ -18,17 +18,17 @@ export default abstract class HelperRenderer {
   }
 
 
-  renderEventDraggingSegs(segs: Seg[], sourceSeg, isTouch) {
+  renderEventDraggingSegs(segs: Seg[], sourceSeg) {
     this.renderEventSegs(
       segs,
       sourceSeg,
       'fc-dragging',
-      isTouch ? null : this.view.opt('dragOpacity')
+      this.view.opt('dragOpacity') // TODO: use CSS to prevent this
     )
   }
 
 
-  renderEventResizingSegs(segs: Seg[], sourceSeg, isTouch) {
+  renderEventResizingSegs(segs: Seg[], sourceSeg) {
     this.renderEventSegs(
       segs,
       sourceSeg,

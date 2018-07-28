@@ -68,7 +68,7 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
   return newStore
 }
 
-function mergeStores(store0: EventStore, store1: EventStore): EventStore {
+export function mergeStores(store0: EventStore, store1: EventStore): EventStore {
   return {
     defs: assignTo({}, store0.defs, store1.defs),
     instances: assignTo({}, store0.instances, store1.instances)
