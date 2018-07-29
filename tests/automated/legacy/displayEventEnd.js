@@ -1,4 +1,4 @@
-import { getEventEls, getEventElTimeEl } from '../event-render/EventRenderUtils'
+import { getSingleEl, getEventElTimeEl } from '../event-render/EventRenderUtils'
 
 describe('displayEventEnd', function() {
 
@@ -29,7 +29,7 @@ describe('displayEventEnd', function() {
               allDay: true
             } ],
             eventAfterAllRender: function() {
-              expect(getEventElTimeEl(getEventEls()).length).toBe(0)
+              expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
               done()
             }
           })
@@ -45,7 +45,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect(getEventElTimeEl(getEventEls())).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -62,7 +62,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect(getEventElTimeEl(getEventEls())).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -86,7 +86,7 @@ describe('displayEventEnd', function() {
               allDay: true
             } ],
             eventAfterAllRender: function() {
-              expect(getEventElTimeEl(getEventEls()).length).toBe(0)
+              expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
               done()
             }
           })
@@ -102,7 +102,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect(getEventElTimeEl(getEventEls())).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -119,7 +119,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect(getEventElTimeEl(getEventEls())).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -136,7 +136,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect(getEventElTimeEl(getEventEls())).toHaveText('1:00 AM - 2:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM - 2:00 AM')
               done()
             }
           })
