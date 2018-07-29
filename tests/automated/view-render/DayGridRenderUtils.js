@@ -85,15 +85,26 @@ export function getFirstDayGridDayEl(){
   return getDayGridDayEl().first()
 }
 
-export function getGetMoreEl(){
+export function getMoreEl(){
   return $(`.${MORE_CLASS}`)
 }
 
-export function getGetMorePopoverEl(){
+export function getMorePopoverEl(){
   return $(`.${MORE_POPOVER_CLASS}`)
 }
 
-export function getGetMorePopoverElTitleEl(){
-  return getGetMorePopoverEl().find(`.${HEADER_CLASS} .${TITLE_CLASS}`)
+export function getMorePopoverElTitleEl(){
+  return getMorePopoverEl().find(`.${HEADER_CLASS} .${TITLE_CLASS}`)
 }
 
+export function getDayGridRowEls(){
+  return $(`.${DAY_GRID_CLASS} .${ROW_CLASS}`)
+}
+
+export function getDayGridRowElAtIndex(index){
+  return getDayGridRowEls().eq(index)
+}
+
+export function getDayGridRowDayElAtIndex(index){
+  return getDayGridRowElAtIndex(index).find(`.${DAY_CLASS}`)
+}

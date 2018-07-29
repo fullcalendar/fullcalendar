@@ -1,4 +1,4 @@
-import { getGetMoreEl, getGetMorePopoverElTitleEl } from '../view-render/DayGridRenderUtils'
+import { getMoreEl, getMorePopoverElTitleEl } from '../view-render/DayGridRenderUtils'
 
 describe('dayPopoverFormat', function() {
 
@@ -17,16 +17,16 @@ describe('dayPopoverFormat', function() {
     initCalendar({
       dayPopoverFormat: { month: 'long', day: 'numeric' }
     })
-    getGetMoreEl().simulate('click')
-    expect(getGetMorePopoverElTitleEl()).toHaveText('July 29')
+    getMoreEl().simulate('click')
+    expect(getMorePopoverElTitleEl()).toHaveText('July 29')
   })
 
   it('is affected by the current locale when the value is default', function() {
     initCalendar({
       locale: 'fr'
     })
-    getGetMoreEl().simulate('click')
-    expect(getGetMorePopoverElTitleEl()).toHaveText('29 juillet 2014')
+    getMoreEl().simulate('click')
+    expect(getMorePopoverElTitleEl()).toHaveText('29 juillet 2014')
   })
 
   it('still maintains the same format when explicitly set, and there is a locale', function() {
@@ -34,8 +34,8 @@ describe('dayPopoverFormat', function() {
       locale: 'fr',
       dayPopoverFormat: { year: 'numeric' }
     })
-    getGetMoreEl().simulate('click')
-    expect(getGetMorePopoverElTitleEl()).toHaveText('2014')
+    getMoreEl().simulate('click')
+    expect(getMorePopoverElTitleEl()).toHaveText('2014')
   })
 
 })
