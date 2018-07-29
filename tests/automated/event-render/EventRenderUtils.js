@@ -51,6 +51,10 @@ export function getEventEls() {
   return $(`.${EVENT_CLASS}`)
 }
 
+export function getEventElAtIndex(index) {
+  return getEventEls().eq(index)
+}
+
 export function getFirstEventEl() {
   return getEventEls().first()
 }
