@@ -5,6 +5,15 @@ const RESIZER_CLASS = 'fc-resizer'
 const START_CLASS = 'fc-start'
 const END_CLASS = 'fc-end'
 const DAY_CLASS = 'fc-day'
+const EVENT_DOT_CLASS = 'fc-event-dot'
+
+export function getEventElDotEl(el) {
+  return el.find(`.${EVENT_DOT_CLASS}`)
+}
+
+export function replaceEventElDotElWithEl(eventEl, newDotEl){
+  return getEventElDotEl(eventEl).replaceWith(newDotEl)
+}
 
 export function expectIsStart(bool) {
   var el = getSingleEl()
