@@ -1,92 +1,69 @@
-import ElementDragging from '../dnd/ElementDragging'
-import { PointerDragEvent } from '../dnd/PointerDragging'
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'
 import { whenTransitionDone } from '../util/dom-event'
 
-export default class DragMirror {
+export default class ElementMirror {
 
-  dragging: ElementDragging
-  isEnabled: boolean = false
-  pointerDownX: number
-  pointerDownY: number
+  isVisible: boolean = false
+  origX: number
+  origY: number
   deltaX: number
   deltaY: number
   sourceEl: HTMLElement
   mirrorEl: HTMLElement
   sourceElRect: any
-  needsRevert: boolean = true
   revertDuration: number = 1000
-  isReverting: boolean = false
-  revertDoneCallback: any
 
-  constructor(dragging: ElementDragging) {
-    this.dragging = dragging
-    dragging.emitter.on('pointerdown', this.onPointerDown)
-    dragging.emitter.on('dragstart', this.onDragStart)
-    dragging.emitter.on('dragmove', this.onDragMove)
-    dragging.emitter.on('pointerup', this.onPointerUp)
+  start(sourceEl, left, top) {
+    this.sourceEl = sourceEl
+    this.origX = left
+    this.origY = top
+    this.deltaX = 0
+    this.deltaY = 0
+    this.updateElPosition()
   }
 
-  enable() {
-    if (!this.isEnabled) {
-      this.isEnabled = true
+  handleMove(left, top) {
+    this.deltaX = left - this.origX
+    this.deltaY = top - this.origY
+    this.updateElPosition()
+  }
 
-      if (this.dragging.isDragging) {
-
+  setIsVisible(bool: boolean) {
+    if (bool) {
+      if (!this.isVisible) {
         if (this.mirrorEl) {
           this.mirrorEl.style.display = ''
         }
-
         this.updateElPosition()
       }
-    }
-  }
-
-  disable() {
-    if (this.isEnabled) {
-      this.isEnabled = false
-
-      if (this.mirrorEl) {
-        this.mirrorEl.style.display = 'none'
+    } else {
+      if (this.isVisible) {
+        if (this.mirrorEl) {
+          this.mirrorEl.style.display = 'none'
+        }
       }
     }
+
+    this.isVisible = bool
   }
 
-  onPointerDown = (ev: PointerDragEvent) => {
-    this.pointerDownX = ev.pageX
-    this.pointerDownY = ev.pageY
-    this.sourceEl = ev.subjectEl
-  }
-
-  onDragStart = (ev: PointerDragEvent) => {
-    this.handleDragEvent(ev)
-  }
-
-  onDragMove = (ev: PointerDragEvent) => {
-    this.handleDragEvent(ev)
-  }
-
-  onPointerUp = (ev: PointerDragEvent) => {
-
-    if (this.mirrorEl) {
-
-      if (this.isEnabled && this.needsRevert && (this.deltaX || this.deltaY)) {
-        this.revertAndRemove(this.mirrorEl)
-      } else {
-        removeElement(this.mirrorEl)
-      }
-
-      this.mirrorEl = null
+  // always async
+  stop(doRevertAnimation, callback) {
+    let done = () => {
+      this.cleanup()
+      callback()
     }
 
-    this.sourceEl = null
-    this.sourceElRect = null // so knows to recompute next time
+    if (doRevertAnimation && this.mirrorEl && this.isVisible) {
+      this.doAnimation(done)
+    } else {
+      setTimeout(done, 0)
+    }
   }
 
-  // can happen after drag has finished and a new one begins
-  revertAndRemove(mirrorEl) {
-    this.isReverting = true
+  doAnimation(callback) {
+    let { mirrorEl } = this
 
     mirrorEl.style.transition =
       'top ' + this.revertDuration + 'ms,' +
@@ -99,25 +76,22 @@ export default class DragMirror {
 
     whenTransitionDone(mirrorEl, () => {
       mirrorEl.style.transition = ''
-      removeElement(mirrorEl)
-      this.isReverting = false
-
-      if (this.revertDoneCallback) {
-        this.revertDoneCallback()
-        this.revertDoneCallback = null
-      }
+      callback()
     })
   }
 
-  handleDragEvent(ev: PointerDragEvent) {
-    this.deltaX = ev.pageX - this.pointerDownX
-    this.deltaY = ev.pageY - this.pointerDownY
-    this.updateElPosition()
+  cleanup() {
+    if (this.mirrorEl) {
+      removeElement(this.mirrorEl)
+      this.mirrorEl = null
+    }
+
+    this.sourceEl = null
+    this.sourceElRect = null // so knows to recompute next time
   }
 
   updateElPosition() {
-    if (this.isEnabled) {
-
+    if (this.isVisible) {
       if (!this.sourceElRect) {
         this.sourceElRect = computeRect(this.sourceEl)
       }

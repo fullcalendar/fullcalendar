@@ -4,12 +4,11 @@ import EmitterMixin from '../common/EmitterMixin'
 - pointerdown
 - dragstart
 - dragmove
-- pointerup ... TODO: change order!
+- pointerup
 - dragend
 */
 export default abstract class ElementDragging {
 
-  isDragging: boolean = false // will go away when DragMirror is more loosely coupled
   emitter: EmitterMixin
 
   constructor() {
@@ -22,12 +21,7 @@ export default abstract class ElementDragging {
   setIgnoreMove(bool: boolean) {
   }
 
-  enableMirror() {
-    // TODO: make it a switch
-  }
-
-  disableMirror() {
-    // TODO: make it a switch
+  setMirrorIsVisible(bool: boolean) {
   }
 
   setMirrorNeedsRevert(bool: boolean) {

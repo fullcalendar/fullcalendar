@@ -23,7 +23,7 @@ export default class ExternalElementDragging {
     hitDragging.on('hitout', this.onHitOut)
     hitDragging.on('dragend', this.onDragEnd)
 
-    dragging.enableMirror()
+    dragging.setMirrorIsVisible(true)
 
     this.explicitEventCreationData = rawEventCreationData ? processExplicitData(rawEventCreationData) : null
   }
@@ -66,12 +66,11 @@ export default class ExternalElementDragging {
 
     dragging.setMirrorNeedsRevert(false)
 
-    // TODO wish we could somehow wait for dispatch to guarantee render
-    if (!document.querySelector('.fc-helper')) {
-      dragging.enableMirror()
-    } else {
-      dragging.disableMirror()
-    }
+    // show mirror if no already-rendered helper element
+    // TODO: wish we could somehow wait for dispatch to guarantee render
+    dragging.setMirrorIsVisible(
+      !document.querySelector('.fc-helper')
+    )
   }
 
   onHitOut = (hit) => { // TODO: onHitChange?
@@ -89,12 +88,12 @@ export default class ExternalElementDragging {
 
     let { dragging } = this.hitDragging
 
-    dragging.enableMirror()
+    dragging.setMirrorIsVisible(true)
     dragging.setMirrorNeedsRevert(true)
   }
 
   onDragEnd = (pev: PointerDragEvent) => {
-    this.hitDragging.dragging.enableMirror() // always restore!
+    this.hitDragging.dragging.setMirrorIsVisible(true) // always restore!
 
     if (this.addableEventStore) {
       let finalHit = this.hitDragging.finalHit

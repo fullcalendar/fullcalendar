@@ -43,13 +43,14 @@ export default class EventDragging {
     dragging.delay = this.computeDragDelay(ev)
 
     // to prevent from cloning the sourceEl before it is selected
-    dragging.dragMirror.disable()
+    dragging.setMirrorIsVisible(false)
 
     let origTarget = ev.origEvent.target as HTMLElement
 
-    dragging.pointer.shouldIgnoreMove =
+    dragging.setIgnoreMove(
       !this.component.isValidSegInteraction(origTarget) ||
       elementClosest(origTarget, '.fc-resizer')
+    )
   }
 
   computeDragDelay(ev: PointerDragEvent): number {
@@ -112,17 +113,16 @@ export default class EventDragging {
       }
     })
 
-    let { dragMirror } = this.dragging
+    let { dragging } = this
 
-    // TODO wish we could somehow wait for dispatch to guarantee render
-    if (!document.querySelector('.fc-helper')) {
-      dragMirror.enable()
-    } else {
-      dragMirror.disable()
-    }
+    // render the mirror if no already-rendered helper
+    // TODO: wish we could somehow wait for dispatch to guarantee render
+    dragging.setMirrorIsVisible(
+      !document.querySelector('.fc-helper')
+    )
 
     let isSame = isHitsEqual(initialHit, hit)
-    dragMirror.needsRevert = isSame
+    dragging.setMirrorNeedsRevert(isSame)
 
     if (!isSame) {
       this.mutation = mutation
@@ -142,16 +142,12 @@ export default class EventDragging {
       }
     })
 
-    let { dragMirror } = this.dragging
+    let { dragging } = this
 
-    dragMirror.enable()
-    dragMirror.needsRevert = true
+    dragging.setMirrorIsVisible(true)
+    dragging.setMirrorNeedsRevert(true)
   }
 
-  /*
-  TODO: rethinking ordering of onDocumentPointerUp firing,
-  we want something that will always fire LAST, in case drag never activated
-  */
   onDocumentPointerUp = (ev, wasTouchScroll) => {
     if (
       !this.mutation &&

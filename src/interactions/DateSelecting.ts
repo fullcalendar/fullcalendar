@@ -40,7 +40,7 @@ export default class DateSelecting {
       component.isValidDateInteraction(ev.origEvent.target as HTMLElement)
 
     // don't bother to watch expensive moves if component won't do selection
-    dragging.pointer.shouldIgnoreMove = !isValid
+    dragging.setIgnoreMove(!isValid)
 
     dragging.delay = (isValid && ev.isTouch) ?
       getComponentDelay(component) :

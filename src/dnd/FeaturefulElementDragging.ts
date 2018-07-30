@@ -1,15 +1,14 @@
-import { default as EmitterMixin } from '../common/EmitterMixin'
 import { default as PointerDragging, PointerDragEvent } from './PointerDragging'
 import { preventSelection, allowSelection, preventContextMenu, allowContextMenu } from '../util/misc'
-import DragMirror from './DragMirror'
+import ElementMirror from './ElementMirror'
 import ElementDragging from './ElementDragging'
 
 
 export default class FeaturefulElementDragging extends ElementDragging {
 
   pointer: PointerDragging
-  emitter: EmitterMixin
-  dragMirror: DragMirror // TODO: move out of here?
+  mirror: ElementMirror
+  mirrorNeedsRevert: boolean = false
 
   // options
   delay: number
@@ -17,7 +16,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
   touchScrollAllowed: boolean = true
 
   isWatchingPointer: boolean = false
-  isDragging: boolean = false // is it INTENTFULLY dragging? lasts until after revert animation // TODO: exclude revert anim?
+  isDragging: boolean = false // is it INTENTFULLY dragging? lasts until after revert animation
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
 
@@ -28,21 +27,16 @@ export default class FeaturefulElementDragging extends ElementDragging {
   constructor(containerEl: HTMLElement) {
     super()
 
-    this.emitter = new EmitterMixin()
-    this.dragMirror = new DragMirror(this)
-
     let pointer = this.pointer = new PointerDragging(containerEl)
     pointer.emitter.on('pointerdown', this.onPointerDown)
     pointer.emitter.on('pointermove', this.onPointerMove)
     pointer.emitter.on('pointerup', this.onPointerUp)
+
+    this.mirror = new ElementMirror()
   }
 
   destroy() {
     this.pointer.destroy()
-  }
-
-  on(name, handler) {
-    this.emitter.on(name, handler)
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
@@ -58,6 +52,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
       this.origY = ev.pageY
 
       this.emitter.trigger('pointerdown', ev)
+      this.mirror.start(ev.subjectEl, ev.pageX, ev.pageY)
 
       // if moving is being ignored, don't fire any initial drag events
       if (!this.pointer.shouldIgnoreMove) {
@@ -75,6 +70,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
   onPointerMove = (ev: PointerDragEvent) => {
     if (this.isWatchingPointer) { // if false, still waiting for previous drag's revert
       this.emitter.trigger('pointermove', ev)
+      this.mirror.handleMove(ev.pageX, ev.pageY)
 
       if (!this.isDistanceSurpassed) {
         let dx = ev.pageX - this.origX
@@ -139,6 +135,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
     if (this.isDelayEnded && this.isDistanceSurpassed) {
       if (!this.pointer.wasTouchScroll || this.touchScrollAllowed) {
         this.isDragging = true
+        this.mirrorNeedsRevert = false
         this.emitter.trigger('dragstart', ev)
 
         if (this.touchScrollAllowed === false) {
@@ -149,38 +146,29 @@ export default class FeaturefulElementDragging extends ElementDragging {
   }
 
   tryStopDrag(ev) {
-    let stopDrag = this.stopDrag.bind(this, ev) // bound with args
-
-    if (this.dragMirror.isReverting) {
-      this.dragMirror.revertDoneCallback = stopDrag // will clear itself
-    } else {
-      // HACK - we want to make sure dragend fires after all pointerup events.
-      // Without doing this hack, pointer-up event propogation might reach an ancestor
-      // node after dragend
-      setTimeout(stopDrag, 0)
-    }
+    // .stop() is ALWAYS asynchronous, which we NEED because we want all pointerup events
+    // that come from the document to fire beforehand. much more convenient this way.
+    this.mirror.stop(
+      this.mirrorNeedsRevert,
+      this.stopDrag.bind(this, ev) // bound with args
+    )
   }
 
   stopDrag(ev) {
-    this.isDragging = false // go first because DragMirror::enable relies on it :(
+    this.isDragging = false
     this.emitter.trigger('dragend', ev)
-  }
-
-
-  enableMirror() {
-    this.dragMirror.enable()
-  }
-
-  disableMirror() {
-    this.dragMirror.disable()
-  }
-
-  setMirrorNeedsRevert(bool: boolean) {
-    this.dragMirror.needsRevert = bool
   }
 
   setIgnoreMove(bool: boolean) {
     this.pointer.shouldIgnoreMove = bool
+  }
+
+  setMirrorIsVisible(bool: boolean) {
+    this.mirror.setIsVisible(bool)
+  }
+
+  setMirrorNeedsRevert(bool: boolean) {
+    this.mirrorNeedsRevert = true
   }
 
 }

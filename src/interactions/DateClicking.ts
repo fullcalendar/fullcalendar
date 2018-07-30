@@ -18,11 +18,12 @@ export default class DateClicking {
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    let { component } = this
-    let { pointer } = this.dragging
+    let { dragging } = this
 
     // do this in pointerdown (not dragend) because DOM might be mutated by the time dragend is fired
-    pointer.shouldIgnoreMove = !component.isValidDateInteraction(pointer.downEl)
+    dragging.setIgnoreMove(
+      !this.component.isValidDateInteraction(dragging.pointer.downEl)
+    )
   }
 
   onDragEnd = (ev: PointerDragEvent) => {

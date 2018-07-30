@@ -10,7 +10,6 @@ import ElementDragging from '../dnd/ElementDragging'
 */
 export default class DumbElementDragging extends ElementDragging {
 
-  isDragging: boolean
   options: any
   pointer: PointerDragging
   currentMirrorEl: HTMLElement
@@ -32,7 +31,6 @@ export default class DumbElementDragging extends ElementDragging {
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
-    this.isDragging = true
     this.emitter.trigger('pointerdown', ev)
     this.emitter.trigger('dragstart', ev)
   }
@@ -42,7 +40,6 @@ export default class DumbElementDragging extends ElementDragging {
   }
 
   handlePointerUp = (ev: PointerDragEvent) => {
-    this.isDragging = false
     this.emitter.trigger('pointerup', ev)
     this.emitter.trigger('dragend', ev)
   }
