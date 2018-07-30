@@ -1,5 +1,5 @@
 import DateComponent from '../component/DateComponent'
-import PointerDragListener from '../dnd/PointerDragListener'
+import PointerDragging from '../dnd/PointerDragging'
 import DateClicking from '../interactions/DateClicking'
 import DateSelecting from '../interactions/DateSelecting'
 import EventClicking from '../interactions/EventClicking'
@@ -12,7 +12,7 @@ import Calendar from '../Calendar'
 
 export class GlobalContext { // TODO: rename file to something better
 
-  pointerUpListener: PointerDragListener
+  pointer: PointerDragging
   componentCnt: number = 0
   componentHash = {}
   listenerHash = {}
@@ -40,14 +40,14 @@ export class GlobalContext { // TODO: rename file to something better
   }
 
   bind() {
-    let pointerUpListener = this.pointerUpListener = new PointerDragListener(document as any)
-    pointerUpListener.shouldIgnoreMove = true
-    pointerUpListener.emitter.on('pointerup', this.onPointerUp)
+    let pointer = this.pointer = new PointerDragging(document as any)
+    pointer.shouldIgnoreMove = true
+    pointer.emitter.on('pointerup', this.onPointerUp)
   }
 
   unbind() {
-    this.pointerUpListener.destroy()
-    this.pointerUpListener = null
+    this.pointer.destroy()
+    this.pointer = null
   }
 
   bindComponent(component: DateComponent) {
@@ -76,7 +76,7 @@ export class GlobalContext { // TODO: rename file to something better
 
   onPointerUp = (ev) => {
     let { listenerHash } = this
-    let { wasTouchScroll, downEl } = this.pointerUpListener
+    let { wasTouchScroll, downEl } = this.pointer
 
     for (let id in listenerHash) {
       listenerHash[id].dateSelecting.onDocumentPointerUp(ev, wasTouchScroll, downEl)

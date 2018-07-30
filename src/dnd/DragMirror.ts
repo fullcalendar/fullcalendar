@@ -1,12 +1,12 @@
-import { IntentfulDragListener } from '../dnd/IntentfulDragListener'
-import { PointerDragEvent } from '../dnd/PointerDragListener'
+import ElementDragging from '../dnd/ElementDragging'
+import { PointerDragEvent } from '../dnd/PointerDragging'
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'
 import { whenTransitionDone } from '../util/dom-event'
 
 export default class DragMirror {
 
-  dragListener: IntentfulDragListener
+  dragging: ElementDragging
   isEnabled: boolean = false
   pointerDownX: number
   pointerDownY: number
@@ -20,19 +20,19 @@ export default class DragMirror {
   isReverting: boolean = false
   revertDoneCallback: any
 
-  constructor(dragListener: IntentfulDragListener) {
-    this.dragListener = dragListener
-    dragListener.on('pointerdown', this.onPointerDown)
-    dragListener.on('dragstart', this.onDragStart)
-    dragListener.on('dragmove', this.onDragMove)
-    dragListener.on('pointerup', this.onPointerUp)
+  constructor(dragging: ElementDragging) {
+    this.dragging = dragging
+    dragging.emitter.on('pointerdown', this.onPointerDown)
+    dragging.emitter.on('dragstart', this.onDragStart)
+    dragging.emitter.on('dragmove', this.onDragMove)
+    dragging.emitter.on('pointerup', this.onPointerUp)
   }
 
   enable() {
     if (!this.isEnabled) {
       this.isEnabled = true
 
-      if (this.dragListener.isDragging) {
+      if (this.dragging.isDragging) {
 
         if (this.mirrorEl) {
           this.mirrorEl.style.display = ''

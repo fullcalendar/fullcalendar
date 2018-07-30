@@ -109,8 +109,8 @@ export { parse as parseMarker } from './datelib/parsing'
 export { registerSourceType } from './reducers/event-sources'
 export { refineProps } from './reducers/utils'
 
-export { default as PointerDragListener, PointerDragEvent } from './dnd/PointerDragListener'
-export { IntentfulDragListener } from './dnd/IntentfulDragListener'
+export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'
+export { default as ElementDragging } from './dnd/ElementDragging'
 
 export { default as ExternalDraggableEvent } from './interactions/ExternalDraggableEvent'
 export { default as ExternalDragging } from './interactions/ExternalDragging'

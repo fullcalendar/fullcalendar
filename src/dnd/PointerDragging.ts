@@ -18,7 +18,7 @@ emitted events:
 - pointermove
 - pointerup
 */
-export default class PointerDragListener {
+export default class PointerDragging {
 
   containerEl: HTMLElement
   subjectEl: HTMLElement

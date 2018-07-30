@@ -1,7 +1,7 @@
-import { IntentfulDragListener } from '../dnd/IntentfulDragListener'
+import ElementDragging from '../dnd/ElementDragging'
 import HitDragListener, { Hit } from '../dnd/HitDragListener'
 import globalContext from '../common/GlobalContext'
-import { PointerDragEvent } from '../dnd/PointerDragListener'
+import { PointerDragEvent } from '../dnd/PointerDragging'
 import { EventStore, parseDef, createInstance } from '../reducers/event-store'
 import UnzonedRange from '../models/UnzonedRange'
 import * as externalHooks from '../exports'
@@ -15,15 +15,15 @@ export default class ExternalDragging {
   explicitEventCreationData: any
   eventCreationData: any
 
-  constructor(dragListener: IntentfulDragListener, rawEventCreationData?) {
-    let hitListener = this.hitListener = new HitDragListener(dragListener, globalContext.componentHash)
+  constructor(dragging: ElementDragging, rawEventCreationData?) {
+    let hitListener = this.hitListener = new HitDragListener(dragging, globalContext.componentHash)
     hitListener.dieIfNoInitial = false
     hitListener.on('dragstart', this.onDragStart)
     hitListener.on('hitover', this.onHitOver)
     hitListener.on('hitout', this.onHitOut)
     hitListener.on('dragend', this.onDragEnd)
 
-    dragListener.enableMirror()
+    dragging.enableMirror()
 
     this.explicitEventCreationData = rawEventCreationData ? processExplicitData(rawEventCreationData) : null
   }
@@ -62,15 +62,15 @@ export default class ExternalDragging {
       }
     })
 
-    let { dragListener } = this.hitListener
+    let { dragging } = this.hitListener
 
-    dragListener.setMirrorNeedsRevert(false)
+    dragging.setMirrorNeedsRevert(false)
 
     // TODO wish we could somehow wait for dispatch to guarantee render
     if (!document.querySelector('.fc-helper')) {
-      dragListener.enableMirror()
+      dragging.enableMirror()
     } else {
-      dragListener.disableMirror()
+      dragging.disableMirror()
     }
   }
 
@@ -87,14 +87,14 @@ export default class ExternalDragging {
 
     this.addableEventStore = null
 
-    let { dragListener } = this.hitListener
+    let { dragging } = this.hitListener
 
-    dragListener.enableMirror()
-    dragListener.setMirrorNeedsRevert(true)
+    dragging.enableMirror()
+    dragging.setMirrorNeedsRevert(true)
   }
 
   onDragEnd = (pev: PointerDragEvent) => {
-    this.hitListener.dragListener.enableMirror() // always restore!
+    this.hitListener.dragging.enableMirror() // always restore!
 
     if (this.addableEventStore) {
       let finalHit = this.hitListener.finalHit

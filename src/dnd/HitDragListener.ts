@@ -1,6 +1,6 @@
 import EmitterMixin from '../common/EmitterMixin'
-import { PointerDragEvent } from './PointerDragListener'
-import { IntentfulDragListener } from './IntentfulDragListener'
+import { PointerDragEvent } from './PointerDragging'
+import ElementDragging from './ElementDragging'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
 import { computeRect } from '../util/dom-geom'
@@ -22,7 +22,7 @@ fires (none will be fired if no initial hit):
 export default class HitDragListener {
 
   droppableHash: DateComponentHash
-  dragListener: IntentfulDragListener
+  dragging: ElementDragging
   emitter: EmitterMixin
   initialHit: Hit
   movingHit: Hit
@@ -34,7 +34,7 @@ export default class HitDragListener {
   // options
   subjectCenter: boolean = false
 
-  constructor(dragListener: IntentfulDragListener, droppable: DateComponent | DateComponentHash) {
+  constructor(dragging: ElementDragging, droppable: DateComponent | DateComponentHash) {
 
     if (droppable instanceof DateComponent) {
       this.droppableHash = { [droppable.uid]: droppable }
@@ -42,18 +42,18 @@ export default class HitDragListener {
       this.droppableHash = droppable
     }
 
-    dragListener.on('pointerdown', this.onPointerDown)
-    dragListener.on('dragstart', this.onDragStart)
-    dragListener.on('dragmove', this.onDragMove)
-    dragListener.on('pointerup', this.onPointerUp)
-    dragListener.on('dragend', this.onDragEnd)
+    dragging.emitter.on('pointerdown', this.onPointerDown)
+    dragging.emitter.on('dragstart', this.onDragStart)
+    dragging.emitter.on('dragmove', this.onDragMove)
+    dragging.emitter.on('pointerup', this.onPointerUp)
+    dragging.emitter.on('dragend', this.onDragEnd)
 
-    this.dragListener = dragListener
+    this.dragging = dragging
     this.emitter = new EmitterMixin()
   }
 
   destroy() {
-    this.dragListener.destroy() // should not be responsible for destroying!
+    this.dragging.destroy() // should not be responsible for destroying!
   }
 
   on(name, handler) {
@@ -68,15 +68,15 @@ export default class HitDragListener {
     this.prepareComponents()
     this.processFirstCoord(ev)
 
-    let { dragListener } = this
+    let { dragging } = this
 
     if (this.initialHit || !this.dieIfNoInitial) {
       this.isIgnoringMove = false
-      dragListener.setIgnoreMove(false)
+      dragging.setIgnoreMove(false)
       this.emitter.trigger('pointerdown', ev)
     } else {
       this.isIgnoringMove = true
-      dragListener.setIgnoreMove(true)
+      dragging.setIgnoreMove(true)
     }
   }
 

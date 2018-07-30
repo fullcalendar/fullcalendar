@@ -4,15 +4,15 @@ import DateComponent from '../component/DateComponent'
 import HitDragListener, { Hit } from '../dnd/HitDragListener'
 import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
-import { PointerDragEvent } from '../dnd/PointerDragListener'
-import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
+import { PointerDragEvent } from '../dnd/PointerDragging'
+import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { GlobalContext } from '../common/GlobalContext'
 
 export default class DateSelecting {
 
   component: DateComponent
   globalContext: GlobalContext
-  dragListener: IntentfulDragListenerImpl
+  dragging: FeaturefulElementDragging
   hitListener: HitDragListener
   dragSelection: Selection
 
@@ -20,10 +20,10 @@ export default class DateSelecting {
     this.component = component
     this.globalContext = globalContext
 
-    this.dragListener = new IntentfulDragListenerImpl(component.el)
-    this.dragListener.touchScrollAllowed = false
+    this.dragging = new FeaturefulElementDragging(component.el)
+    this.dragging.touchScrollAllowed = false
 
-    let hitListener = this.hitListener = new HitDragListener(this.dragListener, component)
+    let hitListener = this.hitListener = new HitDragListener(this.dragging, component)
     hitListener.on('pointerdown', this.onPointerDown)
     hitListener.on('dragstart', this.onDragStart)
     hitListener.on('hitover', this.onHitOver)
@@ -35,14 +35,14 @@ export default class DateSelecting {
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    let { component, dragListener } = this
+    let { component, dragging } = this
     let isValid = component.opt('selectable') &&
       component.isValidDateInteraction(ev.origEvent.target as HTMLElement)
 
     // don't bother to watch expensive moves if component won't do selection
-    dragListener.pointerListener.shouldIgnoreMove = !isValid
+    dragging.pointer.shouldIgnoreMove = !isValid
 
-    dragListener.delay = (isValid && ev.isTouch) ?
+    dragging.delay = (isValid && ev.isTouch) ?
       getComponentDelay(component) :
       null
   }

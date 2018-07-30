@@ -1,4 +1,4 @@
-import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
+import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import ExternalDragging from './ExternalDragging'
 
 export interface ExternalDraggableEventSettings {
@@ -11,7 +11,7 @@ export default class ExternalDraggableEvent {
   externalDragging: ExternalDragging
 
   constructor(settings: ExternalDraggableEventSettings) {
-    let dragListener = new IntentfulDragListenerImpl(settings.el)
+    let dragListener = new FeaturefulElementDragging(settings.el)
     this.externalDragging = new ExternalDragging(dragListener, settings.event)
   }
 

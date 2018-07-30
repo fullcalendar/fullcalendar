@@ -3,13 +3,13 @@ import HitDragListener, { isHitsEqual, Hit } from '../dnd/HitDragListener'
 import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
 import { elementClosest } from '../util/dom-manip'
 import UnzonedRange from '../models/UnzonedRange'
-import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
-import { PointerDragEvent } from '../dnd/PointerDragListener'
+import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
+import { PointerDragEvent } from '../dnd/PointerDragging'
 
 export default class EventDragging {
 
   component: DateComponent
-  dragListener: IntentfulDragListenerImpl
+  dragging: FeaturefulElementDragging
   hitListener: HitDragListener
   draggingSeg: Seg
   mutation: EventMutation
@@ -17,11 +17,11 @@ export default class EventDragging {
   constructor(component: DateComponent) {
     this.component = component
 
-    this.dragListener = new IntentfulDragListenerImpl(component.el)
-    this.dragListener.pointerListener.selector = '.fc-resizer'
-    this.dragListener.touchScrollAllowed = false
+    this.dragging = new FeaturefulElementDragging(component.el)
+    this.dragging.pointer.selector = '.fc-resizer'
+    this.dragging.touchScrollAllowed = false
 
-    let hitListener = this.hitListener = new HitDragListener(this.dragListener, component)
+    let hitListener = this.hitListener = new HitDragListener(this.dragging, component)
     hitListener.on('pointerdown', this.onPointerDown)
     hitListener.on('dragstart', this.onDragStart)
     hitListener.on('hitover', this.onHitOver)
@@ -38,7 +38,7 @@ export default class EventDragging {
     let eventInstanceId = seg.eventRange.eventInstance.instanceId
 
     // if touch, need to be working with a selected event
-    this.dragListener.pointerListener.shouldIgnoreMove =
+    this.dragging.pointer.shouldIgnoreMove =
       !this.component.isValidSegInteraction(ev.origEvent.target) ||
       (ev.isTouch && this.component.selectedEventInstanceId !== eventInstanceId)
   }

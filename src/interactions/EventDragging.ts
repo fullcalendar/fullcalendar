@@ -1,17 +1,17 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
-import { PointerDragEvent } from '../dnd/PointerDragListener'
+import { PointerDragEvent } from '../dnd/PointerDragging'
 import HitDragListener, { isHitsEqual, Hit } from '../dnd/HitDragListener'
 import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
 import { GlobalContext } from '../common/GlobalContext'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
-import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
+import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 
 export default class EventDragging {
 
   component: DateComponent
   globalContext: GlobalContext // need this as a member?
-  dragListener: IntentfulDragListenerImpl
+  dragging: FeaturefulElementDragging
   hitListener: HitDragListener
   draggingSeg: Seg
   mutation: EventMutation
@@ -20,11 +20,11 @@ export default class EventDragging {
     this.component = component
     this.globalContext = globalContext
 
-    this.dragListener = new IntentfulDragListenerImpl(component.el)
-    this.dragListener.pointerListener.selector = '.fc-draggable'
-    this.dragListener.touchScrollAllowed = false
+    this.dragging = new FeaturefulElementDragging(component.el)
+    this.dragging.pointer.selector = '.fc-draggable'
+    this.dragging.touchScrollAllowed = false
 
-    let hitListener = this.hitListener = new HitDragListener(this.dragListener, globalContext.componentHash)
+    let hitListener = this.hitListener = new HitDragListener(this.dragging, globalContext.componentHash)
     hitListener.subjectCenter = true
     hitListener.on('pointerdown', this.onPointerDown)
     hitListener.on('dragstart', this.onDragStart)
@@ -38,16 +38,16 @@ export default class EventDragging {
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    let { dragListener } = this
+    let { dragging } = this
 
-    dragListener.delay = this.computeDragDelay(ev)
+    dragging.delay = this.computeDragDelay(ev)
 
     // to prevent from cloning the sourceEl before it is selected
-    dragListener.dragMirror.disable()
+    dragging.dragMirror.disable()
 
     let origTarget = ev.origEvent.target as HTMLElement
 
-    dragListener.pointerListener.shouldIgnoreMove =
+    dragging.pointer.shouldIgnoreMove =
       !this.component.isValidSegInteraction(origTarget) ||
       elementClosest(origTarget, '.fc-resizer')
   }
@@ -112,7 +112,7 @@ export default class EventDragging {
       }
     })
 
-    let { dragMirror } = this.dragListener
+    let { dragMirror } = this.dragging
 
     // TODO wish we could somehow wait for dispatch to guarantee render
     if (!document.querySelector('.fc-helper')) {
@@ -142,7 +142,7 @@ export default class EventDragging {
       }
     })
 
-    let { dragMirror } = this.dragListener
+    let { dragMirror } = this.dragging
 
     dragMirror.enable()
     dragMirror.needsRevert = true

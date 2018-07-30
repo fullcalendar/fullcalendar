@@ -1,37 +1,37 @@
 import DateComponent from '../component/DateComponent'
-import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
+import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import HitDragListener, { isHitsEqual } from '../dnd/HitDragListener'
-import { PointerDragEvent } from '../dnd/PointerDragListener'
+import { PointerDragEvent } from '../dnd/PointerDragging'
 
 export default class DateClicking {
 
   component: DateComponent
-  dragListener: IntentfulDragListenerImpl
+  dragging: FeaturefulElementDragging
   hitListener: HitDragListener
 
   constructor(component: DateComponent) {
     this.component = component
-    this.dragListener = new IntentfulDragListenerImpl(component.el)
-    this.hitListener = new HitDragListener(this.dragListener, component)
+    this.dragging = new FeaturefulElementDragging(component.el)
+    this.hitListener = new HitDragListener(this.dragging, component)
     this.hitListener.on('pointerdown', this.onPointerDown)
     this.hitListener.on('dragend', this.onDragEnd)
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
     let { component } = this
-    let { pointerListener } = this.dragListener
+    let { pointer } = this.dragging
 
     // do this in pointerdown (not dragend) because DOM might be mutated by the time dragend is fired
-    pointerListener.shouldIgnoreMove = !component.isValidDateInteraction(pointerListener.downEl)
+    pointer.shouldIgnoreMove = !component.isValidDateInteraction(pointer.downEl)
   }
 
   onDragEnd = (ev: PointerDragEvent) => {
     let { component } = this
-    let { pointerListener } = this.dragListener
+    let { pointer } = this.dragging
 
     if (
-      !pointerListener.shouldIgnoreMove && // not ignored in onPointerDown
-      !pointerListener.wasTouchScroll
+      !pointer.shouldIgnoreMove && // not ignored in onPointerDown
+      !pointer.wasTouchScroll
     ) {
       let { initialHit, finalHit } = this.hitListener
 
