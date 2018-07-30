@@ -197,7 +197,7 @@ export default class PointerDragging {
 // Event Normalization
 // ----------------------------------------------------------------------------------------------------
 
-function createEventFromMouse(ev, subjectEl: HTMLElement): PointerDragEvent {
+function createEventFromMouse(ev: MouseEvent, subjectEl: HTMLElement): PointerDragEvent {
   return {
     origEvent: ev,
     isTouch: false,
@@ -207,26 +207,28 @@ function createEventFromMouse(ev, subjectEl: HTMLElement): PointerDragEvent {
   }
 }
 
-function createEventFromTouch(ev, subjectEl: HTMLElement): PointerDragEvent {
-  let pev = {
-    origEvent: ev,
-    isTouch: true,
-    subjectEl
-  } as PointerDragEvent
-
+function createEventFromTouch(ev: TouchEvent, subjectEl: HTMLElement): PointerDragEvent {
   let touches = ev.touches
+  let pageX
+  let pageY
 
   // if touch coords available, prefer,
   // because FF would give bad ev.pageX ev.pageY
   if (touches && touches.length) {
-    pev.pageX = touches[0].pageX
-    pev.pageY = touches[0].pageY
+    pageX = touches[0].pageX
+    pageY = touches[0].pageY
   } else {
-    pev.pageX = ev.pageX
-    pev.pageY = ev.pageY
+    pageX = (ev as any).pageX
+    pageY = (ev as any).pageY
   }
 
-  return pev
+  return {
+    origEvent: ev,
+    isTouch: true,
+    subjectEl,
+    pageX,
+    pageY
+  }
 }
 
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
@@ -267,7 +269,7 @@ function listenerDestroyed() {
   }
 }
 
-function onWindowTouchMove(ev) {
+function onWindowTouchMove(ev: UIEvent) {
   if (isWindowTouchMoveCancelled) {
     ev.preventDefault()
   }

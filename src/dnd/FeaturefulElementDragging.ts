@@ -150,7 +150,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
     }
   }
 
-  tryStopDrag(ev) {
+  tryStopDrag(ev: PointerDragEvent) {
     // .stop() is ALWAYS asynchronous, which we NEED because we want all pointerup events
     // that come from the document to fire beforehand. much more convenient this way.
     this.mirror.stop(
@@ -159,7 +159,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
     )
   }
 
-  stopDrag(ev) {
+  stopDrag(ev: PointerDragEvent) {
     this.isDragging = false
     this.emitter.trigger('dragend', ev)
   }

@@ -22,7 +22,7 @@ export default class ElementMirror {
   // TODO: wire up
   revertDuration: number = 1000
 
-  start(sourceEl, left, top) {
+  start(sourceEl: HTMLElement, left: number, top: number) {
     this.sourceEl = sourceEl
     this.origX = left
     this.origY = top
@@ -31,7 +31,7 @@ export default class ElementMirror {
     this.updateElPosition()
   }
 
-  handleMove(left, top) {
+  handleMove(left: number, top: number) {
     this.deltaX = left - this.origX
     this.deltaY = top - this.origY
     this.updateElPosition()
