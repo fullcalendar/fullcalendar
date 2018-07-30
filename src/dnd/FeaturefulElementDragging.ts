@@ -3,14 +3,20 @@ import { preventSelection, allowSelection, preventContextMenu, allowContextMenu 
 import ElementMirror from './ElementMirror'
 import ElementDragging from './ElementDragging'
 
-
+/*
+Monitors dragging on an element. Has a number of high-level features:
+- minimum distance required before dragging
+- minimum wait time ("delay") before dragging
+- a mirror element that follows the pointer
+*/
 export default class FeaturefulElementDragging extends ElementDragging {
 
   pointer: PointerDragging
   mirror: ElementMirror
   mirrorNeedsRevert: boolean = false
 
-  // options
+  // options that can be directly set by caller
+  // the caller can also set the PointerDragging's options as well
   delay: number
   minDistance: number = 0
   touchScrollAllowed: boolean = true
@@ -19,7 +25,6 @@ export default class FeaturefulElementDragging extends ElementDragging {
   isDragging: boolean = false // is it INTENTFULLY dragging? lasts until after revert animation
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
-
   delayTimeoutId: number
   origX: number
   origY: number
@@ -94,7 +99,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
     if (this.isWatchingPointer) { // if false, still waiting for previous drag's revert
       this.isWatchingPointer = false
 
-      this.emitter.trigger('pointerup', ev) // can potentially set needsRevert
+      this.emitter.trigger('pointerup', ev) // can potentially set mirrorNeedsRevert
 
       if (this.isDragging) {
         this.tryStopDrag(ev)
@@ -158,6 +163,8 @@ export default class FeaturefulElementDragging extends ElementDragging {
     this.isDragging = false
     this.emitter.trigger('dragend', ev)
   }
+
+  // fill in the implementations...
 
   setIgnoreMove(bool: boolean) {
     this.pointer.shouldIgnoreMove = bool

@@ -2,6 +2,11 @@ import { removeElement, applyStyle } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'
 import { whenTransitionDone } from '../util/dom-event'
 
+/*
+An effect in which an element follows the movement of a pointer across the screen.
+The moving element is a clone of some other element.
+Must call start + handleMove + stop.
+*/
 export default class ElementMirror {
 
   isVisible: boolean = false
@@ -12,6 +17,9 @@ export default class ElementMirror {
   sourceEl: HTMLElement
   mirrorEl: HTMLElement
   sourceElRect: any
+
+  // options that can be set directly by caller
+  // TODO: wire up
   revertDuration: number = 1000
 
   start(sourceEl, left, top) {
@@ -29,6 +37,7 @@ export default class ElementMirror {
     this.updateElPosition()
   }
 
+  // can be called before start
   setIsVisible(bool: boolean) {
     if (bool) {
       if (!this.isVisible) {
@@ -51,20 +60,20 @@ export default class ElementMirror {
   }
 
   // always async
-  stop(doRevertAnimation, callback) {
+  stop(needsRevertAnimation: boolean, callback: () => void) {
     let done = () => {
       this.cleanup()
       callback()
     }
 
-    if (doRevertAnimation && this.mirrorEl && this.isVisible) {
-      this.doAnimation(done)
+    if (needsRevertAnimation && this.mirrorEl && this.isVisible) {
+      this.doRevertAnimation(done)
     } else {
       setTimeout(done, 0)
     }
   }
 
-  doAnimation(callback) {
+  doRevertAnimation(callback: () => void) {
     let { mirrorEl } = this
 
     mirrorEl.style.transition =
@@ -136,6 +145,7 @@ export default class ElementMirror {
         //zIndex: this.options.zIndex
       })
 
+      // TODO: appendTo setting
       document.body.appendChild(mirrorEl)
     }
 

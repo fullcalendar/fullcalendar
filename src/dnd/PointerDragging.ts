@@ -13,7 +13,13 @@ export interface PointerDragEvent {
 }
 
 /*
-emitted events:
+Uses a "pointer" abstraction, which monitors UI events for both mouse and touch.
+Tracks when the pointer "drags" on a certain element, meaning down+move+up.
+
+Also, tracks if there was touch-scrolling.
+Also, can prevent touch-scrolling from happening.
+
+emits:
 - pointerdown
 - pointermove
 - pointerup
@@ -25,8 +31,8 @@ export default class PointerDragging {
   downEl: HTMLElement
   emitter: EmitterMixin
 
-  // options
-  selector: string
+  // options that can be directly assigned by caller
+  selector: string // will cause subjectEl in all emitted events to be this element
   handleSelector: string
   shouldIgnoreMove: boolean = false
 

@@ -1,6 +1,12 @@
 import EmitterMixin from '../common/EmitterMixin'
 
-/* emits:
+/*
+An abstraction for a dragging interaction originating on an event.
+Does higher-level things than PointerDragger, such as possibly:
+- a "mirror" that moves with the pointer
+- a minimum number of pixels or other criteria for a true drag to begin
+
+subclasses must emit:
 - pointerdown
 - dragstart
 - dragmove
@@ -19,12 +25,15 @@ export default abstract class ElementDragging {
   }
 
   setIgnoreMove(bool: boolean) {
+    // optional. used for optimization
   }
 
   setMirrorIsVisible(bool: boolean) {
+    // optional if subclass doesn't want to support a mirror
   }
 
   setMirrorNeedsRevert(bool: boolean) {
+    // optional if subclass doesn't want to support a mirror
   }
 
 }
