@@ -40,7 +40,7 @@ export default class DateSelecting {
       component.isValidDateInteraction(ev.origEvent.target as HTMLElement)
 
     // don't bother to watch expensive moves if component won't do selection
-    dragListener.pointerListener.ignoreMove = !isValid
+    dragListener.pointerListener.shouldIgnoreMove = !isValid
 
     dragListener.delay = (isValid && ev.isTouch) ?
       getComponentDelay(component) :
@@ -84,7 +84,7 @@ export default class DateSelecting {
     })
   }
 
-  onDocumentPointerUp = (ev: PointerDragEvent, isTouchScroll: boolean, downEl: HTMLElement) => {
+  onDocumentPointerUp = (ev: PointerDragEvent, wasTouchScroll: boolean, downEl: HTMLElement) => {
     let { component } = this
 
     if (this.dragSelection) {
@@ -98,7 +98,7 @@ export default class DateSelecting {
 
       this.dragSelection = null
 
-    } else if (!isTouchScroll && component.selection) {
+    } else if (!wasTouchScroll && component.selection) {
       // if there was a pointerup that did not result in a selection and was
       // not merely a touchmove-scroll, then possibly unselect the current selection.
       // won't do anything if already unselected (OR, leverage selectedCalendar?)

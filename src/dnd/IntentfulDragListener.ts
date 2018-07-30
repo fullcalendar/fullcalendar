@@ -82,7 +82,7 @@ export class IntentfulDragListenerImpl implements IntentfulDragListener {
       this.emitter.trigger('pointerdown', ev)
 
       // if moving is being ignored, don't fire any initial drag events
-      if (!this.pointerListener.ignoreMove) {
+      if (!this.pointerListener.shouldIgnoreMove) {
         // actions that could fire dragstart...
 
         this.startDelay(ev)
@@ -159,7 +159,7 @@ export class IntentfulDragListenerImpl implements IntentfulDragListener {
 
   tryStartDrag(ev: PointerDragEvent) {
     if (this.isDelayEnded && this.isDistanceSurpassed) {
-      if (!this.pointerListener.isTouchScroll || this.touchScrollAllowed) {
+      if (!this.pointerListener.wasTouchScroll || this.touchScrollAllowed) {
         this.isDragging = true
         this.emitter.trigger('dragstart', ev)
 
@@ -202,7 +202,7 @@ export class IntentfulDragListenerImpl implements IntentfulDragListener {
   }
 
   setIgnoreMove(bool: boolean) {
-    this.pointerListener.ignoreMove = bool
+    this.pointerListener.shouldIgnoreMove = bool
   }
 
 }

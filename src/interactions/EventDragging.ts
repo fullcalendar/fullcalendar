@@ -47,7 +47,7 @@ export default class EventDragging {
 
     let origTarget = ev.origEvent.target as HTMLElement
 
-    dragListener.pointerListener.ignoreMove =
+    dragListener.pointerListener.shouldIgnoreMove =
       !this.component.isValidSegInteraction(origTarget) ||
       elementClosest(origTarget, '.fc-resizer')
   }
@@ -152,10 +152,10 @@ export default class EventDragging {
   TODO: rethinking ordering of onDocumentPointerUp firing,
   we want something that will always fire LAST, in case drag never activated
   */
-  onDocumentPointerUp = (ev, isTouchScroll) => {
+  onDocumentPointerUp = (ev, wasTouchScroll) => {
     if (
       !this.mutation &&
-      !isTouchScroll &&
+      !wasTouchScroll &&
       this.globalContext.eventSelectedComponent === this.component
     ) {
       this.component.getCalendar().dispatch({

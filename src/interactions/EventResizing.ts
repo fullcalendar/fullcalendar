@@ -38,7 +38,7 @@ export default class EventDragging {
     let eventInstanceId = seg.eventRange.eventInstance.instanceId
 
     // if touch, need to be working with a selected event
-    this.dragListener.pointerListener.ignoreMove =
+    this.dragListener.pointerListener.shouldIgnoreMove =
       !this.component.isValidSegInteraction(ev.origEvent.target) ||
       (ev.isTouch && this.component.selectedEventInstanceId !== eventInstanceId)
   }

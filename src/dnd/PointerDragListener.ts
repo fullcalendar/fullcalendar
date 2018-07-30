@@ -28,12 +28,12 @@ export default class PointerDragListener {
   // options
   selector: string
   handleSelector: string
-  ignoreMove: boolean = false // bad name?
+  shouldIgnoreMove: boolean = false
 
   // internal states
   isDragging: boolean = false
   isTouchDragging: boolean = false
-  isTouchScroll: boolean = false
+  wasTouchScroll: boolean = false
 
   constructor(containerEl: HTMLElement) {
     this.containerEl = containerEl
@@ -60,7 +60,7 @@ export default class PointerDragListener {
       this.subjectEl = subjectEl
       this.downEl = downEl
       this.isDragging = true // do this first so cancelTouchScroll will work
-      this.isTouchScroll = false
+      this.wasTouchScroll = false
       return true
     }
 
@@ -72,7 +72,7 @@ export default class PointerDragListener {
     this.isDragging = false
     this.subjectEl = null
     this.downEl = null
-    // keep isTouchScroll around for later access
+    // keep wasTouchScroll around for later access
   }
 
   queryValidSubjectEl(ev: UIEvent): HTMLElement {
@@ -95,7 +95,7 @@ export default class PointerDragListener {
     ) {
       this.emitter.trigger('pointerdown', createEventFromMouse(ev, this.subjectEl))
 
-      if (!this.ignoreMove) {
+      if (!this.shouldIgnoreMove) {
         document.addEventListener('mousemove', this.handleMouseMove)
       }
 
@@ -134,7 +134,7 @@ export default class PointerDragListener {
       // https://stackoverflow.com/a/45760014
       let target = ev.target
 
-      if (!this.ignoreMove) {
+      if (!this.shouldIgnoreMove) {
         target.addEventListener('touchmove', this.handleTouchMove)
       }
 
@@ -175,10 +175,10 @@ export default class PointerDragListener {
   }
 
   handleTouchScroll = () => {
-    this.isTouchScroll = true
+    this.wasTouchScroll = true
   }
 
-  // can be called by user of this class, while dragging
+  // can be called by user of this class, to cancel touch-based scrolling for the current drag
   cancelTouchScroll() {
     if (this.isDragging) {
       isWindowTouchMoveCancelled = true

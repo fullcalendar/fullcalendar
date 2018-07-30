@@ -26,7 +26,7 @@ export default class HitDragListener {
   emitter: EmitterMixin
   initialHit: Hit
   movingHit: Hit
-  finalHit: Hit // won't ever be populated if ignoreMove
+  finalHit: Hit // won't ever be populated if shouldIgnoreMove
   coordAdjust: any
   dieIfNoInitial: boolean = true
   isIgnoringMove: boolean = false

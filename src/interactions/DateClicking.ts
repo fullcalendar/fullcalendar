@@ -22,7 +22,7 @@ export default class DateClicking {
     let { pointerListener } = this.dragListener
 
     // do this in pointerdown (not dragend) because DOM might be mutated by the time dragend is fired
-    pointerListener.ignoreMove = !component.isValidDateInteraction(pointerListener.downEl)
+    pointerListener.shouldIgnoreMove = !component.isValidDateInteraction(pointerListener.downEl)
   }
 
   onDragEnd = (ev: PointerDragEvent) => {
@@ -30,8 +30,8 @@ export default class DateClicking {
     let { pointerListener } = this.dragListener
 
     if (
-      !pointerListener.ignoreMove && // not ignored in onPointerDown
-      !pointerListener.isTouchScroll
+      !pointerListener.shouldIgnoreMove && // not ignored in onPointerDown
+      !pointerListener.wasTouchScroll
     ) {
       let { initialHit, finalHit } = this.hitListener
 

@@ -41,7 +41,7 @@ export class GlobalContext { // TODO: rename file to something better
 
   bind() {
     let pointerUpListener = this.pointerUpListener = new PointerDragListener(document as any)
-    pointerUpListener.ignoreMove = true
+    pointerUpListener.shouldIgnoreMove = true
     pointerUpListener.emitter.on('pointerup', this.onPointerUp)
   }
 
@@ -76,11 +76,11 @@ export class GlobalContext { // TODO: rename file to something better
 
   onPointerUp = (ev) => {
     let { listenerHash } = this
-    let { isTouchScroll, downEl } = this.pointerUpListener
+    let { wasTouchScroll, downEl } = this.pointerUpListener
 
     for (let id in listenerHash) {
-      listenerHash[id].dateSelecting.onDocumentPointerUp(ev, isTouchScroll, downEl)
-      listenerHash[id].eventDragging.onDocumentPointerUp(ev, isTouchScroll, downEl)
+      listenerHash[id].dateSelecting.onDocumentPointerUp(ev, wasTouchScroll, downEl)
+      listenerHash[id].eventDragging.onDocumentPointerUp(ev, wasTouchScroll, downEl)
     }
   }
 
