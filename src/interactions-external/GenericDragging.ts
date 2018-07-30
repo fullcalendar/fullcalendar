@@ -1,4 +1,4 @@
-import ExternalDragging from './ExternalElementDragging'
+import ExternalElementDragging from './ExternalElementDragging'
 import DumbElementDragging from './DumbElementDragging'
 
 let externalDragging
@@ -9,7 +9,7 @@ export default {
 
   enable(options) {
     let dragging = new DumbElementDragging(options || {})
-    externalDragging = new ExternalDragging(dragging)
+    externalDragging = new ExternalElementDragging(dragging)
   },
 
   disable() {

@@ -44,21 +44,22 @@ export default class DumbElementDragging extends ElementDragging {
     this.emitter.trigger('dragend', ev)
   }
 
-  disableMirror() {
-    let selector = this.options.mirrorSelector
-    let mirrorEl = selector ? document.querySelector(selector) as HTMLElement : null
+  setMirrorIsVisible(bool: boolean) {
+    if (bool) {
+      // restore a previously hidden element.
+      // use the reference in case the selector class has already been removed.
+      if (this.currentMirrorEl) {
+        this.currentMirrorEl.style.visibility = ''
+        this.currentMirrorEl = null
+      }
+    } else {
+      let selector = this.options.mirrorSelector
+      let mirrorEl = selector ? document.querySelector(selector) as HTMLElement : null
 
-    if (mirrorEl) {
-      this.currentMirrorEl = mirrorEl
-      mirrorEl.style.visibility = 'hidden'
-    }
-  }
-
-  enableMirror() {
-    // use the reference in case the selector class has already been removed
-    if (this.currentMirrorEl) {
-      this.currentMirrorEl.style.visibility = ''
-      this.currentMirrorEl = null
+      if (mirrorEl) {
+        this.currentMirrorEl = mirrorEl
+        mirrorEl.style.visibility = 'hidden'
+      }
     }
   }
 
