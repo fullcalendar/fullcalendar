@@ -1,7 +1,7 @@
 import {
-  PointerDragListener,
+  PointerDragging,
   PointerDragEvent,
-  IntentfulDragListener,
+  ElementDragging,
   EmitterMixin
 } from 'fullcalendar'
 
@@ -12,26 +12,29 @@ import {
 - pointerup
 - dragend
 */
-export default class DumbDragListener implements IntentfulDragListener {
+export default class DumbDragListener extends ElementDragging {
 
   isDragging: boolean
   emitter: EmitterMixin
   options: any
-  pointerListener: PointerDragListener
+  pointer: PointerDragging
+  currentMirrorEl: HTMLElement
 
   constructor(options) {
+    super()
+
     this.options = options
     this.emitter = new EmitterMixin()
 
-    let pointerListener = this.pointerListener = new PointerDragListener(document as any)
-    pointerListener.selector = options.itemSelector || '[data-event]' // TODO: better
-    pointerListener.on('pointerdown', this.handlePointerDown)
-    pointerListener.on('pointermove', this.handlePointerMove)
-    pointerListener.on('pointerup', this.handlePointerUp)
+    let pointer = this.pointer = new PointerDragging(document as any)
+    pointer.selector = options.itemSelector || '[data-event]' // TODO: better
+    pointer.emitter.on('pointerdown', this.handlePointerDown)
+    pointer.emitter.on('pointermove', this.handlePointerMove)
+    pointer.emitter.on('pointerup', this.handlePointerUp)
   }
 
   destroy() {
-    this.pointerListener.destroy()
+    this.pointer.destroy()
   }
 
   on(name, func) {
@@ -58,21 +61,21 @@ export default class DumbDragListener implements IntentfulDragListener {
     // doesn't support revert animation
   }
 
-  enableMirror() {
-    let selector = this.options.mirrorSelector
-    let mirrorEl = selector ? document.querySelector(selector) as HTMLElement : null
-
-    if (mirrorEl) {
-      mirrorEl.style.visibility = ''
-    }
-  }
-
   disableMirror() {
     let selector = this.options.mirrorSelector
     let mirrorEl = selector ? document.querySelector(selector) as HTMLElement : null
 
     if (mirrorEl) {
+      this.currentMirrorEl = mirrorEl
       mirrorEl.style.visibility = 'hidden'
+    }
+  }
+
+  enableMirror() {
+    // use the reference in case the selector class has already been removed
+    if (this.currentMirrorEl) {
+      this.currentMirrorEl.style.visibility = ''
+      this.currentMirrorEl = null
     }
   }
 

@@ -3,6 +3,8 @@ import DumbDragListener from './DumbDragListener'
 
 let externalDragging
 
+// TODO: protect against multiple enables/disables
+
 window['FullCalendarGenericDragging'] = {
 
   enable(options) {

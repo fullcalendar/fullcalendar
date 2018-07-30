@@ -7,44 +7,45 @@
 
   document.addEventListener('DOMContentLoaded', function() {
 
-    // var PointerDragListener = FullCalendar.PointerDragListener;
+    // var PointerDragging = FullCalendar.PointerDragging;
 
-    // var listener = new PointerDragListener(document.getElementById('box'))
-    // listener.on('down', function(ev) {
+    // var pointer = new PointerDragging(document.getElementById('box'))
+    // pointer.on('down', function(ev) {
     //   console.log('down', ev)
-    //   listener.cancelTouchScroll()
+    //   pointer.cancelTouchScroll()
     // })
-    // listener.on('move', function(ev) {
+    // pointer.on('move', function(ev) {
     //   console.log('move', ev)
     // })
-    // listener.on('up', function(ev) {
+    // pointer.on('up', function(ev) {
     //   console.log('up', ev)
     // })
 
-    var IntentfulDragListener = FullCalendar.IntentfulDragListener;
+    // TODO: need to expose
+    // var FeaturefulDragging = FullCalendar.FeaturefulDragging;
 
-    var listener = new IntentfulDragListener({
-      containerEl: document.getElementById('box'),
-      selector: 'a',
-      touchDelay: 1000,
-      mouseMinDistance: 20,
-      touchScrollAllowed: false
-    })
-    listener.on('pointerdown', function(ev) {
-      console.log('pointerdown', ev)
-    })
-    listener.on('dragstart', function(ev) {
-      console.log('dragstart', ev)
-    })
-    listener.on('dragmove', function(ev) {
-      console.log('dragmove', ev)
-    })
-    listener.on('dragend', function(ev) {
-      console.log('dragend', ev)
-    })
-    listener.on('pointerup', function(ev) {
-      console.log('pointerup', ev)
-    })
+    // var listener = new FeaturefulDragging({
+    //   containerEl: document.getElementById('box'),
+    //   selector: 'a',
+    //   touchDelay: 1000,
+    //   mouseMinDistance: 20,
+    //   touchScrollAllowed: false
+    // })
+    // listener.on('pointerdown', function(ev) {
+    //   console.log('pointerdown', ev)
+    // })
+    // listener.on('dragstart', function(ev) {
+    //   console.log('dragstart', ev)
+    // })
+    // listener.on('dragmove', function(ev) {
+    //   console.log('dragmove', ev)
+    // })
+    // listener.on('dragend', function(ev) {
+    //   console.log('dragend', ev)
+    // })
+    // listener.on('pointerup', function(ev) {
+    //   console.log('pointerup', ev)
+    // })
   });
 
 </script>
