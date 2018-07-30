@@ -8,7 +8,6 @@ import EventDragging from '../interactions/EventDragging'
 import EventResizing from '../interactions/EventResizing'
 import Calendar from '../Calendar'
 
-// TODO: how to accept external drags?
 // TODO: rename to BrowserContext?
 
 export class GlobalContext { // TODO: rename file to something better
@@ -41,9 +40,9 @@ export class GlobalContext { // TODO: rename file to something better
   }
 
   bind() {
-    this.pointerUpListener = new PointerDragListener(document as any)
-    this.pointerUpListener.ignoreMove = true
-    this.pointerUpListener.on('pointerup', this.onPointerUp)
+    let pointerUpListener = this.pointerUpListener = new PointerDragListener(document as any)
+    pointerUpListener.ignoreMove = true
+    pointerUpListener.emitter.on('pointerup', this.onPointerUp)
   }
 
   unbind() {

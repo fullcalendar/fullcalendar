@@ -56,7 +56,7 @@ export default class DragMirror {
   onPointerDown = (ev: PointerDragEvent) => {
     this.pointerDownX = ev.pageX
     this.pointerDownY = ev.pageY
-    this.sourceEl = ev.el
+    this.sourceEl = ev.subjectEl
   }
 
   onDragStart = (ev: PointerDragEvent) => {

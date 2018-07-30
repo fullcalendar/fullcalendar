@@ -4,6 +4,7 @@ import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '
 import { elementClosest } from '../util/dom-manip'
 import UnzonedRange from '../models/UnzonedRange'
 import { IntentfulDragListenerImpl } from '../dnd/IntentfulDragListener'
+import { PointerDragEvent } from '../dnd/PointerDragListener'
 
 export default class EventDragging {
 
@@ -46,7 +47,7 @@ export default class EventDragging {
     this.draggingSeg = this.querySeg(ev)
   }
 
-  onHitOver = (hit, ev) => {
+  onHitOver = (hit, ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
     let { initialHit } = this.hitListener
     let eventInstance = this.draggingSeg.eventRange.eventInstance
@@ -54,7 +55,7 @@ export default class EventDragging {
     let mutation = computeMutation(
       initialHit,
       hit,
-      ev.el.classList.contains('.fc-start-resizer'),
+      ev.subjectEl.classList.contains('.fc-start-resizer'),
       eventInstance.range
     )
 
@@ -110,8 +111,8 @@ export default class EventDragging {
     this.draggingSeg = null
   }
 
-  querySeg(ev): Seg {
-    return elementClosest(ev.el, this.component.segSelector).fcSeg
+  querySeg(ev: PointerDragEvent): Seg {
+    return elementClosest(ev.subjectEl, this.component.segSelector).fcSeg
   }
 
 }

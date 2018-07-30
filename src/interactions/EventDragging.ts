@@ -54,7 +54,7 @@ export default class EventDragging {
 
   computeDragDelay(ev: PointerDragEvent): number {
     if (ev.isTouch) {
-      let seg = (ev.el as any).fcSeg
+      let seg = (ev.subjectEl as any).fcSeg
       let eventInstanceId = seg.eventRange.eventInstance.instanceId
 
       if (eventInstanceId !== this.component.selectedEventInstanceId) {
@@ -79,7 +79,7 @@ export default class EventDragging {
       }
     }
 
-    this.draggingSeg = (ev.el as any).fcSeg
+    this.draggingSeg = (ev.subjectEl as any).fcSeg
 
     if (ev.isTouch) {
       let eventInstanceId = this.draggingSeg.eventRange.eventInstance.instanceId

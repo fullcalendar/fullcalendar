@@ -85,7 +85,7 @@ export default class HitDragListener {
   processFirstCoord(ev: PointerDragEvent) {
     let origPoint = { left: ev.pageX, top: ev.pageY }
     let adjustedPoint = origPoint
-    let subjectEl = ev.el as HTMLElement
+    let subjectEl = ev.subjectEl
     let subjectRect
 
     if (subjectEl !== (document as any)) {

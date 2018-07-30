@@ -46,7 +46,7 @@ export default class ExternalDragging {
       }
     }
 
-    this.eventCreationData = this.explicitEventCreationData || getDraggedElMeta(ev.el)
+    this.eventCreationData = this.explicitEventCreationData || getDraggedElMeta(ev.subjectEl)
   }
 
   onHitOver = (hit) => {
@@ -108,7 +108,7 @@ export default class ExternalDragging {
       // TODO: how to let Scheduler extend this?
       finalCalendar.publiclyTrigger('drop', [
         {
-          draggedEl: pev.el,
+          draggedEl: pev.subjectEl,
           date: finalCalendar.dateEnv.toDate(finalHit.range.start),
           isAllDay: finalHit.isAllDay,
           jsEvent: pev.origEvent,
@@ -126,7 +126,7 @@ export default class ExternalDragging {
         // signal an external event landed
         finalCalendar.publiclyTrigger('eventReceive', [
           {
-            draggedEl: pev.el,
+            draggedEl: pev.subjectEl,
             event: this.addableEventStore, // TODO: what to put here!?
             view: finalView
           }

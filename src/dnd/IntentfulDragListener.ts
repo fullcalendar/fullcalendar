@@ -54,9 +54,9 @@ export class IntentfulDragListenerImpl implements IntentfulDragListener {
     this.dragMirror = new DragMirror(this)
 
     let pointerListener = this.pointerListener = new PointerDragListener(containerEl)
-    pointerListener.on('pointerdown', this.onPointerDown)
-    pointerListener.on('pointermove', this.onPointerMove)
-    pointerListener.on('pointerup', this.onPointerUp)
+    pointerListener.emitter.on('pointerdown', this.onPointerDown)
+    pointerListener.emitter.on('pointermove', this.onPointerMove)
+    pointerListener.emitter.on('pointerup', this.onPointerUp)
   }
 
   destroy() {
