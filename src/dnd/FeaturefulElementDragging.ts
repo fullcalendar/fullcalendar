@@ -168,7 +168,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
   }
 
   setMirrorNeedsRevert(bool: boolean) {
-    this.mirrorNeedsRevert = true
+    this.mirrorNeedsRevert = bool
   }
 
 }

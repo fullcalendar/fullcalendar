@@ -35,6 +35,8 @@ export default class ElementMirror {
         if (this.mirrorEl) {
           this.mirrorEl.style.display = ''
         }
+
+        this.isVisible = bool // needs to happen before updateElPosition
         this.updateElPosition()
       }
     } else {
@@ -42,10 +44,10 @@ export default class ElementMirror {
         if (this.mirrorEl) {
           this.mirrorEl.style.display = 'none'
         }
+
+        this.isVisible = bool
       }
     }
-
-    this.isVisible = bool
   }
 
   // always async

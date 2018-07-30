@@ -50,7 +50,7 @@ export default class PointerDragging {
   }
 
   tryStart(ev: UIEvent): boolean {
-    let subjectEl = this.queryValidSubjectEl(ev)
+    let subjectEl = this.querySubjectEl(ev)
     let downEl = ev.target as HTMLElement
 
     if (
@@ -75,7 +75,7 @@ export default class PointerDragging {
     // keep wasTouchScroll around for later access
   }
 
-  queryValidSubjectEl(ev: UIEvent): HTMLElement {
+  querySubjectEl(ev: UIEvent): HTMLElement {
     if (this.selector) {
       return elementClosest(ev.target as HTMLElement, this.selector)
     } else {
