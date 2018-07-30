@@ -112,5 +112,5 @@ export { refineProps } from './reducers/utils'
 export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'
 export { default as ElementDragging } from './dnd/ElementDragging'
 
-export { default as ExternalDraggableEvent } from './interactions/ExternalDraggableEvent'
-export { default as ExternalDragging } from './interactions/ExternalDragging'
+export { default as Draggable } from './interactions-external/Draggable'
+export { default as GenericDragging } from './interactions-external/GenericDragging'

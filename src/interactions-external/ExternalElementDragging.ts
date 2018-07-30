@@ -1,5 +1,5 @@
 import ElementDragging from '../dnd/ElementDragging'
-import HitDragging, { Hit } from './HitDragging'
+import HitDragging, { Hit } from '../interactions/HitDragging'
 import globalContext from '../common/GlobalContext'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { EventStore, parseDef, createInstance } from '../reducers/event-store'
@@ -8,7 +8,7 @@ import * as externalHooks from '../exports'
 import { createDuration } from '../datelib/duration'
 import { assignTo } from '../util/object'
 
-export default class ExternalDragging {
+export default class ExternalElementDragging {
 
   hitDragging: HitDragging
   addableEventStore: EventStore

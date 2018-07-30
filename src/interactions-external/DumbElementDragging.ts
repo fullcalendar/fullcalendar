@@ -1,9 +1,5 @@
-import {
-  PointerDragging,
-  PointerDragEvent,
-  ElementDragging,
-  EmitterMixin
-} from 'fullcalendar'
+import PointerDragging, { PointerDragEvent } from '../dnd/PointerDragging'
+import ElementDragging from '../dnd/ElementDragging'
 
 /* needs to fire events:
 - pointerdown
@@ -12,10 +8,9 @@ import {
 - pointerup
 - dragend
 */
-export default class DumbDragListener extends ElementDragging {
+export default class DumbElementDragging extends ElementDragging {
 
   isDragging: boolean
-  emitter: EmitterMixin
   options: any
   pointer: PointerDragging
   currentMirrorEl: HTMLElement
@@ -24,7 +19,6 @@ export default class DumbDragListener extends ElementDragging {
     super()
 
     this.options = options
-    this.emitter = new EmitterMixin()
 
     let pointer = this.pointer = new PointerDragging(document as any)
     pointer.selector = options.itemSelector || '[data-event]' // TODO: better
@@ -35,10 +29,6 @@ export default class DumbDragListener extends ElementDragging {
 
   destroy() {
     this.pointer.destroy()
-  }
-
-  on(name, func) {
-    this.emitter.on(name, func)
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
@@ -57,10 +47,6 @@ export default class DumbDragListener extends ElementDragging {
     this.emitter.trigger('dragend', ev)
   }
 
-  setMirrorNeedsRevert() {
-    // doesn't support revert animation
-  }
-
   disableMirror() {
     let selector = this.options.mirrorSelector
     let mirrorEl = selector ? document.querySelector(selector) as HTMLElement : null
@@ -77,10 +63,6 @@ export default class DumbDragListener extends ElementDragging {
       this.currentMirrorEl.style.visibility = ''
       this.currentMirrorEl = null
     }
-  }
-
-  setIgnoreMove(bool: boolean) {
-    // no optimization
   }
 
 }

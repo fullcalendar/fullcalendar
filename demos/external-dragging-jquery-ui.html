@@ -7,12 +7,11 @@
 <script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../node_modules/components-jqueryui/jquery-ui.js'></script>
 <script src='../dist/fullcalendar.js'></script>
-<script src='../dist/generic-dragging.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
 
-    FullCalendarGenericDragging.enable({
+    FullCalendar.GenericDragging.enable({
       mirrorSelector: '.ui-draggable-dragging'
     })
 
@@ -48,11 +47,11 @@
       },
       editable: true,
       droppable: true, // this allows things to be dropped onto the calendar
-      drop: function() {
+      drop: function(arg) {
         // is the "remove after drop" checkbox checked?
         if ($('#drop-remove').is(':checked')) {
           // if so, remove the element from the "Draggable Events" list
-          $(this).remove();
+          $(arg.draggedEl).remove();
         }
       }
     });

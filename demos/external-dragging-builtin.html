@@ -19,21 +19,14 @@
     );
 
     eventEls.forEach(function(eventEl) {
-      new FullCalendar.ExternalDraggableEvent(
-        eventEl,
-        {}
-      )
-
-      // eventEl.setAttribute('data-event', JSON.stringify({
-      //   title: eventEl.innerText.trim(),
-      //   stick: true
-      // }));
+      new FullCalendar.Draggable({
+        el: eventEl,
+        event: {
+          title: eventEl.innerText.trim(),
+          stick: true
+        }
+      });
     });
-
-    // FullCalendar.dragula({
-    //   containers: [ containerEl ],
-    //   copy: true
-    // });
 
     /* initialize the calendar
     -----------------------------------------------------------------*/
@@ -47,11 +40,11 @@
       },
       editable: true,
       droppable: true, // this allows things to be dropped onto the calendar
-      drop: function() {
+      drop: function(arg) {
         // is the "remove after drop" checkbox checked?
         if (document.getElementById('drop-remove').checked) {
           // if so, remove the element from the "Draggable Events" list
-          this.parentNode.removeChild(this);
+          arg.draggedEl.parentNode.removeChild(arg.draggedEl);
         }
       }
     });

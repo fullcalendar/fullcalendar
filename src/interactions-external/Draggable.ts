@@ -1,5 +1,5 @@
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import ExternalDragging from './ExternalDragging'
+import ExternalElementDragging from './ExternalElementDragging'
 
 export interface ExternalDraggableEventSettings {
   el: HTMLElement
@@ -8,11 +8,11 @@ export interface ExternalDraggableEventSettings {
 
 export default class ExternalDraggableEvent {
 
-  externalDragging: ExternalDragging
+  externalDragging: ExternalElementDragging
 
   constructor(settings: ExternalDraggableEventSettings) {
-    let dragListener = new FeaturefulElementDragging(settings.el)
-    this.externalDragging = new ExternalDragging(dragListener, settings.event)
+    let dragging = new FeaturefulElementDragging(settings.el)
+    this.externalDragging = new ExternalElementDragging(dragging, settings.event)
   }
 
   destroy() {

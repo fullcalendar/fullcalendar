@@ -7,7 +7,6 @@
 <link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../node_modules/dragula/dist/dragula.js'></script>
 <script src='../dist/fullcalendar.js'></script>
-<script src='../dist/generic-dragging.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -32,7 +31,7 @@
       copy: true
     });
 
-    FullCalendarGenericDragging.enable({
+    FullCalendar.GenericDragging.enable({
       mirrorSelector: '.gu-mirror'
     })
 
@@ -48,11 +47,11 @@
       },
       editable: true,
       droppable: true, // this allows things to be dropped onto the calendar
-      drop: function() {
+      drop: function(arg) {
         // is the "remove after drop" checkbox checked?
         if (document.getElementById('drop-remove').checked) {
           // if so, remove the element from the "Draggable Events" list
-          this.parentNode.removeChild(this);
+          arg.draggedEl.parentNode.removeChild(arg.draggedEl);
         }
       }
     });

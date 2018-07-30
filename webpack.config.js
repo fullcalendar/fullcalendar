@@ -14,7 +14,6 @@ const MODULES = {
   'dist/fullcalendar.css': './src/main.scss',
   'dist/fullcalendar.print.css': './src/common/print.scss',
   'dist/gcal': './plugins/gcal/main.ts',
-  'dist/generic-dragging': './plugins/generic-dragging/main.ts',
   'tmp/automated-tests': './tests/automated/index'
 }
 
