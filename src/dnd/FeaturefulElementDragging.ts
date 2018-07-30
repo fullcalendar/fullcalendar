@@ -17,7 +17,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
   // options that can be directly set by caller
   // the caller can also set the PointerDragging's options as well
-  delay: number
+  delay: number | null = null
   minDistance: number = 0
   touchScrollAllowed: boolean = true
 
@@ -25,9 +25,9 @@ export default class FeaturefulElementDragging extends ElementDragging {
   isDragging: boolean = false // is it INTENTFULLY dragging? lasts until after revert animation
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
-  delayTimeoutId: number
-  origX: number
-  origY: number
+  delayTimeoutId: number | null = null
+  origX?: number
+  origY?: number
 
   constructor(containerEl: HTMLElement) {
     super()
@@ -78,8 +78,8 @@ export default class FeaturefulElementDragging extends ElementDragging {
       this.mirror.handleMove(ev.pageX, ev.pageY)
 
       if (!this.isDistanceSurpassed) {
-        let dx = ev.pageX - this.origX
-        let dy = ev.pageY - this.origY
+        let dx = ev.pageX - this.origX!
+        let dy = ev.pageY - this.origY!
         let minDistance = this.minDistance
         let distanceSq // current distance from the origin, squared
 

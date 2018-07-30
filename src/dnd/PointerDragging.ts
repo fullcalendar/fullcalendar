@@ -27,13 +27,13 @@ emits:
 export default class PointerDragging {
 
   containerEl: HTMLElement
-  subjectEl: HTMLElement
-  downEl: HTMLElement
+  subjectEl: HTMLElement | null = null
+  downEl: HTMLElement | null = null
   emitter: EmitterMixin
 
   // options that can be directly assigned by caller
-  selector: string // will cause subjectEl in all emitted events to be this element
-  handleSelector: string
+  selector: string = '' // will cause subjectEl in all emitted events to be this element
+  handleSelector: string = ''
   shouldIgnoreMove: boolean = false
 
   // internal states
@@ -99,7 +99,7 @@ export default class PointerDragging {
       isPrimaryMouseButton(ev) &&
       this.tryStart(ev)
     ) {
-      this.emitter.trigger('pointerdown', createEventFromMouse(ev, this.subjectEl))
+      this.emitter.trigger('pointerdown', createEventFromMouse(ev, this.subjectEl!))
 
       if (!this.shouldIgnoreMove) {
         document.addEventListener('mousemove', this.handleMouseMove)
@@ -110,14 +110,14 @@ export default class PointerDragging {
   }
 
   handleMouseMove = (ev: MouseEvent) => {
-    this.emitter.trigger('pointermove', createEventFromMouse(ev, this.subjectEl))
+    this.emitter.trigger('pointermove', createEventFromMouse(ev, this.subjectEl!))
   }
 
   handleMouseUp = (ev: MouseEvent) => {
     document.removeEventListener('mousemove', this.handleMouseMove)
     document.removeEventListener('mouseup', this.handleMouseUp)
 
-    this.emitter.trigger('pointerup', createEventFromMouse(ev, this.subjectEl))
+    this.emitter.trigger('pointerup', createEventFromMouse(ev, this.subjectEl!))
 
     this.cleanup() // call last so that pointerup has access to props
   }
@@ -134,11 +134,11 @@ export default class PointerDragging {
     if (this.tryStart(ev)) {
       this.isTouchDragging = true
 
-      this.emitter.trigger('pointerdown', createEventFromTouch(ev, this.subjectEl))
+      this.emitter.trigger('pointerdown', createEventFromTouch(ev, this.subjectEl!))
 
       // unlike mouse, need to attach to target, not document
       // https://stackoverflow.com/a/45760014
-      let target = ev.target
+      let target = ev.target as HTMLElement
 
       if (!this.shouldIgnoreMove) {
         target.addEventListener('touchmove', this.handleTouchMove)
@@ -160,19 +160,19 @@ export default class PointerDragging {
   }
 
   handleTouchMove = (ev: TouchEvent) => {
-    this.emitter.trigger('pointermove', createEventFromTouch(ev, this.subjectEl))
+    this.emitter.trigger('pointermove', createEventFromTouch(ev, this.subjectEl!))
   }
 
   handleTouchEnd = (ev: TouchEvent) => {
     if (this.isDragging) { // done to guard against touchend followed by touchcancel
-      let target = ev.target
+      let target = ev.target as HTMLElement
 
       target.removeEventListener('touchmove', this.handleTouchMove)
       target.removeEventListener('touchend', this.handleTouchEnd)
       target.removeEventListener('touchcancel', this.handleTouchEnd)
       window.removeEventListener('scroll', this.handleTouchScroll)
 
-      this.emitter.trigger('pointerup', createEventFromTouch(ev, this.subjectEl))
+      this.emitter.trigger('pointerup', createEventFromTouch(ev, this.subjectEl!))
 
       this.cleanup() // call last so that pointerup has access to props
       this.isTouchDragging = false

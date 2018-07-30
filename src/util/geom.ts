@@ -1,6 +1,19 @@
 
+export interface Point {
+  left: number
+  top: number
+}
+
+export interface Rect {
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+
+
 // Returns a new rectangle that is the intersection of the two rectangles. If they don't intersect, returns false
-export function intersectRects(rect1, rect2) {
+export function intersectRects(rect1: Rect, rect2: Rect): Rect | false {
   let res = {
     left: Math.max(rect1.left, rect2.left),
     right: Math.min(rect1.right, rect2.right),
@@ -11,12 +24,13 @@ export function intersectRects(rect1, rect2) {
   if (res.left < res.right && res.top < res.bottom) {
     return res
   }
+
   return false
 }
 
 
 // Returns a new point that will have been moved to reside within the given rectangle
-export function constrainPoint(point, rect) {
+export function constrainPoint(point: Point, rect: Rect): Point {
   return {
     left: Math.min(Math.max(point.left, rect.left), rect.right),
     top: Math.min(Math.max(point.top, rect.top), rect.bottom)
@@ -25,7 +39,7 @@ export function constrainPoint(point, rect) {
 
 
 // Returns a point that is the center of the given rectangle
-export function getRectCenter(rect) {
+export function getRectCenter(rect: Rect): Point {
   return {
     left: (rect.left + rect.right) / 2,
     top: (rect.top + rect.bottom) / 2
@@ -34,7 +48,7 @@ export function getRectCenter(rect) {
 
 
 // Subtracts point2's coordinates from point1's coordinates, returning a delta
-export function diffPoints(point1, point2) {
+export function diffPoints(point1: Point, point2: Point): Point {
   return {
     left: point1.left - point2.left,
     top: point1.top - point2.top

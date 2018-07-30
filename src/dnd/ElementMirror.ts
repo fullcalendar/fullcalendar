@@ -1,6 +1,7 @@
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'
 import { whenTransitionDone } from '../util/dom-event'
+import { Rect } from '../util/geom'
 
 /*
 An effect in which an element follows the movement of a pointer across the screen.
@@ -10,13 +11,13 @@ Must call start + handleMove + stop.
 export default class ElementMirror {
 
   isVisible: boolean = false
-  origX: number
-  origY: number
-  deltaX: number
-  deltaY: number
-  sourceEl: HTMLElement
-  mirrorEl: HTMLElement
-  sourceElRect: any
+  origX?: number
+  origY?: number
+  deltaX?: number
+  deltaY?: number
+  sourceEl: HTMLElement | null = null
+  mirrorEl: HTMLElement | null = null
+  sourceElRect: Rect | null = null
 
   // options that can be set directly by caller
   // TODO: wire up
@@ -32,8 +33,8 @@ export default class ElementMirror {
   }
 
   handleMove(left: number, top: number) {
-    this.deltaX = left - this.origX
-    this.deltaY = top - this.origY
+    this.deltaX = left - this.origX!
+    this.deltaY = top - this.origY!
     this.updateElPosition()
   }
 
@@ -74,15 +75,15 @@ export default class ElementMirror {
   }
 
   doRevertAnimation(callback: () => void) {
-    let { mirrorEl } = this
+    let mirrorEl = this.mirrorEl!
 
     mirrorEl.style.transition =
       'top ' + this.revertDuration + 'ms,' +
       'left ' + this.revertDuration + 'ms'
 
     applyStyle(mirrorEl, {
-      left: this.sourceElRect.left,
-      top: this.sourceElRect.top
+      left: this.sourceElRect!.left,
+      top: this.sourceElRect!.top
     })
 
     whenTransitionDone(mirrorEl, () => {
@@ -108,8 +109,8 @@ export default class ElementMirror {
       }
 
       applyStyle(this.getMirrorEl(), {
-        left: this.sourceElRect.left + this.deltaX,
-        top: this.sourceElRect.top + this.deltaY
+        left: this.sourceElRect.left + this.deltaX!,
+        top: this.sourceElRect.top + this.deltaY!
       })
     }
   }
@@ -118,7 +119,7 @@ export default class ElementMirror {
     let mirrorEl = this.mirrorEl
 
     if (!mirrorEl) {
-      mirrorEl = this.mirrorEl = this.sourceEl.cloneNode(true) as HTMLElement // cloneChildren=true
+      mirrorEl = this.mirrorEl = this.sourceEl!.cloneNode(true) as HTMLElement // cloneChildren=true
       // we don't want long taps or any mouse interaction causing selection/menus.
       // would use preventSelection(), but that prevents selectstart, causing problems.
       mirrorEl.classList.add('fc-unselectable')
@@ -139,8 +140,8 @@ export default class ElementMirror {
         bottom: 'auto', // erase and set height instead
 
         // vvv use sourceElRect instead?
-        width: this.sourceEl.offsetWidth, // explicit height in case there was a 'right' value
-        height: this.sourceEl.offsetHeight, // explicit width in case there was a 'bottom' value
+        width: this.sourceEl!.offsetWidth, // explicit height in case there was a 'right' value
+        height: this.sourceEl!.offsetHeight, // explicit width in case there was a 'bottom' value
         //opacity: this.options.opacity || '',
         //zIndex: this.options.zIndex
       })
