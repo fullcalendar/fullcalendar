@@ -1,20 +1,20 @@
 import DateComponent from '../component/DateComponent'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import HitDragListener, { isHitsEqual } from '../dnd/HitDragListener'
+import HitDragging, { isHitsEqual } from './HitDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 
 export default class DateClicking {
 
   component: DateComponent
   dragging: FeaturefulElementDragging
-  hitListener: HitDragListener
+  hitDragging: HitDragging
 
   constructor(component: DateComponent) {
     this.component = component
     this.dragging = new FeaturefulElementDragging(component.el)
-    this.hitListener = new HitDragListener(this.dragging, component)
-    this.hitListener.on('pointerdown', this.onPointerDown)
-    this.hitListener.on('dragend', this.onDragEnd)
+    this.hitDragging = new HitDragging(this.dragging, component)
+    this.hitDragging.on('pointerdown', this.onPointerDown)
+    this.hitDragging.on('dragend', this.onDragEnd)
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
@@ -33,7 +33,7 @@ export default class DateClicking {
       !pointer.shouldIgnoreMove && // not ignored in onPointerDown
       !pointer.wasTouchScroll
     ) {
-      let { initialHit, finalHit } = this.hitListener
+      let { initialHit, finalHit } = this.hitDragging
 
       if (initialHit && finalHit && isHitsEqual(initialHit, finalHit)) {
         component.getCalendar().triggerDayClick(initialHit, initialHit.el, component.view, ev.origEvent)
@@ -42,7 +42,7 @@ export default class DateClicking {
   }
 
   destroy() {
-    this.hitListener.destroy()
+    this.hitDragging.destroy()
   }
 
 }

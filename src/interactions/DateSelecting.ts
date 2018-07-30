@@ -1,7 +1,7 @@
 import { compareNumbers } from '../util/misc'
 import { elementClosest } from '../util/dom-manip'
 import DateComponent from '../component/DateComponent'
-import HitDragListener, { Hit } from '../dnd/HitDragListener'
+import HitDragging, { Hit } from './HitDragging'
 import { Selection } from '../reducers/selection'
 import UnzonedRange from '../models/UnzonedRange'
 import { PointerDragEvent } from '../dnd/PointerDragging'
@@ -13,7 +13,7 @@ export default class DateSelecting {
   component: DateComponent
   globalContext: GlobalContext
   dragging: FeaturefulElementDragging
-  hitListener: HitDragListener
+  hitDragging: HitDragging
   dragSelection: Selection
 
   constructor(component: DateComponent, globalContext: GlobalContext) {
@@ -23,15 +23,15 @@ export default class DateSelecting {
     this.dragging = new FeaturefulElementDragging(component.el)
     this.dragging.touchScrollAllowed = false
 
-    let hitListener = this.hitListener = new HitDragListener(this.dragging, component)
-    hitListener.on('pointerdown', this.onPointerDown)
-    hitListener.on('dragstart', this.onDragStart)
-    hitListener.on('hitover', this.onHitOver)
-    hitListener.on('hitout', this.onHitOut)
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
+    hitDragging.on('pointerdown', this.onPointerDown)
+    hitDragging.on('dragstart', this.onDragStart)
+    hitDragging.on('hitover', this.onHitOver)
+    hitDragging.on('hitout', this.onHitOut)
   }
 
   destroy() {
-    this.hitListener.destroy()
+    this.hitDragging.destroy()
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
@@ -59,7 +59,7 @@ export default class DateSelecting {
   onHitOver = (overHit: Hit) => { // TODO: do a onHitChange instead?
     let { globalContext } = this
     let calendar = this.component.getCalendar()
-    let dragSelection = computeSelection(this.hitListener.initialHit, overHit)
+    let dragSelection = computeSelection(this.hitDragging.initialHit, overHit)
 
     if (dragSelection) {
       globalContext.selectedCalendar = calendar

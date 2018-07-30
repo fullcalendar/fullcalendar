@@ -1,12 +1,12 @@
 import EmitterMixin from '../common/EmitterMixin'
-import { PointerDragEvent } from './PointerDragging'
-import ElementDragging from './ElementDragging'
+import { PointerDragEvent } from '../dnd/PointerDragging'
+import ElementDragging from '../dnd/ElementDragging'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { Selection } from '../reducers/selection'
 import { computeRect } from '../util/dom-geom'
 import { constrainPoint, intersectRects, getRectCenter, diffPoints } from '../util/geom'
 
-export interface Hit extends Selection {
+export interface Hit extends Selection { // TODO: rename! put somewhere else
   component: DateComponent
 }
 
@@ -19,7 +19,7 @@ fires (none will be fired if no initial hit):
 - pointerup
 - dragend
 */
-export default class HitDragListener {
+export default class HitDragging {
 
   droppableHash: DateComponentHash
   dragging: ElementDragging

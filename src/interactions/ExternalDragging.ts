@@ -1,5 +1,5 @@
 import ElementDragging from '../dnd/ElementDragging'
-import HitDragListener, { Hit } from '../dnd/HitDragListener'
+import HitDragging, { Hit } from './HitDragging'
 import globalContext from '../common/GlobalContext'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { EventStore, parseDef, createInstance } from '../reducers/event-store'
@@ -10,18 +10,18 @@ import { assignTo } from '../util/object'
 
 export default class ExternalDragging {
 
-  hitListener: HitDragListener
+  hitDragging: HitDragging
   addableEventStore: EventStore
   explicitEventCreationData: any
   eventCreationData: any
 
   constructor(dragging: ElementDragging, rawEventCreationData?) {
-    let hitListener = this.hitListener = new HitDragListener(dragging, globalContext.componentHash)
-    hitListener.dieIfNoInitial = false
-    hitListener.on('dragstart', this.onDragStart)
-    hitListener.on('hitover', this.onHitOver)
-    hitListener.on('hitout', this.onHitOut)
-    hitListener.on('dragend', this.onDragEnd)
+    let hitDragging = this.hitDragging = new HitDragging(dragging, globalContext.componentHash)
+    hitDragging.dieIfNoInitial = false
+    hitDragging.on('dragstart', this.onDragStart)
+    hitDragging.on('hitover', this.onHitOver)
+    hitDragging.on('hitout', this.onHitOut)
+    hitDragging.on('dragend', this.onDragEnd)
 
     dragging.enableMirror()
 
@@ -29,7 +29,7 @@ export default class ExternalDragging {
   }
 
   destroy() {
-    this.hitListener.destroy() // should not be responsible for destroying something not belonged!
+    this.hitDragging.destroy() // should not be responsible for destroying something not belonged!
   }
 
   onDragStart = (ev: PointerDragEvent) => {
@@ -62,7 +62,7 @@ export default class ExternalDragging {
       }
     })
 
-    let { dragging } = this.hitListener
+    let { dragging } = this.hitDragging
 
     dragging.setMirrorNeedsRevert(false)
 
@@ -87,17 +87,17 @@ export default class ExternalDragging {
 
     this.addableEventStore = null
 
-    let { dragging } = this.hitListener
+    let { dragging } = this.hitDragging
 
     dragging.enableMirror()
     dragging.setMirrorNeedsRevert(true)
   }
 
   onDragEnd = (pev: PointerDragEvent) => {
-    this.hitListener.dragging.enableMirror() // always restore!
+    this.hitDragging.dragging.enableMirror() // always restore!
 
     if (this.addableEventStore) {
-      let finalHit = this.hitListener.finalHit
+      let finalHit = this.hitDragging.finalHit
       let finalView = finalHit.component.view
       let finalCalendar = finalView.calendar
 

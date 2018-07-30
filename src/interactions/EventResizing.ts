@@ -1,5 +1,5 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
-import HitDragListener, { isHitsEqual, Hit } from '../dnd/HitDragListener'
+import HitDragging, { isHitsEqual, Hit } from './HitDragging'
 import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
 import { elementClosest } from '../util/dom-manip'
 import UnzonedRange from '../models/UnzonedRange'
@@ -10,7 +10,7 @@ export default class EventDragging {
 
   component: DateComponent
   dragging: FeaturefulElementDragging
-  hitListener: HitDragListener
+  hitDragging: HitDragging
   draggingSeg: Seg
   mutation: EventMutation
 
@@ -21,16 +21,16 @@ export default class EventDragging {
     this.dragging.pointer.selector = '.fc-resizer'
     this.dragging.touchScrollAllowed = false
 
-    let hitListener = this.hitListener = new HitDragListener(this.dragging, component)
-    hitListener.on('pointerdown', this.onPointerDown)
-    hitListener.on('dragstart', this.onDragStart)
-    hitListener.on('hitover', this.onHitOver)
-    hitListener.on('hitout', this.onHitOut)
-    hitListener.on('dragend', this.onDragEnd)
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
+    hitDragging.on('pointerdown', this.onPointerDown)
+    hitDragging.on('dragstart', this.onDragStart)
+    hitDragging.on('hitover', this.onHitOver)
+    hitDragging.on('hitout', this.onHitOut)
+    hitDragging.on('dragend', this.onDragEnd)
   }
 
   destroy() {
-    this.hitListener.destroy()
+    this.hitDragging.destroy()
   }
 
   onPointerDown = (ev) => {
@@ -49,7 +49,7 @@ export default class EventDragging {
 
   onHitOver = (hit, ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
-    let { initialHit } = this.hitListener
+    let { initialHit } = this.hitDragging
     let eventInstance = this.draggingSeg.eventRange.eventInstance
 
     let mutation = computeMutation(

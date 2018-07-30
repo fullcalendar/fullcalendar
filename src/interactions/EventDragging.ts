@@ -1,6 +1,6 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
 import { PointerDragEvent } from '../dnd/PointerDragging'
-import HitDragListener, { isHitsEqual, Hit } from '../dnd/HitDragListener'
+import HitDragging, { isHitsEqual, Hit } from './HitDragging'
 import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
 import { GlobalContext } from '../common/GlobalContext'
 import { startOfDay } from '../datelib/marker'
@@ -12,7 +12,7 @@ export default class EventDragging {
   component: DateComponent
   globalContext: GlobalContext // need this as a member?
   dragging: FeaturefulElementDragging
-  hitListener: HitDragListener
+  hitDragging: HitDragging
   draggingSeg: Seg
   mutation: EventMutation
 
@@ -24,17 +24,17 @@ export default class EventDragging {
     this.dragging.pointer.selector = '.fc-draggable'
     this.dragging.touchScrollAllowed = false
 
-    let hitListener = this.hitListener = new HitDragListener(this.dragging, globalContext.componentHash)
-    hitListener.subjectCenter = true
-    hitListener.on('pointerdown', this.onPointerDown)
-    hitListener.on('dragstart', this.onDragStart)
-    hitListener.on('hitover', this.onHitOver)
-    hitListener.on('hitout', this.onHitOut)
-    hitListener.on('dragend', this.onDragEnd)
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, globalContext.componentHash)
+    hitDragging.subjectCenter = true
+    hitDragging.on('pointerdown', this.onPointerDown)
+    hitDragging.on('dragstart', this.onDragStart)
+    hitDragging.on('hitover', this.onHitOver)
+    hitDragging.on('hitout', this.onHitOut)
+    hitDragging.on('dragend', this.onDragEnd)
   }
 
   destroy() {
-    this.hitListener.destroy()
+    this.hitDragging.destroy()
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
@@ -94,7 +94,7 @@ export default class EventDragging {
   }
 
   onHitOver = (hit) => {
-    let { initialHit } = this.hitListener
+    let { initialHit } = this.hitDragging
     let calendar = hit.component.getCalendar()
 
     let mutation = computeEventMutation(initialHit, hit)
@@ -165,7 +165,7 @@ export default class EventDragging {
   }
 
   onDragEnd = () => {
-    let { initialHit } = this.hitListener
+    let { initialHit } = this.hitDragging
     let initialCalendar = initialHit.component.getCalendar()
 
     // TODO: what about across calendars?
