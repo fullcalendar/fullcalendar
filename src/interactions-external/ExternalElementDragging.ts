@@ -28,10 +28,6 @@ export default class ExternalElementDragging {
     this.explicitEventCreationData = rawEventCreationData ? processExplicitData(rawEventCreationData) : null
   }
 
-  destroy() {
-    this.hitDragging.destroy() // should not be responsible for destroying something not belonged!
-  }
-
   onDragStart = (ev: PointerDragEvent) => {
 
     // TODO: nicer accessors in GlobalContext for this?

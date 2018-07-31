@@ -31,7 +31,7 @@ export default class DateSelecting {
   }
 
   destroy() {
-    this.hitDragging.destroy()
+    this.dragging.destroy()
   }
 
   onPointerDown = (ev: PointerDragEvent) => {

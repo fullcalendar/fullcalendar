@@ -17,6 +17,10 @@ export default class DateClicking {
     this.hitDragging.on('dragend', this.onDragEnd)
   }
 
+  destroy() {
+    this.dragging.destroy()
+  }
+
   onPointerDown = (ev: PointerDragEvent) => {
     let { dragging } = this
 
@@ -40,10 +44,6 @@ export default class DateClicking {
         component.getCalendar().triggerDayClick(initialHit, initialHit.el, component.view, ev.origEvent)
       }
     }
-  }
-
-  destroy() {
-    this.hitDragging.destroy()
   }
 
 }

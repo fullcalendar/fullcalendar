@@ -8,15 +8,15 @@ export interface ExternalDraggableEventSettings {
 
 export default class ExternalDraggableEvent {
 
-  externalDragging: ExternalElementDragging
+  dragging: FeaturefulElementDragging
 
   constructor(settings: ExternalDraggableEventSettings) {
-    let dragging = new FeaturefulElementDragging(settings.el)
-    this.externalDragging = new ExternalElementDragging(dragging, settings.event)
+    this.dragging = new FeaturefulElementDragging(settings.el)
+    new ExternalElementDragging(this.dragging, settings.event)
   }
 
   destroy() {
-    this.externalDragging.destroy()
+    this.dragging.destroy()
   }
 
 }

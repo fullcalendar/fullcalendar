@@ -30,7 +30,7 @@ export default class EventDragging {
   }
 
   destroy() {
-    this.hitDragging.destroy()
+    this.dragging.destroy()
   }
 
   onPointerDown = (ev) => {

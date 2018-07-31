@@ -52,10 +52,6 @@ export default class HitDragging {
     this.emitter = new EmitterMixin()
   }
 
-  destroy() {
-    this.dragging.destroy() // should not be responsible for destroying!
-  }
-
   on(name, handler) {
     this.emitter.on(name, handler)
   }
