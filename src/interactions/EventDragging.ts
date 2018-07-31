@@ -2,7 +2,7 @@ import { default as DateComponent, Seg } from '../component/DateComponent'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
 import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
-import { GlobalContext } from '../common/GlobalContext'
+import browserContext from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
@@ -10,21 +10,19 @@ import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 export default class EventDragging {
 
   component: DateComponent
-  globalContext: GlobalContext // need this as a member?
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
   draggingSeg: Seg
   mutation: EventMutation
 
-  constructor(component: DateComponent, globalContext: GlobalContext) {
+  constructor(component: DateComponent) {
     this.component = component
-    this.globalContext = globalContext
 
     this.dragging = new FeaturefulElementDragging(component.el)
     this.dragging.pointer.selector = '.fc-draggable'
     this.dragging.touchScrollAllowed = false
 
-    let hitDragging = this.hitDragging = new HitDragging(this.dragging, globalContext.componentHash)
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, browserContext.componentHash)
     hitDragging.useSubjectCenter = true
     hitDragging.emitter.on('pointerdown', this.onPointerDown)
     hitDragging.emitter.on('dragstart', this.onDragStart)
@@ -65,9 +63,7 @@ export default class EventDragging {
   }
 
   onDragStart = (ev: PointerDragEvent) => {
-    let { globalContext } = this
-
-    globalContext.unselectEvent()
+    browserContext.unselectEvent()
     this.draggingSeg = (ev.subjectEl as any).fcSeg
 
     if (ev.isTouch) {
@@ -78,7 +74,7 @@ export default class EventDragging {
         eventInstanceId
       })
 
-      globalContext.reportEventSelection(this.component)
+      browserContext.reportEventSelection(this.component)
     }
   }
 
@@ -141,7 +137,7 @@ export default class EventDragging {
       !this.mutation &&
       !wasTouchScroll &&
       // was the previously event-selected component?
-      this.globalContext.eventSelectedComponent === this.component
+      browserContext.eventSelectedComponent === this.component
     ) {
       this.component.getCalendar().dispatch({
         type: 'CLEAR_SELECTED_EVENT'

@@ -15,7 +15,7 @@ import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
 import { EventInteractionState } from '../reducers/event-interaction'
 import { assignTo } from '../util/object'
-import GlobalContext from '../common/GlobalContext'
+import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
 
 
@@ -199,14 +199,14 @@ export default abstract class DateComponent extends Component {
 
   bindGlobalHandlers() {
     if (this.isInteractable) {
-      GlobalContext.registerComponent(this)
+      browserContext.registerComponent(this)
     }
   }
 
 
   unbindGlobalHandlers() {
     if (this.isInteractable) {
-      GlobalContext.unregisterComponent(this)
+      browserContext.unregisterComponent(this)
     }
   }
 

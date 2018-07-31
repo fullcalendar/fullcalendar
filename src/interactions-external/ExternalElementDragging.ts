@@ -1,6 +1,6 @@
 import ElementDragging from '../dnd/ElementDragging'
 import HitDragging, { Hit } from '../interactions/HitDragging'
-import globalContext from '../common/GlobalContext'
+import browserContext from '../common/browser-context'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { EventStore, parseDef, createInstance } from '../reducers/event-store'
 import UnzonedRange from '../models/UnzonedRange'
@@ -18,7 +18,7 @@ export default class ExternalElementDragging {
   eventCreationData: any
 
   constructor(dragging: ElementDragging, rawEventCreationData?) {
-    let hitDragging = this.hitDragging = new HitDragging(dragging, globalContext.componentHash)
+    let hitDragging = this.hitDragging = new HitDragging(dragging, browserContext.componentHash)
     hitDragging.requireInitial = false
     hitDragging.emitter.on('dragstart', this.onDragStart)
     hitDragging.emitter.on('hitover', this.onHitOver)
@@ -31,19 +31,7 @@ export default class ExternalElementDragging {
   }
 
   onDragStart = (ev: PointerDragEvent) => {
-
-    // TODO: nicer accessors in GlobalContext for this?
-    if (globalContext.eventSelectedComponent) {
-      let selectedCalendar = globalContext.eventSelectedComponent.getCalendar()
-
-      if (selectedCalendar) {
-        selectedCalendar.dispatch({
-          type: 'CLEAR_SELECTED_EVENT'
-        })
-        globalContext.eventSelectedComponent = null
-      }
-    }
-
+    browserContext.unselectEvent()
     this.eventCreationData = this.explicitEventCreationData || getDraggedElMeta(ev.subjectEl)
   }
 

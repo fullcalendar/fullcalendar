@@ -6,19 +6,17 @@ import { DateSpan } from '../reducers/date-span'
 import UnzonedRange from '../models/UnzonedRange'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import { GlobalContext } from '../common/GlobalContext'
+import browserContext from '../common/browser-context'
 
 export default class DateSelecting {
 
   component: DateComponent
-  globalContext: GlobalContext
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
   dragSelection: DateSpan
 
-  constructor(component: DateComponent, globalContext: GlobalContext) {
+  constructor(component: DateComponent) {
     this.component = component
-    this.globalContext = globalContext
 
     this.dragging = new FeaturefulElementDragging(component.el)
     this.dragging.touchScrollAllowed = false
@@ -48,8 +46,7 @@ export default class DateSelecting {
   }
 
   onDragStart = (ev: PointerDragEvent) => {
-    let { globalContext } = this
-    globalContext.unselectDates(ev)
+    browserContext.unselectDates(ev)
   }
 
   onHitOver = (overHit: Hit) => { // TODO: do a onHitChange instead?
@@ -80,12 +77,12 @@ export default class DateSelecting {
   }
 
   onDocumentPointerUp = (ev: PointerDragEvent, wasTouchScroll: boolean, downEl: HTMLElement) => {
-    let { component, globalContext } = this
+    let { component } = this
 
     if (this.dragSelection) {
 
       // the selection is already rendered, so just need to report it
-      globalContext.reportDateSelection(component, this.dragSelection, ev)
+      browserContext.reportDateSelection(component, this.dragSelection, ev)
 
       this.dragSelection = null
 

@@ -8,9 +8,7 @@ import EventDragging from '../interactions/EventDragging'
 import EventResizing from '../interactions/EventResizing'
 import { DateSpan } from '../reducers/date-span'
 
-// TODO: rename to BrowserContext?
-
-export class GlobalContext { // TODO: rename file to something better
+export class BrowserContext {
 
   pointer: PointerDragging
   componentCnt: number = 0
@@ -53,10 +51,10 @@ export class GlobalContext { // TODO: rename file to something better
   bindComponent(component: DateComponent) {
     this.listenerHash[component.uid] = {
       dateClicking: new DateClicking(component),
-      dateSelecting: new DateSelecting(component, globalContext),
+      dateSelecting: new DateSelecting(component),
       eventClicking: new EventClicking(component),
       eventHovering: new EventHovering(component),
-      eventDragging: new EventDragging(component, globalContext),
+      eventDragging: new EventDragging(component),
       eventResizing: new EventResizing(component)
     }
   }
@@ -119,5 +117,4 @@ export class GlobalContext { // TODO: rename file to something better
 
 }
 
-let globalContext = new GlobalContext()
-export default globalContext
+export default new BrowserContext()
