@@ -25,7 +25,7 @@ export default class EventDragging {
     this.dragging.touchScrollAllowed = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, globalContext.componentHash)
-    hitDragging.subjectCenter = true
+    hitDragging.useSubjectCenter = true
     hitDragging.emitter.on('pointerdown', this.onPointerDown)
     hitDragging.emitter.on('dragstart', this.onDragStart)
     hitDragging.emitter.on('hitover', this.onHitOver)

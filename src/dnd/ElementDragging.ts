@@ -24,9 +24,8 @@ export default abstract class ElementDragging {
   destroy() {
   }
 
-  setIgnoreMove(bool: boolean) {
-    // optional. used for optimization
-  }
+  // if given true, should prevent dragstart+dragmove+dragend from firing
+  abstract setIgnoreMove(bool: boolean)
 
   setMirrorIsVisible(bool: boolean) {
     // optional if subclass doesn't want to support a mirror

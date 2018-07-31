@@ -19,7 +19,7 @@ export default class ExternalElementDragging {
 
   constructor(dragging: ElementDragging, rawEventCreationData?) {
     let hitDragging = this.hitDragging = new HitDragging(dragging, globalContext.componentHash)
-    hitDragging.dieIfNoInitial = false
+    hitDragging.requireInitial = false
     hitDragging.emitter.on('dragstart', this.onDragStart)
     hitDragging.emitter.on('hitover', this.onHitOver)
     hitDragging.emitter.on('hitout', this.onHitOut)

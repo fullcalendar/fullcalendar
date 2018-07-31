@@ -29,15 +29,14 @@ export default class HitDragging {
   emitter: EmitterMixin
 
   // options that can be set by caller
-  subjectCenter: boolean = false
-  dieIfNoInitial: boolean = true
+  useSubjectCenter: boolean = false
+  requireInitial: boolean = true
 
   // internal state
   initialHit: Hit
   movingHit: Hit
   finalHit: Hit // won't ever be populated if shouldIgnoreMove
   coordAdjust: any
-  isIgnoringMove: boolean = false
 
   constructor(dragging: ElementDragging, droppable: DateComponent | DateComponentHash) {
 
@@ -58,6 +57,8 @@ export default class HitDragging {
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
+    let { dragging } = this
+
     this.initialHit = null
     this.movingHit = null
     this.finalHit = null
@@ -65,14 +66,10 @@ export default class HitDragging {
     this.prepareComponents()
     this.processFirstCoord(ev)
 
-    let { dragging } = this
-
-    if (this.initialHit || !this.dieIfNoInitial) {
-      this.isIgnoringMove = false
+    if (this.initialHit || !this.requireInitial) {
       dragging.setIgnoreMove(false)
       this.emitter.trigger('pointerdown', ev)
     } else {
-      this.isIgnoringMove = true
       dragging.setIgnoreMove(true)
     }
   }
@@ -93,7 +90,7 @@ export default class HitDragging {
     let initialHit = this.initialHit = this.queryHit(adjustedPoint.left, adjustedPoint.top)
 
     if (initialHit) {
-      if (this.subjectCenter && subjectRect) {
+      if (this.useSubjectCenter && subjectRect) {
         let slicedSubjectRect = intersectRects(subjectRect, initialHit.rect)
         if (slicedSubjectRect) {
           adjustedPoint = getRectCenter(slicedSubjectRect)
@@ -107,23 +104,17 @@ export default class HitDragging {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    if (!this.isIgnoringMove) {
-      this.emitter.trigger('dragstart', ev)
-      this.handleMove(ev)
-    }
+    this.emitter.trigger('dragstart', ev)
+    this.handleMove(ev)
   }
 
   handleDragMove = (ev: PointerDragEvent) => {
-    if (!this.isIgnoringMove) {
-      this.emitter.trigger('dragmove', ev)
-      this.handleMove(ev)
-    }
+    this.emitter.trigger('dragmove', ev)
+    this.handleMove(ev)
   }
 
   handlePointerUp = (ev: PointerDragEvent) => {
-    if (!this.isIgnoringMove) { // cancelled in handlePointerDown?
-      this.emitter.trigger('pointerup', ev)
-    }
+    this.emitter.trigger('pointerup', ev)
   }
 
   handleDragEnd = (ev: PointerDragEvent) => {

@@ -13,6 +13,7 @@ export default class DumbElementDragging extends ElementDragging {
   options: any
   pointer: PointerDragging
   currentMirrorEl: HTMLElement
+  shouldIgnoreMove: boolean = false
 
   constructor(options) {
     super()
@@ -32,16 +33,28 @@ export default class DumbElementDragging extends ElementDragging {
 
   handlePointerDown = (ev: PointerDragEvent) => {
     this.emitter.trigger('pointerdown', ev)
-    this.emitter.trigger('dragstart', ev)
+
+    if (!this.shouldIgnoreMove) {
+      this.emitter.trigger('dragstart', ev)
+    }
   }
 
   handlePointerMove = (ev: PointerDragEvent) => {
-    this.emitter.trigger('dragmove', ev)
+    if (!this.shouldIgnoreMove) {
+      this.emitter.trigger('dragmove', ev)
+    }
   }
 
   handlePointerUp = (ev: PointerDragEvent) => {
     this.emitter.trigger('pointerup', ev)
-    this.emitter.trigger('dragend', ev)
+
+    if (!this.shouldIgnoreMove) {
+      this.emitter.trigger('dragend', ev)
+    }
+  }
+
+  setIgnoreMove(bool: boolean) {
+    this.shouldIgnoreMove = bool
   }
 
   setMirrorIsVisible(bool: boolean) {
