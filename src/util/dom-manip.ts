@@ -137,11 +137,11 @@ const closestMethod = Element.prototype.closest || function(selector) {
   return null
 }
 
-export function elementClosest(el: HTMLElement, selector: string) {
+export function elementClosest(el: HTMLElement, selector: string): HTMLElement {
   return closestMethod.call(el, selector)
 }
 
-export function elementMatches(el: HTMLElement, selector: string) {
+export function elementMatches(el: HTMLElement, selector: string): HTMLElement {
   return matchesMethod.call(el, selector)
 }
 

@@ -27,15 +27,17 @@ export default class HitDragging {
   droppableHash: DateComponentHash
   dragging: ElementDragging
   emitter: EmitterMixin
+
+  // options that can be set by caller
+  subjectCenter: boolean = false
+  dieIfNoInitial: boolean = true
+
+  // internal state
   initialHit: Hit
   movingHit: Hit
   finalHit: Hit // won't ever be populated if shouldIgnoreMove
   coordAdjust: any
-  dieIfNoInitial: boolean = true
   isIgnoringMove: boolean = false
-
-  // options
-  subjectCenter: boolean = false
 
   constructor(dragging: ElementDragging, droppable: DateComponent | DateComponentHash) {
 
@@ -45,21 +47,17 @@ export default class HitDragging {
       this.droppableHash = droppable
     }
 
-    dragging.emitter.on('pointerdown', this.onPointerDown)
-    dragging.emitter.on('dragstart', this.onDragStart)
-    dragging.emitter.on('dragmove', this.onDragMove)
-    dragging.emitter.on('pointerup', this.onPointerUp)
-    dragging.emitter.on('dragend', this.onDragEnd)
+    dragging.emitter.on('pointerdown', this.handlePointerDown)
+    dragging.emitter.on('dragstart', this.handleDragStart)
+    dragging.emitter.on('dragmove', this.handleDragMove)
+    dragging.emitter.on('pointerup', this.handlePointerUp)
+    dragging.emitter.on('dragend', this.handleDragEnd)
 
     this.dragging = dragging
     this.emitter = new EmitterMixin()
   }
 
-  on(name, handler) {
-    this.emitter.on(name, handler)
-  }
-
-  onPointerDown = (ev: PointerDragEvent) => {
+  handlePointerDown = (ev: PointerDragEvent) => {
     this.initialHit = null
     this.movingHit = null
     this.finalHit = null
@@ -87,7 +85,7 @@ export default class HitDragging {
     let subjectEl = ev.subjectEl
     let subjectRect
 
-    if (subjectEl !== (document as any)) {
+    if (subjectEl !== document) {
       subjectRect = computeRect(subjectEl)
       adjustedPoint = constrainPoint(adjustedPoint, subjectRect)
     }
@@ -108,27 +106,27 @@ export default class HitDragging {
     }
   }
 
-  onDragStart = (ev: PointerDragEvent) => {
+  handleDragStart = (ev: PointerDragEvent) => {
     if (!this.isIgnoringMove) {
       this.emitter.trigger('dragstart', ev)
       this.handleMove(ev)
     }
   }
 
-  onDragMove = (ev: PointerDragEvent) => {
+  handleDragMove = (ev: PointerDragEvent) => {
     if (!this.isIgnoringMove) {
       this.emitter.trigger('dragmove', ev)
       this.handleMove(ev)
     }
   }
 
-  onPointerUp = (ev: PointerDragEvent) => {
-    if (!this.isIgnoringMove) { // cancelled in onPointerDown?
+  handlePointerUp = (ev: PointerDragEvent) => {
+    if (!this.isIgnoringMove) { // cancelled in handlePointerDown?
       this.emitter.trigger('pointerup', ev)
     }
   }
 
-  onDragEnd = (ev: PointerDragEvent) => {
+  handleDragEnd = (ev: PointerDragEvent) => {
     this.finalHit = this.movingHit
     this.movingHit = null
     this.emitter.trigger('dragend', ev)

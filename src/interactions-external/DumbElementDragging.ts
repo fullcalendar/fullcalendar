@@ -19,7 +19,7 @@ export default class DumbElementDragging extends ElementDragging {
 
     this.options = options
 
-    let pointer = this.pointer = new PointerDragging(document as any)
+    let pointer = this.pointer = new PointerDragging(document)
     pointer.selector = options.itemSelector || '[data-event]' // TODO: better
     pointer.emitter.on('pointerdown', this.handlePointerDown)
     pointer.emitter.on('pointermove', this.handlePointerMove)

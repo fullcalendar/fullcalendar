@@ -24,10 +24,10 @@ export default class DateSelecting {
     this.dragging.touchScrollAllowed = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
-    hitDragging.on('pointerdown', this.onPointerDown)
-    hitDragging.on('dragstart', this.onDragStart)
-    hitDragging.on('hitover', this.onHitOver)
-    hitDragging.on('hitout', this.onHitOut)
+    hitDragging.emitter.on('pointerdown', this.onPointerDown)
+    hitDragging.emitter.on('dragstart', this.onDragStart)
+    hitDragging.emitter.on('hitover', this.onHitOver)
+    hitDragging.emitter.on('hitout', this.onHitOut)
   }
 
   destroy() {

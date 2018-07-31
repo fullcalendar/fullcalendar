@@ -20,10 +20,10 @@ export default class ExternalElementDragging {
   constructor(dragging: ElementDragging, rawEventCreationData?) {
     let hitDragging = this.hitDragging = new HitDragging(dragging, globalContext.componentHash)
     hitDragging.dieIfNoInitial = false
-    hitDragging.on('dragstart', this.onDragStart)
-    hitDragging.on('hitover', this.onHitOver)
-    hitDragging.on('hitout', this.onHitOut)
-    hitDragging.on('dragend', this.onDragEnd)
+    hitDragging.emitter.on('dragstart', this.onDragStart)
+    hitDragging.emitter.on('hitover', this.onHitOver)
+    hitDragging.emitter.on('hitout', this.onHitOut)
+    hitDragging.emitter.on('dragend', this.onDragEnd)
 
     dragging.setMirrorIsVisible(true)
 

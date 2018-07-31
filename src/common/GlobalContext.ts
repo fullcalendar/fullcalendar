@@ -40,7 +40,7 @@ export class GlobalContext { // TODO: rename file to something better
   }
 
   bind() {
-    let pointer = this.pointer = new PointerDragging(document as any)
+    let pointer = this.pointer = new PointerDragging(document)
     pointer.shouldIgnoreMove = true
     pointer.emitter.on('pointerup', this.onPointerUp)
   }

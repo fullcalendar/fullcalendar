@@ -13,8 +13,8 @@ export default class DateClicking {
     this.component = component
     this.dragging = new FeaturefulElementDragging(component.el)
     this.hitDragging = new HitDragging(this.dragging, component)
-    this.hitDragging.on('pointerdown', this.onPointerDown)
-    this.hitDragging.on('dragend', this.onDragEnd)
+    this.hitDragging.emitter.on('pointerdown', this.onPointerDown)
+    this.hitDragging.emitter.on('dragend', this.onDragEnd)
   }
 
   destroy() {

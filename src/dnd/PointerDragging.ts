@@ -7,7 +7,7 @@ import { default as EmitterMixin } from '../common/EmitterMixin'
 export interface PointerDragEvent {
   origEvent: UIEvent
   isTouch: boolean
-  subjectEl: HTMLElement
+  subjectEl: EventTarget
   pageX: number
   pageY: number
 }
@@ -26,7 +26,7 @@ emits:
 */
 export default class PointerDragging {
 
-  containerEl: HTMLElement
+  containerEl: EventTarget
   subjectEl: HTMLElement | null = null
   downEl: HTMLElement | null = null
   emitter: EmitterMixin
@@ -41,7 +41,7 @@ export default class PointerDragging {
   isTouchDragging: boolean = false
   wasTouchScroll: boolean = false
 
-  constructor(containerEl: HTMLElement) {
+  constructor(containerEl: EventTarget) {
     this.containerEl = containerEl
     this.emitter = new EmitterMixin()
     containerEl.addEventListener('mousedown', this.handleMouseDown)
@@ -85,7 +85,7 @@ export default class PointerDragging {
     if (this.selector) {
       return elementClosest(ev.target as HTMLElement, this.selector)
     } else {
-      return this.containerEl
+      return this.containerEl as HTMLElement
     }
   }
 
@@ -197,7 +197,7 @@ export default class PointerDragging {
 // Event Normalization
 // ----------------------------------------------------------------------------------------------------
 
-function createEventFromMouse(ev: MouseEvent, subjectEl: HTMLElement): PointerDragEvent {
+function createEventFromMouse(ev: MouseEvent, subjectEl: EventTarget): PointerDragEvent {
   return {
     origEvent: ev,
     isTouch: false,
@@ -207,7 +207,7 @@ function createEventFromMouse(ev: MouseEvent, subjectEl: HTMLElement): PointerDr
   }
 }
 
-function createEventFromTouch(ev: TouchEvent, subjectEl: HTMLElement): PointerDragEvent {
+function createEventFromTouch(ev: TouchEvent, subjectEl: EventTarget): PointerDragEvent {
   let touches = ev.touches
   let pageX
   let pageY

@@ -22,11 +22,11 @@ export default class EventDragging {
     this.dragging.touchScrollAllowed = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
-    hitDragging.on('pointerdown', this.onPointerDown)
-    hitDragging.on('dragstart', this.onDragStart)
-    hitDragging.on('hitover', this.onHitOver)
-    hitDragging.on('hitout', this.onHitOut)
-    hitDragging.on('dragend', this.onDragEnd)
+    hitDragging.emitter.on('pointerdown', this.onPointerDown)
+    hitDragging.emitter.on('dragstart', this.onDragStart)
+    hitDragging.emitter.on('hitover', this.onHitOver)
+    hitDragging.emitter.on('hitout', this.onHitOut)
+    hitDragging.emitter.on('dragend', this.onDragEnd)
   }
 
   destroy() {
@@ -56,7 +56,7 @@ export default class EventDragging {
     let mutation = computeMutation(
       initialHit,
       hit,
-      ev.subjectEl.classList.contains('.fc-start-resizer'),
+      (ev.subjectEl as HTMLElement).classList.contains('.fc-start-resizer'),
       eventInstance.range
     )
 
@@ -113,7 +113,7 @@ export default class EventDragging {
   }
 
   querySeg(ev: PointerDragEvent): Seg {
-    return elementClosest(ev.subjectEl, this.component.segSelector).fcSeg
+    return (elementClosest(ev.subjectEl as HTMLElement, this.component.segSelector) as any).fcSeg
   }
 
 }

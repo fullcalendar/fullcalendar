@@ -57,7 +57,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
       this.origY = ev.pageY
 
       this.emitter.trigger('pointerdown', ev)
-      this.mirror.start(ev.subjectEl, ev.pageX, ev.pageY)
+      this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY)
 
       // if moving is being ignored, don't fire any initial drag events
       if (!this.pointer.shouldIgnoreMove) {

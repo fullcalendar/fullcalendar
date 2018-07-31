@@ -26,11 +26,11 @@ export default class EventDragging {
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, globalContext.componentHash)
     hitDragging.subjectCenter = true
-    hitDragging.on('pointerdown', this.onPointerDown)
-    hitDragging.on('dragstart', this.onDragStart)
-    hitDragging.on('hitover', this.onHitOver)
-    hitDragging.on('hitout', this.onHitOut)
-    hitDragging.on('dragend', this.onDragEnd)
+    hitDragging.emitter.on('pointerdown', this.onPointerDown)
+    hitDragging.emitter.on('dragstart', this.onDragStart)
+    hitDragging.emitter.on('hitover', this.onHitOver)
+    hitDragging.emitter.on('hitout', this.onHitOut)
+    hitDragging.emitter.on('dragend', this.onDragEnd)
   }
 
   destroy() {
@@ -49,7 +49,7 @@ export default class EventDragging {
 
     dragging.setIgnoreMove(
       !this.component.isValidSegInteraction(origTarget) ||
-      elementClosest(origTarget, '.fc-resizer')
+      Boolean(elementClosest(origTarget, '.fc-resizer'))
     )
   }
 
