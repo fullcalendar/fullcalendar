@@ -1,12 +1,12 @@
 import DateComponent from '../component/DateComponent'
-import PointerDragging from '../dnd/PointerDragging'
+import PointerDragging, { PointerDragEvent } from '../dnd/PointerDragging'
 import DateClicking from '../interactions/DateClicking'
 import DateSelecting from '../interactions/DateSelecting'
 import EventClicking from '../interactions/EventClicking'
 import EventHovering from '../interactions/EventHovering'
 import EventDragging from '../interactions/EventDragging'
 import EventResizing from '../interactions/EventResizing'
-import Calendar from '../Calendar'
+import { DateSpan } from '../reducers/date-span'
 
 // TODO: rename to BrowserContext?
 
@@ -16,7 +16,7 @@ export class GlobalContext { // TODO: rename file to something better
   componentCnt: number = 0
   componentHash = {}
   listenerHash = {}
-  selectedCalendar: Calendar // *date* selection // TODO: move to component just like eventSelected?
+  dateSelectedComponent: DateComponent
   eventSelectedComponent: DateComponent
 
   registerComponent(component: DateComponent) {
@@ -82,6 +82,39 @@ export class GlobalContext { // TODO: rename file to something better
       listenerHash[id].dateSelecting.onDocumentPointerUp(ev, wasTouchScroll, downEl)
       listenerHash[id].eventDragging.onDocumentPointerUp(ev, wasTouchScroll, downEl)
     }
+  }
+
+  unselectDates(ev: PointerDragEvent) {
+    if (this.dateSelectedComponent) {
+      this.dateSelectedComponent.getCalendar().unselect(ev.origEvent) // TODO: send pev?
+      this.dateSelectedComponent = null
+    }
+  }
+
+  reportDateSelection(component: DateComponent, selection: DateSpan, ev: PointerDragEvent) {
+    this.unselectDates(ev)
+
+    component.getCalendar().triggerSelect(
+      selection,
+      component.view,
+      ev.origEvent // TODO: send pev?
+    )
+
+    this.dateSelectedComponent = component
+  }
+
+  unselectEvent() {
+    if (this.eventSelectedComponent) {
+      this.eventSelectedComponent.getCalendar().dispatch({
+        type: 'CLEAR_SELECTED_EVENT'
+      })
+      this.eventSelectedComponent = null
+    }
+  }
+
+  reportEventSelection(component: DateComponent) {
+    this.unselectEvent()
+    this.eventSelectedComponent = component
   }
 
 }

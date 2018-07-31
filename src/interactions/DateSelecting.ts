@@ -49,15 +49,10 @@ export default class DateSelecting {
 
   onDragStart = (ev: PointerDragEvent) => {
     let { globalContext } = this
-
-    if (globalContext.selectedCalendar) {
-      globalContext.selectedCalendar.unselect(ev.origEvent)
-      globalContext.selectedCalendar = null
-    }
+    globalContext.unselectDates(ev)
   }
 
   onHitOver = (overHit: Hit) => { // TODO: do a onHitChange instead?
-    let { globalContext } = this
     let calendar = this.component.getCalendar()
     let dragSelection = computeSelection(
       this.hitDragging.initialHit.dateSpan,
@@ -65,7 +60,6 @@ export default class DateSelecting {
     )
 
     if (dragSelection) {
-      globalContext.selectedCalendar = calendar
       this.dragSelection = dragSelection
 
       calendar.dispatch({
@@ -76,10 +70,8 @@ export default class DateSelecting {
   }
 
   onHitOut = (hit: DateSpan, ev) => {
-    let { globalContext } = this
     let calendar = this.component.getCalendar()
 
-    globalContext.selectedCalendar = null
     this.dragSelection = null
 
     calendar.dispatch({
@@ -88,16 +80,12 @@ export default class DateSelecting {
   }
 
   onDocumentPointerUp = (ev: PointerDragEvent, wasTouchScroll: boolean, downEl: HTMLElement) => {
-    let { component } = this
+    let { component, globalContext } = this
 
     if (this.dragSelection) {
 
-      // the selection is already rendered, so just need to fire
-      component.getCalendar().triggerSelect(
-        this.dragSelection,
-        component.view,
-        ev.origEvent
-      )
+      // the selection is already rendered, so just need to report it
+      globalContext.reportDateSelection(component, this.dragSelection, ev)
 
       this.dragSelection = null
 

@@ -66,31 +66,19 @@ export default class EventDragging {
 
   onDragStart = (ev: PointerDragEvent) => {
     let { globalContext } = this
-    let calendar = this.component.getCalendar()
 
-    // TODO: nicer accessors in GlobalContext for this?
-    if (globalContext.eventSelectedComponent) {
-      let selectedCalendar = globalContext.eventSelectedComponent.getCalendar()
-
-      if (selectedCalendar !== calendar) {
-        selectedCalendar.dispatch({
-          type: 'CLEAR_SELECTED_EVENT'
-        })
-        globalContext.eventSelectedComponent = null
-      }
-    }
-
+    globalContext.unselectEvent()
     this.draggingSeg = (ev.subjectEl as any).fcSeg
 
     if (ev.isTouch) {
       let eventInstanceId = this.draggingSeg.eventRange.eventInstance.instanceId
 
-      calendar.dispatch({
+      this.component.getCalendar().dispatch({
         type: 'SELECT_EVENT',
         eventInstanceId
       })
 
-      this.globalContext.eventSelectedComponent = this.component
+      globalContext.reportEventSelection(this.component)
     }
   }
 
@@ -152,6 +140,7 @@ export default class EventDragging {
     if (
       !this.mutation &&
       !wasTouchScroll &&
+      // was the previously event-selected component?
       this.globalContext.eventSelectedComponent === this.component
     ) {
       this.component.getCalendar().dispatch({
