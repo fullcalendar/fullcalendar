@@ -7,6 +7,8 @@ import UnzonedRange from '../models/UnzonedRange'
 import * as externalHooks from '../exports'
 import { createDuration } from '../datelib/duration'
 import { assignTo } from '../util/object'
+import { DateSpan } from '../reducers/date-span'
+import Calendar from '../Calendar'
 
 export default class ExternalElementDragging {
 
@@ -45,10 +47,14 @@ export default class ExternalElementDragging {
     this.eventCreationData = this.explicitEventCreationData || getDraggedElMeta(ev.subjectEl)
   }
 
-  onHitOver = (hit) => {
+  onHitOver = (hit: Hit) => {
     let calendar = hit.component.getCalendar()
 
-    this.addableEventStore = computeEventStoreForHit(hit, this.eventCreationData)
+    this.addableEventStore = computeEventStoreForDateSpan(
+      hit.dateSpan,
+      hit.component.getCalendar(),
+      this.eventCreationData
+    )
 
     calendar.dispatch({
       type: 'SET_DRAG',
@@ -104,8 +110,8 @@ export default class ExternalElementDragging {
       finalCalendar.publiclyTrigger('drop', [
         {
           draggedEl: pev.subjectEl,
-          date: finalCalendar.dateEnv.toDate(finalHit.range.start),
-          isAllDay: finalHit.isAllDay,
+          date: finalCalendar.dateEnv.toDate(finalHit.dateSpan.range.start),
+          isAllDay: finalHit.dateSpan.isAllDay,
           jsEvent: pev.origEvent,
           view: finalView
         }
@@ -135,27 +141,26 @@ export default class ExternalElementDragging {
 }
 
 
-function computeEventStoreForHit(hit: Hit, eventCreationData): EventStore {
-  let calendar = hit.component.getCalendar()
+function computeEventStoreForDateSpan(dateSpan: DateSpan, calendar: Calendar, eventCreationData): EventStore {
 
   let def = parseDef(
     eventCreationData.standardProps || {},
     null,
-    hit.isAllDay,
+    dateSpan.isAllDay,
     Boolean(eventCreationData.duration) // hasEnd
   )
 
-  let start = hit.range.start
+  let start = dateSpan.range.start
 
   // only rely on time info if drop zone is all-day,
   // otherwise, we already know the time
-  if (hit.isAllDay && eventCreationData.time) {
+  if (dateSpan.isAllDay && eventCreationData.time) {
     start = calendar.dateEnv.add(start, eventCreationData.time)
   }
 
   let end = eventCreationData.duration ?
     calendar.dateEnv.add(start, eventCreationData.duration) :
-    calendar.getDefaultEventEnd(hit.isAllDay, start)
+    calendar.getDefaultEventEnd(dateSpan.isAllDay, start)
 
   let instance = createInstance(def.defId, new UnzonedRange(start, end))
 

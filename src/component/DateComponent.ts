@@ -6,7 +6,7 @@ import View from '../View'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration, asRoughMs } from '../datelib/duration'
-import { Selection } from '../reducers/selection'
+import { DateSpan } from '../reducers/date-span'
 import UnzonedRange from '../models/UnzonedRange'
 import { EventRenderRange, sliceEventStore } from '../reducers/event-rendering'
 import { EventStore } from '../reducers/event-store'
@@ -16,12 +16,13 @@ import Theme from '../theme/Theme'
 import { EventInteractionState } from '../reducers/event-interaction'
 import { assignTo } from '../util/object'
 import GlobalContext from '../common/GlobalContext'
+import { Hit } from '../interactions/HitDragging'
 
 
 export interface DateComponentRenderState {
   dateProfile: DateProfile
   eventStore: EventStore
-  selection: Selection | null
+  selection: DateSpan | null
   dragState: EventInteractionState | null
   eventResizeState: EventInteractionState | null
   businessHoursDef: BusinessHourDef // BusinessHourDef's `false` is the empty state
@@ -76,7 +77,7 @@ export default abstract class DateComponent extends Component {
 
   dateProfile: DateProfile = null
   businessHoursDef: BusinessHourDef = false
-  selection: Selection = null
+  selection: DateSpan = null
   eventStore: EventStore = null
   dragState: EventInteractionState = null
   eventResizeState: EventInteractionState = null
@@ -191,7 +192,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  queryHit(leftOffset, topOffset): Selection {
+  queryHit(leftOffset, topOffset): Hit {
     return null // this should be abstract
   }
 
@@ -724,12 +725,12 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  // Selection
+  // DateSpan
   // ---------------------------------------------------------------------------------------------------------------
 
 
   // Renders a visual indication of the selection
-  renderSelection(selection: Selection) {
+  renderSelection(selection: DateSpan) {
     this.renderHighlightSegs(this.selectionToSegs(selection))
   }
 
@@ -818,7 +819,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  selectionToSegs(selection: Selection): Seg[] {
+  selectionToSegs(selection: DateSpan): Seg[] {
     return this.rangeToSegs(selection.range, selection.isAllDay)
   }
 

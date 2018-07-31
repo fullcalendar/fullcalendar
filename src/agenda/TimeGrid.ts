@@ -10,8 +10,9 @@ import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDu
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import DateComponent, { Seg } from '../component/DateComponent'
-import { Selection } from '../reducers/selection'
+import { DateSpan } from '../reducers/date-span'
 import { EventStore } from '../reducers/event-store'
+import { Hit } from '../interactions/HitDragging'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -561,7 +562,7 @@ export default class TimeGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  queryHit(leftOffset, topOffset): Selection {
+  queryHit(leftOffset, topOffset): Hit {
     let snapsPerSlot = this.snapsPerSlot
     let colCoordCache = this.colCoordCache
     let slatCoordCache = this.slatCoordCache
@@ -588,9 +589,12 @@ export default class TimeGrid extends DateComponent {
         let end = dateEnv.add(start, this.snapDuration)
 
         return {
-          range: new UnzonedRange(start, end),
-          isAllDay: false,
-          el: this.colEls[colIndex],
+          component: this,
+          dateSpan: {
+            range: new UnzonedRange(start, end),
+            isAllDay: false
+          },
+          dayEl: this.colEls[colIndex],
           rect: {
             left: colCoordCache.getLeftOffset(colIndex),
             right: colCoordCache.getRightOffset(colIndex),
@@ -660,7 +664,7 @@ export default class TimeGrid extends DateComponent {
 
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-  renderSelection(selection: Selection) {
+  renderSelection(selection: DateSpan) {
     let segs = this.selectionToSegs(selection)
 
     if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered

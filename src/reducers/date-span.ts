@@ -2,14 +2,14 @@ import UnzonedRange from '../models/UnzonedRange'
 import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../reducers/utils'
 
-export interface SelectionInput {
+export interface DateSpanInput {
   start: DateInput
   end: DateInput
   isAllDay?: boolean
   [otherProp: string]: any
 }
 
-export interface Selection {
+export interface DateSpan {
   range: UnzonedRange
   isAllDay: boolean
   [otherProp: string]: any
@@ -21,7 +21,7 @@ const STANDARD_PROPS = {
   isAllDay: Boolean
 }
 
-export function parseSelection(raw: SelectionInput, dateEnv: DateEnv): Selection {
+export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan {
   let otherProps = {} as any
   let standardProps = refineProps(raw, STANDARD_PROPS, otherProps)
   let startMeta = standardProps.start ? dateEnv.createMarkerMeta(standardProps.start) : null
@@ -40,4 +40,27 @@ export function parseSelection(raw: SelectionInput, dateEnv: DateEnv): Selection
 
     return otherProps
   }
+}
+
+export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {
+
+  if (!span0.range.equals(span1.range)) {
+    return false
+  }
+
+  for (let propName in span1) {
+    if (propName !== 'range') {
+      if (span0[propName] !== span1[propName]) {
+        return false
+      }
+    }
+  }
+
+  for (let propName in span0) {
+    if (!(propName in span1)) {
+      return false
+    }
+  }
+
+  return true
 }

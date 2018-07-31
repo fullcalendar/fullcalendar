@@ -2,12 +2,15 @@ import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
-import { Selection } from '../reducers/selection'
+import { DateSpan, isDateSpansEqual } from '../reducers/date-span'
 import { computeRect } from '../util/dom-geom'
-import { constrainPoint, intersectRects, getRectCenter, diffPoints } from '../util/geom'
+import { constrainPoint, intersectRects, getRectCenter, diffPoints, Rect } from '../util/geom'
 
-export interface Hit extends Selection { // TODO: rename! put somewhere else
+export interface Hit {
   component: DateComponent
+  dateSpan: DateSpan
+  dayEl: HTMLElement
+  rect: Rect
 }
 
 /*
@@ -161,10 +164,9 @@ export default class HitDragging {
   queryHit(x, y): Hit {
     for (let id in this.droppableHash) {
       let component = this.droppableHash[id]
-      let hit = component.queryHit(x, y) as Hit
+      let hit = component.queryHit(x, y)
 
       if (hit) {
-        hit.component = component
         return hit
       }
     }
@@ -172,7 +174,7 @@ export default class HitDragging {
 
 }
 
-export function isHitsEqual(hit0: Selection, hit1: Selection) {
+export function isHitsEqual(hit0: Hit, hit1: Hit) {
   if (!hit0 && !hit1) {
     return true
   }
@@ -181,23 +183,5 @@ export function isHitsEqual(hit0: Selection, hit1: Selection) {
     return false
   }
 
-  if (!hit0.range.equals(hit1.range)) {
-    return false
-  }
-
-  for (let propName in hit1) {
-    if (propName !== 'range' && propName !== 'component' && propName !== 'rect') {
-      if (hit0[propName] !== hit1[propName]) {
-        return false
-      }
-    }
-  }
-
-  for (let propName in hit0) {
-    if (!(propName in hit1)) {
-      return false
-    }
-  }
-
-  return true
+  return isDateSpansEqual(hit0.dateSpan, hit1.dateSpan)
 }

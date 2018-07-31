@@ -103,7 +103,7 @@ export default class ElementMirror {
   }
 
   updateElPosition() {
-    if (this.isVisible) {
+    if (this.sourceEl && this.isVisible) {
       if (!this.sourceElRect) {
         this.sourceElRect = computeRect(this.sourceEl)
       }

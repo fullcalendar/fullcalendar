@@ -185,17 +185,19 @@ export default class EventDragging {
 }
 
 function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
-  let date0 = hit0.range.start
-  let date1 = hit1.range.start
+  let dateSpan0 = hit0.dateSpan
+  let dateSpan1 = hit1.dateSpan
+  let date0 = dateSpan0.range.start
+  let date1 = dateSpan1.range.start
   let standardProps = null
 
-  if (hit0.isAllDay !== hit1.isAllDay) {
+  if (dateSpan0.isAllDay !== dateSpan1.isAllDay) {
     standardProps = {
       hasEnd: false, // TODO: make this a setting
-      isAllDay: hit1.isAllDay
+      isAllDay: dateSpan1.isAllDay
     }
 
-    if (hit1.isAllDay) {
+    if (dateSpan1.isAllDay) {
       // means date1 is already start-of-day,
       // but date0 needs to be converted
       date0 = startOfDay(date0)

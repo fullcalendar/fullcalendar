@@ -2,7 +2,7 @@ import { compareNumbers } from '../util/misc'
 import { elementClosest } from '../util/dom-manip'
 import DateComponent from '../component/DateComponent'
 import HitDragging, { Hit } from './HitDragging'
-import { Selection } from '../reducers/selection'
+import { DateSpan } from '../reducers/date-span'
 import UnzonedRange from '../models/UnzonedRange'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
@@ -14,7 +14,7 @@ export default class DateSelecting {
   globalContext: GlobalContext
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
-  dragSelection: Selection
+  dragSelection: DateSpan
 
   constructor(component: DateComponent, globalContext: GlobalContext) {
     this.component = component
@@ -59,7 +59,10 @@ export default class DateSelecting {
   onHitOver = (overHit: Hit) => { // TODO: do a onHitChange instead?
     let { globalContext } = this
     let calendar = this.component.getCalendar()
-    let dragSelection = computeSelection(this.hitDragging.initialHit, overHit)
+    let dragSelection = computeSelection(
+      this.hitDragging.initialHit.dateSpan,
+      overHit.dateSpan
+    )
 
     if (dragSelection) {
       globalContext.selectedCalendar = calendar
@@ -72,7 +75,7 @@ export default class DateSelecting {
     }
   }
 
-  onHitOut = (hit: Selection, ev) => {
+  onHitOut = (hit: DateSpan, ev) => {
     let { globalContext } = this
     let calendar = this.component.getCalendar()
 
@@ -122,19 +125,19 @@ function getComponentDelay(component): number {
   return delay
 }
 
-function computeSelection(hit0: Hit, hit1: Hit): Selection {
+function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan): DateSpan {
   let ms = [
-    hit0.range.start,
-    hit0.range.end,
-    hit1.range.start,
-    hit1.range.end
+    dateSpan0.range.start,
+    dateSpan0.range.end,
+    dateSpan1.range.start,
+    dateSpan1.range.end
   ]
 
   ms.sort(compareNumbers)
 
   return {
     range: new UnzonedRange(ms[0], ms[3]),
-    isAllDay: hit0.isAllDay
+    isAllDay: dateSpan0.isAllDay
   }
 }
 

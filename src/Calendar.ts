@@ -18,7 +18,7 @@ import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import { CalendarState, reduce } from './reducers/main'
-import { parseSelection, SelectionInput, Selection } from './reducers/selection'
+import { parseDateSpan, DateSpanInput, DateSpan } from './reducers/date-span'
 import reselector from './util/reselector'
 import { assignTo } from './util/object'
 import { RenderForceFlags } from './component/Component'
@@ -896,25 +896,25 @@ export default class Calendar {
   }
 
 
-  // Selection / DayClick
+  // DateSpan / DayClick
   // -----------------------------------------------------------------------------------------------------------------
 
 
   // this public method receives start/end dates in any format, with any timezone
   // NOTE: args were changed from v3
   select(dateOrObj: DateInput | object, endDate?: DateInput) {
-    let selectionInput: SelectionInput
+    let selectionInput: DateSpanInput
 
     if (endDate == null) {
-      selectionInput = dateOrObj as SelectionInput
+      selectionInput = dateOrObj as DateSpanInput
     } else {
       selectionInput = {
         start: dateOrObj,
         end: endDate
-      } as SelectionInput
+      } as DateSpanInput
     }
 
-    let selection = parseSelection(selectionInput, this.dateEnv)
+    let selection = parseDateSpan(selectionInput, this.dateEnv)
     if (selection) {
       this.dispatch({
         type: 'SELECT',
@@ -935,7 +935,7 @@ export default class Calendar {
 
 
   // Triggers handlers to 'select'
-  triggerSelect(selection: Selection, view: View, ev?: UIEvent) {
+  triggerSelect(selection: DateSpan, view: View, ev?: UIEvent) {
     this.publiclyTrigger('select', [
       {
         start: this.dateEnv.toDate(selection.range.start),
@@ -958,11 +958,11 @@ export default class Calendar {
   }
 
 
-  triggerDayClick(selection: Selection, dayEl: HTMLElement, view: View, ev: UIEvent) {
+  triggerDayClick(dateSpan: DateSpan, dayEl: HTMLElement, view: View, ev: UIEvent) {
     this.publiclyTrigger('dayClick', [
       {
-        date: this.dateEnv.toDate(selection.range.start),
-        isAllDay: selection.isAllDay,
+        date: this.dateEnv.toDate(dateSpan.range.start),
+        isAllDay: dateSpan.isAllDay,
         dayEl,
         jsEvent: ev,
         view

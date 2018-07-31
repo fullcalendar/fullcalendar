@@ -19,8 +19,8 @@ import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import DateComponent, { Seg } from '../component/DateComponent'
 import { EventStore } from '../reducers/event-store'
-import { Selection } from '../reducers/selection'
 import DayTile from './DayTile'
+import { Hit } from '../interactions/HitDragging'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -291,7 +291,7 @@ export default class DayGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  queryHit(leftOffset, topOffset): Selection { // why is this a Selection?
+  queryHit(leftOffset, topOffset): Hit {
     let { colCoordCache, rowCoordCache } = this
 
     if (colCoordCache.isLeftInBounds(leftOffset) && rowCoordCache.isTopInBounds(topOffset)) {
@@ -300,9 +300,12 @@ export default class DayGrid extends DateComponent {
 
       if (row != null && col != null) {
         return {
-          range: this.getCellRange(row, col),
-          isAllDay: true,
-          el: this.getCellEl(row, col),
+          component: this,
+          dateSpan: {
+            range: this.getCellRange(row, col),
+            isAllDay: true
+          },
+          dayEl: this.getCellEl(row, col),
           rect: {
             left: colCoordCache.getLeftOffset(col),
             right: colCoordCache.getRightOffset(col),

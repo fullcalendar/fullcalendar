@@ -83,7 +83,7 @@ export default class EventDragging {
     }
   }
 
-  onHitOut = (hit, ev) => {
+  onHitOut = (hit: Hit, ev) => {
     let calendar = this.component.getCalendar()
 
     calendar.dispatch({
@@ -120,8 +120,8 @@ export default class EventDragging {
 
 function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: UnzonedRange): EventMutation {
   let dateEnv = hit0.component.getDateEnv()
-  let date0 = hit0.range.start
-  let date1 = hit1.range.start
+  let date0 = hit0.dateSpan.range.start
+  let date1 = hit1.dateSpan.range.start
 
   let delta = diffDates(
     date0, date1,

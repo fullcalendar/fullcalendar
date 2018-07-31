@@ -41,7 +41,12 @@ export default class DateClicking {
       let { initialHit, finalHit } = this.hitDragging
 
       if (initialHit && finalHit && isHitsEqual(initialHit, finalHit)) {
-        component.getCalendar().triggerDayClick(initialHit, initialHit.el, component.view, ev.origEvent)
+        component.getCalendar().triggerDayClick(
+          initialHit.dateSpan,
+          initialHit.dayEl,
+          component.view,
+          ev.origEvent
+        )
       }
     }
   }
