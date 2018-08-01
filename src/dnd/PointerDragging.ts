@@ -44,14 +44,14 @@ export default class PointerDragging {
   constructor(containerEl: EventTarget) {
     this.containerEl = containerEl
     this.emitter = new EmitterMixin()
-    containerEl.addEventListener('mousedown', this.handleMouseDown)
-    containerEl.addEventListener('touchstart', this.handleTouchStart)
+    containerEl.addEventListener('mousedown', this.handleMouseDown as EventListener)
+    containerEl.addEventListener('touchstart', this.handleTouchStart as EventListener)
     listenerCreated()
   }
 
   destroy() {
-    this.containerEl.removeEventListener('mousedown', this.handleMouseDown)
-    this.containerEl.removeEventListener('touchstart', this.handleTouchStart)
+    this.containerEl.removeEventListener('mousedown', this.handleMouseDown as EventListener)
+    this.containerEl.removeEventListener('touchstart', this.handleTouchStart as EventListener)
     listenerDestroyed()
   }
 
@@ -67,6 +67,7 @@ export default class PointerDragging {
       this.downEl = downEl
       this.isDragging = true // do this first so cancelTouchScroll will work
       this.wasTouchScroll = false
+
       return true
     }
 
@@ -99,6 +100,11 @@ export default class PointerDragging {
       isPrimaryMouseButton(ev) &&
       this.tryStart(ev)
     ) {
+      // prevent links from being visited if there's an eventual drag.
+      // also prevents selection in older browsers (maybe?).
+      // not necessary for touch, besides, browser would complain about passiveness.
+      ev.preventDefault()
+
       this.emitter.trigger('pointerdown', createEventFromMouse(ev, this.subjectEl!))
 
       if (!this.shouldIgnoreMove) {

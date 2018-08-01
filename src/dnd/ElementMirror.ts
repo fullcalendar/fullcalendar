@@ -67,19 +67,25 @@ export default class ElementMirror {
       callback()
     }
 
-    if (needsRevertAnimation && this.mirrorEl && this.isVisible) {
-      this.doRevertAnimation(done)
+    if (
+      needsRevertAnimation &&
+      this.mirrorEl &&
+      this.isVisible &&
+      this.revertDuration && // if 0, transition won't work
+      (this.deltaX || this.deltaY) // if same coords, transition won't work
+    ) {
+      this.doRevertAnimation(done, this.revertDuration)
     } else {
       setTimeout(done, 0)
     }
   }
 
-  doRevertAnimation(callback: () => void) {
+  doRevertAnimation(callback: () => void, revertDuration: number) {
     let mirrorEl = this.mirrorEl!
 
     mirrorEl.style.transition =
-      'top ' + this.revertDuration + 'ms,' +
-      'left ' + this.revertDuration + 'ms'
+      'top ' + revertDuration + 'ms,' +
+      'left ' + revertDuration + 'ms'
 
     applyStyle(mirrorEl, {
       left: this.sourceElRect!.left,

@@ -43,6 +43,7 @@ export default class EventDragging {
   onPointerDown = (ev: PointerDragEvent) => {
     let { dragging } = this
 
+    dragging.minDistance = 5
     dragging.delay = this.computeDragDelay(ev)
 
     // to prevent from cloning the sourceEl before it is selected
