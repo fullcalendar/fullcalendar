@@ -10,7 +10,7 @@ Must call start + handleMove + stop.
 */
 export default class ElementMirror {
 
-  isVisible: boolean = false
+  isVisible: boolean = false // must be explicitly enabled
   origX?: number
   origY?: number
   deltaX?: number

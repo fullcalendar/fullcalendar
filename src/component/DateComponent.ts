@@ -49,6 +49,8 @@ export default abstract class DateComponent extends Component {
 
   // self-config, overridable by subclasses
   isInteractable: boolean = false
+  doesDragHelper: boolean = false
+  doesDragHighlight: boolean = false
   segSelector: string = '.fc-event-container > *' // what constitutes an event element?
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
@@ -591,15 +593,31 @@ export default abstract class DateComponent extends Component {
 
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
-  // Must return elements used for any mock events.
   renderDrag(eventStore: EventStore, origSeg, willCreateEvent) {
-    // subclasses can implement
+    let segs = this.eventStoreToSegs(eventStore)
+    let noEvent = !origSeg && !willCreateEvent
+
+    if (
+      !noEvent &&
+      (this.doesDragHelper || origSeg && origSeg.component.doesDragHelper) &&
+      this.helperRenderer
+    ) {
+      this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
+    }
+
+    if (noEvent || this.doesDragHighlight) {
+      this.renderHighlightSegs(segs)
+    }
   }
 
 
   // Unrenders a visual indication of an event or external-element being dragged.
   unrenderDrag() {
-    // subclasses can implement
+    this.unrenderHighlight()
+
+    if (this.helperRenderer) {
+      this.helperRenderer.unrender()
+    }
   }
 
 

@@ -40,6 +40,8 @@ export default class TimeGrid extends DateComponent {
   getCellDate: DayTableInterface['getCellDate']
 
   isInteractable = true
+  doesDragHelper = true
+  doesDragHighlight = false
 
   view: any // TODO: make more general and/or remove
   helperRenderer: any
@@ -610,34 +612,6 @@ export default class TimeGrid extends DateComponent {
   buildCoordCaches() {
     this.colCoordCache.build()
     this.slatCoordCache.build()
-  }
-
-
-
-  /* Event Drag Visualization
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Renders a visual indication of an event being dragged over the specified date(s).
-  // A returned value of `true` signals that a mock "helper" event has been rendered.
-  renderDrag(eventStore: EventStore, origSeg, willCreateEvent) {
-    let segs = this.eventStoreToSegs(eventStore)
-
-    // if from within the calendar OR external element that will create an event, render helper
-    if (origSeg || willCreateEvent) {
-      if (segs.length) {
-        this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
-      }
-    } else { // otherwise, just render a highlight
-      this.renderHighlightSegs(segs)
-    }
-  }
-
-
-  // Unrenders any visual indication of an event being dragged
-  unrenderDrag() {
-    this.unrenderHighlight()
-    this.helperRenderer.unrender()
   }
 
 

@@ -46,6 +46,8 @@ export default class DayGrid extends DateComponent {
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
   isInteractable = true
+  doesDragHelper = false
+  doesDragHighlight = true
 
   view: View // TODO: make more general and/or remove
   helperRenderer: any
@@ -354,31 +356,6 @@ export default class DayGrid extends DateComponent {
         this.segPopoverTile.getAllEventSegs() :
         []
     )
-  }
-
-
-  /* Event Drag Visualization
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Renders a visual indication of an event or external element being dragged.
-  // `eventLocation` has zoned start and end (optional)
-  renderDrag(eventStore: EventStore, origSeg) {
-    let segs = this.eventStoreToSegs(eventStore)
-
-    this.renderHighlightSegs(segs)
-
-    // render drags from OTHER components as helpers
-    if (segs.length && origSeg && origSeg.component !== this) {
-      this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
-    }
-  }
-
-
-  // Unrenders any visual indication of a hovering event
-  unrenderDrag() {
-    this.unrenderHighlight()
-    this.helperRenderer.unrender()
   }
 
 

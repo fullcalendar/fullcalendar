@@ -17,7 +17,7 @@ export interface Hit {
 emits:
 - pointerdown
 - dragstart
-- hitchange
+- hitchange - fires initially, even if not over a hit
 - pointerup
 - (hitchange - again, to null, if ended over a hit)
 - dragend
@@ -105,7 +105,7 @@ export default class HitDragging {
 
   handleDragStart = (ev: PointerDragEvent) => {
     this.emitter.trigger('dragstart', ev)
-    this.handleMove(ev)
+    this.handleMove(ev, true) // force = fire even if initially null
   }
 
   handleDragMove = (ev: PointerDragEvent) => {
@@ -127,13 +127,13 @@ export default class HitDragging {
     this.emitter.trigger('dragend', ev)
   }
 
-  handleMove(ev: PointerDragEvent) {
+  handleMove(ev: PointerDragEvent, force?) {
     let hit = this.queryHit(
       ev.pageX + this.coordAdjust.left,
       ev.pageY + this.coordAdjust.top
     )
 
-    if (!isHitsEqual(this.movingHit, hit)) {
+    if (force || !isHitsEqual(this.movingHit, hit)) {
       this.movingHit = hit
       this.emitter.trigger('hitchange', hit, false, ev)
     }
