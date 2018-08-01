@@ -3,10 +3,10 @@ import {
   getListHeadingElAltElText,
   getListHeadingElMainElText,
   getListHeadingEls,
-  getListItemEls,
-  getListItemElsCount,
-  getListItemElTimeElText,
-  getListItemElTitleElText
+  getListEventEls,
+  getListEventElsCount,
+  getListEventElTimeElText,
+  getListEventElTitleElText
 } from '../lib/ListViewUtils'
 import { getScrollerEl } from '../lib/MonthViewUtils'
 import { replaceEventElDotElWithEl } from '../event-render/EventRenderUtils'
@@ -443,11 +443,11 @@ describe('ListView rendering', function() {
     initCalendar(options)
     currentCalendar.changeView('listWeek')
 
-    expect(getListItemElsCount()).toBe(1)
+    expect(getListEventElsCount()).toBe(1)
 
     currentCalendar.prev()
 
-    expect(getListItemElsCount()).toBe(0)
+    expect(getListEventElsCount()).toBe(0)
   })
 
   function getDayInfo() {
@@ -462,11 +462,11 @@ describe('ListView rendering', function() {
   }
 
   function getEventInfo() { // gets all *segments*
-    return getListItemEls().map(function(i, el) {
+    return getListEventEls().map(function(i, el) {
       el = $(el)
       return {
-        title: getListItemElTitleElText(el) || '', // text!
-        timeText: getListItemElTimeElText(el) || '' // text!
+        title: getListEventElTitleElText(el) || '', // text!
+        timeText: getListEventElTimeElText(el) || '' // text!
       }
     }).get()
   }

@@ -7,28 +7,28 @@ const LIST_HEADING_ALT_CLASS = 'fc-list-heading-alt'
 const EMPTY_MESSAGE_CLASS = 'fc-list-empty'
 
 
-export function getListItemEls() {
+export function getListEventEls() {
   return $(`.${LIST_ITEM_CLASS}`)
 }
 
-export function getListItemElsCount() {
-  return getListItemEls().length
+export function getListEventElsCount() {
+  return getListEventEls().length
 }
 
-export function getListItemElTitleEl(el) {
+export function getListEventElTitleEl(el) {
   return el.find(`.${LIST_ITEM_TITLE_CLASS}`)
 }
 
-export function getListItemElTimeEl(el) {
+export function getListEventElTimeEl(el) {
   return el.find(`.${LIST_ITEM_TIME_CLASS}`)
 }
 
-export function getListItemElTitleElText(el) {
-  return getListItemElTitleEl(el).text()
+export function getListEventElTitleElText(el) {
+  return getListEventElTitleEl(el).text()
 }
 
-export function getListItemElTimeElText(el) {
-  return getListItemElTimeEl(el).text()
+export function getListEventElTimeElText(el) {
+  return getListEventElTimeEl(el).text()
 }
 
 export function getListHeadingEls() {
