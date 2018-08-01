@@ -448,16 +448,19 @@ function splitInteractionState(state: EventInteractionState) {
   let timed = null
 
   if (state) {
-    let eventStoreGroups = splitEventStore(state.eventStore)
+    let affectedEventGroups = splitEventStore(state.affectedEvents)
+    let mutatedEventGroups = splitEventStore(state.mutatedEvents)
 
     allDay = {
-      eventStore: eventStoreGroups.allDay,
+      affectedEvents: affectedEventGroups.allDay,
+      mutatedEvents: mutatedEventGroups.allDay,
       origSeg: state.origSeg,
       willCreateEvent: state.willCreateEvent
     }
 
     timed = {
-      eventStore: eventStoreGroups.timed,
+      affectedEvents: affectedEventGroups.timed,
+      mutatedEvents: mutatedEventGroups.timed,
       origSeg: state.origSeg,
       willCreateEvent: state.willCreateEvent
     }

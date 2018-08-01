@@ -4,7 +4,7 @@ import ElementDragging from '../dnd/ElementDragging'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { DateSpan, isDateSpansEqual } from '../reducers/date-span'
 import { computeRect } from '../util/dom-geom'
-import { constrainPoint, intersectRects, getRectCenter, diffPoints, Rect } from '../util/geom'
+import { constrainPoint, intersectRects, getRectCenter, diffPoints, Rect, Point } from '../util/geom'
 
 export interface Hit {
   component: DateComponent
@@ -14,12 +14,12 @@ export interface Hit {
 }
 
 /*
-fires (none will be fired if no initial hit):
+emits:
 - pointerdown
 - dragstart
-- hitover - always fired in beginning
-- hitout - only fired when pointer moves away. not fired at drag end
+- hitchange
 - pointerup
+- (hitchange - again, to null, if ended over a hit)
 - dragend
 */
 export default class HitDragging {
@@ -30,13 +30,13 @@ export default class HitDragging {
 
   // options that can be set by caller
   useSubjectCenter: boolean = false
-  requireInitial: boolean = true
+  requireInitial: boolean = true // if doesn't start out on a hit, won't emit any events
 
   // internal state
   initialHit: Hit
   movingHit: Hit
   finalHit: Hit // won't ever be populated if shouldIgnoreMove
-  coordAdjust: any
+  coordAdjust: Point
 
   constructor(dragging: ElementDragging, droppable: DateComponent | DateComponentHash) {
 
@@ -118,6 +118,10 @@ export default class HitDragging {
   }
 
   handleDragEnd = (ev: PointerDragEvent) => {
+    if (this.movingHit) {
+      this.emitter.trigger('hitchange', null, true, ev)
+    }
+
     this.finalHit = this.movingHit
     this.movingHit = null
     this.emitter.trigger('dragend', ev)
@@ -129,17 +133,9 @@ export default class HitDragging {
       ev.pageY + this.coordAdjust.top
     )
 
-    if (!this.movingHit || !isHitsEqual(this.movingHit, hit)) {
-
-      if (this.movingHit) {
-        this.emitter.trigger('hitout', this.movingHit, ev)
-        this.movingHit = null
-      }
-
-      if (hit) {
-        this.movingHit = hit
-        this.emitter.trigger('hitover', hit, ev)
-      }
+    if (!isHitsEqual(this.movingHit, hit)) {
+      this.movingHit = hit
+      this.emitter.trigger('hitchange', hit, false, ev)
     }
   }
 

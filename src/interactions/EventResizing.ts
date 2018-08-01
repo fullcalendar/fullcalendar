@@ -24,8 +24,7 @@ export default class EventDragging {
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
     hitDragging.emitter.on('pointerdown', this.onPointerDown)
     hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitover', this.onHitOver)
-    hitDragging.emitter.on('hitout', this.onHitOut)
+    hitDragging.emitter.on('hitchange', this.onHitChange)
     hitDragging.emitter.on('dragend', this.onDragEnd)
   }
 
@@ -48,57 +47,50 @@ export default class EventDragging {
     this.draggingSeg = this.querySeg(ev)
   }
 
-  onHitOver = (hit, ev: PointerDragEvent) => {
+  onHitChange = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
     let { initialHit } = this.hitDragging
     let eventInstance = this.draggingSeg.eventRange.eventInstance
+    let mutation = null
 
-    let mutation = computeMutation(
-      initialHit,
-      hit,
-      (ev.subjectEl as HTMLElement).classList.contains('.fc-start-resizer'),
-      eventInstance.range
-    )
+    if (hit) {
+      mutation = computeMutation(
+        initialHit,
+        hit,
+        (ev.subjectEl as HTMLElement).classList.contains('.fc-start-resizer'),
+        eventInstance.range
+      )
+    }
 
-    if (!mutation) {
-      calendar.dispatch({
-        type: 'CLEAR_EVENT_RESIZE'
-      })
-    } else {
+    if (mutation) {
       let related = getRelatedEvents(calendar.state.eventStore, eventInstance.instanceId)
       let mutatedRelated = applyMutationToAll(related, mutation, calendar)
 
       calendar.dispatch({
         type: 'SET_EVENT_RESIZE',
         eventResizeState: {
-          eventStore: mutatedRelated,
-          origSeg: this.draggingSeg,
-          isTouch: ev.isTouch
+          affectedEvents: related,
+          mutatedEvents: mutatedRelated,
+          origSeg: this.draggingSeg
         }
       })
-
-      if (!isHitsEqual(initialHit, hit)) {
-        this.mutation = mutation
-      }
+    } else {
+      calendar.dispatch({
+        type: 'CLEAR_EVENT_RESIZE'
+      })
     }
-  }
 
-  onHitOut = (hit: Hit, ev) => {
-    let calendar = this.component.getCalendar()
+    if (mutation && isHitsEqual(initialHit, hit)) {
+      mutation = null
+    }
 
-    calendar.dispatch({
-      type: 'CLEAR_EVENT_RESIZE'
-    })
-
-    this.mutation = null
+    if (!isFinal) {
+      this.mutation = mutation
+    }
   }
 
   onDragEnd = (ev) => {
     let calendar = this.component.getCalendar()
-
-    calendar.dispatch({
-      type: 'CLEAR_EVENT_RESIZE'
-    })
 
     if (this.mutation) {
       calendar.dispatch({
@@ -106,9 +98,10 @@ export default class EventDragging {
         mutation: this.mutation,
         instanceId: this.draggingSeg.eventRange.eventInstance.instanceId
       })
+
+      this.mutation = null
     }
 
-    this.mutation = null
     this.draggingSeg = null
   }
 

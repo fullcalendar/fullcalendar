@@ -22,6 +22,7 @@ import { parseDateSpan, DateSpanInput, DateSpan } from './reducers/date-span'
 import reselector from './util/reselector'
 import { assignTo } from './util/object'
 import { RenderForceFlags } from './component/Component'
+import browserContext from './common/browser-context'
 
 
 export default class Calendar {
@@ -915,46 +916,21 @@ export default class Calendar {
     }
 
     let selection = parseDateSpan(selectionInput, this.dateEnv)
-    if (selection) {
+    if (selection) { // throw parse error otherwise?
       this.dispatch({
         type: 'SELECT',
         selection: selection
       })
-      this.triggerSelect(selection, this.view)
-    } // otherwise, throw error?
+      browserContext.reportDateSelection(this, selection)
+    }
   }
 
 
   // public method
   unselect(ev?: UIEvent) {
-    this.dispatch({
-      type: 'UNSELECT'
-    })
-    this.triggerUnselect(this.view, ev)
-  }
-
-
-  // Triggers handlers to 'select'
-  triggerSelect(selection: DateSpan, view: View, ev?: UIEvent) {
-    this.publiclyTrigger('select', [
-      {
-        start: this.dateEnv.toDate(selection.range.start),
-        end: this.dateEnv.toDate(selection.range.end),
-        isAllDay: selection.isAllDay,
-        jsEvent: ev,
-        view
-      }
-    ])
-  }
-
-
-  triggerUnselect(view, ev?: UIEvent) {
-    this.publiclyTrigger('unselect', [
-      {
-        jsEvent: ev,
-        view
-      }
-    ])
+    if (browserContext.dateSelectedCalendar === this) {
+      browserContext.unselectDates()
+    }
   }
 
 

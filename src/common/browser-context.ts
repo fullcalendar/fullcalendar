@@ -7,6 +7,7 @@ import EventHovering from '../interactions/EventHovering'
 import EventDragging from '../interactions/EventDragging'
 import EventResizing from '../interactions/EventResizing'
 import { DateSpan } from '../reducers/date-span'
+import Calendar from '../Calendar'
 
 export class BrowserContext {
 
@@ -14,7 +15,7 @@ export class BrowserContext {
   componentCnt: number = 0
   componentHash = {}
   listenerHash = {}
-  dateSelectedComponent: DateComponent
+  dateSelectedCalendar: Calendar
   eventSelectedComponent: DateComponent
 
   registerComponent(component: DateComponent) {
@@ -82,23 +83,40 @@ export class BrowserContext {
     }
   }
 
-  unselectDates(ev: PointerDragEvent) {
-    if (this.dateSelectedComponent) {
-      this.dateSelectedComponent.getCalendar().unselect(ev.origEvent) // TODO: send pev?
-      this.dateSelectedComponent = null
+  unselectDates(pev?: PointerDragEvent) {
+    let { dateSelectedCalendar } = this
+
+    if (dateSelectedCalendar) {
+
+      dateSelectedCalendar.dispatch({
+        type: 'UNSELECT'
+      })
+
+      dateSelectedCalendar.publiclyTrigger('unselect', [
+        {
+          jsEvent: pev ? pev.origEvent : null,
+          view: dateSelectedCalendar.view
+        }
+      ])
+
+      this.dateSelectedCalendar = null
     }
   }
 
-  reportDateSelection(component: DateComponent, selection: DateSpan, ev: PointerDragEvent) {
-    this.unselectDates(ev)
+  reportDateSelection(calendar: Calendar, selection: DateSpan, pev?: PointerDragEvent) {
+    this.unselectDates(pev)
 
-    component.getCalendar().triggerSelect(
-      selection,
-      component.view,
-      ev.origEvent // TODO: send pev?
-    )
+    calendar.publiclyTrigger('select', [
+      {
+        start: calendar.dateEnv.toDate(selection.range.start),
+        end: calendar.dateEnv.toDate(selection.range.end),
+        isAllDay: selection.isAllDay,
+        jsEvent: pev ? pev.origEvent : null,
+        view: calendar.view
+      }
+    ])
 
-    this.dateSelectedComponent = component
+    this.dateSelectedCalendar = calendar
   }
 
   unselectEvent() {

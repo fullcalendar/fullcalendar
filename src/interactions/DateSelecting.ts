@@ -24,8 +24,7 @@ export default class DateSelecting {
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
     hitDragging.emitter.on('pointerdown', this.onPointerDown)
     hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitover', this.onHitOver)
-    hitDragging.emitter.on('hitout', this.onHitOut)
+    hitDragging.emitter.on('hitchange', this.onHitChange)
   }
 
   destroy() {
@@ -49,31 +48,31 @@ export default class DateSelecting {
     browserContext.unselectDates(ev)
   }
 
-  onHitOver = (overHit: Hit) => { // TODO: do a onHitChange instead?
+  onHitChange = (hit: Hit | null, isFinal: boolean) => {
     let calendar = this.component.getCalendar()
-    let dragSelection = computeSelection(
-      this.hitDragging.initialHit.dateSpan,
-      overHit.dateSpan
-    )
+    let dragSelection: DateSpan = null
+
+    if (hit) {
+      dragSelection = computeSelection(
+        this.hitDragging.initialHit.dateSpan,
+        hit.dateSpan
+      )
+    }
 
     if (dragSelection) {
-      this.dragSelection = dragSelection
-
       calendar.dispatch({
         type: 'SELECT',
         selection: dragSelection
       })
+    } else if (!isFinal) { // only unselect if moved away while dragging
+      calendar.dispatch({
+        type: 'UNSELECT'
+      })
     }
-  }
 
-  onHitOut = (hit: DateSpan, ev) => {
-    let calendar = this.component.getCalendar()
-
-    this.dragSelection = null
-
-    calendar.dispatch({
-      type: 'UNSELECT'
-    })
+    if (!isFinal) {
+      this.dragSelection = dragSelection
+    }
   }
 
   onDocumentPointerUp = (ev: PointerDragEvent, wasTouchScroll: boolean, downEl: HTMLElement) => {
@@ -82,20 +81,16 @@ export default class DateSelecting {
     if (this.dragSelection) {
 
       // the selection is already rendered, so just need to report it
-      browserContext.reportDateSelection(component, this.dragSelection, ev)
+      browserContext.reportDateSelection(component.getCalendar(), this.dragSelection, ev)
 
       this.dragSelection = null
 
-    } else if (!wasTouchScroll && component.selection) {
-      // if there was a pointerup that did not result in a selection and was
-      // not merely a touchmove-scroll, then possibly unselect the current selection.
-      // won't do anything if already unselected (OR, leverage selectedCalendar?)
-
+    } else if (!wasTouchScroll && component.selection) { // only unselect if this component has a selection
       let unselectAuto = component.opt('unselectAuto')
       let unselectCancel = component.opt('unselectCancel')
 
       if (unselectAuto && (!unselectAuto || !elementClosest(downEl, unselectCancel))) {
-        component.getCalendar().unselect()
+        browserContext.unselectDates(ev)
       }
     }
   }
@@ -125,5 +120,3 @@ function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan): DateSpan {
     isAllDay: dateSpan0.isAllDay
   }
 }
-
-// TODO: isSelectionFootprintAllowed

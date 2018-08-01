@@ -578,17 +578,13 @@ export default abstract class DateComponent extends Component {
 
 
   renderDragState(dragState: EventInteractionState) {
-    if (dragState.origSeg) {
-      this.hideRelatedSegs(dragState.origSeg)
-    }
-    this.renderDrag(dragState.eventStore, dragState.origSeg, dragState.willCreateEvent)
+    this.hideSegsByHash(dragState.affectedEvents.instances)
+    this.renderDrag(dragState.mutatedEvents, dragState.origSeg, dragState.willCreateEvent)
   }
 
 
   unrenderDragState() {
-    if (this.dragState.origSeg) {
-      this.showRelatedSegs(this.dragState.origSeg)
-    }
+    this.showSegsByHash(this.dragState.affectedEvents.instances)
     this.unrenderDrag()
   }
 
@@ -612,17 +608,13 @@ export default abstract class DateComponent extends Component {
 
 
   renderEventResizeState(eventResizeState: EventInteractionState) {
-    if (eventResizeState.origSeg) {
-      this.hideRelatedSegs(eventResizeState.origSeg)
-    }
-    this.renderEventResize(eventResizeState.eventStore, eventResizeState.origSeg)
+    this.hideSegsByHash(eventResizeState.affectedEvents.instances)
+    this.renderEventResize(eventResizeState.mutatedEvents, eventResizeState.origSeg)
   }
 
 
   unrenderEventResizeState() {
-    if (this.eventResizeState.origSeg) {
-      this.showRelatedSegs(this.eventResizeState.origSeg)
-    }
+    this.showSegsByHash(this.eventResizeState.affectedEvents.instances)
     this.unrenderEventResize()
   }
 
@@ -643,33 +635,25 @@ export default abstract class DateComponent extends Component {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  hideRelatedSegs(targetSeg: Seg) {
-    this.getRelatedSegs(targetSeg).forEach(function(seg) {
-      seg.el.style.visibility = 'hidden'
+  hideSegsByHash(hash) {
+    this.getAllEventSegs().forEach(function(seg) {
+      if (hash[seg.eventRange.eventInstance.instanceId]) {
+        seg.el.style.visibility = 'hidden'
+      }
     })
   }
 
 
-  showRelatedSegs(targetSeg: Seg) {
-    this.getRelatedSegs(targetSeg).forEach(function(seg) {
-      seg.el.style.visibility = ''
+  showSegsByHash(hash) {
+    this.getAllEventSegs().forEach(function(seg) {
+      if (hash[seg.eventRange.eventInstance.instanceId]) {
+        seg.el.style.visibility = ''
+      }
     })
   }
 
 
-  getRelatedSegs(targetSeg: Seg) {
-    let targetEventDef = targetSeg.eventRange.eventDef
-
-    return this.getAllEventSegs().filter(function(seg: Seg) {
-      let segEventDef = seg.eventRange.eventDef
-
-      return segEventDef.defId === targetEventDef.defId || // include defId as well???
-        segEventDef.groupId && segEventDef.groupId === targetEventDef.groupId
-    })
-  }
-
-
-  getAllEventSegs() {
+  getAllEventSegs(): Seg[] {
     if (this.eventRenderer) {
       return this.eventRenderer.getSegs()
     } else {

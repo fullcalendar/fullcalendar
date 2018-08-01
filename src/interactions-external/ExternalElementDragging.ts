@@ -9,10 +9,12 @@ import { createDuration } from '../datelib/duration'
 import { assignTo } from '../util/object'
 import { DateSpan } from '../reducers/date-span'
 import Calendar from '../Calendar'
+import { EventInteractionState } from '../reducers/event-interaction'
 
 export default class ExternalElementDragging {
 
   hitDragging: HitDragging
+  receivingCalendar: Calendar
   addableEventStore: EventStore
   explicitEventCreationData: any
   eventCreationData: any
@@ -21,11 +23,8 @@ export default class ExternalElementDragging {
     let hitDragging = this.hitDragging = new HitDragging(dragging, browserContext.componentHash)
     hitDragging.requireInitial = false
     hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitover', this.onHitOver)
-    hitDragging.emitter.on('hitout', this.onHitOut)
+    hitDragging.emitter.on('hitchange', this.onHitChange)
     hitDragging.emitter.on('dragend', this.onDragEnd)
-
-    dragging.setMirrorIsVisible(true)
 
     this.explicitEventCreationData = rawEventCreationData ? processExplicitData(rawEventCreationData) : null
   }
@@ -35,70 +34,54 @@ export default class ExternalElementDragging {
     this.eventCreationData = this.explicitEventCreationData || getDraggedElMeta(ev.subjectEl)
   }
 
-  onHitOver = (hit: Hit) => {
-    let calendar = hit.component.getCalendar()
+  onHitChange = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
+    let { dragging } = this.hitDragging
+    let receivingCalendar: Calendar = null
+    let addableEventStore: EventStore = null
 
-    this.addableEventStore = computeEventStoreForDateSpan(
-      hit.dateSpan,
-      hit.component.getCalendar(),
-      this.eventCreationData
-    )
+    if (hit) {
+      receivingCalendar = hit.component.getCalendar()
+      addableEventStore = computeEventStoreForDateSpan(
+        hit.dateSpan,
+        receivingCalendar,
+        this.eventCreationData
+      )
+    }
 
-    calendar.dispatch({
-      type: 'SET_DRAG',
-      dragState: {
-        eventStore: this.addableEventStore,
-        willCreateEvent: Boolean(this.eventCreationData.standardProps)
-      }
+    this.renderDrag(receivingCalendar, {
+      affectedEvents: { defs: {}, instances: {} },
+      mutatedEvents: addableEventStore || { defs: {}, instances: {} }, // TODO: better way to make empty event-store
+      willCreateEvent: Boolean(this.eventCreationData.standardProps)
     })
 
-    let { dragging } = this.hitDragging
-
-    dragging.setMirrorNeedsRevert(false)
-
-    // show mirror if no already-rendered helper element
+    // show mirror if no already-rendered helper element OR if we are shutting down the mirror
     // TODO: wish we could somehow wait for dispatch to guarantee render
     dragging.setMirrorIsVisible(
-      !document.querySelector('.fc-helper')
+      isFinal || !addableEventStore || !document.querySelector('.fc-helper')
     )
-  }
 
-  onHitOut = (hit) => { // TODO: onHitChange?
+    if (!isFinal) {
+      dragging.setMirrorNeedsRevert(!addableEventStore)
 
-    // we still want to notify calendar about invalid drag
-    // because we want related events to stay hidden
-    hit.component.getCalendar().dispatch({
-      type: 'SET_DRAG',
-      dragState: {
-        eventStore: { defs: {}, instances: {} } // TODO: better way to make empty event-store
-      }
-    })
-
-    this.addableEventStore = null
-
-    let { dragging } = this.hitDragging
-
-    dragging.setMirrorIsVisible(true)
-    dragging.setMirrorNeedsRevert(true)
+      this.receivingCalendar = receivingCalendar
+      this.addableEventStore = addableEventStore
+    }
   }
 
   onDragEnd = (pev: PointerDragEvent) => {
-    this.hitDragging.dragging.setMirrorIsVisible(true) // always restore!
+    let { receivingCalendar, addableEventStore } = this
 
-    if (this.addableEventStore) {
+    this.unrenderDrag()
+
+    if (receivingCalendar && addableEventStore) {
       let finalHit = this.hitDragging.finalHit
       let finalView = finalHit.component.view
-      let finalCalendar = finalView.calendar
-
-      finalCalendar.dispatch({
-        type: 'CLEAR_DRAG'
-      })
 
       // TODO: how to let Scheduler extend this?
-      finalCalendar.publiclyTrigger('drop', [
+      receivingCalendar.publiclyTrigger('drop', [
         {
           draggedEl: pev.subjectEl,
-          date: finalCalendar.dateEnv.toDate(finalHit.dateSpan.range.start),
+          date: receivingCalendar.dateEnv.toDate(finalHit.dateSpan.range.start),
           isAllDay: finalHit.dateSpan.isAllDay,
           jsEvent: pev.origEvent,
           view: finalView
@@ -106,23 +89,45 @@ export default class ExternalElementDragging {
       ])
 
       if (this.eventCreationData.standardProps) { // TODO: bad way to test if event creation is good
-        finalCalendar.dispatch({
+        receivingCalendar.dispatch({
           type: 'ADD_EVENTS',
-          eventStore: this.addableEventStore,
+          eventStore: addableEventStore,
           stick: this.eventCreationData.stick // TODO: use this param
         })
 
         // signal an external event landed
-        finalCalendar.publiclyTrigger('eventReceive', [
+        receivingCalendar.publiclyTrigger('eventReceive', [
           {
             draggedEl: pev.subjectEl,
-            event: this.addableEventStore, // TODO: what to put here!?
+            event: addableEventStore, // TODO: what to put here!?
             view: finalView
           }
         ])
       }
+    }
 
-      this.addableEventStore = null
+    this.receivingCalendar = null
+    this.addableEventStore = null
+  }
+
+  renderDrag(newReceivingCalendar: Calendar | null, dragState: EventInteractionState) {
+    let prevReceivingCalendar = this.receivingCalendar
+
+    if (prevReceivingCalendar && prevReceivingCalendar !== newReceivingCalendar) {
+      prevReceivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
+    }
+
+    if (newReceivingCalendar) {
+      newReceivingCalendar.dispatch({
+        type: 'SET_DRAG',
+        dragState: dragState
+      })
+    }
+  }
+
+  unrenderDrag() {
+    if (this.receivingCalendar) {
+      this.receivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
     }
   }
 
