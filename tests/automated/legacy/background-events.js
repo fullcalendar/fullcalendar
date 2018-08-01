@@ -10,7 +10,7 @@ import {
 import {
   getBackgroundEventElsResizerEls,
   getDayGridNonBusinessDayEls,
-  getNonBusinessDayEls,
+  getNonBusinessDayEls
 
 } from '../view-render/DayGridRenderUtils'
 import {

@@ -163,7 +163,7 @@ export function getSlotElByTime(timeMs) {
   }
 }
 
-export function getTimeGridNonBusinessDayEls(){
+export function getTimeGridNonBusinessDayEls() {
   return $(`.${TIME_GRID_CLASS} .${NON_BUSINESS_CLASS}`)
 }
 

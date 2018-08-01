@@ -14,7 +14,7 @@ export function getEventElDotEl(el) {
   return el.find(`.${EVENT_DOT_CLASS}`)
 }
 
-export function replaceEventElDotElWithEl(eventEl, newDotEl){
+export function replaceEventElDotElWithEl(eventEl, newDotEl) {
   return getEventElDotEl(eventEl).replaceWith(newDotEl)
 }
 
@@ -46,7 +46,7 @@ export function getVisibleEventEls() {
   return $(`.${EVENT_CLASS}:visible`)
 }
 
-export function getDayEls(){
+export function getDayEls() {
   return $(`.${DAY_CLASS}`)
 }
 
@@ -62,7 +62,7 @@ export function getDayGridRowElAtIndexBackgroundEventEls(index) {
   return getDayGridRowElAtIndex(index).find(`.${BACKGROUND_EVENT_CLASS}`)
 }
 
-export function getDayGridRowElAtIndexBackgroundEventElAtIndex(rowIndex, eventIndex){
+export function getDayGridRowElAtIndexBackgroundEventElAtIndex(rowIndex, eventIndex) {
   return getDayGridRowElAtIndexBackgroundEventEls(rowIndex).eq(eventIndex)
 }
 
@@ -106,7 +106,7 @@ export function getEventElTimeEl(el) {
   return el.find(`.${TIME_CLASS}`)
 }
 
-export function getEventElsWithCustomClass(customClass){
+export function getEventElsWithCustomClass(customClass) {
   return $(`.${customClass}`)
 }
 

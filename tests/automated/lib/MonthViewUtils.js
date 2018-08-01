@@ -10,6 +10,6 @@ export function getDayGridRowEls() {
   return $(`.${DAY_GRID_CLASS} .${ROW_CLASS}`)
 }
 
-export function getDayGridRowElAtIndex(index){
+export function getDayGridRowElAtIndex(index) {
   return getDayGridRowEls().eq(index)
 }

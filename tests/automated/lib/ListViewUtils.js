@@ -7,19 +7,19 @@ const LIST_HEADING_ALT_CLASS = 'fc-list-heading-alt'
 const EMPTY_MESSAGE_CLASS = 'fc-list-empty'
 
 
-export function getListItemEls(){
+export function getListItemEls() {
   return $(`.${LIST_ITEM_CLASS}`)
 }
 
-export function getListItemElsCount(){
+export function getListItemElsCount() {
   return getListItemEls().length
 }
 
-export function getListItemElTitleEl(el){
+export function getListItemElTitleEl(el) {
   return el.find(`.${LIST_ITEM_TITLE_CLASS}`)
 }
 
-export function getListItemElTimeEl(el){
+export function getListItemElTimeEl(el) {
   return el.find(`.${LIST_ITEM_TIME_CLASS}`)
 }
 
@@ -27,7 +27,7 @@ export function getListItemElTitleElText(el) {
   return getListItemElTitleEl(el).text()
 }
 
-export function getListItemElTimeElText(el){
+export function getListItemElTimeElText(el) {
   return getListItemElTimeEl(el).text()
 }
 
@@ -35,11 +35,11 @@ export function getListHeadingEls() {
   return $(`.${LIST_HEADING_CLASS}`)
 }
 
-export function getListHeadingElMainEl(el){
+export function getListHeadingElMainEl(el) {
   return el.find(`.${LIST_HEADING_MAIN_CLASS}`)
 }
 
-export function getListHeadingElAltEl(el){
+export function getListHeadingElAltEl(el) {
   return el.find(`.${LIST_HEADING_ALT_CLASS}`)
 }
 
@@ -51,10 +51,10 @@ export function getListHeadingElAltElText(el) {
   return getListHeadingElAltEl(el).text()
 }
 
-export function getEmptyMessageEls(){
+export function getEmptyMessageEls() {
   return $(`.${EMPTY_MESSAGE_CLASS}`)
 }
 
-export function getEmptyMessageElsCount(){
+export function getEmptyMessageElsCount() {
   return getEmptyMessageEls().length
 }

@@ -1,5 +1,4 @@
 import { formatIsoDay } from '../datelib/utils'
-import { getHeaderEl } from './DayGridRenderUtils'
 import { getBackgroundEventEls } from '../event-render/EventRenderUtils'
 
 const DAY_GRID_CLASS = 'fc-day-grid'
@@ -9,7 +8,7 @@ const HEAD_CLASS = 'fc-head'
 const VIEW_CLASS = 'fc-view'
 const DAY_HEADER_CLASS = 'fc-day-header'
 const DAY_TOP_CLASS = 'fc-day-top'
-const DAY_DISABLED_CLASS  = 'fc-disabled-day'
+const DAY_DISABLED_CLASS = 'fc-disabled-day'
 const AXIS_CLASS = 'fc-axis'
 const DAY_CLASS = 'fc-day'
 const MORE_CLASS = 'fc-more'
@@ -29,8 +28,8 @@ export function getDayEl(date) {
   return $(`.${DAY_GRID_CLASS} .${BG_CLASS} .${DAY_CLASS}[data-date="${formatIsoDay(date)}"]`)
 }
 
-export function getDisabledDayEls(){
-  return  $(`.${DAY_GRID_CLASS} .${BG_CLASS} .${DAY_DISABLED_CLASS}`)
+export function getDisabledDayEls() {
+  return $(`.${DAY_GRID_CLASS} .${BG_CLASS} .${DAY_DISABLED_CLASS}`)
 }
 
 export function getDisabledDayElAtIndex(i) {
@@ -63,77 +62,77 @@ export function getLastDayEl() {
   return getDayOfWeekHeaderEls().last()
 }
 
-export function getAllDayAxisEl(){
+export function getAllDayAxisEl() {
   return $(`.${DAY_GRID_CLASS} > .${ROW_CLASS} > .${BG_CLASS} .${AXIS_CLASS}`)
 }
 
-export function getAllDayAxisElText(){
+export function getAllDayAxisElText() {
   return getAllDayAxisEl().text()
 }
 
-export function getTimeGridHeaderAxisEl(){
+export function getTimeGridHeaderAxisEl() {
   return getHeaderEl().find(`.${AXIS_CLASS}`)
 }
 
-export function getSlatElAxisEl(slatEl){
+export function getSlatElAxisEl(slatEl) {
   return slatEl.find(`.${AXIS_CLASS}`)
 }
 
-export function getSlatElGridEls(slatEl){
+export function getSlatElGridEls(slatEl) {
   return slatEl.find(`td:not(.${AXIS_CLASS})`)
 }
 
-export function getDayGridAxisEl(){
+export function getDayGridAxisEl() {
   return $(`.${DAY_GRID_CLASS} .${AXIS_CLASS}`)
 }
 
-export function getDayGridDayEl(){
-    return $(`.${DAY_GRID_CLASS} .${DAY_CLASS}`)
+export function getDayGridDayEl() {
+  return $(`.${DAY_GRID_CLASS} .${DAY_CLASS}`)
 }
 
-export function getFirstDayGridDayEl(){
+export function getFirstDayGridDayEl() {
   return getDayGridDayEl().first()
 }
 
-export function getMoreEl(){
+export function getMoreEl() {
   return $(`.${MORE_CLASS}`)
 }
 
-export function getMorePopoverEl(){
+export function getMorePopoverEl() {
   return $(`.${MORE_POPOVER_CLASS}`)
 }
 
-export function getMorePopoverElTitleEl(){
+export function getMorePopoverElTitleEl() {
   return getMorePopoverEl().find(`.${HEADER_CLASS} .${TITLE_CLASS}`)
 }
 
-export function getDayGridRowEls(){
+export function getDayGridRowEls() {
   return $(`.${DAY_GRID_CLASS} .${ROW_CLASS}`)
 }
 
-export function getDayGridRowElAtIndex(index){
+export function getDayGridRowElAtIndex(index) {
   return getDayGridRowEls().eq(index)
 }
 
-export function getDayGridRowDayElAtIndex(index){
+export function getDayGridRowDayElAtIndex(index) {
   return getDayGridRowElAtIndex(index).find(`.${DAY_CLASS}`)
 }
 
-export function getHeaderTopEls(){
+export function getHeaderTopEls() {
   return $(`.${WIDGET_HEADER_CLASS}`)
-            .not(`.${ROW_CLASS}`)
-            .not(`.${HEAD_CONTAINER_CLASS}`)
-            .not(`.${DIVIDER_CLASS}`)
+  .not(`.${ROW_CLASS}`)
+  .not(`.${HEAD_CONTAINER_CLASS}`)
+  .not(`.${DIVIDER_CLASS}`)
 }
 
-export function getBackgroundEventElsResizerEls(){
+export function getBackgroundEventElsResizerEls() {
   return getBackgroundEventEls().find(`.${RESIZER_CLASS}`)
 }
 
-export function getNonBusinessDayEls(){
+export function getNonBusinessDayEls() {
   return $(`.${NON_BUSINESS_CLASS}`)
 }
 
-export function getDayGridNonBusinessDayEls(){
+export function getDayGridNonBusinessDayEls() {
   return $(`.${DAY_GRID_CLASS} .${NON_BUSINESS_CLASS}`)
 }

@@ -1,6 +1,6 @@
-import { 
-  getFirstDayEl, getTimeGridHeaderAxisEl, 
-  getDayGridAxisEl, getSlatElAxisEl, 
+import {
+  getFirstDayEl, getTimeGridHeaderAxisEl,
+  getDayGridAxisEl, getSlatElAxisEl,
   getSlatElGridEls, getFirstDayGridDayEl } from './../view-render/DayGridRenderUtils'
 import { getSlotEls } from '../lib/time-grid'
 
@@ -15,7 +15,7 @@ describe('Agenda view rendering', function() {
     })
 
     it('renders the axis on the left', function() {
-      initCalendar()      
+      initCalendar()
       var firstSlat = getSlotEls().first()
       expect(getTimeGridHeaderAxisEl()).toBeLeftOf(getFirstDayEl())
       expect(getDayGridAxisEl()).toBeLeftOf(getFirstDayGridDayEl())
@@ -29,7 +29,7 @@ describe('Agenda view rendering', function() {
     })
 
     it('renders the axis on the right', function() {
-      initCalendar()      
+      initCalendar()
       var firstSlat = getSlotEls().first()
       expect(getTimeGridHeaderAxisEl()).toBeRightOf(getFirstDayEl())
       expect(getDayGridAxisEl()).toBeRightOf(getFirstDayGridDayEl())

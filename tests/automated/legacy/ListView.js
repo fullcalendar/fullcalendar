@@ -53,7 +53,7 @@ describe('ListView rendering', function() {
       it('filters events through eventRender', function() {
         var options = {}
         options.eventRender = function(arg) {
-          replaceEventElDotElWithEl($(arg.el),'<span class="custom-icon" />')
+          replaceEventElDotElWithEl($(arg.el), '<span class="custom-icon" />')
         }
 
         initCalendar(options)

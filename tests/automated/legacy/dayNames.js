@@ -6,7 +6,7 @@ describe('day names', function() {
     'basicDay',
     'agendaDay'
   ]
-  
+
   var sundayDate = new Date('2014-05-25T06:00:00')
   var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ]
 

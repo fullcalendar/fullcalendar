@@ -1,9 +1,9 @@
 const DAY_GRID_CLASS = 'fc-day-grid'
 
-export function getDayGridSlotEls(){
+export function getDayGridSlotEls() {
   return $(`.${DAY_GRID_CLASS}`)
 }
 
-export function getDayGridSlotElsCount(){
+export function getDayGridSlotElsCount() {
   return getDayGridSlotEls().length
 }
