@@ -134,8 +134,20 @@ export function reduceEventStore(eventStore: EventStore, action: any, calendar: 
     case 'ADD_EVENTS':
       return mergeStores(eventStore, action.eventStore)
 
+    case 'REMOVE_EVENTS':
+      return excludeEventInstances(eventStore, action.eventStore)
+
     default:
       return eventStore
+  }
+}
+
+function excludeEventInstances(eventStore: EventStore, removals: EventStore) {
+  return {
+    defs: eventStore.defs,
+    instances: filterHash(eventStore.instances, function(instance: EventInstance) {
+      return !removals.instances[instance.instanceId]
+    })
   }
 }
 

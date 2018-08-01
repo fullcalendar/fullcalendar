@@ -18,6 +18,7 @@ export default class EventDragging {
   draggingSeg: Seg
   receivingCalendar: Calendar
   validMutation: EventMutation
+  mutatedRelatedEvents: EventStore
 
   constructor(component: DateComponent) {
     this.component = component
@@ -124,6 +125,7 @@ export default class EventDragging {
 
       this.receivingCalendar = receivingCalendar
       this.validMutation = validMutation
+      this.mutatedRelatedEvents = mutatedRelatedEvents
     }
   }
 
@@ -142,15 +144,30 @@ export default class EventDragging {
     this.unrenderDrag()
 
     if (this.validMutation) {
-      this.receivingCalendar.dispatch({
-        type: 'MUTATE_EVENTS',
-        mutation: this.validMutation,
-        instanceId: this.draggingSeg.eventRange.eventInstance.instanceId
-      })
+      let initialCalendar = this.hitDragging.initialHit.component.getCalendar()
+
+      if (this.receivingCalendar === initialCalendar) {
+        this.receivingCalendar.dispatch({
+          type: 'MUTATE_EVENTS',
+          mutation: this.validMutation,
+          instanceId: this.draggingSeg.eventRange.eventInstance.instanceId
+        })
+      } else {
+        initialCalendar.dispatch({
+          type: 'REMOVE_EVENTS',
+          eventStore: this.mutatedRelatedEvents
+        })
+        this.receivingCalendar.dispatch({
+          type: 'ADD_EVENTS',
+          eventStore: this.mutatedRelatedEvents,
+          stick: true // TODO: use this param
+        })
+      }
     }
 
     this.receivingCalendar = null
     this.validMutation = null
+    this.mutatedRelatedEvents = null
     this.draggingSeg = null
   }
 
