@@ -1,4 +1,5 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
+import { getElSeg } from '../component/renderers/EventRenderer'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
 import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
@@ -31,7 +32,7 @@ export default class EventDragging {
     hitDragging.useSubjectCenter = true
     hitDragging.emitter.on('pointerdown', this.onPointerDown)
     hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitchange', this.onHitChange)
+    hitDragging.emitter.on('hitupdate', this.onHitUpdate)
     hitDragging.emitter.on('dragend', this.onDragEnd)
   }
 
@@ -50,14 +51,14 @@ export default class EventDragging {
     let origTarget = ev.origEvent.target as HTMLElement
 
     dragging.setIgnoreMove(
-      !this.component.isValidSegInteraction(origTarget) ||
+      !this.component.isValidSegDownEl(origTarget) ||
       Boolean(elementClosest(origTarget, '.fc-resizer'))
     )
   }
 
   computeDragDelay(ev: PointerDragEvent): number {
     if (ev.isTouch) {
-      let seg = (ev.subjectEl as any).fcSeg
+      let seg = getElSeg(ev.subjectEl)
       let eventInstanceId = seg.eventRange.eventInstance.instanceId
 
       if (eventInstanceId !== this.component.selectedEventInstanceId) {
@@ -67,7 +68,7 @@ export default class EventDragging {
   }
 
   onDragStart = (ev: PointerDragEvent) => {
-    this.draggingSeg = (ev.subjectEl as any).fcSeg
+    this.draggingSeg = getElSeg(ev.subjectEl)
 
     if (ev.isTouch) {
       let eventInstanceId = this.draggingSeg.eventRange.eventInstance.instanceId
@@ -83,7 +84,7 @@ export default class EventDragging {
     }
   }
 
-  onHitChange = (hit: Hit | null, isFinal: boolean) => {
+  onHitUpdate = (hit: Hit | null, isFinal: boolean) => {
     let { initialHit } = this.hitDragging // guaranteed
     let initialCalendar = initialHit.component.getCalendar()
     let receivingCalendar: Calendar = null
@@ -99,7 +100,10 @@ export default class EventDragging {
     if (hit) {
       receivingCalendar = hit.component.getCalendar()
 
-      if (!isHitsEqual(initialHit, hit)) {
+      if (
+        initialCalendar !== receivingCalendar || // TODO: write test for this
+        !isHitsEqual(initialHit, hit)
+      ) {
         validMutation = computeEventMutation(initialHit, hit)
 
         if (validMutation) {

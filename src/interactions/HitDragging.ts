@@ -14,6 +14,10 @@ export interface Hit {
 }
 
 /*
+Tracks movement over multiple droppable areas (aka "hits")
+that exist in one or more DateComponents.
+Relies on an existing draggable.
+
 emits:
 - pointerdown
 - dragstart
@@ -33,10 +37,10 @@ export default class HitDragging {
   requireInitial: boolean = true // if doesn't start out on a hit, won't emit any events
 
   // internal state
-  initialHit: Hit
-  movingHit: Hit
-  finalHit: Hit // won't ever be populated if shouldIgnoreMove
-  coordAdjust: Point
+  initialHit: Hit | null = null
+  movingHit: Hit | null = null
+  finalHit: Hit | null = null // won't ever be populated if shouldIgnoreMove
+  coordAdjust?: Point
 
   constructor(dragging: ElementDragging, droppable: DateComponent | DateComponentHash) {
 
@@ -119,7 +123,7 @@ export default class HitDragging {
 
   handleDragEnd = (ev: PointerDragEvent) => {
     if (this.movingHit) {
-      this.emitter.trigger('hitchange', null, true, ev)
+      this.emitter.trigger('hitupdate', null, true, ev)
     }
 
     this.finalHit = this.movingHit
@@ -127,39 +131,43 @@ export default class HitDragging {
     this.emitter.trigger('dragend', ev)
   }
 
-  handleMove(ev: PointerDragEvent, force?) {
+  handleMove(ev: PointerDragEvent, forceHandle?: boolean) {
     let hit = this.queryHit(
-      ev.pageX + this.coordAdjust.left,
-      ev.pageY + this.coordAdjust.top
+      ev.pageX + this.coordAdjust!.left,
+      ev.pageY + this.coordAdjust!.top
     )
 
-    if (force || !isHitsEqual(this.movingHit, hit)) {
+    if (forceHandle || !isHitsEqual(this.movingHit, hit)) {
       this.movingHit = hit
-      this.emitter.trigger('hitchange', hit, false, ev)
+      this.emitter.trigger('hitupdate', hit, false, ev)
     }
   }
 
   prepareComponents() {
-    for (let id in this.droppableHash) {
-      let component = this.droppableHash[id]
-      component.buildCoordCaches()
+    let { droppableHash } = this
+
+    for (let id in droppableHash) {
+      droppableHash[id].buildCoordCaches()
     }
   }
 
-  queryHit(x, y): Hit {
-    for (let id in this.droppableHash) {
-      let component = this.droppableHash[id]
-      let hit = component.queryHit(x, y)
+  queryHit(x: number, y: number): Hit | null {
+    let { droppableHash } = this
+
+    for (let id in droppableHash) {
+      let hit = droppableHash[id].queryHit(x, y)
 
       if (hit) {
         return hit
       }
     }
+
+    return null
   }
 
 }
 
-export function isHitsEqual(hit0: Hit, hit1: Hit) {
+export function isHitsEqual(hit0: Hit | null, hit1: Hit | null): boolean {
   if (!hit0 && !hit1) {
     return true
   }
@@ -168,5 +176,5 @@ export function isHitsEqual(hit0: Hit, hit1: Hit) {
     return false
   }
 
-  return isDateSpansEqual(hit0.dateSpan, hit1.dateSpan)
+  return isDateSpansEqual(hit0!.dateSpan, hit1!.dateSpan)
 }

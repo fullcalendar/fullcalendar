@@ -8,12 +8,16 @@ import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import browserContext from '../common/browser-context'
 
+/*
+Tracks when the user selects a portion of time of a component,
+constituted by a drag over date cells, with a possible delay at the beginning of the drag.
+*/
 export default class DateSelecting {
 
   component: DateComponent
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
-  dragSelection: DateSpan
+  dragSelection: DateSpan | null = null
 
   constructor(component: DateComponent) {
     this.component = component
@@ -22,56 +26,50 @@ export default class DateSelecting {
     this.dragging.touchScrollAllowed = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
-    hitDragging.emitter.on('pointerdown', this.onPointerDown)
-    hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitchange', this.onHitChange)
+    hitDragging.emitter.on('pointerdown', this.handlePointerDown)
+    hitDragging.emitter.on('dragstart', this.handleDragStart)
+    hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
   }
 
   destroy() {
     this.dragging.destroy()
   }
 
-  onPointerDown = (ev: PointerDragEvent) => {
+  handlePointerDown = (ev: PointerDragEvent) => {
     let { component, dragging } = this
     let isValid = component.opt('selectable') &&
-      component.isValidDateInteraction(ev.origEvent.target as HTMLElement)
+      component.isValidDateDownEl(ev.origEvent.target as HTMLElement)
 
     // don't bother to watch expensive moves if component won't do selection
     dragging.setIgnoreMove(!isValid)
 
-    dragging.delay = (isValid && ev.isTouch) ?
-      getComponentDelay(component) :
-      null
+    // if touch, require user to hold down
+    dragging.delay = ev.isTouch ? getComponentTouchDelay(component) : null
   }
 
-  onDragStart = (ev: PointerDragEvent) => {
-    browserContext.unselectDates(ev)
+  handleDragStart = (ev: PointerDragEvent) => {
+    browserContext.unselectDates(ev) // clear selection from all other calendars/components
   }
 
-  onHitChange = (hit: Hit | null, isFinal: boolean) => {
+  handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
     let calendar = this.component.getCalendar()
-    let dragSelection: DateSpan = null
+    let dragSelection: DateSpan | null = null
 
     if (hit) {
       dragSelection = computeSelection(
-        this.hitDragging.initialHit.dateSpan,
+        this.hitDragging.initialHit!.dateSpan,
         hit.dateSpan
       )
     }
 
     if (dragSelection) {
-      calendar.dispatch({
-        type: 'SELECT',
-        selection: dragSelection
-      })
+      calendar.dispatch({ type: 'SELECT', selection: dragSelection })
     } else if (!isFinal) { // only unselect if moved away while dragging
-      calendar.dispatch({
-        type: 'UNSELECT'
-      })
+      calendar.dispatch({ type: 'UNSELECT' })
     }
 
     if (!isFinal) {
-      this.dragSelection = dragSelection
+      this.dragSelection = dragSelection // only clear if moved away from all hits while dragging
     }
   }
 
@@ -85,7 +83,9 @@ export default class DateSelecting {
 
       this.dragSelection = null
 
-    } else if (!wasTouchScroll && component.selection) { // only unselect if this component has a selection
+    // only unselect if this component has a selection.
+    // otherwise, we might be clearing another component's new selection in the same calendar.
+    } else if (!wasTouchScroll && component.selection) {
       let unselectAuto = component.opt('unselectAuto')
       let unselectCancel = component.opt('unselectCancel')
 
@@ -97,11 +97,13 @@ export default class DateSelecting {
 
 }
 
-function getComponentDelay(component): number {
+function getComponentTouchDelay(component: DateComponent): number {
   let delay = component.opt('selectLongPressDelay')
+
   if (delay == null) {
     delay = component.opt('longPressDelay')
   }
+
   return delay
 }
 

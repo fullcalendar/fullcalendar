@@ -994,17 +994,17 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  isValidSegInteraction(evTarget: HTMLElement) {
+  isValidSegDownEl(el: HTMLElement) {
     return !this.dragState &&
       !this.eventResizeState &&
-      !elementClosest(evTarget, '.fc-helper')
+      !elementClosest(el, '.fc-helper')
   }
 
 
-  isValidDateInteraction(evTarget: HTMLElement) {
-    return !elementClosest(evTarget, this.segSelector) &&
-      !elementClosest(evTarget, '.fc-more') && // a "more.." link
-      !elementClosest(evTarget, 'a[data-goto]') // a clickable nav link
+  isValidDateDownEl(el: HTMLElement) {
+    return !elementClosest(el, this.segSelector) &&
+      !elementClosest(el, '.fc-more') && // a "more.." link
+      !elementClosest(el, 'a[data-goto]') // a clickable nav link
   }
 
 }

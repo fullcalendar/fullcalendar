@@ -23,7 +23,7 @@ export default class ExternalElementDragging {
     let hitDragging = this.hitDragging = new HitDragging(dragging, browserContext.componentHash)
     hitDragging.requireInitial = false
     hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitchange', this.onHitChange)
+    hitDragging.emitter.on('hitupdate', this.onHitUpdate)
     hitDragging.emitter.on('dragend', this.onDragEnd)
 
     this.explicitEventCreationData = rawEventCreationData ? processExplicitData(rawEventCreationData) : null
@@ -34,7 +34,7 @@ export default class ExternalElementDragging {
     this.eventCreationData = this.explicitEventCreationData || getDraggedElMeta(ev.subjectEl)
   }
 
-  onHitChange = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
+  onHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let { dragging } = this.hitDragging
     let receivingCalendar: Calendar = null
     let addableEventStore: EventStore = null

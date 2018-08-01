@@ -170,7 +170,7 @@ export default class EventRenderer {
         }
 
         if (el) {
-          (el as any).fcSeg = seg // used by handlers
+          setElSeg(el, seg)
           seg.el = el
           renderedSegs.push(seg)
         }
@@ -482,4 +482,12 @@ export default class EventRenderer {
   assignFgSize() {
   }
 
+}
+
+function setElSeg(el: HTMLElement, seg: Seg) {
+  (el as any).fcSeg = seg
+}
+
+export function getElSeg(el: HTMLElement): Seg | null {
+  return (el as any).fcSeg || null
 }

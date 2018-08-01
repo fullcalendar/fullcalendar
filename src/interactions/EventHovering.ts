@@ -1,6 +1,11 @@
 import DateComponent from '../component/DateComponent'
 import { listenToHoverBySelector } from '../util/dom-event'
+import { getElSeg } from '../component/renderers/EventRenderer'
 
+/*
+Triggers events and adds/removes core classNames when the user's pointer
+enters/leaves event-elements of a component.
+*/
 export default class EventHovering {
 
   component: DateComponent
@@ -8,28 +13,33 @@ export default class EventHovering {
 
   constructor(component: DateComponent) {
     this.component = component
+
     this.destroy = listenToHoverBySelector(
       component.el,
       component.segSelector,
-      this.handleSegEv.bind(this, 'eventMouseover'),
-      this.handleSegEv.bind(this, 'eventMouseout')
+      this.handleSegEnter,
+      this.handleSegLeave
     )
   }
 
-  handleSegEv(triggerType: string, ev: UIEvent, segEl: HTMLElement) {
+  handleSegEnter = (ev: Event, segEl: HTMLElement) => {
+    segEl.classList.add('fc-allow-mouse-resize')
+    this.triggerEvent('eventMouseover', ev, segEl)
+  }
+
+  handleSegLeave = (ev: Event, segEl: HTMLElement) => {
+    segEl.classList.remove('fc-allow-mouse-resize')
+    this.triggerEvent('eventMouseout', ev, segEl)
+  }
+
+  triggerEvent(publicEvName: string, ev: Event, segEl: HTMLElement) {
     let { component } = this
-    let seg = (segEl as any).fcSeg // put there by EventRenderer
+    let seg = getElSeg(segEl)!
 
-    if (triggerType === 'eventMouseover') { // LAME way to test
-      segEl.classList.add('fc-allow-mouse-resize')
-    } else {
-      segEl.classList.remove('fc-allow-mouse-resize')
-    }
-
-    if (component.isValidSegInteraction(segEl as HTMLElement)) {
-      component.publiclyTrigger(triggerType, [
+    if (component.isValidSegDownEl(ev.target as HTMLElement)) {
+      component.publiclyTrigger(publicEvName, [
         {
-          event: seg.eventRange.eventInstance, // TODO: correct arg!
+          event: seg.eventRange!.eventInstance, // TODO: correct arg!
           jsEvent: ev,
           view: component.view
         }

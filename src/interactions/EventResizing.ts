@@ -5,6 +5,7 @@ import { elementClosest } from '../util/dom-manip'
 import UnzonedRange from '../models/UnzonedRange'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
+import { getElSeg } from '../component/renderers/EventRenderer'
 
 export default class EventDragging {
 
@@ -24,7 +25,7 @@ export default class EventDragging {
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
     hitDragging.emitter.on('pointerdown', this.onPointerDown)
     hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitchange', this.onHitChange)
+    hitDragging.emitter.on('hitupdate', this.onHitUpdate)
     hitDragging.emitter.on('dragend', this.onDragEnd)
   }
 
@@ -38,7 +39,7 @@ export default class EventDragging {
 
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
-      !this.component.isValidSegInteraction(ev.origEvent.target) ||
+      !this.component.isValidSegDownEl(ev.origEvent.target) ||
       (ev.isTouch && this.component.selectedEventInstanceId !== eventInstanceId)
     )
   }
@@ -47,7 +48,7 @@ export default class EventDragging {
     this.draggingSeg = this.querySeg(ev)
   }
 
-  onHitChange = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
+  onHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
     let { initialHit } = this.hitDragging
     let eventInstance = this.draggingSeg.eventRange.eventInstance
@@ -106,7 +107,7 @@ export default class EventDragging {
   }
 
   querySeg(ev: PointerDragEvent): Seg {
-    return (elementClosest(ev.subjectEl as HTMLElement, this.component.segSelector) as any).fcSeg
+    return getElSeg(elementClosest(ev.subjectEl as HTMLElement, this.component.segSelector))
   }
 
 }
