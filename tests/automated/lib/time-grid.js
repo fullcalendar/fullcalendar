@@ -1,6 +1,11 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib/utils'
 
+const TIME_GRID_CLASS = 'fc-time-grid'
+const NON_BUSINESS_CLASS = 'fc-nonbusiness'
+const CONTENT_SKELETON_CLASS = 'fc-content-skeleton'
+const AXIS_CLASS = 'fc-axis'
+const BACKGROUND_EVENT_CLASS = 'fc-bgevent'
 
 export function dragTimeGridEvent(eventEl, dropDate) {
   return new Promise(function(resolve) {
@@ -158,6 +163,17 @@ export function getSlotElByTime(timeMs) {
   }
 }
 
+export function getTimeGridNonBusinessDayEls(){
+  return $(`.${TIME_GRID_CLASS} .${NON_BUSINESS_CLASS}`)
+}
+
+export function queryBgEventsInCol(col) {
+  return $(`.${TIME_GRID_CLASS} .${CONTENT_SKELETON_CLASS} td:not(.${AXIS_CLASS}):eq(${col}) .${BACKGROUND_EVENT_CLASS}`)
+}
+
+export function queryNonBusinessSegsInCol(col) {
+  return $(`.${TIME_GRID_CLASS} .${CONTENT_SKELETON_CLASS} td:not(.${AXIS_CLASS}):eq(${col}) .${NON_BUSINESS_CLASS}`)
+}
 
 // TODO: discourage use
 export function getTimeGridDowEls(dayAbbrev) {

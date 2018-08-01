@@ -1,3 +1,4 @@
+import { getAllDayAxisElText } from '../view-render/DayGridRenderUtils'
 
 describe('allDayText', function() {
 
@@ -8,7 +9,7 @@ describe('allDayText', function() {
           defaultView: 'agendaWeek'
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('all-day')
       })
     })
@@ -18,7 +19,7 @@ describe('allDayText', function() {
           defaultView: 'agendaDay'
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('all-day')
       })
     })
@@ -32,7 +33,7 @@ describe('allDayText', function() {
           allDaySlot: true
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('all-day')
       })
     })
@@ -43,7 +44,7 @@ describe('allDayText', function() {
           allDaySlot: true
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('all-day')
       })
     })
@@ -58,7 +59,7 @@ describe('allDayText', function() {
           locale: 'pt-br'
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('dia inteiro')
       })
     })
@@ -70,7 +71,7 @@ describe('allDayText', function() {
           locale: 'pt-br'
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('dia inteiro')
       })
     })
@@ -85,7 +86,7 @@ describe('allDayText', function() {
           allDayText: 'axis-phosy'
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('axis-phosy')
       })
     })
@@ -96,7 +97,7 @@ describe('allDayText', function() {
           allDayText: 'axis-phosy'
         }
         initCalendar(options)
-        var allDayText = $('.fc-day-grid > .fc-row > .fc-bg .fc-axis').text()
+        var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('axis-phosy')
       })
     })

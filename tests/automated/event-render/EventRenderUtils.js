@@ -1,3 +1,5 @@
+import { getDayGridRowElAtIndex } from '../view-render/DayGridRenderUtils'
+
 const TIME_CLASS = 'fc-time'
 const EVENT_CLASS = 'fc-event'
 const TITLE_CLASS = 'fc-title'
@@ -6,6 +8,7 @@ const START_CLASS = 'fc-start'
 const END_CLASS = 'fc-end'
 const DAY_CLASS = 'fc-day'
 const EVENT_DOT_CLASS = 'fc-event-dot'
+const BACKGROUND_EVENT_CLASS = 'fc-bgevent'
 
 export function getEventElDotEl(el) {
   return el.find(`.${EVENT_DOT_CLASS}`)
@@ -51,8 +54,24 @@ export function getEventEls() {
   return $(`.${EVENT_CLASS}`)
 }
 
+export function getBackgroundEventEls() {
+  return $(`.${BACKGROUND_EVENT_CLASS}`)
+}
+
+export function getDayGridRowElAtIndexBackgroundEventEls(index) {
+  return getDayGridRowElAtIndex(index).find(`.${BACKGROUND_EVENT_CLASS}`)
+}
+
+export function getDayGridRowElAtIndexBackgroundEventElAtIndex(rowIndex, eventIndex){
+  return getDayGridRowElAtIndexBackgroundEventEls(rowIndex).eq(eventIndex)
+}
+
 export function getEventElAtIndex(index) {
   return getEventEls().eq(index)
+}
+
+export function getBackgroundEventElAtIndex(index) {
+  return getBackgroundEventEls().eq(index)
 }
 
 export function getFirstEventEl() {
@@ -77,6 +96,12 @@ export function getSingleEl() {
   return els
 }
 
+export function getSingleBackgroundEventEl() {
+  var els = getBackgroundEventEls()
+  expect(els).toHaveLength(1)
+  return els
+}
+
 export function getEventElTimeEl(el) {
   return el.find(`.${TIME_CLASS}`)
 }
@@ -84,3 +109,6 @@ export function getEventElTimeEl(el) {
 export function getEventElsWithCustomClass(customClass){
   return $(`.${customClass}`)
 }
+
+
+

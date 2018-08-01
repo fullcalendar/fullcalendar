@@ -1,5 +1,6 @@
 import { formatIsoDay } from '../datelib/utils'
 import { getHeaderEl } from './DayGridRenderUtils'
+import { getBackgroundEventEls } from '../event-render/EventRenderUtils'
 
 const DAY_GRID_CLASS = 'fc-day-grid'
 const ROW_CLASS = 'fc-row'
@@ -15,6 +16,11 @@ const MORE_CLASS = 'fc-more'
 const HEADER_CLASS = 'fc-header'
 const TITLE_CLASS = 'fc-title'
 const MORE_POPOVER_CLASS = 'fc-more-popover'
+const WIDGET_HEADER_CLASS = 'fc-widget-header'
+const HEAD_CONTAINER_CLASS = 'fc-head-container'
+const DIVIDER_CLASS = 'fc-divider'
+const RESIZER_CLASS = 'fc-resizer'
+const NON_BUSINESS_CLASS = 'fc-nonbusiness'
 
 export function getDayEl(date) {
   if (typeof date === 'string') {
@@ -59,6 +65,10 @@ export function getLastDayEl() {
 
 export function getAllDayAxisEl(){
   return $(`.${DAY_GRID_CLASS} > .${ROW_CLASS} > .${BG_CLASS} .${AXIS_CLASS}`)
+}
+
+export function getAllDayAxisElText(){
+  return getAllDayAxisEl().text()
 }
 
 export function getTimeGridHeaderAxisEl(){
@@ -107,4 +117,23 @@ export function getDayGridRowElAtIndex(index){
 
 export function getDayGridRowDayElAtIndex(index){
   return getDayGridRowElAtIndex(index).find(`.${DAY_CLASS}`)
+}
+
+export function getHeaderTopEls(){
+  return $(`.${WIDGET_HEADER_CLASS}`)
+            .not(`.${ROW_CLASS}`)
+            .not(`.${HEAD_CONTAINER_CLASS}`)
+            .not(`.${DIVIDER_CLASS}`)
+}
+
+export function getBackgroundEventElsResizerEls(){
+  return getBackgroundEventEls().find(`.${RESIZER_CLASS}`)
+}
+
+export function getNonBusinessDayEls(){
+  return $(`.${NON_BUSINESS_CLASS}`)
+}
+
+export function getDayGridNonBusinessDayEls(){
+  return $(`.${DAY_GRID_CLASS} .${NON_BUSINESS_CLASS}`)
 }
