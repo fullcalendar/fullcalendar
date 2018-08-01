@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../node_modules/dragula/dist/dragula.css' rel='stylesheet' />
+<link href='../dist/fullcalendar.css' rel='stylesheet' />
+<link href='../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../dist/fullcalendar.js'></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+
+    /* initialize the external events
+    -----------------------------------------------------------------*/
+
+    var containerEl = document.getElementById('external-events-list');
+    var eventEls = Array.prototype.slice.call(
+      containerEl.querySelectorAll('.fc-event')
+    );
+
+    eventEls.forEach(function(eventEl) {
+      new FullCalendar.Draggable({
+        el: eventEl,
+        event: {
+          title: eventEl.innerText.trim(),
+          stick: true
+        }
+      });
+    });
+
+    /* initialize the calendar
+    -----------------------------------------------------------------*/
+
+    var calendarEl0 = document.getElementById('calendar0');
+    var calendar0 = new FullCalendar.Calendar(calendarEl0, {
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      editable: true,
+      droppable: true, // this allows things to be dropped onto the calendar
+      drop: function(arg) {
+        // is the "remove after drop" checkbox checked?
+        if (document.getElementById('drop-remove').checked) {
+          // if so, remove the element from the "Draggable Events" list
+          arg.draggedEl.parentNode.removeChild(arg.draggedEl);
+        }
+      }
+    });
+    calendar0.render();
+
+    var calendarEl1 = document.getElementById('calendar1');
+    var calendar1 = new FullCalendar.Calendar(calendarEl1, {
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      editable: true,
+      droppable: true, // this allows things to be dropped onto the calendar
+      drop: function(arg) {
+        // is the "remove after drop" checkbox checked?
+        if (document.getElementById('drop-remove').checked) {
+          // if so, remove the element from the "Draggable Events" list
+          arg.draggedEl.parentNode.removeChild(arg.draggedEl);
+        }
+      }
+    });
+    calendar1.render();
+
+  });
+
+</script>
+<style>
+
+  body {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 14px;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+  }
+
+  #external-events {
+    float: left;
+    width: 150px;
+    padding: 0 10px;
+    border: 1px solid #ccc;
+    background: #eee;
+    text-align: left;
+  }
+
+  #external-events h4 {
+    font-size: 16px;
+    margin-top: 0;
+    padding-top: 1em;
+  }
+
+  #external-events .fc-event {
+    margin: 10px 0;
+    cursor: pointer;
+  }
+
+  #external-events p {
+    margin: 1.5em 0;
+    font-size: 11px;
+    color: #666;
+  }
+
+  #external-events p input {
+    margin: 0;
+    vertical-align: middle;
+  }
+
+  .fc {
+    float: left;
+    margin-left: 20px;
+    width: 600px;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='external-events'>
+    <h4>Draggable Events</h4>
+
+    <div id='external-events-list'>
+      <div class='fc-event'>My Event 1</div>
+      <div class='fc-event'>My Event 2</div>
+      <div class='fc-event'>My Event 3</div>
+      <div class='fc-event'>My Event 4</div>
+      <div class='fc-event'>My Event 5</div>
+    </div>
+
+    <p>
+      <input type='checkbox' id='drop-remove' />
+      <label for='drop-remove'>remove after drop</label>
+    </p>
+  </div>
+
+  <div id='calendar0'></div>
+  <div id='calendar1'></div>
+
+  <div style='clear:both'></div>
+
+</body>
+</html>
