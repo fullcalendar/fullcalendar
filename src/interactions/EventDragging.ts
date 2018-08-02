@@ -119,14 +119,14 @@ export default class EventDragging {
       }
     }
 
-    if (!isFinal) {
-      this.displayDrag(receivingCalendar, {
-        affectedEvents: relatedEvents,
-        mutatedEvents: mutatedRelatedEvents || relatedEvents,
-        isEvent: true,
-        origSeg: this.draggingSeg
-      })
+    this.displayDrag(receivingCalendar, {
+      affectedEvents: relatedEvents,
+      mutatedEvents: mutatedRelatedEvents || relatedEvents,
+      isEvent: true,
+      origSeg: this.draggingSeg
+    })
 
+    if (!isFinal) {
       this.dragging.setMirrorNeedsRevert(!validMutation)
 
       // render the mirror if no already-rendered helper
@@ -139,9 +139,6 @@ export default class EventDragging {
       this.receivingCalendar = receivingCalendar
       this.validMutation = validMutation
       this.mutatedRelatedEvents = mutatedRelatedEvents
-
-    } else {
-      this.clearDrag() // drag is ending
     }
   }
 
@@ -159,6 +156,8 @@ export default class EventDragging {
   handleDragEnd = () => {
     let initialCalendar = this.component.getCalendar()
     let { receivingCalendar } = this
+
+    this.clearDrag() // must happen after revert animation
 
     if (this.validMutation) {
 
