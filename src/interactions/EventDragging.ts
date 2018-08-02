@@ -7,7 +7,7 @@ import browserContext from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import { EventStore } from '../reducers/event-store'
+import { EventStore, createEmptyEventStore } from '../reducers/event-store'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../reducers/event-interaction'
 
@@ -16,35 +16,51 @@ export default class EventDragging {
   component: DateComponent
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
-  draggingSeg: Seg
-  receivingCalendar: Calendar
-  validMutation: EventMutation
-  mutatedRelatedEvents: EventStore
+
+  // internal state
+  draggingSeg: Seg | null = null
+  eventInstanceId: string = ''
+  relatedEvents: EventStore | null = null
+  receivingCalendar: Calendar | null = null
+  validMutation: EventMutation | null = null
+  mutatedRelatedEvents: EventStore | null = null
 
   constructor(component: DateComponent) {
     this.component = component
 
-    this.dragging = new FeaturefulElementDragging(component.el)
-    this.dragging.pointer.selector = '.fc-draggable'
-    this.dragging.touchScrollAllowed = false
+    let dragging = this.dragging = new FeaturefulElementDragging(component.el)
+    dragging.pointer.selector = '.fc-draggable'
+    dragging.touchScrollAllowed = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, browserContext.componentHash)
     hitDragging.useSubjectCenter = true
-    hitDragging.emitter.on('pointerdown', this.onPointerDown)
-    hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitupdate', this.onHitUpdate)
-    hitDragging.emitter.on('dragend', this.onDragEnd)
+    hitDragging.emitter.on('pointerdown', this.handlePointerDown)
+    hitDragging.emitter.on('dragstart', this.handleDragStart)
+    hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
+    hitDragging.emitter.on('dragend', this.handleDragEnd)
   }
 
   destroy() {
     this.dragging.destroy()
   }
 
-  onPointerDown = (ev: PointerDragEvent) => {
-    let { dragging } = this
+  handlePointerDown = (ev: PointerDragEvent) => {
+    let { component, dragging } = this
+    let initialCalendar = component.getCalendar()
+    let draggingSeg = this.draggingSeg = getElSeg(ev.subjectEl as HTMLElement)!
+    let eventInstanceId = this.eventInstanceId = draggingSeg.eventRange!.eventInstance!.instanceId
 
-    dragging.minDistance = 5
-    dragging.delay = this.computeDragDelay(ev)
+    this.relatedEvents = getRelatedEvents(
+      initialCalendar.state.eventStore,
+      eventInstanceId
+    )
+
+    dragging.minDistance = ev.isTouch ? 0 : 5
+    dragging.delay =
+      // only do a touch delay if touch and this event hasn't been selected yet
+      (ev.isTouch && eventInstanceId !== component.selectedEventInstanceId) ?
+        getComponentTouchDelay(component) :
+        null
 
     // to prevent from cloning the sourceEl before it is selected
     dragging.setMirrorIsVisible(false)
@@ -57,46 +73,36 @@ export default class EventDragging {
     )
   }
 
-  computeDragDelay(ev: PointerDragEvent): number {
+  handleDragStart = (ev: PointerDragEvent) => {
     if (ev.isTouch) {
-      let seg = getElSeg(ev.subjectEl)
-      let eventInstanceId = seg.eventRange.eventInstance.instanceId
 
-      if (eventInstanceId !== this.component.selectedEventInstanceId) {
-        return 1000 // TODO: use setting
+      // need to select a different event?
+      if (this.eventInstanceId !== this.component.selectedEventInstanceId) {
+        let initialCalendar = this.component.getCalendar()
+
+        initialCalendar.dispatch({
+          type: 'SELECT_EVENT',
+          eventInstanceId: this.eventInstanceId
+        })
+
+        browserContext.reportEventSelection(this.component) // will unselect previous
       }
-    }
-  }
 
-  onDragStart = (ev: PointerDragEvent) => {
-    this.draggingSeg = getElSeg(ev.subjectEl)
-
-    if (ev.isTouch) {
-      let eventInstanceId = this.draggingSeg.eventRange.eventInstance.instanceId
-
-      this.component.getCalendar().dispatch({
-        type: 'SELECT_EVENT',
-        eventInstanceId
-      })
-
-      browserContext.reportEventSelection(this.component) // will unselect previous
+    // if now using mouse, but was previous touch interaction, clear selected event
     } else {
       browserContext.unselectEvent()
     }
   }
 
-  onHitUpdate = (hit: Hit | null, isFinal: boolean) => {
-    let { initialHit } = this.hitDragging // guaranteed
-    let initialCalendar = initialHit.component.getCalendar()
-    let receivingCalendar: Calendar = null
-    let validMutation: EventMutation = null
-    let relatedEvents: EventStore = null
-    let mutatedRelatedEvents: EventStore = null
+  handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
+    let relatedEvents = this.relatedEvents!
+    let initialHit = this.hitDragging.initialHit!
+    let initialCalendar = this.component.getCalendar()
 
-    relatedEvents = getRelatedEvents( // TODO: compute this only once?
-      initialCalendar.state.eventStore,
-      this.draggingSeg.eventRange.eventInstance.instanceId
-    )
+    // states based on new hit
+    let receivingCalendar: Calendar | null = null
+    let validMutation: EventMutation | null = null
+    let mutatedRelatedEvents: EventStore | null = null
 
     if (hit) {
       receivingCalendar = hit.component.getCalendar()
@@ -113,13 +119,14 @@ export default class EventDragging {
       }
     }
 
-    this.renderDrag(receivingCalendar, {
-      affectedEvents: relatedEvents,
-      mutatedEvents: mutatedRelatedEvents || relatedEvents,
-      origSeg: this.draggingSeg
-    })
-
     if (!isFinal) {
+      this.displayDrag(receivingCalendar, {
+        affectedEvents: relatedEvents,
+        mutatedEvents: mutatedRelatedEvents || relatedEvents,
+        isEvent: true,
+        origSeg: this.draggingSeg
+      })
+
       this.dragging.setMirrorNeedsRevert(!validMutation)
 
       // render the mirror if no already-rendered helper
@@ -128,13 +135,17 @@ export default class EventDragging {
         !hit || !document.querySelector('.fc-helper')
       )
 
+      // assign states based on new hit
       this.receivingCalendar = receivingCalendar
       this.validMutation = validMutation
       this.mutatedRelatedEvents = mutatedRelatedEvents
+
+    } else {
+      this.clearDrag() // drag is ending
     }
   }
 
-  onDocumentPointerUp = (ev, wasTouchScroll) => {
+  onDocumentPointerUp = (ev: PointerDragEvent, wasTouchScroll: boolean) => {
     if (
       !wasTouchScroll &&
       !this.draggingSeg && // was never dragging
@@ -145,24 +156,28 @@ export default class EventDragging {
     }
   }
 
-  onDragEnd = () => {
-    this.unrenderDrag()
+  handleDragEnd = () => {
+    let initialCalendar = this.component.getCalendar()
+    let { receivingCalendar } = this
 
     if (this.validMutation) {
-      let initialCalendar = this.hitDragging.initialHit.component.getCalendar()
 
-      if (this.receivingCalendar === initialCalendar) {
-        this.receivingCalendar.dispatch({
+      // dropped within same calendar
+      if (receivingCalendar === initialCalendar) {
+        receivingCalendar.dispatch({
           type: 'MUTATE_EVENTS',
           mutation: this.validMutation,
-          instanceId: this.draggingSeg.eventRange.eventInstance.instanceId
+          instanceId: this.eventInstanceId
         })
-      } else {
+
+      // dropped in different calendar
+      // TODO: more public triggers
+      } else if (receivingCalendar) {
         initialCalendar.dispatch({
           type: 'REMOVE_EVENTS',
           eventStore: this.mutatedRelatedEvents
         })
-        this.receivingCalendar.dispatch({
+        receivingCalendar.dispatch({
           type: 'ADD_EVENTS',
           eventStore: this.mutatedRelatedEvents,
           stick: true // TODO: use this param
@@ -170,47 +185,55 @@ export default class EventDragging {
       }
     }
 
+    // reset all internal state
+    this.draggingSeg = null
+    this.eventInstanceId = ''
+    this.relatedEvents = null
     this.receivingCalendar = null
     this.validMutation = null
     this.mutatedRelatedEvents = null
-    this.draggingSeg = null
   }
 
-  renderDrag(newReceivingCalendar: Calendar | null, dragState: EventInteractionState) {
-    let initialCalendar = this.hitDragging.initialHit.component.getCalendar()
-    let prevReceivingCalendar = this.receivingCalendar
+  // render a drag state on the next receivingCalendar
+  displayDrag(nextCalendar: Calendar | null, dragState: EventInteractionState) {
+    let initialCalendar = this.component.getCalendar()
+    let prevCalendar = this.receivingCalendar
 
-    if (prevReceivingCalendar && prevReceivingCalendar !== newReceivingCalendar) {
-      if (prevReceivingCalendar === initialCalendar) {
-        prevReceivingCalendar.dispatch({
+    // does the previous calendar need to be cleared?
+    if (prevCalendar && prevCalendar !== nextCalendar) {
+
+      // does the initial calendar need to be cleared?
+      // if so, don't clear all the way. we still need to to hide the affectedEvents
+      if (prevCalendar === initialCalendar) {
+        prevCalendar.dispatch({
           type: 'SET_DRAG',
           dragState: {
             affectedEvents: dragState.affectedEvents,
-            mutatedEvents: { defs: {}, instances: {} }, // TODO: util
+            mutatedEvents: createEmptyEventStore(),
             origSeg: dragState.origSeg
           }
         })
+
+      // completely clear the old calendar if it wasn't the initial
       } else {
-        prevReceivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
+        prevCalendar.dispatch({ type: 'CLEAR_DRAG' })
       }
     }
 
-    if (newReceivingCalendar) {
-      newReceivingCalendar.dispatch({
-        type: 'SET_DRAG',
-        dragState
-      })
+    if (nextCalendar) {
+      nextCalendar.dispatch({ type: 'SET_DRAG', dragState })
     }
   }
 
-  unrenderDrag() {
-    let initialCalendar = this.hitDragging.initialHit.component.getCalendar()
+  clearDrag() {
+    let initialCalendar = this.component.getCalendar()
     let { receivingCalendar } = this
 
     if (receivingCalendar) {
       receivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
     }
 
+    // the initial calendar might have an dummy drag state from displayDrag
     if (initialCalendar !== receivingCalendar) {
       initialCalendar.dispatch({ type: 'CLEAR_DRAG' })
     }
@@ -251,4 +274,14 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
     endDelta: delta,
     standardProps
   }
+}
+
+function getComponentTouchDelay(component: DateComponent): number | null {
+  let delay = component.opt('eventLongPressDelay')
+
+  if (delay == null) {
+    delay = component.opt('longPressDelay')
+  }
+
+  return delay
 }

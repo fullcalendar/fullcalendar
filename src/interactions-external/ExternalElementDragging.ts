@@ -51,7 +51,8 @@ export default class ExternalElementDragging {
     this.renderDrag(receivingCalendar, {
       affectedEvents: { defs: {}, instances: {} },
       mutatedEvents: addableEventStore || { defs: {}, instances: {} }, // TODO: better way to make empty event-store
-      willCreateEvent: Boolean(this.eventCreationData.standardProps)
+      isEvent: Boolean(this.eventCreationData.standardProps),
+      origSeg: null
     })
 
     // show mirror if no already-rendered helper element OR if we are shutting down the mirror

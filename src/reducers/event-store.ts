@@ -286,3 +286,7 @@ function parseDateInfo(rawEvent: EventInput, sourceId: string, calendar: Calenda
     forcedEndTzo: endMeta ? endMeta.forcedTimeZoneOffset : null
   }
 }
+
+export function createEmptyEventStore(): EventStore {
+  return { defs: {}, instances: {} }
+}

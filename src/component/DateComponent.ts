@@ -49,8 +49,8 @@ export default abstract class DateComponent extends Component {
 
   // self-config, overridable by subclasses
   isInteractable: boolean = false
-  doesDragHelper: boolean = false
-  doesDragHighlight: boolean = false
+  doesDragHelper: boolean = false // for events that ORIGINATE from this component
+  doesDragHighlight: boolean = false // for events that ORIGINATE from this component
   segSelector: string = '.fc-event-container > *' // what constitutes an event element?
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
@@ -581,7 +581,7 @@ export default abstract class DateComponent extends Component {
 
   renderDragState(dragState: EventInteractionState) {
     this.hideSegsByHash(dragState.affectedEvents.instances)
-    this.renderDrag(dragState.mutatedEvents, dragState.origSeg, dragState.willCreateEvent)
+    this.renderDrag(dragState.mutatedEvents, dragState.isEvent, dragState.origSeg)
   }
 
 
@@ -593,19 +593,21 @@ export default abstract class DateComponent extends Component {
 
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
-  renderDrag(eventStore: EventStore, origSeg, willCreateEvent) {
+  renderDrag(eventStore: EventStore, isEvent: boolean, origSeg: Seg | null) {
     let segs = this.eventStoreToSegs(eventStore)
-    let noEvent = !origSeg && !willCreateEvent
 
-    if (
-      !noEvent &&
-      (this.doesDragHelper || origSeg && origSeg.component.doesDragHelper) &&
-      this.helperRenderer
-    ) {
-      this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
+    // if the user is dragging something that is considered an event with real event data,
+    // and this component likes to do drag mirrors OR the component where the seg came from
+    // likes to do drag mirrors, then render a drag mirror.
+    if (isEvent && (this.doesDragHelper || origSeg && origSeg.component.doesDragHelper)) {
+      if (this.helperRenderer) {
+        this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
+      }
     }
 
-    if (noEvent || this.doesDragHighlight) {
+    // if it would be impossible to render a drag mirror OR this component likes to render
+    // highlights, then render a highlight.
+    if (!isEvent || this.doesDragHighlight) {
       this.renderHighlightSegs(segs)
     }
   }

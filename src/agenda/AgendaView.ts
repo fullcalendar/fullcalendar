@@ -454,15 +454,15 @@ function splitInteractionState(state: EventInteractionState) {
     allDay = {
       affectedEvents: affectedEventGroups.allDay,
       mutatedEvents: mutatedEventGroups.allDay,
-      origSeg: state.origSeg,
-      willCreateEvent: state.willCreateEvent
+      isEvent: state.isEvent,
+      origSeg: state.origSeg
     }
 
     timed = {
       affectedEvents: affectedEventGroups.timed,
       mutatedEvents: mutatedEventGroups.timed,
-      origSeg: state.origSeg,
-      willCreateEvent: state.willCreateEvent
+      isEvent: state.isEvent,
+      origSeg: state.origSeg
     }
   }
 

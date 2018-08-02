@@ -104,7 +104,9 @@ export class BrowserContext {
   }
 
   reportDateSelection(calendar: Calendar, selection: DateSpan, pev?: PointerDragEvent) {
-    this.unselectDates(pev)
+    if (this.dateSelectedCalendar && this.dateSelectedCalendar !== calendar) {
+      this.unselectDates(pev)
+    }
 
     calendar.publiclyTrigger('select', [
       {
@@ -129,7 +131,13 @@ export class BrowserContext {
   }
 
   reportEventSelection(component: DateComponent) {
-    this.unselectEvent()
+    if (
+      this.eventSelectedComponent &&
+      this.eventSelectedComponent.getCalendar() !== component.getCalendar()
+    ) {
+      this.unselectEvent()
+    }
+
     this.eventSelectedComponent = component
   }
 

@@ -6,53 +6,66 @@ import UnzonedRange from '../models/UnzonedRange'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { getElSeg } from '../component/renderers/EventRenderer'
+import { EventStore, EventInstance } from '../reducers/event-store'
 
 export default class EventDragging {
 
   component: DateComponent
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
-  draggingSeg: Seg
-  mutation: EventMutation
+
+  // internal state
+  draggingSeg: Seg | null = null
+  eventInstance: EventInstance | null = null
+  relatedEvents: EventStore | null = null
+  validMutation: EventMutation | null = null
 
   constructor(component: DateComponent) {
     this.component = component
 
-    this.dragging = new FeaturefulElementDragging(component.el)
-    this.dragging.pointer.selector = '.fc-resizer'
-    this.dragging.touchScrollAllowed = false
+    let dragging = this.dragging = new FeaturefulElementDragging(component.el)
+    dragging.pointer.selector = '.fc-resizer'
+    dragging.touchScrollAllowed = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
-    hitDragging.emitter.on('pointerdown', this.onPointerDown)
-    hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitupdate', this.onHitUpdate)
-    hitDragging.emitter.on('dragend', this.onDragEnd)
+    hitDragging.emitter.on('pointerdown', this.handlePointerDown)
+    hitDragging.emitter.on('dragstart', this.handleDragStart)
+    hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
+    hitDragging.emitter.on('dragend', this.handleDragEnd)
   }
 
   destroy() {
     this.dragging.destroy()
   }
 
-  onPointerDown = (ev) => {
-    let seg = this.querySeg(ev)
-    let eventInstanceId = seg.eventRange.eventInstance.instanceId
+  handlePointerDown = (ev: PointerDragEvent) => {
+    let seg = this.querySeg(ev)!
+    let eventInstance = this.eventInstance = seg.eventRange!.eventInstance!
 
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
-      !this.component.isValidSegDownEl(ev.origEvent.target) ||
-      (ev.isTouch && this.component.selectedEventInstanceId !== eventInstanceId)
+      !this.component.isValidSegDownEl(ev.origEvent.target as HTMLElement) ||
+      (ev.isTouch && this.component.selectedEventInstanceId !== eventInstance.instanceId)
     )
   }
 
-  onDragStart = (ev) => {
+  handleDragStart = (ev: PointerDragEvent) => {
+    let calendar = this.component.getCalendar()
+
+    this.relatedEvents = getRelatedEvents(
+      calendar.state.eventStore,
+      this.eventInstance!.instanceId
+    )
+
     this.draggingSeg = this.querySeg(ev)
   }
 
-  onHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
+  handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
-    let { initialHit } = this.hitDragging
-    let eventInstance = this.draggingSeg.eventRange.eventInstance
-    let mutation = null
+    let relatedEvents = this.relatedEvents!
+    let initialHit = this.hitDragging.initialHit!
+    let eventInstance = this.eventInstance!
+    let mutation: EventMutation | null = null
 
     if (hit) {
       mutation = computeMutation(
@@ -64,55 +77,57 @@ export default class EventDragging {
     }
 
     if (mutation) {
-      let related = getRelatedEvents(calendar.state.eventStore, eventInstance.instanceId)
-      let mutatedRelated = applyMutationToAll(related, mutation, calendar)
+      let mutatedRelated = applyMutationToAll(relatedEvents, mutation, calendar)
 
       calendar.dispatch({
         type: 'SET_EVENT_RESIZE',
         eventResizeState: {
-          affectedEvents: related,
+          affectedEvents: relatedEvents,
           mutatedEvents: mutatedRelated,
+          isEvent: true,
           origSeg: this.draggingSeg
         }
       })
     } else {
-      calendar.dispatch({
-        type: 'CLEAR_EVENT_RESIZE'
-      })
-    }
-
-    if (mutation && isHitsEqual(initialHit, hit)) {
-      mutation = null
+      calendar.dispatch({ type: 'CLEAR_EVENT_RESIZE' })
     }
 
     if (!isFinal) {
-      this.mutation = mutation
+
+      if (mutation && isHitsEqual(initialHit, hit)) {
+        mutation = null
+      }
+
+      this.validMutation = mutation
     }
   }
 
-  onDragEnd = (ev) => {
+  handleDragEnd = (ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
 
-    if (this.mutation) {
+    if (this.validMutation) {
       calendar.dispatch({
         type: 'MUTATE_EVENTS',
-        mutation: this.mutation,
-        instanceId: this.draggingSeg.eventRange.eventInstance.instanceId
+        mutation: this.validMutation,
+        instanceId: this.eventInstance!.instanceId
       })
-
-      this.mutation = null
     }
 
+    // reset all internal state
     this.draggingSeg = null
+    this.relatedEvents = null
+    this.validMutation = null
+
+    // okay to keep eventInstance around. useful to set it in handlePointerDown
   }
 
-  querySeg(ev: PointerDragEvent): Seg {
+  querySeg(ev: PointerDragEvent): Seg | null {
     return getElSeg(elementClosest(ev.subjectEl as HTMLElement, this.component.segSelector))
   }
 
 }
 
-function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: UnzonedRange): EventMutation {
+function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: UnzonedRange): EventMutation | null {
   let dateEnv = hit0.component.getDateEnv()
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start
@@ -132,4 +147,6 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
       return { endDelta: delta, standardProps: { hasEnd: true } }
     }
   }
+
+  return null
 }
