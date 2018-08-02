@@ -25,7 +25,7 @@ export default abstract class ElementDragging {
   }
 
   // if given true, should prevent dragstart+dragmove+dragend from firing
-  abstract setIgnoreMove(bool: boolean)
+  abstract setIgnoreMove(bool: boolean): void
 
   setMirrorIsVisible(bool: boolean) {
     // optional if subclass doesn't want to support a mirror

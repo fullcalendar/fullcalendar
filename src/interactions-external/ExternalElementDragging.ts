@@ -2,83 +2,96 @@ import ElementDragging from '../dnd/ElementDragging'
 import HitDragging, { Hit } from '../interactions/HitDragging'
 import browserContext from '../common/browser-context'
 import { PointerDragEvent } from '../dnd/PointerDragging'
-import { EventStore, parseDef, createInstance } from '../reducers/event-store'
+import { EventStore, parseDef, createInstance, EventDef, createEmptyEventStore, EventInstance } from '../reducers/event-store'
 import UnzonedRange from '../models/UnzonedRange'
 import * as externalHooks from '../exports'
-import { createDuration } from '../datelib/duration'
-import { assignTo } from '../util/object'
 import { DateSpan } from '../reducers/date-span'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../reducers/event-interaction'
+import { DragMeta, parseDragMeta } from '../structs/drag-meta'
 
+export interface EventRes { // TODO: relate this to EventRenderRange?
+  def: EventDef
+  instance: EventInstance
+}
+
+/*
+Given an already instantiated draggable object for one-or-more elements,
+Interprets any dragging as an attempt to drag an events that lives outside
+of a calendar onto a calendar.
+*/
 export default class ExternalElementDragging {
 
   hitDragging: HitDragging
-  receivingCalendar: Calendar
-  addableEventStore: EventStore
-  explicitEventCreationData: any
-  eventCreationData: any
+  receivingCalendar: Calendar | null = null
+  droppableEvent: EventRes | null = null
+  explicitDragMeta: DragMeta | null = null
+  dragMeta: DragMeta | null = null
 
-  constructor(dragging: ElementDragging, rawEventCreationData?) {
+  constructor(dragging: ElementDragging, rawEventDragData?: DragMeta) {
+
     let hitDragging = this.hitDragging = new HitDragging(dragging, browserContext.componentHash)
-    hitDragging.requireInitial = false
-    hitDragging.emitter.on('dragstart', this.onDragStart)
-    hitDragging.emitter.on('hitupdate', this.onHitUpdate)
-    hitDragging.emitter.on('dragend', this.onDragEnd)
+    hitDragging.requireInitial = false // will start outside of a component
+    hitDragging.emitter.on('dragstart', this.handleDragStart)
+    hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
+    hitDragging.emitter.on('dragend', this.handleDragEnd)
 
-    this.explicitEventCreationData = rawEventCreationData ? processExplicitData(rawEventCreationData) : null
+    if (rawEventDragData) {
+      this.explicitDragMeta = parseDragMeta(rawEventDragData)
+    }
   }
 
-  onDragStart = (ev: PointerDragEvent) => {
-    browserContext.unselectEvent()
-    this.eventCreationData = this.explicitEventCreationData || getDraggedElMeta(ev.subjectEl)
+  handleDragStart = (ev: PointerDragEvent) => {
+    browserContext.unselectEvent() // unselect any existing events
+
+    this.dragMeta = this.explicitDragMeta || getDragMetaFromEl(ev.subjectEl as HTMLElement)
   }
 
-  onHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
+  handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let { dragging } = this.hitDragging
-    let receivingCalendar: Calendar = null
-    let addableEventStore: EventStore = null
+    let receivingCalendar: Calendar | null = null
+    let droppableEvent: EventRes | null = null
 
     if (hit) {
       receivingCalendar = hit.component.getCalendar()
-      addableEventStore = computeEventStoreForDateSpan(
+      droppableEvent = computeEventForDateSpan(
         hit.dateSpan,
-        receivingCalendar,
-        this.eventCreationData
+        this.dragMeta!,
+        receivingCalendar
       )
     }
 
-    this.renderDrag(receivingCalendar, {
-      affectedEvents: { defs: {}, instances: {} },
-      mutatedEvents: addableEventStore || { defs: {}, instances: {} }, // TODO: better way to make empty event-store
-      isEvent: Boolean(this.eventCreationData.standardProps),
+    this.displayDrag(receivingCalendar, {
+      affectedEvents: createEmptyEventStore(),
+      mutatedEvents: droppableEvent ? toEventStore(droppableEvent) : createEmptyEventStore(),
+      isEvent: this.dragMeta!.create,
       origSeg: null
     })
 
     // show mirror if no already-rendered helper element OR if we are shutting down the mirror
     // TODO: wish we could somehow wait for dispatch to guarantee render
     dragging.setMirrorIsVisible(
-      isFinal || !addableEventStore || !document.querySelector('.fc-helper')
+      isFinal || !droppableEvent || !document.querySelector('.fc-helper')
     )
 
     if (!isFinal) {
-      dragging.setMirrorNeedsRevert(!addableEventStore)
+      dragging.setMirrorNeedsRevert(!droppableEvent)
 
       this.receivingCalendar = receivingCalendar
-      this.addableEventStore = addableEventStore
+      this.droppableEvent = droppableEvent
     }
   }
 
-  onDragEnd = (pev: PointerDragEvent) => {
-    let { receivingCalendar, addableEventStore } = this
+  handleDragEnd = (pev: PointerDragEvent) => {
+    let { receivingCalendar, droppableEvent } = this
 
-    this.unrenderDrag()
+    this.clearDrag()
 
-    if (receivingCalendar && addableEventStore) {
-      let finalHit = this.hitDragging.finalHit
+    if (receivingCalendar && droppableEvent) {
+      let finalHit = this.hitDragging.finalHit!
       let finalView = finalHit.component.view
+      let dragMeta = this.dragMeta!
 
-      // TODO: how to let Scheduler extend this?
       receivingCalendar.publiclyTrigger('drop', [
         {
           draggedEl: pev.subjectEl,
@@ -89,18 +102,18 @@ export default class ExternalElementDragging {
         }
       ])
 
-      if (this.eventCreationData.standardProps) { // TODO: bad way to test if event creation is good
+      if (dragMeta.create) {
         receivingCalendar.dispatch({
           type: 'ADD_EVENTS',
-          eventStore: addableEventStore,
-          stick: this.eventCreationData.stick // TODO: use this param
+          eventStore: toEventStore(droppableEvent),
+          stick: dragMeta.stick // TODO: use this param in the event-store
         })
 
-        // signal an external event landed
+        // signal that an external event landed
         receivingCalendar.publiclyTrigger('eventReceive', [
           {
             draggedEl: pev.subjectEl,
-            event: addableEventStore, // TODO: what to put here!?
+            event: droppableEvent.instance, // TODO: what to transmit here?
             view: finalView
           }
         ])
@@ -108,25 +121,22 @@ export default class ExternalElementDragging {
     }
 
     this.receivingCalendar = null
-    this.addableEventStore = null
+    this.droppableEvent = null
   }
 
-  renderDrag(newReceivingCalendar: Calendar | null, dragState: EventInteractionState) {
-    let prevReceivingCalendar = this.receivingCalendar
+  displayDrag(nextCalendar: Calendar | null, dragState: EventInteractionState) {
+    let prevCalendar = this.receivingCalendar
 
-    if (prevReceivingCalendar && prevReceivingCalendar !== newReceivingCalendar) {
-      prevReceivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
+    if (prevCalendar && prevCalendar !== nextCalendar) {
+      prevCalendar.dispatch({ type: 'CLEAR_DRAG' })
     }
 
-    if (newReceivingCalendar) {
-      newReceivingCalendar.dispatch({
-        type: 'SET_DRAG',
-        dragState: dragState
-      })
+    if (nextCalendar) {
+      nextCalendar.dispatch({ type: 'SET_DRAG', dragState: dragState })
     }
   }
 
-  unrenderDrag() {
+  clearDrag() {
     if (this.receivingCalendar) {
       this.receivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
     }
@@ -134,131 +144,60 @@ export default class ExternalElementDragging {
 
 }
 
+// Utils for computing event store from the DragMeta
+// ----------------------------------------------------------------------------------------------------
 
-function computeEventStoreForDateSpan(dateSpan: DateSpan, calendar: Calendar, eventCreationData): EventStore {
-
+function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventRes {
   let def = parseDef(
-    eventCreationData.standardProps || {},
-    null,
+    dragMeta.leftoverProps || {},
+    '',
     dateSpan.isAllDay,
-    Boolean(eventCreationData.duration) // hasEnd
+    Boolean(dragMeta.duration) // hasEnd
   )
 
   let start = dateSpan.range.start
 
   // only rely on time info if drop zone is all-day,
   // otherwise, we already know the time
-  if (dateSpan.isAllDay && eventCreationData.time) {
-    start = calendar.dateEnv.add(start, eventCreationData.time)
+  if (dateSpan.isAllDay && dragMeta.time) {
+    start = calendar.dateEnv.add(start, dragMeta.time)
   }
 
-  let end = eventCreationData.duration ?
-    calendar.dateEnv.add(start, eventCreationData.duration) :
+  let end = dragMeta.duration ?
+    calendar.dateEnv.add(start, dragMeta.duration) :
     calendar.getDefaultEventEnd(dateSpan.isAllDay, start)
 
   let instance = createInstance(def.defId, new UnzonedRange(start, end))
 
+  return { def, instance }
+}
+
+function toEventStore(res: EventRes): EventStore {
   return {
-    defs: { [def.defId]: def },
-    instances: { [instance.instanceId]: instance }
+    defs: { [res.def.defId]: res.def },
+    instances: { [res.instance.instanceId]: res.instance }
   }
 }
 
+// Utils for extracting data from element
+// ----------------------------------------------------------------------------------------------------
 
-// same return type as getDraggedElMeta
-// TODO: merge a lot of code with getDraggedElMeta!
-// TODO: use refineProps!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// ALSO: don't like how `stick` and others are in same namespace. impossible for them to go to extendedProps
-function processExplicitData(data) {
-  let standardProps = assignTo({}, data)
-  let startTime // a Duration
-  let duration
-  let stick
+function getDragMetaFromEl(el: HTMLElement): DragMeta | null {
+  let str = getEmbeddedElData(el, 'event')
+  let obj = str ? JSON.parse(str) : null
 
-  if (standardProps) {
-
-    // something like 1 or true. still signal event creation
-    if (typeof standardProps !== 'object') {
-      standardProps = {}
-    }
-
-    // pluck special-cased date/time properties
-    startTime = standardProps.start
-    if (startTime == null) { startTime = standardProps.time } // accept 'time' as well
-    duration = standardProps.duration
-    stick = standardProps.stick
-    delete standardProps.start
-    delete standardProps.time
-    delete standardProps.duration
-    delete standardProps.stick
+  if (obj) {
+    return parseDragMeta(obj)
   }
 
-  // massage into correct data types
-  startTime = startTime != null ? createDuration(startTime) : null
-  duration = duration != null ? createDuration(duration) : null
-  stick = Boolean(stick) // wont be refining undefined?!?! - have a default
-
-  return { standardProps, startTime, duration, stick }
+  return null
 }
-
-
-// Extracting Event Data From Elements
-// -----------------------------------
-// TODO: create returned struct
 
 (externalHooks as any).dataAttrPrefix = ''
 
-// Given an element that might represent a dragged FullCalendar event, returns an intermediate data structure
-// to be used for Event Object creation.
-// A defined `.eventProps`, even when empty, indicates that an event should be created.
-function getDraggedElMeta(el) {
-  let standardProps // properties for creating the event, not related to date/time
-  let startTime // a Duration
-  let duration
-  let stick
-
-  standardProps = getEmbeddedElData(el, 'event', true)
-
-  if (standardProps) {
-
-    // something like 1 or true. still signal event creation
-    if (typeof standardProps !== 'object') {
-      standardProps = {}
-    }
-
-    // pluck special-cased date/time properties
-    startTime = standardProps.start
-    if (startTime == null) { startTime = standardProps.time } // accept 'time' as well
-    duration = standardProps.duration
-    stick = standardProps.stick
-    delete standardProps.start
-    delete standardProps.time
-    delete standardProps.duration
-    delete standardProps.stick
-  }
-
-  // fallback to standalone attribute values for each of the date/time properties
-  if (startTime == null) { startTime = getEmbeddedElData(el, 'start') }
-  if (startTime == null) { startTime = getEmbeddedElData(el, 'time') } // accept 'time' as well
-  if (duration == null) { duration = getEmbeddedElData(el, 'duration') }
-  if (stick == null) { stick = getEmbeddedElData(el, 'stick', true) }
-
-  // massage into correct data types
-  startTime = startTime != null ? createDuration(startTime) : null
-  duration = duration != null ? createDuration(duration) : null
-  stick = Boolean(stick)
-
-  return { standardProps, startTime, duration, stick }
-}
-
-function getEmbeddedElData(el, name, shouldParseJson = false) {
+function getEmbeddedElData(el: HTMLElement, name: string): string {
   let prefix = (externalHooks as any).dataAttrPrefix
   let prefixedName = (prefix ? prefix + '-' : '') + name
 
-  let data = el.getAttribute('data-' + prefixedName) || null
-  if (data && shouldParseJson) {
-    data = JSON.parse(data)
-  }
-
-  return data
+  return el.getAttribute('data-' + prefixedName) || ''
 }

@@ -196,6 +196,8 @@ export function parseDef(raw: EventInput, sourceId: string, isAllDay: boolean, h
   let leftovers = {} as any
   let def = refineProps(raw, SIMPLE_DEF_PROPS, leftovers)
 
+  // TODO: allow explicit extendedProps hash
+
   if (leftovers.id != null) {
     def.publicId = String(leftovers.id)
     delete leftovers.id

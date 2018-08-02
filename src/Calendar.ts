@@ -359,6 +359,8 @@ export default class Calendar {
       if (oldState !== newState) {
         this.requestRerender()
       }
+
+      // TODO: what about pausing new renders while rendering?
     }
   }
 
