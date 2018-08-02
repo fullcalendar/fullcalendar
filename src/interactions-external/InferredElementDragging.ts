@@ -1,9 +1,7 @@
 import PointerDragging, { PointerDragEvent } from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 
-// TODO: rename file InferredElementDragging
-
-export interface DumbElementDraggingSettings {
+export interface InferredElementDraggingSettings {
   itemSelector?: string
   mirrorSelector?: string
 }
@@ -15,14 +13,14 @@ export interface DumbElementDraggingSettings {
 - pointerup
 - dragend
 */
-export default class DumbElementDragging extends ElementDragging {
+export default class InferredElementDragging extends ElementDragging {
 
   pointer: PointerDragging
   shouldIgnoreMove: boolean = false
   mirrorSelector: string
   currentMirrorEl: HTMLElement | null = null
 
-  constructor(options: DumbElementDraggingSettings) {
+  constructor(options: InferredElementDraggingSettings) {
     super()
 
     let pointer = this.pointer = new PointerDragging(document)

@@ -113,4 +113,4 @@ export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragg
 export { default as ElementDragging } from './dnd/ElementDragging'
 
 export { default as Draggable } from './interactions-external/Draggable'
-export { default as GenericDragging } from './interactions-external/GenericDragging'
+export { default as GenericDragging } from './interactions-external/generic-dragging' // singleton

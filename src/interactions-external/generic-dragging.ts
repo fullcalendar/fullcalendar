@@ -1,20 +1,20 @@
 import ExternalElementDragging from './ExternalElementDragging'
-import DumbElementDragging, { DumbElementDraggingSettings } from './DumbElementDragging'
+import InferredElementDragging, { InferredElementDraggingSettings } from './InferredElementDragging'
 
 // TODO: change file
 
 export class GenericDragging {
 
-  dragging: DumbElementDragging | null = null
+  dragging: InferredElementDragging | null = null
   externalDragging: ExternalElementDragging | null = null
   isEnabled: boolean = false
 
-  enable(options?: DumbElementDraggingSettings) {
+  enable(options?: InferredElementDraggingSettings) {
     if (!this.isEnabled) {
       this.isEnabled = true
 
       new ExternalElementDragging(
-        this.dragging = new DumbElementDragging(options || {})
+        this.dragging = new InferredElementDragging(options || {})
       )
     }
   }
