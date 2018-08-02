@@ -1,7 +1,7 @@
 import UnzonedRange from '../models/UnzonedRange'
 import { diffDayAndTime, diffDays, startOfDay, addDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
-import { EventStore } from './event-store'
+import { EventStore, mergeStores, getRelatedEvents } from './event-store'
 import { EventDef, EventInstance } from './event'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
@@ -36,45 +36,6 @@ export function applyMutationToAll(eventStore: EventStore, mutation: EventMutati
   }
 
   return newStore
-}
-
-export function getRelatedEvents(eventStore: EventStore, instanceId: string): EventStore {
-  let newStore = { defs: {}, instances: {} } // TODO: better name
-  let eventInstance = eventStore.instances[instanceId]
-  let eventDef = eventStore.defs[eventInstance.defId]
-
-  if (eventDef && eventInstance) {
-    let matchGroupId = eventDef.groupId
-
-    for (let defId in eventStore.defs) {
-      let def = eventStore.defs[defId]
-
-      if (def === eventDef || matchGroupId && matchGroupId === def.groupId) {
-        newStore.defs[defId] = def
-      }
-    }
-
-    for (let instanceId in eventStore.instances) {
-      let instance = eventStore.instances[instanceId]
-
-      if (
-        instance === eventInstance ||
-        matchGroupId && matchGroupId === eventStore.defs[instance.defId].groupId
-      ) {
-        newStore.instances[instanceId] = instance
-      }
-    }
-  }
-
-  return newStore
-}
-
-// TODO: move to event-store
-export function mergeStores(store0: EventStore, store1: EventStore): EventStore {
-  return {
-    defs: assignTo({}, store0.defs, store1.defs),
-    instances: assignTo({}, store0.instances, store1.instances)
-  }
 }
 
 function applyMutationToDef(eventDef: EventDef, mutation: EventMutation) {

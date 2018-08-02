@@ -1,13 +1,13 @@
 import { createDuration, Duration, DurationInput } from '../datelib/duration'
 import { refineProps } from '../util/misc'
+import { EventNonDateInput } from '../structs/event'
 
-export interface DragMetaInput {
+export interface DragMetaInput extends EventNonDateInput {
   time?: DurationInput
   duration?: DurationInput
   create?: boolean
   stick?: boolean
-  [extendedPropName: string]: any
-  // TODO: somehow join with EventInput, but minus datetime props
+  [extendedProp: string]: any
 }
 
 export interface DragMeta {

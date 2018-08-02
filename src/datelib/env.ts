@@ -107,7 +107,7 @@ export class DateEnv {
       return null
     }
 
-    return { marker, isTimeUnspecified: false, forcedTimeZoneOffset: null }
+    return { marker, isTimeUnspecified: false, forcedTzo: null }
   }
 
   parse(s: string) {
@@ -117,17 +117,17 @@ export class DateEnv {
     }
 
     let marker = parts.marker
-    let forcedTimeZoneOffset = null
+    let forcedTzo = null
 
     if (parts.timeZoneOffset !== null) {
       if (this.canComputeOffset) {
         marker = this.timestampToMarker(marker.valueOf() - parts.timeZoneOffset * 60 * 1000)
       } else {
-        forcedTimeZoneOffset = parts.timeZoneOffset
+        forcedTzo = parts.timeZoneOffset
       }
     }
 
-    return { marker, isTimeUnspecified: parts.isTimeUnspecified, forcedTimeZoneOffset }
+    return { marker, isTimeUnspecified: parts.isTimeUnspecified, forcedTzo }
   }
 
 
@@ -338,8 +338,8 @@ export class DateEnv {
     return formatter.format(
       {
         marker: marker,
-        timeZoneOffset: dateOptions.forcedTimeZoneOffset != null ?
-          dateOptions.forcedTimeZoneOffset :
+        timeZoneOffset: dateOptions.forcedTzo != null ?
+          dateOptions.forcedTzo :
           this.offsetForMarker(marker)
       },
       this
@@ -373,8 +373,8 @@ export class DateEnv {
     let timeZoneOffset = null
 
     if (!extraOptions.omitTimeZoneOffset) {
-      if (extraOptions.forcedTimeZoneOffset != null) {
-        timeZoneOffset = extraOptions.forcedTimeZoneOffset
+      if (extraOptions.forcedTzo != null) {
+        timeZoneOffset = extraOptions.forcedTzo
       } else {
         timeZoneOffset = this.offsetForMarker(marker)
       }

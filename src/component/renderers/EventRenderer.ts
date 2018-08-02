@@ -280,7 +280,7 @@ export default class EventRenderer {
         })
       } else {
         return dateEnv.format(start, formatter, {
-          forcedTimeZoneOffset: forcedStartTimeZoneOffset
+          forcedTzo: forcedStartTimeZoneOffset
         })
       }
     }

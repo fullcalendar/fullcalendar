@@ -3,16 +3,13 @@ import { parseClassName, ClassNameInput } from '../util/html'
 import { DateInput } from '../datelib/env'
 import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
+import { assignTo } from '../util/object'
 
-export type RenderingChoices = '' | 'background' | 'inverse-background' | 'none'
+export type EventRenderingChoice = '' | 'background' | 'inverse-background' | 'none'
 
-export interface EventInput {
+export interface EventNonDateInput {
   id?: string | number
   groupId?: string | number
-  start?: DateInput
-  end?: DateInput
-  date?: DateInput
-  isAllDay?: boolean
   title?: string
   url?: string
   editable?: boolean
@@ -20,36 +17,45 @@ export interface EventInput {
   durationEditable?: boolean
   constraint?: any
   overlap?: any
-  rendering?: RenderingChoices
+  rendering?: EventRenderingChoice
   className?: ClassNameInput
   color?: string
   backgroundColor?: string
   borderColor?: string
   textColor?: string
-  [extendedPropName: string]: any
+  extendedProps?: object
+  [extendedProp: string]: any
 }
+
+export interface EventDateInput {
+  start?: DateInput
+  end?: DateInput
+  date?: DateInput
+  isAllDay?: boolean
+}
+
+export type EventInput = EventNonDateInput & EventDateInput
 
 export interface EventDef {
   defId: string
   sourceId: string
-  publicId: string | null
-  groupId: string | null
+  publicId: string
+  groupId: string
   hasEnd: boolean
   isAllDay: boolean
-  title: string | null
-  url: string | null
+  title: string
+  url: string
   editable: boolean | null
   startEditable: boolean | null
   durationEditable: boolean | null
   constraint: any
   overlap: any
-  rendering: RenderingChoices
+  rendering: EventRenderingChoice
   className: string[]
-  color: string | null
-  backgroundColor: string | null
-  borderColor: string | null
-  textColor: string | null
-  extendedProps: any
+  backgroundColor: string
+  borderColor: string
+  textColor: string
+  extendedProps: object
 }
 
 export interface EventInstance {
@@ -60,7 +66,7 @@ export interface EventInstance {
   forcedEndTzo: number | null
 }
 
-export interface EventDateInfo {
+export interface EventDateSpan {
   isAllDay: boolean
   hasEnd: boolean
   range: UnzonedRange
@@ -68,17 +74,11 @@ export interface EventDateInfo {
   forcedEndTzo: number | null
 }
 
+export type EventInstanceHash = { [instanceId: string]: EventInstance }
+export type EventDefHash = { [defId: string]: EventDef }
 
-// vars
-
-const DATE_PROPS = {
-  start: null,
-  date: null,
-  end: null,
-  isAllDay: null
-}
-
-const SIMPLE_DEF_PROPS = {
+const NON_DATE_PROPS = {
+  id: String,
   groupId: String,
   title: String,
   url: String,
@@ -92,47 +92,63 @@ const SIMPLE_DEF_PROPS = {
   color: String,
   backgroundColor: String,
   borderColor: String,
-  textColor: String
+  textColor: String,
+  extendedProps: null
 }
 
-let guid = 0
+const DATE_PROPS = {
+  start: null,
+  date: null,
+  end: null,
+  isAllDay: null
+}
 
+let uid = 0
 
-
-export function parseDef(raw: EventInput, sourceId: string, isAllDay: boolean, hasEnd: boolean): EventDef {
+export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay: boolean, hasEnd: boolean): EventDef {
   let leftovers = {} as any
-  let def = refineProps(raw, SIMPLE_DEF_PROPS, leftovers)
+  let props = refineProps(raw, NON_DATE_PROPS, leftovers)
 
-  // TODO: allow explicit extendedProps hash
-
-  if (leftovers.id != null) {
-    def.publicId = String(leftovers.id)
-    delete leftovers.id
-  } else {
-    def.publicId = null
+  return {
+    defId: String(uid++),
+    sourceId,
+    publicId: props.id || '',
+    groupId: props.groupId || '',
+    hasEnd,
+    isAllDay,
+    title: props.title || '',
+    url: props.url || '',
+    editable: props.editable,
+    startEditable: props.startEditable,
+    durationEditable: props.durationEditable,
+    constraint: props.constraint,
+    overlap: props.overlap,
+    rendering: props.rendering || '',
+    className: props.className || [],
+    backgroundColor: props.backgroundColor || props.color || '',
+    borderColor: props.borderColor || props.color || '',
+    textColor: props.textColor || '',
+    extendedProps: assignTo(leftovers, props.extendedProps || {})
   }
-
-  def.defId = String(guid++)
-  def.sourceId = sourceId
-  def.isAllDay = isAllDay
-  def.hasEnd = hasEnd
-  def.extendedProps = leftovers
-
-  return def
 }
 
-export function createInstance(
+export function createEventInstance(
   defId: string,
   range: UnzonedRange,
   forcedStartTzo: number | null = null,
   forcedEndTzo: number | null = null
 ): EventInstance {
-  let instanceId = String(guid++)
+  let instanceId = String(uid++)
   return { instanceId, defId, range, forcedStartTzo, forcedEndTzo }
 }
 
-export function parseDateInfo(rawEvent: EventInput, sourceId: string, calendar: Calendar, leftoverProps: any): EventDateInfo | null {
-  let dateProps = refineProps(rawEvent, DATE_PROPS, leftoverProps)
+export function parseEventDateSpan(
+  raw: EventDateInput,
+  sourceId: string,
+  calendar: Calendar,
+  leftovers: object
+): EventDateSpan | null {
+  let dateProps = refineProps(raw, DATE_PROPS, leftovers)
   let rawStart = dateProps.start
   let startMeta
   let hasEnd = false
@@ -191,7 +207,7 @@ export function parseDateInfo(rawEvent: EventInput, sourceId: string, calendar: 
     isAllDay,
     hasEnd,
     range: new UnzonedRange(startMeta.marker, endMarker),
-    forcedStartTzo: startMeta.forcedTimeZoneOffset, // TODO: rename to 'tzo' elsewhere
-    forcedEndTzo: endMeta ? endMeta.forcedTimeZoneOffset : null
+    forcedStartTzo: startMeta.forcedTzo,
+    forcedEndTzo: endMeta ? endMeta.forcedTzo : null
   }
 }

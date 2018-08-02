@@ -3,7 +3,7 @@ import Calendar from '../Calendar'
 import { warn } from '../util/misc'
 import { EventSource, EventSourceHash, parseSource, sourceTypes } from '../structs/event-source'
 
-let guid = 0
+let uid = 0
 
 // reducers
 
@@ -43,7 +43,7 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
     case 'FETCH_EVENT_SOURCE':
       eventSource = sourceHash[action.sourceId]
 
-      let fetchId = String(guid++)
+      let fetchId = String(uid++)
       sourceTypes[eventSource.sourceType].fetch(
         {
           eventSource,

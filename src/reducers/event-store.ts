@@ -1,8 +1,8 @@
 import Calendar from '../Calendar'
 import { filterHash } from '../util/object'
-import { applyMutationToRelated, mergeStores } from '../structs/event-mutation'
+import { applyMutationToRelated } from '../structs/event-mutation'
 import { EventDef, EventInstance } from '../structs/event'
-import { EventStore, addRawEvents } from '../structs/event-store'
+import { EventStore, addRawEvents, mergeStores } from '../structs/event-store'
 
 // reducing
 

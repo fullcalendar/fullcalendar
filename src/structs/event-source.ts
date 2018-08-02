@@ -85,7 +85,7 @@ const SIMPLE_SOURCE_PROPS = {
 }
 
 export let sourceTypes: { [sourceTypeName: string]: EventSourceTypeSettings } = {}
-let guid = 0
+let uid = 0
 
 export function registerSourceType(type: string, settings: EventSourceTypeSettings) {
   sourceTypes[type] = settings
@@ -98,7 +98,7 @@ export function parseSource(raw: EventSourceInput): EventSource {
 
     if (sourceTypeMeta) {
       let source: EventSource = refineProps(raw, SIMPLE_SOURCE_PROPS)
-      source.sourceId = String(guid++)
+      source.sourceId = String(uid++)
       source.sourceType = sourceTypeName
       source.sourceTypeMeta = sourceTypeMeta
 

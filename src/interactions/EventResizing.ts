@@ -1,13 +1,13 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
-import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../structs/event-mutation'
+import { EventMutation, diffDates, applyMutationToAll } from '../structs/event-mutation'
 import { elementClosest } from '../util/dom-manip'
 import UnzonedRange from '../models/UnzonedRange'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { getElSeg } from '../component/renderers/EventRenderer'
 import { EventInstance } from '../structs/event'
-import { EventStore } from '../structs/event-store'
+import { EventStore, getRelatedEvents } from '../structs/event-store'
 
 export default class EventDragging {
 

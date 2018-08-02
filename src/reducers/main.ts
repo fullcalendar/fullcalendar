@@ -1,10 +1,10 @@
 import Calendar from '../Calendar'
 import { DateComponentRenderState } from '../component/DateComponent'
 import { EventSourceHash } from '../structs/event-source'
-import { reduceEventSourceHash } from './event-sources'
-import { reduceEventStore } from './event-store'
 import { DateMarker } from '../datelib/marker'
 import { assignTo } from '../util/object'
+import { reduceEventSourceHash } from './event-sources'
+import { reduceEventStore } from './event-store'
 
 export interface CalendarState extends DateComponentRenderState {
   loadingLevel: number
@@ -46,6 +46,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     case 'SET_DATE_PROFILE':
       if (action.dateProfile.isValid) {
         newState.dateProfile = action.dateProfile
+        // why not just always use action.dateProfile.date ???
         newState.currentDate = action.dateProfile.date // might have been constrained by view dates
         calendar.view.updateMiscDateProps(action.dateProfile)
       }

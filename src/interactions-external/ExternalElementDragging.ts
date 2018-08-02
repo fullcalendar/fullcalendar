@@ -2,7 +2,7 @@ import ElementDragging from '../dnd/ElementDragging'
 import HitDragging, { Hit } from '../interactions/HitDragging'
 import browserContext from '../common/browser-context'
 import { PointerDragEvent } from '../dnd/PointerDragging'
-import { parseDef, createInstance, EventDef, EventInstance } from '../structs/event'
+import { parseEventDef, createEventInstance, EventDef, EventInstance } from '../structs/event'
 import { EventStore, createEmptyEventStore } from '../structs/event-store'
 import UnzonedRange from '../models/UnzonedRange'
 import * as externalHooks from '../exports'
@@ -149,7 +149,7 @@ export default class ExternalElementDragging {
 // ----------------------------------------------------------------------------------------------------
 
 function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventRes {
-  let def = parseDef(
+  let def = parseEventDef(
     dragMeta.leftoverProps || {},
     '',
     dateSpan.isAllDay,
@@ -168,7 +168,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
     calendar.dateEnv.add(start, dragMeta.duration) :
     calendar.getDefaultEventEnd(dateSpan.isAllDay, start)
 
-  let instance = createInstance(def.defId, new UnzonedRange(start, end))
+  let instance = createEventInstance(def.defId, new UnzonedRange(start, end))
 
   return { def, instance }
 }
