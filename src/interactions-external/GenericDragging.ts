@@ -1,24 +1,33 @@
 import ExternalElementDragging from './ExternalElementDragging'
-import DumbElementDragging from './DumbElementDragging'
+import DumbElementDragging, { DumbElementDraggingSettings } from './DumbElementDragging'
 
-let externalDragging
+// TODO: change file
 
-// TODO: protect against multiple enables/disables
+export class GenericDragging {
 
-export default {
+  dragging: DumbElementDragging | null = null
+  externalDragging: ExternalElementDragging | null = null
+  isEnabled: boolean = false
 
-  enable(options) {
-    let dragging = new DumbElementDragging(options || {})
-    externalDragging = new ExternalElementDragging(dragging)
-  },
+  enable(options?: DumbElementDraggingSettings) {
+    if (!this.isEnabled) {
+      this.isEnabled = true
+
+      new ExternalElementDragging(
+        this.dragging = new DumbElementDragging(options || {})
+      )
+    }
+  }
 
   disable() {
-    if (externalDragging) {
-      externalDragging.destroy()
-      externalDragging = null
+    if (this.isEnabled) {
+      this.isEnabled = false
+
+      this.dragging!.destroy()
+      this.dragging = null
     }
   }
 
 }
 
-
+export default new GenericDragging()

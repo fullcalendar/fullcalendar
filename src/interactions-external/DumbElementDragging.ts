@@ -1,7 +1,14 @@
 import PointerDragging, { PointerDragEvent } from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 
-/* needs to fire events:
+// TODO: rename file InferredElementDragging
+
+export interface DumbElementDraggingSettings {
+  itemSelector?: string
+  mirrorSelector?: string
+}
+
+/* emits:
 - pointerdown
 - dragstart
 - dragmove
@@ -10,21 +17,21 @@ import ElementDragging from '../dnd/ElementDragging'
 */
 export default class DumbElementDragging extends ElementDragging {
 
-  options: any
   pointer: PointerDragging
-  currentMirrorEl: HTMLElement
   shouldIgnoreMove: boolean = false
+  mirrorSelector: string
+  currentMirrorEl: HTMLElement | null = null
 
-  constructor(options) {
+  constructor(options: DumbElementDraggingSettings) {
     super()
 
-    this.options = options
-
     let pointer = this.pointer = new PointerDragging(document)
-    pointer.selector = options.itemSelector || '[data-event]' // TODO: better
+    pointer.selector = options.itemSelector || '[data-event]'
     pointer.emitter.on('pointerdown', this.handlePointerDown)
     pointer.emitter.on('pointermove', this.handlePointerMove)
     pointer.emitter.on('pointerup', this.handlePointerUp)
+
+    this.mirrorSelector = options.mirrorSelector || ''
   }
 
   destroy() {
@@ -66,8 +73,9 @@ export default class DumbElementDragging extends ElementDragging {
         this.currentMirrorEl = null
       }
     } else {
-      let selector = this.options.mirrorSelector
-      let mirrorEl = selector ? document.querySelector(selector) as HTMLElement : null
+      let mirrorEl = this.mirrorSelector ?
+        document.querySelector(this.mirrorSelector) as HTMLElement :
+        null
 
       if (mirrorEl) {
         this.currentMirrorEl = mirrorEl

@@ -1,5 +1,14 @@
-import { createDuration, Duration } from '../datelib/duration'
+import { createDuration, Duration, DurationInput } from '../datelib/duration'
 import { refineProps } from '../reducers/utils'
+
+export interface DragMetaInput {
+  time?: DurationInput
+  duration?: DurationInput
+  create?: boolean
+  stick?: boolean
+  [extendedPropName: string]: any
+  // TODO: somehow join with EventInput, but minus datetime props
+}
 
 export interface DragMeta {
   time: Duration | null
@@ -16,7 +25,7 @@ const DRAG_META_PROPS = {
   stick: Boolean
 }
 
-export function parseDragMeta(raw: object): DragMeta {
+export function parseDragMeta(raw: DragMetaInput): DragMeta {
   let leftoverProps = {}
   let refined = refineProps(raw, DRAG_META_PROPS, leftoverProps)
 

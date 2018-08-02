@@ -8,7 +8,7 @@ import * as externalHooks from '../exports'
 import { DateSpan } from '../reducers/date-span'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../reducers/event-interaction'
-import { DragMeta, parseDragMeta } from '../structs/drag-meta'
+import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 
 export interface EventRes { // TODO: relate this to EventRenderRange?
   def: EventDef
@@ -28,7 +28,7 @@ export default class ExternalElementDragging {
   explicitDragMeta: DragMeta | null = null
   dragMeta: DragMeta | null = null
 
-  constructor(dragging: ElementDragging, rawEventDragData?: DragMeta) {
+  constructor(dragging: ElementDragging, rawEventDragData?: DragMetaInput) {
 
     let hitDragging = this.hitDragging = new HitDragging(dragging, browserContext.componentHash)
     hitDragging.requireInitial = false // will start outside of a component

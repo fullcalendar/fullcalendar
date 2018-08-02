@@ -1,18 +1,16 @@
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import ExternalElementDragging from './ExternalElementDragging'
+import { DragMetaInput } from '../structs/drag-meta'
 
-export interface ExternalDraggableEventSettings {
-  el: HTMLElement
-  event?: any
-}
+// TODO: somehow accept settings for FeaturefulElementDragging
 
 export default class ExternalDraggableEvent {
 
   dragging: FeaturefulElementDragging
 
-  constructor(settings: ExternalDraggableEventSettings) {
-    this.dragging = new FeaturefulElementDragging(settings.el)
-    new ExternalElementDragging(this.dragging, settings.event)
+  constructor(el: HTMLElement, dragMeta?: DragMetaInput) {
+    this.dragging = new FeaturefulElementDragging(el)
+    new ExternalElementDragging(this.dragging, dragMeta)
   }
 
   destroy() {
