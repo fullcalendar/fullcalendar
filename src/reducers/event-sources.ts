@@ -1,99 +1,14 @@
 import { assignTo } from '../util/object'
-import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
-import { EventInput } from './event-store'
-import { ClassNameInput, parseClassName, refineProps } from './utils'
 import { warn } from '../util/misc'
+import { EventSource, EventSourceHash, parseSource, sourceTypes } from '../structs/event-source'
 
-// types
-
-export interface EventSourceInput {
-  id?: string | number
-  allDayDefault?: boolean
-  eventDataTransform?: any
-  editable?: boolean
-  startEditable?: boolean
-  durationEditable?: boolean
-  overlap?: any
-  constraint?: any
-  rendering?: string
-  className?: ClassNameInput
-  color?: string
-  backgroundColor?: string
-  borderColor?: string
-  textColor?: string
-  success?: (eventInputs: EventInput[]) => void
-  failure?: (errorObj: any) => void
-  [otherProp: string]: any
-}
-
-export interface EventSource {
-  sourceId: string
-  sourceType: string
-  sourceTypeMeta: any
-  publicId: string
-  isFetching: boolean
-  latestFetchId: string | null
-  fetchRange: UnzonedRange
-  allDayDefault: boolean | null
-  eventDataTransform: any
-  editable: boolean | null
-  startEditable: boolean | null
-  durationEditable: boolean | null
-  overlap: any
-  constraint: any
-  rendering: string | null
-  className: string[]
-  color: string | null
-  backgroundColor: string | null
-  borderColor: string | null
-  textColor: string | null
-  success?: (eventInputs: EventInput[]) => void
-  failure?: (errorObj: any) => void
-}
-
-export type EventSourceHash = { [sourceId: string]: EventSource }
-
-export interface EventSourceTypeSettings {
-  parseMeta: (raw: any) => any
-  fetch: (
-    arg: {
-      eventSource: EventSource
-      calendar: Calendar
-      range: UnzonedRange
-    },
-    success: (rawEvents: EventInput) => void,
-    failure: (errorObj: any) => void
-  ) => void
-}
-
-// vars
-
-const SIMPLE_SOURCE_PROPS = {
-  allDayDefault: Boolean,
-  eventDataTransform: null,
-  editable: Boolean,
-  startEditable: Boolean,
-  durationEditable: Boolean,
-  overlap: null,
-  constraint: null,
-  rendering: String,
-  className: parseClassName,
-  color: String,
-  backgroundColor: String,
-  borderColor: String,
-  textColor: String,
-  success: null,
-  failure: null
-}
-
-let sourceTypes: { [sourceTypeName: string]: EventSourceTypeSettings } = {}
 let guid = 0
 
 // reducers
 
 export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, calendar: Calendar): EventSourceHash {
-  let eventSource
+  let eventSource: EventSource
 
   switch (action.type) {
 
@@ -223,32 +138,4 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
     default:
       return sourceHash
   }
-}
-
-// parsing
-
-export function registerSourceType(type: string, settings: EventSourceTypeSettings) {
-  sourceTypes[type] = settings
-}
-
-function parseSource(raw: EventSourceInput): EventSource {
-  for (let sourceTypeName in sourceTypes) {
-    let sourceTypeSettings = sourceTypes[sourceTypeName]
-    let sourceTypeMeta = sourceTypeSettings.parseMeta(raw)
-
-    if (sourceTypeMeta) {
-      let source: EventSource = refineProps(raw, SIMPLE_SOURCE_PROPS)
-      source.sourceId = String(guid++)
-      source.sourceType = sourceTypeName
-      source.sourceTypeMeta = sourceTypeMeta
-
-      if (raw.id != null) {
-        source.publicId = String(raw.id)
-      }
-
-      return source
-    }
-  }
-
-  return null
 }

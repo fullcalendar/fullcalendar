@@ -1,9 +1,9 @@
 import Calendar from '../Calendar'
 import UnzonedRange from '../models/UnzonedRange'
-import { EventInput } from './event-store'
 import { assignTo } from '../util/object'
-import { expandRecurring } from './recurring-events'
-import { EventStore, parseDef, createInstance } from './event-store'
+import { expandRecurring } from './recurring-event'
+import { EventInput, parseDef, createInstance } from './event'
+import { EventStore } from './event-store'
 
 export type BusinessHourDef = boolean | EventInput | EventInput[] // TODO: rename to plural?
 
@@ -28,8 +28,9 @@ export function buildBusinessHourEventStore(
     instances: {}
   }
 
+  // TODO: join with event-store
   for (let eventInput of eventInputs) {
-    let def = parseDef(eventInput, null, isAllDay, true)
+    let def = parseDef(eventInput, '', isAllDay, true) // nooo, do this second, with lefotvers
     let ranges = expandRecurring(eventInput, framingRange, calendar).ranges
 
     eventStore.defs[def.defId] = def

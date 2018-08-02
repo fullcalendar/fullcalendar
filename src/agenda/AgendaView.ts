@@ -13,10 +13,10 @@ import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
-import { EventStore } from '../reducers/event-store'
+import { EventStore } from '../structs/event-store'
 import { RenderForceFlags } from '../component/Component'
 import { DateComponentRenderState } from '../component/DateComponent'
-import { EventInteractionState } from '../reducers/event-interaction'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 import reselector from '../util/reselector'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5

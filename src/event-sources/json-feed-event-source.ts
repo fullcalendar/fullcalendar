@@ -2,7 +2,7 @@ import UnzonedRange from '../models/UnzonedRange'
 import * as request from 'superagent'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
-import { registerSourceType } from './event-sources'
+import { registerSourceType } from '../structs/event-source'
 
 interface JsonFeedMeta {
   url: string

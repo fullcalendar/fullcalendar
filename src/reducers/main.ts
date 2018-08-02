@@ -1,6 +1,7 @@
 import Calendar from '../Calendar'
 import { DateComponentRenderState } from '../component/DateComponent'
-import { EventSourceHash, reduceEventSourceHash } from './event-sources'
+import { EventSourceHash } from '../structs/event-source'
+import { reduceEventSourceHash } from './event-sources'
 import { reduceEventStore } from './event-store'
 import { DateMarker } from '../datelib/marker'
 import { assignTo } from '../util/object'

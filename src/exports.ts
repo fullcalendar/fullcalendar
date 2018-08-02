@@ -106,8 +106,8 @@ export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
 export { DateFormatter, createFormatter } from './datelib/formatting'
 export { parse as parseMarker } from './datelib/parsing'
 
-export { registerSourceType } from './reducers/event-sources'
-export { refineProps } from './reducers/utils'
+export { registerSourceType } from './structs/event-source'
+export { refineProps } from './util/misc'
 
 export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'
 export { default as ElementDragging } from './dnd/ElementDragging'

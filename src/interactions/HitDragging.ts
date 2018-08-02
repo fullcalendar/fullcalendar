@@ -2,7 +2,7 @@ import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
-import { DateSpan, isDateSpansEqual } from '../reducers/date-span'
+import { DateSpan, isDateSpansEqual } from '../structs/date-span'
 import { computeRect } from '../util/dom-geom'
 import { constrainPoint, intersectRects, getRectCenter, diffPoints, Rect, Point } from '../util/geom'
 

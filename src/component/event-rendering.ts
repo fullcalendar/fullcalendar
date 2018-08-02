@@ -1,5 +1,6 @@
 import UnzonedRange from '../models/UnzonedRange'
-import { EventStore, EventDef, EventInstance } from './event-store'
+import { EventDef, EventInstance } from '../structs/event'
+import { EventStore } from '../structs/event-store'
 
 export interface EventRenderRange {
   eventDef: EventDef

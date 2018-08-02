@@ -1,5 +1,5 @@
 import { createDuration, Duration, DurationInput } from '../datelib/duration'
-import { refineProps } from '../reducers/utils'
+import { refineProps } from '../util/misc'
 
 export interface DragMetaInput {
   time?: DurationInput

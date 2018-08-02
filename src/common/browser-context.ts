@@ -6,7 +6,7 @@ import EventClicking from '../interactions/EventClicking'
 import EventHovering from '../interactions/EventHovering'
 import EventDragging from '../interactions/EventDragging'
 import EventResizing from '../interactions/EventResizing'
-import { DateSpan } from '../reducers/date-span'
+import { DateSpan } from '../structs/date-span'
 import Calendar from '../Calendar'
 
 export class BrowserContext {

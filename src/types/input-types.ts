@@ -4,7 +4,7 @@ https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalenda
 */
 
 import View from '../View'
-import { EventSourceInput } from '../reducers/event-sources'
+import { EventSourceInput } from '../structs/event-source'
 import { Duration } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
 import { FormatterInput } from '../datelib/formatting'

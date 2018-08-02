@@ -6,7 +6,7 @@ import './basic/config'
 import './agenda/config'
 import './list/config'
 
-import './reducers/json-feed-event-source'
-import './reducers/array-event-source'
+import './event-sources/json-feed-event-source'
+import './event-sources/array-event-source'
 
 export = exportHooks

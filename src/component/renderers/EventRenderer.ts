@@ -3,7 +3,7 @@ import { DateMarker } from '../../datelib/marker'
 import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
-import { EventRenderRange } from '../../reducers/event-rendering'
+import { EventRenderRange } from '../event-rendering'
 import { Seg } from '../DateComponent'
 
 

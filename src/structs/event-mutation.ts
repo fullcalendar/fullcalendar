@@ -1,7 +1,8 @@
 import UnzonedRange from '../models/UnzonedRange'
 import { diffDayAndTime, diffDays, startOfDay, addDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
-import { EventStore, EventDef, EventInstance } from './event-store'
+import { EventStore } from './event-store'
+import { EventDef, EventInstance } from './event'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 
@@ -68,6 +69,7 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
   return newStore
 }
 
+// TODO: move to event-store
 export function mergeStores(store0: EventStore, store1: EventStore): EventStore {
   return {
     defs: assignTo({}, store0.defs, store1.defs),
@@ -130,6 +132,7 @@ function applyMutationToInstance(
   return copy
 }
 
+// best place?
 export function diffDates(date0, date1, dateEnv, largeUnit) {
   if (largeUnit === 'year') {
     return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')!

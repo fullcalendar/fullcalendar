@@ -18,7 +18,7 @@ import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import DateComponent, { Seg } from '../component/DateComponent'
-import { EventStore } from '../reducers/event-store'
+import { EventStore } from '../structs/event-store'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
 

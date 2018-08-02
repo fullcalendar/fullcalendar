@@ -10,8 +10,8 @@ import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDu
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import DateComponent, { Seg } from '../component/DateComponent'
-import { DateSpan } from '../reducers/date-span'
-import { EventStore } from '../reducers/event-store'
+import { DateSpan } from '../structs/date-span'
+import { EventStore } from '../structs/event-store'
 import { Hit } from '../interactions/HitDragging'
 
 /* A component that renders one or more columns of vertical time slots

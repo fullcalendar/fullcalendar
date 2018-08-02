@@ -1,4 +1,4 @@
-import { EventStore } from './event-store'
+import { EventStore } from '../structs/event-store'
 import { Seg } from '../component/DateComponent'
 
 export interface EventInteractionState {

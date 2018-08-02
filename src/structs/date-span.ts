@@ -1,6 +1,6 @@
 import UnzonedRange from '../models/UnzonedRange'
 import { DateInput, DateEnv } from '../datelib/env'
-import { refineProps } from '../reducers/utils'
+import { refineProps } from '../util/misc'
 
 export interface DateSpanInput {
   start: DateInput

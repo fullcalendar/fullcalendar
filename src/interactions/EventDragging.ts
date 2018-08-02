@@ -2,14 +2,14 @@ import { default as DateComponent, Seg } from '../component/DateComponent'
 import { getElSeg } from '../component/renderers/EventRenderer'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
-import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../reducers/event-mutation'
+import { EventMutation, diffDates, getRelatedEvents, applyMutationToAll } from '../structs/event-mutation'
 import browserContext from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import { EventStore, createEmptyEventStore } from '../reducers/event-store'
+import { EventStore, createEmptyEventStore } from '../structs/event-store'
 import Calendar from '../Calendar'
-import { EventInteractionState } from '../reducers/event-interaction'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 
 export default class EventDragging {
 

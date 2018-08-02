@@ -1,5 +1,5 @@
-import { registerSourceType } from './event-sources'
-import { EventInput } from './event-store'
+import { registerSourceType } from '../structs/event-source'
+import { EventInput } from '../structs/event'
 
 registerSourceType('array', {
 
