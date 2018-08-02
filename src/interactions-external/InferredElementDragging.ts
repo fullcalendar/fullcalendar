@@ -6,12 +6,11 @@ export interface InferredElementDraggingSettings {
   mirrorSelector?: string
 }
 
-/* emits:
-- pointerdown
-- dragstart
-- dragmove
-- pointerup
-- dragend
+/*
+Detects when a *THIRD-PARTY* drag-n-drop system interacts with elements.
+The third-party system is responsible for drawing the visuals effects of the drag.
+This class simply monitors for pointer movements and fires events.
+It also has the ability to hide the moving element (the "mirror") during the drag.
 */
 export default class InferredElementDragging extends ElementDragging {
 
@@ -40,6 +39,7 @@ export default class InferredElementDragging extends ElementDragging {
     this.emitter.trigger('pointerdown', ev)
 
     if (!this.shouldIgnoreMove) {
+      // fire dragstart right away. does not support delay or min-distance
       this.emitter.trigger('dragstart', ev)
     }
   }
@@ -54,6 +54,7 @@ export default class InferredElementDragging extends ElementDragging {
     this.emitter.trigger('pointerup', ev)
 
     if (!this.shouldIgnoreMove) {
+      // fire dragend right away. does not support a revert animation
       this.emitter.trigger('dragend', ev)
     }
   }

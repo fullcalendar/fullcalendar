@@ -1,7 +1,10 @@
 import ExternalElementDragging from './ExternalElementDragging'
 import InferredElementDragging, { InferredElementDraggingSettings } from './InferredElementDragging'
 
-// TODO: change file
+/*
+The public API to the system that bridges third-party drag-n-drop systems with FullCalendar.
+This class is instantiated as a singleton.
+*/
 
 export class GenericDragging {
 
@@ -30,4 +33,4 @@ export class GenericDragging {
 
 }
 
-export default new GenericDragging()
+export default new GenericDragging() // singleton

@@ -19,12 +19,9 @@
     );
 
     eventEls.forEach(function(eventEl) {
-      new FullCalendar.Draggable({
-        el: eventEl,
-        event: {
-          title: eventEl.innerText.trim(),
-          stick: true
-        }
+      new FullCalendar.Draggable(eventEl, {
+        title: eventEl.innerText.trim(),
+        stick: true
       });
     });
 
