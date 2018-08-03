@@ -70,7 +70,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
         dateProfile: calendar.view.computeDateProfile(
-          calendar.dateEnv.addYears(newState.dateProfile.date, -1)
+          calendar.dateEnv.addYears(newState.dateProfile.currentDate, -1)
         )
       })
       break
@@ -79,7 +79,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
         dateProfile: calendar.view.computeDateProfile(
-          calendar.dateEnv.addYears(newState.dateProfile.date, 1)
+          calendar.dateEnv.addYears(newState.dateProfile.currentDate, 1)
         )
       })
       break
@@ -95,7 +95,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
         dateProfile: calendar.view.computeDateProfile(
-          calendar.dateEnv.add(newState.dateProfile.date, action.delta)
+          calendar.dateEnv.add(newState.dateProfile.currentDate, action.delta)
         )
       })
       break

@@ -682,7 +682,7 @@ export default class Calendar {
 
   // for external API
   getDate(): Date {
-    return this.dateEnv.toDate(this.state.dateProfile.date)
+    return this.dateEnv.toDate(this.state.dateProfile.currentDate)
   }
 
 

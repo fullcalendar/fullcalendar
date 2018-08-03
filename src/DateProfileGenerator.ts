@@ -5,16 +5,16 @@ import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rang
 
 
 export interface DateProfile {
-  validRange: OpenDateRange
+  currentDate: DateMarker
   currentRange: DateRange
   currentRangeUnit: string
   isRangeAllDay: boolean
+  validRange: OpenDateRange
   activeRange: DateRange
   renderRange: DateRange
   minTime: Duration
   maxTime: Duration
   isValid: boolean
-  date: DateMarker // TODO: rename to currentDate
   dateIncrement: Duration
 }
 
@@ -44,11 +44,11 @@ export default class DateProfileGenerator {
 
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
-  buildPrev(currentDateProfile): DateProfile {
+  buildPrev(currentDateProfile: DateProfile): DateProfile {
     const dateEnv = this._view.calendar.dateEnv
 
     let prevDate = dateEnv.subtract(
-      dateEnv.startOf(currentDateProfile.date, currentDateProfile.currentRangeUnit),
+      dateEnv.startOf(currentDateProfile.currentDate, currentDateProfile.currentRangeUnit),
       currentDateProfile.dateIncrement
     )
 
@@ -57,11 +57,11 @@ export default class DateProfileGenerator {
 
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
-  buildNext(currentDateProfile): DateProfile {
+  buildNext(currentDateProfile: DateProfile): DateProfile {
     const dateEnv = this._view.calendar.dateEnv
 
     let nextDate = dateEnv.add(
-      dateEnv.startOf(currentDateProfile.date, currentDateProfile.currentRangeUnit),
+      dateEnv.startOf(currentDateProfile.currentDate, currentDateProfile.currentRangeUnit),
       currentDateProfile.dateIncrement
     )
 
@@ -72,7 +72,7 @@ export default class DateProfileGenerator {
   // Builds a structure holding dates/ranges for rendering around the given date.
   // Optional direction param indicates whether the date is being incremented/decremented
   // from its previous value. decremented = -1, incremented = 1 (default).
-  build(date: DateMarker, direction?, forceToValid = false): DateProfile {
+  build(currentDate: DateMarker, direction?, forceToValid = false): DateProfile {
     let validRange: DateRange
     let minTime = null
     let maxTime = null
@@ -86,10 +86,10 @@ export default class DateProfileGenerator {
     validRange = this.trimHiddenDays(validRange)
 
     if (forceToValid) {
-      date = constrainMarkerToRange(date, validRange)
+      currentDate = constrainMarkerToRange(currentDate, validRange)
     }
 
-    currentInfo = this.buildCurrentRangeInfo(date, direction)
+    currentInfo = this.buildCurrentRangeInfo(currentDate, direction)
     isRangeAllDay = /^(year|month|week|day)$/.test(currentInfo.unit)
     renderRange = this.buildRenderRange(
       this.trimHiddenDays(currentInfo.range),
@@ -109,7 +109,7 @@ export default class DateProfileGenerator {
     activeRange = intersectRanges(activeRange, validRange) // might return null
 
     if (activeRange) {
-      date = constrainMarkerToRange(date, activeRange)
+      currentDate = constrainMarkerToRange(currentDate, activeRange)
     }
 
     // it's invalid if the originally requested date is not contained,
@@ -121,6 +121,8 @@ export default class DateProfileGenerator {
       // an object with optional start and end properties.
       validRange: validRange,
 
+      currentDate,
+
       // range the view is formally responsible for.
       // for example, a month view might have 1st-31st, excluding padded dates
       currentRange: currentInfo.range,
@@ -128,25 +130,23 @@ export default class DateProfileGenerator {
       // name of largest unit being displayed, like "month" or "week"
       currentRangeUnit: currentInfo.unit,
 
-      isRangeAllDay: isRangeAllDay,
+      isRangeAllDay,
 
       // dates that display events and accept drag-n-drop
       // will be `null` if no dates accept events
-      activeRange: activeRange,
+      activeRange,
 
       // date range with a rendered skeleton
       // includes not-active days that need some sort of DOM
-      renderRange: renderRange,
+      renderRange,
 
       // Duration object that denotes the first visible time of any given day
-      minTime: minTime,
+      minTime,
 
       // Duration object that denotes the exclusive visible end time of any given day
-      maxTime: maxTime,
+      maxTime,
 
-      isValid: isValid,
-
-      date: date,
+      isValid,
 
       // how far the current date will move for a prev/next operation
       dateIncrement: this.buildDateIncrement(currentInfo.duration)
