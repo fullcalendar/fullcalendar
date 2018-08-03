@@ -5,6 +5,9 @@ import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 
+/*
+*/
+
 export type EventRenderingChoice = '' | 'background' | 'inverse-background' | 'none'
 
 export interface EventNonDateInput {

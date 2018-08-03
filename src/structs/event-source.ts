@@ -4,6 +4,7 @@ import { refineProps } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
 
+// TODO: unify with EventNonDateInput
 export interface EventSourceInput {
   id?: string | number
   allDayDefault?: boolean
@@ -21,50 +22,49 @@ export interface EventSourceInput {
   textColor?: string
   success?: (eventInputs: EventInput[]) => void
   failure?: (errorObj: any) => void
-  [otherProp: string]: any
+  [extendedProp: string]: any
 }
 
 export interface EventSource {
   sourceId: string
-  sourceType: string
-  sourceTypeMeta: any
+  sourceDefId: number // one of the few IDs that's a NUMBER not a string
+  meta: any
   publicId: string
   isFetching: boolean
-  latestFetchId: string | null
-  fetchRange: UnzonedRange
+  latestFetchId: string
+  fetchRange: UnzonedRange | null
   allDayDefault: boolean | null
-  eventDataTransform: any
+  eventDataTransform: any // TODO: make this a real type. AND use it
   editable: boolean | null
   startEditable: boolean | null
   durationEditable: boolean | null
   overlap: any
   constraint: any
-  rendering: string | null
+  rendering: string
   className: string[]
-  color: string | null
-  backgroundColor: string | null
-  borderColor: string | null
-  textColor: string | null
-  success?: (eventInputs: EventInput[]) => void
-  failure?: (errorObj: any) => void
+  backgroundColor: string
+  borderColor: string
+  textColor: string
+  success: null | ((eventInputs: EventInput[]) => void)
+  failure: null | ((errorObj: any) => void)
 }
 
-// need this?
 export type EventSourceHash = { [sourceId: string]: EventSource }
 
-export interface EventSourceTypeSettings {
-  parseMeta: (raw: any) => any
-  fetch: (
-    arg: {
-      eventSource: EventSource
-      calendar: Calendar
-      range: UnzonedRange
-    },
-    success: (rawEvents: EventInput) => void,
-    failure: (errorObj: any) => void
-  ) => void
-}
+export type EventSourceFetcher = (
+  arg: {
+    eventSource: EventSource
+    calendar: Calendar
+    range: UnzonedRange
+  },
+  success: (rawEvents: EventInput) => void,
+  failure: (errorObj: any) => void
+) => void
 
+export interface EventSourceDef {
+  parseMeta: (raw: EventSourceInput) => object | null
+  fetch: EventSourceFetcher
+}
 
 const SIMPLE_SOURCE_PROPS = {
   allDayDefault: Boolean,
@@ -84,31 +84,57 @@ const SIMPLE_SOURCE_PROPS = {
   failure: null
 }
 
-export let sourceTypes: { [sourceTypeName: string]: EventSourceTypeSettings } = {}
+let defs: EventSourceDef[] = []
 let uid = 0
 
-export function registerSourceType(type: string, settings: EventSourceTypeSettings) {
-  sourceTypes[type] = settings
+// NOTE: if we ever want to remove defs,
+// we need to null out the entry in the array, not delete it,
+// because our event source IDs rely on the index.
+export function registerEventSourceDef(def: EventSourceDef) {
+  defs.push(def)
 }
 
-export function parseSource(raw: EventSourceInput): EventSource {
-  for (let sourceTypeName in sourceTypes) {
-    let sourceTypeSettings = sourceTypes[sourceTypeName]
-    let sourceTypeMeta = sourceTypeSettings.parseMeta(raw)
+export function getEventSourceDef(id: number): EventSourceDef {
+  return defs[id]
+}
 
-    if (sourceTypeMeta) {
-      let source: EventSource = refineProps(raw, SIMPLE_SOURCE_PROPS)
-      source.sourceId = String(uid++)
-      source.sourceType = sourceTypeName
-      source.sourceTypeMeta = sourceTypeMeta
+export function parseEventSource(raw: EventSourceInput): EventSource | null {
+  for (let i = 0; i < defs.length; i++) {
+    let def = defs[i]
+    let meta = def.parseMeta(raw)
 
-      if (raw.id != null) {
-        source.publicId = String(raw.id)
-      }
-
-      return source
+    if (meta) {
+      return parseEventSourceProps(raw, meta, i)
     }
   }
 
   return null
+}
+
+function parseEventSourceProps(raw: EventSourceInput, meta: object, sourceDefId: number): EventSource {
+  let props = refineProps(raw, SIMPLE_SOURCE_PROPS)
+
+  return {
+    sourceId: String(uid++),
+    sourceDefId,
+    meta,
+    publicId: props.id || '',
+    isFetching: false,
+    latestFetchId: '',
+    fetchRange: null,
+    allDayDefault: props.allDayDefault,
+    eventDataTransform: props.eventDataTransform,
+    editable: props.editable,
+    startEditable: props.startEditable,
+    durationEditable: props.durationEditable,
+    overlap: props.overlap,
+    constraint: props.constraint,
+    rendering: props.rendering || '',
+    className: props.className || [],
+    backgroundColor: props.backgroundColor || props.color || '',
+    borderColor: props.borderColor || props.color || '',
+    textColor: props.textColor,
+    success: props.success,
+    failure: props.failure
+  }
 }

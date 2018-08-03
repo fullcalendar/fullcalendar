@@ -106,7 +106,7 @@ export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
 export { DateFormatter, createFormatter } from './datelib/formatting'
 export { parse as parseMarker } from './datelib/parsing'
 
-export { registerSourceType } from './structs/event-source'
+export { registerEventSourceDef } from './structs/event-source'
 export { refineProps } from './util/misc'
 
 export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'

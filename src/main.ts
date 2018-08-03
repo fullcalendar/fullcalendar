@@ -9,4 +9,6 @@ import './list/config'
 import './event-sources/json-feed-event-source'
 import './event-sources/array-event-source'
 
+import './structs/recurring-event-simple'
+
 export = exportHooks

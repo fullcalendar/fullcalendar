@@ -1,6 +1,10 @@
 import { applyStyle } from './dom-manip'
 import { computeHeightAndMargins } from './dom-geom'
 import { preventDefault } from './dom-event'
+import { DateMarker, startOfDay, addDays, diffDays, diffDayAndTime } from '../datelib/marker'
+import { Duration, asRoughMs, createDuration } from '../datelib/duration'
+import { DateEnv } from '../datelib/env'
+import UnzonedRange from '../models/UnzonedRange'
 
 
 /* FullCalendar-specific DOM Utilities
@@ -392,6 +396,10 @@ export function debounce(func, wait) {
 }
 
 
+/* Object Parsing
+----------------------------------------------------------------------------------------------------------------------*/
+
+
 export function refineProps(rawProps, processorFuncs, leftoverProps?): any {
   let refined = {}
 
@@ -414,4 +422,49 @@ export function refineProps(rawProps, processorFuncs, leftoverProps?): any {
   }
 
   return refined
+}
+
+
+/* Date stuff that doesn't belong in datelib core
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+export function computeAlignedDayRange(range: UnzonedRange): UnzonedRange {
+  let dayCnt = Math.floor(diffDays(range.start, range.end)) || 1
+  let start = startOfDay(range.start)
+  let end = addDays(start, dayCnt)
+  return new UnzonedRange(start, end)
+}
+
+
+export function computeVisibleDayRange(unzonedRange: UnzonedRange, nextDayThreshold: Duration): UnzonedRange {
+  let startDay: DateMarker = startOfDay(unzonedRange.start) // the beginning of the day the range starts
+  let end: DateMarker = unzonedRange.end
+  let endDay: DateMarker = startOfDay(end)
+  let endTimeMS: number = end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
+
+  // If the end time is actually inclusively part of the next day and is equal to or
+  // beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
+  // Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
+  if (endTimeMS && endTimeMS >= asRoughMs(nextDayThreshold)) {
+    endDay = addDays(endDay, 1)
+  }
+
+  // If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
+  if (endDay <= startDay) {
+    endDay = addDays(startDay, 1)
+  }
+
+  return new UnzonedRange(startDay, endDay)
+}
+
+
+export function diffDates(date0: DateMarker, date1: DateMarker, dateEnv: DateEnv, largeUnit?: string) {
+  if (largeUnit === 'year') {
+    return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')!
+  } else if (largeUnit === 'month') {
+    return createDuration(dateEnv.diffWholeMonths(date0, date1), 'month')!
+  } else {
+    return diffDayAndTime(date0, date1) // returns a duration
+  }
 }

@@ -2,6 +2,9 @@ import { createDuration, Duration, DurationInput } from '../datelib/duration'
 import { refineProps } from '../util/misc'
 import { EventNonDateInput } from '../structs/event'
 
+/*
+*/
+
 export interface DragMetaInput extends EventNonDateInput {
   time?: DurationInput
   duration?: DurationInput

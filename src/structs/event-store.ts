@@ -4,52 +4,66 @@ import { expandRecurring } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 
+/*
+*/
+
 export interface EventStore {
   defs: EventDefHash
   instances: EventInstanceHash
-}
-
-export function addRawEvents(eventStore: EventStore, sourceId: string, fetchRange: UnzonedRange, rawEvents: any, calendar: Calendar) {
-  rawEvents.forEach(function(rawEvent: EventInput) {
-    let leftoverProps = {}
-    let recurringDateInfo = expandRecurring(rawEvent, fetchRange, calendar, leftoverProps)
-
-    if (recurringDateInfo) {
-      let def = parseEventDef(leftoverProps, sourceId, recurringDateInfo.isAllDay, recurringDateInfo.hasEnd)
-      eventStore.defs[def.defId] = def
-
-      for (let range of recurringDateInfo.ranges) {
-        let instance = createEventInstance(def.defId, range)
-        eventStore.instances[instance.instanceId] = instance
-      }
-
-    } else {
-      let dateInfo = parseEventDateSpan(rawEvent, sourceId, calendar, leftoverProps)
-
-      if (dateInfo) {
-        let def = parseEventDef(leftoverProps, sourceId, dateInfo.isAllDay, dateInfo.hasEnd)
-        let instance = createEventInstance(def.defId, dateInfo.range, dateInfo.forcedStartTzo, dateInfo.forcedEndTzo)
-
-        eventStore.defs[def.defId] = def
-        eventStore.instances[instance.instanceId] = instance
-      }
-    }
-  })
 }
 
 export function createEmptyEventStore(): EventStore {
   return { defs: {}, instances: {} }
 }
 
-export function mergeStores(store0: EventStore, store1: EventStore): EventStore {
+export function mergeEventStores(store0: EventStore, store1: EventStore): EventStore {
   return {
     defs: assignTo({}, store0.defs, store1.defs),
     instances: assignTo({}, store0.instances, store1.instances)
   }
 }
 
+export function parseEventStore(
+  rawEvents: EventInput[],
+  sourceId: string,
+  fetchRange: UnzonedRange,
+  calendar: Calendar,
+  dest: EventStore = createEmptyEventStore()
+): EventStore {
+
+  for (let rawEvent of rawEvents) {
+    let leftovers = {}
+    let recurringDateSpans = expandRecurring(rawEvent, fetchRange, calendar, leftovers)
+
+    // a recurring event?
+    if (recurringDateSpans) {
+      let def = parseEventDef(leftovers, sourceId, recurringDateSpans.isAllDay, recurringDateSpans.hasEnd)
+      dest.defs[def.defId] = def
+
+      for (let range of recurringDateSpans.ranges) {
+        let instance = createEventInstance(def.defId, range)
+        dest.instances[instance.instanceId] = instance
+      }
+
+    // a non-recurring event
+    } else {
+      let dateSpan = parseEventDateSpan(rawEvent, sourceId, calendar, leftovers)
+
+      if (dateSpan) {
+        let def = parseEventDef(leftovers, sourceId, dateSpan.isAllDay, dateSpan.hasEnd)
+        let instance = createEventInstance(def.defId, dateSpan.range, dateSpan.forcedStartTzo, dateSpan.forcedEndTzo)
+
+        dest.defs[def.defId] = def
+        dest.instances[instance.instanceId] = instance
+      }
+    }
+  }
+
+  return dest
+}
+
 export function getRelatedEvents(eventStore: EventStore, instanceId: string): EventStore {
-  let newStore = { defs: {}, instances: {} } // TODO: better name
+  let dest = createEmptyEventStore()
   let eventInstance = eventStore.instances[instanceId]
   let eventDef = eventStore.defs[eventInstance.defId]
 
@@ -60,7 +74,7 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
       let def = eventStore.defs[defId]
 
       if (def === eventDef || matchGroupId && matchGroupId === def.groupId) {
-        newStore.defs[defId] = def
+        dest.defs[defId] = def
       }
     }
 
@@ -71,10 +85,10 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
         instance === eventInstance ||
         matchGroupId && matchGroupId === eventStore.defs[instance.defId].groupId
       ) {
-        newStore.instances[instanceId] = instance
+        dest.instances[instanceId] = instance
       }
     }
   }
 
-  return newStore
+  return dest
 }

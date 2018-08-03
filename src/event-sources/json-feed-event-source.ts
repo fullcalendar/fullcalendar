@@ -2,7 +2,7 @@ import UnzonedRange from '../models/UnzonedRange'
 import * as request from 'superagent'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
-import { registerSourceType } from '../structs/event-source'
+import { registerEventSourceDef } from '../structs/event-source'
 
 interface JsonFeedMeta {
   url: string
@@ -13,9 +13,9 @@ interface JsonFeedMeta {
   timezoneParam?: string
 }
 
-registerSourceType('json-feed', {
+registerEventSourceDef({
 
-  parseMeta(raw: any): JsonFeedMeta {
+  parseMeta(raw: any): JsonFeedMeta | null {
     if (typeof raw === 'string') { // short form
       raw = { url: raw }
     } else if (!raw || typeof raw !== 'object' || !raw.url) {
@@ -33,14 +33,14 @@ registerSourceType('json-feed', {
   },
 
   fetch(arg, success, failure) {
-    let meta: JsonFeedMeta = arg.eventSource.sourceTypeMeta
+    let meta: JsonFeedMeta = arg.eventSource.meta
     let theRequest
     let requestParams = buildRequestParams(meta, arg.range, arg.calendar)
 
     if (meta.method === 'GET') {
       theRequest = request.get(meta.url).query(requestParams) // querystring params
     } else {
-      theRequest = request(meta.method, this.url).send(requestParams) // body data
+      theRequest = request(meta.method, meta.url).send(requestParams) // body data
     }
 
     theRequest.end((error, res) => {

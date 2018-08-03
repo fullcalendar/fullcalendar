@@ -1,18 +1,19 @@
-import { registerSourceType } from '../structs/event-source'
+import { registerEventSourceDef } from '../structs/event-source'
 import { EventInput } from '../structs/event'
 
-registerSourceType('array', {
+registerEventSourceDef({
 
-  parseMeta(raw: any): EventInput[] {
+  parseMeta(raw: any): EventInput[] | null {
     if (Array.isArray(raw)) { // short form
       return raw
     } else if (Array.isArray(raw.events)) {
       return raw.events
     }
+    return null
   },
 
   fetch(arg, success) {
-    success(arg.eventSource.sourceTypeMeta as EventInput[])
+    success(arg.eventSource.meta as EventInput[])
   }
 
 })

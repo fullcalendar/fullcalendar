@@ -1,6 +1,6 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
-import { EventMutation, diffDates, applyMutationToAll } from '../structs/event-mutation'
+import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { elementClosest } from '../util/dom-manip'
 import UnzonedRange from '../models/UnzonedRange'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
@@ -8,6 +8,7 @@ import { PointerDragEvent } from '../dnd/PointerDragging'
 import { getElSeg } from '../component/renderers/EventRenderer'
 import { EventInstance } from '../structs/event'
 import { EventStore, getRelatedEvents } from '../structs/event-store'
+import { diffDates } from '../util/misc'
 
 export default class EventDragging {
 
@@ -78,7 +79,7 @@ export default class EventDragging {
     }
 
     if (mutation) {
-      let mutatedRelated = applyMutationToAll(relatedEvents, mutation, calendar)
+      let mutatedRelated = applyMutationToEventStore(relatedEvents, mutation, calendar)
 
       calendar.dispatch({
         type: 'SET_EVENT_RESIZE',

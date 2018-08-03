@@ -2,7 +2,7 @@ import { default as DateComponent, Seg } from '../component/DateComponent'
 import { getElSeg } from '../component/renderers/EventRenderer'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
-import { EventMutation, diffDates, applyMutationToAll } from '../structs/event-mutation'
+import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import browserContext from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
@@ -10,6 +10,7 @@ import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { EventStore, getRelatedEvents, createEmptyEventStore } from '../structs/event-store'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
+import { diffDates } from '../util/misc'
 
 export default class EventDragging {
 
@@ -114,7 +115,7 @@ export default class EventDragging {
         validMutation = computeEventMutation(initialHit, hit)
 
         if (validMutation) {
-          mutatedRelatedEvents = applyMutationToAll(relatedEvents, validMutation, receivingCalendar)
+          mutatedRelatedEvents = applyMutationToEventStore(relatedEvents, validMutation, receivingCalendar)
         }
       }
     }

@@ -1,11 +1,13 @@
 import Calendar from '../Calendar'
 import UnzonedRange from '../models/UnzonedRange'
 import { assignTo } from '../util/object'
-import { expandRecurring } from './recurring-event'
-import { EventInput, parseEventDef, createEventInstance } from './event'
-import { EventStore } from './event-store'
+import { EventInput } from './event'
+import { EventStore, parseEventStore } from './event-store'
 
-export type BusinessHourDef = boolean | EventInput | EventInput[] // TODO: rename to plural?
+/*
+*/
+
+export type BusinessHoursDef = boolean | EventInput | EventInput[]
 
 const BUSINESS_HOUR_EVENT_DEFAULTS = {
   startTime: '09:00',
@@ -15,38 +17,21 @@ const BUSINESS_HOUR_EVENT_DEFAULTS = {
   className: 'fc-nonbusiness'
 }
 
-
-export function buildBusinessHourEventStore(
-  input: BusinessHourDef,
+export function buildBusinessHours(
+  input: BusinessHoursDef,
   isAllDay: boolean,
   framingRange: UnzonedRange,
   calendar: Calendar
 ): EventStore {
-  let eventInputs = refineEventInputs(input, isAllDay)
-  let eventStore: EventStore = {
-    defs: {},
-    instances: {}
-  }
-
-  // TODO: join with event-store
-  for (let eventInput of eventInputs) {
-    let def = parseEventDef(eventInput, '', isAllDay, true) // nooo, do this second, with lefotvers
-    let ranges = expandRecurring(eventInput, framingRange, calendar).ranges
-
-    eventStore.defs[def.defId] = def
-
-    for (let range of ranges) {
-      let instance = createEventInstance(def.defId, range)
-
-      eventStore.instances[instance.instanceId] = instance
-    }
-  }
-
-  return eventStore
+  return parseEventStore(
+    refineInputs(input, isAllDay),
+    '',
+    framingRange,
+    calendar
+  )
 }
 
-
-function refineEventInputs(input: BusinessHourDef, isAllDay: boolean): EventInput[] {
+function refineInputs(input: BusinessHoursDef, isAllDay: boolean): EventInput[] {
   let rawDefs: EventInput[]
 
   if (input === true) {

@@ -2,6 +2,9 @@ import UnzonedRange from '../models/UnzonedRange'
 import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 
+/*
+*/
+
 export interface DateSpanInput {
   start: DateInput
   end: DateInput
@@ -21,7 +24,7 @@ const STANDARD_PROPS = {
   isAllDay: Boolean
 }
 
-export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan {
+export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan | null {
   let otherProps = {} as any
   let standardProps = refineProps(raw, STANDARD_PROPS, otherProps)
   let startMeta = standardProps.start ? dateEnv.createMarkerMeta(standardProps.start) : null
@@ -40,6 +43,8 @@ export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan {
 
     return otherProps
   }
+
+  return null
 }
 
 export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {

@@ -1,8 +1,8 @@
 import Calendar from '../Calendar'
 import { filterHash } from '../util/object'
-import { applyMutationToRelated } from '../structs/event-mutation'
+import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance } from '../structs/event'
-import { EventStore, addRawEvents, mergeStores } from '../structs/event-store'
+import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents } from '../structs/event-store'
 
 // reducing
 
@@ -15,11 +15,16 @@ export function reduceEventStore(eventStore: EventStore, action: any, calendar: 
       eventSource = calendar.state.eventSources[action.sourceId]
 
       if (eventSource.latestFetchId === action.fetchId) { // this is checked in event-sources too :(
-        eventStore = excludeSource(eventStore, action.sourceId)
-        addRawEvents(eventStore, action.sourceId, action.fetchRange, action.rawEvents, calendar)
+        return parseEventStore(
+          action.rawEvents,
+          action.sourceId,
+          action.fetchRange,
+          calendar,
+          excludeSource(eventStore, action.sourceId)
+        )
+      } else {
+        return eventStore
       }
-
-      return eventStore
 
     case 'CLEAR_EVENT_SOURCE': // TODO: wire up
       return excludeSource(eventStore, action.sourceId)
@@ -28,7 +33,7 @@ export function reduceEventStore(eventStore: EventStore, action: any, calendar: 
       return applyMutationToRelated(eventStore, action.instanceId, action.mutation, calendar)
 
     case 'ADD_EVENTS':
-      return mergeStores(eventStore, action.eventStore)
+      return mergeEventStores(eventStore, action.eventStore)
 
     case 'REMOVE_EVENTS':
       return excludeEventInstances(eventStore, action.eventStore)
@@ -38,7 +43,7 @@ export function reduceEventStore(eventStore: EventStore, action: any, calendar: 
   }
 }
 
-function excludeEventInstances(eventStore: EventStore, removals: EventStore) {
+function excludeEventInstances(eventStore: EventStore, removals: EventStore): EventStore {
   return {
     defs: eventStore.defs,
     instances: filterHash(eventStore.instances, function(instance: EventInstance) {
@@ -56,5 +61,11 @@ function excludeSource(eventStore: EventStore, sourceId: string): EventStore {
       return eventStore.defs[instance.defId].sourceId !== sourceId
     })
   }
+}
+
+function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
+  let relatedStore = getRelatedEvents(eventStore, instanceId)
+  relatedStore = applyMutationToEventStore(relatedStore, mutation, calendar)
+  return mergeEventStores(eventStore, relatedStore)
 }
 

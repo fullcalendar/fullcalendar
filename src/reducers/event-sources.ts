@@ -1,7 +1,7 @@
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 import { warn } from '../util/misc'
-import { EventSource, EventSourceHash, parseSource, sourceTypes } from '../structs/event-source'
+import { EventSource, EventSourceHash, parseEventSource, getEventSourceDef } from '../structs/event-source'
 
 let uid = 0
 
@@ -13,7 +13,7 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
   switch (action.type) {
 
     case 'ADD_EVENT_SOURCE':
-      eventSource = parseSource(action.rawSource)
+      eventSource = parseEventSource(action.rawSource)
 
       if (eventSource) {
         if (calendar.state.dateProfile) {
@@ -44,7 +44,8 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
       eventSource = sourceHash[action.sourceId]
 
       let fetchId = String(uid++)
-      sourceTypes[eventSource.sourceType].fetch(
+
+      getEventSourceDef(eventSource.sourceDefId).fetch(
         {
           eventSource,
           calendar,

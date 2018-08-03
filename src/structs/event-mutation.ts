@@ -1,10 +1,13 @@
 import UnzonedRange from '../models/UnzonedRange'
-import { diffDayAndTime, diffDays, startOfDay, addDays } from '../datelib/marker'
-import { Duration, createDuration } from '../datelib/duration'
-import { EventStore, mergeStores, getRelatedEvents } from './event-store'
+import { Duration } from '../datelib/duration'
+import { EventStore, createEmptyEventStore } from './event-store'
 import { EventDef, EventInstance } from './event'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
+import { computeAlignedDayRange } from '../util/misc'
+
+/*
+*/
 
 export interface EventMutation {
   startDelta?: Duration
@@ -13,32 +16,25 @@ export interface EventMutation {
   extendedProps?: any // for the def
 }
 
-export function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
-  let relatedStore = getRelatedEvents(eventStore, instanceId)
-  relatedStore = applyMutationToAll(relatedStore, mutation, calendar)
-  return mergeStores(eventStore, relatedStore)
-}
-
-export function applyMutationToAll(eventStore: EventStore, mutation: EventMutation, calendar: Calendar): EventStore {
-  let newStore = { defs: {}, instances: {} }
+// applies to ALL defs/instances within the event store
+export function applyMutationToEventStore(eventStore: EventStore, mutation: EventMutation, calendar: Calendar): EventStore {
+  let dest = createEmptyEventStore()
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
-
-    newStore.defs[defId] = applyMutationToDef(def, mutation)
+    dest.defs[defId] = applyMutationToEventDef(def, mutation)
   }
 
   for (let instanceId in eventStore.instances) {
     let instance = eventStore.instances[instanceId]
-    let def = newStore.defs[instance.defId] // the newly MODIFIED def
-
-    newStore.instances[instanceId] = applyMutationToInstance(instance, def, mutation, calendar)
+    let def = dest.defs[instance.defId] // important to grab the newly modified def
+    dest.instances[instanceId] = applyMutationToEventInstance(instance, def, mutation, calendar)
   }
 
-  return newStore
+  return dest
 }
 
-function applyMutationToDef(eventDef: EventDef, mutation: EventMutation) {
+function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation): EventDef {
   let copy = assignTo({}, eventDef)
 
   if (mutation.standardProps) {
@@ -52,23 +48,19 @@ function applyMutationToDef(eventDef: EventDef, mutation: EventMutation) {
   return copy
 }
 
-function applyMutationToInstance(
+function applyMutationToEventInstance(
   eventInstance: EventInstance,
-  eventDef: EventDef, // after already having been modified
+  eventDef: EventDef, // must first be modified by applyMutationToEventDef
   mutation: EventMutation,
   calendar: Calendar
-) {
+): EventInstance {
   let dateEnv = calendar.dateEnv
   let forceAllDay = mutation.standardProps && mutation.standardProps.isAllDay === true
   let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
   let copy = assignTo({}, eventInstance)
 
   if (forceAllDay) {
-    // TODO: make a util for this?
-    let dayCnt = Math.floor(diffDays(copy.range.start, copy.range.end)) || 1
-    let start = startOfDay(copy.range.start)
-    let end = addDays(start, dayCnt)
-    copy.range = new UnzonedRange(start, end)
+    copy.range = computeAlignedDayRange(copy.range)
   }
 
   if (mutation.startDelta) {
@@ -91,15 +83,4 @@ function applyMutationToInstance(
   }
 
   return copy
-}
-
-// best place?
-export function diffDates(date0, date1, dateEnv, largeUnit) {
-  if (largeUnit === 'year') {
-    return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')!
-  } else if (largeUnit === 'month') {
-    return createDuration(dateEnv.diffWholeMonths(date0, date1), 'month')!
-  } else {
-    return diffDayAndTime(date0, date1) // returns a duration
-  }
 }

@@ -1,5 +1,5 @@
 import * as request from 'superagent'
-import { registerSourceType, refineProps, addDays, assignTo } from 'fullcalendar'
+import { registerSourceDef, refineProps, addDays, assignTo } from 'fullcalendar'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
@@ -11,7 +11,7 @@ const STANDARD_PROPS = {
   data: null
 }
 
-registerSourceType('google-calendar', {
+registerSourceDef({
 
   parseMeta(raw) {
     if (typeof raw === 'string') {
@@ -35,7 +35,7 @@ registerSourceType('google-calendar', {
 
   fetch(arg, onSuccess, onFailure) {
     let calendar = arg.calendar
-    let meta = arg.eventSource.sourceTypeMeta
+    let meta = arg.eventSource.meta
     let apiKey = meta.googleCalendarApiKey || calendar.opt('googleCalendarApiKey')
 
     if (!apiKey) {

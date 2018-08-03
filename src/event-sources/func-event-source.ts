@@ -1,8 +1,8 @@
 import { unpromisify } from '../util/promise'
-import { registerSourceType } from '../structs/event-source'
+import { registerEventSourceDef } from '../structs/event-source'
 import { EventInput } from '../structs/event'
 
-registerSourceType('function', {
+registerEventSourceDef({
 
   parseMeta(raw: any): EventInput[] {
     if (typeof raw === 'function') { // short form
@@ -16,7 +16,7 @@ registerSourceType('function', {
     const dateEnv = arg.calendar.dateEnv
 
     unpromisify(
-      arg.eventSource.sourceTypeMeta({ // the function
+      arg.eventSource.meta({ // the function
         start: dateEnv.toDate(arg.range.start),
         end: dateEnv.toDate(arg.range.end),
         timeZone: dateEnv.timeZone

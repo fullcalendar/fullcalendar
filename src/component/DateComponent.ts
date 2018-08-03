@@ -5,18 +5,19 @@ import Calendar from '../Calendar'
 import View from '../View'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
-import { Duration, createDuration, asRoughMs } from '../datelib/duration'
+import { Duration, createDuration } from '../datelib/duration'
 import { DateSpan } from '../structs/date-span'
 import UnzonedRange from '../models/UnzonedRange'
 import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
 import { EventStore } from '../structs/event-store'
-import { BusinessHourDef, buildBusinessHourEventStore } from '../structs/business-hours'
+import { BusinessHoursDef, buildBusinessHours } from '../structs/business-hours'
 import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { assignTo } from '../util/object'
 import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
+import { computeVisibleDayRange } from '../util/misc'
 
 
 export interface DateComponentRenderState {
@@ -25,8 +26,8 @@ export interface DateComponentRenderState {
   selection: DateSpan | null
   dragState: EventInteractionState | null
   eventResizeState: EventInteractionState | null
-  businessHoursDef: BusinessHourDef // BusinessHourDef's `false` is the empty state
-  selectedEventInstanceId: string | null
+  businessHoursDef: BusinessHoursDef // BusinessHoursDef's `false` is the empty state
+  selectedEventInstanceId: string
 }
 
 // NOTE: for fg-events, eventRange.range is NOT sliced,
@@ -78,7 +79,7 @@ export default abstract class DateComponent extends Component {
   dirtySizeFlags: any = {}
 
   dateProfile: DateProfile = null
-  businessHoursDef: BusinessHourDef = false
+  businessHoursDef: BusinessHoursDef = false
   selection: DateSpan = null
   eventStore: EventStore = null
   dragState: EventInteractionState = null
@@ -494,12 +495,12 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderBusinessHours(businessHoursDef: BusinessHourDef) {
+  renderBusinessHours(businessHoursDef: BusinessHoursDef) {
     if (this.fillRenderer) {
       this.fillRenderer.renderSegs(
         'businessHours',
         this.eventStoreToSegs(
-          buildBusinessHourEventStore(
+          buildBusinessHours(
             businessHoursDef,
             this.hasAllDayBusinessHours,
             this.dateProfile.activeUnzonedRange,
@@ -984,7 +985,7 @@ export default abstract class DateComponent extends Component {
   // Returns the date range of the full days the given range visually appears to occupy.
   // Returns a plain object with start/end, NOT an UnzonedRange!
   computeDayRange(unzonedRange): UnzonedRange {
-    return computeDayRange(unzonedRange, this.nextDayThreshold)
+    return computeVisibleDayRange(unzonedRange, this.nextDayThreshold)
   }
 
 
@@ -1009,26 +1010,4 @@ export default abstract class DateComponent extends Component {
       !elementClosest(el, 'a[data-goto]') // a clickable nav link
   }
 
-}
-
-
-function computeDayRange(unzonedRange: UnzonedRange, nextDayThreshold: Duration): UnzonedRange {
-  let startDay: DateMarker = startOfDay(unzonedRange.start) // the beginning of the day the range starts
-  let end: DateMarker = unzonedRange.end
-  let endDay: DateMarker = startOfDay(end)
-  let endTimeMS: number = end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
-
-  // If the end time is actually inclusively part of the next day and is equal to or
-  // beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
-  // Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-  if (endTimeMS && endTimeMS >= asRoughMs(nextDayThreshold)) {
-    endDay = addDays(endDay, 1)
-  }
-
-  // If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
-  if (endDay <= startDay) {
-    endDay = addDays(startDay, 1)
-  }
-
-  return new UnzonedRange(startDay, endDay)
 }

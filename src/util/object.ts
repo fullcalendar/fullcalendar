@@ -103,7 +103,7 @@ export function filterHash(hash, func) {
 }
 
 
-export function arrayToHash(a) {
+export function arrayToHash(a): { [key: string]: true } {
   let hash = {}
 
   for (let item of a) {
