@@ -47,15 +47,15 @@ export default abstract class View extends DateComponent {
   dateProfileGeneratorClass: any // initialized after class
   dateProfileGenerator: DateProfileGenerator
 
-  // whether minTime/maxTime will affect the activeUnzonedRange. Views must opt-in.
+  // whether minTime/maxTime will affect the activeRange. Views must opt-in.
   // initialized after class
   usesMinMaxTime: boolean
 
   // DEPRECATED
-  start: Date // use activeUnzonedRange
-  end: Date // use activeUnzonedRange
-  intervalStart: Date // use currentUnzonedRange
-  intervalEnd: Date // use currentUnzonedRange
+  start: Date // use activeRange
+  end: Date // use activeRange
+  intervalStart: Date // use currentRange
+  intervalEnd: Date // use currentRange
 
 
   constructor(calendar, viewSpec) {
@@ -94,13 +94,13 @@ export default abstract class View extends DateComponent {
   // Computes what the title at the top of the calendar should be for this view
   computeTitle(dateProfile) {
     let dateEnv = this.getDateEnv()
-    let unzonedRange
+    let range: DateRange
 
     // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
     if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
-      unzonedRange = dateProfile.currentUnzonedRange
+      range = dateProfile.currentRange
     } else { // for day units or smaller, use the actual day range
-      unzonedRange = dateProfile.activeUnzonedRange
+      range = dateProfile.activeRange
     }
 
     // TODO: precompute
@@ -114,8 +114,8 @@ export default abstract class View extends DateComponent {
     }
 
     return dateEnv.formatRange(
-      unzonedRange.start,
-      unzonedRange.end,
+      range.start,
+      range.end,
       createFormatter(rawTitleFormat),
       { isEndExclusive: dateProfile.isRangeAllDay }
     )
@@ -133,8 +133,8 @@ export default abstract class View extends DateComponent {
       return { year: 'numeric', month: 'long' } // like "September 2014"
     } else {
       let days = diffWholeDays(
-        dateProfile.currentUnzonedRange.start,
-        dateProfile.currentUnzonedRange.end
+        dateProfile.currentRange.start,
+        dateProfile.currentRange.end
       )
       if (days !== null && days > 1) {
         // multi-day range. shorter, like "Sep 9 - 10 2014"
@@ -156,7 +156,7 @@ export default abstract class View extends DateComponent {
 
     if ( // reuse current reference if possible, for rendering optimization
       this.dateProfile &&
-      rangesEqual(this.dateProfile.activeUnzonedRange, dateProfile.activeUnzonedRange)
+      rangesEqual(this.dateProfile.activeRange, dateProfile.activeRange)
     ) {
       return this.dateProfile
     }
@@ -170,10 +170,10 @@ export default abstract class View extends DateComponent {
 
     this.title = this.computeTitle(dateProfile)
     // DEPRECATED, but we need to keep it updated...
-    this.start = dateEnv.toDate(dateProfile.activeUnzonedRange.start)
-    this.end = dateEnv.toDate(dateProfile.activeUnzonedRange.end)
-    this.intervalStart = dateEnv.toDate(dateProfile.currentUnzonedRange.start)
-    this.intervalEnd = dateEnv.toDate(dateProfile.currentUnzonedRange.end)
+    this.start = dateEnv.toDate(dateProfile.activeRange.start)
+    this.end = dateEnv.toDate(dateProfile.activeRange.end)
+    this.intervalStart = dateEnv.toDate(dateProfile.currentRange.start)
+    this.intervalEnd = dateEnv.toDate(dateProfile.currentRange.end)
   }
 
 
@@ -428,9 +428,9 @@ export default abstract class View extends DateComponent {
 
   // Remove days from the beginning and end of the range that are computed as hidden.
   // If the whole range is trimmed off, returns null
-  trimHiddenDays(inputUnzonedRange): DateRange | null {
-    let start = inputUnzonedRange.start
-    let end = inputUnzonedRange.end
+  trimHiddenDays(range: DateRange): DateRange | null {
+    let start = range.start
+    let end = range.end
 
     if (start) {
       start = this.skipHiddenDays(start)
@@ -459,7 +459,7 @@ export default abstract class View extends DateComponent {
 
 
   // Incrementing the current day until it is no longer a hidden day, returning a copy.
-  // DOES NOT CONSIDER validUnzonedRange!
+  // DOES NOT CONSIDER validRange!
   // If the initial value of `date` is not a hidden day, don't do anything.
   // Pass `isExclusive` as `true` if you are dealing with an end date.
   // `inc` defaults to `1` (increment one day forward each time)

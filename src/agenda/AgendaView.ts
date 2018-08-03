@@ -349,7 +349,7 @@ agendaTimeGridMethods = {
     let view = this.view
     let calendar = view.calendar
     let dateEnv = calendar.dateEnv
-    let weekStart = this.dateProfile.renderUnzonedRange.start
+    let weekStart = this.dateProfile.renderRange.start
     let weekText
 
     if (this.opt('weekNumbers')) {

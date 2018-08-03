@@ -6,11 +6,11 @@ import { DateRange } from '../datelib/date-range'
 export default class BasicViewDateProfileGenerator extends DateProfileGenerator {
 
   // Computes the date range that will be rendered.
-  buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay): DateRange {
+  buildRenderRange(currentRange, currentRangeUnit, isRangeAllDay): DateRange {
     let dateEnv = this._view.calendar.dateEnv
-    let renderUnzonedRange = super.buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay)
-    let start = renderUnzonedRange.start
-    let end = renderUnzonedRange.end
+    let renderRange = super.buildRenderRange(currentRange, currentRangeUnit, isRangeAllDay)
+    let start = renderRange.start
+    let end = renderRange.end
     let endOfWeek
 
     // year and month views should be aligned with weeks. this is already done for week

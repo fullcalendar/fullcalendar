@@ -845,7 +845,7 @@ export default class Calendar {
     let props = {
       title: view.title,
       activeButton: view.type,
-      isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentUnzonedRange, now),
+      isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentRange, now),
       isPrevEnabled: prevInfo.isValid,
       isNextEnabled: nextInfo.isValid
     }

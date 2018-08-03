@@ -104,21 +104,21 @@ export default class TimeGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  sliceRangeByTimes(unzonedRange) {
+  sliceRangeByTimes(range) {
     let segs = []
     let segRange
     let dayIndex
 
     for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
 
-      segRange = intersectRanges(unzonedRange, this.dayRanges[dayIndex])
+      segRange = intersectRanges(range, this.dayRanges[dayIndex])
 
       if (segRange) {
         segs.push({
           start: segRange.start,
           end: segRange.end,
-          isStart: segRange.start.valueOf() === unzonedRange.start.valueOf(),
-          isEnd: segRange.end.valueOf() === unzonedRange.end.valueOf(),
+          isStart: segRange.start.valueOf() === range.start.valueOf(),
+          isEnd: segRange.end.valueOf() === range.end.valueOf(),
           dayIndex: dayIndex
         })
       }
@@ -250,7 +250,7 @@ export default class TimeGrid extends DateComponent {
     let isRTL = this.isRTL
     let dateProfile = this.dateProfile
     let html = ''
-    let dayStart = startOfDay(dateProfile.renderUnzonedRange.start)
+    let dayStart = startOfDay(dateProfile.renderRange.start)
     let slotTime = dateProfile.minTime
     let slotIterator = createDuration(0)
     let slotDate // will be on the view's first day, but we only care about its time

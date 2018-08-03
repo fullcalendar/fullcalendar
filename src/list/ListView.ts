@@ -72,8 +72,8 @@ export default class ListView extends View {
 
   renderDates() {
     let dateProfile = this.dateProfile
-    let dayStart = startOfDay(dateProfile.renderUnzonedRange.start)
-    let viewEnd = dateProfile.renderUnzonedRange.end
+    let dayStart = startOfDay(dateProfile.renderRange.start)
+    let viewEnd = dateProfile.renderRange.end
     let dayDates: DateMarker[] = []
     let dayRanges: DateRange[] = []
 

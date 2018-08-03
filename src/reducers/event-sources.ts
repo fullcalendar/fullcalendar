@@ -20,7 +20,7 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
           calendar.dispatch({
             type: 'FETCH_EVENT_SOURCE',
             sourceId: eventSource.sourceId,
-            range: calendar.state.dateProfile.activeUnzonedRange
+            range: calendar.state.dateProfile.activeRange
           })
         }
         return assignTo({}, sourceHash, {
@@ -35,7 +35,7 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
         calendar.dispatch({
           type: 'FETCH_EVENT_SOURCE',
           sourceId,
-          range: calendar.state.dateProfile.activeUnzonedRange
+          range: calendar.state.dateProfile.activeRange
         })
       }
       return sourceHash
@@ -110,7 +110,7 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
       }
 
     case 'SET_DATE_PROFILE':
-      let activeRange = action.dateProfile.activeUnzonedRange
+      let activeRange = action.dateProfile.activeRange
 
       for (let sourceId in sourceHash) {
         eventSource = sourceHash[sourceId]

@@ -17,8 +17,8 @@ export interface DayTableInterface {
   bookendCells(trEl: HTMLElement)
   getCellDate(row, col)
   getCellRange(row, col): DateRange
-  sliceRangeByDay(unzonedRange)
-  sliceRangeByRow(unzonedRange)
+  sliceRangeByDay(range)
+  sliceRangeByRow(range)
   renderIntroHtml()
 }
 
@@ -42,8 +42,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let t = (this as any)
     let view = t.view
     let dateProfile = t.dateProfile
-    let date: DateMarker = dateProfile.renderUnzonedRange.start
-    let end: DateMarker = dateProfile.renderUnzonedRange.end
+    let date: DateMarker = dateProfile.renderRange.start
+    let end: DateMarker = dateProfile.renderRange.end
     let dayIndex = -1
     let dayIndices = []
     let dayDates: DateMarker[] = []
@@ -175,9 +175,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 
   // Slices up a date range into a segment for every week-row it intersects with
-  sliceRangeByRow(unzonedRange) {
+  sliceRangeByRow(range) {
     let daysPerRow = this.daysPerRow
-    let normalRange = (this as any).view.computeDayRange(unzonedRange) // make whole-day range, considering nextDayThreshold
+    let normalRange = (this as any).view.computeDayRange(range) // make whole-day range, considering nextDayThreshold
     let rangeFirst = this.getDateDayIndex(normalRange.start) // inclusive first index
     let rangeLast = this.getDateDayIndex(addDays(normalRange.end, -1)) // inclusive last index
     let segs = []
@@ -220,9 +220,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
   // Slices up a date range into a segment for every day-cell it intersects with.
   // TODO: make more DRY with sliceRangeByRow somehow.
-  sliceRangeByDay(unzonedRange) {
+  sliceRangeByDay(range) {
     let daysPerRow = this.daysPerRow
-    let normalRange = (this as any).view.computeDayRange(unzonedRange) // make whole-day range, considering nextDayThreshold
+    let normalRange = (this as any).view.computeDayRange(range) // make whole-day range, considering nextDayThreshold
     let rangeFirst = this.getDateDayIndex(normalRange.start) // inclusive first index
     let rangeLast = this.getDateDayIndex(addDays(normalRange.end, -1)) // inclusive last index
     let segs = []
@@ -321,7 +321,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let view = t.view
     let dateEnv = t.getDateEnv()
     let dateProfile = t.dateProfile
-    let isDateValid =  rangeContainsMarker(dateProfile.activeUnzonedRange, date) // TODO: called too frequently. cache somehow.
+    let isDateValid =  rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let classNames = [
       'fc-day-header',
       view.calendar.theme.getClass('widgetHeader')
@@ -412,7 +412,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let view = t.view
     let dateEnv = t.getDateEnv()
     let dateProfile = t.dateProfile
-    let isDateValid = rangeContainsMarker(dateProfile.activeUnzonedRange, date) // TODO: called too frequently. cache somehow.
+    let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let classes = t.getDayClasses(date)
 
     classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'))

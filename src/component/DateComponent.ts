@@ -503,7 +503,7 @@ export default abstract class DateComponent extends Component {
           buildBusinessHours(
             businessHoursDef,
             this.hasAllDayBusinessHours,
-            this.dateProfile.activeUnzonedRange,
+            this.dateProfile.activeRange,
             this.getCalendar()
           )
         ),
@@ -807,8 +807,8 @@ export default abstract class DateComponent extends Component {
 
 
   eventStoreToSegs(eventStore: EventStore): Seg[] {
-    let activeUnzonedRange = this.dateProfile.activeUnzonedRange
-    let eventRenderRanges = sliceEventStore(eventStore, activeUnzonedRange)
+    let activeRange = this.dateProfile.activeRange
+    let eventRenderRanges = sliceEventStore(eventStore, activeRange)
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
@@ -931,7 +931,7 @@ export default abstract class DateComponent extends Component {
     let todayStart: DateMarker
     let todayEnd: DateMarker
 
-    if (!rangeContainsMarker(this.dateProfile.activeUnzonedRange, date)) {
+    if (!rangeContainsMarker(this.dateProfile.activeRange, date)) {
       classes.push('fc-disabled-day') // TODO: jQuery UI theme?
     } else {
       classes.push('fc-' + DAY_IDS[date.getUTCDay()])
@@ -965,7 +965,7 @@ export default abstract class DateComponent extends Component {
   // Will return `0` if there's not a clean whole interval.
   currentRangeAs(unit) { // PLURAL :(
     let dateEnv = this.getDateEnv()
-    let range = this.dateProfile.currentUnzonedRange
+    let range = this.dateProfile.currentRange
     let res = null
 
     if (unit === 'years') {

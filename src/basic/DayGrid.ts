@@ -243,7 +243,7 @@ export default class DayGrid extends DateComponent {
     let view = this.view
     let dateEnv = this.getDateEnv()
     let html = ''
-    let isDateValid = rangeContainsMarker(this.dateProfile.activeUnzonedRange, date) // TODO: called too frequently. cache somehow.
+    let isDateValid = rangeContainsMarker(this.dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
     let classes
     let weekCalcFirstDow
