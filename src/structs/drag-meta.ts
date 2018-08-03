@@ -3,6 +3,8 @@ import { refineProps } from '../util/misc'
 import { EventNonDateInput } from '../structs/event'
 
 /*
+Information about what will happen when an external element is dragged-and-dropped
+onto a calendar. Contains information for creating an event.
 */
 
 export interface DragMetaInput extends EventNonDateInput {
@@ -10,14 +12,13 @@ export interface DragMetaInput extends EventNonDateInput {
   duration?: DurationInput
   create?: boolean
   stick?: boolean
-  [extendedProp: string]: any
 }
 
 export interface DragMeta {
   time: Duration | null
   duration: Duration | null
   create: boolean // create an event when dropped?
-  stick: boolean // like addEvent's stick parameter
+  stick: boolean // similar to addEvent's stick parameter
   leftoverProps: object
 }
 

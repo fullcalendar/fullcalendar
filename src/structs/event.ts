@@ -6,6 +6,8 @@ import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 
 /*
+Utils for parsing event-input data. Each util parses a subset of the event-input's data.
+It's up to the caller to stitch them together into an aggregate object like an EventStore.
 */
 
 export type EventRenderingChoice = '' | 'background' | 'inverse-background' | 'none'
@@ -69,6 +71,8 @@ export interface EventInstance {
   forcedEndTzo: number | null
 }
 
+// information about an event's dates.
+// only used as an intermediate object. never stored anywhere.
 export interface EventDateSpan {
   isAllDay: boolean
   hasEnd: boolean

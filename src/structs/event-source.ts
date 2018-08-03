@@ -4,9 +4,14 @@ import { refineProps } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
 
+/*
+Parsing and normalization of the EventSource data type, which defines how event data is fetched.
+Contains the plugin system for defining new types if event sources.
+*/
+
+export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
 export type EventSourceSuccessHandler = (eventInputs: EventInput[]) => void
 export type EventSourceFailureHandler = (errorObj: any) => void
-export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
 
 export interface EventSourceInput {
   id?: string | number

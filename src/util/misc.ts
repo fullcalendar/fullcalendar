@@ -452,6 +452,8 @@ export function refineProps(rawProps: GenericHash, processors: GenericHash, defa
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
+// given a timed range, computes an all-day range that has the same exact duration,
+// but whose start time is aligned with the start of the day.
 export function computeAlignedDayRange(range: UnzonedRange): UnzonedRange {
   let dayCnt = Math.floor(diffDays(range.start, range.end)) || 1
   let start = startOfDay(range.start)
@@ -460,6 +462,7 @@ export function computeAlignedDayRange(range: UnzonedRange): UnzonedRange {
 }
 
 
+// given a timed range, computes an all-day range based on how for the end date bleeds into the next day
 export function computeVisibleDayRange(unzonedRange: UnzonedRange, nextDayThreshold: Duration): UnzonedRange {
   let startDay: DateMarker = startOfDay(unzonedRange.start) // the beginning of the day the range starts
   let end: DateMarker = unzonedRange.end

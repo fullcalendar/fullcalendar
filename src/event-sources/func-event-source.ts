@@ -10,13 +10,14 @@ registerEventSourceDef({
     } else if (typeof raw.events === 'function') {
       return raw.events
     }
+    return null
   },
 
   fetch(arg, success, failure) {
     const dateEnv = arg.calendar.dateEnv
 
     unpromisify(
-      arg.eventSource.meta({ // the function
+      arg.eventSource.meta({ // the function returned from parseMeta
         start: dateEnv.toDate(arg.range.start),
         end: dateEnv.toDate(arg.range.end),
         timeZone: dateEnv.timeZone

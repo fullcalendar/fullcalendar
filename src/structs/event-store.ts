@@ -5,6 +5,9 @@ import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 
 /*
+A data structure that encapsulates EventDefs and EventInstances.
+Utils for parsing this data from raw EventInputs.
+Utils for manipulating an EventStore.
 */
 
 export interface EventStore {
@@ -12,23 +15,12 @@ export interface EventStore {
   instances: EventInstanceHash
 }
 
-export function createEmptyEventStore(): EventStore {
-  return { defs: {}, instances: {} }
-}
-
-export function mergeEventStores(store0: EventStore, store1: EventStore): EventStore {
-  return {
-    defs: assignTo({}, store0.defs, store1.defs),
-    instances: assignTo({}, store0.instances, store1.instances)
-  }
-}
-
 export function parseEventStore(
   rawEvents: EventInput[],
   sourceId: string,
   fetchRange: UnzonedRange,
   calendar: Calendar,
-  dest: EventStore = createEmptyEventStore()
+  dest: EventStore = createEmptyEventStore() // specify this arg to append to an existing EventStore
 ): EventStore {
 
   for (let rawEvent of rawEvents) {
@@ -62,6 +54,7 @@ export function parseEventStore(
   return dest
 }
 
+// retrieves events that have the same groupId as the instance specified by `instanceId`
 export function getRelatedEvents(eventStore: EventStore, instanceId: string): EventStore {
   let dest = createEmptyEventStore()
   let eventInstance = eventStore.instances[instanceId]
@@ -91,4 +84,15 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
   }
 
   return dest
+}
+
+export function createEmptyEventStore(): EventStore {
+  return { defs: {}, instances: {} }
+}
+
+export function mergeEventStores(store0: EventStore, store1: EventStore): EventStore {
+  return {
+    defs: assignTo({}, store0.defs, store1.defs),
+    instances: assignTo({}, store0.instances, store1.instances)
+  }
 }

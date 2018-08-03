@@ -7,16 +7,17 @@ import Calendar from '../Calendar'
 import { computeAlignedDayRange } from '../util/misc'
 
 /*
+A data structure for how to modify an EventDef/EventInstance within an EventStore
 */
 
 export interface EventMutation {
   startDelta?: Duration
   endDelta?: Duration
-  standardProps?: any // for the def
+  standardProps?: any // for the def. should not include extendedProps
   extendedProps?: any // for the def
 }
 
-// applies to ALL defs/instances within the event store
+// applies the mutation to ALL defs/instances within the event store
 export function applyMutationToEventStore(eventStore: EventStore, mutation: EventMutation, calendar: Calendar): EventStore {
   let dest = createEmptyEventStore()
 

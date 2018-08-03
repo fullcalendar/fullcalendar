@@ -3,6 +3,8 @@ import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 
 /*
+A data-structure for a date-range that will be visually displayed.
+Contains other metadata like isAllDay, and anything else Components might like to store.
 */
 
 export interface DateSpanInput {

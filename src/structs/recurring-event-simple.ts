@@ -8,6 +8,7 @@ import Calendar from '../Calendar'
 import { EventInput } from './event'
 
 /*
+An implementation of recurring events that only supports every-day or weekly recurrences.
 */
 
 const SIMPLE_RECURRING_PROPS = {

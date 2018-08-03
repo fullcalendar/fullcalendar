@@ -3,6 +3,7 @@ import Calendar from '../Calendar'
 import { EventInput } from './event'
 
 /*
+The plugin system for defining how a recurring event is expanded into individual instances.
 */
 
 export interface RecurringEventDateSpans {
@@ -18,7 +19,12 @@ export type RecurringExpander = (
   leftovers: object
 ) => RecurringEventDateSpans | null
 
+
 let recurringExpanders: RecurringExpander[] = []
+
+export function registerRecurringExpander(expander: RecurringExpander) {
+  recurringExpanders.push(expander)
+}
 
 export function expandRecurring(
   rawEvent: EventInput,
@@ -35,8 +41,4 @@ export function expandRecurring(
   }
 
   return null
-}
-
-export function registerRecurringExpander(expander: RecurringExpander) {
-  recurringExpanders.push(expander)
 }
