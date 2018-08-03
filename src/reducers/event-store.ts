@@ -14,6 +14,8 @@ export function reduceEventStore(eventStore: EventStore, action: any, calendar: 
     case 'RECEIVE_EVENT_SOURCE':
       eventSource = calendar.state.eventSources[action.sourceId]
 
+      // TODO: use eventDataTransform
+
       if (eventSource.latestFetchId === action.fetchId) { // this is checked in event-sources too :(
         return parseEventStore(
           action.rawEvents,

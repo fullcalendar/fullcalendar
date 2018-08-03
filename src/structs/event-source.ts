@@ -4,11 +4,14 @@ import { refineProps } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
 
-// TODO: unify with EventNonDateInput
+export type EventSourceSuccessHandler = (eventInputs: EventInput[]) => void
+export type EventSourceFailureHandler = (errorObj: any) => void
+export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
+
 export interface EventSourceInput {
   id?: string | number
   allDayDefault?: boolean
-  eventDataTransform?: any
+  eventDataTransform?: EventInputTransformer
   editable?: boolean
   startEditable?: boolean
   durationEditable?: boolean
@@ -20,9 +23,9 @@ export interface EventSourceInput {
   backgroundColor?: string
   borderColor?: string
   textColor?: string
-  success?: (eventInputs: EventInput[]) => void
-  failure?: (errorObj: any) => void
-  [extendedProp: string]: any
+  success?: EventSourceSuccessHandler
+  failure?: EventSourceFailureHandler
+  [otherProp: string]: any // in case plugins want more props
 }
 
 export interface EventSource {
@@ -34,7 +37,7 @@ export interface EventSource {
   latestFetchId: string
   fetchRange: UnzonedRange | null
   allDayDefault: boolean | null
-  eventDataTransform: any // TODO: make this a real type. AND use it
+  eventDataTransform: EventInputTransformer
   editable: boolean | null
   startEditable: boolean | null
   durationEditable: boolean | null
@@ -45,8 +48,8 @@ export interface EventSource {
   backgroundColor: string
   borderColor: string
   textColor: string
-  success: (eventInputs: EventInput[]) => void
-  failure: (errorObj: any) => void
+  success: EventSourceSuccessHandler
+  failure: EventSourceFailureHandler
 }
 
 export type EventSourceHash = { [sourceId: string]: EventSource }
@@ -57,8 +60,8 @@ export type EventSourceFetcher = (
     calendar: Calendar
     range: UnzonedRange
   },
-  success: (rawEvents: EventInput) => void,
-  failure: (errorObj: any) => void
+  success: EventSourceSuccessHandler,
+  failure: EventSourceFailureHandler
 ) => void
 
 export interface EventSourceDef {
