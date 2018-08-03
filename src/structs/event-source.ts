@@ -45,8 +45,8 @@ export interface EventSource {
   backgroundColor: string
   borderColor: string
   textColor: string
-  success: null | ((eventInputs: EventInput[]) => void)
-  failure: null | ((errorObj: any) => void)
+  success: (eventInputs: EventInput[]) => void
+  failure: (errorObj: any) => void
 }
 
 export type EventSourceHash = { [sourceId: string]: EventSource }
@@ -68,7 +68,7 @@ export interface EventSourceDef {
 
 const SIMPLE_SOURCE_PROPS = {
   allDayDefault: Boolean,
-  eventDataTransform: null,
+  eventDataTransform: Function,
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
@@ -76,12 +76,11 @@ const SIMPLE_SOURCE_PROPS = {
   constraint: null,
   rendering: String,
   className: parseClassName,
-  color: String,
   backgroundColor: String,
   borderColor: String,
   textColor: String,
-  success: null,
-  failure: null
+  success: Function,
+  failure: Function
 }
 
 let defs: EventSourceDef[] = []
@@ -112,29 +111,24 @@ export function parseEventSource(raw: EventSourceInput): EventSource | null {
 }
 
 function parseEventSourceProps(raw: EventSourceInput, meta: object, sourceDefId: number): EventSource {
-  let props = refineProps(raw, SIMPLE_SOURCE_PROPS)
+  let props = refineProps(raw, SIMPLE_SOURCE_PROPS) as EventSource
 
-  return {
-    sourceId: String(uid++),
-    sourceDefId,
-    meta,
-    publicId: props.id || '',
-    isFetching: false,
-    latestFetchId: '',
-    fetchRange: null,
-    allDayDefault: props.allDayDefault,
-    eventDataTransform: props.eventDataTransform,
-    editable: props.editable,
-    startEditable: props.startEditable,
-    durationEditable: props.durationEditable,
-    overlap: props.overlap,
-    constraint: props.constraint,
-    rendering: props.rendering || '',
-    className: props.className || [],
-    backgroundColor: props.backgroundColor || props.color || '',
-    borderColor: props.borderColor || props.color || '',
-    textColor: props.textColor,
-    success: props.success,
-    failure: props.failure
+  props.isFetching = false
+  props.latestFetchId = ''
+  props.fetchRange = null
+  props.publicId = String(raw.id || '')
+  props.sourceId = String(uid++)
+  props.sourceDefId = sourceDefId
+  props.meta = meta
+
+  if (typeof raw.color === 'string') {
+    if (!props.backgroundColor) {
+      props.backgroundColor = raw.color
+    }
+    if (!props.borderColor) {
+      props.borderColor = raw.color
+    }
   }
+
+  return props
 }

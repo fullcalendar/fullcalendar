@@ -19,14 +19,14 @@ export interface DateSpan {
 }
 
 const STANDARD_PROPS = {
-  start: null, // dont auto-refine
-  end: null, // dont auto-refine
+  start: null,
+  end: null,
   isAllDay: Boolean
 }
 
 export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan | null {
-  let otherProps = {} as any
-  let standardProps = refineProps(raw, STANDARD_PROPS, otherProps)
+  let leftovers = {} as DateSpan
+  let standardProps = refineProps(raw, STANDARD_PROPS, {}, leftovers)
   let startMeta = standardProps.start ? dateEnv.createMarkerMeta(standardProps.start) : null
   let endMeta = standardProps.end ? dateEnv.createMarkerMeta(standardProps.end) : null
   let isAllDay = standardProps.isAllDay
@@ -38,10 +38,10 @@ export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan | 
     }
 
     // use this leftover object as the selection object
-    otherProps.range = new UnzonedRange(startMeta.marker, endMeta.marker)
-    otherProps.isAllDay = isAllDay
+    leftovers.range = new UnzonedRange(startMeta.marker, endMeta.marker)
+    leftovers.isAllDay = isAllDay
 
-    return otherProps
+    return leftovers
   }
 
   return null

@@ -400,22 +400,45 @@ export function debounce(func, wait) {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-export function refineProps(rawProps, processorFuncs, leftoverProps?): any {
-  let refined = {}
+export type GenericHash = { [key: string]: any }
 
-  for (let key in processorFuncs) {
-    if (rawProps[key] == null) {
-      refined[key] = null
-    } else if (processorFuncs[key]) {
-      refined[key] = processorFuncs[key](rawProps[key])
+let emptyFunc = function() { }
+
+// Number and Boolean are only types that defaults or not computed for
+// TODO: write more comments
+export function refineProps(rawProps: GenericHash, processors: GenericHash, defaults: GenericHash = {}, leftoverProps?: GenericHash): GenericHash {
+  let refined: GenericHash = {}
+
+  for (let key in processors) {
+    let processor = processors[key]
+
+    if (rawProps[key] !== undefined) {
+      // found
+      if (processor) { // a refining function?
+        refined[key] = processor(rawProps[key])
+      } else {
+        refined[key] = rawProps[key]
+      }
+    } else if (defaults[key] !== undefined) {
+      // there's an explicit default
+      refined[key] = defaults[key]
     } else {
-      refined[key] = rawProps[key]
+      // must compute a default
+      if (processor === String) {
+        refined[key] = '' // empty string is default for String
+      } else if (processor === Function) {
+        refined[key] = emptyFunc // noop is default for Function
+      } else if (!processor || processor === Number || processor === Boolean) {
+        refined[key] = null // assign null for other non-custom processor funcs
+      } else {
+        refined[key] = processor(null) // run the custom processor func
+      }
     }
   }
 
   if (leftoverProps) {
     for (let key in rawProps) {
-      if (processorFuncs[key] === undefined) {
+      if (processors[key] === undefined) {
         leftoverProps[key] = rawProps[key]
       }
     }

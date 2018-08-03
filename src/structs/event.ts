@@ -81,7 +81,6 @@ export type EventInstanceHash = { [instanceId: string]: EventInstance }
 export type EventDefHash = { [defId: string]: EventDef }
 
 const NON_DATE_PROPS = {
-  id: String,
   groupId: String,
   title: String,
   url: String,
@@ -110,29 +109,31 @@ let uid = 0
 
 export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay: boolean, hasEnd: boolean): EventDef {
   let leftovers = {} as any
-  let props = refineProps(raw, NON_DATE_PROPS, leftovers)
+  let props = refineProps(raw, NON_DATE_PROPS, {}, leftovers) as EventDef
 
-  return {
-    defId: String(uid++),
-    sourceId,
-    publicId: props.id || '',
-    groupId: props.groupId || '',
-    hasEnd,
-    isAllDay,
-    title: props.title || '',
-    url: props.url || '',
-    editable: props.editable,
-    startEditable: props.startEditable,
-    durationEditable: props.durationEditable,
-    constraint: props.constraint,
-    overlap: props.overlap,
-    rendering: props.rendering || '',
-    className: props.className || [],
-    backgroundColor: props.backgroundColor || props.color || '',
-    borderColor: props.borderColor || props.color || '',
-    textColor: props.textColor || '',
-    extendedProps: assignTo(leftovers, props.extendedProps || {})
+  props.defId = String(uid++)
+  props.sourceId = sourceId
+  props.isAllDay = isAllDay
+  props.hasEnd = hasEnd
+
+  if ('id' in leftovers) {
+    props.publicId = String(leftovers.id)
+    delete leftovers.id
   }
+
+  if ('color' in leftovers) {
+    if (!props.backgroundColor) {
+      props.backgroundColor = leftovers.color
+    }
+    if (!props.borderColor) {
+      props.borderColor = leftovers.color
+    }
+    delete leftovers.color
+  }
+
+  props.extendedProps = assignTo(leftovers, props.extendedProps || {})
+
+  return props
 }
 
 export function createEventInstance(
@@ -151,7 +152,7 @@ export function parseEventDateSpan(
   calendar: Calendar,
   leftovers: object
 ): EventDateSpan | null {
-  let dateProps = refineProps(raw, DATE_PROPS, leftovers)
+  let dateProps = refineProps(raw, DATE_PROPS, {}, leftovers)
   let rawStart = dateProps.start
   let startMeta
   let hasEnd = false

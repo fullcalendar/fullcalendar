@@ -93,15 +93,10 @@ export function reduceEventSourceHash(sourceHash: EventSourceHash, action: any, 
       if (eventSource.latestFetchId === action.fetchId) {
 
         if (action.type === 'RECEIVE_EVENT_SOURCE') {
-          if (typeof eventSource.success === 'function') {
-            eventSource.success(action.rawEvents)
-          }
+          eventSource.success(action.rawEvents)
         } else { // failure
           warn(action.error.message, action.error)
-
-          if (typeof eventSource.failure === 'function') {
-            eventSource.failure(action.error)
-          }
+          eventSource.failure(action.error)
         }
 
         return assignTo({}, sourceHash, {

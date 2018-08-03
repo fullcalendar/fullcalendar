@@ -28,15 +28,16 @@ const DRAG_META_PROPS = {
   stick: Boolean
 }
 
+const DRAG_META_DEFAULTS = {
+  create: true,
+  stick: false
+}
+
 export function parseDragMeta(raw: DragMetaInput): DragMeta {
   let leftoverProps = {}
-  let refined = refineProps(raw, DRAG_META_PROPS, leftoverProps)
+  let refined = refineProps(raw, DRAG_META_PROPS, DRAG_META_DEFAULTS, leftoverProps) as DragMeta
 
-  return {
-    time: refined.time,
-    duration: refined.duration,
-    create: refined.create === false ? false : true,
-    stick: refined.stick || false, // TODO: make the default a setting?
-    leftoverProps
-  }
+  refined.leftoverProps = leftoverProps
+
+  return refined
 }
