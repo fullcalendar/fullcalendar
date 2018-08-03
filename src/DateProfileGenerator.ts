@@ -14,7 +14,7 @@ export interface DateProfile {
   minTime: Duration
   maxTime: Duration
   isValid: boolean
-  date: DateMarker
+  date: DateMarker // TODO: rename to currentDate
   dateIncrement: Duration
 }
 

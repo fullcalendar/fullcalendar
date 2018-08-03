@@ -309,14 +309,17 @@ export default class Calendar {
       this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource })
     }
 
-    this.dispatch({ type: 'SET_VIEW_TYPE', viewType: this.opt('defaultView') })
+    this.dispatch({
+      type: 'SET_VIEW_TYPE',
+      viewType: this.opt('defaultView'),
+      dateMarker: this.getInitialDate()
+    })
   }
 
 
   buildInitialState(): CalendarState {
     return {
       loadingLevel: 0,
-      currentDate: this.getInitialDate(),
       dateProfile: null,
       eventSources: {},
       eventStore: {
@@ -679,7 +682,7 @@ export default class Calendar {
 
   // for external API
   getDate(): Date {
-    return this.dateEnv.toDate(this.state.currentDate)
+    return this.dateEnv.toDate(this.state.dateProfile.date)
   }
 
 

@@ -39,7 +39,7 @@ export function parseRange(input: DateRangeInput, dateEnv: DateEnv): OpenDateRan
   return { start, end }
 }
 
-// SIDE-EFFECT: will mutate eventRanges.
+// SIDE-EFFECT: will mutate ranges.
 // Will return a new array result.
 export function invertRanges(ranges: DateRange[], constraintRange: DateRange): DateRange[] {
   let invertedRanges: DateRange[] = []

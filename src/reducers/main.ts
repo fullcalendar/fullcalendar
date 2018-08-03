@@ -1,7 +1,6 @@
 import Calendar from '../Calendar'
 import { DateComponentRenderState } from '../component/DateComponent'
 import { EventSourceHash } from '../structs/event-source'
-import { DateMarker } from '../datelib/marker'
 import { assignTo } from '../util/object'
 import { reduceEventSourceHash } from './event-sources'
 import { reduceEventStore } from './event-store'
@@ -9,7 +8,6 @@ import { reduceEventStore } from './event-store'
 export interface CalendarState extends DateComponentRenderState {
   loadingLevel: number
   eventSources: EventSourceHash
-  currentDate: DateMarker
 }
 
 export function reduce(state: CalendarState, action: any, calendar: Calendar): CalendarState {
@@ -18,7 +16,6 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     eventSources: reduceEventSourceHash(state.eventSources, action, calendar),
     eventStore: reduceEventStore(state.eventStore, action, calendar),
     dateProfile: state.dateProfile,
-    currentDate: state.currentDate,
     selection: state.selection,
     dragState: state.dragState,
     eventResizeState: state.eventResizeState,
@@ -36,9 +33,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
         calendar.view = view
         calendar.dispatch({
           type: 'SET_DATE_PROFILE',
-          dateProfile: view.computeDateProfile(
-            action.dateMarker || state.currentDate
-          )
+          dateProfile: view.computeDateProfile(action.dateMarker)
         })
       }
       break
@@ -46,8 +41,6 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
     case 'SET_DATE_PROFILE':
       if (action.dateProfile.isValid) {
         newState.dateProfile = action.dateProfile
-        // why not just always use action.dateProfile.date ???
-        newState.currentDate = action.dateProfile.date // might have been constrained by view dates
         calendar.view.updateMiscDateProps(action.dateProfile)
       }
       break
@@ -77,7 +70,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
         dateProfile: calendar.view.computeDateProfile(
-          calendar.dateEnv.addYears(newState.currentDate, -1)
+          calendar.dateEnv.addYears(newState.dateProfile.date, -1)
         )
       })
       break
@@ -86,7 +79,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
         dateProfile: calendar.view.computeDateProfile(
-          calendar.dateEnv.addYears(newState.currentDate, 1)
+          calendar.dateEnv.addYears(newState.dateProfile.date, 1)
         )
       })
       break
@@ -102,7 +95,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
       calendar.dispatch({
         type: 'SET_DATE_PROFILE',
         dateProfile: calendar.view.computeDateProfile(
-          calendar.dateEnv.add(newState.currentDate, action.delta)
+          calendar.dateEnv.add(newState.dateProfile.date, action.delta)
         )
       })
       break
