@@ -5,7 +5,7 @@ import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rang
 
 
 export interface DateProfile {
-  validRange: DateRange
+  validRange: OpenDateRange
   currentRange: DateRange
   currentRangeUnit: string
   isRangeAllDay: boolean
