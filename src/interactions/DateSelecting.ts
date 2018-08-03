@@ -3,7 +3,6 @@ import { elementClosest } from '../util/dom-manip'
 import DateComponent from '../component/DateComponent'
 import HitDragging, { Hit } from './HitDragging'
 import { DateSpan } from '../structs/date-span'
-import UnzonedRange from '../models/UnzonedRange'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import browserContext from '../common/browser-context'
@@ -118,7 +117,7 @@ function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan): DateSpan {
   ms.sort(compareNumbers)
 
   return {
-    range: new UnzonedRange(ms[0], ms[3]),
+    range: { start: ms[0], end: ms[3] },
     isAllDay: dateSpan0.isAllDay
   }
 }

@@ -2,7 +2,7 @@ import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import CoordCache from '../common/CoordCache'
-import UnzonedRange from '../models/UnzonedRange'
+import { DateRange, intersectRanges } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
@@ -46,7 +46,7 @@ export default class TimeGrid extends DateComponent {
   view: any // TODO: make more general and/or remove
   helperRenderer: any
 
-  dayRanges: any // UnzonedRange[], of start-end of each day
+  dayRanges: DateRange[] // of start-end of each day
   slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
   snapDuration: Duration // granularity of time for dragging and selecting
   snapsPerSlot: any
@@ -82,7 +82,7 @@ export default class TimeGrid extends DateComponent {
 
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  rangeToSegs(range: UnzonedRange): Seg[] {
+  rangeToSegs(range: DateRange): Seg[] {
     let segs = this.sliceRangeByTimes(range)
     let i
 
@@ -111,7 +111,7 @@ export default class TimeGrid extends DateComponent {
 
     for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
 
-      segRange = unzonedRange.intersect(this.dayRanges[dayIndex])
+      segRange = intersectRanges(unzonedRange, this.dayRanges[dayIndex])
 
       if (segRange) {
         segs.push({
@@ -295,10 +295,10 @@ export default class TimeGrid extends DateComponent {
     let dateEnv = this.getDateEnv()
 
     this.dayRanges = this.dayDates.map(function(dayDate) {
-      return new UnzonedRange(
-        dateEnv.add(dayDate, dateProfile.minTime),
-        dateEnv.add(dayDate, dateProfile.maxTime)
-      )
+      return {
+        start: dateEnv.add(dayDate, dateProfile.minTime),
+        end: dateEnv.add(dayDate, dateProfile.maxTime)
+      }
     })
 
     if (this.headContainerEl) {
@@ -436,9 +436,10 @@ export default class TimeGrid extends DateComponent {
 
     // seg system might be overkill, but it handles scenario where line needs to be rendered
     //  more than once because of columns with the same date (resources columns for example)
-    let segs = this.rangeToSegs(
-      new UnzonedRange(date, addMs(date, 1)), // protect against null range
-    )
+    let segs = this.rangeToSegs({
+      start: date,
+      end: addMs(date, 1) // protect against null range
+    })
     let top = this.computeDateTop(date)
     let nodes = []
     let i
@@ -593,7 +594,7 @@ export default class TimeGrid extends DateComponent {
         return {
           component: this,
           dateSpan: {
-            range: new UnzonedRange(start, end),
+            range: { start, end },
             isAllDay: false
           },
           dayEl: this.colEls[colIndex],

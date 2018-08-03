@@ -7,7 +7,6 @@ import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import { DateSpan } from '../structs/date-span'
-import UnzonedRange from '../models/UnzonedRange'
 import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
 import { EventStore } from '../structs/event-store'
 import { BusinessHoursDef, buildBusinessHours } from '../structs/business-hours'
@@ -18,6 +17,7 @@ import { assignTo } from '../util/object'
 import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
 import { computeVisibleDayRange } from '../util/misc'
+import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 
 
 export interface DateComponentRenderState {
@@ -830,7 +830,7 @@ export default abstract class DateComponent extends Component {
 
 
   // must implement if want to use many of the rendering utils
-  rangeToSegs(range: UnzonedRange, isAllDay: boolean): Seg[] {
+  rangeToSegs(range: DateRange, isAllDay: boolean): Seg[] {
     return []
   }
 
@@ -931,7 +931,7 @@ export default abstract class DateComponent extends Component {
     let todayStart: DateMarker
     let todayEnd: DateMarker
 
-    if (!this.dateProfile.activeUnzonedRange.containsDate(date)) {
+    if (!rangeContainsMarker(this.dateProfile.activeUnzonedRange, date)) {
       classes.push('fc-disabled-day') // TODO: jQuery UI theme?
     } else {
       classes.push('fc-' + DAY_IDS[date.getUTCDay()])
@@ -983,15 +983,14 @@ export default abstract class DateComponent extends Component {
 
 
   // Returns the date range of the full days the given range visually appears to occupy.
-  // Returns a plain object with start/end, NOT an UnzonedRange!
-  computeDayRange(unzonedRange): UnzonedRange {
-    return computeVisibleDayRange(unzonedRange, this.nextDayThreshold)
+  computeDayRange(range): DateRange {
+    return computeVisibleDayRange(range, this.nextDayThreshold)
   }
 
 
   // Does the given range visually appear to occupy more than one day?
-  isMultiDayRange(unzonedRange) {
-    let dayRange = this.computeDayRange(unzonedRange)
+  isMultiDayRange(range) {
+    let dayRange = this.computeDayRange(range)
 
     return diffDays(dayRange.start, dayRange.end) > 1
   }

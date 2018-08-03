@@ -1,4 +1,3 @@
-import UnzonedRange from '../models/UnzonedRange'
 import { Duration } from '../datelib/duration'
 import { EventStore, createEmptyEventStore } from './event-store'
 import { EventDef, EventInstance } from './event'
@@ -58,29 +57,29 @@ function applyMutationToEventInstance(
   let dateEnv = calendar.dateEnv
   let forceAllDay = mutation.standardProps && mutation.standardProps.isAllDay === true
   let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
-  let copy = assignTo({}, eventInstance)
+  let copy = assignTo({}, eventInstance) as EventInstance
 
   if (forceAllDay) {
     copy.range = computeAlignedDayRange(copy.range)
   }
 
   if (mutation.startDelta) {
-    copy.range = new UnzonedRange(
-      dateEnv.add(copy.range.start, mutation.startDelta),
-      copy.range.end
-    )
+    copy.range = {
+      start: dateEnv.add(copy.range.start, mutation.startDelta),
+      end: copy.range.end
+    }
   }
 
   if (clearEnd) {
-    copy.range = new UnzonedRange(
-      copy.range.start,
-      calendar.getDefaultEventEnd(eventDef.isAllDay, copy.range.start)
-    )
+    copy.range = {
+      start: copy.range.start,
+      end: calendar.getDefaultEventEnd(eventDef.isAllDay, copy.range.start)
+    }
   } else if (mutation.endDelta) {
-    copy.range = new UnzonedRange(
-      copy.range.start,
-      dateEnv.add(copy.range.end, mutation.endDelta),
-    )
+    copy.range = {
+      start: copy.range.start,
+      end: dateEnv.add(copy.range.end, mutation.endDelta),
+    }
   }
 
   return copy

@@ -1,8 +1,8 @@
-import UnzonedRange from '../models/UnzonedRange'
 import * as request from 'superagent'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 import { registerEventSourceDef } from '../structs/event-source'
+import { DateRange } from '../datelib/date-range'
 
 interface JsonFeedMeta {
   url: string
@@ -65,7 +65,7 @@ registerEventSourceDef({
 
 })
 
-function buildRequestParams(meta: JsonFeedMeta, range: UnzonedRange, calendar: Calendar) {
+function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Calendar) {
   const dateEnv = calendar.dateEnv
   let startParam
   let endParam

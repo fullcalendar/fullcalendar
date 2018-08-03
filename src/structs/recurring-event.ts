@@ -1,6 +1,6 @@
-import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
 import { EventInput } from './event'
+import { DateRange } from '../datelib/date-range'
 
 /*
 The plugin system for defining how a recurring event is expanded into individual instances.
@@ -9,12 +9,12 @@ The plugin system for defining how a recurring event is expanded into individual
 export interface RecurringEventDateSpans {
   isAllDay: boolean
   hasEnd: boolean
-  ranges: UnzonedRange[]
+  ranges: DateRange[]
 }
 
 export type RecurringExpander = (
   rawEvent: EventInput,
-  range: UnzonedRange,
+  range: DateRange,
   calendar: Calendar,
   leftovers: object
 ) => RecurringEventDateSpans | null
@@ -28,7 +28,7 @@ export function registerRecurringExpander(expander: RecurringExpander) {
 
 export function expandRecurring(
   rawEvent: EventInput,
-  range: UnzonedRange,
+  range: DateRange,
   calendar: Calendar,
   leftovers?: object
 ): RecurringEventDateSpans | null {

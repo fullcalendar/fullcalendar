@@ -1,8 +1,8 @@
-import UnzonedRange from '../models/UnzonedRange'
 import { ClassNameInput, parseClassName } from '../util/html'
 import { refineProps } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
+import { DateRange } from '../datelib/date-range'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
@@ -40,7 +40,7 @@ export interface EventSource {
   publicId: string
   isFetching: boolean
   latestFetchId: string
-  fetchRange: UnzonedRange | null
+  fetchRange: DateRange | null
   allDayDefault: boolean | null
   eventDataTransform: EventInputTransformer
   editable: boolean | null
@@ -63,7 +63,7 @@ export type EventSourceFetcher = (
   arg: {
     eventSource: EventSource
     calendar: Calendar
-    range: UnzonedRange
+    range: DateRange
   },
   success: EventSourceSuccessHandler,
   failure: EventSourceFailureHandler

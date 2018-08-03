@@ -3,11 +3,11 @@ import { parseFieldSpecs } from './util/misc'
 import Calendar from './Calendar'
 import { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import DateComponent from './component/DateComponent'
-import UnzonedRange from './models/UnzonedRange'
 import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
+import { OpenDateRange, parseRange, DateRange, rangesEqual } from './datelib/date-range'
 
 
 /* An abstract class from which other views inherit from
@@ -156,7 +156,7 @@ export default abstract class View extends DateComponent {
 
     if ( // reuse current reference if possible, for rendering optimization
       this.dateProfile &&
-      this.dateProfile.activeUnzonedRange.equals(dateProfile.activeUnzonedRange)
+      rangesEqual(this.dateProfile.activeUnzonedRange, dateProfile.activeUnzonedRange)
     ) {
       return this.dateProfile
     }
@@ -382,7 +382,7 @@ export default abstract class View extends DateComponent {
   // Arguments after name will be forwarded to a hypothetical function value
   // WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
   // Always clone your objects if you fear mutation.
-  getUnzonedRangeOption(name, ...otherArgs) {
+  getRangeOption(name, ...otherArgs): OpenDateRange {
     let val = this.opt(name)
 
     if (typeof val === 'function') {
@@ -390,7 +390,7 @@ export default abstract class View extends DateComponent {
     }
 
     if (val) {
-      return this.calendar.parseUnzonedRange(val)
+      return parseRange(val, this.calendar.dateEnv)
     }
   }
 
@@ -428,7 +428,7 @@ export default abstract class View extends DateComponent {
 
   // Remove days from the beginning and end of the range that are computed as hidden.
   // If the whole range is trimmed off, returns null
-  trimHiddenDays(inputUnzonedRange) {
+  trimHiddenDays(inputUnzonedRange): DateRange | null {
     let start = inputUnzonedRange.start
     let end = inputUnzonedRange.end
 
@@ -441,7 +441,7 @@ export default abstract class View extends DateComponent {
     }
 
     if (start == null || end == null || start < end) {
-      return new UnzonedRange(start, end)
+      return { start, end }
     }
 
     return null

@@ -1,21 +1,21 @@
-import UnzonedRange from '../models/UnzonedRange'
 import { EventDef, EventInstance } from '../structs/event'
 import { EventStore } from '../structs/event-store'
+import { DateRange, invertRanges } from '../datelib/date-range'
 
 export interface EventRenderRange {
   eventDef: EventDef
   eventInstance?: EventInstance
-  range: UnzonedRange
+  range: DateRange
 }
 
 
 /*
-Does not slice ranges via windowRange into new ranges, but instead,
+Does not slice ranges via framingRange into new ranges, but instead,
 keeps fg event ranges intact but more importantly slices inverse-BG events.
 */
-export function sliceEventStore(eventStore: EventStore, windowRange: UnzonedRange) {
-  let inverseBgByGroupId: { [groupId: string]: UnzonedRange[] } = {}
-  let inverseBgByDefId: { [defId: string]: UnzonedRange[] } = {}
+export function sliceEventStore(eventStore: EventStore, framingRange: DateRange) {
+  let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
+  let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
   let renderRanges: EventRenderRange[] = []
 
@@ -56,7 +56,7 @@ export function sliceEventStore(eventStore: EventStore, windowRange: UnzonedRang
 
   for (let groupId in inverseBgByGroupId) {
     let ranges = inverseBgByGroupId[groupId]
-    let invertedRanges = UnzonedRange.invertRanges(ranges, windowRange)
+    let invertedRanges = invertRanges(ranges, framingRange)
 
     for (let invertedRange of invertedRanges) {
       let def = defByGroupId[groupId]
@@ -70,7 +70,7 @@ export function sliceEventStore(eventStore: EventStore, windowRange: UnzonedRang
 
   for (let defId in inverseBgByDefId) {
     let ranges = inverseBgByDefId[defId]
-    let invertedRanges = UnzonedRange.invertRanges(ranges, windowRange)
+    let invertedRanges = invertRanges(ranges, framingRange)
 
     for (let invertedRange of invertedRanges) {
       renderRanges.push({

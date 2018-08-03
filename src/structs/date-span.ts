@@ -1,4 +1,4 @@
-import UnzonedRange from '../models/UnzonedRange'
+import { DateRange, rangesEqual } from '../datelib/date-range'
 import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 
@@ -15,7 +15,7 @@ export interface DateSpanInput {
 }
 
 export interface DateSpan {
-  range: UnzonedRange
+  range: DateRange
   isAllDay: boolean
   [otherProp: string]: any
 }
@@ -40,7 +40,7 @@ export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan | 
     }
 
     // use this leftover object as the selection object
-    leftovers.range = new UnzonedRange(startMeta.marker, endMeta.marker)
+    leftovers.range = { start: startMeta.marker, end: endMeta.marker }
     leftovers.isAllDay = isAllDay
 
     return leftovers
@@ -51,7 +51,7 @@ export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan | 
 
 export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {
 
-  if (!span0.range.equals(span1.range)) {
+  if (!rangesEqual(span0.range, span1.range)) {
     return false
   }
 

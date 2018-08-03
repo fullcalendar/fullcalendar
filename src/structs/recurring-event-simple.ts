@@ -3,9 +3,9 @@ import { Duration, createDuration } from '../datelib/duration'
 import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
 import { registerRecurringExpander, RecurringEventDateSpans } from './recurring-event'
-import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
 import { EventInput } from './event'
+import { DateRange } from '../datelib/date-range'
 
 /*
 An implementation of recurring events that only supports every-day or weekly recurrences.
@@ -18,7 +18,7 @@ const SIMPLE_RECURRING_PROPS = {
 }
 
 registerRecurringExpander(
-  function(rawEvent: EventInput, framingRange: UnzonedRange, calendar: Calendar, leftoverProps: object): RecurringEventDateSpans | null {
+  function(rawEvent: EventInput, framingRange: DateRange, calendar: Calendar, leftoverProps: object): RecurringEventDateSpans | null {
     if (
       rawEvent.daysOfWeek ||
       rawEvent.startTime != null ||
@@ -47,9 +47,9 @@ function expandRanges(
   daysOfWeek: number[] | null,
   startTime: Duration | null,
   endTime: Duration | null,
-  framingRange: UnzonedRange,
+  framingRange: DateRange,
   calendar: Calendar
-): UnzonedRange[] {
+): DateRange[] {
   let dateEnv = calendar.dateEnv
   let dowHash: { [num: string]: true } | null = daysOfWeek ? arrayToHash(daysOfWeek) : null
   let dayMarker = startOfDay(framingRange.start)
@@ -80,7 +80,7 @@ function expandRanges(
         )
       }
 
-      instanceRanges.push(new UnzonedRange(instanceStart, instanceEnd))
+      instanceRanges.push({ start: instanceStart, end: instanceEnd })
     }
 
     dayMarker = addDays(dayMarker, 1)

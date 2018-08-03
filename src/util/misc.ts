@@ -4,7 +4,7 @@ import { preventDefault } from './dom-event'
 import { DateMarker, startOfDay, addDays, diffDays, diffDayAndTime } from '../datelib/marker'
 import { Duration, asRoughMs, createDuration } from '../datelib/duration'
 import { DateEnv } from '../datelib/env'
-import UnzonedRange from '../models/UnzonedRange'
+import { DateRange } from '../datelib/date-range'
 
 
 /* FullCalendar-specific DOM Utilities
@@ -454,16 +454,16 @@ export function refineProps(rawProps: GenericHash, processors: GenericHash, defa
 
 // given a timed range, computes an all-day range that has the same exact duration,
 // but whose start time is aligned with the start of the day.
-export function computeAlignedDayRange(range: UnzonedRange): UnzonedRange {
+export function computeAlignedDayRange(range: DateRange): DateRange {
   let dayCnt = Math.floor(diffDays(range.start, range.end)) || 1
   let start = startOfDay(range.start)
   let end = addDays(start, dayCnt)
-  return new UnzonedRange(start, end)
+  return { start, end }
 }
 
 
 // given a timed range, computes an all-day range based on how for the end date bleeds into the next day
-export function computeVisibleDayRange(unzonedRange: UnzonedRange, nextDayThreshold: Duration): UnzonedRange {
+export function computeVisibleDayRange(unzonedRange: DateRange, nextDayThreshold: Duration): DateRange {
   let startDay: DateMarker = startOfDay(unzonedRange.start) // the beginning of the day the range starts
   let end: DateMarker = unzonedRange.end
   let endDay: DateMarker = startOfDay(end)
@@ -481,7 +481,7 @@ export function computeVisibleDayRange(unzonedRange: UnzonedRange, nextDayThresh
     endDay = addDays(startDay, 1)
   }
 
-  return new UnzonedRange(startDay, endDay)
+  return { start: startDay, end: endDay }
 }
 
 

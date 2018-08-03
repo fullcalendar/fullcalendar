@@ -1,5 +1,4 @@
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
-import UnzonedRange from '../models/UnzonedRange'
 import { addWeeks, diffWeeks } from '../datelib/marker'
 
 
@@ -20,7 +19,7 @@ export default class MonthViewDateProfileGenerator extends BasicViewDateProfileG
       end = addWeeks(end, 6 - rowCnt)
     }
 
-    return new UnzonedRange(start, end)
+    return { start, end }
   }
 
 }

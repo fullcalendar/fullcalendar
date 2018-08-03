@@ -9,7 +9,6 @@ import OptionsManager from './OptionsManager'
 import ViewSpecManager from './ViewSpecManager'
 import View from './View'
 import Theme from './theme/Theme'
-import UnzonedRange from './models/UnzonedRange'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
 import { RangeInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
 import { getLocale } from './datelib/locale'
@@ -23,6 +22,7 @@ import reselector from './util/reselector'
 import { assignTo } from './util/object'
 import { RenderForceFlags } from './component/Component'
 import browserContext from './common/browser-context'
+import { rangeContainsMarker } from './datelib/date-range'
 
 
 export default class Calendar {
@@ -845,7 +845,7 @@ export default class Calendar {
     let props = {
       title: view.title,
       activeButton: view.type,
-      isTodayEnabled: todayInfo.isValid && !dateProfile.currentUnzonedRange.containsDate(now),
+      isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentUnzonedRange, now),
       isPrevEnabled: prevInfo.isValid,
       isNextEnabled: nextInfo.isValid
     }
@@ -967,31 +967,6 @@ export default class Calendar {
     }
 
     return this.dateEnv.createMarker(now)
-  }
-
-
-  // will return `null` if invalid range
-  parseUnzonedRange(rangeInput: RangeInput): UnzonedRange {
-    let start = null
-    let end = null
-
-    if (rangeInput.start) {
-      start = this.dateEnv.createMarker(rangeInput.start)
-    }
-
-    if (rangeInput.end) {
-      end = this.dateEnv.createMarker(rangeInput.end)
-    }
-
-    if (!start && !end) {
-      return null
-    }
-
-    if (start && end && end < start) {
-      return null
-    }
-
-    return new UnzonedRange(start, end)
   }
 
 

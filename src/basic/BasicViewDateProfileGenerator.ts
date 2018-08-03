@@ -1,14 +1,14 @@
-import UnzonedRange from '../models/UnzonedRange'
 import DateProfileGenerator from '../DateProfileGenerator'
 import { addWeeks } from '../datelib/marker'
+import { DateRange } from '../datelib/date-range'
 
 
 export default class BasicViewDateProfileGenerator extends DateProfileGenerator {
 
   // Computes the date range that will be rendered.
-  buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) {
+  buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay): DateRange {
     let dateEnv = this._view.calendar.dateEnv
-    let renderUnzonedRange = super.buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay) // an UnzonedRange
+    let renderUnzonedRange = super.buildRenderRange(currentUnzonedRange, currentRangeUnit, isRangeAllDay)
     let start = renderUnzonedRange.start
     let end = renderUnzonedRange.end
     let endOfWeek
@@ -24,7 +24,7 @@ export default class BasicViewDateProfileGenerator extends DateProfileGenerator 
       }
     }
 
-    return new UnzonedRange(start, end)
+    return { start, end }
   }
 
 }

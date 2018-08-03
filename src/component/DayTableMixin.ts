@@ -3,7 +3,7 @@ import { prependToElement, appendToElement } from '../util/dom-manip'
 import Mixin from '../common/Mixin'
 import { DateMarker, DAY_IDS, addDays, diffDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
-import UnzonedRange from '../models/UnzonedRange'
+import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 
 export interface DayTableInterface {
   dayDates: DateMarker[]
@@ -16,7 +16,7 @@ export interface DayTableInterface {
   renderBgTrHtml(row)
   bookendCells(trEl: HTMLElement)
   getCellDate(row, col)
-  getCellRange(row, col): UnzonedRange
+  getCellRange(row, col): DateRange
   sliceRangeByDay(unzonedRange)
   sliceRangeByRow(unzonedRange)
   renderIntroHtml()
@@ -109,11 +109,11 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 
   // Computes the ambiguously-timed date range for the given cell
-  getCellRange(row, col) {
+  getCellRange(row, col): DateRange {
     let start = this.getCellDate(row, col)
     let end = addDays(start, 1)
 
-    return new UnzonedRange(start, end)
+    return { start, end }
   }
 
 
@@ -321,7 +321,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let view = t.view
     let dateEnv = t.getDateEnv()
     let dateProfile = t.dateProfile
-    let isDateValid = dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
+    let isDateValid =  rangeContainsMarker(dateProfile.activeUnzonedRange, date) // TODO: called too frequently. cache somehow.
     let classNames = [
       'fc-day-header',
       view.calendar.theme.getClass('widgetHeader')
@@ -412,7 +412,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let view = t.view
     let dateEnv = t.getDateEnv()
     let dateProfile = t.dateProfile
-    let isDateValid = dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
+    let isDateValid = rangeContainsMarker(dateProfile.activeUnzonedRange, date) // TODO: called too frequently. cache somehow.
     let classes = t.getDayClasses(date)
 
     classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'))

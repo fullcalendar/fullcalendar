@@ -1,9 +1,9 @@
 import { refineProps } from '../util/misc'
 import { parseClassName, ClassNameInput } from '../util/html'
 import { DateInput } from '../datelib/env'
-import UnzonedRange from '../models/UnzonedRange'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
+import { DateRange } from '../datelib/date-range'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -66,7 +66,7 @@ export interface EventDef {
 export interface EventInstance {
   instanceId: string
   defId: string
-  range: UnzonedRange
+  range: DateRange
   forcedStartTzo: number | null
   forcedEndTzo: number | null
 }
@@ -76,7 +76,7 @@ export interface EventInstance {
 export interface EventDateSpan {
   isAllDay: boolean
   hasEnd: boolean
-  range: UnzonedRange
+  range: DateRange
   forcedStartTzo: number | null
   forcedEndTzo: number | null
 }
@@ -142,7 +142,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay
 
 export function createEventInstance(
   defId: string,
-  range: UnzonedRange,
+  range: DateRange,
   forcedStartTzo: number | null = null,
   forcedEndTzo: number | null = null
 ): EventInstance {
@@ -214,7 +214,7 @@ export function parseEventDateSpan(
   return {
     isAllDay,
     hasEnd,
-    range: new UnzonedRange(startMeta.marker, endMarker),
+    range: { start: startMeta.marker, end: endMarker },
     forcedStartTzo: startMeta.forcedTzo,
     forcedEndTzo: endMeta ? endMeta.forcedTzo : null
   }

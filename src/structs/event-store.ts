@@ -1,8 +1,8 @@
-import UnzonedRange from '../models/UnzonedRange'
 import { EventInput, EventDefHash, EventInstanceHash, parseEventDef, parseEventDateSpan, createEventInstance } from './event'
 import { expandRecurring } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
+import { DateRange } from '../datelib/date-range'
 
 /*
 A data structure that encapsulates EventDefs and EventInstances.
@@ -18,7 +18,7 @@ export interface EventStore {
 export function parseEventStore(
   rawEvents: EventInput[],
   sourceId: string,
-  fetchRange: UnzonedRange,
+  fetchRange: DateRange,
   calendar: Calendar,
   dest: EventStore = createEmptyEventStore() // specify this arg to append to an existing EventStore
 ): EventStore {

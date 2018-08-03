@@ -1,8 +1,8 @@
 import Calendar from '../Calendar'
-import UnzonedRange from '../models/UnzonedRange'
 import { assignTo } from '../util/object'
 import { EventInput } from './event'
 import { EventStore, parseEventStore } from './event-store'
+import { DateRange } from '../datelib/date-range'
 
 /*
 Utils for converting raw business hour input into an EventStore,
@@ -22,7 +22,7 @@ const DEF_DEFAULTS = {
 export function buildBusinessHours(
   input: BusinessHoursDef,
   isAllDay: boolean,
-  framingRange: UnzonedRange,
+  framingRange: DateRange,
   calendar: Calendar
 ): EventStore {
   return parseEventStore(

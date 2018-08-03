@@ -10,7 +10,6 @@ import { computeRect } from '../util/dom-geom'
 import View from '../View'
 import CoordCache from '../common/CoordCache'
 import Popover from '../common/Popover'
-import UnzonedRange from '../models/UnzonedRange'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridHelperRenderer from './DayGridHelperRenderer'
@@ -21,6 +20,7 @@ import DateComponent, { Seg } from '../component/DateComponent'
 import { EventStore } from '../structs/event-store'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
+import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -79,7 +79,7 @@ export default class DayGrid extends DateComponent {
 
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  rangeToSegs(range: UnzonedRange): Seg[] {
+  rangeToSegs(range: DateRange): Seg[] {
     let segs = this.sliceRangeByRow(range)
 
     for (let i = 0; i < segs.length; i++) {
@@ -243,7 +243,7 @@ export default class DayGrid extends DateComponent {
     let view = this.view
     let dateEnv = this.getDateEnv()
     let html = ''
-    let isDateValid = this.dateProfile.activeUnzonedRange.containsDate(date) // TODO: called too frequently. cache somehow.
+    let isDateValid = rangeContainsMarker(this.dateProfile.activeUnzonedRange, date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
     let classes
     let weekCalcFirstDow
@@ -656,13 +656,13 @@ export default class DayGrid extends DateComponent {
   resliceDaySegs(segs, dayDate) {
     let dayStart = dayDate
     let dayEnd = addDays(dayStart, 1)
-    let dayRange = new UnzonedRange(dayStart, dayEnd)
+    let dayRange = { start: dayStart, end: dayEnd }
     let newSegs = []
 
     for (let seg of segs) {
       let eventRange = seg.eventRange
       let origRange = eventRange.range
-      let slicedRange = origRange.intersect(dayRange)
+      let slicedRange = intersectRanges(origRange, dayRange)
 
       if (slicedRange) {
         newSegs.push(

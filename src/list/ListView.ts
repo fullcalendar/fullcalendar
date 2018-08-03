@@ -1,12 +1,12 @@
 import { htmlToElement, createElement } from '../util/dom-manip'
 import { htmlEscape } from '../util/html'
 import { subtractInnerElHeight } from '../util/misc'
-import UnzonedRange from '../models/UnzonedRange'
 import View from '../View'
 import Scroller from '../common/Scroller'
 import ListEventRenderer from './ListEventRenderer'
 import { DateMarker, addDays, startOfDay } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
+import { DateRange, intersectRanges } from '../datelib/date-range'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -22,7 +22,7 @@ export default class ListView extends View {
   contentEl: HTMLElement
 
   dayDates: DateMarker[]
-  dayRanges: UnzonedRange[] // start/end of each day
+  dayRanges: DateRange[] // start/end of each day
 
 
   constructor(calendar, viewSpec) {
@@ -74,17 +74,17 @@ export default class ListView extends View {
     let dateProfile = this.dateProfile
     let dayStart = startOfDay(dateProfile.renderUnzonedRange.start)
     let viewEnd = dateProfile.renderUnzonedRange.end
-    let dayDates = []
-    let dayRanges = []
+    let dayDates: DateMarker[] = []
+    let dayRanges: DateRange[] = []
 
     while (dayStart < viewEnd) {
 
       dayDates.push(dayStart)
 
-      dayRanges.push(new UnzonedRange(
-        dayStart,
-        addDays(dayStart, 1)
-      ))
+      dayRanges.push({
+        start: dayStart,
+        end: addDays(dayStart, 1)
+      })
 
       dayStart = addDays(dayStart, 1)
     }
@@ -97,7 +97,7 @@ export default class ListView extends View {
 
 
   // slices by day
-  rangeToSegs(range: UnzonedRange, isAllDay: boolean) {
+  rangeToSegs(range: DateRange, isAllDay: boolean) {
     let dateEnv = this.getDateEnv()
     let dayRanges = this.dayRanges
     let dayIndex
@@ -106,7 +106,7 @@ export default class ListView extends View {
     let segs = []
 
     for (dayIndex = 0; dayIndex < dayRanges.length; dayIndex++) {
-      segRange = range.intersect(dayRanges[dayIndex])
+      segRange = intersectRanges(range, dayRanges[dayIndex])
 
       if (segRange) {
         seg = {

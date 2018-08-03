@@ -2,13 +2,13 @@ import { default as DateComponent, Seg } from '../component/DateComponent'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { elementClosest } from '../util/dom-manip'
-import UnzonedRange from '../models/UnzonedRange'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { getElSeg } from '../component/renderers/EventRenderer'
 import { EventInstance } from '../structs/event'
 import { EventStore, getRelatedEvents } from '../structs/event-store'
 import { diffDates } from '../util/misc'
+import { DateRange } from '../datelib/date-range'
 
 export default class EventDragging {
 
@@ -129,7 +129,7 @@ export default class EventDragging {
 
 }
 
-function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: UnzonedRange): EventMutation | null {
+function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: DateRange): EventMutation | null {
   let dateEnv = hit0.component.getDateEnv()
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start

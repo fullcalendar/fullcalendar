@@ -72,7 +72,7 @@ export {
 } from './util/dom-geom'
 
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-export { default as UnzonedRange } from './models/UnzonedRange'
+export { DateRange, rangeContainsMarker, intersectRanges } from './datelib/date-range'
 export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Mixin } from './common/Mixin'
 export { default as CoordCache } from './common/CoordCache'
