@@ -309,11 +309,7 @@ export default class Calendar {
       this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource })
     }
 
-    this.dispatch({
-      type: 'SET_VIEW_TYPE',
-      viewType: this.opt('defaultView'),
-      dateMarker: this.getInitialDate()
-    })
+    this.setViewType(this.opt('defaultView'), this.getInitialDate())
   }
 
 
@@ -359,9 +355,7 @@ export default class Calendar {
         this.publiclyTrigger('loading', [ false, this.view ])
       }
 
-      if (oldState !== newState) {
-        this.requestRerender()
-      }
+      this.requestRerender()
 
       // TODO: what about pausing new renders while rendering?
     }
@@ -601,7 +595,7 @@ export default class Calendar {
       }
     }
 
-    this.dispatch({ type: 'SET_VIEW_TYPE', viewType, dateMarker })
+    this.setViewType(viewType, dateMarker)
   }
 
 
@@ -616,9 +610,24 @@ export default class Calendar {
       this.viewSpecManager.getUnitViewSpec(viewType, this)
 
     if (spec) {
-      this.dispatch({ type: 'SET_VIEW_TYPE', viewType: spec.type, dateMarker })
+      this.setViewType(spec.type, dateMarker)
     } else {
-      this.dispatch({ type: 'NAVIGATE_DATE', dateMarker })
+      this.setCurrentDateMarker(dateMarker)
+    }
+  }
+
+
+  setViewType(viewType: string, dateMarker?: DateMarker) { // internal use only
+    if (!this.view || this.view.type !== viewType) {
+      let view = this.getViewByType(viewType)
+      this.view = view
+
+      this.dispatch({ // luckily, will cause a rerender
+        type: 'SET_DATE_PROFILE',
+        dateProfile: view.computeDateProfile(
+          dateMarker || this.state.dateProfile.currentDate
+        )
+      })
     }
   }
 
@@ -640,42 +649,62 @@ export default class Calendar {
 
 
   prev() {
-    this.dispatch({ type: 'NAVIGATE_PREV' })
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.view.dateProfileGenerator.buildPrev(this.state.dateProfile)
+    })
   }
 
 
   next() {
-    this.dispatch({ type: 'NAVIGATE_NEXT' })
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.view.dateProfileGenerator.buildNext(this.state.dateProfile)
+    })
   }
 
 
   prevYear() {
-    this.dispatch({ type: 'NAVIGATE_PREV_YEAR' })
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.view.computeDateProfile(
+        this.dateEnv.addYears(this.state.dateProfile.currentDate, -1)
+      )
+    })
   }
 
 
   nextYear() {
-    this.dispatch({ type: 'NAVIGATE_NEXT_YEAR' })
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.view.computeDateProfile(
+        this.dateEnv.addYears(this.state.dateProfile.currentDate, 1)
+      )
+    })
   }
 
 
   today() {
-    this.dispatch({ type: 'NAVIGATE_TODAY' })
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.view.computeDateProfile(this.getNow())
+    })
   }
 
 
   gotoDate(zonedDateInput) {
-    this.dispatch({
-      type: 'NAVIGATE_DATE',
-      dateMarker: this.dateEnv.createMarker(zonedDateInput)
-    })
+    this.setCurrentDateMarker(
+      this.dateEnv.createMarker(zonedDateInput)
+    )
   }
 
 
   incrementDate(delta) { // is public facing
     this.dispatch({
-      type: 'NAVIGATE_DELTA',
-      delta: createDuration(delta)
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.view.computeDateProfile(
+        this.dateEnv.add(this.state.dateProfile.currentDate, delta)
+      )
     })
   }
 
@@ -683,6 +712,14 @@ export default class Calendar {
   // for external API
   getDate(): Date {
     return this.dateEnv.toDate(this.state.dateProfile.currentDate)
+  }
+
+
+  setCurrentDateMarker(date: DateMarker) { // internal use only
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.view.computeDateProfile(date)
+    })
   }
 
 
