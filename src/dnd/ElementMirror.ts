@@ -1,5 +1,4 @@
 import { removeElement, applyStyle } from '../util/dom-manip'
-import { computeRect } from '../util/dom-geom'
 import { whenTransitionDone } from '../util/dom-event'
 import { Rect } from '../util/geom'
 
@@ -20,8 +19,10 @@ export default class ElementMirror {
   sourceElRect: Rect | null = null
 
   // options that can be set directly by caller
-  // TODO: wire up
-  revertDuration: number = 1000
+  parentNode: HTMLElement = document.body
+  opacity: string = ''
+  zIndex: number = 9999
+  revertDuration: number = 0
 
   start(sourceEl: HTMLElement, left: number, top: number) {
     this.sourceEl = sourceEl
@@ -47,7 +48,7 @@ export default class ElementMirror {
         }
 
         this.isVisible = bool // needs to happen before updateElPosition
-        this.updateElPosition()
+        this.updateElPosition() // because was not updating the position while invisible
       }
     } else {
       if (this.isVisible) {
@@ -110,8 +111,10 @@ export default class ElementMirror {
 
   updateElPosition() {
     if (this.sourceEl && this.isVisible) {
+
       if (!this.sourceElRect) {
-        this.sourceElRect = computeRect(this.sourceEl)
+        // relative to viewport, which is what we want, since mirror el is position: fixed
+        this.sourceElRect = this.sourceEl.getBoundingClientRect()
       }
 
       applyStyle(this.getMirrorEl(), {
@@ -122,38 +125,32 @@ export default class ElementMirror {
   }
 
   getMirrorEl(): HTMLElement {
+    let sourceElRect = this.sourceElRect!
     let mirrorEl = this.mirrorEl
 
     if (!mirrorEl) {
-      mirrorEl = this.mirrorEl = this.sourceEl!.cloneNode(true) as HTMLElement // cloneChildren=true
+      mirrorEl = this.mirrorEl = this.sourceEl.cloneNode(true) as HTMLElement // cloneChildren=true
+
       // we don't want long taps or any mouse interaction causing selection/menus.
       // would use preventSelection(), but that prevents selectstart, causing problems.
       mirrorEl.classList.add('fc-unselectable')
 
-      // if (this.options.additionalClass) {
-      //   mirrorEl.classList.add(this.options.additionalClass)
-      // }
-
-      // TODO: do fixed positioning?
-      // TODO: how would that work with auto-scrolling?
-      // TODO: attache to .fc so that `.fc fc-not-end` will work
+      mirrorEl.classList.add('fc-dragging')
 
       applyStyle(mirrorEl, {
-        position: 'absolute',
-        visibility: '', // in case original element was hidden (commonly through hideEvents())
-        margin: 0,
+        position: 'fixed',
+        zIndex: this.zIndex,
+        visibility: '', // in case original element was hidden by the drag effect
+        boxSizing: 'border-box', // for easy width/height
+        width: sourceElRect.right - sourceElRect.left, // explicit height in case there was a 'right' value
+        height: sourceElRect.bottom - sourceElRect.top, // explicit width in case there was a 'bottom' value
         right: 'auto', // erase and set width instead
         bottom: 'auto', // erase and set height instead
-
-        // vvv use sourceElRect instead?
-        width: this.sourceEl!.offsetWidth, // explicit height in case there was a 'right' value
-        height: this.sourceEl!.offsetHeight, // explicit width in case there was a 'bottom' value
-        //opacity: this.options.opacity || '',
-        //zIndex: this.options.zIndex
+        margin: 0,
+        opacity: this.opacity
       })
 
-      // TODO: appendTo setting
-      document.body.appendChild(mirrorEl)
+      this.parentNode.appendChild(mirrorEl)
     }
 
     return mirrorEl

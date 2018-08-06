@@ -23,7 +23,7 @@ export default abstract class HelperRenderer {
       segs,
       sourceSeg,
       'fc-dragging',
-      this.view.opt('dragOpacity') // TODO: use CSS to prevent this
+      this.view.opt('dragOpacity')
     )
   }
 

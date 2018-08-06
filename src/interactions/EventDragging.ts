@@ -46,7 +46,9 @@ export default class EventDragging {
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
+    let origTarget = ev.origEvent.target as HTMLElement
     let { component, dragging } = this
+    let { mirror } = dragging
     let initialCalendar = component.getCalendar()
     let draggingSeg = this.draggingSeg = getElSeg(ev.subjectEl as HTMLElement)!
     let eventInstanceId = this.eventInstanceId = draggingSeg.eventRange!.eventInstance!.instanceId
@@ -63,10 +65,12 @@ export default class EventDragging {
         getComponentTouchDelay(component) :
         null
 
+    mirror.parentNode = initialCalendar.el
+    mirror.opacity = component.opt('dragOpacity')
+    mirror.revertDuration = component.opt('dragRevertDuration')
+
     // to prevent from cloning the sourceEl before it is selected
     dragging.setMirrorIsVisible(false)
-
-    let origTarget = ev.origEvent.target as HTMLElement
 
     dragging.setIgnoreMove(
       !this.component.isValidSegDownEl(origTarget) ||
