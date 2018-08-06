@@ -1,10 +1,11 @@
 import Calendar from '../Calendar'
-import reduceEventSources from './event-sources'
-import reduceEventStore from './event-store'
+import reduceEventSources from './eventSources'
+import reduceEventStore from './eventStore'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { CalendarState, Action } from './types'
+import { EventSourceHash } from '../structs/event-source'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
   calendar.trigger(action.type, action) // for testing hooks
@@ -21,7 +22,7 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     selectedEventInstanceId: reduceSelectedEvent(state.selectedEventInstanceId, action),
     dragState: reduceDrag(state.dragState, action),
     eventResizeState: reduceEventResize(state.eventResizeState, action),
-    loadingLevel: reduceLoadingLevel(state.loadingLevel, action)
+    loadingLevel: reduceLoadingLevel(state.loadingLevel, action, eventSources)
   }
 }
 
@@ -78,10 +79,10 @@ function reduceEventResize(currentEventResize: EventInteractionState | null, act
   }
 }
 
-function reduceLoadingLevel(level: number, action: Action): number {
+function reduceLoadingLevel(level: number, action: Action, eventSources: EventSourceHash): number {
   switch (action.type) {
     case 'FETCH_EVENT_SOURCES':
-      return level + action.sourceIds.length
+      return level + (action.sourceIds ? action.sourceIds.length : Object.keys(eventSources).length)
     case 'RECEIVE_EVENTS':
     case 'RECEIVE_EVENT_ERROR':
       return level - 1
