@@ -16,7 +16,7 @@ import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
-import { CalendarState, reduce } from './reducers/main'
+import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan } from './structs/date-span'
 import reselector from './util/reselector'
 import { assignTo } from './util/object'
@@ -24,6 +24,8 @@ import { RenderForceFlags } from './component/Component'
 import browserContext from './common/browser-context'
 import { rangeContainsMarker } from './datelib/date-range'
 import { DateProfile } from './DateProfileGenerator'
+import { EventSourceInput, parseEventSource } from './structs/event-source'
+import { CalendarState, Action } from './reducers/types'
 
 
 export default class Calendar {
@@ -301,14 +303,20 @@ export default class Calendar {
 
     let rawSources = this.opt('eventSources') || []
     let singleRawSource = this.opt('events')
+    let sources = [] // parsed
 
     if (singleRawSource) {
       rawSources.unshift(singleRawSource)
     }
 
     for (let rawSource of rawSources) {
-      this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource })
+      let source = parseEventSource(rawSource)
+      if (source) {
+        sources.push(source)
+      }
     }
+
+    this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
 
     this.setViewType(this.opt('defaultView'), this.getInitialDate())
   }
@@ -332,7 +340,7 @@ export default class Calendar {
   }
 
 
-  dispatch(action) {
+  dispatch(action: Action) {
     this.actionQueue.push(action)
 
     if (!this.isReducing) {
@@ -363,7 +371,7 @@ export default class Calendar {
   }
 
 
-  reduce(state: CalendarState, action: object, calendar: Calendar): CalendarState {
+  reduce(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
     return reduce(state, action, calendar)
   }
 
@@ -1063,7 +1071,10 @@ export default class Calendar {
 
 
   addEventSource(sourceInput: EventSourceInput) {
-    this.dispatch({ type: 'ADD_EVENT_SOURCE', rawSource: sourceInput })
+    let eventSource = parseEventSource(sourceInput)
+    if (eventSource) { // TODO: error otherwise?
+      this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [ eventSource ] })
+    }
   }
 
 
@@ -1078,7 +1089,7 @@ export default class Calendar {
 
 
   refetchEvents() {
-    this.dispatch({ type: 'FETCH_ALL_EVENT_SOURCES' })
+    this.dispatch({ type: 'FETCH_EVENT_SOURCES' })
   }
 
 

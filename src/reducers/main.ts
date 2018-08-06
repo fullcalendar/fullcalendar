@@ -1,24 +1,21 @@
 import Calendar from '../Calendar'
-import { DateComponentRenderState } from '../component/DateComponent'
-import { EventSourceHash } from '../structs/event-source'
-import { reduceEventSourceHash } from './event-sources'
-import { reduceEventStore } from './event-store'
+import reduceEventSources from './event-sources'
+import reduceEventStore from './event-store'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
+import { CalendarState, Action } from './types'
 
-export interface CalendarState extends DateComponentRenderState {
-  loadingLevel: number
-  eventSources: EventSourceHash
-}
-
-export function reduce(state: CalendarState, action: any, calendar: Calendar): CalendarState {
+export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
   calendar.trigger(action.type, action) // for testing hooks
 
+  let dateProfile = reduceDateProfile(state.dateProfile, action)
+  let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendar)
+
   return {
-    dateProfile: reduceDateProfile(state.dateProfile, action),
-    eventSources: reduceEventSourceHash(state.eventSources, action, calendar),
-    eventStore: reduceEventStore(state.eventStore, action, calendar),
+    dateProfile,
+    eventSources,
+    eventStore: reduceEventStore(state.eventStore, action, eventSources, calendar),
     businessHoursDef: state.businessHoursDef, // TODO: rename?
     selection: reduceDateSelection(state.selection, action), // TODO: rename
     selectedEventInstanceId: reduceSelectedEvent(state.selectedEventInstanceId, action),
@@ -28,7 +25,7 @@ export function reduce(state: CalendarState, action: any, calendar: Calendar): C
   }
 }
 
-function reduceDateProfile(currentDateProfile: DateProfile, action: any) {
+function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action) {
   switch (action.type) {
     case 'SET_DATE_PROFILE':
       return action.dateProfile
@@ -37,7 +34,7 @@ function reduceDateProfile(currentDateProfile: DateProfile, action: any) {
   }
 }
 
-function reduceDateSelection(currentSelection: DateSpan, action: any) {
+function reduceDateSelection(currentSelection: DateSpan | null, action: Action) {
   switch (action.type) {
     case 'SELECT': // TODO: rename
       return action.selection
@@ -48,7 +45,7 @@ function reduceDateSelection(currentSelection: DateSpan, action: any) {
   }
 }
 
-function reduceSelectedEvent(currentInstanceId: string, action: any): string {
+function reduceSelectedEvent(currentInstanceId: string, action: Action): string {
   switch (action.type) {
     case 'SELECT_EVENT':
       return action.eventInstanceId
@@ -59,7 +56,7 @@ function reduceSelectedEvent(currentInstanceId: string, action: any): string {
   }
 }
 
-function reduceDrag(currentDrag: EventInteractionState, action: any) {
+function reduceDrag(currentDrag: EventInteractionState | null, action: Action) {
   switch (action.type) {
     case 'SET_DRAG':
       return action.dragState
@@ -70,7 +67,7 @@ function reduceDrag(currentDrag: EventInteractionState, action: any) {
   }
 }
 
-function reduceEventResize(currentEventResize: EventInteractionState, action: any) {
+function reduceEventResize(currentEventResize: EventInteractionState | null, action: Action) {
   switch (action.type) {
     case 'SET_EVENT_RESIZE':
       return action.eventResizeState
@@ -81,12 +78,12 @@ function reduceEventResize(currentEventResize: EventInteractionState, action: an
   }
 }
 
-function reduceLoadingLevel(level: number, action): number {
+function reduceLoadingLevel(level: number, action: Action): number {
   switch (action.type) {
-    case 'FETCH_EVENT_SOURCE':
-      return level + 1
-    case 'RECEIVE_EVENT_SOURCE':
-    case 'ERROR_EVENT_SOURCE':
+    case 'FETCH_EVENT_SOURCES':
+      return level + action.sourceIds.length
+    case 'RECEIVE_EVENTS':
+    case 'RECEIVE_EVENT_ERROR':
       return level - 1
     default:
       return level

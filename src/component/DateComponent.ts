@@ -21,7 +21,7 @@ import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 
 
 export interface DateComponentRenderState {
-  dateProfile: DateProfile
+  dateProfile: DateProfile | null
   eventStore: EventStore
   selection: DateSpan | null
   dragState: EventInteractionState | null

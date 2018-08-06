@@ -210,6 +210,7 @@ export default class EventDragging {
           dragState: {
             affectedEvents: dragState.affectedEvents,
             mutatedEvents: createEmptyEventStore(),
+            isEvent: true,
             origSeg: dragState.origSeg
           }
         })
