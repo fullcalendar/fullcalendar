@@ -175,36 +175,36 @@ export default class AgendaView extends View {
     let allDaySeletion = null
     let timedSelection = null
     let eventStoreGroups = this.splitEventStore(renderState.eventStore)
-    let dragStateGroups = this.splitInteractionState(renderState.dragState)
-    let eventResizeStateGroups = this.splitInteractionState(renderState.eventResizeState)
+    let dragGroups = this.splitInteractionState(renderState.eventDrag)
+    let resizeGroups = this.splitInteractionState(renderState.eventResize)
 
-    if (renderState.selection) {
-      if (renderState.selection.isAllDay) {
-        allDaySeletion = renderState.selection
+    if (renderState.dateSelection) {
+      if (renderState.dateSelection.isAllDay) {
+        allDaySeletion = renderState.dateSelection
       } else {
-        timedSelection = renderState.selection
+        timedSelection = renderState.dateSelection
       }
     }
 
     this.timeGrid.render({
       dateProfile: renderState.dateProfile,
       eventStore: eventStoreGroups.timed,
-      selection: timedSelection,
-      dragState: dragStateGroups.timed,
-      eventResizeState: eventResizeStateGroups.timed,
-      businessHoursDef: renderState.businessHoursDef,
-      selectedEventInstanceId: renderState.selectedEventInstanceId
+      dateSelection: timedSelection,
+      eventSelection: renderState.eventSelection,
+      eventDrag: dragGroups.timed,
+      eventResize: resizeGroups.timed,
+      businessHoursDef: renderState.businessHoursDef
     }, forceFlags)
 
     if (this.dayGrid) {
       this.dayGrid.render({
         dateProfile: renderState.dateProfile,
         eventStore: eventStoreGroups.allDay,
-        selection: allDaySeletion,
-        dragState: dragStateGroups.allDay,
-        eventResizeState: eventResizeStateGroups.allDay,
-        businessHoursDef: renderState.businessHoursDef,
-        selectedEventInstanceId: renderState.selectedEventInstanceId
+        dateSelection: allDaySeletion,
+        eventSelection: renderState.eventSelection,
+        eventDrag: dragGroups.allDay,
+        eventResize: resizeGroups.allDay,
+        businessHoursDef: renderState.businessHoursDef
       }, forceFlags)
     }
   }

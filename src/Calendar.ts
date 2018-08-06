@@ -317,7 +317,6 @@ export default class Calendar {
     }
 
     this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
-
     this.setViewType(this.opt('defaultView'), this.getInitialDate())
   }
 
@@ -331,11 +330,11 @@ export default class Calendar {
         defs: {},
         instances: {}
       },
-      selection: null,
-      dragState: null,
-      eventResizeState: null,
-      businessHoursDef: false,
-      selectedEventInstanceId: null
+      businessHoursDef: false, // gets populated when we delegate rendering to View
+      dateSelection: null,
+      eventSelection: '',
+      eventDrag: null,
+      eventResize: null
     }
   }
 
@@ -554,11 +553,11 @@ export default class Calendar {
     renderedView.render({
       dateProfile: state.dateProfile,
       eventStore: state.eventStore,
-      selection: state.selection,
-      dragState: state.dragState,
-      eventResizeState: state.eventResizeState,
       businessHoursDef: renderedView.opt('businessHours'),
-      selectedEventInstanceId: state.selectedEventInstanceId
+      dateSelection: state.dateSelection,
+      eventSelection: state.eventSelection,
+      eventDrag: state.eventDrag,
+      eventResize: state.eventResize
     }, forceFlags)
 
     if (this.updateViewSize()) { // success?
@@ -960,7 +959,7 @@ export default class Calendar {
     let selection = parseDateSpan(selectionInput, this.dateEnv)
     if (selection) { // throw parse error otherwise?
       this.dispatch({
-        type: 'SELECT',
+        type: 'SELECT_DATES',
         selection: selection
       })
       browserContext.reportDateSelection(this, selection)

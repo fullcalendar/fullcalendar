@@ -47,7 +47,7 @@ export default class EventDragging {
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
       !this.component.isValidSegDownEl(ev.origEvent.target as HTMLElement) ||
-      (ev.isTouch && this.component.selectedEventInstanceId !== eventInstance.instanceId)
+      (ev.isTouch && this.component.eventSelection !== eventInstance.instanceId)
     )
   }
 
@@ -83,7 +83,7 @@ export default class EventDragging {
 
       calendar.dispatch({
         type: 'SET_EVENT_RESIZE',
-        eventResizeState: {
+        state: {
           affectedEvents: relatedEvents,
           mutatedEvents: mutatedRelated,
           isEvent: true,
@@ -91,7 +91,7 @@ export default class EventDragging {
         }
       })
     } else {
-      calendar.dispatch({ type: 'CLEAR_EVENT_RESIZE' })
+      calendar.dispatch({ type: 'UNSET_EVENT_RESIZE' })
     }
 
     if (!isFinal) {

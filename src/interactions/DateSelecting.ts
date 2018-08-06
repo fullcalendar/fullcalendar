@@ -62,9 +62,9 @@ export default class DateSelecting {
     }
 
     if (dragSelection) {
-      calendar.dispatch({ type: 'SELECT', selection: dragSelection })
+      calendar.dispatch({ type: 'SELECT_DATES', selection: dragSelection })
     } else if (!isFinal) { // only unselect if moved away while dragging
-      calendar.dispatch({ type: 'UNSELECT' })
+      calendar.dispatch({ type: 'UNSELECT_DATES' })
     }
 
     if (!isFinal) {
@@ -84,7 +84,7 @@ export default class DateSelecting {
 
     // only unselect if this component has a selection.
     // otherwise, we might be clearing another component's new selection in the same calendar.
-    } else if (!wasTouchScroll && component.selection) {
+    } else if (!wasTouchScroll && component.dateSelection) {
       let unselectAuto = component.opt('unselectAuto')
       let unselectCancel = component.opt('unselectCancel')
 

@@ -59,7 +59,7 @@ export default class EventDragging {
     dragging.minDistance = ev.isTouch ? 0 : 5
     dragging.delay =
       // only do a touch delay if touch and this event hasn't been selected yet
-      (ev.isTouch && eventInstanceId !== component.selectedEventInstanceId) ?
+      (ev.isTouch && eventInstanceId !== component.eventSelection) ?
         getComponentTouchDelay(component) :
         null
 
@@ -78,7 +78,7 @@ export default class EventDragging {
     if (ev.isTouch) {
 
       // need to select a different event?
-      if (this.eventInstanceId !== this.component.selectedEventInstanceId) {
+      if (this.eventInstanceId !== this.component.eventSelection) {
         let initialCalendar = this.component.getCalendar()
 
         initialCalendar.dispatch({
@@ -195,7 +195,7 @@ export default class EventDragging {
   }
 
   // render a drag state on the next receivingCalendar
-  displayDrag(nextCalendar: Calendar | null, dragState: EventInteractionState) {
+  displayDrag(nextCalendar: Calendar | null, state: EventInteractionState) {
     let initialCalendar = this.component.getCalendar()
     let prevCalendar = this.receivingCalendar
 
@@ -206,23 +206,23 @@ export default class EventDragging {
       // if so, don't clear all the way. we still need to to hide the affectedEvents
       if (prevCalendar === initialCalendar) {
         prevCalendar.dispatch({
-          type: 'SET_DRAG',
-          dragState: {
-            affectedEvents: dragState.affectedEvents,
+          type: 'SET_EVENT_DRAG',
+          state: {
+            affectedEvents: state.affectedEvents,
             mutatedEvents: createEmptyEventStore(),
             isEvent: true,
-            origSeg: dragState.origSeg
+            origSeg: state.origSeg
           }
         })
 
       // completely clear the old calendar if it wasn't the initial
       } else {
-        prevCalendar.dispatch({ type: 'CLEAR_DRAG' })
+        prevCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
       }
     }
 
     if (nextCalendar) {
-      nextCalendar.dispatch({ type: 'SET_DRAG', dragState })
+      nextCalendar.dispatch({ type: 'SET_EVENT_DRAG', state })
     }
   }
 
@@ -231,12 +231,12 @@ export default class EventDragging {
     let { receivingCalendar } = this
 
     if (receivingCalendar) {
-      receivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
+      receivingCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
     }
 
     // the initial calendar might have an dummy drag state from displayDrag
     if (initialCalendar !== receivingCalendar) {
-      initialCalendar.dispatch({ type: 'CLEAR_DRAG' })
+      initialCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
     }
   }
 

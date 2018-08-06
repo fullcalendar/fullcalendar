@@ -21,17 +21,17 @@ export type Action =
 
   { type: 'SET_DATE_PROFILE', dateProfile: DateProfile  } |
 
-  { type: 'SELECT', selection: DateSpan } |
-  { type: 'UNSELECT' } |
+  { type: 'SELECT_DATES', selection: DateSpan } |
+  { type: 'UNSELECT_DATES' } |
 
   { type: 'SELECT_EVENT', eventInstanceId: string } |
-  { type: 'CLEAR_SELECTED_EVENT' } |
+  { type: 'UNSELECT_EVENT' } |
 
-  { type: 'SET_DRAG', dragState: EventInteractionState } |
-  { type: 'CLEAR_DRAG' } |
+  { type: 'SET_EVENT_DRAG', state: EventInteractionState } |
+  { type: 'UNSET_EVENT_DRAG' } |
 
-  { type: 'SET_EVENT_RESIZE', eventResizeState: EventInteractionState } |
-  { type: 'CLEAR_EVENT_RESIZE' } |
+  { type: 'SET_EVENT_RESIZE', state: EventInteractionState } |
+  { type: 'UNSET_EVENT_RESIZE' } |
 
   { type: 'ADD_EVENT_SOURCES', sources: EventSource[] } |
   { type: 'REMOVE_EVENT_SOURCES', sourceIds?: string[] } | // if no sourceIds, remove all

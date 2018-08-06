@@ -89,7 +89,7 @@ export class BrowserContext {
     if (dateSelectedCalendar) {
 
       dateSelectedCalendar.dispatch({
-        type: 'UNSELECT'
+        type: 'UNSELECT_DATES'
       })
 
       dateSelectedCalendar.publiclyTrigger('unselect', [
@@ -124,7 +124,7 @@ export class BrowserContext {
   unselectEvent() {
     if (this.eventSelectedComponent) {
       this.eventSelectedComponent.getCalendar().dispatch({
-        type: 'CLEAR_SELECTED_EVENT'
+        type: 'UNSELECT_EVENT'
       })
       this.eventSelectedComponent = null
     }

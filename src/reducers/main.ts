@@ -17,11 +17,11 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     dateProfile,
     eventSources,
     eventStore: reduceEventStore(state.eventStore, action, eventSources, calendar),
-    businessHoursDef: state.businessHoursDef, // TODO: rename?
-    selection: reduceDateSelection(state.selection, action), // TODO: rename
-    selectedEventInstanceId: reduceSelectedEvent(state.selectedEventInstanceId, action),
-    dragState: reduceDrag(state.dragState, action),
-    eventResizeState: reduceEventResize(state.eventResizeState, action),
+    businessHoursDef: state.businessHoursDef,
+    dateSelection: reduceDateSelection(state.dateSelection, action),
+    eventSelection: reduceSelectedEvent(state.eventSelection, action),
+    eventDrag: reduceEventDrag(state.eventDrag, action),
+    eventResize: reduceEventResize(state.eventResize, action),
     loadingLevel: reduceLoadingLevel(state.loadingLevel, action, eventSources)
   }
 }
@@ -37,9 +37,9 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
 
 function reduceDateSelection(currentSelection: DateSpan | null, action: Action) {
   switch (action.type) {
-    case 'SELECT': // TODO: rename
+    case 'SELECT_DATES':
       return action.selection
-    case 'UNSELECT': // TODO: rename
+    case 'UNSELECT_DATES':
       return null
     default:
       return currentSelection
@@ -50,18 +50,18 @@ function reduceSelectedEvent(currentInstanceId: string, action: Action): string 
   switch (action.type) {
     case 'SELECT_EVENT':
       return action.eventInstanceId
-    case 'CLEAR_SELECTED_EVENT':
+    case 'UNSELECT_EVENT':
       return ''
     default:
       return currentInstanceId
   }
 }
 
-function reduceDrag(currentDrag: EventInteractionState | null, action: Action) {
+function reduceEventDrag(currentDrag: EventInteractionState | null, action: Action) {
   switch (action.type) {
-    case 'SET_DRAG':
-      return action.dragState
-    case 'CLEAR_DRAG':
+    case 'SET_EVENT_DRAG':
+      return action.state
+    case 'UNSET_EVENT_DRAG':
       return null
     default:
       return currentDrag
@@ -71,8 +71,8 @@ function reduceDrag(currentDrag: EventInteractionState | null, action: Action) {
 function reduceEventResize(currentEventResize: EventInteractionState | null, action: Action) {
   switch (action.type) {
     case 'SET_EVENT_RESIZE':
-      return action.eventResizeState
-    case 'CLEAR_EVENT_RESIZE':
+      return action.state
+    case 'UNSET_EVENT_RESIZE':
       return null
     default:
       return currentEventResize

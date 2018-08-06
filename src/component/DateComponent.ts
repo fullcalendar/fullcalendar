@@ -22,12 +22,12 @@ import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 
 export interface DateComponentRenderState {
   dateProfile: DateProfile | null
-  eventStore: EventStore
-  selection: DateSpan | null
-  dragState: EventInteractionState | null
-  eventResizeState: EventInteractionState | null
   businessHoursDef: BusinessHoursDef // BusinessHoursDef's `false` is the empty state
-  selectedEventInstanceId: string
+  eventStore: EventStore
+  dateSelection: DateSpan | null
+  eventSelection: string
+  eventDrag: EventInteractionState | null
+  eventResize: EventInteractionState | null
 }
 
 // NOTE: for fg-events, eventRange.range is NOT sliced,
@@ -80,12 +80,11 @@ export default abstract class DateComponent extends Component {
 
   dateProfile: DateProfile = null
   businessHoursDef: BusinessHoursDef = false
-  selection: DateSpan = null
   eventStore: EventStore = null
-  dragState: EventInteractionState = null
-  eventResizeState: EventInteractionState = null
-  interactingEventDefId: string = null
-  selectedEventInstanceId: string = null
+  dateSelection: DateSpan = null
+  eventSelection: string = ''
+  eventDrag: EventInteractionState = null
+  eventResize: EventInteractionState = null
 
 
   constructor(_view, _options?) {
@@ -154,11 +153,11 @@ export default abstract class DateComponent extends Component {
     }
 
     // don't worry about updating the resize of the helper
-    if (force || flags.selection || flags.drag || flags.eventResize) {
+    if (force || flags.dateSelection || flags.eventDrag || flags.eventResize) {
       this.computeHighlightSize()
     }
 
-    if (force || flags.drag || flags.eventResize) {
+    if (force || flags.eventDrag || flags.eventResize) {
       this.computeHelperSize()
     }
 
@@ -170,11 +169,11 @@ export default abstract class DateComponent extends Component {
       this.assignBusinessHoursSize()
     }
 
-    if (force || flags.selection || flags.drag || flags.eventResize) {
+    if (force || flags.dateSelection || flags.eventDrag || flags.eventResize) {
       this.assignHighlightSize()
     }
 
-    if (force || flags.drag || flags.eventResize) {
+    if (force || flags.eventDrag || flags.eventResize) {
       this.assignHelperSize()
     }
 
@@ -287,12 +286,12 @@ export default abstract class DateComponent extends Component {
     let dirtyFlags = {
       skeleton: false,
       dates: renderState.dateProfile !== this.dateProfile,
-      businessHours: renderState.businessHoursDef !== this.businessHoursDef,
-      selection: renderState.selection !== this.selection,
       events: renderState.eventStore !== this.eventStore,
-      selectedEvent: renderState.selectedEventInstanceId !== this.selectedEventInstanceId,
-      drag: renderState.dragState !== this.dragState,
-      eventResize: renderState.eventResizeState !== this.eventResizeState
+      businessHours: renderState.businessHoursDef !== this.businessHoursDef,
+      dateSelection: renderState.dateSelection !== this.dateSelection,
+      eventSelection: renderState.eventSelection !== this.eventSelection,
+      eventDrag: renderState.eventDrag !== this.eventDrag,
+      eventResize: renderState.eventResize !== this.eventResize
     }
 
     assignTo(dirtyFlags, forceFlags)
@@ -349,10 +348,10 @@ export default abstract class DateComponent extends Component {
       dirtySizeFlags.businessHours = true
     }
 
-    if (flags.selection && renderState.selection) {
-      this.renderSelection(renderState.selection)
-      renderedFlags.selection = true
-      dirtySizeFlags.selection = true
+    if (flags.dateSelection && renderState.dateSelection) {
+      this.renderDateSelection(renderState.dateSelection)
+      renderedFlags.dateSelection = true
+      dirtySizeFlags.dateSelection = true
     }
 
     if (flags.events && renderState.eventStore) {
@@ -361,20 +360,20 @@ export default abstract class DateComponent extends Component {
       dirtySizeFlags.events = true
     }
 
-    if (flags.selectedEvent) {
-      this.selectEventsByInstanceId(renderState.selectedEventInstanceId)
-      renderedFlags.selectedEvent = true
-      dirtySizeFlags.selectedEvent = true
+    if (flags.eventSelection) {
+      this.selectEventsByInstanceId(renderState.eventSelection)
+      renderedFlags.eventSelection = true
+      dirtySizeFlags.eventSelection = true
     }
 
-    if (flags.drag && renderState.dragState) {
-      this.renderDragState(renderState.dragState)
-      renderedFlags.drag = true
-      dirtySizeFlags.drag = true
+    if (flags.eventDrag && renderState.eventDrag) {
+      this.renderEventDragState(renderState.eventDrag)
+      renderedFlags.eventDrag = true
+      dirtySizeFlags.eventDrag = true
     }
 
-    if (flags.eventResize && renderState.eventResizeState) {
-      this.renderEventResizeState(renderState.eventResizeState)
+    if (flags.eventResize && renderState.eventResize) {
+      this.renderEventResizeState(renderState.eventResize)
       renderedFlags.eventResize = true
       dirtySizeFlags.eventResize = true
     }
@@ -389,14 +388,14 @@ export default abstract class DateComponent extends Component {
       renderedFlags.eventResize = false
     }
 
-    if ((!flags || flags.drag) && renderedFlags.drag) {
-      this.unrenderDragState()
-      renderedFlags.drag = false
+    if ((!flags || flags.eventDrag) && renderedFlags.eventDrag) {
+      this.unrenderEventDragState()
+      renderedFlags.eventDrag = false
     }
 
-    if ((!flags || flags.selectedEvent) && renderedFlags.selectedEvent) {
+    if ((!flags || flags.eventSelection) && renderedFlags.eventSelection) {
       this.unselectAllEvents()
-      renderedFlags.selectedEvent = false
+      renderedFlags.eventSelection = false
     }
 
     if ((!flags || flags.events) && renderedFlags.events) {
@@ -404,9 +403,9 @@ export default abstract class DateComponent extends Component {
       renderedFlags.events = false
     }
 
-    if ((!flags || flags.selection) && renderedFlags.selection) {
-      this.unrenderSelection()
-      renderedFlags.selection = false
+    if ((!flags || flags.dateSelection) && renderedFlags.dateSelection) {
+      this.unrenderDateSelection()
+      renderedFlags.dateSelection = false
     }
 
     if ((!flags || flags.businessHours) && renderedFlags.businessHours) {
@@ -580,21 +579,21 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderDragState(dragState: EventInteractionState) {
-    this.hideSegsByHash(dragState.affectedEvents.instances)
-    this.renderDrag(dragState.mutatedEvents, dragState.isEvent, dragState.origSeg)
+  renderEventDragState(state: EventInteractionState) {
+    this.hideSegsByHash(state.affectedEvents.instances)
+    this.renderEventDrag(state.mutatedEvents, state.isEvent, state.origSeg)
   }
 
 
-  unrenderDragState() {
-    this.showSegsByHash(this.dragState.affectedEvents.instances)
-    this.unrenderDrag()
+  unrenderEventDragState() {
+    this.showSegsByHash(this.eventDrag.affectedEvents.instances)
+    this.unrenderEventDrag()
   }
 
 
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
-  renderDrag(eventStore: EventStore, isEvent: boolean, origSeg: Seg | null) {
+  renderEventDrag(eventStore: EventStore, isEvent: boolean, origSeg: Seg | null) {
     let segs = this.eventStoreToSegs(eventStore)
 
     // if the user is dragging something that is considered an event with real event data,
@@ -615,7 +614,7 @@ export default abstract class DateComponent extends Component {
 
 
   // Unrenders a visual indication of an event or external-element being dragged.
-  unrenderDrag() {
+  unrenderEventDrag() {
     this.unrenderHighlight()
 
     if (this.helperRenderer) {
@@ -628,14 +627,14 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderEventResizeState(eventResizeState: EventInteractionState) {
-    this.hideSegsByHash(eventResizeState.affectedEvents.instances)
-    this.renderEventResize(eventResizeState.mutatedEvents, eventResizeState.origSeg)
+  renderEventResizeState(state: EventInteractionState) {
+    this.hideSegsByHash(state.affectedEvents.instances)
+    this.renderEventResize(state.mutatedEvents, state.origSeg)
   }
 
 
   unrenderEventResizeState() {
-    this.showSegsByHash(this.eventResizeState.affectedEvents.instances)
+    this.showSegsByHash(this.eventResize.affectedEvents.instances)
     this.unrenderEventResize()
   }
 
@@ -735,13 +734,13 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders a visual indication of the selection
-  renderSelection(selection: DateSpan) {
+  renderDateSelection(selection: DateSpan) {
     this.renderHighlightSegs(this.selectionToSegs(selection))
   }
 
 
   // Unrenders a visual indication of selection
-  unrenderSelection() {
+  unrenderDateSelection() {
     this.unrenderHighlight()
   }
 
@@ -997,8 +996,7 @@ export default abstract class DateComponent extends Component {
 
 
   isValidSegDownEl(el: HTMLElement) {
-    return !this.dragState &&
-      !this.eventResizeState &&
+    return !this.eventDrag && !this.eventResize &&
       !elementClosest(el, '.fc-helper')
   }
 

@@ -124,21 +124,21 @@ export default class ExternalElementDragging {
     this.droppableEvent = null
   }
 
-  displayDrag(nextCalendar: Calendar | null, dragState: EventInteractionState) {
+  displayDrag(nextCalendar: Calendar | null, state: EventInteractionState) {
     let prevCalendar = this.receivingCalendar
 
     if (prevCalendar && prevCalendar !== nextCalendar) {
-      prevCalendar.dispatch({ type: 'CLEAR_DRAG' })
+      prevCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
     }
 
     if (nextCalendar) {
-      nextCalendar.dispatch({ type: 'SET_DRAG', dragState: dragState })
+      nextCalendar.dispatch({ type: 'SET_EVENT_DRAG', state })
     }
   }
 
   clearDrag() {
     if (this.receivingCalendar) {
-      this.receivingCalendar.dispatch({ type: 'CLEAR_DRAG' })
+      this.receivingCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
     }
   }
 
