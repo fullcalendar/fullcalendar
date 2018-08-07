@@ -61,10 +61,10 @@ export default class DayGrid extends DateComponent {
   rowEls: HTMLElement[] // set of fake row elements
   cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
 
-  rowCoordCache: CoordCache
-  colCoordCache: CoordCache
-  colOffsets: OffsetCoordCache
+  rowPositions: CoordCache
+  colPositions: CoordCache
   rowOffsets: OffsetCoordCache
+  colOffsets: OffsetCoordCache
 
   // isRigid determines whether the individual rows should ignore the contents and be a constant height.
   // Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
@@ -139,12 +139,12 @@ export default class DayGrid extends DateComponent {
     this.rowEls = findElements(this.el, '.fc-row')
     this.cellEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
-    this.rowCoordCache = new CoordCache({
+    this.rowPositions = new CoordCache({
       originEl: this.el,
       els: this.rowEls,
       isVertical: true
     })
-    this.colCoordCache = new CoordCache({
+    this.colPositions = new CoordCache({
       originEl: this.el,
       els: this.cellEls.slice(0, this.colCnt), // only the first row
       isHorizontal: true
@@ -297,9 +297,9 @@ export default class DayGrid extends DateComponent {
 
 
   buildCoordCaches() {
-    this.colCoordCache.build()
-    this.rowCoordCache.build()
-    this.rowCoordCache.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
+    this.colPositions.build()
+    this.rowPositions.build()
+    this.rowPositions.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
   }
 
 
@@ -308,8 +308,8 @@ export default class DayGrid extends DateComponent {
 
 
   prepareHits() {
-    this.colOffsets = new OffsetCoordCache(this.colCoordCache)
-    this.rowOffsets = new OffsetCoordCache(this.rowCoordCache)
+    this.colOffsets = new OffsetCoordCache(this.colPositions)
+    this.rowOffsets = new OffsetCoordCache(this.rowPositions)
   }
 
 
