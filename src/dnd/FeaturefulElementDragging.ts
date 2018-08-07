@@ -2,6 +2,8 @@ import { default as PointerDragging, PointerDragEvent } from './PointerDragging'
 import { preventSelection, allowSelection, preventContextMenu, allowContextMenu } from '../util/misc'
 import ElementMirror from './ElementMirror'
 import ElementDragging from './ElementDragging'
+import AutoScroller from './AutoScroller'
+import { WindowScrollControllerCache, WindowScrollController } from './scroll'
 
 /*
 Monitors dragging on an element. Has a number of high-level features:
@@ -12,8 +14,9 @@ Monitors dragging on an element. Has a number of high-level features:
 export default class FeaturefulElementDragging extends ElementDragging {
 
   pointer: PointerDragging
+  windowScrollController: WindowScrollControllerCache
   mirror: ElementMirror
-  mirrorNeedsRevert: boolean = false
+  autoScroller: AutoScroller
 
   // options that can be directly set by caller
   // the caller can also set the PointerDragging's options as well
@@ -21,7 +24,8 @@ export default class FeaturefulElementDragging extends ElementDragging {
   minDistance: number = 0
   touchScrollAllowed: boolean = true
 
-  isWatchingPointer: boolean = false
+  mirrorNeedsRevert: boolean = false
+  isInteracting: boolean = false // is the user validly moving the pointer? lasts until pointerup
   isDragging: boolean = false // is it INTENTFULLY dragging? lasts until after revert animation
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
@@ -38,6 +42,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
     pointer.emitter.on('pointerup', this.onPointerUp)
 
     this.mirror = new ElementMirror()
+    this.autoScroller = new AutoScroller()
   }
 
   destroy() {
@@ -45,23 +50,26 @@ export default class FeaturefulElementDragging extends ElementDragging {
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
-    if (!this.isDragging) { // mainly so new drag doesn't happen while revert animation is going
-      this.isWatchingPointer = true
+    if (!this.isDragging) { // so new drag doesn't happen while revert animation is going
+
+      this.isInteracting = true
       this.isDelayEnded = false
       this.isDistanceSurpassed = false
 
       preventSelection(document.body)
       preventContextMenu(document.body)
 
-      this.origX = ev.pageX
-      this.origY = ev.pageY
-
       this.emitter.trigger('pointerdown', ev)
-      this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY)
 
-      // if moving is being ignored, don't fire any initial drag events
       if (!this.pointer.shouldIgnoreMove) {
-        // actions that could fire dragstart...
+        // actions related to initiating dragstart+dragmove+dragend...
+
+        this.origX = ev.pageX
+        this.origY = ev.pageY
+
+        this.windowScrollController = new WindowScrollControllerCache(new WindowScrollController())
+        this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY, this.windowScrollController)
+        this.autoScroller.start(ev.pageX, ev.pageY, this.windowScrollController)
 
         this.startDelay(ev)
 
@@ -73,9 +81,12 @@ export default class FeaturefulElementDragging extends ElementDragging {
   }
 
   onPointerMove = (ev: PointerDragEvent) => {
-    if (this.isWatchingPointer) { // if false, still waiting for previous drag's revert
+    if (this.isInteracting) { // if false, still waiting for previous drag's revert
+
       this.emitter.trigger('pointermove', ev)
+
       this.mirror.handleMove(ev.pageX, ev.pageY)
+      this.autoScroller.handleMove(ev.pageX, ev.pageY)
 
       if (!this.isDistanceSurpassed) {
         let dx = ev.pageX - this.origX!
@@ -96,17 +107,23 @@ export default class FeaturefulElementDragging extends ElementDragging {
   }
 
   onPointerUp = (ev: PointerDragEvent) => {
-    if (this.isWatchingPointer) { // if false, still waiting for previous drag's revert
-      this.isWatchingPointer = false
+    if (this.isInteracting) { // if false, still waiting for previous drag's revert
+      this.isInteracting = false
+
+      allowSelection(document.body)
+      allowContextMenu(document.body)
 
       this.emitter.trigger('pointerup', ev) // can potentially set mirrorNeedsRevert
+
+      if (!this.pointer.shouldIgnoreMove) { // because these things wouldn't have been started otherwise
+        this.autoScroller.stop()
+        this.windowScrollController.destroy()
+        this.windowScrollController = null
+      }
 
       if (this.isDragging) {
         this.tryStopDrag(ev)
       }
-
-      allowSelection(document.body)
-      allowContextMenu(document.body)
 
       if (this.delayTimeoutId) {
         clearTimeout(this.delayTimeoutId)

@@ -1,6 +1,7 @@
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { whenTransitionDone } from '../util/dom-event'
 import { Rect } from '../util/geom'
+import { WindowScrollControllerCache } from './scroll'
 
 /*
 An effect in which an element follows the movement of a pointer across the screen.
@@ -10,13 +11,14 @@ Must call start + handleMove + stop.
 export default class ElementMirror {
 
   isVisible: boolean = false // must be explicitly enabled
-  origX?: number
-  origY?: number
+  origScreenX?: number
+  origScreenY?: number
   deltaX?: number
   deltaY?: number
   sourceEl: HTMLElement | null = null
   mirrorEl: HTMLElement | null = null
-  sourceElRect: Rect | null = null
+  windowController: WindowScrollControllerCache
+  sourceElRect: Rect | null = null // screen coords relative to viewport
 
   // options that can be set directly by caller
   parentNode: HTMLElement = document.body
@@ -24,18 +26,19 @@ export default class ElementMirror {
   zIndex: number = 9999
   revertDuration: number = 0
 
-  start(sourceEl: HTMLElement, left: number, top: number) {
+  start(sourceEl: HTMLElement, pageX: number, pageY: number, windowController: WindowScrollControllerCache) {
     this.sourceEl = sourceEl
-    this.origX = left
-    this.origY = top
+    this.origScreenX = pageX - windowController.getScrollLeft()
+    this.origScreenY = pageY - windowController.getScrollTop()
     this.deltaX = 0
     this.deltaY = 0
+    this.windowController = windowController
     this.updateElPosition()
   }
 
-  handleMove(left: number, top: number) {
-    this.deltaX = left - this.origX!
-    this.deltaY = top - this.origY!
+  handleMove(pageX: number, pageY: number) {
+    this.deltaX = (pageX - this.windowController.getScrollLeft()) - this.origScreenX!
+    this.deltaY = (pageY - this.windowController.getScrollTop()) - this.origScreenY!
     this.updateElPosition()
   }
 
