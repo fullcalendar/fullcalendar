@@ -1,4 +1,5 @@
 import { createElement, removeElement } from './dom-manip'
+import { Rect } from './geom'
 
 export interface EdgeInfo {
   borderLeft: number
@@ -71,7 +72,7 @@ export function computeInnerRect(el, goWithinPadding = false) {
 }
 
 
-export function computeRect(el) {
+export function computeRect(el): Rect {
   let rect = el.getBoundingClientRect()
 
   return {
@@ -83,12 +84,12 @@ export function computeRect(el) {
 }
 
 
-export function computeViewportRect() {
+export function computeViewportRect(): Rect {
   return {
-    top: window.scrollY,
     left: window.scrollX,
-    width: document.documentElement.clientWidth,
-    height: document.documentElement.clientHeight
+    right: window.scrollX + document.documentElement.clientWidth,
+    top: window.scrollY,
+    bottom: window.scrollY + document.documentElement.clientHeight
   }
 }
 

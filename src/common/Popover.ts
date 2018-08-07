@@ -16,6 +16,7 @@ Options:
 import { removeElement, createElement, applyStyle } from '../util/dom-manip'
 import { listenBySelector } from '../util/dom-event'
 import { getScrollParent, computeRect, computeViewportRect } from '../util/dom-geom'
+import { Rect } from '../util/geom'
 
 export interface PopoverOptions {
   className?: string
@@ -122,7 +123,7 @@ export default class Popover {
     let elDims = el.getBoundingClientRect() // only used for width,height
     let origin = computeRect(el.offsetParent)
     let scrollEl = getScrollParent(el)
-    let viewportRect
+    let viewportRect: Rect
     let top // the "position" (not "offset") values for the popover
     let left //
 
@@ -144,9 +145,9 @@ export default class Popover {
 
     // constrain to the view port. if constrained by two edges, give precedence to top/left
     if (options.viewportConstrain !== false) {
-      top = Math.min(top, viewportRect.top + viewportRect.height - elDims.height - this.margin)
+      top = Math.min(top, viewportRect.bottom - elDims.height - this.margin)
       top = Math.max(top, viewportRect.top + this.margin)
-      left = Math.min(left, viewportRect.left + viewportRect.width - elDims.width - this.margin)
+      left = Math.min(left, viewportRect.right - elDims.width - this.margin)
       left = Math.max(left, viewportRect.left + this.margin)
     }
 
