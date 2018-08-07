@@ -12,6 +12,14 @@ export interface Rect {
 }
 
 
+export function pointInsideRect(point: Point, rect: Rect): boolean {
+  return point.left >= rect.left &&
+    point.left < rect.right &&
+    point.top >= rect.top &&
+    point.top < rect.bottom
+}
+
+
 // Returns a new rectangle that is the intersection of the two rectangles. If they don't intersect, returns false
 export function intersectRects(rect1: Rect, rect2: Rect): Rect | false {
   let res = {

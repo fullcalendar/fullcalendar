@@ -77,6 +77,7 @@ export default abstract class DateComponent extends Component {
 
   renderedFlags: any = {}
   dirtySizeFlags: any = {}
+  needHitsDepth: number = 0
 
   dateProfile: DateProfile = null
   businessHoursDef: BusinessHoursDef = false
@@ -191,6 +192,28 @@ export default abstract class DateComponent extends Component {
 
 
   buildCoordCaches() {
+  }
+
+
+  requestPrepareHits() {
+    if (!(this.needHitsDepth++)) {
+      this.prepareHits()
+    }
+  }
+
+
+  requestReleaseHits() {
+    if (!(--this.needHitsDepth)) {
+      this.releaseHits()
+    }
+  }
+
+
+  protected prepareHits() {
+  }
+
+
+  protected releaseHits() {
   }
 
 

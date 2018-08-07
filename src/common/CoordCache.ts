@@ -1,6 +1,5 @@
-import { computeInnerRect, getScrollParent } from '../util/dom-geom'
 
-export interface CoordCacheOptions {
+export interface CoordCacheOptions { // TODO: set these props directly
   originEl: HTMLElement
   els: HTMLElement[]
   isHorizontal?: boolean
@@ -16,12 +15,10 @@ options:
 - isHorizontal
 - isVertical
 */
-export default class CoordCache {
+export default class CoordCache { // TODO: rename to PositionCoordCache
 
   els: HTMLElement[] // assumed to be siblings
   originEl: HTMLElement // options can override the natural originEl
-  origin: any // {left,top} position of originEl of els
-  boundingRect: any // constrain cordinates to this rectangle. {left,right,top,bottom} or null
   isHorizontal: boolean = false // whether to query for left/right/width
   isVertical: boolean = false // whether to query for top/bottom/height
 
@@ -46,11 +43,6 @@ export default class CoordCache {
     let originEl = this.originEl
     let originClientRect = originEl.getBoundingClientRect() // relative to viewport top-left
 
-    this.origin = {
-      top: originClientRect.top + window.scrollY,
-      left: originClientRect.left + window.scrollX
-    }
-
     if (this.isHorizontal) {
       this.buildElHorizontals(originClientRect.left)
     }
@@ -58,8 +50,6 @@ export default class CoordCache {
     if (this.isVertical) {
       this.buildElVerticals(originClientRect.top)
     }
-
-    this.boundingRect = this.queryBoundingRect()
   }
 
 
@@ -68,11 +58,11 @@ export default class CoordCache {
     let lefts = []
     let rights = []
 
-    this.els.forEach(function(node) {
-      let rect = node.getBoundingClientRect()
+    for (let el of this.els) {
+      let rect = el.getBoundingClientRect()
       lefts.push(rect.left - originClientLeft)
       rights.push(rect.right - originClientLeft)
-    })
+    }
 
     this.lefts = lefts
     this.rights = rights
@@ -84,11 +74,11 @@ export default class CoordCache {
     let tops = []
     let bottoms = []
 
-    this.els.forEach(function(node) {
-      let rect = node.getBoundingClientRect()
+    for (let el of this.els) {
+      let rect = el.getBoundingClientRect()
       tops.push(rect.top - originClientTop)
       bottoms.push(rect.bottom - originClientTop)
-    })
+    }
 
     this.tops = tops
     this.bottoms = bottoms
@@ -97,8 +87,7 @@ export default class CoordCache {
 
   // Given a left offset (from document left), returns the index of the el that it horizontally intersects.
   // If no intersection is made, returns undefined.
-  getHorizontalIndex(leftOffset) {
-    let leftPosition = leftOffset - this.origin.left
+  leftPositionToIndex(leftPosition) {
     let lefts = this.lefts
     let rights = this.rights
     let len = lefts.length
@@ -114,8 +103,7 @@ export default class CoordCache {
 
   // Given a top offset (from document top), returns the index of the el that it vertically intersects.
   // If no intersection is made, returns undefined.
-  getVerticalIndex(topOffset) {
-    let topPosition = topOffset - this.origin.top
+  topPositionToIndex(topPosition) {
     let tops = this.tops
     let bottoms = this.bottoms
     let len = tops.length
@@ -129,29 +117,29 @@ export default class CoordCache {
   }
 
 
-  // Gets the left offset (from document left) of the element at the given index
-  getLeftOffset(leftIndex) {
-    return this.lefts[leftIndex] + this.origin.left
-  }
-
-
   // Gets the left position (from originEl left) of the element at the given index
-  getLeftPosition(leftIndex) {
+  indexToLeftPosition(leftIndex) {
     return this.lefts[leftIndex]
-  }
-
-
-  // Gets the right offset (from document left) of the element at the given index.
-  // This value is NOT relative to the document's right edge, like the CSS concept of "right" would be.
-  getRightOffset(leftIndex) {
-    return this.rights[leftIndex] + this.origin.left
   }
 
 
   // Gets the right position (from originEl left) of the element at the given index.
   // This value is NOT relative to the originEl's right edge, like the CSS concept of "right" would be.
-  getRightPosition(leftIndex) {
+  indexToRightPosition(leftIndex) {
     return this.rights[leftIndex]
+  }
+
+
+  // Gets the top position (from originEl top) of the element at the given position
+  indexToTopPosition(topIndex) {
+    return this.tops[topIndex]
+  }
+
+
+  // Gets the bottom position (from the originEl top) of the element at the given index.
+  // This value is NOT relative to the originEl's bottom edge, like the CSS concept of "bottom" would be.
+  indexToBottomPosition(topIndex) {
+    return this.bottoms[topIndex]
   }
 
 
@@ -161,61 +149,9 @@ export default class CoordCache {
   }
 
 
-  // Gets the top offset (from document top) of the element at the given index
-  getTopOffset(topIndex) {
-    return this.tops[topIndex] + this.origin.top
-  }
-
-
-  // Gets the top position (from originEl top) of the element at the given position
-  getTopPosition(topIndex) {
-    return this.tops[topIndex]
-  }
-
-  // Gets the bottom offset (from the document top) of the element at the given index.
-  // This value is NOT relative to the originEl's bottom edge, like the CSS concept of "bottom" would be.
-  getBottomOffset(topIndex) {
-    return this.bottoms[topIndex] + this.origin.top
-  }
-
-
-  // Gets the bottom position (from the originEl top) of the element at the given index.
-  // This value is NOT relative to the originEl's bottom edge, like the CSS concept of "bottom" would be.
-  getBottomPosition(topIndex) {
-    return this.bottoms[topIndex]
-  }
-
-
   // Gets the height of the element at the given index
   getHeight(topIndex) {
     return this.bottoms[topIndex] - this.tops[topIndex]
-  }
-
-
-  // Bounding Rect
-  // TODO: decouple this from CoordCache
-
-  // Compute and return what the elements' bounding rectangle is, from the user's perspective.
-  // Right now, only returns a rectangle if constrained by an overflow:scroll element.
-  // Returns null if there are no elements
-  queryBoundingRect() {
-    let scrollParentEl: HTMLElement = getScrollParent(this.els[0] || this.originEl)
-
-    if (scrollParentEl) {
-      return computeInnerRect(scrollParentEl)
-    }
-  }
-
-  isPointInBounds(leftOffset, topOffset) {
-    return this.isLeftInBounds(leftOffset) && this.isTopInBounds(topOffset)
-  }
-
-  isLeftInBounds(leftOffset) {
-    return !this.boundingRect || (leftOffset >= this.boundingRect.left && leftOffset < this.boundingRect.right)
-  }
-
-  isTopInBounds(topOffset) {
-    return !this.boundingRect || (topOffset >= this.boundingRect.top && topOffset < this.boundingRect.bottom)
   }
 
 }

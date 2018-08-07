@@ -10,6 +10,7 @@ import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDu
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import DateComponent, { Seg } from '../component/DateComponent'
+import OffsetCoordCache from '../common/OffsetCoordCache'
 import { DateSpan } from '../structs/date-span'
 import { EventStore } from '../structs/event-store'
 import { Hit } from '../interactions/HitDragging'
@@ -61,6 +62,8 @@ export default class TimeGrid extends DateComponent {
 
   colCoordCache: CoordCache
   slatCoordCache: CoordCache
+  colOffsets: OffsetCoordCache
+  slatOffsets: OffsetCoordCache
 
   rootBgContainerEl: HTMLElement
   bottomRuleEl: HTMLElement // hidden by default
@@ -514,7 +517,7 @@ export default class TimeGrid extends DateComponent {
     // could be 1.0 if slatCoverage is covering *all* the slots
     slatRemainder = slatCoverage - slatIndex
 
-    return this.slatCoordCache.getTopPosition(slatIndex) +
+    return this.slatCoordCache.indexToTopPosition(slatIndex) +
       this.slatCoordCache.getHeight(slatIndex) * slatRemainder
   }
 
@@ -561,21 +564,41 @@ export default class TimeGrid extends DateComponent {
   }
 
 
+  /* Sizing
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  buildCoordCaches() {
+    this.colCoordCache.build()
+    this.slatCoordCache.build()
+  }
+
+
   /* Hit System
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  queryHit(leftOffset, topOffset): Hit {
-    let snapsPerSlot = this.snapsPerSlot
-    let colCoordCache = this.colCoordCache
-    let slatCoordCache = this.slatCoordCache
+  prepareHits() {
+    this.colOffsets = new OffsetCoordCache(this.colCoordCache)
+    this.slatOffsets = new OffsetCoordCache(this.slatCoordCache)
+  }
 
-    if (colCoordCache.isLeftInBounds(leftOffset) && slatCoordCache.isTopInBounds(topOffset)) {
-      let colIndex = colCoordCache.getHorizontalIndex(leftOffset)
-      let slatIndex = slatCoordCache.getVerticalIndex(topOffset)
+
+  releaseHits() {
+    this.colOffsets.destroy()
+    this.slatOffsets.destroy()
+  }
+
+
+  queryHit(leftOffset, topOffset): Hit {
+    let { snapsPerSlot, slatCoordCache, colOffsets, slatOffsets } = this
+
+    if (colOffsets.isInBounds(leftOffset, topOffset)) {
+      let colIndex = colOffsets.leftOffsetToIndex(leftOffset)
+      let slatIndex = slatOffsets.topOffsetToIndex(topOffset)
 
       if (colIndex != null && slatIndex != null) {
-        let slatTop = slatCoordCache.getTopOffset(slatIndex)
+        let slatTop = slatOffsets.indexToTopOffset(slatIndex)
         let slatHeight = slatCoordCache.getHeight(slatIndex)
         let partial = (topOffset - slatTop) / slatHeight // floating point number between 0 and 1
         let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
@@ -599,20 +622,14 @@ export default class TimeGrid extends DateComponent {
           },
           dayEl: this.colEls[colIndex],
           rect: {
-            left: colCoordCache.getLeftOffset(colIndex),
-            right: colCoordCache.getRightOffset(colIndex),
+            left: colOffsets.indexToLeftOffset(colIndex),
+            right: colOffsets.indexToRightOffset(colIndex),
             top: slatTop,
             bottom: slatTop + slatHeight
           }
         }
       }
     }
-  }
-
-
-  buildCoordCaches() {
-    this.colCoordCache.build()
-    this.slatCoordCache.build()
   }
 
 

@@ -21,6 +21,7 @@ import { EventStore } from '../structs/event-store'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
+import OffsetCoordCache from '../common/OffsetCoordCache'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -62,6 +63,8 @@ export default class DayGrid extends DateComponent {
 
   rowCoordCache: CoordCache
   colCoordCache: CoordCache
+  colOffsets: OffsetCoordCache
+  rowOffsets: OffsetCoordCache
 
   // isRigid determines whether the individual rows should ignore the contents and be a constant height.
   // Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
@@ -289,16 +292,39 @@ export default class DayGrid extends DateComponent {
   }
 
 
+  /* Sizing
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  buildCoordCaches() {
+    this.colCoordCache.build()
+    this.rowCoordCache.build()
+    this.rowCoordCache.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
+  }
+
+
   /* Hit System
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  queryHit(leftOffset, topOffset): Hit {
-    let { colCoordCache, rowCoordCache } = this
+  prepareHits() {
+    this.colOffsets = new OffsetCoordCache(this.colCoordCache)
+    this.rowOffsets = new OffsetCoordCache(this.rowCoordCache)
+  }
 
-    if (colCoordCache.isLeftInBounds(leftOffset) && rowCoordCache.isTopInBounds(topOffset)) {
-      let col = colCoordCache.getHorizontalIndex(leftOffset)
-      let row = rowCoordCache.getVerticalIndex(topOffset)
+
+  releaseHits() {
+    this.colOffsets.destroy()
+    this.rowOffsets.destroy()
+  }
+
+
+  queryHit(leftOffset, topOffset): Hit {
+    let { colOffsets, rowOffsets } = this
+
+    if (colOffsets.isInBounds(leftOffset, topOffset)) {
+      let col = colOffsets.leftOffsetToIndex(leftOffset)
+      let row = rowOffsets.topOffsetToIndex(topOffset)
 
       if (row != null && col != null) {
         return {
@@ -309,21 +335,14 @@ export default class DayGrid extends DateComponent {
           },
           dayEl: this.getCellEl(row, col),
           rect: {
-            left: colCoordCache.getLeftOffset(col),
-            right: colCoordCache.getRightOffset(col),
-            top: rowCoordCache.getTopOffset(row),
-            bottom: rowCoordCache.getBottomOffset(row)
+            left: colOffsets.indexToLeftOffset(col),
+            right: colOffsets.indexToRightOffset(col),
+            top: rowOffsets.indexToTopOffset(row),
+            bottom: rowOffsets.indexToBottomOffset(row)
           }
         }
       }
     }
-  }
-
-
-  buildCoordCaches() {
-    this.colCoordCache.build()
-    this.rowCoordCache.build()
-    this.rowCoordCache.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
   }
 
 

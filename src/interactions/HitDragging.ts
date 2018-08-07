@@ -67,7 +67,7 @@ export default class HitDragging {
     this.movingHit = null
     this.finalHit = null
 
-    this.prepareComponents()
+    this.prepareHits()
     this.processFirstCoord(ev)
 
     if (this.initialHit || !this.requireInitial) {
@@ -118,6 +118,7 @@ export default class HitDragging {
   }
 
   handlePointerUp = (ev: PointerDragEvent) => {
+    this.releaseHits()
     this.emitter.trigger('pointerup', ev)
   }
 
@@ -143,11 +144,19 @@ export default class HitDragging {
     }
   }
 
-  prepareComponents() {
+  prepareHits() {
     let { droppableHash } = this
 
     for (let id in droppableHash) {
-      droppableHash[id].buildCoordCaches()
+      droppableHash[id].requestPrepareHits()
+    }
+  }
+
+  releaseHits() {
+    let { droppableHash } = this
+
+    for (let id in droppableHash) {
+      droppableHash[id].requestReleaseHits()
     }
   }
 
