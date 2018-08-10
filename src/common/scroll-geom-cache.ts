@@ -2,18 +2,16 @@ import { Rect } from '../util/geom'
 import { computeRect } from '../util/dom-geom'
 import { ScrollController, ElementScrollController, WindowScrollController } from './scroll-controller'
 
-export abstract class ScrollGeomCache extends ScrollController { // needs to extend ScrollController?
+export abstract class ScrollGeomCache extends ScrollController {
 
   rect: Rect
-  scrollController: ScrollController
-
-  doesListening: boolean
-
   origScrollTop: number
   origScrollLeft: number
 
-  scrollTop: number
-  scrollLeft: number
+  protected scrollController: ScrollController
+  protected doesListening: boolean
+  protected scrollTop: number
+  protected scrollLeft: number
   protected scrollWidth: number
   protected scrollHeight: number
   protected clientWidth: number

@@ -8,7 +8,7 @@ import {
 } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'
 import View from '../View'
-import CoordCache from '../common/CoordCache'
+import PositionCache from '../common/PositionCache'
 import Popover from '../common/Popover'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import DayGridEventRenderer from './DayGridEventRenderer'
@@ -61,8 +61,8 @@ export default class DayGrid extends DateComponent {
   rowEls: HTMLElement[] // set of fake row elements
   cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
 
-  rowPositions: CoordCache
-  colPositions: CoordCache
+  rowPositions: PositionCache
+  colPositions: PositionCache
   offsetTracker: OffsetTracker
 
   // isRigid determines whether the individual rows should ignore the contents and be a constant height.
@@ -138,12 +138,12 @@ export default class DayGrid extends DateComponent {
     this.rowEls = findElements(this.el, '.fc-row')
     this.cellEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
-    this.rowPositions = new CoordCache({
+    this.rowPositions = new PositionCache({
       originEl: this.el,
       els: this.rowEls,
       isVertical: true
     })
-    this.colPositions = new CoordCache({
+    this.colPositions = new PositionCache({
       originEl: this.el,
       els: this.cellEls.slice(0, this.colCnt), // only the first row
       isHorizontal: true
@@ -295,7 +295,7 @@ export default class DayGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  buildCoordCaches() {
+  buildPositionCaches() {
     this.colPositions.build()
     this.rowPositions.build()
     this.rowPositions.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
@@ -320,10 +320,10 @@ export default class DayGrid extends DateComponent {
     let { colPositions, rowPositions, offsetTracker } = this
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
-      let leftOrigin = offsetTracker.getLeft()
-      let topOrigin = offsetTracker.getTop()
-      let col = colPositions.leftPositionToIndex(leftOffset - leftOrigin)
-      let row = rowPositions.topPositionToIndex(topOffset - topOrigin)
+      let leftOrigin = offsetTracker.computeLeft()
+      let topOrigin = offsetTracker.computeTop()
+      let col = colPositions.leftToIndex(leftOffset - leftOrigin)
+      let row = rowPositions.topToIndex(topOffset - topOrigin)
 
       if (row != null && col != null) {
         return {
@@ -334,10 +334,10 @@ export default class DayGrid extends DateComponent {
           },
           dayEl: this.getCellEl(row, col),
           rect: {
-            left: colPositions.indexToLeftPosition(col) + leftOrigin,
-            right: colPositions.indexToRightPosition(col) + leftOrigin,
-            top: rowPositions.indexToTopPosition(row) + topOrigin,
-            bottom: rowPositions.indexToBottomPosition(row) + topOrigin
+            left: colPositions.lefts[col] + leftOrigin,
+            right: colPositions.rights[col] + leftOrigin,
+            top: rowPositions.tops[row] + topOrigin,
+            bottom: rowPositions.bottoms[row] + topOrigin
           }
         }
       }

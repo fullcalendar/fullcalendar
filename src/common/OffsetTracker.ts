@@ -39,21 +39,21 @@ export default class OffsetTracker {
     return true
   }
 
-  getLeft() {
+  computeLeft() {
     let left = this.origLeft
 
     for (let scrollCache of this.scrollCaches) {
-      left += scrollCache.scrollLeft - scrollCache.origScrollLeft
+      left += scrollCache.getScrollLeft() - scrollCache.origScrollLeft
     }
 
     return left
   }
 
-  getTop() {
+  computeTop() {
     let top = this.origTop
 
     for (let scrollCache of this.scrollCaches) {
-      top += scrollCache.origScrollTop - scrollCache.scrollTop
+      top += scrollCache.origScrollTop - scrollCache.getScrollTop()
     }
 
     return top

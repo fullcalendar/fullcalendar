@@ -1,5 +1,5 @@
 
-export interface CoordCacheOptions { // TODO: set these props directly
+export interface PositionCacheOptions { // TODO: set these props directly
   originEl: HTMLElement
   els: HTMLElement[]
   isHorizontal?: boolean
@@ -15,7 +15,7 @@ options:
 - isHorizontal
 - isVertical
 */
-export default class CoordCache { // TODO: rename to PositionCoordCache
+export default class PositionCache { // TODO: rename to PositionCache
 
   els: HTMLElement[] // assumed to be siblings
   originEl: HTMLElement // options can override the natural originEl
@@ -29,7 +29,7 @@ export default class CoordCache { // TODO: rename to PositionCoordCache
   bottoms: any
 
 
-  constructor(options: CoordCacheOptions) {
+  constructor(options: PositionCacheOptions) {
     this.originEl = options.originEl
     this.els = options.els
     this.isHorizontal = options.isHorizontal
@@ -87,7 +87,7 @@ export default class CoordCache { // TODO: rename to PositionCoordCache
 
   // Given a left offset (from document left), returns the index of the el that it horizontally intersects.
   // If no intersection is made, returns undefined.
-  leftPositionToIndex(leftPosition) {
+  leftToIndex(leftPosition) {
     let lefts = this.lefts
     let rights = this.rights
     let len = lefts.length
@@ -103,7 +103,7 @@ export default class CoordCache { // TODO: rename to PositionCoordCache
 
   // Given a top offset (from document top), returns the index of the el that it vertically intersects.
   // If no intersection is made, returns undefined.
-  topPositionToIndex(topPosition) {
+  topToIndex(topPosition) {
     let tops = this.tops
     let bottoms = this.bottoms
     let len = tops.length
@@ -114,32 +114,6 @@ export default class CoordCache { // TODO: rename to PositionCoordCache
         return i
       }
     }
-  }
-
-
-  // Gets the left position (from originEl left) of the element at the given index
-  indexToLeftPosition(leftIndex) {
-    return this.lefts[leftIndex]
-  }
-
-
-  // Gets the right position (from originEl left) of the element at the given index.
-  // This value is NOT relative to the originEl's right edge, like the CSS concept of "right" would be.
-  indexToRightPosition(leftIndex) {
-    return this.rights[leftIndex]
-  }
-
-
-  // Gets the top position (from originEl top) of the element at the given position
-  indexToTopPosition(topIndex) {
-    return this.tops[topIndex]
-  }
-
-
-  // Gets the bottom position (from the originEl top) of the element at the given index.
-  // This value is NOT relative to the originEl's bottom edge, like the CSS concept of "bottom" would be.
-  indexToBottomPosition(topIndex) {
-    return this.bottoms[topIndex]
   }
 
 

@@ -1,7 +1,7 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
-import CoordCache from '../common/CoordCache'
+import PositionCache from '../common/PositionCache'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridHelperRenderer from './TimeGridHelperRenderer'
@@ -60,8 +60,8 @@ export default class TimeGrid extends DateComponent {
   slatEls: HTMLElement[] // elements running horizontally across all columns
   nowIndicatorEls: HTMLElement[]
 
-  colPositions: CoordCache
-  slatPositions: CoordCache
+  colPositions: PositionCache
+  slatPositions: PositionCache
   offsetTracker: OffsetTracker
 
   rootBgContainerEl: HTMLElement
@@ -236,7 +236,7 @@ export default class TimeGrid extends DateComponent {
 
     this.slatEls = findElements(this.slatContainerEl, 'tr')
 
-    this.slatPositions = new CoordCache({
+    this.slatPositions = new PositionCache({
       originEl: this.el,
       els: this.slatEls,
       isVertical: true
@@ -314,7 +314,7 @@ export default class TimeGrid extends DateComponent {
 
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
-    this.colPositions = new CoordCache({
+    this.colPositions = new PositionCache({
       originEl: this.el,
       els: this.colEls,
       isHorizontal: true
@@ -516,7 +516,7 @@ export default class TimeGrid extends DateComponent {
     // could be 1.0 if slatCoverage is covering *all* the slots
     slatRemainder = slatCoverage - slatIndex
 
-    return this.slatPositions.indexToTopPosition(slatIndex) +
+    return this.slatPositions.tops[slatIndex] +
       this.slatPositions.getHeight(slatIndex) * slatRemainder
   }
 
@@ -567,7 +567,7 @@ export default class TimeGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  buildCoordCaches() {
+  buildPositionCaches() {
     this.colPositions.build()
     this.slatPositions.build()
   }
@@ -591,13 +591,13 @@ export default class TimeGrid extends DateComponent {
     let { snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
-      let leftOrigin = offsetTracker.getLeft()
-      let topOrigin = offsetTracker.getTop()
-      let colIndex = colPositions.leftPositionToIndex(leftOffset - leftOrigin)
-      let slatIndex = slatPositions.topPositionToIndex(topOffset - topOrigin)
+      let leftOrigin = offsetTracker.computeLeft()
+      let topOrigin = offsetTracker.computeTop()
+      let colIndex = colPositions.leftToIndex(leftOffset - leftOrigin)
+      let slatIndex = slatPositions.topToIndex(topOffset - topOrigin)
 
       if (colIndex != null && slatIndex != null) {
-        let slatTop = slatPositions.indexToTopPosition(slatIndex) + topOrigin
+        let slatTop = slatPositions.tops[slatIndex] + topOrigin
         let slatHeight = slatPositions.getHeight(slatIndex)
         let partial = (topOffset - slatTop) / slatHeight // floating point number between 0 and 1
         let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
@@ -621,8 +621,8 @@ export default class TimeGrid extends DateComponent {
           },
           dayEl: this.colEls[colIndex],
           rect: {
-            left: colPositions.indexToLeftPosition(colIndex) + leftOrigin,
-            right: colPositions.indexToRightPosition(colIndex) + leftOrigin,
+            left: colPositions.lefts[colIndex] + leftOrigin,
+            right: colPositions.rights[colIndex] + leftOrigin,
             top: slatTop,
             bottom: slatTop + slatHeight
           }

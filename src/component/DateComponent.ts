@@ -146,7 +146,7 @@ export default abstract class DateComponent extends Component {
       // sort of the catch-all sizing
       // anything that might cause dimension changes
       this.updateBaseSize(totalHeight, isAuto)
-      this.buildCoordCaches()
+      this.buildPositionCaches()
     }
 
     if (force || flags.businessHours) {
@@ -191,7 +191,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  buildCoordCaches() {
+  buildPositionCaches() {
   }
 
 

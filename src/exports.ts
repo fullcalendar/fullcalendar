@@ -75,7 +75,7 @@ export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin
 export { DateRange, rangeContainsMarker, intersectRanges } from './datelib/date-range'
 export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Mixin } from './common/Mixin'
-export { default as CoordCache } from './common/CoordCache'
+export { default as PositionCache } from './common/PositionCache'
 export { default as ScrollComponent } from './common/ScrollComponent'
 export { default as Theme } from './theme/Theme'
 export { default as DateComponent } from './component/DateComponent'
