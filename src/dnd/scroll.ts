@@ -239,7 +239,7 @@ export class WindowScrollControllerCache extends ScrollControllerCache {
   }
 
   computeRect(): Rect {
-    return { // computeViewportRect needed anymore?
+    return {
       left: this.scrollLeft,
       right: this.scrollLeft + this.clientWidth,
       top: this.scrollTop,

@@ -7,7 +7,7 @@ import {
   compensateScroll,
   subtractInnerElHeight
 } from '../util/misc'
-import Scroller from '../common/Scroller'
+import ScrollerComponent from '../common/ScrollerComponent'
 import View from '../View'
 import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
@@ -40,7 +40,7 @@ export default class AgendaView extends View {
   timeGrid: TimeGrid // the main time-grid subcomponent of this view
   dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
 
-  scroller: Scroller
+  scroller: ScrollerComponent
   axisWidth: any // the width of the time axis running down the side
   usesMinMaxTime: boolean = true // indicates that minTime/maxTime affects rendering
 
@@ -59,7 +59,7 @@ export default class AgendaView extends View {
       this.addChild(this.dayGrid)
     }
 
-    this.scroller = new Scroller({
+    this.scroller = new ScrollerComponent({
       overflowX: 'hidden',
       overflowY: 'auto'
     })

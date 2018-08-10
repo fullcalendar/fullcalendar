@@ -2,7 +2,7 @@ import { htmlToElement, createElement } from '../util/dom-manip'
 import { htmlEscape } from '../util/html'
 import { subtractInnerElHeight } from '../util/misc'
 import View from '../View'
-import Scroller from '../common/Scroller'
+import ScrollerComponent from '../common/ScrollerComponent'
 import ListEventRenderer from './ListEventRenderer'
 import { DateMarker, addDays, startOfDay } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
@@ -18,7 +18,7 @@ export default class ListView extends View {
 
   segSelector: any = '.fc-list-item' // which elements accept event actions
 
-  scroller: Scroller
+  scroller: ScrollerComponent
   contentEl: HTMLElement
 
   dayDates: DateMarker[]
@@ -28,7 +28,7 @@ export default class ListView extends View {
   constructor(calendar, viewSpec) {
     super(calendar, viewSpec)
 
-    this.scroller = new Scroller({
+    this.scroller = new ScrollerComponent({
       overflowX: 'hidden',
       overflowY: 'auto'
     })

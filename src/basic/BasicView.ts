@@ -9,7 +9,7 @@ import {
   undistributeHeight
 } from '../util/misc'
 import { createFormatter } from '../datelib/formatting'
-import Scroller from '../common/Scroller'
+import ScrollerComponent from '../common/ScrollerComponent'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import DayGrid from './DayGrid'
@@ -28,7 +28,7 @@ export default class BasicView extends View {
   dateProfileGeneratorClass: any
   dayGridClass: any // class the dayGrid will be instantiated from (overridable by subclasses)
 
-  scroller: Scroller
+  scroller: ScrollerComponent
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
   colWeekNumbersVisible: boolean = false
 
@@ -53,7 +53,7 @@ export default class BasicView extends View {
 
     this.addChild(this.dayGrid)
 
-    this.scroller = new Scroller({
+    this.scroller = new ScrollerComponent({
       overflowX: 'hidden',
       overflowY: 'auto'
     })
