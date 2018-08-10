@@ -1,7 +1,6 @@
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { whenTransitionDone } from '../util/dom-event'
 import { Rect } from '../util/geom'
-import { WindowScrollControllerCache } from './scroll'
 
 /*
 An effect in which an element follows the movement of a pointer across the screen.
@@ -17,7 +16,6 @@ export default class ElementMirror {
   deltaY?: number
   sourceEl: HTMLElement | null = null
   mirrorEl: HTMLElement | null = null
-  windowController: WindowScrollControllerCache
   sourceElRect: Rect | null = null // screen coords relative to viewport
 
   // options that can be set directly by caller
@@ -26,19 +24,19 @@ export default class ElementMirror {
   zIndex: number = 9999
   revertDuration: number = 0
 
-  start(sourceEl: HTMLElement, pageX: number, pageY: number, windowController: WindowScrollControllerCache) {
+  start(sourceEl: HTMLElement, pageX: number, pageY: number) {
     this.sourceEl = sourceEl
-    this.origScreenX = pageX - windowController.getScrollLeft()
-    this.origScreenY = pageY - windowController.getScrollTop()
+    this.sourceElRect = this.sourceEl.getBoundingClientRect()
+    this.origScreenX = pageX - window.scrollX
+    this.origScreenY = pageY - window.scrollY
     this.deltaX = 0
     this.deltaY = 0
-    this.windowController = windowController
     this.updateElPosition()
   }
 
   handleMove(pageX: number, pageY: number) {
-    this.deltaX = (pageX - this.windowController.getScrollLeft()) - this.origScreenX!
-    this.deltaY = (pageY - this.windowController.getScrollTop()) - this.origScreenY!
+    this.deltaX = (pageX - window.scrollX) - this.origScreenX!
+    this.deltaY = (pageY - window.scrollY) - this.origScreenY!
     this.updateElPosition()
   }
 
@@ -86,14 +84,15 @@ export default class ElementMirror {
 
   doRevertAnimation(callback: () => void, revertDuration: number) {
     let mirrorEl = this.mirrorEl!
+    let finalSourceElRect = this.sourceEl.getBoundingClientRect() // because autoscrolling might have happened
 
     mirrorEl.style.transition =
       'top ' + revertDuration + 'ms,' +
       'left ' + revertDuration + 'ms'
 
     applyStyle(mirrorEl, {
-      left: this.sourceElRect!.left,
-      top: this.sourceElRect!.top
+      left: finalSourceElRect.left,
+      top: finalSourceElRect.top
     })
 
     whenTransitionDone(mirrorEl, () => {
@@ -109,17 +108,10 @@ export default class ElementMirror {
     }
 
     this.sourceEl = null
-    this.sourceElRect = null // so knows to recompute next time
   }
 
   updateElPosition() {
     if (this.sourceEl && this.isVisible) {
-
-      if (!this.sourceElRect) {
-        // relative to viewport, which is what we want, since mirror el is position: fixed
-        this.sourceElRect = this.sourceEl.getBoundingClientRect()
-      }
-
       applyStyle(this.getMirrorEl(), {
         left: this.sourceElRect.left + this.deltaX!,
         top: this.sourceElRect.top + this.deltaY!

@@ -62,8 +62,7 @@ export default class TimeGrid extends DateComponent {
 
   colPositions: CoordCache
   slatPositions: CoordCache
-  colOffsets: OffsetCoordCache
-  slatOffsets: OffsetCoordCache
+  offsetTracker: OffsetCoordCache
 
   rootBgContainerEl: HTMLElement
   bottomRuleEl: HTMLElement // hidden by default
@@ -238,7 +237,7 @@ export default class TimeGrid extends DateComponent {
     this.slatEls = findElements(this.slatContainerEl, 'tr')
 
     this.slatPositions = new CoordCache({
-      originEl: this.slatContainerEl,
+      originEl: this.el,
       els: this.slatEls,
       isVertical: true
     })
@@ -316,7 +315,7 @@ export default class TimeGrid extends DateComponent {
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
     this.colPositions = new CoordCache({
-      originEl: this.rootBgContainerEl,
+      originEl: this.el,
       els: this.colEls,
       isHorizontal: true
     })
@@ -579,26 +578,26 @@ export default class TimeGrid extends DateComponent {
 
 
   prepareHits() {
-    this.colOffsets = new OffsetCoordCache(this.colPositions)
-    this.slatOffsets = new OffsetCoordCache(this.slatPositions)
+    this.offsetTracker = new OffsetCoordCache(this.el)
   }
 
 
   releaseHits() {
-    this.colOffsets.destroy()
-    this.slatOffsets.destroy()
+    this.offsetTracker.destroy()
   }
 
 
   queryHit(leftOffset, topOffset): Hit {
-    let { snapsPerSlot, slatPositions, colOffsets, slatOffsets } = this
+    let { snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
 
-    if (colOffsets.isInBounds(leftOffset, topOffset)) {
-      let colIndex = colOffsets.leftOffsetToIndex(leftOffset)
-      let slatIndex = slatOffsets.topOffsetToIndex(topOffset)
+    if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
+      let leftOrigin = offsetTracker.getLeftAdjust()
+      let topOrigin = offsetTracker.getTopAdjust()
+      let colIndex = colPositions.leftPositionToIndex(leftOffset - leftOrigin)
+      let slatIndex = slatPositions.topPositionToIndex(topOffset - topOrigin)
 
       if (colIndex != null && slatIndex != null) {
-        let slatTop = slatOffsets.indexToTopOffset(slatIndex)
+        let slatTop = slatPositions.indexToTopPosition(slatIndex) + topOrigin
         let slatHeight = slatPositions.getHeight(slatIndex)
         let partial = (topOffset - slatTop) / slatHeight // floating point number between 0 and 1
         let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
@@ -622,8 +621,8 @@ export default class TimeGrid extends DateComponent {
           },
           dayEl: this.colEls[colIndex],
           rect: {
-            left: colOffsets.indexToLeftOffset(colIndex),
-            right: colOffsets.indexToRightOffset(colIndex),
+            left: colPositions.indexToLeftPosition(colIndex) + leftOrigin,
+            right: colPositions.indexToRightPosition(colIndex) + leftOrigin,
             top: slatTop,
             bottom: slatTop + slatHeight
           }

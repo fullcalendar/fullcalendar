@@ -1,55 +1,62 @@
-import CoordCache from './CoordCache'
-import { computeInnerRect, getScrollParent, computeRect } from '../util/dom-geom'
-import { Rect, pointInsideRect } from '../util/geom'
+import { getClippingParents, computeRect } from '../util/dom-geom'
+import { pointInsideRect } from '../util/geom'
+import { ElScrollControllerCache, ElScrollController } from '../dnd/scroll'
 
-export default class OffsetCoordCache {
+export default class OffsetCoordCache { // TODO: rename to OffsetTracker?
 
-  coordCache: CoordCache
-  boundingRect: Rect
+  scrollCaches: ElScrollControllerCache[]
   originOffsetLeft: number
   originOffsetTop: number
 
-  constructor(coordCache: CoordCache) {
-    this.coordCache = coordCache
-
-    let scrollParent = getScrollParent(coordCache.originEl)
-    this.boundingRect = scrollParent ? computeInnerRect(scrollParent) : null
-
-    let rect = computeRect(coordCache.originEl)
+  constructor(el: HTMLElement) {
+    let rect = computeRect(el)
     this.originOffsetLeft = rect.left
     this.originOffsetTop = rect.top
+
+    this.scrollCaches = getClippingParents(el).map(function(el) {
+      return new ElScrollControllerCache(
+        new ElScrollController(el),
+        true // listens to element for scrolling
+      )
+    })
   }
 
   destroy() {
-    // console.log('OffsetCoordCache::destroy')
+    for (let scrollCache of this.scrollCaches) {
+      scrollCache.destroy()
+    }
   }
 
-  isInBounds(pageX, pageY): boolean {
-    return !this.boundingRect || pointInsideRect({ left: pageX, top: pageY }, this.boundingRect)
+  isWithinClipping(pageX, pageY): boolean {
+    let point = { left: pageX, top: pageY }
+
+    for (let scrollCache of this.scrollCaches) {
+      if (!pointInsideRect(point, scrollCache.rect)) {
+        return false
+      }
+    }
+
+    return true
   }
 
-  leftOffsetToIndex(leftOffset): number {
-    return this.coordCache.leftPositionToIndex(leftOffset - this.originOffsetLeft)
+  getLeftAdjust() {
+    let left = this.originOffsetLeft
+
+    for (let scrollCache of this.scrollCaches) {
+      left += scrollCache.scrollLeft - scrollCache.origScrollLeft
+    }
+
+    return left
   }
 
-  topOffsetToIndex(topOffset): number {
-    return this.coordCache.topPositionToIndex(topOffset - this.originOffsetTop)
-  }
+  getTopAdjust() {
+    let top = this.originOffsetTop
 
-  indexToLeftOffset(index): number {
-    return this.coordCache.indexToLeftPosition(index) + this.originOffsetLeft
-  }
+    for (let scrollCache of this.scrollCaches) {
+      top += scrollCache.origScrollTop - scrollCache.scrollTop
+    }
 
-  indexToTopOffset(index): number {
-    return this.coordCache.indexToTopPosition(index) + this.originOffsetTop
-  }
-
-  indexToRightOffset(index): number {
-    return this.coordCache.indexToRightPosition(index) + this.originOffsetLeft
-  }
-
-  indexToBottomOffset(index): number {
-    return this.coordCache.indexToBottomPosition(index) + this.originOffsetTop
+    return top
   }
 
 }

@@ -1,5 +1,5 @@
 import { createElement, removeElement } from './dom-manip'
-import { Rect } from './geom'
+import { Rect, intersectRects } from './geom'
 
 export interface EdgeInfo {
   borderLeft: number
@@ -102,8 +102,8 @@ export function computeHeightAndMargins(el: HTMLElement) {
 }
 
 
-// will return null of no scroll parent. will NOT return window/body
-export function getScrollParent(el: HTMLElement): HTMLElement | null {
+export function getClippingParents(el: HTMLElement): HTMLElement[] {
+  let parents: HTMLElement[] = []
 
   while (el instanceof HTMLElement) { // will stop when gets to document or null
     let computedStyle = window.getComputedStyle(el)
@@ -113,13 +113,25 @@ export function getScrollParent(el: HTMLElement): HTMLElement | null {
     }
 
     if ((/(auto|scroll)/).test(computedStyle.overflow + computedStyle.overflowY + computedStyle.overflowX)) {
-      return el
+      parents.push(el)
     }
 
     el = el.parentNode as HTMLElement
   }
 
-  return null
+  return parents
+}
+
+
+export function computeClippingRect(el: HTMLElement): Rect {
+  return getClippingParents(el)
+    .map(function(el) {
+      return computeInnerRect(el)
+    })
+    .concat(computeViewportRect())
+    .reduce(function(rect0, rect1) {
+      return intersectRects(rect0, rect1) || rect1 // should always intersect
+    })
 }
 
 

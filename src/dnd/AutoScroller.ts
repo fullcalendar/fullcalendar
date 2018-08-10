@@ -1,4 +1,10 @@
-import { ScrollControllerCache, ElScrollControllerCache, ElScrollController, WindowScrollControllerCache } from './scroll'
+import {
+  ScrollControllerCache,
+  ElScrollControllerCache,
+  ElScrollController,
+  WindowScrollControllerCache,
+  WindowScrollController
+} from './scroll'
 
 interface Side { // rename to Edge?
   controller: ScrollControllerCache
@@ -11,55 +17,74 @@ interface Side { // rename to Edge?
 // https://developer.mozilla.org/en-US/docs/Web/API/Performance
 const getTime = typeof performance === 'function' ? (performance as any).now : Date.now
 
-let uid = 0
-
 export default class AutoScroller {
 
-  id: string
-
-  constructor() {
-    this.id = String(uid++)
-  }
-
   // options that can be set by caller
+  isEnabled: boolean = true
   scrollerQuery: (Window | string)[] = [ window, '.fc-scroller' ]
   edge: number = 50
-  maxSpeed: number = 300 // pixels per second
-  isAnimating: boolean = false
+  maxVelocity: number = 300 // pixels per second
+
   pointerScreenX: number
   pointerScreenY: number
+  isAnimating: boolean = false
+  everMovedUp: boolean = false
+  everMovedDown: boolean = false
+  everMovedLeft: boolean = false
+  everMovedRight: boolean = false
 
-  private windowController: WindowScrollControllerCache
   private controllers: ScrollControllerCache[] // rename to caches?
   private msSinceRequest: number
 
-  start(pageX: number, pageY: number, windowController: WindowScrollControllerCache) { // TODO: pass windowscrollcontrollercache
-    this.windowController = windowController
-    this.controllers = this.buildControllers()
-    this.handleMove(pageX, pageY)
+  start(pageX: number, pageY: number) {
+    if (this.isEnabled) {
+      this.controllers = this.buildControllers()
+
+      this.pointerScreenX = null
+      this.pointerScreenY = null
+      this.everMovedUp = false
+      this.everMovedDown = false
+      this.everMovedLeft = false
+      this.everMovedRight = false
+
+      this.handleMove(pageX, pageY)
+    }
   }
 
   handleMove(pageX: number, pageY: number) {
-    this.pointerScreenX = pageX - this.windowController.getScrollLeft() // audit all ordering
-    this.pointerScreenY = pageY - this.windowController.getScrollTop()
+    if (this.isEnabled) {
+      let pointerScreenX = pageX - window.scrollX //this.windowController.getScrollLeft() // audit all ordering
+      let pointerScreenY = pageY - window.scrollY // this.windowController.getScrollTop()
 
-    if (!this.isAnimating) {
-      this.isAnimating = true
-      this.requestAnimation(getTime())
+      let yDelta = this.pointerScreenY === null ? 0 : pointerScreenY - this.pointerScreenY
+      let xDelta = this.pointerScreenX === null ? 0 : pointerScreenX - this.pointerScreenX
+
+      if (yDelta < 0) { this.everMovedUp = true }
+      else if (yDelta > 0) { this.everMovedDown = true }
+
+      if (xDelta < 0) { this.everMovedLeft = true }
+      else if (yDelta > 0) { this.everMovedRight = true }
+
+      this.pointerScreenX = pointerScreenX
+      this.pointerScreenY = pointerScreenY
+
+      if (!this.isAnimating) {
+        this.isAnimating = true
+        this.requestAnimation(getTime())
+      }
     }
   }
 
   stop() {
-    this.isAnimating = false // will stop animation
+    if (this.isEnabled) {
+      this.isAnimating = false
 
-    for (let controller of this.controllers) {
-      if (controller !== this.windowController) { // because window controller isnt our responsbility. TODO: rethink
+      for (let controller of this.controllers) {
         controller.destroy()
       }
-    }
-    this.controllers = null
 
-    this.windowController = null
+      this.controllers = null
+    }
   }
 
   requestAnimation(now) {
@@ -68,10 +93,10 @@ export default class AutoScroller {
   }
 
   private animate = () => {
-    if (this.isAnimating) { // wasn't cancelled
+    if (this.isAnimating) { // wasn't cancelled between animation calls
       let side = this.computeBestSide(
-        this.pointerScreenX + this.windowController.getScrollLeft(),
-        this.pointerScreenY + this.windowController.getScrollTop()
+        this.pointerScreenX + window.scrollX,
+        this.pointerScreenY + window.scrollY
       )
 
       if (side) {
@@ -85,28 +110,24 @@ export default class AutoScroller {
   }
 
   private handleSide(side: Side, seconds: number) {
-    let { edge } = this
     let { controller } = side
-    let invEdge = edge - side.distance
-    let speed = ((invEdge * invEdge) / (edge * edge)) * // quadratic
-      this.maxSpeed * seconds
+    let { edge } = this
+    let invDistance = edge - side.distance
+    let velocity = (invDistance * invDistance) / (edge * edge) * this.maxVelocity * seconds // quadratic
+    let sign = 1
 
     switch (side.name) {
 
       case 'left':
-        controller.setScrollLeft(controller.getScrollLeft() - speed)
-        break
-
+        sign = -1
       case 'right':
-        controller.setScrollLeft(controller.getScrollLeft() + speed)
+        controller.setScrollLeft(controller.getScrollLeft() + velocity * sign)
         break
 
       case 'top':
-        controller.setScrollTop(controller.getScrollTop() - speed)
-        break
-
+        sign = -1
       case 'bottom':
-        controller.setScrollTop(controller.getScrollTop() + speed)
+        controller.setScrollTop(controller.getScrollTop() + velocity * sign)
         break
     }
   }
@@ -126,19 +147,19 @@ export default class AutoScroller {
       // completely within the rect?
       if (leftDist >= 0 && rightDist >= 0 && topDist >= 0 && bottomDist >= 0) {
 
-        if (topDist <= edge && controller.canScrollUp() && (!bestSide || bestSide.distance > topDist)) {
+        if (topDist <= edge && this.everMovedUp && controller.canScrollUp() && (!bestSide || bestSide.distance > topDist)) {
           bestSide = { controller, name: 'top', distance: topDist }
         }
 
-        if (bottomDist <= edge && controller.canScrollDown() && (!bestSide || bestSide.distance > bottomDist)) {
+        if (bottomDist <= edge && this.everMovedDown && controller.canScrollDown() && (!bestSide || bestSide.distance > bottomDist)) {
           bestSide = { controller, name: 'bottom', distance: bottomDist }
         }
 
-        if (leftDist <= edge && controller.canScrollLeft() && (!bestSide || bestSide.distance > leftDist)) {
+        if (leftDist <= edge && this.everMovedLeft && controller.canScrollLeft() && (!bestSide || bestSide.distance > leftDist)) {
           bestSide = { controller, name: 'left', distance: leftDist }
         }
 
-        if (rightDist <= edge && controller.canScrollRight() && (!bestSide || bestSide.distance > rightDist)) {
+        if (rightDist <= edge && this.everMovedRight && controller.canScrollRight() && (!bestSide || bestSide.distance > rightDist)) {
           bestSide = { controller, name: 'right', distance: rightDist }
         }
       }
@@ -150,9 +171,15 @@ export default class AutoScroller {
   private buildControllers() {
     return this.queryScrollerEls().map((el) => {
       if (el === window) {
-        return this.windowController
+        return new WindowScrollControllerCache(
+          new WindowScrollController(),
+          false // don't listen to user-generated scrolls
+        )
       } else {
-        return new ElScrollControllerCache(new ElScrollController(el as HTMLElement))
+        return new ElScrollControllerCache(
+          new ElScrollController(el as HTMLElement),
+          false // don't listen to user-generated scrolls
+        )
       }
     })
   }

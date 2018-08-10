@@ -83,11 +83,7 @@ export class ElScrollController extends ScrollController {
 
 }
 
-export class WindowScrollController extends ElScrollController {
-
-  constructor() {
-    super(document.documentElement)
-  }
+export class WindowScrollController extends ScrollController {
 
   getScrollTop() {
     return window.scrollY
@@ -105,47 +101,73 @@ export class WindowScrollController extends ElScrollController {
     window.scroll(n, window.scrollY)
   }
 
+  getScrollWidth() {
+    return document.documentElement.scrollWidth
+  }
+
+  getScrollHeight() {
+    return document.documentElement.scrollHeight
+  }
+
+  getClientHeight() {
+    return document.documentElement.clientHeight
+  }
+
+  getClientWidth() {
+    return document.documentElement.clientWidth
+  }
+
 }
 
+// TODO: more of a "dimensions" cache
 export abstract class ScrollControllerCache extends ScrollController {
 
   rect: Rect
   scrollController: ScrollController
 
-  protected scrollTop: number
-  protected scrollLeft: number
+  doesListening: boolean
+
+  origScrollTop: number
+  origScrollLeft: number
+
+  scrollTop: number
+  scrollLeft: number
   protected scrollWidth: number
   protected scrollHeight: number
   protected clientWidth: number
   protected clientHeight: number
 
-  constructor(scrollController: ScrollController) {
+  constructor(scrollController: ScrollController, doesListening) {
     super()
     this.scrollController = scrollController
-    this.scrollTop = scrollController.getScrollTop()
-    this.scrollLeft = scrollController.getScrollLeft()
+    this.doesListening = doesListening
+    this.scrollTop = this.origScrollTop = scrollController.getScrollTop()
+    this.scrollLeft = this.origScrollLeft = scrollController.getScrollLeft()
     this.scrollWidth = scrollController.getScrollWidth()
     this.scrollHeight = scrollController.getScrollHeight()
     this.clientWidth = scrollController.getClientWidth()
     this.clientHeight = scrollController.getClientHeight()
     this.rect = this.computeRect() // do last in case it needs cached values
-    this.getEventTarget().addEventListener('scroll', this.handleScroll)
+
+    if (this.doesListening) {
+      this.getEventTarget().addEventListener('scroll', this.handleScroll)
+    }
   }
 
+  abstract getEventTarget(): EventTarget
+  abstract computeRect(): Rect
+
   destroy() {
-    this.getEventTarget().removeEventListener('scroll', this.handleScroll)
+    if (this.doesListening) {
+      this.getEventTarget().removeEventListener('scroll', this.handleScroll)
+    }
   }
 
   handleScroll = () => {
     this.scrollTop = this.scrollController.getScrollTop()
     this.scrollLeft = this.scrollController.getScrollLeft()
-    this._handleScroll()
+    this.handleScrollChange()
   }
-
-  _handleScroll() { }
-
-  abstract computeRect(): Rect
-  abstract getEventTarget(): EventTarget
 
   getScrollTop() {
     return this.scrollTop
@@ -157,14 +179,20 @@ export abstract class ScrollControllerCache extends ScrollController {
 
   setScrollTop(n) {
     this.scrollController.setScrollTop(n)
-    this.scrollTop = Math.max(Math.min(n, this.getMaxScrollTop()), 0) // in meantime before handleScroll
-    this._handleScroll()
+
+    if (!this.doesListening) {
+      this.scrollTop = Math.max(Math.min(n, this.getMaxScrollTop()), 0)
+      this.handleScrollChange()
+    }
   }
 
   setScrollLeft(n) {
     this.scrollController.setScrollLeft(n)
-    this.scrollLeft = Math.max(Math.min(n, this.getMaxScrollLeft()), 0) // in meantime before handleScroll
-    this._handleScroll()
+
+    if (!this.doesListening) {
+      this.scrollLeft = Math.max(Math.min(n, this.getMaxScrollLeft()), 0)
+      this.handleScrollChange()
+    }
   }
 
   getClientWidth() {
@@ -183,18 +211,21 @@ export abstract class ScrollControllerCache extends ScrollController {
     return this.scrollHeight
   }
 
+  handleScrollChange() {
+  }
+
 }
 
 export class ElScrollControllerCache extends ScrollControllerCache {
 
   scrollController: ElScrollController
 
-  computeRect() {
-    return computeRect(this.scrollController.el)
-  }
-
   getEventTarget(): EventTarget {
     return this.scrollController.el
+  }
+
+  computeRect() {
+    return computeRect(this.scrollController.el)
   }
 
 }
@@ -203,20 +234,20 @@ export class WindowScrollControllerCache extends ScrollControllerCache {
 
   scrollController: WindowScrollController
 
-  computeRect(): Rect {
-    return { // computeViewportRect needed anymore?
-      left: this.scrollLeft,
-      right: this.scrollLeft + this.clientWidth, // clientWidth best?
-      top: this.scrollTop,
-      bottom: this.scrollTop + this.clientHeight // clientHeight best?
-    }
-  }
-
   getEventTarget(): EventTarget {
     return window
   }
 
-  _handleScroll() {
+  computeRect(): Rect {
+    return { // computeViewportRect needed anymore?
+      left: this.scrollLeft,
+      right: this.scrollLeft + this.clientWidth,
+      top: this.scrollTop,
+      bottom: this.scrollTop + this.clientHeight
+    }
+  }
+
+  handleScrollChange() {
     this.rect = this.computeRect()
   }
 

@@ -63,8 +63,7 @@ export default class DayGrid extends DateComponent {
 
   rowPositions: CoordCache
   colPositions: CoordCache
-  rowOffsets: OffsetCoordCache
-  colOffsets: OffsetCoordCache
+  offsetTracker: OffsetCoordCache
 
   // isRigid determines whether the individual rows should ignore the contents and be a constant height.
   // Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
@@ -308,23 +307,23 @@ export default class DayGrid extends DateComponent {
 
 
   prepareHits() {
-    this.colOffsets = new OffsetCoordCache(this.colPositions)
-    this.rowOffsets = new OffsetCoordCache(this.rowPositions)
+    this.offsetTracker = new OffsetCoordCache(this.el)
   }
 
 
   releaseHits() {
-    this.colOffsets.destroy()
-    this.rowOffsets.destroy()
+    this.offsetTracker.destroy()
   }
 
 
   queryHit(leftOffset, topOffset): Hit {
-    let { colOffsets, rowOffsets } = this
+    let { colPositions, rowPositions, offsetTracker } = this
 
-    if (colOffsets.isInBounds(leftOffset, topOffset)) {
-      let col = colOffsets.leftOffsetToIndex(leftOffset)
-      let row = rowOffsets.topOffsetToIndex(topOffset)
+    if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
+      let leftOrigin = offsetTracker.getLeftAdjust()
+      let topOrigin = offsetTracker.getTopAdjust()
+      let col = colPositions.leftPositionToIndex(leftOffset - leftOrigin)
+      let row = rowPositions.topPositionToIndex(topOffset - topOrigin)
 
       if (row != null && col != null) {
         return {
@@ -335,10 +334,10 @@ export default class DayGrid extends DateComponent {
           },
           dayEl: this.getCellEl(row, col),
           rect: {
-            left: colOffsets.indexToLeftOffset(col),
-            right: colOffsets.indexToRightOffset(col),
-            top: rowOffsets.indexToTopOffset(row),
-            bottom: rowOffsets.indexToBottomOffset(row)
+            left: colPositions.indexToLeftPosition(col) + leftOrigin,
+            right: colPositions.indexToRightPosition(col) + leftOrigin,
+            top: rowPositions.indexToTopPosition(row) + topOrigin,
+            bottom: rowPositions.indexToBottomPosition(row) + topOrigin
           }
         }
       }
@@ -635,10 +634,9 @@ export default class DayGrid extends DateComponent {
 
     options = {
       className: 'fc-more-popover ' + view.calendar.theme.getClass('popover'),
-      parentEl: view.el, // attach to root of view. guarantees outside of scrollbars.
+      parentEl: this.el,
       top: computeRect(topEl).top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
-      viewportConstrain: this.opt('popoverViewportConstrain'),
       content: (el) => {
         this.segPopoverTile.setElement(el)
 

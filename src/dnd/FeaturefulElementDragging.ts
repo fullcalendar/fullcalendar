@@ -3,7 +3,6 @@ import { preventSelection, allowSelection, preventContextMenu, allowContextMenu 
 import ElementMirror from './ElementMirror'
 import ElementDragging from './ElementDragging'
 import AutoScroller from './AutoScroller'
-import { WindowScrollControllerCache, WindowScrollController } from './scroll'
 
 /*
 Monitors dragging on an element. Has a number of high-level features:
@@ -14,7 +13,6 @@ Monitors dragging on an element. Has a number of high-level features:
 export default class FeaturefulElementDragging extends ElementDragging {
 
   pointer: PointerDragging
-  windowScrollController: WindowScrollControllerCache
   mirror: ElementMirror
   autoScroller: AutoScroller
 
@@ -67,9 +65,8 @@ export default class FeaturefulElementDragging extends ElementDragging {
         this.origX = ev.pageX
         this.origY = ev.pageY
 
-        this.windowScrollController = new WindowScrollControllerCache(new WindowScrollController())
-        this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY, this.windowScrollController)
-        this.autoScroller.start(ev.pageX, ev.pageY, this.windowScrollController)
+        this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY)
+        this.autoScroller.start(ev.pageX, ev.pageY)
 
         this.startDelay(ev)
 
@@ -85,8 +82,10 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
       this.emitter.trigger('pointermove', ev)
 
-      this.mirror.handleMove(ev.pageX, ev.pageY)
-      this.autoScroller.handleMove(ev.pageX, ev.pageY)
+      if (ev.origEvent.type !== 'scroll') {
+        this.mirror.handleMove(ev.pageX, ev.pageY)
+        this.autoScroller.handleMove(ev.pageX, ev.pageY)
+      }
 
       if (!this.isDistanceSurpassed) {
         let dx = ev.pageX - this.origX!
@@ -117,8 +116,6 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
       if (!this.pointer.shouldIgnoreMove) { // because these things wouldn't have been started otherwise
         this.autoScroller.stop()
-        this.windowScrollController.destroy()
-        this.windowScrollController = null
       }
 
       if (this.isDragging) {

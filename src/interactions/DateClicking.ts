@@ -18,6 +18,7 @@ export default class DateClicking {
 
     // we DO want to watch pointer moves because otherwise finalHit won't get populated
     this.dragging = new FeaturefulElementDragging(component.el)
+    this.dragging.autoScroller.isEnabled = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
