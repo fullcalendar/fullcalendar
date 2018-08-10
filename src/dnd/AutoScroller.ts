@@ -1,7 +1,7 @@
 import { ScrollGeomCache, ElementScrollGeomCache, WindowScrollGeomCache } from '../common/scroll-geom-cache'
 
-interface Side { // rename to Edge?
-  controller: ScrollGeomCache
+interface Edge {
+  scrollCache: ScrollGeomCache
   name: 'top' | 'left' | 'right' | 'bottom'
   distance: number
 }
@@ -15,10 +15,11 @@ export default class AutoScroller {
 
   // options that can be set by caller
   isEnabled: boolean = true
-  scrollerQuery: (Window | string)[] = [ window, '.fc-scroller' ]
-  edge: number = 50
+  scrollQuery: (Window | string)[] = [ window, '.fc-scroller' ]
+  edgeThreshold: number = 50 // pixels
   maxVelocity: number = 300 // pixels per second
 
+  // internal state
   pointerScreenX: number
   pointerScreenY: number
   isAnimating: boolean = false
@@ -26,13 +27,12 @@ export default class AutoScroller {
   everMovedDown: boolean = false
   everMovedLeft: boolean = false
   everMovedRight: boolean = false
-
-  private controllers: ScrollGeomCache[] // rename to caches?
-  private msSinceRequest: number
+  scrollCaches: ScrollGeomCache[]
+  msSinceRequest: number
 
   start(pageX: number, pageY: number) {
     if (this.isEnabled) {
-      this.controllers = this.buildControllers()
+      this.scrollCaches = this.buildCaches()
 
       this.pointerScreenX = null
       this.pointerScreenY = null
@@ -73,11 +73,11 @@ export default class AutoScroller {
     if (this.isEnabled) {
       this.isAnimating = false
 
-      for (let controller of this.controllers) {
-        controller.destroy()
+      for (let scrollCache of this.scrollCaches) {
+        scrollCache.destroy()
       }
 
-      this.controllers = null
+      this.scrollCaches = null
     }
   }
 
@@ -88,14 +88,14 @@ export default class AutoScroller {
 
   private animate = () => {
     if (this.isAnimating) { // wasn't cancelled between animation calls
-      let side = this.computeBestSide(
+      let edge = this.computeBestEdge(
         this.pointerScreenX + window.scrollX,
         this.pointerScreenY + window.scrollY
       )
 
-      if (side) {
+      if (edge) {
         let now = getTime()
-        this.handleSide(side, (now - this.msSinceRequest) / 1000)
+        this.handleSide(edge, (now - this.msSinceRequest) / 1000)
         this.requestAnimation(now)
       } else {
         this.isAnimating = false
@@ -103,36 +103,38 @@ export default class AutoScroller {
     }
   }
 
-  private handleSide(side: Side, seconds: number) {
-    let { controller } = side
-    let { edge } = this
-    let invDistance = edge - side.distance
-    let velocity = (invDistance * invDistance) / (edge * edge) * this.maxVelocity * seconds // quadratic
+  private handleSide(edge: Edge, seconds: number) {
+    let { scrollCache } = edge
+    let { edgeThreshold } = this
+    let invDistance = edgeThreshold - edge.distance
+    let velocity =
+      (invDistance * invDistance) / (edgeThreshold * edgeThreshold) * // quadratic
+      this.maxVelocity * seconds
     let sign = 1
 
-    switch (side.name) {
+    switch (edge.name) {
 
       case 'left':
         sign = -1
       case 'right':
-        controller.setScrollLeft(controller.getScrollLeft() + velocity * sign)
+        scrollCache.setScrollLeft(scrollCache.getScrollLeft() + velocity * sign)
         break
 
       case 'top':
         sign = -1
       case 'bottom':
-        controller.setScrollTop(controller.getScrollTop() + velocity * sign)
+        scrollCache.setScrollTop(scrollCache.getScrollTop() + velocity * sign)
         break
     }
   }
 
   // left/top are relative to document topleft
-  private computeBestSide(left, top): Side | null {
-    let { edge } = this
-    let bestSide: Side | null = null
+  private computeBestEdge(left, top): Edge | null {
+    let { edgeThreshold } = this
+    let bestSide: Edge | null = null
 
-    for (let controller of this.controllers) {
-      let rect = controller.rect
+    for (let scrollCache of this.scrollCaches) {
+      let rect = scrollCache.rect
       let leftDist = left - rect.left
       let rightDist = rect.right - left
       let topDist = top - rect.top
@@ -141,20 +143,32 @@ export default class AutoScroller {
       // completely within the rect?
       if (leftDist >= 0 && rightDist >= 0 && topDist >= 0 && bottomDist >= 0) {
 
-        if (topDist <= edge && this.everMovedUp && controller.canScrollUp() && (!bestSide || bestSide.distance > topDist)) {
-          bestSide = { controller, name: 'top', distance: topDist }
+        if (
+          topDist <= edgeThreshold && this.everMovedUp && scrollCache.canScrollUp() &&
+          (!bestSide || bestSide.distance > topDist)
+        ) {
+          bestSide = { scrollCache, name: 'top', distance: topDist }
         }
 
-        if (bottomDist <= edge && this.everMovedDown && controller.canScrollDown() && (!bestSide || bestSide.distance > bottomDist)) {
-          bestSide = { controller, name: 'bottom', distance: bottomDist }
+        if (
+          bottomDist <= edgeThreshold && this.everMovedDown && scrollCache.canScrollDown() &&
+          (!bestSide || bestSide.distance > bottomDist)
+        ) {
+          bestSide = { scrollCache, name: 'bottom', distance: bottomDist }
         }
 
-        if (leftDist <= edge && this.everMovedLeft && controller.canScrollLeft() && (!bestSide || bestSide.distance > leftDist)) {
-          bestSide = { controller, name: 'left', distance: leftDist }
+        if (
+          leftDist <= edgeThreshold && this.everMovedLeft && scrollCache.canScrollLeft() &&
+          (!bestSide || bestSide.distance > leftDist)
+        ) {
+          bestSide = { scrollCache, name: 'left', distance: leftDist }
         }
 
-        if (rightDist <= edge && this.everMovedRight && controller.canScrollRight() && (!bestSide || bestSide.distance > rightDist)) {
-          bestSide = { controller, name: 'right', distance: rightDist }
+        if (
+          rightDist <= edgeThreshold && this.everMovedRight && scrollCache.canScrollRight() &&
+          (!bestSide || bestSide.distance > rightDist)
+        ) {
+          bestSide = { scrollCache, name: 'right', distance: rightDist }
         }
       }
     }
@@ -162,20 +176,20 @@ export default class AutoScroller {
     return bestSide
   }
 
-  private buildControllers() {
-    return this.queryScrollerEls().map((el) => {
+  private buildCaches() {
+    return this.queryScrollEls().map((el) => {
       if (el === window) {
-        return new WindowScrollGeomCache(false) // don't listen to user-generated scrolls
+        return new WindowScrollGeomCache(false) // false = don't listen to user-generated scrolls
       } else {
-        return new ElementScrollGeomCache(el, false) // don't listen to user-generated scrolls
+        return new ElementScrollGeomCache(el, false) // false = don't listen to user-generated scrolls
       }
     })
   }
 
-  private queryScrollerEls() {
+  private queryScrollEls() {
     let els = []
 
-    for (let query of this.scrollerQuery) {
+    for (let query of this.scrollQuery) {
       if (typeof query === 'object') {
         els.push(query)
       } else {
