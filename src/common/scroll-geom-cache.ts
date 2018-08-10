@@ -1,8 +1,8 @@
 import { Rect } from '../util/geom'
 import { computeRect } from '../util/dom-geom'
-import { ScrollController, ElScrollController, WindowScrollController } from './scroll-controller'
+import { ScrollController, ElementScrollController, WindowScrollController } from './scroll-controller'
 
-export abstract class ScrollControllerCache extends ScrollController {
+export abstract class ScrollGeomCache extends ScrollController { // needs to extend ScrollController?
 
   rect: Rect
   scrollController: ScrollController
@@ -98,12 +98,12 @@ export abstract class ScrollControllerCache extends ScrollController {
 
 }
 
-export class ElScrollControllerCache extends ScrollControllerCache {
+export class ElementScrollGeomCache extends ScrollGeomCache {
 
-  scrollController: ElScrollController
+  scrollController: ElementScrollController
 
   constructor(el: HTMLElement, doesListening) {
-    super(new ElScrollController(el), doesListening)
+    super(new ElementScrollController(el), doesListening)
   }
 
   getEventTarget(): EventTarget {
@@ -116,7 +116,7 @@ export class ElScrollControllerCache extends ScrollControllerCache {
 
 }
 
-export class WindowScrollControllerCache extends ScrollControllerCache {
+export class WindowScrollGeomCache extends ScrollGeomCache {
 
   scrollController: WindowScrollController
 

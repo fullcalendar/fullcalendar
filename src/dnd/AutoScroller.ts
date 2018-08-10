@@ -1,7 +1,7 @@
-import { ScrollControllerCache, ElScrollControllerCache, WindowScrollControllerCache } from '../common/scroll-geom-cache'
+import { ScrollGeomCache, ElementScrollGeomCache, WindowScrollGeomCache } from '../common/scroll-geom-cache'
 
 interface Side { // rename to Edge?
-  controller: ScrollControllerCache
+  controller: ScrollGeomCache
   name: 'top' | 'left' | 'right' | 'bottom'
   distance: number
 }
@@ -27,7 +27,7 @@ export default class AutoScroller {
   everMovedLeft: boolean = false
   everMovedRight: boolean = false
 
-  private controllers: ScrollControllerCache[] // rename to caches?
+  private controllers: ScrollGeomCache[] // rename to caches?
   private msSinceRequest: number
 
   start(pageX: number, pageY: number) {
@@ -165,9 +165,9 @@ export default class AutoScroller {
   private buildControllers() {
     return this.queryScrollerEls().map((el) => {
       if (el === window) {
-        return new WindowScrollControllerCache(false) // don't listen to user-generated scrolls
+        return new WindowScrollGeomCache(false) // don't listen to user-generated scrolls
       } else {
-        return new ElScrollControllerCache(el, false) // don't listen to user-generated scrolls
+        return new ElementScrollGeomCache(el, false) // don't listen to user-generated scrolls
       }
     })
   }

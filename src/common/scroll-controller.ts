@@ -36,7 +36,7 @@ export abstract class ScrollController {
 
 }
 
-export class ElScrollController extends ScrollController {
+export class ElementScrollController extends ScrollController {
 
   el: HTMLElement
 
