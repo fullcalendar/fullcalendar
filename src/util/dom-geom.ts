@@ -84,7 +84,7 @@ export function computeRect(el): Rect {
 }
 
 
-export function computeViewportRect(): Rect {
+function computeViewportRect(): Rect {
   return {
     left: window.scrollX,
     right: window.scrollX + document.documentElement.clientWidth,
