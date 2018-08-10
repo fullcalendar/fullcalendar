@@ -31,7 +31,7 @@ export default class OffsetTracker {
     let point = { left: pageX, top: pageY }
 
     for (let scrollCache of this.scrollCaches) {
-      if (!pointInsideRect(point, scrollCache.rect)) {
+      if (!pointInsideRect(point, scrollCache.clientRect)) {
         return false
       }
     }

@@ -134,7 +134,7 @@ export default class AutoScroller {
     let bestSide: Edge | null = null
 
     for (let scrollCache of this.scrollCaches) {
-      let rect = scrollCache.rect
+      let rect = scrollCache.clientRect
       let leftDist = left - rect.left
       let rightDist = rect.right - left
       let topDist = top - rect.top

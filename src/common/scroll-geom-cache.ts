@@ -1,10 +1,10 @@
 import { Rect } from '../util/geom'
-import { computeRect } from '../util/dom-geom'
+import { computeInnerRect } from '../util/dom-geom'
 import { ScrollController, ElementScrollController, WindowScrollController } from './scroll-controller'
 
 export abstract class ScrollGeomCache extends ScrollController {
 
-  rect: Rect
+  clientRect: Rect
   origScrollTop: number
   origScrollLeft: number
 
@@ -27,7 +27,7 @@ export abstract class ScrollGeomCache extends ScrollController {
     this.scrollHeight = scrollController.getScrollHeight()
     this.clientWidth = scrollController.getClientWidth()
     this.clientHeight = scrollController.getClientHeight()
-    this.rect = this.computeRect() // do last in case it needs cached values
+    this.clientRect = this.computeClientRect() // do last in case it needs cached values
 
     if (this.doesListening) {
       this.getEventTarget().addEventListener('scroll', this.handleScroll)
@@ -35,7 +35,7 @@ export abstract class ScrollGeomCache extends ScrollController {
   }
 
   abstract getEventTarget(): EventTarget
-  abstract computeRect(): Rect
+  abstract computeClientRect(): Rect
 
   destroy() {
     if (this.doesListening) {
@@ -108,8 +108,8 @@ export class ElementScrollGeomCache extends ScrollGeomCache {
     return this.scrollController.el
   }
 
-  computeRect() {
-    return computeRect(this.scrollController.el)
+  computeClientRect() {
+    return computeInnerRect(this.scrollController.el)
   }
 
 }
@@ -126,7 +126,7 @@ export class WindowScrollGeomCache extends ScrollGeomCache {
     return window
   }
 
-  computeRect(): Rect {
+  computeClientRect(): Rect {
     return {
       left: this.scrollLeft,
       right: this.scrollLeft + this.clientWidth,
@@ -136,7 +136,7 @@ export class WindowScrollGeomCache extends ScrollGeomCache {
   }
 
   handleScrollChange() {
-    this.rect = this.computeRect()
+    this.clientRect = this.computeClientRect()
   }
 
 }
