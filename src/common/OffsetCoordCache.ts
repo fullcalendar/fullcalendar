@@ -1,6 +1,6 @@
 import { getClippingParents, computeRect } from '../util/dom-geom'
 import { pointInsideRect } from '../util/geom'
-import { ElScrollControllerCache, ElScrollController } from '../dnd/scroll'
+import { ElScrollControllerCache } from '../common/scroll-geom-cache'
 
 export default class OffsetCoordCache { // TODO: rename to OffsetTracker?
 
@@ -14,10 +14,7 @@ export default class OffsetCoordCache { // TODO: rename to OffsetTracker?
     this.originOffsetTop = rect.top
 
     this.scrollCaches = getClippingParents(el).map(function(el) {
-      return new ElScrollControllerCache(
-        new ElScrollController(el),
-        true // listens to element for scrolling
-      )
+      return new ElScrollControllerCache(el, true) // listen=true
     })
   }
 

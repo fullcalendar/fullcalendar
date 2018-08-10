@@ -1,10 +1,4 @@
-import {
-  ScrollControllerCache,
-  ElScrollControllerCache,
-  ElScrollController,
-  WindowScrollControllerCache,
-  WindowScrollController
-} from './scroll'
+import { ScrollControllerCache, ElScrollControllerCache, WindowScrollControllerCache } from '../common/scroll-geom-cache'
 
 interface Side { // rename to Edge?
   controller: ScrollControllerCache
@@ -171,15 +165,9 @@ export default class AutoScroller {
   private buildControllers() {
     return this.queryScrollerEls().map((el) => {
       if (el === window) {
-        return new WindowScrollControllerCache(
-          new WindowScrollController(),
-          false // don't listen to user-generated scrolls
-        )
+        return new WindowScrollControllerCache(false) // don't listen to user-generated scrolls
       } else {
-        return new ElScrollControllerCache(
-          new ElScrollController(el as HTMLElement),
-          false // don't listen to user-generated scrolls
-        )
+        return new ElScrollControllerCache(el, false) // don't listen to user-generated scrolls
       }
     })
   }
