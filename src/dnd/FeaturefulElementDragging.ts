@@ -82,6 +82,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
       this.emitter.trigger('pointermove', ev)
 
+      // a real pointer move? (not one simulated by scrolling)
       if (ev.origEvent.type !== 'scroll') {
         this.mirror.handleMove(ev.pageX, ev.pageY)
         this.autoScroller.handleMove(ev.pageX, ev.pageY)

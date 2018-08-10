@@ -18,6 +18,7 @@ Tracks when the pointer "drags" on a certain element, meaning down+move+up.
 
 Also, tracks if there was touch-scrolling.
 Also, can prevent touch-scrolling from happening.
+Also, can fire pointermove events when scrolling happens underneath, even when no real pointer movement.
 
 emits:
 - pointerdown
@@ -35,11 +36,16 @@ export default class PointerDragging {
   selector: string = '' // will cause subjectEl in all emitted events to be this element
   handleSelector: string = ''
   shouldIgnoreMove: boolean = false
+  shouldWatchScroll: boolean = true // for simulating pointermove on scroll
 
   // internal states
   isDragging: boolean = false
   isTouchDragging: boolean = false
   wasTouchScroll: boolean = false
+  prevPageX: number
+  prevPageY: number
+  prevScrollX: number // at time of last pointer pageX/pageY capture
+  prevScrollY: number // "
 
   constructor(containerEl: EventTarget) {
     this.containerEl = containerEl
@@ -80,6 +86,7 @@ export default class PointerDragging {
     this.subjectEl = null
     this.downEl = null
     // keep wasTouchScroll around for later access
+    this.destroyScrollWatch()
   }
 
   querySubjectEl(ev: UIEvent): HTMLElement {
@@ -105,7 +112,10 @@ export default class PointerDragging {
       // not necessary for touch, besides, browser would complain about passiveness.
       ev.preventDefault()
 
-      this.emitter.trigger('pointerdown', createEventFromMouse(ev, this.subjectEl!))
+      let pev = createEventFromMouse(ev, this.subjectEl!)
+
+      this.emitter.trigger('pointerdown', pev)
+      this.initScrollWatch(pev)
 
       if (!this.shouldIgnoreMove) {
         document.addEventListener('mousemove', this.handleMouseMove)
@@ -116,7 +126,9 @@ export default class PointerDragging {
   }
 
   handleMouseMove = (ev: MouseEvent) => {
-    this.emitter.trigger('pointermove', createEventFromMouse(ev, this.subjectEl!))
+    let pev = createEventFromMouse(ev, this.subjectEl!)
+    this.recordCoords(pev)
+    this.emitter.trigger('pointermove', pev)
   }
 
   handleMouseUp = (ev: MouseEvent) => {
@@ -140,7 +152,9 @@ export default class PointerDragging {
     if (this.tryStart(ev)) {
       this.isTouchDragging = true
 
-      this.emitter.trigger('pointerdown', createEventFromTouch(ev, this.subjectEl!))
+      let pev = createEventFromTouch(ev, this.subjectEl!)
+      this.emitter.trigger('pointerdown', pev)
+      this.initScrollWatch(pev)
 
       // unlike mouse, need to attach to target, not document
       // https://stackoverflow.com/a/45760014
@@ -166,7 +180,9 @@ export default class PointerDragging {
   }
 
   handleTouchMove = (ev: TouchEvent) => {
-    this.emitter.trigger('pointermove', createEventFromTouch(ev, this.subjectEl!))
+    let pev = createEventFromTouch(ev, this.subjectEl!)
+    this.recordCoords(pev)
+    this.emitter.trigger('pointermove', pev)
   }
 
   handleTouchEnd = (ev: TouchEvent) => {
@@ -194,6 +210,44 @@ export default class PointerDragging {
   cancelTouchScroll() {
     if (this.isDragging) {
       isWindowTouchMoveCancelled = true
+    }
+  }
+
+
+  // Scrolling that simulates pointermoves
+  // ----------------------------------------------------------------------------------------------------
+
+  initScrollWatch(ev: PointerDragEvent) {
+    if (this.shouldWatchScroll) {
+      this.recordCoords(ev)
+      window.addEventListener('scroll', this.handleScroll, true) // useCapture=true
+    }
+  }
+
+  recordCoords(ev: PointerDragEvent) {
+    if (this.shouldWatchScroll) {
+      this.prevPageX = (ev as any).pageX
+      this.prevPageY = (ev as any).pageY
+      this.prevScrollX = window.scrollX
+      this.prevScrollY = window.scrollY
+    }
+  }
+
+  handleScroll = (ev: UIEvent) => {
+    if (!this.shouldIgnoreMove) {
+      this.emitter.trigger('pointermove', {
+        origEvent: ev,
+        isTouch: this.isTouchDragging,
+        subjectEl: this.subjectEl,
+        pageX: (window.scrollX - this.prevScrollX) + this.prevPageX,
+        pageY: (window.scrollY - this.prevScrollY) + this.prevPageY
+      } as PointerDragEvent)
+    }
+  }
+
+  destroyScrollWatch() {
+    if (this.shouldWatchScroll) {
+      window.removeEventListener('scroll', this.handleScroll)
     }
   }
 
