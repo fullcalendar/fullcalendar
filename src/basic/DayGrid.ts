@@ -21,7 +21,7 @@ import { EventStore } from '../structs/event-store'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
-import OffsetCoordCache from '../common/OffsetCoordCache'
+import OffsetTracker from '../common/OffsetTracker'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -63,7 +63,7 @@ export default class DayGrid extends DateComponent {
 
   rowPositions: CoordCache
   colPositions: CoordCache
-  offsetTracker: OffsetCoordCache
+  offsetTracker: OffsetTracker
 
   // isRigid determines whether the individual rows should ignore the contents and be a constant height.
   // Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
@@ -307,7 +307,7 @@ export default class DayGrid extends DateComponent {
 
 
   prepareHits() {
-    this.offsetTracker = new OffsetCoordCache(this.el)
+    this.offsetTracker = new OffsetTracker(this.el)
   }
 
 
@@ -320,8 +320,8 @@ export default class DayGrid extends DateComponent {
     let { colPositions, rowPositions, offsetTracker } = this
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
-      let leftOrigin = offsetTracker.getLeftAdjust()
-      let topOrigin = offsetTracker.getTopAdjust()
+      let leftOrigin = offsetTracker.getLeft()
+      let topOrigin = offsetTracker.getTop()
       let col = colPositions.leftPositionToIndex(leftOffset - leftOrigin)
       let row = rowPositions.topPositionToIndex(topOffset - topOrigin)
 

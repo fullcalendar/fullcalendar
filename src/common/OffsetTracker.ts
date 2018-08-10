@@ -2,17 +2,20 @@ import { getClippingParents, computeRect } from '../util/dom-geom'
 import { pointInsideRect } from '../util/geom'
 import { ElementScrollGeomCache } from '../common/scroll-geom-cache'
 
-export default class OffsetCoordCache { // TODO: rename to OffsetTracker?
+/*
+*/
+export default class OffsetTracker {
 
   scrollCaches: ElementScrollGeomCache[]
-  originOffsetLeft: number
-  originOffsetTop: number
+  origLeft: number
+  origTop: number
 
   constructor(el: HTMLElement) {
     let rect = computeRect(el)
-    this.originOffsetLeft = rect.left
-    this.originOffsetTop = rect.top
+    this.origLeft = rect.left
+    this.origTop = rect.top
 
+    // will work fine for divs that have overflow:hidden
     this.scrollCaches = getClippingParents(el).map(function(el) {
       return new ElementScrollGeomCache(el, true) // listen=true
     })
@@ -36,8 +39,8 @@ export default class OffsetCoordCache { // TODO: rename to OffsetTracker?
     return true
   }
 
-  getLeftAdjust() {
-    let left = this.originOffsetLeft
+  getLeft() {
+    let left = this.origLeft
 
     for (let scrollCache of this.scrollCaches) {
       left += scrollCache.scrollLeft - scrollCache.origScrollLeft
@@ -46,8 +49,8 @@ export default class OffsetCoordCache { // TODO: rename to OffsetTracker?
     return left
   }
 
-  getTopAdjust() {
-    let top = this.originOffsetTop
+  getTop() {
+    let top = this.origTop
 
     for (let scrollCache of this.scrollCaches) {
       top += scrollCache.origScrollTop - scrollCache.scrollTop

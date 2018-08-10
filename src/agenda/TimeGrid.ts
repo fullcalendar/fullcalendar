@@ -10,7 +10,7 @@ import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDu
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import DateComponent, { Seg } from '../component/DateComponent'
-import OffsetCoordCache from '../common/OffsetCoordCache'
+import OffsetTracker from '../common/OffsetTracker'
 import { DateSpan } from '../structs/date-span'
 import { EventStore } from '../structs/event-store'
 import { Hit } from '../interactions/HitDragging'
@@ -62,7 +62,7 @@ export default class TimeGrid extends DateComponent {
 
   colPositions: CoordCache
   slatPositions: CoordCache
-  offsetTracker: OffsetCoordCache
+  offsetTracker: OffsetTracker
 
   rootBgContainerEl: HTMLElement
   bottomRuleEl: HTMLElement // hidden by default
@@ -578,7 +578,7 @@ export default class TimeGrid extends DateComponent {
 
 
   prepareHits() {
-    this.offsetTracker = new OffsetCoordCache(this.el)
+    this.offsetTracker = new OffsetTracker(this.el)
   }
 
 
@@ -591,8 +591,8 @@ export default class TimeGrid extends DateComponent {
     let { snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
-      let leftOrigin = offsetTracker.getLeftAdjust()
-      let topOrigin = offsetTracker.getTopAdjust()
+      let leftOrigin = offsetTracker.getLeft()
+      let topOrigin = offsetTracker.getTop()
       let colIndex = colPositions.leftPositionToIndex(leftOffset - leftOrigin)
       let slatIndex = slatPositions.topPositionToIndex(topOffset - topOrigin)
 
