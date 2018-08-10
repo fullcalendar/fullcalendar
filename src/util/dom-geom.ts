@@ -1,5 +1,5 @@
-import { createElement, removeElement } from './dom-manip'
 import { Rect, intersectRects } from './geom'
+import { sanitizeScrollbarWidth, getIsRtlScrollbarOnLeft } from './scrollbars'
 
 export interface EdgeInfo {
   borderLeft: number
@@ -34,7 +34,7 @@ export function computeEdges(el, getPadding = false): EdgeInfo {
     scrollbarRight: 0
   }
 
-  if (getIsLeftRtlScrollbars() && computedStyle.direction === 'rtl') { // is the scrollbar on the left side?
+  if (getIsRtlScrollbarOnLeft() && computedStyle.direction === 'rtl') { // is the scrollbar on the left side?
     res.scrollbarLeft = scrollbarLeftRight
   } else {
     res.scrollbarRight = scrollbarLeftRight
@@ -132,46 +132,4 @@ export function computeClippingRect(el: HTMLElement): Rect {
     .reduce(function(rect0, rect1) {
       return intersectRects(rect0, rect1) || rect1 // should always intersect
     })
-}
-
-
-// The scrollbar width computations in computeEdges are sometimes flawed when it comes to
-// retina displays, rounding, and IE11. Massage them into a usable value.
-function sanitizeScrollbarWidth(width) {
-  width = Math.max(0, width) // no negatives
-  width = Math.round(width)
-  return width
-}
-
-
-// Logic for determining if, when the element is right-to-left, the scrollbar appears on the left side
-
-let _isLeftRtlScrollbars = null
-
-function getIsLeftRtlScrollbars() { // responsible for caching the computation
-  if (_isLeftRtlScrollbars === null) {
-    _isLeftRtlScrollbars = computeIsLeftRtlScrollbars()
-  }
-  return _isLeftRtlScrollbars
-}
-
-function computeIsLeftRtlScrollbars() { // creates an offscreen test element, then removes it
-  let outerEl = createElement('div', {
-    style: {
-      position: 'absolute',
-      top: -1000,
-      left: 0,
-      border: 0,
-      padding: 0,
-      overflow: 'scroll',
-      direction: 'rtl'
-    }
-  }, '<div></div>')
-
-  document.body.appendChild(outerEl)
-  let innerEl = outerEl.firstChild as HTMLElement
-  let res = innerEl.getBoundingClientRect().left > outerEl.getBoundingClientRect().left
-
-  removeElement(outerEl)
-  return res
 }

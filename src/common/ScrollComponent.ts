@@ -4,7 +4,7 @@ import { removeElement, createElement, applyStyle, applyStyleProp } from '../uti
 /*
 Embodies a div that has potential scrollbars
 */
-export default class ScrollerComponent {
+export default class ScrollComponent {
 
   el: HTMLElement // the guaranteed outer element
   scrollEl: HTMLElement // the element with the scrollbars

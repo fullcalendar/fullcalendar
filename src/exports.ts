@@ -76,7 +76,7 @@ export { DateRange, rangeContainsMarker, intersectRanges } from './datelib/date-
 export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Mixin } from './common/Mixin'
 export { default as CoordCache } from './common/CoordCache'
-export { default as ScrollerComponent } from './common/ScrollerComponent'
+export { default as ScrollComponent } from './common/ScrollComponent'
 export { default as Theme } from './theme/Theme'
 export { default as DateComponent } from './component/DateComponent'
 export { default as Calendar } from './Calendar'
