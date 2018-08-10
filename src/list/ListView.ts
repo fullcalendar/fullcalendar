@@ -43,15 +43,15 @@ export default class ListView extends View {
       this.el.classList.add(themeClass)
     }
 
-    this.scroller.render()
+    this.scroller.applyOverflow()
     this.el.appendChild(this.scroller.el)
 
-    this.contentEl = this.scroller.scrollEl // shortcut
+    this.contentEl = this.scroller.el // shortcut
   }
 
 
   unrenderSkeleton() {
-    this.scroller.destroy() // will remove the Grid too
+    this.scroller.removeElement() // will remove the Grid too
   }
 
 

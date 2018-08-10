@@ -1,34 +1,24 @@
 import { computeEdges } from '../util/dom-geom'
 import { removeElement, createElement, applyStyle, applyStyleProp } from '../util/dom-manip'
+import { ElementScrollController } from './scroll-controller'
 
 /*
 Embodies a div that has potential scrollbars
 */
-export default class ScrollComponent {
+export default class ScrollComponent extends ElementScrollController {
 
-  el: HTMLElement // the guaranteed outer element
-  scrollEl: HTMLElement // the element with the scrollbars
   overflowX: any
   overflowY: any
 
-
   constructor(options?) {
+    super(
+      createElement('div', {
+        className: 'fc-scroller'
+      })
+    )
     options = options || {}
     this.overflowX = options.overflowX || options.overflow || 'auto'
     this.overflowY = options.overflowY || options.overflow || 'auto'
-  }
-
-
-  render() {
-    this.el = this.renderEl()
-    this.applyOverflow()
-  }
-
-
-  renderEl() {
-    return this.scrollEl = createElement('div', {
-      className: 'fc-scroller'
-    })
   }
 
 
@@ -39,7 +29,7 @@ export default class ScrollComponent {
   }
 
 
-  destroy() {
+  removeElement() {
     removeElement(this.el)
   }
 
@@ -49,7 +39,7 @@ export default class ScrollComponent {
 
 
   applyOverflow() {
-    applyStyle(this.scrollEl, {
+    applyStyle(this.el, {
       overflowX: this.overflowX,
       overflowY: this.overflowY
     })
@@ -60,7 +50,6 @@ export default class ScrollComponent {
   // Useful for preserving scrollbar widths regardless of future resizes.
   // Can pass in scrollbarWidths for optimization.
   lockOverflow(scrollbarWidths) {
-    let { scrollEl } = this
     let overflowX = this.overflowX
     let overflowY = this.overflowY
 
@@ -69,56 +58,28 @@ export default class ScrollComponent {
     if (overflowX === 'auto') {
       overflowX = (
           scrollbarWidths.bottom || // horizontal scrollbars?
-          // OR scrolling pane with massless scrollbars?
-          scrollEl.scrollWidth - 1 > scrollEl.clientWidth
-            // subtract 1 because of IE off-by-one issue
+          this.canScrollHorizontally() // OR scrolling pane with massless scrollbars?
         ) ? 'scroll' : 'hidden'
     }
 
     if (overflowY === 'auto') {
       overflowY = (
-          scrollbarWidths.left || scrollbarWidths.right || // vertical scrollbars?
-          // OR scrolling pane with massless scrollbars?
-          scrollEl.scrollHeight - 1 > scrollEl.clientHeight
-            // subtract 1 because of IE off-by-one issue
+          scrollbarWidths.left || scrollbarWidths.right || // horizontal scrollbars?
+          this.canScrollVertically() // OR scrolling pane with massless scrollbars?
         ) ? 'scroll' : 'hidden'
     }
 
-    applyStyle(this.scrollEl, { overflowX, overflowY })
+    applyStyle(this.el, { overflowX, overflowY })
   }
-
-
-  // Getters / Setters
-  // -----------------------------------------------------------------------------------------------------------------
 
 
   setHeight(height) {
-    applyStyleProp(this.scrollEl, 'height', height)
-  }
-
-
-  getScrollTop() {
-    return this.scrollEl.scrollTop
-  }
-
-
-  setScrollTop(top) {
-    this.scrollEl.scrollTop = top
-  }
-
-
-  getClientWidth() {
-    return this.scrollEl.clientWidth
-  }
-
-
-  getClientHeight() {
-    return this.scrollEl.clientHeight
+    applyStyleProp(this.el, 'height', height)
   }
 
 
   getScrollbarWidths() {
-    let edges = computeEdges(this.scrollEl)
+    let edges = computeEdges(this.el)
     return {
       left: edges.scrollbarLeft,
       right: edges.scrollbarRight,

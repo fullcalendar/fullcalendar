@@ -96,7 +96,7 @@ export default class AgendaView extends View {
     this.el.classList.add('fc-agenda-view')
     this.el.innerHTML = this.renderSkeletonHtml()
 
-    this.scroller.render()
+    this.scroller.applyOverflow()
 
     timeGridWrapEl = this.scroller.el
     timeGridWrapEl.classList.add('fc-time-grid-container')
@@ -124,7 +124,7 @@ export default class AgendaView extends View {
       this.dayGrid.removeElement()
     }
 
-    this.scroller.destroy()
+    this.scroller.removeElement()
   }
 
 

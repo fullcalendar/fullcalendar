@@ -86,7 +86,7 @@ export default class BasicView extends View {
     this.el.classList.add('fc-basic-view')
     this.el.innerHTML = this.renderSkeletonHtml()
 
-    this.scroller.render()
+    this.scroller.applyOverflow()
 
     dayGridContainerEl = this.scroller.el
     dayGridContainerEl.classList.add('fc-day-grid-container')
@@ -102,7 +102,7 @@ export default class BasicView extends View {
 
   unrenderSkeleton() {
     this.dayGrid.removeElement()
-    this.scroller.destroy()
+    this.scroller.removeElement()
   }
 
 

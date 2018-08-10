@@ -18,6 +18,14 @@ export abstract class ScrollController {
     return this.getScrollWidth() - this.getClientWidth()
   }
 
+  canScrollVertically() {
+    return this.getMaxScrollTop() > 0
+  }
+
+  canScrollHorizontally() {
+    return this.getMaxScrollLeft() > 0
+  }
+
   canScrollUp() {
     return this.getScrollTop() > 0
   }
