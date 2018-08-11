@@ -28,7 +28,7 @@ registerEventSourceDef({
     let func = arg.eventSource.meta as EventSourceFunc
 
     unpromisify(
-      func.bind({ // the function returned from parseMeta
+      func.bind(null, { // the function returned from parseMeta
         start: dateEnv.toDate(arg.range.start),
         end: dateEnv.toDate(arg.range.end),
         timeZone: dateEnv.timeZone

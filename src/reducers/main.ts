@@ -22,7 +22,8 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     eventSelection: reduceSelectedEvent(state.eventSelection, action),
     eventDrag: reduceEventDrag(state.eventDrag, action),
     eventResize: reduceEventResize(state.eventResize, action),
-    loadingLevel: reduceLoadingLevel(state.loadingLevel, action, eventSources)
+    eventSourceLoadingLevel: reduceEventSourceLoadingLevel(state.eventSourceLoadingLevel, action, eventSources),
+    loadingLevel: reduceEventSourceLoadingLevel(state.loadingLevel, action, eventSources) // use same func
   }
 }
 
@@ -79,7 +80,7 @@ function reduceEventResize(currentEventResize: EventInteractionState | null, act
   }
 }
 
-function reduceLoadingLevel(level: number, action: Action, eventSources: EventSourceHash): number {
+function reduceEventSourceLoadingLevel(level: number, action: Action, eventSources: EventSourceHash): number {
   switch (action.type) {
     case 'FETCH_EVENT_SOURCES':
       return level + (action.sourceIds ? action.sourceIds.length : Object.keys(eventSources).length)

@@ -9,8 +9,9 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
 
 export interface CalendarState extends DateComponentRenderState {
-  loadingLevel: number
   eventSources: EventSourceHash
+  eventSourceLoadingLevel: number
+  loadingLevel: number
 }
 
 export interface SimpleError {

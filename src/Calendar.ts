@@ -29,7 +29,7 @@ import { EventInput, EventInstance, EventDef } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
-import { parseEventStore } from './structs/event-store'
+import { parseEventStore, createEmptyEventStore, EventStore } from './structs/event-store'
 
 
 export default class Calendar {
@@ -85,6 +85,7 @@ export default class Calendar {
   isSkeletonRendered: boolean = false // fyi: set within the debounce delay
   renderingPauseDepth: number = 0
   rerenderFlags: RenderForceFlags
+  renderableEventStore: EventStore
   buildDelayedRerender: any
   delayedRerender: any
   afterSizingTriggers: any = {}
@@ -124,6 +125,7 @@ export default class Calendar {
   render() {
     if (!this.isDisplaying) {
       this.isDisplaying = true
+      this.renderableEventStore = createEmptyEventStore()
       this.bindGlobalHandlers()
       this.el.classList.add('fc')
       this._render()
@@ -336,6 +338,7 @@ export default class Calendar {
   buildInitialState(): CalendarState {
     return {
       loadingLevel: 0,
+      eventSourceLoadingLevel: 0,
       dateProfile: null,
       eventSources: {},
       eventStore: {
@@ -558,9 +561,16 @@ export default class Calendar {
       renderedView.addScroll(renderedView.queryScroll())
     }
 
+    // if event sources are still loading and progressive rendering hasn't been enabled,
+    // keep rendering the last fully loaded set of events
+    let renderableEventStore = this.renderableEventStore =
+      (state.eventSourceLoadingLevel && !this.opt('progressiveEventRendering')) ?
+        this.renderableEventStore :
+        state.eventStore
+
     renderedView.render({
       dateProfile: state.dateProfile,
-      eventStore: state.eventStore,
+      eventStore: renderableEventStore,
       businessHoursDef: renderedView.opt('businessHours'),
       dateSelection: state.dateSelection,
       eventSelection: state.eventSelection,
