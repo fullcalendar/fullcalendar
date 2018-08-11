@@ -112,3 +112,14 @@ export function arrayToHash(a): { [key: string]: true } {
 
   return hash
 }
+
+
+export function objectValues(obj) {
+  let vals = []
+
+  for (let key in obj) {
+    vals.push(obj[key])
+  }
+
+  return vals
+}

@@ -19,7 +19,7 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan } from './structs/date-span'
 import reselector from './util/reselector'
-import { assignTo } from './util/object'
+import { assignTo, objectValues } from './util/object'
 import { RenderForceFlags } from './component/Component'
 import browserContext from './common/browser-context'
 import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
@@ -27,6 +27,9 @@ import { DateProfile } from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource } from './structs/event-source'
 import { EventInput } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
+import EventSourceApi from './api/EventSourceApi'
+import EventApi from './api/EventApi'
+import { parseEventStore } from './structs/event-store'
 
 
 export default class Calendar {
@@ -1034,25 +1037,66 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  addEvent(eventInput: EventInput, isSticky: boolean = false): EventApi | null {
+    let subset = parseEventStore([ eventInput ], '', this.state.dateProfile.activeRange, this)
+
+    this.dispatch({
+      type: 'ADD_EVENTS',
+      eventStore: subset,
+      stick: isSticky // TODO: do something with this
+    })
+
+    let def = objectValues(subset.defs)[0]
+    let instances = objectValues(subset.instances)
+
+    if (def) {
+      return new EventApi(
+        this,
+        def,
+        instances.length === 1 ? instances[0] : null
+      )
+    }
+
+    return null
+  }
+
+
+  // TODO: optimize
+  getEventById(id: string): EventApi | null {
+    let { defs, instances } = this.state.eventStore
+
+    id = String(id)
+
+    for (let id in instances) {
+      let instance = instances[id]
+      let def = defs[instance.defId]
+
+      if (def.publicId === id) {
+        return new EventApi(this, def, instance)
+      }
+    }
+
+    return null
+  }
+
+
+  getEvents(): EventApi[] {
+    let { defs, instances } = this.state.eventStore
+    let eventApis: EventApi[] = []
+
+    for (let id in instances) {
+      let instance = instances[id]
+      let def = defs[instance.defId]
+
+      eventApis.push(new EventApi(this, def, instance))
+    }
+
+    return eventApis
+  }
+
+
   rerenderEvents() { // API method. destroys old events if previously rendered.
     this.requestRerender({ events: true }) // TODO: test this
-  }
-
-
-  renderEvent(eventInput: EventInput, isSticky: boolean = false) {
-    // TODO
-  }
-
-
-  // legacyQuery operates on legacy event instance objects
-  removeEvents(legacyQuery) {
-    // TODO
-  }
-
-
-  // legacyQuery operates on legacy event instance objects
-  clientEvents(legacyQuery) {
-    // TODO
   }
 
 
@@ -1060,41 +1104,48 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  getEventSources(): EventSource[] {
-    return null // TODO
+  getEventSources(): EventSourceApi[] {
+    let sourceHash = this.state.eventSources
+    let sourceApis: EventSourceApi[] = []
+
+    for (let internalId in sourceHash) {
+      sourceApis.push(new EventSourceApi(this, sourceHash[internalId]))
+    }
+
+    return sourceApis
   }
 
 
-  getEventSourceById(id): EventSource | null {
-    return null // TODO
+  getEventSourceById(id: string): EventSourceApi | null {
+    let sourceHash = this.state.eventSources
+
+    id = String(id)
+
+    for (let internalId in sourceHash) {
+      if (sourceHash[internalId].publicId === id) {
+        return new EventSourceApi(this, sourceHash[internalId])
+      }
+    }
+
+    return null
   }
 
 
-  addEventSource(sourceInput: EventSourceInput) {
+  addEventSource(sourceInput: EventSourceInput): EventSourceApi {
     let eventSource = parseEventSource(sourceInput)
+
     if (eventSource) { // TODO: error otherwise?
       this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [ eventSource ] })
+
+      return new EventSourceApi(this, eventSource)
     }
-  }
 
-
-  removeEventSources(sourceMultiQuery) {
-    // TODO
-  }
-
-
-  removeEventSource(sourceQuery) {
-    // TODO
+    return null
   }
 
 
   refetchEvents() {
     this.dispatch({ type: 'FETCH_EVENT_SOURCES' })
-  }
-
-
-  refetchEventSources(sourceMultiQuery) {
-    // TODO
   }
 
 

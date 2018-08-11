@@ -92,21 +92,24 @@ export class BrowserContext {
         type: 'UNSELECT_DATES'
       })
 
+      this.dateSelectedCalendar = null // in case publicTrigger wants to reselect
+
       dateSelectedCalendar.publiclyTrigger('unselect', [
         {
           jsEvent: pev ? pev.origEvent : null,
           view: dateSelectedCalendar.view
         }
       ])
-
-      this.dateSelectedCalendar = null
     }
   }
 
   reportDateSelection(calendar: Calendar, selection: DateSpan, pev?: PointerDragEvent) {
+
     if (this.dateSelectedCalendar && this.dateSelectedCalendar !== calendar) {
       this.unselectDates(pev)
     }
+
+    this.dateSelectedCalendar = calendar // in case publicTrigger wants to unselect
 
     calendar.publiclyTrigger('select', [
       {
@@ -117,8 +120,6 @@ export class BrowserContext {
         view: calendar.view
       }
     ])
-
-    this.dateSelectedCalendar = calendar
   }
 
   unselectEvent() {

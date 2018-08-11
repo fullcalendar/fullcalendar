@@ -13,4 +13,9 @@ export default class EventApi {
     this.instance = instance || null
   }
 
+
+  remove() {
+    // TODO
+  }
+
 }
