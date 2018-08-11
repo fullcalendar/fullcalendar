@@ -9,6 +9,7 @@ import { DateSpan } from '../structs/date-span'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
+import EventApi from '../api/EventApi'
 
 export interface EventRes { // TODO: relate this to EventRenderRange?
   def: EventDef
@@ -113,7 +114,11 @@ export default class ExternalElementDragging {
         receivingCalendar.publiclyTrigger('eventReceive', [
           {
             draggedEl: pev.subjectEl,
-            event: droppableEvent.instance, // TODO: what to transmit here?
+            event: new EventApi(
+              receivingCalendar,
+              droppableEvent.def,
+              droppableEvent.instance
+            ),
             view: finalView
           }
         ])

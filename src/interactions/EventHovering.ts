@@ -1,6 +1,7 @@
 import DateComponent from '../component/DateComponent'
 import { listenToHoverBySelector } from '../util/dom-event'
 import { getElSeg } from '../component/renderers/EventRenderer'
+import EventApi from '../api/EventApi'
 
 /*
 Triggers events and adds/removes core classNames when the user's pointer
@@ -39,7 +40,11 @@ export default class EventHovering {
     if (component.isValidSegDownEl(ev.target as HTMLElement)) {
       component.publiclyTrigger(publicEvName, [
         {
-          event: seg.eventRange!.eventInstance, // TODO: correct arg!
+          event: new EventApi(
+            this.component.getCalendar(),
+            seg.eventRange.eventDef,
+            seg.eventRange.eventInstance
+          ),
           jsEvent: ev,
           view: component.view
         }

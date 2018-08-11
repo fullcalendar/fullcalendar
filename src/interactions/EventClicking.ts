@@ -1,6 +1,7 @@
 import DateComponent from '../component/DateComponent'
 import { listenBySelector } from '../util/dom-event'
 import { getElSeg } from '../component/renderers/EventRenderer'
+import EventApi from '../api/EventApi'
 
 /*
 Detects when the user clicks on an event within a DateComponent
@@ -28,7 +29,11 @@ export default class EventClicking {
     if (component.isValidSegDownEl(ev.target as HTMLElement)) {
       component.publiclyTrigger('eventClick', [
         {
-          event: seg.eventRange!.eventInstance, // TODO: correct arg!
+          event: new EventApi(
+            component.getCalendar(),
+            seg.eventRange.eventDef,
+            seg.eventRange.eventInstance
+          ),
           jsEvent: ev,
           view: component.view
         }

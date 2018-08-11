@@ -5,6 +5,7 @@ import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
 import { EventRenderRange } from '../event-rendering'
 import { Seg } from '../DateComponent'
+import EventApi from '../../api/EventApi'
 
 
 export default class EventRenderer {
@@ -217,7 +218,11 @@ export default class EventRenderer {
 
     let custom = this.view.publiclyTrigger('eventRender', [
       {
-        event: eventRange, // what to do here?
+        event: new EventApi(
+          this.view.calendar,
+          eventRange.eventDef,
+          eventRange.eventInstance
+        ),
         el,
         view: this.view
       }

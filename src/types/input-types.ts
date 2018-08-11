@@ -11,10 +11,10 @@ import { FormatterInput } from '../datelib/formatting'
 import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursDef } from '../structs/business-hours'
 import { EventInput } from '../structs/event'
+import EventApi from '../api/EventApi'
 
 
 // temporary!
-export type EventApi = EventInput
 export type ConstraintInput = DateRangeInput | BusinessHoursDef | 'businessHours'
 
 

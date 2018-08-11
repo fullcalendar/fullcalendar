@@ -18,6 +18,7 @@ import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
 import { computeVisibleDayRange } from '../util/misc'
 import { DateRange, rangeContainsMarker } from '../datelib/date-range'
+import EventApi from '../api/EventApi'
 
 
 export interface DateComponentRenderState {
@@ -272,10 +273,16 @@ export default abstract class DateComponent extends Component {
 
   triggerRenderedSegs(segs: Seg[]) {
     if (this.hasPublicHandlers('eventAfterRender')) {
+      let calendar = this.getCalendar()
+
       for (let seg of segs) {
         this.publiclyTriggerAfterSizing('eventAfterRender', [
           {
-            event: seg.eventRange, // what to do here?
+            event: new EventApi(
+              calendar,
+              seg.eventRange.eventDef,
+              seg.eventRange.eventInstance
+            ),
             el: seg.el,
             view: this
           }
@@ -287,10 +294,16 @@ export default abstract class DateComponent extends Component {
 
   triggerWillRemoveSegs(segs: Seg[]) {
     if (this.hasPublicHandlers('eventDestroy')) {
+      let calendar = this.getCalendar()
+
       for (let seg of segs) {
         this.publiclyTrigger('eventDestroy', [
           {
-            event: seg.eventRange, // what to do here?
+            event: new EventApi(
+              calendar,
+              seg.eventRange.eventDef,
+              seg.eventRange.eventInstance
+            ),
             el: seg.el,
             view: this
           }
