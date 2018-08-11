@@ -2,9 +2,19 @@ import { unpromisify } from '../util/promise'
 import { registerEventSourceDef } from '../structs/event-source'
 import { EventInput } from '../structs/event'
 
+export type EventSourceFunc = (
+  arg: {
+    start: Date
+    end: Date
+    timeZone: string
+  },
+  successCallback: (events: EventInput[]) => void,
+  failureCallback: (errorObj: any) => void
+) => any; // a promise-like object, or nothing
+
 registerEventSourceDef({
 
-  parseMeta(raw: any): EventInput[] {
+  parseMeta(raw: any): EventSourceFunc {
     if (typeof raw === 'function') { // short form
       return raw
     } else if (typeof raw.events === 'function') {
@@ -14,10 +24,11 @@ registerEventSourceDef({
   },
 
   fetch(arg, success, failure) {
-    const dateEnv = arg.calendar.dateEnv
+    let dateEnv = arg.calendar.dateEnv
+    let func = arg.eventSource.meta as EventSourceFunc
 
     unpromisify(
-      arg.eventSource.meta({ // the function returned from parseMeta
+      func.bind({ // the function returned from parseMeta
         start: dateEnv.toDate(arg.range.start),
         end: dateEnv.toDate(arg.range.end),
         timeZone: dateEnv.timeZone

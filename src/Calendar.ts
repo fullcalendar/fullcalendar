@@ -10,7 +10,7 @@ import ViewSpecManager from './ViewSpecManager'
 import View from './View'
 import Theme from './theme/Theme'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
-import { RangeInput, OptionsInput, EventObjectInput, EventSourceInput } from './types/input-types'
+import { OptionsInput } from './types/input-types'
 import { getLocale } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
@@ -22,9 +22,10 @@ import reselector from './util/reselector'
 import { assignTo } from './util/object'
 import { RenderForceFlags } from './component/Component'
 import browserContext from './common/browser-context'
-import { rangeContainsMarker } from './datelib/date-range'
+import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
 import { DateProfile } from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource } from './structs/event-source'
+import { EventInput } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 
 
@@ -590,11 +591,11 @@ export default class Calendar {
   }
 
 
-  changeView(viewType: string, dateOrRange: RangeInput | DateInput) {
+  changeView(viewType: string, dateOrRange: DateRangeInput | DateInput) {
     let dateMarker = null
 
     if (dateOrRange) {
-      if ((dateOrRange as RangeInput).start && (dateOrRange as RangeInput).end) { // a range
+      if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
         this.optionsManager.add({ // will not rerender
           visibleRange: dateOrRange
         })
@@ -1038,7 +1039,7 @@ export default class Calendar {
   }
 
 
-  renderEvent(eventInput: EventObjectInput, isSticky: boolean = false) {
+  renderEvent(eventInput: EventInput, isSticky: boolean = false) {
     // TODO
   }
 
@@ -1059,12 +1060,12 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  getEventSources(): EventSource {
+  getEventSources(): EventSource[] {
     return null // TODO
   }
 
 
-  getEventSourceById(id): EventSource {
+  getEventSourceById(id): EventSource | null {
     return null // TODO
   }
 

@@ -3,17 +3,20 @@ import { refineProps } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
+import { EventSourceFunc } from '../event-sources/func-event-source'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
 Contains the plugin system for defining new types if event sources.
+
+TODO: "EventSource" is the same name as a built-in type in TypeScript. Rethink.
 */
 
 export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
 export type EventSourceSuccessHandler = (eventInputs: EventInput[]) => void
 export type EventSourceFailureHandler = (errorObj: any) => void
 
-export interface EventSourceInput {
+export interface ExtendedEventSourceInput {
   id?: string | number
   allDayDefault?: boolean
   eventDataTransform?: EventInputTransformer
@@ -30,8 +33,25 @@ export interface EventSourceInput {
   textColor?: string
   success?: EventSourceSuccessHandler
   failure?: EventSourceFailureHandler
+
+  // array (TODO: how to move this to array-event-source?)
+  events?: EventInput[]
+
+  // json feed (TODO: how to move this to json-feed-event-source?)
+  url?: string
+  method?: string
+  data?: object | (() => object)
+  startParam?: string
+  endParam?: string
+  timezoneParam?: string
+
   [otherProp: string]: any // in case plugins want more props
 }
+
+export type EventSourceInput =
+  ExtendedEventSourceInput | // object in extended form
+  EventSourceFunc | // just a function
+  string // a URL for a JSON feed
 
 export interface EventSource {
   sourceId: string
@@ -111,14 +131,18 @@ export function parseEventSource(raw: EventSourceInput): EventSource | null {
     let meta = def.parseMeta(raw)
 
     if (meta) {
-      return parseEventSourceProps(raw, meta, i)
+      return parseEventSourceProps(
+        typeof raw === 'object' ? raw : {},
+        meta,
+        i
+      )
     }
   }
 
   return null
 }
 
-function parseEventSourceProps(raw: EventSourceInput, meta: object, sourceDefId: number): EventSource {
+function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number): EventSource {
   let props = refineProps(raw, SIMPLE_SOURCE_PROPS) as EventSource
 
   props.isFetching = false
