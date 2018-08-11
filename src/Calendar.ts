@@ -70,9 +70,6 @@ export default class Calendar {
   removeNavLinkListener: any
   windowResizeProxy: any
 
-  isRendered: boolean = false
-  isSkeletonRendered: boolean = false
-
   viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
   view: View // the latest view, internal state, regardless of whether rendered or not
   renderedView: View // the view that is currently RENDERED, though it might not be most recent from internal state
@@ -83,6 +80,9 @@ export default class Calendar {
   actionQueue = []
   isReducing: boolean = false
 
+  isDisplaying: boolean = false // installed in DOM? accepting renders?
+  isRendering: boolean = false // currently in the _render function?
+  isSkeletonRendered: boolean = false // fyi: set within the debounce delay
   renderingPauseDepth: number = 0
   rerenderFlags: RenderForceFlags
   buildDelayedRerender: any
@@ -122,11 +122,11 @@ export default class Calendar {
 
 
   render() {
-    if (!this.isRendered) {
+    if (!this.isDisplaying) {
+      this.isDisplaying = true
       this.bindGlobalHandlers()
       this.el.classList.add('fc')
       this._render()
-      this.isRendered = true
     } else if (this.elementVisible()) {
       // mainly for the public API
       this.calcSize()
@@ -136,13 +136,11 @@ export default class Calendar {
 
 
   destroy() {
-    if (this.isRendered) {
+    if (this.isDisplaying) {
+      this.isDisplaying = false
+      this.unbindGlobalHandlers()
       this._destroy()
       this.el.classList.remove('fc')
-      this.isRendered = false
-      this.unbindGlobalHandlers()
-      this.trigger('destroy')
-      Calendar.trigger('destroy', this)
     }
   }
 
@@ -152,6 +150,8 @@ export default class Calendar {
 
 
   _render(forceFlags: RenderForceFlags = {}) {
+    this.isRendering = true
+
     this.applyElClassNames()
 
     if (!this.isSkeletonRendered) {
@@ -164,6 +164,14 @@ export default class Calendar {
     this.renderView(forceFlags)
     this.thawContentHeight()
     this.releaseAfterSizingTriggers()
+
+    this.isRendering = false
+    this.trigger('_rendered') // for tests
+
+    // another render requested during this most recent rendering?
+    if (this.rerenderFlags) {
+      this.delayedRerender()
+    }
   }
 
 
@@ -368,8 +376,6 @@ export default class Calendar {
       }
 
       this.requestRerender()
-
-      // TODO: what about pausing new renders while rendering?
     }
   }
 
@@ -390,29 +396,27 @@ export default class Calendar {
       assignTo(this.rerenderFlags, forceFlags) // merge the objects
     }
 
-    this.delayedRerender()
+    this.delayedRerender() // will call a debounced-version of tryRerender
   }
 
 
   tryRerender() {
     if (
+      this.isDisplaying && // must be accepting renders
+      this.rerenderFlags && // indicates that a rerender was requested
       !this.renderingPauseDepth && // not paused
-      this.isRendered && // must be currently rendered
-      this.rerenderFlags // indicates that a rerender was requested
+      !this.isRendering // not currently in the render loop
     ) {
-      this._render(this.rerenderFlags)
-      this.rerenderFlags = null
-      this.trigger('_rendered')
+      let { rerenderFlags } = this
+      this.rerenderFlags = null // clear for future requestRerender calls, which might happen during render
+      this._render(rerenderFlags)
     }
   }
 
 
-  pauseRendering() {
+  batchRendering(func) {
     this.renderingPauseDepth++
-  }
-
-
-  resumeRendering() {
+    func()
     this.renderingPauseDepth--
     this.requestRerender()
   }
@@ -1070,8 +1074,8 @@ export default class Calendar {
 
     id = String(id)
 
-    for (let id in instances) {
-      let instance = instances[id]
+    for (let instanceId in instances) {
+      let instance = instances[instanceId]
       let def = defs[instance.defId]
 
       if (def.publicId === id) {
@@ -1124,9 +1128,9 @@ export default class Calendar {
 
     id = String(id)
 
-    for (let internalId in sourceHash) {
-      if (sourceHash[internalId].publicId === id) {
-        return new EventSourceApi(this, sourceHash[internalId])
+    for (let sourceId in sourceHash) {
+      if (sourceHash[sourceId].publicId === id) {
+        return new EventSourceApi(this, sourceHash[sourceId])
       }
     }
 
@@ -1154,7 +1158,6 @@ export default class Calendar {
 
 }
 
-EmitterMixin.mixIntoObj(Calendar) // for global registry
 EmitterMixin.mixInto(Calendar)
 
 
