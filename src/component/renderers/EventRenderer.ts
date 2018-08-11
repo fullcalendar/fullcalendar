@@ -6,6 +6,7 @@ import { compareByFieldSpecs } from '../../util/misc'
 import { EventRenderRange } from '../event-rendering'
 import { Seg } from '../DateComponent'
 import EventApi from '../../api/EventApi'
+import { EventDef } from '../../structs/event'
 
 
 export default class EventRenderer {
@@ -447,36 +448,56 @@ export default class EventRenderer {
 
 
   // Computes if the given event is allowed to be dragged by the user
-  isEventDefDraggable(eventDef) {
-    return this.isEventDefStartEditable(eventDef)
+  isEventDefDraggable(eventDef: EventDef): boolean {
+    let val = eventDef.startEditable
+
+    if (val == null) {
+      let source = this.view.calendar.state.eventSources[eventDef.sourceId]
+      val = source ? source.startEditable : null
+
+      if (val == null) {
+        val = this.opt('eventStartEditable')
+
+        if (val == null) {
+          val = this.opt('editable')
+        }
+      }
+    }
+
+    return val
   }
 
 
-  isEventDefStartEditable(eventDef) {
-    return true // TODO
-  }
+  // Computes if the given event is allowed to be resized AT ALL
+  isEventDefResizable(eventDef): boolean {
+    let val = eventDef.durationEditable
 
+    if (val == null) {
+      let source = this.view.calendar.state.eventSources[eventDef.sourceId]
+      val = source ? source.durationEditable : null
 
-  isEventDefGenerallyEditable(eventDef) { // NOT USED YET
-    return false // TODO
+      if (val == null) {
+        val = this.opt('eventDurationEditable')
+
+        if (val == null) {
+          val = this.opt('editable')
+        }
+      }
+    }
+
+    return val
   }
 
 
   // Computes if the given event is allowed to be resized from its starting edge
-  isEventDefResizableFromStart(eventDef) {
+  isEventDefResizableFromStart(eventDef): boolean {
     return this.opt('eventResizableFromStart') && this.isEventDefResizable(eventDef)
   }
 
 
   // Computes if the given event is allowed to be resized from its ending edge
-  isEventDefResizableFromEnd(eventDef) {
+  isEventDefResizableFromEnd(eventDef): boolean {
     return this.isEventDefResizable(eventDef)
-  }
-
-
-  // Computes if the given event is allowed to be resized by the user at all
-  isEventDefResizable(eventDef) {
-    return true // TODO
   }
 
 

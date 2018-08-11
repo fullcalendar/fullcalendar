@@ -658,12 +658,10 @@ export default class TimeGrid extends DateComponent {
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
   renderDateSelection(selection: DateSpan) {
-    let segs = this.selectionToSegs(selection)
-
-    if (this.opt('selectHelper')) { // this setting signals that a mock helper event should be rendered
-      this.helperRenderer.renderEventSegs(segs)
+    if (this.opt('selectHelper')) {
+      this.helperRenderer.renderEventSegs(this.selectionToSegs(selection, true))
     } else {
-      this.renderHighlightSegs(segs)
+      this.renderHighlightSegs(this.selectionToSegs(selection, false))
     }
   }
 

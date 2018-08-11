@@ -19,6 +19,7 @@ import { Hit } from '../interactions/HitDragging'
 import { computeVisibleDayRange } from '../util/misc'
 import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
+import { parseEventDef, createEventInstance } from '../structs/event'
 
 
 export interface DateComponentRenderState {
@@ -154,12 +155,8 @@ export default abstract class DateComponent extends Component {
       this.computeBusinessHoursSize()
     }
 
-    // don't worry about updating the resize of the helper
     if (force || flags.dateSelection || flags.eventDrag || flags.eventResize) {
       this.computeHighlightSize()
-    }
-
-    if (force || flags.eventDrag || flags.eventResize) {
       this.computeHelperSize()
     }
 
@@ -173,9 +170,6 @@ export default abstract class DateComponent extends Component {
 
     if (force || flags.dateSelection || flags.eventDrag || flags.eventResize) {
       this.assignHighlightSize()
-    }
-
-    if (force || flags.eventDrag || flags.eventResize) {
       this.assignHelperSize()
     }
 
@@ -771,7 +765,7 @@ export default abstract class DateComponent extends Component {
 
   // Renders a visual indication of the selection
   renderDateSelection(selection: DateSpan) {
-    this.renderHighlightSegs(this.selectionToSegs(selection))
+    this.renderHighlightSegs(this.selectionToSegs(selection, false))
   }
 
 
@@ -859,8 +853,23 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  selectionToSegs(selection: DateSpan): Seg[] {
-    return this.rangeToSegs(selection.range, selection.isAllDay)
+  selectionToSegs(selection: DateSpan, fabricateEvents: boolean): Seg[] {
+    let segs = this.rangeToSegs(selection.range, selection.isAllDay)
+
+    if (fabricateEvents) {
+      let def = parseEventDef({ editable: false }, '', selection.isAllDay, true)
+      let eventRange = {
+        eventDef: def,
+        eventInstance: createEventInstance(def.defId, selection.range),
+        range: selection.range
+      }
+
+      for (let seg of segs) {
+        seg.eventRange = eventRange
+      }
+    }
+
+    return segs
   }
 
 

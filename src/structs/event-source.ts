@@ -63,7 +63,6 @@ export interface EventSource {
   fetchRange: DateRange | null
   allDayDefault: boolean | null
   eventDataTransform: EventInputTransformer
-  editable: boolean | null
   startEditable: boolean | null
   durationEditable: boolean | null
   overlap: any
@@ -97,7 +96,6 @@ export interface EventSourceDef {
 const SIMPLE_SOURCE_PROPS = {
   allDayDefault: Boolean,
   eventDataTransform: Function,
-  editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
   overlap: null,
@@ -153,11 +151,22 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
   props.sourceDefId = sourceDefId
   props.meta = meta
 
-  if (typeof raw.color === 'string') {
-    if (!props.backgroundColor) {
+  // TODO: consolidate with event struct
+  if ('editable' in raw) {
+    if (props.startEditable === null) {
+      props.startEditable = raw.editable
+    }
+    if (props.durationEditable === null) {
+      props.durationEditable = raw.editable
+    }
+  }
+
+  // TODO: consolidate with event struct
+  if ('color' in raw) {
+    if (props.backgroundColor === null) {
       props.backgroundColor = raw.color
     }
-    if (!props.borderColor) {
+    if (props.borderColor === null) {
       props.borderColor = raw.color
     }
   }

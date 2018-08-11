@@ -30,10 +30,11 @@
       // US Holidays
       events: 'en.usa#holiday@group.v.calendar.google.com',
 
-      eventClick: function(event) {
+      eventClick: function(arg) {
         // opens events in a popup window
-        window.open(event.url, 'gcalevent', 'width=700,height=600');
-        return false;
+        window.open(arg.event.url, 'gcalevent', 'width=700,height=600');
+
+        arg.jsEvent.preventDefault() // don't navigate in main tab
       },
 
       loading: function(bool) {

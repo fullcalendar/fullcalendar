@@ -50,7 +50,6 @@ export interface EventDef {
   isAllDay: boolean
   title: string
   url: string
-  editable: boolean | null
   startEditable: boolean | null
   durationEditable: boolean | null
   constraint: any
@@ -89,7 +88,6 @@ const NON_DATE_PROPS = {
   groupId: String,
   title: String,
   url: String,
-  editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
   constraint: null,
@@ -126,11 +124,21 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay
     delete leftovers.id
   }
 
+  if ('editable' in leftovers) {
+    if (props.startEditable === null) {
+      props.startEditable = leftovers.editable
+    }
+    if (props.durationEditable === null) {
+      props.durationEditable = leftovers.editable
+    }
+    delete leftovers.editable
+  }
+
   if ('color' in leftovers) {
-    if (!props.backgroundColor) {
+    if (props.backgroundColor === null) {
       props.backgroundColor = leftovers.color
     }
-    if (!props.borderColor) {
+    if (props.borderColor === null) {
       props.borderColor = leftovers.color
     }
     delete leftovers.color
