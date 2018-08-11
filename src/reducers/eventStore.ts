@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import { filterHash, arrayToHash } from '../util/object'
+import { filterHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
 import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents } from '../structs/event-store'
@@ -32,10 +32,6 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
     case 'REMOVE_EVENT_SOURCE':
       return excludeSource(eventStore, action.sourceId)
 
-    case 'FETCH_EVENT_SOURCES':
-      // when refetching happens for a source, clear the temporary events in it
-      return excludeTemporary(eventStore, action.sourceIds)
-
     default:
       return eventStore
   }
@@ -60,7 +56,11 @@ function receiveEvents(
       eventSource.sourceId,
       fetchRange,
       calendar,
-      excludeSource(eventStore, eventSource.sourceId) // dest
+      excludeSource( // dest
+        eventStore,
+        eventSource.sourceId,
+        true // also remove events with isTemporary:true
+      )
     )
   }
 
@@ -76,9 +76,10 @@ function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): 
   }
 }
 
-function excludeSource(eventStore: EventStore, sourceId: string): EventStore {
+// has extra bonus feature of removing temporary events
+function excludeSource(eventStore: EventStore, sourceId: string, temporaryMatch?: boolean): EventStore {
   let defs = filterHash(eventStore.defs, function(def: EventDef) {
-    return def.sourceId !== sourceId
+    return def.sourceId !== sourceId || def.isTemporary === temporaryMatch
   })
   let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
     return defs[instance.defId] // still exists?
@@ -90,15 +91,4 @@ function applyMutationToRelated(eventStore: EventStore, instanceId: string, muta
   let related = getRelatedEvents(eventStore, instanceId)
   related = applyMutationToEventStore(related, mutation, calendar)
   return mergeEventStores(eventStore, related)
-}
-
-function excludeTemporary(eventStore: EventStore, sourceIds: string[]): EventStore {
-  let sourceIdHash = arrayToHash(sourceIds)
-  let defs = filterHash(eventStore.defs, function(def: EventDef) {
-    return !(sourceIdHash[def.sourceId] && def.isTemporary)
-  })
-  let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
-    return defs[instance.defId] // still exists?
-  })
-  return { defs, instances }
 }

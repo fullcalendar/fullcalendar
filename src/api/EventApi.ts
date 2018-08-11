@@ -1,5 +1,6 @@
 import Calendar from '../Calendar'
 import { EventDef, EventInstance } from '../structs/event'
+import { EventMutation } from '../structs/event-mutation'
 
 export default class EventApi {
 
@@ -14,42 +15,45 @@ export default class EventApi {
   }
 
   updateProp(name: string, val: string) {
-    let { instance } = this
+    if (name.match(/^(start|end|date|isAllDay)$/)) {
+      // error. date-related props need other methods
+    } else {
+      let props
 
-    if (instance) {
-      if (name.match(/^(start|end|date|isAllDay)$/)) {
-        // error. date-related props need other methods
+      // TODO: consolidate this logic with event struct?
+      if (name === 'editable') {
+        props = { startEditable: val, durationEditable: val }
+      } else if (name === 'color') {
+        props = { backgroundColor: val, borderColor: val }
       } else {
-        let props
-
-        if (name === 'color') { // TODO: consolidate this logic with event struct?
-          props = { backgroundColor: val, borderColor: val }
-        } else {
-          props = { [name]: val }
-        }
-
-        this.calendar.dispatch({
-          type: 'MUTATE_EVENTS',
-          instanceId: instance.instanceId,
-          mutation: {
-            standardProps: props
-          }
-        })
+        props = { [name]: val }
       }
+
+      this.mutate({
+        standardProps: props
+      })
     }
   }
 
   updateExtendedProp(name: string, val: string) {
+    this.mutate({
+      extendedProps: { [name]: val }
+    })
+  }
+
+  private mutate(mutation: EventMutation) {
     let { instance } = this
 
     if (instance) {
       this.calendar.dispatch({
         type: 'MUTATE_EVENTS',
         instanceId: instance.instanceId,
-        mutation: {
-          extendedProps: { [name]: val }
-        }
+        mutation
       })
+
+      let eventStore = this.calendar.state.eventStore
+      this.def = eventStore.defs[this.def.defId]
+      this.instance = eventStore.instances[this.instance.instanceId]
     }
   }
 
@@ -62,6 +66,20 @@ export default class EventApi {
         instances: { [instance.instanceId]: instance }
       })
     }
+  }
+
+  get title(): string {
+    return this.def.title
+  }
+
+  get start(): Date {
+    return this.calendar.dateEnv.toDate(this.instance.range.start)
+  }
+
+  get end(): Date {
+    return this.def.hasEnd ?
+      this.calendar.dateEnv.toDate(this.instance.range.end) :
+      null
   }
 
 }
