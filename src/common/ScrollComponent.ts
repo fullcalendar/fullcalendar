@@ -2,23 +2,28 @@ import { computeEdges } from '../util/dom-geom'
 import { removeElement, createElement, applyStyle, applyStyleProp } from '../util/dom-manip'
 import { ElementScrollController } from './scroll-controller'
 
+export interface ScrollbarWidths {
+  left: number
+  right: number
+  bottom: number
+}
+
 /*
 Embodies a div that has potential scrollbars
 */
 export default class ScrollComponent extends ElementScrollController {
 
-  overflowX: any
-  overflowY: any
+  overflowX: string
+  overflowY: string
 
-  constructor(options?) {
+  constructor(overflowX: string, overflowY: string) {
     super(
       createElement('div', {
         className: 'fc-scroller'
       })
     )
-    options = options || {}
-    this.overflowX = options.overflowX || options.overflow || 'auto'
-    this.overflowY = options.overflowY || options.overflow || 'auto'
+    this.overflowX = overflowX
+    this.overflowY = overflowY
   }
 
 
@@ -49,7 +54,7 @@ export default class ScrollComponent extends ElementScrollController {
   // Causes any 'auto' overflow values to resolves to 'scroll' or 'hidden'.
   // Useful for preserving scrollbar widths regardless of future resizes.
   // Can pass in scrollbarWidths for optimization.
-  lockOverflow(scrollbarWidths) {
+  lockOverflow(scrollbarWidths: ScrollbarWidths) {
     let overflowX = this.overflowX
     let overflowY = this.overflowY
 
@@ -73,12 +78,12 @@ export default class ScrollComponent extends ElementScrollController {
   }
 
 
-  setHeight(height) {
+  setHeight(height: number | string) {
     applyStyleProp(this.el, 'height', height)
   }
 
 
-  getScrollbarWidths() {
+  getScrollbarWidths(): ScrollbarWidths {
     let edges = computeEdges(this.el)
     return {
       left: edges.scrollbarLeft,

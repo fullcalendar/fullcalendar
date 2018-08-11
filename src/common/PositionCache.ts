@@ -1,39 +1,29 @@
 
-export interface PositionCacheOptions { // TODO: set these props directly
-  originEl: HTMLElement
-  els: HTMLElement[]
-  isHorizontal?: boolean
-  isVertical?: boolean
-}
-
 /*
-A cache for the left/right/top/bottom/width/height values for one or more elements.
-Works with both offset (from topleft document) and position (from originEl).
-
-options:
-- els
-- isHorizontal
-- isVertical
+Records offset information for a set of elements, relative to an origin element.
+Can record the left/right OR the top/bottom OR both.
+Provides methods for querying the cache by position.
 */
-export default class PositionCache { // TODO: rename to PositionCache
+export default class PositionCache {
 
   els: HTMLElement[] // assumed to be siblings
   originEl: HTMLElement // options can override the natural originEl
-  isHorizontal: boolean = false // whether to query for left/right/width
-  isVertical: boolean = false // whether to query for top/bottom/height
+  isHorizontal: boolean // whether to query for left/right/width
+  isVertical: boolean // whether to query for top/bottom/height
 
-  // arrays of coordinates (offsets from topleft of originEl)
+  // arrays of coordinates (from topleft of originEl)
+  // caller can access these directly
   lefts: any
   rights: any
   tops: any
   bottoms: any
 
 
-  constructor(options: PositionCacheOptions) {
-    this.originEl = options.originEl
-    this.els = options.els
-    this.isHorizontal = options.isHorizontal
-    this.isVertical = options.isVertical
+  constructor(originEl: HTMLElement, els: HTMLElement[], isHorizontal: boolean, isVertical: boolean) {
+    this.originEl = originEl
+    this.els = els
+    this.isHorizontal = isHorizontal
+    this.isVertical = isVertical
   }
 
 
@@ -87,7 +77,7 @@ export default class PositionCache { // TODO: rename to PositionCache
 
   // Given a left offset (from document left), returns the index of the el that it horizontally intersects.
   // If no intersection is made, returns undefined.
-  leftToIndex(leftPosition) {
+  leftToIndex(leftPosition: number) {
     let lefts = this.lefts
     let rights = this.rights
     let len = lefts.length
@@ -103,7 +93,7 @@ export default class PositionCache { // TODO: rename to PositionCache
 
   // Given a top offset (from document top), returns the index of the el that it vertically intersects.
   // If no intersection is made, returns undefined.
-  topToIndex(topPosition) {
+  topToIndex(topPosition: number) {
     let tops = this.tops
     let bottoms = this.bottoms
     let len = tops.length
@@ -118,13 +108,13 @@ export default class PositionCache { // TODO: rename to PositionCache
 
 
   // Gets the width of the element at the given index
-  getWidth(leftIndex) {
+  getWidth(leftIndex: number) {
     return this.rights[leftIndex] - this.lefts[leftIndex]
   }
 
 
   // Gets the height of the element at the given index
-  getHeight(topIndex) {
+  getHeight(topIndex: number) {
     return this.bottoms[topIndex] - this.tops[topIndex]
   }
 

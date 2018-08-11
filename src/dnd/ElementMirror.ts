@@ -84,7 +84,7 @@ export default class ElementMirror {
 
   doRevertAnimation(callback: () => void, revertDuration: number) {
     let mirrorEl = this.mirrorEl!
-    let finalSourceElRect = this.sourceEl.getBoundingClientRect() // because autoscrolling might have happened
+    let finalSourceElRect = this.sourceEl!.getBoundingClientRect() // because autoscrolling might have happened
 
     mirrorEl.style.transition =
       'top ' + revertDuration + 'ms,' +
@@ -113,8 +113,8 @@ export default class ElementMirror {
   updateElPosition() {
     if (this.sourceEl && this.isVisible) {
       applyStyle(this.getMirrorEl(), {
-        left: this.sourceElRect.left + this.deltaX!,
-        top: this.sourceElRect.top + this.deltaY!
+        left: this.sourceElRect!.left + this.deltaX!,
+        top: this.sourceElRect!.top + this.deltaY!
       })
     }
   }
@@ -124,7 +124,7 @@ export default class ElementMirror {
     let mirrorEl = this.mirrorEl
 
     if (!mirrorEl) {
-      mirrorEl = this.mirrorEl = this.sourceEl.cloneNode(true) as HTMLElement // cloneChildren=true
+      mirrorEl = this.mirrorEl = this.sourceEl!.cloneNode(true) as HTMLElement // cloneChildren=true
 
       // we don't want long taps or any mouse interaction causing selection/menus.
       // would use preventSelection(), but that prevents selectstart, causing problems.

@@ -3,7 +3,7 @@ import { ScrollGeomCache, ElementScrollGeomCache, WindowScrollGeomCache } from '
 interface Edge {
   scrollCache: ScrollGeomCache
   name: 'top' | 'left' | 'right' | 'bottom'
-  distance: number
+  distance: number // how many pixels the current pointer is from the edge
 }
 
 // If available we are using native "performance" API instead of "Date"
@@ -11,6 +11,12 @@ interface Edge {
 // https://developer.mozilla.org/en-US/docs/Web/API/Performance
 const getTime = typeof performance === 'function' ? (performance as any).now : Date.now
 
+/*
+For a pointer interaction, automatically scrolls certain scroll containers when the pointer
+approaches the edge.
+
+The caller must call start + handleMove + stop.
+*/
 export default class AutoScroller {
 
   // options that can be set by caller
@@ -20,35 +26,35 @@ export default class AutoScroller {
   maxVelocity: number = 300 // pixels per second
 
   // internal state
-  pointerScreenX: number
-  pointerScreenY: number
+  pointerScreenX: number | null = null
+  pointerScreenY: number | null = null
   isAnimating: boolean = false
+  scrollCaches: ScrollGeomCache[] | null = null
+  msSinceRequest?: number
+
+  // protect against the initial pointerdown being too close to an edge and starting the scroll
   everMovedUp: boolean = false
   everMovedDown: boolean = false
   everMovedLeft: boolean = false
   everMovedRight: boolean = false
-  scrollCaches: ScrollGeomCache[]
-  msSinceRequest: number
 
   start(pageX: number, pageY: number) {
     if (this.isEnabled) {
       this.scrollCaches = this.buildCaches()
-
       this.pointerScreenX = null
       this.pointerScreenY = null
       this.everMovedUp = false
       this.everMovedDown = false
       this.everMovedLeft = false
       this.everMovedRight = false
-
       this.handleMove(pageX, pageY)
     }
   }
 
   handleMove(pageX: number, pageY: number) {
     if (this.isEnabled) {
-      let pointerScreenX = pageX - window.scrollX //this.windowController.getScrollLeft() // audit all ordering
-      let pointerScreenY = pageY - window.scrollY // this.windowController.getScrollTop()
+      let pointerScreenX = pageX - window.scrollX
+      let pointerScreenY = pageY - window.scrollY
 
       let yDelta = this.pointerScreenY === null ? 0 : pointerScreenY - this.pointerScreenY
       let xDelta = this.pointerScreenX === null ? 0 : pointerScreenX - this.pointerScreenX
@@ -71,9 +77,9 @@ export default class AutoScroller {
 
   stop() {
     if (this.isEnabled) {
-      this.isAnimating = false
+      this.isAnimating = false // will stop animation
 
-      for (let scrollCache of this.scrollCaches) {
+      for (let scrollCache of this.scrollCaches!) {
         scrollCache.destroy()
       }
 
@@ -81,7 +87,7 @@ export default class AutoScroller {
     }
   }
 
-  requestAnimation(now) {
+  requestAnimation(now: number) {
     this.msSinceRequest = now
     requestAnimationFrame(this.animate)
   }
@@ -89,16 +95,16 @@ export default class AutoScroller {
   private animate = () => {
     if (this.isAnimating) { // wasn't cancelled between animation calls
       let edge = this.computeBestEdge(
-        this.pointerScreenX + window.scrollX,
-        this.pointerScreenY + window.scrollY
+        this.pointerScreenX! + window.scrollX,
+        this.pointerScreenY! + window.scrollY
       )
 
       if (edge) {
         let now = getTime()
-        this.handleSide(edge, (now - this.msSinceRequest) / 1000)
+        this.handleSide(edge, (now - this.msSinceRequest!) / 1000)
         this.requestAnimation(now)
       } else {
-        this.isAnimating = false
+        this.isAnimating = false // will stop animation
       }
     }
   }
@@ -107,7 +113,7 @@ export default class AutoScroller {
     let { scrollCache } = edge
     let { edgeThreshold } = this
     let invDistance = edgeThreshold - edge.distance
-    let velocity =
+    let velocity = // the closer to the edge, the faster we scroll
       (invDistance * invDistance) / (edgeThreshold * edgeThreshold) * // quadratic
       this.maxVelocity * seconds
     let sign = 1
@@ -129,11 +135,11 @@ export default class AutoScroller {
   }
 
   // left/top are relative to document topleft
-  private computeBestEdge(left, top): Edge | null {
+  private computeBestEdge(left: number, top: number): Edge | null {
     let { edgeThreshold } = this
     let bestSide: Edge | null = null
 
-    for (let scrollCache of this.scrollCaches) {
+    for (let scrollCache of this.scrollCaches!) {
       let rect = scrollCache.clientRect
       let leftDist = left - rect.left
       let rightDist = rect.right - left

@@ -1,10 +1,15 @@
 
+/*
+An object for getting/setting scroll-related information for an element.
+Internally, this is done very differently for window versus DOM element,
+so this object serves as a common interface.
+*/
 export abstract class ScrollController {
 
   abstract getScrollTop(): number
   abstract getScrollLeft(): number
-  abstract setScrollTop(number): void
-  abstract setScrollLeft(number): void
+  abstract setScrollTop(top: number): void
+  abstract setScrollLeft(left: number): void
   abstract getClientWidth(): number
   abstract getClientHeight(): number
   abstract getScrollWidth(): number
@@ -61,12 +66,12 @@ export class ElementScrollController extends ScrollController {
     return this.el.scrollLeft
   }
 
-  setScrollTop(n: number) {
-    this.el.scrollTop = n
+  setScrollTop(top: number) {
+    this.el.scrollTop = top
   }
 
-  setScrollLeft(n: number) {
-    this.el.scrollLeft = n
+  setScrollLeft(left: number) {
+    this.el.scrollLeft = left
   }
 
   getScrollWidth() {

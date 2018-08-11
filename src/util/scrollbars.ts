@@ -3,7 +3,7 @@ import { createElement, removeElement } from './dom-manip'
 
 // Logic for determining if, when the element is right-to-left, the scrollbar appears on the left side
 
-let isRtlScrollbarOnLeft = null
+let isRtlScrollbarOnLeft: boolean | null = null
 
 export function getIsRtlScrollbarOnLeft() { // responsible for caching the computation
   if (isRtlScrollbarOnLeft === null) {
@@ -36,7 +36,7 @@ function computeIsRtlScrollbarOnLeft() { // creates an offscreen test element, t
 
 // The scrollbar width computations in computeEdges are sometimes flawed when it comes to
 // retina displays, rounding, and IE11. Massage them into a usable value.
-export function sanitizeScrollbarWidth(width) {
+export function sanitizeScrollbarWidth(width: number) {
   width = Math.max(0, width) // no negatives
   width = Math.round(width)
   return width

@@ -28,10 +28,10 @@ export default class ListView extends View {
   constructor(calendar, viewSpec) {
     super(calendar, viewSpec)
 
-    this.scroller = new ScrollComponent({
-      overflowX: 'hidden',
-      overflowY: 'auto'
-    })
+    this.scroller = new ScrollComponent(
+      'hidden', // overflow x
+      'auto' // overflow y
+    )
   }
 
 

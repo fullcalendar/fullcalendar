@@ -236,11 +236,12 @@ export default class TimeGrid extends DateComponent {
 
     this.slatEls = findElements(this.slatContainerEl, 'tr')
 
-    this.slatPositions = new PositionCache({
-      originEl: this.el,
-      els: this.slatEls,
-      isVertical: true
-    })
+    this.slatPositions = new PositionCache(
+      this.el,
+      this.slatEls,
+      false,
+      true // vertical
+    )
   }
 
 
@@ -314,11 +315,12 @@ export default class TimeGrid extends DateComponent {
 
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
-    this.colPositions = new PositionCache({
-      originEl: this.el,
-      els: this.colEls,
-      isHorizontal: true
-    })
+    this.colPositions = new PositionCache(
+      this.el,
+      this.colEls,
+      true, // horizontal
+      false
+    )
 
     this.renderContentSkeleton()
   }

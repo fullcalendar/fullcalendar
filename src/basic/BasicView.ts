@@ -53,10 +53,10 @@ export default class BasicView extends View {
 
     this.addChild(this.dayGrid)
 
-    this.scroller = new ScrollComponent({
-      overflowX: 'hidden',
-      overflowY: 'auto'
-    })
+    this.scroller = new ScrollComponent(
+      'hidden', // overflow x
+      'auto' // overflow y
+    )
   }
 
 

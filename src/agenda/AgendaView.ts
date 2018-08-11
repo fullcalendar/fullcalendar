@@ -59,10 +59,10 @@ export default class AgendaView extends View {
       this.addChild(this.dayGrid)
     }
 
-    this.scroller = new ScrollComponent({
-      overflowX: 'hidden',
-      overflowY: 'auto'
-    })
+    this.scroller = new ScrollComponent(
+      'hidden', // overflow x
+      'auto' // overflow y
+    )
 
     this.splitEventStore = reselector(splitEventStore)
     this.splitInteractionState = reselector(splitInteractionState)

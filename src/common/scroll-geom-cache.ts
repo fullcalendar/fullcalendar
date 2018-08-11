@@ -2,6 +2,14 @@ import { Rect } from '../util/geom'
 import { computeInnerRect } from '../util/dom-geom'
 import { ScrollController, ElementScrollController, WindowScrollController } from './scroll-controller'
 
+/*
+Is a cache for a given element's scroll information (all the info that ScrollController stores)
+in addition the "client rectangle" of the element.. the area within the scrollbars.
+
+The cache can be in one of two modes:
+- doesListening:false - ignores when the container is scrolled by someone else
+- doesListening:true - watch for scrolling and update the cache
+*/
 export abstract class ScrollGeomCache extends ScrollController {
 
   clientRect: Rect
@@ -17,7 +25,7 @@ export abstract class ScrollGeomCache extends ScrollController {
   protected clientWidth: number
   protected clientHeight: number
 
-  constructor(scrollController: ScrollController, doesListening) {
+  constructor(scrollController: ScrollController, doesListening: boolean) {
     super()
     this.scrollController = scrollController
     this.doesListening = doesListening
@@ -57,20 +65,26 @@ export abstract class ScrollGeomCache extends ScrollController {
     return this.scrollLeft
   }
 
-  setScrollTop(n) {
-    this.scrollController.setScrollTop(n)
+  setScrollTop(top: number) {
+    this.scrollController.setScrollTop(top)
 
     if (!this.doesListening) {
-      this.scrollTop = Math.max(Math.min(n, this.getMaxScrollTop()), 0)
+      // we are not relying on the element to normalize out-of-bounds scroll values
+      // so we need to sanitize ourselves
+      this.scrollTop = Math.max(Math.min(top, this.getMaxScrollTop()), 0)
+
       this.handleScrollChange()
     }
   }
 
-  setScrollLeft(n) {
-    this.scrollController.setScrollLeft(n)
+  setScrollLeft(top: number) {
+    this.scrollController.setScrollLeft(top)
 
     if (!this.doesListening) {
-      this.scrollLeft = Math.max(Math.min(n, this.getMaxScrollLeft()), 0)
+      // we are not relying on the element to normalize out-of-bounds scroll values
+      // so we need to sanitize ourselves
+      this.scrollLeft = Math.max(Math.min(top, this.getMaxScrollLeft()), 0)
+
       this.handleScrollChange()
     }
   }
@@ -98,27 +112,23 @@ export abstract class ScrollGeomCache extends ScrollController {
 
 export class ElementScrollGeomCache extends ScrollGeomCache {
 
-  scrollController: ElementScrollController
-
-  constructor(el: HTMLElement, doesListening) {
+  constructor(el: HTMLElement, doesListening: boolean) {
     super(new ElementScrollController(el), doesListening)
   }
 
   getEventTarget(): EventTarget {
-    return this.scrollController.el
+    return (this.scrollController as ElementScrollController).el
   }
 
   computeClientRect() {
-    return computeInnerRect(this.scrollController.el)
+    return computeInnerRect((this.scrollController as ElementScrollController).el)
   }
 
 }
 
 export class WindowScrollGeomCache extends ScrollGeomCache {
 
-  scrollController: WindowScrollController
-
-  constructor(doesListening) {
+  constructor(doesListening: boolean) {
     super(new WindowScrollController(), doesListening)
   }
 
@@ -135,6 +145,8 @@ export class WindowScrollGeomCache extends ScrollGeomCache {
     }
   }
 
+  // the window is the only scroll object that changes it's rectangle relative
+  // to the document's topleft as it scrolls
   handleScrollChange() {
     this.clientRect = this.computeClientRect()
   }

@@ -138,16 +138,19 @@ export default class DayGrid extends DateComponent {
     this.rowEls = findElements(this.el, '.fc-row')
     this.cellEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
-    this.rowPositions = new PositionCache({
-      originEl: this.el,
-      els: this.rowEls,
-      isVertical: true
-    })
-    this.colPositions = new PositionCache({
-      originEl: this.el,
-      els: this.cellEls.slice(0, this.colCnt), // only the first row
-      isHorizontal: true
-    })
+    this.rowPositions = new PositionCache(
+      this.el,
+      this.rowEls,
+      false,
+      true // vertical
+    )
+
+    this.colPositions = new PositionCache(
+      this.el,
+      this.cellEls.slice(0, this.colCnt), // only the first row
+      true,
+      false // horizontal
+    )
 
     // trigger dayRender with each cell's element
     for (row = 0; row < rowCnt; row++) {

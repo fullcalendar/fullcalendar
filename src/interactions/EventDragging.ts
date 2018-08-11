@@ -179,11 +179,11 @@ export default class EventDragging {
       } else if (receivingCalendar) {
         initialCalendar.dispatch({
           type: 'REMOVE_EVENTS',
-          eventStore: this.mutatedRelatedEvents
+          eventStore: this.mutatedRelatedEvents!
         })
         receivingCalendar.dispatch({
           type: 'ADD_EVENTS',
-          eventStore: this.mutatedRelatedEvents,
+          eventStore: this.mutatedRelatedEvents!,
           stick: true // TODO: use this param
         })
       }
