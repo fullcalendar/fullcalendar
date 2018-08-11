@@ -25,7 +25,7 @@ import browserContext from './common/browser-context'
 import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
 import { DateProfile } from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource } from './structs/event-source'
-import { EventInput } from './structs/event'
+import { EventInput, EventInstance, EventDef } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
@@ -1039,17 +1039,20 @@ export default class Calendar {
 
   addEvent(eventInput: EventInput, isSticky: boolean = false): EventApi | null {
     let subset = parseEventStore([ eventInput ], '', this.state.dateProfile.activeRange, this)
-
-    this.dispatch({
-      type: 'ADD_EVENTS',
-      eventStore: subset,
-      stick: isSticky // TODO: do something with this
-    })
-
-    let def = objectValues(subset.defs)[0]
-    let instances = objectValues(subset.instances)
+    let def: EventDef = objectValues(subset.defs)[0]
+    let instances: EventInstance[] = objectValues(subset.instances)
 
     if (def) {
+
+      if (!isSticky) {
+        def.isTemporary = true // will mutate subet, which is good for ADD_EVENTS
+      }
+
+      this.dispatch({
+        type: 'ADD_EVENTS',
+        eventStore: subset
+      })
+
       return new EventApi(
         this,
         def,

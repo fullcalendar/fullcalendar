@@ -12,12 +12,8 @@ export default function(eventSourceHash: EventSourceHash, action: Action, datePr
     case 'ADD_EVENT_SOURCES': // already parsed
       return addSources(eventSourceHash, action.sources, dateProfile, calendar)
 
-    case 'REMOVE_EVENT_SOURCES':
-      if (action.sourceIds) {
-        return removeSources(eventSourceHash, action.sourceIds)
-      } else {
-        return {} // remove all
-      }
+    case 'REMOVE_EVENT_SOURCE':
+      return removeSource(eventSourceHash, action.sourceId)
 
     case 'SET_DATE_PROFILE':
       fetchDirtySources(eventSourceHash, action.dateProfile, calendar)
@@ -55,11 +51,9 @@ function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], da
   return assignTo({}, eventSourceHash, hash)
 }
 
-function removeSources(eventSourceHash: EventSourceHash, sourceIds: string[]): EventSourceHash {
-  let idHash = arrayToHash(sourceIds)
-
+function removeSource(eventSourceHash: EventSourceHash, sourceId: string): EventSourceHash {
   return filterHash(eventSourceHash, function(eventSource: EventSource) {
-    return !idHash[eventSource.sourceId]
+    return eventSource.sourceId !== sourceId
   })
 }
 

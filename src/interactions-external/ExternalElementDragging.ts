@@ -106,8 +106,7 @@ export default class ExternalElementDragging {
       if (dragMeta.create) {
         receivingCalendar.dispatch({
           type: 'ADD_EVENTS',
-          eventStore: toEventStore(droppableEvent),
-          stick: dragMeta.stick // TODO: use this param in the event-store
+          eventStore: toEventStore(droppableEvent)
         })
 
         // signal that an external event landed
@@ -159,6 +158,10 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
     dateSpan.isAllDay,
     Boolean(dragMeta.duration) // hasEnd
   )
+
+  if (!dragMeta.stick) {
+    def.isTemporary = true
+  }
 
   let start = dateSpan.range.start
 

@@ -61,6 +61,7 @@ export interface EventDef {
   borderColor: string
   textColor: string
   extendedProps: object
+  isTemporary?: boolean // if true, will disappear upon navigation
 }
 
 export interface EventInstance {

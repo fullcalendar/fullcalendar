@@ -13,8 +13,8 @@ export default class EventSourceApi {
 
   remove() {
     this.calendar.dispatch({
-      type: 'REMOVE_EVENT_SOURCES',
-      sourceIds: [ this.internalEventSource.sourceId ]
+      type: 'REMOVE_EVENT_SOURCE',
+      sourceId: this.internalEventSource.sourceId
     })
   }
 

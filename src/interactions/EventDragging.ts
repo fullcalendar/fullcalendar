@@ -183,8 +183,7 @@ export default class EventDragging {
         })
         receivingCalendar.dispatch({
           type: 'ADD_EVENTS',
-          eventStore: this.mutatedRelatedEvents!,
-          stick: true // TODO: use this param
+          eventStore: this.mutatedRelatedEvents!
         })
       }
     }

@@ -29,12 +29,12 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
     case 'REMOVE_EVENT_INSTANCES':
       return excludeInstances(eventStore, action.instances)
 
-    case 'REMOVE_EVENT_SOURCES':
-      if (action.sourceIds) {
-        return excludeSources(eventStore, action.sourceIds)
-      } else {
-        return excludeNonSticky(eventStore)
-      }
+    case 'REMOVE_EVENT_SOURCE':
+      return excludeSource(eventStore, action.sourceId)
+
+    case 'FETCH_EVENT_SOURCES':
+      // when refetching happens for a source, clear the temporary events in it
+      return excludeTemporary(eventStore, action.sourceIds)
 
     default:
       return eventStore
@@ -60,7 +60,7 @@ function receiveEvents(
       eventSource.sourceId,
       fetchRange,
       calendar,
-      excludeSources(eventStore, [ eventSource.sourceId ]) // dest
+      excludeSource(eventStore, eventSource.sourceId) // dest
     )
   }
 
@@ -76,33 +76,29 @@ function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): 
   }
 }
 
-function excludeSources(eventStore: EventStore, sourceIds: string[]): EventStore {
-  let idHash = arrayToHash(sourceIds)
-
-  return {
-    defs: filterHash(eventStore.defs, function(def: EventDef) {
-      return idHash && !idHash[def.sourceId]
-    }),
-    instances: filterHash(eventStore.instances, function(instance: EventInstance) {
-      return idHash && !idHash[eventStore.defs[instance.defId].sourceId]
-    })
-  }
-}
-
-// sticky events don't have source IDs
-function excludeNonSticky(eventStore: EventStore): EventStore {
-  return {
-    defs: filterHash(eventStore.defs, function(def: EventDef) {
-      return !def.sourceId // keep sticky
-    }),
-    instances: filterHash(eventStore.instances, function(instance: EventInstance) {
-      return !eventStore.defs[instance.defId].sourceId // keep sticky
-    })
-  }
+function excludeSource(eventStore: EventStore, sourceId: string): EventStore {
+  let defs = filterHash(eventStore.defs, function(def: EventDef) {
+    return def.sourceId !== sourceId
+  })
+  let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
+    return defs[instance.defId] // still exists?
+  })
+  return { defs, instances }
 }
 
 function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
   let related = getRelatedEvents(eventStore, instanceId)
   related = applyMutationToEventStore(related, mutation, calendar)
   return mergeEventStores(eventStore, related)
+}
+
+function excludeTemporary(eventStore: EventStore, sourceIds: string[]): EventStore {
+  let sourceIdHash = arrayToHash(sourceIds)
+  let defs = filterHash(eventStore.defs, function(def: EventDef) {
+    return !(sourceIdHash[def.sourceId] && def.isTemporary)
+  })
+  let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
+    return defs[instance.defId] // still exists?
+  })
+  return { defs, instances }
 }
