@@ -1047,7 +1047,8 @@ export default abstract class DateComponent extends Component {
 
 
   isValidDateDownEl(el: HTMLElement) {
-    return !elementClosest(el, this.segSelector) &&
+    let segEl = elementClosest(el, this.segSelector)
+    return (!segEl || segEl.classList.contains('fc-helper')) &&
       !elementClosest(el, '.fc-more') && // a "more.." link
       !elementClosest(el, 'a[data-goto]') // a clickable nav link
   }
