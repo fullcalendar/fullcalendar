@@ -126,7 +126,7 @@ export function getEventSourceDef(id: number): EventSourceDef {
 }
 
 export function parseEventSource(raw: EventSourceInput): EventSource | null {
-  for (let i = 0; i < defs.length; i++) {
+  for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
     let def = defs[i]
     let meta = def.parseMeta(raw)
 
