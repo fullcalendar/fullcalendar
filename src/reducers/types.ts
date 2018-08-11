@@ -1,4 +1,4 @@
-import { EventInput } from '../structs/event'
+import { EventInput, EventInstanceHash } from '../structs/event'
 import { DateRange } from '../datelib/date-range'
 import { EventStore } from '../structs/event-store'
 import { EventMutation } from '../structs/event-mutation'
@@ -42,4 +42,4 @@ export type Action =
 
   { type: 'ADD_EVENTS', eventStore: EventStore, stick: boolean } | // TODO: use stick param
   { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation } |
-  { type: 'REMOVE_EVENTS', eventStore: EventStore }
+  { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash }

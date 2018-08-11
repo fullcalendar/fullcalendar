@@ -1,7 +1,7 @@
 import Calendar from '../Calendar'
 import { filterHash, arrayToHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
-import { EventDef, EventInstance, EventInput } from '../structs/event'
+import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
 import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents } from '../structs/event-store'
 import { Action } from './types'
 import { EventSourceHash, EventSource } from '../structs/event-source'
@@ -26,8 +26,8 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
     case 'MUTATE_EVENTS':
       return applyMutationToRelated(eventStore, action.instanceId, action.mutation, calendar)
 
-    case 'REMOVE_EVENTS':
-      return excludeInstances(eventStore, action.eventStore)
+    case 'REMOVE_EVENT_INSTANCES':
+      return excludeInstances(eventStore, action.instances)
 
     case 'REMOVE_EVENT_SOURCES':
       if (action.sourceIds) {
@@ -67,11 +67,11 @@ function receiveEvents(
   return eventStore
 }
 
-function excludeInstances(eventStore: EventStore, removals: EventStore): EventStore {
+function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): EventStore {
   return {
     defs: eventStore.defs,
     instances: filterHash(eventStore.instances, function(instance: EventInstance) {
-      return !removals.instances[instance.instanceId]
+      return !removals[instance.instanceId]
     })
   }
 }

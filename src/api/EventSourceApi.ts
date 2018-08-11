@@ -12,11 +12,17 @@ export default class EventSourceApi {
   }
 
   remove() {
-    // TODO
+    this.calendar.dispatch({
+      type: 'REMOVE_EVENT_SOURCES',
+      sourceIds: [ this.internalEventSource.sourceId ]
+    })
   }
 
   refetch() {
-    // TODO
+    this.calendar.dispatch({
+      type: 'FETCH_EVENT_SOURCES',
+      sourceIds: [ this.internalEventSource.sourceId ]
+    })
   }
 
 }

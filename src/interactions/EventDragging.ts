@@ -178,8 +178,8 @@ export default class EventDragging {
       // TODO: more public triggers
       } else if (receivingCalendar) {
         initialCalendar.dispatch({
-          type: 'REMOVE_EVENTS',
-          eventStore: this.mutatedRelatedEvents!
+          type: 'REMOVE_EVENT_INSTANCES',
+          instances: this.mutatedRelatedEvents!.instances
         })
         receivingCalendar.dispatch({
           type: 'ADD_EVENTS',
