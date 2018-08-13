@@ -1,4 +1,3 @@
-import { formatIsoTimeZoneOffset } from '../datelib/utils'
 import { getTimeTexts } from './TimeGridEventRenderUtils'
 
 describe('the time text on events', function() {
