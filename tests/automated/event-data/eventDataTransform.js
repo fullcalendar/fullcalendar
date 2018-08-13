@@ -24,8 +24,8 @@ describe('eventDataTransform', function() {
   }, function() {
     it('affects parsing of the event', function() {
       initCalendar()
-      var eventObj = currentCalendar.clientEvents()[0]
-      expect(eventObj.was_processed).toBe(true)
+      var eventObj = currentCalendar.getEvents()[0]
+      expect(eventObj.extendedProps.was_processed).toBe(true)
     })
   })
 

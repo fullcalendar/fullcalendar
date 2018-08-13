@@ -23,14 +23,12 @@ export function drag(rect0, rect1, debug) {
 
   currentCalendar.on('eventDragStop', function() {
     setTimeout(function() {
-      deferred.resolve({ isSuccess: false }) // won't do anything if already eventDrop
-    }, 200) // will happen after eventDrop's timeout
+      deferred.resolve(false) // won't do anything if already resolved by eventMutation
+    }, 0) // will happen after eventMutation
   })
 
-  currentCalendar.on('eventDrop', function(event) { // always called after eventDragStop, if success
-    setTimeout(function() {
-      deferred.resolve({ isSuccess: true, event: event })
-    }, 100) // will happen first
+  currentCalendar.on('eventMutation', function(arg) { // always called after eventDragStop, if success
+    deferred.resolve(arg) // will happen first
   })
 
   return deferred.promise()

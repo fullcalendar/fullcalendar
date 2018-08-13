@@ -20,7 +20,7 @@ describe('validRange event dragging', function() {
         initCalendar()
         return DayGridEventDragUtils.drag('2017-06-08', '2017-06-06')
           .then(function(res) {
-            expect(res.isSuccess).toBe(false)
+            expect(res).toBe(false)
           })
       })
     })
@@ -43,7 +43,7 @@ describe('validRange event dragging', function() {
         initCalendar()
         return DayGridEventDragUtils.drag('2017-06-05', '2017-06-08')
           .then(function(res) {
-            expect(res.isSuccess).toBe(false)
+            expect(res).toBe(false)
           })
       })
     })

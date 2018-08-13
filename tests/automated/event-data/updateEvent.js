@@ -1,5 +1,5 @@
 
-describe('updateEvent', function() {
+xdescribe('updateEvent', function() {
   pushOptions({
     timezone: 'UTC'
   })

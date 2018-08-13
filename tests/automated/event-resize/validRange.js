@@ -21,7 +21,7 @@ describe('validRange event resizing', function() {
         DayGridRenderUtils.getSingleDayEl('2017-06-06')[0].getBoundingClientRect(),
         DayGridRenderUtils.getDisabledEl(0)[0].getBoundingClientRect() // where Jun 9th would be
       ).then(function(res) {
-        expect(res.isSuccess).toBe(false)
+        expect(res).toBe(false)
       })
     })
   })
