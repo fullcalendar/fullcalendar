@@ -65,7 +65,18 @@ window.initCalendar = function(options, el) {
     $el = $('<div id="calendar">').appendTo('body')
   }
 
-  window.currentCalendar = new FullCalendar.Calendar($el[0], getCurrentOptions()) // set the global
+  var options = getCurrentOptions()
+  var eventAfterAllRenderCallback = options.eventAfterAllRender
+
+  if (eventAfterAllRenderCallback) {
+    delete options.eventAfterAllRender
+  }
+
+  window.currentCalendar = new FullCalendar.Calendar($el[0], options) // set the global
+
+  if (eventAfterAllRenderCallback) {
+    eventAfterAllRender(window.currentCalendar, eventAfterAllRenderCallback)
+  }
 
   return window.currentCalendar.render()
 }
@@ -224,7 +235,7 @@ window.pushOptions({
 // Convoluted triggers that are really useful
 // ---------------------------------------------------------------------------------------------------------------------
 
-window.afterViewEventsRendered = function(calendar, callback) {
+window.eventAfterAllRender = function(calendar, callback) {
 
   function monitor() {
     var sourceHash = calendar.state.eventSources
@@ -239,7 +250,7 @@ window.afterViewEventsRendered = function(calendar, callback) {
     if (!pendingSourceCnt) {
       callback()
     } else {
-      calendar.one('RECEIVE_EVENT_SOURCE', function() {
+      calendar.one('RECEIVE_EVENTS', function() {
         pendingSourceCnt--
         if (!pendingSourceCnt) {
           calendar.one('_rendered', callback)
