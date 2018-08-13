@@ -13,20 +13,21 @@ window.pit = function(description, runFunc) {
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
 
-window.optionsStack = null
-window.currentCalendar = null
+var optionsStack = null
 
 
 beforeEach(function() {
-  window.optionsStack = []
+  optionsStack = []
 })
 
 afterEach(function() {
-  window.optionsStack = null
+  optionsStack = null
+
   if (window.currentCalendar) {
     window.currentCalendar.destroy()
     window.currentCalendar = null
   }
+
   $('#calendar').remove()
 })
 
@@ -36,7 +37,7 @@ afterEach(function() {
 
 window.pushOptions = function(options) {
   beforeEach(function() {
-    return window.optionsStack.push(options)
+    return optionsStack.push(options)
   })
 }
 
@@ -47,7 +48,7 @@ window.spyOnCalendarCallback = function(name, func) {
   options[name] = func
   spyOn(options, name).and.callThrough()
 
-  window.optionsStack.push(options)
+  optionsStack.push(options)
 
   return options[name]
 }
@@ -56,7 +57,7 @@ window.initCalendar = function(options, el) {
   var $el
 
   if (options) {
-    window.optionsStack.push(options)
+    optionsStack.push(options)
   }
 
   if (el) {
@@ -72,17 +73,32 @@ window.initCalendar = function(options, el) {
     delete options.eventAfterAllRender
   }
 
-  window.currentCalendar = new FullCalendar.Calendar($el[0], options) // set the global
-
-  if (eventAfterAllRenderCallback) {
-    eventAfterAllRender(window.currentCalendar, eventAfterAllRenderCallback)
+  if (window.currentCalendar) {
+    window.currentCalendar.destroy()
   }
 
-  return window.currentCalendar.render()
+  var newCalendar
+
+  options.SET_DATE_PROFILE = function() {
+    newCalendar = window.currentCalendar = this
+  }
+
+  new FullCalendar.Calendar($el[0], options)
+
+  if (newCalendar === window.currentCalendar) {
+
+    if (eventAfterAllRenderCallback) {
+      eventAfterAllRender(newCalendar, eventAfterAllRenderCallback)
+    }
+
+    newCalendar.render()
+  } else {
+    newCalendar.destroy()
+  }
 }
 
 window.getCurrentOptions = function() {
-  return $.extend.apply($, [ {} ].concat(window.optionsStack))
+  return $.extend.apply($, [ {} ].concat(optionsStack))
 }
 
 
