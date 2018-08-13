@@ -7,12 +7,12 @@ describe('event dragging on repeating events', function() {
     editable: true,
     events: [
       {
-        id: 999,
+        groupId: 999,
         title: 'Repeating Event',
         start: '2017-02-09T16:00:00'
       },
       {
-        id: 999,
+        groupId: 999,
         title: 'Repeating Event',
         start: '2017-02-16T16:00:00'
       }
@@ -30,7 +30,7 @@ describe('event dragging on repeating events', function() {
 
     return TimeGridEventDragUtils.drag('2017-02-16T16:00:00', '2017-02-16T12:00:00')
       .then(function(res) {
-        expect(res.isSuccess).toBe(true)
+        expect(typeof res).toBe('object')
       })
   })
 
@@ -46,7 +46,7 @@ describe('event dragging on repeating events', function() {
           ).toBe(1)
         }, 0)
       },
-      eventDrop: function() {
+      eventMutation: function() {
         setTimeout(function() {
           done()
         }, 10)
@@ -55,7 +55,7 @@ describe('event dragging on repeating events', function() {
 
     $('.fc-event:first').simulate('drag', {
       dx: 100,
-      duration: 100 // ample time for separate eventDragStart/eventDrop
+      duration: 100 // ample time for separate eventDragStart/eventMutation
     })
   })
 
@@ -82,7 +82,7 @@ describe('event dragging on repeating events', function() {
           ).toBe(2) // the dragging event AND the other regular event
         }, 0)
       },
-      eventDrop: function() {
+      eventMutation: function() {
         setTimeout(function() {
           done()
         }, 10)
@@ -91,7 +91,7 @@ describe('event dragging on repeating events', function() {
 
     $('.fc-event:first').simulate('drag', {
       dx: 100,
-      duration: 100 // ample time for separate eventDragStart/eventDrop
+      duration: 100 // ample time for separate eventDragStart/eventMutation
     })
   })
 

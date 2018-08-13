@@ -20,7 +20,7 @@ describe('showNonCurrentDates event dragging', function() {
         DayGridRenderUtils.getSingleDayEl('2017-06-08')[0].getBoundingClientRect(),
         DayGridRenderUtils.getDisabledEl(3)[0].getBoundingClientRect() // the cell before Jun 1
       ).then(function(res) {
-        expect(res.isSuccess).toBe(false)
+        expect(res).toBe(false)
       })
     })
   })
@@ -30,7 +30,7 @@ describe('showNonCurrentDates event dragging', function() {
       initCalendar()
       return DayGridEventDragUtils.drag('2017-06-08', '2017-06-01')
         .then(function(res) {
-          expect(res.isSuccess).toBe(true)
+          expect(typeof res).toBe('object')
         })
     })
   })
