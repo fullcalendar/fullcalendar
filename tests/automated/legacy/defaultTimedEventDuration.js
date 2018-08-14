@@ -22,7 +22,7 @@ describe('defaultTimedEventDuration', function() {
           }
         ]
       })
-      var event = currentCalendar.clientEvents()[0]
+      var event = currentCalendar.getEvents()[0]
       expect(event.end).toEqualDate('2014-05-05T06:30:00Z')
     })
 
@@ -36,7 +36,7 @@ describe('defaultTimedEventDuration', function() {
           }
         ]
       })
-      var event = currentCalendar.clientEvents()[0]
+      var event = currentCalendar.getEvents()[0]
       expect(event.end).toEqualDate('2014-05-05T07:15:00Z')
     })
   })

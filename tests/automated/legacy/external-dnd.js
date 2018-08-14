@@ -22,6 +22,10 @@ describe('external drag and drop', function() {
       '<div id="cal" style="width:600px;position:absolute;top:10px;left:220px">' +
       '</div>'
     )
+
+    FullCalendar.GenericDragging.enable({
+      itemSelector: '#sidebar .fc-event'
+    })
   })
 
   afterEach(function() {
@@ -29,6 +33,7 @@ describe('external drag and drop', function() {
     currentCalendar.destroy()
     $(el).remove()
     $('#sidebar').remove()
+    FullCalendar.GenericDragging.disable()
   })
 
   function init() {

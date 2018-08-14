@@ -24,7 +24,7 @@ describe('eventRender', function() {
           var options = {
             eventRender: function(arg) {
               expect(typeof arg.event).toBe('object')
-              expect(arg.event.rendering).toBeUndefined()
+              expect(arg.event.rendering).toBe('')
               expect(arg.event.start).toBeDefined()
               expect(arg.el instanceof HTMLElement).toBe(true)
               expect(typeof arg.view).toBe('object')

@@ -24,19 +24,15 @@ describe('dayClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(true)
                 expect(arg.date).toEqualDate('2014-05-07')
+                done()
               }
-              spyOn(options, 'dayClick').and.callThrough()
+
               initCalendar(options)
 
               var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of isRTL)
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
-              dayCell.simulate('drag', {
-                callback: function() {
-                  expect(options.dayClick).toHaveBeenCalled()
-                  done()
-                }
-              })
+              dayCell.simulate('drag')
             })
           })
 
@@ -51,20 +47,16 @@ describe('dayClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(true)
                 expect(arg.date).toEqualDate('2014-05-28')
+                done()
               }
-              spyOn(options, 'dayClick').and.callThrough()
+
               initCalendar(options)
 
               // 2014-05-28 (regardless of isRTL)
               var dayContent = $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)')
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
-              dayContent.simulate('drag', {
-                callback: function() {
-                  expect(options.dayClick).toHaveBeenCalled()
-                  done()
-                }
-              })
+              dayContent.simulate('drag')
             })
 
             it('fires correctly when clicking on a timed slot', function(done) {
@@ -79,20 +71,16 @@ describe('dayClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(false)
                 expect(arg.date).toEqualDate('2014-05-28T09:00:00Z')
+                done()
               }
-              spyOn(options, 'dayClick').and.callThrough()
+
               initCalendar(options)
 
               // the middle is 2014-05-28T09:00:00 (regardless of isRTL)
               var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)')
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
-              slotRow.simulate('drag', {
-                callback: function() {
-                  expect(options.dayClick).toHaveBeenCalled()
-                  done()
-                }
-              })
+              slotRow.simulate('drag')
             })
 
             // issue 2217
@@ -109,20 +97,16 @@ describe('dayClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(false)
                 expect(arg.date).toEqualDate('2014-05-28T11:00:00Z')
+                done()
               }
-              spyOn(options, 'dayClick').and.callThrough()
+
               initCalendar(options)
 
               // the middle is 2014-05-28T11:00:00 (regardless of isRTL)
               var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)')
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
-              slotRow.simulate('drag', {
-                callback: function() {
-                  expect(options.dayClick).toHaveBeenCalled()
-                  done()
-                }
-              })
+              slotRow.simulate('drag')
             })
           })
         })
@@ -140,19 +124,16 @@ describe('dayClick', function() {
         expect(typeof arg.view).toEqual('object') // "
         expect(arg.isAllDay).toEqual(true)
         expect(arg.date).toEqualDate('2014-05-07')
+        done()
       }
-      spyOn(options, 'dayClick').and.callThrough()
+
       initCalendar(options)
 
       var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of isRTL)
 
       // for simulating the mousedown/mouseup/click (relevant for selectable)
       dayCell.simulate('drag', {
-        isTouch: true,
-        callback: function() {
-          expect(options.dayClick).toHaveBeenCalled()
-          done()
-        }
+        isTouch: true
       })
     })
 
@@ -186,16 +167,13 @@ describe('dayClick', function() {
         expect(typeof arg.view).toEqual('object') // "
         expect(arg.isAllDay).toEqual(true)
         expect(arg.date).toEqualDate('2014-05-07')
+        done()
       }
-      spyOn(options, 'dayClick').and.callThrough()
+
       initCalendar(options)
 
       var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of isRTL)
-
       $.simulateTouchClick(dayCell)
-
-      expect(options.dayClick).toHaveBeenCalled()
-      done()
     })
   })
 })

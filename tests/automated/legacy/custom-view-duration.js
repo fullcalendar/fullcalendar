@@ -349,7 +349,12 @@ describe('custom view', function() {
     })
 
     it('falls back to view name when view lacks metadata', function() {
-      FullCalendar.views.crazy = FullCalendar.View.extend()
+
+      class CrazyView extends FullCalendar.View {
+      }
+
+      FullCalendar.views.crazy = CrazyView
+
       var options = {
         views: {}
       }

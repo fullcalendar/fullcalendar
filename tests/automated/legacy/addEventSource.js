@@ -102,7 +102,7 @@ describe('addEventSource', function() {
   // Checks to make sure all events have been rendered and that the calendar
   // has internal info on all the events.
   function checkAllEvents() {
-    expect(currentCalendar.clientEvents().length).toEqual(3)
+    expect(currentCalendar.getEvents().length).toEqual(3)
     expect($('.fc-event').length).toEqual(3)
   }
 

@@ -1,12 +1,5 @@
 
 describe('constructor', function() {
-  beforeEach(function() {
-    initCalendar()
-  })
-  it('should return a jQuery object for chaining', function() {
-    var res = $(currentCalendar.el)
-    expect(res instanceof jQuery).toBe(true)
-  })
 
   it('should not modify the options object', function() {
     var options = {
@@ -57,6 +50,7 @@ describe('constructor', function() {
     beforeEach(function() {
       initCalendar()
     })
+
     it('should contain a table fc-toolbar', function() {
       var header = $(currentCalendar.el).find('.fc-toolbar')
       expect(header[0]).not.toBeUndefined()

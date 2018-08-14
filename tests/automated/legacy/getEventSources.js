@@ -28,7 +28,7 @@ describe('getEventSources', function() {
     expect(eventSources.length).toBe(3)
 
     // prove that eventSources is a copy, and wasn't mutated
-    currentCalendar.removeEventSource(eventSources[0])
+    eventSources[0].remove()
     expect(eventSources.length).toBe(3)
 
     done()

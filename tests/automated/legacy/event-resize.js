@@ -32,8 +32,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11')
             expect(arg.event.end).toEqualDate('2014-06-17')
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
@@ -57,7 +57,7 @@ describe('eventResize', function() {
             options.events = [ {
               title: 'all-day event',
               start: '2014-06-11',
-              allDay: true
+              isAllDay: true
             } ]
 
             init(
@@ -81,8 +81,8 @@ describe('eventResize', function() {
                 expect(arg.event.start).toEqualDate('2014-06-11')
                 expect(arg.event.end).toEqualDate('2014-06-17')
 
-                arg.revertFunc()
-                var event = currentCalendar.clientEvents()[0]
+                arg.revert()
+                var event = currentCalendar.getEvents()[0]
 
                 expect(event.start).toEqualDate('2014-06-11')
                 expect(event.end).toBeNull()
@@ -138,8 +138,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11')
             expect(arg.event.end).toEqualDate('2014-06-14')
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
@@ -176,8 +176,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00Z')
 
-            arg.revertFunc()
-            event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(event.end).toEqualDate('2014-06-11T07:00:00Z')
@@ -212,8 +212,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00Z')
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(event.end).toEqualDate('2014-06-11T07:00:00Z')
@@ -241,8 +241,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(arg.event.end).toEqualDate('2014-06-12T09:30:00Z')
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(event.end).toEqualDate('2014-06-11T07:00:00Z')
@@ -269,8 +269,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00') // local
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00') // local
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T05:00:00') // local
             expect(event.end).toEqualDate('2014-06-11T07:00:00') // local
@@ -297,8 +297,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00+00:00')
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00+00:00')
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T05:00:00+00:00')
             expect(event.end).toEqualDate('2014-06-11T07:00:00+00:00')
@@ -474,14 +474,12 @@ describe('eventResize', function() {
       expect(typeof arg.jsEvent).toBe('object')
       expect(typeof arg.view).toBe('object')
     }
-    options.eventResize = function(arg) {
+    options.eventMutation = function(arg) {
       expect(options.eventResizeStop).toHaveBeenCalled()
 
-      expect(arg.el instanceof Element).toBe(true)
-      expect(arg.el).toHaveClass('fc-event')
       expect(typeof arg.event).toBe('object')
-      expect(typeof arg.delta).toBe('object')
-      expect(typeof arg.revertFunc).toBe('function')
+      expect(typeof arg.mutation).toBe('object')
+      expect(typeof arg.revert).toBe('function')
       expect(typeof arg.jsEvent).toBe('object')
       expect(typeof arg.view).toBe('object')
 

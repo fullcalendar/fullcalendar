@@ -24,7 +24,7 @@ describe('defaultAllDayEventDuration', function() {
         ]
       })
 
-      var event = currentCalendar.clientEvents()[0]
+      var event = currentCalendar.getEvents()[0]
       expect(event.end).toEqualDate('2014-05-07')
     })
 
@@ -40,7 +40,7 @@ describe('defaultAllDayEventDuration', function() {
         ]
       })
 
-      var event = currentCalendar.clientEvents()[0]
+      var event = currentCalendar.getEvents()[0]
       expect(event.end).toEqualDate('2014-05-08')
     })
   })

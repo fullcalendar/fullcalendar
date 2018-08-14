@@ -10,13 +10,14 @@ describe('removeEventSources', function() {
     ]
   })
 
-  describe('when called with no arguments', function() {
+  describe('when called with no arguments', function() { //
     it('removes all sources', function() {
 
       initCalendar()
       expect($('.fc-event').length).toBe(3)
 
-      currentCalendar.removeEventSources()
+      currentCalendar.removeAllEventSources()
+
       expect($('.fc-event').length).toBe(0)
     })
   })
@@ -27,7 +28,9 @@ describe('removeEventSources', function() {
       initCalendar()
       expect($('.fc-event').length).toBe(3)
 
-      currentCalendar.removeEventSources([ 1, 3 ])
+      currentCalendar.getEventSourceById(1).remove()
+      currentCalendar.getEventSourceById(3).remove()
+
       expect($('.fc-event').length).toBe(1)
       expect($('.event2').length).toBe(1)
     })

@@ -270,12 +270,12 @@ describe('background events', function() {
           var options = {}
           options.events = [
             {
-              id: 'hi',
+              groupId: 'hi',
               start: '2014-11-06',
               rendering: 'inverse-background'
             },
             {
-              id: 'hi',
+              groupId: 'hi',
               start: '2014-11-04',
               rendering: 'inverse-background'
             }
@@ -446,9 +446,9 @@ describe('background events', function() {
         it('renders correctly if custom', function() {
           var options = {}
           options.businessHours = {
-            start: '02:00',
-            end: '06:00',
-            dow: [ 1, 2, 3, 4 ] // Mon-Thu
+            startTime: '02:00',
+            endTime: '06:00',
+            daysOfWeek: [ 1, 2, 3, 4 ] // Mon-Thu
           }
           initCalendar(options)
 
@@ -504,9 +504,9 @@ describe('background events', function() {
         it('renders correctly if custom', function() {
           var options = {}
           options.businessHours = {
-            start: '02:00',
-            end: '06:00',
-            dow: [ 1, 2, 3, 4 ] // Mon-Thu
+            startTime: '02:00',
+            endTime: '06:00',
+            daysOfWeek: [ 1, 2, 3, 4 ] // Mon-Thu
           }
           initCalendar(options)
 
@@ -618,13 +618,13 @@ describe('background events', function() {
           var options = {}
           options.events = [
             {
-              id: 'hello',
+              groupId: 'hello',
               start: '2014-11-05T01:00:00',
               end: '2014-11-05T05:00:00',
               rendering: 'inverse-background'
             },
             {
-              id: 'hello',
+              groupId: 'hello',
               start: '2014-11-03T01:00:00',
               end: '2014-11-03T05:00:00',
               rendering: 'inverse-background'
@@ -649,13 +649,13 @@ describe('background events', function() {
           var options = {}
           options.events = [
             {
-              id: 'hello',
+              groupId: 'hello',
               start: '2014-11-05T01:00:00',
               end: '2014-11-05T05:00:00',
               rendering: 'inverse-background'
             },
             {
-              id: 'hello',
+              groupId: 'hello',
               start: '2014-11-05T02:00:00',
               end: '2014-11-05T04:00:00',
               rendering: 'inverse-background'

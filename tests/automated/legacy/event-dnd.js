@@ -44,13 +44,15 @@ describe('eventDrop', function() {
                 })
               },
               function(arg) {
-                expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 9 }))
+                var delta = FullCalendar.createDuration({ day: 9 })
+                expect(arg.mutation.startDelta).toEqual(delta)
+                expect(arg.mutation.endDelta).toEqual(delta)
 
                 expect(arg.event.start).toEqualDate('2014-06-20')
                 expect(arg.event.end).toBeNull()
 
-                arg.revertFunc()
-                var event = currentCalendar.clientEvents()[0]
+                arg.revert()
+                var event = currentCalendar.getEvents()[0]
 
                 expect(event.start).toEqualDate('2014-06-11')
                 expect(event.end).toBeNull()
@@ -79,13 +81,15 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 5 }))
+            var delta = FullCalendar.createDuration({ day: 5 })
+            expect(arg.mutation.startDelta).toEqual(delta)
+            expect(arg.mutation.endDelta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-16T06:00:00Z')
             expect(arg.event.end).toBeNull()
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T06:00:00Z')
             expect(event.end).toBeNull()
@@ -171,13 +175,15 @@ describe('eventDrop', function() {
                 }, 0)
               },
               function(arg) {
-                expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 1, hour: 1, minute: 30 }))
+                var delta = FullCalendar.createDuration({ day: 1, hour: 1, minute: 30 })
+                expect(arg.mutation.startDelta).toEqual(delta)
+                expect(arg.mutation.endDelta).toEqual(delta)
 
                 expect(arg.event.start).toEqualDate('2014-06-12T07:30:00Z')
                 expect(arg.event.end).toBeNull()
 
-                arg.revertFunc()
-                var event = currentCalendar.clientEvents()[0]
+                arg.revert()
+                var event = currentCalendar.getEvents()[0]
 
                 expect(event.start).toEqualDate('2014-06-11T06:00:00Z')
                 expect(event.end).toBeNull()
@@ -205,13 +211,15 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: 2 }))
+            var delta = FullCalendar.createDuration({ day: 2 })
+            expect(arg.mutation.startDelta).toEqual(delta)
+            expect(arg.mutation.endDelta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-13')
             expect(arg.event.end).toBeNull()
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
@@ -242,14 +250,16 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: -1, hour: 1 }))
+            let delta = FullCalendar.createDuration({ day: -1, hour: 1 })
+            expect(arg.mutation.startDelta).toEqual(delta)
+            expect(arg.mutation.endDelta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-10T01:00:00Z')
             expect(arg.event.end).toBeNull()
             expect(arg.event.isAllDay).toBe(false)
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11')
             expect(event.end).toBeNull()
@@ -294,14 +304,16 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            expect(arg.delta).toEqual(FullCalendar.createDuration({ day: -1 }))
+            var delta = FullCalendar.createDuration({ day: -1 })
+            expect(arg.mutation.startDelta).toEqual(delta)
+            expect(arg.mutation.endDelta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-10')
             expect(arg.event.end).toBeNull()
             expect(arg.event.isAllDay).toBe(true)
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T01:00:00Z')
             expect(event.end).toBeNull()
@@ -402,13 +414,11 @@ describe('eventDrop', function() {
       expect(typeof arg.jsEvent).toBe('object')
       expect(typeof arg.view).toBe('object')
     }
-    options.eventDrop = function(arg) {
+    options.eventMutation = function(arg) {
       expect(options.eventDragStop).toHaveBeenCalled()
 
-      expect(arg.el instanceof Element).toBe(true)
-      expect(arg.el).toHaveClass('fc-event')
-      expect(typeof arg.delta).toBe('object')
-      expect(typeof arg.revertFunc).toBe('function')
+      expect(typeof arg.mutation).toBe('object')
+      expect(typeof arg.revert).toBe('function')
       expect(typeof arg.jsEvent).toBe('object')
       expect(typeof arg.view).toBe('object')
 

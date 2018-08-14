@@ -11,7 +11,7 @@ describe('allDayDefault', function() {
           }
         ]
       })
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(false)
     })
 
@@ -25,7 +25,7 @@ describe('allDayDefault', function() {
           }
         ]
       })
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(false)
     })
 
@@ -38,7 +38,7 @@ describe('allDayDefault', function() {
           }
         ]
       })
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(true)
     })
 
@@ -52,7 +52,7 @@ describe('allDayDefault', function() {
           }
         ]
       })
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(true)
     })
 
@@ -67,7 +67,7 @@ describe('allDayDefault', function() {
         ]
       })
 
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(false)
     })
 
@@ -81,7 +81,7 @@ describe('allDayDefault', function() {
           }
         ]
       })
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(false)
     })
 
@@ -99,7 +99,7 @@ describe('allDayDefault', function() {
           }
         ]
       })
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(false)
     })
 
@@ -110,11 +110,11 @@ describe('allDayDefault', function() {
           {
             id: '1',
             start: '2014-05-01T00:00:00',
-            allDay: true
+            isAllDay: true
           }
         ]
       })
-      var eventObj = currentCalendar.clientEvents('1')[0]
+      var eventObj = currentCalendar.getEventById('1')
       expect(eventObj.isAllDay).toEqual(true)
     })
 
@@ -138,7 +138,7 @@ describe('source.allDayDefault', function() {
         }
       ]
     })
-    var eventObj = currentCalendar.clientEvents('1')[0]
+    var eventObj = currentCalendar.getEventById('1')
     expect(eventObj.isAllDay).toEqual(false)
   })
 
@@ -157,7 +157,7 @@ describe('source.allDayDefault', function() {
         }
       ]
     })
-    var eventObj = currentCalendar.clientEvents('1')[0]
+    var eventObj = currentCalendar.getEventById('1')
     expect(eventObj.isAllDay).toEqual(true)
   })
 
@@ -176,7 +176,7 @@ describe('source.allDayDefault', function() {
         }
       ]
     })
-    var eventObj = currentCalendar.clientEvents('1')[0]
+    var eventObj = currentCalendar.getEventById('1')
     expect(eventObj.isAllDay).toEqual(false)
   })
 
@@ -189,13 +189,13 @@ describe('source.allDayDefault', function() {
             {
               id: '1',
               start: '2014-05-01',
-              allDay: false
+              isAllDay: false
             }
           ]
         }
       ]
     })
-    var eventObj = currentCalendar.clientEvents('1')[0]
+    var eventObj = currentCalendar.getEventById('1')
     expect(eventObj.isAllDay).toEqual(false)
   })
 

@@ -56,14 +56,10 @@ describe('businessHours', function() {
           defaultView: viewName,
           businessHours: false
         })
-        var rootEl = $('.fc-view > *:first')
-        expect(rootEl.length).toBe(1)
 
         expect(queryNonBusinessSegs().length).toBe(0)
         currentCalendar.option('businessHours', true)
         expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
-
-        expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // same element. didn't completely rerender
       })
 
       it('allows dynamic turning off', function() {
@@ -71,14 +67,10 @@ describe('businessHours', function() {
           defaultView: viewName,
           businessHours: true
         })
-        var rootEl = $('.fc-view > *:first')
-        expect(rootEl.length).toBe(1)
 
         expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
         currentCalendar.option('businessHours', false)
         expect(queryNonBusinessSegs().length).toBe(0)
-
-        expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // same element. didn't completely rerender
       })
     })
   })
@@ -92,14 +84,14 @@ describe('businessHours', function() {
         defaultView: 'agendaWeek',
         businessHours: [
           {
-            dow: [ 1, 2, 3 ], // mon, tue, wed
-            start: '08:00',
-            end: '18:00'
+            daysOfWeek: [ 1, 2, 3 ], // mon, tue, wed
+            startTime: '08:00',
+            endTime: '18:00'
           },
           {
-            dow: [ 4, 5 ], // thu, fri
-            start: '10:00',
-            end: '16:00'
+            daysOfWeek: [ 4, 5 ], // thu, fri
+            startTime: '10:00',
+            endTime: '16:00'
           }
         ]
       })
@@ -135,13 +127,13 @@ describe('businessHours', function() {
         businessHours: [
           {
             // invalid
-            start: '08:00',
-            end: '18:00'
+            startTime: '08:00',
+            endTime: '18:00'
           },
           {
-            dow: [ 4, 5 ], // thu, fri
-            start: '10:00',
-            end: '16:00'
+            daysOfWeek: [ 4, 5 ], // thu, fri
+            startTime: '10:00',
+            endTime: '16:00'
           }
         ]
       })

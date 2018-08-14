@@ -104,49 +104,49 @@ describe('eventLimit popover', function() {
             title: 'event01',
             start: '2012-03-22T11:00:00',
             end: '2012-03-22T11:30:00',
-            allDay: false
+            isAllDay: false
           },
           {
             id: '40607',
             title: 'event02',
             start: '2012-03-22T16:15:00',
             end: '2012-03-22T16:30:00',
-            allDay: false
+            isAllDay: false
           },
           {
             id: '40760',
             title: 'event03',
             start: '2012-03-22T16:00:00',
             end: '2012-03-22T16:15:00',
-            allDay: false
+            isAllDay: false
           },
           {
             id: '41284',
             title: 'event04',
             start: '2012-03-22T19:00:00',
             end: '2012-03-22T19:15:00',
-            allDay: false
+            isAllDay: false
           },
           {
             id: '41645',
             title: 'event05',
             start: '2012-03-22T11:30:00',
             end: '2012-03-22T12:00:00',
-            allDay: false
+            isAllDay: false
           },
           {
             id: '41679',
             title: 'event07',
             start: '2012-03-22T12:00:00',
             end: '2012-03-22T12:15:00',
-            allDay: false
+            isAllDay: false
           },
           {
             id: '42246',
             title: 'event08',
             start: '2012-03-22T16:45:00',
             end: '2012-03-22T17:00:00',
-            allDay: false
+            isAllDay: false
           }
         ]
       })

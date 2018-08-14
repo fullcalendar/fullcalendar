@@ -12,9 +12,14 @@ describe('advanced external dnd', function() {
       })
       .appendTo('body')
       .draggable()
+
+    FullCalendar.GenericDragging.enable({
+      itemSelector: '.drag'
+    })
   })
 
   afterEach(function() {
+    FullCalendar.GenericDragging.disable()
     dragEl.remove()
     dragEl = null
   })
@@ -112,91 +117,57 @@ describe('advanced external dnd', function() {
       it('fires correctly', function(done) {
         var options = {}
 
-        dragEl.data('event', { title: 'hey' })
+        dragEl.attr('data-event', JSON.stringify({
+          title: 'hey'
+        }))
         testExternalEventDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, done)
       })
 
       describe('when given a start time', function() {
-        describe('through the event object\'s start property', function() {
-          beforeEach(function() {
-            dragEl.data('event', { start: '05:00' })
-          })
-          defineTests()
-        })
         describe('through the event object\'s time property', function() {
           beforeEach(function() {
-            dragEl.data('event', { time: '05:00' })
+            dragEl.attr('data-event', JSON.stringify({
+              time: '05:00' // TODO: rename to startTime
+            }))
           })
-          defineTests()
-        })
-        describe('through the `start` data attribute', function() {
-          beforeEach(function() {
-            dragEl
-              .data('event', true)
-              .data('start', '05:00')
-          })
-          defineTests()
-        })
-        describe('through the `time` data attribute', function() {
-          beforeEach(function() {
-            dragEl.data('event', true)
-              .data('time', '05:00')
-          })
-          defineTests()
-        })
-        function defineTests() {
+
           it('voids the given time when dropped on a timed slot', function(done) {
             var options = {}
-
             testExternalEventDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, done)
             // will test the resulting event object's start
           })
-        }
+        })
       })
 
       describe('when given a duration', function() {
         describe('through the event object\'s duration property', function() {
           beforeEach(function() {
-            dragEl.data('event', { duration: '05:00' })
+            dragEl.attr('data-event', JSON.stringify({
+              duration: '05:00'
+            }))
           })
-          defineTests()
-        })
-        describe('through the `duration` data attribute', function() {
-          beforeEach(function() {
-            dragEl.data('event', true)
-              .data('duration', '05:00')
-          })
-          defineTests()
-        })
-        function defineTests() {
+
           it('accepts the given duration when dropped on a timed slot', function(done) {
             var options = {}
 
             testExternalEventDrag(options, '2014-11-13T02:00:00Z', '2014-11-13T02:00:00Z', true, function() {
-              var event = currentCalendar.clientEvents()[0]
+              var event = currentCalendar.getEvents()[0]
               expect(event.start).toEqualDate('2014-11-13T02:00:00Z')
               expect(event.end).toEqualDate('2014-11-13T07:00:00Z')
               done()
             })
           })
-        }
+        })
       })
 
       describe('when given stick:true', function() {
         describe('through the event object', function() {
           beforeEach(function() {
-            dragEl.data('event', { stick: true })
+            dragEl.attr('data-event', JSON.stringify({
+              stick: true
+            }))
           })
-          defineTests()
-        })
-        describe('through the data attribute', function() {
-          beforeEach(function() {
-            dragEl.data('event', true)
-              .data('stick', true)
-          })
-          defineTests()
-        })
-        function defineTests() {
+
           it('keeps the event when navigating away and back', function(done) {
             var options = {}
 
@@ -224,7 +195,7 @@ describe('advanced external dnd', function() {
             } ]
           })
           beforeEach(function() {
-            dragEl.data('event', true)
+            dragEl.attr('data-event', '{}')
           })
           defineTests()
         })
@@ -236,9 +207,9 @@ describe('advanced external dnd', function() {
             }]
           })
           beforeEach(function() {
-            dragEl.data('event', {
+            dragEl.attr('data-event', JSON.stringify({
               overlap: false
-            })
+            }))
           })
           defineTests()
         })
@@ -251,7 +222,7 @@ describe('advanced external dnd', function() {
             }]
           })
           beforeEach(function() {
-            dragEl.data('event', true)
+            dragEl.attr('data-event', '{}')
           })
           defineTests()
         })
@@ -276,19 +247,21 @@ describe('advanced external dnd', function() {
             }
           })
           beforeEach(function() {
-            dragEl.data('event', { duration: '02:00' })
+            dragEl.attr('data-event', JSON.stringify({
+              duration: '02:00'
+            }))
           })
           defineTests()
         })
         describe('via the event object\'s constraint property', function() {
           beforeEach(function() {
-            dragEl.data('event', {
+            dragEl.attr('data-event', JSON.stringify({
               duration: '02:00',
               constraint: {
                 start: '04:00',
                 end: '08:00'
               }
-            })
+            }))
           })
           defineTests()
         })
@@ -318,60 +291,38 @@ describe('advanced external dnd', function() {
       it('fires correctly', function(done) {
         var options = {}
 
-        dragEl.data('event', { title: 'hey' })
+        dragEl.attr('data-event', JSON.stringify({
+          title: 'hey'
+        }))
         testExternalEventDrag(options, '2014-11-13', '2014-11-13', true, done)
       })
 
       describe('when given a start time', function() {
 
-        describe('through the event object\'s start property', function() {
-          beforeEach(function() {
-            dragEl.data('event', { start: '05:00' })
-          })
-          defineTests()
-        })
-
         describe('through the event object\'s time property', function() {
           beforeEach(function() {
-            dragEl.data('event', { time: '05:00' })
+            dragEl.attr('data-event', JSON.stringify({
+              time: '05:00' // TODO: rename to startTime
+            }))
           })
-          defineTests()
-        })
 
-        describe('through the `start` data attribute', function() {
-          beforeEach(function() {
-            dragEl.data('event', true)
-              .data('start', '05:00')
-          })
-          defineTests()
-        })
-
-        describe('through the `time` data attribute', function() {
-          beforeEach(function() {
-            dragEl.data('event', true)
-              .data('time', '05:00')
-          })
-          defineTests()
-        })
-
-        function defineTests() {
           it('accepts the given start time for the dropped day', function(done) {
             var options = {}
 
             testExternalEventDrag(options, '2014-11-13', '2014-11-13T05:00:00Z', true, function() {
               // the whole-day start was already checked. we still need to check the exact time
-              var event = currentCalendar.clientEvents()[0]
+              var event = currentCalendar.getEvents()[0]
               expect(event.start).toEqualDate('2014-11-13T05:00:00Z')
               done()
             })
           })
-        }
+        })
       })
     })
   })
 
 
-  function testExternalElDrag(options, dragToDate, expectedDate, expectSuccess, callback) {
+  function testExternalElDrag(options, dragToDate, expectedDate, expectSuccess, callback) { // with NO event creation
     options.droppable = true
     options.drop = function(arg) {
       expect(arg.date instanceof Date).toBe(true)

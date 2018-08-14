@@ -15,7 +15,7 @@ describe('event object creation', function() {
     initCalendar({
       events: [ singleEventData ]
     })
-    return currentCalendar.clientEvents()[0]
+    return currentCalendar.getEvents()[0]
   }
 
   it('accepts `date` property as alias for `start`', function() {
@@ -98,7 +98,7 @@ describe('event object creation', function() {
     var event = init({
       start: '2014-05-01T01:00:00-12:00',
       end: '2014-05-02T01:00:00-12:00',
-      allDay: true
+      isAllDay: true
     })
     expect(event.isAllDay).toEqual(true)
     expect(event.start).toEqualDate('2014-05-01')
@@ -109,18 +109,11 @@ describe('event object creation', function() {
     var event = init({
       start: '2014-05-01',
       end: '2014-05-03',
-      allDay: false
+      isAllDay: false
     })
     expect(event.isAllDay).toEqual(false)
     expect(event.start).toEqualDate('2014-05-01T00:00:00Z')
     expect(event.end).toEqualDate('2014-05-03T00:00:00Z')
-  })
-
-  it('sets the source', function() {
-    var event = init({
-      start: '2014-05-01'
-    })
-    expect(typeof event.source).toEqual('object')
   })
 
   it('accepts an array `className`', function() {
@@ -128,8 +121,8 @@ describe('event object creation', function() {
       start: '2014-05-01',
       className: [ 'class1', 'class2' ]
     })
-    expect($.isArray(event.className)).toEqual(true)
-    expect(event.className).toEqual([ 'class1', 'class2' ])
+    expect($.isArray(event.classNames)).toEqual(true)
+    expect(event.classNames).toEqual([ 'class1', 'class2' ])
   })
 
   it('accepts a string `className`', function() {
@@ -137,18 +130,18 @@ describe('event object creation', function() {
       start: '2014-05-01',
       className: 'class1 class2'
     })
-    expect($.isArray(event.className)).toEqual(true)
-    expect(event.className).toEqual([ 'class1', 'class2' ])
+    expect($.isArray(event.classNames)).toEqual(true)
+    expect(event.classNames).toEqual([ 'class1', 'class2' ])
   })
 
-  it('copies over custom properties', function() {
+  it('accepts extended properties', function() {
     var event = init({
       start: '2014-05-01',
       prop1: 'prop1val',
       prop2: [ 'a', 'b' ]
     })
-    expect(event.prop1).toEqual('prop1val')
-    expect(event.prop2).toEqual([ 'a', 'b' ])
+    expect(event.extendedProps.prop1).toEqual('prop1val')
+    expect(event.extendedProps.prop2).toEqual([ 'a', 'b' ])
   })
 
 })

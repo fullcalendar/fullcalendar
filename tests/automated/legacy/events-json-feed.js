@@ -52,7 +52,7 @@ describe('events as a json feed', function() {
     })
   })
 
-  it('requests correctly when custom timezone', function(done) {
+  it('requests correctly when named timezone', function(done) {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({

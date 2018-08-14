@@ -85,53 +85,8 @@ describe('removeEventSource', function() {
       }
     })
 
-    currentCalendar.removeEventSource(source1)
+    currentCalendar.getEventSources()[0].remove()
     currentCalendar.addEventSource(source2)
-  })
-
-  describe('when multiple sources share the same fetching function', function() {
-    var fetchFunc = function(arg, callback) {
-      callback([ {
-        title: 'event',
-        start: '2014-08-01T02:00:00'
-      } ])
-    }
-
-    pushOptions({
-      eventSources: [
-        { events: fetchFunc, className: 'event1', id: 'source1' },
-        { events: fetchFunc, className: 'event2', id: 'source2' }
-      ]
-    })
-
-    describe('when called with the raw function', function() {
-      it('removes events from all matching sources', function() {
-
-        initCalendar()
-        expect($('.fc-event').length).toBe(2)
-        expect($('.event1').length).toBe(1)
-        expect($('.event2').length).toBe(1)
-
-        currentCalendar.removeEventSource(fetchFunc)
-        expect($('.fc-event').length).toBe(0)
-      })
-    })
-
-    describe('when called with proper source object', function() {
-      it('removes events only from the specific source', function() {
-
-        initCalendar()
-        expect($('.fc-event').length).toBe(2)
-        expect($('.event1').length).toBe(1)
-        expect($('.event2').length).toBe(1)
-
-        var source = currentCalendar.getEventSourceById('source2')
-        currentCalendar.removeEventSource(source)
-        expect($('.fc-event').length).toBe(1)
-        expect($('.event1').length).toBe(1)
-        expect($('.event2').length).toBe(0)
-      })
-    })
   })
 
   function testInput(eventInput) {
@@ -201,6 +156,6 @@ describe('removeEventSource', function() {
 
   function expectEventCnt(cnt) {
     expect($('.fc-event').length).toBe(cnt)
-    expect(currentCalendar.clientEvents().length).toBe(cnt)
+    expect(currentCalendar.getEvents().length).toBe(cnt)
   }
 })

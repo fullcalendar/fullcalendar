@@ -37,9 +37,9 @@ describe('timezone', function() {
   })
 
   function expectLocalTimezone() {
-    var allDayEvent = currentCalendar.clientEvents('1')[0]
-    var timedEvent = currentCalendar.clientEvents('2')[0]
-    var zonedEvent = currentCalendar.clientEvents('3')[0]
+    var allDayEvent = currentCalendar.getEventById('1')
+    var timedEvent = currentCalendar.getEventById('2')
+    var zonedEvent = currentCalendar.getEventById('3')
     expect(allDayEvent.isAllDay).toEqual(true)
     expect(allDayEvent.start).toEqualDate('2014-05-02T00:00:00') // local
     expect(timedEvent.isAllDay).toEqual(false)
@@ -60,9 +60,9 @@ describe('timezone', function() {
   })
 
   function expectUtcTimezone() {
-    var allDayEvent = currentCalendar.clientEvents('1')[0]
-    var timedEvent = currentCalendar.clientEvents('2')[0]
-    var zonedEvent = currentCalendar.clientEvents('3')[0]
+    var allDayEvent = currentCalendar.getEventById('1')
+    var timedEvent = currentCalendar.getEventById('2')
+    var zonedEvent = currentCalendar.getEventById('3')
     expect(allDayEvent.isAllDay).toEqual(true)
     expect(allDayEvent.start).toEqualDate('2014-05-02')
     expect(timedEvent.isAllDay).toEqual(false)
@@ -83,9 +83,9 @@ describe('timezone', function() {
   })
 
   function expectCustomTimezone() {
-    var allDayEvent = currentCalendar.clientEvents('1')[0]
-    var timedEvent = currentCalendar.clientEvents('2')[0]
-    var zonedEvent = currentCalendar.clientEvents('3')[0]
+    var allDayEvent = currentCalendar.getEventById('1')
+    var timedEvent = currentCalendar.getEventById('2')
+    var zonedEvent = currentCalendar.getEventById('3')
     expect(allDayEvent.isAllDay).toEqual(true)
     expect(allDayEvent.start).toEqualDate('2014-05-02')
     expect(timedEvent.isAllDay).toEqual(false)
@@ -97,7 +97,6 @@ describe('timezone', function() {
 
   it('can be set dynamically', function(done) {
     var callCnt = 0
-    var rootEl
 
     initCalendar({
       timezone: 'local',
@@ -105,12 +104,9 @@ describe('timezone', function() {
         callCnt++
         if (callCnt === 1) {
           expectLocalTimezone()
-          rootEl = $('.fc-view > *:first')
-          expect(rootEl.length).toBe(1)
           currentCalendar.option('timezone', 'UTC') // will cause second call...
         } else if (callCnt === 2) {
           expectUtcTimezone()
-          expect($('.fc-view > *:first')[0]).toBe(rootEl[0]) // ensure didn't rerender whole calendar
           done()
         }
       }

@@ -47,7 +47,7 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'local'
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       var i
 
       expect(events.length).toBe(NUM_EVENTS)
@@ -65,7 +65,7 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'UTC'
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       var i
 
       expect(events.length).toBe(NUM_EVENTS)
@@ -83,7 +83,7 @@ describe('Google Calendar plugin', function() {
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
     options.timezone = 'America/New York'
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       var eventEls = $('.fc-event')
       var i
 
@@ -121,7 +121,7 @@ describe('Google Calendar plugin', function() {
       googleCalendarApiKey: API_KEY
     }
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
@@ -140,7 +140,7 @@ describe('Google Calendar plugin', function() {
         googleCalendarId: HOLIDAY_CALENDAR_ID
       }
       options.eventAfterAllRender = function() {
-        var events = currentCalendar.clientEvents()
+        var events = currentCalendar.getEvents()
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
@@ -168,7 +168,7 @@ describe('Google Calendar plugin', function() {
         googleCalendarId: HOLIDAY_CALENDAR_ID
       }
       options.eventAfterAllRender = function() {
-        var events = currentCalendar.clientEvents()
+        var events = currentCalendar.getEvents()
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
@@ -187,7 +187,7 @@ describe('Google Calendar plugin', function() {
     options.googleCalendarApiKey = API_KEY
     options.events = HOLIDAY_CALENDAR_ID
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
@@ -242,7 +242,7 @@ describe('Google Calendar plugin', function() {
     options.googleCalendarApiKey = API_KEY
     options.events = 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
@@ -253,7 +253,7 @@ describe('Google Calendar plugin', function() {
     options.googleCalendarApiKey = API_KEY
     options.events = 'https://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
@@ -265,7 +265,7 @@ describe('Google Calendar plugin', function() {
     options.events =
       'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events'
     options.eventAfterAllRender = function() {
-      var events = currentCalendar.clientEvents()
+      var events = currentCalendar.getEvents()
       expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
       done()
     }
@@ -292,7 +292,7 @@ describe('Google Calendar plugin', function() {
     initCalendar(options)
   })
 
-  describe('removeEventSource', function() {
+  describe('EventSource::remove', function() {
 
     it('works when specifying only the Google Calendar ID', function(done) {
       var called = false
@@ -305,12 +305,12 @@ describe('Google Calendar plugin', function() {
         if (called) { return } // only the first time
         called = true
 
-        events = currentCalendar.clientEvents()
+        events = currentCalendar.getEvents()
         expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
         setTimeout(function() {
-          currentCalendar.removeEventSource(HOLIDAY_CALENDAR_ID)
-          events = currentCalendar.clientEvents()
+          currentCalendar.getEventSources()[0].remove()
+          events = currentCalendar.getEvents()
           expect(events.length).toBe(0)
           done()
         }, 0)
@@ -331,12 +331,12 @@ describe('Google Calendar plugin', function() {
         if (called) { return } // only the first time
         called = true
 
-        events = currentCalendar.clientEvents()
+        events = currentCalendar.getEvents()
         expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
 
         setTimeout(function() {
-          currentCalendar.removeEventSource(googleSource)
-          events = currentCalendar.clientEvents()
+          currentCalendar.getEventSources()[0].remove()
+          events = currentCalendar.getEvents()
           expect(events.length).toBe(0)
           done()
         }, 0)

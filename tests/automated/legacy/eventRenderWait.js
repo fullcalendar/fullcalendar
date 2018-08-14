@@ -20,7 +20,7 @@ describe('eventRenderWait', function() {
       eventRenderWait: 0, // will still debounce despite being zero
       eventAfterAllRender: function() {
         eventRenderCnt++
-        if (eventRenderCnt === 1) {
+        if (eventRenderCnt === 2) {
 
           expect($('.event1').length).toBe(1)
           expect($('.event2').length).toBe(1)
@@ -31,25 +31,25 @@ describe('eventRenderWait', function() {
 
           // make sure doesn't fire again
           setTimeout(function() {
-            expect(eventRenderCnt).toBe(1)
+            expect(eventRenderCnt).toBe(2)
             done()
           }, 1000)
         }
       }
     })
 
-    expect($('.fc-event').length).toBe(0)
+    expect($('.fc-event').length).toBe(2)
 
     currentCalendar.addEventSource(eventSource2)
-    expect($('.fc-event').length).toBe(0)
+    expect($('.fc-event').length).toBe(2)
 
-    currentCalendar.renderEvent(extraEvent1)
-    expect($('.fc-event').length).toBe(0)
+    currentCalendar.addEvent(extraEvent1)
+    expect($('.fc-event').length).toBe(2)
 
-    currentCalendar.renderEvent(extraEvent2)
-    expect($('.fc-event').length).toBe(0)
+    var refined2 = currentCalendar.addEvent(extraEvent2)
+    expect($('.fc-event').length).toBe(2)
 
-    currentCalendar.removeEvents(extraEvent2.id) // only works with id!?
-    expect($('.fc-event').length).toBe(0)
+    refined2.remove()
+    expect($('.fc-event').length).toBe(2)
   })
 })

@@ -77,7 +77,7 @@ describe('refetchEventSources', function() {
       eventCount = 2
       fetchId = 8
 
-      currentCalendar.refetchEventSources(2)
+      currentCalendar.getEventSourceById('blue').refetch()
 
       // events from unaffected sources remain
       expect($('.source1-7').length).toEqual(1)
@@ -93,42 +93,8 @@ describe('refetchEventSources', function() {
     })
   })
 
-  describe('with an array of multiple event sources passed in', function() {
-    it('only refetches events for the specified event sources', function(done) {
-      initCalendar()
-
-      expect($('.source1-7').length).toEqual(1)
-      expect($('.source2-7').length).toEqual(1)
-      expect($('.source3-7').length).toEqual(1)
-
-      var allEventSources = currentCalendar.getEventSources()
-      var greenEventSources = $.grep(allEventSources, function(eventSource) {
-        return eventSource.color === 'green'
-      })
-
-      // increase the number of events for the refetched sources
-      eventCount = 2
-      fetchId = 8
-
-      currentCalendar.refetchEventSources(greenEventSources)
-
-      // events from unaffected sources remain
-      expect($('.source2-7').length).toEqual(1)
-
-      // events from old fetch were cleared
-      expect($('.source1-7').length).toEqual(0)
-      expect($('.source3-7').length).toEqual(0)
-
-      // events from new fetch were rendered
-      expect($('.source1-8').length).toEqual(2)
-      expect($('.source3-8').length).toEqual(2)
-
-      done()
-    })
-  })
-
-  describe('with an array of multiple event source IDs passed in', function() {
-    it('only refetches events for the specified event sources', function(done) {
+  describe('multiple event sources', function() {
+    it('will be refetched', function(done) {
       initCalendar()
 
       expect($('.source1-7').length).toEqual(1)
@@ -139,7 +105,8 @@ describe('refetchEventSources', function() {
       eventCount = 2
       fetchId = 8
 
-      currentCalendar.refetchEventSources([ 1, 3 ])
+      currentCalendar.getEventSourceById('green0').refetch()
+      currentCalendar.getEventSourceById('green1').refetch()
 
       // events from unaffected sources remain
       expect($('.source2-7').length).toEqual(1)
@@ -178,16 +145,12 @@ describe('refetchEventSources', function() {
         }
       })
 
-      var allEventSources = currentCalendar.getEventSources()
-      var greenEventSources = $.grep(allEventSources, function(eventSource) { // source 1 and 3
-        return eventSource.color === 'green'
-      })
-
       // increase the number of events for the refetched sources
       eventCount = 2
       fetchId = 8
 
-      currentCalendar.refetchEventSources(greenEventSources)
+      currentCalendar.getEventSourceById('green0').refetch()
+      currentCalendar.getEventSourceById('green1').refetch()
     })
   })
 

@@ -19,7 +19,7 @@ describe('eventDestroy', function() {
       }
     })
 
-    currentCalendar.removeEvents(singleEventData.id)
+    currentCalendar.getEventById(singleEventData.id).remove()
   }
 
   describe('when in month view', function() { // for issue 2017
@@ -30,7 +30,7 @@ describe('eventDestroy', function() {
 
     it('gets called with removeEvents method', function(done) {
       testSingleEvent({
-        id: 1,
+        id: '1',
         title: 'event1',
         date: '2014-08-02'
       }, done)
@@ -46,7 +46,7 @@ describe('eventDestroy', function() {
 
     it('gets called with removeEvents method', function(done) {
       testSingleEvent({
-        id: 1,
+        id: '1',
         title: 'event1',
         date: '2014-08-02T02:00:00'
       }, done)

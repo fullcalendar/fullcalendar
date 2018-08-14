@@ -76,9 +76,13 @@
 
               heightPropDescriptions.forEach(function(testInfo) {
                 describe(testInfo.description, function() {
+
                   if (testInfo.heightWrapper) {
                     beforeEach(function() {
-                      calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
+                      calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
+                    })
+                    afterEach(function() {
+                      $('#calendar-container').remove()
                     })
                   }
 
@@ -180,7 +184,10 @@
                   describe(testInfo.description, function() {
                     if (testInfo.heightWrapper) {
                       beforeEach(function() {
-                        calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
+                        calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
+                      })
+                      afterEach(function() {
+                        $('#calendar-container').remove()
                       })
                     }
 
@@ -234,7 +241,10 @@
                     describe(testInfo.description, function() {
                       if (testInfo.heightWrapper) {
                         beforeEach(function() {
-                          calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
+                          calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
+                        })
+                        afterEach(function() {
+                          $('#calendar-container').remove()
                         })
                       }
 
