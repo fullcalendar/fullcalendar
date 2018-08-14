@@ -66,17 +66,11 @@ window.initCalendar = function(options, el) {
     $el = $('<div id="calendar">').appendTo('body')
   }
 
-  var options = getCurrentOptions()
-  var eventAfterAllRenderCallback = options.eventAfterAllRender
-
-  if (eventAfterAllRenderCallback) {
-    delete options.eventAfterAllRender
-  }
-
   if (window.currentCalendar) {
     window.currentCalendar.destroy()
   }
 
+  var options = getCurrentOptions()
   var newCalendar
 
   options.SET_DATE_PROFILE = function() {
@@ -86,11 +80,6 @@ window.initCalendar = function(options, el) {
   new FullCalendar.Calendar($el[0], options)
 
   if (newCalendar === window.currentCalendar) {
-
-    if (eventAfterAllRenderCallback) {
-      eventAfterAllRender(newCalendar, eventAfterAllRenderCallback)
-    }
-
     newCalendar.render()
   } else {
     newCalendar.destroy()
@@ -246,38 +235,3 @@ window.spyCall = function(func) {
 window.pushOptions({
   timezone: 'UTC'
 })
-
-
-// Convoluted triggers that are really useful
-// ---------------------------------------------------------------------------------------------------------------------
-
-window.eventAfterAllRender = function(calendar, callback) {
-
-  function monitor() {
-    var sourceHash = calendar.state.eventSources
-    var pendingSourceCnt = 0
-
-    for (var sourceId in sourceHash) {
-      if (sourceHash[sourceId].isFetching) {
-        pendingSourceCnt++
-      }
-    }
-
-    if (!pendingSourceCnt) {
-      callback()
-    } else {
-      calendar.one('RECEIVE_EVENTS', function() {
-        pendingSourceCnt--
-        if (!pendingSourceCnt) {
-          calendar.one('_rendered', callback)
-        }
-      })
-    }
-  }
-
-  calendar.one('_rendered', monitor) // wait for calendar.render() to be called
-
-  calendar.on('SET_DATE_PROFILE', function() {
-    calendar.one('_rendered', monitor) // wait for the render after a view/date switch
-  })
-}
