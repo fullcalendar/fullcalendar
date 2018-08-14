@@ -1,14 +1,14 @@
 import Calendar from '../Calendar'
 import reduceEventSources from './eventSources'
 import reduceEventStore from './eventStore'
-import { DateProfile } from '../DateProfileGenerator'
+import { DateProfile, isDateProfilesEqual } from '../DateProfileGenerator'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
-  calendar.trigger(action.type, action) // for testing hooks
+  calendar.publiclyTrigger(action.type, action) // for testing hooks
 
   let dateProfile = reduceDateProfile(state.dateProfile, action)
   let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendar)
@@ -30,7 +30,9 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
 function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action) {
   switch (action.type) {
     case 'SET_DATE_PROFILE':
-      return action.dateProfile
+      return (currentDateProfile && isDateProfilesEqual(currentDateProfile, action.dateProfile)) ?
+        currentDateProfile : // if same, reuse the same object, better for rerenders
+        action.dateProfile
     default:
       return currentDateProfile
   }
@@ -82,6 +84,8 @@ function reduceEventResize(currentEventResize: EventInteractionState | null, act
 
 function reduceEventSourceLoadingLevel(level: number, action: Action, eventSources: EventSourceHash): number {
   switch (action.type) {
+    case 'REMOVE_ALL_EVENT_SOURCES':
+      return 0
     case 'FETCH_EVENT_SOURCES':
       return level + (action.sourceIds ? action.sourceIds.length : Object.keys(eventSources).length)
     case 'RECEIVE_EVENTS':

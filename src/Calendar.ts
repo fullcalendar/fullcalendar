@@ -103,13 +103,7 @@ export default class Calendar {
     this.buildDelayedRerender = reselector(buildDelayedRerender)
 
     this.handleOptions(this.optionsManager.computed)
-    this.constructed()
     this.hydrate()
-  }
-
-
-  constructed() {
-    // useful for monkeypatching. used?
   }
 
 
@@ -151,7 +145,10 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  _render(forceFlags: RenderForceFlags = {}) {
+  _render() {
+    let { rerenderFlags } = this
+    this.rerenderFlags = null // clear for future requestRerender calls, which might happen during render
+
     this.isRendering = true
 
     this.applyElClassNames()
@@ -162,8 +159,8 @@ export default class Calendar {
     }
 
     this.freezeContentHeight() // do after contentEl is created in renderSkeleton
-    this.renderToolbars(forceFlags)
-    this.renderView(forceFlags)
+    this.renderToolbars(rerenderFlags)
+    this.renderView(rerenderFlags)
     this.thawContentHeight()
     this.releaseAfterSizingTriggers()
 
@@ -279,8 +276,6 @@ export default class Calendar {
 
   unrenderSkeleton() {
     removeElement(this.contentEl)
-    this.contentEl = null
-
     this.removeNavLinkListener()
   }
 
@@ -410,9 +405,7 @@ export default class Calendar {
       !this.renderingPauseDepth && // not paused
       !this.isRendering // not currently in the render loop
     ) {
-      let { rerenderFlags } = this
-      this.rerenderFlags = null // clear for future requestRerender calls, which might happen during render
-      this._render(rerenderFlags)
+      this._render()
     }
   }
 
@@ -504,7 +497,7 @@ export default class Calendar {
   }
 
 
-  publiclyTrigger(name: string, args) {
+  publiclyTrigger(name: string, args?) {
     let optHandler = this.opt(name)
 
     this.triggerWith(name, this, args)
@@ -710,10 +703,14 @@ export default class Calendar {
   }
 
 
-  incrementDate(delta) { // is public facing
-    this.setCurrentDateMarker(
-      this.dateEnv.add(this.state.dateProfile.currentDate, delta)
-    )
+  incrementDate(deltaInput) { // is public facing
+    let delta = createDuration(deltaInput)
+
+    if (delta) { // else, warn about invalid input?
+      this.setCurrentDateMarker(
+        this.dateEnv.add(this.state.dateProfile.currentDate, delta)
+      )
+    }
   }
 
 
@@ -962,11 +959,18 @@ export default class Calendar {
 
   // this public method receives start/end dates in any format, with any timezone
   // NOTE: args were changed from v3
-  select(dateOrObj: DateInput | object, endDate?: DateInput) {
+  select(dateOrObj: DateInput | any, endDate?: DateInput) {
     let selectionInput: DateSpanInput
 
     if (endDate == null) {
-      selectionInput = dateOrObj as DateSpanInput
+      if (dateOrObj.start != null) {
+        selectionInput = dateOrObj as DateSpanInput
+      } else {
+        selectionInput = {
+          start: dateOrObj,
+          end: null
+        }
+      }
     } else {
       selectionInput = {
         start: dateOrObj,
@@ -974,7 +978,12 @@ export default class Calendar {
       } as DateSpanInput
     }
 
-    let selection = parseDateSpan(selectionInput, this.dateEnv)
+    let selection = parseDateSpan(
+      selectionInput,
+      this.dateEnv,
+      createDuration({ days: 1 }) // TODO: cache this?
+    )
+
     if (selection) { // throw parse error otherwise?
       this.dispatch({
         type: 'SELECT_DATES',
@@ -1112,6 +1121,11 @@ export default class Calendar {
   }
 
 
+  removeAllEvents() {
+    this.dispatch({ type: 'REMOVE_ALL_EVENTS' })
+  }
+
+
   rerenderEvents() { // API method. destroys old events if previously rendered.
     this.requestRerender({ events: true }) // TODO: test this
   }
@@ -1158,6 +1172,11 @@ export default class Calendar {
     }
 
     return null
+  }
+
+
+  removeAllEventSources() {
+    this.dispatch({ type: 'REMOVE_ALL_EVENT_SOURCES' })
   }
 
 

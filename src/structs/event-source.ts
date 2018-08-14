@@ -72,8 +72,8 @@ export interface EventSource {
   backgroundColor: string
   borderColor: string
   textColor: string
-  success: EventSourceSuccessHandler
-  failure: EventSourceFailureHandler
+  success: EventSourceSuccessHandler | null
+  failure: EventSourceFailureHandler | null
 }
 
 export type EventSourceHash = { [sourceId: string]: EventSource }
@@ -163,10 +163,10 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
 
   // TODO: consolidate with event struct
   if ('color' in raw) {
-    if (props.backgroundColor === null) {
+    if (!props.backgroundColor) {
       props.backgroundColor = raw.color
     }
-    if (props.borderColor === null) {
+    if (!props.borderColor) {
       props.borderColor = raw.color
     }
   }

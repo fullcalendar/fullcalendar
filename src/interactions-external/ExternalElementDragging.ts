@@ -10,6 +10,7 @@ import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 import EventApi from '../api/EventApi'
+import { elementMatches } from '../util/dom-manip'
 
 export interface EventRes { // TODO: relate this to EventRenderRange?
   def: EventDef
@@ -55,11 +56,14 @@ export default class ExternalElementDragging {
 
     if (hit) {
       receivingCalendar = hit.component.getCalendar()
-      droppableEvent = computeEventForDateSpan(
-        hit.dateSpan,
-        this.dragMeta!,
-        receivingCalendar
-      )
+
+      if (this.canDropElOnCalendar(ev.subjectEl as HTMLElement, receivingCalendar)) {
+        droppableEvent = computeEventForDateSpan(
+          hit.dateSpan,
+          this.dragMeta!,
+          receivingCalendar
+        )
+      }
     }
 
     this.displayDrag(receivingCalendar, {
@@ -144,6 +148,18 @@ export default class ExternalElementDragging {
     if (this.receivingCalendar) {
       this.receivingCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
     }
+  }
+
+  canDropElOnCalendar(el: HTMLElement, receivingCalendar: Calendar): boolean {
+    let dropAccept = receivingCalendar.opt('dropAccept')
+
+    if (typeof dropAccept === 'function') {
+      return dropAccept(el)
+    } else if (typeof dropAccept === 'string' && dropAccept) {
+      return Boolean(elementMatches(el, dropAccept))
+    }
+
+    return true
   }
 
 }

@@ -12,10 +12,7 @@ import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursDef } from '../structs/business-hours'
 import { EventInput } from '../structs/event'
 import EventApi from '../api/EventApi'
-
-
-// temporary!
-export type ConstraintInput = DateRangeInput | BusinessHoursDef | 'businessHours'
+import { ConstraintInput } from '../interactions/constraint'
 
 
 export interface ToolbarInput {
@@ -193,10 +190,10 @@ export interface OptionsInputBase {
   eventDestroy?(arg: { event: EventApi, el: HTMLElement, view: View }): void
   eventDragStart?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: View }): void
   eventDragStop?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: View }): void
-  eventDrop?(arg: { el: HTMLElement, event: EventApi, delta: Duration, revertFunc: Function, jsEvent: Event, view: View }): void
+  eventDrop?(arg: { el: HTMLElement, event: EventApi, delta: Duration, revertFunc: () => void, jsEvent: Event, view: View }): void
   eventResizeStart?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventResizeStop?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  eventResize?(arg: { el: HTMLElement, event: EventApi, delta: Duration, revertFunc: Function, jsEvent: Event, view: View }): void
+  eventResize?(arg: { el: HTMLElement, event: EventApi, delta: Duration, revertFunc: () => void, jsEvent: Event, view: View }): void
   drop?(arg: { date: DateInput, isAllDay: boolean, jsEvent: MouseEvent }): void
   eventReceive?(event: EventApi): void
 }

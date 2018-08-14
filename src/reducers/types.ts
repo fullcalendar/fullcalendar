@@ -37,10 +37,12 @@ export type Action =
   { type: 'ADD_EVENT_SOURCES', sources: EventSource[] } |
   { type: 'REMOVE_EVENT_SOURCE', sourceId: string } |
   { type: 'FETCH_EVENT_SOURCES', sourceIds?: string[] } | // if no sourceIds, fetch all
+  { type: 'REMOVE_ALL_EVENT_SOURCES' } |
 
   { type: 'RECEIVE_EVENTS', sourceId: string, fetchId: string, fetchRange: DateRange, rawEvents: EventInput[] } |
   { type: 'RECEIVE_EVENT_ERROR', sourceId: string, fetchId: string, fetchRange: DateRange, error: SimpleError } |
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |
   { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation } |
-  { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash }
+  { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash } |
+  { type: 'REMOVE_ALL_EVENTS' }

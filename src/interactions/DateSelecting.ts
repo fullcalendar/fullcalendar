@@ -21,8 +21,9 @@ export default class DateSelecting {
   constructor(component: DateComponent) {
     this.component = component
 
-    this.dragging = new FeaturefulElementDragging(component.el)
-    this.dragging.touchScrollAllowed = false
+    let dragging = this.dragging = new FeaturefulElementDragging(component.el)
+    dragging.touchScrollAllowed = false
+    dragging.minDistance = component.opt('selectMinDistance') || 0
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)

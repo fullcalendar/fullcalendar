@@ -4,6 +4,7 @@ import { DateInput } from '../datelib/env'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 import { DateRange } from '../datelib/date-range'
+import { startOfDay } from '../datelib/marker'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -41,13 +42,8 @@ export interface EventDateInput {
 
 export type EventInput = EventNonDateInput & EventDateInput
 
-export interface EventDef {
-  defId: string
-  sourceId: string
-  publicId: string
+export interface EventDefAttrs { // mirrors NON_DATE_PROPS. can be used elsewhere?
   groupId: string
-  hasEnd: boolean
-  isAllDay: boolean
   title: string
   url: string
   startEditable: boolean | null
@@ -59,6 +55,14 @@ export interface EventDef {
   backgroundColor: string
   borderColor: string
   textColor: string
+}
+
+export interface EventDef extends EventDefAttrs {
+  defId: string
+  sourceId: string
+  publicId: string
+  hasEnd: boolean
+  isAllDay: boolean
   extendedProps: object
   isTemporary?: boolean // if true, will disappear upon navigation
 }
@@ -88,6 +92,7 @@ const NON_DATE_PROPS = {
   groupId: String,
   title: String,
   url: String,
+  editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
   constraint: null,
@@ -135,10 +140,10 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay
   }
 
   if ('color' in leftovers) {
-    if (props.backgroundColor === null) {
+    if (!props.backgroundColor) {
       props.backgroundColor = leftovers.color
     }
-    if (props.borderColor === null) {
+    if (!props.borderColor) {
       props.borderColor = leftovers.color
     }
     delete leftovers.color
@@ -168,6 +173,7 @@ export function parseEventDateSpan(
   let dateProps = refineProps(raw, DATE_PROPS, {}, leftovers)
   let rawStart = dateProps.start
   let startMeta
+  let startMarker
   let hasEnd = false
   let endMeta = null
   let endMarker = null
@@ -199,11 +205,19 @@ export function parseEventDateSpan(
     isAllDay = startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified)
   }
 
+  startMarker = startMeta.marker
+
+  if (isAllDay) {
+    startMarker = startOfDay(startMarker)
+  }
+
   if (endMeta) {
     endMarker = endMeta.marker
 
-    if (endMarker <= startMeta.marker) {
+    if (endMarker <= startMarker) {
       endMarker = null
+    } else if (isAllDay) {
+      endMarker = startOfDay(endMarker)
     }
   }
 
@@ -213,7 +227,7 @@ export function parseEventDateSpan(
     hasEnd = calendar.opt('forceEventDuration') || false
 
     endMarker = calendar.dateEnv.add(
-      startMeta.marker,
+      startMarker,
       isAllDay ?
         calendar.defaultAllDayEventDuration :
         calendar.defaultTimedEventDuration
@@ -223,7 +237,7 @@ export function parseEventDateSpan(
   return {
     isAllDay,
     hasEnd,
-    range: { start: startMeta.marker, end: endMarker },
+    range: { start: startMarker, end: endMarker },
     forcedStartTzo: startMeta.forcedTzo,
     forcedEndTzo: endMeta ? endMeta.forcedTzo : null
   }

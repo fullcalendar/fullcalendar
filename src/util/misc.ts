@@ -402,8 +402,6 @@ export function debounce(func, wait) {
 
 export type GenericHash = { [key: string]: any }
 
-let emptyFunc = function() { }
-
 // Number and Boolean are only types that defaults or not computed for
 // TODO: write more comments
 export function refineProps(rawProps: GenericHash, processors: GenericHash, defaults: GenericHash = {}, leftoverProps?: GenericHash): GenericHash {
@@ -414,7 +412,9 @@ export function refineProps(rawProps: GenericHash, processors: GenericHash, defa
 
     if (rawProps[key] !== undefined) {
       // found
-      if (processor) { // a refining function?
+      if (processor === Function) {
+        refined[key] = typeof rawProps[key] === 'function' ? rawProps[key] : null
+      } else if (processor) { // a refining function?
         refined[key] = processor(rawProps[key])
       } else {
         refined[key] = rawProps[key]
@@ -426,9 +426,7 @@ export function refineProps(rawProps: GenericHash, processors: GenericHash, defa
       // must compute a default
       if (processor === String) {
         refined[key] = '' // empty string is default for String
-      } else if (processor === Function) {
-        refined[key] = emptyFunc // noop is default for Function
-      } else if (!processor || processor === Number || processor === Boolean) {
+      } else if (!processor || processor === Number || processor === Boolean || processor === Function) {
         refined[key] = null // assign null for other non-custom processor funcs
       } else {
         refined[key] = processor(null) // run the custom processor func

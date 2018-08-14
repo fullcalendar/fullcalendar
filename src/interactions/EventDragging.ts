@@ -10,7 +10,10 @@ import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { EventStore, getRelatedEvents, createEmptyEventStore } from '../structs/event-store'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import { diffDates } from '../util/misc'
+import { diffDates, enableCursor, disableCursor } from '../util/misc'
+import { EventRenderRange } from '../component/event-rendering'
+import EventApi from '../api/EventApi'
+import { isEventStoreValid } from './constraint'
 
 export default class EventDragging {
 
@@ -20,7 +23,7 @@ export default class EventDragging {
 
   // internal state
   draggingSeg: Seg | null = null
-  eventInstanceId: string = ''
+  eventRange: EventRenderRange | null = null
   relatedEvents: EventStore | null = null
   receivingCalendar: Calendar | null = null
   validMutation: EventMutation | null = null
@@ -51,7 +54,8 @@ export default class EventDragging {
     let { mirror } = dragging
     let initialCalendar = component.getCalendar()
     let draggingSeg = this.draggingSeg = getElSeg(ev.subjectEl as HTMLElement)!
-    let eventInstanceId = this.eventInstanceId = draggingSeg.eventRange!.eventInstance!.instanceId
+    let eventRange = this.eventRange = draggingSeg.eventRange!
+    let eventInstanceId = eventRange.eventInstance!.instanceId
 
     this.relatedEvents = getRelatedEvents(
       initialCalendar.state.eventStore,
@@ -79,15 +83,18 @@ export default class EventDragging {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
+    let initialCalendar = this.component.getCalendar()
+    let eventRange = this.eventRange!
+    let eventInstanceId = eventRange.eventInstance.instanceId
+
     if (ev.isTouch) {
 
       // need to select a different event?
-      if (this.eventInstanceId !== this.component.eventSelection) {
-        let initialCalendar = this.component.getCalendar()
+      if (eventInstanceId !== this.component.eventSelection) {
 
         initialCalendar.dispatch({
           type: 'SELECT_EVENT',
-          eventInstanceId: this.eventInstanceId
+          eventInstanceId: eventInstanceId
         })
 
         browserContext.reportEventSelection(this.component) // will unselect previous
@@ -97,6 +104,15 @@ export default class EventDragging {
     } else {
       browserContext.unselectEvent()
     }
+
+    initialCalendar.publiclyTrigger('eventDragStart', [
+      {
+        el: this.draggingSeg.el,
+        event: new EventApi(initialCalendar, eventRange.eventDef, eventRange.eventInstance),
+        jsEvent: ev.origEvent,
+        view: this.component.view
+      }
+    ])
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
@@ -106,33 +122,48 @@ export default class EventDragging {
 
     // states based on new hit
     let receivingCalendar: Calendar | null = null
-    let validMutation: EventMutation | null = null
+    let mutation: EventMutation | null = null
     let mutatedRelatedEvents: EventStore | null = null
+    let isInvalid = false
 
     if (hit) {
       receivingCalendar = hit.component.getCalendar()
+      mutation = computeEventMutation(initialHit, hit)
 
-      if (
-        initialCalendar !== receivingCalendar || // TODO: write test for this
-        !isHitsEqual(initialHit, hit)
-      ) {
-        validMutation = computeEventMutation(initialHit, hit)
+      if (mutation) {
+        mutatedRelatedEvents = applyMutationToEventStore(relatedEvents, mutation, receivingCalendar)
 
-        if (validMutation) {
-          mutatedRelatedEvents = applyMutationToEventStore(relatedEvents, validMutation, receivingCalendar)
+        if (!isEventStoreValid(mutatedRelatedEvents, this.component.dateProfile)) {
+          isInvalid = true
+          mutation = null
+          mutatedRelatedEvents = null
         }
       }
     }
 
     this.displayDrag(receivingCalendar, {
       affectedEvents: relatedEvents,
-      mutatedEvents: mutatedRelatedEvents || relatedEvents,
+      mutatedEvents: mutatedRelatedEvents || createEmptyEventStore(),
       isEvent: true,
       origSeg: this.draggingSeg
     })
 
+    if (!isInvalid || isFinal) {
+      enableCursor()
+    } else {
+      disableCursor()
+    }
+
     if (!isFinal) {
-      this.dragging.setMirrorNeedsRevert(!validMutation)
+
+      if (
+        initialCalendar === receivingCalendar && // TODO: write test for this
+        isHitsEqual(initialHit, hit)
+      ) {
+        mutation = null
+      }
+
+      this.dragging.setMirrorNeedsRevert(!mutation)
 
       // render the mirror if no already-rendered helper
       // TODO: wish we could somehow wait for dispatch to guarantee render
@@ -142,7 +173,7 @@ export default class EventDragging {
 
       // assign states based on new hit
       this.receivingCalendar = receivingCalendar
-      this.validMutation = validMutation
+      this.validMutation = mutation
       this.mutatedRelatedEvents = mutatedRelatedEvents
     }
   }
@@ -158,21 +189,55 @@ export default class EventDragging {
     }
   }
 
-  handleDragEnd = () => {
+  handleDragEnd = (ev: PointerDragEvent) => {
     let initialCalendar = this.component.getCalendar()
+    let initialView = this.component.view
     let { receivingCalendar } = this
+    let { eventDef, eventInstance } = this.eventRange!
+    let eventApi = new EventApi(initialCalendar, eventDef, eventInstance)
+    let relatedEvents = this.relatedEvents!
+    let mutatedRelatedEvents = this.mutatedRelatedEvents!
 
     this.clearDrag() // must happen after revert animation
+
+    initialCalendar.publiclyTrigger('eventDragStop', [
+      {
+        el: this.draggingSeg.el,
+        event: eventApi,
+        jsEvent: ev.origEvent,
+        view: initialView
+      }
+    ])
 
     if (this.validMutation) {
 
       // dropped within same calendar
       if (receivingCalendar === initialCalendar) {
-        receivingCalendar.dispatch({
-          type: 'MUTATE_EVENTS',
-          mutation: this.validMutation,
-          instanceId: this.eventInstanceId
+
+        initialCalendar.dispatch({
+          type: 'ADD_EVENTS', // will merge
+          eventStore: mutatedRelatedEvents
         })
+
+        initialCalendar.publiclyTrigger('eventMutation', [
+          {
+            mutation: this.validMutation, // TODO: public API?
+            prevEvent: eventApi,
+            event: new EventApi( // the data AFTER the mutation
+              initialCalendar,
+              mutatedRelatedEvents.defs[eventDef.defId],
+              eventInstance ? mutatedRelatedEvents.instances[eventInstance.instanceId] : null
+            ),
+            revert: function() {
+              initialCalendar.dispatch({
+                type: 'ADD_EVENTS', // will merge
+                eventStore: relatedEvents
+              })
+            },
+            jsEvent: ev.origEvent,
+            view: initialView
+          }
+        ])
 
       // dropped in different calendar
       // TODO: more public triggers
@@ -186,11 +251,14 @@ export default class EventDragging {
           eventStore: this.mutatedRelatedEvents!
         })
       }
+
+    } else {
+      initialCalendar.publiclyTrigger('_noEventDrop')
     }
 
     // reset all internal state
     this.draggingSeg = null
-    this.eventInstanceId = ''
+    this.eventRange = null
     this.relatedEvents = null
     this.receivingCalendar = null
     this.validMutation = null

@@ -2,7 +2,7 @@ import Calendar from '../Calendar'
 import { filterHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
-import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents } from '../structs/event-store'
+import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents, createEmptyEventStore } from '../structs/event-store'
 import { Action } from './types'
 import { EventSourceHash, EventSource } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
@@ -30,7 +30,17 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
       return excludeInstances(eventStore, action.instances)
 
     case 'REMOVE_EVENT_SOURCE':
-      return excludeSource(eventStore, action.sourceId)
+      return filterDefs(eventStore, function(eventDef: EventDef) {
+        return eventDef.sourceId !== action.sourceId
+      })
+
+    case 'REMOVE_ALL_EVENT_SOURCES':
+      return filterDefs(eventStore, function(eventDef: EventDef) {
+        return !eventDef.sourceId
+      })
+
+    case 'REMOVE_ALL_EVENTS':
+      return createEmptyEventStore()
 
     default:
       return eventStore
@@ -45,26 +55,52 @@ function receiveEvents(
   rawEvents: EventInput[],
   calendar: Calendar
 ): EventStore {
-  if (fetchId === eventSource.latestFetchId) { // TODO: wish this logic was always in event-sources
 
-    rawEvents = rawEvents.map(function(rawEvent: EventInput) {
-      return eventSource.eventDataTransform(rawEvent) || rawEvent
-    })
+  if (
+    eventSource && // not already removed
+    fetchId === eventSource.latestFetchId // TODO: wish this logic was always in event-sources
+  ) {
+
+    rawEvents = runEventDataTransform(rawEvents, eventSource.eventDataTransform)
+    rawEvents = runEventDataTransform(rawEvents, calendar.opt('eventDataTransform'))
 
     return parseEventStore(
       rawEvents,
       eventSource.sourceId,
       fetchRange,
       calendar,
-      excludeSource( // dest
+      filterDefs( // dest
         eventStore,
-        eventSource.sourceId,
-        true // also remove events with isTemporary:true
+        function(eventDef: EventDef) {
+          return eventDef.sourceId !== eventSource.sourceId && !eventDef.isTemporary
+        }
       )
     )
   }
 
   return eventStore
+}
+
+function runEventDataTransform(rawEvents, func) {
+  let refinedEvents
+
+  if (!func) {
+    refinedEvents = rawEvents
+  } else {
+    refinedEvents = []
+
+    for (let rawEvent of rawEvents) {
+      let refinedEvent = func(rawEvent)
+
+      if (refinedEvent) {
+        refinedEvents.push(refinedEvent)
+      } else if (refinedEvent == null) {
+        refinedEvents.push(rawEvent)
+      } // if a different falsy value, do nothing
+    }
+  }
+
+  return refinedEvents
 }
 
 function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): EventStore {
@@ -77,10 +113,8 @@ function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): 
 }
 
 // has extra bonus feature of removing temporary events
-function excludeSource(eventStore: EventStore, sourceId: string, temporaryMatch?: boolean): EventStore {
-  let defs = filterHash(eventStore.defs, function(def: EventDef) {
-    return def.sourceId !== sourceId || def.isTemporary === temporaryMatch
-  })
+function filterDefs(eventStore: EventStore, filterFunc: (eventDef: EventDef) => boolean): EventStore {
+  let defs = filterHash(eventStore.defs, filterFunc)
   let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
     return defs[instance.defId] // still exists?
   })

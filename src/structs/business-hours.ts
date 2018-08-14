@@ -16,7 +16,8 @@ const DEF_DEFAULTS = {
   endTime: '17:00',
   daysOfWeek: [ 1, 2, 3, 4, 5 ], // monday - friday
   rendering: 'inverse-background',
-  className: 'fc-nonbusiness'
+  className: 'fc-nonbusiness',
+  groupId: '_businessHours' // so multiple defs get grouped
 }
 
 export function buildBusinessHours(

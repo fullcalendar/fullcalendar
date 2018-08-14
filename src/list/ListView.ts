@@ -93,6 +93,8 @@ export default class ListView extends View {
     this.dayRanges = dayRanges
 
     // all real rendering happens in EventRenderer
+
+    super.renderDates() // important for firing viewRender
   }
 
 

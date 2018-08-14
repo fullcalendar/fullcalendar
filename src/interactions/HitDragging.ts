@@ -5,6 +5,7 @@ import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { DateSpan, isDateSpansEqual } from '../structs/date-span'
 import { computeRect } from '../util/dom-geom'
 import { constrainPoint, intersectRects, getRectCenter, diffPoints, Rect, Point } from '../util/geom'
+import { rangeContainsRange } from '../datelib/date-range'
 
 export interface Hit {
   component: DateComponent
@@ -164,9 +165,11 @@ export default class HitDragging {
     let { droppableHash } = this
 
     for (let id in droppableHash) {
-      let hit = droppableHash[id].queryHit(x, y)
+      let component = droppableHash[id]
+      let hit = component.queryHit(x, y)
 
-      if (hit) {
+      // make sure the hit is within activeRange, meaning it's not a deal cell
+      if (hit && rangeContainsRange(component.dateProfile.activeRange, hit.dateSpan.range)) {
         return hit
       }
     }

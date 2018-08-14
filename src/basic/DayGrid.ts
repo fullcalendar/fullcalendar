@@ -82,22 +82,31 @@ export default class DayGrid extends DateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    let segs = this.sliceRangeByRow(range)
+    let validatedRange = intersectRanges(range, this.dateProfile.validRange)
 
-    for (let i = 0; i < segs.length; i++) {
-      let seg = segs[i]
-      seg.component = this
+    if (validatedRange) {
+      let segs = this.sliceRangeByRow(validatedRange)
 
-      if (this.isRTL) {
-        seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex
-        seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex
-      } else {
-        seg.leftCol = seg.firstRowDayIndex
-        seg.rightCol = seg.lastRowDayIndex
+      for (let i = 0; i < segs.length; i++) {
+        let seg = segs[i]
+        seg.component = this
+
+        if (this.isRTL) {
+          seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex
+          seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex
+        } else {
+          seg.leftCol = seg.firstRowDayIndex
+          seg.rightCol = seg.lastRowDayIndex
+        }
+
+        seg.isStart = seg.isStart && range.start.valueOf() === validatedRange.start.valueOf()
+        seg.isEnd = seg.isEnd && range.end.valueOf() === validatedRange.end.valueOf()
       }
-    }
 
-    return segs
+      return segs
+    } else {
+      return []
+    }
   }
 
 

@@ -1,7 +1,7 @@
 import View from './View'
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
 import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
-import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect } from './datelib/date-range'
+import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, rangesEqual } from './datelib/date-range'
 
 
 export interface DateProfile {
@@ -351,4 +351,10 @@ export default class DateProfileGenerator {
     }
   }
 
+}
+
+
+export function isDateProfilesEqual(p0: DateProfile, p1: DateProfile) {
+  return rangesEqual(p0.activeRange, p1.activeRange) &&
+    rangesEqual(p0.validRange, p1.validRange)
 }

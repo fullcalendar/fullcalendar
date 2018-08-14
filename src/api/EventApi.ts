@@ -14,7 +14,7 @@ export default class EventApi {
     this.instance = instance || null
   }
 
-  updateProp(name: string, val: string) {
+  setProp(name: string, val: string) {
     if (name.match(/^(start|end|date|isAllDay)$/)) {
       // error. date-related props need other methods
     } else {
@@ -35,7 +35,7 @@ export default class EventApi {
     }
   }
 
-  updateExtendedProp(name: string, val: string) {
+  setExtendedProp(name: string, val: string) {
     this.mutate({
       extendedProps: { [name]: val }
     })

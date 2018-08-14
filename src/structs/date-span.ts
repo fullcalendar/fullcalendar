@@ -1,6 +1,7 @@
 import { DateRange, rangesEqual } from '../datelib/date-range'
 import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
+import { Duration } from '../datelib/duration'
 
 /*
 A data-structure for a date-range that will be visually displayed.
@@ -26,24 +27,36 @@ const STANDARD_PROPS = {
   isAllDay: Boolean
 }
 
-export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv): DateSpan | null {
+export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv, defaultDuration?: Duration): DateSpan | null {
   let leftovers = {} as DateSpan
   let standardProps = refineProps(raw, STANDARD_PROPS, {}, leftovers)
   let startMeta = standardProps.start ? dateEnv.createMarkerMeta(standardProps.start) : null
+  let startMarker
   let endMeta = standardProps.end ? dateEnv.createMarkerMeta(standardProps.end) : null
+  let endMarker
   let isAllDay = standardProps.isAllDay
 
-  if (startMeta && endMeta) {
+  if (startMeta) {
+    startMarker = startMeta.marker
 
     if (isAllDay == null) {
-      isAllDay = startMeta.isTimeUnspecified && endMeta.isTimeUnspecified
+      isAllDay = startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified)
     }
 
-    // use this leftover object as the selection object
-    leftovers.range = { start: startMeta.marker, end: endMeta.marker }
-    leftovers.isAllDay = isAllDay
+    if (endMeta) {
+      endMarker = endMeta.marker
+    } else if (defaultDuration) {
+      endMarker = dateEnv.add(startMarker, defaultDuration)
+    }
 
-    return leftovers
+    if (endMarker) {
+
+      // use this leftover object as the selection object
+      leftovers.range = { start: startMarker, end: endMarker }
+      leftovers.isAllDay = isAllDay
+
+      return leftovers
+    }
   }
 
   return null

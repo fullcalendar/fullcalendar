@@ -85,20 +85,26 @@ export default class TimeGrid extends DateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    let segs = this.sliceRangeByTimes(range)
-    let i
+    range = intersectRanges(range, this.dateProfile.validRange)
 
-    for (i = 0; i < segs.length; i++) {
-      if (this.isRTL) {
-        segs[i].col = this.daysPerRow - 1 - segs[i].dayIndex
-      } else {
-        segs[i].col = segs[i].dayIndex
+    if (range) {
+      let segs = this.sliceRangeByTimes(range)
+      let i
+
+      for (i = 0; i < segs.length; i++) {
+        if (this.isRTL) {
+          segs[i].col = this.daysPerRow - 1 - segs[i].dayIndex
+        } else {
+          segs[i].col = segs[i].dayIndex
+        }
+
+        segs[i].component = this
       }
 
-      segs[i].component = this
+      return segs
+    } else {
+      return []
     }
-
-    return segs
   }
 
 

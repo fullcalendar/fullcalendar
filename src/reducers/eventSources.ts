@@ -30,6 +30,9 @@ export default function(eventSourceHash: EventSourceHash, action: Action, datePr
     case 'RECEIVE_EVENT_ERROR':
       return receiveResponse(eventSourceHash, action.sourceId, action.fetchId, action.fetchRange)
 
+    case 'REMOVE_ALL_EVENT_SOURCES':
+      return {}
+
     default:
       return eventSourceHash
   }
@@ -67,8 +70,8 @@ function fetchDirtySources(sourceHash: EventSourceHash, dateProfile: DateProfile
     if (
       !calendar.opt('lazyFetching') ||
       !eventSource.fetchRange ||
-      eventSource.fetchRange.start < activeRange.start ||
-      eventSource.fetchRange.end > activeRange.end
+      activeRange.start < eventSource.fetchRange.start ||
+      activeRange.end > eventSource.fetchRange.end
     ) {
       dirtySourceIds.push(eventSource.sourceId)
     }
@@ -120,7 +123,10 @@ function fetchSource(eventSource: EventSource, range: DateRange, fetchId: string
       range
     },
     function(rawEvents) {
-      eventSource.success(rawEvents)
+
+      if (eventSource.success) {
+        eventSource.success(rawEvents)
+      }
 
       calendar.dispatch({
         type: 'RECEIVE_EVENTS',
@@ -134,7 +140,10 @@ function fetchSource(eventSource: EventSource, range: DateRange, fetchId: string
       let error = normalizeError(errorInput)
 
       warn(error.message, error)
-      eventSource.failure(error)
+
+      if (eventSource.failure) {
+        eventSource.failure(error)
+      }
 
       calendar.dispatch({
         type: 'RECEIVE_EVENT_ERROR',

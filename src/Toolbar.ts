@@ -73,18 +73,18 @@ export default class Toolbar extends Component {
 
     if (renderProps.isPrevEnabled !== this.isPrevEnabled || forceFlags === true) {
       if (renderProps.isPrevEnabled) {
-        this.enableButton('today')
+        this.enableButton('prev')
       } else {
-        this.disableButton('today')
+        this.disableButton('prev')
       }
       this.isPrevEnabled = renderProps.isPrevEnabled
     }
 
     if (renderProps.isNextEnabled !== this.isNextEnabled || forceFlags === true) {
       if (renderProps.isNextEnabled) {
-        this.enableButton('today')
+        this.enableButton('next')
       } else {
-        this.disableButton('today')
+        this.disableButton('next')
       }
       this.isNextEnabled = renderProps.isNextEnabled
     }

@@ -344,7 +344,7 @@ export default abstract class DateComponent extends Component {
       if (dirtyFlags.dates) {
         for (let name in dirtyFlags) {
           if (name !== 'skeleton') {
-            forceFlags = true
+            dirtyFlags[name] = true
           }
         }
       }
@@ -592,6 +592,9 @@ export default abstract class DateComponent extends Component {
 
 
   computeEventsSize() {
+    if (this.fillRenderer) {
+      this.fillRenderer.computeSize('bgEvent')
+    }
     if (this.eventRenderer) {
       this.eventRenderer.computeFgSize()
     }
@@ -599,6 +602,9 @@ export default abstract class DateComponent extends Component {
 
 
   assignEventsSize() {
+    if (this.fillRenderer) {
+      this.fillRenderer.assignSize('bgEvent')
+    }
     if (this.eventRenderer) {
       this.eventRenderer.assignFgSize()
     }
@@ -719,8 +725,9 @@ export default abstract class DateComponent extends Component {
 
   selectEventsByInstanceId(instanceId) {
     this.getAllEventSegs().forEach(function(seg) {
+      let eventInstance = seg.eventRange.eventInstance
       if (
-        seg.eventRange.eventInstance.instanceId === instanceId &&
+        eventInstance && eventInstance.instanceId === instanceId &&
         seg.el // necessary?
       ) {
         seg.el.classList.add('fc-selected')
