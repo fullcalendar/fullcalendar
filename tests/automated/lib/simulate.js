@@ -247,7 +247,12 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
     moveIndex++
     updateCoords() // update clientCoords before mousemove
 
-    self.simulateEvent(docNode, isTouch ? 'touchmove' : 'mousemove', clientCoords)
+    if (isTouch) {
+      // touchmove happens on the originating element
+      self.simulateEvent(targetNode, 'touchmove', clientCoords)
+    } else {
+      self.simulateEvent(docNode, 'mousemove', clientCoords)
+    }
 
     if (moveIndex >= moveCnt) {
       stopMoving()
@@ -282,7 +287,13 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
     }
 
     dragStackCnt--;
-    (options.onRelease || options.callback || function() {})() // TODO: deprecate "callback" ?
+
+    // we wait because the there might be a FullCalendar drag interaction that finishes asynchronously
+    // after the mouseend/touchend happens, and it's really convenient if our callback fires after that.
+    setTimeout(
+      options.onRelease || options.callback || function() {}, // TODO: deprecate "callback" ?
+      0
+    )
   }
 
   startDrag()
