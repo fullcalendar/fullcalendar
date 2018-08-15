@@ -1,5 +1,5 @@
 import { EventInput, EventDefHash, EventInstanceHash, parseEventDef, parseEventDateSpan, createEventInstance } from './event'
-import { expandRecurring } from './recurring-event'
+import { parseEventDefRecurring, expandEventDef } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 import { DateRange } from '../datelib/date-range'
@@ -25,14 +25,21 @@ export function parseEventStore(
 
   for (let rawEvent of rawEvents) {
     let leftovers = {}
-    let recurringDateSpans = expandRecurring(rawEvent, fetchRange, calendar, leftovers)
+    let parsedRecurring = parseEventDefRecurring(rawEvent, leftovers)
 
     // a recurring event?
-    if (recurringDateSpans) {
-      let def = parseEventDef(leftovers, sourceId, recurringDateSpans.isAllDay, recurringDateSpans.hasEnd)
+    if (parsedRecurring) {
+      let def = parseEventDef(leftovers, sourceId, parsedRecurring.isAllDay, parsedRecurring.hasEnd)
+      def.recurringDef = {
+        typeId: parsedRecurring.typeId,
+        typeData: parsedRecurring.typeData
+      }
+
       dest.defs[def.defId] = def
 
-      for (let range of recurringDateSpans.ranges) {
+      let ranges = expandEventDef(def, fetchRange, calendar)
+
+      for (let range of ranges) {
         let instance = createEventInstance(def.defId, range)
         dest.instances[instance.instanceId] = instance
       }

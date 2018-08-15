@@ -63,6 +63,7 @@ export interface EventDef extends EventDefAttrs {
   publicId: string
   hasEnd: boolean
   isAllDay: boolean
+  recurringDef: { typeId: number, typeData: {} } | null
   extendedProps: object
   isTemporary?: boolean // if true, will disappear upon navigation
 }
@@ -123,6 +124,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay
   props.sourceId = sourceId
   props.isAllDay = isAllDay
   props.hasEnd = hasEnd
+  props.recurringDef = null
 
   if ('id' in leftovers) {
     props.publicId = String(leftovers.id)

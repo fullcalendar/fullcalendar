@@ -1,44 +1,55 @@
 import Calendar from '../Calendar'
-import { EventInput } from './event'
+import { EventInput, EventDef } from './event'
 import { DateRange } from '../datelib/date-range'
 
 /*
 The plugin system for defining how a recurring event is expanded into individual instances.
 */
 
-export interface RecurringEventDateSpans {
+export interface ParsedRecurring {
   isAllDay: boolean
   hasEnd: boolean
-  ranges: DateRange[]
+  typeData: any
 }
 
-export type RecurringExpander = (
-  rawEvent: EventInput,
-  range: DateRange,
-  calendar: Calendar,
-  leftovers: object
-) => RecurringEventDateSpans | null
-
-
-let recurringExpanders: RecurringExpander[] = []
-
-export function registerRecurringExpander(expander: RecurringExpander) {
-  recurringExpanders.push(expander)
+export interface IddParsedRecurring extends ParsedRecurring {
+  typeId: number
 }
 
-export function expandRecurring(
-  rawEvent: EventInput,
-  range: DateRange,
-  calendar: Calendar,
-  leftovers?: object
-): RecurringEventDateSpans | null {
-  for (let expander of recurringExpanders) {
-    let dateInfo = expander(rawEvent, range, calendar, leftovers || {})
+export interface RecurringType {
+  parse: (rawEvent: EventInput, leftoverProps: any) => ParsedRecurring | null
+  expand: (typeData: any, eventDef: EventDef, framingRange: DateRange, calendar: Calendar) => DateRange[]
+}
 
-    if (dateInfo) {
-      return dateInfo
+
+let recurringTypes: RecurringType[] = []
+
+export function registerRecurringType(recurringType: RecurringType) {
+  recurringTypes.push(recurringType)
+}
+
+
+export function parseEventDefRecurring(eventInput: EventInput, leftovers: any): IddParsedRecurring | null {
+  for (let i = 0; i < recurringTypes.length; i++) {
+    let parsed = recurringTypes[i].parse(eventInput, leftovers) as IddParsedRecurring
+
+    if (parsed) {
+      parsed.typeId = i
+      return parsed
     }
   }
 
   return null
+}
+
+
+export function expandEventDef(eventDef: EventDef, framingRange: DateRange, calendar: Calendar) {
+  let typeDef = recurringTypes[eventDef.recurringDef.typeId]
+
+  return typeDef.expand(
+    eventDef.recurringDef.typeData,
+    eventDef,
+    framingRange,
+    calendar
+  )
 }

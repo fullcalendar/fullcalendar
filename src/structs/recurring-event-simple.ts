@@ -2,9 +2,9 @@ import { startOfDay, addDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
-import { registerRecurringExpander, RecurringEventDateSpans } from './recurring-event'
+import { registerRecurringType, ParsedRecurring } from './recurring-event'
 import Calendar from '../Calendar'
-import { EventInput } from './event'
+import { EventInput, EventDef } from './event'
 import { DateRange } from '../datelib/date-range'
 
 /*
@@ -17,31 +17,47 @@ const SIMPLE_RECURRING_PROPS = {
   endTime: createDuration
 }
 
-registerRecurringExpander(
-  function(rawEvent: EventInput, framingRange: DateRange, calendar: Calendar, leftoverProps: object): RecurringEventDateSpans | null {
+interface SimpleRecurringData {
+  daysOfWeek: number[] | null
+  startTime: Duration | null
+  endTime: Duration | null
+}
+
+interface SimpleParsedRecurring extends ParsedRecurring {
+  typeData: SimpleRecurringData
+}
+
+registerRecurringType({
+
+  parse(rawEvent: EventInput, leftoverProps: any): SimpleParsedRecurring | null {
     if (
       rawEvent.daysOfWeek ||
       rawEvent.startTime != null ||
       rawEvent.endTime != null
     ) {
-      let props = refineProps(rawEvent, SIMPLE_RECURRING_PROPS, {}, leftoverProps)
+      let props = refineProps(rawEvent, SIMPLE_RECURRING_PROPS, {}, leftoverProps) as SimpleRecurringData
 
       return {
         isAllDay: !props.startTime && !props.endTime,
         hasEnd: Boolean(props.endTime),
-        ranges: expandRanges(
-          props.daysOfWeek,
-          props.startTime,
-          props.endTime,
-          framingRange,
-          calendar
-        )
+        typeData: props
       }
     }
 
     return null
+  },
+
+  expand(typeData: SimpleRecurringData, eventDef: EventDef, framingRange: DateRange, calendar: Calendar): DateRange[] {
+    return expandRanges(
+      typeData.daysOfWeek,
+      typeData.startTime,
+      typeData.endTime,
+      framingRange,
+      calendar
+    )
   }
-)
+
+})
 
 function expandRanges(
   daysOfWeek: number[] | null,
