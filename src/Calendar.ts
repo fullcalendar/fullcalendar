@@ -1060,16 +1060,12 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  addEvent(eventInput: EventInput, isSticky: boolean = false): EventApi | null {
+  addEvent(eventInput: EventInput): EventApi | null {
     let activeRange = this.state.dateProfile.activeRange
     let subset = parseEventStore([ eventInput ], '', this, activeRange)
     let def: EventDef = objectValues(subset.defs)[0]
 
     if (def) {
-
-      if (!isSticky) {
-        def.isTemporary = true // will mutate subet, which is good for ADD_EVENTS
-      }
 
       // TODO: make this regenerate recurring events
       this.dispatch({

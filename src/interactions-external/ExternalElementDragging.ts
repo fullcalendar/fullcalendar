@@ -175,10 +175,6 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
     Boolean(dragMeta.duration) // hasEnd
   )
 
-  if (!dragMeta.stick) {
-    def.isTemporary = true
-  }
-
   let start = dateSpan.range.start
 
   // only rely on time info if drop zone is all-day,

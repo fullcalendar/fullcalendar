@@ -65,7 +65,6 @@ export interface EventDef extends EventDefAttrs {
   isAllDay: boolean
   recurringDef: { typeId: number, typeData: {} } | null
   extendedProps: object
-  isTemporary?: boolean // if true, will disappear upon navigation
 }
 
 export interface EventInstance {

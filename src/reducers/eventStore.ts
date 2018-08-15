@@ -30,13 +30,11 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
       return excludeInstances(eventStore, action.instances)
 
     case 'REMOVE_EVENT_SOURCE':
-      return filterDefs(eventStore, function(eventDef: EventDef) {
-        return eventDef.sourceId !== action.sourceId
-      })
+      return excludeEventsBySourceId(eventStore, action.sourceId)
 
     case 'REMOVE_ALL_EVENT_SOURCES':
       return filterDefs(eventStore, function(eventDef: EventDef) {
-        return !eventDef.sourceId
+        return !eventDef.sourceId // only keep events with no source id
       })
 
     case 'REMOVE_ALL_EVENTS':
@@ -64,20 +62,12 @@ function receiveEvents(
     rawEvents = runEventDataTransform(rawEvents, eventSource.eventDataTransform)
     rawEvents = runEventDataTransform(rawEvents, calendar.opt('eventDataTransform'))
 
-    let dest = filterDefs(
-      eventStore,
-      function(eventDef: EventDef) {
-        // not the best isTemporary solution
-        return eventDef.sourceId !== eventSource.sourceId && !eventDef.isTemporary
-      }
-    )
-
     return parseEventStore(
       rawEvents,
       eventSource.sourceId,
       calendar,
       fetchRange,
-      dest
+      excludeEventsBySourceId(eventStore, eventSource.sourceId)
     )
   }
 
@@ -113,6 +103,12 @@ function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): 
       return !removals[instance.instanceId]
     })
   }
+}
+
+function excludeEventsBySourceId(eventStore, sourceId) {
+  return filterDefs(eventStore, function(eventDef: EventDef) {
+    return eventDef.sourceId !== sourceId
+  })
 }
 
 // has extra bonus feature of removing temporary events
