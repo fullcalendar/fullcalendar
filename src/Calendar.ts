@@ -1079,7 +1079,7 @@ export default class Calendar {
 
       return new EventApi(
         this,
-        def, // TODO: do for getEventById as well
+        def,
         def.recurringDef ? null : objectValues(subset.instances)[0]
       )
     }
@@ -1094,12 +1094,23 @@ export default class Calendar {
 
     id = String(id)
 
-    for (let instanceId in instances) {
-      let instance = instances[instanceId]
-      let def = defs[instance.defId]
+    for (let defId in defs) {
+      let def = defs[defId]
 
       if (def.publicId === id) {
-        return new EventApi(this, def, instance)
+
+        if (def.recurringDef) {
+          return new EventApi(this, def, null)
+        } else {
+
+          for (let instanceId in instances) {
+            let instance = instances[instanceId]
+
+            if (instance.defId === def.defId) {
+              return new EventApi(this, def, instance)
+            }
+          }
+        }
       }
     }
 
