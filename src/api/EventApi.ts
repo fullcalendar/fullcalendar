@@ -58,14 +58,10 @@ export default class EventApi {
   }
 
   remove() {
-    let { instance } = this
-
-    if (instance) {
-      this.calendar.dispatch({
-        type: 'REMOVE_EVENT_INSTANCES',
-        instances: { [instance.instanceId]: instance }
-      })
-    }
+    this.calendar.dispatch({
+      type: 'REMOVE_EVENT_DEF',
+      defId: this.def.defId
+    })
   }
 
   get title(): string {

@@ -29,6 +29,11 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
     case 'REMOVE_EVENT_INSTANCES':
       return excludeInstances(eventStore, action.instances)
 
+    case 'REMOVE_EVENT_DEF':
+      return filterDefs(eventStore, function(eventDef) {
+        return eventDef.defId !== action.defId
+      })
+
     case 'REMOVE_EVENT_SOURCE':
       return excludeEventsBySourceId(eventStore, action.sourceId)
 

@@ -42,7 +42,8 @@ export type Action =
   { type: 'RECEIVE_EVENTS', sourceId: string, fetchId: string, fetchRange: DateRange, rawEvents: EventInput[] } |
   { type: 'RECEIVE_EVENT_ERROR', sourceId: string, fetchId: string, fetchRange: DateRange, error: SimpleError } |
 
-  { type: 'ADD_EVENTS', eventStore: EventStore } |
+  { type: 'ADD_EVENTS', eventStore: EventStore } | // rename to MERGE_EVENTS?
   { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation } |
+  { type: 'REMOVE_EVENT_DEF', defId: string } |
   { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash } |
   { type: 'REMOVE_ALL_EVENTS' }
