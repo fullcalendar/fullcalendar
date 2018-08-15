@@ -25,7 +25,7 @@ import browserContext from './common/browser-context'
 import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
 import { DateProfile } from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource } from './structs/event-source'
-import { EventInput, EventInstance, EventDef } from './structs/event'
+import { EventInput, EventDef } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
@@ -1061,9 +1061,9 @@ export default class Calendar {
 
 
   addEvent(eventInput: EventInput, isSticky: boolean = false): EventApi | null {
-    let subset = parseEventStore([ eventInput ], '', this.state.dateProfile.activeRange, this)
+    let activeRange = this.state.dateProfile.activeRange
+    let subset = parseEventStore([ eventInput ], '', this, activeRange)
     let def: EventDef = objectValues(subset.defs)[0]
-    let instances: EventInstance[] = objectValues(subset.instances)
 
     if (def) {
 
@@ -1071,6 +1071,7 @@ export default class Calendar {
         def.isTemporary = true // will mutate subet, which is good for ADD_EVENTS
       }
 
+      // TODO: make this regenerate recurring events
       this.dispatch({
         type: 'ADD_EVENTS',
         eventStore: subset
@@ -1078,8 +1079,8 @@ export default class Calendar {
 
       return new EventApi(
         this,
-        def,
-        instances.length === 1 ? instances[0] : null
+        def, // TODO: do for getEventById as well
+        def.recurringDef ? null : objectValues(subset.instances)[0]
       )
     }
 

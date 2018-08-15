@@ -64,17 +64,20 @@ function receiveEvents(
     rawEvents = runEventDataTransform(rawEvents, eventSource.eventDataTransform)
     rawEvents = runEventDataTransform(rawEvents, calendar.opt('eventDataTransform'))
 
+    let dest = filterDefs(
+      eventStore,
+      function(eventDef: EventDef) {
+        // not the best isTemporary solution
+        return eventDef.sourceId !== eventSource.sourceId && !eventDef.isTemporary
+      }
+    )
+
     return parseEventStore(
       rawEvents,
       eventSource.sourceId,
-      fetchRange,
       calendar,
-      filterDefs( // dest
-        eventStore,
-        function(eventDef: EventDef) {
-          return eventDef.sourceId !== eventSource.sourceId && !eventDef.isTemporary
-        }
-      )
+      fetchRange,
+      dest
     )
   }
 

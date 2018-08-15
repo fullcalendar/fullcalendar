@@ -1,4 +1,4 @@
-import { EventInput, EventDefHash, EventInstanceHash, parseEventDef, parseEventDateSpan, createEventInstance } from './event'
+import { EventInput, EventDefHash, EventInstanceHash, parseEventDef, parseEventDateSpan, createEventInstance, EventDef } from './event'
 import { parseEventDefRecurring, expandEventDef } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
@@ -18,9 +18,9 @@ export interface EventStore {
 export function parseEventStore(
   rawEvents: EventInput[],
   sourceId: string,
-  fetchRange: DateRange,
   calendar: Calendar,
-  dest: EventStore = createEmptyEventStore() // specify this arg to append to an existing EventStore
+  expandRange?: DateRange,
+  dest: EventStore = createEmptyEventStore(), // specify this arg to append to an existing EventStore
 ): EventStore {
 
   for (let rawEvent of rawEvents) {
@@ -30,6 +30,7 @@ export function parseEventStore(
     // a recurring event?
     if (parsedRecurring) {
       let def = parseEventDef(leftovers, sourceId, parsedRecurring.isAllDay, parsedRecurring.hasEnd)
+
       def.recurringDef = {
         typeId: parsedRecurring.typeId,
         typeData: parsedRecurring.typeData
@@ -37,11 +38,8 @@ export function parseEventStore(
 
       dest.defs[def.defId] = def
 
-      let ranges = expandEventDef(def, fetchRange, calendar)
-
-      for (let range of ranges) {
-        let instance = createEventInstance(def.defId, range)
-        dest.instances[instance.instanceId] = instance
+      if (expandRange) {
+        expandEventDefInstances(def, expandRange, calendar, dest.instances)
       }
 
     // a non-recurring event
@@ -59,6 +57,23 @@ export function parseEventStore(
   }
 
   return dest
+}
+
+export function expandEventDefInstances(
+  def: EventDef,
+  framingRange: DateRange,
+  calendar: Calendar,
+  dest: EventInstanceHash
+) {
+  if (def.recurringDef) { // need to have this check?
+    let ranges = expandEventDef(def, framingRange, calendar)
+
+    for (let range of ranges) {
+      let instance = createEventInstance(def.defId, range)
+
+      dest[instance.instanceId] = instance
+    }
+  }
 }
 
 // retrieves events that have the same groupId as the instance specified by `instanceId`

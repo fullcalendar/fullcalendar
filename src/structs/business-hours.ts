@@ -29,8 +29,8 @@ export function buildBusinessHours(
   return parseEventStore(
     refineInputs(input, isAllDay),
     '',
-    framingRange,
-    calendar
+    calendar,
+    framingRange
   )
 }
 
