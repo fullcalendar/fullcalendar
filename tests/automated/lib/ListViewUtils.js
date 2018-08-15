@@ -23,11 +23,11 @@ export function getListEventElTimeEl(el) {
   return el.find(`.${LIST_ITEM_TIME_CLASS}`)
 }
 
-export function getListEventElTitleElText(el) {
+export function getListEventElTitle(el) {
   return getListEventElTitleEl(el).text()
 }
 
-export function getListEventElTimeElText(el) {
+export function getListEventElTimeText(el) {
   return getListEventElTimeEl(el).text()
 }
 

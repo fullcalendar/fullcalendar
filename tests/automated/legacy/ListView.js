@@ -5,8 +5,8 @@ import {
   getListHeadingEls,
   getListEventEls,
   getListEventElsCount,
-  getListEventElTimeElText,
-  getListEventElTitleElText
+  getListEventElTimeText,
+  getListEventElTitle
 } from '../lib/ListViewUtils'
 import { getScrollerEl } from '../lib/MonthViewUtils'
 import { replaceEventElDotElWithEl } from '../event-render/EventRenderUtils'
@@ -465,8 +465,8 @@ describe('ListView rendering', function() {
     return getListEventEls().map(function(i, el) {
       el = $(el)
       return {
-        title: getListEventElTitleElText(el) || '', // text!
-        timeText: getListEventElTimeElText(el) || '' // text!
+        title: getListEventElTitle(el) || '', // text!
+        timeText: getListEventElTimeText(el) || '' // text!
       }
     }).get()
   }

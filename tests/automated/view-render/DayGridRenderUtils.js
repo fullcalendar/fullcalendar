@@ -102,7 +102,7 @@ export function getMorePopoverEl() {
   return $(`.${MORE_POPOVER_CLASS}`)
 }
 
-export function getMorePopoverElTitleEl() {
+export function getMorePopoverTitle() {
   return getMorePopoverEl().find(`.${HEADER_CLASS} .${TITLE_CLASS}`)
 }
 

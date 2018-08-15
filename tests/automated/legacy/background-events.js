@@ -1,16 +1,14 @@
 import { RED_REGEX } from '../lib/dom-misc'
 import {
   getBackgroundEventEls,
-  getBackgroundEventElAtIndex,
-  getDayGridRowElAtIndexBackgroundEventEls,
   getEventEls,
   getSingleBackgroundEventEl,
-  getDayGridRowElAtIndexBackgroundEventElAtIndex
 } from '../event-render/EventRenderUtils'
 import {
   getBackgroundEventElsResizerEls,
   getDayGridNonBusinessDayEls,
-  getNonBusinessDayEls
+  getNonBusinessDayEls,
+  getDayGridRowEls,
 
 } from '../view-render/DayGridRenderUtils'
 import {
@@ -40,7 +38,7 @@ describe('background events', function() {
         } ]
         options.eventAfterAllRender = function() {
           expect(getBackgroundEventEls().length).toBe(1)
-          expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
+          expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
           expect(getSingleBackgroundEventEl()).toBeLeftOf('.fc-day[data-date="2014-11-05"]')
           expect(getEventEls().length).toBe(0)
           expect(getBackgroundEventElsResizerEls().length).toBe(0) // can't resize
@@ -58,10 +56,10 @@ describe('background events', function() {
         } ]
         options.eventAfterAllRender = function() {
           expect(getBackgroundEventEls().length).toBe(2)
-          expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
-          expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-          expect(getBackgroundEventElAtIndex(0)).toBeRightOf('.fc-day[data-date="2014-11-03"]')
-          expect(getBackgroundEventElAtIndex(1)).toBeLeftOf('.fc-day[data-date="2014-11-12"]')
+          expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
+          expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+          expect(getBackgroundEventEls().eq(0)).toBeRightOf('.fc-day[data-date="2014-11-03"]')
+          expect(getBackgroundEventEls().eq(1)).toBeLeftOf('.fc-day[data-date="2014-11-12"]')
           expect(getEventEls().length).toBe(0)
           done()
         }
@@ -83,9 +81,9 @@ describe('background events', function() {
         ]
         options.eventAfterAllRender = function() {
           expect(getBackgroundEventEls().length).toBe(2)
-          expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(2)
-          expect(getBackgroundEventElAtIndex(0)).toBeRightOf('.fc-day[data-date="2014-11-02"]')
-          expect(getBackgroundEventElAtIndex(1)).toBeLeftOf('.fc-day[data-date="2014-11-08"]')
+          expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(2)
+          expect(getBackgroundEventEls().eq(0)).toBeRightOf('.fc-day[data-date="2014-11-02"]')
+          expect(getBackgroundEventEls().eq(1)).toBeLeftOf('.fc-day[data-date="2014-11-08"]')
           expect(getEventEls().length).toBe(0)
           done()
         }
@@ -102,7 +100,7 @@ describe('background events', function() {
           } ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
             expect(getBackgroundEventEls()).toBeRightOf('.fc-day-grid .fc-row:eq(1) .fc-week-number')
             expect(getEventEls().length).toBe(0)
             done()
@@ -135,7 +133,7 @@ describe('background events', function() {
         } ]
         options.eventAfterAllRender = function() {
           expect(getBackgroundEventEls().length).toBe(1)
-          expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
+          expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
           expect(getBackgroundEventEls()).toBeRightOf('.fc-day[data-date="2014-11-06"]')
           expect(getEventEls().length).toBe(0)
           done()
@@ -152,10 +150,10 @@ describe('background events', function() {
         } ]
         options.eventAfterAllRender = function() {
           expect(getBackgroundEventEls().length).toBe(2)
-          expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
-          expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-          expect(getBackgroundEventElAtIndex(0)).toBeLeftOf('.fc-day[data-date="2014-11-02"]')
-          expect(getBackgroundEventElAtIndex(1)).toBeRightOf('.fc-day[data-date="2014-11-12"]')
+          expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
+          expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+          expect(getBackgroundEventEls().eq(0)).toBeLeftOf('.fc-day[data-date="2014-11-02"]')
+          expect(getBackgroundEventEls().eq(1)).toBeRightOf('.fc-day[data-date="2014-11-12"]')
           expect(getEventEls().length).toBe(0)
           done()
         }
@@ -172,7 +170,7 @@ describe('background events', function() {
           } ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
             expect(getBackgroundEventEls()).toBeLeftOf('.fc-day-grid .fc-row:eq(1) .fc-week-number span')
             expect(getEventEls().length).toBe(0)
             done()
@@ -194,16 +192,16 @@ describe('background events', function() {
           } ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(7)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(0).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(2)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(3).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(4).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(5).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(2)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(3)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(4)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(5)).length).toBe(1)
 
-            expect(getDayGridRowElAtIndexBackgroundEventElAtIndex(1, 0))
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).eq(0))
               .toBeLeftOf('.fc-day[data-date="2014-11-05"]')
-            expect(getDayGridRowElAtIndexBackgroundEventElAtIndex(1, 1))
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).eq(1))
               .toBeRightOf('.fc-day[data-date="2014-11-03"]')
 
             expect(getEventEls().length).toBe(0)
@@ -221,17 +219,17 @@ describe('background events', function() {
           } ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(6)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(0).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(3).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(4).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(5).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(3)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(4)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(5)).length).toBe(1)
 
-            expect(getDayGridRowElAtIndexBackgroundEventElAtIndex(1, 0))
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).eq(0))
               .toBeLeftOf('.fc-day[data-date="2014-11-05"]')
 
-            expect(getDayGridRowElAtIndexBackgroundEventElAtIndex(2, 0))
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).eq(0))
               .toBeRightOf('.fc-day[data-date="2014-11-09"]')
 
             expect(getEventEls().length).toBe(0)
@@ -248,14 +246,14 @@ describe('background events', function() {
           } ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(5)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(0).length).toBe(0)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(3).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(4).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(5).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(0)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(3)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(4)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(5)).length).toBe(1)
 
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1))
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)))
               .toBeRightOf('.fc-day[data-date="2014-11-04"]')
 
             done()
@@ -271,14 +269,14 @@ describe('background events', function() {
           } ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(5)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(0).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(3).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(4).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(5).length).toBe(0)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(3)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(4)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(5)).length).toBe(0)
 
-            expect(getDayGridRowElAtIndexBackgroundEventEls(4))
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(4)))
               .toBeLeftOf('.fc-day[data-date="2014-11-28"]')
 
             done()
@@ -301,12 +299,12 @@ describe('background events', function() {
           ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(8)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(0).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(3)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(3).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(4).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(5).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(3)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(3)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(4)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(5)).length).toBe(1)
 
             /* order in DOM is reversed
             expect($('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(0)'))
@@ -333,12 +331,12 @@ describe('background events', function() {
           } ]
           options.eventAfterAllRender = function() {
             expect(getBackgroundEventEls().length).toBe(7)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(0).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(1).length).toBe(2)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(2).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(3).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(4).length).toBe(1)
-            expect(getDayGridRowElAtIndexBackgroundEventEls(5).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(2)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(3)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(4)).length).toBe(1)
+            expect(getBackgroundEventEls(getDayGridRowEls().eq(5)).length).toBe(1)
 
             /* order in DOM is reversed
             expect($('.fc-day-grid .fc-row:eq(1) .fc-bgevent:eq(0)'))
@@ -690,8 +688,8 @@ describe('background events', function() {
             expect(queryBgEventsInCol(5).length).toBe(1)
             expect(queryBgEventsInCol(6).length).toBe(1)
 
-            expect(getBackgroundEventElAtIndex(3)).toBeAbove('.fc-slats tr:eq(2)') // first part before 1am
-            expect(getBackgroundEventElAtIndex(4)).toBeBelow('.fc-slats tr:eq(9)') // second part after 5am
+            expect(getBackgroundEventEls().eq(3)).toBeAbove('.fc-slats tr:eq(2)') // first part before 1am
+            expect(getBackgroundEventEls().eq(4)).toBeBelow('.fc-slats tr:eq(9)') // second part after 5am
 
             done()
           }

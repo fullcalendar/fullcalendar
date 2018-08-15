@@ -1,5 +1,3 @@
-import { getDayGridRowElAtIndex } from '../view-render/DayGridRenderUtils'
-
 const TIME_CLASS = 'fc-time'
 const EVENT_CLASS = 'fc-event'
 const TITLE_CLASS = 'fc-title'
@@ -54,24 +52,12 @@ export function getEventEls() {
   return $(`.${EVENT_CLASS}`)
 }
 
-export function getBackgroundEventEls() {
-  return $(`.${BACKGROUND_EVENT_CLASS}`)
-}
-
-export function getDayGridRowElAtIndexBackgroundEventEls(index) {
-  return getDayGridRowElAtIndex(index).find(`.${BACKGROUND_EVENT_CLASS}`)
-}
-
-export function getDayGridRowElAtIndexBackgroundEventElAtIndex(rowIndex, eventIndex) {
-  return getDayGridRowElAtIndexBackgroundEventEls(rowIndex).eq(eventIndex)
+export function getBackgroundEventEls(containerEl) {
+  return $(`.${BACKGROUND_EVENT_CLASS}`, containerEl)
 }
 
 export function getEventElAtIndex(index) {
   return getEventEls().eq(index)
-}
-
-export function getBackgroundEventElAtIndex(index) {
-  return getBackgroundEventEls().eq(index)
 }
 
 export function getFirstEventEl() {

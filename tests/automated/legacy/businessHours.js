@@ -2,8 +2,13 @@
 
 import { getBoundingRect } from '../lib/dom-geom'
 import { doElsMatchSegs } from '../lib/segs'
-import { getTimeGridTop, getTimeGridDayEls } from '../lib/time-grid'
+import {
+  getTimeGridTop,
+  getTimeGridDayEls,
+  getTimeGridNonBusinessDayEls
+} from '../lib/time-grid'
 import { ensureDate } from '../datelib/utils'
+import { getDayGridNonBusinessDayEls } from '../view-render/DayGridRenderUtils'
 
 
 describe('businessHours', function() {
@@ -21,7 +26,7 @@ describe('businessHours', function() {
     currentCalendar.next() // ... out. should render correctly.
 
     // whole days
-    expect($('.fc-day-grid .fc-nonbusiness').length).toBe(2) // each multi-day stretch is one element
+    expect(getDayGridNonBusinessDayEls().length).toBe(2) // each multi-day stretch is one element
 
     // timed area
     expect(isTimeGridNonBusinessSegsRendered([
@@ -191,7 +196,7 @@ describe('businessHours', function() {
   ------------------------------------------------------------------------------------------------------------------ */
 
   function isTimeGridNonBusinessSegsRendered(segs) {
-    return doElsMatchSegs($('.fc-time-grid .fc-nonbusiness'), segs, getTimeGridRect)
+    return doElsMatchSegs(getTimeGridNonBusinessDayEls(), segs, getTimeGridRect)
   }
 
   function getTimeGridRect(start, end) {
