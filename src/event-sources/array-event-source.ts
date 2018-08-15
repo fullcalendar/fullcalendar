@@ -3,6 +3,8 @@ import { EventInput } from '../structs/event'
 
 registerEventSourceDef({
 
+  singleFetch: true, // can we please NOT store the raw events internally then???
+
   parseMeta(raw: any): EventInput[] | null {
     if (Array.isArray(raw)) { // short form
       return raw

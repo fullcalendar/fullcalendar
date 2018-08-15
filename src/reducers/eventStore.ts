@@ -2,10 +2,12 @@ import Calendar from '../Calendar'
 import { filterHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
-import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents, createEmptyEventStore } from '../structs/event-store'
+import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents, createEmptyEventStore, expandEventDefInstances } from '../structs/event-store'
 import { Action } from './types'
-import { EventSourceHash, EventSource } from '../structs/event-source'
+import { EventSourceHash, EventSource, getEventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
+
+// how to let user modify recurring def AFTER?
 
 export default function(eventStore: EventStore, action: Action, sourceHash: EventSourceHash, calendar: Calendar): EventStore {
   switch(action.type) {
@@ -44,6 +46,9 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
 
     case 'REMOVE_ALL_EVENTS':
       return createEmptyEventStore()
+
+    case 'SET_DATE_PROFILE':
+      return expandStaticEventDefs(eventStore, sourceHash, action.dateProfile.activeRange, calendar)
 
     default:
       return eventStore
@@ -129,4 +134,23 @@ function applyMutationToRelated(eventStore: EventStore, instanceId: string, muta
   let related = getRelatedEvents(eventStore, instanceId)
   related = applyMutationToEventStore(related, mutation, calendar)
   return mergeEventStores(eventStore, related)
+}
+
+function expandStaticEventDefs(eventStore: EventStore, eventSources: EventSourceHash, framingRange: DateRange, calendar: Calendar): EventStore {
+  let staticSources = filterHash(eventSources, function(eventSource: EventSource) { // sources that won't change
+    return eventSource.fetchRange && getEventSourceDef(eventSource.sourceDefId).singleFetch // only needs one fetch, and already got it
+  }) as EventSourceHash
+
+  let defs = eventStore.defs
+  let instances = filterHash(eventStore.instances, function(eventInstance) {
+    let def = defs[eventInstance.defId]
+
+    return !def.recurringDef || !staticSources[def.sourceId]
+  })
+
+  for (let defId in defs) {
+    expandEventDefInstances(defs[defId], framingRange, calendar, instances)
+  }
+
+  return { defs, instances }
 }

@@ -1,4 +1,4 @@
-import { EventSource, EventSourceHash, getEventSourceDef } from '../structs/event-source'
+import { EventSource, EventSourceHash, getEventSourceDef, EventSourceDef } from '../structs/event-source'
 import Calendar from '../Calendar'
 import { arrayToHash, assignTo, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
@@ -20,7 +20,7 @@ export default function(eventSourceHash: EventSourceHash, action: Action, datePr
 
     case 'FETCH_EVENT_SOURCES':
       if (dateProfile) {
-        return fetchSourcesById(eventSourceHash, action.sourceIds || null, dateProfile, calendar)
+        return fetchSourcesByIds(eventSourceHash, action.sourceIds || null, dateProfile, calendar)
       } else {
         return eventSourceHash // can't fetch if don't know the framing range
       }
@@ -63,6 +63,7 @@ function fetchDirtySources(sourceHash: EventSourceHash, dateProfile: DateProfile
   let activeRange = dateProfile.activeRange
   let dirtySourceIds = []
 
+
   for (let sourceId in sourceHash) {
     let eventSource = sourceHash[sourceId]
 
@@ -77,13 +78,13 @@ function fetchDirtySources(sourceHash: EventSourceHash, dateProfile: DateProfile
   }
 
   if (dirtySourceIds.length) {
-    return fetchSourcesById(sourceHash, dirtySourceIds, dateProfile, calendar)
+    sourceHash = fetchSourcesByIds(sourceHash, dirtySourceIds, dateProfile, calendar)
   }
 
   return sourceHash
 }
 
-function fetchSourcesById(
+function fetchSourcesByIds(
   prevSources: EventSourceHash,
   sourceIds: string[] | null,
   dateProfile: DateProfile,
@@ -97,14 +98,7 @@ function fetchSourcesById(
     let source = prevSources[sourceId]
 
     if (!sourceIdHash || sourceIdHash[sourceId]) {
-      let fetchId = String(uid++)
-
-      fetchSource(source, activeRange, fetchId, calendar)
-
-      nextSources[sourceId] = assignTo({}, source, {
-        isFetching: true,
-        latestFetchId: fetchId
-      })
+      nextSources[sourceId] = fetchSource(source, activeRange, calendar)
     } else {
       nextSources[sourceId] = source
     }
@@ -113,8 +107,20 @@ function fetchSourcesById(
   return nextSources
 }
 
-function fetchSource(eventSource: EventSource, range: DateRange, fetchId: string, calendar: Calendar) {
-  getEventSourceDef(eventSource.sourceDefId).fetch(
+function fetchSource(eventSource: EventSource, range: DateRange, calendar: Calendar) {
+  let sourceDef = getEventSourceDef(eventSource.sourceDefId)
+
+  if (sourceDef.singleFetch && eventSource.fetchRange) {
+    return eventSource
+  } else {
+    return fetchSourceAsync(eventSource, sourceDef, range, calendar)
+  }
+}
+
+function fetchSourceAsync(eventSource: EventSource, sourceDef: EventSourceDef, range: DateRange, calendar: Calendar) {
+  let fetchId = String(uid++)
+
+  sourceDef.fetch(
     {
       eventSource,
       calendar,
@@ -152,6 +158,13 @@ function fetchSource(eventSource: EventSource, range: DateRange, fetchId: string
       })
     }
   )
+
+  // TODO: if singleFetch, remove the meta at this point?
+
+  return assignTo({}, eventSource, {
+    isFetching: true,
+    latestFetchId: fetchId
+  })
 }
 
 function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId: string, fetchRange: DateRange) {
