@@ -71,7 +71,7 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        currentCalendar.getEvent(1).remove()
+        currentCalendar.getEventById(1).remove()
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)
@@ -87,7 +87,7 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        currentCalendar.getEvent('1').remove()
+        currentCalendar.getEventById('1').remove()
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)
@@ -103,7 +103,7 @@ describe('removeEvents', function() {
     go(
       buildEventsWithIds(),
       function() {
-        currentCalendar.getEvent(0).remove()
+        currentCalendar.getEventById(0).remove()
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)
