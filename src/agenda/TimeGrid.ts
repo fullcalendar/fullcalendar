@@ -633,7 +633,8 @@ export default class TimeGrid extends DateComponent {
             right: colPositions.rights[colIndex] + leftOrigin,
             top: slatTop,
             bottom: slatTop + slatHeight
-          }
+          },
+          layer: 0
         }
       }
     }

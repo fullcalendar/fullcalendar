@@ -350,7 +350,8 @@ export default class DayGrid extends DateComponent {
             right: colPositions.rights[col] + leftOrigin,
             top: rowPositions.tops[row] + topOrigin,
             bottom: rowPositions.bottoms[row] + topOrigin
-          }
+          },
+          layer: 0
         }
       }
     }

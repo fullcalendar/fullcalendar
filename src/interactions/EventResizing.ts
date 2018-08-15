@@ -31,6 +31,7 @@ export default class EventDragging {
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.pointer.selector = '.fc-resizer'
     dragging.touchScrollAllowed = false
+    dragging.autoScroller.isEnabled = component.opt('dragScroll')
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)

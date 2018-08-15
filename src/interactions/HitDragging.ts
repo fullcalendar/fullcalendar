@@ -12,6 +12,7 @@ export interface Hit {
   dateSpan: DateSpan
   dayEl: HTMLElement
   rect: Rect
+  layer: number
 }
 
 /*
@@ -73,7 +74,7 @@ export default class HitDragging {
 
     if (this.initialHit || !this.requireInitial) {
       dragging.setIgnoreMove(false)
-      this.emitter.trigger('pointerdown', ev)
+      this.emitter.trigger('pointerdown', ev) // TODO: fire this before computing processFirstCoord, so listeners can cancel. this gets fired by almost every handler :(
     } else {
       dragging.setIgnoreMove(true)
     }
@@ -163,18 +164,26 @@ export default class HitDragging {
 
   queryHit(x: number, y: number): Hit | null {
     let { droppableHash } = this
+    let bestHit: Hit | null = null
 
     for (let id in droppableHash) {
       let component = droppableHash[id]
       let hit = component.queryHit(x, y)
 
-      // make sure the hit is within activeRange, meaning it's not a deal cell
-      if (hit && rangeContainsRange(component.dateProfile.activeRange, hit.dateSpan.range)) {
-        return hit
+      if (
+        hit &&
+        (
+          // make sure the hit is within activeRange, meaning it's not a deal cell
+          !component.dateProfile || // hack for DayTile
+          rangeContainsRange(component.dateProfile.activeRange, hit.dateSpan.range)
+        ) &&
+        (!bestHit || hit.layer > bestHit.layer)
+      ) {
+        bestHit = hit
       }
     }
 
-    return null
+    return bestHit
   }
 
 }

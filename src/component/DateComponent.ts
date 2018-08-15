@@ -52,6 +52,7 @@ export default abstract class DateComponent extends Component {
 
   // self-config, overridable by subclasses
   isInteractable: boolean = false
+  useEventCenter: boolean = true // for dragging geometry
   doesDragHelper: boolean = false // for events that ORIGINATE from this component
   doesDragHighlight: boolean = false // for events that ORIGINATE from this component
   segSelector: string = '.fc-event-container > *' // what constitutes an event element?
@@ -1049,15 +1050,25 @@ export default abstract class DateComponent extends Component {
 
   isValidSegDownEl(el: HTMLElement) {
     return !this.eventDrag && !this.eventResize &&
-      !elementClosest(el, '.fc-helper')
+      !elementClosest(el, '.fc-helper') &&
+      !this.isInPopover(el)
   }
 
 
   isValidDateDownEl(el: HTMLElement) {
     let segEl = elementClosest(el, this.segSelector)
+
     return (!segEl || segEl.classList.contains('fc-helper')) &&
       !elementClosest(el, '.fc-more') && // a "more.." link
-      !elementClosest(el, 'a[data-goto]') // a clickable nav link
+      !elementClosest(el, 'a[data-goto]') && // a clickable nav link
+      !this.isInPopover(el)
+  }
+
+
+  // is the element inside of an inner popover?
+  isInPopover(el: HTMLElement) {
+    let popoverEl = elementClosest(el, '.fc-popover')
+    return popoverEl && popoverEl !== this.el // if the current component IS a popover, okay
   }
 
 }

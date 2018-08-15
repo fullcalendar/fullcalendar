@@ -36,9 +36,10 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.pointer.selector = '.fc-draggable, .fc-resizable' // TODO: test this in IE11
     dragging.touchScrollAllowed = false
+    dragging.autoScroller.isEnabled = component.opt('dragScroll')
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, browserContext.componentHash)
-    hitDragging.useSubjectCenter = true
+    hitDragging.useSubjectCenter = component.useEventCenter
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragstart', this.handleDragStart)
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
