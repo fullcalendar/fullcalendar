@@ -16,8 +16,7 @@ export default function(eventSourceHash: EventSourceHash, action: Action, datePr
       return removeSource(eventSourceHash, action.sourceId)
 
     case 'SET_DATE_PROFILE':
-      fetchDirtySources(eventSourceHash, action.dateProfile, calendar)
-      return eventSourceHash
+      return fetchDirtySources(eventSourceHash, action.dateProfile, calendar)
 
     case 'FETCH_EVENT_SOURCES':
       if (dateProfile) {
@@ -48,7 +47,7 @@ function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], da
   }
 
   if (dateProfile) {
-    fetchDirtySources(hash, dateProfile, calendar)
+    hash = fetchDirtySources(hash, dateProfile, calendar)
   }
 
   return assignTo({}, eventSourceHash, hash)
@@ -60,7 +59,7 @@ function removeSource(eventSourceHash: EventSourceHash, sourceId: string): Event
   })
 }
 
-function fetchDirtySources(sourceHash: EventSourceHash, dateProfile: DateProfile, calendar: Calendar) {
+function fetchDirtySources(sourceHash: EventSourceHash, dateProfile: DateProfile, calendar: Calendar): EventSourceHash {
   let activeRange = dateProfile.activeRange
   let dirtySourceIds = []
 
@@ -78,11 +77,10 @@ function fetchDirtySources(sourceHash: EventSourceHash, dateProfile: DateProfile
   }
 
   if (dirtySourceIds.length) {
-    calendar.dispatch({
-      type: 'FETCH_EVENT_SOURCES',
-      sourceIds: dirtySourceIds
-    })
+    return fetchSourcesById(sourceHash, dirtySourceIds, dateProfile, calendar)
   }
+
+  return sourceHash
 }
 
 function fetchSourcesById(

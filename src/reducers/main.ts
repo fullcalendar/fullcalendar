@@ -22,8 +22,8 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     eventSelection: reduceSelectedEvent(state.eventSelection, action),
     eventDrag: reduceEventDrag(state.eventDrag, action),
     eventResize: reduceEventResize(state.eventResize, action),
-    eventSourceLoadingLevel: reduceEventSourceLoadingLevel(state.eventSourceLoadingLevel, action, eventSources),
-    loadingLevel: reduceEventSourceLoadingLevel(state.loadingLevel, action, eventSources) // use same func
+    eventSourceLoadingLevel: computeLoadingLevel(eventSources),
+    loadingLevel: computeLoadingLevel(eventSources)
   }
 }
 
@@ -82,16 +82,14 @@ function reduceEventResize(currentEventResize: EventInteractionState | null, act
   }
 }
 
-function reduceEventSourceLoadingLevel(level: number, action: Action, eventSources: EventSourceHash): number {
-  switch (action.type) {
-    case 'REMOVE_ALL_EVENT_SOURCES':
-      return 0
-    case 'FETCH_EVENT_SOURCES':
-      return level + (action.sourceIds ? action.sourceIds.length : Object.keys(eventSources).length)
-    case 'RECEIVE_EVENTS':
-    case 'RECEIVE_EVENT_ERROR':
-      return level - 1
-    default:
-      return level
+function computeLoadingLevel(eventSources: EventSourceHash): number {
+  let cnt = 0
+
+  for (let sourceId in eventSources) {
+    if (eventSources[sourceId].isFetching) {
+      cnt++
+    }
   }
+
+  return cnt
 }
