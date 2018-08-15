@@ -276,7 +276,7 @@ describe('eventLimit popover', function() {
       it('should have the new day and remain all-day', function(done) {
 
         initCalendar({
-          eventDrop: function(arg) {
+          eventMutation: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-28')
             expect(arg.event.isAllDay).toBe(true)
             done()
@@ -305,7 +305,7 @@ describe('eventLimit popover', function() {
 
         initCalendar({
           events: testEvents,
-          eventDrop: function(arg) {
+          eventMutation: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-28T13:00:00Z')
             expect(arg.event.isAllDay).toBe(false)
             done()
@@ -329,7 +329,7 @@ describe('eventLimit popover', function() {
         initCalendar({
           defaultView: 'agendaWeek',
           scrollTime: '00:00:00',
-          eventDrop: function(arg) {
+          eventMutation: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-30T03:00:00Z')
             expect(arg.event.isAllDay).toBe(false)
             done()
@@ -356,7 +356,7 @@ describe('eventLimit popover', function() {
 
         initCalendar({
           eventDragStop: function() {
-            setTimeout(function() { // try to wait until drag is over. eventDrop won't fire BTW
+            setTimeout(function() { // try to wait until drag is over. eventMutation won't fire BTW
               expect($('.fc-more-popover')).toBeInDOM()
               done()
             }, 0)
