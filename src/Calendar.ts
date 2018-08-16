@@ -546,6 +546,9 @@ export default class Calendar {
       renderedView.setElement(
         createElement('div', { className: 'fc-view fc-' + renderedView.type + '-view' })
       )
+    } else {
+      // because removeElement must have been called previously, which unbinds global handlers
+      renderedView.bindGlobalHandlers()
     }
 
     if (!renderedView.el.parentNode) {

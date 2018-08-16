@@ -213,8 +213,9 @@ export default class TimeGrid extends DateComponent {
 
 
   unrenderDates() {
-    // this.unrenderSlats(); // don't need this because repeated .html() calls clear
     this.unrenderColumns()
+    // we don't unrender slats because won't change between date navigation,
+    // and if slat-related settings are changed, the whole component will be rerendered.
   }
 
 
@@ -381,16 +382,7 @@ export default class TimeGrid extends DateComponent {
 
 
   unrenderContentSkeleton() {
-    if (this.contentSkeletonEl) { // defensive :(
-      removeElement(this.contentSkeletonEl)
-      this.contentSkeletonEl = null
-      this.colContainerEls = null
-      this.helperContainerEls = null
-      this.fgContainerEls = null
-      this.bgContainerEls = null
-      this.highlightContainerEls = null
-      this.businessContainerEls = null
-    }
+    removeElement(this.contentSkeletonEl)
   }
 
 

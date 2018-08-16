@@ -23,6 +23,7 @@ export default class EventHovering {
       this.handleSegLeave
     )
 
+    // TODO: find less expensive way to do this. generates lots of EventApi's
     component.getCalendar().on('eventDestroy', this.handleEventDestroy)
   }
 

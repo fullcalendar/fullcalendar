@@ -76,9 +76,7 @@ export default class EventRenderer {
       }
     }
 
-    if (this.renderBgSegs(bgSegs) !== false) { // no failure?
-      this.bgSegs = bgSegs
-    }
+    this.bgSegs = this.renderBgSegs(bgSegs)
 
     // render an `.el` on each seg
     // returns a subset of the segs. segs that were actually rendered
@@ -119,9 +117,9 @@ export default class EventRenderer {
   }
 
 
-  renderBgSegs(segs: Seg[]): false | void {
+  renderBgSegs(segs: Seg[]): Seg[] {
     if (this.fillRenderer) {
-      this.fillRenderer.renderSegs('bgEvent', segs, {
+      return this.fillRenderer.renderSegs('bgEvent', segs, {
         getClasses: (seg) => {
           return this.getBgClasses(seg.eventRange.eventDef)
         },
@@ -134,9 +132,9 @@ export default class EventRenderer {
           return this.filterEventRenderEl(seg.eventRange, el)
         }
       })
-    } else {
-      return false // signal failure if no fillRenderer
     }
+
+    return []
   }
 
 
@@ -205,7 +203,7 @@ export default class EventRenderer {
     }
 
     // event is currently selected? attach a className.
-    if (seg.eventRange.eventInstance.instanceId === this.component.selectedEventInstanceId) {
+    if (seg.eventRange.eventInstance.instanceId === this.component.eventSelection) {
       classes.push('fc-selected')
     }
 
