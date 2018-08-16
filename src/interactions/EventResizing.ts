@@ -11,6 +11,7 @@ import { DateRange } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
 import { EventRenderRange } from '../component/event-rendering'
 import { isEventStoreValid } from './constraint'
+import { createDuration } from '../datelib/duration'
 
 export default class EventDragging {
 
@@ -19,7 +20,7 @@ export default class EventDragging {
   hitDragging: HitDragging
 
   // internal state
-  draggingSeg: Seg | null = null
+  draggingSeg: Seg | null = null // TODO: rename to resizingSeg? subjectSeg?
   eventRange: EventRenderRange | null = null
   relatedEvents: EventStore | null = null
   validMutation: EventMutation | null = null
@@ -160,9 +161,11 @@ export default class EventDragging {
         eventStore: mutatedRelatedEvents
       })
 
-      calendar.publiclyTrigger('eventMutation', [
+      calendar.publiclyTrigger('eventResize', [
         {
-          mutation: this.validMutation, // TODO: public API?
+          el: this.draggingSeg.el,
+          startDelta: this.validMutation.startDelta || createDuration(0),
+          endDelta: this.validMutation.endDelta || createDuration(0),
           prevEvent: eventApi,
           event: new EventApi( // the data AFTER the mutation
             calendar,

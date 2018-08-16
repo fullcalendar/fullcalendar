@@ -239,9 +239,10 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
             eventStore: mutatedRelatedEvents
           })
 
-          initialCalendar.publiclyTrigger('eventMutation', [
+          initialCalendar.publiclyTrigger('eventDrop', [
             {
-              mutation: this.validMutation, // TODO: public API?
+              el: ev.subjectEl,
+              delta: this.validMutation.startDelta!,
               prevEvent: eventApi,
               event: new EventApi( // the data AFTER the mutation
                 initialCalendar,
