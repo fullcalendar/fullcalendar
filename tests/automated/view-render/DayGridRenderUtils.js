@@ -103,7 +103,7 @@ export function getMorePopoverEl() {
 }
 
 export function getMorePopoverTitle() {
-  return getMorePopoverEl().find(`.${HEADER_CLASS} .${TITLE_CLASS}`)
+  return getMorePopoverEl().find(`.${HEADER_CLASS} .${TITLE_CLASS}`).text()
 }
 
 export function getDayGridRowEls() {
@@ -120,9 +120,9 @@ export function getDayGridRowDayElAtIndex(index) {
 
 export function getHeaderTopEls() {
   return $(`.${WIDGET_HEADER_CLASS}`)
-  .not(`.${ROW_CLASS}`)
-  .not(`.${HEAD_CONTAINER_CLASS}`)
-  .not(`.${DIVIDER_CLASS}`)
+    .not(`.${ROW_CLASS}`)
+    .not(`.${HEAD_CONTAINER_CLASS}`)
+    .not(`.${DIVIDER_CLASS}`)
 }
 
 export function getBackgroundEventElsResizerEls() {

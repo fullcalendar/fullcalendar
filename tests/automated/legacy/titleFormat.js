@@ -36,7 +36,7 @@ describe('titleFormat', function() {
       { view: 'month', expected: 'June 2014' },
       { view: 'basicWeek', expected: 'Jun 8 - 14, 2014' },
       { view: 'agendaWeek', expected: 'June 8 - 14, 2014' },
-      { view: 'basicDay', expected: 'Thursday, June 12, 2014' },
+      { view: 'basicDay', expected: 'Thursday, June 12, 2014' }
     ]
 
     beforeEach(function() {

@@ -2,13 +2,13 @@ import { RED_REGEX } from '../lib/dom-misc'
 import {
   getBackgroundEventEls,
   getEventEls,
-  getSingleBackgroundEventEl,
+  getSingleBackgroundEventEl
 } from '../event-render/EventRenderUtils'
 import {
   getBackgroundEventElsResizerEls,
   getDayGridNonBusinessDayEls,
   getNonBusinessDayEls,
-  getDayGridRowEls,
+  getDayGridRowEls
 
 } from '../view-render/DayGridRenderUtils'
 import {
