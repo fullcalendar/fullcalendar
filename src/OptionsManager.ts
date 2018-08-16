@@ -20,8 +20,8 @@ export default class OptionsManager {
   }
 
 
-  add(newOptionHash) {
-    assignTo(this.dynamicOverrides, newOptionHash)
+  add(name, value) {
+    this.dynamicOverrides[name] = value
     this.compute()
   }
 

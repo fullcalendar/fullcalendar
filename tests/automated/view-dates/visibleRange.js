@@ -70,7 +70,7 @@ describe('visibleRange', function() {
         initCalendar({
           defaultView: 'basic'
         })
-        currentCalendar.option('visibleRange', {
+        currentCalendar.setOption('visibleRange', {
           start: startInput,
           end: endInput
         })

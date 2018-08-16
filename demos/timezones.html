@@ -72,7 +72,7 @@
 
     // when the timezone selector changes, dynamically change the calendar option
     timezoneSelectorEl.addEventListener('change', function() {
-      calendar.option('timezone', this.value || false);
+      calendar.setOption('timezone', this.value || false);
     });
   });
 

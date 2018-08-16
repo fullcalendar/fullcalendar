@@ -37,7 +37,7 @@ describe('footer rendering', function() {
       }
     })
     expect($('.fc-footer-toolbar')).toBeInDOM()
-    currentCalendar.option('footer', false)
+    currentCalendar.setOption('footer', false)
     expect($('.fc-footer-toolbar')).not.toBeInDOM()
   })
 

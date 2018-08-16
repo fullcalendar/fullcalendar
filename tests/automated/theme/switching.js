@@ -4,21 +4,21 @@ describe('theme switching', function() {
   it('can switch from standard to jquery-ui', function() {
     initCalendar()
     verifyStandardTheme()
-    currentCalendar.option('themeSystem', 'jquery-ui')
+    currentCalendar.setOption('themeSystem', 'jquery-ui')
     verifyJqueryUiTheme()
   })
 
   it('can switch from jquery-ui to boostrap3', function() {
     initCalendar({ themeSystem: 'jquery-ui' })
     verifyJqueryUiTheme()
-    currentCalendar.option('themeSystem', 'bootstrap3')
+    currentCalendar.setOption('themeSystem', 'bootstrap3')
     verifyBootstrapTheme()
   })
 
   it('can switch from jquery-ui to boostrap4', function() {
     initCalendar({ themeSystem: 'jquery-ui' })
     verifyJqueryUiTheme()
-    currentCalendar.option('themeSystem', 'bootstrap4')
+    currentCalendar.setOption('themeSystem', 'bootstrap4')
     verifyBootstrap4Theme()
   })
 

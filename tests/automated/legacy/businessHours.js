@@ -58,7 +58,7 @@ describe('businessHours', function() {
         })
 
         expect(queryNonBusinessSegs().length).toBe(0)
-        currentCalendar.option('businessHours', true)
+        currentCalendar.setOption('businessHours', true)
         expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
       })
 
@@ -69,7 +69,7 @@ describe('businessHours', function() {
         })
 
         expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
-        currentCalendar.option('businessHours', false)
+        currentCalendar.setOption('businessHours', false)
         expect(queryNonBusinessSegs().length).toBe(0)
       })
     })

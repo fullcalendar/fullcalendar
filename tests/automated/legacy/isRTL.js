@@ -4,7 +4,7 @@ describe('isRTL', function() {
     initCalendar({
       locale: 'ar' // Arabic is RTL
     })
-    expect(currentCalendar.option('isRTL')).toEqual(true)
+    expect(currentCalendar.getOption('isRTL')).toEqual(true)
   })
 
   // NOTE: don't put tests related to other options in here!
@@ -19,7 +19,7 @@ describe('isRTL', function() {
     expect($el).toHaveClass('fc-ltr')
     expect($el).not.toHaveClass('fc-rtl')
 
-    currentCalendar.option('isRTL', true)
+    currentCalendar.setOption('isRTL', true)
 
     expect($el).toHaveClass('fc-rtl')
     expect($el).not.toHaveClass('fc-ltr')

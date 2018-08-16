@@ -159,8 +159,17 @@ export default class Calendar {
     }
 
     this.freezeContentHeight() // do after contentEl is created in renderSkeleton
-    this.renderToolbars(rerenderFlags)
+
     this.renderView(rerenderFlags)
+
+    if (this.view) { // toolbar rendering heavily depends on view
+      this.renderToolbars(rerenderFlags)
+    }
+
+    if (this.updateViewSize()) { // success?
+      this.renderedView.popScroll()
+    }
+
     this.thawContentHeight()
     this.releaseAfterSizingTriggers()
 
@@ -422,46 +431,47 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  // public getter/setter
-  option(name: string | object, value?) {
-    if (typeof name === 'string') {
-      if (value === undefined) { // getter
-        return this.opt(name)
-      } else { // setter for individual option
-        this.setOptions({
-          [name]: value
-        })
-      }
-    } else if (typeof name === 'object' && name) { // compound setter with object input (non-null)
-      this.setOptions(name)
+  setOption(name: string, value: any) {
+    this.optionsManager.add(name, value)
+    this.handleOptions(this.optionsManager.computed)
+
+    if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
+      this.updateViewSize(true) // isResize=true
+    } else if (name === 'defaultDate') {
+      // can't change date this way. use gotoDate instead
+    } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
+      // doesn't affect rendering. only interactions.
+    } else {
+      this.batchRendering(() => {
+        let oldView = this.view
+
+        // reinstantiate/rerender the entire view
+        if (oldView) {
+          this.viewsByType = {} // so that getViewByType will generate fresh views
+          this.view = this.getViewByType(oldView.type) // will be rendered in renderView
+
+          // recompute dateProfile
+          this.setCurrentDateMarker(this.state.dateProfile.currentDate)
+
+          // transfer scroll from old view
+          let scroll = oldView.queryScroll()
+          scroll.isLocked = true // will prevent view from computing own values
+          this.view.addScroll(scroll)
+        }
+
+        this.requestRerender(true) // force=true
+      })
     }
   }
 
 
-  setOptions(optionsHash) {
-    this.optionsManager.add(optionsHash)
-    this.handleOptions(this.optionsManager.computed)
+  getOption(name: string) { // getter, used externally
+    return this.optionsManager.computed[name]
+  }
 
-    let optionCnt = 0
-    let optionName
 
-    for (optionName in optionsHash) {
-      optionCnt++
-    }
-
-    if (optionCnt === 1) {
-      if (optionName === 'height' || optionName === 'contentHeight' || optionName === 'aspectRatio') {
-        this.updateViewSize(true) // force=true
-        return
-      } else if (optionName === 'defaultDate') {
-        return // can't change date this way. use gotoDate instead
-      } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(optionName)) {
-        return // doesn't affect rendering. only interactions.
-      }
-    }
-
-    this.viewsByType = {}
-    this.requestRerender(true) // force=true
+  opt(name: string) { // getter, used internally
+    return this.optionsManager.computed[name]
   }
 
 
@@ -479,11 +489,6 @@ export default class Calendar {
     )
 
     this.viewSpecManager.clearCache()
-  }
-
-
-  opt(optName) {
-    return this.optionsManager.computed[optName]
   }
 
 
@@ -573,10 +578,6 @@ export default class Calendar {
       eventDrag: state.eventDrag,
       eventResize: state.eventResize
     }, forceFlags)
-
-    if (this.updateViewSize()) { // success?
-      renderedView.popScroll()
-    }
   }
 
 
@@ -609,9 +610,7 @@ export default class Calendar {
 
     if (dateOrRange) {
       if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
-        this.optionsManager.add({ // will not rerender
-          visibleRange: dateOrRange
-        })
+        this.optionsManager.add('visibleRange', dateOrRange) // will not rerender
       } else { // a date
         dateMarker = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate
       }
@@ -639,10 +638,11 @@ export default class Calendar {
   }
 
 
-  setViewType(viewType: string, dateMarker?: DateMarker) { // internal use only
+  // internal use only
+  // does not cause a render
+  setViewType(viewType: string, dateMarker?: DateMarker) {
     if (!this.view || this.view.type !== viewType) {
-      let view = this.getViewByType(viewType)
-      this.view = view
+      this.view = this.getViewByType(viewType)
 
       // luckily, will always cause a rerender
       this.setCurrentDateMarker(dateMarker || this.state.dateProfile.currentDate)
@@ -731,8 +731,6 @@ export default class Calendar {
 
 
   setDateProfile(dateProfile: DateProfile) {
-    this.view.updateMiscDateProps(dateProfile) // for legacy!
-
     this.dispatch({
       type: 'SET_DATE_PROFILE',
       dateProfile: dateProfile
@@ -784,13 +782,13 @@ export default class Calendar {
   }
 
 
-  updateViewSize(force: boolean = false) {
+  updateViewSize(isResize: boolean = false) {
     let { renderedView } = this
     let scroll
 
     if (!this.ignoreUpdateViewSize && renderedView) {
 
-      if (force) {
+      if (isResize) {
         this.calcSize()
         scroll = renderedView.queryScroll()
       }
@@ -800,12 +798,12 @@ export default class Calendar {
       renderedView.updateSize(
         this.getSuggestedViewHeight(),
         this.isHeightAuto(),
-        force
+        isResize
       )
 
       this.ignoreUpdateViewSize--
 
-      if (force) {
+      if (isResize) {
         renderedView.applyScroll(scroll)
       }
 

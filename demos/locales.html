@@ -98,7 +98,7 @@
     // when the selected option changes, dynamically change the calendar option
     localeSelectorEl.addEventListener('change', function() {
       if (this.value) {
-        calendar.option('locale', this.value);
+        calendar.setOption('locale', this.value);
       }
     });
 

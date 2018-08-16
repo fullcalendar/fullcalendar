@@ -25,10 +25,10 @@ describe('locale', function() {
     expect($('h2', calendarEl)).toHaveText('julio de 2016')
     expect($(calendarEl)).not.toHaveClass('fc-rtl')
 
-    currentCalendar.option('locale', 'fr')
+    currentCalendar.setOption('locale', 'fr')
     expect($('h2', calendarEl)).toHaveText('juillet 2016')
 
-    currentCalendar.option('locale', 'ar') // NOTE: we had problems testing for RTL title text
+    currentCalendar.setOption('locale', 'ar') // NOTE: we had problems testing for RTL title text
     expect($(calendarEl)).toHaveClass('fc-rtl')
   })
 

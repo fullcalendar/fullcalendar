@@ -65,7 +65,7 @@ describe('events as a function', function() {
           expect(arg.start).toEqualDate('2014-04-27')
           expect(arg.end).toEqualDate('2014-06-08')
           setTimeout(function() {
-            currentCalendar.option('timezone', 'UTC')
+            currentCalendar.setOption('timezone', 'UTC')
           }, 0)
         } else if (callCnt === 2) {
           expect(arg.timeZone).toEqual('UTC')

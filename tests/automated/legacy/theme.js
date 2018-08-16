@@ -17,7 +17,7 @@ describe('theme', function() {
     var scrollTop = $('.fc-scroller').scrollTop()
 
     // change option!
-    currentCalendar.option('theme', true)
+    currentCalendar.setOption('theme', true)
 
     expect($('.fc')).toHaveClass('ui-widget')
     expect($('.fc')).not.toHaveClass('fc-unthemed')
@@ -40,9 +40,9 @@ describe('theme', function() {
     expect($('.fc-nonbusiness').length).toBe(0)
 
     // change option!
-    currentCalendar.option({
-      theme: true,
-      businessHours: true
+    currentCalendar.batchRendering(function() {
+      currentCalendar.setOption('theme', true)
+      currentCalendar.setOption('businessHours', true)
     })
 
     expect($('.fc')).toHaveClass('ui-widget')

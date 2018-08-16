@@ -30,7 +30,7 @@ export default abstract class View extends DateComponent {
   viewSpec: any
   options: any // hash containing all options. already merged with view-specific-options
 
-  queuedScroll: object
+  queuedScroll: any
 
   eventOrderSpecs: any // criteria for ordering events when they have same date/time
 
@@ -183,6 +183,7 @@ export default abstract class View extends DateComponent {
 
   // if dateProfile not specified, uses current
   renderDates() {
+    this.updateMiscDateProps(this.dateProfile)
     super.renderDates()
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
@@ -317,7 +318,9 @@ export default abstract class View extends DateComponent {
   addScroll(scroll) {
     let queuedScroll = this.queuedScroll || (this.queuedScroll = {})
 
-    assignTo(queuedScroll, scroll)
+    if (!queuedScroll.isLocked) {
+      assignTo(queuedScroll, scroll)
+    }
   }
 
 
@@ -333,7 +336,7 @@ export default abstract class View extends DateComponent {
 
 
   queryScroll() {
-    let scroll = {}
+    let scroll = {} as any
 
     if (this.renderedFlags.dates) {
       assignTo(scroll, this.queryDateScroll())
@@ -344,8 +347,17 @@ export default abstract class View extends DateComponent {
 
 
   applyScroll(scroll) {
-    if (scroll.isDateInit && this.renderedFlags.dates) {
-      assignTo(scroll, this.computeInitialDateScroll())
+
+    if (scroll.isLocked) {
+      delete scroll.isLocked
+    }
+
+    if (scroll.isDateInit) {
+      delete scroll.isDateInit
+
+      if (this.renderedFlags.dates) {
+        assignTo(scroll, this.computeInitialDateScroll())
+      }
     }
 
     if (this.renderedFlags.dates) {

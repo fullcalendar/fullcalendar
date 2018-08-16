@@ -104,7 +104,7 @@ describe('timezone', function() {
         callCnt++
         if (callCnt === 1) {
           expectLocalTimezone()
-          currentCalendar.option('timezone', 'UTC') // will cause second call...
+          currentCalendar.setOption('timezone', 'UTC') // will cause second call...
         } else if (callCnt === 2) {
           expectUtcTimezone()
           done()

@@ -64,7 +64,7 @@ describe('header rendering', function() {
   it('allow for dynamically changing', function() {
     initCalendar()
     expect($('.fc-toolbar')).toBeInDOM()
-    currentCalendar.option('header', false)
+    currentCalendar.setOption('header', false)
     expect($('.fc-toolbar')).not.toBeInDOM()
   })
 
