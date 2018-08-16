@@ -27,7 +27,7 @@ export function resize(rect0, rect1, debug) {
     debug: debug
   })
 
-  currentCalendar.on('eventMutation', function(arg) {
+  currentCalendar.on('eventResize', function(arg) {
     deferred.resolve(arg)
   })
 

@@ -46,7 +46,7 @@ describe('event dragging on repeating events', function() {
           ).toBe(1)
         }, 0)
       },
-      eventMutation: function() {
+      eventDrop: function() {
         setTimeout(function() {
           done()
         }, 10)
@@ -55,7 +55,7 @@ describe('event dragging on repeating events', function() {
 
     $('.fc-event:first').simulate('drag', {
       dx: 100,
-      duration: 100 // ample time for separate eventDragStart/eventMutation
+      duration: 100 // ample time for separate eventDragStart/eventDrop
     })
   })
 
@@ -82,7 +82,7 @@ describe('event dragging on repeating events', function() {
           ).toBe(2) // the dragging event AND the other regular event
         }, 0)
       },
-      eventMutation: function() {
+      eventDrop: function() {
         setTimeout(function() {
           done()
         }, 10)
@@ -91,7 +91,7 @@ describe('event dragging on repeating events', function() {
 
     $('.fc-event:first').simulate('drag', {
       dx: 100,
-      duration: 100 // ample time for separate eventDragStart/eventMutation
+      duration: 100 // ample time for separate eventDragStart/eventDrop
     })
   })
 

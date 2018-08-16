@@ -21,7 +21,7 @@ export function drag(rect0, rect1, debug) {
     debug: debug
   })
 
-  currentCalendar.on('eventMutation', function(arg) {
+  currentCalendar.on('eventDrop', function(arg) {
     deferred.resolve(arg)
   })
 
