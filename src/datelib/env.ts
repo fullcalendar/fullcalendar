@@ -146,19 +146,19 @@ export class DateEnv {
 
   add(marker: DateMarker, dur: Duration): DateMarker {
     let a = this.calendarSystem.markerToArray(marker)
-    a[0] += dur.year
-    a[1] += dur.month
-    a[2] += dur.day
-    a[6] += dur.time
+    a[0] += dur.years
+    a[1] += dur.months
+    a[2] += dur.days
+    a[6] += dur.milliseconds
     return this.calendarSystem.arrayToMarker(a)
   }
 
   subtract(marker: DateMarker, dur: Duration): DateMarker {
     let a = this.calendarSystem.markerToArray(marker)
-    a[0] -= dur.year
-    a[1] -= dur.month
-    a[2] -= dur.day
-    a[6] -= dur.time
+    a[0] -= dur.years
+    a[1] -= dur.months
+    a[2] -= dur.days
+    a[6] -= dur.milliseconds
     return this.calendarSystem.arrayToMarker(a)
   }
 
@@ -256,21 +256,21 @@ export class DateEnv {
     // TODO: can use greatestWholeUnit
     let diff
 
-    if (d.year) {
+    if (d.years) {
       diff = this.diffWholeYears(m0, m1)
       if (diff !== null) {
         return diff / asRoughYears(d)
       }
     }
 
-    if (d.month) {
+    if (d.months) {
       diff = this.diffWholeMonths(m0, m1)
       if (diff !== null) {
         return diff / asRoughMonths(d)
       }
     }
 
-    if (d.day) {
+    if (d.days) {
       diff = diffWholeDays(m0, m1)
       if (diff !== null) {
         return diff / asRoughDays(d)

@@ -53,10 +53,10 @@ export function diffDayAndTime(m0: DateMarker, m1: DateMarker): Duration {
   let m1day = startOfDay(m1)
 
   return {
-    year: 0,
-    month: 0,
-    day: Math.round(diffDays(m0day, m1day)),
-    time: (m1.valueOf() - m1day.valueOf()) - (m0.valueOf() - m0day.valueOf())
+    years: 0,
+    months: 0,
+    days: Math.round(diffDays(m0day, m1day)),
+    milliseconds: (m1.valueOf() - m1day.valueOf()) - (m0.valueOf() - m0day.valueOf())
   }
 }
 

@@ -310,7 +310,7 @@ export default class AgendaView extends View {
   // Computes the initial pre-configured scroll state prior to allowing the user to change it
   computeInitialDateScroll() {
     let scrollTime = createDuration(this.opt('scrollTime'))
-    let top = this.timeGrid.computeTimeTop(scrollTime.time)
+    let top = this.timeGrid.computeTimeTop(scrollTime.milliseconds)
 
     // zoom can give weird floating-point values. rather scroll a little bit further
     top = Math.ceil(top)
