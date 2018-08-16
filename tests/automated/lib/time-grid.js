@@ -103,7 +103,7 @@ export function getTimeGridTop(targetTimeMs) {
     slotEl = $(slotEl)
 
     prevSlotTimeMs = slotTimeMs
-    slotTimeMs = FullCalendar.createDuration(slotEl.data('time')).time
+    slotTimeMs = FullCalendar.createDuration(slotEl.data('time')).milliseconds
 
     // is target time between start of previous slot but before this one?
     if (targetTimeMs < slotTimeMs) {

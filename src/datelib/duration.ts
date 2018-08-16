@@ -27,7 +27,7 @@ export interface Duration {
   milliseconds: number
 }
 
-const INTERNAL_UNITS = [ 'year', 'month', 'day', 'time' ]
+const INTERNAL_UNITS = [ 'years', 'months', 'days', 'milliseconds' ]
 const PARSE_RE = /^(-?)(?:(\d+)\.)?(\d+):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
 
 
@@ -39,7 +39,7 @@ export function createDuration(input, unit?: string): Duration | null {
   } else if (typeof input === 'object' && input) { // non-null object
     return normalizeObject(input)
   } else if (typeof input === 'number') {
-    return { years: 0, months: 0, days: 0, milliseconds: input }
+    return normalizeObject({ [unit || 'milliseconds']: input })
   } else {
     return null
   }

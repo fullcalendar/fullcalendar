@@ -466,10 +466,10 @@ describe('datelib', function() {
           env.createMarker(d1)
         )
         expect(diff).toEqual({
-          year: 0,
-          month: 0,
-          day: -14,
-          time: -12 * 60 * 60 * 1000
+          years: 0,
+          months: 0,
+          days: -14,
+          milliseconds: -12 * 60 * 60 * 1000
         })
       })
 
@@ -481,10 +481,10 @@ describe('datelib', function() {
           env.createMarker(d1)
         )
         expect(diff).toEqual({
-          year: 0,
-          month: 0,
-          day: 14,
-          time: 12 * 60 * 60 * 1000
+          years: 0,
+          months: 0,
+          days: 14,
+          milliseconds: 12 * 60 * 60 * 1000
         })
       })
 
@@ -622,20 +622,20 @@ describe('datelib', function() {
     it('accepts whole day in string', function() {
       var dur = createDuration('2.00:00:00')
       expect(dur).toEqual({
-        year: 0,
-        month: 0,
-        day: 2,
-        time: 0
+        years: 0,
+        months: 0,
+        days: 2,
+        milliseconds: 0
       })
     })
 
     it('accepts hours, minutes, seconds, and milliseconds', function() {
       var dur = createDuration('01:02:03.500')
       expect(dur).toEqual({
-        year: 0,
-        month: 0,
-        day: 0,
-        time:
+        years: 0,
+        months: 0,
+        days: 0,
+        milliseconds:
           1 * 60 * 60 * 1000 +
           2 * 60 * 1000 +
           3 * 1000 +
@@ -646,10 +646,10 @@ describe('datelib', function() {
     it('accepts just hours and minutes', function() {
       var dur = createDuration('01:02')
       expect(dur).toEqual({
-        year: 0,
-        month: 0,
-        day: 0,
-        time:
+        years: 0,
+        months: 0,
+        days: 0,
+        milliseconds:
           1 * 60 * 60 * 1000 +
           2 * 60 * 1000
       })

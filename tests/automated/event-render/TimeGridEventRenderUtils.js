@@ -162,7 +162,7 @@ function computeSlots() {
     return $.extend({}, rect, {
       startTimeMs: FullCalendar.createDuration(
         $(node).data('time')
-      ).time
+      ).milliseconds
     })
   }).get()
 
@@ -215,8 +215,8 @@ function computeSlots() {
   slots[i].dayOffset = dayOffset
 
   // if last slot went over the day threshold
-  if (slots[i].endTimeMs.time > 1000 * 60 * 60 * 24) {
-    slots[i].endTimeMs.time -= 1000 * 60 * 60 * 24
+  if (slots[i].endTimeMs > 1000 * 60 * 60 * 24) {
+    slots[i].endTimeMs -= 1000 * 60 * 60 * 24
     slots[i].dayOffset++
   }
 
