@@ -1,4 +1,4 @@
-import DateComponent, { Seg } from '../component/DateComponent'
+import DateComponent from '../component/DateComponent'
 import { listenToHoverBySelector } from '../util/dom-event'
 import { getElSeg } from '../component/renderers/EventRenderer'
 import EventApi from '../api/EventApi'

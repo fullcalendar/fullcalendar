@@ -41,6 +41,7 @@ export class BrowserContext {
   bind() {
     let pointer = this.pointer = new PointerDragging(document)
     pointer.shouldIgnoreMove = true
+    pointer.shouldWatchScroll = false
     pointer.emitter.on('pointerup', this.onPointerUp)
   }
 

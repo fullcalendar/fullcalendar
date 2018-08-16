@@ -107,11 +107,6 @@ export default class PointerDragging {
       isPrimaryMouseButton(ev) &&
       this.tryStart(ev)
     ) {
-      // prevent links from being visited if there's an eventual drag.
-      // also prevents selection in older browsers (maybe?).
-      // not necessary for touch, besides, browser would complain about passiveness.
-      ev.preventDefault()
-
       let pev = createEventFromMouse(ev, this.subjectEl!)
 
       this.emitter.trigger('pointerdown', pev)

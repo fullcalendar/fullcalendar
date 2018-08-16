@@ -57,6 +57,13 @@ export default class FeaturefulElementDragging extends ElementDragging {
       preventSelection(document.body)
       preventContextMenu(document.body)
 
+      // prevent links from being visited if there's an eventual drag.
+      // also prevents selection in older browsers (maybe?).
+      // not necessary for touch, besides, browser would complain about passiveness.
+      if (!ev.isTouch) {
+        ev.origEvent.preventDefault()
+      }
+
       this.emitter.trigger('pointerdown', ev)
 
       if (!this.pointer.shouldIgnoreMove) {
