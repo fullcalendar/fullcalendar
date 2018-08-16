@@ -16,6 +16,7 @@ export default class ListView extends View {
   // initialized after the class
   eventRendererClass: any
 
+  isInteractable = true
   segSelector: any = '.fc-list-item' // which elements accept event actions
 
   scroller: ScrollComponent
@@ -235,26 +236,3 @@ export default class ListView extends View {
 }
 
 ListView.prototype.eventRendererClass = ListEventRenderer
-
-/*
-export default class ListEventPointing extends EventPointing {
-
-  // for events with a url, the whole <tr> should be clickable,
-  // but it's impossible to wrap with an <a> tag. simulate this.
-  handleClick(seg, ev) {
-    let url
-
-    super.handleClick(seg, ev) // might prevent the default action
-
-    // not clicking on or within an <a> with an href
-    if (!elementClosest(ev.target, 'a[href]')) {
-      url = seg.footprint.eventDef.url
-
-      if (url && !ev.isDefaultPrevented()) { // jsEvent not cancelled in handler
-        window.location.href = url // simulate link click
-      }
-    }
-  }
-
-}
-*/
