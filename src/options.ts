@@ -23,7 +23,7 @@ export const globalDefaults = {
   weekNumbers: false,
   weekNumberCalculation: 'local',
 
-  // editable: false,
+  editable: false,
 
   // nowIndicator: false,
 

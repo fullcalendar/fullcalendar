@@ -103,6 +103,17 @@ export function filterHash(hash, func) {
 }
 
 
+export function mapHash(hash, func) {
+  let newHash = {}
+
+  for (let key in hash) {
+    newHash[key] = func(hash[key], key)
+  }
+
+  return newHash
+}
+
+
 export function arrayToHash(a): { [key: string]: true } {
   let hash = {}
 

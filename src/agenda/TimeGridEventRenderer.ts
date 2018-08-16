@@ -91,12 +91,13 @@ export default class TimeGridEventRenderer extends EventRenderer {
     let view = this.view
     let eventRange = seg.eventRange
     let eventDef = eventRange.eventDef
+    let eventUi = eventRange.ui
     let isAllDay = eventDef.isAllDay
-    let isDraggable = this.isEventDefDraggable(eventDef)
-    let isResizableFromStart = seg.isStart && this.isEventDefResizableFromStart(eventDef)
-    let isResizableFromEnd = seg.isEnd && this.isEventDefResizableFromEnd(eventDef)
+    let isDraggable = eventUi.startEditable
+    let isResizableFromStart = seg.isStart && eventUi.durationEditable && this.opt('eventResizableFromStart')
+    let isResizableFromEnd = seg.isEnd && eventUi.durationEditable
     let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
-    let skinCss = cssToStr(this.getSkinCss(eventDef))
+    let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeText
     let fullTimeText // more verbose time text. for the print stylesheet
     let startTimeText // just the start time text

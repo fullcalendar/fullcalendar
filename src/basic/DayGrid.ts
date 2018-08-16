@@ -22,6 +22,7 @@ import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
 import OffsetTracker from '../common/OffsetTracker'
+import { EventRenderRange } from '../component/event-rendering'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -700,8 +701,9 @@ export default class DayGrid extends DateComponent {
             eventRange: {
               eventDef: eventRange.eventDef,
               eventInstance: eventRange.eventInstance,
-              range: slicedRange
-            },
+              range: slicedRange,
+              ui: assignTo({}, eventRange.ui, { durationEditable: false }) // hack to disable resizing
+            } as EventRenderRange,
             isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
             isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
           })

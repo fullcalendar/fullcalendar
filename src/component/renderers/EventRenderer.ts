@@ -3,10 +3,9 @@ import { DateMarker } from '../../datelib/marker'
 import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
-import { EventRenderRange } from '../event-rendering'
+import { EventRenderRange, EventUiProps } from '../event-rendering'
 import { Seg } from '../DateComponent'
 import EventApi from '../../api/EventApi'
-import { EventDef } from '../../structs/event'
 
 
 export default class EventRenderer {
@@ -67,7 +66,7 @@ export default class EventRenderer {
     let fgSegs: Seg[] = []
 
     for (let seg of allSegs) {
-      let rendering = seg.eventRange.eventDef.rendering
+      let rendering = seg.eventRange.ui.rendering
 
       if (rendering === 'background' || rendering === 'inverse-background') {
         bgSegs.push(seg)
@@ -121,11 +120,11 @@ export default class EventRenderer {
     if (this.fillRenderer) {
       return this.fillRenderer.renderSegs('bgEvent', segs, {
         getClasses: (seg) => {
-          return this.getBgClasses(seg.eventRange.eventDef)
+          return seg.eventRange.ui.classNames.concat([ 'fc-bgevent' ])
         },
         getCss: (seg) => {
           return {
-            'background-color': this.getBgColor(seg.eventRange.eventDef)
+            'background-color': seg.eventRange.ui.backgroundColor
           }
         },
         filterEl: (seg, el) => {
@@ -193,7 +192,7 @@ export default class EventRenderer {
       'fc-event',
       seg.isStart ? 'fc-start' : 'fc-not-start',
       seg.isEnd ? 'fc-end' : 'fc-not-end'
-    ].concat(this.getClasses(seg.eventRange.eventDef))
+    ].concat(seg.eventRange.ui.classNames)
 
     if (isDraggable) {
       classes.push('fc-draggable')
@@ -312,108 +311,12 @@ export default class EventRenderer {
   }
 
 
-  getBgClasses(eventDef) {
-    let classNames = this.getClasses(eventDef)
-    classNames.push('fc-bgevent')
-    return classNames
-  }
-
-
-  getClasses(eventDef) {
-    let objs = this.getStylingObjs(eventDef)
-    let i
-    let classNames = []
-
-    for (i = 0; i < objs.length; i++) {
-      classNames.push.apply( // append
-        classNames,
-        objs[i].eventClassName || objs[i].className || []
-      )
-    }
-
-    return classNames
-  }
-
-
   // Utility for generating event skin-related CSS properties
-  getSkinCss(eventDef) {
+  getSkinCss(ui: EventUiProps) {
     return {
-      'background-color': this.getBgColor(eventDef),
-      'border-color': this.getBorderColor(eventDef),
-      color: this.getTextColor(eventDef)
-    }
-  }
-
-
-  // Queries for caller-specified color, then falls back to default
-  getBgColor(eventDef) {
-    let objs = this.getStylingObjs(eventDef)
-    let i
-    let val
-
-    for (i = 0; i < objs.length && !val; i++) {
-      val = objs[i].eventBackgroundColor || objs[i].eventColor ||
-        objs[i].backgroundColor || objs[i].color
-    }
-
-    if (!val) {
-      val = this.opt('eventBackgroundColor') || this.opt('eventColor')
-    }
-
-    return val
-  }
-
-
-  // Queries for caller-specified color, then falls back to default
-  getBorderColor(eventDef) {
-    let objs = this.getStylingObjs(eventDef)
-    let i
-    let val
-
-    for (i = 0; i < objs.length && !val; i++) {
-      val = objs[i].eventBorderColor || objs[i].eventColor ||
-        objs[i].borderColor || objs[i].color
-    }
-
-    if (!val) {
-      val = this.opt('eventBorderColor') || this.opt('eventColor')
-    }
-
-    return val
-  }
-
-
-  // Queries for caller-specified color, then falls back to default
-  getTextColor(eventDef) {
-    let objs = this.getStylingObjs(eventDef)
-    let i
-    let val
-
-    for (i = 0; i < objs.length && !val; i++) {
-      val = objs[i].eventTextColor ||
-        objs[i].textColor
-    }
-
-    if (!val) {
-      val = this.opt('eventTextColor')
-    }
-
-    return val
-  }
-
-
-  getStylingObjs(eventDef) {
-    let objs = this.getFallbackStylingObjs(eventDef)
-    objs.unshift(eventDef)
-    return objs
-  }
-
-
-  getFallbackStylingObjs(eventDef): any {
-    if (eventDef.sourceId) {
-      return [ this.view.calendar.state.eventSources[eventDef.sourceId] ]
-    } else {
-      return []
+      'background-color': ui.backgroundColor,
+      'border-color': ui.borderColor,
+      color: ui.textColor
     }
   }
 
@@ -442,60 +345,6 @@ export default class EventRenderer {
         eventDef1.extendedProps,
         eventDef2.extendedProps
       )
-  }
-
-
-  // Computes if the given event is allowed to be dragged by the user
-  isEventDefDraggable(eventDef: EventDef): boolean {
-    let val = eventDef.startEditable
-
-    if (val == null) {
-      let source = this.view.calendar.state.eventSources[eventDef.sourceId]
-      val = source ? source.startEditable : null
-
-      if (val == null) {
-        val = this.opt('eventStartEditable')
-
-        if (val == null) {
-          val = this.opt('editable')
-        }
-      }
-    }
-
-    return val
-  }
-
-
-  // Computes if the given event is allowed to be resized AT ALL
-  isEventDefResizable(eventDef): boolean {
-    let val = eventDef.durationEditable
-
-    if (val == null) {
-      let source = this.view.calendar.state.eventSources[eventDef.sourceId]
-      val = source ? source.durationEditable : null
-
-      if (val == null) {
-        val = this.opt('eventDurationEditable')
-
-        if (val == null) {
-          val = this.opt('editable')
-        }
-      }
-    }
-
-    return val
-  }
-
-
-  // Computes if the given event is allowed to be resized from its starting edge
-  isEventDefResizableFromStart(eventDef): boolean {
-    return this.opt('eventResizableFromStart') && this.isEventDefResizable(eventDef)
-  }
-
-
-  // Computes if the given event is allowed to be resized from its ending edge
-  isEventDefResizableFromEnd(eventDef): boolean {
-    return this.isEventDefResizable(eventDef)
   }
 
 

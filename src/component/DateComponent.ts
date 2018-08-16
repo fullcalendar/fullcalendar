@@ -7,7 +7,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import { DateSpan } from '../structs/date-span'
-import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
+import { EventRenderRange, sliceEventStore, computeUiHash } from '../component/event-rendering'
 import { EventStore } from '../structs/event-store'
 import { BusinessHoursDef, buildBusinessHours } from '../structs/business-hours'
 import { DateEnv } from '../datelib/env'
@@ -845,7 +845,12 @@ export default abstract class DateComponent extends Component {
 
   eventStoreToSegs(eventStore: EventStore): Seg[] {
     let activeRange = this.dateProfile.activeRange
-    let eventRenderRanges = sliceEventStore(eventStore, activeRange)
+    let eventRenderRanges = sliceEventStore(
+      eventStore,
+      this.getCalendar().state.eventSources,
+      activeRange,
+      this.view.options
+    )
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
@@ -865,11 +870,15 @@ export default abstract class DateComponent extends Component {
     let segs = this.rangeToSegs(selection.range, selection.isAllDay)
 
     if (fabricateEvents) {
+
+      // fabricate an eventRange. important for helper
+      // TODO: make a separate utility for this?
       let def = parseEventDef({ editable: false }, '', selection.isAllDay, true)
       let eventRange = {
         eventDef: def,
         eventInstance: createEventInstance(def.defId, selection.range),
-        range: selection.range
+        range: selection.range,
+        ui: computeUiHash(def, {}, {})
       }
 
       for (let seg of segs) {

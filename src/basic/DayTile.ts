@@ -95,14 +95,6 @@ export class DayTileEventRenderer extends EventRenderer {
     }
   }
 
-  isEventDefResizableFromStart(eventDef) {
-    return false
-  }
-
-  isEventDefResizableFromEnd(eventDef) {
-    return false
-  }
-
 }
 
 // hack

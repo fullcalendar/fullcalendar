@@ -12,7 +12,7 @@ import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 import EventApi from '../api/EventApi'
 import { elementMatches } from '../util/dom-manip'
 
-export interface EventRes { // TODO: relate this to EventRenderRange?
+export interface EventRes {
   def: EventDef
   instance: EventInstance
 }

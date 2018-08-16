@@ -23,9 +23,10 @@ export default class ListEventRenderer extends EventRenderer {
     let theme = calendar.theme
     let eventRange = seg.eventRange
     let eventDef = eventRange.eventDef
+    let eventUi = eventRange.ui
     let url = eventDef.url
-    let classes = [ 'fc-list-item' ].concat(this.getClasses(eventDef))
-    let bgColor = this.getBgColor(eventDef)
+    let classes = [ 'fc-list-item' ].concat(eventUi.classNames)
+    let bgColor = eventUi.backgroundColor
     let timeHtml
 
     if (eventDef.isAllDay) {
