@@ -7,7 +7,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import { DateSpan } from '../structs/date-span'
-import { EventRenderRange, sliceEventStore, computeUiHash } from '../component/event-rendering'
+import { EventRenderRange, sliceEventStore, computeEventDefUi, EventUiHash, computeEventDefUis } from '../component/event-rendering'
 import { EventStore } from '../structs/event-store'
 import { BusinessHoursDef, buildBusinessHours } from '../structs/business-hours'
 import { DateEnv } from '../datelib/env'
@@ -26,6 +26,7 @@ export interface DateComponentRenderState {
   dateProfile: DateProfile | null
   businessHoursDef: BusinessHoursDef // BusinessHoursDef's `false` is the empty state
   eventStore: EventStore
+  eventUis: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
   eventDrag: EventInteractionState | null
@@ -85,6 +86,7 @@ export default abstract class DateComponent extends Component {
   dateProfile: DateProfile = null
   businessHoursDef: BusinessHoursDef = false
   eventStore: EventStore = null
+  eventUis: EventUiHash = null
   dateSelection: DateSpan = null
   eventSelection: string = ''
   eventDrag: EventInteractionState = null
@@ -317,7 +319,7 @@ export default abstract class DateComponent extends Component {
     let dirtyFlags = {
       skeleton: false,
       dates: renderState.dateProfile !== this.dateProfile,
-      events: renderState.eventStore !== this.eventStore,
+      events: renderState.eventStore !== this.eventStore || renderState.eventUis !== this.eventUis,
       businessHours: renderState.businessHoursDef !== this.businessHoursDef,
       dateSelection: renderState.dateSelection !== this.dateSelection,
       eventSelection: renderState.eventSelection !== this.eventSelection,
@@ -386,7 +388,7 @@ export default abstract class DateComponent extends Component {
     }
 
     if (flags.events && renderState.eventStore) {
-      this.renderEvents(renderState.eventStore)
+      this.renderEvents(renderState.eventStore, renderState.eventUis)
       renderedFlags.events = true
       dirtySizeFlags.events = true
     }
@@ -527,15 +529,18 @@ export default abstract class DateComponent extends Component {
 
   renderBusinessHours(businessHoursDef: BusinessHoursDef) {
     if (this.fillRenderer) {
+      let eventStore = buildBusinessHours(
+        businessHoursDef,
+        this.hasAllDayBusinessHours,
+        this.dateProfile.activeRange,
+        this.getCalendar()
+      )
+
       this.fillRenderer.renderSegs(
         'businessHours',
         this.eventStoreToSegs(
-          buildBusinessHours(
-            businessHoursDef,
-            this.hasAllDayBusinessHours,
-            this.dateProfile.activeRange,
-            this.getCalendar()
-          )
+          eventStore,
+          computeEventDefUis(eventStore.defs, {}, {})
         ),
         {
           getClasses(seg) {
@@ -573,11 +578,11 @@ export default abstract class DateComponent extends Component {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  renderEvents(eventStore: EventStore) {
+  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
     if (this.eventRenderer) {
       this.eventRenderer.rangeUpdated() // poorly named now
       this.eventRenderer.renderSegs(
-        this.eventStoreToSegs(eventStore)
+        this.eventStoreToSegs(eventStore, eventUis)
       )
       this.triggerRenderedSegs(this.eventRenderer.getSegs())
     }
@@ -631,7 +636,10 @@ export default abstract class DateComponent extends Component {
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
   renderEventDrag(eventStore: EventStore, isEvent: boolean, origSeg: Seg | null) {
-    let segs = this.eventStoreToSegs(eventStore)
+    let segs = this.eventStoreToSegs(
+      eventStore,
+      this.eventUis // bad to use this here
+    )
 
     // if the user is dragging something that is considered an event with real event data,
     // and this component likes to do drag mirrors OR the component where the seg came from
@@ -843,14 +851,9 @@ export default abstract class DateComponent extends Component {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  eventStoreToSegs(eventStore: EventStore): Seg[] {
+  eventStoreToSegs(eventStore: EventStore, eventUis: EventUiHash): Seg[] {
     let activeRange = this.dateProfile.activeRange
-    let eventRenderRanges = sliceEventStore(
-      eventStore,
-      this.getCalendar().state.eventSources,
-      activeRange,
-      this.view.options
-    )
+    let eventRenderRanges = sliceEventStore(eventStore, eventUis, activeRange)
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
@@ -878,7 +881,7 @@ export default abstract class DateComponent extends Component {
         eventDef: def,
         eventInstance: createEventInstance(def.defId, selection.range),
         range: selection.range,
-        ui: computeUiHash(def, {}, {})
+        ui: computeEventDefUi(def, {}, {})
       }
 
       for (let seg of segs) {

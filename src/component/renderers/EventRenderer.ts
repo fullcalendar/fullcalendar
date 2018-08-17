@@ -3,7 +3,7 @@ import { DateMarker } from '../../datelib/marker'
 import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
-import { EventRenderRange, EventUiProps } from '../event-rendering'
+import { EventRenderRange, EventUi } from '../event-rendering'
 import { Seg } from '../DateComponent'
 import EventApi from '../../api/EventApi'
 
@@ -312,7 +312,7 @@ export default class EventRenderer {
 
 
   // Utility for generating event skin-related CSS properties
-  getSkinCss(ui: EventUiProps) {
+  getSkinCss(ui: EventUi) {
     return {
       'background-color': ui.backgroundColor,
       'border-color': ui.borderColor,

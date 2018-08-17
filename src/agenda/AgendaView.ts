@@ -189,6 +189,7 @@ export default class AgendaView extends View {
     this.timeGrid.render({
       dateProfile: renderState.dateProfile,
       eventStore: eventStoreGroups.timed,
+      eventUis: renderState.eventUis,
       dateSelection: timedSelection,
       eventSelection: renderState.eventSelection,
       eventDrag: dragGroups.timed,
@@ -200,6 +201,7 @@ export default class AgendaView extends View {
       this.dayGrid.render({
         dateProfile: renderState.dateProfile,
         eventStore: eventStoreGroups.allDay,
+        eventUis: renderState.eventUis,
         dateSelection: allDaySeletion,
         eventSelection: renderState.eventSelection,
         eventDrag: dragGroups.allDay,

@@ -5,7 +5,7 @@ import { EventSourceHash } from '../structs/event-source'
 import { mapHash } from '../util/object'
 import { parseClassName } from '../util/html'
 
-export interface EventUiProps {
+export interface EventUi {
   startEditable: boolean
   durationEditable: boolean
   backgroundColor: string
@@ -15,11 +15,13 @@ export interface EventUiProps {
   classNames: string[]
 }
 
+export type EventUiHash = { [defId: string]: EventUi }
+
 export interface EventRenderRange {
   eventDef: EventDef
   eventInstance?: EventInstance
   range: DateRange
-  ui: EventUiProps
+  ui: EventUi
 }
 
 
@@ -27,16 +29,15 @@ export interface EventRenderRange {
 Does not slice ranges via framingRange into new ranges, but instead,
 keeps fg event ranges intact but more importantly slices inverse-BG events.
 */
-export function sliceEventStore(eventStore: EventStore, eventSources: EventSourceHash, framingRange: DateRange, options) {
+export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, framingRange: DateRange) {
   let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
   let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
   let renderRanges: EventRenderRange[] = []
-  let uiHashes = computeUiHashes(eventStore.defs, eventSources, options)
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
-    let ui = uiHashes[defId]
+    let ui = eventUis[defId]
 
     if (ui.rendering === 'inverse-background') {
       if (def.groupId) {
@@ -54,7 +55,7 @@ export function sliceEventStore(eventStore: EventStore, eventSources: EventSourc
   for (let instanceId in eventStore.instances) {
     let instance = eventStore.instances[instanceId]
     let def = eventStore.defs[instance.defId]
-    let ui = uiHashes[def.defId]
+    let ui = eventUis[def.defId]
 
     if (ui.rendering === 'inverse-background') {
       if (def.groupId) {
@@ -78,7 +79,7 @@ export function sliceEventStore(eventStore: EventStore, eventSources: EventSourc
 
     for (let invertedRange of invertedRanges) {
       let def = defByGroupId[groupId]
-      let ui = uiHashes[def.defId]
+      let ui = eventUis[def.defId]
 
       renderRanges.push({
         eventDef: def,
@@ -96,7 +97,7 @@ export function sliceEventStore(eventStore: EventStore, eventSources: EventSourc
       renderRanges.push({
         eventDef: eventStore.defs[defId],
         range: invertedRange,
-        ui: uiHashes[defId]
+        ui: eventUis[defId]
       })
     }
   }
@@ -108,25 +109,26 @@ export function sliceEventStore(eventStore: EventStore, eventSources: EventSourc
 // UI Props
 // ----------------------------------------------------------------------------------------------------
 
-function computeUiHashes(eventDefs: EventDefHash, eventSources: EventSourceHash, options) {
+export function computeEventDefUis(eventDefs: EventDefHash, eventSources: EventSourceHash, options) {
   return mapHash(eventDefs, function(eventDef) {
-    return computeUiHash(eventDef, eventSources, options)
+    return computeEventDefUi(eventDef, eventSources, options)
   })
 }
 
-export function computeUiHash(eventDef: EventDef, eventSources: EventSourceHash, options) {
+export function computeEventDefUi(eventDef: EventDef, eventSources: EventSourceHash, options) {
+
   // lowest to highest priority
-  // TODO: hook for resources, using refineScopedUiHash
+  // TODO: hook for resources, using refineScopedUi
   let refinedHashes = [
-    refineScopedUiHash(options),
-    refineUnscopedUiHash(eventSources[eventDef.sourceId] || {}),
-    refineUnscopedUiHash(eventDef)
+    refineScopedUi(options),
+    refineUnscopedUi(eventSources[eventDef.sourceId] || {}),
+    refineUnscopedUi(eventDef)
   ]
 
-  return refinedHashes.reduce(combineUiHashes)
+  return refinedHashes.reduce(combineUis)
 }
 
-function refineScopedUiHash(input) { // has word "event" in prop names
+function refineScopedUi(input) { // has word "event" in prop names
   return {
     startEditable: (input.startEditable != null) ? input.startEditable : input.editable,
     durationEditable: (input.durationEditable != null) ? input.durationEditable : input.editable,
@@ -138,7 +140,7 @@ function refineScopedUiHash(input) { // has word "event" in prop names
   }
 }
 
-function refineUnscopedUiHash(input) { // does NOT have the word "event' in prop names
+function refineUnscopedUi(input) { // does NOT have the word "event" in prop names
   return {
     startEditable: (input.startEditable != null) ? input.startEditable : input.editable,
     durationEditable: (input.durationEditable != null) ? input.durationEditable : input.editable,
@@ -150,7 +152,7 @@ function refineUnscopedUiHash(input) { // does NOT have the word "event' in prop
   }
 }
 
-function combineUiHashes(hash0, hash1) { // hash1 has higher precedence
+function combineUis(hash0, hash1) { // hash1 has higher precedence
   return {
     startEditable: (hash1.startEditable != null) ? hash1.startEditable : hash0.startEditable,
     durationEditable: (hash1.durationEditable != null) ? hash1.durationEditable : hash0.durationEditable,

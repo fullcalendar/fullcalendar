@@ -24,12 +24,13 @@ import { RenderForceFlags } from './component/Component'
 import browserContext from './common/browser-context'
 import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
 import { DateProfile } from './DateProfileGenerator'
-import { EventSourceInput, parseEventSource } from './structs/event-source'
-import { EventInput, EventDef } from './structs/event'
+import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
+import { EventInput, EventDef, EventDefHash } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { parseEventStore, createEmptyEventStore, EventStore } from './structs/event-store'
+import { computeEventDefUis, EventUiHash } from './component/event-rendering'
 
 
 export default class Calendar {
@@ -83,6 +84,7 @@ export default class Calendar {
   isDisplaying: boolean = false // installed in DOM? accepting renders?
   isRendering: boolean = false // currently in the _render function?
   isSkeletonRendered: boolean = false // fyi: set within the debounce delay
+  computeEventDefUis: (eventDefs: EventDefHash, eventSources: EventSourceHash, options: any) => EventUiHash
   renderingPauseDepth: number = 0
   rerenderFlags: RenderForceFlags
   renderableEventStore: EventStore
@@ -101,6 +103,7 @@ export default class Calendar {
     this.buildDateEnv = reselector(buildDateEnv)
     this.buildTheme = reselector(buildTheme)
     this.buildDelayedRerender = reselector(buildDelayedRerender)
+    this.computeEventDefUis = reselector(computeEventDefUis)
 
     this.handleOptions(this.optionsManager.computed)
     this.hydrate()
@@ -349,6 +352,7 @@ export default class Calendar {
         defs: {},
         instances: {}
       },
+      eventUis: {},
       businessHoursDef: false, // gets populated when we delegate rendering to View
       dateSelection: null,
       eventSelection: '',
@@ -569,9 +573,16 @@ export default class Calendar {
         this.renderableEventStore :
         state.eventStore
 
+    let eventUis = this.computeEventDefUis(
+      renderableEventStore.defs,
+      state.eventSources,
+      renderedView.options
+    )
+
     renderedView.render({
       dateProfile: state.dateProfile,
       eventStore: renderableEventStore,
+      eventUis: eventUis,
       businessHoursDef: renderedView.opt('businessHours'),
       dateSelection: state.dateSelection,
       eventSelection: state.eventSelection,
