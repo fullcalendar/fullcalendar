@@ -527,16 +527,25 @@ export default abstract class DateComponent extends Component {
 
 
   renderBusinessHours(businessHours: EventStore) {
-    if (this.fillRenderer) {
+    if (this.slicingType) { // can use eventStoreToRanges?
       let expandedInstances = expandEventStoreInstances(businessHours, this.dateProfile.activeRange, this.getCalendar())
       let expandedStore: EventStore = { defs: businessHours.defs, instances: expandedInstances }
 
-      this.fillRenderer.renderSegs(
-        'businessHours',
-        this.eventStoreToSegs(
+      this.renderBusinessHourRanges(
+        this.eventStoreToRanges(
           expandedStore,
           computeEventDefUis(expandedStore.defs, {}, {})
-        ),
+        )
+      )
+    }
+  }
+
+
+  renderBusinessHourRanges(eventRanges: EventRenderRange[]) {
+    if (this.fillRenderer) {
+      this.fillRenderer.renderSegs(
+        'businessHours',
+        this.eventRangesToSegs(eventRanges),
         {
           getClasses(seg) {
             return [ 'fc-bgevent' ].concat(seg.eventRange.eventDef.className)
@@ -574,10 +583,19 @@ export default abstract class DateComponent extends Component {
 
 
   renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
+    if (this.slicingType) { // can use eventStoreToRanges?
+      this.renderEventRanges(
+        this.eventStoreToRanges(eventStore, eventUis)
+      )
+    }
+  }
+
+
+  renderEventRanges(eventRanges: EventRenderRange[]) {
     if (this.eventRenderer) {
       this.eventRenderer.rangeUpdated() // poorly named now
       this.eventRenderer.renderSegs(
-        this.eventStoreToSegs(eventStore, eventUis)
+        this.eventRangesToSegs(eventRanges)
       )
       this.triggerRenderedSegs(this.eventRenderer.getSegs())
     }
@@ -631,9 +649,11 @@ export default abstract class DateComponent extends Component {
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
   renderEventDrag(eventStore: EventStore, isEvent: boolean, origSeg: Seg | null) {
-    let segs = this.eventStoreToSegs(
-      eventStore,
-      this.eventUis // bad to use this here
+    let segs = this.eventRangesToSegs(
+      this.eventStoreToRanges(
+        eventStore,
+        this.eventUis // bad to use this here
+      )
     )
 
     // if the user is dragging something that is considered an event with real event data,
@@ -846,14 +866,17 @@ export default abstract class DateComponent extends Component {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  eventStoreToSegs(eventStore: EventStore, eventUis: EventUiHash): Seg[] {
-    let activeRange = this.dateProfile.activeRange
-    let eventRenderRanges = sliceEventStore(
+  eventStoreToRanges(eventStore: EventStore, eventUis: EventUiHash): EventRenderRange[] {
+    return sliceEventStore(
       eventStore,
       eventUis,
-      activeRange,
+      this.dateProfile.activeRange,
       this.slicingType === 'all-day' ? this.nextDayThreshold : null
     )
+  }
+
+
+  eventRangesToSegs(eventRenderRanges: EventRenderRange[]): Seg[] {
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
