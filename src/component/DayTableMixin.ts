@@ -175,11 +175,11 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 
   // Slices up a date range into a segment for every week-row it intersects with
+  // range already normalized to start-of-day
   sliceRangeByRow(range) {
     let daysPerRow = this.daysPerRow
-    let normalRange = (this as any).view.computeDayRange(range) // make whole-day range, considering nextDayThreshold
-    let rangeFirst = this.getDateDayIndex(normalRange.start) // inclusive first index
-    let rangeLast = this.getDateDayIndex(addDays(normalRange.end, -1)) // inclusive last index
+    let rangeFirst = this.getDateDayIndex(range.start) // inclusive first index
+    let rangeLast = this.getDateDayIndex(addDays(range.end, -1)) // inclusive last index
     let segs = []
     let row
     let rowFirst
@@ -219,12 +219,12 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 
   // Slices up a date range into a segment for every day-cell it intersects with.
+  // range already normalized to start-of-day
   // TODO: make more DRY with sliceRangeByRow somehow.
   sliceRangeByDay(range) {
     let daysPerRow = this.daysPerRow
-    let normalRange = (this as any).view.computeDayRange(range) // make whole-day range, considering nextDayThreshold
-    let rangeFirst = this.getDateDayIndex(normalRange.start) // inclusive first index
-    let rangeLast = this.getDateDayIndex(addDays(normalRange.end, -1)) // inclusive last index
+    let rangeFirst = this.getDateDayIndex(range.start) // inclusive first index
+    let rangeLast = this.getDateDayIndex(addDays(range.end, -1)) // inclusive last index
     let segs = []
     let row
     let rowFirst

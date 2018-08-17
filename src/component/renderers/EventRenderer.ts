@@ -3,7 +3,7 @@ import { DateMarker } from '../../datelib/marker'
 import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
-import { EventRenderRange, EventUi } from '../event-rendering'
+import { EventRenderRange, EventUi, hasBgRendering } from '../event-rendering'
 import { Seg } from '../DateComponent'
 import EventApi from '../../api/EventApi'
 
@@ -66,9 +66,7 @@ export default class EventRenderer {
     let fgSegs: Seg[] = []
 
     for (let seg of allSegs) {
-      let rendering = seg.eventRange.ui.rendering
-
-      if (rendering === 'background' || rendering === 'inverse-background') {
+      if (hasBgRendering(seg.eventRange.ui)) {
         bgSegs.push(seg)
       } else {
         fgSegs.push(seg)

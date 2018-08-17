@@ -1,9 +1,9 @@
 import { DateRangeInput, rangeContainsRange } from '../datelib/date-range'
-import { BusinessHoursDef } from '../structs/business-hours'
+import { BusinessHoursInput } from '../structs/business-hours'
 import { EventStore } from '../structs/event-store'
 import { DateProfile } from '../DateProfileGenerator'
 
-export type ConstraintInput = DateRangeInput | BusinessHoursDef | 'businessHours'
+export type ConstraintInput = DateRangeInput | BusinessHoursInput | 'businessHours'
 
 export function isEventStoreValid(eventStore: EventStore, dateProfile: DateProfile) {
   let instanceHash = eventStore.instances

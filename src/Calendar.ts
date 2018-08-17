@@ -31,6 +31,7 @@ import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { parseEventStore, createEmptyEventStore, EventStore } from './structs/event-store'
 import { computeEventDefUis, EventUiHash } from './component/event-rendering'
+import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
 
 export default class Calendar {
@@ -53,6 +54,8 @@ export default class Calendar {
 
   buildDateEnv: any
   buildTheme: any
+  computeEventDefUis: (eventDefs: EventDefHash, eventSources: EventSourceHash, options: any) => EventUiHash
+  parseBusinessHours: (input: BusinessHoursInput) => EventStore
 
   optionsManager: OptionsManager
   viewSpecManager: ViewSpecManager
@@ -84,7 +87,6 @@ export default class Calendar {
   isDisplaying: boolean = false // installed in DOM? accepting renders?
   isRendering: boolean = false // currently in the _render function?
   isSkeletonRendered: boolean = false // fyi: set within the debounce delay
-  computeEventDefUis: (eventDefs: EventDefHash, eventSources: EventSourceHash, options: any) => EventUiHash
   renderingPauseDepth: number = 0
   rerenderFlags: RenderForceFlags
   renderableEventStore: EventStore
@@ -104,6 +106,9 @@ export default class Calendar {
     this.buildTheme = reselector(buildTheme)
     this.buildDelayedRerender = reselector(buildDelayedRerender)
     this.computeEventDefUis = reselector(computeEventDefUis)
+    this.parseBusinessHours = reselector((input) => {
+      return parseBusinessHours(input, this)
+    })
 
     this.handleOptions(this.optionsManager.computed)
     this.hydrate()
@@ -348,12 +353,9 @@ export default class Calendar {
       eventSourceLoadingLevel: 0,
       dateProfile: null,
       eventSources: {},
-      eventStore: {
-        defs: {},
-        instances: {}
-      },
+      eventStore: createEmptyEventStore(),
       eventUis: {},
-      businessHoursDef: false, // gets populated when we delegate rendering to View
+      businessHours: createEmptyEventStore(), // gets populated when we delegate rendering to View
       dateSelection: null,
       eventSelection: '',
       eventDrag: null,
@@ -583,7 +585,7 @@ export default class Calendar {
       dateProfile: state.dateProfile,
       eventStore: renderableEventStore,
       eventUis: eventUis,
-      businessHoursDef: renderedView.opt('businessHours'),
+      businessHours: this.parseBusinessHours(renderedView.opt('businessHours')),
       dateSelection: state.dateSelection,
       eventSelection: state.eventSelection,
       eventDrag: state.eventDrag,

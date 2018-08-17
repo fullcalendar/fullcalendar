@@ -43,6 +43,7 @@ export default class TimeGrid extends DateComponent {
   isInteractable = true
   doesDragHelper = true
   doesDragHighlight = false
+  slicingType: 'timed' = 'timed' // stupid TypeScript
 
   view: any // TODO: make more general and/or remove
   helperRenderer: any

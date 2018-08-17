@@ -9,7 +9,7 @@ import { Duration, DurationInput } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
 import { FormatterInput } from '../datelib/formatting'
 import { DateRangeInput } from '../datelib/date-range'
-import { BusinessHoursDef } from '../structs/business-hours'
+import { BusinessHoursInput } from '../structs/business-hours'
 import { EventInput } from '../structs/event'
 import EventApi from '../api/EventApi'
 import { ConstraintInput } from '../interactions/constraint'
@@ -87,7 +87,7 @@ export interface OptionsInputBase {
   weekNumbers?: boolean
   weekNumbersWithinDays?: boolean
   weekNumberCalculation?: 'local' | 'ISO' | ((m: Date) => number)
-  businessHours?: BusinessHoursDef
+  businessHours?: BusinessHoursInput
   showNonCurrentDates?: boolean
   height?: number | 'auto' | 'parent' | (() => number)
   contentHeight?: number | 'auto' | (() => number)

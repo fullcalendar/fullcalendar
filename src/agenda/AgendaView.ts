@@ -13,11 +13,12 @@ import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
-import { EventStore } from '../structs/event-store'
+import { EventStore, filterEventStoreDefs } from '../structs/event-store'
 import { RenderForceFlags } from '../component/Component'
 import { DateComponentRenderState } from '../component/DateComponent'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import reselector from '../util/reselector'
+import { EventUiHash, hasBgRendering } from '../component/event-rendering'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -44,8 +45,13 @@ export default class AgendaView extends View {
   axisWidth: any // the width of the time axis running down the side
   usesMinMaxTime: boolean = true // indicates that minTime/maxTime affects rendering
 
-  splitEventStore: any
-  splitInteractionState: any
+  // reselectors
+  filterEventsForTimeGrid: any
+  filterEventsForDayGrid: any
+  buildEventDragForTimeGrid: any
+  buildEventDragForDayGrid: any
+  buildEventResizeForTimeGrid: any
+  buildEventResizeForDayGrid: any
 
 
   constructor(calendar, viewSpec) {
@@ -64,8 +70,12 @@ export default class AgendaView extends View {
       'auto' // overflow y
     )
 
-    this.splitEventStore = reselector(splitEventStore)
-    this.splitInteractionState = reselector(splitInteractionState)
+    this.filterEventsForTimeGrid = reselector(filterEventsForTimeGrid)
+    this.filterEventsForDayGrid = reselector(filterEventsForDayGrid)
+    this.buildEventDragForTimeGrid = reselector(buildInteractionForTimeGrid)
+    this.buildEventDragForDayGrid = reselector(buildInteractionForDayGrid)
+    this.buildEventResizeForTimeGrid = reselector(buildInteractionForTimeGrid)
+    this.buildEventResizeForDayGrid = reselector(buildInteractionForDayGrid)
   }
 
 
@@ -174,10 +184,6 @@ export default class AgendaView extends View {
   renderChildren(renderState: DateComponentRenderState, forceFlags: RenderForceFlags) {
     let allDaySeletion = null
     let timedSelection = null
-    let eventStoreGroups = this.splitEventStore(renderState.eventStore)
-    let dragGroups = this.splitInteractionState(renderState.eventDrag)
-    let resizeGroups = this.splitInteractionState(renderState.eventResize)
-
     if (renderState.dateSelection) {
       if (renderState.dateSelection.isAllDay) {
         allDaySeletion = renderState.dateSelection
@@ -188,25 +194,25 @@ export default class AgendaView extends View {
 
     this.timeGrid.render({
       dateProfile: renderState.dateProfile,
-      eventStore: eventStoreGroups.timed,
+      eventStore: this.filterEventsForTimeGrid(renderState.eventStore, renderState.eventUis),
       eventUis: renderState.eventUis,
       dateSelection: timedSelection,
       eventSelection: renderState.eventSelection,
-      eventDrag: dragGroups.timed,
-      eventResize: resizeGroups.timed,
-      businessHoursDef: renderState.businessHoursDef
+      eventDrag: this.buildEventDragForTimeGrid(renderState.eventDrag, renderState.eventUis),
+      eventResize: this.buildEventResizeForTimeGrid(renderState.eventResize, renderState.eventUis),
+      businessHours: renderState.businessHours
     }, forceFlags)
 
     if (this.dayGrid) {
       this.dayGrid.render({
         dateProfile: renderState.dateProfile,
-        eventStore: eventStoreGroups.allDay,
+        eventStore: this.filterEventsForDayGrid(renderState.eventStore, renderState.eventUis),
         eventUis: renderState.eventUis,
         dateSelection: allDaySeletion,
         eventSelection: renderState.eventSelection,
-        eventDrag: dragGroups.allDay,
-        eventResize: resizeGroups.allDay,
-        businessHoursDef: renderState.businessHoursDef
+        eventDrag: this.buildEventDragForDayGrid(renderState.eventDrag, renderState.eventUis),
+        eventResize: this.buildEventResizeForDayGrid(renderState.eventResize, renderState.eventUis),
+        businessHours: renderState.businessHours
       }, forceFlags)
     }
   }
@@ -415,58 +421,38 @@ agendaDayGridMethods = {
 
 }
 
-
-function splitEventStore(eventStore: EventStore) {
-  let allDay: EventStore = { defs: {}, instances: {} }
-  let timed: EventStore = { defs: {}, instances: {} }
-
-  for (let defId in eventStore.defs) {
-    let def = eventStore.defs[defId]
-
-    if (def.isAllDay) {
-      allDay.defs[defId] = def
-    } else {
-      timed.defs[defId] = def
-    }
-  }
-
-  for (let instanceId in eventStore.instances) {
-    let instance = eventStore.instances[instanceId]
-    let def = eventStore.defs[instance.defId]
-
-    if (def.isAllDay) {
-      allDay.instances[instanceId] = instance
-    } else {
-      timed.instances[instanceId] = instance
-    }
-  }
-
-  return { allDay, timed }
+function filterEventsForTimeGrid(eventStore: EventStore, eventUis: EventUiHash): EventStore {
+  return filterEventStoreDefs(eventStore, function(eventDef) {
+    return !eventDef.isAllDay || hasBgRendering(eventUis[eventDef.defId])
+  })
 }
 
+function filterEventsForDayGrid(eventStore: EventStore, eventUis: EventUiHash): EventStore {
+  return filterEventStoreDefs(eventStore, function(eventDef) {
+    return eventDef.isAllDay || hasBgRendering(eventUis[eventDef.defId])
+  })
+}
 
-function splitInteractionState(state: EventInteractionState) {
-  let allDay = null
-  let timed = null
-
+function buildInteractionForTimeGrid(state: EventInteractionState, eventUis: EventUiHash): EventInteractionState {
   if (state) {
-    let affectedEventGroups = splitEventStore(state.affectedEvents)
-    let mutatedEventGroups = splitEventStore(state.mutatedEvents)
-
-    allDay = {
-      affectedEvents: affectedEventGroups.allDay,
-      mutatedEvents: mutatedEventGroups.allDay,
-      isEvent: state.isEvent,
-      origSeg: state.origSeg
-    }
-
-    timed = {
-      affectedEvents: affectedEventGroups.timed,
-      mutatedEvents: mutatedEventGroups.timed,
+    return {
+      affectedEvents: filterEventsForTimeGrid(state.affectedEvents, eventUis),
+      mutatedEvents: filterEventsForTimeGrid(state.mutatedEvents, eventUis),
       isEvent: state.isEvent,
       origSeg: state.origSeg
     }
   }
+  return null
+}
 
-  return { allDay, timed }
+function buildInteractionForDayGrid(state: EventInteractionState, eventUis: EventUiHash): EventInteractionState {
+  if (state) {
+    return {
+      affectedEvents: filterEventsForDayGrid(state.affectedEvents, eventUis),
+      mutatedEvents: filterEventsForDayGrid(state.mutatedEvents, eventUis),
+      isEvent: state.isEvent,
+      origSeg: state.origSeg
+    }
+  }
+  return null
 }

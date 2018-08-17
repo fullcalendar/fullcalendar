@@ -8,8 +8,7 @@ import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } fro
 import { Duration, createDuration } from '../datelib/duration'
 import { DateSpan } from '../structs/date-span'
 import { EventRenderRange, sliceEventStore, computeEventDefUi, EventUiHash, computeEventDefUis } from '../component/event-rendering'
-import { EventStore } from '../structs/event-store'
-import { BusinessHoursDef, buildBusinessHours } from '../structs/business-hours'
+import { EventStore, expandEventStoreInstances } from '../structs/event-store'
 import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
 import { EventInteractionState } from '../interactions/event-interaction-state'
@@ -24,7 +23,7 @@ import { parseEventDef, createEventInstance } from '../structs/event'
 
 export interface DateComponentRenderState {
   dateProfile: DateProfile | null
-  businessHoursDef: BusinessHoursDef // BusinessHoursDef's `false` is the empty state
+  businessHours: EventStore
   eventStore: EventStore
   eventUis: EventUiHash
   dateSelection: DateSpan | null
@@ -63,6 +62,8 @@ export default abstract class DateComponent extends Component {
   // TODO: port isTimeScale into same system?
   largeUnit: any
 
+  slicingType: 'timed' | 'all-day' | null = null
+
   eventRendererClass: any
   helperRendererClass: any
   fillRendererClass: any
@@ -77,14 +78,12 @@ export default abstract class DateComponent extends Component {
   helperRenderer: any
   fillRenderer: any
 
-  hasAllDayBusinessHours: boolean = false // TODO: unify with largeUnit and isTimeScale?
-
   renderedFlags: any = {}
   dirtySizeFlags: any = {}
   needHitsDepth: number = 0
 
   dateProfile: DateProfile = null
-  businessHoursDef: BusinessHoursDef = false
+  businessHours: EventStore = null
   eventStore: EventStore = null
   eventUis: EventUiHash = null
   dateSelection: DateSpan = null
@@ -320,7 +319,7 @@ export default abstract class DateComponent extends Component {
       skeleton: false,
       dates: renderState.dateProfile !== this.dateProfile,
       events: renderState.eventStore !== this.eventStore || renderState.eventUis !== this.eventUis,
-      businessHours: renderState.businessHoursDef !== this.businessHoursDef,
+      businessHours: renderState.businessHours !== this.businessHours,
       dateSelection: renderState.dateSelection !== this.dateSelection,
       eventSelection: renderState.eventSelection !== this.eventSelection,
       eventDrag: renderState.eventDrag !== this.eventDrag,
@@ -375,8 +374,8 @@ export default abstract class DateComponent extends Component {
       dirtySizeFlags.dates = true
     }
 
-    if (flags.businessHours && renderState.businessHoursDef) {
-      this.renderBusinessHours(renderState.businessHoursDef)
+    if (flags.businessHours && renderState.businessHours) {
+      this.renderBusinessHours(renderState.businessHours)
       renderedFlags.businessHours = true
       dirtySizeFlags.businessHours = true
     }
@@ -527,20 +526,16 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderBusinessHours(businessHoursDef: BusinessHoursDef) {
+  renderBusinessHours(businessHours: EventStore) {
     if (this.fillRenderer) {
-      let eventStore = buildBusinessHours(
-        businessHoursDef,
-        this.hasAllDayBusinessHours,
-        this.dateProfile.activeRange,
-        this.getCalendar()
-      )
+      let expandedInstances = expandEventStoreInstances(businessHours, this.dateProfile.activeRange, this.getCalendar())
+      let expandedStore: EventStore = { defs: businessHours.defs, instances: expandedInstances }
 
       this.fillRenderer.renderSegs(
         'businessHours',
         this.eventStoreToSegs(
-          eventStore,
-          computeEventDefUis(eventStore.defs, {}, {})
+          expandedStore,
+          computeEventDefUis(expandedStore.defs, {}, {})
         ),
         {
           getClasses(seg) {
@@ -853,7 +848,12 @@ export default abstract class DateComponent extends Component {
 
   eventStoreToSegs(eventStore: EventStore, eventUis: EventUiHash): Seg[] {
     let activeRange = this.dateProfile.activeRange
-    let eventRenderRanges = sliceEventStore(eventStore, eventUis, activeRange)
+    let eventRenderRanges = sliceEventStore(
+      eventStore,
+      eventUis,
+      activeRange,
+      this.slicingType === 'all-day' ? this.nextDayThreshold : null
+    )
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
@@ -1046,15 +1046,9 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  // Returns the date range of the full days the given range visually appears to occupy.
-  computeDayRange(range): DateRange {
-    return computeVisibleDayRange(range, this.nextDayThreshold)
-  }
-
-
   // Does the given range visually appear to occupy more than one day?
   isMultiDayRange(range) {
-    let dayRange = this.computeDayRange(range)
+    let dayRange = computeVisibleDayRange(range, this.nextDayThreshold)
 
     return diffDays(dayRange.start, dayRange.end) > 1
   }

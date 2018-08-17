@@ -1,7 +1,16 @@
-import { EventInput, EventDefHash, EventInstanceHash, parseEventDef, parseEventDateSpan, createEventInstance, EventDef } from './event'
+import {
+  EventInput,
+  EventDef,
+  EventDefHash,
+  EventInstance,
+  EventInstanceHash,
+  parseEventDef,
+  parseEventDateSpan,
+  createEventInstance
+} from './event'
 import { parseEventDefRecurring, expandEventDef } from './recurring-event'
 import Calendar from '../Calendar'
-import { assignTo } from '../util/object'
+import { assignTo, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 
 /*
@@ -59,6 +68,21 @@ export function parseEventStore(
   return dest
 }
 
+export function expandEventStoreInstances(
+  eventStore: EventStore,
+  framingRange: DateRange,
+  calendar: Calendar
+): EventInstanceHash {
+  let dest: EventInstanceHash = {}
+
+  for (let defId in eventStore.defs) {
+    expandEventDefInstances(eventStore.defs[defId], framingRange, calendar, dest)
+  }
+
+  return dest
+}
+
+// TODO: be smarter about where this and expandEventStoreInstances are called
 export function expandEventDefInstances(
   def: EventDef,
   framingRange: DateRange,
@@ -117,4 +141,12 @@ export function mergeEventStores(store0: EventStore, store1: EventStore): EventS
     defs: assignTo({}, store0.defs, store1.defs),
     instances: assignTo({}, store0.instances, store1.instances)
   }
+}
+
+export function filterEventStoreDefs(eventStore: EventStore, filterFunc: (eventDef: EventDef) => boolean): EventStore {
+  let defs = filterHash(eventStore.defs, filterFunc)
+  let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
+    return defs[instance.defId] // still exists?
+  })
+  return { defs, instances }
 }

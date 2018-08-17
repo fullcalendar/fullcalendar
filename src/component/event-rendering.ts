@@ -4,6 +4,8 @@ import { DateRange, invertRanges } from '../datelib/date-range'
 import { EventSourceHash } from '../structs/event-source'
 import { mapHash } from '../util/object'
 import { parseClassName } from '../util/html'
+import { Duration } from '../datelib/duration'
+import { computeVisibleDayRange } from '../util/misc'
 
 export interface EventUi {
   startEditable: boolean
@@ -20,16 +22,17 @@ export type EventUiHash = { [defId: string]: EventUi }
 export interface EventRenderRange {
   eventDef: EventDef
   eventInstance?: EventInstance
-  range: DateRange
+  range: DateRange // NOT sliced by framingRange
   ui: EventUi
 }
 
 
 /*
-Does not slice ranges via framingRange into new ranges, but instead,
+DOES NOT ACTUALLY SLIE RANGES via framingRange into new ranges, but instead,
 keeps fg event ranges intact but more importantly slices inverse-BG events.
+Specifying nextDayThreshold signals that all-day ranges should be sliced.
 */
-export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, framingRange: DateRange) {
+export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
   let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
   let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
@@ -56,18 +59,23 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
     let instance = eventStore.instances[instanceId]
     let def = eventStore.defs[instance.defId]
     let ui = eventUis[def.defId]
+    let range = instance.range
+
+    if (!def.isAllDay && nextDayThreshold) {
+      range = computeVisibleDayRange(range, nextDayThreshold)
+    }
 
     if (ui.rendering === 'inverse-background') {
       if (def.groupId) {
-        inverseBgByGroupId[def.groupId].push(instance.range)
+        inverseBgByGroupId[def.groupId].push(range)
       } else {
-        inverseBgByDefId[instance.defId].push(instance.range)
+        inverseBgByDefId[instance.defId].push(range)
       }
     } else {
       renderRanges.push({
         eventDef: def,
         eventInstance: instance,
-        range: instance.range,
+        range: range,
         ui
       })
     }
@@ -103,6 +111,10 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
   }
 
   return renderRanges
+}
+
+export function hasBgRendering(ui: EventUi) {
+  return ui.rendering === 'background' || ui.rendering === 'inverse-background'
 }
 
 

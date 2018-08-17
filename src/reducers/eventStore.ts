@@ -2,7 +2,15 @@ import Calendar from '../Calendar'
 import { filterHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
-import { EventStore, parseEventStore, mergeEventStores, getRelatedEvents, createEmptyEventStore, expandEventDefInstances } from '../structs/event-store'
+import {
+  EventStore,
+  parseEventStore,
+  mergeEventStores,
+  getRelatedEvents,
+  createEmptyEventStore,
+  expandEventDefInstances,
+  filterEventStoreDefs
+} from '../structs/event-store'
 import { Action } from './types'
 import { EventSourceHash, EventSource, getEventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
@@ -32,7 +40,7 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
       return excludeInstances(eventStore, action.instances)
 
     case 'REMOVE_EVENT_DEF':
-      return filterDefs(eventStore, function(eventDef) {
+      return filterEventStoreDefs(eventStore, function(eventDef) {
         return eventDef.defId !== action.defId
       })
 
@@ -40,7 +48,7 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
       return excludeEventsBySourceId(eventStore, action.sourceId)
 
     case 'REMOVE_ALL_EVENT_SOURCES':
-      return filterDefs(eventStore, function(eventDef: EventDef) {
+      return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
         return !eventDef.sourceId // only keep events with no source id
       })
 
@@ -116,18 +124,9 @@ function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): 
 }
 
 function excludeEventsBySourceId(eventStore, sourceId) {
-  return filterDefs(eventStore, function(eventDef: EventDef) {
+  return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
     return eventDef.sourceId !== sourceId
   })
-}
-
-// has extra bonus feature of removing temporary events
-function filterDefs(eventStore: EventStore, filterFunc: (eventDef: EventDef) => boolean): EventStore {
-  let defs = filterHash(eventStore.defs, filterFunc)
-  let instances = filterHash(eventStore.instances, function(instance: EventInstance) {
-    return defs[instance.defId] // still exists?
-  })
-  return { defs, instances }
 }
 
 function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {

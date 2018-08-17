@@ -50,6 +50,7 @@ export default class DayGrid extends DateComponent {
   isInteractable = true
   doesDragHelper = false
   doesDragHighlight = true
+  slicingType: 'all-day' = 'all-day' // stupid TypeScript
 
   view: View // TODO: make more general and/or remove
   helperRenderer: any
@@ -69,8 +70,6 @@ export default class DayGrid extends DateComponent {
   // isRigid determines whether the individual rows should ignore the contents and be a constant height.
   // Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
   isRigid: boolean = false
-
-  hasAllDayBusinessHours: boolean = true
 
   segPopover: Popover // the Popover that holds events that can't fit in a cell. null when not visible
   segPopoverTile: DayTile

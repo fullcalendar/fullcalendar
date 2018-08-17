@@ -2,14 +2,13 @@ import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 import { EventInput } from './event'
 import { EventStore, parseEventStore } from './event-store'
-import { DateRange } from '../datelib/date-range'
 
 /*
 Utils for converting raw business hour input into an EventStore,
 for both rendering and the constraint system.
 */
 
-export type BusinessHoursDef = boolean | EventInput | EventInput[]
+export type BusinessHoursInput = boolean | EventInput | EventInput[]
 
 const DEF_DEFAULTS = {
   startTime: '09:00',
@@ -20,21 +19,15 @@ const DEF_DEFAULTS = {
   groupId: '_businessHours' // so multiple defs get grouped
 }
 
-export function buildBusinessHours(
-  input: BusinessHoursDef,
-  isAllDay: boolean,
-  framingRange: DateRange,
-  calendar: Calendar
-): EventStore {
+export function parseBusinessHours(input: BusinessHoursInput, calendar: Calendar): EventStore {
   return parseEventStore(
-    refineInputs(input, isAllDay),
+    refineInputs(input),
     '',
-    calendar,
-    framingRange
+    calendar
   )
 }
 
-function refineInputs(input: BusinessHoursDef, isAllDay: boolean): EventInput[] {
+function refineInputs(input: BusinessHoursInput): EventInput[] {
   let rawDefs: EventInput[]
 
   if (input === true) {
@@ -51,14 +44,7 @@ function refineInputs(input: BusinessHoursDef, isAllDay: boolean): EventInput[] 
   }
 
   rawDefs = rawDefs.map(function(rawDef) {
-    rawDef = assignTo({}, DEF_DEFAULTS, rawDef)
-
-    if (isAllDay) {
-      rawDef.startTime = null
-      rawDef.endTime = null
-    }
-
-    return rawDef
+    return assignTo({}, DEF_DEFAULTS, rawDef)
   })
 
   return rawDefs

@@ -18,7 +18,7 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     eventSources,
     eventStore: reduceEventStore(state.eventStore, action, eventSources, calendar),
     eventUis: state.eventUis, // TODO: should really be internal state
-    businessHoursDef: state.businessHoursDef,
+    businessHours: state.businessHours,
     dateSelection: reduceDateSelection(state.dateSelection, action),
     eventSelection: reduceSelectedEvent(state.eventSelection, action),
     eventDrag: reduceEventDrag(state.eventDrag, action),
