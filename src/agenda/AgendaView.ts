@@ -198,8 +198,8 @@ export default class AgendaView extends View {
       eventUis: renderState.eventUis,
       dateSelection: timedSelection,
       eventSelection: renderState.eventSelection,
-      eventDrag: this.buildEventDragForTimeGrid(renderState.eventDrag, renderState.eventUis),
-      eventResize: this.buildEventResizeForTimeGrid(renderState.eventResize, renderState.eventUis),
+      eventDrag: this.buildEventDragForTimeGrid(renderState.eventDrag),
+      eventResize: this.buildEventResizeForTimeGrid(renderState.eventResize),
       businessHours: renderState.businessHours
     }, forceFlags)
 
@@ -210,8 +210,8 @@ export default class AgendaView extends View {
         eventUis: renderState.eventUis,
         dateSelection: allDaySeletion,
         eventSelection: renderState.eventSelection,
-        eventDrag: this.buildEventDragForDayGrid(renderState.eventDrag, renderState.eventUis),
-        eventResize: this.buildEventResizeForDayGrid(renderState.eventResize, renderState.eventUis),
+        eventDrag: this.buildEventDragForDayGrid(renderState.eventDrag),
+        eventResize: this.buildEventResizeForDayGrid(renderState.eventResize),
         businessHours: renderState.businessHours
       }, forceFlags)
     }
@@ -429,15 +429,16 @@ function filterEventsForTimeGrid(eventStore: EventStore, eventUis: EventUiHash):
 
 function filterEventsForDayGrid(eventStore: EventStore, eventUis: EventUiHash): EventStore {
   return filterEventStoreDefs(eventStore, function(eventDef) {
-    return eventDef.isAllDay || hasBgRendering(eventUis[eventDef.defId])
+    return eventDef.isAllDay
   })
 }
 
-function buildInteractionForTimeGrid(state: EventInteractionState, eventUis: EventUiHash): EventInteractionState {
+function buildInteractionForTimeGrid(state: EventInteractionState): EventInteractionState {
   if (state) {
     return {
-      affectedEvents: filterEventsForTimeGrid(state.affectedEvents, eventUis),
-      mutatedEvents: filterEventsForTimeGrid(state.mutatedEvents, eventUis),
+      affectedEvents: filterEventsForTimeGrid(state.affectedEvents, state.eventUis),
+      mutatedEvents: filterEventsForTimeGrid(state.mutatedEvents, state.eventUis),
+      eventUis: state.eventUis,
       isEvent: state.isEvent,
       origSeg: state.origSeg
     }
@@ -445,11 +446,12 @@ function buildInteractionForTimeGrid(state: EventInteractionState, eventUis: Eve
   return null
 }
 
-function buildInteractionForDayGrid(state: EventInteractionState, eventUis: EventUiHash): EventInteractionState {
+function buildInteractionForDayGrid(state: EventInteractionState): EventInteractionState {
   if (state) {
     return {
-      affectedEvents: filterEventsForDayGrid(state.affectedEvents, eventUis),
-      mutatedEvents: filterEventsForDayGrid(state.mutatedEvents, eventUis),
+      affectedEvents: filterEventsForDayGrid(state.affectedEvents, state.eventUis),
+      mutatedEvents: filterEventsForDayGrid(state.mutatedEvents, state.eventUis),
+      eventUis: state.eventUis,
       isEvent: state.isEvent,
       origSeg: state.origSeg
     }

@@ -14,6 +14,7 @@ import OffsetTracker from '../common/OffsetTracker'
 import { DateSpan } from '../structs/date-span'
 import { EventStore } from '../structs/event-store'
 import { Hit } from '../interactions/HitDragging'
+import { EventUiHash } from '../component/event-rendering'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -639,12 +640,9 @@ export default class TimeGrid extends DateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventStore: EventStore, origSeg) {
+  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, origSeg) {
     let segs = this.eventRangesToSegs(
-      this.eventStoreToRanges(
-        eventStore,
-        this.eventUis // bad to use this here
-      )
+      this.eventStoreToRanges(eventStore, eventUis)
     )
 
     this.helperRenderer.renderEventResizingSegs(segs, origSeg)

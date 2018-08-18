@@ -636,7 +636,12 @@ export default abstract class DateComponent extends Component {
 
   renderEventDragState(state: EventInteractionState) {
     this.hideSegsByHash(state.affectedEvents.instances)
-    this.renderEventDrag(state.mutatedEvents, state.isEvent, state.origSeg)
+    this.renderEventDrag(
+      state.mutatedEvents,
+      state.eventUis,
+      state.isEvent,
+      state.origSeg
+    )
   }
 
 
@@ -648,12 +653,9 @@ export default abstract class DateComponent extends Component {
 
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
-  renderEventDrag(eventStore: EventStore, isEvent: boolean, origSeg: Seg | null) {
+  renderEventDrag(eventStore: EventStore, eventUis: EventUiHash, isEvent: boolean, origSeg: Seg | null) {
     let segs = this.eventRangesToSegs(
-      this.eventStoreToRanges(
-        eventStore,
-        this.eventUis // bad to use this here
-      )
+      this.eventStoreToRanges(eventStore, eventUis)
     )
 
     // if the user is dragging something that is considered an event with real event data,
@@ -689,7 +691,11 @@ export default abstract class DateComponent extends Component {
 
   renderEventResizeState(state: EventInteractionState) {
     this.hideSegsByHash(state.affectedEvents.instances)
-    this.renderEventResize(state.mutatedEvents, state.origSeg)
+    this.renderEventResize(
+      state.mutatedEvents,
+      state.eventUis,
+      state.origSeg
+    )
   }
 
 
@@ -700,7 +706,7 @@ export default abstract class DateComponent extends Component {
 
 
   // Renders a visual indication of an event being resized.
-  renderEventResize(eventStore: EventStore, origSeg: any) {
+  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, origSeg: any) {
     // subclasses can implement
   }
 

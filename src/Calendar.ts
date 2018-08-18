@@ -575,7 +575,8 @@ export default class Calendar {
         this.renderableEventStore :
         state.eventStore
 
-    let eventUis = this.computeEventDefUis(
+    // setting state here, eek
+    let eventUis = this.state.eventUis = this.computeEventDefUis(
       renderableEventStore.defs,
       state.eventSources,
       renderedView.options

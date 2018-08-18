@@ -159,6 +159,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     this.displayDrag(receivingCalendar, {
       affectedEvents: relatedEvents,
       mutatedEvents: mutatedRelatedEvents || createEmptyEventStore(),
+      eventUis: initialCalendar.state.eventUis,
       isEvent: true,
       origSeg: this.subjectSeg
     })
@@ -297,6 +298,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
           state: {
             affectedEvents: state.affectedEvents,
             mutatedEvents: createEmptyEventStore(),
+            eventUis: {},
             isEvent: true,
             origSeg: state.origSeg
           }

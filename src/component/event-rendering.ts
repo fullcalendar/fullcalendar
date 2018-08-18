@@ -140,7 +140,9 @@ export function computeEventDefUi(eventDef: EventDef, eventSources: EventSourceH
   return refinedHashes.reduce(combineUis)
 }
 
-function refineScopedUi(input) { // has word "event" in prop names
+// has word "event" in prop names
+// FYI: startEditable/durationEditable might end up being null
+function refineScopedUi(input): EventUi {
   return {
     startEditable: (input.startEditable != null) ? input.startEditable : input.editable,
     durationEditable: (input.durationEditable != null) ? input.durationEditable : input.editable,
@@ -152,7 +154,9 @@ function refineScopedUi(input) { // has word "event" in prop names
   }
 }
 
-function refineUnscopedUi(input) { // does NOT have the word "event" in prop names
+// does NOT have the word "event" in prop names
+// FYI: startEditable/durationEditable might end up being null
+function refineUnscopedUi(input): EventUi {
   return {
     startEditable: (input.startEditable != null) ? input.startEditable : input.editable,
     durationEditable: (input.durationEditable != null) ? input.durationEditable : input.editable,
@@ -164,7 +168,7 @@ function refineUnscopedUi(input) { // does NOT have the word "event" in prop nam
   }
 }
 
-function combineUis(hash0, hash1) { // hash1 has higher precedence
+function combineUis(hash0, hash1): EventUi { // hash1 has higher precedence
   return {
     startEditable: (hash1.startEditable != null) ? hash1.startEditable : hash0.startEditable,
     durationEditable: (hash1.durationEditable != null) ? hash1.durationEditable : hash0.durationEditable,
