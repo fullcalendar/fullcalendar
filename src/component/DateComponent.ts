@@ -4,7 +4,7 @@ import { default as Component, RenderForceFlags } from './Component'
 import Calendar from '../Calendar'
 import View from '../View'
 import { DateProfile } from '../DateProfileGenerator'
-import { DateMarker, DAY_IDS, addDays, startOfDay, diffDays, diffWholeDays } from '../datelib/marker'
+import { DateMarker, DAY_IDS, addDays, startOfDay, diffWholeDays } from '../datelib/marker'
 import { Duration, createDuration } from '../datelib/duration'
 import { DateSpan } from '../structs/date-span'
 import { EventRenderRange, sliceEventStore, computeEventDefUi, EventUiHash, computeEventDefUis } from '../component/event-rendering'
@@ -15,7 +15,6 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { assignTo } from '../util/object'
 import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
-import { computeVisibleDayRange } from '../util/misc'
 import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
 import { parseEventDef, createEventInstance } from '../structs/event'
@@ -1072,14 +1071,6 @@ export default abstract class DateComponent extends Component {
     }
 
     return res || 0
-  }
-
-
-  // Does the given range visually appear to occupy more than one day?
-  isMultiDayRange(range) {
-    let dayRange = computeVisibleDayRange(range, this.nextDayThreshold)
-
-    return diffDays(dayRange.start, dayRange.end) > 1
   }
 
 

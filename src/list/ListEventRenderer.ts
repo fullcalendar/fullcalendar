@@ -2,6 +2,7 @@ import { htmlEscape } from '../util/html'
 import EventRenderer from '../component/renderers/EventRenderer'
 import ListView from './ListView'
 import { Seg } from '../component/DateComponent'
+import { isMultiDayRange } from '../util/misc'
 
 export default class ListEventRenderer extends EventRenderer {
 
@@ -23,6 +24,7 @@ export default class ListEventRenderer extends EventRenderer {
     let theme = calendar.theme
     let eventRange = seg.eventRange
     let eventDef = eventRange.eventDef
+    let eventInstance = eventRange.eventInstance
     let eventUi = eventRange.ui
     let url = eventDef.url
     let classes = [ 'fc-list-item' ].concat(eventUi.classNames)
@@ -31,11 +33,17 @@ export default class ListEventRenderer extends EventRenderer {
 
     if (eventDef.isAllDay) {
       timeHtml = view.getAllDayHtml()
-    } else if (view.isMultiDayRange(eventRange.range)) {
-      if (seg.isStart || seg.isEnd) { // outer segment that probably lasts part of the day
+    } else if (isMultiDayRange(eventRange.range)) {
+      if (seg.isStart) {
+        timeHtml = htmlEscape(this._getTimeText(
+          eventInstance.range.start,
+          seg.end,
+          false // isAllDay
+        ))
+      } else if (seg.isEnd) {
         timeHtml = htmlEscape(this._getTimeText(
           seg.start,
-          seg.end,
+          eventInstance.range.end,
           false // isAllDay
         ))
       } else { // inner segment that lasts the whole day

@@ -483,6 +483,14 @@ export function computeVisibleDayRange(timedRange: DateRange, nextDayThreshold: 
 }
 
 
+// spans from one day into another?
+export function isMultiDayRange(range: DateRange) {
+  let visibleRange = computeVisibleDayRange(range, createDuration(0))
+
+  return diffDays(visibleRange.start, visibleRange.end) > 1
+}
+
+
 export function diffDates(date0: DateMarker, date1: DateMarker, dateEnv: DateEnv, largeUnit?: string) {
   if (largeUnit === 'year') {
     return createDuration(dateEnv.diffWholeYears(date0, date1), 'year')!

@@ -3,6 +3,7 @@ import { removeElement, applyStyle } from '../util/dom-manip'
 import { createFormatter } from '../datelib/formatting'
 import EventRenderer from '../component/renderers/EventRenderer'
 import { Seg } from '../component/DateComponent'
+import { isMultiDayRange } from '../util/misc'
 
 const FULL_TIME_FORMAT = createFormatter({ hour: 'numeric', minute: '2-digit' })
 
@@ -88,7 +89,6 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
   // Renders the HTML for a single event segment's default rendering
   fgSegHtml(seg: Seg) {
-    let view = this.view
     let eventRange = seg.eventRange
     let eventDef = eventRange.eventDef
     let eventUi = eventRange.ui
@@ -105,7 +105,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
     classes.unshift('fc-time-grid-event', 'fc-v-event')
 
     // if the event appears to span more than one day...
-    if (view.isMultiDayRange(eventRange.range)) {
+    if (isMultiDayRange(eventRange.range)) {
       // Don't display time text on segments that run entirely through a day.
       // That would appear as midnight-midnight and would look dumb.
       // Otherwise, display the time text for the *segment's* times (like 6pm-midnight or midnight-10am)
