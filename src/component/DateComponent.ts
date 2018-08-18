@@ -597,6 +597,12 @@ export default abstract class DateComponent extends Component {
         this.eventRangesToSegs(eventRanges)
       )
       this.triggerRenderedSegs(this.eventRenderer.getSegs())
+
+      // hack to fire eventAfterAllRender
+      let calendar = this.getCalendar()
+      if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
+        calendar.afterSizingTriggers.eventAfterAllRender = [ null ] // fire once
+      }
     }
   }
 
