@@ -12,7 +12,7 @@ describe('eventMouseover', function() {
         defaultView: viewName
       })
 
-      it('will trigger a eventMouseout with updateEvent', function(done) {
+      it('will trigger a eventMouseout when updating an event', function(done) {
 
         spyOnCalendarCallback('eventMouseout', function(arg) {
           expect(typeof arg.event).toBe('object')
@@ -29,8 +29,7 @@ describe('eventMouseover', function() {
           eventMouseover: function(arg) {
             expect(typeof arg.event).toBe('object')
             expect(typeof arg.jsEvent).toBe('object')
-            arg.event.title = 'YO'
-            currentCalendar.updateEvent(arg.event)
+            arg.event.setProp('title', 'YO')
           }
         })
 
