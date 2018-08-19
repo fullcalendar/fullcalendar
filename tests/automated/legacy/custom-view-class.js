@@ -1,49 +1,68 @@
 describe('custom view class', function() {
 
   it('calls all standard methods with correct parameters', function() {
-    var View = FullCalendar.View
-    var CustomView
 
-    var methods = {
-      initialize: function() {
-      },
-      render: function() {
-      },
-      setHeight: function(height, isAuto) {
+    class CustomView extends FullCalendar.View {
+
+      slicingType = 'all-day'
+
+      initialize() {
+      }
+
+      renderSkeleton() {
+      }
+
+      renderDates(dateProfile) {
+        expect(dateProfile.activeRange.start instanceof Date).toBe(true)
+        expect(dateProfile.activeRange.end instanceof Date).toBe(true)
+      }
+
+      updateSize(height, isAuto) {
         expect(typeof height).toBe('number')
         expect(typeof isAuto).toBe('boolean')
-      },
-      renderEvents: function(events) {
-        expect($.type(events)).toBe('array')
-        expect(events.length).toBe(1)
-        expect(events[0].start instanceof Date).toBe(true)
-        expect(events[0].end instanceof Date).toBe(true)
-      },
-      destroyEvents: function() {
-      },
-      renderSelection: function(range) {
-        expect($.type(range)).toBe('object')
-        expect(range.start instanceof Date).toBe(true)
-        expect(range.end instanceof Date).toBe(true)
-      },
-      destroySelection: function() {
       }
+
+      renderEventRanges(eventRanges) {
+        expect(Array.isArray(eventRanges)).toBe(true)
+        expect(eventRanges.length).toBe(1)
+        expect(typeof eventRanges[0].def).toBe('object')
+        expect(typeof eventRanges[0].ui).toBe('object')
+        expect(typeof eventRanges[0].instance).toBe('object')
+        expect(eventRanges[0].isStart).toBe(true)
+        expect(eventRanges[0].isEnd).toBe(true)
+        expect(eventRanges[0].range.start instanceof Date).toBe(true)
+        expect(eventRanges[0].range.end instanceof Date).toBe(true)
+      }
+
+      unrenderEvents() {
+      }
+
+      renderDateSelection(dateSpan) {
+        expect(typeof dateSpan).toBe('object')
+        expect(dateSpan.isAllDay).toBe(true)
+        expect(dateSpan.range.start instanceof Date).toBe(true)
+        expect(dateSpan.range.end instanceof Date).toBe(true)
+      }
+
+      unrenderDateSelection() {
+      }
+
     }
 
-    spyOn(methods, 'initialize').and.callThrough()
-    spyOn(methods, 'render').and.callThrough()
-    spyOn(methods, 'setHeight').and.callThrough()
-    spyOn(methods, 'renderEvents').and.callThrough()
-    spyOn(methods, 'destroyEvents').and.callThrough()
-    spyOn(methods, 'renderSelection').and.callThrough()
-    spyOn(methods, 'destroySelection').and.callThrough()
+    spyOn(CustomView.prototype, 'initialize').and.callThrough()
+    spyOn(CustomView.prototype, 'renderSkeleton').and.callThrough()
+    spyOn(CustomView.prototype, 'renderDates').and.callThrough()
+    spyOn(CustomView.prototype, 'updateSize').and.callThrough()
+    spyOn(CustomView.prototype, 'renderEventRanges').and.callThrough()
+    spyOn(CustomView.prototype, 'unrenderEvents').and.callThrough()
+    spyOn(CustomView.prototype, 'renderDateSelection').and.callThrough()
+    spyOn(CustomView.prototype, 'unrenderDateSelection').and.callThrough()
 
-    CustomView = View.extend(methods)
     FullCalendar.views.custom = CustomView
 
     initCalendar({
       defaultView: 'custom',
-      defaultDate: '2014-12-25',
+      defaultDate: '2014-12-25', // will end up being a single-day view
       events: [
         {
           title: 'Holidays',
@@ -53,22 +72,23 @@ describe('custom view class', function() {
       ]
     })
 
-    expect(methods.initialize).toHaveBeenCalled()
-    expect(methods.render).toHaveBeenCalled()
-    expect(methods.setHeight).toHaveBeenCalled()
-    expect(methods.renderEvents).toHaveBeenCalled()
+    expect(CustomView.prototype.initialize).toHaveBeenCalled()
+    expect(CustomView.prototype.renderSkeleton).toHaveBeenCalled()
+    expect(CustomView.prototype.renderDates).toHaveBeenCalled()
+    expect(CustomView.prototype.updateSize).toHaveBeenCalled()
+    expect(CustomView.prototype.renderEventRanges).toHaveBeenCalled()
 
     currentCalendar.rerenderEvents()
 
-    expect(methods.destroyEvents).toHaveBeenCalled()
+    expect(CustomView.prototype.unrenderEvents).toHaveBeenCalled()
 
     currentCalendar.select('2014-12-25', '2014-01-01')
 
-    expect(methods.renderSelection).toHaveBeenCalled()
+    expect(CustomView.prototype.renderDateSelection).toHaveBeenCalled()
 
     currentCalendar.unselect()
 
-    expect(methods.destroySelection).toHaveBeenCalled()
+    expect(CustomView.prototype.unrenderDateSelection).toHaveBeenCalled()
 
     delete FullCalendar.views.custom
   })
