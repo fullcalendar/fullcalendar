@@ -20,12 +20,12 @@ export interface EventUi {
 export type EventUiHash = { [defId: string]: EventUi }
 
 export interface EventRenderRange {
-  eventDef: EventDef
-  eventInstance?: EventInstance
-  range: DateRange,
+  def: EventDef
+  ui: EventUi
+  instance?: EventInstance
+  range: DateRange
   isStart: boolean
   isEnd: boolean
-  ui: EventUi
 }
 
 
@@ -77,12 +77,12 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
         }
       } else {
         renderRanges.push({
-          eventDef: def,
-          eventInstance: instance,
+          def,
+          ui,
+          instance,
           range: visibleRange,
           isStart: origRange.start.valueOf() === slicedRange.start.valueOf(),
-          isEnd: origRange.end.valueOf() === slicedRange.end.valueOf(),
-          ui
+          isEnd: origRange.end.valueOf() === slicedRange.end.valueOf()
         })
       }
     }
@@ -97,11 +97,11 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
       let ui = eventUis[def.defId]
 
       renderRanges.push({
-        eventDef: def,
+        def,
+        ui,
         range: invertedRange,
         isStart: false,
-        isEnd: false,
-        ui
+        isEnd: false
       })
     }
   }
@@ -112,11 +112,11 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
 
     for (let invertedRange of invertedRanges) {
       renderRanges.push({
-        eventDef: eventStore.defs[defId],
+        def: eventStore.defs[defId],
+        ui: eventUis[defId],
         range: invertedRange,
         isStart: false,
-        isEnd: false,
-        ui: eventUis[defId]
+        isEnd: false
       })
     }
   }

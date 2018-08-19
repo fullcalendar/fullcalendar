@@ -23,7 +23,7 @@ export default class DayGridEventRenderer extends EventRenderer {
   renderBgSegs(segs: Seg[]) {
     // don't render timed background events
     segs = segs.filter(function(seg) {
-      return seg.eventRange.eventDef.isAllDay
+      return seg.eventRange.def.isAllDay
     })
 
     return super.renderBgSegs(segs)
@@ -238,7 +238,7 @@ export default class DayGridEventRenderer extends EventRenderer {
   // Builds the HTML to be used for the default element for an individual segment
   fgSegHtml(seg: Seg) {
     let eventRange = seg.eventRange
-    let eventDef = eventRange.eventDef
+    let eventDef = eventRange.def
     let eventUi = eventRange.ui
     let isAllDay = eventDef.isAllDay
     let isDraggable = eventUi.startEditable

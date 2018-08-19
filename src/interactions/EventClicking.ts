@@ -38,8 +38,8 @@ export default class EventClicking {
         {
           event: new EventApi(
             component.getCalendar(),
-            seg.eventRange.eventDef,
-            seg.eventRange.eventInstance
+            seg.eventRange.def,
+            seg.eventRange.instance
           ),
           jsEvent: ev,
           view: component.view

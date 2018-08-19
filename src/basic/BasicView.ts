@@ -13,6 +13,7 @@ import ScrollComponent from '../common/ScrollComponent'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import DayGrid from './DayGrid'
+import { DateProfile } from '../DateProfileGenerator'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -70,12 +71,12 @@ export default class BasicView extends View {
   }
 
 
-  renderDates() {
+  renderDates(dateProfile: DateProfile) {
     this.dayGrid.breakOnWeeks = /year|month|week/.test(
       this.dateProfile.currentRangeUnit
     )
 
-    super.renderDates()
+    super.renderDates(dateProfile)
   }
 
 

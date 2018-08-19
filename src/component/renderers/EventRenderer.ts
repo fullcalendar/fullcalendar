@@ -200,7 +200,7 @@ export default class EventRenderer {
     }
 
     // event is currently selected? attach a className.
-    if (seg.eventRange.eventInstance.instanceId === this.component.eventSelection) {
+    if (seg.eventRange.instance.instanceId === this.component.eventSelection) {
       classes.push('fc-selected')
     }
 
@@ -216,8 +216,8 @@ export default class EventRenderer {
       {
         event: new EventApi(
           this.view.calendar,
-          eventRange.eventDef,
-          eventRange.eventInstance
+          eventRange.def,
+          eventRange.instance
         ),
         el,
         view: this.view
@@ -240,16 +240,16 @@ export default class EventRenderer {
   // If not specified, formatter will default to the eventTimeFormat setting,
   // and displayEnd will default to the displayEventEnd setting.
   getTimeText(eventRange: EventRenderRange, formatter?, displayEnd?) {
-    let { eventDef, eventInstance } = eventRange
+    let { def, instance } = eventRange
 
     return this._getTimeText(
-      eventInstance.range.start,
-      eventDef.hasEnd ? eventInstance.range.end : null,
-      eventDef.isAllDay,
+      instance.range.start,
+      def.hasEnd ? instance.range.end : null,
+      def.isAllDay,
       formatter,
       displayEnd,
-      eventInstance.forcedStartTzo,
-      eventInstance.forcedEndTzo
+      instance.forcedStartTzo,
+      instance.forcedEndTzo
     )
   }
 

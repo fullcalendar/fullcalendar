@@ -23,8 +23,8 @@ export default class ListEventRenderer extends EventRenderer {
     let calendar = view.calendar
     let theme = calendar.theme
     let eventRange = seg.eventRange
-    let eventDef = eventRange.eventDef
-    let eventInstance = eventRange.eventInstance
+    let eventDef = eventRange.def
+    let eventInstance = eventRange.instance
     let eventUi = eventRange.ui
     let url = eventDef.url
     let classes = [ 'fc-list-item' ].concat(eventUi.classNames)

@@ -275,8 +275,8 @@ export default abstract class DateComponent extends Component {
           {
             event: new EventApi(
               calendar,
-              seg.eventRange.eventDef,
-              seg.eventRange.eventInstance
+              seg.eventRange.def,
+              seg.eventRange.instance
             ),
             el: seg.el,
             view: this
@@ -296,8 +296,8 @@ export default abstract class DateComponent extends Component {
           {
             event: new EventApi(
               calendar,
-              seg.eventRange.eventDef,
-              seg.eventRange.eventInstance
+              seg.eventRange.def,
+              seg.eventRange.instance
             ),
             el: seg.el,
             view: this
@@ -368,7 +368,7 @@ export default abstract class DateComponent extends Component {
     }
 
     if (flags.dates && renderState.dateProfile) {
-      this.renderDates() // pass in dateProfile too?
+      this.renderDates(renderState.dateProfile)
       renderedFlags.dates = true
       dirtySizeFlags.dates = true
     }
@@ -487,7 +487,7 @@ export default abstract class DateComponent extends Component {
 
 
   // date-cell content only
-  renderDates() {
+  renderDates(dateProfile: DateProfile) {
     // subclasses should implement
   }
 
@@ -547,7 +547,7 @@ export default abstract class DateComponent extends Component {
         this.eventRangesToSegs(eventRanges),
         {
           getClasses(seg) {
-            return [ 'fc-bgevent' ].concat(seg.eventRange.eventDef.className)
+            return [ 'fc-bgevent' ].concat(seg.eventRange.def.className)
           }
         }
       )
@@ -728,7 +728,7 @@ export default abstract class DateComponent extends Component {
 
   hideSegsByHash(hash) {
     this.getAllEventSegs().forEach(function(seg) {
-      if (hash[seg.eventRange.eventInstance.instanceId]) {
+      if (hash[seg.eventRange.instance.instanceId]) {
         seg.el.style.visibility = 'hidden'
       }
     })
@@ -737,7 +737,7 @@ export default abstract class DateComponent extends Component {
 
   showSegsByHash(hash) {
     this.getAllEventSegs().forEach(function(seg) {
-      if (hash[seg.eventRange.eventInstance.instanceId]) {
+      if (hash[seg.eventRange.instance.instanceId]) {
         seg.el.style.visibility = ''
       }
     })
@@ -760,7 +760,7 @@ export default abstract class DateComponent extends Component {
 
   selectEventsByInstanceId(instanceId) {
     this.getAllEventSegs().forEach(function(seg) {
-      let eventInstance = seg.eventRange.eventInstance
+      let eventInstance = seg.eventRange.instance
       if (
         eventInstance && eventInstance.instanceId === instanceId &&
         seg.el // necessary?
@@ -891,7 +891,7 @@ export default abstract class DateComponent extends Component {
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
-      let segs = this.rangeToSegs(eventRenderRange.range, eventRenderRange.eventDef.isAllDay)
+      let segs = this.rangeToSegs(eventRenderRange.range, eventRenderRange.def.isAllDay)
 
       for (let seg of segs) {
         seg.eventRange = eventRenderRange
@@ -915,12 +915,12 @@ export default abstract class DateComponent extends Component {
       // TODO: make a separate utility for this?
       let def = parseEventDef({ editable: false }, '', selection.isAllDay, true)
       let eventRange = {
-        eventDef: def,
-        eventInstance: createEventInstance(def.defId, selection.range),
+        def,
+        ui: computeEventDefUi(def, {}, {}),
+        instance: createEventInstance(def.defId, selection.range),
         range: selection.range,
         isStart: true,
-        isEnd: true,
-        ui: computeEventDefUi(def, {}, {})
+        isEnd: true
       }
 
       for (let seg of segs) {

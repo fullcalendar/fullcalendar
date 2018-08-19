@@ -7,6 +7,7 @@ import ListEventRenderer from './ListEventRenderer'
 import { DateMarker, addDays, startOfDay } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { DateRange, intersectRanges } from '../datelib/date-range'
+import { DateProfile } from '../DateProfileGenerator'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -72,8 +73,7 @@ export default class ListView extends View {
   }
 
 
-  renderDates() {
-    let dateProfile = this.dateProfile
+  renderDates(dateProfile: DateProfile) {
     let dayStart = startOfDay(dateProfile.renderRange.start)
     let viewEnd = dateProfile.renderRange.end
     let dayDates: DateMarker[] = []
@@ -96,7 +96,7 @@ export default class ListView extends View {
 
     // all real rendering happens in EventRenderer
 
-    super.renderDates() // important for firing viewRender
+    super.renderDates(dateProfile) // important for firing viewRender
   }
 
 

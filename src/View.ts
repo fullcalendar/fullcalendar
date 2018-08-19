@@ -74,10 +74,11 @@ export default abstract class View extends DateComponent {
     this.dateProfileGenerator = new this.dateProfileGeneratorClass(this)
     this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'))
 
-    // legacy
-    if (this['initialize']) {
-      this['initialize']()
-    }
+    this.initialize()
+  }
+
+
+  initialize() { // convenient for sublcasses
   }
 
 
@@ -182,9 +183,9 @@ export default abstract class View extends DateComponent {
 
 
   // if dateProfile not specified, uses current
-  renderDates() {
-    this.updateMiscDateProps(this.dateProfile)
-    super.renderDates()
+  renderDates(dateProfile: DateProfile) {
+    this.updateMiscDateProps(dateProfile)
+    super.renderDates(dateProfile)
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
     this.triggerRenderedDates()

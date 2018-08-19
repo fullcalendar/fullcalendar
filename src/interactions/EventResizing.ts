@@ -54,7 +54,7 @@ export default class EventDragging {
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
       !this.component.isValidSegDownEl(ev.origEvent.target as HTMLElement) ||
-      (ev.isTouch && this.component.eventSelection !== eventRange.eventInstance!.instanceId)
+      (ev.isTouch && this.component.eventSelection !== eventRange.instance!.instanceId)
     )
   }
 
@@ -64,7 +64,7 @@ export default class EventDragging {
 
     this.relatedEvents = getRelatedEvents(
       calendar.state.eventStore,
-      this.eventRange.eventInstance!.instanceId
+      this.eventRange.instance!.instanceId
     )
 
     this.draggingSeg = this.querySeg(ev)
@@ -72,7 +72,7 @@ export default class EventDragging {
     calendar.publiclyTrigger('eventResizeStart', [
       {
         el: this.draggingSeg.el,
-        event: new EventApi(calendar, eventRange.eventDef, eventRange.eventInstance),
+        event: new EventApi(calendar, eventRange.def, eventRange.instance),
         jsEvent: ev.origEvent,
         view: this.component.view
       }
@@ -83,7 +83,7 @@ export default class EventDragging {
     let calendar = this.component.getCalendar()
     let relatedEvents = this.relatedEvents!
     let initialHit = this.hitDragging.initialHit!
-    let eventInstance = this.eventRange.eventInstance!
+    let eventInstance = this.eventRange.instance!
     let mutation: EventMutation | null = null
     let mutatedRelatedEvents: EventStore | null = null
     let isInvalid = false
@@ -141,7 +141,8 @@ export default class EventDragging {
   handleDragEnd = (ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
     let view = this.component.view
-    let { eventDef, eventInstance } = this.eventRange!
+    let eventDef = this.eventRange!.def
+    let eventInstance = this.eventRange!.instance
     let eventApi = new EventApi(calendar, eventDef, eventInstance)
     let relatedEvents = this.relatedEvents!
     let mutatedRelatedEvents = this.mutatedRelatedEvents!

@@ -697,10 +697,10 @@ export default class DayGrid extends DateComponent {
         newSegs.push(
           assignTo({}, seg, {
             eventRange: {
-              eventDef: eventRange.eventDef,
-              eventInstance: eventRange.eventInstance,
-              range: slicedRange,
-              ui: assignTo({}, eventRange.ui, { durationEditable: false }) // hack to disable resizing
+              def: eventRange.def,
+              ui: assignTo({}, eventRange.ui, { durationEditable: false }), // hack to disable resizing
+              instance: eventRange.instance,
+              range: slicedRange
             } as EventRenderRange,
             isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
             isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()

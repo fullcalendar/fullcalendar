@@ -90,7 +90,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
   // Renders the HTML for a single event segment's default rendering
   fgSegHtml(seg: Seg) {
     let eventRange = seg.eventRange
-    let eventDef = eventRange.eventDef
+    let eventDef = eventRange.def
     let eventUi = eventRange.ui
     let isAllDay = eventDef.isAllDay
     let isDraggable = eventUi.startEditable

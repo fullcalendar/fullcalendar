@@ -61,8 +61,8 @@ export default class EventHovering {
           el: segEl,
           event: new EventApi(
             this.component.getCalendar(),
-            seg.eventRange.eventDef,
-            seg.eventRange.eventInstance
+            seg.eventRange.def,
+            seg.eventRange.instance
           ),
           jsEvent: ev,
           view: component.view

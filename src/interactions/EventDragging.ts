@@ -57,7 +57,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     let initialCalendar = component.getCalendar()
     let subjectSeg = this.subjectSeg = getElSeg(ev.subjectEl as HTMLElement)!
     let eventRange = this.eventRange = subjectSeg.eventRange!
-    let eventInstanceId = eventRange.eventInstance!.instanceId
+    let eventInstanceId = eventRange.instance!.instanceId
 
     this.relatedEvents = getRelatedEvents(
       initialCalendar.state.eventStore,
@@ -93,7 +93,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   handleDragStart = (ev: PointerDragEvent) => {
     let initialCalendar = this.component.getCalendar()
     let eventRange = this.eventRange!
-    let eventInstanceId = eventRange.eventInstance.instanceId
+    let eventInstanceId = eventRange.instance.instanceId
 
     if (ev.isTouch) {
 
@@ -117,7 +117,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       initialCalendar.publiclyTrigger('eventDragStart', [
         {
           el: this.subjectSeg.el,
-          event: new EventApi(initialCalendar, eventRange.eventDef, eventRange.eventInstance),
+          event: new EventApi(initialCalendar, eventRange.def, eventRange.instance),
           jsEvent: ev.origEvent,
           view: this.component.view
         }
@@ -213,7 +213,8 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       let initialCalendar = this.component.getCalendar()
       let initialView = this.component.view
       let { receivingCalendar } = this
-      let { eventDef, eventInstance } = this.eventRange!
+      let eventDef = this.eventRange!.def
+      let eventInstance = this.eventRange!.instance
       let eventApi = new EventApi(initialCalendar, eventDef, eventInstance)
       let relatedEvents = this.relatedEvents!
       let mutatedRelatedEvents = this.mutatedRelatedEvents!
