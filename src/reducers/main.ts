@@ -3,9 +3,10 @@ import reduceEventSources from './eventSources'
 import reduceEventStore from './eventStore'
 import { DateProfile, isDateProfilesEqual } from '../DateProfileGenerator'
 import { DateSpan } from '../structs/date-span'
-import { EventInteractionState } from '../interactions/event-interaction-state'
+import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
+import { computeEventDefUis } from '../component/event-rendering'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
   calendar.publiclyTrigger(action.type, action) // for testing hooks
@@ -21,8 +22,8 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     businessHours: state.businessHours,
     dateSelection: reduceDateSelection(state.dateSelection, action),
     eventSelection: reduceSelectedEvent(state.eventSelection, action),
-    eventDrag: reduceEventDrag(state.eventDrag, action),
-    eventResize: reduceEventResize(state.eventResize, action),
+    eventDrag: reduceEventDrag(state.eventDrag, action, eventSources, calendar),
+    eventResize: reduceEventResize(state.eventResize, action, eventSources, calendar),
     eventSourceLoadingLevel: computeLoadingLevel(eventSources),
     loadingLevel: computeLoadingLevel(eventSources)
   }
@@ -61,25 +62,55 @@ function reduceSelectedEvent(currentInstanceId: string, action: Action): string 
   }
 }
 
-function reduceEventDrag(currentDrag: EventInteractionState | null, action: Action) {
+function reduceEventDrag(currentDrag: EventInteractionUiState | null, action: Action, sources: EventSourceHash, calendar: Calendar): EventInteractionUiState | null {
   switch (action.type) {
+
     case 'SET_EVENT_DRAG':
-      return action.state
+      let newDrag = action.state
+      let eventUis = computeEventDefUis(
+        newDrag.mutatedEvents.defs,
+        sources,
+        calendar.view ? calendar.view.options : {} // yuck
+      )
+      return {
+        affectedEvents: newDrag.affectedEvents,
+        mutatedEvents: newDrag.mutatedEvents,
+        isEvent: newDrag.isEvent,
+        origSeg: newDrag.origSeg,
+        eventUis: eventUis
+      }
+
     case 'UNSET_EVENT_DRAG':
       return null
+
     default:
       return currentDrag
   }
 }
 
-function reduceEventResize(currentEventResize: EventInteractionState | null, action: Action) {
+function reduceEventResize(currentResize: EventInteractionUiState | null, action: Action, sources: EventSourceHash, calendar: Calendar): EventInteractionUiState | null {
   switch (action.type) {
+
     case 'SET_EVENT_RESIZE':
-      return action.state
+      let newResize = action.state
+      let eventUis = computeEventDefUis(
+        newResize.mutatedEvents.defs,
+        sources,
+        calendar.view ? calendar.view.options : {} // yuck
+      )
+      return {
+        affectedEvents: newResize.affectedEvents,
+        mutatedEvents: newResize.mutatedEvents,
+        isEvent: newResize.isEvent,
+        origSeg: newResize.origSeg,
+        eventUis
+      }
+
     case 'UNSET_EVENT_RESIZE':
       return null
+
     default:
-      return currentEventResize
+      return currentResize
   }
 }
 

@@ -11,7 +11,6 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 import EventApi from '../api/EventApi'
 import { elementMatches } from '../util/dom-manip'
-import { computeEventDefUis } from '../component/event-rendering'
 
 export interface EventRes {
   def: EventDef
@@ -70,14 +69,9 @@ export default class ExternalElementDragging {
     // TODO: always store as event-store?
     let droppableEventStore = droppableEvent ? toEventStore(droppableEvent) : createEmptyEventStore()
 
-    // we need to compute UI objects. no source or original calendar options,
-    // so just compute based off event defs.
-    let eventUis = computeEventDefUis(droppableEventStore.defs, {}, {})
-
     this.displayDrag(receivingCalendar, {
       affectedEvents: createEmptyEventStore(),
       mutatedEvents: droppableEventStore,
-      eventUis,
       isEvent: this.dragMeta!.create,
       origSeg: null
     })

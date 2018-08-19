@@ -5,7 +5,10 @@ import { EventUiHash } from '../component/event-rendering'
 export interface EventInteractionState {
   affectedEvents: EventStore
   mutatedEvents: EventStore
-  eventUis: EventUiHash
   isEvent: boolean
   origSeg: Seg | null
+}
+
+export interface EventInteractionUiState extends EventInteractionState {
+  eventUis: EventUiHash
 }

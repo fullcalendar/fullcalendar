@@ -16,7 +16,7 @@ import { createFormatter } from '../datelib/formatting'
 import { EventStore, filterEventStoreDefs } from '../structs/event-store'
 import { RenderForceFlags } from '../component/Component'
 import { DateComponentRenderState } from '../component/DateComponent'
-import { EventInteractionState } from '../interactions/event-interaction-state'
+import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import reselector from '../util/reselector'
 import { EventUiHash, hasBgRendering } from '../component/event-rendering'
 
@@ -433,10 +433,10 @@ function filterEventsForDayGrid(eventStore: EventStore, eventUis: EventUiHash): 
   })
 }
 
-function buildInteractionForTimeGrid(state: EventInteractionState): EventInteractionState {
+function buildInteractionForTimeGrid(state: EventInteractionUiState): EventInteractionUiState {
   if (state) {
     return {
-      affectedEvents: filterEventsForTimeGrid(state.affectedEvents, state.eventUis),
+      affectedEvents: state.affectedEvents,
       mutatedEvents: filterEventsForTimeGrid(state.mutatedEvents, state.eventUis),
       eventUis: state.eventUis,
       isEvent: state.isEvent,
@@ -446,10 +446,10 @@ function buildInteractionForTimeGrid(state: EventInteractionState): EventInterac
   return null
 }
 
-function buildInteractionForDayGrid(state: EventInteractionState): EventInteractionState {
+function buildInteractionForDayGrid(state: EventInteractionUiState): EventInteractionUiState {
   if (state) {
     return {
-      affectedEvents: filterEventsForDayGrid(state.affectedEvents, state.eventUis),
+      affectedEvents: state.affectedEvents,
       mutatedEvents: filterEventsForDayGrid(state.mutatedEvents, state.eventUis),
       eventUis: state.eventUis,
       isEvent: state.isEvent,

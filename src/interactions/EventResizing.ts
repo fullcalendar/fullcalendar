@@ -113,7 +113,6 @@ export default class EventDragging {
         state: {
           affectedEvents: relatedEvents,
           mutatedEvents: mutatedRelatedEvents,
-          eventUis: calendar.state.eventUis,
           isEvent: true,
           origSeg: this.draggingSeg
         }

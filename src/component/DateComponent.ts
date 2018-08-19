@@ -11,7 +11,7 @@ import { EventRenderRange, sliceEventStore, computeEventDefUi, EventUiHash, comp
 import { EventStore, expandEventStoreInstances } from '../structs/event-store'
 import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
-import { EventInteractionState } from '../interactions/event-interaction-state'
+import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { assignTo } from '../util/object'
 import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
@@ -27,8 +27,8 @@ export interface DateComponentRenderState {
   eventUis: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
-  eventDrag: EventInteractionState | null
-  eventResize: EventInteractionState | null
+  eventDrag: EventInteractionUiState | null
+  eventResize: EventInteractionUiState | null
 }
 
 // NOTE: for fg-events, eventRange.range is NOT sliced,
@@ -87,8 +87,8 @@ export default abstract class DateComponent extends Component {
   eventUis: EventUiHash = null
   dateSelection: DateSpan = null
   eventSelection: string = ''
-  eventDrag: EventInteractionState = null
-  eventResize: EventInteractionState = null
+  eventDrag: EventInteractionUiState = null
+  eventResize: EventInteractionUiState = null
 
 
   constructor(_view, _options?) {
@@ -639,7 +639,7 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderEventDragState(state: EventInteractionState) {
+  renderEventDragState(state: EventInteractionUiState) {
     this.hideSegsByHash(state.affectedEvents.instances)
     this.renderEventDrag(
       state.mutatedEvents,
@@ -694,7 +694,7 @@ export default abstract class DateComponent extends Component {
   // ---------------------------------------------------------------------------------------------------------------
 
 
-  renderEventResizeState(state: EventInteractionState) {
+  renderEventResizeState(state: EventInteractionUiState) {
     this.hideSegsByHash(state.affectedEvents.instances)
     this.renderEventResize(
       state.mutatedEvents,
