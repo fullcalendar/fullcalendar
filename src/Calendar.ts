@@ -443,6 +443,8 @@ export default class Calendar {
 
     if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
       this.updateViewSize(true) // isResize=true
+    } else if (name === 'timezone') {
+      this.refetchEvents()
     } else if (name === 'defaultDate') {
       // can't change date this way. use gotoDate instead
     } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
