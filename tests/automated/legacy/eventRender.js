@@ -316,12 +316,12 @@ describe('eventRender', function() {
         } ]
       })
 
-      it('will render in the all-day slot', function(done) {
+      it('will render in all-day AND timed slots', function(done) {
         var options = {
           eventRender: function() {},
           eventAfterAllRender: function() {
             expect($('.fc-day-grid .fc-bgevent').length).toBe(1)
-            expect($('.fc-time-grid .fc-bgevent').length).toBe(0)
+            expect($('.fc-time-grid .fc-bgevent').length).toBe(1)
             expect(options.eventRender).toHaveBeenCalled()
             done()
           }
