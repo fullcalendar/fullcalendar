@@ -1,6 +1,6 @@
 import { EventDef, EventInstance, EventDefHash } from '../structs/event'
 import { EventStore } from '../structs/event-store'
-import { DateRange, invertRanges } from '../datelib/date-range'
+import { DateRange, invertRanges, intersectRanges } from '../datelib/date-range'
 import { EventSourceHash } from '../structs/event-source'
 import { mapHash } from '../util/object'
 import { parseClassName } from '../util/html'
@@ -22,14 +22,14 @@ export type EventUiHash = { [defId: string]: EventUi }
 export interface EventRenderRange {
   eventDef: EventDef
   eventInstance?: EventInstance
-  range: DateRange // NOT sliced by framingRange
+  range: DateRange,
+  isStart: boolean
+  isEnd: boolean
   ui: EventUi
 }
 
 
 /*
-DOES NOT ACTUALLY SLIE RANGES via framingRange into new ranges, but instead,
-keeps fg event ranges intact but more importantly slices inverse-BG events.
 Specifying nextDayThreshold signals that all-day ranges should be sliced.
 */
 export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
@@ -59,25 +59,32 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
     let instance = eventStore.instances[instanceId]
     let def = eventStore.defs[instance.defId]
     let ui = eventUis[def.defId]
-    let range = instance.range
+    let origRange = instance.range
+    let slicedRange = intersectRanges(origRange, framingRange)
+    let visibleRange
 
-    if (!def.isAllDay && nextDayThreshold) {
-      range = computeVisibleDayRange(range, nextDayThreshold)
-    }
+    if (slicedRange) {
 
-    if (ui.rendering === 'inverse-background') {
-      if (def.groupId) {
-        inverseBgByGroupId[def.groupId].push(range)
+      visibleRange = (!def.isAllDay && nextDayThreshold) ?
+        computeVisibleDayRange(slicedRange, nextDayThreshold) :
+        slicedRange
+
+      if (ui.rendering === 'inverse-background') {
+        if (def.groupId) {
+          inverseBgByGroupId[def.groupId].push(visibleRange)
+        } else {
+          inverseBgByDefId[instance.defId].push(visibleRange)
+        }
       } else {
-        inverseBgByDefId[instance.defId].push(range)
+        renderRanges.push({
+          eventDef: def,
+          eventInstance: instance,
+          range: visibleRange,
+          isStart: origRange.start.valueOf() === slicedRange.start.valueOf(),
+          isEnd: origRange.end.valueOf() === slicedRange.end.valueOf(),
+          ui
+        })
       }
-    } else {
-      renderRanges.push({
-        eventDef: def,
-        eventInstance: instance,
-        range: range,
-        ui
-      })
     }
   }
 
@@ -92,6 +99,8 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
       renderRanges.push({
         eventDef: def,
         range: invertedRange,
+        isStart: false,
+        isEnd: false,
         ui
       })
     }
@@ -105,6 +114,8 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
       renderRanges.push({
         eventDef: eventStore.defs[defId],
         range: invertedRange,
+        isStart: false,
+        isEnd: false,
         ui: eventUis[defId]
       })
     }

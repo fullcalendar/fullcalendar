@@ -895,6 +895,9 @@ export default abstract class DateComponent extends Component {
 
       for (let seg of segs) {
         seg.eventRange = eventRenderRange
+        seg.isStart = seg.isStart && eventRenderRange.isStart
+        seg.isEnd = seg.isEnd && eventRenderRange.isEnd
+
         allSegs.push(seg)
       }
     }
@@ -915,6 +918,8 @@ export default abstract class DateComponent extends Component {
         eventDef: def,
         eventInstance: createEventInstance(def.defId, selection.range),
         range: selection.range,
+        isStart: true,
+        isEnd: true,
         ui: computeEventDefUi(def, {}, {})
       }
 
