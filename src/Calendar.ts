@@ -216,6 +216,29 @@ export default class Calendar {
   }
 
 
+  smash() { // rebuild view and rerender everything
+    this.batchRendering(() => {
+      let oldView = this.view
+
+      // reinstantiate/rerender the entire view
+      if (oldView) {
+        this.viewsByType = {} // so that getViewByType will generate fresh views
+        this.view = this.getViewByType(oldView.type) // will be rendered in renderView
+
+        // recompute dateProfile
+        this.setCurrentDateMarker(this.state.dateProfile.currentDate)
+
+        // transfer scroll from old view
+        let scroll = oldView.queryScroll()
+        scroll.isLocked = true // will prevent view from computing own values
+        this.view.addScroll(scroll)
+      }
+
+      this.requestRerender(true) // force=true
+    })
+  }
+
+
   // Classnames on root elements
   // -----------------------------------------------------------------------------------------------------------------
 
@@ -455,25 +478,7 @@ export default class Calendar {
     } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
       // doesn't affect rendering. only interactions.
     } else {
-      this.batchRendering(() => {
-        let oldView = this.view
-
-        // reinstantiate/rerender the entire view
-        if (oldView) {
-          this.viewsByType = {} // so that getViewByType will generate fresh views
-          this.view = this.getViewByType(oldView.type) // will be rendered in renderView
-
-          // recompute dateProfile
-          this.setCurrentDateMarker(this.state.dateProfile.currentDate)
-
-          // transfer scroll from old view
-          let scroll = oldView.queryScroll()
-          scroll.isLocked = true // will prevent view from computing own values
-          this.view.addScroll(scroll)
-        }
-
-        this.requestRerender(true) // force=true
-      })
+      this.smash()
     }
   }
 
