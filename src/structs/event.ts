@@ -75,7 +75,7 @@ export interface EventInstance {
 
 export interface EventTuple {
   def: EventDef
-  instance: EventInstance
+  instance: EventInstance | null
 }
 
 export type EventInstanceHash = { [instanceId: string]: EventInstance }

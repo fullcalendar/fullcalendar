@@ -1,4 +1,4 @@
-import { EventDef, EventInstance, EventDefHash } from '../structs/event'
+import { EventDef, EventDefHash, EventTuple } from '../structs/event'
 import { EventStore } from '../structs/event-store'
 import { DateRange, invertRanges, intersectRanges } from '../datelib/date-range'
 import { EventSourceHash } from '../structs/event-source'
@@ -19,10 +19,8 @@ export interface EventUi {
 
 export type EventUiHash = { [defId: string]: EventUi }
 
-export interface EventRenderRange {
-  def: EventDef
+export interface EventRenderRange extends EventTuple {
   ui: EventUi
-  instance?: EventInstance
   range: DateRange
   isStart: boolean
   isEnd: boolean
@@ -99,6 +97,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
       renderRanges.push({
         def,
         ui,
+        instance: null,
         range: invertedRange,
         isStart: false,
         isEnd: false
@@ -114,6 +113,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
       renderRanges.push({
         def: eventStore.defs[defId],
         ui: eventUis[defId],
+        instance: null,
         range: invertedRange,
         isStart: false,
         isEnd: false
