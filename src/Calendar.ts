@@ -1103,7 +1103,7 @@ export default class Calendar {
     if (tuple) {
 
       this.dispatch({
-        type: 'MERGE_EVENTS',
+        type: 'ADD_EVENTS',
         eventStore: eventTupleToStore(tuple)
       })
 
