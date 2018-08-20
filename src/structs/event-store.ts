@@ -4,11 +4,11 @@ import {
   EventDefHash,
   EventInstance,
   EventInstanceHash,
-  parseEventDef,
-  parseEventDateSpan,
-  createEventInstance
+  createEventInstance,
+  parseEvent,
+  EventTuple
 } from './event'
-import { parseEventDefRecurring, expandEventDef } from './recurring-event'
+import { expandRecurringRanges } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
@@ -24,80 +24,61 @@ export interface EventStore {
   instances: EventInstanceHash
 }
 
-export function parseEventStore(
+export function parseEvents(
   rawEvents: EventInput[],
   sourceId: string,
-  calendar: Calendar,
-  expandRange?: DateRange,
-  dest: EventStore = createEmptyEventStore(), // specify this arg to append to an existing EventStore
+  calendar: Calendar
 ): EventStore {
+  let eventStore = createEmptyEventStore()
+  let transform = calendar.opt('eventDataTransform')
+
+  if (transform) {
+    rawEvents = transformRawEvents(rawEvents, transform)
+  }
 
   for (let rawEvent of rawEvents) {
-    let leftovers = {}
-    let parsedRecurring = parseEventDefRecurring(rawEvent, leftovers)
+    let tuple = parseEvent(rawEvent, sourceId, calendar)
 
-    // a recurring event?
-    if (parsedRecurring) {
-      let def = parseEventDef(leftovers, sourceId, parsedRecurring.isAllDay, parsedRecurring.hasEnd)
+    if (tuple) {
+      eventTupleToStore(tuple, eventStore)
+    }
+  }
 
-      def.recurringDef = {
-        typeId: parsedRecurring.typeId,
-        typeData: parsedRecurring.typeData
-      }
+  return eventStore
+}
 
-      dest.defs[def.defId] = def
+export function eventTupleToStore(tuple: EventTuple, eventStore: EventStore = createEmptyEventStore()) {
+  eventStore.defs[tuple.def.defId] = tuple.def
 
-      if (expandRange) {
-        expandEventDefInstances(def, expandRange, calendar, dest.instances)
-      }
+  if (tuple.instance) {
+    eventStore.instances[tuple.instance.instanceId] = tuple.instance
+  }
 
-    // a non-recurring event
-    } else {
-      let dateSpan = parseEventDateSpan(rawEvent, sourceId, calendar, leftovers)
+  return eventStore
+}
 
-      if (dateSpan) {
-        let def = parseEventDef(leftovers, sourceId, dateSpan.isAllDay, dateSpan.hasEnd)
-        let instance = createEventInstance(def.defId, dateSpan.range, dateSpan.forcedStartTzo, dateSpan.forcedEndTzo)
+export function expandRecurring(eventStore: EventStore, framingRange: DateRange, calendar: Calendar): EventStore {
+  let { defs, instances } = eventStore
 
-        dest.defs[def.defId] = def
-        dest.instances[instance.instanceId] = instance
+  // remove existing recurring instances
+  instances = filterHash(instances, function(instance: EventInstance) {
+    return !defs[instance.defId].recurringDef
+  })
+
+  for (let defId in defs) {
+    let def = defs[defId]
+
+    if (def.recurringDef) {
+      let ranges = expandRecurringRanges(def, framingRange, calendar)
+
+      for (let range of ranges) {
+        let instance = createEventInstance(defId, range)
+        instances[instance.instanceId] = instance
       }
     }
   }
 
-  return dest
-}
-
-export function expandEventStoreInstances(
-  eventStore: EventStore,
-  framingRange: DateRange,
-  calendar: Calendar
-): EventInstanceHash {
-  let dest: EventInstanceHash = {}
-
-  for (let defId in eventStore.defs) {
-    expandEventDefInstances(eventStore.defs[defId], framingRange, calendar, dest)
-  }
-
-  return dest
-}
-
-// TODO: be smarter about where this and expandEventStoreInstances are called
-export function expandEventDefInstances(
-  def: EventDef,
-  framingRange: DateRange,
-  calendar: Calendar,
-  dest: EventInstanceHash
-) {
-  if (def.recurringDef) { // need to have this check?
-    let ranges = expandEventDef(def, framingRange, calendar)
-
-    for (let range of ranges) {
-      let instance = createEventInstance(def.defId, range)
-
-      dest[instance.instanceId] = instance
-    }
-  }
+  return { defs, instances }
 }
 
 // retrieves events that have the same groupId as the instance specified by `instanceId`
@@ -130,6 +111,28 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
   }
 
   return dest
+}
+
+export function transformRawEvents(rawEvents, func) {
+  let refinedEvents
+
+  if (!func) {
+    refinedEvents = rawEvents
+  } else {
+    refinedEvents = []
+
+    for (let rawEvent of rawEvents) {
+      let refinedEvent = func(rawEvent)
+
+      if (refinedEvent) {
+        refinedEvents.push(refinedEvent)
+      } else if (refinedEvent == null) {
+        refinedEvents.push(rawEvent)
+      } // if a different falsy value, do nothing
+    }
+  }
+
+  return refinedEvents
 }
 
 export function createEmptyEventStore(): EventStore {

@@ -19,17 +19,17 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan } from './structs/date-span'
 import reselector from './util/reselector'
-import { assignTo, objectValues } from './util/object'
+import { assignTo } from './util/object'
 import { RenderForceFlags } from './component/Component'
 import browserContext from './common/browser-context'
 import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
 import { DateProfile } from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
-import { EventInput, EventDef, EventDefHash } from './structs/event'
+import { EventInput, EventDefHash, parseEvent } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
-import { parseEventStore, createEmptyEventStore, EventStore } from './structs/event-store'
+import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
 import { computeEventDefUis, EventUiHash } from './component/event-rendering'
 import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
@@ -438,13 +438,18 @@ export default class Calendar {
 
 
   setOption(name: string, value: any) {
+    let oldDateEnv = this.dateEnv
+
     this.optionsManager.add(name, value)
     this.handleOptions(this.optionsManager.computed)
 
     if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
       this.updateViewSize(true) // isResize=true
     } else if (name === 'timezone') {
-      this.refetchEvents()
+      this.dispatch({
+        type: 'CHANGE_TIMEZONE',
+        oldDateEnv
+      })
     } else if (name === 'defaultDate') {
       // can't change date this way. use gotoDate instead
     } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
@@ -1077,23 +1082,30 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  addEvent(eventInput: EventInput): EventApi | null {
-    let activeRange = this.state.dateProfile.activeRange
-    let subset = parseEventStore([ eventInput ], '', this, activeRange)
-    let def: EventDef = objectValues(subset.defs)[0]
+  addEvent(eventInput: EventInput, sourceInput?: any): EventApi | null {
+    let sourceId
 
-    if (def) {
+    if (sourceInput && sourceInput.sourceId !== undefined) {
+      sourceId = sourceInput.sourceId
+    } else if (typeof sourceInput === 'string') {
+      sourceId = sourceInput
+    } else {
+      sourceId = ''
+    }
 
-      // TODO: make this regenerate recurring events
+    let tuple = parseEvent(eventInput, sourceId, this)
+
+    if (tuple) {
+
       this.dispatch({
-        type: 'ADD_EVENTS',
-        eventStore: subset
+        type: 'MERGE_EVENTS',
+        eventStore: eventTupleToStore(tuple)
       })
 
       return new EventApi(
         this,
-        def,
-        def.recurringDef ? null : objectValues(subset.instances)[0]
+        tuple.def,
+        tuple.def.recurringDef ? null : tuple.instance
       )
     }
 

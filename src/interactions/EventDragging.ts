@@ -236,7 +236,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
         if (receivingCalendar === initialCalendar) {
 
           initialCalendar.dispatch({
-            type: 'ADD_EVENTS', // will merge
+            type: 'MERGE_EVENTS',
             eventStore: mutatedRelatedEvents
           })
 
@@ -252,7 +252,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
               ),
               revert: function() {
                 initialCalendar.dispatch({
-                  type: 'ADD_EVENTS', // will merge
+                  type: 'MERGE_EVENTS',
                   eventStore: relatedEvents
                 })
               },
@@ -269,7 +269,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
             instances: this.mutatedRelatedEvents!.instances
           })
           receivingCalendar.dispatch({
-            type: 'ADD_EVENTS',
+            type: 'MERGE_EVENTS',
             eventStore: this.mutatedRelatedEvents!
           })
         }

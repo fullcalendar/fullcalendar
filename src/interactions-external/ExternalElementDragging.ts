@@ -2,8 +2,8 @@ import ElementDragging from '../dnd/ElementDragging'
 import HitDragging, { Hit } from '../interactions/HitDragging'
 import browserContext from '../common/browser-context'
 import { PointerDragEvent } from '../dnd/PointerDragging'
-import { parseEventDef, createEventInstance, EventDef, EventInstance } from '../structs/event'
-import { EventStore, createEmptyEventStore } from '../structs/event-store'
+import { parseEventDef, createEventInstance, EventTuple } from '../structs/event'
+import { createEmptyEventStore, eventTupleToStore } from '../structs/event-store'
 import * as externalHooks from '../exports'
 import { DateSpan } from '../structs/date-span'
 import Calendar from '../Calendar'
@@ -11,11 +11,6 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 import EventApi from '../api/EventApi'
 import { elementMatches } from '../util/dom-manip'
-
-export interface EventRes {
-  def: EventDef
-  instance: EventInstance
-}
 
 /*
 Given an already instantiated draggable object for one-or-more elements,
@@ -26,7 +21,7 @@ export default class ExternalElementDragging {
 
   hitDragging: HitDragging
   receivingCalendar: Calendar | null = null
-  droppableEvent: EventRes | null = null
+  droppableEvent: EventTuple | null = null
   explicitDragMeta: DragMeta | null = null
   dragMeta: DragMeta | null = null
 
@@ -52,7 +47,7 @@ export default class ExternalElementDragging {
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let { dragging } = this.hitDragging
     let receivingCalendar: Calendar | null = null
-    let droppableEvent: EventRes | null = null
+    let droppableEvent: EventTuple | null = null
 
     if (hit) {
       receivingCalendar = hit.component.getCalendar()
@@ -67,7 +62,7 @@ export default class ExternalElementDragging {
     }
 
     // TODO: always store as event-store?
-    let droppableEventStore = droppableEvent ? toEventStore(droppableEvent) : createEmptyEventStore()
+    let droppableEventStore = droppableEvent ? eventTupleToStore(droppableEvent) : createEmptyEventStore()
 
     this.displayDrag(receivingCalendar, {
       affectedEvents: createEmptyEventStore(),
@@ -112,8 +107,8 @@ export default class ExternalElementDragging {
 
       if (dragMeta.create) {
         receivingCalendar.dispatch({
-          type: 'ADD_EVENTS',
-          eventStore: toEventStore(droppableEvent)
+          type: 'MERGE_EVENTS',
+          eventStore: eventTupleToStore(droppableEvent)
         })
 
         // signal that an external event landed
@@ -170,13 +165,10 @@ export default class ExternalElementDragging {
 // Utils for computing event store from the DragMeta
 // ----------------------------------------------------------------------------------------------------
 
-function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventRes {
-  let def = parseEventDef(
-    dragMeta.leftoverProps || {},
-    '',
-    dateSpan.isAllDay,
-    Boolean(dragMeta.duration) // hasEnd
-  )
+function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventTuple {
+  let def = parseEventDef(dragMeta.leftoverProps || {}, '')
+  def.isAllDay = dateSpan.isAllDay
+  def.hasEnd = Boolean(dragMeta.duration)
 
   let start = dateSpan.range.start
 
@@ -193,13 +185,6 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
   let instance = createEventInstance(def.defId, { start, end })
 
   return { def, instance }
-}
-
-function toEventStore(res: EventRes): EventStore {
-  return {
-    defs: { [res.def.defId]: res.def },
-    instances: { [res.instance.instanceId]: res.instance }
-  }
 }
 
 // Utils for extracting data from element

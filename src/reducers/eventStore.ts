@@ -1,37 +1,57 @@
 import Calendar from '../Calendar'
-import { filterHash } from '../util/object'
+import { filterHash, assignTo, mapHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
 import {
   EventStore,
-  parseEventStore,
   mergeEventStores,
   getRelatedEvents,
   createEmptyEventStore,
-  expandEventDefInstances,
-  filterEventStoreDefs
+  filterEventStoreDefs,
+  transformRawEvents,
+  parseEvents,
+  expandRecurring
 } from '../structs/event-store'
 import { Action } from './types'
-import { EventSourceHash, EventSource, getEventSourceDef } from '../structs/event-source'
+import { EventSourceHash, EventSource } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
+import { DateProfile } from '../DateProfileGenerator'
+import { DateEnv } from '../datelib/env'
 
-// how to let user modify recurring def AFTER?
 
-export default function(eventStore: EventStore, action: Action, sourceHash: EventSourceHash, calendar: Calendar): EventStore {
+export default function(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, calendar: Calendar): EventStore {
   switch(action.type) {
 
-    case 'ADD_EVENTS': // already parsed
-      return mergeEventStores(eventStore, action.eventStore)
-
     case 'RECEIVE_EVENTS': // raw
-      return receiveEvents(
+      return receiveRawEvents(
         eventStore,
-        sourceHash[action.sourceId],
+        eventSources[action.sourceId],
         action.fetchId,
         action.fetchRange,
         action.rawEvents,
         calendar
       )
+
+    case 'ADD_EVENTS': // already parsed, but not expanded
+      return addEvent(
+        eventStore,
+        action.eventStore, // new ones
+        dateProfile ? dateProfile.activeRange : null,
+        calendar
+      )
+
+    case 'MERGE_EVENTS': // already parsed and expanded
+      return mergeEventStores(eventStore, action.eventStore)
+
+    case 'SET_DATE_PROFILE':
+      if (dateProfile) {
+        return expandRecurring(eventStore, dateProfile.activeRange, calendar)
+      } else {
+        return eventStore
+      }
+
+    case 'CHANGE_TIMEZONE':
+      return rezoneDates(eventStore, action.oldDateEnv, calendar.dateEnv)
 
     case 'MUTATE_EVENTS':
       return applyMutationToRelated(eventStore, action.instanceId, action.mutation, calendar)
@@ -55,19 +75,17 @@ export default function(eventStore: EventStore, action: Action, sourceHash: Even
     case 'REMOVE_ALL_EVENTS':
       return createEmptyEventStore()
 
-    case 'SET_DATE_PROFILE':
-      return expandStaticEventDefs(eventStore, sourceHash, action.dateProfile.activeRange, calendar)
-
     default:
       return eventStore
   }
 }
 
-function receiveEvents(
+
+function receiveRawEvents(
   eventStore: EventStore,
   eventSource: EventSource,
   fetchId: string,
-  fetchRange: DateRange,
+  fetchRange: DateRange | null,
   rawEvents: EventInput[],
   calendar: Calendar
 ): EventStore {
@@ -76,43 +94,70 @@ function receiveEvents(
     eventSource && // not already removed
     fetchId === eventSource.latestFetchId // TODO: wish this logic was always in event-sources
   ) {
+    rawEvents = transformRawEvents(rawEvents, eventSource.eventDataTransform)
+    let subset = parseEvents(rawEvents, eventSource.sourceId, calendar)
 
-    rawEvents = runEventDataTransform(rawEvents, eventSource.eventDataTransform)
-    rawEvents = runEventDataTransform(rawEvents, calendar.opt('eventDataTransform'))
+    if (fetchRange) {
+      subset = expandRecurring(subset, fetchRange, calendar)
+    }
 
-    return parseEventStore(
-      rawEvents,
-      eventSource.sourceId,
-      calendar,
-      fetchRange,
-      excludeEventsBySourceId(eventStore, eventSource.sourceId)
+    return mergeEventStores(
+      excludeEventsBySourceId(eventStore, eventSource.sourceId),
+      subset
     )
   }
 
   return eventStore
 }
 
-function runEventDataTransform(rawEvents, func) {
-  let refinedEvents
 
-  if (!func) {
-    refinedEvents = rawEvents
-  } else {
-    refinedEvents = []
+function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateRange | null, calendar: Calendar): EventStore {
 
-    for (let rawEvent of rawEvents) {
-      let refinedEvent = func(rawEvent)
-
-      if (refinedEvent) {
-        refinedEvents.push(refinedEvent)
-      } else if (refinedEvent == null) {
-        refinedEvents.push(rawEvent)
-      } // if a different falsy value, do nothing
-    }
+  if (expandRange) {
+    subset = expandRecurring(subset, expandRange, calendar)
   }
 
-  return refinedEvents
+  return mergeEventStores(eventStore, subset)
 }
+
+
+function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: DateEnv): EventStore {
+  let defs = eventStore.defs
+
+  let instances = mapHash(eventStore.instances, function(instance: EventInstance): EventInstance {
+    let def = defs[instance.defId]
+
+    if (def.isAllDay || def.recurringDef) {
+      return instance // isn't dependent on timezone
+    } else {
+      return assignTo({}, instance, {
+        range: {
+          start: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.start, instance.forcedStartTzo)),
+          end: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.end, instance.forcedEndTzo))
+        },
+        forcedStartTzo: newDateEnv.canComputeOffset ? null : instance.forcedStartTzo,
+        forcedEndTzo: newDateEnv.canComputeOffset ? null : instance.forcedEndTzo
+      })
+    }
+  })
+
+  return { defs, instances }
+}
+
+
+function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
+  let related = getRelatedEvents(eventStore, instanceId)
+  related = applyMutationToEventStore(related, mutation, calendar)
+  return mergeEventStores(eventStore, related)
+}
+
+
+function excludeEventsBySourceId(eventStore, sourceId) {
+  return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
+    return eventDef.sourceId !== sourceId
+  })
+}
+
 
 function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): EventStore {
   return {
@@ -121,35 +166,4 @@ function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): 
       return !removals[instance.instanceId]
     })
   }
-}
-
-function excludeEventsBySourceId(eventStore, sourceId) {
-  return filterEventStoreDefs(eventStore, function(eventDef: EventDef) {
-    return eventDef.sourceId !== sourceId
-  })
-}
-
-function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
-  let related = getRelatedEvents(eventStore, instanceId)
-  related = applyMutationToEventStore(related, mutation, calendar)
-  return mergeEventStores(eventStore, related)
-}
-
-function expandStaticEventDefs(eventStore: EventStore, eventSources: EventSourceHash, framingRange: DateRange, calendar: Calendar): EventStore {
-  let staticSources = filterHash(eventSources, function(eventSource: EventSource) { // sources that won't change
-    return eventSource.fetchRange && getEventSourceDef(eventSource.sourceDefId).singleFetch // only needs one fetch, and already got it
-  }) as EventSourceHash
-
-  let defs = eventStore.defs
-  let instances = filterHash(eventStore.instances, function(eventInstance) {
-    let def = defs[eventInstance.defId]
-
-    return !def.recurringDef || !staticSources[def.sourceId]
-  })
-
-  for (let defId in defs) {
-    expandEventDefInstances(defs[defId], framingRange, calendar, instances)
-  }
-
-  return { defs, instances }
 }

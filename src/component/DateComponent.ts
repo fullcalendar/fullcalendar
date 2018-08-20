@@ -8,7 +8,7 @@ import { DateMarker, DAY_IDS, addDays, startOfDay, diffWholeDays } from '../date
 import { Duration, createDuration } from '../datelib/duration'
 import { DateSpan } from '../structs/date-span'
 import { EventRenderRange, sliceEventStore, computeEventDefUi, EventUiHash, computeEventDefUis } from '../component/event-rendering'
-import { EventStore, expandEventStoreInstances } from '../structs/event-store'
+import { EventStore, expandRecurring } from '../structs/event-store'
 import { DateEnv } from '../datelib/env'
 import Theme from '../theme/Theme'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
@@ -17,7 +17,7 @@ import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
-import { parseEventDef, createEventInstance } from '../structs/event'
+import { createEventInstance, parseEventDef } from '../structs/event'
 
 
 export interface DateComponentRenderState {
@@ -527,8 +527,7 @@ export default abstract class DateComponent extends Component {
 
   renderBusinessHours(businessHours: EventStore) {
     if (this.slicingType) { // can use eventStoreToRanges?
-      let expandedInstances = expandEventStoreInstances(businessHours, this.dateProfile.activeRange, this.getCalendar())
-      let expandedStore: EventStore = { defs: businessHours.defs, instances: expandedInstances }
+      let expandedStore = expandRecurring(businessHours, this.dateProfile.activeRange, this.getCalendar())
 
       this.renderBusinessHourRanges(
         this.eventStoreToRanges(
@@ -913,7 +912,11 @@ export default abstract class DateComponent extends Component {
 
       // fabricate an eventRange. important for helper
       // TODO: make a separate utility for this?
-      let def = parseEventDef({ editable: false }, '', selection.isAllDay, true)
+      let def = parseEventDef({
+        editable: false,
+        isAllDay: selection.isAllDay,
+        hasEnd: true
+      }, '')
       let eventRange = {
         def,
         ui: computeEventDefUi(def, {}, {}),

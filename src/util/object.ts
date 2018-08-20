@@ -18,14 +18,6 @@ export function assignTo(target, ...sources) {
 }
 
 
-export function isEmptyObject(obj) {
-  for (let _key in obj) {
-    return false
-  }
-  return true
-}
-
-
 export function copyOwnProps(src, dest) {
   for (let name in src) {
     if (hasOwnProp(src, name)) {
@@ -122,15 +114,4 @@ export function arrayToHash(a): { [key: string]: true } {
   }
 
   return hash
-}
-
-
-export function objectValues(obj) {
-  let vals = []
-
-  for (let key in obj) {
-    vals.push(obj[key])
-  }
-
-  return vals
 }

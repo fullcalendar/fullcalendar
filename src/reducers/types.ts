@@ -7,6 +7,7 @@ import { EventSource, EventSourceHash } from '../structs/event-source'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
+import { DateEnv } from '../datelib/env'
 
 export interface CalendarState extends DateComponentRenderState {
   eventSources: EventSourceHash
@@ -36,13 +37,16 @@ export type Action =
 
   { type: 'ADD_EVENT_SOURCES', sources: EventSource[] } |
   { type: 'REMOVE_EVENT_SOURCE', sourceId: string } |
-  { type: 'FETCH_EVENT_SOURCES', sourceIds?: string[] } | // if no sourceIds, fetch all
   { type: 'REMOVE_ALL_EVENT_SOURCES' } |
 
-  { type: 'RECEIVE_EVENTS', sourceId: string, fetchId: string, fetchRange: DateRange, rawEvents: EventInput[] } |
-  { type: 'RECEIVE_EVENT_ERROR', sourceId: string, fetchId: string, fetchRange: DateRange, error: SimpleError } |
+  { type: 'FETCH_EVENT_SOURCES', sourceIds?: string[] } | // if no sourceIds, fetch all
+  { type: 'CHANGE_TIMEZONE', oldDateEnv: DateEnv } |
 
-  { type: 'ADD_EVENTS', eventStore: EventStore } | // rename to MERGE_EVENTS?
+  { type: 'RECEIVE_EVENTS', sourceId: string, fetchId: string, fetchRange: DateRange | null, rawEvents: EventInput[] } |
+  { type: 'RECEIVE_EVENT_ERROR', sourceId: string, fetchId: string, fetchRange: DateRange | null, error: SimpleError } |
+
+  { type: 'ADD_EVENTS', eventStore: EventStore } |
+  { type: 'MERGE_EVENTS', eventStore: EventStore } |
   { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation } |
   { type: 'REMOVE_EVENT_DEF', defId: string } |
   { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash } |

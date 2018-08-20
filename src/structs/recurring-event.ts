@@ -12,10 +12,6 @@ export interface ParsedRecurring {
   typeData: any
 }
 
-export interface IddParsedRecurring extends ParsedRecurring {
-  typeId: number
-}
-
 export interface RecurringType {
   parse: (rawEvent: EventInput, leftoverProps: any) => ParsedRecurring | null
   expand: (typeData: any, eventDef: EventDef, framingRange: DateRange, calendar: Calendar) => DateRange[]
@@ -29,13 +25,17 @@ export function registerRecurringType(recurringType: RecurringType) {
 }
 
 
-export function parseEventDefRecurring(eventInput: EventInput, leftovers: any): IddParsedRecurring | null {
+export function parseRecurring(eventInput: EventInput, leftovers: any) {
   for (let i = 0; i < recurringTypes.length; i++) {
-    let parsed = recurringTypes[i].parse(eventInput, leftovers) as IddParsedRecurring
+    let parsed = recurringTypes[i].parse(eventInput, leftovers) as ParsedRecurring
 
     if (parsed) {
-      parsed.typeId = i
-      return parsed
+      return {
+        isAllDay: parsed.isAllDay,
+        hasEnd: parsed.hasEnd,
+        typeData: parsed.typeData,
+        typeId: i
+      }
     }
   }
 
@@ -43,7 +43,10 @@ export function parseEventDefRecurring(eventInput: EventInput, leftovers: any): 
 }
 
 
-export function expandEventDef(eventDef: EventDef, framingRange: DateRange, calendar: Calendar) {
+/*
+Event MUST have a recurringDef
+*/
+export function expandRecurringRanges(eventDef: EventDef, framingRange: DateRange, calendar: Calendar): DateRange[] {
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
 
   return typeDef.expand(

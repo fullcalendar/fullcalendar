@@ -5,6 +5,7 @@ import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
+import { parseRecurring } from './recurring-event'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -42,8 +43,14 @@ export interface EventDateInput {
 
 export type EventInput = EventNonDateInput & EventDateInput
 
-export interface EventDefAttrs { // mirrors NON_DATE_PROPS. can be used elsewhere?
+export interface EventDef {
+  defId: string
+  sourceId: string
+  publicId: string
   groupId: string
+  isAllDay: boolean
+  hasEnd: boolean
+  recurringDef: { typeId: number, typeData: any } | null
   title: string
   url: string
   startEditable: boolean | null
@@ -55,15 +62,6 @@ export interface EventDefAttrs { // mirrors NON_DATE_PROPS. can be used elsewher
   backgroundColor: string
   borderColor: string
   textColor: string
-}
-
-export interface EventDef extends EventDefAttrs {
-  defId: string
-  sourceId: string
-  publicId: string
-  hasEnd: boolean
-  isAllDay: boolean
-  recurringDef: { typeId: number, typeData: {} } | null
   extendedProps: object
 }
 
@@ -75,20 +73,16 @@ export interface EventInstance {
   forcedEndTzo: number | null
 }
 
-// information about an event's dates.
-// only used as an intermediate object. never stored anywhere.
-export interface EventDateSpan {
-  isAllDay: boolean
-  hasEnd: boolean
-  range: DateRange
-  forcedStartTzo: number | null
-  forcedEndTzo: number | null
+export interface EventTuple {
+  def: EventDef
+  instance: EventInstance
 }
 
 export type EventInstanceHash = { [instanceId: string]: EventInstance }
 export type EventDefHash = { [defId: string]: EventDef }
 
 const NON_DATE_PROPS = {
+  id: String,
   groupId: String,
   title: String,
   url: String,
@@ -108,84 +102,128 @@ const NON_DATE_PROPS = {
 
 const DATE_PROPS = {
   start: null,
-  date: null,
+  date: null, // alias for start
   end: null,
   isAllDay: null
 }
 
 let uid = 0
 
-export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay: boolean, hasEnd: boolean): EventDef {
-  let leftovers = {} as any
-  let props = refineProps(raw, NON_DATE_PROPS, {}, leftovers) as EventDef
 
-  props.defId = String(uid++)
-  props.sourceId = sourceId
-  props.isAllDay = isAllDay
-  props.hasEnd = hasEnd
-  props.recurringDef = null
+export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar): EventTuple | null {
+  let leftovers0 = {} as any
+  let dateProps = pluckDateProps(raw, leftovers0)
+  let leftovers1 = {} as any
+  let def = parseEventDef(raw, sourceId, leftovers1)
+  let instance: EventInstance = null
 
-  if ('id' in leftovers) {
-    props.publicId = String(leftovers.id)
-    delete leftovers.id
+  if (dateProps.start !== null) {
+    let instanceRes = parseEventInstance(dateProps, def.defId, sourceId, calendar)
+
+    if (instanceRes) {
+      def.isAllDay = instanceRes.isAllDay
+      def.hasEnd = instanceRes.hasEnd
+      instance = instanceRes.instance
+    } else {
+      return null // TODO: give a warning
+    }
+  } else {
+    let recurringRes = parseRecurring(
+      leftovers0, // non-date props and other non-standard props
+      leftovers1 // dest
+    )
+
+    if (recurringRes) {
+      def.isAllDay = recurringRes.isAllDay
+      def.hasEnd = recurringRes.hasEnd
+      def.recurringDef = { typeId: recurringRes.typeId, typeData: recurringRes.typeData }
+    } else {
+      return null // TODO: give a warning
+    }
   }
 
-  if ('editable' in leftovers) {
-    if (props.startEditable === null) {
-      props.startEditable = leftovers.editable
-    }
-    if (props.durationEditable === null) {
-      props.durationEditable = leftovers.editable
-    }
-    delete leftovers.editable
+  def.extendedProps = assignTo(leftovers1, def.extendedProps)
+
+  return { def, instance }
+}
+
+
+/*
+Will NOT populate extendedProps with the leftover properties.
+The EventNonDateInput has been normalized (id => publicId, etc).
+*/
+export function parseEventDef(raw: EventNonDateInput, sourceId: string, leftovers?: any): EventDef {
+  let def = pluckNonDateProps(raw, leftovers) as EventDef
+
+  def.defId = String(uid++)
+  def.sourceId = sourceId
+
+  if (!def.extendedProps) {
+    def.extendedProps = {}
   }
 
-  if ('color' in leftovers) {
-    if (!props.backgroundColor) {
-      props.backgroundColor = leftovers.color
-    }
-    if (!props.borderColor) {
-      props.borderColor = leftovers.color
-    }
-    delete leftovers.color
-  }
+  return def
+}
 
-  props.extendedProps = assignTo(leftovers, props.extendedProps || {})
+
+function pluckDateProps(raw: EventInput, leftovers: any) {
+  let props = refineProps(raw, DATE_PROPS, {}, leftovers)
+
+  if (props.date !== null) {
+    if (props.start === null) {
+      props.start = props.date
+    }
+    delete props.date
+  }
 
   return props
 }
 
-export function createEventInstance(
-  defId: string,
-  range: DateRange,
-  forcedStartTzo: number | null = null,
-  forcedEndTzo: number | null = null
-): EventInstance {
-  let instanceId = String(uid++)
-  return { instanceId, defId, range, forcedStartTzo, forcedEndTzo }
+
+function pluckNonDateProps(raw: EventInput, leftovers: any) {
+  let props = refineProps(raw, NON_DATE_PROPS, {}, leftovers)
+
+  if (props.id !== null) {
+    props.publicId = String(props.id)
+    delete props.id
+  }
+
+  if (props.editable !== null) {
+    if (props.startEditable === null) {
+      props.startEditable = props.editable
+    }
+    if (props.durationEditable === null) {
+      props.durationEditable = props.editable
+    }
+    delete props.editable
+  }
+
+  if (props.color !== null) {
+    if (!props.backgroundColor) {
+      props.backgroundColor = props.color
+    }
+    if (!props.borderColor) {
+      props.borderColor = props.color
+    }
+    delete props.color
+  }
+
+  return props
 }
 
-export function parseEventDateSpan(
-  raw: EventDateInput,
-  sourceId: string,
-  calendar: Calendar,
-  leftovers: object
-): EventDateSpan | null {
-  let dateProps = refineProps(raw, DATE_PROPS, {}, leftovers)
-  let rawStart = dateProps.start
+
+/*
+The EventDateInput has been normalized (date => start, etc).
+*/
+function parseEventInstance(dateProps: EventDateInput, defId: string, sourceId: string, calendar: Calendar) {
   let startMeta
   let startMarker
   let hasEnd = false
   let endMeta = null
   let endMarker = null
 
-  if (rawStart == null) {
-    rawStart = dateProps.date
-  }
+  startMeta = calendar.dateEnv.createMarkerMeta(dateProps.start)
 
-  if (rawStart != null) {
-    startMeta = calendar.dateEnv.createMarkerMeta(rawStart)
-  }
   if (!startMeta) {
     return null
   }
@@ -238,8 +276,27 @@ export function parseEventDateSpan(
   return {
     isAllDay,
     hasEnd,
-    range: { start: startMarker, end: endMarker },
-    forcedStartTzo: startMeta.forcedTzo,
-    forcedEndTzo: endMeta ? endMeta.forcedTzo : null
+    instance: createEventInstance(
+      defId,
+      { start: startMarker, end: endMarker },
+      startMeta.forcedTzo,
+      endMeta ? endMeta.forcedTzo : null
+    )
+  }
+}
+
+
+export function createEventInstance(
+  defId: string,
+  range: DateRange,
+  forcedStartTzo?: number,
+  forcedEndTzo?: number
+): EventInstance {
+  return {
+    instanceId: String(uid++),
+    defId,
+    range,
+    forcedStartTzo: forcedStartTzo == null ? null : forcedStartTzo,
+    forcedEndTzo: forcedEndTzo == null ? null : forcedEndTzo
   }
 }

@@ -89,6 +89,7 @@ export type EventSourceFetcher = (
 ) => void
 
 export interface EventSourceDef {
+  ignoreRange?: boolean
   parseMeta: (raw: EventSourceInput) => object | null
   fetch: EventSourceFetcher
 }
@@ -121,6 +122,10 @@ export function registerEventSourceDef(def: EventSourceDef) {
 
 export function getEventSourceDef(id: number): EventSourceDef {
   return defs[id]
+}
+
+export function doesSourceNeedRange(eventSource: EventSource) {
+  return !defs[eventSource.sourceDefId].ignoreRange
 }
 
 export function parseEventSource(raw: EventSourceInput): EventSource | null {

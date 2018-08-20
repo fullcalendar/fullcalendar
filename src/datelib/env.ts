@@ -410,11 +410,13 @@ export class DateEnv {
 
   // Conversion
 
-  toDate(m: DateMarker): Date {
+  toDate(m: DateMarker, forcedTzo?: number): Date {
     if (this.timeZone === 'local') {
       return arrayToLocalDate(dateToUtcArray(m))
-    } else if (this.timeZone === 'UTC' || !this.namedTimeZoneImpl) {
+    } else if (this.timeZone === 'UTC') {
       return new Date(m.valueOf()) // make sure it's a copy
+    } else if (!this.namedTimeZoneImpl) {
+      return new Date(m.valueOf() - (forcedTzo || 0))
     } else {
       return new Date(
         m.valueOf() -

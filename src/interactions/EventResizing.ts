@@ -158,7 +158,7 @@ export default class EventDragging {
 
     if (this.validMutation) {
       calendar.dispatch({
-        type: 'ADD_EVENTS', // will merge
+        type: 'MERGE_EVENTS',
         eventStore: mutatedRelatedEvents
       })
 
@@ -175,7 +175,7 @@ export default class EventDragging {
           ),
           revert: function() {
             calendar.dispatch({
-              type: 'ADD_EVENTS', // will merge
+              type: 'MERGE_EVENTS',
               eventStore: relatedEvents
             })
           },

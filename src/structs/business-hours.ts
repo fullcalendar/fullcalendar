@@ -1,7 +1,7 @@
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 import { EventInput } from './event'
-import { EventStore, parseEventStore } from './event-store'
+import { EventStore, parseEvents } from './event-store'
 
 /*
 Utils for converting raw business hour input into an EventStore,
@@ -20,7 +20,7 @@ const DEF_DEFAULTS = {
 }
 
 export function parseBusinessHours(input: BusinessHoursInput, calendar: Calendar): EventStore {
-  return parseEventStore(
+  return parseEvents(
     refineInputs(input),
     '',
     calendar

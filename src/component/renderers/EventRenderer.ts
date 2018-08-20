@@ -328,17 +328,20 @@ export default class EventRenderer {
 
   // A cmp function for determining which segments should take visual priority
   compareEventSegs(seg1: Seg, seg2: Seg) {
-    let eventDef1 = seg1.eventRange.eventDef
-    let eventDef2 = seg2.eventRange.eventDef
-    let r1 = seg1.eventRange.range
-    let r2 = seg2.eventRange.range
+    let eventDef1 = seg1.eventRange.def
+    let eventDef2 = seg2.eventRange.def
+    let r1 = seg1.eventRange.instance.range
+    let r2 = seg2.eventRange.instance.range
+
+    let eventApi1 = new EventApi(this.view.calendar, eventDef1)
+    let eventApi2 = new EventApi(this.view.calendar, eventDef2)
 
     return r1.start.valueOf() - r2.start.valueOf() || // earlier events go first
       (r2.end.valueOf() - r2.start.valueOf()) - (r1.end.valueOf() - r1.start.valueOf()) || // tie? longer events go first
-      Number(eventDef2.isAllDay) - Number(eventDef1.isAllDay) || // tie? put all-day events first
+      Number(eventDef1.isAllDay) - Number(eventDef2.isAllDay) || // tie? put all-day events first
       compareByFieldSpecs(
-        eventDef1,
-        eventDef2,
+        eventApi1,
+        eventApi2,
         this.view.eventOrderSpecs,
         eventDef1.extendedProps,
         eventDef2.extendedProps
