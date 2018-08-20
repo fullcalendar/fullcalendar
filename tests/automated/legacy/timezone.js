@@ -103,10 +103,22 @@ describe('timezone', function() {
       eventAfterAllRender: function() {
         callCnt++
         if (callCnt === 1) {
+
           expectLocalTimezone()
           currentCalendar.setOption('timezone', 'UTC') // will cause second call...
+
         } else if (callCnt === 2) {
-          expectUtcTimezone()
+
+          var allDayEvent = currentCalendar.getEventById('1')
+          var timedEvent = currentCalendar.getEventById('2')
+          var zonedEvent = currentCalendar.getEventById('3')
+          expect(allDayEvent.isAllDay).toEqual(true)
+          expect(allDayEvent.start).toEqualDate('2014-05-02')
+          expect(timedEvent.isAllDay).toEqual(false)
+          expect(timedEvent.start).toEqualDate('2014-05-10T12:00:00') // was parsed as LOCAL originally
+          expect(zonedEvent.isAllDay).toEqual(false)
+          expect(zonedEvent.start).toEqualDate('2014-05-10T14:00:00+11:00')
+
           done()
         }
       }
