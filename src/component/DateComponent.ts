@@ -553,7 +553,7 @@ export default abstract class DateComponent extends Component {
         this.eventRangesToSegs(eventRanges),
         {
           getClasses(seg) {
-            return [ 'fc-bgevent' ].concat(seg.eventRange.def.className)
+            return [ 'fc-bgevent' ].concat(seg.eventRange.def.classNames)
           }
         }
       )

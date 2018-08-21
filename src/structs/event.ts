@@ -25,7 +25,8 @@ export interface EventNonDateInput {
   constraint?: any
   overlap?: any
   rendering?: EventRenderingChoice
-  className?: ClassNameInput
+  classNames?: ClassNameInput // accept both
+  className?: ClassNameInput //
   color?: string
   backgroundColor?: string
   borderColor?: string
@@ -58,7 +59,7 @@ export interface EventDef {
   constraint: any
   overlap: any
   rendering: EventRenderingChoice
-  className: string[]
+  classNames: string[]
   backgroundColor: string
   borderColor: string
   textColor: string
@@ -92,6 +93,7 @@ const NON_DATE_PROPS = {
   constraint: null,
   overlap: null,
   rendering: String,
+  classNames: parseClassName,
   className: parseClassName,
   color: String,
   backgroundColor: String,
@@ -162,6 +164,9 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, leftover
     def.extendedProps = {}
   }
 
+  // help out EventApi::extendedProps from having user modify props
+  Object.freeze(def.extendedProps)
+
   return def
 }
 
@@ -169,12 +174,8 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, leftover
 function pluckDateProps(raw: EventInput, leftovers: any) {
   let props = refineProps(raw, DATE_PROPS, {}, leftovers)
 
-  if (props.date !== null) {
-    if (props.start === null) {
-      props.start = props.date
-    }
-    delete props.date
-  }
+  props.start = (props.start !== null) ? props.start : props.date
+  delete props.date
 
   return props
 }
@@ -183,30 +184,17 @@ function pluckDateProps(raw: EventInput, leftovers: any) {
 function pluckNonDateProps(raw: EventInput, leftovers: any) {
   let props = refineProps(raw, NON_DATE_PROPS, {}, leftovers)
 
-  if (props.id !== null) {
-    props.publicId = String(props.id)
-    delete props.id
-  }
+  props.publicId = props.id
+  props.classNames = props.classNames.concat(props.className)
+  props.startEditable = (props.startEditable !== null) ? props.startEditable : props.editable
+  props.durationEditable = (props.durationEditable !== null) ? props.durationEditable : props.editable
+  props.backgroundColor = props.backgroundColor || props.color
+  props.borderColor = props.borderColor || props.color
 
-  if (props.editable !== null) {
-    if (props.startEditable === null) {
-      props.startEditable = props.editable
-    }
-    if (props.durationEditable === null) {
-      props.durationEditable = props.editable
-    }
-    delete props.editable
-  }
-
-  if (props.color !== null) {
-    if (!props.backgroundColor) {
-      props.backgroundColor = props.color
-    }
-    if (!props.borderColor) {
-      props.borderColor = props.color
-    }
-    delete props.color
-  }
+  delete props.id
+  delete props.className
+  delete props.editable
+  delete props.color
 
   return props
 }

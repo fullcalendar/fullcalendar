@@ -161,7 +161,7 @@ function refineScopedUi(input): EventUi {
     borderColor: input.eventBorderColor || input.eventColor || '',
     textColor: input.eventTextColor || '',
     rendering: input.eventRendering || '',
-    classNames: parseClassName(input.eventClassNames || input.eventClassName)
+    classNames: parseClassName(input.eventClassNames || input.eventClassName) // probs already parsed
   }
 }
 
@@ -175,7 +175,7 @@ function refineUnscopedUi(input): EventUi {
     borderColor: input.borderColor || input.color || '',
     textColor: input.textColor || '',
     rendering: input.rendering || '',
-    classNames: parseClassName(input.classNames || input.className)
+    classNames: parseClassName(input.classNames || input.className) // probs already parsed
   }
 }
 

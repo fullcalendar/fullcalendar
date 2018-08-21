@@ -1,5 +1,4 @@
 import DateComponent from '../component/DateComponent'
-import EventRenderer from '../component/renderers/EventRenderer'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import { htmlEscape } from '../util/html'
 import { createFormatter } from '../datelib/formatting'

@@ -64,18 +64,36 @@ export default class EventApi {
     })
   }
 
-  get title(): string {
-    return this.def.title
+  get start(): Date | null {
+    return this.instance ?
+      this.calendar.dateEnv.toDate(this.instance.range.start) :
+      null
   }
 
-  get start(): Date {
-    return this.calendar.dateEnv.toDate(this.instance.range.start)
-  }
-
-  get end(): Date {
-    return this.def.hasEnd ?
+  get end(): Date | null {
+    return (this.instance && this.def.hasEnd) ?
       this.calendar.dateEnv.toDate(this.instance.range.end) :
       null
   }
+
+  // computable props that all access the def
+  // TODO: find a TypeScript-compatible way to do this at scale
+  get id(): string { return this.def.publicId }
+  get groupId(): string { return this.def.groupId }
+  get isAllDay(): boolean { return this.def.isAllDay }
+  get title(): string { return this.def.title }
+  get url(): string { return this.def.url }
+  get startEditable(): boolean { return this.def.startEditable }
+  get durationEditable(): boolean { return this.def.durationEditable }
+  get constraint(): any { return this.def.constraint }
+  get overlap(): any { return this.def.overlap }
+  get rendering(): string { return this.def.rendering }
+  get classNames(): string[] { return this.def.classNames }
+  get backgroundColor(): string { return this.def.backgroundColor }
+  get borderColor(): string { return this.def.borderColor }
+  get textColor(): string { return this.def.textColor }
+
+  // NOTE: user can't modify extendedProps because Object.freeze was called in event-def parsing
+  get extendedProps(): any { return this.def.extendedProps }
 
 }
