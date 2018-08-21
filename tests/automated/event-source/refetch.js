@@ -1,4 +1,4 @@
-describe('refetchEventSources', function() {
+describe('event source refetch', function() {
 
   // used by createEventGenerator
   var eventCount
@@ -16,57 +16,25 @@ describe('refetchEventSources', function() {
     scrollTime: '00:00',
     eventSources: [
       {
-        id: 1,
+        id: 'green0',
         events: createEventGenerator('source1-'),
         color: 'green'
       },
       {
-        id: 2,
+        id: 'blue',
         events: createEventGenerator('source2-'),
         color: 'blue'
       },
       {
-        id: 3,
+        id: 'green1',
         events: createEventGenerator('source3-'),
         color: 'green'
       }
     ]
   })
 
-  describe('with a single event source passed in', function() {
-    it('only refetches events for the specified event source', function(done) {
-      initCalendar()
-
-      expect($('.source1-7').length).toEqual(1)
-      expect($('.source2-7').length).toEqual(1)
-      expect($('.source3-7').length).toEqual(1)
-
-      var allEventSources = currentCalendar.getEventSources()
-      var blueEventSource = $.grep(allEventSources, function(eventSource) {
-        return eventSource.color === 'blue'
-      })[0]
-
-      // increase the number of events for the refetched source
-      eventCount = 2
-      fetchId = 8
-
-      currentCalendar.refetchEventSources(blueEventSource)
-
-      // events from unaffected sources remain
-      expect($('.source1-7').length).toEqual(1)
-      expect($('.source3-7').length).toEqual(1)
-
-      // events from old fetch were cleared
-      expect($('.source2-7').length).toEqual(0)
-
-      // events from new fetch were rendered
-      expect($('.source2-8').length).toEqual(2)
-
-      done()
-    })
-  })
-  describe('with a single event source ID passed in', function() {
-    it('only refetches events for the specified event source', function(done) {
+  describe('with a single event source', function() { // reword this stuff
+    it('will be refetched', function() {
       initCalendar()
 
       expect($('.source1-7').length).toEqual(1)
@@ -88,13 +56,11 @@ describe('refetchEventSources', function() {
 
       // events from new fetch were rendered
       expect($('.source2-8').length).toEqual(2)
-
-      done()
     })
   })
 
   describe('multiple event sources', function() {
-    it('will be refetched', function(done) {
+    it('will be refetched', function() {
       initCalendar()
 
       expect($('.source1-7').length).toEqual(1)
@@ -118,8 +84,6 @@ describe('refetchEventSources', function() {
       // events from new fetch were rendered
       expect($('.source1-8').length).toEqual(2)
       expect($('.source3-8').length).toEqual(2)
-
-      done()
     })
   })
 
