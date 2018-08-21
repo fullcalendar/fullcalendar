@@ -1,9 +1,9 @@
 import { htmlEscape, cssToStr } from '../util/html'
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { createFormatter } from '../datelib/formatting'
-import EventRenderer from '../component/renderers/EventRenderer'
+import EventRenderer, { buildSegCompareObj } from '../component/renderers/EventRenderer'
 import { Seg } from '../component/DateComponent'
-import { isMultiDayRange } from '../util/misc'
+import { isMultiDayRange, compareByFieldSpecs } from '../util/misc'
 
 const FULL_TIME_FORMAT = createFormatter({ hour: 'numeric', minute: '2-digit' })
 
@@ -233,18 +233,24 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
 
   sortForwardSegs(forwardSegs: Seg[]) {
-    forwardSegs.sort(this.compareForwardSegs.bind(this))
-  }
+    let objs = forwardSegs.map(buildTimeGridSegCompareObj)
 
-
-  // A cmp function for determining which forward segment to rely on more when computing coordinates.
-  compareForwardSegs(seg1: Seg, seg2: Seg) {
-    // put higher-pressure first
-    return seg2.forwardPressure - seg1.forwardPressure ||
+    let specs = [
+      // put higher-pressure first
+      { field: 'forwardPressure', order: -1 },
       // put segments that are closer to initial edge first (and favor ones with no coords yet)
-      (seg1.backwardCoord || 0) - (seg2.backwardCoord || 0) ||
-      // do normal sorting...
-      this.compareEventSegs(seg1, seg2)
+      { field: 'backwardCoord', order: 1 }
+    ].concat(
+      this.view.eventOrderSpecs
+    )
+
+    objs.sort(function(obj0, obj1) {
+      return compareByFieldSpecs(obj0, obj1, specs)
+    })
+
+    return objs.map(function(c) {
+      return c._seg
+    })
   }
 
 
@@ -402,4 +408,14 @@ function computeSlotSegCollisions(seg: Seg, otherSegs: Seg[], results= []) {
 // Do these segments occupy the same vertical space?
 function isSlotSegCollision(seg1: Seg, seg2: Seg) {
   return seg1.bottom > seg2.top && seg1.top < seg2.bottom
+}
+
+
+function buildTimeGridSegCompareObj(seg: Seg) {
+  let obj = buildSegCompareObj(seg)
+
+  obj.forwardPressure = seg.forwardPressure
+  obj.backwardCoord = seg.backwardCoord
+
+  return obj
 }
