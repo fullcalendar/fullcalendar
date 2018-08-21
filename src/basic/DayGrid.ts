@@ -654,7 +654,9 @@ export default class DayGrid extends DateComponent {
 
         // it would be more proper to call render() with a full render state,
         // but hackily rendering segs directly is much easier
+        // simlate a lot of what happens in render() and renderEventRanges()
         this.segPopoverTile.renderSkeleton()
+        this.segPopoverTile.eventRenderer.rangeUpdated()
         this.segPopoverTile.eventRenderer.renderSegs(segs)
         this.segPopoverTile.renderedFlags.events = true // so unrendering works
         this.segPopoverTile.triggerRenderedSegs(segs) // for eventAfterRender

@@ -87,8 +87,10 @@ export default class DayTile extends DateComponent {
 
 }
 
-export class DayTileEventRenderer extends EventRenderer {
+// hack
+export class DayTileEventRenderer extends DayGridEventRenderer {
 
+  // simply append the els the container element
   renderFgSegs(segs: Seg[]) {
     for (let seg of segs) {
       this.component.segContainerEl.appendChild(seg.el)
@@ -96,8 +98,5 @@ export class DayTileEventRenderer extends EventRenderer {
   }
 
 }
-
-// hack
-DayTileEventRenderer.prototype.fgSegHtml = DayGridEventRenderer.prototype.fgSegHtml
 
 DayTile.prototype.eventRendererClass = DayTileEventRenderer
