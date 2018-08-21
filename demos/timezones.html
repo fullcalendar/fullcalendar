@@ -44,11 +44,11 @@
       // eventRender: function(event, el) {
       // },
 
-      dayClick: function(date) {
-        console.log('dayClick', calendar.formatIso(date));
+      dayClick: function(arg) {
+        console.log('dayClick', calendar.formatIso(arg.date));
       },
-      select: function(startDate, endDate) {
-        console.log('select', calendar.formatIso(startDate), calendar.formatIso(endDate));
+      select: function(arg) {
+        console.log('select', calendar.formatIso(arg.start), calendar.formatIso(arg.end));
       }
     });
 

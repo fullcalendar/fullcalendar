@@ -20,18 +20,17 @@
       navLinks: true, // can click day/week names to navigate views
       selectable: true,
       selectHelper: true,
-      select: function(start, end) {
+      select: function(arg) {
         var title = prompt('Event Title:');
-        var eventData;
         if (title) {
-          eventData = {
+          calendar.addEvent({
             title: title,
-            start: start,
-            end: end
-          };
-          $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+            start: arg.start,
+            end: arg.end,
+            isAllDay: arg.isAllDay
+          })
         }
-        $('#calendar').fullCalendar('unselect');
+        calendar.unselect()
       },
       editable: true,
       eventLimit: true, // allow "more" link when too many events
