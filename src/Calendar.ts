@@ -496,7 +496,7 @@ export default class Calendar {
   handleOptions(options) {
     this.defaultAllDayEventDuration = createDuration(options.defaultAllDayEventDuration)
     this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
-    this.delayedRerender = this.buildDelayedRerender(options.eventRenderWait) // TODO: rename settings
+    this.delayedRerender = this.buildDelayedRerender(options.rerenderDelay)
     this.theme = this.buildTheme(options)
     this.dateEnv = this.buildDateEnv(
       options.locale,

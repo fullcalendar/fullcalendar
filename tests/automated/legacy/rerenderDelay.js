@@ -1,4 +1,4 @@
-describe('eventRenderWait', function() {
+describe('rerenderDelay', function() { // TODO: rename file
 
   it('batches together many event renders', function(done) {
     var eventSource1 = [
@@ -17,7 +17,7 @@ describe('eventRenderWait', function() {
       defaultDate: '2016-12-04',
       defaultView: 'agendaDay',
       events: eventSource1,
-      eventRenderWait: 0, // will still debounce despite being zero
+      rerenderDelay: 0, // will still debounce despite being zero
       eventAfterAllRender: function() {
         eventRenderCnt++
         if (eventRenderCnt === 2) {

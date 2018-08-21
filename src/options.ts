@@ -66,7 +66,7 @@ export const globalDefaults = {
   dropAccept: '*',
 
   eventOrder: 'title',
-  // eventRenderWait: null,
+  // rerenderDelay: null,
 
   eventLimit: false,
   eventLimitClick: 'popover',

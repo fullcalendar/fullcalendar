@@ -157,7 +157,7 @@ export interface OptionsInputBase {
   eventTextColor?: string
   nextDayThreshold?: DurationInput
   eventOrder?: string | Array<((a: EventApi, b: EventApi) => number) | (string | ((a: EventApi, b: EventApi) => number))>
-  eventRenderWait?: number | null
+  rerenderDelay?: number | null
   editable?: boolean
   eventStartEditable?: boolean
   eventDurationEditable?: boolean
