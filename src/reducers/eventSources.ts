@@ -177,7 +177,10 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange | null, cal
 function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId: string, fetchRange: DateRange) {
   let eventSource: EventSource = sourceHash[sourceId]
 
-  if (fetchId === eventSource.latestFetchId) {
+  if (
+    eventSource && // not already removed
+    fetchId === eventSource.latestFetchId
+  ) {
     return assignTo({}, sourceHash, {
       [sourceId]: assignTo({}, eventSource, {
         isFetching: false,
