@@ -130,11 +130,11 @@ describe('Google Calendar plugin', function() {
 
   describe('when not given an API key', function() {
     it('calls error handlers, raises warning, and receives no events', function(done) {
-      options.googleCalendarError = function(err) {
+      options.eventSourceFailure = function(err) {
         expect(typeof err).toBe('object')
       }
       options.events = {
-        googleCalendarError: function(err) {
+        failure: function(err) {
           expect(typeof err).toBe('object')
         },
         googleCalendarId: HOLIDAY_CALENDAR_ID
@@ -144,13 +144,13 @@ describe('Google Calendar plugin', function() {
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
-        expect(options.googleCalendarError).toHaveBeenCalled()
-        expect(options.events.googleCalendarError).toHaveBeenCalled()
+        expect(options.eventSourceFailure).toHaveBeenCalled()
+        expect(options.events.failure).toHaveBeenCalled()
 
         done()
       }
-      spyOn(options, 'googleCalendarError').and.callThrough()
-      spyOn(options.events, 'googleCalendarError').and.callThrough()
+      spyOn(options, 'eventSourceFailure').and.callThrough()
+      spyOn(options.events, 'failure').and.callThrough()
       initCalendar(options)
     })
   })
@@ -158,11 +158,11 @@ describe('Google Calendar plugin', function() {
   describe('when given a bad API key', function() {
     it('calls error handlers, raises warning, and receives no event', function(done) {
       options.googleCalendarApiKey = 'asdfasdfasdf'
-      options.googleCalendarError = function(err) {
+      options.eventSourceFailure = function(err) {
         expect(typeof err).toBe('object')
       }
       options.events = {
-        googleCalendarError: function(err) {
+        failure: function(err) {
           expect(typeof err).toBe('object')
         },
         googleCalendarId: HOLIDAY_CALENDAR_ID
@@ -172,13 +172,13 @@ describe('Google Calendar plugin', function() {
 
         expect(events.length).toBe(0)
         expect(currentWarnArgs.length).toBeGreaterThan(0)
-        expect(options.googleCalendarError).toHaveBeenCalled()
-        expect(options.events.googleCalendarError).toHaveBeenCalled()
+        expect(options.eventSourceFailure).toHaveBeenCalled()
+        expect(options.events.failure).toHaveBeenCalled()
 
         done()
       }
-      spyOn(options, 'googleCalendarError').and.callThrough()
-      spyOn(options.events, 'googleCalendarError').and.callThrough()
+      spyOn(options, 'eventSourceFailure').and.callThrough()
+      spyOn(options.events, 'failure').and.callThrough()
       initCalendar(options)
     })
   })
