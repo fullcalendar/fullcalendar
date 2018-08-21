@@ -40,15 +40,19 @@ export default class EventHovering {
   }
 
   handleSegEnter = (ev: Event, segEl: HTMLElement) => {
-    segEl.classList.add('fc-allow-mouse-resize')
-    this.currentSegEl = segEl
-    this.triggerEvent('eventMouseover', ev, segEl)
+    if (getElSeg(segEl)) { // TODO: better way to make sure not hovering over more+ link or its wrapper
+      segEl.classList.add('fc-allow-mouse-resize')
+      this.currentSegEl = segEl
+      this.triggerEvent('eventMouseover', ev, segEl)
+    }
   }
 
   handleSegLeave = (ev: Event | null, segEl: HTMLElement) => {
-    segEl.classList.remove('fc-allow-mouse-resize')
-    this.currentSegEl = null
-    this.triggerEvent('eventMouseout', ev, segEl)
+    if (this.currentSegEl) {
+      segEl.classList.remove('fc-allow-mouse-resize')
+      this.currentSegEl = null
+      this.triggerEvent('eventMouseout', ev, segEl)
+    }
   }
 
   triggerEvent(publicEvName: string, ev: Event | null, segEl: HTMLElement) {
