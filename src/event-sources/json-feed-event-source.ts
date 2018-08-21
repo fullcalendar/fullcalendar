@@ -53,12 +53,15 @@ registerEventSourceDef({
           // if the server doesn't set Content-Type, won't be parsed as JSON. parse anyway.
           rawEvents = JSON.parse(res.text)
         }
-      }
 
-      if (rawEvents) {
-        success(rawEvents)
+        if (rawEvents) {
+          success({ rawEvents, response: res })
+        } else {
+          failure({ message: 'Invalid JSON response', response: res })
+        }
+
       } else {
-        failure('No response')
+        failure(error) // error has { error, response }
       }
     })
   }

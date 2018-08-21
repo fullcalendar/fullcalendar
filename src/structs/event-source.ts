@@ -12,9 +12,15 @@ Contains the plugin system for defining new types if event sources.
 TODO: "EventSource" is the same name as a built-in type in TypeScript. Rethink.
 */
 
+export type EventSourceError = {
+  message: string
+  response?: any // an XHR or something like it
+  [otherProp: string]: any
+}
+
 export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
-export type EventSourceSuccessHandler = (eventInputs: EventInput[]) => void
-export type EventSourceFailureHandler = (errorObj: any) => void
+export type EventSourceSuccessResponseHandler = (rawEvents: EventInput[], response: any) => void
+export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
 export interface ExtendedEventSourceInput {
   id?: string | number
@@ -31,8 +37,6 @@ export interface ExtendedEventSourceInput {
   backgroundColor?: string
   borderColor?: string
   textColor?: string
-  success?: EventSourceSuccessHandler
-  failure?: EventSourceFailureHandler
 
   // array (TODO: how to move this to array-event-source?)
   events?: EventInput[]
@@ -44,6 +48,10 @@ export interface ExtendedEventSourceInput {
   startParam?: string
   endParam?: string
   timezoneParam?: string
+
+  // for any network-related sources
+  success?: EventSourceSuccessResponseHandler
+  failure?: EventSourceErrorResponseHandler
 
   [otherProp: string]: any // in case plugins want more props
 }
@@ -72,8 +80,8 @@ export interface EventSource {
   backgroundColor: string
   borderColor: string
   textColor: string
-  success: EventSourceSuccessHandler | null
-  failure: EventSourceFailureHandler | null
+  success: EventSourceSuccessResponseHandler | null
+  failure: EventSourceErrorResponseHandler | null
 }
 
 export type EventSourceHash = { [sourceId: string]: EventSource }
@@ -84,8 +92,8 @@ export type EventSourceFetcher = (
     calendar: Calendar
     range: DateRange
   },
-  success: EventSourceSuccessHandler,
-  failure: EventSourceFailureHandler
+  success: (res: { rawEvents: EventInput[], response?: any }) => void,
+  failure: (error: EventSourceError) => void
 ) => void
 
 export interface EventSourceDef {

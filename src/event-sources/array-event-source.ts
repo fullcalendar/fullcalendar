@@ -15,7 +15,9 @@ registerEventSourceDef({
   },
 
   fetch(arg, success) {
-    success(arg.eventSource.meta as EventInput[])
+    success({
+      rawEvents: arg.eventSource.meta as EventInput[]
+    })
   }
 
 })

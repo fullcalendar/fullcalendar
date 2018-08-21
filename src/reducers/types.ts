@@ -3,7 +3,7 @@ import { DateRange } from '../datelib/date-range'
 import { EventStore } from '../structs/event-store'
 import { EventMutation } from '../structs/event-mutation'
 import { DateComponentRenderState } from '../component/DateComponent'
-import { EventSource, EventSourceHash } from '../structs/event-source'
+import { EventSource, EventSourceHash, EventSourceError } from '../structs/event-source'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
@@ -13,10 +13,6 @@ export interface CalendarState extends DateComponentRenderState {
   eventSources: EventSourceHash
   eventSourceLoadingLevel: number
   loadingLevel: number
-}
-
-export interface SimpleError {
-  message: string
 }
 
 export type Action =
@@ -43,7 +39,7 @@ export type Action =
   { type: 'CHANGE_TIMEZONE', oldDateEnv: DateEnv } |
 
   { type: 'RECEIVE_EVENTS', sourceId: string, fetchId: string, fetchRange: DateRange | null, rawEvents: EventInput[] } |
-  { type: 'RECEIVE_EVENT_ERROR', sourceId: string, fetchId: string, fetchRange: DateRange | null, error: SimpleError } |
+  { type: 'RECEIVE_EVENT_ERROR', sourceId: string, fetchId: string, fetchRange: DateRange | null, error: EventSourceError } |
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |
   { type: 'MERGE_EVENTS', eventStore: EventStore } |

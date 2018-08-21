@@ -4,7 +4,7 @@ import { arrayToHash, assignTo, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { warn } from '../util/misc'
 import { DateProfile } from '../DateProfileGenerator'
-import { Action, SimpleError } from './types'
+import { Action } from './types'
 
 export default function(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, calendar: Calendar): EventSourceHash {
   switch (action.type) {
@@ -124,10 +124,17 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange | null, cal
       calendar,
       range: fetchRange
     },
-    function(rawEvents) {
+    function(res) {
+      let calSuccess = calendar.opt('eventSourceSuccess')
 
-      if (eventSource.success) {
-        eventSource.success(rawEvents)
+      // only call success callbacks if it was a network request (aka has a `response`)
+      if (res.response) {
+        if (eventSource.success) {
+          eventSource.success(res.rawEvents, res.response)
+        }
+        if (calSuccess) {
+          calSuccess(res.rawEvents, res.response)
+        }
       }
 
       calendar.dispatch({
@@ -135,16 +142,19 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange | null, cal
         sourceId: eventSource.sourceId,
         fetchId,
         fetchRange,
-        rawEvents
+        rawEvents: res.rawEvents
       })
     },
-    function(errorInput) {
-      let error = normalizeError(errorInput)
+    function(error) {
+      let calError = calendar.opt('eventSourceFailure')
 
       warn(error.message, error)
 
       if (eventSource.failure) {
         eventSource.failure(error)
+      }
+      if (calError) {
+        calError(error)
       }
 
       calendar.dispatch({
@@ -177,15 +187,6 @@ function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId:
   }
 
   return sourceHash
-}
-
-
-function normalizeError(input: any): SimpleError {
-  if (typeof input === 'string') {
-    return { message: input }
-  } else {
-    return input || {}
-  }
 }
 
 

@@ -33,8 +33,10 @@ registerEventSourceDef({
         end: dateEnv.toDate(arg.range.end),
         timeZone: dateEnv.timeZone
       }),
-      success,
-      failure
+      function(rawEvents) { // success
+        success({ rawEvents }) // needs an object response
+      },
+      failure // send errorObj directly to failure callback
     )
   }
 
