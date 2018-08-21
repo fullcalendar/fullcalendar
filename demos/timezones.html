@@ -9,12 +9,12 @@
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
-    var initialTimezone = 'local';
-    var timezoneSelectorEl = document.getElementById('timezone-selector');
+    var initialTimeZone = 'local';
+    var timeZoneSelectorEl = document.getElementById('timezone-selector');
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
-      timezone: initialTimezone,
+      timeZone: initialTimeZone,
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -56,23 +56,23 @@
 
     // load the list of available timezones, build the <select> options
     superagent.get('php/get-timezones.php').end(function(err, res) {
-      var timezones = res.body || JSON.parse(res.text);
+      var timeZones = res.body || JSON.parse(res.text);
 
-      timezones.forEach(function(timezone) {
+      timeZones.forEach(function(timeZone) {
         var optionEl;
 
-        if (timezone != 'UTC') { // UTC is already in the list
+        if (timeZone != 'UTC') { // UTC is already in the list
           optionEl = document.createElement('option');
-          optionEl.value = timezone;
-          optionEl.innerText = timezone;
-          timezoneSelectorEl.appendChild(optionEl);
+          optionEl.value = timeZone;
+          optionEl.innerText = timeZone;
+          timeZoneSelectorEl.appendChild(optionEl);
         }
       });
     });
 
     // when the timezone selector changes, dynamically change the calendar option
-    timezoneSelectorEl.addEventListener('change', function() {
-      calendar.setOption('timezone', this.value || false);
+    timeZoneSelectorEl.addEventListener('change', function() {
+      calendar.setOption('timeZone', this.value || false);
     });
   });
 

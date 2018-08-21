@@ -1,7 +1,7 @@
 
 xdescribe('updateEvent', function() {
   pushOptions({
-    timezone: 'UTC'
+    timeZone: 'UTC'
   })
 
   describe('when changing an event\'s ID', function() {

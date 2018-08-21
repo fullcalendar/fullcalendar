@@ -1,7 +1,7 @@
 
 describe('lazyFetching', function() {
   pushOptions({
-    timezone: 'UTC',
+    timeZone: 'UTC',
     defaultView: 'month',
     defaultDate: '2017-10-04'
   })

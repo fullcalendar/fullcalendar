@@ -5,7 +5,7 @@ describe('recurring events', function() {
     pushOptions({
       defaultView: 'agendaWeek',
       defaultDate: '2017-07-03',
-      timezone: 'local',
+      timeZone: 'local',
       events: [
         { startTime: '09:00', endTime: '11:00', daysOfWeek: [ 2, 4 ] }
       ]

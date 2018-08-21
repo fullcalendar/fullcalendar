@@ -254,7 +254,7 @@ describe('eventResize', function() {
 
       it('should have correct arguments with a timed delta, when timezone is local', function(done) {
         var options = {}
-        options.timezone = 'local'
+        options.timeZone = 'local'
         init(
           options,
           function() {
@@ -282,7 +282,7 @@ describe('eventResize', function() {
 
       it('should have correct arguments with a timed delta, when timezone is UTC', function(done) {
         var options = {}
-        options.timezone = 'UTC'
+        options.timeZone = 'UTC'
         init(
           options,
           function() {

@@ -13,7 +13,7 @@ describe('events as a function', function() {
 
   it('requests correctly when local timezone', function(done) {
     initCalendar({
-      timezone: 'local',
+      timeZone: 'local',
       events: function(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('local')
@@ -27,7 +27,7 @@ describe('events as a function', function() {
 
   it('requests correctly when UTC timezone', function(done) {
     initCalendar({
-      timezone: 'UTC',
+      timeZone: 'UTC',
       events: function(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('UTC')
@@ -41,7 +41,7 @@ describe('events as a function', function() {
 
   it('requests correctly when custom timezone', function(done) {
     initCalendar({
-      timezone: 'America/Chicago',
+      timeZone: 'America/Chicago',
       events: function(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('America/Chicago')
@@ -56,7 +56,7 @@ describe('events as a function', function() {
   it('requests correctly when timezone changed dynamically', function(done) {
     var callCnt = 0
     var options = {
-      timezone: 'America/Chicago',
+      timeZone: 'America/Chicago',
       events: function(arg, callback) {
         testEventFunctionParams(arg, callback)
         callCnt++
@@ -65,7 +65,7 @@ describe('events as a function', function() {
           expect(arg.start).toEqualDate('2014-04-27')
           expect(arg.end).toEqualDate('2014-06-08')
           setTimeout(function() {
-            currentCalendar.setOption('timezone', 'UTC')
+            currentCalendar.setOption('timeZone', 'UTC')
           }, 0)
         } else if (callCnt === 2) {
           expect(arg.timeZone).toEqual('UTC')
@@ -98,7 +98,7 @@ describe('events as a function', function() {
     spyOn(eventSource, 'events').and.callThrough()
 
     initCalendar({
-      timezone: 'UTC',
+      timeZone: 'UTC',
       eventSources: [ eventSource ],
       eventRender: function(arg) {
         expect(eventSource.events.calls.count()).toEqual(1)

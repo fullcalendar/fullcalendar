@@ -218,7 +218,7 @@ describe('external drag and drop', function() {
         })
 
         it('works with timezone as "local"', function(done) { // for issue 2225
-          options.timezone = 'local'
+          options.timeZone = 'local'
           options.drop = function(arg) {
             expect(arg.date).toEqualDate('2014-08-20T01:00:00') // local
             done()
@@ -234,7 +234,7 @@ describe('external drag and drop', function() {
         })
 
         it('works with timezone as "UTC"', function(done) { // for issue 2225
-          options.timezone = 'UTC'
+          options.timeZone = 'UTC'
           options.drop = function(arg) {
             expect(arg.date).toEqualDate('2014-08-20T01:00:00Z')
             done()

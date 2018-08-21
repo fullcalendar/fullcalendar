@@ -3,7 +3,7 @@ describe('defaultTimedEventDuration', function() {
   pushOptions({
     defaultDate: '2014-05-01',
     defaultView: 'month',
-    timezone: 'UTC'
+    timeZone: 'UTC'
   })
 
   describe('when forceEventDuration is on', function() {

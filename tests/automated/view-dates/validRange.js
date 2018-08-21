@@ -2,7 +2,7 @@ import { expectActiveRange, expectRenderRange } from './ViewDateUtils'
 
 describe('validRange', function() {
   pushOptions({
-    timezone: 'UTC',
+    timeZone: 'UTC',
     defaultDate: '2017-06-08'
   })
 

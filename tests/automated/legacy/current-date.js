@@ -10,7 +10,7 @@ describe('current date', function() {
     titleFormat: TITLE_FORMAT,
     titleRangeSeparator: ' - ',
     defaultDate: '2014-06-01',
-    timezone: 'UTC'
+    timeZone: 'UTC'
   })
 
   describe('defaultDate & getDate', function() { // keep getDate

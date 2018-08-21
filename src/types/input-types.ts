@@ -96,7 +96,7 @@ export interface OptionsInputBase {
   windowResizeDelay?: number
   eventLimit?: boolean | number
   eventLimitClick?: 'popover' | 'week' | 'day' | string | ((cellinfo: CellInfo, jsevent: Event) => void)
-  timezone?: string | boolean
+  timeZone?: string | boolean
   now?: DateInput | (() => DateInput)
   defaultView?: string
   allDaySlot?: boolean

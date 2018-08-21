@@ -2,7 +2,7 @@ describe('dayClick', function() {
   pushOptions({
     defaultDate: '2014-05-27',
     selectable: false,
-    timezone: 'UTC'
+    timeZone: 'UTC'
   });
 
   [ false, true ].forEach(function(isRTL) {

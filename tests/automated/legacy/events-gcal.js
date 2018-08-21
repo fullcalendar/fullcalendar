@@ -45,7 +45,7 @@ describe('Google Calendar plugin', function() {
   it('request/receives correctly when local timezone', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
-    options.timezone = 'local'
+    options.timeZone = 'local'
     options.eventAfterAllRender = function() {
       var events = currentCalendar.getEvents()
       var i
@@ -63,7 +63,7 @@ describe('Google Calendar plugin', function() {
   it('request/receives correctly when UTC timezone', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
-    options.timezone = 'UTC'
+    options.timeZone = 'UTC'
     options.eventAfterAllRender = function() {
       var events = currentCalendar.getEvents()
       var i
@@ -81,7 +81,7 @@ describe('Google Calendar plugin', function() {
   it('request/receives correctly when named timezone, defaults to not editable', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
-    options.timezone = 'America/New York'
+    options.timeZone = 'America/New York'
     options.eventAfterAllRender = function() {
       var events = currentCalendar.getEvents()
       var eventEls = $('.fc-event')

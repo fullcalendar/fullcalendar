@@ -1,4 +1,4 @@
-describe('timezone', function() {
+describe('timeZone', function() {
 
   // NOTE: Only deals with the processing of *received* events.
   // Verification of a correct AJAX *request* is done in events-json-feed.js
@@ -28,7 +28,7 @@ describe('timezone', function() {
 
   it('receives events correctly when local timezone', function(done) {
     initCalendar({
-      timezone: 'local',
+      timeZone: 'local',
       eventAfterAllRender: function() {
         expectLocalTimezone()
         done()
@@ -51,7 +51,7 @@ describe('timezone', function() {
 
   it('receives events correctly when UTC timezone', function(done) {
     initCalendar({
-      timezone: 'UTC',
+      timeZone: 'UTC',
       eventAfterAllRender: function() {
         expectUtcTimezone()
         done()
@@ -74,7 +74,7 @@ describe('timezone', function() {
 
   it('receives events correctly when custom timezone', function(done) {
     initCalendar({
-      timezone: 'America/Chicago',
+      timeZone: 'America/Chicago',
       eventAfterAllRender: function() {
         expectCustomTimezone()
         done()
@@ -99,13 +99,13 @@ describe('timezone', function() {
     var callCnt = 0
 
     initCalendar({
-      timezone: 'local',
+      timeZone: 'local',
       eventAfterAllRender: function() {
         callCnt++
         if (callCnt === 1) {
 
           expectLocalTimezone()
-          currentCalendar.setOption('timezone', 'UTC') // will cause second call...
+          currentCalendar.setOption('timeZone', 'UTC') // will cause second call...
 
         } else if (callCnt === 2) {
 

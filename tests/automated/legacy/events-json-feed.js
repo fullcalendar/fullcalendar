@@ -30,7 +30,7 @@ describe('events as a json feed', function() {
 
     initCalendar({
       events: 'my-feed.php',
-      timezone: 'local'
+      timeZone: 'local'
     })
   })
 
@@ -40,7 +40,7 @@ describe('events as a json feed', function() {
       expect(req.url().query).toEqual({
         start: '2014-04-27T00:00:00Z',
         end: '2014-06-08T00:00:00Z',
-        timezone: 'UTC'
+        timeZone: 'UTC'
       })
       done()
       return res.status(200).header('content-type', 'application/json').body('[]')
@@ -48,7 +48,7 @@ describe('events as a json feed', function() {
 
     initCalendar({
       events: 'my-feed.php',
-      timezone: 'UTC'
+      timeZone: 'UTC'
     })
   })
 
@@ -58,7 +58,7 @@ describe('events as a json feed', function() {
       expect(req.url().query).toEqual({
         start: '2014-04-27T00:00:00',
         end: '2014-06-08T00:00:00',
-        timezone: 'America/Chicago'
+        timeZone: 'America/Chicago'
       })
       done()
       return res.status(200).header('content-type', 'application/json').body('[]')
@@ -66,7 +66,7 @@ describe('events as a json feed', function() {
 
     initCalendar({
       events: 'my-feed.php',
-      timezone: 'America/Chicago'
+      timeZone: 'America/Chicago'
     })
   })
 
@@ -76,7 +76,7 @@ describe('events as a json feed', function() {
       expect(req.url().query).toEqual({
         start: '2014-04-27T00:00:00',
         end: '2014-06-08T00:00:00',
-        timezone: 'America/Chicago'
+        timeZone: 'America/Chicago'
       })
       return res.status(200).header('content-type', 'application/json').body(
         JSON.stringify([
@@ -93,7 +93,7 @@ describe('events as a json feed', function() {
         url: 'my-feed.php',
         className: 'customeventclass'
       } ],
-      timezone: 'America/Chicago',
+      timeZone: 'America/Chicago',
       eventRender: function(arg) {
         expect(arg.el).toHaveClass('customeventclass')
         done()
@@ -105,7 +105,7 @@ describe('events as a json feed', function() {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({
-        timezone: 'UTC',
+        timeZone: 'UTC',
         start: '2014-04-27T00:00:00Z',
         end: '2014-06-08T00:00:00Z',
         customParam: 'yes'
@@ -128,7 +128,7 @@ describe('events as a json feed', function() {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({
-        timezone: 'UTC',
+        timeZone: 'UTC',
         start: '2014-04-27T00:00:00Z',
         end: '2014-06-08T00:00:00Z',
         customParam: 'heckyeah'

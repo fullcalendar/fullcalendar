@@ -36,9 +36,9 @@ export const globalDefaults = {
   lazyFetching: true,
   startParam: 'start',
   endParam: 'end',
-  timezoneParam: 'timezone',
+  timeZoneParam: 'timeZone',
 
-  timezone: 'UTC', // TODO: throw error if given falsy value?
+  timeZone: 'UTC', // TODO: throw error if given falsy value?
 
   // allDayDefault: undefined,
 

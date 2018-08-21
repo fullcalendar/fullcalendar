@@ -23,8 +23,8 @@ class Event {
 
 
   // Constructs an Event object from the given array of key=>values.
-  // You can optionally force the timezone of the parsed dates.
-  public function __construct($array, $timezone=null) {
+  // You can optionally force the timeZone of the parsed dates.
+  public function __construct($array, $timeZone=null) {
 
     $this->title = $array['title'];
 
@@ -40,12 +40,12 @@ class Event {
 
     if ($this->allDay) {
       // If dates are allDay, we want to parse them in UTC to avoid DST issues.
-      $timezone = null;
+      $timeZone = null;
     }
 
     // Parse dates
-    $this->start = parseDateTime($array['start'], $timezone);
-    $this->end = isset($array['end']) ? parseDateTime($array['end'], $timezone) : null;
+    $this->start = parseDateTime($array['start'], $timeZone);
+    $this->end = isset($array['end']) ? parseDateTime($array['end'], $timeZone) : null;
 
     // Record misc properties
     foreach ($array as $name => $value) {
@@ -107,17 +107,17 @@ class Event {
 //----------------------------------------------------------------------------------------------
 
 
-// Parses a string into a DateTime object, optionally forced into the given timezone.
-function parseDateTime($string, $timezone=null) {
+// Parses a string into a DateTime object, optionally forced into the given timeZone.
+function parseDateTime($string, $timeZone=null) {
   $date = new DateTime(
     $string,
-    $timezone ? $timezone : new DateTimeZone('UTC')
+    $timeZone ? $timeZone : new DateTimeZone('UTC')
       // Used only when the string is ambiguous.
-      // Ignored if string has a timezone offset in it.
+      // Ignored if string has a timeZone offset in it.
   );
-  if ($timezone) {
-    // If our timezone was ignored above, force it.
-    $date->setTimezone($timezone);
+  if ($timeZone) {
+    // If our timeZone was ignored above, force it.
+    $date->setTimezone($timeZone);
   }
   return $date;
 }

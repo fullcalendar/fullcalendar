@@ -122,7 +122,7 @@ describe('event overlap', function() {
       })
       describe('when UTC timezone', function() {
         it('does not allow dragging', function(done) {
-          options.timezone = 'UTC'
+          options.timeZone = 'UTC'
           options.events = [
             {
               title: 'Event A',
@@ -167,7 +167,7 @@ describe('event overlap', function() {
         })
         describe('when UTC timezone', function() {
           it('does not allow dragging', function(done) {
-            options.timezone = 'UTC'
+            options.timeZone = 'UTC'
             options.events = [
               {
                 title: 'Event A',
@@ -854,7 +854,7 @@ describe('selectOverlap', function() {
     describe('when dragged intersecting an event\'s start', function() {
       describe('when UTC timezone', function() {
         it('does not allow selection', function(done) {
-          options.timezone = 'UTC'
+          options.timeZone = 'UTC'
           options.events = [ {
             title: 'Event A',
             start: '2014-11-12T04:00:00+00:00',
@@ -865,7 +865,7 @@ describe('selectOverlap', function() {
       })
       describe('when local timezone', function() {
         it('does not allow selection', function(done) {
-          options.timezone = 'local'
+          options.timeZone = 'local'
           options.events = [ {
             title: 'Event A',
             start: '2014-11-12T04:00:00',
@@ -889,7 +889,7 @@ describe('selectOverlap', function() {
         })
         describe('when UTC timezone', function() {
           it('does not allow selection', function(done) {
-            options.timezone = 'UTC'
+            options.timeZone = 'UTC'
             options.events = [ {
               title: 'Event A',
               start: '2014-11-12T04:00:00+00:00',
@@ -900,7 +900,7 @@ describe('selectOverlap', function() {
         })
         describe('when local timezone', function() {
           it('does not allow selection', function(done) {
-            options.timezone = 'local'
+            options.timeZone = 'local'
             options.events = [ {
               title: 'Event A',
               start: '2014-11-12T04:00:00',

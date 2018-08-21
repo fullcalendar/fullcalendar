@@ -255,7 +255,7 @@ describe('event constraint', function() {
           it('does not allow a drag', function(done) {
             var options = {}
 
-            options.timezone = 'UTC'
+            options.timeZone = 'UTC'
             options.events = [ {
               start: '2014-11-10T03:00:00+00:00',
               end: '2014-11-10T05:00:00+00:00',
@@ -304,7 +304,7 @@ describe('event constraint', function() {
           it('does not allow a drag', function(done) {
             var options = {}
 
-            options.timezone = 'UTC'
+            options.timeZone = 'UTC'
             options.events = [ {
               start: '2014-11-10T03:00:00+00:00',
               end: '2014-11-10T05:00:00+00:00',

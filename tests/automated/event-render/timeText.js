@@ -13,7 +13,7 @@ describe('the time text on events', function() {
       var FORMAT = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }
 
       initCalendar({
-        timezone: 'local',
+        timeZone: 'local',
         timeFormat: FORMAT,
         events: [
           { start: '2017-07-03T23:00:00', end: '2017-07-04T13:00:00' }

@@ -85,7 +85,7 @@ describe('visibleRange', function() {
         var matched = false
 
         initCalendar({
-          timezone: 'local',
+          timeZone: 'local',
           defaultDate: defaultDateInput,
           visibleRange: function(date) {
             // this function will receive the date for prev/next,
@@ -103,7 +103,7 @@ describe('visibleRange', function() {
         var matched = false
 
         initCalendar({
-          timezone: 'UTC',
+          timeZone: 'UTC',
           defaultDate: defaultDateInput,
           visibleRange: function(date) {
             // this function will receive the date for prev/next,

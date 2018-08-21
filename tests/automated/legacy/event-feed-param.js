@@ -13,7 +13,7 @@ describe('event feed params', function() {
     XHRMock.teardown()
   })
 
-  it('utilizes custom startParam, endParam, and timezoneParam names', function(done) {
+  it('utilizes custom startParam, endParam, and timeZoneParam names', function(done) {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({
@@ -27,14 +27,14 @@ describe('event feed params', function() {
 
     initCalendar({
       events: 'my-feed.php',
-      timezone: 'America/Los_Angeles',
+      timeZone: 'America/Los_Angeles',
       startParam: 'mystart',
       endParam: 'myend',
-      timezoneParam: 'currtz'
+      timeZoneParam: 'currtz'
     })
   })
 
-  it('utilizes event-source-specific startParam, endParam, and timezoneParam names', function(done) {
+  it('utilizes event-source-specific startParam, endParam, and timeZoneParam names', function(done) {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({
@@ -47,16 +47,16 @@ describe('event feed params', function() {
     })
 
     initCalendar({
-      timezone: 'America/Los_Angeles',
+      timeZone: 'America/Los_Angeles',
       startParam: 'mystart',
       endParam: 'myend',
-      timezoneParam: 'currtz',
+      timeZoneParam: 'currtz',
       eventSources: [
         {
           url: 'my-feed.php',
           startParam: 'feedstart',
           endParam: 'feedend',
-          timezoneParam: 'feedctz'
+          timeZoneParam: 'feedctz'
         }
       ]
     })

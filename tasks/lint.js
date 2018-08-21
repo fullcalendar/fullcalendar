@@ -74,7 +74,7 @@ gulp.task('lint:js:tests', function() {
           'karmaConfig',
           'pushOptions',
           'describeOptions',
-          'describeTimezones',
+          'describeTimeZones',
           'describeValues',
           'pit',
           'getCurrentOptions',

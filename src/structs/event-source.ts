@@ -47,7 +47,7 @@ export interface ExtendedEventSourceInput {
   data?: object | (() => object)
   startParam?: string
   endParam?: string
-  timezoneParam?: string
+  timeZoneParam?: string
 
   // for any network-related sources
   success?: EventSourceSuccessResponseHandler

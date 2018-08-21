@@ -10,7 +10,7 @@ interface JsonFeedMeta {
   extraData?: any
   startParam?: string
   endParam?: string
-  timezoneParam?: string
+  timeZoneParam?: string
 }
 
 registerEventSourceDef({
@@ -28,7 +28,7 @@ registerEventSourceDef({
       extraData: raw.data,
       startParam: raw.startParam,
       endParam: raw.endParam,
-      timezoneParam: raw.timezoneParam
+      timeZoneParam: raw.timeZoneParam
     }
   },
 
@@ -72,7 +72,7 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Cale
   const dateEnv = calendar.dateEnv
   let startParam
   let endParam
-  let timezoneParam
+  let timeZoneParam
   let customRequestParams
   let params = {}
 
@@ -86,9 +86,9 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Cale
     endParam = calendar.opt('endParam')
   }
 
-  timezoneParam = meta.timezoneParam
-  if (timezoneParam == null) {
-    timezoneParam = calendar.opt('timezoneParam')
+  timeZoneParam = meta.timeZoneParam
+  if (timeZoneParam == null) {
+    timeZoneParam = calendar.opt('timeZoneParam')
   }
 
   // retrieve any outbound GET/POST data from the options
@@ -106,7 +106,7 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Cale
   params[endParam] = dateEnv.formatIso(range.end)
 
   if (dateEnv.timeZone !== 'local') {
-    params[timezoneParam] = dateEnv.timeZone
+    params[timeZoneParam] = dateEnv.timeZone
   }
 
   return params

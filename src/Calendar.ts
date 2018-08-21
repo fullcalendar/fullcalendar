@@ -468,7 +468,7 @@ export default class Calendar {
 
     if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
       this.updateViewSize(true) // isResize=true
-    } else if (name === 'timezone') {
+    } else if (name === 'timeZone') {
       this.dispatch({
         type: 'CHANGE_TIMEZONE',
         oldDateEnv
@@ -500,7 +500,7 @@ export default class Calendar {
     this.theme = this.buildTheme(options)
     this.dateEnv = this.buildDateEnv(
       options.locale,
-      options.timezone,
+      options.timeZone,
       options.firstDay,
       options.weekNumberCalculation,
       options.weekLabel
@@ -1236,10 +1236,10 @@ EmitterMixin.mixInto(Calendar)
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function buildDateEnv(locale, timezone, firstDay, weekNumberCalculation, weekLabel) {
+function buildDateEnv(locale, timeZone, firstDay, weekNumberCalculation, weekLabel) {
   return new DateEnv({
     calendarSystem: 'gregory',
-    timeZone: timezone,
+    timeZone,
     locale: getLocale(locale),
     weekNumberCalculation: weekNumberCalculation,
     firstDay: firstDay,

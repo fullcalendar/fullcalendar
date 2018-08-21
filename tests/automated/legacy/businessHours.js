@@ -8,7 +8,7 @@ import { ensureDate } from '../datelib/utils'
 
 describe('businessHours', function() {
   pushOptions({
-    timezone: 'UTC',
+    timeZone: 'UTC',
     defaultDate: '2014-11-25',
     defaultView: 'month',
     businessHours: true

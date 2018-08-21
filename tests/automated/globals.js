@@ -138,7 +138,7 @@ window.describeValues = function(hash, callback) {
 // new Date('YYYY-MM-DD') --- parsed as UTC
 // new Date('YYYY-MM-DDT00:00:00') --- parsed as local
 
-const timezoneScenarios = {
+const timeZoneScenarios = {
   local: {
     description: 'when local timezone',
     value: 'local',
@@ -161,23 +161,23 @@ const timezoneScenarios = {
   }
 }
 
-window.describeTimezones = function(callback) {
-  $.each(timezoneScenarios, function(name, scenario) {
+window.describeTimeZones = function(callback) {
+  $.each(timeZoneScenarios, function(name, scenario) {
     describe(scenario.description, function() {
       pushOptions({
-        timezone: name
+        timeZone: name
       })
       callback(scenario)
     })
   })
 }
 
-window.describeTimezone = function(name, callback) {
-  var scenario = timezoneScenarios[name]
+window.describeTimeZone = function(name, callback) {
+  var scenario = timeZoneScenarios[name]
 
   describe(scenario.description, function() {
     pushOptions({
-      timezone: name
+      timeZone: name
     })
     callback(scenario)
   })
@@ -233,5 +233,5 @@ window.spyCall = function(func) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 window.pushOptions({
-  timezone: 'UTC'
+  timeZone: 'UTC'
 })

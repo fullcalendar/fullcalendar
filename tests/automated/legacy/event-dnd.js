@@ -3,7 +3,7 @@ describe('eventDrop', function() {
 
   beforeEach(function() {
     options = {
-      timezone: 'UTC',
+      timeZone: 'UTC',
       defaultDate: '2014-06-11',
       editable: true,
       dragScroll: false,
