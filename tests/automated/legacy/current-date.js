@@ -176,10 +176,10 @@ describe('current date', function() {
         options.weekends = false
         initCalendar(options)
         var view = currentCalendar.getView()
-        expect(view.start).toEqualDate('2014-06-02')
-        expect(view.end).toEqualDate('2014-07-12')
-        expect(view.intervalStart).toEqualDate('2014-06-01')
-        expect(view.intervalEnd).toEqualDate('2014-07-01')
+        expect(view.activeStart).toEqualDate('2014-06-02')
+        expect(view.activeEnd).toEqualDate('2014-07-12')
+        expect(view.currentStart).toEqualDate('2014-06-01')
+        expect(view.currentEnd).toEqualDate('2014-07-01')
       })
       it('should display the current month', function() {
         var options = {}
@@ -187,10 +187,10 @@ describe('current date', function() {
         options.weekends = false
         initCalendar(options)
         var view = currentCalendar.getView()
-        expect(view.start).toEqualDate('2014-04-28')
-        expect(view.end).toEqualDate('2014-06-07')
-        expect(view.intervalStart).toEqualDate('2014-05-01')
-        expect(view.intervalEnd).toEqualDate('2014-06-01')
+        expect(view.activeStart).toEqualDate('2014-04-28')
+        expect(view.activeEnd).toEqualDate('2014-06-07')
+        expect(view.currentStart).toEqualDate('2014-05-01')
+        expect(view.currentEnd).toEqualDate('2014-06-01')
       })
       describe('when navigating back a month', function() {
         it('should not skip months', function() {
@@ -199,12 +199,12 @@ describe('current date', function() {
           options.weekends = false
           initCalendar(options)
           var view = currentCalendar.getView()
-          expect(view.intervalStart).toEqualDate('2014-07-01')
-          expect(view.intervalEnd).toEqualDate('2014-08-01')
+          expect(view.currentStart).toEqualDate('2014-07-01')
+          expect(view.currentEnd).toEqualDate('2014-08-01')
           currentCalendar.prev() // will move to Jun 1, which is a Sunday
           view = currentCalendar.getView()
-          expect(view.intervalStart).toEqualDate('2014-06-01')
-          expect(view.intervalEnd).toEqualDate('2014-07-01')
+          expect(view.currentStart).toEqualDate('2014-06-01')
+          expect(view.currentEnd).toEqualDate('2014-07-01')
         })
       })
     })
@@ -215,10 +215,10 @@ describe('current date', function() {
         options.weekends = false
         initCalendar(options)
         var view = currentCalendar.getView()
-        expect(view.start).toEqualDate('2014-06-02')
-        expect(view.end).toEqualDate('2014-06-03')
-        expect(view.intervalStart).toEqualDate('2014-06-02')
-        expect(view.intervalEnd).toEqualDate('2014-06-03')
+        expect(view.activeStart).toEqualDate('2014-06-02')
+        expect(view.activeEnd).toEqualDate('2014-06-03')
+        expect(view.currentStart).toEqualDate('2014-06-02')
+        expect(view.currentEnd).toEqualDate('2014-06-03')
       })
     })
   })
@@ -268,8 +268,8 @@ describe('current date', function() {
 
     calculatedEnd = end || FullCalendar.addDays(start, 1)
 
-    expect(start).toEqualDate(view.start)
-    expect(calculatedEnd).toEqualDate(view.end)
+    expect(start).toEqualDate(view.activeStart)
+    expect(calculatedEnd).toEqualDate(view.activeEnd)
 
     titleStart = titleStart || start
     titleEnd = titleEnd || calculatedEnd

@@ -26,7 +26,7 @@
     $('#calendar').fullCalendar({
       //weekends: false,
       //defaultView: 'agendaWeek',
-      
+
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -34,11 +34,11 @@
       },
       editable: true,
       //isRTL: true,
-      
+
       viewDisplay: function(view) {
         console.log('viewDisplay');
-        console.log(view.start + ' - ' + view.end);
-        console.log(view.visStart + ' - ' + view.visEnd);
+        console.log(view.activeStart + ' - ' + view.activeEnd);
+        console.log(view.currentStart + ' - ' + view.currentEnd);
         //console.log(view);
         //console.log(this);
       },
@@ -46,14 +46,14 @@
       eventAfterAllRender: function(view) {
         console.log('all rendered', view);
       },
-      
+
       //loading: // see sources.html
-      
+
       windowResize: function(view) {
         console.log('windowResize - ' + view.title);
         //console.log(this);
       },
-      
+
       minTime: '5',
       maxTime: '21:30',
       dayClick: function(dayDate, allDay, ev, view) {
@@ -62,7 +62,7 @@
         //console.log(ev);
         console.log(this);
       },
-      
+
       selectable: true,
       select: function(start, end, allDay) {
         console.log('select', start, end, allDay);
@@ -70,7 +70,7 @@
       unselect: function() {
         console.log('unselect');
       },
-      
+
       eventRender: function(event, element, view) {
         if (event.id == 888) {
           return false;
@@ -87,7 +87,7 @@
         //console.log('after render for "' + event.title + '":');
         //console.log(element);
       },
-      
+
       eventClick: function(event, jsEvent, view) {
         console.log('EVENT CLICK ' + event.title);
         //console.log(jsEvent);
@@ -95,8 +95,8 @@
         //console.log(this);
         //return false;
       },
-      
-      
+
+
       eventMouseover: function(event, jsEvent, view) {
         console.log('MOUSEOVER ' + event.title);
         //console.log(jsEvent);
@@ -109,8 +109,8 @@
         //console.log(view);
         //console.log(this);
       },
-      
-      
+
+
       eventDragStart: function(event, jsEvent, ui, view) {
         console.log('DRAG START ' + event.title);
         console.log(this);
@@ -132,7 +132,7 @@
         //console.log(view.title);
         //console.log(this);
       },
-      
+
       eventResizeStart: function(event, jsEvent, ui, view) {
         console.log('RESIZE START ' + event.title);
         //console.log(this);
@@ -161,7 +161,7 @@
         className: 'holiday'
       },
       */
-      
+
       events: [
         {
           title: 'All Day Event',

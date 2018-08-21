@@ -51,12 +51,6 @@ export default abstract class View extends DateComponent {
   // initialized after class
   usesMinMaxTime: boolean
 
-  // DEPRECATED
-  start: Date // use activeRange
-  end: Date // use activeRange
-  intervalStart: Date // use currentRange
-  intervalEnd: Date // use currentRange
-
 
   constructor(calendar, viewSpec) {
     super(null, viewSpec.options)
@@ -174,15 +168,20 @@ export default abstract class View extends DateComponent {
   }
 
 
-  updateMiscDateProps(dateProfile) {
-    let dateEnv = this.getDateEnv()
+  get activeStart(): Date {
+    return this.getDateEnv().toDate(this.dateProfile.activeRange.start)
+  }
 
-    this.title = this.computeTitle(dateProfile)
-    // DEPRECATED, but we need to keep it updated...
-    this.start = dateEnv.toDate(dateProfile.activeRange.start)
-    this.end = dateEnv.toDate(dateProfile.activeRange.end)
-    this.intervalStart = dateEnv.toDate(dateProfile.currentRange.start)
-    this.intervalEnd = dateEnv.toDate(dateProfile.currentRange.end)
+  get activeEnd(): Date {
+    return this.getDateEnv().toDate(this.dateProfile.activeRange.end)
+  }
+
+  get currentStart(): Date {
+    return this.getDateEnv().toDate(this.dateProfile.currentRange.start)
+  }
+
+  get currentEnd(): Date {
+    return this.getDateEnv().toDate(this.dateProfile.currentRange.end)
   }
 
 
@@ -192,8 +191,9 @@ export default abstract class View extends DateComponent {
 
   // if dateProfile not specified, uses current
   renderDates(dateProfile: DateProfile) {
-    this.updateMiscDateProps(dateProfile)
     super.renderDates(dateProfile)
+
+    this.title = this.computeTitle(dateProfile)
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
     this.triggerRenderedDates()

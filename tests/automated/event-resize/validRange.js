@@ -1,7 +1,6 @@
 import * as EventResizeUtils from './EventResizeUtils'
 import * as DayGridRenderUtils from '../view-render/DayGridRenderUtils'
 
-
 describe('validRange event resizing', function() {
 
   describe('when in month view', function() {
