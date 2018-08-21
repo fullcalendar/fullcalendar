@@ -23,18 +23,17 @@ export default class EventHovering {
       this.handleSegLeave
     )
 
-    // TODO: find less expensive way to do this. generates lots of EventApi's
-    component.getCalendar().on('eventDestroy', this.handleEventDestroy)
+    component.emitter.on('eventElRemove', this.handleEventElRemove)
   }
 
   destroy() {
     this.removeHoverListeners()
-    this.component.getCalendar().off('eventDestroy', this.handleEventDestroy)
+    this.component.emitter.off('eventElRemove', this.handleEventElRemove)
   }
 
   // for simulating an eventMouseout when the event el is destroyed while mouse is over it
-  handleEventDestroy = (arg) => {
-    if (arg.el === this.currentSegEl) {
+  handleEventElRemove = (el: HTMLElement) => {
+    if (el === this.currentSegEl) {
       this.handleSegLeave(null, this.currentSegEl)
     }
   }

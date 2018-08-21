@@ -18,6 +18,7 @@ import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
 import { createEventInstance, parseEventDef } from '../structs/event'
+import EmitterMixin from '../common/EmitterMixin'
 
 
 export interface DateComponentRenderState {
@@ -72,6 +73,7 @@ export default abstract class DateComponent extends Component {
   isRTL: boolean = false // frequently accessed options
   nextDayThreshold: Duration // "
   view: View
+  emitter: EmitterMixin = new EmitterMixin()
 
   eventRenderer: any
   helperRenderer: any
@@ -288,6 +290,11 @@ export default abstract class DateComponent extends Component {
 
 
   triggerWillRemoveSegs(segs: Seg[]) {
+
+    for (let seg of segs) {
+      this.emitter.trigger('eventElRemove', seg.el)
+    }
+
     if (this.hasPublicHandlers('eventDestroy')) {
       let calendar = this.getCalendar()
 
