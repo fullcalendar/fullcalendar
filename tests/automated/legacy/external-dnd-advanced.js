@@ -346,10 +346,13 @@ describe('advanced external dnd', function() {
 
 
   function testExternalEventDrag(options, dragToDate, expectedDate, expectSuccess, callback) {
+    var expectedAllDay = dragToDate.indexOf('T') === -1 // for the drop callback only!
+
     options.droppable = true
     options.drop = function(arg) {
       expect(arg.date instanceof Date).toBe(true)
-      expect(arg.date).toEqualDate(expectedDate)
+      expect(arg.date).toEqualDate(dragToDate)
+      expect(arg.isAllDay).toBe(expectedAllDay)
       expect(typeof arg.jsEvent).toBe('object')
     }
     options.eventReceive = function(arg) {
