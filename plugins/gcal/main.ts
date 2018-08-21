@@ -41,7 +41,9 @@ registerEventSourceDef({
     let apiKey = meta.googleCalendarApiKey || calendar.opt('googleCalendarApiKey')
 
     if (!apiKey) {
-      onFailure('Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/')
+      onFailure({
+        message: 'Specify a googleCalendarApiKey. See http://fullcalendar.io/docs/google_calendar/'
+      })
     } else {
       let url = buildUrl(meta)
       let requestParams = buildRequestParams(
@@ -54,23 +56,26 @@ registerEventSourceDef({
       request.get(url)
         .query(requestParams)
         .end((error, res) => {
+
+          // make an error object with more info if we can
           if (res && res.body && res.body.error) {
-            onFailure({
+            error = {
               message: 'Google Calendar API: ' + res.body.error.message,
+              response: res,
               errors: res.body.error.errors
-            })
-          } else if (error) {
-            onFailure({
-              message: 'Google Calendar API',
-              error
-            })
+            }
+          }
+
+          if (error) {
+            onFailure(error)
           } else {
-            onSuccess(
-              gcalItemsToRawEventDefs(
+            onSuccess({
+              rawEvents: gcalItemsToRawEventDefs(
                 res.body.items,
                 requestParams.timeZone
-              )
-            )
+              ),
+              response: res
+            })
           }
         })
     }
