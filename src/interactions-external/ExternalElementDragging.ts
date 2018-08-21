@@ -166,7 +166,7 @@ export default class ExternalElementDragging {
 // ----------------------------------------------------------------------------------------------------
 
 function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventTuple {
-  let def = parseEventDef(dragMeta.leftoverProps || {}, '')
+  let def = parseEventDef(dragMeta.leftoverProps, '')
   def.isAllDay = dateSpan.isAllDay
   def.hasEnd = Boolean(dragMeta.duration)
 
@@ -190,15 +190,13 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
 // Utils for extracting data from element
 // ----------------------------------------------------------------------------------------------------
 
-function getDragMetaFromEl(el: HTMLElement): DragMeta | null {
+function getDragMetaFromEl(el: HTMLElement): DragMeta {
   let str = getEmbeddedElData(el, 'event')
-  let obj = str ? JSON.parse(str) : null
+  let obj = str ?
+    JSON.parse(str) :
+    { create: false } // if no embedded data, assume no event creation
 
-  if (obj) {
-    return parseDragMeta(obj)
-  }
-
-  return null
+  return parseDragMeta(obj)
 }
 
 (externalHooks as any).dataAttrPrefix = ''
