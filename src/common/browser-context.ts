@@ -75,12 +75,19 @@ export class BrowserContext {
   }
 
   onPointerUp = (ev) => {
-    let { listenerHash } = this
-    let { wasTouchScroll, downEl } = this.pointer
+    let { listenerHash, pointer } = this
+
+    // trickiness about sending pointer-up to these components:
+    // pointer might be null, but if so, all components were destroyed and the following loops won't execute.
+    // also, a onDocumentPointerUp call might cause the component to be destroyed, so break into separate loops
+    // and freshly access listenerHash every time.
 
     for (let id in listenerHash) {
-      listenerHash[id].dateSelecting.onDocumentPointerUp(ev, wasTouchScroll, downEl)
-      listenerHash[id].eventDragging.onDocumentPointerUp(ev, wasTouchScroll, downEl)
+      listenerHash[id].dateSelecting.onDocumentPointerUp(ev, pointer.wasTouchScroll, pointer.downEl)
+    }
+
+    for (let id in listenerHash) {
+      listenerHash[id].eventDragging.onDocumentPointerUp(ev, pointer.wasTouchScroll, pointer.downEl)
     }
   }
 
