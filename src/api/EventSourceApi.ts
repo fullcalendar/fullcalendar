@@ -25,4 +25,13 @@ export default class EventSourceApi {
     })
   }
 
+  get id(): string {
+    return this.internalEventSource.publicId
+  }
+
+  // only relevant to json-feed event sources
+  get url(): string {
+    return this.internalEventSource.meta.url
+  }
+
 }
