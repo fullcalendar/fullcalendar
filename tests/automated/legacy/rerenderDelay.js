@@ -1,4 +1,4 @@
-describe('rerenderDelay', function() { // TODO: rename file
+describe('rerenderDelay', function() {
 
   it('batches together many event renders', function(done) {
     var eventSource1 = [
