@@ -1,5 +1,7 @@
 import { testEventDrag } from '../lib/dnd-resize-utils'
 
+// TODO: Use FullCalendar.Draggable for some of these tests
+
 describe('advanced external dnd', function() {
   var dragEl
 
@@ -39,9 +41,12 @@ describe('advanced external dnd', function() {
         })
         defineTests()
       })
-      describe('when given duration through data-duration', function() {
+      describe('when given duration through data attribute', function() {
         beforeEach(function() {
-          dragEl.data('duration', '2:30')
+          dragEl.attr('data-event', JSON.stringify({
+            duration: '2:30',
+            create: false // only an external element, won't create or render as an event
+          }))
         })
         defineTests()
       })
