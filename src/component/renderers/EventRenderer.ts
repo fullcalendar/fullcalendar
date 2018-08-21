@@ -264,8 +264,8 @@ export default class EventRenderer {
     isAllDay,
     formatter?,
     displayEnd?,
-    forcedStartTimeZoneOffset?: number,
-    forcedEndTimeZoneOffset?: number
+    forcedStartTzo?: number,
+    forcedEndTzo?: number
 ) {
     const dateEnv = this.view.calendar.dateEnv
 
@@ -280,12 +280,12 @@ export default class EventRenderer {
     if (this.displayEventTime && !isAllDay) {
       if (displayEnd && end) {
         return dateEnv.formatRange(start, end, formatter, {
-          forcedStartTimeZoneOffset,
-          forcedEndTimeZoneOffset
+          forcedStartTzo,
+          forcedEndTzo
         })
       } else {
         return dateEnv.format(start, formatter, {
-          forcedTzo: forcedStartTimeZoneOffset
+          forcedTzo: forcedStartTzo
         })
       }
     }

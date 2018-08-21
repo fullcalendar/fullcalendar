@@ -355,14 +355,14 @@ export class DateEnv {
     return formatter.formatRange(
       {
         marker: start,
-        timeZoneOffset: dateOptions.forcedStartTimeZoneOffset != null ?
-          dateOptions.forcedStartTimeZoneOffset :
+        timeZoneOffset: dateOptions.forcedStartTzo != null ?
+          dateOptions.forcedStartTzo :
           this.offsetForMarker(start)
       },
       {
         marker: end,
-        timeZoneOffset: dateOptions.forcedEndTimeZoneOffset != null ?
-          dateOptions.forcedEndTimeZoneOffset :
+        timeZoneOffset: dateOptions.forcedEndTzo != null ?
+          dateOptions.forcedEndTzo :
           this.offsetForMarker(end)
       },
       this
