@@ -127,7 +127,7 @@ export default class EventRenderer {
           }
         },
         filterEl: (seg, el) => {
-          return this.filterEventRenderEl(seg.eventRange, el)
+          return this.filterEventRenderEl(seg, el)
         }
       })
     }
@@ -164,7 +164,7 @@ export default class EventRenderer {
         let seg = segs[i]
 
         if (hasEventRenderHandlers) { // optimization
-          el = this.filterEventRenderEl(seg.eventRange, el)
+          el = this.filterEventRenderEl(seg, el)
         }
 
         if (el) {
@@ -211,15 +211,18 @@ export default class EventRenderer {
 
   // Given an event and the default element used for rendering, returns the element that should actually be used.
   // Basically runs events and elements through the eventRender hook.
-  filterEventRenderEl(eventRange: EventRenderRange, el) {
+  filterEventRenderEl(seg: Seg, el) {
 
     let custom = this.view.publiclyTrigger('eventRender', [
       {
         event: new EventApi(
           this.view.calendar,
-          eventRange.def,
-          eventRange.instance
+          seg.eventRange.def,
+          seg.eventRange.instance,
         ),
+        isStart: seg.isStart,
+        isEnd: seg.isEnd,
+        // TODO: include seg.range once all components consistently generate it
         el,
         view: this.view
       }
