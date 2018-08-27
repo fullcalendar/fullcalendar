@@ -73,7 +73,10 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
     }
 
     // use this leftover object as the selection object
-    leftovers.range = { start: startMeta.marker, end: endMeta.marker }
+    leftovers.range = {
+      start: startMeta ? startMeta.marker : null,
+      end: endMeta ? endMeta.marker : null
+    }
     leftovers.isAllDay = isAllDay
 
     return leftovers

@@ -1120,12 +1120,14 @@ export default abstract class DateComponent extends Component {
   }
 
   isEventsValid(eventStore: EventStore) {
-    let { validRange } = this.dateProfile
+    let { dateProfile } = this
     let instances = eventStore.instances
 
-    for (let instanceId in instances) {
-      if (!rangeContainsRange(validRange, instances[instanceId].range)) {
-        return false
+    if (dateProfile) { // HACK for DayTile
+      for (let instanceId in instances) {
+        if (!rangeContainsRange(dateProfile.validRange, instances[instanceId].range)) {
+          return false
+        }
       }
     }
 
@@ -1133,8 +1135,12 @@ export default abstract class DateComponent extends Component {
   }
 
   isSelectionValid(selection: DateSpan): boolean {
+    let { dateProfile } = this
 
-    if (!rangeContainsRange(this.dateProfile.validRange, selection.range)) {
+    if (
+      dateProfile && // HACK for DayTile
+      !rangeContainsRange(dateProfile.validRange, selection.range)
+    ) {
       return false
     }
 
