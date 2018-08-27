@@ -120,7 +120,7 @@ export default class EventDragging {
       calendar.dispatch({ type: 'UNSET_EVENT_RESIZE' })
     }
 
-    if (!isInvalid || isFinal) {
+    if (!isInvalid) {
       enableCursor()
     } else {
       disableCursor()

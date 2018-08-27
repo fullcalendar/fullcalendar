@@ -162,7 +162,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       origSeg: this.subjectSeg
     })
 
-    if (!isInvalid || isFinal) {
+    if (!isInvalid) {
       enableCursor()
     } else {
       disableCursor()

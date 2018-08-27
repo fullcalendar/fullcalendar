@@ -1,4 +1,4 @@
-import { compareNumbers } from '../util/misc'
+import { compareNumbers, enableCursor, disableCursor } from '../util/misc'
 import { elementClosest } from '../util/dom-manip'
 import DateComponent from '../component/DateComponent'
 import HitDragging, { Hit } from './HitDragging'
@@ -38,11 +38,11 @@ export default class DateSelecting {
 
   handlePointerDown = (ev: PointerDragEvent) => {
     let { component, dragging } = this
-    let isValid = component.opt('selectable') &&
+    let canSelect = component.opt('selectable') &&
       component.isValidDateDownEl(ev.origEvent.target as HTMLElement)
 
     // don't bother to watch expensive moves if component won't do selection
-    dragging.setIgnoreMove(!isValid)
+    dragging.setIgnoreMove(!canSelect)
 
     // if touch, require user to hold down
     dragging.delay = ev.isTouch ? getComponentTouchDelay(component) : null
@@ -55,18 +55,30 @@ export default class DateSelecting {
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
     let calendar = this.component.getCalendar()
     let dragSelection: DateSpan | null = null
+    let isInvalid = false
 
     if (hit) {
       dragSelection = computeSelection(
         this.hitDragging.initialHit!.dateSpan,
         hit.dateSpan
       )
+
+      if (!this.component.isSelectionValid(dragSelection)) {
+        isInvalid = false
+        dragSelection = null
+      }
     }
 
     if (dragSelection) {
       calendar.dispatch({ type: 'SELECT_DATES', selection: dragSelection })
     } else if (!isFinal) { // only unselect if moved away while dragging
       calendar.dispatch({ type: 'UNSELECT_DATES' })
+    }
+
+    if (!isInvalid) {
+      enableCursor()
+    } else {
+      disableCursor()
     }
 
     if (!isFinal) {
