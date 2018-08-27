@@ -13,7 +13,6 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { diffDates, enableCursor, disableCursor } from '../util/misc'
 import { EventRenderRange } from '../component/event-rendering'
 import EventApi from '../api/EventApi'
-import { isEventStoreValid } from './constraint'
 
 export default class EventDragging { // TODO: rename to EventSelectingAndDragging
 
@@ -148,7 +147,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       if (mutation) {
         mutatedRelatedEvents = applyMutationToEventStore(relatedEvents, mutation, receivingCalendar)
 
-        if (!isEventStoreValid(mutatedRelatedEvents, this.component.dateProfile)) {
+        if (!this.component.isEventsValid(mutatedRelatedEvents)) {
           isInvalid = true
           mutation = null
           mutatedRelatedEvents = null

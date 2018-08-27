@@ -10,7 +10,6 @@ import { diffDates, enableCursor, disableCursor } from '../util/misc'
 import { DateRange } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
 import { EventRenderRange } from '../component/event-rendering'
-import { isEventStoreValid } from './constraint'
 import { createDuration } from '../datelib/duration'
 
 export default class EventDragging {
@@ -100,7 +99,7 @@ export default class EventDragging {
     if (mutation) {
       mutatedRelatedEvents = applyMutationToEventStore(relatedEvents, mutation, calendar)
 
-      if (!isEventStoreValid(mutatedRelatedEvents, this.component.dateProfile)) {
+      if (!this.component.isEventsValid(mutatedRelatedEvents)) {
         isInvalid = true
         mutation = null
         mutatedRelatedEvents = null

@@ -4,6 +4,7 @@ import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
+import { ConstraintInput, Constraint, normalizeConstraint, Allow } from '../validation'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
@@ -29,8 +30,9 @@ export interface ExtendedEventSourceInput {
   editable?: boolean
   startEditable?: boolean
   durationEditable?: boolean
-  overlap?: any
-  constraint?: any
+  constraint?: ConstraintInput
+  overlap?: boolean
+  allow?: Allow
   rendering?: string
   className?: ClassNameInput
   color?: string
@@ -73,8 +75,9 @@ export interface EventSource {
   eventDataTransform: EventInputTransformer
   startEditable: boolean | null
   durationEditable: boolean | null
-  overlap: any
-  constraint: any
+  constraint: Constraint | null
+  overlap: boolean | null // does not allow full Overlap data type
+  allow: Allow | null
   rendering: string
   className: string[]
   backgroundColor: string
@@ -107,8 +110,9 @@ const SIMPLE_SOURCE_PROPS = {
   eventDataTransform: Function,
   startEditable: Boolean,
   durationEditable: Boolean,
-  overlap: null,
-  constraint: null,
+  constraint: normalizeConstraint,
+  overlap: Boolean,
+  allow: null,
   rendering: String,
   className: parseClassName,
   backgroundColor: String,

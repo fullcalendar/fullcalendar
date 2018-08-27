@@ -6,6 +6,7 @@ import { assignTo } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
+import { ConstraintInput, Constraint, normalizeConstraint } from '../validation'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -22,8 +23,8 @@ export interface EventNonDateInput {
   editable?: boolean
   startEditable?: boolean
   durationEditable?: boolean
-  constraint?: any
-  overlap?: any
+  constraint?: ConstraintInput
+  overlap?: boolean
   rendering?: EventRenderingChoice
   classNames?: ClassNameInput // accept both
   className?: ClassNameInput //
@@ -56,8 +57,8 @@ export interface EventDef {
   url: string
   startEditable: boolean | null
   durationEditable: boolean | null
-  constraint: any
-  overlap: any
+  constraint: Constraint | null
+  overlap: boolean | null // does not allow full Overlap data type
   rendering: EventRenderingChoice
   classNames: string[]
   backgroundColor: string
@@ -90,8 +91,8 @@ const NON_DATE_PROPS = {
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
-  constraint: null,
-  overlap: null,
+  constraint: normalizeConstraint,
+  overlap: Boolean,
   rendering: String,
   classNames: parseClassName,
   className: parseClassName,

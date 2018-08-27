@@ -12,7 +12,7 @@ import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursInput } from '../structs/business-hours'
 import { EventInput } from '../structs/event'
 import EventApi from '../api/EventApi'
-import { ConstraintInput } from '../interactions/constraint'
+import { Allow, ConstraintInput, Overlap } from '../validation'
 
 
 export interface ToolbarInput {
@@ -143,8 +143,9 @@ export interface OptionsInputBase {
   selectHelper?: boolean
   unselectAuto?: boolean
   unselectCancel?: string
-  selectOverlap?: boolean | ((event: EventApi) => boolean)
   selectConstraint?: ConstraintInput
+  selectOverlap?: Overlap
+  selectAllow?: Allow
   events?: EventSourceInput
   eventSources?: EventSourceInput[]
   allDayDefault?: boolean
@@ -164,9 +165,9 @@ export interface OptionsInputBase {
   dragRevertDuration?: number
   dragOpacity?: number
   dragScroll?: boolean
-  eventOverlap?: boolean | ((stillEvent: EventApi, movingEvent: EventApi) => boolean)
   eventConstraint?: ConstraintInput
-  eventAllow?: ((dropInfo: DropInfo, draggedEvent: Event) => boolean)
+  eventOverlap?: Overlap
+  eventAllow?: Allow
   longPressDelay?: number
   eventLongPressDelay?: number
   droppable?: boolean

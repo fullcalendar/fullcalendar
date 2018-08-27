@@ -103,6 +103,13 @@ export function intersectRanges(range0: OpenDateRange, range1: OpenDateRange): O
   return newRange
 }
 
+export function joinRanges(range0: DateRange, range1: DateRange): DateRange {
+  return {
+    start: range0.start < range1.start ? range0.start : range1.start,
+    end: range0.end > range1.end ? range0.end : range1.end
+  }
+}
+
 export function rangesEqual(range0: OpenDateRange, range1: OpenDateRange): boolean {
   return (range0.start === null ? null : range0.start.valueOf()) === (range1.start === null ? null : range1.start.valueOf()) &&
     (range0.end === null ? null : range0.end.valueOf()) === (range1.end === null ? null : range1.end.valueOf())

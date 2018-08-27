@@ -15,10 +15,11 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import { assignTo } from '../util/object'
 import browserContext from '../common/browser-context'
 import { Hit } from '../interactions/HitDragging'
-import { DateRange, rangeContainsMarker } from '../datelib/date-range'
+import { DateRange, rangeContainsMarker, rangeContainsRange } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
 import { createEventInstance, parseEventDef } from '../structs/event'
 import EmitterMixin from '../common/EmitterMixin'
+import { isEventsValid, isSelectionValid } from '../validation'
 
 
 export interface DateComponentRenderState {
@@ -1116,6 +1117,28 @@ export default abstract class DateComponent extends Component {
   isInPopover(el: HTMLElement) {
     let popoverEl = elementClosest(el, '.fc-popover')
     return popoverEl && popoverEl !== this.el // if the current component IS a popover, okay
+  }
+
+  isEventsValid(eventStore: EventStore) {
+    let { validRange } = this.dateProfile
+    let instances = eventStore.instances
+
+    for (let instanceId in instances) {
+      if (!rangeContainsRange(validRange, instances[instanceId].range)) {
+        return false
+      }
+    }
+
+    return isEventsValid(eventStore, this.getCalendar())
+  }
+
+  isSelectionValid(selection: DateSpan): boolean {
+
+    if (!rangeContainsRange(this.dateProfile.validRange, selection.range)) {
+      return false
+    }
+
+    return isSelectionValid(selection, this.getCalendar())
   }
 
 }

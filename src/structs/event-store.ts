@@ -11,7 +11,7 @@ import {
 import { expandRecurringRanges } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo, filterHash } from '../util/object'
-import { DateRange } from '../datelib/date-range'
+import { DateRange, joinRanges } from '../datelib/date-range'
 
 /*
 A data structure that encapsulates EventDefs and EventInstances.
@@ -111,6 +111,23 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
   }
 
   return dest
+}
+
+/*
+Returns a date range that tightly contains all instances
+*/
+export function getStoreRange(store: EventStore): DateRange | null {
+  let instances = store.instances
+  let joinedRange: DateRange | null = null
+
+  for (let instanceId in instances) {
+    let instance = instances[instanceId]
+    joinedRange = joinedRange ?
+      joinRanges(joinedRange, instance.range) :
+      instance.range
+  }
+
+  return joinedRange
 }
 
 export function transformRawEvents(rawEvents, func) {
