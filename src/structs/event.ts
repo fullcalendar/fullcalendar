@@ -187,10 +187,22 @@ function pluckNonDateProps(raw: EventInput, leftovers: any) {
 
   props.publicId = props.id
   props.classNames = props.classNames.concat(props.className)
-  props.startEditable = (props.startEditable !== null) ? props.startEditable : props.editable
-  props.durationEditable = (props.durationEditable !== null) ? props.durationEditable : props.editable
-  props.backgroundColor = props.backgroundColor || props.color
-  props.borderColor = props.borderColor || props.color
+
+  if (props.startEditable == null) {
+    props.startEditable = props.editable
+  }
+
+  if (props.durationEditable == null) {
+    props.durationEditable = props.editable
+  }
+
+  if (!props.backgroundColor) {
+    props.backgroundColor = props.color
+  }
+
+  if (!props.borderColor) {
+    props.borderColor = props.color
+  }
 
   delete props.id
   delete props.className

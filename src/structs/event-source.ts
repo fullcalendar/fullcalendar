@@ -106,8 +106,10 @@ export interface EventSourceDef {
 }
 
 const SIMPLE_SOURCE_PROPS = {
+  id: String,
   allDayDefault: Boolean,
   eventDataTransform: Function,
+  editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
   constraint: normalizeConstraint,
@@ -115,6 +117,7 @@ const SIMPLE_SOURCE_PROPS = {
   allow: null,
   rendering: String,
   className: parseClassName,
+  color: String,
   backgroundColor: String,
   borderColor: String,
   textColor: String,
@@ -157,8 +160,11 @@ export function parseEventSource(raw: EventSourceInput): EventSource | null {
   return null
 }
 
+/*
+TODO: combine with pluckNonDateProps AND refineScopedUi
+*/
 function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number): EventSource {
-  let props = refineProps(raw, SIMPLE_SOURCE_PROPS) as EventSource
+  let props = refineProps(raw, SIMPLE_SOURCE_PROPS) as (EventSource & { editable: boolean | null, color: string })
 
   props.isFetching = false
   props.latestFetchId = ''
@@ -168,25 +174,24 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
   props.sourceDefId = sourceDefId
   props.meta = meta
 
-  // TODO: consolidate with event struct
-  if ('editable' in raw) {
-    if (props.startEditable === null) {
-      props.startEditable = raw.editable
-    }
-    if (props.durationEditable === null) {
-      props.durationEditable = raw.editable
-    }
+  if (props.startEditable == null) {
+    props.startEditable = props.editable
   }
 
-  // TODO: consolidate with event struct
-  if ('color' in raw) {
-    if (!props.backgroundColor) {
-      props.backgroundColor = raw.color
-    }
-    if (!props.borderColor) {
-      props.borderColor = raw.color
-    }
+  if (props.durationEditable == null) {
+    props.durationEditable = props.editable
   }
 
-  return props
+  if (!props.backgroundColor) {
+    props.backgroundColor = props.color
+  }
+
+  if (!props.borderColor) {
+    props.borderColor = props.color
+  }
+
+  delete props.editable
+  delete props.color
+
+  return props as EventSource
 }
