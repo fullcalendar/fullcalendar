@@ -36,7 +36,7 @@ describe('event constraint', function() {
               }
             } ]
             testEventDrag(options, '2014-11-14', true, function() {
-              var event = currentCalendar.clientEvents()[0]
+              var event = currentCalendar.getEvents()[0]
               expect(event.start).toEqualDate('2014-11-14T05:00:00Z')
               expect(event.end).toEqualDate('2014-11-14T07:00:00Z')
               done()
@@ -418,8 +418,8 @@ describe('event constraint', function() {
             start: '2014-11-12T01:00:00',
             end: '2014-11-12T03:00:00',
             constraint: {
-              start: '04:00:00',
-              end: '08:00:00'
+              startTime: '04:00:00',
+              endTime: '08:00:00'
             }
           } ]
           testEventDrag(options, '2014-11-12T05:00:00', true, done)
@@ -434,8 +434,8 @@ describe('event constraint', function() {
             start: '2014-11-12T01:00:00',
             end: '2014-11-12T03:00:00',
             constraint: {
-              start: '04:00:00',
-              end: '08:00:00'
+              startTime: '04:00:00',
+              endTime: '08:00:00'
             }
           } ]
           testEventDrag(options, '2014-11-12T07:00:00', false, done)
@@ -450,9 +450,9 @@ describe('event constraint', function() {
             start: '2014-11-12T01:00:00',
             end: '2014-11-12T03:00:00',
             constraint: {
-              start: '04:00:00',
-              end: '08:00:00',
-              dow: [ 0, 1, 2, 3, 5, 6 ] // except Thursday
+              startTime: '04:00:00',
+              endTime: '08:00:00',
+              daysOfWeek: [ 0, 1, 2, 3, 5, 6 ] // except Thursday
             }
           } ]
           testEventDrag(options, '2014-11-13T05:00:00', false, done) // drag to Thursday
@@ -471,8 +471,8 @@ describe('event constraint', function() {
           var options = {}
 
           options.businessHours = {
-            start: '02:00',
-            end: '06:00'
+            startTime: '02:00',
+            endTime: '06:00'
           }
           options.events = [ {
             start: '2014-11-12T01:00:00',
@@ -488,8 +488,8 @@ describe('event constraint', function() {
           var options = {}
 
           options.businessHours = {
-            start: '02:00',
-            end: '06:00'
+            startTime: '02:00',
+            endTime: '06:00'
           }
           options.events = [ {
             start: '2014-11-12T01:00:00',
@@ -505,9 +505,9 @@ describe('event constraint', function() {
           var options = {}
 
           options.businessHours = {
-            start: '02:00',
-            end: '06:00',
-            dow: [ 1, 2, 3, 4 ] // Mon - Thurs
+            startTime: '02:00',
+            endTime: '06:00',
+            daysOfWeek: [ 1, 2, 3, 4 ] // Mon - Thurs
           }
           options.events = [ {
             start: '2014-11-12T01:00:00',
@@ -520,7 +520,7 @@ describe('event constraint', function() {
     })
   })
 
-  describe('when used with an event ID', function() {
+  describe('when used with an event group ID', function() {
 
     describe('when an event is being dragged', function() {
 
@@ -536,7 +536,7 @@ describe('event constraint', function() {
               constraint: 'yo'
             },
             {
-              id: 'yo',
+              groupId: 'yo',
               start: '2014-11-13T01:00:00',
               end: '2014-11-13T05:00:00'
             }
@@ -774,8 +774,8 @@ describe('selectConstraint', function() {
         var options = {}
 
         options.selectConstraint = {
-          start: '01:00:00',
-          end: '05:00:00'
+          startTime: '01:00:00',
+          endTime: '05:00:00'
         }
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', true, done)
       })
@@ -786,8 +786,8 @@ describe('selectConstraint', function() {
         var options = {}
 
         options.selectConstraint = {
-          start: '01:00:00',
-          end: '05:00:00'
+          startTime: '01:00:00',
+          endTime: '05:00:00'
         }
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T06:00:00Z', false, done)
       })
@@ -795,8 +795,8 @@ describe('selectConstraint', function() {
         var options = {}
 
         options.selectConstraint = {
-          start: '01:00:00',
-          end: '05:00:00'
+          startTime: '01:00:00',
+          endTime: '05:00:00'
         }
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-14T04:00:00Z', false, done)
       })
@@ -810,8 +810,8 @@ describe('selectConstraint', function() {
         var options = {}
 
         options.businessHours = {
-          start: '01:00:00',
-          end: '05:00:00'
+          startTime: '01:00:00',
+          endTime: '05:00:00'
         }
         options.selectConstraint = 'businessHours'
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', true, done)
@@ -823,8 +823,8 @@ describe('selectConstraint', function() {
         var options = {}
 
         options.businessHours = {
-          start: '01:00:00',
-          end: '05:00:00'
+          startTime: '01:00:00',
+          endTime: '05:00:00'
         }
         options.selectConstraint = 'businessHours'
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T06:00:00Z', false, done)
@@ -836,9 +836,9 @@ describe('selectConstraint', function() {
         var options = {}
 
         options.businessHours = {
-          start: '01:00:00',
-          end: '05:00:00',
-          dow: [ 1, 2, 4, 5 ] // Mon,Tue,Thu,Fri
+          startTime: '01:00:00',
+          endTime: '05:00:00',
+          daysOfWeek: [ 1, 2, 4, 5 ] // Mon,Tue,Thu,Fri
         }
         options.selectConstraint = 'businessHours'
         testSelection(options, '2014-11-12T02:00:00Z', '2014-11-12T04:00:00Z', false, done) // Wed
@@ -846,14 +846,14 @@ describe('selectConstraint', function() {
     })
   })
 
-  describe('when used with an event ID', function() {
+  describe('when used with an event group ID', function() {
 
     describe('to the middle of the constraint range', function() {
       it('allows a selection', function(done) {
         var options = {}
 
         options.events = [ {
-          id: 'yo',
+          groupId: 'yo',
           start: '2014-11-12T02:00:00',
           end: '2014-11-12T05:00:00',
           rendering: 'background'
@@ -868,7 +868,7 @@ describe('selectConstraint', function() {
         var options = {}
 
         options.events = [ {
-          id: 'yo',
+          groupId: 'yo',
           start: '2014-11-12T02:00:00',
           end: '2014-11-12T05:00:00',
           rendering: 'background'

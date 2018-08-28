@@ -69,11 +69,11 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
         if (!isDraggingExternal) { // if dragging an event within the calendar, check dates
 
           if (eventClassName) {
-            eventObj = calendar.clientEvents(function(o) {
-              return o.className.join(' ') === eventClassName
+            eventObj = calendar.getEvents().filter(function(o) {
+              return o.classNames.join(' ') === eventClassName
             })[0]
           } else {
-            eventObj = calendar.clientEvents()[0]
+            eventObj = calendar.getEvents()[0]
           }
 
           if (dropDateHasTime) { // dropped on a slot
@@ -153,11 +153,11 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
         var successfulDrop
 
         if (eventClassName) {
-          eventObj = calendar.clientEvents(function(o) {
-            return o.className.join(' ') === eventClassName
+          eventObj = calendar.getEvents(function(o) {
+            return o.classNames.join(' ') === eventClassName
           })[0]
         } else {
-          eventObj = calendar.clientEvents()[0]
+          eventObj = calendar.getEvents()[0]
         }
 
         successfulDrop = eventObj.end && eventObj.end.valueOf() === resizeDate.valueOf()
