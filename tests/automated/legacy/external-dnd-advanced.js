@@ -99,8 +99,8 @@ describe('advanced external dnd', function() {
         describe('with a selectConstraint', function() {
           pushOptions({
             selectConstraint: {
-              start: '04:00',
-              end: '08:00'
+              startTime: '04:00',
+              endTime: '08:00'
             }
           })
           it('can be dropped within', function(done) {
@@ -187,7 +187,7 @@ describe('advanced external dnd', function() {
               }, 0)
             })
           })
-        }
+        })
       })
 
       describe('when an overlap is specified', function() {
@@ -247,8 +247,8 @@ describe('advanced external dnd', function() {
         describe('via eventConstraint', function() {
           pushOptions({
             eventConstraint: {
-              start: '04:00',
-              end: '08:00'
+              startTime: '04:00',
+              endTime: '08:00'
             }
           })
           beforeEach(function() {
@@ -263,8 +263,8 @@ describe('advanced external dnd', function() {
             dragEl.attr('data-event', JSON.stringify({
               duration: '02:00',
               constraint: {
-                start: '04:00',
-                end: '08:00'
+                startTime: '04:00',
+                endTime: '08:00'
               }
             }))
           })
