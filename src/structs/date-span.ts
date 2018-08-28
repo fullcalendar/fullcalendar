@@ -6,6 +6,8 @@ import { Duration } from '../datelib/duration'
 /*
 A data-structure for a date-range that will be visually displayed.
 Contains other metadata like isAllDay, and anything else Components might like to store.
+
+TODO: in future, put otherProps in own object.
 */
 
 export interface OpenDateSpanInput {
@@ -57,6 +59,7 @@ export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv, defaultDurat
 
 /*
 TODO: somehow combine with parseRange?
+Will return null if the start/end props were present but parsed invalidly.
 */
 export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): OpenDateSpan | null {
   let leftovers = {} as DateSpan
@@ -65,24 +68,19 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
   let endMeta = standardProps.end ? dateEnv.createMarkerMeta(standardProps.end) : null
   let isAllDay = standardProps.isAllDay
 
-  if (startMeta) {
-
-    if (isAllDay == null) {
-      isAllDay = (startMeta && startMeta.isTimeUnspecified) &&
-        (!endMeta || endMeta.isTimeUnspecified)
-    }
-
-    // use this leftover object as the selection object
-    leftovers.range = {
-      start: startMeta ? startMeta.marker : null,
-      end: endMeta ? endMeta.marker : null
-    }
-    leftovers.isAllDay = isAllDay
-
-    return leftovers
+  if (isAllDay == null) {
+    isAllDay = (startMeta && startMeta.isTimeUnspecified) &&
+      (!endMeta || endMeta.isTimeUnspecified)
   }
 
-  return null
+  // use this leftover object as the selection object
+  leftovers.range = {
+    start: startMeta ? startMeta.marker : null,
+    end: endMeta ? endMeta.marker : null
+  }
+  leftovers.isAllDay = isAllDay
+
+  return leftovers
 }
 
 export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {

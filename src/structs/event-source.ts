@@ -112,7 +112,7 @@ const SIMPLE_SOURCE_PROPS = {
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
-  constraint: normalizeConstraint,
+  constraint: null,
   overlap: Boolean,
   allow: null,
   rendering: String,
@@ -143,7 +143,7 @@ export function doesSourceNeedRange(eventSource: EventSource) {
   return !defs[eventSource.sourceDefId].ignoreRange
 }
 
-export function parseEventSource(raw: EventSourceInput): EventSource | null {
+export function parseEventSource(raw: EventSourceInput, calendar: Calendar): EventSource | null {
   for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
     let def = defs[i]
     let meta = def.parseMeta(raw)
@@ -152,7 +152,8 @@ export function parseEventSource(raw: EventSourceInput): EventSource | null {
       return parseEventSourceProps(
         typeof raw === 'object' ? raw : {},
         meta,
-        i
+        i,
+        calendar
       )
     }
   }
@@ -163,7 +164,7 @@ export function parseEventSource(raw: EventSourceInput): EventSource | null {
 /*
 TODO: combine with pluckNonDateProps AND refineScopedUi
 */
-function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number): EventSource {
+function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, calendar: Calendar): EventSource {
   let props = refineProps(raw, SIMPLE_SOURCE_PROPS) as (EventSource & { editable: boolean | null, color: string })
 
   props.isFetching = false
@@ -173,6 +174,10 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
   props.sourceId = String(uid++)
   props.sourceDefId = sourceDefId
   props.meta = meta
+
+  if (props.constraint) {
+    props.constraint = normalizeConstraint(props.constraint, calendar)
+  }
 
   if (props.startEditable == null) {
     props.startEditable = props.editable

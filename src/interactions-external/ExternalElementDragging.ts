@@ -166,7 +166,7 @@ export default class ExternalElementDragging {
 // ----------------------------------------------------------------------------------------------------
 
 function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventTuple {
-  let def = parseEventDef(dragMeta.leftoverProps, '')
+  let def = parseEventDef(dragMeta.leftoverProps, '', calendar)
   def.isAllDay = dateSpan.isAllDay
   def.hasEnd = Boolean(dragMeta.duration)
 

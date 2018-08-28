@@ -11,7 +11,7 @@ import {
 import { expandRecurringRanges } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo, filterHash } from '../util/object'
-import { DateRange, joinRanges } from '../datelib/date-range'
+import { DateRange } from '../datelib/date-range'
 
 /*
 A data structure that encapsulates EventDefs and EventInstances.
@@ -83,51 +83,41 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
 
 // retrieves events that have the same groupId as the instance specified by `instanceId`
 export function getRelatedEvents(eventStore: EventStore, instanceId: string): EventStore {
-  let dest = createEmptyEventStore()
-  let eventInstance = eventStore.instances[instanceId]
-  let eventDef = eventStore.defs[eventInstance.defId]
+  let instance = eventStore.instances[instanceId]
 
-  if (eventDef && eventInstance) {
-    let matchGroupId = eventDef.groupId
+  if (instance) {
+    let def = eventStore.defs[instance.defId]
 
-    for (let defId in eventStore.defs) {
-      let def = eventStore.defs[defId]
-
-      if (def === eventDef || matchGroupId && matchGroupId === def.groupId) {
-        dest.defs[defId] = def
-      }
+    if (def.groupId) {
+      return getEventsByGroupId(eventStore, def.groupId) // will include the original def/instance
+    } else {
+      return eventTupleToStore({ def, instance })
     }
+  }
 
-    for (let instanceId in eventStore.instances) {
-      let instance = eventStore.instances[instanceId]
+  return createEmptyEventStore()
+}
 
-      if (
-        instance === eventInstance ||
-        matchGroupId && matchGroupId === eventStore.defs[instance.defId].groupId
-      ) {
-        dest.instances[instanceId] = instance
-      }
+export function getEventsByGroupId(eventStore: EventStore, groupId: string): EventStore {
+  let dest = createEmptyEventStore()
+
+  for (let defId in eventStore.defs) {
+    let def = eventStore.defs[defId]
+
+    if (def.groupId === groupId) {
+      dest.defs[defId] = def
+    }
+  }
+
+  for (let instanceId in eventStore.instances) {
+    let instance = eventStore.instances[instanceId]
+
+    if (eventStore.defs[instance.defId].groupId === groupId) {
+      dest.instances[instanceId] = instance
     }
   }
 
   return dest
-}
-
-/*
-Returns a date range that tightly contains all instances
-*/
-export function getStoreRange(store: EventStore): DateRange | null {
-  let instances = store.instances
-  let joinedRange: DateRange | null = null
-
-  for (let instanceId in instances) {
-    let instance = instances[instanceId]
-    joinedRange = joinedRange ?
-      joinRanges(joinedRange, instance.range) :
-      instance.range
-  }
-
-  return joinedRange
 }
 
 export function transformRawEvents(rawEvents, func) {

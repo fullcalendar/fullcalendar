@@ -359,7 +359,7 @@ export default class Calendar {
     }
 
     for (let rawSource of rawSources) {
-      let source = parseEventSource(rawSource)
+      let source = parseEventSource(rawSource, this)
       if (source) {
         sources.push(source)
       }
@@ -1205,7 +1205,7 @@ export default class Calendar {
 
 
   addEventSource(sourceInput: EventSourceInput): EventSourceApi {
-    let eventSource = parseEventSource(sourceInput)
+    let eventSource = parseEventSource(sourceInput, this)
 
     if (eventSource) { // TODO: error otherwise?
       this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [ eventSource ] })

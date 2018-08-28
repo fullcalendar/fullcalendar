@@ -924,7 +924,7 @@ export default abstract class DateComponent extends Component {
         editable: false,
         isAllDay: selection.isAllDay,
         hasEnd: true
-      }, '')
+      }, '', this.getCalendar())
       let eventRange = {
         def,
         ui: computeEventDefUi(def, {}, {}),

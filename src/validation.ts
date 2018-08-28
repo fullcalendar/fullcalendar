@@ -1,16 +1,14 @@
-import { EventStore, getRelatedEvents, expandRecurring, getStoreRange } from './structs/event-store'
+import { EventStore, expandRecurring, eventTupleToStore, getEventsByGroupId } from './structs/event-store'
 import Calendar from './Calendar'
 import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching } from './structs/date-span'
-import { EventInstance, EventDef, EventTuple } from './structs/event'
+import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
 import { EventSource, EventSourceHash } from './structs/event-source'
 import { rangeContainsRange, rangesIntersect } from './datelib/date-range'
-import { DateEnv } from './datelib/env'
-import { CalendarState } from './reducers/types'
 import EventApi from './api/EventApi'
 
 // TODO: rename to "criteria" ?
-export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput
-export type Constraint = 'businessHours' | string | OpenDateSpan
+export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
+export type Constraint = 'businessHours' | string | OpenDateSpan | EventTuple
 export type Overlap = boolean | ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
 export type Allow = (span: DateSpan, movingEvent: EventApi | null) => boolean
 
@@ -25,7 +23,7 @@ interface ValidationEntity {
 export function isEventsValid(eventStore: EventStore, calendar: Calendar): boolean {
   return isEntitiesValid(
     eventStoreToEntities(eventStore, calendar.state.eventSources),
-    normalizeConstraint(calendar.opt('eventConstraint'), calendar.dateEnv),
+    normalizeConstraint(calendar.opt('eventConstraint'), calendar),
     calendar.opt('eventOverlap'),
     calendar.opt('eventAllow'),
     calendar
@@ -35,7 +33,7 @@ export function isEventsValid(eventStore: EventStore, calendar: Calendar): boole
 export function isSelectionValid(selection: DateSpan, calendar: Calendar): boolean {
   return isEntitiesValid(
     [ { dateSpan: selection, event: null, constraint: null, overlap: null, allow: null } ],
-    normalizeConstraint(calendar.opt('selectConstraint'), calendar.dateEnv),
+    normalizeConstraint(calendar.opt('selectConstraint'), calendar),
     calendar.opt('selectOverlap'),
     calendar.opt('selectAllow'),
     calendar
@@ -65,7 +63,7 @@ function isEntitiesValid(
   for (let subjectEntity of entities) {
     for (let eventEntity of eventEntities) {
       if (
-        (
+        ( // not comparing the same event
           !subjectEntity.event ||
           !eventEntity.event ||
           subjectEntity.event.def.defId !== eventEntity.event.def.defId
@@ -144,31 +142,45 @@ function mapEventInstances(
   return res
 }
 
-function isDateSpanWithinConstraint(subjectSpan: DateSpan, constraint: any, calendar: Calendar): boolean {
+function isDateSpanWithinConstraint(subjectSpan: DateSpan, constraint: Constraint | null, calendar: Calendar): boolean {
+
+  if (constraint === null) {
+    return true // doesn't care
+  }
+
   let constrainingSpans: DateSpan[] = constraintToSpans(constraint, subjectSpan, calendar)
 
   for (let constrainingSpan of constrainingSpans) {
-    if (!dateSpanContainsOther(constrainingSpan, subjectSpan)) {
-      return false
+    if (dateSpanContainsOther(constrainingSpan, subjectSpan)) {
+      return true
     }
   }
 
-  return true
+  return false // not contained by any one of the constrainingSpans
 }
 
 function constraintToSpans(constraint: Constraint, subjectSpan: DateSpan, calendar: Calendar): DateSpan[] {
 
   if (constraint === 'businessHours') {
-    let store = getPeerBusinessHours(subjectSpan, calendar.state)
-    store = expandRecurring(store, getStoreRange(store), calendar)
+    let store = getPeerBusinessHours(subjectSpan, calendar)
+    store = expandRecurring(store, subjectSpan.range, calendar)
     return eventStoreToDateSpans(store)
 
   } else if (typeof constraint === 'string') { // an ID
-    let store = getRelatedEvents(calendar.state.eventStore, constraint)
+    let store = getEventsByGroupId(calendar.state.eventStore, constraint)
     return eventStoreToDateSpans(store)
 
   } else if (typeof constraint === 'object' && constraint) { // non-null object
-    return [ constraint ] // already parsed
+
+    if ((constraint as EventTuple).def) { // an event definition (actually, a tuple)
+      let store = eventTupleToStore(constraint as EventTuple)
+      store = expandRecurring(store, subjectSpan.range, calendar)
+      return eventStoreToDateSpans(store)
+
+    } else {
+      return [ constraint as OpenDateSpan ] // already parsed datespan
+    }
+
   }
 
   return []
@@ -226,13 +238,20 @@ function eventToDateSpan(def: EventDef, instance: EventInstance): DateSpan {
 }
 
 // TODO: plugin
-function getPeerBusinessHours(subjectSpan: DateSpan, state: CalendarState): EventStore {
-  return state.eventStore
+function getPeerBusinessHours(subjectSpan: DateSpan, calendar: Calendar): EventStore {
+  return calendar.view.businessHours // accessing view :(
 }
 
-export function normalizeConstraint(input: ConstraintInput, dateEnv: DateEnv): Constraint {
+export function normalizeConstraint(input: ConstraintInput, calendar: Calendar): Constraint | null {
   if (typeof input === 'object' && input) { // non-null object
-    return parseOpenDateSpan(input, dateEnv)
+    let span = parseOpenDateSpan(input, calendar.dateEnv)
+
+    if (span === null || span.range.start || span.range.end) {
+      return span
+    } else { // if completely-open range, assume it's a recurring event (prolly with startTime/endTime)
+      return parseEvent(input, '', calendar)
+    }
+
   } else if (input != null) {
     return String(input)
   } else {

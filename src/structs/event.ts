@@ -91,7 +91,7 @@ const NON_DATE_PROPS = {
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,
-  constraint: normalizeConstraint,
+  constraint: null,
   overlap: Boolean,
   rendering: String,
   classNames: parseClassName,
@@ -117,7 +117,7 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
   let leftovers0 = {} as any
   let dateProps = pluckDateProps(raw, leftovers0)
   let leftovers1 = {} as any
-  let def = parseEventDef(raw, sourceId, leftovers1)
+  let def = parseEventDef(raw, sourceId, calendar, leftovers1)
   let instance: EventInstance = null
 
   if (dateProps.start !== null) {
@@ -153,10 +153,11 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
 
 /*
 Will NOT populate extendedProps with the leftover properties.
+Will NOT populate date-related props.
 The EventNonDateInput has been normalized (id => publicId, etc).
 */
-export function parseEventDef(raw: EventNonDateInput, sourceId: string, leftovers?: any): EventDef {
-  let def = pluckNonDateProps(raw, leftovers) as EventDef
+export function parseEventDef(raw: EventNonDateInput, sourceId: string, calendar: Calendar, leftovers?: any): EventDef {
+  let def = pluckNonDateProps(raw, calendar, leftovers) as EventDef
 
   def.defId = String(uid++)
   def.sourceId = sourceId
@@ -182,11 +183,15 @@ function pluckDateProps(raw: EventInput, leftovers: any) {
 }
 
 
-function pluckNonDateProps(raw: EventInput, leftovers: any) {
+function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers: any) {
   let props = refineProps(raw, NON_DATE_PROPS, {}, leftovers)
 
   props.publicId = props.id
   props.classNames = props.classNames.concat(props.className)
+
+  if (props.constraint) {
+    props.constraint = normalizeConstraint(props.constraint, calendar)
+  }
 
   if (props.startEditable == null) {
     props.startEditable = props.editable
