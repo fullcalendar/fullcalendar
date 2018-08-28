@@ -11,6 +11,8 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 import EventApi from '../api/EventApi'
 import { elementMatches } from '../util/dom-manip'
+import { enableCursor, disableCursor } from '../util/misc'
+import { isEventsValid, isSelectionValid, eventToDateSpan } from '../validation'
 
 /*
 Given an already instantiated draggable object for one-or-more elements,
@@ -48,6 +50,7 @@ export default class ExternalElementDragging {
     let { dragging } = this.hitDragging
     let receivingCalendar: Calendar | null = null
     let droppableEvent: EventTuple | null = null
+    let isInvalid = false
 
     if (hit) {
       receivingCalendar = hit.component.getCalendar()
@@ -58,6 +61,17 @@ export default class ExternalElementDragging {
           this.dragMeta!,
           receivingCalendar
         )
+
+        // TODO: fix inefficiency of calling eventTupleToStore again, and eventToDateSpan
+        if (this.dragMeta.create) {
+          isInvalid = !isEventsValid(eventTupleToStore(droppableEvent), receivingCalendar)
+        } else { // treat non-event-creating drags as selection validation
+          isInvalid = !isSelectionValid(eventToDateSpan(droppableEvent.def, droppableEvent.instance), receivingCalendar)
+        }
+
+        if (isInvalid) {
+          droppableEvent = null
+        }
       }
     }
 
@@ -76,6 +90,12 @@ export default class ExternalElementDragging {
     dragging.setMirrorIsVisible(
       isFinal || !droppableEvent || !document.querySelector('.fc-helper')
     )
+
+    if (!isInvalid) {
+      enableCursor()
+    } else {
+      disableCursor()
+    }
 
     if (!isFinal) {
       dragging.setMirrorNeedsRevert(!droppableEvent)
