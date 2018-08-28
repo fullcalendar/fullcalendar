@@ -2,6 +2,7 @@ import { DateRange, rangesEqual, OpenDateRange } from '../datelib/date-range'
 import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 import { Duration } from '../datelib/duration'
+import { assignTo } from '../util/object'
 
 /*
 A data-structure for a date-range that will be visually displayed.
@@ -30,6 +31,13 @@ export interface OpenDateSpan {
 
 export interface DateSpan extends OpenDateSpan {
   range: DateRange
+}
+
+export interface DateSpanApi {
+  start: Date
+  end: Date
+  isAllDay: boolean
+  [otherProp: string]: any
 }
 
 const STANDARD_PROPS = {
@@ -120,4 +128,14 @@ export function isSpanPropsMatching(subjectSpan: DateSpan, matchSpan: DateSpan):
   }
 
   return true
+}
+
+export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi {
+  let props = assignTo({}, span)
+  delete props.range
+
+  props.start = dateEnv.toDate(span.range.start)
+  props.end = dateEnv.toDate(span.range.end)
+
+  return props
 }

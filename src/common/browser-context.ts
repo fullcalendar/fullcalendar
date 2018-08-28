@@ -6,7 +6,7 @@ import EventClicking from '../interactions/EventClicking'
 import EventHovering from '../interactions/EventHovering'
 import EventDragging from '../interactions/EventDragging'
 import EventResizing from '../interactions/EventResizing'
-import { DateSpan } from '../structs/date-span'
+import { DateSpan, buildDateSpanApi } from '../structs/date-span'
 import Calendar from '../Calendar'
 
 export class BrowserContext {
@@ -119,15 +119,11 @@ export class BrowserContext {
 
     this.dateSelectedCalendar = calendar // in case publicTrigger wants to unselect
 
-    calendar.publiclyTrigger('select', [
-      {
-        start: calendar.dateEnv.toDate(selection.range.start),
-        end: calendar.dateEnv.toDate(selection.range.end),
-        isAllDay: selection.isAllDay,
-        jsEvent: pev ? pev.origEvent : null,
-        view: calendar.view
-      }
-    ])
+    let arg = buildDateSpanApi(selection, calendar.dateEnv)
+    arg.jsEvent = pev ? pev.origEvent : null
+    arg.view = calendar.view
+
+    calendar.publiclyTrigger('select', [ arg ])
   }
 
   unselectEvent() {

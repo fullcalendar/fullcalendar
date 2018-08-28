@@ -1,6 +1,6 @@
 import { EventStore, expandRecurring, eventTupleToStore, mapEventInstances, filterEventStoreDefs, isEventDefsRelated } from './structs/event-store'
 import Calendar from './Calendar'
-import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching } from './structs/date-span'
+import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
 import { EventSourceHash } from './structs/event-source'
 import { rangeContainsRange, rangesIntersect } from './datelib/date-range'
@@ -10,7 +10,7 @@ import EventApi from './api/EventApi'
 export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
 export type Constraint = 'businessHours' | string | OpenDateSpan | EventTuple
 export type Overlap = boolean | ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
-export type Allow = (span: DateSpan, movingEvent: EventApi | null) => boolean
+export type Allow = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
 
 interface ValidationEntity {
   dateSpan: DateSpan
@@ -186,7 +186,7 @@ function isDateSpanAllowed(dateSpan: DateSpan, moving: EventTuple | null, allow:
   if (typeof allow === 'function') {
     return Boolean(
       allow(
-        dateSpan,
+        buildDateSpanApi(dateSpan, calendar.dateEnv),
         moving ? new EventApi(calendar, moving.def, moving.instance) : null
       )
     )
