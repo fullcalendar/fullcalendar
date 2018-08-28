@@ -1,4 +1,4 @@
-import { EventStore, expandRecurring, eventTupleToStore, getEventsByGroupId, mapEventInstances } from './structs/event-store'
+import { EventStore, expandRecurring, eventTupleToStore, mapEventInstances, filterEventStoreDefs, isEventDefsRelated } from './structs/event-store'
 import Calendar from './Calendar'
 import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching } from './structs/date-span'
 import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
@@ -63,16 +63,16 @@ function isEntitiesValid(
   for (let subjectEntity of entities) {
     for (let eventEntity of eventEntities) {
       if (
-        ( // not comparing the same event
+        ( // not comparing the same/related event
           !subjectEntity.event ||
           !eventEntity.event ||
-          subjectEntity.event.def.defId !== eventEntity.event.def.defId
+          !isEventDefsRelated(subjectEntity.event.def, eventEntity.event.def)
         ) &&
-        dateSpansCollide(subjectEntity.dateSpan, eventEntity.dateSpan)
+        dateSpansCollide(subjectEntity.dateSpan, eventEntity.dateSpan) // a collision!
       ) {
         if (
           subjectEntity.overlap === false ||
-          eventEntity.overlap === false ||
+          (eventEntity.overlap === false && subjectEntity.event) || // the eventEntity doesn't like two events colliding
           !isOverlapValid(eventEntity.event, subjectEntity.event, globalOverlap, calendar)
         ) {
           return false
@@ -146,7 +146,9 @@ function constraintToSpans(constraint: Constraint, subjectSpan: DateSpan, calend
     return eventStoreToDateSpans(store)
 
   } else if (typeof constraint === 'string') { // an ID
-    let store = getEventsByGroupId(calendar.state.eventStore, constraint)
+    let store = filterEventStoreDefs(calendar.state.eventStore, function(eventDef) {
+      return eventDef.groupId === constraint
+    })
     return eventStoreToDateSpans(store)
 
   } else if (typeof constraint === 'object' && constraint) { // non-null object

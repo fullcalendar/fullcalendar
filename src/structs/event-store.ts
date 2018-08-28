@@ -88,36 +88,19 @@ export function getRelatedEvents(eventStore: EventStore, instanceId: string): Ev
   if (instance) {
     let def = eventStore.defs[instance.defId]
 
-    if (def.groupId) {
-      return getEventsByGroupId(eventStore, def.groupId) // will include the original def/instance
-    } else {
-      return eventTupleToStore({ def, instance })
-    }
+    return filterEventStoreDefs(eventStore, function(eventDef) {
+      return isEventDefsRelated(eventDef, def)
+    })
   }
 
   return createEmptyEventStore()
 }
 
-export function getEventsByGroupId(eventStore: EventStore, groupId: string): EventStore {
-  let dest = createEmptyEventStore()
-
-  for (let defId in eventStore.defs) {
-    let def = eventStore.defs[defId]
-
-    if (def.groupId === groupId) {
-      dest.defs[defId] = def
-    }
-  }
-
-  for (let instanceId in eventStore.instances) {
-    let instance = eventStore.instances[instanceId]
-
-    if (eventStore.defs[instance.defId].groupId === groupId) {
-      dest.instances[instanceId] = instance
-    }
-  }
-
-  return dest
+export function isEventDefsRelated(def0: EventDef, def1: EventDef): boolean {
+  return Boolean(
+    def0.defId === def1.defId ||
+    def0.groupId && def0.groupId === def1.groupId
+  )
 }
 
 export function transformRawEvents(rawEvents, func) {
