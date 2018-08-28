@@ -1,8 +1,8 @@
-import { EventStore, expandRecurring, eventTupleToStore, getEventsByGroupId } from './structs/event-store'
+import { EventStore, expandRecurring, eventTupleToStore, getEventsByGroupId, mapEventInstances } from './structs/event-store'
 import Calendar from './Calendar'
 import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching } from './structs/date-span'
 import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
-import { EventSource, EventSourceHash } from './structs/event-source'
+import { EventSourceHash } from './structs/event-source'
 import { rangeContainsRange, rangesIntersect } from './datelib/date-range'
 import EventApi from './api/EventApi'
 
@@ -94,52 +94,31 @@ function isEntitiesValid(
 }
 
 function eventStoreToEntities(eventStore: EventStore, eventSources: EventSourceHash): ValidationEntity[] {
-  return mapEventInstances(
-    eventStore, eventSources,
-    function(eventInstance: EventInstance, eventDef: EventDef, eventSource: EventSource): ValidationEntity {
-      let constraint = eventDef.constraint as Constraint
-      let overlap = eventDef.overlap as boolean
+  return mapEventInstances(eventStore, function(eventInstance: EventInstance, eventDef: EventDef): ValidationEntity {
+    let eventSource = eventSources[eventDef.sourceId]
+    let constraint = eventDef.constraint as Constraint
+    let overlap = eventDef.overlap as boolean
 
-      if (constraint == null && eventSource) {
-        constraint = eventSource.constraint
-      }
+    if (constraint == null && eventSource) {
+      constraint = eventSource.constraint
+    }
 
-      if (overlap == null && eventSource) {
-        overlap = eventSource.overlap
+    if (overlap == null && eventSource) {
+      overlap = eventSource.overlap
 
-        if (overlap == null) {
-          overlap = true
-        }
-      }
-
-      return {
-        dateSpan: eventToDateSpan(eventDef, eventInstance),
-        event: { def: eventDef, instance: eventInstance },
-        constraint,
-        overlap,
-        allow: eventSource ? eventSource.allow : null
+      if (overlap == null) {
+        overlap = true
       }
     }
-  )
-}
 
-function mapEventInstances(
-  eventStore: EventStore,
-  eventSources: EventSourceHash,
-  callback: (instance: EventInstance, def: EventDef, source: EventSource | null) => any
-): any[] {
-  let { defs, instances } = eventStore
-  let res = []
-
-  for (let instanceId in instances) {
-    let instance = instances[instanceId]
-    let def = defs[instance.defId]
-    let source = eventSources[def.sourceId] || null
-
-    res.push(callback(instance, def, source))
-  }
-
-  return res
+    return {
+      dateSpan: eventToDateSpan(eventDef, eventInstance),
+      event: { def: eventDef, instance: eventInstance },
+      constraint,
+      overlap,
+      allow: eventSource ? eventSource.allow : null
+    }
+  })
 }
 
 function isDateSpanWithinConstraint(subjectSpan: DateSpan, constraint: Constraint | null, calendar: Calendar): boolean {
@@ -224,7 +203,7 @@ function dateSpanContainsOther(outerSpan: DateSpan, subjectSpan: DateSpan): bool
 }
 
 function eventStoreToDateSpans(store: EventStore): DateSpan[] {
-  return mapEventInstances(store, {}, function(instance: EventInstance, def: EventDef) {
+  return mapEventInstances(store, function(instance: EventInstance, def: EventDef) {
     return eventToDateSpan(def, instance)
   })
 }

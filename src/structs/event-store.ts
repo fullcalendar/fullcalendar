@@ -160,3 +160,18 @@ export function filterEventStoreDefs(eventStore: EventStore, filterFunc: (eventD
   })
   return { defs, instances }
 }
+
+export function mapEventInstances(
+  eventStore: EventStore,
+  callback: (instance: EventInstance, def: EventDef) => any
+): any[] {
+  let { defs, instances } = eventStore
+  let res = []
+
+  for (let instanceId in instances) {
+    let instance = instances[instanceId]
+    res.push(callback(instance, defs[instance.defId]))
+  }
+
+  return res
+}
