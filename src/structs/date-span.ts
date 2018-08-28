@@ -86,17 +86,20 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
 }
 
 export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {
-  return rangesEqual(span0.range, span1.range) && isDateSpanPropsEqual(span0, span1)
+  return rangesEqual(span0.range, span1.range) &&
+    span0.isAllDay === span1.isAllDay &&
+    isSpanPropsEqual(span0, span1)
 }
 
-// besides range
-export function isDateSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
+// the NON-DATE-RELATED props
+export function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
 
-  if (!isDateSpanPropsWithin(span0, span1)) {
+  if (!isSpanPropsMatching(span0, span1)) {
     return false
   }
 
   // are there any props that span0 has that span1 DOESN'T have?
+  // both have range/allDay, so no need to special-case.
   for (let propName in span0) {
     if (!(propName in span1)) {
       return false
@@ -106,12 +109,13 @@ export function isDateSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean 
   return true
 }
 
-// does subjectSpan have all the props that validationSpan has? (subjectSpan can be a superset)
-export function isDateSpanPropsWithin(subjectSpan: DateSpan, validationSpan: DateSpan): boolean {
+// does subjectSpan have all the props/values that matchSpan does?
+// subjectSpan is allowed to have more
+export function isSpanPropsMatching(subjectSpan: DateSpan, matchSpan: DateSpan): boolean {
 
-  for (let propName in validationSpan) {
-    if (propName !== 'range') {
-      if (subjectSpan[propName] !== validationSpan[propName]) {
+  for (let propName in matchSpan) {
+    if (propName !== 'range' && propName !== 'isAllDay') {
+      if (subjectSpan[propName] !== matchSpan[propName]) {
         return false
       }
     }

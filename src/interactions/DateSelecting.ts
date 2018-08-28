@@ -64,7 +64,7 @@ export default class DateSelecting {
       )
 
       if (!this.component.isSelectionValid(dragSelection)) {
-        isInvalid = false
+        isInvalid = true
         dragSelection = null
       }
     }

@@ -1,6 +1,6 @@
 import { EventStore, getRelatedEvents, expandRecurring, getStoreRange } from './structs/event-store'
 import Calendar from './Calendar'
-import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, isDateSpanPropsWithin, isDateSpanPropsEqual, OpenDateSpan } from './structs/date-span'
+import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching } from './structs/date-span'
 import { EventInstance, EventDef, EventTuple } from './structs/event'
 import { EventSource, EventSourceHash } from './structs/event-source'
 import { rangeContainsRange, rangesIntersect } from './datelib/date-range'
@@ -64,7 +64,14 @@ function isEntitiesValid(
 
   for (let subjectEntity of entities) {
     for (let eventEntity of eventEntities) {
-      if (dateSpansCollide(subjectEntity.dateSpan, eventEntity.dateSpan)) {
+      if (
+        (
+          !subjectEntity.event ||
+          !eventEntity.event ||
+          subjectEntity.event.def.defId !== eventEntity.event.def.defId
+        ) &&
+        dateSpansCollide(subjectEntity.dateSpan, eventEntity.dateSpan)
+      ) {
         if (
           subjectEntity.overlap === false ||
           eventEntity.overlap === false ||
@@ -161,10 +168,7 @@ function constraintToSpans(constraint: Constraint, subjectSpan: DateSpan, calend
     return eventStoreToDateSpans(store)
 
   } else if (typeof constraint === 'object' && constraint) { // non-null object
-    let parsedSpan = parseOpenDateSpan(constraint, calendar.dateEnv)
-    if (parsedSpan) {
-      return [ parsedSpan ]
-    }
+    return [ constraint ] // already parsed
   }
 
   return []
@@ -199,11 +203,12 @@ function isDateSpanAllowed(dateSpan: DateSpan, moving: EventTuple | null, allow:
 }
 
 function dateSpansCollide(span0: DateSpan, span1: DateSpan): boolean {
-  return rangesIntersect(span0.range, span1.range) && isDateSpanPropsEqual(span0, span1)
+  return rangesIntersect(span0.range, span1.range) && isSpanPropsEqual(span0, span1)
 }
 
 function dateSpanContainsOther(outerSpan: DateSpan, subjectSpan: DateSpan): boolean {
-  return rangeContainsRange(outerSpan.range, subjectSpan.range) && isDateSpanPropsWithin(subjectSpan, outerSpan)
+  return rangeContainsRange(outerSpan.range, subjectSpan.range) &&
+    isSpanPropsMatching(subjectSpan, outerSpan) // subjectSpan has all the props that outerSpan has?
 }
 
 function eventStoreToDateSpans(store: EventStore): DateSpan[] {
