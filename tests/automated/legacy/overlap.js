@@ -271,18 +271,18 @@ describe('event overlap', function() {
         ]
         testEventDrag(options, '2014-11-04T06:00:00', false, done, 'event-a')
       })
-      describe('when both events have the same ID', function() {
+      describe('when both events have the same group ID', function() {
         it('allows the drag', function(done) {
           options.events = [
             {
-              id: 'myid',
+              groupId: 'myid',
               title: 'Event A',
               className: 'event-a',
               start: '2014-11-04T01:00:00',
               end: '2014-11-04T03:00:00'
             },
             {
-              id: 'myid',
+              groupId: 'myid',
               title: 'Event B',
               className: 'event-b',
               start: '2014-11-04T05:00:00',
@@ -387,66 +387,6 @@ describe('event overlap', function() {
     })
   })
 
-  describe('when other eventSource overlap is a function', function() {
-    describe('when dragged over an intersecting event', function() {
-      describe('and function returns false', function() {
-        it('does not allow dragging', function(done) {
-          options.eventSources = [
-            {
-              events: [ {
-                title: 'Event A',
-                className: 'event-a',
-                start: '2014-11-04T01:00:00',
-                end: '2014-11-04T03:00:00'
-              } ]
-            },
-            {
-              overlap: function(stillEvent, draggingEvent) {
-                // checks that the arguments are correct
-                expect(stillEvent.title).toBe('Event B')
-                expect(draggingEvent.title).toBe('Event A')
-                return false
-              },
-              events: [ {
-                title: 'Event B',
-                className: 'event-b',
-                start: '2014-11-04T05:00:00',
-                end: '2014-11-04T09:00:00'
-              } ]
-            }
-          ]
-          testEventDrag(options, '2014-11-04T06:00:00', false, done, 'event-a')
-        })
-      })
-      describe('and function returns true', function() {
-        it('allows dragging', function(done) {
-          options.eventSources = [
-            {
-              events: [ {
-                title: 'Event A',
-                className: 'event-a',
-                start: '2014-11-04T01:00:00',
-                end: '2014-11-04T03:00:00'
-              } ]
-            },
-            {
-              overlap: function() {
-                return true
-              },
-              events: [ {
-                title: 'Event B',
-                className: 'event-b',
-                start: '2014-11-04T05:00:00',
-                end: '2014-11-04T09:00:00'
-              } ]
-            }
-          ]
-          testEventDrag(options, '2014-11-04T06:00:00', true, done, 'event-a')
-        })
-      })
-    })
-  })
-
   describe('when subject event is false', function() {
     describe('when dragged adjacently after the other event', function() {
       it('allows dragging', function(done) {
@@ -537,155 +477,6 @@ describe('event overlap', function() {
           }
         ]
         testEventDrag(options, '2014-11-04T06:00:00', false, done, 'event-a')
-      })
-    })
-  })
-
-  describe('when subject eventSource is a function', function() {
-    describe('when dragged over an intersecting event', function() {
-      describe('and function returns false', function() {
-        it('does not allow dragging', function(done) {
-          options.eventSources = [
-            {
-              overlap: function(stillEvent, draggingEvent) {
-                // checking parameters here
-                expect(stillEvent.title).toBe('Event B')
-                expect(draggingEvent.title).toBe('Event A')
-                return false
-              },
-              events: [ {
-                title: 'Event A',
-                className: 'event-a',
-                start: '2014-11-04T01:00:00',
-                end: '2014-11-04T03:00:00'
-              } ]
-            },
-            {
-              events: [ {
-                title: 'Event B',
-                className: 'event-b',
-                start: '2014-11-04T05:00:00',
-                end: '2014-11-04T09:00:00'
-              } ]
-            }
-          ]
-          testEventDrag(options, '2014-11-04T06:00:00', false, done, 'event-a')
-        })
-      })
-      describe('and function returns true', function() {
-        it('allows dragging', function(done) {
-          options.eventSources = [
-            {
-              overlap: function(otherEvent, thisEvent) {
-                return true
-              },
-              events: [ {
-                title: 'Event A',
-                className: 'event-a',
-                start: '2014-11-04T01:00:00',
-                end: '2014-11-04T03:00:00'
-              } ]
-            },
-            {
-              events: [ {
-                title: 'Event B',
-                className: 'event-b',
-                start: '2014-11-04T05:00:00',
-                end: '2014-11-04T09:00:00'
-              } ]
-            }
-          ]
-          testEventDrag(options, '2014-11-04T06:00:00', true, done, 'event-a')
-        })
-      })
-    })
-    describe('when other eventSource is ALSO a function', function() {
-      describe('and only the subject\'s function returns false', function() {
-        it('disallows dragging', function(done) {
-          options.eventSources = [
-            {
-              overlap: function(otherEvent, thisEvent) {
-                return false
-              },
-              events: [ {
-                title: 'Event A',
-                className: 'event-a',
-                start: '2014-11-04T01:00:00',
-                end: '2014-11-04T03:00:00'
-              } ]
-            },
-            {
-              overlap: function(otherEvent, thisEvent) {
-                return true
-              },
-              events: [ {
-                title: 'Event B',
-                className: 'event-b',
-                start: '2014-11-04T05:00:00',
-                end: '2014-11-04T09:00:00'
-              } ]
-            }
-          ]
-          testEventDrag(options, '2014-11-04T06:00:00', false, done, 'event-a')
-        })
-      })
-      describe('and only the other\'s function returns false', function() {
-        it('disallows dragging', function(done) {
-          options.eventSources = [
-            {
-              overlap: function(otherEvent, thisEvent) {
-                return true
-              },
-              events: [ {
-                title: 'Event A',
-                className: 'event-a',
-                start: '2014-11-04T01:00:00',
-                end: '2014-11-04T03:00:00'
-              } ]
-            },
-            {
-              overlap: function(otherEvent, thisEvent) {
-                return false
-              },
-              events: [ {
-                title: 'Event B',
-                className: 'event-b',
-                start: '2014-11-04T05:00:00',
-                end: '2014-11-04T09:00:00'
-              } ]
-            }
-          ]
-          testEventDrag(options, '2014-11-04T06:00:00', false, done, 'event-a')
-        })
-      })
-      describe('and neither function returns false', function() {
-        it('allows dragging', function(done) {
-          options.eventSources = [
-            {
-              overlap: function(otherEvent, thisEvent) {
-                return true
-              },
-              events: [ {
-                title: 'Event A',
-                className: 'event-a',
-                start: '2014-11-04T01:00:00',
-                end: '2014-11-04T03:00:00'
-              } ]
-            },
-            {
-              overlap: function(otherEvent, thisEvent) {
-                return true
-              },
-              events: [ {
-                title: 'Event B',
-                className: 'event-b',
-                start: '2014-11-04T05:00:00',
-                end: '2014-11-04T09:00:00'
-              } ]
-            }
-          ]
-          testEventDrag(options, '2014-11-04T06:00:00', true, done, 'event-a')
-        })
       })
     })
   })
