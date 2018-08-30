@@ -425,6 +425,10 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  /*
+  the force flags force certain entities to be rerendered.
+  it does not avoid the delay if one is configured.
+  */
   requestRerender(forceFlags: RenderForceFlags = {}) {
     if (forceFlags === true || !this.rerenderFlags) {
       this.rerenderFlags = forceFlags // true, or the first object
