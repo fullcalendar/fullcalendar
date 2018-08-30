@@ -22,7 +22,6 @@
   },
   "copyright": "2018 Adam Shaw",
   "dependencies": {
-    "moment": "^2.20.1",
     "superagent": "^3.8.2"
   },
   "version": "0.0.0",
@@ -64,6 +63,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-verbose-reporter": "0.0.6",
+    "moment": "^2.20.1",
     "moment-timezone": "^0.5.16",
     "native-promise-only": "^0.8.1",
     "node-sass": "^4.8.3",
