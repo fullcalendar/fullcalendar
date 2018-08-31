@@ -98,8 +98,8 @@ describe('eventDrop', function() {
       })
     })
 
-    // TODO: tests for eventMouseover/eventMouseout firing correctly when no dragging
-    it('should not fire any eventMouseover/eventMouseout events while dragging', function(done) { // issue 1297
+    // TODO: tests for eventMouseEnter/eventMouseLeave firing correctly when no dragging
+    it('should not fire any eventMouseEnter/eventMouseLeave events while dragging', function(done) { // issue 1297
       options.events = [
         {
           title: 'all-day event',
@@ -114,10 +114,10 @@ describe('eventDrop', function() {
           className: 'event2'
         }
       ]
-      options.eventMouseover = function() { }
-      options.eventMouseout = function() { }
-      spyOn(options, 'eventMouseover')
-      spyOn(options, 'eventMouseout')
+      options.eventMouseEnter = function() { }
+      options.eventMouseLeave = function() { }
+      spyOn(options, 'eventMouseEnter')
+      spyOn(options, 'eventMouseLeave')
 
       init(
         function() {
@@ -136,8 +136,8 @@ describe('eventDrop', function() {
           }, 500)
         },
         function(arg) {
-          expect(options.eventMouseover).not.toHaveBeenCalled()
-          expect(options.eventMouseout).not.toHaveBeenCalled()
+          expect(options.eventMouseEnter).not.toHaveBeenCalled()
+          expect(options.eventMouseLeave).not.toHaveBeenCalled()
           done()
         }
       )

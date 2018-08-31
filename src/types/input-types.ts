@@ -179,8 +179,8 @@ export interface OptionsInputBase {
   windowResize?(view: View): void
   dateClick?(arg: { date: Date, isAllDay: boolean, resource: any, el: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   eventClick?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): boolean | void
-  eventMouseover?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  eventMouseout?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
+  eventMouseEnter?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
+  eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   select?(arg: { start: Date, end: Date, isAllDay: boolean, resource: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   unselect?(arg: { view: View, jsEvent: Event }): void
   eventDataTransform?(eventData: any): EventInput

@@ -31,7 +31,7 @@ export default class EventHovering {
     this.component.emitter.off('eventElRemove', this.handleEventElRemove)
   }
 
-  // for simulating an eventMouseout when the event el is destroyed while mouse is over it
+  // for simulating an eventMouseLeave when the event el is destroyed while mouse is over it
   handleEventElRemove = (el: HTMLElement) => {
     if (el === this.currentSegEl) {
       this.handleSegLeave(null, this.currentSegEl)
@@ -42,7 +42,7 @@ export default class EventHovering {
     if (getElSeg(segEl)) { // TODO: better way to make sure not hovering over more+ link or its wrapper
       segEl.classList.add('fc-allow-mouse-resize')
       this.currentSegEl = segEl
-      this.triggerEvent('eventMouseover', ev, segEl)
+      this.triggerEvent('eventMouseEnter', ev, segEl)
     }
   }
 
@@ -50,7 +50,7 @@ export default class EventHovering {
     if (this.currentSegEl) {
       segEl.classList.remove('fc-allow-mouse-resize')
       this.currentSegEl = null
-      this.triggerEvent('eventMouseout', ev, segEl)
+      this.triggerEvent('eventMouseLeave', ev, segEl)
     }
   }
 
