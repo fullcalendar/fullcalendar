@@ -1,4 +1,4 @@
-describe('dayClick', function() {
+describe('dateClick', function() {
   pushOptions({
     defaultDate: '2014-05-27',
     selectable: false,
@@ -18,7 +18,7 @@ describe('dayClick', function() {
 
             it('fires correctly when clicking on a cell', function(done) {
               var options = {}
-              options.dayClick = function(arg) {
+              options.dateClick = function(arg) {
                 expect(arg.date instanceof Date).toEqual(true)
                 expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
                 expect(typeof arg.view).toEqual('object') // "
@@ -41,7 +41,7 @@ describe('dayClick', function() {
 
             it('fires correctly when clicking on an all-day slot', function(done) {
               var options = {}
-              options.dayClick = function(arg) {
+              options.dateClick = function(arg) {
                 expect(arg.date instanceof Date).toEqual(true)
                 expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
                 expect(typeof arg.view).toEqual('object') // "
@@ -65,7 +65,7 @@ describe('dayClick', function() {
               options.contentHeight = 500
               options.scrollTime = '07:00:00'
 
-              options.dayClick = function(arg) {
+              options.dateClick = function(arg) {
                 expect(arg.date instanceof Date).toEqual(true)
                 expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
                 expect(typeof arg.view).toEqual('object') // "
@@ -91,7 +91,7 @@ describe('dayClick', function() {
               options.scrollTime = '07:00:00'
               options.minTime = '02:00:00'
 
-              options.dayClick = function(arg) {
+              options.dateClick = function(arg) {
                 expect(arg.date instanceof Date).toEqual(true)
                 expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
                 expect(typeof arg.view).toEqual('object') // "
@@ -118,7 +118,7 @@ describe('dayClick', function() {
 
     it('fires correctly when simulated short drag on a cell', function(done) {
       var options = {}
-      options.dayClick = function(arg) {
+      options.dateClick = function(arg) {
         expect(arg.date instanceof Date).toEqual(true)
         expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
         expect(typeof arg.view).toEqual('object') // "
@@ -139,8 +139,8 @@ describe('dayClick', function() {
 
     it('won\'t fire if touch moves outside of date cell', function(done) {
       var options = {}
-      options.dayClick = function(arg) {}
-      spyOn(options, 'dayClick').and.callThrough()
+      options.dateClick = function(arg) {}
+      spyOn(options, 'dateClick').and.callThrough()
 
       initCalendar(options)
 
@@ -153,7 +153,7 @@ describe('dayClick', function() {
         isTouch: true,
         end: endCell,
         callback: function() {
-          expect(options.dayClick).not.toHaveBeenCalled()
+          expect(options.dateClick).not.toHaveBeenCalled()
           done()
         }
       })
@@ -161,7 +161,7 @@ describe('dayClick', function() {
 
     it('fires correctly when simulated click on a cell', function(done) {
       var options = {}
-      options.dayClick = function(arg) {
+      options.dateClick = function(arg) {
         expect(arg.date instanceof Date).toEqual(true)
         expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
         expect(typeof arg.view).toEqual('object') // "

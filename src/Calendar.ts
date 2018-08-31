@@ -1035,7 +1035,7 @@ export default class Calendar {
 
   // TODO: receive pev?
   triggerDayClick(dateSpan: DateSpan, dayEl: HTMLElement, view: View, ev: UIEvent) {
-    this.publiclyTrigger('dayClick', [
+    this.publiclyTrigger('dateClick', [
       {
         date: this.dateEnv.toDate(dateSpan.range.start),
         isAllDay: dateSpan.isAllDay,
