@@ -18,7 +18,7 @@ describe('rerenderDelay', function() {
       defaultView: 'agendaDay',
       events: eventSource1,
       rerenderDelay: 0, // will still debounce despite being zero
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         eventRenderCnt++
         if (eventRenderCnt === 2) {
 

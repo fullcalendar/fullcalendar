@@ -36,7 +36,7 @@ describe('background events', function() {
           start: '2014-11-04',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(1)
           expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
           expect(getSingleBackgroundEventEl()).toBeLeftOf('.fc-day[data-date="2014-11-05"]')
@@ -54,7 +54,7 @@ describe('background events', function() {
           end: '2014-11-11',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(2)
           expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
           expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
@@ -79,7 +79,7 @@ describe('background events', function() {
             rendering: 'background'
           }
         ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(2)
           expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(2)
           expect(getBackgroundEventEls().eq(0)).toBeRightOf('.fc-day[data-date="2014-11-02"]')
@@ -98,7 +98,7 @@ describe('background events', function() {
             end: '2014-11-09',
             rendering: 'background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(1)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
             expect(getBackgroundEventEls()).toBeRightOf('.fc-day-grid .fc-row:eq(1) .fc-week-number')
@@ -111,7 +111,7 @@ describe('background events', function() {
       it('renders "business hours" on whole days', function(done) {
         var options = {}
         options.businessHours = true
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           setTimeout(function() { // no trigger when business hours renders. this will have to do.
             expect(getNonBusinessDayEls().length).toBe(12) // there are 6 weeks. 2 weekend days each
             done()
@@ -131,7 +131,7 @@ describe('background events', function() {
           start: '2014-11-04',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(1)
           expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
           expect(getBackgroundEventEls()).toBeRightOf('.fc-day[data-date="2014-11-06"]')
@@ -148,7 +148,7 @@ describe('background events', function() {
           end: '2014-11-11',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(2)
           expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
           expect(getBackgroundEventEls(getDayGridRowEls().eq(2)).length).toBe(1)
@@ -168,7 +168,7 @@ describe('background events', function() {
             end: '2014-11-09',
             rendering: 'background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(1)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
             expect(getBackgroundEventEls()).toBeLeftOf('.fc-day-grid .fc-row:eq(1) .fc-week-number span')
@@ -190,7 +190,7 @@ describe('background events', function() {
             start: '2014-11-04',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(7)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(2)
@@ -217,7 +217,7 @@ describe('background events', function() {
             end: '2014-11-11',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(6)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
@@ -244,7 +244,7 @@ describe('background events', function() {
             end: '2014-11-06',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(5)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(0)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
@@ -267,7 +267,7 @@ describe('background events', function() {
             end: '2014-12-08',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(5)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(1)
@@ -297,7 +297,7 @@ describe('background events', function() {
               rendering: 'inverse-background'
             }
           ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(8)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(3)
@@ -329,7 +329,7 @@ describe('background events', function() {
             start: '2014-11-04',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(7)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(0)).length).toBe(1)
             expect(getBackgroundEventEls(getDayGridRowEls().eq(1)).length).toBe(2)
@@ -362,7 +362,7 @@ describe('background events', function() {
             start: '2014-11-04'
           } ]
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(1)
           expect(getEventEls().length).toBe(0)
           done()
@@ -381,7 +381,7 @@ describe('background events', function() {
             start: '2014-11-04T01:00:00'
           } ]
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(1)
           expect(getEventEls().length).toBe(0)
           done()
@@ -402,7 +402,7 @@ describe('background events', function() {
           end: '2014-11-04T05:00:00',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(1)
           expect(queryBgEventsInCol(2).length).toBe(1) // column 2
           expect(getBackgroundEventEls()).toBeBelow('.fc-slats tr:eq(0)') // should be 1am (eq(1)) but FF cmplaning
@@ -420,7 +420,7 @@ describe('background events', function() {
           end: '2014-11-05T05:00:00',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(2)
           expect(queryBgEventsInCol(2).length).toBe(1)
           expect(queryBgEventsInCol(3).length).toBe(1)
@@ -443,7 +443,7 @@ describe('background events', function() {
             rendering: 'background'
           }
         ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(4)
           expect(queryBgEventsInCol(2).length).toBe(2)
           expect(queryBgEventsInCol(3).length).toBe(2)
@@ -493,7 +493,7 @@ describe('background events', function() {
           end: '2014-11-04T05:00:00',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(1)
           expect(queryBgEventsInCol(4).length).toBe(1)
           expect(getBackgroundEventEls()).toBeBelow('.fc-slats tr:eq(0)') // should be 1am (eq(1)) but FF cmplaining
@@ -509,7 +509,7 @@ describe('background events', function() {
           end: '2014-11-05T05:00:00',
           rendering: 'background'
         } ]
-        options.eventAfterAllRender = function() {
+        options._eventsRendered = function() {
           expect(getBackgroundEventEls().length).toBe(2)
           expect(queryBgEventsInCol(3).length).toBe(1)
           expect(queryBgEventsInCol(4).length).toBe(1)
@@ -554,7 +554,7 @@ describe('background events', function() {
             end: '2014-11-04T05:00:00',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(8)
             expect(queryBgEventsInCol(0).length).toBe(1)
             expect(queryBgEventsInCol(1).length).toBe(1)
@@ -576,7 +576,7 @@ describe('background events', function() {
             end: '2014-11-05T05:00:00',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(7)
             expect(queryBgEventsInCol(0).length).toBe(1)
             expect(queryBgEventsInCol(1).length).toBe(1)
@@ -598,7 +598,7 @@ describe('background events', function() {
             end: '2014-11-04T05:00:00',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(5)
             expect(queryBgEventsInCol(0).length).toBe(0)
             expect(queryBgEventsInCol(1).length).toBe(0)
@@ -620,7 +620,7 @@ describe('background events', function() {
             end: '2014-11-12T05:00:00',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(3)
             expect(queryBgEventsInCol(0).length).toBe(1)
             expect(queryBgEventsInCol(1).length).toBe(1)
@@ -647,7 +647,7 @@ describe('background events', function() {
               rendering: 'inverse-background'
             }
           ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(9)
             expect(queryBgEventsInCol(0).length).toBe(1)
             expect(queryBgEventsInCol(1).length).toBe(2)
@@ -678,7 +678,7 @@ describe('background events', function() {
               rendering: 'inverse-background'
             }
           ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(8)
             expect(queryBgEventsInCol(0).length).toBe(1)
             expect(queryBgEventsInCol(1).length).toBe(1)
@@ -707,7 +707,7 @@ describe('background events', function() {
             end: '2014-11-04T05:00:00',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(8)
             expect(queryBgEventsInCol(0).length).toBe(1)
             expect(queryBgEventsInCol(1).length).toBe(1)
@@ -731,7 +731,7 @@ describe('background events', function() {
             end: '2014-01-01T05:00:00',
             rendering: 'inverse-background'
           } ]
-          options.eventAfterAllRender = function() {
+          options._eventsRendered = function() {
             expect(getBackgroundEventEls().length).toBe(7)
             done()
           }
@@ -747,7 +747,7 @@ describe('background events', function() {
         rendering: 'background',
         color: 'red'
       } ]
-      options.eventAfterAllRender = function() {
+      options._eventsRendered = function() {
         expect(getBackgroundEventEls().css('background-color')).toMatch(RED_REGEX)
         done()
       }
@@ -761,7 +761,7 @@ describe('background events', function() {
         rendering: 'background',
         backgroundColor: 'red'
       } ]
-      options.eventAfterAllRender = function() {
+      options._eventsRendered = function() {
         expect(getBackgroundEventEls().css('background-color')).toMatch(RED_REGEX)
         done()
       }
@@ -777,7 +777,7 @@ describe('background events', function() {
           rendering: 'background'
         } ]
       } ]
-      options.eventAfterAllRender = function() {
+      options._eventsRendered = function() {
         expect(getBackgroundEventEls().css('background-color')).toMatch(RED_REGEX)
         done()
       }
@@ -793,7 +793,7 @@ describe('background events', function() {
           rendering: 'background'
         } ]
       } ]
-      options.eventAfterAllRender = function() {
+      options._eventsRendered = function() {
         expect(getBackgroundEventEls().css('background-color')).toMatch(RED_REGEX)
         done()
       }
@@ -809,7 +809,7 @@ describe('background events', function() {
           rendering: 'background'
         } ]
       } ]
-      options.eventAfterAllRender = function() {
+      options._eventsRendered = function() {
         expect(getBackgroundEventEls().css('background-color')).toMatch(RED_REGEX)
         done()
       }
@@ -825,7 +825,7 @@ describe('background events', function() {
           rendering: 'background'
         } ]
       } ]
-      options.eventAfterAllRender = function() {
+      options._eventsRendered = function() {
         expect(getBackgroundEventEls().css('background-color')).toMatch(RED_REGEX)
         done()
       }

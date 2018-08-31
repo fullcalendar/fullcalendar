@@ -23,7 +23,7 @@
       month: 6, // July
       date: 31,
       events: 'slot_event_overlap.json',
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         testOverlap($('#calendar'), true, false);
       }
     });
@@ -42,7 +42,7 @@
       date: 31,
       events: 'slot_event_overlap.json',
       slotEventOverlap: false,
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         testOverlap($('#calendar-nooverlap'), false, false);
       }
     });
@@ -61,7 +61,7 @@
       date: 31,
       events: 'slot_event_overlap.json',
       isRTL: true,
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         testOverlap($('#calendar-rtl'), true, true);
       }
     });
@@ -81,7 +81,7 @@
       events: 'slot_event_overlap.json',
       isRTL: true,
       slotEventOverlap: false,
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         testOverlap($('#calendar-rtl-nooverlap'), false, true);
       }
     });

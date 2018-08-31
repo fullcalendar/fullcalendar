@@ -63,7 +63,7 @@ describe('scroll state', function() {
         events: [ {
           start: '2015-02-20'
         } ],
-        eventAfterAllRender: function() {
+        _eventsRendered: function() {
           if (++calls === 1) {
             eventEl0 = $('.fc-event', calendarEl)
             expect(eventEl0.length).toBe(1)

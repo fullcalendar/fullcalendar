@@ -28,7 +28,7 @@ describe('displayEventEnd', function() {
               end: '2014-06-13',
               allDay: true
             } ],
-            eventAfterAllRender: function() {
+            _eventsRendered: function() {
               expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
               done()
             }
@@ -44,7 +44,7 @@ describe('displayEventEnd', function() {
               start: '2014-06-13T01:00:00',
               allDay: false
             } ],
-            eventAfterAllRender: function() {
+            _eventsRendered: function() {
               expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
@@ -61,7 +61,7 @@ describe('displayEventEnd', function() {
               end: '2014-06-13T02:00:00',
               allDay: false
             } ],
-            eventAfterAllRender: function() {
+            _eventsRendered: function() {
               expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
@@ -85,7 +85,7 @@ describe('displayEventEnd', function() {
               end: '2014-06-13',
               allDay: true
             } ],
-            eventAfterAllRender: function() {
+            _eventsRendered: function() {
               expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
               done()
             }
@@ -101,7 +101,7 @@ describe('displayEventEnd', function() {
               start: '2014-06-13T01:00:00',
               allDay: false
             } ],
-            eventAfterAllRender: function() {
+            _eventsRendered: function() {
               expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
@@ -118,7 +118,7 @@ describe('displayEventEnd', function() {
               end: '2014-06-13T01:00:00',
               allDay: false
             } ],
-            eventAfterAllRender: function() {
+            _eventsRendered: function() {
               expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
@@ -135,7 +135,7 @@ describe('displayEventEnd', function() {
               end: '2014-06-13T02:00:00',
               allDay: false
             } ],
-            eventAfterAllRender: function() {
+            _eventsRendered: function() {
               expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM - 2:00 AM')
               done()
             }

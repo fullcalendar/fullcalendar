@@ -71,7 +71,7 @@ describe('addEventSource', function() {
   function go(addFunc, extraTestFunc, doneFunc) {
     var callCnt = 0
     var options = {}
-    options.eventAfterAllRender = function() {
+    options._eventsRendered = function() {
       callCnt++
       if (callCnt === 2) { // once for initial render. second time for addEventSource
 

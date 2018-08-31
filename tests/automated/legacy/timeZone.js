@@ -29,7 +29,7 @@ describe('timeZone', function() {
   it('receives events correctly when local timezone', function(done) {
     initCalendar({
       timeZone: 'local',
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         expectLocalTimezone()
         done()
       }
@@ -52,7 +52,7 @@ describe('timeZone', function() {
   it('receives events correctly when UTC timezone', function(done) {
     initCalendar({
       timeZone: 'UTC',
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         expectUtcTimezone()
         done()
       }
@@ -75,7 +75,7 @@ describe('timeZone', function() {
   it('receives events correctly when custom timezone', function(done) {
     initCalendar({
       timeZone: 'America/Chicago',
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         expectCustomTimezone()
         done()
       }
@@ -100,7 +100,7 @@ describe('timeZone', function() {
 
     initCalendar({
       timeZone: 'local',
-      eventAfterAllRender: function() {
+      _eventsRendered: function() {
         callCnt++
         if (callCnt === 1) {
 
