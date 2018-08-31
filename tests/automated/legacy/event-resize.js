@@ -342,7 +342,7 @@ describe('eventResize', function() {
           eventRender(arg) {
             $(arg.el).addClass('eventDidRender')
           },
-          eventRendered(arg) {
+          eventPositioned(arg) {
             $(arg.el).addClass('eventDidPosition')
           },
           _eventsPositioned() {

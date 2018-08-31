@@ -384,34 +384,34 @@ describe('eventLimit popover', function() {
         { title: 'event4', start: '2014-07-29', className: 'event4' }
       ],
       eventRender: function() {},
-      eventRendered: function() {},
+      eventPositioned: function() {},
       _eventsPositioned: function() {},
       eventDestroy: function() {}
     }
 
     spyOn(options, 'eventRender')
-    spyOn(options, 'eventRendered')
+    spyOn(options, 'eventPositioned')
     spyOn(options, '_eventsPositioned')
     spyOn(options, 'eventDestroy')
 
     initCalendar(options)
 
     expect(options.eventRender.calls.count()).toBe(4)
-    expect(options.eventRendered.calls.count()).toBe(4)
+    expect(options.eventPositioned.calls.count()).toBe(4)
     expect(options._eventsPositioned.calls.count()).toBe(1)
     expect(options.eventDestroy.calls.count()).toBe(0)
 
     $('.fc-more').simulate('click')
 
     expect(options.eventRender.calls.count()).toBe(8) // +4
-    expect(options.eventRendered.calls.count()).toBe(8) // +4
+    expect(options.eventPositioned.calls.count()).toBe(8) // +4
     expect(options._eventsPositioned.calls.count()).toBe(1) // stays same!
     expect(options.eventDestroy.calls.count()).toBe(0)
 
     $('.fc-more-popover .fc-close').simulate('click')
 
     expect(options.eventRender.calls.count()).toBe(8)
-    expect(options.eventRendered.calls.count()).toBe(8)
+    expect(options.eventPositioned.calls.count()).toBe(8)
     expect(options._eventsPositioned.calls.count()).toBe(1)
     expect(options.eventDestroy.calls.count()).toBe(4) // +4
   })
