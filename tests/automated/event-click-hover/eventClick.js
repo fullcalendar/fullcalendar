@@ -31,12 +31,26 @@ describe('eventClick', function() {
         { start: '2018-08-31', rendering: 'background' }
       ],
       eventClick(arg) {
+        expect(arg.event.rendering).toBe('background')
         done()
       }
     })
 
     // single EVENT element
     getSingleBackgroundEventEl().simulate('click')
+  })
+
+  it('works via touch', function(done) {
+    initCalendar({
+      events: [
+        { start: '2018-08-31' }
+      ],
+      eventClick() {
+        done()
+      }
+    })
+
+    getSingleEl().simulate('click')
   })
 
 })
