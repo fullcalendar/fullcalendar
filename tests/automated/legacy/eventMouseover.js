@@ -38,4 +38,30 @@ describe('eventMouseover', function() {
       })
     })
   })
+
+  it('gets fired for background events', function(done) {
+    let mouseoverCalled = false
+
+    initCalendar({
+      events: [ {
+        start: '2014-08-02',
+        rendering: 'background',
+        className: 'event'
+      } ],
+      eventMouseover(arg) {
+        expect(arg.event.rendering).toBe('background')
+        mouseoverCalled = true
+      },
+      eventMouseout() {
+        expect(mouseoverCalled).toBe(true)
+        done()
+      }
+    })
+
+    $('.event')
+      .simulate('mouseover')
+      .simulate('mouseout')
+      .simulate('mouseleave') // helps out listenBySelector
+  })
+
 })
