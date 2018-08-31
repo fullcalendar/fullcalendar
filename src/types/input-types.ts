@@ -173,8 +173,8 @@ export interface OptionsInputBase {
   droppable?: boolean
   dropAccept?: string | ((draggable: any) => boolean)
 
-  viewRender?(arg: { view: View, el: HTMLElement }): void
-  viewDestroy?(arg: { view: View, el: HTMLElement }): void
+  datesRender?(arg: { view: View, el: HTMLElement }): void
+  datesDestroy?(arg: { view: View, el: HTMLElement }): void
   dayRender?(arg: { view: View, date: Date, isAllDay: boolean, el: HTMLElement }): void
   windowResize?(view: View): void
   dateClick?(arg: { date: Date, isAllDay: boolean, resource: any, el: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler

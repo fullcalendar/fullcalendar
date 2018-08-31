@@ -1,4 +1,4 @@
-describe('viewDestroy', function() {
+describe('datesDestroy', function() {
 
   pushOptions({
     defaultDate: '2015-02-20'
@@ -20,17 +20,17 @@ describe('viewDestroy', function() {
 
   function defineTests() {
     it('fires before the view is unrendered, with correct arguments', function(done) {
-      var viewRenderCalls = 0
-      var viewDestroyCalls = 0
+      var datesRenderCalls = 0
+      var datesDestroyCalls = 0
       initCalendar({
-        viewRender: function() {
-          ++viewRenderCalls
+        datesRender: function() {
+          ++datesRenderCalls
         },
-        viewDestroy: function(arg) {
-          if (++viewDestroyCalls === 1) { // because done() calls destroy
+        datesDestroy: function(arg) {
+          if (++datesDestroyCalls === 1) { // because done() calls destroy
 
-            // the viewDestroy should be called before the next viewRender
-            expect(viewRenderCalls).toBe(1)
+            // the datesDestroy should be called before the next datesRender
+            expect(datesRenderCalls).toBe(1)
 
             var viewObj = currentCalendar.getView()
             var viewEl = $('.fc-view', currentCalendar.el)
@@ -42,7 +42,7 @@ describe('viewDestroy', function() {
           }
         }
       })
-      currentCalendar.next() // trigger viewDestroy/viewRender
+      currentCalendar.next() // trigger datesDestroy/datesRender
     })
   }
 })

@@ -201,7 +201,7 @@ export default abstract class View extends DateComponent {
 
 
   triggerRenderedDates() {
-    this.publiclyTriggerAfterSizing('viewRender', [
+    this.publiclyTriggerAfterSizing('datesRender', [
       {
         view: this,
         el: this.el
@@ -211,7 +211,7 @@ export default abstract class View extends DateComponent {
 
 
   triggerWillRemoveDates() {
-    this.publiclyTrigger('viewDestroy', [
+    this.publiclyTrigger('datesDestroy', [
       {
         view: this,
         el: this.el

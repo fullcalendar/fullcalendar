@@ -96,7 +96,7 @@ export default class ListView extends View {
 
     // all real rendering happens in EventRenderer
 
-    super.renderDates(dateProfile) // important for firing viewRender
+    super.renderDates(dateProfile) // important for firing datesRender
   }
 
 

@@ -27,9 +27,9 @@
       editable: true,
       selectable: true,
 
-      viewRender: function(view, element) {
-        console.log('viewRender');
-        //alert('viewRender');
+      datesRender: function(view, element) {
+        console.log('datesRender');
+        //alert('datesRender');
         if (verbose) {
           console.log(' this', this);
           console.log(' view', view);
@@ -45,9 +45,9 @@
         }
       },
 
-      viewDestroy: function(view, element) {
-        console.log('viewDestroy');
-        //alert('viewDestroy');
+      datesDestroy: function(view, element) {
+        console.log('datesDestroy');
+        //alert('datesDestroy');
         if (verbose) {
           console.log(' this', this);
           console.log(' view', view);

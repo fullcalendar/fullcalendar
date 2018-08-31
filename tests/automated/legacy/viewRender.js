@@ -1,4 +1,4 @@
-describe('viewRender', function() {
+describe('datesRender', function() {
 
   pushOptions({
     defaultDate: '2015-02-20'
@@ -22,7 +22,7 @@ describe('viewRender', function() {
 
     it('fires after the view is rendered, with correct arguments', function(done) {
       initCalendar({
-        viewRender: function(arg) {
+        datesRender: function(arg) {
           var viewObj = currentCalendar.getView()
           var viewEl = $('.fc-view', currentCalendar.el)
 

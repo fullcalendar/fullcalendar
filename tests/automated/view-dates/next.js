@@ -115,7 +115,7 @@ describe('next', function() {
           var called
 
           initCalendar({
-            viewRender: function() {
+            datesRender: function() {
               called = true
             }
           })
