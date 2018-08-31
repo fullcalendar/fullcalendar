@@ -56,7 +56,8 @@ export default abstract class DateComponent extends Component {
   useEventCenter: boolean = true // for dragging geometry
   doesDragHelper: boolean = false // for events that ORIGINATE from this component
   doesDragHighlight: boolean = false // for events that ORIGINATE from this component
-  segSelector: string = '.fc-event-container > *' // what constitutes an event element?
+  fgSegSelector: string = '.fc-event-container > *' // lets eventRender produce elements without fc-event class
+  bgSegSelector: string = '.fc-bgevent'
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
   // of the date areas. if not defined, assumes to be day and time granularity.
@@ -1104,7 +1105,7 @@ export default abstract class DateComponent extends Component {
 
 
   isValidDateDownEl(el: HTMLElement) {
-    let segEl = elementClosest(el, this.segSelector)
+    let segEl = elementClosest(el, this.fgSegSelector)
 
     return (!segEl || segEl.classList.contains('fc-helper')) &&
       !elementClosest(el, '.fc-more') && // a "more.." link

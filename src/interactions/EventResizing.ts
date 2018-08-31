@@ -196,7 +196,7 @@ export default class EventDragging {
   }
 
   querySeg(ev: PointerDragEvent): Seg | null {
-    return getElSeg(elementClosest(ev.subjectEl as HTMLElement, this.component.segSelector))
+    return getElSeg(elementClosest(ev.subjectEl as HTMLElement, this.component.fgSegSelector))
   }
 
 }

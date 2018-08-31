@@ -18,7 +18,7 @@ export default class EventClicking {
     this.destroy = listenBySelector(
       component.el,
       'click',
-      component.segSelector,
+      component.fgSegSelector + ',' + component.bgSegSelector,
       this.handleSegClick
     )
   }

@@ -18,7 +18,7 @@ export default class EventHovering {
 
     this.removeHoverListeners = listenToHoverBySelector(
       component.el,
-      component.segSelector,
+      component.fgSegSelector + ',' + component.bgSegSelector,
       this.handleSegEnter,
       this.handleSegLeave
     )

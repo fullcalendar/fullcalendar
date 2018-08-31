@@ -19,7 +19,7 @@ export default class ListView extends View {
 
   isInteractable = true
   slicingType: 'all-day' = 'all-day' // stupid TypeScript
-  segSelector: any = '.fc-list-item' // which elements accept event actions
+  fgSegSelector: any = '.fc-list-item' // which elements accept event actions
 
   scroller: ScrollComponent
   contentEl: HTMLElement

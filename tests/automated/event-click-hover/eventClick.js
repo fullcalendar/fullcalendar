@@ -1,4 +1,4 @@
-import { getSingleEl } from '../event-render/EventRenderUtils'
+import { getSingleEl, getSingleBackgroundEventEl } from '../event-render/EventRenderUtils'
 
 describe('eventClick', function() {
   pushOptions({
@@ -24,4 +24,19 @@ describe('eventClick', function() {
     // single EVENT element
     getSingleEl().simulate('click')
   })
+
+  it('fires on a background event', function(done) {
+    initCalendar({
+      events: [
+        { start: '2018-08-31', rendering: 'background' }
+      ],
+      eventClick(arg) {
+        done()
+      }
+    })
+
+    // single EVENT element
+    getSingleBackgroundEventEl().simulate('click')
+  })
+
 })

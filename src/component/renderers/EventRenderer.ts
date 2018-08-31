@@ -126,7 +126,14 @@ export default class EventRenderer {
           }
         },
         filterEl: (seg, el) => {
-          return this.filterEventRenderEl(seg, el)
+          el = this.filterEventRenderEl(seg, el)
+
+          if (el) {
+            setElSeg(el, seg)
+            seg.el = el
+          }
+
+          return el
         }
       })
     }
