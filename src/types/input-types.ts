@@ -186,7 +186,7 @@ export interface OptionsInputBase {
   eventDataTransform?(eventData: any): EventInput
   loading?(isLoading: boolean, view: View): void
   eventRender?(arg: { event: EventApi, el: HTMLElement, view: View }): void
-  eventAfterRender?(arg: { event: EventApi, el: HTMLElement, view: View }): void
+  eventRendered?(arg: { event: EventApi, el: HTMLElement, view: View }): void
   eventAfterAllRender?(arg: { view: View }): void
   eventDestroy?(arg: { event: EventApi, el: HTMLElement, view: View }): void
   eventDragStart?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: View }): void

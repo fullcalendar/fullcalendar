@@ -7,13 +7,13 @@ describe('selectMirror', function() {
     selectMirror: true
   })
 
-  it('goes through eventRender and eventAfterRender', function() {
+  it('goes through eventRender and eventRendered', function() {
     initCalendar({
       eventRender(arg) {
         expect(arg.isMirror).toBe(true)
         $(arg.el).addClass('eventDidRender')
       },
-      eventAfterRender(arg) {
+      eventRendered(arg) {
         expect(arg.isMirror).toBe(true)
         $(arg.el).addClass('eventDidPosition')
       }

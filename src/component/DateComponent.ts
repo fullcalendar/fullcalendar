@@ -271,11 +271,11 @@ export default abstract class DateComponent extends Component {
 
 
   triggerRenderedSegs(segs: Seg[], isMirrors: boolean = false) {
-    if (this.hasPublicHandlers('eventAfterRender')) {
+    if (this.hasPublicHandlers('eventRendered')) {
       let calendar = this.getCalendar()
 
       for (let seg of segs) {
-        this.publiclyTriggerAfterSizing('eventAfterRender', [
+        this.publiclyTriggerAfterSizing('eventRendered', [
           {
             event: new EventApi(
               calendar,
