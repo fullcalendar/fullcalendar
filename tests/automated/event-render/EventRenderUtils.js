@@ -76,6 +76,7 @@ export function getEventElResizerEl(eventEl) {
   return eventEl.find(`.${RESIZER_CLASS}`)
 }
 
+// single EVENT element
 export function getSingleEl() {
   var els = getEventEls()
   expect(els).toHaveLength(1)
