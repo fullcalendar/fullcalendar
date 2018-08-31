@@ -179,10 +179,10 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
       this.dragging.setMirrorNeedsRevert(!mutation)
 
-      // render the mirror if no already-rendered helper
+      // render the mirror if no already-rendered mirror
       // TODO: wish we could somehow wait for dispatch to guarantee render
       this.dragging.setMirrorIsVisible(
-        !hit || !document.querySelector('.fc-helper')
+        !hit || !document.querySelector('.fc-mirror')
       )
 
       // assign states based on new hit

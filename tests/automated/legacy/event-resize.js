@@ -312,7 +312,7 @@ describe('eventResize', function() {
         var options = {}
         options.eventAfterAllRender = function() {
           setTimeout(function() {
-            var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
+            var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
             $('.fc-event').simulate('mouseover') // for revealing resizer
             $('.fc-event .fc-resizer').simulate('drag', {
               dy: dy,

@@ -4,7 +4,7 @@ import { default as DayTableMixin, DayTableInterface } from '../component/DayTab
 import PositionCache from '../common/PositionCache'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
-import TimeGridHelperRenderer from './TimeGridHelperRenderer'
+import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
 import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDurations, asRoughMs } from '../datelib/duration'
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
@@ -42,12 +42,12 @@ export default class TimeGrid extends DateComponent {
   getCellDate: DayTableInterface['getCellDate']
 
   isInteractable = true
-  doesDragHelper = true
+  doesDragMirror = true
   doesDragHighlight = false
   slicingType: 'timed' = 'timed' // stupid TypeScript
 
   view: any // TODO: make more general and/or remove
-  helperRenderer: any
+  mirrorRenderer: any
 
   dayRanges: DateRange[] // of start-end of each day
   slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
@@ -74,7 +74,7 @@ export default class TimeGrid extends DateComponent {
   // inner-containers for each column where different types of segs live
   fgContainerEls: HTMLElement[]
   bgContainerEls: HTMLElement[]
-  helperContainerEls: HTMLElement[]
+  mirrorContainerEls: HTMLElement[]
   highlightContainerEls: HTMLElement[]
   businessContainerEls: HTMLElement[]
 
@@ -354,7 +354,7 @@ export default class TimeGrid extends DateComponent {
       cellHtml +=
         '<td>' +
           '<div class="fc-content-col">' +
-            '<div class="fc-event-container fc-helper-container"></div>' +
+            '<div class="fc-event-container fc-mirror-container"></div>' +
             '<div class="fc-event-container"></div>' +
             '<div class="fc-highlight-container"></div>' +
             '<div class="fc-bgevent-container"></div>' +
@@ -372,8 +372,8 @@ export default class TimeGrid extends DateComponent {
     )
 
     this.colContainerEls = findElements(skeletonEl, '.fc-content-col')
-    this.helperContainerEls = findElements(skeletonEl, '.fc-helper-container')
-    this.fgContainerEls = findElements(skeletonEl, '.fc-event-container:not(.fc-helper-container)')
+    this.mirrorContainerEls = findElements(skeletonEl, '.fc-mirror-container')
+    this.fgContainerEls = findElements(skeletonEl, '.fc-event-container:not(.fc-mirror-container)')
     this.bgContainerEls = findElements(skeletonEl, '.fc-bgevent-container')
     this.highlightContainerEls = findElements(skeletonEl, '.fc-highlight-container')
     this.businessContainerEls = findElements(skeletonEl, '.fc-business-container')
@@ -645,13 +645,13 @@ export default class TimeGrid extends DateComponent {
       this.eventStoreToRanges(eventStore, eventUis)
     )
 
-    this.helperRenderer.renderEventResizingSegs(segs, origSeg)
+    this.mirrorRenderer.renderEventResizingSegs(segs, origSeg)
   }
 
 
   // Unrenders any visual indication of an event being resized
   unrenderEventResize() {
-    this.helperRenderer.unrender()
+    this.mirrorRenderer.unrender()
   }
 
 
@@ -661,8 +661,8 @@ export default class TimeGrid extends DateComponent {
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
   renderDateSelection(selection: DateSpan) {
-    if (this.opt('selectHelper')) {
-      this.helperRenderer.renderEventSegs(this.selectionToSegs(selection, true))
+    if (this.opt('selectMirror')) {
+      this.mirrorRenderer.renderEventSegs(this.selectionToSegs(selection, true))
     } else {
       this.renderHighlightSegs(this.selectionToSegs(selection, false))
     }
@@ -671,14 +671,14 @@ export default class TimeGrid extends DateComponent {
 
   // Unrenders any visual indication of a selection
   unrenderDateSelection() {
-    this.helperRenderer.unrender()
+    this.mirrorRenderer.unrender()
     this.unrenderHighlight()
   }
 
 }
 
 TimeGrid.prototype.eventRendererClass = TimeGridEventRenderer
-TimeGrid.prototype.helperRendererClass = TimeGridHelperRenderer
+TimeGrid.prototype.mirrorRendererClass = TimeGridMirrorRenderer
 TimeGrid.prototype.fillRendererClass = TimeGridFillRenderer
 
 DayTableMixin.mixInto(TimeGrid)

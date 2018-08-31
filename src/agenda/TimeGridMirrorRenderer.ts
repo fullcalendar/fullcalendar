@@ -1,12 +1,12 @@
 import { applyStyle } from '../util/dom-manip'
-import HelperRenderer from '../component/renderers/HelperRenderer'
+import MirrorRenderer from '../component/renderers/MirrorRenderer'
 import { Seg } from '../component/DateComponent'
 
 
-export default class TimeGridHelperRenderer extends HelperRenderer {
+export default class TimeGridMirrorRenderer extends MirrorRenderer {
 
   renderSegs(segs: Seg[], sourceSeg) {
-    let helperNodes = []
+    let mirrorNodes = []
     let i
     let seg: Seg
     let sourceEl
@@ -15,7 +15,7 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
     // TODO: not good to call eventRenderer this way
     this.eventRenderer.renderFgSegsIntoContainers(
       segs,
-      this.component.helperContainerEls
+      this.component.mirrorContainerEls
     )
 
     // Try to make the segment that is in the same row as sourceSeg look the same
@@ -38,10 +38,10 @@ export default class TimeGridHelperRenderer extends HelperRenderer {
         })
       }
 
-      helperNodes.push(seg.el)
+      mirrorNodes.push(seg.el)
     }
 
-    return helperNodes // must return the elements rendered
+    return mirrorNodes // must return the elements rendered
   }
 
   computeSize() {

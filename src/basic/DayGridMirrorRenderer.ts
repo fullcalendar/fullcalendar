@@ -1,17 +1,17 @@
 import { htmlToElement } from '../util/dom-manip'
-import HelperRenderer from '../component/renderers/HelperRenderer'
+import MirrorRenderer from '../component/renderers/MirrorRenderer'
 import DayGrid from './DayGrid'
 import { Seg } from '../component/DateComponent'
 
 
-export default class DayGridHelperRenderer extends HelperRenderer {
+export default class DayGridMirrorRenderer extends MirrorRenderer {
 
   component: DayGrid
 
 
-  // Renders a mock "helper" event. `sourceSeg` is the associated internal segment object. It can be null.
+  // Renders a mock "mirror" event. `sourceSeg` is the associated internal segment object. It can be null.
   renderSegs(segs: Seg[], sourceSeg) {
-    let helperNodes = []
+    let mirrorNodes = []
     let rowStructs
 
     // TODO: not good to call eventRenderer this way
@@ -19,7 +19,7 @@ export default class DayGridHelperRenderer extends HelperRenderer {
 
     // inject each new event skeleton into each associated row
     this.component.rowEls.forEach(function(rowNode, row) {
-      let skeletonEl = htmlToElement('<div class="fc-helper-skeleton"><table></table></div>') // will be absolutely positioned
+      let skeletonEl = htmlToElement('<div class="fc-mirror-skeleton"><table></table></div>') // will be absolutely positioned
       let skeletonTopEl: HTMLElement
       let skeletonTop
 
@@ -40,10 +40,10 @@ export default class DayGridHelperRenderer extends HelperRenderer {
       skeletonEl.querySelector('table').appendChild(rowStructs[row].tbodyEl)
 
       rowNode.appendChild(skeletonEl)
-      helperNodes.push(skeletonEl)
+      mirrorNodes.push(skeletonEl)
     })
 
-    return helperNodes // must return the elements rendered
+    return mirrorNodes // must return the elements rendered
   }
 
 }

@@ -2,12 +2,12 @@ import { removeElement } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
 
 
-export default abstract class HelperRenderer {
+export default abstract class MirrorRenderer {
 
   view: any
   component: any
   eventRenderer: any
-  helperEls: HTMLElement[]
+  mirrorEls: HTMLElement[]
   segs: Seg[]
 
 
@@ -45,7 +45,7 @@ export default abstract class HelperRenderer {
 
     for (i = 0; i < segs.length; i++) {
       let classList = segs[i].el.classList
-      classList.add('fc-helper')
+      classList.add('fc-mirror')
       if (extraClassName) {
         classList.add(extraClassName)
       }
@@ -57,7 +57,7 @@ export default abstract class HelperRenderer {
       }
     }
 
-    this.helperEls = this.renderSegs(segs, sourceSeg)
+    this.mirrorEls = this.renderSegs(segs, sourceSeg)
     this.segs = segs
   }
 
@@ -77,9 +77,9 @@ export default abstract class HelperRenderer {
 
 
   unrender() {
-    if (this.helperEls) {
-      this.helperEls.forEach(removeElement)
-      this.helperEls = null
+    if (this.mirrorEls) {
+      this.mirrorEls.forEach(removeElement)
+      this.mirrorEls = null
     }
   }
 

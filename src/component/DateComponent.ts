@@ -54,7 +54,7 @@ export default abstract class DateComponent extends Component {
   // self-config, overridable by subclasses
   isInteractable: boolean = false
   useEventCenter: boolean = true // for dragging geometry
-  doesDragHelper: boolean = false // for events that ORIGINATE from this component
+  doesDragMirror: boolean = false // for events that ORIGINATE from this component
   doesDragHighlight: boolean = false // for events that ORIGINATE from this component
   fgSegSelector: string = '.fc-event-container > *' // lets eventRender produce elements without fc-event class
   bgSegSelector: string = '.fc-bgevent'
@@ -67,7 +67,7 @@ export default abstract class DateComponent extends Component {
   slicingType: 'timed' | 'all-day' | null = null
 
   eventRendererClass: any
-  helperRendererClass: any
+  mirrorRendererClass: any
   fillRendererClass: any
 
   uid: any
@@ -78,7 +78,7 @@ export default abstract class DateComponent extends Component {
   emitter: EmitterMixin = new EmitterMixin()
 
   eventRenderer: any
-  helperRenderer: any
+  mirrorRenderer: any
   fillRenderer: any
 
   renderedFlags: any = {}
@@ -118,8 +118,8 @@ export default abstract class DateComponent extends Component {
       this.eventRenderer = new this.eventRendererClass(this, this.fillRenderer)
     }
 
-    if (this.helperRendererClass && this.eventRenderer) {
-      this.helperRenderer = new this.helperRendererClass(this, this.eventRenderer)
+    if (this.mirrorRendererClass && this.eventRenderer) {
+      this.mirrorRenderer = new this.mirrorRendererClass(this, this.eventRenderer)
     }
   }
 
@@ -162,7 +162,7 @@ export default abstract class DateComponent extends Component {
 
     if (force || flags.dateSelection || flags.eventDrag || flags.eventResize) {
       this.computeHighlightSize()
-      this.computeHelperSize()
+      this.computeMirrorSize()
     }
 
     if (force || flags.events) {
@@ -175,7 +175,7 @@ export default abstract class DateComponent extends Component {
 
     if (force || flags.dateSelection || flags.eventDrag || flags.eventResize) {
       this.assignHighlightSize()
-      this.assignHelperSize()
+      this.assignMirrorSize()
     }
 
     if (force || flags.events) {
@@ -674,9 +674,9 @@ export default abstract class DateComponent extends Component {
     // if the user is dragging something that is considered an event with real event data,
     // and this component likes to do drag mirrors OR the component where the seg came from
     // likes to do drag mirrors, then render a drag mirror.
-    if (isEvent && (this.doesDragHelper || origSeg && origSeg.component.doesDragHelper)) {
-      if (this.helperRenderer) {
-        this.helperRenderer.renderEventDraggingSegs(segs, origSeg)
+    if (isEvent && (this.doesDragMirror || origSeg && origSeg.component.doesDragMirror)) {
+      if (this.mirrorRenderer) {
+        this.mirrorRenderer.renderEventDraggingSegs(segs, origSeg)
       }
     }
 
@@ -692,8 +692,8 @@ export default abstract class DateComponent extends Component {
   unrenderEventDrag() {
     this.unrenderHighlight()
 
-    if (this.helperRenderer) {
-      this.helperRenderer.unrender()
+    if (this.mirrorRenderer) {
+      this.mirrorRenderer.unrender()
     }
   }
 
@@ -867,16 +867,16 @@ export default abstract class DateComponent extends Component {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  computeHelperSize() {
-    if (this.helperRenderer) {
-      this.helperRenderer.computeSize()
+  computeMirrorSize() {
+    if (this.mirrorRenderer) {
+      this.mirrorRenderer.computeSize()
     }
   }
 
 
-  assignHelperSize() {
-    if (this.helperRenderer) {
-      this.helperRenderer.assignSize()
+  assignMirrorSize() {
+    if (this.mirrorRenderer) {
+      this.mirrorRenderer.assignSize()
     }
   }
 
@@ -919,7 +919,7 @@ export default abstract class DateComponent extends Component {
 
     if (fabricateEvents) {
 
-      // fabricate an eventRange. important for helper
+      // fabricate an eventRange. important for mirror
       // TODO: make a separate utility for this?
       let def = parseEventDef({
         editable: false,
@@ -1099,7 +1099,7 @@ export default abstract class DateComponent extends Component {
 
   isValidSegDownEl(el: HTMLElement) {
     return !this.eventDrag && !this.eventResize &&
-      !elementClosest(el, '.fc-helper') &&
+      !elementClosest(el, '.fc-mirror') &&
       !this.isInPopover(el)
   }
 
@@ -1107,7 +1107,7 @@ export default abstract class DateComponent extends Component {
   isValidDateDownEl(el: HTMLElement) {
     let segEl = elementClosest(el, this.fgSegSelector)
 
-    return (!segEl || segEl.classList.contains('fc-helper')) &&
+    return (!segEl || segEl.classList.contains('fc-mirror')) &&
       !elementClosest(el, '.fc-more') && // a "more.." link
       !elementClosest(el, 'a[data-goto]') && // a clickable nav link
       !this.isInPopover(el)

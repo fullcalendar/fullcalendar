@@ -337,7 +337,7 @@ describe('eventDrop', function() {
               dy: $('.fc-slats tr:eq(1)').height() * 2.9, // 1.5 hours
               onBeforeRelease: function() {
                 dragged = true
-                expect($('.fc-event.fc-helper .fc-time')).toHaveText('2:30')
+                expect($('.fc-event.fc-mirror .fc-time')).toHaveText('2:30')
               }
             })
           },
@@ -368,7 +368,7 @@ describe('eventDrop', function() {
               dy: $('.fc-slats tr:eq(1)').height() * 2.9, // 1.5 hours
               onBeforeRelease: function() {
                 dragged = true
-                expect($('.fc-event.fc-helper .fc-time')).toHaveText('2:30 - 3:30')
+                expect($('.fc-event.fc-mirror .fc-time')).toHaveText('2:30 - 3:30')
               }
             })
           },

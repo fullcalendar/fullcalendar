@@ -12,7 +12,7 @@ import PositionCache from '../common/PositionCache'
 import Popover from '../common/Popover'
 import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
 import DayGridEventRenderer from './DayGridEventRenderer'
-import DayGridHelperRenderer from './DayGridHelperRenderer'
+import DayGridMirrorRenderer from './DayGridMirrorRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
@@ -48,12 +48,12 @@ export default class DayGrid extends DateComponent {
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
   isInteractable = true
-  doesDragHelper = false
+  doesDragMirror = false
   doesDragHighlight = true
   slicingType: 'all-day' = 'all-day' // stupid TypeScript
 
   view: View // TODO: make more general and/or remove
-  helperRenderer: any
+  mirrorRenderer: any
 
   cellWeekNumbersVisible: boolean = false // display week numbers in day cell?
 
@@ -399,14 +399,14 @@ export default class DayGrid extends DateComponent {
 
     this.renderHighlightSegs(segs)
 
-    this.helperRenderer.renderEventResizingSegs(segs, origSeg)
+    this.mirrorRenderer.renderEventResizingSegs(segs, origSeg)
   }
 
 
   // Unrenders a visual indication of an event being resized
   unrenderEventResize() {
     this.unrenderHighlight()
-    this.helperRenderer.unrender()
+    this.mirrorRenderer.unrender()
   }
 
 
@@ -749,7 +749,7 @@ export default class DayGrid extends DateComponent {
 }
 
 DayGrid.prototype.eventRendererClass = DayGridEventRenderer
-DayGrid.prototype.helperRendererClass = DayGridHelperRenderer
+DayGrid.prototype.mirrorRendererClass = DayGridMirrorRenderer
 DayGrid.prototype.fillRendererClass = DayGridFillRenderer
 
 DayTableMixin.mixInto(DayGrid)

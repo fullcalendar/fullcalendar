@@ -1,10 +1,10 @@
-describe('selectHelper', function() {
+describe('selectMirror', function() {
 
   pushOptions({
     defaultDate: '2014-08-03',
     defaultView: 'agendaWeek',
     scrollTime: '00:00:00',
-    selectHelper: true
+    selectMirror: true
   })
 
   it('goes through eventRender', function() {
@@ -14,6 +14,6 @@ describe('selectHelper', function() {
       }
     })
     currentCalendar.select('2014-08-04T01:00:00Z', '2014-08-04T04:00:00Z')
-    expect($('.fc-helper')).toHaveClass('didEventRender')
+    expect($('.fc-mirror')).toHaveClass('didEventRender')
   })
 })

@@ -385,7 +385,7 @@ agendaTimeGridMethods = {
 
 
   // Generates the HTML that goes before all other types of cells.
-  // Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+  // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderIntroHtml() {
     let view = this.view
 
@@ -412,7 +412,7 @@ agendaDayGridMethods = {
 
 
   // Generates the HTML that goes before all other types of cells.
-  // Affects content-skeleton, helper-skeleton, highlight-skeleton for both the time-grid and day-grid.
+  // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderIntroHtml() {
     let view = this.view
 

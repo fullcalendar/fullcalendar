@@ -140,7 +140,7 @@ export interface OptionsInputBase {
   navLinkDayClick?: string | ((date: Date, jsEvent: Event) => void)
   navLinkWeekClick?: string | ((weekStart: any, jsEvent: Event) => void)
   selectable?: boolean
-  selectHelper?: boolean
+  selectMirror?: boolean
   unselectAuto?: boolean
   unselectCancel?: string
   selectConstraint?: ConstraintInput

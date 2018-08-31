@@ -85,10 +85,10 @@ export default class ExternalElementDragging {
       origSeg: null
     })
 
-    // show mirror if no already-rendered helper element OR if we are shutting down the mirror
+    // show mirror if no already-rendered mirror element OR if we are shutting down the mirror
     // TODO: wish we could somehow wait for dispatch to guarantee render
     dragging.setMirrorIsVisible(
-      isFinal || !droppableEvent || !document.querySelector('.fc-helper')
+      isFinal || !droppableEvent || !document.querySelector('.fc-mirror')
     )
 
     if (!isInvalid) {

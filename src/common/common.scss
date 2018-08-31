@@ -207,7 +207,7 @@ hr.fc-divider {
 .fc-bg,
 .fc-bgevent-skeleton,
 .fc-highlight-skeleton,
-.fc-helper-skeleton {
+.fc-mirror-skeleton {
   /* these element should always cling to top-left/right corners */
   position: absolute;
   top: 0;
@@ -327,7 +327,7 @@ a[data-goto]:hover {
 }
 
 /*
-row content (which contains day/week numbers and events) as well as "helper" (which contains
+row content (which contains day/week numbers and events) as well as "mirror" (which contains
 temporary rendered events).
 */
 
@@ -337,13 +337,13 @@ temporary rendered events).
   padding-bottom: 2px; /* matches the space above the events */
 }
 
-.fc-row .fc-helper-skeleton {
+.fc-row .fc-mirror-skeleton {
   z-index: 5;
 }
 
 .fc .fc-row .fc-content-skeleton table,
 .fc .fc-row .fc-content-skeleton td,
-.fc .fc-row .fc-helper-skeleton td {
+.fc .fc-row .fc-mirror-skeleton td {
   /* see-through to the background below */
   /* extra precedence to prevent theme-provided backgrounds */
   background: none; /* in case <td>s are globally styled */
@@ -351,13 +351,13 @@ temporary rendered events).
 }
 
 .fc-row .fc-content-skeleton td,
-.fc-row .fc-helper-skeleton td {
+.fc-row .fc-mirror-skeleton td {
   /* don't put a border between events and/or the day number */
   border-bottom: 0;
 }
 
 .fc-row .fc-content-skeleton tbody td, /* cells with events inside (so NOT the day number cell) */
-.fc-row .fc-helper-skeleton tbody td {
+.fc-row .fc-mirror-skeleton tbody td {
   /* don't put a border between event cells */
   border-top: 0;
 }
@@ -571,8 +571,8 @@ be a descendant of the grid when it is being dragged.
 tr:first-child > td > .fc-day-grid-event {
   margin-top: 2px; /* a little bit more space before the first event */
 }
-.fc-helper-skeleton tr:first-child > td > .fc-day-grid-event {
-  margin-top: 0; /* except for helper skeleton */
+.fc-mirror-skeleton tr:first-child > td > .fc-day-grid-event {
+  margin-top: 0; /* except for mirror skeleton */
 }
 
 .fc-day-grid-event.fc-selected:after {
