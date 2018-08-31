@@ -28,6 +28,7 @@ describe('eventRender', function() {
               expect(arg.event.start).toBeDefined()
               expect(arg.el instanceof HTMLElement).toBe(true)
               expect(typeof arg.view).toBe('object')
+              expect(arg.isMirror).toBe(false)
               $(arg.el).css('font-size', '20px')
             },
             eventAfterAllRender: function() {

@@ -7,13 +7,21 @@ describe('selectMirror', function() {
     selectMirror: true
   })
 
-  it('goes through eventRender', function() {
+  it('goes through eventRender and eventAfterRender', function() {
     initCalendar({
-      eventRender: function(arg) {
-        $(arg.el).addClass('didEventRender')
+      eventRender(arg) {
+        expect(arg.isMirror).toBe(true)
+        $(arg.el).addClass('eventDidRender')
+      },
+      eventAfterRender(arg) {
+        expect(arg.isMirror).toBe(true)
+        $(arg.el).addClass('eventDidPosition')
       }
     })
+
     currentCalendar.select('2014-08-04T01:00:00Z', '2014-08-04T04:00:00Z')
-    expect($('.fc-mirror')).toHaveClass('didEventRender')
+
+    expect($('.fc-mirror')).toHaveClass('eventDidRender')
+    expect($('.fc-mirror')).toHaveClass('eventDidPosition')
   })
 })

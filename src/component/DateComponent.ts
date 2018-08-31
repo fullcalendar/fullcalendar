@@ -270,7 +270,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  triggerRenderedSegs(segs: Seg[]) {
+  triggerRenderedSegs(segs: Seg[], isMirrors: boolean = false) {
     if (this.hasPublicHandlers('eventAfterRender')) {
       let calendar = this.getCalendar()
 
@@ -282,6 +282,9 @@ export default abstract class DateComponent extends Component {
               seg.eventRange.def,
               seg.eventRange.instance
             ),
+            isMirror: isMirrors,
+            isStart: seg.isStart,
+            isEnd: seg.isEnd,
             el: seg.el,
             view: this
           }
@@ -604,7 +607,6 @@ export default abstract class DateComponent extends Component {
       this.eventRenderer.renderSegs(
         this.eventRangesToSegs(eventRanges)
       )
-      this.triggerRenderedSegs(this.eventRenderer.getSegs())
 
       // hack to fire eventAfterAllRender
       let calendar = this.getCalendar()
