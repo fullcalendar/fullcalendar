@@ -178,29 +178,39 @@ export default abstract class View extends DateComponent {
   }
 
 
+  // Skeleton Rendering
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  afterSkeletonRender() {
+    this.publiclyTriggerAfterSizing('viewSkeletonRender', [
+      {
+        view: this,
+        el: this.el
+      }
+    ])
+  }
+
+
+  beforeSkeletonUnrender() {
+    this.publiclyTrigger('viewSkeletonDestroy', [
+      {
+        view: this,
+        el: this.el
+      }
+    ])
+  }
+
+
   // Date Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  // if dateProfile not specified, uses current
-  renderDates(dateProfile: DateProfile) {
-    super.renderDates(dateProfile)
-
-    this.title = this.computeTitle(dateProfile)
+  afterDatesRender() {
+    this.title = this.computeTitle(this.dateProfile)
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
-    this.triggerRenderedDates()
-  }
 
-
-  unrenderDates() {
-    this.triggerWillRemoveDates()
-    this.stopNowIndicator()
-    super.unrenderDates()
-  }
-
-
-  triggerRenderedDates() {
     this.publiclyTriggerAfterSizing('datesRender', [
       {
         view: this,
@@ -210,13 +220,15 @@ export default abstract class View extends DateComponent {
   }
 
 
-  triggerWillRemoveDates() {
+  beforeDatesUnrender() {
     this.publiclyTrigger('datesDestroy', [
       {
         view: this,
         el: this.el
       }
     ])
+
+    this.stopNowIndicator()
   }
 
 

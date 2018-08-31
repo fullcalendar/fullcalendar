@@ -375,12 +375,14 @@ export default abstract class DateComponent extends Component {
 
     if (flags.skeleton) {
       this.renderSkeleton()
+      this.afterSkeletonRender()
       renderedFlags.skeleton = true
       dirtySizeFlags.skeleton = true
     }
 
     if (flags.dates && renderState.dateProfile) {
       this.renderDates(renderState.dateProfile)
+      this.afterDatesRender()
       renderedFlags.dates = true
       dirtySizeFlags.dates = true
     }
@@ -457,11 +459,13 @@ export default abstract class DateComponent extends Component {
     }
 
     if ((!flags || flags.dates) && renderedFlags.dates) {
+      this.beforeDatesUnrender()
       this.unrenderDates()
       renderedFlags.dates = false
     }
 
     if ((!flags || flags.skeleton) && renderedFlags.skeleton) {
+      this.beforeSkeletonUnrender()
       this.unrenderSkeleton()
       renderedFlags.skeleton = false
     }
@@ -489,6 +493,10 @@ export default abstract class DateComponent extends Component {
   }
 
 
+  afterSkeletonRender() { }
+  beforeSkeletonUnrender() { }
+
+
   unrenderSkeleton() {
     // subclasses should implement
   }
@@ -504,10 +512,15 @@ export default abstract class DateComponent extends Component {
   }
 
 
+  afterDatesRender() { }
+  beforeDatesUnrender() { }
+
+
   // date-cell content only
   unrenderDates() {
     // subclasses should override
   }
+
 
 
   // Now-Indicator
