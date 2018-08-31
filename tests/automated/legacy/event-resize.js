@@ -317,11 +317,11 @@ describe('eventResize', function() {
             $('.fc-event .fc-resizer').simulate('drag', {
               dy: dy,
               onBeforeRelease: function() {
-                expect($('.fc-event.fc-helper .fc-time')).toHaveText('5:00 - 9:30')
-                $('.fc-event.fc-helper .fc-resizer').simulate('drag', {
+                expect($('.fc-event.fc-mirror .fc-time')).toHaveText('5:00 - 9:30')
+                $('.fc-event.fc-mirror .fc-resizer').simulate('drag', {
                   dy: -dy,
                   onBeforeRelease: function() {
-                    expect($('.fc-event.fc-helper')).not.toExist()
+                    expect($('.fc-event.fc-mirror')).not.toExist()
                     expect($('.fc-event')).toBeVisible()
                     expect($('.fc-event .fc-time')).toHaveText('5:00 - 7:00')
                   },
@@ -338,34 +338,37 @@ describe('eventResize', function() {
       })
 
       it('should run the temporarily rendered event through eventRender', function(done) {
-        var options = {}
-        options.eventRender = function(arg) {
-          $(arg.el).addClass('didEventRender')
-        }
+        initCalendar({
+          eventRender(arg) {
+            $(arg.el).addClass('eventDidRender')
+          },
+          eventRendered(arg) {
+            $(arg.el).addClass('eventDidPosition')
+          },
+          _eventsRendered() {
+            setTimeout(function() {
+              var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
+              $('.fc-event').simulate('mouseover') // for revealing resizer
+              $('.fc-event .fc-resizer').simulate('drag', {
+                dy: dy,
+                onBeforeRelease: function() {
+                  expect($('.fc-event.fc-mirror')).toHaveClass('eventDidRender')
+                  expect($('.fc-event.fc-mirror')).toHaveClass('eventDidPosition')
 
-        options._eventsRendered = function() {
-          setTimeout(function() {
-            var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
-            $('.fc-event').simulate('mouseover') // for revealing resizer
-            $('.fc-event .fc-resizer').simulate('drag', {
-              dy: dy,
-              onBeforeRelease: function() {
-                expect($('.fc-event.fc-helper')).toHaveClass('didEventRender')
-                $('.fc-event.fc-helper .fc-resizer').simulate('drag', {
-                  dy: -dy,
-                  onBeforeRelease: function() {
-                    expect($('.fc-event.fc-helper')).not.toExist()
-                  },
-                  onRelease: function() {
-                    done()
-                  }
-                })
-              }
-            })
-          }, 0) // idk
-        }
-
-        initCalendar(options)
+                  $('.fc-event.fc-mirror .fc-resizer').simulate('drag', {
+                    dy: -dy,
+                    onBeforeRelease: function() {
+                      expect($('.fc-event.fc-mirror')).not.toExist()
+                    },
+                    onRelease: function() {
+                      done()
+                    }
+                  })
+                }
+              })
+            }, 0) // idk
+          }
+        })
       })
 
       it('should not fire the windowResize handler', function(done) { // bug 1116
@@ -425,11 +428,11 @@ describe('eventResize', function() {
             $('.fc-event .fc-resizer').simulate('drag', {
               dy: dy,
               onBeforeRelease: function() {
-                expect($('.fc-event.fc-helper .fc-time')).toHaveText('5:00 - 9:30')
-                $('.fc-event.fc-helper .fc-resizer').simulate('drag', {
+                expect($('.fc-event.fc-mirror .fc-time')).toHaveText('5:00 - 9:30')
+                $('.fc-event.fc-mirror .fc-resizer').simulate('drag', {
                   dy: -dy,
                   onBeforeRelease: function() {
-                    expect($('.fc-event.fc-helper')).not.toExist()
+                    expect($('.fc-event.fc-mirror')).not.toExist()
                     expect($('.fc-event')).toBeVisible()
                     expect($('.fc-event .fc-time')).toHaveText('5:00')
                   },
