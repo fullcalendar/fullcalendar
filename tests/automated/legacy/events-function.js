@@ -18,7 +18,9 @@ describe('events as a function', function() {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('local')
         expect(arg.start).toEqualDate('2014-04-27T00:00:00') // local
+        expect(arg.startStr).toMatch(/^2014-04-27T00:00:00[-+]/)
         expect(arg.end).toEqualDate('2014-06-08T00:00:00') // local
+        expect(arg.endStr).toMatch(/^2014-06-08T00:00:00[-+]/)
         callback([])
         done()
       }
@@ -31,8 +33,10 @@ describe('events as a function', function() {
       events: function(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('UTC')
-        expect(arg.start).toEqualDate('2014-04-27')
-        expect(arg.end).toEqualDate('2014-06-08')
+        expect(arg.start).toEqualDate('2014-04-27T00:00:00Z')
+        expect(arg.startStr).toEqual('2014-04-27T00:00:00Z')
+        expect(arg.end).toEqualDate('2014-06-08T00:00:00Z')
+        expect(arg.endStr).toEqual('2014-06-08T00:00:00Z')
         callback([])
         done()
       }
@@ -45,8 +49,10 @@ describe('events as a function', function() {
       events: function(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('America/Chicago')
-        expect(arg.start).toEqualDate('2014-04-27')
-        expect(arg.end).toEqualDate('2014-06-08')
+        expect(arg.start).toEqualDate('2014-04-27T00:00:00Z')
+        expect(arg.startStr).toEqual('2014-04-27T00:00:00') // no Z
+        expect(arg.end).toEqualDate('2014-06-08T00:00:00Z')
+        expect(arg.endStr).toEqual('2014-06-08T00:00:00') // no Z
         callback([])
         done()
       }

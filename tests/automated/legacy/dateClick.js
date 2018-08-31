@@ -24,6 +24,7 @@ describe('dateClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(true)
                 expect(arg.date).toEqualDate('2014-05-07')
+                expect(arg.dateStr).toEqual('2014-05-07')
                 done()
               }
 
@@ -47,6 +48,7 @@ describe('dateClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(true)
                 expect(arg.date).toEqualDate('2014-05-28')
+                expect(arg.dateStr).toEqual('2014-05-28')
                 done()
               }
 
@@ -71,6 +73,7 @@ describe('dateClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(false)
                 expect(arg.date).toEqualDate('2014-05-28T09:00:00Z')
+                expect(arg.dateStr).toEqual('2014-05-28T09:00:00Z')
                 done()
               }
 
@@ -97,6 +100,7 @@ describe('dateClick', function() {
                 expect(typeof arg.view).toEqual('object') // "
                 expect(arg.isAllDay).toEqual(false)
                 expect(arg.date).toEqualDate('2014-05-28T11:00:00Z')
+                expect(arg.dateStr).toEqual('2014-05-28T11:00:00Z')
                 done()
               }
 
@@ -124,6 +128,7 @@ describe('dateClick', function() {
         expect(typeof arg.view).toEqual('object') // "
         expect(arg.isAllDay).toEqual(true)
         expect(arg.date).toEqualDate('2014-05-07')
+        expect(arg.dateStr).toEqual('2014-05-07')
         done()
       }
 
@@ -167,6 +172,7 @@ describe('dateClick', function() {
         expect(typeof arg.view).toEqual('object') // "
         expect(arg.isAllDay).toEqual(true)
         expect(arg.date).toEqualDate('2014-05-07')
+        expect(arg.dateStr).toEqual('2014-05-07')
         done()
       }
 

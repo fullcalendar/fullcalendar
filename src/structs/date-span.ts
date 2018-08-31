@@ -137,5 +137,8 @@ export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi 
   props.start = dateEnv.toDate(span.range.start)
   props.end = dateEnv.toDate(span.range.end)
 
+  props.startStr = dateEnv.formatIso(span.range.start, { omitTime: span.isAllDay })
+  props.endStr = dateEnv.formatIso(span.range.end, { omitTime: span.isAllDay })
+
   return props
 }

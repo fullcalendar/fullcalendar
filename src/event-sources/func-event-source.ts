@@ -31,6 +31,8 @@ registerEventSourceDef({
       func.bind(null, { // the function returned from parseMeta
         start: dateEnv.toDate(arg.range.start),
         end: dateEnv.toDate(arg.range.end),
+        startStr: dateEnv.formatIso(arg.range.start),
+        endStr: dateEnv.formatIso(arg.range.end),
         timeZone: dateEnv.timeZone
       }),
       function(rawEvents) { // success

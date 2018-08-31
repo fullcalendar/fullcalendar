@@ -31,7 +31,9 @@ describe('select callback', function() {
             expect(typeof arg.view).toEqual('object') // "
             expect(arg.isAllDay).toEqual(true)
             expect(arg.start).toEqualDate('2014-04-28')
+            expect(arg.startStr).toEqual('2014-04-28')
             expect(arg.end).toEqualDate('2014-05-07')
+            expect(arg.endStr).toEqual('2014-05-07')
           }
           spyOn(options, 'select').and.callThrough()
           initCalendar(options)
@@ -51,7 +53,9 @@ describe('select callback', function() {
             expect(typeof arg.view).toEqual('object') // "
             expect(arg.isAllDay).toEqual(true)
             expect(arg.start).toEqualDate('2014-04-28')
+            expect(arg.startStr).toEqual('2014-04-28')
             expect(arg.end).toEqualDate('2014-05-07')
+            expect(arg.endStr).toEqual('2014-05-07')
           }
           spyOn(options, 'select').and.callThrough()
           initCalendar(options)
@@ -73,7 +77,9 @@ describe('select callback', function() {
             expect(typeof arg.view).toEqual('object') // "
             expect(arg.isAllDay).toEqual(true)
             expect(arg.start).toEqualDate('2014-04-28')
+            expect(arg.startStr).toEqual('2014-04-28')
             expect(arg.end).toEqualDate('2014-04-29')
+            expect(arg.endStr).toEqual('2014-04-29')
           }
           spyOn(options, 'select').and.callThrough()
           initCalendar(options)
@@ -100,7 +106,9 @@ describe('select callback', function() {
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.isAllDay).toEqual(true)
               expect(arg.start).toEqualDate('2014-05-28')
+              expect(arg.startStr).toEqual('2014-05-28')
               expect(arg.end).toEqualDate('2014-05-30')
+              expect(arg.endStr).toEqual('2014-05-30')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -120,7 +128,9 @@ describe('select callback', function() {
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.isAllDay).toEqual(true)
               expect(arg.start).toEqualDate('2014-05-28')
+              expect(arg.startStr).toEqual('2014-05-28')
               expect(arg.end).toEqualDate('2014-05-29')
+              expect(arg.endStr).toEqual('2014-05-29')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -141,7 +151,9 @@ describe('select callback', function() {
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.isAllDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-28T10:30:00Z')
+              expect(arg.endStr).toEqual('2014-05-28T10:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -161,7 +173,9 @@ describe('select callback', function() {
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.isAllDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-28T10:30:00Z')
+              expect(arg.endStr).toEqual('2014-05-28T10:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -185,7 +199,9 @@ describe('select callback', function() {
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.isAllDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-29T10:30:00Z')
+              expect(arg.endStr).toEqual('2014-05-29T10:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
@@ -206,7 +222,9 @@ describe('select callback', function() {
               expect(typeof arg.view).toEqual('object') // "
               expect(arg.isAllDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
+              expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-28T09:30:00Z')
+              expect(arg.endStr).toEqual('2014-05-28T09:30:00Z')
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
