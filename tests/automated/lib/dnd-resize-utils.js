@@ -14,7 +14,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
   var eventsRendered = false
 
   options.editable = true
-  options._eventsRendered = function() {
+  options._eventsPositioned = function() {
     var calendar = currentCalendar
     var isDraggingExternal = false
     var dayEl
@@ -107,7 +107,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
   var eventsRendered = false
 
   options.editable = true
-  options._eventsRendered = function() {
+  options._eventsPositioned = function() {
     var calendar = currentCalendar
     var lastDayEl
     var lastSlatIndex

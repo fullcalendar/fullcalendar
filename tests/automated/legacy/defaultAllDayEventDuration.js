@@ -75,7 +75,7 @@ describe('defaultAllDayEventDuration', function() {
               start: '2014-04-28'
             }
           ],
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             var eventElms = getEventEls()
             var width0 = eventElms.eq(0).outerWidth()
             var width1 = eventElms.eq(1).outerWidth()

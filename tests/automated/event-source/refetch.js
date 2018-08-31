@@ -92,7 +92,7 @@ describe('event source refetch', function() {
       fetchDelay = 100
 
       initCalendar({
-        _eventsRendered() {
+        _eventsPositioned() {
 
           // events from unaffected sources remain
           expect($('.source2-7').length).toEqual(1)

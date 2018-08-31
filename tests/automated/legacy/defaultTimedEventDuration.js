@@ -73,7 +73,7 @@ describe('defaultTimedEventDuration', function() {
               start: '2014-05-02T04:00:00'
             }
           ],
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             var eventElms = getEventEls()
             var height0 = eventElms.eq(0).outerHeight()
             var height1 = eventElms.eq(1).outerHeight()
@@ -110,7 +110,7 @@ describe('defaultTimedEventDuration', function() {
               start: '2014-04-28T04:00:00'
             }
           ],
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             var eventElms = getEventEls()
             var width0 = eventElms.eq(0).outerWidth()
             var width1 = eventElms.eq(1).outerWidth()

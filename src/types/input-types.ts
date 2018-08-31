@@ -187,12 +187,12 @@ export interface OptionsInputBase {
   loading?(isLoading: boolean, view: View): void
   eventRender?(arg: { event: EventApi, el: HTMLElement, view: View }): void
 <<<<<<< HEAD
-  eventRendered?(arg: { event: EventApi, el: HTMLElement, view: View }): void
+  eventPositioned?(arg: { event: EventApi, el: HTMLElement, view: View }): void
   eventAfterAllRender?(arg: { view: View }): void
 =======
   eventPositioned?(arg: { event: EventApi, el: HTMLElement, view: View }): void
-  _eventsRendered?(arg: { view: View }): void
->>>>>>> 560e67db... eventAfterAllRender -> _eventsRendered
+  _eventsPositioned?(arg: { view: View }): void
+>>>>>>> 560e67db... eventAfterAllRender -> _eventsPositioned
   eventDestroy?(arg: { event: EventApi, el: HTMLElement, view: View }): void
   eventDragStart?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: View }): void
   eventDragStop?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: View }): void

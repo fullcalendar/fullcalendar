@@ -22,7 +22,7 @@ describe('refetchEvents', function() {
             ])
           }, 100)
         },
-        _eventsRendered: function() {
+        _eventsPositioned: function() {
           var scrollEl = $('.fc-time-grid-container.fc-scroller')
           renderCalls++
           if (renderCalls === 1) {
@@ -100,7 +100,7 @@ describe('refetchEvents', function() {
         }
         initCalendar({
           eventSources: eventSources,
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             fetchCount++
             if (fetchCount === 1) {
               // after the initial rendering of events, call refetchEvents

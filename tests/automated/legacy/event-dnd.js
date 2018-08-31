@@ -386,7 +386,7 @@ describe('eventDrop', function() {
   function init(dragFunc, dropHandler) {
     var eventsRendered = false
 
-    options._eventsRendered = function() {
+    options._eventsPositioned = function() {
       if (!eventsRendered) { // because event rerendering will happen upon drop
         dragFunc()
         eventsRendered = true

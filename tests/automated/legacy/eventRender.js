@@ -31,7 +31,7 @@ describe('eventRender', function() {
               expect(arg.isMirror).toBe(false)
               $(arg.el).css('font-size', '20px')
             },
-            _eventsRendered: function() {
+            _eventsPositioned: function() {
               expect($(gridSelector).find('.fc-event').css('font-size')).toBe('20px')
               expect(options.eventRender).toHaveBeenCalled()
               done()
@@ -60,7 +60,7 @@ describe('eventRender', function() {
           eventRender: function(arg) {
             return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .sup').length).toBe(1)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -74,7 +74,7 @@ describe('eventRender', function() {
           eventRender: function(arg) {
             return false
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .fc-event').length).toBe(0)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -105,7 +105,7 @@ describe('eventRender', function() {
             expect(typeof arg.view).toBe('object')
             $(arg.el).css('font-size', '20px')
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .fc-bgevent').css('font-size')).toBe('20px')
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -120,7 +120,7 @@ describe('eventRender', function() {
           eventRender: function(arg) {
             return $('<td class="sup" style="background-color:green">sup g</td>')[0]
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .sup').length).toBe(1)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -135,7 +135,7 @@ describe('eventRender', function() {
           eventRender: function(arg) {
             return $('<div class="sup" style="background-color:green">sup g</div>')[0]
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .sup').length).toBe(0)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -150,7 +150,7 @@ describe('eventRender', function() {
           eventRender: function(arg) {
             return false
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -174,7 +174,7 @@ describe('eventRender', function() {
       it('won\'t render or call eventRender', function(done) {
         var options = {
           eventRender: function(arg) {},
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
             expect(options.eventRender).not.toHaveBeenCalled()
             done()
@@ -206,7 +206,7 @@ describe('eventRender', function() {
           eventRender: function(arg) {
             return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-time-grid .sup').length).toBe(1)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -221,7 +221,7 @@ describe('eventRender', function() {
           eventRender: function(arg) {
             return false
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-time-grid .fc-event').length).toBe(0)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -252,7 +252,7 @@ describe('eventRender', function() {
             expect(typeof arg.view).toBe('object')
             $(arg.el).css('font-size', '20px')
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-time-grid .fc-bgevent').css('font-size')).toBe('20px')
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -267,7 +267,7 @@ describe('eventRender', function() {
           eventRender: function() {
             return $('<div class="fc-bgevent sup" style="background-color:green">sup g</div>')[0]
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-time-grid .sup').length).toBe(1)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -282,7 +282,7 @@ describe('eventRender', function() {
           eventRender: function() {
             return $('<p class="fc-bgevent sup" style="background-color:green">sup g</p>')[0]
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-time-grid .sup').length).toBe(0)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -296,7 +296,7 @@ describe('eventRender', function() {
           eventRender: function() {
             return false
           },
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-time-grid .fc-bgevent').length).toBe(0)
             expect(options.eventRender).toHaveBeenCalled()
             done()
@@ -320,7 +320,7 @@ describe('eventRender', function() {
       it('will render in all-day AND timed slots', function(done) {
         var options = {
           eventRender: function() {},
-          _eventsRendered: function() {
+          _eventsPositioned: function() {
             expect($('.fc-day-grid .fc-bgevent').length).toBe(1)
             expect($('.fc-time-grid .fc-bgevent').length).toBe(1)
             expect(options.eventRender).toHaveBeenCalled()

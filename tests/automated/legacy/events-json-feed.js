@@ -161,7 +161,7 @@ describe('events as a json feed', function() {
       loading: function(bool) {
         loadingCallArgs.push(bool)
       },
-      _eventsRendered: function() {
+      _eventsPositioned: function() {
         expect(loadingCallArgs).toEqual([ true, false ])
         done()
       }

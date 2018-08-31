@@ -37,7 +37,7 @@ describe('changeView', function() {
 
       initCalendar({
         defaultView: 'month',
-        _eventsRendered: function(arg) {
+        _eventsPositioned: function(arg) {
           var view = currentCalendar.view
 
           renderCalls++

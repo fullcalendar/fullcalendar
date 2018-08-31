@@ -678,7 +678,7 @@ export default class DayGrid extends DateComponent {
     this.segPopoverTile = new DayTile(this.view, this.getCellDate(row, col))
     this.segPopover = new Popover(options)
     this.segPopover.show()
-    this.getCalendar().releaseAfterSizingTriggers() // hack for eventRendered
+    this.getCalendar().releaseAfterSizingTriggers() // hack for eventPositioned
   }
 
 

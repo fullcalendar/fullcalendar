@@ -103,7 +103,7 @@ describe('eventResize', function() {
           start: '2014-06-11T08:00:00',
           allDay: false
         } ]
-        options._eventsRendered = function() {
+        options._eventsPositioned = function() {
           expect($('.fc-event .fc-resizer').length).toBe(0)
           done()
         }
@@ -310,7 +310,7 @@ describe('eventResize', function() {
 
       it('should display the correct time text while resizing', function(done) {
         var options = {}
-        options._eventsRendered = function() {
+        options._eventsPositioned = function() {
           setTimeout(function() {
             var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
             $('.fc-event').simulate('mouseover') // for revealing resizer
@@ -345,7 +345,7 @@ describe('eventResize', function() {
           eventRendered(arg) {
             $(arg.el).addClass('eventDidPosition')
           },
-          _eventsRendered() {
+          _eventsPositioned() {
             setTimeout(function() {
               var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
               $('.fc-event').simulate('mouseover') // for revealing resizer
@@ -385,7 +385,7 @@ describe('eventResize', function() {
           }
         }
 
-        options._eventsRendered = function() {
+        options._eventsPositioned = function() {
           if (alreadyRendered) {
             return
           }
@@ -421,7 +421,7 @@ describe('eventResize', function() {
 
       it('should display the correct time text while resizing', function(done) {
         var options = {}
-        options._eventsRendered = function() {
+        options._eventsPositioned = function() {
           setTimeout(function() {
             var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
             $('.fc-event').simulate('mouseover') // for revealing resizer
@@ -455,7 +455,7 @@ describe('eventResize', function() {
   function init(options, resizeStartFunc, resizeDoneFunc) {
     var eventsRendered = false
 
-    options._eventsRendered = function() {
+    options._eventsPositioned = function() {
       if (!eventsRendered) { // because event rerendering will happen when resize is over
         resizeStartFunc()
         eventsRendered = true

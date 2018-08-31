@@ -120,7 +120,7 @@ describe('removeEvents', function() {
     var called = false
     initCalendar({
       events: events,
-      _eventsRendered: function() {
+      _eventsPositioned: function() {
         if (!called) { // don't execute on subsequent removeEvents/next/prev
           called = true
 

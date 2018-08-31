@@ -14,7 +14,7 @@ describe('event source remove', function() {
           { title: 'event2', start: '2014-08-02' }
         ]
       } ],
-      _eventsRendered() {
+      _eventsPositioned() {
         callCnt++
         if (callCnt === 1) {
           expectEventCnt(2)
@@ -57,7 +57,7 @@ describe('event source remove', function() {
 
     initCalendar({
       eventSources: [ source1 ],
-      _eventsRendered() {
+      _eventsPositioned() {
         if (!$('.fc-event').length) {
           ; // might have rendered no events after removeEventSource call
         } else {
