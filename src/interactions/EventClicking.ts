@@ -36,6 +36,7 @@ export default class EventClicking {
 
       component.publiclyTrigger('eventClick', [
         {
+          el: segEl,
           event: new EventApi(
             component.getCalendar(),
             seg.eventRange.def,
