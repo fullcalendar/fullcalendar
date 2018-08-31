@@ -245,7 +245,7 @@ export default class Calendar {
 
   applyElClassNames() {
     let classList = this.el.classList
-    let elDirClassName = this.opt('isRTL') ? 'fc-rtl' : 'fc-ltr'
+    let elDirClassName = this.opt('isRtl') ? 'fc-rtl' : 'fc-ltr'
     let elThemeClassName = this.theme.getClass('widget')
 
     if (elDirClassName !== this.elDirClassName) {

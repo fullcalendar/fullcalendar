@@ -60,7 +60,7 @@
       month: 6, // July
       date: 31,
       events: 'slot_event_overlap.json',
-      isRTL: true,
+      isRtl: true,
       _eventsPositioned: function() {
         testOverlap($('#calendar-rtl'), true, true);
       }
@@ -79,7 +79,7 @@
       month: 6, // July
       date: 31,
       events: 'slot_event_overlap.json',
-      isRTL: true,
+      isRtl: true,
       slotEventOverlap: false,
       _eventsPositioned: function() {
         testOverlap($('#calendar-rtl-nooverlap'), false, true);
@@ -88,8 +88,8 @@
     
   });
 
-  function testOverlap(el, allowOverlap, isRTL) {
-    if (_testOverlap(el, allowOverlap, isRTL)) {
+  function testOverlap(el, allowOverlap, isRtl) {
+    if (_testOverlap(el, allowOverlap, isRtl)) {
       el.prev('h2').find('span').css('color', 'green').text('passed');
     }
     else {
@@ -97,7 +97,7 @@
     }
   }
 
-  function _testOverlap(el, allowOverlap, isRTL) {
+  function _testOverlap(el, allowOverlap, isRtl) {
 
     var events = el.find('.fc-event');
 
@@ -131,7 +131,7 @@
 
       if (allowOverlap) {
         width /= 2; // make sure nothing overlaps the first half of the event
-        if (isRTL) {
+        if (isRtl) {
           left += width;
         }
       }

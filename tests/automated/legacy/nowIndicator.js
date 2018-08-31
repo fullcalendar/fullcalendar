@@ -38,11 +38,11 @@ describe('now indicator', function() {
         options.nowIndicator = true
       });
 
-      [ false, true ].forEach(function(isRTL) {
+      [ false, true ].forEach(function(isRtl) {
 
-        describe('when ' + (isRTL ? 'RTL' : 'LTR'), function() {
+        describe('when ' + (isRtl ? 'RTL' : 'LTR'), function() {
           beforeEach(function() {
-            options.isRTL = isRTL
+            options.isRtl = isRtl
           })
 
           it('doesn\'t render when out of view', function() {

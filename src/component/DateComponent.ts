@@ -72,7 +72,7 @@ export default abstract class DateComponent extends Component {
 
   uid: any
   childrenByUid: any
-  isRTL: boolean = false // frequently accessed options
+  isRtl: boolean = false // frequently accessed options
   nextDayThreshold: Duration // "
   view: View
   emitter: EmitterMixin = new EmitterMixin()
@@ -108,7 +108,7 @@ export default abstract class DateComponent extends Component {
     this.childrenByUid = {}
 
     this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
-    this.isRTL = this.opt('isRTL')
+    this.isRtl = this.opt('isRtl')
 
     if (this.fillRendererClass) {
       this.fillRenderer = new this.fillRendererClass(this)

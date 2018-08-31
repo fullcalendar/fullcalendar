@@ -122,7 +122,7 @@ describe('background events', function() {
     })
 
     describe('when RTL', function() {
-      pushOptions({isRTL: true})
+      pushOptions({isRtl: true})
 
       it('render correctly on a single day', function(done) {
         var options = {}
@@ -320,7 +320,7 @@ describe('background events', function() {
       })
 
       describe('when RTL', function() {
-        pushOptions({ isRTL: true })
+        pushOptions({ isRtl: true })
 
         it('render correctly on a single day', function(done) {
           var options = {}
@@ -485,7 +485,7 @@ describe('background events', function() {
       })
     })
     describe('when RTL', function() {
-      pushOptions({ isRTL: true })
+      pushOptions({ isRtl: true })
       it('render correctly on one day', function(done) {
         var options = {}
         options.events = [ {
@@ -699,7 +699,7 @@ describe('background events', function() {
       })
 
       describe('when RTL', function() {
-        pushOptions({ isRTL: true })
+        pushOptions({ isRtl: true })
         it('render correctly on one day', function(done) {
           var options = {}
           options.events = [ {

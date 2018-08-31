@@ -199,7 +199,7 @@ function formatWeekNumber(num: number, weekLabel: string, locale: Locale, displa
 
   parts.push(locale.simpleNumberFormat.format(num))
 
-  if (locale.options.isRTL) {
+  if (locale.options.isRtl) {
     parts.reverse()
   }
 

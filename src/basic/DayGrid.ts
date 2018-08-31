@@ -91,7 +91,7 @@ export default class DayGrid extends DateComponent {
         let seg = segs[i]
         seg.component = this
 
-        if (this.isRTL) {
+        if (this.isRtl) {
           seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex
           seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex
         } else {
@@ -222,9 +222,9 @@ export default class DayGrid extends DateComponent {
   renderNumberTrHtml(row) {
     return '' +
       '<tr>' +
-        (this.isRTL ? '' : this.renderNumberIntroHtml(row)) +
+        (this.isRtl ? '' : this.renderNumberIntroHtml(row)) +
         this.renderNumberCellsHtml(row) +
-        (this.isRTL ? this.renderNumberIntroHtml(row) : '') +
+        (this.isRtl ? this.renderNumberIntroHtml(row) : '') +
       '</tr>'
   }
 
@@ -669,7 +669,7 @@ export default class DayGrid extends DateComponent {
 
     // Determine horizontal coordinate.
     // We use the moreWrap instead of the <td> to avoid border confusion.
-    if (this.isRTL) {
+    if (this.isRtl) {
       options.right = computeRect(moreWrap).right + 1 // +1 to be over cell border
     } else {
       options.left = computeRect(moreWrap).left - 1 // -1 to be over cell border

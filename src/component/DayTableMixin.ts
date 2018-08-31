@@ -125,7 +125,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
   // Returns the numner of day cells, chronologically, from the first cell in *any given row*
   getColDayIndex(col) {
-    if ((this as any).isRTL) {
+    if ((this as any).isRtl) {
       return this.colCnt - 1 - col
     } else {
       return col
@@ -293,9 +293,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   renderHeadTrHtml() {
     return '' +
       '<tr>' +
-        ((this as any).isRTL ? '' : this.renderHeadIntroHtml()) +
+        ((this as any).isRtl ? '' : this.renderHeadIntroHtml()) +
         this.renderHeadDateCellsHtml() +
-        ((this as any).isRTL ? this.renderHeadIntroHtml() : '') +
+        ((this as any).isRtl ? this.renderHeadIntroHtml() : '') +
       '</tr>'
   }
 
@@ -381,9 +381,9 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   renderBgTrHtml(row) {
     return '' +
       '<tr>' +
-        ((this as any).isRTL ? '' : this.renderBgIntroHtml(row)) +
+        ((this as any).isRtl ? '' : this.renderBgIntroHtml(row)) +
         this.renderBgCellsHtml(row) +
-        ((this as any).isRTL ? this.renderBgIntroHtml(row) : '') +
+        ((this as any).isRtl ? this.renderBgIntroHtml(row) : '') +
       '</tr>'
   }
 
@@ -453,7 +453,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let introHtml = this.renderIntroHtml()
 
     if (introHtml) {
-      if ((this as any).isRTL) {
+      if ((this as any).isRtl) {
         appendToElement(trEl, introHtml)
       } else {
         prependToElement(trEl, introHtml)

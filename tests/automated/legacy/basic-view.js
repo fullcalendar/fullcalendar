@@ -5,10 +5,10 @@ describe('basic view rendering', function() {
     defaultView: 'month'
   })
 
-  describe('when isRTL is false', function() {
+  describe('when isRtl is false', function() {
 
     pushOptions({
-      isRTL: false
+      isRtl: false
     })
 
     it('should have days ordered sun to sat', function() {
@@ -24,10 +24,10 @@ describe('basic view rendering', function() {
     })
   })
 
-  describe('when isRTL is true', function() {
+  describe('when isRtl is true', function() {
 
     pushOptions({
-      isRTL: true
+      isRtl: true
     })
 
     it('should have days ordered sat to sun', function() {

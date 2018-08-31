@@ -11,7 +11,7 @@ describe('Agenda view rendering', function() {
 
   describe('when LTR', function() {
     pushOptions({
-      isRTL: false
+      isRtl: false
     })
 
     it('renders the axis on the left', function() {
@@ -25,7 +25,7 @@ describe('Agenda view rendering', function() {
 
   describe('when RTL', function() {
     pushOptions({
-      isRTL: true
+      isRtl: true
     })
 
     it('renders the axis on the right', function() {

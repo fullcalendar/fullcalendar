@@ -14,7 +14,7 @@ describe('DayGrid event rendering', function() {
     initMonthTesting(true)
   })
 
-  function initMonthTesting(isRTL) {
+  function initMonthTesting(isRtl) {
     it('correctly renders an event starting before view\'s start', function() {
       var options = {}
       options.events = [
@@ -184,9 +184,9 @@ describe('DayGrid event rendering', function() {
     })
 
     function testSeg(calendarOptions, testSegOptions) {
-      calendarOptions.isRTL = isRTL
+      calendarOptions.isRtl = isRtl
       initCalendar(calendarOptions)
-      directionallyTestSeg(testSegOptions, isRTL)
+      directionallyTestSeg(testSegOptions, isRtl)
     }
   }
 
@@ -250,7 +250,7 @@ describe('DayGrid event rendering', function() {
     - isStart
     - isEnd
   */
-  function directionallyTestSeg(opts, isRTL) {
+  function directionallyTestSeg(opts, isRtl) {
     var el = opts.el ? $(opts.el) : getFirstEventEl()
 
     var row = opts.row || 0
@@ -259,7 +259,7 @@ describe('DayGrid event rendering', function() {
 
     var leftCol
     var rightCol
-    if (isRTL) {
+    if (isRtl) {
       leftCol = rowTds.length - opts.lastCol - 1
       rightCol = rowTds.length - opts.firstCol - 1
     } else {

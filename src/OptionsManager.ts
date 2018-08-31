@@ -31,7 +31,7 @@ export default class OptionsManager {
   compute() {
     let locale
     let localeDefaults
-    let isRTL
+    let isRtl
     let dirDefaults
 
     locale = firstDefined( // explicit locale option given?
@@ -40,13 +40,13 @@ export default class OptionsManager {
     )
     localeDefaults = getLocale(locale).options // TODO: not efficient bc calendar already queries this
 
-    isRTL = firstDefined( // based on options computed so far, is direction RTL?
-      this.dynamicOverrides.isRTL,
-      this.overrides.isRTL,
-      localeDefaults.isRTL,
-      globalDefaults.isRTL
+    isRtl = firstDefined( // based on options computed so far, is direction RTL?
+      this.dynamicOverrides.isRtl,
+      this.overrides.isRtl,
+      localeDefaults.isRtl,
+      globalDefaults.isRtl
     )
-    dirDefaults = isRTL ? rtlDefaults : {}
+    dirDefaults = isRtl ? rtlDefaults : {}
 
     this.dirDefaults = dirDefaults
     this.localeDefaults = localeDefaults

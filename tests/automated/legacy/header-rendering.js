@@ -69,15 +69,15 @@ describe('header rendering', function() {
   })
 
   describe('renders left and right literally', function() {
-    [ true, false ].forEach(function(isRTL) {
-      describe('when isRTL is ' + isRTL, function() {
+    [ true, false ].forEach(function(isRtl) {
+      describe('when isRtl is ' + isRtl, function() {
         pushOptions({
           header: {
             left: 'prev',
             center: 'today',
             right: 'next'
           },
-          isRTL: isRTL
+          isRtl: isRtl
         })
         it('should have prev in left', function() {
           initCalendar()

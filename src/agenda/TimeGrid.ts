@@ -94,7 +94,7 @@ export default class TimeGrid extends DateComponent {
       let i
 
       for (i = 0; i < segs.length; i++) {
-        if (this.isRTL) {
+        if (this.isRtl) {
           segs[i].col = this.daysPerRow - 1 - segs[i].dayIndex
         } else {
           segs[i].col = segs[i].dayIndex
@@ -259,7 +259,7 @@ export default class TimeGrid extends DateComponent {
     let view = this.view
     let dateEnv = this.getDateEnv()
     let theme = this.getTheme()
-    let isRTL = this.isRTL
+    let isRtl = this.isRtl
     let dateProfile = this.dateProfile
     let html = ''
     let dayStart = startOfDay(dateProfile.renderRange.start)
@@ -288,9 +288,9 @@ export default class TimeGrid extends DateComponent {
         '<tr data-time="' + formatIsoTimeString(slotDate) + '"' +
           (isLabeled ? '' : ' class="fc-minor"') +
           '>' +
-          (!isRTL ? axisHtml : '') +
+          (!isRtl ? axisHtml : '') +
           '<td class="' + theme.getClass('widgetContent') + '"></td>' +
-          (isRTL ? axisHtml : '') +
+          (isRtl ? axisHtml : '') +
         '</tr>'
 
       slotTime = addDurations(slotTime, this.slotDuration)

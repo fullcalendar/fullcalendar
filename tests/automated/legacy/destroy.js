@@ -5,7 +5,7 @@ describe('destroy', function() {
   describe('when calendar is LTR', function() {
     it('cleans up all classNames on the root element', function() {
       initCalendar({
-        isRTL: false
+        isRtl: false
       })
       currentCalendar.destroy()
       expect($('#calendar')[0].className).toBe('')
@@ -15,7 +15,7 @@ describe('destroy', function() {
   describe('when calendar is RTL', function() {
     it('cleans up all classNames on the root element', function() {
       initCalendar({
-        isRTL: true
+        isRtl: true
       })
       currentCalendar.destroy()
       expect($('#calendar')[0].className).toBe('')

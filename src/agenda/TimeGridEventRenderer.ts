@@ -279,7 +279,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
     let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
     let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point
     let props = this.timeGrid.generateSegVerticalCss(seg) // get top/bottom first
-    let isRTL = this.timeGrid.isRTL
+    let isRtl = this.timeGrid.isRtl
     let left // amount of space from left edge, a fraction of the total width
     let right // amount of space from right edge, a fraction of the total width
 
@@ -288,7 +288,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
       forwardCoord = Math.min(1, backwardCoord + (forwardCoord - backwardCoord) * 2)
     }
 
-    if (isRTL) {
+    if (isRtl) {
       left = 1 - forwardCoord
       right = backwardCoord
     } else {
@@ -302,7 +302,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
     if (shouldOverlap && seg.forwardPressure) {
       // add padding to the edge so that forward stacked events don't cover the resizer's icon
-      props[isRTL ? 'marginLeft' : 'marginRight'] = 10 * 2 // 10 is a guesstimate of the icon's width
+      props[isRtl ? 'marginLeft' : 'marginRight'] = 10 * 2 // 10 is a guesstimate of the icon's width
     }
 
     return props

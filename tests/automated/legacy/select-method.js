@@ -17,10 +17,10 @@ describe('select method', function() {
     - for basic/month views, when given timed dates, should really be all-day
   */
 
-  [ false, true ].forEach(function(isRTL) {
-    describe('when isRTL is ' + isRTL, function() {
+  [ false, true ].forEach(function(isRtl) {
+    describe('when isRtl is ' + isRtl, function() {
       beforeEach(function() {
-        options.isRTL = isRTL
+        options.isRtl = isRtl
       })
       describe('when in month view', function() {
         beforeEach(function() {

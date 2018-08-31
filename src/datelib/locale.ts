@@ -15,7 +15,7 @@ const RAW_EN_LOCALE = {
     dow: 0, // Sunday is the first day of the week
     doy: 4 // 4 days need to be within the year to be considered the first week
   },
-  isRTL: false,
+  isRtl: false,
   buttonText: {
     prev: 'prev',
     next: 'next',

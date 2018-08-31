@@ -12,7 +12,7 @@
 
   $(document).ready(function() {
     var theme = false;
-    var isRTL = false;
+    var isRtl = false;
     var businessHours = false;
 
     $('#change-theme-button').on('click', function() {
@@ -21,8 +21,8 @@
     });
 
     $('#change-dir-button').on('click', function() {
-      isRTL = !isRTL;
-      $('#calendar').fullCalendar('option', 'isRTL', isRTL);
+      isRtl = !isRtl;
+      $('#calendar').fullCalendar('option', 'isRtl', isRtl);
     });
 
     $('#change-businessHours-button').on('click', function() {
@@ -32,18 +32,18 @@
 
     $('#change-all-button').on('click', function() {
       theme = !theme;
-      isRTL = !isRTL;
+      isRtl = !isRtl;
       businessHours = !businessHours;
       $('#calendar').fullCalendar('option', {
         theme: theme,
-        isRTL: isRTL,
+        isRtl: isRtl,
         businessHours: businessHours
       });
     });
 
     $('#calendar').fullCalendar({
       theme: theme,
-      isRTL: isRTL,
+      isRtl: isRtl,
       businessHours: businessHours,
       header: {
         left: 'prev,next today',

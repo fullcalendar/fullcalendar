@@ -9,12 +9,12 @@
 <script>
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
 
       dayRender: function(date, td) {
@@ -27,7 +27,7 @@
       },
       weekNumbers: true,
       //selectable: true,
-      //isRTL: true,
+      //isRtl: true,
 
       header: {
         left: 'prev,next today',
@@ -82,7 +82,7 @@
         }
       ]
     });
-    
+
   });
 
 </script>
