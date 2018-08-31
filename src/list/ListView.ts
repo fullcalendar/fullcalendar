@@ -175,7 +175,12 @@ export default class ListView extends View {
         // append a day header
         tbodyEl.appendChild(this.buildDayHeaderRow(this.dayDates[dayIndex]))
 
-        daySegs = this.eventRenderer.sortEventSegs(daySegs)
+        daySegs = this.eventRenderer.sortEventSegs(
+          daySegs,
+          [
+            { field: 'start', order: 1 } // always put earlier events first, regardless of eventOrder
+          ].concat(this.view.eventOrderSpecs)
+        )
 
         for (i = 0; i < daySegs.length; i++) {
           tbodyEl.appendChild(daySegs[i].el) // append event row

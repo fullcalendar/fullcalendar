@@ -67,14 +67,7 @@ export default abstract class View extends DateComponent {
     this.initHiddenDays()
     this.dateProfileGenerator = new this.dateProfileGeneratorClass(this)
 
-    this.eventOrderSpecs = [
-      // TODO: make these parts of the eventOrder default
-      { field: 'start', order: 1 }, // earlier goes first
-      { field: 'duration', order: -1 }, // longer events go first
-      { field: 'isAllDay', order: 1 }, // put all-day events first
-    ].concat(
-      parseFieldSpecs(this.opt('eventOrder'))
-    )
+    this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'))
 
     this.initialize()
   }

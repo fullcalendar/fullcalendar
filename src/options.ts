@@ -65,7 +65,9 @@ export const globalDefaults = {
 
   dropAccept: '*',
 
-  eventOrder: 'title',
+  eventOrder: 'start,-duration,isAllDay,title',
+  // ^ if start tie, longer events go before shorter. final tie-breaker is title text
+
   // rerenderDelay: null,
 
   eventLimit: false,
