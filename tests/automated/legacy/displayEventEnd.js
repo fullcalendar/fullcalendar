@@ -5,7 +5,7 @@ describe('displayEventEnd', function() {
   pushOptions({
     defaultDate: '2014-06-13',
     timeZone: 'UTC',
-    timeFormat: { hour: 'numeric', minute: '2-digit' }
+    eventTimeFormat: { hour: 'numeric', minute: '2-digit' }
   })
 
   describeOptions('defaultView', {

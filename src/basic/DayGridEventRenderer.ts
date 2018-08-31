@@ -218,7 +218,7 @@ export default class DayGridEventRenderer extends EventRenderer {
   }
 
 
-  // Computes a default event time formatting string if `timeFormat` is not explicitly defined
+  // Computes a default event time formatting string if `eventTimeFormat` is not explicitly defined
   computeEventTimeFormat() {
     return {
       hour: 'numeric',

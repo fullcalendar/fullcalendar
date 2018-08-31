@@ -121,7 +121,7 @@ export interface OptionsInputBase {
   duration?: DurationInput
   dayCount?: number
   locale?: string
-  timeFormat?: FormatterInput
+  eventTimeFormat?: FormatterInput
   columnHeader?: boolean
   columnHeaderFormat?: FormatterInput
   columnHeaderText?: string | ((date: DateInput) => string)

@@ -14,7 +14,7 @@ describe('the time text on events', function() {
 
       initCalendar({
         timeZone: 'local',
-        timeFormat: FORMAT,
+        eventTimeFormat: FORMAT,
         events: [
           { start: '2017-07-03T23:00:00', end: '2017-07-04T13:00:00' }
         ]
