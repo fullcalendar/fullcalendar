@@ -659,7 +659,6 @@ export default class DayGrid extends DateComponent {
         this.segPopoverTile.eventRenderer.rangeUpdated()
         this.segPopoverTile.eventRenderer.renderSegs(segs)
         this.segPopoverTile.renderedFlags.events = true // so unrendering works
-        this.segPopoverTile.triggerRenderedSegs(segs) // for eventRendered
       },
       hide: () => {
         this.segPopoverTile.removeElement()
