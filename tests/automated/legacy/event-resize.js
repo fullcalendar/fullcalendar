@@ -176,8 +176,8 @@ describe('eventResize', function() {
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00Z')
 
-            arg.revertFunc()
-            var event = currentCalendar.clientEvents()[0]
+            arg.revert()
+            var event = currentCalendar.getEvents()[0]
 
             expect(event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(event.end).toEqualDate('2014-06-11T07:00:00Z')
