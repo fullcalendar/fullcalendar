@@ -8,7 +8,7 @@ export const globalDefaults = {
   defaultTimedEventDuration: '02:00:00',
   defaultAllDayEventDuration: { day: 1 },
   forceEventDuration: false,
-  nextDayThreshold: '09:00:00', // 9am
+  nextDayThreshold: '00:00:00',
 
   // display
   columnHeader: true,

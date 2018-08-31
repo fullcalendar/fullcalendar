@@ -99,7 +99,7 @@ describe('defaultTimedEventDuration', function() {
               title: 'control event',
               allDay: false,
               start: '2014-04-28T04:00:00',
-              end: '2014-04-30T00:00:00'
+              end: '2014-04-30T04:00:00'
             },
             {
               // one day after the control. no specified end
