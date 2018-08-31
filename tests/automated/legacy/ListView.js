@@ -1,3 +1,16 @@
+import {
+  getEmptyMessageElsCount,
+  getListHeadingElAltElText,
+  getListHeadingElMainElText,
+  getListHeadingEls,
+  getListEventEls,
+  getListEventElsCount,
+  getListEventElTimeText,
+  getListEventElTitle
+} from '../lib/ListViewUtils'
+import { getScrollerEl } from '../lib/MonthViewUtils'
+import { replaceEventElDotElWithEl } from '../event-render/EventRenderUtils'
+
 describe('ListView rendering', function() {
   pushOptions({
     defaultView: 'listWeek',
@@ -40,7 +53,7 @@ describe('ListView rendering', function() {
       it('filters events through eventRender', function() {
         var options = {}
         options.eventRender = function(arg) {
-          $(arg.el).find('.fc-event-dot').replaceWith('<span class="custom-icon" />')
+          replaceEventElDotElWithEl($(arg.el), '<span class="custom-icon" />')
         }
 
         initCalendar(options)
@@ -396,7 +409,7 @@ describe('ListView rendering', function() {
       initCalendar({
         header: false
       }, $el)
-      let $scrollEl = $('.fc-view .fc-scroller')
+      let $scrollEl = getScrollerEl()
       expect(
         $scrollEl[0].scrollHeight
       ).toBeGreaterThan(
@@ -411,7 +424,7 @@ describe('ListView rendering', function() {
         header: false,
         height: 'auto'
       }, $el)
-      let $scrollEl = $('.fc-view .fc-scroller')
+      let $scrollEl = getScrollerEl()
       expect(
         Math.abs($scrollEl[0].scrollHeight - $scrollEl[0].clientHeight)
       ).toBeLessThan(2)
@@ -430,35 +443,35 @@ describe('ListView rendering', function() {
     initCalendar(options)
     currentCalendar.changeView('listWeek')
 
-    expect($('.fc-list-item').length).toBe(1)
+    expect(getListEventElsCount()).toBe(1)
 
     currentCalendar.prev()
 
-    expect($('.fc-list-item').length).toBe(0)
+    expect(getListEventElsCount()).toBe(0)
   })
 
   function getDayInfo() {
-    return $('.fc-list-heading').map(function(i, el) {
+    return getListHeadingEls().map(function(i, el) {
       el = $(el)
       return {
-        mainText: el.find('.fc-list-heading-main').text() || '',
-        altText: el.find('.fc-list-heading-alt').text() || '',
+        mainText: getListHeadingElMainElText(el) || '',
+        altText: getListHeadingElAltElText(el) || '',
         date: new Date(el.data('date'))
       }
     }).get()
   }
 
   function getEventInfo() { // gets all *segments*
-    return $('.fc-list-item').map(function(i, el) {
+    return getListEventEls().map(function(i, el) {
       el = $(el)
       return {
-        title: el.find('.fc-list-item-title').text() || '', // text!
-        timeText: el.find('.fc-list-item-time').text() || '' // text!
+        title: getListEventElTitle(el) || '', // text!
+        timeText: getListEventElTimeText(el) || '' // text!
       }
     }).get()
   }
 
   function getIsEmptyMessage() {
-    return Boolean($('.fc-list-empty').length)
+    return Boolean(getEmptyMessageElsCount())
   }
 })

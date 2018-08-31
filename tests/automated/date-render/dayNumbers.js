@@ -1,3 +1,4 @@
+import { getDayOfWeekHeaderElTopElText } from '../view-render/DayGridRenderUtils'
 
 describe('dayNumbers', function() {
   pushOptions({
@@ -9,7 +10,7 @@ describe('dayNumbers', function() {
       defaultView: 'month',
       locale: 'ar'
     })
-    expect($('td[data-date="2018-01-01"]')).toContainText('١') // an Arabic 1
+    expect(getDayOfWeekHeaderElTopElText('2018-01-01')).toEqual('١') // an Arabic 1
   })
 
 })

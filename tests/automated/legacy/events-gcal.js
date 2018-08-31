@@ -8,7 +8,7 @@ if (SKIP_GCAL) {
 
 // eslint-disable-next-line
 SKIP_GCAL ||
-describe('Google Calendar plugin', function() {
+xdescribe('Google Calendar plugin', function() {
 
   var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE'
   var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'

@@ -1,18 +1,13 @@
+import { getHeaderEl } from './../view-render/DayGridRenderUtils'
+import { DAY_CLASSES } from './../lib/constants'
+
 describe('day names', function() {
   var testableClasses = [
     'basicDay',
     'agendaDay'
   ]
-  var dayClasses = [
-    '.fc-sun',
-    '.fc-mon',
-    '.fc-tue',
-    '.fc-wed',
-    '.fc-thu',
-    '.fc-fri',
-    '.fc-sat'
-  ]
-  var sundayDate = new Date('2014-05-25T06:00:00Z')
+
+  var sundayDate = new Date('2014-05-25T06:00:00')
   var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ]
 
   pushOptions({
@@ -28,7 +23,7 @@ describe('day names', function() {
         pushOptions({
           locale: 'en'
         })
-        dayClasses.forEach(function(cls, index, classes) {
+        DAY_CLASSES.forEach(function(cls, index, classes) {
           var dayDate = FullCalendar.addDays(sundayDate, index)
           var dayText = dayDate.toLocaleString('en', { weekday: 'long' })
 
@@ -36,14 +31,14 @@ describe('day names', function() {
             initCalendar({
               now: dayDate
             })
-            expect($('.fc-view thead ' + dayClasses[index])).toHaveText(dayText)
+            expect(getHeaderEl().find(`.${cls}`)).toHaveText(dayText)
           })
         })
       })
 
       $.each(locales, function(index, locale) {
         describe('when locale is ' + locale, function() {
-          dayClasses.forEach(function(cls, index, classes) {
+          DAY_CLASSES.forEach(function(cls, index, classes) {
             var dayDate = FullCalendar.addDays(sundayDate, index)
             var dayText = dayDate.toLocaleString(locale, { weekday: 'long' })
 
@@ -54,7 +49,7 @@ describe('day names', function() {
                 now: dayDate
               })
 
-              expect($('.fc-view thead ' + dayClasses[index])).toHaveText(dayText)
+              expect(getHeaderEl().find(`.${cls}`)).toHaveText(dayText)
             })
           })
         })

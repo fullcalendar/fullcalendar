@@ -17,8 +17,8 @@ describe('validRange event resizing', function() {
     pit('won\'t go after validRange', function() {
       initCalendar()
       return EventResizeUtils.resize(
-        DayGridRenderUtils.getSingleDayEl('2017-06-06')[0].getBoundingClientRect(),
-        DayGridRenderUtils.getDisabledEl(0)[0].getBoundingClientRect() // where Jun 9th would be
+        DayGridRenderUtils.getDayEl('2017-06-06')[0].getBoundingClientRect(),
+        DayGridRenderUtils.getDisabledDayElAtIndex(0)[0].getBoundingClientRect() // where Jun 9th would be
       ).then(function(res) {
         expect(res).toBe(false)
       })

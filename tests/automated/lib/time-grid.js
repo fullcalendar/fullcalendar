@@ -1,6 +1,11 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib/utils'
 
+const TIME_GRID_CLASS = 'fc-time-grid'
+const NON_BUSINESS_CLASS = 'fc-nonbusiness'
+const CONTENT_SKELETON_CLASS = 'fc-content-skeleton'
+const AXIS_CLASS = 'fc-axis'
+const BACKGROUND_EVENT_CLASS = 'fc-bgevent'
 
 export function dragTimeGridEvent(eventEl, dropDate) {
   return new Promise(function(resolve) {
@@ -86,7 +91,7 @@ export function getTimeGridLine(date) { // not in Scheduler
 
 export function getTimeGridTop(targetTimeMs) {
   const topBorderWidth = 1 // TODO: kill
-  let slotEls = getTimeGridSlotEls(targetTimeMs)
+  let slotEls = getSlotElByTime(targetTimeMs)
   let slotEl
 
   // exact slot match
@@ -94,7 +99,7 @@ export function getTimeGridTop(targetTimeMs) {
     return slotEls.eq(0).offset().top + topBorderWidth
   }
 
-  slotEls = $('.fc-time-grid .fc-slats tr[data-time]') // all slots
+  slotEls = getSlotEls() // all slots
   let slotTimeMs = null
   let prevSlotTimeMs = null
 
@@ -138,8 +143,16 @@ export function getTimeGridDayEls(date) {
   return $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(date) + '"]')
 }
 
+export function getSlotEls() {
+  return $('.fc-time-grid .fc-slats tr[data-time]')
+}
 
-export function getTimeGridSlotEls(timeMs) {
+
+export function getSlotElByIndex(index) {
+  return $(`.fc-slats tr:eq(${index})`)
+}
+
+export function getSlotElByTime(timeMs) {
   const date = new Date('2016-01-01')
   date = new Date(date.valueOf() + timeMs)
 
@@ -150,6 +163,17 @@ export function getTimeGridSlotEls(timeMs) {
   }
 }
 
+export function getTimeGridNonBusinessDayEls() {
+  return $(`.${TIME_GRID_CLASS} .${NON_BUSINESS_CLASS}`)
+}
+
+export function queryBgEventsInCol(col) {
+  return $(`.${TIME_GRID_CLASS} .${CONTENT_SKELETON_CLASS} td:not(.${AXIS_CLASS}):eq(${col}) .${BACKGROUND_EVENT_CLASS}`)
+}
+
+export function queryNonBusinessSegsInCol(col) {
+  return $(`.${TIME_GRID_CLASS} .${CONTENT_SKELETON_CLASS} td:not(.${AXIS_CLASS}):eq(${col}) .${NON_BUSINESS_CLASS}`)
+}
 
 // TODO: discourage use
 export function getTimeGridDowEls(dayAbbrev) {

@@ -5,7 +5,7 @@ beforeEach(function() {
     toEqualDate() {
       return {
         compare: function(actual, expected) {
-          var result;
+          var result
 
           if (typeof expected === 'string') {
             expected = new Date(expected)

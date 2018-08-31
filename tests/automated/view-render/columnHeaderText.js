@@ -1,3 +1,4 @@
+import { getFirstDayEl } from './DayGridRenderUtils'
 
 describe('columnHeaderText', function() {
   pushOptions({
@@ -20,7 +21,7 @@ describe('columnHeaderText', function() {
   })
 
   function hasCustomText() {
-    var firstHeader = $('.fc-day-header:first')
+    var firstHeader = getFirstDayEl()
 
     return firstHeader.text() === '<div>Custom Sunday</div>'
   }

@@ -1,3 +1,6 @@
+import { getDayGridRowDayElAtIndex, getDayGridRowElAtIndex } from '../view-render/DayGridRenderUtils'
+import { getFirstEventEl, getSingleEl } from '../event-render/EventRenderUtils'
+
 describe('DayGrid event rendering', function() {
   pushOptions({
     defaultDate: '2014-08-01', // 2014-07-27 - 2014-10-07 (excl)
@@ -204,10 +207,10 @@ describe('DayGrid event rendering', function() {
       }
     ]
     initCalendar(options)
-    var row0 = $('.fc-day-grid .fc-row:eq(0)')
+    var row0 = getDayGridRowElAtIndex(0)
     var row0event1 = row0.find('.event1')
     var row0event2 = row0.find('.event2')
-    var row1 = $('.fc-day-grid .fc-row:eq(1)')
+    var row1 = getDayGridRowElAtIndex(1)
     var row1event1 = row1.find('.event1')
     var row1event2 = row1.find('.event2')
     expect(row0event1.offset().top).toBeLessThan(row0event2.offset().top)
@@ -221,7 +224,7 @@ describe('DayGrid event rendering', function() {
       start: '2014-08-01'
     } ]
     initCalendar(options)
-    var seg = $('.fc-event')
+    var seg = getSingleEl()
     expect(seg).not.toHaveAttr('href')
   })
 
@@ -233,7 +236,7 @@ describe('DayGrid event rendering', function() {
       url: 'http://google.com/'
     } ]
     initCalendar(options)
-    var seg = $('.fc-event')
+    var seg = getSingleEl()
     expect(seg).toHaveAttr('href')
   })
 
@@ -248,10 +251,10 @@ describe('DayGrid event rendering', function() {
     - isEnd
   */
   function directionallyTestSeg(opts, isRTL) {
-    var el = $(opts.el || '.fc-event:first')
+    var el = opts.el ? $(opts.el) : getFirstEventEl()
 
     var row = opts.row || 0
-    var rowTds = $('.fc-day-grid .fc-row:eq(' + row + ') .fc-day')
+    var rowTds = getDayGridRowDayElAtIndex(row)
     expect(rowTds.length).toBeGreaterThan(1)
 
     var leftCol

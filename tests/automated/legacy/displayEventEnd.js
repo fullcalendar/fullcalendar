@@ -1,3 +1,5 @@
+import { getSingleEl, getEventElTimeEl } from '../event-render/EventRenderUtils'
+
 describe('displayEventEnd', function() {
 
   pushOptions({
@@ -27,7 +29,7 @@ describe('displayEventEnd', function() {
               allDay: true
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time').length).toBe(0)
+              expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
               done()
             }
           })
@@ -43,7 +45,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -60,7 +62,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -84,7 +86,7 @@ describe('displayEventEnd', function() {
               allDay: true
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time').length).toBe(0)
+              expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
               done()
             }
           })
@@ -100,7 +102,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -117,7 +119,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
               done()
             }
           })
@@ -134,7 +136,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ],
             eventAfterAllRender: function() {
-              expect($('.fc-event .fc-time')).toHaveText('1:00 AM - 2:00 AM')
+              expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM - 2:00 AM')
               done()
             }
           })

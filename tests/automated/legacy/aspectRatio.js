@@ -1,3 +1,4 @@
+import { getViewContainerEl } from '../lib/ViewUtils'
 
 describe('aspectRatio', function() {
 
@@ -11,13 +12,13 @@ describe('aspectRatio', function() {
 
     it('fc-content should use the ratio 1:35 to set height', function() {
       initCalendar({}, getCalendarElement(elementWidth))
-      var height = $('.fc-view-container').height()
+      var height = getViewContainerEl().height()
       expect(Math.round(height)).toEqual(500)
     })
 
     it('fc-content should have width of div', function() {
       initCalendar({}, getCalendarElement(elementWidth))
-      var width = $('.fc-view-container').width()
+      var width = getViewContainerEl().width()
       expect(Math.round(width)).toEqual(elementWidth)
     })
 
@@ -35,14 +36,14 @@ describe('aspectRatio', function() {
 
       it('should not change the width', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
+        var width = getViewContainerEl().width()
         expect(Math.round(width)).toEqual(elementWidth)
       })
 
       it('should set the height to width sizes very close to ratio of 2', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
-        var height = $('.fc-view-container').height()
+        var width = getViewContainerEl().width()
+        var height = getViewContainerEl().height()
         var ratio = Math.round(width / height * 100)
         expect(Math.round(ratio)).toEqual(200)
       })
@@ -57,14 +58,14 @@ describe('aspectRatio', function() {
 
       it('should not change the width', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
+        var width = getViewContainerEl().width()
         expect(Math.round(width)).toEqual(elementWidth)
       })
 
       it('should set the height to width sizes very close to ratio of 2', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
-        var height = $('.fc-view-container').height()
+        var width = getViewContainerEl().width()
+        var height = getViewContainerEl().height()
         var ratio = Math.round(width / height * 100)
         expect(Math.round(ratio)).toEqual(100)
       })
@@ -79,14 +80,14 @@ describe('aspectRatio', function() {
 
       it('should not change the width', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
+        var width = getViewContainerEl().width()
         expect(Math.round(width)).toEqual(elementWidth)
       })
 
       it('should set the height to width ratio to 0.5', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
-        var height = $('.fc-view-container').height()
+        var width = getViewContainerEl().width()
+        var height = getViewContainerEl().height()
         var ratio = Math.round(width / height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
@@ -101,14 +102,14 @@ describe('aspectRatio', function() {
 
       it('should not change the width', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
+        var width = getViewContainerEl().width()
         expect(Math.round(width)).toEqual(elementWidth)
       })
 
       it('should set the height to width ratio to 0.5', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
-        var height = $('.fc-view-container').height()
+        var width = getViewContainerEl().width()
+        var height = getViewContainerEl().height()
         var ratio = Math.round(width / height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
@@ -123,14 +124,14 @@ describe('aspectRatio', function() {
 
       it('should not change the width', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
+        var width = getViewContainerEl().width()
         expect(Math.round(width)).toEqual(elementWidth)
       })
 
       it('should set the height to width ratio to 0.5', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
-        var height = $('.fc-view-container').height()
+        var width = getViewContainerEl().width()
+        var height = getViewContainerEl().height()
         var ratio = Math.round(width / height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
@@ -145,15 +146,15 @@ describe('aspectRatio', function() {
 
       it('should not change the width', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var width = $('.fc-view-container').width()
+        var width = getViewContainerEl().width()
         expect(Math.round(width)).toEqual(elementWidth)
       })
 
       it('should cause rows to be natural height', function() {
         initCalendar({}, getCalendarElement(elementWidth))
-        var actualHeight = $('.fc-view-container').height()
+        var actualHeight = getViewContainerEl().height()
         $('tr.fc-week td:first-child > div').css('min-height', '').css('background', 'red')
-        var naturalHeight = $('.fc-view-container').height()
+        var naturalHeight = getViewContainerEl().height()
         expect(Math.round(actualHeight)).toEqual(Math.round(naturalHeight))
       })
 

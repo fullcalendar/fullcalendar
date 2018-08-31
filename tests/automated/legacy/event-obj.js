@@ -35,7 +35,7 @@ describe('event object creation', function() {
 
   it('doesn\'t produce an event when an invalid start string', function() {
     var event = init({
-      start: 'asdfasdfasdf',
+      start: 'asdfasdfasdf'
     })
     expect(event).toBeUndefined()
   })

@@ -1,7 +1,10 @@
+import { getDayOfWeekHeaderEls } from '../view-render/DayGridRenderUtils'
+import { getSlotEls } from '../lib/time-grid'
+import { getEventEls, getEventElTimeText } from './EventRenderUtils'
 
 export function getTimeTexts() {
-  return $('.fc-event').map(function(i, eventEl) {
-    return $(eventEl).find('.fc-time').text()
+  return getEventEls().map(function(i, eventEl) {
+    return getEventElTimeText(eventEl)
   }).get()
 }
 
@@ -20,7 +23,7 @@ export function checkEventRendering(start, end) {
   }
 
   var expectedRects = computeSpanRects(start, end)
-  var eventEls = $('.fc-event') // sorted by DOM order. not good for RTL
+  var eventEls = getEventEls() // sorted by DOM order. not good for RTL
   var isMatch = checkEventRenderingMatch(expectedRects, eventEls)
 
   return {
@@ -139,9 +142,9 @@ export function computeSpanRects(start, end) {
 
 
 function computeDays() {
-  var dayEls = $('.fc-day-header[data-date]')
+  var dayOfWeekHeaderEls = getDayOfWeekHeaderEls()
 
-  var days = dayEls.map(function(i, node) {
+  var days = dayOfWeekHeaderEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
       date: FullCalendar.parseMarker(
@@ -155,7 +158,7 @@ function computeDays() {
 
 
 function computeSlots() {
-  var slotEls = $('.fc-time-grid .fc-slats tr[data-time]')
+  var slotEls = getSlotEls()
 
   var slots = slotEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()

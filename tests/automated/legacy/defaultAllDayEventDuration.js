@@ -1,3 +1,5 @@
+import { getEventEls } from '../event-render/EventRenderUtils'
+
 describe('defaultAllDayEventDuration', function() {
 
   pushOptions({
@@ -74,7 +76,7 @@ describe('defaultAllDayEventDuration', function() {
             }
           ],
           eventAfterAllRender: function() {
-            var eventElms = $('.fc-event', currentCalendar.el)
+            var eventElms = getEventEls()
             var width0 = eventElms.eq(0).outerWidth()
             var width1 = eventElms.eq(1).outerWidth()
             expect(width0).toBeGreaterThan(0)

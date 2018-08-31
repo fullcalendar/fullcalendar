@@ -1,3 +1,4 @@
+import { getEventEls } from './EventRenderUtils'
 
 describe('eventOrder', function() {
   pushOptions({
@@ -87,7 +88,7 @@ describe('eventOrder', function() {
   })
 
   function getEventOrder() {
-    return $('.fc-event').map(function(i, node) {
+    return getEventEls().map(function(i, node) {
       return $(node).data('event-id')
     }).get()
   }

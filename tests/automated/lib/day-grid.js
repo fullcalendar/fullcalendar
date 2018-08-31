@@ -8,6 +8,9 @@ export function getDayGridDayEls(date) {
   return $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(date) + '"]')
 }
 
+export function getDayGridAxis() {
+  return $('.fc-day-grid .fc-axis')
+}
 
 // TODO: discourage use
 export function getDayGridDowEls(dayAbbrev) {

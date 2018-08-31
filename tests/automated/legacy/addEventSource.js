@@ -1,3 +1,5 @@
+import { getEventEls } from './../event-render/EventRenderUtils'
+
 describe('addEventSource', function() {
   var eventArray = [
     { id: 0, title: 'event zero', start: '2014-06-24', className: 'event-zero' },
@@ -103,7 +105,6 @@ describe('addEventSource', function() {
   // has internal info on all the events.
   function checkAllEvents() {
     expect(currentCalendar.getEvents().length).toEqual(3)
-    expect($('.fc-event').length).toEqual(3)
+    expect(getEventEls().length).toEqual(3)
   }
-
 })

@@ -1,7 +1,15 @@
-import { formatIsoDay } from '../datelib/utils'
+import { formatIsoDay, addDays } from '../datelib/utils'
+import { getTimeGridDayEls, getSlotElByIndex } from './time-grid'
+import { getDayEl } from '../view-render/DayGridRenderUtils'
+import {
+  getEventElResizerEl,
+  getEventElTitleEl,
+  getEventElTimeEl,
+  getFirstEventEl,
+  getLastEventEl
+} from '../event-render/EventRenderUtils'
 
 
-// this function has been mangled to work with external jqui draggables as well
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
   var eventsRendered = false
 
@@ -30,19 +38,19 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dropDateHasTime = true
     }
 
-    eventEl = $('.' + (eventClassName || 'fc-event') + ':first')
+    eventEl = eventClassName ? $(`.${eventClassName}:first`) : getFirstEventEl()
     expect(eventEl.length).toBe(1)
 
     if (dropDateHasTime) {
-      dragEl = eventEl.find('.fc-time')
-      dayEl = $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(dropDate) + '"]')
+      dragEl = getEventElTimeEl(eventEl)
+      dayEl = getTimeGridDayEls(dropDate)
       slatIndex = dropDate.getUTCHours() * 2 + (dropDate.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
-      slatEl = $('.fc-slats tr:eq(' + slatIndex + ')')
+      slatEl = getSlotElByIndex(slatIndex)
       expect(slatEl.length).toBe(1)
       dy = slatEl.offset().top - eventEl.offset().top
     } else {
-      dragEl = eventEl.find('.fc-title')
-      dayEl = $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(dropDate) + '"]')
+      dragEl = getEventElTitleEl(eventEl)
+      dayEl = getDayEl(dropDate)
       dy = dayEl.offset().top - eventEl.offset().top
     }
 
@@ -122,17 +130,17 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       resizeDateHasTime = true
     }
 
-    eventEl = $('.' + (eventClassName || 'fc-event') + ':last')
-    dragEl = eventEl.find('.fc-resizer')
+    eventEl = eventClassName ? $(`.${eventClassName}:first`) : getLastEventEl(eventClassName)
+    dragEl = getEventElResizerEl(eventEl)
 
     if (resizeDateHasTime) {
-      lastDayEl = $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(resizeDate) + '"]')
+      lastDayEl = getTimeGridDayEls(resizeDate)
       lastSlatIndex = resizeDate.getUTCHours() * 2 + (resizeDate.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
-      lastSlatEl = $('.fc-slats tr:eq(' + (lastSlatIndex - 1) + ')')
+      lastSlatEl = getSlotElByIndex(lastSlatIndex - 1)
       expect(lastSlatEl.length).toBe(1)
       dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())
     } else {
-      lastDayEl = $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(FullCalendar.addDays(resizeDate, -1)) + '"]')
+      lastDayEl = getDayEl(addDays(resizeDate, -1))
       dy = lastDayEl.offset().top - eventEl.offset().top
     }
 
@@ -206,19 +214,19 @@ export function testSelection(options, start, end, expectSuccess, callback) {
   initCalendar(options)
 
   if (!isAllDay) {
-    firstDayEl = $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(start) + '"]')
-    lastDayEl = $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(end) + '"]')
+    firstDayEl = getTimeGridDayEls(start)
+    lastDayEl = getTimeGridDayEls(end)
     firstSlatIndex = start.getUTCHours() * 2 + (start.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
     lastSlatIndex = end.getUTCHours() * 2 + (end.getUTCMinutes() / 30) - 1 // assumes slotDuration:'30:00'
-    firstSlatEl = $('.fc-slats tr:eq(' + firstSlatIndex + ')')
-    lastSlatEl = $('.fc-slats tr:eq(' + lastSlatIndex + ')')
+    firstSlatEl = getSlotElByIndex(firstSlatIndex)
+    lastSlatEl = getSlotElByIndex(lastSlatIndex)
     expect(firstSlatEl.length).toBe(1)
     expect(lastSlatEl.length).toBe(1)
     dy = lastSlatEl.offset().top - firstSlatEl.offset().top
     dragEl = firstSlatEl
   } else {
-    firstDayEl = $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(start) + '"]')
-    lastDayEl = $('.fc-day-grid .fc-day[data-date="' + formatIsoDay(new Date(end.valueOf() - 1)) + '"]') // inclusive
+    firstDayEl = getDayEl(start)
+    lastDayEl = getDayEl(new Date(end.valueOf() - 1)) // inclusive
     dy = lastDayEl.offset().top - firstDayEl.offset().top
     dragEl = firstDayEl
   }
