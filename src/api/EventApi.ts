@@ -1,6 +1,9 @@
 import Calendar from '../Calendar'
 import { EventDef, EventInstance } from '../structs/event'
 import { EventMutation } from '../structs/event-mutation'
+import { DateInput } from '../datelib/env'
+import { diffDates } from '../util/misc'
+import { subtractDurations, asRoughMs, DurationInput, createDuration } from '../datelib/duration'
 
 export default class EventApi {
 
@@ -38,6 +41,115 @@ export default class EventApi {
   setExtendedProp(name: string, val: string) {
     this.mutate({
       extendedProps: { [name]: val }
+    })
+  }
+
+  setStart(startInput: DateInput, options: { granularity?: string, maintainDuration?: boolean } = {}) {
+    let dateEnv = this.calendar.dateEnv
+    let start = dateEnv.createMarker(startInput)
+
+    if (start && this.instance) { // TODO: warning if parsed bad
+      let instanceRange = this.instance.range
+      let startDelta = diffDates(instanceRange.start, start, dateEnv, options.granularity) // what if parsed bad!?
+      let endDelta = null
+
+      if (options.maintainDuration) {
+        let origDuration = diffDates(instanceRange.start, instanceRange.end, dateEnv, options.granularity)
+        let newDuration = diffDates(start, instanceRange.end, dateEnv, options.granularity)
+        endDelta = subtractDurations(newDuration, origDuration)
+      }
+
+      this.mutate({
+        startDelta,
+        endDelta,
+        standardProps:
+          options.maintainDuration || !asRoughMs(startDelta) ?
+            {} :
+            { hasEnd: true } // when events will get new duration, considered to have an end
+      })
+    }
+  }
+
+  setEnd(endInput: DateInput, options: { granularity?: string } = {}) {
+    let dateEnv = this.calendar.dateEnv
+    let end = dateEnv.createMarker(endInput)
+
+    if (end && this.instance) { // TODO: warning if parsed bad
+      let endDelta = diffDates(this.instance.range.end, end, dateEnv, options.granularity)
+
+      this.mutate({
+        endDelta,
+        standardProps: { hasEnd: true }
+      })
+    }
+  }
+
+  setDates(startInput: DateInput, endInput: DateInput, options: { granularity?: string } = {}) {
+    let dateEnv = this.calendar.dateEnv
+    let start = dateEnv.createMarker(startInput)
+    let end = dateEnv.createMarker(endInput)
+
+    if (start && end && this.instance) { // TODO: warning if parsed bad
+      let instanceRange = this.instance.range
+      let startDelta = diffDates(instanceRange.start, start, dateEnv, options.granularity)
+      let endDelta = diffDates(instanceRange.end, end, dateEnv, options.granularity)
+
+      this.mutate({
+        startDelta,
+        endDelta,
+        standardProps:
+          asRoughMs(endDelta) ?
+            { hasEnd: true } : // any end change? mark as having an end
+            {}
+      })
+    }
+  }
+
+  moveStart(deltaInput: DurationInput) {
+    let delta = createDuration(deltaInput)
+
+    if (delta) { // TODO: warning if parsed bad
+      this.mutate({
+        startDelta: delta,
+        standardProps: { hasEnd: true }
+      })
+    }
+  }
+
+  moveEnd(deltaInput: DurationInput) {
+    let delta = createDuration(deltaInput)
+
+    if (delta) { // TODO: warning if parsed bad
+      this.mutate({
+        endDelta: delta,
+        standardProps: { hasEnd: true }
+      })
+    }
+  }
+
+  moveDates(deltaInput: DurationInput) {
+    let delta = createDuration(deltaInput)
+
+    if (delta) { // TODO: warning if parsed bad
+      this.mutate({
+        startDelta: delta,
+        endDelta: delta
+      })
+    }
+  }
+
+  setIsAllDay(isAllDay: boolean, options: { maintainDuration?: boolean } = {}) {
+    let maintainDuration = options.maintainDuration
+
+    if (maintainDuration == null) {
+      maintainDuration = this.calendar.opt('isAllDayMaintainDuration')
+    }
+
+    this.mutate({
+      standardProps: {
+        isAllDay,
+        hasEnd: maintainDuration
+      }
     })
   }
 

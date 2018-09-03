@@ -59,6 +59,8 @@ export const globalDefaults = {
   dragRevertDuration: 500,
   dragScroll: true,
 
+  isAllDayMaintainDuration: false,
+
   // selectable: false,
   unselectAuto: true,
   // selectMinDistance: 0,
