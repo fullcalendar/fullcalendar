@@ -31,24 +31,34 @@ export default class ExternalDraggable {
     }
 
     dragging.emitter.on('pointerdown', this.handlePointerDown)
+    dragging.emitter.on('dragstart', this.handleDragStart)
 
     new ExternalElementDragging(dragging, settings.eventData)
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
     let { dragging } = this
-    let { delay, minDistance } = this.settings
+    let { minDistance, delay } = this.settings
 
-    if (minDistance == null) {
-      minDistance = globalDefaults.eventDragMinDistance
+    dragging.minDistance =
+      minDistance != null ?
+        minDistance :
+        (ev.isTouch ? 0 : globalDefaults.eventDragMinDistance)
+
+    dragging.delay =
+      delay != null ?
+        delay :
+        (ev.isTouch ? globalDefaults.longPressDelay : 0) // TODO: eventually read eventLongPressDelay
+  }
+
+  handleDragStart = (ev: PointerDragEvent) => {
+    if (
+      ev.isTouch &&
+      this.dragging.delay &&
+      (ev.subjectEl as HTMLElement).classList.contains('fc-event')
+    ) {
+      this.dragging.mirror.getMirrorEl().classList.add('fc-selected')
     }
-
-    if (delay == null) {
-      delay = globalDefaults.longPressDelay // TODO: eventually read eventLongPressDelay
-    }
-
-    dragging.minDistance = ev.isTouch ? 0 : minDistance
-    dragging.delay = ev.isTouch ? delay : 0
   }
 
   destroy() {
