@@ -14,16 +14,27 @@
     -----------------------------------------------------------------*/
 
     var containerEl = document.getElementById('external-events-list');
-    var eventEls = Array.prototype.slice.call(
-      containerEl.querySelectorAll('.fc-event')
-    );
-
-    eventEls.forEach(function(eventEl) {
-      new FullCalendar.Draggable(eventEl, {
-        title: eventEl.innerText.trim(),
-        stick: true
-      });
+    new FullCalendar.Draggable(containerEl, {
+      itemSelector: '.fc-event',
+      eventData: function(eventEl) {
+        return {
+          title: eventEl.innerText.trim(),
+        }
+      }
     });
+
+    //// the individual way to do it
+    // var containerEl = document.getElementById('external-events-list');
+    // var eventEls = Array.prototype.slice.call(
+    //   containerEl.querySelectorAll('.fc-event')
+    // );
+    // eventEls.forEach(function(eventEl) {
+    //   new FullCalendar.Draggable(eventEl, {
+    //     eventData: {
+    //       title: eventEl.innerText.trim(),
+    //     }
+    //   });
+    // });
 
     /* initialize the calendar
     -----------------------------------------------------------------*/

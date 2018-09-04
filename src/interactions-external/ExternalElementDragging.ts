@@ -14,7 +14,7 @@ import { elementMatches } from '../util/dom-manip'
 import { enableCursor, disableCursor } from '../util/misc'
 import { isEventsValid, isSelectionValid, eventToDateSpan } from '../validation'
 
-export type ExternalDragMetaInput = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
+export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
 
 /*
 Given an already instantiated draggable object for one-or-more elements,
@@ -26,10 +26,10 @@ export default class ExternalElementDragging {
   hitDragging: HitDragging
   receivingCalendar: Calendar | null = null
   droppableEvent: EventTuple | null = null
-  suppliedDragMeta: ExternalDragMetaInput | null = null
+  suppliedDragMeta: DragMetaGenerator | null = null
   dragMeta: DragMeta | null = null
 
-  constructor(dragging: ElementDragging, suppliedDragMeta?: ExternalDragMetaInput) {
+  constructor(dragging: ElementDragging, suppliedDragMeta?: DragMetaGenerator) {
 
     let hitDragging = this.hitDragging = new HitDragging(dragging, browserContext.componentHash)
     hitDragging.requireInitial = false // will start outside of a component
