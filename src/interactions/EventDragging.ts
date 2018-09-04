@@ -348,8 +348,8 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
 
   if (dateSpan0.isAllDay !== dateSpan1.isAllDay) {
     standardProps = {
-      hasEnd: hit1.component.opt('isAllDayMaintainDuration'),
-      isAllDay: dateSpan1.isAllDay
+      isAllDay: dateSpan1.isAllDay,
+      hasEnd: hit1.component.opt('isAllDayMaintainDuration')
     }
 
     if (dateSpan1.isAllDay) {

@@ -1,9 +1,10 @@
-import { Duration } from '../datelib/duration'
+import { Duration, asRoughMs, durationsEqual } from '../datelib/duration'
 import { EventStore, createEmptyEventStore } from './event-store'
 import { EventDef, EventInstance } from './event'
 import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 import { computeAlignedDayRange } from '../util/misc'
+import { startOfDay } from '../datelib/marker'
 
 /*
 A data structure for how to modify an EventDef/EventInstance within an EventStore
@@ -36,16 +37,40 @@ export function applyMutationToEventStore(eventStore: EventStore, mutation: Even
 
 function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation): EventDef {
   let copy = assignTo({}, eventDef)
+  let standardProps = mutation.standardProps || {}
 
-  if (mutation.standardProps) {
-    assignTo(copy, mutation.standardProps)
+  // if hasEnd has not been specified, guess a good value based on deltas.
+  // if duration will change, there's no way the default duration will persist,
+  // and thus, we need to mark the event as having a real end
+  if (
+    standardProps.hasEnd == null &&
+    willDeltasAffectDuration(mutation.startDelta, mutation.endDelta)
+  ) {
+    standardProps.hasEnd = true
   }
+
+  assignTo(copy, standardProps)
 
   if (mutation.extendedProps) {
     copy.extendedProps = assignTo({}, copy.extendedProps, mutation.extendedProps)
   }
 
   return copy
+}
+
+function willDeltasAffectDuration(startDelta: Duration | null, endDelta: Duration | null) {
+  if (startDelta && !asRoughMs(startDelta)) { startDelta = null }
+  if (endDelta && !asRoughMs(endDelta)) { endDelta = null }
+
+  if (!startDelta && !endDelta) {
+    return false
+  }
+
+  if (Boolean(startDelta) !== Boolean(endDelta)) {
+    return true
+  }
+
+  return !durationsEqual(startDelta, endDelta)
 }
 
 function applyMutationToEventInstance(
@@ -80,6 +105,20 @@ function applyMutationToEventInstance(
       start: copy.range.start,
       end: dateEnv.add(copy.range.end, mutation.endDelta),
     }
+  }
+
+  // in case event was all-day but the supplied deltas were not
+  // better util for this?
+  if (eventDef.isAllDay) {
+    copy.range = {
+      start: startOfDay(copy.range.start),
+      end: startOfDay(copy.range.end)
+    }
+  }
+
+  // handle invalid durations
+  if (copy.range.end < copy.range.start) {
+    copy.range.end = calendar.getDefaultEventEnd(eventDef.isAllDay, copy.range.start)
   }
 
   return copy

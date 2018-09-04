@@ -214,11 +214,11 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
 
   if (isFromStart) {
     if (dateEnv.add(instanceRange.start, delta) > instanceRange.end) {
-      return { startDelta: delta, standardProps: { hasEnd: true } }
+      return { startDelta: delta }
     }
   } else {
     if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
-      return { endDelta: delta, standardProps: { hasEnd: true } }
+      return { endDelta: delta }
     }
   }
 
