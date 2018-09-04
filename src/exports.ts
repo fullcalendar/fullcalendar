@@ -112,3 +112,5 @@ export { default as ElementDragging } from './dnd/ElementDragging'
 
 export { default as Draggable } from './interactions-external/Draggable'
 export { default as GenericDragging } from './interactions-external/generic-dragging' // singleton
+
+export { formatDate, formatRange } from './formatting-api'

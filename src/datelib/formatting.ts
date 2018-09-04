@@ -43,6 +43,7 @@ export interface DateFormatter {
   formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext)
 }
 
+// TODO: use Intl.DateTimeFormatOptions
 export type FormatterInput = object | string | FuncFormatterFunc
 
 

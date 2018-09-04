@@ -19,7 +19,7 @@ export interface DateEnvSettings {
   locale: Locale
   weekNumberCalculation?: any
   firstDay?: any,
-  weekLabel: string
+  weekLabel?: string
 }
 
 export type DateInput = Date | string | number | number[]
