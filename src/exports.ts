@@ -110,7 +110,7 @@ export { refineProps } from './util/misc'
 export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'
 export { default as ElementDragging } from './dnd/ElementDragging'
 
-export { default as Draggable } from './interactions-external/Draggable'
+export { default as Draggable } from './interactions-external/ExternalDraggable'
 export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 
 export { formatDate, formatRange } from './formatting-api'
