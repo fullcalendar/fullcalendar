@@ -334,7 +334,7 @@ export class DateEnv {
   }
 
   // TODO: choke on timeZoneName: long
-  format(marker: DateMarker, formatter: DateFormatter, dateOptions: any = {}) {
+  format(marker: DateMarker, formatter: DateFormatter, dateOptions: { forcedTzo?: number } = {}) {
     return formatter.format(
       {
         marker: marker,
@@ -346,7 +346,7 @@ export class DateEnv {
     )
   }
 
-  formatRange(start: DateMarker, end: DateMarker, formatter: DateFormatter, dateOptions: any = {}) {
+  formatRange(start: DateMarker, end: DateMarker, formatter: DateFormatter, dateOptions: { forcedStartTzo?: number, forcedEndTzo?: number, isEndExclusive?: boolean } = {}) {
 
     if (dateOptions.isEndExclusive) {
       end = addMs(end, -1)

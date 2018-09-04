@@ -4,6 +4,7 @@ import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/misc'
 import { subtractDurations, DurationInput, createDuration } from '../datelib/duration'
+import { createFormatter, FormatterInput } from '../datelib/formatting'
 
 export default class EventApi {
 
@@ -161,6 +162,23 @@ export default class EventApi {
     }
 
     this.mutate({ standardProps })
+  }
+
+  formatRange(formatInput: FormatterInput) {
+    let dateEnv = this.calendar.dateEnv
+    let { instance } = this
+    let formatter = createFormatter(formatInput)
+
+    if (this.def.hasEnd) {
+      return dateEnv.formatRange(instance.range.start, instance.range.end, formatter, {
+        forcedStartTzo: instance.forcedStartTzo,
+        forcedEndTzo: instance.forcedEndTzo
+      })
+    } else {
+      return dateEnv.format(instance.range.start, formatter, {
+        forcedTzo: instance.forcedStartTzo
+      })
+    }
   }
 
   private mutate(mutation: EventMutation) {
