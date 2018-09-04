@@ -15,25 +15,34 @@
     -----------------------------------------------------------------*/
 
     var containerEl = document.getElementById('external-events-list');
-    var eventEls = Array.prototype.slice.call(
-      containerEl.querySelectorAll('.fc-event')
-    );
-
-    eventEls.forEach(function(eventEl) {
-      eventEl.setAttribute('data-event', JSON.stringify({
-        title: eventEl.innerText.trim(),
-        stick: true
-      }));
-    });
 
     var drake = dragula({
       containers: [ containerEl ],
       copy: true
     });
 
-    FullCalendar.GenericDragging.enable({
-      mirrorSelector: '.gu-mirror'
+    new FullCalendar.ThirdPartyDraggable(containerEl, {
+      itemSelector: '.fc-event',
+      mirrorSelector: '.gu-mirror',
+      eventData: function(eventEl) {
+        return {
+          title: eventEl.innerText.trim()
+        }
+      }
     })
+
+    //// the individual way to do it
+    // var eventEls = Array.prototype.slice.call(
+    //   containerEl.querySelectorAll('.fc-event')
+    // );
+    // eventEls.forEach(function(eventEl) {
+    //   eventEl.setAttribute('data-event', JSON.stringify({
+    //     title: eventEl.innerText.trim()
+    //   }));
+    // });
+    // new FullCalendar.ThirdPartyDraggable({
+    //   mirrorSelector: '.gu-mirror'
+    // })
 
     /* initialize the calendar
     -----------------------------------------------------------------*/

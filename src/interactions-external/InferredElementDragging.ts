@@ -1,11 +1,6 @@
 import PointerDragging, { PointerDragEvent } from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 
-export interface InferredElementDraggingSettings {
-  itemSelector?: string
-  mirrorSelector?: string
-}
-
 /*
 Detects when a *THIRD-PARTY* drag-n-drop system interacts with elements.
 The third-party system is responsible for drawing the visuals effects of the drag.
@@ -16,19 +11,16 @@ export default class InferredElementDragging extends ElementDragging {
 
   pointer: PointerDragging
   shouldIgnoreMove: boolean = false
-  mirrorSelector: string
+  mirrorSelector: string = ''
   currentMirrorEl: HTMLElement | null = null
 
-  constructor(options: InferredElementDraggingSettings) {
+  constructor(containerEl: HTMLElement) {
     super()
 
-    let pointer = this.pointer = new PointerDragging(document)
-    pointer.selector = options.itemSelector || '[data-event]'
+    let pointer = this.pointer = new PointerDragging(containerEl)
     pointer.emitter.on('pointerdown', this.handlePointerDown)
     pointer.emitter.on('pointermove', this.handlePointerMove)
     pointer.emitter.on('pointerup', this.handlePointerUp)
-
-    this.mirrorSelector = options.mirrorSelector || ''
   }
 
   destroy() {

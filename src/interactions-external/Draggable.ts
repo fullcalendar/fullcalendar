@@ -18,23 +18,23 @@ export default class ExternalDraggable {
 
   dragging: FeaturefulElementDragging
 
-  constructor(el: HTMLElement, options: ExternalDraggableSettings = {}) {
+  constructor(el: HTMLElement, settings: ExternalDraggableSettings = {}) {
     let dragging = this.dragging = new FeaturefulElementDragging(el)
 
-    if (options.itemSelector != null) {
-      dragging.pointer.selector = options.itemSelector
+    if (settings.itemSelector != null) {
+      dragging.pointer.selector = settings.itemSelector
     }
-    if (options.delay != null) {
-      dragging.delay = options.delay
+    if (settings.delay != null) {
+      dragging.delay = settings.delay
     }
-    if (options.minDistance != null) {
-      dragging.minDistance = options.minDistance
+    if (settings.minDistance != null) {
+      dragging.minDistance = settings.minDistance
     }
-    if (options.touchScrollAllowed != null) {
-      dragging.touchScrollAllowed = options.touchScrollAllowed
+    if (settings.touchScrollAllowed != null) {
+      dragging.touchScrollAllowed = settings.touchScrollAllowed
     }
 
-    new ExternalElementDragging(dragging, options.eventData)
+    new ExternalElementDragging(dragging, settings.eventData)
   }
 
   destroy() {

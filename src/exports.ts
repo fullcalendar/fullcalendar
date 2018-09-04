@@ -111,6 +111,6 @@ export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragg
 export { default as ElementDragging } from './dnd/ElementDragging'
 
 export { default as Draggable } from './interactions-external/Draggable'
-export { default as GenericDragging } from './interactions-external/generic-dragging' // singleton
+export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 
 export { formatDate, formatRange } from './formatting-api'
