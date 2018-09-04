@@ -11,14 +11,14 @@ export interface DragMetaInput extends EventNonDateInput {
   time?: DurationInput
   duration?: DurationInput
   create?: boolean
-  stick?: boolean
+  sourceId?: string
 }
 
 export interface DragMeta {
   time: Duration | null
   duration: Duration | null
   create: boolean // create an event when dropped?
-  stick: boolean // similar to addEvent's stick parameter
+  sourceId: string // similar to addEvent's parameter
   leftoverProps: object
 }
 
@@ -26,12 +26,11 @@ const DRAG_META_PROPS = {
   time: createDuration,
   duration: createDuration,
   create: Boolean,
-  stick: Boolean
+  sourceId: String
 }
 
 const DRAG_META_DEFAULTS = {
-  create: true,
-  stick: false
+  create: true
 }
 
 export function parseDragMeta(raw: DragMetaInput): DragMeta {
