@@ -79,7 +79,8 @@ export const globalDefaults = {
   handleWindowResize: true,
   windowResizeDelay: 100, // milliseconds before an updateSize happens
 
-  longPressDelay: 1000
+  longPressDelay: 1000,
+  eventDragMinDistance: 5 // only applies to mouse
 
 }
 

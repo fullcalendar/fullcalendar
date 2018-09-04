@@ -63,7 +63,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       eventInstanceId
     )
 
-    dragging.minDistance = ev.isTouch ? 0 : 5
+    dragging.minDistance = ev.isTouch ? 0 : component.opt('eventDragMinDistance')
     dragging.delay =
       // only do a touch delay if touch and this event hasn't been selected yet
       (ev.isTouch && eventInstanceId !== component.eventSelection) ?
@@ -73,9 +73,6 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     mirror.parentNode = initialCalendar.el
     mirror.opacity = component.opt('dragOpacity')
     mirror.revertDuration = component.opt('dragRevertDuration')
-
-    // to prevent from cloning the sourceEl before it is selected
-    dragging.setMirrorIsVisible(false)
 
     let isValid =
       this.component.isValidSegDownEl(origTarget) &&

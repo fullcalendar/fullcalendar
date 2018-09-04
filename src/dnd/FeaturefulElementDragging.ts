@@ -20,7 +20,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
   // the caller can also set the PointerDragging's options as well
   delay: number | null = null
   minDistance: number = 0
-  touchScrollAllowed: boolean = true
+  touchScrollAllowed: boolean = true // prevents drag from starting and blocks scrolling during drag
 
   mirrorNeedsRevert: boolean = false
   isInteracting: boolean = false // is the user validly moving the pointer? lasts until pointerup
@@ -72,6 +72,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
         this.origX = ev.pageX
         this.origY = ev.pageY
 
+        this.mirror.setIsVisible(false) // reset. caller must set-visible
         this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY)
         this.autoScroller.start(ev.pageX, ev.pageY)
 

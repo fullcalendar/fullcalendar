@@ -1,12 +1,13 @@
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import ExternalElementDragging, { DragMetaGenerator } from './ExternalElementDragging'
+import { globalDefaults } from '../options'
+import { PointerDragEvent } from '../dnd/PointerDragging'
 
 export interface ExternalDraggableSettings {
   eventData?: DragMetaGenerator
   itemSelector?: string
   delay?: number
   minDistance?: number
-  touchScrollAllowed?: boolean
 }
 
 /*
@@ -17,24 +18,37 @@ Leverages FullCalendar's internal drag-n-drop functionality WITHOUT a third-part
 export default class ExternalDraggable {
 
   dragging: FeaturefulElementDragging
+  settings: ExternalDraggableSettings
 
   constructor(el: HTMLElement, settings: ExternalDraggableSettings = {}) {
+    this.settings = settings
+
     let dragging = this.dragging = new FeaturefulElementDragging(el)
+    dragging.touchScrollAllowed = false
 
     if (settings.itemSelector != null) {
       dragging.pointer.selector = settings.itemSelector
     }
-    if (settings.delay != null) {
-      dragging.delay = settings.delay
-    }
-    if (settings.minDistance != null) {
-      dragging.minDistance = settings.minDistance
-    }
-    if (settings.touchScrollAllowed != null) {
-      dragging.touchScrollAllowed = settings.touchScrollAllowed
-    }
+
+    dragging.emitter.on('pointerdown', this.handlePointerDown)
 
     new ExternalElementDragging(dragging, settings.eventData)
+  }
+
+  handlePointerDown = (ev: PointerDragEvent) => {
+    let { dragging } = this
+    let { delay, minDistance } = this.settings
+
+    if (minDistance == null) {
+      minDistance = globalDefaults.eventDragMinDistance
+    }
+
+    if (delay == null) {
+      delay = globalDefaults.longPressDelay // TODO: eventually read eventLongPressDelay
+    }
+
+    dragging.minDistance = ev.isTouch ? 0 : minDistance
+    dragging.delay = ev.isTouch ? delay : 0
   }
 
   destroy() {

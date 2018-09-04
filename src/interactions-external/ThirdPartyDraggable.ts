@@ -17,14 +17,15 @@ export default class ThirdPartyDraggable {
 
   constructor(
     containerOrSettings?: EventTarget | ThirdPartyDraggableSettings,
-    settings: ThirdPartyDraggableSettings = {}
+    settings?: ThirdPartyDraggableSettings
   ) {
     let containerEl: EventTarget = document
 
     if (containerOrSettings instanceof EventTarget) {
       containerEl = containerOrSettings
+      settings = settings || {}
     } else {
-      settings = containerOrSettings || settings
+      settings = containerOrSettings || {}
     }
 
     let dragging = this.dragging = new InferredElementDragging(containerEl as HTMLElement)
