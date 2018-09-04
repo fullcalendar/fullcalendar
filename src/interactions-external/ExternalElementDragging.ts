@@ -14,6 +14,8 @@ import { elementMatches } from '../util/dom-manip'
 import { enableCursor, disableCursor } from '../util/misc'
 import { isEventsValid, isSelectionValid, eventToDateSpan } from '../validation'
 
+export type ExternalDragMetaInput = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
+
 /*
 Given an already instantiated draggable object for one-or-more elements,
 Interprets any dragging as an attempt to drag an events that lives outside
@@ -24,10 +26,10 @@ export default class ExternalElementDragging {
   hitDragging: HitDragging
   receivingCalendar: Calendar | null = null
   droppableEvent: EventTuple | null = null
-  explicitDragMeta: DragMeta | null = null
+  suppliedDragMeta: ExternalDragMetaInput | null = null
   dragMeta: DragMeta | null = null
 
-  constructor(dragging: ElementDragging, rawEventDragData?: DragMetaInput) {
+  constructor(dragging: ElementDragging, suppliedDragMeta?: ExternalDragMetaInput) {
 
     let hitDragging = this.hitDragging = new HitDragging(dragging, browserContext.componentHash)
     hitDragging.requireInitial = false // will start outside of a component
@@ -35,15 +37,23 @@ export default class ExternalElementDragging {
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
     hitDragging.emitter.on('dragend', this.handleDragEnd)
 
-    if (rawEventDragData) {
-      this.explicitDragMeta = parseDragMeta(rawEventDragData)
-    }
+    this.suppliedDragMeta = suppliedDragMeta
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
     browserContext.unselectEvent() // unselect any existing events
 
-    this.dragMeta = this.explicitDragMeta || getDragMetaFromEl(ev.subjectEl as HTMLElement)
+    this.dragMeta = this.buildDragMeta(ev.subjectEl as HTMLElement)
+  }
+
+  buildDragMeta(subjectEl: HTMLElement) {
+    if (typeof this.suppliedDragMeta === 'object') {
+      return parseDragMeta(this.suppliedDragMeta)
+    } else if (typeof this.suppliedDragMeta === 'function') {
+      return parseDragMeta(this.suppliedDragMeta(subjectEl))
+    } else {
+      return getDragMetaFromEl(subjectEl)
+    }
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
