@@ -4,6 +4,7 @@ import { testEventDrag } from '../lib/dnd-resize-utils'
 
 describe('advanced external dnd', function() {
   var dragEl
+  var thirdPartyDraggable
 
   beforeEach(function() {
     dragEl = $('<div class="drag">yo</div>')
@@ -15,13 +16,13 @@ describe('advanced external dnd', function() {
       .appendTo('body')
       .draggable()
 
-    FullCalendar.GenericDragging.enable({
+    thirdPartyDraggable = new FullCalendar.ThirdPartyDraggable({
       itemSelector: '.drag'
     })
   })
 
   afterEach(function() {
-    FullCalendar.GenericDragging.disable()
+    thirdPartyDraggable.destroy()
     dragEl.remove()
     dragEl = null
   })

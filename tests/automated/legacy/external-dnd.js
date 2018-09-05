@@ -6,6 +6,7 @@ describe('external drag and drop', function() {
 
   var doSortable
   var options
+  var thirdPartyDraggable
 
   beforeEach(function() {
     doSortable = false
@@ -23,7 +24,7 @@ describe('external drag and drop', function() {
       '</div>'
     )
 
-    FullCalendar.GenericDragging.enable({
+    thirdPartyDraggable = new FullCalendar.ThirdPartyDraggable({
       itemSelector: '#sidebar .fc-event'
     })
   })
@@ -33,7 +34,7 @@ describe('external drag and drop', function() {
     currentCalendar.destroy()
     $(el).remove()
     $('#sidebar').remove()
-    FullCalendar.GenericDragging.disable()
+    thirdPartyDraggable.destroy()
   })
 
   function init() {
