@@ -18,6 +18,7 @@ module.exports = function(config) {
       // dependencies for main lib AND plugin
       'node_modules/superagent/superagent.js',
       'node_modules/moment/moment.js',
+      'node_modules/moment/locale/es.js', // only spanish for testing
       'node_modules/moment-timezone/moment-timezone.js',
       'node_modules/jquery/dist/jquery.js',
       'node_modules/components-jqueryui/jquery-ui.js',
