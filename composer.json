@@ -35,8 +35,12 @@
         "dist/fullcalendar.min.css",
         "dist/fullcalendar.print.css",
         "dist/fullcalendar.print.min.css",
-        "dist/gcal.js",
-        "dist/gcal.min.js",
+        "dist/fullcalendar-gcal.js",
+        "dist/fullcalendar-gcal.min.js",
+        "dist/fullcalendar-moment.js",
+        "dist/fullcalendar-moment.min.js",
+        "dist/fullcalendar-moment-timezone.js",
+        "dist/fullcalendar-moment-timezone.min.js",
         "dist/locale-all.js",
         "dist/locale/*.js"
       ]

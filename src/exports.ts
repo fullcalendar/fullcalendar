@@ -101,7 +101,13 @@ export {
 } from './datelib/duration'
 export { DateEnv } from './datelib/env'
 export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
-export { DateFormatter, createFormatter } from './datelib/formatting'
+export {
+  DateFormatter,
+  createFormatter,
+  VerboseFormattingArg
+} from './datelib/formatting'
+export { NamedTimeZoneImpl, registerNamedTimeZoneImpl } from './datelib/timezone'
+export { registerCmdFormatter } from './datelib/formatting-cmd'
 export { parse as parseMarker } from './datelib/parsing'
 
 export { registerEventSourceDef } from './structs/event-source'
