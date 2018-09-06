@@ -210,7 +210,8 @@ describe('datelib', function() {
       var formatter = createFormatter({
         day: 'numeric',
         month: 'long',
-        year: 'numeric'
+        year: 'numeric',
+        separator: ' - '
       })
 
       it('works with different days of same month', function() {

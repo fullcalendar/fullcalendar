@@ -3,7 +3,9 @@ import { mergeProps } from './util/object'
 
 export const globalDefaults = {
 
+  defaultRangeSeparator: ' - ',
   titleRangeSeparator: ' \u2013 ', // en dash
+  //cmdFormatter: null,
 
   defaultTimedEventDuration: '02:00:00',
   defaultAllDayEventDuration: { day: 1 },
@@ -39,8 +41,6 @@ export const globalDefaults = {
   timeZoneParam: 'timeZone',
 
   timeZone: 'UTC', // TODO: throw error if given falsy value?
-
-  //cmdFormatter: null,
 
   // allDayDefault: undefined,
 

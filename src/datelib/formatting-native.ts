@@ -5,7 +5,6 @@ import { Locale } from './locale'
 import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset } from './formatting'
 
 
-const DEFAULT_SEPARATOR = ' - '
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
   separator: 0, // 0 = not applicable
@@ -160,7 +159,7 @@ export class NativeFormatter implements DateFormatter {
     let partial1 = this.format(end, context, partialFormatSettings)
 
     let insertion = findCommonInsertion(full0, partial0, full1, partial1)
-    let separator = this.extendedSettings.separator || DEFAULT_SEPARATOR
+    let separator = this.extendedSettings.separator || ''
 
     if (insertion) {
       return insertion.before + partial0 + separator + partial1 + insertion.after

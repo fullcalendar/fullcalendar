@@ -1,7 +1,8 @@
 import { DateEnv, DateInput } from './datelib/env'
 import { assignTo } from './util/object'
 import { createFormatter } from './datelib/formatting'
-import { getLocale } from './datelib/locale';
+import { getLocale } from './datelib/locale'
+import { globalDefaults } from './options'
 
 export function formatDate(dateInput: DateInput, settings = {}) {
   let dateEnv = buildDateEnv(settings)
@@ -17,9 +18,14 @@ export function formatDate(dateInput: DateInput, settings = {}) {
   })
 }
 
-export function formatRange(startInput: DateInput, endInput: DateInput, settings = {}) {
-  let dateEnv = buildDateEnv(settings)
-  let formatter = createFormatter(settings)
+export function formatRange(
+  startInput: DateInput,
+  endInput: DateInput,
+  settings, // mixture of env and formatter settings
+  defaultSeparator: string = globalDefaults.defaultRangeSeparator
+) {
+  let dateEnv = buildDateEnv(typeof settings === 'object' && settings ? settings : {}) // pass in if non-null object
+  let formatter = createFormatter(settings, defaultSeparator)
   let startMeta = dateEnv.createMarkerMeta(startInput)
   let endMeta = dateEnv.createMarkerMeta(endInput)
 

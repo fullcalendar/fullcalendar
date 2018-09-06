@@ -776,7 +776,10 @@ export default class Calendar {
 
   formatDate(d: Date, formatter): string {
     const { dateEnv } = this
-    return dateEnv.format(dateEnv.createMarker(d), createFormatter(formatter))
+    return dateEnv.format(
+      dateEnv.createMarker(d),
+      createFormatter(formatter)
+    )
   }
 
 
@@ -785,7 +788,7 @@ export default class Calendar {
     return dateEnv.formatRange(
       dateEnv.createMarker(d0),
       dateEnv.createMarker(d1),
-      createFormatter(formatter),
+      createFormatter(formatter, this.opt('defaultRangeSeparator')),
       { isEndExclusive }
     )
   }

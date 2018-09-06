@@ -64,7 +64,7 @@ describe('moment plugin', function() {
 
   })
 
-  describe('formatting', function() {
+  describe('date formatting', function() {
 
     it('produces event time text', function() {
       initCalendar({
@@ -78,6 +78,58 @@ describe('moment plugin', function() {
         ]
       })
       expect(getEventElTimeText(getSingleEl())).toBe('13:30:20!')
+    })
+
+  })
+
+  describe('range formatting', function() {
+
+    it('renders with same month', function() {
+      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+        cmdFormatter: 'moment'
+      })
+      let s
+
+      s = calendar.formatRange('2018-09-03', '2018-09-05', 'MMMM {D}, YYYY [nice]')
+      expect(s).toEqual('September 3 - 5, 2018 nice')
+
+      s = calendar.formatRange('2018-09-03', '2018-09-05', '{D} MMMM, YYYY [nice]')
+      expect(s).toEqual('3 - 5 September, 2018 nice')
+    })
+
+    it('renders with same year but different month', function() {
+      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+        cmdFormatter: 'moment'
+      })
+      let s
+
+      s = calendar.formatRange('2018-09-03', '2018-10-05', '{MMMM {D}}, YYYY [nice]')
+      expect(s).toEqual('September 3 - October 5, 2018 nice')
+
+      s = calendar.formatRange('2018-09-03', '2018-10-05', '{{D} MMMM}, YYYY [nice]')
+      expect(s).toEqual('3 September - 5 October, 2018 nice')
+    })
+
+    it('renders with different years', function() {
+      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+        cmdFormatter: 'moment'
+      })
+      let s
+
+      s = calendar.formatRange('2018-09-03', '2019-10-05', '{MMMM {D}}, YYYY [nice]')
+      expect(s).toEqual('September 3, 2018 nice - October 5, 2019 nice')
+
+      s = calendar.formatRange('2018-09-03', '2019-10-05', '{{D} MMMM}, YYYY [nice]')
+      expect(s).toEqual('3 September, 2018 nice - 5 October, 2019 nice')
+    })
+
+    it('inherits defaultRangeSeparator', function() {
+      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+        cmdFormatter: 'moment',
+        defaultRangeSeparator: ' to '
+      })
+      let s = calendar.formatRange('2018-09-03', '2018-09-05', 'MMMM D, YYYY [nice]')
+      expect(s).toEqual('September 3, 2018 nice to September 5, 2018 nice')
     })
 
     it('produces title with titleRangeSeparator', function() {

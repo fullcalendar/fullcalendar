@@ -167,7 +167,7 @@ export default class EventApi {
   formatRange(formatInput: FormatterInput) {
     let dateEnv = this.calendar.dateEnv
     let { instance } = this
-    let formatter = createFormatter(formatInput)
+    let formatter = createFormatter(formatInput, this.calendar.opt('defaultRangeSeparator'))
 
     if (this.def.hasEnd) {
       return dateEnv.formatRange(instance.range.start, instance.range.end, formatter, {

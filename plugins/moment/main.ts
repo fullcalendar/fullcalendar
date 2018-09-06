@@ -36,9 +36,9 @@ fc.registerCmdFormatter('moment', function(cmdStr: string, arg: fc.VerboseFormat
     )
     return formatRange(
       cmd,
-      startMom.format.bind(startMom),
-      endMom.format.bind(endMom),
-      arg.separator // TODO: test separator
+      createMomentFormatFunc(startMom),
+      createMomentFormatFunc(endMom),
+      arg.separator
     )
   }
 
@@ -49,6 +49,12 @@ fc.registerCmdFormatter('moment', function(cmdStr: string, arg: fc.VerboseFormat
     arg.localeCodes[0]
   ).format(cmd.whole) // TODO: test for this
 })
+
+function createMomentFormatFunc(mom: moment.Moment) {
+  return function(cmdStr) {
+    return cmdStr ? mom.format(cmdStr) : '' // because calling with blank string results in ISO8601 :(
+  }
+}
 
 function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | null, locale: string): moment.Moment {
   let mom: moment.Moment
@@ -81,20 +87,22 @@ function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | 
 
 interface CmdParts {
   head: string | null
-  middle: string | null
+  middle: CmdParts | null
   tail: string | null
   whole: string
 }
 
 function parseCmdStr(cmdStr: string): CmdParts {
-  let parts = cmdStr.match(/^(.*?)\{(.*?)\}(.*)$/)
+  let parts = cmdStr.match(/^(.*?)\{(.*)\}(.*)$/) // TODO: lookbehinds for escape characters
 
   if (parts) {
+    let middle = parseCmdStr(parts[2])
+
     return {
       head: parts[1],
-      middle: parts[2],
+      middle,
       tail: parts[3],
-      whole: parts[1] + parts[2] + parts[3]
+      whole: parts[1] + middle.whole + parts[3]
     }
   } else {
     return {
@@ -107,13 +115,13 @@ function parseCmdStr(cmdStr: string): CmdParts {
 }
 
 function formatRange(cmd: CmdParts, formatStart: (cmdStr: string) => string, formatEnd: (cmdStr: string) => string, separator: string): string {
-  if (cmd.head) {
+  if (cmd.middle) {
     let startHead = formatStart(cmd.head)
-    let startMiddle = formatStart(cmd.middle)
+    let startMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator)
     let startTail = formatStart(cmd.tail)
 
     let endHead = formatEnd(cmd.head)
-    let endMiddle = formatEnd(cmd.middle)
+    let endMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator)
     let endTail = formatEnd(cmd.tail)
 
     if (startHead === endHead && startTail === endTail) {
