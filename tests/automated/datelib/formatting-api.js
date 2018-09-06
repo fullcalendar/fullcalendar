@@ -18,7 +18,7 @@ describe('formatDate', function() {
       timeZoneName: 'short',
       timeZone: 'America/New_York' // but with no timeZoneImpl
     })
-    expect(str).toBe('September 4, 2018, GMT+5')
+    expect(str).toBe('September 4, 2018, GMT-5')
   })
 
 })
@@ -42,7 +42,7 @@ describe('formatRange', function() {
       timeZoneName: 'short',
       timeZone: 'America/New_York' // but with no timeZoneImpl
     })
-    expect(str).toBe('September 4 - October 4, 2018, GMT+5')
+    expect(str).toBe('September 4 - October 4, 2018, GMT-5')
   })
 
 })

@@ -11,7 +11,7 @@ export interface ZonedMarker {
   timeZoneOffset: number
 }
 
-export interface ExpandedZoneMarker extends ZonedMarker {
+export interface ExpandedZonedMarker extends ZonedMarker {
   array: number[],
   year: number,
   month: number,
@@ -23,9 +23,9 @@ export interface ExpandedZoneMarker extends ZonedMarker {
 }
 
 export interface VerboseFormattingArg {
-  date: ExpandedZoneMarker
-  start: ExpandedZoneMarker
-  end?: ExpandedZoneMarker
+  date: ExpandedZonedMarker
+  start: ExpandedZonedMarker
+  end?: ExpandedZonedMarker
   timeZone: string
   localeCodes: string[]
 }
@@ -93,7 +93,7 @@ export function formatIsoTimeString(marker: DateMarker) {
 }
 
 export function formatTimeZoneOffset(minutes: number, doIso = false) {
-  let sign = minutes < 0 ? '+' : '-' // whaaa
+  let sign = minutes < 0 ? '-' : '+'
   let abs = Math.abs(minutes)
   let hours = Math.floor(abs / 60)
   let mins = Math.round(abs % 60)
@@ -121,7 +121,7 @@ export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker,
   }
 }
 
-function expandZonedMarker(dateInfo: ZonedMarker, calendarSystem: CalendarSystem): ExpandedZoneMarker {
+function expandZonedMarker(dateInfo: ZonedMarker, calendarSystem: CalendarSystem): ExpandedZonedMarker {
   let a = calendarSystem.markerToArray(dateInfo.marker)
 
   return {

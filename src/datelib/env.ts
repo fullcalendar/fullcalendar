@@ -398,7 +398,7 @@ export class DateEnv {
 
   offsetForMarker(m: DateMarker) {
     if (this.timeZone === 'local') {
-      return arrayToLocalDate(dateToUtcArray(m)).getTimezoneOffset()
+      return -arrayToLocalDate(dateToUtcArray(m)).getTimezoneOffset() // convert "inverse" offset to "normal" offset
     } else if (this.timeZone === 'UTC') {
       return 0
     } else if (this.namedTimeZoneImpl) {
@@ -419,7 +419,7 @@ export class DateEnv {
       return new Date(m.valueOf() - (forcedTzo || 0))
     } else {
       return new Date(
-        m.valueOf() +
+        m.valueOf() -
         this.namedTimeZoneImpl.offsetForArray(dateToUtcArray(m)) * 1000 * 60 // convert minutes -> ms
       )
     }

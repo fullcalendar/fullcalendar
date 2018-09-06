@@ -69,18 +69,30 @@ describe('luxon plugin', function() {
 
   describe('toDuration', function() {
 
-    it('converts correctly', function() {
+    it('converts numeric values correctly', function() {
       let calendar = new FullCalendar.Calendar(document.createElement('div'), {
         defaultTimedEventDuration: '05:00',
         defaultAllDayEventDuration: { days: 3 }
       })
 
       // hacky way to have a duration parsed
-      let timedDuration = toDuration(calendar.defaultTimedEventDuration)
-      let allDayDuration = toDuration(calendar.defaultAllDayEventDuration)
+      let timedDuration = toDuration(calendar, calendar.defaultTimedEventDuration)
+      let allDayDuration = toDuration(calendar, calendar.defaultAllDayEventDuration)
 
       expect(timedDuration.as('hours')).toBe(5)
       expect(allDayDuration.as('days')).toBe(3)
+    })
+
+    it('transfers locale correctly', function() {
+      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+        defaultTimedEventDuration: '05:00',
+        locale: 'es'
+      })
+
+      // hacky way to have a duration parsed
+      let timedDuration = toDuration(calendar, calendar.defaultTimedEventDuration)
+
+      expect(timedDuration.locale).toBe('es')
     })
 
   })
