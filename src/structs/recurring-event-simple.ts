@@ -24,7 +24,7 @@ interface SimpleRecurringData {
 }
 
 interface SimpleParsedRecurring extends ParsedRecurring {
-  typeData: SimpleRecurringData
+  typeData: SimpleRecurringData // the whole point is to make this more specific
 }
 
 registerRecurringType({

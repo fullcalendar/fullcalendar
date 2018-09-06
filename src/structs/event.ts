@@ -133,7 +133,8 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
   } else {
     let recurringRes = parseRecurring(
       leftovers0, // non-date props and other non-standard props
-      leftovers1 // dest
+      leftovers1, // dest
+      calendar.dateEnv
     )
 
     if (recurringRes) {

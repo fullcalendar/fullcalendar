@@ -25,6 +25,7 @@
     "luxon": "^1.3.3",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
+    "rrule": "^2.5.5",
     "superagent": "^3.8.2"
   },
   "version": "0.0.0",

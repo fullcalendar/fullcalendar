@@ -21,6 +21,7 @@ module.exports = function(config) {
       'node_modules/moment/locale/es.js', // only spanish for testing
       'node_modules/moment-timezone/builds/moment-timezone-with-data.js',
       'node_modules/luxon/build/global/luxon.js',
+      'node_modules/rrule/dist/es5/rrule.js',
       'node_modules/jquery/dist/jquery.js',
       'node_modules/components-jqueryui/jquery-ui.js',
       'node_modules/components-jqueryui/themes/cupertino/jquery-ui.css',

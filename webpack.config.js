@@ -17,6 +17,7 @@ const MODULES = {
   'dist/fullcalendar-moment': './plugins/moment/main.ts',
   'dist/fullcalendar-moment-timezone': './plugins/moment-timezone/main.ts',
   'dist/fullcalendar-luxon': './plugins/luxon/main.ts',
+  'dist/fullcalendar-rrule': './plugins/rrule/main.ts',
   'tmp/automated-tests': './tests/automated/index'
 }
 
@@ -30,10 +31,12 @@ module.exports = {
   entry: Object.assign({}, MODULES, generateLocaleMap()),
 
   externals: {
+    superagent: 'superagent',
     moment: 'moment',
     'moment-timezone': 'moment-timezone',
     luxon: 'luxon',
-    superagent: 'superagent',
+    rrule: 'rrule',
+    dragula: 'dragula',
 
     // for plugins that might need jQuery
     jquery: {
@@ -42,9 +45,6 @@ module.exports = {
       amd: 'jquery',
       root: 'jQuery'
     },
-
-    // for plugins
-    dragula: 'dragula',
 
     // plugins reference the root 'fullcalendar' namespace
     fullcalendar: {

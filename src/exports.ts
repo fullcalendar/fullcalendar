@@ -8,7 +8,7 @@ export const internalApiVersion = 12
 
 // types
 export { OptionsInput } from './types/input-types'
-export { EventInput } from './structs/event'
+export { EventInput, EventDef } from './structs/event'
 export { BusinessHoursInput } from './structs/business-hours'
 
 export {
@@ -122,3 +122,5 @@ export { default as ThirdPartyDraggable } from './interactions-external/ThirdPar
 export { formatDate, formatRange } from './formatting-api'
 
 export { globalDefaults } from './options'
+
+export { registerRecurringType, ParsedRecurring } from './structs/recurring-event'

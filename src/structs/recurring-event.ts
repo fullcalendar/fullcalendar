@@ -1,6 +1,7 @@
 import Calendar from '../Calendar'
 import { EventInput, EventDef } from './event'
 import { DateRange } from '../datelib/date-range'
+import { DateEnv } from '../datelib/env'
 
 /*
 The plugin system for defining how a recurring event is expanded into individual instances.
@@ -13,7 +14,7 @@ export interface ParsedRecurring {
 }
 
 export interface RecurringType {
-  parse: (rawEvent: EventInput, leftoverProps: any) => ParsedRecurring | null
+  parse: (rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
   expand: (typeData: any, eventDef: EventDef, framingRange: DateRange, calendar: Calendar) => DateRange[]
 }
 
@@ -25,9 +26,9 @@ export function registerRecurringType(recurringType: RecurringType) {
 }
 
 
-export function parseRecurring(eventInput: EventInput, leftovers: any) {
+export function parseRecurring(eventInput: EventInput, leftovers: any, dateEnv: DateEnv) {
   for (let i = 0; i < recurringTypes.length; i++) {
-    let parsed = recurringTypes[i].parse(eventInput, leftovers) as ParsedRecurring
+    let parsed = recurringTypes[i].parse(eventInput, leftovers, dateEnv) as ParsedRecurring
 
     if (parsed) {
       return {
