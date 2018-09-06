@@ -38,6 +38,7 @@ class LuxonNamedTimeZone extends fc.NamedTimeZoneImpl {
 }
 
 fc.registerNamedTimeZoneImpl('luxon', LuxonNamedTimeZone)
+fc.globalDefaults.timeZoneImpl = 'luxon'
 
 
 fc.registerCmdFormatter('luxon', function(cmdStr: string, arg: fc.VerboseFormattingArg) {
@@ -68,6 +69,7 @@ fc.registerCmdFormatter('luxon', function(cmdStr: string, arg: fc.VerboseFormatt
     arg.localeCodes[0]
   ).toFormat(cmd.whole)
 })
+fc.globalDefaults.cmdFormatter = 'luxon'
 
 
 function luxonToArray(datetime: DateTime): number[] {

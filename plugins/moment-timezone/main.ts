@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import 'moment-timezone'
-import { NamedTimeZoneImpl, registerNamedTimeZoneImpl } from 'fullcalendar'
+import { NamedTimeZoneImpl, registerNamedTimeZoneImpl, globalDefaults } from 'fullcalendar'
 
 
 class MomentNamedTimeZone extends NamedTimeZoneImpl {
@@ -17,3 +17,4 @@ class MomentNamedTimeZone extends NamedTimeZoneImpl {
 
 
 registerNamedTimeZoneImpl('moment-timezone', MomentNamedTimeZone)
+globalDefaults.timeZoneImpl = 'moment-timezone'

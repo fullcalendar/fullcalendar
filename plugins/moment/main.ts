@@ -49,6 +49,7 @@ fc.registerCmdFormatter('moment', function(cmdStr: string, arg: fc.VerboseFormat
     arg.localeCodes[0]
   ).format(cmd.whole) // TODO: test for this
 })
+fc.globalDefaults.cmdFormatter = 'moment'
 
 function createMomentFormatFunc(mom: moment.Moment) {
   return function(cmdStr) {

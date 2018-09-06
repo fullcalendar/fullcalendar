@@ -5,7 +5,7 @@ export const globalDefaults = {
 
   defaultRangeSeparator: ' - ',
   titleRangeSeparator: ' \u2013 ', // en dash
-  //cmdFormatter: null,
+  cmdFormatter: null,
 
   defaultTimedEventDuration: '02:00:00',
   defaultAllDayEventDuration: { day: 1 },
@@ -41,6 +41,7 @@ export const globalDefaults = {
   timeZoneParam: 'timeZone',
 
   timeZone: 'UTC', // TODO: throw error if given falsy value?
+  timeZoneImpl: null,
 
   // allDayDefault: undefined,
 

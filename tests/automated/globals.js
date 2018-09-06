@@ -235,3 +235,7 @@ window.spyCall = function(func) {
 window.pushOptions({
   timeZone: 'UTC'
 })
+
+// clear what plugins do. will take affect for all calendars, not just those via initCalendar()
+FullCalendar.globalDefaults.timeZoneImpl = null
+FullCalendar.globalDefaults.cmdFormatter = null

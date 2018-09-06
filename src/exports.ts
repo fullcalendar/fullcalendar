@@ -120,3 +120,5 @@ export { default as Draggable } from './interactions-external/ExternalDraggable'
 export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 
 export { formatDate, formatRange } from './formatting-api'
+
+export { globalDefaults } from './options'
