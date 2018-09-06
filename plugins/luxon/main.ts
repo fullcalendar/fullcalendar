@@ -15,3 +15,42 @@ import * as fc from 'fullcalendar'
   }
 
 }
+
+
+class LuxonNamedTimeZone extends fc.NamedTimeZoneImpl {
+
+  offsetForArray(a: number[]): number {
+    // use negative to convert the "real" offset to the "inverse" offset,
+    // which is what builtin JS objects return with Date::getTimezoneOffset
+    // TODO: rethink about doing this internally too
+    return -DateTime.fromObject({
+      zone: this.name,
+      year: a[0],
+      month: a[1] + 1, // convert 0-based to 1-based
+      day: a[2],
+      hour: a[3],
+      minute: a[4],
+      second: a[5],
+      millisecond: a[6]
+    }).offset
+  }
+
+  timestampToArray(ms: number): number[] {
+    let obj = DateTime.fromMillis(ms, {
+      zone: this.name
+    })
+    return [
+      obj.year,
+      obj.month - 1, // convert 1-based to 0-based
+      obj.day,
+      obj.hour,
+      obj.minute,
+      obj.second,
+      obj.millisecond
+    ]
+  }
+
+}
+
+
+fc.registerNamedTimeZoneImpl('luxon', LuxonNamedTimeZone)

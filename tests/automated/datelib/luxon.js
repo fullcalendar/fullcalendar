@@ -4,11 +4,12 @@ describe('luxon plugin', function() {
   let toDuration = FullCalendar.Luxon.toDuration
 
   // TODO: test formatting
-  // TODO: test named timezones
+
+  // NOTE: timezone offset converting is done in timeZoneImpl
 
   describe('toDateTime', function() {
 
-    describe('timezone handling', function() {
+    describe('timezone transfering', function() {
 
       it('transfers UTC', function() {
         let calendar = new FullCalendar.Calendar(document.createElement('div'), {
@@ -24,7 +25,7 @@ describe('luxon plugin', function() {
         expect(end.zoneName).toBe('UTC')
       })
 
-      it('transfers local', function() {
+      it('transfers local timezone', function() {
         let calendar = new FullCalendar.Calendar(document.createElement('div'), {
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'local'
@@ -36,6 +37,20 @@ describe('luxon plugin', function() {
         expect(start.zoneName).toMatch('/') // has a named timezone
         expect(end.toJSDate()).toEqualDate('2018-09-05T18:00:00') // compare to local
         expect(end.zoneName).toMatch('/') // has a named timezone
+      })
+
+      it('transfers named timezone', function() {
+        let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+          events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
+          timeZone: 'Europe/Moscow'
+        })
+        let event = calendar.getEvents()[0]
+        var start = toDateTime(calendar, event.start)
+        var end = toDateTime(calendar, event.end)
+        expect(start.toJSDate()).toEqualDate('2018-09-05T12:00:00Z') // not using timeZoneImpl, so fake-UTC
+        expect(start.zoneName).toMatch('Europe/Moscow')
+        expect(end.toJSDate()).toEqualDate('2018-09-05T18:00:00Z') // not using timeZoneImpl, so fake-UTC
+        expect(end.zoneName).toMatch('Europe/Moscow')
       })
 
     })

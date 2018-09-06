@@ -419,8 +419,8 @@ export class DateEnv {
       return new Date(m.valueOf() - (forcedTzo || 0))
     } else {
       return new Date(
-        m.valueOf() -
-        this.namedTimeZoneImpl.offsetForArray(dateToUtcArray(m))
+        m.valueOf() +
+        this.namedTimeZoneImpl.offsetForArray(dateToUtcArray(m)) * 1000 * 60 // convert minutes -> ms
       )
     }
   }

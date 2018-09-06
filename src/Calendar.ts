@@ -505,6 +505,7 @@ export default class Calendar {
     this.dateEnv = this.buildDateEnv(
       options.locale,
       options.timeZone,
+      options.timeZoneImpl,
       options.firstDay,
       options.weekNumberCalculation,
       options.weekLabel
@@ -1241,10 +1242,11 @@ EmitterMixin.mixInto(Calendar)
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function buildDateEnv(locale, timeZone, firstDay, weekNumberCalculation, weekLabel) {
+function buildDateEnv(locale, timeZone, timeZoneImpl, firstDay, weekNumberCalculation, weekLabel) {
   return new DateEnv({
     calendarSystem: 'gregory',
     timeZone,
+    timeZoneImpl,
     locale: getLocale(locale),
     weekNumberCalculation: weekNumberCalculation,
     firstDay: firstDay,

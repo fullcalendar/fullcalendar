@@ -64,6 +64,7 @@ export function createFormatter(input: FormatterInput): DateFormatter {
 
 // String Utils
 
+// timeZoneOffset is in minutes
 export function buildIsoString(marker: DateMarker, timeZoneOffset?: number, stripZeroTime: boolean = false) {
   let s = marker.toISOString()
 

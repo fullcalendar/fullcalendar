@@ -22,7 +22,7 @@ export function createNamedTimeZoneImpl(implName, tzName) {
   let theClass = namedTimeZonedImpls[implName]
 
   if (theClass) {
-    return theClass(tzName)
+    return new theClass(tzName)
   }
 
   return null
