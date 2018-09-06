@@ -5,6 +5,7 @@ import { Locale } from './locale'
 import { NativeFormatter } from './formatting-native'
 import { CmdFormatter } from './formatting-cmd'
 import { FuncFormatter, FuncFormatterFunc } from './formatting-func'
+import { assignTo } from '../util/object'
 
 export interface ZonedMarker {
   marker: DateMarker,
@@ -27,7 +28,8 @@ export interface VerboseFormattingArg {
   start: ExpandedZonedMarker
   end?: ExpandedZonedMarker
   timeZone: string
-  localeCodes: string[]
+  localeCodes: string[],
+  separator: string
 }
 
 export interface DateFormattingContext {
@@ -49,12 +51,15 @@ export type FormatterInput = object | string | FuncFormatterFunc
 
 // Formatter Object Creation
 
-export function createFormatter(input: FormatterInput): DateFormatter {
-  if (typeof input === 'object') {
+export function createFormatter(input: FormatterInput, defaultSeparator?: string): DateFormatter {
+  if (typeof input === 'object' && input) { // non-null object
+    if (typeof defaultSeparator === 'string') {
+      input = assignTo({ separator: defaultSeparator }, input)
+    }
     return new NativeFormatter(input)
   }
   else if (typeof input === 'string') {
-    return new CmdFormatter(input)
+    return new CmdFormatter(input, defaultSeparator)
   }
   else if (typeof input === 'function') {
     return new FuncFormatter(input)
@@ -108,7 +113,7 @@ export function formatTimeZoneOffset(minutes: number, doIso = false) {
 
 // Arg Utils
 
-export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
+export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext, separator?: string): VerboseFormattingArg {
   let startInfo = expandZonedMarker(start, context.calendarSystem)
   let endInfo = end ? expandZonedMarker(end, context.calendarSystem) : null
 
@@ -117,7 +122,8 @@ export function createVerboseFormattingArg(start: ZonedMarker, end: ZonedMarker,
     start: startInfo,
     end: endInfo,
     timeZone: context.timeZone,
-    localeCodes: context.locale.codes
+    localeCodes: context.locale.codes,
+    separator
   }
 }
 

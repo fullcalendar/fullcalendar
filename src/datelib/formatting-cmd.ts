@@ -18,17 +18,19 @@ export function registerCmdFormatter(name, input: CmdFormatterFunc) {
 export class CmdFormatter implements DateFormatter {
 
   cmdStr: string
+  separator: string
 
-  constructor(cmdStr: string) {
+  constructor(cmdStr: string, separator?: string) {
     this.cmdStr = cmdStr
+    this.separator = separator
   }
 
   format(date: ZonedMarker, context: DateFormattingContext) {
-    return soleCmdFunc(this.cmdStr, createVerboseFormattingArg(date, null, context))
+    return soleCmdFunc(this.cmdStr, createVerboseFormattingArg(date, null, context, this.separator))
   }
 
   formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
-    return soleCmdFunc(this.cmdStr, createVerboseFormattingArg(start, end, context))
+    return soleCmdFunc(this.cmdStr, createVerboseFormattingArg(start, end, context, this.separator))
   }
 
 }

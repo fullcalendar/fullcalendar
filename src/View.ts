@@ -99,20 +99,13 @@ export default abstract class View extends DateComponent {
       range = dateProfile.activeRange
     }
 
-    // TODO: precompute
-    // TODO: how will moment plugin deal with this?
-    let rawTitleFormat = this.opt('titleFormat') || this.computeTitleFormat(dateProfile)
-    if (typeof rawTitleFormat === 'object') {
-      rawTitleFormat = assignTo(
-        { separator: this.opt('titleRangeSeparator') },
-        rawTitleFormat
-      )
-    }
-
     return dateEnv.formatRange(
       range.start,
       range.end,
-      createFormatter(rawTitleFormat),
+      createFormatter(
+        this.opt('titleFormat') || this.computeTitleFormat(dateProfile),
+        this.opt('titleRangeSeparator')
+      ),
       { isEndExclusive: dateProfile.isRangeAllDay }
     )
   }

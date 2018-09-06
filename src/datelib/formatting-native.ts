@@ -10,7 +10,7 @@ const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
   separator: 0, // 0 = not applicable
   omitZeroTime: 0,
-  meridiem: 0,
+  meridiem: 0, // like am/pm
   omitCommas: 0
 }
 const STANDARD_DATE_PROP_SEVERITIES = {
