@@ -16,6 +16,7 @@ const MODULES = {
   'dist/fullcalendar-gcal': './plugins/gcal/main.ts',
   'dist/fullcalendar-moment': './plugins/moment/main.ts',
   'dist/fullcalendar-moment-timezone': './plugins/moment-timezone/main.ts',
+  'dist/fullcalendar-luxon': './plugins/luxon/main.ts',
   'tmp/automated-tests': './tests/automated/index'
 }
 
@@ -31,6 +32,7 @@ module.exports = {
   externals: {
     moment: 'moment',
     'moment-timezone': 'moment-timezone',
+    luxon: 'luxon',
     superagent: 'superagent',
 
     // for plugins that might need jQuery

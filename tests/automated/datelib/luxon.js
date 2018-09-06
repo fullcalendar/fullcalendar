@@ -1,11 +1,12 @@
 
-describe('moment plugin', function() {
-  let toMoment = FullCalendar.Moment.toMoment
-  let toDuration = FullCalendar.Moment.toDuration
+describe('luxon plugin', function() {
+  let toDateTime = FullCalendar.Luxon.toDateTime
+  let toDuration = FullCalendar.Luxon.toDuration
 
   // TODO: test formatting
+  // TODO: test named timezones
 
-  describe('toMoment', function() {
+  describe('toDateTime', function() {
 
     describe('timezone handling', function() {
 
@@ -15,10 +16,12 @@ describe('moment plugin', function() {
           timeZone: 'UTC'
         })
         let event = calendar.getEvents()[0]
-        var startMom = toMoment(calendar, event.start)
-        var endMom = toMoment(calendar, event.end)
-        expect(startMom.format()).toEqual('2018-09-05T12:00:00Z')
-        expect(endMom.format()).toEqual('2018-09-05T18:00:00Z')
+        var start = toDateTime(calendar, event.start)
+        var end = toDateTime(calendar, event.end)
+        expect(start.toISO()).toBe('2018-09-05T12:00:00.000Z')
+        expect(start.zoneName).toBe('UTC')
+        expect(end.toISO()).toBe('2018-09-05T18:00:00.000Z')
+        expect(end.zoneName).toBe('UTC')
       })
 
       it('transfers local', function() {
@@ -27,10 +30,12 @@ describe('moment plugin', function() {
           timeZone: 'local'
         })
         let event = calendar.getEvents()[0]
-        var startMom = toMoment(calendar, event.start)
-        var endMom = toMoment(calendar, event.end)
-        expect(startMom.toDate()).toEqualDate('2018-09-05T12:00:00') // compare to local
-        expect(endMom.toDate()).toEqualDate('2018-09-05T18:00:00') // compare to local
+        var start = toDateTime(calendar, event.start)
+        var end = toDateTime(calendar, event.end)
+        expect(start.toJSDate()).toEqualDate('2018-09-05T12:00:00') // compare to local
+        expect(start.zoneName).toMatch('/') // has a named timezone
+        expect(end.toJSDate()).toEqualDate('2018-09-05T18:00:00') // compare to local
+        expect(end.zoneName).toMatch('/') // has a named timezone
       })
 
     })
@@ -41,8 +46,8 @@ describe('moment plugin', function() {
         locale: 'es'
       })
       let event = calendar.getEvents()[0]
-      var mom = toMoment(calendar, event.start)
-      expect(mom.locale()).toEqual('es')
+      var datetime = toDateTime(calendar, event.start)
+      expect(datetime.locale).toEqual('es')
     })
 
   })
@@ -59,8 +64,8 @@ describe('moment plugin', function() {
       let timedDuration = toDuration(calendar.defaultTimedEventDuration)
       let allDayDuration = toDuration(calendar.defaultAllDayEventDuration)
 
-      expect(timedDuration.asHours()).toBe(5)
-      expect(allDayDuration.asDays()).toBe(3)
+      expect(timedDuration.as('hours')).toBe(5)
+      expect(allDayDuration.as('days')).toBe(3)
     })
 
   })
