@@ -80,7 +80,7 @@ describe('moment plugin', function() {
       expect(getEventElTimeText(getSingleEl())).toBe('13:30:20!')
     })
 
-    xit('produces title with titleRangeSeparator', function() {
+    it('produces title with titleRangeSeparator', function() {
       initCalendar({ // need to render the calendar to get view.title :(
         defaultView: 'basicWeek',
         now: '2018-09-06',
