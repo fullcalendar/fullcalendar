@@ -6,15 +6,24 @@ import {
 export type CmdFormatterFunc = (cmd: string, arg: VerboseFormattingArg) => string
 
 
-let soleCmdFunc: CmdFormatterFunc = null
+let cmdFormatters: { [name: string]: CmdFormatterFunc } = {}
 
 export function registerCmdFormatter(name, input: CmdFormatterFunc) {
-  if (!soleCmdFunc) {
-    soleCmdFunc = input
-  }
+  cmdFormatters[name] = input
 }
 
+export function getCmdFormatter(name: string): CmdFormatterFunc | null {
+  return cmdFormatters[name]
+}
 
+/*
+TODO: fix the terminology of "formatter" vs "formatting func"
+*/
+
+/*
+At the time of instantiation, this object does not know which cmd-formatting system it will use.
+It receives this at the time of formatting, as a setting.
+*/
 export class CmdFormatter implements DateFormatter {
 
   cmdStr: string
@@ -26,11 +35,11 @@ export class CmdFormatter implements DateFormatter {
   }
 
   format(date: ZonedMarker, context: DateFormattingContext) {
-    return soleCmdFunc(this.cmdStr, createVerboseFormattingArg(date, null, context, this.separator))
+    return context.cmdFormatter(this.cmdStr, createVerboseFormattingArg(date, null, context, this.separator))
   }
 
   formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
-    return soleCmdFunc(this.cmdStr, createVerboseFormattingArg(start, end, context, this.separator))
+    return context.cmdFormatter(this.cmdStr, createVerboseFormattingArg(start, end, context, this.separator))
   }
 
 }

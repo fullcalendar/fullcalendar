@@ -3,7 +3,7 @@ import { DateMarker } from './marker'
 import { CalendarSystem } from './calendar-system'
 import { Locale } from './locale'
 import { NativeFormatter } from './formatting-native'
-import { CmdFormatter } from './formatting-cmd'
+import { CmdFormatter, CmdFormatterFunc } from './formatting-cmd'
 import { FuncFormatter, FuncFormatterFunc } from './formatting-func'
 import { assignTo } from '../util/object'
 
@@ -38,6 +38,7 @@ export interface DateFormattingContext {
   calendarSystem: CalendarSystem
   computeWeekNumber: (d: DateMarker) => number
   weekLabel: string
+  cmdFormatter: CmdFormatterFunc
 }
 
 export interface DateFormatter {

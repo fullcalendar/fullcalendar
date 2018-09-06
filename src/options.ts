@@ -40,6 +40,8 @@ export const globalDefaults = {
 
   timeZone: 'UTC', // TODO: throw error if given falsy value?
 
+  //cmdFormatter: null,
+
   // allDayDefault: undefined,
 
   // locale
