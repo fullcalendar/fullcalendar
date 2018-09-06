@@ -23,7 +23,7 @@ export interface ExpandedZonedMarker extends ZonedMarker {
   millisecond: number
 }
 
-export interface VerboseFormattingArg {
+export interface VerboseFormattingArg { // TODO: kill this
   date: ExpandedZonedMarker
   start: ExpandedZonedMarker
   end?: ExpandedZonedMarker

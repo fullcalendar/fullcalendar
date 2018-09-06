@@ -1,7 +1,7 @@
 
 export abstract class NamedTimeZoneImpl {
 
-  name: string
+  name: string // bad name for this. is it the impl or the timeZone name?
 
   constructor(name: string) {
     this.name = name

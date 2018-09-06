@@ -24,34 +24,57 @@ import * as fc from 'fullcalendar'
 class LuxonNamedTimeZone extends fc.NamedTimeZoneImpl {
 
   offsetForArray(a: number[]): number {
-    return DateTime.fromObject({
-      zone: this.name,
-      year: a[0],
-      month: a[1] + 1, // convert 0-based to 1-based
-      day: a[2],
-      hour: a[3],
-      minute: a[4],
-      second: a[5],
-      millisecond: a[6]
-    }).offset
+    return arrayToLuxon(a, this.name).offset
   }
 
   timestampToArray(ms: number): number[] {
-    let obj = DateTime.fromMillis(ms, {
-      zone: this.name
-    })
-    return [
-      obj.year,
-      obj.month - 1, // convert 1-based to 0-based
-      obj.day,
-      obj.hour,
-      obj.minute,
-      obj.second,
-      obj.millisecond
-    ]
+    return luxonToArray(
+      DateTime.fromMillis(ms, {
+        zone: this.name
+      })
+    )
   }
 
 }
 
 
 fc.registerNamedTimeZoneImpl('luxon', LuxonNamedTimeZone)
+
+
+
+// TODO: what about range!!??
+
+fc.registerCmdFormatter('luxon', function(cmdStr: string, arg: fc.VerboseFormattingArg) {
+  return arrayToLuxon(
+    arg.date.array,
+    arg.timeZone,
+    arg.localeCodes[0]
+  ).toFormat(cmdStr)
+})
+
+
+function luxonToArray(datetime: DateTime): number[] {
+  return [
+    datetime.year,
+    datetime.month - 1, // convert 1-based to 0-based
+    datetime.day,
+    datetime.hour,
+    datetime.minute,
+    datetime.second,
+    datetime.millisecond
+  ]
+}
+
+function arrayToLuxon(arr: number[], timeZone: string, locale?: string): DateTime {
+  return DateTime.fromObject({
+    zone: timeZone,
+    locale: locale,
+    year: arr[0],
+    month: arr[1] + 1, // convert 0-based to 1-based
+    day: arr[2],
+    hour: arr[3],
+    minute: arr[4],
+    second: arr[5],
+    millisecond: arr[6]
+  })
+}

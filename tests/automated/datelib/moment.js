@@ -1,9 +1,8 @@
+import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
 
 describe('moment plugin', function() {
   let toMoment = FullCalendar.Moment.toMoment
   let toDuration = FullCalendar.Moment.toDuration
-
-  // TODO: test formatting
 
   describe('toMoment', function() {
 
@@ -61,6 +60,35 @@ describe('moment plugin', function() {
 
       expect(timedDuration.asHours()).toBe(5)
       expect(allDayDuration.asDays()).toBe(3)
+    })
+
+  })
+
+  describe('formatting', function() {
+
+    it('produces event time text', function() {
+      initCalendar({
+        defaultView: 'month',
+        now: '2018-09-06',
+        displayEventEnd: false,
+        cmdFormatter: 'moment',
+        eventTimeFormat: 'HH:mm:ss[!]',
+        events: [
+          { title: 'my event', start: '2018-09-06T13:30:20' }
+        ]
+      })
+      expect(getEventElTimeText(getSingleEl())).toBe('13:30:20!')
+    })
+
+    xit('produces title with titleRangeSeparator', function() {
+      initCalendar({ // need to render the calendar to get view.title :(
+        defaultView: 'basicWeek',
+        now: '2018-09-06',
+        cmdFormatter: 'moment',
+        titleFormat: 'MMMM {D} YY [yup]',
+        titleRangeSeparator: ' to '
+      })
+      expect(currentCalendar.view.title).toBe('September 2 to 8 18 yup')
     })
 
   })
