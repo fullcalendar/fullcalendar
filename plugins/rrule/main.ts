@@ -1,5 +1,5 @@
 import { RRule, rrulestr } from 'rrule'
-import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, DateMarkerMeta, createDuration } from 'fullcalendar'
+import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration, assignTo } from 'fullcalendar'
 
 interface RRuleParsedRecurring extends ParsedRecurring {
   typeData: RRule
@@ -44,28 +44,41 @@ function parseRRule(input, dateEnv: DateEnv) {
     }
 
   } else if (typeof input === 'object' && input) { // non-null object
-    let dtstartMeta: DateMarkerMeta
-
-    let refined = refineProps(input, {
-      dtstart: null,
-      until: null,
-      freq: convertConstant,
-      wkst: convertConstant,
-      byweekday: convertConstants
-    })
+    let refined = assignTo({}, input) // copy
+    let isAllDay = false
 
     if (typeof refined.dtstart === 'string') {
-      dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart)
-      refined.dtstart = dtstartMeta ? dtstartMeta.marker : null
+      let dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart)
+
+      if (dtstartMeta) {
+        refined.dtstart = dtstartMeta.marker
+        isAllDay = dtstartMeta.isTimeUnspecified
+      } else {
+        delete refined.dtstart
+      }
     }
 
     if (typeof refined.until === 'string') {
       refined.until = dateEnv.createMarker(refined.until)
     }
 
+    if (refined.freq != null) {
+      refined.freq = convertConstant(refined.freq)
+    }
+
+    if (refined.wkst != null) {
+      refined.wkst = convertConstant(refined.wkst)
+    } else {
+      refined.wkst = (dateEnv.weekDow - 1 + 7) % 7 // convert Sunday-first to Monday-first
+    }
+
+    if (refined.byweekday != null) {
+      refined.byweekday = convertConstants(refined.byweekday) // the plural version
+    }
+
     return {
       rrule: new RRule(refined),
-      isAllDay: dtstartMeta && dtstartMeta.isTimeUnspecified
+      isAllDay
     }
   }
 

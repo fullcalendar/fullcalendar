@@ -41,8 +41,8 @@ export class DateEnv {
 
   calendarSystem: CalendarSystem
   locale: Locale
-  weekDow: number
-  weekDoy: number
+  weekDow: number // which day begins the week
+  weekDoy: number // which day must be within the year, for computing the first week number
   weekNumberFunc: any
   weekLabel: string // DON'T LIKE how options are confused with local
   cmdFormatter: CmdFormatterFunc
