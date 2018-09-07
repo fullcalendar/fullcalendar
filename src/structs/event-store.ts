@@ -58,6 +58,7 @@ export function eventTupleToStore(tuple: EventTuple, eventStore: EventStore = cr
 }
 
 export function expandRecurring(eventStore: EventStore, framingRange: DateRange, calendar: Calendar): EventStore {
+  let dateEnv = calendar.dateEnv
   let { defs, instances } = eventStore
 
   // remove existing recurring instances
@@ -69,10 +70,20 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
     let def = defs[defId]
 
     if (def.recurringDef) {
-      let ranges = expandRecurringRanges(def, framingRange, calendar)
+      let starts = expandRecurringRanges(def, framingRange, calendar.dateEnv)
+      let duration = def.recurringDef.duration
 
-      for (let range of ranges) {
-        let instance = createEventInstance(defId, range)
+      if (!duration) {
+        duration = def.isAllDay ?
+          calendar.defaultAllDayEventDuration :
+          calendar.defaultTimedEventDuration
+      }
+
+      for (let start of starts) {
+        let instance = createEventInstance(defId, {
+          start,
+          end: dateEnv.add(start, duration)
+        })
         instances[instance.instanceId] = instance
       }
     }

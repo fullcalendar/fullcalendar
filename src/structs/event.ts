@@ -7,6 +7,7 @@ import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
 import { ConstraintInput, Constraint, normalizeConstraint } from '../validation'
+import { Duration } from '../datelib/duration'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -52,7 +53,7 @@ export interface EventDef {
   groupId: string
   isAllDay: boolean
   hasEnd: boolean
-  recurringDef: { typeId: number, typeData: any } | null
+  recurringDef: { typeId: number, typeData: any, duration: Duration | null } | null
   title: string
   url: string
   startEditable: boolean | null
@@ -139,8 +140,12 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
 
     if (recurringRes) {
       def.isAllDay = recurringRes.isAllDay
-      def.hasEnd = recurringRes.hasEnd
-      def.recurringDef = { typeId: recurringRes.typeId, typeData: recurringRes.typeData }
+      def.hasEnd = Boolean(recurringRes.duration)
+      def.recurringDef = {
+        typeId: recurringRes.typeId,
+        typeData: recurringRes.typeData,
+        duration: recurringRes.duration
+      }
     } else {
       return null // TODO: give a warning
     }

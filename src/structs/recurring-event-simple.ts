@@ -1,11 +1,11 @@
-import { startOfDay, addDays } from '../datelib/marker'
-import { Duration, createDuration } from '../datelib/duration'
+import { startOfDay, addDays, DateMarker } from '../datelib/marker'
+import { Duration, createDuration, subtractDurations } from '../datelib/duration'
 import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
 import { registerRecurringType, ParsedRecurring } from './recurring-event'
-import Calendar from '../Calendar'
 import { EventInput, EventDef } from './event'
 import { DateRange } from '../datelib/date-range'
+import { DateEnv } from '../datelib/env'
 
 /*
 An implementation of recurring events that only supports every-day or weekly recurrences.
@@ -39,21 +39,22 @@ registerRecurringType({
 
       return {
         isAllDay: !props.startTime && !props.endTime,
-        hasEnd: Boolean(props.endTime),
-        typeData: props
+        duration: (props.startTime && props.endTime) ?
+          subtractDurations(props.endTime, props.startTime) :
+          null,
+        typeData: props // doesn't need endTime anymore but oh well
       }
     }
 
     return null
   },
 
-  expand(typeData: SimpleRecurringData, eventDef: EventDef, framingRange: DateRange, calendar: Calendar): DateRange[] {
+  expand(typeData: SimpleRecurringData, eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
     return expandRanges(
       typeData.daysOfWeek,
       typeData.startTime,
-      typeData.endTime,
       framingRange,
-      calendar
+      dateEnv
     )
   }
 
@@ -62,19 +63,16 @@ registerRecurringType({
 function expandRanges(
   daysOfWeek: number[] | null,
   startTime: Duration | null,
-  endTime: Duration | null,
   framingRange: DateRange,
-  calendar: Calendar
-): DateRange[] {
-  let dateEnv = calendar.dateEnv
+  dateEnv: DateEnv
+): DateMarker[] {
   let dowHash: { [num: string]: true } | null = daysOfWeek ? arrayToHash(daysOfWeek) : null
   let dayMarker = startOfDay(framingRange.start)
   let endMarker = framingRange.end
-  let instanceRanges = []
+  let instanceStarts: DateMarker[] = []
 
   while (dayMarker < endMarker) {
     let instanceStart
-    let instanceEnd
 
     // if everyday, or this particular day-of-week
     if (!dowHash || dowHash[dayMarker.getUTCDay()]) {
@@ -85,22 +83,11 @@ function expandRanges(
         instanceStart = dayMarker
       }
 
-      if (endTime) {
-        instanceEnd = dateEnv.add(dayMarker, endTime)
-      } else {
-        instanceEnd = dateEnv.add(
-          instanceStart,
-          startTime ? // a timed event?
-            calendar.defaultTimedEventDuration :
-            calendar.defaultAllDayEventDuration
-        )
-      }
-
-      instanceRanges.push({ start: instanceStart, end: instanceEnd })
+      instanceStarts.push(instanceStart)
     }
 
     dayMarker = addDays(dayMarker, 1)
   }
 
-  return instanceRanges
+  return instanceStarts
 }

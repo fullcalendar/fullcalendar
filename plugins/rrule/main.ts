@@ -1,25 +1,26 @@
 import { RRule, rrulestr } from 'rrule'
-import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, Calendar, DateMarker } from 'fullcalendar'
+import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration } from 'fullcalendar'
 
 interface RRuleParsedRecurring extends ParsedRecurring {
   typeData: RRule
+}
+
+const EVENT_DEF_PROPS = {
+  rrule: null,
+  duration: createDuration
 }
 
 registerRecurringType({
 
   parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
     if (rawEvent.rrule != null) {
-
-      let rrule = parseRRule(rawEvent.rrule, dateEnv)
+      let props = refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps)
+      let rrule = parseRRule(props.rrule, dateEnv)
 
       if (rrule) {
-        // put all other props (except rrule) in leftoverProps
-        // TODO: should still remove the rrule prop even if failure?
-        refineProps(rawEvent, { rrule: null }, {}, leftoverProps)
-
         return {
           isAllDay: false, // TODO!!!
-          hasEnd: true, // TODO!!!
+          duration: props.duration,
           typeData: rrule
         }
       }
@@ -28,18 +29,8 @@ registerRecurringType({
     return null
   },
 
-  // TODO: what about duration?!!
-  expand(rrule: RRule, eventDef: EventDef, framingRange: DateRange, calendar: Calendar): DateRange[] {
-    let dateEnv = calendar.dateEnv
-    let duration = calendar.defaultTimedEventDuration
-    let markers = rrule.between(framingRange.start, framingRange.end)
-
-    return markers.map(function(marker: DateMarker) {
-      return {
-        start: marker,
-        end: dateEnv.add(marker, duration)
-      }
-    })
+  expand(rrule: RRule, eventDef: EventDef, framingRange: DateRange): DateMarker[] {
+    return rrule.between(framingRange.start, framingRange.end)
   }
 
 })

@@ -1,7 +1,8 @@
-import Calendar from '../Calendar'
 import { EventInput, EventDef } from './event'
 import { DateRange } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
+import { Duration } from '../datelib/duration'
+import { DateMarker } from '../datelib/marker'
 
 /*
 The plugin system for defining how a recurring event is expanded into individual instances.
@@ -9,13 +10,13 @@ The plugin system for defining how a recurring event is expanded into individual
 
 export interface ParsedRecurring {
   isAllDay: boolean
-  hasEnd: boolean
+  duration: Duration | null // signals hasEnd
   typeData: any
 }
 
 export interface RecurringType {
   parse: (rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
-  expand: (typeData: any, eventDef: EventDef, framingRange: DateRange, calendar: Calendar) => DateRange[]
+  expand: (typeData: any, eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv) => DateMarker[]
 }
 
 
@@ -33,7 +34,7 @@ export function parseRecurring(eventInput: EventInput, leftovers: any, dateEnv: 
     if (parsed) {
       return {
         isAllDay: parsed.isAllDay,
-        hasEnd: parsed.hasEnd,
+        duration: parsed.duration,
         typeData: parsed.typeData,
         typeId: i
       }
@@ -47,13 +48,13 @@ export function parseRecurring(eventInput: EventInput, leftovers: any, dateEnv: 
 /*
 Event MUST have a recurringDef
 */
-export function expandRecurringRanges(eventDef: EventDef, framingRange: DateRange, calendar: Calendar): DateRange[] {
+export function expandRecurringRanges(eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
 
   return typeDef.expand(
     eventDef.recurringDef.typeData,
     eventDef,
     framingRange,
-    calendar
+    dateEnv
   )
 }
