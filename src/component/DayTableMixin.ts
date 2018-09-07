@@ -90,7 +90,6 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     this.colCnt = this.computeColCnt()
     this.colHeadFormat = createFormatter(
       (this as any).opt('columnHeaderFormat') ||
-      (this as any).opt('columnFormat') || // deprecated
       this.computeColHeadFormat()
     )
   }

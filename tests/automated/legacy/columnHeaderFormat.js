@@ -1,7 +1,7 @@
 
 describe('columnHeaderFormat', function() {
 
-  describe('when columnFormat is not set', function() {
+  describe('when not set', function() {
 
     var viewWithFormat = [
       { view: 'month', expected: 'Sun', selector: 'th.fc-day-header.fc-sun' },
