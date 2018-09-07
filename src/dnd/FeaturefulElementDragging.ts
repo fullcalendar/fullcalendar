@@ -73,8 +73,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
         this.origY = ev.pageY
 
         this.mirror.setIsVisible(false) // reset. caller must set-visible
-        this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY)
-        this.autoScroller.start(ev.pageX, ev.pageY)
+        this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY) // must happen on first pointer down
 
         this.startDelay(ev)
 
@@ -90,12 +89,6 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
       this.emitter.trigger('pointermove', ev)
 
-      // a real pointer move? (not one simulated by scrolling)
-      if (ev.origEvent.type !== 'scroll') {
-        this.mirror.handleMove(ev.pageX, ev.pageY)
-        this.autoScroller.handleMove(ev.pageX, ev.pageY)
-      }
-
       if (!this.isDistanceSurpassed) {
         let dx = ev.pageX - this.origX!
         let dy = ev.pageY - this.origY!
@@ -109,6 +102,13 @@ export default class FeaturefulElementDragging extends ElementDragging {
       }
 
       if (this.isDragging) {
+
+        // a real pointer move? (not one simulated by scrolling)
+        if (ev.origEvent.type !== 'scroll') {
+          this.mirror.handleMove(ev.pageX, ev.pageY)
+          this.autoScroller.handleMove(ev.pageX, ev.pageY)
+        }
+
         this.emitter.trigger('dragmove', ev)
       }
     }
@@ -123,12 +123,9 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
       this.emitter.trigger('pointerup', ev) // can potentially set mirrorNeedsRevert
 
-      if (!this.pointer.shouldIgnoreMove) { // because these things wouldn't have been started otherwise
-        this.autoScroller.stop()
-      }
-
       if (this.isDragging) {
-        this.tryStopDrag(ev)
+        this.autoScroller.stop()
+        this.tryStopDrag(ev) // which will stop the mirror
       }
 
       if (this.delayTimeoutId) {
@@ -164,6 +161,8 @@ export default class FeaturefulElementDragging extends ElementDragging {
       if (!this.pointer.wasTouchScroll || this.touchScrollAllowed) {
         this.isDragging = true
         this.mirrorNeedsRevert = false
+
+        this.autoScroller.start(ev.pageX, ev.pageY)
         this.emitter.trigger('dragstart', ev)
 
         if (this.touchScrollAllowed === false) {
