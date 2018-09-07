@@ -114,4 +114,22 @@ describe('events as a function', function() {
     })
   })
 
+  it('can return a promise-like object', function(done) {
+    initCalendar({
+      events(arg) {
+        let deferred = $.Deferred() // we want tests to run in IE11, which doesn't have native promises
+        setTimeout(function() {
+          deferred.resolve([
+            { start: '2018-09-04' }
+          ])
+        }, 100)
+        return deferred.promise()
+      },
+      _eventsPositioned() {
+        expect(currentCalendar.getEvents().length).toBe(1)
+        done()
+      }
+    })
+  })
+
 })
