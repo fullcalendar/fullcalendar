@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import { EventDef, EventInstance } from '../structs/event'
+import { EventDef, EventInstance, EventTuple } from '../structs/event'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/misc'
@@ -7,11 +7,11 @@ import { subtractDurations, DurationInput, createDuration } from '../datelib/dur
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import EventSourceApi from './EventSourceApi'
 
-export default class EventApi {
+export default class EventApi implements EventTuple {
 
   calendar: Calendar
   def: EventDef
-  instance: EventInstance
+  instance: EventInstance | null
 
   constructor(calendar: Calendar, def: EventDef, instance?: EventInstance) {
     this.calendar = calendar

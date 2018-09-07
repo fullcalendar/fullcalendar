@@ -1098,11 +1098,24 @@ export default class Calendar {
 
 
   addEvent(eventInput: EventInput, sourceInput?: any): EventApi | null {
-    let sourceId
 
-    if (sourceInput && sourceInput.sourceId !== undefined) {
+    if (eventInput instanceof EventApi) {
+
+      // not already present? don't want to add an old snapshot
+      if (!this.state.eventStore.defs[eventInput.def.defId]) {
+        this.dispatch({
+          type: 'ADD_EVENTS',
+          eventStore: eventTupleToStore(eventInput)
+        })
+      }
+
+      return eventInput
+    }
+
+    let sourceId
+    if (sourceInput && sourceInput.sourceId !== undefined) { // can accept a source object
       sourceId = sourceInput.sourceId
-    } else if (typeof sourceInput === 'string') {
+    } else if (typeof sourceInput === 'string') { // can accept a sourceId string
       sourceId = sourceInput
     } else {
       sourceId = ''
@@ -1215,6 +1228,20 @@ export default class Calendar {
 
 
   addEventSource(sourceInput: EventSourceInput): EventSourceApi {
+
+    if (sourceInput instanceof EventSourceApi) {
+
+      // not already present? don't want to add an old snapshot
+      if (!this.state.eventSources[sourceInput.internalEventSource.sourceId]) {
+        this.dispatch({
+          type: 'ADD_EVENT_SOURCES',
+          sources: [ sourceInput.internalEventSource ]
+        })
+      }
+
+      return sourceInput
+    }
+
     let eventSource = parseEventSource(sourceInput, this)
 
     if (eventSource) { // TODO: error otherwise?
