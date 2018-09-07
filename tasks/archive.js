@@ -43,14 +43,9 @@ gulp.task('archive:misc', function() {
 
 gulp.task('archive:deps', function() {
   return gulp.src([
-    'node_modules/moment/min/moment.min.js',
-    'node_modules/superagent/superagent.js',
-    'node_modules/jquery/dist/jquery.min.js', // only for draggable example
-    'node_modules/components-jqueryui/jquery-ui.min.js', // "
-    'node_modules/dragula/dist/dragula.min.js', // "
-    'node_modules/dragula/dist/dragula.min.css' // "
+    'node_modules/superagent/superagent.js'
   ])
-    .pipe(gulp.dest('tmp/' + packageId + '/lib/'))
+    .pipe(gulp.dest('tmp/' + packageId + '/demos/js/'))
 })
 
 // transfers demo files, transforming their paths to dependencies
@@ -73,12 +68,14 @@ const demoPathModify = modify(function(content) {
 })
 
 function transformDemoPath(path) {
-  // reroot 3rd party libs
-  path = path.replace('../node_modules/moment/', '../lib/')
-  path = path.replace('../node_modules/superagent/', '../lib/')
-  path = path.replace('../node_modules/jquery/dist/', '../lib/')
-  path = path.replace('../node_modules/components-jqueryui/', '../lib/')
-  path = path.replace('../node_modules/dragula/dist/', '../lib/')
+  // reroot 3rd party libs that we include in our dist
+  path = path.replace('../node_modules/superagent/', 'js/') // js dir in the demos dir
+
+  // reroot 3rd party libs that request from CDN
+  path = path.replace('../node_modules/rrule/', 'https://cdn.jsdelivr.net/npm/rrule@2.5.5/')
+  path = path.replace('../node_modules/dragula/dist/', 'https://cdn.jsdelivr.net/npm/dragula@3.7.2/')
+  path = path.replace('../node_modules/jquery/dist/', 'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/')
+  path = path.replace('../node_modules/components-jqueryui/', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/')
 
   // reroot dist files to archive root
   path = path.replace('../dist/', '../')
