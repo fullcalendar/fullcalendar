@@ -25,7 +25,7 @@ export default class ExternalElementDragging {
 
   hitDragging: HitDragging
   receivingCalendar: Calendar | null = null
-  droppableEvent: EventTuple | null = null
+  droppableEvent: EventTuple | null = null // will exist for all drags, even if create:false
   suppliedDragMeta: DragMetaGenerator | null = null
   dragMeta: DragMeta | null = null
 

@@ -5,6 +5,7 @@ import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/misc'
 import { subtractDurations, DurationInput, createDuration } from '../datelib/duration'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
+import EventSourceApi from './EventSourceApi'
 
 export default class EventApi {
 
@@ -16,6 +17,16 @@ export default class EventApi {
     this.calendar = calendar
     this.def = def
     this.instance = instance || null
+  }
+
+  getSource(): EventSourceApi | null {
+    if (this.def.sourceId) {
+      return new EventSourceApi(
+        this.calendar,
+        this.calendar.state.eventSources[this.def.sourceId]
+      )
+    }
+    return null
   }
 
   setProp(name: string, val: string) {
