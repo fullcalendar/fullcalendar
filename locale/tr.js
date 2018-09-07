@@ -34,5 +34,5 @@ FullCalendar.locale("tr", {
   },
   allDayText: "Tüm gün",
   eventLimitText: "daha fazla",
-  noEventsMessage: "Herhangi bir etkinlik görüntülemek için"
+  noEventsMessage: "Gösterilecek etkinlik yok"
 });
