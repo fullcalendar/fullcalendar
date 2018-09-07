@@ -1,4 +1,5 @@
-import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset } from './utils'
+import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from './utils'
+import { getDSTDeadZone } from './dst-dead-zone'
 
 describe('datelib', function() {
   var DateEnv = FullCalendar.DateEnv
@@ -518,6 +519,41 @@ describe('datelib', function() {
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 7, 12)))
         expect(res.forcedTzo).toBeNull()
+      })
+
+      it('does not lose info when parsing a dst-dead-zone date', function() {
+        let deadZone = getDSTDeadZone()
+
+        if (!deadZone) {
+          console.log('could not determine DST dead zone')
+        } else {
+
+          // use a utc date to get a ISO8601 string representation of the start of the dead zone
+          let utcDate = new Date(Date.UTC(
+            deadZone[1].getFullYear(),
+            deadZone[1].getMonth(),
+            deadZone[1].getDate(),
+            deadZone[1].getHours() - 1, // back one hour. shouldn't exist in local time
+            deadZone[1].getMinutes(),
+            deadZone[1].getSeconds(),
+            deadZone[1].getMilliseconds()
+          ))
+          let s = formatIsoWithoutTz(utcDate)
+
+          // check that the local date falls out of the dead zone
+          let localDate = new Date(s)
+          expect(localDate.getHours()).not.toBe(deadZone[1].getHours() - 1)
+
+          // check that is parsed and retained the original hour,
+          // even tho it falls into the dead zone for local time
+          let marker = env.createMarker(s)
+          expect(formatIsoWithoutTz(marker)).toBe(s)
+
+          //// TODO
+          // // when it uses the env to format to local time,
+          // // it should have jumped out of the dead zone.
+          // expect(env.formatIso(marker)).not.toMatch(s)
+        }
       })
 
     })
