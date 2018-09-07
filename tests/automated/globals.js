@@ -1,15 +1,4 @@
 
-// Jasmine Enhancements
-// ---------------------------------------------------------------------------------------------------------------------
-
-// like `it`, but with the ability to return a promise
-window.pit = function(description, runFunc) {
-  it(description, function(done) {
-    runFunc().then(done)
-  })
-}
-
-
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
 

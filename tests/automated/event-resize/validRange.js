@@ -14,14 +14,14 @@ describe('validRange event resizing', function() {
       editable: true
     })
 
-    pit('won\'t go after validRange', function() {
+    it('won\'t go after validRange', function(done) {
       initCalendar()
-      return EventResizeUtils.resize(
+      EventResizeUtils.resize(
         DayGridRenderUtils.getDayEl('2017-06-06')[0].getBoundingClientRect(),
         DayGridRenderUtils.getDisabledDayElAtIndex(0)[0].getBoundingClientRect() // where Jun 9th would be
       ).then(function(res) {
         expect(res).toBe(false)
-      })
+      }).then(done)
     })
   })
 })

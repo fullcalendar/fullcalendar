@@ -21,7 +21,7 @@ describe('event dragging on repeating events', function() {
   })
 
   // bug where offscreen instance of a repeating event was being incorrectly dragged
-  pit('drags correct instance of event', function() {
+  it('drags correct instance of event', function(done) {
 
     initCalendar()
 
@@ -29,10 +29,11 @@ describe('event dragging on repeating events', function() {
     // so that the new view receives out-of-range events.
     currentCalendar.changeView('agendaWeek')
 
-    return TimeGridEventDragUtils.drag('2017-02-16T16:00:00', '2017-02-16T12:00:00')
+    TimeGridEventDragUtils.drag('2017-02-16T16:00:00', '2017-02-16T12:00:00')
       .then(function(res) {
         expect(typeof res).toBe('object')
       })
+      .then(done)
   })
 
   it('hides other repeating events when dragging', function(done) {
