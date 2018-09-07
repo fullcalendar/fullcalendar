@@ -19,8 +19,7 @@
   ],
   "minimum-stability": "stable",
   "require": {
-    "robloach/component-installer": "*",
-    "moment/moment": "^2.20.1"
+    "robloach/component-installer": "*"
   },
   "extra": {
     "component": {

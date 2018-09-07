@@ -21,9 +21,7 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2018 Adam Shaw",
-  "dependencies": {
-    "moment": "^2.20.1"
-  },
+  "dependencies": {},
   "main": [
     "dist/fullcalendar.js",
     "dist/fullcalendar.css"
