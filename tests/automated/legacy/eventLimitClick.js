@@ -43,7 +43,6 @@ describe('eventLimitClick', function() { // simulate a click
       })
       $('.fc-more').simulate('click')
       var view = currentCalendar.getView()
-      expect(view.name).toBe('basicWeek') // .name should be deprecated
       expect(view.type).toBe('basicWeek')
     })
 
@@ -57,7 +56,6 @@ describe('eventLimitClick', function() { // simulate a click
       })
       $('.fc-more').simulate('click')
       var view = currentCalendar.getView()
-      expect(view.name).toBe('agendaWeek') // .name should be deprecated
       expect(view.type).toBe('agendaWeek')
     })
   })
@@ -78,7 +76,7 @@ describe('eventLimitClick', function() { // simulate a click
       })
       $('.fc-more').simulate('click')
       var view = currentCalendar.getView()
-      expect(view.name).toBe('basicDay')
+      expect(view.type).toBe('basicDay')
     })
 
     it('should go to agendaDay if it is one of the available views', function() {
@@ -91,7 +89,7 @@ describe('eventLimitClick', function() { // simulate a click
       })
       $('.fc-more').simulate('click')
       var view = currentCalendar.getView()
-      expect(view.name).toBe('agendaDay')
+      expect(view.type).toBe('agendaDay')
     })
   })
 
@@ -106,7 +104,7 @@ describe('eventLimitClick', function() { // simulate a click
     })
     $('.fc-more').simulate('click')
     var view = currentCalendar.getView()
-    expect(view.name).toBe('agendaWeek')
+    expect(view.type).toBe('agendaWeek')
   })
 
   it('works with custom function and all the arguments are correct', function() {
@@ -132,7 +130,7 @@ describe('eventLimitClick', function() { // simulate a click
     })
     $('.fc-more').simulate('click')
     var view = currentCalendar.getView()
-    expect(view.name).toBe('agendaDay')
+    expect(view.type).toBe('agendaDay')
   })
 
 })

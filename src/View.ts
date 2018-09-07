@@ -23,7 +23,6 @@ export default abstract class View extends DateComponent {
   hasHandlers: EmitterInterface['hasHandlers']
 
   type: string // subclass' view name (string)
-  name: string // deprecated. use `type` instead
   title: string // the text that will be displayed in the header's title
 
   calendar: Calendar // owner Calendar object
@@ -60,9 +59,6 @@ export default abstract class View extends DateComponent {
 
     // shortcuts
     this.type = viewSpec.type
-
-    // .name is deprecated
-    this.name = this.type
 
     this.initHiddenDays()
     this.dateProfileGenerator = new this.dateProfileGeneratorClass(this)
