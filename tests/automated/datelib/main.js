@@ -652,6 +652,17 @@ describe('datelib', function() {
       expect(s).toBe('Friday, June 8, 2018')
     })
 
+    it('computes current date as local values', function() {
+      var marker = env.createNowMarker()
+      var localDate = new Date()
+      expect(marker.getUTCFullYear()).toBe(localDate.getFullYear())
+      expect(marker.getUTCMonth()).toBe(localDate.getMonth())
+      expect(marker.getUTCDate()).toBe(localDate.getDate())
+      expect(marker.getUTCHours()).toBe(localDate.getHours())
+      expect(marker.getUTCMinutes()).toBe(localDate.getMinutes())
+      expect(marker.getUTCSeconds()).toBe(localDate.getSeconds())
+    })
+
   })
 
   describe('duration parsing', function() {

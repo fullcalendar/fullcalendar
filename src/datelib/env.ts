@@ -93,7 +93,13 @@ export class DateEnv {
   }
 
   createNowMarker(): DateMarker {
-    return this.timestampToMarker(new Date().valueOf())
+    if (this.canComputeOffset) {
+      return this.timestampToMarker(new Date().valueOf())
+    } else {
+      // if we can't compute the current date val for a timezone,
+      // better to give the current local date vals than UTC
+      return arrayToUtcDate(dateToLocalArray(new Date()))
+    }
   }
 
   createMarkerMeta(input: DateInput): DateMarkerMeta {
