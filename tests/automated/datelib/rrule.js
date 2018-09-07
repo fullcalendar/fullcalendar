@@ -142,6 +142,25 @@ describe('rrule plugin', function() {
     expect(events[0].isAllDay).toBe(false)
   })
 
+  it('can generate local dates', function() {
+    initCalendar({
+      timeZone: 'local',
+      events: [
+        {
+          rrule: {
+            dtstart: new Date('2018-09-04T05:00:00').toISOString(),
+            freq: 'weekly'
+          }
+        }
+      ]
+    })
+    let events = getSortedEvents()
+    expect(events.length).toBe(5)
+    expect(events[0].start).toEqualDate('2018-09-04T05:00:00') // local
+    expect(events[0].end).toBe(null)
+    expect(events[0].isAllDay).toBe(false)
+  })
+
 
   function getSortedEvents() {
     let events = currentCalendar.getEvents()
