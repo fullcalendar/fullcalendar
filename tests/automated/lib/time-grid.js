@@ -8,44 +8,46 @@ const AXIS_CLASS = 'fc-axis'
 const BACKGROUND_EVENT_CLASS = 'fc-bgevent'
 
 export function dragTimeGridEvent(eventEl, dropDate) {
-  return new Promise(function(resolve) {
-    var modifiedEvent = null
+  var deferred = $.Deferred()
+  var modifiedEvent = null
 
-    currentCalendar.on('eventDragStop', function() {
-      setTimeout(function() { // wait for eventDrop to be called
-        resolve(modifiedEvent)
-      })
-    })
-    currentCalendar.on('eventDrop', function(arg) {
-      modifiedEvent = arg.event
-    })
-
-    eventEl.simulate('drag', {
-      localPoint: { left: '50%', top: 1 }, // 1 for zoom
-      end: getTimeGridPoint(dropDate)
+  currentCalendar.on('eventDragStop', function() {
+    setTimeout(function() { // wait for eventDrop to be called
+      deferred.resolve(modifiedEvent)
     })
   })
+  currentCalendar.on('eventDrop', function(arg) {
+    modifiedEvent = arg.event
+  })
+
+  eventEl.simulate('drag', {
+    localPoint: { left: '50%', top: 1 }, // 1 for zoom
+    end: getTimeGridPoint(dropDate)
+  })
+
+  return deferred.promise()
 }
 
 
 export function selectTimeGrid(start, inclusiveEnd) {
-  return new Promise(function(resolve) {
-    var selectInfo = null
+  var deferred = $.Deferred()
+  var selectInfo = null
 
-    currentCalendar.on('select', function(arg) {
-      selectInfo = arg
-    })
-
-    getTimeGridDayEls(start).simulate('drag', {
-      point: getTimeGridPoint(start),
-      end: getTimeGridPoint(inclusiveEnd),
-      onRelease: function() {
-        setTimeout(function() { // wait for eventDrop to be called
-          resolve(selectInfo)
-        })
-      }
-    })
+  currentCalendar.on('select', function(arg) {
+    selectInfo = arg
   })
+
+  getTimeGridDayEls(start).simulate('drag', {
+    point: getTimeGridPoint(start),
+    end: getTimeGridPoint(inclusiveEnd),
+    onRelease: function() {
+      setTimeout(function() { // wait for eventDrop to be called
+        deferred.resolve(selectInfo)
+      })
+    }
+  })
+
+  return deferred.promise()
 }
 
 
