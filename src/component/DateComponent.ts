@@ -935,11 +935,13 @@ export default abstract class DateComponent extends Component {
 
       // fabricate an eventRange. important for mirror
       // TODO: make a separate utility for this?
-      let def = parseEventDef({
-        editable: false,
-        isAllDay: selection.isAllDay,
-        hasEnd: true
-      }, '', this.getCalendar())
+      let def = parseEventDef(
+        { editable: false },
+        '', // sourceId
+        selection.isAllDay,
+        true, // hasEnd
+        this.getCalendar()
+      )
       let eventRange = {
         def,
         ui: computeEventDefUi(def, {}, {}),

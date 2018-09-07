@@ -26,6 +26,12 @@ export interface DateEnvSettings {
 
 export type DateInput = Date | string | number | number[]
 
+export interface DateMarkerMeta {
+  marker: DateMarker
+  isTimeUnspecified: boolean
+  forcedTzo: number | null
+}
+
 
 export class DateEnv {
 
@@ -90,7 +96,7 @@ export class DateEnv {
     return this.timestampToMarker(new Date().valueOf())
   }
 
-  createMarkerMeta(input: DateInput) {
+  createMarkerMeta(input: DateInput): DateMarkerMeta {
 
     if (typeof input === 'string') {
       return this.parse(input)

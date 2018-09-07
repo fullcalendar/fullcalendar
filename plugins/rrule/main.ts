@@ -1,5 +1,5 @@
 import { RRule, rrulestr } from 'rrule'
-import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration } from 'fullcalendar'
+import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, DateMarkerMeta, createDuration } from 'fullcalendar'
 
 interface RRuleParsedRecurring extends ParsedRecurring {
   typeData: RRule
@@ -15,13 +15,13 @@ registerRecurringType({
   parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
     if (rawEvent.rrule != null) {
       let props = refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps)
-      let rrule = parseRRule(props.rrule, dateEnv)
+      let parsed = parseRRule(props.rrule, dateEnv)
 
-      if (rrule) {
+      if (parsed) {
         return {
-          isAllDay: false, // TODO!!!
+          isAllDay: parsed.isAllDay,
           duration: props.duration,
-          typeData: rrule
+          typeData: parsed.rrule
         }
       }
     }
@@ -35,32 +35,38 @@ registerRecurringType({
 
 })
 
-function parseRRule(input, dateEnv: DateEnv): RRule | null {
+function parseRRule(input, dateEnv: DateEnv) {
 
   if (typeof input === 'string') {
-    return rrulestr(input)
-
-  } else if (typeof input === 'object' && input) { // non-null object
-
-    let parseMarker = function(val) {
-      if (typeof val === 'string') {
-        let marker = dateEnv.createMarker(val)
-        if (marker) {
-          return marker
-        }
-      }
-      return val
+    return {
+      rrule: rrulestr(input),
+      isAllDay: false
     }
 
+  } else if (typeof input === 'object' && input) { // non-null object
+    let dtstartMeta: DateMarkerMeta
+
     let refined = refineProps(input, {
-      dtstart: parseMarker,
-      until: parseMarker,
+      dtstart: null,
+      until: null,
       freq: convertConstant,
       wkst: convertConstant,
       byweekday: convertConstants
     })
 
-    return new RRule(refined)
+    if (typeof refined.dtstart === 'string') {
+      dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart)
+      refined.dtstart = dtstartMeta ? dtstartMeta.marker : null
+    }
+
+    if (typeof refined.until === 'string') {
+      refined.until = dateEnv.createMarker(refined.until)
+    }
+
+    return {
+      rrule: new RRule(refined),
+      isAllDay: dtstartMeta && dtstartMeta.isTimeUnspecified
+    }
   }
 
   return null

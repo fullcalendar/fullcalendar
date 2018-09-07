@@ -19,19 +19,23 @@
         right: 'month,agendaWeek,agendaDay,listMonth'
       },
       defaultDate: '2018-04-12',
-      navLinks: true, // can click day/week names to navigate views
-      businessHours: true, // display business hours
       editable: true,
       events: [
         {
-          title: 'cooool',
+          title: 'rrule event',
           rrule: {
-            dtstart: '2018-04-09',
-            until: '2018-04-30',
+            dtstart: '2018-04-09T13:00:00',
+            // until: '2018-05-01',
             freq: 'weekly'
-          }
+          },
+          duration: '02:00'
         }
-      ]
+      ],
+      eventClick: function(arg) {
+        if (confirm('delete event?')) {
+          arg.event.remove()
+        }
+      }
     });
 
     calendar.render();
