@@ -39,6 +39,7 @@ module.exports = function(config) {
       'dist/fullcalendar-luxon.js',
       'dist/fullcalendar-moment.js',
       'dist/fullcalendar-moment-timezone.js',
+      'dist/fullcalendar-rrule.js',
       'dist/locale-all.js',
 
       // a way to dump variables into the test environment
