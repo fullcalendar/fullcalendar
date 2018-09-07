@@ -40,12 +40,12 @@ export function formatRange(
 }
 
 function buildDateEnv(settings) {
-  let locale = settings.locale || 'en'
+  let locale = settings.locale || globalDefaults.locale
 
   // ensure required settings
-  // TODO: use constants
   settings = assignTo({
-    timeZone: 'UTC',
+    timeZone: globalDefaults.timeZone,
+    timeZoneImpl: globalDefaults.timeZoneImpl,
     calendarSystem: 'gregory'
   }, settings, {
     locale: getLocale(locale)

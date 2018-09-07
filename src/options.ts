@@ -40,7 +40,7 @@ export const globalDefaults = {
   endParam: 'end',
   timeZoneParam: 'timeZone',
 
-  timeZone: 'UTC', // TODO: throw error if given falsy value?
+  timeZone: 'local', // TODO: throw error if given falsy value?
   timeZoneImpl: null,
 
   // allDayDefault: undefined,
