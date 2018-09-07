@@ -7,6 +7,7 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
 import { computeEventDefUis } from '../component/event-rendering'
+import browserContext from '../common/browser-context'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
   calendar.publiclyTrigger(action.type, action) // for testing hooks
@@ -42,10 +43,20 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
 
 function reduceDateSelection(currentSelection: DateSpan | null, action: Action) {
   switch (action.type) {
+
     case 'SELECT_DATES':
       return action.selection
+
+    case 'SET_DATE_PROFILE': // happens on a view-change as well
+      // clear selection if dates are changing.
+      // we need to notify the global context that his happened (strange place to do this).
+      if (currentSelection) {
+        browserContext.unselectDates()
+      } // will fall thru...
+
     case 'UNSELECT_DATES':
       return null
+
     default:
       return currentSelection
   }
