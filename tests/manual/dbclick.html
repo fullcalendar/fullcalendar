@@ -9,12 +9,12 @@
 <script>
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
@@ -39,13 +39,13 @@
           end: new Date(y, m, d-2)
         },
         {
-          id: 999,
+          groupId: 999,
           title: 'Repeating Event',
           start: new Date(y, m, d-3, 16, 0),
           allDay: false
         },
         {
-          id: 999,
+          groupId: 999,
           title: 'Repeating Event',
           start: new Date(y, m, d+4, 16, 0),
           allDay: false
@@ -75,7 +75,7 @@
         }
       ]
     });
-    
+
   });
 
 </script>
