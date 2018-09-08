@@ -1,11 +1,9 @@
 import { htmlEscape, cssToStr } from '../util/html'
 import { removeElement, applyStyle } from '../util/dom-manip'
-import { createFormatter } from '../datelib/formatting'
+import { createFormatter, DateFormatter } from '../datelib/formatting'
 import EventRenderer, { buildSegCompareObj } from '../component/renderers/EventRenderer'
 import { Seg } from '../component/DateComponent'
 import { isMultiDayRange, compareByFieldSpecs } from '../util/misc'
-
-const FULL_TIME_FORMAT = createFormatter({ hour: 'numeric', minute: '2-digit' })
 
 /*
 Only handles foreground segs.
@@ -15,11 +13,18 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
   timeGrid: any
   segsByCol: any
+  fullTimeFormat: DateFormatter
 
 
   constructor(timeGrid, fillRenderer) {
     super(timeGrid, fillRenderer)
     this.timeGrid = timeGrid
+
+    this.fullTimeFormat = createFormatter({
+      hour: 'numeric',
+      minute: '2-digit',
+      separator: this.opt('defaultRangeSeparator')
+    })
   }
 
 
@@ -113,13 +118,13 @@ export default class TimeGridEventRenderer extends EventRenderer {
         let unzonedStart = seg.start
         let unzonedEnd = seg.end
         timeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay) // TODO: give the timezones
-        fullTimeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay, FULL_TIME_FORMAT)
+        fullTimeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay, this.fullTimeFormat)
         startTimeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay, null, false) // displayEnd=false
       }
     } else {
       // Display the normal time text for the *event's* times
       timeText = this.getTimeText(eventRange)
-      fullTimeText = this.getTimeText(eventRange, FULL_TIME_FORMAT)
+      fullTimeText = this.getTimeText(eventRange, this.fullTimeFormat)
       startTimeText = this.getTimeText(eventRange, null, false) // displayEnd=false
     }
 
