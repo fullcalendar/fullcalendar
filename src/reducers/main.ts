@@ -42,20 +42,10 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
 
 function reduceDateSelection(currentSelection: DateSpan | null, action: Action, calendar: Calendar) {
   switch (action.type) {
-
     case 'SELECT_DATES':
       return action.selection
-
-    case 'SET_DATE_PROFILE': // happens on a view-change as well
-      // clear selection if dates are changing.
-      // we need to notify the global context that his happened (strange place to do this).
-      if (currentSelection) {
-        calendar.unselect()
-      } // will fall thru...
-
     case 'UNSELECT_DATES':
       return null
-
     default:
       return currentSelection
   }

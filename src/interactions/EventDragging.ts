@@ -105,6 +105,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     }
 
     if (this.isDragging) {
+      initialCalendar.unselect(ev) // unselect *date* selection
       initialCalendar.publiclyTrigger('eventDragStart', [
         {
           el: this.subjectSeg.el,

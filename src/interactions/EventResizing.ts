@@ -68,6 +68,7 @@ export default class EventDragging {
 
     this.draggingSeg = this.querySeg(ev)
 
+    calendar.unselect()
     calendar.publiclyTrigger('eventResizeStart', [
       {
         el: this.draggingSeg.el,

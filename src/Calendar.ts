@@ -769,6 +769,7 @@ export default class Calendar {
 
 
   setDateProfile(dateProfile: DateProfile) {
+    this.unselect()
     this.dispatch({
       type: 'SET_DATE_PROFILE',
       dateProfile: dateProfile
@@ -1035,8 +1036,10 @@ export default class Calendar {
 
   // public method
   unselect(pev?: PointerDragEvent) {
-    this.dispatch({ type: 'UNSELECT_DATES' })
-    this.triggerDateUnselect(pev)
+    if (this.state.dateSelection) {
+      this.dispatch({ type: 'UNSELECT_DATES' })
+      this.triggerDateUnselect(pev)
+    }
   }
 
 
