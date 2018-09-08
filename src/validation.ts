@@ -1,4 +1,4 @@
-import { EventStore, expandRecurring, eventTupleToStore, mapEventInstances, filterEventStoreDefs, isEventDefsRelated } from './structs/event-store'
+import { EventStore, expandRecurring, eventTupleToStore, mapEventInstances, filterEventStoreDefs, isEventDefsGrouped } from './structs/event-store'
 import Calendar from './Calendar'
 import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
@@ -66,7 +66,7 @@ function isEntitiesValid(
         ( // not comparing the same/related event
           !subjectEntity.event ||
           !eventEntity.event ||
-          !isEventDefsRelated(subjectEntity.event.def, eventEntity.event.def)
+          isEventsCollidable(subjectEntity.event, eventEntity.event)
         ) &&
         dateSpansCollide(subjectEntity.dateSpan, eventEntity.dateSpan) // a collision!
       ) {
@@ -91,6 +91,16 @@ function isEntitiesValid(
   }
 
   return true
+}
+
+// do we want to compare these events for collision?
+// say no if events are the same, or if they share a groupId
+function isEventsCollidable(event0: EventTuple, event1: EventTuple): boolean {
+  if (event0.instance.instanceId === event1.instance.instanceId) {
+    return false
+  }
+
+  return !isEventDefsGrouped(event0.def, event1.def)
 }
 
 function eventStoreToEntities(eventStore: EventStore, eventSources: EventSourceHash): ValidationEntity[] {

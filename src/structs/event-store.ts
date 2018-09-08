@@ -93,25 +93,33 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
 }
 
 // retrieves events that have the same groupId as the instance specified by `instanceId`
+// or they are the same as the instance.
+// why might instanceId not be in the store? an event from another calendar?
+// TODO: rename to getRelevantEvents and rename other stuff too
 export function getRelatedEvents(eventStore: EventStore, instanceId: string): EventStore {
   let instance = eventStore.instances[instanceId]
 
   if (instance) {
     let def = eventStore.defs[instance.defId]
 
-    return filterEventStoreDefs(eventStore, function(eventDef) {
-      return isEventDefsRelated(eventDef, def)
+    // get events/instances with same group
+    let newStore = filterEventStoreDefs(eventStore, function(lookDef) {
+      return isEventDefsGrouped(def, lookDef)
     })
+
+    // add the original
+    // TODO: wish we could use eventTupleToStore or something like it
+    newStore.defs[def.defId] = def
+    newStore.instances[instance.instanceId] = instance
+
+    return newStore
   }
 
   return createEmptyEventStore()
 }
 
-export function isEventDefsRelated(def0: EventDef, def1: EventDef): boolean {
-  return Boolean(
-    def0.defId === def1.defId ||
-    def0.groupId && def0.groupId === def1.groupId
-  )
+export function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
+  return Boolean(def0.groupId && def0.groupId === def1.groupId)
 }
 
 export function transformRawEvents(rawEvents, func) {
