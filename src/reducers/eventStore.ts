@@ -5,7 +5,7 @@ import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../struc
 import {
   EventStore,
   mergeEventStores,
-  getRelatedEvents,
+  getRelevantEvents,
   createEmptyEventStore,
   filterEventStoreDefs,
   transformRawEvents,
@@ -146,9 +146,9 @@ function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: Da
 
 
 function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
-  let related = getRelatedEvents(eventStore, instanceId)
-  related = applyMutationToEventStore(related, mutation, calendar)
-  return mergeEventStores(eventStore, related)
+  let relevant = getRelevantEvents(eventStore, instanceId)
+  relevant = applyMutationToEventStore(relevant, mutation, calendar)
+  return mergeEventStores(eventStore, relevant)
 }
 
 

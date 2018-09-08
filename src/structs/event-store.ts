@@ -95,8 +95,7 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
 // retrieves events that have the same groupId as the instance specified by `instanceId`
 // or they are the same as the instance.
 // why might instanceId not be in the store? an event from another calendar?
-// TODO: rename to getRelevantEvents and rename other stuff too
-export function getRelatedEvents(eventStore: EventStore, instanceId: string): EventStore {
+export function getRelevantEvents(eventStore: EventStore, instanceId: string): EventStore {
   let instance = eventStore.instances[instanceId]
 
   if (instance) {

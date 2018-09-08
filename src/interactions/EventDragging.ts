@@ -7,7 +7,7 @@ import browserContext from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import { EventStore, getRelatedEvents, createEmptyEventStore } from '../structs/event-store'
+import { EventStore, getRelevantEvents, createEmptyEventStore } from '../structs/event-store'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { diffDates, enableCursor, disableCursor } from '../util/misc'
@@ -26,10 +26,10 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   subjectSeg: Seg | null = null // the seg being selected/dragged
   isDragging: boolean = false
   eventRange: EventRenderRange | null = null
-  relatedEvents: EventStore | null = null
+  relevantEvents: EventStore | null = null
   receivingCalendar: Calendar | null = null
   validMutation: EventMutation | null = null
-  mutatedRelatedEvents: EventStore | null = null
+  mutatedRelevantEvents: EventStore | null = null
 
   constructor(component: DateComponent) {
     this.component = component
@@ -61,7 +61,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     let eventRange = this.eventRange = subjectSeg.eventRange!
     let eventInstanceId = eventRange.instance!.instanceId
 
-    this.relatedEvents = getRelatedEvents(
+    this.relevantEvents = getRelevantEvents(
       initialCalendar.state.eventStore,
       eventInstanceId
     )
@@ -122,14 +122,14 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       return
     }
 
-    let relatedEvents = this.relatedEvents!
+    let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
     let initialCalendar = this.component.getCalendar()
 
     // states based on new hit
     let receivingCalendar: Calendar | null = null
     let mutation: EventMutation | null = null
-    let mutatedRelatedEvents: EventStore | null = null
+    let mutatedRelevantEvents: EventStore | null = null
     let isInvalid = false
 
     if (hit) {
@@ -137,19 +137,19 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       mutation = computeEventMutation(initialHit, hit)
 
       if (mutation) {
-        mutatedRelatedEvents = applyMutationToEventStore(relatedEvents, mutation, receivingCalendar)
+        mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, receivingCalendar)
 
-        if (!this.component.isEventsValid(mutatedRelatedEvents)) {
+        if (!this.component.isEventsValid(mutatedRelevantEvents)) {
           isInvalid = true
           mutation = null
-          mutatedRelatedEvents = null
+          mutatedRelevantEvents = null
         }
       }
     }
 
     this.displayDrag(receivingCalendar, {
-      affectedEvents: relatedEvents,
-      mutatedEvents: mutatedRelatedEvents || createEmptyEventStore(),
+      affectedEvents: relevantEvents,
+      mutatedEvents: mutatedRelevantEvents || createEmptyEventStore(),
       isEvent: true,
       origSeg: this.subjectSeg
     })
@@ -180,7 +180,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       // assign states based on new hit
       this.receivingCalendar = receivingCalendar
       this.validMutation = mutation
-      this.mutatedRelatedEvents = mutatedRelatedEvents
+      this.mutatedRelevantEvents = mutatedRelevantEvents
     }
   }
 
@@ -199,8 +199,8 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       let eventDef = this.eventRange!.def
       let eventInstance = this.eventRange!.instance
       let eventApi = new EventApi(initialCalendar, eventDef, eventInstance)
-      let relatedEvents = this.relatedEvents!
-      let mutatedRelatedEvents = this.mutatedRelatedEvents!
+      let relevantEvents = this.relevantEvents!
+      let mutatedRelevantEvents = this.mutatedRelevantEvents!
 
       this.clearDrag() // must happen after revert animation
 
@@ -220,7 +220,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
           initialCalendar.dispatch({
             type: 'MERGE_EVENTS',
-            eventStore: mutatedRelatedEvents
+            eventStore: mutatedRelevantEvents
           })
 
           initialCalendar.publiclyTrigger('eventDrop', [
@@ -230,13 +230,13 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
               prevEvent: eventApi,
               event: new EventApi( // the data AFTER the mutation
                 initialCalendar,
-                mutatedRelatedEvents.defs[eventDef.defId],
-                eventInstance ? mutatedRelatedEvents.instances[eventInstance.instanceId] : null
+                mutatedRelevantEvents.defs[eventDef.defId],
+                eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
               ),
               revert: function() {
                 initialCalendar.dispatch({
                   type: 'MERGE_EVENTS',
-                  eventStore: relatedEvents
+                  eventStore: relevantEvents
                 })
               },
               jsEvent: ev.origEvent,
@@ -250,12 +250,12 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
           initialCalendar.dispatch({
             type: 'REMOVE_EVENT_INSTANCES',
-            instances: this.mutatedRelatedEvents!.instances
+            instances: this.mutatedRelevantEvents!.instances
           })
 
           receivingCalendar.dispatch({
             type: 'MERGE_EVENTS',
-            eventStore: this.mutatedRelatedEvents!
+            eventStore: this.mutatedRelevantEvents!
           })
 
           if (ev.isTouch) {
@@ -324,10 +324,10 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     this.subjectSeg = null
     this.isDragging = false
     this.eventRange = null
-    this.relatedEvents = null
+    this.relevantEvents = null
     this.receivingCalendar = null
     this.validMutation = null
-    this.mutatedRelatedEvents = null
+    this.mutatedRelevantEvents = null
   }
 
 }

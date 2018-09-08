@@ -5,7 +5,7 @@ import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { getElSeg } from '../component/renderers/EventRenderer'
-import { EventStore, getRelatedEvents } from '../structs/event-store'
+import { EventStore, getRelevantEvents } from '../structs/event-store'
 import { diffDates, enableCursor, disableCursor } from '../util/misc'
 import { DateRange } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
@@ -21,9 +21,9 @@ export default class EventDragging {
   // internal state
   draggingSeg: Seg | null = null // TODO: rename to resizingSeg? subjectSeg?
   eventRange: EventRenderRange | null = null
-  relatedEvents: EventStore | null = null
+  relevantEvents: EventStore | null = null
   validMutation: EventMutation | null = null
-  mutatedRelatedEvents: EventStore | null = null
+  mutatedRelevantEvents: EventStore | null = null
 
   constructor(component: DateComponent) {
     this.component = component
@@ -61,7 +61,7 @@ export default class EventDragging {
     let calendar = this.component.getCalendar()
     let eventRange = this.eventRange!
 
-    this.relatedEvents = getRelatedEvents(
+    this.relevantEvents = getRelevantEvents(
       calendar.state.eventStore,
       this.eventRange.instance!.instanceId
     )
@@ -81,11 +81,11 @@ export default class EventDragging {
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
     let calendar = this.component.getCalendar()
-    let relatedEvents = this.relatedEvents!
+    let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
     let eventInstance = this.eventRange.instance!
     let mutation: EventMutation | null = null
-    let mutatedRelatedEvents: EventStore | null = null
+    let mutatedRelevantEvents: EventStore | null = null
     let isInvalid = false
 
     if (hit) {
@@ -98,21 +98,21 @@ export default class EventDragging {
     }
 
     if (mutation) {
-      mutatedRelatedEvents = applyMutationToEventStore(relatedEvents, mutation, calendar)
+      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, calendar)
 
-      if (!this.component.isEventsValid(mutatedRelatedEvents)) {
+      if (!this.component.isEventsValid(mutatedRelevantEvents)) {
         isInvalid = true
         mutation = null
-        mutatedRelatedEvents = null
+        mutatedRelevantEvents = null
       }
     }
 
-    if (mutatedRelatedEvents) {
+    if (mutatedRelevantEvents) {
       calendar.dispatch({
         type: 'SET_EVENT_RESIZE',
         state: {
-          affectedEvents: relatedEvents,
-          mutatedEvents: mutatedRelatedEvents,
+          affectedEvents: relevantEvents,
+          mutatedEvents: mutatedRelevantEvents,
           isEvent: true,
           origSeg: this.draggingSeg
         }
@@ -134,7 +134,7 @@ export default class EventDragging {
       }
 
       this.validMutation = mutation
-      this.mutatedRelatedEvents = mutatedRelatedEvents
+      this.mutatedRelevantEvents = mutatedRelevantEvents
     }
   }
 
@@ -144,8 +144,8 @@ export default class EventDragging {
     let eventDef = this.eventRange!.def
     let eventInstance = this.eventRange!.instance
     let eventApi = new EventApi(calendar, eventDef, eventInstance)
-    let relatedEvents = this.relatedEvents!
-    let mutatedRelatedEvents = this.mutatedRelatedEvents!
+    let relevantEvents = this.relevantEvents!
+    let mutatedRelevantEvents = this.mutatedRelevantEvents!
 
     calendar.publiclyTrigger('eventResizeStop', [
       {
@@ -159,7 +159,7 @@ export default class EventDragging {
     if (this.validMutation) {
       calendar.dispatch({
         type: 'MERGE_EVENTS',
-        eventStore: mutatedRelatedEvents
+        eventStore: mutatedRelevantEvents
       })
 
       calendar.publiclyTrigger('eventResize', [
@@ -170,13 +170,13 @@ export default class EventDragging {
           prevEvent: eventApi,
           event: new EventApi( // the data AFTER the mutation
             calendar,
-            mutatedRelatedEvents.defs[eventDef.defId],
-            eventInstance ? mutatedRelatedEvents.instances[eventInstance.instanceId] : null
+            mutatedRelevantEvents.defs[eventDef.defId],
+            eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
           ),
           revert: function() {
             calendar.dispatch({
               type: 'MERGE_EVENTS',
-              eventStore: relatedEvents
+              eventStore: relevantEvents
             })
           },
           jsEvent: ev.origEvent,
@@ -190,7 +190,7 @@ export default class EventDragging {
 
     // reset all internal state
     this.draggingSeg = null
-    this.relatedEvents = null
+    this.relevantEvents = null
     this.validMutation = null
 
     // okay to keep eventInstance around. useful to set it in handlePointerDown
