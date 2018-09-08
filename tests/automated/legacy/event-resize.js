@@ -412,6 +412,7 @@ describe('eventResize', function() {
 
     describe('when resizing a timed event without an end', function() {
       pushOptions({
+        defaultTimedEventDuration: '02:00',
         events: [ {
           title: 'timed event event',
           start: '2014-06-11T05:00:00',

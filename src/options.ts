@@ -7,7 +7,7 @@ export const globalDefaults = {
   titleRangeSeparator: ' \u2013 ', // en dash
   cmdFormatter: null,
 
-  defaultTimedEventDuration: '02:00:00',
+  defaultTimedEventDuration: '01:00:00',
   defaultAllDayEventDuration: { day: 1 },
   forceEventDuration: false,
   nextDayThreshold: '00:00:00',
