@@ -1034,9 +1034,9 @@ export default class Calendar {
 
 
   // public method
-  unselect(ev?: UIEvent) {
+  unselect(pev?: PointerDragEvent) {
     this.dispatch({ type: 'UNSELECT_DATES' })
-    this.triggerDateUnselect()
+    this.triggerDateUnselect(pev)
   }
 
 
@@ -1094,7 +1094,7 @@ export default class Calendar {
         let unselectCancel = view.opt('unselectCancel')
 
         if (unselectAuto && (!unselectAuto || !elementClosest(documentPointer.downEl, unselectCancel))) {
-          this.unselect(pev.origEvent)
+          this.unselect(pev)
         }
       }
 

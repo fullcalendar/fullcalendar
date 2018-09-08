@@ -48,9 +48,7 @@ export default class DateSelecting {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    // unselect previous (just trigger the handlers)
-    // will render previous selection in handleHitUpdate
-    this.component.getCalendar().triggerDateUnselect()
+    this.component.getCalendar().unselect(ev) // unselect previous selections
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
