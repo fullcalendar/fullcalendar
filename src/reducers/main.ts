@@ -7,7 +7,6 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
 import { computeEventDefUis } from '../component/event-rendering'
-import browserContext from '../common/browser-context'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
   calendar.publiclyTrigger(action.type, action) // for testing hooks
@@ -21,7 +20,7 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     eventStore: reduceEventStore(state.eventStore, action, eventSources, dateProfile, calendar),
     eventUis: state.eventUis, // TODO: should really be internal state
     businessHours: state.businessHours,
-    dateSelection: reduceDateSelection(state.dateSelection, action),
+    dateSelection: reduceDateSelection(state.dateSelection, action, calendar),
     eventSelection: reduceSelectedEvent(state.eventSelection, action),
     eventDrag: reduceEventDrag(state.eventDrag, action, eventSources, calendar),
     eventResize: reduceEventResize(state.eventResize, action, eventSources, calendar),
@@ -41,7 +40,7 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
   }
 }
 
-function reduceDateSelection(currentSelection: DateSpan | null, action: Action) {
+function reduceDateSelection(currentSelection: DateSpan | null, action: Action, calendar: Calendar) {
   switch (action.type) {
 
     case 'SELECT_DATES':
@@ -51,7 +50,7 @@ function reduceDateSelection(currentSelection: DateSpan | null, action: Action) 
       // clear selection if dates are changing.
       // we need to notify the global context that his happened (strange place to do this).
       if (currentSelection) {
-        browserContext.unselectDates()
+        calendar.unselect()
       } // will fall thru...
 
     case 'UNSELECT_DATES':

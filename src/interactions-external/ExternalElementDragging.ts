@@ -41,8 +41,6 @@ export default class ExternalElementDragging {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    browserContext.unselectEvent() // unselect any existing events
-
     this.dragMeta = this.buildDragMeta(ev.subjectEl as HTMLElement)
   }
 

@@ -16,6 +16,8 @@ import EventApi from '../api/EventApi'
 
 export default class EventDragging { // TODO: rename to EventSelectingAndDragging
 
+  static SELECTOR = '.fc-draggable, .fc-resizable' // TODO: test this in IE11
+
   component: DateComponent
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
@@ -33,7 +35,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     this.component = component
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
-    dragging.pointer.selector = '.fc-draggable, .fc-resizable' // TODO: test this in IE11
+    dragging.pointer.selector = EventDragging.SELECTOR
     dragging.touchScrollAllowed = false
     dragging.autoScroller.isEnabled = component.opt('dragScroll')
 
@@ -42,6 +44,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragstart', this.handleDragStart)
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
+    hitDragging.emitter.on('pointerup', this.handlePointerUp)
     hitDragging.emitter.on('dragend', this.handleDragEnd)
   }
 
@@ -92,21 +95,13 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     let eventInstanceId = eventRange.instance.instanceId
 
     if (ev.isTouch) {
-
       // need to select a different event?
       if (eventInstanceId !== this.component.eventSelection) {
-
-        initialCalendar.dispatch({
-          type: 'SELECT_EVENT',
-          eventInstanceId: eventInstanceId
-        })
-
-        browserContext.reportEventSelection(this.component) // will unselect previous
+        initialCalendar.dispatch({ type: 'SELECT_EVENT', eventInstanceId })
       }
-
-    // if now using mouse, but was previous touch interaction, clear selected event
     } else {
-      browserContext.unselectEvent()
+      // if now using mouse, but was previous touch interaction, clear selected event
+      initialCalendar.dispatch({ type: 'UNSELECT_EVENT' })
     }
 
     if (this.isDragging) {
@@ -189,15 +184,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     }
   }
 
-  onDocumentPointerUp = (ev: PointerDragEvent, wasTouchScroll: boolean) => {
-    if (
-      !wasTouchScroll &&
-      !this.subjectSeg && // no events were selected/dragged during this interaction
-      browserContext.eventSelectedComponent === this.component // this component owned the previous event selection
-    ) {
-      browserContext.unselectEvent()
-    }
-
+  handlePointerUp = () => {
     if (!this.isDragging) {
       this.cleanup() // because handleDragEnd won't fire
     }

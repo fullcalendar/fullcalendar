@@ -1,4 +1,4 @@
-import { createElement, removeElement, applyStyle, prependToElement } from './util/dom-manip'
+import { createElement, removeElement, applyStyle, prependToElement, elementClosest } from './util/dom-manip'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
@@ -16,11 +16,10 @@ import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
-import { parseDateSpan, DateSpanInput, DateSpan } from './structs/date-span'
+import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi } from './structs/date-span'
 import reselector from './util/reselector'
 import { assignTo } from './util/object'
 import { RenderForceFlags } from './component/Component'
-import browserContext from './common/browser-context'
 import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
 import { DateProfile } from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
@@ -65,6 +64,9 @@ export default class Calendar {
   elThemeClassName: string
   elDirClassName: string
   contentEl: HTMLElement
+
+  documentPointer: PointerDragging // for unfocusing
+  isRecentPointerDateSelect = false // wish we could use a selector to detect date selection, but uses hit system
 
   suggestedViewHeight: number
   ignoreUpdateViewSize: number = 0
@@ -322,6 +324,11 @@ export default class Calendar {
 
 
   bindGlobalHandlers() {
+    let documentPointer = this.documentPointer = new PointerDragging(document)
+    documentPointer.shouldIgnoreMove = true
+    documentPointer.shouldWatchScroll = false
+    documentPointer.emitter.on('pointerup', this.onDocumentPointerUp)
+
     if (this.opt('handleWindowResize')) {
       window.addEventListener('resize',
         this.windowResizeProxy = debounce( // prevents rapid calls
@@ -333,6 +340,8 @@ export default class Calendar {
   }
 
   unbindGlobalHandlers() {
+    this.documentPointer.destroy()
+
     if (this.windowResizeProxy) {
       window.removeEventListener('resize', this.windowResizeProxy)
       this.windowResizeProxy = null
@@ -986,7 +995,7 @@ export default class Calendar {
   }
 
 
-  // DateSpan / DayClick
+  // Date Selection / Event Selection / DayClick
   // -----------------------------------------------------------------------------------------------------------------
 
 
@@ -1018,20 +1027,40 @@ export default class Calendar {
     )
 
     if (selection) { // throw parse error otherwise?
-      this.dispatch({
-        type: 'SELECT_DATES',
-        selection: selection
-      })
-      browserContext.reportDateSelection(this, selection)
+      this.dispatch({ type: 'SELECT_DATES', selection })
+      this.triggerDateSelect(selection)
     }
   }
 
 
   // public method
   unselect(ev?: UIEvent) {
-    if (browserContext.dateSelectedCalendar === this) {
-      browserContext.unselectDates()
+    this.dispatch({ type: 'UNSELECT_DATES' })
+    this.triggerDateUnselect()
+  }
+
+
+  triggerDateSelect(selection: DateSpan, pev?: PointerDragEvent) {
+    let arg = buildDateSpanApi(selection, this.dateEnv)
+
+    arg.jsEvent = pev ? pev.origEvent : null
+    arg.view = this.view
+
+    this.publiclyTrigger('select', [ arg ])
+
+    if (pev) {
+      this.isRecentPointerDateSelect = true
     }
+  }
+
+
+  triggerDateUnselect(pev?: PointerDragEvent) {
+    this.publiclyTrigger('unselect', [
+      {
+        jsEvent: pev ? pev.origEvent : null,
+        view: this.view
+      }
+    ])
   }
 
 
@@ -1047,6 +1076,38 @@ export default class Calendar {
         view
       }
     ])
+  }
+
+
+  // for unfocusing selections
+  onDocumentPointerUp = (pev: PointerDragEvent) => {
+    let { state, view, documentPointer } = this
+
+    // touch-scrolling should never unfocus any type of selection
+    if (!documentPointer.wasTouchScroll) {
+
+      if (
+        state.dateSelection && // an existing date selection?
+        !this.isRecentPointerDateSelect // a new pointer-initiated date selection since last onDocumentPointerUp?
+      ) {
+        let unselectAuto = view.opt('unselectAuto')
+        let unselectCancel = view.opt('unselectCancel')
+
+        if (unselectAuto && (!unselectAuto || !elementClosest(documentPointer.downEl, unselectCancel))) {
+          this.unselect(pev.origEvent)
+        }
+      }
+
+      if (
+        state.eventSelection && // an existing event selected?
+        !elementClosest(documentPointer.downEl, EventDragging.SELECTOR) // interaction DIDN'T start on an event
+      ) {
+        this.dispatch({ type: 'UNSELECT_EVENT' })
+      }
+
+    }
+
+    this.isRecentPointerDateSelect = false
   }
 
 

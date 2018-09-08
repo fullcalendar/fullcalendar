@@ -1,11 +1,9 @@
 import { compareNumbers, enableCursor, disableCursor } from '../util/misc'
-import { elementClosest } from '../util/dom-manip'
 import DateComponent from '../component/DateComponent'
 import HitDragging, { Hit } from './HitDragging'
 import { DateSpan } from '../structs/date-span'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import browserContext from '../common/browser-context'
 
 /*
 Tracks when the user selects a portion of time of a component,
@@ -30,6 +28,7 @@ export default class DateSelecting {
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragstart', this.handleDragStart)
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)
+    hitDragging.emitter.on('pointerup', this.handlePointerUp)
   }
 
   destroy() {
@@ -49,7 +48,9 @@ export default class DateSelecting {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    browserContext.unselectDates(ev) // clear selection from all other calendars/components
+    // unselect previous (just trigger the handlers)
+    // will render previous selection in handleHitUpdate
+    this.component.getCalendar().triggerDateUnselect()
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
@@ -86,25 +87,13 @@ export default class DateSelecting {
     }
   }
 
-  onDocumentPointerUp = (ev: PointerDragEvent, wasTouchScroll: boolean, downEl: HTMLElement) => {
-    let { component } = this
-
+  handlePointerUp = (pev: PointerDragEvent) => {
     if (this.dragSelection) {
 
-      // the selection is already rendered, so just need to report it
-      browserContext.reportDateSelection(component.getCalendar(), this.dragSelection, ev)
+      // selection is already rendered, so just need to report selection
+      this.component.getCalendar().triggerDateSelect(this.dragSelection, pev)
 
       this.dragSelection = null
-
-    // only unselect if this component has a selection.
-    // otherwise, we might be clearing another component's new selection in the same calendar.
-    } else if (!wasTouchScroll && component.dateSelection) {
-      let unselectAuto = component.opt('unselectAuto')
-      let unselectCancel = component.opt('unselectCancel')
-
-      if (unselectAuto && (!unselectAuto || !elementClosest(downEl, unselectCancel))) {
-        browserContext.unselectDates(ev)
-      }
     }
   }
 
