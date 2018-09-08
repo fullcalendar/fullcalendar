@@ -247,14 +247,23 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
         // dropped in different calendar
         // TODO: more public triggers
         } else if (receivingCalendar) {
+
           initialCalendar.dispatch({
             type: 'REMOVE_EVENT_INSTANCES',
             instances: this.mutatedRelatedEvents!.instances
           })
+
           receivingCalendar.dispatch({
             type: 'MERGE_EVENTS',
             eventStore: this.mutatedRelatedEvents!
           })
+
+          if (ev.isTouch) {
+            receivingCalendar.dispatch({
+              type: 'SELECT_EVENT',
+              eventInstanceId: eventInstance.instanceId
+            })
+          }
         }
 
       } else {

@@ -139,6 +139,13 @@ export default class ExternalElementDragging {
           eventStore: eventTupleToStore(droppableEvent)
         })
 
+        if (pev.isTouch) {
+          receivingCalendar.dispatch({
+            type: 'SELECT_EVENT',
+            eventInstanceId: droppableEvent.instance.instanceId
+          })
+        }
+
         // signal that an external event landed
         receivingCalendar.publiclyTrigger('eventReceive', [
           {
