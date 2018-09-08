@@ -8,7 +8,7 @@ export function assignTo(target, ...sources) {
     if (source != null) { // skip over if undefined or null
       for (let key in source) {
         // avoid bugs when hasOwnProperty is shadowed
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
+        if (hasOwnProp(source, key)) {
           target[key] = source[key]
         }
       }
