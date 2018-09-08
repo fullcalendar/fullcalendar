@@ -22,8 +22,7 @@ export default abstract class MirrorRenderer {
     this.renderEventSegs(
       segs,
       sourceSeg,
-      'fc-dragging',
-      this.view.opt('dragOpacity')
+      'fc-dragging'
     )
   }
 
@@ -37,7 +36,7 @@ export default abstract class MirrorRenderer {
   }
 
 
-  renderEventSegs(segs: Seg[], sourceSeg?, extraClassName?, opacity?) {
+  renderEventSegs(segs: Seg[], sourceSeg?, extraClassName?) {
     let i
 
     // assigns each seg's el and returns a subset of segs that were rendered
@@ -48,12 +47,6 @@ export default abstract class MirrorRenderer {
       classList.add('fc-mirror')
       if (extraClassName) {
         classList.add(extraClassName)
-      }
-    }
-
-    if (opacity != null) {
-      for (i = 0; i < segs.length; i++) {
-        segs[i].el.style.opacity = opacity
       }
     }
 

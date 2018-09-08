@@ -74,7 +74,6 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
         null
 
     mirror.parentNode = initialCalendar.el
-    mirror.opacity = component.opt('dragOpacity')
     mirror.revertDuration = component.opt('dragRevertDuration')
 
     let isValid =

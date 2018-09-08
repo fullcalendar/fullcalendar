@@ -58,7 +58,6 @@ export const globalDefaults = {
   // themeButtonIcons: null,
 
   // eventResizableFromStart: false,
-  dragOpacity: .75,
   dragRevertDuration: 500,
   dragScroll: true,
 

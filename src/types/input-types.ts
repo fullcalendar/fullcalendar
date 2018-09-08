@@ -163,7 +163,6 @@ export interface OptionsInputBase {
   eventStartEditable?: boolean
   eventDurationEditable?: boolean
   dragRevertDuration?: number
-  dragOpacity?: number
   dragScroll?: boolean
   eventConstraint?: ConstraintInput
   eventOverlap?: Overlap

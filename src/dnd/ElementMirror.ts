@@ -20,7 +20,6 @@ export default class ElementMirror {
 
   // options that can be set directly by caller
   parentNode: HTMLElement = document.body
-  opacity: string = ''
   zIndex: number = 9999
   revertDuration: number = 0
 
@@ -141,8 +140,7 @@ export default class ElementMirror {
         height: sourceElRect.bottom - sourceElRect.top, // explicit width in case there was a 'bottom' value
         right: 'auto', // erase and set width instead
         bottom: 'auto', // erase and set height instead
-        margin: 0,
-        opacity: this.opacity
+        margin: 0
       })
 
       this.parentNode.appendChild(mirrorEl)
