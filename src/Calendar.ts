@@ -2,7 +2,6 @@ import { createElement, removeElement, applyStyle, prependToElement } from './ut
 import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
-import { globalDefaults, rtlDefaults } from './options'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import Toolbar from './Toolbar'
 import OptionsManager from './OptionsManager'
@@ -32,13 +31,11 @@ import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
 import { computeEventDefUis, EventUiHash } from './component/event-rendering'
 import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
+import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
+import EventDragging from './interactions/EventDragging'
 
 
 export default class Calendar {
-
-  // not for internal use. use options module directly instead.
-  static defaults: any = globalDefaults
-  static rtlDefaults: any = rtlDefaults
 
   // global handler registry
   static on: EmitterInterface['on']
