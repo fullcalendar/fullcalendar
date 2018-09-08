@@ -465,8 +465,16 @@ temporary rendered events).
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.fc-event.fc-selected.fc-dragging {
+
+/* Event Dragging
+--------------------------------------------------------------------------------------------------*/
+
+.fc-event.fc-dragging.fc-selected {
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+}
+
+.fc-event.fc-dragging:not(.fc-selected) {
+  opacity: .75;
 }
 
 
