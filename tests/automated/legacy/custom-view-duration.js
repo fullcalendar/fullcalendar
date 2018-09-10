@@ -1,4 +1,5 @@
 describe('custom view', function() {
+
   it('renders a 4 day basic view', function() {
     var options = {
       views: {}

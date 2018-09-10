@@ -1,6 +1,8 @@
 import { htmlEscape } from './util/html'
 import { htmlToElement, appendToElement, findElements, createElement } from './util/dom-manip'
 import { default as Component, RenderForceFlags } from './component/Component'
+import Calendar from './Calendar'
+import { ViewSpec } from './structs/view-spec'
 
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -16,7 +18,7 @@ export interface ToolbarRenderProps {
 
 export default class Toolbar extends Component {
 
-  calendar: any
+  calendar: Calendar
   el: HTMLElement = null
   viewsWithButtons: any
 
@@ -126,7 +128,7 @@ export default class Toolbar extends Component {
     let calendar = this.calendar
     let theme = calendar.theme
     let optionsManager = calendar.optionsManager
-    let viewSpecManager = calendar.viewSpecManager
+    let viewSpecs = calendar.viewSpecs
     let sectionEl = createElement('div', { className: 'fc-' + position })
     let calendarCustomButtons = optionsManager.computed.customButtons || {}
     let calendarButtonTextOverrides = optionsManager.overrides.buttonText || {}
@@ -140,7 +142,7 @@ export default class Toolbar extends Component {
 
         buttonGroupStr.split(',').forEach((buttonName, j) => {
           let customButtonProps
-          let viewSpec
+          let viewSpec: ViewSpec
           let buttonClick
           let buttonIcon // only one of these will be set
           let buttonText // "
@@ -163,7 +165,7 @@ export default class Toolbar extends Component {
               (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
               (buttonIcon = theme.getIconClass(buttonName)) ||
               (buttonText = customButtonProps.text)
-            } else if ((viewSpec = viewSpecManager.getViewSpec(buttonName))) {
+            } else if ((viewSpec = viewSpecs[buttonName])) {
               this.viewsWithButtons.push(buttonName)
               buttonClick = function() {
                 calendar.changeView(buttonName)

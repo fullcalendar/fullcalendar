@@ -5,7 +5,6 @@ import { capitaliseFirstLetter, debounce } from './util/misc'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import Toolbar from './Toolbar'
 import OptionsManager from './OptionsManager'
-import ViewSpecManager from './ViewSpecManager'
 import View from './View'
 import Theme from './theme/Theme'
 import { getThemeSystemClass } from './theme/ThemeRegistry'
@@ -32,6 +31,8 @@ import { computeEventDefUis, EventUiHash } from './component/event-rendering'
 import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
+import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
+import * as exportHooks from './exports'
 
 
 export default class Calendar {
@@ -54,7 +55,7 @@ export default class Calendar {
   parseBusinessHours: (input: BusinessHoursInput) => EventStore
 
   optionsManager: OptionsManager
-  viewSpecManager: ViewSpecManager
+  viewSpecs: ViewSpecHash
   theme: Theme
   dateEnv: DateEnv
   defaultAllDayEventDuration: Duration
@@ -73,7 +74,7 @@ export default class Calendar {
   removeNavLinkListener: any
   windowResizeProxy: any
 
-  viewsByType: { [viewName: string]: View } // holds all instantiated view instances, current or not
+  viewsByType: { [viewType: string]: View } // holds all instantiated view instances, current or not
   view: View // the latest view, internal state, regardless of whether rendered or not
   renderedView: View // the view that is currently RENDERED, though it might not be most recent from internal state
   header: Toolbar
@@ -99,7 +100,6 @@ export default class Calendar {
     this.viewsByType = {}
 
     this.optionsManager = new OptionsManager(overrides)
-    this.viewSpecManager = new ViewSpecManager(this.optionsManager)
 
     this.buildDateEnv = reselector(buildDateEnv)
     this.buildTheme = reselector(buildTheme)
@@ -517,8 +517,10 @@ export default class Calendar {
       options.weekLabel,
       options.cmdFormatter
     )
-
-    this.viewSpecManager.clearCache()
+    this.viewSpecs = buildViewSpecs( // ineffecient to do every time?
+      (exportHooks as any).views,
+      this.optionsManager
+    )
   }
 
 
@@ -627,7 +629,7 @@ export default class Calendar {
 
   // Given a view name for a custom view or a standard view, creates a ready-to-go View object
   instantiateView(viewType: string): View {
-    let spec = this.viewSpecManager.getViewSpec(viewType)
+    let spec = this.viewSpecs[viewType]
 
     if (!spec) {
       throw new Error(`View type "${viewType}" is not valid`)
@@ -639,11 +641,11 @@ export default class Calendar {
 
   // Returns a boolean about whether the view is okay to instantiate at some point
   isValidViewType(viewType: string): boolean {
-    return Boolean(this.viewSpecManager.getViewSpec(viewType))
+    return Boolean(this.viewSpecs[viewType])
   }
 
 
-  changeView(viewType: string, dateOrRange: DateRangeInput | DateInput) {
+  changeView(viewType: string, dateOrRange?: DateRangeInput | DateInput) {
     let dateMarker = null
 
     if (dateOrRange) {
@@ -665,13 +667,37 @@ export default class Calendar {
     let spec
 
     viewType = viewType || 'day' // day is default zoom
-    spec = this.viewSpecManager.getViewSpec(viewType) ||
-      this.viewSpecManager.getUnitViewSpec(viewType, this)
+    spec = this.viewSpecs[viewType] ||
+      this.getUnitViewSpec(viewType)
 
     if (spec) {
       this.setViewType(spec.type, dateMarker)
     } else {
       this.setCurrentDateMarker(dateMarker)
+    }
+  }
+
+
+  // Given a duration singular unit, like "week" or "day", finds a matching view spec.
+  // Preference is given to views that have corresponding buttons.
+  getUnitViewSpec(unit: string): ViewSpec | null {
+    let viewTypes
+    let i
+    let spec
+
+    // put views that have buttons first. there will be duplicates, but oh well
+    viewTypes = this.header.getViewsWithButtons() // TODO: include footer as well?
+    for (let viewType in this.viewSpecs) {
+      viewTypes.push(viewType)
+    }
+
+    for (i = 0; i < viewTypes.length; i++) {
+      spec = this.viewSpecs[viewTypes[i]]
+      if (spec) {
+        if (spec.singleUnit === unit) {
+          return spec
+        }
+      }
     }
   }
 

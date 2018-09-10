@@ -2,9 +2,7 @@ import { defineView } from '../ViewRegistry'
 import BasicView from './BasicView'
 import MonthView from './MonthView'
 
-defineView('basic', {
-  'class': BasicView
-})
+defineView('basic', BasicView)
 
 defineView('basicDay', {
   type: 'basic',
@@ -19,7 +17,5 @@ defineView('basicWeek', {
 defineView('month', {
   'class': MonthView,
   duration: { months: 1 }, // important for prev/next
-  defaults: {
-    fixedWeekCount: true
-  }
+  fixedWeekCount: true
 })

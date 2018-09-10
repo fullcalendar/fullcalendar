@@ -5,11 +5,11 @@ export const viewHash = {};
 (exportHooks as any).views = viewHash
 
 
-export function defineView(viewName, viewConfig) {
-  viewHash[viewName] = viewConfig
+export function defineView(viewType: string, viewConfig) {
+  viewHash[viewType] = viewConfig
 }
 
 
-export function getViewConfig(viewName) {
-  return viewHash[viewName]
+export function getViewConfig(viewType: string) {
+  return viewHash[viewType]
 }

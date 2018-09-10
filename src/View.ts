@@ -8,6 +8,7 @@ import { createDuration } from './datelib/duration'
 import { createFormatter } from './datelib/formatting'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { OpenDateRange, parseRange, DateRange, rangesEqual } from './datelib/date-range'
+import { ViewSpec } from './structs/view-spec'
 
 
 /* An abstract class from which other views inherit from
@@ -26,7 +27,7 @@ export default abstract class View extends DateComponent {
   title: string // the text that will be displayed in the header's title
 
   calendar: Calendar // owner Calendar object
-  viewSpec: any
+  viewSpec: ViewSpec
   options: any // hash containing all options. already merged with view-specific-options
 
   queuedScroll: any
@@ -51,7 +52,7 @@ export default abstract class View extends DateComponent {
   usesMinMaxTime: boolean
 
 
-  constructor(calendar, viewSpec) {
+  constructor(calendar, viewSpec: ViewSpec) {
     super(null, viewSpec.options)
 
     this.calendar = calendar
