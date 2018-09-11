@@ -61,7 +61,7 @@ describe('view-specific options', function() {
       }
     })
     testEachView({
-      month: 'default', // will NOT target month view
+      month: 'special!!!',
       basicWeek: 'special!!!',
       basicDay: 'special!!!',
       agendaWeek: 'default',

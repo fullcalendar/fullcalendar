@@ -651,6 +651,7 @@ export default class Calendar {
     if (dateOrRange) {
       if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
         this.optionsManager.add('visibleRange', dateOrRange) // will not rerender
+        this.handleOptions(this.optionsManager.computed) // ...but yuck
       } else { // a date
         dateMarker = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate
       }
