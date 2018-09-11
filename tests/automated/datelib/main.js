@@ -174,11 +174,13 @@ describe('datelib', function() {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
         year: 'numeric',
         timeZoneName: 'short'
       })
       var s = env.format(marker, formatter)
-      expect(s).toBe('Friday, June 8, 2018, UTC')
+      expect(stripNonVis(s)).toMatch(/^Friday, June 8, 2018,? 12:00 AM (UTC|GMT)$/)
     })
 
 
@@ -219,7 +221,7 @@ describe('datelib', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-06-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(s).toBe('June 8 - 9, 2018')
+        expect(stripNonVis(s)).toBe('June 8 - 9, 2018')
       })
 
       it('works with different days of same month, with inprecise formatter', function() {
@@ -230,21 +232,21 @@ describe('datelib', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-06-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(s).toBe('June 2018')
+        expect(stripNonVis(s)).toBe('June 2018')
       })
 
       it('works with different day/month of same year', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-07-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(s).toBe('June 8 - July 9, 2018')
+        expect(stripNonVis(s)).toBe('June 8 - July 9, 2018')
       })
 
       it('works with completely different dates', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2020-07-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(s).toBe('June 8, 2018 - July 9, 2020')
+        expect(stripNonVis(s)).toBe('June 8, 2018 - July 9, 2020')
       })
 
     })
@@ -572,10 +574,16 @@ describe('datelib', function() {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
         timeZoneName: 'short'
       })
       var s = env.format(marker, formatter)
-      expect(s).toBe('Friday, June 8, 2018, ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)))
+      expect(
+        stripNonVis(s)
+      ).toMatch(
+        new RegExp('^Friday, June 8, 2018,? 12:00 AM ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)) + '$')
+      )
     })
 
     it('can output a timezone only', function() {
@@ -636,7 +644,7 @@ describe('datelib', function() {
         timeZoneName: 'short'
       })
       var s = env.format(marker, formatter)
-      expect(s).toBe('Friday, June 8, 2018')
+      expect(stripNonVis(s)).toBe('Friday, June 8, 2018')
     })
 
     it('outputs pretty format with no timezone even tho specified as long', function() {
@@ -649,7 +657,7 @@ describe('datelib', function() {
         timeZoneName: 'long'
       })
       var s = env.format(marker, formatter)
-      expect(s).toBe('Friday, June 8, 2018')
+      expect(stripNonVis(s)).toBe('Friday, June 8, 2018')
     })
 
     it('computes current date as local values', function() {

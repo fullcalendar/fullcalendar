@@ -7,7 +7,7 @@ describe('formatDate', function() {
       day: 'numeric',
       year: 'numeric'
     })
-    expect(str).toBe('September 4, 2018')
+    expect(stripNonVis(str)).toBe('September 4, 2018')
   })
 
   it('works with timezone offset', function() {
@@ -15,10 +15,12 @@ describe('formatDate', function() {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
       timeZoneName: 'short',
       timeZone: 'America/New_York' // but with no timeZoneImpl
     })
-    expect(str).toBe('September 4, 2018, GMT-5')
+    expect(stripNonVis(str)).toMatch(/^September 4, 2018,? 12:00 AM GMT-5$/)
   })
 
 })
@@ -31,7 +33,7 @@ describe('formatRange', function() {
       day: 'numeric',
       year: 'numeric'
     })
-    expect(str).toBe('September 4 - October 4, 2018')
+    expect(stripNonVis(str)).toBe('September 4 - October 4, 2018')
   })
 
   it('works with timezone offset', function() {
@@ -39,10 +41,12 @@ describe('formatRange', function() {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
       timeZoneName: 'short',
       timeZone: 'America/New_York' // but with no timeZoneImpl
     })
-    expect(str).toBe('September 4 - October 4, 2018, GMT-5')
+    expect(stripNonVis(str)).toMatch(/^September 4, 2018,? 12:00 AM GMT-5 - October 4, 2018,? 12:00 AM GMT-5$/)
   })
 
 })
