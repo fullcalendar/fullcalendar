@@ -1,25 +1,10 @@
-import { assignTo, mapHash } from '../util/object'
-import { refineProps } from '../util/misc'
+import { assignTo } from '../util/object'
+import { ViewClass, ViewConfigHash } from './view-config'
 
-export type ViewClass = any
-
-export interface ViewDefInputObject {
-  type?: string
-  class?: ViewClass
-  [optionName: string]: any
-}
-
-export type ViewDefInput = ViewClass | ViewDefInputObject
-export type ViewDefInputHash = { [viewType: string]: ViewDefInput }
-
-export interface ViewDefParse {
-  superType: string
-  class: ViewClass | null
-  options: any
-}
-
-export type ViewDefParseHash = { [viewType: string]: ViewDefParse }
-
+/*
+Represents information for an instantiatable View class along with settings
+that are specific to that view. No other settings, like calendar-wide settings, are stored.
+*/
 export interface ViewDef {
   type: string
   class: ViewClass
@@ -29,51 +14,27 @@ export interface ViewDef {
 
 export type ViewDefHash = { [viewType: string]: ViewDef }
 
-export function parseViewDefInputs(inputs: ViewDefInputHash): ViewDefParseHash {
-  return mapHash(inputs, parseViewDefInput)
-}
-
-export function compileViewDefs(defaults: ViewDefParseHash, overrides: ViewDefParseHash): ViewDefHash {
+export function compileViewDefs(defaultConfigs: ViewConfigHash, overrideConfigs: ViewConfigHash): ViewDefHash {
   let hash: ViewDefHash = {}
   let viewType: string
 
-  for (viewType in defaults) {
-    ensureViewDef(viewType, hash, defaults, overrides)
+  for (viewType in defaultConfigs) {
+    ensureViewDef(viewType, hash, defaultConfigs, overrideConfigs)
   }
 
-  for (viewType in overrides) {
-    ensureViewDef(viewType, hash, defaults, overrides)
+  for (viewType in overrideConfigs) {
+    ensureViewDef(viewType, hash, defaultConfigs, overrideConfigs)
   }
 
   return hash
 }
 
-const VIEW_DEF_PROPS = {
-  type: String,
-  class: null
-}
-
-function parseViewDefInput(input: ViewDefInput): ViewDefParse {
-  if (typeof input === 'function') {
-    input = { class: input }
-  }
-
-  let options = {}
-  let props = refineProps(input, VIEW_DEF_PROPS, {}, options)
-
-  return {
-    superType: props.type,
-    class: props.class,
-    options
-  }
-}
-
-function ensureViewDef(viewType: string, hash: ViewDefHash, defaults: ViewDefParseHash, overrides: ViewDefParseHash): ViewDef | null {
+function ensureViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewConfigHash, overrideConfigs: ViewConfigHash): ViewDef | null {
   if (hash[viewType]) {
     return hash[viewType]
   }
 
-  let viewDef = buildViewDef(viewType, hash, defaults, overrides)
+  let viewDef = buildViewDef(viewType, hash, defaultConfigs, overrideConfigs)
 
   if (viewDef) {
     hash[viewType] = viewDef
@@ -82,13 +43,13 @@ function ensureViewDef(viewType: string, hash: ViewDefHash, defaults: ViewDefPar
   return viewDef
 }
 
-function buildViewDef(viewType: string, hash: ViewDefHash, defaults: ViewDefParseHash, overrides: ViewDefParseHash): ViewDef | null {
-  let defaultParse = defaults[viewType]
-  let overrideParse = overrides[viewType]
+function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewConfigHash, overrideConfigs: ViewConfigHash): ViewDef | null {
+  let defaultConfig = defaultConfigs[viewType]
+  let overrideConfig = overrideConfigs[viewType]
 
   let queryProp = function(name) {
-    return (defaultParse && defaultParse[name] !== null) ? defaultParse[name] :
-      ((overrideParse && overrideParse[name] !== null) ? overrideParse[name] : null)
+    return (defaultConfig && defaultConfig[name] !== null) ? defaultConfig[name] :
+      ((overrideConfig && overrideConfig[name] !== null) ? overrideConfig[name] : null)
   }
 
   let theClass = queryProp('class') as ViewClass
@@ -96,11 +57,11 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaults: ViewDefPars
 
   if (!superType && theClass) {
     superType =
-      findViewNameBySubclass(theClass, overrides) ||
-      findViewNameBySubclass(theClass, defaults)
+      findViewNameBySubclass(theClass, overrideConfigs) ||
+      findViewNameBySubclass(theClass, defaultConfigs)
   }
 
-  let superDef = superType ? ensureViewDef(superType, hash, defaults, overrides) : null
+  let superDef = superType ? ensureViewDef(superType, hash, defaultConfigs, overrideConfigs) : null
 
   if (!theClass && superDef) {
     theClass = superDef.class
@@ -116,21 +77,24 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaults: ViewDefPars
     defaults: assignTo(
       {},
       superDef ? superDef.defaults : {},
-      defaultParse ? defaultParse.options : {}
+      defaultConfig ? defaultConfig.options : {}
     ),
     overrides: assignTo(
       {},
       superDef ? superDef.overrides : {},
-      overrideParse ? overrideParse.options : {}
+      overrideConfig ? overrideConfig.options : {}
     )
   }
 }
 
-function findViewNameBySubclass(viewSubclass: ViewClass, parseHash: ViewDefParseHash): string {
-  for (let viewType in parseHash) {
-    let parsed = parseHash[viewType]
+function findViewNameBySubclass(viewSubclass: ViewClass, configs: ViewConfigHash): string {
+  let superProto = Object.getPrototypeOf(viewSubclass.prototype)
 
-    if (parsed.class && viewSubclass.prototype instanceof parsed.class) {
+  for (let viewType in configs) {
+    let parsed = configs[viewType]
+
+    // need DIRECT subclass, so instanceof won't do it
+    if (parsed.class && parsed.class.prototype === superProto) {
       return viewType
     }
   }

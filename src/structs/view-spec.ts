@@ -1,9 +1,18 @@
-import { ViewDef, ViewClass, ViewDefParseHash, ViewDefInputHash, parseViewDefInputs, compileViewDefs } from './view-def'
+import { ViewDef, compileViewDefs } from './view-def'
 import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInput } from '../datelib/duration'
 import OptionsManager from '../OptionsManager'
 import { assignTo, mapHash } from '../util/object'
 import { globalDefaults } from '../options'
+import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewClass } from './view-config'
 
+/*
+Represents everything needed to instantiate a new view instance,
+including options that have been compiled from view-specific and calendar-wide options,
+as well as duration information.
+
+Overall flow:
+ViewConfig -> ViewDef -> ViewSpec
+*/
 export interface ViewSpec {
   type: string
   class: ViewClass
@@ -17,17 +26,17 @@ export interface ViewSpec {
 
 export type ViewSpecHash = { [viewType: string]: ViewSpec }
 
-export function buildViewSpecs(defaultViewInputs: ViewDefInputHash, optionsManager: OptionsManager): ViewSpecHash {
-  let defaultParses = parseViewDefInputs(defaultViewInputs)
-  let overrideParses = parseViewDefInputs(optionsManager.overrides.views)
-  let viewDefs = compileViewDefs(defaultParses, overrideParses)
+export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionsManager: OptionsManager): ViewSpecHash {
+  let defaultConfigs = parseViewConfigs(defaultInputs)
+  let overrideConfigs = parseViewConfigs(optionsManager.overrides.views)
+  let viewDefs = compileViewDefs(defaultConfigs, overrideConfigs)
 
   return mapHash(viewDefs, function(viewDef) {
-    return buildViewSpec(viewDef, overrideParses, optionsManager)
+    return buildViewSpec(viewDef, overrideConfigs, optionsManager)
   })
 }
 
-function buildViewSpec(viewDef: ViewDef, viewParses: ViewDefParseHash, optionsManager: OptionsManager): ViewSpec {
+function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, optionsManager: OptionsManager): ViewSpec {
   let durationInput =
     viewDef.overrides.duration ||
     viewDef.defaults.duration ||
@@ -52,7 +61,7 @@ function buildViewSpec(viewDef: ViewDef, viewParses: ViewDefParseHash, optionsMa
 
       if (denom.value === 1) {
         singleUnit = durationUnit
-        singleUnitOverrides = viewParses[durationUnit] ? viewParses[durationUnit].options : {}
+        singleUnitOverrides = overrideConfigs[durationUnit] ? overrideConfigs[durationUnit].options : {}
       }
     }
   }
