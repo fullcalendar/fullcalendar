@@ -119,4 +119,54 @@ describe('view-specific options', function() {
       agendaDay: 'special!!!'
     })
   })
+
+  it('can implicitly target a View subclass', function() {
+
+    class SuperMonthView extends FullCalendar.MonthView {
+    }
+
+    FullCalendar.views.superMonth = SuperMonthView
+
+    initCalendar({
+      views: {
+        month: {
+          titleFormat: function() { return 'special!!!' }
+        }
+      }
+    })
+
+    testEachView({
+      month: 'special!!!',
+      superMonth: 'special!!!',
+      basicDay: 'default'
+    })
+
+    delete FullCalendar.views.superMonth
+  })
+
+  it('can implicitly target an old-school View subclass', function() {
+
+    let MonthView = FullCalendar.MonthView
+    function SuperMonthView() { MonthView.apply(this, arguments) }
+    SuperMonthView.prototype = Object.create(MonthView.prototype)
+
+    FullCalendar.views.superMonth = SuperMonthView
+
+    initCalendar({
+      views: {
+        month: {
+          titleFormat: function() { return 'special!!!' }
+        }
+      }
+    })
+
+    testEachView({
+      month: 'special!!!',
+      superMonth: 'special!!!',
+      basicDay: 'default'
+    })
+
+    delete FullCalendar.views.superMonth
+  })
+
 })
