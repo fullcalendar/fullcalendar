@@ -84,8 +84,7 @@ gulp.task('lint:js:tests', function() {
           'spyOnCalendarCallback',
           'spyCall',
           'oneCall',
-          'XHRMock',
-          'stripNonVis'
+          'XHRMock'
         ]
       })
     )

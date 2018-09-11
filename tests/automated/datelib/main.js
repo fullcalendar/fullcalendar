@@ -1,6 +1,8 @@
 import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from './utils'
 import { getDSTDeadZone } from './dst-dead-zone'
 
+// can use omitCommas instead of match
+
 describe('datelib', function() {
   var DateEnv = FullCalendar.DateEnv
   var createFormatter = FullCalendar.createFormatter
@@ -180,7 +182,7 @@ describe('datelib', function() {
         timeZoneName: 'short'
       })
       var s = env.format(marker, formatter)
-      expect(stripNonVis(s)).toMatch(/^Friday, June 8, 2018,? 12:00 AM (UTC|GMT)$/)
+      expect(s).toMatch(/^Friday, June 8, 2018,? 12:00 AM (UTC|GMT)$/)
     })
 
 
@@ -221,7 +223,7 @@ describe('datelib', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-06-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(stripNonVis(s)).toBe('June 8 - 9, 2018')
+        expect(s).toBe('June 8 - 9, 2018')
       })
 
       it('works with different days of same month, with inprecise formatter', function() {
@@ -232,21 +234,21 @@ describe('datelib', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-06-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(stripNonVis(s)).toBe('June 2018')
+        expect(s).toBe('June 2018')
       })
 
       it('works with different day/month of same year', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2018-07-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(stripNonVis(s)).toBe('June 8 - July 9, 2018')
+        expect(s).toBe('June 8 - July 9, 2018')
       })
 
       it('works with completely different dates', function() {
         var m0 = env.createMarker('2018-06-08')
         var m1 = env.createMarker('2020-07-09')
         var s = env.formatRange(m0, m1, formatter)
-        expect(stripNonVis(s)).toBe('June 8, 2018 - July 9, 2020')
+        expect(s).toBe('June 8, 2018 - July 9, 2020')
       })
 
     })
@@ -579,9 +581,7 @@ describe('datelib', function() {
         timeZoneName: 'short'
       })
       var s = env.format(marker, formatter)
-      expect(
-        stripNonVis(s)
-      ).toMatch(
+      expect(s).toMatch(
         new RegExp('^Friday, June 8, 2018,? 12:00 AM ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)) + '$')
       )
     })
@@ -634,30 +634,32 @@ describe('datelib', function() {
 
     })
 
-    it('outputs pretty format with no timezone even tho specified', function() {
+    it('outputs UTC timezone when no timezone specified', function() {
       var marker = env.createMarker('2018-06-08')
       var formatter = createFormatter({
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        timeZoneName: 'short'
+        timeZoneName: 'short',
+        omitCommas: true // for cross-browser
       })
       var s = env.format(marker, formatter)
-      expect(stripNonVis(s)).toBe('Friday, June 8, 2018')
+      expect(s).toBe('Friday June 8 2018 12:00 AM UTC')
     })
 
-    it('outputs pretty format with no timezone even tho specified as long', function() {
+    it('outputs UTC short timezone when no timezone specified, when requested as long', function() {
       var marker = env.createMarker('2018-06-08')
       var formatter = createFormatter({
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        timeZoneName: 'long'
+        timeZoneName: 'long',
+        omitCommas: true // for cross-browser
       })
       var s = env.format(marker, formatter)
-      expect(stripNonVis(s)).toBe('Friday, June 8, 2018')
+      expect(s).toBe('Friday June 8 2018 12:00 AM UTC')
     })
 
     it('computes current date as local values', function() {
