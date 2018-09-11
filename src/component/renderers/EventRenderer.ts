@@ -308,7 +308,7 @@ export default class EventRenderer {
     return {
       hour: 'numeric',
       minute: '2-digit',
-      omitZeroTime: true
+      omitZeroMinSec: true
     }
   }
 

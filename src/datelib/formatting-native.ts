@@ -8,7 +8,7 @@ import reselector from '../util/reselector'
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
   separator: 0, // 0 = not applicable
-  omitZeroTime: 0,
+  omitZeroMinSec: 0,
   meridiem: 0, // like am/pm
   omitCommas: 0
 }
@@ -177,25 +177,23 @@ function buildNativeFormattingFunc(
   standardDateProps.timeZone = 'UTC' // we leverage the only guaranteed timeZone for our UTC markers
 
   let normalFormat = new Intl.DateTimeFormat(context.locale.codes, standardDateProps)
-  let zeroTimeFormat
+  let zeroFormat
 
-  if (extendedSettings.omitZeroTime) {
-    let zeroTimeProps = assignTo({}, standardDateProps)
+  if (extendedSettings.omitZeroMinSec) {
+    let zeroProps = assignTo({}, standardDateProps)
 
-    delete zeroTimeProps.hour
-    delete zeroTimeProps.minute
-    delete zeroTimeProps.second
-    delete zeroTimeProps.timeZoneName
+    delete zeroProps.minute
+    delete zeroProps.second
 
-    zeroTimeFormat = new Intl.DateTimeFormat(context.locale.codes, zeroTimeProps)
+    zeroFormat = new Intl.DateTimeFormat(context.locale.codes, zeroProps)
   }
 
   return function(date: ZonedMarker) {
     let marker = date.marker
     let format
 
-    if (zeroTimeFormat && !marker.getUTCHours() && !marker.getUTCMinutes() && !marker.getUTCSeconds()) {
-      format = zeroTimeFormat
+    if (zeroFormat && !marker.getUTCMinutes() && !marker.getUTCSeconds()) {
+      format = zeroFormat
     } else {
       format = normalFormat
     }
@@ -219,6 +217,13 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
     )
   }
 
+  if (extendedSettings.omitCommas) {
+    s = s.replace(COMMA_RE, '').trim()
+  }
+
+  // ^ do anything that might create adjacent spaces before this point,
+  // because MERIDIEM_RE likes to eat up loading spaces
+
   if (extendedSettings.meridiem === false) {
     s = s.replace(MERIDIEM_RE, '').trim()
   } else if (extendedSettings.meridiem === 'narrow') { // a/p
@@ -233,10 +238,6 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
     s = s.replace(MERIDIEM_RE, function(m0) {
       return m0.toLocaleLowerCase()
     })
-  }
-
-  if (extendedSettings.omitCommas) {
-    s = s.replace(COMMA_RE, '').trim()
   }
 
   s = s.replace(MULTI_SPACE_RE, ' ')
