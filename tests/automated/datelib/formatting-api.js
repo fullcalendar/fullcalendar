@@ -16,9 +16,10 @@ describe('formatDate', function() {
       day: 'numeric',
       year: 'numeric',
       timeZoneName: 'short',
-      timeZone: 'America/New_York' // but with no timeZoneImpl
+      timeZone: 'America/New_York', // but with no timeZoneImpl
+      omitCommas: true // for cross-browser
     })
-    expect(str).toMatch(/^September 4, 2018,? 12:00 AM GMT-5$/)
+    expect(str).toBe('September 4 2018 12:00 AM GMT-5')
   })
 
 })
@@ -34,15 +35,16 @@ describe('formatRange', function() {
     expect(str).toBe('September 4 - October 4, 2018')
   })
 
-  fit('works with timezone offset', function() {
+  it('works with timezone offset', function() {
     let str = FullCalendar.formatRange('2018-09-04T00:00:00-05:00', '2018-10-04T00:00:00-05:00', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
       timeZoneName: 'short',
-      timeZone: 'America/New_York' // but with no timeZoneImpl
+      timeZone: 'America/New_York', // but with no timeZoneImpl
+      omitCommas: true // for cross-browser
     })
-    expect(str).toMatch(/^September 4 - October 4, 2018,? 12:00 AM GMT-5$/)
+    expect(str).toBe('September 4 - October 4 2018 12:00 AM GMT-5')
   })
 
 })

@@ -1,8 +1,6 @@
 import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from './utils'
 import { getDSTDeadZone } from './dst-dead-zone'
 
-// can use omitCommas instead of match
-
 describe('datelib', function() {
   var DateEnv = FullCalendar.DateEnv
   var createFormatter = FullCalendar.createFormatter
@@ -179,10 +177,11 @@ describe('datelib', function() {
         hour: '2-digit',
         minute: '2-digit',
         year: 'numeric',
-        timeZoneName: 'short'
+        timeZoneName: 'short',
+        omitCommas: true // for cross-browser
       })
       var s = env.format(marker, formatter)
-      expect(s).toMatch(/^Friday, June 8, 2018,? 12:00 AM (UTC|GMT)$/)
+      expect(s).toBe('Friday June 8 2018 12:00 AM UTC')
     })
 
 
@@ -578,12 +577,11 @@ describe('datelib', function() {
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        timeZoneName: 'short'
+        timeZoneName: 'short',
+        omitCommas: true // for cross-browser
       })
       var s = env.format(marker, formatter)
-      expect(s).toMatch(
-        new RegExp('^Friday, June 8, 2018,? 12:00 AM ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)) + '$')
-      )
+      expect(s).toBe('Friday June 8 2018 12:00 AM ' + formatPrettyTimeZoneOffset(new Date(2018, 5, 8)))
     })
 
     it('can output a timezone only', function() {
