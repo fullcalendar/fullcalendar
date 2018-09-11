@@ -223,8 +223,8 @@ export default class PointerDragging {
     if (this.shouldWatchScroll) {
       this.prevPageX = (ev as any).pageX
       this.prevPageY = (ev as any).pageY
-      this.prevScrollX = window.scrollX
-      this.prevScrollY = window.scrollY
+      this.prevScrollX = window.pageXOffset
+      this.prevScrollY = window.pageYOffset
     }
   }
 
@@ -234,8 +234,8 @@ export default class PointerDragging {
         origEvent: ev,
         isTouch: this.isTouchDragging,
         subjectEl: this.subjectEl,
-        pageX: (window.scrollX - this.prevScrollX) + this.prevPageX,
-        pageY: (window.scrollY - this.prevScrollY) + this.prevPageY
+        pageX: (window.pageXOffset - this.prevScrollX) + this.prevPageX,
+        pageY: (window.pageYOffset - this.prevScrollY) + this.prevPageY
       } as PointerDragEvent)
     }
   }

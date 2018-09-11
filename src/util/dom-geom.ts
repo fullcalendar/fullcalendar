@@ -76,20 +76,20 @@ export function computeRect(el): Rect {
   let rect = el.getBoundingClientRect()
 
   return {
-    left: rect.left + window.scrollX,
-    top: rect.top + window.scrollY,
-    right: rect.right + window.scrollX,
-    bottom: rect.bottom + window.scrollY
+    left: rect.left + window.pageXOffset,
+    top: rect.top + window.pageYOffset,
+    right: rect.right + window.pageXOffset,
+    bottom: rect.bottom + window.pageYOffset
   }
 }
 
 
 function computeViewportRect(): Rect {
   return {
-    left: window.scrollX,
-    right: window.scrollX + document.documentElement.clientWidth,
-    top: window.scrollY,
-    bottom: window.scrollY + document.documentElement.clientHeight
+    left: window.pageXOffset,
+    right: window.pageXOffset + document.documentElement.clientWidth,
+    top: window.pageYOffset,
+    bottom: window.pageYOffset + document.documentElement.clientHeight
   }
 }
 

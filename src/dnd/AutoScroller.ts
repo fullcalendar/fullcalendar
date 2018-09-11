@@ -53,8 +53,8 @@ export default class AutoScroller {
 
   handleMove(pageX: number, pageY: number) {
     if (this.isEnabled) {
-      let pointerScreenX = pageX - window.scrollX
-      let pointerScreenY = pageY - window.scrollY
+      let pointerScreenX = pageX - window.pageXOffset
+      let pointerScreenY = pageY - window.pageYOffset
 
       let yDelta = this.pointerScreenY === null ? 0 : pointerScreenY - this.pointerScreenY
       let xDelta = this.pointerScreenX === null ? 0 : pointerScreenX - this.pointerScreenX
@@ -95,8 +95,8 @@ export default class AutoScroller {
   private animate = () => {
     if (this.isAnimating) { // wasn't cancelled between animation calls
       let edge = this.computeBestEdge(
-        this.pointerScreenX! + window.scrollX,
-        this.pointerScreenY! + window.scrollY
+        this.pointerScreenX! + window.pageXOffset,
+        this.pointerScreenY! + window.pageYOffset
       )
 
       if (edge) {
