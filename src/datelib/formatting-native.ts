@@ -3,6 +3,7 @@ import { DateMarker, timeAsMs } from './marker'
 import { CalendarSystem } from './calendar-system'
 import { Locale } from './locale'
 import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset } from './formatting'
+import reselector from '../util/reselector'
 
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
@@ -35,6 +36,7 @@ export class NativeFormatter implements DateFormatter {
   standardDateProps: any
   extendedSettings: any
   severity: number
+  private buildFormattingFunc: typeof buildFormattingFunc // caching for efficiency with same date env
 
   constructor(formatSettings) {
     let standardDateProps: any = {}
@@ -57,10 +59,12 @@ export class NativeFormatter implements DateFormatter {
     this.standardDateProps = standardDateProps
     this.extendedSettings = extendedSettings
     this.severity = severity
+
+    this.buildFormattingFunc = reselector(buildFormattingFunc)
   }
 
   format(date: ZonedMarker, context: DateFormattingContext) {
-    return buildFormattingFunc(this.standardDateProps, this.extendedSettings, context)(date) // TODO: use reselector
+    return this.buildFormattingFunc(this.standardDateProps, this.extendedSettings, context)(date)
   }
 
   formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext) {
