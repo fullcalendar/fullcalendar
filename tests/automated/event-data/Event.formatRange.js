@@ -9,7 +9,8 @@ describe('Event::formatRange', function() {
     day: 'numeric',
     year: 'numeric',
     timeZoneName: 'short',
-    separator: ' to '
+    separator: ' to ',
+    omitCommas: true // for cross-browser
   }
 
   describe('when event has an end', function() {
@@ -23,7 +24,7 @@ describe('Event::formatRange', function() {
       initCalendar()
       let event = currentCalendar.getEvents()[0]
       let str = event.formatRange(FORMAT_SETTINGS)
-      expect(str).toBe('September 4 to 5, 2018, GMT-5')
+      expect(str).toBe('September 4 to 5 2018 12:00 PM GMT-5')
     })
   })
 
@@ -38,7 +39,7 @@ describe('Event::formatRange', function() {
       initCalendar()
       let event = currentCalendar.getEvents()[0]
       let str = event.formatRange(FORMAT_SETTINGS)
-      expect(str).toBe('September 4, 2018, GMT-5')
+      expect(str).toBe('September 4 2018 12:00 PM GMT-5')
     })
   })
 
