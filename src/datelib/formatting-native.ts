@@ -28,7 +28,7 @@ const STANDARD_DATE_PROP_SEVERITIES = {
 const MERIDIEM_RE = /\s*([ap])\.?m\.?/i // eats up leading spaces too
 const COMMA_RE = /,/g // we need re for globalness
 const MULTI_SPACE_RE = /\s+/g
-const NON_VIS_RE = /[^\x00-\x7F]+/g
+const LTR_RE = /\u200e/g // control character
 const UTC_RE = /UTC|GMT/
 
 export class NativeFormatter implements DateFormatter {
@@ -180,15 +180,14 @@ function buildNativeFormattingFunc(
   let zeroTimeFormat
 
   if (extendedSettings.omitZeroTime) {
-    zeroTimeFormat = new Intl.DateTimeFormat(
-      context.locale.codes,
-      assignTo({}, standardDateProps, {
-        hour: null,
-        minute: null,
-        second: null,
-        timeZoneName: null
-      })
-    )
+    let zeroTimeProps = assignTo({}, standardDateProps)
+
+    delete zeroTimeProps.hour
+    delete zeroTimeProps.minute
+    delete zeroTimeProps.second
+    delete zeroTimeProps.timeZoneName
+
+    zeroTimeFormat = new Intl.DateTimeFormat(context.locale.codes, zeroTimeProps)
   }
 
   return function(date: ZonedMarker) {
@@ -209,7 +208,7 @@ function buildNativeFormattingFunc(
 
 function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSettings, context: DateFormattingContext): string {
 
-  s = s.replace(NON_VIS_RE, '') // remove rtl/ltr control chars. do first. good for other regexes
+  s = s.replace(LTR_RE, '') // remove left-to-right control chars. do first. good for other regexes
 
   if (standardDateProps.timeZoneName) {
     s = s.replace(
