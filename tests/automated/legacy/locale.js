@@ -11,7 +11,7 @@ describe('locale', function() {
     })
     expect(
       $('.fc-day-header:first').text()
-    ).toMatch(/^Sun\.? 12[- ]21$/)
+    ).toMatch(/^Sun\.? 12[-/ ]21$/)
     expect($('.fc-event .fc-time')).toHaveText('10:00')
   })
 

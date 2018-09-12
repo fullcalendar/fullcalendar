@@ -196,12 +196,15 @@ describe('eventResize', function() {
             setTimeout(function() { // wait for scroll to init, so don't do a rescroll which kills drag
               $('.fc-event').simulate('drag', {
                 isTouch: true,
+                localPoint: { left: '50%', top: '90%' },
                 delay: 200,
                 onRelease: function() {
-                  $('.fc-event .fc-resizer').simulate('drag', {
-                    dy: $('.fc-slats tr:eq(1)').height() * 4.5, // 5 slots, so 2.5 hours
-                    isTouch: true
-                  })
+                  setTimeout(function() { // for FF
+                    $('.fc-event .fc-resizer').simulate('drag', {
+                      dy: $('.fc-slats tr:eq(1)').height() * 4.5, // 5 slots, so 2.5 hours
+                      isTouch: true,
+                    })
+                  }, 0)
                 }
               })
             }, 0)
