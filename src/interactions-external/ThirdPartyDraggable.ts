@@ -21,11 +21,15 @@ export default class ThirdPartyDraggable {
   ) {
     let containerEl: EventTarget = document
 
-    if (containerOrSettings instanceof EventTarget) {
-      containerEl = containerOrSettings
+    if (
+      // wish we could just test instanceof EventTarget, but doesn't work in IE11
+      containerOrSettings === document ||
+      containerOrSettings instanceof Element
+    ) {
+      containerEl = containerOrSettings as EventTarget
       settings = settings || {}
     } else {
-      settings = containerOrSettings || {}
+      settings = (containerOrSettings || {}) as ThirdPartyDraggableSettings
     }
 
     let dragging = this.dragging = new InferredElementDragging(containerEl as HTMLElement)
