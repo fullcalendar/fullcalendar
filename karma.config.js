@@ -27,6 +27,7 @@ module.exports = function(config) {
       'node_modules/components-jqueryui/themes/cupertino/jquery-ui.css',
 
       // dependencies for tests
+      'node_modules/native-promise-only/lib/npo.src.js', // Promises needed by xhr-mock
       'node_modules/xhr-mock/dist/xhr-mock.js', // TODO: should include this via require(), but .d.ts problems
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
       'node_modules/jquery-simulate/jquery.simulate.js',
