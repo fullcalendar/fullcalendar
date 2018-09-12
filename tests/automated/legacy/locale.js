@@ -2,14 +2,16 @@ describe('locale', function() {
 
   it('works when certain locale has no FC settings defined', function() {
     initCalendar({
-      locale: 'en-ca',
+      locale: 'en-asdf',
       defaultView: 'agendaWeek',
       defaultDate: '2014-12-25',
       events: [
         { title: 'Christmas', start: '2014-12-25T10:00:00' }
       ]
     })
-    expect($('.fc-day-header:first')).toHaveText('Sun. 12-21')
+    expect(
+      $('.fc-day-header:first').text()
+    ).toMatch(/^Sun\.? 12[- ]21$/)
     expect($('.fc-event .fc-time')).toHaveText('10:00')
   })
 
