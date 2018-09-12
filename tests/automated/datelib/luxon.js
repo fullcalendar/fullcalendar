@@ -1,6 +1,12 @@
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
 import { testTimeZoneImpl } from './timeZoneImpl'
 
+if (!FullCalendar.Luxon) {
+  console.log('Luxon not present. Skipping tests.')
+}
+
+// eslint-disable-next-line
+FullCalendar.Luxon &&
 describe('luxon plugin', function() {
   let toDateTime = FullCalendar.Luxon.toDateTime
   let toDuration = FullCalendar.Luxon.toDuration
