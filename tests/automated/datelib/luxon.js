@@ -1,10 +1,11 @@
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
+import { testTimeZoneImpl } from './timeZoneImpl'
 
 describe('luxon plugin', function() {
   let toDateTime = FullCalendar.Luxon.toDateTime
   let toDuration = FullCalendar.Luxon.toDuration
 
-  // NOTE: timezone offset converting is done in timeZoneImpl
+  testTimeZoneImpl('luxon')
 
   describe('toDateTime', function() {
 

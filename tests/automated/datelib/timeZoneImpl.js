@@ -1,25 +1,29 @@
 
-describeOptions('timeZoneImpl', {
-  'timeZoneImpl as moment-timezone': 'moment-timezone',
-  'timeZoneImpl as luxon': 'luxon'
-}, function() {
+export function testTimeZoneImpl(timeZoneImpl) {
 
-  it('computes correct offset for named timezone for View dates', function() {
-    initCalendar({
-      defaultView: 'month',
-      now: '2018-09-01',
-      timeZone: 'Europe/Moscow',
-      events: [
-        { start: '2018-09-05' }
-      ]
+  describe('timeZoneImpl', function() {
+    pushOptions({
+      timeZoneImpl
     })
 
-    let view = currentCalendar.view
-    expect(view.currentStart).toEqualDate('2018-09-01T00:00:00+03:00')
+    it('computes correct offset for named timezone for View dates', function() {
+      initCalendar({
+        defaultView: 'month',
+        now: '2018-09-01',
+        timeZone: 'Europe/Moscow',
+        events: [
+          { start: '2018-09-05' }
+        ]
+      })
 
-    // interprets the ambug iso date string correctly
-    let event = currentCalendar.getEvents()[0]
-    expect(event.start).toEqualDate('2018-09-05T00:00:00+03:00')
+      let view = currentCalendar.view
+      expect(view.currentStart).toEqualDate('2018-09-01T00:00:00+03:00')
+
+      // interprets the ambug iso date string correctly
+      let event = currentCalendar.getEvents()[0]
+      expect(event.start).toEqualDate('2018-09-05T00:00:00+03:00')
+    })
+
   })
 
-})
+}
