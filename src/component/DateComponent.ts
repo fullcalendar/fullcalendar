@@ -108,7 +108,7 @@ export default abstract class DateComponent extends Component {
     this.childrenByUid = {}
 
     this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
-    this.isRtl = this.opt('isRtl')
+    this.isRtl = this.opt('dir') === 'rtl'
 
     if (this.fillRendererClass) {
       this.fillRenderer = new this.fillRendererClass(this)

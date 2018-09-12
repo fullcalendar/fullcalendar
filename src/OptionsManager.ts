@@ -31,22 +31,24 @@ export default class OptionsManager {
   compute() {
     let locale
     let localeDefaults
-    let isRtl
+    let dir
     let dirDefaults
 
     locale = firstDefined( // explicit locale option given?
       this.dynamicOverrides.locale,
-      this.overrides.locale
+      this.overrides.locale,
+      globalDefaults.locale
     )
+
     localeDefaults = getLocale(locale).options // TODO: not efficient bc calendar already queries this
 
-    isRtl = firstDefined( // based on options computed so far, is direction RTL?
-      this.dynamicOverrides.isRtl,
-      this.overrides.isRtl,
-      localeDefaults.isRtl,
-      globalDefaults.isRtl
+    dir = firstDefined( // based on options computed so far, is direction RTL?
+      this.dynamicOverrides.dir,
+      this.overrides.dir,
+      localeDefaults.dir
     )
-    dirDefaults = isRtl ? rtlDefaults : {}
+
+    dirDefaults = dir === 'rtl' ? rtlDefaults : {}
 
     this.dirDefaults = dirDefaults
     this.localeDefaults = localeDefaults

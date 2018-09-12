@@ -80,7 +80,7 @@ export interface OptionsInputBase {
   bootstrapGlyphicons?: boolean | ButtonIconsInput,
   bootstrapFontAwesome?: boolean | ButtonIconsInput,
   firstDay?: number
-  isRtl?: boolean
+  dir?: 'ltr' | 'rtl' | 'auto'
   weekends?: boolean
   hiddenDays?: number[]
   fixedWeekCount?: boolean

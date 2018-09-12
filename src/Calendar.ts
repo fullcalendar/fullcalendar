@@ -244,7 +244,7 @@ export default class Calendar {
 
   applyElClassNames() {
     let classList = this.el.classList
-    let elDirClassName = this.opt('isRtl') ? 'fc-rtl' : 'fc-ltr'
+    let elDirClassName = 'fc-' + this.opt('dir')
     let elThemeClassName = this.theme.getClass('widget')
 
     if (elDirClassName !== this.elDirClassName) {
@@ -508,6 +508,7 @@ export default class Calendar {
     this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
     this.delayedRerender = this.buildDelayedRerender(options.rerenderDelay)
     this.theme = this.buildTheme(options)
+
     this.dateEnv = this.buildDateEnv(
       options.locale,
       options.timeZone,
@@ -517,6 +518,7 @@ export default class Calendar {
       options.weekLabel,
       options.cmdFormatter
     )
+
     this.viewSpecs = buildViewSpecs( // ineffecient to do every time?
       (exportHooks as any).views,
       this.optionsManager

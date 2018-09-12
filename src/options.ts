@@ -47,7 +47,7 @@ export const globalDefaults = {
 
   // locale
   locale: 'en',
-  isRtl: false,
+  // dir: will get this from the default locale
   // buttonIcons: null,
 
   // allows setting a min-height to the event segment to prevent short events overlapping each other
