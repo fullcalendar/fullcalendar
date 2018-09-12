@@ -31,20 +31,20 @@ export default class ListEventRenderer extends EventRenderer {
     let bgColor = eventUi.backgroundColor
     let timeHtml
 
-    if (eventDef.isAllDay) {
+    if (eventDef.allDay) {
       timeHtml = view.getAllDayHtml()
     } else if (isMultiDayRange(eventRange.range)) {
       if (seg.isStart) {
         timeHtml = htmlEscape(this._getTimeText(
           eventInstance.range.start,
           seg.end,
-          false // isAllDay
+          false // allDay
         ))
       } else if (seg.isEnd) {
         timeHtml = htmlEscape(this._getTimeText(
           seg.start,
           eventInstance.range.end,
-          false // isAllDay
+          false // allDay
         ))
       } else { // inner segment that lasts the whole day
         timeHtml = view.getAllDayHtml()

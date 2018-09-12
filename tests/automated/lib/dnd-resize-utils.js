@@ -190,30 +190,30 @@ export function testSelection(options, start, end, expectSuccess, callback) {
   var dragEl
   var allowed
 
-  var isAllDay = false
+  var allDay = false
   var meta
   if (typeof start === 'string') {
     meta = FullCalendar.parseMarker(start)
-    isAllDay = isAllDay || meta.isTimeUnspecified
+    allDay = allDay || meta.isTimeUnspecified
     start = meta.marker
   }
   if (typeof end === 'string') {
     meta = FullCalendar.parseMarker(end)
-    isAllDay = isAllDay || meta.isTimeUnspecified
+    allDay = allDay || meta.isTimeUnspecified
     end = meta.marker
   }
 
   options.selectable = true
   options.select = function(arg) {
     successfulSelection =
-      arg.isAllDay === isAllDay &&
+      arg.allDay === allDay &&
       arg.start.valueOf() === start.valueOf() &&
       arg.end.valueOf() === end.valueOf()
   }
   spyOn(options, 'select').and.callThrough()
   initCalendar(options)
 
-  if (!isAllDay) {
+  if (!allDay) {
     firstDayEl = getTimeGridDayEls(start)
     lastDayEl = getTimeGridDayEls(end)
     firstSlatIndex = start.getUTCHours() * 2 + (start.getUTCMinutes() / 30) // assumes slotDuration:'30:00'

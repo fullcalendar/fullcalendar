@@ -61,7 +61,7 @@ export const globalDefaults = {
   dragRevertDuration: 500,
   dragScroll: true,
 
-  isAllDayMaintainDuration: false,
+  allDayMaintainDuration: false,
 
   // selectable: false,
   unselectAuto: true,
@@ -69,7 +69,7 @@ export const globalDefaults = {
 
   dropAccept: '*',
 
-  eventOrder: 'start,-duration,isAllDay,title',
+  eventOrder: 'start,-duration,allDay,title',
   // ^ if start tie, longer events go before shorter. final tie-breaker is title text
 
   // rerenderDelay: null,

@@ -39,7 +39,7 @@ describe('custom view class', function() {
 
       renderDateSelection(dateSpan) {
         expect(typeof dateSpan).toBe('object')
-        expect(dateSpan.isAllDay).toBe(true)
+        expect(dateSpan.allDay).toBe(true)
         expect(dateSpan.range.start instanceof Date).toBe(true)
         expect(dateSpan.range.end instanceof Date).toBe(true)
       }

@@ -339,13 +339,13 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
   let date1 = dateSpan1.range.start
   let standardProps = null
 
-  if (dateSpan0.isAllDay !== dateSpan1.isAllDay) {
+  if (dateSpan0.allDay !== dateSpan1.allDay) {
     standardProps = {
-      isAllDay: dateSpan1.isAllDay,
-      hasEnd: hit1.component.opt('isAllDayMaintainDuration')
+      allDay: dateSpan1.allDay,
+      hasEnd: hit1.component.opt('allDayMaintainDuration')
     }
 
-    if (dateSpan1.isAllDay) {
+    if (dateSpan1.allDay) {
       // means date1 is already start-of-day,
       // but date0 needs to be converted
       date0 = startOfDay(date0)

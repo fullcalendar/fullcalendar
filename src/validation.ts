@@ -223,7 +223,7 @@ function eventStoreToDateSpans(store: EventStore): DateSpan[] {
 // TODO: plugin
 export function eventToDateSpan(def: EventDef, instance: EventInstance): DateSpan {
   return {
-    isAllDay: def.isAllDay,
+    allDay: def.allDay,
     range: instance.range
   }
 }

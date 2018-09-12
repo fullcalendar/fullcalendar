@@ -80,7 +80,7 @@ function applyMutationToEventInstance(
   calendar: Calendar
 ): EventInstance {
   let dateEnv = calendar.dateEnv
-  let forceAllDay = mutation.standardProps && mutation.standardProps.isAllDay === true
+  let forceAllDay = mutation.standardProps && mutation.standardProps.allDay === true
   let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
   let copy = assignTo({}, eventInstance) as EventInstance
 
@@ -98,7 +98,7 @@ function applyMutationToEventInstance(
   if (clearEnd) {
     copy.range = {
       start: copy.range.start,
-      end: calendar.getDefaultEventEnd(eventDef.isAllDay, copy.range.start)
+      end: calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
     }
   } else if (mutation.endDelta) {
     copy.range = {
@@ -109,7 +109,7 @@ function applyMutationToEventInstance(
 
   // in case event was all-day but the supplied deltas were not
   // better util for this?
-  if (eventDef.isAllDay) {
+  if (eventDef.allDay) {
     copy.range = {
       start: startOfDay(copy.range.start),
       end: startOfDay(copy.range.end)
@@ -118,7 +118,7 @@ function applyMutationToEventInstance(
 
   // handle invalid durations
   if (copy.range.end < copy.range.start) {
-    copy.range.end = calendar.getDefaultEventEnd(eventDef.isAllDay, copy.range.start)
+    copy.range.end = calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
   }
 
   return copy

@@ -97,7 +97,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
-    let isAllDay = eventDef.isAllDay
+    let allDay = eventDef.allDay
     let isDraggable = eventUi.startEditable
     let isResizableFromStart = seg.isStart && eventUi.durationEditable && this.opt('eventResizableFromStart')
     let isResizableFromEnd = seg.isEnd && eventUi.durationEditable
@@ -117,9 +117,9 @@ export default class TimeGridEventRenderer extends EventRenderer {
       if (seg.isStart || seg.isEnd) {
         let unzonedStart = seg.start
         let unzonedEnd = seg.end
-        timeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay) // TODO: give the timezones
-        fullTimeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay, this.fullTimeFormat)
-        startTimeText = this._getTimeText(unzonedStart, unzonedEnd, isAllDay, null, false) // displayEnd=false
+        timeText = this._getTimeText(unzonedStart, unzonedEnd, allDay) // TODO: give the timezones
+        fullTimeText = this._getTimeText(unzonedStart, unzonedEnd, allDay, this.fullTimeFormat)
+        startTimeText = this._getTimeText(unzonedStart, unzonedEnd, allDay, null, false) // displayEnd=false
       }
     } else {
       // Display the normal time text for the *event's* times

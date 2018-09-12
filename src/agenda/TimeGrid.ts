@@ -619,7 +619,7 @@ export default class TimeGrid extends DateComponent {
           component: this,
           dateSpan: {
             range: { start, end },
-            isAllDay: false
+            allDay: false
           },
           dayEl: this.colEls[colIndex],
           rect: {

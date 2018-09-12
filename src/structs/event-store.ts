@@ -74,7 +74,7 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
       let duration = def.recurringDef.duration
 
       if (!duration) {
-        duration = def.isAllDay ?
+        duration = def.allDay ?
           calendar.defaultAllDayEventDuration :
           calendar.defaultTimedEventDuration
       }

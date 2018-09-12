@@ -1101,8 +1101,8 @@ export default class Calendar {
     this.publiclyTrigger('dateClick', [
       {
         date: this.dateEnv.toDate(dateSpan.range.start),
-        dateStr: this.dateEnv.formatIso(dateSpan.range.start, { omitTime: dateSpan.isAllDay }),
-        isAllDay: dateSpan.isAllDay,
+        dateStr: this.dateEnv.formatIso(dateSpan.range.start, { omitTime: dateSpan.allDay }),
+        allDay: dateSpan.allDay,
         dayEl,
         jsEvent: ev,
         view

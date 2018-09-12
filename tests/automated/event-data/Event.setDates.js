@@ -66,16 +66,16 @@ describe('Event::setDates', function() {
     })
   })
 
-  it('can set isAllDay to true', function() {
+  it('can set allDay to true', function() {
     initCalendar() // { id: '1', start: '2018-09-05T12:00:00' }
     let event = currentCalendar.getEventById('1')
-    event.setDates('2018-09-06', '2018-09-10', { isAllDay: true })
+    event.setDates('2018-09-06', '2018-09-10', { allDay: true })
     expect(event.start).toEqualDate('2018-09-06')
     expect(event.end).toEqualDate('2018-09-10')
-    expect(event.isAllDay).toBe(true)
+    expect(event.allDay).toBe(true)
   })
 
-  it('can set isAllDay to false', function() {
+  it('can set allDay to false', function() {
     initCalendar({
       events: [
         { id: '1', start: '2018-09-05', end: '2018-09-08' }
@@ -83,10 +83,10 @@ describe('Event::setDates', function() {
     })
 
     let event = currentCalendar.getEventById('1')
-    event.setDates('2018-09-06T10:00:00', '2018-09-10T02:00:00', { isAllDay: false })
+    event.setDates('2018-09-06T10:00:00', '2018-09-10T02:00:00', { allDay: false })
     expect(event.start).toEqualDate('2018-09-06T10:00:00Z')
     expect(event.end).toEqualDate('2018-09-10T02:00:00Z')
-    expect(event.isAllDay).toBe(false)
+    expect(event.allDay).toBe(false)
   })
 
   it('shortens related events of different duration by same delta', function() {

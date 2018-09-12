@@ -84,7 +84,7 @@ describe('rrule plugin', function() {
     expect(events[0].end).toEqualDate('2018-09-04T16:00:00Z')
   })
 
-  it('expands events with guessed isAllDay', function() {
+  it('expands events with guessed allDay', function() {
     initCalendar({
       events: [
         {
@@ -99,7 +99,7 @@ describe('rrule plugin', function() {
     expect(events.length).toBe(5)
     expect(events[0].start).toEqualDate('2018-09-04')
     expect(events[0].end).toBe(null)
-    expect(events[0].isAllDay).toBe(true)
+    expect(events[0].allDay).toBe(true)
   })
 
   it('inherits allDayDefault from source', function() {
@@ -118,7 +118,7 @@ describe('rrule plugin', function() {
     expect(events.length).toBe(5)
     expect(events[0].start).toEqualDate('2018-09-04')
     expect(events[0].end).toBe(null)
-    expect(events[0].isAllDay).toBe(false)
+    expect(events[0].allDay).toBe(false)
   })
 
   it('inherits allDayDefault from source setting', function() {
@@ -139,7 +139,7 @@ describe('rrule plugin', function() {
     expect(events.length).toBe(5)
     expect(events[0].start).toEqualDate('2018-09-04')
     expect(events[0].end).toBe(null)
-    expect(events[0].isAllDay).toBe(false)
+    expect(events[0].allDay).toBe(false)
   })
 
   it('can generate local dates', function() {
@@ -158,7 +158,7 @@ describe('rrule plugin', function() {
     expect(events.length).toBe(5)
     expect(events[0].start).toEqualDate('2018-09-04T05:00:00') // local
     expect(events[0].end).toBe(null)
-    expect(events[0].isAllDay).toBe(false)
+    expect(events[0].allDay).toBe(false)
   })
 
 

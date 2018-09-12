@@ -6,7 +6,7 @@ import { assignTo } from '../util/object'
 
 /*
 A data-structure for a date-range that will be visually displayed.
-Contains other metadata like isAllDay, and anything else Components might like to store.
+Contains other metadata like allDay, and anything else Components might like to store.
 
 TODO: in future, put otherProps in own object.
 */
@@ -14,7 +14,7 @@ TODO: in future, put otherProps in own object.
 export interface OpenDateSpanInput {
   start?: DateInput
   end?: DateInput
-  isAllDay?: boolean
+  allDay?: boolean
   [otherProp: string]: any
 }
 
@@ -25,7 +25,7 @@ export interface DateSpanInput extends OpenDateSpanInput {
 
 export interface OpenDateSpan {
   range: OpenDateRange
-  isAllDay: boolean
+  allDay: boolean
   [otherProp: string]: any
 }
 
@@ -36,14 +36,14 @@ export interface DateSpan extends OpenDateSpan {
 export interface DateSpanApi {
   start: Date
   end: Date
-  isAllDay: boolean
+  allDay: boolean
   [otherProp: string]: any
 }
 
 const STANDARD_PROPS = {
   start: null,
   end: null,
-  isAllDay: Boolean
+  allDay: Boolean
 }
 
 export function parseDateSpan(raw: DateSpanInput, dateEnv: DateEnv, defaultDuration?: Duration): DateSpan | null {
@@ -74,10 +74,10 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
   let standardProps = refineProps(raw, STANDARD_PROPS, {}, leftovers)
   let startMeta = standardProps.start ? dateEnv.createMarkerMeta(standardProps.start) : null
   let endMeta = standardProps.end ? dateEnv.createMarkerMeta(standardProps.end) : null
-  let isAllDay = standardProps.isAllDay
+  let allDay = standardProps.allDay
 
-  if (isAllDay == null) {
-    isAllDay = (startMeta && startMeta.isTimeUnspecified) &&
+  if (allDay == null) {
+    allDay = (startMeta && startMeta.isTimeUnspecified) &&
       (!endMeta || endMeta.isTimeUnspecified)
   }
 
@@ -86,14 +86,14 @@ export function parseOpenDateSpan(raw: OpenDateSpanInput, dateEnv: DateEnv): Ope
     start: startMeta ? startMeta.marker : null,
     end: endMeta ? endMeta.marker : null
   }
-  leftovers.isAllDay = isAllDay
+  leftovers.allDay = allDay
 
   return leftovers
 }
 
 export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {
   return rangesEqual(span0.range, span1.range) &&
-    span0.isAllDay === span1.isAllDay &&
+    span0.allDay === span1.allDay &&
     isSpanPropsEqual(span0, span1)
 }
 
@@ -120,7 +120,7 @@ export function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
 export function isSpanPropsMatching(subjectSpan: DateSpan, matchSpan: DateSpan): boolean {
 
   for (let propName in matchSpan) {
-    if (propName !== 'range' && propName !== 'isAllDay') {
+    if (propName !== 'range' && propName !== 'allDay') {
       if (subjectSpan[propName] !== matchSpan[propName]) {
         return false
       }
@@ -137,8 +137,8 @@ export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi 
   props.start = dateEnv.toDate(span.range.start)
   props.end = dateEnv.toDate(span.range.end)
 
-  props.startStr = dateEnv.formatIso(span.range.start, { omitTime: span.isAllDay })
-  props.endStr = dateEnv.formatIso(span.range.end, { omitTime: span.isAllDay })
+  props.startStr = dateEnv.formatIso(span.range.start, { omitTime: span.allDay })
+  props.endStr = dateEnv.formatIso(span.range.end, { omitTime: span.allDay })
 
   return props
 }

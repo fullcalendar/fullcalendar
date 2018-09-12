@@ -119,6 +119,6 @@ function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan): DateSpan {
 
   return {
     range: { start: ms[0], end: ms[3] },
-    isAllDay: dateSpan0.isAllDay
+    allDay: dateSpan0.allDay
   }
 }

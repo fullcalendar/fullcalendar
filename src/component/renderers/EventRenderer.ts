@@ -259,7 +259,7 @@ export default class EventRenderer {
     return this._getTimeText(
       instance.range.start,
       def.hasEnd ? instance.range.end : null,
-      def.isAllDay,
+      def.allDay,
       formatter,
       displayEnd,
       instance.forcedStartTzo,
@@ -271,7 +271,7 @@ export default class EventRenderer {
   _getTimeText(
     start: DateMarker,
     end: DateMarker,
-    isAllDay,
+    allDay,
     formatter?,
     displayEnd?,
     forcedStartTzo?: number,
@@ -287,7 +287,7 @@ export default class EventRenderer {
       displayEnd = this.displayEventEnd
     }
 
-    if (this.displayEventTime && !isAllDay) {
+    if (this.displayEventTime && !allDay) {
       if (displayEnd && end) {
         return dateEnv.formatRange(start, end, formatter, {
           forcedStartTzo,
@@ -381,7 +381,7 @@ export function buildSegCompareObj(seg: Seg) {
       start,
       end,
       duration: end - start,
-      isAllDay: Number(eventDef.isAllDay),
+      allDay: Number(eventDef.allDay),
       _seg: seg // for later retrieval
     }
   )

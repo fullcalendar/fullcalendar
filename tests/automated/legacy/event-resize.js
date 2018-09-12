@@ -57,7 +57,7 @@ describe('eventResize', function() {
             options.events = [ {
               title: 'all-day event',
               start: '2014-06-11',
-              isAllDay: true
+              allDay: true
             } ]
 
             init(

@@ -63,7 +63,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
 
     if (slicedRange) {
 
-      visibleRange = (!def.isAllDay && nextDayThreshold) ?
+      visibleRange = (!def.allDay && nextDayThreshold) ?
         computeVisibleDayRange(slicedRange, nextDayThreshold) :
         slicedRange
 

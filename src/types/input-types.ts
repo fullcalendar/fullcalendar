@@ -174,13 +174,13 @@ export interface OptionsInputBase {
 
   datesRender?(arg: { view: View, el: HTMLElement }): void
   datesDestroy?(arg: { view: View, el: HTMLElement }): void
-  dayRender?(arg: { view: View, date: Date, isAllDay: boolean, el: HTMLElement }): void
+  dayRender?(arg: { view: View, date: Date, allDay: boolean, el: HTMLElement }): void
   windowResize?(view: View): void
-  dateClick?(arg: { date: Date, isAllDay: boolean, resource: any, el: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
+  dateClick?(arg: { date: Date, allDay: boolean, resource: any, el: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   eventClick?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): boolean | void
   eventMouseEnter?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  select?(arg: { start: Date, end: Date, isAllDay: boolean, resource: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
+  select?(arg: { start: Date, end: Date, allDay: boolean, resource: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   unselect?(arg: { view: View, jsEvent: Event }): void
   eventDataTransform?(eventData: any): EventInput
   loading?(isLoading: boolean, view: View): void
@@ -194,7 +194,7 @@ export interface OptionsInputBase {
   eventResizeStart?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventResizeStop?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventResize?(arg: { el: HTMLElement, event: EventApi, delta: Duration, revert: () => void, jsEvent: Event, view: View }): void
-  drop?(arg: { date: DateInput, isAllDay: boolean, jsEvent: MouseEvent }): void
+  drop?(arg: { date: DateInput, allDay: boolean, jsEvent: MouseEvent }): void
   eventReceive?(event: EventApi): void
 }
 

@@ -30,7 +30,7 @@ export default class EventApi implements EventTuple {
   }
 
   setProp(name: string, val: string) {
-    if (name.match(/^(start|end|date|isAllDay)$/)) {
+    if (name.match(/^(start|end|date|allDay)$/)) {
       // error. date-related props need other methods
     } else {
       let props
@@ -97,9 +97,9 @@ export default class EventApi implements EventTuple {
     }
   }
 
-  setDates(startInput: DateInput, endInput: DateInput | null, options: { isAllDay?: boolean, granularity?: string } = {}) {
+  setDates(startInput: DateInput, endInput: DateInput | null, options: { allDay?: boolean, granularity?: string } = {}) {
     let dateEnv = this.calendar.dateEnv
-    let standardProps = { isAllDay: options.isAllDay } as any
+    let standardProps = { allDay: options.allDay } as any
     let start = dateEnv.createMarker(startInput)
     let end
 
@@ -120,7 +120,7 @@ export default class EventApi implements EventTuple {
 
       // when computing the diff for an event being converted to all-day,
       // compute diff off of the all-day values the way event-mutation does.
-      if (options.isAllDay === true) {
+      if (options.allDay === true) {
         instanceRange = computeAlignedDayRange(instanceRange)
       }
 
@@ -160,15 +160,15 @@ export default class EventApi implements EventTuple {
     }
   }
 
-  setIsAllDay(isAllDay: boolean, options: { maintainDuration?: boolean } = {}) {
-    let standardProps = { isAllDay } as any
+  setIsAllDay(allDay: boolean, options: { maintainDuration?: boolean } = {}) {
+    let standardProps = { allDay } as any
     let maintainDuration = options.maintainDuration
 
     if (maintainDuration == null) {
-      maintainDuration = this.calendar.opt('isAllDayMaintainDuration')
+      maintainDuration = this.calendar.opt('allDayMaintainDuration')
     }
 
-    if (this.def.isAllDay !== isAllDay) {
+    if (this.def.allDay !== allDay) {
       standardProps.hasEnd = maintainDuration
     }
 
@@ -231,7 +231,7 @@ export default class EventApi implements EventTuple {
   // TODO: find a TypeScript-compatible way to do this at scale
   get id(): string { return this.def.publicId }
   get groupId(): string { return this.def.groupId }
-  get isAllDay(): boolean { return this.def.isAllDay }
+  get allDay(): boolean { return this.def.allDay }
   get title(): string { return this.def.title }
   get url(): string { return this.def.url }
   get startEditable(): boolean { return this.def.startEditable }

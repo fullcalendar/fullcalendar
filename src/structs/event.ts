@@ -41,7 +41,7 @@ export interface EventDateInput {
   start?: DateInput
   end?: DateInput
   date?: DateInput
-  isAllDay?: boolean
+  allDay?: boolean
 }
 
 export type EventInput = EventNonDateInput & EventDateInput
@@ -51,7 +51,7 @@ export interface EventDef {
   sourceId: string
   publicId: string
   groupId: string
-  isAllDay: boolean
+  allDay: boolean
   hasEnd: boolean
   recurringDef: { typeId: number, typeData: any, duration: Duration | null } | null
   title: string
@@ -108,7 +108,7 @@ const DATE_PROPS = {
   start: null,
   date: null, // alias for start
   end: null,
-  isAllDay: null
+  allDay: null
 }
 
 let uid = 0
@@ -116,11 +116,11 @@ let uid = 0
 
 export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar): EventTuple | null {
   let leftovers0 = {}
-  let isAllDayDefault = computeIsAllDayDefault(sourceId, calendar)
-  let singleRes = parseSingle(raw, isAllDayDefault, calendar, leftovers0)
+  let allDayDefault = computeIsAllDayDefault(sourceId, calendar)
+  let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers0)
 
   if (singleRes) {
-    let def = parseEventDef(leftovers0, sourceId, singleRes.isAllDay, singleRes.hasEnd, calendar)
+    let def = parseEventDef(leftovers0, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)
     let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
 
     return { def, instance }
@@ -134,12 +134,12 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
     )
 
     if (recurringRes) {
-      let isAllDay =
-        (raw.isAllDay != null) ? Boolean(raw.isAllDay) : // need to get this from `raw` because already stripped out of `leftovers0`
-          (isAllDayDefault != null ? isAllDayDefault :
-            recurringRes.isAllDay) // fall back to the recurring date props LAST
+      let allDay =
+        (raw.allDay != null) ? Boolean(raw.allDay) : // need to get this from `raw` because already stripped out of `leftovers0`
+          (allDayDefault != null ? allDayDefault :
+            recurringRes.allDay) // fall back to the recurring date props LAST
 
-      let def = parseEventDef(leftovers1, sourceId, isAllDay, Boolean(recurringRes.duration), calendar)
+      let def = parseEventDef(leftovers1, sourceId, allDay, Boolean(recurringRes.duration), calendar)
 
       def.recurringDef = { // TODO: more efficient way to do this
         typeId: recurringRes.typeId,
@@ -160,13 +160,13 @@ Will NOT populate extendedProps with the leftover properties.
 Will NOT populate date-related props.
 The EventNonDateInput has been normalized (id => publicId, etc).
 */
-export function parseEventDef(raw: EventNonDateInput, sourceId: string, isAllDay: boolean, hasEnd: boolean, calendar: Calendar): EventDef {
+export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: boolean, hasEnd: boolean, calendar: Calendar): EventDef {
   let leftovers = {}
   let def = pluckNonDateProps(raw, calendar, leftovers) as EventDef
 
   def.defId = String(uid++)
   def.sourceId = sourceId
-  def.isAllDay = isAllDay
+  def.allDay = allDay
   def.hasEnd = hasEnd
   def.extendedProps = assignTo(leftovers, def.extendedProps || {})
 
@@ -193,9 +193,9 @@ export function createEventInstance(
 }
 
 
-function parseSingle(raw: EventInput, isAllDayDefault: boolean | null, calendar: Calendar, leftovers?) {
+function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: Calendar, leftovers?) {
   let props = pluckDateProps(raw, leftovers)
-  let isAllDay = props.isAllDay
+  let allDay = props.allDay
   let startMeta
   let startMarker
   let hasEnd = false
@@ -212,18 +212,18 @@ function parseSingle(raw: EventInput, isAllDayDefault: boolean | null, calendar:
     endMeta = calendar.dateEnv.createMarkerMeta(props.end)
   }
 
-  if (isAllDay == null) {
-    if (isAllDayDefault != null) {
-      isAllDay = isAllDayDefault
+  if (allDay == null) {
+    if (allDayDefault != null) {
+      allDay = allDayDefault
     } else {
       // fall back to the date props LAST
-      isAllDay = startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified)
+      allDay = startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified)
     }
   }
 
   startMarker = startMeta.marker
 
-  if (isAllDay) {
+  if (allDay) {
     startMarker = startOfDay(startMarker)
   }
 
@@ -232,7 +232,7 @@ function parseSingle(raw: EventInput, isAllDayDefault: boolean | null, calendar:
 
     if (endMarker <= startMarker) {
       endMarker = null
-    } else if (isAllDay) {
+    } else if (allDay) {
       endMarker = startOfDay(endMarker)
     }
   }
@@ -244,14 +244,14 @@ function parseSingle(raw: EventInput, isAllDayDefault: boolean | null, calendar:
 
     endMarker = calendar.dateEnv.add(
       startMarker,
-      isAllDay ?
+      allDay ?
         calendar.defaultAllDayEventDuration :
         calendar.defaultTimedEventDuration
     )
   }
 
   return {
-    isAllDay,
+    allDay,
     hasEnd,
     range: { start: startMarker, end: endMarker },
     forcedStartTzo: startMeta.forcedTzo,

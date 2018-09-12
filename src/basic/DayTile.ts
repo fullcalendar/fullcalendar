@@ -71,7 +71,7 @@ export default class DayTile extends DateComponent {
       return {
         component: this,
         dateSpan: {
-          isAllDay: true,
+          allDay: true,
           range: { start: this.date, end: addDays(this.date, 1) }
         },
         dayEl: this.el,

@@ -38,7 +38,7 @@ registerRecurringType({
       let props = refineProps(rawEvent, SIMPLE_RECURRING_PROPS, {}, leftoverProps) as SimpleRecurringData
 
       return {
-        isAllDay: !props.startTime && !props.endTime,
+        allDay: !props.startTime && !props.endTime,
         duration: (props.startTime && props.endTime) ?
           subtractDurations(props.endTime, props.startTime) :
           null,

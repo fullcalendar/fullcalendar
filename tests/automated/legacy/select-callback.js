@@ -31,7 +31,7 @@ describe('select callback', function() {
             expect(arg.end instanceof Date).toEqual(true)
             expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
             expect(typeof arg.view).toEqual('object') // "
-            expect(arg.isAllDay).toEqual(true)
+            expect(arg.allDay).toEqual(true)
             expect(arg.start).toEqualDate('2014-04-28')
             expect(arg.startStr).toEqual('2014-04-28')
             expect(arg.end).toEqualDate('2014-05-07')
@@ -53,7 +53,7 @@ describe('select callback', function() {
             expect(arg.end instanceof Date).toEqual(true)
             expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
             expect(typeof arg.view).toEqual('object') // "
-            expect(arg.isAllDay).toEqual(true)
+            expect(arg.allDay).toEqual(true)
             expect(arg.start).toEqualDate('2014-04-28')
             expect(arg.startStr).toEqual('2014-04-28')
             expect(arg.end).toEqualDate('2014-05-07')
@@ -79,7 +79,7 @@ describe('select callback', function() {
             expect(arg.end instanceof Date).toEqual(true)
             expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
             expect(typeof arg.view).toEqual('object') // "
-            expect(arg.isAllDay).toEqual(true)
+            expect(arg.allDay).toEqual(true)
             expect(arg.start).toEqualDate('2014-04-28')
             expect(arg.startStr).toEqual('2014-04-28')
             expect(arg.end).toEqualDate('2014-04-29')
@@ -108,7 +108,7 @@ describe('select callback', function() {
               expect(arg.end instanceof Date).toEqual(true)
               expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
               expect(typeof arg.view).toEqual('object') // "
-              expect(arg.isAllDay).toEqual(true)
+              expect(arg.allDay).toEqual(true)
               expect(arg.start).toEqualDate('2014-05-28')
               expect(arg.startStr).toEqual('2014-05-28')
               expect(arg.end).toEqualDate('2014-05-30')
@@ -130,7 +130,7 @@ describe('select callback', function() {
               expect(arg.end instanceof Date).toEqual(true)
               expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
               expect(typeof arg.view).toEqual('object') // "
-              expect(arg.isAllDay).toEqual(true)
+              expect(arg.allDay).toEqual(true)
               expect(arg.start).toEqualDate('2014-05-28')
               expect(arg.startStr).toEqual('2014-05-28')
               expect(arg.end).toEqualDate('2014-05-29')
@@ -153,7 +153,7 @@ describe('select callback', function() {
               expect(arg.end instanceof Date).toEqual(true)
               expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
               expect(typeof arg.view).toEqual('object') // "
-              expect(arg.isAllDay).toEqual(false)
+              expect(arg.allDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
               expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-28T10:30:00Z')
@@ -175,7 +175,7 @@ describe('select callback', function() {
               expect(arg.end instanceof Date).toEqual(true)
               expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
               expect(typeof arg.view).toEqual('object') // "
-              expect(arg.isAllDay).toEqual(false)
+              expect(arg.allDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
               expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-28T10:30:00Z')
@@ -201,7 +201,7 @@ describe('select callback', function() {
               expect(arg.end instanceof Date).toEqual(true)
               expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
               expect(typeof arg.view).toEqual('object') // "
-              expect(arg.isAllDay).toEqual(false)
+              expect(arg.allDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
               expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-29T10:30:00Z')
@@ -224,7 +224,7 @@ describe('select callback', function() {
               expect(arg.end instanceof Date).toEqual(true)
               expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
               expect(typeof arg.view).toEqual('object') // "
-              expect(arg.isAllDay).toEqual(false)
+              expect(arg.allDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-28T09:00:00Z')
               expect(arg.startStr).toEqual('2014-05-28T09:00:00Z')
               expect(arg.end).toEqualDate('2014-05-28T09:30:00Z')

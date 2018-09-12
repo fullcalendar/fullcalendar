@@ -19,7 +19,7 @@ registerRecurringType({
 
       if (parsed) {
         return {
-          isAllDay: parsed.isAllDay,
+          allDay: parsed.allDay,
           duration: props.duration,
           typeData: parsed.rrule
         }
@@ -40,19 +40,19 @@ function parseRRule(input, dateEnv: DateEnv) {
   if (typeof input === 'string') {
     return {
       rrule: rrulestr(input),
-      isAllDay: false
+      allDay: false
     }
 
   } else if (typeof input === 'object' && input) { // non-null object
     let refined = assignTo({}, input) // copy
-    let isAllDay = false
+    let allDay = false
 
     if (typeof refined.dtstart === 'string') {
       let dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart)
 
       if (dtstartMeta) {
         refined.dtstart = dtstartMeta.marker
-        isAllDay = dtstartMeta.isTimeUnspecified
+        allDay = dtstartMeta.isTimeUnspecified
       } else {
         delete refined.dtstart
       }
@@ -78,7 +78,7 @@ function parseRRule(input, dateEnv: DateEnv) {
 
     return {
       rrule: new RRule(refined),
-      isAllDay
+      allDay
     }
   }
 

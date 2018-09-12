@@ -66,7 +66,7 @@ describe('Event::setStart', function() {
   describe('when event is all-day', function() {
     pushOptions({
       events: [
-        { id: '1', start: '2018-09-05', end: '2018-09-07', isAllDay: true }
+        { id: '1', start: '2018-09-05', end: '2018-09-07', allDay: true }
       ]
     })
 
@@ -77,7 +77,7 @@ describe('Event::setStart', function() {
         event.setStart('2018-09-01')
         expect(event.start).toEqualDate('2018-09-01')
         expect(event.end).toEqualDate('2018-09-07')
-        expect(event.isAllDay).toBe(true)
+        expect(event.allDay).toBe(true)
       })
     })
 
@@ -88,7 +88,7 @@ describe('Event::setStart', function() {
         event.setStart('2018-09-01T23:00:00')
         expect(event.start).toEqualDate('2018-09-01')
         expect(event.end).toEqualDate('2018-09-07')
-        expect(event.isAllDay).toBe(true)
+        expect(event.allDay).toBe(true)
       })
     })
 

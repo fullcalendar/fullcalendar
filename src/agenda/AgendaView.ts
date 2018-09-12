@@ -185,7 +185,7 @@ export default class AgendaView extends View {
     let allDaySeletion = null
     let timedSelection = null
     if (renderState.dateSelection) {
-      if (renderState.dateSelection.isAllDay) {
+      if (renderState.dateSelection.allDay) {
         allDaySeletion = renderState.dateSelection
       } else {
         timedSelection = renderState.dateSelection
@@ -423,13 +423,13 @@ agendaDayGridMethods = {
 
 function filterEventsForTimeGrid(eventStore: EventStore, eventUis: EventUiHash): EventStore {
   return filterEventStoreDefs(eventStore, function(eventDef) {
-    return !eventDef.isAllDay || hasBgRendering(eventUis[eventDef.defId])
+    return !eventDef.allDay || hasBgRendering(eventUis[eventDef.defId])
   })
 }
 
 function filterEventsForDayGrid(eventStore: EventStore, eventUis: EventUiHash): EventStore {
   return filterEventStoreDefs(eventStore, function(eventDef) {
-    return eventDef.isAllDay
+    return eventDef.allDay
   })
 }
 

@@ -127,7 +127,7 @@ function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: Da
   let instances = mapHash(eventStore.instances, function(instance: EventInstance): EventInstance {
     let def = defs[instance.defId]
 
-    if (def.isAllDay || def.recurringDef) {
+    if (def.allDay || def.recurringDef) {
       return instance // isn't dependent on timezone
     } else {
       return assignTo({}, instance, {

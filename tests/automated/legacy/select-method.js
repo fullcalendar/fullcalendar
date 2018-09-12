@@ -40,7 +40,7 @@ describe('select method', function() {
             })
             it('fires a selection event', function() {
               options.select = function(arg) {
-                expect(arg.isAllDay).toEqual(true)
+                expect(arg.allDay).toEqual(true)
                 expect(arg.start).toEqualDate('2014-05-07')
                 expect(arg.end).toEqualDate('2014-05-09')
               }
@@ -79,7 +79,7 @@ describe('select method', function() {
           })
           it('fires a selection event', function() {
             options.select = function(arg) {
-              expect(arg.isAllDay).toEqual(false)
+              expect(arg.allDay).toEqual(false)
               expect(arg.start).toEqualDate('2014-05-07T06:00:00Z')
               expect(arg.end).toEqualDate('2014-05-09T06:00:00Z')
             }
@@ -148,7 +148,7 @@ describe('select method', function() {
             })
             it('fires a selection event', function() {
               options.select = function(arg) {
-                expect(arg.isAllDay).toEqual(true)
+                expect(arg.allDay).toEqual(true)
                 expect(arg.start).toEqualDate('2014-05-26')
                 expect(arg.end).toEqualDate('2014-05-28')
               }
@@ -171,7 +171,7 @@ describe('select method', function() {
             TODO: implement
             it('doesn\'t fire a selection event', function() {
               options.select = function(arg) {
-                expect(arg.isAllDay).toEqual(true);
+                expect(arg.allDay).toEqual(true);
                 expect(arg.start).toEqualDate('2014-05-26');
                 expect(arg.end).toEqualDate('2014-05-28');
               };

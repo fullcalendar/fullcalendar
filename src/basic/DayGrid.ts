@@ -164,7 +164,7 @@ export default class DayGrid extends DateComponent {
         this.publiclyTrigger('dayRender', [
           {
             date: dateEnv.toDate(this.getCellDate(row, col)),
-            isAllDay: true,
+            allDay: true,
             el: this.getCellEl(row, col),
             view
           }
@@ -339,7 +339,7 @@ export default class DayGrid extends DateComponent {
           component: this,
           dateSpan: {
             range: this.getCellRange(row, col),
-            isAllDay: true
+            allDay: true
           },
           dayEl: this.getCellEl(row, col),
           rect: {
@@ -609,7 +609,7 @@ export default class DayGrid extends DateComponent {
         clickOption = this.publiclyTrigger('eventLimitClick', [
           {
             date: dateEnv.toDate(date),
-            isAllDay: true,
+            allDay: true,
             dayEl: dayEl,
             moreEl: moreEl,
             segs: reslicedAllSegs,

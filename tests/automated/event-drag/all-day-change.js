@@ -2,7 +2,7 @@ import { drag } from './EventDragUtils'
 import { computeSpanRects } from '../event-render/TimeGridEventRenderUtils'
 import { getDayEl } from '../view-render/DayGridRenderUtils'
 
-describe('isAllDay change', function() {
+describe('allDay change', function() {
   pushOptions({
     timeZone: 'UTC',
     defaultView: 'agendaWeek',
@@ -29,9 +29,9 @@ describe('isAllDay change', function() {
       return drag(startRect, endRect, false)
     }
 
-    it('discards duration when isAllDayMaintainDuration:false', function(done) {
+    it('discards duration when allDayMaintainDuration:false', function(done) {
       initCalendar({
-        isAllDayMaintainDuration: false
+        allDayMaintainDuration: false
       })
       doDrag().then(function() {
         let event = currentCalendar.getEventById('1')
@@ -40,9 +40,9 @@ describe('isAllDay change', function() {
       }).then(done)
     })
 
-    it('keeps duration when isAllDayMaintainDuration:true', function(done) {
+    it('keeps duration when allDayMaintainDuration:true', function(done) {
       initCalendar({
-        isAllDayMaintainDuration: true
+        allDayMaintainDuration: true
       })
       doDrag().then(function() {
         let event = currentCalendar.getEventById('1')

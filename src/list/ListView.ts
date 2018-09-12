@@ -99,7 +99,7 @@ export default class ListView extends View {
 
 
   // slices by day
-  rangeToSegs(range: DateRange, isAllDay: boolean) {
+  rangeToSegs(range: DateRange, allDay: boolean) {
     let dateEnv = this.getDateEnv()
     let dayRanges = this.dayRanges
     let dayIndex
@@ -125,7 +125,7 @@ export default class ListView extends View {
         // detect when range won't go fully into the next day,
         // and mutate the latest seg to the be the end.
         if (
-          !seg.isEnd && !isAllDay &&
+          !seg.isEnd && !allDay &&
           dayIndex + 1 < dayRanges.length &&
           range.end <
             dateEnv.add(

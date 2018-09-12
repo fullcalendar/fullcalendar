@@ -127,7 +127,7 @@ export default class ExternalElementDragging {
         {
           draggedEl: pev.subjectEl,
           date: receivingCalendar.dateEnv.toDate(finalHit.dateSpan.range.start),
-          isAllDay: finalHit.dateSpan.isAllDay,
+          allDay: finalHit.dateSpan.allDay,
           jsEvent: pev.origEvent,
           view: finalView
         }
@@ -204,7 +204,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
   let def = parseEventDef(
     dragMeta.leftoverProps,
     dragMeta.sourceId,
-    dateSpan.isAllDay,
+    dateSpan.allDay,
     Boolean(dragMeta.duration), // hasEnd
     calendar
   )
@@ -213,13 +213,13 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
 
   // only rely on time info if drop zone is all-day,
   // otherwise, we already know the time
-  if (dateSpan.isAllDay && dragMeta.time) {
+  if (dateSpan.allDay && dragMeta.time) {
     start = calendar.dateEnv.add(start, dragMeta.time)
   }
 
   let end = dragMeta.duration ?
     calendar.dateEnv.add(start, dragMeta.duration) :
-    calendar.getDefaultEventEnd(dateSpan.isAllDay, start)
+    calendar.getDefaultEventEnd(dateSpan.allDay, start)
 
   let instance = createEventInstance(def.defId, { start, end })
 

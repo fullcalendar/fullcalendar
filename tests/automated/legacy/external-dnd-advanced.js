@@ -358,7 +358,7 @@ describe('advanced external dnd', function() {
     options.drop = function(arg) {
       expect(arg.date instanceof Date).toBe(true)
       expect(arg.date).toEqualDate(dragToDate)
-      expect(arg.isAllDay).toBe(expectedAllDay)
+      expect(arg.allDay).toBe(expectedAllDay)
       expect(typeof arg.jsEvent).toBe('object')
     }
     options.eventReceive = function(arg) {

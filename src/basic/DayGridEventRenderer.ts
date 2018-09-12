@@ -23,7 +23,7 @@ export default class DayGridEventRenderer extends EventRenderer {
   renderBgSegs(segs: Seg[]) {
     // don't render timed background events
     segs = segs.filter(function(seg) {
-      return seg.eventRange.def.isAllDay
+      return seg.eventRange.def.allDay
     })
 
     return super.renderBgSegs(segs)
@@ -240,10 +240,10 @@ export default class DayGridEventRenderer extends EventRenderer {
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
-    let isAllDay = eventDef.isAllDay
+    let allDay = eventDef.allDay
     let isDraggable = eventUi.startEditable
-    let isResizableFromStart = isAllDay && seg.isStart && eventUi.durationEditable && this.opt('eventResizableFromStart')
-    let isResizableFromEnd = isAllDay && seg.isEnd && eventUi.durationEditable
+    let isResizableFromStart = allDay && seg.isStart && eventUi.durationEditable && this.opt('eventResizableFromStart')
+    let isResizableFromEnd = allDay && seg.isEnd && eventUi.durationEditable
     let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeHtml = ''

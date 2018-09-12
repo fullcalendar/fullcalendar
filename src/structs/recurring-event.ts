@@ -9,7 +9,7 @@ The plugin system for defining how a recurring event is expanded into individual
 */
 
 export interface ParsedRecurring {
-  isAllDay: boolean // last fallback to be used
+  allDay: boolean // last fallback to be used
   duration: Duration | null // signals hasEnd
   typeData: any
 }
@@ -33,7 +33,7 @@ export function parseRecurring(eventInput: EventInput, dateEnv: DateEnv, leftove
 
     if (parsed) {
       return { // more efficient way to do this?
-        isAllDay: parsed.isAllDay,
+        allDay: parsed.allDay,
         duration: parsed.duration,
         typeData: parsed.typeData,
         typeId: i
@@ -58,7 +58,7 @@ export function expandRecurringRanges(eventDef: EventDef, framingRange: DateRang
   )
 
   // the recurrence plugins don't guarantee that all-day events are start-of-day, so we have to
-  if (eventDef.isAllDay) {
+  if (eventDef.allDay) {
     markers = markers.map(startOfDay)
   }
 

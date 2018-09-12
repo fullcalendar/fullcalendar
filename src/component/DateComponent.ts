@@ -913,7 +913,7 @@ export default abstract class DateComponent extends Component {
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
-      let segs = this.rangeToSegs(eventRenderRange.range, eventRenderRange.def.isAllDay)
+      let segs = this.rangeToSegs(eventRenderRange.range, eventRenderRange.def.allDay)
 
       for (let seg of segs) {
         seg.eventRange = eventRenderRange
@@ -929,7 +929,7 @@ export default abstract class DateComponent extends Component {
 
 
   selectionToSegs(selection: DateSpan, fabricateEvents: boolean): Seg[] {
-    let segs = this.rangeToSegs(selection.range, selection.isAllDay)
+    let segs = this.rangeToSegs(selection.range, selection.allDay)
 
     if (fabricateEvents) {
 
@@ -938,7 +938,7 @@ export default abstract class DateComponent extends Component {
       let def = parseEventDef(
         { editable: false },
         '', // sourceId
-        selection.isAllDay,
+        selection.allDay,
         true, // hasEnd
         this.getCalendar()
       )
@@ -961,7 +961,7 @@ export default abstract class DateComponent extends Component {
 
 
   // must implement if want to use many of the rendering utils
-  rangeToSegs(range: DateRange, isAllDay: boolean): Seg[] {
+  rangeToSegs(range: DateRange, allDay: boolean): Seg[] {
     return []
   }
 

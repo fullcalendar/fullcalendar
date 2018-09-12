@@ -33,7 +33,7 @@ describe('event mutations on non-instances', function() {
       let event = currentCalendar.getEventById('1')
       expect(event.start).toEqualDate('2018-09-04')
       expect(event.end).toBe(null)
-      expect(event.isAllDay).toBe(true)
+      expect(event.allDay).toBe(true)
     })
   })
 
