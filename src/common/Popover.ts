@@ -19,7 +19,7 @@ import { computeClippingRect, computeRect } from '../util/dom-geom'
 
 export interface PopoverOptions {
   className?: string
-  content?: (HTMLElement) => void
+  content?: (el: HTMLElement) => void
   parentEl: HTMLElement
   autoHide?: boolean
   top?: number

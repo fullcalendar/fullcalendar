@@ -217,7 +217,7 @@ export default abstract class DateComponent extends Component {
   }
 
 
-  queryHit(leftOffset, topOffset): Hit {
+  queryHit(leftOffset, topOffset): Hit | null {
     return null // this should be abstract
   }
 

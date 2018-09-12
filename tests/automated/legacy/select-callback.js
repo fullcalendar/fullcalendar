@@ -59,15 +59,17 @@ describe('select callback', function() {
           }
           spyOn(options, 'select').and.callThrough()
           initCalendar(options)
-          $('.fc-day[data-date="2014-04-28"]').simulate('drag', {
-            isTouch: true,
-            delay: 200,
-            end: '.fc-day[data-date="2014-05-06"]',
-            callback: function() {
-              expect(options.select).toHaveBeenCalled()
-              done()
-            }
-          })
+          setTimeout(function() {
+            $('.fc-day[data-date="2014-04-28"]').simulate('drag', {
+              isTouch: true,
+              delay: 200,
+              end: '.fc-day[data-date="2014-05-06"]',
+              callback: function() {
+                expect(options.select).toHaveBeenCalled()
+                done()
+              }
+            })
+          }, 100) // for FF
         })
         it('gets fired correctly when the user selects just one cell', function(done) {
           options.select = function(arg) {
@@ -189,7 +191,7 @@ describe('select callback', function() {
                   done()
                 }
               })
-            }, 0)
+            }, 100) // for FF
           })
           it('gets fired correctly when the user selects slots in a different day', function(done) {
             options.select = function(arg) {

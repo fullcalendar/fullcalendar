@@ -199,15 +199,15 @@ describe('eventResize', function() {
                 localPoint: { left: '50%', top: '90%' },
                 delay: 200,
                 onRelease: function() {
-                  setTimeout(function() { // for FF
+                  setTimeout(function() {
                     $('.fc-event .fc-resizer').simulate('drag', {
                       dy: $('.fc-slats tr:eq(1)').height() * 4.5, // 5 slots, so 2.5 hours
                       isTouch: true,
                     })
-                  }, 0)
+                  }, 100) // delay for FF
                 }
               })
-            }, 0)
+            }, 100) // delay for FF
           },
           function(arg) {
             expect(arg.endDelta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))

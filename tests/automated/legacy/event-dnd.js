@@ -36,12 +36,14 @@ describe('eventDrop', function() {
 
             init(
               function() {
-                $('.fc-event').simulate('drag', {
-                  dx: $('.fc-day').width() * 2,
-                  dy: $('.fc-day').height(),
-                  isTouch: isTouch,
-                  delay: isTouch ? 200 : 0
-                })
+                setTimeout(function() {
+                  $('.fc-event').simulate('drag', {
+                    dx: $('.fc-day').width() * 2,
+                    dy: $('.fc-day').height(),
+                    isTouch: isTouch,
+                    delay: isTouch ? 200 : 0
+                  })
+                }, 0)
               },
               function(arg) {
                 var delta = FullCalendar.createDuration({ day: 9 })
@@ -168,9 +170,9 @@ describe('eventDrop', function() {
                     dx: $('th.fc-wed').width(), // 1 day
                     dy: $('.fc-slats tr:eq(1)').outerHeight() * 2.9, // 1.5 hours
                     isTouch: isTouch,
-                    delay: isTouch ? 200 : 0
+                    delay: isTouch ? 200 : 0 // delay for FF
                   })
-                }, 0)
+                }, 100) // delay for FF
               },
               function(arg) {
                 var delta = FullCalendar.createDuration({ day: 1, hour: 1, minute: 30 })
