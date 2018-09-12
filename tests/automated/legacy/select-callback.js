@@ -14,10 +14,12 @@ describe('select callback', function() {
     currentCalendar.destroy()
   });
 
-  [ false, true ].forEach(function(isRtl) {
-    describe('when isRtl is ' + isRtl, function() {
+  [ 'ltr', 'rtl' ].forEach(function(dir) {
+    let dirSign = dir === 'rtl' ? -1 : 1
+
+    describe('when dir is ' + dir, function() {
       beforeEach(function() {
-        options.isRtl = isRtl
+        options.dir = dir
       })
       describe('when in month view', function() {
         beforeEach(function() {
@@ -115,7 +117,7 @@ describe('select callback', function() {
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
             $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag', { // will be 2014-05-28 for LTR and RTL
-              dx: $('.fc-sun').outerWidth() * (isRtl ? -1 : 1), // the width of one column
+              dx: $('.fc-sun').outerWidth() * dirSign, // the width of one column
               callback: function() {
                 expect(options.select).toHaveBeenCalled()
                 done()
@@ -208,7 +210,7 @@ describe('select callback', function() {
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
             $('.fc-slats tr:eq(18) td:not(.fc-time)').simulate('drag', { // middle will be 2014-05-28T09:00:00
-              dx: $('.fc-day-header:first').outerWidth() * 0.9 * (isRtl ? -1 : 1), // one day ahead
+              dx: $('.fc-day-header:first').outerWidth() * 0.9 * dirSign, // one day ahead
               dy: $('.fc-slats tr:eq(18)').outerHeight() * 2, // move down two slots
               callback: function() {
                 expect(options.select).toHaveBeenCalled()

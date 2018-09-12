@@ -5,10 +5,10 @@ describe('dateClick', function() {
     timeZone: 'UTC'
   });
 
-  [ false, true ].forEach(function(isRtl) {
-    describe('when isRtl is ' + isRtl, function() {
+  [ 'ltr', 'rtl' ].forEach(function(dir) {
+    describe('when dir is ' + dir, function() {
 
-      pushOptions({ isRtl: isRtl });
+      pushOptions({ dir });
 
       [ false, true ].forEach(function(selectable) {
         describe('when selectable is ' + selectable, function() {
@@ -30,7 +30,7 @@ describe('dateClick', function() {
 
               initCalendar(options)
 
-              var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of isRtl)
+              var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of dir)
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
               dayCell.simulate('drag')
@@ -54,7 +54,7 @@ describe('dateClick', function() {
 
               initCalendar(options)
 
-              // 2014-05-28 (regardless of isRtl)
+              // 2014-05-28 (regardless of dir)
               var dayContent = $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)')
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
@@ -79,7 +79,7 @@ describe('dateClick', function() {
 
               initCalendar(options)
 
-              // the middle is 2014-05-28T09:00:00 (regardless of isRtl)
+              // the middle is 2014-05-28T09:00:00 (regardless of dir)
               var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)')
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
@@ -106,7 +106,7 @@ describe('dateClick', function() {
 
               initCalendar(options)
 
-              // the middle is 2014-05-28T11:00:00 (regardless of isRtl)
+              // the middle is 2014-05-28T11:00:00 (regardless of dir)
               var slotRow = $('.fc-slats tr:eq(18) td:not(.fc-time)')
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
@@ -134,7 +134,7 @@ describe('dateClick', function() {
 
       initCalendar(options)
 
-      var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of isRtl)
+      var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of dir)
 
       // for simulating the mousedown/mouseup/click (relevant for selectable)
       dayCell.simulate('drag', {
@@ -178,7 +178,7 @@ describe('dateClick', function() {
 
       initCalendar(options)
 
-      var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of isRtl)
+      var dayCell = $('.fc-day:eq(10)') // 2014-05-07 (regardless of dir)
       $.simulateTouchClick(dayCell)
     })
   })

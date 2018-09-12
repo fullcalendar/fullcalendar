@@ -33,7 +33,7 @@ export function getBoundingRect(el) {
 }
 
 
-export function getLeadingBoundingRect(els, isRtl) {
+export function getLeadingBoundingRect(els, dir = 'ltr') {
   els = $(els)
   expect(els.length).toBeGreaterThan(0)
   let best = null
@@ -41,7 +41,7 @@ export function getLeadingBoundingRect(els, isRtl) {
     const rect = getBoundingRect(node)
     if (!best) {
       best = rect
-    } else if (isRtl) {
+    } else if (dir === 'rtl') {
       if (rect.right > best.right) {
         best = rect
       }
@@ -55,7 +55,7 @@ export function getLeadingBoundingRect(els, isRtl) {
 }
 
 
-export function getTrailingBoundingRect(els, isRtl) {
+export function getTrailingBoundingRect(els, dir = 'ltr') {
   els = $(els)
   expect(els.length).toBeGreaterThan(0)
   let best = null
@@ -63,7 +63,7 @@ export function getTrailingBoundingRect(els, isRtl) {
     const rect = getBoundingRect(node)
     if (!best) {
       best = rect
-    } else if (isRtl) {
+    } else if (dir === 'rtl') {
       if (rect.left < best.left) {
         best = rect
       }
@@ -77,12 +77,12 @@ export function getTrailingBoundingRect(els, isRtl) {
 }
 
 
-export function sortBoundingRects(els, isRtl) {
+export function sortBoundingRects(els, dir) {
   const rects = els.map(function(i, node) {
     return getBoundingRect(node)
   })
   rects.sort(function(a, b) {
-    if (isRtl) {
+    if (dir === 'rtl') {
       return b.right - a.right
     } else {
       return a.left - b.left

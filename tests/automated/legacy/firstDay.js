@@ -159,10 +159,10 @@ describe('First Day', function() {
     })
   })
 
-  describe('when first day is set to Tuesday and isRtl is true', function() {
+  describe('when first day is set to Tuesday and dir is rtl', function() {
     pushOptions({
       firstDay: 2,
-      isRtl: true
+      dir: 'rtl'
     })
     it('should put days mon, sun, sat ...', function() {
       initCalendar()

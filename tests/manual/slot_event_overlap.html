@@ -60,7 +60,7 @@
       month: 6, // July
       date: 31,
       events: 'slot_event_overlap.json',
-      isRtl: true,
+      dir: 'rtl',
       _eventsPositioned: function() {
         testOverlap($('#calendar-rtl'), true, true);
       }
@@ -79,7 +79,7 @@
       month: 6, // July
       date: 31,
       events: 'slot_event_overlap.json',
-      isRtl: true,
+      dir: 'rtl',
       slotEventOverlap: false,
       _eventsPositioned: function() {
         testOverlap($('#calendar-rtl-nooverlap'), false, true);

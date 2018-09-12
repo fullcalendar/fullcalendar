@@ -12,10 +12,10 @@ const AXIS_CLASS = 'fc-axis'
 
 describe('agenda view rendering', function() {
 
-  describe('when isRtl is false', function() {
+  describe('when dir is ltr', function() {
     pushOptions({
       defaultView: 'agendaWeek',
-      isRtl: false
+      dir: 'ltr'
     })
 
     it('should have have days ordered sun to sat', function() {
@@ -32,10 +32,10 @@ describe('agenda view rendering', function() {
     })
   })
 
-  describe('when isRtl is true', function() {
+  describe('when dir is rtl', function() {
     pushOptions({
       defaultView: 'agendaWeek',
-      isRtl: true
+      dir: 'rtl'
     })
 
     it('should have have days ordered sat to sun', function() {

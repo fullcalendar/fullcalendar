@@ -8,13 +8,13 @@ describe('DayGrid event rendering', function() {
   })
 
   describe('when LTR', function() {
-    initMonthTesting(false)
+    initMonthTesting('ltr')
   })
   describe('when RTL', function() {
-    initMonthTesting(true)
+    initMonthTesting('rtl')
   })
 
-  function initMonthTesting(isRtl) {
+  function initMonthTesting(dir) {
     it('correctly renders an event starting before view\'s start', function() {
       var options = {}
       options.events = [
@@ -184,9 +184,9 @@ describe('DayGrid event rendering', function() {
     })
 
     function testSeg(calendarOptions, testSegOptions) {
-      calendarOptions.isRtl = isRtl
+      calendarOptions.dir = dir
       initCalendar(calendarOptions)
-      directionallyTestSeg(testSegOptions, isRtl)
+      directionallyTestSeg(testSegOptions, dir)
     }
   }
 
@@ -250,7 +250,7 @@ describe('DayGrid event rendering', function() {
     - isStart
     - isEnd
   */
-  function directionallyTestSeg(opts, isRtl) {
+  function directionallyTestSeg(opts, dir) {
     var el = opts.el ? $(opts.el) : getFirstEventEl()
 
     var row = opts.row || 0
@@ -259,7 +259,7 @@ describe('DayGrid event rendering', function() {
 
     var leftCol
     var rightCol
-    if (isRtl) {
+    if (dir === 'rtl') {
       leftCol = rowTds.length - opts.lastCol - 1
       rightCol = rowTds.length - opts.firstCol - 1
     } else {

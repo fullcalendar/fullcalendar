@@ -1,7 +1,7 @@
 import { defineLocale } from 'fullcalendar';
 
 defineLocale("he", {
-  isRtl: true,
+  dir: 'rtl',
   buttonText: {
     prev: "הקודם",
     next: "הבא",

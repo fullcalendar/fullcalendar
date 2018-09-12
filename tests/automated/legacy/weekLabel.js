@@ -31,7 +31,7 @@ describe('weekLabel', function() {
 
       it('renders correctly when customized and LTR', function() {
         initCalendar({
-          isRtl: false,
+          dir: 'ltr',
           weekLabel: 'YO'
         })
         expect(getRenderedWeekNumberTitle()).toBe('YO')
@@ -39,7 +39,7 @@ describe('weekLabel', function() {
 
       it('renders correctly when customized and RTL', function() {
         initCalendar({
-          isRtl: true,
+          dir: 'rtl',
           weekLabel: 'YO'
         })
         expect(getRenderedWeekNumberTitle()).toBe('YO')

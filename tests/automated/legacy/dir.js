@@ -1,10 +1,10 @@
-describe('isRtl', function() {
+describe('dir', function() {
 
   it('has it\'s default value computed differently based off of the locale', function() {
     initCalendar({
       locale: 'ar' // Arabic is RTL
     })
-    expect(currentCalendar.getOption('isRtl')).toEqual(true)
+    expect(currentCalendar.getOption('dir')).toEqual('rtl')
   })
 
   // NOTE: don't put tests related to other options in here!
@@ -12,14 +12,14 @@ describe('isRtl', function() {
 
   it('adapts to dynamic option change', function() {
     initCalendar({
-      isRtl: false
+      dir: 'ltr'
     })
     var $el = $(currentCalendar.el)
 
     expect($el).toHaveClass('fc-ltr')
     expect($el).not.toHaveClass('fc-rtl')
 
-    currentCalendar.setOption('isRtl', true)
+    currentCalendar.setOption('dir', 'rtl')
 
     expect($el).toHaveClass('fc-rtl')
     expect($el).not.toHaveClass('fc-ltr')

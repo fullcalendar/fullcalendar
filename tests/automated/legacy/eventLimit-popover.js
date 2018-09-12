@@ -29,7 +29,7 @@ describe('eventLimit popover', function() {
 
     it('aligns horizontally with left edge of cell if LTR', function() {
       initCalendar({
-        isRtl: false
+        dir: 'ltr'
       })
       init()
       var cellLeft = $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(2)').offset().left
@@ -40,7 +40,7 @@ describe('eventLimit popover', function() {
 
     it('aligns horizontally with left edge of cell if RTL', function() {
       initCalendar({
-        isRtl: true
+        dir: 'rtl'
       })
       init()
       var cell = $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(4)')

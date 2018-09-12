@@ -12,17 +12,17 @@
 
   $(document).ready(function() {
     var theme = false;
-    var isRtl = false;
+    var dir = 'ltr';
     var businessHours = false;
 
     $('#change-theme-button').on('click', function() {
-      theme = !theme;
+      theme = theme ? false : 'jquery-ui';
       $('#calendar').fullCalendar('option', 'theme', theme);
     });
 
     $('#change-dir-button').on('click', function() {
-      isRtl = !isRtl;
-      $('#calendar').fullCalendar('option', 'isRtl', isRtl);
+      dir = dir === 'ltr' ? 'rtl' : 'ltr';
+      $('#calendar').fullCalendar('option', 'dir', dir);
     });
 
     $('#change-businessHours-button').on('click', function() {
@@ -31,19 +31,19 @@
     });
 
     $('#change-all-button').on('click', function() {
-      theme = !theme;
-      isRtl = !isRtl;
+      theme = theme ? false : 'jquery-ui';
+      dir = dir === 'ltr' ? 'rtl' : 'ltr';
       businessHours = !businessHours;
       $('#calendar').fullCalendar('option', {
         theme: theme,
-        isRtl: isRtl,
+        dir: dir,
         businessHours: businessHours
       });
     });
 
     $('#calendar').fullCalendar({
       theme: theme,
-      isRtl: isRtl,
+      dir: dir,
       businessHours: businessHours,
       header: {
         left: 'prev,next today',
