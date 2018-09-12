@@ -20,7 +20,7 @@ import { DateEnv } from '../datelib/env'
 
 
 export default function(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, calendar: Calendar): EventStore {
-  switch(action.type) {
+  switch (action.type) {
 
     case 'RECEIVE_EVENTS': // raw
       return receiveRawEvents(

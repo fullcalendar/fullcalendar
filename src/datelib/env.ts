@@ -259,7 +259,7 @@ export class DateEnv {
     n = diffMinutes(m0, m1)
 
     if (isInt(n)) {
-      return  { unit: 'minute', value: n }
+      return { unit: 'minute', value: n }
     }
 
     n = diffSeconds(m0, m1)

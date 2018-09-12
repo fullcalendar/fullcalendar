@@ -150,11 +150,14 @@ function weekOfGivenYear(marker, year, dow, doy) {
 
 // start-of-first-week - start-of-year
 function firstWeekOffset(year, dow, doy) {
-  var // first-week day -- which january is always in the first week (4 for iso, 1 for other)
-      fwd = 7 + dow - doy,
-      // first-week day local weekday -- which local weekday is fwd
-      fwdlw = (7 + arrayToUtcDate([ year, 0, fwd ]).getUTCDay() - dow) % 7;
-  return -fwdlw + fwd - 1;
+
+  // first-week day -- which january is always in the first week (4 for iso, 1 for other)
+  let fwd = 7 + dow - doy
+
+  // first-week day local weekday -- which local weekday is fwd
+  let fwdlw = (7 + arrayToUtcDate([ year, 0, fwd ]).getUTCDay() - dow) % 7
+
+  return -fwdlw + fwd - 1
 }
 
 
@@ -179,7 +182,7 @@ export function arrayToLocalDate(a) {
     a[2] == null ? 1 : a[2], // day of month
     a[3] || 0,
     a[4] || 0,
-    a[5] || 0,
+    a[5] || 0
   )
 }
 

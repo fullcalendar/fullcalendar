@@ -103,7 +103,7 @@ function applyMutationToEventInstance(
   } else if (mutation.endDelta) {
     copy.range = {
       start: copy.range.start,
-      end: dateEnv.add(copy.range.end, mutation.endDelta),
+      end: dateEnv.add(copy.range.end, mutation.endDelta)
     }
   }
 

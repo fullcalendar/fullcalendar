@@ -227,7 +227,7 @@ export default class EventRenderer {
         event: new EventApi(
           this.view.calendar,
           seg.eventRange.def,
-          seg.eventRange.instance,
+          seg.eventRange.instance
         ),
         isMirror,
         isStart: seg.isStart,

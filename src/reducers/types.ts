@@ -17,7 +17,7 @@ export interface CalendarState extends DateComponentRenderState {
 
 export type Action =
 
-  { type: 'SET_DATE_PROFILE', dateProfile: DateProfile  } |
+  { type: 'SET_DATE_PROFILE', dateProfile: DateProfile } |
 
   { type: 'SELECT_DATES', selection: DateSpan } |
   { type: 'UNSELECT_DATES' } |

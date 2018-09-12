@@ -1,10 +1,10 @@
 import { DateMarker, arrayToUtcDate, dateToUtcArray } from './marker'
 
 export interface CalendarSystem {
-  getMarkerYear(d: DateMarker): number;
-  getMarkerMonth(d: DateMarker): number;
-  getMarkerDay(d: DateMarker): number;
-  arrayToMarker(arr: number[]): DateMarker;
+  getMarkerYear(d: DateMarker): number
+  getMarkerMonth(d: DateMarker): number
+  getMarkerDay(d: DateMarker): number
+  arrayToMarker(arr: number[]): DateMarker
   markerToArray(d: DateMarker): number[]
 }
 

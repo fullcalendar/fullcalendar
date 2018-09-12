@@ -59,11 +59,17 @@ export default class AutoScroller {
       let yDelta = this.pointerScreenY === null ? 0 : pointerScreenY - this.pointerScreenY
       let xDelta = this.pointerScreenX === null ? 0 : pointerScreenX - this.pointerScreenX
 
-      if (yDelta < 0) { this.everMovedUp = true }
-      else if (yDelta > 0) { this.everMovedDown = true }
+      if (yDelta < 0) {
+        this.everMovedUp = true
+      } else if (yDelta > 0) {
+        this.everMovedDown = true
+      }
 
-      if (xDelta < 0) { this.everMovedLeft = true }
-      else if (yDelta > 0) { this.everMovedRight = true }
+      if (xDelta < 0) {
+        this.everMovedLeft = true
+      } else if (yDelta > 0) {
+        this.everMovedRight = true
+      }
 
       this.pointerScreenX = pointerScreenX
       this.pointerScreenY = pointerScreenY
@@ -122,12 +128,14 @@ export default class AutoScroller {
 
       case 'left':
         sign = -1
+        // falls through
       case 'right':
         scrollCache.setScrollLeft(scrollCache.getScrollLeft() + velocity * sign)
         break
 
       case 'top':
         sign = -1
+        // falls through
       case 'bottom':
         scrollCache.setScrollTop(scrollCache.getScrollTop() + velocity * sign)
         break

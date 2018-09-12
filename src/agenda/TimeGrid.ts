@@ -171,10 +171,10 @@ export default class TimeGrid extends DateComponent {
     }
 
     this.labelFormat = createFormatter(input || {
-        hour: 'numeric',
-        minute: '2-digit',
-        omitZeroMinute: true,
-        meridiem: 'short'
+      hour: 'numeric',
+      minute: '2-digit',
+      omitZeroMinute: true,
+      meridiem: 'short'
     })
 
     input = this.opt('slotLabelInterval')

@@ -320,7 +320,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let view = t.view
     let dateEnv = t.getDateEnv()
     let dateProfile = t.dateProfile
-    let isDateValid =  rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
+    let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let classNames = [
       'fc-day-header',
       view.calendar.theme.getClass('widgetHeader')

@@ -26,7 +26,7 @@ const RAW_EN_LOCALE = {
     month: 'month',
     week: 'week',
     day: 'day',
-    list: 'list',
+    list: 'list'
   },
   weekLabel: 'W',
   allDayText: 'all-day',

@@ -179,8 +179,8 @@ export function wholeDivideDurations(numerator: Duration, denominator: Duration)
       }
 
       res = localRes
-    }
-    else if (numerator[unit]) {
+
+    } else if (numerator[unit]) {
       // needs to divide by something but can't!
       return null
     }

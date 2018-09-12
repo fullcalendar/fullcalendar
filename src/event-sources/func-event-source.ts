@@ -10,7 +10,7 @@ export type EventSourceFunc = (
   },
   successCallback: (events: EventInput[]) => void,
   failureCallback: (errorObj: any) => void
-) => any; // a promise-like object, or nothing
+) => any // a promise-like object, or nothing
 
 registerEventSourceDef({
 
