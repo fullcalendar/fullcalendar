@@ -8,7 +8,7 @@ import reselector from '../util/reselector'
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
   separator: 0, // 0 = not applicable
-  omitZeroMinSec: 0,
+  omitZeroMinute: 0,
   meridiem: 0, // like am/pm
   omitCommas: 0
 }
@@ -157,34 +157,18 @@ function buildNativeFormattingFunc(
   context: DateFormattingContext
 ): (date: ZonedMarker) => string {
   standardDateProps = assignTo({}, standardDateProps) // copy
+  extendedSettings = assignTo({}, extendedSettings) // copy
 
-  // deal with a browser inconsistency where formatting the timezone
-  // requires that the hour/minute be present.
-  if (standardDateProps.timeZoneName) {
-    if (!standardDateProps.hour) {
-      standardDateProps.hour = '2-digit'
-    }
-    if (!standardDateProps.minute) {
-      standardDateProps.minute = '2-digit'
-    }
-  }
-
-  // only support short timezone names
-  if (standardDateProps.timeZoneName === 'long') {
-    standardDateProps.timeZoneName = 'short'
-  }
+  sanitizeSettings(standardDateProps, extendedSettings)
 
   standardDateProps.timeZone = 'UTC' // we leverage the only guaranteed timeZone for our UTC markers
 
   let normalFormat = new Intl.DateTimeFormat(context.locale.codes, standardDateProps)
-  let zeroFormat
+  let zeroFormat // needed?
 
-  if (extendedSettings.omitZeroMinSec) {
+  if (extendedSettings.omitZeroMinute) {
     let zeroProps = assignTo({}, standardDateProps)
-
     delete zeroProps.minute
-    delete zeroProps.second
-
     zeroFormat = new Intl.DateTimeFormat(context.locale.codes, zeroProps)
   }
 
@@ -204,6 +188,30 @@ function buildNativeFormattingFunc(
   }
 }
 
+function sanitizeSettings(standardDateProps, extendedSettings) {
+
+  // deal with a browser inconsistency where formatting the timezone
+  // requires that the hour/minute be present.
+  if (standardDateProps.timeZoneName) {
+    if (!standardDateProps.hour) {
+      standardDateProps.hour = '2-digit'
+    }
+    if (!standardDateProps.minute) {
+      standardDateProps.minute = '2-digit'
+    }
+  }
+
+  // only support short timezone names
+  if (standardDateProps.timeZoneName === 'long') {
+    standardDateProps.timeZoneName = 'short'
+  }
+
+  // if requesting to display seconds, MUST display minutes
+  if (extendedSettings.omitZeroMinute && standardDateProps.second) {
+    delete extendedSettings.omitZeroMinute
+  }
+}
+
 function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSettings, context: DateFormattingContext): string {
 
   s = s.replace(LTR_RE, '') // remove left-to-right control chars. do first. good for other regexes
@@ -219,6 +227,10 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
 
   if (extendedSettings.omitCommas) {
     s = s.replace(COMMA_RE, '').trim()
+  }
+
+  if (extendedSettings.omitZeroMinute) {
+    s = s.replace(':00', '') // zeroFormat doesn't always achieve this
   }
 
   // ^ do anything that might create adjacent spaces before this point,

@@ -223,7 +223,7 @@ export default class DayGridEventRenderer extends EventRenderer {
     return {
       hour: 'numeric',
       minute: '2-digit',
-      omitZeroMinSec: true,
+      omitZeroMinute: true,
       meridiem: 'narrow'
     }
   }
