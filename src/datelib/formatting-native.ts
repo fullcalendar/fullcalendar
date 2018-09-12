@@ -208,9 +208,9 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
 
   s = s.replace(LTR_RE, '') // remove left-to-right control chars. do first. good for other regexes
 
-  if (standardDateProps.timeZoneName) {
-    s = s.replace(
-      UTC_RE,
+  if (standardDateProps.timeZoneName === 'short') {
+    s = injectTzoStr(
+      s,
       (context.timeZone === 'UTC' || date.timeZoneOffset == null) ?
         'UTC' : // important to normalize for IE, which does "GMT"
         formatTimeZoneOffset(date.timeZoneOffset)
@@ -242,6 +242,22 @@ function postProcess(s: string, date: ZonedMarker, standardDateProps, extendedSe
 
   s = s.replace(MULTI_SPACE_RE, ' ')
   s = s.trim()
+
+  return s
+}
+
+function injectTzoStr(s: string, tzoStr: string): string {
+  let replaced = false
+
+  s = s.replace(UTC_RE, function() {
+    replaced = true
+    return tzoStr
+  })
+
+  // IE11 doesn't include UTC/GMT in the original string, so append to end
+  if (!replaced) {
+    s = s + ' ' + tzoStr
+  }
 
   return s
 }
