@@ -404,6 +404,39 @@ describe('ListView rendering', function() {
       expect(events[12].timeText).toBe('all-day')
     })
 
+    it('can sort events with non-date property first', function() {
+      initCalendar({
+        now: '2016-08-29',
+        eventOrder: 'title',
+        events: [
+          {
+            title: 'Sup',
+            start: '2016-08-29T00:00:00'
+          },
+          {
+            title: 'Dude',
+            start: '2016-08-29T10:30:00'
+          },
+          {
+            title: 'Hello',
+            start: '2016-08-30'
+          }
+        ]
+      })
+
+      var days = getDayInfo()
+      var events = getEventInfo()
+
+      expect(days.length).toBe(2)
+      expect(days[0].date).toEqualDate('2016-08-29')
+      expect(days[1].date).toEqualDate('2016-08-30')
+
+      expect(events.length).toBe(3)
+      expect(events[0].title).toBe('Dude')
+      expect(events[1].title).toBe('Sup')
+      expect(events[2].title).toBe('Hello')
+    })
+
     it('makes scrollbars', function() {
       let $el = $('<div style="width:300px" />').appendTo('body')
       initCalendar({

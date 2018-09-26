@@ -332,7 +332,8 @@ export default class EventRenderer {
   }
 
 
-  sortEventSegs(segs, specs = this.view.eventOrderSpecs): Seg[] {
+  sortEventSegs(segs): Seg[] {
+    let specs = this.view.eventOrderSpecs
     let objs = segs.map(buildSegCompareObj)
 
     objs.sort(function(obj0, obj1) {
