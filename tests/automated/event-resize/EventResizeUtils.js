@@ -2,12 +2,12 @@ import { getRectCenter, getRectTopLeft, subtractPoints, addPoints } from '../lib
 import * as EventRenderUtils from '../event-render/EventRenderUtils'
 
 
-export function resize(rect0, rect1, debug) {
+export function resize(rect0, rect1, fromStart, debug) {
   var eventEl = EventRenderUtils.getSingleEl()
 
   eventEl.simulate('mouseover') // so that resize handle is revealed
 
-  var resizerEl = eventEl.find('.fc-resizer')
+  var resizerEl = eventEl.find(fromStart ? '.fc-start-resizer' : '.fc-end-resizer')
   var resizerRect = resizerEl[0].getBoundingClientRect()
   var resizerCenter = getRectCenter(resizerRect)
 

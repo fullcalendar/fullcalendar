@@ -92,7 +92,7 @@ export default class EventDragging {
       mutation = computeMutation(
         initialHit,
         hit,
-        (ev.subjectEl as HTMLElement).classList.contains('.fc-start-resizer'),
+        (ev.subjectEl as HTMLElement).classList.contains('fc-start-resizer'),
         eventInstance.range
       )
     }
@@ -214,7 +214,7 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
   )
 
   if (isFromStart) {
-    if (dateEnv.add(instanceRange.start, delta) > instanceRange.end) {
+    if (dateEnv.add(instanceRange.start, delta) < instanceRange.end) {
       return { startDelta: delta }
     }
   } else {
