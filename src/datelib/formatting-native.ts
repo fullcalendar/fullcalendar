@@ -168,7 +168,7 @@ function buildNativeFormattingFunc(
 
   if (extendedSettings.omitZeroMinute) {
     let zeroProps = assignTo({}, standardDateProps)
-    delete zeroProps.minute
+    delete zeroProps.minute // seconds and ms were already considered in sanitizeSettings
     zeroFormat = new Intl.DateTimeFormat(context.locale.codes, zeroProps)
   }
 
@@ -176,7 +176,7 @@ function buildNativeFormattingFunc(
     let marker = date.marker
     let format
 
-    if (zeroFormat && !marker.getUTCMinutes() && !marker.getUTCSeconds()) {
+    if (zeroFormat && !marker.getUTCMinutes()) {
       format = zeroFormat
     } else {
       format = normalFormat
@@ -207,7 +207,7 @@ function sanitizeSettings(standardDateProps, extendedSettings) {
   }
 
   // if requesting to display seconds, MUST display minutes
-  if (extendedSettings.omitZeroMinute && standardDateProps.second) {
+  if (extendedSettings.omitZeroMinute && (standardDateProps.second || standardDateProps.millisecond)) {
     delete extendedSettings.omitZeroMinute
   }
 }
