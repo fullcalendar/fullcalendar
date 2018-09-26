@@ -1,4 +1,4 @@
-describe('Event::getSource', function() {
+describe('Event::source', function() {
 
   it('returns the correct source', function() {
     initCalendar({
@@ -10,7 +10,7 @@ describe('Event::getSource', function() {
       } ]
     })
     let event = currentCalendar.getEventById('eventA')
-    let source = event.getSource()
+    let source = event.source
     expect(source.id).toBe('sourceA')
   })
 
@@ -18,7 +18,7 @@ describe('Event::getSource', function() {
     initCalendar()
     currentCalendar.addEvent({ id: 'eventA', start: '2018-09-07' })
     let event = currentCalendar.getEventById('eventA')
-    let source = event.getSource()
+    let source = event.source
     expect(source).toBe(null)
   })
 

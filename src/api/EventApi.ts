@@ -6,6 +6,7 @@ import { diffDates, computeAlignedDayRange } from '../util/misc'
 import { subtractDurations, DurationInput, createDuration } from '../datelib/duration'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import EventSourceApi from './EventSourceApi'
+import { parseClassName } from '../util/html'
 
 export default class EventApi implements EventTuple {
 
@@ -19,16 +20,6 @@ export default class EventApi implements EventTuple {
     this.instance = instance || null
   }
 
-  getSource(): EventSourceApi | null {
-    if (this.def.sourceId) {
-      return new EventSourceApi(
-        this.calendar,
-        this.calendar.state.eventSources[this.def.sourceId]
-      )
-    }
-    return null
-  }
-
   setProp(name: string, val: string) {
     if (name.match(/^(start|end|date|allDay)$/)) {
       // error. date-related props need other methods
@@ -40,6 +31,8 @@ export default class EventApi implements EventTuple {
         props = { startEditable: val, durationEditable: val }
       } else if (name === 'color') {
         props = { backgroundColor: val, borderColor: val }
+      } else if (name === 'classNames') {
+        props = { classNames: parseClassName(val) }
       } else {
         props = { [name]: val }
       }
@@ -215,6 +208,16 @@ export default class EventApi implements EventTuple {
     })
   }
 
+  get source(): EventSourceApi | null {
+    if (this.def.sourceId) {
+      return new EventSourceApi(
+        this.calendar,
+        this.calendar.state.eventSources[this.def.sourceId]
+      )
+    }
+    return null
+  }
+
   get start(): Date | null {
     return this.instance ?
       this.calendar.dateEnv.toDate(this.instance.range.start) :
@@ -239,12 +242,12 @@ export default class EventApi implements EventTuple {
   get constraint(): any { return this.def.constraint }
   get overlap(): any { return this.def.overlap }
   get rendering(): string { return this.def.rendering }
-  get classNames(): string[] { return this.def.classNames }
   get backgroundColor(): string { return this.def.backgroundColor }
   get borderColor(): string { return this.def.borderColor }
   get textColor(): string { return this.def.textColor }
 
-  // NOTE: user can't modify extendedProps because Object.freeze was called in event-def parsing
+  // NOTE: user can't modify these because Object.freeze was called in event-def parsing
+  get classNames(): string[] { return this.def.classNames }
   get extendedProps(): any { return this.def.extendedProps }
 
 }

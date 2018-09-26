@@ -170,7 +170,8 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
   def.hasEnd = hasEnd
   def.extendedProps = assignTo(leftovers, def.extendedProps || {})
 
-  // help out EventApi::extendedProps from having user modify props
+  // help out EventApi from having user modify props
+  Object.freeze(def.classNames)
   Object.freeze(def.extendedProps)
 
   return def
