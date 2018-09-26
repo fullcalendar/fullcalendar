@@ -1,23 +1,26 @@
 import { DateTime, Duration } from 'luxon'
 import * as fc from 'fullcalendar'
 
-(fc as any).Luxon = {
 
-  toDateTime: function(calendar: fc.Calendar, date: Date): DateTime {
-    return DateTime.fromJSDate(date, {
-      zone: calendar.dateEnv.timeZone,
+export function toDateTime(calendar: fc.Calendar, date: Date): DateTime {
+  return DateTime.fromJSDate(date, {
+    zone: calendar.dateEnv.timeZone,
+    locale: calendar.dateEnv.locale.codes[0]
+  })
+}
+
+export function toDuration(calendar: fc.Calendar, duration: fc.Duration): Duration {
+  return Duration.fromObject(
+    fc.assignTo({}, duration, {
       locale: calendar.dateEnv.locale.codes[0]
     })
-  },
+  )
+}
 
-  toDuration: function(calendar: fc.Calendar, duration: fc.Duration): Duration {
-    return Duration.fromObject(
-      fc.assignTo({}, duration, {
-        locale: calendar.dateEnv.locale.codes[0]
-      })
-    )
-  }
-
+// for browser globals. TODO: better solution
+(fc as any).Luxon = {
+  toDateTime,
+  toDuration
 }
 
 

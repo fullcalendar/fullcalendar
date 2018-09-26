@@ -1,22 +1,26 @@
 import * as moment from 'moment'
 import * as fc from 'fullcalendar'
 
-(fc as any).Moment = {
 
-  toMoment: function(calendar: fc.Calendar, date: Date): moment.Moment {
-    return convertToMoment(
-      date,
-      calendar.dateEnv.timeZone,
-      null,
-      calendar.dateEnv.locale.codes[0]
-    )
-  },
-
-  toDuration: function(fcDuration: fc.Duration): moment.Duration {
-    return moment.duration(fcDuration) // momment accepts all the props that fc.Duration already has!
-  }
-
+export function toMoment(calendar: fc.Calendar, date: Date): moment.Moment {
+  return convertToMoment(
+    date,
+    calendar.dateEnv.timeZone,
+    null,
+    calendar.dateEnv.locale.codes[0]
+  )
 }
+
+export function toDuration(fcDuration: fc.Duration): moment.Duration {
+  return moment.duration(fcDuration) // momment accepts all the props that fc.Duration already has!
+}
+
+// for browser globals. TODO: better solution
+(fc as any).Moment = {
+  toMoment,
+  toDuration
+}
+
 
 fc.registerCmdFormatter('moment', function(cmdStr: string, arg: fc.VerboseFormattingArg) {
   let cmd = parseCmdStr(cmdStr)
