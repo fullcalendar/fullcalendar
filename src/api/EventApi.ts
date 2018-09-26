@@ -160,7 +160,7 @@ export default class EventApi implements EventTuple {
     }
   }
 
-  setIsAllDay(allDay: boolean, options: { maintainDuration?: boolean } = {}) {
+  setAllDay(allDay: boolean, options: { maintainDuration?: boolean } = {}) {
     let standardProps = { allDay } as any
     let maintainDuration = options.maintainDuration
 

@@ -1,4 +1,4 @@
-describe('Event::setIsAllDay', function() {
+describe('Event::setAllDay', function() {
 
   describe('when setting from all-day to all-day', function() {
     it('causes no change', function() {
@@ -8,7 +8,7 @@ describe('Event::setIsAllDay', function() {
         ]
       })
       let event = currentCalendar.getEventById('1')
-      event.setIsAllDay(true)
+      event.setAllDay(true)
       expect(event.start).toEqualDate('2018-09-03')
       expect(event.end).toEqualDate('2018-09-05')
       expect(event.allDay).toBe(true)
@@ -23,7 +23,7 @@ describe('Event::setIsAllDay', function() {
         ]
       })
       let event = currentCalendar.getEventById('1')
-      event.setIsAllDay(false)
+      event.setAllDay(false)
       expect(event.start).toEqualDate('2018-09-03T09:00:00Z')
       expect(event.end).toEqualDate('2018-09-05T09:00:00Z')
       expect(event.allDay).toBe(false)
@@ -40,7 +40,7 @@ describe('Event::setIsAllDay', function() {
           ]
         })
         let event = currentCalendar.getEventById('1')
-        event.setIsAllDay(false)
+        event.setAllDay(false)
         expect(event.start).toEqualDate('2018-09-03')
         expect(event.end).toBe(null)
         expect(event.allDay).toBe(false)
@@ -55,7 +55,7 @@ describe('Event::setIsAllDay', function() {
           ]
         })
         let event = currentCalendar.getEventById('1')
-        event.setIsAllDay(false, { maintainDuration: true })
+        event.setAllDay(false, { maintainDuration: true })
         expect(event.start).toEqualDate('2018-09-03')
         expect(event.end).toEqualDate('2018-09-05')
         expect(event.allDay).toBe(false)
@@ -74,7 +74,7 @@ describe('Event::setIsAllDay', function() {
           ]
         })
         let event = currentCalendar.getEventById('1')
-        event.setIsAllDay(true)
+        event.setAllDay(true)
         expect(event.start).toEqualDate('2018-09-03')
         expect(event.end).toBe(null)
         expect(event.allDay).toBe(true)
@@ -89,7 +89,7 @@ describe('Event::setIsAllDay', function() {
           ]
         })
         let event = currentCalendar.getEventById('1')
-        event.setIsAllDay(true, { maintainDuration: true })
+        event.setAllDay(true, { maintainDuration: true })
         expect(event.start).toEqualDate('2018-09-03')
         expect(event.end).toEqualDate('2018-09-05')
         expect(event.allDay).toBe(true)
@@ -105,7 +105,7 @@ describe('Event::setIsAllDay', function() {
           ]
         })
         let event = currentCalendar.getEventById('1')
-        event.setIsAllDay(true)
+        event.setAllDay(true)
         expect(event.start).toEqualDate('2018-09-03')
         expect(event.end).toEqualDate('2018-09-05')
         expect(event.allDay).toBe(true)

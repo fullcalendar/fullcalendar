@@ -19,7 +19,7 @@ describe('event mutations on non-instances', function() {
             arg.event.moveStart('-01:00')
             arg.event.moveEnd('01:00')
             arg.event.moveDates({ days: 1 })
-            arg.event.setIsAllDay(false)
+            arg.event.setAllDay(false)
           } else if (renderCnt == 2) {
             arg.event.setStart('2018-08-04')
             arg.event.setEnd('2018-10-04')
