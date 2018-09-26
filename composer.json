@@ -32,8 +32,6 @@
       "files": [
         "dist/fullcalendar.min.js",
         "dist/fullcalendar.min.css",
-        "dist/fullcalendar.print.css",
-        "dist/fullcalendar.print.min.css",
         "dist/fullcalendar-gcal.js",
         "dist/fullcalendar-gcal.min.js",
         "dist/fullcalendar-moment.js",
