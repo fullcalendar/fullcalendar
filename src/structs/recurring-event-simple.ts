@@ -4,23 +4,19 @@ import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
 import { registerRecurringType, ParsedRecurring } from './recurring-event'
 import { EventInput, EventDef } from './event'
-import { DateRange } from '../datelib/date-range'
+import { DateRange, OpenDateRange, intersectRanges } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
 
 /*
 An implementation of recurring events that only supports every-day or weekly recurrences.
 */
 
-const SIMPLE_RECURRING_PROPS = {
-  daysOfWeek: null,
-  startTime: createDuration,
-  endTime: createDuration
-}
-
 interface SimpleRecurringData {
   daysOfWeek: number[] | null
   startTime: Duration | null
   endTime: Duration | null
+  startRecur: DateMarker | null
+  endRecur: DateMarker | null
 }
 
 interface SimpleParsedRecurring extends ParsedRecurring {
@@ -29,14 +25,27 @@ interface SimpleParsedRecurring extends ParsedRecurring {
 
 registerRecurringType({
 
-  parse(rawEvent: EventInput, leftoverProps: any): SimpleParsedRecurring | null {
-    if (
-      rawEvent.daysOfWeek ||
-      rawEvent.startTime != null ||
-      rawEvent.endTime != null
-    ) {
-      let props = refineProps(rawEvent, SIMPLE_RECURRING_PROPS, {}, leftoverProps) as SimpleRecurringData
+  parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): SimpleParsedRecurring | null {
+    let createMarker = dateEnv.createMarker.bind(dateEnv)
+    let processors = {
+      daysOfWeek: null,
+      startTime: createDuration,
+      endTime: createDuration,
+      startRecur: createMarker,
+      endRecur: createMarker
+    }
 
+    let props = refineProps(rawEvent, processors, {}, leftoverProps) as SimpleRecurringData
+    let anyValid = false
+
+    for (let propName in props) {
+      if (props[propName] != null) {
+        anyValid = true
+        break
+      }
+    }
+
+    if (anyValid) {
       return {
         allDay: !props.startTime && !props.endTime,
         duration: (props.startTime && props.endTime) ?
@@ -53,6 +62,7 @@ registerRecurringType({
     return expandRanges(
       typeData.daysOfWeek,
       typeData.startTime,
+      { start: typeData.startRecur, end: typeData.endRecur },
       framingRange,
       dateEnv
     )
@@ -63,9 +73,12 @@ registerRecurringType({
 function expandRanges(
   daysOfWeek: number[] | null,
   startTime: Duration | null,
+  recurRange: OpenDateRange,
   framingRange: DateRange,
   dateEnv: DateEnv
 ): DateMarker[] {
+  framingRange = intersectRanges(framingRange, recurRange)
+
   let dowHash: { [num: string]: true } | null = daysOfWeek ? arrayToHash(daysOfWeek) : null
   let dayMarker = startOfDay(framingRange.start)
   let endMarker = framingRange.end
