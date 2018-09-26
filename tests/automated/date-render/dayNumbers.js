@@ -10,7 +10,7 @@ describe('dayNumbers', function() {
       defaultView: 'month',
       locale: 'ar'
     })
-    expect(getDayOfWeekHeaderElTopElText('2018-01-01')).toMatch(/١٤?/) // an Arabic 1
+    expect(getDayOfWeekHeaderElTopElText('2018-01-01')).toMatch(/1|١٤?/) // normal 1, or an Arabic 1
   })
 
 })

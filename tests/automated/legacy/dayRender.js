@@ -9,7 +9,6 @@ describe('dayRender', function() {
       defaultDate: '2014-05-01',
       dayRender: function(arg) {
         expect(arg.date instanceof Date).toEqual(true)
-        expect(arg.allDay).toEqual(true)
         expect(formatIsoDay(arg.date)).toEqual(arg.el.getAttribute('data-date'))
         expect(arg.el).toBeInDOM()
       }
