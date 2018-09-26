@@ -819,13 +819,14 @@ export default class Calendar {
   }
 
 
-  formatRange(d0: Date, d1: Date, formatter, isEndExclusive?: boolean) {
+  // `settings` is for formatter AND isEndExclusive
+  formatRange(d0: Date, d1: Date, settings) {
     const { dateEnv } = this
     return dateEnv.formatRange(
       dateEnv.createMarker(d0),
       dateEnv.createMarker(d1),
-      createFormatter(formatter, this.opt('defaultRangeSeparator')),
-      { isEndExclusive }
+      createFormatter(settings, this.opt('defaultRangeSeparator')),
+      settings
     )
   }
 

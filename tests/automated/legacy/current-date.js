@@ -3,7 +3,8 @@ describe('current date', function() {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
-    separator: ' - '
+    separator: ' - ',
+    isEndExclusive: true
   }
 
   pushOptions({
@@ -278,8 +279,7 @@ describe('current date', function() {
       title = currentCalendar.formatRange(
         titleStart,
         titleEnd,
-        TITLE_FORMAT,
-        true // isEndExclusive
+        TITLE_FORMAT
       )
     } else {
       title = currentCalendar.formatDate(titleStart, TITLE_FORMAT)

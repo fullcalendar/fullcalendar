@@ -21,11 +21,10 @@ export function formatDate(dateInput: DateInput, settings = {}) {
 export function formatRange(
   startInput: DateInput,
   endInput: DateInput,
-  settings, // mixture of env and formatter settings
-  defaultSeparator: string = globalDefaults.defaultRangeSeparator
+  settings // mixture of env and formatter settings
 ) {
   let dateEnv = buildDateEnv(typeof settings === 'object' && settings ? settings : {}) // pass in if non-null object
-  let formatter = createFormatter(settings, defaultSeparator)
+  let formatter = createFormatter(settings, globalDefaults.defaultRangeSeparator)
   let startMeta = dateEnv.createMarkerMeta(startInput)
   let endMeta = dateEnv.createMarkerMeta(endInput)
 
@@ -35,7 +34,8 @@ export function formatRange(
 
   return dateEnv.formatRange(startMeta.marker, endMeta.marker, formatter, {
     forcedStartTzo: startMeta.forcedTzo,
-    forcedEndTzo: endMeta.forcedTzo
+    forcedEndTzo: endMeta.forcedTzo,
+    isEndExclusive: settings.isEndExclusive
   })
 }
 
