@@ -6,8 +6,8 @@ import { PointerDragEvent } from '../dnd/PointerDragging'
 export interface ExternalDraggableSettings {
   eventData?: DragMetaGenerator
   itemSelector?: string
-  delay?: number
   minDistance?: number
+  longPressDelay?: number
 }
 
 /*
@@ -38,7 +38,7 @@ export default class ExternalDraggable {
 
   handlePointerDown = (ev: PointerDragEvent) => {
     let { dragging } = this
-    let { minDistance, delay } = this.settings
+    let { minDistance, longPressDelay } = this.settings
 
     dragging.minDistance =
       minDistance != null ?
@@ -46,9 +46,9 @@ export default class ExternalDraggable {
         (ev.isTouch ? 0 : globalDefaults.eventDragMinDistance)
 
     dragging.delay =
-      delay != null ?
-        delay :
-        (ev.isTouch ? globalDefaults.longPressDelay : 0) // TODO: eventually read eventLongPressDelay
+      ev.isTouch ? // TODO: eventually read eventLongPressDelay instead vvv
+        (longPressDelay != null ? longPressDelay : globalDefaults.longPressDelay) :
+        0
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
