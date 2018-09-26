@@ -268,7 +268,7 @@ function injectTzoStr(s: string, tzoStr: string): string {
 
   // IE11 doesn't include UTC/GMT in the original string, so append to end
   if (!replaced) {
-    s = s + ' ' + tzoStr
+    s += ' ' + tzoStr
   }
 
   return s
@@ -286,7 +286,7 @@ function formatWeekNumber(num: number, weekLabel: string, locale: Locale, displa
 
   parts.push(locale.simpleNumberFormat.format(num))
 
-  if (locale.options.isRtl) {
+  if (locale.options.isRtl) { // TODO: use control characters instead?
     parts.reverse()
   }
 

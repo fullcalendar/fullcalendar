@@ -127,10 +127,6 @@ export interface OptionsInputBase {
   columnHeaderText?: string | ((date: DateInput) => string)
   columnHeaderHtml?: string | ((date: DateInput) => string)
   titleFormat?: FormatterInput
-  monthNames?: string[]
-  monthNamesShort?: string[]
-  dayNames?: string[]
-  dayNamesShort?: string[]
   weekLabel?: string
   displayEventTime?: boolean
   displayEventEnd?: boolean

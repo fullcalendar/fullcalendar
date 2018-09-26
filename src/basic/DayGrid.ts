@@ -164,7 +164,6 @@ export default class DayGrid extends DateComponent {
         this.publiclyTrigger('dayRender', [
           {
             date: dateEnv.toDate(this.getCellDate(row, col)),
-            allDay: true,
             el: this.getCellEl(row, col),
             view
           }

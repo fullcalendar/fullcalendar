@@ -132,11 +132,6 @@ function buildRequestParams(range, apiKey: string, extraData, dateEnv) {
     }
   )
 
-  // when sending timezone names to Google, only accepts underscores, not spaces
-  if (dateEnv.timeZone !== 'local') {
-    params.timeZone = dateEnv.timeZone.replace(' ', '_')
-  }
-
   return params
 }
 

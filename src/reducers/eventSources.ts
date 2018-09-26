@@ -146,15 +146,15 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange | null, cal
       })
     },
     function(error) {
-      let calError = calendar.opt('eventSourceFailure')
+      let callFailure = calendar.opt('eventSourceFailure')
 
       warn(error.message, error)
 
       if (eventSource.failure) {
         eventSource.failure(error)
       }
-      if (calError) {
-        calError(error)
+      if (callFailure) {
+        callFailure(error)
       }
 
       calendar.dispatch({

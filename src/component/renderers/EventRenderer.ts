@@ -42,8 +42,7 @@ export default class EventRenderer {
     let displayEventEnd
 
     this.eventTimeFormat = createFormatter(
-      this.opt('eventTimeFormat') ||
-      this.computeEventTimeFormat(),
+      this.opt('eventTimeFormat') || this.computeEventTimeFormat(),
       this.opt('defaultRangeSeparator')
     )
 
