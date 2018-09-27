@@ -14,8 +14,8 @@ describe('moment plugin', function() {
           timeZone: 'UTC'
         })
         let event = calendar.getEvents()[0]
-        var startMom = toMoment(calendar, event.start)
-        var endMom = toMoment(calendar, event.end)
+        var startMom = toMoment(event.start, calendar)
+        var endMom = toMoment(event.end, calendar)
         expect(startMom.format()).toEqual('2018-09-05T12:00:00Z')
         expect(endMom.format()).toEqual('2018-09-05T18:00:00Z')
       })
@@ -26,8 +26,8 @@ describe('moment plugin', function() {
           timeZone: 'local'
         })
         let event = calendar.getEvents()[0]
-        var startMom = toMoment(calendar, event.start)
-        var endMom = toMoment(calendar, event.end)
+        var startMom = toMoment(event.start, calendar)
+        var endMom = toMoment(event.end, calendar)
         expect(startMom.toDate()).toEqualDate('2018-09-05T12:00:00') // compare to local
         expect(endMom.toDate()).toEqualDate('2018-09-05T18:00:00') // compare to local
       })
@@ -40,7 +40,7 @@ describe('moment plugin', function() {
         locale: 'es'
       })
       let event = calendar.getEvents()[0]
-      var mom = toMoment(calendar, event.start)
+      var mom = toMoment(event.start, calendar)
       expect(mom.locale()).toEqual('es')
     })
 

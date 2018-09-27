@@ -2,14 +2,24 @@ import { DateTime, Duration } from 'luxon'
 import * as fc from 'fullcalendar'
 
 
-export function toDateTime(calendar: fc.Calendar, date: Date): DateTime {
+export function toDateTime(date: Date, calendar: fc.Calendar): DateTime {
+
+  if (!(calendar instanceof fc.Calendar)) {
+    throw new Error('must supply a Calendar instance')
+  }
+
   return DateTime.fromJSDate(date, {
     zone: calendar.dateEnv.timeZone,
     locale: calendar.dateEnv.locale.codes[0]
   })
 }
 
-export function toDuration(calendar: fc.Calendar, duration: fc.Duration): Duration {
+export function toDuration(duration: fc.Duration, calendar: fc.Calendar): Duration {
+
+  if (!(calendar instanceof fc.Calendar)) {
+    throw new Error('must supply a Calendar instance')
+  }
+
   return Duration.fromObject(
     fc.assignTo({}, duration, {
       locale: calendar.dateEnv.locale.codes[0]

@@ -2,7 +2,12 @@ import * as moment from 'moment'
 import * as fc from 'fullcalendar'
 
 
-export function toMoment(calendar: fc.Calendar, date: Date): moment.Moment {
+export function toMoment(date: Date, calendar: fc.Calendar): moment.Moment {
+
+  if (!(calendar instanceof fc.Calendar)) {
+    throw new Error('must supply a Calendar instance')
+  }
+
   return convertToMoment(
     date,
     calendar.dateEnv.timeZone,
