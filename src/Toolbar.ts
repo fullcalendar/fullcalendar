@@ -42,6 +42,7 @@ export default class Toolbar extends Component {
 
   render(renderProps: ToolbarRenderProps, forceFlags: RenderForceFlags) {
 
+    // TODO: break layout into left/center/right props, to prevent unnecessary rerenders
     if (renderProps.layout !== this.layout || forceFlags === true) {
       if (this.isLayoutRendered) {
         this.unrenderLayout()
@@ -49,6 +50,7 @@ export default class Toolbar extends Component {
       this.renderLayout(renderProps.layout)
       this.layout = renderProps.layout
       this.isLayoutRendered = true
+      forceFlags = true // everything else must render
     }
 
     if (renderProps.title !== this.title || forceFlags === true) {
