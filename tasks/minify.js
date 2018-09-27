@@ -13,9 +13,10 @@ gulp.task('minify', [
 gulp.task('minify:js', [ 'webpack' ], function() {
   return gulp.src([
     'dist/*.js',
-    '!dist/*.min.js', // avoid double minify
-    '!dist/locale-all.js' // already minified by webpack task
-  ])
+    '!dist/locale-all.js', // already minified by webpack task
+    'dist/plugins/*.js',
+    '!dist/**/*.min.js' // avoid double minify
+  ], { base: 'dist/' })
     .pipe(uglify({
       preserveComments: 'some' // keep comments starting with !
     }))

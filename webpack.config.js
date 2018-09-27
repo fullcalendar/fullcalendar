@@ -12,11 +12,11 @@ however, all other types of modules should.
 const MODULES = {
   'dist/fullcalendar': './src/main.ts',
   'dist/fullcalendar.css': './src/main.scss',
-  'dist/fullcalendar-gcal': './plugins/gcal/main.ts',
-  'dist/fullcalendar-moment': './plugins/moment/main.ts',
-  'dist/fullcalendar-moment-timezone': './plugins/moment-timezone/main.ts',
-  'dist/fullcalendar-luxon': './plugins/luxon/main.ts',
-  'dist/fullcalendar-rrule': './plugins/rrule/main.ts',
+  'dist/plugins/gcal': './plugins/gcal/main.ts',
+  'dist/plugins/moment': './plugins/moment/main.ts',
+  'dist/plugins/moment-timezone': './plugins/moment-timezone/main.ts',
+  'dist/plugins/luxon': './plugins/luxon/main.ts',
+  'dist/plugins/rrule': './plugins/rrule/main.ts',
   'tmp/automated-tests': './tests/automated/index'
 }
 

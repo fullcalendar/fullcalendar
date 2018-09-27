@@ -34,10 +34,10 @@ module.exports = function(config) {
       // main lib AND plugin files
       'dist/fullcalendar.js',
       'dist/fullcalendar.css',
-      'dist/fullcalendar-gcal.js',
-      'dist/fullcalendar-moment.js',
-      'dist/fullcalendar-moment-timezone.js',
-      'dist/fullcalendar-rrule.js',
+      'dist/plugins/gcal.js',
+      'dist/plugins/moment.js',
+      'dist/plugins/moment-timezone.js',
+      'dist/plugins/rrule.js',
       'dist/locale-all.js',
 
       // COMMENT-OUT THESE LINES when testing IE11

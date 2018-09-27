@@ -32,12 +32,7 @@
       "files": [
         "dist/fullcalendar.min.js",
         "dist/fullcalendar.min.css",
-        "dist/fullcalendar-gcal.js",
-        "dist/fullcalendar-gcal.min.js",
-        "dist/fullcalendar-moment.js",
-        "dist/fullcalendar-moment.min.js",
-        "dist/fullcalendar-moment-timezone.js",
-        "dist/fullcalendar-moment-timezone.min.js",
+        "dist/plugins/*.min.js",
         "dist/locale-all.js",
         "dist/locale/*.js"
       ]
