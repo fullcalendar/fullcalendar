@@ -8,7 +8,7 @@ export interface ExternalDraggableSettings {
   itemSelector?: string
   minDistance?: number
   longPressDelay?: number
-  parentNode?: HTMLElement
+  appendTo?: HTMLElement
 }
 
 /*
@@ -31,8 +31,8 @@ export default class ExternalDraggable {
       dragging.pointer.selector = settings.itemSelector
     }
 
-    if (settings.parentNode != null) {
-      dragging.mirror.parentNode = settings.parentNode // TODO: write tests
+    if (settings.appendTo != null) {
+      dragging.mirror.parentNode = settings.appendTo // TODO: write tests
     }
 
     dragging.emitter.on('pointerdown', this.handlePointerDown)
