@@ -9,7 +9,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     var initialTimeZone = 'local';
-    var timeZoneSelectorEl = document.getElementById('timezone-selector');
+    var timeZoneSelectorEl = document.getElementById('time-zone-selector');
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -26,7 +26,7 @@
       eventLimit: true, // allow "more" link when too many events
       events: {
         url: 'php/get-events.php',
-        error: function() {
+        failure: function() {
           document.getElementById('script-warning').style.display = 'inline'; // show
         }
       },
@@ -54,8 +54,8 @@
     calendar.render();
 
     // load the list of available timezones, build the <select> options
-    superagent.get('php/get-timezones.php').end(function(err, res) {
-      var timeZones = res.body || JSON.parse(res.text);
+    superagent.get('php/get-time-zones.php').end(function(err, res) {
+      var timeZones = res ? (res.body || JSON.parse(res.text)) : [];
 
       timeZones.forEach(function(timeZone) {
         var optionEl;
@@ -117,7 +117,7 @@
 
     <div class='left'>
       Timezone:
-      <select id='timezone-selector'>
+      <select id='time-zone-selector'>
         <option value='local' selected>local</option>
         <option value='UTC'>UTC</option>
       </select>
