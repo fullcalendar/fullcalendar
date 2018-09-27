@@ -114,8 +114,8 @@ describe('columnHeaderFormat', function() {
 
     var viewWithFormat = [
       { view: 'month', expected: /^일$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'basicWeek', expected: /^5[.월] 11[.일] \(?일\)?$/,  selector: 'th.fc-day-header.fc-sun' },
-      { view: 'agendaWeek', expected: /^5[.월] 11[.일] \(?일\)?$/,  selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'basicWeek', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-day-header.fc-sun' },
+      { view: 'agendaWeek', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-widget-header.fc-sun' },
       { view: 'basicDay', expected: /^일요일$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'agendaDay', expected: /^일요일$/, selector: 'th.fc-widget-header.fc-sun' }
     ]

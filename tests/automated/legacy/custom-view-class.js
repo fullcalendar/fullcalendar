@@ -4,9 +4,8 @@ describe('custom view class', function() {
 
     class CustomView extends FullCalendar.View {
 
-      slicingType = 'all-day'
-
       initialize() {
+        this.slicingType = 'all-day' // should really do this in the constructor
       }
 
       renderSkeleton() {

@@ -98,7 +98,7 @@ describe('Event::setStart', function() {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-05T00:00:00', end: '2018-09-10T00:00:00' },
-        { id: '2', groupId: 'a', start: '2018-09-06T00:00:00', end: '2018-09-09T00:00:00' },
+        { id: '2', groupId: 'a', start: '2018-09-06T00:00:00', end: '2018-09-09T00:00:00' }
       ]
     })
 

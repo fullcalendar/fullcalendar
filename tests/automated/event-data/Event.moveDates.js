@@ -36,7 +36,7 @@ describe('Event::moveDates', function() {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-03T00:00:00', end: '2018-09-04T12:00:00' },
-        { id: '2', groupId: 'a', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' },
+        { id: '2', groupId: 'a', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' }
       ]
     })
     let event1 = currentCalendar.getEventById('1')
@@ -53,7 +53,7 @@ describe('Event::moveDates', function() {
     initCalendar({
       events: [
         { id: '1', groupId: 'a', start: '2018-09-03T00:00:00', end: '2018-09-04T12:00:00' },
-        { id: '2', groupId: 'bbb', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' },
+        { id: '2', groupId: 'bbb', start: '2018-10-03T00:00:00', end: '2018-10-04T12:00:00' }
       ]
     })
     let event1 = currentCalendar.getEventById('1')

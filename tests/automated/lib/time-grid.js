@@ -155,7 +155,7 @@ export function getSlotElByIndex(index) {
 }
 
 export function getSlotElByTime(timeMs) {
-  const date = new Date('2016-01-01')
+  let date = new Date('2016-01-01')
   date = new Date(date.valueOf() + timeMs)
 
   if (date.getUTCDate() === 1) { // ensure no time overflow/underflow

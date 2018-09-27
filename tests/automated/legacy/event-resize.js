@@ -202,7 +202,7 @@ describe('eventResize', function() {
                   setTimeout(function() {
                     $('.fc-event .fc-resizer').simulate('drag', {
                       dy: $('.fc-slats tr:eq(1)').height() * 4.5, // 5 slots, so 2.5 hours
-                      isTouch: true,
+                      isTouch: true
                     })
                   }, 100) // delay for FF
                 }
@@ -315,7 +315,7 @@ describe('eventResize', function() {
         var options = {}
         options._eventsPositioned = function() {
           setTimeout(function() {
-            var dy = $('.fc-slats tr:eq(1)').height() * 5; // 5 slots, so 2.5 hours
+            var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
             $('.fc-event').simulate('mouseover') // for revealing resizer
             $('.fc-event .fc-resizer').simulate('drag', {
               dy: dy,

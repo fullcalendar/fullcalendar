@@ -48,7 +48,7 @@ export function parseIsoAsUtc(s) {
   var d = new Date(s)
 
   if (isNaN(d.valueOf())) {
-    throw s + ' is not valid date input'
+    throw new Error(s + ' is not valid date input')
   }
 
   return d
@@ -63,5 +63,5 @@ export function ensureDate(input) {
     return new Date(input)
   }
 
-  throw input + ' is invalid date input'
+  throw new Error(input + ' is invalid date input')
 }

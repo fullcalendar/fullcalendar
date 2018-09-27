@@ -42,11 +42,11 @@ window.spyOnCalendarCallback = function(name, func) {
   return options[name]
 }
 
-window.initCalendar = function(options, el) {
+window.initCalendar = function(moreOptions, el) {
   var $el
 
-  if (options) {
-    optionsStack.push(options)
+  if (moreOptions) {
+    optionsStack.push(moreOptions)
   }
 
   if (el) {

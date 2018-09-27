@@ -286,7 +286,7 @@ function simulateDrag(self, targetNode, startPoint, dx, dy, moveCnt, duration, o
       }
     }
 
-    dragStackCnt--;
+    dragStackCnt--
 
     // we wait because the there might be a FullCalendar drag interaction that finishes asynchronously
     // after the mouseend/touchend happens, and it's really convenient if our callback fires after that.
