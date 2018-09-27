@@ -23,8 +23,10 @@ gulp.task('archive', [
 gulp.task('archive:dist', [ 'dist' ], function() {
   return gulp.src([
     'dist/*.{js,css}',
-    'dist/locale-all.js',
-    'dist/locale/*.js'
+    'dist/plugins/*.js',
+    'dist/plugins/*.css',
+    'dist/locales/*.js',
+    'dist/locales-all.js'
   ], {
     base: 'dist/'
   })
@@ -83,7 +85,7 @@ function transformDemoPath(path) {
   if (
     !/\.min\.(js|css)$/.test(path) && // not already minified
     !/^\w/.test(path) && // reference to demo util js/css file
-    path !== '../locale-all.js' && // this file is already minified
+    path !== '../locales-all.js' && // this file is already minified
     path !== '../lib/superagent.js' // doesn't have a .min.js, but that's okay
   ) {
     // use minified

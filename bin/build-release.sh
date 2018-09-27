@@ -55,7 +55,7 @@ then
   if {
     git checkout --quiet --detach &&
     git add *.json &&
-    git add -f dist/*.js dist/*.d.ts dist/*.css dist/locale/*.js &&
+    git add -f dist/*.js dist/*.d.ts dist/*.css dist/plugins/*.js dist/plugins/*.css dist/locales/*.js &&
     git commit --quiet --no-verify -e -m "version $version" &&
     git tag -a "v$version" -m "version $version"
   }

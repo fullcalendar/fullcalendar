@@ -113,12 +113,12 @@ TODO: try https://webpack.js.org/plugins/module-concatenation-plugin/
 function generateLocaleMap() {
   const map = {}
 
-  glob.sync('locale/*.js').forEach(function(path) {
+  glob.sync('locales/*.js').forEach(function(path) {
     // strip out .js to get module name. also, path must start with ./
     map['dist/' + path.replace(/\.js$/, '')] = './' + path
   })
 
-  map['dist/locale-all'] = Object.values(map) // all locales combined
+  map['dist/locales-all'] = Object.values(map) // all locales combined
 
   return map
 }

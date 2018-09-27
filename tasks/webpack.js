@@ -22,7 +22,7 @@ gulp.task('webpack:watch', function() {
 
 
 const jsFilter = filter([ '**/*.js' ], { restore: true })
-const localeFilter = filter([ '**/locale-all.js', '**/locale/*.js' ], { restore: true })
+const localeFilter = filter([ '**/locales-all.js', '**/locales/*.js' ], { restore: true })
 
 function createStream(isDev, isWatch) {
   let stream = gulp.src([]) // don't pass in any files. webpack handles that
@@ -91,7 +91,7 @@ function reporterFunc(err, stats) {
     let localeModuleCnt = 0
 
     for (let moduleName in assets) {
-      if (moduleName.match(/^dist\/locale/)) {
+      if (moduleName.match(/^dist\/locales/)) {
         localeModuleCnt++
       } else {
         filteredAssets[moduleName] = assets[moduleName]

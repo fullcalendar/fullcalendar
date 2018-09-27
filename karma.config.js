@@ -18,7 +18,7 @@ module.exports = function(config) {
       // dependencies for main lib AND plugin
       'node_modules/superagent/superagent.js',
       'node_modules/moment/moment.js',
-      'node_modules/moment/locale/es.js', // only spanish for testing
+      'node_modules/moment/locales/es.js', // only spanish for testing
       'node_modules/moment-timezone/builds/moment-timezone-with-data.js',
       'node_modules/rrule/dist/es5/rrule.js',
       'node_modules/jquery/dist/jquery.js',
@@ -38,7 +38,7 @@ module.exports = function(config) {
       'dist/plugins/moment.js',
       'dist/plugins/moment-timezone.js',
       'dist/plugins/rrule.js',
-      'dist/locale-all.js',
+      'dist/locales-all.js',
 
       // COMMENT-OUT THESE LINES when testing IE11
       'node_modules/luxon/build/global/luxon.js',

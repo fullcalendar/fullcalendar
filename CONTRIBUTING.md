@@ -23,7 +23,7 @@ In the description of your [Pull Request][Using Pull Requests], please include r
 
 ## Contributing Locales
 
-Please edit the original files in the `locale/` directory. DO NOT edit anything in the `dist/` directory. The build system will responsible for merging FullCalendar's `locale/` data with the [MomentJS locale data].
+Please edit the original files in the `locales/` directory. DO NOT edit anything in the `dist/` directory. The build system will responsible for merging FullCalendar's `locales/` data with the [MomentJS locale data].
 
 
 ## Other Ways to Contribute

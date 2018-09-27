@@ -13,7 +13,7 @@ gulp.task('minify', [
 gulp.task('minify:js', [ 'webpack' ], function() {
   return gulp.src([
     'dist/*.js',
-    '!dist/locale-all.js', // already minified by webpack task
+    '!dist/locales-all.js', // already minified by webpack task
     'dist/plugins/*.js',
     '!dist/**/*.min.js' // avoid double minify
   ], { base: 'dist/' })
@@ -28,7 +28,8 @@ gulp.task('minify:js', [ 'webpack' ], function() {
 gulp.task('minify:css', [ 'webpack' ], function() {
   return gulp.src([
     'dist/*.css',
-    '!dist/*.min.css' // avoid double minify
+    'dist/plugins/*.css',
+    '!dist/**/*.min.css' // avoid double minify
   ])
     .pipe(cssmin())
     .pipe(rename({ extname: '.min.css' }))

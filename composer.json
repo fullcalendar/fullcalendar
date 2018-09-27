@@ -33,8 +33,9 @@
         "dist/fullcalendar.min.js",
         "dist/fullcalendar.min.css",
         "dist/plugins/*.min.js",
-        "dist/locale-all.js",
-        "dist/locale/*.js"
+        "dist/plugins/*.min.css",
+        "dist/locales/*.js",
+        "dist/locales-all.js"
       ]
     }
   }
