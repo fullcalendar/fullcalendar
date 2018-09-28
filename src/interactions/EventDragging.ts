@@ -133,17 +133,26 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     let isInvalid = false
 
     if (hit) {
-      receivingCalendar = hit.component.getCalendar()
-      mutation = computeEventMutation(initialHit, hit)
+      let receivingComponent = hit.component
+      receivingCalendar = receivingComponent.getCalendar()
 
-      if (mutation) {
-        mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, receivingCalendar)
+      if (
+        initialCalendar === receivingCalendar ||
+        receivingComponent.opt('editable') && receivingComponent.opt('droppable')
+      ) {
+        mutation = computeEventMutation(initialHit, hit)
 
-        if (!this.component.isEventsValid(mutatedRelevantEvents)) {
-          isInvalid = true
-          mutation = null
-          mutatedRelevantEvents = null
+        if (mutation) {
+          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, receivingCalendar)
+
+          if (!this.component.isEventsValid(mutatedRelevantEvents)) {
+            isInvalid = true
+            mutation = null
+            mutatedRelevantEvents = null
+          }
         }
+      } else {
+        receivingCalendar = null
       }
     }
 
