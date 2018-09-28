@@ -1,4 +1,4 @@
-import { createElement, removeElement, applyStyle, prependToElement, elementClosest } from './util/dom-manip'
+import { createElement, removeElement, applyStyle, prependToElement, elementClosest, appendToElement } from './util/dom-manip'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
@@ -1001,7 +1001,7 @@ export default class Calendar {
     if (footerLayout) {
       if (!this.footer) {
         this.footer = new Toolbar(this, 'fc-footer-toolbar')
-        prependToElement(this.el, this.footer.el)
+        appendToElement(this.el, this.footer.el)
       }
       this.footer.render(
         assignTo({ layout: footerLayout }, props),
