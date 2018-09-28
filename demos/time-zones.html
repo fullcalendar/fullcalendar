@@ -10,6 +10,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     var initialTimeZone = 'local';
     var timeZoneSelectorEl = document.getElementById('time-zone-selector');
+    var loadingEl = document.getElementById('loading');
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -32,16 +33,13 @@
       },
       loading: function(bool) {
         if (bool) {
-          document.getElementById('loading').style.display = 'inline'; // show
+          loadingEl.style.display = 'inline'; // show
         } else {
-          document.getElementById('loading').style.display = 'none'; // hide
+          loadingEl.style.display = 'none'; // hide
         }
       },
 
       eventTimeFormat: { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' },
-      // TODO: once event API is better:
-      // eventRender: function(event, el) {
-      // },
 
       dateClick: function(arg) {
         console.log('dateClick', calendar.formatIso(arg.date));
@@ -60,7 +58,7 @@
       timeZones.forEach(function(timeZone) {
         var optionEl;
 
-        if (timeZone != 'UTC') { // UTC is already in the list
+        if (timeZone !== 'UTC') { // UTC is already in the list
           optionEl = document.createElement('option');
           optionEl.value = timeZone;
           optionEl.innerText = timeZone;

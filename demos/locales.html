@@ -92,7 +92,7 @@
       optionEl.selected = localeCode == initialLocaleCode;
       optionEl.innerText = localeCode;
       localeSelectorEl.appendChild(optionEl);
-    })
+    });
 
     // when the selected option changes, dynamically change the calendar option
     localeSelectorEl.addEventListener('change', function() {
