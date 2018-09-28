@@ -131,9 +131,8 @@ export default class Calendar {
       this.el.classList.add('fc')
       this._render()
     } else if (this.elementVisible()) {
-      // mainly for the public API
       this.calcSize()
-      this.updateViewSize(true) // force=true
+      this.requestRerender(true)
     }
   }
 
@@ -477,7 +476,7 @@ export default class Calendar {
     this.handleOptions(this.optionsManager.computed)
 
     if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
-      this.updateViewSize(true) // isResize=true
+      this.updateSize()
     } else if (name === 'timeZone') {
       this.dispatch({
         type: 'CHANGE_TIMEZONE',
@@ -839,6 +838,11 @@ export default class Calendar {
 
   // Resizing
   // -----------------------------------------------------------------------------------------------------------------
+
+
+  updateSize() { // public
+    this.updateViewSize(true) // force=true
+  }
 
 
   getSuggestedViewHeight(): number {
