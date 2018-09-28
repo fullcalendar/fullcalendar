@@ -2,142 +2,69 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../node_modules/dragula/dist/dragula.css' rel='stylesheet' />
 <link href='../dist/fullcalendar.css' rel='stylesheet' />
 <script src='../dist/fullcalendar.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
+    var srcCalendarEl = document.getElementById('source-calendar');
+    var destCalendarEl = document.getElementById('destination-calendar');
 
-    /* initialize the external events
-    -----------------------------------------------------------------*/
-
-    var containerEl = document.getElementById('external-events-list');
-
-    new FullCalendar.Draggable(containerEl, {
-      itemSelector: '.fc-event',
-      eventData: function(eventEl) {
-        return {
-          title: eventEl.innerText.trim()
-        }
-      }
-    });
-
-    /* initialize the calendar
-    -----------------------------------------------------------------*/
-
-    var calendarEl0 = document.getElementById('calendar0');
-    var calendar0 = new FullCalendar.Calendar(calendarEl0, {
-      header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay'
-      },
+    var srcCalendar = new FullCalendar.Calendar(srcCalendarEl, {
       editable: true,
-      droppable: true, // this allows things to be dropped onto the calendar
-      drop: function(arg) {
-        // is the "remove after drop" checkbox checked?
-        if (document.getElementById('drop-remove').checked) {
-          // if so, remove the element from the "Draggable Events" list
-          arg.draggedEl.parentNode.removeChild(arg.draggedEl);
+      defaultDate: '2018-09-12',
+      events: [
+        {
+          title: 'event1',
+          start: '2018-09-11T10:00:00',
+          end: '2018-09-11T16:00:00'
+        },
+        {
+          title: 'event2',
+          start: '2018-09-13T10:00:00',
+          end: '2018-09-13T16:00:00'
         }
+      ],
+      eventLeave: function(info) {
+        console.log('event left!', info.event);
       }
     });
-    calendar0.render();
 
-    var calendarEl1 = document.getElementById('calendar1');
-    var calendar1 = new FullCalendar.Calendar(calendarEl1, {
-      header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay'
-      },
+    var destCalendar = new FullCalendar.Calendar(destCalendarEl, {
+      defaultDate: '2018-09-12',
       editable: true,
-      droppable: true, // this allows things to be dropped onto the calendar
-      drop: function(arg) {
-        // is the "remove after drop" checkbox checked?
-        if (document.getElementById('drop-remove').checked) {
-          // if so, remove the element from the "Draggable Events" list
-          arg.draggedEl.parentNode.removeChild(arg.draggedEl);
-        }
+      droppable: true, // will let it receive events!
+      eventReceive: function(info) {
+        console.log('event received!', info.event);
       }
     });
-    calendar1.render();
 
+    srcCalendar.render();
+    destCalendar.render();
   });
 
 </script>
 <style>
 
   body {
-    margin-top: 40px;
-    text-align: center;
+    margin: 20px 0 0 20px;
     font-size: 14px;
     font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
   }
 
-  #external-events {
+  #source-calendar,
+  #destination-calendar {
     float: left;
-    width: 150px;
-    padding: 0 10px;
-    border: 1px solid #ccc;
-    background: #eee;
-    text-align: left;
-  }
-
-  #external-events h4 {
-    font-size: 16px;
-    margin-top: 0;
-    padding-top: 1em;
-  }
-
-  #external-events .fc-event {
-    margin: 10px 0;
-    cursor: pointer;
-  }
-
-  #external-events p {
-    margin: 1.5em 0;
-    font-size: 11px;
-    color: #666;
-  }
-
-  #external-events p input {
-    margin: 0;
-    vertical-align: middle;
-  }
-
-  .fc {
-    float: left;
-    margin-left: 20px;
     width: 600px;
+    margin: 0 20px 20px 0;
   }
 
 </style>
 </head>
 <body>
 
-  <div id='external-events'>
-    <h4>Draggable Events</h4>
-
-    <div id='external-events-list'>
-      <div class='fc-event'>My Event 1</div>
-      <div class='fc-event'>My Event 2</div>
-      <div class='fc-event'>My Event 3</div>
-      <div class='fc-event'>My Event 4</div>
-      <div class='fc-event'>My Event 5</div>
-    </div>
-
-    <p>
-      <input type='checkbox' id='drop-remove' />
-      <label for='drop-remove'>remove after drop</label>
-    </p>
-  </div>
-
-  <div id='calendar0'></div>
-  <div id='calendar1'></div>
-
-  <div style='clear:both'></div>
+  <div id='source-calendar'></div>
+  <div id='destination-calendar'></div>
 
 </body>
 </html>
