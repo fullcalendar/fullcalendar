@@ -245,8 +245,15 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
           ])
 
         // dropped in different calendar
-        // TODO: more public triggers
         } else if (receivingCalendar) {
+
+          initialCalendar.publiclyTrigger('eventLeave', [
+            {
+              draggedEl: ev.subjectEl,
+              event: eventApi,
+              view: initialView
+            }
+          ])
 
           initialCalendar.dispatch({
             type: 'REMOVE_EVENT_INSTANCES',
@@ -264,6 +271,14 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
               eventInstanceId: eventInstance.instanceId
             })
           }
+
+          receivingCalendar.publiclyTrigger('eventReceive', [
+            {
+              draggedEl: ev.subjectEl,
+              event: new EventApi(receivingCalendar, eventDef, eventInstance),
+              view: this.hitDragging.finalHit.component
+            }
+          ])
         }
 
       } else {
