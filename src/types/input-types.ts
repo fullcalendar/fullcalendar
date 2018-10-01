@@ -4,13 +4,12 @@ https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalenda
 */
 
 import View from '../View'
-import { EventSourceInput } from '../structs/event-source'
+import { EventSourceInput, EventRootInputTransformer, EventInputTransformer } from '../structs/event-source'
 import { Duration, DurationInput } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
 import { FormatterInput } from '../datelib/formatting'
 import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursInput } from '../structs/business-hours'
-import { EventInput } from '../structs/event'
 import EventApi from '../api/EventApi'
 import { Allow, ConstraintInput, Overlap } from '../validation'
 
@@ -178,7 +177,8 @@ export interface OptionsInputBase {
   eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   select?(arg: { start: Date, end: Date, allDay: boolean, resource: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   unselect?(arg: { view: View, jsEvent: Event }): void
-  eventDataTransform?(eventData: any): EventInput
+  eventRootDataTransform?: EventRootInputTransformer
+  eventDataTransform?: EventInputTransformer
   loading?(isLoading: boolean, view: View): void
   eventRender?(arg: { event: EventApi, el: HTMLElement, view: View }): void
   eventPositioned?(arg: { event: EventApi, el: HTMLElement, view: View }): void

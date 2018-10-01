@@ -8,6 +8,7 @@ import {
   parseEvent,
   EventTuple
 } from './event'
+import { EventSource } from './event-source'
 import { expandRecurringRanges } from './recurring-event'
 import Calendar from '../Calendar'
 import { assignTo, filterHash } from '../util/object'
@@ -30,11 +31,6 @@ export function parseEvents(
   calendar: Calendar
 ): EventStore {
   let eventStore = createEmptyEventStore()
-  let transform = calendar.opt('eventDataTransform')
-
-  if (transform) {
-    rawEvents = transformRawEvents(rawEvents, transform)
-  }
 
   for (let rawEvent of rawEvents) {
     let tuple = parseEvent(rawEvent, sourceId, calendar)
@@ -121,7 +117,30 @@ export function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
   return Boolean(def0.groupId && def0.groupId === def1.groupId)
 }
 
-export function transformRawEvents(rawEvents, func) {
+export function transformRawEvents(rawEvents, eventSource: EventSource, calendar: Calendar) {
+  let calRootTransform = calendar.opt('eventRootDataTransform')
+  let calEachTransform = calendar.opt('eventDataTransform')
+  let sourceRootTransform = eventSource ? eventSource.rootDataTransform : null
+  let sourceEachTransform = eventSource ? eventSource.eventDataTransform : null
+
+  if (sourceRootTransform) {
+    rawEvents = sourceRootTransform(rawEvents) || []
+  } else if (calRootTransform) { // can't let more than one thing massage the root data
+    rawEvents = calRootTransform(rawEvents) || []
+  }
+
+  if (sourceEachTransform) {
+    rawEvents = transformEachRawEvent(rawEvents, sourceEachTransform)
+  }
+
+  if (calEachTransform) {
+    rawEvents = transformEachRawEvent(rawEvents, calEachTransform)
+  }
+
+  return rawEvents
+}
+
+function transformEachRawEvent(rawEvents, func) {
   let refinedEvents
 
   if (!func) {

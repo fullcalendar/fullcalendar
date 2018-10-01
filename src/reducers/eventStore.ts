@@ -8,9 +8,9 @@ import {
   getRelevantEvents,
   createEmptyEventStore,
   filterEventStoreDefs,
-  transformRawEvents,
   parseEvents,
-  expandRecurring
+  expandRecurring,
+  transformRawEvents
 } from '../structs/event-store'
 import { Action } from './types'
 import { EventSourceHash, EventSource } from '../structs/event-source'
@@ -94,8 +94,12 @@ function receiveRawEvents(
     eventSource && // not already removed
     fetchId === eventSource.latestFetchId // TODO: wish this logic was always in event-sources
   ) {
-    rawEvents = transformRawEvents(rawEvents, eventSource.eventDataTransform)
-    let subset = parseEvents(rawEvents, eventSource.sourceId, calendar)
+
+    let subset = parseEvents(
+      transformRawEvents(rawEvents, eventSource, calendar),
+      eventSource.sourceId,
+      calendar
+    )
 
     if (fetchRange) {
       subset = expandRecurring(subset, fetchRange, calendar)
