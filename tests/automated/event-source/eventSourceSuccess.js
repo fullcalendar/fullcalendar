@@ -1,4 +1,4 @@
-describe('eventRootDataTransform', function() {
+describe('eventSourceSuccess', function() {
 
   const FETCH_FUNC = function(info, successCallback) {
     successCallback({
@@ -19,7 +19,7 @@ describe('eventRootDataTransform', function() {
   it('massages event data with calendar-wide setting', function() {
     initCalendar({
       eventSources: [ FETCH_FUNC ],
-      eventRootDataTransform: TRANSFORM
+      eventSourceSuccess: TRANSFORM
     })
 
     expect(currentCalendar.getEvents().length).toBe(1)
@@ -30,7 +30,7 @@ describe('eventRootDataTransform', function() {
       eventSources: [
         {
           events: FETCH_FUNC,
-          rootDataTransform: TRANSFORM
+          success: TRANSFORM
         }
       ]
     })

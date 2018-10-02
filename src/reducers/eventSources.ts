@@ -125,24 +125,26 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange | null, cal
       range: fetchRange
     },
     function(res) {
+      let { rawEvents } = res
       let calSuccess = calendar.opt('eventSourceSuccess')
+      let calSuccessRes
+      let sourceSuccessRes
 
-      // only call success callbacks if it was a network request (aka has a `response`)
-      if (res.response) {
-        if (eventSource.success) {
-          eventSource.success(res.rawEvents, res.response)
-        }
-        if (calSuccess) {
-          calSuccess(res.rawEvents, res.response)
-        }
+      if (eventSource.success) {
+        sourceSuccessRes = eventSource.success(rawEvents, res.response)
       }
+      if (calSuccess) {
+        calSuccessRes = calSuccess(rawEvents, res.response)
+      }
+
+      rawEvents = sourceSuccessRes || calSuccessRes || rawEvents
 
       calendar.dispatch({
         type: 'RECEIVE_EVENTS',
         sourceId: eventSource.sourceId,
         fetchId,
         fetchRange,
-        rawEvents: res.rawEvents
+        rawEvents
       })
     },
     function(error) {

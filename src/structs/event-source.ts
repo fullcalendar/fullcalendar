@@ -20,14 +20,12 @@ export type EventSourceError = {
 }
 
 export type EventInputTransformer = (eventInput: EventInput) => EventInput | null
-export type EventRootInputTransformer = (eventRootInput: any) => EventInput[]
-export type EventSourceSuccessResponseHandler = (rawEvents: EventInput[], response: any) => void
+export type EventSourceSuccessResponseHandler = (rawData: any, response: any) => EventInput[] | void
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
 export interface ExtendedEventSourceInput {
   id?: string | number
   allDayDefault?: boolean
-  rootDataTransform?: EventRootInputTransformer
   eventDataTransform?: EventInputTransformer
   editable?: boolean
   startEditable?: boolean
@@ -74,7 +72,6 @@ export interface EventSource {
   latestFetchId: string
   fetchRange: DateRange | null
   allDayDefault: boolean | null
-  rootDataTransform?: EventRootInputTransformer
   eventDataTransform: EventInputTransformer
   startEditable: boolean | null
   durationEditable: boolean | null
@@ -111,7 +108,6 @@ export interface EventSourceDef {
 const SIMPLE_SOURCE_PROPS = {
   id: String,
   allDayDefault: Boolean,
-  rootDataTransform: Function,
   eventDataTransform: Function,
   editable: Boolean,
   startEditable: Boolean,

@@ -118,16 +118,8 @@ export function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
 }
 
 export function transformRawEvents(rawEvents, eventSource: EventSource, calendar: Calendar) {
-  let calRootTransform = calendar.opt('eventRootDataTransform')
   let calEachTransform = calendar.opt('eventDataTransform')
-  let sourceRootTransform = eventSource ? eventSource.rootDataTransform : null
   let sourceEachTransform = eventSource ? eventSource.eventDataTransform : null
-
-  if (sourceRootTransform) {
-    rawEvents = sourceRootTransform(rawEvents) || []
-  } else if (calRootTransform) { // can't let more than one thing massage the root data
-    rawEvents = calRootTransform(rawEvents) || []
-  }
 
   if (sourceEachTransform) {
     rawEvents = transformEachRawEvent(rawEvents, sourceEachTransform)
