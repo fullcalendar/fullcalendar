@@ -27,8 +27,8 @@
     "rrule": "^2.5.6",
     "superagent": "^3.8.3"
   },
-  "version": "0.0.0",
-  "releaseDate": "1970-01-01",
+  "version": "4.0.0-alpha.2",
+  "releaseDate": "2018-10-02",
   "devDependencies": {
     "@types/luxon": "^1.2.2",
     "awesome-typescript-loader": "^3.5.0",
