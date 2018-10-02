@@ -1,3 +1,16 @@
+
+v4.0.0-alpha.2 (2018-10-02)
+---------------------------
+
+See https://fullcalendar.io/docs/v4/release-notes
+
+
+v4.0.0-alpha (2018-04-13)
+-------------------------
+
+See https://fullcalendar.io/blog/2018/04/alpha-release-jquery-removal
+
+
 v3.9.0 (2018-03-04)
 -------------------
 
