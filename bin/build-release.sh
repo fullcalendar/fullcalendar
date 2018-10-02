@@ -52,10 +52,12 @@ then
 
   # make a tagged detached commit of the dist files.
   # no-verify avoids commit hooks.
+
   if {
     git checkout --quiet --detach &&
     git add *.json &&
-    git add -f dist/*.js dist/*.d.ts dist/*.css dist/plugins/*.js dist/plugins/*.css dist/locales/*.js &&
+
+    git add -f dist/*.js dist/*.d.ts dist/*.css dist/plugins/*.js dist/locales/*.js &&
     git commit --quiet --no-verify -e -m "version $version" &&
     git tag -a "v$version" -m "version $version"
   }
