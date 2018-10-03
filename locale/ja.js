@@ -35,5 +35,5 @@ FullCalendar.locale("ja", {
   eventLimitText: function(n) {
     return "他 " + n + " 件";
   },
-  noEventsMessage: "イベントが表示されないように"
+  noEventsMessage: "表示する予定はありません"
 });
