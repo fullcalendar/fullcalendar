@@ -32,6 +32,7 @@ import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
+import { PluginSystem } from './plugin-system'
 import * as exportHooks from './exports'
 
 
@@ -58,6 +59,7 @@ export default class Calendar {
   viewSpecs: ViewSpecHash
   theme: Theme
   dateEnv: DateEnv
+  pluginSystem: PluginSystem
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
 
@@ -100,6 +102,7 @@ export default class Calendar {
     this.viewsByType = {}
 
     this.optionsManager = new OptionsManager(overrides)
+    this.pluginSystem = new PluginSystem()
 
     this.buildDateEnv = reselector(buildDateEnv)
     this.buildTheme = reselector(buildTheme)
@@ -108,6 +111,12 @@ export default class Calendar {
     this.parseBusinessHours = reselector((input) => {
       return parseBusinessHours(input, this)
     })
+
+    // only do once. don't do in handleOptions. because can't remove plugins
+    let pluginDefs = this.optionsManager.computed.plugins || []
+    for (let pluginDef of pluginDefs) {
+      this.pluginSystem.add(pluginDef)
+    }
 
     this.handleOptions(this.optionsManager.computed)
     this.hydrate()

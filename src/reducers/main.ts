@@ -7,6 +7,7 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
 import { computeEventDefUis } from '../component/event-rendering'
+import { assignTo } from '../util/object'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
   calendar.publiclyTrigger(action.type, action) // for testing hooks
@@ -14,7 +15,7 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
   let dateProfile = reduceDateProfile(state.dateProfile, action)
   let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendar)
 
-  return {
+  let nextState = assignTo({}, state, {
     dateProfile,
     eventSources,
     eventStore: reduceEventStore(state.eventStore, action, eventSources, dateProfile, calendar),
@@ -26,7 +27,13 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     eventResize: reduceEventResize(state.eventResize, action, eventSources, calendar),
     eventSourceLoadingLevel: computeLoadingLevel(eventSources),
     loadingLevel: computeLoadingLevel(eventSources)
+  })
+
+  for (let reducerFunc of calendar.pluginSystem.hooks.reducers) {
+    nextState = reducerFunc(nextState, action, calendar)
   }
+
+  return nextState
 }
 
 function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action) {

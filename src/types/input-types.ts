@@ -12,6 +12,7 @@ import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursInput } from '../structs/business-hours'
 import EventApi from '../api/EventApi'
 import { Allow, ConstraintInput, Overlap } from '../validation'
+import { PluginDef } from '../plugin-system'
 
 
 export interface ToolbarInput {
@@ -201,4 +202,5 @@ export interface ViewOptionsInput extends OptionsInputBase {
 export interface OptionsInput extends OptionsInputBase {
   buttonText?: ButtonTextCompoundInput
   views?: { [viewId: string]: ViewOptionsInput }
+  plugins: PluginDef[]
 }

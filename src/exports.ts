@@ -124,3 +124,5 @@ export { formatDate, formatRange } from './formatting-api'
 export { globalDefaults } from './options'
 
 export { registerRecurringType, ParsedRecurring } from './structs/recurring-event'
+
+export { createPlugin } from './plugin-system'

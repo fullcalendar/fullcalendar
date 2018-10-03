@@ -8,12 +8,15 @@ import { DateProfile } from '../DateProfileGenerator'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
 import { DateEnv } from '../datelib/env'
+import Calendar from '../Calendar'
 
 export interface CalendarState extends DateComponentRenderState {
   eventSources: EventSourceHash
   eventSourceLoadingLevel: number
   loadingLevel: number
 }
+
+export type reducerFunc = (state: CalendarState, action: Action, calendar: Calendar) => CalendarState
 
 export type Action =
 
