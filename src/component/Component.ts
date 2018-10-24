@@ -74,7 +74,7 @@ export default class Component<PropsType> {
     if (!prevArgs || !isArraysEqual(prevArgs, args)) {
 
       if (prevArgs && unrenderMethodName) {
-        this[unrenderMethodName]()
+        this[unrenderMethodName].apply(this, prevArgs)
       }
 
       this[renderMethodName].apply(this, args)
@@ -109,17 +109,19 @@ export default class Component<PropsType> {
 
   // after destroy is called, this component won't ever be used again
   destroy() {
+    let { renderArgs } = this
+
     if (this.props) {
       this.unrender()
     }
 
-    let methodNames = [] // in reverse
-    this.unrenderMethodNames.forEach(function(methodName) {
-      methodNames.unshift(methodName)
+    let tuples = [] // in reverse
+    this.unrenderMethodNames.forEach(function(unrenderMethodName, renderMethodName) {
+      tuples.unshift([ unrenderMethodName, renderMethodName ])
     })
 
-    for (let methodName in methodNames) {
-      this[methodName]()
+    for (let tuple of tuples) {
+      this[tuple[0]].apply(this, renderArgs[tuple[1]])
     }
   }
 

@@ -40,20 +40,19 @@ export interface Seg {
 
 export default class DateComponent extends Component<DateComponentProps> {
 
-  // self-config, overridable by subclasses
-  isInteractable: boolean = false
-  useEventCenter: boolean = true // for dragging geometry
-  doesDragMirror: boolean = false // for events that ORIGINATE from this component
-  doesDragHighlight: boolean = false // for events that ORIGINATE from this component
-  fgSegSelector: string = '.fc-event-container > *' // lets eventRender produce elements without fc-event class
-  bgSegSelector: string = '.fc-bgevent'
+  // self-config, overridable by subclasses. must set on prototype
+  isInteractable: boolean
+  useEventCenter: boolean // for dragging geometry
+  doesDragMirror: boolean // for events that ORIGINATE from this component
+  doesDragHighlight: boolean // for events that ORIGINATE from this component
+  slicingType: 'timed' | 'all-day' | null
+  fgSegSelector: string // lets eventRender produce elements without fc-event class
+  bgSegSelector: string
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
   // of the date areas. if not defined, assumes to be day and time granularity.
   // TODO: port isTimeScale into same system?
   largeUnit: any
-
-  slicingType: 'timed' | 'all-day' | null = null
 
   eventRendererClass: any
   mirrorRendererClass: any
@@ -105,51 +104,49 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
   render(props: DateComponentProps) {
-    this.subrender('afterSkeletonRender', [], 'beforeSkeletonUnrender', 'skeleton')
-    let dateId = this.subrender('_renderDates', [ props.dateProfile ], '_unrenderDates', 'dates')
-    this.subrender('renderBusinessHours', [ props.businessHours, dateId ], 'unrenderBusinessHours', 'businessHours')
-    this.subrender('renderDateSelection', [ props.dateSelection, dateId ], 'unrenderDateSelection', 'dateSelection')
-    let evId = this.subrender('renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents', 'events')
-    this.subrender('selectEventsByInstanceId', [ props.eventSelection, evId ], 'unselectAllEvents', 'eventSelection')
-    this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState', 'eventDrag')
-    this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState', 'eventResize')
+    this.subrender('afterSkeletonRender', [], 'beforeSkeletonUnrender', true)
+    let dateId = this.subrender('_renderDates', [ props.dateProfile ], '_unrenderDates', true)
+    this.subrender('renderBusinessHours', [ props.businessHours, dateId ], 'unrenderBusinessHours', true)
+    this.subrender('renderDateSelection', [ props.dateSelection, dateId ], 'unrenderDateSelection', true)
+    let evId = this.subrender('renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents', true)
+    this.subrender('selectEventsByInstanceId', [ props.eventSelection, evId ], 'unselectAllEvents', true)
+    this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState', true)
+    this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState', true)
   }
 
   updateSize(isResize: boolean = false) {
-
-    // instead of using this hash as method names, uses it as flags
     let map = this.dirtySizeMethodNames
 
-    if (isResize || map.has('skeleton') || map.has('dates') || map.has('events')) {
+    if (isResize || map.has('afterSkeletonRender') || map.has('_renderDates') || map.has('renderEvents')) {
       // sort of the catch-all sizing
       // anything that might cause dimension changes
       this.updateBaseSize()
       this.buildPositionCaches()
     }
 
-    if (isResize || map.has('businessHours')) {
+    if (isResize || map.has('renderBusinessHours')) {
       this.computeBusinessHoursSize()
     }
 
-    if (isResize || map.has('dateSelection') || map.has('eventDrag') || map.has('eventResize')) {
+    if (isResize || map.has('renderDateSelection') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
       this.computeHighlightSize()
       this.computeMirrorSize()
     }
 
-    if (isResize || map.has('events')) {
+    if (isResize || map.has('renderEvents')) {
       this.computeEventsSize()
     }
 
-    if (isResize || map.has('businessHours')) {
+    if (isResize || map.has('renderBusinessHours')) {
       this.assignBusinessHoursSize()
     }
 
-    if (isResize || map.has('dateSelection') || map.has('eventDrag') || map.has('eventResize')) {
+    if (isResize || map.has('renderDateSelection') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
       this.assignHighlightSize()
       this.assignMirrorSize()
     }
 
-    if (isResize || map.has('events')) {
+    if (isResize || map.has('renderEvents')) {
       this.assignEventsSize()
     }
 
@@ -255,7 +252,9 @@ export default class DateComponent extends Component<DateComponentProps> {
   // ---------------------------------------------------------------------------------------------------------------
 
   renderDateSelection(selection: DateSpan) {
-    this.renderHighlightSegs(this.selectionToSegs(selection, false))
+    if (selection) {
+      this.renderHighlightSegs(this.selectionToSegs(selection, false))
+    }
   }
 
   unrenderDateSelection() {
@@ -319,23 +318,27 @@ export default class DateComponent extends Component<DateComponentProps> {
   // TODO: show/hide according to groupId?
 
   selectEventsByInstanceId(instanceId) {
-    this.getAllEventSegs().forEach(function(seg) {
-      let eventInstance = seg.eventRange.instance
-      if (
-        eventInstance && eventInstance.instanceId === instanceId &&
-        seg.el // necessary?
-      ) {
-        seg.el.classList.add('fc-selected')
-      }
-    })
+    if (instanceId) {
+      this.getAllEventSegs().forEach(function(seg) {
+        let eventInstance = seg.eventRange.instance
+        if (
+          eventInstance && eventInstance.instanceId === instanceId &&
+          seg.el // necessary?
+        ) {
+          seg.el.classList.add('fc-selected')
+        }
+      })
+    }
   }
 
-  unselectAllEvents() {
-    this.getAllEventSegs().forEach(function(seg) {
-      if (seg.el) { // necessary?
-        seg.el.classList.remove('fc-selected')
-      }
-    })
+  unselectAllEvents(instanceId) {
+    if (instanceId) {
+      this.getAllEventSegs().forEach(function(seg) {
+        if (seg.el) { // necessary?
+          seg.el.classList.remove('fc-selected')
+        }
+      })
+    }
   }
 
 
@@ -343,18 +346,22 @@ export default class DateComponent extends Component<DateComponentProps> {
   // ---------------------------------------------------------------------------------------------------------------
 
   renderEventDragState(state: EventInteractionUiState) {
-    this.hideSegsByHash(state.affectedEvents.instances)
-    this.renderEventDrag(
-      state.mutatedEvents,
-      state.eventUis,
-      state.isEvent,
-      state.origSeg
-    )
+    if (state) {
+      this.hideSegsByHash(state.affectedEvents.instances)
+      this.renderEventDrag(
+        state.mutatedEvents,
+        state.eventUis,
+        state.isEvent,
+        state.origSeg
+      )
+    }
   }
 
-  unrenderEventDragState() {
-    this.showSegsByHash(this.props.eventDrag.affectedEvents.instances)
-    this.unrenderEventDrag()
+  unrenderEventDragState(state: EventInteractionUiState) {
+    if (state) {
+      this.showSegsByHash(state.affectedEvents.instances)
+      this.unrenderEventDrag()
+    }
   }
 
   // Renders a visual indication of a event or external-element drag over the given drop zone.
@@ -394,17 +401,21 @@ export default class DateComponent extends Component<DateComponentProps> {
   // ---------------------------------------------------------------------------------------------------------------
 
   renderEventResizeState(state: EventInteractionUiState) {
-    this.hideSegsByHash(state.affectedEvents.instances)
-    this.renderEventResize(
-      state.mutatedEvents,
-      state.eventUis,
-      state.origSeg
-    )
+    if (state) {
+      this.hideSegsByHash(state.affectedEvents.instances)
+      this.renderEventResize(
+        state.mutatedEvents,
+        state.eventUis,
+        state.origSeg
+      )
+    }
   }
 
-  unrenderEventResizeState() {
-    this.showSegsByHash(this.props.eventResize.affectedEvents.instances)
-    this.unrenderEventResize()
+  unrenderEventResizeState(state: EventInteractionUiState) {
+    if (state) {
+      this.showSegsByHash(state.affectedEvents.instances)
+      this.unrenderEventResize()
+    }
   }
 
   // Renders a visual indication of an event being resized.
@@ -722,3 +733,11 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
 }
+
+DateComponent.prototype.isInteractable = false
+DateComponent.prototype.useEventCenter = true
+DateComponent.prototype.doesDragMirror = false
+DateComponent.prototype.doesDragHighlight = false
+DateComponent.prototype.slicingType = null
+DateComponent.prototype.fgSegSelector = '.fc-event-container > *'
+DateComponent.prototype.bgSegSelector = '.fc-bgevent'

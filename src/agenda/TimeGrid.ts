@@ -43,11 +43,6 @@ export default class TimeGrid extends DateComponent {
   bookendCells: DayTableInterface['bookendCells']
   getCellDate: DayTableInterface['getCellDate']
 
-  isInteractable = true
-  doesDragMirror = true
-  doesDragHighlight = false
-  slicingType: 'timed' = 'timed' // stupid TypeScript
-
   mirrorRenderer: any
 
   dayRanges: DateRange[] // of start-end of each day
@@ -655,10 +650,12 @@ export default class TimeGrid extends DateComponent {
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
   renderDateSelection(selection: DateSpan) {
-    if (this.opt('selectMirror')) {
-      this.mirrorRenderer.renderEventSegs(this.selectionToSegs(selection, true))
-    } else {
-      this.renderHighlightSegs(this.selectionToSegs(selection, false))
+    if (selection) {
+      if (this.opt('selectMirror')) {
+        this.mirrorRenderer.renderEventSegs(this.selectionToSegs(selection, true))
+      } else {
+        this.renderHighlightSegs(this.selectionToSegs(selection, false))
+      }
     }
   }
 
@@ -670,6 +667,11 @@ export default class TimeGrid extends DateComponent {
   }
 
 }
+
+TimeGrid.prototype.isInteractable = true
+TimeGrid.prototype.doesDragMirror = true
+TimeGrid.prototype.doesDragHighlight = false
+TimeGrid.prototype.slicingType = 'timed'
 
 TimeGrid.prototype.eventRendererClass = TimeGridEventRenderer
 TimeGrid.prototype.mirrorRendererClass = TimeGridMirrorRenderer

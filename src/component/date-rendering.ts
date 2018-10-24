@@ -60,21 +60,22 @@ export function getAllDayHtml(component: Component<any>) {
 
 // Computes HTML classNames for a single-day element
 export function getDayClasses(component: DateComponent, date: DateMarker, noThemeHighlight?) {
-  let view = this.view
+  let { calendar, view, theme } = component
+  let dateProfile = component.props.dateProfile
   let classes = []
   let todayStart: DateMarker
   let todayEnd: DateMarker
 
-  if (!rangeContainsMarker(this.dateProfile.activeRange, date)) {
-    classes.push('fc-disabled-day') // TODO: jQuery UI theme?
+  if (!rangeContainsMarker(dateProfile.activeRange, date)) {
+    classes.push('fc-disabled-day')
   } else {
     classes.push('fc-' + DAY_IDS[date.getUTCDay()])
 
-    if (view.isDateInOtherMonth(date, this.dateProfile)) { // TODO: use DateComponent subclass somehow
+    if (view.isDateInOtherMonth(date, dateProfile)) {
       classes.push('fc-other-month')
     }
 
-    todayStart = startOfDay(view.calendar.getNow())
+    todayStart = startOfDay(calendar.getNow())
     todayEnd = addDays(todayStart, 1)
 
     if (date < todayStart) {
@@ -85,7 +86,7 @@ export function getDayClasses(component: DateComponent, date: DateMarker, noThem
       classes.push('fc-today')
 
       if (noThemeHighlight !== true) {
-        classes.push(view.calendar.theme.getClass('today'))
+        classes.push(theme.getClass('today'))
       }
     }
   }

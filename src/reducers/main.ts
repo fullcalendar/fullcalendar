@@ -56,7 +56,11 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
     case 'SET_DATE':
     case 'SET_VIEW_TYPE':
       return protectSameDateProfile(
-        calendar.dateProfileGenerators[viewType].build(action.dateMarker, undefined, true), // forceToValid=true
+        calendar.dateProfileGenerators[viewType].build(
+          action.dateMarker || currentDateProfile.currentDate,
+          undefined,
+          true // forceToValid=true
+        ),
         currentDateProfile
       )
     default:
@@ -139,7 +143,7 @@ function reduceEventResize(currentResize: EventInteractionUiState | null, action
 }
 
 function protectSameDateProfile(newDateProfile, oldDateProfile) {
-  if (isDateProfilesEqual(newDateProfile, oldDateProfile)) {
+  if (newDateProfile && oldDateProfile && isDateProfilesEqual(newDateProfile, oldDateProfile)) {
     return oldDateProfile
   }
 

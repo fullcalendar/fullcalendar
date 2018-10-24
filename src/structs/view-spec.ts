@@ -67,13 +67,19 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
   }
 
   let queryButtonText = function(options) {
-    let buttonText = options.buttonText || {}
+    let buttonTextMap = options.buttonText || {}
+    let buttonTextKey = viewDef.defaults.buttonTextKey
 
-    if (buttonText[viewDef.type] != null) {
-      return buttonText[viewDef.type]
+    if (buttonTextKey != null && buttonTextMap[buttonTextKey] != null) {
+      return buttonTextMap[buttonTextKey]
     }
-    if (buttonText[singleUnit] != null) {
-      return buttonText[singleUnit]
+
+    if (buttonTextMap[viewDef.type] != null) {
+      return buttonTextMap[viewDef.type]
+    }
+
+    if (buttonTextMap[singleUnit] != null) {
+      return buttonTextMap[singleUnit]
     }
   }
 
@@ -104,7 +110,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     buttonTextDefault:
       queryButtonText(optionsManager.localeDefaults) ||
       queryButtonText(optionsManager.dirDefaults) ||
-      viewDef.defaults.buttonText || // a single string. from ViewSubclass.defaults
+      viewDef.defaults.buttonText ||
       queryButtonText(globalDefaults) ||
       viewDef.type // fall back to given view name
   }

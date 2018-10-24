@@ -272,7 +272,7 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
     let className = this.theme.getClass('stateActive')
 
     findElements(this.el, '.fc-button').forEach((buttonEl) => {
-      if (buttonName && buttonEl.classList.contains('.fc-' + buttonName + '-button')) {
+      if (buttonName && buttonEl.classList.contains('fc-' + buttonName + '-button')) {
         buttonEl.classList.add(className)
       } else {
         buttonEl.classList.remove(className)

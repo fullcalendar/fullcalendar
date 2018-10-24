@@ -445,7 +445,7 @@ export default class Calendar {
 
     // ineffecient to do every time?
     this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
-      return new DateProfileGenerator(viewSpec, this)
+      return new viewSpec.class.dateProfileGeneratorClass(viewSpec, this)
     })
   }
 

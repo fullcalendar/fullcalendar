@@ -250,7 +250,7 @@ export default abstract class View extends DateComponent {
 
 
   updateHeight(totalHeight, isAuto, isResize) {
-    super.updateSize(isResize)
+    this.updateSize(isResize)
   }
 
 

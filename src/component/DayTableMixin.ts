@@ -43,7 +43,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   updateDayTable() {
     let t = (this as any)
     let view = t.view as View
-    let dateProfile = t.dateProfile
+    let dateProfile = t.props.dateProfile
     let date: DateMarker = dateProfile.renderRange.start
     let end: DateMarker = dateProfile.renderRange.end
     let dayIndex = -1
@@ -273,7 +273,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 
   renderHeadHtml() {
-    let theme = (this as any).getTheme()
+    let theme = (this as any).theme
 
     return '' +
       '<div class="fc-row ' + theme.getClass('headerRow') + '">' +
@@ -320,8 +320,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   renderHeadDateCellHtml(date: DateMarker, colspan, otherAttrs) {
     let t = (this as any)
     let view = t.view
-    let dateEnv = t.getDateEnv()
-    let dateProfile = t.dateProfile
+    let dateEnv = t.dateEnv
+    let dateProfile = t.props.dateProfile
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let classNames = [
       'fc-day-header',
@@ -412,8 +412,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   renderBgCellHtml(date: DateMarker, otherAttrs) {
     let t = (this as any)
     let view = t.view
-    let dateEnv = t.getDateEnv()
-    let dateProfile = t.dateProfile
+    let dateEnv = t.dateEnv
+    let dateProfile = t.props.dateProfile
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let classes = getDayClasses(t, date)
 

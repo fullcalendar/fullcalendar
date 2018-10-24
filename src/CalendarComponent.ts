@@ -197,6 +197,8 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   // -----------------------------------------------------------------------------------------------------------------
 
   updateSize(isResize = false) {
+    super.updateSize(isResize)
+
     if (isResize) {
       this.clearHeightVars()
     }

@@ -19,7 +19,7 @@ import reselector from '../util/reselector'
 import { EventUiHash, hasBgRendering } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getAllDayHtml } from '../component/date-rendering'
 import { DateComponentProps } from '../component/DateComponent'
-import { DateMarker } from 'src/datelib/marker'
+import { DateMarker } from '../datelib/marker'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -145,7 +145,7 @@ export default class AgendaView extends View {
         '<tbody class="fc-body">' +
           '<tr>' +
             '<td class="' + theme.getClass('widgetContent') + '">' +
-              (this.dayGrid ?
+              (this.opt('allDaySlot') ?
                 '<div class="fc-day-grid"></div>' +
                 '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" />' :
                 ''
@@ -230,8 +230,8 @@ export default class AgendaView extends View {
 
 
   // Adjusts the vertical dimensions of the view to the specified values
-  updateHeight(totalHeight, isAuto, force) {
-    super.updateHeight(totalHeight, isAuto, force)
+  updateHeight(totalHeight, isAuto, isResize) {
+    super.updateHeight(totalHeight, isAuto, isResize)
 
     let eventLimit
     let scrollerHeight
@@ -300,6 +300,15 @@ export default class AgendaView extends View {
       if (this.timeGrid.getTotalSlatHeight() < scrollerHeight) {
         this.timeGrid.bottomRuleEl.style.display = ''
       }
+    }
+  }
+
+
+  updateSize(isResize: boolean) {
+    this.timeGrid.updateSize(isResize)
+
+    if (this.dayGrid) {
+      this.dayGrid.updateSize(isResize)
     }
   }
 

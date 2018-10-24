@@ -11,8 +11,6 @@ import { ComponentContext } from '../component/Component'
 
 export default class DayTile extends DateComponent {
 
-  isInteractable = true
-  useEventCenter = false
   date: Date
   segContainerEl: HTMLElement
   width: number
@@ -113,5 +111,8 @@ export class DayTileEventRenderer extends DayGridEventRenderer {
   }
 
 }
+
+DayTile.prototype.isInteractable = true
+DayTile.prototype.useEventCenter = false
 
 DayTile.prototype.eventRendererClass = DayTileEventRenderer

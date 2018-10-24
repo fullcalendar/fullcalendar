@@ -15,13 +15,6 @@ Responsible for the scroller, and forwarding event-related actions into the "gri
 */
 export default class ListView extends View {
 
-  // initialized after the class
-  eventRendererClass: any
-
-  isInteractable = true
-  slicingType: 'all-day' = 'all-day' // stupid TypeScript
-  fgSegSelector: any = '.fc-list-item' // which elements accept event actions
-
   scroller: ScrollComponent
   contentEl: HTMLElement
 
@@ -55,8 +48,8 @@ export default class ListView extends View {
   }
 
 
-  updateHeight(totalHeight, isAuto, force) {
-    super.updateHeight(totalHeight, isAuto, force)
+  updateHeight(totalHeight, isAuto, isResize) {
+    super.updateHeight(totalHeight, isAuto, isResize)
 
     this.scroller.clear() // sets height to 'auto' and clears overflow
 
@@ -236,3 +229,6 @@ export default class ListView extends View {
 }
 
 ListView.prototype.eventRendererClass = ListEventRenderer
+ListView.prototype.isInteractable = true
+ListView.prototype.slicingType = 'all-day'
+ListView.prototype.fgSegSelector = '.fc-list-item' // which elements accept event actions

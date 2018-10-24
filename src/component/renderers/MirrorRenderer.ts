@@ -12,7 +12,7 @@ export default abstract class MirrorRenderer {
 
 
   constructor(component, eventRenderer) {
-    this.view = component.view
+    this.view = component.view || component
     this.component = component
     this.eventRenderer = eventRenderer
   }

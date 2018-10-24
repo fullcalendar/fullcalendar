@@ -48,11 +48,6 @@ export default class DayGrid extends DateComponent {
   bookendCells: DayTableInterface['bookendCells']
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
-  isInteractable = true
-  doesDragMirror = false
-  doesDragHighlight = true
-  slicingType: 'all-day' = 'all-day' // stupid TypeScript
-
   view: View // TODO: make more general and/or remove
   mirrorRenderer: any
 
@@ -60,7 +55,7 @@ export default class DayGrid extends DateComponent {
 
   bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
-  headContainerEl: HTMLElement // div that hold's the date header
+  headerContainerEl: HTMLElement // div that hold's the date header
   rowEls: HTMLElement[] // set of fake row elements
   cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
 
@@ -74,6 +69,13 @@ export default class DayGrid extends DateComponent {
 
   segPopover: Popover // the Popover that holds events that can't fit in a cell. null when not visible
   segPopoverTile: DayTile
+
+
+  constructor(context, headerContainerEl, el) {
+    super(context, el)
+
+    this.headerContainerEl = headerContainerEl
+  }
 
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
@@ -127,8 +129,8 @@ export default class DayGrid extends DateComponent {
     let row
     let col
 
-    if (this.headContainerEl) {
-      this.headContainerEl.innerHTML = this.renderHeadHtml()
+    if (this.headerContainerEl) {
+      this.headerContainerEl.innerHTML = this.renderHeadHtml()
     }
 
     for (row = 0; row < rowCnt; row++) {
@@ -740,6 +742,11 @@ export default class DayGrid extends DateComponent {
   }
 
 }
+
+DayGrid.prototype.isInteractable = true
+DayGrid.prototype.doesDragMirror = false
+DayGrid.prototype.doesDragHighlight = true
+DayGrid.prototype.slicingType = 'all-day'
 
 DayGrid.prototype.eventRendererClass = DayGridEventRenderer
 DayGrid.prototype.mirrorRendererClass = DayGridMirrorRenderer

@@ -3,6 +3,7 @@ import ListView from './ListView'
 
 defineView('list', {
   class: ListView,
+  buttonTextKey: 'list', // what to lookup in locale files
   listDayFormat: { month: 'long', day: 'numeric', year: 'numeric' } // like "January 1, 2016"
 })
 

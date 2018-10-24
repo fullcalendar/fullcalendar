@@ -151,14 +151,14 @@ export default class BasicView extends View {
 
 
   // Refreshes the horizontal dimensions of the view
-  updateHeight(totalHeight, isAuto, force) {
-    super.updateHeight(totalHeight, isAuto, force)
+  updateHeight(totalHeight, isAuto, isResize) {
+    super.updateHeight(totalHeight, isAuto, isResize)
 
     let { dayGrid } = this
     let eventLimit = this.opt('eventLimit')
     let headRowEl =
-      dayGrid.headContainerEl ?
-        dayGrid.headContainerEl.querySelector('.fc-row') as HTMLElement :
+      dayGrid.headerContainerEl ?
+        dayGrid.headerContainerEl.querySelector('.fc-row') as HTMLElement :
         null
     let scrollerHeight
     let scrollbarWidths
@@ -223,6 +223,11 @@ export default class BasicView extends View {
       // guarantees the same scrollbar widths
       this.scroller.lockOverflow(scrollbarWidths)
     }
+  }
+
+
+  updateSize(isResize: boolean) {
+    this.dayGrid.updateSize(isResize)
   }
 
 
