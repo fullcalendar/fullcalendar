@@ -22,11 +22,11 @@ export default class MonthView extends BasicView {
 
 
   isDateInOtherMonth(date: DateMarker, dateProfile) {
-    let dateEnv = this.getDateEnv()
+    let { dateEnv } = this
 
     return dateEnv.getMonth(date) !== dateEnv.getMonth(dateProfile.currentRange.start)
   }
 
 }
 
-MonthView.prototype.dateProfileGeneratorClass = MonthViewDateProfileGenerator
+MonthView.dateProfileGeneratorClass = MonthViewDateProfileGenerator

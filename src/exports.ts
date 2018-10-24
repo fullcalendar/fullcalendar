@@ -22,7 +22,8 @@ export {
   compareByFieldSpec,
   flexibleCompare,
   log,
-  warn
+  warn,
+  computeVisibleDayRange
 } from './util/misc'
 
 export {
@@ -31,8 +32,11 @@ export {
 } from './util/html'
 
 export {
-  removeExact
+  removeExact,
+  isArraysEqual
 } from './util/array'
+
+export { default as reselector } from './util/reselector'
 
 export {
   intersectRects
@@ -57,6 +61,10 @@ export {
   forceClassName
 } from './util/dom-manip'
 
+export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
+export { EventUiHash, hasBgRendering } from './component/event-rendering'
+export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
+
 export {
   preventDefault,
   listenBySelector,
@@ -66,17 +74,21 @@ export {
 export {
   computeInnerRect,
   computeEdges,
-  computeHeightAndMargins
+  computeHeightAndMargins,
+  getClippingParents
 } from './util/dom-geom'
 
+export { unpromisify } from './util/promise'
+
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-export { DateRange, rangeContainsMarker, intersectRanges } from './datelib/date-range'
+export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual } from './datelib/date-range'
 export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Mixin } from './common/Mixin'
 export { default as PositionCache } from './common/PositionCache'
-export { default as ScrollComponent } from './common/ScrollComponent'
+export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComponent'
 export { default as Theme } from './theme/Theme'
-export { default as DateComponent } from './component/DateComponent'
+export { ComponentContext } from './component/Component'
+export { default as DateComponent, Seg, DateComponentProps } from './component/DateComponent'
 export { default as Calendar } from './Calendar'
 export { default as View } from './View'
 export { defineView, getViewConfig } from './ViewRegistry'
@@ -92,7 +104,7 @@ export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
 export { DateProfile } from './DateProfileGenerator'
 
-export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime } from './datelib/marker'
+export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime, isValidDate } from './datelib/marker'
 export {
   Duration, createDuration,
   isSingleDay, multiplyDuration, addDurations,

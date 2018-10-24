@@ -8,6 +8,7 @@ import { DateMarker, addDays, startOfDay } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
+import { buildGotoAnchorHtml } from '../component/date-rendering'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -28,37 +29,35 @@ export default class ListView extends View {
   dayRanges: DateRange[] // start/end of each day
 
 
-  constructor(calendar, viewSpec) {
-    super(calendar, viewSpec)
+  initialize() {
+
+    this.el.classList.add('fc-list-view')
+
+    let listViewClassName = this.theme.getClass('listView')
+    if (listViewClassName) {
+      this.el.classList.add(listViewClassName)
+    }
 
     this.scroller = new ScrollComponent(
       'hidden', // overflow x
       'auto' // overflow y
     )
-  }
 
-
-  renderSkeleton() {
-    this.el.classList.add('fc-list-view')
-
-    let themeClass = this.calendar.theme.getClass('listView')
-    if (themeClass) {
-      this.el.classList.add(themeClass)
-    }
-
-    this.scroller.applyOverflow()
     this.el.appendChild(this.scroller.el)
-
     this.contentEl = this.scroller.el // shortcut
   }
 
 
-  unrenderSkeleton() {
-    this.scroller.removeElement() // will remove the Grid too
+  destroy() {
+    super.destroy()
+
+    this.scroller.destroy() // will remove the Grid too
   }
 
 
-  updateBaseSize(totalHeight, isAuto) {
+  updateHeight(totalHeight, isAuto, force) {
+    super.updateHeight(totalHeight, isAuto, force)
+
     this.scroller.clear() // sets height to 'auto' and clears overflow
 
     if (!isAuto) {
@@ -100,7 +99,7 @@ export default class ListView extends View {
 
   // slices by day
   rangeToSegs(range: DateRange, allDay: boolean) {
-    let dateEnv = this.getDateEnv()
+    let { dateEnv } = this
     let dayRanges = this.dayRanges
     let dayIndex
     let segRange
@@ -204,7 +203,7 @@ export default class ListView extends View {
 
   // generates the HTML for the day headers that live amongst the event rows
   buildDayHeaderRow(dayDate) {
-    let dateEnv = this.getDateEnv()
+    let { dateEnv } = this
     let mainFormat = createFormatter(this.opt('listDayFormat')) // TODO: cache
     let altFormat = createFormatter(this.opt('listDayAltFormat')) // TODO: cache
 
@@ -216,14 +215,16 @@ export default class ListView extends View {
       this.calendar.theme.getClass('widgetHeader')
     ) + '" colspan="3">' +
       (mainFormat ?
-        this.buildGotoAnchorHtml(
+        buildGotoAnchorHtml(
+          this,
           dayDate,
           { 'class': 'fc-list-heading-main' },
           htmlEscape(dateEnv.format(dayDate, mainFormat)) // inner HTML
         ) :
         '') +
       (altFormat ?
-        this.buildGotoAnchorHtml(
+        buildGotoAnchorHtml(
+          this,
           dayDate,
           { 'class': 'fc-list-heading-alt' },
           htmlEscape(dateEnv.format(dayDate, altFormat)) // inner HTML

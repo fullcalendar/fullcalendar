@@ -205,6 +205,10 @@ export function arrayToUtcDate(a) {
 
 // Other Utils
 
+export function isValidDate(m: DateMarker) {
+  return !isNaN(m.valueOf())
+}
+
 export function timeAsMs(m: DateMarker) {
   return m.getUTCHours() * 1000 * 60 * 60 +
     m.getUTCMinutes() * 1000 * 60 +

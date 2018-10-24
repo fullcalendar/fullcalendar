@@ -53,12 +53,12 @@ export default class EventDragging {
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
       !this.component.isValidSegDownEl(ev.origEvent.target as HTMLElement) ||
-      (ev.isTouch && this.component.eventSelection !== eventRange.instance!.instanceId)
+      (ev.isTouch && this.component.props.eventSelection !== eventRange.instance!.instanceId)
     )
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    let calendar = this.component.getCalendar()
+    let calendar = this.component.calendar
     let eventRange = this.eventRange!
 
     this.relevantEvents = getRelevantEvents(
@@ -80,7 +80,7 @@ export default class EventDragging {
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
-    let calendar = this.component.getCalendar()
+    let calendar = this.component.calendar
     let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
     let eventInstance = this.eventRange.instance!
@@ -139,7 +139,7 @@ export default class EventDragging {
   }
 
   handleDragEnd = (ev: PointerDragEvent) => {
-    let calendar = this.component.getCalendar()
+    let calendar = this.component.calendar
     let view = this.component.view
     let eventDef = this.eventRange!.def
     let eventInstance = this.eventRange!.instance
@@ -203,7 +203,7 @@ export default class EventDragging {
 }
 
 function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: DateRange): EventMutation | null {
-  let dateEnv = hit0.component.getDateEnv()
+  let dateEnv = hit0.component.dateEnv
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start
 

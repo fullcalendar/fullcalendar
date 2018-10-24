@@ -48,11 +48,11 @@ export default class DateSelecting {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    this.component.getCalendar().unselect(ev) // unselect previous selections
+    this.component.calendar.unselect(ev) // unselect previous selections
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
-    let calendar = this.component.getCalendar()
+    let calendar = this.component.calendar
     let dragSelection: DateSpan | null = null
     let isInvalid = false
 
@@ -89,7 +89,7 @@ export default class DateSelecting {
     if (this.dragSelection) {
 
       // selection is already rendered, so just need to report selection
-      this.component.getCalendar().triggerDateSelect(this.dragSelection, pev)
+      this.component.calendar.triggerDateSelect(this.dragSelection, pev)
 
       this.dragSelection = null
     }

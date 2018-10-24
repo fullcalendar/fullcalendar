@@ -6,6 +6,7 @@ Provides methods for querying the cache by position.
 */
 export default class PositionCache {
 
+  originClientRect: ClientRect
   els: HTMLElement[] // assumed to be siblings
   originEl: HTMLElement // options can override the natural originEl
   isHorizontal: boolean // whether to query for left/right/width
@@ -31,7 +32,8 @@ export default class PositionCache {
   // Call this method before using and of the get* methods below.
   build() {
     let originEl = this.originEl
-    let originClientRect = originEl.getBoundingClientRect() // relative to viewport top-left
+    let originClientRect = this.originClientRect =
+      originEl.getBoundingClientRect() // relative to viewport top-left
 
     if (this.isHorizontal) {
       this.buildElHorizontals(originClientRect.left)

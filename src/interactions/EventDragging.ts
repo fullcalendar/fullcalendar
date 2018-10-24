@@ -56,7 +56,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     let origTarget = ev.origEvent.target as HTMLElement
     let { component, dragging } = this
     let { mirror } = dragging
-    let initialCalendar = component.getCalendar()
+    let initialCalendar = component.calendar
     let subjectSeg = this.subjectSeg = getElSeg(ev.subjectEl as HTMLElement)!
     let eventRange = this.eventRange = subjectSeg.eventRange!
     let eventInstanceId = eventRange.instance!.instanceId
@@ -69,7 +69,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     dragging.minDistance = ev.isTouch ? 0 : component.opt('eventDragMinDistance')
     dragging.delay =
       // only do a touch delay if touch and this event hasn't been selected yet
-      (ev.isTouch && eventInstanceId !== component.eventSelection) ?
+      (ev.isTouch && eventInstanceId !== component.props.eventSelection) ?
         getComponentTouchDelay(component) :
         null
 
@@ -89,13 +89,13 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    let initialCalendar = this.component.getCalendar()
+    let initialCalendar = this.component.calendar
     let eventRange = this.eventRange!
     let eventInstanceId = eventRange.instance.instanceId
 
     if (ev.isTouch) {
       // need to select a different event?
-      if (eventInstanceId !== this.component.eventSelection) {
+      if (eventInstanceId !== this.component.props.eventSelection) {
         initialCalendar.dispatch({ type: 'SELECT_EVENT', eventInstanceId })
       }
     } else {
@@ -124,7 +124,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
     let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
-    let initialCalendar = this.component.getCalendar()
+    let initialCalendar = this.component.calendar
 
     // states based on new hit
     let receivingCalendar: Calendar | null = null
@@ -134,7 +134,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
     if (hit) {
       let receivingComponent = hit.component
-      receivingCalendar = receivingComponent.getCalendar()
+      receivingCalendar = receivingComponent.calendar
 
       if (
         initialCalendar === receivingCalendar ||
@@ -202,7 +202,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   handleDragEnd = (ev: PointerDragEvent) => {
 
     if (this.isDragging) {
-      let initialCalendar = this.component.getCalendar()
+      let initialCalendar = this.component.calendar
       let initialView = this.component.view
       let { receivingCalendar } = this
       let eventDef = this.eventRange!.def
@@ -300,7 +300,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
   // render a drag state on the next receivingCalendar
   displayDrag(nextCalendar: Calendar | null, state: EventInteractionState) {
-    let initialCalendar = this.component.getCalendar()
+    let initialCalendar = this.component.calendar
     let prevCalendar = this.receivingCalendar
 
     // does the previous calendar need to be cleared?
@@ -331,7 +331,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   }
 
   clearDrag() {
-    let initialCalendar = this.component.getCalendar()
+    let initialCalendar = this.component.calendar
     let { receivingCalendar } = this
 
     if (receivingCalendar) {
@@ -378,7 +378,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
 
   let delta = diffDates(
     date0, date1,
-    hit0.component.getDateEnv(),
+    hit0.component.dateEnv,
     hit0.component === hit1.component ?
       hit0.component.largeUnit :
       null

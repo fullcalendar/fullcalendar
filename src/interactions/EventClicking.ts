@@ -38,7 +38,7 @@ export default class EventClicking {
         {
           el: segEl,
           event: new EventApi(
-            component.getCalendar(),
+            component.calendar,
             seg.eventRange.def,
             seg.eventRange.instance
           ),

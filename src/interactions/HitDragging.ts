@@ -174,8 +174,8 @@ export default class HitDragging {
         hit &&
         (
           // make sure the hit is within activeRange, meaning it's not a deal cell
-          !component.dateProfile || // hack for DayTile
-          rangeContainsRange(component.dateProfile.activeRange, hit.dateSpan.range)
+          !component.props.dateProfile || // hack for DayTile
+          rangeContainsRange(component.props.dateProfile.activeRange, hit.dateSpan.range)
         ) &&
         (!bestHit || hit.layer > bestHit.layer)
       ) {

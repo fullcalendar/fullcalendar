@@ -6,7 +6,8 @@ import { Hit } from '../interactions/HitDragging'
 import OffsetTracker from '../common/OffsetTracker'
 import { computeRect } from '../util/dom-geom'
 import { Rect, pointInsideRect } from '../util/geom'
-import { addDays } from '../datelib/marker'
+import { addDays, DateMarker } from '../datelib/marker'
+import { ComponentContext } from '../component/Component'
 
 export default class DayTile extends DateComponent {
 
@@ -18,14 +19,20 @@ export default class DayTile extends DateComponent {
   height: number
   offsetTracker: OffsetTracker // TODO: abstraction for tracking dims of whole element rect
 
-  constructor(component, date) {
-    super(component)
-    this.date = date
+  constructor(context: ComponentContext, el: HTMLElement, date: DateMarker) {
+    super(context, el)
+
+    this.date = date // HACK
   }
 
-  renderSkeleton() {
-    let theme = this.getTheme()
-    let dateEnv = this.getDateEnv()
+  /*
+  props:
+  - dateProfile
+  - segs
+  */
+  render(props) {
+    let { theme, dateEnv } = this
+
     let title = dateEnv.format(
       this.date,
       createFormatter(this.opt('dayPopoverFormat')) // TODO: cache
@@ -44,6 +51,16 @@ export default class DayTile extends DateComponent {
       '</div>'
 
     this.segContainerEl = this.el.querySelector('.fc-event-container')
+
+    // HACK
+    this.eventRenderer.rangeUpdated()
+    this.eventRenderer.renderSegs(props.segs)
+  }
+
+  destroy() {
+    this.unrenderEvents() // HACK
+
+    super.destroy()
   }
 
   prepareHits() {

@@ -62,7 +62,7 @@ window.initCalendar = function(moreOptions, el) {
   var options = getCurrentOptions()
   var newCalendar
 
-  options.SET_DATE_PROFILE = function() {
+  options._init = function() {
     newCalendar = window.currentCalendar = this
   }
 

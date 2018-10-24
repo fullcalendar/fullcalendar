@@ -9,12 +9,14 @@ import TimeGridFillRenderer from './TimeGridFillRenderer'
 import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDurations, asRoughMs } from '../datelib/duration'
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
+import { ComponentContext } from '../component/Component'
 import DateComponent, { Seg } from '../component/DateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { DateSpan } from '../structs/date-span'
 import { EventStore } from '../structs/event-store'
 import { Hit } from '../interactions/HitDragging'
 import { EventUiHash } from '../component/event-rendering'
+import AgendaView from './AgendaView'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -46,7 +48,6 @@ export default class TimeGrid extends DateComponent {
   doesDragHighlight = false
   slicingType: 'timed' = 'timed' // stupid TypeScript
 
-  view: any // TODO: make more general and/or remove
   mirrorRenderer: any
 
   dayRanges: DateRange[] // of start-end of each day
@@ -79,15 +80,27 @@ export default class TimeGrid extends DateComponent {
   businessContainerEls: HTMLElement[]
 
 
-  constructor(view) {
-    super(view)
+  constructor(context: ComponentContext, headContainerEl: HTMLElement, el: HTMLElement) {
+    super(context, el)
+
     this.processOptions()
+
+    this.headContainerEl = headContainerEl // already created by called! where content is inserted directly!
+
+    el.innerHTML =
+      '<div class="fc-bg"></div>' +
+      '<div class="fc-slats"></div>' +
+      '<hr class="fc-divider ' + this.theme.getClass('widgetHeader') + '" style="display:none" />'
+
+    this.rootBgContainerEl = el.querySelector('.fc-bg')
+    this.slatContainerEl = el.querySelector('.fc-slats')
+    this.bottomRuleEl = el.querySelector('.fc-divider')
   }
 
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    range = intersectRanges(range, this.dateProfile.validRange)
+    range = intersectRanges(range, this.props.dateProfile.validRange)
 
     if (range) {
       let segs = this.sliceRangeByTimes(range)
@@ -221,22 +234,8 @@ export default class TimeGrid extends DateComponent {
   }
 
 
-  renderSkeleton() {
-    let theme = this.getTheme()
-
-    this.el.innerHTML =
-      '<div class="fc-bg"></div>' +
-      '<div class="fc-slats"></div>' +
-      '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
-
-    this.rootBgContainerEl = this.el.querySelector('.fc-bg')
-    this.slatContainerEl = this.el.querySelector('.fc-slats')
-    this.bottomRuleEl = this.el.querySelector('.fc-divider')
-  }
-
-
   renderSlats() {
-    let theme = this.getTheme()
+    let { theme } = this
 
     this.slatContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
@@ -256,11 +255,8 @@ export default class TimeGrid extends DateComponent {
 
   // Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
   renderSlatRowHtml() {
-    let view = this.view
-    let dateEnv = this.getDateEnv()
-    let theme = this.getTheme()
-    let isRtl = this.isRtl
-    let dateProfile = this.dateProfile
+    let { view, dateEnv, theme, isRtl } = this
+    let dateProfile = this.props.dateProfile
     let html = ''
     let dayStart = startOfDay(dateProfile.renderRange.start)
     let slotTime = dateProfile.minTime
@@ -275,7 +271,7 @@ export default class TimeGrid extends DateComponent {
       isLabeled = wholeDivideDurations(slotIterator, this.labelInterval) !== null
 
       axisHtml =
-        '<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '" ' + view.axisStyleAttr() + '>' +
+        '<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '" ' + (view as AgendaView).axisStyleAttr() + '>' +
           (isLabeled ?
             '<span>' + // for matchCellWidths
               htmlEscape(dateEnv.format(slotDate, this.labelFormat)) +
@@ -302,9 +298,8 @@ export default class TimeGrid extends DateComponent {
 
 
   renderColumns() {
-    let dateProfile = this.dateProfile
-    let theme = this.getTheme()
-    let dateEnv = this.getDateEnv()
+    let { theme, dateEnv } = this
+    let dateProfile = this.props.dateProfile
 
     this.dayRanges = this.dayDates.map(function(dayDate) {
       return {
@@ -498,7 +493,7 @@ export default class TimeGrid extends DateComponent {
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
   computeTimeTop(timeMs: number) {
     let len = this.slatEls.length
-    let dateProfile = this.dateProfile
+    let dateProfile = this.props.dateProfile
     let slatCoverage = (timeMs - asRoughMs(dateProfile.minTime)) / asRoughMs(this.slotDuration) // floating-point value of # of slots covered
     let slatIndex
     let slatRemainder
@@ -590,7 +585,7 @@ export default class TimeGrid extends DateComponent {
 
 
   queryHit(leftOffset, topOffset): Hit {
-    let { snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
+    let { dateEnv, snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
       let leftOrigin = offsetTracker.computeLeft()
@@ -607,11 +602,10 @@ export default class TimeGrid extends DateComponent {
 
         let dayDate = this.getCellDate(0, colIndex) // row=0
         let time = addDurations(
-          this.dateProfile.minTime,
+          this.props.dateProfile.minTime,
           multiplyDuration(this.snapDuration, snapIndex)
         )
 
-        let dateEnv = this.getDateEnv()
         let start = dateEnv.add(dayDate, time)
         let end = dateEnv.add(start, this.snapDuration)
 

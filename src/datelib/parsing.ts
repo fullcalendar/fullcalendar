@@ -1,3 +1,4 @@
+import { isValidDate } from './marker'
 
 const ISO_START = /^\s*\d{4}-\d\d-\d\d([T ]\d)?/
 const ISO_TZO_RE = /(?:(Z)|([-+])(\d\d)(?::(\d\d))?)$/
@@ -29,7 +30,7 @@ export function parse(str) {
 
   let marker = new Date(str)
 
-  if (isNaN(marker.valueOf())) {
+  if (!isValidDate(marker)) {
     return null
   }
 

@@ -4,6 +4,8 @@ import Mixin from '../common/Mixin'
 import { DateMarker, DAY_IDS, addDays, diffDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { DateRange, rangeContainsMarker } from '../datelib/date-range'
+import { buildGotoAnchorHtml, getDayClasses } from './date-rendering'
+import View from 'src/View'
 
 export interface DayTableInterface {
   dayDates: DateMarker[]
@@ -40,7 +42,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   // Populates internal variables used for date calculation and rendering
   updateDayTable() {
     let t = (this as any)
-    let view = t.view
+    let view = t.view as View
     let dateProfile = t.dateProfile
     let date: DateMarker = dateProfile.renderRange.start
     let end: DateMarker = dateProfile.renderRange.end
@@ -52,7 +54,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let rowCnt
 
     while (date < end) { // loop each day from start to end
-      if (view.isHiddenDay(date)) {
+      if (view.dateProfileGenerator.isHiddenDay(date)) {
         dayIndices.push(dayIndex + 0.5) // mark that it's between indices
       } else {
         dayIndex++
@@ -342,7 +344,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
       classNames = classNames.concat(
         // includes the day-of-week class
         // noThemeHighlight=true (don't highlight the header)
-        t.getDayClasses(date, true)
+        getDayClasses(t, date, true)
       )
     } else {
       classNames.push('fc-' + DAY_IDS[date.getUTCDay()]) // only add the day-of-week class
@@ -362,7 +364,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
         '>' +
         (isDateValid ?
           // don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
-          view.buildGotoAnchorHtml(
+          buildGotoAnchorHtml(
+            view,
             { date: date, forceOff: t.rowCnt > 1 || t.colCnt === 1 },
             innerHtml
           ) :
@@ -412,7 +415,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let dateEnv = t.getDateEnv()
     let dateProfile = t.dateProfile
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
-    let classes = t.getDayClasses(date)
+    let classes = getDayClasses(t, date)
 
     classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'))
 

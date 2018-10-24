@@ -1,20 +1,24 @@
 import { assignTo } from './util/object'
 import { parseFieldSpecs } from './util/misc'
-import Calendar from './Calendar'
-import { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
+import DateProfileGenerator from './DateProfileGenerator'
 import DateComponent from './component/DateComponent'
-import { DateMarker, addDays, addMs, diffWholeDays } from './datelib/marker'
+import { DateMarker, addMs } from './datelib/marker'
 import { createDuration } from './datelib/duration'
-import { createFormatter } from './datelib/formatting'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-import { OpenDateRange, parseRange, DateRange, rangesEqual } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
+import { createElement } from './util/dom-manip'
+import { ComponentContext } from './component/Component'
 
 
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export default abstract class View extends DateComponent {
+
+  // whether minTime/maxTime will affect the activeRange. Views must opt-in.
+  // initialized after class
+  static usesMinMaxTime: boolean = false
+  static dateProfileGeneratorClass: any // initialized after class. used by Calendar
 
   on: EmitterInterface['on']
   one: EmitterInterface['one']
@@ -23,19 +27,14 @@ export default abstract class View extends DateComponent {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  type: string // subclass' view name (string)
-  title: string // the text that will be displayed in the header's title
-
-  calendar: Calendar // owner Calendar object
   viewSpec: ViewSpec
-  options: any // hash containing all options. already merged with view-specific-options
+  dateProfileGenerator: DateProfileGenerator
+  type: string // subclass' view name (string). for the API
+  title: string // the text that will be displayed in the header's title. SET BY CALLER for API
 
   queuedScroll: any
 
   eventOrderSpecs: any // criteria for ordering events when they have same date/time
-
-  // for date utils, computed from options
-  isHiddenDayHash: boolean[]
 
   // now indicator
   isNowIndicatorRendered: boolean
@@ -44,28 +43,26 @@ export default abstract class View extends DateComponent {
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
 
-  dateProfileGeneratorClass: any // initialized after class
-  dateProfileGenerator: DateProfileGenerator
 
-  // whether minTime/maxTime will affect the activeRange. Views must opt-in.
-  // initialized after class
-  usesMinMaxTime: boolean
+  constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
+    super(
+      {
+        options: context.options,
+        dateEnv: context.dateEnv,
+        theme: context.theme,
+        calendar: context.calendar
+      },
+      createElement('div', { className: 'fc-view fc-' + viewSpec.type + '-view' })
+    )
 
+    this.context.view = this // for when passing context to children
 
-  constructor(calendar, viewSpec: ViewSpec) {
-    super(null, viewSpec.options)
-
-    this.calendar = calendar
     this.viewSpec = viewSpec
-
-    // shortcuts
+    this.dateProfileGenerator = dateProfileGenerator
     this.type = viewSpec.type
-
-    this.initHiddenDays()
-    this.dateProfileGenerator = new this.dateProfileGeneratorClass(this)
-
     this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'))
 
+    parentEl.appendChild(this.el)
     this.initialize()
   }
 
@@ -74,97 +71,24 @@ export default abstract class View extends DateComponent {
   }
 
 
-  // Retrieves an option with the given name
-  opt(name) {
-    return this.options[name]
-  }
-
-
-  /* Title and Date Formatting
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Computes what the title at the top of the calendar should be for this view
-  computeTitle(dateProfile) {
-    let dateEnv = this.getDateEnv()
-    let range: DateRange
-
-    // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-    if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
-      range = dateProfile.currentRange
-    } else { // for day units or smaller, use the actual day range
-      range = dateProfile.activeRange
-    }
-
-    return dateEnv.formatRange(
-      range.start,
-      range.end,
-      createFormatter(
-        this.opt('titleFormat') || this.computeTitleFormat(dateProfile),
-        this.opt('titleRangeSeparator')
-      ),
-      { isEndExclusive: dateProfile.isRangeAllDay }
-    )
-  }
-
-
-  // Generates the format string that should be used to generate the title for the current date range.
-  // Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-  computeTitleFormat(dateProfile) {
-    let currentRangeUnit = dateProfile.currentRangeUnit
-
-    if (currentRangeUnit === 'year') {
-      return { year: 'numeric' }
-    } else if (currentRangeUnit === 'month') {
-      return { year: 'numeric', month: 'long' } // like "September 2014"
-    } else {
-      let days = diffWholeDays(
-        dateProfile.currentRange.start,
-        dateProfile.currentRange.end
-      )
-      if (days !== null && days > 1) {
-        // multi-day range. shorter, like "Sep 9 - 10 2014"
-        return { year: 'numeric', month: 'short', day: 'numeric' }
-      } else {
-        // one day. longer, like "September 9 2014"
-        return { year: 'numeric', month: 'long', day: 'numeric' }
-      }
-    }
-  }
-
-
   // Date Setting/Unsetting
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  computeDateProfile(date: DateMarker): DateProfile {
-    let dateProfile = this.dateProfileGenerator.build(date, undefined, true) // forceToValid=true
-
-    if ( // reuse current reference if possible, for rendering optimization
-      this.dateProfile &&
-      rangesEqual(this.dateProfile.activeRange, dateProfile.activeRange)
-    ) {
-      return this.dateProfile
-    }
-
-    return dateProfile
-  }
-
-
   get activeStart(): Date {
-    return this.getDateEnv().toDate(this.dateProfile.activeRange.start)
+    return this.dateEnv.toDate(this.props.dateProfile.activeRange.start)
   }
 
   get activeEnd(): Date {
-    return this.getDateEnv().toDate(this.dateProfile.activeRange.end)
+    return this.dateEnv.toDate(this.props.dateProfile.activeRange.end)
   }
 
   get currentStart(): Date {
-    return this.getDateEnv().toDate(this.dateProfile.currentRange.start)
+    return this.dateEnv.toDate(this.props.dateProfile.currentRange.start)
   }
 
   get currentEnd(): Date {
-    return this.getDateEnv().toDate(this.dateProfile.currentRange.end)
+    return this.dateEnv.toDate(this.props.dateProfile.currentRange.end)
   }
 
 
@@ -197,7 +121,6 @@ export default abstract class View extends DateComponent {
 
 
   afterDatesRender() {
-    this.title = this.computeTitle(this.dateProfile)
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
 
@@ -230,7 +153,7 @@ export default abstract class View extends DateComponent {
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
   startNowIndicator() {
-    let dateEnv = this.getDateEnv()
+    let { dateEnv } = this
     let unit
     let update
     let delay // ms wait value
@@ -273,7 +196,7 @@ export default abstract class View extends DateComponent {
   // since the initial getNow call.
   updateNowIndicator() {
     if (
-      this.renderedFlags.dates &&
+      this.props.dateProfile && // a way to determine if dates were rendered yet
       this.initialNowDate // activated before?
     ) {
       this.unrenderNowIndicator() // won't unrender if unnecessary
@@ -305,12 +228,34 @@ export default abstract class View extends DateComponent {
   }
 
 
+  getNowIndicatorUnit() {
+    // subclasses should implement
+  }
+
+
+  // Renders a current time indicator at the given datetime
+  renderNowIndicator(date) {
+    // SUBCLASSES MUST PASS TO CHILDREN!
+  }
+
+
+  // Undoes the rendering actions from renderNowIndicator
+  unrenderNowIndicator() {
+    // SUBCLASSES MUST PASS TO CHILDREN!
+  }
+
+
   /* Dimensions
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(totalHeight, isAuto, force) {
-    super.updateSize(totalHeight, isAuto, force)
+  updateHeight(totalHeight, isAuto, isResize) {
+    super.updateSize(isResize)
+  }
+
+
+  updateSize(isResize) {
+    super.updateSize(isResize)
     this.updateNowIndicator()
   }
 
@@ -342,7 +287,7 @@ export default abstract class View extends DateComponent {
   queryScroll() {
     let scroll = {} as any
 
-    if (this.renderedFlags.dates) {
+    if (this.props.dateProfile) { // dates rendered yet?
       assignTo(scroll, this.queryDateScroll())
     }
 
@@ -359,12 +304,12 @@ export default abstract class View extends DateComponent {
     if (scroll.isDateInit) {
       delete scroll.isDateInit
 
-      if (this.renderedFlags.dates) {
+      if (this.props.dateProfile) { // dates rendered yet?
         assignTo(scroll, this.computeInitialDateScroll())
       }
     }
 
-    if (this.renderedFlags.dates) {
+    if (this.props.dateProfile) { // dates rendered yet?
       this.applyDateScroll(scroll)
     }
   }
@@ -394,103 +339,9 @@ export default abstract class View extends DateComponent {
     return false
   }
 
-
-  // Arguments after name will be forwarded to a hypothetical function value
-  // WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
-  // Always clone your objects if you fear mutation.
-  getRangeOption(name, ...otherArgs): OpenDateRange {
-    let val = this.opt(name)
-
-    if (typeof val === 'function') {
-      val = val.apply(null, otherArgs)
-    }
-
-    if (val) {
-      return parseRange(val, this.calendar.dateEnv)
-    }
-  }
-
-
-  /* Hidden Days
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Initializes internal variables related to calculating hidden days-of-week
-  initHiddenDays() {
-    let hiddenDays = this.opt('hiddenDays') || [] // array of day-of-week indices that are hidden
-    let isHiddenDayHash = [] // is the day-of-week hidden? (hash with day-of-week-index -> bool)
-    let dayCnt = 0
-    let i
-
-    if (this.opt('weekends') === false) {
-      hiddenDays.push(0, 6) // 0=sunday, 6=saturday
-    }
-
-    for (i = 0; i < 7; i++) {
-      if (
-        !(isHiddenDayHash[i] = hiddenDays.indexOf(i) !== -1)
-      ) {
-        dayCnt++
-      }
-    }
-
-    if (!dayCnt) {
-      throw new Error('invalid hiddenDays') // all days were hidden? bad.
-    }
-
-    this.isHiddenDayHash = isHiddenDayHash
-  }
-
-
-  // Remove days from the beginning and end of the range that are computed as hidden.
-  // If the whole range is trimmed off, returns null
-  trimHiddenDays(range: DateRange): DateRange | null {
-    let start = range.start
-    let end = range.end
-
-    if (start) {
-      start = this.skipHiddenDays(start)
-    }
-
-    if (end) {
-      end = this.skipHiddenDays(end, -1, true)
-    }
-
-    if (start == null || end == null || start < end) {
-      return { start, end }
-    }
-
-    return null
-  }
-
-
-  // Is the current day hidden?
-  // `day` is a day-of-week index (0-6), or a Date (used for UTC)
-  isHiddenDay(day) {
-    if (day instanceof Date) {
-      day = day.getUTCDay()
-    }
-    return this.isHiddenDayHash[day]
-  }
-
-
-  // Incrementing the current day until it is no longer a hidden day, returning a copy.
-  // DOES NOT CONSIDER validRange!
-  // If the initial value of `date` is not a hidden day, don't do anything.
-  // Pass `isExclusive` as `true` if you are dealing with an end date.
-  // `inc` defaults to `1` (increment one day forward each time)
-  skipHiddenDays(date: DateMarker, inc = 1, isExclusive = false) {
-    while (
-      this.isHiddenDayHash[(date.getUTCDay() + (isExclusive ? inc : 0) + 7) % 7]
-    ) {
-      date = addDays(date, inc)
-    }
-    return date
-  }
-
 }
 
 EmitterMixin.mixInto(View)
 
-View.prototype.usesMinMaxTime = false
-View.prototype.dateProfileGeneratorClass = DateProfileGenerator
+View.usesMinMaxTime = false
+View.dateProfileGeneratorClass = DateProfileGenerator

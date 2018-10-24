@@ -10,7 +10,7 @@ Does not access the DOM after instantiation, so highly performant.
 Also keeps track of all scrolling/overflow:hidden containers that are parents of the given element
 and an determine if a given point is inside the combined clipping rectangle.
 */
-export default class OffsetTracker {
+export default class OffsetTracker { // ElementOffsetTracker
 
   scrollCaches: ElementScrollGeomCache[]
   origLeft: number

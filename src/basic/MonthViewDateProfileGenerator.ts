@@ -12,7 +12,7 @@ export default class MonthViewDateProfileGenerator extends BasicViewDateProfileG
     let rowCnt
 
     // ensure 6 weeks
-    if (this.opt('fixedWeekCount')) {
+    if (this.options.fixedWeekCount) {
       rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
         diffWeeks(start, end)
       )

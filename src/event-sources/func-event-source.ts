@@ -1,5 +1,5 @@
 import { unpromisify } from '../util/promise'
-import { registerEventSourceDef } from '../structs/event-source'
+import { registerEventSourceDef, EventSourceError } from '../structs/event-source'
 import { EventInput } from '../structs/event'
 
 export type EventSourceFunc = (
@@ -9,9 +9,10 @@ export type EventSourceFunc = (
     timeZone: string
   },
   successCallback: (events: EventInput[]) => void,
-  failureCallback: (errorObj: any) => void
-) => any // a promise-like object, or nothing
+  failureCallback: (error: EventSourceError) => void
+) => (void | PromiseLike<EventInput[]>)
 
+;
 registerEventSourceDef({
 
   parseMeta(raw: any): EventSourceFunc {

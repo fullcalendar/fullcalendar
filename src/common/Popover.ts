@@ -103,7 +103,7 @@ export default class Popover {
 
 
   // Hides and unregisters any handlers
-  removeElement() {
+  destroy() {
     this.hide()
 
     if (this.el) {

@@ -230,7 +230,7 @@ export function eventToDateSpan(def: EventDef, instance: EventInstance): DateSpa
 
 // TODO: plugin
 function getPeerBusinessHours(subjectSpan: DateSpan, calendar: Calendar): EventStore {
-  return calendar.view.businessHours // accessing view :(
+  return calendar.component.view.props.businessHours // accessing view :(
 }
 
 export function normalizeConstraint(input: ConstraintInput, calendar: Calendar): Constraint | null {

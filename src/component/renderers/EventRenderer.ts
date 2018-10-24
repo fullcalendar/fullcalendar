@@ -204,13 +204,9 @@ export default class EventRenderer {
     if (isDraggable) {
       classes.push('fc-draggable')
     }
+
     if (isResizable) {
       classes.push('fc-resizable')
-    }
-
-    // event is currently selected? attach a className.
-    if (seg.eventRange.instance.instanceId === this.component.eventSelection) {
-      classes.push('fc-selected')
     }
 
     return classes
@@ -346,11 +342,11 @@ export default class EventRenderer {
   }
 
 
-  computeFgSize() {
+  computeFgSizes() {
   }
 
 
-  assignFgSize() {
+  assignFgSizes() {
   }
 
 }

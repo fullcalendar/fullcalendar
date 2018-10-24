@@ -61,7 +61,7 @@ export default class ExternalElementDragging {
     let isInvalid = false
 
     if (hit) {
-      receivingCalendar = hit.component.getCalendar()
+      receivingCalendar = hit.component.calendar
 
       if (this.canDropElOnCalendar(ev.subjectEl as HTMLElement, receivingCalendar)) {
         droppableEvent = computeEventForDateSpan(

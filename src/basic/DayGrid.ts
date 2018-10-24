@@ -23,6 +23,7 @@ import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
 import OffsetTracker from '../common/OffsetTracker'
 import { EventRenderRange, EventUiHash } from '../component/event-rendering'
+import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -75,14 +76,9 @@ export default class DayGrid extends DateComponent {
   segPopoverTile: DayTile
 
 
-  constructor(view) { // view is required, unlike superclass
-    super(view)
-  }
-
-
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    range = intersectRanges(range, this.dateProfile.validRange)
+    range = intersectRanges(range, this.props.dateProfile.validRange)
 
     if (range) {
       let segs = this.sliceRangeByRow(range)
@@ -124,8 +120,7 @@ export default class DayGrid extends DateComponent {
 
   // Renders the rows and columns into the component's `this.el`, which should already be assigned.
   renderGrid() {
-    let view = this.view
-    let dateEnv = this.getDateEnv()
+    let { view, dateEnv } = this
     let rowCnt = this.rowCnt
     let colCnt = this.colCnt
     let html = ''
@@ -176,7 +171,7 @@ export default class DayGrid extends DateComponent {
   // Generates the HTML for a single row, which is a div that wraps a table.
   // `row` is the row number.
   renderDayRowHtml(row, isRigid) {
-    let theme = this.getTheme()
+    let { theme } = this
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
     if (isRigid) {
@@ -250,10 +245,9 @@ export default class DayGrid extends DateComponent {
   // Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
   // The number row will only exist if either day numbers or week numbers are turned on.
   renderNumberCellHtml(date) {
-    let view = this.view
-    let dateEnv = this.getDateEnv()
+    let { view, dateEnv } = this
     let html = ''
-    let isDateValid = rangeContainsMarker(this.dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
+    let isDateValid = rangeContainsMarker(this.props.dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
     let classes
     let weekCalcFirstDow
@@ -263,7 +257,7 @@ export default class DayGrid extends DateComponent {
       return '<td></td>' //  will create an empty space above events :(
     }
 
-    classes = this.getDayClasses(date)
+    classes = getDayClasses(this, date)
     classes.unshift('fc-day-top')
 
     if (this.cellWeekNumbersVisible) {
@@ -278,7 +272,8 @@ export default class DayGrid extends DateComponent {
       '>'
 
     if (this.cellWeekNumbersVisible && (date.getUTCDay() === weekCalcFirstDow)) {
-      html += view.buildGotoAnchorHtml(
+      html += buildGotoAnchorHtml(
+        view,
         { date: date, type: 'week' },
         { 'class': 'fc-week-number' },
         dateEnv.format(date, WEEK_NUM_FORMAT) // inner HTML
@@ -286,7 +281,8 @@ export default class DayGrid extends DateComponent {
     }
 
     if (isDayNumberVisible) {
-      html += view.buildGotoAnchorHtml(
+      html += buildGotoAnchorHtml(
+        view,
         date,
         { 'class': 'fc-day-number' },
         dateEnv.format(date, DAY_NUM_FORMAT) // inner HTML
@@ -587,8 +583,7 @@ export default class DayGrid extends DateComponent {
   // Renders an <a> element that represents hidden event element for a cell.
   // Responsible for attaching click handler as well.
   renderMoreLink(row, col, hiddenSegs) {
-    let view = this.view
-    let dateEnv = this.getDateEnv()
+    let { view, dateEnv } = this
 
     let a = createElement('a', { className: 'fc-more' })
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
@@ -632,7 +627,7 @@ export default class DayGrid extends DateComponent {
 
   // Reveals the popover that displays all events within a cell
   showSegPopover(row, col, moreLink: HTMLElement, segs) {
-    let view = this.view
+    let { calendar, view, theme } = this
     let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
@@ -644,24 +639,25 @@ export default class DayGrid extends DateComponent {
     }
 
     options = {
-      className: 'fc-more-popover ' + view.calendar.theme.getClass('popover'),
+      className: 'fc-more-popover ' + theme.getClass('popover'),
       parentEl: this.el,
       top: computeRect(topEl).top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       content: (el) => {
-        this.segPopoverTile.setElement(el)
-
-        // it would be more proper to call render() with a full render state,
-        // but hackily rendering segs directly is much easier
-        // simlate a lot of what happens in render() and renderEventRanges()
-        this.segPopoverTile.renderSkeleton()
-        this.segPopoverTile.eventRenderer.rangeUpdated()
-        this.segPopoverTile.eventRenderer.renderSegs(segs)
-        this.segPopoverTile.renderedFlags.events = true // so unrendering works
+        this.segPopoverTile = new DayTile(
+          this.context,
+          el,
+          this.getCellDate(row, col)
+        )
+        this.segPopoverTile.receiveProps({
+          dateProfile: this.props.dateProfile,
+          segs,
+        } as any) // HACK
       },
       hide: () => {
-        this.segPopoverTile.removeElement()
-        this.segPopover.removeElement()
+        this.segPopoverTile.destroy()
+        this.segPopoverTile = null
+        this.segPopover.destroy()
         this.segPopover = null
       }
     }
@@ -674,10 +670,9 @@ export default class DayGrid extends DateComponent {
       options.left = computeRect(moreWrap).left - 1 // -1 to be over cell border
     }
 
-    this.segPopoverTile = new DayTile(this.view, this.getCellDate(row, col))
     this.segPopover = new Popover(options)
     this.segPopover.show()
-    this.getCalendar().releaseAfterSizingTriggers() // hack for eventPositioned
+    calendar.releaseAfterSizingTriggers() // hack for eventPositioned
   }
 
 

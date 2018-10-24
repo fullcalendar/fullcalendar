@@ -10,17 +10,16 @@ import { computeEventDefUis } from '../component/event-rendering'
 import { assignTo } from '../util/object'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
-  calendar.publiclyTrigger(action.type, action) // for testing hooks
 
-  let dateProfile = reduceDateProfile(state.dateProfile, action)
+  let viewType = reduceViewType(state.viewType, action)
+  let dateProfile = reduceDateProfile(state.dateProfile, action, viewType, calendar)
   let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendar)
 
   let nextState = assignTo({}, state, {
+    viewType,
     dateProfile,
     eventSources,
     eventStore: reduceEventStore(state.eventStore, action, eventSources, dateProfile, calendar),
-    eventUis: state.eventUis, // TODO: should really be internal state
-    businessHours: state.businessHours,
     dateSelection: reduceDateSelection(state.dateSelection, action, calendar),
     eventSelection: reduceSelectedEvent(state.eventSelection, action),
     eventDrag: reduceEventDrag(state.eventDrag, action, eventSources, calendar),
@@ -33,15 +32,33 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     nextState = reducerFunc(nextState, action, calendar)
   }
 
+  // console.log(action.type, nextState)
+
   return nextState
 }
 
-function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action) {
+function reduceViewType(currentViewType: string, action: Action): string {
+  switch (action.type) {
+    case 'SET_VIEW_TYPE':
+      return action.viewType
+    default:
+      return currentViewType
+  }
+}
+
+function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, viewType: string, calendar: Calendar): DateProfile {
   switch (action.type) {
     case 'SET_DATE_PROFILE':
-      return (currentDateProfile && isDateProfilesEqual(currentDateProfile, action.dateProfile)) ?
-        currentDateProfile : // if same, reuse the same object, better for rerenders
-        action.dateProfile
+      return protectSameDateProfile(
+        action.dateProfile,
+        currentDateProfile
+      )
+    case 'SET_DATE':
+    case 'SET_VIEW_TYPE':
+      return protectSameDateProfile(
+        calendar.dateProfileGenerators[viewType].build(action.dateMarker, undefined, true), // forceToValid=true
+        currentDateProfile
+      )
     default:
       return currentDateProfile
   }
@@ -77,7 +94,7 @@ function reduceEventDrag(currentDrag: EventInteractionUiState | null, action: Ac
       let eventUis = computeEventDefUis(
         newDrag.mutatedEvents.defs,
         sources,
-        calendar.view ? calendar.view.options : {} // yuck
+        calendar.viewOpts()
       )
       return {
         affectedEvents: newDrag.affectedEvents,
@@ -103,7 +120,7 @@ function reduceEventResize(currentResize: EventInteractionUiState | null, action
       let eventUis = computeEventDefUis(
         newResize.mutatedEvents.defs,
         sources,
-        calendar.view ? calendar.view.options : {} // yuck
+        calendar.viewOpts()
       )
       return {
         affectedEvents: newResize.affectedEvents,
@@ -119,6 +136,14 @@ function reduceEventResize(currentResize: EventInteractionUiState | null, action
     default:
       return currentResize
   }
+}
+
+function protectSameDateProfile(newDateProfile, oldDateProfile) {
+  if (isDateProfilesEqual(newDateProfile, oldDateProfile)) {
+    return oldDateProfile
+  }
+
+  return newDateProfile
 }
 
 function computeLoadingLevel(eventSources: EventSourceHash): number {

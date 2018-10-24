@@ -24,7 +24,7 @@ export type EventSourceSuccessResponseHandler = (rawData: any, response: any) =>
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
 export interface ExtendedEventSourceInput {
-  id?: string | number
+  id?: string | number // only accept number?
   allDayDefault?: boolean
   eventDataTransform?: EventInputTransformer
   editable?: boolean
@@ -46,7 +46,7 @@ export interface ExtendedEventSourceInput {
   // json feed (TODO: how to move this to json-feed-event-source?)
   url?: string
   method?: string
-  data?: object | (() => object)
+  extraData?: object | (() => object)
   startParam?: string
   endParam?: string
   timeZoneParam?: string
@@ -97,7 +97,7 @@ export type EventSourceFetcher = (
   },
   success: (res: { rawEvents: EventInput[], response?: any }) => void,
   failure: (error: EventSourceError) => void
-) => void
+) => (void | PromiseLike<EventInput[]>)
 
 export interface EventSourceDef {
   ignoreRange?: boolean

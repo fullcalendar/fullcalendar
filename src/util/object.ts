@@ -115,3 +115,20 @@ export function arrayToHash(a): { [key: string]: true } {
 
   return hash
 }
+
+
+export function isPropsEqual(obj0, obj1): boolean {
+  for (let key in obj0) {
+    if (obj0[key] !== obj1[key]) {
+      return false
+    }
+  }
+
+  for (let key in obj1) {
+    if (!(key in obj0)) {
+      return false
+    }
+  }
+
+  return true
+}

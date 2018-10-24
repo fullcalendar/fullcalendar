@@ -16,7 +16,7 @@ export function cssToStr(cssProps) {
 
   for (let name in cssProps) {
     let val = cssProps[name]
-    if (val != null) {
+    if (val != null && val !== '') {
       statements.push(name + ':' + val)
     }
   }

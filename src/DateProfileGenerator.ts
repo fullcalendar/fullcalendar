@@ -1,7 +1,9 @@
-import View from './View'
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
 import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
-import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, rangesEqual } from './datelib/date-range'
+import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, rangesEqual, parseRange } from './datelib/date-range'
+import { ViewSpec } from './structs/view-spec'
+import { DateEnv } from './datelib/env'
+import Calendar from './Calendar'
 
 
 export interface DateProfile {
@@ -21,21 +23,21 @@ export interface DateProfile {
 
 export default class DateProfileGenerator {
 
-  _view: View // discourage
+  viewSpec: ViewSpec
+  options: any
+  dateEnv: DateEnv
+  calendar: Calendar // avoid
+
+  isHiddenDayHash: boolean[]
 
 
-  constructor(_view) {
-    this._view = _view
-  }
+  constructor(viewSpec: ViewSpec, calendar: Calendar) {
+    this.viewSpec = viewSpec
+    this.options = viewSpec.options
+    this.dateEnv = calendar.dateEnv
+    this.calendar = calendar
 
-
-  opt(name) {
-    return this._view.opt(name)
-  }
-
-
-  trimHiddenDays(range) {
-    return this._view.trimHiddenDays(range)
+    this.initHiddenDays()
   }
 
 
@@ -45,7 +47,7 @@ export default class DateProfileGenerator {
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
   buildPrev(currentDateProfile: DateProfile): DateProfile {
-    const dateEnv = this._view.calendar.dateEnv
+    let { dateEnv } = this
 
     let prevDate = dateEnv.subtract(
       dateEnv.startOf(currentDateProfile.currentDate, currentDateProfile.currentRangeUnit),
@@ -58,7 +60,7 @@ export default class DateProfileGenerator {
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
   buildNext(currentDateProfile: DateProfile): DateProfile {
-    const dateEnv = this._view.calendar.dateEnv
+    let { dateEnv } = this
 
     let nextDate = dateEnv.add(
       dateEnv.startOf(currentDateProfile.currentDate, currentDateProfile.currentRangeUnit),
@@ -99,12 +101,12 @@ export default class DateProfileGenerator {
     renderRange = this.trimHiddenDays(renderRange)
     activeRange = renderRange
 
-    if (!this.opt('showNonCurrentDates')) {
+    if (!this.options.showNonCurrentDates) {
       activeRange = intersectRanges(activeRange, currentInfo.range)
     }
 
-    minTime = createDuration(this.opt('minTime'))
-    maxTime = createDuration(this.opt('maxTime'))
+    minTime = createDuration(this.options.minTime)
+    maxTime = createDuration(this.options.maxTime)
     activeRange = this.adjustActiveRange(activeRange, minTime, maxTime)
     activeRange = intersectRanges(activeRange, validRange) // might return null
 
@@ -159,7 +161,7 @@ export default class DateProfileGenerator {
   // Indicates the minimum/maximum dates to display.
   // not responsible for trimming hidden days.
   buildValidRange(): OpenDateRange {
-    return this._view.getRangeOption('validRange', this._view.calendar.getNow()) ||
+    return this.getRangeOption('validRange', this.calendar.getNow()) ||
       { start: null, end: null } // completely open-ended
   }
 
@@ -169,8 +171,7 @@ export default class DateProfileGenerator {
   // See build() for a description of `direction`.
   // Guaranteed to have `range` and `unit` properties. `duration` is optional.
   buildCurrentRangeInfo(date: DateMarker, direction) {
-    const dateEnv = this._view.calendar.dateEnv
-    let viewSpec = this._view.viewSpec
+    let { viewSpec, dateEnv } = this
     let duration = null
     let unit = null
     let range = null
@@ -180,7 +181,7 @@ export default class DateProfileGenerator {
       duration = viewSpec.duration
       unit = viewSpec.durationUnit
       range = this.buildRangeFromDuration(date, direction, duration, unit)
-    } else if ((dayCount = this.opt('dayCount'))) {
+    } else if ((dayCount = this.options.dayCount)) {
       unit = 'day'
       range = this.buildRangeFromDayCount(date, direction, dayCount)
     } else if ((range = this.buildCustomVisibleRange(date))) {
@@ -203,11 +204,11 @@ export default class DateProfileGenerator {
   // Returns a new activeRange to have time values (un-ambiguate)
   // minTime or maxTime causes the range to expand.
   adjustActiveRange(range: DateRange, minTime: Duration, maxTime: Duration) {
-    const dateEnv = this._view.calendar.dateEnv
+    let { dateEnv } = this
     let start = range.start
     let end = range.end
 
-    if (this._view.usesMinMaxTime) {
+    if ((this.viewSpec.class as any).usesMinMaxTime) {
 
       // expand active range if minTime is negative (why not when positive?)
       if (asRoughDays(minTime) < 0) {
@@ -230,8 +231,8 @@ export default class DateProfileGenerator {
   // Builds the "current" range when it is specified as an explicit duration.
   // `unit` is the already-computed greatestDurationDenominator unit of duration.
   buildRangeFromDuration(date: DateMarker, direction, duration: Duration, unit) {
-    const dateEnv = this._view.calendar.dateEnv
-    let alignment = this.opt('dateAlignment')
+    let { dateEnv } = this
+    let alignment = this.options.dateAlignment
     let dateIncrementInput
     let dateIncrementDuration
     let start: DateMarker
@@ -240,7 +241,7 @@ export default class DateProfileGenerator {
 
     // compute what the alignment should be
     if (!alignment) {
-      dateIncrementInput = this.opt('dateIncrement')
+      dateIncrementInput = this.options.dateIncrement
 
       if (dateIncrementInput) {
         dateIncrementDuration = createDuration(dateIncrementInput)
@@ -261,8 +262,8 @@ export default class DateProfileGenerator {
 
     // if the view displays a single day or smaller
     if (asRoughDays(duration) <= 1) {
-      if (this._view.isHiddenDay(start)) {
-        start = this._view.skipHiddenDays(start, direction)
+      if (this.isHiddenDay(start)) {
+        start = this.skipHiddenDays(start, direction)
         start = startOfDay(start)
       }
     }
@@ -277,7 +278,7 @@ export default class DateProfileGenerator {
 
     // if range is completely enveloped by hidden days, go past the hidden days
     if (!this.trimHiddenDays(res)) {
-      date = this._view.skipHiddenDays(date, direction)
+      date = this.skipHiddenDays(date, direction)
       computeRes()
     }
 
@@ -287,8 +288,8 @@ export default class DateProfileGenerator {
 
   // Builds the "current" range when a dayCount is specified.
   buildRangeFromDayCount(date: DateMarker, direction, dayCount) {
-    const dateEnv = this._view.calendar.dateEnv
-    let customAlignment = this.opt('dateAlignment')
+    let { dateEnv } = this
+    let customAlignment = this.options.dateAlignment
     let runningCount = 0
     let start: DateMarker = date
     let end: DateMarker
@@ -298,12 +299,12 @@ export default class DateProfileGenerator {
     }
 
     start = startOfDay(start)
-    start = this._view.skipHiddenDays(start, direction)
+    start = this.skipHiddenDays(start, direction)
 
     end = start
     do {
       end = addDays(end, 1)
-      if (!this._view.isHiddenDay(end)) {
+      if (!this.isHiddenDay(end)) {
         runningCount++
       }
     } while (runningCount < dayCount)
@@ -315,8 +316,8 @@ export default class DateProfileGenerator {
   // Builds a normalized range object for the "visible" range,
   // which is a way to define the currentRange and activeRange at the same time.
   buildCustomVisibleRange(date: DateMarker) {
-    const dateEnv = this._view.calendar.dateEnv
-    let visibleRange = this._view.getRangeOption('visibleRange', dateEnv.toDate(date))
+    let { dateEnv } = this
+    let visibleRange = this.getRangeOption('visibleRange', dateEnv.toDate(date))
 
     if (visibleRange && (visibleRange.start == null || visibleRange.end == null)) {
       return null
@@ -337,18 +338,112 @@ export default class DateProfileGenerator {
   // Compute the duration value that should be added/substracted to the current date
   // when a prev/next operation happens.
   buildDateIncrement(fallback): Duration {
-    let dateIncrementInput = this.opt('dateIncrement')
+    let dateIncrementInput = this.options.dateIncrement
     let customAlignment
 
     if (dateIncrementInput) {
       return createDuration(dateIncrementInput)
-    } else if ((customAlignment = this.opt('dateAlignment'))) {
+    } else if ((customAlignment = this.options.dateAlignment)) {
       return createDuration(1, customAlignment)
     } else if (fallback) {
       return fallback
     } else {
       return createDuration({ days: 1 })
     }
+  }
+
+
+  // Arguments after name will be forwarded to a hypothetical function value
+  // WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
+  // Always clone your objects if you fear mutation.
+  getRangeOption(name, ...otherArgs): OpenDateRange {
+    let val = this.options[name]
+
+    if (typeof val === 'function') {
+      val = val.apply(null, otherArgs)
+    }
+
+    if (val) {
+      return parseRange(val, this.dateEnv)
+    }
+  }
+
+
+  /* Hidden Days
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  // Initializes internal variables related to calculating hidden days-of-week
+  initHiddenDays() {
+    let hiddenDays = this.options.hiddenDays || [] // array of day-of-week indices that are hidden
+    let isHiddenDayHash = [] // is the day-of-week hidden? (hash with day-of-week-index -> bool)
+    let dayCnt = 0
+    let i
+
+    if (this.options.weekends === false) {
+      hiddenDays.push(0, 6) // 0=sunday, 6=saturday
+    }
+
+    for (i = 0; i < 7; i++) {
+      if (
+        !(isHiddenDayHash[i] = hiddenDays.indexOf(i) !== -1)
+      ) {
+        dayCnt++
+      }
+    }
+
+    if (!dayCnt) {
+      throw new Error('invalid hiddenDays') // all days were hidden? bad.
+    }
+
+    this.isHiddenDayHash = isHiddenDayHash
+  }
+
+
+  // Remove days from the beginning and end of the range that are computed as hidden.
+  // If the whole range is trimmed off, returns null
+  trimHiddenDays(range: DateRange): DateRange | null {
+    let start = range.start
+    let end = range.end
+
+    if (start) {
+      start = this.skipHiddenDays(start)
+    }
+
+    if (end) {
+      end = this.skipHiddenDays(end, -1, true)
+    }
+
+    if (start == null || end == null || start < end) {
+      return { start, end }
+    }
+
+    return null
+  }
+
+
+  // Is the current day hidden?
+  // `day` is a day-of-week index (0-6), or a Date (used for UTC)
+  isHiddenDay(day) {
+    if (day instanceof Date) {
+      day = day.getUTCDay()
+    }
+    return this.isHiddenDayHash[day]
+  }
+
+
+  // Incrementing the current day until it is no longer a hidden day, returning a copy.
+  // DOES NOT CONSIDER validRange!
+  // If the initial value of `date` is not a hidden day, don't do anything.
+  // Pass `isExclusive` as `true` if you are dealing with an end date.
+  // `inc` defaults to `1` (increment one day forward each time)
+  skipHiddenDays(date: DateMarker, inc = 1, isExclusive = false) {
+    while (
+      this.isHiddenDayHash[(date.getUTCDay() + (isExclusive ? inc : 0) + 7) % 7]
+    ) {
+      date = addDays(date, inc)
+    }
+    return date
   }
 
 }

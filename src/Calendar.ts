@@ -1,9 +1,7 @@
-import { createElement, removeElement, applyStyle, prependToElement, elementClosest, appendToElement } from './util/dom-manip'
-import { computeHeightAndMargins } from './util/dom-geom'
+import { elementClosest } from './util/dom-manip'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-import Toolbar from './Toolbar'
 import OptionsManager from './OptionsManager'
 import View from './View'
 import Theme from './theme/Theme'
@@ -17,10 +15,9 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi } from './structs/date-span'
 import reselector from './util/reselector'
-import { assignTo } from './util/object'
-import { RenderForceFlags } from './component/Component'
-import { DateRangeInput, rangeContainsMarker } from './datelib/date-range'
-import { DateProfile } from './DateProfileGenerator'
+import { mapHash } from './util/object'
+import { DateRangeInput } from './datelib/date-range'
+import DateProfileGenerator from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
 import { EventInput, EventDefHash, parseEvent } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
@@ -28,12 +25,12 @@ import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
 import { computeEventDefUis, EventUiHash } from './component/event-rendering'
-import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem } from './plugin-system'
 import * as exportHooks from './exports'
+import CalendarComponent from './CalendarComponent'
 
 
 export default class Calendar {
@@ -53,53 +50,43 @@ export default class Calendar {
   buildDateEnv: any
   buildTheme: any
   computeEventDefUis: (eventDefs: EventDefHash, eventSources: EventSourceHash, options: any) => EventUiHash
-  parseBusinessHours: (input: BusinessHoursInput) => EventStore
 
   optionsManager: OptionsManager
   viewSpecs: ViewSpecHash
+  dateProfileGenerators: { [viewName: string]: DateProfileGenerator }
   theme: Theme
   dateEnv: DateEnv
   pluginSystem: PluginSystem
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
 
-  el: HTMLElement
-  elThemeClassName: string
-  elDirClassName: string
-  contentEl: HTMLElement
-
+  removeNavLinkListener: any
   documentPointer: PointerDragging // for unfocusing
   isRecentPointerDateSelect = false // wish we could use a selector to detect date selection, but uses hit system
 
-  suggestedViewHeight: number
-  ignoreUpdateViewSize: number = 0
-  removeNavLinkListener: any
   windowResizeProxy: any
-
-  viewsByType: { [viewType: string]: View } // holds all instantiated view instances, current or not
-  view: View // the latest view, internal state, regardless of whether rendered or not
-  renderedView: View // the view that is currently RENDERED, though it might not be most recent from internal state
-  header: Toolbar
-  footer: Toolbar
+  isResizing: boolean
 
   state: CalendarState
   actionQueue = []
   isReducing: boolean = false
 
-  isDisplaying: boolean = false // installed in DOM? accepting renders?
-  isRendering: boolean = false // currently in the _render function?
-  isSkeletonRendered: boolean = false // fyi: set within the debounce delay
+  // isDisplaying: boolean = false // installed in DOM? accepting renders?
+  needsRerender: boolean = false // needs a render?
+  needsFullRerender: boolean = false
+  isRendering: boolean = false // currently in the renderComponent function?
   renderingPauseDepth: number = 0
-  rerenderFlags: RenderForceFlags
   renderableEventStore: EventStore
   buildDelayedRerender: any
   delayedRerender: any
   afterSizingTriggers: any = {}
 
+  el: HTMLElement
+  component: CalendarComponent
+
 
   constructor(el: HTMLElement, overrides: OptionsInput) {
     this.el = el
-    this.viewsByType = {}
 
     this.optionsManager = new OptionsManager(overrides)
     this.pluginSystem = new PluginSystem()
@@ -108,9 +95,6 @@ export default class Calendar {
     this.buildTheme = reselector(buildTheme)
     this.buildDelayedRerender = reselector(buildDelayedRerender)
     this.computeEventDefUis = reselector(computeEventDefUis)
-    this.parseBusinessHours = reselector((input) => {
-      return parseBusinessHours(input, this)
-    })
 
     // only do once. don't do in handleOptions. because can't remove plugins
     let pluginDefs = this.optionsManager.computed.plugins || []
@@ -119,12 +103,13 @@ export default class Calendar {
     }
 
     this.handleOptions(this.optionsManager.computed)
+    this.publiclyTrigger('_init') // for tests
     this.hydrate()
   }
 
 
   getView(): View {
-    return this.view
+    return this.component.view
   }
 
 
@@ -133,171 +118,30 @@ export default class Calendar {
 
 
   render() {
-    if (!this.isDisplaying) {
-      this.isDisplaying = true
+    if (!this.component) {
       this.renderableEventStore = createEmptyEventStore()
-      this.bindGlobalHandlers()
-      this.el.classList.add('fc')
-      this._render()
-    } else if (this.elementVisible()) {
-      this.calcSize()
+      this.bindHandlers()
+      this.renderComponent()
+    } else {
       this.requestRerender(true)
     }
   }
 
 
   destroy() {
-    if (this.isDisplaying) {
-      this.isDisplaying = false
-      this.unbindGlobalHandlers()
-      this._destroy()
-      this.el.classList.remove('fc')
+    if (this.component) {
+      this.unbindHandlers()
+      this.component.destroy()
+      this.component = null
     }
   }
 
 
-  // General Rendering
+  // Handlers
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  _render() {
-    let { rerenderFlags } = this
-    this.rerenderFlags = null // clear for future requestRerender calls, which might happen during render
-
-    this.isRendering = true
-
-    this.applyElClassNames()
-
-    if (!this.isSkeletonRendered) {
-      this.renderSkeleton()
-      this.isSkeletonRendered = true
-    }
-
-    this.freezeContentHeight() // do after contentEl is created in renderSkeleton
-
-    this.renderView(rerenderFlags)
-
-    if (this.view) { // toolbar rendering heavily depends on view
-      this.renderToolbars(rerenderFlags)
-    }
-
-    if (this.updateViewSize()) { // success?
-      this.renderedView.popScroll()
-    }
-
-    this.thawContentHeight()
-    this.releaseAfterSizingTriggers()
-
-    this.isRendering = false
-    this.trigger('_rendered') // for tests
-
-    // another render requested during this most recent rendering?
-    if (this.rerenderFlags) {
-      this.delayedRerender()
-    }
-  }
-
-
-  _destroy() {
-    this.view = null
-
-    if (this.renderedView) {
-      this.renderedView.removeElement()
-      this.renderedView = null
-    }
-
-    if (this.header) {
-      this.header.removeElement()
-      this.header = null
-    }
-
-    if (this.footer) {
-      this.footer.removeElement()
-      this.footer = null
-    }
-
-    this.unrenderSkeleton()
-    this.isSkeletonRendered = false
-
-    this.removeElClassNames()
-  }
-
-
-  smash() { // rebuild view and rerender everything
-    this.batchRendering(() => {
-      let oldView = this.view
-
-      // reinstantiate/rerender the entire view
-      if (oldView) {
-        this.viewsByType = {} // so that getViewByType will generate fresh views
-        this.view = this.getViewByType(oldView.type) // will be rendered in renderView
-
-        // recompute dateProfile
-        this.setCurrentDateMarker(this.state.dateProfile.currentDate)
-
-        // transfer scroll from old view
-        let scroll = oldView.queryScroll()
-        scroll.isLocked = true // will prevent view from computing own values
-        this.view.addScroll(scroll)
-      }
-
-      this.requestRerender(true) // force=true
-    })
-  }
-
-
-  // Classnames on root elements
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  applyElClassNames() {
-    let classList = this.el.classList
-    let elDirClassName = 'fc-' + this.opt('dir')
-    let elThemeClassName = this.theme.getClass('widget')
-
-    if (elDirClassName !== this.elDirClassName) {
-      if (this.elDirClassName) {
-        classList.remove(this.elDirClassName)
-      }
-      classList.add(elDirClassName)
-      this.elDirClassName = elDirClassName
-    }
-
-    if (elThemeClassName !== this.elThemeClassName) {
-      if (this.elThemeClassName) {
-        classList.remove(this.elThemeClassName)
-      }
-      classList.add(elThemeClassName)
-      this.elThemeClassName = elThemeClassName
-    }
-  }
-
-
-  removeElClassNames() {
-    let classList = this.el.classList
-
-    if (this.elDirClassName) {
-      classList.remove(this.elDirClassName)
-      this.elDirClassName = null
-    }
-
-    if (this.elThemeClassName) {
-      classList.remove(this.elThemeClassName)
-      this.elThemeClassName = null
-    }
-  }
-
-
-  // Skeleton Rendering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  renderSkeleton() {
-
-    prependToElement(
-      this.el,
-      this.contentEl = createElement('div', { className: 'fc-view-container' })
-    )
+  bindHandlers() {
 
     // event delegation for nav links
     this.removeNavLinkListener = listenBySelector(this.el, 'click', 'a[data-goto]', (ev, anchorEl) => {
@@ -308,7 +152,7 @@ export default class Calendar {
       let viewType = gotoOptions.type
 
       // property like "navLinkDayClick". might be a string or a function
-      let customAction = this.renderedView.opt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
+      let customAction = this.viewOpt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
 
       if (typeof customAction === 'function') {
         customAction(date, ev)
@@ -319,19 +163,7 @@ export default class Calendar {
         this.zoomTo(date, viewType)
       }
     })
-  }
 
-  unrenderSkeleton() {
-    removeElement(this.contentEl)
-    this.removeNavLinkListener()
-  }
-
-
-  // Global Handlers
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  bindGlobalHandlers() {
     let documentPointer = this.documentPointer = new PointerDragging(document)
     documentPointer.shouldIgnoreMove = true
     documentPointer.shouldWatchScroll = false
@@ -347,7 +179,9 @@ export default class Calendar {
     }
   }
 
-  unbindGlobalHandlers() {
+  unbindHandlers() {
+    this.removeNavLinkListener()
+
     this.documentPointer.destroy()
 
     if (this.windowResizeProxy) {
@@ -379,20 +213,26 @@ export default class Calendar {
       }
     }
 
-    this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
-    this.setViewType(this.opt('defaultView'), this.getInitialDate())
+    this.batchRendering(() => {
+      this.dispatch({ type: 'INIT' }) // pass in sources here?
+      this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
+      this.dispatch({
+        type: 'SET_VIEW_TYPE',
+        viewType: this.opt('defaultView'),
+        dateMarker: this.getInitialDate()
+      })
+    })
   }
 
 
   buildInitialState(): CalendarState {
     return {
+      viewType: null,
       loadingLevel: 0,
       eventSourceLoadingLevel: 0,
       dateProfile: null,
       eventSources: {},
       eventStore: createEmptyEventStore(),
-      eventUis: {},
-      businessHours: createEmptyEventStore(), // gets populated when we delegate rendering to View
       dateSelection: null,
       eventSelection: '',
       eventDrag: null,
@@ -420,9 +260,9 @@ export default class Calendar {
       this.isReducing = false
 
       if (!oldState.loadingLevel && newState.loadingLevel) {
-        this.publiclyTrigger('loading', [ true, this.view ])
+        this.publiclyTrigger('loading', [ true ])
       } else if (oldState.loadingLevel && !newState.loadingLevel) {
-        this.publiclyTrigger('loading', [ false, this.view ])
+        this.publiclyTrigger('loading', [ false ])
       }
 
       this.requestRerender()
@@ -443,25 +283,21 @@ export default class Calendar {
   the force flags force certain entities to be rerendered.
   it does not avoid the delay if one is configured.
   */
-  requestRerender(forceFlags: RenderForceFlags = {}) {
-    if (forceFlags === true || !this.rerenderFlags) {
-      this.rerenderFlags = forceFlags // true, or the first object
-    } else {
-      assignTo(this.rerenderFlags, forceFlags) // merge the objects
-    }
-
+  requestRerender(force = false) {
+    this.needsRerender = true
+    this.needsFullRerender = this.needsFullRerender || force
     this.delayedRerender() // will call a debounced-version of tryRerender
   }
 
 
   tryRerender() {
     if (
-      this.isDisplaying && // must be accepting renders
-      this.rerenderFlags && // indicates that a rerender was requested
+      this.component && // must be accepting renders
+      this.needsRerender && // indicates that a rerender was requested
       !this.renderingPauseDepth && // not paused
       !this.isRendering // not currently in the render loop
     ) {
-      this._render()
+      this.renderComponent(this.needsFullRerender)
     }
   }
 
@@ -471,6 +307,70 @@ export default class Calendar {
     func()
     this.renderingPauseDepth--
     this.requestRerender()
+  }
+
+
+  // Rendering
+  // -----------------------------------------------------------------------------------------------------------------
+
+  renderComponent(force = false) {
+    let { state, component } = this
+    let { viewType } = state
+    let viewSpec = this.viewSpecs[viewType]
+    let savedScroll = (force && component) ? component.view.queryScroll() : null
+
+    if (!viewSpec) {
+      throw new Error(`View type "${viewType}" is not valid`)
+    }
+
+    // if event sources are still loading and progressive rendering hasn't been enabled,
+    // keep rendering the last fully loaded set of events
+    let renderableEventStore = this.renderableEventStore =
+      (state.eventSourceLoadingLevel && !this.opt('progressiveEventRendering')) ?
+        this.renderableEventStore :
+        state.eventStore
+
+    let eventUis = this.computeEventDefUis(
+      renderableEventStore.defs,
+      state.eventSources,
+      viewSpec.options
+    )
+
+    this.isRendering = true
+
+    if (force || !component) {
+
+      if (component) {
+        component.destroy()
+      }
+
+      component = this.component = new CalendarComponent({
+        calendar: this,
+        dateEnv: this.dateEnv,
+        theme: this.theme,
+        options: this.optionsManager.computed
+      }, this.el)
+    }
+
+    if (savedScroll) {
+      savedScroll.isLocked = true // will prevent view from computing own values
+      component.view.addScroll(savedScroll)
+    }
+
+    component.receiveProps({
+      viewSpec,
+      dateProfile: state.dateProfile,
+      dateProfileGenerator: this.dateProfileGenerators[viewType],
+      eventStore: renderableEventStore,
+      eventUis,
+      dateSelection: state.dateSelection,
+      eventSelection: state.eventSelection,
+      eventDrag: state.eventDrag,
+      eventResize: state.eventResize
+    })
+
+    this.releaseAfterSizingTriggers()
+    this.isRendering = false
   }
 
 
@@ -491,12 +391,12 @@ export default class Calendar {
         type: 'CHANGE_TIMEZONE',
         oldDateEnv
       })
-    } else if (name === 'defaultDate') {
+    } else if (name === 'defaultDate' || name === 'defaultView') {
       // can't change date this way. use gotoDate instead
     } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
       // doesn't affect rendering. only interactions.
     } else {
-      this.smash()
+      this.renderComponent(true)
     }
   }
 
@@ -508,6 +408,16 @@ export default class Calendar {
 
   opt(name: string) { // getter, used internally
     return this.optionsManager.computed[name]
+  }
+
+
+  viewOpt(name: string) { // getter, used internally
+    return this.viewOpts()[name]
+  }
+
+
+  viewOpts() {
+    return this.viewSpecs[this.state.viewType]
   }
 
 
@@ -527,10 +437,16 @@ export default class Calendar {
       options.cmdFormatter
     )
 
-    this.viewSpecs = buildViewSpecs( // ineffecient to do every time?
+    // ineffecient to do every time?
+    this.viewSpecs = buildViewSpecs(
       (exportHooks as any).views,
       this.optionsManager
     )
+
+    // ineffecient to do every time?
+    this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
+      return new DateProfileGenerator(viewSpec, this)
+    })
   }
 
 
@@ -579,76 +495,6 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  renderView(forceFlags: RenderForceFlags) {
-    let { state, renderedView } = this
-
-    if (renderedView !== this.view) {
-      if (renderedView) {
-        renderedView.removeElement()
-      }
-      renderedView = this.renderedView = this.view
-    }
-
-    if (!renderedView.el) {
-      renderedView.setElement(
-        createElement('div', { className: 'fc-view fc-' + renderedView.type + '-view' })
-      )
-    } else {
-      // because removeElement must have been called previously, which unbinds global handlers
-      renderedView.bindGlobalHandlers()
-    }
-
-    if (!renderedView.el.parentNode) {
-      this.contentEl.appendChild(renderedView.el)
-    } else {
-      renderedView.addScroll(renderedView.queryScroll())
-    }
-
-    // if event sources are still loading and progressive rendering hasn't been enabled,
-    // keep rendering the last fully loaded set of events
-    let renderableEventStore = this.renderableEventStore =
-      (state.eventSourceLoadingLevel && !this.opt('progressiveEventRendering')) ?
-        this.renderableEventStore :
-        state.eventStore
-
-    // setting state here, eek
-    let eventUis = this.state.eventUis = this.computeEventDefUis(
-      renderableEventStore.defs,
-      state.eventSources,
-      renderedView.options
-    )
-
-    renderedView.render({
-      dateProfile: state.dateProfile,
-      eventStore: renderableEventStore,
-      eventUis: eventUis,
-      businessHours: this.parseBusinessHours(renderedView.opt('businessHours')),
-      dateSelection: state.dateSelection,
-      eventSelection: state.eventSelection,
-      eventDrag: state.eventDrag,
-      eventResize: state.eventResize
-    }, forceFlags)
-  }
-
-
-  getViewByType(viewType: string) {
-    return this.viewsByType[viewType] ||
-      (this.viewsByType[viewType] = this.instantiateView(viewType))
-  }
-
-
-  // Given a view name for a custom view or a standard view, creates a ready-to-go View object
-  instantiateView(viewType: string): View {
-    let spec = this.viewSpecs[viewType]
-
-    if (!spec) {
-      throw new Error(`View type "${viewType}" is not valid`)
-    }
-
-    return new spec['class'](this, spec)
-  }
-
-
   // Returns a boolean about whether the view is okay to instantiate at some point
   isValidViewType(viewType: string): boolean {
     return Boolean(this.viewSpecs[viewType])
@@ -667,7 +513,12 @@ export default class Calendar {
       }
     }
 
-    this.setViewType(viewType, dateMarker)
+    this.unselect()
+    this.dispatch({
+      type: 'SET_VIEW_TYPE',
+      viewType,
+      dateMarker
+    })
   }
 
 
@@ -681,10 +532,19 @@ export default class Calendar {
     spec = this.viewSpecs[viewType] ||
       this.getUnitViewSpec(viewType)
 
+    this.unselect()
+
     if (spec) {
-      this.setViewType(spec.type, dateMarker)
+      this.dispatch({
+        type: 'SET_VIEW_TYPE',
+        viewType: spec.type,
+        dateMarker
+      })
     } else {
-      this.setCurrentDateMarker(dateMarker)
+      this.dispatch({
+        type: 'SET_DATE',
+        dateMarker
+      })
     }
   }
 
@@ -697,7 +557,7 @@ export default class Calendar {
     let spec
 
     // put views that have buttons first. there will be duplicates, but oh well
-    viewTypes = this.header.getViewsWithButtons() // TODO: include footer as well?
+    viewTypes = this.component.header.viewsWithButtons // TODO: include footer as well?
     for (let viewType in this.viewSpecs) {
       viewTypes.push(viewType)
     }
@@ -709,18 +569,6 @@ export default class Calendar {
           return spec
         }
       }
-    }
-  }
-
-
-  // internal use only
-  // does not cause a render
-  setViewType(viewType: string, dateMarker?: DateMarker) {
-    if (!this.view || this.view.type !== viewType) {
-      this.view = this.getViewByType(viewType)
-
-      // luckily, will always cause a rerender
-      this.setCurrentDateMarker(dateMarker || this.state.dateProfile.currentDate)
     }
   }
 
@@ -742,42 +590,56 @@ export default class Calendar {
 
 
   prev() {
-    this.setDateProfile(
-      this.view.dateProfileGenerator.buildPrev(this.state.dateProfile)
-    )
+    this.unselect()
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.dateProfileGenerators[this.state.viewType].buildPrev(this.state.dateProfile)
+    })
   }
 
 
   next() {
-    this.setDateProfile(
-      this.view.dateProfileGenerator.buildNext(this.state.dateProfile)
-    )
+    this.unselect()
+    this.dispatch({
+      type: 'SET_DATE_PROFILE',
+      dateProfile: this.dateProfileGenerators[this.state.viewType].buildNext(this.state.dateProfile)
+    })
   }
 
 
   prevYear() {
-    this.setCurrentDateMarker(
-      this.dateEnv.addYears(this.state.dateProfile.currentDate, -1)
-    )
+    this.unselect()
+    this.dispatch({
+      type: 'SET_DATE',
+      dateMarker: this.dateEnv.addYears(this.state.dateProfile.currentDate, -1)
+    })
   }
 
 
   nextYear() {
-    this.setCurrentDateMarker(
-      this.dateEnv.addYears(this.state.dateProfile.currentDate, 1)
-    )
+    this.unselect()
+    this.dispatch({
+      type: 'SET_DATE',
+      dateMarker: this.dateEnv.addYears(this.state.dateProfile.currentDate, 1)
+    })
   }
 
 
   today() {
-    this.setCurrentDateMarker(this.getNow())
+    this.unselect()
+    this.dispatch({
+      type: 'SET_DATE',
+      dateMarker: this.getNow()
+    })
   }
 
 
   gotoDate(zonedDateInput) {
-    this.setCurrentDateMarker(
-      this.dateEnv.createMarker(zonedDateInput)
-    )
+    this.unselect()
+    this.dispatch({
+      type: 'SET_DATE',
+      dateMarker: this.dateEnv.createMarker(zonedDateInput)
+    })
   }
 
 
@@ -785,9 +647,11 @@ export default class Calendar {
     let delta = createDuration(deltaInput)
 
     if (delta) { // else, warn about invalid input?
-      this.setCurrentDateMarker(
-        this.dateEnv.add(this.state.dateProfile.currentDate, delta)
-      )
+      this.unselect()
+      this.dispatch({
+        type: 'SET_DATE',
+        dateMarker: this.dateEnv.add(this.state.dateProfile.currentDate, delta)
+      })
     }
   }
 
@@ -795,22 +659,6 @@ export default class Calendar {
   // for external API
   getDate(): Date {
     return this.dateEnv.toDate(this.state.dateProfile.currentDate)
-  }
-
-
-  setCurrentDateMarker(date: DateMarker) { // internal use only
-    this.setDateProfile(
-      this.view.computeDateProfile(date)
-    )
-  }
-
-
-  setDateProfile(dateProfile: DateProfile) {
-    this.unselect()
-    this.dispatch({
-      type: 'SET_DATE_PROFILE',
-      dateProfile: dateProfile
-    })
   }
 
 
@@ -845,197 +693,42 @@ export default class Calendar {
   }
 
 
-  // Resizing
+  // Sizing
   // -----------------------------------------------------------------------------------------------------------------
-
-
-  updateSize() { // public
-    this.updateViewSize(true) // force=true
-  }
-
-
-  getSuggestedViewHeight(): number {
-    if (this.suggestedViewHeight == null) {
-      this.calcSize()
-    }
-    return this.suggestedViewHeight
-  }
-
-
-  isHeightAuto(): boolean {
-    return this.opt('contentHeight') === 'auto' || this.opt('height') === 'auto'
-  }
-
-
-  updateViewSize(isResize: boolean = false) {
-    let { renderedView } = this
-    let scroll
-
-    if (!this.ignoreUpdateViewSize && renderedView) {
-
-      if (isResize) {
-        this.calcSize()
-        scroll = renderedView.queryScroll()
-      }
-
-      this.ignoreUpdateViewSize++
-
-      renderedView.updateSize(
-        this.getSuggestedViewHeight(),
-        this.isHeightAuto(),
-        isResize
-      )
-
-      this.ignoreUpdateViewSize--
-
-      if (isResize) {
-        renderedView.applyScroll(scroll)
-      }
-
-      return true // signal success
-    }
-  }
-
-
-  calcSize() {
-    if (this.elementVisible()) {
-      this._calcSize()
-    }
-  }
-
-
-  _calcSize() { // assumes elementVisible
-    let contentHeightInput = this.opt('contentHeight')
-    let heightInput = this.opt('height')
-
-    if (typeof contentHeightInput === 'number') { // exists and not 'auto'
-      this.suggestedViewHeight = contentHeightInput
-    } else if (typeof contentHeightInput === 'function') { // exists and is a function
-      this.suggestedViewHeight = contentHeightInput()
-    } else if (typeof heightInput === 'number') { // exists and not 'auto'
-      this.suggestedViewHeight = heightInput - this.queryToolbarsHeight()
-    } else if (typeof heightInput === 'function') { // exists and is a function
-      this.suggestedViewHeight = heightInput() - this.queryToolbarsHeight()
-    } else if (heightInput === 'parent') { // set to height of parent element
-      this.suggestedViewHeight = (this.el.parentNode as HTMLElement).offsetHeight - this.queryToolbarsHeight()
-    } else {
-      this.suggestedViewHeight = Math.round(
-        this.contentEl.offsetWidth /
-        Math.max(this.opt('aspectRatio'), .5)
-      )
-    }
-  }
-
-
-  elementVisible(): boolean {
-    return Boolean(this.el.offsetWidth)
-  }
 
 
   windowResize(ev: Event) {
-    if (
-      // the purpose: so we don't process jqui "resize" events that have bubbled up
-      // cast to any because .target, which is Element, can't be compared to window for some reason.
-      (ev as any).target === window &&
-      this.renderedView &&
-      this.renderedView.renderedFlags.dates
-    ) {
-      if (this.updateViewSize(true)) { // force=true, returns true on success
-        this.publiclyTrigger('windowResize', [ this.renderedView ])
+    if ((ev as any).target === window) { // not a jqui resize event
+      if (this.resizeComponent()) { // returns true on success
+        this.publiclyTrigger('windowResize', [ this.component.view ])
       }
     }
   }
 
 
-  // Height "Freezing"
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  freezeContentHeight() {
-    applyStyle(this.contentEl, {
-      width: '100%',
-      height: this.contentEl.offsetHeight,
-      overflow: 'hidden'
-    })
+  updateSize() { // public
+    this.resizeComponent()
   }
 
 
-  thawContentHeight() {
-    applyStyle(this.contentEl, {
-      width: '',
-      height: '',
-      overflow: ''
-    })
-  }
+  resizeComponent(): boolean {
 
+    if (!this.isResizing && this.component) {
+      this.isResizing = true
 
-  // Toolbar
-  // -----------------------------------------------------------------------------------------------------------------
+      let savedScroll = this.component.view.queryScroll()
 
+      this.component.updateSize(true) // isResize=true
 
-  renderToolbars(forceFlags: RenderForceFlags) {
-    let headerLayout = this.opt('header')
-    let footerLayout = this.opt('footer')
-    let now = this.getNow()
-    let dateProfile = this.state.dateProfile
-    let view = this.view // use the view that intends to be rendered
-    let todayInfo = view.dateProfileGenerator.build(now)
-    let prevInfo = view.dateProfileGenerator.buildPrev(dateProfile)
-    let nextInfo = view.dateProfileGenerator.buildNext(dateProfile)
-    let props = {
-      title: view.title,
-      activeButton: view.type,
-      isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentRange, now),
-      isPrevEnabled: prevInfo.isValid,
-      isNextEnabled: nextInfo.isValid
+      savedScroll.isLocked = true // will prevent view from computing own values
+      this.component.view.applyScroll(savedScroll)
+
+      this.isResizing = false
+
+      return true // signal success
     }
 
-    if ((!headerLayout || forceFlags === true) && this.header) {
-      this.header.removeElement()
-      this.header = null
-    }
-
-    if (headerLayout) {
-      if (!this.header) {
-        this.header = new Toolbar(this, 'fc-header-toolbar')
-        prependToElement(this.el, this.header.el)
-      }
-      this.header.render(
-        assignTo({ layout: headerLayout }, props),
-        forceFlags
-      )
-    }
-
-    if ((!footerLayout || forceFlags === true) && this.footer) {
-      this.footer.removeElement()
-      this.footer = null
-    }
-
-    if (footerLayout) {
-      if (!this.footer) {
-        this.footer = new Toolbar(this, 'fc-footer-toolbar')
-        appendToElement(this.el, this.footer.el)
-      }
-      this.footer.render(
-        assignTo({ layout: footerLayout }, props),
-        forceFlags
-      )
-    }
-  }
-
-
-  queryToolbarsHeight() {
-    let height = 0
-
-    if (this.header) {
-      height += computeHeightAndMargins(this.header.el)
-    }
-
-    if (this.footer) {
-      height += computeHeightAndMargins(this.footer.el)
-    }
-
-    return height
+    return false
   }
 
 
@@ -1090,7 +783,7 @@ export default class Calendar {
     let arg = buildDateSpanApi(selection, this.dateEnv)
 
     arg.jsEvent = pev ? pev.origEvent : null
-    arg.view = this.view
+    arg.view = this.component.view
 
     this.publiclyTrigger('select', [ arg ])
 
@@ -1104,7 +797,7 @@ export default class Calendar {
     this.publiclyTrigger('unselect', [
       {
         jsEvent: pev ? pev.origEvent : null,
-        view: this.view
+        view: this.component.view
       }
     ])
   }
@@ -1127,7 +820,7 @@ export default class Calendar {
 
   // for unfocusing selections
   onDocumentPointerUp = (pev: PointerDragEvent) => {
-    let { state, view, documentPointer } = this
+    let { state, documentPointer } = this
 
     // touch-scrolling should never unfocus any type of selection
     if (!documentPointer.wasTouchScroll) {
@@ -1136,8 +829,8 @@ export default class Calendar {
         state.dateSelection && // an existing date selection?
         !this.isRecentPointerDateSelect // a new pointer-initiated date selection since last onDocumentPointerUp?
       ) {
-        let unselectAuto = view.opt('unselectAuto')
-        let unselectCancel = view.opt('unselectCancel')
+        let unselectAuto = this.viewOpt('unselectAuto')
+        let unselectCancel = this.viewOpt('unselectCancel')
 
         if (unselectAuto && (!unselectAuto || !elementClosest(documentPointer.downEl, unselectCancel))) {
           this.unselect(pev)
@@ -1296,7 +989,7 @@ export default class Calendar {
 
 
   rerenderEvents() { // API method. destroys old events if previously rendered.
-    this.requestRerender({ events: true }) // TODO: test this
+    this.dispatch({ type: 'RESET_EVENTS' })
   }
 
 

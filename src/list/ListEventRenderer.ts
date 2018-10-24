@@ -3,6 +3,7 @@ import EventRenderer from '../component/renderers/EventRenderer'
 import ListView from './ListView'
 import { Seg } from '../component/DateComponent'
 import { isMultiDayRange } from '../util/misc'
+import { getAllDayHtml } from '../component/date-rendering'
 
 export default class ListEventRenderer extends EventRenderer {
 
@@ -32,7 +33,7 @@ export default class ListEventRenderer extends EventRenderer {
     let timeHtml
 
     if (eventDef.allDay) {
-      timeHtml = view.getAllDayHtml()
+      timeHtml = getAllDayHtml(view)
     } else if (isMultiDayRange(eventRange.range)) {
       if (seg.isStart) {
         timeHtml = htmlEscape(this._getTimeText(
@@ -47,7 +48,7 @@ export default class ListEventRenderer extends EventRenderer {
           false // allDay
         ))
       } else { // inner segment that lasts the whole day
-        timeHtml = view.getAllDayHtml()
+        timeHtml = getAllDayHtml(view)
       }
     } else {
       // Display the normal time text for the *event's* times

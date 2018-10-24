@@ -2,7 +2,7 @@ import {
   DateMarker, addMs,
   diffHours, diffMinutes, diffSeconds, diffWholeWeeks, diffWholeDays,
   startOfDay, startOfHour, startOfMinute, startOfSecond,
-  weekOfYear, arrayToUtcDate, dateToUtcArray, dateToLocalArray, arrayToLocalDate, timeAsMs
+  weekOfYear, arrayToUtcDate, dateToUtcArray, dateToLocalArray, arrayToLocalDate, timeAsMs, isValidDate
 } from './marker'
 import { CalendarSystem, createCalendarSystem } from './calendar-system'
 import { Locale } from './locale'
@@ -122,7 +122,7 @@ export class DateEnv {
       marker = arrayToUtcDate(input)
     }
 
-    if (marker === null || isNaN(marker.valueOf())) {
+    if (marker === null || !isValidDate(marker)) {
       return null
     }
 

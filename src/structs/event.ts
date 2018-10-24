@@ -65,7 +65,7 @@ export interface EventDef {
   backgroundColor: string
   borderColor: string
   textColor: string
-  extendedProps: object
+  extendedProps: any
 }
 
 export interface EventInstance {

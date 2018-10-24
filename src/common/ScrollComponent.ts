@@ -24,6 +24,7 @@ export default class ScrollComponent extends ElementScrollController {
     )
     this.overflowX = overflowX
     this.overflowY = overflowY
+    this.applyOverflow()
   }
 
 
@@ -34,7 +35,7 @@ export default class ScrollComponent extends ElementScrollController {
   }
 
 
-  removeElement() {
+  destroy() {
     removeElement(this.el)
   }
 

@@ -451,6 +451,7 @@ export function computeAlignedDayRange(timedRange: DateRange): DateRange {
 
 
 // given a timed range, computes an all-day range based on how for the end date bleeds into the next day
+// TODO: give nextDayThreshold a default arg
 export function computeVisibleDayRange(timedRange: DateRange, nextDayThreshold: Duration): DateRange {
   let startDay: DateMarker = startOfDay(timedRange.start) // the beginning of the day the range starts
   let end: DateMarker = timedRange.end

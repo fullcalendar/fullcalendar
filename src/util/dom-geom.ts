@@ -102,6 +102,7 @@ export function computeHeightAndMargins(el: HTMLElement) {
 }
 
 
+// does not return window
 export function getClippingParents(el: HTMLElement): HTMLElement[] {
   let parents: HTMLElement[] = []
 
