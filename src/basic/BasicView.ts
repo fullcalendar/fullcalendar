@@ -32,7 +32,7 @@ export default class BasicView extends View {
 
   scroller: ScrollComponent
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
-  colWeekNumbersVisible: boolean = false
+  colWeekNumbersVisible: boolean
 
   weekNumberWidth: any // width of all the week-number cells running down the side
 
@@ -67,6 +67,8 @@ export default class BasicView extends View {
         this.dayGrid.cellWeekNumbersVisible = false
         this.colWeekNumbersVisible = true
       }
+    } else {
+      this.colWeekNumbersVisible = false
     }
   }
 
@@ -271,7 +273,7 @@ export default class BasicView extends View {
 }
 
 
-BasicView.dateProfileGeneratorClass = BasicViewDateProfileGenerator
+BasicView.prototype.dateProfileGeneratorClass = BasicViewDateProfileGenerator
 BasicView.prototype.dayGridClass = DayGrid
 
 

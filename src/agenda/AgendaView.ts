@@ -467,4 +467,4 @@ function buildInteractionForDayGrid(state: EventInteractionUiState): EventIntera
   return null
 }
 
-AgendaView.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering
+AgendaView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering

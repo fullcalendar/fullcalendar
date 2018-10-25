@@ -29,4 +29,4 @@ export default class MonthView extends BasicView {
 
 }
 
-MonthView.dateProfileGeneratorClass = MonthViewDateProfileGenerator
+MonthView.prototype.dateProfileGeneratorClass = MonthViewDateProfileGenerator

@@ -18,7 +18,11 @@ export default function(eventSources: EventSourceHash, action: Action, dateProfi
     case 'SET_VIEW_TYPE':
     case 'SET_DATE':
     case 'SET_DATE_PROFILE':
-      return fetchDirtySources(eventSources, dateProfile.activeRange, calendar)
+      if (dateProfile) {
+        return fetchDirtySources(eventSources, dateProfile.activeRange, calendar)
+      } else {
+        return eventSources
+      }
 
     case 'FETCH_EVENT_SOURCES':
     case 'CHANGE_TIMEZONE':
@@ -54,7 +58,9 @@ function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fe
     hash[source.sourceId] = source
   }
 
-  hash = fetchDirtySources(hash, fetchRange, calendar)
+  if (fetchRange) {
+    hash = fetchDirtySources(hash, fetchRange, calendar)
+  }
 
   return assignTo({}, eventSourceHash, hash)
 }
@@ -67,7 +73,7 @@ function removeSource(eventSourceHash: EventSourceHash, sourceId: string): Event
 }
 
 
-function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange | null, calendar: Calendar): EventSourceHash {
+function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, calendar: Calendar): EventSourceHash {
   return fetchSourcesByIds(
     sourceHash,
     filterHash(sourceHash, function(eventSource) {
@@ -79,25 +85,23 @@ function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange | 
 }
 
 
-function isSourceDirty(eventSource: EventSource, fetchRange: DateRange | null, calendar: Calendar) {
+function isSourceDirty(eventSource: EventSource, fetchRange: DateRange, calendar: Calendar) {
 
   if (!doesSourceNeedRange(eventSource)) {
     return !eventSource.latestFetchId
-  } else if (fetchRange) {
+  } else {
     return !calendar.opt('lazyFetching') ||
       !eventSource.fetchRange ||
       fetchRange.start < eventSource.fetchRange.start ||
       fetchRange.end > eventSource.fetchRange.end
   }
-
-  return false
 }
 
 
 function fetchSourcesByIds(
   prevSources: EventSourceHash,
   sourceIdHash: { [sourceId: string]: any },
-  fetchRange: DateRange | null,
+  fetchRange: DateRange,
   calendar: Calendar
 ): EventSourceHash {
   let nextSources: EventSourceHash = {}
@@ -116,7 +120,7 @@ function fetchSourcesByIds(
 }
 
 
-function fetchSource(eventSource: EventSource, fetchRange: DateRange | null, calendar: Calendar) {
+function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: Calendar) {
   let sourceDef = getEventSourceDef(eventSource.sourceDefId)
   let fetchId = String(uid++)
 

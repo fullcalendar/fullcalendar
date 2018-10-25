@@ -107,7 +107,7 @@ export default class DateComponent extends Component<DateComponentProps> {
     this.subrender('afterSkeletonRender', [], 'beforeSkeletonUnrender', true)
     let dateId = this.subrender('_renderDates', [ props.dateProfile ], '_unrenderDates', true)
     this.subrender('renderBusinessHours', [ props.businessHours, dateId ], 'unrenderBusinessHours', true)
-    this.subrender('renderDateSelection', [ props.dateSelection, dateId ], 'unrenderDateSelection', true)
+    this.subrender('renderDateSelectionState', [ props.dateSelection, dateId ], 'unrenderDateSelectionState', true)
     let evId = this.subrender('renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents', true)
     this.subrender('selectEventsByInstanceId', [ props.eventSelection, evId ], 'unselectAllEvents', true)
     this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState', true)
@@ -128,7 +128,7 @@ export default class DateComponent extends Component<DateComponentProps> {
       this.computeBusinessHoursSize()
     }
 
-    if (isResize || map.has('renderDateSelection') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
+    if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
       this.computeHighlightSize()
       this.computeMirrorSize()
     }
@@ -141,7 +141,7 @@ export default class DateComponent extends Component<DateComponentProps> {
       this.assignBusinessHoursSize()
     }
 
-    if (isResize || map.has('renderDateSelection') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
+    if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
       this.assignHighlightSize()
       this.assignMirrorSize()
     }
@@ -251,10 +251,20 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Date Selection
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderDateSelection(selection: DateSpan) {
+  renderDateSelectionState(selection: DateSpan) {
     if (selection) {
-      this.renderHighlightSegs(this.selectionToSegs(selection, false))
+      this.renderDateSelection(selection)
     }
+  }
+
+  unrenderDateSelectionState(selection: DateSpan) {
+    if (selection) {
+      this.unrenderDateSelection()
+    }
+  }
+
+  renderDateSelection(selection: DateSpan) {
+    this.renderHighlightSegs(this.selectionToSegs(selection, false))
   }
 
   unrenderDateSelection() {

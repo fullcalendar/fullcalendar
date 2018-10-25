@@ -15,10 +15,9 @@ import { ComponentContext } from './component/Component'
 
 export default abstract class View extends DateComponent {
 
-  // whether minTime/maxTime will affect the activeRange. Views must opt-in.
-  // initialized after class
-  static usesMinMaxTime: boolean = false
-  static dateProfileGeneratorClass: any // initialized after class. used by Calendar
+  // config properties, initialized after class on prototype
+  usesMinMaxTime: boolean // whether minTime/maxTime will affect the activeRange. Views must opt-in.
+  dateProfileGeneratorClass: any // initialized after class. used by Calendar
 
   on: EmitterInterface['on']
   one: EmitterInterface['one']
@@ -245,17 +244,6 @@ export default abstract class View extends DateComponent {
   }
 
 
-  /* Dimensions
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  updateSize(totalHeight: number, isAuto: boolean, isResize: boolean) {
-    super.updateSize(totalHeight, isAuto, isResize)
-
-    this.updateNowIndicator()
-  }
-
-
   /* Scroller
   ------------------------------------------------------------------------------------------------------------------*/
 
@@ -333,5 +321,5 @@ export default abstract class View extends DateComponent {
 
 EmitterMixin.mixInto(View)
 
-View.usesMinMaxTime = false
-View.dateProfileGeneratorClass = DateProfileGenerator
+View.prototype.usesMinMaxTime = false
+View.prototype.dateProfileGeneratorClass = DateProfileGenerator

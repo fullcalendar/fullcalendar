@@ -74,7 +74,7 @@ export default class Calendar {
   // isDisplaying: boolean = false // installed in DOM? accepting renders?
   needsRerender: boolean = false // needs a render?
   needsFullRerender: boolean = false
-  isRendering: boolean = false // currently in the renderComponent function?
+  isRendering: boolean = false // currently in the executeRender function?
   renderingPauseDepth: number = 0
   renderableEventStore: EventStore
   buildDelayedRerender: any
@@ -108,8 +108,15 @@ export default class Calendar {
   }
 
 
+  // public API
+  get view(): View {
+    return this.component ? this.component.view : null
+  }
+
+
+  // public API :(
   getView(): View {
-    return this.component.view
+    return this.view // calls getter
   }
 
 
@@ -121,7 +128,7 @@ export default class Calendar {
     if (!this.component) {
       this.renderableEventStore = createEmptyEventStore()
       this.bindHandlers()
-      this.renderComponent()
+      this.executeRender()
     } else {
       this.requestRerender(true)
     }
@@ -131,7 +138,7 @@ export default class Calendar {
   destroy() {
     if (this.component) {
       this.unbindHandlers()
-      this.component.destroy()
+      this.component.destroy() // don't null-out. in case API needs access
       this.component = null
     }
   }
@@ -293,8 +300,7 @@ export default class Calendar {
       !this.renderingPauseDepth && // not paused
       !this.isRendering // not currently in the render loop
     ) {
-      this.renderComponent(this.needsFullRerender)
-      this.needsFullRerender = false
+      this.executeRender()
     }
   }
 
@@ -310,7 +316,27 @@ export default class Calendar {
   // Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderComponent(needsFull = false) {
+  executeRender() {
+    let { needsFullRerender } = this // save before clearing
+
+    // clear these BEFORE the render so that new values will accumulate during render
+    this.needsRerender = false
+    this.needsFullRerender = false
+
+    this.isRendering = true
+    this.renderComponent(needsFullRerender)
+    this.isRendering = false
+
+    // received a rerender request while rendering
+    if (this.needsRerender) {
+      this.delayedRerender()
+    }
+  }
+
+  /*
+  don't call this directly. use executeRender instead
+  */
+  renderComponent(needsFull) {
     let { state, component } = this
     let { viewType } = state
     let viewSpec = this.viewSpecs[viewType]
@@ -332,8 +358,6 @@ export default class Calendar {
       state.eventSources,
       viewSpec.options
     )
-
-    this.isRendering = true
 
     if (needsFull || !component) {
 
@@ -367,7 +391,6 @@ export default class Calendar {
     }
 
     this.releaseAfterSizingTriggers()
-    this.isRendering = false
   }
 
 
@@ -393,7 +416,16 @@ export default class Calendar {
     } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
       // doesn't affect rendering. only interactions.
     } else {
-      this.renderComponent(true)
+
+      /* HACK
+      has the same effect as calling this.requestRerender(true)
+      but recomputes the state's dateProfile
+      */
+      this.needsFullRerender = true
+      this.dispatch({
+        type: 'SET_VIEW_TYPE',
+        viewType: this.state.viewType
+      })
     }
   }
 
@@ -414,7 +446,7 @@ export default class Calendar {
 
 
   viewOpts() {
-    return this.viewSpecs[this.state.viewType]
+    return this.viewSpecs[this.state.viewType].options
   }
 
 
@@ -442,7 +474,7 @@ export default class Calendar {
 
     // ineffecient to do every time?
     this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
-      return new viewSpec.class.dateProfileGeneratorClass(viewSpec, this)
+      return new viewSpec.class.prototype.dateProfileGeneratorClass(viewSpec, this)
     })
   }
 
@@ -697,7 +729,7 @@ export default class Calendar {
   windowResize(ev: Event) {
     if ((ev as any).target === window) { // not a jqui resize event
       if (this.resizeComponent()) { // returns true on success
-        this.publiclyTrigger('windowResize', [ this.component.view ])
+        this.publiclyTrigger('windowResize', [ this.view ])
       }
     }
   }
@@ -774,7 +806,7 @@ export default class Calendar {
     let arg = buildDateSpanApi(selection, this.dateEnv)
 
     arg.jsEvent = pev ? pev.origEvent : null
-    arg.view = this.component.view
+    arg.view = this.view
 
     this.publiclyTrigger('select', [ arg ])
 
@@ -788,7 +820,7 @@ export default class Calendar {
     this.publiclyTrigger('unselect', [
       {
         jsEvent: pev ? pev.origEvent : null,
-        view: this.component.view
+        view: this.view
       }
     ])
   }
