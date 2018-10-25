@@ -279,13 +279,9 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  /*
-  the force flags force certain entities to be rerendered.
-  it does not avoid the delay if one is configured.
-  */
-  requestRerender(force = false) {
+  requestRerender(needsFull = false) {
     this.needsRerender = true
-    this.needsFullRerender = this.needsFullRerender || force
+    this.needsFullRerender = this.needsFullRerender || needsFull
     this.delayedRerender() // will call a debounced-version of tryRerender
   }
 
@@ -298,6 +294,7 @@ export default class Calendar {
       !this.isRendering // not currently in the render loop
     ) {
       this.renderComponent(this.needsFullRerender)
+      this.needsFullRerender = false
     }
   }
 
@@ -313,11 +310,11 @@ export default class Calendar {
   // Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderComponent(force = false) {
+  renderComponent(needsFull = false) {
     let { state, component } = this
     let { viewType } = state
     let viewSpec = this.viewSpecs[viewType]
-    let savedScroll = (force && component) ? component.view.queryScroll() : null
+    let savedScroll = (needsFull && component) ? component.view.queryScroll() : null
 
     if (!viewSpec) {
       throw new Error(`View type "${viewType}" is not valid`)
@@ -338,7 +335,7 @@ export default class Calendar {
 
     this.isRendering = true
 
-    if (force || !component) {
+    if (needsFull || !component) {
 
       if (component) {
         component.destroy()
