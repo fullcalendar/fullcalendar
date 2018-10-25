@@ -98,15 +98,18 @@ describe('eventResize', function() {
     describe('when rendering a timed event', function() {
       it('should not have resize capabilities', function(done) {
         var options = {}
+
         options.events = [ {
           title: 'timed event',
           start: '2014-06-11T08:00:00',
           allDay: false
         } ]
+
         options._eventsPositioned = function() {
           expect($('.fc-event .fc-resizer').length).toBe(0)
           done()
         }
+
         initCalendar(options)
       })
     })
@@ -312,56 +315,28 @@ describe('eventResize', function() {
       })
 
       it('should display the correct time text while resizing', function(done) {
+        var renderCnt = 0
         var options = {}
+
         options._eventsPositioned = function() {
-          setTimeout(function() {
-            var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
-            $('.fc-event').simulate('mouseover') // for revealing resizer
-            $('.fc-event .fc-resizer').simulate('drag', {
-              dy: dy,
-              onBeforeRelease: function() {
-                expect($('.fc-event.fc-mirror .fc-time')).toHaveText('5:00 - 9:30')
-                $('.fc-event.fc-mirror .fc-resizer').simulate('drag', {
-                  dy: -dy,
-                  onBeforeRelease: function() {
-                    expect($('.fc-event.fc-mirror')).not.toExist()
-                    expect($('.fc-event')).toBeVisible()
-                    expect($('.fc-event .fc-time')).toHaveText('5:00 - 7:00')
-                  },
-                  onRelease: function() {
-                    done()
-                  }
-                })
-              }
-            })
-          }, 0) // idk
-        }
+          renderCnt++
 
-        initCalendar(options)
-      })
-
-      it('should run the temporarily rendered event through eventRender', function(done) {
-        initCalendar({
-          eventRender(arg) {
-            $(arg.el).addClass('eventDidRender')
-          },
-          eventPositioned(arg) {
-            $(arg.el).addClass('eventDidPosition')
-          },
-          _eventsPositioned() {
+          if (renderCnt === 1) {
             setTimeout(function() {
               var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
               $('.fc-event').simulate('mouseover') // for revealing resizer
               $('.fc-event .fc-resizer').simulate('drag', {
                 dy: dy,
                 onBeforeRelease: function() {
-                  expect($('.fc-event.fc-mirror')).toHaveClass('eventDidRender')
-                  expect($('.fc-event.fc-mirror')).toHaveClass('eventDidPosition')
+                  expect($('.fc-event.fc-mirror .fc-time')).toHaveText('5:00 - 9:30')
 
-                  $('.fc-event.fc-mirror .fc-resizer').simulate('drag', {
+                  // drag it back
+                  $('.fc-event.fc-mirror').simulate('drag', {
                     dy: -dy,
                     onBeforeRelease: function() {
                       expect($('.fc-event.fc-mirror')).not.toExist()
+                      expect($('.fc-event')).toBeVisible()
+                      expect($('.fc-event .fc-time')).toHaveText('5:00 - 7:00')
                     },
                     onRelease: function() {
                       done()
@@ -371,13 +346,56 @@ describe('eventResize', function() {
               })
             }, 0) // idk
           }
+        }
+
+        initCalendar(options)
+      })
+
+      it('should run the temporarily rendered event through eventRender', function(done) {
+        var renderCnt = 0
+
+        initCalendar({
+          eventRender(arg) {
+            $(arg.el).addClass('eventDidRender')
+          },
+          eventPositioned(arg) {
+            $(arg.el).addClass('eventDidPosition')
+          },
+          _eventsPositioned() {
+            renderCnt++
+
+            if (renderCnt === 1) {
+              setTimeout(function() {
+                var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
+                $('.fc-event').simulate('mouseover') // for revealing resizer
+                $('.fc-event .fc-resizer').simulate('drag', {
+                  dy: dy,
+                  onBeforeRelease: function() {
+                    expect($('.fc-event.fc-mirror')).toHaveClass('eventDidRender')
+                    expect($('.fc-event.fc-mirror')).toHaveClass('eventDidPosition')
+
+                    // drag it back
+                    $('.fc-event.fc-mirror').simulate('drag', {
+                      dy: -dy,
+                      onBeforeRelease: function() {
+                        expect($('.fc-event.fc-mirror')).not.toExist()
+                      },
+                      onRelease: function() {
+                        done()
+                      }
+                    })
+                  }
+                })
+              }, 0) // idk
+            }
+          }
         })
       })
 
       it('should not fire the windowResize handler', function(done) { // bug 1116
+        var alreadyRendered = false
 
         // has to do this crap because PhantomJS was trigger false window resizes unrelated to the fc-event resize
-        var alreadyRendered = false
         var isDragging = false
         var calledWhileDragging = false
         var options = {}
@@ -424,29 +442,37 @@ describe('eventResize', function() {
       })
 
       it('should display the correct time text while resizing', function(done) {
+        var renderCnt = 0
         var options = {}
+
         options._eventsPositioned = function() {
-          setTimeout(function() {
-            var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
-            $('.fc-event').simulate('mouseover') // for revealing resizer
-            $('.fc-event .fc-resizer').simulate('drag', {
-              dy: dy,
-              onBeforeRelease: function() {
-                expect($('.fc-event.fc-mirror .fc-time')).toHaveText('5:00 - 9:30')
-                $('.fc-event.fc-mirror .fc-resizer').simulate('drag', {
-                  dy: -dy,
-                  onBeforeRelease: function() {
-                    expect($('.fc-event.fc-mirror')).not.toExist()
-                    expect($('.fc-event')).toBeVisible()
-                    expect($('.fc-event .fc-time')).toHaveText('5:00')
-                  },
-                  onRelease: function() {
-                    done()
-                  }
-                })
-              }
-            })
-          }, 0) // idk
+          renderCnt++
+
+          if (renderCnt === 1) {
+            setTimeout(function() {
+              var dy = $('.fc-slats tr:eq(1)').height() * 5 // 5 slots, so 2.5 hours
+              $('.fc-event').simulate('mouseover') // for revealing resizer
+              $('.fc-event .fc-resizer').simulate('drag', {
+                dy: dy,
+                onBeforeRelease: function() {
+                  expect($('.fc-event.fc-mirror .fc-time')).toHaveText('5:00 - 9:30')
+
+                  // drag it back
+                  $('.fc-event.fc-mirror').simulate('drag', {
+                    dy: -dy,
+                    onBeforeRelease: function() {
+                      expect($('.fc-event.fc-mirror')).not.toExist()
+                      expect($('.fc-event')).toBeVisible()
+                      expect($('.fc-event .fc-time')).toHaveText('5:00')
+                    },
+                    onRelease: function() {
+                      done()
+                    }
+                  })
+                }
+              })
+            }, 0) // idk
+          }
         }
 
         initCalendar(options)
