@@ -338,6 +338,7 @@ export default class Calendar {
     if (needsFull || !component) {
 
       if (component) {
+        component.freezeHeight() // next component will unfreeze it
         component.destroy()
       }
 

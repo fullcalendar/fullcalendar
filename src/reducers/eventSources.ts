@@ -15,8 +15,10 @@ export default function(eventSources: EventSourceHash, action: Action, dateProfi
     case 'REMOVE_EVENT_SOURCE':
       return removeSource(eventSources, action.sourceId)
 
+    case 'SET_VIEW_TYPE':
+    case 'SET_DATE':
     case 'SET_DATE_PROFILE':
-      return fetchDirtySources(eventSources, action.dateProfile.activeRange, calendar)
+      return fetchDirtySources(eventSources, dateProfile.activeRange, calendar)
 
     case 'FETCH_EVENT_SOURCES':
     case 'CHANGE_TIMEZONE':

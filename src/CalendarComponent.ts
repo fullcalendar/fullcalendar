@@ -99,14 +99,14 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   }
 
   render(props: CalendarComponentProps) {
-    this.freezeContentHeight()
+    this.freezeHeight()
 
     let title = this.computeTitle(props.dateProfile, props.viewSpec.options)
     this.subrender('renderToolbars', [ props.viewSpec, props.dateProfile, props.dateProfileGenerator, title ])
     this.renderView(props, title)
 
     this.updateRootSize()
-    this.thawContentHeight()
+    this.thawHeight()
   }
 
   renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, title: string) {
@@ -260,17 +260,15 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   // Height "Freezing"
   // -----------------------------------------------------------------------------------------------------------------
 
-  freezeContentHeight() {
-    applyStyle(this.contentEl, {
-      width: '100%',
-      height: this.contentEl.offsetHeight,
+  freezeHeight() {
+    applyStyle(this.el, {
+      height: this.el.offsetHeight,
       overflow: 'hidden'
     })
   }
 
-  thawContentHeight() {
-    applyStyle(this.contentEl, {
-      width: '',
+  thawHeight() {
+    applyStyle(this.el, {
       height: '',
       overflow: ''
     })
