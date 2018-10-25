@@ -107,7 +107,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
     this.updateRootSize()
     this.thawContentHeight()
-    this.view.popScroll()
   }
 
   renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, title: string) {
@@ -175,6 +174,8 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         dateProfileGenerator,
         this.contentEl
       )
+    } else {
+      view.addScroll(view.queryScroll())
     }
 
     view.title = title // for the API
@@ -196,11 +197,18 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   // -----------------------------------------------------------------------------------------------------------------
 
   updateRootSize(isResize = false) {
+    let { view } = this
+
+    if (isResize) {
+      view.addScroll(view.queryScroll())
+    }
+
     if (isResize || this.isHeightAuto == null) {
       this.computeHeightVars()
     }
 
     this.updateSize(this.viewHeight, this.isHeightAuto, isResize)
+    view.popScroll()
   }
 
   updateSize(totalHeight, isAuto, isResize) {

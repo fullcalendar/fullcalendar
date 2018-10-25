@@ -352,11 +352,6 @@ export default class Calendar {
       }, this.el)
     }
 
-    if (savedScroll) {
-      savedScroll.isLocked = true // will prevent view from computing own values
-      component.view.addScroll(savedScroll)
-    }
-
     component.receiveProps({
       viewSpec,
       dateProfile: state.dateProfile,
@@ -368,6 +363,10 @@ export default class Calendar {
       eventDrag: state.eventDrag,
       eventResize: state.eventResize
     })
+
+    if (savedScroll) {
+      component.view.applyScroll(savedScroll)
+    }
 
     this.releaseAfterSizingTriggers()
     this.isRendering = false
@@ -714,15 +713,9 @@ export default class Calendar {
   resizeComponent(): boolean {
 
     if (!this.isResizing && this.component) {
+
       this.isResizing = true
-
-      let savedScroll = this.component.view.queryScroll()
-
       this.component.updateRootSize(true) // isResize=true
-
-      savedScroll.isLocked = true // will prevent view from computing own values
-      this.component.view.applyScroll(savedScroll)
-
       this.isResizing = false
 
       return true // signal success

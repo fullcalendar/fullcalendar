@@ -263,9 +263,7 @@ export default abstract class View extends DateComponent {
   addScroll(scroll) {
     let queuedScroll = this.queuedScroll || (this.queuedScroll = {})
 
-    if (!queuedScroll.isLocked) {
-      assignTo(queuedScroll, scroll)
-    }
+    assignTo(queuedScroll, scroll)
   }
 
 
@@ -292,10 +290,6 @@ export default abstract class View extends DateComponent {
 
 
   applyScroll(scroll) {
-
-    if (scroll.isLocked) {
-      delete scroll.isLocked
-    }
 
     if (scroll.isDateInit) {
       delete scroll.isDateInit
