@@ -249,13 +249,9 @@ export default abstract class View extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateHeight(totalHeight, isAuto, isResize) {
-    this.updateSize(isResize)
-  }
+  updateSize(totalHeight: number, isAuto: boolean, isResize: boolean) {
+    super.updateSize(totalHeight, isAuto, isResize)
 
-
-  updateSize(isResize) {
-    super.updateSize(isResize)
     this.updateNowIndicator()
   }
 

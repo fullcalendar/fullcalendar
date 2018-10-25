@@ -385,7 +385,7 @@ export default class Calendar {
     this.handleOptions(this.optionsManager.computed)
 
     if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
-      this.updateSize()
+      this.resizeComponent()
     } else if (name === 'timeZone') {
       this.dispatch({
         type: 'CHANGE_TIMEZONE',
@@ -718,7 +718,7 @@ export default class Calendar {
 
       let savedScroll = this.component.view.queryScroll()
 
-      this.component.updateSize(true) // isResize=true
+      this.component.updateRootSize(true) // isResize=true
 
       savedScroll.isLocked = true // will prevent view from computing own values
       this.component.view.applyScroll(savedScroll)

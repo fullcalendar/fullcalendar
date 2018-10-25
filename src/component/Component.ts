@@ -97,7 +97,7 @@ export default class Component<PropsType> {
   }
 
   // when isResize is true, causes all subrenders to have sizes updated
-  updateSize(isResize: boolean = false) {
+  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
     let methodNames = isResize ? this.sizeMethodNames : this.dirtySizeMethodNames
 
     methodNames.forEach((sizeMethodName) => {

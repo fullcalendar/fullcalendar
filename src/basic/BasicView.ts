@@ -150,10 +150,15 @@ export default class BasicView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Refreshes the horizontal dimensions of the view
-  updateHeight(totalHeight, isAuto, isResize) {
-    super.updateHeight(totalHeight, isAuto, isResize)
+  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+    super.updateSize(viewHeight, isAuto, isResize) // will call updateBaseSize. important that executes first
 
+    this.dayGrid.updateSize(viewHeight, isAuto, isResize)
+  }
+
+
+  // Refreshes the horizontal dimensions of the view
+  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
     let { dayGrid } = this
     let eventLimit = this.opt('eventLimit')
     let headRowEl =
@@ -167,7 +172,7 @@ export default class BasicView extends View {
     // TODO: separate setting height from scroller VS dayGrid.
     if (!dayGrid.rowEls) {
       if (!isAuto) {
-        scrollerHeight = this.computeScrollerHeight(totalHeight)
+        scrollerHeight = this.computeScrollerHeight(viewHeight)
         this.scroller.setHeight(scrollerHeight)
       }
       return
@@ -195,8 +200,8 @@ export default class BasicView extends View {
     }
 
     // distribute the height to the rows
-    // (totalHeight is a "recommended" value if isAuto)
-    scrollerHeight = this.computeScrollerHeight(totalHeight)
+    // (viewHeight is a "recommended" value if isAuto)
+    scrollerHeight = this.computeScrollerHeight(viewHeight)
     this.setGridHeight(scrollerHeight, isAuto)
 
     // is the event limit dynamically calculated?
@@ -216,7 +221,7 @@ export default class BasicView extends View {
         }
 
         // doing the scrollbar compensation might have created text overflow which created more height. redo
-        scrollerHeight = this.computeScrollerHeight(totalHeight)
+        scrollerHeight = this.computeScrollerHeight(viewHeight)
         this.scroller.setHeight(scrollerHeight)
       }
 
@@ -226,14 +231,9 @@ export default class BasicView extends View {
   }
 
 
-  updateSize(isResize: boolean) {
-    this.dayGrid.updateSize(isResize)
-  }
-
-
   // given a desired total height of the view, returns what the height of the scroller should be
-  computeScrollerHeight(totalHeight) {
-    return totalHeight -
+  computeScrollerHeight(viewHeight) {
+    return viewHeight -
       subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
   }
 

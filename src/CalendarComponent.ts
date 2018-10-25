@@ -78,7 +78,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
     removeElement(this.contentEl)
     this.toggleElClassNames(false)
-    this.clearHeightVars()
 
     super.destroy()
   }
@@ -106,7 +105,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     this.subrender('renderToolbars', [ props.viewSpec, props.dateProfile, props.dateProfileGenerator, title ])
     this.renderView(props, title)
 
-    this.updateSize()
+    this.updateRootSize()
     this.thawContentHeight()
     this.view.popScroll()
   }
@@ -196,18 +195,18 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   // Sizing
   // -----------------------------------------------------------------------------------------------------------------
 
-  updateSize(isResize = false) {
-    super.updateSize(isResize)
-
-    if (isResize) {
-      this.clearHeightVars()
-    }
-
-    if (this.isHeightAuto == null) {
+  updateRootSize(isResize = false) {
+    if (isResize || this.isHeightAuto == null) {
       this.computeHeightVars()
     }
 
-    this.view.updateHeight(this.viewHeight, this.isHeightAuto, isResize)
+    this.updateSize(this.viewHeight, this.isHeightAuto, isResize)
+  }
+
+  updateSize(totalHeight, isAuto, isResize) {
+    super.updateSize(totalHeight, isAuto, isResize)
+
+    this.view.updateSize(this.viewHeight, this.isHeightAuto, isResize)
   }
 
   computeHeightVars() {
@@ -233,11 +232,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         Math.max(this.opt('aspectRatio'), .5)
       )
     }
-  }
-
-  clearHeightVars() {
-    this.isHeightAuto = null
-    this.viewHeight = null
   }
 
   queryToolbarsHeight() {

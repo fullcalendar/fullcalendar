@@ -114,13 +114,13 @@ export default class DateComponent extends Component<DateComponentProps> {
     this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState', true)
   }
 
-  updateSize(isResize: boolean = false) {
+  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
     let map = this.dirtySizeMethodNames
 
     if (isResize || map.has('afterSkeletonRender') || map.has('_renderDates') || map.has('renderEvents')) {
       // sort of the catch-all sizing
       // anything that might cause dimension changes
-      this.updateBaseSize()
+      this.updateBaseSize(viewHeight, isAuto, isResize)
       this.buildPositionCaches()
     }
 
@@ -153,7 +153,7 @@ export default class DateComponent extends Component<DateComponentProps> {
     this.dirtySizeMethodNames = new Map()
   }
 
-  updateBaseSize() {
+  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
   }
 
   buildPositionCaches() {

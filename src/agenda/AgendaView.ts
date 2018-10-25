@@ -229,10 +229,19 @@ export default class AgendaView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Adjusts the vertical dimensions of the view to the specified values
-  updateHeight(totalHeight, isAuto, isResize) {
-    super.updateHeight(totalHeight, isAuto, isResize)
+  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+    super.updateSize(viewHeight, isAuto, isResize) // will call updateBaseSize. important that executes first
 
+    this.timeGrid.updateSize(viewHeight, isAuto, isResize)
+
+    if (this.dayGrid) {
+      this.dayGrid.updateSize(viewHeight, isAuto, isResize)
+    }
+  }
+
+
+  // Adjusts the vertical dimensions of the view to the specified values
+  updateBaseSize(viewHeight, isAuto, isResize) {
     let eventLimit
     let scrollerHeight
     let scrollbarWidths
@@ -244,7 +253,7 @@ export default class AgendaView extends View {
     // TODO: separate setting height from scroller VS timeGrid.
     if (!this.timeGrid.colEls) {
       if (!isAuto) {
-        scrollerHeight = this.computeScrollerHeight(totalHeight)
+        scrollerHeight = this.computeScrollerHeight(viewHeight)
         this.scroller.setHeight(scrollerHeight)
       }
       return
@@ -275,7 +284,7 @@ export default class AgendaView extends View {
 
     if (!isAuto) { // should we force dimensions of the scroll container?
 
-      scrollerHeight = this.computeScrollerHeight(totalHeight)
+      scrollerHeight = this.computeScrollerHeight(viewHeight)
       this.scroller.setHeight(scrollerHeight)
       scrollbarWidths = this.scroller.getScrollbarWidths()
 
@@ -288,7 +297,7 @@ export default class AgendaView extends View {
 
         // the scrollbar compensation might have changed text flow, which might affect height, so recalculate
         // and reapply the desired height to the scroller.
-        scrollerHeight = this.computeScrollerHeight(totalHeight)
+        scrollerHeight = this.computeScrollerHeight(viewHeight)
         this.scroller.setHeight(scrollerHeight)
       }
 
@@ -304,18 +313,9 @@ export default class AgendaView extends View {
   }
 
 
-  updateSize(isResize: boolean) {
-    this.timeGrid.updateSize(isResize)
-
-    if (this.dayGrid) {
-      this.dayGrid.updateSize(isResize)
-    }
-  }
-
-
   // given a desired total height of the view, returns what the height of the scroller should be
-  computeScrollerHeight(totalHeight) {
-    return totalHeight -
+  computeScrollerHeight(viewHeight) {
+    return viewHeight -
       subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
   }
 
