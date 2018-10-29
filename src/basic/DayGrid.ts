@@ -366,6 +366,14 @@ export default class DayGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
+  filterBgEventRanges(bgEventRanges) {
+    // don't render timed background events
+    return bgEventRanges.filter(function(eventRange) {
+      return eventRange.def.allDay
+    })
+  }
+
+
   // Unrenders all events currently rendered on the grid
   unrenderEvents() {
     this.removeSegPopover() // removes the "more.." events popover

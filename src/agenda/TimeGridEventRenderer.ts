@@ -16,8 +16,8 @@ export default class TimeGridEventRenderer extends EventRenderer {
   fullTimeFormat: DateFormatter
 
 
-  constructor(timeGrid, fillRenderer) {
-    super(timeGrid, fillRenderer)
+  constructor(timeGrid) {
+    super(timeGrid)
     this.timeGrid = timeGrid
 
     this.fullTimeFormat = createFormatter({

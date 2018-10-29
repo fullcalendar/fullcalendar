@@ -1,7 +1,7 @@
 import DateComponent from '../component/DateComponent'
 import { listenToHoverBySelector } from '../util/dom-event'
-import { getElSeg } from '../component/renderers/EventRenderer'
 import EventApi from '../api/EventApi'
+import { getElSeg } from '../component/event-rendering'
 
 /*
 Triggers events and adds/removes core classNames when the user's pointer

@@ -14,19 +14,9 @@ export default class DayGridEventRenderer extends EventRenderer {
   rowStructs: any // an array of objects, each holding information about a row's foreground event-rendering
 
 
-  constructor(dayGrid, fillRenderer) {
-    super(dayGrid, fillRenderer)
+  constructor(dayGrid) {
+    super(dayGrid)
     this.dayGrid = dayGrid
-  }
-
-
-  renderBgSegs(segs: Seg[]) {
-    // don't render timed background events
-    segs = segs.filter(function(seg) {
-      return seg.eventRange.def.allDay
-    })
-
-    return super.renderBgSegs(segs)
   }
 
 

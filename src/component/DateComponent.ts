@@ -1,7 +1,7 @@
 import Component, { ComponentContext } from './Component'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventStore, expandRecurring } from '../structs/event-store'
-import { EventUiHash, EventRenderRange, computeEventDefUis, sliceEventStore, computeEventDefUi } from './event-rendering'
+import { EventUiHash, EventRenderRange, computeEventDefUis, sliceEventStore, computeEventDefUi, hasBgRendering, filterSegsViaEls } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { createDuration, Duration } from '../datelib/duration'
@@ -80,8 +80,8 @@ export default class DateComponent extends Component<DateComponentProps> {
       this.fillRenderer = new this.fillRendererClass(this)
     }
 
-    if (this.eventRendererClass) { // fillRenderer is optional -----v
-      this.eventRenderer = new this.eventRendererClass(this, this.fillRenderer)
+    if (this.eventRendererClass) {
+      this.eventRenderer = new this.eventRendererClass(this)
     }
 
     if (this.mirrorRendererClass && this.eventRenderer) {
@@ -284,11 +284,43 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
   renderEventRanges(eventRanges: EventRenderRange[]) {
-    if (this.eventRenderer) {
-      this.eventRenderer.rangeUpdated() // poorly named now
-      this.eventRenderer.renderSegs(
-        this.eventRangesToSegs(eventRanges)
-      )
+    if (this.eventRenderer || this.fillRenderer) {
+
+      let bgRanges = []
+      let fgRanges = []
+
+      for (let eventRange of eventRanges) {
+        if (hasBgRendering(eventRange.ui)) {
+          bgRanges.push(eventRange)
+        } else {
+          fgRanges.push(eventRange)
+        }
+      }
+
+      if (this.eventRenderer) {
+        this.eventRenderer.rangeUpdated() // poorly named now
+        this.eventRenderer.renderSegs(
+          this.eventRangesToSegs(fgRanges)
+        )
+      }
+
+      if (this.fillRenderer) {
+        bgRanges = this.filterBgEventRanges(bgRanges)
+
+        this.fillRenderer.renderSegs('bgEvent', this.eventRangesToSegs(bgRanges), {
+          getClasses: (seg) => {
+            return seg.eventRange.ui.classNames.concat([ 'fc-bgevent' ])
+          },
+          getCss: (seg) => {
+            return {
+              'background-color': seg.eventRange.ui.backgroundColor
+            }
+          },
+          filterSegs: (segs) => {
+            return filterSegsViaEls(this.view, segs, false)
+          }
+        })
+      }
 
       let calendar = this.calendar
       if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
@@ -297,10 +329,19 @@ export default class DateComponent extends Component<DateComponentProps> {
     }
   }
 
+  filterBgEventRanges(bgEventRanges) {
+    return bgEventRanges
+  }
+
   unrenderEvents() {
     if (this.eventRenderer) {
-      this.triggerWillRemoveSegs(this.eventRenderer.getSegs())
+      this.triggerWillRemoveSegs(this.eventRenderer.fgSegs || [])
       this.eventRenderer.unrender()
+    }
+
+    if (this.fillRenderer) {
+      this.triggerWillRemoveSegs(this.fillRenderer.renderedSegsByType['bgEvent'] || [])
+      this.fillRenderer.unrender('bgEvent')
     }
   }
 
@@ -308,6 +349,7 @@ export default class DateComponent extends Component<DateComponentProps> {
     if (this.fillRenderer) {
       this.fillRenderer.computeSize('bgEvent')
     }
+
     if (this.eventRenderer) {
       this.eventRenderer.computeFgSizes()
     }
@@ -576,11 +618,10 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
   getAllEventSegs(): Seg[] {
-    if (this.eventRenderer) {
-      return this.eventRenderer.getSegs()
-    } else {
-      return []
-    }
+    return [].concat(
+      this.eventRenderer ? (this.eventRenderer.fgSegs || []) : [],
+      this.fillRenderer ? (this.fillRenderer.renderedSegsByType['bgEvent'] || []) : []
+    )
   }
 
 

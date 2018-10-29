@@ -6,6 +6,9 @@ import { mapHash } from '../util/object'
 import { parseClassName } from '../util/html'
 import { Duration } from '../datelib/duration'
 import { computeVisibleDayRange } from '../util/misc'
+import { Seg } from './DateComponent'
+import View from '../View'
+import EventApi from '../api/EventApi'
 
 export interface EventUi {
   startEditable: boolean
@@ -126,6 +129,51 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
 
 export function hasBgRendering(ui: EventUi) {
   return ui.rendering === 'background' || ui.rendering === 'inverse-background'
+}
+
+export function filterSegsViaEls(view: View, segs: Seg[], isMirror) {
+
+  if (view.hasPublicHandlers('eventRender')) {
+    segs = segs.filter(function(seg) {
+      let custom = view.publiclyTrigger('eventRender', [
+        {
+          event: new EventApi(
+            view.calendar,
+            seg.eventRange.def,
+            seg.eventRange.instance
+          ),
+          isMirror,
+          isStart: seg.isStart,
+          isEnd: seg.isEnd,
+          // TODO: include seg.range once all components consistently generate it
+          el: seg.el,
+          view
+        }
+      ])
+
+      if (custom === false) { // means don't render at all
+        return false
+      } else if (custom && custom !== true) {
+        seg.el = custom
+      }
+
+      return true
+    })
+  }
+
+  for (let seg of segs) {
+    setElSeg(seg.el, seg)
+  }
+
+  return segs
+}
+
+function setElSeg(el: HTMLElement, seg: Seg) {
+  (el as any).fcSeg = seg
+}
+
+export function getElSeg(el: HTMLElement): Seg | null {
+  return (el as any).fcSeg || null
 }
 
 

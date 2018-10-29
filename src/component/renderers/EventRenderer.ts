@@ -3,9 +3,8 @@ import { DateMarker } from '../../datelib/marker'
 import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
-import { EventRenderRange, EventUi, hasBgRendering } from '../event-rendering'
+import { EventRenderRange, EventUi, filterSegsViaEls } from '../event-rendering'
 import { Seg } from '../DateComponent'
-import EventApi from '../../api/EventApi'
 import { assignTo } from '../../util/object'
 
 
@@ -13,10 +12,8 @@ export default class EventRenderer {
 
   view: View
   component: any
-  fillRenderer: any // might remain null
 
   fgSegs: Seg[]
-  bgSegs: Seg[]
 
   // derived from options
   eventTimeFormat: DateFormatter
@@ -24,10 +21,9 @@ export default class EventRenderer {
   displayEventEnd: boolean
 
 
-  constructor(component, fillRenderer) { // fillRenderer is optional
+  constructor(component) {
     this.view = component.view || component
     this.component = component
-    this.fillRenderer = fillRenderer
   }
 
 
@@ -61,43 +57,23 @@ export default class EventRenderer {
   }
 
 
-  renderSegs(allSegs: Seg[]) {
-    let bgSegs: Seg[] = []
-    let fgSegs: Seg[] = []
-
-    for (let seg of allSegs) {
-      if (hasBgRendering(seg.eventRange.ui)) {
-        bgSegs.push(seg)
-      } else {
-        fgSegs.push(seg)
-      }
-    }
-
-    this.bgSegs = this.renderBgSegs(bgSegs)
+  renderSegs(fgSegs: Seg[]) {
 
     // render an `.el` on each seg
     // returns a subset of the segs. segs that were actually rendered
-    fgSegs = this.renderFgSegEls(fgSegs)
+    fgSegs = this.renderFgSegEls(fgSegs, false)
 
     if (this.renderFgSegs(fgSegs) !== false) { // no failure?
       this.fgSegs = fgSegs
     }
 
-    this.view.triggerRenderedSegs(this.getSegs())
+    this.view.triggerRenderedSegs(this.fgSegs || [])
   }
 
 
   unrender() {
-    this.unrenderBgSegs()
-    this.bgSegs = null
-
     this.unrenderFgSegs(this.fgSegs || [])
     this.fgSegs = null
-  }
-
-
-  getSegs() {
-    return (this.bgSegs || []).concat(this.fgSegs || [])
   }
 
 
@@ -116,47 +92,10 @@ export default class EventRenderer {
   }
 
 
-  renderBgSegs(segs: Seg[]): Seg[] {
-    if (this.fillRenderer) {
-      return this.fillRenderer.renderSegs('bgEvent', segs, {
-        getClasses: (seg) => {
-          return seg.eventRange.ui.classNames.concat([ 'fc-bgevent' ])
-        },
-        getCss: (seg) => {
-          return {
-            'background-color': seg.eventRange.ui.backgroundColor
-          }
-        },
-        filterEl: (seg, el) => {
-          el = this.filterEventRenderEl(seg, el)
-
-          if (el) {
-            setElSeg(el, seg)
-            seg.el = el
-          }
-
-          return el
-        }
-      })
-    }
-
-    return []
-  }
-
-
-  unrenderBgSegs() {
-    if (this.fillRenderer) {
-      this.fillRenderer.unrender('bgEvent')
-    }
-  }
-
-
   // Renders and assigns an `el` property for each foreground event segment.
   // Only returns segments that successfully rendered.
-  renderFgSegEls(segs: Seg[], isMirrors?: boolean) {
-    let hasEventRenderHandlers = this.view.hasPublicHandlers('eventRender')
+  renderFgSegEls(segs: Seg[], isMirrors: boolean) {
     let html = ''
-    let renderedSegs = []
     let i
 
     if (segs.length) { // don't build an empty html string
@@ -171,19 +110,15 @@ export default class EventRenderer {
       htmlToElements(html).forEach((el, i) => {
         let seg = segs[i]
 
-        if (hasEventRenderHandlers) { // optimization
-          el = this.filterEventRenderEl(seg, el, isMirrors)
-        }
-
         if (el) {
-          setElSeg(el, seg)
           seg.el = el
-          renderedSegs.push(seg)
         }
       })
+
+      segs = filterSegsViaEls(this.view, segs, isMirrors)
     }
 
-    return renderedSegs
+    return segs
   }
 
 
@@ -210,36 +145,6 @@ export default class EventRenderer {
     }
 
     return classes
-  }
-
-
-  // Given an event and the default element used for rendering, returns the element that should actually be used.
-  // Basically runs events and elements through the eventRender hook.
-  filterEventRenderEl(seg: Seg, el: HTMLElement, isMirror: boolean = false) {
-
-    let custom = this.view.publiclyTrigger('eventRender', [
-      {
-        event: new EventApi(
-          this.view.calendar,
-          seg.eventRange.def,
-          seg.eventRange.instance
-        ),
-        isMirror,
-        isStart: seg.isStart,
-        isEnd: seg.isEnd,
-        // TODO: include seg.range once all components consistently generate it
-        el,
-        view: this.view
-      }
-    ])
-
-    if (custom === false) { // means don't render at all
-      el = null
-    } else if (custom && custom !== true) {
-      el = custom
-    }
-
-    return el
   }
 
 
@@ -349,15 +254,6 @@ export default class EventRenderer {
   assignFgSizes() {
   }
 
-}
-
-
-function setElSeg(el: HTMLElement, seg: Seg) {
-  (el as any).fcSeg = seg
-}
-
-export function getElSeg(el: HTMLElement): Seg | null {
-  return (el as any).fcSeg || null
 }
 
 

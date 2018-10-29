@@ -1,8 +1,8 @@
 import DateComponent from '../component/DateComponent'
 import { listenBySelector } from '../util/dom-event'
-import { getElSeg } from '../component/renderers/EventRenderer'
 import EventApi from '../api/EventApi'
 import { elementClosest } from '../util/dom-manip'
+import { getElSeg } from '../component/event-rendering'
 
 /*
 Detects when the user clicks on an event within a DateComponent

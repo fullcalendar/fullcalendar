@@ -1,5 +1,4 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
-import { getElSeg } from '../component/renderers/EventRenderer'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
@@ -11,7 +10,7 @@ import { EventStore, getRelevantEvents, createEmptyEventStore } from '../structs
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { diffDates, enableCursor, disableCursor } from '../util/misc'
-import { EventRenderRange } from '../component/event-rendering'
+import { EventRenderRange, getElSeg } from '../component/event-rendering'
 import EventApi from '../api/EventApi'
 
 export default class EventDragging { // TODO: rename to EventSelectingAndDragging

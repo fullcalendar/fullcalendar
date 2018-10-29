@@ -28,8 +28,6 @@ export default class FillRenderer { // use for highlight, background events, bus
     }
 
     this.renderedSegsByType[type] = renderedSegs
-
-    return renderedSegs
   }
 
 
@@ -50,7 +48,6 @@ export default class FillRenderer { // use for highlight, background events, bus
   // Only returns segments that successfully rendered.
   buildSegEls(type, segs: Seg[], props) {
     let html = ''
-    let renderedSegs = []
     let i
 
     if (segs.length) {
@@ -65,20 +62,22 @@ export default class FillRenderer { // use for highlight, background events, bus
       htmlToElements(html).forEach((el, i) => {
         let seg = segs[i]
 
-        // allow custom filter methods per-type
-        if (props.filterEl) {
-          el = props.filterEl(seg, el) // might return null/undefined
-        }
-
-        // correct element type? (would be bad if a non-TD were inserted into a table for example)
-        if (el && elementMatches(el, this.fillSegTag)) {
+        if (el) {
           seg.el = el
-          renderedSegs.push(seg)
         }
+      })
+
+      if (props.filterSegs) {
+        segs = props.filterSegs(segs)
+      }
+
+      // correct element type? (would be bad if a non-TD were inserted into a table for example)
+      segs = segs.filter((seg) => {
+        return elementMatches(seg.el, this.fillSegTag)
       })
     }
 
-    return renderedSegs
+    return segs
   }
 
 

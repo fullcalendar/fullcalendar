@@ -4,12 +4,11 @@ import { EventMutation, applyMutationToEventStore } from '../structs/event-mutat
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
-import { getElSeg } from '../component/renderers/EventRenderer'
 import { EventStore, getRelevantEvents } from '../structs/event-store'
 import { diffDates, enableCursor, disableCursor } from '../util/misc'
 import { DateRange } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
-import { EventRenderRange } from '../component/event-rendering'
+import { EventRenderRange, getElSeg } from '../component/event-rendering'
 import { createDuration } from '../datelib/duration'
 
 export default class EventDragging {
