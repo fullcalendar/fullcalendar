@@ -7,33 +7,39 @@ import OffsetTracker from '../common/OffsetTracker'
 import { computeRect } from '../util/dom-geom'
 import { Rect, pointInsideRect } from '../util/geom'
 import { addDays, DateMarker } from '../datelib/marker'
-import { ComponentContext } from '../component/Component'
 import { removeElement } from '../util/dom-manip'
+import { EventInteractionUiState } from '../interactions/event-interaction-state'
 
+/*
+props:
+- date
+- segs
+- eventSelection
+- eventDrag
+- eventResize
+*/
 export default class DayTile extends DateComponent {
 
-  date: Date
   segContainerEl: HTMLElement
   width: number
   height: number
   offsetTracker: OffsetTracker // TODO: abstraction for tracking dims of whole element rect
 
-  constructor(context: ComponentContext, el: HTMLElement, date: DateMarker) {
-    super(context, el)
 
-    this.date = date // HACK
+  render(props) {
+    let dateId = this.subrender('renderFrame', [ props.date ])
+    let evId = this.subrender('renderCoolSegs', [ props.segs ], 'unrenderCoolSegs')
+    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
+    this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState')
+    this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState')
   }
 
-  /*
-  props:
-  - dateProfile
-  - segs
-  */
-  render(props) {
+  // needed to be a different name :/
+  renderFrame(date: DateMarker) {
     let { theme, dateEnv } = this
 
     let title = dateEnv.format(
-      this.date,
+      date,
       createFormatter(this.opt('dayPopoverFormat')) // TODO: cache
     )
 
@@ -50,14 +56,40 @@ export default class DayTile extends DateComponent {
       '</div>'
 
     this.segContainerEl = this.el.querySelector('.fc-event-container')
-
-    this.eventRenderer.renderSegs(props.segs)
   }
 
-  destroy() {
-    this.unrenderEvents() // HACK
+  // needed to be a different name :/
+  renderCoolSegs(segs: Seg[]) {
+    this.eventRenderer.renderSegs(segs)
+  }
 
-    super.destroy()
+  // needed to be a different name :/
+  unrenderCoolSegs(segs: Seg[]) {
+    this.eventRenderer.unrender()
+  }
+
+  renderEventDragState(state: EventInteractionUiState) {
+    if (state) {
+      this.eventRenderer.hideByHash(state.affectedEvents.instances)
+    }
+  }
+
+  unrenderEventDragState(state: EventInteractionUiState) {
+    if (state) {
+      this.eventRenderer.showByHash(state.affectedEvents.instances)
+    }
+  }
+
+  renderEventResizeState(state: EventInteractionUiState) {
+    if (state) {
+      this.eventRenderer.hideByHash(state.affectedEvents.instances)
+    }
+  }
+
+  unrenderEventResizeState(state: EventInteractionUiState) {
+    if (state) {
+      this.eventRenderer.showByHash(state.affectedEvents.instances)
+    }
   }
 
   prepareHits() {
@@ -82,11 +114,13 @@ export default class DayTile extends DateComponent {
     }
 
     if (pointInsideRect({ left: leftOffset, top: topOffset }, rect)) {
+      let date = (this.props as any).date // HACK
+
       return {
         component: this,
         dateSpan: {
           allDay: true,
-          range: { start: this.date, end: addDays(this.date, 1) }
+          range: { start: date, end: addDays(date, 1) }
         },
         dayEl: this.el,
         rect: rect,

@@ -107,7 +107,7 @@ export default class DateComponent extends Component<DateComponentProps> {
     this.subrender('renderBusinessHours', [ props.businessHours, dateId ], 'unrenderBusinessHours', true)
     this.subrender('renderDateSelectionState', [ props.dateSelection, dateId ], 'unrenderDateSelectionState', true)
     let evId = this.subrender('renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents', true)
-    this.subrender('selectEventsByInstanceId', [ props.eventSelection, evId ], 'unselectAllEvents', true)
+    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection', true)
     this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState', true)
     this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState', true)
   }
@@ -365,27 +365,15 @@ export default class DateComponent extends Component<DateComponentProps> {
   // -----------------------------------------------------------------------------------------------------------------
   // TODO: show/hide according to groupId?
 
-  selectEventsByInstanceId(instanceId) {
-    if (instanceId) {
-      this.getAllEventSegs().forEach(function(seg) {
-        let eventInstance = seg.eventRange.instance
-        if (
-          eventInstance && eventInstance.instanceId === instanceId &&
-          seg.el // necessary?
-        ) {
-          seg.el.classList.add('fc-selected')
-        }
-      })
+  renderEventSelection(instanceId) {
+    if (instanceId && this.eventRenderer) {
+      this.eventRenderer.selectByInstanceId(instanceId)
     }
   }
 
-  unselectAllEvents(instanceId) {
-    if (instanceId) {
-      this.getAllEventSegs().forEach(function(seg) {
-        if (seg.el) { // necessary?
-          seg.el.classList.remove('fc-selected')
-        }
-      })
+  unrenderEventSelection(instanceId) {
+    if (instanceId && this.eventRenderer) {
+      this.eventRenderer.unselectByInstanceId(instanceId)
     }
   }
 
@@ -395,7 +383,11 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   renderEventDragState(state: EventInteractionUiState) {
     if (state) {
-      this.hideSegsByHash(state.affectedEvents.instances)
+
+      if (this.eventRenderer) {
+        this.eventRenderer.hideByHash(state.affectedEvents.instances)
+      }
+
       this.renderEventDrag(
         state.mutatedEvents,
         state.eventUis,
@@ -407,7 +399,11 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   unrenderEventDragState(state: EventInteractionUiState) {
     if (state) {
-      this.showSegsByHash(state.affectedEvents.instances)
+
+      if (this.eventRenderer) {
+        this.eventRenderer.showByHash(state.affectedEvents.instances)
+      }
+
       this.unrenderEventDrag()
     }
   }
@@ -450,7 +446,11 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   renderEventResizeState(state: EventInteractionUiState) {
     if (state) {
-      this.hideSegsByHash(state.affectedEvents.instances)
+
+      if (this.eventRenderer) {
+        this.eventRenderer.hideByHash(state.affectedEvents.instances)
+      }
+
       this.renderEventResize(
         state.mutatedEvents,
         state.eventUis,
@@ -461,7 +461,11 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   unrenderEventResizeState(state: EventInteractionUiState) {
     if (state) {
-      this.showSegsByHash(state.affectedEvents.instances)
+
+      if (this.eventRenderer) {
+        this.eventRenderer.showByHash(state.affectedEvents.instances)
+      }
+
       this.unrenderEventResize()
     }
   }
@@ -591,33 +595,6 @@ export default class DateComponent extends Component<DateComponentProps> {
   // must implement if want to use many of the rendering utils
   rangeToSegs(range: DateRange, allDay: boolean): Seg[] {
     return []
-  }
-
-
-  // Seg Utils
-  // -----------------------------------------------------------------------------------------------------------------
-
-  hideSegsByHash(hash) {
-    this.getAllEventSegs().forEach(function(seg) {
-      if (hash[seg.eventRange.instance.instanceId]) {
-        seg.el.style.visibility = 'hidden'
-      }
-    })
-  }
-
-  showSegsByHash(hash) {
-    this.getAllEventSegs().forEach(function(seg) {
-      if (hash[seg.eventRange.instance.instanceId]) {
-        seg.el.style.visibility = ''
-      }
-    })
-  }
-
-  getAllEventSegs(): Seg[] {
-    return [].concat(
-      this.eventRenderer ? (this.eventRenderer.segs) : [],
-      this.fillRenderer ? (this.fillRenderer.renderedSegsByType['bgEvent'] || []) : []
-    )
   }
 
 

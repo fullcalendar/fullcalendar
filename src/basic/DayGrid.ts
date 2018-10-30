@@ -16,7 +16,7 @@ import DayGridMirrorRenderer from './DayGridMirrorRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
-import DateComponent, { Seg } from '../component/DateComponent'
+import DateComponent, { Seg, DateComponentProps } from '../component/DateComponent'
 import { EventStore } from '../structs/event-store'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
@@ -102,6 +102,26 @@ export default class DayGrid extends DateComponent {
     } else {
       return []
     }
+  }
+
+
+  render(props: DateComponentProps) {
+    super.render(props)
+
+    if (this.segPopoverTile) {
+      this.updateSegPopoverTile()
+    }
+  }
+
+
+  updateSegPopoverTile(date?, segs?) {
+    this.segPopoverTile.receiveProps({
+      date: date || (this.segPopoverTile.props as any).date,
+      segs: segs || (this.segPopoverTile.props as any).segs,
+      eventSelection: this.props.eventSelection,
+      eventDrag: this.props.eventDrag,
+      eventResize: this.props.eventResize
+    } as any) // HACK
   }
 
 
@@ -381,17 +401,6 @@ export default class DayGrid extends DateComponent {
   }
 
 
-  // Retrieves all rendered segment objects currently rendered on the grid
-  getAllEventSegs() {
-    // append the segments from the "more..." popover
-    return super.getAllEventSegs().concat(
-      this.segPopoverTile ?
-        this.segPopoverTile.getAllEventSegs() :
-        []
-    )
-  }
-
-
   /* Event Resize Visualization
   ------------------------------------------------------------------------------------------------------------------*/
 
@@ -656,13 +665,12 @@ export default class DayGrid extends DateComponent {
       content: (el) => {
         this.segPopoverTile = new DayTile(
           this.context,
-          el,
-          this.getCellDate(row, col)
+          el
         )
-        this.segPopoverTile.receiveProps({
-          dateProfile: this.props.dateProfile,
-          segs,
-        } as any) // HACK
+        this.updateSegPopoverTile(
+          this.getCellDate(row, col),
+          segs
+        )
       },
       hide: () => {
         this.segPopoverTile.destroy()
