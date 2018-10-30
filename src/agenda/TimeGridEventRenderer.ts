@@ -1,34 +1,36 @@
 import { htmlEscape, cssToStr } from '../util/html'
 import { removeElement, applyStyle } from '../util/dom-manip'
 import { createFormatter, DateFormatter } from '../datelib/formatting'
-import EventRenderer, { buildSegCompareObj } from '../component/renderers/EventRenderer'
+import FgEventRenderer, { buildSegCompareObj } from '../component/renderers/FgEventRenderer'
 import { Seg } from '../component/DateComponent'
 import { isMultiDayRange, compareByFieldSpecs } from '../util/misc'
+import TimeGrid from './TimeGrid'
 
 /*
 Only handles foreground segs.
 Does not own rendering. Use for low-level util methods by TimeGrid.
 */
-export default class TimeGridEventRenderer extends EventRenderer {
+export default class TimeGridEventRenderer extends FgEventRenderer {
 
-  timeGrid: any
+  timeGrid: TimeGrid
   segsByCol: any
   fullTimeFormat: DateFormatter
 
 
-  constructor(timeGrid) {
-    super(timeGrid)
+  constructor(timeGrid: TimeGrid) {
+    super(timeGrid.context)
+
     this.timeGrid = timeGrid
 
     this.fullTimeFormat = createFormatter({
       hour: 'numeric',
       minute: '2-digit',
-      separator: this.opt('defaultRangeSeparator')
+      separator: this.context.options.defaultRangeSeparator
     })
   }
 
 
-  renderFgSegs(segs: Seg[]) {
+  attachSegs(segs: Seg[]) {
     this.renderFgSegsIntoContainers(segs, this.timeGrid.fgContainerEls)
   }
 
@@ -41,12 +43,10 @@ export default class TimeGridEventRenderer extends EventRenderer {
   }
 
 
-  unrenderFgSegs() {
-    if (this.fgSegs) { // hack
-      this.fgSegs.forEach(function(seg) {
-        removeElement(seg.el)
-      })
-    }
+  detachSegs(segs: Seg[]) {
+    segs.forEach(function(seg) {
+      removeElement(seg.el)
+    })
 
     this.segsByCol = null
   }
@@ -93,13 +93,13 @@ export default class TimeGridEventRenderer extends EventRenderer {
 
 
   // Renders the HTML for a single event segment's default rendering
-  fgSegHtml(seg: Seg) {
+  renderSegHtml(seg: Seg) {
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
     let allDay = eventDef.allDay
     let isDraggable = eventUi.startEditable
-    let isResizableFromStart = seg.isStart && eventUi.durationEditable && this.opt('eventResizableFromStart')
+    let isResizableFromStart = seg.isStart && eventUi.durationEditable && this.context.options.eventResizableFromStart
     let isResizableFromEnd = seg.isEnd && eventUi.durationEditable
     let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
@@ -246,7 +246,7 @@ export default class TimeGridEventRenderer extends EventRenderer {
       // put segments that are closer to initial edge first (and favor ones with no coords yet)
       { field: 'backwardCoord', order: 1 }
     ].concat(
-      this.view.eventOrderSpecs
+      this.context.view.eventOrderSpecs
     )
 
     objs.sort(function(obj0, obj1) {
@@ -280,10 +280,10 @@ export default class TimeGridEventRenderer extends EventRenderer {
   // Generates an object with CSS properties/values that should be applied to an event segment element.
   // Contains important positioning-related properties that should be applied to any event element, customized or not.
   generateFgSegHorizontalCss(seg: Seg) {
-    let shouldOverlap = this.opt('slotEventOverlap')
+    let shouldOverlap = this.context.options.slotEventOverlap
     let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
     let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point
-    let props = this.timeGrid.generateSegVerticalCss(seg) // get top/bottom first
+    let props = this.timeGrid.generateSegVerticalCss(seg) as any // get top/bottom first
     let isRtl = this.timeGrid.isRtl
     let left // amount of space from left edge, a fraction of the total width
     let right // amount of space from right edge, a fraction of the total width

@@ -1,28 +1,38 @@
 import { htmlEscape } from '../util/html'
-import EventRenderer from '../component/renderers/EventRenderer'
+import FgEventRenderer from '../component/renderers/FgEventRenderer'
 import ListView from './ListView'
 import { Seg } from '../component/DateComponent'
 import { isMultiDayRange } from '../util/misc'
 import { getAllDayHtml } from '../component/date-rendering'
 
-export default class ListEventRenderer extends EventRenderer {
+export default class ListEventRenderer extends FgEventRenderer {
 
-  component: ListView
+  listView: ListView
 
 
-  renderFgSegs(segs: Seg[]) {
+  constructor(listView: ListView) {
+    super(listView.context)
+
+    this.listView = listView
+  }
+
+
+  attachSegs(segs: Seg[]) {
     if (!segs.length) {
-      this.component.renderEmptyMessage()
+      this.listView.renderEmptyMessage()
     } else {
-      this.component.renderSegList(segs)
+      this.listView.renderSegList(segs)
     }
   }
 
+
+  detachSegs() {
+  }
+
+
   // generates the HTML for a single event row
-  fgSegHtml(seg: Seg) {
-    let view = this.view
-    let calendar = view.calendar
-    let theme = calendar.theme
+  renderSegHtml(seg: Seg) {
+    let { view, theme } = this.context
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventInstance = eventRange.instance

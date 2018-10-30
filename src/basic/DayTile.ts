@@ -1,5 +1,5 @@
 import DateComponent, { Seg } from '../component/DateComponent'
-import DayGridEventRenderer from './DayGridEventRenderer'
+import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
 import { htmlEscape } from '../util/html'
 import { createFormatter } from '../datelib/formatting'
 import { Hit } from '../interactions/HitDragging'
@@ -8,6 +8,7 @@ import { computeRect } from '../util/dom-geom'
 import { Rect, pointInsideRect } from '../util/geom'
 import { addDays, DateMarker } from '../datelib/marker'
 import { ComponentContext } from '../component/Component'
+import { removeElement } from '../util/dom-manip'
 
 export default class DayTile extends DateComponent {
 
@@ -50,8 +51,6 @@ export default class DayTile extends DateComponent {
 
     this.segContainerEl = this.el.querySelector('.fc-event-container')
 
-    // HACK
-    this.eventRenderer.rangeUpdated()
     this.eventRenderer.renderSegs(props.segs)
   }
 
@@ -100,13 +99,25 @@ export default class DayTile extends DateComponent {
 
 }
 
-// hack
-export class DayTileEventRenderer extends DayGridEventRenderer {
+export class DayTileEventRenderer extends SimpleDayGridEventRenderer {
 
-  // simply append the els the container element
-  renderFgSegs(segs: Seg[]) {
+  dayTile: DayTile
+
+  constructor(dayTile) {
+    super(dayTile.context)
+
+    this.dayTile = dayTile
+  }
+
+  attachSegs(segs: Seg[]) {
     for (let seg of segs) {
-      this.component.segContainerEl.appendChild(seg.el)
+      this.dayTile.segContainerEl.appendChild(seg.el)
+    }
+  }
+
+  detachSegs(segs: Seg[]) {
+    for (let seg of segs) {
+      removeElement(seg.el)
     }
   }
 
@@ -114,5 +125,4 @@ export class DayTileEventRenderer extends DayGridEventRenderer {
 
 DayTile.prototype.isInteractable = true
 DayTile.prototype.useEventCenter = false
-
 DayTile.prototype.eventRendererClass = DayTileEventRenderer

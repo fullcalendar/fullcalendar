@@ -1,0 +1,86 @@
+import { htmlEscape, cssToStr } from '../util/html'
+import FgEventRenderer from '../component/renderers/FgEventRenderer'
+import { Seg } from '../component/DateComponent'
+
+
+/* Event-rendering methods for the DayGrid class
+----------------------------------------------------------------------------------------------------------------------*/
+
+export default abstract class SimpleDayGridEventRenderer extends FgEventRenderer {
+
+
+  // Builds the HTML to be used for the default element for an individual segment
+  renderSegHtml(seg: Seg) {
+    let { options } = this.context
+    let eventRange = seg.eventRange
+    let eventDef = eventRange.def
+    let eventUi = eventRange.ui
+    let allDay = eventDef.allDay
+    let isDraggable = eventUi.startEditable
+    let isResizableFromStart = allDay && seg.isStart && eventUi.durationEditable && options.eventResizableFromStart
+    let isResizableFromEnd = allDay && seg.isEnd && eventUi.durationEditable
+    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
+    let skinCss = cssToStr(this.getSkinCss(eventUi))
+    let timeHtml = ''
+    let timeText
+    let titleHtml
+
+    classes.unshift('fc-day-grid-event', 'fc-h-event')
+
+    // Only display a timed events time if it is the starting segment
+    if (seg.isStart) {
+      timeText = this.getTimeText(eventRange)
+      if (timeText) {
+        timeHtml = '<span class="fc-time">' + htmlEscape(timeText) + '</span>'
+      }
+    }
+
+    titleHtml =
+      '<span class="fc-title">' +
+        (htmlEscape(eventDef.title || '') || '&nbsp;') + // we always want one line of height
+      '</span>'
+
+    return '<a class="' + classes.join(' ') + '"' +
+        (eventDef.url ?
+          ' href="' + htmlEscape(eventDef.url) + '"' :
+          ''
+          ) +
+        (skinCss ?
+          ' style="' + skinCss + '"' :
+          ''
+          ) +
+      '>' +
+        '<div class="fc-content">' +
+          (options.dir === 'rtl' ?
+            titleHtml + ' ' + timeHtml : // put a natural space in between
+            timeHtml + ' ' + titleHtml   //
+            ) +
+        '</div>' +
+        (isResizableFromStart ?
+          '<div class="fc-resizer fc-start-resizer"></div>' :
+          ''
+          ) +
+        (isResizableFromEnd ?
+          '<div class="fc-resizer fc-end-resizer"></div>' :
+          ''
+          ) +
+      '</a>'
+  }
+
+
+  // Computes a default event time formatting string if `eventTimeFormat` is not explicitly defined
+  computeEventTimeFormat() {
+    return {
+      hour: 'numeric',
+      minute: '2-digit',
+      omitZeroMinute: true,
+      meridiem: 'narrow'
+    }
+  }
+
+
+  computeDisplayEventEnd() {
+    return false // TODO: somehow consider the originating DayGrid's column count
+  }
+
+}

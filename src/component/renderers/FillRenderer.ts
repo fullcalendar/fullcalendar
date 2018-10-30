@@ -18,6 +18,7 @@ export default class FillRenderer { // use for highlight, background events, bus
   }
 
 
+  // TODO: try to make props smallers
   renderSegs(type, segs: Seg[], props) {
     let renderedSegs = this.buildSegEls(type, segs, props) // assignes `.el` to each seg. returns successfully rendered segs
     let containerEls = this.attachSegEls(type, renderedSegs)

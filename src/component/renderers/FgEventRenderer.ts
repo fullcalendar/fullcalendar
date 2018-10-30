@@ -1,4 +1,3 @@
-import View from '../../View'
 import { DateMarker } from '../../datelib/marker'
 import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
@@ -6,48 +5,68 @@ import { compareByFieldSpecs } from '../../util/misc'
 import { EventRenderRange, EventUi, filterSegsViaEls } from '../event-rendering'
 import { Seg } from '../DateComponent'
 import { assignTo } from '../../util/object'
+import { ComponentContext } from '../Component'
 
 
-export default class EventRenderer {
+export default abstract class FgEventRenderer {
 
-  view: View
-  component: any
-
-  fgSegs: Seg[]
+  context: ComponentContext
 
   // derived from options
   eventTimeFormat: DateFormatter
   displayEventTime: boolean
   displayEventEnd: boolean
 
+  segs: Seg[] = []
 
-  constructor(component) {
-    this.view = component.view || component
-    this.component = component
+
+  constructor(context: ComponentContext) {
+    this.context = context
   }
 
 
-  opt(name) {
-    return this.view.opt(name)
+  renderSegs(segs: Seg[]) {
+    this.rangeUpdated() // called too frequently :(
+
+    // render an `.el` on each seg
+    // returns a subset of the segs. segs that were actually rendered
+    segs = this.renderSegEls(segs, false)
+
+    this.segs = segs
+    this.attachSegs(segs)
+    this.context.view.triggerRenderedSegs(this.segs)
   }
+
+
+  unrender() {
+    this.context.view.triggerWillRemoveSegs(this.segs)
+    this.detachSegs(this.segs)
+    this.segs = []
+  }
+
+
+  abstract renderSegHtml(seg: Seg): string
+  abstract attachSegs(segs: Seg[])
+  abstract detachSegs(segs: Seg[])
 
 
   // Updates values that rely on options and also relate to range
   rangeUpdated() {
+    let { options } = this.context
     let displayEventTime
     let displayEventEnd
 
     this.eventTimeFormat = createFormatter(
-      this.opt('eventTimeFormat') || this.computeEventTimeFormat(),
-      this.opt('defaultRangeSeparator')
+      options.eventTimeFormat || this.computeEventTimeFormat(),
+      options.defaultRangeSeparator
     )
 
-    displayEventTime = this.opt('displayEventTime')
+    displayEventTime = options.displayEventTime
     if (displayEventTime == null) {
       displayEventTime = this.computeDisplayEventTime() // might be based off of range
     }
 
-    displayEventEnd = this.opt('displayEventEnd')
+    displayEventEnd = options.displayEventEnd
     if (displayEventEnd == null) {
       displayEventEnd = this.computeDisplayEventEnd() // might be based off of range
     }
@@ -57,44 +76,9 @@ export default class EventRenderer {
   }
 
 
-  renderSegs(fgSegs: Seg[]) {
-
-    // render an `.el` on each seg
-    // returns a subset of the segs. segs that were actually rendered
-    fgSegs = this.renderFgSegEls(fgSegs, false)
-
-    if (this.renderFgSegs(fgSegs) !== false) { // no failure?
-      this.fgSegs = fgSegs
-    }
-
-    this.view.triggerRenderedSegs(this.fgSegs || [])
-  }
-
-
-  unrender() {
-    this.unrenderFgSegs(this.fgSegs || [])
-    this.fgSegs = null
-  }
-
-
-  // Renders foreground event segments onto the grid
-  renderFgSegs(segs: Seg[]): (boolean | void) {
-    // subclasses must implement
-    // segs already has rendered els, and has been filtered.
-
-    return false // signal failure if not implemented
-  }
-
-
-  // Unrenders all currently rendered foreground segments
-  unrenderFgSegs(segs: Seg[]) {
-    // subclasses must implement
-  }
-
-
   // Renders and assigns an `el` property for each foreground event segment.
   // Only returns segments that successfully rendered.
-  renderFgSegEls(segs: Seg[], isMirrors: boolean) {
+  renderSegEls(segs: Seg[], isMirrors: boolean) {
     let html = ''
     let i
 
@@ -102,7 +86,7 @@ export default class EventRenderer {
 
       // build a large concatenation of event segment HTML
       for (i = 0; i < segs.length; i++) {
-        html += this.fgSegHtml(segs[i])
+        html += this.renderSegHtml(segs[i])
       }
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -115,16 +99,10 @@ export default class EventRenderer {
         }
       })
 
-      segs = filterSegsViaEls(this.view, segs, isMirrors)
+      segs = filterSegsViaEls(this.context.view, segs, isMirrors)
     }
 
     return segs
-  }
-
-
-  // Generates the HTML for the default rendering of a foreground event segment. Used by renderFgSegEls()
-  fgSegHtml(seg: Seg) {
-    // subclasses should implement
   }
 
 
@@ -177,7 +155,7 @@ export default class EventRenderer {
     forcedStartTzo?: number,
     forcedEndTzo?: number
 ) {
-    const dateEnv = this.view.calendar.dateEnv
+    let { dateEnv } = this.context
 
     if (formatter == null) {
       formatter = this.eventTimeFormat
@@ -234,7 +212,7 @@ export default class EventRenderer {
 
 
   sortEventSegs(segs): Seg[] {
-    let specs = this.view.eventOrderSpecs
+    let specs = this.context.view.eventOrderSpecs
     let objs = segs.map(buildSegCompareObj)
 
     objs.sort(function(obj0, obj1) {

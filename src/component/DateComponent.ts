@@ -7,7 +7,6 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import { createDuration, Duration } from '../datelib/duration'
 import { parseEventDef, createEventInstance } from '../structs/event'
 import { DateRange, rangeContainsRange } from '../datelib/date-range'
-import EmitterMixin from '../common/EmitterMixin'
 import { Hit } from '../interactions/HitDragging'
 import browserContext from '../common/browser-context'
 import { elementClosest, removeElement } from '../util/dom-manip'
@@ -63,7 +62,6 @@ export default class DateComponent extends Component<DateComponentProps> {
   fillRenderer: any
 
   el: HTMLElement // passed in to constructor
-  emitter: EmitterMixin = new EmitterMixin()
   needHitsDepth: number = 0
 
   // derived from options
@@ -298,7 +296,6 @@ export default class DateComponent extends Component<DateComponentProps> {
       }
 
       if (this.eventRenderer) {
-        this.eventRenderer.rangeUpdated() // poorly named now
         this.eventRenderer.renderSegs(
           this.eventRangesToSegs(fgRanges)
         )
@@ -335,7 +332,6 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   unrenderEvents() {
     if (this.eventRenderer) {
-      this.triggerWillRemoveSegs(this.eventRenderer.fgSegs || [])
       this.eventRenderer.unrender()
     }
 
@@ -619,7 +615,7 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   getAllEventSegs(): Seg[] {
     return [].concat(
-      this.eventRenderer ? (this.eventRenderer.fgSegs || []) : [],
+      this.eventRenderer ? (this.eventRenderer.segs) : [],
       this.fillRenderer ? (this.fillRenderer.renderedSegsByType['bgEvent'] || []) : []
     )
   }
@@ -724,7 +720,7 @@ export default class DateComponent extends Component<DateComponentProps> {
             isStart: seg.isStart,
             isEnd: seg.isEnd,
             el: seg.el,
-            view: this
+            view: this // ?
           }
         ])
       }
@@ -732,13 +728,13 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
   triggerWillRemoveSegs(segs: Seg[]) {
+    let { calendar } = this
 
     for (let seg of segs) {
-      this.emitter.trigger('eventElRemove', seg.el)
+      calendar.trigger('eventElRemove', seg.el)
     }
 
     if (this.hasPublicHandlers('eventDestroy')) {
-      let calendar = this.calendar
 
       for (let seg of segs) {
         this.publiclyTrigger('eventDestroy', [
@@ -749,7 +745,7 @@ export default class DateComponent extends Component<DateComponentProps> {
               seg.eventRange.instance
             ),
             el: seg.el,
-            view: this
+            view: this // ?
           }
         ])
       }
@@ -763,7 +759,7 @@ export default class DateComponent extends Component<DateComponentProps> {
   isValidSegDownEl(el: HTMLElement) {
     return !this.props.eventDrag && !this.props.eventResize &&
       !elementClosest(el, '.fc-mirror') &&
-      !this.isInPopover(el)
+      !this.isInPopover(el) // how to determine if not in a sub-component???
   }
 
 

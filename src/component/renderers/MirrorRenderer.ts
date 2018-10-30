@@ -40,7 +40,7 @@ export default abstract class MirrorRenderer {
     let i
 
     // assigns each seg's el and returns a subset of segs that were rendered
-    segs = this.eventRenderer.renderFgSegEls(segs, true) // isMirrors=true
+    segs = this.eventRenderer.renderSegEls(segs, true) // isMirrors=true
 
     for (i = 0; i < segs.length; i++) {
       let classList = segs[i].el.classList

@@ -23,12 +23,12 @@ export default class EventHovering {
       this.handleSegLeave
     )
 
-    component.emitter.on('eventElRemove', this.handleEventElRemove)
+    component.calendar.on('eventElRemove', this.handleEventElRemove)
   }
 
   destroy() {
     this.removeHoverListeners()
-    this.component.emitter.off('eventElRemove', this.handleEventElRemove)
+    this.component.calendar.off('eventElRemove', this.handleEventElRemove)
   }
 
   // for simulating an eventMouseLeave when the event el is destroyed while mouse is over it

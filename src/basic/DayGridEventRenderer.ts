@@ -1,27 +1,27 @@
-import { htmlEscape, cssToStr } from '../util/html'
 import { createElement, removeElement } from '../util/dom-manip'
-import EventRenderer from '../component/renderers/EventRenderer'
 import DayGrid from './DayGrid'
 import { Seg } from '../component/DateComponent'
+import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
 
 
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export default class DayGridEventRenderer extends EventRenderer {
+export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
   dayGrid: DayGrid
   rowStructs: any // an array of objects, each holding information about a row's foreground event-rendering
 
 
-  constructor(dayGrid) {
-    super(dayGrid)
+  constructor(dayGrid: DayGrid) {
+    super(dayGrid.context)
+
     this.dayGrid = dayGrid
   }
 
 
   // Renders the given foreground event segments onto the grid
-  renderFgSegs(segs: Seg[]) {
+  attachSegs(segs: Seg[]) {
     let rowStructs = this.rowStructs = this.renderSegRows(segs)
 
     // append to each row's content skeleton
@@ -34,7 +34,7 @@ export default class DayGridEventRenderer extends EventRenderer {
 
 
   // Unrenders all currently rendered foreground event segments
-  unrenderFgSegs() {
+  detachSegs() {
     let rowStructs = this.rowStructs || []
     let rowStruct
 
@@ -208,78 +208,9 @@ export default class DayGridEventRenderer extends EventRenderer {
   }
 
 
-  // Computes a default event time formatting string if `eventTimeFormat` is not explicitly defined
-  computeEventTimeFormat() {
-    return {
-      hour: 'numeric',
-      minute: '2-digit',
-      omitZeroMinute: true,
-      meridiem: 'narrow'
-    }
-  }
-
-
   // Computes a default `displayEventEnd` value if one is not expliclty defined
   computeDisplayEventEnd() {
     return this.dayGrid.colCnt === 1 // we'll likely have space if there's only one day
-  }
-
-
-  // Builds the HTML to be used for the default element for an individual segment
-  fgSegHtml(seg: Seg) {
-    let eventRange = seg.eventRange
-    let eventDef = eventRange.def
-    let eventUi = eventRange.ui
-    let allDay = eventDef.allDay
-    let isDraggable = eventUi.startEditable
-    let isResizableFromStart = allDay && seg.isStart && eventUi.durationEditable && this.opt('eventResizableFromStart')
-    let isResizableFromEnd = allDay && seg.isEnd && eventUi.durationEditable
-    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
-    let skinCss = cssToStr(this.getSkinCss(eventUi))
-    let timeHtml = ''
-    let timeText
-    let titleHtml
-
-    classes.unshift('fc-day-grid-event', 'fc-h-event')
-
-    // Only display a timed events time if it is the starting segment
-    if (seg.isStart) {
-      timeText = this.getTimeText(eventRange)
-      if (timeText) {
-        timeHtml = '<span class="fc-time">' + htmlEscape(timeText) + '</span>'
-      }
-    }
-
-    titleHtml =
-      '<span class="fc-title">' +
-        (htmlEscape(eventDef.title || '') || '&nbsp;') + // we always want one line of height
-      '</span>'
-
-    return '<a class="' + classes.join(' ') + '"' +
-        (eventDef.url ?
-          ' href="' + htmlEscape(eventDef.url) + '"' :
-          ''
-          ) +
-        (skinCss ?
-          ' style="' + skinCss + '"' :
-          ''
-          ) +
-      '>' +
-        '<div class="fc-content">' +
-          (this.component.isRtl ?
-            titleHtml + ' ' + timeHtml : // put a natural space in between
-            timeHtml + ' ' + titleHtml   //
-            ) +
-        '</div>' +
-        (isResizableFromStart ?
-          '<div class="fc-resizer fc-start-resizer"></div>' :
-          ''
-          ) +
-        (isResizableFromEnd ?
-          '<div class="fc-resizer fc-end-resizer"></div>' :
-          ''
-          ) +
-      '</a>'
   }
 
 }

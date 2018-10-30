@@ -86,7 +86,7 @@ export default class ListView extends View {
     this.dayDates = dayDates
     this.dayRanges = dayRanges
 
-    // all real rendering happens in EventRenderer
+    // all real rendering happens in FgEventRenderer
   }
 
 
