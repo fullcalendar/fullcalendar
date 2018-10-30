@@ -255,12 +255,24 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
         // dropped in different calendar
         } else if (receivingCalendar) {
+          let finalHit = this.hitDragging.finalHit!
+          let finalView = finalHit.component.view
 
           initialCalendar.publiclyTrigger('eventLeave', [
             {
               draggedEl: ev.subjectEl,
               event: eventApi,
               view: initialView
+            }
+          ])
+
+          receivingCalendar.publiclyTrigger('drop', [
+            {
+              draggedEl: ev.subjectEl,
+              date: receivingCalendar.dateEnv.toDate(finalHit.dateSpan.range.start),
+              allDay: finalHit.dateSpan.allDay,
+              jsEvent: ev.origEvent,
+              view: finalView
             }
           ])
 
