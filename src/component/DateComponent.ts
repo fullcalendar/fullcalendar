@@ -1,7 +1,7 @@
 import Component, { ComponentContext } from './Component'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventStore, expandRecurring } from '../structs/event-store'
-import { EventUiHash, EventRenderRange, computeEventDefUis, sliceEventStore, computeEventDefUi, hasBgRendering, filterSegsViaEls } from './event-rendering'
+import { EventUiHash, EventRenderRange, computeEventDefUis, sliceEventStore, computeEventDefUi, hasBgRendering } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { createDuration, Duration } from '../datelib/duration'
@@ -214,15 +214,7 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   renderBusinessHourRanges(eventRanges: EventRenderRange[]) {
     if (this.fillRenderer) {
-      this.fillRenderer.renderSegs(
-        'businessHours',
-        this.eventRangesToSegs(eventRanges),
-        {
-          getClasses(seg) {
-            return [ 'fc-bgevent' ].concat(seg.eventRange.def.classNames)
-          }
-        }
-      )
+      this.fillRenderer.renderSegs('businessHours', this.eventRangesToSegs(eventRanges))
     }
   }
 
@@ -235,13 +227,13 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   computeBusinessHoursSize() {
     if (this.fillRenderer) {
-      this.fillRenderer.computeSize('businessHours')
+      this.fillRenderer.computeSizes('businessHours')
     }
   }
 
   assignBusinessHoursSize() {
     if (this.fillRenderer) {
-      this.fillRenderer.assignSize('businessHours')
+      this.fillRenderer.assignSizes('businessHours')
     }
   }
 
@@ -303,20 +295,7 @@ export default class DateComponent extends Component<DateComponentProps> {
 
       if (this.fillRenderer) {
         bgRanges = this.filterBgEventRanges(bgRanges)
-
-        this.fillRenderer.renderSegs('bgEvent', this.eventRangesToSegs(bgRanges), {
-          getClasses: (seg) => {
-            return seg.eventRange.ui.classNames.concat([ 'fc-bgevent' ])
-          },
-          getCss: (seg) => {
-            return {
-              'background-color': seg.eventRange.ui.backgroundColor
-            }
-          },
-          filterSegs: (segs) => {
-            return filterSegsViaEls(this.view, segs, false)
-          }
-        })
+        this.fillRenderer.renderSegs('bgEvent', this.eventRangesToSegs(bgRanges))
       }
 
       let calendar = this.calendar
@@ -336,14 +315,13 @@ export default class DateComponent extends Component<DateComponentProps> {
     }
 
     if (this.fillRenderer) {
-      this.triggerWillRemoveSegs(this.fillRenderer.renderedSegsByType['bgEvent'] || [])
       this.fillRenderer.unrender('bgEvent')
     }
   }
 
   computeEventsSize() {
     if (this.fillRenderer) {
-      this.fillRenderer.computeSize('bgEvent')
+      this.fillRenderer.computeSizes('bgEvent')
     }
 
     if (this.eventRenderer) {
@@ -353,7 +331,7 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   assignEventsSize() {
     if (this.fillRenderer) {
-      this.fillRenderer.assignSize('bgEvent')
+      this.fillRenderer.assignSizes('bgEvent')
     }
     if (this.eventRenderer) {
       this.eventRenderer.assignSizes()
@@ -487,11 +465,7 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
   renderHighlightSegs(segs) {
     if (this.fillRenderer) {
-      this.fillRenderer.renderSegs('highlight', segs, {
-        getClasses() {
-          return [ 'fc-highlight' ]
-        }
-      })
+      this.fillRenderer.renderSegs('highlight', segs)
     }
   }
 
@@ -504,13 +478,13 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   computeHighlightSize() {
     if (this.fillRenderer) {
-      this.fillRenderer.computeSize('highlight')
+      this.fillRenderer.computeSizes('highlight')
     }
   }
 
   assignHighlightSize() {
     if (this.fillRenderer) {
-      this.fillRenderer.assignSize('highlight')
+      this.fillRenderer.assignSizes('highlight')
     }
   }
 

@@ -1,11 +1,20 @@
 import FillRenderer from '../component/renderers/FillRenderer'
 import { Seg } from '../component/DateComponent'
+import TimeGrid from './TimeGrid'
 
 
 export default class TimeGridFillRenderer extends FillRenderer {
 
-  attachSegEls(type, segs: Seg[]) {
-    let timeGrid = this.component
+  timeGrid: TimeGrid
+
+  constructor(timeGrid: TimeGrid) {
+    super(timeGrid.context)
+
+    this.timeGrid = timeGrid
+  }
+
+  attachSegs(type, segs: Seg[]) {
+    let { timeGrid } = this
     let containerEls
 
     // TODO: more efficient lookup
@@ -24,12 +33,12 @@ export default class TimeGridFillRenderer extends FillRenderer {
     })
   }
 
-  computeSize(type) {
-    this.component.computeSegVerticals(this.renderedSegsByType[type] || [])
+  computeSizes(type) {
+    this.timeGrid.computeSegVerticals(this.getSegsByType(type))
   }
 
-  assignSize(type) {
-    this.component.assignSegVerticals(this.renderedSegsByType[type] || [])
+  assignSizes(type) {
+    this.timeGrid.assignSegVerticals(this.getSegsByType(type))
   }
 
 }

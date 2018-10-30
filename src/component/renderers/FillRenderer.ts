@@ -1,53 +1,65 @@
 import { cssToStr } from '../../util/html'
 import { htmlToElements, removeElement, elementMatches } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
+import { filterSegsViaEls } from '../event-rendering'
+import { ComponentContext } from '../Component'
 
 
-export default class FillRenderer { // use for highlight, background events, business hours
+export default abstract class FillRenderer { // use for highlight, background events, business hours
 
+  context: ComponentContext
   fillSegTag: string = 'div'
-  component: any
   containerElsByType: any // a hash of element sets used for rendering each fill. Keyed by fill name.
-  renderedSegsByType: any
+  segsByType: any
 
 
-  constructor(component) {
-    this.component = component
+  constructor(context: ComponentContext) {
+    this.context = context
     this.containerElsByType = {}
-    this.renderedSegsByType = {}
+    this.segsByType = {}
   }
 
 
-  // TODO: try to make props smallers
-  renderSegs(type, segs: Seg[], props) {
-    let renderedSegs = this.buildSegEls(type, segs, props) // assignes `.el` to each seg. returns successfully rendered segs
-    let containerEls = this.attachSegEls(type, renderedSegs)
+  getSegsByType(type: string) {
+    return this.segsByType[type] || []
+  }
+
+
+  renderSegs(type, segs: Seg[]) {
+    let renderedSegs = this.renderSegEls(type, segs) // assignes `.el` to each seg. returns successfully rendered segs
+    let containerEls = this.attachSegs(type, renderedSegs)
 
     if (containerEls) {
       (this.containerElsByType[type] || (this.containerElsByType[type] = []))
         .push(...containerEls)
     }
 
-    this.renderedSegsByType[type] = renderedSegs
+    this.segsByType[type] = renderedSegs
+
+    if (type === 'bgEvent') {
+      this.context.view.triggerRenderedSegs(renderedSegs, false) // isMirror=false
+    }
   }
 
 
   // Unrenders a specific type of fill that is currently rendered on the grid
   unrender(type) {
-    let containerEls = this.containerElsByType[type]
+    let segs = this.segsByType[type]
 
-    if (containerEls) {
-      containerEls.forEach(removeElement)
-      delete this.containerElsByType[type]
+    if (segs) {
+
+      if (type === 'bgEvent') {
+        this.context.view.triggerWillRemoveSegs(segs)
+      }
+
+      this.detachSegs(type, segs)
     }
-
-    delete this.renderedSegsByType[type]
   }
 
 
   // Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
   // Only returns segments that successfully rendered.
-  buildSegEls(type, segs: Seg[], props) {
+  renderSegEls(type, segs: Seg[]) {
     let html = ''
     let i
 
@@ -55,7 +67,7 @@ export default class FillRenderer { // use for highlight, background events, bus
 
       // build a large concatenation of segment HTML
       for (i = 0; i < segs.length; i++) {
-        html += this.buildSegHtml(type, segs[i], props)
+        html += this.renderSegHtml(type, segs[i])
       }
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -68,8 +80,12 @@ export default class FillRenderer { // use for highlight, background events, bus
         }
       })
 
-      if (props.filterSegs) {
-        segs = props.filterSegs(segs)
+      if (type === 'bgEvent') {
+        segs = filterSegsViaEls(
+          this.context.view,
+          segs,
+          false // isMirror. background events can never be mirror elements
+        )
       }
 
       // correct element type? (would be bad if a non-TD were inserted into a table for example)
@@ -83,29 +99,49 @@ export default class FillRenderer { // use for highlight, background events, bus
 
 
   // Builds the HTML needed for one fill segment. Generic enough to work with different types.
-  buildSegHtml(type, seg: Seg, props) {
-    // custom hooks per-type
-    let classes = props.getClasses ? props.getClasses(seg) : []
-    let css = cssToStr(props.getCss ? props.getCss(seg) : {})
+  renderSegHtml(type, seg: Seg) {
+    let css = null
+    let classNames = []
+
+    if (seg.eventRange) {
+      css = {
+        'background-color': seg.eventRange.ui.backgroundColor
+      }
+
+      classNames = classNames.concat(seg.eventRange.ui.classNames)
+    }
+
+    if (type === 'businessHours') {
+      classNames.push('fc-bgevent')
+    } else {
+      classNames.push('fc-' + type.toLowerCase())
+    }
 
     return '<' + this.fillSegTag +
-      (classes.length ? ' class="' + classes.join(' ') + '"' : '') +
-      (css ? ' style="' + css + '"' : '') +
+      (classNames.length ? ' class="' + classNames.join(' ') + '"' : '') +
+      (css ? ' style="' + cssToStr(css) + '"' : '') +
       '></' + this.fillSegTag + '>'
   }
 
 
-  // Should return wrapping DOM structure
-  attachSegEls(type, segs: Seg[]): HTMLElement[] {
-    // subclasses must implement
-    return null
+  abstract attachSegs(type, segs: Seg[]): HTMLElement[] | void
+
+
+  detachSegs(type, segs: Seg[]) {
+    let containerEls = this.containerElsByType[type]
+
+    if (containerEls) {
+      containerEls.forEach(removeElement)
+      delete this.containerElsByType[type]
+    }
   }
 
 
-  computeSize(type: string) {
+  computeSizes(type: string) {
   }
 
-  assignSize(type: string) {
+
+  assignSizes(type: string) {
   }
 
 }

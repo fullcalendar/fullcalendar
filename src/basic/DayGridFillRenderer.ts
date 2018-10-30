@@ -6,11 +6,16 @@ import { Seg } from '../component/DateComponent'
 
 export default class DayGridFillRenderer extends FillRenderer {
 
-  component: DayGrid
   fillSegTag: string = 'td' // override the default tag name
+  dayGrid: DayGrid
 
+  constructor(dayGrid: DayGrid) {
+    super(dayGrid.context)
 
-  attachSegEls(type, segs: Seg[]) {
+    this.dayGrid = dayGrid
+  }
+
+  attachSegs(type, segs: Seg[]) {
     let els = []
     let i
     let seg
@@ -19,17 +24,17 @@ export default class DayGridFillRenderer extends FillRenderer {
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
       skeletonEl = this.renderFillRow(type, seg)
-      this.component.rowEls[seg.row].appendChild(skeletonEl)
+      this.dayGrid.rowEls[seg.row].appendChild(skeletonEl)
       els.push(skeletonEl)
     }
 
     return els
   }
 
-
   // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
   renderFillRow(type, seg: Seg): HTMLElement {
-    let colCnt = this.component.colCnt
+    let { dayGrid } = this
+    let colCnt = dayGrid.colCnt
     let startCol = seg.leftCol
     let endCol = seg.rightCol + 1
     let className
@@ -60,7 +65,7 @@ export default class DayGridFillRenderer extends FillRenderer {
       trEl.appendChild(createElement('td', { colSpan: colCnt - endCol }))
     }
 
-    this.component.bookendCells(trEl)
+    dayGrid.bookendCells(trEl)
 
     return skeletonEl
   }
