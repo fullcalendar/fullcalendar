@@ -21,7 +21,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
 
   // Renders the given foreground event segments onto the grid
-  attachSegs(segs: Seg[]) {
+  attachSegs(segs: Seg[], mirrorInfo) {
     let rowStructs = this.rowStructs = this.renderSegRows(segs)
 
     // append to each row's content skeleton

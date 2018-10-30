@@ -10,7 +10,7 @@ export default abstract class SimpleDayGridEventRenderer extends FgEventRenderer
 
 
   // Builds the HTML to be used for the default element for an individual segment
-  renderSegHtml(seg: Seg) {
+  renderSegHtml(seg: Seg, mirrorInfo) {
     let { options } = this.context
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
@@ -19,7 +19,7 @@ export default abstract class SimpleDayGridEventRenderer extends FgEventRenderer
     let isDraggable = eventUi.startEditable
     let isResizableFromStart = allDay && seg.isStart && eventUi.durationEditable && options.eventResizableFromStart
     let isResizableFromEnd = allDay && seg.isEnd && eventUi.durationEditable
-    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
+    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeHtml = ''
     let timeText

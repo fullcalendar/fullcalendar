@@ -30,16 +30,11 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
   }
 
 
-  attachSegs(segs: Seg[]) {
-    this.renderFgSegsIntoContainers(segs, this.timeGrid.fgContainerEls)
-  }
-
-
   // Given an array of foreground segments, render a DOM element for each, computes position,
   // and attaches to the column inner-container elements.
-  renderFgSegsIntoContainers(segs: Seg[], containerEls) {
+  attachSegs(segs: Seg[], mirrorInfo) {
     this.segsByCol = this.timeGrid.groupSegsByCol(segs)
-    this.timeGrid.attachSegsByCol(this.segsByCol, containerEls)
+    this.timeGrid.attachSegsByCol(this.segsByCol, this.timeGrid.fgContainerEls)
   }
 
 
@@ -52,26 +47,30 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
   }
 
 
-  computeFgSizes() {
-    let { timeGrid } = this
+  computeSizes() {
+    let { timeGrid, segsByCol } = this
 
-    for (let col = 0; col < timeGrid.colCnt; col++) {
-      let segs = this.segsByCol[col]
+    if (segsByCol) {
+      for (let col = 0; col < timeGrid.colCnt; col++) {
+        let segs = segsByCol[col]
 
-      timeGrid.computeSegVerticals(segs) // horizontals relies on this
-      this.computeFgSegHorizontals(segs) // compute horizontal coordinates, z-index's, and reorder the array
+        timeGrid.computeSegVerticals(segs) // horizontals relies on this
+        this.computeFgSegHorizontals(segs) // compute horizontal coordinates, z-index's, and reorder the array
+      }
     }
   }
 
 
-  assignFgSizes() {
-    let { timeGrid } = this
+  assignSizes() {
+    let { timeGrid, segsByCol } = this
 
-    for (let col = 0; col < timeGrid.colCnt; col++) {
-      let segs = this.segsByCol[col]
+    if (segsByCol) {
+      for (let col = 0; col < timeGrid.colCnt; col++) {
+        let segs = segsByCol[col]
 
-      timeGrid.assignSegVerticals(segs)
-      this.assignFgSegHorizontals(segs)
+        timeGrid.assignSegVerticals(segs)
+        this.assignFgSegHorizontals(segs)
+      }
     }
   }
 
@@ -93,7 +92,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
 
   // Renders the HTML for a single event segment's default rendering
-  renderSegHtml(seg: Seg) {
+  renderSegHtml(seg: Seg, mirrorInfo) {
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
@@ -101,7 +100,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
     let isDraggable = eventUi.startEditable
     let isResizableFromStart = seg.isStart && eventUi.durationEditable && this.context.options.eventResizableFromStart
     let isResizableFromEnd = seg.isEnd && eventUi.durationEditable
-    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd)
+    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeText
     let fullTimeText // more verbose time text. for the print stylesheet

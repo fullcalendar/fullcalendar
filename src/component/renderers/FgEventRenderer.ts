@@ -25,16 +25,16 @@ export default abstract class FgEventRenderer {
   }
 
 
-  renderSegs(segs: Seg[]) {
+  renderSegs(segs: Seg[], mirrorInfo?) {
     this.rangeUpdated() // called too frequently :(
 
     // render an `.el` on each seg
     // returns a subset of the segs. segs that were actually rendered
-    segs = this.renderSegEls(segs, false)
+    segs = this.renderSegEls(segs, mirrorInfo)
 
     this.segs = segs
-    this.attachSegs(segs)
-    this.context.view.triggerRenderedSegs(this.segs)
+    this.attachSegs(segs, mirrorInfo)
+    this.context.view.triggerRenderedSegs(this.segs, Boolean(mirrorInfo))
   }
 
 
@@ -45,8 +45,8 @@ export default abstract class FgEventRenderer {
   }
 
 
-  abstract renderSegHtml(seg: Seg): string
-  abstract attachSegs(segs: Seg[])
+  abstract renderSegHtml(seg: Seg, mirrorInfo): string
+  abstract attachSegs(segs: Seg[], mirrorInfo)
   abstract detachSegs(segs: Seg[])
 
 
@@ -78,7 +78,7 @@ export default abstract class FgEventRenderer {
 
   // Renders and assigns an `el` property for each foreground event segment.
   // Only returns segments that successfully rendered.
-  renderSegEls(segs: Seg[], isMirrors: boolean) {
+  renderSegEls(segs: Seg[], mirrorInfo) {
     let html = ''
     let i
 
@@ -86,7 +86,7 @@ export default abstract class FgEventRenderer {
 
       // build a large concatenation of event segment HTML
       for (i = 0; i < segs.length; i++) {
-        html += this.renderSegHtml(segs[i])
+        html += this.renderSegHtml(segs[i], mirrorInfo)
       }
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -99,7 +99,7 @@ export default abstract class FgEventRenderer {
         }
       })
 
-      segs = filterSegsViaEls(this.context.view, segs, isMirrors)
+      segs = filterSegsViaEls(this.context.view, segs, Boolean(mirrorInfo))
     }
 
     return segs
@@ -107,7 +107,7 @@ export default abstract class FgEventRenderer {
 
 
   // Generic utility for generating the HTML classNames for an event segment's element
-  getSegClasses(seg: Seg, isDraggable, isResizable) {
+  getSegClasses(seg: Seg, isDraggable, isResizable, mirrorInfo) {
     let classes = [
       'fc-event',
       seg.isStart ? 'fc-start' : 'fc-not-start',
@@ -120,6 +120,18 @@ export default abstract class FgEventRenderer {
 
     if (isResizable) {
       classes.push('fc-resizable')
+    }
+
+    if (mirrorInfo) {
+      classes.push('fc-mirror')
+
+      if (mirrorInfo.isDragging) {
+        classes.push('fc-dragging')
+      }
+
+      if (mirrorInfo.isResizing) {
+        classes.push('fc-resizing')
+      }
     }
 
     return classes
@@ -225,11 +237,11 @@ export default abstract class FgEventRenderer {
   }
 
 
-  computeFgSizes() {
+  computeSizes() {
   }
 
 
-  assignFgSizes() {
+  assignSizes() {
   }
 
 }

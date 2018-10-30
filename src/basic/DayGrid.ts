@@ -397,14 +397,14 @@ export default class DayGrid extends DateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, origSeg) {
+  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, sourceSeg) {
     let segs = this.eventRangesToSegs(
       this.eventStoreToRanges(eventStore, eventUis)
     )
 
     this.renderHighlightSegs(segs)
 
-    this.mirrorRenderer.renderEventResizingSegs(segs, origSeg)
+    this.mirrorRenderer.renderSegs(segs, { isResizing: true, sourceSeg })
   }
 
 

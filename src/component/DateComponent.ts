@@ -83,7 +83,7 @@ export default class DateComponent extends Component<DateComponentProps> {
     }
 
     if (this.mirrorRendererClass && this.eventRenderer) {
-      this.mirrorRenderer = new this.mirrorRendererClass(this, this.eventRenderer)
+      this.mirrorRenderer = new this.mirrorRendererClass(this)
     }
 
     if (this.isInteractable) {
@@ -347,7 +347,7 @@ export default class DateComponent extends Component<DateComponentProps> {
     }
 
     if (this.eventRenderer) {
-      this.eventRenderer.computeFgSizes()
+      this.eventRenderer.computeSizes()
     }
   }
 
@@ -356,7 +356,7 @@ export default class DateComponent extends Component<DateComponentProps> {
       this.fillRenderer.assignSize('bgEvent')
     }
     if (this.eventRenderer) {
-      this.eventRenderer.assignFgSizes()
+      this.eventRenderer.assignSizes()
     }
   }
 
@@ -414,7 +414,7 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   // Renders a visual indication of a event or external-element drag over the given drop zone.
   // If an external-element, seg will be `null`.
-  renderEventDrag(eventStore: EventStore, eventUis: EventUiHash, isEvent: boolean, origSeg: Seg | null) {
+  renderEventDrag(eventStore: EventStore, eventUis: EventUiHash, isEvent: boolean, sourceSeg: Seg | null) {
     let segs = this.eventRangesToSegs(
       this.eventStoreToRanges(eventStore, eventUis)
     )
@@ -422,9 +422,9 @@ export default class DateComponent extends Component<DateComponentProps> {
     // if the user is dragging something that is considered an event with real event data,
     // and this component likes to do drag mirrors OR the component where the seg came from
     // likes to do drag mirrors, then render a drag mirror.
-    if (isEvent && (this.doesDragMirror || origSeg && origSeg.component.doesDragMirror)) {
+    if (isEvent && (this.doesDragMirror || sourceSeg && sourceSeg.component.doesDragMirror)) {
       if (this.mirrorRenderer) {
-        this.mirrorRenderer.renderEventDraggingSegs(segs, origSeg)
+        this.mirrorRenderer.renderSegs(segs, { isDragging: true, sourceSeg })
       }
     }
 
@@ -516,13 +516,13 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   computeMirrorSize() {
     if (this.mirrorRenderer) {
-      this.mirrorRenderer.computeSize()
+      this.mirrorRenderer.computeSizes()
     }
   }
 
   assignMirrorSize() {
     if (this.mirrorRenderer) {
-      this.mirrorRenderer.assignSize()
+      this.mirrorRenderer.assignSizes()
     }
   }
 
@@ -704,7 +704,7 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
 
-  triggerRenderedSegs(segs: Seg[], isMirrors: boolean = false) {
+  triggerRenderedSegs(segs: Seg[], isMirrors: boolean) {
     if (this.hasPublicHandlers('eventPositioned')) {
       let calendar = this.calendar
 

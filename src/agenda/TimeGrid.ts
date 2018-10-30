@@ -629,12 +629,12 @@ export default class TimeGrid extends DateComponent {
 
 
   // Renders a visual indication of an event being resized
-  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, origSeg) {
+  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, sourceSeg) {
     let segs = this.eventRangesToSegs(
       this.eventStoreToRanges(eventStore, eventUis)
     )
 
-    this.mirrorRenderer.renderEventResizingSegs(segs, origSeg)
+    this.mirrorRenderer.renderSegs(segs, { isResizing: true, sourceSeg })
   }
 
 
@@ -652,7 +652,7 @@ export default class TimeGrid extends DateComponent {
   renderDateSelection(selection: DateSpan) {
     if (selection) {
       if (this.opt('selectMirror')) {
-        this.mirrorRenderer.renderEventSegs(this.selectionToSegs(selection, true))
+        this.mirrorRenderer.renderSegs(this.selectionToSegs(selection, true), { isSelecting: true })
       } else {
         this.renderHighlightSegs(this.selectionToSegs(selection, false))
       }

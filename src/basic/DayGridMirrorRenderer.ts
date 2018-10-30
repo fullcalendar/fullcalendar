@@ -1,24 +1,16 @@
 import { htmlToElement } from '../util/dom-manip'
-import MirrorRenderer from '../component/renderers/MirrorRenderer'
-import DayGrid from './DayGrid'
 import { Seg } from '../component/DateComponent'
+import DayGridEventRenderer from './DayGridEventRenderer'
 
 
-export default class DayGridMirrorRenderer extends MirrorRenderer {
+export default class DayGridMirrorRenderer extends DayGridEventRenderer {
 
-  component: DayGrid
-
-
-  // Renders a mock "mirror" event. `sourceSeg` is the associated internal segment object. It can be null.
-  renderSegs(segs: Seg[], sourceSeg) {
-    let mirrorNodes = []
-    let rowStructs
-
-    // TODO: not good to call eventRenderer this way
-    rowStructs = this.eventRenderer.renderSegRows(segs)
+  attachSegs(segs: Seg[], mirrorInfo) {
+    let { sourceSeg } = mirrorInfo
+    let rowStructs = this.rowStructs = this.renderSegRows(segs)
 
     // inject each new event skeleton into each associated row
-    this.component.rowEls.forEach(function(rowNode, row) {
+    this.dayGrid.rowEls.forEach(function(rowNode, row) {
       let skeletonEl = htmlToElement('<div class="fc-mirror-skeleton"><table></table></div>') // will be absolutely positioned
       let skeletonTopEl: HTMLElement
       let skeletonTop
@@ -28,6 +20,7 @@ export default class DayGridMirrorRenderer extends MirrorRenderer {
         skeletonTopEl = sourceSeg.el
       } else {
         skeletonTopEl = rowNode.querySelector('.fc-content-skeleton tbody')
+
         if (!skeletonTopEl) { // when no events
           skeletonTopEl = rowNode.querySelector('.fc-content-skeleton table')
         }
@@ -40,10 +33,7 @@ export default class DayGridMirrorRenderer extends MirrorRenderer {
       skeletonEl.querySelector('table').appendChild(rowStructs[row].tbodyEl)
 
       rowNode.appendChild(skeletonEl)
-      mirrorNodes.push(skeletonEl)
     })
-
-    return mirrorNodes // must return the elements rendered
   }
 
 }
