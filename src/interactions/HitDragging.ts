@@ -8,7 +8,7 @@ import { constrainPoint, intersectRects, getRectCenter, diffPoints, Rect, Point 
 import { rangeContainsRange } from '../datelib/date-range'
 
 export interface Hit {
-  component: DateComponent
+  component: DateComponent<any>
   dateSpan: DateSpan
   dayEl: HTMLElement
   rect: Rect
@@ -44,7 +44,7 @@ export default class HitDragging {
   finalHit: Hit | null = null // won't ever be populated if shouldIgnoreMove
   coordAdjust?: Point
 
-  constructor(dragging: ElementDragging, droppable: DateComponent | DateComponentHash) {
+  constructor(dragging: ElementDragging, droppable: DateComponent<any> | DateComponentHash) {
 
     if (droppable instanceof DateComponent) {
       this.droppableHash = { [droppable.uid]: droppable }

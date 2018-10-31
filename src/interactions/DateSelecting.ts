@@ -11,12 +11,12 @@ constituted by a drag over date cells, with a possible delay at the beginning of
 */
 export default class DateSelecting {
 
-  component: DateComponent
+  component: DateComponent<any>
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
   dragSelection: DateSpan | null = null
 
-  constructor(component: DateComponent) {
+  constructor(component: DateComponent<any>) {
     this.component = component
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
@@ -97,7 +97,7 @@ export default class DateSelecting {
 
 }
 
-function getComponentTouchDelay(component: DateComponent): number {
+function getComponentTouchDelay(component: DateComponent<any>): number {
   let delay = component.opt('selectLongPressDelay')
 
   if (delay == null) {

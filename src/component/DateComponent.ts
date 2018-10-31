@@ -1,12 +1,10 @@
 import Component, { ComponentContext } from './Component'
-import { DateProfile } from '../DateProfileGenerator'
-import { EventStore, expandRecurring } from '../structs/event-store'
-import { EventUiHash, EventRenderRange, computeEventDefUis, sliceEventStore, computeEventDefUi, hasBgRendering } from './event-rendering'
+import { EventStore } from '../structs/event-store'
+import { EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
-import { createDuration, Duration } from '../datelib/duration'
-import { parseEventDef, createEventInstance, EventInstanceHash } from '../structs/event'
-import { DateRange, rangeContainsRange } from '../datelib/date-range'
+import { EventInstanceHash } from '../structs/event'
+import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from '../interactions/HitDragging'
 import browserContext from '../common/browser-context'
 import { elementClosest, removeElement } from '../util/dom-manip'
@@ -15,23 +13,12 @@ import EventApi from '../api/EventApi'
 import FgEventRenderer from './renderers/FgEventRenderer'
 import FillRenderer from './renderers/FillRenderer'
 
-export interface DateComponentProps {
-  dateProfile: DateProfile | null
-  businessHours: EventStore
-  eventStore: EventStore
-  eventUis: EventUiHash
-  dateSelection: DateSpan | null
-  eventSelection: string
-  eventDrag: EventInteractionUiState | null
-  eventResize: EventInteractionUiState | null
-}
-
-export type DateComponentHash = { [uid: string]: DateComponent }
+export type DateComponentHash = { [uid: string]: DateComponent<any> }
 
 // NOTE: for fg-events, eventRange.range is NOT sliced,
 // thus, we need isStart/isEnd
 export interface Seg {
-  component: DateComponent
+  component: DateComponent<any>
   isStart: boolean
   isEnd: boolean
   eventRange?: EventRenderRange
@@ -39,14 +26,18 @@ export interface Seg {
   [otherProp: string]: any
 }
 
-export default class DateComponent extends Component<DateComponentProps> {
+/*
+PURPOSES:
+- hook up to fg, fill, and mirror renderers
+- interface for dragging and hits
+*/
+export default class DateComponent<PropsType> extends Component<PropsType> {
 
   // self-config, overridable by subclasses. must set on prototype
   isInteractable: boolean
   useEventCenter: boolean // for dragging geometry
   doesDragMirror: boolean // for events that ORIGINATE from this component
   doesDragHighlight: boolean // for events that ORIGINATE from this component
-  slicingType: 'timed' | 'all-day' | null = null
   fgSegSelector: string // lets eventRender produce elements without fc-event class
   bgSegSelector: string
 
@@ -62,15 +53,11 @@ export default class DateComponent extends Component<DateComponentProps> {
   el: HTMLElement // passed in to constructor
   needHitsDepth: number = 0
 
-  // derived from options
-  nextDayThreshold: Duration
-
 
   constructor(context: ComponentContext, el: HTMLElement) {
     super(context)
 
     this.el = el
-    this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
 
     if (this.isInteractable) {
       browserContext.registerComponent(this)
@@ -87,128 +74,9 @@ export default class DateComponent extends Component<DateComponentProps> {
     }
   }
 
-  render(props: DateComponentProps) {
-    this.subrender('afterSkeletonRender', [], 'beforeSkeletonUnrender', true)
-    let dateId = this.subrender('_renderDates', [ props.dateProfile ], '_unrenderDates', true)
-    this.subrender('renderBusinessHours', [ props.businessHours, dateId ], 'unrenderBusinessHours', true)
-    this.subrender('renderDateSelectionState', [ props.dateSelection, dateId ], 'unrenderDateSelectionState', true)
-    let evId = this.subrender('renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents', true)
-    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection', true)
-    this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState', true)
-    this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState', true)
-  }
-
-  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    let map = this.dirtySizeMethodNames
-
-    if (isResize || map.has('afterSkeletonRender') || map.has('_renderDates') || map.has('renderEvents')) {
-      // sort of the catch-all sizing
-      // anything that might cause dimension changes
-      this.updateBaseSize(viewHeight, isAuto, isResize)
-      this.buildPositionCaches()
-    }
-
-    if (isResize || map.has('renderBusinessHours')) {
-      this.computeBusinessHoursSize()
-    }
-
-    if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
-      if (this.mirrorRenderer) {
-        this.mirrorRenderer.computeSizes()
-      }
-      if (this.fillRenderer) {
-        this.fillRenderer.computeSizes('highlight')
-      }
-    }
-
-    if (isResize || map.has('renderEvents')) {
-      this.computeEventsSize()
-    }
-
-    if (isResize || map.has('renderBusinessHours')) {
-      this.assignBusinessHoursSize()
-    }
-
-    if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
-      if (this.mirrorRenderer) {
-        this.mirrorRenderer.assignSizes()
-      }
-      if (this.fillRenderer) {
-        this.fillRenderer.assignSizes('highlight')
-      }
-    }
-
-    if (isResize || map.has('renderEvents')) {
-      this.assignEventsSize()
-    }
-
-    this.dirtySizeMethodNames = new Map()
-  }
-
-  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-  }
-
-  buildPositionCaches() {
-  }
-
-
-  // Skeleton
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  afterSkeletonRender() {
-  }
-
-
-  beforeSkeletonUnrender() {
-  }
-
-
-  // Date
-  // -----------------------------------------------------------------------------------------------------------------
-
-  _renderDates(dateProfile: DateProfile) {
-    this.renderDates(dateProfile)
-    this.afterDatesRender()
-  }
-
-  _unrenderDates() {
-    this.beforeDatesUnrender()
-    this.unrenderDates()
-  }
-
-  renderDates(dateProfile: DateProfile) {
-  }
-
-  unrenderDates() {
-  }
-
-  afterDatesRender() {
-  }
-
-  beforeDatesUnrender() {
-  }
-
 
   // Business Hours
   // ---------------------------------------------------------------------------------------------------------------
-
-  renderBusinessHours(businessHours: EventStore) {
-    if (this.slicingType) { // can use eventStoreToRanges?
-      let expandedStore = expandRecurring(businessHours, this.props.dateProfile.activeRange, this.calendar)
-
-      this.renderBusinessHourRanges(
-        this.eventStoreToRanges(
-          expandedStore,
-          computeEventDefUis(expandedStore.defs, {}, {})
-        )
-      )
-    }
-  }
-
-  renderBusinessHourRanges(eventRanges: EventRenderRange[]) {
-    this.renderBusinessHourSegs(this.eventRangesToSegs(eventRanges))
-  }
 
   renderBusinessHourSegs(segs: Seg[]) {
     if (this.fillRenderer) {
@@ -238,22 +106,6 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Date Selection
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderDateSelectionState(selection: DateSpan | null) {
-    if (selection) {
-      this.renderDateSelection(selection)
-    }
-  }
-
-  unrenderDateSelectionState(selection: DateSpan | null) {
-    if (selection) {
-      this.unrenderDateSelection(selection)
-    }
-  }
-
-  renderDateSelection(selection: DateSpan) {
-    this.renderDateSelectionSegs(this.selectionToSegs(selection))
-  }
-
   renderDateSelectionSegs(segs: Seg[]) {
     if (this.fillRenderer) {
       this.fillRenderer.renderSegs('highlight', segs)
@@ -269,33 +121,6 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   // Events
   // -----------------------------------------------------------------------------------------------------------------
-
-  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
-    this.renderEventRanges(
-      this.eventStoreToRanges(eventStore, eventUis)
-    )
-  }
-
-  renderEventRanges(eventRanges: EventRenderRange[]) {
-    let bgRanges = []
-    let fgRanges = []
-
-    for (let eventRange of eventRanges) {
-      if (hasBgRendering(eventRange.ui)) {
-        bgRanges.push(eventRange)
-      } else {
-        fgRanges.push(eventRange)
-      }
-    }
-
-    this.renderFgEventSegs(
-      this.eventRangesToSegs(fgRanges)
-    )
-
-    this.renderBgEventSegs(
-      this.eventRangesToSegs(bgRanges)
-    )
-  }
 
   renderFgEventSegs(segs: Seg[]) {
     if (this.eventRenderer) {
@@ -360,26 +185,6 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Event Drag-n-Drop Rendering (for both events and external elements)
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderEventDragState(state: EventInteractionUiState | null) {
-    if (state) {
-      this.renderEventDrag(state)
-    }
-  }
-
-  unrenderEventDragState(state: EventInteractionUiState | null) {
-    if (state) {
-      this.unrenderEventDrag(state)
-    }
-  }
-
-  renderEventDrag(state: EventInteractionUiState) {
-    let segs = this.eventRangesToSegs(
-      this.eventStoreToRanges(state.mutatedEvents, state.eventUis)
-    )
-
-    this.renderEventDragSegs(segs, state.isEvent, state.origSeg, state.affectedEvents.instances)
-  }
-
   renderEventDragSegs(segs: Seg[], isEvent: boolean, sourceSeg: Seg | null, affectedInstances: EventInstanceHash) {
 
     if (this.eventRenderer) {
@@ -422,26 +227,6 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Event Resizing
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderEventResizeState(state: EventInteractionUiState | null) {
-    if (state) {
-      this.renderEventResize(state)
-    }
-  }
-
-  unrenderEventResizeState(state: EventInteractionUiState | null) {
-    if (state) {
-      this.unrenderEventResize(state)
-    }
-  }
-
-  renderEventResize(state: EventInteractionUiState) {
-    let segs = this.eventRangesToSegs(
-      this.eventStoreToRanges(state.mutatedEvents, state.eventUis)
-    )
-
-    this.renderEventResizeSegs(segs, state.origSeg, state.affectedEvents.instances)
-  }
-
   renderEventResizeSegs(segs: Seg[], sourceSeg, affectedInstances: EventInstanceHash) {
     if (this.eventRenderer) {
       this.eventRenderer.hideByHash(affectedInstances)
@@ -462,71 +247,6 @@ export default class DateComponent extends Component<DateComponentProps> {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('highlight')
     }
-  }
-
-
-  // Converting selection/eventRanges -> segs
-  // ---------------------------------------------------------------------------------------------------------------
-
-  eventStoreToRanges(eventStore: EventStore, eventUis: EventUiHash): EventRenderRange[] {
-    return sliceEventStore(
-      eventStore,
-      eventUis,
-      this.props.dateProfile.activeRange,
-      this.slicingType === 'all-day' ? this.nextDayThreshold : null
-    )
-  }
-
-  eventRangesToSegs(eventRenderRanges: EventRenderRange[]): Seg[] {
-    let allSegs: Seg[] = []
-
-    for (let eventRenderRange of eventRenderRanges) {
-      let segs = this.rangeToSegs(eventRenderRange.range, eventRenderRange.def.allDay)
-
-      for (let seg of segs) {
-        seg.eventRange = eventRenderRange
-        seg.isStart = seg.isStart && eventRenderRange.isStart
-        seg.isEnd = seg.isEnd && eventRenderRange.isEnd
-
-        allSegs.push(seg)
-      }
-    }
-
-    return allSegs
-  }
-
-  selectionToSegs(selection: DateSpan): Seg[] {
-    let segs = this.rangeToSegs(selection.range, selection.allDay)
-
-    // fabricate an eventRange. important for mirror
-    // TODO: make a separate utility for this?
-    let def = parseEventDef(
-      { editable: false },
-      '', // sourceId
-      selection.allDay,
-      true, // hasEnd
-      this.calendar
-    )
-
-    let eventRange = {
-      def,
-      ui: computeEventDefUi(def, {}, {}),
-      instance: createEventInstance(def.defId, selection.range),
-      range: selection.range,
-      isStart: true,
-      isEnd: true
-    }
-
-    for (let seg of segs) {
-      seg.eventRange = eventRange
-    }
-
-    return segs
-  }
-
-  // must implement if want to use many of the rendering utils
-  rangeToSegs(range: DateRange, allDay: boolean): Seg[] {
-    return []
   }
 
 
@@ -560,7 +280,7 @@ export default class DateComponent extends Component<DateComponentProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
   isEventsValid(eventStore: EventStore) {
-    let dateProfile = this.props.dateProfile
+    let dateProfile = (this.props as any).dateProfile // HACK
     let instances = eventStore.instances
 
     if (dateProfile) { // HACK for DayTile
@@ -575,7 +295,7 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
   isSelectionValid(selection: DateSpan): boolean {
-    let dateProfile = this.props.dateProfile
+    let dateProfile = (this.props as any).dateProfile // HACK
 
     if (
       dateProfile && // HACK for DayTile
@@ -590,6 +310,7 @@ export default class DateComponent extends Component<DateComponentProps> {
 
   // Triggering
   // -----------------------------------------------------------------------------------------------------------------
+  // TODO: move to Calendar
 
 
   publiclyTrigger(name, args) {
@@ -671,7 +392,8 @@ export default class DateComponent extends Component<DateComponentProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
   isValidSegDownEl(el: HTMLElement) {
-    return !this.props.eventDrag && !this.props.eventResize &&
+    return !(this.props as any).eventDrag && // HACK
+      !(this.props as any).eventResize && // HACK
       !elementClosest(el, '.fc-mirror') &&
       !this.isInPopover(el) // how to determine if not in a sub-component???
   }

@@ -18,7 +18,7 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import reselector from '../util/reselector'
 import { EventUiHash, hasBgRendering } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getAllDayHtml } from '../component/date-rendering'
-import { DateComponentProps } from '../component/DateComponent'
+import { StandardDateComponentProps } from '../component/StandardDateComponent'
 import { DateMarker } from '../datelib/marker'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
@@ -170,7 +170,7 @@ export default class AgendaView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  render(props: DateComponentProps) {
+  render(props: StandardDateComponentProps) {
     super.render(props)
 
     let allDaySeletion = null

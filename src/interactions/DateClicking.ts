@@ -9,11 +9,11 @@ A pointerdown+pointerup on the same "hit" constitutes a click.
 */
 export default class DateClicking {
 
-  component: DateComponent
+  component: DateComponent<any>
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
 
-  constructor(component: DateComponent) {
+  constructor(component: DateComponent<any>) {
     this.component = component
 
     // we DO want to watch pointer moves because otherwise finalHit won't get populated

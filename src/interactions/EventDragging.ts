@@ -17,7 +17,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
   static SELECTOR = '.fc-draggable, .fc-resizable' // TODO: test this in IE11
 
-  component: DateComponent
+  component: DateComponent<any>
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
 
@@ -30,7 +30,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
 
-  constructor(component: DateComponent) {
+  constructor(component: DateComponent<any>) {
     this.component = component
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
@@ -390,7 +390,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
   }
 }
 
-function getComponentTouchDelay(component: DateComponent): number | null {
+function getComponentTouchDelay(component: DateComponent<any>): number | null {
   let delay = component.opt('eventLongPressDelay')
 
   if (delay == null) {

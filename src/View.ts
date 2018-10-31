@@ -1,7 +1,7 @@
 import { assignTo } from './util/object'
 import { parseFieldSpecs } from './util/misc'
 import DateProfileGenerator from './DateProfileGenerator'
-import DateComponent from './component/DateComponent'
+import StandardDateComponent from './component/StandardDateComponent'
 import { DateMarker, addMs } from './datelib/marker'
 import { createDuration } from './datelib/duration'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
@@ -13,7 +13,7 @@ import { ComponentContext } from './component/Component'
 /* An abstract class from which other views inherit from
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export default abstract class View extends DateComponent {
+export default abstract class View extends StandardDateComponent {
 
   // config properties, initialized after class on prototype
   usesMinMaxTime: boolean // whether minTime/maxTime will affect the activeRange. Views must opt-in.

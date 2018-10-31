@@ -15,7 +15,7 @@ import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import DayGrid from './DayGrid'
 import { DateProfile } from '../DateProfileGenerator'
 import { buildGotoAnchorHtml } from '../component/date-rendering'
-import { DateComponentProps } from '../component/DateComponent'
+import { StandardDateComponentProps } from '../component/StandardDateComponent'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -91,7 +91,7 @@ export default class BasicView extends View {
   }
 
 
-  render(props: DateComponentProps) {
+  render(props: StandardDateComponentProps) {
     super.render(props)
 
     this.dayGrid.receiveProps(props)

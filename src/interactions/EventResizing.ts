@@ -13,7 +13,7 @@ import { createDuration } from '../datelib/duration'
 
 export default class EventDragging {
 
-  component: DateComponent
+  component: DateComponent<any>
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
 
@@ -24,7 +24,7 @@ export default class EventDragging {
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
 
-  constructor(component: DateComponent) {
+  constructor(component: DateComponent<any>) {
     this.component = component
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)

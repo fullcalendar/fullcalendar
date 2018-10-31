@@ -9,10 +9,10 @@ Detects when the user clicks on an event within a DateComponent
 */
 export default class EventClicking {
 
-  component: DateComponent
+  component: DateComponent<any>
   destroy: () => void
 
-  constructor(component: DateComponent) {
+  constructor(component: DateComponent<any>) {
     this.component = component
 
     this.destroy = listenBySelector(

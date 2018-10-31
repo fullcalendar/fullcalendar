@@ -59,7 +59,7 @@ export function getAllDayHtml(component: Component<any>) {
 
 
 // Computes HTML classNames for a single-day element
-export function getDayClasses(component: DateComponent, date: DateMarker, noThemeHighlight?) {
+export function getDayClasses(component: DateComponent<any>, date: DateMarker, noThemeHighlight?) {
   let { calendar, view, theme } = component
   let dateProfile = component.props.dateProfile
   let classes = []

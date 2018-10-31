@@ -16,7 +16,9 @@ import DayGridMirrorRenderer from './DayGridMirrorRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
-import DateComponent, { Seg, DateComponentProps } from '../component/DateComponent'
+import { StandardDateComponentProps } from '../component/StandardDateComponent'
+import { Seg } from '../component/DateComponent'
+import StandardDateComponent from '../component/StandardDateComponent'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
@@ -31,7 +33,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export default class DayGrid extends DateComponent {
+export default class DayGrid extends StandardDateComponent {
 
   rowCnt: DayTableInterface['rowCnt']
   colCnt: DayTableInterface['colCnt']
@@ -110,7 +112,7 @@ export default class DayGrid extends DateComponent {
   }
 
 
-  render(props: DateComponentProps) {
+  render(props: StandardDateComponentProps) {
     super.render(props)
 
     if (this.segPopoverTile) {

@@ -10,7 +10,8 @@ import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDu
 import { startOfDay, DateMarker, addMs } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import { ComponentContext } from '../component/Component'
-import DateComponent, { Seg } from '../component/DateComponent'
+import { Seg } from '../component/DateComponent'
+import StandardDateComponent from '../component/StandardDateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 import AgendaView from './AgendaView'
@@ -29,7 +30,7 @@ const AGENDA_STOCK_SUB_DURATIONS = [
   { seconds: 15 }
 ]
 
-export default class TimeGrid extends DateComponent {
+export default class TimeGrid extends StandardDateComponent {
 
   dayDates: DayTableInterface['dayDates']
   daysPerRow: DayTableInterface['daysPerRow']

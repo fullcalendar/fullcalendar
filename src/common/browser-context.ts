@@ -11,17 +11,17 @@ export class BrowserContext {
   componentHash = {}
   listenerHash = {}
 
-  registerComponent(component: DateComponent) {
+  registerComponent(component: DateComponent<any>) {
     this.componentHash[component.uid] = component
     this.bindComponent(component)
   }
 
-  unregisterComponent(component: DateComponent) {
+  unregisterComponent(component: DateComponent<any>) {
     delete this.componentHash[component.uid]
     this.unbindComponent(component)
   }
 
-  bindComponent(component: DateComponent) {
+  bindComponent(component: DateComponent<any>) {
     this.listenerHash[component.uid] = {
       dateClicking: new DateClicking(component),
       dateSelecting: new DateSelecting(component),
@@ -32,7 +32,7 @@ export class BrowserContext {
     }
   }
 
-  unbindComponent(component: DateComponent) {
+  unbindComponent(component: DateComponent<any>) {
     let listeners = this.listenerHash[component.uid]
 
     listeners.dateClicking.destroy()

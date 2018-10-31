@@ -9,11 +9,11 @@ enters/leaves event-elements of a component.
 */
 export default class EventHovering {
 
-  component: DateComponent
+  component: DateComponent<any>
   removeHoverListeners: () => void
   currentSegEl: HTMLElement
 
-  constructor(component: DateComponent) {
+  constructor(component: DateComponent<any>) {
     this.component = component
 
     this.removeHoverListeners = listenToHoverBySelector(

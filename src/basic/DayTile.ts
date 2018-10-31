@@ -1,4 +1,4 @@
-import DateComponent, { Seg } from '../component/DateComponent'
+import { Seg } from '../component/DateComponent'
 import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
 import { htmlEscape } from '../util/html'
 import { createFormatter } from '../datelib/formatting'
@@ -9,7 +9,8 @@ import { Rect, pointInsideRect } from '../util/geom'
 import { addDays, DateMarker } from '../datelib/marker'
 import { removeElement } from '../util/dom-manip'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
-import { ComponentContext } from 'src/component/Component'
+import { ComponentContext } from '../component/Component'
+import StandardDateComponent from '../component/StandardDateComponent'
 
 /*
 props:
@@ -19,7 +20,7 @@ props:
 - eventDrag
 - eventResize
 */
-export default class DayTile extends DateComponent {
+export default class DayTile extends StandardDateComponent {
 
   segContainerEl: HTMLElement
   width: number
