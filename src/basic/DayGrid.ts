@@ -17,12 +17,11 @@ import DayGridFillRenderer from './DayGridFillRenderer'
 import { addDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import DateComponent, { Seg, DateComponentProps } from '../component/DateComponent'
-import { EventStore } from '../structs/event-store'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
 import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
 import OffsetTracker from '../common/OffsetTracker'
-import { EventRenderRange, EventUiHash } from '../component/event-rendering'
+import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
@@ -392,11 +391,13 @@ export default class DayGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  filterBgEventRanges(bgEventRanges) {
-    // don't render timed background events
-    return bgEventRanges.filter(function(eventRange) {
-      return eventRange.def.allDay
-    })
+  renderBgEventSegs(segs: Seg[]) {
+    super.renderBgEventSegs(
+      // don't render timed background events
+      segs.filter(function(seg) {
+        return seg.eventRange.def.allDay
+      })
+    )
   }
 
 
@@ -411,22 +412,11 @@ export default class DayGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Renders a visual indication of an event being resized
-  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, sourceSeg) {
-    let segs = this.eventRangesToSegs(
-      this.eventStoreToRanges(eventStore, eventUis)
-    )
+  renderEventResizeSegs(segs: Seg[], sourceSeg, affectedInstances) {
+    super.renderEventResizeSegs(segs, sourceSeg, affectedInstances)
 
-    this.renderHighlightSegs(segs)
-
+    this.fillRenderer.renderSegs('highlight', segs)
     this.mirrorRenderer.renderSegs(segs, { isResizing: true, sourceSeg })
-  }
-
-
-  // Unrenders a visual indication of an event being resized
-  unrenderEventResize() {
-    this.unrenderHighlight()
-    this.mirrorRenderer.unrender()
   }
 
 

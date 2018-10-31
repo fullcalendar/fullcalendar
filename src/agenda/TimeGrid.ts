@@ -12,10 +12,7 @@ import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/
 import { ComponentContext } from '../component/Component'
 import DateComponent, { Seg } from '../component/DateComponent'
 import OffsetTracker from '../common/OffsetTracker'
-import { DateSpan } from '../structs/date-span'
-import { EventStore } from '../structs/event-store'
 import { Hit } from '../interactions/HitDragging'
-import { EventUiHash } from '../component/event-rendering'
 import AgendaView from './AgendaView'
 
 /* A component that renders one or more columns of vertical time slots
@@ -633,19 +630,10 @@ export default class TimeGrid extends DateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Renders a visual indication of an event being resized
-  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, sourceSeg) {
-    let segs = this.eventRangesToSegs(
-      this.eventStoreToRanges(eventStore, eventUis)
-    )
+  renderEventResizeSegs(segs: Seg[], sourceSeg, affectedInstances) {
+    super.renderEventResizeSegs(segs, sourceSeg, affectedInstances)
 
     this.mirrorRenderer.renderSegs(segs, { isResizing: true, sourceSeg })
-  }
-
-
-  // Unrenders any visual indication of an event being resized
-  unrenderEventResize() {
-    this.mirrorRenderer.unrender()
   }
 
 
@@ -654,22 +642,14 @@ export default class TimeGrid extends DateComponent {
 
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-  renderDateSelection(selection: DateSpan) {
-    if (selection) {
-      if (this.opt('selectMirror')) {
-        this.mirrorRenderer.renderSegs(this.selectionToSegs(selection, true), { isSelecting: true })
-      } else {
-        this.renderHighlightSegs(this.selectionToSegs(selection, false))
-      }
+  renderDateSelectionSegs(segs: Seg[]) {
+    if (this.opt('selectMirror')) {
+      this.mirrorRenderer.renderSegs(segs, { isSelecting: true })
+    } else {
+      this.fillRenderer.renderSegs('highlight', segs)
     }
   }
 
-
-  // Unrenders any visual indication of a selection
-  unrenderDateSelection() {
-    this.mirrorRenderer.unrender()
-    this.unrenderHighlight()
-  }
 
 }
 

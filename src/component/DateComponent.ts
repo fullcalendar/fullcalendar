@@ -5,7 +5,7 @@ import { EventUiHash, EventRenderRange, computeEventDefUis, sliceEventStore, com
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { createDuration, Duration } from '../datelib/duration'
-import { parseEventDef, createEventInstance } from '../structs/event'
+import { parseEventDef, createEventInstance, EventInstanceHash } from '../structs/event'
 import { DateRange, rangeContainsRange } from '../datelib/date-range'
 import { Hit } from '../interactions/HitDragging'
 import browserContext from '../common/browser-context'
@@ -113,8 +113,12 @@ export default class DateComponent extends Component<DateComponentProps> {
     }
 
     if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
-      this.computeHighlightSize()
-      this.computeMirrorSize()
+      if (this.mirrorRenderer) {
+        this.mirrorRenderer.computeSizes()
+      }
+      if (this.fillRenderer) {
+        this.fillRenderer.computeSizes('highlight')
+      }
     }
 
     if (isResize || map.has('renderEvents')) {
@@ -126,8 +130,12 @@ export default class DateComponent extends Component<DateComponentProps> {
     }
 
     if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
-      this.assignHighlightSize()
-      this.assignMirrorSize()
+      if (this.mirrorRenderer) {
+        this.mirrorRenderer.assignSizes()
+      }
+      if (this.fillRenderer) {
+        this.fillRenderer.assignSizes('highlight')
+      }
     }
 
     if (isResize || map.has('renderEvents')) {
@@ -199,12 +207,15 @@ export default class DateComponent extends Component<DateComponentProps> {
   }
 
   renderBusinessHourRanges(eventRanges: EventRenderRange[]) {
+    this.renderBusinessHourSegs(this.eventRangesToSegs(eventRanges))
+  }
+
+  renderBusinessHourSegs(segs: Seg[]) {
     if (this.fillRenderer) {
-      this.fillRenderer.renderSegs('businessHours', this.eventRangesToSegs(eventRanges))
+      this.fillRenderer.renderSegs('businessHours', segs)
     }
   }
 
-  // Unrenders previously-rendered business-hours
   unrenderBusinessHours() {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('businessHours')
@@ -227,24 +238,32 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Date Selection
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderDateSelectionState(selection: DateSpan) {
+  renderDateSelectionState(selection: DateSpan | null) {
     if (selection) {
       this.renderDateSelection(selection)
     }
   }
 
-  unrenderDateSelectionState(selection: DateSpan) {
+  unrenderDateSelectionState(selection: DateSpan | null) {
     if (selection) {
-      this.unrenderDateSelection()
+      this.unrenderDateSelection(selection)
     }
   }
 
   renderDateSelection(selection: DateSpan) {
-    this.renderHighlightSegs(this.selectionToSegs(selection, false))
+    this.renderDateSelectionSegs(this.selectionToSegs(selection))
   }
 
-  unrenderDateSelection() {
-    this.unrenderHighlight()
+  renderDateSelectionSegs(segs: Seg[]) {
+    if (this.fillRenderer) {
+      this.fillRenderer.renderSegs('highlight', segs)
+    }
+  }
+
+  unrenderDateSelection(selection: DateSpan) {
+    if (this.fillRenderer) {
+      this.fillRenderer.unrender('highlight')
+    }
   }
 
 
@@ -252,42 +271,42 @@ export default class DateComponent extends Component<DateComponentProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
   renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
-    if (this.slicingType) { // can use eventStoreToRanges?
-      this.renderEventRanges(
-        this.eventStoreToRanges(eventStore, eventUis)
-      )
-    }
+    this.renderEventRanges(
+      this.eventStoreToRanges(eventStore, eventUis)
+    )
   }
 
   renderEventRanges(eventRanges: EventRenderRange[]) {
-    if (this.eventRenderer || this.fillRenderer) {
+    let bgRanges = []
+    let fgRanges = []
 
-      let bgRanges = []
-      let fgRanges = []
-
-      for (let eventRange of eventRanges) {
-        if (hasBgRendering(eventRange.ui)) {
-          bgRanges.push(eventRange)
-        } else {
-          fgRanges.push(eventRange)
-        }
+    for (let eventRange of eventRanges) {
+      if (hasBgRendering(eventRange.ui)) {
+        bgRanges.push(eventRange)
+      } else {
+        fgRanges.push(eventRange)
       }
+    }
 
-      if (this.eventRenderer) {
-        this.eventRenderer.renderSegs(
-          this.eventRangesToSegs(fgRanges)
-        )
-      }
+    this.renderFgEventSegs(
+      this.eventRangesToSegs(fgRanges)
+    )
 
-      if (this.fillRenderer) {
-        bgRanges = this.filterBgEventRanges(bgRanges)
-        this.fillRenderer.renderSegs('bgEvent', this.eventRangesToSegs(bgRanges))
-      }
+    this.renderBgEventSegs(
+      this.eventRangesToSegs(bgRanges)
+    )
+  }
+
+  renderFgEventSegs(segs: Seg[]) {
+    if (this.eventRenderer) {
+      this.eventRenderer.renderSegs(segs)
     }
   }
 
-  filterBgEventRanges(bgEventRanges) {
-    return bgEventRanges
+  renderBgEventSegs(segs: Seg[]) {
+    if (this.fillRenderer) {
+      this.fillRenderer.renderSegs('bgEvent', segs)
+    }
   }
 
   unrenderEvents() {
@@ -314,6 +333,7 @@ export default class DateComponent extends Component<DateComponentProps> {
     if (this.fillRenderer) {
       this.fillRenderer.assignSizes('bgEvent')
     }
+
     if (this.eventRenderer) {
       this.eventRenderer.assignSizes()
     }
@@ -340,39 +360,31 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Event Drag-n-Drop Rendering (for both events and external elements)
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderEventDragState(state: EventInteractionUiState) {
+  renderEventDragState(state: EventInteractionUiState | null) {
     if (state) {
-
-      if (this.eventRenderer) {
-        this.eventRenderer.hideByHash(state.affectedEvents.instances)
-      }
-
-      this.renderEventDrag(
-        state.mutatedEvents,
-        state.eventUis,
-        state.isEvent,
-        state.origSeg
-      )
+      this.renderEventDrag(state)
     }
   }
 
-  unrenderEventDragState(state: EventInteractionUiState) {
+  unrenderEventDragState(state: EventInteractionUiState | null) {
     if (state) {
-
-      if (this.eventRenderer) {
-        this.eventRenderer.showByHash(state.affectedEvents.instances)
-      }
-
-      this.unrenderEventDrag()
+      this.unrenderEventDrag(state)
     }
   }
 
-  // Renders a visual indication of a event or external-element drag over the given drop zone.
-  // If an external-element, seg will be `null`.
-  renderEventDrag(eventStore: EventStore, eventUis: EventUiHash, isEvent: boolean, sourceSeg: Seg | null) {
+  renderEventDrag(state: EventInteractionUiState) {
     let segs = this.eventRangesToSegs(
-      this.eventStoreToRanges(eventStore, eventUis)
+      this.eventStoreToRanges(state.mutatedEvents, state.eventUis)
     )
+
+    this.renderEventDragSegs(segs, state.isEvent, state.origSeg, state.affectedEvents.instances)
+  }
+
+  renderEventDragSegs(segs: Seg[], isEvent: boolean, sourceSeg: Seg | null, affectedInstances: EventInstanceHash) {
+
+    if (this.eventRenderer) {
+      this.eventRenderer.hideByHash(affectedInstances)
+    }
 
     // if the user is dragging something that is considered an event with real event data,
     // and this component likes to do drag mirrors OR the component where the seg came from
@@ -386,16 +398,23 @@ export default class DateComponent extends Component<DateComponentProps> {
     // if it would be impossible to render a drag mirror OR this component likes to render
     // highlights, then render a highlight.
     if (!isEvent || this.doesDragHighlight) {
-      this.renderHighlightSegs(segs)
+      if (this.fillRenderer) {
+        this.fillRenderer.renderSegs('highlight', segs)
+      }
     }
   }
 
-  // Unrenders a visual indication of an event or external-element being dragged.
-  unrenderEventDrag() {
-    this.unrenderHighlight()
+  unrenderEventDrag(state: EventInteractionUiState) {
+    if (this.eventRenderer) {
+      this.eventRenderer.showByHash(state.affectedEvents.instances)
+    }
 
     if (this.mirrorRenderer) {
       this.mirrorRenderer.unrender()
+    }
+
+    if (this.fillRenderer) {
+      this.fillRenderer.unrender('highlight')
     }
   }
 
@@ -403,85 +422,45 @@ export default class DateComponent extends Component<DateComponentProps> {
   // Event Resizing
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderEventResizeState(state: EventInteractionUiState) {
+  renderEventResizeState(state: EventInteractionUiState | null) {
     if (state) {
-
-      if (this.eventRenderer) {
-        this.eventRenderer.hideByHash(state.affectedEvents.instances)
-      }
-
-      this.renderEventResize(
-        state.mutatedEvents,
-        state.eventUis,
-        state.origSeg
-      )
+      this.renderEventResize(state)
     }
   }
 
-  unrenderEventResizeState(state: EventInteractionUiState) {
+  unrenderEventResizeState(state: EventInteractionUiState | null) {
     if (state) {
-
-      if (this.eventRenderer) {
-        this.eventRenderer.showByHash(state.affectedEvents.instances)
-      }
-
-      this.unrenderEventResize()
+      this.unrenderEventResize(state)
     }
   }
 
-  // Renders a visual indication of an event being resized.
-  renderEventResize(eventStore: EventStore, eventUis: EventUiHash, origSeg: any) {
-    // subclasses can implement
+  renderEventResize(state: EventInteractionUiState) {
+    let segs = this.eventRangesToSegs(
+      this.eventStoreToRanges(state.mutatedEvents, state.eventUis)
+    )
+
+    this.renderEventResizeSegs(segs, state.origSeg, state.affectedEvents.instances)
   }
 
-  // Unrenders a visual indication of an event being resized.
-  unrenderEventResize() {
-    // subclasses can implement
-  }
-
-
-  // Highlight
-  // ---------------------------------------------------------------------------------------------------------------
-
-  // Renders an emphasis on the given date range. Given a span (unzoned start/end and other misc data)
-  renderHighlightSegs(segs) {
-    if (this.fillRenderer) {
-      this.fillRenderer.renderSegs('highlight', segs)
+  renderEventResizeSegs(segs: Seg[], sourceSeg, affectedInstances: EventInstanceHash) {
+    if (this.eventRenderer) {
+      this.eventRenderer.hideByHash(affectedInstances)
     }
+
+    // subclasses can override and do something with segs
   }
 
-  // Unrenders the emphasis on a date range
-  unrenderHighlight() {
+  unrenderEventResize(state: EventInteractionUiState) {
+    if (this.eventRenderer) {
+      this.eventRenderer.showByHash(state.affectedEvents.instances)
+    }
+
+    if (this.mirrorRenderer) {
+      this.mirrorRenderer.unrender()
+    }
+
     if (this.fillRenderer) {
       this.fillRenderer.unrender('highlight')
-    }
-  }
-
-  computeHighlightSize() {
-    if (this.fillRenderer) {
-      this.fillRenderer.computeSizes('highlight')
-    }
-  }
-
-  assignHighlightSize() {
-    if (this.fillRenderer) {
-      this.fillRenderer.assignSizes('highlight')
-    }
-  }
-
-
-  // Mirror
-  // ---------------------------------------------------------------------------------------------------------------
-
-  computeMirrorSize() {
-    if (this.mirrorRenderer) {
-      this.mirrorRenderer.computeSizes()
-    }
-  }
-
-  assignMirrorSize() {
-    if (this.mirrorRenderer) {
-      this.mirrorRenderer.assignSizes()
     }
   }
 
@@ -516,32 +495,30 @@ export default class DateComponent extends Component<DateComponentProps> {
     return allSegs
   }
 
-  selectionToSegs(selection: DateSpan, fabricateEvents: boolean): Seg[] {
+  selectionToSegs(selection: DateSpan): Seg[] {
     let segs = this.rangeToSegs(selection.range, selection.allDay)
 
-    if (fabricateEvents) {
+    // fabricate an eventRange. important for mirror
+    // TODO: make a separate utility for this?
+    let def = parseEventDef(
+      { editable: false },
+      '', // sourceId
+      selection.allDay,
+      true, // hasEnd
+      this.calendar
+    )
 
-      // fabricate an eventRange. important for mirror
-      // TODO: make a separate utility for this?
-      let def = parseEventDef(
-        { editable: false },
-        '', // sourceId
-        selection.allDay,
-        true, // hasEnd
-        this.calendar
-      )
-      let eventRange = {
-        def,
-        ui: computeEventDefUi(def, {}, {}),
-        instance: createEventInstance(def.defId, selection.range),
-        range: selection.range,
-        isStart: true,
-        isEnd: true
-      }
+    let eventRange = {
+      def,
+      ui: computeEventDefUi(def, {}, {}),
+      instance: createEventInstance(def.defId, selection.range),
+      range: selection.range,
+      isStart: true,
+      isEnd: true
+    }
 
-      for (let seg of segs) {
-        seg.eventRange = eventRange
-      }
+    for (let seg of segs) {
+      seg.eventRange = eventRange
     }
 
     return segs
