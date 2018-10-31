@@ -297,11 +297,6 @@ export default class DateComponent extends Component<DateComponentProps> {
         bgRanges = this.filterBgEventRanges(bgRanges)
         this.fillRenderer.renderSegs('bgEvent', this.eventRangesToSegs(bgRanges))
       }
-
-      let calendar = this.calendar
-      if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
-        calendar.afterSizingTriggers._eventsPositioned = [ null ] // fire once
-      }
     }
   }
 
@@ -656,8 +651,9 @@ export default class DateComponent extends Component<DateComponentProps> {
 
 
   triggerRenderedSegs(segs: Seg[], isMirrors: boolean) {
+    let { calendar } = this
+
     if (this.hasPublicHandlers('eventPositioned')) {
-      let calendar = this.calendar
 
       for (let seg of segs) {
         this.publiclyTriggerAfterSizing('eventPositioned', [
@@ -675,6 +671,10 @@ export default class DateComponent extends Component<DateComponentProps> {
           }
         ])
       }
+    }
+
+    if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
+      calendar.afterSizingTriggers._eventsPositioned = [ null ] // fire once
     }
   }
 

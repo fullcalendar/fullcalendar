@@ -405,14 +405,14 @@ describe('eventLimit popover', function() {
 
     expect(options.eventRender.calls.count()).toBe(8) // +4
     expect(options.eventPositioned.calls.count()).toBe(8) // +4
-    expect(options._eventsPositioned.calls.count()).toBe(1) // stays same!
+    expect(options._eventsPositioned.calls.count()).toBe(2) // +1
     expect(options.eventDestroy.calls.count()).toBe(0)
 
     $('.fc-more-popover .fc-close').simulate('click')
 
     expect(options.eventRender.calls.count()).toBe(8)
     expect(options.eventPositioned.calls.count()).toBe(8)
-    expect(options._eventsPositioned.calls.count()).toBe(1)
+    expect(options._eventsPositioned.calls.count()).toBe(2)
     expect(options.eventDestroy.calls.count()).toBe(4) // +4
   })
 
