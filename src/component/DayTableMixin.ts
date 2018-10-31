@@ -1,26 +1,13 @@
-import Mixin from '../common/Mixin'
 import { DateMarker, addDays, diffDays } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
-
-export interface DayTableInterface {
-  dayDates: DateMarker[]
-  daysPerRow: any
-  rowCnt: any
-  colCnt: any
-  breakOnWeeks: boolean
-  updateDayTable()
-  getCellDate(row, col)
-  getCellRange(row, col): DateRange
-  sliceRangeByRow(range)
-}
+import DateProfileGenerator, { DateProfile } from 'src/DateProfileGenerator'
 
 /*
-A set of rendering and date-related methods for a visual component comprised of one or more rows of day columns.
-Prerequisite: the object being mixed into needs to be a *Grid*
+computes date/index/cell information.
+doesn't do any rendering.
 */
-export default class DayTableMixin extends Mixin implements DayTableInterface {
+export default class DayTable { // TODO: rename file
 
-  breakOnWeeks: boolean // should create a new row for each week? not specified, so default is FALSY
   dayDates: DateMarker[] // whole-day dates for each column. left to right
   dayIndices: any // for each day from start, the offset
   daysPerRow: any
@@ -29,16 +16,8 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
 
   // Populates internal variables used for date calculation and rendering
-  /*
-  sets dayDates
-  sets dayIndices ( dayoffset -> something )
-  sets daysPerRow
-  sets rowCnt
-  sets colCnt
-  */
-  updateDayTable() {
-    let view = (this as any).view
-    let dateProfile = (this as any).props.dateProfile
+  // breakOnWeeks - should create a new row for each week? not specified, so default is FALSY
+  constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, breakOnWeeks: boolean) {
     let date: DateMarker = dateProfile.renderRange.start
     let end: DateMarker = dateProfile.renderRange.end
     let dayIndex = -1
@@ -49,7 +28,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     let rowCnt
 
     while (date < end) { // loop each day from start to end
-      if (view.dateProfileGenerator.isHiddenDay(date)) {
+      if (dateProfileGenerator.isHiddenDay(date)) {
         dayIndices.push(dayIndex + 0.5) // mark that it's between indices
       } else {
         dayIndex++
@@ -59,7 +38,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
       date = addDays(date, 1)
     }
 
-    if (this.breakOnWeeks) {
+    if (breakOnWeeks) {
       // count columns until the day-of-week repeats
       firstDay = dayDates[0].getUTCDay()
       for (daysPerRow = 1; daysPerRow < dayDates.length; daysPerRow++) {

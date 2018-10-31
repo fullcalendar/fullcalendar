@@ -13,9 +13,9 @@ import ScrollComponent from '../common/ScrollComponent'
 import View from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import DayGrid from './DayGrid'
-import { DateProfile } from '../DateProfileGenerator'
 import { buildGotoAnchorHtml } from '../component/date-rendering'
 import { StandardDateComponentProps } from '../component/StandardDateComponent'
+import { assignTo } from '../util/object'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -94,16 +94,11 @@ export default class BasicView extends View {
   render(props: StandardDateComponentProps) {
     super.render(props)
 
-    this.dayGrid.receiveProps(props)
-  }
-
-
-  renderDates(dateProfile: DateProfile) {
-    this.dayGrid.breakOnWeeks = /year|month|week/.test(
-      this.props.dateProfile.currentRangeUnit
+    this.dayGrid.receiveProps(
+      assignTo({}, props, {
+        breakOnWeeks: /year|month|week/.test(props.dateProfile.currentRangeUnit)
+      })
     )
-
-    super.renderDates(dateProfile)
   }
 
 
@@ -302,15 +297,15 @@ function makeDayGridSubclass(SuperClass) {
 
     // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
     renderNumberIntroHtml(this: DayGrid, row) {
-      let { view, dateEnv } = this
-      let weekStart = this.getCellDate(row, 0)
+      let { view, dateEnv, dayTable } = this
+      let weekStart = dayTable.getCellDate(row, 0)
 
       if ((view as BasicView).colWeekNumbersVisible) {
         return '' +
           '<td class="fc-week-number" ' + (view as BasicView).weekNumberStyleAttr() + '>' +
             buildGotoAnchorHtml( // aside from link, important for matchCellWidths
               view,
-              { date: weekStart, type: 'week', forceOff: this.colCnt === 1 },
+              { date: weekStart, type: 'week', forceOff: dayTable.colCnt === 1 },
               dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
             ) +
           '</td>'

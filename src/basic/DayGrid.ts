@@ -7,10 +7,9 @@ import {
   removeElement
 } from '../util/dom-manip'
 import { computeRect } from '../util/dom-geom'
-import View from '../View'
 import PositionCache from '../common/PositionCache'
 import Popover from '../common/Popover'
-import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
+import { default as DayTableMixin } from '../component/DayTableMixin'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridMirrorRenderer from './DayGridMirrorRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
@@ -35,18 +34,13 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
+export interface DayGridProps extends StandardDateComponent {
+  breakOnWeeks: boolean
+}
+
 export default class DayGrid extends StandardDateComponent {
 
-  rowCnt: DayTableInterface['rowCnt']
-  colCnt: DayTableInterface['colCnt']
-  dayDates: DayTableInterface['dayDates']
-  daysPerRow: DayTableInterface['daysPerRow']
-  sliceRangeByRow: DayTableInterface['sliceRangeByRow']
-  updateDayTable: DayTableInterface['updateDayTable']
-  getCellDate: DayTableInterface['getCellDate']
-  getCellRange: DayTableInterface['getCellRange']
-  breakOnWeeks: DayTableInterface['breakOnWeeks']
-
+  dayTable: DayTableMixin
   eventRenderer: DayGridEventRenderer
 
   cellWeekNumbersVisible: boolean = false // display week numbers in day cell?
@@ -83,18 +77,20 @@ export default class DayGrid extends StandardDateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
+    let { dayTable } = this
+
     range = intersectRanges(range, this.props.dateProfile.validRange)
 
     if (range) {
-      let segs = this.sliceRangeByRow(range)
+      let segs = dayTable.sliceRangeByRow(range)
 
       for (let i = 0; i < segs.length; i++) {
         let seg = segs[i]
         seg.component = this
 
         if (this.isRtl) {
-          seg.leftCol = this.daysPerRow - 1 - seg.lastRowDayIndex
-          seg.rightCol = this.daysPerRow - 1 - seg.firstRowDayIndex
+          seg.leftCol = dayTable.daysPerRow - 1 - seg.lastRowDayIndex
+          seg.rightCol = dayTable.daysPerRow - 1 - seg.firstRowDayIndex
         } else {
           seg.leftCol = seg.firstRowDayIndex
           seg.rightCol = seg.lastRowDayIndex
@@ -132,8 +128,13 @@ export default class DayGrid extends StandardDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderDates() {
-    this.updateDayTable()
+  renderDates(dateProfile) {
+    this.dayTable = new DayTableMixin(
+      dateProfile,
+      this.view.dateProfileGenerator,
+      (this.props as any).breakOnWeeks // HACK
+    )
+
     this.renderGrid()
   }
 
@@ -145,9 +146,9 @@ export default class DayGrid extends StandardDateComponent {
 
   // Renders the rows and columns into the component's `this.el`, which should already be assigned.
   renderGrid() {
-    let { view, dateEnv } = this
-    let rowCnt = this.rowCnt
-    let colCnt = this.colCnt
+    let { view, dateEnv, dayTable } = this
+    let rowCnt = dayTable.rowCnt
+    let colCnt = dayTable.colCnt
     let html = ''
     let row
     let col
@@ -157,8 +158,8 @@ export default class DayGrid extends StandardDateComponent {
       let header = new DayTableHeader(this.context, this.headerContainerEl)
       header.receiveProps({
         dateProfile: this.props.dateProfile,
-        dates: this.dayDates.slice(0, this.colCnt), // because might be mult rows
-        datesRepDistinctDays: this.rowCnt === 1,
+        dates: dayTable.dayDates.slice(0, dayTable.colCnt), // because might be mult rows
+        datesRepDistinctDays: dayTable.rowCnt === 1,
         renderIntroHtml: this.renderHeadIntroHtml.bind(this)
       })
     }
@@ -180,7 +181,7 @@ export default class DayGrid extends StandardDateComponent {
 
     this.colPositions = new PositionCache(
       this.el,
-      this.cellEls.slice(0, this.colCnt), // only the first row
+      this.cellEls.slice(0, dayTable.colCnt), // only the first row
       true,
       false // horizontal
     )
@@ -190,7 +191,7 @@ export default class DayGrid extends StandardDateComponent {
       for (col = 0; col < colCnt; col++) {
         this.publiclyTrigger('dayRender', [
           {
-            date: dateEnv.toDate(this.getCellDate(row, col)),
+            date: dateEnv.toDate(dayTable.getCellDate(row, col)),
             el: this.getCellEl(row, col),
             view
           }
@@ -203,14 +204,15 @@ export default class DayGrid extends StandardDateComponent {
   // Generates the HTML for a single row, which is a div that wraps a table.
   // `row` is the row number.
   renderDayRowHtml(row, isRigid) {
-    let { theme, daysPerRow } = this
+    let { theme, dayTable } = this
+    let { daysPerRow } = dayTable
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
     if (isRigid) {
       classes.push('fc-rigid')
     }
 
-    let dates = this.dayDates.slice(
+    let dates = dayTable.dayDates.slice(
       row * daysPerRow,
       (row + 1) * daysPerRow
     )
@@ -248,7 +250,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   getIsDayNumbersVisible() {
-    return this.rowCnt > 1
+    return this.dayTable.rowCnt > 1
   }
 
 
@@ -287,12 +289,13 @@ export default class DayGrid extends StandardDateComponent {
 
 
   renderNumberCellsHtml(row) {
+    let { dayTable } = this
     let htmls = []
     let col
     let date
 
-    for (col = 0; col < this.colCnt; col++) {
-      date = this.getCellDate(row, col)
+    for (col = 0; col < dayTable.colCnt; col++) {
+      date = dayTable.getCellDate(row, col)
       htmls.push(this.renderNumberCellHtml(date))
     }
 
@@ -360,7 +363,7 @@ export default class DayGrid extends StandardDateComponent {
   buildPositionCaches() {
     this.colPositions.build()
     this.rowPositions.build()
-    this.rowPositions.bottoms[this.rowCnt - 1] += this.bottomCoordPadding // hack
+    this.rowPositions.bottoms[this.dayTable.rowCnt - 1] += this.bottomCoordPadding // hack
   }
 
 
@@ -379,7 +382,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   queryHit(leftOffset, topOffset): Hit {
-    let { colPositions, rowPositions, offsetTracker } = this
+    let { colPositions, rowPositions, offsetTracker, dayTable } = this
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
       let leftOrigin = offsetTracker.computeLeft()
@@ -391,7 +394,7 @@ export default class DayGrid extends StandardDateComponent {
         return {
           component: this,
           dateSpan: {
-            range: this.getCellRange(row, col),
+            range: dayTable.getCellRange(row, col),
             allDay: true
           },
           dayEl: this.getCellEl(row, col),
@@ -414,7 +417,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   getCellEl(row, col) {
-    return this.cellEls[row * this.colCnt + col]
+    return this.cellEls[row * this.dayTable.colCnt + col]
   }
 
 
@@ -600,7 +603,7 @@ export default class DayGrid extends StandardDateComponent {
         }
       }
 
-      emptyCellsUntil(this.colCnt) // finish off the level
+      emptyCellsUntil(this.dayTable.colCnt) // finish off the level
       rowStruct.moreEls = moreNodes // for easy undoing later
       rowStruct.limitedEls = limitedNodes // for easy undoing later
     }
@@ -635,7 +638,7 @@ export default class DayGrid extends StandardDateComponent {
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
     a.addEventListener('click', (ev) => {
       let clickOption = this.opt('eventLimitClick')
-      let date = this.getCellDate(row, col)
+      let date = this.dayTable.getCellDate(row, col)
       let moreEl = ev.currentTarget as HTMLElement
       let dayEl = this.getCellEl(row, col)
       let allSegs = this.getCellSegs(row, col)
@@ -673,12 +676,12 @@ export default class DayGrid extends StandardDateComponent {
 
   // Reveals the popover that displays all events within a cell
   showSegPopover(row, col, moreLink: HTMLElement, segs) {
-    let { calendar, view, theme } = this
+    let { calendar, view, theme, dayTable } = this
     let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
 
-    if (this.rowCnt === 1) {
+    if (dayTable.rowCnt === 1) {
       topEl = view.el // will cause the popover to cover any sort of header
     } else {
       topEl = this.rowEls[row] // will align with top of row
@@ -695,7 +698,7 @@ export default class DayGrid extends StandardDateComponent {
           el
         )
         this.updateSegPopoverTile(
-          this.getCellDate(row, col),
+          dayTable.getCellDate(row, col),
           segs
         )
       },
@@ -789,5 +792,3 @@ export default class DayGrid extends StandardDateComponent {
 DayGrid.prototype.isInteractable = true
 DayGrid.prototype.doesDragMirror = false
 DayGrid.prototype.doesDragHighlight = true
-
-DayTableMixin.mixInto(DayGrid)

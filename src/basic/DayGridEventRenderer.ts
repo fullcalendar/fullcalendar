@@ -72,7 +72,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // NOTE: modifies rowSegs
   renderSegRow(row, rowSegs) {
     let { dayGrid } = this
-    let colCnt = dayGrid.colCnt
+    let colCnt = dayGrid.dayTable.colCnt
     let segLevels = this.buildSegLevels(rowSegs) // group into sub-arrays of levels
     let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
     let tbody = document.createElement('tbody')
@@ -206,7 +206,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
     let segRows = []
     let i
 
-    for (i = 0; i < this.dayGrid.rowCnt; i++) {
+    for (i = 0; i < this.dayGrid.dayTable.rowCnt; i++) {
       segRows.push([])
     }
 
@@ -220,7 +220,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
   // Computes a default `displayEventEnd` value if one is not expliclty defined
   computeDisplayEventEnd() {
-    return this.dayGrid.colCnt === 1 // we'll likely have space if there's only one day
+    return this.dayGrid.dayTable.colCnt === 1 // we'll likely have space if there's only one day
   }
 
 }

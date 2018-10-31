@@ -1,6 +1,6 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
-import { default as DayTableMixin, DayTableInterface } from '../component/DayTableMixin'
+import { default as DayTableMixin } from '../component/DayTableMixin'
 import PositionCache from '../common/PositionCache'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
@@ -34,12 +34,7 @@ const AGENDA_STOCK_SUB_DURATIONS = [
 
 export default class TimeGrid extends StandardDateComponent {
 
-  dayDates: DayTableInterface['dayDates']
-  daysPerRow: DayTableInterface['daysPerRow']
-  colCnt: DayTableInterface['colCnt']
-  updateDayTable: DayTableInterface['updateDayTable']
-  getCellDate: DayTableInterface['getCellDate']
-
+  dayTable: DayTableMixin
   mirrorRenderer: any
 
   dayRanges: DateRange[] // of start-end of each day
@@ -97,6 +92,8 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
+    let { dayTable } = this
+
     range = intersectRanges(range, this.props.dateProfile.validRange)
 
     if (range) {
@@ -105,7 +102,7 @@ export default class TimeGrid extends StandardDateComponent {
 
       for (i = 0; i < segs.length; i++) {
         if (this.isRtl) {
-          segs[i].col = this.daysPerRow - 1 - segs[i].dayIndex
+          segs[i].col = dayTable.daysPerRow - 1 - segs[i].dayIndex
         } else {
           segs[i].col = segs[i].dayIndex
         }
@@ -125,11 +122,12 @@ export default class TimeGrid extends StandardDateComponent {
 
 
   sliceRangeByTimes(range) {
+    let { dayTable } = this
     let segs = []
     let segRange
     let dayIndex
 
-    for (dayIndex = 0; dayIndex < this.daysPerRow; dayIndex++) {
+    for (dayIndex = 0; dayIndex < dayTable.daysPerRow; dayIndex++) {
 
       segRange = intersectRanges(range, this.dayRanges[dayIndex])
 
@@ -217,8 +215,13 @@ export default class TimeGrid extends StandardDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderDates() {
-    this.updateDayTable()
+  renderDates(dateProfile) {
+    this.dayTable = new DayTableMixin(
+      dateProfile,
+      this.view.dateProfileGenerator,
+      false
+    )
+
     this.renderSlats()
     this.renderColumns()
   }
@@ -310,10 +313,11 @@ export default class TimeGrid extends StandardDateComponent {
 
 
   renderColumns() {
-    let { theme, dateEnv } = this
+    let { theme, dateEnv, dayTable} = this
+    let { dayDates } = dayTable
     let dateProfile = this.props.dateProfile
 
-    this.dayRanges = this.dayDates.map(function(dayDate) {
+    this.dayRanges = dayDates.map(function(dayDate) {
       return {
         start: dateEnv.add(dayDate, dateProfile.minTime),
         end: dateEnv.add(dayDate, dateProfile.maxTime)
@@ -325,7 +329,7 @@ export default class TimeGrid extends StandardDateComponent {
       let header = new DayTableHeader(this.context, this.headContainerEl)
       header.receiveProps({
         dateProfile,
-        dates: this.dayDates,
+        dates: dayDates,
         datesRepDistinctDays: true,
         renderIntroHtml: this.renderHeadIntroHtml.bind(this)
       })
@@ -335,7 +339,7 @@ export default class TimeGrid extends StandardDateComponent {
     this.rootBgContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
         bgRow.renderHtml({
-          dates: this.dayDates,
+          dates: dayDates,
           dateProfile,
           renderIntroHtml: this.renderBgIntroHtml.bind(this)
         }) +
@@ -370,7 +374,7 @@ export default class TimeGrid extends StandardDateComponent {
 
     parts.push(this.renderIntroHtml())
 
-    for (let i = 0; i < this.colCnt; i++) {
+    for (let i = 0; i < this.dayTable.colCnt; i++) {
       parts.push(
         '<td>' +
           '<div class="fc-content-col">' +
@@ -417,7 +421,7 @@ export default class TimeGrid extends StandardDateComponent {
     let segsByCol = []
     let i
 
-    for (i = 0; i < this.colCnt; i++) {
+    for (i = 0; i < this.dayTable.colCnt; i++) {
       segsByCol.push([])
     }
 
@@ -436,7 +440,7 @@ export default class TimeGrid extends StandardDateComponent {
     let segs
     let i
 
-    for (col = 0; col < this.colCnt; col++) { // iterate each column grouping
+    for (col = 0; col < this.dayTable.colCnt; col++) { // iterate each column grouping
       segs = segsByCol[col]
 
       for (i = 0; i < segs.length; i++) {
@@ -556,7 +560,7 @@ export default class TimeGrid extends StandardDateComponent {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      dayDate = this.dayDates[seg.dayIndex]
+      dayDate = this.dayTable.dayDates[seg.dayIndex]
 
       seg.top = this.computeDateTop(seg.start, dayDate)
       seg.bottom = Math.max(
@@ -629,7 +633,7 @@ export default class TimeGrid extends StandardDateComponent {
         let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
         let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
 
-        let dayDate = this.getCellDate(0, colIndex) // row=0
+        let dayDate = this.dayTable.getCellDate(0, colIndex) // row=0
         let time = addDurations(
           this.props.dateProfile.minTime,
           multiplyDuration(this.snapDuration, snapIndex)
@@ -688,5 +692,3 @@ export default class TimeGrid extends StandardDateComponent {
 TimeGrid.prototype.isInteractable = true
 TimeGrid.prototype.doesDragMirror = true
 TimeGrid.prototype.doesDragHighlight = false
-
-DayTableMixin.mixInto(TimeGrid)

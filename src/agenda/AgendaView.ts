@@ -363,7 +363,7 @@ agendaTimeGridMethods = {
 
   // Generates the HTML that will go before the day-of week header cells
   renderHeadIntroHtml(this: TimeGrid) {
-    let { view, theme, dateEnv } = this
+    let { view, theme, dateEnv, dayTable } = this
     let weekStart = this.props.dateProfile.renderRange.start
     let weekText
 
@@ -374,7 +374,7 @@ agendaTimeGridMethods = {
         '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '" ' + (view as AgendaView).axisStyleAttr() + '>' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             view,
-            { date: weekStart, type: 'week', forceOff: this.colCnt > 1 },
+            { date: weekStart, type: 'week', forceOff: dayTable.colCnt > 1 },
             htmlEscape(weekText) // inner HTML
           ) +
         '</th>'

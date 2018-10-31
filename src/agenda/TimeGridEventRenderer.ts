@@ -49,9 +49,10 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   computeSizes() {
     let { timeGrid, segsByCol } = this
+    let colCnt = timeGrid.dayTable.colCnt
 
     if (segsByCol) {
-      for (let col = 0; col < timeGrid.colCnt; col++) {
+      for (let col = 0; col < colCnt; col++) {
         let segs = segsByCol[col]
 
         timeGrid.computeSegVerticals(segs) // horizontals relies on this
@@ -63,9 +64,10 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   assignSizes() {
     let { timeGrid, segsByCol } = this
+    let colCnt = timeGrid.dayTable.colCnt
 
     if (segsByCol) {
-      for (let col = 0; col < timeGrid.colCnt; col++) {
+      for (let col = 0; col < colCnt; col++) {
         let segs = segsByCol[col]
 
         timeGrid.assignSegVerticals(segs)
