@@ -1,6 +1,6 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
-import { default as DayTableMixin } from '../component/DayTableMixin'
+import DayTable from '../component/DayTable'
 import PositionCache from '../common/PositionCache'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
@@ -34,7 +34,7 @@ const AGENDA_STOCK_SUB_DURATIONS = [
 
 export default class TimeGrid extends StandardDateComponent {
 
-  dayTable: DayTableMixin
+  dayTable: DayTable
   mirrorRenderer: any
 
   dayRanges: DateRange[] // of start-end of each day
@@ -216,7 +216,7 @@ export default class TimeGrid extends StandardDateComponent {
 
 
   renderDates(dateProfile) {
-    this.dayTable = new DayTableMixin(
+    this.dayTable = new DayTable(
       dateProfile,
       this.view.dateProfileGenerator,
       false

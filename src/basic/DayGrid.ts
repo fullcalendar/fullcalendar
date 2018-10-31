@@ -9,7 +9,7 @@ import {
 import { computeRect } from '../util/dom-geom'
 import PositionCache from '../common/PositionCache'
 import Popover from '../common/Popover'
-import { default as DayTableMixin } from '../component/DayTableMixin'
+import DayTable from '../component/DayTable'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridMirrorRenderer from './DayGridMirrorRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
@@ -40,7 +40,7 @@ export interface DayGridProps extends StandardDateComponent {
 
 export default class DayGrid extends StandardDateComponent {
 
-  dayTable: DayTableMixin
+  dayTable: DayTable
   eventRenderer: DayGridEventRenderer
 
   cellWeekNumbersVisible: boolean = false // display week numbers in day cell?
@@ -129,7 +129,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   renderDates(dateProfile) {
-    this.dayTable = new DayTableMixin(
+    this.dayTable = new DayTable(
       dateProfile,
       this.view.dateProfileGenerator,
       (this.props as any).breakOnWeeks // HACK
