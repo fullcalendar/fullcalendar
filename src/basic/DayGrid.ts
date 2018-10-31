@@ -47,8 +47,6 @@ export default class DayGrid extends StandardDateComponent {
   getCellRange: DayTableInterface['getCellRange']
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
-  view: View // TODO: make more general and/or remove
-
   eventRenderer: DayGridEventRenderer
 
   cellWeekNumbersVisible: boolean = false // display week numbers in day cell?
@@ -126,7 +124,7 @@ export default class DayGrid extends StandardDateComponent {
       eventSelection: this.props.eventSelection,
       eventDrag: this.props.eventDrag,
       eventResize: this.props.eventResize
-    } as any) // HACK
+    })
   }
 
 
