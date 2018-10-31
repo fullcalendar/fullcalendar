@@ -12,6 +12,8 @@ import browserContext from '../common/browser-context'
 import { elementClosest, removeElement } from '../util/dom-manip'
 import { isSelectionValid, isEventsValid } from '../validation'
 import EventApi from '../api/EventApi'
+import FgEventRenderer from './renderers/FgEventRenderer'
+import FillRenderer from './renderers/FillRenderer'
 
 export interface DateComponentProps {
   dateProfile: DateProfile | null
@@ -44,7 +46,7 @@ export default class DateComponent extends Component<DateComponentProps> {
   useEventCenter: boolean // for dragging geometry
   doesDragMirror: boolean // for events that ORIGINATE from this component
   doesDragHighlight: boolean // for events that ORIGINATE from this component
-  slicingType: 'timed' | 'all-day' | null
+  slicingType: 'timed' | 'all-day' | null = null
   fgSegSelector: string // lets eventRender produce elements without fc-event class
   bgSegSelector: string
 
@@ -53,13 +55,9 @@ export default class DateComponent extends Component<DateComponentProps> {
   // TODO: port isTimeScale into same system?
   largeUnit: any
 
-  eventRendererClass: any
-  mirrorRendererClass: any
-  fillRendererClass: any
-
-  eventRenderer: any
-  mirrorRenderer: any
-  fillRenderer: any
+  eventRenderer: FgEventRenderer
+  mirrorRenderer: FgEventRenderer
+  fillRenderer: FillRenderer
 
   el: HTMLElement // passed in to constructor
   needHitsDepth: number = 0
@@ -73,18 +71,6 @@ export default class DateComponent extends Component<DateComponentProps> {
 
     this.el = el
     this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
-
-    if (this.fillRendererClass) {
-      this.fillRenderer = new this.fillRendererClass(this)
-    }
-
-    if (this.eventRendererClass) {
-      this.eventRenderer = new this.eventRendererClass(this)
-    }
-
-    if (this.mirrorRendererClass && this.eventRenderer) {
-      this.mirrorRenderer = new this.mirrorRendererClass(this)
-    }
 
     if (this.isInteractable) {
       browserContext.registerComponent(this)
@@ -736,6 +722,5 @@ DateComponent.prototype.isInteractable = false
 DateComponent.prototype.useEventCenter = true
 DateComponent.prototype.doesDragMirror = false
 DateComponent.prototype.doesDragHighlight = false
-DateComponent.prototype.slicingType = null
 DateComponent.prototype.fgSegSelector = '.fc-event-container > *'
 DateComponent.prototype.bgSegSelector = '.fc-bgevent'

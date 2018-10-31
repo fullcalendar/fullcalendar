@@ -78,6 +78,11 @@ export default class TimeGrid extends DateComponent {
   constructor(context: ComponentContext, headContainerEl: HTMLElement, el: HTMLElement) {
     super(context, el)
 
+    this.eventRenderer = new TimeGridEventRenderer(this)
+    this.mirrorRenderer = new TimeGridMirrorRenderer(this)
+    this.fillRenderer = new TimeGridFillRenderer(this)
+    this.slicingType = 'timed'
+
     this.processOptions()
 
     this.headContainerEl = headContainerEl // already created by called! where content is inserted directly!
@@ -671,10 +676,5 @@ export default class TimeGrid extends DateComponent {
 TimeGrid.prototype.isInteractable = true
 TimeGrid.prototype.doesDragMirror = true
 TimeGrid.prototype.doesDragHighlight = false
-TimeGrid.prototype.slicingType = 'timed'
-
-TimeGrid.prototype.eventRendererClass = TimeGridEventRenderer
-TimeGrid.prototype.mirrorRendererClass = TimeGridMirrorRenderer
-TimeGrid.prototype.fillRendererClass = TimeGridFillRenderer
 
 DayTableMixin.mixInto(TimeGrid)

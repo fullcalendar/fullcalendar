@@ -24,6 +24,9 @@ export default class ListView extends View {
 
   initialize() {
 
+    this.eventRenderer = new ListEventRenderer(this)
+    this.slicingType = 'all-day'
+
     this.el.classList.add('fc-list-view')
 
     let listViewClassName = this.theme.getClass('listView')
@@ -228,7 +231,5 @@ export default class ListView extends View {
 
 }
 
-ListView.prototype.eventRendererClass = ListEventRenderer
 ListView.prototype.isInteractable = true
-ListView.prototype.slicingType = 'all-day'
 ListView.prototype.fgSegSelector = '.fc-list-item' // which elements accept event actions

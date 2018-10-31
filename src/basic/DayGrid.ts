@@ -49,7 +49,8 @@ export default class DayGrid extends DateComponent {
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
   view: View // TODO: make more general and/or remove
-  mirrorRenderer: any
+
+  eventRenderer: DayGridEventRenderer
 
   cellWeekNumbersVisible: boolean = false // display week numbers in day cell?
 
@@ -73,6 +74,11 @@ export default class DayGrid extends DateComponent {
 
   constructor(context, headerContainerEl, el) {
     super(context, el)
+
+    this.eventRenderer = new DayGridEventRenderer(this)
+    this.mirrorRenderer = new DayGridMirrorRenderer(this)
+    this.fillRenderer = new DayGridFillRenderer(this)
+    this.slicingType = 'all-day'
 
     this.headerContainerEl = headerContainerEl
   }
@@ -762,10 +768,5 @@ export default class DayGrid extends DateComponent {
 DayGrid.prototype.isInteractable = true
 DayGrid.prototype.doesDragMirror = false
 DayGrid.prototype.doesDragHighlight = true
-DayGrid.prototype.slicingType = 'all-day'
-
-DayGrid.prototype.eventRendererClass = DayGridEventRenderer
-DayGrid.prototype.mirrorRendererClass = DayGridMirrorRenderer
-DayGrid.prototype.fillRendererClass = DayGridFillRenderer
 
 DayTableMixin.mixInto(DayGrid)

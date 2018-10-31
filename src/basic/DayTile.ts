@@ -9,6 +9,7 @@ import { Rect, pointInsideRect } from '../util/geom'
 import { addDays, DateMarker } from '../datelib/marker'
 import { removeElement } from '../util/dom-manip'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
+import { ComponentContext } from 'src/component/Component'
 
 /*
 props:
@@ -24,6 +25,13 @@ export default class DayTile extends DateComponent {
   width: number
   height: number
   offsetTracker: OffsetTracker // TODO: abstraction for tracking dims of whole element rect
+
+
+  constructor(context: ComponentContext, el: HTMLElement) {
+    super(context, el)
+
+    this.eventRenderer = new DayTileEventRenderer(this)
+  }
 
 
   render(props) {
@@ -159,4 +167,3 @@ export class DayTileEventRenderer extends SimpleDayGridEventRenderer {
 
 DayTile.prototype.isInteractable = true
 DayTile.prototype.useEventCenter = false
-DayTile.prototype.eventRendererClass = DayTileEventRenderer
