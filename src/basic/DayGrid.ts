@@ -45,7 +45,6 @@ export default class DayGrid extends StandardDateComponent {
   updateDayTable: DayTableInterface['updateDayTable']
   getCellDate: DayTableInterface['getCellDate']
   getCellRange: DayTableInterface['getCellRange']
-  sliceRangeByDay: DayTableInterface['sliceRangeByDay']
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
   view: View // TODO: make more general and/or remove

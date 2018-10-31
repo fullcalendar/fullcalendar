@@ -11,7 +11,6 @@ export interface DayTableInterface {
   updateDayTable()
   getCellDate(row, col)
   getCellRange(row, col): DateRange
-  sliceRangeByDay(range)
   sliceRangeByRow(range)
 }
 
@@ -189,6 +188,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   // Slices up a date range into a segment for every day-cell it intersects with.
   // range already normalized to start-of-day
   // TODO: make more DRY with sliceRangeByRow somehow.
+  /*
   sliceRangeByDay(range) {
     let daysPerRow = this.daysPerRow
     let rangeFirst = this.getDateDayIndex(range.start) // inclusive first index
@@ -233,5 +233,6 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
 
     return segs
   }
+  */
 
 }
