@@ -25,6 +25,8 @@ import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date
 import OffsetTracker from '../common/OffsetTracker'
 import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
+import DayTableHeader from './DayTableHeader'
+import DayBgRow from './DayBgRow'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -37,16 +39,13 @@ export default class DayGrid extends StandardDateComponent {
 
   rowCnt: DayTableInterface['rowCnt']
   colCnt: DayTableInterface['colCnt']
+  dayDates: DayTableInterface['dayDates']
   daysPerRow: DayTableInterface['daysPerRow']
   sliceRangeByRow: DayTableInterface['sliceRangeByRow']
   updateDayTable: DayTableInterface['updateDayTable']
-  renderHeadHtml: DayTableInterface['renderHeadHtml']
   getCellDate: DayTableInterface['getCellDate']
-  renderBgTrHtml: DayTableInterface['renderBgTrHtml']
-  renderIntroHtml: DayTableInterface['renderIntroHtml']
   getCellRange: DayTableInterface['getCellRange']
   sliceRangeByDay: DayTableInterface['sliceRangeByDay']
-  bookendCells: DayTableInterface['bookendCells']
   breakOnWeeks: DayTableInterface['breakOnWeeks']
 
   view: View // TODO: make more general and/or remove
@@ -157,7 +156,14 @@ export default class DayGrid extends StandardDateComponent {
     let col
 
     if (this.headerContainerEl) {
-      this.headerContainerEl.innerHTML = this.renderHeadHtml()
+      // TODO: destroy?
+      let header = new DayTableHeader(this.context, this.headerContainerEl)
+      header.receiveProps({
+        dateProfile: this.props.dateProfile,
+        dates: this.dayDates.slice(0, this.colCnt), // because might be mult rows
+        datesRepDistinctDays: this.rowCnt === 1,
+        renderIntroHtml: this.renderHeadIntroHtml.bind(this)
+      })
     }
 
     for (row = 0; row < rowCnt; row++) {
@@ -200,18 +206,29 @@ export default class DayGrid extends StandardDateComponent {
   // Generates the HTML for a single row, which is a div that wraps a table.
   // `row` is the row number.
   renderDayRowHtml(row, isRigid) {
-    let { theme } = this
+    let { theme, daysPerRow } = this
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
     if (isRigid) {
       classes.push('fc-rigid')
     }
 
+    let dates = this.dayDates.slice(
+      row * daysPerRow,
+      (row + 1) * daysPerRow
+    )
+
+    let bgRow = new DayBgRow(this.context)
+
     return '' +
       '<div class="' + classes.join(' ') + '">' +
         '<div class="fc-bg">' +
           '<table class="' + theme.getClass('tableGrid') + '">' +
-            this.renderBgTrHtml(row) +
+            bgRow.renderHtml({
+              dates,
+              dateProfile: this.props.dateProfile,
+              renderIntroHtml: this.renderBgIntroHtml.bind(this)
+            }) +
           '</table>' +
         '</div>' +
         '<div class="fc-content-skeleton">' +
@@ -252,7 +269,22 @@ export default class DayGrid extends StandardDateComponent {
   }
 
 
+  renderIntroHtml() {
+    return ''
+  }
+
+
+  renderHeadIntroHtml() {
+    return this.renderIntroHtml()
+  }
+
+
   renderNumberIntroHtml(row) {
+    return this.renderIntroHtml()
+  }
+
+
+  renderBgIntroHtml() {
     return this.renderIntroHtml()
   }
 
@@ -286,7 +318,7 @@ export default class DayGrid extends StandardDateComponent {
       return '<td></td>' //  will create an empty space above events :(
     }
 
-    classes = getDayClasses(this, date)
+    classes = getDayClasses(date, this.props.dateProfile, this.context)
     classes.unshift('fc-day-top')
 
     if (this.cellWeekNumbersVisible) {

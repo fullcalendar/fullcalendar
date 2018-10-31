@@ -1,8 +1,8 @@
 import { htmlEscape, attrsToStr } from '../util/html'
 import { DateMarker, startOfDay, addDays, DAY_IDS } from '../datelib/marker'
 import { rangeContainsMarker } from '../datelib/date-range'
-import Component from '../component/Component'
-import DateComponent from './DateComponent'
+import Component, { ComponentContext } from '../component/Component'
+import { DateProfile } from '../DateProfileGenerator'
 
 
 // Generates HTML for an anchor to another view into the calendar.
@@ -59,9 +59,8 @@ export function getAllDayHtml(component: Component<any>) {
 
 
 // Computes HTML classNames for a single-day element
-export function getDayClasses(component: DateComponent<any>, date: DateMarker, noThemeHighlight?) {
-  let { calendar, view, theme } = component
-  let dateProfile = component.props.dateProfile
+export function getDayClasses(date: DateMarker, dateProfile: DateProfile, context: ComponentContext, noThemeHighlight?) {
+  let { calendar, view, theme } = context
   let classes = []
   let todayStart: DateMarker
   let todayEnd: DateMarker

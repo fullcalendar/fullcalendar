@@ -1,4 +1,4 @@
-import { createElement, removeElement } from '../util/dom-manip'
+import { createElement, removeElement, appendToElement, prependToElement } from '../util/dom-manip'
 import DayGrid from './DayGrid'
 import { Seg } from '../component/DateComponent'
 import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
@@ -71,7 +71,8 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // the segments. Returns object with a bunch of internal data about how the render was calculated.
   // NOTE: modifies rowSegs
   renderSegRow(row, rowSegs) {
-    let colCnt = this.dayGrid.colCnt
+    let { dayGrid } = this
+    let colCnt = dayGrid.colCnt
     let segLevels = this.buildSegLevels(rowSegs) // group into sub-arrays of levels
     let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
     let tbody = document.createElement('tbody')
@@ -139,7 +140,16 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
       }
 
       emptyCellsUntil(colCnt) // finish off the row
-      this.dayGrid.bookendCells(tr)
+
+      let introHtml = dayGrid.renderIntroHtml()
+      if (introHtml) {
+        if (dayGrid.isRtl) {
+          appendToElement(tr, introHtml)
+        } else {
+          prependToElement(tr, introHtml)
+        }
+      }
+
       tbody.appendChild(tr)
     }
 

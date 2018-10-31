@@ -1,4 +1,4 @@
-import { htmlToElement, createElement } from '../util/dom-manip'
+import { htmlToElement, createElement, appendToElement, prependToElement } from '../util/dom-manip'
 import FillRenderer from '../component/renderers/FillRenderer'
 import DayGrid from './DayGrid'
 import { Seg } from '../component/DateComponent'
@@ -65,7 +65,14 @@ export default class DayGridFillRenderer extends FillRenderer {
       trEl.appendChild(createElement('td', { colSpan: colCnt - endCol }))
     }
 
-    dayGrid.bookendCells(trEl)
+    let introHtml = dayGrid.renderIntroHtml()
+    if (introHtml) {
+      if (dayGrid.isRtl) {
+        appendToElement(trEl, introHtml)
+      } else {
+        prependToElement(trEl, introHtml)
+      }
+    }
 
     return skeletonEl
   }

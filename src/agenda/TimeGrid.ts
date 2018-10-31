@@ -15,6 +15,8 @@ import StandardDateComponent from '../component/StandardDateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 import AgendaView from './AgendaView'
+import DayTableHeader from '../basic/DayTableHeader'
+import DayBgRow from '../basic/DayBgRow'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -36,9 +38,6 @@ export default class TimeGrid extends StandardDateComponent {
   daysPerRow: DayTableInterface['daysPerRow']
   colCnt: DayTableInterface['colCnt']
   updateDayTable: DayTableInterface['updateDayTable']
-  renderHeadHtml: DayTableInterface['renderHeadHtml']
-  renderBgTrHtml: DayTableInterface['renderBgTrHtml']
-  bookendCells: DayTableInterface['bookendCells']
   getCellDate: DayTableInterface['getCellDate']
 
   mirrorRenderer: any
@@ -232,6 +231,21 @@ export default class TimeGrid extends StandardDateComponent {
   }
 
 
+  renderIntroHtml() {
+    return ''
+  }
+
+
+  renderHeadIntroHtml() {
+    return this.renderIntroHtml()
+  }
+
+
+  renderBgIntroHtml() {
+    return this.renderIntroHtml()
+  }
+
+
   renderSlats() {
     let { theme } = this
 
@@ -307,12 +321,24 @@ export default class TimeGrid extends StandardDateComponent {
     })
 
     if (this.headContainerEl) {
-      this.headContainerEl.innerHTML = this.renderHeadHtml()
+      // TODO: destroy?
+      let header = new DayTableHeader(this.context, this.headContainerEl)
+      header.receiveProps({
+        dateProfile,
+        dates: this.dayDates,
+        datesRepDistinctDays: true,
+        renderIntroHtml: this.renderHeadIntroHtml.bind(this)
+      })
     }
 
+    let bgRow = new DayBgRow(this.context)
     this.rootBgContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
-        this.renderBgTrHtml(0) + // row=0
+        bgRow.renderHtml({
+          dates: this.dayDates,
+          dateProfile,
+          renderIntroHtml: this.renderBgIntroHtml.bind(this)
+        }) +
       '</table>'
 
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
@@ -339,12 +365,13 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Renders the DOM that the view's content will live in
   renderContentSkeleton() {
-    let cellHtml = ''
-    let i
+    let parts = []
     let skeletonEl: HTMLElement
 
-    for (i = 0; i < this.colCnt; i++) {
-      cellHtml +=
+    parts.push(this.renderIntroHtml())
+
+    for (let i = 0; i < this.colCnt; i++) {
+      parts.push(
         '<td>' +
           '<div class="fc-content-col">' +
             '<div class="fc-event-container fc-mirror-container"></div>' +
@@ -354,12 +381,17 @@ export default class TimeGrid extends StandardDateComponent {
             '<div class="fc-business-container"></div>' +
           '</div>' +
         '</td>'
+      )
+    }
+
+    if (this.isRtl) {
+      parts.reverse()
     }
 
     skeletonEl = this.contentSkeletonEl = htmlToElement(
       '<div class="fc-content-skeleton">' +
         '<table>' +
-          '<tr>' + cellHtml + '</tr>' +
+          '<tr>' + parts.join('') + '</tr>' +
         '</table>' +
       '</div>'
     )
@@ -371,7 +403,6 @@ export default class TimeGrid extends StandardDateComponent {
     this.highlightContainerEls = findElements(skeletonEl, '.fc-highlight-container')
     this.businessContainerEls = findElements(skeletonEl, '.fc-business-container')
 
-    this.bookendCells(skeletonEl.querySelector('tr')) // TODO: do this on string level
     this.el.appendChild(skeletonEl)
   }
 

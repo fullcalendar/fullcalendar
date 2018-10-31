@@ -1,11 +1,6 @@
-import { htmlEscape } from '../util/html'
-import { prependToElement, appendToElement } from '../util/dom-manip'
 import Mixin from '../common/Mixin'
-import { DateMarker, DAY_IDS, addDays, diffDays } from '../datelib/marker'
-import { createFormatter } from '../datelib/formatting'
-import { DateRange, rangeContainsMarker } from '../datelib/date-range'
-import { buildGotoAnchorHtml, getDayClasses } from './date-rendering'
-import View from 'src/View'
+import { DateMarker, addDays, diffDays } from '../datelib/marker'
+import { DateRange } from '../datelib/date-range'
 
 export interface DayTableInterface {
   dayDates: DateMarker[]
@@ -14,14 +9,10 @@ export interface DayTableInterface {
   colCnt: any
   breakOnWeeks: boolean
   updateDayTable()
-  renderHeadHtml()
-  renderBgTrHtml(row)
-  bookendCells(trEl: HTMLElement)
   getCellDate(row, col)
   getCellRange(row, col): DateRange
   sliceRangeByDay(range)
   sliceRangeByRow(range)
-  renderIntroHtml()
 }
 
 /*
@@ -36,14 +27,19 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
   daysPerRow: any
   rowCnt: any
   colCnt: any
-  colHeadFormat: any
 
 
   // Populates internal variables used for date calculation and rendering
+  /*
+  sets dayDates
+  sets dayIndices ( dayoffset -> something )
+  sets daysPerRow
+  sets rowCnt
+  sets colCnt
+  */
   updateDayTable() {
-    let t = (this as any)
-    let view = t.view as View
-    let dateProfile = t.props.dateProfile
+    let view = (this as any).view
+    let dateProfile = (this as any).props.dateProfile
     let date: DateMarker = dateProfile.renderRange.start
     let end: DateMarker = dateProfile.renderRange.end
     let dayIndex = -1
@@ -82,18 +78,7 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     this.dayIndices = dayIndices
     this.daysPerRow = daysPerRow
     this.rowCnt = rowCnt
-
-    this.updateDayTableCols()
-  }
-
-
-  // Computes and assigned the colCnt property and updates any options that may be computed from it
-  updateDayTableCols() {
     this.colCnt = this.computeColCnt()
-    this.colHeadFormat = createFormatter(
-      (this as any).opt('columnHeaderFormat') ||
-      this.computeColHeadFormat()
-    )
   }
 
 
@@ -149,24 +134,6 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
       return dayIndices[dayIndices.length - 1] + 1
     } else {
       return dayIndices[dayOffset]
-    }
-  }
-
-
-  /* Options
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Computes a default column header formatting string if `colFormat` is not explicitly defined
-  computeColHeadFormat() {
-    // if more than one week row, or if there are a lot of columns with not much space,
-    // put just the day numbers will be in each cell
-    if (this.rowCnt > 1 || this.colCnt > 10) {
-      return { weekday: 'short' } // "Sat"
-    } else if (this.colCnt > 1) {
-      return { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true } // "Sat 11/12"
-    } else {
-      return { weekday: 'long' } // "Saturday"
     }
   }
 
@@ -265,202 +232,6 @@ export default class DayTableMixin extends Mixin implements DayTableInterface {
     }
 
     return segs
-  }
-
-
-  /* Header Rendering
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  renderHeadHtml() {
-    let theme = (this as any).theme
-
-    return '' +
-      '<div class="fc-row ' + theme.getClass('headerRow') + '">' +
-        '<table class="' + theme.getClass('tableGrid') + '">' +
-          '<thead>' +
-            this.renderHeadTrHtml() +
-          '</thead>' +
-        '</table>' +
-      '</div>'
-  }
-
-
-  renderHeadIntroHtml() {
-    return this.renderIntroHtml() // fall back to generic
-  }
-
-
-  renderHeadTrHtml() {
-    return '' +
-      '<tr>' +
-        ((this as any).isRtl ? '' : this.renderHeadIntroHtml()) +
-        this.renderHeadDateCellsHtml() +
-        ((this as any).isRtl ? this.renderHeadIntroHtml() : '') +
-      '</tr>'
-  }
-
-
-  renderHeadDateCellsHtml() {
-    let htmls = []
-    let col
-    let date: DateMarker
-
-    for (col = 0; col < this.colCnt; col++) {
-      date = this.getCellDate(0, col)
-      htmls.push((this as any).renderHeadDateCellHtml(date))
-    }
-
-    return htmls.join('')
-  }
-
-
-  // TODO: when internalApiVersion, accept an object for HTML attributes
-  // (colspan should be no different)
-  renderHeadDateCellHtml(date: DateMarker, colspan, otherAttrs) {
-    let t = (this as any)
-    let view = t.view
-    let dateEnv = t.dateEnv
-    let dateProfile = t.props.dateProfile
-    let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
-    let classNames = [
-      'fc-day-header',
-      view.calendar.theme.getClass('widgetHeader')
-    ]
-    let innerHtml
-
-    if (typeof t.opt('columnHeaderHtml') === 'function') {
-      innerHtml = t.opt('columnHeaderHtml')(date)
-    } else if (typeof t.opt('columnHeaderText') === 'function') {
-      innerHtml = htmlEscape(
-        t.opt('columnHeaderText')(date)
-      )
-    } else {
-      innerHtml = htmlEscape(dateEnv.format(date, t.colHeadFormat))
-    }
-
-    // if only one row of days, the classNames on the header can represent the specific days beneath
-    if (t.rowCnt === 1) {
-      classNames = classNames.concat(
-        // includes the day-of-week class
-        // noThemeHighlight=true (don't highlight the header)
-        getDayClasses(t, date, true)
-      )
-    } else {
-      classNames.push('fc-' + DAY_IDS[date.getUTCDay()]) // only add the day-of-week class
-    }
-
-    return '' +
-      '<th class="' + classNames.join(' ') + '"' +
-        ((isDateValid && t.rowCnt) === 1 ?
-          ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' :
-          '') +
-        (colspan > 1 ?
-          ' colspan="' + colspan + '"' :
-          '') +
-        (otherAttrs ?
-          ' ' + otherAttrs :
-          '') +
-        '>' +
-        (isDateValid ?
-          // don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
-          buildGotoAnchorHtml(
-            view,
-            { date: date, forceOff: t.rowCnt > 1 || t.colCnt === 1 },
-            innerHtml
-          ) :
-          // if not valid, display text, but no link
-          innerHtml
-        ) +
-      '</th>'
-  }
-
-
-  /* Background Rendering
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  renderBgTrHtml(row) {
-    return '' +
-      '<tr>' +
-        ((this as any).isRtl ? '' : this.renderBgIntroHtml(row)) +
-        this.renderBgCellsHtml(row) +
-        ((this as any).isRtl ? this.renderBgIntroHtml(row) : '') +
-      '</tr>'
-  }
-
-
-  renderBgIntroHtml(row) {
-    return this.renderIntroHtml() // fall back to generic
-  }
-
-
-  renderBgCellsHtml(row) {
-    let htmls = []
-    let col
-    let date
-
-    for (col = 0; col < this.colCnt; col++) {
-      date = this.getCellDate(row, col)
-      htmls.push((this as any).renderBgCellHtml(date))
-    }
-
-    return htmls.join('')
-  }
-
-
-  renderBgCellHtml(date: DateMarker, otherAttrs) {
-    let t = (this as any)
-    let view = t.view
-    let dateEnv = t.dateEnv
-    let dateProfile = t.props.dateProfile
-    let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
-    let classes = getDayClasses(t, date)
-
-    classes.unshift('fc-day', view.calendar.theme.getClass('widgetContent'))
-
-    return '<td class="' + classes.join(' ') + '"' +
-      (isDateValid ?
-        ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' :
-        '') +
-      (otherAttrs ?
-        ' ' + otherAttrs :
-        '') +
-      '></td>'
-  }
-
-
-  /* Generic
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Generates the default HTML intro for any row. User classes should override
-  renderIntroHtml(): string {
-    return ''
-  }
-
-
-  // TODO: a generic method for dealing with <tr>, RTL, intro
-  // when increment internalApiVersion
-  // wrapTr (scheduler)
-
-
-  /* Utils
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Applies the generic "intro" and "outro" HTML to the given cells.
-  // Intro means the leftmost cell when the calendar is LTR and the rightmost cell when RTL. Vice-versa for outro.
-  bookendCells(trEl: HTMLElement) {
-    let introHtml = this.renderIntroHtml()
-
-    if (introHtml) {
-      if ((this as any).isRtl) {
-        appendToElement(trEl, introHtml)
-      } else {
-        prependToElement(trEl, introHtml)
-      }
-    }
   }
 
 }
