@@ -1,4 +1,4 @@
-import { Seg } from '../component/DateComponent'
+import DateComponent, { Seg } from '../component/DateComponent'
 import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
 import { htmlEscape } from '../util/html'
 import { createFormatter } from '../datelib/formatting'
@@ -10,17 +10,16 @@ import { addDays, DateMarker } from '../datelib/marker'
 import { removeElement } from '../util/dom-manip'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { ComponentContext } from '../component/Component'
-import StandardDateComponent from '../component/StandardDateComponent'
 
-/*
-props:
-- date
-- segs
-- eventSelection
-- eventDrag
-- eventResize
-*/
-export default class DayTile extends StandardDateComponent {
+export interface DayTileProps {
+  date: DateMarker
+  segs: Seg[]
+  eventSelection: string
+  eventDrag: EventInteractionUiState
+  eventResize: EventInteractionUiState
+}
+
+export default class DayTile extends DateComponent<DayTileProps> {
 
   segContainerEl: HTMLElement
   width: number
@@ -35,15 +34,14 @@ export default class DayTile extends StandardDateComponent {
   }
 
 
-  render(props) {
+  render(props: DayTileProps) {
     let dateId = this.subrender('renderFrame', [ props.date ])
-    let evId = this.subrender('renderCoolSegs', [ props.segs ], 'unrenderCoolSegs')
+    let evId = this.subrender('renderFgEventSegs', [ props.segs, dateId ], 'unrenderEvents')
     this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
     this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState')
     this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState')
   }
 
-  // needed to be a different name :/
   renderFrame(date: DateMarker) {
     let { theme, dateEnv } = this
 
@@ -65,16 +63,6 @@ export default class DayTile extends StandardDateComponent {
       '</div>'
 
     this.segContainerEl = this.el.querySelector('.fc-event-container')
-  }
-
-  // needed to be a different name :/
-  renderCoolSegs(segs: Seg[]) {
-    this.eventRenderer.renderSegs(segs)
-  }
-
-  // needed to be a different name :/
-  unrenderCoolSegs(segs: Seg[]) {
-    this.eventRenderer.unrender()
   }
 
   renderEventDragState(state: EventInteractionUiState) {
