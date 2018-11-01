@@ -34,8 +34,6 @@ export default class BasicView extends View {
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
   colWeekNumbersVisible: boolean
 
-  weekNumberWidth: any // width of all the week-number cells running down the side
-
 
   initialize() {
 
@@ -126,15 +124,6 @@ export default class BasicView extends View {
   }
 
 
-  // Generates an HTML attribute string for setting the width of the week number column, if it is known
-  weekNumberStyleAttr() {
-    if (this.weekNumberWidth != null) {
-      return 'style="width:' + this.weekNumberWidth + 'px"'
-    }
-    return ''
-  }
-
-
   // Determines whether each row should have a constant height
   hasRigidRows() {
     let eventLimit = this.opt('eventLimit')
@@ -177,10 +166,7 @@ export default class BasicView extends View {
 
     if (this.colWeekNumbersVisible) {
       // Make sure all week number cells running down the side have the same width.
-      // Record the width for cells created later.
-      this.weekNumberWidth = matchCellWidths(
-        findElements(this.el, '.fc-week-number')
-      )
+      matchCellWidths(findElements(this.el, '.fc-week-number'))
     }
 
     // reset all heights to be natural
@@ -284,7 +270,7 @@ function makeDayGridSubclass(SuperClass) {
 
       if ((view as BasicView).colWeekNumbersVisible) {
         return '' +
-          '<th class="fc-week-number ' + theme.getClass('widgetHeader') + '" ' + (view as BasicView).weekNumberStyleAttr() + '>' +
+          '<th class="fc-week-number ' + theme.getClass('widgetHeader') + '">' +
             '<span>' + // needed for matchCellWidths
               htmlEscape(this.opt('weekLabel')) +
             '</span>' +
@@ -302,7 +288,7 @@ function makeDayGridSubclass(SuperClass) {
 
       if ((view as BasicView).colWeekNumbersVisible) {
         return '' +
-          '<td class="fc-week-number" ' + (view as BasicView).weekNumberStyleAttr() + '>' +
+          '<td class="fc-week-number">' +
             buildGotoAnchorHtml( // aside from link, important for matchCellWidths
               view,
               { date: weekStart, type: 'week', forceOff: dayTable.colCnt === 1 },
@@ -320,8 +306,7 @@ function makeDayGridSubclass(SuperClass) {
       let { view, theme } = this
 
       if ((view as BasicView).colWeekNumbersVisible) {
-        return '<td class="fc-week-number ' + theme.getClass('widgetContent') + '" ' +
-          (view as BasicView).weekNumberStyleAttr() + '></td>'
+        return '<td class="fc-week-number ' + theme.getClass('widgetContent') + '"></td>'
       }
 
       return ''
@@ -334,7 +319,7 @@ function makeDayGridSubclass(SuperClass) {
       let { view } = this
 
       if ((view as BasicView).colWeekNumbersVisible) {
-        return '<td class="fc-week-number" ' + (view as BasicView).weekNumberStyleAttr() + '></td>'
+        return '<td class="fc-week-number"></td>'
       }
 
       return ''

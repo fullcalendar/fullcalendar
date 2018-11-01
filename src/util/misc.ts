@@ -122,6 +122,10 @@ export function matchCellWidths(els: HTMLElement[]) {
   let maxInnerWidth = 0
 
   els.forEach(function(el) {
+    el.style.width = ''
+  })
+
+  els.forEach(function(el) {
     let innerEl = el.firstChild // hopefully an element
     if (innerEl instanceof HTMLElement) {
       let innerWidth = innerEl.offsetWidth

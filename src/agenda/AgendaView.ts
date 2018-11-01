@@ -43,7 +43,6 @@ export default class AgendaView extends View {
   dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
 
   scroller: ScrollComponent
-  axisWidth: any // the width of the time axis running down the side
 
   // reselectors
   filterEventsForTimeGrid: any
@@ -157,15 +156,6 @@ export default class AgendaView extends View {
   }
 
 
-  // Generates an HTML attribute string for setting the width of the axis, if it is known
-  axisStyleAttr() {
-    if (this.axisWidth != null) {
-      return 'style="width:' + this.axisWidth + 'px"'
-    }
-    return ''
-  }
-
-
   /* Render Delegation
   ------------------------------------------------------------------------------------------------------------------*/
 
@@ -246,8 +236,8 @@ export default class AgendaView extends View {
     let scrollerHeight
     let scrollbarWidths
 
-    // make all axis cells line up, and record the width so newly created axis cells will have it
-    this.axisWidth = matchCellWidths(findElements(this.el, '.fc-axis'))
+    // make all axis cells line up
+    matchCellWidths(findElements(this.el, '.fc-axis'))
 
     // hack to give the view some height prior to timeGrid's columns being rendered
     // TODO: separate setting height from scroller VS timeGrid.
@@ -371,7 +361,7 @@ agendaTimeGridMethods = {
       weekText = dateEnv.format(weekStart, WEEK_HEADER_FORMAT)
 
       return '' +
-        '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '" ' + (view as AgendaView).axisStyleAttr() + '>' +
+        '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '">' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             view,
             { date: weekStart, type: 'week', forceOff: dayTable.colCnt > 1 },
@@ -379,25 +369,23 @@ agendaTimeGridMethods = {
           ) +
         '</th>'
     } else {
-      return '<th class="fc-axis ' + theme.getClass('widgetHeader') + '" ' + (view as AgendaView).axisStyleAttr() + '></th>'
+      return '<th class="fc-axis ' + theme.getClass('widgetHeader') + '"></th>'
     }
   },
 
 
   // Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
   renderBgIntroHtml(this: TimeGrid) {
-    let { view, theme } = this
+    let { theme } = this
 
-    return '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + (view as AgendaView).axisStyleAttr() + '></td>'
+    return '<td class="fc-axis ' + theme.getClass('widgetContent') + '"></td>'
   },
 
 
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderIntroHtml(this: TimeGrid) {
-    let { view } = this
-
-    return '<td class="fc-axis" ' + (view as AgendaView).axisStyleAttr() + '></td>'
+    return '<td class="fc-axis"></td>'
   }
 
 }
@@ -411,7 +399,7 @@ agendaDayGridMethods = {
     let { view, theme } = this
 
     return '' +
-      '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + (view as AgendaView).axisStyleAttr() + '>' +
+      '<td class="fc-axis ' + theme.getClass('widgetContent') + '">' +
         '<span>' + // needed for matchCellWidths
           getAllDayHtml(view) +
         '</span>' +
@@ -422,9 +410,7 @@ agendaDayGridMethods = {
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderIntroHtml(this: DayGrid) {
-    let { view } = this
-
-    return '<td class="fc-axis" ' + (view as AgendaView).axisStyleAttr() + '></td>'
+    return '<td class="fc-axis"></td>'
   }
 
 }

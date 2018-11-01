@@ -14,7 +14,6 @@ import { Seg } from '../component/DateComponent'
 import StandardDateComponent from '../component/StandardDateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
-import AgendaView from './AgendaView'
 import DayTableHeader from '../basic/DayTableHeader'
 import DayBgRow from '../basic/DayBgRow'
 
@@ -271,7 +270,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
   renderSlatRowHtml() {
-    let { view, dateEnv, theme, isRtl } = this
+    let { dateEnv, theme, isRtl } = this
     let dateProfile = this.props.dateProfile
     let html = ''
     let dayStart = startOfDay(dateProfile.renderRange.start)
@@ -287,7 +286,7 @@ export default class TimeGrid extends StandardDateComponent {
       isLabeled = wholeDivideDurations(slotIterator, this.labelInterval) !== null
 
       axisHtml =
-        '<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '" ' + (view as AgendaView).axisStyleAttr() + '>' +
+        '<td class="fc-axis fc-time ' + theme.getClass('widgetContent') + '">' +
           (isLabeled ?
             '<span>' + // for matchCellWidths
               htmlEscape(dateEnv.format(slotDate, this.labelFormat)) +
