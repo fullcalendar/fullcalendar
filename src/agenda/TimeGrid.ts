@@ -219,6 +219,7 @@ export default class TimeGrid extends StandardDateComponent {
     this.dayTable = new DayTable(
       dateProfile,
       this.view.dateProfileGenerator,
+      this.isRtl,
       false
     )
 

@@ -6,10 +6,11 @@ import DateProfileGenerator, { DateProfile } from 'src/DateProfileGenerator'
 computes date/index/cell information.
 doesn't do any rendering.
 */
-export default class DayTable { // TODO: rename file
+export default class DayTable {
 
   dayDates: DateMarker[] // whole-day dates for each column. left to right
   dayIndices: any // for each day from start, the offset
+  isRtl: boolean
   daysPerRow: any
   rowCnt: any
   colCnt: any
@@ -17,7 +18,7 @@ export default class DayTable { // TODO: rename file
 
   // Populates internal variables used for date calculation and rendering
   // breakOnWeeks - should create a new row for each week? not specified, so default is FALSY
-  constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, breakOnWeeks: boolean) {
+  constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, isRtl: boolean, breakOnWeeks: boolean) {
     let date: DateMarker = dateProfile.renderRange.start
     let end: DateMarker = dateProfile.renderRange.end
     let dayIndex = -1
@@ -26,6 +27,8 @@ export default class DayTable { // TODO: rename file
     let daysPerRow
     let firstDay
     let rowCnt
+
+    this.isRtl = isRtl
 
     while (date < end) { // loop each day from start to end
       if (dateProfileGenerator.isHiddenDay(date)) {
@@ -89,7 +92,7 @@ export default class DayTable { // TODO: rename file
 
   // Returns the numner of day cells, chronologically, from the first cell in *any given row*
   getColDayIndex(col) {
-    if ((this as any).isRtl) {
+    if (this.isRtl) {
       return this.colCnt - 1 - col
     } else {
       return col

@@ -132,6 +132,7 @@ export default class DayGrid extends StandardDateComponent {
     this.dayTable = new DayTable(
       dateProfile,
       this.view.dateProfileGenerator,
+      this.isRtl,
       (this.props as any).breakOnWeeks // HACK
     )
 
