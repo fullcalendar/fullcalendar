@@ -11,7 +11,7 @@ describe('columnHeader', function() {
     'when basic view': 'basicDay'
   }, function() {
 
-    describe('when off', function() {
+    describe('when on', function() {
       pushOptions({
         columnHeader: true
       })
@@ -22,7 +22,7 @@ describe('columnHeader', function() {
       })
     })
 
-    describe('when on', function() {
+    describe('when off', function() {
       pushOptions({
         columnHeader: false
       })

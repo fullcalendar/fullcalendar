@@ -9,7 +9,6 @@ import {
 import { computeRect } from '../util/dom-geom'
 import PositionCache from '../common/PositionCache'
 import Popover from '../common/Popover'
-import DayTable from '../component/DayTable'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridMirrorRenderer from './DayGridMirrorRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
@@ -24,7 +23,6 @@ import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date
 import OffsetTracker from '../common/OffsetTracker'
 import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
-import DayTableHeader from './DayTableHeader'
 import DayBgRow from './DayBgRow'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
@@ -39,8 +37,7 @@ export interface DayGridProps extends StandardDateComponent {
 }
 
 export interface RenderProps {
-  renderHeadIntroHtml: (dayTable: DayTable) => string
-  renderNumberIntroHtml: (row: number, dayTable: DayTable) => string
+  renderNumberIntroHtml: (row: number) => string
   renderBgIntroHtml: () => string
   renderIntroHtml: () => string
   colWeekNumbersVisible: boolean // week numbers render in own column? (caller does HTML via intro)
@@ -54,7 +51,6 @@ export default class DayGrid extends StandardDateComponent {
 
   bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
-  headerContainerEl: HTMLElement // div that hold's the date header
   rowEls: HTMLElement[] // set of fake row elements
   cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
 
@@ -70,7 +66,7 @@ export default class DayGrid extends StandardDateComponent {
   segPopoverTile: DayTile
 
 
-  constructor(context, headerContainerEl, el, renderProps: RenderProps) {
+  constructor(context, el, renderProps: RenderProps) {
     super(context, el)
 
     this.eventRenderer = new DayGridEventRenderer(this)
@@ -78,7 +74,6 @@ export default class DayGrid extends StandardDateComponent {
     this.fillRenderer = new DayGridFillRenderer(this)
     this.slicingType = 'all-day'
 
-    this.headerContainerEl = headerContainerEl
     this.renderProps = renderProps
   }
 
@@ -144,17 +139,6 @@ export default class DayGrid extends StandardDateComponent {
     let html = ''
     let row
     let col
-
-    if (this.headerContainerEl) {
-      // TODO: destroy?
-      let header = new DayTableHeader(this.context, this.headerContainerEl)
-      header.receiveProps({
-        dateProfile,
-        dates: dayTable.dayDates.slice(0, dayTable.colCnt), // because might be mult rows
-        datesRepDistinctDays: dayTable.rowCnt === 1,
-        renderIntroHtml: this.renderProps.renderHeadIntroHtml.bind(null, dayTable)
-      })
-    }
 
     for (row = 0; row < rowCnt; row++) {
       html += this.renderDayRowHtml(row, this.isRigid)
@@ -261,8 +245,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   renderNumberTrHtml(row: number) {
-    let dayTable = (this.props as any).dayTable
-    let intro = this.renderProps.renderNumberIntroHtml(row, dayTable)
+    let intro = this.renderProps.renderNumberIntroHtml(row)
 
     return '' +
       '<tr>' +

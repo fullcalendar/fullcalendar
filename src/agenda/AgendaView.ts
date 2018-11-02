@@ -24,6 +24,7 @@ import DayTable from '../component/DayTable';
 import { ComponentContext } from '../component/Component';
 import { ViewSpec } from '../structs/view-spec';
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator';
+import DayTableHeader from '../basic/DayTableHeader'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -36,10 +37,13 @@ const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
 
 export default class AgendaView extends View {
 
+  header: DayTableHeader
   timeGrid: TimeGrid // the main time-grid subcomponent of this view
   dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
 
   scroller: ScrollComponent
+
+  dayTable: DayTable
 
   // reselectors
   filterEventsForTimeGrid: any
@@ -68,6 +72,13 @@ export default class AgendaView extends View {
       'auto' // overflow y
     )
 
+    if (this.opt('columnHeader')) {
+      this.header = new DayTableHeader(
+        this.context,
+        this.el.querySelector('.fc-head-container')
+      )
+    }
+
     let timeGridWrapEl = this.scroller.el
     this.el.querySelector('.fc-body > tr > td').appendChild(timeGridWrapEl)
     timeGridWrapEl.classList.add('fc-time-grid-container')
@@ -76,10 +87,8 @@ export default class AgendaView extends View {
 
     this.timeGrid = new TimeGrid(
       this.context,
-      this.el.querySelector('.fc-head-container'),
       timeGridEl,
       {
-        renderHeadIntroHtml: this.renderTimeGridHeadIntroHtml,
         renderBgIntroHtml: this.renderTimeGridBgIntroHtml,
         renderIntroHtml: this.renderTimeGridIntroHtml
       }
@@ -89,10 +98,8 @@ export default class AgendaView extends View {
 
       this.dayGrid = new DayGrid( // the all-day subcomponent of this view
         this.context,
-        null, // headContainerEl
         this.el.querySelector('.fc-day-grid'),
         {
-          renderHeadIntroHtml: this.renderDayGridIntroHtml, // not used, because head not used
           renderNumberIntroHtml: this.renderDayGridIntroHtml, // don't want numbers
           renderBgIntroHtml: this.renderDayGridBgIntroHtml,
           renderIntroHtml: this.renderDayGridIntroHtml,
@@ -109,6 +116,10 @@ export default class AgendaView extends View {
 
   destroy() {
     super.destroy()
+
+    if (this.header) {
+      this.header.destroy()
+    }
 
     this.timeGrid.destroy()
 
@@ -172,7 +183,17 @@ export default class AgendaView extends View {
       }
     }
 
-    let dayTable = this.buildDayTable(props.dateProfile)
+    let dayTable = this.dayTable =
+      this.buildDayTable(props.dateProfile)
+
+    if (this.header) {
+      this.header.receiveProps({
+        dateProfile: props.dateProfile,
+        dates: dayTable.dayDates,
+        datesRepDistinctDays: true,
+        renderIntroHtml: this.renderHeadIntroHtml
+      })
+    }
 
     this.timeGrid.receiveProps(
       assignTo({}, props, {
@@ -205,7 +226,7 @@ export default class AgendaView extends View {
       this.isRtl,
       false
     )
-  }) as any
+  })
 
 
   /* Now Indicator
@@ -354,12 +375,12 @@ export default class AgendaView extends View {
   }
 
 
-  /* Time Grid Render Methods
+  /* Header Render Methods
   ------------------------------------------------------------------------------------------------------------------*/
 
 
   // Generates the HTML that will go before the day-of week header cells
-  renderTimeGridHeadIntroHtml = (dayTable: DayTable) => {
+  renderHeadIntroHtml = () => {
     let { theme, dateEnv } = this
     let weekStart = this.props.dateProfile.renderRange.start
     let weekText
@@ -371,7 +392,7 @@ export default class AgendaView extends View {
         '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '">' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             this,
-            { date: weekStart, type: 'week', forceOff: dayTable.colCnt > 1 },
+            { date: weekStart, type: 'week', forceOff: this.dayTable.colCnt > 1 },
             htmlEscape(weekText) // inner HTML
           ) +
         '</th>'
@@ -379,6 +400,10 @@ export default class AgendaView extends View {
       return '<th class="fc-axis ' + theme.getClass('widgetHeader') + '"></th>'
     }
   }
+
+
+  /* Time Grid Render Methods
+  ------------------------------------------------------------------------------------------------------------------*/
 
 
   // Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.

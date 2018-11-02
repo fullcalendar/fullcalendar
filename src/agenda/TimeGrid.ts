@@ -1,6 +1,5 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
-import DayTable from '../component/DayTable'
 import PositionCache from '../common/PositionCache'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
@@ -14,7 +13,6 @@ import { Seg } from '../component/DateComponent'
 import StandardDateComponent from '../component/StandardDateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
-import DayTableHeader from '../basic/DayTableHeader'
 import DayBgRow from '../basic/DayBgRow'
 
 /* A component that renders one or more columns of vertical time slots
@@ -32,7 +30,6 @@ const AGENDA_STOCK_SUB_DURATIONS = [
 ]
 
 export interface RenderProps {
-  renderHeadIntroHtml: (dayTable: DayTable) => string
   renderBgIntroHtml: () => string
   renderIntroHtml: () => string
 }
@@ -49,7 +46,6 @@ export default class TimeGrid extends StandardDateComponent {
   labelFormat: DateFormatter // formatting string for times running along vertical axis
   labelInterval: Duration // duration of how often a label should be displayed for a slot
 
-  headContainerEl: HTMLElement // div that hold's the date header
   colEls: HTMLElement[] // cells elements in the day-row background
   slatContainerEl: HTMLElement // div that wraps all the slat rows
   slatEls: HTMLElement[] // elements running horizontally across all columns
@@ -72,7 +68,7 @@ export default class TimeGrid extends StandardDateComponent {
   businessContainerEls: HTMLElement[]
 
 
-  constructor(context: ComponentContext, headContainerEl: HTMLElement, el: HTMLElement, renderProps: RenderProps) {
+  constructor(context: ComponentContext, el: HTMLElement, renderProps: RenderProps) {
     super(context, el)
 
     this.eventRenderer = new TimeGridEventRenderer(this)
@@ -81,8 +77,6 @@ export default class TimeGrid extends StandardDateComponent {
     this.slicingType = 'timed'
 
     this.processOptions()
-
-    this.headContainerEl = headContainerEl // already created by called! where content is inserted directly!
 
     el.innerHTML =
       '<div class="fc-bg"></div>' +
@@ -310,17 +304,6 @@ export default class TimeGrid extends StandardDateComponent {
         end: dateEnv.add(dayDate, dateProfile.maxTime)
       }
     })
-
-    if (this.headContainerEl) {
-      // TODO: destroy?
-      let header = new DayTableHeader(this.context, this.headContainerEl)
-      header.receiveProps({
-        dateProfile,
-        dates: dayDates,
-        datesRepDistinctDays: true,
-        renderIntroHtml: this.renderProps.renderHeadIntroHtml.bind(null, dayTable)
-      })
-    }
 
     let bgRow = new DayBgRow(this.context)
     this.rootBgContainerEl.innerHTML =

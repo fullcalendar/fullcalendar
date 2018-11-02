@@ -20,7 +20,8 @@ import DayTable from '../component/DayTable';
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
-import reselector from '../util/reselector';
+import reselector from '../util/reselector'
+import DayTableHeader from './DayTableHeader'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -33,7 +34,10 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 export default class BasicView extends View {
 
   scroller: ScrollComponent
+  header: DayTableHeader
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
+
+  dayTable: DayTable
   colWeekNumbersVisible: boolean
 
 
@@ -69,12 +73,17 @@ export default class BasicView extends View {
       cellWeekNumbersVisible = false
     }
 
+    if (this.opt('columnHeader')) {
+      this.header = new DayTableHeader(
+        this.context,
+        this.el.querySelector('.fc-head-container')
+      )
+    }
+
     this.dayGrid = new DayGrid(
       this.context,
-      this.el.querySelector('.fc-head-container'),
       dayGridEl,
       {
-        renderHeadIntroHtml: this.renderDayGridHeadIntroHtml,
         renderNumberIntroHtml: this.renderDayGridNumberIntroHtml,
         renderBgIntroHtml: this.renderDayGridBgIntroHtml,
         renderIntroHtml: this.renderDayGridIntroHtml,
@@ -89,6 +98,10 @@ export default class BasicView extends View {
   destroy() {
     super.destroy()
 
+    if (this.header) {
+      this.header.destroy()
+    }
+
     this.dayGrid.destroy()
     this.scroller.destroy()
   }
@@ -97,7 +110,17 @@ export default class BasicView extends View {
   render(props: StandardDateComponentProps) {
     super.render(props)
 
-    let dayTable = this.buildDayTable(props.dateProfile)
+    let dayTable = this.dayTable =
+      this.buildDayTable(props.dateProfile)
+
+    if (this.header) {
+      this.header.receiveProps({
+        dateProfile: props.dateProfile,
+        dates: this.sliceDayDates(dayTable), // get just the first row
+        datesRepDistinctDays: dayTable.rowCnt === 1,
+        renderIntroHtml: this.renderHeadIntroHtml
+      })
+    }
 
     this.dayGrid.receiveProps(
       assignTo({}, props, {
@@ -114,7 +137,12 @@ export default class BasicView extends View {
       this.isRtl,
       /year|month|week/.test(dateProfile.currentRangeUnit)
     )
-  }) as any
+  })
+
+
+  sliceDayDates = reselector(function(dayTable: DayTable) {
+    return dayTable.dayDates.slice(0, dayTable.colCnt)
+  })
 
 
   // Builds the HTML skeleton for the view.
@@ -162,12 +190,9 @@ export default class BasicView extends View {
 
   // Refreshes the horizontal dimensions of the view
   updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    let { dayGrid } = this
+    let { header, dayGrid } = this
     let eventLimit = this.opt('eventLimit')
-    let headRowEl =
-      dayGrid.headerContainerEl ?
-        dayGrid.headerContainerEl.querySelector('.fc-row') as HTMLElement :
-        null
+    let headRowEl = header ? header.el : null
     let scrollerHeight
     let scrollbarWidths
 
@@ -269,12 +294,12 @@ export default class BasicView extends View {
   }
 
 
-  /* Day Grid Rendering
+  /* Header Rendering
   ------------------------------------------------------------------------------------------------------------------*/
 
 
   // Generates the HTML that will go before the day-of week header cells
-  renderDayGridHeadIntroHtml = () => {
+  renderHeadIntroHtml = () => {
     let { theme } = this
 
     if (this.colWeekNumbersVisible) {
@@ -290,9 +315,13 @@ export default class BasicView extends View {
   }
 
 
+  /* Day Grid Rendering
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
   // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
-  renderDayGridNumberIntroHtml = (row, dayTable: DayTable) => {
-    let { dateEnv } = this
+  renderDayGridNumberIntroHtml = (row) => {
+    let { dateEnv, dayTable } = this
     let weekStart = dayTable.getCellDate(row, 0)
 
     if (this.colWeekNumbersVisible) {
