@@ -141,7 +141,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
       emptyCellsUntil(colCnt) // finish off the row
 
-      let introHtml = dayGrid.renderIntroHtml()
+      let introHtml = dayGrid.renderProps.renderIntroHtml()
       if (introHtml) {
         if (dayGrid.isRtl) {
           appendToElement(tr, introHtml)

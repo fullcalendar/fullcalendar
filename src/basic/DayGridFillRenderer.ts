@@ -65,7 +65,7 @@ export default class DayGridFillRenderer extends FillRenderer {
       trEl.appendChild(createElement('td', { colSpan: colCnt - endCol }))
     }
 
-    let introHtml = dayGrid.renderIntroHtml()
+    let introHtml = dayGrid.renderProps.renderIntroHtml()
     if (introHtml) {
       if (dayGrid.isRtl) {
         appendToElement(trEl, introHtml)

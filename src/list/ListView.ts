@@ -7,8 +7,10 @@ import ListEventRenderer from './ListEventRenderer'
 import { DateMarker, addDays, startOfDay } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { DateRange, intersectRanges } from '../datelib/date-range'
-import { DateProfile } from '../DateProfileGenerator'
+import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { buildGotoAnchorHtml } from '../component/date-rendering'
+import { ComponentContext } from '../component/Component'
+import { ViewSpec } from '../structs/view-spec'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -22,7 +24,8 @@ export default class ListView extends View {
   dayRanges: DateRange[] // start/end of each day
 
 
-  initialize() {
+  constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
+    super(context, viewSpec, dateProfileGenerator, parentEl)
 
     this.eventRenderer = new ListEventRenderer(this)
     this.slicingType = 'all-day'

@@ -31,10 +31,17 @@ const AGENDA_STOCK_SUB_DURATIONS = [
   { seconds: 15 }
 ]
 
+export interface RenderProps {
+  renderHeadIntroHtml: (dayTable: DayTable) => string
+  renderBgIntroHtml: () => string
+  renderIntroHtml: () => string
+}
+
 export default class TimeGrid extends StandardDateComponent {
 
   dayTable: DayTable
   mirrorRenderer: any
+  renderProps: RenderProps
 
   dayRanges: DateRange[] // of start-end of each day
   slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
@@ -66,7 +73,7 @@ export default class TimeGrid extends StandardDateComponent {
   businessContainerEls: HTMLElement[]
 
 
-  constructor(context: ComponentContext, headContainerEl: HTMLElement, el: HTMLElement) {
+  constructor(context: ComponentContext, headContainerEl: HTMLElement, el: HTMLElement, renderProps: RenderProps) {
     super(context, el)
 
     this.eventRenderer = new TimeGridEventRenderer(this)
@@ -86,6 +93,8 @@ export default class TimeGrid extends StandardDateComponent {
     this.rootBgContainerEl = el.querySelector('.fc-bg')
     this.slatContainerEl = el.querySelector('.fc-slats')
     this.bottomRuleEl = el.querySelector('.fc-divider')
+
+    this.renderProps = renderProps
   }
 
 
@@ -234,21 +243,6 @@ export default class TimeGrid extends StandardDateComponent {
   }
 
 
-  renderIntroHtml() {
-    return ''
-  }
-
-
-  renderHeadIntroHtml() {
-    return this.renderIntroHtml()
-  }
-
-
-  renderBgIntroHtml() {
-    return this.renderIntroHtml()
-  }
-
-
   renderSlats() {
     let { theme } = this
 
@@ -331,7 +325,7 @@ export default class TimeGrid extends StandardDateComponent {
         dateProfile,
         dates: dayDates,
         datesRepDistinctDays: true,
-        renderIntroHtml: this.renderHeadIntroHtml.bind(this)
+        renderIntroHtml: this.renderProps.renderHeadIntroHtml.bind(null, this.dayTable)
       })
     }
 
@@ -341,7 +335,7 @@ export default class TimeGrid extends StandardDateComponent {
         bgRow.renderHtml({
           dates: dayDates,
           dateProfile,
-          renderIntroHtml: this.renderBgIntroHtml.bind(this)
+          renderIntroHtml: this.renderProps.renderBgIntroHtml
         }) +
       '</table>'
 
@@ -372,7 +366,9 @@ export default class TimeGrid extends StandardDateComponent {
     let parts = []
     let skeletonEl: HTMLElement
 
-    parts.push(this.renderIntroHtml())
+    parts.push(
+      this.renderProps.renderIntroHtml()
+    )
 
     for (let i = 0; i < this.dayTable.colCnt; i++) {
       parts.push(

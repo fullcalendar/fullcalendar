@@ -38,12 +38,20 @@ export interface DayGridProps extends StandardDateComponent {
   breakOnWeeks: boolean
 }
 
+export interface RenderProps {
+  renderHeadIntroHtml: (dayTable: DayTable) => string
+  renderNumberIntroHtml: (row: number, dayTable: DayTable) => string
+  renderBgIntroHtml: () => string
+  renderIntroHtml: () => string
+  colWeekNumbersVisible: boolean // week numbers render in own column? (caller does HTML via intro)
+  cellWeekNumbersVisible: boolean // display week numbers in day cell?
+}
+
 export default class DayGrid extends StandardDateComponent {
 
   dayTable: DayTable
   eventRenderer: DayGridEventRenderer
-
-  cellWeekNumbersVisible: boolean = false // display week numbers in day cell?
+  renderProps: RenderProps
 
   bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
@@ -63,7 +71,7 @@ export default class DayGrid extends StandardDateComponent {
   segPopoverTile: DayTile
 
 
-  constructor(context, headerContainerEl, el) {
+  constructor(context, headerContainerEl, el, renderProps: RenderProps) {
     super(context, el)
 
     this.eventRenderer = new DayGridEventRenderer(this)
@@ -72,6 +80,7 @@ export default class DayGrid extends StandardDateComponent {
     this.slicingType = 'all-day'
 
     this.headerContainerEl = headerContainerEl
+    this.renderProps = renderProps
   }
 
 
@@ -161,7 +170,7 @@ export default class DayGrid extends StandardDateComponent {
         dateProfile: this.props.dateProfile,
         dates: dayTable.dayDates.slice(0, dayTable.colCnt), // because might be mult rows
         datesRepDistinctDays: dayTable.rowCnt === 1,
-        renderIntroHtml: this.renderHeadIntroHtml.bind(this)
+        renderIntroHtml: this.renderProps.renderHeadIntroHtml.bind(null, this.dayTable)
       })
     }
 
@@ -227,7 +236,7 @@ export default class DayGrid extends StandardDateComponent {
             bgRow.renderHtml({
               dates,
               dateProfile: this.props.dateProfile,
-              renderIntroHtml: this.renderBgIntroHtml.bind(this)
+              renderIntroHtml: this.renderProps.renderBgIntroHtml
             }) +
           '</table>' +
         '</div>' +
@@ -246,7 +255,9 @@ export default class DayGrid extends StandardDateComponent {
 
 
   getIsNumbersVisible() {
-    return this.getIsDayNumbersVisible() || this.cellWeekNumbersVisible
+    return this.getIsDayNumbersVisible() ||
+      this.renderProps.cellWeekNumbersVisible ||
+      this.renderProps.colWeekNumbersVisible
   }
 
 
@@ -259,33 +270,15 @@ export default class DayGrid extends StandardDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderNumberTrHtml(row) {
+  renderNumberTrHtml(row: number) {
+    let intro = this.renderProps.renderNumberIntroHtml(row, this.dayTable)
+
     return '' +
       '<tr>' +
-        (this.isRtl ? '' : this.renderNumberIntroHtml(row)) +
+        (this.isRtl ? '' : intro) +
         this.renderNumberCellsHtml(row) +
-        (this.isRtl ? this.renderNumberIntroHtml(row) : '') +
+        (this.isRtl ? intro : '') +
       '</tr>'
-  }
-
-
-  renderIntroHtml() {
-    return ''
-  }
-
-
-  renderHeadIntroHtml() {
-    return this.renderIntroHtml()
-  }
-
-
-  renderNumberIntroHtml(row) {
-    return this.renderIntroHtml()
-  }
-
-
-  renderBgIntroHtml() {
-    return this.renderIntroHtml()
   }
 
 
@@ -314,7 +307,7 @@ export default class DayGrid extends StandardDateComponent {
     let classes
     let weekCalcFirstDow
 
-    if (!isDayNumberVisible && !this.cellWeekNumbersVisible) {
+    if (!isDayNumberVisible && !this.renderProps.cellWeekNumbersVisible) {
       // no numbers in day cell (week number must be along the side)
       return '<td></td>' //  will create an empty space above events :(
     }
@@ -322,7 +315,7 @@ export default class DayGrid extends StandardDateComponent {
     classes = getDayClasses(date, this.props.dateProfile, this.context)
     classes.unshift('fc-day-top')
 
-    if (this.cellWeekNumbersVisible) {
+    if (this.renderProps.cellWeekNumbersVisible) {
       weekCalcFirstDow = dateEnv.weekDow
     }
 
@@ -333,7 +326,7 @@ export default class DayGrid extends StandardDateComponent {
         ) +
       '>'
 
-    if (this.cellWeekNumbersVisible && (date.getUTCDay() === weekCalcFirstDow)) {
+    if (this.renderProps.cellWeekNumbersVisible && (date.getUTCDay() === weekCalcFirstDow)) {
       html += buildGotoAnchorHtml(
         view,
         { date: date, type: 'week' },
