@@ -14,7 +14,7 @@ export default class MonthView extends BasicView {
 
     // if auto, make the height of each row the height that it would be if there were 6 weeks
     if (isAuto) {
-      height *= this.dayGrid.dayTable.rowCnt / 6
+      height *= (this.dayGrid.props as any).dayTable.rowCnt / 6
     }
 
     distributeHeight(this.dayGrid.rowEls, height, !isAuto) // if auto, don't compensate for height-hogging rows

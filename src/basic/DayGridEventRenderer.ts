@@ -72,7 +72,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // NOTE: modifies rowSegs
   renderSegRow(row, rowSegs) {
     let { dayGrid } = this
-    let colCnt = dayGrid.dayTable.colCnt
+    let colCnt = (dayGrid.props as any).dayTable.colCnt
     let segLevels = this.buildSegLevels(rowSegs) // group into sub-arrays of levels
     let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
     let tbody = document.createElement('tbody')
@@ -203,10 +203,11 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
   // Given a flat array of segments, return an array of sub-arrays, grouped by each segment's row
   groupSegRows(segs: Seg[]) {
+    let dayTable = (this.dayGrid.props as any).dayTable
     let segRows = []
     let i
 
-    for (i = 0; i < this.dayGrid.dayTable.rowCnt; i++) {
+    for (i = 0; i < dayTable.rowCnt; i++) {
       segRows.push([])
     }
 
@@ -220,7 +221,9 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
   // Computes a default `displayEventEnd` value if one is not expliclty defined
   computeDisplayEventEnd() {
-    return this.dayGrid.dayTable.colCnt === 1 // we'll likely have space if there's only one day
+    let dayTable = (this.dayGrid.props as any).dayTable
+
+    return dayTable.colCnt === 1 // we'll likely have space if there's only one day
   }
 
 }

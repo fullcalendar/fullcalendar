@@ -19,7 +19,8 @@ import { assignTo } from '../util/object'
 import DayTable from '../component/DayTable';
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
-import DateProfileGenerator from '../DateProfileGenerator'
+import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
+import reselector from '../util/reselector';
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -96,12 +97,24 @@ export default class BasicView extends View {
   render(props: StandardDateComponentProps) {
     super.render(props)
 
+    let dayTable = this.buildDayTable(props.dateProfile)
+
     this.dayGrid.receiveProps(
       assignTo({}, props, {
-        breakOnWeeks: /year|month|week/.test(props.dateProfile.currentRangeUnit)
+        dayTable
       })
     )
   }
+
+
+  buildDayTable = reselector(function(this: BasicView, dateProfile: DateProfile) {
+    return new DayTable(
+      dateProfile,
+      this.dateProfileGenerator,
+      this.isRtl,
+      /year|month|week/.test(dateProfile.currentRangeUnit)
+    )
+  }) as any
 
 
   // Builds the HTML skeleton for the view.

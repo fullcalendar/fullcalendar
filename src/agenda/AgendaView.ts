@@ -23,7 +23,7 @@ import { DateMarker } from '../datelib/marker'
 import DayTable from '../component/DayTable';
 import { ComponentContext } from '../component/Component';
 import { ViewSpec } from '../structs/view-spec';
-import DateProfileGenerator from '../DateProfileGenerator';
+import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator';
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -172,12 +172,15 @@ export default class AgendaView extends View {
       }
     }
 
+    let dayTable = this.buildDayTable(props.dateProfile)
+
     this.timeGrid.receiveProps(
       assignTo({}, props, {
         eventStore: this.filterEventsForTimeGrid(props.eventStore, props.eventUis),
         dateSelection: timedSelection,
         eventDrag: this.buildEventDragForTimeGrid(props.eventDrag),
-        eventResize: this.buildEventResizeForTimeGrid(props.eventResize)
+        eventResize: this.buildEventResizeForTimeGrid(props.eventResize),
+        dayTable
       })
     )
 
@@ -187,11 +190,22 @@ export default class AgendaView extends View {
           eventStore: this.filterEventsForDayGrid(props.eventStore, props.eventUis),
           dateSelection: allDaySeletion,
           eventDrag: this.buildEventDragForDayGrid(props.eventDrag),
-          eventResize: this.buildEventResizeForDayGrid(props.eventResize)
+          eventResize: this.buildEventResizeForDayGrid(props.eventResize),
+          dayTable
         })
       )
     }
   }
+
+
+  buildDayTable = reselector(function(this: AgendaView, dateProfile: DateProfile) {
+    return new DayTable(
+      dateProfile,
+      this.dateProfileGenerator,
+      this.isRtl,
+      false
+    )
+  }) as any
 
 
   /* Now Indicator

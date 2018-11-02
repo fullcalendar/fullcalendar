@@ -49,7 +49,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   computeSizes() {
     let { timeGrid, segsByCol } = this
-    let colCnt = timeGrid.dayTable.colCnt
+    let colCnt = (timeGrid.props as any).dayTable.colCnt
 
     if (segsByCol) {
       for (let col = 0; col < colCnt; col++) {
@@ -64,7 +64,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   assignSizes() {
     let { timeGrid, segsByCol } = this
-    let colCnt = timeGrid.dayTable.colCnt
+    let colCnt = (timeGrid.props as any).dayTable.colCnt
 
     if (segsByCol) {
       for (let col = 0; col < colCnt; col++) {
