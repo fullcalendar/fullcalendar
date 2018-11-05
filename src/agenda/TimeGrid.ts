@@ -1,7 +1,7 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
 import PositionCache from '../common/PositionCache'
-import { DateRange, intersectRanges } from '../datelib/date-range'
+import { DateRange } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
@@ -14,11 +14,10 @@ import StandardDateComponent from '../component/StandardDateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 import DayBgRow from '../basic/DayBgRow'
-import DayTable from '../component/DayTable'
+import TimeGridSlicer from './TimeGridSlicer'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
-// We mixin DayTable, even though there is only a single row of days
 
 // potential nice values for the slot-duration and interval-duration
 // from largest to smallest
@@ -93,57 +92,9 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as TimeGridSlicer
 
-    range = intersectRanges(range, this.props.dateProfile.validRange)
-
-    if (range) {
-      let segs = this.sliceRangeByTimes(range)
-      let i
-
-      for (i = 0; i < segs.length; i++) {
-        if (this.isRtl) {
-          segs[i].col = dayTable.daysPerRow - 1 - segs[i].dayIndex
-        } else {
-          segs[i].col = segs[i].dayIndex
-        }
-
-        segs[i].component = this
-      }
-
-      return segs
-    } else {
-      return []
-    }
-  }
-
-
-  /* Date Handling
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  sliceRangeByTimes(range) {
-    let dayTable = (this.props as any).dayTable as DayTable
-    let segs = []
-    let segRange
-    let dayIndex
-
-    for (dayIndex = 0; dayIndex < dayTable.daysPerRow; dayIndex++) {
-
-      segRange = intersectRanges(range, this.dayRanges[dayIndex])
-
-      if (segRange) {
-        segs.push({
-          start: segRange.start,
-          end: segRange.end,
-          isStart: segRange.start.valueOf() === range.start.valueOf(),
-          isEnd: segRange.end.valueOf() === range.end.valueOf(),
-          dayIndex: dayIndex
-        })
-      }
-    }
-
-    return segs
+    return slicer.rangeToSegs(range)
   }
 
 
@@ -294,8 +245,8 @@ export default class TimeGrid extends StandardDateComponent {
 
   renderColumns() {
     let { theme, dateEnv } = this
-    let dayTable = (this.props as any).dayTable as DayTable
-    let { dates } = dayTable.daySeries
+    let slicer = (this.props as any).slicer as TimeGridSlicer
+    let { dates } = slicer.daySeries
     let dateProfile = this.props.dateProfile
 
     this.dayRanges = dates.map(function(dayDate) {
@@ -309,7 +260,7 @@ export default class TimeGrid extends StandardDateComponent {
     this.rootBgContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
         bgRow.renderHtml({
-          dates,
+          dates, // TODO: pass over cell objects
           dateProfile,
           renderIntroHtml: this.renderProps.renderBgIntroHtml
         }) +
@@ -339,7 +290,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Renders the DOM that the view's content will live in
   renderContentSkeleton() {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as TimeGridSlicer
     let parts = []
     let skeletonEl: HTMLElement
 
@@ -347,7 +298,7 @@ export default class TimeGrid extends StandardDateComponent {
       this.renderProps.renderIntroHtml()
     )
 
-    for (let i = 0; i < dayTable.colCnt; i++) {
+    for (let i = 0; i < slicer.colCnt; i++) {
       parts.push(
         '<td>' +
           '<div class="fc-content-col">' +
@@ -391,11 +342,11 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
   groupSegsByCol(segs) {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as TimeGridSlicer
     let segsByCol = []
     let i
 
-    for (i = 0; i < dayTable.colCnt; i++) {
+    for (i = 0; i < slicer.colCnt; i++) {
       segsByCol.push([])
     }
 
@@ -410,12 +361,12 @@ export default class TimeGrid extends StandardDateComponent {
   // Given segments grouped by column, insert the segments' elements into a parallel array of container
   // elements, each living within a column.
   attachSegsByCol(segsByCol, containerEls: HTMLElement[]) {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as TimeGridSlicer
     let col
     let segs
     let i
 
-    for (col = 0; col < dayTable.colCnt; col++) { // iterate each column grouping
+    for (col = 0; col < slicer.colCnt; col++) { // iterate each column grouping
       segs = segsByCol[col]
 
       for (i = 0; i < segs.length; i++) {
@@ -528,7 +479,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   // For each segment in an array, computes and assigns its top and bottom properties
   computeSegVerticals(segs) {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as TimeGridSlicer
     let eventMinHeight = this.opt('agendaEventMinHeight')
     let i
     let seg
@@ -536,7 +487,7 @@ export default class TimeGrid extends StandardDateComponent {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      dayDate = dayTable.daySeries.dates[seg.dayIndex]
+      dayDate = slicer.daySeries.dates[seg.dayIndex]
 
       seg.top = this.computeDateTop(seg.start, dayDate)
       seg.bottom = Math.max(
@@ -595,7 +546,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   queryHit(leftOffset, topOffset): Hit {
     let { dateEnv, snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as TimeGridSlicer
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
       let leftOrigin = offsetTracker.computeLeft()
@@ -610,7 +561,7 @@ export default class TimeGrid extends StandardDateComponent {
         let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
         let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
 
-        let dayDate = dayTable.getCellDate(0, colIndex) // row=0
+        let dayDate = slicer.getColDate(colIndex)
         let time = addDurations(
           this.props.dateProfile.minTime,
           multiplyDuration(this.snapDuration, snapIndex)

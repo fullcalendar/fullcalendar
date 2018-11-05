@@ -2,6 +2,7 @@ import { htmlToElement, createElement, appendToElement, prependToElement } from 
 import FillRenderer from '../component/renderers/FillRenderer'
 import DayGrid from './DayGrid'
 import { Seg } from '../component/DateComponent'
+import DayGridSlicer from './DayGridSlicer';
 
 
 export default class DayGridFillRenderer extends FillRenderer {
@@ -34,7 +35,8 @@ export default class DayGridFillRenderer extends FillRenderer {
   // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
   renderFillRow(type, seg: Seg): HTMLElement {
     let { dayGrid } = this
-    let colCnt = (dayGrid.props as any).dayTable.colCnt
+    let slicer = (dayGrid.props as any).slicer as DayGridSlicer
+    let colCnt = slicer.colCnt
     let startCol = seg.leftCol
     let endCol = seg.rightCol + 1
     let className

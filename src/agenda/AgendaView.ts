@@ -20,11 +20,12 @@ import { EventUiHash, hasBgRendering } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getAllDayHtml } from '../component/date-rendering'
 import { StandardDateComponentProps } from '../component/StandardDateComponent'
 import { DateMarker } from '../datelib/marker'
-import DayTable from '../component/DayTable';
 import { ComponentContext } from '../component/Component';
 import { ViewSpec } from '../structs/view-spec';
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator';
 import DayTableHeader from '../basic/DayTableHeader'
+import DayGridSlicer from '../basic/DayGridSlicer'
+import TimeGridSlicer from './TimeGridSlicer'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -44,7 +45,8 @@ export default class AgendaView extends View {
   scroller: ScrollComponent
   axisWidth: any // the width of the time axis running down the side
 
-  dayTable: DayTable
+  dayGridSlicer: DayGridSlicer
+  timeGridSlicer: TimeGridSlicer
 
   // reselectors
   filterEventsForTimeGrid: any
@@ -184,13 +186,12 @@ export default class AgendaView extends View {
       }
     }
 
-    let dayTable = this.dayTable =
-      this.buildDayTable(props.dateProfile)
+    let timeGridSlicer = this.buildTimeGridSlicer(props.dateProfile)
 
     if (this.header) {
       this.header.receiveProps({
         dateProfile: props.dateProfile,
-        dates: dayTable.daySeries.dates,
+        dates: timeGridSlicer.daySeries.dates,
         datesRepDistinctDays: true,
         renderIntroHtml: this.renderHeadIntroHtml
       })
@@ -202,7 +203,7 @@ export default class AgendaView extends View {
         dateSelection: timedSelection,
         eventDrag: this.buildEventDragForTimeGrid(props.eventDrag),
         eventResize: this.buildEventResizeForTimeGrid(props.eventResize),
-        dayTable
+        slicer: timeGridSlicer
       })
     )
 
@@ -213,19 +214,29 @@ export default class AgendaView extends View {
           dateSelection: allDaySeletion,
           eventDrag: this.buildEventDragForDayGrid(props.eventDrag),
           eventResize: this.buildEventResizeForDayGrid(props.eventResize),
-          dayTable
+          slicer: this.buildDayGridSlicer(props.dateProfile)
         })
       )
     }
   }
 
 
-  buildDayTable = reselector(function(this: AgendaView, dateProfile: DateProfile) {
-    return new DayTable(
+  buildDayGridSlicer = reselector(function(this: AgendaView, dateProfile: DateProfile) {
+    return new DayGridSlicer(
       dateProfile,
       this.dateProfileGenerator,
       this.isRtl,
       false
+    )
+  })
+
+
+  buildTimeGridSlicer = reselector(function(this: AgendaView, dateProfile) {
+    return new TimeGridSlicer(
+      dateProfile,
+      this.dateProfileGenerator,
+      this.isRtl,
+      this.dateEnv
     )
   })
 
@@ -393,7 +404,7 @@ export default class AgendaView extends View {
         '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '" ' + this.axisStyleAttr() + '>' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             this,
-            { date: weekStart, type: 'week', forceOff: this.dayTable.colCnt > 1 },
+            { date: weekStart, type: 'week', forceOff: this.header.props.dates.length > 1 },
             htmlEscape(weekText) // inner HTML
           ) +
         '</th>'

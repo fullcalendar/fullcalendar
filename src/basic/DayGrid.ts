@@ -24,7 +24,7 @@ import OffsetTracker from '../common/OffsetTracker'
 import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 import DayBgRow from './DayBgRow'
-import DayTable from '../component/DayTable'
+import DayGridSlicer from './DayGridSlicer'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -49,6 +49,7 @@ export default class DayGrid extends StandardDateComponent {
 
   eventRenderer: DayGridEventRenderer
   renderProps: RenderProps
+  slicer: DayGridSlicer
 
   bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
@@ -81,30 +82,9 @@ export default class DayGrid extends StandardDateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
 
-    range = intersectRanges(range, this.props.dateProfile.validRange)
-
-    if (range) {
-      let segs = dayTable.sliceRangeByRow(range)
-
-      for (let i = 0; i < segs.length; i++) {
-        let seg = segs[i]
-        seg.component = this
-
-        if (this.isRtl) {
-          seg.leftCol = dayTable.daysPerRow - 1 - seg.lastRowDayIndex
-          seg.rightCol = dayTable.daysPerRow - 1 - seg.firstRowDayIndex
-        } else {
-          seg.leftCol = seg.firstRowDayIndex
-          seg.rightCol = seg.lastRowDayIndex
-        }
-      }
-
-      return segs
-    } else {
-      return []
-    }
+    return slicer.rangeToSegs(range)
   }
 
 
@@ -134,9 +114,8 @@ export default class DayGrid extends StandardDateComponent {
 
   renderDates(dateProfile) {
     let { view, dateEnv } = this
-    let dayTable = (this.props as any).dayTable as DayTable
-    let rowCnt = dayTable.rowCnt
-    let colCnt = dayTable.colCnt
+    let slicer = (this.props as any).slicer as DayGridSlicer
+    let { rowCnt, colCnt } = slicer
     let html = ''
     let row
     let col
@@ -158,7 +137,7 @@ export default class DayGrid extends StandardDateComponent {
 
     this.colPositions = new PositionCache(
       this.el,
-      this.cellEls.slice(0, dayTable.colCnt), // only the first row
+      this.cellEls.slice(0, slicer.colCnt), // only the first row
       true,
       false // horizontal
     )
@@ -168,7 +147,7 @@ export default class DayGrid extends StandardDateComponent {
       for (col = 0; col < colCnt; col++) {
         this.publiclyTrigger('dayRender', [
           {
-            date: dateEnv.toDate(dayTable.getCellDate(row, col)),
+            date: dateEnv.toDate(slicer.getCellDate(row, col)),
             el: this.getCellEl(row, col),
             view
           }
@@ -187,15 +166,15 @@ export default class DayGrid extends StandardDateComponent {
   // `row` is the row number.
   renderDayRowHtml(row, isRigid) {
     let { theme } = this
-    let dayTable = (this.props as any).dayTable as DayTable
-    let { daysPerRow } = dayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
+    let { daysPerRow } = slicer
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
     if (isRigid) {
       classes.push('fc-rigid')
     }
 
-    let dates = dayTable.daySeries.dates.slice(
+    let dates = slicer.daySeries.dates.slice(
       row * daysPerRow,
       (row + 1) * daysPerRow
     )
@@ -235,9 +214,9 @@ export default class DayGrid extends StandardDateComponent {
 
 
   getIsDayNumbersVisible() {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
 
-    return dayTable.rowCnt > 1
+    return slicer.rowCnt > 1
   }
 
 
@@ -258,13 +237,13 @@ export default class DayGrid extends StandardDateComponent {
 
 
   renderNumberCellsHtml(row) {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
     let htmls = []
     let col
     let date
 
-    for (col = 0; col < dayTable.colCnt; col++) {
-      date = dayTable.getCellDate(row, col)
+    for (col = 0; col < slicer.colCnt; col++) {
+      date = slicer.getCellDate(row, col)
       htmls.push(this.renderNumberCellHtml(date))
     }
 
@@ -330,11 +309,11 @@ export default class DayGrid extends StandardDateComponent {
 
 
   buildPositionCaches() {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
 
     this.colPositions.build()
     this.rowPositions.build()
-    this.rowPositions.bottoms[dayTable.rowCnt - 1] += this.bottomCoordPadding // hack
+    this.rowPositions.bottoms[slicer.rowCnt - 1] += this.bottomCoordPadding // hack
   }
 
 
@@ -354,7 +333,7 @@ export default class DayGrid extends StandardDateComponent {
 
   queryHit(leftOffset, topOffset): Hit {
     let { colPositions, rowPositions, offsetTracker } = this
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
       let leftOrigin = offsetTracker.computeLeft()
@@ -366,7 +345,7 @@ export default class DayGrid extends StandardDateComponent {
         return {
           component: this,
           dateSpan: {
-            range: dayTable.getCellRange(row, col),
+            range: slicer.getCellRange(row, col),
             allDay: true
           },
           dayEl: this.getCellEl(row, col),
@@ -389,9 +368,9 @@ export default class DayGrid extends StandardDateComponent {
 
 
   getCellEl(row, col) {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
 
-    return this.cellEls[row * dayTable.colCnt + col]
+    return this.cellEls[row * slicer.colCnt + col]
   }
 
 
@@ -492,7 +471,7 @@ export default class DayGrid extends StandardDateComponent {
   // `row` is the row number.
   // `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
   limitRow(row, levelLimit) {
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
     let rowStruct = this.eventRenderer.rowStructs[row]
     let moreNodes = [] // array of "more" <a> links and <td> DOM nodes
     let col = 0 // col #, left-to-right (not chronologically)
@@ -578,7 +557,7 @@ export default class DayGrid extends StandardDateComponent {
         }
       }
 
-      emptyCellsUntil(dayTable.colCnt) // finish off the level
+      emptyCellsUntil(slicer.colCnt) // finish off the level
       rowStruct.moreEls = moreNodes // for easy undoing later
       rowStruct.limitedEls = limitedNodes // for easy undoing later
     }
@@ -608,13 +587,13 @@ export default class DayGrid extends StandardDateComponent {
   // Responsible for attaching click handler as well.
   renderMoreLink(row, col, hiddenSegs) {
     let { view, dateEnv } = this
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
 
     let a = createElement('a', { className: 'fc-more' })
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
     a.addEventListener('click', (ev) => {
       let clickOption = this.opt('eventLimitClick')
-      let date = dayTable.getCellDate(row, col)
+      let date = slicer.getCellDate(row, col)
       let moreEl = ev.currentTarget as HTMLElement
       let dayEl = this.getCellEl(row, col)
       let allSegs = this.getCellSegs(row, col)
@@ -653,12 +632,12 @@ export default class DayGrid extends StandardDateComponent {
   // Reveals the popover that displays all events within a cell
   showSegPopover(row, col, moreLink: HTMLElement, segs) {
     let { calendar, view, theme } = this
-    let dayTable = (this.props as any).dayTable as DayTable
+    let slicer = (this.props as any).slicer as DayGridSlicer
     let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
 
-    if (dayTable.rowCnt === 1) {
+    if (slicer.rowCnt === 1) {
       topEl = view.el // will cause the popover to cover any sort of header
     } else {
       topEl = this.rowEls[row] // will align with top of row
@@ -675,7 +654,7 @@ export default class DayGrid extends StandardDateComponent {
           el
         )
         this.updateSegPopoverTile(
-          dayTable.getCellDate(row, col),
+          slicer.getCellDate(row, col),
           segs
         )
       },

@@ -2,6 +2,7 @@ import { createElement, removeElement, appendToElement, prependToElement } from 
 import DayGrid from './DayGrid'
 import { Seg } from '../component/DateComponent'
 import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
+import DayGridSlicer from './DayGridSlicer'
 
 
 /* Event-rendering methods for the DayGrid class
@@ -72,7 +73,8 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // NOTE: modifies rowSegs
   renderSegRow(row, rowSegs) {
     let { dayGrid } = this
-    let colCnt = (dayGrid.props as any).dayTable.colCnt
+    let slicer = (dayGrid.props as any).slicer as DayGridSlicer
+    let colCnt = slicer.colCnt
     let segLevels = this.buildSegLevels(rowSegs) // group into sub-arrays of levels
     let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
     let tbody = document.createElement('tbody')
@@ -203,11 +205,11 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
   // Given a flat array of segments, return an array of sub-arrays, grouped by each segment's row
   groupSegRows(segs: Seg[]) {
-    let dayTable = (this.dayGrid.props as any).dayTable
+    let slicer = (this.dayGrid.props as any).slicer as DayGridSlicer
     let segRows = []
     let i
 
-    for (i = 0; i < dayTable.rowCnt; i++) {
+    for (i = 0; i < slicer.rowCnt; i++) {
       segRows.push([])
     }
 
@@ -221,9 +223,9 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
   // Computes a default `displayEventEnd` value if one is not expliclty defined
   computeDisplayEventEnd() {
-    let dayTable = (this.dayGrid.props as any).dayTable
+    let slicer = (this.dayGrid.props as any).slicer as DayGridSlicer
 
-    return dayTable.colCnt === 1 // we'll likely have space if there's only one day
+    return slicer.colCnt === 1 // we'll likely have space if there's only one day
   }
 
 }
