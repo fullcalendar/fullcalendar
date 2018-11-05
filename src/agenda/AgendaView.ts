@@ -42,6 +42,7 @@ export default class AgendaView extends View {
   dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
 
   scroller: ScrollComponent
+  axisWidth: any // the width of the time axis running down the side
 
   dayTable: DayTable
 
@@ -270,7 +271,7 @@ export default class AgendaView extends View {
     let scrollbarWidths
 
     // make all axis cells line up
-    matchCellWidths(findElements(this.el, '.fc-axis'))
+    this.axisWidth = matchCellWidths(findElements(this.el, '.fc-axis'))
 
     // hack to give the view some height prior to timeGrid's columns being rendered
     // TODO: separate setting height from scroller VS timeGrid.
@@ -389,7 +390,7 @@ export default class AgendaView extends View {
       weekText = dateEnv.format(weekStart, WEEK_HEADER_FORMAT)
 
       return '' +
-        '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '">' +
+        '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '" ' + this.axisStyleAttr() + '>' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             this,
             { date: weekStart, type: 'week', forceOff: this.dayTable.colCnt > 1 },
@@ -397,8 +398,17 @@ export default class AgendaView extends View {
           ) +
         '</th>'
     } else {
-      return '<th class="fc-axis ' + theme.getClass('widgetHeader') + '"></th>'
+      return '<th class="fc-axis ' + theme.getClass('widgetHeader') + '" ' + this.axisStyleAttr() + '></th>'
     }
+  }
+
+
+  // Generates an HTML attribute string for setting the width of the axis, if it is known
+  axisStyleAttr() {
+    if (this.axisWidth != null) {
+      return 'style="width:' + this.axisWidth + 'px"'
+    }
+    return ''
   }
 
 
@@ -410,14 +420,14 @@ export default class AgendaView extends View {
   renderTimeGridBgIntroHtml = () => {
     let { theme } = this
 
-    return '<td class="fc-axis ' + theme.getClass('widgetContent') + '"></td>'
+    return '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + this.axisStyleAttr() + '></td>'
   }
 
 
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderTimeGridIntroHtml = () => {
-    return '<td class="fc-axis"></td>'
+    return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>'
   }
 
 
@@ -430,7 +440,7 @@ export default class AgendaView extends View {
     let { theme } = this
 
     return '' +
-      '<td class="fc-axis ' + theme.getClass('widgetContent') + '">' +
+      '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + this.axisStyleAttr() + '>' +
         '<span>' + // needed for matchCellWidths
           getAllDayHtml(this) +
         '</span>' +
@@ -441,7 +451,7 @@ export default class AgendaView extends View {
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderDayGridIntroHtml = () => {
-    return '<td class="fc-axis"></td>'
+    return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>'
   }
 
 }
