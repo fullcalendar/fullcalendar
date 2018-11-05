@@ -37,7 +37,6 @@ export interface RenderProps {
 
 export default class TimeGrid extends StandardDateComponent {
 
-  mirrorRenderer: any
   renderProps: RenderProps
 
   dayRanges: DateRange[] // of start-end of each day
