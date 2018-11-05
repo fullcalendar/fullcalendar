@@ -140,8 +140,8 @@ export default class BasicView extends View {
   })
 
 
-  sliceDayDates = reselector(function(dayTable: DayTable) {
-    return dayTable.dayDates.slice(0, dayTable.colCnt)
+  sliceDayDates = reselector(function(dayTable: DayTable) { // TODO: put into dayTable
+    return dayTable.daySeries.dates.slice(0, dayTable.colCnt)
   })
 
 

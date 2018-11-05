@@ -24,6 +24,7 @@ import OffsetTracker from '../common/OffsetTracker'
 import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 import DayBgRow from './DayBgRow'
+import DayTable from '../component/DayTable'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -80,7 +81,7 @@ export default class DayGrid extends StandardDateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     range = intersectRanges(range, this.props.dateProfile.validRange)
 
@@ -133,7 +134,7 @@ export default class DayGrid extends StandardDateComponent {
 
   renderDates(dateProfile) {
     let { view, dateEnv } = this
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let rowCnt = dayTable.rowCnt
     let colCnt = dayTable.colCnt
     let html = ''
@@ -186,7 +187,7 @@ export default class DayGrid extends StandardDateComponent {
   // `row` is the row number.
   renderDayRowHtml(row, isRigid) {
     let { theme } = this
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let { daysPerRow } = dayTable
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
@@ -194,7 +195,7 @@ export default class DayGrid extends StandardDateComponent {
       classes.push('fc-rigid')
     }
 
-    let dates = dayTable.dayDates.slice(
+    let dates = dayTable.daySeries.dates.slice(
       row * daysPerRow,
       (row + 1) * daysPerRow
     )
@@ -234,7 +235,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   getIsDayNumbersVisible() {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     return dayTable.rowCnt > 1
   }
@@ -257,7 +258,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   renderNumberCellsHtml(row) {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let htmls = []
     let col
     let date
@@ -329,7 +330,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   buildPositionCaches() {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     this.colPositions.build()
     this.rowPositions.build()
@@ -353,7 +354,7 @@ export default class DayGrid extends StandardDateComponent {
 
   queryHit(leftOffset, topOffset): Hit {
     let { colPositions, rowPositions, offsetTracker } = this
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
       let leftOrigin = offsetTracker.computeLeft()
@@ -388,7 +389,7 @@ export default class DayGrid extends StandardDateComponent {
 
 
   getCellEl(row, col) {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     return this.cellEls[row * dayTable.colCnt + col]
   }
@@ -491,7 +492,7 @@ export default class DayGrid extends StandardDateComponent {
   // `row` is the row number.
   // `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
   limitRow(row, levelLimit) {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let rowStruct = this.eventRenderer.rowStructs[row]
     let moreNodes = [] // array of "more" <a> links and <td> DOM nodes
     let col = 0 // col #, left-to-right (not chronologically)
@@ -607,7 +608,7 @@ export default class DayGrid extends StandardDateComponent {
   // Responsible for attaching click handler as well.
   renderMoreLink(row, col, hiddenSegs) {
     let { view, dateEnv } = this
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     let a = createElement('a', { className: 'fc-more' })
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
@@ -652,7 +653,7 @@ export default class DayGrid extends StandardDateComponent {
   // Reveals the popover that displays all events within a cell
   showSegPopover(row, col, moreLink: HTMLElement, segs) {
     let { calendar, view, theme } = this
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options

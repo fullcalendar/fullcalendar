@@ -1,6 +1,7 @@
-import { DateMarker, addDays, diffDays } from '../datelib/marker'
+import { DateMarker, addDays } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
 import DateProfileGenerator, { DateProfile } from 'src/DateProfileGenerator'
+import DaySeries from './DaySeries'
 
 /*
 computes date/index/cell information.
@@ -8,10 +9,9 @@ doesn't do any rendering.
 */
 export default class DayTable {
 
-  dayDates: DateMarker[] // whole-day dates for each column. left to right
-  dayIndices: any // for each day from start, the offset
-  isRtl: boolean
+  daySeries: DaySeries
   daysPerRow: any
+  isRtl: boolean
   rowCnt: any
   colCnt: any
 
@@ -19,45 +19,29 @@ export default class DayTable {
   // Populates internal variables used for date calculation and rendering
   // breakOnWeeks - should create a new row for each week? not specified, so default is FALSY
   constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, isRtl: boolean, breakOnWeeks: boolean) {
-    let date: DateMarker = dateProfile.renderRange.start
-    let end: DateMarker = dateProfile.renderRange.end
-    let dayIndex = -1
-    let dayIndices = []
-    let dayDates: DateMarker[] = []
+    let daySeries = new DaySeries(dateProfile, dateProfileGenerator)
+    let { dates } = daySeries
     let daysPerRow
     let firstDay
     let rowCnt
 
-    this.isRtl = isRtl
-
-    while (date < end) { // loop each day from start to end
-      if (dateProfileGenerator.isHiddenDay(date)) {
-        dayIndices.push(dayIndex + 0.5) // mark that it's between indices
-      } else {
-        dayIndex++
-        dayIndices.push(dayIndex)
-        dayDates.push(date)
-      }
-      date = addDays(date, 1)
-    }
-
     if (breakOnWeeks) {
       // count columns until the day-of-week repeats
-      firstDay = dayDates[0].getUTCDay()
-      for (daysPerRow = 1; daysPerRow < dayDates.length; daysPerRow++) {
-        if (dayDates[daysPerRow].getUTCDay() === firstDay) {
+      firstDay = dates[0].getUTCDay()
+      for (daysPerRow = 1; daysPerRow < dates.length; daysPerRow++) {
+        if (dates[daysPerRow].getUTCDay() === firstDay) {
           break
         }
       }
-      rowCnt = Math.ceil(dayDates.length / daysPerRow)
+      rowCnt = Math.ceil(dates.length / daysPerRow)
     } else {
       rowCnt = 1
-      daysPerRow = dayDates.length
+      daysPerRow = dates.length
     }
 
-    this.dayDates = dayDates
-    this.dayIndices = dayIndices
+    this.daySeries = daySeries
     this.daysPerRow = daysPerRow
+    this.isRtl = isRtl
     this.rowCnt = rowCnt
     this.colCnt = this.computeColCnt()
   }
@@ -71,7 +55,7 @@ export default class DayTable {
 
   // Computes the DateMarker for the given cell
   getCellDate(row, col): DateMarker {
-    return this.dayDates[this.getCellDayIndex(row, col)]
+    return this.daySeries.dates[this.getCellDayIndex(row, col)]
   }
 
 
@@ -85,36 +69,17 @@ export default class DayTable {
 
 
   // Returns the number of day cells, chronologically, from the first of the grid (0-based)
-  getCellDayIndex(row, col) {
+  private getCellDayIndex(row, col) {
     return row * this.daysPerRow + this.getColDayIndex(col)
   }
 
 
   // Returns the numner of day cells, chronologically, from the first cell in *any given row*
-  getColDayIndex(col) {
+  private getColDayIndex(col) {
     if (this.isRtl) {
       return this.colCnt - 1 - col
     } else {
       return col
-    }
-  }
-
-
-  // Given a date, returns its chronolocial cell-index from the first cell of the grid.
-  // If the date lies between cells (because of hiddenDays), returns a floating-point value between offsets.
-  // If before the first offset, returns a negative number.
-  // If after the last offset, returns an offset past the last cell offset.
-  // Only works for *start* dates of cells. Will not work for exclusive end dates for cells.
-  getDateDayIndex(date) {
-    let dayIndices = this.dayIndices
-    let dayOffset = Math.floor(diffDays(this.dayDates[0], date))
-
-    if (dayOffset < 0) {
-      return dayIndices[0] - 1
-    } else if (dayOffset >= dayIndices.length) {
-      return dayIndices[dayIndices.length - 1] + 1
-    } else {
-      return dayIndices[dayOffset]
     }
   }
 
@@ -127,8 +92,8 @@ export default class DayTable {
   // range already normalized to start-of-day
   sliceRangeByRow(range) {
     let daysPerRow = this.daysPerRow
-    let rangeFirst = this.getDateDayIndex(range.start) // inclusive first index
-    let rangeLast = this.getDateDayIndex(addDays(range.end, -1)) // inclusive last index
+    let rangeFirst = this.daySeries.getDateDayIndex(range.start) // inclusive first index
+    let rangeLast = this.daySeries.getDateDayIndex(addDays(range.end, -1)) // inclusive last index
     let segs = []
     let row
     let rowFirst

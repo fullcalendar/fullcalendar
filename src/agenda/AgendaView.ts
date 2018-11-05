@@ -189,7 +189,7 @@ export default class AgendaView extends View {
     if (this.header) {
       this.header.receiveProps({
         dateProfile: props.dateProfile,
-        dates: dayTable.dayDates,
+        dates: dayTable.daySeries.dates,
         datesRepDistinctDays: true,
         renderIntroHtml: this.renderHeadIntroHtml
       })

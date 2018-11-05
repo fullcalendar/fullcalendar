@@ -14,6 +14,7 @@ import StandardDateComponent from '../component/StandardDateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 import DayBgRow from '../basic/DayBgRow'
+import DayTable from '../component/DayTable'
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -93,7 +94,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     range = intersectRanges(range, this.props.dateProfile.validRange)
 
@@ -123,7 +124,7 @@ export default class TimeGrid extends StandardDateComponent {
 
 
   sliceRangeByTimes(range) {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let segs = []
     let segRange
     let dayIndex
@@ -294,11 +295,11 @@ export default class TimeGrid extends StandardDateComponent {
 
   renderColumns() {
     let { theme, dateEnv } = this
-    let dayTable = (this.props as any).dayTable
-    let { dayDates } = dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
+    let { dates } = dayTable.daySeries
     let dateProfile = this.props.dateProfile
 
-    this.dayRanges = dayDates.map(function(dayDate) {
+    this.dayRanges = dates.map(function(dayDate) {
       return {
         start: dateEnv.add(dayDate, dateProfile.minTime),
         end: dateEnv.add(dayDate, dateProfile.maxTime)
@@ -309,7 +310,7 @@ export default class TimeGrid extends StandardDateComponent {
     this.rootBgContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
         bgRow.renderHtml({
-          dates: dayDates,
+          dates,
           dateProfile,
           renderIntroHtml: this.renderProps.renderBgIntroHtml
         }) +
@@ -339,7 +340,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Renders the DOM that the view's content will live in
   renderContentSkeleton() {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let parts = []
     let skeletonEl: HTMLElement
 
@@ -391,7 +392,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
   groupSegsByCol(segs) {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let segsByCol = []
     let i
 
@@ -410,7 +411,7 @@ export default class TimeGrid extends StandardDateComponent {
   // Given segments grouped by column, insert the segments' elements into a parallel array of container
   // elements, each living within a column.
   attachSegsByCol(segsByCol, containerEls: HTMLElement[]) {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let col
     let segs
     let i
@@ -528,7 +529,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   // For each segment in an array, computes and assigns its top and bottom properties
   computeSegVerticals(segs) {
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
     let eventMinHeight = this.opt('agendaEventMinHeight')
     let i
     let seg
@@ -536,7 +537,7 @@ export default class TimeGrid extends StandardDateComponent {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      dayDate = dayTable.dayDates[seg.dayIndex]
+      dayDate = dayTable.daySeries.dates[seg.dayIndex]
 
       seg.top = this.computeDateTop(seg.start, dayDate)
       seg.bottom = Math.max(
@@ -595,7 +596,7 @@ export default class TimeGrid extends StandardDateComponent {
 
   queryHit(leftOffset, topOffset): Hit {
     let { dateEnv, snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
-    let dayTable = (this.props as any).dayTable
+    let dayTable = (this.props as any).dayTable as DayTable
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
       let leftOrigin = offsetTracker.computeLeft()
