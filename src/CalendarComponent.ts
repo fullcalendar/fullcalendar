@@ -180,16 +180,18 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
     view.title = title // for the API
 
-    view.receiveProps({
-      dateProfile: props.dateProfile,
-      businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
-      eventStore: props.eventStore,
-      eventUis: props.eventUis,
-      dateSelection: props.dateSelection,
-      eventSelection: props.eventSelection,
-      eventDrag: props.eventDrag,
-      eventResize: props.eventResize
-    })
+    view.receiveProps(
+      assignTo({}, props, {
+        dateProfile: props.dateProfile,
+        businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
+        eventStore: props.eventStore,
+        eventUis: props.eventUis,
+        dateSelection: props.dateSelection,
+        eventSelection: props.eventSelection,
+        eventDrag: props.eventDrag,
+        eventResize: props.eventResize
+      })
+    )
   }
 
 

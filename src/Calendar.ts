@@ -15,7 +15,7 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi } from './structs/date-span'
 import reselector from './util/reselector'
-import { mapHash } from './util/object'
+import { mapHash, assignTo } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
@@ -374,17 +374,19 @@ export default class Calendar {
       }, this.el)
     }
 
-    component.receiveProps({
-      viewSpec,
-      dateProfile: state.dateProfile,
-      dateProfileGenerator: this.dateProfileGenerators[viewType],
-      eventStore: renderableEventStore,
-      eventUis,
-      dateSelection: state.dateSelection,
-      eventSelection: state.eventSelection,
-      eventDrag: state.eventDrag,
-      eventResize: state.eventResize
-    })
+    component.receiveProps(
+      assignTo({}, state, {
+        viewSpec,
+        dateProfile: state.dateProfile,
+        dateProfileGenerator: this.dateProfileGenerators[viewType],
+        eventStore: renderableEventStore,
+        eventUis,
+        dateSelection: state.dateSelection,
+        eventSelection: state.eventSelection,
+        eventDrag: state.eventDrag,
+        eventResize: state.eventResize
+      })
+    )
 
     if (savedScroll) {
       component.view.applyScroll(savedScroll)
