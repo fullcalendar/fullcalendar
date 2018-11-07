@@ -96,8 +96,11 @@ export { defineView, getViewConfig } from './ViewRegistry'
 export { default as FgEventRenderer } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
 export { default as AgendaView } from './agenda/AgendaView'
+export { default as AbstractAgendaView} from './agenda/AbstractAgendaView'
 export { default as TimeGrid } from './agenda/TimeGrid'
+export { default as TimeGridSlicer } from './agenda/TimeGridSlicer'
 export { default as DayGrid } from './basic/DayGrid'
+export { default as DayGridSlicer } from './basic/DayGridSlicer'
 export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
@@ -139,3 +142,5 @@ export { registerRecurringType, ParsedRecurring } from './structs/recurring-even
 
 export { createPlugin, PluginDef, PluginDefInput } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
+
+export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'

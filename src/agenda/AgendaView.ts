@@ -4,7 +4,7 @@ import DayGrid from '../basic/DayGrid'
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
-import DayTableHeader from '../basic/DayTableHeader'
+import DayHeader from '../common/DayHeader'
 import { StandardDateComponentProps } from '../component/StandardDateComponent'
 import { assignTo } from '../util/object'
 import reselector from '../util/reselector'
@@ -14,7 +14,7 @@ import TimeGridSlicer from './TimeGridSlicer'
 
 export default class AgendaView extends AbstractAgendaView {
 
-  header: DayTableHeader
+  header: DayHeader
 
   constructor(
     context: ComponentContext,
@@ -25,7 +25,7 @@ export default class AgendaView extends AbstractAgendaView {
     super(context, viewSpec, dateProfileGenerator, parentEl, TimeGrid, DayGrid)
 
     if (this.opt('columnHeader')) {
-      this.header = new DayTableHeader(
+      this.header = new DayHeader(
         this.context,
         this.el.querySelector('.fc-head-container')
       )

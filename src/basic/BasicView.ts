@@ -20,7 +20,7 @@ import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import reselector from '../util/reselector'
-import DayTableHeader from './DayTableHeader'
+import DayHeader from '../common/DayHeader'
 import DayGridSlicer from './DayGridSlicer'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -34,7 +34,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 export default class BasicView extends View {
 
   scroller: ScrollComponent
-  header: DayTableHeader
+  header: DayHeader
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
   colWeekNumbersVisible: boolean
 
@@ -72,7 +72,7 @@ export default class BasicView extends View {
     }
 
     if (this.opt('columnHeader')) {
-      this.header = new DayTableHeader(
+      this.header = new DayHeader(
         this.context,
         this.el.querySelector('.fc-head-container')
       )
