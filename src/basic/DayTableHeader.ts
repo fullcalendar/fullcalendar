@@ -50,17 +50,18 @@ export default class DayTableHeader extends Component<DayTableHeaderProps> {
 
     let colHeadFormat = createFormatter(
       this.opt('columnHeaderFormat') ||
-      this.computeColHeadFormat(datesRepDistinctDays, dates.length)
+      computeFallbackHeaderFormat(datesRepDistinctDays, dates.length)
     )
 
     for (let date of dates) {
       parts.push(
-        this.renderDateCell(
+        renderDateCell(
           date,
           props.dateProfile,
           datesRepDistinctDays,
           dates.length,
-          colHeadFormat
+          colHeadFormat,
+          this.context
         )
       )
     }
@@ -72,12 +73,10 @@ export default class DayTableHeader extends Component<DayTableHeaderProps> {
     this.thead.innerHTML = '<tr>' + parts.join('') + '</tr>'
   }
 
-  renderDateCell(date: DateMarker, dateProfile: DateProfile, datesRepDistinctDays, dayCnt, colHeadFormat): string {
-    return renderDateCell(date, dateProfile, datesRepDistinctDays, dayCnt, colHeadFormat, this.context)
-  }
+}
 
-  // Computes a default column header formatting string if `colFormat` is not explicitly defined
-  computeColHeadFormat(datesRepDistinctDays, dayCnt) {
+// Computes a default column header formatting string if `colFormat` is not explicitly defined
+function computeFallbackHeaderFormat(datesRepDistinctDays: boolean, dayCnt: number) {
     // if more than one week row, or if there are a lot of columns with not much space,
     // put just the day numbers will be in each cell
     if (!datesRepDistinctDays || dayCnt > 10) {
@@ -87,8 +86,6 @@ export default class DayTableHeader extends Component<DayTableHeaderProps> {
     } else {
       return { weekday: 'long' } // "Saturday"
     }
-  }
-
 }
 
 function renderDateCell(
