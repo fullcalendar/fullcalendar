@@ -38,7 +38,6 @@ export default class TimeGrid extends StandardDateComponent {
 
   renderProps: RenderProps
 
-  dayRanges: DateRange[] // of start-end of each day
   slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
   snapDuration: Duration // granularity of time for dragging and selecting
   snapsPerSlot: any
@@ -244,17 +243,10 @@ export default class TimeGrid extends StandardDateComponent {
 
 
   renderColumns() {
-    let { theme, dateEnv } = this
+    let { theme } = this
     let slicer = (this.props as any).slicer as TimeGridSlicer
     let { dates } = slicer.daySeries
     let dateProfile = this.props.dateProfile
-
-    this.dayRanges = dates.map(function(dayDate) {
-      return {
-        start: dateEnv.add(dayDate, dateProfile.minTime),
-        end: dateEnv.add(dayDate, dateProfile.maxTime)
-      }
-    })
 
     let bgRow = new DayBgRow(this.context)
     this.rootBgContainerEl.innerHTML =
