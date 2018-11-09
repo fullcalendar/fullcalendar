@@ -84,10 +84,16 @@ export default class DayGrid extends StandardDateComponent {
   rangeToSegs(range: DateRange): Seg[] {
     let slicer = (this.props as any).slicer as DayGridSlicer
 
-    return slicer.rangeToSegs(range).map((seg) => {
-      seg.component = this
-      return seg
-    })
+    range = intersectRanges(range, this.props.dateProfile.validRange)
+
+    if (range) {
+      return slicer.rangeToSegs(range).map((seg) => {
+        seg.component = this
+        return seg
+      })
+    } else {
+      return []
+    }
   }
 
 

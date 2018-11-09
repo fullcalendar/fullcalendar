@@ -10,6 +10,8 @@ import { assignTo } from '../util/object'
 import reselector from '../util/reselector'
 import DayGridSlicer from '../basic/DayGridSlicer'
 import TimeGridSlicer from './TimeGridSlicer'
+import DayTable from '../common/DayTable'
+import DaySeries from '../common/DaySeries'
 
 
 export default class AgendaView extends AbstractAgendaView {
@@ -90,10 +92,11 @@ export default class AgendaView extends AbstractAgendaView {
 
   buildDayGridSlicer = reselector(function(this: AgendaView, dateProfile: DateProfile) {
     return new DayGridSlicer(
-      dateProfile,
-      this.dateProfileGenerator,
-      this.isRtl,
-      false
+      new DayTable(
+        new DaySeries(this.props.dateProfile.renderRange, this.dateProfileGenerator), // TODO: reuse!!!
+        false // breakOnWeeks
+      ),
+      this.isRtl
     )
   })
 

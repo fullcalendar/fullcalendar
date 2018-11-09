@@ -22,6 +22,8 @@ import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import reselector from '../util/reselector'
 import DayHeader from '../common/DayHeader'
 import DayGridSlicer from './DayGridSlicer'
+import DayTable from '../common/DayTable'
+import DaySeries from '../common/DaySeries'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -129,10 +131,14 @@ export default class BasicView extends View {
 
   buildSlicer = reselector(function(this: BasicView, dateProfile: DateProfile) {
     return new DayGridSlicer(
-      dateProfile,
-      this.dateProfileGenerator,
-      this.isRtl,
-      /year|month|week/.test(dateProfile.currentRangeUnit)
+      new DayTable(
+        new DaySeries(
+          this.props.dateProfile.renderRange,
+          this.dateProfileGenerator
+        ),
+        /year|month|week/.test(dateProfile.currentRangeUnit)
+      ),
+      this.isRtl
     )
   })
 

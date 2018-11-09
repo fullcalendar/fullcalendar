@@ -1,27 +1,21 @@
-import { DateRange, intersectRanges } from '../datelib/date-range'
-import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
+import { DateRange } from '../datelib/date-range'
 import { Seg } from '../component/DateComponent'
 import { addDays, DateMarker } from '../datelib/marker'
-import DaySeries from '../common/DaySeries'
 import DayTable from '../common/DayTable'
 
 export default class DayGridSlicer {
 
-  private dayTable: DayTable
-  dateProfile: DateProfile
-  isRtl: boolean
   rowCnt: number
   colCnt: number
 
+  private dayTable: DayTable
+  private isRtl: boolean
 
-  constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, isRtl: boolean, breakOnWeeks: boolean) {
-    let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
-    let dayTable = new DayTable(daySeries, breakOnWeeks)
 
+  constructor(dayTable: DayTable, isRtl: boolean) {
     this.dayTable = dayTable
     this.rowCnt = dayTable.rowCnt
     this.colCnt = dayTable.colCnt
-    this.dateProfile = dateProfile
     this.isRtl = isRtl
   }
 
@@ -30,22 +24,16 @@ export default class DayGridSlicer {
   rangeToSegs(range: DateRange): Seg[] {
     let colCnt = this.dayTable.colCnt
 
-    range = intersectRanges(range, this.dateProfile.validRange)
-
-    if (range) {
-      return this.dayTable.sliceRange(range)
-        .map((dayTableSeg) => {
-          return {
-            isStart: dayTableSeg.isStart,
-            isEnd: dayTableSeg.isEnd,
-            row: dayTableSeg.row,
-            leftCol: this.isRtl ? (colCnt - 1 - dayTableSeg.lastCol) : dayTableSeg.firstCol,
-            rightCol: this.isRtl ? (colCnt - 1 - dayTableSeg.firstCol) : dayTableSeg.lastCol
-          }
-        })
-    }
-
-    return []
+    return this.dayTable.sliceRange(range)
+      .map((dayTableSeg) => {
+        return {
+          isStart: dayTableSeg.isStart,
+          isEnd: dayTableSeg.isEnd,
+          row: dayTableSeg.row,
+          leftCol: this.isRtl ? (colCnt - 1 - dayTableSeg.lastCol) : dayTableSeg.firstCol,
+          rightCol: this.isRtl ? (colCnt - 1 - dayTableSeg.firstCol) : dayTableSeg.lastCol
+        }
+      })
   }
 
 
@@ -62,6 +50,5 @@ export default class DayGridSlicer {
 
     return { start, end }
   }
-
 
 }
