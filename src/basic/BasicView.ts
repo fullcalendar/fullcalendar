@@ -131,14 +131,12 @@ export default class BasicView extends View {
 
   buildSlicer = reselector(function(this: BasicView, dateProfile: DateProfile) {
     return new DayGridSlicer(
-      new DayTable(
-        new DaySeries(
-          this.props.dateProfile.renderRange,
-          this.dateProfileGenerator
-        ),
-        /year|month|week/.test(dateProfile.currentRangeUnit)
+      new DaySeries(
+        this.props.dateProfile.renderRange,
+        this.dateProfileGenerator
       ),
-      this.isRtl
+      this.isRtl,
+      /year|month|week/.test(dateProfile.currentRangeUnit)
     )
   })
 

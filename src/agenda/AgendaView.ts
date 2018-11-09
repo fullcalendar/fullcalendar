@@ -92,11 +92,9 @@ export default class AgendaView extends AbstractAgendaView {
 
   buildDayGridSlicer = reselector(function(this: AgendaView, dateProfile: DateProfile) {
     return new DayGridSlicer(
-      new DayTable(
-        new DaySeries(this.props.dateProfile.renderRange, this.dateProfileGenerator), // TODO: reuse!!!
-        false // breakOnWeeks
-      ),
-      this.isRtl
+      new DaySeries(dateProfile.renderRange, this.dateProfileGenerator), // TODO: reuse!!!
+      this.isRtl,
+      false // breakOnWeeks
     )
   })
 

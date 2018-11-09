@@ -144,3 +144,5 @@ export { createPlugin, PluginDef, PluginDefInput } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
 
 export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
+
+export { default as DaySeries } from './common/DaySeries'

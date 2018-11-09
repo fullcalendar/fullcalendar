@@ -2,8 +2,9 @@ import { DateRange, intersectRanges } from '../datelib/date-range'
 import { Seg } from '../component/DateComponent'
 import { addDays, DateMarker } from '../datelib/marker'
 import DayTable from '../common/DayTable'
-import { EventRenderRange } from '../component/event-rendering';
-import { DateSpan } from '../structs/date-span';
+import { EventRenderRange } from '../component/event-rendering'
+import { DateSpan } from '../structs/date-span'
+import DaySeries from '../common/DaySeries'
 
 export default class DayGridSlicer {
 
@@ -14,11 +15,13 @@ export default class DayGridSlicer {
   private isRtl: boolean
 
 
-  constructor(dayTable: DayTable, isRtl: boolean) {
-    this.dayTable = dayTable
+  constructor(daySeries: DaySeries, isRtl: boolean, breakOnWeeks: boolean) {
+    let dayTable = new DayTable(daySeries, breakOnWeeks)
+
     this.rowCnt = dayTable.rowCnt
     this.colCnt = dayTable.colCnt
     this.isRtl = isRtl
+    this.dayTable = dayTable
   }
 
 
