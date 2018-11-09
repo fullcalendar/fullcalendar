@@ -1,6 +1,6 @@
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { DateRange, intersectRanges } from '../datelib/date-range'
-import DaySeries from '../component/DaySeries'
+import DaySeries from '../common/DaySeries'
 import { Seg } from '../component/DateComponent'
 import { DateEnv } from '../datelib/env'
 

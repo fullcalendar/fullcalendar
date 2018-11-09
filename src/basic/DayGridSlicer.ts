@@ -2,7 +2,7 @@ import { DateRange, intersectRanges } from '../datelib/date-range'
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { Seg } from '../component/DateComponent'
 import { addDays, DateMarker } from '../datelib/marker'
-import DaySeries from '../component/DaySeries'
+import DaySeries from '../common/DaySeries'
 
 
 export default class DayGridSlicer {
