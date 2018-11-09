@@ -74,7 +74,7 @@ export default class DayGrid extends StandardDateComponent {
     this.eventRenderer = new DayGridEventRenderer(this)
     this.mirrorRenderer = new DayGridMirrorRenderer(this)
     this.fillRenderer = new DayGridFillRenderer(this)
-    this.slicingType = 'all-day'
+    this.slicingType = 'all-day' // for eventStoreToRanges
 
     this.renderProps = renderProps
   }
