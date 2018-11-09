@@ -1,7 +1,6 @@
 import { htmlEscape } from '../util/html'
 import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
 import PositionCache from '../common/PositionCache'
-import { DateRange } from '../datelib/date-range'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
@@ -86,17 +85,6 @@ export default class TimeGrid extends StandardDateComponent {
     this.bottomRuleEl = el.querySelector('.fc-divider')
 
     this.renderProps = renderProps
-  }
-
-
-  // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  rangeToSegs(range: DateRange): Seg[] {
-    let slicer = (this.props as any).slicer as TimeGridSlicer
-
-    return slicer.rangeToSegs(range).map((seg) => {
-      seg.component = this
-      return seg
-    })
   }
 
 
@@ -400,6 +388,7 @@ export default class TimeGrid extends StandardDateComponent {
 
 
   renderNowIndicator(date) {
+    let slicer = (this.props as any).slicer as TimeGridSlicer
 
     // HACK: if date columns not ready for some reason (scheduler)
     if (!this.colContainerEls) {
@@ -408,10 +397,13 @@ export default class TimeGrid extends StandardDateComponent {
 
     // seg system might be overkill, but it handles scenario where line needs to be rendered
     //  more than once because of columns with the same date (resources columns for example)
-    let segs = this.rangeToSegs({
-      start: date,
-      end: addMs(date, 1) // protect against null range
-    })
+    let segs = slicer.dateSpanToSegs({
+      range: {
+        start: date,
+        end: addMs(date, 1) // protect against null range
+      },
+      allDay: false
+    }, this)
     let top = this.computeDateTop(date)
     let nodes = []
     let i

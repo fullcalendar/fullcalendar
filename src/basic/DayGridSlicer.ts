@@ -1,7 +1,9 @@
-import { DateRange } from '../datelib/date-range'
+import { DateRange, intersectRanges } from '../datelib/date-range'
 import { Seg } from '../component/DateComponent'
 import { addDays, DateMarker } from '../datelib/marker'
 import DayTable from '../common/DayTable'
+import { EventRenderRange } from '../component/event-rendering';
+import { DateSpan } from '../structs/date-span';
 
 export default class DayGridSlicer {
 
@@ -20,8 +22,36 @@ export default class DayGridSlicer {
   }
 
 
+  eventRangeToSegs(eventRange: EventRenderRange, component) {
+    let range = intersectRanges(eventRange.range, component.props.dateProfile.validRange)
+
+    if (range) {
+      return this.rangeToSegs(range).map(function(seg) {
+        seg.component = component
+        return seg
+      })
+    }
+
+    return []
+  }
+
+
+  dateSpanToSegs(dateSpan: DateSpan, component) {
+    let range = intersectRanges(dateSpan.range, component.props.dateProfile.validRange)
+
+    if (range) {
+      return this.rangeToSegs(range).map(function(seg) {
+        seg.component = component
+        return seg
+      })
+    }
+
+    return []
+  }
+
+
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  rangeToSegs(range: DateRange): Seg[] {
+  private rangeToSegs(range: DateRange): Seg[] {
     let colCnt = this.dayTable.colCnt
 
     return this.dayTable.sliceRange(range)

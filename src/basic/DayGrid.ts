@@ -19,7 +19,7 @@ import { Seg } from '../component/DateComponent'
 import StandardDateComponent from '../component/StandardDateComponent'
 import DayTile from './DayTile'
 import { Hit } from '../interactions/HitDragging'
-import { DateRange, rangeContainsMarker, intersectRanges } from '../datelib/date-range'
+import { rangeContainsMarker, intersectRanges } from '../datelib/date-range'
 import OffsetTracker from '../common/OffsetTracker'
 import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
@@ -77,23 +77,6 @@ export default class DayGrid extends StandardDateComponent {
     this.slicingType = 'all-day' // for eventStoreToRanges
 
     this.renderProps = renderProps
-  }
-
-
-  // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  rangeToSegs(range: DateRange): Seg[] {
-    let slicer = (this.props as any).slicer as DayGridSlicer
-
-    range = intersectRanges(range, this.props.dateProfile.validRange)
-
-    if (range) {
-      return slicer.rangeToSegs(range).map((seg) => {
-        seg.component = this
-        return seg
-      })
-    } else {
-      return []
-    }
   }
 
 

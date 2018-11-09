@@ -3,6 +3,8 @@ import { DateRange, intersectRanges } from '../datelib/date-range'
 import DaySeries from '../common/DaySeries'
 import { Seg } from '../component/DateComponent'
 import { DateEnv } from '../datelib/env'
+import { EventRenderRange } from '../component/event-rendering';
+import { DateSpan } from '../structs/date-span'
 
 export default class TimeGridSlicer {
 
@@ -20,8 +22,36 @@ export default class TimeGridSlicer {
   }
 
 
+  eventRangeToSegs(eventRange: EventRenderRange, component) {
+    let range = intersectRanges(eventRange.range, component.props.dateProfile.validRange)
+
+    if (range) {
+      return this.rangeToSegs(range).map(function(seg) {
+        seg.component = component
+        return seg
+      })
+    }
+
+    return []
+  }
+
+
+  dateSpanToSegs(dateSpan: DateSpan, component) {
+    let range = intersectRanges(dateSpan.range, component.props.dateProfile.validRange)
+
+    if (range) {
+      return this.rangeToSegs(range).map(function(seg) {
+        seg.component = component
+        return seg
+      })
+    }
+
+    return []
+  }
+
+
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
-  rangeToSegs(range: DateRange): Seg[] {
+  private rangeToSegs(range: DateRange): Seg[] {
     let segs = []
 
     // important to do ALL cols (tho can be optimized)

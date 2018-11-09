@@ -7,7 +7,6 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import { Duration, createDuration } from '../datelib/duration'
 import { ComponentContext } from './Component';
 import { parseEventDef, createEventInstance } from '../structs/event'
-import { DateRange } from '../datelib/date-range'
 
 export interface StandardDateComponentProps {
   dateProfile: DateProfile | null
@@ -40,9 +39,24 @@ export default class StandardDateComponent extends DateComponent<StandardDateCom
   }
 
 
-  // SHOULD BE ABSTRACT
-  // but Views extends from this class :(
-  rangeToSegs(range: DateRange, allDay: boolean): Seg[] {
+  eventRangeToSegs(eventRange: EventRenderRange): Seg[] {
+    let slicer = (this.props as any).slicer
+
+    if (slicer) {
+      return slicer.eventRangeToSegs(eventRange, this)
+    }
+
+    return []
+  }
+
+
+  dateSpanToSegs(selection: DateSpan): Seg[] {
+    let slicer = (this.props as any).slicer
+
+    if (slicer) {
+      return slicer.dateSpanToSegs(selection, this)
+    }
+
     return []
   }
 
@@ -288,7 +302,7 @@ export default class StandardDateComponent extends DateComponent<StandardDateCom
     let allSegs: Seg[] = []
 
     for (let eventRenderRange of eventRenderRanges) {
-      let segs = this.rangeToSegs(eventRenderRange.range, eventRenderRange.def.allDay)
+      let segs = this.eventRangeToSegs(eventRenderRange)
 
       for (let seg of segs) {
         seg.eventRange = eventRenderRange
@@ -303,7 +317,7 @@ export default class StandardDateComponent extends DateComponent<StandardDateCom
   }
 
   selectionToSegs(selection: DateSpan): Seg[] {
-    let segs = this.rangeToSegs(selection.range, selection.allDay)
+    let segs = this.dateSpanToSegs(selection)
 
     // fabricate an eventRange. important for mirror
     // TODO: make a separate utility for this?

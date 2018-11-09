@@ -11,6 +11,7 @@ import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { buildGotoAnchorHtml } from '../component/date-rendering'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
+import { EventRenderRange } from '../component/event-rendering';
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -97,7 +98,9 @@ export default class ListView extends View {
 
 
   // slices by day
-  rangeToSegs(range: DateRange, allDay: boolean) {
+  eventRangeToSegs(eventRange: EventRenderRange) {
+    let range = eventRange.range
+    let allDay = eventRange.def.allDay
     let { dateEnv } = this
     let dayRanges = this.dayRanges
     let dayIndex
