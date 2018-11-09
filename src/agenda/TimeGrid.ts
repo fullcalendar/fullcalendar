@@ -93,7 +93,10 @@ export default class TimeGrid extends StandardDateComponent {
   rangeToSegs(range: DateRange): Seg[] {
     let slicer = (this.props as any).slicer as TimeGridSlicer
 
-    return slicer.rangeToSegs(range)
+    return slicer.rangeToSegs(range).map((seg) => {
+      seg.component = this
+      return seg
+    })
   }
 
 
@@ -245,8 +248,14 @@ export default class TimeGrid extends StandardDateComponent {
   renderColumns() {
     let { theme } = this
     let slicer = (this.props as any).slicer as TimeGridSlicer
-    let { dates } = slicer.daySeries
     let dateProfile = this.props.dateProfile
+
+    let dates = []
+    for (let col = 0; col < slicer.colCnt; col++) {
+      dates.push(
+        slicer.getColDate(col)
+      )
+    }
 
     let bgRow = new DayBgRow(this.context)
     this.rootBgContainerEl.innerHTML =
@@ -259,6 +268,10 @@ export default class TimeGrid extends StandardDateComponent {
       '</table>'
 
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
+
+    if (this.isRtl) {
+      this.colEls.reverse()
+    }
 
     this.colPositions = new PositionCache(
       this.el,
@@ -322,6 +335,15 @@ export default class TimeGrid extends StandardDateComponent {
     this.bgContainerEls = findElements(skeletonEl, '.fc-bgevent-container')
     this.highlightContainerEls = findElements(skeletonEl, '.fc-highlight-container')
     this.businessContainerEls = findElements(skeletonEl, '.fc-business-container')
+
+    if (this.isRtl) {
+      this.colContainerEls.reverse()
+      this.mirrorContainerEls.reverse()
+      this.fgContainerEls.reverse()
+      this.bgContainerEls.reverse()
+      this.highlightContainerEls.reverse()
+      this.businessContainerEls.reverse()
+    }
 
     this.el.appendChild(skeletonEl)
   }
@@ -479,7 +501,7 @@ export default class TimeGrid extends StandardDateComponent {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      dayDate = slicer.daySeries.dates[seg.dayIndex]
+      dayDate = slicer.getColDate(seg.col)
 
       seg.top = this.computeDateTop(seg.start, dayDate)
       seg.bottom = Math.max(

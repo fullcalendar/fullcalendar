@@ -6,62 +6,28 @@ import { DateEnv } from '../datelib/env'
 
 export default class TimeGridSlicer {
 
+  dateEnv: DateEnv
   dateProfile: DateProfile
-  daySeries: DaySeries
-  dateRanges: DateRange[]
-  isRtl: boolean
+  daySeries: DaySeries // TODO: make private!
   colCnt: number
 
 
-  constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, isRtl: boolean, dateEnv: DateEnv) {
+  constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, dateEnv: DateEnv) {
+    this.dateEnv = dateEnv
     this.dateProfile = dateProfile
-    this.daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
-    this.dateRanges = this.daySeries.dates.map(function(dayDate) {
-      return {
-        start: dateEnv.add(dayDate, dateProfile.minTime),
-        end: dateEnv.add(dayDate, dateProfile.maxTime)
-      }
-    })
-    this.isRtl = isRtl
+    this.daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator) // should pass this in
     this.colCnt = this.daySeries.dates.length
   }
 
 
   // Slices up the given span (unzoned start/end with other misc data) into an array of segments
   rangeToSegs(range: DateRange): Seg[] {
-
-    range = intersectRanges(range, this.dateProfile.validRange)
-
-    if (range) {
-      let segs = this.sliceRangeByTimes(range)
-      let i
-
-      for (i = 0; i < segs.length; i++) {
-        if (this.isRtl) {
-          segs[i].col = this.daySeries.dates.length - 1 - segs[i].dayIndex
-        } else {
-          segs[i].col = segs[i].dayIndex
-        }
-
-        segs[i].component = this
-      }
-
-      return segs
-    } else {
-      return []
-    }
-  }
-
-
-  sliceRangeByTimes(range) {
-    let { dateRanges } = this
     let segs = []
-    let segRange
-    let dayIndex
 
-    for (dayIndex = 0; dayIndex < dateRanges.length; dayIndex++) {
-
-      segRange = intersectRanges(range, dateRanges[dayIndex])
+    // important to do ALL cols (tho can be optimized)
+    // because of extended minTime/maxTime
+    for (let col = 0; col < this.colCnt; col++) {
+      let segRange = intersectRanges(range, this.getColRange(col))
 
       if (segRange) {
         segs.push({
@@ -69,7 +35,7 @@ export default class TimeGridSlicer {
           end: segRange.end,
           isStart: segRange.start.valueOf() === range.start.valueOf(),
           isEnd: segRange.end.valueOf() === range.end.valueOf(),
-          dayIndex: dayIndex
+          col
         })
       }
     }
@@ -79,11 +45,18 @@ export default class TimeGridSlicer {
 
 
   getColDate(col: number) {
-    if (this.isRtl) {
-      col = this.colCnt - 1 - col
-    }
-
     return this.daySeries.dates[col]
+  }
+
+
+  getColRange(col: number): DateRange { // TODO: cache these
+    let { dateEnv, dateProfile } = this
+    let date = this.getColDate(col)
+
+    return {
+      start: dateEnv.add(date, dateProfile.minTime),
+      end: dateEnv.add(date, dateProfile.maxTime)
+    }
   }
 
 }

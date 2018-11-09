@@ -7,7 +7,7 @@ import DayTable from '../common/DayTable'
 
 export default class DayGridSlicer {
 
-  dayTable: DayTable
+  private dayTable: DayTable
   dateProfile: DateProfile
   isRtl: boolean
   rowCnt: number

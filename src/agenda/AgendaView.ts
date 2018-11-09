@@ -101,7 +101,6 @@ export default class AgendaView extends AbstractAgendaView {
     return new TimeGridSlicer(
       dateProfile,
       this.dateProfileGenerator,
-      this.isRtl,
       this.dateEnv
     )
   })
