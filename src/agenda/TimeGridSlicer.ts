@@ -15,7 +15,7 @@ export default class TimeGridSlicer {
 
   constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, isRtl: boolean, dateEnv: DateEnv) {
     this.dateProfile = dateProfile
-    this.daySeries = new DaySeries(dateProfile, dateProfileGenerator)
+    this.daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
     this.dateRanges = this.daySeries.dates.map(function(dayDate) {
       return {
         start: dateEnv.add(dayDate, dateProfile.minTime),

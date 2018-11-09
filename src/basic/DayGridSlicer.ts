@@ -16,7 +16,7 @@ export default class DayGridSlicer {
 
 
   constructor(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, isRtl: boolean, breakOnWeeks: boolean) {
-    let daySeries = new DaySeries(dateProfile, dateProfileGenerator)
+    let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
     let { dates } = daySeries
     let daysPerRow
     let firstDay
@@ -73,43 +73,28 @@ export default class DayGridSlicer {
   }
 
 
-  // Slices up a date range into a segment for every week-row it intersects with
-  // range already normalized to start-of-day
   sliceRangeByRow(range) {
-    let daysPerRow = this.daysPerRow
-    let rangeFirst = this.daySeries.getDateDayIndex(range.start) // inclusive first index
-    let rangeLast = this.daySeries.getDateDayIndex(addDays(range.end, -1)) // inclusive last index
+    let { daysPerRow } = this
+    let seriesSeg = this.daySeries.sliceRange(range)
     let segs = []
-    let row
-    let rowFirst
-    let rowLast // inclusive day-index range for current row
-    let segFirst
-    let segLast // inclusive day-index range for segment
 
-    for (row = 0; row < this.rowCnt; row++) {
-      rowFirst = row * daysPerRow
-      rowLast = rowFirst + daysPerRow - 1
+    if (seriesSeg) {
+      let { firstIndex, lastIndex } = seriesSeg
+      let index = firstIndex
 
-      // intersect segment's offset range with the row's
-      segFirst = Math.max(rangeFirst, rowFirst)
-      segLast = Math.min(rangeLast, rowLast)
+      while (index <= lastIndex) {
+        let row = Math.floor(index / daysPerRow)
+        let nextIndex = Math.min((row + 1) * daysPerRow, lastIndex + 1)
 
-      // deal with in-between indices
-      segFirst = Math.ceil(segFirst) // in-between starts round to next cell
-      segLast = Math.floor(segLast) // in-between ends round to prev cell
-
-      if (segFirst <= segLast) { // was there any intersection with the current row?
         segs.push({
-          row: row,
-
-          // normalize to start of row
-          firstRowDayIndex: segFirst - rowFirst,
-          lastRowDayIndex: segLast - rowFirst,
-
-          // must be matching integers to be the segment's start/end
-          isStart: segFirst === rangeFirst,
-          isEnd: segLast === rangeLast
+          row,
+          firstRowDayIndex: index % daysPerRow,
+          lastRowDayIndex: (nextIndex - 1) % daysPerRow,
+          isStart: seriesSeg.isStart && index === firstIndex,
+          isEnd: seriesSeg.isEnd && (nextIndex - 1) === lastIndex
         })
+
+        index = nextIndex
       }
     }
 
