@@ -138,7 +138,15 @@ export default class BasicView extends View {
 
 
   sliceDayDates = reselector(function(slicer: DayGridSlicer) { // TODO: put into slicer
-    return slicer.daySeries.dates.slice(0, slicer.colCnt)
+    let dates = []
+
+    for (let col = 0; col < slicer.colCnt; col++) {
+      dates.push(
+        slicer.getCellDate(0, col)
+      )
+    }
+
+    return dates
   })
 
 
@@ -327,7 +335,7 @@ export default class BasicView extends View {
         '<td class="fc-week-number">' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             this,
-            { date: weekStart, type: 'week', forceOff: slicer.daySeries.dates.length === 1 },
+            { date: weekStart, type: 'week', forceOff: slicer.colCnt === 1 },
             dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
           ) +
         '</td>'

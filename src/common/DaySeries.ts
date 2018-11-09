@@ -12,8 +12,6 @@ export interface DaySeriesSeg {
 export default class DaySeries {
 
   cnt: number
-
-  // TODO: make private
   dates: DateMarker[] // whole-day dates for each column. left to right
   indices: number[] // for each day from start, the offset
 

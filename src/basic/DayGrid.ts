@@ -84,7 +84,10 @@ export default class DayGrid extends StandardDateComponent {
   rangeToSegs(range: DateRange): Seg[] {
     let slicer = (this.props as any).slicer as DayGridSlicer
 
-    return slicer.rangeToSegs(range)
+    return slicer.rangeToSegs(range).map((seg) => {
+      seg.component = this
+      return seg
+    })
   }
 
 
@@ -128,6 +131,10 @@ export default class DayGrid extends StandardDateComponent {
     this.rowEls = findElements(this.el, '.fc-row')
     this.cellEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
+    if (this.isRtl) {
+      this.cellEls.reverse()
+    }
+
     this.rowPositions = new PositionCache(
       this.el,
       this.rowEls,
@@ -167,17 +174,18 @@ export default class DayGrid extends StandardDateComponent {
   renderDayRowHtml(row, isRigid) {
     let { theme } = this
     let slicer = (this.props as any).slicer as DayGridSlicer
-    let { daysPerRow } = slicer
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
     if (isRigid) {
       classes.push('fc-rigid')
     }
 
-    let dates = slicer.daySeries.dates.slice(
-      row * daysPerRow,
-      (row + 1) * daysPerRow
-    )
+    let dates = []
+    for (let col = 0; col < slicer.colCnt; col++) {
+      dates.push(
+        slicer.getCellDate(row, col)
+      )
+    }
 
     let bgRow = new DayBgRow(this.context)
 
@@ -245,6 +253,10 @@ export default class DayGrid extends StandardDateComponent {
     for (col = 0; col < slicer.colCnt; col++) {
       date = slicer.getCellDate(row, col)
       htmls.push(this.renderNumberCellHtml(date))
+    }
+
+    if (this.isRtl) {
+      htmls.reverse()
     }
 
     return htmls.join('')
