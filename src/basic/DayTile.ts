@@ -8,15 +8,15 @@ import { computeRect } from '../util/dom-geom'
 import { Rect, pointInsideRect } from '../util/geom'
 import { addDays, DateMarker } from '../datelib/marker'
 import { removeElement } from '../util/dom-manip'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { ComponentContext } from '../component/Component'
+import { EventInstanceHash } from '../structs/event'
 
 export interface DayTileProps {
   date: DateMarker
   segs: Seg[]
   eventSelection: string
-  eventDrag: EventInteractionUiState
-  eventResize: EventInteractionUiState
+  eventDragInstances: EventInstanceHash
+  eventResizeInstances: EventInstanceHash
 }
 
 export default class DayTile extends DateComponent<DayTileProps> {
@@ -36,10 +36,10 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
   render(props: DayTileProps) {
     let dateId = this.subrender('renderFrame', [ props.date ])
-    let evId = this.subrender('renderFgEventSegs', [ props.segs, dateId ], 'unrenderEvents')
+    let evId = this.subrender('renderEventSegs', [ props.segs, dateId ], 'unrenderEvents')
     this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
-    this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState')
-    this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState')
+    this.subrender('renderEventDrag', [ props.eventDragInstances, dateId ], 'unrenderEventDrag')
+    this.subrender('renderEventResize', [ props.eventResizeInstances, dateId ], 'unrenderEventResize')
   }
 
   renderFrame(date: DateMarker) {
@@ -65,27 +65,27 @@ export default class DayTile extends DateComponent<DayTileProps> {
     this.segContainerEl = this.el.querySelector('.fc-event-container')
   }
 
-  renderEventDragState(state: EventInteractionUiState) {
-    if (state) {
-      this.eventRenderer.hideByHash(state.affectedEvents.instances)
+  renderEventDrag(affectedInstances: EventInstanceHash) {
+    if (affectedInstances) {
+      this.eventRenderer.hideByHash(affectedInstances)
     }
   }
 
-  unrenderEventDragState(state: EventInteractionUiState) {
-    if (state) {
-      this.eventRenderer.showByHash(state.affectedEvents.instances)
+  unrenderEventDrag(affectedInstances: EventInstanceHash) {
+    if (affectedInstances) {
+      this.eventRenderer.showByHash(affectedInstances)
     }
   }
 
-  renderEventResizeState(state: EventInteractionUiState) {
-    if (state) {
-      this.eventRenderer.hideByHash(state.affectedEvents.instances)
+  renderEventResize(affectedInstances: EventInstanceHash) {
+    if (affectedInstances) {
+      this.eventRenderer.hideByHash(affectedInstances)
     }
   }
 
-  unrenderEventResizeState(state: EventInteractionUiState) {
-    if (state) {
-      this.eventRenderer.showByHash(state.affectedEvents.instances)
+  unrenderEventResize(affectedInstances: EventInstanceHash) {
+    if (affectedInstances) {
+      this.eventRenderer.showByHash(affectedInstances)
     }
   }
 

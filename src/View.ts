@@ -1,19 +1,30 @@
 import { assignTo } from './util/object'
 import { parseFieldSpecs } from './util/misc'
-import DateProfileGenerator from './DateProfileGenerator'
-import StandardDateComponent from './component/StandardDateComponent'
+import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { DateMarker, addMs } from './datelib/marker'
-import { createDuration } from './datelib/duration'
+import { createDuration, Duration } from './datelib/duration'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { ViewSpec } from './structs/view-spec'
 import { createElement } from './util/dom-manip'
 import { ComponentContext } from './component/Component'
+import DateComponent from './component/DateComponent'
+import { EventStore } from './structs/event-store'
+import { EventUiHash } from './component/event-rendering'
+import { DateSpan } from './structs/date-span'
+import { EventInteractionUiState } from './interactions/event-interaction-state'
 
+export interface ViewProps {
+  dateProfile: DateProfile | null
+  businessHours: EventStore
+  eventStore: EventStore
+  eventUis: EventUiHash
+  dateSelection: DateSpan | null
+  eventSelection: string
+  eventDrag: EventInteractionUiState | null
+  eventResize: EventInteractionUiState | null
+}
 
-/* An abstract class from which other views inherit from
-----------------------------------------------------------------------------------------------------------------------*/
-
-export default abstract class View extends StandardDateComponent {
+export default abstract class View extends DateComponent<ViewProps> {
 
   // config properties, initialized after class on prototype
   usesMinMaxTime: boolean // whether minTime/maxTime will affect the activeRange. Views must opt-in.
@@ -34,6 +45,7 @@ export default abstract class View extends StandardDateComponent {
   queuedScroll: any
 
   eventOrderSpecs: any // criteria for ordering events when they have same date/time
+  nextDayThreshold: Duration
 
   // now indicator
   isNowIndicatorRendered: boolean
@@ -60,6 +72,7 @@ export default abstract class View extends StandardDateComponent {
     this.dateProfileGenerator = dateProfileGenerator
     this.type = viewSpec.type
     this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'))
+    this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
 
     parentEl.appendChild(this.el)
     this.initialize()
@@ -88,6 +101,108 @@ export default abstract class View extends StandardDateComponent {
 
   get currentEnd(): Date {
     return this.dateEnv.toDate(this.props.dateProfile.currentRange.end)
+  }
+
+
+  // General Rendering
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  render(props: ViewProps) {
+    this.subrender('afterSkeletonRender', [], 'beforeSkeletonUnrender', true)
+    let dateId = this.subrender('_renderDates', [ props.dateProfile ], '_unrenderDates', true)
+    this.subrender('renderBusinessHours', [ props.businessHours, props.dateProfile, dateId ], 'unrenderBusinessHours', true)
+    this.subrender('renderDateSelectionState', [ props.dateSelection, dateId ], 'unrenderDateSelectionState', true)
+    let evId = this.subrender('renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents', true)
+    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection', true)
+    this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState', true)
+    this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState', true)
+  }
+
+  _renderDates(dateProfile: DateProfile) {
+    this.renderDates(dateProfile)
+    this.afterDatesRender()
+  }
+
+  _unrenderDates() {
+    this.beforeDatesUnrender()
+    this.unrenderDates()
+  }
+
+  renderDates(dateProfile: DateProfile) {}
+  unrenderDates() {}
+
+  renderBusinessHours(businessHours: EventStore) {}
+  unrenderBusinessHours() {}
+
+  renderDateSelectionState(selection: DateSpan) {}
+  unrenderDateSelectionState() {}
+
+  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {}
+  unrenderEvents() {}
+
+  renderEventSelection(instanceId: string) {}
+  unrenderEventSelection() {}
+
+  renderEventDragState(state: EventInteractionUiState) {}
+  unrenderEventDragState() {}
+
+  renderEventResizeState(state: EventInteractionUiState) {}
+  unrenderEventResizeState() {}
+
+
+  // Sizing
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+    let map = this.dirtySizeMethodNames
+
+    if (isResize || map.has('afterSkeletonRender') || map.has('_renderDates') || map.has('renderEvents')) {
+      // sort of the catch-all sizing
+      // anything that might cause dimension changes
+      this.updateBaseSize(viewHeight, isAuto, isResize)
+    }
+
+    if (isResize || map.has('renderBusinessHours')) {
+      this.computeBusinessHoursSize()
+    }
+
+    if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
+      if (this.mirrorRenderer) {
+        this.mirrorRenderer.computeSizes()
+      }
+      if (this.fillRenderer) {
+        this.fillRenderer.computeSizes('highlight')
+      }
+    }
+
+    if (isResize || map.has('renderEvents')) {
+      this.computeEventsSize()
+    }
+
+    if (isResize || map.has('renderBusinessHours')) {
+      this.assignBusinessHoursSize()
+    }
+
+    if (isResize || map.has('renderDateSelectionState') || map.has('renderEventDragState') || map.has('renderEventResizeState')) {
+      if (this.mirrorRenderer) {
+        this.mirrorRenderer.assignSizes()
+      }
+      if (this.fillRenderer) {
+        this.fillRenderer.assignSizes('highlight')
+      }
+    }
+
+    if (isResize || map.has('renderEvents')) {
+      this.assignEventsSize()
+    }
+
+    this.dirtySizeMethodNames = new Map()
+  }
+
+
+  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
   }
 
 

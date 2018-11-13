@@ -1,8 +1,7 @@
 import Component, { ComponentContext } from './Component'
 import { EventStore } from '../structs/event-store'
-import { EventRenderRange } from './event-rendering'
+import { EventRenderRange, hasBgRendering } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { EventInstanceHash } from '../structs/event'
 import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from '../interactions/HitDragging'
@@ -18,12 +17,19 @@ export type DateComponentHash = { [uid: string]: DateComponent<any> }
 // NOTE: for fg-events, eventRange.range is NOT sliced,
 // thus, we need isStart/isEnd
 export interface Seg {
-  component?: DateComponent<any>
+  component: DateComponent<any>
   isStart: boolean
   isEnd: boolean
   eventRange?: EventRenderRange
   el?: HTMLElement
   [otherProp: string]: any
+}
+
+export interface EventSegUiInteractionState {
+  affectedInstances: EventInstanceHash
+  segs: Seg[]
+  isEvent: boolean
+  sourceSeg: any
 }
 
 /*
@@ -107,12 +113,18 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // ---------------------------------------------------------------------------------------------------------------
 
   renderDateSelectionSegs(segs: Seg[]) {
-    if (this.fillRenderer) {
-      this.fillRenderer.renderSegs('highlight', segs)
+    if (segs) {
+      if (this.fillRenderer) {
+        this.fillRenderer.renderSegs('highlight', segs)
+      }
     }
   }
 
-  unrenderDateSelection(selection: DateSpan) {
+  unrenderDateSelection() {
+    if (this.mirrorRenderer) {
+      this.mirrorRenderer.unrender()
+    }
+
     if (this.fillRenderer) {
       this.fillRenderer.unrender('highlight')
     }
@@ -121,6 +133,22 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
 
   // Events
   // -----------------------------------------------------------------------------------------------------------------
+
+  renderEventSegs(segs: Seg[]) {
+    let bgSegs = []
+    let fgSegs = []
+
+    for (let seg of segs) {
+      if (hasBgRendering(seg.eventRange.ui)) {
+        bgSegs.push(seg)
+      } else {
+        fgSegs.push(seg)
+      }
+    }
+
+    this.renderFgEventSegs(fgSegs)
+    this.renderBgEventSegs(bgSegs)
+  }
 
   renderFgEventSegs(segs: Seg[]) {
     if (this.eventRenderer) {
@@ -135,10 +163,17 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   }
 
   unrenderEvents() {
+    this.unrenderFgEventSegs()
+    this.unrenderBgEventSegs()
+  }
+
+  unrenderFgEventSegs() {
     if (this.eventRenderer) {
       this.eventRenderer.unrender()
     }
+  }
 
+  unrenderBgEventSegs() {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('bgEvent')
     }
@@ -185,33 +220,42 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // Event Drag-n-Drop Rendering (for both events and external elements)
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderEventDragSegs(segs: Seg[], isEvent: boolean, sourceSeg: Seg | null, affectedInstances: EventInstanceHash) {
+  renderEventDragSegs(state: EventSegUiInteractionState) {
+    if (state) {
+      let { isEvent, segs, sourceSeg } = state
 
-    if (this.eventRenderer) {
-      this.eventRenderer.hideByHash(affectedInstances)
-    }
-
-    // if the user is dragging something that is considered an event with real event data,
-    // and this component likes to do drag mirrors OR the component where the seg came from
-    // likes to do drag mirrors, then render a drag mirror.
-    if (isEvent && (this.doesDragMirror || sourceSeg && sourceSeg.component.doesDragMirror)) {
-      if (this.mirrorRenderer) {
-        this.mirrorRenderer.renderSegs(segs, { isDragging: true, sourceSeg })
+      if (this.eventRenderer) {
+        this.eventRenderer.hideByHash(state.affectedInstances)
       }
-    }
 
-    // if it would be impossible to render a drag mirror OR this component likes to render
-    // highlights, then render a highlight.
-    if (!isEvent || this.doesDragHighlight) {
-      if (this.fillRenderer) {
-        this.fillRenderer.renderSegs('highlight', segs)
+      // if the user is dragging something that is considered an event with real event data,
+      // and this component likes to do drag mirrors OR the component where the seg came from
+      // likes to do drag mirrors, then render a drag mirror.
+      if (isEvent && (this.doesDragMirror || sourceSeg && sourceSeg.component.doesDragMirror)) {
+        if (this.mirrorRenderer) {
+          this.mirrorRenderer.renderSegs(segs, { isDragging: true, sourceSeg })
+        }
+      }
+
+      // if it would be impossible to render a drag mirror OR this component likes to render
+      // highlights, then render a highlight.
+      if (!isEvent || this.doesDragHighlight) {
+        if (this.fillRenderer) {
+          this.fillRenderer.renderSegs('highlight', segs)
+        }
       }
     }
   }
 
-  unrenderEventDrag(state: EventInteractionUiState) {
+  unrenderEventDragSegs(state: EventSegUiInteractionState) {
+    if (state) {
+      this.unrenderEventDrag(state.affectedInstances)
+    }
+  }
+
+  unrenderEventDrag(affectedInstances: EventInstanceHash) {
     if (this.eventRenderer) {
-      this.eventRenderer.showByHash(state.affectedEvents.instances)
+      this.eventRenderer.showByHash(affectedInstances)
     }
 
     if (this.mirrorRenderer) {
@@ -227,17 +271,23 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // Event Resizing
   // ---------------------------------------------------------------------------------------------------------------
 
-  renderEventResizeSegs(segs: Seg[], sourceSeg, affectedInstances: EventInstanceHash) {
+  renderEventResizeSegs(state: EventSegUiInteractionState) {
     if (this.eventRenderer) {
-      this.eventRenderer.hideByHash(affectedInstances)
+      this.eventRenderer.hideByHash(state.affectedInstances)
     }
 
     // subclasses can override and do something with segs
   }
 
-  unrenderEventResize(state: EventInteractionUiState) {
+  unrenderEventResizeSegs(state: EventSegUiInteractionState) {
+    if (state) {
+      this.unrenderEventResize(state.affectedInstances)
+    }
+  }
+
+  unrenderEventResize(affectedInstances: EventInstanceHash) {
     if (this.eventRenderer) {
-      this.eventRenderer.showByHash(state.affectedEvents.instances)
+      this.eventRenderer.showByHash(affectedInstances)
     }
 
     if (this.mirrorRenderer) {

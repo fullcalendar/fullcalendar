@@ -1,19 +1,19 @@
 import { htmlEscape } from '../util/html'
-import { htmlToElement, findElements, createElement, removeElement, applyStyle } from '../util/dom-manip'
+import { htmlToElement, findElements, removeElement, applyStyle, createElement } from '../util/dom-manip'
 import PositionCache from '../common/PositionCache'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
 import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDurations, asRoughMs } from '../datelib/duration'
-import { startOfDay, DateMarker, addMs } from '../datelib/marker'
+import { startOfDay, DateMarker } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import { ComponentContext } from '../component/Component'
-import { Seg } from '../component/DateComponent'
-import StandardDateComponent from '../component/StandardDateComponent'
+import DateComponent, { Seg, EventSegUiInteractionState } from '../component/DateComponent'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 import DayBgRow from '../basic/DayBgRow'
-import TimeGridSlicer from './TimeGridSlicer'
+import { DateProfile } from '../DateProfileGenerator'
+
 
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -33,7 +33,29 @@ export interface RenderProps {
   renderIntroHtml: () => string
 }
 
-export default class TimeGrid extends StandardDateComponent {
+export interface TimeGridSeg extends Seg {
+  col: number
+  start: DateMarker
+  end: DateMarker
+}
+
+export interface TimeGridCell {
+  date: DateMarker
+  htmlAttrs?: string
+}
+
+export interface TimeGridProps {
+  dateProfile: DateProfile
+  cells: TimeGridCell[]
+  businessHourSegs: TimeGridSeg[]
+  eventSegs: TimeGridSeg[]
+  dateSelectionSegs: TimeGridSeg[]
+  eventSelection: string
+  eventDrag: EventSegUiInteractionState | null
+  eventResize: EventSegUiInteractionState | null
+}
+
+export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   renderProps: RenderProps
 
@@ -43,6 +65,7 @@ export default class TimeGrid extends StandardDateComponent {
   labelFormat: DateFormatter // formatting string for times running along vertical axis
   labelInterval: Duration // duration of how often a label should be displayed for a slot
 
+  colCnt: number
   colEls: HTMLElement[] // cells elements in the day-row background
   slatContainerEl: HTMLElement // div that wraps all the slat rows
   slatEls: HTMLElement[] // elements running horizontally across all columns
@@ -71,7 +94,6 @@ export default class TimeGrid extends StandardDateComponent {
     this.eventRenderer = new TimeGridEventRenderer(this)
     this.mirrorRenderer = new TimeGridMirrorRenderer(this)
     this.fillRenderer = new TimeGridFillRenderer(this)
-    this.slicingType = 'timed'
 
     this.processOptions()
 
@@ -153,29 +175,80 @@ export default class TimeGrid extends StandardDateComponent {
   }
 
 
-  /* Date Rendering
+  /* Rendering
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderDates() {
-    this.renderSlats()
-    this.renderColumns()
+  render(props: TimeGridProps) {
+    let cells = props.cells
+    this.colCnt = cells.length
+
+    this.subrender('renderSlats', [ props.dateProfile ], null, true)
+    let dateId = this.subrender('renderColumns', [ props.cells, props.dateProfile ], 'unrenderColumns', true)
+    this.subrender('renderBusinessHourSegs', [ props.businessHourSegs, props.dateProfile, dateId ], 'unrenderBusinessHours', true)
+    this.subrender('renderDateSelectionSegs', [ props.dateSelectionSegs, dateId ], 'unrenderDateSelection', true)
+    let evId = this.subrender('renderEventSegs', [ props.eventSegs, dateId ], 'unrenderEvents', true)
+    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection', true)
+    this.subrender('renderEventDragSegs', [ props.eventDrag, dateId ], 'unrenderEventDragSegs', true)
+    this.subrender('renderEventResizeSegs', [ props.eventResize, dateId ], 'unrenderEventResizeSegs', true)
+  }
+
+  // TODO: kill
+  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+    let map = this.dirtySizeMethodNames
+
+    if (isResize || map.has('renderSlats')) {
+      this.buildSlatPositions()
+    }
+
+    if (isResize || map.has('renderColumns')) {
+      this.buildColPositions()
+    }
+
+    if (isResize || map.has('renderBusinessHourSegs')) {
+      this.computeBusinessHoursSize()
+    }
+
+    if (isResize || map.has('renderDateSelectionSegs') || map.has('renderEventDragSegs') || map.has('renderEventResizeSegs')) {
+      if (this.mirrorRenderer) {
+        this.mirrorRenderer.computeSizes()
+      }
+      if (this.fillRenderer) {
+        this.fillRenderer.computeSizes('highlight')
+      }
+    }
+
+    if (isResize || map.has('renderEventSegs')) {
+      this.computeEventsSize()
+    }
+
+    if (isResize || map.has('renderBusinessHourSegs')) {
+      this.assignBusinessHoursSize()
+    }
+
+    if (isResize || map.has('renderDateSelectionSegs') || map.has('renderEventDragSegs') || map.has('renderEventResizeSegs')) {
+      if (this.mirrorRenderer) {
+        this.mirrorRenderer.assignSizes()
+      }
+      if (this.fillRenderer) {
+        this.fillRenderer.assignSizes('highlight')
+      }
+    }
+
+    if (isResize || map.has('renderEventSegs')) {
+      this.assignEventsSize()
+    }
+
+    this.dirtySizeMethodNames = new Map()
   }
 
 
-  unrenderDates() {
-    this.unrenderColumns()
-    // we don't unrender slats because won't change between date navigation,
-    // and if slat-related settings are changed, the whole component will be rerendered.
-  }
-
-
-  renderSlats() {
+  renderSlats(dateProfile: DateProfile) {
     let { theme } = this
 
     this.slatContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
-        this.renderSlatRowHtml() +
+        this.renderSlatRowHtml(dateProfile) +
       '</table>'
 
     this.slatEls = findElements(this.slatContainerEl, 'tr')
@@ -190,9 +263,8 @@ export default class TimeGrid extends StandardDateComponent {
 
 
   // Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
-  renderSlatRowHtml() {
+  renderSlatRowHtml(dateProfile: DateProfile) {
     let { dateEnv, theme, isRtl } = this
-    let dateProfile = this.props.dateProfile
     let html = ''
     let dayStart = startOfDay(dateProfile.renderRange.start)
     let slotTime = dateProfile.minTime
@@ -233,23 +305,14 @@ export default class TimeGrid extends StandardDateComponent {
   }
 
 
-  renderColumns() {
+  renderColumns(cells: TimeGridCell[], dateProfile: DateProfile) {
     let { theme } = this
-    let slicer = (this.props as any).slicer as TimeGridSlicer
-    let dateProfile = this.props.dateProfile
-
-    let dates = []
-    for (let col = 0; col < slicer.colCnt; col++) {
-      dates.push(
-        slicer.getColDate(col)
-      )
-    }
 
     let bgRow = new DayBgRow(this.context)
     this.rootBgContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
         bgRow.renderHtml({
-          dates, // TODO: pass over cell objects
+          cells,
           dateProfile,
           renderIntroHtml: this.renderProps.renderBgIntroHtml
         }) +
@@ -283,7 +346,6 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Renders the DOM that the view's content will live in
   renderContentSkeleton() {
-    let slicer = (this.props as any).slicer as TimeGridSlicer
     let parts = []
     let skeletonEl: HTMLElement
 
@@ -291,7 +353,7 @@ export default class TimeGrid extends StandardDateComponent {
       this.renderProps.renderIntroHtml()
     )
 
-    for (let i = 0; i < slicer.colCnt; i++) {
+    for (let i = 0; i < this.colCnt; i++) {
       parts.push(
         '<td>' +
           '<div class="fc-content-col">' +
@@ -344,11 +406,10 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
   groupSegsByCol(segs) {
-    let slicer = (this.props as any).slicer as TimeGridSlicer
     let segsByCol = []
     let i
 
-    for (i = 0; i < slicer.colCnt; i++) {
+    for (i = 0; i < this.colCnt; i++) {
       segsByCol.push([])
     }
 
@@ -363,12 +424,11 @@ export default class TimeGrid extends StandardDateComponent {
   // Given segments grouped by column, insert the segments' elements into a parallel array of container
   // elements, each living within a column.
   attachSegsByCol(segsByCol, containerEls: HTMLElement[]) {
-    let slicer = (this.props as any).slicer as TimeGridSlicer
     let col
     let segs
     let i
 
-    for (col = 0; col < slicer.colCnt; col++) { // iterate each column grouping
+    for (col = 0; col < this.colCnt; col++) { // iterate each column grouping
       segs = segsByCol[col]
 
       for (i = 0; i < segs.length; i++) {
@@ -387,23 +447,13 @@ export default class TimeGrid extends StandardDateComponent {
   }
 
 
-  renderNowIndicator(date) {
-    let slicer = (this.props as any).slicer as TimeGridSlicer
+  renderNowIndicator(segs: TimeGridSeg[], date) {
 
     // HACK: if date columns not ready for some reason (scheduler)
     if (!this.colContainerEls) {
       return
     }
 
-    // seg system might be overkill, but it handles scenario where line needs to be rendered
-    //  more than once because of columns with the same date (resources columns for example)
-    let segs = slicer.dateSpanToSegs({
-      range: {
-        start: date,
-        end: addMs(date, 1) // protect against null range
-      },
-      allDay: false
-    }, this)
     let top = this.computeDateTop(date)
     let nodes = []
     let i
@@ -485,7 +535,6 @@ export default class TimeGrid extends StandardDateComponent {
 
   // For each segment in an array, computes and assigns its top and bottom properties
   computeSegVerticals(segs) {
-    let slicer = (this.props as any).slicer as TimeGridSlicer
     let eventMinHeight = this.opt('agendaEventMinHeight')
     let i
     let seg
@@ -493,7 +542,7 @@ export default class TimeGrid extends StandardDateComponent {
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      dayDate = slicer.getColDate(seg.col)
+      dayDate = this.props.cells[seg.col].date
 
       seg.top = this.computeDateTop(seg.start, dayDate)
       seg.bottom = Math.max(
@@ -530,8 +579,12 @@ export default class TimeGrid extends StandardDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  buildPositionCaches() {
+  buildColPositions() {
     this.colPositions.build()
+  }
+
+
+  buildSlatPositions() {
     this.slatPositions.build()
   }
 
@@ -552,7 +605,6 @@ export default class TimeGrid extends StandardDateComponent {
 
   queryHit(leftOffset, topOffset): Hit {
     let { dateEnv, snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
-    let slicer = (this.props as any).slicer as TimeGridSlicer
 
     if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
       let leftOrigin = offsetTracker.computeLeft()
@@ -567,7 +619,7 @@ export default class TimeGrid extends StandardDateComponent {
         let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
         let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
 
-        let dayDate = slicer.getColDate(colIndex)
+        let dayDate = this.props.cells[colIndex].date
         let time = addDurations(
           this.props.dateProfile.minTime,
           multiplyDuration(this.snapDuration, snapIndex)
@@ -600,10 +652,11 @@ export default class TimeGrid extends StandardDateComponent {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderEventResizeSegs(segs: Seg[], sourceSeg, affectedInstances) {
-    super.renderEventResizeSegs(segs, sourceSeg, affectedInstances)
-
-    this.mirrorRenderer.renderSegs(segs, { isResizing: true, sourceSeg })
+  renderEventResizeSegs(state: EventSegUiInteractionState) {
+    if (state) {
+      this.eventRenderer.hideByHash(state.affectedInstances)
+      this.mirrorRenderer.renderSegs(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
+    }
   }
 
 
@@ -613,10 +666,12 @@ export default class TimeGrid extends StandardDateComponent {
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
   renderDateSelectionSegs(segs: Seg[]) {
-    if (this.opt('selectMirror')) {
-      this.mirrorRenderer.renderSegs(segs, { isSelecting: true })
-    } else {
-      this.fillRenderer.renderSegs('highlight', segs)
+    if (segs) {
+      if (this.opt('selectMirror')) {
+        this.mirrorRenderer.renderSegs(segs, { isSelecting: true })
+      } else {
+        this.fillRenderer.renderSegs('highlight', segs)
+      }
     }
   }
 

@@ -5,7 +5,6 @@ import FgEventRenderer, { buildSegCompareObj } from '../component/renderers/FgEv
 import { Seg } from '../component/DateComponent'
 import { isMultiDayRange, compareByFieldSpecs } from '../util/misc'
 import TimeGrid from './TimeGrid'
-import TimeGridSlicer from './TimeGridSlicer';
 
 /*
 Only handles foreground segs.
@@ -50,8 +49,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   computeSizes() {
     let { timeGrid, segsByCol } = this
-    let slicer = (timeGrid.props as any).slicer as TimeGridSlicer
-    let colCnt = slicer.colCnt
+    let colCnt = timeGrid.colCnt
 
     if (segsByCol) {
       for (let col = 0; col < colCnt; col++) {
@@ -66,8 +64,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   assignSizes() {
     let { timeGrid, segsByCol } = this
-    let slicer = (timeGrid.props as any).slicer as TimeGridSlicer
-    let colCnt = slicer.colCnt
+    let colCnt = timeGrid.colCnt
 
     if (segsByCol) {
       for (let col = 0; col < colCnt; col++) {

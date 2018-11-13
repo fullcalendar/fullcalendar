@@ -1,7 +1,10 @@
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 import { EventInput } from './event'
-import { EventStore, parseEvents } from './event-store'
+import { EventStore, parseEvents, expandRecurring } from './event-store'
+import { DateRange } from '../datelib/date-range'
+import { Duration } from '../datelib/duration'
+import { EventRenderRange, sliceEventStore, computeEventDefUis } from '../component/event-rendering'
 
 /*
 Utils for converting raw business hour input into an EventStore,
@@ -48,4 +51,16 @@ function refineInputs(input: BusinessHoursInput): EventInput[] {
   })
 
   return rawDefs
+}
+
+
+export function sliceBusinessHours(businessHours: EventStore, range: DateRange, nextDayThreshold: Duration, calendar: Calendar): EventRenderRange[] {
+  let expandedStore = expandRecurring(businessHours, range, calendar)
+
+  return sliceEventStore(
+    expandedStore,
+    computeEventDefUis(expandedStore.defs, {}, {}),
+    range,
+    nextDayThreshold
+  )
 }

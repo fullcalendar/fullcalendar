@@ -10,20 +10,18 @@ import {
 } from '../util/misc'
 import { createFormatter } from '../datelib/formatting'
 import ScrollComponent from '../common/ScrollComponent'
-import View from '../View'
+import View, { ViewProps } from '../View'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
-import DayGrid from './DayGrid'
 import { buildGotoAnchorHtml } from '../component/date-rendering'
-import { StandardDateComponentProps } from '../component/StandardDateComponent'
-import { assignTo } from '../util/object'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
-import reselector from '../util/reselector'
 import DayHeader from '../common/DayHeader'
-import DayGridSlicer from './DayGridSlicer'
-import DayTable from '../common/DayTable'
 import DaySeries from '../common/DaySeries'
+import DayTable from '../common/DayTable'
+import DayGrid from './DayGrid'
+import SimpleDayGrid from './SimpleDayGrid'
+import reselector from '../util/reselector'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -38,7 +36,12 @@ export default class BasicView extends View {
   scroller: ScrollComponent
   header: DayHeader
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
+  simpleDayGrid: SimpleDayGrid
+
   colWeekNumbersVisible: boolean
+  dayTable: DayTable
+
+  buildDayTable = reselector(buildDayTable)
 
 
   constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
@@ -91,7 +94,8 @@ export default class BasicView extends View {
         cellWeekNumbersVisible
       }
     )
-    this.dayGrid.isRigid = this.hasRigidRows()
+
+    this.simpleDayGrid = new SimpleDayGrid(context, this.dayGrid)
   }
 
 
@@ -107,52 +111,36 @@ export default class BasicView extends View {
   }
 
 
-  render(props: StandardDateComponentProps) {
+  render(props: ViewProps) {
     super.render(props)
 
-    let slicer = this.buildSlicer(props.dateProfile)
+    let { dateProfile } = this.props
+
+    let dayTable = this.dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
 
     if (this.header) {
       this.header.receiveProps({
-        dateProfile: props.dateProfile,
-        dates: this.sliceDayDates(slicer), // get just the first row
-        datesRepDistinctDays: slicer.rowCnt === 1,
+        dateProfile,
+        dates: dayTable.headerDates,
+        datesRepDistinctDays: dayTable.rowCnt === 1,
         renderIntroHtml: this.renderHeadIntroHtml
       })
     }
 
-    this.dayGrid.receiveProps(
-      assignTo({}, props, {
-        slicer
-      })
-    )
+    this.simpleDayGrid.receiveProps({
+      dateProfile,
+      dayTable,
+      businessHours: props.businessHours,
+      dateSelection: props.dateSelection,
+      eventStore: props.eventStore,
+      eventUis: props.eventUis,
+      eventSelection: props.eventSelection,
+      eventDrag: props.eventDrag,
+      eventResize: props.eventResize,
+      isRigid: this.hasRigidRows(),
+      nextDayThreshold: this.nextDayThreshold
+    })
   }
-
-
-  buildSlicer = reselector(function(this: BasicView, dateProfile: DateProfile) {
-    return new DayGridSlicer(
-      new DaySeries(
-        this.props.dateProfile.renderRange,
-        this.dateProfileGenerator
-      ),
-      this.isRtl,
-      /year|month|week/.test(dateProfile.currentRangeUnit)
-    )
-  })
-
-
-  sliceDayDates = reselector(function(slicer: DayGridSlicer) { // TODO: put into slicer
-    let dates = []
-
-    for (let col = 0; col < slicer.colCnt; col++) {
-      dates.push(
-        slicer.getCellDate(0, col)
-      )
-    }
-
-    return dates
-  })
-
 
   // Builds the HTML skeleton for the view.
   // The day-grid component will render inside of a container defined by this HTML.
@@ -330,16 +318,15 @@ export default class BasicView extends View {
 
   // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
   renderDayGridNumberIntroHtml = (row) => {
-    let { dateEnv } = this
-    let slicer = (this.dayGrid.props as any).slicer as DayGridSlicer
-    let weekStart = slicer.getCellDate(row, 0)
+    let { dateEnv, dayTable } = this
+    let weekStart = dayTable.cells[row][0].date
 
     if (this.colWeekNumbersVisible) {
       return '' +
         '<td class="fc-week-number">' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             this,
-            { date: weekStart, type: 'week', forceOff: slicer.colCnt === 1 },
+            { date: weekStart, type: 'week', forceOff: dayTable.colCnt === 1 },
             dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
           ) +
         '</td>'
@@ -376,3 +363,12 @@ export default class BasicView extends View {
 
 BasicView.prototype.dateProfileGeneratorClass = BasicViewDateProfileGenerator
 
+
+function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
+  let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
+
+  return new DayTable(
+    daySeries,
+    /year|month|week/.test(dateProfile.currentRangeUnit)
+  )
+}

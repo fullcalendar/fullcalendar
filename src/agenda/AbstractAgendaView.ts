@@ -17,12 +17,10 @@ import { EventInteractionUiState } from '../interactions/event-interaction-state
 import reselector from '../util/reselector'
 import { EventUiHash, hasBgRendering } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getAllDayHtml } from '../component/date-rendering'
-import { DateMarker, diffDays } from '../datelib/marker'
+import { diffDays } from '../datelib/marker'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator from '../DateProfileGenerator'
-import DayGridSlicer from '../basic/DayGridSlicer'
-import TimeGridSlicer from './TimeGridSlicer'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -41,34 +39,22 @@ export default abstract class AgendaView extends View {
   scroller: ScrollComponent
   axisWidth: any // the width of the time axis running down the side
 
-  dayGridSlicer: DayGridSlicer
-  timeGridSlicer: TimeGridSlicer
-
   // reselectors
-  filterEventsForTimeGrid: any
-  filterEventsForDayGrid: any
-  buildEventDragForTimeGrid: any
-  buildEventDragForDayGrid: any
-  buildEventResizeForTimeGrid: any
-  buildEventResizeForDayGrid: any
+  filterEventsForTimeGrid = reselector(filterEventsForTimeGrid)
+  filterEventsForDayGrid = reselector(filterEventsForDayGrid)
+  buildEventDragForTimeGrid = reselector(buildInteractionForTimeGrid)
+  buildEventDragForDayGrid = reselector(buildInteractionForDayGrid)
+  buildEventResizeForTimeGrid = reselector(buildInteractionForTimeGrid)
+  buildEventResizeForDayGrid = reselector(buildInteractionForDayGrid)
 
 
   constructor(
     context: ComponentContext,
     viewSpec: ViewSpec,
     dateProfileGenerator: DateProfileGenerator,
-    parentEl: HTMLElement,
-    TimeGridClass,
-    DayGridClass
+    parentEl: HTMLElement
   ) {
     super(context, viewSpec, dateProfileGenerator, parentEl)
-
-    this.filterEventsForTimeGrid = reselector(filterEventsForTimeGrid)
-    this.filterEventsForDayGrid = reselector(filterEventsForDayGrid)
-    this.buildEventDragForTimeGrid = reselector(buildInteractionForTimeGrid)
-    this.buildEventDragForDayGrid = reselector(buildInteractionForDayGrid)
-    this.buildEventResizeForTimeGrid = reselector(buildInteractionForTimeGrid)
-    this.buildEventResizeForDayGrid = reselector(buildInteractionForDayGrid)
 
     this.el.classList.add('fc-agenda-view')
     this.el.innerHTML = this.renderSkeletonHtml()
@@ -84,7 +70,7 @@ export default abstract class AgendaView extends View {
     let timeGridEl = createElement('div', { className: 'fc-time-grid' })
     timeGridWrapEl.appendChild(timeGridEl)
 
-    this.timeGrid = new TimeGridClass(
+    this.timeGrid = new TimeGrid(
       this.context,
       timeGridEl,
       {
@@ -95,7 +81,7 @@ export default abstract class AgendaView extends View {
 
     if (this.opt('allDaySlot')) { // should we display the "all-day" area?
 
-      this.dayGrid = new DayGridClass( // the all-day subcomponent of this view
+      this.dayGrid = new DayGrid( // the all-day subcomponent of this view
         this.context,
         this.el.querySelector('.fc-day-grid'),
         {
@@ -169,9 +155,9 @@ export default abstract class AgendaView extends View {
   }
 
 
-  renderNowIndicator(date: DateMarker) {
-    this.timeGrid.renderNowIndicator(date)
-  }
+  // subclasses should implement
+  // renderNowIndicator(date: DateMarker) {
+  // }
 
 
   unrenderNowIndicator() {

@@ -1,22 +1,23 @@
 import AbstractAgendaView from './AbstractAgendaView'
-import TimeGrid from './TimeGrid'
-import DayGrid from '../basic/DayGrid'
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DayHeader from '../common/DayHeader'
-import { StandardDateComponentProps } from '../component/StandardDateComponent'
-import { assignTo } from '../util/object'
-import reselector from '../util/reselector'
-import DayGridSlicer from '../basic/DayGridSlicer'
-import TimeGridSlicer from './TimeGridSlicer'
-import DayTable from '../common/DayTable'
 import DaySeries from '../common/DaySeries'
+import DayTable from '../common/DayTable'
+import SimpleTimeGrid from './SimpleTimeGrid'
+import SimpleDayGrid from '../basic/SimpleDayGrid'
+import reselector from '../util/reselector'
+import { ViewProps } from 'src/View'
 
 
 export default class AgendaView extends AbstractAgendaView {
 
   header: DayHeader
+  simpleDayGrid: SimpleDayGrid
+  simpleTimeGrid: SimpleTimeGrid
+
+  buildDayTable = reselector(buildDayTable)
 
   constructor(
     context: ComponentContext,
@@ -24,13 +25,19 @@ export default class AgendaView extends AbstractAgendaView {
     dateProfileGenerator: DateProfileGenerator,
     parentEl: HTMLElement
   ) {
-    super(context, viewSpec, dateProfileGenerator, parentEl, TimeGrid, DayGrid)
+    super(context, viewSpec, dateProfileGenerator, parentEl)
 
     if (this.opt('columnHeader')) {
       this.header = new DayHeader(
         this.context,
         this.el.querySelector('.fc-head-container')
       )
+    }
+
+    this.simpleTimeGrid = new SimpleTimeGrid(context, this.timeGrid)
+
+    if (this.dayGrid) {
+      this.simpleDayGrid = new SimpleDayGrid(context, this.dayGrid)
     }
   }
 
@@ -42,68 +49,58 @@ export default class AgendaView extends AbstractAgendaView {
     }
   }
 
-  render(props: StandardDateComponentProps) {
+  render(props: ViewProps) {
     super.render(props)
 
-    let allDaySeletion = null
-    let timedSelection = null
-
-    if (props.dateSelection) {
-      if (props.dateSelection.allDay) {
-        allDaySeletion = props.dateSelection
-      } else {
-        timedSelection = props.dateSelection
-      }
-    }
-
-    let timeGridSlicer = this.buildTimeGridSlicer(props.dateProfile)
+    let { dateProfile, dateSelection } = this.props
+    let dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
 
     if (this.header) {
       this.header.receiveProps({
-        dateProfile: props.dateProfile,
-        dates: timeGridSlicer.daySeries.dates,
+        dateProfile,
+        dates: dayTable.headerDates,
         datesRepDistinctDays: true,
         renderIntroHtml: this.renderHeadIntroHtml
       })
     }
 
-    this.timeGrid.receiveProps(
-      assignTo({}, props, {
-        eventStore: this.filterEventsForTimeGrid(props.eventStore, props.eventUis),
-        dateSelection: timedSelection,
-        eventDrag: this.buildEventDragForTimeGrid(props.eventDrag),
-        eventResize: this.buildEventResizeForTimeGrid(props.eventResize),
-        slicer: timeGridSlicer
-      })
-    )
+    this.simpleTimeGrid.receiveProps({
+      dateProfile,
+      dayTable,
+      businessHours: props.businessHours,
+      dateSelection: dateSelection && !dateSelection.allDay ? dateSelection : null,
+      eventStore: this.filterEventsForTimeGrid(props.eventStore, props.eventUis),
+      eventUis: props.eventUis,
+      eventSelection: props.eventSelection,
+      eventDrag: this.buildEventDragForTimeGrid(props.eventDrag),
+      eventResize: this.buildEventResizeForTimeGrid(props.eventResize)
+    })
 
-    if (this.dayGrid) {
-      this.dayGrid.receiveProps(
-        assignTo({}, props, {
-          eventStore: this.filterEventsForDayGrid(props.eventStore, props.eventUis),
-          dateSelection: allDaySeletion,
-          eventDrag: this.buildEventDragForDayGrid(props.eventDrag),
-          eventResize: this.buildEventResizeForDayGrid(props.eventResize),
-          slicer: this.buildDayGridSlicer(props.dateProfile)
-        })
-      )
+    if (this.simpleDayGrid) {
+      this.simpleDayGrid.receiveProps({
+        dateProfile,
+        dayTable,
+        businessHours: props.businessHours,
+        dateSelection: dateSelection && dateSelection.allDay ? dateSelection : null,
+        eventStore: this.filterEventsForDayGrid(props.eventStore, props.eventUis),
+        eventUis: props.eventUis,
+        eventSelection: props.eventSelection,
+        eventDrag: this.buildEventDragForDayGrid(props.eventDrag),
+        eventResize: this.buildEventResizeForDayGrid(props.eventResize),
+        nextDayThreshold: this.nextDayThreshold,
+        isRigid: false
+      })
     }
   }
 
-  buildDayGridSlicer = reselector(function(this: AgendaView, dateProfile: DateProfile) {
-    return new DayGridSlicer(
-      new DaySeries(dateProfile.renderRange, this.dateProfileGenerator), // TODO: reuse!!!
-      this.isRtl,
-      false // breakOnWeeks
-    )
-  })
+  renderNowIndicator(date) {
+    this.simpleTimeGrid.renderNowIndicator(date)
+  }
 
-  buildTimeGridSlicer = reselector(function(this: AgendaView, dateProfile) {
-    return new TimeGridSlicer(
-      dateProfile,
-      this.dateProfileGenerator,
-      this.dateEnv
-    )
-  })
+}
 
+function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator): DayTable {
+  let daySeries = new DaySeries(dateProfile.renderRange, this.dateProfileGenerator)
+
+  return new DayTable(daySeries, false)
 }

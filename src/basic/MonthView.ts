@@ -2,7 +2,6 @@ import { distributeHeight } from '../util/misc'
 import BasicView from './BasicView'
 import MonthViewDateProfileGenerator from './MonthViewDateProfileGenerator'
 import { DateMarker } from '../datelib/marker'
-import DayGridSlicer from './DayGridSlicer'
 
 
 /* A month view with day cells running in rows (one-per-week) and columns
@@ -12,11 +11,10 @@ export default class MonthView extends BasicView {
 
   // Overrides the default BasicView behavior to have special multi-week auto-height logic
   setGridHeight(height, isAuto) {
-    let slicer = (this.dayGrid.props as any).slicer as DayGridSlicer
 
     // if auto, make the height of each row the height that it would be if there were 6 weeks
     if (isAuto) {
-      height *= slicer.rowCnt / 6
+      height *= this.dayTable.rowCnt / 6
     }
 
     distributeHeight(this.dayGrid.rowEls, height, !isAuto) // if auto, don't compensate for height-hogging rows

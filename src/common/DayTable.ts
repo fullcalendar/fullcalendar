@@ -1,5 +1,6 @@
 import DaySeries from './DaySeries'
 import { DateRange } from '../datelib/date-range'
+import { DateMarker } from '../datelib/marker'
 
 export interface DayTableSeg {
   row: number
@@ -9,10 +10,18 @@ export interface DayTableSeg {
   isEnd: boolean
 }
 
+export interface DayTableCell {
+  date: DateMarker
+  htmlAttrs?: string
+}
+
 export default class DayTable {
 
   rowCnt: number
   colCnt: number
+  cells: DayTableCell[][]
+  headerDates: DateMarker[]
+
   private daySeries: DaySeries
 
   constructor(daySeries: DaySeries, breakOnWeeks: boolean) {
@@ -38,10 +47,42 @@ export default class DayTable {
     this.rowCnt = rowCnt
     this.colCnt = daysPerRow
     this.daySeries = daySeries
+    this.cells = this.buildCells()
+    this.headerDates = this.buildHeaderDates()
   }
 
-  getDate(row: number, col: number) {
-    return this.daySeries.dates[row * this.colCnt + col]
+  private buildCells() {
+    let rows = []
+
+    for (let row = 0; row < this.rowCnt; row++) {
+      let cells = []
+
+      for (let col = 0; col < this.colCnt; col++) {
+        cells.push(
+          this.buildCell(row, col)
+        )
+      }
+
+      rows.push(cells)
+    }
+
+    return rows
+  }
+
+  private buildCell(row, col) {
+    return {
+      date: this.daySeries.dates[row * this.colCnt + col]
+    }
+  }
+
+  private buildHeaderDates() {
+    let dates = []
+
+    for (let col = 0; col < this.colCnt; col++) {
+      dates.push(this.cells[0][col].date)
+    }
+
+    return dates
   }
 
   sliceRange(range: DateRange): DayTableSeg[] {

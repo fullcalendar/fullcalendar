@@ -4,8 +4,13 @@ import { getDayClasses } from "../component/date-rendering";
 import { rangeContainsMarker } from "../datelib/date-range";
 import { DateProfile } from "../DateProfileGenerator";
 
+export interface DayBgCell {
+  date: DateMarker
+  htmlAttrs?: string
+}
+
 export interface DayBgRowProps {
-  dates: DateMarker[]
+  cells: DayBgCell[]
   dateProfile: DateProfile
   renderIntroHtml?: () => string
 }
@@ -25,9 +30,14 @@ export default class DayBgRow {
       parts.push(props.renderIntroHtml())
     }
 
-    for (let date of props.dates) {
+    for (let cell of props.cells) {
       parts.push(
-        this.renderCellHtml(date, props.dateProfile)
+        renderCellHtml(
+          cell.date,
+          props.dateProfile,
+          this.context,
+          cell.htmlAttrs
+        )
       )
     }
 
@@ -36,14 +46,6 @@ export default class DayBgRow {
     }
 
     return '<tr>' + parts.join('') + '</tr>'
-  }
-
-  renderCellHtml(date: DateMarker, dateProfile: DateProfile) {
-    return renderCellHtml(
-      date,
-      dateProfile,
-      this.context
-    )
   }
 
 }

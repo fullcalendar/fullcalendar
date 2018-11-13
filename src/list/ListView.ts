@@ -11,7 +11,8 @@ import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { buildGotoAnchorHtml } from '../component/date-rendering'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
-import { EventRenderRange } from '../component/event-rendering';
+import { EventRenderRange, EventUiHash, sliceEventStore } from '../component/event-rendering'
+import { EventStore } from 'src/structs/event-store';
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -29,7 +30,6 @@ export default class ListView extends View {
     super(context, viewSpec, dateProfileGenerator, parentEl)
 
     this.eventRenderer = new ListEventRenderer(this)
-    this.slicingType = 'all-day'
 
     this.el.classList.add('fc-list-view')
 
@@ -93,11 +93,36 @@ export default class ListView extends View {
     this.dayDates = dayDates
     this.dayRanges = dayRanges
 
-    // all real rendering happens in FgEventRenderer
+    // all real rendering happens in ListEventRenderer
   }
 
 
-  // slices by day
+  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
+    this.renderEventSegs(
+      this.eventRangesToSegs(
+        sliceEventStore(
+          eventStore,
+          eventUis,
+          this.props.dateProfile.activeRange,
+          this.nextDayThreshold
+        )
+      )
+    )
+  }
+
+
+  eventRangesToSegs(eventRanges: EventRenderRange[]) {
+    let segs = []
+
+    // TODO: util for doing this
+    for (let eventRange of eventRanges) {
+      segs.push(...this.eventRangeToSegs(eventRange))
+    }
+
+    return segs
+  }
+
+
   eventRangeToSegs(eventRange: EventRenderRange) {
     let range = eventRange.range
     let allDay = eventRange.def.allDay
@@ -114,6 +139,7 @@ export default class ListView extends View {
       if (segRange) {
         seg = {
           component: this,
+          eventRange,
           start: segRange.start,
           end: segRange.end,
           isStart: segRange.start.valueOf() === range.start.valueOf(),

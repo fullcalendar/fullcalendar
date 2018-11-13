@@ -3,6 +3,8 @@ import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 import { Duration } from '../datelib/duration'
 import { assignTo } from '../util/object'
+import { parseEventDef, createEventInstance } from './event';
+import { computeEventDefUi, EventRenderRange } from '../component/event-rendering';
 
 /*
 A data-structure for a date-range that will be visually displayed.
@@ -141,4 +143,23 @@ export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi 
   props.endStr = dateEnv.formatIso(span.range.end, { omitTime: span.allDay })
 
   return props
+}
+
+export function fabricateEventRange(dateSpan: DateSpan): EventRenderRange {
+  let def = parseEventDef(
+    { editable: false },
+    '', // sourceId
+    dateSpan.allDay,
+    true, // hasEnd
+    this.calendar
+  )
+
+  return {
+    def,
+    ui: computeEventDefUi(def, {}, {}),
+    instance: createEventInstance(def.defId, dateSpan.range),
+    range: dateSpan.range,
+    isStart: true,
+    isEnd: true
+  }
 }
