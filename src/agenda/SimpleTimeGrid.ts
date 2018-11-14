@@ -56,8 +56,8 @@ export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
       eventSegs: this.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, colRanges, timeGrid),
       dateSelectionSegs: this.selectionToSegs(props.dateSelection, colRanges, timeGrid),
       eventSelection: props.eventSelection,
-      eventDrag: this.buildEventDrag(props.eventDrag, props.eventUis, dateProfile, colRanges, timeGrid),
-      eventResize: this.buildEventResize(props.eventResize, props.eventUis, dateProfile, colRanges, timeGrid)
+      eventDrag: this.buildEventDrag(props.eventDrag, dateProfile, colRanges, timeGrid),
+      eventResize: this.buildEventResize(props.eventResize, dateProfile, colRanges, timeGrid)
     })
   }
 
@@ -111,14 +111,14 @@ function businessHoursToSegs(businessHours: EventStore, dateProfile: DateProfile
   )
 }
 
-function buildSegInteraction(interaction: EventInteractionUiState, eventUis: EventUiHash, dateProfile: DateProfile, colRanges: DateRange[], timeGrid: TimeGrid) {
+function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, colRanges: DateRange[], timeGrid: TimeGrid) {
   if (!interaction) {
     return null
   }
 
   return {
     segs: eventRangesToSegs(
-      sliceEventStore(interaction.mutatedEvents, eventUis, dateProfile.activeRange),
+      sliceEventStore(interaction.mutatedEvents, interaction.eventUis, dateProfile.activeRange),
       colRanges,
       timeGrid
     ),
@@ -180,8 +180,8 @@ function eventRangeToSegs(colRanges: DateRange[], eventRange: EventRenderRange, 
         eventRange,
         start: segRange.start,
         end: segRange.end,
-        isStart: segRange.start.valueOf() === range.start.valueOf(),
-        isEnd: segRange.end.valueOf() === range.end.valueOf(),
+        isStart: eventRange.isStart && segRange.start.valueOf() === range.start.valueOf(),
+        isEnd: eventRange.isEnd && segRange.end.valueOf() === range.end.valueOf(),
         col
       })
     }

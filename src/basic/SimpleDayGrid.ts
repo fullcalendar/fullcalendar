@@ -111,8 +111,8 @@ function eventRangeToSegs(eventRange: EventRenderRange, dayTable: DayTable, dayG
     return {
       eventRange,
       component: dayGrid,
-      isStart: seg.isStart,
-      isEnd: seg.isEnd,
+      isStart: eventRange.isStart && seg.isStart,
+      isEnd: eventRange.isEnd && seg.isEnd,
       row: seg.row,
       leftCol: dayGrid.isRtl ? (dayTable.colCnt - 1 - seg.lastCol) : seg.firstCol,
       rightCol: dayGrid.isRtl ? (dayTable.colCnt - 1 - seg.firstCol) : seg.lastCol

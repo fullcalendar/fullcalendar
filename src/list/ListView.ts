@@ -142,8 +142,8 @@ export default class ListView extends View {
           eventRange,
           start: segRange.start,
           end: segRange.end,
-          isStart: segRange.start.valueOf() === range.start.valueOf(),
-          isEnd: segRange.end.valueOf() === range.end.valueOf(),
+          isStart: eventRange.isStart && segRange.start.valueOf() === range.start.valueOf(),
+          isEnd: eventRange.isEnd && segRange.end.valueOf() === range.end.valueOf(),
           dayIndex: dayIndex
         }
 

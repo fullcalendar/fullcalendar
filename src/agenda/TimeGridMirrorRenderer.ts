@@ -15,9 +15,10 @@ export default class TimeGridMirrorRenderer extends TimeGridEventRenderer {
 
   generateSegCss(seg: Seg) {
     let props = super.generateSegCss(seg)
+    let { sourceSeg } = this
 
-    if (seg.col === this.sourceSeg.col) {
-      let sourceSegProps = super.generateSegCss(this.sourceSeg)
+    if (sourceSeg && sourceSeg.col === seg.col) {
+      let sourceSegProps = super.generateSegCss(sourceSeg)
 
       props.left = sourceSegProps.left
       props.right = sourceSegProps.right
