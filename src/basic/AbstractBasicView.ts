@@ -32,6 +32,7 @@ export default abstract class BasicView extends View {
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
 
   colWeekNumbersVisible: boolean
+  weekNumberWidth: number
 
 
   constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
@@ -111,6 +112,15 @@ export default abstract class BasicView extends View {
   }
 
 
+  // Generates an HTML attribute string for setting the width of the week number column, if it is known
+  weekNumberStyleAttr() {
+    if (this.weekNumberWidth != null) {
+      return 'style="width:' + this.weekNumberWidth + 'px"'
+    }
+    return ''
+  }
+
+
   // Determines whether each row should have a constant height
   hasRigidRows() {
     let eventLimit = this.opt('eventLimit')
@@ -150,7 +160,9 @@ export default abstract class BasicView extends View {
 
     if (this.colWeekNumbersVisible) {
       // Make sure all week number cells running down the side have the same width.
-      matchCellWidths(findElements(this.el, '.fc-week-number'))
+      this.weekNumberWidth = matchCellWidths(
+        findElements(this.el, '.fc-week-number')
+      )
     }
 
     // reset all heights to be natural
@@ -246,7 +258,7 @@ export default abstract class BasicView extends View {
 
     if (this.colWeekNumbersVisible) {
       return '' +
-        '<th class="fc-week-number ' + theme.getClass('widgetHeader') + '">' +
+        '<th class="fc-week-number ' + theme.getClass('widgetHeader') + '" ' + this.weekNumberStyleAttr() + '>' +
           '<span>' + // needed for matchCellWidths
             htmlEscape(this.opt('weekLabel')) +
           '</span>' +
@@ -268,7 +280,7 @@ export default abstract class BasicView extends View {
 
     if (this.colWeekNumbersVisible) {
       return '' +
-        '<td class="fc-week-number">' +
+        '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             this,
             { date: weekStart, type: 'week', forceOff: dayGrid.colCnt === 1 },
@@ -286,7 +298,7 @@ export default abstract class BasicView extends View {
     let { theme } = this
 
     if (this.colWeekNumbersVisible) {
-      return '<td class="fc-week-number ' + theme.getClass('widgetContent') + '"></td>'
+      return '<td class="fc-week-number ' + theme.getClass('widgetContent') + '" ' + this.weekNumberStyleAttr() + '></td>'
     }
 
     return ''
@@ -298,7 +310,7 @@ export default abstract class BasicView extends View {
   renderDayGridIntroHtml = () => {
 
     if (this.colWeekNumbersVisible) {
-      return '<td class="fc-week-number"></td>'
+      return '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '></td>'
     }
 
     return ''
