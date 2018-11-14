@@ -9,7 +9,7 @@ import { createElement } from './util/dom-manip'
 import { ComponentContext } from './component/Component'
 import DateComponent from './component/DateComponent'
 import { EventStore } from './structs/event-store'
-import { EventUiHash } from './component/event-rendering'
+import { EventUiHash, sliceEventStore } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionUiState } from './interactions/event-interaction-state'
 
@@ -112,7 +112,7 @@ export default abstract class View extends DateComponent<ViewProps> {
     this.subrender('afterSkeletonRender', [], 'beforeSkeletonUnrender', true)
     let dateId = this.subrender('_renderDates', [ props.dateProfile ], '_unrenderDates', true)
     this.subrender('renderBusinessHours', [ props.businessHours, props.dateProfile, dateId ], 'unrenderBusinessHours', true)
-    this.subrender('renderDateSelectionState', [ props.dateSelection, dateId ], 'unrenderDateSelectionState', true)
+    this.subrender('renderDateSelectionState', [ props.dateSelection, dateId ], 'unrenderDateSelection', true)
     let evId = this.subrender('renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents', true)
     this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection', true)
     this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState', true)
@@ -131,24 +131,34 @@ export default abstract class View extends DateComponent<ViewProps> {
 
   renderDates(dateProfile: DateProfile) {}
   unrenderDates() {}
-
   renderBusinessHours(businessHours: EventStore) {}
-  unrenderBusinessHours() {}
-
-  renderDateSelectionState(selection: DateSpan) {}
-  unrenderDateSelectionState() {}
-
   renderEvents(eventStore: EventStore, eventUis: EventUiHash) {}
-  unrenderEvents() {}
-
   renderEventSelection(instanceId: string) {}
-  unrenderEventSelection() {}
 
   renderEventDragState(state: EventInteractionUiState) {}
   unrenderEventDragState() {}
 
   renderEventResizeState(state: EventInteractionUiState) {}
   unrenderEventResizeState() {}
+
+  renderDateSelectionState(selection: DateSpan) {
+    if (selection) {
+      this.renderDateSelection(selection)
+    }
+  }
+
+  renderDateSelection(selection: DateSpan) {
+  }
+
+  // util for subclasses
+  sliceEvents(eventStore: EventStore, eventUis: EventUiHash, allDay: boolean) {
+    return sliceEventStore(
+      eventStore,
+      eventUis,
+      this.props.dateProfile.activeRange,
+      allDay ? this.nextDayThreshold : null
+    )
+  }
 
 
   // Sizing

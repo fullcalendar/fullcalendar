@@ -11,28 +11,37 @@ describe('rerender performance', function() {
 
   [
     {
-      classes: [ 'MonthView', 'DayGrid' ],
       defaultView: 'month',
+      classes: [
+        { name: 'MonthView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
+        { name: 'DayGrid', dateMethod: 'renderCells', eventMethod: 'renderEventSegs' }
+      ],
       changeToView: 'list' // does not have DayGrid!
     },
     {
-      classes: [ 'AgendaView', 'DayGrid', 'TimeGrid' ],
       defaultView: 'agendaWeek',
+      classes: [
+        { name: 'AgendaView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
+        { name: 'DayGrid', dateMethod: 'renderCells', eventMethod: 'renderEventSegs' },
+        { name: 'TimeGrid', dateMethod: 'renderColumns', eventMethod: 'renderEventSegs' }
+      ],
       changeToView: 'list' // does not have DayGrid!
     },
     {
-      classes: [ 'ListView' ],
       defaultView: 'listWeek',
+      classes: [
+        { name: 'ListView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
+      ],
       changeToView: 'month'
     }
   ].forEach(function(settings) {
-    settings.classes.forEach(function(className) {
-      describe('for ' + className + ' in ' + settings.defaultView + ' view', function() {
-        var Class = FullCalendar[className]
+    settings.classes.forEach(function(classInfo) {
+      describe('for ' + classInfo.name + ' in ' + settings.defaultView + ' view', function() {
+        var Class = FullCalendar[classInfo.name]
 
         it('calls methods a limited number of times', function(done) {
-          var renderDates = spyOnMethod(Class, 'renderDates')
-          var renderEvents = spyOnMethod(Class, 'renderEvents')
+          var renderDates = spyOnMethod(Class, classInfo.dateMethod)
+          var renderEvents = spyOnMethod(Class, classInfo.eventMethod)
           var updateSize = spyOnMethod(Class, 'updateSize')
 
           initCalendar({

@@ -4,10 +4,6 @@ describe('custom view class', function() {
 
     class CustomView extends FullCalendar.View {
 
-      initialize() {
-        this.slicingType = 'all-day' // should really do this in the constructor
-      }
-
       renderDates(dateProfile) {
         expect(dateProfile.activeRange.start instanceof Date).toBe(true)
         expect(dateProfile.activeRange.end instanceof Date).toBe(true)
@@ -18,7 +14,9 @@ describe('custom view class', function() {
         expect(typeof isAuto).toBe('boolean')
       }
 
-      renderEventRanges(eventRanges) {
+      renderEvents(eventStore, eventUis) {
+        let eventRanges = this.sliceEvents(eventStore, eventUis, true) // allDay=true
+
         expect(Array.isArray(eventRanges)).toBe(true)
         expect(eventRanges.length).toBe(1)
         expect(typeof eventRanges[0].def).toBe('object')
@@ -48,7 +46,7 @@ describe('custom view class', function() {
     spyOn(CustomView.prototype, 'initialize').and.callThrough()
     spyOn(CustomView.prototype, 'renderDates').and.callThrough()
     spyOn(CustomView.prototype, 'updateSize').and.callThrough()
-    spyOn(CustomView.prototype, 'renderEventRanges').and.callThrough()
+    spyOn(CustomView.prototype, 'renderEvents').and.callThrough()
     spyOn(CustomView.prototype, 'unrenderEvents').and.callThrough()
     spyOn(CustomView.prototype, 'renderDateSelection').and.callThrough()
     spyOn(CustomView.prototype, 'unrenderDateSelection').and.callThrough()
@@ -70,7 +68,7 @@ describe('custom view class', function() {
     expect(CustomView.prototype.initialize).toHaveBeenCalled()
     expect(CustomView.prototype.renderDates).toHaveBeenCalled()
     expect(CustomView.prototype.updateSize).toHaveBeenCalled()
-    expect(CustomView.prototype.renderEventRanges).toHaveBeenCalled()
+    expect(CustomView.prototype.renderEvents).toHaveBeenCalled()
 
     currentCalendar.rerenderEvents()
 
