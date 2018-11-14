@@ -17,7 +17,6 @@ import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator from '../DateProfileGenerator'
 import DayGrid from './DayGrid'
-import { DateMarker } from '../datelib/marker'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -263,16 +262,16 @@ export default abstract class BasicView extends View {
 
 
   // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
-  renderDayGridNumberIntroHtml = (row) => {
+  renderDayGridNumberIntroHtml = (row: number, dayGrid: DayGrid) => {
     let { dateEnv } = this
-    let weekStart = this.getRowDate(row)
+    let weekStart = dayGrid.props.cells[row][0].date
 
     if (this.colWeekNumbersVisible) {
       return '' +
         '<td class="fc-week-number">' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             this,
-            { date: weekStart, type: 'week', forceOff: dayTable.colCnt === 1 },
+            { date: weekStart, type: 'week', forceOff: dayGrid.colCnt === 1 },
             dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
           ) +
         '</td>'
@@ -304,8 +303,6 @@ export default abstract class BasicView extends View {
 
     return ''
   }
-
-  abstract getRowDate(row: number): DateMarker
 
 }
 

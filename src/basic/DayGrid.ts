@@ -33,7 +33,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export interface RenderProps { // TODO: combine with DayGridProps
-  renderNumberIntroHtml: (row: number) => string
+  renderNumberIntroHtml: (row: number, dayGrid: DayGrid) => string
   renderBgIntroHtml: () => string
   renderIntroHtml: () => string
   colWeekNumbersVisible: boolean // week numbers render in own column? (caller does HTML via intro)
@@ -249,7 +249,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
 
 
   renderNumberTrHtml(row: number) {
-    let intro = this.renderProps.renderNumberIntroHtml(row)
+    let intro = this.renderProps.renderNumberIntroHtml(row, this)
 
     return '' +
       '<tr>' +

@@ -56,7 +56,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
         let segs = segsByCol[col]
 
         timeGrid.computeSegVerticals(segs) // horizontals relies on this
-        this.computeFgSegHorizontals(segs) // compute horizontal coordinates, z-index's, and reorder the array
+        this.computeSegHorizontals(segs) // compute horizontal coordinates, z-index's, and reorder the array
       }
     }
   }
@@ -71,7 +71,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
         let segs = segsByCol[col]
 
         timeGrid.assignSegVerticals(segs)
-        this.assignFgSegHorizontals(segs)
+        this.assignSegCss(segs)
       }
     }
   }
@@ -173,7 +173,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
   // NOTE: Also reorders the given array by date!
-  computeFgSegHorizontals(segs: Seg[]) {
+  computeSegHorizontals(segs: Seg[]) {
     let levels
     let level0
     let i
@@ -189,7 +189,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
       }
 
       for (i = 0; i < level0.length; i++) {
-        this.computeFgSegForwardBack(level0[i], 0, 0)
+        this.computeSegForwardBack(level0[i], 0, 0)
       }
     }
   }
@@ -203,7 +203,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
   // who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
   // segments behind this one in the current series, and `seriesBackwardCoord` is the starting
   // coordinate of the first segment in the series.
-  computeFgSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardCoord) {
+  computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardCoord) {
     let forwardSegs = seg.forwardSegs
     let i
 
@@ -220,7 +220,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
         // this segment's forwardCoord will be calculated from the backwardCoord of the
         // highest-pressure forward segment.
-        this.computeFgSegForwardBack(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord)
+        this.computeSegForwardBack(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord)
         seg.forwardCoord = forwardSegs[0].backwardCoord
       }
 
@@ -232,7 +232,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
       // use this segment's coordinates to computed the coordinates of the less-pressurized
       // forward segments
       for (i = 0; i < forwardSegs.length; i++) {
-        this.computeFgSegForwardBack(forwardSegs[i], 0, seg.forwardCoord)
+        this.computeSegForwardBack(forwardSegs[i], 0, seg.forwardCoord)
       }
     }
   }
@@ -262,13 +262,13 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   // Given foreground event segments that have already had their position coordinates computed,
   // assigns position-related CSS values to their elements.
-  assignFgSegHorizontals(segs: Seg[]) {
+  assignSegCss(segs: Seg[]) {
     let i
     let seg
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      applyStyle(seg.el, this.generateFgSegHorizontalCss(seg))
+      applyStyle(seg.el, this.generateSegCss(seg))
 
       // if the height is short, add a className for alternate styling
       if (seg.bottom - seg.top < 30) {
@@ -280,7 +280,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   // Generates an object with CSS properties/values that should be applied to an event segment element.
   // Contains important positioning-related properties that should be applied to any event element, customized or not.
-  generateFgSegHorizontalCss(seg: Seg) {
+  generateSegCss(seg: Seg) {
     let shouldOverlap = this.context.options.slotEventOverlap
     let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
     let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point

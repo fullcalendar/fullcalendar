@@ -8,7 +8,6 @@ import { ViewProps } from '../View'
 import reselector from '../util/reselector'
 import DaySeries from '../common/DaySeries'
 import DayTable from '../common/DayTable'
-import { DateMarker } from '../datelib/marker'
 
 export default class BasicView extends AbstractBasicView {
 
@@ -69,10 +68,6 @@ export default class BasicView extends AbstractBasicView {
       isRigid: this.hasRigidRows(),
       nextDayThreshold: this.nextDayThreshold
     })
-  }
-
-  getRowDate(row: number): DateMarker {
-    return this.dayTable.cells[row][0].date
   }
 
 }
