@@ -9,7 +9,7 @@ import { createElement } from './util/dom-manip'
 import { ComponentContext } from './component/Component'
 import DateComponent from './component/DateComponent'
 import { EventStore } from './structs/event-store'
-import { EventUiHash, sliceEventStore } from './component/event-rendering'
+import { EventUiHash, sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionUiState } from './interactions/event-interaction-state'
 
@@ -151,7 +151,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
   // util for subclasses
-  sliceEvents(eventStore: EventStore, eventUis: EventUiHash, allDay: boolean) {
+  sliceEvents(eventStore: EventStore, eventUis: EventUiHash, allDay: boolean): EventRenderRange[] {
     return sliceEventStore(
       eventStore,
       eventUis,

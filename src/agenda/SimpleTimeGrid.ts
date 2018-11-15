@@ -11,6 +11,7 @@ import { sliceBusinessHours } from '../structs/business-hours'
 import DayTable from '../common/DayTable'
 import { DateEnv } from '../datelib/env'
 import { DateMarker, addMs } from '../datelib/marker'
+import { EventSegUiInteractionState } from '../component/DateComponent'
 
 export interface SimpleTimeGridProps {
   dateProfile: DateProfile | null
@@ -111,7 +112,7 @@ function businessHoursToSegs(businessHours: EventStore, dateProfile: DateProfile
   )
 }
 
-function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, colRanges: DateRange[], timeGrid: TimeGrid) {
+function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, colRanges: DateRange[], timeGrid: TimeGrid): EventSegUiInteractionState {
   if (!interaction) {
     return null
   }
@@ -161,13 +162,13 @@ function eventRangesToSegs(eventRanges: EventRenderRange[], colRanges: DateRange
   let segs = []
 
   for (let eventRange of eventRanges) {
-    segs.push(...eventRangeToSegs(colRanges, eventRange, timeGrid))
+    segs.push(...eventRangeToSegs(eventRange, colRanges, timeGrid))
   }
 
   return segs
 }
 
-function eventRangeToSegs(colRanges: DateRange[], eventRange: EventRenderRange, timeGrid: TimeGrid): TimeGridSeg[] {
+function eventRangeToSegs(eventRange: EventRenderRange, colRanges: DateRange[], timeGrid: TimeGrid): TimeGridSeg[] {
   let { range } = eventRange
   let segs = []
 

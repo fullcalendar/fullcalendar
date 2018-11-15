@@ -8,7 +8,7 @@ import DayTable from '../common/DayTable'
 import SimpleTimeGrid from './SimpleTimeGrid'
 import SimpleDayGrid from '../basic/SimpleDayGrid'
 import reselector from '../util/reselector'
-import { ViewProps } from 'src/View'
+import { ViewProps } from '../View'
 
 
 export default class AgendaView extends AbstractAgendaView {

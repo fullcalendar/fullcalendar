@@ -12,7 +12,7 @@ import { buildGotoAnchorHtml } from '../component/date-rendering'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import { EventRenderRange, EventUiHash, sliceEventStore } from '../component/event-rendering'
-import { EventStore } from 'src/structs/event-store';
+import { EventStore } from '../structs/event-store';
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".

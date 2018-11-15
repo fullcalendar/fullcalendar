@@ -9,6 +9,7 @@ import { Duration } from '../datelib/duration'
 import reselector from '../util/reselector'
 import { sliceBusinessHours } from '../structs/business-hours'
 import Component from '../component/Component'
+import { EventSegUiInteractionState } from '../component/DateComponent'
 
 export interface SimpleDayGridProps {
   dateProfile: DateProfile | null
@@ -79,7 +80,7 @@ function dateSpanToSegs(dateSpan: DateSpan, dayTable: DayTable, dayGrid: DayGrid
   return dateSpan ? sliceDateSpan(dateSpan, dayTable, dayGrid) : null
 }
 
-function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, dayTable: DayTable, nextDayThreshold: Duration, dayGrid: DayGrid) {
+function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, dayTable: DayTable, nextDayThreshold: Duration, dayGrid: DayGrid): EventSegUiInteractionState {
   if (!interaction) {
     return null
   }

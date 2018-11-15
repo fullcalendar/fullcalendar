@@ -9,7 +9,7 @@ export const internalApiVersion = 12
 // types
 export { OptionsInput } from './types/input-types'
 export { EventInput, EventDef } from './structs/event'
-export { BusinessHoursInput } from './structs/business-hours'
+export { BusinessHoursInput, sliceBusinessHours } from './structs/business-hours'
 
 export {
   applyAll,
@@ -90,7 +90,7 @@ export { default as Theme } from './theme/Theme'
 export { default as Component, ComponentContext } from './component/Component'
 export { default as DateComponent, Seg } from './component/DateComponent'
 export { default as Calendar } from './Calendar'
-export { default as View } from './View'
+export { default as View, ViewProps } from './View'
 export { defineView, getViewConfig } from './ViewRegistry'
 export { default as FgEventRenderer } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
@@ -103,6 +103,7 @@ export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewSpec } from './structs/view-spec'
+export { DateSpan } from './structs/date-span'
 
 export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime, isValidDate } from './datelib/marker'
 export {
@@ -143,3 +144,6 @@ export { reducerFunc, Action, CalendarState } from './reducers/types'
 export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
 
 export { default as DaySeries } from './common/DaySeries'
+
+export { EventInteractionUiState } from './interactions/event-interaction-state'
+export { EventRenderRange, sliceEventStore } from './component/event-rendering'
