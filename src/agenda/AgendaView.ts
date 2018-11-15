@@ -50,7 +50,7 @@ export default class AgendaView extends AbstractAgendaView {
   }
 
   render(props: ViewProps) {
-    super.render(props)
+    super.render(props) // for flags for updateSize
 
     let { dateProfile, dateSelection } = this.props
     let dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
@@ -100,7 +100,7 @@ export default class AgendaView extends AbstractAgendaView {
 }
 
 function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator): DayTable {
-  let daySeries = new DaySeries(dateProfile.renderRange, this.dateProfileGenerator)
+  let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
 
   return new DayTable(daySeries, false)
 }

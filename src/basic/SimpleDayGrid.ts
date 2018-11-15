@@ -10,6 +10,7 @@ import reselector from '../util/reselector'
 import { sliceBusinessHours } from '../structs/business-hours'
 import Component from '../component/Component'
 import { EventSegUiInteractionState } from '../component/DateComponent'
+import { DateRange } from '../datelib/date-range'
 
 export interface SimpleDayGridProps {
   dateProfile: DateProfile | null
@@ -76,7 +77,7 @@ function businessHoursToSegs(businessHours: EventStore, dateProfile: DateProfile
   )
 }
 
-function dateSpanToSegs(dateSpan: DateSpan, dayTable: DayTable, dayGrid: DayGrid) {
+export function dateSpanToSegs(dateSpan: DateSpan, dayTable: DayTable, dayGrid: DayGrid) {
   return dateSpan ? sliceDateSpan(dateSpan, dayTable, dayGrid) : null
 }
 
@@ -107,24 +108,25 @@ function eventRangesToSegs(eventRanges: EventRenderRange[], dayTable: DayTable, 
   return segs
 }
 
-function eventRangeToSegs(eventRange: EventRenderRange, dayTable: DayTable, dayGrid: DayGrid): DayGridSeg[] {
-  return dayTable.sliceRange(eventRange.range).map(function(seg) {
-    return {
-      eventRange,
-      component: dayGrid,
-      isStart: eventRange.isStart && seg.isStart,
-      isEnd: eventRange.isEnd && seg.isEnd,
-      row: seg.row,
-      leftCol: dayGrid.isRtl ? (dayTable.colCnt - 1 - seg.lastCol) : seg.firstCol,
-      rightCol: dayGrid.isRtl ? (dayTable.colCnt - 1 - seg.firstCol) : seg.lastCol
-    }
-  })
+export function eventRangeToSegs(eventRange: EventRenderRange, dayTable: DayTable, dayGrid: DayGrid): DayGridSeg[] {
+  let segs = buildSegs(eventRange.range, dayTable, eventRange, dayGrid)
+
+  for (let seg of segs) {
+    seg.isStart = eventRange.isStart && seg.isStart
+    seg.isEnd = eventRange.isEnd && seg.isEnd
+  }
+
+  return segs
 }
 
 function sliceDateSpan(dateSpan: DateSpan, dayTable: DayTable, dayGrid: DayGrid): DayGridSeg[] {
   let eventRange = fabricateEventRange(dateSpan)
 
-  return dayTable.sliceRange(dateSpan.range).map(function(seg) {
+  return buildSegs(dateSpan.range, dayTable, eventRange, dayGrid)
+}
+
+function buildSegs(range: DateRange, dayTable: DayTable, eventRange: EventRenderRange, dayGrid: DayGrid): DayGridSeg[] {
+  return dayTable.sliceRange(range).map(function(seg) {
     return {
       component: dayGrid,
       eventRange,

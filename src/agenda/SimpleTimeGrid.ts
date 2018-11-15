@@ -11,7 +11,7 @@ import { sliceBusinessHours } from '../structs/business-hours'
 import DayTable from '../common/DayTable'
 import { DateEnv } from '../datelib/env'
 import { DateMarker, addMs } from '../datelib/marker'
-import { EventSegUiInteractionState } from '../component/DateComponent'
+import DateComponent, { EventSegUiInteractionState } from '../component/DateComponent'
 
 export interface SimpleTimeGridProps {
   dateProfile: DateProfile | null
@@ -28,9 +28,9 @@ export interface SimpleTimeGridProps {
 export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
 
   timeGrid: TimeGrid
-  colRanges: DateRange[]
+  dayRanges: DateRange[]
 
-  buildColRanges = reselector(buildColRanges)
+  buildDayRanges = reselector(buildDayRanges)
   eventStoreToSegs = reselector(eventStoreToSegs)
   businessHoursToSegs = reselector(businessHoursToSegs)
   selectionToSegs = reselector(dateSpanToSegs)
@@ -47,18 +47,18 @@ export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
     let { timeGrid } = this
     let { dateProfile, dayTable } = props
 
-    let colRanges = this.colRanges =
-      this.buildColRanges(dayTable, dateProfile, this.dateEnv)
+    let dayRanges = this.dayRanges =
+      this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
 
     timeGrid.receiveProps({
       dateProfile,
       cells: dayTable.cells[0],
-      businessHourSegs: this.businessHoursToSegs(props.businessHours, dateProfile, colRanges, timeGrid),
-      eventSegs: this.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, colRanges, timeGrid),
-      dateSelectionSegs: this.selectionToSegs(props.dateSelection, colRanges, timeGrid),
+      businessHourSegs: this.businessHoursToSegs(props.businessHours, dateProfile, dayRanges, timeGrid),
+      eventSegs: this.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, dayRanges, timeGrid),
+      dateSelectionSegs: this.selectionToSegs(props.dateSelection, dayRanges, timeGrid),
       eventSelection: props.eventSelection,
-      eventDrag: this.buildEventDrag(props.eventDrag, dateProfile, colRanges, timeGrid),
-      eventResize: this.buildEventResize(props.eventResize, dateProfile, colRanges, timeGrid)
+      eventDrag: this.buildEventDrag(props.eventDrag, dateProfile, dayRanges, timeGrid),
+      eventResize: this.buildEventResize(props.eventResize, dateProfile, dayRanges, timeGrid)
     })
   }
 
@@ -73,7 +73,7 @@ export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
           end: addMs(date, 1) // protect against null range
         },
         allDay: false
-      }, this.colRanges, this.timeGrid),
+      }, this.dayRanges, this.timeGrid),
 
       date
     )
@@ -81,12 +81,10 @@ export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
 
 }
 
-function buildColRanges(dayTable: DayTable, dateProfile: DateProfile, dateEnv: DateEnv): DateRange[] {
+export function buildDayRanges(dayTable: DayTable, dateProfile: DateProfile, dateEnv: DateEnv): DateRange[] {
   let ranges: DateRange[] = []
 
-  for (let col = 0; col < dayTable.colCnt; col++) {
-    let date = dayTable.cells[0][col].date
-
+  for (let date of dayTable.headerDates) {
     ranges.push({
       start: dateEnv.add(date, dateProfile.minTime),
       end: dateEnv.add(date, dateProfile.maxTime)
@@ -96,23 +94,23 @@ function buildColRanges(dayTable: DayTable, dateProfile: DateProfile, dateEnv: D
   return ranges
 }
 
-function eventStoreToSegs(eventStore: EventStore, eventUis: EventUiHash, dateProfile: DateProfile, colRanges: DateRange[], timeGrid: TimeGrid) {
+function eventStoreToSegs(eventStore: EventStore, eventUis: EventUiHash, dateProfile: DateProfile, dayRanges: DateRange[], timeGrid: TimeGrid) {
   return eventRangesToSegs(
     sliceEventStore(eventStore, eventUis, dateProfile.activeRange),
-    colRanges,
+    dayRanges,
     timeGrid
   )
 }
 
-function businessHoursToSegs(businessHours: EventStore, dateProfile: DateProfile, colRanges: DateRange[], timeGrid: TimeGrid) {
+function businessHoursToSegs(businessHours: EventStore, dateProfile: DateProfile, dayRanges: DateRange[], timeGrid: TimeGrid) {
   return eventRangesToSegs(
     sliceBusinessHours(businessHours, dateProfile.activeRange, null, timeGrid.calendar),
-    colRanges,
+    dayRanges,
     timeGrid
   )
 }
 
-function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, colRanges: DateRange[], timeGrid: TimeGrid): EventSegUiInteractionState {
+function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, dayRanges: DateRange[], timeGrid: TimeGrid): EventSegUiInteractionState {
   if (!interaction) {
     return null
   }
@@ -120,7 +118,7 @@ function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: 
   return {
     segs: eventRangesToSegs(
       sliceEventStore(interaction.mutatedEvents, interaction.eventUis, dateProfile.activeRange),
-      colRanges,
+      dayRanges,
       timeGrid
     ),
     affectedInstances: interaction.affectedEvents.instances,
@@ -129,60 +127,53 @@ function buildSegInteraction(interaction: EventInteractionUiState, dateProfile: 
   }
 }
 
-function dateSpanToSegs(dateSpan: DateSpan, colRanges: DateRange[], timeGrid: TimeGrid): TimeGridSeg[] {
+export function dateSpanToSegs(dateSpan: DateSpan, dayRanges: DateRange[], component: DateComponent<any>): TimeGridSeg[] {
 
   if (!dateSpan) {
     return []
   }
 
   let eventRange = fabricateEventRange(dateSpan)
-  let { range } = dateSpan
+
+  return buildSegs(dateSpan.range, dayRanges, eventRange, component)
+}
+
+function eventRangesToSegs(eventRanges: EventRenderRange[], dayRanges: DateRange[], timeGrid: TimeGrid): TimeGridSeg[] {
+  let segs = []
+
+  for (let eventRange of eventRanges) {
+    segs.push(...eventRangeToSegs(eventRange, dayRanges, timeGrid))
+  }
+
+  return segs
+}
+
+export function eventRangeToSegs(eventRange: EventRenderRange, dayRanges: DateRange[], component: DateComponent<any>): TimeGridSeg[] {
+  let segs = buildSegs(eventRange.range, dayRanges, eventRange, component)
+
+  for (let seg of segs) {
+    seg.isStart = eventRange.isStart && seg.isStart
+    seg.isEnd = eventRange.isEnd && seg.isEnd
+  }
+
+  return segs
+}
+
+
+function buildSegs(range: DateRange, dayRanges: DateRange[], eventRange: EventRenderRange, component: DateComponent<any>): TimeGridSeg[] {
   let segs: TimeGridSeg[] = []
 
-  for (let col = 0; col < colRanges.length; col++) {
-    let segRange = intersectRanges(range, colRanges[col])
+  for (let col = 0; col < dayRanges.length; col++) {
+    let segRange = intersectRanges(range, dayRanges[col])
 
     if (segRange) {
       segs.push({
-        component: timeGrid,
-        eventRange,
+        component,
+        eventRange: eventRange,
         start: segRange.start,
         end: segRange.end,
         isStart: segRange.start.valueOf() === range.start.valueOf(),
         isEnd: segRange.end.valueOf() === range.end.valueOf(),
-        col
-      })
-    }
-  }
-
-  return segs
-}
-
-function eventRangesToSegs(eventRanges: EventRenderRange[], colRanges: DateRange[], timeGrid: TimeGrid): TimeGridSeg[] {
-  let segs = []
-
-  for (let eventRange of eventRanges) {
-    segs.push(...eventRangeToSegs(eventRange, colRanges, timeGrid))
-  }
-
-  return segs
-}
-
-function eventRangeToSegs(eventRange: EventRenderRange, colRanges: DateRange[], timeGrid: TimeGrid): TimeGridSeg[] {
-  let { range } = eventRange
-  let segs = []
-
-  for (let col = 0; col < colRanges.length; col++) {
-    let segRange = intersectRanges(range, colRanges[col])
-
-    if (segRange) {
-      segs.push({
-        component: timeGrid,
-        eventRange,
-        start: segRange.start,
-        end: segRange.end,
-        isStart: eventRange.isStart && segRange.start.valueOf() === range.start.valueOf(),
-        isEnd: eventRange.isEnd && segRange.end.valueOf() === range.end.valueOf(),
         col
       })
     }

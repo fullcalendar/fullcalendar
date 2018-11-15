@@ -88,7 +88,7 @@ export { default as PositionCache } from './common/PositionCache'
 export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComponent'
 export { default as Theme } from './theme/Theme'
 export { default as Component, ComponentContext } from './component/Component'
-export { default as DateComponent, Seg } from './component/DateComponent'
+export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar } from './Calendar'
 export { default as View, ViewProps } from './View'
 export { defineView, getViewConfig } from './ViewRegistry'
@@ -96,8 +96,13 @@ export { default as FgEventRenderer } from './component/renderers/FgEventRendere
 export { default as FillRenderer } from './component/renderers/FillRenderer'
 export { default as AgendaView } from './agenda/AgendaView'
 export { default as AbstractAgendaView} from './agenda/AbstractAgendaView'
-export { default as TimeGrid } from './agenda/TimeGrid'
-export { default as DayGrid } from './basic/DayGrid'
+export { default as TimeGrid, TimeGridSeg } from './agenda/TimeGrid'
+export { dateSpanToSegs, eventRangeToSegs, buildDayRanges } from './agenda/SimpleTimeGrid'
+export {
+  eventRangeToSegs as DayGrid_eventRangeToSegs,
+  dateSpanToSegs as DayGrid_dateSpanToSegs
+} from './basic/SimpleDayGrid'
+export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
 export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
@@ -147,3 +152,5 @@ export { default as DaySeries } from './common/DaySeries'
 
 export { EventInteractionUiState } from './interactions/event-interaction-state'
 export { EventRenderRange, sliceEventStore } from './component/event-rendering'
+
+export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
