@@ -14,7 +14,8 @@
     "baseUrl": ".",
     "paths": {
       "fullcalendar": ["src/main"]
-    }
+    },
+    "sourceMap": true
   },
   "include": [
     "src/main.ts",

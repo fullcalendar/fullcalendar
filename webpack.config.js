@@ -1,7 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const webpack = require('webpack')
-const { CheckerPlugin } = require('awesome-typescript-loader') // for https://github.com/webpack/webpack/issues/3460
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('./package.json')
 
@@ -67,9 +67,10 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|js)$/,
-        loader: 'awesome-typescript-loader',
+        loader: 'ts-loader',
+        exclude: /node_modules/,
         options: {
-          useCache: true
+          transpileOnly: true // so ForkTsCheckerWebpackPlugin can take over
         }
       },
       {
@@ -84,7 +85,7 @@ module.exports = {
   },
 
   plugins: [
-    new CheckerPlugin(),
+    new ForkTsCheckerWebpackPlugin(),
     new ExtractTextPlugin({
       filename: '[name]', // the module name should already have .css in it!
       allChunks: true
