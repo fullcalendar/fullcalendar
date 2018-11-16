@@ -1,7 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const webpack = require('webpack')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('./package.json')
 
