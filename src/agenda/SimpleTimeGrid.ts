@@ -10,7 +10,7 @@ import { intersectRanges, DateRange } from '../datelib/date-range'
 import DayTable from '../common/DayTable'
 import { DateEnv } from '../datelib/env'
 import { DateMarker, addMs } from '../datelib/marker'
-import { buildBusinessHoursToSegs, buildEventStoreToSegs, buildDateSpanToSegs, buildMassageInteraction } from '../common/slicing-utils'
+import { Slicer } from '../common/slicing-utils'
 
 export interface SimpleTimeGridProps {
   dateProfile: DateProfile | null
@@ -29,34 +29,31 @@ export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
   timeGrid: TimeGrid
   dayRanges: DateRange[]
 
-  buildDayRanges = reselector(buildDayRanges)
-  businessHoursToSegs = reselector(buildBusinessHoursToSegs(sliceSegs))
-  eventStoreToSegs = reselector(buildEventStoreToSegs(sliceSegs))
-  selectionToSegs = reselector(buildDateSpanToSegs(sliceSegs))
-  buildEventDrag = reselector(buildMassageInteraction(sliceSegs))
-  buildEventResize = reselector(buildMassageInteraction(sliceSegs))
+  private buildDayRanges = reselector(buildDayRanges)
+  private slicer = new Slicer(sliceSegs)
 
   constructor(context, timeGrid: TimeGrid) {
     super(context)
 
     this.timeGrid = timeGrid
+    this.slicer.component = timeGrid
   }
 
   render(props: SimpleTimeGridProps) {
-    let { timeGrid } = this
+    let { slicer } = this
     let { dateProfile, dayTable } = props
 
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
 
-    timeGrid.receiveProps({
+    this.timeGrid.receiveProps({
       dateProfile,
       cells: dayTable.cells[0],
-      businessHourSegs: this.businessHoursToSegs(props.businessHours, dateProfile, null, timeGrid, dayRanges),
-      eventSegs: this.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, timeGrid, dayRanges),
-      dateSelectionSegs: this.selectionToSegs(props.dateSelection, timeGrid, dayRanges),
+      businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, null, dayRanges),
+      eventSegs: slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, dayRanges),
+      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, dayRanges),
       eventSelection: props.eventSelection,
-      eventDrag: this.buildEventDrag(props.eventDrag, dateProfile, timeGrid, dayRanges),
-      eventResize: this.buildEventResize(props.eventResize, dateProfile, timeGrid, dayRanges)
+      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, dayRanges),
+      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, dayRanges)
     })
   }
 
@@ -87,7 +84,7 @@ export function buildDayRanges(dayTable: DayTable, dateProfile: DateProfile, dat
   return ranges
 }
 
-function sliceSegs(range: DateRange, dayRanges: DateRange[]): TimeGridSeg[] {
+export function sliceSegs(range: DateRange, dayRanges: DateRange[]): TimeGridSeg[] {
   let segs: TimeGridSeg[] = []
 
   for (let col = 0; col < dayRanges.length; col++) {

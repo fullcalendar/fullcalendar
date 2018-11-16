@@ -49,18 +49,3 @@ export function isArraysEqual(a0, a1) {
 
   return true
 }
-
-// best place for this?
-export function collectArrays<InputItemType, OtherArgsType extends any[], OutputItemType>(
-  generator: (inputItem: InputItemType, ...otherArgs: OtherArgsType) => OutputItemType[],
-  inputItems: InputItemType[],
-  ...otherArgs: OtherArgsType
-): OutputItemType[] {
-  let outputItems: OutputItemType[] = []
-
-  for (let inputItem of inputItems) {
-    outputItems.push(...generator(inputItem, ...otherArgs))
-  }
-
-  return outputItems
-}

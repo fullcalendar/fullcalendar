@@ -8,7 +8,7 @@ export const internalApiVersion = 12
 
 // types
 export { OptionsInput } from './types/input-types'
-export { EventInput, EventDef } from './structs/event'
+export { EventInput, EventDef, EventInstance, EventInstanceHash } from './structs/event'
 export { BusinessHoursInput, sliceBusinessHours } from './structs/business-hours'
 
 export {
@@ -97,7 +97,7 @@ export { default as FillRenderer } from './component/renderers/FillRenderer'
 export { default as AgendaView } from './agenda/AgendaView'
 export { default as AbstractAgendaView} from './agenda/AbstractAgendaView'
 export { default as TimeGrid, TimeGridSeg } from './agenda/TimeGrid'
-export { buildDayRanges } from './agenda/SimpleTimeGrid'
+export { buildDayRanges, sliceSegs as sliceTimeGridSegs } from './agenda/SimpleTimeGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
 export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'
@@ -150,3 +150,5 @@ export { EventInteractionUiState } from './interactions/event-interaction-state'
 export { EventRenderRange, sliceEventStore } from './component/event-rendering'
 
 export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
+
+export { Slicer } from './common/slicing-utils'
