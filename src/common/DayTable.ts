@@ -1,13 +1,12 @@
 import DaySeries from './DaySeries'
 import { DateRange } from '../datelib/date-range'
 import { DateMarker } from '../datelib/marker'
+import { Seg } from '../component/DateComponent'
 
-export interface DayTableSeg {
+export interface DayTableSeg extends Seg {
   row: number
   firstCol: number
   lastCol: number
-  isStart: boolean
-  isEnd: boolean
 }
 
 export interface DayTableCell {

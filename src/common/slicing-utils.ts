@@ -2,7 +2,7 @@ import { DateRange } from '../datelib/date-range'
 import { EventStore } from '../structs/event-store'
 import { EventUiHash, sliceEventStore, EventRenderRange } from '../component/event-rendering'
 import { DateProfile } from '../DateProfileGenerator'
-import { Seg } from '../component/DateComponent'
+import { Seg, EventSegUiInteractionState } from '../component/DateComponent'
 import { DateSpan, fabricateEventRange } from '../structs/date-span'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { sliceBusinessHours } from '../structs/business-hours'
@@ -52,7 +52,7 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
     }
 
     let eventRange = fabricateEventRange(dateSpan)
-    let segs = this.dateSpanToSegs(dateSpan, ...otherArgs)
+    let segs = this.dateSpanToSegs(dateSpan, otherArgs)
 
     for (let seg of segs) {
       seg.component = this.component
@@ -62,7 +62,7 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
     return segs
   }
 
-  private massageInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, ...otherArgs: OtherArgsType) {
+  private massageInteraction(interaction: EventInteractionUiState, dateProfile: DateProfile, nextDayThreshold: Duration, ...otherArgs: OtherArgsType): EventSegUiInteractionState {
 
     if (!interaction) {
       return null
@@ -70,7 +70,7 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
 
     return {
       segs: this.eventRangesToSegs(
-        sliceEventStore(interaction.mutatedEvents, interaction.eventUis, dateProfile.activeRange),
+        sliceEventStore(interaction.mutatedEvents, interaction.eventUis, dateProfile.activeRange, nextDayThreshold),
         otherArgs
       ),
       affectedInstances: interaction.affectedEvents.instances,
@@ -102,7 +102,7 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
     return segs
   }
 
-  protected dateSpanToSegs(dateSpan: DateSpan, ...otherArgs: OtherArgsType): SegType[] {
+  protected dateSpanToSegs(dateSpan: DateSpan, otherArgs: OtherArgsType): SegType[] {
     return this.slice(dateSpan.range, ...otherArgs)
   }
 

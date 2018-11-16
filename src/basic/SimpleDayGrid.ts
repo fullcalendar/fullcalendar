@@ -48,15 +48,15 @@ export default class SimpleDayGrid extends Component<SimpleDayGridProps> {
       eventSegs: slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, nextDayThreshold, dayTable, isRtl),
       dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, dayTable, isRtl),
       eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, dayTable, isRtl),
-      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, dayTable, isRtl),
+      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, null, dayTable, isRtl),
+      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, null, dayTable, isRtl),
       isRigid: props.isRigid
     })
   }
 
 }
 
-function sliceSegs(range: DateRange, dayTable: DayTable, isRtl: boolean): DayGridSeg[] {
+export function sliceSegs(range: DateRange, dayTable: DayTable, isRtl: boolean): DayGridSeg[] {
   return dayTable.sliceRange(range).map(function(seg) {
     return {
       isStart: seg.isStart,

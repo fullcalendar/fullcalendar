@@ -22,7 +22,7 @@ export interface Seg {
   isEnd: boolean
   eventRange?: EventRenderRange
   el?: HTMLElement
-  [otherProp: string]: any
+  [otherProp: string]: any // TODO: remove this. extending Seg will handle this
 }
 
 export interface EventSegUiInteractionState {

@@ -52,8 +52,8 @@ export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
       eventSegs: slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, dayRanges),
       dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, dayRanges),
       eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, dayRanges),
-      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, dayRanges)
+      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, null, dayRanges),
+      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, null, dayRanges)
     })
   }
 
