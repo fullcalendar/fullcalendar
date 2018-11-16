@@ -17,7 +17,7 @@ export type DateComponentHash = { [uid: string]: DateComponent<any> }
 // NOTE: for fg-events, eventRange.range is NOT sliced,
 // thus, we need isStart/isEnd
 export interface Seg {
-  component: DateComponent<any>
+  component?: DateComponent<any>
   isStart: boolean
   isEnd: boolean
   eventRange?: EventRenderRange

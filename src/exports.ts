@@ -97,11 +97,7 @@ export { default as FillRenderer } from './component/renderers/FillRenderer'
 export { default as AgendaView } from './agenda/AgendaView'
 export { default as AbstractAgendaView} from './agenda/AbstractAgendaView'
 export { default as TimeGrid, TimeGridSeg } from './agenda/TimeGrid'
-export { dateSpanToSegs, eventRangeToSegs, buildDayRanges } from './agenda/SimpleTimeGrid'
-export {
-  eventRangeToSegs as DayGrid_eventRangeToSegs,
-  dateSpanToSegs as DayGrid_dateSpanToSegs
-} from './basic/SimpleDayGrid'
+export { buildDayRanges } from './agenda/SimpleTimeGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
 export { default as BasicView } from './basic/BasicView'
 export { default as MonthView } from './basic/MonthView'

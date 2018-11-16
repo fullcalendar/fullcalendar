@@ -63,7 +63,7 @@ export function createFormatter(input: FormatterInput, defaultSeparator?: string
     return new CmdFormatter(input, defaultSeparator)
 
   } else if (typeof input === 'function') {
-    return new FuncFormatter(input)
+    return new FuncFormatter(input as FuncFormatterFunc)
   }
 }
 
