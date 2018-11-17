@@ -219,10 +219,23 @@ export default abstract class BasicView extends View {
 
   // Sets the height of just the DayGrid component in this view
   setGridHeight(height, isAuto) {
-    if (isAuto) {
-      undistributeHeight(this.dayGrid.rowEls) // let the rows be their natural height with no expanding
+
+    if (this.opt('monthMode')) {
+
+      // if auto, make the height of each row the height that it would be if there were 6 weeks
+      if (isAuto) {
+        height *= this.dayGrid.rowCnt / 6
+      }
+
+      distributeHeight(this.dayGrid.rowEls, height, !isAuto) // if auto, don't compensate for height-hogging rows
+
     } else {
-      distributeHeight(this.dayGrid.rowEls, height, true) // true = compensate for height-hogging rows
+
+      if (isAuto) {
+        undistributeHeight(this.dayGrid.rowEls) // let the rows be their natural height with no expanding
+      } else {
+        distributeHeight(this.dayGrid.rowEls, height, true) // true = compensate for height-hogging rows
+      }
     }
   }
 

@@ -60,7 +60,7 @@ export function getAllDayHtml(component: Component<any>) {
 
 // Computes HTML classNames for a single-day element
 export function getDayClasses(date: DateMarker, dateProfile: DateProfile, context: ComponentContext, noThemeHighlight?) {
-  let { calendar, view, theme } = context
+  let { calendar, view, theme, dateEnv } = context
   let classes = []
   let todayStart: DateMarker
   let todayEnd: DateMarker
@@ -70,7 +70,10 @@ export function getDayClasses(date: DateMarker, dateProfile: DateProfile, contex
   } else {
     classes.push('fc-' + DAY_IDS[date.getUTCDay()])
 
-    if (view.isDateInOtherMonth(date, dateProfile)) {
+    if (
+      view.opt('monthMode') &&
+      dateEnv.getMonth(date) !== dateEnv.getMonth(dateProfile.currentRange.start)
+    ) {
       classes.push('fc-other-month')
     }
 

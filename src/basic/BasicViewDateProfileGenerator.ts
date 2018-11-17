@@ -1,5 +1,5 @@
 import DateProfileGenerator from '../DateProfileGenerator'
-import { addWeeks } from '../datelib/marker'
+import { addWeeks, diffWeeks } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
 
 
@@ -22,6 +22,17 @@ export default class BasicViewDateProfileGenerator extends DateProfileGenerator 
       if (endOfWeek.valueOf() !== end.valueOf()) {
         end = addWeeks(endOfWeek, 1)
       }
+    }
+
+    // ensure 6 weeks
+    if (
+      this.options.monthMode &&
+      this.options.fixedWeekCount
+    ) {
+      let rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
+        diffWeeks(start, end)
+      )
+      end = addWeeks(end, 6 - rowCnt)
     }
 
     return { start, end }

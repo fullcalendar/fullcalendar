@@ -101,7 +101,6 @@ export { buildDayRanges, sliceSegs as sliceTimeGridSegs } from './agenda/SimpleT
 export { sliceSegs as sliceDayGridSegs } from './basic/SimpleDayGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
 export { default as BasicView } from './basic/BasicView'
-export { default as MonthView } from './basic/MonthView'
 export { default as ListView } from './list/ListView'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewSpec } from './structs/view-spec'

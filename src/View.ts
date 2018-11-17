@@ -432,16 +432,6 @@ export default abstract class View extends DateComponent<ViewProps> {
      // subclasses must implement
   }
 
-
-  /* Date Utils
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // For DateComponent::getDayClasses
-  isDateInOtherMonth(date: DateMarker, dateProfile) {
-    return false
-  }
-
 }
 
 EmitterMixin.mixInto(View)
