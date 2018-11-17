@@ -5,7 +5,6 @@ describe('internal View/Grid classes', function() {
 
     expect(typeof FullCalendar.AgendaView).toBe('function')
     expect(typeof FullCalendar.BasicView).toBe('function')
-    expect(typeof FullCalendar.MonthView).toBe('function')
     expect(typeof FullCalendar.ListView).toBe('function')
 
     expect(typeof FullCalendar.DayGrid).toBe('function')

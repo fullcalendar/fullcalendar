@@ -13,7 +13,7 @@ describe('rerender performance', function() {
     {
       defaultView: 'month',
       classes: [
-        { name: 'MonthView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
+        { name: 'BasicView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
         { name: 'DayGrid', dateMethod: 'renderCells', eventMethod: 'renderEventSegs' }
       ],
       changeToView: 'list' // does not have DayGrid!
