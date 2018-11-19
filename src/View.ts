@@ -14,7 +14,7 @@ import { DateSpan } from './structs/date-span'
 import { EventInteractionUiState } from './interactions/event-interaction-state'
 
 export interface ViewProps {
-  dateProfile: DateProfile | null
+  dateProfile: DateProfile
   businessHours: EventStore
   eventStore: EventStore
   eventUis: EventUiHash
