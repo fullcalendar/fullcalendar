@@ -9,7 +9,7 @@ export const internalApiVersion = 12
 // types
 export { OptionsInput } from './types/input-types'
 export { EventInput, EventDef, EventInstance, EventInstanceHash } from './structs/event'
-export { BusinessHoursInput, sliceBusinessHours } from './structs/business-hours'
+export { BusinessHoursInput, sliceBusinessHours, parseBusinessHours } from './structs/business-hours'
 
 export {
   applyAll,
@@ -94,13 +94,14 @@ export { default as View, ViewProps } from './View'
 export { defineView, getViewConfig } from './ViewRegistry'
 export { default as FgEventRenderer } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
-export { default as AgendaView } from './agenda/AgendaView'
+export { default as AgendaView, buildDayTable as buildAgendaDayTable } from './agenda/AgendaView'
 export { default as AbstractAgendaView} from './agenda/AbstractAgendaView'
+export { default as AbstractBasicView} from './basic/AbstractBasicView'
 export { default as TimeGrid, TimeGridSeg } from './agenda/TimeGrid'
 export { buildDayRanges, sliceSegs as sliceTimeGridSegs } from './agenda/SimpleTimeGrid'
 export { sliceSegs as sliceDayGridSegs } from './basic/SimpleDayGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
-export { default as BasicView } from './basic/BasicView'
+export { default as BasicView, buildDayTable as buildBasicDayTable } from './basic/BasicView'
 export { default as ListView } from './list/ListView'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewSpec } from './structs/view-spec'

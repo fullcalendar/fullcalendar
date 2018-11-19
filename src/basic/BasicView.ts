@@ -72,7 +72,7 @@ export default class BasicView extends AbstractBasicView {
 
 }
 
-function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
+export function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
   let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
 
   return new DayTable(

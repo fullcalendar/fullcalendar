@@ -22,6 +22,9 @@ const DEF_DEFAULTS = {
   groupId: '_businessHours' // so multiple defs get grouped
 }
 
+/*
+TODO: pass around as EventDefHash!!!
+*/
 export function parseBusinessHours(input: BusinessHoursInput, calendar: Calendar): EventStore {
   return parseEvents(
     refineInputs(input),

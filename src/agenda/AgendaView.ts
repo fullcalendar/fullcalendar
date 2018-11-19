@@ -99,7 +99,7 @@ export default class AgendaView extends AbstractAgendaView {
 
 }
 
-function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator): DayTable {
+export function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator): DayTable {
   let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
 
   return new DayTable(daySeries, false)
