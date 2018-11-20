@@ -33,6 +33,17 @@ import * as exportHooks from './exports'
 import CalendarComponent from './CalendarComponent'
 
 
+export interface DateClickApi {
+  date: Date
+  dateStr: string
+  allDay: boolean
+  dayEl: HTMLElement
+  jsEvent: UIEvent
+  view: View
+}
+
+export type dateClickApiTransformer = (dateClick: DateClickApi, dateSpan: DateSpan) => void
+
 export default class Calendar {
 
   // global handler registry
@@ -829,17 +840,21 @@ export default class Calendar {
 
 
   // TODO: receive pev?
-  triggerDayClick(dateSpan: DateSpan, dayEl: HTMLElement, view: View, ev: UIEvent) {
-    this.publiclyTrigger('dateClick', [
-      {
-        date: this.dateEnv.toDate(dateSpan.range.start),
-        dateStr: this.dateEnv.formatIso(dateSpan.range.start, { omitTime: dateSpan.allDay }),
-        allDay: dateSpan.allDay,
-        dayEl,
-        jsEvent: ev,
-        view
-      }
-    ])
+  triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, view: View, ev: UIEvent) {
+    let dateClickApi: DateClickApi = {
+      date: this.dateEnv.toDate(dateSpan.range.start),
+      dateStr: this.dateEnv.formatIso(dateSpan.range.start, { omitTime: dateSpan.allDay }),
+      allDay: dateSpan.allDay,
+      dayEl,
+      jsEvent: ev,
+      view
+    }
+
+    for (let transformer of this.pluginSystem.hooks.dateClickApiTransformers) {
+      transformer(dateClickApi, dateSpan)
+    }
+
+    this.publiclyTrigger('dateClick', [ dateClickApi ])
   }
 
 

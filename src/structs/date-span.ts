@@ -5,6 +5,7 @@ import { Duration } from '../datelib/duration'
 import { assignTo } from '../util/object'
 import { parseEventDef, createEventInstance } from './event';
 import { computeEventDefUi, EventRenderRange } from '../component/event-rendering';
+import Calendar from '../Calendar'
 
 /*
 A data-structure for a date-range that will be visually displayed.
@@ -145,13 +146,13 @@ export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi 
   return props
 }
 
-export function fabricateEventRange(dateSpan: DateSpan): EventRenderRange {
+export function fabricateEventRange(dateSpan: DateSpan, calendar: Calendar): EventRenderRange {
   let def = parseEventDef(
     { editable: false },
     '', // sourceId
     dateSpan.allDay,
     true, // hasEnd
-    this.calendar
+    calendar
   )
 
   return {

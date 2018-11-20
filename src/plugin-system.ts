@@ -2,6 +2,7 @@ import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
 import { eventDragMutationMassager } from './interactions/EventDragging'
 import { eventDefMutationApplier } from './structs/event-mutation'
+import { dateClickApiTransformer } from './Calendar'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -9,8 +10,9 @@ export interface PluginDefInput {
   deps?: PluginDef[]
   reducers?: reducerFunc[]
   eventDefParsers?: eventDefParserFunc[]
-  eventDragMutationMassagers: eventDragMutationMassager[]
-  eventDefMutationAppliers: eventDefMutationApplier[]
+  eventDragMutationMassagers?: eventDragMutationMassager[]
+  eventDefMutationAppliers?: eventDefMutationApplier[],
+  dateClickApiTransformers?: dateClickApiTransformer[]
 }
 
 export interface PluginHooks {
@@ -18,6 +20,7 @@ export interface PluginHooks {
   eventDefParsers: eventDefParserFunc[]
   eventDragMutationMassagers: eventDragMutationMassager[]
   eventDefMutationAppliers: eventDefMutationApplier[]
+  dateClickApiTransformers: dateClickApiTransformer[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -34,7 +37,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     reducers: input.reducers || [],
     eventDefParsers: input.eventDefParsers || [],
     eventDragMutationMassagers: input.eventDragMutationMassagers || [],
-    eventDefMutationAppliers: input.eventDefMutationAppliers || []
+    eventDefMutationAppliers: input.eventDefMutationAppliers || [],
+    dateClickApiTransformers: input.dateClickApiTransformers || []
   }
 }
 
@@ -48,7 +52,8 @@ export class PluginSystem {
       reducers: [],
       eventDefParsers: [],
       eventDragMutationMassagers: [],
-      eventDefMutationAppliers: []
+      eventDefMutationAppliers: [],
+      dateClickApiTransformers: []
     }
     this.addedHash = {}
   }
@@ -72,6 +77,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     reducers: hooks0.reducers.concat(hooks1.reducers),
     eventDefParsers: hooks0.eventDefParsers.concat(hooks1.eventDefParsers),
     eventDragMutationMassagers: hooks0.eventDragMutationMassagers.concat(hooks1.eventDragMutationMassagers),
-    eventDefMutationAppliers: hooks0.eventDefMutationAppliers.concat(hooks1.eventDefMutationAppliers)
+    eventDefMutationAppliers: hooks0.eventDefMutationAppliers.concat(hooks1.eventDefMutationAppliers),
+    dateClickApiTransformers: hooks0.dateClickApiTransformers.concat(hooks1.dateClickApiTransformers)
   }
 }

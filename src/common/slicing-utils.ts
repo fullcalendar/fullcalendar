@@ -51,7 +51,7 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
       return []
     }
 
-    let eventRange = fabricateEventRange(dateSpan)
+    let eventRange = fabricateEventRange(dateSpan, this.component.calendar)
     let segs = this.dateSpanToSegs(dateSpan, otherArgs)
 
     for (let seg of segs) {

@@ -89,7 +89,7 @@ export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComp
 export { default as Theme } from './theme/Theme'
 export { default as Component, ComponentContext } from './component/Component'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
-export { default as Calendar } from './Calendar'
+export { default as Calendar, dateClickApiTransformer, DateClickApi } from './Calendar'
 export { default as View, ViewProps } from './View'
 export { defineView, getViewConfig } from './ViewRegistry'
 export { default as FgEventRenderer } from './component/renderers/FgEventRenderer'
