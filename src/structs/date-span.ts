@@ -2,7 +2,6 @@ import { DateRange, rangesEqual, OpenDateRange } from '../datelib/date-range'
 import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 import { Duration } from '../datelib/duration'
-import { assignTo } from '../util/object'
 import { parseEventDef, createEventInstance } from './event';
 import { computeEventDefUi, EventRenderRange } from '../component/event-rendering';
 import Calendar from '../Calendar'
@@ -39,8 +38,15 @@ export interface DateSpan extends OpenDateSpan {
 export interface DateSpanApi {
   start: Date
   end: Date
+  startStr: string
+  endStr: string
   allDay: boolean
-  [otherProp: string]: any
+}
+
+export interface DatePointApi {
+  date: Date
+  dateStr: string
+  allDay: boolean
 }
 
 const STANDARD_PROPS = {
@@ -134,16 +140,21 @@ export function isSpanPropsMatching(subjectSpan: DateSpan, matchSpan: DateSpan):
 }
 
 export function buildDateSpanApi(span: DateSpan, dateEnv: DateEnv): DateSpanApi {
-  let props = assignTo({}, span)
-  delete props.range
+  return {
+    start: dateEnv.toDate(span.range.start),
+    end: dateEnv.toDate(span.range.end),
+    startStr: dateEnv.formatIso(span.range.start, { omitTime: span.allDay }),
+    endStr: dateEnv.formatIso(span.range.end, { omitTime: span.allDay }),
+    allDay: span.allDay
+  }
+}
 
-  props.start = dateEnv.toDate(span.range.start)
-  props.end = dateEnv.toDate(span.range.end)
-
-  props.startStr = dateEnv.formatIso(span.range.start, { omitTime: span.allDay })
-  props.endStr = dateEnv.formatIso(span.range.end, { omitTime: span.allDay })
-
-  return props
+export function buildDatePointApi(span: DateSpan, dateEnv: DateEnv): DatePointApi {
+  return {
+    date: dateEnv.toDate(span.range.start),
+    dateStr: dateEnv.formatIso(span.range.start, { omitTime: span.allDay }),
+    allDay: span.allDay
+  }
 }
 
 export function fabricateEventRange(dateSpan: DateSpan, calendar: Calendar): EventRenderRange {

@@ -13,7 +13,7 @@ import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
-import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi } from './structs/date-span'
+import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import reselector from './util/reselector'
 import { mapHash, assignTo } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
@@ -33,16 +33,19 @@ import * as exportHooks from './exports'
 import CalendarComponent from './CalendarComponent'
 
 
-export interface DateClickApi {
-  date: Date
-  dateStr: string
-  allDay: boolean
+export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
   jsEvent: UIEvent
   view: View
 }
 
+export interface DateSelectionApi extends DateSpanApi {
+  jsEvent: UIEvent
+  view: View
+}
+
 export type dateClickApiTransformer = (dateClick: DateClickApi, dateSpan: DateSpan) => void
+export type dateSelectionApiTransformer = (dateSelection: DateSelectionApi, dateSpan: DateSpan) => void
 
 export default class Calendar {
 
@@ -816,10 +819,14 @@ export default class Calendar {
 
 
   triggerDateSelect(selection: DateSpan, pev?: PointerDragEvent) {
-    let arg = buildDateSpanApi(selection, this.dateEnv)
+    let arg = buildDateSpanApi(selection, this.dateEnv) as DateSelectionApi
 
     arg.jsEvent = pev ? pev.origEvent : null
     arg.view = this.view
+
+    for (let transformer of this.pluginSystem.hooks.dateSelectionApiTransformers) {
+      transformer(arg, selection)
+    }
 
     this.publiclyTrigger('select', [ arg ])
 
@@ -841,20 +848,17 @@ export default class Calendar {
 
   // TODO: receive pev?
   triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, view: View, ev: UIEvent) {
-    let dateClickApi: DateClickApi = {
-      date: this.dateEnv.toDate(dateSpan.range.start),
-      dateStr: this.dateEnv.formatIso(dateSpan.range.start, { omitTime: dateSpan.allDay }),
-      allDay: dateSpan.allDay,
-      dayEl,
-      jsEvent: ev,
-      view
-    }
+    let arg = buildDatePointApi(dateSpan, this.dateEnv) as DateClickApi
+
+    arg.dayEl = dayEl
+    arg.jsEvent = ev
+    arg.view = view
 
     for (let transformer of this.pluginSystem.hooks.dateClickApiTransformers) {
-      transformer(dateClickApi, dateSpan)
+      transformer(arg, dateSpan)
     }
 
-    this.publiclyTrigger('dateClick', [ dateClickApi ])
+    this.publiclyTrigger('dateClick', [ arg ])
   }
 
 

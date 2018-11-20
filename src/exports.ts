@@ -89,7 +89,7 @@ export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComp
 export { default as Theme } from './theme/Theme'
 export { default as Component, ComponentContext } from './component/Component'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
-export { default as Calendar, dateClickApiTransformer, DateClickApi } from './Calendar'
+export { default as Calendar, dateClickApiTransformer, DateClickApi, DateSelectionApi } from './Calendar'
 export { default as View, ViewProps } from './View'
 export { defineView, getViewConfig } from './ViewRegistry'
 export { default as FgEventRenderer } from './component/renderers/FgEventRenderer'
@@ -135,6 +135,7 @@ export { default as Draggable } from './interactions-external/ExternalDraggable'
 export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 
 export { Hit } from './interactions/HitDragging'
+export { dateSelectionTransformer } from './interactions/DateSelecting'
 
 export { formatDate, formatRange } from './formatting-api'
 

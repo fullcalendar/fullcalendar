@@ -59,10 +59,11 @@ export default class DateSelecting {
     if (hit) {
       dragSelection = computeSelection(
         this.hitDragging.initialHit!.dateSpan,
-        hit.dateSpan
+        hit.dateSpan,
+        calendar.pluginSystem.hooks.dateSelectionTransformers
       )
 
-      if (!this.component.isSelectionValid(dragSelection)) {
+      if (!dragSelection || !this.component.isSelectionValid(dragSelection)) {
         isInvalid = true
         dragSelection = null
       }
@@ -107,7 +108,7 @@ function getComponentTouchDelay(component: DateComponent<any>): number {
   return delay
 }
 
-function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan): DateSpan {
+function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan, dateSelectionTransformers: dateSelectionTransformer[]): DateSpan {
   let ms = [
     dateSpan0.range.start,
     dateSpan0.range.end,
@@ -117,8 +118,20 @@ function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan): DateSpan {
 
   ms.sort(compareNumbers)
 
-  return {
+  let finalDateSpan: DateSpan = {
     range: { start: ms[0], end: ms[3] },
     allDay: dateSpan0.allDay
   }
+
+  for (let transformer of dateSelectionTransformers) {
+    if (
+      !transformer(finalDateSpan, dateSpan0, dateSpan1)
+    ) {
+      return null
+    }
+  }
+
+  return finalDateSpan
 }
+
+export type dateSelectionTransformer = (finalDateSpan: DateSpan, dateSpan0: DateSpan, dateSpan1: DateSpan) => boolean
