@@ -134,6 +134,8 @@ export { default as ElementDragging } from './dnd/ElementDragging'
 export { default as Draggable } from './interactions-external/ExternalDraggable'
 export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 
+export { Hit } from './interactions/HitDragging'
+
 export { formatDate, formatRange } from './formatting-api'
 
 export { globalDefaults } from './options'
@@ -144,6 +146,8 @@ export { createPlugin, PluginDef, PluginDefInput } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
 
 export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
+
+export { default as OffsetTracker } from './common/OffsetTracker'
 
 export { default as DaySeries } from './common/DaySeries'
 

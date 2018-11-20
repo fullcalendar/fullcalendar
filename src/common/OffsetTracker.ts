@@ -15,11 +15,15 @@ export default class OffsetTracker { // ElementOffsetTracker
   scrollCaches: ElementScrollGeomCache[]
   origLeft: number
   origTop: number
+  origRight: number
+  origBottom: number // TODO: use rect?
 
   constructor(el: HTMLElement) {
     let rect = computeRect(el)
     this.origLeft = rect.left
     this.origTop = rect.top
+    this.origRight = rect.right
+    this.origBottom = rect.bottom
 
     // will work fine for divs that have overflow:hidden
     this.scrollCaches = getClippingParents(el).map(function(el) {

@@ -472,4 +472,4 @@ DateComponent.prototype.useEventCenter = true
 DateComponent.prototype.doesDragMirror = false
 DateComponent.prototype.doesDragHighlight = false
 DateComponent.prototype.fgSegSelector = '.fc-event-container > *'
-DateComponent.prototype.bgSegSelector = '.fc-bgevent'
+DateComponent.prototype.bgSegSelector = '.fc-bgevent:not(.fc-nonbusiness)'

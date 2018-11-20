@@ -276,7 +276,7 @@ export default abstract class AgendaView extends View {
       top++ // to overcome top border that slots beyond the first have. looks better
     }
 
-    return { top: top }
+    return { top }
   }
 
 
