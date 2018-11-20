@@ -23,7 +23,7 @@ export function applyMutationToEventStore(eventStore: EventStore, mutation: Even
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
-    dest.defs[defId] = applyMutationToEventDef(def, mutation)
+    dest.defs[defId] = applyMutationToEventDef(def, mutation, calendar.pluginSystem.hooks.eventDefMutationAppliers)
   }
 
   for (let instanceId in eventStore.instances) {
@@ -35,7 +35,10 @@ export function applyMutationToEventStore(eventStore: EventStore, mutation: Even
   return dest
 }
 
-function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation): EventDef {
+export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutation) => void
+
+
+function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation, appliers: eventDefMutationApplier[]): EventDef {
   let copy = assignTo({}, eventDef)
   let standardProps = mutation.standardProps || {}
 
@@ -53,6 +56,10 @@ function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation): E
 
   if (mutation.extendedProps) {
     copy.extendedProps = assignTo({}, copy.extendedProps, mutation.extendedProps)
+  }
+
+  for (let applier of appliers) {
+    applier(copy, mutation)
   }
 
   return copy

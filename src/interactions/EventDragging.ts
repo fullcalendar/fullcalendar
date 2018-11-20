@@ -139,7 +139,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
         initialCalendar === receivingCalendar ||
         receivingComponent.opt('editable') && receivingComponent.opt('droppable')
       ) {
-        mutation = computeEventMutation(initialHit, hit)
+        mutation = computeEventMutation(initialHit, hit, receivingCalendar.pluginSystem.hooks.eventDragMutationMassagers)
 
         if (mutation) {
           mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, receivingCalendar)
@@ -355,7 +355,10 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
 }
 
-function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
+
+export type eventDragMutationMassager = (mutation: EventMutation, hit0: Hit, hit1: Hit) => void
+
+function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutationMassager[]): EventMutation {
   let dateSpan0 = hit0.dateSpan
   let dateSpan1 = hit1.dateSpan
   let date0 = dateSpan0.range.start
@@ -383,11 +386,17 @@ function computeEventMutation(hit0: Hit, hit1: Hit): EventMutation {
       null
   )
 
-  return {
+  let mutation: EventMutation = {
     startDelta: delta,
     endDelta: delta,
     standardProps
   }
+
+  for (let massager of massagers) {
+    massager(mutation, hit0, hit1)
+  }
+
+  return mutation
 }
 
 function getComponentTouchDelay(component: DateComponent<any>): number | null {

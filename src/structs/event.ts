@@ -168,6 +168,13 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
   def.sourceId = sourceId
   def.allDay = allDay
   def.hasEnd = hasEnd
+
+  for (let eventDefParser of calendar.pluginSystem.hooks.eventDefParsers) {
+    let newLeftovers = {}
+    eventDefParser(def, leftovers, newLeftovers)
+    leftovers = newLeftovers
+  }
+
   def.extendedProps = assignTo(leftovers, def.extendedProps || {})
 
   // help out EventApi from having user modify props
@@ -176,6 +183,8 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
 
   return def
 }
+
+export type eventDefParserFunc = (def: EventDef, props: any, leftovers: any) => void
 
 
 export function createEventInstance(

@@ -157,3 +157,5 @@ export { EventRenderRange, sliceEventStore } from './component/event-rendering'
 export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
 
 export { Slicer } from './common/slicing-utils'
+
+export { EventMutation } from './structs/event-mutation'
