@@ -44,8 +44,8 @@ export interface DateSelectionApi extends DateSpanApi {
   view: View
 }
 
-export type dateClickApiTransformer = (dateClick: DateClickApi, dateSpan: DateSpan) => void
-export type dateSelectionApiTransformer = (dateSelection: DateSelectionApi, dateSpan: DateSpan) => void
+export type dateClickApiTransformer = (dateClick: DateClickApi, dateSpan: DateSpan, calendar: Calendar) => void
+export type dateSelectionApiTransformer = (dateSelection: DateSelectionApi, dateSpan: DateSpan, calendar: Calendar) => void
 
 export default class Calendar {
 
@@ -825,7 +825,7 @@ export default class Calendar {
     arg.view = this.view
 
     for (let transformer of this.pluginSystem.hooks.dateSelectionApiTransformers) {
-      transformer(arg, selection)
+      transformer(arg, selection, this)
     }
 
     this.publiclyTrigger('select', [ arg ])
@@ -855,7 +855,7 @@ export default class Calendar {
     arg.view = view
 
     for (let transformer of this.pluginSystem.hooks.dateClickApiTransformers) {
-      transformer(arg, dateSpan)
+      transformer(arg, dateSpan, this)
     }
 
     this.publiclyTrigger('dateClick', [ arg ])
