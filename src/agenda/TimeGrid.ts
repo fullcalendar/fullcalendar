@@ -9,8 +9,6 @@ import { startOfDay, DateMarker } from '../datelib/marker'
 import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
 import { ComponentContext } from '../component/Component'
 import DateComponent, { Seg, EventSegUiInteractionState } from '../component/DateComponent'
-import OffsetTracker from '../common/OffsetTracker'
-import { Hit } from '../interactions/HitDragging'
 import DayBgRow from '../basic/DayBgRow'
 import { DateProfile } from '../DateProfileGenerator'
 
@@ -73,7 +71,6 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   colPositions: PositionCache
   slatPositions: PositionCache
-  offsetTracker: OffsetTracker
 
   rootBgContainerEl: HTMLElement
   bottomRuleEl: HTMLElement // hidden by default
@@ -592,56 +589,40 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   /* Hit System
   ------------------------------------------------------------------------------------------------------------------*/
 
+  positionToHit(positionLeft, positionTop) {
+    let { dateEnv, snapsPerSlot, slatPositions, colPositions } = this
 
-  prepareHits() {
-    this.offsetTracker = new OffsetTracker(this.el)
-  }
+    let colIndex = colPositions.leftToIndex(positionLeft)
+    let slatIndex = slatPositions.topToIndex(positionTop)
 
+    if (colIndex != null && slatIndex != null) {
+      let slatTop = slatPositions.tops[slatIndex]
+      let slatHeight = slatPositions.getHeight(slatIndex)
+      let partial = (positionTop - slatTop) / slatHeight // floating point number between 0 and 1
+      let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
+      let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
 
-  releaseHits() {
-    this.offsetTracker.destroy()
-  }
+      let dayDate = this.props.cells[colIndex].date
+      let time = addDurations(
+        this.props.dateProfile.minTime,
+        multiplyDuration(this.snapDuration, snapIndex)
+      )
 
+      let start = dateEnv.add(dayDate, time)
+      let end = dateEnv.add(start, this.snapDuration)
 
-  queryHit(leftOffset, topOffset): Hit {
-    let { dateEnv, snapsPerSlot, slatPositions, colPositions, offsetTracker } = this
-
-    if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
-      let leftOrigin = offsetTracker.computeLeft()
-      let topOrigin = offsetTracker.computeTop()
-      let colIndex = colPositions.leftToIndex(leftOffset - leftOrigin)
-      let slatIndex = slatPositions.topToIndex(topOffset - topOrigin)
-
-      if (colIndex != null && slatIndex != null) {
-        let slatTop = slatPositions.tops[slatIndex] + topOrigin
-        let slatHeight = slatPositions.getHeight(slatIndex)
-        let partial = (topOffset - slatTop) / slatHeight // floating point number between 0 and 1
-        let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
-        let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
-
-        let dayDate = this.props.cells[colIndex].date
-        let time = addDurations(
-          this.props.dateProfile.minTime,
-          multiplyDuration(this.snapDuration, snapIndex)
-        )
-
-        let start = dateEnv.add(dayDate, time)
-        let end = dateEnv.add(start, this.snapDuration)
-
-        return {
-          component: this,
-          dateSpan: {
-            range: { start, end },
-            allDay: false
-          },
-          dayEl: this.colEls[colIndex],
-          rect: {
-            left: colPositions.lefts[colIndex] + leftOrigin,
-            right: colPositions.rights[colIndex] + leftOrigin,
-            top: slatTop,
-            bottom: slatTop + slatHeight
-          },
-          layer: 0
+      return {
+        col: colIndex,
+        dateSpan: {
+          range: { start, end },
+          allDay: false
+        },
+        dayEl: this.colEls[colIndex],
+        relativeRect: {
+          left: colPositions.lefts[colIndex],
+          right: colPositions.rights[colIndex],
+          top: slatTop,
+          bottom: slatTop + slatHeight
         }
       }
     }
@@ -678,6 +659,5 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 }
 
-TimeGrid.prototype.isInteractable = true
 TimeGrid.prototype.doesDragMirror = true
 TimeGrid.prototype.doesDragHighlight = false

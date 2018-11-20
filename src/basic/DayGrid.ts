@@ -17,9 +17,7 @@ import { createFormatter } from '../datelib/formatting'
 import DateComponentProps, { EventSegUiInteractionState } from '../component/DateComponent'
 import { Seg } from '../component/DateComponent'
 import DayTile from './DayTile'
-import { Hit } from '../interactions/HitDragging'
 import { rangeContainsMarker, intersectRanges } from '../datelib/date-range'
-import OffsetTracker from '../common/OffsetTracker'
 import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 import DayBgRow from './DayBgRow'
@@ -81,7 +79,6 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
 
   rowPositions: PositionCache
   colPositions: PositionCache
-  offsetTracker: OffsetTracker
 
   segPopover: Popover // the Popover that holds events that can't fit in a cell. null when not visible
   segPopoverTile: DayTile
@@ -396,41 +393,26 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   /* Hit System
   ------------------------------------------------------------------------------------------------------------------*/
 
+  positionToHit(leftPosition, topPosition) {
+    let { colPositions, rowPositions } = this
 
-  prepareHits() {
-    this.offsetTracker = new OffsetTracker(this.el)
-  }
+    let col = colPositions.leftToIndex(leftPosition)
+    let row = rowPositions.topToIndex(topPosition)
 
-
-  releaseHits() {
-    this.offsetTracker.destroy()
-  }
-
-
-  queryHit(leftOffset, topOffset): Hit {
-    let { colPositions, rowPositions, offsetTracker } = this
-
-    if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
-      let leftOrigin = offsetTracker.computeLeft()
-      let topOrigin = offsetTracker.computeTop()
-      let col = colPositions.leftToIndex(leftOffset - leftOrigin)
-      let row = rowPositions.topToIndex(topOffset - topOrigin)
-
-      if (row != null && col != null) {
-        return {
-          component: this,
-          dateSpan: {
-            range: this.getCellRange(row, col),
-            allDay: true
-          },
-          dayEl: this.getCellEl(row, col),
-          rect: {
-            left: colPositions.lefts[col] + leftOrigin,
-            right: colPositions.rights[col] + leftOrigin,
-            top: rowPositions.tops[row] + topOrigin,
-            bottom: rowPositions.bottoms[row] + topOrigin
-          },
-          layer: 0
+    if (row != null && col != null) {
+      return {
+        row,
+        col,
+        dateSpan: {
+          range: this.getCellRange(row, col),
+          allDay: true
+        },
+        dayEl: this.getCellEl(row, col),
+        relativeRect: {
+          left: colPositions.lefts[col],
+          right: colPositions.rights[col],
+          top: rowPositions.tops[row],
+          bottom: rowPositions.bottoms[row]
         }
       }
     }
@@ -816,6 +798,5 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
 
 }
 
-DayGrid.prototype.isInteractable = true
 DayGrid.prototype.doesDragMirror = false
 DayGrid.prototype.doesDragHighlight = true

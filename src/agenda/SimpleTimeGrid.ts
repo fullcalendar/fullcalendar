@@ -1,5 +1,5 @@
 import TimeGrid, { TimeGridSeg } from './TimeGrid'
-import Component from '../component/Component'
+import DateComponent from '../component/DateComponent'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventStore } from '../structs/event-store'
 import { EventUiHash } from '../component/event-rendering'
@@ -11,6 +11,8 @@ import DayTable from '../common/DayTable'
 import { DateEnv } from '../datelib/env'
 import { DateMarker, addMs } from '../datelib/marker'
 import { Slicer } from '../common/slicing-utils'
+import OffsetTracker from '../common/OffsetTracker'
+import { Hit } from '../interactions/HitDragging'
 
 export interface SimpleTimeGridProps {
   dateProfile: DateProfile | null
@@ -24,16 +26,17 @@ export interface SimpleTimeGridProps {
   eventResize: EventInteractionUiState | null
 }
 
-export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
+export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
 
   timeGrid: TimeGrid
   dayRanges: DateRange[]
+  offsetTracker: OffsetTracker
 
   private buildDayRanges = reselector(buildDayRanges)
   private slicer = new Slicer(sliceSegs)
 
   constructor(context, timeGrid: TimeGrid) {
-    super(context)
+    super(context, timeGrid.el)
 
     this.timeGrid = timeGrid
     this.slicer.component = timeGrid
@@ -69,7 +72,47 @@ export default class SimpleTimeGrid extends Component<SimpleTimeGridProps> {
     )
   }
 
+  prepareHits() {
+    this.offsetTracker = new OffsetTracker(this.timeGrid.el)
+  }
+
+  releaseHits() {
+    this.offsetTracker.destroy()
+  }
+
+  queryHit(leftOffset, topOffset): Hit {
+    let { offsetTracker } = this
+
+    if (offsetTracker.isWithinClipping(leftOffset, topOffset)) {
+      let originLeft = offsetTracker.computeLeft()
+      let originTop = offsetTracker.computeTop()
+
+      let rawHit = this.timeGrid.positionToHit(
+        leftOffset - originLeft,
+        topOffset - originTop
+      )
+
+      if (rawHit) {
+        return {
+          component: this.timeGrid,
+          dateSpan: rawHit.dateSpan,
+          dayEl: rawHit.dayEl,
+          rect: {
+            left: rawHit.relativeRect.left + originLeft,
+            right: rawHit.relativeRect.right + originLeft,
+            top: rawHit.relativeRect.top + originTop,
+            bottom: rawHit.relativeRect.bottom + originTop
+          },
+          layer: 0
+        }
+      }
+    }
+  }
+
 }
+
+SimpleTimeGrid.prototype.isInteractable = true
+
 
 export function buildDayRanges(dayTable: DayTable, dateProfile: DateProfile, dateEnv: DateEnv): DateRange[] {
   let ranges: DateRange[] = []
