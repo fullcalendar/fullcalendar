@@ -18,6 +18,7 @@ export default abstract class FgEventRenderer {
   displayEventEnd: boolean
 
   segs: Seg[] = []
+  isSizeDirty: boolean = false
 
 
   constructor(context: ComponentContext) {
@@ -34,6 +35,8 @@ export default abstract class FgEventRenderer {
 
     this.segs = segs
     this.attachSegs(segs, mirrorInfo)
+
+    this.isSizeDirty = true
     this.context.view.triggerRenderedSegs(this.segs, Boolean(mirrorInfo))
   }
 
@@ -237,11 +240,26 @@ export default abstract class FgEventRenderer {
   }
 
 
-  computeSizes() {
+  computeSizes(force: boolean) {
+    if (force || this.isSizeDirty) {
+      this.computeSegSizes(this.segs)
+    }
   }
 
 
-  assignSizes() {
+  assignSizes(force: boolean) {
+    if (force || this.isSizeDirty) {
+      this.assignSegSizes(this.segs)
+      this.isSizeDirty = false
+    }
+  }
+
+
+  computeSegSizes(segs: Seg[]) {
+  }
+
+
+  assignSegSizes(segs: Seg[]) {
   }
 
 

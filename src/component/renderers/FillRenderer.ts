@@ -11,6 +11,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
   fillSegTag: string = 'div'
   containerElsByType: any // a hash of element sets used for rendering each fill. Keyed by fill name.
   segsByType: any
+  dirtySizeFlags: any = {}
 
 
   constructor(context: ComponentContext) {
@@ -39,6 +40,8 @@ export default abstract class FillRenderer { // use for highlight, background ev
     if (type === 'bgEvent') {
       this.context.view.triggerRenderedSegs(renderedSegs, false) // isMirror=false
     }
+
+    this.dirtySizeFlags[type] = true
   }
 
 
@@ -137,11 +140,31 @@ export default abstract class FillRenderer { // use for highlight, background ev
   }
 
 
-  computeSizes(type: string) {
+  computeSizes(force: boolean) {
+    for (let type in this.segsByType) {
+      if (force || this.dirtySizeFlags[type]) {
+        this.computeSegSizes(this.segsByType[type])
+      }
+    }
   }
 
 
-  assignSizes(type: string) {
+  assignSizes(force: boolean) {
+    for (let type in this.segsByType) {
+      if (force || this.dirtySizeFlags[type]) {
+        this.assignSegSizes(this.segsByType[type])
+      }
+    }
+
+    this.dirtySizeFlags = {}
+  }
+
+
+  computeSegSizes(segs: Seg[]) {
+  }
+
+
+  assignSegSizes(segs: Seg[]) {
   }
 
 }

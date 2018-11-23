@@ -47,31 +47,29 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
   }
 
 
-  computeSizes() {
+  computeSegSizes(allSegs: Seg[]) {
     let { timeGrid, segsByCol } = this
     let colCnt = timeGrid.colCnt
 
+    timeGrid.computeSegVerticals(allSegs) // horizontals relies on this
+
     if (segsByCol) {
       for (let col = 0; col < colCnt; col++) {
-        let segs = segsByCol[col]
-
-        timeGrid.computeSegVerticals(segs) // horizontals relies on this
-        this.computeSegHorizontals(segs) // compute horizontal coordinates, z-index's, and reorder the array
+        this.computeSegHorizontals(segsByCol[col]) // compute horizontal coordinates, z-index's, and reorder the array
       }
     }
   }
 
 
-  assignSizes() {
+  assignSegSizes(allSegs: Seg[]) {
     let { timeGrid, segsByCol } = this
     let colCnt = timeGrid.colCnt
 
+    timeGrid.assignSegVerticals(allSegs) // horizontals relies on this
+
     if (segsByCol) {
       for (let col = 0; col < colCnt; col++) {
-        let segs = segsByCol[col]
-
-        timeGrid.assignSegVerticals(segs)
-        this.assignSegCss(segs)
+        this.assignSegCss(segsByCol[col])
       }
     }
   }

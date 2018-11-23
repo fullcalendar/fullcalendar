@@ -96,18 +96,6 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
     }
   }
 
-  computeBusinessHoursSize() {
-    if (this.fillRenderer) {
-      this.fillRenderer.computeSizes('businessHours')
-    }
-  }
-
-  assignBusinessHoursSize() {
-    if (this.fillRenderer) {
-      this.fillRenderer.assignSizes('businessHours')
-    }
-  }
-
 
   // Date Selection
   // ---------------------------------------------------------------------------------------------------------------
@@ -176,26 +164,6 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   unrenderBgEventSegs() {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('bgEvent')
-    }
-  }
-
-  computeEventsSize() {
-    if (this.fillRenderer) {
-      this.fillRenderer.computeSizes('bgEvent')
-    }
-
-    if (this.eventRenderer) {
-      this.eventRenderer.computeSizes()
-    }
-  }
-
-  assignEventsSize() {
-    if (this.fillRenderer) {
-      this.fillRenderer.assignSizes('bgEvent')
-    }
-
-    if (this.eventRenderer) {
-      this.eventRenderer.assignSizes()
     }
   }
 

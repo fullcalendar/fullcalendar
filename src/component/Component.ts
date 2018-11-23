@@ -23,8 +23,6 @@ export default class Component<PropsType> {
   renderArgs: { [renderMethodName: string]: any[] } = {} // also indicates if rendered
   renderIds: { [renderMethodName: string]: number } = {}
   unrenderMethodNames: Map<string, string> = new Map()
-  sizeMethodNames: Map<string, string> = new Map() // never gets cleared
-  dirtySizeMethodNames: Map<string, string> = new Map()
 
   // context vars
   context: ComponentContext
@@ -66,7 +64,7 @@ export default class Component<PropsType> {
   protected unrender() {
   }
 
-  subrender(renderMethodName, args, unrenderMethodName?, sizeMethodName?): number {
+  subrender(renderMethodName, args, unrenderMethodName?): number {
     let { renderIds, renderArgs } = this
     let prevArgs = renderArgs[renderMethodName]
     let renderId = renderIds[renderMethodName]
@@ -85,26 +83,9 @@ export default class Component<PropsType> {
       if (unrenderMethodName) {
         this.unrenderMethodNames.set(renderMethodName, unrenderMethodName)
       }
-
-      // for updateSize
-      if (sizeMethodName) {
-        this.sizeMethodNames.set(renderMethodName, sizeMethodName)
-        this.dirtySizeMethodNames.set(renderMethodName, sizeMethodName)
-      }
     }
 
     return renderId
-  }
-
-  // when isResize is true, causes all subrenders to have sizes updated
-  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    let methodNames = isResize ? this.sizeMethodNames : this.dirtySizeMethodNames
-
-    methodNames.forEach((sizeMethodName) => {
-      this[sizeMethodName](isResize)
-    })
-
-    this.dirtySizeMethodNames = new Map()
   }
 
   // after destroy is called, this component won't ever be used again

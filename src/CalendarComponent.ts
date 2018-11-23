@@ -214,8 +214,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   }
 
   updateSize(totalHeight, isAuto, isResize) {
-    super.updateSize(totalHeight, isAuto, isResize)
-
     this.view.updateSize(this.viewHeight, this.isHeightAuto, isResize)
     this.view.updateNowIndicator() // we need to guarantee this will run after updateSize
   }

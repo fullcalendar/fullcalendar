@@ -71,6 +71,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   colPositions: PositionCache
   slatPositions: PositionCache
+  isSlatSizesDirty: boolean = false
+  isColSizesDirty: boolean = false
 
   rootBgContainerEl: HTMLElement
   bottomRuleEl: HTMLElement // hidden by default
@@ -180,63 +182,37 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     let cells = props.cells
     this.colCnt = cells.length
 
-    this.subrender('renderSlats', [ props.dateProfile ], null, true)
-    let dateId = this.subrender('renderColumns', [ props.cells, props.dateProfile ], 'unrenderColumns', true)
-    this.subrender('renderBusinessHourSegs', [ props.businessHourSegs, props.dateProfile, dateId ], 'unrenderBusinessHours', true)
-    this.subrender('renderDateSelectionSegs', [ props.dateSelectionSegs, dateId ], 'unrenderDateSelection', true)
-    let evId = this.subrender('renderEventSegs', [ props.eventSegs, dateId ], 'unrenderEvents', true)
-    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection', true)
-    this.subrender('renderEventDragSegs', [ props.eventDrag, dateId ], 'unrenderEventDragSegs', true)
-    this.subrender('renderEventResizeSegs', [ props.eventResize, dateId ], 'unrenderEventResizeSegs', true)
+    this.subrender('renderSlats', [ props.dateProfile ])
+    let dateId = this.subrender('renderColumns', [ props.cells, props.dateProfile ], 'unrenderColumns')
+    this.subrender('renderBusinessHourSegs', [ props.businessHourSegs, props.dateProfile, dateId ], 'unrenderBusinessHours')
+    this.subrender('renderDateSelectionSegs', [ props.dateSelectionSegs, dateId ], 'unrenderDateSelection')
+    let evId = this.subrender('renderEventSegs', [ props.eventSegs, dateId ], 'unrenderEvents')
+    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
+    this.subrender('renderEventDragSegs', [ props.eventDrag, dateId ], 'unrenderEventDragSegs')
+    this.subrender('renderEventResizeSegs', [ props.eventResize, dateId ], 'unrenderEventResizeSegs')
   }
 
-  // TODO: kill
+
   updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    let map = this.dirtySizeMethodNames
+    let { fillRenderer, eventRenderer, mirrorRenderer } = this
 
-    if (isResize || map.has('renderSlats')) {
+    if (isResize || this.isSlatSizesDirty) {
       this.buildSlatPositions()
+      this.isSlatSizesDirty = false
     }
 
-    if (isResize || map.has('renderColumns')) {
+    if (isResize || this.isColSizesDirty) {
       this.buildColPositions()
+      this.isColSizesDirty = false
     }
 
-    if (isResize || map.has('renderBusinessHourSegs')) {
-      this.computeBusinessHoursSize()
-    }
+    fillRenderer.computeSizes(isResize)
+    eventRenderer.computeSizes(isResize)
+    mirrorRenderer.computeSizes(isResize)
 
-    if (isResize || map.has('renderDateSelectionSegs') || map.has('renderEventDragSegs') || map.has('renderEventResizeSegs')) {
-      if (this.mirrorRenderer) {
-        this.mirrorRenderer.computeSizes()
-      }
-      if (this.fillRenderer) {
-        this.fillRenderer.computeSizes('highlight')
-      }
-    }
-
-    if (isResize || map.has('renderEventSegs')) {
-      this.computeEventsSize()
-    }
-
-    if (isResize || map.has('renderBusinessHourSegs')) {
-      this.assignBusinessHoursSize()
-    }
-
-    if (isResize || map.has('renderDateSelectionSegs') || map.has('renderEventDragSegs') || map.has('renderEventResizeSegs')) {
-      if (this.mirrorRenderer) {
-        this.mirrorRenderer.assignSizes()
-      }
-      if (this.fillRenderer) {
-        this.fillRenderer.assignSizes('highlight')
-      }
-    }
-
-    if (isResize || map.has('renderEventSegs')) {
-      this.assignEventsSize()
-    }
-
-    this.dirtySizeMethodNames = new Map()
+    fillRenderer.assignSizes(isResize)
+    eventRenderer.assignSizes(isResize)
+    mirrorRenderer.assignSizes(isResize)
   }
 
 
@@ -256,6 +232,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       false,
       true // vertical
     )
+
+    this.isSlatSizesDirty = true
   }
 
 
@@ -329,6 +307,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     )
 
     this.renderContentSkeleton()
+    this.isColSizesDirty = true
   }
 
 

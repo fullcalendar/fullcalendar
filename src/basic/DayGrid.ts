@@ -77,6 +77,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   rowEls: HTMLElement[] // set of fake row elements
   cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
 
+  isCellSizesDirty: boolean = false
   rowPositions: PositionCache
   colPositions: PositionCache
 
@@ -100,13 +101,13 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
     this.rowCnt = cells.length
     this.colCnt = cells[0].length
 
-    let dateId = this.subrender('renderCells', [ props.cells, props.isRigid ], 'unrenderCells', true)
-    this.subrender('renderBusinessHourSegs', [ props.businessHourSegs, props.dateProfile, dateId ], 'unrenderBusinessHours', true)
-    this.subrender('renderDateSelectionSegs', [ props.dateSelectionSegs, dateId ], 'unrenderDateSelection', true)
-    let evId = this.subrender('renderEventSegs', [ props.eventSegs, dateId ], 'unrenderEvents', true)
-    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection', true)
-    this.subrender('renderEventDragSegs', [ props.eventDrag, dateId ], 'unrenderEventDragSegs', true)
-    this.subrender('renderEventResizeSegs', [ props.eventResize, dateId ], 'unrenderEventResizeSegs', true)
+    let dateId = this.subrender('renderCells', [ props.cells, props.isRigid ], 'unrenderCells')
+    this.subrender('renderBusinessHourSegs', [ props.businessHourSegs, props.dateProfile, dateId ], 'unrenderBusinessHours')
+    this.subrender('renderDateSelectionSegs', [ props.dateSelectionSegs, dateId ], 'unrenderDateSelection')
+    let evId = this.subrender('renderEventSegs', [ props.eventSegs, dateId ], 'unrenderEvents')
+    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
+    this.subrender('renderEventDragSegs', [ props.eventDrag, dateId ], 'unrenderEventDragSegs')
+    this.subrender('renderEventResizeSegs', [ props.eventResize, dateId ], 'unrenderEventResizeSegs')
 
     if (this.segPopoverTile) {
       this.updateSegPopoverTile()
@@ -184,6 +185,8 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
         ])
       }
     }
+
+    this.isCellSizesDirty = true
   }
 
 
@@ -332,50 +335,22 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // TODO: kill
   updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    let map = this.dirtySizeMethodNames
+    let { fillRenderer, eventRenderer, mirrorRenderer } = this
 
-    if (isResize || map.has('renderCells')) {
+    if (isResize || this.isCellSizesDirty) {
       this.buildColPositions()
       this.buildRowPositions()
+      this.isCellSizesDirty = false
     }
 
-    if (isResize || map.has('renderBusinessHourSegs')) {
-      this.computeBusinessHoursSize()
-    }
+    fillRenderer.computeSizes(isResize)
+    eventRenderer.computeSizes(isResize)
+    mirrorRenderer.computeSizes(isResize)
 
-    if (isResize || map.has('renderDateSelectionSegs') || map.has('renderEventDragSegs') || map.has('renderEventResizeSegs')) {
-      if (this.mirrorRenderer) {
-        this.mirrorRenderer.computeSizes()
-      }
-      if (this.fillRenderer) {
-        this.fillRenderer.computeSizes('highlight')
-      }
-    }
-
-    if (isResize || map.has('renderEventSegs')) {
-      this.computeEventsSize()
-    }
-
-    if (isResize || map.has('renderBusinessHourSegs')) {
-      this.assignBusinessHoursSize()
-    }
-
-    if (isResize || map.has('renderDateSelectionSegs') || map.has('renderEventDragSegs') || map.has('renderEventResizeSegs')) {
-      if (this.mirrorRenderer) {
-        this.mirrorRenderer.assignSizes()
-      }
-      if (this.fillRenderer) {
-        this.fillRenderer.assignSizes('highlight')
-      }
-    }
-
-    if (isResize || map.has('renderEventSegs')) {
-      this.assignEventsSize()
-    }
-
-    this.dirtySizeMethodNames = new Map()
+    fillRenderer.assignSizes(isResize)
+    eventRenderer.assignSizes(isResize)
+    mirrorRenderer.assignSizes(isResize)
   }
 
 

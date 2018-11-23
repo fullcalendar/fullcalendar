@@ -33,12 +33,12 @@ export default class TimeGridFillRenderer extends FillRenderer {
     })
   }
 
-  computeSizes(type) {
-    this.timeGrid.computeSegVerticals(this.getSegsByType(type))
+  computeSegSizes(segs: Seg[]) {
+    this.timeGrid.computeSegVerticals(segs)
   }
 
-  assignSizes(type) {
-    this.timeGrid.assignSegVerticals(this.getSegsByType(type))
+  assignSegSizes(segs: Seg[]) {
+    this.timeGrid.assignSegVerticals(segs)
   }
 
 }
