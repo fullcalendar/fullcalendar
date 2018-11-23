@@ -20,12 +20,12 @@ export default class AgendaView extends AbstractAgendaView {
   buildDayTable = reselector(buildDayTable)
 
   constructor(
-    context: ComponentContext,
+    _context: ComponentContext,
     viewSpec: ViewSpec,
     dateProfileGenerator: DateProfileGenerator,
     parentEl: HTMLElement
   ) {
-    super(context, viewSpec, dateProfileGenerator, parentEl)
+    super(_context, viewSpec, dateProfileGenerator, parentEl)
 
     if (this.opt('columnHeader')) {
       this.header = new DayHeader(
@@ -34,10 +34,10 @@ export default class AgendaView extends AbstractAgendaView {
       )
     }
 
-    this.simpleTimeGrid = new SimpleTimeGrid(context, this.timeGrid)
+    this.simpleTimeGrid = new SimpleTimeGrid(this.context, this.timeGrid)
 
     if (this.dayGrid) {
-      this.simpleDayGrid = new SimpleDayGrid(context, this.dayGrid)
+      this.simpleDayGrid = new SimpleDayGrid(this.context, this.dayGrid)
     }
   }
 
@@ -46,6 +46,12 @@ export default class AgendaView extends AbstractAgendaView {
 
     if (this.header) {
       this.header.destroy()
+    }
+
+    this.simpleTimeGrid.destroy()
+
+    if (this.simpleDayGrid) {
+      this.simpleDayGrid.destroy()
     }
   }
 

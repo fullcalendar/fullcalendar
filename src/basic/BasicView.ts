@@ -17,8 +17,8 @@ export default class BasicView extends AbstractBasicView {
 
   buildDayTable = reselector(buildDayTable)
 
-  constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
-    super(context, viewSpec, dateProfileGenerator, parentEl)
+  constructor(_context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
+    super(_context, viewSpec, dateProfileGenerator, parentEl)
 
     if (this.opt('columnHeader')) {
       this.header = new DayHeader(
@@ -27,7 +27,7 @@ export default class BasicView extends AbstractBasicView {
       )
     }
 
-    this.simpleDayGrid = new SimpleDayGrid(context, this.dayGrid)
+    this.simpleDayGrid = new SimpleDayGrid(this.context, this.dayGrid)
   }
 
   destroy() {
@@ -36,6 +36,8 @@ export default class BasicView extends AbstractBasicView {
     if (this.header) {
       this.header.destroy()
     }
+
+    this.simpleDayGrid.destroy()
   }
 
   render(props: ViewProps) {
