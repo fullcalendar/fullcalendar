@@ -33,16 +33,24 @@ export function removeExact(array, exactVal) {
 }
 
 
-export function isArraysEqual(a0, a1) {
+export type EqualityFuncs = (null | ((obj0, obj1) => boolean))[]
+
+export function isArraysEqual(a0, a1, equalities: EqualityFuncs = []) {
   let len = a0.length
   let i
 
-  if (len == null || len !== a1.length) { // not array? or not same length?
+  if (len !== a1.length) { // not array? or not same length?
     return false
   }
 
   for (i = 0; i < len; i++) {
-    if (a0[i] !== a1[i]) {
+    if (
+      a0[i] !== a1[i] &&
+      !(
+        equalities[i] &&
+        equalities[i](a0[i], a1[i])
+      )
+    ) {
       return false
     }
   }
