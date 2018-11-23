@@ -95,6 +95,7 @@ export default class Calendar {
   delayedRerender: any
   afterSizingTriggers: any = {}
   isViewNew: boolean = false
+  isDatesNew: boolean = false
 
   el: HTMLElement
   component: CalendarComponent
@@ -287,6 +288,18 @@ export default class Calendar {
         this.publiclyTrigger('loading', [ false ])
       }
 
+      if (oldState.dateProfile !== newState.dateProfile) {
+        if (oldState.dateProfile) {
+          this.publiclyTrigger('datesDestroy', [
+            {
+              view: this.component.view,
+              el: this.component.view.el
+            }
+          ])
+        }
+        this.isDatesNew = true
+      }
+
       if (oldState.viewType !== newState.viewType) {
         if (oldState.viewType) {
           this.publiclyTrigger('viewSkeletonDestroy', [
@@ -421,7 +434,17 @@ export default class Calendar {
 
     if (this.isViewNew) {
       this.isViewNew = false
-      this.publiclyTriggerAfterSizing('viewSkeletonRender', [
+      this.publiclyTrigger('viewSkeletonRender', [
+        {
+          view: component.view,
+          el: component.view.el
+        }
+      ])
+    }
+
+    if (this.isDatesNew) {
+      this.isDatesNew = false
+      this.publiclyTrigger('datesRender', [
         {
           view: component.view,
           el: component.view.el

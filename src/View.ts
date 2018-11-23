@@ -236,24 +236,10 @@ export default abstract class View extends DateComponent<ViewProps> {
   afterDatesRender() {
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
-
-    this.publiclyTriggerAfterSizing('datesRender', [
-      {
-        view: this,
-        el: this.el
-      }
-    ])
   }
 
 
   beforeDatesUnrender() {
-    this.publiclyTrigger('datesDestroy', [
-      {
-        view: this,
-        el: this.el
-      }
-    ])
-
     this.stopNowIndicator()
   }
 
