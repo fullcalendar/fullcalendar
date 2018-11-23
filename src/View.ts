@@ -12,6 +12,7 @@ import { EventStore } from './structs/event-store'
 import { EventUiHash, sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionUiState } from './interactions/event-interaction-state'
+import { memoizeRendering } from './component/memoized-rendering'
 
 export interface ViewProps {
   dateProfile: DateProfile
@@ -56,6 +57,14 @@ export default abstract class View extends DateComponent<ViewProps> {
   initialNowQueriedMs: number // ms time the getNow was called
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
+
+  private _renderDates = memoizeRendering(this.__renderDates, this.__unrenderDates)
+  private _renderBusinessHours = memoizeRendering(this.renderBusinessHours, this.unrenderBusinessHours, [ this._renderDates ])
+  private _renderDateSelectionState = memoizeRendering(this.renderDateSelectionState, this.unrenderDateSelection, [ this._renderDates ])
+  private _renderEvents = memoizeRendering(this.__renderEvents, this.unrenderEvents, [ this._renderDates ])
+  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderEvents ])
+  private _renderEventDragState = memoizeRendering(this.renderEventDragState, this.unrenderEventDragState, [ this._renderDates ])
+  private _renderEventResizeState = memoizeRendering(this.renderEventResizeState, this.unrenderEventResizeState, [ this._renderDates ])
 
 
   constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
@@ -112,13 +121,20 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   render(props: ViewProps) {
-    let dateId = this.subrender('_renderDates', [ props.dateProfile ], '_unrenderDates')
-    this.subrender('renderBusinessHours', [ props.businessHours, props.dateProfile, dateId ], 'unrenderBusinessHours')
-    this.subrender('renderDateSelectionState', [ props.dateSelection, dateId ], 'unrenderDateSelection')
-    let evId = this.subrender('_renderEvents', [ props.eventStore, props.eventUis, dateId ], 'unrenderEvents')
-    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
-    this.subrender('renderEventDragState', [ props.eventDrag, dateId ], 'unrenderEventDragState')
-    this.subrender('renderEventResizeState', [ props.eventResize, dateId ], 'unrenderEventResizeState')
+    this._renderDates(props.dateProfile)
+    this._renderBusinessHours(props.businessHours)
+    this._renderDateSelectionState(props.dateSelection)
+    this._renderEvents(props.eventStore, props.eventUis)
+    this._renderEventSelection(props.eventSelection)
+    this._renderEventDragState(props.eventDrag)
+    this._renderEventResizeState(props.eventResize)
+  }
+
+
+  destroy() {
+    super.destroy()
+
+    this._renderDates.unrender() // should unrender everything else
   }
 
 
@@ -167,14 +183,14 @@ export default abstract class View extends DateComponent<ViewProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  _renderDates(dateProfile: DateProfile) {
+  __renderDates(dateProfile: DateProfile) {
     this.renderDates(dateProfile)
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
     this.isDateSizeDirty = true
   }
 
-  _unrenderDates() {
+  __unrenderDates() {
     this.stopNowIndicator()
     this.unrenderDates()
   }
@@ -186,7 +202,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Event Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  _renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
+  __renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
     this.isEventSizeDirty = true
     this.renderEvents(eventStore, eventUis)
   }

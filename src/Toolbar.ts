@@ -2,6 +2,7 @@ import { htmlEscape } from './util/html'
 import { htmlToElement, appendToElement, findElements, createElement, removeElement } from './util/dom-manip'
 import Component, { ComponentContext } from './component/Component'
 import { ViewSpec } from './structs/view-spec'
+import { memoizeRendering } from './component/memoized-rendering'
 
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -20,6 +21,13 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
   el: HTMLElement
   viewsWithButtons: any
 
+  private _renderLayout = memoizeRendering(this.renderLayout, this.unrenderLayout)
+  private _updateTitle = memoizeRendering(this.updateTitle, null, [ this._renderLayout ])
+  private _updateActiveButton = memoizeRendering(this.updateActiveButton, null, [ this._renderLayout ])
+  private _updateToday = memoizeRendering(this.updateToday, null, [ this._renderLayout ])
+  private _updatePrev = memoizeRendering(this.updatePrev, null, [ this._renderLayout ])
+  private _updateNext = memoizeRendering(this.updateNext, null, [ this._renderLayout ])
+
 
   constructor(context: ComponentContext, extraClassName) {
     super(context)
@@ -31,17 +39,18 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
   destroy() {
     super.destroy()
 
+    this._renderLayout.unrender() // should unrender everything else
     removeElement(this.el)
   }
 
 
   render(props: ToolbarRenderProps) {
-    let layoutId = this.subrender('renderLayout', [ props.layout ], 'unrenderLayout')
-    this.subrender('updateTitle', [ props.title, layoutId ])
-    this.subrender('updateActiveButton', [ props.activeButton, layoutId ])
-    this.subrender('updateToday', [ props.isTodayEnabled, layoutId ])
-    this.subrender('updatePrev', [ props.isPrevEnabled, layoutId ])
-    this.subrender('updateNext', [ props.isNextEnabled, layoutId ])
+    this._renderLayout(props.layout)
+    this._updateTitle(props.title)
+    this._updateActiveButton(props.activeButton)
+    this._updateToday(props.isTodayEnabled)
+    this._updatePrev(props.isPrevEnabled)
+    this._updateNext(props.isNextEnabled)
   }
 
 

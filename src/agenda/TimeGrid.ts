@@ -11,6 +11,7 @@ import { ComponentContext } from '../component/Component'
 import DateComponent, { Seg, EventSegUiInteractionState } from '../component/DateComponent'
 import DayBgRow from '../basic/DayBgRow'
 import { DateProfile } from '../DateProfileGenerator'
+import { memoizeRendering } from '../component/memoized-rendering'
 
 
 /* A component that renders one or more columns of vertical time slots
@@ -85,6 +86,15 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   mirrorContainerEls: HTMLElement[]
   highlightContainerEls: HTMLElement[]
   businessContainerEls: HTMLElement[]
+
+  private _renderSlats = memoizeRendering(this.renderSlats)
+  private _renderColumns = memoizeRendering(this.renderColumns, this.unrenderColumns)
+  private _renderBusinessHourSegs = memoizeRendering(this.renderBusinessHourSegs, this.unrenderBusinessHours, [ this._renderColumns ])
+  private _renderDateSelectionSegs = memoizeRendering(this.renderDateSelectionSegs, this.unrenderDateSelection, [ this._renderColumns ])
+  private _renderEventSegs = memoizeRendering(this.renderEventSegs, this.unrenderEvents, [ this._renderColumns ])
+  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderEventSegs ])
+  private _renderEventDragSegs = memoizeRendering(this.renderEventDragSegs, this.unrenderEventDragSegs, [ this._renderColumns ])
+  private _renderEventResizeSegs = memoizeRendering(this.renderEventResizeSegs, this.unrenderEventResizeSegs, [ this._renderColumns ])
 
 
   constructor(context: ComponentContext, el: HTMLElement, renderProps: RenderProps) {
@@ -182,14 +192,23 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     let cells = props.cells
     this.colCnt = cells.length
 
-    this.subrender('renderSlats', [ props.dateProfile ])
-    let dateId = this.subrender('renderColumns', [ props.cells, props.dateProfile ], 'unrenderColumns')
-    this.subrender('renderBusinessHourSegs', [ props.businessHourSegs, props.dateProfile, dateId ], 'unrenderBusinessHours')
-    this.subrender('renderDateSelectionSegs', [ props.dateSelectionSegs, dateId ], 'unrenderDateSelection')
-    let evId = this.subrender('renderEventSegs', [ props.eventSegs, dateId ], 'unrenderEvents')
-    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
-    this.subrender('renderEventDragSegs', [ props.eventDrag, dateId ], 'unrenderEventDragSegs')
-    this.subrender('renderEventResizeSegs', [ props.eventResize, dateId ], 'unrenderEventResizeSegs')
+    this._renderSlats(props.dateProfile)
+    this._renderColumns(props.cells, props.dateProfile)
+    this._renderBusinessHourSegs(props.businessHourSegs)
+    this._renderDateSelectionSegs(props.dateSelectionSegs)
+    this._renderEventSegs(props.eventSegs)
+    this._renderEventSelection(props.eventSelection)
+    this._renderEventDragSegs(props.eventDrag)
+    this._renderEventResizeSegs(props.eventResize)
+  }
+
+
+  destroy() {
+    super.destroy()
+
+    // should unrender everything else too
+    this._renderSlats.unrender()
+    this._renderColumns.unrender()
   }
 
 

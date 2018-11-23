@@ -10,6 +10,7 @@ import { addDays, DateMarker } from '../datelib/marker'
 import { removeElement } from '../util/dom-manip'
 import { ComponentContext } from '../component/Component'
 import { EventInstanceHash } from '../structs/event'
+import { memoizeRendering } from '../component/memoized-rendering'
 
 export interface DayTileProps {
   date: DateMarker
@@ -26,6 +27,11 @@ export default class DayTile extends DateComponent<DayTileProps> {
   height: number
   offsetTracker: OffsetTracker // TODO: abstraction for tracking dims of whole element rect
 
+  private _renderFrame = memoizeRendering(this.renderFrame)
+  private _renderEventSegs = memoizeRendering(this.renderEventSegs, this.unrenderEvents, [ this._renderFrame ])
+  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderEventSegs ])
+  private _renderEventDrag = memoizeRendering(this.renderEventDrag, this.unrenderEventDrag, [ this._renderFrame ])
+  private _renderEventResize = memoizeRendering(this.renderEventResize, this.unrenderEventResize, [ this._renderFrame ])
 
   constructor(context: ComponentContext, el: HTMLElement) {
     super(context, el)
@@ -33,13 +39,18 @@ export default class DayTile extends DateComponent<DayTileProps> {
     this.eventRenderer = new DayTileEventRenderer(this)
   }
 
-
   render(props: DayTileProps) {
-    let dateId = this.subrender('renderFrame', [ props.date ])
-    let evId = this.subrender('renderEventSegs', [ props.segs, dateId ], 'unrenderEvents')
-    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
-    this.subrender('renderEventDrag', [ props.eventDragInstances, dateId ], 'unrenderEventDrag')
-    this.subrender('renderEventResize', [ props.eventResizeInstances, dateId ], 'unrenderEventResize')
+    this._renderFrame(props.date)
+    this._renderEventSegs(props.segs)
+    this._renderEventSelection(props.eventSelection)
+    this._renderEventDrag(props.eventDragInstances)
+    this._renderEventResize(props.eventResizeInstances)
+  }
+
+  destroy() {
+    super.destroy()
+
+    this._renderFrame.unrender() // should unrender everything else
   }
 
   renderFrame(date: DateMarker) {

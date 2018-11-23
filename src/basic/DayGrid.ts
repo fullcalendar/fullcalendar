@@ -22,6 +22,7 @@ import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 import DayBgRow from './DayBgRow'
 import { DateProfile } from '../DateProfileGenerator'
+import { memoizeRendering } from '../component/memoized-rendering'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -84,6 +85,14 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   segPopover: Popover // the Popover that holds events that can't fit in a cell. null when not visible
   segPopoverTile: DayTile
 
+  private _renderCells = memoizeRendering(this.renderCells, this.unrenderCells)
+  private _renderBusinessHourSegs = memoizeRendering(this.renderBusinessHourSegs, this.unrenderBusinessHours, [ this._renderCells ])
+  private _renderDateSelectionSegs = memoizeRendering(this.renderDateSelectionSegs, this.unrenderDateSelection, [ this._renderCells ])
+  private _renderEventSegs = memoizeRendering(this.renderEventSegs, this.unrenderEvents, [ this._renderCells ])
+  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderCells ])
+  private _renderEventDragSegs = memoizeRendering(this.renderEventDragSegs, this.unrenderEventDragSegs, [ this._renderCells ])
+  private _renderEventResizeSegs = memoizeRendering(this.renderEventResizeSegs, this.unrenderEventResizeSegs, [ this._renderCells ])
+
 
   constructor(context, el, renderProps: RenderProps) {
     super(context, el)
@@ -101,17 +110,24 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
     this.rowCnt = cells.length
     this.colCnt = cells[0].length
 
-    let dateId = this.subrender('renderCells', [ props.cells, props.isRigid ], 'unrenderCells')
-    this.subrender('renderBusinessHourSegs', [ props.businessHourSegs, props.dateProfile, dateId ], 'unrenderBusinessHours')
-    this.subrender('renderDateSelectionSegs', [ props.dateSelectionSegs, dateId ], 'unrenderDateSelection')
-    let evId = this.subrender('renderEventSegs', [ props.eventSegs, dateId ], 'unrenderEvents')
-    this.subrender('renderEventSelection', [ props.eventSelection, evId ], 'unrenderEventSelection')
-    this.subrender('renderEventDragSegs', [ props.eventDrag, dateId ], 'unrenderEventDragSegs')
-    this.subrender('renderEventResizeSegs', [ props.eventResize, dateId ], 'unrenderEventResizeSegs')
+    this._renderCells(cells, props.isRigid)
+    this._renderBusinessHourSegs(props.businessHourSegs)
+    this._renderDateSelectionSegs(props.dateSelectionSegs)
+    this._renderEventSegs(props.eventSegs)
+    this._renderEventSelection(props.eventSelection)
+    this._renderEventDragSegs(props.eventDrag)
+    this._renderEventResizeSegs(props.eventResize)
 
     if (this.segPopoverTile) {
       this.updateSegPopoverTile()
     }
+  }
+
+
+  destroy() {
+    super.destroy()
+
+    this._renderCells.unrender() // will unrender everything else
   }
 
 

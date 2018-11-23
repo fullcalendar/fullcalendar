@@ -15,6 +15,7 @@ import reselector from './util/reselector'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { createFormatter } from './datelib/formatting'
 import { diffWholeDays } from './datelib/marker'
+import { memoizeRendering } from './component/memoized-rendering'
 
 export interface CalendarComponentProps {
   viewSpec: ViewSpec
@@ -42,6 +43,8 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
   isHeightAuto: boolean
   viewHeight: number
+
+  private _renderToolbars = memoizeRendering(this.renderToolbars)
 
 
   constructor(context: ComponentContext, el: HTMLElement) {
@@ -102,7 +105,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     this.freezeHeight()
 
     let title = this.computeTitle(props.dateProfile, props.viewSpec.options)
-    this.subrender('renderToolbars', [ props.viewSpec, props.dateProfile, props.dateProfileGenerator, title ])
+    this._renderToolbars(props.viewSpec, props.dateProfile, props.dateProfileGenerator, title)
     this.renderView(props, title)
 
     this.updateRootSize()
