@@ -37,6 +37,7 @@ export {
 } from './util/array'
 
 export { default as reselector } from './util/reselector'
+export { memoizeRendering } from './component/memoized-rendering'
 
 export {
   intersectRects

@@ -2,8 +2,7 @@ import Calendar from '../Calendar'
 import View from '../View'
 import Theme from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
-import { isArraysEqual } from '../util/array'
-import { isPropsEqual } from '../util/object'
+import { isPropsEqual, assignTo, EqualityFuncHash } from '../util/object'
 
 let guid = 0
 
@@ -17,12 +16,10 @@ export interface ComponentContext {
 
 export default class Component<PropsType> {
 
-  uid: string
+  equalityFuncs: EqualityFuncHash
 
+  uid: string
   props: PropsType | null // non-null signals that a render happened
-  renderArgs: { [renderMethodName: string]: any[] } = {} // also indicates if rendered
-  renderIds: { [renderMethodName: string]: number } = {}
-  unrenderMethodNames: Map<string, string> = new Map()
 
   // context vars
   context: ComponentContext
@@ -42,12 +39,20 @@ export default class Component<PropsType> {
     this.isRtl = this.opt('dir') === 'rtl'
   }
 
+  static addEqualityFuncs(newFuncs: EqualityFuncHash) {
+    this.prototype.equalityFuncs = assignTo(
+      {},
+      this.prototype.equalityFuncs,
+      newFuncs
+    )
+  }
+
   opt(name) {
     return this.context.options[name]
   }
 
   receiveProps(props: PropsType) {
-    if (!this.props || !isPropsEqual(this.props, props)) {
+    if (!this.props || !isPropsEqual(this.props, props, this.equalityFuncs)) {
 
       if (this.props) {
         this.unrender()
@@ -64,45 +69,10 @@ export default class Component<PropsType> {
   protected unrender() {
   }
 
-  subrender(renderMethodName, args, unrenderMethodName?): number {
-    let { renderIds, renderArgs } = this
-    let prevArgs = renderArgs[renderMethodName]
-    let renderId = renderIds[renderMethodName]
-
-    if (!prevArgs || !isArraysEqual(prevArgs, args)) {
-
-      if (prevArgs && unrenderMethodName) {
-        this[unrenderMethodName].apply(this, prevArgs)
-      }
-
-      this[renderMethodName].apply(this, args)
-      renderArgs[renderMethodName] = args
-      renderIds[renderMethodName] = renderId = guid++
-
-      // for destroy
-      if (unrenderMethodName) {
-        this.unrenderMethodNames.set(renderMethodName, unrenderMethodName)
-      }
-    }
-
-    return renderId
-  }
-
   // after destroy is called, this component won't ever be used again
   destroy() {
-    let { renderArgs } = this
-
     if (this.props) {
       this.unrender()
-    }
-
-    let tuples = [] // in reverse
-    this.unrenderMethodNames.forEach(function(unrenderMethodName, renderMethodName) {
-      tuples.unshift([ unrenderMethodName, renderMethodName ])
-    })
-
-    for (let tuple of tuples) {
-      this[tuple[0]].apply(this, renderArgs[tuple[1]])
     }
   }
 
