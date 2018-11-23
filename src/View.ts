@@ -165,6 +165,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  // TODO: kill
   updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
     let map = this.dirtySizeMethodNames
 
@@ -221,22 +222,10 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   afterSkeletonRender() {
-    this.publiclyTriggerAfterSizing('viewSkeletonRender', [
-      {
-        view: this,
-        el: this.el
-      }
-    ])
   }
 
 
   beforeSkeletonUnrender() {
-    this.publiclyTrigger('viewSkeletonDestroy', [
-      {
-        view: this,
-        el: this.el
-      }
-    ])
   }
 
 

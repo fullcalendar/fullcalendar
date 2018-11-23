@@ -94,6 +94,7 @@ export default class Calendar {
   buildDelayedRerender: any
   delayedRerender: any
   afterSizingTriggers: any = {}
+  isViewNew: boolean = false
 
   el: HTMLElement
   component: CalendarComponent
@@ -286,6 +287,18 @@ export default class Calendar {
         this.publiclyTrigger('loading', [ false ])
       }
 
+      if (oldState.viewType !== newState.viewType) {
+        if (oldState.viewType) {
+          this.publiclyTrigger('viewSkeletonDestroy', [
+            {
+              view: this.component.view,
+              el: this.component.view.el
+            }
+          ])
+        }
+        this.isViewNew = true
+      }
+
       this.requestRerender()
     }
   }
@@ -404,6 +417,16 @@ export default class Calendar {
 
     if (savedScroll) {
       component.view.applyScroll(savedScroll)
+    }
+
+    if (this.isViewNew) {
+      this.isViewNew = false
+      this.publiclyTriggerAfterSizing('viewSkeletonRender', [
+        {
+          view: component.view,
+          el: component.view.el
+        }
+      ])
     }
 
     this.releaseAfterSizingTriggers()
