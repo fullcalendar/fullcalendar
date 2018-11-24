@@ -14,7 +14,7 @@ describe('rerender performance', function() {
       defaultView: 'month',
       classes: [
         { name: 'BasicView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
-        { name: 'DayGrid', dateMethod: 'renderCells', eventMethod: 'renderEventSegs' }
+        { name: 'DayGrid', dateMethod: '_renderCells', eventMethod: '_renderEventSegs' }
       ],
       changeToView: 'list' // does not have DayGrid!
     },
@@ -22,8 +22,8 @@ describe('rerender performance', function() {
       defaultView: 'agendaWeek',
       classes: [
         { name: 'AgendaView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
-        { name: 'DayGrid', dateMethod: 'renderCells', eventMethod: 'renderEventSegs' },
-        { name: 'TimeGrid', dateMethod: 'renderColumns', eventMethod: 'renderEventSegs' }
+        { name: 'DayGrid', dateMethod: '_renderCells', eventMethod: '_renderEventSegs' },
+        { name: 'TimeGrid', dateMethod: '_renderColumns', eventMethod: '_renderEventSegs' }
       ],
       changeToView: 'list' // does not have DayGrid!
     },
