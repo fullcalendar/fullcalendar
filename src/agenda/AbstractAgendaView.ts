@@ -169,19 +169,19 @@ export default abstract class AgendaView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    super.updateSize(viewHeight, isAuto, isResize) // will call updateBaseSize. important that executes first
+  updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
+    super.updateSize(isResize, viewHeight, isAuto) // will call updateBaseSize. important that executes first
 
-    this.timeGrid.updateSize(viewHeight, isAuto, isResize)
+    this.timeGrid.updateSize(isResize)
 
     if (this.dayGrid) {
-      this.dayGrid.updateSize(viewHeight, isAuto, isResize)
+      this.dayGrid.updateSize(isResize)
     }
   }
 
 
   // Adjusts the vertical dimensions of the view to the specified values
-  updateBaseSize(viewHeight, isAuto, isResize) {
+  updateBaseSize(isResize, viewHeight, isAuto) {
     let eventLimit
     let scrollerHeight
     let scrollbarWidths

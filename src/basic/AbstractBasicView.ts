@@ -133,15 +133,15 @@ export default abstract class BasicView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    super.updateSize(viewHeight, isAuto, isResize) // will call updateBaseSize. important that executes first
+  updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
+    super.updateSize(isResize, viewHeight, isAuto) // will call updateBaseSize. important that executes first
 
-    this.dayGrid.updateSize(viewHeight, isAuto, isResize)
+    this.dayGrid.updateSize(isResize)
   }
 
 
   // Refreshes the horizontal dimensions of the view
-  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+  updateBaseSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
     let { dayGrid } = this
     let eventLimit = this.opt('eventLimit')
     let headRowEl = (this as any).header ? (this as any).header.el : null // HACK

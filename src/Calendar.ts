@@ -807,7 +807,7 @@ export default class Calendar {
     if (!this.isResizing && this.component) {
 
       this.isResizing = true
-      this.component.updateRootSize(true) // isResize=true
+      this.component.updateSize(true) // isResize=true
       this.isResizing = false
 
       return true // signal success

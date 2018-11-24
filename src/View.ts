@@ -142,12 +142,12 @@ export default abstract class View extends DateComponent<ViewProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+  updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
 
     if (isResize || this.isDateSizeDirty || this.isEventSizeDirty) {
       // sort of the catch-all sizing
       // anything that might cause dimension changes
-      this.updateBaseSize(viewHeight, isAuto, isResize)
+      this.updateBaseSize(isResize, viewHeight, isAuto)
     }
 
     this.isDateSizeDirty = false
@@ -155,7 +155,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+  updateBaseSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
   }
 
 

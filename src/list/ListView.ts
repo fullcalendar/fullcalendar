@@ -55,8 +55,8 @@ export default class ListView extends View {
   }
 
 
-  updateSize(totalHeight, isAuto, isResize) {
-    super.updateSize(totalHeight, isAuto, isResize)
+  updateSize(isResize, viewHeight, isAuto) {
+    super.updateSize(isResize, viewHeight, isAuto)
 
     this.eventRenderer.computeSizes(isResize)
     this.eventRenderer.assignSizes(isResize)
@@ -64,13 +64,13 @@ export default class ListView extends View {
     this.scroller.clear() // sets height to 'auto' and clears overflow
 
     if (!isAuto) {
-      this.scroller.setHeight(this.computeScrollerHeight(totalHeight))
+      this.scroller.setHeight(this.computeScrollerHeight(viewHeight))
     }
   }
 
 
-  computeScrollerHeight(totalHeight) {
-    return totalHeight -
+  computeScrollerHeight(viewHeight) {
+    return viewHeight -
       subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
   }
 

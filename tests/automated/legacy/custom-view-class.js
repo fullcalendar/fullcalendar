@@ -9,7 +9,8 @@ describe('custom view class', function() {
         expect(dateProfile.activeRange.end instanceof Date).toBe(true)
       }
 
-      updateSize(height, isAuto) {
+      updateSize(isResize, height, isAuto) {
+        expect(typeof isResize).toBe('boolean')
         expect(typeof height).toBe('number')
         expect(typeof isAuto).toBe('boolean')
       }

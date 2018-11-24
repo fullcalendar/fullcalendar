@@ -108,7 +108,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     this._renderToolbars(props.viewSpec, props.dateProfile, props.dateProfileGenerator, title)
     this.renderView(props, title)
 
-    this.updateRootSize()
+    this.updateSize()
     this.thawHeight()
   }
 
@@ -201,7 +201,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   // Sizing
   // -----------------------------------------------------------------------------------------------------------------
 
-  updateRootSize(isResize = false) {
+  updateSize(isResize = false) {
     let { view } = this
 
     if (isResize) {
@@ -212,13 +212,9 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       this.computeHeightVars()
     }
 
-    this.updateSize(this.viewHeight, this.isHeightAuto, isResize)
+    view.updateSize(isResize, this.viewHeight, this.isHeightAuto)
+    view.updateNowIndicator() // we need to guarantee this will run after updateSize
     view.popScroll()
-  }
-
-  updateSize(totalHeight, isAuto, isResize) {
-    this.view.updateSize(this.viewHeight, this.isHeightAuto, isResize)
-    this.view.updateNowIndicator() // we need to guarantee this will run after updateSize
   }
 
   computeHeightVars() {

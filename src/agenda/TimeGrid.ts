@@ -253,7 +253,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+  updateSize(isResize: boolean) {
     let { fillRenderer, eventRenderer, mirrorRenderer } = this
 
     if (isResize || this.isSlatSizesDirty) {
