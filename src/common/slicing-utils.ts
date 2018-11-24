@@ -27,6 +27,10 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
   }
 
   private _eventStoreToSegs(eventStore: EventStore, eventUis: EventUiHash, dateProfile: DateProfile, nextDayThreshold: Duration, ...otherArgs: OtherArgsType): SegType[] {
+    if (!eventStore) {
+      return []
+    }
+
     return this.eventRangesToSegs(
       sliceEventStore(eventStore, eventUis, dateProfile.activeRange, nextDayThreshold),
       otherArgs
@@ -34,6 +38,10 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
   }
 
   private _businessHoursToSegs(businessHours: EventStore, dateProfile: DateProfile, nextDayThreshold: Duration, ...otherArgs: OtherArgsType): SegType[] {
+    if (!businessHours) {
+      return []
+    }
+
     return this.eventRangesToSegs(
       sliceBusinessHours(
         businessHours,
