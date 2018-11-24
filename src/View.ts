@@ -58,13 +58,13 @@ export default abstract class View extends DateComponent<ViewProps> {
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
 
-  private _renderDates = memoizeRendering(this.__renderDates, this.__unrenderDates)
-  private _renderBusinessHours = memoizeRendering(this.renderBusinessHours, this.unrenderBusinessHours, [ this._renderDates ])
-  private _renderDateSelectionState = memoizeRendering(this.renderDateSelectionState, this.unrenderDateSelection, [ this._renderDates ])
-  private _renderEvents = memoizeRendering(this.__renderEvents, this.unrenderEvents, [ this._renderDates ])
-  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderEvents ])
-  private _renderEventDragState = memoizeRendering(this.renderEventDragState, this.unrenderEventDragState, [ this._renderDates ])
-  private _renderEventResizeState = memoizeRendering(this.renderEventResizeState, this.unrenderEventResizeState, [ this._renderDates ])
+  private renderDatesMem = memoizeRendering(this.renderDatesWrap, this.unrenderDatesWrap)
+  private renderBusinessHoursMem = memoizeRendering(this.renderBusinessHours, this.unrenderBusinessHours, [ this.renderDatesMem ])
+  private renderDateSelectionMem = memoizeRendering(this.renderDateSelectionWrap, this.unrenderDateSelectionWrap, [ this.renderDatesMem ])
+  private renderEventsMem = memoizeRendering(this.renderEventsWrap, this.unrenderEvents, [ this.renderDatesMem ])
+  private renderEventSelectionMem = memoizeRendering(this.renderEventSelectionWrap, this.unrenderEventSelectionWrap, [ this.renderEventsMem ])
+  private renderEventDragMem = memoizeRendering(this.renderEventDragWrap, this.unrenderEventDragWrap, [ this.renderDatesMem ])
+  private renderEventResizeMem = memoizeRendering(this.renderEventResizeWrap, this.unrenderEventResizeWrap, [ this.renderDatesMem ])
 
 
   constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
@@ -121,22 +121,99 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   render(props: ViewProps) {
-    this._renderDates(props.dateProfile)
-    this._renderBusinessHours(props.businessHours)
-    this._renderDateSelectionState(props.dateSelection)
-    this._renderEvents(props.eventStore, props.eventUis)
-    this._renderEventSelection(props.eventSelection)
-    this._renderEventDragState(props.eventDrag)
-    this._renderEventResizeState(props.eventResize)
+    this.renderDatesMem(props.dateProfile)
+    this.renderBusinessHoursMem(props.businessHours)
+    this.renderDateSelectionMem(props.dateSelection)
+    this.renderEventsMem(props.eventStore, props.eventUis)
+    this.renderEventSelectionMem(props.eventSelection)
+    this.renderEventDragMem(props.eventDrag)
+    this.renderEventResizeMem(props.eventResize)
   }
 
 
   destroy() {
     super.destroy()
 
-    this._renderDates.unrender() // should unrender everything else
+    this.renderDatesMem.unrender() // should unrender everything else
   }
 
+
+  // Sizing
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+
+    if (isResize || this.isDateSizeDirty || this.isEventSizeDirty) {
+      // sort of the catch-all sizing
+      // anything that might cause dimension changes
+      this.updateBaseSize(viewHeight, isAuto, isResize)
+    }
+
+    this.isDateSizeDirty = false
+    this.isEventSizeDirty = false
+  }
+
+
+  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+  }
+
+
+  // Date Rendering
+  // -----------------------------------------------------------------------------------------------------------------
+
+  renderDatesWrap(dateProfile: DateProfile) {
+    this.renderDates(dateProfile)
+    this.addScroll({ isDateInit: true })
+    this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
+    this.isDateSizeDirty = true
+  }
+
+  unrenderDatesWrap() {
+    this.stopNowIndicator()
+    this.unrenderDates()
+  }
+
+  renderDates(dateProfile: DateProfile) {}
+  unrenderDates() {}
+
+
+  // Business Hours
+  // -----------------------------------------------------------------------------------------------------------------
+
+  renderBusinessHours(businessHours: EventStore) {}
+  unrenderBusinessHours() {}
+
+
+  // Date Selection
+  // -----------------------------------------------------------------------------------------------------------------
+
+  renderDateSelectionWrap(selection: DateSpan) {
+    if (selection) {
+      this.renderDateSelection(selection)
+    }
+  }
+
+  unrenderDateSelectionWrap(selection: DateSpan) {
+    if (selection) {
+      this.unrenderDateSelection(selection)
+    }
+  }
+
+  renderDateSelection(selection: DateSpan) {}
+  unrenderDateSelection(selection: DateSpan) {}
+
+
+  // Event Rendering
+  // -----------------------------------------------------------------------------------------------------------------
+
+  renderEventsWrap(eventStore: EventStore, eventUis: EventUiHash) {
+    this.isEventSizeDirty = true
+    this.renderEvents(eventStore, eventUis)
+  }
+
+  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {}
+  unrenderEvents() {}
 
   // util for subclasses
   sliceEvents(eventStore: EventStore, eventUis: EventUiHash, allDay: boolean): EventRenderRange[] {
@@ -149,88 +226,61 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  // Sizing
+  // Event Selection
   // -----------------------------------------------------------------------------------------------------------------
 
-
-  updateSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
-    let { fillRenderer, eventRenderer, mirrorRenderer } = this
-
-    if (isResize || this.isDateSizeDirty || this.isEventSizeDirty) {
-      // sort of the catch-all sizing
-      // anything that might cause dimension changes
-      this.updateBaseSize(viewHeight, isAuto, isResize)
+  renderEventSelectionWrap(instanceId: string) {
+    if (instanceId) {
+      this.renderEventSelection(instanceId)
     }
-
-    this.isDateSizeDirty = false
-    this.isEventSizeDirty = false
-
-    fillRenderer && fillRenderer.computeSizes(isResize)
-    eventRenderer && eventRenderer.computeSizes(isResize)
-    mirrorRenderer && mirrorRenderer.computeSizes(isResize)
-
-    fillRenderer && fillRenderer.assignSizes(isResize)
-    eventRenderer && eventRenderer.assignSizes(isResize)
-    mirrorRenderer && mirrorRenderer.assignSizes(isResize)
   }
 
-
-  updateBaseSize(viewHeight: number, isAuto: boolean, isResize: boolean) {
+  unrenderEventSelectionWrap(instanceId: string) {
+    if (instanceId) {
+      this.unrenderEventSelection(instanceId)
+    }
   }
 
-
-  // Date Rendering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  __renderDates(dateProfile: DateProfile) {
-    this.renderDates(dateProfile)
-    this.addScroll({ isDateInit: true })
-    this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
-    this.isDateSizeDirty = true
-  }
-
-  __unrenderDates() {
-    this.stopNowIndicator()
-    this.unrenderDates()
-  }
-
-  renderDates(dateProfile: DateProfile) {}
-  unrenderDates() {}
-
-
-  // Event Rendering
-  // -----------------------------------------------------------------------------------------------------------------
-
-  __renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
-    this.isEventSizeDirty = true
-    this.renderEvents(eventStore, eventUis)
-  }
-
-  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {}
-
-
-  // Other Rendering (uses eventRenderer and fillRenderer)
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  renderBusinessHours(businessHours: EventStore) {}
   renderEventSelection(instanceId: string) {}
+  unrenderEventSelection(instanceId: string) {}
 
-  renderEventDragState(state: EventInteractionUiState) {}
-  unrenderEventDragState() {}
 
-  renderEventResizeState(state: EventInteractionUiState) {}
-  unrenderEventResizeState() {}
+  // Event Drag
+  // -----------------------------------------------------------------------------------------------------------------
 
-  renderDateSelectionState(selection: DateSpan) {
-    if (selection) {
-      this.renderDateSelection(selection)
+  renderEventDragWrap(state: EventInteractionUiState) {
+    if (state) {
+      this.renderEventDrag(state)
     }
   }
 
-  renderDateSelection(selection: DateSpan) {
+  unrenderEventDragWrap(state: EventInteractionUiState) {
+    if (state) {
+      this.unrenderEventDrag(state)
+    }
   }
+
+  renderEventDrag(state: EventInteractionUiState) {}
+  unrenderEventDrag(state: EventInteractionUiState) {}
+
+
+  // Event Resize
+  // -----------------------------------------------------------------------------------------------------------------
+
+  renderEventResizeWrap(state: EventInteractionUiState) {
+    if (state) {
+      this.renderEventResize(state)
+    }
+  }
+
+  unrenderEventResizeWrap(state: EventInteractionUiState) {
+    if (state) {
+      this.unrenderEventResize(state)
+    }
+  }
+
+  renderEventResize(state: EventInteractionUiState) {}
+  unrenderEventResize(state: EventInteractionUiState) {}
 
 
   /* Now Indicator

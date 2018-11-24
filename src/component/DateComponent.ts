@@ -42,8 +42,6 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // self-config, overridable by subclasses. must set on prototype
   isInteractable: boolean
   useEventCenter: boolean // for dragging geometry
-  doesDragMirror: boolean // for events that ORIGINATE from this component
-  doesDragHighlight: boolean // for events that ORIGINATE from this component
   fgSegSelector: string // lets eventRender produce elements without fc-event class
   bgSegSelector: string
 
@@ -81,48 +79,10 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   }
 
 
-  // Business Hours
-  // ---------------------------------------------------------------------------------------------------------------
-
-  renderBusinessHourSegs(segs: Seg[]) {
-    if (this.fillRenderer) {
-      this.fillRenderer.renderSegs('businessHours', segs)
-    }
-  }
-
-  unrenderBusinessHours() {
-    if (this.fillRenderer) {
-      this.fillRenderer.unrender('businessHours')
-    }
-  }
-
-
-  // Date Selection
-  // ---------------------------------------------------------------------------------------------------------------
-
-  renderDateSelectionSegs(segs: Seg[]) {
-    if (segs) {
-      if (this.fillRenderer) {
-        this.fillRenderer.renderSegs('highlight', segs)
-      }
-    }
-  }
-
-  unrenderDateSelection() {
-    if (this.mirrorRenderer) {
-      this.mirrorRenderer.unrender()
-    }
-
-    if (this.fillRenderer) {
-      this.fillRenderer.unrender('highlight')
-    }
-  }
-
-
   // Events
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderEventSegs(segs: Seg[]) {
+  _renderEventSegs(segs: Seg[]) {
     let bgSegs = []
     let fgSegs = []
 
@@ -134,60 +94,45 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
       }
     }
 
-    this.renderFgEventSegs(fgSegs)
-    this.renderBgEventSegs(bgSegs)
+    this._renderFgEventSegs(fgSegs)
+    this._renderBgEventSegs(bgSegs)
   }
 
-  renderFgEventSegs(segs: Seg[]) {
+  _renderFgEventSegs(segs: Seg[]) {
     if (this.eventRenderer) {
       this.eventRenderer.renderSegs(segs)
     }
   }
 
-  renderBgEventSegs(segs: Seg[]) {
+  _renderBgEventSegs(segs: Seg[]) {
     if (this.fillRenderer) {
       this.fillRenderer.renderSegs('bgEvent', segs)
     }
   }
 
-  unrenderEvents() {
-    this.unrenderFgEventSegs()
-    this.unrenderBgEventSegs()
+  _unrenderEventSegs() {
+    this._unrenderFgEventSegs()
+    this._unrenderBgEventSegs()
   }
 
-  unrenderFgEventSegs() {
+  _unrenderFgEventSegs() {
     if (this.eventRenderer) {
       this.eventRenderer.unrender()
     }
   }
 
-  unrenderBgEventSegs() {
+  _unrenderBgEventSegs() {
     if (this.fillRenderer) {
       this.fillRenderer.unrender('bgEvent')
     }
   }
 
 
-  // Event Instance Selection (aka long-touch focus)
-  // -----------------------------------------------------------------------------------------------------------------
-  // TODO: show/hide according to groupId?
-
-  renderEventSelection(instanceId) {
-    if (instanceId && this.eventRenderer) {
-      this.eventRenderer.selectByInstanceId(instanceId)
-    }
-  }
-
-  unrenderEventSelection(instanceId) {
-    if (instanceId && this.eventRenderer) {
-      this.eventRenderer.unselectByInstanceId(instanceId)
-    }
-  }
-
-
+  // TODO: WHAT ABOUT (sourceSeg && sourceSeg.component.doesDragMirror)
+  //
   // Event Drag-n-Drop Rendering (for both events and external elements)
   // ---------------------------------------------------------------------------------------------------------------
-
+  /*
   renderEventDragSegs(state: EventSegUiInteractionState) {
     if (state) {
       let { isEvent, segs, sourceSeg } = state
@@ -214,58 +159,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
       }
     }
   }
-
-  unrenderEventDragSegs(state: EventSegUiInteractionState) {
-    if (state) {
-      this.unrenderEventDrag(state.affectedInstances)
-    }
-  }
-
-  unrenderEventDrag(affectedInstances: EventInstanceHash) {
-    if (this.eventRenderer) {
-      this.eventRenderer.showByHash(affectedInstances)
-    }
-
-    if (this.mirrorRenderer) {
-      this.mirrorRenderer.unrender()
-    }
-
-    if (this.fillRenderer) {
-      this.fillRenderer.unrender('highlight')
-    }
-  }
-
-
-  // Event Resizing
-  // ---------------------------------------------------------------------------------------------------------------
-
-  renderEventResizeSegs(state: EventSegUiInteractionState) {
-    if (this.eventRenderer) {
-      this.eventRenderer.hideByHash(state.affectedInstances)
-    }
-
-    // subclasses can override and do something with segs
-  }
-
-  unrenderEventResizeSegs(state: EventSegUiInteractionState) {
-    if (state) {
-      this.unrenderEventResize(state.affectedInstances)
-    }
-  }
-
-  unrenderEventResize(affectedInstances: EventInstanceHash) {
-    if (this.eventRenderer) {
-      this.eventRenderer.showByHash(affectedInstances)
-    }
-
-    if (this.mirrorRenderer) {
-      this.mirrorRenderer.unrender()
-    }
-
-    if (this.fillRenderer) {
-      this.fillRenderer.unrender('highlight')
-    }
-  }
+  */
 
 
   // Hit System
@@ -437,7 +331,5 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
 
 DateComponent.prototype.isInteractable = false
 DateComponent.prototype.useEventCenter = true
-DateComponent.prototype.doesDragMirror = false
-DateComponent.prototype.doesDragHighlight = false
 DateComponent.prototype.fgSegSelector = '.fc-event-container > *'
 DateComponent.prototype.bgSegSelector = '.fc-bgevent:not(.fc-nonbusiness)'

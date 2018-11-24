@@ -10,7 +10,7 @@ import { addDays, DateMarker } from '../datelib/marker'
 import { removeElement } from '../util/dom-manip'
 import { ComponentContext } from '../component/Component'
 import { EventInstanceHash } from '../structs/event'
-import { memoizeRendering } from '../component/memoized-rendering'
+import { memoizeRendering, MemoizedRendering } from '../component/memoized-rendering'
 
 export interface DayTileProps {
   date: DateMarker
@@ -27,33 +27,61 @@ export default class DayTile extends DateComponent<DayTileProps> {
   height: number
   offsetTracker: OffsetTracker // TODO: abstraction for tracking dims of whole element rect
 
-  private _renderFrame = memoizeRendering(this.renderFrame)
-  private _renderEventSegs = memoizeRendering(this.renderEventSegs, this.unrenderEvents, [ this._renderFrame ])
-  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderEventSegs ])
-  private _renderEventDrag = memoizeRendering(this.renderEventDrag, this.unrenderEventDrag, [ this._renderFrame ])
-  private _renderEventResize = memoizeRendering(this.renderEventResize, this.unrenderEventResize, [ this._renderFrame ])
+  private renderFrame: MemoizedRendering<[DateMarker]>
+  private renderEvents: MemoizedRendering<[Seg[]]>
+  private renderEventSelection: MemoizedRendering<[string]>
+  private renderEventDrag: MemoizedRendering<[EventInstanceHash]>
+  private renderEventResize: MemoizedRendering<[EventInstanceHash]>
 
   constructor(context: ComponentContext, el: HTMLElement) {
     super(context, el)
 
-    this.eventRenderer = new DayTileEventRenderer(this)
+    let eventRenderer = this.eventRenderer = new DayTileEventRenderer(this)
+
+    let renderFrame = this.renderFrame = memoizeRendering(
+      this._renderFrame
+    )
+
+    let renderEvents = this.renderEvents = memoizeRendering(
+      this._renderEventSegs,
+      this._unrenderEventSegs,
+      [ renderFrame ]
+    )
+
+    this.renderEventSelection = memoizeRendering(
+      eventRenderer.selectByInstanceId.bind(eventRenderer),
+      eventRenderer.unselectByInstanceId.bind(eventRenderer),
+      [ renderEvents ]
+    )
+
+    this.renderEventDrag = memoizeRendering(
+      eventRenderer.hideByHash.bind(eventRenderer),
+      eventRenderer.showByHash.bind(eventRenderer),
+      [ renderFrame ]
+    )
+
+    this.renderEventResize = memoizeRendering(
+      eventRenderer.hideByHash.bind(eventRenderer),
+      eventRenderer.showByHash.bind(eventRenderer),
+      [ renderFrame ]
+    )
   }
 
   render(props: DayTileProps) {
-    this._renderFrame(props.date)
-    this._renderEventSegs(props.segs)
-    this._renderEventSelection(props.eventSelection)
-    this._renderEventDrag(props.eventDragInstances)
-    this._renderEventResize(props.eventResizeInstances)
+    this.renderFrame(props.date)
+    this.renderEvents(props.segs)
+    this.renderEventSelection(props.eventSelection)
+    this.renderEventDrag(props.eventDragInstances)
+    this.renderEventResize(props.eventResizeInstances)
   }
 
   destroy() {
     super.destroy()
 
-    this._renderFrame.unrender() // should unrender everything else
+    this.renderFrame.unrender() // should unrender everything else
   }
 
-  renderFrame(date: DateMarker) {
+  _renderFrame(date: DateMarker) {
     let { theme, dateEnv } = this
 
     let title = dateEnv.format(
@@ -74,30 +102,6 @@ export default class DayTile extends DateComponent<DayTileProps> {
       '</div>'
 
     this.segContainerEl = this.el.querySelector('.fc-event-container')
-  }
-
-  renderEventDrag(affectedInstances: EventInstanceHash) {
-    if (affectedInstances) {
-      this.eventRenderer.hideByHash(affectedInstances)
-    }
-  }
-
-  unrenderEventDrag(affectedInstances: EventInstanceHash) {
-    if (affectedInstances) {
-      this.eventRenderer.showByHash(affectedInstances)
-    }
-  }
-
-  renderEventResize(affectedInstances: EventInstanceHash) {
-    if (affectedInstances) {
-      this.eventRenderer.hideByHash(affectedInstances)
-    }
-  }
-
-  unrenderEventResize(affectedInstances: EventInstanceHash) {
-    if (affectedInstances) {
-      this.eventRenderer.showByHash(affectedInstances)
-    }
   }
 
   prepareHits() {
@@ -141,6 +145,10 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
 }
 
+DayTile.prototype.isInteractable = true
+DayTile.prototype.useEventCenter = false
+
+
 export class DayTileEventRenderer extends SimpleDayGridEventRenderer {
 
   dayTile: DayTile
@@ -164,6 +172,3 @@ export class DayTileEventRenderer extends SimpleDayGridEventRenderer {
   }
 
 }
-
-DayTile.prototype.isInteractable = true
-DayTile.prototype.useEventCenter = false

@@ -11,7 +11,7 @@ import { ComponentContext } from '../component/Component'
 import DateComponent, { Seg, EventSegUiInteractionState } from '../component/DateComponent'
 import DayBgRow from '../basic/DayBgRow'
 import { DateProfile } from '../DateProfileGenerator'
-import { memoizeRendering } from '../component/memoized-rendering'
+import { memoizeRendering, MemoizedRendering } from '../component/memoized-rendering'
 
 
 /* A component that renders one or more columns of vertical time slots
@@ -87,22 +87,63 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   highlightContainerEls: HTMLElement[]
   businessContainerEls: HTMLElement[]
 
-  private _renderSlats = memoizeRendering(this.renderSlats)
-  private _renderColumns = memoizeRendering(this.renderColumns, this.unrenderColumns)
-  private _renderBusinessHourSegs = memoizeRendering(this.renderBusinessHourSegs, this.unrenderBusinessHours, [ this._renderColumns ])
-  private _renderDateSelectionSegs = memoizeRendering(this.renderDateSelectionSegs, this.unrenderDateSelection, [ this._renderColumns ])
-  private _renderEventSegs = memoizeRendering(this.renderEventSegs, this.unrenderEvents, [ this._renderColumns ])
-  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderEventSegs ])
-  private _renderEventDragSegs = memoizeRendering(this.renderEventDragSegs, this.unrenderEventDragSegs, [ this._renderColumns ])
-  private _renderEventResizeSegs = memoizeRendering(this.renderEventResizeSegs, this.unrenderEventResizeSegs, [ this._renderColumns ])
+  private renderSlats = memoizeRendering(this._renderSlats)
+  private renderColumns: MemoizedRendering<[TimeGridCell[], DateProfile]>
+  private renderBusinessHours: MemoizedRendering<[TimeGridSeg[]]>
+  private renderDateSelection: MemoizedRendering<[TimeGridSeg[]]>
+  private renderEvents: MemoizedRendering<[TimeGridSeg[]]>
+  private renderEventSelection: MemoizedRendering<[string]>
+  private renderEventDrag: MemoizedRendering<[EventSegUiInteractionState]>
+  private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
 
 
   constructor(context: ComponentContext, el: HTMLElement, renderProps: RenderProps) {
     super(context, el)
 
-    this.eventRenderer = new TimeGridEventRenderer(this)
+    let eventRenderer = this.eventRenderer = new TimeGridEventRenderer(this)
+    let fillRenderer = this.fillRenderer = new TimeGridFillRenderer(this)
     this.mirrorRenderer = new TimeGridMirrorRenderer(this)
-    this.fillRenderer = new TimeGridFillRenderer(this)
+
+    let renderColumns = this.renderColumns = memoizeRendering(
+      this._renderColumns,
+      this._unrenderColumns
+    )
+
+    this.renderBusinessHours = memoizeRendering(
+      fillRenderer.renderSegs.bind(fillRenderer, 'businessHours'),
+      fillRenderer.unrender.bind(fillRenderer, 'businessHours'),
+      [ renderColumns ]
+    )
+
+    this.renderDateSelection = memoizeRendering(
+      this._renderDateSelection,
+      this._unrenderDateSelection,
+      [ renderColumns ]
+    )
+
+    this.renderEvents = memoizeRendering(
+      this._renderEventSegs,
+      this._unrenderEventSegs,
+      [ renderColumns ]
+    )
+
+    this.renderEventSelection = memoizeRendering(
+      eventRenderer.selectByInstanceId.bind(eventRenderer),
+      eventRenderer.unselectByInstanceId.bind(eventRenderer),
+      [ this.renderEvents ]
+    )
+
+    this.renderEventDrag = memoizeRendering(
+      this._renderEventDrag,
+      this._unrenderEventDrag,
+      [ renderColumns ]
+    )
+
+    this.renderEventResize = memoizeRendering(
+      this._renderEventResize,
+      this._unrenderEventResize,
+      [ renderColumns ]
+    )
 
     this.processOptions()
 
@@ -192,14 +233,14 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     let cells = props.cells
     this.colCnt = cells.length
 
-    this._renderSlats(props.dateProfile)
-    this._renderColumns(props.cells, props.dateProfile)
-    this._renderBusinessHourSegs(props.businessHourSegs)
-    this._renderDateSelectionSegs(props.dateSelectionSegs)
-    this._renderEventSegs(props.eventSegs)
-    this._renderEventSelection(props.eventSelection)
-    this._renderEventDragSegs(props.eventDrag)
-    this._renderEventResizeSegs(props.eventResize)
+    this.renderSlats(props.dateProfile)
+    this.renderColumns(props.cells, props.dateProfile)
+    this.renderBusinessHours(props.businessHourSegs)
+    this.renderDateSelection(props.dateSelectionSegs)
+    this.renderEvents(props.eventSegs)
+    this.renderEventSelection(props.eventSelection)
+    this.renderEventDrag(props.eventDrag)
+    this.renderEventResize(props.eventResize)
   }
 
 
@@ -207,8 +248,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     super.destroy()
 
     // should unrender everything else too
-    this._renderSlats.unrender()
-    this._renderColumns.unrender()
+    this.renderSlats.unrender()
+    this.renderColumns.unrender()
   }
 
 
@@ -235,7 +276,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  renderSlats(dateProfile: DateProfile) {
+  _renderSlats(dateProfile: DateProfile) {
     let { theme } = this
 
     this.slatContainerEl.innerHTML =
@@ -299,7 +340,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  renderColumns(cells: TimeGridCell[], dateProfile: DateProfile) {
+  _renderColumns(cells: TimeGridCell[], dateProfile: DateProfile) {
     let { theme } = this
 
     let bgRow = new DayBgRow(this.context)
@@ -330,7 +371,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  unrenderColumns() {
+  _unrenderColumns() {
     this.unrenderContentSkeleton()
   }
 
@@ -627,14 +668,48 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
+  /* Event Drag Visualization
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  _renderEventDrag(state: EventSegUiInteractionState) {
+    if (state) {
+      this.eventRenderer.hideByHash(state.affectedInstances)
+
+      if (state.isEvent) {
+        this.mirrorRenderer.renderSegs(state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
+      } else {
+        this.fillRenderer.renderSegs('highlight', state.segs)
+      }
+    }
+  }
+
+
+  _unrenderEventDrag(state: EventSegUiInteractionState) {
+    if (state) {
+      this.eventRenderer.showByHash(state.affectedInstances)
+      this.mirrorRenderer.unrender()
+      this.fillRenderer.unrender('highlight')
+    }
+  }
+
+
   /* Event Resize Visualization
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderEventResizeSegs(state: EventSegUiInteractionState) {
+  _renderEventResize(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.hideByHash(state.affectedInstances)
       this.mirrorRenderer.renderSegs(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
+    }
+  }
+
+
+  _unrenderEventResize(state: EventSegUiInteractionState) {
+    if (state) {
+      this.eventRenderer.showByHash(state.affectedInstances)
+      this.mirrorRenderer.unrender()
     }
   }
 
@@ -644,7 +719,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-  renderDateSelectionSegs(segs: Seg[]) {
+  _renderDateSelection(segs: Seg[]) {
     if (segs) {
       if (this.opt('selectMirror')) {
         this.mirrorRenderer.renderSegs(segs, { isSelecting: true })
@@ -655,7 +730,9 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-}
+  _unrenderDateSelection() {
+    this.mirrorRenderer.unrender()
+    this.fillRenderer.unrender('highlight')
+  }
 
-TimeGrid.prototype.doesDragMirror = true
-TimeGrid.prototype.doesDragHighlight = false
+}

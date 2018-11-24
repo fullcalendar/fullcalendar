@@ -58,6 +58,9 @@ export default class ListView extends View {
   updateSize(totalHeight, isAuto, isResize) {
     super.updateSize(totalHeight, isAuto, isResize)
 
+    this.eventRenderer.computeSizes(isResize)
+    this.eventRenderer.assignSizes(isResize)
+
     this.scroller.clear() // sets height to 'auto' and clears overflow
 
     if (!isAuto) {
@@ -98,7 +101,7 @@ export default class ListView extends View {
 
 
   renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
-    this.renderEventSegs(
+    this._renderEventSegs(
       this.eventRangesToSegs(
         sliceEventStore(
           eventStore,

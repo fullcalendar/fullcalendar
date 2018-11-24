@@ -22,7 +22,7 @@ import { EventRenderRange } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 import DayBgRow from './DayBgRow'
 import { DateProfile } from '../DateProfileGenerator'
-import { memoizeRendering } from '../component/memoized-rendering'
+import { memoizeRendering, MemoizedRendering } from '../component/memoized-rendering'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -85,21 +85,62 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   segPopover: Popover // the Popover that holds events that can't fit in a cell. null when not visible
   segPopoverTile: DayTile
 
-  private _renderCells = memoizeRendering(this.renderCells, this.unrenderCells)
-  private _renderBusinessHourSegs = memoizeRendering(this.renderBusinessHourSegs, this.unrenderBusinessHours, [ this._renderCells ])
-  private _renderDateSelectionSegs = memoizeRendering(this.renderDateSelectionSegs, this.unrenderDateSelection, [ this._renderCells ])
-  private _renderEventSegs = memoizeRendering(this.renderEventSegs, this.unrenderEvents, [ this._renderCells ])
-  private _renderEventSelection = memoizeRendering(this.renderEventSelection, this.unrenderEventSelection, [ this._renderCells ])
-  private _renderEventDragSegs = memoizeRendering(this.renderEventDragSegs, this.unrenderEventDragSegs, [ this._renderCells ])
-  private _renderEventResizeSegs = memoizeRendering(this.renderEventResizeSegs, this.unrenderEventResizeSegs, [ this._renderCells ])
+  private renderCells: MemoizedRendering<[DayGridCell[][], boolean]>
+  private renderBusinessHours: MemoizedRendering<[DayGridSeg[]]>
+  private renderDateSelection: MemoizedRendering<[DayGridSeg[]]>
+  private renderEvents: MemoizedRendering<[DayGridSeg[]]>
+  private renderEventSelection: MemoizedRendering<[string]>
+  private renderEventDrag: MemoizedRendering<[EventSegUiInteractionState]>
+  private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
 
 
   constructor(context, el, renderProps: RenderProps) {
     super(context, el)
 
-    this.eventRenderer = new DayGridEventRenderer(this)
+    let eventRenderer = this.eventRenderer = new DayGridEventRenderer(this)
+    let fillRenderer = this.fillRenderer = new DayGridFillRenderer(this)
     this.mirrorRenderer = new DayGridMirrorRenderer(this)
-    this.fillRenderer = new DayGridFillRenderer(this)
+
+    let renderCells = this.renderCells = memoizeRendering(
+      this._renderCells,
+      this._unrenderCells
+    )
+
+    this.renderBusinessHours = memoizeRendering(
+      fillRenderer.renderSegs.bind(fillRenderer, 'businessHours'),
+      fillRenderer.unrender.bind(fillRenderer, 'businessHours'),
+      [ renderCells ]
+    )
+
+    this.renderDateSelection = memoizeRendering(
+      fillRenderer.renderSegs.bind(fillRenderer, 'highlight'),
+      fillRenderer.unrender.bind(fillRenderer, 'highlight'),
+      [ renderCells ]
+    )
+
+    this.renderEvents = memoizeRendering(
+      this._renderEventSegs,
+      this._unrenderEventSegs,
+      [ renderCells ]
+    )
+
+    this.renderEventSelection = memoizeRendering(
+      eventRenderer.selectByInstanceId.bind(eventRenderer),
+      eventRenderer.unselectByInstanceId.bind(eventRenderer),
+      [ this.renderEvents ]
+    )
+
+    this.renderEventDrag = memoizeRendering(
+      this._renderEventDrag,
+      this._unrenderEventDrag,
+      [ renderCells ]
+    )
+
+    this.renderEventResize = memoizeRendering(
+      this._renderEventResize,
+      this._unrenderEventResize,
+      [ renderCells ]
+    )
 
     this.renderProps = renderProps
   }
@@ -110,13 +151,13 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
     this.rowCnt = cells.length
     this.colCnt = cells[0].length
 
-    this._renderCells(cells, props.isRigid)
-    this._renderBusinessHourSegs(props.businessHourSegs)
-    this._renderDateSelectionSegs(props.dateSelectionSegs)
-    this._renderEventSegs(props.eventSegs)
-    this._renderEventSelection(props.eventSelection)
-    this._renderEventDragSegs(props.eventDrag)
-    this._renderEventResizeSegs(props.eventResize)
+    this.renderCells(cells, props.isRigid)
+    this.renderBusinessHours(props.businessHourSegs)
+    this.renderDateSelection(props.dateSelectionSegs)
+    this.renderEvents(props.eventSegs)
+    this.renderEventSelection(props.eventSelection)
+    this.renderEventDrag(props.eventDrag)
+    this.renderEventResize(props.eventResize)
 
     if (this.segPopoverTile) {
       this.updateSegPopoverTile()
@@ -127,7 +168,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   destroy() {
     super.destroy()
 
-    this._renderCells.unrender() // will unrender everything else
+    this.renderCells.unrender() // will unrender everything else
   }
 
 
@@ -156,7 +197,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderCells(cells: DayGridCell[][], isRigid: boolean) {
+  _renderCells(cells: DayGridCell[][], isRigid: boolean) {
     let { view, dateEnv } = this
     let { rowCnt, colCnt } = this
     let html = ''
@@ -206,7 +247,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   }
 
 
-  unrenderCells() {
+  _unrenderCells() {
     this.removeSegPopover()
   }
 
@@ -424,8 +465,8 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderBgEventSegs(segs: Seg[]) {
-    super.renderBgEventSegs(
+  _renderBgEventSegs(segs: Seg[]) {
+    super._renderBgEventSegs(
       // don't render timed background events
       segs.filter(function(seg) {
         return seg.eventRange.def.allDay
@@ -435,9 +476,30 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
 
 
   // Unrenders all events currently rendered on the grid
-  unrenderEvents() {
+  _unrenderEventSegs() {
+    super._unrenderEventSegs()
+
     this.removeSegPopover() // removes the "more.." events popover
-    super.unrenderEvents()
+  }
+
+
+  /* Event Drag Visualization
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  _renderEventDrag(state: EventSegUiInteractionState) {
+    if (state) {
+      this.eventRenderer.hideByHash(state.affectedInstances)
+      this.fillRenderer.renderSegs('highlight', state.segs)
+    }
+  }
+
+
+  _unrenderEventDrag(state: EventSegUiInteractionState) {
+    if (state) {
+      this.eventRenderer.showByHash(state.affectedInstances)
+      this.fillRenderer.unrender('highlight')
+    }
   }
 
 
@@ -445,11 +507,20 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderEventResizeSegs(state: EventSegUiInteractionState) {
+  _renderEventResize(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.hideByHash(state.affectedInstances)
       this.fillRenderer.renderSegs('highlight', state.segs)
       this.mirrorRenderer.renderSegs(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
+    }
+  }
+
+
+  _unrenderEventResize(state: EventSegUiInteractionState) {
+    if (state) {
+      this.eventRenderer.showByHash(state.affectedInstances)
+      this.fillRenderer.unrender('highlight')
+      this.mirrorRenderer.unrender()
     }
   }
 
@@ -788,6 +859,3 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   }
 
 }
-
-DayGrid.prototype.doesDragMirror = false
-DayGrid.prototype.doesDragHighlight = true

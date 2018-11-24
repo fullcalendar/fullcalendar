@@ -267,40 +267,48 @@ export default abstract class FgEventRenderer {
 
 
   hideByHash(hash) {
-    for (let seg of this.segs) {
-      if (hash[seg.eventRange.instance.instanceId]) {
-        seg.el.style.visibility = 'hidden'
+    if (hash) {
+      for (let seg of this.segs) {
+        if (hash[seg.eventRange.instance.instanceId]) {
+          seg.el.style.visibility = 'hidden'
+        }
       }
     }
   }
 
 
   showByHash(hash) {
-    for (let seg of this.segs) {
-      if (hash[seg.eventRange.instance.instanceId]) {
-        seg.el.style.visibility = ''
+    if (hash) {
+      for (let seg of this.segs) {
+        if (hash[seg.eventRange.instance.instanceId]) {
+          seg.el.style.visibility = ''
+        }
       }
     }
   }
 
 
-  selectByInstanceId(instanceId) {
-    for (let seg of this.segs) {
-      let eventInstance = seg.eventRange.instance
-      if (
-        eventInstance && eventInstance.instanceId === instanceId &&
-        seg.el // necessary?
-      ) {
-        seg.el.classList.add('fc-selected')
+  selectByInstanceId(instanceId: string) {
+    if (instanceId) {
+      for (let seg of this.segs) {
+        let eventInstance = seg.eventRange.instance
+        if (
+          eventInstance && eventInstance.instanceId === instanceId &&
+          seg.el // necessary?
+        ) {
+          seg.el.classList.add('fc-selected')
+        }
       }
     }
   }
 
 
-  unselectByInstanceId(instanceId) {
-    for (let seg of this.segs) {
-      if (seg.el) { // necessary?
-        seg.el.classList.remove('fc-selected')
+  unselectByInstanceId(instanceId: string) {
+    if (instanceId) {
+      for (let seg of this.segs) {
+        if (seg.el) { // necessary?
+          seg.el.classList.remove('fc-selected')
+        }
       }
     }
   }
