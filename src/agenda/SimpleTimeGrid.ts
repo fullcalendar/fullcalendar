@@ -10,7 +10,7 @@ import { intersectRanges, DateRange } from '../datelib/date-range'
 import DayTable from '../common/DayTable'
 import { DateEnv } from '../datelib/env'
 import { DateMarker, addMs } from '../datelib/marker'
-import { Slicer } from '../common/slicing-utils'
+import { Slicer, memoizeSlicer } from '../common/slicing-utils'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 
@@ -33,13 +33,12 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   offsetTracker: OffsetTracker
 
   private buildDayRanges = reselector(buildDayRanges)
-  private slicer = new Slicer(sliceSegs)
+  private slicer = memoizeSlicer(new Slicer(sliceSegs, () => { return this.timeGrid }))
 
   constructor(context, timeGrid: TimeGrid) {
     super(context, timeGrid.el)
 
     this.timeGrid = timeGrid
-    this.slicer.component = timeGrid
   }
 
   render(props: SimpleTimeGridProps) {

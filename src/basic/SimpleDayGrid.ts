@@ -8,7 +8,7 @@ import DayTable from '../common/DayTable'
 import { Duration } from '../datelib/duration'
 import DateComponent from '../component/DateComponent'
 import { DateRange } from '../datelib/date-range'
-import { Slicer } from '../common/slicing-utils'
+import { Slicer, memoizeSlicer } from '../common/slicing-utils'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 
@@ -31,13 +31,12 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
   dayGrid: DayGrid
   offsetTracker: OffsetTracker
 
-  private slicer = new Slicer(sliceSegs)
+  private slicer = memoizeSlicer(new Slicer(sliceSegs, () => { return this.dayGrid }))
 
   constructor(context, dayGrid: DayGrid) {
     super(context, dayGrid.el)
 
     this.dayGrid = dayGrid
-    this.slicer.component = dayGrid
   }
 
   render(props: SimpleDayGridProps) {
