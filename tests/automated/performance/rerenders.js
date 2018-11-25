@@ -13,24 +13,22 @@ describe('rerender performance', function() {
     {
       defaultView: 'month',
       classes: [
-        { name: 'BasicView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
-        { name: 'DayGrid', dateMethod: '_renderCells', eventMethod: '_renderEventSegs' }
+        { name: 'DayGrid', dateMethod: '_renderCells' }
       ],
       changeToView: 'list' // does not have DayGrid!
     },
     {
       defaultView: 'agendaWeek',
       classes: [
-        { name: 'AgendaView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
-        { name: 'DayGrid', dateMethod: '_renderCells', eventMethod: '_renderEventSegs' },
-        { name: 'TimeGrid', dateMethod: '_renderColumns', eventMethod: '_renderEventSegs' }
+        { name: 'DayGrid', dateMethod: '_renderCells' },
+        { name: 'TimeGrid', dateMethod: '_renderColumns' }
       ],
       changeToView: 'list' // does not have DayGrid!
     },
     {
       defaultView: 'listWeek',
       classes: [
-        { name: 'ListView', dateMethod: 'renderDates', eventMethod: 'renderEvents' },
+        { name: 'ListView', dateMethod: 'renderDates' }
       ],
       changeToView: 'month'
     }
@@ -40,34 +38,37 @@ describe('rerender performance', function() {
         var Class = FullCalendar[classInfo.name]
 
         it('calls methods a limited number of times', function(done) {
-          var renderDates = spyOnMethod(Class, classInfo.dateMethod)
-          var renderEvents = spyOnMethod(Class, classInfo.eventMethod)
-          var updateSize = spyOnMethod(Class, 'updateSize')
+          var calSettings = {
+            defaultView: settings.defaultView,
+            eventRender: function() {}
+          }
 
-          initCalendar({
-            defaultView: settings.defaultView
-          })
+          var renderDates = spyOnMethod(Class, classInfo.dateMethod)
+          var updateSize = spyOnMethod(Class, 'updateSize')
+          spyOn(calSettings, 'eventRender')
+
+          initCalendar(calSettings)
 
           expect(renderDates.calls.count()).toBe(1)
-          expect(renderEvents.calls.count()).toBe(1)
+          expect(calSettings.eventRender.calls.count()).toBe(1)
           expect(updateSize.calls.count()).toBe(1)
 
           currentCalendar.changeView(settings.changeToView)
 
           expect(renderDates.calls.count()).toBe(1)
-          expect(renderEvents.calls.count()).toBe(1)
+          expect(calSettings.eventRender.calls.count()).toBe(2) // +1 (switch to new view)
           expect(updateSize.calls.count()).toBe(1)
 
           currentCalendar.changeView(settings.defaultView)
 
           expect(renderDates.calls.count()).toBe(2) // +1
-          expect(renderEvents.calls.count()).toBe(2) // +1
+          expect(calSettings.eventRender.calls.count()).toBe(3) // +1
           expect(updateSize.calls.count()).toBe(2) // +1
 
           currentCalendar.rerenderEvents()
 
           expect(renderDates.calls.count()).toBe(2)
-          expect(renderEvents.calls.count()).toBe(3) // +1
+          expect(calSettings.eventRender.calls.count()).toBe(4) // +1
           expect(updateSize.calls.count()).toBe(3) // +1
 
           $(window).simulate('resize')
@@ -75,11 +76,10 @@ describe('rerender performance', function() {
           setTimeout(function() {
 
             expect(renderDates.calls.count()).toBe(2)
-            expect(renderEvents.calls.count()).toBe(3)
+            expect(calSettings.eventRender.calls.count()).toBe(4)
             expect(updateSize.calls.count()).toBe(4) // +1
 
             renderDates.restore()
-            renderEvents.restore()
             updateSize.restore()
 
             done()
