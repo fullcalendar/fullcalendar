@@ -79,55 +79,6 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   }
 
 
-  // Events
-  // -----------------------------------------------------------------------------------------------------------------
-
-  _renderEventSegs(segs: Seg[]) {
-    let bgSegs = []
-    let fgSegs = []
-
-    for (let seg of segs) {
-      if (hasBgRendering(seg.eventRange.ui)) {
-        bgSegs.push(seg)
-      } else {
-        fgSegs.push(seg)
-      }
-    }
-
-    this._renderFgEventSegs(fgSegs)
-    this._renderBgEventSegs(bgSegs)
-  }
-
-  _renderFgEventSegs(segs: Seg[]) {
-    if (this.eventRenderer) {
-      this.eventRenderer.renderSegs(segs)
-    }
-  }
-
-  _renderBgEventSegs(segs: Seg[]) {
-    if (this.fillRenderer) {
-      this.fillRenderer.renderSegs('bgEvent', segs)
-    }
-  }
-
-  _unrenderEventSegs() {
-    this._unrenderFgEventSegs()
-    this._unrenderBgEventSegs()
-  }
-
-  _unrenderFgEventSegs() {
-    if (this.eventRenderer) {
-      this.eventRenderer.unrender()
-    }
-  }
-
-  _unrenderBgEventSegs() {
-    if (this.fillRenderer) {
-      this.fillRenderer.unrender('bgEvent')
-    }
-  }
-
-
   // TODO: WHAT ABOUT (sourceSeg && sourceSeg.component.doesDragMirror)
   //
   // Event Drag-n-Drop Rendering (for both events and external elements)

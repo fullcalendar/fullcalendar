@@ -37,7 +37,8 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
   let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
   let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
-  let renderRanges: EventRenderRange[] = []
+  let bgRanges: EventRenderRange[] = []
+  let fgRanges: EventRenderRange[] = []
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
@@ -77,7 +78,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
           inverseBgByDefId[instance.defId].push(visibleRange)
         }
       } else {
-        renderRanges.push({
+        (ui.rendering === 'background' ? bgRanges : fgRanges).push({
           def,
           ui,
           instance,
@@ -89,7 +90,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
     }
   }
 
-  for (let groupId in inverseBgByGroupId) {
+  for (let groupId in inverseBgByGroupId) { // BY GROUP
     let ranges = inverseBgByGroupId[groupId]
     let invertedRanges = invertRanges(ranges, framingRange)
 
@@ -97,7 +98,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
       let def = defByGroupId[groupId]
       let ui = eventUis[def.defId]
 
-      renderRanges.push({
+      bgRanges.push({
         def,
         ui,
         instance: null,
@@ -113,7 +114,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
     let invertedRanges = invertRanges(ranges, framingRange)
 
     for (let invertedRange of invertedRanges) {
-      renderRanges.push({
+      bgRanges.push({
         def: eventStore.defs[defId],
         ui: eventUis[defId],
         instance: null,
@@ -124,7 +125,7 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
     }
   }
 
-  return renderRanges
+  return { bg: bgRanges, fg: fgRanges }
 }
 
 export function hasBgRendering(ui: EventUi) {

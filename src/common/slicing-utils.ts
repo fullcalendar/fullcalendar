@@ -43,15 +43,18 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
     dateProfile: DateProfile,
     nextDayThreshold: Duration,
     ...otherArgs: OtherArgsType
-  ): SegType[] => {
-    if (!eventStore) {
-      return []
-    }
+  ): { bg: SegType[], fg: SegType[] } => {
+    if (eventStore) {
+      let rangeRes = sliceEventStore(eventStore, eventUis, dateProfile.activeRange, nextDayThreshold)
 
-    return this.eventRangesToCompleteSegs(
-      sliceEventStore(eventStore, eventUis, dateProfile.activeRange, nextDayThreshold),
-      otherArgs
-    )
+      return {
+        bg: this.eventRangesToCompleteSegs(rangeRes.bg, otherArgs),
+        fg: this.eventRangesToCompleteSegs(rangeRes.fg, otherArgs)
+      }
+
+    } else {
+      return { bg: [], fg: [] }
+    }
   }
 
   businessHoursToSegs = (
@@ -105,11 +108,10 @@ export class Slicer<OtherArgsType extends any[], SegType extends Seg> {
       return null
     }
 
+    let rangeRes = sliceEventStore(interaction.mutatedEvents, interaction.eventUis, dateProfile.activeRange, nextDayThreshold)
+
     return {
-      segs: this.eventRangesToCompleteSegs(
-        sliceEventStore(interaction.mutatedEvents, interaction.eventUis, dateProfile.activeRange, nextDayThreshold),
-        otherArgs
-      ),
+      segs: this.eventRangesToCompleteSegs(rangeRes.fg, otherArgs),
       affectedInstances: interaction.affectedEvents.instances,
       isEvent: interaction.isEvent,
       sourceSeg: interaction.origSeg

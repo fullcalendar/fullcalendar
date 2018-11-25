@@ -30,6 +30,11 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
         rowStructs[i].tbodyEl
       )
     })
+
+    // removes the "more.." events popover
+    if (!mirrorInfo) {
+      this.dayGrid.removeSegPopover()
+    }
   }
 
 

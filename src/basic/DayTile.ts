@@ -14,7 +14,7 @@ import { memoizeRendering, MemoizedRendering } from '../component/memoized-rende
 
 export interface DayTileProps {
   date: DateMarker
-  segs: Seg[]
+  fgSegs: Seg[]
   eventSelection: string
   eventDragInstances: EventInstanceHash
   eventResizeInstances: EventInstanceHash
@@ -28,7 +28,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
   offsetTracker: OffsetTracker // TODO: abstraction for tracking dims of whole element rect
 
   private renderFrame: MemoizedRendering<[DateMarker]>
-  private renderEvents: MemoizedRendering<[Seg[]]>
+  private renderFgEvents: MemoizedRendering<[Seg[]]>
   private renderEventSelection: MemoizedRendering<[string]>
   private renderEventDrag: MemoizedRendering<[EventInstanceHash]>
   private renderEventResize: MemoizedRendering<[EventInstanceHash]>
@@ -42,16 +42,16 @@ export default class DayTile extends DateComponent<DayTileProps> {
       this._renderFrame
     )
 
-    let renderEvents = this.renderEvents = memoizeRendering(
-      this._renderEventSegs,
-      this._unrenderEventSegs,
+    this.renderFgEvents = memoizeRendering(
+      eventRenderer.renderSegs.bind(eventRenderer),
+      eventRenderer.unrender.bind(eventRenderer),
       [ renderFrame ]
     )
 
     this.renderEventSelection = memoizeRendering(
       eventRenderer.selectByInstanceId.bind(eventRenderer),
       eventRenderer.unselectByInstanceId.bind(eventRenderer),
-      [ renderEvents ]
+      [ this.renderFgEvents ]
     )
 
     this.renderEventDrag = memoizeRendering(
@@ -69,7 +69,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
   render(props: DayTileProps) {
     this.renderFrame(props.date)
-    this.renderEvents(props.segs)
+    this.renderFgEvents(props.fgSegs)
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDragInstances)
     this.renderEventResize(props.eventResizeInstances)

@@ -43,11 +43,14 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     let { dayGrid, slicer, isRtl } = this
     let { dateProfile, dayTable, nextDayThreshold } = props
 
+    let segRes = slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, nextDayThreshold, dayTable, isRtl)
+
     dayGrid.receiveProps({
       dateProfile,
       cells: dayTable.cells,
       businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, nextDayThreshold, dayTable, isRtl),
-      eventSegs: slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, nextDayThreshold, dayTable, isRtl),
+      bgEventSegs: segRes.bg,
+      fgEventSegs: segRes.fg,
       dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, dayTable, isRtl),
       eventSelection: props.eventSelection,
       eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, nextDayThreshold, dayTable, isRtl),

@@ -2,7 +2,7 @@ import { EventStore } from '../structs/event-store'
 import { Seg } from '../component/DateComponent'
 import { EventUiHash } from '../component/event-rendering'
 
-export interface EventInteractionState {
+export interface EventInteractionState { // is this ever used alone?
   affectedEvents: EventStore
   mutatedEvents: EventStore
   isEvent: boolean

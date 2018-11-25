@@ -222,7 +222,7 @@ export default abstract class View extends DateComponent<ViewProps> {
       eventUis,
       this.props.dateProfile.activeRange,
       allDay ? this.nextDayThreshold : null
-    )
+    ).fg
   }
 
 

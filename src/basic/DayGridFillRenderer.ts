@@ -1,6 +1,6 @@
 import { htmlToElement, createElement, appendToElement, prependToElement } from '../util/dom-manip'
 import FillRenderer from '../component/renderers/FillRenderer'
-import DayGrid from './DayGrid'
+import DayGrid, { DayGridSeg } from './DayGrid'
 import { Seg } from '../component/DateComponent'
 
 
@@ -13,6 +13,18 @@ export default class DayGridFillRenderer extends FillRenderer {
     super(dayGrid.context)
 
     this.dayGrid = dayGrid
+  }
+
+  renderSegs(type: string, segs: DayGridSeg[]) {
+
+    // don't render timed background events
+    if (type === 'bgEvent') {
+      segs = segs.filter(function(seg) {
+        return seg.eventRange.def.allDay
+      })
+    }
+
+    super.renderSegs(type, segs)
   }
 
   attachSegs(type, segs: Seg[]) {

@@ -47,7 +47,8 @@ export interface TimeGridProps {
   dateProfile: DateProfile
   cells: TimeGridCell[]
   businessHourSegs: TimeGridSeg[]
-  eventSegs: TimeGridSeg[]
+  bgEventSegs: TimeGridSeg[]
+  fgEventSegs: TimeGridSeg[]
   dateSelectionSegs: TimeGridSeg[]
   eventSelection: string
   eventDrag: EventSegUiInteractionState | null
@@ -91,7 +92,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   private renderColumns: MemoizedRendering<[TimeGridCell[], DateProfile]>
   private renderBusinessHours: MemoizedRendering<[TimeGridSeg[]]>
   private renderDateSelection: MemoizedRendering<[TimeGridSeg[]]>
-  private renderEvents: MemoizedRendering<[TimeGridSeg[]]>
+  private renderBgEvents: MemoizedRendering<[TimeGridSeg[]]>
+  private renderFgEvents: MemoizedRendering<[TimeGridSeg[]]>
   private renderEventSelection: MemoizedRendering<[string]>
   private renderEventDrag: MemoizedRendering<[EventSegUiInteractionState]>
   private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
@@ -121,16 +123,22 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       [ renderColumns ]
     )
 
-    this.renderEvents = memoizeRendering(
-      this._renderEventSegs,
-      this._unrenderEventSegs,
+    this.renderFgEvents = memoizeRendering(
+      eventRenderer.renderSegs.bind(eventRenderer),
+      eventRenderer.unrender.bind(eventRenderer),
+      [ renderColumns ]
+    )
+
+    this.renderBgEvents = memoizeRendering(
+      fillRenderer.renderSegs.bind(fillRenderer, 'bgEvent'),
+      fillRenderer.unrender.bind(fillRenderer, 'bgEvent'),
       [ renderColumns ]
     )
 
     this.renderEventSelection = memoizeRendering(
       eventRenderer.selectByInstanceId.bind(eventRenderer),
       eventRenderer.unselectByInstanceId.bind(eventRenderer),
-      [ this.renderEvents ]
+      [ this.renderFgEvents ]
     )
 
     this.renderEventDrag = memoizeRendering(
@@ -237,7 +245,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     this.renderColumns(props.cells, props.dateProfile)
     this.renderBusinessHours(props.businessHourSegs)
     this.renderDateSelection(props.dateSelectionSegs)
-    this.renderEvents(props.eventSegs)
+    this.renderFgEvents(props.fgEventSegs)
+    this.renderBgEvents(props.bgEventSegs)
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDrag)
     this.renderEventResize(props.eventResize)

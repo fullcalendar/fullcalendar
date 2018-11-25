@@ -12,7 +12,7 @@ import { buildGotoAnchorHtml } from '../component/date-rendering'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import { EventRenderRange, EventUiHash, sliceEventStore } from '../component/event-rendering'
-import { EventStore } from '../structs/event-store';
+import { EventStore } from '../structs/event-store'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -100,17 +100,23 @@ export default class ListView extends View {
   }
 
 
+  // superclass calls this
   renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
-    this._renderEventSegs(
+    this.eventRenderer.renderSegs(
       this.eventRangesToSegs(
         sliceEventStore(
           eventStore,
           eventUis,
           this.props.dateProfile.activeRange,
           this.nextDayThreshold
-        )
+        ).fg
       )
     )
+  }
+
+
+  unrenderEvents() {
+    this.eventRenderer.unrender()
   }
 
 

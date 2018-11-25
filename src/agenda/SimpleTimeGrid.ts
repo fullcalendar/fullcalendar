@@ -46,12 +46,14 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     let { dateProfile, dayTable } = props
 
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
+    let segRes = slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, dayRanges)
 
     this.timeGrid.receiveProps({
       dateProfile,
       cells: dayTable.cells[0],
       businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, null, dayRanges),
-      eventSegs: slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, dayRanges),
+      bgEventSegs: segRes.bg,
+      fgEventSegs: segRes.fg,
       dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, dayRanges),
       eventSelection: props.eventSelection,
       eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, null, dayRanges),
