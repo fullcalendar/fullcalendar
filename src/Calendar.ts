@@ -29,7 +29,6 @@ import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem, PluginDef } from './plugin-system'
-import * as exportHooks from './exports'
 import CalendarComponent from './CalendarComponent'
 
 
@@ -517,6 +516,8 @@ export default class Calendar {
 
 
   handleOptions(options) {
+    let pluginHooks = this.pluginSystem.hooks
+
     this.defaultAllDayEventDuration = createDuration(options.defaultAllDayEventDuration)
     this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
     this.delayedRerender = this.buildDelayedRerender(options.rerenderDelay)
@@ -534,8 +535,9 @@ export default class Calendar {
 
     // ineffecient to do every time?
     this.viewSpecs = buildViewSpecs(
-      (exportHooks as any).views,
-      this.optionsManager
+      pluginHooks.viewConfigs,
+      this.optionsManager,
+      pluginHooks.viewDefTransformers
     )
 
     // ineffecient to do every time?

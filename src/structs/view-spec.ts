@@ -26,17 +26,19 @@ export interface ViewSpec {
 
 export type ViewSpecHash = { [viewType: string]: ViewSpec }
 
-export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionsManager: OptionsManager): ViewSpecHash {
+export type ViewDefTransformer = (viewDef: ViewDef, overrides) => ViewDef
+
+export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionsManager: OptionsManager, defTransformers: ViewDefTransformer[]): ViewSpecHash {
   let defaultConfigs = parseViewConfigs(defaultInputs)
   let overrideConfigs = parseViewConfigs(optionsManager.overrides.views)
   let viewDefs = compileViewDefs(defaultConfigs, overrideConfigs)
 
   return mapHash(viewDefs, function(viewDef) {
-    return buildViewSpec(viewDef, overrideConfigs, optionsManager)
+    return buildViewSpec(viewDef, overrideConfigs, optionsManager, defTransformers)
   })
 }
 
-function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, optionsManager: OptionsManager): ViewSpec {
+function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, optionsManager: OptionsManager, defTransformers: ViewDefTransformer[]): ViewSpec {
   let durationInput =
     viewDef.overrides.duration ||
     viewDef.defaults.duration ||
@@ -83,6 +85,28 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     }
   }
 
+  let overrides = assignTo(
+    {},
+    optionsManager.overrides,
+    singleUnitOverrides,
+    viewDef.overrides,
+    optionsManager.dynamicOverrides
+  )
+
+  // we do this really late because we want to pass in the overrides
+  // NOTE: can't change 'type' because already grabbed buttonTextMap/buttonTextKey
+  for (let defTransformer of defTransformers) {
+    viewDef = defTransformer(viewDef, overrides)
+  }
+
+  let defaults = assignTo(
+    {},
+    globalDefaults,
+    viewDef.defaults,
+    optionsManager.dirDefaults,
+    optionsManager.localeDefaults,
+  )
+
   return {
     type: viewDef.type,
     class: viewDef.class,
@@ -90,17 +114,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     durationUnit,
     singleUnit,
 
-    options: assignTo(
-      {},
-      globalDefaults,
-      viewDef.defaults,
-      optionsManager.dirDefaults,
-      optionsManager.localeDefaults,
-      optionsManager.overrides,
-      singleUnitOverrides,
-      viewDef.overrides,
-      optionsManager.dynamicOverrides
-    ),
+    options: assignTo(defaults, overrides), // can be destructive to defaults
 
     buttonTextOverride:
       queryButtonText(optionsManager.dynamicOverrides) ||

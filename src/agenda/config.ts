@@ -1,19 +1,25 @@
-import { defineView } from '../ViewRegistry'
+import { createPlugin } from '../plugin-system'
 import AgendaView from './AgendaView'
 
-defineView('agenda', {
-  class: AgendaView,
-  allDaySlot: true,
-  slotDuration: '00:30:00',
-  slotEventOverlap: true // a bad name. confused with overlap/constraint system
-})
+export default createPlugin({
+  viewConfigs: {
 
-defineView('agendaDay', {
-  type: 'agenda',
-  duration: { days: 1 }
-})
+    agenda: {
+      class: AgendaView,
+      allDaySlot: true,
+      slotDuration: '00:30:00',
+      slotEventOverlap: true // a bad name. confused with overlap/constraint system
+    },
 
-defineView('agendaWeek', {
-  type: 'agenda',
-  duration: { weeks: 1 }
+    agendaDay: {
+      type: 'agenda',
+      duration: { days: 1 }
+    },
+
+    agendaWeek: {
+      type: 'agenda',
+      duration: { weeks: 1 }
+    }
+
+  }
 })

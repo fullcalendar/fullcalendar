@@ -350,22 +350,26 @@ describe('custom view', function() {
     })
 
     it('falls back to view name when view lacks metadata', function() {
+      // also sorta tests plugin system
 
       class CrazyView extends FullCalendar.View {
       }
 
-      FullCalendar.views.crazy = CrazyView
+      initCalendar({
+        plugins: [
+          FullCalendar.createPlugin({
+            viewConfigs: {
+              crazy: CrazyView
+            }
+          })
+        ],
+        header: {
+          center: 'crazy,month'
+        },
+        defaultView: 'crazy'
+      })
 
-      var options = {
-        views: {}
-      }
-      options.header = {
-        center: 'crazy,month'
-      }
-      options.defaultView = 'crazy'
-      initCalendar(options)
       expect($('.fc-crazy-button')).toHaveText('crazy')
-      delete FullCalendar.views.crazy
     })
   })
 })

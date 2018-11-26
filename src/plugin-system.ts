@@ -4,6 +4,9 @@ import { eventDragMutationMassager } from './interactions/EventDragging'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import { dateClickApiTransformer, dateSelectionApiTransformer } from './Calendar'
 import { dateSelectionTransformer } from './interactions/DateSelecting'
+import { ViewConfigInputHash } from './structs/view-config'
+import { assignTo } from './util/object'
+import { ViewDefTransformer } from './structs/view-spec'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -16,6 +19,8 @@ export interface PluginDefInput {
   dateSelectionTransformers?: dateSelectionTransformer[]
   dateClickApiTransformers?: dateClickApiTransformer[]
   dateSelectionApiTransformers?: dateSelectionApiTransformer[]
+  viewConfigs?: ViewConfigInputHash
+  viewDefTransformers?: ViewDefTransformer[]
 }
 
 export interface PluginHooks {
@@ -26,6 +31,8 @@ export interface PluginHooks {
   dateSelectionTransformers: dateSelectionTransformer[]
   dateClickApiTransformers: dateClickApiTransformer[]
   dateSelectionApiTransformers: dateSelectionApiTransformer[]
+  viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?
+  viewDefTransformers: ViewDefTransformer[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -45,7 +52,9 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     eventDefMutationAppliers: input.eventDefMutationAppliers || [],
     dateSelectionTransformers: input.dateSelectionTransformers || [],
     dateClickApiTransformers: input.dateClickApiTransformers || [],
-    dateSelectionApiTransformers: input.dateSelectionApiTransformers || []
+    dateSelectionApiTransformers: input.dateSelectionApiTransformers || [],
+    viewConfigs: input.viewConfigs || {},
+    viewDefTransformers: input.viewDefTransformers || []
   }
 }
 
@@ -62,7 +71,9 @@ export class PluginSystem {
       eventDefMutationAppliers: [],
       dateSelectionTransformers: [],
       dateClickApiTransformers: [],
-      dateSelectionApiTransformers: []
+      dateSelectionApiTransformers: [],
+      viewConfigs: {},
+      viewDefTransformers: []
     }
     this.addedHash = {}
   }
@@ -89,6 +100,8 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     eventDefMutationAppliers: hooks0.eventDefMutationAppliers.concat(hooks1.eventDefMutationAppliers),
     dateSelectionTransformers: hooks0.dateSelectionTransformers.concat(hooks1.dateSelectionTransformers),
     dateClickApiTransformers: hooks0.dateClickApiTransformers.concat(hooks1.dateClickApiTransformers),
-    dateSelectionApiTransformers: hooks0.dateSelectionApiTransformers.concat(hooks1.dateSelectionApiTransformers)
+    dateSelectionApiTransformers: hooks0.dateSelectionApiTransformers.concat(hooks1.dateSelectionApiTransformers),
+    viewConfigs: assignTo({}, hooks0.viewConfigs, hooks1.viewConfigs),
+    viewDefTransformers: hooks0.viewDefTransformers.concat(hooks1.viewDefTransformers)
   }
 }

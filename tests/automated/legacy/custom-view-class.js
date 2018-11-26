@@ -52,9 +52,14 @@ describe('custom view class', function() {
     spyOn(CustomView.prototype, 'renderDateSelection').and.callThrough()
     spyOn(CustomView.prototype, 'unrenderDateSelection').and.callThrough()
 
-    FullCalendar.views.custom = CustomView
-
     initCalendar({
+      plugins: [
+        FullCalendar.createPlugin({
+          viewConfigs: {
+            custom: CustomView
+          }
+        })
+      ],
       defaultView: 'custom',
       defaultDate: '2014-12-25', // will end up being a single-day view
       events: [
@@ -82,8 +87,6 @@ describe('custom view class', function() {
     currentCalendar.unselect()
 
     expect(CustomView.prototype.unrenderDateSelection).toHaveBeenCalled()
-
-    delete FullCalendar.views.custom
   })
 
 })

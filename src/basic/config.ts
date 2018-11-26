@@ -1,21 +1,27 @@
-import { defineView } from '../ViewRegistry'
+import { createPlugin } from '../plugin-system'
 import BasicView from './BasicView'
 
-defineView('basic', BasicView)
+export default createPlugin({
+  viewConfigs: {
 
-defineView('basicDay', {
-  type: 'basic',
-  duration: { days: 1 }
-})
+    basic: BasicView,
 
-defineView('basicWeek', {
-  type: 'basic',
-  duration: { weeks: 1 }
-})
+    basicDay: {
+      type: 'basic',
+      duration: { days: 1 }
+    },
 
-defineView('month', {
-  type: 'basic',
-  monthMode: true,
-  duration: { months: 1 }, // important for prev/next
-  fixedWeekCount: true
+    basicWeek: {
+      type: 'basic',
+      duration: { weeks: 1 }
+    },
+
+    month: {
+      type: 'basic',
+      monthMode: true,
+      duration: { months: 1 }, // important for prev/next
+      fixedWeekCount: true
+    }
+
+  }
 })

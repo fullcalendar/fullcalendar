@@ -1,33 +1,39 @@
-import { defineView } from '../ViewRegistry'
+import { createPlugin } from '../plugin-system'
 import ListView from './ListView'
 
-defineView('list', {
-  class: ListView,
-  buttonTextKey: 'list', // what to lookup in locale files
-  listDayFormat: { month: 'long', day: 'numeric', year: 'numeric' } // like "January 1, 2016"
-})
+export default createPlugin({
+  viewConfigs: {
 
-defineView('listDay', {
-  type: 'list',
-  duration: { days: 1 },
-  listDayFormat: { weekday: 'long' } // day-of-week is all we need. full date is probably in header
-})
+    list: {
+      class: ListView,
+      buttonTextKey: 'list', // what to lookup in locale files
+      listDayFormat: { month: 'long', day: 'numeric', year: 'numeric' } // like "January 1, 2016"
+    },
 
-defineView('listWeek', {
-  type: 'list',
-  duration: { weeks: 1 },
-  listDayFormat: { weekday: 'long' }, // day-of-week is more important
-  listDayAltFormat: { month: 'long', day: 'numeric', year: 'numeric' }
-})
+    listDay: {
+      type: 'list',
+      duration: { days: 1 },
+      listDayFormat: { weekday: 'long' } // day-of-week is all we need. full date is probably in header
+    },
 
-defineView('listMonth', {
-  type: 'list',
-  duration: { month: 1 },
-  listDayAltFormat: { weekday: 'long' } // day-of-week is nice-to-have
-})
+    listWeek: {
+      type: 'list',
+      duration: { weeks: 1 },
+      listDayFormat: { weekday: 'long' }, // day-of-week is more important
+      listDayAltFormat: { month: 'long', day: 'numeric', year: 'numeric' }
+    },
 
-defineView('listYear', {
-  type: 'list',
-  duration: { year: 1 },
-  listDayAltFormat: { weekday: 'long' } // day-of-week is nice-to-have
+    listMonth: {
+      type: 'list',
+      duration: { month: 1 },
+      listDayAltFormat: { weekday: 'long' } // day-of-week is nice-to-have
+    },
+
+    listYear: {
+      type: 'list',
+      duration: { year: 1 },
+      listDayAltFormat: { weekday: 'long' } // day-of-week is nice-to-have
+    }
+
+  }
 })

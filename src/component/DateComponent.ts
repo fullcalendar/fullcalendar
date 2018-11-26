@@ -1,6 +1,6 @@
 import Component, { ComponentContext } from './Component'
 import { EventStore } from '../structs/event-store'
-import { EventRenderRange, hasBgRendering } from './event-rendering'
+import { EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInstanceHash } from '../structs/event'
 import { rangeContainsRange } from '../datelib/date-range'

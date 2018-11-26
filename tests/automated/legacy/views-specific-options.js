@@ -125,9 +125,14 @@ describe('view-specific options', function() {
     class SuperBasicView extends FullCalendar.BasicView {
     }
 
-    FullCalendar.views.superBasic = SuperBasicView
-
     initCalendar({
+      plugins: [
+        FullCalendar.createPlugin({
+          viewConfigs: {
+            superBasic: SuperBasicView
+          }
+        })
+      ],
       views: {
         basic: {
           titleFormat: function() { return 'special!!!' }
@@ -140,8 +145,6 @@ describe('view-specific options', function() {
       month: 'special!!!',
       basicDay: 'special!!!'
     })
-
-    delete FullCalendar.views.superBasic
   })
 
   it('can implicitly target an old-school View subclass', function() {
@@ -150,9 +153,14 @@ describe('view-specific options', function() {
     function SuperBasicView() { BasicView.apply(this, arguments) }
     SuperBasicView.prototype = Object.create(BasicView.prototype)
 
-    FullCalendar.views.superBasic = SuperBasicView
-
     initCalendar({
+      plugins: [
+        FullCalendar.createPlugin({
+          viewConfigs: {
+            superBasic: SuperBasicView
+          }
+        })
+      ],
       views: {
         basic: {
           titleFormat: function() { return 'special!!!' }
@@ -165,8 +173,6 @@ describe('view-specific options', function() {
       month: 'special!!!',
       basicDay: 'special!!!'
     })
-
-    delete FullCalendar.views.superBasic
   })
 
 })
