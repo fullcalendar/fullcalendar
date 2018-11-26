@@ -28,7 +28,7 @@ import { computeEventDefUis, EventUiHash } from './component/event-rendering'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
-import { PluginSystem } from './plugin-system'
+import { PluginSystem, PluginDef } from './plugin-system'
 import * as exportHooks from './exports'
 import CalendarComponent from './CalendarComponent'
 
@@ -53,6 +53,8 @@ export default class Calendar {
   static on: EmitterInterface['on']
   static off: EmitterInterface['off']
   static trigger: EmitterInterface['trigger']
+
+  static defaultPlugins: PluginDef[] = []
 
   on: EmitterInterface['on']
   one: EmitterInterface['one']
@@ -113,7 +115,9 @@ export default class Calendar {
     this.computeEventDefUis = reselector(computeEventDefUis)
 
     // only do once. don't do in handleOptions. because can't remove plugins
-    let pluginDefs = this.optionsManager.computed.plugins || []
+    let pluginDefs = Calendar.defaultPlugins.concat(
+      this.optionsManager.computed.plugins || []
+    )
     for (let pluginDef of pluginDefs) {
       this.pluginSystem.add(pluginDef)
     }
