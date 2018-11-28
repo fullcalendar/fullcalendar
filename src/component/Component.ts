@@ -53,11 +53,6 @@ export default class Component<PropsType> {
 
   receiveProps(props: PropsType) {
     if (!this.props || !isPropsEqual(this.props, props, this.equalityFuncs)) {
-
-      if (this.props) {
-        this.unrender()
-      }
-
       this.props = props
       this.render(props)
     }
@@ -66,14 +61,8 @@ export default class Component<PropsType> {
   protected render(props: PropsType) {
   }
 
-  protected unrender() {
-  }
-
   // after destroy is called, this component won't ever be used again
   destroy() {
-    if (this.props) {
-      this.unrender()
-    }
   }
 
 }
