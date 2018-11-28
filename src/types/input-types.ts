@@ -154,7 +154,6 @@ export interface OptionsInputBase extends UnscopedEventUiInput {
   rerenderDelay?: number | null
   dragRevertDuration?: number
   dragScroll?: boolean
-  eventOverlap?: Overlap // more than what EventUi offers
   longPressDelay?: number
   eventLongPressDelay?: number
   droppable?: boolean

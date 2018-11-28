@@ -6,7 +6,7 @@ import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
 import { Duration } from '../datelib/duration'
-import { UnscopedEventUiInput, EventUi, processUnscopedUiProps } from '../component/event-ui'
+import { UnscopedEventUiInput, EventUiPart, processUnscopedUiProps } from '../component/event-ui'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -43,7 +43,7 @@ export interface EventDef {
   recurringDef: { typeId: number, typeData: any, duration: Duration | null } | null
   title: string
   url: string
-  ui: EventUi
+  ui: EventUiPart
   extendedProps: any
 }
 
@@ -63,7 +63,7 @@ export interface EventTuple {
 export type EventInstanceHash = { [instanceId: string]: EventInstance }
 export type EventDefHash = { [defId: string]: EventDef }
 
-const NON_DATE_PROPS = {
+export const NON_DATE_PROPS = {
   id: String,
   groupId: String,
   title: String,
@@ -71,7 +71,7 @@ const NON_DATE_PROPS = {
   extendedProps: null
 }
 
-const DATE_PROPS = {
+export const DATE_PROPS = {
   start: null,
   date: null, // alias for start
   end: null,
@@ -247,7 +247,7 @@ function pluckDateProps(raw: EventInput, leftovers: any) {
 }
 
 
-export function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers?) {
+function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers?) {
   let preLeftovers = {}
   let props = refineProps(raw, NON_DATE_PROPS, {}, preLeftovers)
   let ui = processUnscopedUiProps(preLeftovers, calendar, leftovers)

@@ -1,12 +1,12 @@
 import Calendar from '../Calendar'
-import { EventDef, EventInstance, EventTuple, pluckNonDateProps } from '../structs/event'
+import { EventDef, EventInstance, EventTuple, NON_DATE_PROPS, DATE_PROPS } from '../structs/event'
+import { UNSCOPED_EVENT_UI_PROPS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/misc'
 import { subtractDurations, DurationInput, createDuration } from '../datelib/duration'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import EventSourceApi from './EventSourceApi'
-import { parseClassName } from '../util/html'
 
 export default class EventApi implements EventTuple {
 
@@ -20,26 +20,44 @@ export default class EventApi implements EventTuple {
     this.instance = instance || null
   }
 
+  /*
+  TODO: make event struct more responsible for this
+  */
   setProp(name: string, val: string) {
-    if (name.match(/^(start|end|date|allDay)$/)) {
+    if (name in DATE_PROPS) {
       // error. date-related props need other methods
-    } else {
-      let props
 
-      // TODO: consolidate this logic with event struct?
-      if (name === 'editable') {
-        props = { startEditable: val, durationEditable: val }
-      } else if (name === 'color') {
-        props = { backgroundColor: val, borderColor: val }
-      } else if (name === 'classNames') {
-        props = { classNames: parseClassName(val) }
-      } else {
-        props = { [name]: val }
+    } else if (name in NON_DATE_PROPS) {
+
+      if (typeof NON_DATE_PROPS[name] === 'function') {
+        val = NON_DATE_PROPS[name](val)
       }
 
       this.mutate({
-        standardProps: props
+        standardProps: { [name]: val }
       })
+
+    } else if (name in UNSCOPED_EVENT_UI_PROPS) {
+      let ui
+
+      if (typeof UNSCOPED_EVENT_UI_PROPS[name] === 'function') {
+        val = UNSCOPED_EVENT_UI_PROPS[name](val)
+      }
+
+      if (name === 'color') {
+        ui = { backgroundColor: val, borderColor: val }
+      } else if (name === 'editable') {
+        ui = { startEditable: val, durationEditable: val }
+      } else {
+        ui = { [name]: val }
+      }
+
+      this.mutate({
+        standardProps: { ui }
+      })
+
+    } else {
+      // error
     }
   }
 

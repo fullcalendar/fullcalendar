@@ -4,7 +4,7 @@ import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { ScopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
-import { EventUi } from '../component/event-ui'
+import { EventUiPart } from '../component/event-ui'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
@@ -61,7 +61,7 @@ export interface EventSource {
   fetchRange: DateRange | null
   allDayDefault: boolean | null
   eventDataTransform: EventInputTransformer
-  ui: EventUi
+  ui: EventUiPart
   success: EventSourceSuccessResponseHandler | null
   failure: EventSourceErrorResponseHandler | null
 }

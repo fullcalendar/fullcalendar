@@ -15,81 +15,87 @@ export type Allow = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
 interface ValidationEntity {
   dateSpan: DateSpan
   event: EventTuple | null
-  constraint: Constraint | null // in addition to calendar's
-  overlap: boolean | null // in addition to calendar's. granular entities can't provide functions
-  allow: Allow | null // in addition to calendar's
+  constraints: Constraint[]
+  overlaps: Overlap[]
+  allows: Allow[]
 }
 
 export function isEventsValid(eventStore: EventStore, calendar: Calendar): boolean {
   return isEntitiesValid(
     eventStoreToEntities(eventStore, calendar.renderableEventUis),
-    normalizeConstraint(calendar.opt('eventConstraint'), calendar),
-    calendar.opt('eventOverlap'),
-    calendar.opt('eventAllow'),
     calendar
   )
 }
 
 export function isSelectionValid(selection: DateSpan, calendar: Calendar): boolean {
+
+  // TODO: separate util for this. in scoped part!?
+  let constraint = normalizeConstraint(calendar.opt('selectConstraint'), calendar)
+  let overlap = calendar.opt('selectOverlap')
+  let allow = calendar.opt('selectAllow')
+
   return isEntitiesValid(
-    [ { dateSpan: selection, event: null, constraint: null, overlap: null, allow: null } ],
-    normalizeConstraint(calendar.opt('selectConstraint'), calendar),
-    calendar.opt('selectOverlap'),
-    calendar.opt('selectAllow'),
+    [ {
+      dateSpan: selection,
+      event: null,
+      constraints: constraint != null ? [ constraint ] : [],
+      overlaps: overlap != null ? [ overlap ] : [],
+      allows: allow != null ? [ allow ] : []
+    } ],
     calendar
   )
 }
 
-function isEntitiesValid(
-  entities: ValidationEntity[],
-  globalConstraint: Constraint | null,
-  globalOverlap: Overlap | null,
-  globalAllow: Allow | null,
-  calendar: Calendar
-): boolean {
+function isEntitiesValid(entities: ValidationEntity[], calendar: Calendar): boolean {
 
   for (let entity of entities) {
-    if (
-      !isDateSpanWithinConstraint(entity.dateSpan, entity.constraint, calendar) ||
-      !isDateSpanWithinConstraint(entity.dateSpan, globalConstraint, calendar)
-    ) {
-      return false
+    for (let constraint of entity.constraints) {
+      if (!isDateSpanWithinConstraint(entity.dateSpan, constraint, calendar)) {
+        return false
+      }
     }
   }
 
+  // is this efficient?
   let eventEntities = eventStoreToEntities(calendar.state.eventStore, calendar.renderableEventUis)
 
   for (let subjectEntity of entities) {
     for (let eventEntity of eventEntities) {
-      if (
-        ( // not comparing the same/related event
-          !subjectEntity.event ||
-          !eventEntity.event ||
-          isEventsCollidable(subjectEntity.event, eventEntity.event)
-        ) &&
-        dateSpansCollide(subjectEntity.dateSpan, eventEntity.dateSpan) // a collision!
-      ) {
-        if (
-          subjectEntity.overlap === false ||
-          (eventEntity.overlap === false && subjectEntity.event) || // the eventEntity doesn't like two events colliding
-          !isOverlapValid(eventEntity.event, subjectEntity.event, globalOverlap, calendar)
-        ) {
-          return false
+      if (considerEntitiesForOverlap(subjectEntity, eventEntity)) {
+
+        for (let overlap of eventEntity.overlaps) {
+          if (!isOverlapValid(eventEntity.event, subjectEntity.event, overlap, calendar)) {
+            return false
+          }
+        }
+
+        for (let overlap of subjectEntity.overlaps) {
+          if (!isOverlapValid(eventEntity.event, subjectEntity.event, overlap, calendar)) {
+            return false
+          }
         }
       }
     }
   }
 
   for (let entity of entities) {
-    if (
-      !isDateSpanAllowed(entity.dateSpan, entity.event, entity.allow, calendar) ||
-      !isDateSpanAllowed(entity.dateSpan, entity.event, globalAllow, calendar)
-    ) {
-      return false
+    for (let allow of entity.allows) {
+      if (!isDateSpanAllowed(entity.dateSpan, entity.event, allow, calendar)) {
+        return false
+      }
     }
   }
 
   return true
+}
+
+function considerEntitiesForOverlap(entity0: ValidationEntity, entity1: ValidationEntity) {
+  return ( // not comparing the same/related event
+    !entity0.event ||
+    !entity1.event ||
+    isEventsCollidable(entity0.event, entity1.event)
+  ) &&
+  dateSpansCollide(entity0.dateSpan, entity1.dateSpan) // a collision!
 }
 
 // do we want to compare these events for collision?
@@ -109,9 +115,9 @@ function eventStoreToEntities(eventStore: EventStore, eventUis: EventUiHash): Va
     return {
       dateSpan: eventToDateSpan(eventDef, eventInstance),
       event: { def: eventDef, instance: eventInstance },
-      constraint: eventUi.constraint,
-      overlap: eventUi.overlap,
-      allow: eventUi.allow
+      constraints: eventUi.constraints,
+      overlaps: eventUi.overlaps,
+      allows: eventUi.allows
     }
   })
 }
