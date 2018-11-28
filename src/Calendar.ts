@@ -18,13 +18,13 @@ import reselector from './util/reselector'
 import { mapHash, assignTo } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
-import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
-import { EventInput, EventDefHash, parseEvent } from './structs/event'
+import { EventSourceInput, parseEventSource } from './structs/event-source'
+import { EventInput, parseEvent } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
-import { computeEventDefUis, EventUiHash } from './component/event-rendering'
+import { computeEventDefUis, processScopedUiProps, EventUi, EventUiHash } from './component/event-ui'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
@@ -62,9 +62,13 @@ export default class Calendar {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  buildDateEnv: any
-  buildTheme: any
-  computeEventDefUis: (eventDefs: EventDefHash, eventSources: EventSourceHash, options: any) => EventUiHash
+  buildDateEnv = reselector(buildDateEnv)
+  buildTheme = reselector(buildTheme)
+  buildBaseEventUi = reselector(processScopedUiProps)
+  computeEventDefUis = reselector(computeEventDefUis)
+
+  baseEventUi: EventUi
+  renderableEventUis: EventUiHash
 
   optionsManager: OptionsManager
   viewSpecs: ViewSpecHash
@@ -92,7 +96,7 @@ export default class Calendar {
   isRendering: boolean = false // currently in the executeRender function?
   renderingPauseDepth: number = 0
   renderableEventStore: EventStore
-  buildDelayedRerender: any
+  buildDelayedRerender = reselector(buildDelayedRerender)
   delayedRerender: any
   afterSizingTriggers: any = {}
   isViewNew: boolean = false
@@ -107,11 +111,6 @@ export default class Calendar {
 
     this.optionsManager = new OptionsManager(overrides)
     this.pluginSystem = new PluginSystem()
-
-    this.buildDateEnv = reselector(buildDateEnv)
-    this.buildTheme = reselector(buildTheme)
-    this.buildDelayedRerender = reselector(buildDelayedRerender)
-    this.computeEventDefUis = reselector(computeEventDefUis)
 
     // only do once. don't do in handleOptions. because can't remove plugins
     let pluginDefs = Calendar.defaultPlugins.concat(
@@ -389,6 +388,8 @@ export default class Calendar {
       throw new Error(`View type "${viewType}" is not valid`)
     }
 
+    this.baseEventUi = this.buildBaseEventUi(viewSpec.options, this)
+
     // if event sources are still loading and progressive rendering hasn't been enabled,
     // keep rendering the last fully loaded set of events
     let renderableEventStore = this.renderableEventStore =
@@ -396,10 +397,10 @@ export default class Calendar {
         this.renderableEventStore :
         state.eventStore
 
-    let eventUis = this.computeEventDefUis(
+    this.renderableEventUis = this.computeEventDefUis( // will access baseEventUi
       renderableEventStore.defs,
       state.eventSources,
-      viewSpec.options
+      this
     )
 
     if (needsFull || !component) {
@@ -423,7 +424,7 @@ export default class Calendar {
         dateProfile: state.dateProfile,
         dateProfileGenerator: this.dateProfileGenerators[viewType],
         eventStore: renderableEventStore,
-        eventUis,
+        eventUis: this.renderableEventUis,
         dateSelection: state.dateSelection,
         eventSelection: state.eventSelection,
         eventDrag: state.eventDrag,

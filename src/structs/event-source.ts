@@ -1,10 +1,10 @@
-import { ClassNameInput, parseClassName } from '../util/html'
 import { refineProps } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
-import { ConstraintInput, Constraint, normalizeConstraint, Allow } from '../validation'
+import { ScopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
+import { EventUi } from '../component/event-ui'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
@@ -23,22 +23,10 @@ export type EventInputTransformer = (eventInput: EventInput) => EventInput | nul
 export type EventSourceSuccessResponseHandler = (rawData: any, response: any) => EventInput[] | void
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
-export interface ExtendedEventSourceInput {
+export interface ExtendedEventSourceInput extends ScopedEventUiInput {
   id?: string | number // only accept number?
   allDayDefault?: boolean
   eventDataTransform?: EventInputTransformer
-  editable?: boolean
-  startEditable?: boolean
-  durationEditable?: boolean
-  constraint?: ConstraintInput
-  overlap?: boolean
-  allow?: Allow
-  rendering?: string
-  className?: ClassNameInput
-  color?: string
-  backgroundColor?: string
-  borderColor?: string
-  textColor?: string
 
   // array (TODO: how to move this to array-event-source?)
   events?: EventInput[]
@@ -73,16 +61,7 @@ export interface EventSource {
   fetchRange: DateRange | null
   allDayDefault: boolean | null
   eventDataTransform: EventInputTransformer
-  startEditable: boolean | null
-  durationEditable: boolean | null
-  constraint: Constraint | null
-  overlap: boolean | null // does not allow full Overlap data type
-  allow: Allow | null
-  rendering: string
-  className: string[]
-  backgroundColor: string
-  borderColor: string
-  textColor: string
+  ui: EventUi
   success: EventSourceSuccessResponseHandler | null
   failure: EventSourceErrorResponseHandler | null
 }
@@ -109,18 +88,6 @@ const SIMPLE_SOURCE_PROPS = {
   id: String,
   allDayDefault: Boolean,
   eventDataTransform: Function,
-  editable: Boolean,
-  startEditable: Boolean,
-  durationEditable: Boolean,
-  constraint: null,
-  overlap: Boolean,
-  allow: null,
-  rendering: String,
-  className: parseClassName,
-  color: String,
-  backgroundColor: String,
-  borderColor: String,
-  textColor: String,
   success: Function,
   failure: Function
 }
@@ -161,11 +128,10 @@ export function parseEventSource(raw: EventSourceInput, calendar: Calendar): Eve
   return null
 }
 
-/*
-TODO: combine with pluckNonDateProps AND refineScopedUi
-*/
 function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, calendar: Calendar): EventSource {
-  let props = refineProps(raw, SIMPLE_SOURCE_PROPS) as (EventSource & { editable: boolean | null, color: string })
+  let leftovers = {}
+  let props = refineProps(raw, SIMPLE_SOURCE_PROPS, {}, leftovers)
+  let ui = processUnscopedUiProps(leftovers, calendar)
 
   props.isFetching = false
   props.latestFetchId = ''
@@ -174,29 +140,7 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
   props.sourceId = String(uid++)
   props.sourceDefId = sourceDefId
   props.meta = meta
-
-  if (props.constraint) {
-    props.constraint = normalizeConstraint(props.constraint, calendar)
-  }
-
-  if (props.startEditable == null) {
-    props.startEditable = props.editable
-  }
-
-  if (props.durationEditable == null) {
-    props.durationEditable = props.editable
-  }
-
-  if (!props.backgroundColor) {
-    props.backgroundColor = props.color
-  }
-
-  if (!props.borderColor) {
-    props.borderColor = props.color
-  }
-
-  delete props.editable
-  delete props.color
+  props.ui = ui
 
   return props as EventSource
 }

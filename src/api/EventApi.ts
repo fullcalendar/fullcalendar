@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import { EventDef, EventInstance, EventTuple } from '../structs/event'
+import { EventDef, EventInstance, EventTuple, pluckNonDateProps } from '../structs/event'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/misc'
@@ -237,17 +237,17 @@ export default class EventApi implements EventTuple {
   get allDay(): boolean { return this.def.allDay }
   get title(): string { return this.def.title }
   get url(): string { return this.def.url }
-  get startEditable(): boolean { return this.def.startEditable }
-  get durationEditable(): boolean { return this.def.durationEditable }
-  get constraint(): any { return this.def.constraint }
-  get overlap(): any { return this.def.overlap }
-  get rendering(): string { return this.def.rendering }
-  get backgroundColor(): string { return this.def.backgroundColor }
-  get borderColor(): string { return this.def.borderColor }
-  get textColor(): string { return this.def.textColor }
+  get startEditable(): boolean { return this.def.ui.startEditable }
+  get durationEditable(): boolean { return this.def.ui.durationEditable }
+  get constraint(): any { return this.def.ui.constraint }
+  get overlap(): any { return this.def.ui.overlap }
+  get rendering(): string { return this.def.ui.rendering }
+  get backgroundColor(): string { return this.def.ui.backgroundColor }
+  get borderColor(): string { return this.def.ui.borderColor }
+  get textColor(): string { return this.def.ui.textColor }
 
   // NOTE: user can't modify these because Object.freeze was called in event-def parsing
-  get classNames(): string[] { return this.def.classNames }
+  get classNames(): string[] { return this.def.ui.classNames }
   get extendedProps(): any { return this.def.extendedProps }
 
 }

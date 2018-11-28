@@ -6,7 +6,7 @@ import { DateSpan } from '../structs/date-span'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
-import { computeEventDefUis } from '../component/event-rendering'
+import { computeEventDefUis } from '../component/event-ui'
 import { assignTo } from '../util/object'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
@@ -98,7 +98,7 @@ function reduceEventDrag(currentDrag: EventInteractionUiState | null, action: Ac
       let eventUis = computeEventDefUis(
         newDrag.mutatedEvents.defs,
         sources,
-        calendar.viewOpts()
+        calendar
       )
       return {
         affectedEvents: newDrag.affectedEvents,
@@ -124,7 +124,7 @@ function reduceEventResize(currentResize: EventInteractionUiState | null, action
       let eventUis = computeEventDefUis(
         newResize.mutatedEvents.defs,
         sources,
-        calendar.viewOpts()
+        calendar
       )
       return {
         affectedEvents: newResize.affectedEvents,

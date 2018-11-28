@@ -2,9 +2,9 @@ import { EventStore, expandRecurring, eventTupleToStore, mapEventInstances, filt
 import Calendar from './Calendar'
 import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
-import { EventSourceHash } from './structs/event-source'
 import { rangeContainsRange, rangesIntersect } from './datelib/date-range'
 import EventApi from './api/EventApi'
+import { EventUiHash } from './component/event-ui'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
@@ -22,7 +22,7 @@ interface ValidationEntity {
 
 export function isEventsValid(eventStore: EventStore, calendar: Calendar): boolean {
   return isEntitiesValid(
-    eventStoreToEntities(eventStore, calendar.state.eventSources),
+    eventStoreToEntities(eventStore, calendar.renderableEventUis),
     normalizeConstraint(calendar.opt('eventConstraint'), calendar),
     calendar.opt('eventOverlap'),
     calendar.opt('eventAllow'),
@@ -47,7 +47,6 @@ function isEntitiesValid(
   globalAllow: Allow | null,
   calendar: Calendar
 ): boolean {
-  let state = calendar.state
 
   for (let entity of entities) {
     if (
@@ -58,7 +57,7 @@ function isEntitiesValid(
     }
   }
 
-  let eventEntities = eventStoreToEntities(state.eventStore, state.eventSources)
+  let eventEntities = eventStoreToEntities(calendar.state.eventStore, calendar.renderableEventUis)
 
   for (let subjectEntity of entities) {
     for (let eventEntity of eventEntities) {
@@ -103,30 +102,16 @@ function isEventsCollidable(event0: EventTuple, event1: EventTuple): boolean {
   return !isEventDefsGrouped(event0.def, event1.def)
 }
 
-function eventStoreToEntities(eventStore: EventStore, eventSources: EventSourceHash): ValidationEntity[] {
+function eventStoreToEntities(eventStore: EventStore, eventUis: EventUiHash): ValidationEntity[] {
   return mapEventInstances(eventStore, function(eventInstance: EventInstance, eventDef: EventDef): ValidationEntity {
-    let eventSource = eventSources[eventDef.sourceId]
-    let constraint = eventDef.constraint as Constraint
-    let overlap = eventDef.overlap as boolean
-
-    if (constraint == null && eventSource) {
-      constraint = eventSource.constraint
-    }
-
-    if (overlap == null && eventSource) {
-      overlap = eventSource.overlap
-
-      if (overlap == null) {
-        overlap = true
-      }
-    }
+    let eventUi = eventUis[eventDef.defId]
 
     return {
       dateSpan: eventToDateSpan(eventDef, eventInstance),
       event: { def: eventDef, instance: eventInstance },
-      constraint,
-      overlap,
-      allow: eventSource ? eventSource.allow : null
+      constraint: eventUi.constraint,
+      overlap: eventUi.overlap,
+      allow: eventUi.allow
     }
   })
 }

@@ -4,7 +4,8 @@ import { EventInput } from './event'
 import { EventStore, parseEvents, expandRecurring } from './event-store'
 import { DateRange } from '../datelib/date-range'
 import { Duration } from '../datelib/duration'
-import { EventRenderRange, sliceEventStore, computeEventDefUis } from '../component/event-rendering'
+import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
+import { computeEventDefUis } from '../component/event-ui'
 
 /*
 Utils for converting raw business hour input into an EventStore,
@@ -62,7 +63,7 @@ export function sliceBusinessHours(businessHours: EventStore, range: DateRange, 
 
   return sliceEventStore(
     expandedStore,
-    computeEventDefUis(expandedStore.defs, {}, {}),
+    computeEventDefUis(expandedStore.defs, {}, calendar),
     range,
     nextDayThreshold
   ).bg

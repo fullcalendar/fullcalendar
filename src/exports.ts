@@ -63,7 +63,8 @@ export {
 } from './util/dom-manip'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
-export { EventUiHash, hasBgRendering } from './component/event-rendering'
+export { hasBgRendering } from './component/event-rendering'
+export { EventUiHash } from './component/event-ui'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
 
 export {

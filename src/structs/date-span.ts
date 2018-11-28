@@ -2,8 +2,9 @@ import { DateRange, rangesEqual, OpenDateRange } from '../datelib/date-range'
 import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 import { Duration } from '../datelib/duration'
-import { parseEventDef, createEventInstance } from './event';
-import { computeEventDefUi, EventRenderRange } from '../component/event-rendering';
+import { parseEventDef, createEventInstance } from './event'
+import { EventRenderRange } from '../component/event-rendering'
+import { computeEventDefUi } from '../component/event-ui'
 import Calendar from '../Calendar'
 
 /*
@@ -168,7 +169,7 @@ export function fabricateEventRange(dateSpan: DateSpan, calendar: Calendar): Eve
 
   return {
     def,
-    ui: computeEventDefUi(def, {}, {}),
+    ui: computeEventDefUi(def, {}, calendar),
     instance: createEventInstance(def.defId, dateSpan.range),
     range: dateSpan.range,
     isStart: true,

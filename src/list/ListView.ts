@@ -11,7 +11,8 @@ import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { buildGotoAnchorHtml } from '../component/date-rendering'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
-import { EventRenderRange, EventUiHash, sliceEventStore } from '../component/event-rendering'
+import { EventUiHash } from '../component/event-ui'
+import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
 import { EventStore } from '../structs/event-store'
 
 /*

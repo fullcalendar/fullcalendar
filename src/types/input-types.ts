@@ -13,6 +13,7 @@ import { BusinessHoursInput } from '../structs/business-hours'
 import EventApi from '../api/EventApi'
 import { Allow, ConstraintInput, Overlap } from '../validation'
 import { PluginDef } from '../plugin-system'
+import { UnscopedEventUiInput } from '../component/event-ui'
 
 
 export interface ToolbarInput {
@@ -70,7 +71,7 @@ export interface DropInfo {
   end: Date
 }
 
-export interface OptionsInputBase {
+export interface OptionsInputBase extends UnscopedEventUiInput {
   header?: boolean | ToolbarInput
   footer?: boolean | ToolbarInput
   customButtons?: { [name: string]: CustomButtonInput }
@@ -148,21 +149,12 @@ export interface OptionsInputBase {
   startParam?: string
   endParam?: string
   lazyFetching?: boolean
-  eventColor?: string
-  eventBackgroundColor?: string
-  eventBorderColor?: string
-  eventTextColor?: string
   nextDayThreshold?: DurationInput
   eventOrder?: string | Array<((a: EventApi, b: EventApi) => number) | (string | ((a: EventApi, b: EventApi) => number))>
   rerenderDelay?: number | null
-  editable?: boolean
-  eventStartEditable?: boolean
-  eventDurationEditable?: boolean
   dragRevertDuration?: number
   dragScroll?: boolean
-  eventConstraint?: ConstraintInput
-  eventOverlap?: Overlap
-  eventAllow?: Allow
+  eventOverlap?: Overlap // more than what EventUi offers
   longPressDelay?: number
   eventLongPressDelay?: number
   droppable?: boolean

@@ -106,11 +106,13 @@ export default abstract class FillRenderer { // use for highlight, background ev
     let css = null
     let classNames = []
 
-    if (seg.eventRange) {
+    if (type !== 'highlight' && type !== 'businessHours') {
       css = {
         'background-color': seg.eventRange.ui.backgroundColor
       }
+    }
 
+    if (type !== 'highlight') {
       classNames = classNames.concat(seg.eventRange.ui.classNames)
     }
 

@@ -52,7 +52,9 @@ function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation, ap
     standardProps.hasEnd = true
   }
 
-  assignTo(copy, standardProps)
+  assignTo(copy, standardProps, {
+    ui: assignTo({}, copy.ui, standardProps.ui) // the only prop we want to recursively overlay
+  })
 
   if (mutation.extendedProps) {
     copy.extendedProps = assignTo({}, copy.extendedProps, mutation.extendedProps)

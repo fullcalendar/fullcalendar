@@ -1,13 +1,12 @@
 import { refineProps } from '../util/misc'
-import { parseClassName, ClassNameInput } from '../util/html'
 import { DateInput } from '../datelib/env'
 import Calendar from '../Calendar'
 import { assignTo } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
-import { ConstraintInput, Constraint, normalizeConstraint } from '../validation'
 import { Duration } from '../datelib/duration'
+import { UnscopedEventUiInput, EventUi, processUnscopedUiProps } from '../component/event-ui'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -16,23 +15,11 @@ It's up to the caller to stitch them together into an aggregate object like an E
 
 export type EventRenderingChoice = '' | 'background' | 'inverse-background' | 'none'
 
-export interface EventNonDateInput {
+export interface EventNonDateInput extends UnscopedEventUiInput {
   id?: string | number
   groupId?: string | number
   title?: string
   url?: string
-  editable?: boolean
-  startEditable?: boolean
-  durationEditable?: boolean
-  constraint?: ConstraintInput
-  overlap?: boolean
-  rendering?: EventRenderingChoice
-  classNames?: ClassNameInput // accept both
-  className?: ClassNameInput //
-  color?: string
-  backgroundColor?: string
-  borderColor?: string
-  textColor?: string
   extendedProps?: object
   [extendedProp: string]: any
 }
@@ -56,15 +43,7 @@ export interface EventDef {
   recurringDef: { typeId: number, typeData: any, duration: Duration | null } | null
   title: string
   url: string
-  startEditable: boolean | null
-  durationEditable: boolean | null
-  constraint: Constraint | null
-  overlap: boolean | null // does not allow full Overlap data type
-  rendering: EventRenderingChoice
-  classNames: string[]
-  backgroundColor: string
-  borderColor: string
-  textColor: string
+  ui: EventUi
   extendedProps: any
 }
 
@@ -89,18 +68,6 @@ const NON_DATE_PROPS = {
   groupId: String,
   title: String,
   url: String,
-  editable: Boolean,
-  startEditable: Boolean,
-  durationEditable: Boolean,
-  constraint: null,
-  overlap: Boolean,
-  rendering: String,
-  classNames: parseClassName,
-  className: parseClassName,
-  color: String,
-  backgroundColor: String,
-  borderColor: String,
-  textColor: String,
   extendedProps: null
 }
 
@@ -178,7 +145,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
   def.extendedProps = assignTo(leftovers, def.extendedProps || {})
 
   // help out EventApi from having user modify props
-  Object.freeze(def.classNames)
+  Object.freeze(def.ui.classNames)
   Object.freeze(def.extendedProps)
 
   return def
@@ -280,36 +247,15 @@ function pluckDateProps(raw: EventInput, leftovers: any) {
 }
 
 
-function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers: any) {
-  let props = refineProps(raw, NON_DATE_PROPS, {}, leftovers)
+export function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers?) {
+  let preLeftovers = {}
+  let props = refineProps(raw, NON_DATE_PROPS, {}, preLeftovers)
+  let ui = processUnscopedUiProps(preLeftovers, calendar, leftovers)
 
   props.publicId = props.id
-  props.classNames = props.classNames.concat(props.className)
-
-  if (props.constraint) {
-    props.constraint = normalizeConstraint(props.constraint, calendar)
-  }
-
-  if (props.startEditable == null) {
-    props.startEditable = props.editable
-  }
-
-  if (props.durationEditable == null) {
-    props.durationEditable = props.editable
-  }
-
-  if (!props.backgroundColor) {
-    props.backgroundColor = props.color
-  }
-
-  if (!props.borderColor) {
-    props.borderColor = props.color
-  }
-
   delete props.id
-  delete props.className
-  delete props.editable
-  delete props.color
+
+  props.ui = ui
 
   return props
 }

@@ -7,7 +7,7 @@ import { prependToElement, createElement, removeElement, appendToElement, applyS
 import { rangeContainsMarker, DateRange } from './datelib/date-range';
 import { assignTo } from './util/object';
 import { EventStore } from './structs/event-store'
-import { EventUiHash } from './component/event-rendering'
+import { EventUiHash } from './component/event-ui'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionUiState } from './interactions/event-interaction-state'
 import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'

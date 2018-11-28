@@ -1,7 +1,7 @@
 import DayGrid, { DayGridSeg } from './DayGrid'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventStore } from '../structs/event-store'
-import { EventUiHash } from '../component/event-rendering'
+import { EventUiHash } from '../component/event-ui'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import DayTable from '../common/DayTable'

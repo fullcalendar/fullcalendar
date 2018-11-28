@@ -1,6 +1,7 @@
 import { DateRange } from '../datelib/date-range'
 import { EventStore } from '../structs/event-store'
-import { EventUiHash, sliceEventStore, EventRenderRange } from '../component/event-rendering'
+import { EventUiHash } from '../component/event-ui'
+import { sliceEventStore, EventRenderRange } from '../component/event-rendering'
 import { DateProfile } from '../DateProfileGenerator'
 import { Seg, EventSegUiInteractionState } from '../component/DateComponent'
 import { DateSpan, fabricateEventRange } from '../structs/date-span'
