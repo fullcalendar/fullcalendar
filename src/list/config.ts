@@ -1,7 +1,7 @@
-import { createPlugin } from '../plugin-system'
+import { createPlugin, PluginDef } from '../plugin-system'
 import ListView from './ListView'
 
-export default createPlugin({
+let plugin: PluginDef = createPlugin({
   viewConfigs: {
 
     list: {
@@ -37,3 +37,5 @@ export default createPlugin({
 
   }
 })
+
+export default plugin // done for .d.ts bug :(
