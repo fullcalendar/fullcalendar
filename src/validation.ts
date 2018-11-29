@@ -20,9 +20,9 @@ interface ValidationEntity {
   allows: Allow[]
 }
 
-export function isEventsValid(eventStore: EventStore, calendar: Calendar): boolean {
+export function isEventsValid(eventStore: EventStore, eventUis: EventUiHash, calendar: Calendar): boolean {
   return isEntitiesValid(
-    eventStoreToEntities(eventStore, calendar.renderableEventUis),
+    eventStoreToEntities(eventStore, eventUis),
     calendar
   )
 }
@@ -61,11 +61,14 @@ function isEntitiesValid(entities: ValidationEntity[], calendar: Calendar): bool
 
   for (let subjectEntity of entities) {
     for (let eventEntity of eventEntities) {
-      if (considerEntitiesForOverlap(subjectEntity, eventEntity)) {
+      if (considerEntitiesForOverlap(eventEntity, subjectEntity)) {
 
-        for (let overlap of eventEntity.overlaps) {
-          if (!isOverlapValid(eventEntity.event, subjectEntity.event, overlap, calendar)) {
-            return false
+        // the "subject" (the thing being dragged) must be an event if we are comparing it to other events for overlap
+        if (subjectEntity.event) {
+          for (let overlap of eventEntity.overlaps) {
+            if (!isOverlapValid(eventEntity.event, subjectEntity.event, overlap, calendar)) {
+              return false
+            }
           }
         }
 
@@ -168,14 +171,14 @@ function constraintToSpans(constraint: Constraint, subjectSpan: DateSpan, calend
   return []
 }
 
-function isOverlapValid(still: EventTuple, moving: EventTuple | null, overlap: Overlap | null, calendar: Calendar): boolean {
+function isOverlapValid(stillEvent: EventTuple, movingEvent: EventTuple | null, overlap: Overlap | null, calendar: Calendar): boolean {
   if (typeof overlap === 'boolean') {
     return overlap
   } else if (typeof overlap === 'function') {
     return Boolean(
       overlap(
-        new EventApi(calendar, still.def, still.instance),
-        moving ? new EventApi(calendar, moving.def, moving.instance) : null
+        new EventApi(calendar, stillEvent.def, stillEvent.instance),
+        movingEvent ? new EventApi(calendar, movingEvent.def, movingEvent.instance) : null
       )
     )
   }

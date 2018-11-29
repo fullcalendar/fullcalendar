@@ -143,6 +143,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // -----------------------------------------------------------------------------------------------------------------
 
   isEventsValid(eventStore: EventStore) {
+    let { calendar } = this
     let dateProfile = (this.props as any).dateProfile // HACK
     let instances = eventStore.instances
 
@@ -154,7 +155,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
       }
     }
 
-    return isEventsValid(eventStore, this.calendar)
+    return isEventsValid(eventStore, calendar.renderableEventUis, calendar)
   }
 
   isSelectionValid(selection: DateSpan): boolean {
