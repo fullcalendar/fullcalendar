@@ -6,6 +6,8 @@ import { EventDefHash, EventDef } from '../structs/event'
 import { EventSourceHash } from '../structs/event-source'
 import { mapHash } from '../util/object'
 
+// TODO: better called "EventSettings" or "EventConfig"
+
 export interface UnscopedEventUiInput {
   editable?: boolean
   startEditable?: boolean

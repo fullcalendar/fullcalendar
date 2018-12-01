@@ -6,6 +6,7 @@ import { Seg } from '../component/DateComponent'
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
+// "Simple" is bad a name. has nothing to do with SimpleDayGrid
 export default abstract class SimpleDayGridEventRenderer extends FgEventRenderer {
 
 

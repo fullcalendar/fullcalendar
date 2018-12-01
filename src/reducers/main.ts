@@ -105,7 +105,7 @@ function reduceEventDrag(currentDrag: EventInteractionUiState | null, action: Ac
         mutatedEvents: newDrag.mutatedEvents,
         isEvent: newDrag.isEvent,
         origSeg: newDrag.origSeg,
-        eventUis: eventUis
+        eventUis
       }
 
     case 'UNSET_EVENT_DRAG':

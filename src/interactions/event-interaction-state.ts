@@ -10,5 +10,5 @@ export interface EventInteractionState { // is this ever used alone?
 }
 
 export interface EventInteractionUiState extends EventInteractionState {
-  eventUis: EventUiHash
+  eventUis: EventUiHash // for the MUTATED EVENTS!!!
 }
