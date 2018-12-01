@@ -12,16 +12,13 @@ import TimeGrid from './TimeGrid'
 import DayGrid from '../basic/DayGrid'
 import { createDuration } from '../datelib/duration'
 import { createFormatter } from '../datelib/formatting'
-import { EventStore, filterEventStoreDefs } from '../structs/event-store'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
-import reselector from '../util/reselector'
-import { hasBgRendering } from '../component/event-rendering'
 import { buildGotoAnchorHtml, getAllDayHtml } from '../component/date-rendering'
 import { diffDays } from '../datelib/marker'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator from '../DateProfileGenerator'
-import { EventUiHash } from '../component/event-ui'
+import { memoizeSplitter } from '../component/event-splitting'
+import AllDaySplitter from './AllDaySplitter'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -40,13 +37,7 @@ export default abstract class AgendaView extends View {
   scroller: ScrollComponent
   axisWidth: any // the width of the time axis running down the side
 
-  // reselectors
-  filterEventsForTimeGrid = reselector(filterEventsForTimeGrid)
-  filterEventsForDayGrid = reselector(filterEventsForDayGrid)
-  buildEventDragForTimeGrid = reselector(buildInteractionForTimeGrid)
-  buildEventDragForDayGrid = reselector(buildInteractionForDayGrid)
-  buildEventResizeForTimeGrid = reselector(buildInteractionForTimeGrid)
-  buildEventResizeForDayGrid = reselector(buildInteractionForDayGrid)
+  splitter = memoizeSplitter(new AllDaySplitter())
 
 
   constructor(
@@ -375,42 +366,3 @@ export default abstract class AgendaView extends View {
 }
 
 AgendaView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering
-
-
-function filterEventsForTimeGrid(eventStore: EventStore, eventUis: EventUiHash): EventStore {
-  return filterEventStoreDefs(eventStore, function(eventDef) {
-    return !eventDef.allDay || hasBgRendering(eventUis[eventDef.defId])
-  })
-}
-
-function filterEventsForDayGrid(eventStore: EventStore, eventUis: EventUiHash): EventStore {
-  return filterEventStoreDefs(eventStore, function(eventDef) {
-    return eventDef.allDay
-  })
-}
-
-function buildInteractionForTimeGrid(state: EventInteractionUiState): EventInteractionUiState {
-  if (state) {
-    return {
-      affectedEvents: state.affectedEvents,
-      mutatedEvents: filterEventsForTimeGrid(state.mutatedEvents, state.eventUis),
-      eventUis: state.eventUis,
-      isEvent: state.isEvent,
-      origSeg: state.origSeg
-    }
-  }
-  return null
-}
-
-function buildInteractionForDayGrid(state: EventInteractionUiState): EventInteractionUiState {
-  if (state) {
-    return {
-      affectedEvents: state.affectedEvents,
-      mutatedEvents: filterEventsForDayGrid(state.mutatedEvents, state.eventUis),
-      eventUis: state.eventUis,
-      isEvent: state.isEvent,
-      origSeg: state.origSeg
-    }
-  }
-  return null
-}

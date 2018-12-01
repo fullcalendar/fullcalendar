@@ -65,6 +65,7 @@ export {
 export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
 export { hasBgRendering } from './component/event-rendering'
 export { EventUiHash } from './component/event-ui'
+export { Splitter, memoizeSplitter } from './component/event-splitting'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
 
 export {

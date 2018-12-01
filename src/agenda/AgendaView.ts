@@ -58,8 +58,13 @@ export default class AgendaView extends AbstractAgendaView {
   render(props: ViewProps) {
     super.render(props) // for flags for updateSize
 
+    let { splitter } = this
     let { dateProfile, dateSelection } = this.props
     let dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
+
+    let eventStores = splitter.splitEventStore(props.eventStore, props.eventUis)
+    let eventDrags = splitter.splitEventDrag(props.eventDrag, props.eventUis)
+    let eventResizes = splitter.splitEventResize(props.eventResize, props.eventUis)
 
     if (this.header) {
       this.header.receiveProps({
@@ -75,11 +80,11 @@ export default class AgendaView extends AbstractAgendaView {
       dayTable,
       businessHours: props.businessHours,
       dateSelection: dateSelection && !dateSelection.allDay ? dateSelection : null,
-      eventStore: this.filterEventsForTimeGrid(props.eventStore, props.eventUis),
+      eventStore: eventStores.timed,
       eventUis: props.eventUis,
       eventSelection: props.eventSelection,
-      eventDrag: this.buildEventDragForTimeGrid(props.eventDrag),
-      eventResize: this.buildEventResizeForTimeGrid(props.eventResize)
+      eventDrag: eventDrags.timed,
+      eventResize: eventResizes.timed
     })
 
     if (this.simpleDayGrid) {
@@ -88,11 +93,11 @@ export default class AgendaView extends AbstractAgendaView {
         dayTable,
         businessHours: props.businessHours,
         dateSelection: dateSelection && dateSelection.allDay ? dateSelection : null,
-        eventStore: this.filterEventsForDayGrid(props.eventStore, props.eventUis),
+        eventStore: eventStores.allDay,
         eventUis: props.eventUis,
         eventSelection: props.eventSelection,
-        eventDrag: this.buildEventDragForDayGrid(props.eventDrag),
-        eventResize: this.buildEventResizeForDayGrid(props.eventResize),
+        eventDrag: eventDrags.allDay,
+        eventResize: eventResizes.allDay,
         nextDayThreshold: this.nextDayThreshold,
         isRigid: false
       })
