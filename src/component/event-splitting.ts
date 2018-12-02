@@ -15,16 +15,16 @@ export function memoizeSplitter(splitter: Splitter) {
 
 export abstract class Splitter { // not just EVENT splitting (rename file?)
 
-  allKeys: string[]
+  ensuredKeys: string[]
 
-  constructor(allKeys: string[]) {
-    this.allKeys = allKeys
+  constructor(ensuredKeys: string[] = []) {
+    this.ensuredKeys = ensuredKeys
   }
 
-  splitInteraction = (state: EventInteractionUiState | null, allEventUis: EventUiHash) => {
+  splitInteraction = (state: EventInteractionUiState | null, allEventUis: EventUiHash): { [key: string]: EventInteractionUiState } => {
     let splitStates: { [key: string]: EventInteractionUiState } = {}
 
-    for (let key in this.allKeys) {
+    for (let key of this.ensuredKeys) {
       splitStates[key] = null
     }
 
@@ -55,10 +55,10 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
     return splitStates
   }
 
-  splitEventStore = (eventStore: EventStore, eventUis: EventUiHash) => {
+  splitEventStore = (eventStore: EventStore, eventUis: EventUiHash): { [key: string]: EventStore } => {
     let splitStores = this.splitEventStorePopulated(eventStore, eventUis)
 
-    for (let key in this.allKeys) {
+    for (let key of this.ensuredKeys) {
       if (!splitStores[key]) {
         splitStores[key] = createEmptyEventStore()
       }
@@ -96,6 +96,7 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
     return splitStores
   }
 
+  // is allowed to return keys that aren't in the set
   abstract getKeysForEventDef(eventDef: EventDef, eventUi: EventUi): string[]
 
 }

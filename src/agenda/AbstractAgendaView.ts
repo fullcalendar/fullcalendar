@@ -37,7 +37,7 @@ export default abstract class AgendaView extends View {
   scroller: ScrollComponent
   axisWidth: any // the width of the time axis running down the side
 
-  splitter = memoizeSplitter(new AllDaySplitter())
+  protected splitter = memoizeSplitter(new AllDaySplitter())
 
 
   constructor(
