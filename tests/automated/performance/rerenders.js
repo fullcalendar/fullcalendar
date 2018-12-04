@@ -12,62 +12,62 @@ describe('rerender performance', function() {
   [
     {
       defaultView: 'month',
-      classes: [
-        { name: 'DayGrid', dateMethod: '_renderCells' }
-      ],
+      classes: [ 'DayGrid' ],
       changeToView: 'list' // does not have DayGrid!
     },
     {
       defaultView: 'agendaWeek',
-      classes: [
-        { name: 'DayGrid', dateMethod: '_renderCells' },
-        { name: 'TimeGrid', dateMethod: '_renderColumns' }
-      ],
+      classes: [ 'DayGrid', 'TimeGrid' ],
       changeToView: 'list' // does not have DayGrid!
     },
     {
       defaultView: 'listWeek',
-      classes: [
-        { name: 'ListView', dateMethod: 'renderDates' }
-      ],
+      classes: [ 'ListView' ],
       changeToView: 'month'
     }
   ].forEach(function(settings) {
-    settings.classes.forEach(function(classInfo) {
-      describe('for ' + classInfo.name + ' in ' + settings.defaultView + ' view', function() {
-        var Class = FullCalendar[classInfo.name]
+    settings.classes.forEach(function(className) {
+      describe('for ' + className + ' in ' + settings.defaultView + ' view', function() {
+        var Class = FullCalendar[className]
 
         it('calls methods a limited number of times', function(done) {
           var calSettings = {
             defaultView: settings.defaultView,
+            viewSkeletonRender: function() {},
+            datesRender: function() {},
             eventRender: function() {}
           }
 
-          var renderDates = spyOnMethod(Class, classInfo.dateMethod)
-          var updateSize = spyOnMethod(Class, 'updateSize')
+          var updateSize = spyOnMethod(Class, 'updateSize') // for the specific initial view
+          spyOn(calSettings, 'viewSkeletonRender') // for all views...
           spyOn(calSettings, 'eventRender')
+          spyOn(calSettings, 'datesRender')
 
           initCalendar(calSettings)
 
-          expect(renderDates.calls.count()).toBe(1)
+          expect(calSettings.viewSkeletonRender.calls.count()).toBe(1)
+          expect(calSettings.datesRender.calls.count()).toBe(1)
           expect(calSettings.eventRender.calls.count()).toBe(1)
           expect(updateSize.calls.count()).toBe(1)
 
           currentCalendar.changeView(settings.changeToView)
 
-          expect(renderDates.calls.count()).toBe(1)
+          expect(calSettings.viewSkeletonRender.calls.count()).toBe(2) // +1 (switch to new view)
+          expect(calSettings.datesRender.calls.count()).toBe(2) // +1 (switch to new view)
           expect(calSettings.eventRender.calls.count()).toBe(2) // +1 (switch to new view)
           expect(updateSize.calls.count()).toBe(1)
 
           currentCalendar.changeView(settings.defaultView)
 
-          expect(renderDates.calls.count()).toBe(2) // +1
-          expect(calSettings.eventRender.calls.count()).toBe(3) // +1
+          expect(calSettings.viewSkeletonRender.calls.count()).toBe(3) // +1 (switch to new view)
+          expect(calSettings.datesRender.calls.count()).toBe(3) // +1 (switch to new view)
+          expect(calSettings.eventRender.calls.count()).toBe(3) // +1 (switch to new view)
           expect(updateSize.calls.count()).toBe(2) // +1
 
           currentCalendar.rerenderEvents()
 
-          expect(renderDates.calls.count()).toBe(2)
+          expect(calSettings.viewSkeletonRender.calls.count()).toBe(3)
+          expect(calSettings.datesRender.calls.count()).toBe(3)
           expect(calSettings.eventRender.calls.count()).toBe(4) // +1
           expect(updateSize.calls.count()).toBe(3) // +1
 
@@ -75,11 +75,11 @@ describe('rerender performance', function() {
 
           setTimeout(function() {
 
-            expect(renderDates.calls.count()).toBe(2)
+            expect(calSettings.viewSkeletonRender.calls.count()).toBe(3)
+            expect(calSettings.datesRender.calls.count()).toBe(3)
             expect(calSettings.eventRender.calls.count()).toBe(4)
             expect(updateSize.calls.count()).toBe(4) // +1
 
-            renderDates.restore()
             updateSize.restore()
 
             done()
