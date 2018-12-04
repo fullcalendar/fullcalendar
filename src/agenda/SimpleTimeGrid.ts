@@ -26,6 +26,11 @@ export interface SimpleTimeGridProps {
   eventResize: EventInteractionUiState | null
 }
 
+interface SlicerArgs {
+  component: TimeGrid // TODO: kill
+  dayRanges: DateRange[]
+}
+
 export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
 
   timeGrid: TimeGrid
@@ -33,7 +38,7 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   offsetTracker: OffsetTracker
 
   private buildDayRanges = reselector(buildDayRanges)
-  private slicer = memoizeSlicer(new Slicer(sliceSegs, () => { return this.timeGrid }))
+  private slicer = memoizeSlicer(new Slicer(sliceSegs))
 
   constructor(context, timeGrid: TimeGrid) {
     super(context, timeGrid.el)
@@ -46,29 +51,30 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     let { dateProfile, dayTable } = props
 
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
-    let segRes = slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, dayRanges)
+    let slicerArgs: SlicerArgs = { dayRanges, component: this.timeGrid }
+    let segRes = slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, slicerArgs)
 
     this.timeGrid.receiveProps({
       dateProfile,
       cells: dayTable.cells[0],
-      businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, null, dayRanges),
+      businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, null, slicerArgs),
       bgEventSegs: segRes.bg,
       fgEventSegs: segRes.fg,
-      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, dayRanges),
+      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, slicerArgs),
       eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, null, dayRanges),
-      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, null, dayRanges)
+      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, null, slicerArgs),
+      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, null, slicerArgs)
     })
   }
 
-  renderNowIndicator(date: DateMarker) {
+  renderNowIndicator(date: DateMarker) { // TODO: user slicer???
     this.timeGrid.renderNowIndicator(
       // seg system might be overkill, but it handles scenario where line needs to be rendered
       //  more than once because of columns with the same date (resources columns for example)
       sliceSegs({
         start: date,
         end: addMs(date, 1) // protect against null range
-      }, this.dayRanges),
+      }, { dayRanges: this.dayRanges, component: this.timeGrid }),
       date
     )
   }
@@ -128,7 +134,8 @@ export function buildDayRanges(dayTable: DayTable, dateProfile: DateProfile, dat
   return ranges
 }
 
-export function sliceSegs(range: DateRange, dayRanges: DateRange[]): TimeGridSeg[] {
+export function sliceSegs(range: DateRange, slicerArgs: SlicerArgs): TimeGridSeg[] {
+  let { dayRanges } = slicerArgs
   let segs: TimeGridSeg[] = []
 
   for (let col = 0; col < dayRanges.length; col++) {

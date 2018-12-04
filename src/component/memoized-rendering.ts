@@ -10,7 +10,7 @@ export function memoizeRendering<ArgsType extends any[]>(
   renderFunc: (...args: ArgsType) => void,
   unrenderFunc?: (...args: ArgsType) => void,
   dependencies: MemoizedRendering<any>[] = [],
-  equalityFuncs: EqualityFuncs = []
+  equalityFuncs?: EqualityFuncs
 ): MemoizedRendering<ArgsType> {
 
   let dependents: MemoizedRendering<any>[] = []
