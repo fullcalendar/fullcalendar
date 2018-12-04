@@ -38,21 +38,9 @@ export interface ScopedEventUiInput {
   eventColor?: string
 }
 
-export interface EventUiPart {
+export interface EventUi {
   startEditable: boolean | null
   durationEditable: boolean | null
-  constraint: Constraint | null
-  overlap: Overlap | null
-  allow: Allow | null
-  backgroundColor: string
-  borderColor: string
-  textColor: string,
-  classNames: string[]
-}
-
-export interface EventUi {
-  startEditable: boolean
-  durationEditable: boolean
   constraints: Constraint[]
   overlaps: Overlap[]
   allows: Allow[]
@@ -112,15 +100,16 @@ export function computeEventDefUi(eventDef: EventDef, eventSources: EventSourceH
   return combineEventUis(uis)
 }
 
-export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar: Calendar, leftovers?): EventUiPart {
+export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar: Calendar, leftovers?): EventUi {
   let props = refineProps(rawProps, UNSCOPED_EVENT_UI_PROPS, {}, leftovers)
+  let constraint = normalizeConstraint(props.constraint, calendar)
 
   return {
     startEditable: props.startEditable != null ? props.startEditable : props.editable,
     durationEditable: props.durationEditable != null ? props.durationEditable : props.editable,
-    constraint: normalizeConstraint(props.constraint, calendar),
-    overlap: props.overlap,
-    allow: props.allow,
+    constraints: constraint != null ? [ constraint ] : [],
+    overlaps: props.overlap != null ? [ props.overlap ] : [],
+    allows: props.allow != null ? [ props.allow ] : [],
     backgroundColor: props.backgroundColor || props.color,
     borderColor: props.borderColor || props.color,
     textColor: props.textColor,
@@ -128,15 +117,16 @@ export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar:
   }
 }
 
-export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Calendar, leftovers?): EventUiPart {
+export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Calendar, leftovers?): EventUi {
   let props = refineProps(rawProps, SCOPED_EVENT_UI_PROPS, {}, leftovers)
+  let constraint = normalizeConstraint(props.eventConstraint, calendar)
 
   return {
     startEditable: props.eventStartEditable != null ? props.eventStartEditable : props.editable,
     durationEditable: props.eventDurationEditable != null ? props.eventDurationEditable : props.editable,
-    constraint: normalizeConstraint(props.eventConstraint, calendar),
-    overlap: props.eventOverlap,
-    allow: props.eventAllow,
+    constraints: constraint != null ? [ constraint ] : [],
+    overlaps: props.eventOverlap != null ? [ props.eventOverlap ] : [],
+    allows: props.eventAllow != null ? [ props.eventAllow ] : [],
     backgroundColor: props.eventBackgroundColor || props.eventColor,
     borderColor: props.eventBorderColor || props.eventColor,
     textColor: props.eventTextColor,
@@ -144,32 +134,20 @@ export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Cal
   }
 }
 
-export function combineEventUis(uis: EventUiPart[]): EventUi {
-  return uis.reduce(mergeEventUiPart, INITIAL_EVENT_UI)
+export function combineEventUis(uis: EventUi[]): EventUi {
+  return uis.reduce(mergeEventUis)
 }
 
-const INITIAL_EVENT_UI: EventUi = {
-  startEditable: false,
-  durationEditable: false,
-  constraints: [],
-  overlaps: [],
-  allows: [],
-  backgroundColor: '',
-  borderColor: '',
-  textColor: '',
-  classNames: []
-}
-
-function mergeEventUiPart(accum: EventUi, part: EventUiPart): EventUi { // hash1 has higher precedence
+function mergeEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 has higher precedence
   return {
-    startEditable: part.startEditable != null ? part.startEditable : accum.startEditable,
-    durationEditable: part.durationEditable != null ? part.durationEditable : accum.durationEditable,
-    constraints: part.constraint != null ? accum.constraints.concat([ part.constraint ]) : accum.constraints,
-    overlaps: part.overlap != null ? accum.overlaps.concat([ part.overlap ]) : accum.overlaps,
-    allows: part.allow != null ? accum.allows.concat([ part.allow ]) : accum.allows,
-    backgroundColor: part.backgroundColor || accum.backgroundColor,
-    borderColor: part.borderColor || accum.borderColor,
-    textColor: part.textColor || accum.textColor,
-    classNames: part.classNames.concat(accum.classNames)
+    startEditable: item1.startEditable != null ? item1.startEditable : item0.startEditable,
+    durationEditable: item1.durationEditable != null ? item1.durationEditable : item0.durationEditable,
+    constraints: item0.constraints.concat(item1.constraints),
+    overlaps: item0.overlaps.concat(item1.overlaps),
+    allows: item0.allows.concat(item1.allows),
+    backgroundColor: item1.backgroundColor || item0.backgroundColor,
+    borderColor: item1.borderColor || item0.borderColor,
+    textColor: item1.textColor || item0.textColor,
+    classNames: item0.classNames.concat(item1.classNames)
   }
 }

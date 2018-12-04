@@ -6,7 +6,7 @@ import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
 import { Duration } from '../datelib/duration'
-import { UnscopedEventUiInput, EventUiPart, processUnscopedUiProps } from '../component/event-ui'
+import { UnscopedEventUiInput, EventUi, processUnscopedUiProps } from '../component/event-ui'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -45,7 +45,7 @@ export interface EventDef {
   title: string
   url: string
   rendering: EventRenderingChoice
-  ui: EventUiPart
+  ui: EventUi
   extendedProps: any
 }
 

@@ -24,7 +24,7 @@ import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
-import { computeEventDefUis, processScopedUiProps, EventUiPart, EventUiHash } from './component/event-ui'
+import { computeEventDefUis, processScopedUiProps, EventUi, EventUiHash } from './component/event-ui'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
@@ -67,7 +67,7 @@ export default class Calendar {
   buildBaseEventUi = reselector(processScopedUiProps)
   computeEventDefUis = reselector(computeEventDefUis)
 
-  baseEventUi: EventUiPart
+  baseEventUi: EventUi
   renderableEventUis: EventUiHash
 
   optionsManager: OptionsManager
