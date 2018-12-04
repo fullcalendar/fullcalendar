@@ -62,9 +62,9 @@ export default class AgendaView extends AbstractAgendaView {
     let { dateProfile, dateSelection } = this.props
     let dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
 
-    let eventStores = splitter.splitEventStore(props.eventStore, props.eventUis)
-    let eventDrags = splitter.splitEventDrag(props.eventDrag, props.eventUis)
-    let eventResizes = splitter.splitEventResize(props.eventResize, props.eventUis)
+    let eventStores = splitter.splitEventStore(props.eventStore)
+    let eventDrags = splitter.splitEventDrag(props.eventDrag)
+    let eventResizes = splitter.splitEventResize(props.eventResize)
 
     if (this.header) {
       this.header.receiveProps({

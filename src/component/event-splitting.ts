@@ -2,7 +2,6 @@ import { EventStore, createEmptyEventStore } from '../structs/event-store'
 import { EventDef } from '../structs/event'
 import { EventInteractionUiState } from '../interactions/event-interaction-state'
 import { mapHash } from '../util/object'
-import { EventUi, EventUiHash } from '../component/event-ui'
 import reselector from '../util/reselector'
 
 export function memoizeSplitter(splitter: Splitter) {
@@ -21,7 +20,7 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
     this.ensuredKeys = ensuredKeys
   }
 
-  splitInteraction = (state: EventInteractionUiState | null, allEventUis: EventUiHash): { [key: string]: EventInteractionUiState } => {
+  splitInteraction = (state: EventInteractionUiState | null): { [key: string]: EventInteractionUiState } => {
     let splitStates: { [key: string]: EventInteractionUiState } = {}
 
     for (let key of this.ensuredKeys) {
@@ -29,8 +28,8 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
     }
 
     if (state) {
-      let mutatedStores = this.splitEventStorePopulated(state.mutatedEvents, state.eventUis)
-      let affectedStores = this.splitEventStorePopulated(state.affectedEvents, allEventUis)
+      let mutatedStores = this.splitEventStorePopulated(state.mutatedEvents)
+      let affectedStores = this.splitEventStorePopulated(state.affectedEvents)
       let populate = function(key) {
         if (!splitStates[key]) {
           splitStates[key] = {
@@ -55,8 +54,8 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
     return splitStates
   }
 
-  splitEventStore = (eventStore: EventStore, eventUis: EventUiHash): { [key: string]: EventStore } => {
-    let splitStores = this.splitEventStorePopulated(eventStore, eventUis)
+  splitEventStore = (eventStore: EventStore): { [key: string]: EventStore } => {
+    let splitStores = this.splitEventStorePopulated(eventStore)
 
     for (let key of this.ensuredKeys) {
       if (!splitStores[key]) {
@@ -67,10 +66,10 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
     return splitStores
   }
 
-  splitEventStorePopulated(eventStore: EventStore, eventUis: EventUiHash): { [key: string]: EventStore } {
+  splitEventStorePopulated(eventStore: EventStore): { [key: string]: EventStore } {
     let { defs, instances } = eventStore
     let keysByDefId = mapHash(eventStore.defs, (eventDef: EventDef, defId: string) => {
-      return this.getKeysForEventDef(eventDef, eventUis[defId])
+      return this.getKeysForEventDef(eventDef)
     })
     let splitStores = {}
 
@@ -97,6 +96,6 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
   }
 
   // is allowed to return keys that aren't in the set
-  abstract getKeysForEventDef(eventDef: EventDef, eventUi: EventUi): string[]
+  abstract getKeysForEventDef(eventDef: EventDef): string[]
 
 }

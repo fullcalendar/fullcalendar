@@ -255,11 +255,11 @@ export default class EventApi implements EventTuple {
   get allDay(): boolean { return this.def.allDay }
   get title(): string { return this.def.title }
   get url(): string { return this.def.url }
+  get rendering(): string { return this.def.rendering }
   get startEditable(): boolean { return this.def.ui.startEditable }
   get durationEditable(): boolean { return this.def.ui.durationEditable }
   get constraint(): any { return this.def.ui.constraint }
   get overlap(): any { return this.def.ui.overlap }
-  get rendering(): string { return this.def.ui.rendering }
   get backgroundColor(): string { return this.def.ui.backgroundColor }
   get borderColor(): string { return this.def.ui.borderColor }
   get textColor(): string { return this.def.ui.textColor }

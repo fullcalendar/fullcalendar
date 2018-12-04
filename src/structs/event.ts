@@ -20,6 +20,7 @@ export interface EventNonDateInput extends UnscopedEventUiInput {
   groupId?: string | number
   title?: string
   url?: string
+  rendering?: EventRenderingChoice
   extendedProps?: object
   [extendedProp: string]: any
 }
@@ -43,6 +44,7 @@ export interface EventDef {
   recurringDef: { typeId: number, typeData: any, duration: Duration | null } | null
   title: string
   url: string
+  rendering: EventRenderingChoice
   ui: EventUiPart
   extendedProps: any
 }
@@ -68,6 +70,7 @@ export const NON_DATE_PROPS = {
   groupId: String,
   title: String,
   url: String,
+  rendering: String,
   extendedProps: null
 }
 

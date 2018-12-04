@@ -353,7 +353,8 @@ describe('background events', function() {
     })
 
     describe('when in month view', function() {
-      it('can be activated when rendering set on the source', function(done) {
+      // disabled for v4
+      xit('can be activated when rendering set on the source', function(done) {
         var options = {}
         options.defaultView = 'month'
         options.eventSources = [ {
@@ -372,7 +373,8 @@ describe('background events', function() {
     })
 
     describe('when in agenda view and timed event', function() {
-      it('can be activated when rendering set on the source', function(done) {
+      // disabled for v4
+      xit('can be activated when rendering set on the source', function(done) {
         var options = {}
         options.defaultView = 'agendaWeek'
         options.eventSources = [ {

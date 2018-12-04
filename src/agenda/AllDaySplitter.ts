@@ -1,5 +1,4 @@
 import { Splitter } from '../component/event-splitting'
-import { EventUi } from '../component/event-ui'
 import { hasBgRendering } from '../component/event-rendering'
 import { EventDef } from '../structs/event'
 
@@ -9,10 +8,10 @@ export default class AllDaySplitter extends Splitter {
     super([ 'allDay', 'timed' ])
   }
 
-  getKeysForEventDef(eventDef: EventDef, eventUi: EventUi): string[] {
+  getKeysForEventDef(eventDef: EventDef): string[] {
     if (!eventDef.allDay) {
       return [ 'timed' ]
-    } else if (hasBgRendering(eventUi)) {
+    } else if (hasBgRendering(eventDef)) {
       return [ 'timed', 'allDay' ]
     } else {
       return [ 'allDay' ]

@@ -27,9 +27,8 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
-    let ui = eventUis[defId]
 
-    if (ui.rendering === 'inverse-background') {
+    if (def.rendering === 'inverse-background') {
       if (def.groupId) {
         inverseBgByGroupId[def.groupId] = []
 
@@ -56,14 +55,14 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
         computeVisibleDayRange(slicedRange, nextDayThreshold) :
         slicedRange
 
-      if (ui.rendering === 'inverse-background') {
+      if (def.rendering === 'inverse-background') {
         if (def.groupId) {
           inverseBgByGroupId[def.groupId].push(visibleRange)
         } else {
           inverseBgByDefId[instance.defId].push(visibleRange)
         }
       } else {
-        (ui.rendering === 'background' ? bgRanges : fgRanges).push({
+        (def.rendering === 'background' ? bgRanges : fgRanges).push({
           def,
           ui,
           instance,
@@ -113,8 +112,8 @@ export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, f
   return { bg: bgRanges, fg: fgRanges }
 }
 
-export function hasBgRendering(ui: EventUi) {
-  return ui.rendering === 'background' || ui.rendering === 'inverse-background'
+export function hasBgRendering(def: EventDef) {
+  return def.rendering === 'background' || def.rendering === 'inverse-background'
 }
 
 export function filterSegsViaEls(view: View, segs: Seg[], isMirror) {

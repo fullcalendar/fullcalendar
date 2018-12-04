@@ -15,7 +15,6 @@ export interface UnscopedEventUiInput {
   constraint?: ConstraintInput
   overlap?: Overlap
   allow?: Allow
-  rendering?: string
   className?: string[] | string
   classNames?: string[] | string
   backgroundColor?: string
@@ -31,7 +30,6 @@ export interface ScopedEventUiInput {
   eventConstraint?: ConstraintInput
   eventOverlap?: Overlap
   eventAllow?: Allow
-  eventRendering?: string
   eventClassName?: string[] | string
   eventClassNames?: string[] | string
   eventBackgroundColor?: string
@@ -46,7 +44,6 @@ export interface EventUiPart {
   constraint: Constraint | null
   overlap: Overlap | null
   allow: Allow | null
-  rendering: string
   backgroundColor: string
   borderColor: string
   textColor: string,
@@ -59,7 +56,6 @@ export interface EventUi {
   constraints: Constraint[]
   overlaps: Overlap[]
   allows: Allow[]
-  rendering: string
   backgroundColor: string
   borderColor: string
   textColor: string,
@@ -75,7 +71,6 @@ export const UNSCOPED_EVENT_UI_PROPS = {
   constraint: null,
   overlap: null,
   allow: null,
-  rendering: String,
   className: parseClassName,
   classNames: parseClassName,
   color: String,
@@ -91,7 +86,6 @@ const SCOPED_EVENT_UI_PROPS = { // TODO: not very DRY. instead, map to UNSCOPED_
   eventConstraint: null,
   eventOverlap: null,
   eventAllow: null,
-  eventRendering: String,
   eventClassName: parseClassName,
   eventClassNames: parseClassName,
   eventColor: String,
@@ -127,7 +121,6 @@ export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar:
     constraint: normalizeConstraint(props.constraint, calendar),
     overlap: props.overlap,
     allow: props.allow,
-    rendering: props.rendering,
     backgroundColor: props.backgroundColor || props.color,
     borderColor: props.borderColor || props.color,
     textColor: props.textColor,
@@ -144,7 +137,6 @@ export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Cal
     constraint: normalizeConstraint(props.eventConstraint, calendar),
     overlap: props.eventOverlap,
     allow: props.eventAllow,
-    rendering: props.eventRendering,
     backgroundColor: props.eventBackgroundColor || props.eventColor,
     borderColor: props.eventBorderColor || props.eventColor,
     textColor: props.eventTextColor,
@@ -162,7 +154,6 @@ const INITIAL_EVENT_UI: EventUi = {
   constraints: [],
   overlaps: [],
   allows: [],
-  rendering: '',
   backgroundColor: '',
   borderColor: '',
   textColor: '',
@@ -176,7 +167,6 @@ function mergeEventUiPart(accum: EventUi, part: EventUiPart): EventUi { // hash1
     constraints: part.constraint != null ? accum.constraints.concat([ part.constraint ]) : accum.constraints,
     overlaps: part.overlap != null ? accum.overlaps.concat([ part.overlap ]) : accum.overlaps,
     allows: part.allow != null ? accum.allows.concat([ part.allow ]) : accum.allows,
-    rendering: part.rendering || accum.rendering,
     backgroundColor: part.backgroundColor || accum.backgroundColor,
     borderColor: part.borderColor || accum.borderColor,
     textColor: part.textColor || accum.textColor,
