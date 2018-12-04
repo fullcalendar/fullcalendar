@@ -99,8 +99,9 @@ export default class Calendar {
   buildDelayedRerender = reselector(buildDelayedRerender)
   delayedRerender: any
   afterSizingTriggers: any = {}
-  isViewNew: boolean = false
-  isDatesNew: boolean = false
+  isViewUpdated: boolean = false
+  isDatesUpdated: boolean = false
+  isEventsUpdated: boolean = false
 
   el: HTMLElement
   component: CalendarComponent
@@ -290,28 +291,36 @@ export default class Calendar {
         this.publiclyTrigger('loading', [ false ])
       }
 
-      if (oldState.dateProfile !== newState.dateProfile) {
+      let view = this.component && this.component.view
+
+      if (oldState.eventStore !== newState.eventStore || this.needsFullRerender) {
+        if (oldState.eventStore) {
+          this.isEventsUpdated = true
+        }
+      }
+
+      if (oldState.dateProfile !== newState.dateProfile || this.needsFullRerender) {
         if (oldState.dateProfile) {
           this.publiclyTrigger('datesDestroy', [
             {
-              view: this.component.view,
-              el: this.component.view.el
+              view,
+              el: view.el
             }
           ])
         }
-        this.isDatesNew = true
+        this.isDatesUpdated = true
       }
 
-      if (oldState.viewType !== newState.viewType) {
+      if (oldState.viewType !== newState.viewType || this.needsFullRerender) {
         if (oldState.viewType) {
           this.publiclyTrigger('viewSkeletonDestroy', [
             {
-              view: this.component.view,
-              el: this.component.view.el
+              view,
+              el: view.el
             }
           ])
         }
-        this.isViewNew = true
+        this.isViewUpdated = true
       }
 
       this.requestRerender()
@@ -436,8 +445,8 @@ export default class Calendar {
       component.view.applyScroll(savedScroll)
     }
 
-    if (this.isViewNew) {
-      this.isViewNew = false
+    if (this.isViewUpdated) {
+      this.isViewUpdated = false
       this.publiclyTrigger('viewSkeletonRender', [
         {
           view: component.view,
@@ -446,14 +455,18 @@ export default class Calendar {
       ])
     }
 
-    if (this.isDatesNew) {
-      this.isDatesNew = false
+    if (this.isDatesUpdated) {
+      this.isDatesUpdated = false
       this.publiclyTrigger('datesRender', [
         {
           view: component.view,
           el: component.view.el
         }
       ])
+    }
+
+    if (this.isEventsUpdated) {
+      this.isEventsUpdated = false
     }
 
     this.releaseAfterSizingTriggers()

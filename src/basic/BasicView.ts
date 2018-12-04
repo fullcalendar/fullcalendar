@@ -15,7 +15,7 @@ export default class BasicView extends AbstractBasicView {
   simpleDayGrid: SimpleDayGrid
   dayTable: DayTable
 
-  buildDayTable = reselector(buildDayTable)
+  private buildDayTable = reselector(buildDayTable)
 
   constructor(_context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
     super(_context, viewSpec, dateProfileGenerator, parentEl)

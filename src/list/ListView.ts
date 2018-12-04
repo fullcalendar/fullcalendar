@@ -1,7 +1,7 @@
 import { htmlToElement, createElement } from '../util/dom-manip'
 import { htmlEscape } from '../util/html'
 import { subtractInnerElHeight } from '../util/misc'
-import View from '../View'
+import View, { ViewProps } from '../View'
 import ScrollComponent from '../common/ScrollComponent'
 import ListEventRenderer from './ListEventRenderer'
 import { DateMarker, addDays, startOfDay } from '../datelib/marker'
@@ -14,6 +14,9 @@ import { ViewSpec } from '../structs/view-spec'
 import { EventUiHash } from '../component/event-ui'
 import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
 import { EventStore } from '../structs/event-store'
+import reselector from '../util/reselector'
+import { MemoizedRendering, memoizeRendering } from '../component/memoized-rendering'
+import { Seg } from '../component/DateComponent'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -23,14 +26,21 @@ export default class ListView extends View {
   scroller: ScrollComponent
   contentEl: HTMLElement
 
-  dayDates: DateMarker[]
-  dayRanges: DateRange[] // start/end of each day
+  dayDates: DateMarker[] // TOOD: kill this. only have it because ListEventRenderer
+
+  private computeDateVars = reselector(computeDateVars)
+  private eventStoreToSegs = reselector(this._eventStoreToSegs)
+  private renderContent: MemoizedRendering<[Seg[]]>
 
 
   constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
     super(context, viewSpec, dateProfileGenerator, parentEl)
 
-    this.eventRenderer = new ListEventRenderer(this)
+    let eventRenderer = this.eventRenderer = new ListEventRenderer(this)
+    this.renderContent = memoizeRendering(
+      eventRenderer.renderSegs.bind(eventRenderer),
+      eventRenderer.unrender.bind(eventRenderer)
+    )
 
     this.el.classList.add('fc-list-view')
 
@@ -46,6 +56,16 @@ export default class ListView extends View {
 
     this.el.appendChild(this.scroller.el)
     this.contentEl = this.scroller.el // shortcut
+  }
+
+
+  render(props: ViewProps) {
+    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
+    this.dayDates = dayDates
+
+    this.renderContent(
+      this.eventStoreToSegs(props.eventStore, props.eventUis, dayRanges)
+    )
   }
 
 
@@ -76,68 +96,34 @@ export default class ListView extends View {
   }
 
 
-  renderDates(dateProfile: DateProfile) {
-    let dayStart = startOfDay(dateProfile.renderRange.start)
-    let viewEnd = dateProfile.renderRange.end
-    let dayDates: DateMarker[] = []
-    let dayRanges: DateRange[] = []
-
-    while (dayStart < viewEnd) {
-
-      dayDates.push(dayStart)
-
-      dayRanges.push({
-        start: dayStart,
-        end: addDays(dayStart, 1)
-      })
-
-      dayStart = addDays(dayStart, 1)
-    }
-
-    this.dayDates = dayDates
-    this.dayRanges = dayRanges
-
-    // all real rendering happens in ListEventRenderer
-  }
-
-
-  // superclass calls this
-  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {
-    this.eventRenderer.renderSegs(
-      this.eventRangesToSegs(
-        sliceEventStore(
-          eventStore,
-          eventUis,
-          this.props.dateProfile.activeRange,
-          this.nextDayThreshold
-        ).fg
-      )
+  _eventStoreToSegs(eventStore: EventStore, eventUis: EventUiHash, dayRanges: DateRange[]): Seg[] {
+    return this.eventRangesToSegs(
+      sliceEventStore(
+        eventStore,
+        eventUis,
+        this.props.dateProfile.activeRange,
+        this.nextDayThreshold
+      ).fg,
+      dayRanges
     )
   }
 
 
-  unrenderEvents() {
-    this.eventRenderer.unrender()
-  }
-
-
-  eventRangesToSegs(eventRanges: EventRenderRange[]) {
+  eventRangesToSegs(eventRanges: EventRenderRange[], dayRanges: DateRange[]) {
     let segs = []
 
-    // TODO: util for doing this
     for (let eventRange of eventRanges) {
-      segs.push(...this.eventRangeToSegs(eventRange))
+      segs.push(...this.eventRangeToSegs(eventRange, dayRanges))
     }
 
     return segs
   }
 
 
-  eventRangeToSegs(eventRange: EventRenderRange) {
+  eventRangeToSegs(eventRange: EventRenderRange, dayRanges: DateRange[]) {
+    let { dateEnv, nextDayThreshold } = this
     let range = eventRange.range
     let allDay = eventRange.def.allDay
-    let { dateEnv } = this
-    let dayRanges = this.dayRanges
     let dayIndex
     let segRange
     let seg
@@ -167,7 +153,7 @@ export default class ListView extends View {
           range.end <
             dateEnv.add(
               dayRanges[dayIndex + 1].start,
-              this.nextDayThreshold
+              nextDayThreshold
             )
         ) {
           seg.end = range.end
@@ -193,7 +179,7 @@ export default class ListView extends View {
   }
 
 
-  // render the event segments in the view
+  // called by ListEventRenderer
   renderSegList(allSegs) {
     let segsByDay = this.groupSegsByDay(allSegs) // sparse array
     let dayIndex
@@ -275,3 +261,25 @@ export default class ListView extends View {
 
 ListView.prototype.isInteractable = true
 ListView.prototype.fgSegSelector = '.fc-list-item' // which elements accept event actions
+
+
+function computeDateVars(dateProfile: DateProfile) {
+  let dayStart = startOfDay(dateProfile.renderRange.start)
+  let viewEnd = dateProfile.renderRange.end
+  let dayDates: DateMarker[] = []
+  let dayRanges: DateRange[] = []
+
+  while (dayStart < viewEnd) {
+
+    dayDates.push(dayStart)
+
+    dayRanges.push({
+      start: dayStart,
+      end: addDays(dayStart, 1)
+    })
+
+    dayStart = addDays(dayStart, 1)
+  }
+
+  return { dayDates, dayRanges }
+}

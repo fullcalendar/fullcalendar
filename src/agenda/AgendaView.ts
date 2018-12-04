@@ -17,7 +17,7 @@ export default class AgendaView extends AbstractAgendaView {
   simpleDayGrid: SimpleDayGrid
   simpleTimeGrid: SimpleTimeGrid
 
-  buildDayTable = reselector(buildDayTable)
+  private buildDayTable = reselector(buildDayTable)
 
   constructor(
     _context: ComponentContext,

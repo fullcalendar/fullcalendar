@@ -19,7 +19,7 @@ export interface ViewSpec {
   duration: Duration
   durationUnit: string
   singleUnit: string
-  options: any,
+  options: any
   buttonTextOverride: string
   buttonTextDefault: string
 }

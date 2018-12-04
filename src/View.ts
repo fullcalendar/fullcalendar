@@ -46,9 +46,6 @@ export default abstract class View extends DateComponent<ViewProps> {
 
   queuedScroll: any
 
-  isDateSizeDirty: boolean = false
-  isEventSizeDirty: boolean = false
-
   eventOrderSpecs: any // criteria for ordering events when they have same date/time
   nextDayThreshold: Duration
 
@@ -62,7 +59,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   private renderDatesMem = memoizeRendering(this.renderDatesWrap, this.unrenderDatesWrap)
   private renderBusinessHoursMem = memoizeRendering(this.renderBusinessHours, this.unrenderBusinessHours, [ this.renderDatesMem ])
   private renderDateSelectionMem = memoizeRendering(this.renderDateSelectionWrap, this.unrenderDateSelectionWrap, [ this.renderDatesMem ])
-  private renderEventsMem = memoizeRendering(this.renderEventsWrap, this.unrenderEvents, [ this.renderDatesMem ])
+  private renderEventsMem = memoizeRendering(this.renderEvents, this.unrenderEvents, [ this.renderDatesMem ])
   private renderEventSelectionMem = memoizeRendering(this.renderEventSelectionWrap, this.unrenderEventSelectionWrap, [ this.renderEventsMem ])
   private renderEventDragMem = memoizeRendering(this.renderEventDragWrap, this.unrenderEventDragWrap, [ this.renderDatesMem ])
   private renderEventResizeMem = memoizeRendering(this.renderEventResizeWrap, this.unrenderEventResizeWrap, [ this.renderDatesMem ])
@@ -144,15 +141,13 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
+    let { calendar } = this
 
-    if (isResize || this.isDateSizeDirty || this.isEventSizeDirty) {
+    if (isResize || calendar.isViewUpdated || calendar.isDatesUpdated || calendar.isEventsUpdated) {
       // sort of the catch-all sizing
       // anything that might cause dimension changes
       this.updateBaseSize(isResize, viewHeight, isAuto)
     }
-
-    this.isDateSizeDirty = false
-    this.isEventSizeDirty = false
   }
 
 
@@ -167,7 +162,6 @@ export default abstract class View extends DateComponent<ViewProps> {
     this.renderDates(dateProfile)
     this.addScroll({ isDateInit: true })
     this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
-    this.isDateSizeDirty = true
   }
 
   unrenderDatesWrap() {
@@ -207,11 +201,6 @@ export default abstract class View extends DateComponent<ViewProps> {
 
   // Event Rendering
   // -----------------------------------------------------------------------------------------------------------------
-
-  renderEventsWrap(eventStore: EventStore, eventUis: EventUiHash) {
-    this.isEventSizeDirty = true
-    this.renderEvents(eventStore, eventUis)
-  }
 
   renderEvents(eventStore: EventStore, eventUis: EventUiHash) {}
   unrenderEvents() {}
