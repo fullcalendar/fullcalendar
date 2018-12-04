@@ -8,25 +8,18 @@ import { rangeContainsMarker, DateRange } from './datelib/date-range';
 import { assignTo } from './util/object';
 import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'
-import { DateSpan } from './structs/date-span'
-import { EventInteractionUiState } from './interactions/event-interaction-state'
 import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 import reselector from './util/reselector'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { createFormatter } from './datelib/formatting'
 import { diffWholeDays } from './datelib/marker'
 import { memoizeRendering } from './component/memoized-rendering'
+import { CalendarState } from './reducers/types'
 
-export interface CalendarComponentProps {
+export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec
-  dateProfile: DateProfile | null // for the current view
   dateProfileGenerator: DateProfileGenerator // for the current view
-  eventStore: EventStore
   eventUis: EventUiHash
-  dateSelection: DateSpan | null
-  eventSelection: string
-  eventDrag: EventInteractionUiState | null
-  eventResize: EventInteractionUiState | null
 }
 
 export default class CalendarComponent extends Component<CalendarComponentProps> {

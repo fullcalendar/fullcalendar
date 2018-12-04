@@ -15,7 +15,7 @@ export interface CalendarState {
   eventSourceLoadingLevel: number
   loadingLevel: number
   viewType: string
-  dateProfile: DateProfile | null
+  dateProfile: DateProfile | null // for the current view
   eventStore: EventStore
   dateSelection: DateSpan | null
   eventSelection: string
