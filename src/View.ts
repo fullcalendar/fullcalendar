@@ -1,4 +1,4 @@
-import { assignTo } from './util/object'
+import { assignTo, isPropsEqual } from './util/object'
 import { parseFieldSpecs } from './util/misc'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { DateMarker, addMs } from './datelib/marker'
@@ -12,18 +12,19 @@ import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'
 import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
-import { EventInteractionUiState } from './interactions/event-interaction-state'
+import { EventInteractionState } from './interactions/event-interaction-state'
 import { memoizeRendering } from './component/memoized-rendering'
 
 export interface ViewProps {
   dateProfile: DateProfile
   businessHours: EventStore
   eventStore: EventStore
-  eventUis: EventUiHash
+  eventUiBases: EventUiHash
+  eventUiBySource: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
-  eventDrag: EventInteractionUiState | null
-  eventResize: EventInteractionUiState | null
+  eventDrag: EventInteractionState | null
+  eventResize: EventInteractionState | null
 }
 
 export default abstract class View extends DateComponent<ViewProps> {
@@ -122,7 +123,7 @@ export default abstract class View extends DateComponent<ViewProps> {
     this.renderDatesMem(props.dateProfile)
     this.renderBusinessHoursMem(props.businessHours)
     this.renderDateSelectionMem(props.dateSelection)
-    this.renderEventsMem(props.eventStore, props.eventUis)
+    this.renderEventsMem(props.eventStore)
     this.renderEventSelectionMem(props.eventSelection)
     this.renderEventDragMem(props.eventDrag)
     this.renderEventResizeMem(props.eventResize)
@@ -202,15 +203,18 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Event Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderEvents(eventStore: EventStore, eventUis: EventUiHash) {}
+  renderEvents(eventStore: EventStore) {}
   unrenderEvents() {}
 
   // util for subclasses
-  sliceEvents(eventStore: EventStore, eventUis: EventUiHash, allDay: boolean): EventRenderRange[] {
+  sliceEvents(eventStore: EventStore, allDay: boolean): EventRenderRange[] {
+    let { props } = this
+
     return sliceEventStore(
       eventStore,
-      eventUis,
-      this.props.dateProfile.activeRange,
+      props.eventUiBases,
+      props.eventUiBySource,
+      props.dateProfile.activeRange,
       allDay ? this.nextDayThreshold : null
     ).fg
   }
@@ -238,39 +242,39 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Event Drag
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderEventDragWrap(state: EventInteractionUiState) {
+  renderEventDragWrap(state: EventInteractionState) {
     if (state) {
       this.renderEventDrag(state)
     }
   }
 
-  unrenderEventDragWrap(state: EventInteractionUiState) {
+  unrenderEventDragWrap(state: EventInteractionState) {
     if (state) {
       this.unrenderEventDrag(state)
     }
   }
 
-  renderEventDrag(state: EventInteractionUiState) {}
-  unrenderEventDrag(state: EventInteractionUiState) {}
+  renderEventDrag(state: EventInteractionState) {}
+  unrenderEventDrag(state: EventInteractionState) {}
 
 
   // Event Resize
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderEventResizeWrap(state: EventInteractionUiState) {
+  renderEventResizeWrap(state: EventInteractionState) {
     if (state) {
       this.renderEventResize(state)
     }
   }
 
-  unrenderEventResizeWrap(state: EventInteractionUiState) {
+  unrenderEventResizeWrap(state: EventInteractionState) {
     if (state) {
       this.unrenderEventResize(state)
     }
   }
 
-  renderEventResize(state: EventInteractionUiState) {}
-  unrenderEventResize(state: EventInteractionUiState) {}
+  renderEventResize(state: EventInteractionState) {}
+  unrenderEventResize(state: EventInteractionState) {}
 
 
   /* Now Indicator
@@ -442,3 +446,8 @@ EmitterMixin.mixInto(View)
 
 View.prototype.usesMinMaxTime = false
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator
+
+View.addEqualityFuncs({
+  eventUiBases: isPropsEqual,
+  eventUiBySource: isPropsEqual
+})

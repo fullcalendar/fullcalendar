@@ -155,7 +155,7 @@ export { default as OffsetTracker } from './common/OffsetTracker'
 
 export { default as DaySeries } from './common/DaySeries'
 
-export { EventInteractionUiState } from './interactions/event-interaction-state'
+export { EventInteractionState } from './interactions/event-interaction-state'
 export { EventRenderRange, sliceEventStore } from './component/event-rendering'
 
 export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'

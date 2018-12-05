@@ -1,6 +1,6 @@
 import { EventStore, createEmptyEventStore } from '../structs/event-store'
 import { EventDef } from '../structs/event'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 import { mapHash } from '../util/object'
 import reselector from '../util/reselector'
 
@@ -20,8 +20,8 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
     this.ensuredKeys = ensuredKeys
   }
 
-  splitInteraction = (state: EventInteractionUiState | null): { [key: string]: EventInteractionUiState } => {
-    let splitStates: { [key: string]: EventInteractionUiState } = {}
+  splitInteraction = (state: EventInteractionState | null): { [key: string]: EventInteractionState } => {
+    let splitStates: { [key: string]: EventInteractionState } = {}
 
     for (let key of this.ensuredKeys) {
       splitStates[key] = null
@@ -35,7 +35,6 @@ export abstract class Splitter { // not just EVENT splitting (rename file?)
           splitStates[key] = {
             affectedEvents: affectedStores[key] || createEmptyEventStore(),
             mutatedEvents: mutatedStores[key] || createEmptyEventStore(),
-            eventUis: state.eventUis,
             isEvent: state.isEvent,
             origSeg: state.origSeg
           }

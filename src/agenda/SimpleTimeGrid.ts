@@ -3,7 +3,7 @@ import DateComponent from '../component/DateComponent'
 import { DateProfile } from '../DateProfileGenerator'
 import { EventStore } from '../structs/event-store'
 import { EventUiHash } from '../component/event-ui'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
 import reselector from '../util/reselector'
 import { intersectRanges, DateRange } from '../datelib/date-range'
@@ -19,11 +19,12 @@ export interface SimpleTimeGridProps {
   dayTable: DayTable
   businessHours: EventStore
   eventStore: EventStore
-  eventUis: EventUiHash
+  eventUiBases: EventUiHash
+  eventUiBySource: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
-  eventDrag: EventInteractionUiState | null
-  eventResize: EventInteractionUiState | null
+  eventDrag: EventInteractionState | null
+  eventResize: EventInteractionState | null
 }
 
 interface SlicerArgs {
@@ -52,7 +53,14 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
 
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
     let slicerArgs: SlicerArgs = { dayRanges, component: this.timeGrid }
-    let segRes = slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, null, slicerArgs)
+    let segRes = slicer.eventStoreToSegs(
+      props.eventStore,
+      props.eventUiBases,
+      props.eventUiBySource,
+      dateProfile,
+      null,
+      slicerArgs
+    )
 
     this.timeGrid.receiveProps({
       dateProfile,
@@ -60,10 +68,10 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
       businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, null, slicerArgs),
       bgEventSegs: segRes.bg,
       fgEventSegs: segRes.fg,
-      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, slicerArgs),
+      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, props.eventUiBases, slicerArgs),
       eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, null, slicerArgs),
-      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, null, slicerArgs)
+      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, props.eventUiBySource, dateProfile, null, slicerArgs),
+      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, props.eventUiBySource, dateProfile, null, slicerArgs)
     })
   }
 

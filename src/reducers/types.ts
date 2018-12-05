@@ -4,7 +4,7 @@ import { EventStore } from '../structs/event-store'
 import { EventMutation } from '../structs/event-mutation'
 import { EventSource, EventSourceHash, EventSourceError } from '../structs/event-source'
 import { DateProfile } from '../DateProfileGenerator'
-import { EventInteractionState, EventInteractionUiState } from '../interactions/event-interaction-state'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
 import { DateEnv } from '../datelib/env'
 import Calendar from '../Calendar'
@@ -19,8 +19,8 @@ export interface CalendarState {
   eventStore: EventStore
   dateSelection: DateSpan | null
   eventSelection: string
-  eventDrag: EventInteractionUiState | null
-  eventResize: EventInteractionUiState | null
+  eventDrag: EventInteractionState | null
+  eventResize: EventInteractionState | null
 }
 
 export type reducerFunc = (state: CalendarState, action: Action, calendar: Calendar) => CalendarState

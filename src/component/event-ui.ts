@@ -2,9 +2,6 @@ import { Constraint, Allow, normalizeConstraint, ConstraintInput, Overlap } from
 import { parseClassName } from '../util/html'
 import { refineProps } from '../util/misc'
 import Calendar from '../Calendar'
-import { EventDefHash, EventDef } from '../structs/event'
-import { EventSourceHash } from '../structs/event-source'
-import { mapHash } from '../util/object'
 
 // TODO: better called "EventSettings" or "EventConfig"
 
@@ -80,24 +77,6 @@ const SCOPED_EVENT_UI_PROPS = { // TODO: not very DRY. instead, map to UNSCOPED_
   eventBackgroundColor: String,
   eventBorderColor: String,
   eventTextColor: String
-}
-
-export function computeEventDefUis(eventDefs: EventDefHash, eventSources: EventSourceHash, calendar: Calendar): EventUiHash {
-  return mapHash(eventDefs, function(eventDef) {
-    return computeEventDefUi(eventDef, eventSources, calendar)
-  })
-}
-
-export function computeEventDefUi(eventDef: EventDef, eventSources: EventSourceHash, calendar: Calendar): EventUi {
-  let uis = [ calendar.baseEventUi ]
-
-  if (eventDef.sourceId && eventSources[eventDef.sourceId]) {
-    uis.push(eventSources[eventDef.sourceId].ui)
-  }
-
-  uis.push(eventDef.ui)
-
-  return combineEventUis(uis)
 }
 
 export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar: Calendar, leftovers?): EventUi {

@@ -15,8 +15,8 @@ describe('custom view class', function() {
         expect(typeof isAuto).toBe('boolean')
       }
 
-      renderEvents(eventStore, eventUis) {
-        let eventRanges = this.sliceEvents(eventStore, eventUis, true) // allDay=true
+      renderEvents(eventStore) {
+        let eventRanges = this.sliceEvents(eventStore, true) // allDay=true
 
         expect(Array.isArray(eventRanges)).toBe(true)
         expect(eventRanges.length).toBe(1)

@@ -5,7 +5,7 @@ import { sliceEventStore, EventRenderRange } from '../component/event-rendering'
 import { DateProfile } from '../DateProfileGenerator'
 import { Seg, EventSegUiInteractionState } from '../component/DateComponent'
 import { DateSpan, fabricateEventRange } from '../structs/date-span'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 import { sliceBusinessHours } from '../structs/business-hours'
 import DateComponent from '../component/DateComponent'
 import { Duration } from '../datelib/duration'
@@ -21,12 +21,13 @@ export function memoizeSlicer<
   let buildInteraction = slicer.buildInteraction.bind(slicer) as typeof slicer.buildInteraction
 
   // WARNING: important to keep these memoizer equalityfuncs up to date with the signatures of the methods below!!!
+  // YUCK
   return {
     businessHoursToSegs: reselector(slicer.businessHoursToSegs.bind(slicer) as typeof slicer.businessHoursToSegs, [ null, null, null, isPropsEqual ]),
-    eventStoreToSegs: reselector(slicer.eventStoreToSegs.bind(slicer) as typeof slicer.eventStoreToSegs, [ null, null, null, null, isPropsEqual ]),
-    selectionToSegs: reselector(slicer.dateSpanToCompleteSegs.bind(slicer) as typeof slicer.dateSpanToCompleteSegs, [ null, isPropsEqual ]),
-    buildEventDrag: reselector(buildInteraction, [ null, null, null, isPropsEqual ]),
-    buildEventResize: reselector(buildInteraction, [ null, null, null, isPropsEqual ])
+    eventStoreToSegs: reselector(slicer.eventStoreToSegs.bind(slicer) as typeof slicer.eventStoreToSegs, [ null, isPropsEqual, isPropsEqual, null, null, isPropsEqual ]),
+    selectionToSegs: reselector(slicer.dateSpanToCompleteSegs.bind(slicer) as typeof slicer.dateSpanToCompleteSegs, [ null, isPropsEqual, isPropsEqual ]),
+    buildEventDrag: reselector(buildInteraction, [ null, isPropsEqual, isPropsEqual, null, null, isPropsEqual ]),
+    buildEventResize: reselector(buildInteraction, [ null, isPropsEqual, isPropsEqual, null, null, isPropsEqual ])
   }
 }
 
@@ -45,13 +46,14 @@ export class Slicer<
 
   eventStoreToSegs(
     eventStore: EventStore,
-    eventUis: EventUiHash,
+    eventUiBases: EventUiHash,
+    eventUiBySource: EventUiHash,
     dateProfile: DateProfile,
     nextDayThreshold: Duration,
     otherArgs: OtherArgsType
   ): { bg: SegType[], fg: SegType[] } {
     if (eventStore) {
-      let rangeRes = sliceEventStore(eventStore, eventUis, dateProfile.activeRange, nextDayThreshold)
+      let rangeRes = sliceEventStore(eventStore, eventUiBases, eventUiBySource, dateProfile.activeRange, nextDayThreshold)
 
       return {
         bg: this.eventRangesToCompleteSegs(rangeRes.bg, otherArgs),
@@ -86,6 +88,7 @@ export class Slicer<
 
   dateSpanToCompleteSegs(
     dateSpan: DateSpan,
+    eventUiBases: EventUiHash,
     otherArgs: OtherArgsType
   ): SegType[] {
     if (!dateSpan) {
@@ -93,7 +96,7 @@ export class Slicer<
     }
 
     let component = otherArgs.component
-    let eventRange = fabricateEventRange(dateSpan, component.calendar)
+    let eventRange = fabricateEventRange(dateSpan, eventUiBases, component.calendar)
     let segs = this.dateSpanToSegs(dateSpan, otherArgs)
 
     for (let seg of segs) {
@@ -105,7 +108,9 @@ export class Slicer<
   }
 
   buildInteraction(
-    interaction: EventInteractionUiState,
+    interaction: EventInteractionState,
+    eventUiBases: EventUiHash,
+    eventUiBySource: EventUiHash,
     dateProfile: DateProfile,
     nextDayThreshold: Duration,
     otherArgs: OtherArgsType
@@ -114,7 +119,7 @@ export class Slicer<
       return null
     }
 
-    let rangeRes = sliceEventStore(interaction.mutatedEvents, interaction.eventUis, dateProfile.activeRange, nextDayThreshold)
+    let rangeRes = sliceEventStore(interaction.mutatedEvents, eventUiBases, eventUiBySource, dateProfile.activeRange, nextDayThreshold)
 
     return {
       segs: this.eventRangesToCompleteSegs(rangeRes.fg, otherArgs),

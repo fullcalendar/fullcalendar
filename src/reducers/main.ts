@@ -3,10 +3,9 @@ import reduceEventSources from './eventSources'
 import reduceEventStore from './eventStore'
 import { DateProfile, isDateProfilesEqual } from '../DateProfileGenerator'
 import { DateSpan } from '../structs/date-span'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
-import { computeEventDefUis } from '../component/event-ui'
 import { assignTo } from '../util/object'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
@@ -90,22 +89,17 @@ function reduceSelectedEvent(currentInstanceId: string, action: Action): string 
   }
 }
 
-function reduceEventDrag(currentDrag: EventInteractionUiState | null, action: Action, sources: EventSourceHash, calendar: Calendar): EventInteractionUiState | null {
+function reduceEventDrag(currentDrag: EventInteractionState | null, action: Action, sources: EventSourceHash, calendar: Calendar): EventInteractionState | null {
   switch (action.type) {
 
     case 'SET_EVENT_DRAG':
       let newDrag = action.state
-      let eventUis = computeEventDefUis(
-        newDrag.mutatedEvents.defs,
-        sources,
-        calendar
-      )
+
       return {
         affectedEvents: newDrag.affectedEvents,
         mutatedEvents: newDrag.mutatedEvents,
         isEvent: newDrag.isEvent,
-        origSeg: newDrag.origSeg,
-        eventUis
+        origSeg: newDrag.origSeg
       }
 
     case 'UNSET_EVENT_DRAG':
@@ -116,22 +110,17 @@ function reduceEventDrag(currentDrag: EventInteractionUiState | null, action: Ac
   }
 }
 
-function reduceEventResize(currentResize: EventInteractionUiState | null, action: Action, sources: EventSourceHash, calendar: Calendar): EventInteractionUiState | null {
+function reduceEventResize(currentResize: EventInteractionState | null, action: Action, sources: EventSourceHash, calendar: Calendar): EventInteractionState | null {
   switch (action.type) {
 
     case 'SET_EVENT_RESIZE':
       let newResize = action.state
-      let eventUis = computeEventDefUis(
-        newResize.mutatedEvents.defs,
-        sources,
-        calendar
-      )
+
       return {
         affectedEvents: newResize.affectedEvents,
         mutatedEvents: newResize.mutatedEvents,
         isEvent: newResize.isEvent,
         origSeg: newResize.origSeg,
-        eventUis
       }
 
     case 'UNSET_EVENT_RESIZE':

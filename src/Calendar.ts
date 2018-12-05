@@ -24,12 +24,13 @@ import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
-import { computeEventDefUis, processScopedUiProps, EventUi, EventUiHash } from './component/event-ui'
+import { processScopedUiProps, EventUiHash } from './component/event-ui'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem, PluginDef } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
+import { compileEventUis } from './component/event-rendering';
 
 
 export interface DateClickApi extends DatePointApi {
@@ -64,10 +65,9 @@ export default class Calendar {
 
   buildDateEnv = reselector(buildDateEnv)
   buildTheme = reselector(buildTheme)
-  buildBaseEventUi = reselector(processScopedUiProps)
-  computeEventDefUis = reselector(computeEventDefUis)
+  buildEventUiBase = reselector(processScopedUiProps)
 
-  baseEventUi: EventUi
+  eventUiBases: EventUiHash
   renderableEventUis: EventUiHash
 
   optionsManager: OptionsManager
@@ -397,8 +397,6 @@ export default class Calendar {
       throw new Error(`View type "${viewType}" is not valid`)
     }
 
-    this.baseEventUi = this.buildBaseEventUi(viewSpec.options, this)
-
     // if event sources are still loading and progressive rendering hasn't been enabled,
     // keep rendering the last fully loaded set of events
     let renderableEventStore = this.renderableEventStore =
@@ -406,10 +404,14 @@ export default class Calendar {
         this.renderableEventStore :
         state.eventStore
 
-    this.renderableEventUis = this.computeEventDefUis( // will access baseEventUi
+    let eventUiBases = this.eventUiBases = { '': this.buildEventUiBase(viewSpec.options, this) }
+    let eventUiBySource = mapHash(state.eventSources, (eventSource) => eventSource.ui)
+
+    // specifically for validation system
+    this.renderableEventUis = compileEventUis(
       renderableEventStore.defs,
-      state.eventSources,
-      this
+      eventUiBases,
+      eventUiBySource
     )
 
     if (needsFull || !component) {
@@ -433,7 +435,8 @@ export default class Calendar {
         dateProfile: state.dateProfile,
         dateProfileGenerator: this.dateProfileGenerators[viewType],
         eventStore: renderableEventStore,
-        eventUis: this.renderableEventUis,
+        eventUiBases,
+        eventUiBySource,
         dateSelection: state.dateSelection,
         eventSelection: state.eventSelection,
         eventDrag: state.eventDrag,

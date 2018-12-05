@@ -1,4 +1,4 @@
-import { EventDef, EventTuple } from '../structs/event'
+import { EventDef, EventTuple, EventDefHash } from '../structs/event'
 import { EventStore } from '../structs/event-store'
 import { DateRange, invertRanges, intersectRanges } from '../datelib/date-range'
 import { Duration } from '../datelib/duration'
@@ -6,7 +6,8 @@ import { computeVisibleDayRange } from '../util/misc'
 import { Seg } from './DateComponent'
 import View from '../View'
 import EventApi from '../api/EventApi'
-import { EventUi, EventUiHash } from './event-ui'
+import { EventUi, EventUiHash, combineEventUis } from './event-ui'
+import { mapHash } from '../util/object'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
@@ -18,12 +19,13 @@ export interface EventRenderRange extends EventTuple {
 /*
 Specifying nextDayThreshold signals that all-day ranges should be sliced.
 */
-export function sliceEventStore(eventStore: EventStore, eventUis: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
+export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHash, eventUiBySource: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
   let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
   let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
   let bgRanges: EventRenderRange[] = []
   let fgRanges: EventRenderRange[] = []
+  let eventUis = compileEventUis(eventStore.defs, eventUiBases, eventUiBySource)
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
@@ -159,4 +161,29 @@ function setElSeg(el: HTMLElement, seg: Seg) {
 
 export function getElSeg(el: HTMLElement): Seg | null {
   return (el as any).fcSeg || null
+}
+
+
+// event ui computation
+
+export function compileEventUis(eventDefs: EventDefHash, eventUiBases: EventUiHash, eventUiBySource: EventUiHash) {
+  return mapHash(eventDefs, function(eventDef: EventDef) {
+    return compileEventUi(eventDef, eventUiBases, eventUiBySource)
+  })
+}
+
+export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash, eventUiBySource: EventUiHash) {
+  let uis = []
+
+  if (eventUiBases['']) {
+    uis.push(eventUiBases[''])
+  }
+
+  if (eventDef.sourceId && eventUiBySource[eventDef.sourceId]) {
+    uis.push(eventUiBySource[eventDef.sourceId])
+  }
+
+  uis.push(eventDef.ui)
+
+  return combineEventUis(uis)
 }

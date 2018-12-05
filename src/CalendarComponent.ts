@@ -19,7 +19,8 @@ import { CalendarState } from './reducers/types'
 export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator // for the current view
-  eventUis: EventUiHash
+  eventUiBases: EventUiHash
+  eventUiBySource: EventUiHash
 }
 
 export default class CalendarComponent extends Component<CalendarComponentProps> {
@@ -181,7 +182,8 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         dateProfile: props.dateProfile,
         businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
         eventStore: props.eventStore,
-        eventUis: props.eventUis,
+        eventUiBases: props.eventUiBases,
+        eventUiBySource: props.eventUiBySource,
         dateSelection: props.dateSelection,
         eventSelection: props.eventSelection,
         eventDrag: props.eventDrag,

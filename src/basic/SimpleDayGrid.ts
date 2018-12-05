@@ -3,7 +3,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { EventStore } from '../structs/event-store'
 import { EventUiHash } from '../component/event-ui'
 import { DateSpan } from '../structs/date-span'
-import { EventInteractionUiState } from '../interactions/event-interaction-state'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 import DayTable from '../common/DayTable'
 import { Duration } from '../datelib/duration'
 import DateComponent from '../component/DateComponent'
@@ -18,11 +18,12 @@ export interface SimpleDayGridProps {
   nextDayThreshold: Duration
   businessHours: EventStore
   eventStore: EventStore
-  eventUis: EventUiHash
+  eventUiBases: EventUiHash
+  eventUiBySource: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
-  eventDrag: EventInteractionUiState | null
-  eventResize: EventInteractionUiState | null
+  eventDrag: EventInteractionState | null
+  eventResize: EventInteractionState | null
   isRigid: boolean
 }
 
@@ -50,7 +51,14 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     let { dateProfile, dayTable, nextDayThreshold } = props
 
     let slicerArgs = { dayTable, isRtl, component: this.dayGrid }
-    let segRes = slicer.eventStoreToSegs(props.eventStore, props.eventUis, dateProfile, nextDayThreshold, slicerArgs)
+    let segRes = slicer.eventStoreToSegs(
+      props.eventStore,
+      props.eventUiBases,
+      props.eventUiBySource,
+      dateProfile,
+      nextDayThreshold,
+      slicerArgs
+    )
 
     dayGrid.receiveProps({
       dateProfile,
@@ -58,10 +66,10 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
       businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, nextDayThreshold, slicerArgs),
       bgEventSegs: segRes.bg,
       fgEventSegs: segRes.fg,
-      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, slicerArgs),
+      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, props.eventUiBases, slicerArgs),
       eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, dateProfile, nextDayThreshold, slicerArgs),
-      eventResize: slicer.buildEventResize(props.eventResize, dateProfile, nextDayThreshold, slicerArgs),
+      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, props.eventUiBySource, dateProfile, nextDayThreshold, slicerArgs),
+      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, props.eventUiBySource, dateProfile, nextDayThreshold, slicerArgs),
       isRigid: props.isRigid
     })
   }

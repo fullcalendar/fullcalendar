@@ -3,8 +3,8 @@ import { DateInput, DateEnv } from '../datelib/env'
 import { refineProps } from '../util/misc'
 import { Duration } from '../datelib/duration'
 import { parseEventDef, createEventInstance } from './event'
-import { EventRenderRange } from '../component/event-rendering'
-import { computeEventDefUi } from '../component/event-ui'
+import { EventRenderRange, compileEventUi } from '../component/event-rendering'
+import { EventUiHash } from '../component/event-ui'
 import Calendar from '../Calendar'
 
 /*
@@ -158,7 +158,7 @@ export function buildDatePointApi(span: DateSpan, dateEnv: DateEnv): DatePointAp
   }
 }
 
-export function fabricateEventRange(dateSpan: DateSpan, calendar: Calendar): EventRenderRange {
+export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHash, calendar: Calendar): EventRenderRange {
   let def = parseEventDef(
     { editable: false },
     '', // sourceId
@@ -169,7 +169,7 @@ export function fabricateEventRange(dateSpan: DateSpan, calendar: Calendar): Eve
 
   return {
     def,
-    ui: computeEventDefUi(def, {}, calendar),
+    ui: compileEventUi(def, eventUiBases, {}),
     instance: createEventInstance(def.defId, dateSpan.range),
     range: dateSpan.range,
     isStart: true,
