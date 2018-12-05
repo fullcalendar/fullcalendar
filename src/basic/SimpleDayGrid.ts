@@ -27,7 +27,7 @@ export interface SimpleDayGridProps {
   isRigid: boolean
 }
 
-interface SlicerArgs {
+export interface SimpleDayGridSlicerArgs {
   component: DayGrid // TODO: kill
   dayTable: DayTable
   isRtl: boolean
@@ -38,7 +38,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
   dayGrid: DayGrid
   offsetTracker: OffsetTracker
 
-  private slicer = memoizeSlicer(new Slicer(sliceSegs))
+  private slicer = memoizeSlicer(new Slicer(sliceDayGridSegs))
 
   constructor(context, dayGrid: DayGrid) {
     super(context, dayGrid.el)
@@ -116,7 +116,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
 SimpleDayGrid.prototype.isInteractable = true
 
 
-export function sliceSegs(range: DateRange, slicerArgs: SlicerArgs): DayGridSeg[] {
+export function sliceDayGridSegs(range: DateRange, slicerArgs: SimpleDayGridSlicerArgs): DayGridSeg[] {
   let { dayTable, isRtl } = slicerArgs
 
   return dayTable.sliceRange(range).map(function(seg) {

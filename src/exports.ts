@@ -43,9 +43,7 @@ export {
   intersectRects
 } from './util/geom'
 
-export {
-  assignTo
-} from './util/object'
+export { assignTo, isPropsEqual } from './util/object'
 
 export {
   findElements,
@@ -64,7 +62,7 @@ export {
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
 export { hasBgRendering } from './component/event-rendering'
-export { EventUiHash, EventUi } from './component/event-ui'
+export { EventUiHash, EventUi, processScopedUiProps, ScopedEventUiInput, combineEventUis } from './component/event-ui'
 export { Splitter, memoizeSplitter } from './component/event-splitting'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
 
@@ -100,8 +98,8 @@ export { default as AgendaView, buildDayTable as buildAgendaDayTable } from './a
 export { default as AbstractAgendaView} from './agenda/AbstractAgendaView'
 export { default as AbstractBasicView} from './basic/AbstractBasicView'
 export { default as TimeGrid, TimeGridSeg } from './agenda/TimeGrid'
-export { buildDayRanges, sliceSegs as sliceTimeGridSegs } from './agenda/SimpleTimeGrid'
-export { sliceSegs as sliceDayGridSegs } from './basic/SimpleDayGrid'
+export { buildDayRanges, sliceTimeGridSegs, SimpleTimeGridSlicerArgs } from './agenda/SimpleTimeGrid'
+export { sliceDayGridSegs, SimpleDayGridSlicerArgs } from './basic/SimpleDayGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
 export { default as BasicView, buildDayTable as buildBasicDayTable } from './basic/BasicView'
 export { default as ListView } from './list/ListView'

@@ -114,10 +114,10 @@ export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Cal
 }
 
 export function combineEventUis(uis: EventUi[]): EventUi {
-  return uis.reduce(mergeEventUis)
+  return uis.reduce(combineTwoEventUis)
 }
 
-function mergeEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 has higher precedence
+function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 has higher precedence
   return {
     startEditable: item1.startEditable != null ? item1.startEditable : item0.startEditable,
     durationEditable: item1.durationEditable != null ? item1.durationEditable : item0.durationEditable,
