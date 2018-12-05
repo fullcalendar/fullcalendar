@@ -6,7 +6,7 @@ import { dateClickApiTransformer, dateSelectionApiTransformer } from './Calendar
 import { dateSelectionTransformer } from './interactions/DateSelecting'
 import { ViewConfigInputHash } from './structs/view-config'
 import { assignTo } from './util/object'
-import { ViewDefTransformer } from './structs/view-spec'
+import { ViewSpecTransformer } from './structs/view-spec'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -20,7 +20,7 @@ export interface PluginDefInput {
   dateClickApiTransformers?: dateClickApiTransformer[]
   dateSelectionApiTransformers?: dateSelectionApiTransformer[]
   viewConfigs?: ViewConfigInputHash
-  viewDefTransformers?: ViewDefTransformer[]
+  viewSpecTransformers?: ViewSpecTransformer[]
 }
 
 export interface PluginHooks {
@@ -32,7 +32,7 @@ export interface PluginHooks {
   dateClickApiTransformers: dateClickApiTransformer[]
   dateSelectionApiTransformers: dateSelectionApiTransformer[]
   viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?
-  viewDefTransformers: ViewDefTransformer[]
+  viewSpecTransformers: ViewSpecTransformer[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -54,7 +54,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     dateClickApiTransformers: input.dateClickApiTransformers || [],
     dateSelectionApiTransformers: input.dateSelectionApiTransformers || [],
     viewConfigs: input.viewConfigs || {},
-    viewDefTransformers: input.viewDefTransformers || []
+    viewSpecTransformers: input.viewSpecTransformers || []
   }
 }
 
@@ -73,7 +73,7 @@ export class PluginSystem {
       dateClickApiTransformers: [],
       dateSelectionApiTransformers: [],
       viewConfigs: {},
-      viewDefTransformers: []
+      viewSpecTransformers: []
     }
     this.addedHash = {}
   }
@@ -102,6 +102,6 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     dateClickApiTransformers: hooks0.dateClickApiTransformers.concat(hooks1.dateClickApiTransformers),
     dateSelectionApiTransformers: hooks0.dateSelectionApiTransformers.concat(hooks1.dateSelectionApiTransformers),
     viewConfigs: assignTo({}, hooks0.viewConfigs, hooks1.viewConfigs),
-    viewDefTransformers: hooks0.viewDefTransformers.concat(hooks1.viewDefTransformers)
+    viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers)
   }
 }

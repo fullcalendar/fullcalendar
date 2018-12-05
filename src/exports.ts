@@ -105,7 +105,7 @@ export { default as BasicView, buildDayTable as buildBasicDayTable } from './bas
 export { default as ListView } from './list/ListView'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
-export { ViewSpec, ViewDefTransformer } from './structs/view-spec'
+export { ViewSpec, ViewSpecTransformer } from './structs/view-spec'
 export { DateSpan } from './structs/date-span'
 
 export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime, isValidDate } from './datelib/marker'
