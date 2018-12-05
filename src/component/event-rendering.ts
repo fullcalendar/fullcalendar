@@ -19,13 +19,13 @@ export interface EventRenderRange extends EventTuple {
 /*
 Specifying nextDayThreshold signals that all-day ranges should be sliced.
 */
-export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHash, eventUiBySource: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
+export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHash, framingRange: DateRange, nextDayThreshold?: Duration) {
   let inverseBgByGroupId: { [groupId: string]: DateRange[] } = {}
   let inverseBgByDefId: { [defId: string]: DateRange[] } = {}
   let defByGroupId: { [groupId: string]: EventDef } = {}
   let bgRanges: EventRenderRange[] = []
   let fgRanges: EventRenderRange[] = []
-  let eventUis = compileEventUis(eventStore.defs, eventUiBases, eventUiBySource)
+  let eventUis = compileEventUis(eventStore.defs, eventUiBases)
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
@@ -166,21 +166,21 @@ export function getElSeg(el: HTMLElement): Seg | null {
 
 // event ui computation
 
-export function compileEventUis(eventDefs: EventDefHash, eventUiBases: EventUiHash, eventUiBySource: EventUiHash) {
+export function compileEventUis(eventDefs: EventDefHash, eventUiBases: EventUiHash) {
   return mapHash(eventDefs, function(eventDef: EventDef) {
-    return compileEventUi(eventDef, eventUiBases, eventUiBySource)
+    return compileEventUi(eventDef, eventUiBases)
   })
 }
 
-export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash, eventUiBySource: EventUiHash) {
+export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
   let uis = []
 
   if (eventUiBases['']) {
     uis.push(eventUiBases[''])
   }
 
-  if (eventDef.sourceId && eventUiBySource[eventDef.sourceId]) {
-    uis.push(eventUiBySource[eventDef.sourceId])
+  if (eventUiBases[eventDef.defId]) {
+    uis.push(eventUiBases[eventDef.defId])
   }
 
   uis.push(eventDef.ui)

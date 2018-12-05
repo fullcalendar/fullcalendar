@@ -64,7 +64,6 @@ export default class BasicView extends AbstractBasicView {
       dateSelection: props.dateSelection,
       eventStore: props.eventStore,
       eventUiBases: props.eventUiBases,
-      eventUiBySource: props.eventUiBySource,
       eventSelection: props.eventSelection,
       eventDrag: props.eventDrag,
       eventResize: props.eventResize,

@@ -1,4 +1,4 @@
-import { assignTo, isPropsEqual } from './util/object'
+import { assignTo } from './util/object'
 import { parseFieldSpecs } from './util/misc'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { DateMarker, addMs } from './datelib/marker'
@@ -20,7 +20,6 @@ export interface ViewProps {
   businessHours: EventStore
   eventStore: EventStore
   eventUiBases: EventUiHash
-  eventUiBySource: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
   eventDrag: EventInteractionState | null
@@ -213,7 +212,6 @@ export default abstract class View extends DateComponent<ViewProps> {
     return sliceEventStore(
       eventStore,
       props.eventUiBases,
-      props.eventUiBySource,
       props.dateProfile.activeRange,
       allDay ? this.nextDayThreshold : null
     ).fg
@@ -446,8 +444,3 @@ EmitterMixin.mixInto(View)
 
 View.prototype.usesMinMaxTime = false
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator
-
-View.addEqualityFuncs({
-  eventUiBases: isPropsEqual,
-  eventUiBySource: isPropsEqual
-})

@@ -19,7 +19,6 @@ export interface SimpleDayGridProps {
   businessHours: EventStore
   eventStore: EventStore
   eventUiBases: EventUiHash
-  eventUiBySource: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
   eventDrag: EventInteractionState | null
@@ -54,7 +53,6 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     let segRes = slicer.eventStoreToSegs(
       props.eventStore,
       props.eventUiBases,
-      props.eventUiBySource,
       dateProfile,
       nextDayThreshold,
       slicerArgs
@@ -68,8 +66,8 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
       fgEventSegs: segRes.fg,
       dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, props.eventUiBases, slicerArgs),
       eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, props.eventUiBySource, dateProfile, nextDayThreshold, slicerArgs),
-      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, props.eventUiBySource, dateProfile, nextDayThreshold, slicerArgs),
+      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, dateProfile, nextDayThreshold, slicerArgs),
+      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, dateProfile, nextDayThreshold, slicerArgs),
       isRigid: props.isRigid
     })
   }

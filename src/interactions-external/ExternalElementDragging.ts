@@ -76,8 +76,7 @@ export default class ExternalElementDragging {
           let droppableEventStore = eventTupleToStore(droppableEvent)
           let droppableEventUis = compileEventUis(
             droppableEventStore.defs,
-            receivingCalendar.eventUiBases,
-            {} // eventUiBySource
+            receivingCalendar.eventUiBases
           )
 
           isInvalid = !isEventsValid(droppableEventStore, droppableEventUis, receivingCalendar)

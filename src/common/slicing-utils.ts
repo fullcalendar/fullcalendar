@@ -24,10 +24,10 @@ export function memoizeSlicer<
   // YUCK
   return {
     businessHoursToSegs: reselector(slicer.businessHoursToSegs.bind(slicer) as typeof slicer.businessHoursToSegs, [ null, null, null, isPropsEqual ]),
-    eventStoreToSegs: reselector(slicer.eventStoreToSegs.bind(slicer) as typeof slicer.eventStoreToSegs, [ null, isPropsEqual, isPropsEqual, null, null, isPropsEqual ]),
-    selectionToSegs: reselector(slicer.dateSpanToCompleteSegs.bind(slicer) as typeof slicer.dateSpanToCompleteSegs, [ null, isPropsEqual, isPropsEqual ]),
-    buildEventDrag: reselector(buildInteraction, [ null, isPropsEqual, isPropsEqual, null, null, isPropsEqual ]),
-    buildEventResize: reselector(buildInteraction, [ null, isPropsEqual, isPropsEqual, null, null, isPropsEqual ])
+    eventStoreToSegs: reselector(slicer.eventStoreToSegs.bind(slicer) as typeof slicer.eventStoreToSegs, [ null, isPropsEqual, null, null, isPropsEqual ]),
+    selectionToSegs: reselector(slicer.dateSpanToCompleteSegs.bind(slicer) as typeof slicer.dateSpanToCompleteSegs, [ null, isPropsEqual ]),
+    buildEventDrag: reselector(buildInteraction, [ null, isPropsEqual, null, null, isPropsEqual ]),
+    buildEventResize: reselector(buildInteraction, [ null, isPropsEqual, null, null, isPropsEqual ])
   }
 }
 
@@ -47,13 +47,12 @@ export class Slicer<
   eventStoreToSegs(
     eventStore: EventStore,
     eventUiBases: EventUiHash,
-    eventUiBySource: EventUiHash,
     dateProfile: DateProfile,
     nextDayThreshold: Duration,
     otherArgs: OtherArgsType
   ): { bg: SegType[], fg: SegType[] } {
     if (eventStore) {
-      let rangeRes = sliceEventStore(eventStore, eventUiBases, eventUiBySource, dateProfile.activeRange, nextDayThreshold)
+      let rangeRes = sliceEventStore(eventStore, eventUiBases, dateProfile.activeRange, nextDayThreshold)
 
       return {
         bg: this.eventRangesToCompleteSegs(rangeRes.bg, otherArgs),
@@ -110,7 +109,6 @@ export class Slicer<
   buildInteraction(
     interaction: EventInteractionState,
     eventUiBases: EventUiHash,
-    eventUiBySource: EventUiHash,
     dateProfile: DateProfile,
     nextDayThreshold: Duration,
     otherArgs: OtherArgsType
@@ -119,7 +117,7 @@ export class Slicer<
       return null
     }
 
-    let rangeRes = sliceEventStore(interaction.mutatedEvents, eventUiBases, eventUiBySource, dateProfile.activeRange, nextDayThreshold)
+    let rangeRes = sliceEventStore(interaction.mutatedEvents, eventUiBases, dateProfile.activeRange, nextDayThreshold)
 
     return {
       segs: this.eventRangesToCompleteSegs(rangeRes.fg, otherArgs),

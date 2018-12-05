@@ -169,7 +169,7 @@ export function fabricateEventRange(dateSpan: DateSpan, eventUiBases: EventUiHas
 
   return {
     def,
-    ui: compileEventUi(def, eventUiBases, {}),
+    ui: compileEventUi(def, eventUiBases),
     instance: createEventInstance(def.defId, dateSpan.range),
     range: dateSpan.range,
     isStart: true,

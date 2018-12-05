@@ -82,7 +82,6 @@ export default class AgendaView extends AbstractAgendaView {
       dateSelection: dateSelection && !dateSelection.allDay ? dateSelection : null,
       eventStore: eventStores.timed,
       eventUiBases: props.eventUiBases,
-      eventUiBySource: props.eventUiBySource,
       eventSelection: props.eventSelection,
       eventDrag: eventDrags.timed,
       eventResize: eventResizes.timed
@@ -96,7 +95,6 @@ export default class AgendaView extends AbstractAgendaView {
         dateSelection: dateSelection && dateSelection.allDay ? dateSelection : null,
         eventStore: eventStores.allDay,
         eventUiBases: props.eventUiBases,
-        eventUiBySource: props.eventUiBySource,
         eventSelection: props.eventSelection,
         eventDrag: eventDrags.allDay,
         eventResize: eventResizes.allDay,

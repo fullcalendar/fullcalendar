@@ -20,7 +20,6 @@ export interface SimpleTimeGridProps {
   businessHours: EventStore
   eventStore: EventStore
   eventUiBases: EventUiHash
-  eventUiBySource: EventUiHash
   dateSelection: DateSpan | null
   eventSelection: string
   eventDrag: EventInteractionState | null
@@ -56,7 +55,6 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     let segRes = slicer.eventStoreToSegs(
       props.eventStore,
       props.eventUiBases,
-      props.eventUiBySource,
       dateProfile,
       null,
       slicerArgs
@@ -70,8 +68,8 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
       fgEventSegs: segRes.fg,
       dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, props.eventUiBases, slicerArgs),
       eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, props.eventUiBySource, dateProfile, null, slicerArgs),
-      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, props.eventUiBySource, dateProfile, null, slicerArgs)
+      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, dateProfile, null, slicerArgs),
+      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, dateProfile, null, slicerArgs)
     })
   }
 

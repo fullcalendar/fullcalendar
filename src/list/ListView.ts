@@ -64,7 +64,7 @@ export default class ListView extends View {
     this.dayDates = dayDates
 
     this.renderContent(
-      this.eventStoreToSegs(props.eventStore, props.eventUiBases, props.eventUiBySource, dayRanges)
+      this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
     )
   }
 
@@ -96,12 +96,11 @@ export default class ListView extends View {
   }
 
 
-  _eventStoreToSegs(eventStore: EventStore, eventUiBases: EventUiHash, eventUiBySource: EventUiHash, dayRanges: DateRange[]): Seg[] {
+  _eventStoreToSegs(eventStore: EventStore, eventUiBases: EventUiHash, dayRanges: DateRange[]): Seg[] {
     return this.eventRangesToSegs(
       sliceEventStore(
         eventStore,
         eventUiBases,
-        eventUiBySource,
         this.props.dateProfile.activeRange,
         this.nextDayThreshold
       ).fg,

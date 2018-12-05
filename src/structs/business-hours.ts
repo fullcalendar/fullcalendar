@@ -63,8 +63,7 @@ export function sliceBusinessHours(businessHours: EventStore, range: DateRange, 
 
   return sliceEventStore(
     expandedStore,
-    {},
-    {},
+    {}, // eventUiBases
     range,
     nextDayThreshold
   ).bg

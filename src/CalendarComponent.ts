@@ -20,7 +20,6 @@ export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator // for the current view
   eventUiBases: EventUiHash
-  eventUiBySource: EventUiHash
 }
 
 export default class CalendarComponent extends Component<CalendarComponentProps> {
@@ -183,7 +182,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
         eventStore: props.eventStore,
         eventUiBases: props.eventUiBases,
-        eventUiBySource: props.eventUiBySource,
         dateSelection: props.dateSelection,
         eventSelection: props.eventSelection,
         eventDrag: props.eventDrag,
