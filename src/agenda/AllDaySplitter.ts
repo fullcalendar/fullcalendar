@@ -1,11 +1,16 @@
-import { Splitter } from '../component/event-splitting'
+import Splitter from '../component/event-splitting'
 import { hasBgRendering } from '../component/event-rendering'
 import { EventDef } from '../structs/event'
+import { DateSpan } from '../structs/date-span'
 
 export default class AllDaySplitter extends Splitter {
 
-  constructor() {
-    super([ 'allDay', 'timed' ])
+  getKeysForDateSpan(dateSpan: DateSpan): string[] {
+    if (dateSpan.allDay) {
+      return [ 'allDay' ]
+    } else {
+      return [ 'timed' ]
+    }
   }
 
   getKeysForEventDef(eventDef: EventDef): string[] {

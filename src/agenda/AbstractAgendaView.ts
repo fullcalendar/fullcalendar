@@ -17,7 +17,6 @@ import { diffDays } from '../datelib/marker'
 import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator from '../DateProfileGenerator'
-import { memoizeSplitter } from '../component/event-splitting'
 import AllDaySplitter from './AllDaySplitter'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5
@@ -37,7 +36,7 @@ export default abstract class AgendaView extends View {
   scroller: ScrollComponent
   axisWidth: any // the width of the time axis running down the side
 
-  protected splitter = memoizeSplitter(new AllDaySplitter())
+  protected splitter = new AllDaySplitter()
 
 
   constructor(

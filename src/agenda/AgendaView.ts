@@ -58,13 +58,9 @@ export default class AgendaView extends AbstractAgendaView {
   render(props: ViewProps) {
     super.render(props) // for flags for updateSize
 
-    let { splitter } = this
-    let { dateProfile, dateSelection } = this.props
+    let { dateProfile, businessHours } = this.props
     let dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
-
-    let eventStores = splitter.splitEventStore(props.eventStore)
-    let eventDrags = splitter.splitEventDrag(props.eventDrag)
-    let eventResizes = splitter.splitEventResize(props.eventResize)
+    let splitProps = this.splitter.splitProps(props)
 
     if (this.header) {
       this.header.receiveProps({
@@ -75,32 +71,24 @@ export default class AgendaView extends AbstractAgendaView {
       })
     }
 
-    this.simpleTimeGrid.receiveProps({
-      dateProfile,
-      dayTable,
-      businessHours: props.businessHours,
-      dateSelection: dateSelection && !dateSelection.allDay ? dateSelection : null,
-      eventStore: eventStores.timed,
-      eventUiBases: props.eventUiBases,
-      eventSelection: props.eventSelection,
-      eventDrag: eventDrags.timed,
-      eventResize: eventResizes.timed
-    })
-
-    if (this.simpleDayGrid) {
-      this.simpleDayGrid.receiveProps({
+    this.simpleTimeGrid.receiveProps(
+      Object.assign({}, splitProps['timed'] || splitProps[''], {
         dateProfile,
         dayTable,
-        businessHours: props.businessHours,
-        dateSelection: dateSelection && dateSelection.allDay ? dateSelection : null,
-        eventStore: eventStores.allDay,
-        eventUiBases: props.eventUiBases,
-        eventSelection: props.eventSelection,
-        eventDrag: eventDrags.allDay,
-        eventResize: eventResizes.allDay,
-        nextDayThreshold: this.nextDayThreshold,
-        isRigid: false
+        businessHours
       })
+    )
+
+    if (this.simpleDayGrid) {
+      this.simpleDayGrid.receiveProps(
+        Object.assign({}, splitProps['allDay'] || splitProps[''], {
+          dateProfile,
+          dayTable,
+          businessHours,
+          nextDayThreshold: this.nextDayThreshold,
+          isRigid: false
+        })
+      )
     }
   }
 

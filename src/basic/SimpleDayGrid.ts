@@ -8,7 +8,7 @@ import DayTable from '../common/DayTable'
 import { Duration } from '../datelib/duration'
 import DateComponent from '../component/DateComponent'
 import { DateRange } from '../datelib/date-range'
-import { Slicer, memoizeSlicer } from '../common/slicing-utils'
+import Slicer from '../common/slicing-utils'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 
@@ -26,18 +26,12 @@ export interface SimpleDayGridProps {
   isRigid: boolean
 }
 
-export interface SimpleDayGridSlicerArgs {
-  component: DayGrid // TODO: kill
-  dayTable: DayTable
-  isRtl: boolean
-}
-
 export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
 
   dayGrid: DayGrid
   offsetTracker: OffsetTracker
 
-  private slicer = memoizeSlicer(new Slicer(sliceDayGridSegs))
+  private slicer = new DayGridSlicer()
 
   constructor(context, dayGrid: DayGrid) {
     super(context, dayGrid.el)
@@ -46,30 +40,16 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
   }
 
   render(props: SimpleDayGridProps) {
-    let { dayGrid, slicer, isRtl } = this
-    let { dateProfile, dayTable, nextDayThreshold } = props
+    let { dayGrid } = this
+    let { dateProfile, dayTable } = props
 
-    let slicerArgs = { dayTable, isRtl, component: this.dayGrid }
-    let segRes = slicer.eventStoreToSegs(
-      props.eventStore,
-      props.eventUiBases,
-      dateProfile,
-      nextDayThreshold,
-      slicerArgs
+    dayGrid.receiveProps(
+      Object.assign({}, this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, dayGrid, dayTable, this.isRtl), {
+        dateProfile,
+        cells: dayTable.cells,
+        isRigid: props.isRigid
+      })
     )
-
-    dayGrid.receiveProps({
-      dateProfile,
-      cells: dayTable.cells,
-      businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, nextDayThreshold, slicerArgs),
-      bgEventSegs: segRes.bg,
-      fgEventSegs: segRes.fg,
-      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, props.eventUiBases, slicerArgs),
-      eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, dateProfile, nextDayThreshold, slicerArgs),
-      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, dateProfile, nextDayThreshold, slicerArgs),
-      isRigid: props.isRigid
-    })
   }
 
   prepareHits() {
@@ -114,16 +94,18 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
 SimpleDayGrid.prototype.isInteractable = true
 
 
-export function sliceDayGridSegs(range: DateRange, slicerArgs: SimpleDayGridSlicerArgs): DayGridSeg[] {
-  let { dayTable, isRtl } = slicerArgs
+export class DayGridSlicer extends Slicer<DayGridSeg, [DayTable, boolean]> {
 
-  return dayTable.sliceRange(range).map(function(seg) {
-    return {
-      isStart: seg.isStart,
-      isEnd: seg.isEnd,
-      row: seg.row,
-      leftCol: isRtl ? (dayTable.colCnt - 1 - seg.lastCol) : seg.firstCol,
-      rightCol: isRtl ? (dayTable.colCnt - 1 - seg.firstCol) : seg.lastCol
-    }
-  })
+  sliceRange(dateRange: DateRange, dayTable: DayTable, isRtl: boolean): DayGridSeg[] {
+    return dayTable.sliceRange(dateRange).map(function(seg) {
+      return {
+        isStart: seg.isStart,
+        isEnd: seg.isEnd,
+        row: seg.row,
+        leftCol: isRtl ? (dayTable.colCnt - 1 - seg.lastCol) : seg.firstCol,
+        rightCol: isRtl ? (dayTable.colCnt - 1 - seg.firstCol) : seg.lastCol
+      }
+    })
+  }
+
 }

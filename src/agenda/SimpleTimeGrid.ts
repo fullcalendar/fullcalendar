@@ -9,8 +9,8 @@ import reselector from '../util/reselector'
 import { intersectRanges, DateRange } from '../datelib/date-range'
 import DayTable from '../common/DayTable'
 import { DateEnv } from '../datelib/env'
-import { DateMarker, addMs } from '../datelib/marker'
-import { Slicer, memoizeSlicer } from '../common/slicing-utils'
+import { DateMarker } from '../datelib/marker'
+import Slicer from '../common/slicing-utils'
 import OffsetTracker from '../common/OffsetTracker'
 import { Hit } from '../interactions/HitDragging'
 
@@ -26,19 +26,14 @@ export interface SimpleTimeGridProps {
   eventResize: EventInteractionState | null
 }
 
-export interface SimpleTimeGridSlicerArgs {
-  component: TimeGrid // TODO: kill
-  dayRanges: DateRange[]
-}
-
 export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
 
   timeGrid: TimeGrid
-  dayRanges: DateRange[]
+  dayRanges: DateRange[] // for now indicator
   offsetTracker: OffsetTracker
 
   private buildDayRanges = reselector(buildDayRanges)
-  private slicer = memoizeSlicer(new Slicer(sliceTimeGridSegs))
+  private slicer = new TimeGridSlicer()
 
   constructor(context, timeGrid: TimeGrid) {
     super(context, timeGrid.el)
@@ -47,40 +42,20 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   }
 
   render(props: SimpleTimeGridProps) {
-    let { slicer } = this
     let { dateProfile, dayTable } = props
-
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
-    let slicerArgs: SimpleTimeGridSlicerArgs = { dayRanges, component: this.timeGrid }
-    let segRes = slicer.eventStoreToSegs(
-      props.eventStore,
-      props.eventUiBases,
-      dateProfile,
-      null,
-      slicerArgs
-    )
 
-    this.timeGrid.receiveProps({
-      dateProfile,
-      cells: dayTable.cells[0],
-      businessHourSegs: slicer.businessHoursToSegs(props.businessHours, dateProfile, null, slicerArgs),
-      bgEventSegs: segRes.bg,
-      fgEventSegs: segRes.fg,
-      dateSelectionSegs: slicer.selectionToSegs(props.dateSelection, props.eventUiBases, slicerArgs),
-      eventSelection: props.eventSelection,
-      eventDrag: slicer.buildEventDrag(props.eventDrag, props.eventUiBases, dateProfile, null, slicerArgs),
-      eventResize: slicer.buildEventResize(props.eventResize, props.eventUiBases, dateProfile, null, slicerArgs)
-    })
+    this.timeGrid.receiveProps(
+      Object.assign({}, this.slicer.sliceProps(props, dateProfile, null, this.timeGrid, dayRanges), {
+        dateProfile,
+        cells: dayTable.cells[0]
+      })
+    )
   }
 
-  renderNowIndicator(date: DateMarker) { // TODO: user slicer???
+  renderNowIndicator(date: DateMarker) {
     this.timeGrid.renderNowIndicator(
-      // seg system might be overkill, but it handles scenario where line needs to be rendered
-      //  more than once because of columns with the same date (resources columns for example)
-      sliceTimeGridSegs({
-        start: date,
-        end: addMs(date, 1) // protect against null range
-      }, { dayRanges: this.dayRanges, component: this.timeGrid }),
+      this.slicer.sliceNowDate(date, this.timeGrid, this.dayRanges),
       date
     )
   }
@@ -140,23 +115,27 @@ export function buildDayRanges(dayTable: DayTable, dateProfile: DateProfile, dat
   return ranges
 }
 
-export function sliceTimeGridSegs(range: DateRange, slicerArgs: SimpleTimeGridSlicerArgs): TimeGridSeg[] {
-  let { dayRanges } = slicerArgs
-  let segs: TimeGridSeg[] = []
 
-  for (let col = 0; col < dayRanges.length; col++) {
-    let segRange = intersectRanges(range, dayRanges[col])
+export class TimeGridSlicer extends Slicer<TimeGridSeg, [DateRange[]]> {
 
-    if (segRange) {
-      segs.push({
-        start: segRange.start,
-        end: segRange.end,
-        isStart: segRange.start.valueOf() === range.start.valueOf(),
-        isEnd: segRange.end.valueOf() === range.end.valueOf(),
-        col
-      })
+  sliceRange(range: DateRange, dayRanges: DateRange[]): TimeGridSeg[] {
+    let segs: TimeGridSeg[] = []
+
+    for (let col = 0; col < dayRanges.length; col++) {
+      let segRange = intersectRanges(range, dayRanges[col])
+
+      if (segRange) {
+        segs.push({
+          start: segRange.start,
+          end: segRange.end,
+          isStart: segRange.start.valueOf() === range.start.valueOf(),
+          isEnd: segRange.end.valueOf() === range.end.valueOf(),
+          col
+        })
+      }
     }
+
+    return segs
   }
 
-  return segs
 }
