@@ -1,12 +1,11 @@
 import { DateRange } from '../datelib/date-range'
-import { EventStore } from '../structs/event-store'
+import { EventStore, expandRecurring } from '../structs/event-store'
 import { EventUiHash } from '../component/event-ui'
 import { sliceEventStore, EventRenderRange } from '../component/event-rendering'
 import { DateProfile } from '../DateProfileGenerator'
 import { Seg, EventSegUiInteractionState } from '../component/DateComponent'
 import { DateSpan, fabricateEventRange } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import { sliceBusinessHours } from '../structs/business-hours'
 import DateComponent from '../component/DateComponent'
 import { Duration } from '../datelib/duration'
 import reselector from '../util/reselector'
@@ -44,6 +43,25 @@ export class Slicer<
     this.slice = slice
   }
 
+  businessHoursToSegs (
+    businessHours: EventStore,
+    dateProfile: DateProfile,
+    nextDayThreshold: Duration,
+    otherArgs: OtherArgsType
+  ): SegType[] {
+    if (!businessHours) {
+      return []
+    }
+
+    return this.eventStoreToSegs(
+      expandRecurring(businessHours, dateProfile.activeRange, otherArgs.component.calendar),
+      {},
+      dateProfile,
+      nextDayThreshold,
+      otherArgs
+    ).bg
+  }
+
   eventStoreToSegs(
     eventStore: EventStore,
     eventUiBases: EventUiHash,
@@ -62,27 +80,6 @@ export class Slicer<
     } else {
       return { bg: [], fg: [] }
     }
-  }
-
-  businessHoursToSegs (
-    businessHours: EventStore,
-    dateProfile: DateProfile,
-    nextDayThreshold: Duration,
-    otherArgs: OtherArgsType
-  ): SegType[] {
-    if (!businessHours) {
-      return []
-    }
-
-    return this.eventRangesToCompleteSegs(
-      sliceBusinessHours(
-        businessHours,
-        dateProfile.activeRange,
-        nextDayThreshold,
-        otherArgs.component.calendar
-      ),
-      otherArgs
-    )
   }
 
   dateSpanToCompleteSegs(

@@ -9,7 +9,7 @@ export const internalApiVersion = 12
 // types
 export { OptionsInput } from './types/input-types'
 export { EventInput, EventDef, EventInstance, EventInstanceHash } from './structs/event'
-export { BusinessHoursInput, sliceBusinessHours, parseBusinessHours } from './structs/business-hours'
+export { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
 export {
   applyAll,
