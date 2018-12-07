@@ -17,7 +17,7 @@ export interface SplittableProps {
 
 export const EMPTY_PROPS: SplittableProps = {
   dateSelection: null,
-  eventStore: createEmptyEventStore(),
+  eventStore: createEmptyEventStore(), // TODO: keep empty store elsewhere. const will replace createEmptyEventStore
   eventUiBases: {},
   eventSelection: '',
   eventDrag: null,

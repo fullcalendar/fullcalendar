@@ -494,6 +494,7 @@ export default class Calendar {
     return eventUiBases
   }, [
     // equality funcs. KEEP UP TO DATE with method signature!
+    // TODO: reverse-memoization on eventUiBySource will solve this!!!
     null, null, isPropsEqual
   ])
 

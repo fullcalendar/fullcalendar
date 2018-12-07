@@ -113,6 +113,7 @@ export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Cal
   }
 }
 
+// prevent against problems with <2 args!
 export function combineEventUis(uis: EventUi[]): EventUi {
   return uis.reduce(combineTwoEventUis)
 }
