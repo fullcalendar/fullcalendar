@@ -36,7 +36,7 @@ export {
   isArraysEqual
 } from './util/array'
 
-export { default as reselector } from './util/reselector'
+export { default as reselector, memoizeInBatch } from './util/reselector'
 export { memoizeRendering, MemoizedRendering } from './component/memoized-rendering'
 
 export {
