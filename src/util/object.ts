@@ -95,7 +95,10 @@ export function filterHash(hash, func) {
 }
 
 
-export function mapHash(hash, func) {
+export function mapHash<InputItem, OutputItem>(
+  hash: { [key: string]: InputItem },
+  func: (input: InputItem, key: string) => OutputItem
+): { [key: string]: OutputItem } {
   let newHash = {}
 
   for (let key in hash) {
