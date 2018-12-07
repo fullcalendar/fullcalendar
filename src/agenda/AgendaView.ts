@@ -9,6 +9,7 @@ import SimpleTimeGrid from './SimpleTimeGrid'
 import SimpleDayGrid from '../basic/SimpleDayGrid'
 import reselector from '../util/reselector'
 import { ViewProps } from '../View'
+import { EMPTY_PROPS } from '../component/event-splitting'
 
 
 export default class AgendaView extends AbstractAgendaView {
@@ -72,7 +73,7 @@ export default class AgendaView extends AbstractAgendaView {
     }
 
     this.simpleTimeGrid.receiveProps(
-      Object.assign({}, splitProps['timed'] || splitProps[''], {
+      Object.assign({}, splitProps['timed'] || EMPTY_PROPS, {
         dateProfile,
         dayTable,
         businessHours
@@ -81,7 +82,7 @@ export default class AgendaView extends AbstractAgendaView {
 
     if (this.simpleDayGrid) {
       this.simpleDayGrid.receiveProps(
-        Object.assign({}, splitProps['allDay'] || splitProps[''], {
+        Object.assign({}, splitProps['allDay'] || EMPTY_PROPS, {
           dateProfile,
           dayTable,
           businessHours,

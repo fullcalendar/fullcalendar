@@ -3,7 +3,7 @@ import { EventDef } from '../structs/event'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { mapHash } from '../util/object'
 import reselector from '../util/reselector'
-import { EventUiHash, EventUi, combineEventUis } from './event-ui'
+import { EventUiHash } from './event-ui'
 import { DateSpan } from '../structs/date-span'
 
 export interface SplittableProps {
@@ -13,6 +13,15 @@ export interface SplittableProps {
   eventSelection: string
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
+}
+
+export const EMPTY_PROPS: SplittableProps = {
+  dateSelection: null,
+  eventStore: createEmptyEventStore(),
+  eventUiBases: {},
+  eventSelection: '',
+  eventDrag: null,
+  eventResize: null
 }
 
 export default abstract class Splitter<ExtraArgs extends any[] = []> {
@@ -27,30 +36,23 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
   abstract getKeysForDateSpan(dateSpan: DateSpan, ...extraArgs: ExtraArgs): string[]
   abstract getKeysForEventDef(eventDef: EventDef, ...extraArgs: ExtraArgs): string[]
 
-  protected getEventUiBaseForKey(key: string, ...extraArgs: ExtraArgs): EventUi[] {
-    return []
-  }
-
-  /*
-  will always create a default '' hash
-  */
   splitProps(props: SplittableProps, ...extraArgs: ExtraArgs): { [key: string]: SplittableProps } {
     let dateSelections = this.splitDateSelection(props.dateSelection, ...extraArgs)
     let keysByDefId = this.getKeysForEventDefs(props.eventStore, ...extraArgs)
     let eventStores = this.splitEventStore(props.eventStore, keysByDefId)
-    let eventUiBases = this.splitEventUiBases(props.eventUiBases, keysByDefId, ...extraArgs)
+    let eventUiBases = this.splitEventUiBases(props.eventUiBases, keysByDefId)
     let eventDrags = this.splitEventDrag(props.eventDrag, keysByDefId, ...extraArgs)
     let eventResizes = this.splitEventResize(props.eventResize, keysByDefId, ...extraArgs)
     let splitProps: { [key: string]: SplittableProps } = {}
 
     let populate = function(key: string) {
       if (!splitProps[key]) {
-        let eventStore = eventStores[key] || createEmptyEventStore()
+        let eventStore = eventStores[key] || EMPTY_PROPS.eventStore
 
         splitProps[key] = {
           dateSelection: dateSelections[key] || null,
           eventStore,
-          eventUiBases: eventUiBases[key] || eventUiBases[''],
+          eventUiBases: eventUiBases[key] || {},
           eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
           eventDrag: eventDrags[key] || null,
           eventResize: eventResizes[key] || null
@@ -60,7 +62,7 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
 
     for (let key in dateSelections) { populate(key) }
     for (let key in eventStores) { populate(key) }
-    for (let key in eventUiBases) { populate(key) } // guaranteed to create the '' hash
+    for (let key in eventUiBases) { populate(key) }
     for (let key in eventDrags) { populate(key) }
     for (let key in eventResizes) { populate(key) }
 
@@ -116,10 +118,7 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
     return splitStores
   }
 
-  /*
-  will always create a default '' hash
-  */
-  private _splitEventUiBases(eventUiBases: EventUiHash, keysByDefId, ...extraArgs: ExtraArgs): { [key: string]: EventUiHash } {
+  private _splitEventUiBases(eventUiBases: EventUiHash, keysByDefId): { [key: string]: EventUiHash } {
     let universalEventUiBase = eventUiBases['']
     let splitHashes: { [key: string]: EventUiHash } = {}
 
@@ -136,22 +135,10 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
       }
     }
 
-    for (let key in splitHashes) {
-      let partsForKey = this.getEventUiBaseForKey(key, ...extraArgs)
-
-      if (universalEventUiBase) {
-        partsForKey.unshift(universalEventUiBase) // put at beginning. lower precedence
-      }
-
-      if (partsForKey.length) {
-        splitHashes[key][''] = combineEventUis(partsForKey)
-      }
-    }
-
     if (universalEventUiBase) {
-      splitHashes[''] = { '': universalEventUiBase }
-    } else {
-      splitHashes[''] = {}
+      for (let key in splitHashes) {
+        splitHashes[key][''] = universalEventUiBase
+      }
     }
 
     return splitHashes

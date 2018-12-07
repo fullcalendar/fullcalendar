@@ -61,9 +61,8 @@ export {
 } from './util/dom-manip'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
-export { hasBgRendering } from './component/event-rendering'
 export { EventUiHash, EventUi, processScopedUiProps, ScopedEventUiInput, combineEventUis } from './component/event-ui'
-export { default as Splitter } from './component/event-splitting'
+export { default as Splitter, SplittableProps, EMPTY_PROPS } from './component/event-splitting'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
 
 export {
@@ -154,7 +153,7 @@ export { default as OffsetTracker } from './common/OffsetTracker'
 export { default as DaySeries } from './common/DaySeries'
 
 export { EventInteractionState } from './interactions/event-interaction-state'
-export { EventRenderRange, sliceEventStore } from './component/event-rendering'
+export { EventRenderRange, sliceEventStore, hasBgRendering } from './component/event-rendering'
 
 export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
 
