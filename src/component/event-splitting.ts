@@ -7,7 +7,7 @@ import { EventUiHash } from './event-ui'
 import { DateSpan } from '../structs/date-span'
 
 export interface SplittableProps {
-  dateSelection: DateSpan
+  dateSelection: DateSpan | null
   eventStore: EventStore
   eventUiBases: EventUiHash
   eventSelection: string

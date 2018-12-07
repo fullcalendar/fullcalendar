@@ -48,15 +48,16 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     component: DateComponent<any>, // TODO: kill
     ...extraArgs: ExtraArgs
   ): SlicedProps<SegType> {
-    let eventSegs = this.sliceEventStore(props.eventStore, props.eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs)
+    let { eventUiBases } = props
+    let eventSegs = this.sliceEventStore(props.eventStore, eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs)
 
     return {
-      dateSelectionSegs: this.sliceDateSelection(props.dateSelection, props.eventUiBases, component, ...extraArgs),
+      dateSelectionSegs: this.sliceDateSelection(props.dateSelection, eventUiBases, component, ...extraArgs),
       businessHourSegs: this.sliceBusinessHours(props.businessHours, dateProfile, nextDayThreshold, component, ...extraArgs),
       fgEventSegs: eventSegs.fg,
       bgEventSegs: eventSegs.bg,
-      eventDrag: this.sliceEventDrag(props.eventDrag, props.eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs),
-      eventResize: this.sliceEventResize(props.eventResize, props.eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs),
+      eventDrag: this.sliceEventDrag(props.eventDrag, eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs),
+      eventResize: this.sliceEventResize(props.eventResize, eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs),
       eventSelection: props.eventSelection
     }
   }
