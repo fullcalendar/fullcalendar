@@ -15,9 +15,11 @@ export interface SplittableProps {
   eventResize: EventInteractionState | null
 }
 
+const EMPTY_EVENT_STORE = createEmptyEventStore() // for purecomponents. TODO: keep elsewhere
+
 export const EMPTY_PROPS: SplittableProps = {
   dateSelection: null,
-  eventStore: createEmptyEventStore(), // TODO: keep empty store elsewhere. const will replace createEmptyEventStore
+  eventStore: EMPTY_EVENT_STORE,
   eventUiBases: {},
   eventSelection: '',
   eventDrag: null,
@@ -42,14 +44,13 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
   }
 
   splitProps(props: PropsType): { [key: string]: SplittableProps } {
+    let oldKeyEventUiMergers = this.keyEventUiMergers
+    let keyEventUiMergers = this.keyEventUiMergers = {}
 
     let dateSelections = this.splitDateSelection(props.dateSelection)
     let keysByDefId = this.getKeysForEventDefs(props.eventStore)
-
     let keyEventUis = this.getKeyEventUis(props)
     let eventUiBases = this.splitEventUiBases(props.eventUiBases, keysByDefId)
-    eventUiBases = this.injectKeyEventUis(eventUiBases, keyEventUis)
-
     let eventStores = this.splitEventStore(props.eventStore, keysByDefId)
     let eventDrags = this.splitEventDrag(props.eventDrag, keysByDefId)
     let eventResizes = this.splitEventResize(props.eventResize, keysByDefId)
@@ -58,11 +59,12 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     let populate = function(key: string) {
       if (!splitProps[key]) {
         let eventStore = eventStores[key] || EMPTY_PROPS.eventStore
+        keyEventUiMergers[key] = oldKeyEventUiMergers[key] || reselector(mergeKeyEventUi)
 
         splitProps[key] = {
           dateSelection: dateSelections[key] || null,
           eventStore,
-          eventUiBases: eventUiBases[key] || {},
+          eventUiBases: keyEventUiMergers[key](eventUiBases[key], keyEventUis[key]),
           eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
           eventDrag: eventDrags[key] || null,
           eventResize: eventResizes[key] || null
@@ -72,7 +74,6 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
 
     for (let key in dateSelections) { populate(key) }
     for (let key in eventStores) { populate(key) }
-    for (let key in eventUiBases) { populate(key) }
     for (let key in eventDrags) { populate(key) }
     for (let key in eventResizes) { populate(key) }
 
@@ -157,19 +158,6 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return splitHashes
   }
 
-  /*
-  eventUiBases's PROPS are unique references, not the whole object itself
-  */
-  private injectKeyEventUis(eventUiBases: { [key: string]: EventUiHash }, keyEventUis: EventUiHash): { [key: string]: EventUiHash } {
-    this.keyEventUiMergers = mapHash(eventUiBases, (eventUiBase, key) => {
-      return this.keyEventUiMergers[key] || reselector(mergeKeyEventUi)
-    })
-
-    return mapHash(this.keyEventUiMergers, function(mergeKeyEventUi, key) {
-      return mergeKeyEventUi(eventUiBases[key], keyEventUis[key])
-    })
-  }
-
   private _splitInteraction(interaction: EventInteractionState | null, keysByDefId): { [key: string]: EventInteractionState } {
     let splitStates: { [key: string]: EventInteractionState } = {}
 
@@ -183,8 +171,8 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
       let populate = function(key) {
         if (!splitStates[key]) {
           splitStates[key] = {
-            affectedEvents: affectedStores[key] || createEmptyEventStore(),
-            mutatedEvents: mutatedStores[key] || createEmptyEventStore(),
+            affectedEvents: affectedStores[key] || EMPTY_EVENT_STORE,
+            mutatedEvents: mutatedStores[key] || EMPTY_EVENT_STORE,
             isEvent: interaction.isEvent,
             origSeg: interaction.origSeg
           }
@@ -209,13 +197,21 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
 
 
 function mergeKeyEventUi(eventUiBase: EventUiHash, eventUiForKey?: EventUi): EventUiHash {
-  if (eventUiForKey) {
-    return Object.assign({}, eventUiBase, {
-      '': eventUiBase[''] ?
-        combineEventUis([ eventUiBase[''], eventUiForKey ]) :
-        eventUiForKey
-    })
+  let parts = []
+
+  if (!eventUiBase) {
+    eventUiBase = {}
   }
 
-  return eventUiBase
+  if (eventUiBase['']) {
+    parts.push(eventUiBase[''])
+  }
+
+  if (eventUiForKey) {
+    parts.push(eventUiForKey)
+  }
+
+  return Object.assign(eventUiBase, {
+    '': combineEventUis(parts)
+  })
 }

@@ -59,7 +59,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
       eventDrag: this.sliceEventDrag(props.eventDrag, eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs),
       eventResize: this.sliceEventResize(props.eventResize, eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs),
       eventSelection: props.eventSelection
-    }
+    } // TODO: give interactionSegs?
   }
 
   sliceNowDate( // does not memoize

@@ -113,9 +113,21 @@ export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Cal
   }
 }
 
+const EMPTY_EVENT_UI: EventUi = {
+  startEditable: null,
+  durationEditable: null,
+  constraints: [],
+  overlaps: [],
+  allows: [],
+  backgroundColor: '',
+  borderColor: '',
+  textColor: '',
+  classNames: []
+}
+
 // prevent against problems with <2 args!
 export function combineEventUis(uis: EventUi[]): EventUi {
-  return uis.reduce(combineTwoEventUis)
+  return uis.reduce(combineTwoEventUis, EMPTY_EVENT_UI)
 }
 
 function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 has higher precedence
