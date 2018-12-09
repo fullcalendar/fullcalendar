@@ -36,7 +36,7 @@ export {
   isArraysEqual
 } from './util/array'
 
-export { default as reselector, memoizeInBatch } from './util/reselector'
+export { default as reselector } from './util/reselector'
 export { memoizeRendering, MemoizedRendering } from './component/memoized-rendering'
 
 export {
@@ -97,7 +97,7 @@ export { default as AgendaView, buildDayTable as buildAgendaDayTable } from './a
 export { default as AbstractAgendaView} from './agenda/AbstractAgendaView'
 export { default as AbstractBasicView} from './basic/AbstractBasicView'
 export { default as TimeGrid, TimeGridSeg } from './agenda/TimeGrid'
-export { TimeGridSlicer } from './agenda/SimpleTimeGrid'
+export { TimeGridSlicer, buildDayRanges } from './agenda/SimpleTimeGrid'
 export { DayGridSlicer } from './basic/SimpleDayGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
 export { default as BasicView, buildDayTable as buildBasicDayTable } from './basic/BasicView'
@@ -157,6 +157,6 @@ export { EventRenderRange, sliceEventStore, hasBgRendering } from './component/e
 
 export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
 
-export { default as Slicer } from './common/slicing-utils'
+export { default as Slicer, SlicedProps } from './common/slicing-utils'
 
 export { EventMutation } from './structs/event-mutation'

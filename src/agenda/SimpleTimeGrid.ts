@@ -29,10 +29,10 @@ export interface SimpleTimeGridProps {
 export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
 
   timeGrid: TimeGrid
-  dayRanges: DateRange[] // for now indicator
   offsetTracker: OffsetTracker
 
   private buildDayRanges = reselector(buildDayRanges)
+  private dayRanges: DateRange[] // for now indicator
   private slicer = new TimeGridSlicer()
 
   constructor(context, timeGrid: TimeGrid) {

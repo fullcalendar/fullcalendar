@@ -3,7 +3,7 @@ import { EventDef } from '../structs/event'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { mapHash } from '../util/object'
 import reselector from '../util/reselector'
-import { EventUiHash } from './event-ui'
+import { EventUiHash, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
 
 export interface SplittableProps {
@@ -24,7 +24,7 @@ export const EMPTY_PROPS: SplittableProps = {
   eventResize: null
 }
 
-export default abstract class Splitter<ExtraArgs extends any[] = []> {
+export default abstract class Splitter<PropsType extends SplittableProps = SplittableProps> {
 
   private getKeysForEventDefs = reselector(this._getKeysForEventDefs)
   private splitDateSelection = reselector(this._splitDateSpan)
@@ -32,17 +32,27 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
   private splitEventUiBases = reselector(this._splitEventUiBases)
   private splitEventDrag = reselector(this._splitInteraction)
   private splitEventResize = reselector(this._splitInteraction)
+  protected keyEventUiMergers: { [key: string]: typeof mergeKeyEventUi } = {}
 
-  abstract getKeysForDateSpan(dateSpan: DateSpan, ...extraArgs: ExtraArgs): string[]
-  abstract getKeysForEventDef(eventDef: EventDef, ...extraArgs: ExtraArgs): string[]
+  abstract getKeysForDateSpan(dateSpan: DateSpan): string[]
+  abstract getKeysForEventDef(eventDef: EventDef): string[]
 
-  splitProps(props: SplittableProps, ...extraArgs: ExtraArgs): { [key: string]: SplittableProps } {
-    let dateSelections = this.splitDateSelection(props.dateSelection, ...extraArgs)
-    let keysByDefId = this.getKeysForEventDefs(props.eventStore, ...extraArgs)
-    let eventStores = this.splitEventStore(props.eventStore, keysByDefId)
+  getKeyEventUis(props: PropsType): EventUiHash {
+    return {}
+  }
+
+  splitProps(props: PropsType): { [key: string]: SplittableProps } {
+
+    let dateSelections = this.splitDateSelection(props.dateSelection)
+    let keysByDefId = this.getKeysForEventDefs(props.eventStore)
+
+    let keyEventUis = this.getKeyEventUis(props)
     let eventUiBases = this.splitEventUiBases(props.eventUiBases, keysByDefId)
-    let eventDrags = this.splitEventDrag(props.eventDrag, keysByDefId, ...extraArgs)
-    let eventResizes = this.splitEventResize(props.eventResize, keysByDefId, ...extraArgs)
+    eventUiBases = this.injectKeyEventUis(eventUiBases, keyEventUis)
+
+    let eventStores = this.splitEventStore(props.eventStore, keysByDefId)
+    let eventDrags = this.splitEventDrag(props.eventDrag, keysByDefId)
+    let eventResizes = this.splitEventResize(props.eventResize, keysByDefId)
     let splitProps: { [key: string]: SplittableProps } = {}
 
     let populate = function(key: string) {
@@ -69,11 +79,11 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
     return splitProps
   }
 
-  private _splitDateSpan(dateSpan: DateSpan | null, ...extraArgs: ExtraArgs) {
+  private _splitDateSpan(dateSpan: DateSpan | null) {
     let dateSpans = {}
 
     if (dateSpan) {
-      let keys = this.getKeysForDateSpan(dateSpan, ...extraArgs)
+      let keys = this.getKeysForDateSpan(dateSpan)
 
       for (let key of keys) {
         dateSpans[key] = dateSpan
@@ -83,9 +93,9 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
     return dateSpans
   }
 
-  private _getKeysForEventDefs(eventStore: EventStore, ...extraArgs: ExtraArgs) {
+  private _getKeysForEventDefs(eventStore: EventStore) {
     return mapHash(eventStore.defs, (eventDef: EventDef) => {
-      return this.getKeysForEventDef(eventDef, ...extraArgs)
+      return this.getKeysForEventDef(eventDef)
     })
   }
 
@@ -118,6 +128,9 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
     return splitStores
   }
 
+  /*
+  TODO: can we make EventConfigBase: { all: EventConfig, byDefId: EventConfigHash }
+  */
   private _splitEventUiBases(eventUiBases: EventUiHash, keysByDefId): { [key: string]: EventUiHash } {
     let universalEventUiBase = eventUiBases['']
     let splitHashes: { [key: string]: EventUiHash } = {}
@@ -144,14 +157,27 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
     return splitHashes
   }
 
-  private _splitInteraction(interaction: EventInteractionState | null, keysByDefId, ...extraArgs: ExtraArgs): { [key: string]: EventInteractionState } {
+  /*
+  eventUiBases's PROPS are unique references, not the whole object itself
+  */
+  private injectKeyEventUis(eventUiBases: { [key: string]: EventUiHash }, keyEventUis: EventUiHash): { [key: string]: EventUiHash } {
+    this.keyEventUiMergers = mapHash(eventUiBases, (eventUiBase, key) => {
+      return this.keyEventUiMergers[key] || reselector(mergeKeyEventUi)
+    })
+
+    return mapHash(this.keyEventUiMergers, function(mergeKeyEventUi, key) {
+      return mergeKeyEventUi(eventUiBases[key], keyEventUis[key])
+    })
+  }
+
+  private _splitInteraction(interaction: EventInteractionState | null, keysByDefId): { [key: string]: EventInteractionState } {
     let splitStates: { [key: string]: EventInteractionState } = {}
 
     if (interaction) {
       let affectedStores = this._splitEventStore(interaction.affectedEvents, keysByDefId)
 
       // can't rely on keysByDefId because event data is mutated
-      let mutatedKeysByDefId = this._getKeysForEventDefs(interaction.mutatedEvents, ...extraArgs)
+      let mutatedKeysByDefId = this._getKeysForEventDefs(interaction.mutatedEvents)
       let mutatedStores = this._splitEventStore(interaction.mutatedEvents, mutatedKeysByDefId)
 
       let populate = function(key) {
@@ -177,4 +203,19 @@ export default abstract class Splitter<ExtraArgs extends any[] = []> {
     return splitStates
   }
 
+}
+
+// TODO: move all above methods to be normal functions?
+
+
+function mergeKeyEventUi(eventUiBase: EventUiHash, eventUiForKey?: EventUi): EventUiHash {
+  if (eventUiForKey) {
+    return Object.assign({}, eventUiBase, {
+      '': eventUiBase[''] ?
+        combineEventUis([ eventUiBase[''], eventUiForKey ]) :
+        eventUiForKey
+    })
+  }
+
+  return eventUiBase
 }
