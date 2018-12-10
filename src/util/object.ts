@@ -120,21 +120,10 @@ export function arrayToHash(a): { [key: string]: true } {
 }
 
 
-export type EqualityFuncHash = { [propName: string]: (obj0, obj1) => boolean }
+export function isPropsEqual(obj0, obj1): boolean {
 
-export function isPropsEqual(obj0, obj1, equalities: EqualityFuncHash = {}): boolean {
   for (let key in obj0) {
-    let val0 = obj0[key]
-    let val1 = obj1[key]
-
-    if (
-      val0 !== val1 &&
-      !(
-        equalities[key] &&
-        val1 !== undefined && // we already know val0 exists
-        equalities[key](val0, val1)
-      )
-    ) {
+    if (obj0[key] !== obj1[key]) {
       return false
     }
   }
