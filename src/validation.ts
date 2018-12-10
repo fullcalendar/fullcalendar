@@ -5,6 +5,7 @@ import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event
 import { rangeContainsRange, rangesIntersect } from './datelib/date-range'
 import EventApi from './api/EventApi'
 import { EventUiHash } from './component/event-ui'
+import { compileEventUis } from './component/event-rendering';
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
@@ -20,7 +21,9 @@ interface ValidationEntity {
   allows: Allow[]
 }
 
-export function isEventsValid(eventStore: EventStore, eventUis: EventUiHash, calendar: Calendar): boolean {
+export function isEventsValid(eventStore: EventStore, calendar: Calendar): boolean {
+  let eventUis = compileEventUis(eventStore.defs, calendar.eventUiBases)
+
   return isEntitiesValid(
     eventStoreToEntities(eventStore, eventUis),
     calendar
@@ -57,7 +60,8 @@ function isEntitiesValid(entities: ValidationEntity[], calendar: Calendar): bool
   }
 
   // is this efficient?
-  let eventEntities = eventStoreToEntities(calendar.state.eventStore, calendar.renderableEventUis)
+  let eventUis = compileEventUis(calendar.renderableEventStore.defs, calendar.eventUiBases)
+  let eventEntities = eventStoreToEntities(calendar.state.eventStore, eventUis)
 
   for (let subjectEntity of entities) {
     for (let eventEntity of eventEntities) {

@@ -155,7 +155,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
       }
     }
 
-    return isEventsValid(eventStore, calendar.renderableEventUis, calendar)
+    return isEventsValid(eventStore, calendar)
   }
 
   isSelectionValid(selection: DateSpan): boolean {

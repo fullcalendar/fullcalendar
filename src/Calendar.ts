@@ -30,7 +30,6 @@ import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem, PluginDef } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
-import { compileEventUis } from './component/event-rendering'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -69,9 +68,7 @@ export default class Calendar {
   private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
 
-  // strictly for constraint system
-  eventUiBases: EventUiHash
-  renderableEventUis: EventUiHash
+  eventUiBases: EventUiHash // solely for validation system
 
   optionsManager: OptionsManager
   viewSpecs: ViewSpecHash
@@ -410,11 +407,6 @@ export default class Calendar {
     let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options, this)
     let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
-
-    this.renderableEventUis = compileEventUis(
-      renderableEventStore.defs,
-      eventUiBases
-    )
 
     if (needsFull || !component) {
 
