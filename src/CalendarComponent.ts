@@ -15,6 +15,7 @@ import { createFormatter } from './datelib/formatting'
 import { diffWholeDays } from './datelib/marker'
 import { memoizeRendering } from './component/memoized-rendering'
 import { CalendarState } from './reducers/types'
+import { ViewPropsTransformerClass } from './plugin-system'
 
 export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec
@@ -38,6 +39,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   viewHeight: number
 
   private _renderToolbars = memoizeRendering(this.renderToolbars)
+  private buildViewPropTransformers = reselector(buildViewPropTransformers)
 
 
   constructor(context: ComponentContext, el: HTMLElement) {
@@ -176,18 +178,27 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
     view.title = title // for the API
 
-    view.receiveProps(
-      assignTo({}, props, {
-        dateProfile: props.dateProfile,
-        businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
-        eventStore: props.eventStore,
-        eventUiBases: props.eventUiBases,
-        dateSelection: props.dateSelection,
-        eventSelection: props.eventSelection,
-        eventDrag: props.eventDrag,
-        eventResize: props.eventResize
-      })
-    )
+    let viewProps = {
+      dateProfile: props.dateProfile,
+      businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
+      eventStore: props.eventStore,
+      eventUiBases: props.eventUiBases,
+      dateSelection: props.dateSelection,
+      eventSelection: props.eventSelection,
+      eventDrag: props.eventDrag,
+      eventResize: props.eventResize
+    }
+
+    let transformers = this.buildViewPropTransformers(this.calendar.pluginSystem.hooks.viewPropsTransformers)
+
+    for (let transformer of transformers) {
+      Object.assign(
+        viewProps,
+        transformer.transform(viewProps, viewSpec, props)
+      )
+    }
+
+    view.receiveProps(viewProps)
   }
 
 
@@ -318,4 +329,14 @@ function computeTitleFormat(dateProfile) {
       return { year: 'numeric', month: 'long', day: 'numeric' }
     }
   }
+}
+
+
+// Plugin
+// -----------------------------------------------------------------------------------------------------------------
+
+function buildViewPropTransformers(theClasses: ViewPropsTransformerClass[]) {
+  return theClasses.map(function(theClass) {
+    return new theClass()
+  })
 }

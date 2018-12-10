@@ -6,7 +6,9 @@ import { dateClickApiTransformer, dateSelectionApiTransformer } from './Calendar
 import { dateSelectionTransformer } from './interactions/DateSelecting'
 import { ViewConfigInputHash } from './structs/view-config'
 import { assignTo } from './util/object'
-import { ViewSpecTransformer } from './structs/view-spec'
+import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
+import { ViewProps } from './View'
+import { CalendarComponentProps } from './CalendarComponent'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -21,6 +23,7 @@ export interface PluginDefInput {
   dateSelectionApiTransformers?: dateSelectionApiTransformer[]
   viewConfigs?: ViewConfigInputHash
   viewSpecTransformers?: ViewSpecTransformer[]
+  viewPropsTransformers?: ViewPropsTransformerClass[]
 }
 
 export interface PluginHooks {
@@ -33,12 +36,20 @@ export interface PluginHooks {
   dateSelectionApiTransformers: dateSelectionApiTransformer[]
   viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?
   viewSpecTransformers: ViewSpecTransformer[]
+  viewPropsTransformers: ViewPropsTransformerClass[]
 }
 
 export interface PluginDef extends PluginHooks {
   id: string
   deps: PluginDef[]
 }
+
+export type ViewPropsTransformerClass = new() => ViewPropsTransformer
+
+export interface ViewPropsTransformer {
+  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps): any
+}
+
 
 let uid = 0
 
@@ -54,7 +65,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     dateClickApiTransformers: input.dateClickApiTransformers || [],
     dateSelectionApiTransformers: input.dateSelectionApiTransformers || [],
     viewConfigs: input.viewConfigs || {},
-    viewSpecTransformers: input.viewSpecTransformers || []
+    viewSpecTransformers: input.viewSpecTransformers || [],
+    viewPropsTransformers: input.viewPropsTransformers || []
   }
 }
 
@@ -73,7 +85,8 @@ export class PluginSystem {
       dateClickApiTransformers: [],
       dateSelectionApiTransformers: [],
       viewConfigs: {},
-      viewSpecTransformers: []
+      viewSpecTransformers: [],
+      viewPropsTransformers: []
     }
     this.addedHash = {}
   }
@@ -102,6 +115,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     dateClickApiTransformers: hooks0.dateClickApiTransformers.concat(hooks1.dateClickApiTransformers),
     dateSelectionApiTransformers: hooks0.dateSelectionApiTransformers.concat(hooks1.dateSelectionApiTransformers),
     viewConfigs: assignTo({}, hooks0.viewConfigs, hooks1.viewConfigs),
-    viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers)
+    viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
+    viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers)
   }
 }

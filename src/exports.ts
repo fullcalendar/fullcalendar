@@ -8,7 +8,7 @@ export const internalApiVersion = 12
 
 // types
 export { OptionsInput } from './types/input-types'
-export { EventInput, EventDef, EventInstance, EventInstanceHash } from './structs/event'
+export { EventInput, EventDef, EventDefHash, EventInstance, EventInstanceHash } from './structs/event'
 export { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
 export {
@@ -36,7 +36,7 @@ export {
   isArraysEqual
 } from './util/array'
 
-export { default as reselector } from './util/reselector'
+export { default as reselector, memoizeOutput } from './util/reselector'
 export { memoizeRendering, MemoizedRendering } from './component/memoized-rendering'
 
 export {
@@ -143,8 +143,9 @@ export { globalDefaults } from './options'
 
 export { registerRecurringType, ParsedRecurring } from './structs/recurring-event'
 
-export { createPlugin, PluginDef, PluginDefInput } from './plugin-system'
+export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
+export { CalendarComponentProps } from './CalendarComponent'
 
 export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
 
