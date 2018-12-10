@@ -5,7 +5,7 @@ import { ComponentContext } from '../component/Component'
 import { ViewSpec } from '../structs/view-spec'
 import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
 import { ViewProps } from '../View'
-import reselector from '../util/reselector'
+import { memoize } from '../util/memoize'
 import DaySeries from '../common/DaySeries'
 import DayTable from '../common/DayTable'
 
@@ -15,7 +15,7 @@ export default class BasicView extends AbstractBasicView {
   simpleDayGrid: SimpleDayGrid
   dayTable: DayTable
 
-  private buildDayTable = reselector(buildDayTable)
+  private buildDayTable = memoize(buildDayTable)
 
   constructor(_context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
     super(_context, viewSpec, dateProfileGenerator, parentEl)

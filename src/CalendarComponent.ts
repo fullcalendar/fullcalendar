@@ -9,7 +9,7 @@ import { assignTo } from './util/object';
 import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'
 import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
-import reselector from './util/reselector'
+import { memoize } from './util/memoize'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { createFormatter } from './datelib/formatting'
 import { diffWholeDays } from './datelib/marker'
@@ -39,7 +39,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   viewHeight: number
 
   private _renderToolbars = memoizeRendering(this.renderToolbars)
-  private buildViewPropTransformers = reselector(buildViewPropTransformers)
+  private buildViewPropTransformers = memoize(buildViewPropTransformers)
 
 
   constructor(context: ComponentContext, el: HTMLElement) {
@@ -54,9 +54,9 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
     this.toggleElClassNames(true)
 
-    this.computeTitle = reselector(computeTitle)
+    this.computeTitle = memoize(computeTitle)
 
-    this.parseBusinessHours = reselector((input) => {
+    this.parseBusinessHours = memoize((input) => {
       return parseBusinessHours(input, this.calendar)
     })
   }

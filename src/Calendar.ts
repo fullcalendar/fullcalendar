@@ -14,7 +14,7 @@ import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
-import reselector, { memoizeOutput } from './util/reselector'
+import { memoize, memoizeOutput } from './util/memoize'
 import { mapHash, assignTo, isPropsEqual } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
@@ -63,11 +63,11 @@ export default class Calendar {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  private buildDateEnv = reselector(buildDateEnv)
-  private buildTheme = reselector(buildTheme)
-  private buildEventUiSingleBase = reselector(processScopedUiProps)
+  private buildDateEnv = memoize(buildDateEnv)
+  private buildTheme = memoize(buildTheme)
+  private buildEventUiSingleBase = memoize(processScopedUiProps)
   private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
-  private buildEventUiBases = reselector(buildEventUiBases)
+  private buildEventUiBases = memoize(buildEventUiBases)
 
   // strictly for constraint system
   eventUiBases: EventUiHash
@@ -99,7 +99,7 @@ export default class Calendar {
   isRendering: boolean = false // currently in the executeRender function?
   renderingPauseDepth: number = 0
   renderableEventStore: EventStore
-  buildDelayedRerender = reselector(buildDelayedRerender)
+  buildDelayedRerender = memoize(buildDelayedRerender)
   delayedRerender: any
   afterSizingTriggers: any = {}
   isViewUpdated: boolean = false
@@ -1180,7 +1180,7 @@ export default class Calendar {
 EmitterMixin.mixInto(Calendar)
 
 
-// for reselectors
+// for memoizers
 // -----------------------------------------------------------------------------------------------------------------
 
 

@@ -5,7 +5,7 @@ import { EventStore } from '../structs/event-store'
 import { EventUiHash } from '../component/event-ui'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
-import reselector from '../util/reselector'
+import { memoize } from '../util/memoize'
 import { intersectRanges, DateRange } from '../datelib/date-range'
 import DayTable from '../common/DayTable'
 import { DateEnv } from '../datelib/env'
@@ -31,7 +31,7 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   timeGrid: TimeGrid
   offsetTracker: OffsetTracker
 
-  private buildDayRanges = reselector(buildDayRanges)
+  private buildDayRanges = memoize(buildDayRanges)
   private dayRanges: DateRange[] // for now indicator
   private slicer = new TimeGridSlicer()
 

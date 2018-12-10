@@ -3,7 +3,7 @@ import { DateMarker, timeAsMs } from './marker'
 import { CalendarSystem } from './calendar-system'
 import { Locale } from './locale'
 import { DateFormatter, DateFormattingContext, ZonedMarker, formatTimeZoneOffset } from './formatting'
-import reselector from '../util/reselector'
+import { memoize } from '../util/memoize'
 
 const EXTENDED_SETTINGS_AND_SEVERITIES = {
   week: 3,
@@ -60,7 +60,7 @@ export class NativeFormatter implements DateFormatter {
     this.extendedSettings = extendedSettings
     this.severity = severity
 
-    this.buildFormattingFunc = reselector(buildFormattingFunc)
+    this.buildFormattingFunc = memoize(buildFormattingFunc)
   }
 
   format(date: ZonedMarker, context: DateFormattingContext) {

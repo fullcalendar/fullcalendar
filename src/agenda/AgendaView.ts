@@ -7,7 +7,7 @@ import DaySeries from '../common/DaySeries'
 import DayTable from '../common/DayTable'
 import SimpleTimeGrid from './SimpleTimeGrid'
 import SimpleDayGrid from '../basic/SimpleDayGrid'
-import reselector from '../util/reselector'
+import { memoize } from '../util/memoize'
 import { ViewProps } from '../View'
 import { EMPTY_PROPS } from '../component/event-splitting'
 
@@ -18,7 +18,7 @@ export default class AgendaView extends AbstractAgendaView {
   simpleDayGrid: SimpleDayGrid
   simpleTimeGrid: SimpleTimeGrid
 
-  private buildDayTable = reselector(buildDayTable)
+  private buildDayTable = memoize(buildDayTable)
 
   constructor(
     _context: ComponentContext,

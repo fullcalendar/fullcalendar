@@ -14,7 +14,7 @@ import { ViewSpec } from '../structs/view-spec'
 import { EventUiHash } from '../component/event-ui'
 import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
 import { EventStore } from '../structs/event-store'
-import reselector from '../util/reselector'
+import { memoize } from '../util/memoize'
 import { MemoizedRendering, memoizeRendering } from '../component/memoized-rendering'
 import { Seg } from '../component/DateComponent'
 
@@ -28,8 +28,8 @@ export default class ListView extends View {
 
   dayDates: DateMarker[] // TOOD: kill this. only have it because ListEventRenderer
 
-  private computeDateVars = reselector(computeDateVars)
-  private eventStoreToSegs = reselector(this._eventStoreToSegs)
+  private computeDateVars = memoize(computeDateVars)
+  private eventStoreToSegs = memoize(this._eventStoreToSegs)
   private renderContent: MemoizedRendering<[Seg[]]>
 
 

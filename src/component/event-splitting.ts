@@ -2,7 +2,7 @@ import { EventStore, createEmptyEventStore } from '../structs/event-store'
 import { EventDef } from '../structs/event'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { mapHash } from '../util/object'
-import reselector from '../util/reselector'
+import { memoize } from '../util/memoize'
 import { EventUiHash, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
 
@@ -28,12 +28,12 @@ export const EMPTY_PROPS: SplittableProps = {
 
 export default abstract class Splitter<PropsType extends SplittableProps = SplittableProps> {
 
-  private getKeysForEventDefs = reselector(this._getKeysForEventDefs)
-  private splitDateSelection = reselector(this._splitDateSpan)
-  private splitEventStore = reselector(this._splitEventStore)
-  private splitEventUiBases = reselector(this._splitEventUiBases)
-  private splitEventDrag = reselector(this._splitInteraction)
-  private splitEventResize = reselector(this._splitInteraction)
+  private getKeysForEventDefs = memoize(this._getKeysForEventDefs)
+  private splitDateSelection = memoize(this._splitDateSpan)
+  private splitEventStore = memoize(this._splitEventStore)
+  private splitEventUiBases = memoize(this._splitEventUiBases)
+  private splitEventDrag = memoize(this._splitInteraction)
+  private splitEventResize = memoize(this._splitInteraction)
   protected keyEventUiMergers: { [key: string]: typeof mergeKeyEventUi } = {}
 
   abstract getKeysForDateSpan(dateSpan: DateSpan): string[]
@@ -59,7 +59,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     let populate = function(key: string) {
       if (!splitProps[key]) {
         let eventStore = eventStores[key] || EMPTY_PROPS.eventStore
-        keyEventUiMergers[key] = oldKeyEventUiMergers[key] || reselector(mergeKeyEventUi)
+        keyEventUiMergers[key] = oldKeyEventUiMergers[key] || memoize(mergeKeyEventUi)
 
         splitProps[key] = {
           dateSelection: dateSelections[key] || null,

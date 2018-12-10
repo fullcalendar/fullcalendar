@@ -8,7 +8,7 @@ import { DateSpan, fabricateEventRange } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import DateComponent from '../component/DateComponent'
 import { Duration } from '../datelib/duration'
-import reselector from '../util/reselector'
+import { memoize } from '../util/memoize'
 import { DateMarker, addMs } from '../datelib/marker'
 
 export interface SliceableProps {
@@ -33,11 +33,11 @@ export interface SlicedProps<SegType extends Seg> {
 
 export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> {
 
-  private sliceBusinessHours = reselector(this._sliceBusinessHours)
-  private sliceDateSelection = reselector(this._sliceDateSpan)
-  private sliceEventStore = reselector(this._sliceEventStore)
-  private sliceEventDrag = reselector(this._sliceInteraction)
-  private sliceEventResize = reselector(this._sliceInteraction)
+  private sliceBusinessHours = memoize(this._sliceBusinessHours)
+  private sliceDateSelection = memoize(this._sliceDateSpan)
+  private sliceEventStore = memoize(this._sliceEventStore)
+  private sliceEventDrag = memoize(this._sliceInteraction)
+  private sliceEventResize = memoize(this._sliceInteraction)
 
   abstract sliceRange(dateRange: DateRange, ...extraArgs: ExtraArgs): SegType[]
 
