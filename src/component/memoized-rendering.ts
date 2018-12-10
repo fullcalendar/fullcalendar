@@ -1,4 +1,4 @@
-import { isArraysEqual, EqualityFuncs } from '../util/array'
+import { isArraysEqual } from '../util/array'
 
 export interface MemoizedRendering<ArgsType extends any[]> {
   (...args: ArgsType): void
@@ -9,8 +9,7 @@ export interface MemoizedRendering<ArgsType extends any[]> {
 export function memoizeRendering<ArgsType extends any[]>(
   renderFunc: (...args: ArgsType) => void,
   unrenderFunc?: (...args: ArgsType) => void,
-  dependencies: MemoizedRendering<any>[] = [],
-  equalityFuncs?: EqualityFuncs
+  dependencies: MemoizedRendering<any>[] = []
 ): MemoizedRendering<ArgsType> {
 
   let dependents: MemoizedRendering<any>[] = []
@@ -33,7 +32,7 @@ export function memoizeRendering<ArgsType extends any[]>(
   }
 
   function res() {
-    if (!prevArgs || !isArraysEqual(prevArgs, arguments, equalityFuncs)) {
+    if (!prevArgs || !isArraysEqual(prevArgs, arguments)) {
       unrender()
       thisContext = this
       prevArgs = arguments

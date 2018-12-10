@@ -1,12 +1,12 @@
-import { isArraysEqual, EqualityFuncs } from './array'
+import { isArraysEqual } from './array'
 
 // TODO: eliminate use of equalityFuncs
-export default function<T>(workerFunc: T, equalityFuncs?: EqualityFuncs): T {
+export default function<T>(workerFunc: T): T {
   let args
   let res
 
   return function() {
-    if (!args || !isArraysEqual(args, arguments, equalityFuncs)) {
+    if (!args || !isArraysEqual(args, arguments)) {
       args = arguments
       res = (workerFunc as any).apply(this, arguments)
     }

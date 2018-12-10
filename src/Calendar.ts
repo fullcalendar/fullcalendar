@@ -14,11 +14,11 @@ import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
-import reselector from './util/reselector'
+import reselector, { memoizeOutput } from './util/reselector'
 import { mapHash, assignTo, isPropsEqual } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
-import { EventSourceInput, parseEventSource } from './structs/event-source'
+import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
 import { EventInput, parseEvent, EventDefHash } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
@@ -30,7 +30,7 @@ import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem, PluginDef } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
-import { compileEventUis } from './component/event-rendering';
+import { compileEventUis } from './component/event-rendering'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -65,6 +65,9 @@ export default class Calendar {
 
   private buildDateEnv = reselector(buildDateEnv)
   private buildTheme = reselector(buildTheme)
+  private buildEventUiSingleBase = reselector(processScopedUiProps)
+  private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
+  private buildEventUiBases = reselector(buildEventUiBases)
 
   // strictly for constraint system
   eventUiBases: EventUiHash
@@ -405,7 +408,7 @@ export default class Calendar {
         state.eventStore
 
     let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options, this)
-    let eventUiBySource: EventUiHash = mapHash(state.eventSources, (eventSource) => eventSource.ui)
+    let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
     this.renderableEventUis = compileEventUis(
@@ -472,31 +475,6 @@ export default class Calendar {
 
     this.releaseAfterSizingTriggers()
   }
-
-
-  private buildEventUiSingleBase = reselector(processScopedUiProps)
-
-  private buildEventUiBases = reselector(function(
-    eventDefs: EventDefHash,
-    eventUiSingleBase: EventUi,
-    eventUiBySource: EventUiHash
-  ) {
-    let eventUiBases: EventUiHash = { '': eventUiSingleBase }
-
-    for (let defId in eventDefs) {
-      let def = eventDefs[defId]
-
-      if (def.sourceId && eventUiBySource[def.sourceId]) {
-        eventUiBases[defId] = eventUiBySource[def.sourceId]
-      }
-    }
-
-    return eventUiBases
-  }, [
-    // equality funcs. KEEP UP TO DATE with method signature!
-    // TODO: reverse-memoization on eventUiBySource will solve this!!!
-    null, null, isPropsEqual
-  ])
 
 
   // Options
@@ -1234,4 +1212,26 @@ function buildDelayedRerender(this: Calendar, wait) {
   }
 
   return func
+}
+
+
+function buildEventUiBySource(eventSources: EventSourceHash): EventUiHash {
+  return mapHash(eventSources, function(eventSource) {
+    return eventSource.ui
+  })
+}
+
+
+function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, eventUiBySource: EventUiHash) {
+  let eventUiBases: EventUiHash = { '': eventUiSingleBase }
+
+  for (let defId in eventDefs) {
+    let def = eventDefs[defId]
+
+    if (def.sourceId && eventUiBySource[def.sourceId]) {
+      eventUiBases[defId] = eventUiBySource[def.sourceId]
+    }
+  }
+
+  return eventUiBases
 }

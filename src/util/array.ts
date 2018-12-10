@@ -32,10 +32,7 @@ export function removeExact(array, exactVal) {
   return removeCnt
 }
 
-
-export type EqualityFuncs = (null | ((obj0, obj1) => boolean))[]
-
-export function isArraysEqual(a0, a1, equalities: EqualityFuncs = []) {
+export function isArraysEqual(a0, a1) {
   let len = a0.length
   let i
 
@@ -44,13 +41,7 @@ export function isArraysEqual(a0, a1, equalities: EqualityFuncs = []) {
   }
 
   for (i = 0; i < len; i++) {
-    if (
-      a0[i] !== a1[i] &&
-      !(
-        equalities[i] &&
-        equalities[i](a0[i], a1[i])
-      )
-    ) {
+    if (a0[i] !== a1[i]) {
       return false
     }
   }
