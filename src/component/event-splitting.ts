@@ -31,10 +31,10 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
   private getKeysForEventDefs = memoize(this._getKeysForEventDefs)
   private splitDateSelection = memoize(this._splitDateSpan)
   private splitEventStore = memoize(this._splitEventStore)
-  private splitEventUiBases = memoize(this._splitEventUiBases)
+  private splitIndividualUi = memoize(this._splitIndividualUi)
   private splitEventDrag = memoize(this._splitInteraction)
   private splitEventResize = memoize(this._splitInteraction)
-  protected keyEventUiMergers: { [key: string]: typeof mergeKeyEventUi } = {}
+  protected eventUiBuilders: { [key: string]: typeof buildEventUiForKey } = {}
 
   abstract getKeysForDateSpan(dateSpan: DateSpan): string[]
   abstract getKeysForEventDef(eventDef: EventDef): string[]
@@ -44,27 +44,27 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
   }
 
   splitProps(props: PropsType): { [key: string]: SplittableProps } {
-    let oldKeyEventUiMergers = this.keyEventUiMergers
-    let keyEventUiMergers = this.keyEventUiMergers = {}
+    let oldEventUiBuilders = this.eventUiBuilders
+    this.eventUiBuilders = {}
 
     let dateSelections = this.splitDateSelection(props.dateSelection)
     let keysByDefId = this.getKeysForEventDefs(props.eventStore)
     let keyEventUis = this.getKeyEventUis(props)
-    let eventUiBases = this.splitEventUiBases(props.eventUiBases, keysByDefId)
+    let individualUi = this.splitIndividualUi(props.eventUiBases, keysByDefId)
     let eventStores = this.splitEventStore(props.eventStore, keysByDefId)
     let eventDrags = this.splitEventDrag(props.eventDrag, keysByDefId)
     let eventResizes = this.splitEventResize(props.eventResize, keysByDefId)
     let splitProps: { [key: string]: SplittableProps } = {}
 
-    let populate = function(key: string) {
+    let populate = (key: string) => {
       if (!splitProps[key]) {
         let eventStore = eventStores[key] || EMPTY_PROPS.eventStore
-        keyEventUiMergers[key] = oldKeyEventUiMergers[key] || memoize(mergeKeyEventUi)
+        let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(buildEventUiForKey)
 
         splitProps[key] = {
           dateSelection: dateSelections[key] || null,
           eventStore,
-          eventUiBases: keyEventUiMergers[key](eventUiBases[key], keyEventUis[key]),
+          eventUiBases: buildEventUi(props.eventUiBases[''], keyEventUis[key], individualUi[key]),
           eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
           eventDrag: eventDrags[key] || null,
           eventResize: eventResizes[key] || null
@@ -129,11 +129,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return splitStores
   }
 
-  /*
-  TODO: can we make EventConfigBase: { all: EventConfig, byDefId: EventConfigHash }
-  */
-  private _splitEventUiBases(eventUiBases: EventUiHash, keysByDefId): { [key: string]: EventUiHash } {
-    let universalEventUiBase = eventUiBases['']
+  private _splitIndividualUi(eventUiBases: EventUiHash, keysByDefId): { [key: string]: EventUiHash } {
     let splitHashes: { [key: string]: EventUiHash } = {}
 
     for (let defId in eventUiBases) {
@@ -146,12 +142,6 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
 
           splitHashes[key][defId] = eventUiBases[defId]
         }
-      }
-    }
-
-    if (universalEventUiBase) {
-      for (let key in splitHashes) {
-        splitHashes[key][''] = universalEventUiBase
       }
     }
 
@@ -196,22 +186,24 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
 // TODO: move all above methods to be normal functions?
 
 
-function mergeKeyEventUi(eventUiBase: EventUiHash, eventUiForKey?: EventUi): EventUiHash {
-  let parts = []
+function buildEventUiForKey(allUi?: EventUi, eventUiForKey?: EventUi, individualUi?: EventUiHash) {
+  let baseParts = []
 
-  if (!eventUiBase) {
-    eventUiBase = {}
-  }
-
-  if (eventUiBase['']) {
-    parts.push(eventUiBase[''])
+  if (allUi) {
+    baseParts.push(allUi)
   }
 
   if (eventUiForKey) {
-    parts.push(eventUiForKey)
+    baseParts.push(eventUiForKey)
   }
 
-  return Object.assign(eventUiBase, {
-    '': combineEventUis(parts)
-  })
+  let stuff = {
+    '': combineEventUis(baseParts)
+  }
+
+  if (individualUi) {
+    Object.assign(stuff, individualUi)
+  }
+
+  return stuff
 }
