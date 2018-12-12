@@ -37,12 +37,12 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     this.eventUiBuilders = {}
 
     let keyInfos = this.getKeyInfo(props)
-    let defIdKeys = this.getKeysForEventDefs(props.eventStore)
+    let defKeys = this.getKeysForEventDefs(props.eventStore)
     let dateSelections = this.splitDateSelection(props.dateSelection)
-    let individualUi = this.splitIndividualUi(props.eventUiBases, defIdKeys)
-    let eventStores = this.splitEventStore(props.eventStore, defIdKeys)
-    let eventDrags = this.splitEventDrag(props.eventDrag, defIdKeys)
-    let eventResizes = this.splitEventResize(props.eventResize, defIdKeys)
+    let individualUi = this.splitIndividualUi(props.eventUiBases, defKeys)
+    let eventStores = this.splitEventStore(props.eventStore, defKeys)
+    let eventDrags = this.splitEventDrag(props.eventDrag, defKeys)
+    let eventResizes = this.splitEventResize(props.eventResize, defKeys)
     let splitProps: { [key: string]: SplittableProps } = {}
 
     for (let key in keyInfos) {
@@ -84,12 +84,12 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     })
   }
 
-  private _splitEventStore(eventStore: EventStore, keysByDefId): { [key: string]: EventStore } {
+  private _splitEventStore(eventStore: EventStore, defKeys): { [key: string]: EventStore } {
     let { defs, instances } = eventStore
     let splitStores = {}
 
     for (let defId in defs) {
-      for (let key of keysByDefId[defId]) {
+      for (let key of defKeys[defId]) {
 
         if (!splitStores[key]) {
           splitStores[key] = createEmptyEventStore()
@@ -102,7 +102,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     for (let instanceId in instances) {
       let instance = instances[instanceId]
 
-      for (let key of keysByDefId[instance.defId]) {
+      for (let key of defKeys[instance.defId]) {
 
         if (splitStores[key]) { // must have already been created
           splitStores[key].instances[instanceId] = instance
@@ -113,12 +113,12 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return splitStores
   }
 
-  private _splitIndividualUi(eventUiBases: EventUiHash, keysByDefId): { [key: string]: EventUiHash } {
+  private _splitIndividualUi(eventUiBases: EventUiHash, defKeys): { [key: string]: EventUiHash } {
     let splitHashes: { [key: string]: EventUiHash } = {}
 
     for (let defId in eventUiBases) {
       if (defId) { // not the '' key
-        for (let key of keysByDefId[defId]) {
+        for (let key of defKeys[defId]) {
 
           if (!splitHashes[key]) {
             splitHashes[key] = {}
@@ -132,13 +132,13 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return splitHashes
   }
 
-  private _splitInteraction(interaction: EventInteractionState | null, keysByDefId): { [key: string]: EventInteractionState } {
+  private _splitInteraction(interaction: EventInteractionState | null, defKeys): { [key: string]: EventInteractionState } {
     let splitStates: { [key: string]: EventInteractionState } = {}
 
     if (interaction) {
-      let affectedStores = this._splitEventStore(interaction.affectedEvents, keysByDefId)
+      let affectedStores = this._splitEventStore(interaction.affectedEvents, defKeys)
 
-      // can't rely on keysByDefId because event data is mutated
+      // can't rely on defKeys because event data is mutated
       let mutatedKeysByDefId = this._getKeysForEventDefs(interaction.mutatedEvents)
       let mutatedStores = this._splitEventStore(interaction.mutatedEvents, mutatedKeysByDefId)
 
