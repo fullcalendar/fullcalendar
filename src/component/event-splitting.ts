@@ -7,6 +7,7 @@ import { EventUiHash, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
 
 export interface SplittableProps {
+  businessHours: EventStore | null
   dateSelection: DateSpan | null
   eventStore: EventStore
   eventUiBases: EventUiHash
@@ -16,15 +17,6 @@ export interface SplittableProps {
 }
 
 const EMPTY_EVENT_STORE = createEmptyEventStore() // for purecomponents. TODO: keep elsewhere
-
-export const EMPTY_PROPS: SplittableProps = {
-  dateSelection: null,
-  eventStore: EMPTY_EVENT_STORE,
-  eventUiBases: {},
-  eventSelection: '',
-  eventDrag: null,
-  eventResize: null
-}
 
 export default abstract class Splitter<PropsType extends SplittableProps = SplittableProps> {
 
@@ -36,6 +28,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
   private splitEventResize = memoize(this._splitInteraction)
   protected eventUiBuilders: { [key: string]: typeof buildEventUiForKey } = {}
 
+  abstract getAllKeys(props: PropsType): string[]
   abstract getKeysForDateSpan(dateSpan: DateSpan): string[]
   abstract getKeysForEventDef(eventDef: EventDef): string[]
 
@@ -43,39 +36,40 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return {}
   }
 
+  getKeyBusinessHours(props: PropsType): { [key: string]: EventStore } {
+    return {}
+  }
+
   splitProps(props: PropsType): { [key: string]: SplittableProps } {
     let oldEventUiBuilders = this.eventUiBuilders
     this.eventUiBuilders = {}
 
-    let dateSelections = this.splitDateSelection(props.dateSelection)
-    let keysByDefId = this.getKeysForEventDefs(props.eventStore)
+    let keys = this.getAllKeys(props)
     let keyEventUis = this.getKeyEventUis(props)
+    let keyBusinessHours = this.getKeyBusinessHours(props)
+
+    let keysByDefId = this.getKeysForEventDefs(props.eventStore)
+    let dateSelections = this.splitDateSelection(props.dateSelection)
     let individualUi = this.splitIndividualUi(props.eventUiBases, keysByDefId)
     let eventStores = this.splitEventStore(props.eventStore, keysByDefId)
     let eventDrags = this.splitEventDrag(props.eventDrag, keysByDefId)
     let eventResizes = this.splitEventResize(props.eventResize, keysByDefId)
     let splitProps: { [key: string]: SplittableProps } = {}
 
-    let populate = (key: string) => {
-      if (!splitProps[key]) {
-        let eventStore = eventStores[key] || EMPTY_PROPS.eventStore
-        let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(buildEventUiForKey)
+    for (let key of keys) {
+      let eventStore = eventStores[key] || EMPTY_EVENT_STORE
+      let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(buildEventUiForKey)
 
-        splitProps[key] = {
-          dateSelection: dateSelections[key] || null,
-          eventStore,
-          eventUiBases: buildEventUi(props.eventUiBases[''], keyEventUis[key], individualUi[key]),
-          eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
-          eventDrag: eventDrags[key] || null,
-          eventResize: eventResizes[key] || null
-        }
+      splitProps[key] = {
+        businessHours: keyBusinessHours[key] || props.businessHours,
+        dateSelection: dateSelections[key] || null,
+        eventStore,
+        eventUiBases: buildEventUi(props.eventUiBases[''], keyEventUis[key], individualUi[key]),
+        eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
+        eventDrag: eventDrags[key] || null,
+        eventResize: eventResizes[key] || null
       }
     }
-
-    for (let key in dateSelections) { populate(key) }
-    for (let key in eventStores) { populate(key) }
-    for (let key in eventDrags) { populate(key) }
-    for (let key in eventResizes) { populate(key) }
 
     return splitProps
   }

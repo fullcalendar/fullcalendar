@@ -62,7 +62,7 @@ export {
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
 export { EventUiHash, EventUi, processScopedUiProps, EventScopedEventUiInput, combineEventUis } from './component/event-ui'
-export { default as Splitter, SplittableProps, EMPTY_PROPS } from './component/event-splitting'
+export { default as Splitter, SplittableProps } from './component/event-splitting'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
 
 export {

@@ -5,6 +5,10 @@ import { DateSpan } from '../structs/date-span'
 
 export default class AllDaySplitter extends Splitter {
 
+  getAllKeys() {
+    return [ 'allDay', 'timed' ]
+  }
+
   getKeysForDateSpan(dateSpan: DateSpan): string[] {
     if (dateSpan.allDay) {
       return [ 'allDay' ]
