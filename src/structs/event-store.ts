@@ -173,6 +173,7 @@ export function filterEventStoreDefs(eventStore: EventStore, filterFunc: (eventD
   return { defs, instances }
 }
 
+// bad name. called "map" and returns an array
 export function mapEventInstances(
   eventStore: EventStore,
   callback: (instance: EventInstance, def: EventDef) => any
