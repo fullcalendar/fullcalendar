@@ -61,7 +61,7 @@ export {
 } from './util/dom-manip'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
-export { EventUiHash, EventUi, processScopedUiProps, ScopedEventUiInput, combineEventUis } from './component/event-ui'
+export { EventUiHash, EventUi, processScopedUiProps, EventScopedEventUiInput, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps, EMPTY_PROPS } from './component/event-splitting'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
 

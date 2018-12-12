@@ -31,19 +31,15 @@ export function isEventsValid(eventStore: EventStore, calendar: Calendar): boole
 }
 
 export function isSelectionValid(selection: DateSpan, calendar: Calendar): boolean {
-
-  // TODO: separate util for this. in scoped part!?
-  let constraint = normalizeConstraint(calendar.opt('selectConstraint'), calendar)
-  let overlap = calendar.opt('selectOverlap')
-  let allow = calendar.opt('selectAllow')
+  let { selectionConfig } = calendar
 
   return isEntitiesValid(
     [ {
       dateSpan: selection,
       event: null,
-      constraints: constraint != null ? [ constraint ] : [],
-      overlaps: overlap != null ? [ overlap ] : [],
-      allows: allow != null ? [ allow ] : []
+      constraints: selectionConfig.constraints,
+      overlaps: selectionConfig.overlaps,
+      allows: selectionConfig.allows
     } ],
     calendar
   )

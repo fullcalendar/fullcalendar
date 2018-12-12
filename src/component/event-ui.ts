@@ -1,9 +1,11 @@
 import { Constraint, Allow, normalizeConstraint, ConstraintInput, Overlap } from '../validation'
 import { parseClassName } from '../util/html'
-import { refineProps } from '../util/misc'
+import { refineProps, capitaliseFirstLetter } from '../util/misc'
 import Calendar from '../Calendar'
 
 // TODO: better called "EventSettings" or "EventConfig"
+// TODO: move this file into structs
+// TODO: separate constraint/overlap/allow, because selection uses only that, not other props
 
 export interface UnscopedEventUiInput {
   editable?: boolean
@@ -20,7 +22,7 @@ export interface UnscopedEventUiInput {
   color?: string
 }
 
-export interface ScopedEventUiInput {
+export interface EventScopedEventUiInput { // has the word "event" in all the props
   editable?: boolean // only one not scoped
   eventStartEditable?: boolean
   eventDurationEditable?: boolean
@@ -64,21 +66,6 @@ export const UNSCOPED_EVENT_UI_PROPS = {
   textColor: String
 }
 
-const SCOPED_EVENT_UI_PROPS = { // TODO: not very DRY. instead, map to UNSCOPED_EVENT_UI_PROPS
-  editable: Boolean, // only one not scoped
-  eventStartEditable: Boolean,
-  eventDurationEditable: Boolean,
-  eventConstraint: null,
-  eventOverlap: null,
-  eventAllow: null,
-  eventClassName: parseClassName,
-  eventClassNames: parseClassName,
-  eventColor: String,
-  eventBackgroundColor: String,
-  eventBorderColor: String,
-  eventTextColor: String
-}
-
 export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar: Calendar, leftovers?): EventUi {
   let props = refineProps(rawProps, UNSCOPED_EVENT_UI_PROPS, {}, leftovers)
   let constraint = normalizeConstraint(props.constraint, calendar)
@@ -96,21 +83,18 @@ export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar:
   }
 }
 
-export function processScopedUiProps(rawProps: ScopedEventUiInput, calendar: Calendar, leftovers?): EventUi {
-  let props = refineProps(rawProps, SCOPED_EVENT_UI_PROPS, {}, leftovers)
-  let constraint = normalizeConstraint(props.eventConstraint, calendar)
+export function processScopedUiProps(prefix: string, rawScoped: any, calendar: Calendar, leftovers?): EventUi {
+  let rawUnscoped = {} as any
 
-  return {
-    startEditable: props.eventStartEditable != null ? props.eventStartEditable : props.editable,
-    durationEditable: props.eventDurationEditable != null ? props.eventDurationEditable : props.editable,
-    constraints: constraint != null ? [ constraint ] : [],
-    overlaps: props.eventOverlap != null ? [ props.eventOverlap ] : [],
-    allows: props.eventAllow != null ? [ props.eventAllow ] : [],
-    backgroundColor: props.eventBackgroundColor || props.eventColor,
-    borderColor: props.eventBorderColor || props.eventColor,
-    textColor: props.eventTextColor,
-    classNames: props.eventClassNames.concat(props.eventClassName)
+  for (let key in UNSCOPED_EVENT_UI_PROPS) {
+    rawUnscoped[key] = rawScoped[prefix + capitaliseFirstLetter(key)]
   }
+
+  if (prefix === 'event') {
+    rawUnscoped.editable = rawScoped.editable // special case. there is no 'eventEditable', just 'editable'
+  }
+
+  return processUnscopedUiProps(rawUnscoped, calendar, leftovers)
 }
 
 const EMPTY_EVENT_UI: EventUi = {

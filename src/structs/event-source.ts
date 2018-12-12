@@ -3,7 +3,7 @@ import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
-import { ScopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
+import { EventScopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
 import { EventUi } from '../component/event-ui'
 
 /*
@@ -23,7 +23,7 @@ export type EventInputTransformer = (eventInput: EventInput) => EventInput | nul
 export type EventSourceSuccessResponseHandler = (rawData: any, response: any) => EventInput[] | void
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
-export interface ExtendedEventSourceInput extends ScopedEventUiInput {
+export interface ExtendedEventSourceInput extends EventScopedEventUiInput {
   id?: string | number // only accept number?
   allDayDefault?: boolean
   eventDataTransform?: EventInputTransformer

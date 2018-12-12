@@ -24,7 +24,7 @@ import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
-import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui'
+import { processScopedUiProps, EventUiHash, EventUi, processUnscopedUiProps } from './component/event-ui'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
@@ -64,11 +64,13 @@ export default class Calendar {
 
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
-  private buildEventUiSingleBase = memoize(processScopedUiProps)
+  private buildEventUiSingleBase = memoize(processScopedUiProps.bind(null, 'event') as typeof processUnscopedUiProps) // hack for ts
+  private buildSelectionConfig = memoize(processScopedUiProps.bind(null, 'select') as typeof processUnscopedUiProps) // hack for ts
   private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
 
   eventUiBases: EventUiHash // solely for validation system
+  selectionConfig: EventUi // doesn't need all the info EventUi provides. only validation-related. TODO: separate data structs
 
   optionsManager: OptionsManager
   viewSpecs: ViewSpecHash
@@ -542,6 +544,8 @@ export default class Calendar {
       options.weekLabel,
       options.cmdFormatter
     )
+
+    this.selectionConfig = this.buildSelectionConfig(options, this) // needs dateEnv. do after :(
 
     // ineffecient to do every time?
     this.viewSpecs = buildViewSpecs(
