@@ -58,7 +58,7 @@ export default class AgendaView extends AbstractAgendaView {
   render(props: ViewProps) {
     super.render(props) // for flags for updateSize
 
-    let { dateProfile, businessHours } = this.props
+    let { dateProfile } = this.props
     let dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
     let splitProps = this.splitter.splitProps(props)
 
@@ -74,8 +74,7 @@ export default class AgendaView extends AbstractAgendaView {
     this.simpleTimeGrid.receiveProps(
       Object.assign({}, splitProps['timed'], {
         dateProfile,
-        dayTable,
-        businessHours
+        dayTable
       })
     )
 
@@ -84,7 +83,6 @@ export default class AgendaView extends AbstractAgendaView {
         Object.assign({}, splitProps['allDay'], {
           dateProfile,
           dayTable,
-          businessHours,
           nextDayThreshold: this.nextDayThreshold,
           isRigid: false
         })
