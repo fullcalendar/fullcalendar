@@ -3,7 +3,7 @@ import { eventDefParserFunc } from './structs/event'
 import { eventDragMutationMassager } from './interactions/EventDragging'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import { dateClickApiTransformer, dateSelectionApiTransformer } from './Calendar'
-import { dateSelectionTransformer } from './interactions/DateSelecting'
+import { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 import { ViewConfigInputHash } from './structs/view-config'
 import { assignTo } from './util/object'
 import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
@@ -18,7 +18,7 @@ export interface PluginDefInput {
   eventDefParsers?: eventDefParserFunc[]
   eventDragMutationMassagers?: eventDragMutationMassager[]
   eventDefMutationAppliers?: eventDefMutationApplier[]
-  dateSelectionTransformers?: dateSelectionTransformer[]
+  dateSelectionTransformers?: dateSelectionJoinTransformer[]
   dateClickApiTransformers?: dateClickApiTransformer[]
   dateSelectionApiTransformers?: dateSelectionApiTransformer[]
   viewConfigs?: ViewConfigInputHash
@@ -31,7 +31,7 @@ export interface PluginHooks {
   eventDefParsers: eventDefParserFunc[]
   eventDragMutationMassagers: eventDragMutationMassager[]
   eventDefMutationAppliers: eventDefMutationApplier[]
-  dateSelectionTransformers: dateSelectionTransformer[]
+  dateSelectionTransformers: dateSelectionJoinTransformer[]
   dateClickApiTransformers: dateClickApiTransformer[]
   dateSelectionApiTransformers: dateSelectionApiTransformer[]
   viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?

@@ -57,7 +57,7 @@ export default class DateSelecting {
     let isInvalid = false
 
     if (hit) {
-      dragSelection = computeSelection(
+      dragSelection = joinSpansIntoSelection(
         this.hitDragging.initialHit!.dateSpan,
         hit.dateSpan,
         calendar.pluginSystem.hooks.dateSelectionTransformers
@@ -108,7 +108,7 @@ function getComponentTouchDelay(component: DateComponent<any>): number {
   return delay
 }
 
-function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan, dateSelectionTransformers: dateSelectionTransformer[]): DateSpan {
+function joinSpansIntoSelection(dateSpan0: DateSpan, dateSpan1: DateSpan, dateSelectionTransformers: dateSelectionJoinTransformer[]): DateSpan {
   let ms = [
     dateSpan0.range.start,
     dateSpan0.range.end,
@@ -134,4 +134,4 @@ function computeSelection(dateSpan0: DateSpan, dateSpan1: DateSpan, dateSelectio
   return finalDateSpan
 }
 
-export type dateSelectionTransformer = (finalDateSpan: DateSpan, dateSpan0: DateSpan, dateSpan1: DateSpan) => boolean
+export type dateSelectionJoinTransformer = (finalDateSpan: DateSpan, dateSpan0: DateSpan, dateSpan1: DateSpan) => boolean

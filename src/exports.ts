@@ -135,7 +135,7 @@ export { default as Draggable } from './interactions-external/ExternalDraggable'
 export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 
 export { Hit } from './interactions/HitDragging'
-export { dateSelectionTransformer } from './interactions/DateSelecting'
+export { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 
 export { formatDate, formatRange } from './formatting-api'
 
