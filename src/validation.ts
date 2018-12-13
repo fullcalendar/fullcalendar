@@ -226,7 +226,7 @@ function isSegmentedSelectionValid(
       }
 
       if (overlapFunc && !overlapFunc(
-        new EventApi(calendar, relevantDefs.defs[relevantInstance.defId], relevantInstance)
+        new EventApi(calendar, relevantDefs[relevantInstance.defId], relevantInstance)
       )) {
         return false
       }
@@ -370,6 +370,8 @@ export function normalizeConstraint(input: ConstraintInput, calendar: Calendar):
   if (typeof input === 'object' && input) { // non-null object
     let span = parseOpenDateSpan(input, calendar.dateEnv)
 
+    // TODO: use parseEvent/parseEvents all the way
+    // but to do this, we need to allow open-range parsing
     if (span === null || span.range.start || span.range.end) {
       return span
     } else { // if completely-open range, assume it's a recurring event (prolly with startTime/endTime)

@@ -64,8 +64,8 @@ export default class Calendar {
 
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
-  private buildEventUiSingleBase = memoize(this._buildSelectionConfig)
-  private buildSelectionConfig = memoize(this._buildEventUiSingleBase)
+  private buildEventUiSingleBase = memoize(this._buildEventUiSingleBase)
+  private buildSelectionConfig = memoize(this._buildSelectionConfig)
   private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
 
