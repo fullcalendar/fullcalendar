@@ -113,7 +113,7 @@ export function getRelevantEvents(eventStore: EventStore, instanceId: string): E
   return createEmptyEventStore()
 }
 
-export function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
+function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
   return Boolean(def0.groupId && def0.groupId === def1.groupId)
 }
 
@@ -171,20 +171,4 @@ export function filterEventStoreDefs(eventStore: EventStore, filterFunc: (eventD
     return defs[instance.defId] // still exists?
   })
   return { defs, instances }
-}
-
-// bad name. called "map" and returns an array
-export function mapEventInstances(
-  eventStore: EventStore,
-  callback: (instance: EventInstance, def: EventDef) => any
-): any[] {
-  let { defs, instances } = eventStore
-  let res = []
-
-  for (let instanceId in instances) {
-    let instance = instances[instanceId]
-    res.push(callback(instance, defs[instance.defId]))
-  }
-
-  return res
 }

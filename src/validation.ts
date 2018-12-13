@@ -1,11 +1,13 @@
-import { EventStore, expandRecurring, eventTupleToStore, mapEventInstances, filterEventStoreDefs, isEventDefsGrouped } from './structs/event-store'
+import { EventStore, expandRecurring, eventTupleToStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
 import Calendar from './Calendar'
-import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, isSpanPropsEqual, isSpanPropsMatching, buildDateSpanApi, DateSpanApi } from './structs/date-span'
+import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
-import { rangeContainsRange, rangesIntersect } from './datelib/date-range'
+import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import EventApi from './api/EventApi'
 import { EventUiHash } from './component/event-ui'
-import { compileEventUis } from './component/event-rendering';
+import { compileEventUis } from './component/event-rendering'
+import { ValidationSplitterMeta } from './plugin-system'
+import { excludeInstances } from './reducers/eventStore'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
@@ -13,219 +15,379 @@ export type Constraint = 'businessHours' | string | OpenDateSpan | EventTuple
 export type Overlap = boolean | ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
 export type Allow = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
 
-interface ValidationEntity {
-  dateSpan: DateSpan
-  event: EventTuple | null
-  constraints: Constraint[]
-  overlaps: Overlap[]
-  allows: Allow[]
-}
 
-export function isEventsValid(eventStore: EventStore, calendar: Calendar): boolean {
-  let eventUis = compileEventUis(eventStore.defs, calendar.eventUiBases)
+// high-level segmenting-aware tester functions
+// ------------------------------------------------------------------------------------------------------------------------
 
-  return isEntitiesValid(
-    eventStoreToEntities(eventStore, eventUis),
-    calendar
-  )
-}
+export function isEventsValid(subjectEventStore: EventStore, calendar: Calendar, isntEvent?: boolean): boolean {
+  let splitterMeta = calendar.pluginSystem.hooks.validationSplitter
+  let relevantSegmentedProps = getRelevantSegmentedProps(calendar, splitterMeta)
+  let subjectSegmentedProps = splitMinimalProps({
+    eventStore: subjectEventStore,
+    eventUiBases: isntEvent ? { '': calendar.selectionConfig } : calendar.eventUiBases,
+  }, splitterMeta)
 
-export function isSelectionValid(selection: DateSpan, calendar: Calendar): boolean {
-  let { selectionConfig } = calendar
+  for (let key in subjectSegmentedProps) {
+    let subjectProps = subjectSegmentedProps[key]
+    let relevantProps = relevantSegmentedProps[key]
 
-  return isEntitiesValid(
-    [ {
-      dateSpan: selection,
-      event: null,
-      constraints: selectionConfig.constraints,
-      overlaps: selectionConfig.overlaps,
-      allows: selectionConfig.allows
-    } ],
-    calendar
-  )
-}
-
-function isEntitiesValid(entities: ValidationEntity[], calendar: Calendar): boolean {
-
-  for (let entity of entities) {
-    for (let constraint of entity.constraints) {
-      if (!isDateSpanWithinConstraint(entity.dateSpan, constraint, calendar)) {
-        return false
-      }
-    }
-  }
-
-  // is this efficient?
-  let eventUis = compileEventUis(calendar.renderableEventStore.defs, calendar.eventUiBases)
-  let eventEntities = eventStoreToEntities(calendar.state.eventStore, eventUis)
-
-  for (let subjectEntity of entities) {
-    for (let eventEntity of eventEntities) {
-      if (considerEntitiesForOverlap(eventEntity, subjectEntity)) {
-
-        // the "subject" (the thing being dragged) must be an event if we are comparing it to other events for overlap
-        if (subjectEntity.event) {
-          for (let overlap of eventEntity.overlaps) {
-            if (!isOverlapValid(eventEntity.event, subjectEntity.event, overlap, calendar)) {
-              return false
-            }
-          }
-        }
-
-        for (let overlap of subjectEntity.overlaps) {
-          if (!isOverlapValid(eventEntity.event, subjectEntity.event, overlap, calendar)) {
-            return false
-          }
-        }
-      }
-    }
-  }
-
-  for (let entity of entities) {
-    for (let allow of entity.allows) {
-      if (!isDateSpanAllowed(entity.dateSpan, entity.event, allow, calendar)) {
-        return false
-      }
+    if (!isSegmentedEventsValid(
+      subjectProps.eventStore,
+      subjectProps.eventUiBases,
+      relevantProps.eventStore,
+      relevantProps.eventUiBases,
+      relevantProps.businessHours,
+      calendar,
+      splitterMeta,
+      key,
+      isntEvent
+    )) {
+      return false
     }
   }
 
   return true
 }
 
-function considerEntitiesForOverlap(entity0: ValidationEntity, entity1: ValidationEntity) {
-  return ( // not comparing the same/related event
-    !entity0.event ||
-    !entity1.event ||
-    isEventsCollidable(entity0.event, entity1.event)
-  ) &&
-  dateSpansCollide(entity0.dateSpan, entity1.dateSpan) // a collision!
-}
+export function isSelectionValid(selection: DateSpan, calendar: Calendar): boolean {
+  let splitterMeta = calendar.pluginSystem.hooks.validationSplitter
+  let relevantSegmentedProps = getRelevantSegmentedProps(calendar, splitterMeta)
+  let subjectSegmentedProps = splitMinimalProps({
+    dateSelection: selection
+  }, splitterMeta)
 
-// do we want to compare these events for collision?
-// say no if events are the same, or if they share a groupId
-function isEventsCollidable(event0: EventTuple, event1: EventTuple): boolean {
-  if (event0.instance.instanceId === event1.instance.instanceId) {
-    return false
-  }
+  for (let key in subjectSegmentedProps) {
+    let subjectProps = subjectSegmentedProps[key]
+    let relevantProps = relevantSegmentedProps[key]
 
-  return !isEventDefsGrouped(event0.def, event1.def)
-}
-
-function eventStoreToEntities(eventStore: EventStore, eventUis: EventUiHash): ValidationEntity[] {
-  return mapEventInstances(eventStore, function(eventInstance: EventInstance, eventDef: EventDef): ValidationEntity {
-    let eventUi = eventUis[eventDef.defId]
-
-    return {
-      dateSpan: eventToDateSpan(eventDef, eventInstance),
-      event: { def: eventDef, instance: eventInstance },
-      constraints: eventUi.constraints,
-      overlaps: eventUi.overlaps,
-      allows: eventUi.allows
-    }
-  })
-}
-
-function isDateSpanWithinConstraint(subjectSpan: DateSpan, constraint: Constraint | null, calendar: Calendar): boolean {
-
-  if (constraint === null) {
-    return true // doesn't care
-  }
-
-  let constrainingSpans: DateSpan[] = constraintToSpans(constraint, subjectSpan, calendar)
-
-  for (let constrainingSpan of constrainingSpans) {
-    if (dateSpanContainsOther(constrainingSpan, subjectSpan)) {
-      return true
+    if (!isSegmentedSelectionValid(
+      subjectProps.dateSelection,
+      relevantProps.eventStore,
+      relevantProps.businessHours,
+      calendar,
+      splitterMeta,
+      key,
+    )) {
+      return false
     }
   }
 
-  return false // not contained by any one of the constrainingSpans
+  return true
 }
 
-function constraintToSpans(constraint: Constraint, subjectSpan: DateSpan, calendar: Calendar): DateSpan[] {
+// we have a different meaning of "relevant" here than other places of codebase
+function getRelevantSegmentedProps(calendar: Calendar, splitterMeta: ValidationSplitterMeta) {
+  let view = calendar.view // yuck
+
+  return splitMinimalProps({
+    eventStore: calendar.state.eventStore,
+    eventUiBases: calendar.eventUiBases,
+    businessHours: view ? view.props.businessHours : createEmptyEventStore() // yuck
+  }, splitterMeta)
+}
+
+
+// insular tester functions
+// ------------------------------------------------------------------------------------------------------------------------
+
+function isSegmentedEventsValid(
+  subjectEventStore: EventStore,
+  subjectConfigBase: EventUiHash,
+  relevantEventStore: EventStore, // include the original subject events
+  relevantEventConfigBase: EventUiHash,
+  businessHoursUnexpanded: EventStore,
+  calendar: Calendar,
+  splitterMeta: ValidationSplitterMeta | null,
+  currentSegmentKey: string,
+  isntEvent: boolean
+): boolean {
+  let subjectDefs = subjectEventStore.defs
+  let subjectInstances = subjectEventStore.instances
+  let subjectConfigs = compileEventUis(subjectDefs, subjectConfigBase)
+  let otherEventStore = excludeInstances(relevantEventStore, subjectInstances) // exclude the subject events. TODO: exclude defs too?
+  let otherDefs = otherEventStore.defs
+  let otherInstances = otherEventStore.instances
+  let otherConfigs = compileEventUis(otherDefs, relevantEventConfigBase)
+
+  for (let subjectInstanceId in subjectInstances) {
+    let subjectInstance = subjectInstances[subjectInstanceId]
+    let subjectRange = subjectInstance.range
+    let subjectConfig = subjectConfigs[subjectInstance.defId]
+    let subjectDef = subjectDefs[subjectInstance.defId]
+    let { constraints, overlaps, allows } = subjectConfig
+
+    if (splitterMeta && !splitterMeta.eventAllowsKey(subjectDef, calendar, currentSegmentKey)) { // TODO: pass in EventUi
+      return false
+    }
+
+    // constraint
+    for (let constraint of constraints) {
+
+      if (!constraintPasses(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar)) {
+        return false
+      }
+
+      if (splitterMeta && !splitterMeta.constraintAllowsKey(constraint, currentSegmentKey)) {
+        return false
+      }
+    }
+
+    // overlap
+    for (let otherInstanceId in otherInstances) {
+      let otherInstance = otherInstances[otherInstanceId]
+      let otherDef = otherDefs[otherInstance.defId]
+
+      // intersect! evaluate
+      if (rangesIntersect(subjectRange, otherInstance.range)) {
+        let otherOverlaps = otherConfigs[otherInstance.defId].overlaps
+
+        // consider the other event's overlap. only do this if the subject event is a "real" event
+        if (!isntEvent && !allOverlapsPass(otherOverlaps, otherDef, otherInstance, subjectDef, subjectInstance, calendar)) {
+          return false
+        }
+
+        if (!allOverlapsPass(overlaps, subjectDef, subjectInstance, otherDef, otherInstance, calendar)) {
+          return false
+        }
+      }
+    }
+
+    // allow (a function)
+    for (let allow of allows) {
+      let origDef = relevantEventStore.defs[subjectDef.defId]
+      let origInstance = relevantEventStore.instances[subjectInstanceId]
+
+      let subjectDateSpan: DateSpan = Object.assign(
+        {},
+        splitterMeta ? splitterMeta.getDateSpanPropsForKey(currentSegmentKey) : {},
+        { range: subjectInstance.range, allDay: subjectDef.allDay }
+      )
+
+      if (!allow(
+        buildDateSpanApi(subjectDateSpan, calendar.dateEnv),
+        new EventApi(calendar, origDef, origInstance)
+      )) {
+        return false
+      }
+    }
+
+  }
+
+  return true
+}
+
+function isSegmentedSelectionValid(
+  selection: DateSpan,
+  relevantEventStore: EventStore,
+  businessHoursUnexpanded: EventStore,
+  calendar: Calendar,
+  splitterMeta: ValidationSplitterMeta | null,
+  currentSegmentKey: string
+): boolean {
+  let relevantInstances = relevantEventStore.instances
+  let relevantDefs = relevantEventStore.defs
+  let selectionRange = selection.range
+  let { constraints, overlaps, allows } = calendar.selectionConfig
+
+  // constraint
+  for (let constraint of constraints) {
+
+    if (!constraintPasses(constraint, selectionRange, relevantEventStore, businessHoursUnexpanded, calendar)) {
+      return false
+    }
+
+    if (splitterMeta && !splitterMeta.constraintAllowsKey(constraint, currentSegmentKey)) {
+      return false
+    }
+  }
+
+  // overlap
+  for (let relevantInstanceId in relevantInstances) {
+    let relevantInstance = relevantInstances[relevantInstanceId]
+    let relevantDef = relevantDefs[relevantInstance.defId]
+
+    // intersect! evaluate
+    if (rangesIntersect(selectionRange, relevantInstance.range)) {
+
+      if (!allOverlapsPass(overlaps, null, null, relevantDef, relevantInstance, calendar)) {
+        return false
+      }
+    }
+  }
+
+  // allow (a function)
+  for (let allow of allows) {
+
+    let fullDateSpan = Object.assign(
+      {},
+      splitterMeta ? splitterMeta.getDateSpanPropsForKey(currentSegmentKey) : {},
+      selection,
+    )
+
+    if (!allow(
+      buildDateSpanApi(fullDateSpan, calendar.dateEnv),
+      null
+    )) {
+      return false
+    }
+  }
+
+  return true
+}
+
+
+// Constraint Utils
+// ------------------------------------------------------------------------------------------------------------------------
+
+function constraintPasses(
+  constraint: Constraint,
+  subjectRange: DateRange,
+  otherEventStore: EventStore,
+  businessHoursUnexpanded: EventStore,
+  calendar: Calendar
+) {
+  return anyRangesContainRange(
+    constraintToRanges(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar),
+    subjectRange
+  )
+}
+
+function constraintToRanges(
+  constraint: Constraint,
+  subjectRange: DateRange, // for expanding a recurring constraint, or expanding business hours
+  otherEventStore: EventStore, // for if constraint is an even group ID
+  businessHoursUnexpanded: EventStore, // for if constraint is 'businessHours'
+  calendar: Calendar // for expanding businesshours
+): OpenDateRange[] {
 
   if (constraint === 'businessHours') {
-    let store = getPeerBusinessHours(subjectSpan, calendar)
-    store = expandRecurring(store, subjectSpan.range, calendar)
-    return eventStoreToDateSpans(store)
+    return eventStoreToRanges(
+      expandRecurring(businessHoursUnexpanded, subjectRange, calendar)
+    )
 
-  } else if (typeof constraint === 'string') { // an ID
-    let store = filterEventStoreDefs(calendar.state.eventStore, function(eventDef) {
-      return eventDef.groupId === constraint
-    })
-    return eventStoreToDateSpans(store)
+  } else if (typeof constraint === 'string') { // an group ID
+    return eventStoreToRanges(
+      filterEventStoreDefs(otherEventStore, function(eventDef) {
+        return eventDef.groupId === constraint
+      })
+    )
 
   } else if (typeof constraint === 'object' && constraint) { // non-null object
 
     if ((constraint as EventTuple).def) { // an event definition (actually, a tuple)
-      let store = eventTupleToStore(constraint as EventTuple)
-      store = expandRecurring(store, subjectSpan.range, calendar)
-      return eventStoreToDateSpans(store)
+      return eventStoreToRanges(
+        expandRecurring(eventTupleToStore(constraint as EventTuple), subjectRange, calendar)
+      )
 
     } else {
-      return [ constraint as OpenDateSpan ] // already parsed datespan
+      return [ (constraint as OpenDateSpan).range ] // an already-parsed datespan
     }
-
   }
 
   return []
 }
 
-function isOverlapValid(stillEvent: EventTuple, movingEvent: EventTuple | null, overlap: Overlap | null, calendar: Calendar): boolean {
-  if (typeof overlap === 'boolean') {
-    return overlap
+// TODO: move to event-store file?
+function eventStoreToRanges(eventStore: EventStore): DateRange[] {
+  let { instances } = eventStore
+  let ranges: DateRange[] = []
+
+  for (let instanceId in instances) {
+    ranges.push(instances[instanceId].range)
+  }
+
+  return ranges
+}
+
+// TODO: move to geom file?
+function anyRangesContainRange(outerRanges: DateRange[], innerRange: DateRange): boolean {
+
+  for (let outerRange of outerRanges) {
+    if (rangeContainsRange(outerRange, innerRange)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+
+// Overlap Utils
+// ------------------------------------------------------------------------------------------------------------------------
+
+function allOverlapsPass(
+  overlaps: Overlap[],
+  subjectDef: EventDef | null,
+  subjectInstance: EventInstance | null,
+  otherDef: EventDef,
+  otherInstance: EventInstance,
+  calendar: Calendar
+) {
+  for (let overlap of overlaps) {
+    if (!overlapPasses(overlap, subjectDef, subjectInstance, otherDef, otherInstance, calendar)) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function overlapPasses(
+  overlap: Overlap,
+  subjectDef: EventDef | null,
+  subjectInstance: EventInstance | null,
+  otherDef: EventDef,
+  otherInstance: EventInstance,
+  calendar: Calendar
+) {
+  if (overlap === false) {
+    return false
   } else if (typeof overlap === 'function') {
-    return Boolean(
-      overlap(
-        new EventApi(calendar, stillEvent.def, stillEvent.instance),
-        movingEvent ? new EventApi(calendar, movingEvent.def, movingEvent.instance) : null
-      )
+    return !overlap(
+      new EventApi(calendar, otherDef, otherInstance),
+      subjectDef ? new EventApi(calendar, subjectDef, subjectInstance) : null
     )
   }
 
   return true
 }
 
-function isDateSpanAllowed(dateSpan: DateSpan, moving: EventTuple | null, allow: Allow | null, calendar: Calendar): boolean {
-  if (typeof allow === 'function') {
-    return Boolean(
-      allow(
-        buildDateSpanApi(dateSpan, calendar.dateEnv),
-        moving ? new EventApi(calendar, moving.def, moving.instance) : null
-      )
-    )
-  }
 
-  return true
+// Splitting Utils
+// ------------------------------------------------------------------------------------------------------------------------
+
+interface MinimalSplittableProps {
+  dateSelection?: DateSpan
+  businessHours?: EventStore
+  eventStore?: EventStore
+  eventUiBases?: EventUiHash
 }
 
-function dateSpansCollide(span0: DateSpan, span1: DateSpan): boolean {
-  return rangesIntersect(span0.range, span1.range) && isSpanPropsEqual(span0, span1)
-}
+function splitMinimalProps(
+  inputProps: MinimalSplittableProps,
+  splitterMeta: ValidationSplitterMeta | null
+): { [key: string]: MinimalSplittableProps } {
 
-function dateSpanContainsOther(outerSpan: DateSpan, subjectSpan: DateSpan): boolean {
-  return rangeContainsRange(outerSpan.range, subjectSpan.range) &&
-    isSpanPropsMatching(subjectSpan, outerSpan) // subjectSpan has all the props that outerSpan has?
-}
+  if (splitterMeta) {
+    let splitter = new splitterMeta.splitterClass()
 
-function eventStoreToDateSpans(store: EventStore): DateSpan[] {
-  return mapEventInstances(store, function(instance: EventInstance, def: EventDef) {
-    return eventToDateSpan(def, instance)
-  })
-}
-
-// TODO: plugin
-export function eventToDateSpan(def: EventDef, instance: EventInstance): DateSpan {
-  return {
-    allDay: def.allDay,
-    range: instance.range
+    return splitter.splitProps({
+      businessHours: inputProps.businessHours || createEmptyEventStore(),
+      dateSelection: inputProps.dateSelection || null,
+      eventStore: inputProps.eventStore || createEmptyEventStore(),
+      eventUiBases: inputProps.eventUiBases || {},
+      eventSelection: '',
+      eventDrag: null,
+      eventResize: null
+    })
+  } else {
+    return { '': inputProps }
   }
 }
 
-// TODO: plugin
-function getPeerBusinessHours(subjectSpan: DateSpan, calendar: Calendar): EventStore {
-  return calendar.component.view.props.businessHours // accessing view :(
-}
+
+// Parsing
+// ------------------------------------------------------------------------------------------------------------------------
 
 export function normalizeConstraint(input: ConstraintInput, calendar: Calendar): Constraint | null {
   if (typeof input === 'object' && input) { // non-null object

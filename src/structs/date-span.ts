@@ -108,10 +108,14 @@ export function isDateSpansEqual(span0: DateSpan, span1: DateSpan): boolean {
 }
 
 // the NON-DATE-RELATED props
-export function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
+function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
 
-  if (!isSpanPropsMatching(span0, span1)) {
-    return false
+  for (let propName in span1) {
+    if (propName !== 'range' && propName !== 'allDay') {
+      if (span0[propName] !== span1[propName]) {
+        return false
+      }
+    }
   }
 
   // are there any props that span0 has that span1 DOESN'T have?
@@ -119,21 +123,6 @@ export function isSpanPropsEqual(span0: DateSpan, span1: DateSpan): boolean {
   for (let propName in span0) {
     if (!(propName in span1)) {
       return false
-    }
-  }
-
-  return true
-}
-
-// does subjectSpan have all the props/values that matchSpan does?
-// subjectSpan is allowed to have more
-export function isSpanPropsMatching(subjectSpan: DateSpan, matchSpan: DateSpan): boolean {
-
-  for (let propName in matchSpan) {
-    if (propName !== 'range' && propName !== 'allDay') {
-      if (subjectSpan[propName] !== matchSpan[propName]) {
-        return false
-      }
     }
   }
 

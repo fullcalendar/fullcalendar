@@ -169,7 +169,8 @@ function excludeEventsBySourceId(eventStore, sourceId) {
 }
 
 
-function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): EventStore {
+// QUESTION: why not just return instances? do a general object-property-exclusion util
+export function excludeInstances(eventStore: EventStore, removals: EventInstanceHash): EventStore {
   return {
     defs: eventStore.defs,
     instances: filterHash(eventStore.instances, function(instance: EventInstance) {

@@ -12,7 +12,7 @@ import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 import EventApi from '../api/EventApi'
 import { elementMatches } from '../util/dom-manip'
 import { enableCursor, disableCursor } from '../util/misc'
-import { isEventsValid, isSelectionValid, eventToDateSpan } from '../validation'
+import { isEventsValid } from '../validation'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
 
@@ -70,15 +70,11 @@ export default class ExternalElementDragging {
           receivingCalendar
         )
 
-        // TODO: fix inefficiency of calling eventTupleToStore again, and eventToDateSpan
-        if (this.dragMeta.create) {
-          let droppableEventStore = eventTupleToStore(droppableEvent)
-
-          isInvalid = !isEventsValid(droppableEventStore, receivingCalendar)
-
-        } else { // treat non-event-creating drags as selection validation
-          isInvalid = !isSelectionValid(eventToDateSpan(droppableEvent.def, droppableEvent.instance), receivingCalendar)
-        }
+        isInvalid = !isEventsValid(
+          eventTupleToStore(droppableEvent), // TODO: fix inefficiency of calling eventTupleToStore again
+          receivingCalendar,
+          !this.dragMeta.create
+        )
 
         if (isInvalid) {
           droppableEvent = null
