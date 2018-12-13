@@ -84,7 +84,7 @@ export const DATE_PROPS = {
 let uid = 0
 
 
-export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar): EventTuple | null {
+export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar, allowOpenRange?: boolean): EventTuple | null {
   let allDayDefault = computeIsAllDayDefault(sourceId, calendar)
   let leftovers = {}
   let recurringRes = parseRecurring(
@@ -106,7 +106,7 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
     return { def, instance: null }
 
   } else {
-    let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers)
+    let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers, allowOpenRange)
 
     if (singleRes) {
       let def = parseEventDef(leftovers, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)

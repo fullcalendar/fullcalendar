@@ -28,12 +28,13 @@ export interface EventStore {
 export function parseEvents(
   rawEvents: EventInput[],
   sourceId: string,
-  calendar: Calendar
+  calendar: Calendar,
+  allowOpenRange?: boolean
 ): EventStore {
   let eventStore = createEmptyEventStore()
 
   for (let rawEvent of rawEvents) {
-    let tuple = parseEvent(rawEvent, sourceId, calendar)
+    let tuple = parseEvent(rawEvent, sourceId, calendar, allowOpenRange)
 
     if (tuple) {
       eventTupleToStore(tuple, eventStore)
