@@ -54,7 +54,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
         businessHours: keyInfo.businessHours || props.businessHours,
         dateSelection: dateSelections[key] || null,
         eventStore,
-        eventUiBases: buildEventUi.call(this, props.eventUiBases[''], keyInfo.ui, individualUi[key]),
+        eventUiBases: buildEventUi.call(this, props.eventUiBases[''], keyInfo.ui, individualUi[key], key),
         eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
         eventDrag: eventDrags[key] || null,
         eventResize: eventResizes[key] || null

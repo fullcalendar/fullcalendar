@@ -1,15 +1,16 @@
 import { EventStore, expandRecurring, filterEventStoreDefs, createEmptyEventStore, parseEvents } from './structs/event-store'
 import Calendar from './Calendar'
-import { DateSpan, OpenDateSpanInput, buildDateSpanApi, DateSpanApi } from './structs/date-span'
+import { DateSpan, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import EventApi from './api/EventApi'
 import { EventUiHash } from './component/event-ui'
 import { compileEventUis } from './component/event-rendering'
 import { ValidationSplitterMeta } from './plugin-system'
 import { excludeInstances } from './reducers/eventStore'
+import { EventInput } from './structs/event'
 
 // TODO: rename to "criteria" ?
-export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
+export type ConstraintInput = 'businessHours' | string | EventInput | EventInput[]
 export type Constraint = 'businessHours' | string | EventStore
 export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
 export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
