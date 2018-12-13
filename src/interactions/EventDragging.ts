@@ -25,7 +25,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   subjectSeg: Seg | null = null // the seg being selected/dragged
   isDragging: boolean = false
   eventRange: EventRenderRange | null = null
-  relevantEvents: EventStore | null = null
+  relevantEvents: EventStore | null = null // the events being dragged
   receivingCalendar: Calendar | null = null
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
