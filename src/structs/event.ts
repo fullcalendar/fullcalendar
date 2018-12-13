@@ -168,18 +168,20 @@ export function createEventInstance(
 }
 
 
-function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: Calendar, leftovers?) {
+function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: Calendar, leftovers?, allowOpenRange?: boolean) {
   let props = pluckDateProps(raw, leftovers)
   let allDay = props.allDay
   let startMeta
-  let startMarker
+  let startMarker = null
   let hasEnd = false
-  let endMeta = null
+  let endMeta
   let endMarker = null
 
   startMeta = calendar.dateEnv.createMarkerMeta(props.start)
 
-  if (!startMeta) {
+  if (startMeta) {
+    startMarker = startMeta.marker
+  } else if (!allowOpenRange) {
     return null
   }
 
@@ -192,20 +194,19 @@ function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: C
       allDay = allDayDefault
     } else {
       // fall back to the date props LAST
-      allDay = startMeta.isTimeUnspecified && (!endMeta || endMeta.isTimeUnspecified)
+      allDay = (!startMeta || startMeta.isTimeUnspecified) &&
+        (!endMeta || endMeta.isTimeUnspecified)
     }
   }
 
-  startMarker = startMeta.marker
-
-  if (allDay) {
+  if (allDay && startMarker) {
     startMarker = startOfDay(startMarker)
   }
 
   if (endMeta) {
     endMarker = endMeta.marker
 
-    if (endMarker <= startMarker) {
+    if (startMarker && endMarker <= startMarker) {
       endMarker = null
     } else if (allDay) {
       endMarker = startOfDay(endMarker)
@@ -214,7 +215,7 @@ function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: C
 
   if (endMarker) {
     hasEnd = true
-  } else {
+  } else if (!allowOpenRange) {
     hasEnd = calendar.opt('forceEventDuration') || false
 
     endMarker = calendar.dateEnv.add(
@@ -229,7 +230,7 @@ function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: C
     allDay,
     hasEnd,
     range: { start: startMarker, end: endMarker },
-    forcedStartTzo: startMeta.forcedTzo,
+    forcedStartTzo: startMeta ? startMeta.forcedTzo : null,
     forcedEndTzo: endMeta ? endMeta.forcedTzo : null
   }
 }

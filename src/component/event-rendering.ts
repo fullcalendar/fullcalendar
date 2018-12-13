@@ -69,8 +69,8 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
           ui,
           instance,
           range: visibleRange,
-          isStart: origRange.start.valueOf() === slicedRange.start.valueOf(),
-          isEnd: origRange.end.valueOf() === slicedRange.end.valueOf()
+          isStart: origRange.start && origRange.start.valueOf() === slicedRange.start.valueOf(),
+          isEnd: origRange.end && origRange.end.valueOf() === slicedRange.end.valueOf()
         })
       }
     }

@@ -321,8 +321,8 @@ export default abstract class FgEventRenderer {
 export function buildSegCompareObj(seg: Seg) {
   let eventDef = seg.eventRange.def
   let range = seg.eventRange.instance.range
-  let start = range.start.valueOf()
-  let end = range.end.valueOf()
+  let start = range.start ? range.start.valueOf() : 0 // TODO: better support for open-range events
+  let end = range.end ? range.end.valueOf() : 0 // "
 
   return assignTo(
     {},
