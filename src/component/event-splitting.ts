@@ -26,7 +26,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
   private splitIndividualUi = memoize(this._splitIndividualUi)
   private splitEventDrag = memoize(this._splitInteraction)
   private splitEventResize = memoize(this._splitInteraction)
-  private eventUiBuilders: { [key: string]: typeof buildEventUiForKey } = {}
+  private eventUiBuilders = {} // TODO: typescript protection
 
   abstract getKeyInfo(props: PropsType): { [key: string]: { ui?: EventUi, businessHours?: EventStore } }
   abstract getKeysForDateSpan(dateSpan: DateSpan): string[]
@@ -48,13 +48,13 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     for (let key in keyInfos) {
       let keyInfo = keyInfos[key]
       let eventStore = eventStores[key] || EMPTY_EVENT_STORE
-      let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(buildEventUiForKey)
+      let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(this._buildEventUiForKey)
 
       splitProps[key] = {
         businessHours: keyInfo.businessHours || props.businessHours,
         dateSelection: dateSelections[key] || null,
         eventStore,
-        eventUiBases: buildEventUi(props.eventUiBases[''], keyInfo.ui, individualUi[key]),
+        eventUiBases: buildEventUi.call(this, props.eventUiBases[''], keyInfo.ui, individualUi[key]),
         eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
         eventDrag: eventDrags[key] || null,
         eventResize: eventResizes[key] || null
@@ -165,29 +165,32 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return splitStates
   }
 
-}
+  private _buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null, individualUi: EventUiHash | null, key: string) {
+    let baseParts = []
 
-// TODO: move all above methods to be normal functions?
+    if (allUi) {
+      baseParts.push(allUi)
+    }
 
+    if (eventUiForKey) {
+      baseParts.push(eventUiForKey)
+    }
 
-function buildEventUiForKey(allUi?: EventUi, eventUiForKey?: EventUi, individualUi?: EventUiHash) {
-  let baseParts = []
+    let stuff = {
+      '': combineEventUis(baseParts)
+    }
 
-  if (allUi) {
-    baseParts.push(allUi)
+    if (individualUi) {
+      for (let defId in individualUi) {
+        stuff[defId] = this.filterEventUi(individualUi[defId], key)
+      }
+    }
+
+    return stuff
   }
 
-  if (eventUiForKey) {
-    baseParts.push(eventUiForKey)
+  private filterEventUi(ui: EventUi, key: string): EventUi {
+    return ui
   }
 
-  let stuff = {
-    '': combineEventUis(baseParts)
-  }
-
-  if (individualUi) {
-    Object.assign(stuff, individualUi)
-  }
-
-  return stuff
 }
