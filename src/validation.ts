@@ -11,7 +11,7 @@ import { EventInput } from './structs/event'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | EventInput | EventInput[]
-export type Constraint = 'businessHours' | string | EventStore
+export type Constraint = 'businessHours' | string | EventStore | false // false means won't pass at all
 export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
 export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
 
@@ -296,7 +296,7 @@ function constraintToRanges(
     )
   }
 
-  return []
+  return [] // if it's false
 }
 
 // TODO: move to event-store file?
