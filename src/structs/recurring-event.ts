@@ -15,7 +15,7 @@ export interface ParsedRecurring {
 }
 
 export interface RecurringType {
-  parse: (rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
+  parse: (rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
   expand: (typeData: any, eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv) => DateMarker[]
 }
 
@@ -27,9 +27,12 @@ export function registerRecurringType(recurringType: RecurringType) {
 }
 
 
-export function parseRecurring(eventInput: EventInput, dateEnv: DateEnv, leftovers: any) {
+/*
+KNOWN BUG: will populate lefovers only up until a recurring type works
+*/
+export function parseRecurring(eventInput: EventInput, allDayDefault: boolean | null, dateEnv: DateEnv, leftovers: any) {
   for (let i = 0; i < recurringTypes.length; i++) {
-    let parsed = recurringTypes[i].parse(eventInput, leftovers, dateEnv) as ParsedRecurring
+    let parsed = recurringTypes[i].parse(eventInput, allDayDefault, leftovers, dateEnv) as ParsedRecurring
 
     if (parsed) {
       return { // more efficient way to do this?

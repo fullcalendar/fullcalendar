@@ -85,39 +85,34 @@ let uid = 0
 
 
 export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar): EventTuple | null {
-  let leftovers0 = {}
   let allDayDefault = computeIsAllDayDefault(sourceId, calendar)
-  let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers0)
+  let leftovers = {}
+  let recurringRes = parseRecurring(
+    raw, // raw, but with single-event stuff stripped out
+    allDayDefault,
+    calendar.dateEnv,
+    leftovers // will populate with non-recurring props
+  )
 
-  if (singleRes) {
-    let def = parseEventDef(leftovers0, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)
-    let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
+  if (recurringRes) {
+    let def = parseEventDef(leftovers, sourceId, recurringRes.allDay, Boolean(recurringRes.duration), calendar)
 
-    return { def, instance }
+    def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
+      typeId: recurringRes.typeId,
+      typeData: recurringRes.typeData,
+      duration: recurringRes.duration
+    }
+
+    return { def, instance: null }
 
   } else {
-    let leftovers1 = {}
-    let recurringRes = parseRecurring(
-      leftovers0, // raw, but with single-event stuff stripped out
-      calendar.dateEnv,
-      leftovers1 // the new leftovers
-    )
+    let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers)
 
-    if (recurringRes) {
-      let allDay =
-        (raw.allDay != null) ? Boolean(raw.allDay) : // need to get this from `raw` because already stripped out of `leftovers0`
-          (allDayDefault != null ? allDayDefault :
-            recurringRes.allDay) // fall back to the recurring date props LAST
+    if (singleRes) {
+      let def = parseEventDef(leftovers, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)
+      let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
 
-      let def = parseEventDef(leftovers1, sourceId, allDay, Boolean(recurringRes.duration), calendar)
-
-      def.recurringDef = { // TODO: more efficient way to do this
-        typeId: recurringRes.typeId,
-        typeData: recurringRes.typeData,
-        duration: recurringRes.duration
-      }
-
-      return { def, instance: null }
+      return { def, instance }
     }
   }
 

@@ -25,7 +25,7 @@ interface SimpleParsedRecurring extends ParsedRecurring {
 
 registerRecurringType({
 
-  parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): SimpleParsedRecurring | null {
+  parse(rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv): SimpleParsedRecurring | null {
     let createMarker = dateEnv.createMarker.bind(dateEnv)
     let processors = {
       daysOfWeek: null,
@@ -45,9 +45,19 @@ registerRecurringType({
       }
     }
 
+    let allDay
+
+    if (props.startTime || props.endTime) {
+      allDay = false
+    } else if (allDayDefault != null) {
+      allDay = allDayDefault
+    } else {
+      allDay = true
+    }
+
     if (anyValid) {
       return {
-        allDay: !props.startTime && !props.endTime,
+        allDay,
         duration: (props.startTime && props.endTime) ?
           subtractDurations(props.endTime, props.startTime) :
           null,

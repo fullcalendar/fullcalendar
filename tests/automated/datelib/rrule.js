@@ -108,7 +108,7 @@ describe('rrule plugin', function() {
       events: [
         {
           rrule: {
-            dtstart: '2018-09-04',
+            dtstart: new Date('2018-09-04'), // no allDay info
             freq: 'weekly'
           }
         }
@@ -128,7 +128,7 @@ describe('rrule plugin', function() {
         events: [
           {
             rrule: {
-              dtstart: '2018-09-04',
+              dtstart: new Date('2018-09-04'), // no allDay info
               freq: 'weekly'
             }
           }
