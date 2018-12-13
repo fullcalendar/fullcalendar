@@ -12,10 +12,10 @@ const EVENT_DEF_PROPS = {
 
 registerRecurringType({
 
-  parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
+  parse(rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
     if (rawEvent.rrule != null) {
       let props = refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps)
-      let parsed = parseRRule(props.rrule, dateEnv)
+      let parsed = parseRRule(props.rrule, allDayDefault, dateEnv)
 
       if (parsed) {
         return {
@@ -35,7 +35,7 @@ registerRecurringType({
 
 })
 
-function parseRRule(input, dateEnv: DateEnv) {
+function parseRRule(input, allDayDefault: boolean | null, dateEnv: DateEnv) {
 
   if (typeof input === 'string') {
     return {
@@ -45,7 +45,7 @@ function parseRRule(input, dateEnv: DateEnv) {
 
   } else if (typeof input === 'object' && input) { // non-null object
     let refined = assignTo({}, input) // copy
-    let allDay = false
+    let allDay = allDayDefault
 
     if (typeof refined.dtstart === 'string') {
       let dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart)
@@ -74,6 +74,10 @@ function parseRRule(input, dateEnv: DateEnv) {
 
     if (refined.byweekday != null) {
       refined.byweekday = convertConstants(refined.byweekday) // the plural version
+    }
+
+    if (allDay == null) { // if not specific event after allDayDefault
+      allDay = true
     }
 
     return {
