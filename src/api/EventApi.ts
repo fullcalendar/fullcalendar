@@ -259,7 +259,7 @@ export default class EventApi implements EventTuple {
   get startEditable(): boolean { return this.def.ui.startEditable }
   get durationEditable(): boolean { return this.def.ui.durationEditable }
   get constraint(): any { return this.def.ui.constraints[0] || null }
-  get overlap(): any { return this.def.ui.overlaps[0] || null }
+  get overlap(): any { return this.def.ui.overlap }
   get allow(): any { return this.def.ui.allows[0] || null }
   get backgroundColor(): string { return this.def.ui.backgroundColor }
   get borderColor(): string { return this.def.ui.borderColor }

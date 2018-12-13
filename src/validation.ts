@@ -1,7 +1,7 @@
 import { EventStore, expandRecurring, eventTupleToStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
 import Calendar from './Calendar'
 import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, buildDateSpanApi, DateSpanApi } from './structs/date-span'
-import { EventInstance, EventDef, EventTuple, parseEvent } from './structs/event'
+import { EventTuple, parseEvent } from './structs/event'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import EventApi from './api/EventApi'
 import { EventUiHash } from './component/event-ui'
@@ -12,8 +12,8 @@ import { excludeInstances } from './reducers/eventStore'
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
 export type Constraint = 'businessHours' | string | OpenDateSpan | EventTuple
-export type Overlap = boolean | ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
-export type Allow = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
+export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
+export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
 
 
 // high-level segmenting-aware tester functions
@@ -114,46 +114,55 @@ function isSegmentedEventsValid(
     let subjectRange = subjectInstance.range
     let subjectConfig = subjectConfigs[subjectInstance.defId]
     let subjectDef = subjectDefs[subjectInstance.defId]
-    let { constraints, overlaps, allows } = subjectConfig
 
     if (splitterMeta && !splitterMeta.eventAllowsKey(subjectDef, calendar, currentSegmentKey)) { // TODO: pass in EventUi
       return false
     }
 
     // constraint
-    for (let constraint of constraints) {
+    for (let subjectConstraint of subjectConfig.constraints) {
 
-      if (!constraintPasses(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar)) {
+      if (!constraintPasses(subjectConstraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar)) {
         return false
       }
 
-      if (splitterMeta && !splitterMeta.constraintAllowsKey(constraint, currentSegmentKey)) {
+      if (splitterMeta && !splitterMeta.constraintAllowsKey(subjectConstraint, currentSegmentKey)) {
         return false
       }
     }
 
     // overlap
+
+    let overlapFunc = calendar.opt('eventOverlap')
+    if (typeof overlapFunc !== 'function') { overlapFunc = null }
+
     for (let otherInstanceId in otherInstances) {
       let otherInstance = otherInstances[otherInstanceId]
-      let otherDef = otherDefs[otherInstance.defId]
 
       // intersect! evaluate
       if (rangesIntersect(subjectRange, otherInstance.range)) {
-        let otherOverlaps = otherConfigs[otherInstance.defId].overlaps
+        let otherOverlap = otherConfigs[otherInstance.defId].overlap
 
         // consider the other event's overlap. only do this if the subject event is a "real" event
-        if (!isntEvent && !allOverlapsPass(otherOverlaps, otherDef, otherInstance, subjectDef, subjectInstance, calendar)) {
+        if (otherOverlap === false && !isntEvent) {
           return false
         }
 
-        if (!allOverlapsPass(overlaps, subjectDef, subjectInstance, otherDef, otherInstance, calendar)) {
+        if (subjectConfig.overlap === false) {
+          return false
+        }
+
+        if (overlapFunc && !overlapFunc(
+          new EventApi(calendar, otherDefs[otherInstance.defId], otherInstance), // still event
+          new EventApi(calendar, subjectDef, subjectInstance) // moving event
+        )) {
           return false
         }
       }
     }
 
     // allow (a function)
-    for (let allow of allows) {
+    for (let subjectAllow of subjectConfig.allows) {
       let origDef = relevantEventStore.defs[subjectDef.defId]
       let origInstance = relevantEventStore.instances[subjectInstanceId]
 
@@ -163,7 +172,7 @@ function isSegmentedEventsValid(
         { range: subjectInstance.range, allDay: subjectDef.allDay }
       )
 
-      if (!allow(
+      if (!subjectAllow(
         buildDateSpanApi(subjectDateSpan, calendar.dateEnv),
         new EventApi(calendar, origDef, origInstance)
       )) {
@@ -184,39 +193,48 @@ function isSegmentedSelectionValid(
   splitterMeta: ValidationSplitterMeta | null,
   currentSegmentKey: string
 ): boolean {
-  let relevantInstances = relevantEventStore.instances
   let relevantDefs = relevantEventStore.defs
+  let relevantInstances = relevantEventStore.instances
   let selectionRange = selection.range
-  let { constraints, overlaps, allows } = calendar.selectionConfig
+  let { selectionConfig } = calendar
 
   // constraint
-  for (let constraint of constraints) {
+  for (let selectionConstraint of selectionConfig.constraints) {
 
-    if (!constraintPasses(constraint, selectionRange, relevantEventStore, businessHoursUnexpanded, calendar)) {
+    if (!constraintPasses(selectionConstraint, selectionRange, relevantEventStore, businessHoursUnexpanded, calendar)) {
       return false
     }
 
-    if (splitterMeta && !splitterMeta.constraintAllowsKey(constraint, currentSegmentKey)) {
+    if (splitterMeta && !splitterMeta.constraintAllowsKey(selectionConstraint, currentSegmentKey)) {
       return false
     }
   }
 
   // overlap
+
+  let overlapFunc = calendar.opt('selectOverlap')
+  if (typeof overlapFunc !== 'function') { overlapFunc = null }
+
   for (let relevantInstanceId in relevantInstances) {
     let relevantInstance = relevantInstances[relevantInstanceId]
-    let relevantDef = relevantDefs[relevantInstance.defId]
 
     // intersect! evaluate
     if (rangesIntersect(selectionRange, relevantInstance.range)) {
 
-      if (!allOverlapsPass(overlaps, null, null, relevantDef, relevantInstance, calendar)) {
+      if (selectionConfig.overlap === false) {
+        return false
+      }
+
+      if (overlapFunc && !overlapFunc(
+        new EventApi(calendar, relevantDefs.defs[relevantInstance.defId], relevantInstance)
+      )) {
         return false
       }
     }
   }
 
   // allow (a function)
-  for (let allow of allows) {
+  for (let selectionAllow of selectionConfig.allows) {
 
     let fullDateSpan = Object.assign(
       {},
@@ -224,7 +242,7 @@ function isSegmentedSelectionValid(
       selection,
     )
 
-    if (!allow(
+    if (!selectionAllow(
       buildDateSpanApi(fullDateSpan, calendar.dateEnv),
       null
     )) {
@@ -309,47 +327,6 @@ function anyRangesContainRange(outerRanges: DateRange[], innerRange: DateRange):
   }
 
   return false
-}
-
-
-// Overlap Utils
-// ------------------------------------------------------------------------------------------------------------------------
-
-function allOverlapsPass(
-  overlaps: Overlap[],
-  subjectDef: EventDef | null,
-  subjectInstance: EventInstance | null,
-  otherDef: EventDef,
-  otherInstance: EventInstance,
-  calendar: Calendar
-) {
-  for (let overlap of overlaps) {
-    if (!overlapPasses(overlap, subjectDef, subjectInstance, otherDef, otherInstance, calendar)) {
-      return false
-    }
-  }
-
-  return true
-}
-
-function overlapPasses(
-  overlap: Overlap,
-  subjectDef: EventDef | null,
-  subjectInstance: EventInstance | null,
-  otherDef: EventDef,
-  otherInstance: EventInstance,
-  calendar: Calendar
-) {
-  if (overlap === false) {
-    return false
-  } else if (typeof overlap === 'function') {
-    return !overlap(
-      new EventApi(calendar, otherDef, otherInstance),
-      subjectDef ? new EventApi(calendar, subjectDef, subjectInstance) : null
-    )
-  }
-
-  return true
 }
 
 

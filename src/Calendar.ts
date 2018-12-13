@@ -24,7 +24,7 @@ import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
-import { processScopedUiProps, EventUiHash, EventUi, processUnscopedUiProps } from './component/event-ui'
+import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui'
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
@@ -64,8 +64,8 @@ export default class Calendar {
 
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
-  private buildEventUiSingleBase = memoize(processScopedUiProps.bind(null, 'event') as typeof processUnscopedUiProps) // hack for ts
-  private buildSelectionConfig = memoize(processScopedUiProps.bind(null, 'select') as typeof processUnscopedUiProps) // hack for ts
+  private buildEventUiSingleBase = memoize(this._buildSelectionConfig)
+  private buildSelectionConfig = memoize(this._buildEventUiSingleBase)
   private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
 
@@ -406,7 +406,7 @@ export default class Calendar {
         this.renderableEventStore :
         state.eventStore
 
-    let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options, this)
+    let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options)
     let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
@@ -545,7 +545,7 @@ export default class Calendar {
       options.cmdFormatter
     )
 
-    this.selectionConfig = this.buildSelectionConfig(options, this) // needs dateEnv. do after :(
+    this.selectionConfig = this.buildSelectionConfig(options) // needs dateEnv. do after :(
 
     // ineffecient to do every time?
     this.viewSpecs = buildViewSpecs(
@@ -558,6 +558,19 @@ export default class Calendar {
     this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
       return new viewSpec.class.prototype.dateProfileGeneratorClass(viewSpec, this)
     })
+  }
+
+
+  _buildSelectionConfig(rawOpts) {
+    return processScopedUiProps('select', rawOpts, this)
+  }
+
+
+  _buildEventUiSingleBase(rawOpts) {
+    if (rawOpts.editable) { // so 'editable' affected events
+      rawOpts = Object.assign({}, rawOpts, { eventEditable: true })
+    }
+    return processScopedUiProps('event', rawOpts, this)
   }
 
 

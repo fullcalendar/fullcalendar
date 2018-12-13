@@ -1,4 +1,4 @@
-import { Constraint, Allow, normalizeConstraint, ConstraintInput, Overlap } from '../validation'
+import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../validation'
 import { parseClassName } from '../util/html'
 import { refineProps, capitaliseFirstLetter } from '../util/misc'
 import Calendar from '../Calendar'
@@ -12,8 +12,8 @@ export interface UnscopedEventUiInput {
   startEditable?: boolean
   durationEditable?: boolean
   constraint?: ConstraintInput
-  overlap?: Overlap
-  allow?: Allow
+  overlap?: boolean
+  allow?: AllowFunc
   className?: string[] | string
   classNames?: string[] | string
   backgroundColor?: string
@@ -22,27 +22,12 @@ export interface UnscopedEventUiInput {
   color?: string
 }
 
-export interface EventScopedEventUiInput { // has the word "event" in all the props
-  editable?: boolean // only one not scoped
-  eventStartEditable?: boolean
-  eventDurationEditable?: boolean
-  eventConstraint?: ConstraintInput
-  eventOverlap?: Overlap
-  eventAllow?: Allow
-  eventClassName?: string[] | string
-  eventClassNames?: string[] | string
-  eventBackgroundColor?: string
-  eventBorderColor?: string
-  eventTextColor?: string
-  eventColor?: string
-}
-
 export interface EventUi {
   startEditable: boolean | null
   durationEditable: boolean | null
   constraints: Constraint[]
-  overlaps: Overlap[]
-  allows: Allow[]
+  overlap: boolean | null
+  allows: AllowFunc[]
   backgroundColor: string
   borderColor: string
   textColor: string,
@@ -74,7 +59,7 @@ export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar:
     startEditable: props.startEditable != null ? props.startEditable : props.editable,
     durationEditable: props.durationEditable != null ? props.durationEditable : props.editable,
     constraints: constraint != null ? [ constraint ] : [],
-    overlaps: props.overlap != null ? [ props.overlap ] : [],
+    overlap: props.overlap,
     allows: props.allow != null ? [ props.allow ] : [],
     backgroundColor: props.backgroundColor || props.color,
     borderColor: props.borderColor || props.color,
@@ -101,7 +86,7 @@ const EMPTY_EVENT_UI: EventUi = {
   startEditable: null,
   durationEditable: null,
   constraints: [],
-  overlaps: [],
+  overlap: null,
   allows: [],
   backgroundColor: '',
   borderColor: '',
@@ -119,7 +104,7 @@ function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 
     startEditable: item1.startEditable != null ? item1.startEditable : item0.startEditable,
     durationEditable: item1.durationEditable != null ? item1.durationEditable : item0.durationEditable,
     constraints: item0.constraints.concat(item1.constraints),
-    overlaps: item0.overlaps.concat(item1.overlaps),
+    overlap: typeof item1.overlap === 'boolean' ? item1.overlap : item0.overlap,
     allows: item0.allows.concat(item1.allows),
     backgroundColor: item1.backgroundColor || item0.backgroundColor,
     borderColor: item1.borderColor || item0.borderColor,

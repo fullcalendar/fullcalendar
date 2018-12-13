@@ -3,8 +3,9 @@ import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
-import { EventScopedEventUiInput, processUnscopedUiProps } from '../component/event-ui'
+import { processUnscopedUiProps } from '../component/event-ui'
 import { EventUi } from '../component/event-ui'
+import { ConstraintInput, AllowFunc } from '../validation'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
@@ -23,7 +24,7 @@ export type EventInputTransformer = (eventInput: EventInput) => EventInput | nul
 export type EventSourceSuccessResponseHandler = (rawData: any, response: any) => EventInput[] | void
 export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
-export interface ExtendedEventSourceInput extends EventScopedEventUiInput {
+export interface ExtendedEventSourceInput {
   id?: string | number // only accept number?
   allDayDefault?: boolean
   eventDataTransform?: EventInputTransformer
@@ -42,6 +43,19 @@ export interface ExtendedEventSourceInput extends EventScopedEventUiInput {
   // for any network-related sources
   success?: EventSourceSuccessResponseHandler
   failure?: EventSourceErrorResponseHandler
+
+  editable?: boolean
+  startEditable?: boolean
+  durationEditable?: boolean
+  constraint?: ConstraintInput
+  overlap?: boolean
+  allow?: AllowFunc
+  className?: string[] | string
+  classNames?: string[] | string
+  backgroundColor?: string
+  borderColor?: string
+  textColor?: string
+  color?: string
 
   [otherProp: string]: any // in case plugins want more props
 }

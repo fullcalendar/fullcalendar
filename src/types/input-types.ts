@@ -11,9 +11,8 @@ import { FormatterInput } from '../datelib/formatting'
 import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursInput } from '../structs/business-hours'
 import EventApi from '../api/EventApi'
-import { Allow, ConstraintInput, Overlap } from '../validation'
+import { AllowFunc, ConstraintInput, OverlapFunc } from '../validation'
 import { PluginDef } from '../plugin-system'
-import { UnscopedEventUiInput } from '../component/event-ui'
 
 
 export interface ToolbarInput {
@@ -71,7 +70,7 @@ export interface DropInfo {
   end: Date
 }
 
-export interface OptionsInputBase extends UnscopedEventUiInput {
+export interface OptionsInputBase {
   header?: boolean | ToolbarInput
   footer?: boolean | ToolbarInput
   customButtons?: { [name: string]: CustomButtonInput }
@@ -140,9 +139,24 @@ export interface OptionsInputBase extends UnscopedEventUiInput {
   selectMirror?: boolean
   unselectAuto?: boolean
   unselectCancel?: string
+
   selectConstraint?: ConstraintInput
-  selectOverlap?: Overlap
-  selectAllow?: Allow
+  selectOverlap?: boolean | OverlapFunc
+  selectAllow?: AllowFunc
+
+  editable?: boolean
+  eventStartEditable?: boolean
+  eventDurationEditable?: boolean
+  eventConstraint?: ConstraintInput
+  eventOverlap?: boolean | OverlapFunc // allows a function, unlike EventUi
+  eventAllow?: AllowFunc
+  eventClassName?: string[] | string
+  eventClassNames?: string[] | string
+  eventBackgroundColor?: string
+  eventBorderColor?: string
+  eventTextColor?: string
+  eventColor?: string
+
   events?: EventSourceInput
   eventSources?: EventSourceInput[]
   allDayDefault?: boolean

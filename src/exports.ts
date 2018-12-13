@@ -61,7 +61,7 @@ export {
 } from './util/dom-manip'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
-export { EventUiHash, EventUi, processScopedUiProps, EventScopedEventUiInput, combineEventUis } from './component/event-ui'
+export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps } from './component/event-splitting'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
 
@@ -161,3 +161,4 @@ export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTabl
 export { default as Slicer, SlicedProps } from './common/slicing-utils'
 
 export { EventMutation } from './structs/event-mutation'
+export { ConstraintInput, AllowFunc } from './validation'
