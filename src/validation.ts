@@ -1,7 +1,6 @@
-import { EventStore, expandRecurring, eventTupleToStore, filterEventStoreDefs, createEmptyEventStore } from './structs/event-store'
+import { EventStore, expandRecurring, filterEventStoreDefs, createEmptyEventStore, parseEvents } from './structs/event-store'
 import Calendar from './Calendar'
-import { DateSpan, parseOpenDateSpan, OpenDateSpanInput, OpenDateSpan, buildDateSpanApi, DateSpanApi } from './structs/date-span'
-import { EventTuple, parseEvent } from './structs/event'
+import { DateSpan, OpenDateSpanInput, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import EventApi from './api/EventApi'
 import { EventUiHash } from './component/event-ui'
@@ -11,7 +10,7 @@ import { excludeInstances } from './reducers/eventStore'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | OpenDateSpanInput | { [timeOrRecurringProp: string]: any }
-export type Constraint = 'businessHours' | string | OpenDateSpan | EventTuple
+export type Constraint = 'businessHours' | string | EventStore
 export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
 export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
 
@@ -291,15 +290,9 @@ function constraintToRanges(
     )
 
   } else if (typeof constraint === 'object' && constraint) { // non-null object
-
-    if ((constraint as EventTuple).def) { // an event definition (actually, a tuple)
-      return eventStoreToRanges(
-        expandRecurring(eventTupleToStore(constraint as EventTuple), subjectRange, calendar)
-      )
-
-    } else {
-      return [ (constraint as OpenDateSpan).range ] // an already-parsed datespan
-    }
+    return eventStoreToRanges(
+      expandRecurring(constraint, subjectRange, calendar)
+    )
   }
 
   return []
@@ -367,19 +360,15 @@ function splitMinimalProps(
 // ------------------------------------------------------------------------------------------------------------------------
 
 export function normalizeConstraint(input: ConstraintInput, calendar: Calendar): Constraint | null {
-  if (typeof input === 'object' && input) { // non-null object
-    let span = parseOpenDateSpan(input, calendar.dateEnv)
+  if (Array.isArray(input)) {
+    return parseEvents(input, '', calendar, true) // allowOpenRange=true
 
-    // TODO: use parseEvent/parseEvents all the way
-    // but to do this, we need to allow open-range parsing
-    if (span === null || span.range.start || span.range.end) {
-      return span
-    } else { // if completely-open range, assume it's a recurring event (prolly with startTime/endTime)
-      return parseEvent(input, '', calendar)
-    }
+  } else if (typeof input === 'object' && input) { // non-null object
+    return parseEvents([ input ], '', calendar, true) // allowOpenRange=true
 
   } else if (input != null) {
     return String(input)
+
   } else {
     return null
   }
