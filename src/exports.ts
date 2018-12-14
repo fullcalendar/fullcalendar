@@ -161,4 +161,4 @@ export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTabl
 export { default as Slicer, SlicedProps } from './common/slicing-utils'
 
 export { EventMutation } from './structs/event-mutation'
-export { ConstraintInput, AllowFunc, isPropsValid } from './validation'
+export { Constraint, ConstraintInput, AllowFunc, isPropsValid } from './validation'

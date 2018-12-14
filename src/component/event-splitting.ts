@@ -39,7 +39,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     let keyInfos = this.getKeyInfo(props)
     let defKeys = this.getKeysForEventDefs(props.eventStore)
     let dateSelections = this.splitDateSelection(props.dateSelection)
-    let individualUi = this.splitIndividualUi(props.eventUiBases, defKeys)
+    let individualUi = this.splitIndividualUi(props.eventUiBases, defKeys) // the individual *bases*
     let eventStores = this.splitEventStore(props.eventStore, defKeys)
     let eventDrags = this.splitEventDrag(props.eventDrag, defKeys)
     let eventResizes = this.splitEventResize(props.eventResize, defKeys)
@@ -48,13 +48,13 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     for (let key in keyInfos) {
       let keyInfo = keyInfos[key]
       let eventStore = eventStores[key] || EMPTY_EVENT_STORE
-      let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(this._buildEventUiForKey)
+      let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(buildEventUiForKey)
 
       splitProps[key] = {
         businessHours: keyInfo.businessHours || props.businessHours,
         dateSelection: dateSelections[key] || null,
         eventStore,
-        eventUiBases: buildEventUi.call(this, props.eventUiBases[''], keyInfo.ui, individualUi[key], key),
+        eventUiBases: buildEventUi(props.eventUiBases[''], keyInfo.ui, individualUi[key]),
         eventSelection: eventStore.instances[props.eventSelection] ? props.eventSelection : '',
         eventDrag: eventDrags[key] || null,
         eventResize: eventResizes[key] || null
@@ -165,32 +165,26 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return splitStates
   }
 
-  private _buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null, individualUi: EventUiHash | null, key: string) {
-    let baseParts = []
+}
 
-    if (allUi) {
-      baseParts.push(allUi)
-    }
+function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null, individualUi: EventUiHash | null) {
+  let baseParts = []
 
-    if (eventUiForKey) {
-      baseParts.push(eventUiForKey)
-    }
-
-    let stuff = {
-      '': combineEventUis(baseParts)
-    }
-
-    if (individualUi) {
-      for (let defId in individualUi) {
-        stuff[defId] = this.filterEventUi(individualUi[defId], key)
-      }
-    }
-
-    return stuff
+  if (allUi) {
+    baseParts.push(allUi)
   }
 
-  private filterEventUi(ui: EventUi, key: string): EventUi {
-    return ui
+  if (eventUiForKey) {
+    baseParts.push(eventUiForKey)
   }
 
+  let stuff = {
+    '': combineEventUis(baseParts)
+  }
+
+  if (individualUi) {
+    Object.assign(stuff, individualUi)
+  }
+
+  return stuff
 }

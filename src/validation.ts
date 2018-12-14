@@ -8,6 +8,7 @@ import { excludeInstances } from './reducers/eventStore'
 import { EventInput } from './structs/event'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { SplittableProps } from './component/event-splitting'
+import { mapHash } from './util/object'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | EventInput | EventInput[]
@@ -44,13 +45,13 @@ function isNewPropsValid(newProps, calendar: Calendar) {
   return (calendar.pluginSystem.hooks.isPropsValid || isPropsValid)(props, calendar)
 }
 
-export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta = {}): boolean {
+export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta = {}, filterConfig?): boolean {
 
-  if (state.dateSelection && !isDateSelectionPropsValid(state, calendar, dateSpanMeta)) {
+  if (state.eventDrag && !isInteractionPropsValid(state, calendar, dateSpanMeta, filterConfig)) {
     return false
   }
 
-  if (state.eventDrag && !isInteractionPropsValid(state, calendar, dateSpanMeta)) {
+  if (state.dateSelection && !isDateSelectionPropsValid(state, calendar, dateSpanMeta, filterConfig)) {
     return false
   }
 
@@ -61,7 +62,7 @@ export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpa
 // Moving Event Validation
 // ------------------------------------------------------------------------------------------------------------------------
 
-function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta: any): boolean {
+function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta: any, filterConfig): boolean {
   let interaction = state.eventDrag // HACK: the eventDrag props is used for ALL interactions
 
   let subjectEventStore = interaction.mutatedEvents
@@ -73,6 +74,10 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
       state.eventUiBases :
       { '': calendar.selectionConfig } // if not a real event, validate as a selection
   )
+
+  if (filterConfig) {
+    subjectConfigs = mapHash(subjectConfigs, filterConfig)
+  }
 
   let otherEventStore = excludeInstances(state.eventStore, interaction.affectedEvents.instances) // exclude the subject events. TODO: exclude defs too?
   let otherDefs = otherEventStore.defs
@@ -86,7 +91,7 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
     let subjectDef = subjectDefs[subjectInstance.defId]
 
     // constraint
-    if (!allConstraintPasses(subjectConfig.constraints, subjectRange, otherEventStore, state.businessHours, calendar)) {
+    if (!allConstraintsPass(subjectConfig.constraints, subjectRange, otherEventStore, state.businessHours, calendar)) {
       return false
     }
 
@@ -148,7 +153,7 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
 // Date Selection Validation
 // ------------------------------------------------------------------------------------------------------------------------
 
-function isDateSelectionPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta: any): boolean {
+function isDateSelectionPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta: any, filterConfig): boolean {
   let relevantEventStore = state.eventStore
   let relevantDefs = relevantEventStore.defs
   let relevantInstances = relevantEventStore.instances
@@ -157,8 +162,12 @@ function isDateSelectionPropsValid(state: SplittableProps, calendar: Calendar, d
   let selectionRange = selection.range
   let { selectionConfig } = calendar
 
+  if (filterConfig) {
+    selectionConfig = filterConfig(selectionConfig)
+  }
+
   // constraint
-  if (!allConstraintPasses(selectionConfig.constraints, selectionRange, relevantEventStore, state.businessHours, calendar)) {
+  if (!allConstraintsPass(selectionConfig.constraints, selectionRange, relevantEventStore, state.businessHours, calendar)) {
     return false
   }
 
@@ -205,7 +214,7 @@ function isDateSelectionPropsValid(state: SplittableProps, calendar: Calendar, d
 // Constraint Utils
 // ------------------------------------------------------------------------------------------------------------------------
 
-function allConstraintPasses(
+function allConstraintsPass(
   constraints: Constraint[],
   subjectRange: DateRange,
   otherEventStore: EventStore,
