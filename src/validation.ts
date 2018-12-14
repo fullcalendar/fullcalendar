@@ -14,6 +14,7 @@ export type ConstraintInput = 'businessHours' | string | EventInput | EventInput
 export type Constraint = 'businessHours' | string | EventStore | false // false means won't pass at all
 export type OverlapFunc = ((stillEvent: EventApi, movingEvent: EventApi | null) => boolean)
 export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boolean
+export type isPropsValidTester = (props: SplittableProps, calendar: Calendar) => boolean
 
 
 // high-level segmenting-aware tester functions
@@ -40,12 +41,10 @@ function isNewPropsValid(newProps, calendar: Calendar) {
     eventResize: null
   }, newProps)
 
-  // TODO: hooks
-
-  return isPropsValid(props, calendar)
+  return (calendar.pluginSystem.hooks.isPropsValid || isPropsValid)(props, calendar)
 }
 
-export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta = {}) {
+export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta = {}): boolean {
 
   if (state.dateSelection && !isDateSelectionPropsValid(state, calendar, dateSpanMeta)) {
     return false

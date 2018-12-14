@@ -9,6 +9,7 @@ import { assignTo } from './util/object'
 import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
+import { isPropsValidTester } from './validation'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -24,6 +25,7 @@ export interface PluginDefInput {
   viewConfigs?: ViewConfigInputHash
   viewSpecTransformers?: ViewSpecTransformer[]
   viewPropsTransformers?: ViewPropsTransformerClass[]
+  isPropsValid?: isPropsValidTester
 }
 
 export interface PluginHooks {
@@ -37,6 +39,7 @@ export interface PluginHooks {
   viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?
   viewSpecTransformers: ViewSpecTransformer[]
   viewPropsTransformers: ViewPropsTransformerClass[]
+  isPropsValid: isPropsValidTester | null
 }
 
 export interface PluginDef extends PluginHooks {
@@ -66,7 +69,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     dateSelectionApiTransformers: input.dateSelectionApiTransformers || [],
     viewConfigs: input.viewConfigs || {},
     viewSpecTransformers: input.viewSpecTransformers || [],
-    viewPropsTransformers: input.viewPropsTransformers || []
+    viewPropsTransformers: input.viewPropsTransformers || [],
+    isPropsValid: input.isPropsValid || null
   }
 }
 
@@ -86,7 +90,8 @@ export class PluginSystem {
       dateSelectionApiTransformers: [],
       viewConfigs: {},
       viewSpecTransformers: [],
-      viewPropsTransformers: []
+      viewPropsTransformers: [],
+      isPropsValid: null
     }
     this.addedHash = {}
   }
@@ -116,6 +121,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     dateSelectionApiTransformers: hooks0.dateSelectionApiTransformers.concat(hooks1.dateSelectionApiTransformers),
     viewConfigs: assignTo({}, hooks0.viewConfigs, hooks1.viewConfigs),
     viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
-    viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers)
+    viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
+    isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid
   }
 }
