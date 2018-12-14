@@ -12,7 +12,7 @@ import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
 import EventApi from '../api/EventApi'
 import { elementMatches } from '../util/dom-manip'
 import { enableCursor, disableCursor } from '../util/misc'
-import { isEventsValid } from '../validation'
+import { isInteractionValid } from '../validation'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
 
@@ -59,40 +59,36 @@ export default class ExternalElementDragging {
     let receivingCalendar: Calendar | null = null
     let droppableEvent: EventTuple | null = null
     let isInvalid = false
+    let interaction: EventInteractionState = {
+      affectedEvents: createEmptyEventStore(),
+      mutatedEvents: createEmptyEventStore(),
+      isEvent: this.dragMeta!.create,
+      origSeg: null
+    }
 
     if (hit) {
       receivingCalendar = hit.component.calendar
 
       if (this.canDropElOnCalendar(ev.subjectEl as HTMLElement, receivingCalendar)) {
+
         droppableEvent = computeEventForDateSpan(
           hit.dateSpan,
           this.dragMeta!,
           receivingCalendar
         )
 
-        isInvalid = !isEventsValid(
-          eventTupleToStore(droppableEvent), // TODO: fix inefficiency of calling eventTupleToStore again
-          receivingCalendar,
-          !this.dragMeta.create
-        )
+        interaction.mutatedEvents = eventTupleToStore(droppableEvent)
+        isInvalid = !isInteractionValid(interaction, receivingCalendar)
 
         if (isInvalid) {
-          droppableEvent = null
+          interaction.mutatedEvents = createEmptyEventStore()
         }
       }
     }
 
-    // TODO: always store as event-store?
-    let droppableEventStore = droppableEvent ? eventTupleToStore(droppableEvent) : createEmptyEventStore()
+    this.displayDrag(receivingCalendar, interaction)
 
-    this.displayDrag(receivingCalendar, {
-      affectedEvents: createEmptyEventStore(),
-      mutatedEvents: droppableEventStore,
-      isEvent: this.dragMeta!.create,
-      origSeg: null
-    })
-
-    // show mirror if no already-rendered mirror element OR if we are shutting down the mirror
+    // show mirror if no already-rendered mirror element OR if we are shutting down the mirror (?)
     // TODO: wish we could somehow wait for dispatch to guarantee render
     dragging.setMirrorIsVisible(
       isFinal || !droppableEvent || !document.querySelector('.fc-mirror')

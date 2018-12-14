@@ -63,7 +63,7 @@ export default class DateSelecting {
         calendar.pluginSystem.hooks.dateSelectionTransformers
       )
 
-      if (!dragSelection || !this.component.isSelectionValid(dragSelection)) {
+      if (!dragSelection || !this.component.isDateSelectionValid(dragSelection)) {
         isInvalid = true
         dragSelection = null
       }

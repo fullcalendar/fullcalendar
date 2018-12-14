@@ -1,5 +1,4 @@
 import Component, { ComponentContext } from './Component'
-import { EventStore } from '../structs/event-store'
 import { EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInstanceHash } from '../structs/event'
@@ -7,10 +6,11 @@ import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from '../interactions/HitDragging'
 import browserContext from '../common/browser-context'
 import { elementClosest, removeElement } from '../util/dom-manip'
-import { isSelectionValid, isEventsValid } from '../validation'
+import { isDateSelectionValid, isInteractionValid } from '../validation'
 import EventApi from '../api/EventApi'
 import FgEventRenderer from './renderers/FgEventRenderer'
 import FillRenderer from './renderers/FillRenderer'
+import { EventInteractionState } from '../interactions/event-interaction-state'
 
 export type DateComponentHash = { [uid: string]: DateComponent<any> }
 
@@ -142,10 +142,10 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // Validation
   // -----------------------------------------------------------------------------------------------------------------
 
-  isEventsValid(eventStore: EventStore) {
+  isInteractionValid(interaction: EventInteractionState) {
     let { calendar } = this
     let dateProfile = (this.props as any).dateProfile // HACK
-    let instances = eventStore.instances
+    let instances = interaction.mutatedEvents.instances
 
     if (dateProfile) { // HACK for DayTile
       for (let instanceId in instances) {
@@ -155,10 +155,10 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
       }
     }
 
-    return isEventsValid(eventStore, calendar)
+    return isInteractionValid(interaction, calendar)
   }
 
-  isSelectionValid(selection: DateSpan): boolean {
+  isDateSelectionValid(selection: DateSpan): boolean {
     let dateProfile = (this.props as any).dateProfile // HACK
 
     if (
@@ -168,7 +168,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
       return false
     }
 
-    return isSelectionValid(selection, this.calendar)
+    return isDateSelectionValid(selection, this.calendar)
   }
 
 

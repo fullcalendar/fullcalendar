@@ -1,13 +1,13 @@
-import { EventStore, expandRecurring, filterEventStoreDefs, createEmptyEventStore, parseEvents } from './structs/event-store'
+import { EventStore, expandRecurring, filterEventStoreDefs, parseEvents } from './structs/event-store'
 import Calendar from './Calendar'
 import { DateSpan, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import EventApi from './api/EventApi'
-import { EventUiHash } from './component/event-ui'
 import { compileEventUis } from './component/event-rendering'
-import { ValidationSplitterMeta } from './plugin-system'
 import { excludeInstances } from './reducers/eventStore'
 import { EventInput } from './structs/event'
+import { EventInteractionState } from './interactions/event-interaction-state'
+import { SplittableProps } from './component/event-splitting'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | EventInput | EventInput[]
@@ -19,95 +19,57 @@ export type AllowFunc = (span: DateSpanApi, movingEvent: EventApi | null) => boo
 // high-level segmenting-aware tester functions
 // ------------------------------------------------------------------------------------------------------------------------
 
-export function isEventsValid(subjectEventStore: EventStore, calendar: Calendar, isntEvent?: boolean): boolean {
-  let splitterMeta = calendar.pluginSystem.hooks.validationSplitter
-  let relevantSegmentedProps = getRelevantSegmentedProps(calendar, splitterMeta)
-  let subjectSegmentedProps = splitMinimalProps({
-    eventStore: subjectEventStore,
-    eventUiBases: isntEvent ? { '': calendar.selectionConfig } : calendar.eventUiBases,
-  }, splitterMeta)
-
-  for (let key in subjectSegmentedProps) {
-    let subjectProps = subjectSegmentedProps[key]
-    let relevantProps = relevantSegmentedProps[key]
-
-    if (!isSegmentedEventsValid(
-      subjectProps.eventStore,
-      subjectProps.eventUiBases,
-      relevantProps.eventStore,
-      relevantProps.eventUiBases,
-      relevantProps.businessHours,
-      calendar,
-      splitterMeta,
-      key,
-      isntEvent
-    )) {
-      return false
-    }
-  }
-
-  return true
+export function isInteractionValid(interaction: EventInteractionState, calendar: Calendar) {
+  return isNewPropsValid({ eventDrag: interaction }, calendar) // HACK: the eventDrag props is used for ALL interactions
 }
 
-export function isSelectionValid(selection: DateSpan, calendar: Calendar): boolean {
-  let splitterMeta = calendar.pluginSystem.hooks.validationSplitter
-  let relevantSegmentedProps = getRelevantSegmentedProps(calendar, splitterMeta)
-  let subjectSegmentedProps = splitMinimalProps({
-    dateSelection: selection
-  }, splitterMeta)
-
-  for (let key in subjectSegmentedProps) {
-    let subjectProps = subjectSegmentedProps[key]
-    let relevantProps = relevantSegmentedProps[key]
-
-    if (!isSegmentedSelectionValid(
-      subjectProps.dateSelection,
-      relevantProps.eventStore,
-      relevantProps.businessHours,
-      calendar,
-      splitterMeta,
-      key,
-    )) {
-      return false
-    }
-  }
-
-  return true
+export function isDateSelectionValid(dateSelection: DateSpan, calendar: Calendar) {
+  return isNewPropsValid({ dateSelection }, calendar)
 }
 
-// we have a different meaning of "relevant" here than other places of codebase
-function getRelevantSegmentedProps(calendar: Calendar, splitterMeta: ValidationSplitterMeta) {
-  let view = calendar.view // yuck
-
-  return splitMinimalProps({
+function isNewPropsValid(newProps, calendar: Calendar) {
+  let props = Object.assign({}, {
+    businessHours: calendar.view.props.businessHours, // yuck
+    dateSelection: '',
     eventStore: calendar.state.eventStore,
     eventUiBases: calendar.eventUiBases,
-    businessHours: view ? view.props.businessHours : createEmptyEventStore() // yuck
-  }, splitterMeta)
+    eventSelection: '',
+    eventDrag: null,
+    eventResize: null
+  }, newProps)
+
+  // TODO: hooks
+
+  return isPropsValid(props, calendar)
+}
+
+export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta = {}) {
+
+  if (state.dateSelection && !isDateSelectionPropsValid(state, calendar, dateSpanMeta)) {
+    return false
+  }
+
+  if (state.eventDrag && !isInteractionPropsValid(state, calendar, dateSpanMeta)) {
+    return false
+  }
 }
 
 
-// insular tester functions
+// Moving Event Validation
 // ------------------------------------------------------------------------------------------------------------------------
 
-function isSegmentedEventsValid(
-  subjectEventStore: EventStore,
-  subjectConfigBase: EventUiHash,
-  relevantEventStore: EventStore, // include the original subject events
-  relevantEventConfigBase: EventUiHash,
-  businessHoursUnexpanded: EventStore,
-  calendar: Calendar,
-  splitterMeta: ValidationSplitterMeta | null,
-  currentSegmentKey: string,
-  isntEvent: boolean
-): boolean {
+function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta: any): boolean {
+  let interaction = state.eventDrag // HACK: the eventDrag props is used for ALL interactions
+
+  let subjectEventStore = interaction.mutatedEvents
   let subjectDefs = subjectEventStore.defs
   let subjectInstances = subjectEventStore.instances
-  let subjectConfigs = compileEventUis(subjectDefs, subjectConfigBase)
-  let otherEventStore = excludeInstances(relevantEventStore, subjectInstances) // exclude the subject events. TODO: exclude defs too?
+  let subjectConfigs = compileEventUis(subjectDefs, state.eventUiBases)
+
+  let otherEventStore = excludeInstances(state.eventStore, interaction.affectedEvents.instances) // exclude the subject events. TODO: exclude defs too?
   let otherDefs = otherEventStore.defs
   let otherInstances = otherEventStore.instances
-  let otherConfigs = compileEventUis(otherDefs, relevantEventConfigBase)
+  let otherConfigs = compileEventUis(otherDefs, state.eventUiBases)
 
   for (let subjectInstanceId in subjectInstances) {
     let subjectInstance = subjectInstances[subjectInstanceId]
@@ -115,20 +77,9 @@ function isSegmentedEventsValid(
     let subjectConfig = subjectConfigs[subjectInstance.defId]
     let subjectDef = subjectDefs[subjectInstance.defId]
 
-    if (splitterMeta && !splitterMeta.eventAllowsKey(subjectDef, calendar, currentSegmentKey)) { // TODO: pass in EventUi
-      return false
-    }
-
     // constraint
-    for (let subjectConstraint of subjectConfig.constraints) {
-
-      if (!constraintPasses(subjectConstraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar)) {
-        return false
-      }
-
-      if (splitterMeta && !splitterMeta.constraintAllowsKey(subjectConstraint, currentSegmentKey)) {
-        return false
-      }
+    if (!allConstraintPasses(subjectConfig.constraints, subjectRange, otherEventStore, state.businessHours, calendar)) {
+      return false
     }
 
     // overlap
@@ -144,7 +95,7 @@ function isSegmentedEventsValid(
         let otherOverlap = otherConfigs[otherInstance.defId].overlap
 
         // consider the other event's overlap. only do this if the subject event is a "real" event
-        if (otherOverlap === false && !isntEvent) {
+        if (otherOverlap === false && state.eventDrag.isEvent) {
           return false
         }
 
@@ -163,12 +114,12 @@ function isSegmentedEventsValid(
 
     // allow (a function)
     for (let subjectAllow of subjectConfig.allows) {
-      let origDef = relevantEventStore.defs[subjectDef.defId]
-      let origInstance = relevantEventStore.instances[subjectInstanceId]
+      let origDef = state.eventStore.defs[subjectDef.defId]
+      let origInstance = state.eventStore.instances[subjectInstanceId]
 
       let subjectDateSpan: DateSpan = Object.assign(
         {},
-        splitterMeta ? splitterMeta.getDateSpanPropsForKey(currentSegmentKey) : {},
+        dateSpanMeta,
         { range: subjectInstance.range, allDay: subjectDef.allDay }
       )
 
@@ -185,29 +136,22 @@ function isSegmentedEventsValid(
   return true
 }
 
-function isSegmentedSelectionValid(
-  selection: DateSpan,
-  relevantEventStore: EventStore,
-  businessHoursUnexpanded: EventStore,
-  calendar: Calendar,
-  splitterMeta: ValidationSplitterMeta | null,
-  currentSegmentKey: string
-): boolean {
+
+// Date Selection Validation
+// ------------------------------------------------------------------------------------------------------------------------
+
+function isDateSelectionPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta: any): boolean {
+  let relevantEventStore = state.eventStore
   let relevantDefs = relevantEventStore.defs
   let relevantInstances = relevantEventStore.instances
+
+  let selection = state.dateSelection
   let selectionRange = selection.range
   let { selectionConfig } = calendar
 
   // constraint
-  for (let selectionConstraint of selectionConfig.constraints) {
-
-    if (!constraintPasses(selectionConstraint, selectionRange, relevantEventStore, businessHoursUnexpanded, calendar)) {
-      return false
-    }
-
-    if (splitterMeta && !splitterMeta.constraintAllowsKey(selectionConstraint, currentSegmentKey)) {
-      return false
-    }
+  if (!allConstraintPasses(selectionConfig.constraints, selectionRange, relevantEventStore, state.businessHours, calendar)) {
+    return false
   }
 
   // overlap
@@ -236,11 +180,7 @@ function isSegmentedSelectionValid(
   // allow (a function)
   for (let selectionAllow of selectionConfig.allows) {
 
-    let fullDateSpan = Object.assign(
-      {},
-      splitterMeta ? splitterMeta.getDateSpanPropsForKey(currentSegmentKey) : {},
-      selection,
-    )
+    let fullDateSpan = Object.assign({}, dateSpanMeta, selection)
 
     if (!selectionAllow(
       buildDateSpanApi(fullDateSpan, calendar.dateEnv),
@@ -257,17 +197,23 @@ function isSegmentedSelectionValid(
 // Constraint Utils
 // ------------------------------------------------------------------------------------------------------------------------
 
-function constraintPasses(
-  constraint: Constraint,
+function allConstraintPasses(
+  constraints: Constraint[],
   subjectRange: DateRange,
   otherEventStore: EventStore,
   businessHoursUnexpanded: EventStore,
   calendar: Calendar
 ) {
-  return anyRangesContainRange(
-    constraintToRanges(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar),
-    subjectRange
-  )
+  for (let constraint of constraints) {
+    if (!anyRangesContainRange(
+      constraintToRanges(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar),
+      subjectRange
+    )) {
+      return false
+    }
+  }
+
+  return true
 }
 
 function constraintToRanges(
@@ -321,39 +267,6 @@ function anyRangesContainRange(outerRanges: DateRange[], innerRange: DateRange):
   }
 
   return false
-}
-
-
-// Splitting Utils
-// ------------------------------------------------------------------------------------------------------------------------
-
-interface MinimalSplittableProps {
-  dateSelection?: DateSpan
-  businessHours?: EventStore
-  eventStore?: EventStore
-  eventUiBases?: EventUiHash
-}
-
-function splitMinimalProps(
-  inputProps: MinimalSplittableProps,
-  splitterMeta: ValidationSplitterMeta | null
-): { [key: string]: MinimalSplittableProps } {
-
-  if (splitterMeta) {
-    let splitter = new splitterMeta.splitterClass()
-
-    return splitter.splitProps({
-      businessHours: inputProps.businessHours || createEmptyEventStore(),
-      dateSelection: inputProps.dateSelection || null,
-      eventStore: inputProps.eventStore || createEmptyEventStore(),
-      eventUiBases: inputProps.eventUiBases || {},
-      eventSelection: '',
-      eventDrag: null,
-      eventResize: null
-    })
-  } else {
-    return { '': inputProps }
-  }
 }
 
 

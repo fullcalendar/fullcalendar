@@ -7,7 +7,7 @@ import { EventUiHash, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
 
 export interface SplittableProps {
-  businessHours: EventStore | null
+  businessHours: EventStore | null // is this really allowed to be null?
   dateSelection: DateSpan | null
   eventStore: EventStore
   eventUiBases: EventUiHash

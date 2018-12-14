@@ -4,12 +4,13 @@ import { EventMutation, applyMutationToEventStore } from '../structs/event-mutat
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { PointerDragEvent } from '../dnd/PointerDragging'
-import { EventStore, getRelevantEvents } from '../structs/event-store'
+import { EventStore, getRelevantEvents, createEmptyEventStore } from '../structs/event-store'
 import { diffDates, enableCursor, disableCursor } from '../util/misc'
 import { DateRange } from '../datelib/date-range'
 import EventApi from '../api/EventApi'
 import { EventRenderRange, getElSeg } from '../component/event-rendering'
 import { createDuration } from '../datelib/duration'
+import { EventInteractionState } from './event-interaction-state'
 
 export default class EventDragging {
 
@@ -86,6 +87,12 @@ export default class EventDragging {
     let mutation: EventMutation | null = null
     let mutatedRelevantEvents: EventStore | null = null
     let isInvalid = false
+    let interaction: EventInteractionState = {
+      affectedEvents: relevantEvents,
+      mutatedEvents: createEmptyEventStore(),
+      isEvent: true,
+      origSeg: this.draggingSeg
+    }
 
     if (hit) {
       mutation = computeMutation(
@@ -98,23 +105,21 @@ export default class EventDragging {
 
     if (mutation) {
       mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, calendar)
+      interaction.mutatedEvents = mutatedRelevantEvents
 
-      if (!this.component.isEventsValid(mutatedRelevantEvents)) {
+      if (!this.component.isInteractionValid(interaction)) {
         isInvalid = true
         mutation = null
+
         mutatedRelevantEvents = null
+        interaction.mutatedEvents = null
       }
     }
 
     if (mutatedRelevantEvents) {
       calendar.dispatch({
         type: 'SET_EVENT_RESIZE',
-        state: {
-          affectedEvents: relevantEvents,
-          mutatedEvents: mutatedRelevantEvents,
-          isEvent: true,
-          origSeg: this.draggingSeg
-        }
+        state: interaction
       })
     } else {
       calendar.dispatch({ type: 'UNSET_EVENT_RESIZE' })

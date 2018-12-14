@@ -130,6 +130,12 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     let mutation: EventMutation | null = null
     let mutatedRelevantEvents: EventStore | null = null
     let isInvalid = false
+    let interaction: EventInteractionState = {
+      affectedEvents: relevantEvents,
+      mutatedEvents: createEmptyEventStore(),
+      isEvent: true,
+      origSeg: this.subjectSeg
+    }
 
     if (hit) {
       let receivingComponent = hit.component
@@ -143,11 +149,14 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
 
         if (mutation) {
           mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, receivingCalendar)
+          interaction.mutatedEvents = mutatedRelevantEvents
 
-          if (!this.component.isEventsValid(mutatedRelevantEvents)) {
+          if (!this.component.isInteractionValid(interaction)) {
             isInvalid = true
             mutation = null
+
             mutatedRelevantEvents = null
+            interaction.mutatedEvents = createEmptyEventStore()
           }
         }
       } else {
@@ -155,12 +164,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       }
     }
 
-    this.displayDrag(receivingCalendar, {
-      affectedEvents: relevantEvents,
-      mutatedEvents: mutatedRelevantEvents || createEmptyEventStore(),
-      isEvent: true,
-      origSeg: this.subjectSeg
-    })
+    this.displayDrag(receivingCalendar, interaction)
 
     if (!isInvalid) {
       enableCursor()

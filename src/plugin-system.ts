@@ -1,16 +1,14 @@
 import { reducerFunc } from './reducers/types'
-import { eventDefParserFunc, EventDef } from './structs/event'
+import { eventDefParserFunc } from './structs/event'
 import { eventDragMutationMassager } from './interactions/EventDragging'
 import { eventDefMutationApplier } from './structs/event-mutation'
-import Calendar, { dateClickApiTransformer, dateSelectionApiTransformer } from './Calendar'
+import { dateClickApiTransformer, dateSelectionApiTransformer } from './Calendar'
 import { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 import { ViewConfigInputHash } from './structs/view-config'
 import { assignTo } from './util/object'
 import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
-import Splitter from './component/event-splitting'
-import { Constraint } from './validation'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -26,7 +24,6 @@ export interface PluginDefInput {
   viewConfigs?: ViewConfigInputHash
   viewSpecTransformers?: ViewSpecTransformer[]
   viewPropsTransformers?: ViewPropsTransformerClass[]
-  validationSplitter?: ValidationSplitterMeta
 }
 
 export interface PluginHooks {
@@ -40,20 +37,11 @@ export interface PluginHooks {
   viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?
   viewSpecTransformers: ViewSpecTransformer[]
   viewPropsTransformers: ViewPropsTransformerClass[]
-  validationSplitter: ValidationSplitterMeta | null
 }
 
 export interface PluginDef extends PluginHooks {
   id: string
   deps: PluginDef[]
-}
-
-
-export interface ValidationSplitterMeta {
-  splitterClass: new() => Splitter
-  getDateSpanPropsForKey: (key: string) => any
-  constraintAllowsKey: (constraint: Constraint, key: string) => boolean
-  eventAllowsKey: (subjectDef: EventDef, calendar: Calendar, currentSegmentKey: string) => boolean
 }
 
 export type ViewPropsTransformerClass = new() => ViewPropsTransformer
@@ -78,8 +66,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     dateSelectionApiTransformers: input.dateSelectionApiTransformers || [],
     viewConfigs: input.viewConfigs || {},
     viewSpecTransformers: input.viewSpecTransformers || [],
-    viewPropsTransformers: input.viewPropsTransformers || [],
-    validationSplitter: input.validationSplitter || null
+    viewPropsTransformers: input.viewPropsTransformers || []
   }
 }
 
@@ -99,8 +86,7 @@ export class PluginSystem {
       dateSelectionApiTransformers: [],
       viewConfigs: {},
       viewSpecTransformers: [],
-      viewPropsTransformers: [],
-      validationSplitter: null
+      viewPropsTransformers: []
     }
     this.addedHash = {}
   }
@@ -130,7 +116,6 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     dateSelectionApiTransformers: hooks0.dateSelectionApiTransformers.concat(hooks1.dateSelectionApiTransformers),
     viewConfigs: assignTo({}, hooks0.viewConfigs, hooks1.viewConfigs),
     viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
-    viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
-    validationSplitter: hooks1.validationSplitter || hooks0.validationSplitter
+    viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers)
   }
 }
