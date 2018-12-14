@@ -1,4 +1,4 @@
-import { EventStore, expandRecurring, filterEventStoreDefs, parseEvents } from './structs/event-store'
+import { EventStore, expandRecurring, filterEventStoreDefs, parseEvents, createEmptyEventStore } from './structs/event-store'
 import Calendar from './Calendar'
 import { DateSpan, buildDateSpanApi, DateSpanApi } from './structs/date-span'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
@@ -28,8 +28,10 @@ export function isDateSelectionValid(dateSelection: DateSpan, calendar: Calendar
 }
 
 function isNewPropsValid(newProps, calendar: Calendar) {
+  let view = calendar.view
+
   let props = Object.assign({}, {
-    businessHours: calendar.view.props.businessHours, // yuck
+    businessHours: view ? view.props.businessHours : createEmptyEventStore(), // why? yuck
     dateSelection: '',
     eventStore: calendar.state.eventStore,
     eventUiBases: calendar.eventUiBases,
@@ -52,6 +54,8 @@ export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpa
   if (state.eventDrag && !isInteractionPropsValid(state, calendar, dateSpanMeta)) {
     return false
   }
+
+  return true
 }
 
 
@@ -64,7 +68,12 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
   let subjectEventStore = interaction.mutatedEvents
   let subjectDefs = subjectEventStore.defs
   let subjectInstances = subjectEventStore.instances
-  let subjectConfigs = compileEventUis(subjectDefs, state.eventUiBases)
+  let subjectConfigs = compileEventUis(
+    subjectDefs,
+    interaction.isEvent ?
+      state.eventUiBases :
+      { '': calendar.selectionConfig } // if not a real event, validate as a selection
+  )
 
   let otherEventStore = excludeInstances(state.eventStore, interaction.affectedEvents.instances) // exclude the subject events. TODO: exclude defs too?
   let otherDefs = otherEventStore.defs
@@ -95,7 +104,7 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
         let otherOverlap = otherConfigs[otherInstance.defId].overlap
 
         // consider the other event's overlap. only do this if the subject event is a "real" event
-        if (otherOverlap === false && state.eventDrag.isEvent) {
+        if (otherOverlap === false && interaction.isEvent) {
           return false
         }
 
@@ -203,7 +212,7 @@ function allConstraintPasses(
   otherEventStore: EventStore,
   businessHoursUnexpanded: EventStore,
   calendar: Calendar
-) {
+): boolean {
   for (let constraint of constraints) {
     if (!anyRangesContainRange(
       constraintToRanges(constraint, subjectRange, otherEventStore, businessHoursUnexpanded, calendar),

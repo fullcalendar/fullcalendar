@@ -82,6 +82,7 @@ export default class ExternalElementDragging {
 
         if (isInvalid) {
           interaction.mutatedEvents = createEmptyEventStore()
+          droppableEvent = null
         }
       }
     }
