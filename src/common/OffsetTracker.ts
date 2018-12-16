@@ -41,7 +41,7 @@ export default class OffsetTracker { // ElementOffsetTracker
     let left = this.origLeft
 
     for (let scrollCache of this.scrollCaches) {
-      left += scrollCache.getScrollLeft() - scrollCache.origScrollLeft
+      left += scrollCache.origScrollLeft - scrollCache.getScrollLeft()
     }
 
     return left
