@@ -161,7 +161,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   renderDatesWrap(dateProfile: DateProfile) {
     this.renderDates(dateProfile)
     this.addScroll({ isDateInit: true })
-    this.startNowIndicator() // shouldn't render yet because updateSize will be called soon
+    this.startNowIndicator(dateProfile) // shouldn't render yet because updateSize will be called soon
   }
 
   unrenderDatesWrap() {
@@ -282,14 +282,14 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Immediately render the current time indicator and begins re-rendering it at an interval,
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
-  startNowIndicator() {
+  startNowIndicator(dateProfile: DateProfile) {
     let { dateEnv } = this
     let unit
     let update
     let delay // ms wait value
 
     if (this.opt('nowIndicator')) {
-      unit = this.getNowIndicatorUnit()
+      unit = this.getNowIndicatorUnit(dateProfile)
       if (unit) {
         update = this.updateNowIndicator.bind(this)
 
@@ -358,7 +358,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  getNowIndicatorUnit() {
+  getNowIndicatorUnit(dateProfile: DateProfile) {
     // subclasses should implement
   }
 
