@@ -367,13 +367,11 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
   let dateSpan1 = hit1.dateSpan
   let date0 = dateSpan0.range.start
   let date1 = dateSpan1.range.start
-  let standardProps = null
+  let standardProps = {} as any
 
   if (dateSpan0.allDay !== dateSpan1.allDay) {
-    standardProps = {
-      allDay: dateSpan1.allDay,
-      hasEnd: hit1.component.opt('allDayMaintainDuration')
-    }
+    standardProps.allDay = dateSpan1.allDay
+    standardProps.hasEnd = hit1.component.opt('allDayMaintainDuration')
 
     if (dateSpan1.allDay) {
       // means date1 is already start-of-day,
@@ -389,6 +387,10 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
       hit0.component.largeUnit :
       null
   )
+
+  if (delta.milliseconds) { // has hours/minutes/seconds
+    standardProps.allDay = false
+  }
 
   let mutation: EventMutation = {
     startDelta: delta,
