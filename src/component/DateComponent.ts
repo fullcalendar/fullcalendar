@@ -44,6 +44,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   useEventCenter: boolean // for dragging geometry
   fgSegSelector: string // lets eventRender produce elements without fc-event class
   bgSegSelector: string
+  // IN SCHEDULER: allowEventResizeAcrossResources
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
   // of the date areas. if not defined, assumes to be day and time granularity.

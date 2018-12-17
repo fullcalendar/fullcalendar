@@ -11,6 +11,7 @@ import { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
 import { isPropsValidTester } from './validation'
 import { ExternalDefTransform } from './interactions-external/ExternalElementDragging'
+import { EventResizeJoinTransforms } from './interactions/EventResizing'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -28,6 +29,7 @@ export interface PluginDefInput {
   viewPropsTransformers?: ViewPropsTransformerClass[]
   isPropsValid?: isPropsValidTester
   externalDefTransforms?: ExternalDefTransform[]
+  eventResizeJoinTransforms?: EventResizeJoinTransforms[]
 }
 
 export interface PluginHooks {
@@ -43,6 +45,7 @@ export interface PluginHooks {
   viewPropsTransformers: ViewPropsTransformerClass[]
   isPropsValid: isPropsValidTester | null
   externalDefTransforms: ExternalDefTransform[]
+  eventResizeJoinTransforms: EventResizeJoinTransforms[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -74,7 +77,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     viewSpecTransformers: input.viewSpecTransformers || [],
     viewPropsTransformers: input.viewPropsTransformers || [],
     isPropsValid: input.isPropsValid || null,
-    externalDefTransforms: input.externalDefTransforms || []
+    externalDefTransforms: input.externalDefTransforms || [],
+    eventResizeJoinTransforms: input.eventResizeJoinTransforms || []
   }
 }
 
@@ -96,7 +100,8 @@ export class PluginSystem {
       viewSpecTransformers: [],
       viewPropsTransformers: [],
       isPropsValid: null,
-      externalDefTransforms: []
+      externalDefTransforms: [],
+      eventResizeJoinTransforms: []
     }
     this.addedHash = {}
   }
@@ -128,6 +133,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
     viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
     isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,
-    externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms)
+    externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms),
+    eventResizeJoinTransforms: hooks0.eventResizeJoinTransforms.concat(hooks1.eventResizeJoinTransforms)
   }
 }

@@ -99,7 +99,8 @@ export default class EventDragging {
         initialHit,
         hit,
         (ev.subjectEl as HTMLElement).classList.contains('fc-start-resizer'),
-        eventInstance.range
+        eventInstance.range,
+        calendar.pluginSystem.hooks.eventResizeJoinTransforms
       )
     }
 
@@ -206,7 +207,9 @@ export default class EventDragging {
 
 }
 
-function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: DateRange): EventMutation | null {
+export type EventResizeJoinTransforms = (hit0: Hit, hit1: Hit) => false | object
+
+function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: DateRange, transforms: EventResizeJoinTransforms[]): EventMutation | null {
   let dateEnv = hit0.component.dateEnv
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start
@@ -217,13 +220,27 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
     hit0.component.largeUnit
   )
 
+  let props = {} as any
+
+  for (let transform of transforms) {
+    let res = transform(hit0, hit1)
+
+    if (res === false) {
+      return null
+    } else if (res) {
+      Object.assign(props, res)
+    }
+  }
+
   if (isFromStart) {
     if (dateEnv.add(instanceRange.start, delta) < instanceRange.end) {
-      return { startDelta: delta }
+      props.startDelta = delta
+      return props
     }
   } else {
     if (dateEnv.add(instanceRange.end, delta) > instanceRange.start) {
-      return { endDelta: delta }
+      props.endDelta = delta
+      return props
     }
   }
 
