@@ -419,6 +419,7 @@ export default class Calendar {
 
       component = this.component = new CalendarComponent({
         calendar: this,
+        view: null, // HACK. will get populated by Component
         dateEnv: this.dateEnv,
         theme: this.theme,
         options: this.optionsManager.computed

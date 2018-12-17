@@ -67,16 +67,10 @@ export default abstract class View extends DateComponent<ViewProps> {
 
   constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
     super(
-      {
-        options: context.options,
-        dateEnv: context.dateEnv,
-        theme: context.theme,
-        calendar: context.calendar
-      },
-      createElement('div', { className: 'fc-view fc-' + viewSpec.type + '-view' })
+      context,
+      createElement('div', { className: 'fc-view fc-' + viewSpec.type + '-view' }),
+      true // isView (HACK)
     )
-
-    this.context.view = this // for when passing context to children
 
     this.viewSpec = viewSpec
     this.dateProfileGenerator = dateProfileGenerator

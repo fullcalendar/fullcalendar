@@ -11,7 +11,7 @@ export interface ComponentContext {
   dateEnv: DateEnv
   theme: Theme
   calendar: Calendar
-  view?: View
+  view: View
 }
 
 export type EqualityFuncHash = { [propName: string]: (obj0, obj1) => boolean }
@@ -31,7 +31,13 @@ export default class Component<PropsType> {
   calendar: Calendar
   isRtl: boolean
 
-  constructor(context: ComponentContext) {
+  constructor(context: ComponentContext, isView?: boolean) {
+
+    // HACK to populate view at top of component instantiation call chain
+    if (isView) {
+      context.view = this as any
+    }
+
     this.uid = String(guid++)
     this.context = context
     this.dateEnv = context.dateEnv

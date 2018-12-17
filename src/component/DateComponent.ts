@@ -58,8 +58,8 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   needHitsDepth: number = 0
 
 
-  constructor(context: ComponentContext, el: HTMLElement) {
-    super(context)
+  constructor(context: ComponentContext, el: HTMLElement, isView?: boolean) {
+    super(context, isView)
 
     this.el = el
 

@@ -164,6 +164,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       view = this.view = new viewSpec['class'](
         {
           calendar: this.calendar,
+          view: null, // HACK. will get populated by Component
           dateEnv: this.dateEnv,
           theme: this.theme,
           options: viewSpec.options
