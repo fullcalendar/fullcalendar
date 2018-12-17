@@ -43,8 +43,8 @@ export interface DateSelectionApi extends DateSpanApi {
   view: View
 }
 
-export type dateClickApiTransformer = (dateClick: DateClickApi, dateSpan: DateSpan, calendar: Calendar) => void
-export type dateSelectionApiTransformer = (dateSelection: DateSelectionApi, dateSpan: DateSpan, calendar: Calendar) => void
+export type DatePointTransform = (dateSpan: DateSpan, calendar: Calendar) => any
+export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 
 export default class Calendar {
 
@@ -898,14 +898,10 @@ export default class Calendar {
 
 
   triggerDateSelect(selection: DateSpan, pev?: PointerDragEvent) {
-    let arg = buildDateSpanApi(selection, this.dateEnv) as DateSelectionApi
+    let arg = this.buildDateSpanApi(selection) as DateSelectionApi
 
     arg.jsEvent = pev ? pev.origEvent : null
     arg.view = this.view
-
-    for (let transformer of this.pluginSystem.hooks.dateSelectionApiTransformers) {
-      transformer(arg, selection, this)
-    }
 
     this.publiclyTrigger('select', [ arg ])
 
@@ -927,17 +923,39 @@ export default class Calendar {
 
   // TODO: receive pev?
   triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, view: View, ev: UIEvent) {
-    let arg = buildDatePointApi(dateSpan, this.dateEnv) as DateClickApi
+    let arg = this.buildDatePointApi(dateSpan) as DateClickApi
 
     arg.dayEl = dayEl
     arg.jsEvent = ev
     arg.view = view
 
-    for (let transformer of this.pluginSystem.hooks.dateClickApiTransformers) {
-      transformer(arg, dateSpan, this)
+    this.publiclyTrigger('dateClick', [ arg ])
+  }
+
+
+  buildDatePointApi(dateSpan: DateSpan) {
+    let props = {} as DatePointApi
+
+    for (let transform of this.pluginSystem.hooks.datePointTransforms) {
+      Object.assign(props, transform(dateSpan, this))
     }
 
-    this.publiclyTrigger('dateClick', [ arg ])
+    Object.assign(props, buildDatePointApi(dateSpan, this.dateEnv))
+
+    return props
+  }
+
+
+  buildDateSpanApi(dateSpan: DateSpan) {
+    let props = {} as DateSpanApi
+
+    for (let transform of this.pluginSystem.hooks.dateSpanTransforms) {
+      Object.assign(props, transform(dateSpan, this))
+    }
+
+    Object.assign(props, buildDateSpanApi(dateSpan, this.dateEnv))
+
+    return props
   }
 
 

@@ -5,7 +5,7 @@ import { PointerDragEvent } from '../dnd/PointerDragging'
 import { parseEventDef, createEventInstance, EventTuple } from '../structs/event'
 import { createEmptyEventStore, eventTupleToStore } from '../structs/event-store'
 import * as externalHooks from '../exports'
-import { DateSpan } from '../structs/date-span'
+import { DateSpan, DatePointApi } from '../structs/date-span'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
@@ -13,8 +13,16 @@ import EventApi from '../api/EventApi'
 import { elementMatches } from '../util/dom-manip'
 import { enableCursor, disableCursor } from '../util/misc'
 import { isInteractionValid } from '../validation'
+import View from '../View'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
+
+export interface ExternalDropApi extends DatePointApi {
+  draggedEl: HTMLElement
+  jsEvent: UIEvent
+  view: View
+}
+
 
 /*
 Given an already instantiated draggable object for one-or-more elements,
@@ -118,16 +126,13 @@ export default class ExternalElementDragging {
       let finalHit = this.hitDragging.finalHit!
       let finalView = finalHit.component.view
       let dragMeta = this.dragMeta!
+      let arg = receivingCalendar.buildDatePointApi(finalHit.dateSpan) as ExternalDropApi
 
-      receivingCalendar.publiclyTrigger('drop', [
-        {
-          draggedEl: pev.subjectEl,
-          date: receivingCalendar.dateEnv.toDate(finalHit.dateSpan.range.start),
-          allDay: finalHit.dateSpan.allDay,
-          jsEvent: pev.origEvent,
-          view: finalView
-        }
-      ])
+      arg.draggedEl = pev.subjectEl as HTMLElement
+      arg.jsEvent = pev.origEvent
+      arg.view = finalView
+
+      receivingCalendar.publiclyTrigger('drop', [ arg ])
 
       if (dragMeta.create) {
         receivingCalendar.dispatch({
@@ -196,9 +201,17 @@ export default class ExternalElementDragging {
 // Utils for computing event store from the DragMeta
 // ----------------------------------------------------------------------------------------------------
 
+export type ExternalDefTransform = (dateSpan: DateSpan, dragMeta: DragMeta) => any
+
 function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventTuple {
+  let defProps = Object.assign({}, dragMeta.leftoverProps)
+
+  for (let transform of calendar.pluginSystem.hooks.externalDefTransforms) {
+    Object.assign(defProps, transform(dateSpan, dragMeta))
+  }
+
   let def = parseEventDef(
-    dragMeta.leftoverProps,
+    defProps,
     dragMeta.sourceId,
     dateSpan.allDay,
     Boolean(dragMeta.duration), // hasEnd

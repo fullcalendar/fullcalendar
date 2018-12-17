@@ -89,7 +89,7 @@ export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComp
 export { default as Theme } from './theme/Theme'
 export { default as Component, ComponentContext } from './component/Component'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
-export { default as Calendar, dateClickApiTransformer, DateClickApi, DateSelectionApi } from './Calendar'
+export { default as Calendar, DatePointTransform, DateSpanTransform } from './Calendar'
 export { default as View, ViewProps } from './View'
 export { default as FgEventRenderer } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
@@ -105,7 +105,7 @@ export { default as ListView } from './list/ListView'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
 export { ViewSpec, ViewSpecTransformer } from './structs/view-spec'
-export { DateSpan } from './structs/date-span'
+export { DateSpan, DateSpanApi, DatePointApi } from './structs/date-span'
 
 export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime, isValidDate } from './datelib/marker'
 export {

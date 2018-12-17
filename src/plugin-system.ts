@@ -2,7 +2,7 @@ import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
 import { eventDragMutationMassager } from './interactions/EventDragging'
 import { eventDefMutationApplier } from './structs/event-mutation'
-import { dateClickApiTransformer, dateSelectionApiTransformer } from './Calendar'
+import { DatePointTransform, DateSpanTransform } from './Calendar'
 import { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 import { ViewConfigInputHash } from './structs/view-config'
 import { assignTo } from './util/object'
@@ -10,6 +10,7 @@ import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
 import { isPropsValidTester } from './validation'
+import { ExternalDefTransform } from './interactions-external/ExternalElementDragging'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -20,12 +21,13 @@ export interface PluginDefInput {
   eventDragMutationMassagers?: eventDragMutationMassager[]
   eventDefMutationAppliers?: eventDefMutationApplier[]
   dateSelectionTransformers?: dateSelectionJoinTransformer[]
-  dateClickApiTransformers?: dateClickApiTransformer[]
-  dateSelectionApiTransformers?: dateSelectionApiTransformer[]
+  datePointTransforms?: DatePointTransform[]
+  dateSpanTransforms?: DateSpanTransform[]
   viewConfigs?: ViewConfigInputHash
   viewSpecTransformers?: ViewSpecTransformer[]
   viewPropsTransformers?: ViewPropsTransformerClass[]
   isPropsValid?: isPropsValidTester
+  externalDefTransforms?: ExternalDefTransform[]
 }
 
 export interface PluginHooks {
@@ -34,12 +36,13 @@ export interface PluginHooks {
   eventDragMutationMassagers: eventDragMutationMassager[]
   eventDefMutationAppliers: eventDefMutationApplier[]
   dateSelectionTransformers: dateSelectionJoinTransformer[]
-  dateClickApiTransformers: dateClickApiTransformer[]
-  dateSelectionApiTransformers: dateSelectionApiTransformer[]
+  datePointTransforms: DatePointTransform[]
+  dateSpanTransforms: DateSpanTransform[]
   viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?
   viewSpecTransformers: ViewSpecTransformer[]
   viewPropsTransformers: ViewPropsTransformerClass[]
   isPropsValid: isPropsValidTester | null
+  externalDefTransforms: ExternalDefTransform[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -65,12 +68,13 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     eventDragMutationMassagers: input.eventDragMutationMassagers || [],
     eventDefMutationAppliers: input.eventDefMutationAppliers || [],
     dateSelectionTransformers: input.dateSelectionTransformers || [],
-    dateClickApiTransformers: input.dateClickApiTransformers || [],
-    dateSelectionApiTransformers: input.dateSelectionApiTransformers || [],
+    datePointTransforms: input.datePointTransforms || [],
+    dateSpanTransforms: input.dateSpanTransforms || [],
     viewConfigs: input.viewConfigs || {},
     viewSpecTransformers: input.viewSpecTransformers || [],
     viewPropsTransformers: input.viewPropsTransformers || [],
-    isPropsValid: input.isPropsValid || null
+    isPropsValid: input.isPropsValid || null,
+    externalDefTransforms: input.externalDefTransforms || []
   }
 }
 
@@ -86,12 +90,13 @@ export class PluginSystem {
       eventDragMutationMassagers: [],
       eventDefMutationAppliers: [],
       dateSelectionTransformers: [],
-      dateClickApiTransformers: [],
-      dateSelectionApiTransformers: [],
+      datePointTransforms: [],
+      dateSpanTransforms: [],
       viewConfigs: {},
       viewSpecTransformers: [],
       viewPropsTransformers: [],
-      isPropsValid: null
+      isPropsValid: null,
+      externalDefTransforms: []
     }
     this.addedHash = {}
   }
@@ -117,11 +122,12 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     eventDragMutationMassagers: hooks0.eventDragMutationMassagers.concat(hooks1.eventDragMutationMassagers),
     eventDefMutationAppliers: hooks0.eventDefMutationAppliers.concat(hooks1.eventDefMutationAppliers),
     dateSelectionTransformers: hooks0.dateSelectionTransformers.concat(hooks1.dateSelectionTransformers),
-    dateClickApiTransformers: hooks0.dateClickApiTransformers.concat(hooks1.dateClickApiTransformers),
-    dateSelectionApiTransformers: hooks0.dateSelectionApiTransformers.concat(hooks1.dateSelectionApiTransformers),
+    datePointTransforms: hooks0.datePointTransforms.concat(hooks1.datePointTransforms),
+    dateSpanTransforms: hooks0.dateSpanTransforms.concat(hooks1.dateSpanTransforms),
     viewConfigs: assignTo({}, hooks0.viewConfigs, hooks1.viewConfigs),
     viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
     viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
-    isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid
+    isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,
+    externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms)
   }
 }
