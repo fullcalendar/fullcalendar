@@ -77,7 +77,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // NOTE: modifies rowSegs
   renderSegRow(row, rowSegs) {
     let { dayGrid } = this
-    let colCnt = dayGrid.colCnt
+    let { colCnt, isRtl } = dayGrid
     let segLevels = this.buildSegLevels(rowSegs) // group into sub-arrays of levels
     let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
     let tbody = document.createElement('tbody')
@@ -123,8 +123,8 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
       if (levelSegs) {
         for (j = 0; j < levelSegs.length; j++) { // iterate through segments in level
           seg = levelSegs[j]
-          let leftCol = dayGrid.isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
-          let rightCol = dayGrid.isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
+          let leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
+          let rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
 
           emptyCellsUntil(leftCol)
 
@@ -174,6 +174,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // Stacks a flat array of segments, which are all assumed to be in the same row, into subarrays of vertical levels.
   // NOTE: modifies segs
   buildSegLevels(segs: Seg[]) {
+    let { isRtl, colCnt } = this.dayGrid
     let levels = []
     let i
     let seg
@@ -192,11 +193,14 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
           break
         }
       }
+
       // `j` now holds the desired subrow index
-      seg.level = j;
+      seg.level = j
+      seg.leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol // for sorting only
+      seg.rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol // for sorting only
 
       // create new level array if needed and append segment
-      (levels[j] || (levels[j] = [])).push(seg)
+      ;(levels[j] || (levels[j] = [])).push(seg)
     }
 
     // order segments left-to-right. very important if calendar is RTL
@@ -255,5 +259,5 @@ function isDaySegCollision(seg: Seg, otherSegs: Seg) {
 
 // A cmp function for determining the leftmost event
 function compareDaySegCols(a: Seg, b: Seg) {
-  return a.firstCol - b.firstCol
+  return a.leftCol - b.leftCol
 }
