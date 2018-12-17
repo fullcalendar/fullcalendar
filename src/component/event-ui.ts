@@ -70,16 +70,27 @@ export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar:
 
 export function processScopedUiProps(prefix: string, rawScoped: any, calendar: Calendar, leftovers?): EventUi {
   let rawUnscoped = {} as any
+  let wasFound = {} as any
 
   for (let key in UNSCOPED_EVENT_UI_PROPS) {
-    rawUnscoped[key] = rawScoped[prefix + capitaliseFirstLetter(key)]
+    let scopedKey = prefix + capitaliseFirstLetter(key)
+    rawUnscoped[key] = rawScoped[scopedKey]
+    wasFound[scopedKey] = true
   }
 
   if (prefix === 'event') {
     rawUnscoped.editable = rawScoped.editable // special case. there is no 'eventEditable', just 'editable'
   }
 
-  return processUnscopedUiProps(rawUnscoped, calendar, leftovers)
+  if (leftovers) {
+    for (let key in rawScoped) {
+      if (!wasFound[key]) {
+        leftovers[key] = rawScoped[key]
+      }
+    }
+  }
+
+  return processUnscopedUiProps(rawUnscoped, calendar)
 }
 
 const EMPTY_EVENT_UI: EventUi = {
