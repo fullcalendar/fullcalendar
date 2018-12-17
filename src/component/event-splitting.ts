@@ -33,8 +33,6 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
   abstract getKeysForEventDef(eventDef: EventDef): string[]
 
   splitProps(props: PropsType): { [key: string]: SplittableProps } {
-    let oldEventUiBuilders = this.eventUiBuilders
-    this.eventUiBuilders = {}
 
     let keyInfos = this.getKeyInfo(props)
     let defKeys = this.getKeysForEventDefs(props.eventStore)
@@ -45,10 +43,14 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     let eventResizes = this.splitEventResize(props.eventResize, defKeys)
     let splitProps: { [key: string]: SplittableProps } = {}
 
+    this.eventUiBuilders = mapHash(keyInfos, (info, key) => {
+      return this.eventUiBuilders[key] || memoize(buildEventUiForKey)
+    })
+
     for (let key in keyInfos) {
       let keyInfo = keyInfos[key]
       let eventStore = eventStores[key] || EMPTY_EVENT_STORE
-      let buildEventUi = this.eventUiBuilders[key] = oldEventUiBuilders[key] || memoize(buildEventUiForKey)
+      let buildEventUi = this.eventUiBuilders[key]
 
       splitProps[key] = {
         businessHours: keyInfo.businessHours || props.businessHours,
