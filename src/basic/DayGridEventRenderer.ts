@@ -123,18 +123,20 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
       if (levelSegs) {
         for (j = 0; j < levelSegs.length; j++) { // iterate through segments in level
           seg = levelSegs[j]
+          let leftCol = dayGrid.isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
+          let rightCol = dayGrid.isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
 
-          emptyCellsUntil(seg.leftCol)
+          emptyCellsUntil(leftCol)
 
           // create a container that occupies or more columns. append the event element.
           td = createElement('td', { className: 'fc-event-container' }, seg.el) as HTMLTableCellElement
-          if (seg.leftCol !== seg.rightCol) {
-            td.colSpan = seg.rightCol - seg.leftCol + 1
+          if (leftCol !== rightCol) {
+            td.colSpan = rightCol - leftCol + 1
           } else { // a single-column segment
             loneCellMatrix[i][col] = td
           }
 
-          while (col <= seg.rightCol) {
+          while (col <= rightCol) {
             cellMatrix[i][col] = td
             segMatrix[i][col] = seg
             col++
@@ -240,8 +242,8 @@ function isDaySegCollision(seg: Seg, otherSegs: Seg) {
     otherSeg = otherSegs[i]
 
     if (
-      otherSeg.leftCol <= seg.rightCol &&
-      otherSeg.rightCol >= seg.leftCol
+      otherSeg.firstCol <= seg.lastCol &&
+      otherSeg.lastCol >= seg.firstCol
     ) {
       return true
     }
@@ -253,5 +255,5 @@ function isDaySegCollision(seg: Seg, otherSegs: Seg) {
 
 // A cmp function for determining the leftmost event
 function compareDaySegCols(a: Seg, b: Seg) {
-  return a.leftCol - b.leftCol
+  return a.firstCol - b.firstCol
 }

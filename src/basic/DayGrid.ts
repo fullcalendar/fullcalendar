@@ -41,8 +41,8 @@ export interface RenderProps { // TODO: combine with DayGridProps
 
 export interface DayGridSeg extends Seg {
   row: number
-  leftCol: number
-  rightCol: number
+  firstCol: number
+  lastCol: number
 }
 
 export interface DayGridCell {
@@ -576,6 +576,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
   // `row` is the row number.
   // `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
   limitRow(row, levelLimit) {
+    let { colCnt, isRtl } = this
     let rowStruct = this.eventRenderer.rowStructs[row]
     let moreNodes = [] // array of "more" <a> links and <td> DOM nodes
     let col = 0 // col #, left-to-right (not chronologically)
@@ -622,12 +623,15 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
       // iterate though segments in the last allowable level
       for (i = 0; i < levelSegs.length; i++) {
         seg = levelSegs[i]
-        emptyCellsUntil(seg.leftCol) // process empty cells before the segment
+        let leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
+        let rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
+
+        emptyCellsUntil(leftCol) // process empty cells before the segment
 
         // determine *all* segments below `seg` that occupy the same columns
         colSegsBelow = []
         totalSegsBelow = 0
-        while (col <= seg.rightCol) {
+        while (col <= rightCol) {
           segsBelow = this.getCellSegs(row, col, levelLimit)
           colSegsBelow.push(segsBelow)
           totalSegsBelow += segsBelow.length
@@ -635,7 +639,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
         }
 
         if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
-          td = cellMatrix[levelLimit - 1][seg.leftCol] // the segment's parent cell
+          td = cellMatrix[levelLimit - 1][leftCol] // the segment's parent cell
           rowSpan = td.rowSpan || 1
           segMoreNodes = []
 
@@ -645,7 +649,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
             segsBelow = colSegsBelow[j]
             moreLink = this.renderMoreLink(
               row,
-              seg.leftCol + j,
+              leftCol + j,
               [ seg ].concat(segsBelow) // count seg as hidden too
             )
             moreWrap = createElement('div', null, moreLink)

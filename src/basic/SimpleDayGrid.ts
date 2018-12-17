@@ -44,7 +44,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     let { dateProfile, dayTable } = props
 
     dayGrid.receiveProps(
-      Object.assign({}, this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, dayGrid, dayTable, this.isRtl), {
+      Object.assign({}, this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, dayGrid, dayTable), {
         dateProfile,
         cells: dayTable.cells,
         isRigid: props.isRigid
@@ -94,18 +94,10 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
 SimpleDayGrid.prototype.isInteractable = true
 
 
-export class DayGridSlicer extends Slicer<DayGridSeg, [DayTable, boolean]> {
+export class DayGridSlicer extends Slicer<DayGridSeg, [DayTable]> {
 
-  sliceRange(dateRange: DateRange, dayTable: DayTable, isRtl: boolean): DayGridSeg[] {
-    return dayTable.sliceRange(dateRange).map(function(seg) {
-      return {
-        isStart: seg.isStart,
-        isEnd: seg.isEnd,
-        row: seg.row,
-        leftCol: isRtl ? (dayTable.colCnt - 1 - seg.lastCol) : seg.firstCol,
-        rightCol: isRtl ? (dayTable.colCnt - 1 - seg.firstCol) : seg.lastCol
-      }
-    })
+  sliceRange(dateRange: DateRange, dayTable: DayTable): DayGridSeg[] {
+    return dayTable.sliceRange(dateRange)
   }
 
 }
