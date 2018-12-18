@@ -195,7 +195,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     for (let transformer of transformers) {
       Object.assign(
         viewProps,
-        transformer.transform(viewProps, viewSpec, props)
+        transformer.transform(viewProps, viewSpec, props, this.calendar)
       )
     }
 

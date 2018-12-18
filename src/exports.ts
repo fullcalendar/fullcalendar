@@ -43,7 +43,7 @@ export {
   intersectRects
 } from './util/geom'
 
-export { assignTo, isPropsEqual, mapHash } from './util/object'
+export { assignTo, isPropsEqual, mapHash, filterHash } from './util/object'
 
 export {
   findElements,
@@ -81,7 +81,7 @@ export {
 export { unpromisify } from './util/promise'
 
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual } from './datelib/date-range'
+export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual, rangesIntersect } from './datelib/date-range'
 export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Mixin } from './common/Mixin'
 export { default as PositionCache } from './common/PositionCache'
