@@ -157,7 +157,9 @@ function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: Da
 
 function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
   let relevant = getRelevantEvents(eventStore, instanceId)
-  relevant = applyMutationToEventStore(relevant, mutation, calendar)
+
+  relevant = applyMutationToEventStore(relevant, calendar.eventUiBases, mutation, calendar)
+
   return mergeEventStores(eventStore, relevant)
 }
 

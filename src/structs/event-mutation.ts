@@ -5,6 +5,8 @@ import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 import { computeAlignedDayRange } from '../util/misc'
 import { startOfDay } from '../datelib/marker'
+import { EventUiHash, EventUi } from '../component/event-ui'
+import { compileEventUis } from '../component/event-rendering'
 
 /*
 A data structure for how to modify an EventDef/EventInstance within an EventStore
@@ -18,18 +20,21 @@ export interface EventMutation {
 }
 
 // applies the mutation to ALL defs/instances within the event store
-export function applyMutationToEventStore(eventStore: EventStore, mutation: EventMutation, calendar: Calendar): EventStore {
+export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, calendar: Calendar): EventStore {
+  let eventConfigs = compileEventUis(eventStore.defs, eventConfigBase)
   let dest = createEmptyEventStore()
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
-    dest.defs[defId] = applyMutationToEventDef(def, mutation, calendar.pluginSystem.hooks.eventDefMutationAppliers, calendar)
+
+    dest.defs[defId] = applyMutationToEventDef(def, eventConfigs[defId], mutation, calendar.pluginSystem.hooks.eventDefMutationAppliers, calendar)
   }
 
   for (let instanceId in eventStore.instances) {
     let instance = eventStore.instances[instanceId]
     let def = dest.defs[instance.defId] // important to grab the newly modified def
-    dest.instances[instanceId] = applyMutationToEventInstance(instance, def, mutation, calendar)
+
+    dest.instances[instanceId] = applyMutationToEventInstance(instance, def, eventConfigs[instance.defId], mutation, calendar)
   }
 
   return dest
@@ -38,7 +43,7 @@ export function applyMutationToEventStore(eventStore: EventStore, mutation: Even
 export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutation, calendar: Calendar) => void
 
 
-function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation, appliers: eventDefMutationApplier[], calendar: Calendar): EventDef {
+function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, appliers: eventDefMutationApplier[], calendar: Calendar): EventDef {
   let copy = assignTo({}, eventDef)
   let standardProps = mutation.standardProps || {}
 
@@ -47,7 +52,10 @@ function applyMutationToEventDef(eventDef: EventDef, mutation: EventMutation, ap
   // and thus, we need to mark the event as having a real end
   if (
     standardProps.hasEnd == null &&
-    willDeltasAffectDuration(mutation.startDelta, mutation.endDelta)
+    willDeltasAffectDuration(
+      eventConfig.startEditable ? mutation.startDelta : null,
+      eventConfig.durationEditable ? mutation.endDelta : null
+    )
   ) {
     standardProps.hasEnd = true
   }
@@ -85,6 +93,7 @@ function willDeltasAffectDuration(startDelta: Duration | null, endDelta: Duratio
 function applyMutationToEventInstance(
   eventInstance: EventInstance,
   eventDef: EventDef, // must first be modified by applyMutationToEventDef
+  eventConfig: EventUi,
   mutation: EventMutation,
   calendar: Calendar
 ): EventInstance {
@@ -97,7 +106,7 @@ function applyMutationToEventInstance(
     copy.range = computeAlignedDayRange(copy.range)
   }
 
-  if (mutation.startDelta) {
+  if (mutation.startDelta && eventConfig.startEditable) {
     copy.range = {
       start: dateEnv.add(copy.range.start, mutation.startDelta),
       end: copy.range.end
@@ -109,7 +118,7 @@ function applyMutationToEventInstance(
       start: copy.range.start,
       end: calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
     }
-  } else if (mutation.endDelta) {
+  } else if (mutation.endDelta && eventConfig.durationEditable) {
     copy.range = {
       start: copy.range.start,
       end: dateEnv.add(copy.range.end, mutation.endDelta)

@@ -148,7 +148,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
         mutation = computeEventMutation(initialHit, hit, receivingCalendar.pluginSystem.hooks.eventDragMutationMassagers)
 
         if (mutation) {
-          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, receivingCalendar)
+          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingCalendar.eventUiBases, mutation, receivingCalendar)
           interaction.mutatedEvents = mutatedRelevantEvents
 
           if (!this.component.isInteractionValid(interaction)) {

@@ -105,7 +105,7 @@ export default class EventDragging {
     }
 
     if (mutation) {
-      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, mutation, calendar)
+      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, calendar.eventUiBases, mutation, calendar)
       interaction.mutatedEvents = mutatedRelevantEvents
 
       if (!this.component.isInteractionValid(interaction)) {
