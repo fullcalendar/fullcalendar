@@ -12,7 +12,7 @@ import { CalendarComponentProps } from './CalendarComponent'
 import { isPropsValidTester } from './validation'
 import { ExternalDefTransform } from './interactions-external/ExternalElementDragging'
 import { EventResizeJoinTransforms } from './interactions/EventResizing'
-import Calendar from './Calendar'
+import View from './View'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -57,7 +57,7 @@ export interface PluginDef extends PluginHooks {
 export type ViewPropsTransformerClass = new() => ViewPropsTransformer
 
 export interface ViewPropsTransformer {
-  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps, calendar: Calendar): any
+  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps, view: View): any
 }
 
 
