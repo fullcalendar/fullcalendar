@@ -78,6 +78,7 @@ export interface EventSource {
   ui: EventUi
   success: EventSourceSuccessResponseHandler | null
   failure: EventSourceErrorResponseHandler | null
+  extendedProps: any // undocumented
 }
 
 export type EventSourceHash = { [sourceId: string]: EventSource }
@@ -143,9 +144,10 @@ export function parseEventSource(raw: EventSourceInput, calendar: Calendar): Eve
 }
 
 function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, calendar: Calendar): EventSource {
-  let leftovers = {}
-  let props = refineProps(raw, SIMPLE_SOURCE_PROPS, {}, leftovers)
-  let ui = processUnscopedUiProps(leftovers, calendar)
+  let leftovers0 = {}
+  let props = refineProps(raw, SIMPLE_SOURCE_PROPS, {}, leftovers0)
+  let leftovers1 = {}
+  let ui = processUnscopedUiProps(leftovers0, calendar, leftovers1)
 
   props.isFetching = false
   props.latestFetchId = ''
@@ -155,6 +157,7 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
   props.sourceDefId = sourceDefId
   props.meta = meta
   props.ui = ui
+  props.extendedProps = leftovers1
 
   return props as EventSource
 }
