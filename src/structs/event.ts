@@ -86,16 +86,16 @@ let uid = 0
 
 export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar, allowOpenRange?: boolean): EventTuple | null {
   let allDayDefault = computeIsAllDayDefault(sourceId, calendar)
-  let leftovers = {}
+  let leftovers0 = {}
   let recurringRes = parseRecurring(
     raw, // raw, but with single-event stuff stripped out
     allDayDefault,
     calendar.dateEnv,
-    leftovers // will populate with non-recurring props
+    leftovers0 // will populate with non-recurring props
   )
 
   if (recurringRes) {
-    let def = parseEventDef(leftovers, sourceId, recurringRes.allDay, Boolean(recurringRes.duration), calendar)
+    let def = parseEventDef(leftovers0, sourceId, recurringRes.allDay, Boolean(recurringRes.duration), calendar)
 
     def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
       typeId: recurringRes.typeId,
@@ -106,10 +106,11 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
     return { def, instance: null }
 
   } else {
-    let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers, allowOpenRange)
+    let leftovers1 = {}
+    let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers1, allowOpenRange)
 
     if (singleRes) {
-      let def = parseEventDef(leftovers, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)
+      let def = parseEventDef(leftovers1, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)
       let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
 
       return { def, instance }
