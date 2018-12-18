@@ -41,6 +41,10 @@ export default class DayBgRow {
       )
     }
 
+    if (!props.cells.length) {
+      parts.push('<td class="fc-day ' + this.context.theme.getClass('widgetContent')  + '"></td>')
+    }
+
     if (this.context.options.dir === 'rtl') {
       parts.reverse()
     }
