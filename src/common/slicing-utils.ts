@@ -87,7 +87,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     }
 
     return this._sliceEventStore(
-      expandRecurring(businessHours, dateProfile.activeRange, component.calendar),
+      expandRecurring(businessHours, computeActiveRange(dateProfile), component.calendar),
       {},
       dateProfile,
       nextDayThreshold,
@@ -105,7 +105,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     ...extraArgs: ExtraArgs
   ): { bg: SegType[], fg: SegType[] } {
     if (eventStore) {
-      let rangeRes = sliceEventStore(eventStore, eventUiBases, dateProfile.activeRange, nextDayThreshold)
+      let rangeRes = sliceEventStore(eventStore, eventUiBases, computeActiveRange(dateProfile), nextDayThreshold)
 
       return {
         bg: this.sliceEventRanges(rangeRes.bg, component, extraArgs),
@@ -129,7 +129,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
       return null
     }
 
-    let rangeRes = sliceEventStore(interaction.mutatedEvents, eventUiBases, dateProfile.activeRange, nextDayThreshold)
+    let rangeRes = sliceEventStore(interaction.mutatedEvents, eventUiBases, computeActiveRange(dateProfile), nextDayThreshold)
 
     return {
       segs: this.sliceEventRanges(rangeRes.fg, component, extraArgs),
@@ -197,4 +197,19 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     return segs
   }
 
+}
+
+/*
+TODO: should be part of DateProfile!
+TimelineDateProfile already does this btw
+*/
+function computeActiveRange(dateProfile: DateProfile): DateRange {
+  let range = dateProfile.activeRange
+
+  // return range;
+
+  return {
+    start: addMs(range.start, dateProfile.minTime.milliseconds),
+    end: addMs(range.end, dateProfile.maxTime.milliseconds - 864e5) // 864e5 = ms in a day
+  }
 }
