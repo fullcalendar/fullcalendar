@@ -57,9 +57,9 @@ export default class DateSelecting {
     let isInvalid = false
 
     if (hit) {
-      dragSelection = joinSpansIntoSelection(
-        this.hitDragging.initialHit!.dateSpan,
-        hit.dateSpan,
+      dragSelection = joinHitsIntoSelection(
+        this.hitDragging.initialHit!,
+        hit,
         calendar.pluginSystem.hooks.dateSelectionTransformers
       )
 
@@ -108,7 +108,9 @@ function getComponentTouchDelay(component: DateComponent<any>): number {
   return delay
 }
 
-function joinSpansIntoSelection(dateSpan0: DateSpan, dateSpan1: DateSpan, dateSelectionTransformers: dateSelectionJoinTransformer[]): DateSpan {
+function joinHitsIntoSelection(hit0: Hit, hit1: Hit, dateSelectionTransformers: dateSelectionJoinTransformer[]): DateSpan {
+  let dateSpan0 = hit0.dateSpan
+  let dateSpan1 = hit1.dateSpan
   let ms = [
     dateSpan0.range.start,
     dateSpan0.range.end,
@@ -118,20 +120,22 @@ function joinSpansIntoSelection(dateSpan0: DateSpan, dateSpan1: DateSpan, dateSe
 
   ms.sort(compareNumbers)
 
-  let finalDateSpan: DateSpan = {
-    range: { start: ms[0], end: ms[3] },
-    allDay: dateSpan0.allDay
-  }
+  let props = {} as DateSpan
 
   for (let transformer of dateSelectionTransformers) {
-    if (
-      !transformer(finalDateSpan, dateSpan0, dateSpan1)
-    ) {
+    let res = transformer(hit0, hit1)
+
+    if (res === false) {
       return null
+    } else if (res) {
+      Object.assign(props, res)
     }
   }
 
-  return finalDateSpan
+  props.range = { start: ms[0], end: ms[3] }
+  props.allDay = dateSpan0.allDay
+
+  return props
 }
 
-export type dateSelectionJoinTransformer = (finalDateSpan: DateSpan, dateSpan0: DateSpan, dateSpan1: DateSpan) => boolean
+export type dateSelectionJoinTransformer = (hit0: Hit, hit1: Hit) => any

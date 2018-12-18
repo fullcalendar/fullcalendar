@@ -1,6 +1,6 @@
 import { EventStore, expandRecurring, filterEventStoreDefs, parseEvents, createEmptyEventStore } from './structs/event-store'
 import Calendar from './Calendar'
-import { DateSpan, buildDateSpanApi, DateSpanApi } from './structs/date-span'
+import { DateSpan, DateSpanApi } from './structs/date-span'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import EventApi from './api/EventApi'
 import { compileEventUis } from './component/event-rendering'
@@ -137,7 +137,7 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
       )
 
       if (!subjectAllow(
-        buildDateSpanApi(subjectDateSpan, calendar.dateEnv),
+        calendar.buildDateSpanApi(subjectDateSpan),
         new EventApi(calendar, origDef, origInstance)
       )) {
         return false
@@ -200,7 +200,7 @@ function isDateSelectionPropsValid(state: SplittableProps, calendar: Calendar, d
     let fullDateSpan = Object.assign({}, dateSpanMeta, selection)
 
     if (!selectionAllow(
-      buildDateSpanApi(fullDateSpan, calendar.dateEnv),
+      calendar.buildDateSpanApi(fullDateSpan),
       null
     )) {
       return false
