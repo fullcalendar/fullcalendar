@@ -210,7 +210,8 @@ export default class EventApi implements EventTuple {
       this.calendar.dispatch({
         type: 'MUTATE_EVENTS',
         instanceId: instance.instanceId,
-        mutation
+        mutation,
+        fromApi: true
       })
 
       let eventStore = this.calendar.state.eventStore

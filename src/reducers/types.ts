@@ -57,7 +57,7 @@ export type Action =
 
   { type: 'ADD_EVENTS', eventStore: EventStore } |
   { type: 'MERGE_EVENTS', eventStore: EventStore } |
-  { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation } |
+  { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation, fromApi?: boolean } |
   { type: 'REMOVE_EVENT_DEF', defId: string } |
   { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash } |
   { type: 'REMOVE_ALL_EVENTS' } |

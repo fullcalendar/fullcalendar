@@ -17,6 +17,7 @@ import { EventSourceHash, EventSource } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
+import { EventUiHash } from '../component/event-ui'
 
 
 export default function(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, calendar: Calendar): EventStore {
@@ -54,7 +55,7 @@ export default function(eventStore: EventStore, action: Action, eventSources: Ev
       return rezoneDates(eventStore, action.oldDateEnv, calendar.dateEnv)
 
     case 'MUTATE_EVENTS':
-      return applyMutationToRelated(eventStore, action.instanceId, action.mutation, calendar)
+      return applyMutationToRelated(eventStore, action.instanceId, action.mutation, action.fromApi, calendar)
 
     case 'REMOVE_EVENT_INSTANCES':
       return excludeInstances(eventStore, action.instances)
@@ -155,10 +156,24 @@ function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: Da
 }
 
 
-function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, calendar: Calendar): EventStore {
+function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, fromApi: boolean, calendar: Calendar): EventStore {
   let relevant = getRelevantEvents(eventStore, instanceId)
+  let eventConfigBase = fromApi ?
+    { '': { // HACK. always allow API to mutate events
+      startEditable: true,
+      durationEditable: true,
+      constraints: [],
+      overlap: null,
+      allows: [],
+      backgroundColor: '',
+      borderColor: '',
+      textColor: '',
+      classNames: []
+    } } as EventUiHash:
+    calendar.eventUiBases
 
-  relevant = applyMutationToEventStore(relevant, calendar.eventUiBases, mutation, calendar)
+
+  relevant = applyMutationToEventStore(relevant, eventConfigBase, mutation, calendar)
 
   return mergeEventStores(eventStore, relevant)
 }
