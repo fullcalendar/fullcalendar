@@ -8,14 +8,14 @@ onto a calendar. Contains information for creating an event.
 */
 
 export interface DragMetaInput extends EventNonDateInput {
-  time?: DurationInput
+  startTime?: DurationInput
   duration?: DurationInput
   create?: boolean
   sourceId?: string
 }
 
 export interface DragMeta {
-  time: Duration | null
+  startTime: Duration | null
   duration: Duration | null
   create: boolean // create an event when dropped?
   sourceId: string // similar to addEvent's parameter
@@ -23,7 +23,7 @@ export interface DragMeta {
 }
 
 const DRAG_META_PROPS = {
-  time: createDuration,
+  startTime: createDuration,
   duration: createDuration,
   create: Boolean,
   sourceId: String

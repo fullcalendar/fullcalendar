@@ -133,7 +133,7 @@ describe('advanced external dnd', function() {
         describe('through the event object\'s time property', function() {
           beforeEach(function() {
             dragEl.attr('data-event', JSON.stringify({
-              time: '05:00' // TODO: rename to startTime
+              startTime: '05:00'
             }))
           })
 
@@ -308,7 +308,7 @@ describe('advanced external dnd', function() {
         describe('through the event object\'s time property', function() {
           beforeEach(function() {
             dragEl.attr('data-event', JSON.stringify({
-              time: '05:00' // TODO: rename to startTime
+              startTime: '05:00'
             }))
           })
 

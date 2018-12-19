@@ -223,8 +223,8 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
 
   // only rely on time info if drop zone is all-day,
   // otherwise, we already know the time
-  if (dateSpan.allDay && dragMeta.time) {
-    start = calendar.dateEnv.add(start, dragMeta.time)
+  if (dateSpan.allDay && dragMeta.startTime) {
+    start = calendar.dateEnv.add(start, dragMeta.startTime)
   }
 
   let end = dragMeta.duration ?
