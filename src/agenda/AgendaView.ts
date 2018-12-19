@@ -71,22 +71,20 @@ export default class AgendaView extends AbstractAgendaView {
       })
     }
 
-    this.simpleTimeGrid.receiveProps(
-      Object.assign({}, splitProps['timed'], {
-        dateProfile,
-        dayTable
-      })
-    )
+    this.simpleTimeGrid.receiveProps({
+      ...splitProps['timed'],
+      dateProfile,
+      dayTable
+    })
 
     if (this.simpleDayGrid) {
-      this.simpleDayGrid.receiveProps(
-        Object.assign({}, splitProps['allDay'], {
-          dateProfile,
-          dayTable,
-          nextDayThreshold: this.nextDayThreshold,
-          isRigid: false
-        })
-      )
+      this.simpleDayGrid.receiveProps({
+        ...splitProps['allDay'],
+        dateProfile,
+        dayTable,
+        nextDayThreshold: this.nextDayThreshold,
+        isRigid: false
+      })
     }
   }
 

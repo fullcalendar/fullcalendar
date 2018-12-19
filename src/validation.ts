@@ -32,15 +32,16 @@ export function isDateSelectionValid(dateSelection: DateSpan, calendar: Calendar
 function isNewPropsValid(newProps, calendar: Calendar) {
   let view = calendar.view
 
-  let props = Object.assign({}, {
+  let props = {
     businessHours: view ? view.props.businessHours : createEmptyEventStore(), // why? yuck
     dateSelection: '',
     eventStore: calendar.state.eventStore,
     eventUiBases: calendar.eventUiBases,
     eventSelection: '',
     eventDrag: null,
-    eventResize: null
-  }, newProps)
+    eventResize: null,
+    ...newProps
+  }
 
   return (calendar.pluginSystem.hooks.isPropsValid || isPropsValid)(props, calendar)
 }
@@ -130,11 +131,11 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
       let origDef = state.eventStore.defs[subjectDef.defId]
       let origInstance = state.eventStore.instances[subjectInstanceId]
 
-      let subjectDateSpan: DateSpan = Object.assign(
-        {},
-        dateSpanMeta,
-        { range: subjectInstance.range, allDay: subjectDef.allDay }
-      )
+      let subjectDateSpan: DateSpan = {
+        ...dateSpanMeta,
+        range: subjectInstance.range,
+        allDay: subjectDef.allDay
+      }
 
       if (!subjectAllow(
         calendar.buildDateSpanApi(subjectDateSpan),
@@ -197,7 +198,7 @@ function isDateSelectionPropsValid(state: SplittableProps, calendar: Calendar, d
   // allow (a function)
   for (let selectionAllow of selectionConfig.allows) {
 
-    let fullDateSpan = Object.assign({}, dateSpanMeta, selection)
+    let fullDateSpan = { ...dateSpanMeta, ...selection }
 
     if (!selectionAllow(
       calendar.buildDateSpanApi(fullDateSpan),

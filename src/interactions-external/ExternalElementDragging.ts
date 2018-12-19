@@ -204,7 +204,7 @@ export default class ExternalElementDragging {
 export type ExternalDefTransform = (dateSpan: DateSpan, dragMeta: DragMeta) => any
 
 function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventTuple {
-  let defProps = Object.assign({}, dragMeta.leftoverProps)
+  let defProps = { ...dragMeta.leftoverProps }
 
   for (let transform of calendar.pluginSystem.hooks.externalDefTransforms) {
     Object.assign(defProps, transform(dateSpan, dragMeta))

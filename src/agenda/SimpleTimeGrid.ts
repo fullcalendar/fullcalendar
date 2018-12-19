@@ -45,12 +45,11 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     let { dateProfile, dayTable } = props
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
 
-    this.timeGrid.receiveProps(
-      Object.assign({}, this.slicer.sliceProps(props, dateProfile, null, this.timeGrid, dayRanges), {
-        dateProfile,
-        cells: dayTable.cells[0]
-      })
-    )
+    this.timeGrid.receiveProps({
+      ...this.slicer.sliceProps(props, dateProfile, null, this.timeGrid, dayRanges),
+      dateProfile,
+      cells: dayTable.cells[0]
+    })
   }
 
   renderNowIndicator(date: DateMarker) {

@@ -569,7 +569,7 @@ export default class Calendar {
 
   _buildEventUiSingleBase(rawOpts) {
     if (rawOpts.editable) { // so 'editable' affected events
-      rawOpts = Object.assign({}, rawOpts, { eventEditable: true })
+      rawOpts = { ...rawOpts, eventEditable: true }
     }
     return processScopedUiProps('event', rawOpts, this)
   }
