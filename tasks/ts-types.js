@@ -23,7 +23,13 @@ function exec() {
     out: 'tmp/fullcalendar.d.ts'
   }).then(function() {
     let content = fs.readFileSync('tmp/fullcalendar.d.ts', { encoding: 'utf8' })
+
     content = filterModuleDeclaration(content)
+    content = content.replace(
+      /import\((['"])(..\/)+/g,
+      'import($1fullcalendar/src/'
+    )
+
     if (!fs.existsSync('dist')) {
       fs.mkdirSync('dist')
     }
