@@ -5,7 +5,6 @@ import { compareByFieldSpecs } from '../../util/misc'
 import { EventUi } from '../event-ui'
 import { EventRenderRange, filterSegsViaEls } from '../event-rendering'
 import { Seg } from '../DateComponent'
-import { assignTo } from '../../util/object'
 import { ComponentContext } from '../Component'
 
 
@@ -324,17 +323,14 @@ export function buildSegCompareObj(seg: Seg) {
   let start = range.start ? range.start.valueOf() : 0 // TODO: better support for open-range events
   let end = range.end ? range.end.valueOf() : 0 // "
 
-  return assignTo(
-    {},
-    eventDef.extendedProps,
-    eventDef,
-    {
-      id: eventDef.publicId,
-      start,
-      end,
-      duration: end - start,
-      allDay: Number(eventDef.allDay),
-      _seg: seg // for later retrieval
-    }
-  )
+  return {
+    ...eventDef.extendedProps,
+    ...eventDef,
+    id: eventDef.publicId,
+    start,
+    end,
+    duration: end - start,
+    allDay: Number(eventDef.allDay),
+    _seg: seg // for later retrieval
+  }
 }

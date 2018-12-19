@@ -1,4 +1,3 @@
-import { assignTo } from './util/object'
 import { parseFieldSpecs } from './util/misc'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { DateMarker, addMs } from './datelib/marker'
@@ -376,7 +375,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   addScroll(scroll) {
     let queuedScroll = this.queuedScroll || (this.queuedScroll = {})
 
-    assignTo(queuedScroll, scroll)
+    Object.assign(queuedScroll, scroll)
   }
 
 
@@ -395,7 +394,7 @@ export default abstract class View extends DateComponent<ViewProps> {
     let scroll = {} as any
 
     if (this.props.dateProfile) { // dates rendered yet?
-      assignTo(scroll, this.queryDateScroll())
+      Object.assign(scroll, this.queryDateScroll())
     }
 
     return scroll
@@ -408,7 +407,7 @@ export default abstract class View extends DateComponent<ViewProps> {
       delete scroll.isDateInit
 
       if (this.props.dateProfile) { // dates rendered yet?
-        assignTo(scroll, this.computeInitialDateScroll())
+        Object.assign(scroll, this.computeInitialDateScroll())
       }
     }
 

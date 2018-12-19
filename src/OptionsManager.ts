@@ -1,4 +1,3 @@
-import { assignTo } from './util/object'
 import { firstDefined } from './util/misc'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
 import { getLocale } from './datelib/locale'
@@ -14,7 +13,7 @@ export default class OptionsManager {
 
 
   constructor(overrides) {
-    this.overrides = assignTo({}, overrides) // make a copy
+    this.overrides = { ...overrides } // make a copy
     this.dynamicOverrides = {}
     this.compute()
   }

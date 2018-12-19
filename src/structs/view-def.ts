@@ -1,4 +1,3 @@
-import { assignTo } from '../util/object'
 import { ViewClass, ViewConfigHash } from './view-config'
 
 /*
@@ -74,16 +73,14 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
   return {
     type: viewType,
     class: theClass,
-    defaults: assignTo(
-      {},
-      superDef ? superDef.defaults : {},
-      defaultConfig ? defaultConfig.options : {}
-    ),
-    overrides: assignTo(
-      {},
-      superDef ? superDef.overrides : {},
-      overrideConfig ? overrideConfig.options : {}
-    )
+    defaults: {
+      ...(superDef ? superDef.defaults : {}),
+      ...(defaultConfig ? defaultConfig.options : {})
+    },
+    overrides: {
+      ...(superDef ? superDef.overrides : {}),
+      ...(overrideConfig ? overrideConfig.options : {})
+    }
   }
 }
 

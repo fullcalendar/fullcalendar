@@ -1,4 +1,3 @@
-import { assignTo } from '../util/object'
 import { DateMarker, timeAsMs } from './marker'
 import { CalendarSystem } from './calendar-system'
 import { Locale } from './locale'
@@ -156,8 +155,8 @@ function buildNativeFormattingFunc(
   extendedSettings,
   context: DateFormattingContext
 ): (date: ZonedMarker) => string {
-  standardDateProps = assignTo({}, standardDateProps) // copy
-  extendedSettings = assignTo({}, extendedSettings) // copy
+  standardDateProps = { ...standardDateProps } // copy
+  extendedSettings = { ...extendedSettings } // copy
 
   sanitizeSettings(standardDateProps, extendedSettings)
 
@@ -167,7 +166,7 @@ function buildNativeFormattingFunc(
   let zeroFormat // needed?
 
   if (extendedSettings.omitZeroMinute) {
-    let zeroProps = assignTo({}, standardDateProps)
+    let zeroProps = { ...standardDateProps }
     delete zeroProps.minute // seconds and ms were already considered in sanitizeSettings
     zeroFormat = new Intl.DateTimeFormat(context.locale.codes, zeroProps)
   }

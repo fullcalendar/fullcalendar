@@ -5,7 +5,6 @@ import { Locale } from './locale'
 import { NativeFormatter } from './formatting-native'
 import { CmdFormatter, CmdFormatterFunc } from './formatting-cmd'
 import { FuncFormatter, FuncFormatterFunc } from './formatting-func'
-import { assignTo } from '../util/object'
 
 export interface ZonedMarker {
   marker: DateMarker,
@@ -55,7 +54,7 @@ export type FormatterInput = object | string | FuncFormatterFunc
 export function createFormatter(input: FormatterInput, defaultSeparator?: string): DateFormatter {
   if (typeof input === 'object' && input) { // non-null object
     if (typeof defaultSeparator === 'string') {
-      input = assignTo({ separator: defaultSeparator }, input)
+      input = { separator: defaultSeparator, ...input }
     }
     return new NativeFormatter(input)
 

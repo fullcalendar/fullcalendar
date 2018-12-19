@@ -1,6 +1,6 @@
 import { EventSource, EventSourceHash, getEventSourceDef, doesSourceNeedRange } from '../structs/event-source'
 import Calendar from '../Calendar'
-import { arrayToHash, assignTo, filterHash } from '../util/object'
+import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { warn } from '../util/misc'
 import { DateProfile } from '../DateProfileGenerator'
@@ -62,7 +62,7 @@ function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fe
     hash = fetchDirtySources(hash, fetchRange, calendar)
   }
 
-  return assignTo({}, eventSourceHash, hash)
+  return { ...eventSourceHash, ...hash }
 }
 
 
@@ -175,10 +175,11 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: 
     }
   )
 
-  return assignTo({}, eventSource, {
+  return {
+    ...eventSource,
     isFetching: true,
     latestFetchId: fetchId
-  })
+  }
 }
 
 
@@ -189,12 +190,14 @@ function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId:
     eventSource && // not already removed
     fetchId === eventSource.latestFetchId
   ) {
-    return assignTo({}, sourceHash, {
-      [sourceId]: assignTo({}, eventSource, {
+    return {
+      ...sourceHash,
+      [sourceId]: {
+        ...eventSource,
         isFetching: false,
         fetchRange
-      })
-    })
+      }
+    }
   }
 
   return sourceHash

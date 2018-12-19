@@ -1,37 +1,4 @@
 
-const hasOwnPropMethod = {}.hasOwnProperty
-
-
-export function assignTo(target, ...sources) {
-  for (let i = 0; i < sources.length; i++) {
-    let source = sources[i]
-    if (source != null) { // skip over if undefined or null
-      for (let key in source) {
-        // avoid bugs when hasOwnProperty is shadowed
-        if (hasOwnProp(source, key)) {
-          target[key] = source[key]
-        }
-      }
-    }
-  }
-  return target
-}
-
-
-export function copyOwnProps(src, dest) {
-  for (let name in src) {
-    if (hasOwnProp(src, name)) {
-      dest[name] = src[name]
-    }
-  }
-}
-
-
-function hasOwnProp(obj, name) {
-  return hasOwnPropMethod.call(obj, name)
-}
-
-
 // Merges an array of objects into a single object.
 // The second argument allows for an array of property names who's object values will be merged together.
 export function mergeProps(propObjs, complexProps?): any {

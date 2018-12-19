@@ -1,7 +1,7 @@
 import { ViewDef, compileViewDefs } from './view-def'
 import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInput } from '../datelib/duration'
 import OptionsManager from '../OptionsManager'
-import { assignTo, mapHash } from '../util/object'
+import { mapHash } from '../util/object'
 import { globalDefaults } from '../options'
 import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewClass } from './view-config'
 
@@ -98,17 +98,16 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     durationUnit,
     singleUnit,
 
-    options: assignTo(
-      {},
-      globalDefaults,
-      viewDef.defaults,
-      optionsManager.dirDefaults,
-      optionsManager.localeDefaults,
-      optionsManager.overrides,
-      singleUnitOverrides,
-      viewDef.overrides,
-      optionsManager.dynamicOverrides
-    ),
+    options: {
+      ...globalDefaults,
+      ...viewDef.defaults,
+      ...optionsManager.dirDefaults,
+      ...optionsManager.localeDefaults,
+      ...optionsManager.overrides,
+      ...singleUnitOverrides,
+      ...viewDef.overrides,
+      ...optionsManager.dynamicOverrides
+    },
 
     buttonTextOverride:
       queryButtonText(optionsManager.dynamicOverrides) ||

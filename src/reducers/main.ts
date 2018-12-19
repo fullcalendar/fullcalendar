@@ -6,7 +6,6 @@ import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
-import { assignTo } from '../util/object'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
 
@@ -14,7 +13,8 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
   let dateProfile = reduceDateProfile(state.dateProfile, action, viewType, calendar)
   let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendar)
 
-  let nextState = assignTo({}, state, {
+  let nextState = {
+    ...state,
     viewType,
     dateProfile,
     eventSources,
@@ -25,7 +25,7 @@ export default function(state: CalendarState, action: Action, calendar: Calendar
     eventResize: reduceEventResize(state.eventResize, action, eventSources, calendar),
     eventSourceLoadingLevel: computeLoadingLevel(eventSources),
     loadingLevel: computeLoadingLevel(eventSources)
-  })
+  }
 
   for (let reducerFunc of calendar.pluginSystem.hooks.reducers) {
     nextState = reducerFunc(nextState, action, calendar)

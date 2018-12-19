@@ -1,4 +1,3 @@
-import { assignTo } from '../util/object'
 import {
   createElement,
   insertAfterElement,
@@ -799,18 +798,17 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
       let slicedRange = intersectRanges(origRange, dayRange)
 
       if (slicedRange) {
-        newSegs.push(
-          assignTo({}, seg, {
-            eventRange: {
-              def: eventRange.def,
-              ui: assignTo({}, eventRange.ui, { durationEditable: false }), // hack to disable resizing
-              instance: eventRange.instance,
-              range: slicedRange
-            } as EventRenderRange,
-            isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
-            isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
-          })
-        )
+        newSegs.push({
+          ...seg,
+          eventRange: {
+            def: eventRange.def,
+            ui: { ...eventRange.ui, durationEditable: false }, // hack to disable resizing
+            instance: eventRange.instance,
+            range: slicedRange
+          } as EventRenderRange,
+          isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
+          isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
+        })
       }
     }
 

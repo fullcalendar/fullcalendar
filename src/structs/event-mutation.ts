@@ -1,7 +1,6 @@
 import { Duration, asRoughMs, durationsEqual } from '../datelib/duration'
 import { EventStore, createEmptyEventStore } from './event-store'
 import { EventDef, EventInstance } from './event'
-import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 import { computeAlignedDayRange } from '../util/misc'
 import { startOfDay } from '../datelib/marker'
@@ -44,7 +43,7 @@ export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutati
 
 
 function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, appliers: eventDefMutationApplier[], calendar: Calendar): EventDef {
-  let copy = assignTo({}, eventDef)
+  let copy = { ...eventDef }
   let standardProps = mutation.standardProps || {}
 
   // if hasEnd has not been specified, guess a good value based on deltas.
@@ -60,12 +59,12 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
     standardProps.hasEnd = true
   }
 
-  assignTo(copy, standardProps, {
-    ui: assignTo({}, copy.ui, standardProps.ui) // the only prop we want to recursively overlay
+  Object.assign(copy, standardProps, {
+    ui: { ...copy.ui, ...standardProps.ui } // the only prop we want to recursively overlay
   })
 
   if (mutation.extendedProps) {
-    copy.extendedProps = assignTo({}, copy.extendedProps, mutation.extendedProps)
+    copy.extendedProps = { ...copy.extendedProps, ...mutation.extendedProps }
   }
 
   for (let applier of appliers) {
@@ -100,7 +99,7 @@ function applyMutationToEventInstance(
   let dateEnv = calendar.dateEnv
   let forceAllDay = mutation.standardProps && mutation.standardProps.allDay === true
   let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
-  let copy = assignTo({}, eventInstance) as EventInstance
+  let copy = { ...eventInstance } as EventInstance
 
   if (forceAllDay) {
     copy.range = computeAlignedDayRange(copy.range)

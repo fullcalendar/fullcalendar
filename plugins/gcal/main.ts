@@ -1,5 +1,5 @@
 import * as request from 'superagent'
-import { registerEventSourceDef, refineProps, addDays, assignTo } from 'fullcalendar'
+import { registerEventSourceDef, refineProps, addDays } from 'fullcalendar'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
@@ -121,16 +121,14 @@ function buildRequestParams(range, apiKey: string, extraData, dateEnv) {
     endStr = addDays(range.end, 1).toISOString()
   }
 
-  params = assignTo(
-    extraData || {},
-    {
-      key: apiKey,
-      timeMin: startStr,
-      timeMax: endStr,
-      singleEvents: true,
-      maxResults: 9999
-    }
-  )
+  params = {
+    ...(extraData || {}),
+    key: apiKey,
+    timeMin: startStr,
+    timeMax: endStr,
+    singleEvents: true,
+    maxResults: 9999
+  }
 
   return params
 }

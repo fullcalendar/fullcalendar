@@ -4,8 +4,7 @@ import View from './View'
 import Toolbar from './Toolbar'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { prependToElement, createElement, removeElement, appendToElement, applyStyle } from './util/dom-manip'
-import { rangeContainsMarker, DateRange } from './datelib/date-range';
-import { assignTo } from './util/object';
+import { rangeContainsMarker, DateRange } from './datelib/date-range'
 import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'
 import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
@@ -134,9 +133,10 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         this.header = new Toolbar(this.context, 'fc-header-toolbar')
         prependToElement(this.el, this.header.el)
       }
-      this.header.receiveProps(
-        assignTo({ layout: headerLayout }, toolbarProps)
-      )
+      this.header.receiveProps({
+        layout: headerLayout,
+        ...toolbarProps
+      })
     } else if (this.header) {
       this.header.destroy()
       this.header = null
@@ -147,9 +147,10 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         this.footer = new Toolbar(this.context, 'fc-footer-toolbar')
         appendToElement(this.el, this.footer.el)
       }
-      this.footer.receiveProps(
-        assignTo({ layout: footerLayout }, toolbarProps)
-      )
+      this.footer.receiveProps({
+        layout: footerLayout,
+        ...toolbarProps
+      })
     } else if (this.footer) {
       this.footer.destroy()
       this.footer = null

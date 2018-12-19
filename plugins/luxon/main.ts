@@ -20,11 +20,10 @@ export function toDuration(duration: fc.Duration, calendar: fc.Calendar): Durati
     throw new Error('must supply a Calendar instance')
   }
 
-  return Duration.fromObject(
-    fc.assignTo({}, duration, {
-      locale: calendar.dateEnv.locale.codes[0]
-    })
-  )
+  return Duration.fromObject({
+    ...duration,
+    locale: calendar.dateEnv.locale.codes[0]
+  })
 }
 
 // for browser globals. TODO: better solution

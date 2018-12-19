@@ -1,5 +1,4 @@
 import { DateEnv, DateInput } from './datelib/env'
-import { assignTo } from './util/object'
 import { createFormatter } from './datelib/formatting'
 import { getLocale } from './datelib/locale'
 import { globalDefaults } from './options'
@@ -43,13 +42,13 @@ function buildDateEnv(settings) {
   let locale = settings.locale || globalDefaults.locale
 
   // ensure required settings
-  settings = assignTo({
+  settings = {
     timeZone: globalDefaults.timeZone,
     timeZoneImpl: globalDefaults.timeZoneImpl,
-    calendarSystem: 'gregory'
-  }, settings, {
+    calendarSystem: 'gregory',
+    ...settings,
     locale: getLocale(locale)
-  })
+  }
 
   return new DateEnv(settings)
 }

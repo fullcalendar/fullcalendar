@@ -43,7 +43,7 @@ export {
   intersectRects
 } from './util/geom'
 
-export { assignTo, isPropsEqual, mapHash, filterHash } from './util/object'
+export { isPropsEqual, mapHash, filterHash } from './util/object'
 
 export {
   findElements,

@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import { filterHash, assignTo, mapHash } from '../util/object'
+import { filterHash, mapHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
 import {
@@ -141,14 +141,15 @@ function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: Da
     if (def.allDay || def.recurringDef) {
       return instance // isn't dependent on timezone
     } else {
-      return assignTo({}, instance, {
+      return {
+        ...instance,
         range: {
           start: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.start, instance.forcedStartTzo)),
           end: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.end, instance.forcedEndTzo))
         },
         forcedStartTzo: newDateEnv.canComputeOffset ? null : instance.forcedStartTzo,
         forcedEndTzo: newDateEnv.canComputeOffset ? null : instance.forcedEndTzo
-      })
+      }
     }
   })
 

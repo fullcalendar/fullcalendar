@@ -11,7 +11,7 @@ import {
 import { EventSource } from './event-source'
 import { expandRecurringRanges } from './recurring-event'
 import Calendar from '../Calendar'
-import { assignTo, filterHash } from '../util/object'
+import { filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 
 /*
@@ -161,8 +161,8 @@ export function createEmptyEventStore(): EventStore {
 
 export function mergeEventStores(store0: EventStore, store1: EventStore): EventStore {
   return {
-    defs: assignTo({}, store0.defs, store1.defs),
-    instances: assignTo({}, store0.instances, store1.instances)
+    defs: { ...store0.defs, ...store1.defs },
+    instances: { ...store0.instances, ...store1.instances }
   }
 }
 

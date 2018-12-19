@@ -5,7 +5,6 @@ import { eventDefMutationApplier } from './structs/event-mutation'
 import { DatePointTransform, DateSpanTransform } from './Calendar'
 import { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 import { ViewConfigInputHash } from './structs/view-config'
-import { assignTo } from './util/object'
 import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
@@ -137,7 +136,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     dateSelectionTransformers: hooks0.dateSelectionTransformers.concat(hooks1.dateSelectionTransformers),
     datePointTransforms: hooks0.datePointTransforms.concat(hooks1.datePointTransforms),
     dateSpanTransforms: hooks0.dateSpanTransforms.concat(hooks1.dateSpanTransforms),
-    viewConfigs: assignTo({}, hooks0.viewConfigs, hooks1.viewConfigs),
+    viewConfigs: { ...hooks0.viewConfigs, ...hooks1.viewConfigs },
     viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
     viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
     isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,

@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import { assignTo } from '../util/object'
+
 import { EventInput } from './event'
 import { EventStore, parseEvents } from './event-store'
 
@@ -30,8 +30,8 @@ export function parseBusinessHours(input: BusinessHoursInput, calendar: Calendar
   )
 }
 
-function refineInputs(input: BusinessHoursInput): EventInput[] {
-  let rawDefs: EventInput[]
+function refineInputs(input: BusinessHoursInput) {
+  let rawDefs
 
   if (input === true) {
     rawDefs = [ {} ] // will get DEF_DEFAULTS verbatim
@@ -47,7 +47,7 @@ function refineInputs(input: BusinessHoursInput): EventInput[] {
   }
 
   rawDefs = rawDefs.map(function(rawDef) {
-    return assignTo({}, DEF_DEFAULTS, rawDef)
+    return { ...DEF_DEFAULTS, ...rawDef }
   })
 
   return rawDefs

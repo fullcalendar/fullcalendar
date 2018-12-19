@@ -1,5 +1,5 @@
 import { RRule, rrulestr } from 'rrule'
-import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration, assignTo } from 'fullcalendar'
+import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration } from 'fullcalendar'
 
 interface RRuleParsedRecurring extends ParsedRecurring {
   typeData: RRule
@@ -44,7 +44,7 @@ function parseRRule(input, allDayDefault: boolean | null, dateEnv: DateEnv) {
     }
 
   } else if (typeof input === 'object' && input) { // non-null object
-    let refined = assignTo({}, input) // copy
+    let refined = { ...input } // copy
     let allDay = allDayDefault
 
     if (typeof refined.dtstart === 'string') {

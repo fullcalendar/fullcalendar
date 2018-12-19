@@ -2,7 +2,6 @@ import Calendar from '../Calendar'
 import View from '../View'
 import Theme from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
-import { assignTo } from '../util/object'
 
 let guid = 0
 
@@ -48,11 +47,10 @@ export default class Component<PropsType> {
   }
 
   static addEqualityFuncs(newFuncs: EqualityFuncHash) {
-    this.prototype.equalityFuncs = assignTo(
-      {},
-      this.prototype.equalityFuncs,
-      newFuncs
-    )
+    this.prototype.equalityFuncs = {
+      ...this.prototype.equalityFuncs,
+      ...newFuncs
+    }
   }
 
   opt(name) {

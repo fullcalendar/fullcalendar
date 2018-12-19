@@ -1,5 +1,3 @@
-import { assignTo } from '../util/object'
-
 
 export default class Theme {
 
@@ -34,7 +32,7 @@ export default class Theme {
     let buttonName
 
     if (typeof iconOverrideHash === 'object' && iconOverrideHash) { // non-null object
-      iconClassesCopy = assignTo({}, this.iconClasses)
+      iconClassesCopy = { ...this.iconClasses }
 
       for (buttonName in iconOverrideHash) {
         iconClassesCopy[buttonName] = this.applyIconOverridePrefix(

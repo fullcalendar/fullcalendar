@@ -1,5 +1,4 @@
 import * as request from 'superagent'
-import { assignTo } from '../util/object'
 import Calendar from '../Calendar'
 import { registerEventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
@@ -100,7 +99,7 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Cale
     customRequestParams = meta.extraData || {}
   }
 
-  assignTo(params, customRequestParams)
+  Object.assign(params, customRequestParams)
 
   params[startParam] = dateEnv.formatIso(range.start)
   params[endParam] = dateEnv.formatIso(range.end)

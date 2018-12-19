@@ -1,7 +1,6 @@
 import { refineProps } from '../util/misc'
 import { DateInput } from '../datelib/env'
 import Calendar from '../Calendar'
-import { assignTo } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
@@ -141,7 +140,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
     leftovers = newLeftovers
   }
 
-  def.extendedProps = assignTo(leftovers, def.extendedProps || {})
+  def.extendedProps = Object.assign(leftovers, def.extendedProps || {})
 
   // help out EventApi from having user modify props
   Object.freeze(def.ui.classNames)
