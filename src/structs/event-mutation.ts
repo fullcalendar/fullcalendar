@@ -43,7 +43,6 @@ export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutati
 
 
 function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, appliers: eventDefMutationApplier[], calendar: Calendar): EventDef {
-  let copy = { ...eventDef }
   let standardProps = mutation.standardProps || {}
 
   // if hasEnd has not been specified, guess a good value based on deltas.
@@ -56,12 +55,14 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
       eventConfig.durationEditable ? mutation.endDelta : null
     )
   ) {
-    standardProps.hasEnd = true
+    standardProps.hasEnd = true // TODO: is this mutation okay?
   }
 
-  Object.assign(copy, standardProps, {
-    ui: { ...copy.ui, ...standardProps.ui } // the only prop we want to recursively overlay
-  })
+  let copy = {
+    ...eventDef,
+    ...standardProps,
+    ui: { ...eventDef.ui, ...standardProps.ui } // the only prop we want to recursively overlay
+  }
 
   if (mutation.extendedProps) {
     copy.extendedProps = { ...copy.extendedProps, ...mutation.extendedProps }

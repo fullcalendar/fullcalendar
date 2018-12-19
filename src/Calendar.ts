@@ -30,6 +30,7 @@ import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem, PluginDef } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
+import { __assign } from 'tslib'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -937,10 +938,10 @@ export default class Calendar {
     let props = {} as DatePointApi
 
     for (let transform of this.pluginSystem.hooks.datePointTransforms) {
-      Object.assign(props, transform(dateSpan, this))
+      __assign(props, transform(dateSpan, this))
     }
 
-    Object.assign(props, buildDatePointApi(dateSpan, this.dateEnv))
+    __assign(props, buildDatePointApi(dateSpan, this.dateEnv))
 
     return props
   }
@@ -950,10 +951,10 @@ export default class Calendar {
     let props = {} as DateSpanApi
 
     for (let transform of this.pluginSystem.hooks.dateSpanTransforms) {
-      Object.assign(props, transform(dateSpan, this))
+      __assign(props, transform(dateSpan, this))
     }
 
-    Object.assign(props, buildDateSpanApi(dateSpan, this.dateEnv))
+    __assign(props, buildDateSpanApi(dateSpan, this.dateEnv))
 
     return props
   }

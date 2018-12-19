@@ -4,6 +4,7 @@ import HitDragging, { Hit } from './HitDragging'
 import { DateSpan } from '../structs/date-span'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
+import { __assign } from 'tslib'
 
 /*
 Tracks when the user selects a portion of time of a component,
@@ -128,7 +129,7 @@ function joinHitsIntoSelection(hit0: Hit, hit1: Hit, dateSelectionTransformers: 
     if (res === false) {
       return null
     } else if (res) {
-      Object.assign(props, res)
+      __assign(props, res)
     }
   }
 

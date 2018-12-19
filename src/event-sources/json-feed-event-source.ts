@@ -2,6 +2,7 @@ import * as request from 'superagent'
 import Calendar from '../Calendar'
 import { registerEventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
+import { __assign } from 'tslib'
 
 interface JsonFeedMeta {
   url: string
@@ -99,7 +100,7 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Cale
     customRequestParams = meta.extraData || {}
   }
 
-  Object.assign(params, customRequestParams)
+  __assign(params, customRequestParams)
 
   params[startParam] = dateEnv.formatIso(range.start)
   params[endParam] = dateEnv.formatIso(range.end)

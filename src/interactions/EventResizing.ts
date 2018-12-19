@@ -11,6 +11,7 @@ import EventApi from '../api/EventApi'
 import { EventRenderRange, getElSeg } from '../component/event-rendering'
 import { createDuration } from '../datelib/duration'
 import { EventInteractionState } from './event-interaction-state'
+import { __assign } from 'tslib'
 
 export default class EventDragging {
 
@@ -228,7 +229,7 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
     if (res === false) {
       return null
     } else if (res) {
-      Object.assign(props, res)
+      __assign(props, res)
     }
   }
 

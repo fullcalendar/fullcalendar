@@ -5,6 +5,7 @@ import { mapHash } from '../util/object'
 import { memoize } from '../util/memoize'
 import { EventUiHash, EventUi, combineEventUis } from './event-ui'
 import { DateSpan } from '../structs/date-span'
+import { __assign } from 'tslib'
 
 export interface SplittableProps {
   businessHours: EventStore | null // is this really allowed to be null?
@@ -185,7 +186,7 @@ function buildEventUiForKey(allUi: EventUi | null, eventUiForKey: EventUi | null
   }
 
   if (individualUi) {
-    Object.assign(stuff, individualUi)
+    __assign(stuff, individualUi)
   }
 
   return stuff

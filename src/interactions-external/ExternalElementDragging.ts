@@ -14,6 +14,7 @@ import { elementMatches } from '../util/dom-manip'
 import { enableCursor, disableCursor } from '../util/misc'
 import { isInteractionValid } from '../validation'
 import View from '../View'
+import { __assign } from 'tslib'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
 
@@ -207,7 +208,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
   let defProps = { ...dragMeta.leftoverProps }
 
   for (let transform of calendar.pluginSystem.hooks.externalDefTransforms) {
-    Object.assign(defProps, transform(dateSpan, dragMeta))
+    __assign(defProps, transform(dateSpan, dragMeta))
   }
 
   let def = parseEventDef(

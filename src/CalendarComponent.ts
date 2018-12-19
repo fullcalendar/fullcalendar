@@ -15,6 +15,7 @@ import { diffWholeDays } from './datelib/marker'
 import { memoizeRendering } from './component/memoized-rendering'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
+import { __assign } from 'tslib'
 
 export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec
@@ -199,7 +200,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     let transformers = this.buildViewPropTransformers(this.calendar.pluginSystem.hooks.viewPropsTransformers)
 
     for (let transformer of transformers) {
-      Object.assign(
+      __assign(
         viewProps,
         transformer.transform(viewProps, viewSpec, props, view)
       )

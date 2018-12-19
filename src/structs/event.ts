@@ -6,6 +6,7 @@ import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
 import { Duration } from '../datelib/duration'
 import { UnscopedEventUiInput, EventUi, processUnscopedUiProps } from '../component/event-ui'
+import { __assign } from 'tslib'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -140,7 +141,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
     leftovers = newLeftovers
   }
 
-  def.extendedProps = Object.assign(leftovers, def.extendedProps || {})
+  def.extendedProps = __assign(leftovers, def.extendedProps || {})
 
   // help out EventApi from having user modify props
   Object.freeze(def.ui.classNames)

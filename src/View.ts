@@ -13,6 +13,7 @@ import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { memoizeRendering } from './component/memoized-rendering'
+import { __assign } from 'tslib'
 
 export interface ViewProps {
   dateProfile: DateProfile
@@ -375,7 +376,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   addScroll(scroll) {
     let queuedScroll = this.queuedScroll || (this.queuedScroll = {})
 
-    Object.assign(queuedScroll, scroll)
+    __assign(queuedScroll, scroll)
   }
 
 
@@ -394,7 +395,7 @@ export default abstract class View extends DateComponent<ViewProps> {
     let scroll = {} as any
 
     if (this.props.dateProfile) { // dates rendered yet?
-      Object.assign(scroll, this.queryDateScroll())
+      __assign(scroll, this.queryDateScroll())
     }
 
     return scroll
@@ -407,7 +408,7 @@ export default abstract class View extends DateComponent<ViewProps> {
       delete scroll.isDateInit
 
       if (this.props.dateProfile) { // dates rendered yet?
-        Object.assign(scroll, this.computeInitialDateScroll())
+        __assign(scroll, this.computeInitialDateScroll())
       }
     }
 
