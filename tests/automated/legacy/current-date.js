@@ -176,7 +176,7 @@ describe('current date', function() {
         options.now = options.defaultDate = '2014-06-01' // a Sunday
         options.weekends = false
         initCalendar(options)
-        var view = currentCalendar.getView()
+        var view = currentCalendar.view
         expect(view.activeStart).toEqualDate('2014-06-02')
         expect(view.activeEnd).toEqualDate('2014-07-12')
         expect(view.currentStart).toEqualDate('2014-06-01')
@@ -187,7 +187,7 @@ describe('current date', function() {
         options.now = options.defaultDate = '2014-05-04' // a Sunday
         options.weekends = false
         initCalendar(options)
-        var view = currentCalendar.getView()
+        var view = currentCalendar.view
         expect(view.activeStart).toEqualDate('2014-04-28')
         expect(view.activeEnd).toEqualDate('2014-06-07')
         expect(view.currentStart).toEqualDate('2014-05-01')
@@ -199,11 +199,11 @@ describe('current date', function() {
           options.defaultDate = '2014-07-07'
           options.weekends = false
           initCalendar(options)
-          var view = currentCalendar.getView()
+          var view = currentCalendar.view
           expect(view.currentStart).toEqualDate('2014-07-01')
           expect(view.currentEnd).toEqualDate('2014-08-01')
           currentCalendar.prev() // will move to Jun 1, which is a Sunday
-          view = currentCalendar.getView()
+          view = currentCalendar.view
           expect(view.currentStart).toEqualDate('2014-06-01')
           expect(view.currentEnd).toEqualDate('2014-07-01')
         })
@@ -215,7 +215,7 @@ describe('current date', function() {
         options.now = options.defaultDate = '2014-06-01' // a Sunday
         options.weekends = false
         initCalendar(options)
-        var view = currentCalendar.getView()
+        var view = currentCalendar.view
         expect(view.activeStart).toEqualDate('2014-06-02')
         expect(view.activeEnd).toEqualDate('2014-06-03')
         expect(view.currentStart).toEqualDate('2014-06-02')
@@ -250,7 +250,7 @@ describe('current date', function() {
   }
 
   function expectViewDates(start, end, titleStart, titleEnd) {
-    var view = currentCalendar.getView()
+    var view = currentCalendar.view
     var calculatedEnd
     var title
 

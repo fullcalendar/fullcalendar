@@ -12,7 +12,7 @@ describe('View object', function() {
 
     it('is a correctly defined string', function() {
       initCalendar()
-      var view = currentCalendar.getView()
+      var view = currentCalendar.view
       expect(view.title).toBe('January 2015')
     })
 

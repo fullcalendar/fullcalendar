@@ -32,7 +32,7 @@ describe('datesDestroy', function() {
             // the datesDestroy should be called before the next datesRender
             expect(datesRenderCalls).toBe(1)
 
-            var viewObj = currentCalendar.getView()
+            var viewObj = currentCalendar.view
             var viewEl = $('.fc-view', currentCalendar.el)
 
             expect(viewObj).toBe(arg.view)

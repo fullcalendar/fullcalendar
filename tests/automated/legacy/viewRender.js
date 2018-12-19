@@ -23,7 +23,7 @@ describe('datesRender', function() {
     it('fires after the view is rendered, with correct arguments', function(done) {
       initCalendar({
         datesRender: function(arg) {
-          var viewObj = currentCalendar.getView()
+          var viewObj = currentCalendar.view
           var viewEl = $('.fc-view', currentCalendar.el)
 
           expect(viewObj).toBe(arg.view)

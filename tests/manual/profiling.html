@@ -104,8 +104,8 @@
       var calendar = $('#calendar').fullCalendar('getCalendar');
       calendar.changeView('month');
 
-      var date = calendar.getView().start.clone();
-      var end = calendar.getView().end.clone();
+      var date = calendar.view.start.clone();
+      var end = calendar.view.end.clone();
       var events = [];
 
       while (date.isBefore(end)) {
@@ -148,8 +148,8 @@
       var calendar = $('#calendar').fullCalendar('getCalendar');
       calendar.changeView('agendaWeek');
 
-      var date = calendar.getView().start.clone();
-      var end = calendar.getView().end.clone();
+      var date = calendar.view.start.clone();
+      var end = calendar.view.end.clone();
       var events = [];
       var time;
       var calendar;

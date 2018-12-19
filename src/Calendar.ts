@@ -136,12 +136,6 @@ export default class Calendar {
   }
 
 
-  // public API :(
-  getView(): View {
-    return this.view // calls getter
-  }
-
-
   // Public API for rendering
   // -----------------------------------------------------------------------------------------------------------------
 

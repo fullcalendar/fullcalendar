@@ -42,7 +42,7 @@ describe('eventLimitClick', function() { // simulate a click
         }
       })
       $('.fc-more').simulate('click')
-      var view = currentCalendar.getView()
+      var view = currentCalendar.view
       expect(view.type).toBe('basicWeek')
     })
 
@@ -55,7 +55,7 @@ describe('eventLimitClick', function() { // simulate a click
         }
       })
       $('.fc-more').simulate('click')
-      var view = currentCalendar.getView()
+      var view = currentCalendar.view
       expect(view.type).toBe('agendaWeek')
     })
   })
@@ -75,7 +75,7 @@ describe('eventLimitClick', function() { // simulate a click
         }
       })
       $('.fc-more').simulate('click')
-      var view = currentCalendar.getView()
+      var view = currentCalendar.view
       expect(view.type).toBe('basicDay')
     })
 
@@ -88,7 +88,7 @@ describe('eventLimitClick', function() { // simulate a click
         }
       })
       $('.fc-more').simulate('click')
-      var view = currentCalendar.getView()
+      var view = currentCalendar.view
       expect(view.type).toBe('agendaDay')
     })
   })
@@ -103,7 +103,7 @@ describe('eventLimitClick', function() { // simulate a click
       }
     })
     $('.fc-more').simulate('click')
-    var view = currentCalendar.getView()
+    var view = currentCalendar.view
     expect(view.type).toBe('agendaWeek')
   })
 
@@ -129,7 +129,7 @@ describe('eventLimitClick', function() { // simulate a click
       }
     })
     $('.fc-more').simulate('click')
-    var view = currentCalendar.getView()
+    var view = currentCalendar.view
     expect(view.type).toBe('agendaDay')
   })
 
