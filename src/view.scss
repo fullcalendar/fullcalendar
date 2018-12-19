@@ -2,6 +2,10 @@
 /* View Structure
 --------------------------------------------------------------------------------------------------*/
 
+.fc-view-container {
+  position: relative;
+}
+
 /* undo twitter bootstrap's box-sizing rules. normalizes positioning techniques */
 /* don't do this for the toolbar because we'll want bootstrap to style those buttons as some pt */
 .fc-view-container *,
