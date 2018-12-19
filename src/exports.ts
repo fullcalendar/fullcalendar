@@ -143,7 +143,7 @@ export { globalDefaults } from './options'
 
 export { registerRecurringType, ParsedRecurring } from './structs/recurring-event'
 
-export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer } from './plugin-system'
+export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerModifier } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
 export { CalendarComponentProps } from './CalendarComponent'
 

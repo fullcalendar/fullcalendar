@@ -52,6 +52,11 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       this.contentEl = createElement('div', { className: 'fc-view-container' })
     )
 
+    let { calendar } = this
+    for (let modifyViewContainer of calendar.pluginSystem.hooks.viewContainerModifiers) {
+      modifyViewContainer(this.contentEl, calendar)
+    }
+
     this.toggleElClassNames(true)
 
     this.computeTitle = memoize(computeTitle)
