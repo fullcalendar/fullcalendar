@@ -1033,12 +1033,14 @@ export default class Calendar {
   addEvent(eventInput: EventInput, sourceInput?: any): EventApi | null {
 
     if (eventInput instanceof EventApi) {
+      let def = eventInput._def
+      let instance = eventInput._instance
 
       // not already present? don't want to add an old snapshot
-      if (!this.state.eventStore.defs[eventInput.def.defId]) {
+      if (!this.state.eventStore.defs[def.defId]) {
         this.dispatch({
           type: 'ADD_EVENTS',
-          eventStore: eventTupleToStore(eventInput)
+          eventStore: eventTupleToStore({ def, instance }) // TODO: better util for two args?
         })
       }
 

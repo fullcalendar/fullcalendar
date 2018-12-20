@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import { EventDef, EventInstance, EventTuple, NON_DATE_PROPS, DATE_PROPS } from '../structs/event'
+import { EventDef, EventInstance, NON_DATE_PROPS, DATE_PROPS } from '../structs/event'
 import { UNSCOPED_EVENT_UI_PROPS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
@@ -8,16 +8,16 @@ import { subtractDurations, DurationInput, createDuration } from '../datelib/dur
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import EventSourceApi from './EventSourceApi'
 
-export default class EventApi implements EventTuple {
+export default class EventApi {
 
-  calendar: Calendar
-  def: EventDef
-  instance: EventInstance | null
+  _calendar: Calendar
+  _def: EventDef
+  _instance: EventInstance | null
 
   constructor(calendar: Calendar, def: EventDef, instance?: EventInstance) {
-    this.calendar = calendar
-    this.def = def
-    this.instance = instance || null
+    this._calendar = calendar
+    this._def = def
+    this._instance = instance || null
   }
 
   /*
@@ -68,11 +68,11 @@ export default class EventApi implements EventTuple {
   }
 
   setStart(startInput: DateInput, options: { granularity?: string, maintainDuration?: boolean } = {}) {
-    let dateEnv = this.calendar.dateEnv
+    let { dateEnv } = this._calendar
     let start = dateEnv.createMarker(startInput)
 
-    if (start && this.instance) { // TODO: warning if parsed bad
-      let instanceRange = this.instance.range
+    if (start && this._instance) { // TODO: warning if parsed bad
+      let instanceRange = this._instance.range
       let startDelta = diffDates(instanceRange.start, start, dateEnv, options.granularity) // what if parsed bad!?
       let endDelta = null
 
@@ -87,7 +87,7 @@ export default class EventApi implements EventTuple {
   }
 
   setEnd(endInput: DateInput | null, options: { granularity?: string } = {}) {
-    let dateEnv = this.calendar.dateEnv
+    let { dateEnv } = this._calendar
     let end
 
     if (endInput != null) {
@@ -98,9 +98,9 @@ export default class EventApi implements EventTuple {
       }
     }
 
-    if (this.instance) {
+    if (this._instance) {
       if (end) {
-        let endDelta = diffDates(this.instance.range.end, end, dateEnv, options.granularity)
+        let endDelta = diffDates(this._instance.range.end, end, dateEnv, options.granularity)
         this.mutate({ endDelta })
       } else {
         this.mutate({ standardProps: { hasEnd: false } })
@@ -109,7 +109,7 @@ export default class EventApi implements EventTuple {
   }
 
   setDates(startInput: DateInput, endInput: DateInput | null, options: { allDay?: boolean, granularity?: string } = {}) {
-    let dateEnv = this.calendar.dateEnv
+    let { dateEnv } = this._calendar
     let standardProps = { allDay: options.allDay } as any
     let start = dateEnv.createMarker(startInput)
     let end
@@ -126,8 +126,8 @@ export default class EventApi implements EventTuple {
       }
     }
 
-    if (this.instance) {
-      let instanceRange = this.instance.range
+    if (this._instance) {
+      let instanceRange = this._instance.range
 
       // when computing the diff for an event being converted to all-day,
       // compute diff off of the all-day values the way event-mutation does.
@@ -176,10 +176,10 @@ export default class EventApi implements EventTuple {
     let maintainDuration = options.maintainDuration
 
     if (maintainDuration == null) {
-      maintainDuration = this.calendar.opt('allDayMaintainDuration')
+      maintainDuration = this._calendar.opt('allDayMaintainDuration')
     }
 
-    if (this.def.allDay !== allDay) {
+    if (this._def.allDay !== allDay) {
       standardProps.hasEnd = maintainDuration
     }
 
@@ -187,11 +187,11 @@ export default class EventApi implements EventTuple {
   }
 
   formatRange(formatInput: FormatterInput) {
-    let dateEnv = this.calendar.dateEnv
-    let { instance } = this
-    let formatter = createFormatter(formatInput, this.calendar.opt('defaultRangeSeparator'))
+    let { dateEnv } = this._calendar
+    let instance = this._instance
+    let formatter = createFormatter(formatInput, this._calendar.opt('defaultRangeSeparator'))
 
-    if (this.def.hasEnd) {
+    if (this._def.hasEnd) {
       return dateEnv.formatRange(instance.range.start, instance.range.end, formatter, {
         forcedStartTzo: instance.forcedStartTzo,
         forcedEndTzo: instance.forcedEndTzo
@@ -204,70 +204,73 @@ export default class EventApi implements EventTuple {
   }
 
   private mutate(mutation: EventMutation) {
-    let { instance } = this
+    let def = this._def
+    let instance = this._instance
 
     if (instance) {
-      this.calendar.dispatch({
+      this._calendar.dispatch({
         type: 'MUTATE_EVENTS',
         instanceId: instance.instanceId,
         mutation,
         fromApi: true
       })
 
-      let eventStore = this.calendar.state.eventStore
-      this.def = eventStore.defs[this.def.defId]
-      this.instance = eventStore.instances[this.instance.instanceId]
+      let eventStore = this._calendar.state.eventStore
+      this._def = eventStore.defs[def.defId]
+      this._instance = eventStore.instances[instance.instanceId]
     }
   }
 
   remove() {
-    this.calendar.dispatch({
+    this._calendar.dispatch({
       type: 'REMOVE_EVENT_DEF',
-      defId: this.def.defId
+      defId: this._def.defId
     })
   }
 
   get source(): EventSourceApi | null {
-    if (this.def.sourceId) {
+    let sourceId = this._def.sourceId
+
+    if (sourceId) {
       return new EventSourceApi(
-        this.calendar,
-        this.calendar.state.eventSources[this.def.sourceId]
+        this._calendar,
+        this._calendar.state.eventSources[sourceId]
       )
     }
     return null
   }
 
   get start(): Date | null {
-    return this.instance ?
-      this.calendar.dateEnv.toDate(this.instance.range.start) :
+    return this._instance ?
+      this._calendar.dateEnv.toDate(this._instance.range.start) :
       null
   }
 
   get end(): Date | null {
-    return (this.instance && this.def.hasEnd) ?
-      this.calendar.dateEnv.toDate(this.instance.range.end) :
+    return (this._instance && this._def.hasEnd) ?
+      this._calendar.dateEnv.toDate(this._instance.range.end) :
       null
   }
 
   // computable props that all access the def
   // TODO: find a TypeScript-compatible way to do this at scale
-  get id(): string { return this.def.publicId }
-  get groupId(): string { return this.def.groupId }
-  get allDay(): boolean { return this.def.allDay }
-  get title(): string { return this.def.title }
-  get url(): string { return this.def.url }
-  get rendering(): string { return this.def.rendering }
-  get startEditable(): boolean { return this.def.ui.startEditable }
-  get durationEditable(): boolean { return this.def.ui.durationEditable }
-  get constraint(): any { return this.def.ui.constraints[0] || null }
-  get overlap(): any { return this.def.ui.overlap }
-  get allow(): any { return this.def.ui.allows[0] || null }
-  get backgroundColor(): string { return this.def.ui.backgroundColor }
-  get borderColor(): string { return this.def.ui.borderColor }
-  get textColor(): string { return this.def.ui.textColor }
+  get id(): string { return this._def.publicId }
+  get groupId(): string { return this._def.groupId }
+  get allDay(): boolean { return this._def.allDay }
+  get title(): string { return this._def.title }
+  get url(): string { return this._def.url }
+  get rendering(): string { return this._def.rendering }
+  get startEditable(): boolean { return this._def.ui.startEditable }
+  get durationEditable(): boolean { return this._def.ui.durationEditable }
+  get constraint(): any { return this._def.ui.constraints[0] || null }
+  get overlap(): any { return this._def.ui.overlap }
+  get allow(): any { return this._def.ui.allows[0] || null }
+  get backgroundColor(): string { return this._def.ui.backgroundColor }
+  get borderColor(): string { return this._def.ui.borderColor }
+  get textColor(): string { return this._def.ui.textColor }
 
   // NOTE: user can't modify these because Object.freeze was called in event-def parsing
-  get classNames(): string[] { return this.def.ui.classNames }
-  get extendedProps(): any { return this.def.extendedProps }
+  get classNames(): string[] { return this._def.ui.classNames }
+  get extendedProps(): any { return this._def.extendedProps }
 
 }
