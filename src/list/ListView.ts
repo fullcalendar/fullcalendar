@@ -44,9 +44,11 @@ export default class ListView extends View {
 
     this.el.classList.add('fc-list-view')
 
-    let listViewClassName = this.theme.getClass('listView')
-    if (listViewClassName) {
-      this.el.classList.add(listViewClassName)
+    let listViewClassNames = (this.theme.getClass('listView') || '').split(' ') // wish we didn't have to do this
+    for (let listViewClassName of listViewClassNames) {
+      if (listViewClassName) { // in case input was empty string
+        this.el.classList.add(listViewClassName)
+      }
     }
 
     this.scroller = new ScrollComponent(
