@@ -7,7 +7,7 @@ import { __assign } from 'tslib'
 interface JsonFeedMeta {
   url: string
   method: string
-  extraData?: any
+  extraParams?: any
   startParam?: string
   endParam?: string
   timeZoneParam?: string
@@ -25,7 +25,7 @@ registerEventSourceDef({
     return {
       url: raw.url,
       method: (raw.method || 'GET').toUpperCase(),
-      extraData: raw.data,
+      extraParams: raw.data,
       startParam: raw.startParam,
       endParam: raw.endParam,
       timeZoneParam: raw.timeZoneParam
@@ -92,12 +92,12 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Cale
   }
 
   // retrieve any outbound GET/POST data from the options
-  if (typeof meta.extraData === 'function') {
+  if (typeof meta.extraParams === 'function') {
     // supplied as a function that returns a key/value object
-    customRequestParams = meta.extraData()
+    customRequestParams = meta.extraParams()
   } else {
     // probably supplied as a straight key/value object
-    customRequestParams = meta.extraData || {}
+    customRequestParams = meta.extraParams || {}
   }
 
   __assign(params, customRequestParams)

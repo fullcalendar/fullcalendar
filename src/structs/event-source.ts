@@ -35,7 +35,7 @@ export interface ExtendedEventSourceInput {
   // json feed (TODO: how to move this to json-feed-event-source?)
   url?: string
   method?: string
-  extraData?: object | (() => object)
+  extraParams?: object | (() => object)
   startParam?: string
   endParam?: string
   timeZoneParam?: string

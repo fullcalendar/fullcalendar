@@ -104,7 +104,7 @@ function buildUrl(meta) {
 }
 
 
-function buildRequestParams(range, apiKey: string, extraData, dateEnv) {
+function buildRequestParams(range, apiKey: string, extraParams, dateEnv) {
   let params
   let startStr
   let endStr
@@ -122,7 +122,7 @@ function buildRequestParams(range, apiKey: string, extraData, dateEnv) {
   }
 
   params = {
-    ...(extraData || {}),
+    ...(extraParams || {}),
     key: apiKey,
     timeMin: startStr,
     timeMax: endStr,
