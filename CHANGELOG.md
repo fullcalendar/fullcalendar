@@ -1,4 +1,18 @@
 
+v4.0.0-alpha.3 (2018-12-21)
+---------------------------
+
+Changes since last alpha release:
+- Calendar::getView method removed. Use Calendar::view property instead
+- the event JSON feed property `extraData` has been renamed `extraParams`
+- the external Draggable property `time` has been renamed `startTime`
+- the constraint setting can accept an array of objects
+- MonthView class is no longer exposed. Has been rolled into BasicView,
+  which is exposed instead.
+
+Regressions from v3: #4421, #4420
+
+
 v4.0.0-alpha.2 (2018-10-02)
 ---------------------------
 
