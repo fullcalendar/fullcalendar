@@ -15,6 +15,13 @@ then
   exit 1
 fi
 
+read -p "Enter a version scope (latest/beta/alpha): " scope
+if [[ "$scope" != "latest" ]] && [[ "$scope" != "beta" ]] && [[ "$scope" != "alpha" ]]
+then
+  echo "Invalid scope '$scope'. Aborting."
+  exit 1
+fi
+
 # push the current branch (assumes tracking is set up) and the tag
 git push --recurse-submodules=on-demand
 git push origin "v$version"
@@ -25,11 +32,8 @@ success=0
 current_branch=$(git symbolic-ref --quiet --short HEAD)
 
 # temporarily checkout the tag's commit, publish to NPM
-echo
-echo 'NOTE!!! publishing with "alpha" tag (whereas default is "latest")'
-echo
 git checkout --quiet "v$version"
-if npm publish --tag alpha
+if npm publish --tag "$scope"
 then
   success=1
 fi
