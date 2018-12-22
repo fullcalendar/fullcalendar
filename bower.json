@@ -8,7 +8,7 @@
     "full-sized"
   ],
   "homepage": "https://fullcalendar.io/",
-  "bugs": "https://fullcalendar.io/wiki/Reporting-Bugs/",
+  "bugs": "https://fullcalendar.io/reporting-bugs",
   "repository": {
     "type": "git",
     "url": "https://github.com/fullcalendar/fullcalendar.git"
