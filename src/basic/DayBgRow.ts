@@ -1,8 +1,8 @@
-import { ComponentContext } from "../component/Component"
-import { DateMarker } from "../datelib/marker"
-import { getDayClasses } from "../component/date-rendering";
-import { rangeContainsMarker } from "../datelib/date-range";
-import { DateProfile } from "../DateProfileGenerator";
+import { ComponentContext } from '../component/Component'
+import { DateMarker } from '../datelib/marker'
+import { getDayClasses } from '../component/date-rendering'
+import { rangeContainsMarker } from '../datelib/date-range'
+import { DateProfile } from '../DateProfileGenerator'
 
 export interface DayBgCell {
   date: DateMarker
@@ -42,7 +42,7 @@ export default class DayBgRow {
     }
 
     if (!props.cells.length) {
-      parts.push('<td class="fc-day ' + this.context.theme.getClass('widgetContent')  + '"></td>')
+      parts.push('<td class="fc-day ' + this.context.theme.getClass('widgetContent') + '"></td>')
     }
 
     if (this.context.options.dir === 'rtl') {

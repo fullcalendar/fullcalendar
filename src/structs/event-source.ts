@@ -3,8 +3,7 @@ import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
-import { processUnscopedUiProps } from '../component/event-ui'
-import { EventUi } from '../component/event-ui'
+import { EventUi, processUnscopedUiProps } from '../component/event-ui'
 import { ConstraintInput, AllowFunc } from '../validation'
 
 /*

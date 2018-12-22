@@ -3,10 +3,9 @@ import { EventStore, expandRecurring } from '../structs/event-store'
 import { EventUiHash } from '../component/event-ui'
 import { sliceEventStore, EventRenderRange } from '../component/event-rendering'
 import { DateProfile } from '../DateProfileGenerator'
-import { Seg, EventSegUiInteractionState } from '../component/DateComponent' // TODO: rename EventSegUiInteractionState, move here
+import DateComponent, { Seg, EventSegUiInteractionState } from '../component/DateComponent' // TODO: rename EventSegUiInteractionState, move here
 import { DateSpan, fabricateEventRange } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import DateComponent from '../component/DateComponent'
 import { Duration } from '../datelib/duration'
 import { memoize } from '../util/memoize'
 import { DateMarker, addMs } from '../datelib/marker'

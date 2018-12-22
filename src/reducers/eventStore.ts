@@ -170,7 +170,7 @@ function applyMutationToRelated(eventStore: EventStore, instanceId: string, muta
       borderColor: '',
       textColor: '',
       classNames: []
-    } } as EventUiHash:
+    } } as EventUiHash :
     calendar.eventUiBases
 
 

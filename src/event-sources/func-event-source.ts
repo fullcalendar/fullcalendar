@@ -12,7 +12,7 @@ export type EventSourceFunc = (
   failureCallback: (error: EventSourceError) => void
 ) => (void | PromiseLike<EventInput[]>)
 
-;
+
 registerEventSourceDef({
 
   parseMeta(raw: any): EventSourceFunc {

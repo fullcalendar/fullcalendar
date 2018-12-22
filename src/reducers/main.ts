@@ -120,7 +120,7 @@ function reduceEventResize(currentResize: EventInteractionState | null, action: 
         affectedEvents: newResize.affectedEvents,
         mutatedEvents: newResize.mutatedEvents,
         isEvent: newResize.isEvent,
-        origSeg: newResize.origSeg,
+        origSeg: newResize.origSeg
       }
 
     case 'UNSET_EVENT_RESIZE':
