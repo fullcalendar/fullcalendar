@@ -12,6 +12,10 @@ Changes since last alpha release:
 
 Regressions from v3: #4421, #4420
 
+More info:
+https://fullcalendar.io/blog/2018/12/alpha-release-scheduler-support
+https://fullcalendar.io/docs/v4/release-notes
+
 
 v4.0.0-alpha.2 (2018-10-02)
 ---------------------------
