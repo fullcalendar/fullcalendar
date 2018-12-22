@@ -55,7 +55,7 @@ then
   echo
   echo 'Success.'
   echo 'You can now run:'
-  echo '  ./bin/update-example-repo-deps.sh &&'
+  echo "  ./bin/update-example-repo-deps.sh '$version' &&"
   echo '  git push --recurse-submodules=on-demand &&'
   echo '  ./bin/build-example-repos.sh --recent-release'
   echo
