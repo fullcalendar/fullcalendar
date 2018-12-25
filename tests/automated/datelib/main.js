@@ -293,6 +293,8 @@ describe('datelib', function() {
 
     })
 
+    // test in Safari!
+    // https://github.com/fullcalendar/fullcalendar/issues/4363
     it('startOfYear', function() {
       var d0 = env.createMarker(new Date(Date.UTC(2018, 5, 5, 12)))
       var d1 = env.toDate(env.startOfYear(d0))
