@@ -45,6 +45,25 @@ describe('rrule plugin', function() {
     expect(events[4].start).toEqualDate('2018-10-02T13:00:00Z')
   })
 
+  it('can expand monthly recurrence', function() {
+    initCalendar({
+      defaultView: 'month',
+      now: '2018-12-25T12:00:00',
+      events: [ {
+        rrule: {
+          dtstart: '2018-11-01',
+          freq: 'monthly',
+          count: 13,
+          bymonthday: [ 13 ]
+        }
+      } ]
+    })
+
+    let events = currentCalendar.getEvents()
+    expect(events.length).toBe(1)
+    expect(events[0].start).toEqualDate('2018-12-13')
+  })
+
   it('expands events until a date', function() {
     initCalendar({
       events: [
