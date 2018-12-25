@@ -69,13 +69,21 @@ registerRecurringType({
   },
 
   expand(typeData: SimpleRecurringData, eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
-    return expandRanges(
-      typeData.daysOfWeek,
-      typeData.startTime,
-      { start: typeData.startRecur, end: typeData.endRecur },
+    let clippedFramingRange = intersectRanges(
       framingRange,
-      dateEnv
+      { start: typeData.startRecur, end: typeData.endRecur }
     )
+
+    if (clippedFramingRange) {
+      return expandRanges(
+        typeData.daysOfWeek,
+        typeData.startTime,
+        clippedFramingRange,
+        dateEnv
+      )
+    } else {
+      return []
+    }
   }
 
 })
@@ -83,12 +91,9 @@ registerRecurringType({
 function expandRanges(
   daysOfWeek: number[] | null,
   startTime: Duration | null,
-  recurRange: OpenDateRange,
   framingRange: DateRange,
   dateEnv: DateEnv
 ): DateMarker[] {
-  framingRange = intersectRanges(framingRange, recurRange)
-
   let dowHash: { [num: string]: true } | null = daysOfWeek ? arrayToHash(daysOfWeek) : null
   let dayMarker = startOfDay(framingRange.start)
   let endMarker = framingRange.end

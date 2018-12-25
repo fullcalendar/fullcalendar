@@ -43,6 +43,18 @@ describe('recurring events', function() {
       expect(events[1].start).toEqualDate('2017-07-06T09:00:00Z')
       expect(events[2].start).toEqualDate('2017-07-07T09:00:00Z')
     })
+
+    describe('when current range is completely outside of recur-range', function() {
+      pushOptions({
+        defaultDate: '2017-02-02'
+      })
+
+      it('won\'t render any events', function(done) {
+        initCalendar()
+        let events = currentCalendar.getEvents()
+        expect(events.length).toBe(0)
+      })
+    })
   })
 
 })
