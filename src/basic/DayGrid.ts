@@ -505,7 +505,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
     if (state) {
       this.eventRenderer.showByHash(state.affectedInstances)
       this.fillRenderer.unrender('highlight')
-      this.mirrorRenderer.unrender()
+      this.mirrorRenderer.unrender(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
     }
   }
 

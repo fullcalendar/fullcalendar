@@ -697,7 +697,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   _unrenderEventDrag(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.showByHash(state.affectedInstances)
-      this.mirrorRenderer.unrender()
+      this.mirrorRenderer.unrender(state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
       this.fillRenderer.unrender('highlight')
     }
   }
@@ -718,7 +718,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   _unrenderEventResize(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.showByHash(state.affectedInstances)
-      this.mirrorRenderer.unrender()
+      this.mirrorRenderer.unrender(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
     }
   }
 
@@ -739,8 +739,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  _unrenderDateSelection() {
-    this.mirrorRenderer.unrender()
+  _unrenderDateSelection(segs: Seg[]) {
+    this.mirrorRenderer.unrender(segs, { isSelecting: true })
     this.fillRenderer.unrender('highlight')
   }
 

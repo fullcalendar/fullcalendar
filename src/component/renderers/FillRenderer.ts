@@ -52,7 +52,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
     if (segs) {
 
       if (type === 'bgEvent') {
-        this.context.view.triggerWillRemoveSegs(segs)
+        this.context.view.triggerWillRemoveSegs(segs, false) // isMirror=false
       }
 
       this.detachSegs(type, segs)

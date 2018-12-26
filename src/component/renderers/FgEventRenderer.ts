@@ -41,8 +41,8 @@ export default abstract class FgEventRenderer {
   }
 
 
-  unrender() {
-    this.context.view.triggerWillRemoveSegs(this.segs)
+  unrender(_segs: Seg[], mirrorInfo?) {
+    this.context.view.triggerWillRemoveSegs(this.segs, Boolean(mirrorInfo))
     this.detachSegs(this.segs)
     this.segs = []
   }

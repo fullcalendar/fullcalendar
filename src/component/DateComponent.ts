@@ -227,7 +227,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
     }
   }
 
-  triggerWillRemoveSegs(segs: Seg[]) {
+  triggerWillRemoveSegs(segs: Seg[], isMirrors: boolean) {
     let { calendar } = this
 
     for (let seg of segs) {
@@ -244,6 +244,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
               seg.eventRange.def,
               seg.eventRange.instance
             ),
+            isMirror: isMirrors,
             el: seg.el,
             view: this // ?
           }
