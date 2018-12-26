@@ -46,10 +46,11 @@ export default class EventDragging {
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {
+    let { component } = this
     let seg = this.querySeg(ev)!
     let eventRange = this.eventRange = seg.eventRange!
 
-    this.dragging.minDistance = 5 // TODO: make this a constant
+    this.dragging.minDistance = component.opt('eventDragMinDistance')
 
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
