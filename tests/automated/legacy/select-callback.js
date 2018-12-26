@@ -10,11 +10,7 @@ describe('select callback', function() {
     }
   })
 
-  afterEach(function() {
-    currentCalendar.destroy()
-  });
-
-  [ 'ltr', 'rtl' ].forEach(function(dir) {
+  ;[ 'ltr', 'rtl' ].forEach(function(dir) {
     let dirSign = dir === 'rtl' ? -1 : 1
 
     describe('when dir is ' + dir, function() {
@@ -280,5 +276,21 @@ describe('select callback', function() {
         }
       })
     })
+  })
+
+  it('will fire on a calendar that hasn\'t been rendered yet', function(done) {
+    let calendar = new FullCalendar.Calendar(
+      document.createElement('div'),
+      {
+        now: '2018-12-25',
+        select: function(info) {
+          expect(info.startStr).toBe('2018-12-20')
+          expect(info.endStr).toBe('2018-12-23')
+          done()
+        }
+      }
+    )
+
+    calendar.select('2018-12-20', '2018-12-23')
   })
 })
