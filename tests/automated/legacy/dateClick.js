@@ -123,6 +123,23 @@ describe('dateClick', function() {
     })
   })
 
+  it('will still fire if clicked on background event', function(done) {
+    initCalendar({
+      defaultView: 'month',
+      events: [ {
+        start: '2014-05-06',
+        rendering: 'background'
+      } ],
+      dateClick(info) {
+        expect(info.dateStr).toBe('2014-05-06')
+        done()
+      }
+    })
+
+    // for simulating the mousedown/mouseup/click (relevant for selectable)
+    $('.fc-bgevent').simulate('drag')
+  })
+
   describe('when touch', function() {
 
     it('fires correctly when simulated short drag on a cell', function(done) {
