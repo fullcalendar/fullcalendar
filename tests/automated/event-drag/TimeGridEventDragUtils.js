@@ -1,5 +1,5 @@
 import * as EventDragUtils from './EventDragUtils'
-import { computeSpanRects } from '../event-render/TimeGridEventRenderUtils'
+import { computeSpanRects } from '../view-render/TimeGridRenderUtils'
 
 
 export function drag(startDate, endDate, debug) {

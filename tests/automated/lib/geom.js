@@ -56,6 +56,7 @@ export function addPoints(point0, point1) {
   )
 }
 
+// in most situations you can just use the rect directly, since the interface is a superset
 export function getRectTopLeft(rect) {
   return buildPoint(rect.left, rect.top)
 }

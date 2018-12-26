@@ -2,7 +2,7 @@ import { getRectCenter, getRectTopLeft, subtractPoints, addPoints } from '../lib
 import * as EventRenderUtils from '../event-render/EventRenderUtils'
 
 
-export function resize(rect0, rect1, fromStart, debug) {
+export function resize(point0, point1, fromStart, debug) {
   var eventEl = EventRenderUtils.getSingleEl()
 
   eventEl.simulate('mouseover') // so that resize handle is revealed
@@ -13,10 +13,10 @@ export function resize(rect0, rect1, fromStart, debug) {
 
   var vector = subtractPoints(
     resizerCenter,
-    getRectTopLeft(rect0)
+    point0
   )
   var point1 = addPoints(
-    getRectTopLeft(rect1),
+    point1,
     vector
   )
   var deferred = $.Deferred()

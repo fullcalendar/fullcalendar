@@ -1,5 +1,5 @@
 import { drag } from './EventDragUtils'
-import { computeSpanRects } from '../event-render/TimeGridEventRenderUtils'
+import { computeSpanRects } from '../view-render/TimeGridRenderUtils'
 import { getDayEl } from '../view-render/DayGridRenderUtils'
 
 describe('allDay change', function() {
