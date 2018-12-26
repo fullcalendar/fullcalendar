@@ -4,7 +4,7 @@ import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
 import { registerRecurringType, ParsedRecurring } from './recurring-event'
 import { EventInput, EventDef } from './event'
-import { DateRange, OpenDateRange, intersectRanges } from '../datelib/date-range'
+import { DateRange, intersectRanges } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
 
 /*

@@ -3,7 +3,7 @@ import { expectActiveRange } from './ViewDateUtils'
 /*
 SEE ALSO: next/prev
 */
-fdescribe('dateAlignment', function() {
+describe('dateAlignment', function() {
 
   describe('when week alignment', function() {
     pushOptions({
