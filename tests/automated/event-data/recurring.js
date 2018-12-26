@@ -49,7 +49,7 @@ describe('recurring events', function() {
         defaultDate: '2017-02-02'
       })
 
-      it('won\'t render any events', function(done) {
+      it('won\'t render any events', function() {
         initCalendar()
         let events = currentCalendar.getEvents()
         expect(events.length).toBe(0)
