@@ -351,4 +351,23 @@ describe('external drag and drop', function() {
       })
     })
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/2926
+  it('gives a mouseup event to the drop handler', function(done) {
+    options.drop = function(info) {
+      expect(info.jsEvent.type).toBe('mouseup')
+    }
+    spyOn(options, 'drop').and.callThrough()
+
+    init()
+
+    $('#sidebar .event1').simulate('drag', {
+      end: getMonthCell(1, 3),
+      callback: function() {
+        expect(options.drop).toHaveBeenCalled()
+        done()
+      }
+    })
+  })
+
 })
