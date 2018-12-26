@@ -12,7 +12,10 @@ describe('dateClick', function() {
 
       [ false, true ].forEach(function(selectable) {
         describe('when selectable is ' + selectable, function() {
-          pushOptions({selectable: selectable})
+          pushOptions({
+            selectable
+          })
+
           describe('when in month view', function() {
             pushOptions({defaultView: 'month'})
 
@@ -38,7 +41,9 @@ describe('dateClick', function() {
           })
 
           describe('when in agendaWeek view', function() {
-            pushOptions({defaultView: 'agendaWeek'})
+            pushOptions({
+              defaultView: 'agendaWeek'
+            })
 
             it('fires correctly when clicking on an all-day slot', function(done) {
               var options = {}
