@@ -4,7 +4,7 @@ import { preventDefault } from './dom-event'
 import { DateMarker, startOfDay, addDays, diffDays, diffDayAndTime } from '../datelib/marker'
 import { Duration, asRoughMs, createDuration } from '../datelib/duration'
 import { DateEnv } from '../datelib/env'
-import { DateRange } from '../datelib/date-range'
+import { DateRange, OpenDateRange } from '../datelib/date-range'
 
 
 /* FullCalendar-specific DOM Utilities
@@ -452,22 +452,30 @@ export function computeAlignedDayRange(timedRange: DateRange): DateRange {
 
 // given a timed range, computes an all-day range based on how for the end date bleeds into the next day
 // TODO: give nextDayThreshold a default arg
-export function computeVisibleDayRange(timedRange: DateRange, nextDayThreshold: Duration = createDuration(0)): DateRange {
-  let startDay: DateMarker = startOfDay(timedRange.start) // the beginning of the day the range starts
-  let end: DateMarker = timedRange.end
-  let endDay: DateMarker = startOfDay(end)
-  let endTimeMS: number = end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
+export function computeVisibleDayRange(timedRange: OpenDateRange, nextDayThreshold: Duration = createDuration(0)): OpenDateRange {
+  let startDay: DateMarker = null
+  let endDay: DateMarker = null
 
-  // If the end time is actually inclusively part of the next day and is equal to or
-  // beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
-  // Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
-  if (endTimeMS && endTimeMS >= asRoughMs(nextDayThreshold)) {
-    endDay = addDays(endDay, 1)
+  if (timedRange.end) {
+    endDay = startOfDay(timedRange.end)
+
+    let endTimeMS: number = timedRange.end.valueOf() - endDay.valueOf() // # of milliseconds into `endDay`
+
+    // If the end time is actually inclusively part of the next day and is equal to or
+    // beyond the next day threshold, adjust the end to be the exclusive end of `endDay`.
+    // Otherwise, leaving it as inclusive will cause it to exclude `endDay`.
+    if (endTimeMS && endTimeMS >= asRoughMs(nextDayThreshold)) {
+      endDay = addDays(endDay, 1)
+    }
   }
 
-  // If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
-  if (endDay <= startDay) {
-    endDay = addDays(startDay, 1)
+  if (timedRange.start) {
+    startDay = startOfDay(timedRange.start) // the beginning of the day the range starts
+
+    // If end is within `startDay` but not past nextDayThreshold, assign the default duration of one day.
+    if (endDay && endDay <= startDay) {
+      endDay = addDays(startDay, 1)
+    }
   }
 
   return { start: startDay, end: endDay }
