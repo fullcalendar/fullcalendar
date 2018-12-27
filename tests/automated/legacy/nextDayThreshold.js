@@ -1,3 +1,5 @@
+import { getEventEls } from '../event-render/EventRenderUtils'
+
 describe('nextDayThreshold', function() {
 
   // when a view object exposes its nextDayThreshold value (after some refactoring)...
@@ -50,6 +52,20 @@ describe('nextDayThreshold', function() {
       ]
     })
     expect(renderedDayCount()).toBe(3)
+  })
+
+  it('won\'t render an event that ends before the first day\'s threshold', function() {
+    initCalendar({
+      defaultView: 'month',
+      defaultDate: '2017-10-01',
+      nextDayThreshold: '09:00:00',
+      events: [ {
+        start: '2017-09-30T08:00:00',
+        end:  '2017-10-01T08:00:00'
+      } ]
+    })
+
+    expect(getEventEls().length).toBe(0)
   })
 
 

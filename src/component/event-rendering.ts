@@ -48,29 +48,28 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
     let def = eventStore.defs[instance.defId]
     let ui = eventUis[def.defId]
     let origRange = instance.range
-    let slicedRange = intersectRanges(origRange, framingRange)
-    let visibleRange
+
+    let normalRange = (!def.allDay && nextDayThreshold) ?
+      computeVisibleDayRange(origRange, nextDayThreshold) :
+      origRange
+
+    let slicedRange = intersectRanges(normalRange, framingRange)
 
     if (slicedRange) {
-
-      visibleRange = (!def.allDay && nextDayThreshold) ?
-        computeVisibleDayRange(slicedRange, nextDayThreshold) :
-        slicedRange
-
       if (def.rendering === 'inverse-background') {
         if (def.groupId) {
-          inverseBgByGroupId[def.groupId].push(visibleRange)
+          inverseBgByGroupId[def.groupId].push(slicedRange)
         } else {
-          inverseBgByDefId[instance.defId].push(visibleRange)
+          inverseBgByDefId[instance.defId].push(slicedRange)
         }
       } else {
         (def.rendering === 'background' ? bgRanges : fgRanges).push({
           def,
           ui,
           instance,
-          range: visibleRange,
-          isStart: origRange.start && origRange.start.valueOf() === slicedRange.start.valueOf(),
-          isEnd: origRange.end && origRange.end.valueOf() === slicedRange.end.valueOf()
+          range: slicedRange,
+          isStart: normalRange.start && normalRange.start.valueOf() === slicedRange.start.valueOf(),
+          isEnd: normalRange.end && normalRange.end.valueOf() === slicedRange.end.valueOf()
         })
       }
     }
