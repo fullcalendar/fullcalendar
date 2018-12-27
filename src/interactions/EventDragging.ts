@@ -247,7 +247,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
           __assign(eventDropArg, {
             el: ev.subjectEl,
             delta: this.validMutation.startDelta!,
-            prevEvent: eventApi,
+            oldEvent: eventApi,
             event: new EventApi( // the data AFTER the mutation
               initialCalendar,
               mutatedRelevantEvents.defs[eventDef.defId],

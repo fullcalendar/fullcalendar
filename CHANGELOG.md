@@ -1,4 +1,9 @@
 
+next
+----
+- in `eventDrop`, renamed `prevEvent` to `oldEvent`
+
+
 v4.0.0-alpha.3 (2018-12-21)
 ---------------------------
 
