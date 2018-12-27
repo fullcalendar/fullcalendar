@@ -58,7 +58,7 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
     standardProps.hasEnd = true // TODO: is this mutation okay?
   }
 
-  let copy = {
+  let copy: EventDef = {
     ...eventDef,
     ...standardProps,
     ui: { ...eventDef.ui, ...standardProps.ui } // the only prop we want to recursively overlay
@@ -70,6 +70,10 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
 
   for (let applier of appliers) {
     applier(copy, mutation, calendar)
+  }
+
+  if (!copy.hasEnd && calendar.opt('forceEventDuration')) {
+    copy.hasEnd = true
   }
 
   return copy
