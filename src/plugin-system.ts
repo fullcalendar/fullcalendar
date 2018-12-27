@@ -1,6 +1,6 @@
 import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
-import { eventDragMutationMassager } from './interactions/EventDragging'
+import { eventDragMutationMassager, EventDropTransformers } from './interactions/EventDragging'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import Calendar, { DatePointTransform, DateSpanTransform } from './Calendar'
 import { dateSelectionJoinTransformer } from './interactions/DateSelecting'
@@ -30,6 +30,7 @@ export interface PluginDefInput {
   externalDefTransforms?: ExternalDefTransform[]
   eventResizeJoinTransforms?: EventResizeJoinTransforms[]
   viewContainerModifiers?: ViewContainerModifier[]
+  eventDropTransformers?: EventDropTransformers[]
 }
 
 export interface PluginHooks {
@@ -47,6 +48,7 @@ export interface PluginHooks {
   externalDefTransforms: ExternalDefTransform[]
   eventResizeJoinTransforms: EventResizeJoinTransforms[]
   viewContainerModifiers: ViewContainerModifier[]
+  eventDropTransformers: EventDropTransformers[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -82,7 +84,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     isPropsValid: input.isPropsValid || null,
     externalDefTransforms: input.externalDefTransforms || [],
     eventResizeJoinTransforms: input.eventResizeJoinTransforms || [],
-    viewContainerModifiers: input.viewContainerModifiers || []
+    viewContainerModifiers: input.viewContainerModifiers || [],
+    eventDropTransformers: input.eventDropTransformers || []
   }
 }
 
@@ -106,7 +109,8 @@ export class PluginSystem {
       isPropsValid: null,
       externalDefTransforms: [],
       eventResizeJoinTransforms: [],
-      viewContainerModifiers: []
+      viewContainerModifiers: [],
+      eventDropTransformers: []
     }
     this.addedHash = {}
   }
@@ -140,6 +144,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,
     externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms),
     eventResizeJoinTransforms: hooks0.eventResizeJoinTransforms.concat(hooks1.eventResizeJoinTransforms),
-    viewContainerModifiers: hooks0.viewContainerModifiers.concat(hooks1.viewContainerModifiers)
+    viewContainerModifiers: hooks0.viewContainerModifiers.concat(hooks1.viewContainerModifiers),
+    eventDropTransformers: hooks0.eventDropTransformers.concat(hooks1.eventDropTransformers)
   }
 }

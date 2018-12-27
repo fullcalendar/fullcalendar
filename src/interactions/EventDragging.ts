@@ -12,6 +12,9 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { diffDates, enableCursor, disableCursor } from '../util/misc'
 import { EventRenderRange, getElSeg } from '../component/event-rendering'
 import EventApi from '../api/EventApi'
+import { __assign } from 'tslib'
+
+export type EventDropTransformers = (mutation: EventMutation, calendar: Calendar) => void
 
 export default class EventDragging { // TODO: rename to EventSelectingAndDragging
 
@@ -235,26 +238,32 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
             eventStore: mutatedRelevantEvents
           })
 
-          initialCalendar.publiclyTrigger('eventDrop', [
-            {
-              el: ev.subjectEl,
-              delta: this.validMutation.startDelta!,
-              prevEvent: eventApi,
-              event: new EventApi( // the data AFTER the mutation
-                initialCalendar,
-                mutatedRelevantEvents.defs[eventDef.defId],
-                eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
-              ),
-              revert: function() {
-                initialCalendar.dispatch({
-                  type: 'MERGE_EVENTS',
-                  eventStore: relevantEvents
-                })
-              },
-              jsEvent: ev.origEvent,
-              view: initialView
-            }
-          ])
+          let eventDropArg = {}
+
+          for (let transformer of initialCalendar.pluginSystem.hooks.eventDropTransformers) {
+            __assign(eventDropArg, transformer(this.validMutation, initialCalendar))
+          }
+
+          __assign(eventDropArg, {
+            el: ev.subjectEl,
+            delta: this.validMutation.startDelta!,
+            prevEvent: eventApi,
+            event: new EventApi( // the data AFTER the mutation
+              initialCalendar,
+              mutatedRelevantEvents.defs[eventDef.defId],
+              eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
+            ),
+            revert: function() {
+              initialCalendar.dispatch({
+                type: 'MERGE_EVENTS',
+                eventStore: relevantEvents
+              })
+            },
+            jsEvent: ev.origEvent,
+            view: initialView
+          })
+
+          initialCalendar.publiclyTrigger('eventDrop', [ eventDropArg ])
 
         // dropped in different calendar
         } else if (receivingCalendar) {
