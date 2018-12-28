@@ -28,8 +28,8 @@ export interface ExtendedEventSourceInput {
   allDayDefault?: boolean
   eventDataTransform?: EventInputTransformer
 
-  // array (TODO: how to move this to array-event-source?)
-  events?: EventInput[]
+  // array or function (TODO: move this to array-event-source/func-event-source?)
+  events?: EventInput[] | EventSourceFunc
 
   // json feed (TODO: how to move this to json-feed-event-source?)
   url?: string
