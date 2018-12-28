@@ -15,6 +15,7 @@ export interface CalendarState {
   eventSourceLoadingLevel: number
   loadingLevel: number
   viewType: string
+  currentDate: DateMarker
   dateProfile: DateProfile | null // for the current view
   eventStore: EventStore
   dateSelection: DateSpan | null
@@ -27,9 +28,10 @@ export type reducerFunc = (state: CalendarState, action: Action, calendar: Calen
 
 export type Action =
 
-  { type: 'INIT' } | // wont it create another reneder??
+  { type: 'INIT' } | // wont it create another rerender?
 
-  { type: 'SET_DATE_PROFILE', dateProfile: DateProfile } |
+  { type: 'PREV' } |
+  { type: 'NEXT' } |
   { type: 'SET_DATE', dateMarker: DateMarker } |
   { type: 'SET_VIEW_TYPE', viewType: string, dateMarker?: DateMarker } |
 

@@ -1,13 +1,12 @@
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
 import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
-import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, rangesEqual, parseRange } from './datelib/date-range'
+import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, rangesEqual } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
 import Calendar from './Calendar'
 
 
 export interface DateProfile {
-  currentDate: DateMarker
   currentRange: DateRange
   currentRangeUnit: string
   isRangeAllDay: boolean
@@ -50,7 +49,7 @@ export default class DateProfileGenerator {
     let { dateEnv } = this
 
     let prevDate = dateEnv.subtract(
-      dateEnv.startOf(currentDateProfile.currentDate, currentDateProfile.currentRangeUnit),
+      currentDateProfile.currentRange.start,
       currentDateProfile.dateIncrement
     )
 
@@ -63,7 +62,7 @@ export default class DateProfileGenerator {
     let { dateEnv } = this
 
     let nextDate = dateEnv.add(
-      dateEnv.startOf(currentDateProfile.currentDate, currentDateProfile.currentRangeUnit),
+      currentDateProfile.currentRange.start,
       currentDateProfile.dateIncrement
     )
 
@@ -110,10 +109,6 @@ export default class DateProfileGenerator {
     activeRange = this.adjustActiveRange(activeRange, minTime, maxTime)
     activeRange = intersectRanges(activeRange, validRange) // might return null
 
-    if (activeRange) {
-      currentDate = constrainMarkerToRange(currentDate, activeRange)
-    }
-
     // it's invalid if the originally requested date is not contained,
     // or if the range is completely outside of the valid range.
     isValid = rangesIntersect(currentInfo.range, validRange)
@@ -122,8 +117,6 @@ export default class DateProfileGenerator {
       // constraint for where prev/next operations can go and where events can be dragged/resized to.
       // an object with optional start and end properties.
       validRange: validRange,
-
-      currentDate,
 
       // range the view is formally responsible for.
       // for example, a month view might have 1st-31st, excluding padded dates
@@ -447,7 +440,6 @@ export default class DateProfileGenerator {
   }
 
 }
-
 
 export function isDateProfilesEqual(p0: DateProfile, p1: DateProfile) {
   return rangesEqual(p0.activeRange, p1.activeRange) &&

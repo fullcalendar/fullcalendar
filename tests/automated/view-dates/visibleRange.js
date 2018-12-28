@@ -144,7 +144,7 @@ describe('visibleRange', function() {
 
     describe('when later switching to a one-day view', function() {
 
-      it('constrains the current date to the start of visibleRange', function() {
+      it('constrains an earlier current date to the start of visibleRange', function() {
         initCalendar({
           defaultDate: '2017-06-25',
           visibleRange: {
@@ -156,7 +156,7 @@ describe('visibleRange', function() {
         expectActiveRange('2017-06-26', '2017-06-27')
       })
 
-      it('constrains the current date to the end of visibleRange', function() {
+      it('constrains a later the current date to the start of visibleRange', function() {
         initCalendar({
           defaultDate: '2017-07-01',
           visibleRange: {
@@ -165,7 +165,7 @@ describe('visibleRange', function() {
           }
         })
         currentCalendar.changeView('agendaDay')
-        expectActiveRange('2017-06-28', '2017-06-29')
+        expectActiveRange('2017-06-26', '2017-06-27')
       })
     })
   })

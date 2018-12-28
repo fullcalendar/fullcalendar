@@ -15,9 +15,10 @@ export default function(eventSources: EventSourceHash, action: Action, dateProfi
     case 'REMOVE_EVENT_SOURCE':
       return removeSource(eventSources, action.sourceId)
 
-    case 'SET_VIEW_TYPE': // TODO: how do we track all actions that affect dateProfile :(
+    case 'PREV': // TODO: how do we track all actions that affect dateProfile :(
+    case 'NEXT':
     case 'SET_DATE':
-    case 'SET_DATE_PROFILE':
+    case 'SET_VIEW_TYPE':
       if (dateProfile) {
         return fetchDirtySources(eventSources, dateProfile.activeRange, calendar)
       } else {

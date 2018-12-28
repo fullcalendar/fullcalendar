@@ -241,8 +241,7 @@ export default class Calendar {
       this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
       this.dispatch({
         type: 'SET_VIEW_TYPE',
-        viewType: this.opt('defaultView'),
-        dateMarker: this.getInitialDate()
+        viewType: this.opt('defaultView')
       })
     })
   }
@@ -253,6 +252,7 @@ export default class Calendar {
       viewType: null,
       loadingLevel: 0,
       eventSourceLoadingLevel: 0,
+      currentDate: this.getInitialDate(),
       dateProfile: null,
       eventSources: {},
       eventStore: createEmptyEventStore(),
@@ -710,19 +710,13 @@ export default class Calendar {
 
   prev() {
     this.unselect()
-    this.dispatch({
-      type: 'SET_DATE_PROFILE',
-      dateProfile: this.dateProfileGenerators[this.state.viewType].buildPrev(this.state.dateProfile)
-    })
+    this.dispatch({ type: 'PREV' })
   }
 
 
   next() {
     this.unselect()
-    this.dispatch({
-      type: 'SET_DATE_PROFILE',
-      dateProfile: this.dateProfileGenerators[this.state.viewType].buildNext(this.state.dateProfile)
-    })
+    this.dispatch({ type: 'NEXT' })
   }
 
 
@@ -730,7 +724,7 @@ export default class Calendar {
     this.unselect()
     this.dispatch({
       type: 'SET_DATE',
-      dateMarker: this.dateEnv.addYears(this.state.dateProfile.currentDate, -1)
+      dateMarker: this.dateEnv.addYears(this.state.currentDate, -1)
     })
   }
 
@@ -739,7 +733,7 @@ export default class Calendar {
     this.unselect()
     this.dispatch({
       type: 'SET_DATE',
-      dateMarker: this.dateEnv.addYears(this.state.dateProfile.currentDate, 1)
+      dateMarker: this.dateEnv.addYears(this.state.currentDate, 1)
     })
   }
 
@@ -769,7 +763,7 @@ export default class Calendar {
       this.unselect()
       this.dispatch({
         type: 'SET_DATE',
-        dateMarker: this.dateEnv.add(this.state.dateProfile.currentDate, delta)
+        dateMarker: this.dateEnv.add(this.state.currentDate, delta)
       })
     }
   }
@@ -777,7 +771,7 @@ export default class Calendar {
 
   // for external API
   getDate(): Date {
-    return this.dateEnv.toDate(this.state.dateProfile.currentDate)
+    return this.dateEnv.toDate(this.state.currentDate)
   }
 
 

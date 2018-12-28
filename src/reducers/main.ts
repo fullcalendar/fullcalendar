@@ -6,17 +6,20 @@ import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { CalendarState, Action } from './types'
 import { EventSourceHash } from '../structs/event-source'
+import { DateMarker } from '../datelib/marker'
+import { rangeContainsMarker } from '../datelib/date-range'
 
 export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
 
   let viewType = reduceViewType(state.viewType, action)
-  let dateProfile = reduceDateProfile(state.dateProfile, action, viewType, calendar)
+  let dateProfile = reduceDateProfile(state.dateProfile, action, state.currentDate, viewType, calendar)
   let eventSources = reduceEventSources(state.eventSources, action, dateProfile, calendar)
 
   let nextState = {
     ...state,
     viewType,
     dateProfile,
+    currentDate: reduceCurrentDate(state.currentDate, action, dateProfile),
     eventSources,
     eventStore: reduceEventStore(state.eventStore, action, eventSources, dateProfile, calendar),
     dateSelection: reduceDateSelection(state.dateSelection, action, calendar),
@@ -45,25 +48,74 @@ function reduceViewType(currentViewType: string, action: Action): string {
   }
 }
 
-function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, viewType: string, calendar: Calendar): DateProfile {
+function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, currentDate: DateMarker, viewType: string, calendar: Calendar): DateProfile {
+  let newDateProfile: DateProfile
+
   switch (action.type) {
-    case 'SET_DATE_PROFILE':
-      return protectSameDateProfile(
-        action.dateProfile,
-        currentDateProfile
+
+    case 'PREV':
+      newDateProfile = calendar.dateProfileGenerators[viewType].buildPrev(currentDateProfile)
+      break
+
+    case 'NEXT':
+      newDateProfile = calendar.dateProfileGenerators[viewType].buildNext(currentDateProfile)
+      break
+
+    case 'SET_DATE':
+      if (
+        !currentDateProfile.activeRange ||
+        !rangeContainsMarker(currentDateProfile.activeRange, action.dateMarker)
+      ) {
+        newDateProfile = calendar.dateProfileGenerators[viewType].build(
+          action.dateMarker,
+          undefined,
+          true // forceToValid
+        )
+      }
+      break
+
+    case 'SET_VIEW_TYPE':
+      newDateProfile = calendar.dateProfileGenerators[viewType].build(
+        action.dateMarker || currentDate,
+        undefined,
+        true // forceToValid
       )
+      break
+  }
+
+  if (
+    newDateProfile &&
+    newDateProfile.isValid &&
+    !(currentDateProfile && isDateProfilesEqual(currentDateProfile, newDateProfile))
+  ) {
+    return newDateProfile
+  } else {
+    return currentDateProfile
+  }
+}
+
+function reduceCurrentDate(currentDate: DateMarker, action: Action, dateProfile: DateProfile): DateMarker {
+  switch (action.type) {
+
+    case 'PREV':
+    case 'NEXT':
+      if (!rangeContainsMarker(dateProfile.currentRange, currentDate)) {
+        return dateProfile.currentRange.start
+      } else {
+        return currentDate
+      }
+
     case 'SET_DATE':
     case 'SET_VIEW_TYPE':
-      return protectSameDateProfile(
-        calendar.dateProfileGenerators[viewType].build(
-          action.dateMarker || currentDateProfile.currentDate,
-          undefined,
-          true // forceToValid=true
-        ),
-        currentDateProfile
-      )
+      let newDate = action.dateMarker || currentDate
+      if (dateProfile.activeRange && !rangeContainsMarker(dateProfile.activeRange, newDate)) {
+        return dateProfile.currentRange.start
+      } else {
+        return newDate
+      }
+
     default:
-      return currentDateProfile
+      return currentDate
   }
 }
 
@@ -129,14 +181,6 @@ function reduceEventResize(currentResize: EventInteractionState | null, action: 
     default:
       return currentResize
   }
-}
-
-function protectSameDateProfile(newDateProfile, oldDateProfile) {
-  if (newDateProfile && oldDateProfile && isDateProfilesEqual(newDateProfile, oldDateProfile)) {
-    return oldDateProfile
-  }
-
-  return newDateProfile
 }
 
 function computeLoadingLevel(eventSources: EventSourceHash): number {

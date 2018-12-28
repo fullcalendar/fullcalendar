@@ -44,7 +44,10 @@ export default function(eventStore: EventStore, action: Action, eventSources: Ev
     case 'MERGE_EVENTS': // already parsed and expanded
       return mergeEventStores(eventStore, action.eventStore)
 
-    case 'SET_DATE_PROFILE':
+    case 'PREV': // TODO: how do we track all actions that affect dateProfile :(
+    case 'NEXT':
+    case 'SET_DATE':
+    case 'SET_VIEW_TYPE':
       if (dateProfile) {
         return expandRecurring(eventStore, dateProfile.activeRange, calendar)
       } else {
