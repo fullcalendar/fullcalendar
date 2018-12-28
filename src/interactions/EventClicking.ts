@@ -25,9 +25,12 @@ export default class EventClicking {
 
   handleSegClick = (ev: Event, segEl: HTMLElement) => {
     let { component } = this
-    let seg = getElSeg(segEl)!
+    let seg = getElSeg(segEl)
 
-    if (component.isValidSegDownEl(ev.target as HTMLElement)) {
+    if (
+      seg && // might be the <div> surrounding the more link
+      component.isValidSegDownEl(ev.target as HTMLElement)
+    ) {
 
       // our way to simulate a link click for elements that can't be <a> tags
       // grab before trigger fired in case trigger trashes DOM thru rerendering

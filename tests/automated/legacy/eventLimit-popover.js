@@ -213,6 +213,42 @@ describe('eventLimit popover', function() {
         expect(el).not.toHaveClass('fc-not-end')
       })
     })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/4331
+    it('displays events that were collapsed in previous days', function() {
+      initCalendar({
+        defaultDate: '2018-10-01',
+        events: [
+          {
+            title: 'e1',
+            start: '2018-10-18'
+          },
+          {
+            title: 'e2',
+            start: '2018-10-18',
+          },
+          {
+            title: 'e3',
+            start: '2018-10-18T11:00:00',
+          },
+          {
+            title: 'e4',
+            start: '2018-10-18T12:00:00',
+            end: '2018-10-19T12:00:00'
+          },
+          {
+            title: 'e5',
+            start: '2018-10-19',
+            className: 'event-e5',
+          }
+        ]
+      })
+
+      // click the second +more link
+      $('.event-e5').closest('.fc-event-container').find('.fc-more')
+        .simulate('click')
+    })
+
   })
 
   describeOptions('defaultView', {
