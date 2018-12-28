@@ -749,7 +749,7 @@ export default class DayGrid extends DateComponentProps<DayGridProps> {
 
     options = {
       className: 'fc-more-popover ' + theme.getClass('popover'),
-      parentEl: this.el,
+      parentEl: view.el, // will be outside of all scrollers within the view
       top: computeRect(topEl).top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       content: (el) => {
