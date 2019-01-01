@@ -4,7 +4,7 @@ import { EventSource } from '../structs/event-source'
 export default class EventSourceApi {
 
   calendar: Calendar
-  internalEventSource: EventSource
+  internalEventSource: EventSource // rename?
 
   constructor(calendar: Calendar, internalEventSource: EventSource) {
     this.calendar = calendar

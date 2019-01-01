@@ -1024,7 +1024,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  addEvent(eventInput: EventInput, sourceInput?: any): EventApi | null {
+  addEvent(eventInput: EventInput, sourceInput?: EventSourceApi | string | number): EventApi | null {
 
     if (eventInput instanceof EventApi) {
       let def = eventInput._def
@@ -1042,12 +1042,17 @@ export default class Calendar {
     }
 
     let sourceId
-    if (sourceInput && sourceInput.sourceId !== undefined) { // can accept a source object
-      sourceId = sourceInput.sourceId
-    } else if (typeof sourceInput === 'string') { // can accept a sourceId string
-      sourceId = sourceInput
-    } else {
-      sourceId = ''
+    if (sourceInput instanceof EventSourceApi) {
+      sourceId = sourceInput.internalEventSource.sourceId
+    } else if (sourceInput != null) {
+      let sourceApi = this.getEventSourceById(sourceInput) // TODO: use an internal function
+
+      if (!sourceApi) {
+        console.warn('Could not find an event source with ID "' + sourceInput + '"') // TODO: test
+        return null
+      } else {
+        sourceId = sourceApi.internalEventSource.sourceId
+      }
     }
 
     let tuple = parseEvent(eventInput, sourceId, this)
@@ -1141,7 +1146,7 @@ export default class Calendar {
   }
 
 
-  getEventSourceById(id: string): EventSourceApi | null {
+  getEventSourceById(id: string | number): EventSourceApi | null {
     let sourceHash = this.state.eventSources
 
     id = String(id)
