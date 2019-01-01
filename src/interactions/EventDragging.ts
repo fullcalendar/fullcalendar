@@ -13,6 +13,8 @@ import { diffDates, enableCursor, disableCursor } from '../util/misc'
 import { EventRenderRange, getElSeg } from '../component/event-rendering'
 import EventApi from '../api/EventApi'
 import { __assign } from 'tslib'
+import { ExternalDropApi } from '../interactions-external/ExternalElementDragging'
+import View from '../View'
 
 export type EventDropTransformers = (mutation: EventMutation, calendar: Calendar) => void
 
@@ -216,6 +218,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
       let eventApi = new EventApi(initialCalendar, eventDef, eventInstance)
       let relevantEvents = this.relevantEvents!
       let mutatedRelevantEvents = this.mutatedRelevantEvents!
+      let { finalHit } = this.hitDragging
 
       this.clearDrag() // must happen after revert animation
 
@@ -293,11 +296,22 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
             })
           }
 
+          let dropArg = receivingCalendar.buildDatePointApi(finalHit.dateSpan) as ExternalDropApi
+          dropArg.draggedEl = ev.subjectEl as HTMLElement
+          dropArg.jsEvent = ev.origEvent
+          dropArg.view = finalHit.component as View // ?
+
+          receivingCalendar.publiclyTrigger('drop', [ dropArg ])
+
           receivingCalendar.publiclyTrigger('eventReceive', [
             {
               draggedEl: ev.subjectEl,
-              event: new EventApi(receivingCalendar, eventDef, eventInstance),
-              view: this.hitDragging.finalHit.component
+              event: new EventApi( // the data AFTER the mutation
+                receivingCalendar,
+                mutatedRelevantEvents.defs[eventDef.defId],
+                mutatedRelevantEvents.instances[eventInstance.instanceId]
+              ),
+              view: finalHit.component
             }
           ])
         }
