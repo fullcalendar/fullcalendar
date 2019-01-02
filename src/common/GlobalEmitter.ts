@@ -84,7 +84,7 @@ export default class GlobalEmitter {
       this.handleTouchMoveProxy = (ev) => {
         this.handleTouchMove($.Event(ev as any))
       },
-      { passive: false } as any // allows preventDefault()
+      { passive: false } // allows preventDefault()
     )
 
     // attach a handler to get called when ANY scroll action happens on the page.
@@ -104,7 +104,8 @@ export default class GlobalEmitter {
 
     window.removeEventListener(
       'touchmove',
-      this.handleTouchMoveProxy
+      this.handleTouchMoveProxy,
+      { passive: false } as AddEventListenerOptions // use same options as addEventListener
     )
 
     window.removeEventListener(
