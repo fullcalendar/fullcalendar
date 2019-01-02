@@ -990,6 +990,9 @@ export default class Calendar {
       }
     }
 
+    this.localizeMoment(start)
+    if (end) { this.localizeMoment(end) }
+
     return new EventDateProfile(start, end, this)
   }
 

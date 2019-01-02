@@ -269,4 +269,22 @@ describe('select callback', function() {
       })
     })
   })
+
+  it('will keep the correct locale', function(done) {
+    options.locale = 'fr'
+    options.select = function(start, end) {
+      expect(start.locale()).toBe('fr')
+      expect(end.locale()).toBe('fr')
+    }
+
+    spyOn(options, 'select').and.callThrough()
+    $('#cal').fullCalendar(options)
+
+    $('.fc-day[data-date="2014-04-28"]').simulate('drag', {
+      callback: function() {
+        expect(options.select).toHaveBeenCalled()
+        done()
+      }
+    })
+  })
 })
