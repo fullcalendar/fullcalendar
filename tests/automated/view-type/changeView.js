@@ -70,13 +70,46 @@ describe('changeView', function() {
           }
         }
       })
-
-      function checkViewIntegrity() {
-        var $el = $('.fc-view')
-        expect($el).toBeInDOM()
-        expect($el.children().length).toBeGreaterThan(0)
-        expect($el.text()).toBeTruthy()
-      }
     })
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/3689
+  it('can when switching to/from view while loading events', function(done) {
+    initCalendar({
+      header: {
+        left: 'title basicDay agendaDay'
+      },
+      defaultView: 'agendaDay',
+      now: '2017-06-08T01:00:00',
+      events: function(start, end, timezone, callback) {
+        setTimeout(function() {
+          callback([ // will run after the first view switch but before the second
+            { start: '2017-06-08T01:00:00' } // needs to be timed to cause the JS error
+          ])
+        }, 100)
+      }
+    })
+
+    currentCalendar.changeView('basicDay')
+    checkViewIntegrity()
+    expect(currentCalendar.getView().type).toBe('basicDay')
+
+    setTimeout(function() {
+      currentCalendar.changeView('agendaDay')
+      checkViewIntegrity()
+      expect(currentCalendar.getView().type).toBe('agendaDay')
+      done()
+    }, 200)
+  })
+
+  function checkViewIntegrity() {
+    var $el = $('.fc-view')
+    expect($el).toBeInDOM()
+    expect($el.children().length).toBeGreaterThan(0)
+    expect($el.text()).toBeTruthy()
+    expect(
+      $el.find('[data-date]').length +
+      $el.find('.fc-list-empty').length
+    ).toBeGreaterThan(0)
+  }
 })

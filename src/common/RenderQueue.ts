@@ -118,15 +118,17 @@ export default class RenderQueue extends TaskQueue {
       for (i = q.length - 1; i >= 0; i--) {
         task = q[i]
 
-        switch (task.type) {
-          case 'init':
-            shouldAppend = false
-            // the latest destroy is cancelled out by not doing the init
-            /* falls through */
-          case 'add':
-            /* falls through */
-          case 'remove':
-            q.splice(i, 1) // remove task
+        if (task.namespace === newTask.namespace) {
+          switch (task.type) {
+            case 'init':
+              shouldAppend = false
+              // the latest destroy is cancelled out by not doing the init
+              /* falls through */
+            case 'add':
+              /* falls through */
+            case 'remove':
+              q.splice(i, 1) // remove task
+          }
         }
       }
     }
