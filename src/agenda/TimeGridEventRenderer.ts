@@ -240,9 +240,10 @@ export default class TimeGridEventRenderer extends EventRenderer {
       seg = segs[i]
       seg.el.css(this.generateFgSegHorizontalCss(seg))
 
-      // if the height is short, add a className for alternate styling
-      if (seg.bottom - seg.top < 30) {
-        seg.el.addClass('fc-short')
+      // if the event is short that the title will be cut off,
+      // attach a className that condenses the title into the time area.
+      if (seg.footprint.eventDef.title && seg.bottom - seg.top < 30) {
+        seg.el.addClass('fc-short') // TODO: "condensed" is a better name
       }
     }
   }
