@@ -55,4 +55,28 @@ describe('dayCount', function() {
     expectDay('2017-03-26', false) // sun
     expectDay('2017-03-27', true)
   })
+
+  it('can navigate in reverse with a small dateIncrement split by hidden days', function() {
+    initCalendar({
+      defaultDate: '2018-06-11',
+      defaultView: 'agendaTwoDay',
+      header: {
+        left: 'prev,next',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay,agendaTwoDay'
+      },
+      hiddenDays: [ 0, 6 ],
+      views: {
+        agendaTwoDay: {
+          type: 'agenda',
+          dayCount: 2,
+          dateIncrement: { days: 1 },
+          buttonText: '2 days'
+        }
+      }
+    })
+    currentCalendar.prev()
+    expectActiveRange('2018-06-08', '2018-06-12')
+  })
+
 })
