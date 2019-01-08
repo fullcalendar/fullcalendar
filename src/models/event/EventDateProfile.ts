@@ -38,10 +38,6 @@ export default class EventDateProfile {
       return false
     }
 
-    if (end && (!end.isValid() || !end.isAfter(start))) {
-      end = null
-    }
-
     if (forcedAllDay == null) {
       forcedAllDay = source.allDayDefault
       if (forcedAllDay == null) {
@@ -61,6 +57,10 @@ export default class EventDateProfile {
       if (end && !end.hasTime()) {
         end.time(0)
       }
+    }
+
+    if (end && (!end.isValid() || !end.isAfter(start))) {
+      end = null
     }
 
     if (!end && forceEventDuration) {
