@@ -61,7 +61,10 @@ export default class OffsetTracker { // ElementOffsetTracker
     let point = { left: pageX, top: pageY }
 
     for (let scrollCache of this.scrollCaches) {
-      if (!pointInsideRect(point, scrollCache.clientRect)) {
+      if (
+        !isIgnoredClipping(scrollCache.getEventTarget()) &&
+        !pointInsideRect(point, scrollCache.clientRect)
+      ) {
         return false
       }
     }
@@ -69,4 +72,12 @@ export default class OffsetTracker { // ElementOffsetTracker
     return true
   }
 
+}
+
+// certain clipping containers should never constrain interactions, like <html> and <body>
+// https://github.com/fullcalendar/fullcalendar/issues/3615
+function isIgnoredClipping(node: EventTarget) {
+  let tagName = (node as HTMLElement).tagName
+
+  return tagName === 'HTML' || tagName === 'BODY'
 }
