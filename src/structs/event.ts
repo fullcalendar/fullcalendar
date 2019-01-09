@@ -207,10 +207,12 @@ function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: C
   if (endMeta) {
     endMarker = endMeta.marker
 
+    if (allDay) {
+      endMarker = startOfDay(endMarker)
+    }
+
     if (startMarker && endMarker <= startMarker) {
       endMarker = null
-    } else if (allDay) {
-      endMarker = startOfDay(endMarker)
     }
   }
 
