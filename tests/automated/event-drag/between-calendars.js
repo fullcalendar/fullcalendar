@@ -79,13 +79,51 @@ describe('dragging events between calendars', function() {
     let point1 = getRectCenter(dayEl.getBoundingClientRect())
 
     $(eventEl).simulate('drag', {
-      debug: true,
       point: point0,
       end: point1,
       callback: function() {
         expect(triggerNames).toEqual([ 'eventLeave', 'drop', 'eventReceive' ])
         done()
       }
+    })
+  })
+
+  it('works between agenda views', function(done) {
+    let triggerNames = []
+
+    calendar0 = new Calendar(el0, {
+      scrollTime: '00:00',
+      timeZone: 'UTC',
+      defaultDate: DEFAULT_DATE,
+      defaultView: 'agendaDay',
+      editable: true,
+      events: [
+        { start: '2019-01-01T00:00:00', id: 'a' }
+      ]
+    })
+
+    calendar1 = new Calendar(el1, {
+      scrollTime: '00:00',
+      timeZone: 'UTC',
+      defaultDate: DEFAULT_DATE,
+      defaultView: 'agendaDay',
+      editable: true,
+      droppable: true,
+      eventReceive: function(info) {
+        done()
+      }
+    })
+
+    calendar0.render()
+    calendar1.render()
+
+    let eventEl = getSingleEl()[0]
+    let point0 = getRectCenter(eventEl.getBoundingClientRect())
+    let point1 = getRectCenter(el1.querySelector('.fc-time-grid-container').getBoundingClientRect())
+
+    $(eventEl).simulate('drag', {
+      point: point0,
+      end: point1
     })
   })
 
