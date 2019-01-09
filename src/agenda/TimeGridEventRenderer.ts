@@ -261,16 +261,14 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
   // Given foreground event segments that have already had their position coordinates computed,
   // assigns position-related CSS values to their elements.
   assignSegCss(segs: Seg[]) {
-    let i
-    let seg
 
-    for (i = 0; i < segs.length; i++) {
-      seg = segs[i]
+    for (let seg of segs) {
       applyStyle(seg.el, this.generateSegCss(seg))
 
-      // if the height is short, add a className for alternate styling
-      if (seg.bottom - seg.top < 30) {
-        seg.el.classList.add('fc-short')
+      // if the event is short that the title will be cut off,
+      // attach a className that condenses the title into the time area.
+      if (seg.eventRange.def.title && seg.bottom - seg.top < 30) {
+        seg.el.classList.add('fc-short') // TODO: "condensed" is a better name
       }
     }
   }

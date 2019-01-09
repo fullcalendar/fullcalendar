@@ -25,8 +25,8 @@ describe('short event rendering with agendaEventMinHeight', function() {
   describe('we we have two short events close to each other', function() {
     pushOptions({
       events: [
-        { start: '2017-08-10T10:30:00', end: '2017-08-10T10:31:00' },
-        { start: '2017-08-10T10:31:20', end: '2017-08-10T10:31:40' }
+        { start: '2017-08-10T10:30:00', end: '2017-08-10T10:31:00', title: 'event a' },
+        { start: '2017-08-10T10:31:20', end: '2017-08-10T10:31:40', title: 'event b' }
       ]
     })
 
