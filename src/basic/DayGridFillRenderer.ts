@@ -1,4 +1,4 @@
-import { htmlToElement, createElement, appendToElement, prependToElement } from '../util/dom-manip'
+import { htmlToElement, appendToElement, prependToElement } from '../util/dom-manip'
 import FillRenderer from '../component/renderers/FillRenderer'
 import DayGrid, { DayGridSeg } from './DayGrid'
 import { Seg } from '../component/DateComponent'
@@ -69,14 +69,20 @@ export default class DayGridFillRenderer extends FillRenderer {
     trEl = skeletonEl.getElementsByTagName('tr')[0]
 
     if (startCol > 0) {
-      trEl.appendChild(createElement('td', { colSpan: startCol }))
+      appendToElement(trEl,
+        // will create (startCol + 1) td's
+        new Array(startCol + 1).join('<td></td>')
+      )
     }
 
     (seg.el as HTMLTableCellElement).colSpan = endCol - startCol
     trEl.appendChild(seg.el)
 
     if (endCol < colCnt) {
-      trEl.appendChild(createElement('td', { colSpan: colCnt - endCol }))
+      appendToElement(trEl,
+        // will create (colCnt - endCol) td's
+        new Array(colCnt - endCol + 1).join('<td></td>')
+      )
     }
 
     let introHtml = dayGrid.renderProps.renderIntroHtml()

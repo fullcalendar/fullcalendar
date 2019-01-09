@@ -66,7 +66,7 @@ function computeContainerTag(html: string) {
 // Inserting / Removing
 // ----------------------------------------------------------------------------------------------------------------
 
-export type ElementContent = string | Node | NodeList | Node[]
+export type ElementContent = string | Node | Node[]
 
 export function appendToElement(el: HTMLElement, content: ElementContent) {
   let childNodes = normalizeContent(content)
@@ -94,13 +94,13 @@ export function insertAfterElement(refEl: HTMLElement, content: ElementContent) 
   }
 }
 
-function normalizeContent(content: ElementContent): NodeList | Node[] {
+function normalizeContent(content: ElementContent): Node[] {
   let els
   if (typeof content === 'string') {
-    els = htmlToNodeList(content)
+    els = htmlToElements(content)
   } else if (content instanceof Node) {
     els = [ content ]
-  } else { // assumed to be NodeList or Node[]
+  } else { // assumed to be Node[]
     els = content
   }
   return els
