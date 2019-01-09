@@ -55,13 +55,13 @@ export default class PointerDragging {
     this.containerEl = containerEl
     this.emitter = new EmitterMixin()
     containerEl.addEventListener('mousedown', this.handleMouseDown as EventListener)
-    containerEl.addEventListener('touchstart', this.handleTouchStart as EventListener)
+    containerEl.addEventListener('touchstart', this.handleTouchStart as EventListener, { passive: true })
     listenerCreated()
   }
 
   destroy() {
     this.containerEl.removeEventListener('mousedown', this.handleMouseDown as EventListener)
-    this.containerEl.removeEventListener('touchstart', this.handleTouchStart as EventListener)
+    this.containerEl.removeEventListener('touchstart', this.handleTouchStart as EventListener, { passive: true } as AddEventListenerOptions)
     listenerDestroyed()
   }
 
