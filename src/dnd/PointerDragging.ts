@@ -319,7 +319,7 @@ function listenerCreated() {
 
 function listenerDestroyed() {
   if (!(--listenerCnt)) {
-    window.removeEventListener('touchmove', onWindowTouchMove)
+    window.removeEventListener('touchmove', onWindowTouchMove, { passive: false } as AddEventListenerOptions)
   }
 }
 
