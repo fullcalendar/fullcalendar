@@ -40,8 +40,8 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     let dateSelections = this.splitDateSelection(props.dateSelection)
     let individualUi = this.splitIndividualUi(props.eventUiBases, defKeys) // the individual *bases*
     let eventStores = this.splitEventStore(props.eventStore, defKeys)
-    let eventDrags = this.splitEventDrag(props.eventDrag, defKeys)
-    let eventResizes = this.splitEventResize(props.eventResize, defKeys)
+    let eventDrags = this.splitEventDrag(props.eventDrag)
+    let eventResizes = this.splitEventResize(props.eventResize)
     let splitProps: { [key: string]: SplittableProps } = {}
 
     this.eventUiBuilders = mapHash(keyInfos, (info, key) => {
@@ -135,11 +135,14 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     return splitHashes
   }
 
-  private _splitInteraction(interaction: EventInteractionState | null, defKeys): { [key: string]: EventInteractionState } {
+  private _splitInteraction(interaction: EventInteractionState | null): { [key: string]: EventInteractionState } {
     let splitStates: { [key: string]: EventInteractionState } = {}
 
     if (interaction) {
-      let affectedStores = this._splitEventStore(interaction.affectedEvents, defKeys)
+      let affectedStores = this._splitEventStore(
+        interaction.affectedEvents,
+        this.getKeysForEventDefs(interaction.affectedEvents) // can't use cached. might be events from other calendar
+      )
 
       // can't rely on defKeys because event data is mutated
       let mutatedKeysByDefId = this._getKeysForEventDefs(interaction.mutatedEvents)
