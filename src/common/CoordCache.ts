@@ -235,7 +235,10 @@ export default class CoordCache {
     if (this.els.length > 0) {
       scrollParentEl = getScrollParent(this.els.eq(0))
 
-      if (!scrollParentEl.is(document)) {
+      if (
+        !scrollParentEl.is(document) &&
+        !scrollParentEl.is('html,body') // don't consider these bounding rects. solves issue 3615
+      ) {
         return getClientRect(scrollParentEl)
       }
     }
