@@ -3,13 +3,13 @@
 <head>
 <meta charset='utf-8' />
 <link href='../../dist/fullcalendar.css' rel='stylesheet' />
+<script src='../../node_modules/moment/moment.js'></script>
+<script src='../../node_modules/jquery/dist/jquery.js'></script>
 <script src='../../dist/fullcalendar.js'></script>
 <script>
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+  $(document).ready(function() {
+    $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -18,12 +18,10 @@
       defaultDate: '2018-12-12',
       navLinks: true, // can click day/week names to navigate views
       selectable: true,
-      dateClick: function(info) {
-        console.log('dateClick', info.dateStr)
-      },
-    });
-
-    calendar.render();
+      dayClick: function(date) {
+        console.log('dateClick', date.format())
+      }
+    })
   });
 
 </script>
