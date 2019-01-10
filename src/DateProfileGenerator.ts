@@ -271,7 +271,8 @@ export default class DateProfileGenerator {
   buildRangeFromDayCount(date, direction, dayCount) {
     let customAlignment = this.opt('dateAlignment')
     let runningCount = 0
-    let start, end
+    let start
+    let end
 
     if (customAlignment || direction !== -1) {
 
