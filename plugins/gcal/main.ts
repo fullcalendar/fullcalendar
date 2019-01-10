@@ -1,5 +1,5 @@
 import * as request from 'superagent'
-import { registerEventSourceDef, refineProps, addDays } from 'fullcalendar'
+import { registerEventSourceDef, refineProps, addDays, DateEnv } from 'fullcalendar'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
@@ -104,7 +104,7 @@ function buildUrl(meta) {
 }
 
 
-function buildRequestParams(range, apiKey: string, extraParams, dateEnv) {
+function buildRequestParams(range, apiKey: string, extraParams, dateEnv: DateEnv) {
   let params
   let startStr
   let endStr
@@ -130,31 +130,27 @@ function buildRequestParams(range, apiKey: string, extraParams, dateEnv) {
     maxResults: 9999
   }
 
+  if (dateEnv.timeZone !== 'local') {
+    params.timeZone = dateEnv.timeZone
+  }
+
   return params
 }
 
 
-function gcalItemsToRawEventDefs(items, gcalTimeZone) {
+function gcalItemsToRawEventDefs(items, gcalTimezone) {
   return items.map((item) => {
-    return gcalItemToRawEventDef(item, gcalTimeZone)
+    return gcalItemToRawEventDef(item, gcalTimezone)
   })
 }
 
 
-function gcalItemToRawEventDef(item, gcalTimeZone) {
+function gcalItemToRawEventDef(item, gcalTimezone) {
   let url = item.htmlLink || null
-  let extendedProps = {}
 
   // make the URLs for each event show times in the correct timezone
-  if (url && gcalTimeZone) {
-    url = injectQsComponent(url, 'ctz=' + gcalTimeZone)
-  }
-
-  if (
-    typeof item.extendedProperties === 'object' &&
-    typeof item.extendedProperties.shared === 'object'
-  ) {
-    extendedProps = item.extendedProperties.shared
+  if (url && gcalTimezone) {
+    url = injectQsComponent(url, 'ctz=' + gcalTimezone)
   }
 
   return {
@@ -164,8 +160,7 @@ function gcalItemToRawEventDef(item, gcalTimeZone) {
     end: item.end.dateTime || item.end.date, // same
     url: url,
     location: item.location,
-    description: item.description,
-    extendedProps
+    description: item.description
   }
 }
 

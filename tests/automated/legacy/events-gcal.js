@@ -81,7 +81,7 @@ describe('Google Calendar plugin', function() {
   it('request/receives correctly when named timezone, defaults to not editable', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = { googleCalendarId: HOLIDAY_CALENDAR_ID }
-    options.timeZone = 'America/New York'
+    options.timeZone = 'America/New_York'
     options._eventsPositioned = function() {
       var events = currentCalendar.getEvents()
       var eventEls = $('.fc-event')
