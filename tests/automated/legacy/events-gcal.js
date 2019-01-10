@@ -14,10 +14,10 @@ describe('Google Calendar plugin', function() {
   var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
 
   // Google sometimes stops returning old events. Will need to update this sometimes.
-  var DEFAULT_MONTH = '2018-01'
-  var REQUEST_START = '2017-12-30T00:00:00Z' // one day before, by design
-  var REQUEST_END = '2018-02-12T00:00:00Z' // one day before, by design
-  var NUM_EVENTS = 3
+  var DEFAULT_MONTH = '2018-05'
+  var REQUEST_START = '2018-04-28T00:00:00Z' // one day before, by design
+  var REQUEST_END = '2018-06-11T00:00:00Z' // one day after, by design
+  var NUM_EVENTS = 3 // only two holidays
 
   var options
   var currentWarnArgs
@@ -127,7 +127,7 @@ describe('Google Calendar plugin', function() {
       expect(currentRequest.data.timeMax).toEqual(REQUEST_END)
       expect(currentRequest.data.timeZone).toBeUndefined()
 
-      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS)
       for (i = 0; i < events.length; i++) {
         expect(events[i].url).not.toMatch('ctz=')
       }
@@ -162,7 +162,7 @@ describe('Google Calendar plugin', function() {
     }
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -230,7 +230,7 @@ describe('Google Calendar plugin', function() {
     options.events = HOLIDAY_CALENDAR_ID
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -285,7 +285,7 @@ describe('Google Calendar plugin', function() {
     options.events = 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -296,7 +296,7 @@ describe('Google Calendar plugin', function() {
     options.events = 'https://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic'
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -308,7 +308,7 @@ describe('Google Calendar plugin', function() {
       'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events'
     options.eventAfterAllRender = function() {
       var events = $('#cal').fullCalendar('clientEvents')
-      expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+      expect(events.length).toBe(NUM_EVENTS)
       done()
     }
     $('#cal').fullCalendar(options)
@@ -348,7 +348,7 @@ describe('Google Calendar plugin', function() {
         called = true
 
         events = $('#cal').fullCalendar('clientEvents')
-        expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+        expect(events.length).toBe(NUM_EVENTS)
 
         setTimeout(function() {
           $('#cal').fullCalendar('removeEventSource', HOLIDAY_CALENDAR_ID)
@@ -374,7 +374,7 @@ describe('Google Calendar plugin', function() {
         called = true
 
         events = $('#cal').fullCalendar('clientEvents')
-        expect(events.length).toBe(NUM_EVENTS) // 5 holidays in November 2016 (and end of Oct)
+        expect(events.length).toBe(NUM_EVENTS)
 
         setTimeout(function() {
           $('#cal').fullCalendar('removeEventSource', googleSource)
