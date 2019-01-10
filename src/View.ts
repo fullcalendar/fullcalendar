@@ -660,9 +660,11 @@ export default abstract class View extends InteractiveDateComponent {
       this.calendar
     )
 
+    let resizeDelta = eventMutation.dateMutation.endDelta || eventMutation.dateMutation.startDelta
+
     this.triggerEventResize(
       eventInstance,
-      eventMutation.dateMutation.endDelta,
+      resizeDelta,
       undoFunc,
       el, ev
     )
@@ -670,12 +672,12 @@ export default abstract class View extends InteractiveDateComponent {
 
 
   // Triggers event-resize handlers that have subscribed via the API
-  triggerEventResize(eventInstance, durationDelta, undoFunc, el, ev) {
+  triggerEventResize(eventInstance, resizeDelta, undoFunc, el, ev) {
     this.publiclyTrigger('eventResize', {
       context: el[0],
       args: [
         eventInstance.toLegacy(),
-        durationDelta,
+        resizeDelta,
         undoFunc,
         ev,
         {}, // {} = jqui dummy
