@@ -29,7 +29,7 @@ FullCalendar.locale("be", {
     day: "Дзень",
     list: "Парадак дня"
   },
-  allDayText: "Увесь дзень",
+  allDayHtml: "Увесь<br />дзень",
   eventLimitText: function(n) {
     return "+ яшчэ " + n;
   },
