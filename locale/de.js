@@ -35,5 +35,6 @@ FullCalendar.locale("de", {
   eventLimitText: function(n) {
     return "+ weitere " + n;
   },
-  noEventsMessage: "Keine Ereignisse anzuzeigen"
+  noEventsMessage: "Keine Ereignisse anzuzeigen",
+  dayOfMonthFormat: 'ddd DD.MM.'
 });
