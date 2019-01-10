@@ -21,7 +21,7 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2018 Adam Shaw",
-  "dependencies": {
+  "peerDependencies": {
     "jquery": "2 - 3",
     "moment": "^2.20.1"
   },
@@ -58,6 +58,7 @@
     "jasmine-core": "2.5.2",
     "jasmine-fixture": "^2.0.0",
     "jasmine-jquery": "^2.1.1",
+    "jquery": "2 - 3",
     "jquery-mockjax": "^2.2.0",
     "jquery-simulate": "github:jquery/jquery-simulate",
     "karma": "^0.13.22",
@@ -65,6 +66,7 @@
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-verbose-reporter": "0.0.6",
+    "moment": "^2.20.1",
     "moment-timezone": "^0.5.5",
     "native-promise-only": "^0.8.1",
     "node-sass": "^4.7.2",
