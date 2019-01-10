@@ -26,7 +26,6 @@ export default class DateProfileGenerator {
   options: any
   dateEnv: DateEnv
   calendar: Calendar // avoid
-
   isHiddenDayHash: boolean[]
 
 

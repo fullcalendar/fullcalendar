@@ -8,16 +8,16 @@ if (SKIP_GCAL) {
 
 // eslint-disable-next-line
 SKIP_GCAL ||
-xdescribe('Google Calendar plugin', function() {
+describe('Google Calendar plugin', function() {
 
   var API_KEY = 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE'
   var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
 
   // Google sometimes stops returning old events. Will need to update this sometimes.
-  var DEFAULT_MONTH = '2018-01'
-  // var REQUEST_START = '2017-12-30T00:00:00Z' // one day before, by design
-  // var REQUEST_END = '2018-02-12T00:00:00Z' // one day before, by design
-  var NUM_EVENTS = 3
+  var DEFAULT_MONTH = '2018-05'
+  // var REQUEST_START = '2018-04-28T00:00:00Z' // one day before, by design
+  // var REQUEST_END = '2018-06-11T00:00:00Z' // one day after, by design
+  var NUM_EVENTS = 3 // only two holidays
 
   var options
   var currentWarnArgs

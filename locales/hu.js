@@ -17,5 +17,5 @@ defineLocale("hu", {
   weekLabel: "Hét",
   allDayText: "Egész nap",
   eventLimitText: "további",
-  noEventsMessage: "Nincs megjeleníthető események"
+  noEventsMessage: "Nincs megjeleníthető esemény"
 });

@@ -9,6 +9,7 @@ defineLocale("de", {
     prev: "Zurück",
     next: "Vor",
     today: "Heute",
+    year: "Jahr",
     month: "Monat",
     week: "Woche",
     day: "Tag",
