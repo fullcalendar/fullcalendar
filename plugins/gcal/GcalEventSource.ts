@@ -103,6 +103,11 @@ export default class GcalEventSource extends EventSource {
       url = injectQsComponent(url, 'ctz=' + gcalTimezone)
     }
 
+    let metaData = {}
+    if (typeof item.extendedProperties === 'object' && typeof item.extendedProperties.shared === 'object') {
+      metaData = item.extendedProperties.shared
+    }
+
     return {
       id: item.id,
       title: item.summary,
@@ -110,7 +115,8 @@ export default class GcalEventSource extends EventSource {
       end: item.end.dateTime || item.end.date, // same
       url: url,
       location: item.location,
-      description: item.description
+      description: item.description,
+      metaData: metaData
     }
   }
 
