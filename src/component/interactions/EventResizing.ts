@@ -129,6 +129,11 @@ export default class EventResizing extends Interaction {
             ),
             seg
           )
+          view.reportEventResizing(
+            eventInstance,
+            resizeMutation,
+            el
+          )
         }
       },
       hitOut: () => { // called before mouse moves to a different hit OR moved out of all hits
