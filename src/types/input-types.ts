@@ -116,6 +116,12 @@ export interface DropInfo {
   end: moment.Moment
 }
 
+export interface SelectInfo {
+  start: moment.Moment
+  end: moment.Moment
+  resourceId?: string
+}
+
 export interface OptionsInputBase {
   header?: boolean | ToolbarInput
   footer?: boolean | ToolbarInput
@@ -191,6 +197,7 @@ export interface OptionsInputBase {
   unselectCancel?: string
   selectOverlap?: boolean | ((event: EventObjectInput) => boolean)
   selectConstraint?: ConstraintInput
+  selectAllow?: ((selectInfo: SelectInfo) => boolean)
   events?: EventSourceInput
   eventSources?: EventSourceInput[]
   allDayDefault?: boolean
