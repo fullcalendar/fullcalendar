@@ -134,19 +134,27 @@ function buildRequestParams(range, apiKey: string, extraParams, dateEnv) {
 }
 
 
-function gcalItemsToRawEventDefs(items, gcalTimezone) {
+function gcalItemsToRawEventDefs(items, gcalTimeZone) {
   return items.map((item) => {
-    return gcalItemToRawEventDef(item, gcalTimezone)
+    return gcalItemToRawEventDef(item, gcalTimeZone)
   })
 }
 
 
-function gcalItemToRawEventDef(item, gcalTimezone) {
+function gcalItemToRawEventDef(item, gcalTimeZone) {
   let url = item.htmlLink || null
+  let extendedProps = {}
 
   // make the URLs for each event show times in the correct timezone
-  if (url && gcalTimezone) {
-    url = injectQsComponent(url, 'ctz=' + gcalTimezone)
+  if (url && gcalTimeZone) {
+    url = injectQsComponent(url, 'ctz=' + gcalTimeZone)
+  }
+
+  if (
+    typeof item.extendedProperties === 'object' &&
+    typeof item.extendedProperties.shared === 'object'
+  ) {
+    extendedProps = item.extendedProperties.shared
   }
 
   return {
@@ -156,7 +164,8 @@ function gcalItemToRawEventDef(item, gcalTimezone) {
     end: item.end.dateTime || item.end.date, // same
     url: url,
     location: item.location,
-    description: item.description
+    description: item.description,
+    extendedProps
   }
 }
 
