@@ -66,7 +66,7 @@ function computeContainerTag(html: string) {
 // Inserting / Removing
 // ----------------------------------------------------------------------------------------------------------------
 
-export type ElementContent = string | Node | Node[]
+export type ElementContent = string | Node | Node[] | NodeList
 
 export function appendToElement(el: HTMLElement, content: ElementContent) {
   let childNodes = normalizeContent(content)
@@ -100,8 +100,8 @@ function normalizeContent(content: ElementContent): Node[] {
     els = htmlToElements(content)
   } else if (content instanceof Node) {
     els = [ content ]
-  } else { // assumed to be Node[]
-    els = content
+  } else { // Node[] or NodeList
+    els = Array.prototype.slice.call(content)
   }
   return els
 }
