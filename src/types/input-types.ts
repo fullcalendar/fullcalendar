@@ -195,8 +195,8 @@ export interface OptionsInputBase {
   eventResizeStart?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventResizeStop?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventResize?(arg: { el: HTMLElement, event: EventApi, delta: Duration, revert: () => void, jsEvent: Event, view: View }): void
-  drop?(arg: { date: DateInput, allDay: boolean, jsEvent: MouseEvent }): void
-  eventReceive?(event: EventApi): void
+  drop?(arg: { date: Date, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: View }): void
+  eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: View }): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {
