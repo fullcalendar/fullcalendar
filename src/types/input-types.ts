@@ -219,7 +219,7 @@ export interface OptionsInputBase {
   dragScroll?: boolean
   eventOverlap?: boolean | ((stillEvent: EventObjectInput, movingEvent: EventObjectInput) => boolean)
   eventConstraint?: ConstraintInput
-  eventAllow?: ((dropInfo: DropInfo, draggedEvent: Event) => boolean)
+  eventAllow?: ((dropInfo: DropInfo, draggedEvent: EventObjectInput) => boolean)
   longPressDelay?: number
   eventLongPressDelay?: number
   droppable?: boolean
