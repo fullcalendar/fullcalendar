@@ -225,11 +225,11 @@ describe('eventLimit popover', function() {
           },
           {
             title: 'e2',
-            start: '2018-10-18',
+            start: '2018-10-18'
           },
           {
             title: 'e3',
-            start: '2018-10-18T11:00:00',
+            start: '2018-10-18T11:00:00'
           },
           {
             title: 'e4',
@@ -239,7 +239,7 @@ describe('eventLimit popover', function() {
           {
             title: 'e5',
             start: '2018-10-19',
-            className: 'event-e5',
+            className: 'event-e5'
           }
         ]
       })

@@ -61,7 +61,7 @@ describe('nextDayThreshold', function() {
       nextDayThreshold: '09:00:00',
       events: [ {
         start: '2017-09-30T08:00:00',
-        end:  '2017-10-01T08:00:00'
+        end: '2017-10-01T08:00:00'
       } ]
     })
 

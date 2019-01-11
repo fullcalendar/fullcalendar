@@ -1,4 +1,4 @@
-import { getRectCenter, getRectTopLeft, subtractPoints, addPoints } from '../lib/geom'
+import { getRectCenter, subtractPoints, addPoints } from '../lib/geom'
 import * as EventRenderUtils from '../event-render/EventRenderUtils'
 
 
@@ -15,7 +15,7 @@ export function resize(point0, point1, fromStart, debug) {
     resizerCenter,
     point0
   )
-  var point1 = addPoints(
+  var endPoint = addPoints(
     point1,
     vector
   )
@@ -23,7 +23,7 @@ export function resize(point0, point1, fromStart, debug) {
 
   resizerEl.simulate('drag', {
     point: resizerCenter,
-    end: point1,
+    end: endPoint,
     debug: debug
   })
 

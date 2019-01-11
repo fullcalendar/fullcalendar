@@ -89,7 +89,6 @@ describe('dragging events between calendars', function() {
   })
 
   it('works between agenda views', function(done) {
-    let triggerNames = []
 
     calendar0 = new Calendar(el0, {
       scrollTime: '00:00',
