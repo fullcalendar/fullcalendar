@@ -11,9 +11,11 @@ cache:
 
 env:
   global:
-    - TZ="America/Los_Angeles"
+    - TZ="America/Los_Angeles" # for Headless Chrome. otherwise will be UTC, bad for tests
   matrix:
     - CMD=test
     - CMD=lint
 
+# TODO: instead of flag, use env variable TRAVIS
+# https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
 script: npm run $CMD -- --travis
