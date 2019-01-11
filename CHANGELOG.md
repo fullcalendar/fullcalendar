@@ -1,7 +1,17 @@
 
-next
-----
-- in `eventDrop`, renamed `prevEvent` to `oldEvent`
+v4.0.0-alpha.4 (2019-01-11)
+---------------------------
+
+API changes:
+- in `eventDrop` callback, the `prevEvent` property has been renamed to `oldEvent`
+
+bugfixes that preexisted v4
+- forceEventDuration takes wrong duration when switching between all day and timed event (#4097)
+- first day in View, event spans from previous day ignoring nextDayThreshold (#3943)
+- eventResize helper element should go through eventDestroy (#3543)
+- set touchstart listeners as passive (#4149)
+
+bugfixes for regressions: #4363, #4422, #4238, #4331, #4342, #4416, #4333, #4350, #4348, #4149, #4444
 
 
 v4.0.0-alpha.3 (2018-12-21)
