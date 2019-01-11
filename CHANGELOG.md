@@ -11,7 +11,9 @@ bugfixes that preexisted v4
 - eventResize helper element should go through eventDestroy (#3543)
 - set touchstart listeners as passive (#4149)
 
-bugfixes for regressions: #4363, #4422, #4238, #4331, #4342, #4416, #4333, #4350, #4348, #4149, #4444
+bugfixes for regressions: #4363, #4422, #4331, #4342, #4416, #4333, #4350, #4348, #4149, #4444
+
+also, all bugfixes from [v3.10.0](https://github.com/fullcalendar/fullcalendar/releases/tag/v3.10.0) have been merged
 
 
 v4.0.0-alpha.3 (2018-12-21)
