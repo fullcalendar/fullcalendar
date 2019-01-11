@@ -73,7 +73,7 @@
     "phantomjs-prebuilt": "^2.1.7",
     "sass-loader": "^6.0.7",
     "tslib": "^1.8.0",
-    "tslint": "^5.8.0",
+    "tslint": "^5.12.1",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^2.7.2",
     "webpack": "^3.11.0",
