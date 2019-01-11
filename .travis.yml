@@ -10,7 +10,10 @@ cache:
     - node_modules
 
 env:
-  - CMD=test
-  - CMD=lint
+  global:
+    - TZ="America/Los_Angeles"
+  matrix:
+    - CMD=test
+    - CMD=lint
 
 script: npm run $CMD -- --travis
