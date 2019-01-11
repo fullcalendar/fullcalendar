@@ -24,15 +24,21 @@ do
   # has npm build system? then build
   if [[ -f "$example_path/package.json" ]]
   then
+
     cd "$example_path"
 
-    npm install
+    # start with fresh dependencies
+    rm -f "package-lock.json"
+    rm -rf "node_modules"
 
     # link to the globally linked fullcalendar
+    # (must be done before `npm install`)
     if [[ "$use_current" == '1' ]]
     then
       npm link fullcalendar
     fi
+
+    npm install
 
     if npm run build
     then
@@ -46,12 +52,6 @@ do
       success=0
     fi
 
-    # unlink from the globally linked fullcalendar
-    # don't use npm-unlink because it will remove entry from package.json
-    if [[ "$use_current" == '1' ]]
-    then
-      rm 'node_modules/fullcalendar'
-    fi
   fi
 
   # return to project root, for next iteraion, and for after loop
