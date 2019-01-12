@@ -22,7 +22,6 @@ gulp.task('webpack:watch', function() {
 
 
 const jsFilter = filter([ '**/*.js' ], { restore: true })
-const localeFilter = filter([ '**/locales-all.js', '**/locales/*.js' ], { restore: true })
 
 function createStream(isDev, isWatch) {
   let stream = gulp.src([]) // don't pass in any files. webpack handles that
@@ -54,10 +53,23 @@ function createStream(isDev, isWatch) {
     .pipe(jsFilter)
     .pipe(modify(function(content, path, file) {
 
-      // for modules that plug into the core, webpack produces files that overwrite
-      // the `FullCalendar` browser global each time. strip it out.
-      if (file.relative !== 'dist/fullcalendar.js') {
-        content = content.replace(/(root|exports)\[['"]FullCalendar['"]\]\s*=\s*/g, '')
+      // shouldn't overwrite root namespace
+      if (
+        file.relative.indexOf('dist/fullcalendar/locales') === 0 || // locale files
+        file.relative.indexOf('dist/') !== 0 // anything other than dist files (like test files)
+      ) {
+        content = content.replace(
+          /(exports|root)\[['"]FullCalendar['"]\]\s*=\s*/g,
+          ''
+        )
+
+      // plugin files. shouldn't overwrite root namespace,
+      // instead, add to default plugins when executed as a <script> tag
+      } else if (file.relative.indexOf('dist/fullcalendar-') === 0) {
+        content = content.replace(
+          /(exports|root)\[['"]FullCalendar['"]\]\s*=\s*([^;]*)/g,
+          '$1["FullCalendar"].Calendar.defaultPlugins.push($2.default)'
+        )
       }
 
       // strip out "use strict", which moment and webpack harmony generates.
@@ -66,13 +78,6 @@ function createStream(isDev, isWatch) {
       return content
     }))
     .pipe(jsFilter.restore)
-
-  if (!isDev) {
-    stream = stream
-      .pipe(localeFilter)
-      .pipe(uglify()) // uglify only the locale files, then bring back other files to stream
-      .pipe(localeFilter.restore)
-  }
 
   return stream.pipe(
     gulp.dest(webpackConfig.output.path)
@@ -91,7 +96,7 @@ function reporterFunc(err, stats) {
     let localeModuleCnt = 0
 
     for (let moduleName in assets) {
-      if (moduleName.match(/^dist\/locales/)) {
+      if (moduleName.match(/^dist\/fullcalendar\/locales/)) {
         localeModuleCnt++
       } else {
         filteredAssets[moduleName] = assets[moduleName]

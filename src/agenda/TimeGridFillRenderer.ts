@@ -1,5 +1,6 @@
-import FillRenderer from '../component/renderers/FillRenderer'
-import { Seg } from '../component/DateComponent'
+import {
+  FillRenderer, Seg
+} from 'fullcalendar'
 import TimeGrid from './TimeGrid'
 
 

@@ -1,22 +1,13 @@
-import { htmlEscape } from '../util/html'
-import { findElements, createElement } from '../util/dom-manip'
 import {
-  matchCellWidths,
-  uncompensateScroll,
-  compensateScroll,
-  subtractInnerElHeight
-} from '../util/misc'
-import ScrollComponent from '../common/ScrollComponent'
-import View from '../View'
+  findElements, createElement, htmlEscape,
+  matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
+  ScrollComponent,
+  View, ViewSpec, DateProfileGenerator,
+  DayGrid, ComponentContext,
+  createDuration, createFormatter, diffDays,
+  buildGotoAnchorHtml, getAllDayHtml
+} from 'fullcalendar'
 import TimeGrid from './TimeGrid'
-import DayGrid from '../basic/DayGrid'
-import { createDuration } from '../datelib/duration'
-import { createFormatter } from '../datelib/formatting'
-import { buildGotoAnchorHtml, getAllDayHtml } from '../component/date-rendering'
-import { diffDays } from '../datelib/marker'
-import { ComponentContext } from '../component/Component'
-import { ViewSpec } from '../structs/view-spec'
-import DateProfileGenerator from '../DateProfileGenerator'
 import AllDaySplitter from './AllDaySplitter'
 
 const AGENDA_ALL_DAY_EVENT_LIMIT = 5

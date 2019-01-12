@@ -1,4 +1,4 @@
-import { Seg } from '../component/DateComponent'
+import { Seg } from 'fullcalendar'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 
 

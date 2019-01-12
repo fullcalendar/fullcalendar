@@ -1,18 +1,20 @@
+import {
+  DateComponent,
+  DateProfile,
+  EventStore,
+  EventUiHash,
+  EventInteractionState,
+  DateSpan,
+  memoize,
+  intersectRanges, DateRange,
+  DayTable,
+  DateEnv,
+  DateMarker,
+  Slicer,
+  OffsetTracker,
+  Hit
+} from 'fullcalendar'
 import TimeGrid, { TimeGridSeg } from './TimeGrid'
-import DateComponent from '../component/DateComponent'
-import { DateProfile } from '../DateProfileGenerator'
-import { EventStore } from '../structs/event-store'
-import { EventUiHash } from '../component/event-ui'
-import { EventInteractionState } from '../interactions/event-interaction-state'
-import { DateSpan } from '../structs/date-span'
-import { memoize } from '../util/memoize'
-import { intersectRanges, DateRange } from '../datelib/date-range'
-import DayTable from '../common/DayTable'
-import { DateEnv } from '../datelib/env'
-import { DateMarker } from '../datelib/marker'
-import Slicer from '../common/slicing-utils'
-import OffsetTracker from '../common/OffsetTracker'
-import { Hit } from '../interactions/HitDragging'
 
 export interface SimpleTimeGridProps {
   dateProfile: DateProfile | null

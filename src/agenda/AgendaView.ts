@@ -1,14 +1,16 @@
-import AbstractAgendaView from './AbstractAgendaView'
-import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
-import { ComponentContext } from '../component/Component'
-import { ViewSpec } from '../structs/view-spec'
-import DayHeader from '../common/DayHeader'
-import DaySeries from '../common/DaySeries'
-import DayTable from '../common/DayTable'
+import {
+  DateProfileGenerator, DateProfile,
+  ComponentContext,
+  ViewSpec,
+  DayHeader,
+  DaySeries,
+  DayTable,
+  SimpleDayGrid,
+  memoize,
+  ViewProps
+} from 'fullcalendar'
 import SimpleTimeGrid from './SimpleTimeGrid'
-import SimpleDayGrid from '../basic/SimpleDayGrid'
-import { memoize } from '../util/memoize'
-import { ViewProps } from '../View'
+import AbstractAgendaView from './AbstractAgendaView'
 
 
 export default class AgendaView extends AbstractAgendaView {

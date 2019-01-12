@@ -162,3 +162,7 @@ function formatRange(cmd: CmdParts, formatStart: (cmdStr: string) => string, for
 
   return formatStart(cmd.whole) + separator + formatEnd(cmd.whole)
 }
+
+export default {
+  warning: 'TODO: convert fullcalendar-luxon to real plugin. will still work though.'
+}

@@ -1,9 +1,10 @@
-import { htmlEscape, cssToStr } from '../util/html'
-import { removeElement, applyStyle } from '../util/dom-manip'
-import { createFormatter, DateFormatter } from '../datelib/formatting'
-import FgEventRenderer, { buildSegCompareObj } from '../component/renderers/FgEventRenderer'
-import { Seg } from '../component/DateComponent'
-import { isMultiDayRange, compareByFieldSpecs } from '../util/misc'
+import {
+  htmlEscape, cssToStr,
+  removeElement, applyStyle,
+  createFormatter, DateFormatter,
+  FgEventRenderer, buildSegCompareObj,
+  Seg, isMultiDayRange, compareByFieldSpecs
+} from 'fullcalendar'
 import TimeGrid from './TimeGrid'
 
 /*

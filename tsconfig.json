@@ -13,12 +13,11 @@
     "importHelpers": true,
     "baseUrl": ".",
     "paths": {
-      "fullcalendar": ["src/main"]
+      "fullcalendar": ["src/core/main"]
     },
     "sourceMap": true
   },
   "include": [
-    "src/main.ts",
-    "plugins/**/main.ts"
+    "src/**/main.ts"
   ]
 }

@@ -1,17 +1,34 @@
-import { htmlEscape } from '../util/html'
-import { htmlToElement, findElements, removeElement, applyStyle, createElement } from '../util/dom-manip'
-import PositionCache from '../common/PositionCache'
+import {
+  htmlEscape,
+  htmlToElement,
+  findElements,
+  removeElement,
+  applyStyle,
+  createElement,
+  PositionCache,
+  Duration,
+  createDuration,
+  addDurations,
+  multiplyDuration,
+  wholeDivideDurations,
+  asRoughMs,
+  startOfDay,
+  DateMarker,
+  DateFormatter,
+  createFormatter,
+  formatIsoTimeString,
+  ComponentContext,
+  DateComponent,
+  Seg,
+  EventSegUiInteractionState,
+  DayBgRow,
+  DateProfile,
+  memoizeRendering,
+  MemoizedRendering,
+} from 'fullcalendar'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'
-import { Duration, createDuration, addDurations, multiplyDuration, wholeDivideDurations, asRoughMs } from '../datelib/duration'
-import { startOfDay, DateMarker } from '../datelib/marker'
-import { DateFormatter, createFormatter, formatIsoTimeString } from '../datelib/formatting'
-import { ComponentContext } from '../component/Component'
-import DateComponent, { Seg, EventSegUiInteractionState } from '../component/DateComponent'
-import DayBgRow from '../basic/DayBgRow'
-import { DateProfile } from '../DateProfileGenerator'
-import { memoizeRendering, MemoizedRendering } from '../component/memoized-rendering'
 
 
 /* A component that renders one or more columns of vertical time slots

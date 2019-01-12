@@ -1,7 +1,9 @@
-import Splitter from '../component/event-splitting'
-import { hasBgRendering } from '../component/event-rendering'
-import { EventDef } from '../structs/event'
-import { DateSpan } from '../structs/date-span'
+import {
+  Splitter,
+  hasBgRendering,
+  EventDef,
+  DateSpan
+} from 'fullcalendar'
 
 export default class AllDaySplitter extends Splitter {
 

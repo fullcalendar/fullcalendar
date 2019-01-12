@@ -10,11 +10,9 @@ import './event-sources/json-feed-event-source'
 import './structs/recurring-event-simple'
 
 import BasicPlugin from './basic/config'
-import AgendaPlugin from './agenda/config'
-import ListPlugin from './list/config'
 
 import Calendar from './Calendar'
 
-Calendar.defaultPlugins.push(BasicPlugin, AgendaPlugin, ListPlugin)
+Calendar.defaultPlugins.push(BasicPlugin)
 
 export = exportHooks

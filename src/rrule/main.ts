@@ -102,3 +102,7 @@ function convertConstant(input) {
   }
   return input
 }
+
+export default {
+  warning: 'TODO: convert fullcalendar-rrule to real plugin. will still work though.'
+}

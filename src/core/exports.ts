@@ -23,7 +23,10 @@ export {
   flexibleCompare,
   log,
   warn,
-  computeVisibleDayRange
+  computeVisibleDayRange,
+  refineProps,
+  matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
+  isMultiDayRange
 } from './util/misc'
 
 export {
@@ -91,42 +94,37 @@ export { default as Component, ComponentContext } from './component/Component'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform } from './Calendar'
 export { default as View, ViewProps } from './View'
-export { default as FgEventRenderer } from './component/renderers/FgEventRenderer'
+export { default as FgEventRenderer, buildSegCompareObj } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
-export { default as AgendaView, buildDayTable as buildAgendaDayTable } from './agenda/AgendaView'
-export { default as AbstractAgendaView } from './agenda/AbstractAgendaView'
-export { default as AbstractBasicView } from './basic/AbstractBasicView'
-export { default as TimeGrid, TimeGridSeg } from './agenda/TimeGrid'
-export { TimeGridSlicer, buildDayRanges } from './agenda/SimpleTimeGrid'
-export { DayGridSlicer } from './basic/SimpleDayGrid'
+export { default as SimpleDayGrid, DayGridSlicer } from './basic/SimpleDayGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
 export { default as BasicView, buildDayTable as buildBasicDayTable } from './basic/BasicView'
-export { default as ListView } from './list/ListView'
+export { default as DayBgRow } from './basic/DayBgRow'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
 export { ViewSpec, ViewSpecTransformer } from './structs/view-spec'
 export { DateSpan, DateSpanApi, DatePointApi } from './structs/date-span'
 
-export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime, isValidDate } from './datelib/marker'
+export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime, diffDays, isValidDate } from './datelib/marker'
 export {
   Duration, createDuration,
   isSingleDay, multiplyDuration, addDurations,
   asRoughMinutes, asRoughSeconds, asRoughMs,
-  wholeDivideDurations, greatestDurationDenominator
+  wholeDivideDurations, greatestDurationDenominator,
 } from './datelib/duration'
 export { DateEnv, DateMarkerMeta } from './datelib/env'
 export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
 export {
   DateFormatter,
   createFormatter,
-  VerboseFormattingArg
+  VerboseFormattingArg,
+  formatIsoTimeString
 } from './datelib/formatting'
 export { NamedTimeZoneImpl, registerNamedTimeZoneImpl } from './datelib/timezone'
 export { registerCmdFormatter } from './datelib/formatting-cmd'
 export { parse as parseMarker } from './datelib/parsing'
 
 export { registerEventSourceDef } from './structs/event-source'
-export { refineProps } from './util/misc'
 
 export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'
 export { default as ElementDragging } from './dnd/ElementDragging'
@@ -147,6 +145,7 @@ export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer, ViewCont
 export { reducerFunc, Action, CalendarState } from './reducers/types'
 export { CalendarComponentProps } from './CalendarComponent'
 
+export { default as DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
 
 export { default as OffsetTracker } from './common/OffsetTracker'

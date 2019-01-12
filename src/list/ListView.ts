@@ -1,22 +1,32 @@
-import { htmlToElement, createElement } from '../util/dom-manip'
-import { htmlEscape } from '../util/html'
-import { subtractInnerElHeight } from '../util/misc'
-import View, { ViewProps } from '../View'
-import ScrollComponent from '../common/ScrollComponent'
+import {
+  htmlToElement,
+  createElement,
+  htmlEscape,
+  subtractInnerElHeight,
+  View,
+  ViewProps,
+  ScrollComponent,
+  DateMarker,
+  addDays,
+  startOfDay,
+  createFormatter,
+  DateRange,
+  intersectRanges,
+  DateProfileGenerator,
+  DateProfile,
+  buildGotoAnchorHtml,
+  ComponentContext,
+  ViewSpec,
+  EventUiHash,
+  EventRenderRange,
+  sliceEventStore,
+  EventStore,
+  memoize,
+  MemoizedRendering,
+  memoizeRendering,
+  Seg
+} from 'fullcalendar'
 import ListEventRenderer from './ListEventRenderer'
-import { DateMarker, addDays, startOfDay } from '../datelib/marker'
-import { createFormatter } from '../datelib/formatting'
-import { DateRange, intersectRanges } from '../datelib/date-range'
-import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
-import { buildGotoAnchorHtml } from '../component/date-rendering'
-import { ComponentContext } from '../component/Component'
-import { ViewSpec } from '../structs/view-spec'
-import { EventUiHash } from '../component/event-ui'
-import { EventRenderRange, sliceEventStore } from '../component/event-rendering'
-import { EventStore } from '../structs/event-store'
-import { memoize } from '../util/memoize'
-import { MemoizedRendering, memoizeRendering } from '../component/memoized-rendering'
-import { Seg } from '../component/DateComponent'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".

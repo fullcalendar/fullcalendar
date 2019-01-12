@@ -10,13 +10,17 @@ NOTE: js and typescript module names shouldn't have a .js extention,
 however, all other types of modules should.
 */
 const MODULES = {
-  'dist/fullcalendar': './src/main.ts',
-  'dist/fullcalendar.css': './src/main.scss',
-  'dist/plugins/gcal': './plugins/gcal/main.ts',
-  'dist/plugins/moment': './plugins/moment/main.ts',
-  'dist/plugins/moment-timezone': './plugins/moment-timezone/main.ts',
-  'dist/plugins/luxon': './plugins/luxon/main.ts',
-  'dist/plugins/rrule': './plugins/rrule/main.ts',
+  'dist/fullcalendar/main': './src/core/main.ts',
+  'dist/fullcalendar/main.css': './src/core/main.scss',
+  'dist/fullcalendar-agenda/main': './src/agenda/main.ts',
+  'dist/fullcalendar-agenda/main.css': './src/agenda/main.scss',
+  'dist/fullcalendar-list/main': './src/list/main.ts',
+  'dist/fullcalendar-list/main.css': './src/list/main.scss',
+  'dist/fullcalendar-gcal/main': './src/gcal/main.ts',
+  'dist/fullcalendar-moment/main': './src/moment/main.ts',
+  'dist/fullcalendar-moment-timezone/main': './src/moment-timezone/main.ts',
+  'dist/fullcalendar-luxon/main': './src/luxon/main.ts',
+  'dist/fullcalendar-rrule/main': './src/rrule/main.ts',
   'tmp/automated-tests': './tests/automated/index'
 }
 
@@ -116,10 +120,10 @@ function generateLocaleMap() {
 
   glob.sync('locales/*.js').forEach(function(path) {
     // strip out .js to get module name. also, path must start with ./
-    map['dist/' + path.replace(/\.js$/, '')] = './' + path
+    map['dist/fullcalendar/' + path.replace(/\.js$/, '')] = './' + path
   })
 
-  map['dist/locales-all'] = Object.values(map) // all locales combined
+  map['dist/fullcalendar/locales-all'] = Object.values(map) // all locales combined
 
   return map
 }

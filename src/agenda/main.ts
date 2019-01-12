@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from '../plugin-system'
+import { createPlugin, PluginDef } from 'fullcalendar'
 import AgendaView from './AgendaView'
 
 let plugin: PluginDef = createPlugin({

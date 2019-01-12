@@ -18,3 +18,7 @@ class MomentNamedTimeZone extends NamedTimeZoneImpl {
 
 registerNamedTimeZoneImpl('moment-timezone', MomentNamedTimeZone)
 globalDefaults.timeZoneImpl = 'moment-timezone'
+
+export default {
+  warning: 'TODO: convert fullcalendar-moment-timezone to real plugin. will still work though.'
+}

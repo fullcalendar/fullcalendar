@@ -32,17 +32,21 @@ module.exports = function(config) {
       'node_modules/jquery-simulate/jquery.simulate.js',
 
       // main lib AND plugin files
-      'dist/fullcalendar.js',
-      'dist/fullcalendar.css',
-      'dist/plugins/gcal.js',
-      'dist/plugins/moment.js',
-      'dist/plugins/moment-timezone.js',
-      'dist/plugins/rrule.js',
-      'dist/locales-all.js',
+      'dist/fullcalendar/main.js',
+      'dist/fullcalendar/main.css',
+      'dist/fullcalendar/locales-all.js',
+      'dist/fullcalendar-agenda/main.js',
+      'dist/fullcalendar-agenda/main.css',
+      'dist/fullcalendar-list/main.js',
+      'dist/fullcalendar-list/main.css',
+      'dist/fullcalendar-gcal/main.js',
+      'dist/fullcalendar-moment/main.js',
+      'dist/fullcalendar-moment-timezone/main.js',
+      'dist/fullcalendar-rrule/main.js',
 
       // COMMENT-OUT THESE LINES when testing IE11
       'node_modules/luxon/build/global/luxon.js',
-      'dist/plugins/luxon.js',
+      'dist/fullcalendar-luxon/main.js',
 
       // a way to dump variables into the test environment
       'tmp/automated-test-config.js',

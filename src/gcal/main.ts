@@ -173,3 +173,7 @@ function injectQsComponent(url, component) {
     return (qs ? qs + '&' : '?') + component + hash
   })
 }
+
+export default {
+  warning: 'TODO: convert fullcalendar-gcal to real plugin. will still work though.'
+}

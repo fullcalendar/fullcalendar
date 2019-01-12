@@ -116,6 +116,16 @@ export class PluginSystem {
   }
 
   add(plugin: PluginDef) {
+
+    // TODO: remove this
+    if ((plugin as any).warning) {
+      if (!(plugin as any).warned) {
+        console.warn((plugin as any).warning)
+        ;(plugin as any).warned = true
+      }
+      return
+    }
+
     if (!this.addedHash[plugin.id]) {
       this.addedHash[plugin.id] = true
 
