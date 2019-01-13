@@ -1,3 +1,5 @@
+import { Calendar, globalDefaults } from 'fullcalendar'
+
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
@@ -66,7 +68,7 @@ window.initCalendar = function(moreOptions, el) {
     newCalendar = window.currentCalendar = this
   }
 
-  new FullCalendar.Calendar($el[0], options)
+  new Calendar($el[0], options)
 
   if (newCalendar === window.currentCalendar) {
     newCalendar.render()
@@ -226,5 +228,5 @@ window.pushOptions({
 })
 
 // clear what plugins do. will take affect for all calendars, not just those via initCalendar()
-FullCalendar.globalDefaults.timeZoneImpl = null
-FullCalendar.globalDefaults.cmdFormatter = null
+globalDefaults.timeZoneImpl = null
+globalDefaults.cmdFormatter = null

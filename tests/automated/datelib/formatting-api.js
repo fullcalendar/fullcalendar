@@ -1,8 +1,9 @@
+import { formatDate } from 'fullcalendar'
 
 describe('formatDate', function() {
 
   it('works with no timezone offset', function() {
-    let str = FullCalendar.formatDate('2018-09-04', {
+    let str = formatDate('2018-09-04', {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
@@ -11,7 +12,7 @@ describe('formatDate', function() {
   })
 
   it('works with timezone offset', function() {
-    let str = FullCalendar.formatDate('2018-09-04T00:00:00-05:00', {
+    let str = formatDate('2018-09-04T00:00:00-05:00', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
@@ -27,7 +28,7 @@ describe('formatDate', function() {
 describe('formatRange', function() {
 
   it('works with no timezone offset', function() {
-    let str = FullCalendar.formatRange('2018-09-04', '2018-10-04', {
+    let str = formatRange('2018-09-04', '2018-10-04', {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
@@ -36,7 +37,7 @@ describe('formatRange', function() {
   })
 
   it('works with timezone offset', function() {
-    let str = FullCalendar.formatRange('2018-09-04T00:00:00-05:00', '2018-10-04T00:00:00-05:00', {
+    let str = formatRange('2018-09-04T00:00:00-05:00', '2018-10-04T00:00:00-05:00', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
