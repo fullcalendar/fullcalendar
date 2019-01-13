@@ -13,7 +13,14 @@
     "importHelpers": true,
     "baseUrl": ".",
     "paths": {
-      "fullcalendar": ["src/core/main"]
+      "fullcalendar": [ "src/core/main" ],
+      "fullcalendar-agenda": [ "src/agenda/main" ],
+      "fullcalendar-list": [ "src/list/main" ],
+      "fullcalendar-gcal": [ "src/gcal/main" ],
+      "fullcalendar-rrule": [ "src/rrule/main" ],
+      "fullcalendar-luxon": [ "src/luxon/main" ],
+      "fullcalendar-moment": [ "src/moment/main" ],
+      "fullcalendar-moment-timezone": [ "src/moment-timezone/main" ]
     },
     "sourceMap": true
   },
