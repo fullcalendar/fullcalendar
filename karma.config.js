@@ -57,6 +57,7 @@ module.exports = function(config) {
       'tests/automated/base.css',
       'tmp/automated-tests.js',
 
+      // this sends a huge list to the client!!!!????
       { // serve all other files
         pattern: '**/*',
         included: false, // don't immediately execute
