@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES5",
+    "module": "ES6",
+    "moduleResolution": "Node",
     "lib": [
       "dom",
       "es2015",
       "scripthost"
     ],
-    "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,
@@ -22,9 +24,12 @@
       "fullcalendar-moment": [ "src/moment/main" ],
       "fullcalendar-moment-timezone": [ "src/moment-timezone/main" ]
     },
+    "outDir": "tmp/tsc-output",
     "sourceMap": true
   },
   "include": [
-    "src/**/main.ts"
+    "src/**/main.ts",
+    "locales/*.js",
+    "tests/automated/**/*.js"
   ]
 }

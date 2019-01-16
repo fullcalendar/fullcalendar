@@ -1,20 +1,9 @@
 const fs = require('fs')
 const gulp = require('gulp')
 const gutil = require('gulp-util')
-const watch = require('gulp-watch') // better than gulp.watch because detects new files
 const generateDts = require('dts-generator').default
 
-gulp.task('ts-types', exec)
-
-/*
-Waits for fullcalendar.js to be created/modified before computing,
-to avoid competing with and slowing down main build watcher.
-*/
-gulp.task('ts-types:watch', function() {
-  watch('dist/fullcalendar.js', exec)
-})
-
-function exec() {
+gulp.task('ts-types', function() {
   gutil.log('Computing TypeScript definitions file...')
   return generateDts({
     project: '.', // where the tsconfig is
@@ -36,7 +25,7 @@ function exec() {
     fs.writeFileSync('dist/fullcalendar.d.ts', content, { encoding: 'utf8' })
     gutil.log('Wrote TypeScript definitions file.')
   })
-}
+})
 
 // Typedef Source Code Transformation Hacks
 // ----------------------------------------

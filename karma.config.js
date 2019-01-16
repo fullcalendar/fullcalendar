@@ -30,23 +30,17 @@ module.exports = function(config) {
       'node_modules/xhr-mock/dist/xhr-mock.js', // TODO: should include this via require(), but .d.ts problems
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
       'node_modules/jquery-simulate/jquery.simulate.js',
+      'node_modules/luxon/build/global/luxon.js', // TODO: how to deal with IE11?
 
-      // main lib AND plugin files
-      'dist/fullcalendar/main.js',
-      'dist/fullcalendar/main.css',
-      'dist/fullcalendar/locales-all.js',
-      'dist/fullcalendar-agenda/main.js',
-      'dist/fullcalendar-agenda/main.css',
-      'dist/fullcalendar-list/main.js',
-      'dist/fullcalendar-list/main.css',
-      'dist/fullcalendar-gcal/main.js',
-      'dist/fullcalendar-moment/main.js',
-      'dist/fullcalendar-moment-timezone/main.js',
-      'dist/fullcalendar-rrule/main.js',
+      // core and plugin files
+      'dist/**/*.js',
+      'dist/**/*.css',
 
-      // COMMENT-OUT THESE LINES when testing IE11
-      'node_modules/luxon/build/global/luxon.js',
-      'dist/fullcalendar-luxon/main.js',
+      // sourcemaps
+      { pattern: 'dist/**/*.map', included: false, nocache: true, watched: false },
+
+      // src files referenced from sourcemaps
+      { pattern: 'src/**/*', included: false, nocache: true, watched: false },
 
       // a way to dump variables into the test environment
       'tmp/automated-test-config.js',
@@ -54,20 +48,14 @@ module.exports = function(config) {
       // so plugins can dump files into here and test side effects
       'tmp/test-side-effects/*.js',
 
+      // tests
       'tests/automated/base.css',
       'tmp/automated-tests.js',
-
-      // this sends a huge list to the client!!!!????
-      { // serve all other files
-        pattern: '**/*',
-        included: false, // don't immediately execute
-        nocache: true, // don't let the webserver cache
-        watched: false // don't let changes trigger tests to restart
-      }
     ],
 
+    // make console errors aware of source files
     preprocessors: {
-      '**/*.js': [ 'sourcemap' ]
+      'dist/**/*.js': [ 'sourcemap' ]
     },
 
     // test results reporter to use

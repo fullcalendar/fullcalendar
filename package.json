@@ -33,8 +33,8 @@
     "@types/luxon": "^1.4.1",
     "bootstrap": "^3.4.0",
     "components-jqueryui": "github:components/jqueryui",
+    "concurrently": "^4.1.0",
     "css-loader": "^0.28.11",
-    "del": "^2.2.1",
     "dragula": "^3.7.2",
     "dts-generator": "^2.1.0",
     "eslint": "^4.19.1",
@@ -54,7 +54,6 @@
     "gulp-tslint": "^8.1.3",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
-    "gulp-watch": "^4.3.11",
     "gulp-zip": "^3.2.0",
     "jasmine-core": "2.5.2",
     "jasmine-jquery": "^2.1.1",
@@ -67,6 +66,12 @@
     "karma-verbose-reporter": "0.0.6",
     "native-promise-only": "^0.8.1",
     "node-sass": "^4.11.0",
+    "rollup": "^1.1.0",
+    "rollup-plugin-multi-entry": "^2.1.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-scss": "^0.4.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.18.1",
     "tslib": "^1.9.3",
     "tslint": "^5.12.1",
     "tslint-config-standard": "^7.1.0",
@@ -74,24 +79,21 @@
     "xhr-mock": "^2.4.1",
     "yargs": "^4.8.1"
   },
-  "main": "dist/fullcalendar.js",
-  "types": "dist/fullcalendar.d.ts",
+  "main": "dist/fullcalendar/main.js",
+  "types": "dist/fullcalendar/main.d.ts",
   "files": [
-    "dist/*.js",
-    "dist/*.css",
-    "dist/*.d.ts",
-    "dist/plugins/*.js",
-    "dist/plugins/*.css",
-    "dist/locales/*.js",
-    "README.*",
-    "LICENSE.*",
-    "CHANGELOG.*",
-    "CONTRIBUTING.*"
+    "dist/**/*"
   ],
   "scripts": {
-    "clean": "gulp clean",
-    "dist": "gulp dist",
-    "lint": "gulp lint-and-example-repos",
-    "test": "gulp test:single"
+    "clean": "rm -rf dist tmp",
+    "build": "tsc && npm run rollup && npm run sass",
+    "watch": "concurrently --raw 'tsc --watch' 'npm run rollup-watch' 'npm run sass-watch'",
+    "rollup": "rollup -c --environment BUILD:production",
+    "rollup-watch": "sleep 5 && rollup -c --environment BUILD:development --watch",
+    "sass": "sass --update --sourcemap=none $(bin/sass-args.js)",
+    "sass-watch": "sass --watch $(bin/sass-args.js)",
+    "test": "karma start karma.config.js --auto-watch",
+    "test-single": "karma start karma.config.js --browsers ChromeHeadless_custom --single-run",
+    "lint": "gulp lint-and-example-repos"
   }
 }
