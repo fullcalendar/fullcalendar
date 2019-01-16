@@ -24,7 +24,11 @@ let packageGlobals = {
   fullcalendar: 'FullCalendar'
 }
 
+/*
+KNOWN BUG: when watching test files that don't have any import statements, tsc transpiles ALL files.
+*/
 let watchOptions = {
+  chokidar: true, // better than default watch util. doesn't fire change events on stat changes (like last opened)
   clearScreen: false // let tsc do the screan clearing
 }
 
@@ -65,8 +69,8 @@ function buildPackageConfig(packageName) {
       sourcemapExcludeSources: true
     },
     plugins: [
-      resolve(),
-      sourcemaps()
+      resolve(), // for tslib
+      sourcemaps() // for processing tsc's sourcemaps
     ]
   }
 }
@@ -86,7 +90,10 @@ function buildLocaleConfigs() {
         globals: packageGlobals,
         exports: 'none',
         format: 'umd'
-      }
+      },
+      plugins: [
+        resolve() // for tslib
+      ]
     })
   }
 
@@ -103,6 +110,7 @@ function buildLocaleConfigs() {
       format: 'umd'
     },
     plugins: [
+      resolve(), // for tslib
       multiEntry()
     ]
   })
@@ -127,8 +135,8 @@ function buildTestConfig() {
       format: 'umd'
     },
     plugins: [
-      resolve(),
-      sourcemaps(),
+      resolve(), // for tslib
+      sourcemaps(), // for processing tsc's sourcemaps
       multiEntry({
         exports: false // otherwise will complain about exported utils
       })
@@ -138,6 +146,6 @@ function buildTestConfig() {
 
 function onwarn(warning, warn) {
   if (warning.code !== 'PLUGIN_WARNING') {
-    warn(warning)
+    // warn(warning)
   }
 }

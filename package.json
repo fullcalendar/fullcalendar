@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/luxon": "^1.4.1",
     "bootstrap": "^3.4.0",
+    "chokidar": "^2.0.4",
     "components-jqueryui": "github:components/jqueryui",
     "concurrently": "^4.1.0",
     "css-loader": "^0.28.11",
