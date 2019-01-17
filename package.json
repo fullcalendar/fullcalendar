@@ -20,8 +20,6 @@
     "url": "http://arshaw.com/"
   },
   "copyright": "2018 Adam Shaw",
-  "version": "0.0.0",
-  "releaseDate": "1970-01-01",
   "devDependencies": {
     "@types/luxon": "^1.4.1",
     "bootstrap": "^3.4.0",
@@ -78,11 +76,6 @@
     "xhr-mock": "^2.4.1",
     "yargs": "^4.8.1"
   },
-  "main": "dist/fullcalendar/main.js",
-  "types": "dist/fullcalendar/main.d.ts",
-  "files": [
-    "dist/**/*"
-  ],
   "scripts": {
     "clean": "rm -rf dist tmp",
     "build": "tsc && npm run rollup && npm run sass",
