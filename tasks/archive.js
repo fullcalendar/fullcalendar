@@ -85,7 +85,8 @@ gulp.task('archive:packages', function() {
 
 gulp.task('archive:demos', function() {
   return gulp.src([
-    'demos/**'
+    'demos/**',
+    '!**/_*' // no files that start with underscore
   ])
   .pipe(htmlFileFilter)
   .pipe(demoPathModify)
@@ -98,7 +99,7 @@ gulp.task('archive:demos', function() {
 gulp.task('archive:vendor', [ 'archive:demos' ], function() {
   return gulp.src(
     vendorPaths,
-    { cwd: 'node_modules' }
+    { cwd: 'node_modules' } // a cwd without a base will flatten the paths. what we want
   ).pipe(
     gulp.dest('tmp/' + archiveId + '/packages')
   )
