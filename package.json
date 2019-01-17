@@ -19,7 +19,8 @@
     "email": "arshaw@arshaw.com",
     "url": "http://arshaw.com/"
   },
-  "copyright": "2018 Adam Shaw",
+  "copyright": "2019 Adam Shaw",
+  "main": "main.js",
   "devDependencies": {
     "@types/luxon": "^1.4.1",
     "bootstrap": "^3.4.0",
@@ -78,7 +79,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist tmp",
-    "build": "tsc && npm run rollup && npm run sass && gulp dist-post-process",
+    "build": "tsc && npm run rollup && npm run sass && gulp dist-post-process && gulp ts-types && gulp package-meta",
     "watch": "concurrently --raw 'tsc --watch --sourceMap' 'npm run rollup-watch' 'npm run sass-watch'",
     "rollup": "rollup -c --environment BUILD:production",
     "rollup-watch": "sleep 5 && rollup -c --environment BUILD:development --watch",
