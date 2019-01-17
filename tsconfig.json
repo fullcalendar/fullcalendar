@@ -24,8 +24,7 @@
       "fullcalendar-moment": [ "src/moment/main" ],
       "fullcalendar-moment-timezone": [ "src/moment-timezone/main" ]
     },
-    "outDir": "tmp/tsc-output",
-    "sourceMap": true
+    "outDir": "tmp/tsc-output"
   },
   "include": [
     "src/**/main.ts",
