@@ -57,6 +57,7 @@ then
     git checkout --quiet --detach &&
     git add *.json &&
 
+    # WRONG!!!
     git add -f dist/*.js dist/*.d.ts dist/*.css dist/plugins/*.js dist/locales/*.js &&
     git commit --quiet --no-verify -e -m "version $version" &&
     git tag -a "v$version" -m "version $version"

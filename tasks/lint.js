@@ -15,10 +15,7 @@ gulp.task('lint', [
 ])
 
 gulp.task('lint:ts', function() {
-  return gulp.src([
-    'src/**/*.ts',
-    'plugins/**/*.ts'
-  ])
+  return gulp.src('src/**/*.ts') // TODO: get files from tsconfig.include
     .pipe(
       tslint({ // will use tslint.json
         formatter: 'verbose',

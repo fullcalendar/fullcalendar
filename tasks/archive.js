@@ -20,6 +20,7 @@ gulp.task('archive', [
     .pipe(gulp.dest('dist/'))
 })
 
+// TODO: update
 gulp.task('archive:dist', [ 'dist' ], function() {
   return gulp.src([
     'dist/*.{js,css}',
