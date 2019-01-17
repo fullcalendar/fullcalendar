@@ -1,66 +1,110 @@
 const gulp = require('gulp')
-const rename = require('gulp-rename')
 const filter = require('gulp-filter')
 const modify = require('gulp-modify-file')
+const uglify = require('gulp-uglify')
+const cssmin = require('gulp-cssmin')
+const rename = require('gulp-rename')
 const zip = require('gulp-zip')
 
 // determines the name of the ZIP file
 const packageConfig = require('../package.json')
-const packageId = packageConfig.name + '-' + packageConfig.version
+const archiveId = packageConfig.name + '-' + (packageConfig.version || '0.0.0')
 
-gulp.task('archive', [
-  'archive:dist',
-  'archive:misc',
-  'archive:deps',
-  'archive:demos'
-], function() {
+gulp.task('archive', [ 'archive:files', 'archive:minify' ], function() {
   // make the zip, with a single root directory of a similar name
-  return gulp.src('tmp/' + packageId + '/**/*', { base: 'tmp/' })
-    .pipe(zip(packageId + '.zip'))
-    .pipe(gulp.dest('dist/'))
+  return gulp.src('tmp/' + archiveId + '/**', { base: 'tmp/' })
+    .pipe(
+      zip(archiveId + '.zip')
+    )
+    .pipe(
+      gulp.dest('dist/')
+    )
 })
 
-// TODO: update
-gulp.task('archive:dist', [ 'dist' ], function() {
+gulp.task('archive:files', [
+  'archive:packages',
+  'archive:demos',
+  'archive:vendor',
+  'archive:meta'
+])
+
+gulp.task('archive:minify', [
+  'archive:minify:js',
+  'archive:minify:css'
+])
+
+gulp.task('archive:minify:js', [ 'archive:files' ], function() {
   return gulp.src([
-    'dist/*.{js,css}',
-    'dist/plugins/*.js',
-    'dist/plugins/*.css',
-    'dist/locales/*.js',
-    'dist/locales-all.js'
-  ], {
-    base: 'dist/'
-  })
-    .pipe(gulp.dest('tmp/' + packageId + '/'))
+    'tmp/' + archiveId + '/packages/*/*.js', // only FC files
+    '!**/*.min.js' // avoid double minify
+  ], { base: '.' })
+    .pipe(
+      uglify({
+        preserveComments: 'some' // keep comments starting with !
+      })
+    )
+    .pipe(
+      rename({ extname: '.min.js' })
+    )
+    .pipe(gulp.dest('.'))
 })
 
-gulp.task('archive:misc', function() {
+gulp.task('archive:minify:css', [ 'archive:files' ], function() {
+  return gulp.src([
+    'tmp/' + archiveId + '/packages/*/*.css', // only FC files
+    '!**/*.min.css' // avoid double minify
+  ], { base: '.' })
+    .pipe(
+      cssmin()
+    )
+    .pipe(
+      rename({ extname: '.min.css' })
+    )
+    .pipe(
+      gulp.dest('.')
+    )
+})
+
+gulp.task('archive:meta', function() {
   return gulp.src([
     'LICENSE.*',
-    'CHANGELOG.*',
-    'CONTRIBUTING.*'
-  ])
-    .pipe(rename({ extname: '.txt' }))
-    .pipe(gulp.dest('tmp/' + packageId + '/'))
+    'CHANGELOG.*'
+  ]).pipe(
+    gulp.dest('tmp/' + archiveId)
+  )
 })
 
-gulp.task('archive:deps', function() {
+gulp.task('archive:packages', function() {
   return gulp.src([
-    'node_modules/superagent/superagent.js'
-  ])
-    .pipe(gulp.dest('tmp/' + packageId + '/demos/js/'))
+    'dist/**',
+    '!**/*.{txt,json,d.ts}'
+  ]).pipe(
+    gulp.dest('tmp/' + archiveId + '/packages')
+  )
 })
 
-// transfers demo files, transforming their paths to dependencies
 gulp.task('archive:demos', function() {
-  return gulp.src('**/*', { cwd: 'demos/', base: 'demos/' })
-    .pipe(htmlFileFilter)
-    .pipe(demoPathModify)
-    .pipe(htmlFileFilter.restore) // pipe thru files that didn't match htmlFileFilter
-    .pipe(gulp.dest('tmp/' + packageId + '/demos/'))
+  return gulp.src([
+    'demos/**'
+  ])
+  .pipe(htmlFileFilter)
+  .pipe(demoPathModify)
+  .pipe(htmlFileFilter.restore) // pipe thru files that didn't match htmlFileFilter
+  .pipe(
+    gulp.dest('tmp/' + archiveId + '/demos')
+  )
 })
 
-const htmlFileFilter = filter('*.html', { restore: true })
+gulp.task('archive:vendor', [ 'archive:demos' ], function() {
+  return gulp.src(
+    vendorPaths,
+    { cwd: 'node_modules' }
+  ).pipe(
+    gulp.dest('tmp/' + archiveId + '/packages')
+  )
+})
+
+const htmlFileFilter = filter('**/*.html', { restore: true })
 const demoPathModify = modify(function(content) {
   return content.replace(
     /((?:src|href)=['"])([^'"]*)(['"])/g,
@@ -70,28 +114,18 @@ const demoPathModify = modify(function(content) {
   )
 })
 
+let vendorPaths = []
+
 function transformDemoPath(path) {
-  // reroot 3rd party libs that we include in our dist
-  path = path.replace('../node_modules/superagent/', 'js/') // js dir in the demos dir
+  path = path.replace('../dist/', '../packages/')
 
-  // reroot 3rd party libs that request from CDN
-  path = path.replace('../node_modules/rrule/', 'https://cdn.jsdelivr.net/npm/rrule@2.5.5/')
-  path = path.replace('../node_modules/dragula/dist/', 'https://cdn.jsdelivr.net/npm/dragula@3.7.2/')
-  path = path.replace('../node_modules/jquery/dist/', 'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/')
-  path = path.replace('../node_modules/components-jqueryui/', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/')
-
-  // reroot dist files to archive root
-  path = path.replace('../dist/', '../')
-
-  if (
-    !/\.min\.(js|css)$/.test(path) && // not already minified
-    !/^\w/.test(path) && // reference to demo util js/css file
-    path !== '../locales-all.js' && // this file is already minified
-    path !== '../lib/superagent.js' // doesn't have a .min.js, but that's okay
-  ) {
-    // use minified
-    path = path.replace(/\/([^/]*)\.(js|css)$/, '/$1.min.$2')
-  }
+  path = path.replace(
+    /^\.\.\/node_modules\/(.*)\/([^\/]+)$/,
+    function(m0, m1, m2) {
+      vendorPaths.push(m1 + '/' + m2)
+      return '../packages/' + m2
+    }
+  )
 
   return path
 }

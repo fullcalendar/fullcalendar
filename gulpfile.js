@@ -3,9 +3,8 @@ const gulp = require('gulp')
 require('./tasks/ts-types')
 require('./tasks/package-meta')
 require('./tasks/dist-post-process')
-
-require('./tasks/minify')
 require('./tasks/archive')
+
 require('./tasks/lint')
 require('./tasks/bump')
 require('./tasks/example-repos')

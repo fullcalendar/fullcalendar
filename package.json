@@ -79,6 +79,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist tmp",
+    "archive": "npm run build && gulp archive",
     "build": "tsc && npm run rollup && npm run sass && gulp dist-post-process && gulp ts-types && gulp package-meta",
     "watch": "concurrently --raw 'tsc --watch --sourceMap' 'npm run rollup-watch' 'npm run sass-watch'",
     "rollup": "rollup -c --environment BUILD:production",
