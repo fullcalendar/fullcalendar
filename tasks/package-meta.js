@@ -6,7 +6,21 @@ const tsConfig = require('../tsconfig')
 
 let packagePaths = tsConfig.compilerOptions.paths
 
-gulp.task('package-meta', function() {
+gulp.task('package-meta', [ 'package-meta:text', 'package-meta:json' ])
+
+gulp.task('package-meta:text', function() {
+  let stream = gulp.src('LICENSE.*')
+
+  for (let packageName in packagePaths) {
+    stream = stream.pipe(
+      gulp.dest('dist/' + packageName)
+    )
+  }
+
+  return stream
+})
+
+gulp.task('package-meta:json', function() {
 
   for (let packageName in packagePaths) {
     let packagePath = packagePaths[packageName][0]
