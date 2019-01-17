@@ -1,74 +1,53 @@
-const fs = require('fs')
+const path = require('path')
 const gulp = require('gulp')
-const gutil = require('gulp-util')
+const modify = require('gulp-modify-file')
 const generateDts = require('dts-generator').default
+const tsConfig = require('../tsconfig.json')
 
-gulp.task('ts-types', function() {
-  gutil.log('Computing TypeScript definitions file...')
-  return generateDts({
-    project: '.', // where the tsconfig is
-    name: 'fullcalendar',
-    main: 'fullcalendar/src/main',
-    out: 'tmp/fullcalendar.d.ts'
-  }).then(function() {
-    let content = fs.readFileSync('tmp/fullcalendar.d.ts', { encoding: 'utf8' })
+let outFiles = []
 
-    content = filterModuleDeclaration(content)
-    content = content.replace(
-      /import\((['"])(..\/)+/g,
-      'import($1fullcalendar/src/'
+gulp.task('ts-types', [ 'ts-types:raw' ], function() {
+  return gulp.src(outFiles, { base: '.' })
+    .pipe(
+      modify(modifySource)
     )
-
-    if (!fs.existsSync('dist')) {
-      fs.mkdirSync('dist')
-    }
-    fs.writeFileSync('dist/fullcalendar.d.ts', content, { encoding: 'utf8' })
-    gutil.log('Wrote TypeScript definitions file.')
-  })
+    .pipe(
+      gulp.dest('.')
+    )
 })
 
-// Typedef Source Code Transformation Hacks
-// ----------------------------------------
+gulp.task('ts-types:raw', function() {
+  let packagePaths = tsConfig.compilerOptions.paths
+  let promises = []
 
-function filterModuleDeclaration(s) {
-  return s.replace(
-    /^declare module '([^']*)' \{([\S\s]*?)[\n\r]+\}/mg,
-    function(whole, id, body) {
-      return "declare module '" + filterModuleId(id) + "' {" + filterModuleBody(body) + '\n}'
-    }
-  )
-}
+  for (let packageName in packagePaths) {
+    let packagePath = packagePaths[packageName][0]
+    let outFile = 'dist/' + packageName + '/main.d.ts'
 
-function filterModuleId(id) {
-  // fullcalendar/src/something/MyClass -> fullcalendar/MyClass
-  return id.replace(
-    /\/src\/([^/]*\/)*([A-Z][A-Za-z0-9]*)$/,
-    '/$2'
-  )
-}
+    promises.push(
+      generateDts({
+        baseDir: path.dirname(packagePath),
+        files: [ path.basename(packagePath) ],
+        name: packageName,
+        out: outFile
+      })
+    )
 
-function filterModuleBody(s) {
-  var defaultExportName
-
-  // changes the name of the default export to `Default` and exports it as a *named* export.
-  // this allows ambient declaration merging to grab onto it.
-  // workaround for https://github.com/Microsoft/TypeScript/issues/14080
-  s = s.replace(/export default( abstract)? class ([A-Z][A-Za-z0-9]*)/, function(m0, m1, m2) {
-    defaultExportName = m2
-    return 'export' + (m1 || '') + ' class Default'
-  })
-
-  if (defaultExportName) {
-    // replace any references to the original class' name
-    s = s.replace(new RegExp('\\b' + defaultExportName + '\\b', 'g'), 'Default')
-
-    // still needs to be exported as default
-    s += '\n\texport default Default;'
+    outFiles.push(outFile)
   }
 
-  s = s.replace(/from '([^']*)'/g, function(whole, id) {
-    return "from '" + filterModuleId(id) + "'"
-  })
+  return Promise.all(promises)
+})
 
-  return s
+// changes the name of the default export to `Default` and exports it as a *named* export.
+// this allows ambient declaration merging to grab onto it.
+// workaround for https://github.com/Microsoft/TypeScript/issues/14080
+function modifySource(s) {
+  return s.replace(/export default (abstract )?class ([\w]+)/g, function(m0, abstractStr, className) {
+    if (!abstractStr) {
+      abstractStr = ''
+    }
+    return `export { ${className} as default, ${className} };\n` +
+      `${abstractStr} class ${className}`
+  })
 }
