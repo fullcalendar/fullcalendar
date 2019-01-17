@@ -1,6 +1,8 @@
 const gulp = require('gulp')
 
 require('./tasks/ts-types')
+require('./tasks/package-meta')
+
 require('./tasks/minify')
 require('./tasks/archive')
 require('./tasks/lint')

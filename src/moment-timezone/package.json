@@ -1,0 +1,7 @@
+{
+  "title": "FullCalendar Moment Timezone Plugin",
+  "dependencies": {
+    "moment": "",
+    "moment-timezone": ""
+  }
+}
