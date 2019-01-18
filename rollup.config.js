@@ -14,8 +14,6 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
   isDev = process.env.BUILD == 'development'
 }
 
-let packagePaths = tsConfig.compilerOptions.paths
-let packageNames = Object.keys(packagePaths)
 let packageGlobals = {
   superagent: 'superagent',
   luxon: 'luxon',
@@ -24,12 +22,25 @@ let packageGlobals = {
   fullcalendar: 'FullCalendar'
 }
 
+let packagePaths = tsConfig.compilerOptions.paths
+let packageNames = Object.keys(packagePaths)
+
 /*
 KNOWN BUG: when watching test files that don't have any import statements, tsc transpiles ALL files.
 */
 let watchOptions = {
   chokidar: true, // better than default watch util. doesn't fire change events on stat changes (like last opened)
   clearScreen: false // let tsc do the screan clearing
+}
+
+function getDefaultPlugins() { // need to be instantiated each time
+  let plugins = [ resolve() ] // for tslib
+
+  if (isDev) {
+    plugins.push(sourcemaps()) // for reading/writing sourcemaps
+  }
+
+  return plugins
 }
 
 for (let packageName of packageNames) {
@@ -65,13 +76,9 @@ function buildPackageConfig(packageName) {
       exports: 'named',
       name: packageGlobals[packageName],
       format: 'umd',
-      sourcemap: isDev,
-      sourcemapExcludeSources: true
+      sourcemap: isDev
     },
-    plugins: [
-      resolve(), // for tslib
-      sourcemaps() // for processing tsc's sourcemaps
-    ]
+    plugins: getDefaultPlugins()
   }
 }
 
@@ -89,11 +96,10 @@ function buildLocaleConfigs() {
         file: 'dist/fullcalendar/locales/' + path.basename(localePath),
         globals: packageGlobals,
         exports: 'none',
-        format: 'umd'
+        format: 'umd',
+        sourcemap: isDev
       },
-      plugins: [
-        resolve() // for tslib
-      ]
+      plugins: getDefaultPlugins()
     })
   }
 
@@ -107,12 +113,12 @@ function buildLocaleConfigs() {
       file: 'dist/fullcalendar/locales-all.js',
       globals: packageGlobals,
       exports: 'none',
-      format: 'umd'
+      format: 'umd',
+      sourcemap: isDev
     },
-    plugins: [
-      resolve(), // for tslib
+    plugins: getDefaultPlugins().concat([
       multiEntry()
-    ]
+    ])
   })
 
   return configs
@@ -123,8 +129,8 @@ function buildTestConfig() {
     onwarn,
     watch: watchOptions,
     input: [
-      'tmp/tsc-output/tests/automated/globals.js',
-      'tmp/tsc-output/tests/automated/hacks.js',
+      'tmp/tsc-output/tests/automated/globals.js', // needs to be first
+      'tmp/tsc-output/tests/automated/hacks.js', // "
       'tmp/tsc-output/tests/automated/**/*.js'
     ],
     external: externalPackageNames,
@@ -132,15 +138,14 @@ function buildTestConfig() {
       file: 'tmp/automated-tests.js',
       globals: packageGlobals,
       exports: 'none',
-      format: 'umd'
+      format: 'umd',
+      sourcemap: isDev
     },
-    plugins: [
-      resolve(), // for tslib
-      sourcemaps(), // for processing tsc's sourcemaps
+    plugins: getDefaultPlugins().concat([
       multiEntry({
         exports: false // otherwise will complain about exported utils
       })
-    ]
+    ])
   }
 }
 

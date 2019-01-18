@@ -25,7 +25,7 @@ module.exports = function(config) {
 
       'node_modules/components-jqueryui/jquery-ui.js',
       'node_modules/components-jqueryui/themes/cupertino/jquery-ui.css',
-      { pattern: 'node_modules/components-jqueryui/themes/cupertino/images/**', included: false, nocache: true, watched: false  },
+      { pattern: 'node_modules/components-jqueryui/themes/cupertino/images/**', included: false, nocache: true, watched: false },
 
       // dependencies for tests
       'node_modules/native-promise-only/lib/npo.src.js', // Promises needed by xhr-mock
@@ -36,14 +36,9 @@ module.exports = function(config) {
 
       // core and plugin files
       'dist/fullcalendar/main.js', // needs to be first
-      'dist/**/*.js',
-      'dist/**/*.css',
-
-      // sourcemaps
-      { pattern: 'dist/**/*.map', included: false, nocache: true, watched: false },
-
-      // src files referenced from sourcemaps
-      { pattern: 'src/**/*', included: false, nocache: true, watched: false },
+      'dist/fullcalendar/locales-all.js',
+      'dist/*/main.+(js|css)', // other packages
+      { pattern: 'dist/*/*.map', included: false, nocache: true, watched: false },
 
       // a way to dump variables into the test environment
       'tmp/automated-test-config.js',
@@ -54,6 +49,7 @@ module.exports = function(config) {
       // tests
       'tests/automated/base.css',
       'tmp/automated-tests.js',
+      { pattern: 'tmp/automated-tests.js.map', included: false, nocache: true, watched: false },
     ],
 
     // make console errors aware of source files
