@@ -20,12 +20,6 @@ export function toDuration(fcDuration: fc.Duration): moment.Duration {
   return moment.duration(fcDuration) // momment accepts all the props that fc.Duration already has!
 }
 
-// for browser globals. TODO: better solution
-(fc as any).Moment = {
-  toMoment,
-  toDuration
-}
-
 
 fc.registerCmdFormatter('moment', function(cmdStr: string, arg: fc.VerboseFormattingArg) {
   let cmd = parseCmdStr(cmdStr)

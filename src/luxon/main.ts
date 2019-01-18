@@ -26,12 +26,6 @@ export function toDuration(duration: fc.Duration, calendar: fc.Calendar): Durati
   })
 }
 
-// for browser globals. TODO: better solution
-(fc as any).Luxon = {
-  toDateTime,
-  toDuration
-}
-
 
 class LuxonNamedTimeZone extends fc.NamedTimeZoneImpl {
 
