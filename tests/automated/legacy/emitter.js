@@ -1,6 +1,6 @@
+import { EmitterMixin } from 'fullcalendar'
 
 describe('emitter', function() {
-  var EmitterMixin = FullCalendar.EmitterMixin
 
   it('calls a handler', function() {
     var o = new EmitterMixin()

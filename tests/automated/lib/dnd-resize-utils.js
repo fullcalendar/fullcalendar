@@ -8,7 +8,7 @@ import {
   getFirstEventEl,
   getLastEventEl
 } from '../event-render/EventRenderUtils'
-
+import { parseMarker, addDays } from 'fullcalendar'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
   var eventsRendered = false
@@ -31,7 +31,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
     var dropDateMeta
     var dropDateHasTime
     if (typeof dropDate === 'string') {
-      dropDateMeta = FullCalendar.parseMarker(dropDate)
+      dropDateMeta = parseMarker(dropDate)
       dropDateHasTime = !dropDateMeta.isTimeUnspecified
       dropDate = dropDateMeta.marker
     } else {
@@ -123,7 +123,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
     var resizeDateMeta
     var resizeDateHasTime
     if (typeof resizeDate === 'string') {
-      resizeDateMeta = FullCalendar.parseMarker(resizeDate)
+      resizeDateMeta = parseMarker(resizeDate)
       resizeDateHasTime = !resizeDateMeta.isTimeUnspecified
       resizeDate = resizeDateMeta.marker
     } else {
@@ -140,7 +140,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       expect(lastSlatEl.length).toBe(1)
       dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())
     } else {
-      lastDayEl = getDayEl(FullCalendar.addDays(resizeDate, -1))
+      lastDayEl = getDayEl(addDays(resizeDate, -1))
       dy = lastDayEl.offset().top - eventEl.offset().top
     }
 
@@ -193,12 +193,12 @@ export function testSelection(options, start, end, expectSuccess, callback) {
   var allDay = false
   var meta
   if (typeof start === 'string') {
-    meta = FullCalendar.parseMarker(start)
+    meta = parseMarker(start)
     allDay = allDay || meta.isTimeUnspecified
     start = meta.marker
   }
   if (typeof end === 'string') {
-    meta = FullCalendar.parseMarker(end)
+    meta = parseMarker(end)
     allDay = allDay || meta.isTimeUnspecified
     end = meta.marker
   }

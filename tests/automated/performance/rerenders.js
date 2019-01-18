@@ -1,3 +1,6 @@
+import { DayGrid } from 'fullcalendar'
+import { TimeGrid } from 'fullcalendar-agenda'
+import { ListView } from 'fullcalendar-list'
 
 describe('rerender performance', function() {
 
@@ -7,28 +10,29 @@ describe('rerender performance', function() {
       { title: 'event 0', start: '2017-10-04' }
     ],
     windowResizeDelay: 0
-  });
+  })
 
-  [
+  ;[
     {
       defaultView: 'month',
-      classes: [ 'DayGrid' ],
+      classes: { DayGrid },
       changeToView: 'list' // does not have DayGrid!
     },
     {
       defaultView: 'agendaWeek',
-      classes: [ 'DayGrid', 'TimeGrid' ],
+      classes: { DayGrid, TimeGrid },
       changeToView: 'list' // does not have DayGrid!
     },
     {
       defaultView: 'listWeek',
-      classes: [ 'ListView' ],
+      classes: { ListView },
       changeToView: 'month'
     }
   ].forEach(function(settings) {
-    settings.classes.forEach(function(className) {
+
+    $.each(settings.classes, function(className, Class) {
+
       describe('for ' + className + ' in ' + settings.defaultView + ' view', function() {
-        var Class = FullCalendar[className]
 
         it('calls methods a limited number of times', function(done) {
           var calSettings = {

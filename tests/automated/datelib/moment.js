@@ -1,15 +1,15 @@
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
+import { Calendar } from 'fullcalendar'
+import { toMoment, toDuration } from 'fullcalendar-moment'
 
 describe('moment plugin', function() {
-  let toMoment = FullCalendar.Moment.toMoment
-  let toDuration = FullCalendar.Moment.toDuration
 
   describe('toMoment', function() {
 
     describe('timezone handling', function() {
 
       it('transfers UTC', function() {
-        let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+        let calendar = new Calendar(document.createElement('div'), {
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'UTC'
         })
@@ -21,7 +21,7 @@ describe('moment plugin', function() {
       })
 
       it('transfers local', function() {
-        let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+        let calendar = new Calendar(document.createElement('div'), {
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'local'
         })
@@ -35,7 +35,7 @@ describe('moment plugin', function() {
     })
 
     it('transfers locale', function() {
-      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+      let calendar = new Calendar(document.createElement('div'), {
         events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
         locale: 'es'
       })
@@ -49,7 +49,7 @@ describe('moment plugin', function() {
   describe('toDuration', function() {
 
     it('converts correctly', function() {
-      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+      let calendar = new Calendar(document.createElement('div'), {
         defaultTimedEventDuration: '05:00',
         defaultAllDayEventDuration: { days: 3 }
       })
@@ -85,7 +85,7 @@ describe('moment plugin', function() {
   describe('range formatting', function() {
 
     it('renders with same month', function() {
-      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+      let calendar = new Calendar(document.createElement('div'), {
         cmdFormatter: 'moment'
       })
       let s
@@ -98,7 +98,7 @@ describe('moment plugin', function() {
     })
 
     it('renders with same year but different month', function() {
-      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+      let calendar = new Calendar(document.createElement('div'), {
         cmdFormatter: 'moment'
       })
       let s
@@ -111,7 +111,7 @@ describe('moment plugin', function() {
     })
 
     it('renders with different years', function() {
-      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+      let calendar = new Calendar(document.createElement('div'), {
         cmdFormatter: 'moment'
       })
       let s
@@ -124,7 +124,7 @@ describe('moment plugin', function() {
     })
 
     it('inherits defaultRangeSeparator', function() {
-      let calendar = new FullCalendar.Calendar(document.createElement('div'), {
+      let calendar = new Calendar(document.createElement('div'), {
         cmdFormatter: 'moment',
         defaultRangeSeparator: ' to '
       })

@@ -2,6 +2,7 @@ import { drag } from './EventDragUtils'
 import { computeSpanRects } from '../view-render/TimeGridRenderUtils'
 import { getDayEl } from '../view-render/DayGridRenderUtils'
 import { getEventEls } from '../event-render/EventRenderUtils'
+import { parseMarker, addMs } from 'fullcalendar'
 
 describe('allDay change', function() {
   pushOptions({
@@ -22,10 +23,10 @@ describe('allDay change', function() {
 
     function doDrag() {
       let startRect = getDayEl('2018-09-03')[0].getBoundingClientRect()
-      let endDate = FullCalendar.parseMarker('2018-09-03T02:00:00').marker
+      let endDate = parseMarker('2018-09-03T02:00:00').marker
       var endRect = computeSpanRects(
         endDate,
-        FullCalendar.addMs(endDate, 1000 * 60 * 30) // hardcoded 30 minute slot :(
+        addMs(endDate, 1000 * 60 * 30) // hardcoded 30 minute slot :(
       )[0]
       return drag(startRect, endRect, false) // debug=false
     }

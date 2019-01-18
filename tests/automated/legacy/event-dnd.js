@@ -1,3 +1,5 @@
+import { createDuration } from 'fullcalendar'
+
 describe('eventDrop', function() {
   var options
 
@@ -46,7 +48,7 @@ describe('eventDrop', function() {
                 }, 0)
               },
               function(arg) {
-                var delta = FullCalendar.createDuration({ day: 9 })
+                var delta = createDuration({ day: 9 })
                 expect(arg.delta).toEqual(delta)
 
                 expect(arg.event.start).toEqualDate('2014-06-20')
@@ -82,7 +84,7 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            var delta = FullCalendar.createDuration({ day: 5 })
+            var delta = createDuration({ day: 5 })
             expect(arg.delta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-16T06:00:00Z')
@@ -175,7 +177,7 @@ describe('eventDrop', function() {
                 }, 100) // delay for FF
               },
               function(arg) {
-                var delta = FullCalendar.createDuration({ day: 1, hour: 1, minute: 30 })
+                var delta = createDuration({ day: 1, hour: 1, minute: 30 })
                 expect(arg.delta).toEqual(delta)
 
                 expect(arg.event.start).toEqualDate('2014-06-12T07:30:00Z')
@@ -210,7 +212,7 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            var delta = FullCalendar.createDuration({ day: 2 })
+            var delta = createDuration({ day: 2 })
             expect(arg.delta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-13')
@@ -248,7 +250,7 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            let delta = FullCalendar.createDuration({ day: -1, hour: 1 })
+            let delta = createDuration({ day: -1, hour: 1 })
             expect(arg.delta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-10T01:00:00Z')
@@ -301,7 +303,7 @@ describe('eventDrop', function() {
             })
           },
           function(arg) {
-            var delta = FullCalendar.createDuration({ day: -1 })
+            var delta = createDuration({ day: -1 })
             expect(arg.delta).toEqual(delta)
 
             expect(arg.event.start).toEqualDate('2014-06-10')

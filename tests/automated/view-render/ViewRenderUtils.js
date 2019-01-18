@@ -1,5 +1,5 @@
 import { formatIsoDay } from '../datelib/utils'
-
+import { addDays } from 'fullcalendar'
 
 export function expectDayRange(start, end) {
 
@@ -13,13 +13,13 @@ export function expectDayRange(start, end) {
     end = new Date(end)
   }
 
-  var dayBefore = FullCalendar.addDays(start, -1)
+  var dayBefore = addDays(start, -1)
   expectDay(dayBefore, false)
 
   var date = start
   while (date < end) { // eslint-disable-line
     expectDay(date, true)
-    date = FullCalendar.addDays(date, 1)
+    date = addDays(date, 1)
   }
 
   // `date` is now the first day after the range

@@ -1,6 +1,7 @@
 import { testEventDrag } from '../lib/dnd-resize-utils'
+import { ThirdPartyDraggable } from 'fullcalendar'
 
-// TODO: Use FullCalendar.Draggable for some of these tests
+// TODO: Use the built-in Draggable for some of these tests
 
 describe('advanced external dnd', function() {
   var dragEl
@@ -16,7 +17,7 @@ describe('advanced external dnd', function() {
       .appendTo('body')
       .draggable()
 
-    thirdPartyDraggable = new FullCalendar.ThirdPartyDraggable({
+    thirdPartyDraggable = new ThirdPartyDraggable({
       itemSelector: '.drag'
     })
   })

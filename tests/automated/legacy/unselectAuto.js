@@ -1,5 +1,6 @@
+import { View } from 'fullcalendar'
+
 describe('unselectAuto', function() {
-  var View = FullCalendar.View
 
   pushOptions({
     selectable: true,

@@ -1,5 +1,6 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib/utils'
+import { startOfDay, createDuration } from 'fullcalendar'
 
 const TIME_GRID_CLASS = 'fc-time-grid'
 const NON_BUSINESS_CLASS = 'fc-nonbusiness'
@@ -54,7 +55,7 @@ export function selectTimeGrid(start, inclusiveEnd) {
 export function getTimeGridPoint(date) {
   date = ensureDate(date)
 
-  var day = FullCalendar.startOfDay(date)
+  var day = startOfDay(date)
   var timeMs = date.valueOf() - day.valueOf()
   var top = getTimeGridTop(timeMs)
   var dayEls = getTimeGridDayEls(date)
@@ -73,7 +74,7 @@ export function getTimeGridPoint(date) {
 export function getTimeGridLine(date) { // not in Scheduler
   date = ensureDate(date)
 
-  var day = FullCalendar.startOfDay(date)
+  var day = startOfDay(date)
   var timeMs = date.valueOf() - day.valueOf()
   var top = getTimeGridTop(timeMs)
   var dayEls = getTimeGridDayEls(date)
@@ -110,7 +111,7 @@ export function getTimeGridTop(targetTimeMs) {
     slotEl = $(slotEl)
 
     prevSlotTimeMs = slotTimeMs
-    slotTimeMs = FullCalendar.createDuration(slotEl.data('time')).milliseconds
+    slotTimeMs = createDuration(slotEl.data('time')).milliseconds
 
     // is target time between start of previous slot but before this one?
     if (targetTimeMs < slotTimeMs) {

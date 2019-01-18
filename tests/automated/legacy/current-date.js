@@ -1,3 +1,5 @@
+import { addDays } from 'fullcalendar'
+
 describe('current date', function() {
   var TITLE_FORMAT = {
     month: 'long',
@@ -267,7 +269,7 @@ describe('current date', function() {
       titleEnd = new Date(titleEnd)
     }
 
-    calculatedEnd = end || FullCalendar.addDays(start, 1)
+    calculatedEnd = end || addDays(start, 1)
 
     expect(start).toEqualDate(view.activeStart)
     expect(calculatedEnd).toEqualDate(view.activeEnd)

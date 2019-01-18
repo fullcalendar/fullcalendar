@@ -1,4 +1,5 @@
 import ListenerCounter from '../lib/ListenerCounter'
+import { Calendar, ThirdPartyDraggable } from 'fullcalendar'
 
 describe('external drag and drop', function() {
 
@@ -24,7 +25,7 @@ describe('external drag and drop', function() {
       '</div>'
     )
 
-    thirdPartyDraggable = new FullCalendar.ThirdPartyDraggable({
+    thirdPartyDraggable = new ThirdPartyDraggable({
       itemSelector: '#sidebar .fc-event'
     })
   })
@@ -337,7 +338,7 @@ describe('external drag and drop', function() {
         init()
         var el1 = currentCalendar.el
         var el2 = $('<div id="calendar2">').insertAfter(el1)
-        var currentCalendar2 = new FullCalendar.Calendar(el2[0], options)
+        var currentCalendar2 = new Calendar(el2[0], options)
         currentCalendar2.render()
 
         var docListenerCounter = new ListenerCounter(document)

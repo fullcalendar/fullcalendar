@@ -1,3 +1,5 @@
+import { Calendar } from 'fullcalendar'
+
 describe('select callback', function() {
 
   var options
@@ -279,7 +281,7 @@ describe('select callback', function() {
   })
 
   it('will fire on a calendar that hasn\'t been rendered yet', function(done) {
-    let calendar = new FullCalendar.Calendar(
+    let calendar = new Calendar(
       document.createElement('div'),
       {
         now: '2018-12-25',

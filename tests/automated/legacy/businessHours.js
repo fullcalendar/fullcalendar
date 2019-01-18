@@ -9,6 +9,7 @@ import {
 } from '../lib/time-grid'
 import { ensureDate } from '../datelib/utils'
 import { getDayGridNonBusinessDayEls } from '../view-render/DayGridRenderUtils'
+import { startOfDay } from 'fullcalendar'
 
 
 describe('businessHours', function() {
@@ -202,8 +203,8 @@ describe('businessHours', function() {
     start = ensureDate(start)
     end = ensureDate(end)
 
-    var startDay = FullCalendar.startOfDay(start)
-    var endDay = FullCalendar.startOfDay(end)
+    var startDay = startOfDay(start)
+    var endDay = startOfDay(end)
     var startTimeMs = start.valueOf() - startDay.valueOf()
     var endTimeMs = end.valueOf() - endDay.valueOf()
 

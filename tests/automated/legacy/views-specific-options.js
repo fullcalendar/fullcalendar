@@ -1,3 +1,5 @@
+import { BasicView, createPlugin } from 'fullcalendar'
+
 describe('view-specific options', function() {
 
   pushOptions({
@@ -122,12 +124,12 @@ describe('view-specific options', function() {
 
   it('can implicitly target a View subclass', function() {
 
-    class SuperBasicView extends FullCalendar.BasicView {
+    class SuperBasicView extends BasicView {
     }
 
     initCalendar({
       plugins: [
-        FullCalendar.createPlugin({
+        createPlugin({
           viewConfigs: {
             superBasic: SuperBasicView
           }
@@ -149,13 +151,12 @@ describe('view-specific options', function() {
 
   it('can implicitly target an old-school View subclass', function() {
 
-    let BasicView = FullCalendar.BasicView
     function SuperBasicView() { BasicView.apply(this, arguments) }
     SuperBasicView.prototype = Object.create(BasicView.prototype)
 
     initCalendar({
       plugins: [
-        FullCalendar.createPlugin({
+        createPlugin({
           viewConfigs: {
             superBasic: SuperBasicView
           }

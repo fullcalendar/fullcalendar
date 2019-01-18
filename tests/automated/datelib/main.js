@@ -1,15 +1,8 @@
 import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from './utils'
 import { getDSTDeadZone } from './dst-dead-zone'
+import { DateEnv, createFormatter, createDuration, getLocale, startOfDay, diffWholeWeeks, diffWholeDays, diffDayAndTime } from 'fullcalendar'
 
 describe('datelib', function() {
-  var DateEnv = FullCalendar.DateEnv
-  var createFormatter = FullCalendar.createFormatter
-  var createDuration = FullCalendar.createDuration
-  var getLocale = FullCalendar.getLocale
-  var startOfDay = FullCalendar.startOfDay
-  var diffWholeWeeks = FullCalendar.diffWholeWeeks
-  var diffWholeDays = FullCalendar.diffWholeDays
-  var diffDayAndTime = FullCalendar.diffDayAndTime
 
   describe('computeWeekNumber', function() {
 

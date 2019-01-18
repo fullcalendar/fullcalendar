@@ -1,14 +1,17 @@
+import { BasicView, DayGrid } from 'fullcalendar'
+import { ListView } from 'fullcalendar-list'
+import { AgendaView, TimeGrid } from 'fullcalendar-agenda'
 
 describe('internal View/Grid classes', function() {
 
   it('are exposed', function() {
 
-    expect(typeof FullCalendar.AgendaView).toBe('function')
-    expect(typeof FullCalendar.BasicView).toBe('function')
-    expect(typeof FullCalendar.ListView).toBe('function')
+    expect(typeof AgendaView).toBe('function')
+    expect(typeof BasicView).toBe('function')
+    expect(typeof ListView).toBe('function')
 
-    expect(typeof FullCalendar.DayGrid).toBe('function')
-    expect(typeof FullCalendar.TimeGrid).toBe('function')
+    expect(typeof DayGrid).toBe('function')
+    expect(typeof TimeGrid).toBe('function')
   })
 
 })

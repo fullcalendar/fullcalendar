@@ -1,3 +1,5 @@
+import { View, createPlugin } from 'fullcalendar'
+
 describe('custom view', function() {
 
   it('renders a 4 day basic view', function() {
@@ -352,12 +354,12 @@ describe('custom view', function() {
     it('falls back to view name when view lacks metadata', function() {
       // also sorta tests plugin system
 
-      class CrazyView extends FullCalendar.View {
+      class CrazyView extends View {
       }
 
       initCalendar({
         plugins: [
-          FullCalendar.createPlugin({
+          createPlugin({
             viewConfigs: {
               crazy: CrazyView
             }

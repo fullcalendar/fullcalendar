@@ -1,8 +1,10 @@
+import { View, createPlugin } from 'fullcalendar'
+
 describe('custom view class', function() {
 
   it('calls all standard methods with correct parameters', function() {
 
-    class CustomView extends FullCalendar.View {
+    class CustomView extends View {
 
       renderDates(dateProfile) {
         expect(dateProfile.activeRange.start instanceof Date).toBe(true)
@@ -54,7 +56,7 @@ describe('custom view class', function() {
 
     initCalendar({
       plugins: [
-        FullCalendar.createPlugin({
+        createPlugin({
           viewConfigs: {
             custom: CustomView
           }

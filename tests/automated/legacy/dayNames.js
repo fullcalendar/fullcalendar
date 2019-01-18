@@ -1,6 +1,7 @@
 import { getHeaderEl } from '../view-render/DayGridRenderUtils'
 import { DAY_CLASSES } from '../lib/constants'
 import { removeLtrCharCodes } from '../lib/string'
+import { addDays } from 'fullcalendar'
 
 describe('day names', function() {
   var sundayDate = new Date('2014-05-25T06:00:00')
@@ -19,7 +20,7 @@ describe('day names', function() {
         locale: 'en'
       })
       DAY_CLASSES.forEach(function(cls, index) {
-        var dayDate = FullCalendar.addDays(sundayDate, index)
+        var dayDate = addDays(sundayDate, index)
         var dayText = removeLtrCharCodes(
           dayDate.toLocaleString('en', { weekday: 'long' })
         )
@@ -36,7 +37,7 @@ describe('day names', function() {
     $.each(locales, function(index, locale) {
       describe('when locale is ' + locale, function() {
         DAY_CLASSES.forEach(function(cls, index, classes) {
-          var dayDate = FullCalendar.addDays(sundayDate, index)
+          var dayDate = addDays(sundayDate, index)
           var dayText = removeLtrCharCodes(
             dayDate.toLocaleString(locale, { weekday: 'long' })
           )

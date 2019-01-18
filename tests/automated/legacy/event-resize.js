@@ -1,3 +1,5 @@
+import { createDuration } from 'fullcalendar'
+
 describe('eventResize', function() {
   pushOptions({
     defaultDate: '2014-06-11',
@@ -27,7 +29,7 @@ describe('eventResize', function() {
             })
           },
           function(arg) {
-            expect(arg.endDelta).toEqual(FullCalendar.createDuration({ day: 5 }))
+            expect(arg.endDelta).toEqual(createDuration({ day: 5 }))
 
             expect(arg.event.start).toEqualDate('2014-06-11')
             expect(arg.event.end).toEqualDate('2014-06-17')
@@ -76,7 +78,7 @@ describe('eventResize', function() {
                 })
               },
               function(arg) {
-                expect(arg.endDelta).toEqual(FullCalendar.createDuration({ day: 5 }))
+                expect(arg.endDelta).toEqual(createDuration({ day: 5 }))
 
                 expect(arg.event.start).toEqualDate('2014-06-11')
                 expect(arg.event.end).toEqualDate('2014-06-17')
@@ -136,7 +138,7 @@ describe('eventResize', function() {
             })
           },
           function(arg) {
-            expect(arg.endDelta).toEqual(FullCalendar.createDuration({ day: 2 }))
+            expect(arg.endDelta).toEqual(createDuration({ day: 2 }))
 
             expect(arg.event.start).toEqualDate('2014-06-11')
             expect(arg.event.end).toEqualDate('2014-06-14')
@@ -174,7 +176,7 @@ describe('eventResize', function() {
             })
           },
           function(arg) {
-            expect(arg.endDelta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
+            expect(arg.endDelta).toEqual(createDuration({ hour: 2, minute: 30 }))
 
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00Z')
@@ -213,7 +215,7 @@ describe('eventResize', function() {
             }, 100) // delay for FF
           },
           function(arg) {
-            expect(arg.endDelta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
+            expect(arg.endDelta).toEqual(createDuration({ hour: 2, minute: 30 }))
 
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00Z')
@@ -242,7 +244,7 @@ describe('eventResize', function() {
             })
           },
           function(arg) {
-            expect(arg.endDelta).toEqual(FullCalendar.createDuration({ day: 1, hour: 2, minute: 30 }))
+            expect(arg.endDelta).toEqual(createDuration({ day: 1, hour: 2, minute: 30 }))
 
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00Z')
             expect(arg.event.end).toEqualDate('2014-06-12T09:30:00Z')
@@ -270,7 +272,7 @@ describe('eventResize', function() {
             })
           },
           function(arg) {
-            expect(arg.endDelta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
+            expect(arg.endDelta).toEqual(createDuration({ hour: 2, minute: 30 }))
 
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00') // local
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00') // local
@@ -298,7 +300,7 @@ describe('eventResize', function() {
             })
           },
           function(arg) {
-            expect(arg.endDelta).toEqual(FullCalendar.createDuration({ hour: 2, minute: 30 }))
+            expect(arg.endDelta).toEqual(createDuration({ hour: 2, minute: 30 }))
 
             expect(arg.event.start).toEqualDate('2014-06-11T05:00:00+00:00')
             expect(arg.event.end).toEqualDate('2014-06-11T09:30:00+00:00')

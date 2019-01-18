@@ -1,7 +1,7 @@
 import { getDayOfWeekHeaderEls } from './DayGridRenderUtils' // bad to rely on day grid
 import { getSlotEls } from '../lib/time-grid'
 import { ensureDate } from '../datelib/utils'
-
+import { addDays, addMs, parseMarker, createDuration } from 'fullcalendar'
 
 export function getTimeAxisInfo() {
   return $('.fc-slats tr[data-time]').map(function(i, tr) {
@@ -41,17 +41,17 @@ export function computeSpanRects(start, end) {
     for (slotI = 0; slotI < slotStructs.length; slotI++) {
       slotStruct = slotStructs[slotI]
 
-      slotDayStart = FullCalendar.addDays(
+      slotDayStart = addDays(
         dayStruct.date,
         slotStruct.dayOffset
       )
 
-      slotStart = FullCalendar.addMs(
+      slotStart = addMs(
         slotDayStart,
         slotStruct.startTimeMs
       )
 
-      slotEnd = FullCalendar.addMs(
+      slotEnd = addMs(
         slotDayStart,
         slotStruct.endTimeMs
       )
@@ -104,7 +104,7 @@ function computeDays() {
   var days = dayOfWeekHeaderEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
-      date: FullCalendar.parseMarker(
+      date: parseMarker(
         $(node).data('date')
       ).marker
     })
@@ -120,7 +120,7 @@ function computeSlots() {
   var slots = slotEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
-      startTimeMs: FullCalendar.createDuration(
+      startTimeMs: createDuration(
         $(node).data('time')
       ).milliseconds
     })

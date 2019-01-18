@@ -1,4 +1,5 @@
 import { getStockScrollbarWidths } from '../lib/dom-misc'
+import { computeInnerRect } from 'fullcalendar'
 
 describe('computeInnerRect', function() {
   var INNER_WIDTH = 150
@@ -11,7 +12,6 @@ describe('computeInnerRect', function() {
   var PADDING_RIGHT = 6
   var PADDING_TOP = 7
   var PADDING_BOTTOM = 8
-  var computeInnerRect = FullCalendar.computeInnerRect
 
   describeValues({
     'when LTR': 'ltr',
