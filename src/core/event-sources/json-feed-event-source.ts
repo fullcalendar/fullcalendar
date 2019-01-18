@@ -1,4 +1,4 @@
-import * as request from 'superagent'
+import request from 'superagent'
 import Calendar from '../Calendar'
 import { registerEventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
