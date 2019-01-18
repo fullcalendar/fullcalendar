@@ -78,17 +78,13 @@
   },
   "scripts": {
     "dist": "npm run clean && npm run build && gulp dist && gulp archive",
-
     "build": "tsc && npm run rollup && npm run sass",
     "watch": "concurrently --raw 'tsc --watch --sourceMap' 'npm run rollup-watch' 'npm run sass-watch'",
     "clean": "rm -rf dist tmp",
-
     "rollup": "rollup -c --environment BUILD:production",
     "rollup-watch": "sleep 5 && rollup -c --environment BUILD:development --watch",
-
     "sass": "sass --update --sourcemap=none $(bin/sass-args.js)",
     "sass-watch": "sass --watch $(bin/sass-args.js)",
-
     "test": "karma start karma.config.js --auto-watch",
     "test-single": "karma start karma.config.js --browsers ChromeHeadless_custom --single-run"
   }
