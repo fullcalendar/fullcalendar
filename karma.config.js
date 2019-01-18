@@ -22,8 +22,10 @@ module.exports = function(config) {
       'node_modules/moment-timezone/builds/moment-timezone-with-data.js',
       'node_modules/rrule/dist/es5/rrule.js',
       'node_modules/jquery/dist/jquery.js',
+
       'node_modules/components-jqueryui/jquery-ui.js',
       'node_modules/components-jqueryui/themes/cupertino/jquery-ui.css',
+      { pattern: 'node_modules/components-jqueryui/themes/cupertino/images/**', included: false, nocache: true, watched: false  },
 
       // dependencies for tests
       'node_modules/native-promise-only/lib/npo.src.js', // Promises needed by xhr-mock
@@ -33,6 +35,7 @@ module.exports = function(config) {
       'node_modules/luxon/build/global/luxon.js', // TODO: how to deal with IE11?
 
       // core and plugin files
+      'dist/fullcalendar/main.js', // needs to be first
       'dist/**/*.js',
       'dist/**/*.css',
 
@@ -55,7 +58,7 @@ module.exports = function(config) {
 
     // make console errors aware of source files
     preprocessors: {
-      'dist/**/*.js': [ 'sourcemap' ]
+      '**/*.js': ['sourcemap']
     },
 
     // test results reporter to use
