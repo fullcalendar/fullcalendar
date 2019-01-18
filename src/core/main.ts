@@ -17,8 +17,6 @@ Calendar.defaultPlugins.push(BasicPlugin)
 // exports
 // --------------------------------------------------------------------------------------------------
 
-export const globalHooks = {} as any
-
 export const version = '<%= version %>'
 
 // When introducing internal API incompatibilities (where fullcalendar plugins would break),
@@ -157,7 +155,7 @@ export { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 
 export { formatDate, formatRange } from './formatting-api'
 
-export { globalDefaults } from './options'
+export { globalDefaults, globalHooks } from './options'
 
 export { registerRecurringType, ParsedRecurring } from './structs/recurring-event'
 

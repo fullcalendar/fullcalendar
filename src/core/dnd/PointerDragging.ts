@@ -1,4 +1,4 @@
-import { globalHooks } from '../main'
+import { globalHooks } from '../options'
 import { elementClosest } from '../util/dom-manip'
 import { default as EmitterMixin } from '../common/EmitterMixin'
 

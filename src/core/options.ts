@@ -1,5 +1,6 @@
 import { mergeProps } from './util/object'
 
+export const globalHooks = {} as any // TODO: make these options
 
 export const globalDefaults = {
 
