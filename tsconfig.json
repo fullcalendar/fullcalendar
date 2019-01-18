@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "module": "ES6",
-    "moduleResolution": "Node",
+    "target": "es5",
+    "module": "es6",
+    "moduleResolution": "node",
     "lib": [
       "dom",
       "es2015",
@@ -24,6 +24,9 @@
       "fullcalendar-moment": [ "src/moment/main" ],
       "fullcalendar-moment-timezone": [ "src/moment-timezone/main" ]
     },
+    "types": [
+      "luxon"
+    ],
     "outDir": "tmp/tsc-output"
   },
   "include": [
