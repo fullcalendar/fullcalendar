@@ -4,7 +4,7 @@ import browserContext from '../common/browser-context'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { parseEventDef, createEventInstance, EventTuple } from '../structs/event'
 import { createEmptyEventStore, eventTupleToStore } from '../structs/event-store'
-import * as externalHooks from '../exports'
+import { globalHooks } from '../main'
 import { DateSpan, DatePointApi } from '../structs/date-span'
 import Calendar from '../Calendar'
 import { EventInteractionState } from '../interactions/event-interaction-state'
@@ -248,10 +248,10 @@ function getDragMetaFromEl(el: HTMLElement): DragMeta {
   return parseDragMeta(obj)
 }
 
-(externalHooks as any).dataAttrPrefix = ''
+globalHooks.dataAttrPrefix = ''
 
 function getEmbeddedElData(el: HTMLElement, name: string): string {
-  let prefix = (externalHooks as any).dataAttrPrefix
+  let prefix = globalHooks.dataAttrPrefix
   let prefixedName = (prefix ? prefix + '-' : '') + name
 
   return el.getAttribute('data-' + prefixedName) || ''

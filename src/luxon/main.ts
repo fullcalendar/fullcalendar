@@ -1,33 +1,32 @@
-import { DateTime, Duration } from 'luxon'
-import * as fc from 'fullcalendar'
+import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
+import { Calendar, Duration, NamedTimeZoneImpl, registerNamedTimeZoneImpl, globalDefaults, registerCmdFormatter, VerboseFormattingArg } from 'fullcalendar'
 
+export function toDateTime(date: Date, calendar: Calendar): LuxonDateTime {
 
-export function toDateTime(date: Date, calendar: fc.Calendar): DateTime {
-
-  if (!(calendar instanceof fc.Calendar)) {
+  if (!(calendar instanceof Calendar)) {
     throw new Error('must supply a Calendar instance')
   }
 
-  return DateTime.fromJSDate(date, {
+  return LuxonDateTime.fromJSDate(date, {
     zone: calendar.dateEnv.timeZone,
     locale: calendar.dateEnv.locale.codes[0]
   })
 }
 
-export function toDuration(duration: fc.Duration, calendar: fc.Calendar): Duration {
+export function toDuration(duration: Duration, calendar: Calendar): LuxonDuration {
 
-  if (!(calendar instanceof fc.Calendar)) {
+  if (!(calendar instanceof Calendar)) {
     throw new Error('must supply a Calendar instance')
   }
 
-  return Duration.fromObject({
+  return LuxonDuration.fromObject({
     ...duration,
     locale: calendar.dateEnv.locale.codes[0]
   })
 }
 
 
-class LuxonNamedTimeZone extends fc.NamedTimeZoneImpl {
+class LuxonNamedTimeZone extends NamedTimeZoneImpl {
 
   offsetForArray(a: number[]): number {
     return arrayToLuxon(a, this.name).offset
@@ -35,7 +34,7 @@ class LuxonNamedTimeZone extends fc.NamedTimeZoneImpl {
 
   timestampToArray(ms: number): number[] {
     return luxonToArray(
-      DateTime.fromMillis(ms, {
+      LuxonDateTime.fromMillis(ms, {
         zone: this.name
       })
     )
@@ -43,11 +42,11 @@ class LuxonNamedTimeZone extends fc.NamedTimeZoneImpl {
 
 }
 
-fc.registerNamedTimeZoneImpl('luxon', LuxonNamedTimeZone)
-fc.globalDefaults.timeZoneImpl = 'luxon'
+registerNamedTimeZoneImpl('luxon', LuxonNamedTimeZone)
+globalDefaults.timeZoneImpl = 'luxon'
 
 
-fc.registerCmdFormatter('luxon', function(cmdStr: string, arg: fc.VerboseFormattingArg) {
+registerCmdFormatter('luxon', function(cmdStr: string, arg: VerboseFormattingArg) {
   let cmd = parseCmdStr(cmdStr)
 
   if (arg.end) {
@@ -75,10 +74,11 @@ fc.registerCmdFormatter('luxon', function(cmdStr: string, arg: fc.VerboseFormatt
     arg.localeCodes[0]
   ).toFormat(cmd.whole)
 })
-fc.globalDefaults.cmdFormatter = 'luxon'
+
+globalDefaults.cmdFormatter = 'luxon'
 
 
-function luxonToArray(datetime: DateTime): number[] {
+function luxonToArray(datetime: LuxonDateTime): number[] {
   return [
     datetime.year,
     datetime.month - 1, // convert 1-based to 0-based
@@ -90,8 +90,8 @@ function luxonToArray(datetime: DateTime): number[] {
   ]
 }
 
-function arrayToLuxon(arr: number[], timeZone: string, locale?: string): DateTime {
-  return DateTime.fromObject({
+function arrayToLuxon(arr: number[], timeZone: string, locale?: string): LuxonDateTime {
+  return LuxonDateTime.fromObject({
     zone: timeZone,
     locale: locale,
     year: arr[0],

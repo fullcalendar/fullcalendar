@@ -1,10 +1,10 @@
 import moment from 'moment'
-import * as fc from 'fullcalendar'
+import { Calendar, Duration, VerboseFormattingArg, registerCmdFormatter, globalDefaults } from 'fullcalendar'
 
 
-export function toMoment(date: Date, calendar: fc.Calendar): moment.Moment {
+export function toMoment(date: Date, calendar: Calendar): moment.Moment {
 
-  if (!(calendar instanceof fc.Calendar)) {
+  if (!(calendar instanceof Calendar)) {
     throw new Error('must supply a Calendar instance')
   }
 
@@ -16,12 +16,12 @@ export function toMoment(date: Date, calendar: fc.Calendar): moment.Moment {
   )
 }
 
-export function toDuration(fcDuration: fc.Duration): moment.Duration {
+export function toDuration(fcDuration: Duration): moment.Duration {
   return moment.duration(fcDuration) // momment accepts all the props that fc.Duration already has!
 }
 
 
-fc.registerCmdFormatter('moment', function(cmdStr: string, arg: fc.VerboseFormattingArg) {
+registerCmdFormatter('moment', function(cmdStr: string, arg: VerboseFormattingArg) {
   let cmd = parseCmdStr(cmdStr)
 
   if (arg.end) {
@@ -52,7 +52,8 @@ fc.registerCmdFormatter('moment', function(cmdStr: string, arg: fc.VerboseFormat
     arg.localeCodes[0]
   ).format(cmd.whole) // TODO: test for this
 })
-fc.globalDefaults.cmdFormatter = 'moment'
+
+globalDefaults.cmdFormatter = 'moment'
 
 function createMomentFormatFunc(mom: moment.Moment) {
   return function(cmdStr) {

@@ -1,4 +1,3 @@
-import * as exportHooks from './exports'
 
 // for intentional side-effects
 import './theme/config'
@@ -17,6 +16,8 @@ Calendar.defaultPlugins.push(BasicPlugin)
 
 // exports
 // --------------------------------------------------------------------------------------------------
+
+export const globalHooks = {} as any
 
 export const version = '<%= version %>'
 

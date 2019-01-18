@@ -1,4 +1,4 @@
-import * as exportHooks from '../exports'
+import { globalHooks } from '../main'
 import { elementClosest } from '../util/dom-manip'
 import { default as EmitterMixin } from '../common/EmitterMixin'
 
@@ -10,7 +10,7 @@ export interface PointerDragEvent {
   pageY: number
 }
 
-(exportHooks as any).touchMouseIgnoreWait = 500
+globalHooks.touchMouseIgnoreWait = 500
 
 let ignoreMouseDepth = 0
 let listenerCnt = 0
@@ -304,7 +304,7 @@ function startIgnoringMouse() { // can be made non-class function
 
   setTimeout(() => {
     ignoreMouseDepth--
-  }, (exportHooks as any).touchMouseIgnoreWait)
+  }, globalHooks.touchMouseIgnoreWait)
 }
 
 
