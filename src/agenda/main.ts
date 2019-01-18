@@ -1,6 +1,9 @@
 import { createPlugin } from 'fullcalendar'
 import AgendaView from './AgendaView'
 
+export { AgendaView }
+export { default as TimeGrid } from './TimeGrid'
+
 export default createPlugin({
   viewConfigs: {
 

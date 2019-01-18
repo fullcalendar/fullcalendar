@@ -1,5 +1,5 @@
-import * as moment from 'moment'
-import 'moment-timezone'
+import moment from 'moment'
+// import 'moment-timezone' // rollup includes weird require() markup
 import { NamedTimeZoneImpl, registerNamedTimeZoneImpl, globalDefaults } from 'fullcalendar'
 
 

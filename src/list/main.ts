@@ -1,6 +1,8 @@
 import { createPlugin } from 'fullcalendar'
 import ListView from './ListView'
 
+export { ListView }
+
 export default createPlugin({
   viewConfigs: {
 
