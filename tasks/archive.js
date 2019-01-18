@@ -10,7 +10,8 @@ const zip = require('gulp-zip')
 const packageConfig = require('../package.json')
 const archiveId = packageConfig.name + '-' + (packageConfig.version || '0.0.0')
 
-gulp.task('archive', [ 'archive:files', 'archive:minify' ], function() {
+// assumes a clean dist already happened
+gulp.task('archive', [ 'archive:files' ], function() {
   // make the zip, with a single root directory of a similar name
   return gulp.src('tmp/' + archiveId + '/**', { base: 'tmp/' })
     .pipe(
@@ -23,19 +24,25 @@ gulp.task('archive', [ 'archive:files', 'archive:minify' ], function() {
 
 gulp.task('archive:files', [
   'archive:packages',
+  'archive:packages:minjs',
+  'archive:packages:mincss',
   'archive:demos',
   'archive:vendor',
   'archive:meta'
 ])
 
-gulp.task('archive:minify', [
-  'archive:minify:js',
-  'archive:minify:css'
-])
-
-gulp.task('archive:minify:js', [ 'archive:files' ], function() {
+gulp.task('archive:packages', function() {
   return gulp.src([
-    'tmp/' + archiveId + '/packages/*/*.js', // only FC files
+    'dist/**',
+    '!**/*.{txt,json,d.ts}'
+  ]).pipe(
+    gulp.dest('tmp/' + archiveId + '/packages')
+  )
+})
+
+gulp.task('archive:packages:minjs', [ 'archive:packages' ], function() {
+  return gulp.src([
+    'tmp/' + archiveId + '/packages/*/*.js',
     '!**/*.min.js' // avoid double minify
   ], { base: '.' })
     .pipe(
@@ -49,9 +56,9 @@ gulp.task('archive:minify:js', [ 'archive:files' ], function() {
     .pipe(gulp.dest('.'))
 })
 
-gulp.task('archive:minify:css', [ 'archive:files' ], function() {
+gulp.task('archive:packages:mincss', [ 'archive:packages' ], function() {
   return gulp.src([
-    'tmp/' + archiveId + '/packages/*/*.css', // only FC files
+    'tmp/' + archiveId + '/packages/*/*.css',
     '!**/*.min.css' // avoid double minify
   ], { base: '.' })
     .pipe(
@@ -71,15 +78,6 @@ gulp.task('archive:meta', function() {
     'CHANGELOG.*'
   ]).pipe(
     gulp.dest('tmp/' + archiveId)
-  )
-})
-
-gulp.task('archive:packages', function() {
-  return gulp.src([
-    'dist/**',
-    '!**/*.{txt,json,d.ts}'
-  ]).pipe(
-    gulp.dest('tmp/' + archiveId + '/packages')
   )
 })
 
