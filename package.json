@@ -29,7 +29,6 @@
     "concurrently": "^4.1.0",
     "css-loader": "^0.28.11",
     "dragula": "^3.7.2",
-    "dts-generator": "^2.1.0",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.14.0",

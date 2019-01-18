@@ -11,7 +11,7 @@ gulp.task('lint', [
   'lint:js:built',
   'lint:js:node',
   'lint:js:tests',
-  // 'lint:dts'
+  // 'dts:lint'
 ])
 
 gulp.task('lint:ts', function() {
@@ -88,9 +88,3 @@ gulp.task('lint:js:tests', function() {
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
 })
-
-// // runs the definitions file through the typescript compiler with strict settings
-// // tho we don't do a require('typescript'), we need the tsc executable
-// gulp.task('lint:dts', [ 'ts-types' ], shell.task(
-//   'tsc --strict dist/fullcalendar.d.ts'
-// ))

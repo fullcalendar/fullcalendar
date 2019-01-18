@@ -1,14 +1,14 @@
 const gulp = require('gulp')
 
 require('./tasks/dist-post-process')
-require('./tasks/ts-types')
+require('./tasks/dts')
 require('./tasks/package-meta')
 require('./tasks/archive')
 
 // assumes a clean build already happened
 gulp.task('dist', [
   'dist-post-process',
-  'ts-types',
+  'dts',
   'package-meta'
 ])
 
