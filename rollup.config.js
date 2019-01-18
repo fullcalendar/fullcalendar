@@ -34,7 +34,7 @@ let watchOptions = {
 
 for (let packageName of packageNames) {
   if (!packageGlobals[packageName]) {
-    packageGlobals[packageName] = 'FullCalendar.defaultPlugins.' + packageName
+    packageGlobals[packageName] = 'FullCalendarPlugins.' + packageName
   }
 }
 

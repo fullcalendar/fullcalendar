@@ -1,4 +1,5 @@
 import { mergeProps } from './util/object'
+import { PluginDef } from './plugin-system'
 
 export const globalHooks = {} as any // TODO: make these options
 
@@ -121,4 +122,28 @@ let complexOptions = [ // names of options that are objects whose properties sho
 // Merges an array of option objects into a single object
 export function mergeOptions(optionObjs) {
   return mergeProps(optionObjs, complexOptions)
+}
+
+
+const defaultPlugins: PluginDef[] = []
+
+export function addDefaultPlugin(plugin: PluginDef) {
+  defaultPlugins.push(plugin)
+}
+
+export function getDefaultPlugins(): PluginDef[] {
+  return defaultPlugins.concat(getBrowserGlobalPlugins())
+}
+
+function getBrowserGlobalPlugins(): PluginDef[] {
+  let globalPluginHash = window['FullCalendarPlugins']
+  let plugins = []
+
+  if (globalPluginHash) {
+    for (let pluginId in globalPluginHash) {
+      plugins.push(globalPluginHash[pluginId].default)
+    }
+  }
+
+  return plugins
 }

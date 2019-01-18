@@ -28,9 +28,10 @@ import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui
 import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import EventDragging from './interactions/EventDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
-import { PluginSystem, PluginDef } from './plugin-system'
+import { PluginSystem } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
 import { __assign } from 'tslib'
+import { getDefaultPlugins } from './options'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -53,8 +54,6 @@ export default class Calendar {
   static on: EmitterInterface['on']
   static off: EmitterInterface['off']
   static trigger: EmitterInterface['trigger']
-
-  static defaultPlugins: PluginDef[] = []
 
   on: EmitterInterface['on']
   one: EmitterInterface['one']
@@ -117,7 +116,7 @@ export default class Calendar {
     this.pluginSystem = new PluginSystem()
 
     // only do once. don't do in handleOptions. because can't remove plugins
-    let pluginDefs = Calendar.defaultPlugins.concat(
+    let pluginDefs = getDefaultPlugins().concat(
       this.optionsManager.computed.plugins || []
     )
     for (let pluginDef of pluginDefs) {
