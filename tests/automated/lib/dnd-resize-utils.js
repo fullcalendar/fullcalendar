@@ -1,4 +1,4 @@
-import { formatIsoDay, addDays } from '../datelib/utils'
+import { formatIsoDay } from '../datelib/utils'
 import { getTimeGridDayEls, getSlotElByIndex } from './time-grid'
 import { getDayEl } from '../view-render/DayGridRenderUtils'
 import {
@@ -140,7 +140,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       expect(lastSlatEl.length).toBe(1)
       dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())
     } else {
-      lastDayEl = getDayEl(addDays(resizeDate, -1))
+      lastDayEl = getDayEl(FullCalendar.addDays(resizeDate, -1))
       dy = lastDayEl.offset().top - eventEl.offset().top
     }
 

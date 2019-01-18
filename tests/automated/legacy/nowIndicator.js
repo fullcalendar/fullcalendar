@@ -1,6 +1,7 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { isElWithinRtl } from '../lib/dom-misc'
 import { getTimeGridLine } from '../lib/time-grid'
+import { TimeGrid } from 'fullcalendar-agenda'
 
 describe('now indicator', function() {
   var options
@@ -69,7 +70,7 @@ describe('now indicator', function() {
     it('doesnt double render indicator arrow', function(done) {
 
       // force the indicator to update every second
-      var getNowIndicatorUnit = spyOnMethod(FullCalendar.TimeGrid, 'getNowIndicatorUnit', true)
+      var getNowIndicatorUnit = spyOnMethod(TimeGrid, 'getNowIndicatorUnit', true)
         .and.returnValue('second')
 
       options.defaultDate = '2016-01-01' // does NOT have "now" in view
