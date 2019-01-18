@@ -1,7 +1,7 @@
-import { createPlugin, PluginDef } from 'fullcalendar'
+import { createPlugin } from 'fullcalendar'
 import ListView from './ListView'
 
-let plugin: PluginDef = createPlugin({
+export default createPlugin({
   viewConfigs: {
 
     list: {
@@ -37,5 +37,3 @@ let plugin: PluginDef = createPlugin({
 
   }
 })
-
-export default plugin // done for .d.ts bug :(

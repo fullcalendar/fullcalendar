@@ -1,7 +1,7 @@
-import { createPlugin, PluginDef } from '../plugin-system'
+import { createPlugin } from '../plugin-system'
 import BasicView from './BasicView'
 
-let plugin: PluginDef = createPlugin({
+export default createPlugin({
   viewConfigs: {
 
     basic: BasicView,
@@ -25,5 +25,3 @@ let plugin: PluginDef = createPlugin({
 
   }
 })
-
-export default plugin // done for .d.ts bug :(

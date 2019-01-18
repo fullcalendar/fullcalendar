@@ -1,7 +1,7 @@
-import { createPlugin, PluginDef } from 'fullcalendar'
+import { createPlugin } from 'fullcalendar'
 import AgendaView from './AgendaView'
 
-let plugin: PluginDef = createPlugin({
+export default createPlugin({
   viewConfigs: {
 
     agenda: {
@@ -23,5 +23,3 @@ let plugin: PluginDef = createPlugin({
 
   }
 })
-
-export default plugin // done for .d.ts bug :(
