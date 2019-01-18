@@ -2,8 +2,11 @@ import { Calendar } from 'fullcalendar'
 import { toDateTime, toDuration } from 'fullcalendar-luxon'
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
 import { testTimeZoneImpl } from './timeZoneImpl'
+import * as luxon from 'luxon'
 
-
+// eslint-disable-next-line
+!luxon ?
+console.log('Luxon not present. Skipping related tests.') :
 describe('luxon plugin', function() {
 
   testTimeZoneImpl('luxon')

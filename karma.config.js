@@ -32,7 +32,7 @@ module.exports = function(config) {
       'node_modules/xhr-mock/dist/xhr-mock.js', // TODO: should include this via require(), but .d.ts problems
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
       'node_modules/jquery-simulate/jquery.simulate.js',
-      'node_modules/luxon/build/global/luxon.js', // TODO: how to deal with IE11?
+      'node_modules/luxon/build/global/luxon.js', // for testing IE11, comment out this line
 
       // core and plugin files
       'dist/fullcalendar/main.js', // needs to be first
