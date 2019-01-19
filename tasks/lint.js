@@ -63,7 +63,7 @@ gulp.task('lint:js:tests', function() {
       eslint({
         configFile: 'eslint.json',
         envs: [ 'browser' ],
-        rules: { 'no-undef': 0 } // ignore accessing globals. tsc already does this
+        rules: { 'no-undef': 0 } // ignore referencing globals. tsc already checks this
       })
     )
     .pipe(eslint.format())
