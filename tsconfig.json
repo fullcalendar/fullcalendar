@@ -10,6 +10,7 @@
     ],
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
+    "checkJs": true,
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,
     "importHelpers": true,
@@ -25,13 +26,17 @@
       "fullcalendar-moment-timezone": [ "src/moment-timezone/main" ]
     },
     "types": [
-      "luxon"
+      "luxon",
+      "jquery",
+      "jasmine",
+      "jasmine-jquery"
     ],
     "outDir": "tmp/tsc-output"
   },
   "include": [
     "src/**/main.ts",
     "locales/*.js",
+    "tests/automated/globals.d.ts",
     "tests/automated/**/*.js"
   ]
 }

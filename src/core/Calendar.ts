@@ -778,7 +778,7 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  formatDate(d: Date, formatter): string {
+  formatDate(d: DateInput, formatter): string {
     const { dateEnv } = this
     return dateEnv.format(
       dateEnv.createMarker(d),
@@ -788,7 +788,7 @@ export default class Calendar {
 
 
   // `settings` is for formatter AND isEndExclusive
-  formatRange(d0: Date, d1: Date, settings) {
+  formatRange(d0: DateInput, d1: DateInput, settings) {
     const { dateEnv } = this
     return dateEnv.formatRange(
       dateEnv.createMarker(d0),
@@ -799,7 +799,7 @@ export default class Calendar {
   }
 
 
-  formatIso(d: Date, omitTime?: boolean) {
+  formatIso(d: DateInput, omitTime?: boolean) {
     const { dateEnv } = this
     return dateEnv.formatIso(dateEnv.createMarker(d), { omitTime })
   }

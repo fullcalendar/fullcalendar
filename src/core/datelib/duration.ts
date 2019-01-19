@@ -1,6 +1,8 @@
 import { isInt } from '../util/misc'
 
-export interface DurationInput {
+export type DurationInput = DurationObjectInput | string | number
+
+export interface DurationObjectInput {
   years?: number
   year?: number
   months?: number
@@ -33,7 +35,7 @@ const PARSE_RE = /^(-?)(?:(\d+)\.)?(\d+):(\d\d)(?::(\d\d)(?:\.(\d\d\d))?)?/
 
 // Parsing and Creation
 
-export function createDuration(input, unit?: string): Duration | null {
+export function createDuration(input: DurationInput, unit?: string): Duration | null {
   if (typeof input === 'string') {
     return parseString(input)
   } else if (typeof input === 'object' && input) { // non-null object
@@ -64,7 +66,7 @@ function parseString(s: string): Duration {
   return null
 }
 
-function normalizeObject(obj: DurationInput): Duration {
+function normalizeObject(obj: DurationObjectInput): Duration {
   return {
     years: obj.years || obj.year || 0,
     months: obj.months || obj.month || 0,
@@ -79,7 +81,7 @@ function normalizeObject(obj: DurationInput): Duration {
   }
 }
 
-export function getWeeksFromInput(obj: DurationInput) {
+export function getWeeksFromInput(obj: DurationObjectInput) {
   return obj.weeks || obj.week || 0
 }
 

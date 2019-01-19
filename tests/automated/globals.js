@@ -14,9 +14,9 @@ beforeEach(function() {
 afterEach(function() {
   optionsStack = null
 
-  if (window.currentCalendar) {
-    window.currentCalendar.destroy()
-    window.currentCalendar = null
+  if (window['currentCalendar']) {
+    window['currentCalendar'].destroy()
+    window['currentCalendar'] = null
   }
 
   $('#calendar').remove()
@@ -26,14 +26,16 @@ afterEach(function() {
 // Calendar Options and Initialization
 // ---------------------------------------------------------------------------------------------------------------------
 
-window.pushOptions = function(options) {
+function pushOptions(options) {
   beforeEach(function() {
     return optionsStack.push(options)
   })
 }
 
 // called within an `it`
-window.spyOnCalendarCallback = function(name, func) {
+function spyOnCalendarCallback(name, func) {
+
+  /** @type {any} */
   var options = {}
 
   options[name] = func
@@ -44,7 +46,7 @@ window.spyOnCalendarCallback = function(name, func) {
   return options[name]
 }
 
-window.initCalendar = function(moreOptions, el) {
+function initCalendar(moreOptions, el) {
   var $el
 
   if (moreOptions) {
@@ -57,27 +59,29 @@ window.initCalendar = function(moreOptions, el) {
     $el = $('<div id="calendar">').appendTo('body')
   }
 
-  if (window.currentCalendar) {
-    window.currentCalendar.destroy()
+  if (window['currentCalendar']) {
+    window['currentCalendar'].destroy()
   }
 
   var options = getCurrentOptions()
-  var newCalendar
+
+  /** @type {any} */
+  var newCalendar = null
 
   options._init = function() {
-    newCalendar = window.currentCalendar = this
+    newCalendar = window['currentCalendar'] = this
   }
 
   new Calendar($el[0], options)
 
-  if (newCalendar === window.currentCalendar) {
+  if (newCalendar === window['currentCalendar']) {
     newCalendar.render()
   } else {
     newCalendar.destroy()
   }
 }
 
-window.getCurrentOptions = function() {
+function getCurrentOptions() {
   return $.extend.apply($, [ {} ].concat(optionsStack))
 }
 
@@ -89,7 +93,7 @@ window.getCurrentOptions = function() {
 describeOptions(optionName, descriptionAndValueHash, callback)
 describeOptions(descriptionAndOptionsHash, callback)
  */
-window.describeOptions = function(optName, hash, callback) {
+function describeOptions(optName, hash, callback) {
   if ($.type(optName) === 'object') {
     callback = hash
     hash = optName
@@ -114,7 +118,7 @@ window.describeOptions = function(optName, hash, callback) {
   })
 }
 
-window.describeValues = function(hash, callback) {
+function describeValues(hash, callback) {
   $.each(hash, function(desc, val) {
     describe(desc, function() {
       callback(val)
@@ -152,7 +156,7 @@ const timeZoneScenarios = {
   }
 }
 
-window.describeTimeZones = function(callback) {
+function describeTimeZones(callback) {
   $.each(timeZoneScenarios, function(name, scenario) {
     describe(scenario.description, function() {
       pushOptions({
@@ -163,7 +167,7 @@ window.describeTimeZones = function(callback) {
   })
 }
 
-window.describeTimeZone = function(name, callback) {
+function describeTimeZone(name, callback) {
   var scenario = timeZoneScenarios[name]
 
   describe(scenario.description, function() {
@@ -178,7 +182,7 @@ window.describeTimeZone = function(name, callback) {
 // Misc
 // ---------------------------------------------------------------------------------------------------------------------
 
-window.oneCall = function(func) {
+function oneCall(func) {
   var called
   called = false
   return function() {
@@ -189,7 +193,7 @@ window.oneCall = function(func) {
   }
 }
 
-window.spyOnMethod = function(Class, methodName, dontCallThrough) {
+function spyOnMethod(Class, methodName, dontCallThrough) {
   var origMethod = Class.prototype.hasOwnProperty(methodName)
     ? Class.prototype[methodName]
     : null
@@ -200,7 +204,7 @@ window.spyOnMethod = function(Class, methodName, dontCallThrough) {
     spy = spy.and.callThrough()
   }
 
-  spy.restore = function() {
+  spy['restore'] = function() {
     if (origMethod) {
       Class.prototype[methodName] = origMethod
     } else {
@@ -212,7 +216,7 @@ window.spyOnMethod = function(Class, methodName, dontCallThrough) {
 }
 
 // wraps an existing function in a spy, calling through to the function
-window.spyCall = function(func) {
+function spyCall(func) {
   func = func || function() {}
   const obj = { func }
   spyOn(obj, 'func').and.callThrough()
@@ -220,13 +224,28 @@ window.spyCall = function(func) {
 }
 
 
+Object.assign(window, {
+  pushOptions,
+  spyOnCalendarCallback,
+  initCalendar,
+  getCurrentOptions,
+  describeOptions,
+  describeValues,
+  describeTimeZones,
+  describeTimeZone,
+  oneCall,
+  spyOnMethod,
+  spyCall
+})
+
+
 // Defaults that apply to all tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-window.pushOptions({
+pushOptions({
   timeZone: 'UTC'
 })
 
 // clear what plugins do. will take affect for all calendars, not just those via initCalendar()
-globalDefaults.timeZoneImpl = null
-globalDefaults.cmdFormatter = null
+globalDefaults['timeZoneImpl'] = null
+globalDefaults['cmdFormatter'] = null

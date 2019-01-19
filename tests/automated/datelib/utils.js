@@ -19,7 +19,7 @@ export function formatPrettyTimeZoneOffset(date) {
   return 'GMT' + sign + hours + (mins ? ':' + pad(mins) : '')
 }
 
-function pad(n) {
+function pad(n) { // always pads for 2 digits
   return n < 10 ? '0' + n : '' + n
 }
 
@@ -28,9 +28,9 @@ export function formatIsoDay(date) {
 }
 
 export function formatIsoTime(date) {
-  return pad(date.getUTCHours(), 2) + ':' +
-    pad(date.getUTCMinutes(), 2) + ':' +
-    pad(date.getUTCSeconds(), 2)
+  return pad(date.getUTCHours()) + ':' +
+    pad(date.getUTCMinutes()) + ':' +
+    pad(date.getUTCSeconds())
 }
 
 export function formatIsoWithoutTz(date) {

@@ -1,5 +1,6 @@
 describe('eventLimit popover', function() {
 
+  /** @type {any} */
   var testEvents = [
     { title: 'event1', start: '2014-07-28', end: '2014-07-30', className: 'event1' },
     { title: 'event2', start: '2014-07-29', end: '2014-07-31', className: 'event2' },

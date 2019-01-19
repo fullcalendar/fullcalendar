@@ -5,6 +5,8 @@
       var calendarEl
       var heightElm
       var asAMethod
+
+      /** @type {any} */
       var heightPropDescriptions = [
         { description: 'as a number', height: 600 },
         { description: 'as a function', height: getParentHeight, heightWrapper: true }

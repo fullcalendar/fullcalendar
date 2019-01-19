@@ -53,7 +53,10 @@ $.simulate.prototype.simulateWindowResize = function() {
 
 $.simulate.prototype.simulateTouchEvent = function(elem, type, options) {
   // http://stackoverflow.com/a/29019278/96342
+
+  /** @type {any} */
   var event = document.createEvent('Event')
+
   event.initEvent(type, true, true) // cancelable, bubbleable
   event.touches = [{
     target: elem,
@@ -65,6 +68,7 @@ $.simulate.prototype.simulateTouchEvent = function(elem, type, options) {
     clientX: options.clientX,
     clientY: options.clientY
   }]
+
   this.dispatchEvent(elem, type, event, options)
 }
 

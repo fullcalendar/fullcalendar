@@ -1,5 +1,4 @@
 const gulp = require('gulp')
-const shell = require('gulp-shell')
 const eslint = require('gulp-eslint')
 const tslint = require('gulp-tslint')
 const tslintLib = require('tslint')
@@ -64,25 +63,7 @@ gulp.task('lint:js:tests', function() {
     .pipe(
       eslint({
         configFile: 'eslint.json',
-        envs: [ 'browser', 'jasmine', 'jquery' ],
-        globals: [
-          'FullCalendar',
-          'moment',
-          'karmaConfig',
-          'pushOptions',
-          'describeOptions',
-          'describeTimeZones',
-          'describeValues',
-          'pit',
-          'getCurrentOptions',
-          'initCalendar',
-          'currentCalendar',
-          'spyOnMethod',
-          'spyOnCalendarCallback',
-          'spyCall',
-          'oneCall',
-          'XHRMock'
-        ]
+        envs: [ 'browser', 'jasmine', 'jquery' ]
       })
     )
     .pipe(eslint.format())

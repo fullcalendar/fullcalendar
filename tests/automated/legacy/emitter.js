@@ -18,7 +18,8 @@ describe('emitter', function() {
   })
 
   it('calls a handler with context and args', function() {
-    var customContext = {}
+    var customContext
+    customContext = {}
     var o = new EmitterMixin()
     var handlers = {
       something: function(arg1, arg2) {

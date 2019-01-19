@@ -139,6 +139,10 @@ export interface OptionsInputBase {
   selectMirror?: boolean
   unselectAuto?: boolean
   unselectCancel?: string
+  defaultAllDayEventDuration?: DurationInput
+  defaultTimedEventDuration?: DurationInput
+  cmdFormatter?: string
+  defaultRangeSeparator?: string
 
   selectConstraint?: ConstraintInput
   selectOverlap?: boolean | OverlapFunc
@@ -181,7 +185,7 @@ export interface OptionsInputBase {
   eventClick?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): boolean | void
   eventMouseEnter?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  select?(arg: { start: Date, end: Date, allDay: boolean, resource: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
+  select?(arg: { start: Date, end: Date, startStr: string, endStr: string, allDay: boolean, resource: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   unselect?(arg: { view: View, jsEvent: Event }): void
   eventDataTransform?: EventInputTransformer
   loading?(isLoading: boolean, view: View): void
@@ -195,8 +199,9 @@ export interface OptionsInputBase {
   eventResizeStart?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventResizeStop?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventResize?(arg: { el: HTMLElement, event: EventApi, delta: Duration, revert: () => void, jsEvent: Event, view: View }): void
-  drop?(arg: { date: Date, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: View }): void
+  drop?(arg: { date: Date, dateStr: string, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: View }): void
   eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: View }): void
+  eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: View }): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {
@@ -207,5 +212,5 @@ export interface ViewOptionsInput extends OptionsInputBase {
 export interface OptionsInput extends OptionsInputBase {
   buttonText?: ButtonTextCompoundInput
   views?: { [viewId: string]: ViewOptionsInput }
-  plugins: PluginDef[]
+  plugins?: PluginDef[]
 }

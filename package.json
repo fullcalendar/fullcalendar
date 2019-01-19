@@ -22,6 +22,9 @@
   "copyright": "2019 Adam Shaw",
   "main": "main.js",
   "devDependencies": {
+    "@types/jasmine": "^3.3.7",
+    "@types/jasmine-jquery": "^1.5.33",
+    "@types/jquery": "^3.3.29",
     "@types/luxon": "^1.4.1",
     "bootstrap": "^3.4.0",
     "chokidar": "^2.0.4",

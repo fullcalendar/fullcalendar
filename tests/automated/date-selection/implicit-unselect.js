@@ -1,3 +1,4 @@
+
 describe('implicit unselection', function() {
   pushOptions({
     defaultView: 'month',

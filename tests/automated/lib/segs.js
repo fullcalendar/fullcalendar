@@ -14,7 +14,7 @@ export function doElsMatchSegs(els, segs, segToRectFunc) {
     for (i = k = 0, len1 = unmatchedRects.length; k < len1; i = ++k) {
       elRect = unmatchedRects[i]
       if (isRectsSimilar(elRect, segRect)) {
-        unmatchedRects.splice(i, 1)
+        unmatchedRects.slice(i, 1)
         found = true
         break
       }

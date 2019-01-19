@@ -24,7 +24,9 @@ export function computeSpanRects(start, end) {
   end = ensureDate(end)
 
   var dayStructs = computeDays()
+  /** @type {any} */
   var slotStructs = computeSlots()
+
   var dayI, dayStruct
   var slotI, slotStruct
   var slotDayStart
@@ -57,12 +59,12 @@ export function computeSpanRects(start, end) {
       )
 
       if (startTop === null) { // looking for the start
-        coverage = (start - slotStart) / (slotEnd - slotStart)
+        coverage = (start - slotStart.valueOf()) / (slotEnd.valueOf() - slotStart.valueOf())
         startTop = (coverage > 0 && coverage <= 1)
           ? (slotStruct.top + slotStruct.height * coverage)
           : null
       } else { // looking for the end
-        coverage = (end - slotStart) / (slotEnd - slotStart)
+        coverage = (end - slotStart.valueOf()) / (slotEnd.valueOf() - slotStart.valueOf())
         endTop = (coverage >= 0 && coverage < 1) // exclusive
           ? (slotStruct.top + slotStruct.height * coverage)
           : null
@@ -117,6 +119,7 @@ function computeDays() {
 function computeSlots() {
   var slotEls = getSlotEls()
 
+  /** @type {any} */
   var slots = slotEls.map(function(i, node) {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {

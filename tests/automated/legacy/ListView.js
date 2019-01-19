@@ -485,21 +485,21 @@ describe('ListView rendering', function() {
 
   function getDayInfo() {
     return getListHeadingEls().map(function(i, el) {
-      el = $(el)
+      let $el = $(el)
       return {
-        mainText: getListHeadingElMainElText(el) || '',
-        altText: getListHeadingElAltElText(el) || '',
-        date: new Date(el.data('date'))
+        mainText: getListHeadingElMainElText($el) || '',
+        altText: getListHeadingElAltElText($el) || '',
+        date: new Date($el.data('date'))
       }
     }).get()
   }
 
   function getEventInfo() { // gets all *segments*
     return getListEventEls().map(function(i, el) {
-      el = $(el)
+      let $el = $(el)
       return {
-        title: getListEventElTitle(el) || '', // text!
-        timeText: getListEventElTimeText(el) || '' // text!
+        title: getListEventElTitle($el) || '', // text!
+        timeText: getListEventElTimeText($el) || '' // text!
       }
     }).get()
   }
