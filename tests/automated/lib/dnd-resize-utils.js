@@ -5,7 +5,8 @@ import {
   getEventElResizerEl,
   getEventElTitleEl,
   getEventElTimeEl,
-  getFirstEventEl
+  getFirstEventEl,
+  getLastEventEl
 } from '../event-render/EventRenderUtils'
 import { parseMarker, addDays } from 'fullcalendar'
 
@@ -129,7 +130,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       resizeDateHasTime = true
     }
 
-    eventEl = eventClassName ? $(`.${eventClassName}:first`) : $(`.${eventClassName}:last`)
+    eventEl = eventClassName ? $(`.${eventClassName}:first`) : getLastEventEl()
     dragEl = getEventElResizerEl(eventEl)
 
     if (resizeDateHasTime) {

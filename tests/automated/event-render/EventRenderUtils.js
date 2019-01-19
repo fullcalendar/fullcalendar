@@ -64,6 +64,10 @@ export function getFirstEventEl() {
   return getEventEls().first()
 }
 
+export function getLastEventEl() {
+  return getEventEls().last()
+}
+
 export function getEventElTitleEl(eventEl) {
   return eventEl.find(`.${TITLE_CLASS}`)
 }
