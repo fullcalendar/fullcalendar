@@ -124,7 +124,7 @@ export {
   Duration, createDuration,
   isSingleDay, multiplyDuration, addDurations,
   asRoughMinutes, asRoughSeconds, asRoughMs,
-  wholeDivideDurations, greatestDurationDenominator,
+  wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
 export { DateEnv, DateMarkerMeta } from './datelib/env'
 export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'

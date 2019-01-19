@@ -45,7 +45,7 @@ function buildChunksByPackage(content) {
   let MODULE_DECL_RE = /^declare module ['"]([^'"]*)['"] \{(\s*|([\S\s]*?)[\n\r]+)\}/mg // handles empty or big
   let match
 
-  while (match = MODULE_DECL_RE.exec(content)) {
+  while ((match = MODULE_DECL_RE.exec(content))) {
     let pathParts = match[1].split('/')
     let packageDir = pathParts[0]
     let packageName = dirToPackage[packageDir]

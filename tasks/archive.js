@@ -86,12 +86,12 @@ gulp.task('archive:demos', function() {
     'demos/**',
     '!**/_*' // no files that start with underscore
   ])
-  .pipe(htmlFileFilter)
-  .pipe(demoPathModify)
-  .pipe(htmlFileFilter.restore) // pipe thru files that didn't match htmlFileFilter
-  .pipe(
-    gulp.dest('tmp/' + archiveId + '/demos')
-  )
+    .pipe(htmlFileFilter)
+    .pipe(demoPathModify)
+    .pipe(htmlFileFilter.restore) // pipe thru files that didn't match htmlFileFilter
+    .pipe(
+      gulp.dest('tmp/' + archiveId + '/demos')
+    )
 })
 
 gulp.task('archive:vendor', [ 'archive:demos' ], function() {
@@ -119,7 +119,7 @@ function transformDemoPath(path) {
   path = path.replace('../dist/', '../packages/')
 
   path = path.replace(
-    /^\.\.\/node_modules\/(.*)\/([^\/]+)$/,
+    /^\.\.\/node_modules\/(.*)\/([^/]+)$/,
     function(m0, m1, m2) {
       vendorPaths.push(m1 + '/' + m2)
       return '../packages/' + m2

@@ -4,9 +4,12 @@ import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtil
 import { testTimeZoneImpl } from './timeZoneImpl'
 import * as luxon from 'luxon'
 
+if (!luxon) {
+  console.log('Luxon not present. Skipping related tests.')
+}
+
 // eslint-disable-next-line
-!luxon ?
-console.log('Luxon not present. Skipping related tests.') :
+luxon &&
 describe('luxon plugin', function() {
 
   testTimeZoneImpl('luxon')

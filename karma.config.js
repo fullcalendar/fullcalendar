@@ -49,7 +49,7 @@ module.exports = function(config) {
       // tests
       'tests/automated/base.css',
       'tmp/automated-tests.js',
-      { pattern: 'tmp/automated-tests.js.map', included: false, nocache: true, watched: false },
+      { pattern: 'tmp/automated-tests.js.map', included: false, nocache: true, watched: false }
     ],
 
     // make console errors aware of source files

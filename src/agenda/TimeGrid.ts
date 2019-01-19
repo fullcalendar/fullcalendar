@@ -24,7 +24,7 @@ import {
   DayBgRow,
   DateProfile,
   memoizeRendering,
-  MemoizedRendering,
+  MemoizedRendering
 } from 'fullcalendar'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'

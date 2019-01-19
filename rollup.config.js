@@ -11,7 +11,7 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
   console.warn('BUILD environment not specified. Assuming \'development\'')
   isDev = true
 } else {
-  isDev = process.env.BUILD == 'development'
+  isDev = process.env.BUILD === 'development'
 }
 
 let packageGlobals = {
@@ -125,7 +125,7 @@ function buildLocaleConfigs() {
 }
 
 function buildTestConfig() {
-  return   {
+  return {
     onwarn,
     watch: watchOptions,
     input: [
