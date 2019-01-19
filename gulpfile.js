@@ -3,6 +3,7 @@ const gulp = require('gulp')
 require('./tasks/dist-post-process')
 require('./tasks/dts')
 require('./tasks/package-meta')
+require('./tasks/lint')
 require('./tasks/archive')
 
 // assumes a clean build already happened

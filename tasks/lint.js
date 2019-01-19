@@ -1,40 +1,34 @@
 const gulp = require('gulp')
 const eslint = require('gulp-eslint')
-const tslint = require('gulp-tslint')
-const tslintLib = require('tslint')
-
-const tslintProgram = tslintLib.Linter.createProgram('./tsconfig.json')
+const shell = require('gulp-shell')
 
 gulp.task('lint', [
   'lint:ts',
   'lint:js:built',
   'lint:js:node',
   'lint:js:tests',
-  // 'dts:lint'
+  'dts:lint'
 ])
 
-gulp.task('lint:ts', function() {
-  return gulp.src('src/**/*.ts') // TODO: get files from tsconfig.include
-    .pipe(
-      tslint({ // will use tslint.json
-        formatter: 'verbose',
-        program: tslintProgram // for type-checking rules
-      })
-    )
-    .pipe(tslint.report())
-})
+gulp.task('lint:ts', shell.task('tslint --project .'))
 
-gulp.task('lint:js:built', [ 'webpack' ], function() {
+/*
+expects files to already have been built :(
+ONLY checks two things:
+- code is ES5 compliant (for IE11)
+- does not access any globals. this is important because the typescript compiler allows
+  accessing globals that are defined in the project for tests (tests/automated/globals.d.ts)
+*/
+gulp.task('lint:js:built', function() {
   return gulp.src([
-    'dist/*.js',
-    '!dist/*.min.js'
+    'dist/**/*.js',
+    '!**/*.min.js'
   ])
     .pipe(
-      eslint({ // only checks that globals are properly accessed
-        parserOptions: { 'ecmaVersion': 3 }, // for IE9
+      eslint({
+        parserOptions: { 'ecmaVersion': 5 },
         envs: [ 'browser', 'commonjs', 'amd' ],
-        rules: { 'no-undef': 2 },
-        globals: [ 'Promise', 'ActiveXObject' ] // for superagent
+        rules: { 'no-undef': 2 }
       })
     )
     .pipe(eslint.format())
@@ -44,6 +38,7 @@ gulp.task('lint:js:built', [ 'webpack' ], function() {
 gulp.task('lint:js:node', function() {
   return gulp.src([
     '*.js', // config files in root
+    'bin/*.js',
     'tasks/**/*.js'
   ])
     .pipe(
@@ -56,6 +51,10 @@ gulp.task('lint:js:node', function() {
     .pipe(eslint.failAfterError())
 })
 
+/*
+we would want to use tslint with jsRules:true, but doesn't work at all,
+because of tslint-config-standard possibly
+*/
 gulp.task('lint:js:tests', function() {
   return gulp.src([
     'tests/automated/**/*.js'
@@ -63,7 +62,8 @@ gulp.task('lint:js:tests', function() {
     .pipe(
       eslint({
         configFile: 'eslint.json',
-        envs: [ 'browser', 'jasmine', 'jquery' ]
+        envs: [ 'browser' ],
+        rules: { 'no-undef': 0 } // ignore accessing globals. tsc already does this
       })
     )
     .pipe(eslint.format())

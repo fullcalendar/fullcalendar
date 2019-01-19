@@ -1,5 +1,6 @@
 {
   "extends": "tslint-config-standard",
+  "jsRules": true,
   "rules": {
     "member-ordering": false,
     "no-conditional-assignment": false,

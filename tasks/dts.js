@@ -22,6 +22,9 @@ gulp.task('dts', [ 'dts:raw' ], function() {
 
 gulp.task('dts:raw', shell.task('tsc -p tsconfig.dts.json'))
 
+/*
+expects to already to be built :(
+*/
 gulp.task('dts:lint', shell.task('tsc --allowSyntheticDefaultImports --strict dist/*/*.d.ts'))
 
 
