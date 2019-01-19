@@ -13,7 +13,6 @@ gulp.task('dist', [
   'package-meta'
 ])
 
-// require('./tasks/lint')
 // require('./tasks/bump')
 // require('./tasks/example-repos')
 // // group these somewhat unrelated tasks together for CI
