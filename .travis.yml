@@ -13,7 +13,7 @@ env:
   global:
     - TZ="America/Los_Angeles" # for Headless Chrome. otherwise will be UTC, bad for tests
   matrix:
-    - CMD=test
+    - CMD=test-ci
     - CMD=lint
 
 # TODO: instead of flag, use env variable TRAVIS

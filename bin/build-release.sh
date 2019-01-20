@@ -48,8 +48,8 @@ if {
   # update package manager json files with version number and release date
   ./bin/bump-version.js --version=$version &&
 
-  # build all dist files, the archive (and lint)
-  npm run dist &&
+  # build everything
+  gulp lint dist archive &&
 
   # test in headless browser
   npm run test-single &&

@@ -6,9 +6,8 @@ require('./tasks/package-meta')
 require('./tasks/lint')
 require('./tasks/archive') // depends on the dist task
 
-gulp.task('dist', [ // will lint as well!
+gulp.task('dist', [
   'build',
   'dts',
-  'package-meta',
-  'lint'
+  'package-meta'
 ])
