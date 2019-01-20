@@ -33,6 +33,7 @@ fi
 # # push the current branch (assumes tracking is set up) and the tag
 # git push --recurse-submodules=on-demand
 # git push origin "v$version"
+echo "REENABLE BRANCH PUSHING"
 
 if {
   # check out dist files for tag but don't stage them
@@ -42,7 +43,8 @@ if {
   cd "dist/$package" &&
 
   # npm publish --tag "$scope"
-  echo "FAKE NPM PUBLISH ($PWD)"
+  echo "FAKE NPM PUBLISH ($PWD)" &&
+  ls -al
 }
 then
   echo 'Success.'
