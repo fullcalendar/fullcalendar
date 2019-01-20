@@ -8,60 +8,44 @@ cd "`dirname $0`/.."
 
 ./bin/require-clean-working-tree.sh
 
-read -p "Enter the version you want to publish, with no 'v' (for example '1.0.1'): " version
+package="$1"
+version="$2"
+scope="$3"
+
+if [[ ! "$package" ]]
+then
+  echo "Invalid first argument package name."
+  exit 1
+fi
+
 if [[ ! "$version" ]]
 then
-  echo "Aborting."
+  echo "Invalid second argument version."
   exit 1
 fi
 
-read -p "Enter a version scope (latest/beta/alpha): " scope
 if [[ "$scope" != "latest" ]] && [[ "$scope" != "beta" ]] && [[ "$scope" != "alpha" ]]
 then
-  echo "Invalid scope '$scope'. Aborting."
+  echo "Invalid third argument scope '$scope'. Aborting."
   exit 1
 fi
 
-# push the current branch (assumes tracking is set up) and the tag
-git push --recurse-submodules=on-demand
-git push origin "v$version"
+# # push the current branch (assumes tracking is set up) and the tag
+# git push --recurse-submodules=on-demand
+# git push origin "v$version"
 
-success=0
+if {
+  # check out dist files for tag
+  git checkout --quiet "v$version" -- dist &&
 
-# save reference to current branch
-current_branch=$(git symbolic-ref --quiet --short HEAD)
+  cd "dist/$package" &&
 
-# temporarily checkout the tag's commit, publish to NPM
-git checkout --quiet "v$version"
-if npm publish --tag "$scope"
+  # npm publish --tag "$scope"
+  echo "FAKE NPM PUBLISH ($PWD)"
+}
 then
-  success=1
-fi
-
-# return to branch
-git checkout --quiet "$current_branch"
-
-# restore generated dist files
-git checkout --quiet "v$version" -- dist
-git reset --quiet -- dist
-
-if [[ "$success" == "1" ]]
-then
-  echo "Waiting for release to propagate to NPM..."
-  sleep 10
-
-  ./bin/verify-npm.sh
-
-  echo
   echo 'Success.'
-  echo 'You can now run:'
-  echo "  ./bin/update-example-repo-deps.sh '$version' &&"
-  echo '  git push --recurse-submodules=on-demand &&'
-  echo '  ./bin/build-example-repos.sh --recent-release'
-  echo
 else
-  echo
   echo 'Failure.'
-  echo
   exit 1
 fi
