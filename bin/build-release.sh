@@ -35,54 +35,46 @@ then
   exit 1
 fi
 
-success=0
+# save reference to current branch
+current_branch=$(git symbolic-ref --quiet --short HEAD)
+
+# detach the branch head
+git checkout --quiet --detach
+
 if {
   # ensures stray files stay out of the release
-  gulp clean &&
+  npm run clean &&
 
   # update package manager json files with version number and release date
-  gulp bump --version=$version &&
+  ./bin/bump-version.js --version=$version &&
 
-  # build all dist files, lint, and run tests
-  gulp release
+  # build all dist files, the archive (and lint)
+  npm run dist &&
+
+  # test in headless browser
+  npm run test-single &&
+
+  # commit new files
+  git add -f package.json package-lock.json dist &&
+  git commit --quiet --no-verify -e -m "version $version" &&
+  git tag -a "v$version" -m "version $version"
 }
 then
-  # save reference to current branch
-  current_branch=$(git symbolic-ref --quiet --short HEAD)
-
-  # make a tagged detached commit of the dist files.
-  # no-verify avoids commit hooks.
-
-  if {
-    git checkout --quiet --detach &&
-    git add *.json &&
-
-    # WRONG!!!
-    git add -f dist/*.js dist/*.d.ts dist/*.css dist/plugins/*.js dist/locales/*.js &&
-    git commit --quiet --no-verify -e -m "version $version" &&
-    git tag -a "v$version" -m "version $version"
-  }
-  then
-    success=1
-  fi
-
   # return to branch
   git checkout --quiet "$current_branch"
-fi
 
-if [[ "$success" == "1" ]]
-then
   # keep newly generated dist files around
   git checkout --quiet "v$version" -- dist
   git reset --quiet -- dist
 
   echo "Success."
-else
-  # unstage all dist/ or *.json changes
-  git reset --quiet
 
-  # discard changes from version bump
-  git checkout --quiet -- *.json
+else
+  # unstage all added changes
+  git reset --hard --quiet
+
+  # return to branch
+  git checkout --quiet "$current_branch"
 
   echo "Failure."
   exit 1
