@@ -18,7 +18,7 @@ gulp.task('archive', [ 'archive:files' ], function() {
       zip(archiveId + '.zip')
     )
     .pipe(
-      gulp.dest('dist/')
+      gulp.dest('archives/')
     )
 })
 
