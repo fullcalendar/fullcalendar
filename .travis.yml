@@ -1,9 +1,12 @@
 
 sudo: false # route build to the container-based infrastructure for a faster build
 
+before_install:
+  - gem install sass
+
 language: node_js
 node_js:
-  - 'node' # implies latest version
+  - node # implies latest version
 
 cache:
   directories:
