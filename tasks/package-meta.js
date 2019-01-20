@@ -1,4 +1,5 @@
 const fs = require('fs')
+const mkdirp = require('mkdirp')
 const path = require('path')
 const gulp = require('gulp')
 const rootPackageConfig = require('../package.json')
@@ -33,8 +34,11 @@ gulp.task('package-meta:json', function() {
 
     let content = buildPackageConfig(packageName, overrides)
 
+    let dir = 'dist/' + packageName
+    mkdirp.sync(dir)
+
     fs.writeFileSync(
-      'dist/' + packageName + '/package.json',
+      dir + '/package.json',
       JSON.stringify(content, null, '  ')
     )
   }

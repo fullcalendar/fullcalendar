@@ -1,16 +1,16 @@
 const gulp = require('gulp')
 
-require('./tasks/dist-post-process')
+require('./tasks/build')
 require('./tasks/dts')
 require('./tasks/package-meta')
 require('./tasks/lint')
-require('./tasks/archive')
+require('./tasks/archive') // depends on the dist task
 
-// assumes a clean build already happened
 gulp.task('dist', [
-  'dist-post-process',
+  'build',
   'dts',
-  'package-meta'
+  'package-meta',
+  'lint'
 ])
 
 // require('./tasks/bump')

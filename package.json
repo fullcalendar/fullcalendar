@@ -80,7 +80,7 @@
     "yargs": "^4.8.1"
   },
   "scripts": {
-    "dist": "npm run clean && npm run build && gulp dist && gulp archive",
+    "dist": "gulp dist archive",
     "build": "tsc && npm run rollup && npm run sass",
     "watch": "concurrently --raw 'tsc --watch --sourceMap' 'npm run rollup-watch' 'npm run sass-watch'",
     "clean": "rm -rf dist tmp",

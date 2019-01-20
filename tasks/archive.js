@@ -31,7 +31,7 @@ gulp.task('archive:files', [
   'archive:meta'
 ])
 
-gulp.task('archive:packages', function() {
+gulp.task('archive:packages', [ 'dist' ], function() {
   return gulp.src([
     'dist/**',
     '!**/*.{txt,json,d.ts}'

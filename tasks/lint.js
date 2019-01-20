@@ -12,13 +12,12 @@ gulp.task('lint', [
 gulp.task('lint:ts', shell.task('tslint --project .'))
 
 /*
-expects files to already have been built :(
 ONLY checks two things:
 - code is ES5 compliant (for IE11)
 - does not access any globals. this is important because the typescript compiler allows
   accessing globals that are defined in the project for tests (tests/automated/globals.d.ts)
 */
-gulp.task('lint:js:built', function() {
+gulp.task('lint:js:built', [ 'build' ], function() {
   return gulp.src([
     'dist/**/*.js',
     '!**/*.min.js'

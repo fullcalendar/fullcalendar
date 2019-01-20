@@ -1,9 +1,10 @@
 const path = require('path')
 const gulp = require('gulp')
+const shell = require('gulp-shell')
 const modify = require('gulp-modify-file')
 const rootPackageConfig = require('../package.json')
 
-gulp.task('dist-post-process', function() {
+gulp.task('build', [ 'build:raw' ], function() {
   return gulp.src('dist/*/*.{js,css}', { base: '.' })
     .pipe(
       modify(modifySource)
@@ -12,6 +13,10 @@ gulp.task('dist-post-process', function() {
       gulp.dest('.')
     )
 })
+
+gulp.task('build:raw', shell.task(
+  'npm run build'
+))
 
 const BANNER =
   '/*!\n' +
