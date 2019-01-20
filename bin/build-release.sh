@@ -8,7 +8,7 @@ cd "`dirname $0`/.."
 
 ./bin/require-clean-working-tree.sh
 
-read -p 'Have you already ran `npm update` and committed the package-lock.json? (y/N): ' updated_npm_deps
+read -p 'Have you already ran `npm update` (y/N): ' updated_npm_deps
 if [[ "$updated_npm_deps" != "y" ]]
 then
   echo "Go do that!"
