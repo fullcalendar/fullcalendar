@@ -52,7 +52,7 @@ if {
   npm run clean &&
 
   # update package manager json files with version number and release date
-  ./bin/bump-version.js --version=$version &&
+  ./bin/bump-version.js "$version" &&
 
   # build everything
   gulp lint dist archive &&

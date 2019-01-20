@@ -75,8 +75,7 @@
     "tslint": "^5.12.1",
     "tslint-config-standard": "^7.1.0",
     "typescript": "^3.2.2",
-    "xhr-mock": "^2.4.1",
-    "yargs": "^4.8.1"
+    "xhr-mock": "^2.4.1"
   },
   "scripts": {
     "build": "tsc && npm run rollup && npm run sass",
