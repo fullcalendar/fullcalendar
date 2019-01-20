@@ -31,10 +31,9 @@ gulp.task('archive:files', [
   'archive:meta'
 ])
 
-gulp.task('archive:packages', [ 'dist' ], function() {
+gulp.task('archive:packages', [ 'build' ], function() {
   return gulp.src([
-    'dist/**',
-    '!**/*.{txt,json,d.ts}'
+    'dist/**/*.{js,css}'
   ]).pipe(
     gulp.dest('tmp/' + archiveId + '/packages')
   )

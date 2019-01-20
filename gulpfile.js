@@ -4,7 +4,7 @@ require('./tasks/build')
 require('./tasks/dts')
 require('./tasks/package-meta')
 require('./tasks/lint')
-require('./tasks/archive') // depends on the dist task
+require('./tasks/archive')
 
 gulp.task('dist', [
   'build',
