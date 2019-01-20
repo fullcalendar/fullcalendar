@@ -8,7 +8,7 @@ const zip = require('gulp-zip')
 
 // determines the name of the ZIP file
 const packageConfig = require('../package.json')
-const archiveId = packageConfig.name + '-' + (packageConfig.version || '0.0.0')
+const archiveId = packageConfig.name + '-' + (packageConfig.version || 'latest')
 
 // assumes a clean dist already happened
 gulp.task('archive', [ 'archive:files' ], function() {
