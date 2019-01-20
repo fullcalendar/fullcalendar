@@ -6,8 +6,7 @@ gulp.task('lint', [
   'lint:ts',
   'lint:js:built',
   'lint:js:node',
-  'lint:js:tests',
-  'dts:lint'
+  'lint:js:tests'
 ])
 
 gulp.task('lint:ts', shell.task('tslint --project .'))

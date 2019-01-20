@@ -1,31 +1,37 @@
 const fs = require('fs')
+const mkdirp = require('mkdirp')
 const gulp = require('gulp')
 const shell = require('gulp-shell')
 
 const tsConfig = require('../tsconfig.json')
 const dirToPackage = buildDirToPackage()
 
-/*
-assumes dist/<packageName> dirs already created by build process
-*/
-gulp.task('dts', [ 'dts:raw' ], function() {
+
+gulp.task('dts', [ 'dts:refined', 'dts:verify' ])
+
+gulp.task('dts:raw', shell.task(
+  'tsc -p tsconfig.dts.json'
+))
+
+gulp.task('dts:verify', [ 'dts:refined' ], shell.task(
+  'tsc --allowSyntheticDefaultImports --strict dist/*/*.d.ts'
+))
+
+
+gulp.task('dts:refined', [ 'dts:raw' ], function() {
   let rawContent = fs.readFileSync('tmp/all.d.ts', { encoding: 'utf8' })
   let contentByPackage = buildContentByPackage(rawContent)
 
   for (let packageName in contentByPackage) {
+    let dir = 'dist/' + packageName
+    mkdirp.sync(dir)
+
     fs.writeFileSync(
-      'dist/' + packageName + '/main.d.ts',
+      dir + '/main.d.ts',
       contentByPackage[packageName]
     )
   }
 })
-
-gulp.task('dts:raw', shell.task('tsc -p tsconfig.dts.json'))
-
-/*
-expects to already to be built :(
-*/
-gulp.task('dts:lint', shell.task('tsc --allowSyntheticDefaultImports --strict dist/*/*.d.ts'))
 
 
 /*
