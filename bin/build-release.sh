@@ -8,6 +8,12 @@ cd "`dirname $0`/.."
 
 ./bin/require-clean-working-tree.sh
 
+if [[ ! -f 'package-lock.json' ]]
+then
+  echo "No package-lock.json present. Run npm install/update."
+  exit 1
+fi
+
 read -p 'Have you already ran `npm update` (y/N): ' updated_npm_deps
 if [[ "$updated_npm_deps" != "y" ]]
 then
