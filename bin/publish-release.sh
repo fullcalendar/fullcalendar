@@ -35,8 +35,9 @@ fi
 # git push origin "v$version"
 
 if {
-  # check out dist files for tag
+  # check out dist files for tag but don't stage them
   git checkout --quiet "v$version" -- dist &&
+  git reset --quiet -- dist &&
 
   cd "dist/$package" &&
 
