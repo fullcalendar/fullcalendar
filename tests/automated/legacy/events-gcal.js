@@ -1,7 +1,7 @@
 
-// HACK: in TravisCI, requests to the gcal api were failing for some reason
+// HACK: in our CI setup, requests to the gcal api were failing for some reason
 // (requests to other services were working however)
-const SKIP_GCAL = karmaConfig.isTravis
+const SKIP_GCAL = karmaConfig.isCi
 if (SKIP_GCAL) {
   console.log('skipping gcal')
 }

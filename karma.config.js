@@ -1,5 +1,5 @@
 const fs = require('fs')
-const argv = require('yargs').argv
+const mkdirp = require('mkdirp')
 
 writeConfig()
 
@@ -91,12 +91,10 @@ module.exports = function(config) {
 
 function writeConfig() {
   let config = {
-    isTravis: ('travis' in argv)
+    isCi: Boolean(process.env.CI)
   }
 
-  if (!fs.existsSync('tmp')) {
-    fs.mkdirSync('tmp')
-  }
+  mkdirp('tmp')
   fs.writeFileSync(
     'tmp/automated-test-config.js',
     'window.karmaConfig = ' + JSON.stringify(config),

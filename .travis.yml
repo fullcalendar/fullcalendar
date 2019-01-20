@@ -19,6 +19,4 @@ env:
     - CMD=test-ci
     - CMD=lint
 
-# TODO: instead of flag, use env variable TRAVIS
-# https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
-script: npm run $CMD -- --travis
+script: npm run $CMD
