@@ -35,7 +35,7 @@ module.exports = function(config) {
       'node_modules/luxon/build/global/luxon.js', // for testing IE11, comment out this line
 
       // core and plugin files
-      'dist/fullcalendar/main.js', // needs to be first
+      'dist/fullcalendar/main.+(js|css)', // needs to be first
       'dist/fullcalendar/locales-all.js',
       'dist/*/main.+(js|css)', // other packages
       { pattern: 'dist/*/*.map', included: false, nocache: true, watched: false },
