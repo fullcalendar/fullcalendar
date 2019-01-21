@@ -112,6 +112,7 @@ export { default as FgEventRenderer, buildSegCompareObj } from './component/rend
 export { default as FillRenderer } from './component/renderers/FillRenderer'
 export { default as SimpleDayGrid, DayGridSlicer } from './basic/SimpleDayGrid'
 export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
+export { default as AbstractBasicView } from './basic/AbstractBasicView'
 export { default as BasicView, buildDayTable as buildBasicDayTable } from './basic/BasicView'
 export { default as DayBgRow } from './basic/DayBgRow'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'

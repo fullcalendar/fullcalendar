@@ -1,7 +1,10 @@
 import { createPlugin } from 'fullcalendar'
-import AgendaView from './AgendaView'
+import AbstractAgendaView from './AbstractAgendaView'
+import AgendaView, { buildDayTable } from './AgendaView'
+import { TimeGridSeg } from './TimeGrid'
+import { TimeGridSlicer, buildDayRanges } from './SimpleTimeGrid'
 
-export { AgendaView }
+export { AgendaView, AbstractAgendaView, buildDayTable, buildDayRanges, TimeGridSlicer, TimeGridSeg }
 export { default as TimeGrid } from './TimeGrid'
 
 export default createPlugin({
