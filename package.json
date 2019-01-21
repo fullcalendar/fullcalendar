@@ -21,6 +21,7 @@
   },
   "copyright": "2019 Adam Shaw",
   "main": "main.js",
+  "types": "main.d.ts",
   "devDependencies": {
     "@types/jasmine": "^3.3.7",
     "@types/jasmine-jquery": "^1.5.33",
