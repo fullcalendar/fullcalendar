@@ -122,6 +122,7 @@ function transformModuleBodyPaths(content) {
 // changes the name of the default export to `Default` and exports it as a *named* export.
 // this allows ambient declaration merging to grab onto it.
 // workaround for https://github.com/Microsoft/TypeScript/issues/14080
+// NEEDED ANYMORE?
 function transformDefaultClassExports(content) {
   return content.replace(/^(\s*)export default (abstract )?class ([\w]+)/mg, function(m0, m1, m2, m3) {
     return m1 + 'export { ' + m3 + ' as default, ' + m3 + ' };\n' +

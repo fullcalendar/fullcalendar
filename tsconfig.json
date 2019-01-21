@@ -34,7 +34,7 @@
     "outDir": "tmp/tsc-output"
   },
   "include": [
-    "src/**/main.ts",
+    "src/*/main.ts",
     "locales/*.js",
     "tests/automated/globals.d.ts",
     "tests/automated/**/*.js"

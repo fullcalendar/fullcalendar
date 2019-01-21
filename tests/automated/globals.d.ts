@@ -47,6 +47,10 @@ declare namespace jasmine {
     toBeRightOf: any
     toBeLeftOf: any
     toHaveScrollbars: any
+    toBeMostlyHBoundedBy: any
+    toBeMostlyAbove: any
+    toBeMostlyLeftOf: any
+    toBeMostlyRightOf: any
   }
 
 }

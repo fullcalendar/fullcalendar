@@ -79,9 +79,11 @@
     "xhr-mock": "^2.4.1"
   },
   "scripts": {
-    "build": "tsc && npm run rollup && npm run sass",
-    "watch": "concurrently --raw 'tsc --watch --sourceMap' 'npm run rollup-watch' 'npm run sass-watch'",
+    "build": "npm run tsc && npm run rollup && npm run sass",
+    "watch": "concurrently --raw 'npm run tsc-watch' 'npm run rollup-watch' 'npm run sass-watch'",
     "clean": "rm -rf dist archives tmp",
+    "tsc": "tsc",
+    "tsc-watch": "tsc --watch --sourceMap",
     "rollup": "rollup -c --environment BUILD:production",
     "rollup-watch": "sleep 5 && rollup -c --environment BUILD:development --watch",
     "sass": "sass --update --sourcemap=none $(bin/sass-args.js)",
