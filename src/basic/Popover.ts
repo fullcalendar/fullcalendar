@@ -13,9 +13,11 @@ Options:
   - hide (callback)
 */
 
-import { removeElement, createElement, applyStyle } from '../util/dom-manip'
-import { listenBySelector } from '../util/dom-event'
-import { computeClippingRect, computeRect } from '../util/dom-geom'
+import {
+  removeElement, createElement, applyStyle,
+  listenBySelector,
+  computeClippingRect, computeRect
+} from 'fullcalendar'
 
 export interface PopoverOptions {
   className?: string

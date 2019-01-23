@@ -21,11 +21,11 @@ import {
   DateComponent,
   Seg,
   EventSegUiInteractionState,
-  DayBgRow,
   DateProfile,
   memoizeRendering,
   MemoizedRendering
 } from 'fullcalendar'
+import { DayBgRow } from 'fullcalendar-basic'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'

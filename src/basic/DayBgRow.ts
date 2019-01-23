@@ -1,8 +1,10 @@
-import { ComponentContext } from '../component/Component'
-import { DateMarker } from '../datelib/marker'
-import { getDayClasses } from '../component/date-rendering'
-import { rangeContainsMarker } from '../datelib/date-range'
-import { DateProfile } from '../DateProfileGenerator'
+import {
+  ComponentContext,
+  DateMarker,
+  getDayClasses,
+  rangeContainsMarker,
+  DateProfile
+} from 'fullcalendar'
 
 export interface DayBgCell {
   date: DateMarker

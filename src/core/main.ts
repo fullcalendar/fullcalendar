@@ -6,10 +6,6 @@ import './event-sources/func-event-source'
 import './event-sources/json-feed-event-source'
 import './structs/recurring-event-simple'
 
-import BasicPlugin from './basic/config'
-import { addDefaultPlugin } from './options'
-addDefaultPlugin(BasicPlugin)
-
 // exports
 // --------------------------------------------------------------------------------------------------
 
@@ -40,7 +36,9 @@ export {
   computeVisibleDayRange,
   refineProps,
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
-  isMultiDayRange
+  isMultiDayRange,
+  distributeHeight,
+  undistributeHeight
 } from './util/misc'
 
 export {
@@ -57,7 +55,8 @@ export { memoize, memoizeOutput } from './util/memoize'
 export { memoizeRendering, MemoizedRendering } from './component/memoized-rendering'
 
 export {
-  intersectRects
+  intersectRects,
+  Rect, pointInsideRect
 } from './util/geom'
 
 export { isPropsEqual, mapHash, filterHash } from './util/object'
@@ -92,7 +91,9 @@ export {
   computeInnerRect,
   computeEdges,
   computeHeightAndMargins,
-  getClippingParents
+  getClippingParents,
+  computeClippingRect,
+  computeRect
 } from './util/dom-geom'
 
 export { unpromisify } from './util/promise'
@@ -110,17 +111,13 @@ export { default as Calendar, DatePointTransform, DateSpanTransform } from './Ca
 export { default as View, ViewProps } from './View'
 export { default as FgEventRenderer, buildSegCompareObj } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
-export { default as SimpleDayGrid, DayGridSlicer } from './basic/SimpleDayGrid'
-export { default as DayGrid, DayGridSeg } from './basic/DayGrid'
-export { default as AbstractBasicView } from './basic/AbstractBasicView'
-export { default as BasicView, buildDayTable as buildBasicDayTable } from './basic/BasicView'
-export { default as DayBgRow } from './basic/DayBgRow'
+
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
 export { ViewSpec, ViewSpecTransformer } from './structs/view-spec'
 export { DateSpan, DateSpanApi, DatePointApi } from './structs/date-span'
 
-export { DateMarker, addDays, startOfDay, addMs, diffWholeWeeks, diffWholeDays, diffDayAndTime, diffDays, isValidDate } from './datelib/marker'
+export { DateMarker, addDays, startOfDay, addMs, addWeeks, diffWeeks, diffWholeWeeks, diffWholeDays, diffDayAndTime, diffDays, isValidDate } from './datelib/marker'
 export {
   Duration, createDuration,
   isSingleDay, multiplyDuration, addDurations,

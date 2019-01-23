@@ -1,6 +1,11 @@
-import { createElement, removeElement, appendToElement, prependToElement } from '../util/dom-manip'
+import {
+  createElement,
+  removeElement,
+  appendToElement,
+  prependToElement,
+  Seg
+} from 'fullcalendar'
 import DayGrid from './DayGrid'
-import { Seg } from '../component/DateComponent'
 import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
 
 

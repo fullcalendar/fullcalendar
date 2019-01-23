@@ -3,10 +3,11 @@ import {
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
   ScrollComponent,
   View, ViewSpec, DateProfileGenerator,
-  DayGrid, ComponentContext,
+  ComponentContext,
   createDuration, createFormatter, diffDays,
   buildGotoAnchorHtml, getAllDayHtml
 } from 'fullcalendar'
+import { DayGrid } from 'fullcalendar-basic'
 import TimeGrid from './TimeGrid'
 import AllDaySplitter from './AllDaySplitter'
 

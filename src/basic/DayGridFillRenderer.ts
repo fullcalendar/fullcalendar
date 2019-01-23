@@ -1,7 +1,11 @@
-import { htmlToElement, appendToElement, prependToElement } from '../util/dom-manip'
-import FillRenderer from '../component/renderers/FillRenderer'
+import {
+  htmlToElement,
+  appendToElement,
+  prependToElement,
+  FillRenderer,
+  Seg
+} from 'fullcalendar'
 import DayGrid, { DayGridSeg } from './DayGrid'
-import { Seg } from '../component/DateComponent'
 
 
 export default class DayGridFillRenderer extends FillRenderer {

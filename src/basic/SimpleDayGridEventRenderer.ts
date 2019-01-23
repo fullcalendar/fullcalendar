@@ -1,6 +1,8 @@
-import { htmlEscape, cssToStr } from '../util/html'
-import FgEventRenderer from '../component/renderers/FgEventRenderer'
-import { Seg } from '../component/DateComponent'
+import {
+  htmlEscape, cssToStr,
+  FgEventRenderer,
+  Seg
+} from 'fullcalendar'
 
 
 /* Event-rendering methods for the DayGrid class

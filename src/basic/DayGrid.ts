@@ -3,24 +3,30 @@ import {
   insertAfterElement,
   findElements,
   findChildren,
-  removeElement
-} from '../util/dom-manip'
-import { computeRect } from '../util/dom-geom'
-import PositionCache from '../common/PositionCache'
-import Popover from '../common/Popover'
+  removeElement,
+  computeRect,
+  PositionCache,
+  addDays,
+  DateMarker,
+  createFormatter,
+  DateComponent,
+  EventSegUiInteractionState,
+  Seg,
+  rangeContainsMarker,
+  intersectRanges,
+  EventRenderRange,
+  buildGotoAnchorHtml,
+  getDayClasses,
+  DateProfile,
+  memoizeRendering,
+  MemoizedRendering
+} from 'fullcalendar'
+import Popover from './Popover'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridMirrorRenderer from './DayGridMirrorRenderer'
 import DayGridFillRenderer from './DayGridFillRenderer'
-import { addDays, DateMarker } from '../datelib/marker'
-import { createFormatter } from '../datelib/formatting'
-import DateComponentProps, { EventSegUiInteractionState, Seg } from '../component/DateComponent'
 import DayTile from './DayTile'
-import { rangeContainsMarker, intersectRanges } from '../datelib/date-range'
-import { EventRenderRange } from '../component/event-rendering'
-import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 import DayBgRow from './DayBgRow'
-import { DateProfile } from '../DateProfileGenerator'
-import { memoizeRendering, MemoizedRendering } from '../component/memoized-rendering'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -64,7 +70,7 @@ export interface DayGridProps {
   isRigid: boolean
 }
 
-export default class DayGrid extends DateComponentProps<DayGridProps> {
+export default class DayGrid extends DateComponent<DayGridProps> {
 
   eventRenderer: DayGridEventRenderer
   renderProps: RenderProps

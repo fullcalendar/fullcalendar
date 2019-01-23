@@ -1,16 +1,18 @@
-import DayGrid, { DayGridSeg } from './DayGrid'
-import { DateProfile } from '../DateProfileGenerator'
-import { EventStore } from '../structs/event-store'
-import { EventUiHash } from '../component/event-ui'
-import { DateSpan } from '../structs/date-span'
-import { EventInteractionState } from '../interactions/event-interaction-state'
-import DayTable from '../common/DayTable'
-import { Duration } from '../datelib/duration'
-import DateComponent from '../component/DateComponent'
-import { DateRange } from '../datelib/date-range'
-import Slicer from '../common/slicing-utils'
-import OffsetTracker from '../common/OffsetTracker'
-import { Hit } from '../interactions/HitDragging'
+import {
+  DateProfile,
+  EventStore,
+  EventUiHash,
+  DateSpan,
+  EventInteractionState,
+  DayTable,
+  Duration,
+  DateComponent,
+  DateRange,
+  Slicer,
+  OffsetTracker,
+  Hit
+} from 'fullcalendar'
+import { default as DayGrid, DayGridSeg } from './DayGrid'
 
 export interface SimpleDayGridProps {
   dateProfile: DateProfile | null

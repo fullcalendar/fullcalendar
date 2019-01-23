@@ -1,21 +1,20 @@
-import { htmlEscape } from '../util/html'
-import { createElement, findElements } from '../util/dom-manip'
 import {
+  htmlEscape, createElement, findElements,
   matchCellWidths,
   uncompensateScroll,
   compensateScroll,
   subtractInnerElHeight,
   distributeHeight,
-  undistributeHeight
-} from '../util/misc'
-import { createFormatter } from '../datelib/formatting'
-import ScrollComponent from '../common/ScrollComponent'
-import View from '../View'
+  undistributeHeight,
+  createFormatter,
+  ScrollComponent,
+  View,
+  buildGotoAnchorHtml,
+  ComponentContext,
+  ViewSpec,
+  DateProfileGenerator
+} from 'fullcalendar'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
-import { buildGotoAnchorHtml } from '../component/date-rendering'
-import { ComponentContext } from '../component/Component'
-import { ViewSpec } from '../structs/view-spec'
-import DateProfileGenerator from '../DateProfileGenerator'
 import DayGrid from './DayGrid'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })

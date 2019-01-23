@@ -1,4 +1,4 @@
-import { DayGrid } from 'fullcalendar'
+import { DayGrid } from 'fullcalendar-basic'
 import { TimeGrid } from 'fullcalendar-agenda'
 import { ListView } from 'fullcalendar-list'
 

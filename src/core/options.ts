@@ -125,17 +125,7 @@ export function mergeOptions(optionObjs) {
 }
 
 
-const defaultPlugins: PluginDef[] = []
-
-export function addDefaultPlugin(plugin: PluginDef) {
-  defaultPlugins.push(plugin)
-}
-
 export function getDefaultPlugins(): PluginDef[] {
-  return defaultPlugins.concat(getBrowserGlobalPlugins())
-}
-
-function getBrowserGlobalPlugins(): PluginDef[] {
   let globalPluginHash = window['FullCalendarPlugins']
   let plugins = []
 

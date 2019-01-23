@@ -1,5 +1,11 @@
-import { createPlugin } from '../plugin-system'
+import { createPlugin } from 'fullcalendar'
 import BasicView from './BasicView'
+
+export { default as SimpleDayGrid, DayGridSlicer } from './SimpleDayGrid'
+export { default as DayGrid, DayGridSeg } from './DayGrid'
+export { default as AbstractBasicView } from './AbstractBasicView'
+export { default as BasicView, buildDayTable as buildBasicDayTable } from './BasicView'
+export { default as DayBgRow } from './DayBgRow'
 
 export default createPlugin({
   viewConfigs: {

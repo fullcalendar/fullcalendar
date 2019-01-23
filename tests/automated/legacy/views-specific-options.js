@@ -1,4 +1,5 @@
-import { BasicView, createPlugin } from 'fullcalendar'
+import { createPlugin } from 'fullcalendar'
+import { BasicView } from 'fullcalendar-basic'
 
 describe('view-specific options', function() {
 

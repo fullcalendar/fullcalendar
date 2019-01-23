@@ -5,10 +5,10 @@ import {
   DayHeader,
   DaySeries,
   DayTable,
-  SimpleDayGrid,
   memoize,
   ViewProps
 } from 'fullcalendar'
+import { SimpleDayGrid } from 'fullcalendar-basic'
 import SimpleTimeGrid from './SimpleTimeGrid'
 import AbstractAgendaView from './AbstractAgendaView'
 

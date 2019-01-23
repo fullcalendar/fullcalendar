@@ -1,16 +1,18 @@
-import DateComponent, { Seg } from '../component/DateComponent'
+import {
+  DateComponent, Seg,
+  htmlEscape,
+  createFormatter,
+  Hit,
+  OffsetTracker,
+  computeRect,
+  Rect, pointInsideRect,
+  addDays, DateMarker,
+  removeElement,
+  ComponentContext,
+  EventInstanceHash,
+  memoizeRendering, MemoizedRendering
+} from 'fullcalendar'
 import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
-import { htmlEscape } from '../util/html'
-import { createFormatter } from '../datelib/formatting'
-import { Hit } from '../interactions/HitDragging'
-import OffsetTracker from '../common/OffsetTracker'
-import { computeRect } from '../util/dom-geom'
-import { Rect, pointInsideRect } from '../util/geom'
-import { addDays, DateMarker } from '../datelib/marker'
-import { removeElement } from '../util/dom-manip'
-import { ComponentContext } from '../component/Component'
-import { EventInstanceHash } from '../structs/event'
-import { memoizeRendering, MemoizedRendering } from '../component/memoized-rendering'
 
 export interface DayTileProps {
   date: DateMarker

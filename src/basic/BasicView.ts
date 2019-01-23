@@ -1,13 +1,16 @@
+import {
+  DayHeader,
+  ComponentContext,
+  ViewSpec,
+  DateProfileGenerator,
+  DateProfile,
+  ViewProps,
+  memoize,
+  DaySeries,
+  DayTable
+} from 'fullcalendar'
 import AbstractBasicView from './AbstractBasicView'
-import DayHeader from '../common/DayHeader'
 import SimpleDayGrid from './SimpleDayGrid'
-import { ComponentContext } from '../component/Component'
-import { ViewSpec } from '../structs/view-spec'
-import DateProfileGenerator, { DateProfile } from '../DateProfileGenerator'
-import { ViewProps } from '../View'
-import { memoize } from '../util/memoize'
-import DaySeries from '../common/DaySeries'
-import DayTable from '../common/DayTable'
 
 export default class BasicView extends AbstractBasicView {
 

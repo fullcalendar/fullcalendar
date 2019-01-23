@@ -17,6 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "fullcalendar": [ "src/core/main" ],
+      "fullcalendar-basic": [ "src/basic/main" ],
       "fullcalendar-agenda": [ "src/agenda/main" ],
       "fullcalendar-list": [ "src/list/main" ],
       "fullcalendar-gcal": [ "src/gcal/main" ],

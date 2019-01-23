@@ -1,5 +1,6 @@
-import { htmlToElement } from '../util/dom-manip'
-import { Seg } from '../component/DateComponent'
+import {
+  htmlToElement, Seg
+} from 'fullcalendar'
 import DayGridEventRenderer from './DayGridEventRenderer'
 
 

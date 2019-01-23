@@ -1,7 +1,8 @@
-import DateProfileGenerator from '../DateProfileGenerator'
-import { addWeeks, diffWeeks } from '../datelib/marker'
-import { DateRange } from '../datelib/date-range'
-
+import {
+  DateProfileGenerator,
+  addWeeks, diffWeeks,
+  DateRange
+} from 'fullcalendar'
 
 export default class BasicViewDateProfileGenerator extends DateProfileGenerator {
 
