@@ -136,7 +136,7 @@ export { NamedTimeZoneImpl, registerNamedTimeZoneImpl } from './datelib/timezone
 export { registerCmdFormatter } from './datelib/formatting-cmd'
 export { parse as parseMarker } from './datelib/parsing'
 
-export { registerEventSourceDef } from './structs/event-source'
+export { registerEventSourceDef, EventSource, EventSourceHash } from './structs/event-source'
 
 export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'
 export { default as ElementDragging } from './dnd/ElementDragging'
