@@ -130,7 +130,6 @@ function buildTestConfig() {
     watch: watchOptions,
     input: [
       'tmp/tsc-output/tests/automated/globals.js', // needs to be first
-      'tmp/tsc-output/tests/automated/hacks.js', // "
       'tmp/tsc-output/tests/automated/**/*.js'
     ],
     external: externalPackageNames,

@@ -1,5 +1,6 @@
+import './hacks'
+import './lib/simulate'
 import { Calendar, globalDefaults } from 'fullcalendar'
-
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------

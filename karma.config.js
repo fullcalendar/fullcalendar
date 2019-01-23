@@ -15,19 +15,15 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
 
-      // dependencies for main lib AND plugin
       'node_modules/superagent/superagent.js',
       'node_modules/moment/moment.js',
       'node_modules/moment/locale/es.js', // only spanish for testing
       'node_modules/moment-timezone/builds/moment-timezone-with-data.js',
       'node_modules/rrule/dist/es5/rrule.js',
       'node_modules/jquery/dist/jquery.js',
-
       'node_modules/components-jqueryui/jquery-ui.js',
       'node_modules/components-jqueryui/themes/cupertino/jquery-ui.css',
       { pattern: 'node_modules/components-jqueryui/themes/cupertino/images/**', included: false, nocache: true, watched: false },
-
-      // dependencies for tests
       'node_modules/native-promise-only/lib/npo.src.js', // Promises needed by xhr-mock
       'node_modules/xhr-mock/dist/xhr-mock.js', // TODO: should include this via require(), but .d.ts problems
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',

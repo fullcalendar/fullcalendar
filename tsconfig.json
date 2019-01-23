@@ -37,7 +37,7 @@
   "include": [
     "src/*/main.ts",
     "locales/*.js",
-    "tests/automated/globals.d.ts",
+    "tests/automated/global-defs.d.ts",
     "tests/automated/**/*.js"
   ]
 }
