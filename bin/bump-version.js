@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
+const moment = require('moment')
 
 let version = process.argv[2] // the first command line arg
 
@@ -10,6 +11,9 @@ if (!version) {
 
 } else {
   const packageConfig = require('../package.json')
+
   packageConfig.version = version
+  packageConfig.releaseDate = moment().format('YYYY-MM-DD')
+
   fs.writeFileSync('package.json', JSON.stringify(packageConfig, null, '  '))
 }
