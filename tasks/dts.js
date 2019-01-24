@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const mkdirp = require('mkdirp')
 const gulp = require('gulp')
 const shell = require('gulp-shell')
@@ -23,7 +24,7 @@ gulp.task('dts:refined', [ 'dts:raw' ], function() {
   let contentByPackage = buildContentByPackage(rawContent)
 
   for (let packageName in contentByPackage) {
-    let dir = 'dist/' + packageName
+    let dir = 'dist/' + path.basename(packageName) // using path utils on normal strings :(
     mkdirp.sync(dir)
 
     fs.writeFileSync(
@@ -71,6 +72,9 @@ function buildChunksByPackage(content) {
 }
 
 
+/*
+NOTE: this logic is overkill now that modules names are just '@fullcalendar/*'
+*/
 function transformModuleName(moduleName) {
   let parts = moduleName.split('/')
 

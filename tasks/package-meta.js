@@ -13,8 +13,10 @@ gulp.task('package-meta:text', function() {
   let stream = gulp.src('LICENSE.*')
 
   for (let packageName in packagePaths) {
+    let shortPackageName = path.basename(packageName) // using path utils for normal strings :(
+
     stream = stream.pipe(
-      gulp.dest('dist/' + packageName)
+      gulp.dest('dist/' + shortPackageName)
     )
   }
 
@@ -24,6 +26,7 @@ gulp.task('package-meta:text', function() {
 gulp.task('package-meta:json', function() {
 
   for (let packageName in packagePaths) {
+    let shortPackageName = path.basename(packageName) // using path utils for normal strings :(
     let packagePath = packagePaths[packageName][0]
     let overridePath = path.dirname(packagePath) + '/package.json'
     let overrides = {}
@@ -34,7 +37,7 @@ gulp.task('package-meta:json', function() {
 
     let content = buildPackageConfig(packageName, overrides)
 
-    let dir = 'dist/' + packageName
+    let dir = 'dist/' + shortPackageName
     mkdirp.sync(dir)
 
     fs.writeFileSync(

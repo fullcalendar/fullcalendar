@@ -11,7 +11,7 @@ for (let packageName in packagePaths) {
 
   if (jsPath.match(/^src\//)) { // one of our lib files
     let srcPath = path.dirname(jsPath)
-    let distPath = 'dist/' + packageName
+    let distPath = 'dist/' + path.basename(srcPath) // :(
 
     parts.push(srcPath + ':' + distPath)
   }

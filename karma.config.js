@@ -31,16 +31,16 @@ module.exports = function(config) {
       'node_modules/luxon/build/global/luxon.js', // for testing IE11, comment out this line
 
       // core and plugin files (ordering matters because of dependencies)
-      'dist/fullcalendar/main.+(js|css)',
-      'dist/fullcalendar/locales-all.js',
-      'dist/fullcalendar-basic/main.+(js|css)',
-      'dist/fullcalendar-agenda/main.+(js|css)',
-      'dist/fullcalendar-list/main.+(js|css)',
-      'dist/fullcalendar-rrule/main.+(js|css)',
-      'dist/fullcalendar-gcal/main.+(js|css)',
-      'dist/fullcalendar-luxon/main.+(js|css)',
-      'dist/fullcalendar-moment/main.+(js|css)',
-      'dist/fullcalendar-moment-timezone/main.+(js|css)',
+      'dist/core/main.+(js|css)',
+      'dist/core/locales-all.js',
+      'dist/daygrid/main.+(js|css)',
+      'dist/timegrid/main.+(js|css)',
+      'dist/list/main.+(js|css)',
+      'dist/rrule/main.+(js|css)',
+      'dist/gcal/main.+(js|css)',
+      'dist/luxon/main.+(js|css)',
+      'dist/moment/main.+(js|css)',
+      'dist/moment-timezone/main.+(js|css)',
       { pattern: 'dist/*/*.map', included: false, nocache: true, watched: false },
 
       // a way to dump variables into the test environment

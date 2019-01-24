@@ -28,7 +28,7 @@ const BANNER =
 function modifySource(content, filePath) {
   let packageName = path.basename(path.dirname(filePath))
   let vars = Object.assign(rootPackageConfig, {
-    name: packageName
+    name: '@fullcalendar/' + packageName // TODO: unite this logic
   })
 
   content = BANNER + content
