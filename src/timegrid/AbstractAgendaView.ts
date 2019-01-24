@@ -6,8 +6,8 @@ import {
   ComponentContext,
   createDuration, createFormatter, diffDays,
   buildGotoAnchorHtml, getAllDayHtml
-} from 'fullcalendar'
-import { DayGrid } from 'fullcalendar-basic'
+} from '@fullcalendar/core'
+import { DayGrid } from '@fullcalendar/daygrid'
 import TimeGrid from './TimeGrid'
 import AllDaySplitter from './AllDaySplitter'
 

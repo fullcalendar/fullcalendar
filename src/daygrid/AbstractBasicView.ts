@@ -13,7 +13,7 @@ import {
   ComponentContext,
   ViewSpec,
   DateProfileGenerator
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
 import DayGrid from './DayGrid'
 

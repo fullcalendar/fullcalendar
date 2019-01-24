@@ -11,7 +11,7 @@ import {
   Slicer,
   OffsetTracker,
   Hit
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import { default as DayGrid, DayGridSeg } from './DayGrid'
 
 export interface SimpleDayGridProps {

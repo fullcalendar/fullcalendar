@@ -2,7 +2,7 @@ import {
   DateProfileGenerator,
   addWeeks, diffWeeks,
   DateRange
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 
 export default class BasicViewDateProfileGenerator extends DateProfileGenerator {
 

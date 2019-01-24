@@ -25,7 +25,7 @@ import {
   MemoizedRendering,
   memoizeRendering,
   Seg
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import ListEventRenderer from './ListEventRenderer'
 
 /*

@@ -1,5 +1,5 @@
 import * as request from 'superagent'
-import { registerEventSourceDef, refineProps, addDays, DateEnv } from 'fullcalendar'
+import { registerEventSourceDef, refineProps, addDays, DateEnv } from '@fullcalendar/core'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'

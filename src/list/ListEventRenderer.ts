@@ -4,7 +4,7 @@ import {
   Seg,
   isMultiDayRange,
   getAllDayHtml
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import ListView from './ListView'
 
 

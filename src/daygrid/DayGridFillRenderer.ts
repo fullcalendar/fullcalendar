@@ -4,7 +4,7 @@ import {
   prependToElement,
   FillRenderer,
   Seg
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import DayGrid, { DayGridSeg } from './DayGrid'
 
 

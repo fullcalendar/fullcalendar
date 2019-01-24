@@ -11,7 +11,7 @@ import {
   ComponentContext,
   EventInstanceHash,
   memoizeRendering, MemoizedRendering
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
 
 export interface DayTileProps {

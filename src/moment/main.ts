@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { Calendar, Duration, VerboseFormattingArg, registerCmdFormatter, globalDefaults } from 'fullcalendar'
+import { Calendar, Duration, VerboseFormattingArg, registerCmdFormatter, globalDefaults } from '@fullcalendar/core'
 
 
 export function toMoment(date: Date, calendar: Calendar): moment.Moment {

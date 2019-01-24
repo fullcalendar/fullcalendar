@@ -8,7 +8,7 @@ import {
   memoize,
   DaySeries,
   DayTable
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import AbstractBasicView from './AbstractBasicView'
 import SimpleDayGrid from './SimpleDayGrid'
 

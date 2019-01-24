@@ -13,7 +13,7 @@ import {
   Slicer,
   OffsetTracker,
   Hit
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import TimeGrid, { TimeGridSeg } from './TimeGrid'
 
 export interface SimpleTimeGridProps {

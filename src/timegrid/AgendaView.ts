@@ -7,8 +7,8 @@ import {
   DayTable,
   memoize,
   ViewProps
-} from 'fullcalendar'
-import { SimpleDayGrid } from 'fullcalendar-basic'
+} from '@fullcalendar/core'
+import { SimpleDayGrid } from '@fullcalendar/daygrid'
 import SimpleTimeGrid from './SimpleTimeGrid'
 import AbstractAgendaView from './AbstractAgendaView'
 

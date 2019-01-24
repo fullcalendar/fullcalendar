@@ -17,7 +17,7 @@ import {
   removeElement, createElement, applyStyle,
   listenBySelector,
   computeClippingRect, computeRect
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 
 export interface PopoverOptions {
   className?: string

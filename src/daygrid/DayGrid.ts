@@ -20,7 +20,7 @@ import {
   DateProfile,
   memoizeRendering,
   MemoizedRendering
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import Popover from './Popover'
 import DayGridEventRenderer from './DayGridEventRenderer'
 import DayGridMirrorRenderer from './DayGridMirrorRenderer'

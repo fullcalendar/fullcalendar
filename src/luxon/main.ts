@@ -1,5 +1,5 @@
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
-import { Calendar, Duration, NamedTimeZoneImpl, registerNamedTimeZoneImpl, globalDefaults, registerCmdFormatter, VerboseFormattingArg } from 'fullcalendar'
+import { Calendar, Duration, NamedTimeZoneImpl, registerNamedTimeZoneImpl, globalDefaults, registerCmdFormatter, VerboseFormattingArg } from '@fullcalendar/core'
 
 export function toDateTime(date: Date, calendar: Calendar): LuxonDateTime {
 

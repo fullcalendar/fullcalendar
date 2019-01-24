@@ -2,7 +2,7 @@ import {
   htmlEscape, cssToStr,
   FgEventRenderer,
   Seg
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 
 
 /* Event-rendering methods for the DayGrid class

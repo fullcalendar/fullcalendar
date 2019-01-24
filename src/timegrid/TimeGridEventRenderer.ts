@@ -4,7 +4,7 @@ import {
   createFormatter, DateFormatter,
   FgEventRenderer, buildSegCompareObj,
   Seg, isMultiDayRange, compareByFieldSpecs
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import TimeGrid from './TimeGrid'
 
 /*

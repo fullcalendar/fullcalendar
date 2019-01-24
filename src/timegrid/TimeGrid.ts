@@ -24,8 +24,8 @@ import {
   DateProfile,
   memoizeRendering,
   MemoizedRendering
-} from 'fullcalendar'
-import { DayBgRow } from 'fullcalendar-basic'
+} from '@fullcalendar/core'
+import { DayBgRow } from '@fullcalendar/daygrid'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
 import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
 import TimeGridFillRenderer from './TimeGridFillRenderer'

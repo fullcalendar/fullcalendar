@@ -1,6 +1,6 @@
 import {
   htmlToElement, Seg
-} from 'fullcalendar'
+} from '@fullcalendar/core'
 import DayGridEventRenderer from './DayGridEventRenderer'
 
 

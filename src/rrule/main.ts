@@ -1,5 +1,5 @@
 import { RRule, rrulestr } from 'rrule'
-import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration } from 'fullcalendar'
+import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration } from '@fullcalendar/core'
 
 interface RRuleParsedRecurring extends ParsedRecurring {
   typeData: RRule

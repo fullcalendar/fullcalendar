@@ -1,4 +1,4 @@
-import { createPlugin } from 'fullcalendar'
+import { createPlugin } from '@fullcalendar/core'
 import BasicView from './BasicView'
 
 export { default as SimpleDayGrid, DayGridSlicer } from './SimpleDayGrid'
