@@ -35,13 +35,13 @@ gulp.task('archive:packages', [ 'build' ], function() {
   return gulp.src([
     'dist/**/*.{js,css}'
   ]).pipe(
-    gulp.dest('tmp/' + archiveId + '/packages')
+    gulp.dest('tmp/' + archiveId + '/fullcalendar-packages')
   )
 })
 
 gulp.task('archive:packages:minjs', [ 'archive:packages' ], function() {
   return gulp.src([
-    'tmp/' + archiveId + '/packages/*/*.js',
+    'tmp/' + archiveId + '/fullcalendar-packages/*/*.js',
     '!**/*.min.js' // avoid double minify
   ], { base: '.' })
     .pipe(
@@ -57,7 +57,7 @@ gulp.task('archive:packages:minjs', [ 'archive:packages' ], function() {
 
 gulp.task('archive:packages:mincss', [ 'archive:packages' ], function() {
   return gulp.src([
-    'tmp/' + archiveId + '/packages/*/*.css',
+    'tmp/' + archiveId + '/fullcalendar-packages/*/*.css',
     '!**/*.min.css' // avoid double minify
   ], { base: '.' })
     .pipe(
@@ -98,7 +98,7 @@ gulp.task('archive:vendor', [ 'archive:demos' ], function() {
     vendorPaths,
     { cwd: 'node_modules' } // a cwd without a base will flatten the paths. what we want
   ).pipe(
-    gulp.dest('tmp/' + archiveId + '/packages')
+    gulp.dest('tmp/' + archiveId + '/other-packages')
   )
 })
 
@@ -115,13 +115,13 @@ const demoPathModify = modify(function(content) {
 let vendorPaths = []
 
 function transformDemoPath(path) {
-  path = path.replace('../dist/', '../packages/')
+  path = path.replace('../dist/', '../fullcalendar-packages/')
 
   path = path.replace(
     /^\.\.\/node_modules\/(.*)\/([^/]+)$/,
     function(m0, m1, m2) {
       vendorPaths.push(m1 + '/' + m2)
-      return '../packages/' + m2
+      return '../other-packages/' + m2
     }
   )
 
