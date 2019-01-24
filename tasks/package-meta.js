@@ -59,7 +59,19 @@ function buildPackageConfig(packageName, overrides) {
     let dependencies = {}
 
     for (let dependencyName in overrides.dependencies) {
-      dependencies[dependencyName] = rootPackageConfig.devDependencies[dependencyName]
+
+      if (rootPackageConfig.devDependencies[dependencyName]) {
+        dependencies[dependencyName] = rootPackageConfig.devDependencies[dependencyName]
+
+      } else if (dependencyName in packagePaths) {
+        let dependencyPath = packagePaths[dependencyName][0]
+
+        if (dependencyPath.match(/^src\//)) {
+          dependencies[dependencyName] = rootPackageConfig.version || '0.0.0'
+        }
+      } else {
+        console.error('Unknown dependency', dependencyName)
+      }
     }
 
     res.dependencies = dependencies

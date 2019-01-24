@@ -1,3 +1,6 @@
 {
-  "title": "FullCalendar Agenda Plugin"
+  "title": "FullCalendar Time Grid Plugin",
+  "dependencies": {
+    "@fullcalendar/daygrid": ""
+  }
 }
