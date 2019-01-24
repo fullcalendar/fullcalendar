@@ -46,9 +46,6 @@ module.exports = function(config) {
       // a way to dump variables into the test environment
       'tmp/automated-test-config.js',
 
-      // so plugins can dump files into here and test side effects
-      'tmp/test-side-effects/*.js',
-
       // tests
       'tests/automated/base.css',
       'tmp/automated-tests.js',
