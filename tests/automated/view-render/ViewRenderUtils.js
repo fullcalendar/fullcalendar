@@ -1,5 +1,5 @@
 import { formatIsoDay } from '../datelib/utils'
-import { addDays } from 'fullcalendar'
+import { addDays } from '@fullcalendar/core'
 
 export function expectDayRange(start, end) {
 

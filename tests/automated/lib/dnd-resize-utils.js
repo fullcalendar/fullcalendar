@@ -8,7 +8,7 @@ import {
   getFirstEventEl,
   getLastEventEl
 } from '../event-render/EventRenderUtils'
-import { parseMarker, addDays } from 'fullcalendar'
+import { parseMarker, addDays } from '@fullcalendar/core'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
   var eventsRendered = false

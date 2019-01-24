@@ -1,6 +1,6 @@
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
-import { Calendar } from 'fullcalendar'
-import { toMoment, toDuration } from 'fullcalendar-moment'
+import { Calendar } from '@fullcalendar/core'
+import { toMoment, toDuration } from '@fullcalendar/moment'
 
 describe('moment plugin', function() {
 

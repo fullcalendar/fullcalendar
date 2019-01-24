@@ -1,4 +1,4 @@
-import { EmitterMixin } from 'fullcalendar'
+import { EmitterMixin } from '@fullcalendar/core'
 
 describe('emitter', function() {
 

@@ -1,5 +1,5 @@
-import { Calendar } from 'fullcalendar'
-import { toDateTime, toDuration } from 'fullcalendar-luxon'
+import { Calendar } from '@fullcalendar/core'
+import { toDateTime, toDuration } from '@fullcalendar/luxon'
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
 import { testTimeZoneImpl } from './timeZoneImpl'
 import * as luxon from 'luxon'

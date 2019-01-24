@@ -1,4 +1,4 @@
-import { globalHooks } from 'fullcalendar'
+import { globalHooks } from '@fullcalendar/core'
 
 beforeEach(function() {
 

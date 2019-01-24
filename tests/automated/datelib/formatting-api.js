@@ -1,4 +1,4 @@
-import { formatDate, formatRange } from 'fullcalendar'
+import { formatDate, formatRange } from '@fullcalendar/core'
 
 describe('formatDate', function() {
 

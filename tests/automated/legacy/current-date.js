@@ -1,4 +1,4 @@
-import { addDays } from 'fullcalendar'
+import { addDays } from '@fullcalendar/core'
 
 describe('current date', function() {
   var TITLE_FORMAT = {

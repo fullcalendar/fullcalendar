@@ -1,6 +1,6 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib/utils'
-import { startOfDay, createDuration } from 'fullcalendar'
+import { startOfDay, createDuration } from '@fullcalendar/core'
 
 const TIME_GRID_CLASS = 'fc-time-grid'
 const NON_BUSINESS_CLASS = 'fc-nonbusiness'

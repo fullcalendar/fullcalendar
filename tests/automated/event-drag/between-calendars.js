@@ -1,4 +1,4 @@
-import { Calendar } from 'fullcalendar'
+import { Calendar } from '@fullcalendar/core'
 import { getSingleEl } from '../event-render/EventRenderUtils'
 import { getDayEl } from '../view-render/DayGridRenderUtils'
 import { getRectCenter } from '../lib/geom'

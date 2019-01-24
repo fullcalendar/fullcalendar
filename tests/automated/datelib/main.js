@@ -1,6 +1,6 @@
 import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from './utils'
 import { getDSTDeadZone } from './dst-dead-zone'
-import { DateEnv, createFormatter, createDuration, getLocale, startOfDay, diffWholeWeeks, diffWholeDays, diffDayAndTime } from 'fullcalendar'
+import { DateEnv, createFormatter, createDuration, getLocale, startOfDay, diffWholeWeeks, diffWholeDays, diffDayAndTime } from '@fullcalendar/core'
 
 describe('datelib', function() {
 

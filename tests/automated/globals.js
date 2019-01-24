@@ -1,7 +1,7 @@
 import './hacks'
 import './lib/simulate'
 import './lib/date-matchers'
-import { Calendar, globalDefaults } from 'fullcalendar'
+import { Calendar, globalDefaults } from '@fullcalendar/core'
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------

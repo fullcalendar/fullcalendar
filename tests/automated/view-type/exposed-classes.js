@@ -1,6 +1,6 @@
-import { BasicView, DayGrid } from 'fullcalendar-basic'
-import { ListView } from 'fullcalendar-list'
-import { AgendaView, TimeGrid } from 'fullcalendar-agenda'
+import { BasicView, DayGrid } from '@fullcalendar/daygrid'
+import { ListView } from '@fullcalendar/list'
+import { AgendaView, TimeGrid } from '@fullcalendar/timegrid'
 
 describe('internal View/Grid classes', function() {
 

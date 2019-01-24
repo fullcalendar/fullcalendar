@@ -1,7 +1,7 @@
 import { getHeaderEl } from '../view-render/DayGridRenderUtils'
 import { DAY_CLASSES } from '../lib/constants'
 import { removeLtrCharCodes } from '../lib/string'
-import { addDays } from 'fullcalendar'
+import { addDays } from '@fullcalendar/core'
 
 describe('day names', function() {
   var sundayDate = new Date('2014-05-25T06:00:00')

@@ -1,4 +1,4 @@
-import { Calendar } from 'fullcalendar'
+import { Calendar } from '@fullcalendar/core'
 
 describe('select callback', function() {
 

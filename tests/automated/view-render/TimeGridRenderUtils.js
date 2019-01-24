@@ -1,7 +1,7 @@
 import { getDayOfWeekHeaderEls } from './DayGridRenderUtils' // bad to rely on day grid
 import { getSlotEls } from '../lib/time-grid'
 import { ensureDate } from '../datelib/utils'
-import { addDays, addMs, parseMarker, createDuration } from 'fullcalendar'
+import { addDays, addMs, parseMarker, createDuration } from '@fullcalendar/core'
 
 export function getTimeAxisInfo() {
   return $('.fc-slats tr[data-time]').map(function(i, tr) {

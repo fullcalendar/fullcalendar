@@ -1,4 +1,4 @@
-import { defineLocale } from 'fullcalendar';
+import { defineLocale } from '@fullcalendar/core';
 
 defineLocale("fr-ch", {
   week: {

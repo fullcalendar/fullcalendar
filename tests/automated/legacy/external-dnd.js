@@ -1,5 +1,5 @@
 import ListenerCounter from '../lib/ListenerCounter'
-import { Calendar, ThirdPartyDraggable } from 'fullcalendar'
+import { Calendar, ThirdPartyDraggable } from '@fullcalendar/core'
 
 describe('external drag and drop', function() {
 

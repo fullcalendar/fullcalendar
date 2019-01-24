@@ -1,4 +1,4 @@
-import { createDuration } from 'fullcalendar'
+import { createDuration } from '@fullcalendar/core'
 
 describe('eventResize', function() {
   pushOptions({

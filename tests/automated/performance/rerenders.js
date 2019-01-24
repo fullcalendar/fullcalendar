@@ -1,6 +1,6 @@
-import { DayGrid } from 'fullcalendar-basic'
-import { TimeGrid } from 'fullcalendar-agenda'
-import { ListView } from 'fullcalendar-list'
+import { DayGrid } from '@fullcalendar/daygrid'
+import { TimeGrid } from '@fullcalendar/timegrid'
+import { ListView } from '@fullcalendar/list'
 
 describe('rerender performance', function() {
 

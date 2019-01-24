@@ -1,4 +1,4 @@
-import { View, createPlugin } from 'fullcalendar'
+import { View, createPlugin } from '@fullcalendar/core'
 
 describe('custom view', function() {
 

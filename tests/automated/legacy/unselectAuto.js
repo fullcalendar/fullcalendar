@@ -1,4 +1,4 @@
-import { View } from 'fullcalendar'
+import { View } from '@fullcalendar/core'
 
 describe('unselectAuto', function() {
 
