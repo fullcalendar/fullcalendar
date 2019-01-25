@@ -69,9 +69,9 @@ then
   # return to branch
   git checkout --quiet "$current_branch"
 
-  # keep newly generated dist files around
-  git checkout --quiet "v$version" -- dist package.json package-lock.json
-  git reset --quiet -- dist package.json package-lock.json
+  # keep some newly generated files around
+  git checkout --quiet "v$version" -- dist package-lock.json
+  git reset --quiet -- dist package-lock.json
 
   echo "Success."
 
