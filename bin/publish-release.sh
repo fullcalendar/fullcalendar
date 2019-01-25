@@ -58,6 +58,7 @@ if {
 
   cd "dist/$package" &&
 
+  echo npm publish --tag "$release_tag" "$npm_registry_str" &&
   npm publish --tag "$release_tag" "$npm_registry_str"
 }
 then
