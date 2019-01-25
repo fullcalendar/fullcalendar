@@ -59,7 +59,7 @@ if {
 
   cd "dist/$package" &&
 
-  npm publish --tag "$release_tag" "$npm_registry_str"
+  npm publish --tag "$release_tag" --access public "$npm_registry_str"
 }
 then
   echo 'Success.'
