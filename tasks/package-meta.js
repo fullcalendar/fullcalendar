@@ -70,7 +70,7 @@ function buildPackageConfig(packageName, overrides) {
     if (!peerDependencies) {
       peerDependencies = {}
     }
-    peerDependencies['@fullcalendar/core'] = rootPackageConfig.version || '0.0.0'
+    peerDependencies['@fullcalendar/core'] = '^' + (rootPackageConfig.version || '0.0.0')
   }
 
   if (peerDependencies) {
@@ -100,7 +100,7 @@ function processDependencyMap(inputMap) {
       let dependencyPath = packagePaths[dependencyName][0]
 
       if (dependencyPath.match(/^src\//)) {
-        outputMap[dependencyName] = rootPackageConfig.version || '0.0.0'
+        outputMap[dependencyName] = '^' + (rootPackageConfig.version || '0.0.0')
       }
     } else {
       console.error('Unknown dependency', dependencyName)
