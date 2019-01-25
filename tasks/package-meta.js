@@ -77,5 +77,14 @@ function buildPackageConfig(packageName, overrides) {
     res.dependencies = dependencies
   }
 
+  if (packageName !== '@fullcalendar/core') {
+    let peerDependencies = overrides.peerDependencies || {}
+    peerDependencies['@fullcalendar/core'] = rootPackageConfig.version || '0.0.0'
+    res.peerDependencies = peerDependencies
+  }
+
+  res.main = 'main.js'
+  res.types = 'main.d.ts'
+
   return res
 }
