@@ -33,22 +33,23 @@ fi
 
 if [[ "$production_str" == "" ]]
 then
-  is_production="0"
+  echo "Publishing to DEV NPM INSTALLATION..."
   npm_registry_str="--registry http://localhost:4873"
+
 elif [[ "$production_str" == "--production" ]]
 then
-  is_production="1"
-  npm_registry_str=""
-else
-  echo "Invalid flag $production_str. Aborting"
-  exit 1
-fi
+  echo "Pushing to Github..."
 
-if [[ "$is_production" == "1" ]]
-then
   # push the current branch (assumes tracking is set up) and the tag
   git push --recurse-submodules=on-demand
   git push origin "v$version"
+
+  echo "Publishing to LIVE NPM..."
+  npm_registry_str=""
+
+else
+  echo "Invalid flag $production_str. Aborting"
+  exit 1
 fi
 
 if {
@@ -58,11 +59,9 @@ if {
 
   cd "dist/$package" &&
 
-  echo npm publish --tag "$release_tag" "$npm_registry_str" &&
   npm publish --tag "$release_tag" "$npm_registry_str"
 }
 then
-  ls -al
   echo 'Success.'
 else
   echo 'Failure.'
