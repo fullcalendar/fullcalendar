@@ -86,6 +86,7 @@
     "test": "karma start karma.config.js --auto-watch",
     "test-single": "karma start karma.config.js --browsers ChromeHeadless_custom --single-run",
     "test-ci": "gulp dist && npm run test-single",
-    "lint": "gulp lint"
+    "lint": "gulp lint",
+    "dist": "gulp lint dist archive"
   }
 }

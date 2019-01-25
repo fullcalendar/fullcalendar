@@ -55,10 +55,10 @@ if {
   ./bin/bump-version.js "$version" &&
 
   # build everything
-  gulp lint dist archive &&
+  npm run dist &&
 
-  # # test in headless browser
-  # npm run test-single &&
+  # test in headless browser
+  npm run test-single &&
 
   # commit new files
   git add -f dist package.json package-lock.json &&
