@@ -1,6 +1,6 @@
 {
   "title": "FullCalendar RRule Plugin",
-  "dependencies": {
+  "peerDependencies": {
     "rrule": ""
   }
 }

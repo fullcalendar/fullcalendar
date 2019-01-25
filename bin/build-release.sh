@@ -57,8 +57,8 @@ if {
   # build everything
   gulp lint dist archive &&
 
-  # test in headless browser
-  npm run test-single &&
+  # # test in headless browser
+  # npm run test-single &&
 
   # commit new files
   git add -f package.json package-lock.json dist &&

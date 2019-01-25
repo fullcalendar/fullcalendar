@@ -1,6 +1,6 @@
 {
   "title": "FullCalendar Moment Timezone Plugin",
-  "dependencies": {
+  "peerDependencies": {
     "moment": "",
     "moment-timezone": ""
   }
