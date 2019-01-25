@@ -61,7 +61,7 @@ if {
   # npm run test-single &&
 
   # commit new files
-  git add -f package.json package-lock.json dist &&
+  git add -f dist package.json package-lock.json &&
   git commit --quiet --no-verify -e -m "version $version" &&
   git tag -a "v$version" -m "version $version"
 }
@@ -70,8 +70,8 @@ then
   git checkout --quiet "$current_branch"
 
   # keep newly generated dist files around
-  git checkout --quiet "v$version" -- dist
-  git reset --quiet -- dist
+  git checkout --quiet "v$version" -- dist package.json package-lock.json
+  git reset --quiet -- dist package.json package-lock.json
 
   echo "Success."
 
