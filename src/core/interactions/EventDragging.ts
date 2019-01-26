@@ -2,7 +2,7 @@ import { default as DateComponent, Seg } from '../component/DateComponent'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import HitDragging, { isHitsEqual, Hit } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
-import browserContext from '../common/browser-context'
+import { componentHash } from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
@@ -43,7 +43,7 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
     dragging.touchScrollAllowed = false
     dragging.autoScroller.isEnabled = component.opt('dragScroll')
 
-    let hitDragging = this.hitDragging = new HitDragging(this.dragging, browserContext.componentHash)
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, componentHash)
     hitDragging.useSubjectCenter = component.useEventCenter
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragstart', this.handleDragStart)

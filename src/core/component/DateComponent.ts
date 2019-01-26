@@ -4,7 +4,6 @@ import { DateSpan } from '../structs/date-span'
 import { EventInstanceHash } from '../structs/event'
 import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from '../interactions/HitDragging'
-import browserContext from '../common/browser-context'
 import { elementClosest, removeElement } from '../util/dom-manip'
 import { isDateSelectionValid, isInteractionValid } from '../validation'
 import EventApi from '../api/EventApi'
@@ -65,7 +64,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
     this.el = el
 
     if (this.isInteractable) {
-      browserContext.registerComponent(this)
+      context.calendar.registerComponent(this)
     }
   }
 
@@ -75,7 +74,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
     removeElement(this.el)
 
     if (this.isInteractable) {
-      browserContext.unregisterComponent(this)
+      this.calendar.unregisterComponent(this)
     }
   }
 
