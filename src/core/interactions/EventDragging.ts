@@ -16,8 +16,7 @@ import EventApi from '../api/EventApi'
 import { __assign } from 'tslib'
 import { ExternalDropApi } from '../interactions-external/ExternalElementDragging'
 import View from '../View'
-
-export type EventDropTransformers = (mutation: EventMutation, calendar: Calendar) => void
+import { eventDragMutationMassager } from './event-dragging'
 
 export default class EventDragging { // TODO: rename to EventSelectingAndDragging
 
@@ -382,9 +381,6 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   }
 
 }
-
-
-export type eventDragMutationMassager = (mutation: EventMutation, hit0: Hit, hit1: Hit) => void
 
 function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutationMassager[]): EventMutation {
   let dateSpan0 = hit0.dateSpan

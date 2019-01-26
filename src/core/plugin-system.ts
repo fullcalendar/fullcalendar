@@ -1,16 +1,16 @@
 import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
-import { eventDragMutationMassager, EventDropTransformers } from './interactions/EventDragging'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import Calendar, { DatePointTransform, DateSpanTransform } from './Calendar'
-import { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
 import { isPropsValidTester } from './validation'
-import { ExternalDefTransform } from './interactions-external/ExternalElementDragging'
-import { EventResizeJoinTransforms } from './interactions/EventResizing'
+import { eventDragMutationMassager, EventDropTransformers } from './interactions/event-dragging'
+import { dateSelectionJoinTransformer } from './interactions/date-selecting'
+import { EventResizeJoinTransforms } from './interactions/event-resizing'
+import { ExternalDefTransform } from './interactions/external-element-dragging'
 
 // TODO: easier way to add new hooks? need to update a million things
 

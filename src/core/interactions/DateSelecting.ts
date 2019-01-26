@@ -6,6 +6,7 @@ import { DateSpan } from '../structs/date-span'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
+import { dateSelectionJoinTransformer } from './date-selecting'
 
 /*
 Tracks when the user selects a portion of time of a component,
@@ -139,5 +140,3 @@ function joinHitsIntoSelection(hit0: Hit, hit1: Hit, dateSelectionTransformers: 
 
   return props
 }
-
-export type dateSelectionJoinTransformer = (hit0: Hit, hit1: Hit) => any

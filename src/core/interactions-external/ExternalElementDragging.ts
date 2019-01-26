@@ -203,8 +203,6 @@ export default class ExternalElementDragging {
 // Utils for computing event store from the DragMeta
 // ----------------------------------------------------------------------------------------------------
 
-export type ExternalDefTransform = (dateSpan: DateSpan, dragMeta: DragMeta) => any
-
 function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventTuple {
   let defProps = { ...dragMeta.leftoverProps }
 

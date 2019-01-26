@@ -13,6 +13,7 @@ import { EventRenderRange, getElSeg } from '../component/event-rendering'
 import { createDuration } from '../datelib/duration'
 import { EventInteractionState } from './event-interaction-state'
 import { __assign } from 'tslib'
+import { EventResizeJoinTransforms } from './event-resizing'
 
 export default class EventDragging {
 
@@ -209,8 +210,6 @@ export default class EventDragging {
   }
 
 }
-
-export type EventResizeJoinTransforms = (hit0: Hit, hit1: Hit) => false | object
 
 function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: DateRange, transforms: EventResizeJoinTransforms[]): EventMutation | null {
   let dateEnv = hit0.component.dateEnv
