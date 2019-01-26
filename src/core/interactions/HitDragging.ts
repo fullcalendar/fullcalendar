@@ -2,18 +2,11 @@ import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
-import { DateSpan, isDateSpansEqual } from '../structs/date-span'
+import { isDateSpansEqual } from '../structs/date-span'
 import { computeRect } from '../util/dom-geom'
-import { constrainPoint, intersectRects, getRectCenter, diffPoints, Rect, Point } from '../util/geom'
+import { constrainPoint, intersectRects, getRectCenter, diffPoints, Point } from '../util/geom'
 import { rangeContainsRange } from '../datelib/date-range'
-
-export interface Hit {
-  component: DateComponent<any>
-  dateSpan: DateSpan
-  dayEl: HTMLElement
-  rect: Rect
-  layer: number
-}
+import { Hit } from './hit'
 
 /*
 Tracks movement over multiple droppable areas (aka "hits")

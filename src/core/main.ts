@@ -144,7 +144,7 @@ export { default as ElementDragging } from './dnd/ElementDragging'
 export { default as Draggable } from './interactions-external/ExternalDraggable'
 export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 
-export { Hit } from './interactions/HitDragging'
+export { Hit } from './interactions/hit'
 export { dateSelectionJoinTransformer } from './interactions/DateSelecting'
 
 export { formatDate, formatRange } from './formatting-api'

@@ -1,5 +1,6 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
-import HitDragging, { isHitsEqual, Hit } from './HitDragging'
+import { Hit } from './hit'
+import HitDragging, { isHitsEqual } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'

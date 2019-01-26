@@ -1,6 +1,7 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
 import { PointerDragEvent } from '../dnd/PointerDragging'
-import HitDragging, { isHitsEqual, Hit } from './HitDragging'
+import { Hit } from './hit'
+import HitDragging, { isHitsEqual } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { componentHash } from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'

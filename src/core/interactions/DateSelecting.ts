@@ -1,6 +1,7 @@
 import { compareNumbers, enableCursor, disableCursor } from '../util/misc'
 import DateComponent from '../component/DateComponent'
-import HitDragging, { Hit } from './HitDragging'
+import { Hit } from './hit'
+import HitDragging from './HitDragging'
 import { DateSpan } from '../structs/date-span'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'

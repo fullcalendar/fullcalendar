@@ -1,5 +1,6 @@
 import ElementDragging from '../dnd/ElementDragging'
-import HitDragging, { Hit } from '../interactions/HitDragging'
+import { Hit } from '../interactions/hit'
+import HitDragging from '../interactions/HitDragging'
 import { componentHash } from '../common/browser-context'
 import { PointerDragEvent } from '../dnd/PointerDragging'
 import { parseEventDef, createEventInstance, EventTuple } from '../structs/event'
