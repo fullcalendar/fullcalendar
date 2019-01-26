@@ -1,4 +1,5 @@
-import { default as PointerDragging, PointerDragEvent } from './PointerDragging'
+import { PointerDragEvent } from '../interactions/pointer'
+import PointerDragging from './PointerDragging'
 import { preventSelection, allowSelection, preventContextMenu, allowContextMenu } from '../util/misc'
 import ElementMirror from './ElementMirror'
 import ElementDragging from './ElementDragging'

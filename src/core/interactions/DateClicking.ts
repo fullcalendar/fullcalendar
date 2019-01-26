@@ -1,7 +1,7 @@
 import DateComponent from '../component/DateComponent'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import HitDragging, { isHitsEqual } from './HitDragging'
-import { PointerDragEvent } from '../dnd/PointerDragging'
+import { PointerDragEvent } from '../interactions/pointer'
 
 /*
 Monitors when the user clicks on a specific date/time of a component.

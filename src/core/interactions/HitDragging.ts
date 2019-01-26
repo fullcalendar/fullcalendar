@@ -1,5 +1,5 @@
 import EmitterMixin from '../common/EmitterMixin'
-import { PointerDragEvent } from '../dnd/PointerDragging'
+import { PointerDragEvent } from '../interactions/pointer'
 import ElementDragging from '../dnd/ElementDragging'
 import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { isDateSpansEqual } from '../structs/date-span'

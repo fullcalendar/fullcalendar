@@ -1,5 +1,5 @@
 import { default as DateComponent, Seg } from '../component/DateComponent'
-import { PointerDragEvent } from '../dnd/PointerDragging'
+import { PointerDragEvent } from '../interactions/pointer'
 import { Hit } from './hit'
 import HitDragging, { isHitsEqual } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'

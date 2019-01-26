@@ -1,14 +1,7 @@
 import { globalHooks } from '../options'
 import { elementClosest } from '../util/dom-manip'
 import { default as EmitterMixin } from '../common/EmitterMixin'
-
-export interface PointerDragEvent {
-  origEvent: UIEvent
-  isTouch: boolean
-  subjectEl: EventTarget
-  pageX: number
-  pageY: number
-}
+import { PointerDragEvent } from '../interactions/pointer'
 
 globalHooks.touchMouseIgnoreWait = 500
 

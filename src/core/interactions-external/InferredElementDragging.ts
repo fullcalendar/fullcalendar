@@ -1,4 +1,5 @@
-import PointerDragging, { PointerDragEvent } from '../dnd/PointerDragging'
+import { PointerDragEvent } from '../interactions/pointer'
+import PointerDragging from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 
 /*

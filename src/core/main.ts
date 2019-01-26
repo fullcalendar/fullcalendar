@@ -138,9 +138,9 @@ export { parse as parseMarker } from './datelib/parsing'
 
 export { registerEventSourceDef, EventSource, EventSourceHash } from './structs/event-source'
 
-export { default as PointerDragging, PointerDragEvent } from './dnd/PointerDragging'
+export { PointerDragEvent } from './interactions/pointer'
+export { default as PointerDragging } from './dnd/PointerDragging'
 export { default as ElementDragging } from './dnd/ElementDragging'
-
 export { default as Draggable } from './interactions-external/ExternalDraggable'
 export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
 

@@ -1,7 +1,7 @@
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import ExternalElementDragging, { DragMetaGenerator } from './ExternalElementDragging'
 import { globalDefaults } from '../options'
-import { PointerDragEvent } from '../dnd/PointerDragging'
+import { PointerDragEvent } from '../interactions/pointer'
 
 export interface ExternalDraggableSettings {
   eventData?: DragMetaGenerator

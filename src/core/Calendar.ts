@@ -25,20 +25,21 @@ import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
 import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui'
-import PointerDragging, { PointerDragEvent } from './dnd/PointerDragging'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
 import { __assign } from 'tslib'
 import { getDefaultPlugins } from './options'
 import DateComponent from './component/DateComponent'
-import DateClicking from './interactions/DateClicking'
-import DateSelecting from './interactions/DateSelecting'
+import { PointerDragEvent } from './interactions/pointer'
 import EventClicking from './interactions/EventClicking'
 import EventHovering from './interactions/EventHovering'
+import { componentHash } from './common/browser-context'
+import DateClicking from './interactions/DateClicking'
+import DateSelecting from './interactions/DateSelecting'
 import EventDragging from './interactions/EventDragging'
 import EventResizing from './interactions/EventResizing'
-import { componentHash } from './common/browser-context'
+import PointerDragging from './dnd/PointerDragging'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -855,12 +856,12 @@ export default class Calendar {
     componentHash[component.uid] = component
 
     this.componentListeners[component.uid] = [
-      new DateClicking(component),
-      new DateSelecting(component),
       new EventClicking(component),
       new EventHovering(component),
       new EventDragging(component),
-      new EventResizing(component)
+      new EventResizing(component),
+      new DateClicking(component),
+      new DateSelecting(component)
     ]
   }
 
