@@ -34,7 +34,7 @@ import DateComponent from './component/DateComponent'
 import { PointerDragEvent } from './interactions/pointer'
 import EventClicking from './interactions/EventClicking'
 import EventHovering from './interactions/EventHovering'
-import { componentHash } from './common/browser-context'
+import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore } from './interactions/interaction'
 import DateClicking from './interactions/DateClicking'
 import DateSelecting from './interactions/DateSelecting'
 import EventDragging from './interactions/EventDragging'
@@ -89,7 +89,7 @@ export default class Calendar {
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
 
-  componentListeners: { [componentUid: string]: { destroy: () => void }[] } = {}
+  interactionsStore: { [componentUid: string]: Interaction[] } = {}
 
   removeNavLinkListener: any
   documentPointer: PointerDragging // for unfocusing
@@ -852,29 +852,30 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  registerComponent(component: DateComponent<any>) {
-    componentHash[component.uid] = component
+  registerInteractiveComponent(component: DateComponent<any>, settingsInput: InteractionSettingsInput) {
+    let settings = parseInteractionSettings(component, settingsInput)
 
-    this.componentListeners[component.uid] = [
-      new EventClicking(component),
-      new EventHovering(component),
-      new EventDragging(component),
-      new EventResizing(component),
-      new DateClicking(component),
-      new DateSelecting(component)
+    this.interactionsStore[component.uid] = [
+      new EventClicking(settings),
+      new EventHovering(settings),
+      new EventDragging(settings),
+      new EventResizing(settings),
+      new DateClicking(settings),
+      new DateSelecting(settings)
     ]
+
+    interactionSettingsStore[component.uid] = settings
   }
 
 
-  unregisterComponent(component: DateComponent<any>) {
-    let { componentListeners } = this
+  unregisterInteractiveComponent(component: DateComponent<any>) {
 
-    for (let listener of componentListeners[component.uid]) {
+    for (let listener of this.interactionsStore[component.uid]) {
       listener.destroy()
     }
 
-    delete componentListeners[component.uid]
-    delete componentHash[component.uid]
+    delete this.interactionsStore[component.uid]
+    delete interactionSettingsStore[component.uid]
   }
 
 

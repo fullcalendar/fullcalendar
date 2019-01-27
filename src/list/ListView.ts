@@ -68,6 +68,11 @@ export default class ListView extends View {
 
     this.el.appendChild(this.scroller.el)
     this.contentEl = this.scroller.el // shortcut
+
+    context.calendar.registerInteractiveComponent(this, {
+      el: this.el
+      // TODO: make aware that it doesn't do Hits
+    })
   }
 
 
@@ -85,6 +90,8 @@ export default class ListView extends View {
     super.destroy()
 
     this.scroller.destroy() // will remove the Grid too
+
+    this.calendar.unregisterInteractiveComponent(this)
   }
 
 
@@ -271,7 +278,6 @@ export default class ListView extends View {
 
 }
 
-ListView.prototype.isInteractable = true
 ListView.prototype.fgSegSelector = '.fc-list-item' // which elements accept event actions
 
 

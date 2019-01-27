@@ -7,27 +7,28 @@ import { PointerDragEvent } from '../interactions/pointer'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
 import { dateSelectionJoinTransformer } from './date-selecting'
+import { Interaction, InteractionSettings, interactionSettingsToStore } from './interaction'
 
 /*
 Tracks when the user selects a portion of time of a component,
 constituted by a drag over date cells, with a possible delay at the beginning of the drag.
 */
-export default class DateSelecting {
+export default class DateSelecting extends Interaction {
 
-  component: DateComponent<any>
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
   dragSelection: DateSpan | null = null
 
-  constructor(component: DateComponent<any>) {
-    this.component = component
+  constructor(settings: InteractionSettings) {
+    super(settings)
+    let { component } = settings
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.touchScrollAllowed = false
     dragging.minDistance = component.opt('selectMinDistance') || 0
     dragging.autoScroller.isEnabled = component.opt('dragScroll')
 
-    let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsToStore(settings))
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragstart', this.handleDragStart)
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)

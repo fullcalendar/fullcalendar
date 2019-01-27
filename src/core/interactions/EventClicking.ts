@@ -1,19 +1,17 @@
-import DateComponent from '../component/DateComponent'
 import { listenBySelector } from '../util/dom-event'
 import EventApi from '../api/EventApi'
 import { elementClosest } from '../util/dom-manip'
 import { getElSeg } from '../component/event-rendering'
+import { Interaction, InteractionSettings } from './interaction'
 
 /*
 Detects when the user clicks on an event within a DateComponent
 */
-export default class EventClicking {
+export default class EventClicking extends Interaction {
 
-  component: DateComponent<any>
-  destroy: () => void
-
-  constructor(component: DateComponent<any>) {
-    this.component = component
+  constructor(settings: InteractionSettings) {
+    super(settings)
+    let { component } = settings
 
     this.destroy = listenBySelector(
       component.el,

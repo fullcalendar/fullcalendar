@@ -1,12 +1,12 @@
 import EmitterMixin from '../common/EmitterMixin'
 import { PointerDragEvent } from '../interactions/pointer'
 import ElementDragging from '../dnd/ElementDragging'
-import DateComponent, { DateComponentHash } from '../component/DateComponent'
 import { isDateSpansEqual } from '../structs/date-span'
 import { computeRect } from '../util/dom-geom'
 import { constrainPoint, intersectRects, getRectCenter, diffPoints, Point } from '../util/geom'
 import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from './hit'
+import { InteractionSettingsStore } from './interaction'
 
 /*
 Tracks movement over multiple droppable areas (aka "hits")
@@ -23,7 +23,7 @@ emits:
 */
 export default class HitDragging {
 
-  droppableHash: DateComponentHash
+  droppableStore: InteractionSettingsStore
   dragging: ElementDragging
   emitter: EmitterMixin
 
@@ -37,13 +37,8 @@ export default class HitDragging {
   finalHit: Hit | null = null // won't ever be populated if shouldIgnoreMove
   coordAdjust?: Point
 
-  constructor(dragging: ElementDragging, droppable: DateComponent<any> | DateComponentHash) {
-
-    if (droppable instanceof DateComponent) {
-      this.droppableHash = { [droppable.uid]: droppable }
-    } else {
-      this.droppableHash = droppable
-    }
+  constructor(dragging: ElementDragging, droppableStore: InteractionSettingsStore) {
+    this.droppableStore = droppableStore
 
     dragging.emitter.on('pointerdown', this.handlePointerDown)
     dragging.emitter.on('dragstart', this.handleDragStart)
@@ -140,27 +135,27 @@ export default class HitDragging {
   }
 
   prepareHits() {
-    let { droppableHash } = this
+    let { droppableStore } = this
 
-    for (let id in droppableHash) {
-      droppableHash[id].requestPrepareHits()
+    for (let id in droppableStore) {
+      droppableStore[id].component.requestPrepareHits()
     }
   }
 
   releaseHits() {
-    let { droppableHash } = this
+    let { droppableStore } = this
 
-    for (let id in droppableHash) {
-      droppableHash[id].requestReleaseHits()
+    for (let id in droppableStore) {
+      droppableStore[id].component.requestReleaseHits()
     }
   }
 
   queryHit(x: number, y: number): Hit | null {
-    let { droppableHash } = this
+    let { droppableStore } = this
     let bestHit: Hit | null = null
 
-    for (let id in droppableHash) {
-      let component = droppableHash[id]
+    for (let id in droppableStore) {
+      let component = droppableStore[id].component
       let hit = component.queryHit(x, y)
 
       if (

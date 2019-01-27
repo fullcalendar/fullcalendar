@@ -3,7 +3,6 @@ import { PointerDragEvent } from '../interactions/pointer'
 import { Hit } from './hit'
 import HitDragging, { isHitsEqual } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
-import { componentHash } from '../common/browser-context'
 import { startOfDay } from '../datelib/marker'
 import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
@@ -17,12 +16,12 @@ import { __assign } from 'tslib'
 import { ExternalDropApi } from '../interactions-external/ExternalElementDragging'
 import View from '../View'
 import { eventDragMutationMassager } from './event-dragging'
+import { Interaction, InteractionSettings, interactionSettingsStore } from './interaction'
 
-export default class EventDragging { // TODO: rename to EventSelectingAndDragging
+export default class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
 
   static SELECTOR = '.fc-draggable, .fc-resizable' // TODO: test this in IE11
 
-  component: DateComponent<any>
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
 
@@ -35,16 +34,17 @@ export default class EventDragging { // TODO: rename to EventSelectingAndDraggin
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
 
-  constructor(component: DateComponent<any>) {
-    this.component = component
+  constructor(settings: InteractionSettings) {
+    super(settings)
+    let { component } = this
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.pointer.selector = EventDragging.SELECTOR
     dragging.touchScrollAllowed = false
     dragging.autoScroller.isEnabled = component.opt('dragScroll')
 
-    let hitDragging = this.hitDragging = new HitDragging(this.dragging, componentHash)
-    hitDragging.useSubjectCenter = component.useEventCenter
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsStore)
+    hitDragging.useSubjectCenter = settings.useEventCenter
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragstart', this.handleDragStart)
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)

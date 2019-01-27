@@ -1,7 +1,7 @@
 import ElementDragging from '../dnd/ElementDragging'
 import { Hit } from '../interactions/hit'
 import HitDragging from '../interactions/HitDragging'
-import { componentHash } from '../common/browser-context'
+import { interactionSettingsStore } from '../interactions/interaction'
 import { PointerDragEvent } from '../interactions/pointer'
 import { parseEventDef, createEventInstance, EventTuple } from '../structs/event'
 import { createEmptyEventStore, eventTupleToStore } from '../structs/event-store'
@@ -41,7 +41,7 @@ export default class ExternalElementDragging {
 
   constructor(dragging: ElementDragging, suppliedDragMeta?: DragMetaGenerator) {
 
-    let hitDragging = this.hitDragging = new HitDragging(dragging, componentHash)
+    let hitDragging = this.hitDragging = new HitDragging(dragging, interactionSettingsStore)
     hitDragging.requireInitial = false // will start outside of a component
     hitDragging.emitter.on('dragstart', this.handleDragStart)
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)

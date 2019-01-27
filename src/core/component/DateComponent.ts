@@ -39,8 +39,6 @@ PURPOSES:
 export default class DateComponent<PropsType> extends Component<PropsType> {
 
   // self-config, overridable by subclasses. must set on prototype
-  isInteractable: boolean
-  useEventCenter: boolean // for dragging geometry
   fgSegSelector: string // lets eventRender produce elements without fc-event class
   bgSegSelector: string
   // IN SCHEDULER: allowAcrossResources
@@ -62,20 +60,12 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
     super(context, isView)
 
     this.el = el
-
-    if (this.isInteractable) {
-      context.calendar.registerComponent(this)
-    }
   }
 
   destroy() {
     super.destroy()
 
     removeElement(this.el)
-
-    if (this.isInteractable) {
-      this.calendar.unregisterComponent(this)
-    }
   }
 
 
@@ -282,7 +272,5 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
 
 }
 
-DateComponent.prototype.isInteractable = false
-DateComponent.prototype.useEventCenter = true
 DateComponent.prototype.fgSegSelector = '.fc-event-container > *'
 DateComponent.prototype.bgSegSelector = '.fc-bgevent:not(.fc-nonbusiness)'

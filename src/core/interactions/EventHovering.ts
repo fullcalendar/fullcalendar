@@ -1,20 +1,20 @@
-import DateComponent from '../component/DateComponent'
 import { listenToHoverBySelector } from '../util/dom-event'
 import EventApi from '../api/EventApi'
 import { getElSeg } from '../component/event-rendering'
+import { Interaction, InteractionSettings } from './interaction'
 
 /*
 Triggers events and adds/removes core classNames when the user's pointer
 enters/leaves event-elements of a component.
 */
-export default class EventHovering {
+export default class EventHovering extends Interaction {
 
-  component: DateComponent<any>
   removeHoverListeners: () => void
   currentSegEl: HTMLElement
 
-  constructor(component: DateComponent<any>) {
-    this.component = component
+  constructor(settings: InteractionSettings) {
+    super(settings)
+    let { component } = settings
 
     this.removeHoverListeners = listenToHoverBySelector(
       component.el,

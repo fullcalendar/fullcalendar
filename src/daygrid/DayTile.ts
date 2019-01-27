@@ -67,6 +67,11 @@ export default class DayTile extends DateComponent<DayTileProps> {
       eventRenderer.showByHash.bind(eventRenderer),
       [ renderFrame ]
     )
+
+    context.calendar.registerInteractiveComponent(this, {
+      el: this.el,
+      useEventCenter: false
+    })
   }
 
   render(props: DayTileProps) {
@@ -81,6 +86,8 @@ export default class DayTile extends DateComponent<DayTileProps> {
     super.destroy()
 
     this.renderFrame.unrender() // should unrender everything else
+
+    this.calendar.unregisterInteractiveComponent(this)
   }
 
   _renderFrame(date: DateMarker) {
@@ -146,9 +153,6 @@ export default class DayTile extends DateComponent<DayTileProps> {
   }
 
 }
-
-DayTile.prototype.isInteractable = true
-DayTile.prototype.useEventCenter = false
 
 
 export class DayTileEventRenderer extends SimpleDayGridEventRenderer {

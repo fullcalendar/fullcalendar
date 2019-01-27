@@ -10,7 +10,8 @@ import {
   DateRange,
   Slicer,
   OffsetTracker,
-  Hit
+  Hit,
+  ComponentContext
 } from '@fullcalendar/core'
 import { default as DayGrid, DayGridSeg } from './DayGrid'
 
@@ -35,10 +36,18 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
 
   private slicer = new DayGridSlicer()
 
-  constructor(context, dayGrid: DayGrid) {
+  constructor(context: ComponentContext, dayGrid: DayGrid) {
     super(context, dayGrid.el)
 
     this.dayGrid = dayGrid
+
+    context.calendar.registerInteractiveComponent(this, { el: this.dayGrid.el })
+  }
+
+  destroy() {
+    super.destroy()
+
+    this.calendar.unregisterInteractiveComponent(this)
   }
 
   render(props: SimpleDayGridProps) {
@@ -91,8 +100,6 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
   }
 
 }
-
-SimpleDayGrid.prototype.isInteractable = true
 
 
 export class DayGridSlicer extends Slicer<DayGridSeg, [DayTable]> {

@@ -1,4 +1,4 @@
-import { default as DateComponent, Seg } from '../component/DateComponent'
+import { Seg } from '../component/DateComponent'
 import { Hit } from './hit'
 import HitDragging, { isHitsEqual } from './HitDragging'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
@@ -14,10 +14,10 @@ import { createDuration } from '../datelib/duration'
 import { EventInteractionState } from './event-interaction-state'
 import { __assign } from 'tslib'
 import { EventResizeJoinTransforms } from './event-resizing'
+import { Interaction, InteractionSettings, interactionSettingsToStore } from './interaction'
 
-export default class EventDragging {
+export default class EventDragging extends Interaction {
 
-  component: DateComponent<any>
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
 
@@ -28,15 +28,16 @@ export default class EventDragging {
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
 
-  constructor(component: DateComponent<any>) {
-    this.component = component
+  constructor(settings: InteractionSettings) {
+    super(settings)
+    let { component } = settings
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.pointer.selector = '.fc-resizer'
     dragging.touchScrollAllowed = false
     dragging.autoScroller.isEnabled = component.opt('dragScroll')
 
-    let hitDragging = this.hitDragging = new HitDragging(this.dragging, component)
+    let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsToStore(settings))
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
     hitDragging.emitter.on('dragstart', this.handleDragStart)
     hitDragging.emitter.on('hitupdate', this.handleHitUpdate)

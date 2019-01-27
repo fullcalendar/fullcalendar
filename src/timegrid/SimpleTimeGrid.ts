@@ -12,7 +12,8 @@ import {
   DateMarker,
   Slicer,
   OffsetTracker,
-  Hit
+  Hit,
+  ComponentContext
 } from '@fullcalendar/core'
 import TimeGrid, { TimeGridSeg } from './TimeGrid'
 
@@ -37,10 +38,20 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   private dayRanges: DateRange[] // for now indicator
   private slicer = new TimeGridSlicer()
 
-  constructor(context, timeGrid: TimeGrid) {
+  constructor(context: ComponentContext, timeGrid: TimeGrid) {
     super(context, timeGrid.el)
 
     this.timeGrid = timeGrid
+
+    context.calendar.registerInteractiveComponent(this, {
+      el: this.timeGrid.el
+    })
+  }
+
+  destroy() {
+    super.destroy()
+
+    this.calendar.unregisterInteractiveComponent(this)
   }
 
   render(props: SimpleTimeGridProps) {
@@ -99,8 +110,6 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   }
 
 }
-
-SimpleTimeGrid.prototype.isInteractable = true
 
 
 export function buildDayRanges(dayTable: DayTable, dateProfile: DateProfile, dateEnv: DateEnv): DateRange[] {
