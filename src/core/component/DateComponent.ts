@@ -53,7 +53,6 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   fillRenderer: FillRenderer
 
   el: HTMLElement // passed in to constructor
-  needHitsDepth: number = 0
 
 
   constructor(context: ComponentContext, el: HTMLElement, isView?: boolean) {
@@ -106,25 +105,8 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // Hit System
   // -----------------------------------------------------------------------------------------------------------------
 
-  requestPrepareHits() {
-    if (!(this.needHitsDepth++)) {
-      this.prepareHits()
-    }
-  }
 
-  requestReleaseHits() {
-    if (!(--this.needHitsDepth)) {
-      this.releaseHits()
-    }
-  }
-
-  protected prepareHits() {
-  }
-
-  protected releaseHits() {
-  }
-
-  queryHit(leftOffset, topOffset): Hit | null {
+  queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
     return null // this should be abstract
   }
 

@@ -3,9 +3,6 @@ import {
   htmlEscape,
   createFormatter,
   Hit,
-  OffsetTracker,
-  computeRect,
-  Rect, pointInsideRect,
   addDays, DateMarker,
   removeElement,
   ComponentContext,
@@ -25,9 +22,6 @@ export interface DayTileProps {
 export default class DayTile extends DateComponent<DayTileProps> {
 
   segContainerEl: HTMLElement
-  width: number
-  height: number
-  offsetTracker: OffsetTracker // TODO: abstraction for tracking dims of whole element rect
 
   private renderFrame: MemoizedRendering<[DateMarker]>
   private renderFgEvents: MemoizedRendering<[Seg[]]>
@@ -113,43 +107,24 @@ export default class DayTile extends DateComponent<DayTileProps> {
     this.segContainerEl = this.el.querySelector('.fc-event-container')
   }
 
-  prepareHits() {
-    let rect = computeRect(this.el)
-    this.width = rect.right - rect.left
-    this.height = rect.bottom - rect.top
-    this.offsetTracker = new OffsetTracker(this.el)
-  }
+  queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
+    let date = (this.props as any).date // HACK
 
-  releaseHits() {
-    this.offsetTracker.destroy()
-  }
-
-  queryHit(leftOffset, topOffset): Hit | null {
-    let rectLeft = this.offsetTracker.computeLeft()
-    let rectTop = this.offsetTracker.computeTop()
-    let rect: Rect = {
-      left: rectLeft,
-      right: rectLeft + this.width,
-      top: rectTop,
-      bottom: rectTop + this.height
+    return {
+      component: this,
+      dateSpan: {
+        allDay: true,
+        range: { start: date, end: addDays(date, 1) }
+      },
+      dayEl: this.el,
+      rect: {
+        left: 0,
+        top: 0,
+        right: elWidth,
+        bottom: elHeight
+      },
+      layer: 1
     }
-
-    if (pointInsideRect({ left: leftOffset, top: topOffset }, rect)) {
-      let date = (this.props as any).date // HACK
-
-      return {
-        component: this,
-        dateSpan: {
-          allDay: true,
-          range: { start: date, end: addDays(date, 1) }
-        },
-        dayEl: this.el,
-        rect: rect,
-        layer: 1
-      }
-    }
-
-    return null
   }
 
 }

@@ -1,5 +1,5 @@
 import { getClippingParents, computeRect } from '../util/dom-geom'
-import { pointInsideRect } from '../util/geom'
+import { pointInsideRect, Rect } from '../util/geom'
 import { ElementScrollGeomCache } from '../common/scroll-geom-cache'
 
 /*
@@ -13,17 +13,10 @@ and an determine if a given point is inside the combined clipping rectangle.
 export default class OffsetTracker { // ElementOffsetTracker
 
   scrollCaches: ElementScrollGeomCache[]
-  origLeft: number
-  origTop: number
-  origRight: number
-  origBottom: number // TODO: use rect?
+  origRect: Rect
 
   constructor(el: HTMLElement) {
-    let rect = computeRect(el)
-    this.origLeft = rect.left
-    this.origTop = rect.top
-    this.origRight = rect.right
-    this.origBottom = rect.bottom
+    this.origRect = computeRect(el)
 
     // will work fine for divs that have overflow:hidden
     this.scrollCaches = getClippingParents(el).map(function(el) {
@@ -38,7 +31,7 @@ export default class OffsetTracker { // ElementOffsetTracker
   }
 
   computeLeft() {
-    let left = this.origLeft
+    let left = this.origRect.left
 
     for (let scrollCache of this.scrollCaches) {
       left += scrollCache.origScrollLeft - scrollCache.getScrollLeft()
@@ -48,7 +41,7 @@ export default class OffsetTracker { // ElementOffsetTracker
   }
 
   computeTop() {
-    let top = this.origTop
+    let top = this.origRect.top
 
     for (let scrollCache of this.scrollCaches) {
       top += scrollCache.origScrollTop - scrollCache.getScrollTop()

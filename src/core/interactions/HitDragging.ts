@@ -7,6 +7,8 @@ import { constrainPoint, intersectRects, getRectCenter, diffPoints, Point } from
 import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from './hit'
 import { InteractionSettingsStore } from './interaction'
+import OffsetTracker from '../common/OffsetTracker'
+import { mapHash } from '../util/object'
 
 /*
 Tracks movement over multiple droppable areas (aka "hits")
@@ -32,6 +34,7 @@ export default class HitDragging {
   requireInitial: boolean = true // if doesn't start out on a hit, won't emit any events
 
   // internal state
+  offsetTrackers: { [componentUid: string]: OffsetTracker }
   initialHit: Hit | null = null
   movingHit: Hit | null = null
   finalHit: Hit | null = null // won't ever be populated if shouldIgnoreMove
@@ -81,7 +84,7 @@ export default class HitDragging {
       adjustedPoint = constrainPoint(adjustedPoint, subjectRect)
     }
 
-    let initialHit = this.initialHit = this.queryHit(adjustedPoint.left, adjustedPoint.top)
+    let initialHit = this.initialHit = this.queryHitForOffset(adjustedPoint.left, adjustedPoint.top)
 
     if (initialHit) {
       if (this.useSubjectCenter && subjectRect) {
@@ -123,7 +126,7 @@ export default class HitDragging {
   }
 
   handleMove(ev: PointerDragEvent, forceHandle?: boolean) {
-    let hit = this.queryHit(
+    let hit = this.queryHitForOffset(
       ev.pageX + this.coordAdjust!.left,
       ev.pageY + this.coordAdjust!.top
     )
@@ -135,39 +138,64 @@ export default class HitDragging {
   }
 
   prepareHits() {
-    let { droppableStore } = this
-
-    for (let id in droppableStore) {
-      droppableStore[id].component.requestPrepareHits()
-    }
+    this.offsetTrackers = mapHash(this.droppableStore, function(interactionSettings) {
+      return new OffsetTracker(interactionSettings.el)
+    })
   }
 
   releaseHits() {
-    let { droppableStore } = this
+    let { offsetTrackers } = this
 
-    for (let id in droppableStore) {
-      droppableStore[id].component.requestReleaseHits()
+    for (let id in offsetTrackers) {
+      offsetTrackers[id].destroy()
     }
+
+    this.offsetTrackers = {}
   }
 
-  queryHit(x: number, y: number): Hit | null {
-    let { droppableStore } = this
+  queryHitForOffset(offsetLeft: number, offsetTop: number): Hit | null {
+    let { droppableStore, offsetTrackers } = this
     let bestHit: Hit | null = null
 
     for (let id in droppableStore) {
       let component = droppableStore[id].component
-      let hit = component.queryHit(x, y)
+      let offsetTracker = offsetTrackers[id]
 
-      if (
-        hit &&
-        (
-          // make sure the hit is within activeRange, meaning it's not a deal cell
-          !component.props.dateProfile || // hack for DayTile
-          rangeContainsRange(component.props.dateProfile.activeRange, hit.dateSpan.range)
-        ) &&
-        (!bestHit || hit.layer > bestHit.layer)
-      ) {
-        bestHit = hit
+      if (offsetTracker.isWithinClipping(offsetLeft, offsetTop)) {
+        let originLeft = offsetTracker.computeLeft()
+        let originTop = offsetTracker.computeTop()
+        let positionLeft = offsetLeft - originLeft
+        let positionTop = offsetTop - originTop
+        let { origRect } = offsetTracker
+        let width = origRect.right - origRect.left
+        let height = origRect.bottom - origRect.top
+
+        if (
+          // must be within the element's bounds
+          positionLeft >= 0 && positionTop < width &&
+          positionTop >= 0 && positionTop < height
+        ) {
+          let hit = component.queryHit(positionLeft, positionTop, width, height)
+
+          if (
+            hit &&
+            (
+              // make sure the hit is within activeRange, meaning it's not a deal cell
+              !component.props.dateProfile || // hack for DayTile
+              rangeContainsRange(component.props.dateProfile.activeRange, hit.dateSpan.range)
+            ) &&
+            (!bestHit || hit.layer > bestHit.layer)
+          ) {
+
+            // TODO: better way to re-orient rectangle
+            hit.rect.left += originLeft
+            hit.rect.right += originLeft
+            hit.rect.top += originTop
+            hit.rect.bottom += originTop
+
+            bestHit = hit
+          }
+        }
       }
     }
 

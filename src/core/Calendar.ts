@@ -1,4 +1,3 @@
-import { elementClosest } from './util/dom-manip'
 import { listenBySelector } from './util/dom-event'
 import { capitaliseFirstLetter, debounce } from './util/misc'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
@@ -39,8 +38,7 @@ import DateClicking from './interactions/DateClicking'
 import DateSelecting from './interactions/DateSelecting'
 import EventDragging from './interactions/EventDragging'
 import EventResizing from './interactions/EventResizing'
-import PointerDragging from './dnd/PointerDragging'
-
+import UnselectAuto from './interactions/UnselectAuto'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -90,10 +88,8 @@ export default class Calendar {
   defaultTimedEventDuration: Duration
 
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
-
+  unselectAuto: UnselectAuto // TODO: kill
   removeNavLinkListener: any
-  documentPointer: PointerDragging // for unfocusing
-  isRecentPointerDateSelect = false // wish we could use a selector to detect date selection, but uses hit system
 
   windowResizeProxy: any
   isResizing: boolean
@@ -136,6 +132,8 @@ export default class Calendar {
     this.handleOptions(this.optionsManager.computed)
     this.publiclyTrigger('_init') // for tests
     this.hydrate()
+
+    this.unselectAuto = new UnselectAuto(this)
   }
 
 
@@ -165,6 +163,8 @@ export default class Calendar {
       this.unbindHandlers()
       this.component.destroy() // don't null-out. in case API needs access
       this.component = null
+
+      this.unselectAuto.destroy()
     }
   }
 
@@ -196,11 +196,6 @@ export default class Calendar {
       }
     })
 
-    let documentPointer = this.documentPointer = new PointerDragging(document)
-    documentPointer.shouldIgnoreMove = true
-    documentPointer.shouldWatchScroll = false
-    documentPointer.emitter.on('pointerup', this.onDocumentPointerUp)
-
     if (this.opt('handleWindowResize')) {
       window.addEventListener('resize',
         this.windowResizeProxy = debounce( // prevents rapid calls
@@ -213,8 +208,6 @@ export default class Calendar {
 
   unbindHandlers() {
     this.removeNavLinkListener()
-
-    this.documentPointer.destroy()
 
     if (this.windowResizeProxy) {
       window.removeEventListener('resize', this.windowResizeProxy)
@@ -933,10 +926,6 @@ export default class Calendar {
     arg.view = this.view
 
     this.publiclyTrigger('select', [ arg ])
-
-    if (pev) {
-      this.isRecentPointerDateSelect = true
-    }
   }
 
 
@@ -985,38 +974,6 @@ export default class Calendar {
     __assign(props, buildDateSpanApi(dateSpan, this.dateEnv))
 
     return props
-  }
-
-
-  // for unfocusing selections
-  onDocumentPointerUp = (pev: PointerDragEvent) => {
-    let { state, documentPointer } = this
-
-    // touch-scrolling should never unfocus any type of selection
-    if (!documentPointer.wasTouchScroll) {
-
-      if (
-        state.dateSelection && // an existing date selection?
-        !this.isRecentPointerDateSelect // a new pointer-initiated date selection since last onDocumentPointerUp?
-      ) {
-        let unselectAuto = this.viewOpt('unselectAuto')
-        let unselectCancel = this.viewOpt('unselectCancel')
-
-        if (unselectAuto && (!unselectAuto || !elementClosest(documentPointer.downEl, unselectCancel))) {
-          this.unselect(pev)
-        }
-      }
-
-      if (
-        state.eventSelection && // an existing event selected?
-        !elementClosest(documentPointer.downEl, EventDragging.SELECTOR) // interaction DIDN'T start on an event
-      ) {
-        this.dispatch({ type: 'UNSELECT_EVENT' })
-      }
-
-    }
-
-    this.isRecentPointerDateSelect = false
   }
 
 
