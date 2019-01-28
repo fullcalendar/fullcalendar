@@ -104,7 +104,6 @@ export { unpromisify } from './util/promise'
 
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual, rangesIntersect, rangeContainsRange } from './datelib/date-range'
-export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Mixin } from './common/Mixin'
 export { default as PositionCache } from './common/PositionCache'
 export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComponent'

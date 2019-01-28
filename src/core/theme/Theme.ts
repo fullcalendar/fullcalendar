@@ -94,3 +94,5 @@ Theme.prototype.classes = {}
 Theme.prototype.iconClasses = {}
 Theme.prototype.baseIconClass = ''
 Theme.prototype.iconOverridePrefix = ''
+
+export type ThemeClass = { new(calendarOptions: any): Theme }

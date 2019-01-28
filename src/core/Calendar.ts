@@ -4,7 +4,6 @@ import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin
 import OptionsManager from './OptionsManager'
 import View from './View'
 import Theme from './theme/Theme'
-import { getThemeSystemClass } from './theme/ThemeRegistry'
 import { OptionsInput } from './types/input-types'
 import { getLocale } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
@@ -34,6 +33,7 @@ import { PointerDragEvent } from './interactions/pointer'
 import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore, InteractionClass } from './interactions/interaction'
 import EventClicking from './interactions/EventClicking'
 import EventHovering from './interactions/EventHovering'
+import StandardTheme from './theme/StandardTheme'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -1223,8 +1223,8 @@ function buildDateEnv(locale, timeZone, timeZoneImpl, firstDay, weekNumberCalcul
 }
 
 
-function buildTheme(calendarOptions) {
-  let themeClass = getThemeSystemClass(calendarOptions.themeSystem || calendarOptions.theme)
+function buildTheme(this: Calendar, calendarOptions) {
+  let themeClass = this.pluginSystem.hooks.themeClasses[calendarOptions.themeSystem || calendarOptions.theme] || StandardTheme
   return new themeClass(calendarOptions)
 }
 

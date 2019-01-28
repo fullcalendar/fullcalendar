@@ -12,6 +12,8 @@ import { dateSelectionJoinTransformer } from './interactions/date-selecting'
 import { EventResizeJoinTransforms } from './interactions/event-resizing'
 import { ExternalDefTransform } from './interactions/external-element-dragging'
 import { InteractionClass } from './interactions/interaction'
+import { ThemeClass } from './theme/Theme'
+import { __assign } from 'tslib'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -34,6 +36,7 @@ export interface PluginDefInput {
   eventDropTransformers?: EventDropTransformers[]
   componentInteractions?: InteractionClass[]
   calendarInteractions?: CalendarInteractionClass[]
+  themeClasses?: { [themeSystemName: string]: ThemeClass }
 }
 
 export interface PluginHooks {
@@ -54,6 +57,7 @@ export interface PluginHooks {
   eventDropTransformers: EventDropTransformers[]
   componentInteractions: InteractionClass[]
   calendarInteractions: CalendarInteractionClass[]
+  themeClasses: { [themeSystemName: string]: ThemeClass }
 }
 
 export interface PluginDef extends PluginHooks {
@@ -92,7 +96,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     viewContainerModifiers: input.viewContainerModifiers || [],
     eventDropTransformers: input.eventDropTransformers || [],
     componentInteractions: input.componentInteractions || [],
-    calendarInteractions: input.calendarInteractions || []
+    calendarInteractions: input.calendarInteractions || [],
+    themeClasses: input.themeClasses || {}
   }
 }
 
@@ -119,7 +124,8 @@ export class PluginSystem {
       viewContainerModifiers: [],
       eventDropTransformers: [],
       componentInteractions: [],
-      calendarInteractions: []
+      calendarInteractions: [],
+      themeClasses: {}
     }
     this.addedHash = {}
   }
@@ -166,6 +172,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     viewContainerModifiers: hooks0.viewContainerModifiers.concat(hooks1.viewContainerModifiers),
     eventDropTransformers: hooks0.eventDropTransformers.concat(hooks1.eventDropTransformers),
     calendarInteractions: hooks0.calendarInteractions.concat(hooks1.calendarInteractions),
-    componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions)
+    componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions),
+    themeClasses: __assign({}, hooks0.themeClasses, hooks1.themeClasses)
   }
 }
