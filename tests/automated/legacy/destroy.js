@@ -24,7 +24,6 @@ describe('destroy', function() {
 
   describeOptions('theme', {
     'when jquery-ui theme': 'jquery-ui',
-    'when bootstrap theme': 'bootstrap3',
     'when bootstrap4 theme': 'bootstrap4'
   }, function() {
     it('cleans up all classNames on the root element', function() {

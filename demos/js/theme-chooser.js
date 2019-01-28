@@ -93,14 +93,6 @@ function initThemeChooser(settings) {
     if (themeSystem === 'jquery-ui') {
       return 'https://code.jquery.com/ui/1.12.1/themes/' + themeName + '/jquery-ui.css';
     }
-    else if (themeSystem === 'bootstrap3') {
-      if (themeName) {
-        return 'https://bootswatch.com/3/' + themeName + '/bootstrap.min.css';
-      }
-      else { // the default bootstrap theme
-        return 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
-      }
-    }
     else if (themeSystem === 'bootstrap4') {
       if (themeName) {
         return 'https://bootswatch.com/4/' + themeName + '/bootstrap.min.css';

@@ -37,7 +37,7 @@ describe('customButtons', function() {
 
   it('can specify a bootstrap glyphicon', function() {
     initCalendar({
-      themeSystem: 'bootstrap3',
+      themeSystem: 'bootstrap4',
       customButtons: {
         mybutton: { bootstrapGlyphicon: 'asdf' }
       },
