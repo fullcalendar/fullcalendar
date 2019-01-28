@@ -1,6 +1,6 @@
-import Theme from './Theme'
+import { Theme, defineThemeSystem } from '@fullcalendar/core'
 
-export default class Bootstrap4Theme extends Theme {
+export class Bootstrap4Theme extends Theme {
 }
 
 Bootstrap4Theme.prototype.classes = {
@@ -43,3 +43,10 @@ Bootstrap4Theme.prototype.iconClasses = {
 Bootstrap4Theme.prototype.iconOverrideOption = 'bootstrapFontAwesome'
 Bootstrap4Theme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
 Bootstrap4Theme.prototype.iconOverridePrefix = 'fa-'
+
+
+defineThemeSystem('bootstrap4', Bootstrap4Theme)
+
+export default {
+  warning: 'TODO: convert bootstrap4 to real plugin. will still work though.'
+}
