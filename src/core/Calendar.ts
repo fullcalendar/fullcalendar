@@ -31,9 +31,9 @@ import { __assign } from 'tslib'
 import { getDefaultPlugins } from './options'
 import DateComponent from './component/DateComponent'
 import { PointerDragEvent } from './interactions/pointer'
+import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore, InteractionClass } from './interactions/interaction'
 import EventClicking from './interactions/EventClicking'
 import EventHovering from './interactions/EventHovering'
-import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore } from './interactions/interaction'
 import DateClicking from './interactions/DateClicking'
 import DateSelecting from './interactions/DateSelecting'
 import EventDragging from './interactions/EventDragging'
@@ -53,6 +53,9 @@ export interface DateSelectionApi extends DateSpanApi {
 
 export type DatePointTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
+
+export type CalendarInteraction = { destroy() }
+export type CalendarInteractionClass = { new(calendar: Calendar): CalendarInteraction }
 
 export default class Calendar {
 
@@ -87,6 +90,7 @@ export default class Calendar {
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
 
+  calendarInteractions: CalendarInteraction[]
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
   unselectAuto: UnselectAuto // TODO: kill
   removeNavLinkListener: any
@@ -133,7 +137,15 @@ export default class Calendar {
     this.publiclyTrigger('_init') // for tests
     this.hydrate()
 
-    this.unselectAuto = new UnselectAuto(this)
+    let DEFAULT_CALENDAR_INTERACTION_CLASSES: CalendarInteractionClass[] = [
+      UnselectAuto
+    ]
+    let calendarInteractionClasses = DEFAULT_CALENDAR_INTERACTION_CLASSES.concat(
+      this.pluginSystem.hooks.calendarInteractions
+    )
+    this.calendarInteractions = calendarInteractionClasses.map((calendarInteractionClass) => {
+      return new calendarInteractionClass(this)
+    })
   }
 
 
@@ -164,7 +176,9 @@ export default class Calendar {
       this.component.destroy() // don't null-out. in case API needs access
       this.component = null
 
-      this.unselectAuto.destroy()
+      for (let interaction of this.calendarInteractions) {
+        interaction.destroy()
+      }
     }
   }
 
@@ -847,16 +861,22 @@ export default class Calendar {
 
   registerInteractiveComponent(component: DateComponent<any>, settingsInput: InteractionSettingsInput) {
     let settings = parseInteractionSettings(component, settingsInput)
-
-    this.interactionsStore[component.uid] = [
-      new EventClicking(settings),
-      new EventHovering(settings),
-      new EventDragging(settings),
-      new EventResizing(settings),
-      new DateClicking(settings),
-      new DateSelecting(settings)
+    let DEFAULT_INTERACTIONS: InteractionClass[] = [
+      EventClicking,
+      EventHovering,
+      EventDragging,
+      EventResizing,
+      DateClicking,
+      DateSelecting
     ]
+    let interactionClasses: InteractionClass[] = DEFAULT_INTERACTIONS.concat(
+      this.pluginSystem.hooks.componentInteractions
+    )
+    let interactions = interactionClasses.map((interactionClass) => {
+      return new interactionClass(settings)
+    })
 
+    this.interactionsStore[component.uid] = interactions
     interactionSettingsStore[component.uid] = settings
   }
 

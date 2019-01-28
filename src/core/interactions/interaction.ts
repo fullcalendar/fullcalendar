@@ -14,6 +14,8 @@ export abstract class Interaction {
 
 }
 
+export type InteractionClass = { new(settings: InteractionSettings): Interaction }
+
 
 export interface InteractionSettingsInput {
   el: HTMLElement

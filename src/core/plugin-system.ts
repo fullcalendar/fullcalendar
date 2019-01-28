@@ -11,6 +11,8 @@ import { eventDragMutationMassager, EventDropTransformers } from './interactions
 import { dateSelectionJoinTransformer } from './interactions/date-selecting'
 import { EventResizeJoinTransforms } from './interactions/event-resizing'
 import { ExternalDefTransform } from './interactions/external-element-dragging'
+import { InteractionClass } from './interactions/interaction'
+import { CalendarInteractionClass } from './Calendar'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -31,6 +33,8 @@ export interface PluginDefInput {
   eventResizeJoinTransforms?: EventResizeJoinTransforms[]
   viewContainerModifiers?: ViewContainerModifier[]
   eventDropTransformers?: EventDropTransformers[]
+  componentInteractions?: InteractionClass[]
+  calendarInteractions?: CalendarInteractionClass[]
 }
 
 export interface PluginHooks {
@@ -49,6 +53,8 @@ export interface PluginHooks {
   eventResizeJoinTransforms: EventResizeJoinTransforms[]
   viewContainerModifiers: ViewContainerModifier[]
   eventDropTransformers: EventDropTransformers[]
+  componentInteractions: InteractionClass[]
+  calendarInteractions: CalendarInteractionClass[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -85,7 +91,9 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     externalDefTransforms: input.externalDefTransforms || [],
     eventResizeJoinTransforms: input.eventResizeJoinTransforms || [],
     viewContainerModifiers: input.viewContainerModifiers || [],
-    eventDropTransformers: input.eventDropTransformers || []
+    eventDropTransformers: input.eventDropTransformers || [],
+    componentInteractions: input.componentInteractions || [],
+    calendarInteractions: input.calendarInteractions || []
   }
 }
 
@@ -110,7 +118,9 @@ export class PluginSystem {
       externalDefTransforms: [],
       eventResizeJoinTransforms: [],
       viewContainerModifiers: [],
-      eventDropTransformers: []
+      eventDropTransformers: [],
+      componentInteractions: [],
+      calendarInteractions: []
     }
     this.addedHash = {}
   }
@@ -155,6 +165,8 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms),
     eventResizeJoinTransforms: hooks0.eventResizeJoinTransforms.concat(hooks1.eventResizeJoinTransforms),
     viewContainerModifiers: hooks0.viewContainerModifiers.concat(hooks1.viewContainerModifiers),
-    eventDropTransformers: hooks0.eventDropTransformers.concat(hooks1.eventDropTransformers)
+    eventDropTransformers: hooks0.eventDropTransformers.concat(hooks1.eventDropTransformers),
+    calendarInteractions: hooks0.calendarInteractions.concat(hooks1.calendarInteractions),
+    componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions)
   }
 }
