@@ -1224,7 +1224,7 @@ function buildDateEnv(locale, timeZone, timeZoneImpl, firstDay, weekNumberCalcul
 
 
 function buildTheme(this: Calendar, calendarOptions) {
-  let themeClass = this.pluginSystem.hooks.themeClasses[calendarOptions.themeSystem || calendarOptions.theme] || StandardTheme
+  let themeClass = this.pluginSystem.hooks.themeClasses[calendarOptions.themeSystem] || StandardTheme
   return new themeClass(calendarOptions)
 }
 

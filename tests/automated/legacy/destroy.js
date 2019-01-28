@@ -22,7 +22,7 @@ describe('destroy', function() {
     })
   })
 
-  describeOptions('theme', {
+  describeOptions('themeSystem', {
     'when bootstrap4 theme': 'bootstrap4'
   }, function() {
     it('cleans up all classNames on the root element', function() {

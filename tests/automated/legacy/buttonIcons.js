@@ -53,7 +53,7 @@ describe('buttonIcons', function() {
   describe('when theme is set', function() {
 
     pushOptions({
-      theme: 'bootstrap4'
+      themeSystem: 'bootstrap4'
     })
 
     it('buttonIcons is ignored', function() {

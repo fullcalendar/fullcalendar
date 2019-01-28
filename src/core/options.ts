@@ -58,7 +58,7 @@ export const globalDefaults = {
   // allows setting a min-height to the event segment to prevent short events overlapping each other
   agendaEventMinHeight: 0,
 
-  theme: 'standard',
+  themeSystem: 'standard',
   // themeButtonIcons: null,
 
   // eventResizableFromStart: false,

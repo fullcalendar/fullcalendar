@@ -1,4 +1,4 @@
-describe('theme', function() {
+describe('themeSystem', function() {
 
   pushOptions({
     defaultView: 'agendaWeek'
@@ -17,7 +17,7 @@ describe('theme', function() {
     var scrollTop = $('.fc-scroller').scrollTop()
 
     // change option!
-    currentCalendar.setOption('theme', 'bootstrap4')
+    currentCalendar.setOption('themeSystem', 'bootstrap4')
 
     expect($('.fc')).toHaveClass('fc-bootstrap4')
     expect($('.fc')).not.toHaveClass('fc-unthemed')
@@ -41,7 +41,7 @@ describe('theme', function() {
 
     // change option!
     currentCalendar.batchRendering(function() {
-      currentCalendar.setOption('theme', 'bootstrap4')
+      currentCalendar.setOption('themeSystem', 'bootstrap4')
       currentCalendar.setOption('businessHours', true)
     })
 
