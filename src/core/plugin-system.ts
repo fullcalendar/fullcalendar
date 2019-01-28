@@ -1,7 +1,7 @@
 import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
 import { eventDefMutationApplier } from './structs/event-mutation'
-import Calendar, { DatePointTransform, DateSpanTransform } from './Calendar'
+import Calendar, { DatePointTransform, DateSpanTransform, CalendarInteractionClass } from './Calendar'
 import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
@@ -12,7 +12,6 @@ import { dateSelectionJoinTransformer } from './interactions/date-selecting'
 import { EventResizeJoinTransforms } from './interactions/event-resizing'
 import { ExternalDefTransform } from './interactions/external-element-dragging'
 import { InteractionClass } from './interactions/interaction'
-import { CalendarInteractionClass } from './Calendar'
 
 // TODO: easier way to add new hooks? need to update a million things
 

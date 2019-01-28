@@ -1,7 +1,9 @@
-import Calendar, { DateSelectionApi } from '../Calendar'
+import {
+  Calendar, DateSelectionApi,
+  PointerDragEvent,
+  elementClosest
+} from '@fullcalendar/core'
 import PointerDragging from '../dnd/PointerDragging'
-import { PointerDragEvent } from './pointer'
-import { elementClosest } from '../util/dom-manip'
 import EventDragging from './EventDragging'
 
 export default class UnselectAuto {

@@ -1,4 +1,4 @@
-import EmitterMixin from '../common/EmitterMixin'
+import { EmitterMixin } from '@fullcalendar/core'
 
 /*
 An abstraction for a dragging interaction originating on an event.

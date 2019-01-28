@@ -1,6 +1,4 @@
-import { removeElement, applyStyle } from '../util/dom-manip'
-import { whenTransitionDone } from '../util/dom-event'
-import { Rect } from '../util/geom'
+import { removeElement, applyStyle, whenTransitionDone, Rect } from '@fullcalendar/core'
 
 /*
 An effect in which an element follows the movement of a pointer across the screen.

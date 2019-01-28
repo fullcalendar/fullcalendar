@@ -1,4 +1,4 @@
-import { ScrollGeomCache, ElementScrollGeomCache, WindowScrollGeomCache } from '../common/scroll-geom-cache'
+import { ScrollGeomCache, ElementScrollGeomCache, WindowScrollGeomCache } from '../scroll-geom-cache'
 
 interface Edge {
   scrollCache: ScrollGeomCache

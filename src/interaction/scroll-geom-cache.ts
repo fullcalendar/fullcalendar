@@ -1,6 +1,7 @@
-import { Rect } from '../util/geom'
-import { computeInnerRect } from '../util/dom-geom'
-import { ScrollController, ElementScrollController, WindowScrollController } from './scroll-controller'
+import {
+  Rect, computeInnerRect,
+  ScrollController, ElementScrollController, WindowScrollController
+} from '@fullcalendar/core'
 
 /*
 Is a cache for a given element's scroll information (all the info that ScrollController stores)

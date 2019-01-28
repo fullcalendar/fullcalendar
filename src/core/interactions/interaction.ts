@@ -28,7 +28,7 @@ export interface InteractionSettings {
   useEventCenter: boolean
 }
 
-export type InteractionSettingsStore = { [componenUid: string]: InteractionSettings  }
+export type InteractionSettingsStore = { [componenUid: string]: InteractionSettings }
 
 export function parseInteractionSettings(component: DateComponent<any>, input: InteractionSettingsInput): InteractionSettings {
   return {

@@ -1,20 +1,22 @@
+import {
+  Hit,
+  interactionSettingsStore,
+  PointerDragEvent,
+  parseEventDef, createEventInstance, EventTuple,
+  createEmptyEventStore, eventTupleToStore,
+  globalHooks,
+  DateSpan, DatePointApi,
+  Calendar,
+  EventInteractionState,
+  DragMetaInput, DragMeta, parseDragMeta,
+  EventApi,
+  elementMatches,
+  enableCursor, disableCursor,
+  isInteractionValid,
+  View
+} from '@fullcalendar/core'
 import ElementDragging from '../dnd/ElementDragging'
-import { Hit } from '../interactions/hit'
 import HitDragging from '../interactions/HitDragging'
-import { interactionSettingsStore } from '../interactions/interaction'
-import { PointerDragEvent } from '../interactions/pointer'
-import { parseEventDef, createEventInstance, EventTuple } from '../structs/event'
-import { createEmptyEventStore, eventTupleToStore } from '../structs/event-store'
-import { globalHooks } from '../options'
-import { DateSpan, DatePointApi } from '../structs/date-span'
-import Calendar from '../Calendar'
-import { EventInteractionState } from '../interactions/event-interaction-state'
-import { DragMetaInput, DragMeta, parseDragMeta } from '../structs/drag-meta'
-import EventApi from '../api/EventApi'
-import { elementMatches } from '../util/dom-manip'
-import { enableCursor, disableCursor } from '../util/misc'
-import { isInteractionValid } from '../validation'
-import View from '../View'
 import { __assign } from 'tslib'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)

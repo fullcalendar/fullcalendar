@@ -1,6 +1,8 @@
-import { getClippingParents, computeRect } from '../util/dom-geom'
-import { pointInsideRect, Rect } from '../util/geom'
-import { ElementScrollGeomCache } from '../common/scroll-geom-cache'
+import {
+  getClippingParents, computeRect,
+  pointInsideRect, Rect
+} from '@fullcalendar/core'
+import { ElementScrollGeomCache } from './scroll-geom-cache'
 
 /*
 When this class is instantiated, it records the offset of an element (relative to the document topleft),

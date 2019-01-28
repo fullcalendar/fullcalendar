@@ -1,20 +1,22 @@
-import { Seg } from '../component/DateComponent'
-import { Hit } from './hit'
+import {
+  Seg, Hit,
+  EventMutation, applyMutationToEventStore,
+  elementClosest,
+  PointerDragEvent,
+  EventStore, getRelevantEvents, createEmptyEventStore,
+  diffDates, enableCursor, disableCursor,
+  DateRange,
+  EventApi,
+  EventRenderRange, getElSeg,
+  createDuration,
+  EventInteractionState,
+  EventResizeJoinTransforms,
+  Interaction, InteractionSettings, interactionSettingsToStore
+} from '@fullcalendar/core'
 import HitDragging, { isHitsEqual } from './HitDragging'
-import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
-import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import { PointerDragEvent } from '../interactions/pointer'
-import { EventStore, getRelevantEvents, createEmptyEventStore } from '../structs/event-store'
-import { diffDates, enableCursor, disableCursor } from '../util/misc'
-import { DateRange } from '../datelib/date-range'
-import EventApi from '../api/EventApi'
-import { EventRenderRange, getElSeg } from '../component/event-rendering'
-import { createDuration } from '../datelib/duration'
-import { EventInteractionState } from './event-interaction-state'
 import { __assign } from 'tslib'
-import { EventResizeJoinTransforms } from './event-resizing'
-import { Interaction, InteractionSettings, interactionSettingsToStore } from './interaction'
+
 
 export default class EventDragging extends Interaction {
 

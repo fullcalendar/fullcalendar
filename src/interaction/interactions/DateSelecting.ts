@@ -1,13 +1,11 @@
-import { compareNumbers, enableCursor, disableCursor } from '../util/misc'
-import DateComponent from '../component/DateComponent'
-import { Hit } from './hit'
+import {
+  compareNumbers, enableCursor, disableCursor, DateComponent, Hit,
+  DateSpan, PointerDragEvent, dateSelectionJoinTransformer,
+  Interaction, InteractionSettings, interactionSettingsToStore
+} from '@fullcalendar/core'
 import HitDragging from './HitDragging'
-import { DateSpan } from '../structs/date-span'
-import { PointerDragEvent } from '../interactions/pointer'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
-import { dateSelectionJoinTransformer } from './date-selecting'
-import { Interaction, InteractionSettings, interactionSettingsToStore } from './interaction'
 
 /*
 Tracks when the user selects a portion of time of a component,

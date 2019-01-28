@@ -33,6 +33,7 @@ module.exports = function(config) {
       // core and plugin files (ordering matters because of dependencies)
       'dist/core/main.+(js|css)',
       'dist/core/locales-all.js',
+      'dist/interaction/main.+(js|css)',
       'dist/daygrid/main.+(js|css)',
       'dist/timegrid/main.+(js|css)',
       'dist/list/main.+(js|css)',

@@ -1,5 +1,5 @@
 import { testEventDrag } from '../lib/dnd-resize-utils'
-import { ThirdPartyDraggable } from '@fullcalendar/core'
+import { ThirdPartyDraggable } from '@fullcalendar/interaction'
 
 // TODO: Use the built-in Draggable for some of these tests
 

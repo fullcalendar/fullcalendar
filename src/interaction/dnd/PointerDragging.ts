@@ -1,7 +1,4 @@
-import { globalHooks } from '../options'
-import { elementClosest } from '../util/dom-manip'
-import { default as EmitterMixin } from '../common/EmitterMixin'
-import { PointerDragEvent } from '../interactions/pointer'
+import { globalHooks, elementClosest, EmitterMixin, PointerDragEvent } from '@fullcalendar/core'
 
 globalHooks.touchMouseIgnoreWait = 500
 

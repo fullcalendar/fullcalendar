@@ -1,14 +1,15 @@
-import EmitterMixin from '../common/EmitterMixin'
-import { PointerDragEvent } from '../interactions/pointer'
+import {
+  EmitterMixin, PointerDragEvent,
+  isDateSpansEqual,
+  computeRect,
+  constrainPoint, intersectRects, getRectCenter, diffPoints, Point,
+  rangeContainsRange,
+  Hit,
+  InteractionSettingsStore,
+  mapHash
+} from '@fullcalendar/core'
 import ElementDragging from '../dnd/ElementDragging'
-import { isDateSpansEqual } from '../structs/date-span'
-import { computeRect } from '../util/dom-geom'
-import { constrainPoint, intersectRects, getRectCenter, diffPoints, Point } from '../util/geom'
-import { rangeContainsRange } from '../datelib/date-range'
-import { Hit } from './hit'
-import { InteractionSettingsStore } from './interaction'
-import OffsetTracker from '../common/OffsetTracker'
-import { mapHash } from '../util/object'
+import OffsetTracker from '../OffsetTracker'
 
 /*
 Tracks movement over multiple droppable areas (aka "hits")

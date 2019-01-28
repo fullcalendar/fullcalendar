@@ -13,7 +13,10 @@ export const version = '<%= version %>'
 
 // types
 export { OptionsInput } from './types/input-types'
-export { EventInput, EventDef, EventDefHash, EventInstance, EventInstanceHash } from './structs/event'
+export {
+  EventInput, EventDef, EventDefHash, EventInstance, EventInstanceHash,
+  parseEventDef, createEventInstance, EventTuple
+} from './structs/event'
 export { BusinessHoursInput, parseBusinessHours } from './structs/business-hours'
 
 export {
@@ -33,7 +36,10 @@ export {
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
   isMultiDayRange,
   distributeHeight,
-  undistributeHeight
+  undistributeHeight,
+  preventSelection, allowSelection, preventContextMenu, allowContextMenu,
+  compareNumbers, enableCursor, disableCursor,
+  diffDates
 } from './util/misc'
 
 export {
@@ -51,7 +57,9 @@ export { memoizeRendering, MemoizedRendering } from './component/memoized-render
 
 export {
   intersectRects,
-  Rect, pointInsideRect
+  Rect, pointInsideRect,
+  constrainPoint,
+  getRectCenter, diffPoints, Point
 } from './util/geom'
 
 export { isPropsEqual, mapHash, filterHash } from './util/object'
@@ -68,10 +76,11 @@ export {
   applyStyle,
   applyStyleProp,
   elementMatches,
+  elementClosest,
   forceClassName
 } from './util/dom-manip'
 
-export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores } from './structs/event-store'
+export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
 export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps } from './component/event-splitting'
 export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
@@ -94,15 +103,16 @@ export {
 export { unpromisify } from './util/promise'
 
 export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual, rangesIntersect } from './datelib/date-range'
+export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual, rangesIntersect, rangeContainsRange } from './datelib/date-range'
 export { defineThemeSystem } from './theme/ThemeRegistry'
 export { default as Mixin } from './common/Mixin'
 export { default as PositionCache } from './common/PositionCache'
 export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComponent'
+export { ScrollController, ElementScrollController, WindowScrollController } from './common/scroll-controller'
 export { default as Theme } from './theme/Theme'
 export { default as Component, ComponentContext } from './component/Component'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
-export { default as Calendar, DatePointTransform, DateSpanTransform } from './Calendar'
+export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
 export { default as View, ViewProps } from './View'
 export { default as FgEventRenderer, buildSegCompareObj } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
@@ -110,7 +120,7 @@ export { default as FillRenderer } from './component/renderers/FillRenderer'
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
 export { ViewSpec, ViewSpecTransformer } from './structs/view-spec'
-export { DateSpan, DateSpanApi, DatePointApi } from './structs/date-span'
+export { DateSpan, DateSpanApi, DatePointApi, isDateSpansEqual } from './structs/date-span'
 
 export { DateMarker, addDays, startOfDay, addMs, addWeeks, diffWeeks, diffWholeWeeks, diffWholeDays, diffDayAndTime, diffDays, isValidDate } from './datelib/marker'
 export {
@@ -133,20 +143,20 @@ export { parse as parseMarker } from './datelib/parsing'
 
 export { registerEventSourceDef, EventSource, EventSourceHash } from './structs/event-source'
 
+export { Interaction, InteractionSettings, interactionSettingsToStore, interactionSettingsStore, InteractionSettingsStore } from './interactions/interaction'
 export { PointerDragEvent } from './interactions/pointer'
-export { default as PointerDragging } from './dnd/PointerDragging'
-export { default as ElementDragging } from './dnd/ElementDragging'
-export { default as Draggable } from './interactions-external/ExternalDraggable'
-export { default as ThirdPartyDraggable } from './interactions-external/ThirdPartyDraggable'
-
 export { Hit } from './interactions/hit'
 export { dateSelectionJoinTransformer } from './interactions/date-selecting'
+export { eventDragMutationMassager } from './interactions/event-dragging'
+export { EventResizeJoinTransforms } from './interactions/event-resizing'
 
 export { formatDate, formatRange } from './formatting-api'
 
 export { globalDefaults, globalHooks } from './options'
 
 export { registerRecurringType, ParsedRecurring } from './structs/recurring-event'
+
+export { DragMetaInput, DragMeta, parseDragMeta } from './structs/drag-meta'
 
 export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerModifier } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
@@ -155,17 +165,15 @@ export { CalendarComponentProps } from './CalendarComponent'
 export { default as DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
 
-export { default as OffsetTracker } from './common/OffsetTracker'
-
 export { default as DaySeries } from './common/DaySeries'
 
 export { EventInteractionState } from './interactions/event-interaction-state'
-export { EventRenderRange, sliceEventStore, hasBgRendering } from './component/event-rendering'
+export { EventRenderRange, sliceEventStore, hasBgRendering, getElSeg } from './component/event-rendering'
 
 export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
 
 export { default as Slicer, SlicedProps } from './common/slicing-utils'
 
-export { EventMutation } from './structs/event-mutation'
-export { Constraint, ConstraintInput, AllowFunc, isPropsValid } from './validation'
+export { EventMutation, applyMutationToEventStore } from './structs/event-mutation'
+export { Constraint, ConstraintInput, AllowFunc, isPropsValid, isInteractionValid } from './validation'
 export { default as EventApi } from './api/EventApi'

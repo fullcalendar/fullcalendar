@@ -1,4 +1,4 @@
-import { PointerDragEvent } from '../interactions/pointer'
+import { PointerDragEvent } from '@fullcalendar/core'
 import PointerDragging from '../dnd/PointerDragging'
 import ElementDragging from '../dnd/ElementDragging'
 

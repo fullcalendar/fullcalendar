@@ -34,11 +34,6 @@ import { PointerDragEvent } from './interactions/pointer'
 import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore, InteractionClass } from './interactions/interaction'
 import EventClicking from './interactions/EventClicking'
 import EventHovering from './interactions/EventHovering'
-import DateClicking from './interactions/DateClicking'
-import DateSelecting from './interactions/DateSelecting'
-import EventDragging from './interactions/EventDragging'
-import EventResizing from './interactions/EventResizing'
-import UnselectAuto from './interactions/UnselectAuto'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -92,7 +87,6 @@ export default class Calendar {
 
   calendarInteractions: CalendarInteraction[]
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
-  unselectAuto: UnselectAuto // TODO: kill
   removeNavLinkListener: any
 
   windowResizeProxy: any
@@ -137,15 +131,10 @@ export default class Calendar {
     this.publiclyTrigger('_init') // for tests
     this.hydrate()
 
-    let DEFAULT_CALENDAR_INTERACTION_CLASSES: CalendarInteractionClass[] = [
-      UnselectAuto
-    ]
-    let calendarInteractionClasses = DEFAULT_CALENDAR_INTERACTION_CLASSES.concat(
-      this.pluginSystem.hooks.calendarInteractions
-    )
-    this.calendarInteractions = calendarInteractionClasses.map((calendarInteractionClass) => {
-      return new calendarInteractionClass(this)
-    })
+    this.calendarInteractions = this.pluginSystem.hooks.calendarInteractions
+      .map((calendarInteractionClass) => {
+        return new calendarInteractionClass(this)
+      })
   }
 
 
@@ -863,11 +852,7 @@ export default class Calendar {
     let settings = parseInteractionSettings(component, settingsInput)
     let DEFAULT_INTERACTIONS: InteractionClass[] = [
       EventClicking,
-      EventHovering,
-      EventDragging,
-      EventResizing,
-      DateClicking,
-      DateSelecting
+      EventHovering
     ]
     let interactionClasses: InteractionClass[] = DEFAULT_INTERACTIONS.concat(
       this.pluginSystem.hooks.componentInteractions

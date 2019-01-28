@@ -1,22 +1,24 @@
-import { default as DateComponent, Seg } from '../component/DateComponent'
-import { PointerDragEvent } from '../interactions/pointer'
-import { Hit } from './hit'
+import {
+  DateComponent, Seg,
+  PointerDragEvent, Hit,
+  EventMutation, applyMutationToEventStore,
+  startOfDay,
+  elementClosest,
+  EventStore, getRelevantEvents, createEmptyEventStore,
+  Calendar,
+  EventInteractionState,
+  diffDates, enableCursor, disableCursor,
+  EventRenderRange, getElSeg,
+  EventApi,
+  View,
+  eventDragMutationMassager,
+  Interaction, InteractionSettings, interactionSettingsStore
+} from '@fullcalendar/core'
 import HitDragging, { isHitsEqual } from './HitDragging'
-import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
-import { startOfDay } from '../datelib/marker'
-import { elementClosest } from '../util/dom-manip'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import { EventStore, getRelevantEvents, createEmptyEventStore } from '../structs/event-store'
-import Calendar from '../Calendar'
-import { EventInteractionState } from '../interactions/event-interaction-state'
-import { diffDates, enableCursor, disableCursor } from '../util/misc'
-import { EventRenderRange, getElSeg } from '../component/event-rendering'
-import EventApi from '../api/EventApi'
 import { __assign } from 'tslib'
 import { ExternalDropApi } from '../interactions-external/ExternalElementDragging'
-import View from '../View'
-import { eventDragMutationMassager } from './event-dragging'
-import { Interaction, InteractionSettings, interactionSettingsStore } from './interaction'
+
 
 export default class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
 
