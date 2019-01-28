@@ -1,29 +1,24 @@
 
 describe('theme switching', function() {
 
-  it('can switch from standard to jquery-ui', function() {
+  it('can switch from standard to bootstrap4', function() {
     initCalendar()
     verifyStandardTheme()
-    currentCalendar.setOption('themeSystem', 'jquery-ui')
-    verifyJqueryUiTheme()
-  })
-
-  it('can switch from jquery-ui to boostrap4', function() {
-    initCalendar({ themeSystem: 'jquery-ui' })
-    verifyJqueryUiTheme()
     currentCalendar.setOption('themeSystem', 'bootstrap4')
     verifyBootstrap4Theme()
+  })
+
+  it('can switch from boostrap4 to standard', function() {
+    initCalendar({ themeSystem: 'boostrap4' })
+    verifyBootstrap4Theme()
+    currentCalendar.setOption('themeSystem', 'standard')
+    verifyStandardTheme()
   })
 
 
   function verifyStandardTheme() {
     expect($('.fc-unthemed')).toBeInDOM()
     expect($('.fc-widget-header')).toBeInDOM()
-  }
-
-  function verifyJqueryUiTheme() {
-    expect($('.fc.ui-widget')).toBeInDOM()
-    expect($('.ui-widget-header')).toBeInDOM()
   }
 
   function verifyBootstrap4Theme() {

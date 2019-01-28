@@ -55,7 +55,6 @@ export const globalDefaults = {
   // allows setting a min-height to the event segment to prevent short events overlapping each other
   agendaEventMinHeight: 0,
 
-  // jquery-ui theming
   theme: false,
   // themeButtonIcons: null,
 

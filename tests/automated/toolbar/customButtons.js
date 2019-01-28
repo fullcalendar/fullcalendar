@@ -23,18 +23,6 @@ describe('customButtons', function() {
     expect($('.fc-mybutton-button .fc-icon')).toHaveClass('fc-icon-asdf')
   })
 
-  it('can specify a jquery-ui icon', function() {
-    initCalendar({
-      themeSystem: 'jquery-ui',
-      customButtons: {
-        mybutton: { themeIcon: 'asdf' }
-      },
-      header: { left: 'mybutton', center: '', right: '' }
-    })
-
-    expect($('.fc-mybutton-button .ui-icon')).toHaveClass('ui-icon-asdf')
-  })
-
   it('can specify a bootstrap glyphicon', function() {
     initCalendar({
       themeSystem: 'bootstrap4',

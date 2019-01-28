@@ -22,8 +22,6 @@ module.exports = function(config) {
       'node_modules/rrule/dist/es5/rrule.js',
       'node_modules/jquery/dist/jquery.js',
       'node_modules/components-jqueryui/jquery-ui.js',
-      'node_modules/components-jqueryui/themes/cupertino/jquery-ui.css',
-      { pattern: 'node_modules/components-jqueryui/themes/cupertino/images/**', included: false, nocache: true, watched: false },
       'node_modules/native-promise-only/lib/npo.src.js', // Promises needed by xhr-mock
       'node_modules/xhr-mock/dist/xhr-mock.js', // TODO: should include this via require(), but .d.ts problems
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',

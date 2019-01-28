@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../../node_modules/components-jqueryui/themes/cupertino/jquery-ui.min.css' rel='stylesheet' />
 <link href='../../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
 <script src='../../node_modules/moment/moment.js'></script>
@@ -11,14 +10,8 @@
 <script>
 
   $(document).ready(function() {
-    var theme = false;
     var dir = 'ltr';
     var businessHours = false;
-
-    $('#change-theme-button').on('click', function() {
-      theme = theme ? false : 'jquery-ui';
-      $('#calendar').fullCalendar('option', 'theme', theme);
-    });
 
     $('#change-dir-button').on('click', function() {
       dir = dir === 'ltr' ? 'rtl' : 'ltr';
@@ -31,18 +24,15 @@
     });
 
     $('#change-all-button').on('click', function() {
-      theme = theme ? false : 'jquery-ui';
       dir = dir === 'ltr' ? 'rtl' : 'ltr';
       businessHours = !businessHours;
       $('#calendar').fullCalendar('option', {
-        theme: theme,
         dir: dir,
         businessHours: businessHours
       });
     });
 
     $('#calendar').fullCalendar({
-      theme: theme,
       dir: dir,
       businessHours: businessHours,
       header: {
@@ -113,7 +103,6 @@
 </style>
 </head>
 <body>
-  <button id='change-theme-button'>change theme</button>
   <button id='change-dir-button'>change dir</button>
   <button id='change-businessHours-button'>change businessHours</button>
   <button id='change-all-button'>change all</button>
