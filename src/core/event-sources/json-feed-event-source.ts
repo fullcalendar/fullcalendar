@@ -1,8 +1,9 @@
 import request from 'superagent'
 import Calendar from '../Calendar'
-import { registerEventSourceDef } from '../structs/event-source'
+import { EventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
 import { __assign } from 'tslib'
+import { createPlugin } from '../plugin-system'
 
 interface JsonFeedMeta {
   url: string
@@ -13,7 +14,7 @@ interface JsonFeedMeta {
   timeZoneParam?: string
 }
 
-registerEventSourceDef({
+let eventSourceDef: EventSourceDef = {
 
   parseMeta(raw: any): JsonFeedMeta | null {
     if (typeof raw === 'string') { // short form
@@ -66,6 +67,10 @@ registerEventSourceDef({
     })
   }
 
+}
+
+export default createPlugin({
+  eventSourceDefs: [ eventSourceDef ]
 })
 
 function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Calendar) {

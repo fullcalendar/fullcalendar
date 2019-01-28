@@ -1,8 +1,8 @@
-import { registerEventSourceDef } from '../structs/event-source'
+import { createPlugin } from '../plugin-system'
+import { EventSourceDef } from '../structs/event-source'
 import { EventInput } from '../structs/event'
 
-registerEventSourceDef({
-
+let eventSourceDef: EventSourceDef = {
   ignoreRange: true,
 
   parseMeta(raw: any): EventInput[] | null {
@@ -19,5 +19,8 @@ registerEventSourceDef({
       rawEvents: arg.eventSource.meta as EventInput[]
     })
   }
+}
 
+export default createPlugin({
+  eventSourceDefs: [ eventSourceDef ]
 })

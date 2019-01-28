@@ -14,6 +14,7 @@ import { ExternalDefTransform } from './interactions/external-element-dragging'
 import { InteractionClass } from './interactions/interaction'
 import { ThemeClass } from './theme/Theme'
 import { __assign } from 'tslib'
+import { EventSourceDef } from './structs/event-source'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -37,6 +38,7 @@ export interface PluginDefInput {
   componentInteractions?: InteractionClass[]
   calendarInteractions?: CalendarInteractionClass[]
   themeClasses?: { [themeSystemName: string]: ThemeClass }
+  eventSourceDefs?: EventSourceDef[]
 }
 
 export interface PluginHooks {
@@ -58,6 +60,7 @@ export interface PluginHooks {
   componentInteractions: InteractionClass[]
   calendarInteractions: CalendarInteractionClass[]
   themeClasses: { [themeSystemName: string]: ThemeClass }
+  eventSourceDefs: EventSourceDef[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -97,7 +100,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     eventDropTransformers: input.eventDropTransformers || [],
     componentInteractions: input.componentInteractions || [],
     calendarInteractions: input.calendarInteractions || [],
-    themeClasses: input.themeClasses || {}
+    themeClasses: input.themeClasses || {},
+    eventSourceDefs: input.eventSourceDefs || []
   }
 }
 
@@ -125,7 +129,8 @@ export class PluginSystem {
       eventDropTransformers: [],
       componentInteractions: [],
       calendarInteractions: [],
-      themeClasses: {}
+      themeClasses: {},
+      eventSourceDefs: []
     }
     this.addedHash = {}
   }
@@ -173,6 +178,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     eventDropTransformers: hooks0.eventDropTransformers.concat(hooks1.eventDropTransformers),
     calendarInteractions: hooks0.calendarInteractions.concat(hooks1.calendarInteractions),
     componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions),
-    themeClasses: __assign({}, hooks0.themeClasses, hooks1.themeClasses)
+    themeClasses: __assign({}, hooks0.themeClasses, hooks1.themeClasses),
+    eventSourceDefs: hooks0.eventSourceDefs.concat(hooks1.eventSourceDefs)
   }
 }

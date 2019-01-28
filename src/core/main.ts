@@ -140,7 +140,7 @@ export { NamedTimeZoneImpl, registerNamedTimeZoneImpl } from './datelib/timezone
 export { registerCmdFormatter } from './datelib/formatting-cmd'
 export { parse as parseMarker } from './datelib/parsing'
 
-export { registerEventSourceDef, EventSource, EventSourceHash } from './structs/event-source'
+export { EventSourceDef, EventSource, EventSourceHash } from './structs/event-source'
 
 export { Interaction, InteractionSettings, interactionSettingsToStore, interactionSettingsStore, InteractionSettingsStore } from './interactions/interaction'
 export { PointerDragEvent } from './interactions/pointer'

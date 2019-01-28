@@ -106,25 +106,17 @@ const SIMPLE_SOURCE_PROPS = {
   failure: Function
 }
 
-let defs: EventSourceDef[] = []
 let uid = 0
 
-// NOTE: if we ever want to remove defs,
-// we need to null out the entry in the array, not delete it,
-// because our event source IDs rely on the index.
-export function registerEventSourceDef(def: EventSourceDef) {
-  defs.push(def)
-}
+export function doesSourceNeedRange(eventSource: EventSource, calendar: Calendar) {
+  let defs = calendar.pluginSystem.hooks.eventSourceDefs
 
-export function getEventSourceDef(id: number): EventSourceDef {
-  return defs[id]
-}
-
-export function doesSourceNeedRange(eventSource: EventSource) {
   return !defs[eventSource.sourceDefId].ignoreRange
 }
 
 export function parseEventSource(raw: EventSourceInput, calendar: Calendar): EventSource | null {
+  let defs = calendar.pluginSystem.hooks.eventSourceDefs
+
   for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
     let def = defs[i]
     let meta = def.parseMeta(raw)

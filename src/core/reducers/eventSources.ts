@@ -1,4 +1,4 @@
-import { EventSource, EventSourceHash, getEventSourceDef, doesSourceNeedRange } from '../structs/event-source'
+import { EventSource, EventSourceHash, doesSourceNeedRange } from '../structs/event-source'
 import Calendar from '../Calendar'
 import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
@@ -31,7 +31,7 @@ export default function(eventSources: EventSourceHash, action: Action, dateProfi
         eventSources,
         (action as any).sourceIds ?
           arrayToHash((action as any).sourceIds) :
-          excludeStaticSources(eventSources),
+          excludeStaticSources(eventSources, calendar),
         dateProfile ? dateProfile.activeRange : null,
         calendar
       )
@@ -88,7 +88,7 @@ function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, c
 
 function isSourceDirty(eventSource: EventSource, fetchRange: DateRange, calendar: Calendar) {
 
-  if (!doesSourceNeedRange(eventSource)) {
+  if (!doesSourceNeedRange(eventSource, calendar)) {
     return !eventSource.latestFetchId
   } else {
     return !calendar.opt('lazyFetching') ||
@@ -122,7 +122,7 @@ function fetchSourcesByIds(
 
 
 function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: Calendar) {
-  let sourceDef = getEventSourceDef(eventSource.sourceDefId)
+  let sourceDef = calendar.pluginSystem.hooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = String(uid++)
 
   sourceDef.fetch(
@@ -205,8 +205,8 @@ function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId:
 }
 
 
-function excludeStaticSources(eventSources: EventSourceHash): EventSourceHash {
+function excludeStaticSources(eventSources: EventSourceHash, calendar: Calendar): EventSourceHash {
   return filterHash(eventSources, function(eventSource) {
-    return doesSourceNeedRange(eventSource)
+    return doesSourceNeedRange(eventSource, calendar)
   })
 }

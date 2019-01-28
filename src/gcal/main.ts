@@ -1,5 +1,5 @@
 import * as request from 'superagent'
-import { registerEventSourceDef, refineProps, addDays, DateEnv } from '@fullcalendar/core'
+import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv } from '@fullcalendar/core'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
@@ -11,7 +11,7 @@ const STANDARD_PROPS = {
   data: null
 }
 
-registerEventSourceDef({
+let eventSourceDef: EventSourceDef = {
 
   parseMeta(raw) {
     if (typeof raw === 'string') {
@@ -80,7 +80,7 @@ registerEventSourceDef({
         })
     }
   }
-})
+}
 
 
 function parseGoogleCalendarId(url) {
@@ -174,6 +174,6 @@ function injectQsComponent(url, component) {
   })
 }
 
-export default {
-  warning: 'TODO: convert fullcalendar-gcal to real plugin. will still work though.'
-}
+export default createPlugin({
+  eventSourceDefs: [ eventSourceDef ]
+})

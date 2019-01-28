@@ -1,6 +1,7 @@
 import { unpromisify } from '../util/promise'
-import { registerEventSourceDef, EventSourceError } from '../structs/event-source'
+import { EventSourceError, EventSourceDef } from '../structs/event-source'
 import { EventInput } from '../structs/event'
+import { createPlugin } from '../plugin-system'
 
 export type EventSourceFunc = (
   arg: {
@@ -13,7 +14,7 @@ export type EventSourceFunc = (
 ) => (void | PromiseLike<EventInput[]>)
 
 
-registerEventSourceDef({
+let eventSourceDef: EventSourceDef = {
 
   parseMeta(raw: any): EventSourceFunc {
     if (typeof raw === 'function') { // short form
@@ -43,4 +44,8 @@ registerEventSourceDef({
     )
   }
 
+}
+
+export default createPlugin({
+  eventSourceDefs: [ eventSourceDef ]
 })

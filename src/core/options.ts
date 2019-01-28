@@ -1,5 +1,8 @@
 import { mergeProps } from './util/object'
 import { PluginDef } from './plugin-system'
+import ArrayEventSourcePlugin from './event-sources/array-event-source'
+import FuncEventSourcePlugin from './event-sources/func-event-source'
+import JsonFeedEventSourcePlugin from './event-sources/json-feed-event-source'
 
 export const globalHooks = {} as any // TODO: make these options
 
@@ -124,7 +127,17 @@ export function mergeOptions(optionObjs) {
 }
 
 
+const INTERNAL_PLUGINS: PluginDef[] = [
+  ArrayEventSourcePlugin,
+  FuncEventSourcePlugin,
+  JsonFeedEventSourcePlugin
+]
+
 export function getDefaultPlugins(): PluginDef[] {
+  return INTERNAL_PLUGINS.concat(getBrowserGlobalPlugins())
+}
+
+function getBrowserGlobalPlugins(): PluginDef[] {
   let globalPluginHash = window['FullCalendarPlugins']
   let plugins = []
 
