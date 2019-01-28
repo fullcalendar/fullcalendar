@@ -23,18 +23,6 @@ describe('customButtons', function() {
     expect($('.fc-mybutton-button .fc-icon')).toHaveClass('fc-icon-asdf')
   })
 
-  it('can specify a bootstrap glyphicon', function() {
-    initCalendar({
-      themeSystem: 'bootstrap4',
-      customButtons: {
-        mybutton: { bootstrapGlyphicon: 'asdf' }
-      },
-      header: { left: 'mybutton', center: '', right: '' }
-    })
-
-    expect($('.fc-mybutton-button .glyphicon')).toHaveClass('glyphicon-asdf')
-  })
-
   it('can specify a bootstrap4 font-awesome icon', function() {
     initCalendar({
       themeSystem: 'bootstrap4',

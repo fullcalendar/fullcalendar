@@ -50,10 +50,10 @@ describe('buttonIcons', function() {
     })
   })
 
-  describe('when theme is true', function() {
+  describe('when theme is set', function() {
 
     pushOptions({
-      theme: true
+      theme: 'bootstrap4'
     })
 
     it('buttonIcons is ignored', function() {

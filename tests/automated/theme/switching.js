@@ -8,8 +8,8 @@ describe('theme switching', function() {
     verifyBootstrap4Theme()
   })
 
-  it('can switch from boostrap4 to standard', function() {
-    initCalendar({ themeSystem: 'boostrap4' })
+  it('can switch from bootstrap4 to standard', function() {
+    initCalendar({ themeSystem: 'bootstrap4' })
     verifyBootstrap4Theme()
     currentCalendar.setOption('themeSystem', 'standard')
     verifyStandardTheme()

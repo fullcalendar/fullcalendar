@@ -9,22 +9,21 @@
 <script>
 
   $(document).ready(function() {
-    
+
     var cal = $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
-      },
-      theme: true
+      }
     });
-    
+
     console.log(cal.data('fullCalendar'));
-    
+
     cal.fullCalendar('destroy');
-    
+
     console.log(cal.data('fullCalendar'));
-    
+
   });
 
 </script>

@@ -25,7 +25,6 @@ export interface CustomButtonInput {
   text: string
   icon?: string
   themeIcon?: string
-  bootstrapGlyphicon?: string,
   bootstrapFontAwesome?: string,
   click(element: HTMLElement): void
 }
@@ -77,7 +76,6 @@ export interface OptionsInputBase {
   buttonIcons?: boolean | ButtonIconsInput
   themeSystem?: 'standard' | string
   themeButtonIcons?: boolean | ButtonIconsInput
-  bootstrapGlyphicons?: boolean | ButtonIconsInput,
   bootstrapFontAwesome?: boolean | ButtonIconsInput,
   firstDay?: number
   dir?: 'ltr' | 'rtl' | 'auto'
