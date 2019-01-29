@@ -2,6 +2,18 @@ import './hacks'
 import './lib/simulate'
 import './lib/date-matchers'
 import { Calendar, globalDefaults } from '@fullcalendar/core'
+import InteractionPlugin from '@fullcalendar/interaction'
+import DayGridPlugin from '@fullcalendar/daygrid'
+import TimeGridPlugin from '@fullcalendar/timegrid'
+import ListPlugin from '@fullcalendar/list'
+
+const DEFAULT_PLUGINS = [
+  InteractionPlugin,
+  DayGridPlugin,
+  TimeGridPlugin,
+  ListPlugin
+]
+
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
@@ -84,7 +96,13 @@ function initCalendar(moreOptions, el) {
 }
 
 function getCurrentOptions() {
-  return $.extend.apply($, [ {} ].concat(optionsStack))
+  let options = $.extend.apply($, [ {} ].concat(optionsStack))
+
+  if (!options.plugins) {
+    options.plugins = DEFAULT_PLUGINS
+  }
+
+  return options
 }
 
 

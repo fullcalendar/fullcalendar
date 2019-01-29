@@ -1,5 +1,6 @@
 import { Calendar } from '@fullcalendar/core'
-import { toDateTime, toDuration } from '@fullcalendar/luxon'
+import LuxonPlugin, { toDateTime, toDuration } from '@fullcalendar/luxon'
+import DayGridPlugin from '@fullcalendar/daygrid'
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
 import { testTimeZoneImpl } from './timeZoneImpl'
 import * as luxon from 'luxon'
@@ -12,6 +13,9 @@ if (!luxon) {
 luxon &&
 describe('luxon plugin', function() {
 
+  const PLUGINS = [ LuxonPlugin, DayGridPlugin ]
+  pushOptions({ plugins: PLUGINS })
+
   testTimeZoneImpl('luxon')
 
   describe('toDateTime', function() {
@@ -20,6 +24,7 @@ describe('luxon plugin', function() {
 
       it('transfers UTC', function() {
         let calendar = new Calendar(document.createElement('div'), {
+          plugins: PLUGINS,
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'UTC'
         })
@@ -34,6 +39,7 @@ describe('luxon plugin', function() {
 
       it('transfers local timezone', function() {
         let calendar = new Calendar(document.createElement('div'), {
+          plugins: PLUGINS,
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'local'
         })
@@ -48,6 +54,7 @@ describe('luxon plugin', function() {
 
       it('transfers named timezone', function() {
         let calendar = new Calendar(document.createElement('div'), {
+          plugins: PLUGINS,
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'Europe/Moscow'
         })
@@ -64,6 +71,7 @@ describe('luxon plugin', function() {
 
     it('transfers locale', function() {
       let calendar = new Calendar(document.createElement('div'), {
+        plugins: PLUGINS,
         events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
         locale: 'es'
       })
@@ -78,6 +86,7 @@ describe('luxon plugin', function() {
 
     it('converts numeric values correctly', function() {
       let calendar = new Calendar(document.createElement('div'), {
+        plugins: PLUGINS,
         defaultTimedEventDuration: '05:00',
         defaultAllDayEventDuration: { days: 3 }
       })
@@ -92,6 +101,7 @@ describe('luxon plugin', function() {
 
     it('transfers locale correctly', function() {
       let calendar = new Calendar(document.createElement('div'), {
+        plugins: PLUGINS,
         defaultTimedEventDuration: '05:00',
         locale: 'es'
       })
@@ -111,7 +121,6 @@ describe('luxon plugin', function() {
         defaultView: 'month',
         now: '2018-09-06',
         displayEventEnd: false,
-        cmdFormatter: 'luxon',
         eventTimeFormat: 'HH:mm:ss\'abc\'',
         events: [
           { title: 'my event', start: '2018-09-06T13:30:20' }
@@ -126,7 +135,7 @@ describe('luxon plugin', function() {
 
     it('renders with same month', function() {
       let calendar = new Calendar(document.createElement('div'), {
-        cmdFormatter: 'luxon'
+        plugins: PLUGINS
       })
       let s
 
@@ -139,7 +148,7 @@ describe('luxon plugin', function() {
 
     it('renders with same year but different month', function() {
       let calendar = new Calendar(document.createElement('div'), {
-        cmdFormatter: 'luxon'
+        plugins: PLUGINS
       })
       let s
 
@@ -152,7 +161,7 @@ describe('luxon plugin', function() {
 
     it('renders with different years', function() {
       let calendar = new Calendar(document.createElement('div'), {
-        cmdFormatter: 'luxon'
+        plugins: PLUGINS
       })
       let s
 
@@ -165,7 +174,7 @@ describe('luxon plugin', function() {
 
     it('inherits defaultRangeSeparator', function() {
       let calendar = new Calendar(document.createElement('div'), {
-        cmdFormatter: 'luxon',
+        plugins: PLUGINS,
         defaultRangeSeparator: ' to '
       })
       let s = calendar.formatRange('2018-09-03', '2018-09-05', 'MMMM d, yyyy \'asdf\'')
@@ -174,9 +183,9 @@ describe('luxon plugin', function() {
 
     it('produces title with titleRangeSeparator', function() {
       initCalendar({ // need to render the calendar to get view.title :(
+        plugins: PLUGINS,
         defaultView: 'basicWeek',
         now: '2018-09-06',
-        cmdFormatter: 'luxon',
         titleFormat: 'MMMM {d} yy \'yup\'',
         titleRangeSeparator: ' to '
       })
