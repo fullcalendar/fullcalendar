@@ -3,6 +3,7 @@ import { PluginDef } from './plugin-system'
 import ArrayEventSourcePlugin from './event-sources/array-event-source'
 import FuncEventSourcePlugin from './event-sources/func-event-source'
 import JsonFeedEventSourcePlugin from './event-sources/json-feed-event-source'
+import SimpleRecurrencePlugin from './structs/recurring-event-simple'
 
 export const globalHooks = {} as any // TODO: make these options
 
@@ -129,7 +130,8 @@ export function mergeOptions(optionObjs) {
 const INTERNAL_PLUGINS: PluginDef[] = [
   ArrayEventSourcePlugin,
   FuncEventSourcePlugin,
-  JsonFeedEventSourcePlugin
+  JsonFeedEventSourcePlugin,
+  SimpleRecurrencePlugin
 ]
 
 export function getDefaultPlugins(): PluginDef[] {

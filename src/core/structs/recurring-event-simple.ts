@@ -2,10 +2,11 @@ import { startOfDay, addDays, DateMarker } from '../datelib/marker'
 import { Duration, createDuration, subtractDurations } from '../datelib/duration'
 import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
-import { registerRecurringType, ParsedRecurring } from './recurring-event'
+import { RecurringType, ParsedRecurring } from './recurring-event'
 import { EventInput, EventDef } from './event'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
+import { createPlugin } from '../plugin-system'
 
 /*
 An implementation of recurring events that only supports every-day or weekly recurrences.
@@ -23,7 +24,7 @@ interface SimpleParsedRecurring extends ParsedRecurring {
   typeData: SimpleRecurringData // the whole point is to make this more specific
 }
 
-registerRecurringType({
+let recurring: RecurringType = {
 
   parse(rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv): SimpleParsedRecurring | null {
     let createMarker = dateEnv.createMarker.bind(dateEnv)
@@ -86,6 +87,10 @@ registerRecurringType({
     }
   }
 
+}
+
+export default createPlugin({
+  recurringTypes: [ recurring ]
 })
 
 function expandRanges(

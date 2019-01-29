@@ -1,7 +1,4 @@
 
-// for intentional side-effects
-import './structs/recurring-event-simple'
-
 // exports
 // --------------------------------------------------------------------------------------------------
 
@@ -148,7 +145,7 @@ export { formatDate, formatRange } from './formatting-api'
 
 export { globalDefaults, globalHooks } from './options'
 
-export { registerRecurringType, ParsedRecurring } from './structs/recurring-event'
+export { RecurringType, ParsedRecurring } from './structs/recurring-event'
 
 export { DragMetaInput, DragMeta, parseDragMeta } from './structs/drag-meta'
 

@@ -20,17 +20,16 @@ export interface RecurringType {
 }
 
 
-let recurringTypes: RecurringType[] = []
-
-export function registerRecurringType(recurringType: RecurringType) {
-  recurringTypes.push(recurringType)
-}
-
-
 /*
 KNOWN BUG: will populate lefovers only up until a recurring type works
 */
-export function parseRecurring(eventInput: EventInput, allDayDefault: boolean | null, dateEnv: DateEnv, leftovers: any) {
+export function parseRecurring(
+  eventInput: EventInput,
+  allDayDefault: boolean | null,
+  dateEnv: DateEnv,
+  recurringTypes: RecurringType[],
+  leftovers: any
+) {
   for (let i = 0; i < recurringTypes.length; i++) {
     let parsed = recurringTypes[i].parse(eventInput, allDayDefault, leftovers, dateEnv) as ParsedRecurring
 
@@ -51,7 +50,12 @@ export function parseRecurring(eventInput: EventInput, allDayDefault: boolean | 
 /*
 Event MUST have a recurringDef
 */
-export function expandRecurringRanges(eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
+export function expandRecurringRanges(
+  eventDef: EventDef,
+  framingRange: DateRange,
+  dateEnv: DateEnv,
+  recurringTypes: RecurringType[],
+): DateMarker[] {
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
   let markers = typeDef.expand(
     eventDef.recurringDef.typeData,

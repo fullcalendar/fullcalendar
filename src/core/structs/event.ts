@@ -91,6 +91,7 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
     raw, // raw, but with single-event stuff stripped out
     allDayDefault,
     calendar.dateEnv,
+    calendar.pluginSystem.hooks.recurringTypes,
     leftovers0 // will populate with non-recurring props
   )
 

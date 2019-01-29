@@ -1,5 +1,16 @@
 import { RRule, rrulestr } from 'rrule'
-import { registerRecurringType, ParsedRecurring, EventInput, refineProps, DateEnv, EventDef, DateRange, DateMarker, createDuration } from '@fullcalendar/core'
+import {
+  RecurringType,
+  ParsedRecurring,
+  EventInput,
+  refineProps,
+  DateEnv,
+  EventDef,
+  DateRange,
+  DateMarker,
+  createDuration,
+  createPlugin
+} from '@fullcalendar/core'
 
 interface RRuleParsedRecurring extends ParsedRecurring {
   typeData: RRule
@@ -10,7 +21,7 @@ const EVENT_DEF_PROPS = {
   duration: createDuration
 }
 
-registerRecurringType({
+let recurring: RecurringType = {
 
   parse(rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
     if (rawEvent.rrule != null) {
@@ -33,6 +44,10 @@ registerRecurringType({
     return rrule.between(framingRange.start, framingRange.end)
   }
 
+}
+
+export default createPlugin({
+  recurringTypes: [ recurring ]
 })
 
 function parseRRule(input, allDayDefault: boolean | null, dateEnv: DateEnv) {
@@ -101,8 +116,4 @@ function convertConstant(input) {
     return RRule[input.toUpperCase()]
   }
   return input
-}
-
-export default {
-  warning: 'TODO: convert fullcalendar-rrule to real plugin. will still work though.'
 }

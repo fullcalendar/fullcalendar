@@ -16,6 +16,7 @@ import { ThemeClass } from './theme/Theme'
 import { __assign } from 'tslib'
 import { EventSourceDef } from './structs/event-source'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
+import { RecurringType } from './structs/recurring-event'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -41,6 +42,7 @@ export interface PluginDefInput {
   themeClasses?: { [themeSystemName: string]: ThemeClass }
   eventSourceDefs?: EventSourceDef[]
   cmdFormatter?: CmdFormatterFunc
+  recurringTypes?: RecurringType[]
 }
 
 export interface PluginHooks {
@@ -64,6 +66,7 @@ export interface PluginHooks {
   themeClasses: { [themeSystemName: string]: ThemeClass }
   eventSourceDefs: EventSourceDef[]
   cmdFormatter?: CmdFormatterFunc
+  recurringTypes: RecurringType[]
 }
 
 export interface PluginDef extends PluginHooks {
@@ -105,7 +108,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     calendarInteractions: input.calendarInteractions || [],
     themeClasses: input.themeClasses || {},
     eventSourceDefs: input.eventSourceDefs || [],
-    cmdFormatter: input.cmdFormatter
+    cmdFormatter: input.cmdFormatter,
+    recurringTypes: input.recurringTypes || []
   }
 }
 
@@ -135,22 +139,13 @@ export class PluginSystem {
       calendarInteractions: [],
       themeClasses: {},
       eventSourceDefs: [],
-      cmdFormatter: null
+      cmdFormatter: null,
+      recurringTypes: []
     }
     this.addedHash = {}
   }
 
   add(plugin: PluginDef) {
-
-    // TODO: remove this
-    if ((plugin as any).warning) {
-      if (!(plugin as any).warned) {
-        console.warn((plugin as any).warning)
-        ;(plugin as any).warned = true
-      }
-      return
-    }
-
     if (!this.addedHash[plugin.id]) {
       this.addedHash[plugin.id] = true
 
@@ -185,6 +180,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions),
     themeClasses: __assign({}, hooks0.themeClasses, hooks1.themeClasses),
     eventSourceDefs: hooks0.eventSourceDefs.concat(hooks1.eventSourceDefs),
-    cmdFormatter: hooks1.cmdFormatter || hooks0.cmdFormatter
+    cmdFormatter: hooks1.cmdFormatter || hooks0.cmdFormatter,
+    recurringTypes: hooks0.recurringTypes.concat(hooks1.recurringTypes)
   }
 }
