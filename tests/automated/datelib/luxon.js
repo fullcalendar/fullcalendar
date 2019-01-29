@@ -13,8 +13,8 @@ if (!luxon) {
 luxon &&
 describe('luxon plugin', function() {
 
-  const PLUGINS = [ LuxonPlugin, DayGridPlugin ]
-  pushOptions({ plugins: PLUGINS })
+  const PLUGINS = [ LuxonPlugin, DayGridPlugin ] // for `new Calendar`
+  pushOptions({ plugins: PLUGINS }) // for initCalendar
 
   testTimeZoneImpl('luxon')
 

@@ -7,13 +7,6 @@ import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import ListPlugin from '@fullcalendar/list'
 
-const DEFAULT_PLUGINS = [
-  InteractionPlugin,
-  DayGridPlugin,
-  TimeGridPlugin,
-  ListPlugin
-]
-
 
 // Setup / Teardown
 // ---------------------------------------------------------------------------------------------------------------------
@@ -96,13 +89,7 @@ function initCalendar(moreOptions, el) {
 }
 
 function getCurrentOptions() {
-  let options = $.extend.apply($, [ {} ].concat(optionsStack))
-
-  if (!options.plugins) {
-    options.plugins = DEFAULT_PLUGINS
-  }
-
-  return options
+  return $.extend.apply($, [ {} ].concat(optionsStack))
 }
 
 
@@ -262,8 +249,16 @@ Object.assign(window, {
 // Defaults that apply to all tests
 // ---------------------------------------------------------------------------------------------------------------------
 
+const DEFAULT_PLUGINS = [
+  InteractionPlugin,
+  DayGridPlugin,
+  TimeGridPlugin,
+  ListPlugin
+]
+
 pushOptions({
-  timeZone: 'UTC'
+  timeZone: 'UTC',
+  plugins: DEFAULT_PLUGINS
 })
 
 // clear what plugins do. will take affect for all calendars, not just those via initCalendar()
