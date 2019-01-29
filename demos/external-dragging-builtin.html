@@ -14,12 +14,14 @@
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
+    var Calendar = FullCalendar.Calendar;
+    var Draggable = FullCalendarPlugins.interaction.Draggable
 
     /* initialize the external events
     -----------------------------------------------------------------*/
 
     var containerEl = document.getElementById('external-events-list');
-    new FullCalendar.Draggable(containerEl, {
+    new Draggable(containerEl, {
       itemSelector: '.fc-event',
       eventData: function(eventEl) {
         return {
@@ -45,7 +47,7 @@
     -----------------------------------------------------------------*/
 
     var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    var calendar = new Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',
