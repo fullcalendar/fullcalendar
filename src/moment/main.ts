@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { Calendar, Duration, VerboseFormattingArg, registerCmdFormatter, globalDefaults } from '@fullcalendar/core'
+import { Calendar, Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
 
 
 export function toMoment(date: Date, calendar: Calendar): moment.Moment {
@@ -21,7 +21,7 @@ export function toDuration(fcDuration: Duration): moment.Duration {
 }
 
 
-registerCmdFormatter('moment', function(cmdStr: string, arg: VerboseFormattingArg) {
+function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
   let cmd = parseCmdStr(cmdStr)
 
   if (arg.end) {
@@ -51,9 +51,12 @@ registerCmdFormatter('moment', function(cmdStr: string, arg: VerboseFormattingAr
     arg.date.timeZoneOffset,
     arg.localeCodes[0]
   ).format(cmd.whole) // TODO: test for this
+}
+
+export default createPlugin({
+  cmdFormatter: formatWithCmdStr
 })
 
-globalDefaults.cmdFormatter = 'moment'
 
 function createMomentFormatFunc(mom: moment.Moment) {
   return function(cmdStr) {
@@ -137,8 +140,4 @@ function formatRange(cmd: CmdParts, formatStart: (cmdStr: string) => string, for
   }
 
   return formatStart(cmd.whole) + separator + formatEnd(cmd.whole)
-}
-
-export default {
-  warning: 'TODO: convert fullcalendar-moment to real plugin. will still work though.'
 }

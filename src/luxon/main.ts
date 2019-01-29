@@ -1,5 +1,5 @@
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
-import { Calendar, Duration, NamedTimeZoneImpl, registerNamedTimeZoneImpl, globalDefaults, registerCmdFormatter, VerboseFormattingArg } from '@fullcalendar/core'
+import { Calendar, Duration, NamedTimeZoneImpl, registerNamedTimeZoneImpl, globalDefaults, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
 
 export function toDateTime(date: Date, calendar: Calendar): LuxonDateTime {
 
@@ -46,7 +46,7 @@ registerNamedTimeZoneImpl('luxon', LuxonNamedTimeZone)
 globalDefaults.timeZoneImpl = 'luxon'
 
 
-registerCmdFormatter('luxon', function(cmdStr: string, arg: VerboseFormattingArg) {
+function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
   let cmd = parseCmdStr(cmdStr)
 
   if (arg.end) {
@@ -73,9 +73,11 @@ registerCmdFormatter('luxon', function(cmdStr: string, arg: VerboseFormattingArg
     arg.timeZone,
     arg.localeCodes[0]
   ).toFormat(cmd.whole)
-})
+}
 
-globalDefaults.cmdFormatter = 'luxon'
+export default createPlugin({
+  cmdFormatter: formatWithCmdStr
+})
 
 
 function luxonToArray(datetime: LuxonDateTime): number[] {
@@ -157,6 +159,6 @@ function formatRange(cmd: CmdParts, formatStart: (cmdStr: string) => string, for
   return formatStart(cmd.whole) + separator + formatEnd(cmd.whole)
 }
 
-export default {
-  warning: 'TODO: convert fullcalendar-luxon to real plugin. will still work though.'
-}
+// export default {
+//   warning: 'TODO: convert fullcalendar-luxon to real plugin. will still work though.'
+// }

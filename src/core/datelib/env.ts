@@ -11,7 +11,7 @@ import { Duration, asRoughYears, asRoughMonths, asRoughDays, asRoughMs } from '.
 import { DateFormatter, buildIsoString } from './formatting'
 import { parse } from './parsing'
 import { isInt } from '../util/misc'
-import { CmdFormatterFunc, getCmdFormatter } from './formatting-cmd'
+import { CmdFormatterFunc } from './formatting-cmd'
 
 export interface DateEnvSettings {
   timeZone: string
@@ -21,7 +21,7 @@ export interface DateEnvSettings {
   weekNumberCalculation?: any
   firstDay?: any,
   weekLabel?: string,
-  cmdFormatter?: string
+  cmdFormatter?: CmdFormatterFunc
 }
 
 export type DateInput = Date | string | number | number[]
@@ -45,7 +45,7 @@ export class DateEnv {
   weekDoy: number // which day must be within the year, for computing the first week number
   weekNumberFunc: any
   weekLabel: string // DON'T LIKE how options are confused with local
-  cmdFormatter: CmdFormatterFunc
+  cmdFormatter?: CmdFormatterFunc
 
 
   constructor(settings: DateEnvSettings) {
@@ -76,9 +76,7 @@ export class DateEnv {
 
     this.weekLabel = settings.weekLabel != null ? settings.weekLabel : settings.locale.options.weekLabel
 
-    if (typeof settings.cmdFormatter === 'string') {
-      this.cmdFormatter = getCmdFormatter(settings.cmdFormatter)
-    }
+    this.cmdFormatter = settings.cmdFormatter
   }
 
 

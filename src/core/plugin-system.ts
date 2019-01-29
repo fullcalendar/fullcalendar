@@ -15,6 +15,7 @@ import { InteractionClass } from './interactions/interaction'
 import { ThemeClass } from './theme/Theme'
 import { __assign } from 'tslib'
 import { EventSourceDef } from './structs/event-source'
+import { CmdFormatterFunc } from './datelib/formatting-cmd'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -39,6 +40,7 @@ export interface PluginDefInput {
   calendarInteractions?: CalendarInteractionClass[]
   themeClasses?: { [themeSystemName: string]: ThemeClass }
   eventSourceDefs?: EventSourceDef[]
+  cmdFormatter?: CmdFormatterFunc
 }
 
 export interface PluginHooks {
@@ -61,6 +63,7 @@ export interface PluginHooks {
   calendarInteractions: CalendarInteractionClass[]
   themeClasses: { [themeSystemName: string]: ThemeClass }
   eventSourceDefs: EventSourceDef[]
+  cmdFormatter?: CmdFormatterFunc
 }
 
 export interface PluginDef extends PluginHooks {
@@ -101,7 +104,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     componentInteractions: input.componentInteractions || [],
     calendarInteractions: input.calendarInteractions || [],
     themeClasses: input.themeClasses || {},
-    eventSourceDefs: input.eventSourceDefs || []
+    eventSourceDefs: input.eventSourceDefs || [],
+    cmdFormatter: input.cmdFormatter
   }
 }
 
@@ -130,7 +134,8 @@ export class PluginSystem {
       componentInteractions: [],
       calendarInteractions: [],
       themeClasses: {},
-      eventSourceDefs: []
+      eventSourceDefs: [],
+      cmdFormatter: null
     }
     this.addedHash = {}
   }
@@ -179,6 +184,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     calendarInteractions: hooks0.calendarInteractions.concat(hooks1.calendarInteractions),
     componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions),
     themeClasses: __assign({}, hooks0.themeClasses, hooks1.themeClasses),
-    eventSourceDefs: hooks0.eventSourceDefs.concat(hooks1.eventSourceDefs)
+    eventSourceDefs: hooks0.eventSourceDefs.concat(hooks1.eventSourceDefs),
+    cmdFormatter: hooks1.cmdFormatter || hooks0.cmdFormatter
   }
 }

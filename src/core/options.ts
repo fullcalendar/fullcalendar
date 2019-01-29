@@ -10,7 +10,6 @@ export const globalDefaults = {
 
   defaultRangeSeparator: ' - ',
   titleRangeSeparator: ' \u2013 ', // en dash
-  cmdFormatter: null,
 
   defaultTimedEventDuration: '01:00:00',
   defaultAllDayEventDuration: { day: 1 },
@@ -138,7 +137,7 @@ export function getDefaultPlugins(): PluginDef[] {
 }
 
 function getBrowserGlobalPlugins(): PluginDef[] {
-  let globalPluginHash = window['FullCalendarPlugins']
+  let globalPluginHash = !globalHooks.disableGlobalPlugins && window['FullCalendarPlugins']
   let plugins = []
 
   if (globalPluginHash) {

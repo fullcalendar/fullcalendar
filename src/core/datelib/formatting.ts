@@ -37,7 +37,7 @@ export interface DateFormattingContext {
   calendarSystem: CalendarSystem
   computeWeekNumber: (d: DateMarker) => number
   weekLabel: string
-  cmdFormatter: CmdFormatterFunc
+  cmdFormatter?: CmdFormatterFunc
 }
 
 export interface DateFormatter {

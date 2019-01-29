@@ -34,6 +34,7 @@ import { InteractionSettingsInput, parseInteractionSettings, Interaction, intera
 import EventClicking from './interactions/EventClicking'
 import EventHovering from './interactions/EventHovering'
 import StandardTheme from './theme/StandardTheme'
+import { CmdFormatterFunc } from './datelib/formatting-cmd';
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -542,7 +543,7 @@ export default class Calendar {
       options.firstDay,
       options.weekNumberCalculation,
       options.weekLabel,
-      options.cmdFormatter
+      pluginHooks.cmdFormatter
     )
 
     this.selectionConfig = this.buildSelectionConfig(options) // needs dateEnv. do after :(
@@ -1209,7 +1210,7 @@ EmitterMixin.mixInto(Calendar)
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function buildDateEnv(locale, timeZone, timeZoneImpl, firstDay, weekNumberCalculation, weekLabel, cmdFormatter) {
+function buildDateEnv(locale, timeZone, timeZoneImpl, firstDay, weekNumberCalculation, weekLabel, cmdFormatter: CmdFormatterFunc) {
   return new DateEnv({
     calendarSystem: 'gregory', // TODO: make this a setting
     timeZone,

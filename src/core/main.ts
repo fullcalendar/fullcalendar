@@ -133,7 +133,6 @@ export {
   formatIsoTimeString
 } from './datelib/formatting'
 export { NamedTimeZoneImpl, registerNamedTimeZoneImpl } from './datelib/timezone'
-export { registerCmdFormatter } from './datelib/formatting-cmd'
 export { parse as parseMarker } from './datelib/parsing'
 
 export { EventSourceDef, EventSource, EventSourceHash } from './structs/event-source'

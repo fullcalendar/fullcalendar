@@ -5,17 +5,6 @@ import {
 
 export type CmdFormatterFunc = (cmd: string, arg: VerboseFormattingArg) => string
 
-
-let cmdFormatters: { [name: string]: CmdFormatterFunc } = {}
-
-export function registerCmdFormatter(name, input: CmdFormatterFunc) {
-  cmdFormatters[name] = input
-}
-
-export function getCmdFormatter(name: string): CmdFormatterFunc | null {
-  return cmdFormatters[name]
-}
-
 /*
 TODO: fix the terminology of "formatter" vs "formatting func"
 */
