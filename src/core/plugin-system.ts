@@ -17,6 +17,7 @@ import { __assign } from 'tslib'
 import { EventSourceDef } from './structs/event-source'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { RecurringType } from './structs/recurring-event'
+import { NamedTimeZoneImplClass } from './datelib/timezone'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -43,6 +44,7 @@ export interface PluginDefInput {
   eventSourceDefs?: EventSourceDef[]
   cmdFormatter?: CmdFormatterFunc
   recurringTypes?: RecurringType[]
+  namedTimeZonedImpl?: NamedTimeZoneImplClass
 }
 
 export interface PluginHooks {
@@ -67,6 +69,7 @@ export interface PluginHooks {
   eventSourceDefs: EventSourceDef[]
   cmdFormatter?: CmdFormatterFunc
   recurringTypes: RecurringType[]
+  namedTimeZonedImpl?: NamedTimeZoneImplClass
 }
 
 export interface PluginDef extends PluginHooks {
@@ -109,7 +112,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     themeClasses: input.themeClasses || {},
     eventSourceDefs: input.eventSourceDefs || [],
     cmdFormatter: input.cmdFormatter,
-    recurringTypes: input.recurringTypes || []
+    recurringTypes: input.recurringTypes || [],
+    namedTimeZonedImpl: input.namedTimeZonedImpl
   }
 }
 
@@ -140,7 +144,8 @@ export class PluginSystem {
       themeClasses: {},
       eventSourceDefs: [],
       cmdFormatter: null,
-      recurringTypes: []
+      recurringTypes: [],
+      namedTimeZonedImpl: null
     }
     this.addedHash = {}
   }
@@ -181,6 +186,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     themeClasses: __assign({}, hooks0.themeClasses, hooks1.themeClasses),
     eventSourceDefs: hooks0.eventSourceDefs.concat(hooks1.eventSourceDefs),
     cmdFormatter: hooks1.cmdFormatter || hooks0.cmdFormatter,
-    recurringTypes: hooks0.recurringTypes.concat(hooks1.recurringTypes)
+    recurringTypes: hooks0.recurringTypes.concat(hooks1.recurringTypes),
+    namedTimeZonedImpl: hooks1.namedTimeZonedImpl || hooks0.namedTimeZonedImpl
   }
 }

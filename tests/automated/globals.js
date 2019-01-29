@@ -1,7 +1,7 @@
 import './hacks'
 import './lib/simulate'
 import './lib/date-matchers'
-import { Calendar, globalDefaults } from '@fullcalendar/core'
+import { Calendar } from '@fullcalendar/core'
 import InteractionPlugin from '@fullcalendar/interaction'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
@@ -260,7 +260,3 @@ pushOptions({
   timeZone: 'UTC',
   plugins: DEFAULT_PLUGINS
 })
-
-// clear what plugins do. will take affect for all calendars, not just those via initCalendar()
-globalDefaults['timeZoneImpl'] = null
-globalDefaults['cmdFormatter'] = null

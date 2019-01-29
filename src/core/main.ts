@@ -129,7 +129,7 @@ export {
   VerboseFormattingArg,
   formatIsoTimeString
 } from './datelib/formatting'
-export { NamedTimeZoneImpl, registerNamedTimeZoneImpl } from './datelib/timezone'
+export { NamedTimeZoneImpl } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'
 
 export { EventSourceDef, EventSource, EventSourceHash } from './structs/event-source'

@@ -16,7 +16,7 @@ describe('luxon plugin', function() {
   const PLUGINS = [ LuxonPlugin, DayGridPlugin ] // for `new Calendar`
   pushOptions({ plugins: PLUGINS }) // for initCalendar
 
-  testTimeZoneImpl('luxon')
+  testTimeZoneImpl(LuxonPlugin)
 
   describe('toDateTime', function() {
 
@@ -61,9 +61,9 @@ describe('luxon plugin', function() {
         let event = calendar.getEvents()[0]
         var start = toDateTime(event.start, calendar)
         var end = toDateTime(event.end, calendar)
-        expect(start.toJSDate()).toEqualDate('2018-09-05T12:00:00Z') // not using timeZoneImpl, so fake-UTC
+        expect(start.toJSDate()).toEqualDate('2018-09-05T12:00:00Z') // not using named tz implementation, so fake-UTC
         expect(start.zoneName).toMatch('Europe/Moscow')
-        expect(end.toJSDate()).toEqualDate('2018-09-05T18:00:00Z') // not using timeZoneImpl, so fake-UTC
+        expect(end.toJSDate()).toEqualDate('2018-09-05T18:00:00Z') // not using named tz implementation, so fake-UTC
         expect(end.zoneName).toMatch('Europe/Moscow')
       })
 

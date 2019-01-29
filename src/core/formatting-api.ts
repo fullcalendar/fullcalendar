@@ -44,7 +44,6 @@ function buildDateEnv(settings) {
   // ensure required settings
   settings = {
     timeZone: globalDefaults.timeZone,
-    timeZoneImpl: globalDefaults.timeZoneImpl,
     calendarSystem: 'gregory',
     ...settings,
     locale: getLocale(locale)

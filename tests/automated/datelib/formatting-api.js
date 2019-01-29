@@ -17,7 +17,7 @@ describe('formatDate', function() {
       day: 'numeric',
       year: 'numeric',
       timeZoneName: 'short',
-      timeZone: 'America/New_York', // but with no timeZoneImpl
+      timeZone: 'America/New_York', // but with no named tz implementation
       omitCommas: true // for cross-browser
     })
     expect(str).toBe('September 4 2018 12:00 AM GMT-5')
@@ -42,7 +42,7 @@ describe('formatRange', function() {
       day: 'numeric',
       year: 'numeric',
       timeZoneName: 'short',
-      timeZone: 'America/New_York', // but with no timeZoneImpl
+      timeZone: 'America/New_York', // but with no named tz implementation
       omitCommas: true // for cross-browser
     })
     expect(str).toBe('September 4 - October 4 2018 12:00 AM GMT-5')

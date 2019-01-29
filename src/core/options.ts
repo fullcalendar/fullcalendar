@@ -46,7 +46,6 @@ export const globalDefaults = {
   timeZoneParam: 'timeZone',
 
   timeZone: 'local', // TODO: throw error if given falsy value?
-  timeZoneImpl: null,
 
   // allDayDefault: undefined,
 

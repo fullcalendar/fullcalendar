@@ -6,7 +6,7 @@ import {
 } from './marker'
 import { CalendarSystem, createCalendarSystem } from './calendar-system'
 import { Locale } from './locale'
-import { NamedTimeZoneImpl, createNamedTimeZoneImpl } from './timezone'
+import { NamedTimeZoneImpl, NamedTimeZoneImplClass } from './timezone'
 import { Duration, asRoughYears, asRoughMonths, asRoughDays, asRoughMs } from './duration'
 import { DateFormatter, buildIsoString } from './formatting'
 import { parse } from './parsing'
@@ -15,7 +15,7 @@ import { CmdFormatterFunc } from './formatting-cmd'
 
 export interface DateEnvSettings {
   timeZone: string
-  timeZoneImpl?: string
+  namedTimeZoneImpl?: NamedTimeZoneImplClass
   calendarSystem: string
   locale: Locale
   weekNumberCalculation?: any
@@ -52,8 +52,8 @@ export class DateEnv {
     let timeZone = this.timeZone = settings.timeZone
     let isNamedTimeZone = timeZone !== 'local' && timeZone !== 'UTC'
 
-    if (settings.timeZoneImpl && isNamedTimeZone) {
-      this.namedTimeZoneImpl = createNamedTimeZoneImpl(settings.timeZoneImpl, timeZone)
+    if (settings.namedTimeZoneImpl && isNamedTimeZone) {
+      this.namedTimeZoneImpl = new settings.namedTimeZoneImpl(timeZone)
     }
 
     this.canComputeOffset = Boolean(!isNamedTimeZone || this.namedTimeZoneImpl)
