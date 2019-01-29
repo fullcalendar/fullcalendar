@@ -1,4 +1,6 @@
 import { Calendar } from '@fullcalendar/core'
+import DayGridPlugin from '@fullcalendar/daygrid'
+import InteractionPlugin from '@fullcalendar/interaction'
 
 describe('select callback', function() {
 
@@ -284,6 +286,7 @@ describe('select callback', function() {
     let calendar = new Calendar(
       document.createElement('div'),
       {
+        plugins: [ InteractionPlugin, DayGridPlugin ],
         now: '2018-12-25',
         select: function(info) {
           expect(info.startStr).toBe('2018-12-20')

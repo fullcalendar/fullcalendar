@@ -1,5 +1,10 @@
+import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import DayGridPlugin from '@fullcalendar/daygrid'
 
 describe('theme switching', function() {
+  pushOptions({
+    plugins: [ BootstrapPlugin, DayGridPlugin ]
+  })
 
   it('can switch from standard to bootstrap4', function() {
     initCalendar()

@@ -1,6 +1,10 @@
+import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import TimeGridPlugin from '@fullcalendar/timegrid'
+
 describe('themeSystem', function() {
 
   pushOptions({
+    plugins: [ BootstrapPlugin, TimeGridPlugin ],
     defaultView: 'agendaWeek'
   })
 

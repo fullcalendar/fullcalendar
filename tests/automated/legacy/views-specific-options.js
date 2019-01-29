@@ -1,5 +1,5 @@
 import { createPlugin } from '@fullcalendar/core'
-import { BasicView } from '@fullcalendar/daygrid'
+import DayGridPlugin, { BasicView } from '@fullcalendar/daygrid'
 
 describe('view-specific options', function() {
 
@@ -130,6 +130,7 @@ describe('view-specific options', function() {
 
     initCalendar({
       plugins: [
+        DayGridPlugin,
         createPlugin({
           viewConfigs: {
             superBasic: SuperBasicView
@@ -157,6 +158,7 @@ describe('view-specific options', function() {
 
     initCalendar({
       plugins: [
+        DayGridPlugin,
         createPlugin({
           viewConfigs: {
             superBasic: SuperBasicView

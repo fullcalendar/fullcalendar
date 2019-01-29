@@ -1,4 +1,7 @@
 import { Calendar } from '@fullcalendar/core'
+import InteractionPlugin from '@fullcalendar/interaction'
+import DayGridPlugin from '@fullcalendar/daygrid'
+import TimeGridPlugin from '@fullcalendar/timegrid'
 import { getSingleEl } from '../event-render/EventRenderUtils'
 import { getDayEl } from '../view-render/DayGridRenderUtils'
 import { getRectCenter } from '../lib/geom'
@@ -36,6 +39,7 @@ describe('dragging events between calendars', function() {
     let triggerNames = []
 
     calendar0 = new Calendar(el0, {
+      plugins: [ InteractionPlugin, DayGridPlugin ],
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
       defaultView: 'month',
@@ -51,6 +55,7 @@ describe('dragging events between calendars', function() {
     })
 
     calendar1 = new Calendar(el1, {
+      plugins: [ InteractionPlugin, DayGridPlugin ],
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
       defaultView: 'month',
@@ -91,6 +96,7 @@ describe('dragging events between calendars', function() {
   it('works between agenda views', function(done) {
 
     calendar0 = new Calendar(el0, {
+      plugins: [ InteractionPlugin, TimeGridPlugin ],
       scrollTime: '00:00',
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
@@ -102,6 +108,7 @@ describe('dragging events between calendars', function() {
     })
 
     calendar1 = new Calendar(el1, {
+      plugins: [ InteractionPlugin, TimeGridPlugin ],
       scrollTime: '00:00',
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,

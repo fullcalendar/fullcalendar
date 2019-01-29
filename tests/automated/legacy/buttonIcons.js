@@ -1,6 +1,9 @@
-describe('buttonIcons', function() {
+import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import DayGridPlugin from '@fullcalendar/daygrid'
 
+describe('buttonIcons', function() {
   pushOptions({
+    plugins: [ DayGridPlugin, BootstrapPlugin ],
     header: {
       left: 'prev,next today',
       center: 'title',

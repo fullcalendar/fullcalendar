@@ -1,6 +1,8 @@
 import ListenerCounter from '../lib/ListenerCounter'
 import { Calendar } from '@fullcalendar/core'
-import { ThirdPartyDraggable } from '@fullcalendar/interaction'
+import InteractionPlugin, { ThirdPartyDraggable } from '@fullcalendar/interaction'
+import DayGridPlugin from '@fullcalendar/daygrid'
+import TimeGridPlugin from '@fullcalendar/timegrid'
 
 describe('external drag and drop', function() {
 
@@ -13,6 +15,7 @@ describe('external drag and drop', function() {
   beforeEach(function() {
     doSortable = false
     options = {
+      plugins: [ InteractionPlugin, TimeGridPlugin, DayGridPlugin ],
       defaultDate: '2014-08-23',
       droppable: true
     }

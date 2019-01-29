@@ -1,5 +1,10 @@
+import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import DayGridPlugin from '@fullcalendar/daygrid'
 
 describe('customButtons', function() {
+  pushOptions({
+    plugins: [ BootstrapPlugin, DayGridPlugin ]
+  })
 
   it('can specify text', function() {
     initCalendar({

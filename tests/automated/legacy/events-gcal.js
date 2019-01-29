@@ -1,3 +1,5 @@
+import GCalPlugin from '@fullcalendar/gcal'
+import DayGridPlugin from '@fullcalendar/daygrid'
 
 // HACK: in our CI setup, requests to the gcal api were failing for some reason
 // (requests to other services were working however)
@@ -26,6 +28,7 @@ describe('Google Calendar plugin', function() {
   beforeEach(function() {
 
     options = {
+      plugins: [ GCalPlugin, DayGridPlugin ],
       defaultView: 'month',
       defaultDate: DEFAULT_MONTH + '-01'
     }
