@@ -1,6 +1,9 @@
+import DayGridPlugin from '@fullcalendar/daygrid'
+import RRulePlugin from '@fullcalendar/rrule'
 
 describe('rrule plugin', function() {
   pushOptions({
+    plugins: [ RRulePlugin, DayGridPlugin ],
     defaultView: 'month',
     now: '2018-09-07',
     timeZone: 'UTC'
