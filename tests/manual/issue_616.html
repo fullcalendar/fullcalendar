@@ -6,7 +6,7 @@
 <script src='../../node_modules/jquery/dist/jquery.js'></script>
 <script src='../../node_modules/moment/moment.js'></script>
 <script src='../../dist/fullcalendar.js'></script>
-<script src='../../dist/plugins/gcal.js'></script>
+<script src='../../dist/plugins/google-calendar.js'></script>
 <script>
 
   $(document).ready(function() {
@@ -30,8 +30,8 @@
 
   function doit() {
     var calendar = $('#calendar');
-    var gcal = FullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic');
-    calendar.fullCalendar('addEventSource', gcal);
+    var google-calendar = FullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic');
+    calendar.fullCalendar('addEventSource', google-calendar);
     calendar.fullCalendar('refetchEvents');
   }
 

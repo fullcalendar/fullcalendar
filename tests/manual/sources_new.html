@@ -6,7 +6,7 @@
 <script src='../../node_modules/jquery/dist/jquery.js'></script>
 <script src='../../node_modules/moment/moment.js'></script>
 <script src='../../dist/fullcalendar.js'></script>
-<script src='../../dist/plugins/gcal.js'></script>
+<script src='../../dist/plugins/google-calendar.js'></script>
 <script>
 
 /*
@@ -71,9 +71,9 @@ $(document).ready(function() {
       {
         url: 'http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic',
         color: 'orange',
-        className: 'gcal',
+        className: 'google-calendar',
         success: function(events) {
-          console.log('successfully loaded gcal event data!', events);
+          console.log('successfully loaded google-calendar event data!', events);
         },
         editable: true
       },
@@ -81,7 +81,7 @@ $(document).ready(function() {
       /*
       FullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic', {
         color: 'orange',
-        className: 'gcal'
+        className: 'google-calendar'
       }),
       */
 

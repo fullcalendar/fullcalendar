@@ -1,11 +1,11 @@
-import GCalPlugin from '@fullcalendar/gcal'
+import GoogleCalendarPlugin from '@fullcalendar/google-calendar'
 import DayGridPlugin from '@fullcalendar/daygrid'
 
-// HACK: in our CI setup, requests to the gcal api were failing for some reason
+// HACK: in our CI setup, requests to the google-calendar api were failing for some reason
 // (requests to other services were working however)
 const SKIP_GCAL = karmaConfig.isCi
 if (SKIP_GCAL) {
-  console.log('skipping gcal')
+  console.log('skipping google-calendar')
 }
 
 // eslint-disable-next-line
@@ -28,7 +28,7 @@ describe('Google Calendar plugin', function() {
   beforeEach(function() {
 
     options = {
-      plugins: [ GCalPlugin, DayGridPlugin ],
+      plugins: [ GoogleCalendarPlugin, DayGridPlugin ],
       defaultView: 'month',
       defaultDate: DEFAULT_MONTH + '-01'
     }
@@ -197,7 +197,7 @@ describe('Google Calendar plugin', function() {
     initCalendar(options)
   })
 
-  it('detects a gcal when `events` is the actual calendar ID, with complicated characters (1)', function(done) {
+  it('detects a google-calendar when `events` is the actual calendar ID, with complicated characters (1)', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = 'arshaw.com_jlr7e6hpcuiald27@whatever.import.calendar.google.com'
     options._eventsPositioned = function() {
@@ -208,7 +208,7 @@ describe('Google Calendar plugin', function() {
     initCalendar(options)
   })
 
-  it('detects a gcal when `events` is the actual calendar ID, with complicated characters (2)', function(done) {
+  it('detects a google-calendar when `events` is the actual calendar ID, with complicated characters (2)', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = 'ar-shaw.com_jlr7e6hpcuiald27@calendar.google.com'
     options._eventsPositioned = function() {
@@ -219,7 +219,7 @@ describe('Google Calendar plugin', function() {
     initCalendar(options)
   })
 
-  it('detects a gcal when `events` is the actual calendar ID, person gmail', function(done) {
+  it('detects a google-calendar when `events` is the actual calendar ID, person gmail', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = 'arshaw.arshaw@gmail.com'
     options._eventsPositioned = function() {
@@ -230,7 +230,7 @@ describe('Google Calendar plugin', function() {
     initCalendar(options)
   })
 
-  it('detects a gcal when `events` is the actual calendar ID, person googlemail', function(done) {
+  it('detects a google-calendar when `events` is the actual calendar ID, person googlemail', function(done) {
     options.googleCalendarApiKey = API_KEY
     options.events = 'arshaw.arshaw@googlemail.com'
     options._eventsPositioned = function() {

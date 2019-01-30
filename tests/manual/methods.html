@@ -6,7 +6,7 @@
 <script src='../../node_modules/jquery/dist/jquery.js'></script>
 <script src='../../node_modules/moment/moment.js'></script>
 <script src='../../dist/fullcalendar.js'></script>
-<script src='../../dist/plugins/gcal.js'></script>
+<script src='../../dist/plugins/google-calendar.js'></script>
 <script>
 
   var cal, staticEvents;
@@ -166,8 +166,8 @@
 
 <button onclick="cal.fullCalendar('addEventSource', staticEvents)">+ static events</button>
 <button onclick="cal.fullCalendar('removeEventSource', staticEvents)">- static events</button>
-<button onclick="cal.fullCalendar('addEventSource', gcalFeed)">+ gcal</button>
-<button onclick="cal.fullCalendar('removeEventSource', gcalFeed)">- gcal</button>
+<button onclick="cal.fullCalendar('addEventSource', gcalFeed)">+ google-calendar</button>
+<button onclick="cal.fullCalendar('removeEventSource', gcalFeed)">- google-calendar</button>
 <button onclick="cal.fullCalendar('addEventSource', jsonFeed)">+ json</button>
 <button onclick="cal.fullCalendar('removeEventSource', jsonFeed)">- json</button>
 

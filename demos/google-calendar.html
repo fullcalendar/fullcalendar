@@ -9,7 +9,7 @@
 <script src='../dist/interaction/main.js'></script>
 <script src='../dist/daygrid/main.js'></script>
 <script src='../dist/list/main.js'></script>
-<script src='../dist/gcal/main.js'></script>
+<script src='../dist/google-calendar/main.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -35,7 +35,7 @@
 
       eventClick: function(arg) {
         // opens events in a popup window
-        window.open(arg.event.url, 'gcalevent', 'width=700,height=600');
+        window.open(arg.event.url, 'google-calendar-event', 'width=700,height=600');
 
         arg.jsEvent.preventDefault() // don't navigate in main tab
       },

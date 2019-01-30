@@ -21,7 +21,7 @@
       "@fullcalendar/daygrid": [ "src/daygrid/main" ],
       "@fullcalendar/timegrid": [ "src/timegrid/main" ],
       "@fullcalendar/list": [ "src/list/main" ],
-      "@fullcalendar/gcal": [ "src/gcal/main" ],
+      "@fullcalendar/google-calendar": [ "src/google-calendar/main" ],
       "@fullcalendar/rrule": [ "src/rrule/main" ],
       "@fullcalendar/luxon": [ "src/luxon/main" ],
       "@fullcalendar/moment": [ "src/moment/main" ],

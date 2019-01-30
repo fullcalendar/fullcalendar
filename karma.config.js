@@ -35,7 +35,7 @@ module.exports = function(config) {
       'dist/timegrid/main.+(js|css)',
       'dist/list/main.+(js|css)',
       'dist/rrule/main.+(js|css)',
-      'dist/gcal/main.+(js|css)',
+      'dist/google-calendar/main.+(js|css)',
       'dist/luxon/main.+(js|css)',
       'dist/moment/main.+(js|css)',
       'dist/moment-timezone/main.+(js|css)',
