@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("ja", {
+export default createLocale("ja", {
   buttonText: {
     prev: "前",
     next: "次",

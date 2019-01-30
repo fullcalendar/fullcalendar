@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("th", {
+export default createLocale("th", {
   buttonText: {
     prev: "ย้อน",
     next: "ถัดไป",

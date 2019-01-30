@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("pt-br", {
+export default createLocale("pt-br", {
   buttonText: {
     prevText: "Anterior",
     nextText: "Próximo",

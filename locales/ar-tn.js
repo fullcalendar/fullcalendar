@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("ar-tn", {
+export default createLocale("ar-tn", {
   week: {
     dow: 1, // Monday is the first day of the week.
     doy: 4 // The week that contains Jan 4th is the first week of the year.

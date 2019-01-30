@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("zh-tw", {
+export default createLocale("zh-tw", {
   buttonText: {
     prev: "上月",
     next: "下月",

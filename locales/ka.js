@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("ka", {
+export default createLocale("ka", {
   week: {
     dow: 1,
     doy: 7

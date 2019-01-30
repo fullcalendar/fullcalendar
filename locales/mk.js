@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("mk", {
+export default createLocale("mk", {
   buttonText: {
     prev: "претходно",
     next: "следно",

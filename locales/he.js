@@ -1,6 +1,6 @@
-import { defineLocale } from '@fullcalendar/core';
+import { createLocale } from '@fullcalendar/core';
 
-defineLocale("he", {
+export default createLocale("he", {
   dir: 'rtl',
   buttonText: {
     prev: "הקודם",
