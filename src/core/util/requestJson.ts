@@ -3,6 +3,7 @@ export default function requestJson(method: string, url: string, params: object,
   method = method.toUpperCase()
 
   let body = null
+
   if (method === 'GET') {
     url = injectQueryStringParams(url, params)
   } else {
@@ -11,6 +12,10 @@ export default function requestJson(method: string, url: string, params: object,
 
   let xhr = new XMLHttpRequest()
   xhr.open(method, url, true)
+
+  if (method !== 'GET') {
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+  }
 
   xhr.onload = function() {
     if (xhr.status >= 200 && xhr.status < 400) {
