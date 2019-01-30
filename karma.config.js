@@ -15,7 +15,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
 
-      'node_modules/superagent/superagent.js',
       'node_modules/moment/moment.js',
       'node_modules/moment/locale/es.js', // only spanish for testing
       'node_modules/moment-timezone/builds/moment-timezone-with-data.js',

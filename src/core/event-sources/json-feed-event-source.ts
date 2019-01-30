@@ -1,4 +1,4 @@
-import request from 'superagent'
+import requestJson from '../util/requestJson'
 import Calendar from '../Calendar'
 import { EventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
@@ -35,36 +35,17 @@ let eventSourceDef: EventSourceDef = {
 
   fetch(arg, success, failure) {
     let meta: JsonFeedMeta = arg.eventSource.meta
-    let theRequest
     let requestParams = buildRequestParams(meta, arg.range, arg.calendar)
 
-    if (meta.method === 'GET') {
-      theRequest = request.get(meta.url).query(requestParams) // querystring params
-    } else {
-      theRequest = request(meta.method, meta.url).send(requestParams) // body data
-    }
-
-    theRequest.end((error, res) => {
-      let rawEvents
-
-      if (!error) {
-        if (res.body) { // parsed JSON
-          rawEvents = res.body
-        } else if (res.text) {
-          // if the server doesn't set Content-Type, won't be parsed as JSON. parse anyway.
-          rawEvents = JSON.parse(res.text)
-        }
-
-        if (rawEvents) {
-          success({ rawEvents, response: res })
-        } else {
-          failure({ message: 'Invalid JSON response', response: res })
-        }
-
-      } else {
-        failure(error) // error has { error, response }
+    requestJson(
+      meta.method, meta.url, requestParams,
+      function(rawEvents, xhr) {
+        success({ rawEvents, xhr })
+      },
+      function(errorMessage, xhr) {
+        failure({ message: errorMessage, xhr })
       }
-    })
+    )
   }
 
 }

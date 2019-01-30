@@ -66,7 +66,6 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rrule": "^2.6.0",
-    "superagent": "^3.8.3",
     "tslib": "^1.9.3",
     "tslint": "^5.12.1",
     "tslint-config-standard": "^7.1.0",

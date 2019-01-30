@@ -15,7 +15,6 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 }
 
 let packageGlobals = {
-  superagent: 'superagent',
   luxon: 'luxon',
   moment: 'moment',
   rrule: 'rrule',

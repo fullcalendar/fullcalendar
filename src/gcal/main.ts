@@ -1,5 +1,4 @@
-import * as request from 'superagent'
-import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv } from '@fullcalendar/core'
+import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv, requestJson } from '@fullcalendar/core'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
@@ -53,31 +52,27 @@ let eventSourceDef: EventSourceDef = {
         calendar.dateEnv
       )
 
-      request.get(url)
-        .query(requestParams)
-        .end((error, res) => {
+      requestJson('GET', url, requestParams, function(body, xhr) {
 
-          // make an error object with more info if we can
-          if (res && res.body && res.body.error) {
-            error = {
-              message: 'Google Calendar API: ' + res.body.error.message,
-              response: res,
-              errors: res.body.error.errors
-            }
-          }
+        if (body.error) {
+          onFailure({
+            message: 'Google Calendar API: ' + body.error.message,
+            errors: body.error.errors,
+            xhr
+          })
+        } else {
+          onSuccess({
+            rawEvents: gcalItemsToRawEventDefs(
+              body.items,
+              requestParams.timeZone
+            ),
+            xhr
+          })
+        }
 
-          if (error) {
-            onFailure(error)
-          } else {
-            onSuccess({
-              rawEvents: gcalItemsToRawEventDefs(
-                res.body.items,
-                requestParams.timeZone
-              ),
-              response: res
-            })
-          }
-        })
+      }, function(message, xhr) {
+        onFailure({ message, xhr })
+      })
     }
   }
 }

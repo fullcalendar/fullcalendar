@@ -1,6 +1,3 @@
 {
-  "title": "FullCalendar Google Calendar Plugin",
-  "dependencies": {
-    "superagent": ""
-  }
+  "title": "FullCalendar Google Calendar Plugin"
 }

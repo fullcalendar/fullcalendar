@@ -168,3 +168,5 @@ export { default as Slicer, SlicedProps } from './common/slicing-utils'
 export { EventMutation, applyMutationToEventStore } from './structs/event-mutation'
 export { Constraint, ConstraintInput, AllowFunc, isPropsValid, isInteractionValid } from './validation'
 export { default as EventApi } from './api/EventApi'
+
+export { default as requestJson } from './util/requestJson'

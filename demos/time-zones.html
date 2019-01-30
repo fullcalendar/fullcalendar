@@ -6,7 +6,6 @@
 <link href='../dist/daygrid/main.css' rel='stylesheet' />
 <link href='../dist/timegrid/main.css' rel='stylesheet' />
 <link href='../dist/list/main.css' rel='stylesheet' />
-<script src='../node_modules/superagent/superagent.js'></script>
 <script src='../dist/core/main.js'></script>
 <script src='../dist/interaction/main.js'></script>
 <script src='../dist/daygrid/main.js'></script>
@@ -59,8 +58,8 @@
     calendar.render();
 
     // load the list of available timezones, build the <select> options
-    superagent.get('php/get-time-zones.php').end(function(err, res) {
-      var timeZones = res ? (res.body || JSON.parse(res.text)) : [];
+    // it's HIGHLY recommended to use a different library for network requests, not this internal util func
+    FullCalendar.requestJson('GET', 'php/get-time-zones.php', {}, function(timeZones) {
 
       timeZones.forEach(function(timeZone) {
         var optionEl;
@@ -72,6 +71,8 @@
           timeZoneSelectorEl.appendChild(optionEl);
         }
       });
+    }, function() {
+      // TODO: handle error
     });
 
     // when the timezone selector changes, dynamically change the calendar option

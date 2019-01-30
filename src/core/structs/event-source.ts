@@ -88,7 +88,7 @@ export type EventSourceFetcher = (
     calendar: Calendar
     range: DateRange
   },
-  success: (res: { rawEvents: EventInput[], response?: any }) => void,
+  success: (res: { rawEvents: EventInput[], xhr?: XMLHttpRequest }) => void,
   failure: (error: EventSourceError) => void
 ) => (void | PromiseLike<EventInput[]>)
 

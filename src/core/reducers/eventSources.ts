@@ -138,10 +138,10 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: 
       let sourceSuccessRes
 
       if (eventSource.success) {
-        sourceSuccessRes = eventSource.success(rawEvents, res.response)
+        sourceSuccessRes = eventSource.success(rawEvents, res.xhr)
       }
       if (calSuccess) {
-        calSuccessRes = calSuccess(rawEvents, res.response)
+        calSuccessRes = calSuccess(rawEvents, res.xhr)
       }
 
       rawEvents = sourceSuccessRes || calSuccessRes || rawEvents
