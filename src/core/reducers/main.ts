@@ -75,7 +75,13 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
       break
 
     case 'SET_VIEW_TYPE':
-      newDateProfile = calendar.dateProfileGenerators[viewType].build(
+      let generator = calendar.dateProfileGenerators[viewType]
+
+      if (!generator) {
+        throw new Error('The FullCalendar view "' + viewType + '" does not exist. Make sure your plugins are loaded correctly.')
+      }
+
+      newDateProfile = generator.build(
         action.dateMarker || currentDate,
         undefined,
         true // forceToValid
