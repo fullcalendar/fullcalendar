@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("ja", {
+export default {
+  code: "ja",
   buttonText: {
     prev: "前",
     next: "次",
@@ -16,4 +16,4 @@ export default createLocale("ja", {
     return "他 " + n + " 件";
   },
   noEventsMessage: "表示する予定はありません"
-});
+};

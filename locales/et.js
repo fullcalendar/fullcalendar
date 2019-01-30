@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("et", {
+export default {
+  code: "et",
   week: {
     dow: 1, // Monday is the first day of the week.
     doy: 4  // The week that contains Jan 4th is the first week of the year.
@@ -20,4 +20,4 @@ export default createLocale("et", {
     return "+ veel " + n;
   },
   noEventsMessage: "Kuvamiseks puuduvad sündmused"
-});
+};

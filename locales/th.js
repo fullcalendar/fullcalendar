@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("th", {
+export default {
+  code: "th",
   buttonText: {
     prev: "ย้อน",
     next: "ถัดไป",
@@ -13,4 +13,4 @@ export default createLocale("th", {
   allDayText: "ตลอดวัน",
   eventLimitText: "เพิ่มเติม",
   noEventsMessage: "ไม่มีกิจกรรมที่จะแสดง"
-});
+};

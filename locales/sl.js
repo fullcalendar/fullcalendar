@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("sl", {
+export default {
+  code: "sl",
   week: {
     dow: 1, // Monday is the first day of the week.
     doy: 7  // The week that contains Jan 1st is the first week of the year.
@@ -18,4 +18,4 @@ export default createLocale("sl", {
   allDayText: "Ves dan",
   eventLimitText: "več",
   noEventsMessage: "Ni dogodkov za prikaz"
-});
+};

@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("he", {
+export default {
+  code: "he",
   dir: 'rtl',
   buttonText: {
     prev: "הקודם",
@@ -15,4 +15,4 @@ export default createLocale("he", {
   eventLimitText: "אחר",
   noEventsMessage: "אין אירועים להצגה",
   weekLabel: "שבוע"
-});
+};

@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("fr", {
+export default {
+  code: "fr",
   buttonText: {
     prev: "Précédent",
     next: "Suivant",
@@ -15,4 +15,4 @@ export default createLocale("fr", {
   allDayHtml: "Toute la<br/>journée",
   eventLimitText: "en plus",
   noEventsMessage: "Aucun événement à afficher"
-});
+};

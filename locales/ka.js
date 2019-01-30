@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("ka", {
+export default {
+  code: "ka",
   week: {
     dow: 1,
     doy: 7
@@ -20,4 +20,4 @@ export default createLocale("ka", {
     return "+ კიდევ " + n;
   },
   noEventsMessage: "ღონისძიებები არ არის"
-});
+};

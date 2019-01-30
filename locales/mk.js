@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("mk", {
+export default {
+  code: "mk",
   buttonText: {
     prev: "претходно",
     next: "следно",
@@ -16,4 +16,4 @@ export default createLocale("mk", {
     return "+повеќе " + n;
   },
   noEventsMessage: "Нема настани за прикажување"
-});
+};

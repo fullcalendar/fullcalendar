@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("af", {
+export default {
+  code: "af",
   week: {
     dow: 1, // Maandag is die eerste dag van die week.
     doy: 4  // Die week wat die 4de Januarie bevat is die eerste week van die jaar.
@@ -18,4 +18,4 @@ export default createLocale("af", {
   allDayHtml: "Heeldag",
   eventLimitText: "Addisionele",
   noEventsMessage: "Daar is geen gebeurtenisse nie"
-});
+};

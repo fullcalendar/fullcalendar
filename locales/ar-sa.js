@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("ar-sa", {
+export default {
+  code: "ar-sa",
   week: {
     dow: 0, // Sunday is the first day of the week.
     doy: 6  // The week that contains Jan 1st is the first week of the year.
@@ -19,4 +19,4 @@ export default createLocale("ar-sa", {
   allDayText: "اليوم كله",
   eventLimitText: "أخرى",
   noEventsMessage: "أي أحداث لعرض"
-});
+};

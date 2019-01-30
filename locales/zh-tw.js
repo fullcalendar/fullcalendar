@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("zh-tw", {
+export default {
+  code: "zh-tw",
   buttonText: {
     prev: "上月",
     next: "下月",
@@ -14,4 +14,4 @@ export default createLocale("zh-tw", {
   allDayText: "整天",
   eventLimitText: '顯示更多',
   noEventsMessage: "没有任何活動"
-});
+};

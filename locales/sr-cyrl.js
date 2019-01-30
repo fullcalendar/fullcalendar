@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("sr-cyrl", {
+export default {
+  code: "sr-cyrl",
   week: {
     dow: 1, // Monday is the first day of the week.
     doy: 7  // The week that contains Jan 1st is the first week of the year.
@@ -20,4 +20,4 @@ export default createLocale("sr-cyrl", {
     return "+ још " + n;
   },
   noEventsMessage: "Нема догађаја за приказ"
-});
+};

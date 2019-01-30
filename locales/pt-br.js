@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("pt-br", {
+export default {
+  code: "pt-br",
   buttonText: {
     prevText: "Anterior",
     nextText: "Próximo",
@@ -16,4 +16,4 @@ export default createLocale("pt-br", {
     return "mais +" + n;
   },
   noEventsMessage: "Não há eventos para mostrar"
-});
+};

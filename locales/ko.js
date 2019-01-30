@@ -1,6 +1,6 @@
-import { createLocale } from '@fullcalendar/core';
 
-export default createLocale("ko", {
+export default {
+  code: "ko",
   buttonText: {
     prev: "이전달",
     next: "다음달",
@@ -14,4 +14,4 @@ export default createLocale("ko", {
   allDayText: "종일",
   eventLimitText: "개",
   noEventsMessage: "일정이 없습니다"
-});
+};
