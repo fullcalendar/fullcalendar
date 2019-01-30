@@ -17,6 +17,7 @@ describe('external drag and drop', function() {
     options = {
       plugins: [ InteractionPlugin, TimeGridPlugin, DayGridPlugin ],
       defaultDate: '2014-08-23',
+      defaultView: 'month',
       droppable: true
     }
 

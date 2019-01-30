@@ -54,7 +54,7 @@ export function expandRecurringRanges(
   eventDef: EventDef,
   framingRange: DateRange,
   dateEnv: DateEnv,
-  recurringTypes: RecurringType[],
+  recurringTypes: RecurringType[]
 ): DateMarker[] {
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
   let markers = typeDef.expand(

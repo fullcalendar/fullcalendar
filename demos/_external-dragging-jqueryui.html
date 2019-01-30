@@ -8,13 +8,16 @@
 <script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../node_modules/components-jqueryui/jquery-ui.js'></script>
 <script src='../dist/core/main.js'></script>
+<script src='../dist/interaction/main.js'></script>
 <script src='../dist/daygrid/main.js'></script>
 <script src='../dist/timegrid/main.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
+    var Calendar = FullCalendar.Calendar;
+    var ThirdPartyDraggable = FullCalendarPlugins.interaction.ThirdPartyDraggable;
 
-    new FullCalendar.ThirdPartyDraggable({
+    new ThirdPartyDraggable({
       mirrorSelector: '.ui-draggable-dragging'
     })
 
@@ -42,7 +45,7 @@
     -----------------------------------------------------------------*/
 
     var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    var calendar = new Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',
