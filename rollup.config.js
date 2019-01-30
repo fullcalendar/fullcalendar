@@ -2,6 +2,7 @@ import path from 'path'
 import glob from 'glob'
 import resolve from 'rollup-plugin-node-resolve'
 import multiEntry from 'rollup-plugin-multi-entry'
+import multiEntryArray from './rollup-plugin-multi-entry-array'
 import sourcemaps from 'rollup-plugin-sourcemaps'
 import rootPackageConfig from './package.json'
 import tsConfig from './tsconfig.json'
@@ -92,15 +93,18 @@ function buildLocaleConfigs() {
   let configs = []
 
   for (let localePath of localePaths) {
+    let localeJsName = path.basename(localePath)
+    let localeName = localeJsName.replace(/\..*$/, '')
+
     configs.push({
       onwarn,
       watch: watchOptions,
       input: localePath,
       external: externalPackageNames,
       output: {
-        file: 'dist/core/locales/' + path.basename(localePath),
+        file: 'dist/core/locales/' + localeJsName,
         globals: packageGlobals,
-        exports: 'none',
+        name: 'FullCalendarLocales.' + localeName,
         format: 'umd',
         sourcemap: isDev
       },
@@ -117,12 +121,12 @@ function buildLocaleConfigs() {
     output: {
       file: 'dist/core/locales-all.js',
       globals: packageGlobals,
-      exports: 'none',
+      name: 'FullCalendarLocalesAll',
       format: 'umd',
       sourcemap: isDev
     },
     plugins: getDefaultPlugins().concat([
-      multiEntry()
+      multiEntryArray()
     ])
   })
 
