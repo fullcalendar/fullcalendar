@@ -93,14 +93,14 @@ describe('dragging events between calendars', function() {
     })
   })
 
-  it('works between agenda views', function(done) {
+  it('works between timeGrid views', function(done) {
 
     calendar0 = new Calendar(el0, {
       plugins: [ InteractionPlugin, TimeGridPlugin ],
       scrollTime: '00:00',
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
-      defaultView: 'agendaDay',
+      defaultView: 'day',
       editable: true,
       events: [
         { start: '2019-01-01T00:00:00', id: 'a' }
@@ -112,7 +112,7 @@ describe('dragging events between calendars', function() {
       scrollTime: '00:00',
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
-      defaultView: 'agendaDay',
+      defaultView: 'day',
       editable: true,
       droppable: true,
       eventReceive: function(info) {

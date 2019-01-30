@@ -372,11 +372,11 @@ describe('background events', function() {
       })
     })
 
-    describe('when in agenda view and timed event', function() {
+    describe('when in timeGrid view and timed event', function() {
       // disabled for v4
       xit('can be activated when rendering set on the source', function(done) {
         var options = {}
-        options.defaultView = 'agendaWeek'
+        options.defaultView = 'week'
         options.eventSources = [ {
           rendering: 'background',
           events: [ {
@@ -393,8 +393,8 @@ describe('background events', function() {
     })
   })
 
-  describe('when in agendaWeek view', function() {
-    pushOptions({ defaultView: 'agendaWeek' })
+  describe('when in week view', function() {
+    pushOptions({ defaultView: 'week' })
 
     describe('when LTR', function() {
       it('render correctly on one day', function(done) {

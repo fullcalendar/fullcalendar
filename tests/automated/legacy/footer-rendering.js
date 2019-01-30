@@ -2,7 +2,7 @@ describe('footer rendering', function() {
 
   pushOptions({
     defaultDate: '2014-06-04',
-    defaultView: 'agendaWeek'
+    defaultView: 'week'
   })
 
   describe('when supplying footer options', function() {
@@ -10,7 +10,7 @@ describe('footer rendering', function() {
       initCalendar({
         footer: {
           left: 'next,prev',
-          center: 'prevYear today nextYear agendaView,dayView',
+          center: 'prevYear today nextYear day,week',
           right: 'title'
         }
       })
@@ -32,7 +32,7 @@ describe('footer rendering', function() {
     initCalendar({
       footer: {
         left: 'next,prev',
-        center: 'prevYear today nextYear agendaView,dayView',
+        center: 'prevYear today nextYear day,week',
         right: 'title'
       }
     })

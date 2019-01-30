@@ -11,11 +11,11 @@ import { DayGrid } from '@fullcalendar/daygrid'
 import TimeGrid from './TimeGrid'
 import AllDaySplitter from './AllDaySplitter'
 
-const AGENDA_ALL_DAY_EVENT_LIMIT = 5
+const TIMEGRID_ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
 
 
-/* An abstract class for all agenda-related views. Displays one more columns with time slots running vertically.
+/* An abstract class for all timegrid-related views. Displays one more columns with time slots running vertically.
 ----------------------------------------------------------------------------------------------------------------------*/
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
@@ -39,7 +39,7 @@ export default abstract class AgendaView extends View {
   ) {
     super(context, viewSpec, dateProfileGenerator, parentEl)
 
-    this.el.classList.add('fc-agenda-view')
+    this.el.classList.add('fc-timeGrid-view')
     this.el.innerHTML = this.renderSkeletonHtml()
 
     this.scroller = new ScrollComponent(
@@ -198,7 +198,7 @@ export default abstract class AgendaView extends View {
 
       eventLimit = this.opt('eventLimit')
       if (eventLimit && typeof eventLimit !== 'number') {
-        eventLimit = AGENDA_ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
+        eventLimit = TIMEGRID_ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
       }
       if (eventLimit) {
         this.dayGrid.limitRows(eventLimit)

@@ -14,7 +14,7 @@ describe('select method', function() {
   - better date normalization (for both render and reporting to select callback)
     - if second date is the same or before the first
     - if given a mixture of timed/all-day
-    - for basic/month views, when given timed dates, should really be all-day
+    - for dayGrid/month views, when given timed dates, should really be all-day
   */
 
   [ 'ltr', 'rtl' ].forEach(function(dir) {
@@ -90,9 +90,9 @@ describe('select method', function() {
           })
         })
       })
-      describe('when in agendaWeek view', function() { // May 25 - 31
+      describe('when in week view', function() { // May 25 - 31
         beforeEach(function() {
-          options.defaultView = 'agendaWeek'
+          options.defaultView = 'week'
           options.scrollTime = '01:00:00' // so that most events will be below the divider
           options.height = 400 // short enought to make scrolling happen
         })

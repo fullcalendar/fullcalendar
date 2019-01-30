@@ -12,7 +12,7 @@ describe('prev', function() {
 
   describe('when in a week view', function() {
     pushOptions({
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
 
     it('moves back by one week', function() {

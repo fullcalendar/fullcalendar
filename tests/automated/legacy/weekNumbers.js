@@ -135,10 +135,10 @@ describe('weekNumbers', function() {
 
   })
 
-  describe('when using basicWeek view', function() {
+  describe('when using dayGridWeek view', function() {
 
     pushOptions({
-      defaultView: 'basicWeek'
+      defaultView: 'dayGridWeek'
     })
 
     describe('with default weekNumbers', function() {
@@ -257,10 +257,10 @@ describe('weekNumbers', function() {
 
   })
 
-  describe('when using an agenda view', function() {
+  describe('when using an timeGrid view', function() {
 
     pushOptions({
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
 
     describe('with default weekNumbers', function() {

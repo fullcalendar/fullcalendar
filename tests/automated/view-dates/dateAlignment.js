@@ -7,7 +7,7 @@ describe('dateAlignment', function() {
 
   describe('when week alignment', function() {
     pushOptions({
-      defaultView: 'agenda',
+      defaultView: 'timeGrid',
       dateAlignment: 'week',
       defaultDate: '2017-06-15'
     })
@@ -40,7 +40,7 @@ describe('dateAlignment', function() {
   // https://github.com/fullcalendar/fullcalendar/issues/4363
   describe('when year alignment', function() {
     pushOptions({
-      defaultView: 'basic',
+      defaultView: 'dayGrid',
       duration: { months: 1 },
       dateAlignment: 'year',
       defaultDate: '2017-06-15'

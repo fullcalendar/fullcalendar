@@ -70,7 +70,7 @@ describe('nextDayThreshold', function() {
 
 
   function renderedDayCount() { // assumes only one event on the calendar
-    var cellWidth = $('.fc-sun').outerWidth() // works with basic and agenda
+    var cellWidth = $('.fc-sun').outerWidth() // works with dayGrid and timeGrid
     var totalWidth = 0
     $('.fc-event').each(function() {
       totalWidth += $(this).outerWidth()

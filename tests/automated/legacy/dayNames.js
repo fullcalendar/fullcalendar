@@ -11,9 +11,9 @@ describe('day names', function() {
     now: sundayDate
   })
 
-  describe('when view is basicDay', function() {
+  describe('when view is dayGridDay', function() {
     pushOptions({
-      defaultView: 'basicDay'
+      defaultView: 'dayGridDay'
     })
     describe('when locale is default', function() {
       pushOptions({

@@ -24,8 +24,8 @@ describe('eventLimit popover', function() {
 
   describeOptions('defaultView', {
     'when in month view': 'month',
-    'when in basicWeek view': 'basicWeek',
-    'when in agendaWeek view': 'agendaWeek'
+    'when in dayGridWeek view': 'dayGridWeek',
+    'when in week view': 'week'
   }, function() {
 
     it('aligns horizontally with left edge of cell if LTR', function() {
@@ -253,8 +253,8 @@ describe('eventLimit popover', function() {
   })
 
   describeOptions('defaultView', {
-    'when in basicWeek view': 'basicWeek',
-    'when in agendaWeek view': 'agendaWeek'
+    'when in dayGridWeek view': 'dayGridWeek',
+    'when in week view': 'week'
   }, function() {
     it('aligns with top of header', function() {
       initCalendar()
@@ -364,7 +364,7 @@ describe('eventLimit popover', function() {
       it('should assume the new time, with a cleared end', function(done) {
 
         initCalendar({
-          defaultView: 'agendaWeek',
+          defaultView: 'week',
           scrollTime: '00:00:00',
           eventDrop: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-30T03:00:00Z')

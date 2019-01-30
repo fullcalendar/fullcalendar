@@ -10,19 +10,19 @@ describe('changeView', function() {
 
   it('can change views', function() {
     initCalendar()
-    currentCalendar.changeView('agendaWeek')
+    currentCalendar.changeView('week')
     expectActiveRange('2017-06-04', '2017-06-11')
   })
 
   it('can change views and navigate date', function() {
     initCalendar()
-    currentCalendar.changeView('agendaDay', '2017-06-26')
+    currentCalendar.changeView('day', '2017-06-26')
     expectActiveRange('2017-06-26', '2017-06-27')
   })
 
   it('can change views and change activeRange', function() {
     initCalendar()
-    currentCalendar.changeView('agenda', {
+    currentCalendar.changeView('timeGrid', {
       start: '2017-07-04',
       end: '2017-07-08'
     })
@@ -46,16 +46,16 @@ describe('changeView', function() {
             case 1:
               expect(view.type).toBe('month')
               checkViewIntegrity()
-              currentCalendar.changeView('agendaWeek')
+              currentCalendar.changeView('week')
               break
             case 2:
-              expect(view.type).toBe('agendaWeek')
+              expect(view.type).toBe('week')
               checkViewIntegrity()
               expect(TimeGridRenderUtils.isStructureValid()).toBe(true)
-              currentCalendar.changeView('basicWeek')
+              currentCalendar.changeView('dayGridWeek')
               break
             case 3:
-              expect(view.type).toBe('basicWeek')
+              expect(view.type).toBe('dayGridWeek')
               checkViewIntegrity()
               currentCalendar.changeView('listWeek')
               break
@@ -79,9 +79,9 @@ describe('changeView', function() {
   it('can when switching to/from view while loading events', function(done) {
     initCalendar({
       header: {
-        left: 'title basicDay agendaDay'
+        left: 'title dayGridDay day'
       },
-      defaultView: 'agendaDay',
+      defaultView: 'day',
       now: '2017-06-08T01:00:00',
       events: function(fetchInfo, successCallback) {
         setTimeout(function() {
@@ -92,14 +92,14 @@ describe('changeView', function() {
       }
     })
 
-    currentCalendar.changeView('basicDay')
+    currentCalendar.changeView('dayGridDay')
     checkViewIntegrity()
-    expect(currentCalendar.view.type).toBe('basicDay')
+    expect(currentCalendar.view.type).toBe('dayGridDay')
 
     setTimeout(function() {
-      currentCalendar.changeView('agendaDay')
+      currentCalendar.changeView('day')
       checkViewIntegrity()
-      expect(currentCalendar.view.type).toBe('agendaDay')
+      expect(currentCalendar.view.type).toBe('day')
       done()
     }, 200)
   })

@@ -12,9 +12,9 @@
   /*
   TODO:
   this file demonstrates a bug, unrelated to triggers, where starting off in a small window,
-  changing to agendaWeek, maximizing the window, switching to month causes the last column of
+  changing to week, maximizing the window, switching to month causes the last column of
   events to be misaligned (don't stretch all the way right)
-  this happens due to agendaWeek being taller than month before the switch back
+  this happens due to week being taller than month before the switch back
   */
 
   var date = new Date();
@@ -25,12 +25,12 @@
   $(document).ready(function() {
     $('#calendar').fullCalendar({
       //weekends: false,
-      //defaultView: 'agendaWeek',
+      //defaultView: 'week',
 
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+        right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       editable: true,
       //dir: 'rtl',

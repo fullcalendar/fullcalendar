@@ -35,7 +35,7 @@ describe('events as a function', function() {
 
   it('requests a timed range when minTime is negative', function(done) {
     initCalendar({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       defaultDate: '2017-06-08',
       minTime: { hours: -2 },
       events: function(arg, callback) {
@@ -48,7 +48,7 @@ describe('events as a function', function() {
 
   it('requests a timed range when maxTime exceeds 24 hours', function(done) {
     initCalendar({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       defaultDate: '2017-06-08',
       maxTime: '26:00',
       events: function(arg, callback) {

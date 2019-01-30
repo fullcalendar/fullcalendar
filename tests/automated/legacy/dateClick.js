@@ -40,9 +40,9 @@ describe('dateClick', function() {
             })
           })
 
-          describe('when in agendaWeek view', function() {
+          describe('when in week view', function() {
             pushOptions({
-              defaultView: 'agendaWeek'
+              defaultView: 'week'
             })
 
             it('fires correctly when clicking on an all-day slot', function(done) {
@@ -60,7 +60,7 @@ describe('dateClick', function() {
               initCalendar(options)
 
               // 2014-05-28 (regardless of dir)
-              var dayContent = $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)')
+              var dayContent = $('.fc-timeGrid-view .fc-day-grid .fc-day:eq(3)')
 
               // for simulating the mousedown/mouseup/click (relevant for selectable)
               dayContent.simulate('drag')

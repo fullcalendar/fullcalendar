@@ -182,10 +182,10 @@ describe('external drag and drop', function() {
         })
       })
 
-      describe('in agenda view', function() {
+      describe('in timeGrid view', function() {
 
         beforeEach(function() {
-          options.defaultView = 'agendaWeek'
+          options.defaultView = 'week'
           options.dragScroll = false
           options.scrollTime = '00:00:00'
         })

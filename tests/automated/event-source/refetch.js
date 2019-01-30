@@ -12,7 +12,7 @@ describe('event source refetch', function() {
 
   pushOptions({
     now: '2015-08-07',
-    defaultView: 'agendaDay',
+    defaultView: 'day',
     scrollTime: '00:00',
     eventSources: [
       {

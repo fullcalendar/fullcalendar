@@ -10,8 +10,8 @@ describe('columnHeaderText', function() {
 
   describeOptions('defaultView', {
     'when month view': 'month',
-    'when agenda view': 'agendaDay',
-    'when basic view': 'basicDay'
+    'when timeGrid view': 'day',
+    'when dayGrid view': 'dayGridDay'
   }, function() {
 
     it('should contain custom HTML escaped text', function() {

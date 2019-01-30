@@ -3,20 +3,20 @@ import { getAllDayAxisElText } from '../view-render/DayGridRenderUtils'
 describe('allDayText', function() {
 
   describe('when allDaySlots is not set', function() {
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'agendaWeek'
+          defaultView: 'week'
         }
         initCalendar(options)
         var allDayText = getAllDayAxisElText()
         expect(allDayText).toEqual('all-day')
       })
     })
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'agendaDay'
+          defaultView: 'day'
         }
         initCalendar(options)
         var allDayText = getAllDayAxisElText()
@@ -26,10 +26,10 @@ describe('allDayText', function() {
   })
 
   describe('when allDaySlots is set true', function() {
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'agendaWeek',
+          defaultView: 'week',
           allDaySlot: true
         }
         initCalendar(options)
@@ -37,10 +37,10 @@ describe('allDayText', function() {
         expect(allDayText).toEqual('all-day')
       })
     })
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'agendaDay',
+          defaultView: 'day',
           allDaySlot: true
         }
         initCalendar(options)
@@ -51,10 +51,10 @@ describe('allDayText', function() {
   })
 
   describe('when allDaySlots is set true and locale is not default', function() {
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should use the locale\'s all-day value', function() {
         var options = {
-          defaultView: 'agendaWeek',
+          defaultView: 'week',
           allDaySlot: true,
           locale: 'pt-br'
         }
@@ -63,10 +63,10 @@ describe('allDayText', function() {
         expect(allDayText).toEqual('dia inteiro')
       })
     })
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should use the locale\'s all-day value', function() {
         var options = {
-          defaultView: 'agendaDay',
+          defaultView: 'day',
           allDaySlot: true,
           locale: 'pt-br'
         }
@@ -78,10 +78,10 @@ describe('allDayText', function() {
   })
 
   describe('when allDaySlots is set true and allDayText is specified', function() {
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should show specified all day text', function() {
         var options = {
-          defaultView: 'agendaWeek',
+          defaultView: 'week',
           allDaySlot: true,
           allDayText: 'axis-phosy'
         }
@@ -90,10 +90,10 @@ describe('allDayText', function() {
         expect(allDayText).toEqual('axis-phosy')
       })
     })
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should show specified all day text', function() {
         var options = {
-          defaultView: 'agendaDay',
+          defaultView: 'day',
           allDayText: 'axis-phosy'
         }
         initCalendar(options)

@@ -19,7 +19,7 @@ describe('rerender performance', function() {
       changeToView: 'list' // does not have DayGrid!
     },
     {
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       classes: { DayGrid, TimeGrid },
       changeToView: 'list' // does not have DayGrid!
     },

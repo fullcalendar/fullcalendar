@@ -11,7 +11,7 @@ describe('eventRender', function() {
 
   $.each({
     month: '.fc-day-grid',
-    agendaWeek: '.fc-time-grid'
+    week: '.fc-time-grid'
   }, function(viewName, gridSelector) {
     describe('when in ' + viewName + ' view', function() {
 
@@ -186,10 +186,10 @@ describe('eventRender', function() {
     })
   })
 
-  describe('when in agendaWeek view', function() {
+  describe('when in week view', function() {
 
     pushOptions({
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
 
     describe('with a foreground event', function() {

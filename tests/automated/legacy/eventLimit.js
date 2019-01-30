@@ -9,8 +9,8 @@ describe('eventLimit', function() {
 
     describeOptions('defaultView', {
       'when in month view': 'month',
-      'when in basicWeek view': 'basicWeek',
-      'when in agendaWeek view': 'agendaWeek'
+      'when in dayGridWeek view': 'dayGridWeek',
+      'when in week view': 'week'
     }, function() {
 
       it('doesn\'t display a more link when limit is more than the # of events', function() {
@@ -183,7 +183,7 @@ describe('eventLimit', function() {
 
     describeOptions('defaultView', {
       'when in month view': 'month',
-      'when in basicWeek view': 'basicWeek'
+      'when in dayGridWeek view': 'dayGridWeek'
     }, function() {
 
       it('doesn\'t render a more link where there should obviously not be a limit', function() {
@@ -196,10 +196,10 @@ describe('eventLimit', function() {
       })
     })
 
-    describe('in agendaWeek view', function() {
+    describe('in week view', function() {
 
       pushOptions({
-        defaultView: 'agendaWeek'
+        defaultView: 'week'
       })
 
       it('behaves as if limit is 5', function() {

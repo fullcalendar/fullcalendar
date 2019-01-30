@@ -22,7 +22,7 @@ describe('businessHours', function() {
 
   it('doesn\'t break when starting out in a larger month time range', function() {
     initCalendar() // start out in the month range
-    currentCalendar.changeView('agendaWeek')
+    currentCalendar.changeView('week')
     currentCalendar.next() // move out of the original month range...
     currentCalendar.next() // ... out. should render correctly.
 
@@ -55,7 +55,7 @@ describe('businessHours', function() {
 
 
   describe('when used as a dynamic option', function() {
-    [ 'agendaWeek', 'month' ].forEach(function(viewName) {
+    [ 'week', 'month' ].forEach(function(viewName) {
 
       it('allows dynamic turning on', function() {
         initCalendar({
@@ -87,7 +87,7 @@ describe('businessHours', function() {
     it('rendes two day-of-week groups', function() {
       initCalendar({
         defaultDate: '2014-12-07',
-        defaultView: 'agendaWeek',
+        defaultView: 'week',
         businessHours: [
           {
             daysOfWeek: [ 1, 2, 3 ], // mon, tue, wed
@@ -129,7 +129,7 @@ describe('businessHours', function() {
     it('wont\'t process businessHour items that omit dow', function() {
       initCalendar({
         defaultDate: '2014-12-07',
-        defaultView: 'agendaWeek',
+        defaultView: 'week',
         businessHours: [
           {
             // invalid
@@ -170,7 +170,7 @@ describe('businessHours', function() {
   it('will grey-out a totally non-business-hour view', function() {
     initCalendar({
       defaultDate: '2016-07-23', // sat
-      defaultView: 'agendaDay',
+      defaultView: 'day',
       businessHours: true
     })
 

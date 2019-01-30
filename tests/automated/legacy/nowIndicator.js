@@ -24,9 +24,9 @@ describe('now indicator', function() {
     })
   })
 
-  describe('when in agendaWeek view', function() {
+  describe('when in week view', function() {
     beforeEach(function() {
-      options.defaultView = 'agendaWeek'
+      options.defaultView = 'week'
     })
 
     it('doesn\'t render by default', function() {

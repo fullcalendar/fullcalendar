@@ -10,7 +10,7 @@ import { expectButtonEnabled } from './ToolbarUtils'
 
 describe('prev button', function() {
   pushOptions({
-    defaultView: 'agendaWeek',
+    defaultView: 'week',
     defaultDate: '2017-06-08'
   })
 
@@ -49,7 +49,7 @@ describe('prev button', function() {
   describe('when day before current day is a hidden day', function() {
     pushOptions({
       defaultDate: '2017-03-27',
-      defaultView: 'basicDay',
+      defaultView: 'dayGridDay',
       weekends: false,
       dateIncrement: { years: 1 } // prev range is 2016-06-05 - 2016-06-12
     })
@@ -62,7 +62,7 @@ describe('prev button', function() {
   describe('when defaultDate is constrained backward to validRange and prev week is valid', function() {
     pushOptions({
       defaultDate: '2017-07-17',
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       validRange: { start: '2017-03-20', end: '2017-03-30' }
     })
     it('is enabled', function() {

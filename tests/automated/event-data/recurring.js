@@ -3,7 +3,7 @@ describe('recurring events', function() {
 
   describe('when timed events in local timezone', function() {
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       defaultDate: '2017-07-03',
       timeZone: 'local',
       events: [

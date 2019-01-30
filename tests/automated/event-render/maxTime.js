@@ -2,7 +2,7 @@ import { checkEventRendering } from './TimeGridEventRenderUtils'
 
 describe('event rendering with maxTime', function() {
   pushOptions({
-    defaultView: 'agendaWeek',
+    defaultView: 'week',
     defaultDate: '2017-03-22',
     scrollTime: '00:00'
   })

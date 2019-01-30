@@ -7,8 +7,8 @@ describe('columnHeader', function() {
 
   describeOptions('defaultView', {
     'when month view': 'month',
-    'when agenda view': 'agendaDay',
-    'when basic view': 'basicDay'
+    'when timeGrid view': 'day',
+    'when dayGrid view': 'dayGridDay'
   }, function() {
 
     describe('when on', function() {

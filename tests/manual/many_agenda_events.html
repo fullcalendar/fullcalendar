@@ -9,19 +9,19 @@
 <script>
 
   $(document).ready(function() {
-    
+
     $('#calendar').fullCalendar({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       defaultDate: '2009-12-16',
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+        right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       editable: true,
-      events: 'many_agenda_events_json.txt'
+      events: 'many_timegrid_events_json.txt'
     });
-    
+
   });
 
 </script>

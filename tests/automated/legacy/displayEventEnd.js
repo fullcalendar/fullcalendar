@@ -10,7 +10,7 @@ describe('displayEventEnd', function() {
 
   describeOptions('defaultView', {
     'when in month view': 'month',
-    'when in agendaWeek view': 'agendaWeek'
+    'when in week view': 'week'
   }, function() {
 
     describe('when off', function() {

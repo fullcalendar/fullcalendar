@@ -5,7 +5,7 @@ describe('eventMouseEnter', function() {
     scrollTime: '00:00:00'
   })
 
-  ;[ 'month', 'agendaWeek' ].forEach(function(viewName) {
+  ;[ 'month', 'week' ].forEach(function(viewName) {
     describe('for ' + viewName + ' view', function() {
 
       pushOptions({

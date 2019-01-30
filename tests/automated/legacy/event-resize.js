@@ -117,8 +117,8 @@ describe('eventResize', function() {
     })
   })
 
-  describe('when in agenda view', function() {
-    pushOptions({defaultView: 'agendaWeek'})
+  describe('when in timeGrid view', function() {
+    pushOptions({defaultView: 'week'})
 
     describe('when resizing an all-day event', function() {
       it('should have correct arguments with a whole-day delta', function(done) {
@@ -527,7 +527,7 @@ describe('eventResize', function() {
     spyOn(options, 'eventResizeStart').and.callThrough()
     spyOn(options, 'eventResizeStop').and.callThrough()
 
-    setTimeout(function() { // hack. agenda view scroll state would get messed up between tests
+    setTimeout(function() { // hack. timeGrid view scroll state would get messed up between tests
       initCalendar(options)
     }, 0)
   }

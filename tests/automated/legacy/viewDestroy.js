@@ -11,9 +11,9 @@ describe('datesDestroy', function() {
     defineTests()
   })
 
-  describe('when in agendaWeek view', function() {
+  describe('when in week view', function() {
     pushOptions({
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
     defineTests()
   })

@@ -597,7 +597,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   // For each segment in an array, computes and assigns its top and bottom properties
   computeSegVerticals(segs) {
-    let eventMinHeight = this.opt('agendaEventMinHeight')
+    let eventMinHeight = this.opt('timeGridEventMinHeight')
     let i
     let seg
     let dayDate

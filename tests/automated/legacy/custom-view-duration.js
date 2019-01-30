@@ -2,15 +2,15 @@ import { View, createPlugin } from '@fullcalendar/core'
 
 describe('custom view', function() {
 
-  it('renders a 4 day basic view', function() {
+  it('renders a 4 day dayGrid view', function() {
     var options = {
       views: {}
     }
-    options.views.basicFourDay = {
-      type: 'basic',
+    options.views.dayGridFourDay = {
+      type: 'dayGrid',
       duration: { days: 4 }
     }
-    options.defaultView = 'basicFourDay'
+    options.defaultView = 'dayGridFourDay'
     options.defaultDate = '2014-12-25'
     initCalendar(options)
     expect($('.fc-day-grid .fc-row').length).toBe(1)
@@ -19,15 +19,15 @@ describe('custom view', function() {
       .toBeMatchedBy('[data-date="2014-12-25"]') // starts on defaultDate
   })
 
-  it('renders a 2 week basic view', function() {
+  it('renders a 2 week dayGrid view', function() {
     var options = {
       views: {}
     }
-    options.views.basicTwoWeek = {
-      type: 'basic',
+    options.views.dayGridTwoWeek = {
+      type: 'dayGrid',
       duration: { weeks: 2 }
     }
-    options.defaultView = 'basicTwoWeek'
+    options.defaultView = 'dayGridTwoWeek'
     options.defaultDate = '2014-12-25'
     options.firstDay = 2 // Tues
     initCalendar(options)
@@ -41,12 +41,12 @@ describe('custom view', function() {
     var options = {
       views: {}
     }
-    options.views.basicFourDay = {
-      type: 'basic',
+    options.views.dayGridFourDay = {
+      type: 'dayGrid',
       duration: { days: 4 },
       titleFormat: function() { return 'special' }
     }
-    options.defaultView = 'basicFourDay'
+    options.defaultView = 'dayGridFourDay'
     initCalendar(options)
     expect($('h2')).toHaveText('special')
   })
@@ -55,33 +55,33 @@ describe('custom view', function() {
     var options = {
       views: {}
     }
-    options.views.basic = {
-      titleFormat: function() { return 'basictitle' }
+    options.views.dayGrid = {
+      titleFormat: function() { return 'dayGridtitle' }
     }
-    options.views.basicFourDay = {
-      type: 'basic',
+    options.views.dayGridFourDay = {
+      type: 'dayGrid',
       duration: { days: 4 }
     }
-    options.defaultView = 'basicFourDay'
+    options.defaultView = 'dayGridFourDay'
     initCalendar(options)
-    expect($('h2')).toHaveText('basictitle')
+    expect($('h2')).toHaveText('dayGridtitle')
   })
 
   it('will override an option from the parent view type', function() {
     var options = {
       views: {}
     }
-    options.views.basic = {
-      titleFormat: function() { return 'basictitle' }
+    options.views.dayGrid = {
+      titleFormat: function() { return 'dayGridtitle' }
     }
-    options.views.basicFourDay = {
-      type: 'basic',
+    options.views.dayGridFourDay = {
+      type: 'dayGrid',
       duration: { days: 4 },
-      titleFormat: function() { return 'basicfourweekttitle' }
+      titleFormat: function() { return 'dayGridfourweekttitle' }
     }
-    options.defaultView = 'basicFourDay'
+    options.defaultView = 'dayGridFourDay'
     initCalendar(options)
-    expect($('h2')).toHaveText('basicfourweekttitle')
+    expect($('h2')).toHaveText('dayGridfourweekttitle')
   })
 
   it('will inherit options from generic "week" type', function() {
@@ -91,32 +91,32 @@ describe('custom view', function() {
     options.views.week = {
       titleFormat: function() { return 'weektitle' }
     }
-    options.views.basicOneWeek = {
-      type: 'basic',
+    options.views.dayGridOneWeek = {
+      type: 'dayGrid',
       duration: { weeks: 1 }
     }
-    options.defaultView = 'basicOneWeek'
+    options.defaultView = 'dayGridOneWeek'
     initCalendar(options)
     expect($('h2')).toHaveText('weektitle')
   })
 
-  it('generic type options for "basic" will override generic "week" options', function() {
+  it('generic type options for "dayGrid" will override generic "week" options', function() {
     var options = {
       views: {}
     }
     options.views.week = {
       titleFormat: function() { return 'weektitle' }
     }
-    options.views.basic = {
-      titleFormat: function() { return 'basictitle' }
+    options.views.dayGrid = {
+      titleFormat: function() { return 'dayGridtitle' }
     }
-    options.views.basicOneWeek = {
-      type: 'basic',
+    options.views.dayGridOneWeek = {
+      type: 'dayGrid',
       duration: { weeks: 1 }
     }
-    options.defaultView = 'basicOneWeek'
+    options.defaultView = 'dayGridOneWeek'
     initCalendar(options)
-    expect($('h2')).toHaveText('basictitle')
+    expect($('h2')).toHaveText('dayGridtitle')
   })
 
   it('will not inherit "week" options if more than a single week', function() {
@@ -127,24 +127,24 @@ describe('custom view', function() {
     options.views.week = {
       titleFormat: function() { return 'weektitle' }
     }
-    options.views.basicTwoWeek = {
-      type: 'basic',
+    options.views.dayGridTwoWeek = {
+      type: 'dayGrid',
       duration: { weeks: 2 }
     }
-    options.defaultView = 'basicTwoWeek'
+    options.defaultView = 'dayGridTwoWeek'
     initCalendar(options)
     expect($('h2')).toHaveText('defaultitle')
   })
 
-  it('renders a 4 day agenda view', function() {
+  it('renders a 4 day timeGrid view', function() {
     var options = {
       views: {}
     }
-    options.views.agendaFourDay = {
-      type: 'agenda',
+    options.views.timeGridFourDay = {
+      type: 'timeGrid',
       duration: { days: 4 }
     }
-    options.defaultView = 'agendaFourDay'
+    options.defaultView = 'timeGridFourDay'
     options.defaultDate = '2014-12-25'
     initCalendar(options)
     expect($('.fc-day-grid .fc-row').length).toBe(1)
@@ -153,15 +153,15 @@ describe('custom view', function() {
     expect($('.fc-time-grid .fc-day:first')).toBeMatchedBy('[data-date="2014-12-25"]') // starts on defaultDate
   })
 
-  it('renders a two week agenda view', function() {
+  it('renders a two week timeGrid view', function() {
     var options = {
       views: {}
     }
-    options.views.agendaTwoWeek = {
-      type: 'agenda',
+    options.views.timeGridTwoWeek = {
+      type: 'timeGrid',
       duration: { weeks: 2 }
     }
-    options.defaultView = 'agendaTwoWeek'
+    options.defaultView = 'timeGridTwoWeek'
     options.defaultDate = '2014-12-25'
     initCalendar(options)
     expect($('.fc-day-grid .fc-row').length).toBe(1)
@@ -170,15 +170,15 @@ describe('custom view', function() {
     expect($('.fc-time-grid .fc-day:first')).toBeMatchedBy('[data-date="2014-12-21"]') // week start
   })
 
-  it('renders a two month agenda view', function() {
+  it('renders a two month timeGrid view', function() {
     var options = {
       views: {}
     }
-    options.views.agendaTwoMonth = {
-      type: 'agenda',
+    options.views.timeGridTwoWeek = {
+      type: 'timeGrid',
       duration: { months: 2 }
     }
-    options.defaultView = 'agendaTwoMonth'
+    options.defaultView = 'timeGridTwoWeek'
     options.defaultDate = '2014-11-27'
     initCalendar(options)
     expect($('.fc-day-grid .fc-row').length).toBe(1)
@@ -188,15 +188,15 @@ describe('custom view', function() {
     expect($('.fc-time-grid .fc-day:last')).toBeMatchedBy('[data-date="2014-12-31"]')
   })
 
-  it('renders a two month basic view', function() {
+  it('renders a two month dayGrid view', function() {
     var options = {
       views: {}
     }
-    options.views.basicTwoWeek = {
-      type: 'basic',
+    options.views.dayGridTwoWeek = {
+      type: 'dayGrid',
       duration: { months: 2 }
     }
-    options.defaultView = 'basicTwoWeek'
+    options.defaultView = 'dayGridTwoWeek'
     options.defaultDate = '2014-11-27'
     initCalendar(options)
     expect($('.fc-day-grid .fc-row').length).toBe(10)
@@ -205,15 +205,15 @@ describe('custom view', function() {
     expect($('.fc-day-grid .fc-day:last')).toBeMatchedBy('[data-date="2015-01-03"]')
   })
 
-  it('renders a one year basic view', function() {
+  it('renders a one year dayGrid view', function() {
     var options = {
       views: {}
     }
-    options.views.basicYear = {
-      type: 'basic',
+    options.views.dayGridYear = {
+      type: 'dayGrid',
       duration: { years: 1 }
     }
-    options.defaultView = 'basicYear'
+    options.defaultView = 'dayGridYear'
     options.defaultDate = '2014-11-27'
     initCalendar(options)
     expect($('.fc-day-grid .fc-day:first')).toBeMatchedBy('[data-date="2013-12-29"]')
@@ -230,7 +230,7 @@ describe('custom view', function() {
         custom: 'over-ridden'
       }
       options.views.custom = {
-        type: 'basic',
+        type: 'dayGrid',
         duration: { days: 4 },
         buttonText: 'awesome'
       }
@@ -250,7 +250,7 @@ describe('custom view', function() {
         day: '1day-over-ridden'
       }
       options.views.custom = {
-        type: 'basic',
+        type: 'dayGrid',
         duration: { days: 1 },
         buttonText: 'awesome'
       }
@@ -270,7 +270,7 @@ describe('custom view', function() {
         day: '1day!!!???'
       }
       options.views.custom = {
-        type: 'basic',
+        type: 'dayGrid',
         duration: { days: 2 },
         buttonText: 'awesome'
       }
@@ -288,7 +288,7 @@ describe('custom view', function() {
       }
       options.locale = 'fr'
       options.views.custom = {
-        type: 'basic',
+        type: 'dayGrid',
         duration: { days: 1 }
       }
       options.header = {
@@ -305,7 +305,7 @@ describe('custom view', function() {
       }
       options.locale = 'fr'
       options.views.custom = {
-        type: 'basic',
+        type: 'dayGrid',
         duration: { days: 1 },
         buttonText: 'awesome'
       }
@@ -322,7 +322,7 @@ describe('custom view', function() {
         views: {}
       }
       options.views.custom = {
-        type: 'basic',
+        type: 'dayGrid',
         duration: { days: 4 },
         buttonText: 'awesome'
       }
@@ -338,17 +338,17 @@ describe('custom view', function() {
       var options = {
         views: {}
       }
-      options.views.basicFourDay = { // "basicFourDay" is a pitfall for smartProperty
-        type: 'basic',
+      options.views.dayGridFourDay = { // "dayGridFourDay" is a pitfall for smartProperty
+        type: 'dayGrid',
         duration: { days: 4 },
         buttonText: 'awesome'
       }
       options.header = {
-        center: 'basicFourDay,month'
+        center: 'dayGridFourDay,month'
       }
-      options.defaultView = 'basicFourDay'
+      options.defaultView = 'dayGridFourDay'
       initCalendar(options)
-      expect($('.fc-basicFourDay-button')).toHaveText('awesome')
+      expect($('.fc-dayGridFourDay-button')).toHaveText('awesome')
     })
 
     it('falls back to view name when view lacks metadata', function() {

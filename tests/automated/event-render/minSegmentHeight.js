@@ -1,10 +1,10 @@
 import * as EventRenderUtils from './EventRenderUtils'
 
-describe('short event rendering with agendaEventMinHeight', function() {
+describe('short event rendering with timeGridEventMinHeight', function() {
   pushOptions({
-    defaultView: 'agendaWeek',
+    defaultView: 'week',
     defaultDate: '2017-08-10',
-    agendaEventMinHeight: 25
+    timeGridEventMinHeight: 25
   })
 
   describe('we we have an isolated short event', function() {
@@ -14,7 +14,7 @@ describe('short event rendering with agendaEventMinHeight', function() {
       ]
     })
 
-    it('renders the event having full width and the agendaEventMinHeight height value', function() {
+    it('renders the event having full width and the timeGridEventMinHeight height value', function() {
       initCalendar()
       var el = EventRenderUtils.getSingleEl()
 

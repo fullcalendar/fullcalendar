@@ -141,7 +141,7 @@ describe('moment plugin', function() {
 
     it('produces title with titleRangeSeparator', function() {
       initCalendar({ // need to render the calendar to get view.title :(
-        defaultView: 'basicWeek',
+        defaultView: 'dayGridWeek',
         now: '2018-09-06',
         titleFormat: 'MMMM {D} YY [yup]',
         titleRangeSeparator: ' to '

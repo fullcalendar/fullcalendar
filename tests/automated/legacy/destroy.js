@@ -42,8 +42,8 @@ describe('destroy', function() {
   })
 
   describeOptions('defaultView', {
-    'when in basicWeek view': 'basicWeek',
-    'when in agendaWeek view': 'agendaWeek',
+    'when in dayGridWeek view': 'dayGridWeek',
+    'when in week view': 'week',
     'when in listWeek view': 'listWeek',
     'when in month view': 'month'
   }, function(viewName) {
@@ -58,7 +58,7 @@ describe('destroy', function() {
       initCalendar({}, $el)
       currentCalendar.destroy()
 
-      if (viewName !== 'agendaDay') { // hack for skipping 3rd one
+      if (viewName !== 'day') { // hack for skipping 3rd one
         expect(elHandlerCounter.stopWatching()).toBe(0)
         expect(docHandlerCounter.stopWatching()).toBe(0)
       }

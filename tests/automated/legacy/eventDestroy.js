@@ -37,10 +37,10 @@ describe('eventDestroy', function() {
     })
   })
 
-  describe('when in agendaWeek view', function() { // for issue 2017
+  describe('when in week view', function() { // for issue 2017
 
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       scrollTime: '00:00:00'
     })
 

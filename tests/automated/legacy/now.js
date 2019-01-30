@@ -18,9 +18,9 @@ describe('now', function() {
     })
   })
 
-  describe('when agendaWeek view', function() {
+  describe('when week view', function() {
     pushOptions({
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
     it('changes the highlighted day when customized', function() {
       initCalendar({

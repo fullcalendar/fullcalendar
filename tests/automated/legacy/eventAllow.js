@@ -4,7 +4,7 @@ describe('eventAllow', function() {
 
   pushOptions({
     now: '2016-09-04',
-    defaultView: 'agendaWeek',
+    defaultView: 'week',
     scrollTime: '00:00',
     editable: true,
     events: [

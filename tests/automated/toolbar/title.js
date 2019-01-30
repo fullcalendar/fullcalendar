@@ -11,7 +11,7 @@ describe('calendar title', function() {
         defaultView: 'month'
       })
       expect(getTitleText()).toBe('March 2017')
-      currentCalendar.changeView('agendaWeek')
+      currentCalendar.changeView('week')
       expect(getTitleText()).toBe('Mar 26 – Apr 1, 2017')
       currentCalendar.changeView('month')
       expect(getTitleText()).toBe('March 2017')

@@ -9,7 +9,7 @@
 <script>
 
   $(document).ready(function() {
-    
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
@@ -17,12 +17,12 @@
 
     $('#calendar').fullCalendar({
 
-      defaultView: 'agendaDay',
+      defaultView: 'day',
       minTime: 0,
       maxTime: 24,
       firstDay: 1,
       allDayText: "dieną",
-      
+
           events: [
       {
         title: 'All Day Event',
@@ -85,15 +85,15 @@
       },
 
       slotLabelFormat: 'HH(:mm)',
-      timeFormat: { agenda: 'HH:mm{ - HH:mm}' },
+      timeFormat: { timeGrid: 'HH:mm{ - HH:mm}' },
       weekends: true
     });
 
 });
 
-  
+
 </script>
-    
+
 <body>
 <div id="calendar"> </div>
 </body>

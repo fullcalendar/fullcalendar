@@ -10,11 +10,11 @@ const [
 
 const AXIS_CLASS = 'fc-axis'
 
-describe('agenda view rendering', function() {
+describe('timeGrid view rendering', function() {
 
   describe('when dir is ltr', function() {
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       dir: 'ltr'
     })
 
@@ -34,7 +34,7 @@ describe('agenda view rendering', function() {
 
   describe('when dir is rtl', function() {
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       dir: 'rtl'
     })
 

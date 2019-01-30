@@ -157,7 +157,7 @@
               })
             });
 
-            [ 'basicWeek', 'basicDay' ].forEach(function(viewName) {
+            [ 'dayGridWeek', 'dayGridDay' ].forEach(function(viewName) {
               describe('in ' + viewName + ' view', function() {
                 pushOptions({
                   defaultView: viewName
@@ -208,7 +208,7 @@
               })
             });
 
-            [ 'agendaWeek', 'agendaDay' ].forEach(function(viewName) {
+            [ 'week', 'day' ].forEach(function(viewName) {
               describe('in ' + viewName + ' view', function() {
                 pushOptions({
                   defaultView: viewName

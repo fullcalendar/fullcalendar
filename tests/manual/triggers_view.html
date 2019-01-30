@@ -22,7 +22,7 @@
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+        right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       editable: true,
       selectable: true,
@@ -138,7 +138,7 @@
 
 
   function hyperJump() {console.log('hyperJump');
-    $('#calendar').fullCalendar('changeView', 'agendaWeek');
+    $('#calendar').fullCalendar('changeView', 'week');
     //alert('pause');
     $('#calendar').fullCalendar('gotoDate', new Date(y, m+2, d));
   }

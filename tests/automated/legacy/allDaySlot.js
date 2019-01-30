@@ -3,20 +3,20 @@ import { getDayGridSlotElsCount } from './../lib/AgendaViewUtils'
 describe('allDaySlots', function() {
 
   describe('when allDaySlots is not set', function() {
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'agendaWeek'
+          defaultView: 'week'
         }
         initCalendar(options)
         var allDaySlotCount = getDayGridSlotElsCount()
         expect(allDaySlotCount).toEqual(1)
       })
     })
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'agendaDay'
+          defaultView: 'day'
         }
         initCalendar(options)
         var allDaySlotCount = getDayGridSlotElsCount()
@@ -26,10 +26,10 @@ describe('allDaySlots', function() {
   })
 
   describe('when allDaySlots is set true', function() {
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'agendaWeek',
+          defaultView: 'week',
           allDaySlot: true
         }
         initCalendar(options)
@@ -37,10 +37,10 @@ describe('allDaySlots', function() {
         expect(allDaySlotCount).toEqual(1)
       })
     })
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'agendaDay',
+          defaultView: 'day',
           allDaySlot: true
         }
         initCalendar(options)
@@ -51,10 +51,10 @@ describe('allDaySlots', function() {
   })
 
   describe('when allDaySlots is set false', function() {
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'agendaWeek',
+          defaultView: 'week',
           allDaySlot: false
         }
         initCalendar(options)
@@ -62,10 +62,10 @@ describe('allDaySlots', function() {
         expect(allDaySlotCount).toEqual(0)
       })
     })
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'agendaDay',
+          defaultView: 'day',
           allDaySlot: false
         }
         initCalendar(options)

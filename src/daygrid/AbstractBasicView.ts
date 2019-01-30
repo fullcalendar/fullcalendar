@@ -20,7 +20,7 @@ import DayGrid from './DayGrid'
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
 
-/* An abstract class for the "basic" views, as well as month view. Renders one or more rows of day cells.
+/* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
@@ -37,7 +37,7 @@ export default abstract class BasicView extends View {
   constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
     super(context, viewSpec, dateProfileGenerator, parentEl)
 
-    this.el.classList.add('fc-basic-view')
+    this.el.classList.add('fc-dayGrid-view')
     this.el.innerHTML = this.renderSkeletonHtml()
 
     this.scroller = new ScrollComponent(

@@ -4,7 +4,7 @@ describe('visibleRange', function() {
 
   describe('when custom view with a flexible range', function() {
     pushOptions({
-      defaultView: 'agenda'
+      defaultView: 'timeGrid'
     })
 
     describe('when given a valid date range', function() {
@@ -43,7 +43,7 @@ describe('visibleRange', function() {
         initCalendar({
           views: {
             myCustomView: {
-              type: 'agenda',
+              type: 'timeGrid',
               visibleRange: {
                 start: startInput,
                 end: endInput
@@ -68,7 +68,7 @@ describe('visibleRange', function() {
 
       it('works as a dynamic option', function() {
         initCalendar({
-          defaultView: 'basic'
+          defaultView: 'dayGrid'
         })
         currentCalendar.setOption('visibleRange', {
           start: startInput,
@@ -152,7 +152,7 @@ describe('visibleRange', function() {
             end: '2017-06-29'
           }
         })
-        currentCalendar.changeView('agendaDay')
+        currentCalendar.changeView('day')
         expectActiveRange('2017-06-26', '2017-06-27')
       })
 
@@ -164,7 +164,7 @@ describe('visibleRange', function() {
             end: '2017-06-29'
           }
         })
-        currentCalendar.changeView('agendaDay')
+        currentCalendar.changeView('day')
         expectActiveRange('2017-06-26', '2017-06-27')
       })
     })
@@ -191,7 +191,7 @@ describe('visibleRange', function() {
   describe('when custom view with fixed duration', function() {
     pushOptions({
       defaultDate: '2015-06-08',
-      defaultView: 'agenda',
+      defaultView: 'timeGrid',
       duration: { days: 3 }
     })
 
@@ -209,7 +209,7 @@ describe('visibleRange', function() {
   describe('when standard view', function() {
     pushOptions({
       defaultDate: '2015-06-08',
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
 
     it('ignores the given visibleRange', function() {

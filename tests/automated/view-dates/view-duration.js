@@ -2,7 +2,7 @@ import { expectActiveRange } from './ViewDateUtils'
 
 describe('view duration', function() {
   pushOptions({
-    defaultView: 'agenda',
+    defaultView: 'timeGrid',
     defaultDate: '2017-03-15'
   })
 

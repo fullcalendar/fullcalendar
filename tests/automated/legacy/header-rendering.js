@@ -27,7 +27,7 @@ describe('header rendering', function() {
     pushOptions({
       header: {
         left: 'next,prev',
-        center: 'prevYear today nextYear agendaView,dayView',
+        center: 'prevYear today nextYear day,week',
         right: 'title'
       }
     })

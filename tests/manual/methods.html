@@ -23,7 +23,7 @@
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+        right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       loading: function(bool) {
         if (bool) {
@@ -176,8 +176,8 @@
 <br />
 
 <button onclick="cal.fullCalendar('changeView', 'month')">change to month</button>
-<button onclick="cal.fullCalendar('changeView', 'basicWeek')">change to basicWeek</button>
-<button onclick="cal.fullCalendar('changeView', 'basicDay')">change to basicDay</button>
+<button onclick="cal.fullCalendar('changeView', 'dayGridWeek')">change to dayGridWeek</button>
+<button onclick="cal.fullCalendar('changeView', 'dayGridDay')">change to dayGridDay</button>
 <button onclick="getView()">getView</button>
 <button onclick="getDate()">getDate</button>
 <button onclick="optionGetter()">option getter</button>

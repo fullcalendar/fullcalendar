@@ -49,10 +49,10 @@ describe('defaultTimedEventDuration', function() {
       forceEventDuration: false
     })
 
-    describe('with agendaWeek view', function() {
+    describe('with week view', function() {
 
       pushOptions({
-        defaultView: 'agendaWeek'
+        defaultView: 'week'
       })
 
       it('renders a timed event with no `end` to appear to have the default duration', function(done) {
@@ -85,10 +85,10 @@ describe('defaultTimedEventDuration', function() {
       })
     })
 
-    describe('with basicWeek view', function() {
+    describe('with dayGridWeek view', function() {
 
       pushOptions({
-        defaultView: 'basicWeek'
+        defaultView: 'dayGridWeek'
       })
 
       it('renders a timed event with no `end` to appear to have the default duration', function(done) {

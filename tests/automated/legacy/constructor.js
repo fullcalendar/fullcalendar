@@ -3,7 +3,7 @@ describe('constructor', function() {
 
   it('should not modify the options object', function() {
     var options = {
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       scrollTime: '09:00:00',
       slotDuration: { minutes: 45 }
     }

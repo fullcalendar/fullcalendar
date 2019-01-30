@@ -6,7 +6,7 @@ describe('weekNumberCalculation', function() {
 
   function getRenderedWeekText() {
     // works for both kinds of views
-    return $('.fc-agenda-view .fc-week-number, .fc-week:first .fc-content-skeleton .fc-week-number').text()
+    return $('.fc-timeGrid-view .fc-week-number, .fc-week:first .fc-content-skeleton .fc-week-number').text()
   }
 
   function getRenderedWeekNumber() {
@@ -14,7 +14,7 @@ describe('weekNumberCalculation', function() {
     return parseInt(text.replace(/\D/g, ''), 10)
   }
 
-  [ 'basicDay', 'agendaDay' ].forEach(function(viewType) {
+  [ 'dayGridDay', 'day' ].forEach(function(viewType) {
     describe('when in ' + viewType + ' view', function() {
       pushOptions({
         defaultView: viewType

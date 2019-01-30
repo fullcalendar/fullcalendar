@@ -2,9 +2,9 @@ import { getTimeTexts } from './TimeGridEventRenderUtils'
 
 describe('the time text on events', function() {
 
-  describe('in agendaWeek', function() {
+  describe('in week', function() {
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       defaultDate: '2017-07-03',
       scrollTime: '00:00'
     })

@@ -10,20 +10,20 @@ export { default as DayBgRow } from './DayBgRow'
 export default createPlugin({
   viewConfigs: {
 
-    basic: BasicView,
+    dayGrid: BasicView,
 
-    basicDay: {
-      type: 'basic',
+    dayGridDay: {
+      type: 'dayGrid',
       duration: { days: 1 }
     },
 
-    basicWeek: {
-      type: 'basic',
+    dayGridWeek: {
+      type: 'dayGrid',
       duration: { weeks: 1 }
     },
 
     month: {
-      type: 'basic',
+      type: 'dayGrid',
       monthMode: true,
       duration: { months: 1 }, // important for prev/next
       fixedWeekCount: true

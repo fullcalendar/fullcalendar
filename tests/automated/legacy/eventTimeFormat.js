@@ -39,10 +39,10 @@ describe('eventTimeFormat', function() {
     })
   })
 
-  describe('when in agendaWeek view', function() {
+  describe('when in week view', function() {
 
     pushOptions({
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
 
     it('renders correctly when default', function() {
@@ -65,16 +65,16 @@ describe('eventTimeFormat', function() {
     })
   })
 
-  describe('when in multi-day custom basic view', function() {
+  describe('when in multi-day custom dayGrid view', function() {
 
     pushOptions({
       views: {
-        basicTwoDay: {
-          type: 'basic',
+        dayGridTwoDay: {
+          type: 'dayGrid',
           duration: { days: 2 }
         }
       },
-      defaultView: 'basicTwoDay'
+      defaultView: 'dayGridTwoDay'
     })
 
     it('defaults to no end time', function() {
@@ -83,10 +83,10 @@ describe('eventTimeFormat', function() {
     })
   })
 
-  describe('when in basicDay view', function() {
+  describe('when in dayGridDay view', function() {
 
     pushOptions({
-      defaultView: 'basicDay'
+      defaultView: 'dayGridDay'
     })
 
 

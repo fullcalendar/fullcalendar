@@ -45,7 +45,7 @@ describe('implicit unselection', function() {
     expect(selectFired).toBe(1)
     expect(unselectFired).toBe(0)
 
-    currentCalendar.changeView('basicWeek')
+    currentCalendar.changeView('dayGridWeek')
     expect(selectFired).toBe(1)
     expect(unselectFired).toBe(1) // unselected
   })

@@ -1,7 +1,7 @@
 describe('refetchEvents', function() {
 
   // there IS a similar test in automated-better, but does month view
-  describe('when agenda events are rerendered', function() {
+  describe('when timeGrid events are rerendered', function() {
 
     it('keeps scroll after refetchEvents', function(done) {
       var renderCalls = 0
@@ -10,7 +10,7 @@ describe('refetchEvents', function() {
         now: '2015-08-07',
         scrollTime: '00:00',
         height: 400, // makes this test more consistent across viewports
-        defaultView: 'agendaDay',
+        defaultView: 'day',
         events: function(arg, callback) {
           setTimeout(function() {
             callback([
@@ -47,7 +47,7 @@ describe('refetchEvents', function() {
 
     pushOptions({
       now: '2015-08-07',
-      defaultView: 'agendaWeek'
+      defaultView: 'week'
     })
 
     beforeEach(function() {

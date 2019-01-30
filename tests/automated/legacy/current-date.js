@@ -235,13 +235,13 @@ describe('current date', function() {
   }
 
   function describeWhenInWeek(func) {
-    describeWhenIn('basicWeek', func)
-    describeWhenIn('agendaWeek', func)
+    describeWhenIn('dayGridWeek', func)
+    describeWhenIn('week', func)
   }
 
   function describeWhenInDay(func) {
-    describeWhenIn('basicDay', func)
-    describeWhenIn('agendaDay', func)
+    describeWhenIn('dayGridDay', func)
+    describeWhenIn('day', func)
   }
 
   function describeWhenIn(viewName, func) {

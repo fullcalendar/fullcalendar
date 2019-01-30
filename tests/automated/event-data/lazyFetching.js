@@ -21,7 +21,7 @@ describe('lazyFetching', function() {
       spyOn(options, 'events').and.callThrough()
 
       initCalendar(options)
-      currentCalendar.changeView('agendaWeek')
+      currentCalendar.changeView('week')
       currentCalendar.next()
       currentCalendar.next()
       currentCalendar.next()
@@ -49,7 +49,7 @@ describe('lazyFetching', function() {
       spyOn(options, 'events')
 
       initCalendar(options)
-      currentCalendar.changeView('agendaWeek')
+      currentCalendar.changeView('week')
       currentCalendar.next()
       currentCalendar.next()
       currentCalendar.next()

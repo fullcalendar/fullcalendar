@@ -14,7 +14,7 @@ describe('events as an array', function() {
     ]
   }
 
-  it('accepts an event using basic form', function(done) {
+  it('accepts an event using dayGrid form', function(done) {
     initCalendar({
       events: getEventArray(),
       eventRender: function(arg) {

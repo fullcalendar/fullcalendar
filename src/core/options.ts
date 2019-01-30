@@ -55,7 +55,7 @@ export const globalDefaults = {
   // buttonIcons: null,
 
   // allows setting a min-height to the event segment to prevent short events overlapping each other
-  agendaEventMinHeight: 0,
+  timeGridEventMinHeight: 0,
 
   themeSystem: 'standard',
   // themeButtonIcons: null,

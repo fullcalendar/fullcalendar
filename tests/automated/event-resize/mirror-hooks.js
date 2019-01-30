@@ -52,9 +52,9 @@ describe('event resize mirror', function() {
     })
   })
 
-  describe('in agenda view', function() {
+  describe('in timeGrid view', function() {
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       scrollTime: '00:00',
       slotDuration: '01:00',
       snapDuration: '01:00',

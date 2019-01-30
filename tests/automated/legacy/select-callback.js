@@ -97,9 +97,9 @@ describe('select callback', function() {
         })
       })
 
-      describe('when in agendaWeek view', function() {
+      describe('when in week view', function() {
         beforeEach(function() {
-          options.defaultView = 'agendaWeek'
+          options.defaultView = 'week'
         })
         describe('when selecting all-day slots', function() {
           it('gets fired correctly when the user selects cells', function(done) {
@@ -116,7 +116,7 @@ describe('select callback', function() {
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
-            $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag', { // will be 2014-05-28 for LTR and RTL
+            $('.fc-timeGrid-view .fc-day-grid .fc-day:eq(3)').simulate('drag', { // will be 2014-05-28 for LTR and RTL
               dx: $('.fc-sun').outerWidth() * dirSign, // the width of one column
               callback: function() {
                 expect(options.select).toHaveBeenCalled()
@@ -138,7 +138,7 @@ describe('select callback', function() {
             }
             spyOn(options, 'select').and.callThrough()
             initCalendar(options)
-            $('.fc-agenda-view .fc-day-grid .fc-day:eq(3)').simulate('drag', { // will be 2014-05-28 for LTR and RTL
+            $('.fc-timeGrid-view .fc-day-grid .fc-day:eq(3)').simulate('drag', { // will be 2014-05-28 for LTR and RTL
               callback: function() {
                 expect(options.select).toHaveBeenCalled()
                 done()

@@ -148,9 +148,9 @@ describe('eventDrop', function() {
     })
   })
 
-  describe('when in agenda view', function() {
+  describe('when in timeGrid view', function() {
     beforeEach(function() {
-      options.defaultView = 'agendaWeek'
+      options.defaultView = 'week'
     });
 
     [ false, true ].forEach(function(isTouch) {
@@ -242,7 +242,7 @@ describe('eventDrop', function() {
 
         init(
           function() {
-            var allDayGrid = $('.fc-agenda-view .fc-day-grid')
+            var allDayGrid = $('.fc-timeGrid-view .fc-day-grid')
             var hr = allDayGrid.next('hr')
             $('.fc-event').simulate('drag', {
               dx: $('th.fc-wed').width() * -1,
@@ -286,11 +286,11 @@ describe('eventDrop', function() {
           function() {
             eventElm = $('.fc-event .fc-time').simulate('drag', { // grabs the top of the event
               dx: $('th.fc-wed').width() * -1,
-              dy: -$('.fc-agenda-view .fc-day-grid').outerHeight(),
+              dy: -$('.fc-timeGrid-view .fc-day-grid').outerHeight(),
               onBeforeRelease: function() {
                 // the all day slot works off of mouse-moving coordinates
                 var offset = eventElm.offset()
-                $('.fc-agenda-allday .fc-day-content')
+                $('.fc-timeGrid-allday .fc-day-content')
                   .simulate('mouseover', {
                     clientX: offset.left + 10,
                     clientY: offset.top + 10
@@ -428,7 +428,7 @@ describe('eventDrop', function() {
     spyOn(options, 'eventDragStart').and.callThrough()
     spyOn(options, 'eventDragStop').and.callThrough()
 
-    setTimeout(function() { // hack. agenda view scroll state would get messed up between tests
+    setTimeout(function() { // hack. timeGrid view scroll state would get messed up between tests
       initCalendar(options)
     }, 0)
   }

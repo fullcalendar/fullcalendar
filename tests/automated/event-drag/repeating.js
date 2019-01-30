@@ -25,9 +25,9 @@ describe('event dragging on repeating events', function() {
 
     initCalendar()
 
-    // event range needs out large (month) then scope down (agendaWeek)
+    // event range needs out large (month) then scope down (week)
     // so that the new view receives out-of-range events.
-    currentCalendar.changeView('agendaWeek')
+    currentCalendar.changeView('week')
 
     TimeGridEventDragUtils.drag('2017-02-16T16:00:00', '2017-02-16T12:00:00')
       .then(function(res) {

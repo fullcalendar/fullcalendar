@@ -3,7 +3,7 @@ describe('locale', function() {
   it('works when certain locale has no FC settings defined', function() {
     initCalendar({
       locale: 'en-asdf',
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       defaultDate: '2014-12-25',
       events: [
         { title: 'Christmas', start: '2014-12-25T10:00:00' }

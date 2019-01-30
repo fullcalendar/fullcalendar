@@ -1,5 +1,5 @@
 
-describe('basic view rendering', function() {
+describe('dayGrid view rendering', function() {
 
   pushOptions({
     defaultView: 'month'

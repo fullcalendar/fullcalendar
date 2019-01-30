@@ -34,8 +34,8 @@ describe('advanced external dnd', function() {
     droppable: true
   })
 
-  describe('in agenda slots', function() {
-    pushOptions({defaultView: 'agendaWeek'})
+  describe('in timeGrid slots', function() {
+    pushOptions({defaultView: 'week'})
     describe('when no element event data', function() {
       describe('when given duration through defaultTimedEventDuration', function() {
         pushOptions({

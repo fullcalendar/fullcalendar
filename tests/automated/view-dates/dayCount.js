@@ -9,13 +9,13 @@ describe('dayCount', function() {
 
   describeOptions({
     'when specified as top-level options': {
-      defaultView: 'basic',
+      defaultView: 'dayGrid',
       dayCount: 5
     },
     'when specified as custom view': {
       views: {
         myCustomView: {
-          type: 'basic',
+          type: 'dayGrid',
           dayCount: 5
         }
       },
@@ -37,7 +37,7 @@ describe('dayCount', function() {
 
   it('can span multiple weeks', function() {
     initCalendar({
-      defaultView: 'agenda',
+      defaultView: 'timeGrid',
       dayCount: 9
     })
     expectActiveRange('2017-03-15', '2017-03-28')
@@ -59,16 +59,16 @@ describe('dayCount', function() {
   it('can navigate in reverse with a small dateIncrement split by hidden days', function() {
     initCalendar({
       defaultDate: '2018-06-11',
-      defaultView: 'agendaTwoDay',
+      defaultView: 'timeGridTwoDay',
       header: {
         left: 'prev,next',
         center: 'title',
-        right: 'month,agendaWeek,agendaDay,agendaTwoDay'
+        right: 'month,week,day,timeGridTwoDay'
       },
       hiddenDays: [ 0, 6 ], // sunday, saturday
       views: {
-        agendaTwoDay: {
-          type: 'agenda',
+        timeGridTwoDay: {
+          type: 'timeGrid',
           dayCount: 2,
           dateIncrement: { days: 1 },
           buttonText: '2 days'

@@ -10,7 +10,7 @@ describe('weekLabel', function() {
     return text.replace(/\d/g, '').trim()
   }
 
-  [ 'basicWeek', 'agendaWeek' ].forEach(function(viewName) {
+  [ 'dayGridWeek', 'week' ].forEach(function(viewName) {
     describe('when views is ' + viewName, function() {
 
       pushOptions({

@@ -80,7 +80,7 @@
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,agendaWeek,agendaDay,listWeek'
+          right: 'month,week,day,listWeek'
         },
         defaultDate: '2017-07-01',
         navLinks: true, // can click day/week names to navigate views
@@ -142,11 +142,11 @@
       //console.log('rendered ' + events.length + ' events');
     }, destroyCalendar);
 
-    initProfilingAction($('#render-agenda-events'), function(start, stop) {
+    initProfilingAction($('#render-timegrid-events'), function(start, stop) {
       initCalendar();
 
       var calendar = $('#calendar').fullCalendar('getCalendar');
-      calendar.changeView('agendaWeek');
+      calendar.changeView('week');
 
       var date = calendar.view.start.clone();
       var end = calendar.view.end.clone();
@@ -182,7 +182,7 @@
       calendar.removeEvents();
       stop();
     });
-    
+
   });
 
 </script>
@@ -222,9 +222,9 @@
       <button class='profiling-action__button'>render events for month</button>
     </div>
 
-    <div class='profiling-action' id='render-agenda-events'>
+    <div class='profiling-action' id='render-timegrid-events'>
       <span class='profiling-action__result'></span>
-      <button class='profiling-action__button'>render events for agenda</button>
+      <button class='profiling-action__button'>render events for timegrid</button>
     </div>
 
     <div class='profiling-action' id='clear-events'>

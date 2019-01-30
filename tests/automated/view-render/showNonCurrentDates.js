@@ -20,7 +20,7 @@ describe('showNonCurrentDates', function() {
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       defaultDate: '2017-06-01'
     })
 

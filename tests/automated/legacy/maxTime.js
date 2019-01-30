@@ -11,20 +11,20 @@ describe('maxTime', function() {
 
   describe('when using the default settings', function() {
 
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       it('should start at 12am', function() {
         initCalendar({
-          defaultView: 'agendaWeek'
+          defaultView: 'week'
         })
         var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
         expect(lastSlotText).toEqual('11pm')
       })
     })
 
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       it('should start at 12am', function() {
         initCalendar({
-          defaultView: 'agendaDay'
+          defaultView: 'day'
         })
         var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
         expect(lastSlotText).toEqual('11pm')
@@ -36,11 +36,11 @@ describe('maxTime', function() {
 
     var hourNumbers = [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 ]
 
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber, function() {
           initCalendar({
-            defaultView: 'agendaWeek',
+            defaultView: 'week',
             maxTime: { hours: hourNumber }
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
@@ -50,11 +50,11 @@ describe('maxTime', function() {
       })
     })
 
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber, function() {
           initCalendar({
-            defaultView: 'agendaDay',
+            defaultView: 'day',
             maxTime: hourNumber + ':00' // in addition, test string duration input
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
@@ -69,11 +69,11 @@ describe('maxTime', function() {
 
     var hourNumbers = [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 ]
 
-    describe('in agendaWeek', function() {
+    describe('in week', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber + ':20', function() {
           initCalendar({
-            defaultView: 'agendaWeek',
+            defaultView: 'week',
             maxTime: { hours: hourNumber, minutes: 20 }
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
@@ -84,11 +84,11 @@ describe('maxTime', function() {
       })
     })
 
-    describe('in agendaDay', function() {
+    describe('in day', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber + ':20', function() {
           initCalendar({
-            defaultView: 'agendaDay',
+            defaultView: 'day',
             maxTime: { hours: hourNumber, minutes: 20 }
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()

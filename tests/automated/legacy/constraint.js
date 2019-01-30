@@ -4,7 +4,7 @@ describe('event constraint', function() {
 
   pushOptions({
     defaultDate: '2014-11-10',
-    defaultView: 'agendaWeek',
+    defaultView: 'week',
     scrollTime: '00:00'
   })
   describe('when used with a specific date range', function() {
@@ -111,7 +111,7 @@ describe('event constraint', function() {
 
       describe('after a constraint range', function() {
         describe('using an event object\'s constraint', function() {
-          describe('when in agendaWeek view with timed events', function() {
+          describe('when in week view with timed events', function() {
             it('does not allow a drag', function(done) {
               var options = {}
 
@@ -650,7 +650,7 @@ describe('selectConstraint', function() {
 
   pushOptions({
     defaultDate: '2014-11-10',
-    defaultView: 'agendaWeek',
+    defaultView: 'week',
     scrollTime: '00:00'
   })
 
@@ -717,7 +717,7 @@ describe('selectConstraint', function() {
     })
 
     describe('when dragged after the constraint', function() {
-      describe('when in agendaWeek view with timed events', function() {
+      describe('when in week view with timed events', function() {
         it('does not allow a selection', function(done) {
           var options = {}
 
@@ -879,7 +879,7 @@ describe('selectConstraint', function() {
     })
 
     describe('when event ID does not match any events', function() {
-      describe('when in agendaWeek view', function() {
+      describe('when in week view', function() {
         it('does not allow a selection', function(done) {
           var options = {}
 

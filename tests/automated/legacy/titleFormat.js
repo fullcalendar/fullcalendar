@@ -6,10 +6,10 @@ describe('titleFormat', function() {
 
     var viewWithFormat = [
       { view: 'month', expected: 'June 2014' },
-      { view: 'basicWeek', expected: /Jun 8 - 14,? 2014/ },
-      { view: 'agendaWeek', expected: /Jun 8 - 14,? 2014/ },
-      { view: 'basicDay', expected: /June 12,? 2014/ },
-      { view: 'agendaDay', expected: /June 12,? 2014/ }
+      { view: 'dayGridWeek', expected: /Jun 8 - 14,? 2014/ },
+      { view: 'week', expected: /Jun 8 - 14,? 2014/ },
+      { view: 'dayGridDay', expected: /June 12,? 2014/ },
+      { view: 'day', expected: /June 12,? 2014/ }
     ]
 
     beforeEach(function() {
@@ -34,9 +34,9 @@ describe('titleFormat', function() {
 
     var viewWithFormat = [
       { view: 'month', expected: 'June 2014' },
-      { view: 'basicWeek', expected: 'Jun 8 - 14, 2014' },
-      { view: 'agendaWeek', expected: 'June 8 - 14, 2014' },
-      { view: 'basicDay', expected: 'Thursday, June 12, 2014' }
+      { view: 'dayGridWeek', expected: 'Jun 8 - 14, 2014' },
+      { view: 'week', expected: 'June 8 - 14, 2014' },
+      { view: 'dayGridDay', expected: 'Thursday, June 12, 2014' }
     ]
 
     beforeEach(function() {
@@ -45,9 +45,9 @@ describe('titleFormat', function() {
         titleRangeSeparator: ' - ',
         views: {
           month: { titleFormat: { year: 'numeric', month: 'long' } },
-          basicWeek: { titleFormat: { day: 'numeric', month: 'short', year: 'numeric' } },
-          agendaWeek: { titleFormat: { day: 'numeric', month: 'long', year: 'numeric' } },
-          basicDay: { titleFormat: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' } }
+          dayGridWeek: { titleFormat: { day: 'numeric', month: 'short', year: 'numeric' } },
+          week: { titleFormat: { day: 'numeric', month: 'long', year: 'numeric' } },
+          dayGridDay: { titleFormat: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' } }
         }
       })
     })
@@ -65,10 +65,10 @@ describe('titleFormat', function() {
 
     var viewWithFormat = [
       { view: 'month', expected: 'juin 2014' },
-      { view: 'basicWeek', expected: '9 - 15 juin 2014' },
-      { view: 'agendaWeek', expected: '9 - 15 juin 2014' },
-      { view: 'basicDay', expected: '12 juin 2014' },
-      { view: 'agendaDay', expected: '12 juin 2014' }
+      { view: 'dayGridWeek', expected: '9 - 15 juin 2014' },
+      { view: 'week', expected: '9 - 15 juin 2014' },
+      { view: 'dayGridDay', expected: '12 juin 2014' },
+      { view: 'day', expected: '12 juin 2014' }
     ]
 
     beforeEach(function() {
@@ -94,7 +94,7 @@ describe('titleFormat', function() {
       initCalendar({
         views: {
           multiYear: {
-            type: 'basic',
+            type: 'dayGrid',
             duration: { years: 2 }
           }
         },
@@ -109,7 +109,7 @@ describe('titleFormat', function() {
       initCalendar({
         views: {
           multiMonth: {
-            type: 'basic',
+            type: 'dayGrid',
             duration: { months: 2 }
           }
         },
@@ -124,7 +124,7 @@ describe('titleFormat', function() {
       initCalendar({
         views: {
           multiWeek: {
-            type: 'basic',
+            type: 'dayGrid',
             duration: { weeks: 2 }
           }
         },
@@ -139,7 +139,7 @@ describe('titleFormat', function() {
       initCalendar({
         views: {
           multiDay: {
-            type: 'basic',
+            type: 'dayGrid',
             duration: { days: 2 }
           }
         },
@@ -155,7 +155,7 @@ describe('titleFormat', function() {
 
     it('doesn\'t include hidden days in the title', function() {
       initCalendar({
-        defaultView: 'agendaWeek',
+        defaultView: 'week',
         defaultDate: '2017-02-13',
         weekends: false,
         titleRangeSeparator: ' - '

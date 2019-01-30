@@ -2,7 +2,7 @@ describe('getEventSources', function() {
 
   pushOptions({
     now: '2015-08-07',
-    defaultView: 'agendaWeek',
+    defaultView: 'week',
     eventSources: [
       {
         events: [

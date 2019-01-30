@@ -22,7 +22,7 @@ Bootstrap4Theme.prototype.classes = {
   popoverContent: 'card-body',
 
   // day grid
-  // for left/right border color when border is inset from edges (all-day in agenda view)
+  // for left/right border color when border is inset from edges (all-day in timeGrid view)
   // avoid `table` class b/c don't want margins/padding/structure. only border color.
   headerRow: 'table-bordered',
   dayRow: 'table-bordered',

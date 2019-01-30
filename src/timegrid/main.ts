@@ -10,20 +10,20 @@ export { default as TimeGrid } from './TimeGrid'
 export default createPlugin({
   viewConfigs: {
 
-    agenda: {
+    timeGrid: {
       class: AgendaView,
       allDaySlot: true,
       slotDuration: '00:30:00',
       slotEventOverlap: true // a bad name. confused with overlap/constraint system
     },
 
-    agendaDay: {
-      type: 'agenda',
+    day: {
+      type: 'timeGrid',
       duration: { days: 1 }
     },
 
-    agendaWeek: {
-      type: 'agenda',
+    week: {
+      type: 'timeGrid',
       duration: { weeks: 1 }
     }
 

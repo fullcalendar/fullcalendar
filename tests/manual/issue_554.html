@@ -23,7 +23,7 @@
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaDay'
+        right: 'month,day'
       },
       events: FullCalendar.gcalFeed('http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic')
     });
@@ -48,7 +48,7 @@
 </style>
 </head>
 <body>
-<button onclick="$('#calendar').fullCalendar('gotoDate',2010,10,11);$('#calendar').fullCalendar('changeView','agendaDay')">gotoDate + changeView</button>
+<button onclick="$('#calendar').fullCalendar('gotoDate',2010,10,11);$('#calendar').fullCalendar('changeView','day')">gotoDate + changeView</button>
 <div id='calendar'></div>
 </body>
 </html>

@@ -54,8 +54,8 @@ describe('defaultAllDayEventDuration', function() {
     })
 
     describeOptions('defaultView', {
-      'with basicWeek view': 'basicWeek',
-      'with agendaWeek view': 'agendaWeek'
+      'with dayGridWeek view': 'dayGridWeek',
+      'with week view': 'week'
     }, function() {
       it('renders an all-day event with no `end` to appear to have the default duration', function(done) {
         initCalendar({

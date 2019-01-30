@@ -21,9 +21,9 @@ describe('scroll state', function() {
     defineTests()
   })
 
-  describe('when in agendaWeek view', function() {
+  describe('when in week view', function() {
     pushOptions({
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       scrollTime: '00:00'
     })
     defineTests()

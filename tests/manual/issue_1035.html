@@ -9,20 +9,20 @@
 <script>
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+        right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       editable: true,
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       selectable: true,
       events: [
         {
@@ -71,7 +71,7 @@
         }
       ]
     });
-    
+
   });
 
 </script>
@@ -89,7 +89,7 @@
     margin: 0 auto;
     }
 
-  .fc-agenda-slots td div {
+  .fc-timeGrid-slots td div {
     height: 10px;
     }
 
@@ -97,8 +97,9 @@
 </head>
 <body>
 
-<p>The selection box for selecting agenda slot cells should align to the grid.</p>
-<p>(even though <code>.fc-agenda-slots td div</code> has been set to 10px tall)</p>
+<p>The selection box for selecting timegrid slot cells should align to the grid.</p>
+<p>(even though <code>.fc-timeGrid-slots td div</code> has been set to 10px tall)</p>
+<p>(even though <code>.fc-timeGrid-slots td div</code> has been set to 10px tall)</p>
 
 <div id='calendar'></div>
 

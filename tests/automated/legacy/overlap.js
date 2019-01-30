@@ -6,7 +6,7 @@ describe('event overlap', function() {
   beforeEach(function() {
     options = {
       defaultDate: '2014-11-04',
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       scrollTime: '00:00'
     }
   })
@@ -144,7 +144,7 @@ describe('event overlap', function() {
     })
 
     describe('when dragged intersecting the other event\'s end', function() {
-      describe('when in agendaWeek view with timed events', function() {
+      describe('when in week view with timed events', function() {
         describe('when no timezone', function() {
           it('does not allow dragging', function(done) {
             options.events = [
@@ -613,7 +613,7 @@ describe('selectOverlap', function() {
   beforeEach(function() {
     options = {
       defaultDate: '2014-11-12',
-      defaultView: 'agendaWeek',
+      defaultView: 'week',
       scrollTime: '00:00'
     }
   })
@@ -667,7 +667,7 @@ describe('selectOverlap', function() {
       })
     })
     describe('when dragged intersecting an event\'s end', function() {
-      describe('when in agendaWeek view with timed events', function() {
+      describe('when in week view with timed events', function() {
         describe('when no timezone', function() {
           it('does not allow selection', function(done) {
             options.events = [ {

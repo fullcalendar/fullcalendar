@@ -4,7 +4,7 @@ describe('weekViewRender', function() {
 
   pushOptions({
     now: nowStr,
-    defaultView: 'agendaWeek'
+    defaultView: 'week'
   })
 
   describe('verify th class for today', function() {

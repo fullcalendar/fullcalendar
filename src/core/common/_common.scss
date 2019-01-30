@@ -370,7 +370,7 @@ temporary rendered events).
   -webkit-overflow-scrolling: touch;
 }
 
-/* TODO: move to agenda/basic */
+/* TODO: move to timegrid/daygrid */
 .fc-scroller > .fc-day-grid,
 .fc-scroller > .fc-time-grid {
   position: relative; /* re-scope all positions */

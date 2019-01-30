@@ -184,7 +184,7 @@ describe('luxon plugin', function() {
     it('produces title with titleRangeSeparator', function() {
       initCalendar({ // need to render the calendar to get view.title :(
         plugins: PLUGINS,
-        defaultView: 'basicWeek',
+        defaultView: 'dayGridWeek',
         now: '2018-09-06',
         titleFormat: 'MMMM {d} yy \'yup\'',
         titleRangeSeparator: ' to '

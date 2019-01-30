@@ -20,7 +20,7 @@ describe('validRange rendering', function() {
 
     describe('when in week view', function() {
       pushOptions({
-        defaultView: 'agendaWeek',
+        defaultView: 'week',
         defaultDate: '2017-06-08',
         validRange: { start: '2017-06-06' }
       })
@@ -49,7 +49,7 @@ describe('validRange rendering', function() {
 
     describe('when in week view', function() {
       pushOptions({
-        defaultView: 'agendaWeek',
+        defaultView: 'week',
         defaultDate: '2017-06-08',
         validRange: { end: '2017-06-06' }
       })

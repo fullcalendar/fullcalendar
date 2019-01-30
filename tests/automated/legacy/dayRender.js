@@ -30,14 +30,14 @@ describe('dayRender', function() {
     spyOn(options, 'dayRender').and.callThrough()
     initCalendar(options)
     options.dayRender.calls.reset()
-    currentCalendar.changeView('basicWeek')
+    currentCalendar.changeView('dayGridWeek')
     expect(options.dayRender.calls.count()).toEqual(7)
   })
 
   // called if the date is navigated to a different visible range
   it('is called when view is changed', function() {
     var options = {
-      defaultView: 'basicWeek',
+      defaultView: 'dayGridWeek',
       defaultDate: '2014-05-01',
       dayRender: function(arg) { }
     }
@@ -51,7 +51,7 @@ describe('dayRender', function() {
 
   it('won\'t be called when date is navigated but remains in the current visible range', function() {
     var options = {
-      defaultView: 'basicWeek',
+      defaultView: 'dayGridWeek',
       defaultDate: '2014-05-01',
       dayRender: function(arg) { }
     }

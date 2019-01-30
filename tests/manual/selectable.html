@@ -17,41 +17,35 @@
   var calendar;
 
   $(document).ready(function() {
-    
+
     calendar = $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,basicWeek,agendaDay,basicDay'
+        right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       date: '2014-01-12',
       defaultView: 'month',
-      
+
       //firstDay: 1,
       //dir: 'rtl',
       //minTime: 7,
       //weekends: false,
       //allDaySlot: false,
       //hiddenDays: [ 2, 4 ], // tuesdays and thursdays
-      
+
       selectable: true,
-      /*
-      selectable: {
-        month: false,
-        agenda: true
-      },
-      */
-      
+
       selectMirror: true,
       /*
       selectMirror: function(start, end) {
         return $("<div style='background:red' />").text(start+' '+end);
       },
       */
-      
+
       //unselectAuto: false,
       //unselectCancel: '.fc',
-      
+
       select: function(start, end, ev) {
         console.log(
           '---- selection ----\n' +
@@ -113,8 +107,8 @@
         }
       ]
     });
-    
-    
+
+
   });
 
 </script>
