@@ -1,10 +1,10 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import BootstrapPlugin from '@fullcalendar/bootstrap'
 import DayGridPlugin from '@fullcalendar/daygrid'
 
-describe('bootstrap4 theme', function() {
+describe('bootstrap theme', function() {
   pushOptions({
     plugins: [ BootstrapPlugin, DayGridPlugin ],
-    themeSystem: 'bootstrap4'
+    themeSystem: 'bootstrap'
   })
 
   describe('fa', function() {

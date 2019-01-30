@@ -23,7 +23,7 @@ describe('destroy', function() {
   })
 
   describeOptions('themeSystem', {
-    'when bootstrap4 theme': 'bootstrap4'
+    'when bootstrap theme': 'bootstrap'
   }, function() {
     it('cleans up all classNames on the root element', function() {
       initCalendar()

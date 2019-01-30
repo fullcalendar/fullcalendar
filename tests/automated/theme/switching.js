@@ -1,4 +1,4 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import BootstrapPlugin from '@fullcalendar/bootstrap'
 import DayGridPlugin from '@fullcalendar/daygrid'
 
 describe('theme switching', function() {
@@ -6,16 +6,16 @@ describe('theme switching', function() {
     plugins: [ BootstrapPlugin, DayGridPlugin ]
   })
 
-  it('can switch from standard to bootstrap4', function() {
+  it('can switch from standard to bootstrap', function() {
     initCalendar()
     verifyStandardTheme()
-    currentCalendar.setOption('themeSystem', 'bootstrap4')
-    verifyBootstrap4Theme()
+    currentCalendar.setOption('themeSystem', 'bootstrap')
+    verifyBootstrapTheme()
   })
 
-  it('can switch from bootstrap4 to standard', function() {
-    initCalendar({ themeSystem: 'bootstrap4' })
-    verifyBootstrap4Theme()
+  it('can switch from bootstrap to standard', function() {
+    initCalendar({ themeSystem: 'bootstrap' })
+    verifyBootstrapTheme()
     currentCalendar.setOption('themeSystem', 'standard')
     verifyStandardTheme()
   })
@@ -26,8 +26,8 @@ describe('theme switching', function() {
     expect($('.fc-widget-header')).toBeInDOM()
   }
 
-  function verifyBootstrap4Theme() {
-    expect($('.fc-bootstrap4')).toBeInDOM()
+  function verifyBootstrapTheme() {
+    expect($('.fc-bootstrap')).toBeInDOM()
     expect($('.fc .table-bordered')).toBeInDOM()
   }
 

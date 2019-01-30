@@ -39,7 +39,7 @@ module.exports = function(config) {
       'dist/luxon/main.+(js|css)',
       'dist/moment/main.+(js|css)',
       'dist/moment-timezone/main.+(js|css)',
-      'dist/bootstrap4/main.+(js|css)',
+      'dist/bootstrap/main.+(js|css)',
       { pattern: 'dist/*/*.map', included: false, nocache: true, watched: false },
 
       // a way to dump variables into the test environment

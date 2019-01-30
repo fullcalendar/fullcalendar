@@ -90,11 +90,11 @@ function initThemeChooser(settings) {
 
 
   function generateStylesheetUrl(themeSystem, themeName) {
-    if (themeSystem === 'bootstrap4') {
+    if (themeSystem === 'bootstrap') {
       if (themeName) {
         return 'https://bootswatch.com/4/' + themeName + '/bootstrap.min.css';
       }
-      else { // the default bootstrap4 theme
+      else { // the default bootstrap theme
         return 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css';
       }
     }

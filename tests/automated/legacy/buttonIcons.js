@@ -1,4 +1,4 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import BootstrapPlugin from '@fullcalendar/bootstrap'
 import DayGridPlugin from '@fullcalendar/daygrid'
 
 describe('buttonIcons', function() {
@@ -56,7 +56,7 @@ describe('buttonIcons', function() {
   describe('when theme is set', function() {
 
     pushOptions({
-      themeSystem: 'bootstrap4'
+      themeSystem: 'bootstrap'
     })
 
     it('buttonIcons is ignored', function() {

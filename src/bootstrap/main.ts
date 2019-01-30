@@ -1,10 +1,10 @@
 import { Theme, createPlugin } from '@fullcalendar/core'
 
-export class Bootstrap4Theme extends Theme {
+export class BootstrapTheme extends Theme {
 }
 
-Bootstrap4Theme.prototype.classes = {
-  widget: 'fc-bootstrap4',
+BootstrapTheme.prototype.classes = {
+  widget: 'fc-bootstrap',
 
   tableGrid: 'table-bordered', // avoid `table` class b/c don't want margins. only border color
   tableList: 'table', // `table` class creates bottom margin but who cares
@@ -31,8 +31,8 @@ Bootstrap4Theme.prototype.classes = {
   listView: 'card card-primary'
 }
 
-Bootstrap4Theme.prototype.baseIconClass = 'fa'
-Bootstrap4Theme.prototype.iconClasses = {
+BootstrapTheme.prototype.baseIconClass = 'fa'
+BootstrapTheme.prototype.iconClasses = {
   close: 'fa-times',
   prev: 'fa-chevron-left',
   next: 'fa-chevron-right',
@@ -40,12 +40,12 @@ Bootstrap4Theme.prototype.iconClasses = {
   nextYear: 'fa-angle-double-right'
 }
 
-Bootstrap4Theme.prototype.iconOverrideOption = 'bootstrapFontAwesome'
-Bootstrap4Theme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
-Bootstrap4Theme.prototype.iconOverridePrefix = 'fa-'
+BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome'
+BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
+BootstrapTheme.prototype.iconOverridePrefix = 'fa-'
 
 export default createPlugin({
   themeClasses: {
-    bootstrap4: Bootstrap4Theme
+    bootstrap: BootstrapTheme
   }
 })

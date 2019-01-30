@@ -26,7 +26,7 @@
       "@fullcalendar/luxon": [ "src/luxon/main" ],
       "@fullcalendar/moment": [ "src/moment/main" ],
       "@fullcalendar/moment-timezone": [ "src/moment-timezone/main" ],
-      "@fullcalendar/bootstrap4": [ "src/bootstrap4/main" ]
+      "@fullcalendar/bootstrap": [ "src/bootstrap/main" ]
     },
     "types": [
       "luxon",

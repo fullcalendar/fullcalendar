@@ -1,4 +1,4 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import BootstrapPlugin from '@fullcalendar/bootstrap'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 
 describe('themeSystem', function() {
@@ -12,7 +12,7 @@ describe('themeSystem', function() {
     initCalendar()
 
     expect($('.fc')).toHaveClass('fc-unthemed')
-    expect($('.fc')).not.toHaveClass('fc-bootstrap4')
+    expect($('.fc')).not.toHaveClass('fc-bootstrap')
     expect($('.fc-toolbar button .fc-icon').length).toBeGreaterThan(0)
     expect($('.fc-toolbar button .fa').length).toBe(0) // FontAwesome icon
     expect($('.table-bordered').length).toBe(0)
@@ -21,9 +21,9 @@ describe('themeSystem', function() {
     var scrollTop = $('.fc-scroller').scrollTop()
 
     // change option!
-    currentCalendar.setOption('themeSystem', 'bootstrap4')
+    currentCalendar.setOption('themeSystem', 'bootstrap')
 
-    expect($('.fc')).toHaveClass('fc-bootstrap4')
+    expect($('.fc')).toHaveClass('fc-bootstrap')
     expect($('.fc')).not.toHaveClass('fc-unthemed')
     expect($('.fc-toolbar button .fc-icon').length).toBe(0)
     expect($('.fc-toolbar button .fa').length).toBeGreaterThan(0) // FontAwesome icon
@@ -40,16 +40,16 @@ describe('themeSystem', function() {
     initCalendar()
 
     expect($('.fc')).toHaveClass('fc-unthemed')
-    expect($('.fc')).not.toHaveClass('fc-bootstrap4')
+    expect($('.fc')).not.toHaveClass('fc-bootstrap')
     expect($('.fc-nonbusiness').length).toBe(0)
 
     // change option!
     currentCalendar.batchRendering(function() {
-      currentCalendar.setOption('themeSystem', 'bootstrap4')
+      currentCalendar.setOption('themeSystem', 'bootstrap')
       currentCalendar.setOption('businessHours', true)
     })
 
-    expect($('.fc')).toHaveClass('fc-bootstrap4')
+    expect($('.fc')).toHaveClass('fc-bootstrap')
     expect($('.fc')).not.toHaveClass('fc-unthemed')
     expect($('.fc-nonbusiness').length).toBeGreaterThan(0)
   })

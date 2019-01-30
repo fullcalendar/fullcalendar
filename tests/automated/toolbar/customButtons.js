@@ -1,4 +1,4 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap4'
+import BootstrapPlugin from '@fullcalendar/bootstrap'
 import DayGridPlugin from '@fullcalendar/daygrid'
 
 describe('customButtons', function() {
@@ -28,9 +28,9 @@ describe('customButtons', function() {
     expect($('.fc-mybutton-button .fc-icon')).toHaveClass('fc-icon-asdf')
   })
 
-  it('can specify a bootstrap4 font-awesome icon', function() {
+  it('can specify a bootstrap font-awesome icon', function() {
     initCalendar({
-      themeSystem: 'bootstrap4',
+      themeSystem: 'bootstrap',
       customButtons: {
         mybutton: { bootstrapFontAwesome: 'asdf' }
       },
