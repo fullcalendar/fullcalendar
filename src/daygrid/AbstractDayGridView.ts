@@ -14,7 +14,7 @@ import {
   ViewSpec,
   DateProfileGenerator
 } from '@fullcalendar/core'
-import BasicViewDateProfileGenerator from './BasicViewDateProfileGenerator'
+import DayGridDateProfileGenerator from './DayGridDateProfileGenerator'
 import DayGrid from './DayGrid'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -25,7 +25,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-export default abstract class BasicView extends View {
+export default abstract class DayGridView extends View {
 
   scroller: ScrollComponent
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
@@ -330,4 +330,4 @@ export default abstract class BasicView extends View {
 
 }
 
-BasicView.prototype.dateProfileGeneratorClass = BasicViewDateProfileGenerator
+DayGridView.prototype.dateProfileGeneratorClass = DayGridDateProfileGenerator

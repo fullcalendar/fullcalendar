@@ -1,17 +1,17 @@
 import { createPlugin } from '@fullcalendar/core'
-import AbstractAgendaView from './AbstractAgendaView'
-import AgendaView, { buildDayTable } from './AgendaView'
+import AbstractTimeGridView from './AbstractTimeGridView'
+import TimeGridView, { buildDayTable } from './TimeGridView'
 import { TimeGridSeg } from './TimeGrid'
 import { TimeGridSlicer, buildDayRanges } from './SimpleTimeGrid'
 
-export { AgendaView, AbstractAgendaView, buildDayTable, buildDayRanges, TimeGridSlicer, TimeGridSeg }
+export { TimeGridView, AbstractTimeGridView, buildDayTable, buildDayRanges, TimeGridSlicer, TimeGridSeg }
 export { default as TimeGrid } from './TimeGrid'
 
 export default createPlugin({
   viewConfigs: {
 
     timeGrid: {
-      class: AgendaView,
+      class: TimeGridView,
       allDaySlot: true,
       slotDuration: '00:30:00',
       slotEventOverlap: true // a bad name. confused with overlap/constraint system

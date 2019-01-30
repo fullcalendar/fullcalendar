@@ -20,7 +20,7 @@ const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-export default abstract class AgendaView extends View {
+export default abstract class TimeGridView extends View {
 
   timeGrid: TimeGrid // the main time-grid subcomponent of this view
   dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -356,4 +356,4 @@ export default abstract class AgendaView extends View {
 
 }
 
-AgendaView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering
+TimeGridView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering

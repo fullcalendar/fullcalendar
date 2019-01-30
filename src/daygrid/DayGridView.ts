@@ -9,10 +9,10 @@ import {
   DaySeries,
   DayTable
 } from '@fullcalendar/core'
-import AbstractBasicView from './AbstractBasicView'
+import AbstractDayGridView from './AbstractDayGridView'
 import SimpleDayGrid from './SimpleDayGrid'
 
-export default class BasicView extends AbstractBasicView {
+export default class DayGridView extends AbstractDayGridView {
 
   header: DayHeader
   simpleDayGrid: SimpleDayGrid

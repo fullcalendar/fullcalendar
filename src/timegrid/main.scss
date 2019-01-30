@@ -1,5 +1,5 @@
 
-/* AgendaView all-day area
+/* TimeGridView all-day area
 --------------------------------------------------------------------------------------------------*/
 
 .fc-timeGrid-view .fc-day-grid {
@@ -56,7 +56,7 @@
 }
 
 .fc-time-grid .fc-slats,
-.fc-time-grid > hr { /* the <hr> AgendaView injects when grid is shorter than scroller */
+.fc-time-grid > hr { /* the <hr> TimeGridView injects when grid is shorter than scroller */
   position: relative;
   z-index: 2;
 }

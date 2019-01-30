@@ -10,10 +10,10 @@ import {
 } from '@fullcalendar/core'
 import { SimpleDayGrid } from '@fullcalendar/daygrid'
 import SimpleTimeGrid from './SimpleTimeGrid'
-import AbstractAgendaView from './AbstractAgendaView'
+import AbstractTimeGridView from './AbstractTimeGridView'
 
 
-export default class AgendaView extends AbstractAgendaView {
+export default class TimeGridView extends AbstractTimeGridView {
 
   header: DayHeader
   simpleDayGrid: SimpleDayGrid

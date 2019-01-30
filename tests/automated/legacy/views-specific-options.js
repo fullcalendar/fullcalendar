@@ -1,5 +1,5 @@
 import { createPlugin } from '@fullcalendar/core'
-import DayGridPlugin, { BasicView } from '@fullcalendar/daygrid'
+import DayGridPlugin, { DayGridView } from '@fullcalendar/daygrid'
 
 describe('view-specific options', function() {
 
@@ -125,7 +125,7 @@ describe('view-specific options', function() {
 
   it('can implicitly target a View subclass', function() {
 
-    class SuperBasicView extends BasicView {
+    class SuperDayGridView extends DayGridView {
     }
 
     initCalendar({
@@ -133,7 +133,7 @@ describe('view-specific options', function() {
         DayGridPlugin,
         createPlugin({
           viewConfigs: {
-            superBasic: SuperBasicView
+            superBasic: SuperDayGridView
           }
         })
       ],
@@ -153,15 +153,15 @@ describe('view-specific options', function() {
 
   it('can implicitly target an old-school View subclass', function() {
 
-    function SuperBasicView() { BasicView.apply(this, arguments) }
-    SuperBasicView.prototype = Object.create(BasicView.prototype)
+    function SuperDayGridView() { DayGridView.apply(this, arguments) }
+    SuperDayGridView.prototype = Object.create(DayGridView.prototype)
 
     initCalendar({
       plugins: [
         DayGridPlugin,
         createPlugin({
           viewConfigs: {
-            superBasic: SuperBasicView
+            superBasic: SuperDayGridView
           }
         })
       ],
