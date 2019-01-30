@@ -54,7 +54,6 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
   let duration = null
   let durationUnit = ''
   let singleUnit = ''
-  let singleUnitOverrides = {}
 
   if (durationInput) {
     duration = createDuration(durationInput)
@@ -69,7 +68,6 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
 
       if (denom.value === 1) {
         singleUnit = durationUnit
-        singleUnitOverrides = overrideConfigs[durationUnit] ? overrideConfigs[durationUnit].options : {}
       }
     }
   }
@@ -104,7 +102,6 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
       ...optionsManager.dirDefaults,
       ...optionsManager.localeDefaults,
       ...optionsManager.overrides,
-      ...singleUnitOverrides,
       ...viewDef.overrides,
       ...optionsManager.dynamicOverrides
     },

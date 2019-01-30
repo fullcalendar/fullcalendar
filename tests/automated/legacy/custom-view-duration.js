@@ -84,22 +84,6 @@ describe('custom view', function() {
     expect($('h2')).toHaveText('dayGridfourweekttitle')
   })
 
-  it('will inherit options from generic "week" type', function() {
-    var options = {
-      views: {}
-    }
-    options.views.week = {
-      titleFormat: function() { return 'weektitle' }
-    }
-    options.views.dayGridOneWeek = {
-      type: 'dayGrid',
-      duration: { weeks: 1 }
-    }
-    options.defaultView = 'dayGridOneWeek'
-    initCalendar(options)
-    expect($('h2')).toHaveText('weektitle')
-  })
-
   it('generic type options for "dayGrid" will override generic "week" options', function() {
     var options = {
       views: {}
