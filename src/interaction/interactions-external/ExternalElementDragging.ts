@@ -4,7 +4,7 @@ import {
   PointerDragEvent,
   parseEventDef, createEventInstance, EventTuple,
   createEmptyEventStore, eventTupleToStore,
-  globalHooks,
+  config,
   DateSpan, DatePointApi,
   Calendar,
   EventInteractionState,
@@ -249,10 +249,10 @@ function getDragMetaFromEl(el: HTMLElement): DragMeta {
   return parseDragMeta(obj)
 }
 
-globalHooks.dataAttrPrefix = ''
+config.dataAttrPrefix = ''
 
 function getEmbeddedElData(el: HTMLElement, name: string): string {
-  let prefix = globalHooks.dataAttrPrefix
+  let prefix = config.dataAttrPrefix
   let prefixedName = (prefix ? prefix + '-' : '') + name
 
   return el.getAttribute('data-' + prefixedName) || ''

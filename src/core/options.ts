@@ -5,7 +5,7 @@ import FuncEventSourcePlugin from './event-sources/func-event-source'
 import JsonFeedEventSourcePlugin from './event-sources/json-feed-event-source'
 import SimpleRecurrencePlugin from './structs/recurring-event-simple'
 
-export const globalHooks = {} as any // TODO: make these options
+export const config = {} as any // TODO: make these options
 
 export const globalDefaults = {
 
@@ -138,7 +138,7 @@ export function getDefaultPlugins(): PluginDef[] {
 }
 
 function getBrowserGlobalPlugins(): PluginDef[] {
-  let globalPluginHash = !globalHooks.disableGlobalPlugins && window['FullCalendarPlugins']
+  let globalPluginHash = !config.disableGlobalPlugins && window['FullCalendarPlugins']
   let plugins = []
 
   if (globalPluginHash) {

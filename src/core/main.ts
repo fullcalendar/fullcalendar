@@ -143,7 +143,7 @@ export { EventResizeJoinTransforms } from './interactions/event-resizing'
 
 export { formatDate, formatRange } from './formatting-api'
 
-export { globalDefaults, globalHooks } from './options'
+export { globalDefaults, config } from './options'
 
 export { RecurringType, ParsedRecurring } from './structs/recurring-event'
 

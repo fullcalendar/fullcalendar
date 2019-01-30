@@ -1,6 +1,6 @@
-import { globalHooks, elementClosest, EmitterMixin, PointerDragEvent } from '@fullcalendar/core'
+import { config, elementClosest, EmitterMixin, PointerDragEvent } from '@fullcalendar/core'
 
-globalHooks.touchMouseIgnoreWait = 500
+config.touchMouseIgnoreWait = 500
 
 let ignoreMouseDepth = 0
 let listenerCnt = 0
@@ -294,7 +294,7 @@ function startIgnoringMouse() { // can be made non-class function
 
   setTimeout(() => {
     ignoreMouseDepth--
-  }, globalHooks.touchMouseIgnoreWait)
+  }, config.touchMouseIgnoreWait)
 }
 
 
