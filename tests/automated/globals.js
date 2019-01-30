@@ -6,6 +6,7 @@ import InteractionPlugin from '@fullcalendar/interaction'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import ListPlugin from '@fullcalendar/list'
+import { __assign } from 'tslib'
 
 
 // Setup / Teardown
@@ -231,7 +232,7 @@ function spyCall(func) {
 }
 
 
-Object.assign(window, {
+__assign(window, {
   pushOptions,
   spyOnCalendarCallback,
   initCalendar,
