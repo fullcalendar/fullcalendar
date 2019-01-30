@@ -19,7 +19,7 @@ export const globalDefaults = {
 
   // display
   columnHeader: true,
-  defaultView: 'month',
+  defaultView: '',
   aspectRatio: 1.35,
   header: {
     left: 'title',
@@ -142,7 +142,13 @@ function getBrowserGlobalPlugins(): PluginDef[] {
   let plugins = []
 
   if (globalPluginHash) {
-    for (let pluginId in globalPluginHash) {
+
+    // create predictable order of plugin loading
+    // useful because we want daygrid's defaultView to go before other plugins.
+    let pluginIds = Object.keys(globalPluginHash)
+    pluginIds.sort()
+
+    for (let pluginId of pluginIds) {
       plugins.push(globalPluginHash[pluginId].default)
     }
   }

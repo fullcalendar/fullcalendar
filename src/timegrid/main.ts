@@ -8,6 +8,7 @@ export { TimeGridView, AbstractTimeGridView, buildDayTable, buildDayRanges, Time
 export { default as TimeGrid } from './TimeGrid'
 
 export default createPlugin({
+  defaultView: 'week',
   viewConfigs: {
 
     timeGrid: {

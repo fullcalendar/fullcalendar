@@ -45,6 +45,7 @@ export interface PluginDefInput {
   cmdFormatter?: CmdFormatterFunc
   recurringTypes?: RecurringType[]
   namedTimeZonedImpl?: NamedTimeZoneImplClass
+  defaultView?: string
 }
 
 export interface PluginHooks {
@@ -70,6 +71,7 @@ export interface PluginHooks {
   cmdFormatter?: CmdFormatterFunc
   recurringTypes: RecurringType[]
   namedTimeZonedImpl?: NamedTimeZoneImplClass
+  defaultView: string
 }
 
 export interface PluginDef extends PluginHooks {
@@ -113,7 +115,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     eventSourceDefs: input.eventSourceDefs || [],
     cmdFormatter: input.cmdFormatter,
     recurringTypes: input.recurringTypes || [],
-    namedTimeZonedImpl: input.namedTimeZonedImpl
+    namedTimeZonedImpl: input.namedTimeZonedImpl,
+    defaultView: input.defaultView || ''
   }
 }
 
@@ -145,7 +148,8 @@ export class PluginSystem {
       eventSourceDefs: [],
       cmdFormatter: null,
       recurringTypes: [],
-      namedTimeZonedImpl: null
+      namedTimeZonedImpl: null,
+      defaultView: ''
     }
     this.addedHash = {}
   }
@@ -187,6 +191,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     eventSourceDefs: hooks0.eventSourceDefs.concat(hooks1.eventSourceDefs),
     cmdFormatter: hooks1.cmdFormatter || hooks0.cmdFormatter,
     recurringTypes: hooks0.recurringTypes.concat(hooks1.recurringTypes),
-    namedTimeZonedImpl: hooks1.namedTimeZonedImpl || hooks0.namedTimeZonedImpl
+    namedTimeZonedImpl: hooks1.namedTimeZonedImpl || hooks0.namedTimeZonedImpl,
+    defaultView: hooks0.defaultView || hooks1.defaultView // put earlier plugins FIRST
   }
 }

@@ -248,7 +248,7 @@ export default class Calendar {
       this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
       this.dispatch({
         type: 'SET_VIEW_TYPE',
-        viewType: this.opt('defaultView')
+        viewType: this.opt('defaultView') || this.pluginSystem.hooks.defaultView
       })
     })
   }

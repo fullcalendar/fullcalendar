@@ -8,6 +8,7 @@ export { default as DayGridView, buildDayTable as buildBasicDayTable } from './D
 export { default as DayBgRow } from './DayBgRow'
 
 export default createPlugin({
+  defaultView: 'month',
   viewConfigs: {
 
     dayGrid: DayGridView,
