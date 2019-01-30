@@ -1,4 +1,4 @@
-import { getDayGridSlotElsCount } from './../lib/AgendaViewUtils'
+import { getDayGridSlotElsCount } from './../lib/TimeGridViewUtils'
 
 describe('allDaySlots', function() {
 
