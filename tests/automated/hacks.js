@@ -7,7 +7,7 @@ beforeEach(function() {
   // The simulates touch events do not fire these mouse events anyway.
   config.touchMouseIgnoreWait = 0
 
-  config.disableGlobalPlugins = true
+  config.ignoreGlobals = true
 
   // increase the default timeout
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000

@@ -1,5 +1,6 @@
 import { mergeProps } from '../util/object'
 import { __assign } from 'tslib'
+import { config } from '../options'
 
 export type LocaleCodeArg = string | string[]
 export type LocaleSingularArg = LocaleCodeArg | RawLocale
@@ -51,8 +52,10 @@ const RAW_EN_LOCALE = {
 }
 
 export function parseRawLocales(inputPlural: LocalePluralArg): RawLocaleInfo {
-  let inputArray: (string | RawLocale)[] = inputPlural.concat(window['FullCalendarLocalesAll'] || [])
-  let globalMap = window['FullCalendarLocales'] || {}
+  let globalArray = (!config.ignoreGlobals && window['FullCalendarLocalesAll']) || []
+  let globalMap = (!config.ignoreGlobals && window['FullCalendarLocales']) || {}
+
+  let inputArray: (string | RawLocale)[] = inputPlural.concat(globalArray)
   let rawLocaleArray: RawLocale[] = []
 
   for (let inputItem of inputArray) {

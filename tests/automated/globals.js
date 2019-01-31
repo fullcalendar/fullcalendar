@@ -259,5 +259,9 @@ const DEFAULT_PLUGINS = [
 
 pushOptions({
   timeZone: 'UTC',
-  plugins: DEFAULT_PLUGINS
+  plugins: DEFAULT_PLUGINS,
+
+  // hack to simulate `import localesAll from @fullcalendar/core/locales-all`
+  // but sortof defeats the point
+  locales: window['FullCalendarLocalesAll']
 })
