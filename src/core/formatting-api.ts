@@ -1,6 +1,6 @@
 import { DateEnv, DateInput } from './datelib/env'
 import { createFormatter } from './datelib/formatting'
-import { getLocale } from './datelib/locale'
+import { parseRawLocales, buildLocale } from './datelib/locale'
 import { globalDefaults } from './options'
 
 export function formatDate(dateInput: DateInput, settings = {}) {
@@ -38,15 +38,17 @@ export function formatRange(
   })
 }
 
+// TODO: more DRY and optimized
 function buildDateEnv(settings) {
-  let locale = settings.locale || globalDefaults.locale
+  let singleLocaleInput = settings.locale || globalDefaults.locale
+  let locale = buildLocale(singleLocaleInput, parseRawLocales([]).map)
 
   // ensure required settings
   settings = {
     timeZone: globalDefaults.timeZone,
     calendarSystem: 'gregory',
     ...settings,
-    locale: getLocale(locale)
+    locale
   }
 
   return new DateEnv(settings)

@@ -1,8 +1,9 @@
 import { formatPrettyTimeZoneOffset, formatIsoTimeZoneOffset, formatIsoWithoutTz } from './utils'
 import { getDSTDeadZone } from './dst-dead-zone'
-import { DateEnv, createFormatter, createDuration, getLocale, startOfDay, diffWholeWeeks, diffWholeDays, diffDayAndTime } from '@fullcalendar/core'
+import { DateEnv, createFormatter, createDuration, startOfDay, diffWholeWeeks, diffWholeDays, diffDayAndTime, Calendar } from '@fullcalendar/core'
 
 describe('datelib', function() {
+  const enLocale = new Calendar(document.createElement('div'), {}).dateEnv.locale // HACK
 
   describe('computeWeekNumber', function() {
 
@@ -10,7 +11,7 @@ describe('datelib', function() {
       var env = new DateEnv({
         timeZone: 'UTC',
         calendarSystem: 'gregory',
-        locale: getLocale('en')
+        locale: enLocale
       })
       var m1 = env.createMarker('2018-04-07')
       var m2 = env.createMarker('2018-04-08')
@@ -22,7 +23,7 @@ describe('datelib', function() {
       var env = new DateEnv({
         timeZone: 'UTC',
         calendarSystem: 'gregory',
-        locale: getLocale('en'),
+        locale: enLocale,
         weekNumberCalculation: 'ISO'
       })
       var m1 = env.createMarker('2018-04-01')
@@ -35,7 +36,7 @@ describe('datelib', function() {
       var env = new DateEnv({
         timeZone: 'UTC',
         calendarSystem: 'gregory',
-        locale: getLocale('en'),
+        locale: enLocale,
         weekNumberCalculation: function(date) {
           expect(date instanceof Date).toBe(true)
           expect(date.valueOf()).toBe(Date.UTC(2018, 3, 1))
@@ -52,7 +53,7 @@ describe('datelib', function() {
     var env = new DateEnv({
       timeZone: 'UTC',
       calendarSystem: 'gregory',
-      locale: getLocale('en'),
+      locale: enLocale,
       firstDay: 2 // tues
     })
     var m = env.createMarker('2018-04-19')
@@ -71,7 +72,7 @@ describe('datelib', function() {
       env = new DateEnv({
         timeZone: 'UTC',
         calendarSystem: 'gregory',
-        locale: getLocale('en')
+        locale: enLocale
       })
     })
 
@@ -499,7 +500,7 @@ describe('datelib', function() {
       env = new DateEnv({
         timeZone: 'local',
         calendarSystem: 'gregory',
-        locale: getLocale('en')
+        locale: enLocale
       })
     })
 
@@ -605,7 +606,7 @@ describe('datelib', function() {
       env = new DateEnv({
         timeZone: 'America/Chicago',
         calendarSystem: 'gregory',
-        locale: getLocale('en')
+        locale: enLocale
       })
     })
 

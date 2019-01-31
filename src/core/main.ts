@@ -122,7 +122,7 @@ export {
   wholeDivideDurations, greatestDurationDenominator
 } from './datelib/duration'
 export { DateEnv, DateMarkerMeta } from './datelib/env'
-export { defineLocale, getLocale, getLocaleCodes } from './datelib/locale'
+
 export {
   DateFormatter,
   createFormatter,

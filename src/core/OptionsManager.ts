@@ -1,6 +1,6 @@
 import { firstDefined } from './util/misc'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
-import { getLocale } from './datelib/locale'
+import { parseRawLocales, buildLocale } from './datelib/locale'
 
 
 export default class OptionsManager {
@@ -28,26 +28,28 @@ export default class OptionsManager {
   // Computes the flattened options hash for the calendar and assigns to `this.options`.
   // Assumes this.overrides and this.dynamicOverrides have already been initialized.
   compute() {
-    let locale
-    let localeDefaults
-    let dir
-    let dirDefaults
 
-    locale = firstDefined( // explicit locale option given?
+    // TODO: not a very efficient system
+    let locales = firstDefined( // explicit locale option given?
+      this.dynamicOverrides.locales,
+      this.overrides.locales,
+      globalDefaults.locales
+    )
+    let locale = firstDefined( // explicit locales option given?
       this.dynamicOverrides.locale,
       this.overrides.locale,
       globalDefaults.locale
     )
+    let available = parseRawLocales(locales)
+    let localeDefaults = buildLocale(locale || available.defaultCode, available.map).options
 
-    localeDefaults = getLocale(locale).options // TODO: not efficient bc calendar already queries this
-
-    dir = firstDefined( // based on options computed so far, is direction RTL?
+    let dir = firstDefined( // based on options computed so far, is direction RTL?
       this.dynamicOverrides.dir,
       this.overrides.dir,
       localeDefaults.dir
     )
 
-    dirDefaults = dir === 'rtl' ? rtlDefaults : {}
+    let dirDefaults = dir === 'rtl' ? rtlDefaults : {}
 
     this.dirDefaults = dirDefaults
     this.localeDefaults = localeDefaults

@@ -50,6 +50,7 @@ export const globalDefaults = {
   // allDayDefault: undefined,
 
   // locale
+  locales: [],
   locale: 'en',
   // dir: will get this from the default locale
   // buttonIcons: null,

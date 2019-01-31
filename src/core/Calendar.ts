@@ -5,7 +5,7 @@ import OptionsManager from './OptionsManager'
 import View from './View'
 import Theme from './theme/Theme'
 import { OptionsInput } from './types/input-types'
-import { getLocale } from './datelib/locale'
+import { Locale, buildLocale, parseRawLocales, RawLocaleMap } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
@@ -68,6 +68,8 @@ export default class Calendar {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
+  private parseRawLocales = memoize(parseRawLocales)
+  private buildLocale = memoize(buildLocale)
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
   private buildEventUiSingleBase = memoize(this._buildEventUiSingleBase)
@@ -83,6 +85,7 @@ export default class Calendar {
   dateProfileGenerators: { [viewName: string]: DateProfileGenerator }
   theme: Theme
   dateEnv: DateEnv
+  availableRawLocales: RawLocaleMap
   pluginSystem: PluginSystem
   defaultAllDayEventDuration: Duration
   defaultTimedEventDuration: Duration
@@ -537,8 +540,12 @@ export default class Calendar {
     this.delayedRerender = this.buildDelayedRerender(options.rerenderDelay)
     this.theme = this.buildTheme(options)
 
+    let available = this.parseRawLocales(options.locales)
+    this.availableRawLocales = available.map
+    let locale = this.buildLocale(options.locale || available.defaultCode, available.map)
+
     this.dateEnv = this.buildDateEnv(
-      options.locale,
+      locale,
       options.timeZone,
       pluginHooks.namedTimeZonedImpl,
       options.firstDay,
@@ -560,6 +567,11 @@ export default class Calendar {
     this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
       return new viewSpec.class.prototype.dateProfileGeneratorClass(viewSpec, this)
     })
+  }
+
+
+  getAvailableLocaleCodes() {
+    return Object.keys(this.availableRawLocales)
   }
 
 
@@ -1186,12 +1198,12 @@ EmitterMixin.mixInto(Calendar)
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function buildDateEnv(locale, timeZone, namedTimeZoneImpl: NamedTimeZoneImplClass, firstDay, weekNumberCalculation, weekLabel, cmdFormatter: CmdFormatterFunc) {
+function buildDateEnv(locale: Locale, timeZone, namedTimeZoneImpl: NamedTimeZoneImplClass, firstDay, weekNumberCalculation, weekLabel, cmdFormatter: CmdFormatterFunc) {
   return new DateEnv({
     calendarSystem: 'gregory', // TODO: make this a setting
     timeZone,
     namedTimeZoneImpl,
-    locale: getLocale(locale),
+    locale,
     weekNumberCalculation,
     firstDay,
     weekLabel,

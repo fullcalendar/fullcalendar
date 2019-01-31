@@ -93,7 +93,7 @@
     calendar.render();
 
     // build the locale selector's options
-    FullCalendar.getLocaleCodes().forEach(function(localeCode) {
+    calendar.getAvailableLocaleCodes().forEach(function(localeCode) {
       var optionEl = document.createElement('option');
       optionEl.value = localeCode;
       optionEl.selected = localeCode == initialLocaleCode;
