@@ -271,29 +271,6 @@ export function flexibleCompare(a, b) {
 }
 
 
-/* Logging and Debug
-----------------------------------------------------------------------------------------------------------------------*/
-
-
-export function log(...args) {
-  let console = window.console
-
-  if (console && console.log) {
-    return console.log.apply(console, args)
-  }
-}
-
-export function warn(...args) {
-  let console = window.console
-
-  if (console && console.warn) {
-    return console.warn.apply(console, args)
-  } else {
-    return log.apply(null, args)
-  }
-}
-
-
 /* String Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 

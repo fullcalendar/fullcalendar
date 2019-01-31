@@ -1,6 +1,5 @@
 import { mergeProps } from '../util/object'
 import { __assign } from 'tslib'
-import { warn } from '../util/misc'
 
 export type LocaleCodeArg = string | string[]
 export type LocaleSingularArg = LocaleCodeArg | RawLocale
@@ -61,7 +60,7 @@ export function parseRawLocales(inputPlural: LocalePluralArg): RawLocaleInfo {
       if (globalMap[inputItem]) {
         rawLocaleArray.push(globalMap[inputItem])
       } else {
-        warn('You must have ' + inputItem + '.js loaded to use the "' + inputItem + '" locale')
+        console.warn('You must have ' + inputItem + '.js loaded to use the "' + inputItem + '" locale')
       }
     } else {
       rawLocaleArray.push(inputItem)

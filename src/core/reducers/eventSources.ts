@@ -2,7 +2,6 @@ import { EventSource, EventSourceHash, doesSourceNeedRange } from '../structs/ev
 import Calendar from '../Calendar'
 import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
-import { warn } from '../util/misc'
 import { DateProfile } from '../DateProfileGenerator'
 import { Action } from './types'
 
@@ -157,7 +156,7 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: 
     function(error) {
       let callFailure = calendar.opt('eventSourceFailure')
 
-      warn(error.message, error)
+      console.warn(error.message, error)
 
       if (eventSource.failure) {
         eventSource.failure(error)

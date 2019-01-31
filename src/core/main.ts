@@ -22,8 +22,6 @@ export {
   compareByFieldSpecs,
   compareByFieldSpec,
   flexibleCompare,
-  log,
-  warn,
   computeVisibleDayRange,
   refineProps,
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
