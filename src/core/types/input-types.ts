@@ -212,5 +212,5 @@ export interface ViewOptionsInput extends OptionsInputBase {
 export interface OptionsInput extends OptionsInputBase {
   buttonText?: ButtonTextCompoundInput
   views?: { [viewId: string]: ViewOptionsInput }
-  plugins?: PluginDef[]
+  plugins?: (PluginDef | string)[]
 }
