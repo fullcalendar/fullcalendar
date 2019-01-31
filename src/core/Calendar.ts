@@ -118,10 +118,10 @@ export default class Calendar {
   component: CalendarComponent
 
 
-  constructor(el: HTMLElement, overrides: OptionsInput) {
+  constructor(el: HTMLElement, overrides?: OptionsInput) {
     this.el = el
 
-    this.optionsManager = new OptionsManager(overrides)
+    this.optionsManager = new OptionsManager(overrides || {})
     this.pluginSystem = new PluginSystem()
 
     // only do once. don't do in handleOptions. because can't remove plugins
