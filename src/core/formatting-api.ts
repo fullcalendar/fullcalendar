@@ -40,8 +40,7 @@ export function formatRange(
 
 // TODO: more DRY and optimized
 function buildDateEnv(settings) {
-  let singleLocaleInput = settings.locale || globalDefaults.locale
-  let locale = buildLocale(singleLocaleInput, parseRawLocales([]).map)
+  let locale = buildLocale(settings.locale, parseRawLocales([]).map)
 
   // ensure required settings
   settings = {

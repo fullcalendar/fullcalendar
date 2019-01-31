@@ -51,7 +51,7 @@ export const globalDefaults = {
 
   // locale
   locales: [],
-  locale: 'en',
+  locale: '', // blank values means it will compute based off locales[]
   // dir: will get this from the default locale
   // buttonIcons: null,
 
