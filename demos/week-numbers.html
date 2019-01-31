@@ -17,6 +17,7 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ 'interaction', 'daygrid', 'timegrid', 'list' ],
       header: {
         left: 'prev,next today',
         center: 'title',

@@ -17,6 +17,8 @@
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
 
+      plugins: [ 'interaction', 'daygrid', 'list', 'google-calendar' ],
+
       header: {
         left: 'prev,next today',
         center: 'title',

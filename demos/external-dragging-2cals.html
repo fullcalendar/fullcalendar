@@ -14,6 +14,7 @@
     var destCalendarEl = document.getElementById('destination-calendar');
 
     var srcCalendar = new FullCalendar.Calendar(srcCalendarEl, {
+      plugins: [ 'interaction', 'daygrid' ],
       editable: true,
       defaultDate: '2019-01-12',
       events: [
@@ -34,6 +35,7 @@
     });
 
     var destCalendar = new FullCalendar.Calendar(destCalendarEl, {
+      plugins: [ 'interaction', 'daygrid' ],
       defaultDate: '2019-01-12',
       editable: true,
       droppable: true, // will let it receive events!

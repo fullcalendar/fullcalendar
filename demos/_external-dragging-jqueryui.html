@@ -46,6 +46,7 @@
 
     var calendarEl = document.getElementById('calendar');
     var calendar = new Calendar(calendarEl, {
+      plugins: [ 'interaction', 'daygrid', 'timegrid' ],
       header: {
         left: 'prev,next today',
         center: 'title',

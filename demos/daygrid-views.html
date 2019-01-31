@@ -13,6 +13,7 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ 'interaction', 'daygrid' ],
       header: {
         left: 'prev,next today',
         center: 'title',
