@@ -127,6 +127,9 @@ export function mergeOptions(optionObjs) {
 }
 
 
+
+// TODO: move this stuff to a "plugin"-related file...
+
 const INTERNAL_PLUGINS: PluginDef[] = [
   ArrayEventSourcePlugin,
   FuncEventSourcePlugin,
@@ -134,25 +137,21 @@ const INTERNAL_PLUGINS: PluginDef[] = [
   SimpleRecurrencePlugin
 ]
 
-export function getDefaultPlugins(): PluginDef[] {
-  return INTERNAL_PLUGINS.concat(getBrowserGlobalPlugins())
-}
-
-function getBrowserGlobalPlugins(): PluginDef[] {
-  let globalPluginHash = !config.disableGlobalPlugins && window['FullCalendarPlugins']
+export function refinePluginDefs(pluginInputs: any[]): PluginDef[] {
+  let globalHash = window['FullCalendarPlugins'] || {}
   let plugins = []
 
-  if (globalPluginHash) {
-
-    // create predictable order of plugin loading
-    // useful because we want daygrid's defaultView to go before other plugins.
-    let pluginIds = Object.keys(globalPluginHash)
-    pluginIds.sort()
-
-    for (let pluginId of pluginIds) {
-      plugins.push(globalPluginHash[pluginId].default)
+  for (let pluginInput of pluginInputs) {
+    if (typeof pluginInput === 'string') {
+      if (!globalHash[pluginInput]) {
+        console.warn('You must have ' + pluginInput + '.js plugin file loaded.')
+      } else {
+        plugins.push(globalHash[pluginInput].default) // is an ES6 module
+      }
+    } else {
+      plugins.push(pluginInput)
     }
   }
 
-  return plugins
+  return INTERNAL_PLUGINS.concat(plugins)
 }

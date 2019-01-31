@@ -27,7 +27,7 @@ import { buildViewSpecs, ViewSpecHash } from './structs/view-spec'
 import { PluginSystem } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
 import { __assign } from 'tslib'
-import { getDefaultPlugins } from './options'
+import { refinePluginDefs } from './options'
 import DateComponent from './component/DateComponent'
 import { PointerDragEvent } from './interactions/pointer'
 import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore, InteractionClass } from './interactions/interaction'
@@ -125,7 +125,7 @@ export default class Calendar {
     this.pluginSystem = new PluginSystem()
 
     // only do once. don't do in handleOptions. because can't remove plugins
-    let pluginDefs = getDefaultPlugins().concat(
+    let pluginDefs = refinePluginDefs(
       this.optionsManager.computed.plugins || []
     )
     for (let pluginDef of pluginDefs) {

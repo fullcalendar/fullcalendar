@@ -78,7 +78,11 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
       let generator = calendar.dateProfileGenerators[viewType]
 
       if (!generator) {
-        throw new Error('The FullCalendar view "' + viewType + '" does not exist. Make sure your plugins are loaded correctly.')
+        throw new Error(
+          viewType ?
+            'The FullCalendar view "' + viewType + '" does not exist. Make sure your plugins are loaded correctly.' :
+            'No available FullCalendar view plugins.'
+        )
       }
 
       newDateProfile = generator.build(

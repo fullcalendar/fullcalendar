@@ -60,7 +60,7 @@ export function parseRawLocales(inputPlural: LocalePluralArg): RawLocaleInfo {
       if (globalMap[inputItem]) {
         rawLocaleArray.push(globalMap[inputItem])
       } else {
-        console.warn('You must have ' + inputItem + '.js loaded to use the "' + inputItem + '" locale')
+        console.warn('You must have ' + inputItem + '.js locale file loaded.')
       }
     } else {
       rawLocaleArray.push(inputItem)
