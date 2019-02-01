@@ -3,9 +3,13 @@ import { getDSTDeadZone } from './dst-dead-zone'
 import { DateEnv, createFormatter, createDuration, startOfDay, diffWholeWeeks, diffWholeDays, diffDayAndTime, Calendar } from '@fullcalendar/core'
 
 describe('datelib', function() {
-  const enLocale = new Calendar(document.createElement('div'), { // HACK
-    plugins: [ 'daygrid' ]
-  }).dateEnv.locale
+  let enLocale
+
+  beforeEach(function() {
+    enLocale = new Calendar(document.createElement('div'), { // HACK
+      plugins: [ 'daygrid' ]
+    }).dateEnv.locale
+  })
 
   describe('computeWeekNumber', function() {
 

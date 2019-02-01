@@ -138,7 +138,7 @@ const INTERNAL_PLUGINS: PluginDef[] = [
 ]
 
 export function refinePluginDefs(pluginInputs: any[]): PluginDef[] {
-  let globalHash = (!config.ignoreGlobals && window['FullCalendarPlugins']) || {}
+  let globalHash = window['FullCalendarPlugins'] || {}
   let plugins = []
 
   for (let pluginInput of pluginInputs) {
