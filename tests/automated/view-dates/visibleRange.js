@@ -57,7 +57,7 @@ describe('visibleRange', function() {
 
       it('ignores dateAlignment', function() {
         initCalendar({
-          dateAlignment: 'month',
+          dateAlignment: 'dayGridMonth',
           visibleRange: {
             start: startInput,
             end: endInput
@@ -152,7 +152,7 @@ describe('visibleRange', function() {
             end: '2017-06-29'
           }
         })
-        currentCalendar.changeView('day')
+        currentCalendar.changeView('timeGridDay')
         expectActiveRange('2017-06-26', '2017-06-27')
       })
 
@@ -164,7 +164,7 @@ describe('visibleRange', function() {
             end: '2017-06-29'
           }
         })
-        currentCalendar.changeView('day')
+        currentCalendar.changeView('timeGridDay')
         expectActiveRange('2017-06-26', '2017-06-27')
       })
     })
@@ -209,7 +209,7 @@ describe('visibleRange', function() {
   describe('when standard view', function() {
     pushOptions({
       defaultDate: '2015-06-08',
-      defaultView: 'week'
+      defaultView: 'timeGridWeek'
     })
 
     it('ignores the given visibleRange', function() {

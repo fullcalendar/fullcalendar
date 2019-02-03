@@ -63,7 +63,7 @@ describe('dayCount', function() {
       header: {
         left: 'prev,next',
         center: 'title',
-        right: 'month,week,day,timeGridTwoDay'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridTwoDay'
       },
       hiddenDays: [ 0, 6 ], // sunday, saturday
       views: {

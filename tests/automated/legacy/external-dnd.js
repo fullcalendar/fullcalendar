@@ -17,7 +17,7 @@ describe('external drag and drop', function() {
     options = {
       plugins: [ InteractionPlugin, TimeGridPlugin, DayGridPlugin ],
       defaultDate: '2014-08-23',
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       droppable: true
     }
 
@@ -65,7 +65,7 @@ describe('external drag and drop', function() {
       describe('in month view', function() {
 
         beforeEach(function() {
-          options.defaultView = 'month'
+          options.defaultView = 'dayGridMonth'
         })
 
         it('works after the view is changed', function(done) { // issue 2240
@@ -186,7 +186,7 @@ describe('external drag and drop', function() {
       describe('in timeGrid view', function() {
 
         beforeEach(function() {
-          options.defaultView = 'week'
+          options.defaultView = 'timeGridWeek'
           options.dragScroll = false
           options.scrollTime = '00:00:00'
         })

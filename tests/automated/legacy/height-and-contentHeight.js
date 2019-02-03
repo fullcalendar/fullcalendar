@@ -67,7 +67,7 @@
           describe('for ' + heightProp, function() {
             describe('when in month view', function() {
               pushOptions({
-                defaultView: 'month'
+                defaultView: 'dayGridMonth'
               })
 
               heightPropDescriptions.forEach(function(testInfo) {
@@ -208,7 +208,7 @@
               })
             });
 
-            [ 'week', 'day' ].forEach(function(viewName) {
+            [ 'timeGridWeek', 'timeGridDay' ].forEach(function(viewName) {
               describe('in ' + viewName + ' view', function() {
                 pushOptions({
                   defaultView: viewName

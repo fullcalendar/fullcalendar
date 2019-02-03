@@ -468,7 +468,7 @@ describe('ListView rendering', function() {
   it('updates rendered events despite fetch range being lazy', function() {
     var options = {}
     options.now = '2016-09-12'
-    options.defaultView = 'month'
+    options.defaultView = 'dayGridMonth'
     options.events = [
       { title: 'event1', start: '2016-09-12' }
     ]

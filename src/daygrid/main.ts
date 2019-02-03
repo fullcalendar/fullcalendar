@@ -8,7 +8,7 @@ export { default as DayGridView, buildDayTable as buildBasicDayTable } from './D
 export { default as DayBgRow } from './DayBgRow'
 
 export default createPlugin({
-  defaultView: 'month',
+  defaultView: 'dayGridMonth',
   viewConfigs: {
 
     dayGrid: DayGridView,
@@ -23,7 +23,7 @@ export default createPlugin({
       duration: { weeks: 1 }
     },
 
-    month: {
+    dayGridMonth: {
       type: 'dayGrid',
       monthMode: true,
       duration: { months: 1 }, // important for prev/next

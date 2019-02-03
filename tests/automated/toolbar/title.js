@@ -8,12 +8,12 @@ describe('calendar title', function() {
   describe('when switching to and from a view', function() {
     it('updates the title at each switch', function() {
       initCalendar({
-        defaultView: 'month'
+        defaultView: 'dayGridMonth'
       })
       expect(getTitleText()).toBe('March 2017')
-      currentCalendar.changeView('week')
+      currentCalendar.changeView('timeGridWeek')
       expect(getTitleText()).toBe('Mar 26 – Apr 1, 2017')
-      currentCalendar.changeView('month')
+      currentCalendar.changeView('dayGridMonth')
       expect(getTitleText()).toBe('March 2017')
     })
   })

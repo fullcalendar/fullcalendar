@@ -6,7 +6,7 @@ describe('allDaySlots', function() {
     describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'week'
+          defaultView: 'timeGridWeek'
         }
         initCalendar(options)
         var allDaySlotCount = getDayGridSlotElsCount()
@@ -16,7 +16,7 @@ describe('allDaySlots', function() {
     describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'day'
+          defaultView: 'timeGridDay'
         }
         initCalendar(options)
         var allDaySlotCount = getDayGridSlotElsCount()
@@ -29,7 +29,7 @@ describe('allDaySlots', function() {
     describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'week',
+          defaultView: 'timeGridWeek',
           allDaySlot: true
         }
         initCalendar(options)
@@ -40,7 +40,7 @@ describe('allDaySlots', function() {
     describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'day',
+          defaultView: 'timeGridDay',
           allDaySlot: true
         }
         initCalendar(options)
@@ -54,7 +54,7 @@ describe('allDaySlots', function() {
     describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'week',
+          defaultView: 'timeGridWeek',
           allDaySlot: false
         }
         initCalendar(options)
@@ -65,7 +65,7 @@ describe('allDaySlots', function() {
     describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var options = {
-          defaultView: 'day',
+          defaultView: 'timeGridDay',
           allDaySlot: false
         }
         initCalendar(options)

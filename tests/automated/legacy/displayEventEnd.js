@@ -9,8 +9,8 @@ describe('displayEventEnd', function() {
   })
 
   describeOptions('defaultView', {
-    'when in month view': 'month',
-    'when in week view': 'week'
+    'when in month view': 'dayGridMonth',
+    'when in week view': 'timeGridWeek'
   }, function() {
 
     describe('when off', function() {

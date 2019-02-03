@@ -6,8 +6,8 @@ describe('columnHeader', function() {
   })
 
   describeOptions('defaultView', {
-    'when month view': 'month',
-    'when timeGrid view': 'day',
+    'when month view': 'dayGridMonth',
+    'when timeGrid view': 'timeGridDay',
     'when dayGrid view': 'dayGridDay'
   }, function() {
 

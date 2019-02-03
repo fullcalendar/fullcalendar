@@ -9,7 +9,7 @@ describe('eventLimit popover', function() {
   ]
 
   pushOptions({
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     defaultDate: '2014-08-01',
     eventLimit: 3,
     events: testEvents,
@@ -23,9 +23,9 @@ describe('eventLimit popover', function() {
   }
 
   describeOptions('defaultView', {
-    'when in month view': 'month',
+    'when in month view': 'dayGridMonth',
     'when in dayGridWeek view': 'dayGridWeek',
-    'when in week view': 'week'
+    'when in week view': 'timeGridWeek'
   }, function() {
 
     it('aligns horizontally with left edge of cell if LTR', function() {
@@ -56,7 +56,7 @@ describe('eventLimit popover', function() {
   describe('when in month view', function() {
 
     pushOptions({
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
 
     it('aligns with top of cell', function() {
@@ -254,7 +254,7 @@ describe('eventLimit popover', function() {
 
   describeOptions('defaultView', {
     'when in dayGridWeek view': 'dayGridWeek',
-    'when in week view': 'week'
+    'when in week view': 'timeGridWeek'
   }, function() {
     it('aligns with top of header', function() {
       initCalendar()
@@ -364,7 +364,7 @@ describe('eventLimit popover', function() {
       it('should assume the new time, with a cleared end', function(done) {
 
         initCalendar({
-          defaultView: 'week',
+          defaultView: 'timeGridWeek',
           scrollTime: '00:00:00',
           eventDrop: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-30T03:00:00Z')

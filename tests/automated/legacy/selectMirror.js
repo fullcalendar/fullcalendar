@@ -2,7 +2,7 @@ describe('selectMirror', function() {
 
   pushOptions({
     defaultDate: '2014-08-03',
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     scrollTime: '00:00:00',
     selectMirror: true
   })

@@ -5,11 +5,11 @@ describe('titleFormat', function() {
   describe('when default', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: 'June 2014' },
+      { view: 'dayGridMonth', expected: 'June 2014' },
       { view: 'dayGridWeek', expected: /Jun 8 - 14,? 2014/ },
-      { view: 'week', expected: /Jun 8 - 14,? 2014/ },
+      { view: 'timeGridWeek', expected: /Jun 8 - 14,? 2014/ },
       { view: 'dayGridDay', expected: /June 12,? 2014/ },
-      { view: 'day', expected: /June 12,? 2014/ }
+      { view: 'timeGridDay', expected: /June 12,? 2014/ }
     ]
 
     beforeEach(function() {
@@ -33,9 +33,9 @@ describe('titleFormat', function() {
   describe('when set on a per-view basis', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: 'June 2014' },
+      { view: 'dayGridMonth', expected: 'June 2014' },
       { view: 'dayGridWeek', expected: 'Jun 8 - 14, 2014' },
-      { view: 'week', expected: 'June 8 - 14, 2014' },
+      { view: 'timeGridWeek', expected: 'June 8 - 14, 2014' },
       { view: 'dayGridDay', expected: 'Thursday, June 12, 2014' }
     ]
 
@@ -64,11 +64,11 @@ describe('titleFormat', function() {
   describe('when default and locale is French', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: 'juin 2014' },
+      { view: 'dayGridMonth', expected: 'juin 2014' },
       { view: 'dayGridWeek', expected: '9 - 15 juin 2014' },
-      { view: 'week', expected: '9 - 15 juin 2014' },
+      { view: 'timeGridWeek', expected: '9 - 15 juin 2014' },
       { view: 'dayGridDay', expected: '12 juin 2014' },
-      { view: 'day', expected: '12 juin 2014' }
+      { view: 'timeGridDay', expected: '12 juin 2014' }
     ]
 
     beforeEach(function() {
@@ -155,7 +155,7 @@ describe('titleFormat', function() {
 
     it('doesn\'t include hidden days in the title', function() {
       initCalendar({
-        defaultView: 'week',
+        defaultView: 'timeGridWeek',
         defaultDate: '2017-02-13',
         weekends: false,
         titleRangeSeparator: ' - '

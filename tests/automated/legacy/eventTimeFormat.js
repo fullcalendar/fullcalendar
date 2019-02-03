@@ -16,7 +16,7 @@ describe('eventTimeFormat', function() {
   describe('when in month view', function() {
 
     pushOptions({
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
 
     it('renders correctly when default', function() {
@@ -42,7 +42,7 @@ describe('eventTimeFormat', function() {
   describe('when in week view', function() {
 
     pushOptions({
-      defaultView: 'week'
+      defaultView: 'timeGridWeek'
     })
 
     it('renders correctly when default', function() {

@@ -43,9 +43,9 @@ describe('destroy', function() {
 
   describeOptions('defaultView', {
     'when in dayGridWeek view': 'dayGridWeek',
-    'when in week view': 'week',
+    'when in week view': 'timeGridWeek',
     'when in listWeek view': 'listWeek',
-    'when in month view': 'month'
+    'when in month view': 'dayGridMonth'
   }, function(viewName) {
     it('leaves no handlers attached to DOM', function() {
       var $el = $('<div>').appendTo('body')
@@ -58,7 +58,7 @@ describe('destroy', function() {
       initCalendar({}, $el)
       currentCalendar.destroy()
 
-      if (viewName !== 'day') { // hack for skipping 3rd one
+      if (viewName !== 'timeGridDay') { // hack for skipping 3rd one
         expect(elHandlerCounter.stopWatching()).toBe(0)
         expect(docHandlerCounter.stopWatching()).toBe(0)
       }

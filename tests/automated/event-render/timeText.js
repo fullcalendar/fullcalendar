@@ -4,7 +4,7 @@ describe('the time text on events', function() {
 
   describe('in week', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       defaultDate: '2017-07-03',
       scrollTime: '00:00'
     })

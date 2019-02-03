@@ -3,7 +3,7 @@ describe('constructor', function() {
 
   it('should not modify the options object', function() {
     var options = {
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       scrollTime: '09:00:00',
       slotDuration: { minutes: 45 }
     }
@@ -14,7 +14,7 @@ describe('constructor', function() {
 
   it('should not modify the events array', function() {
     var options = {
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2014-05-27',
       events: [
         {
@@ -30,7 +30,7 @@ describe('constructor', function() {
 
   it('should not modify the eventSources array', function() {
     var options = {
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2014-05-27',
       eventSources: [
         { events: [

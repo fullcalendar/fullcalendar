@@ -2,7 +2,7 @@ import * as EventRenderUtils from './EventRenderUtils'
 
 describe('short event rendering with timeGridEventMinHeight', function() {
   pushOptions({
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     defaultDate: '2017-08-10',
     timeGridEventMinHeight: 25
   })

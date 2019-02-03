@@ -29,7 +29,7 @@ describe('Google Calendar plugin', function() {
 
     options = {
       plugins: [ GoogleCalendarPlugin, DayGridPlugin ],
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: DEFAULT_MONTH + '-01'
     }
 

@@ -5,7 +5,7 @@ describe('unselectAuto', function() {
   pushOptions({
     selectable: true,
     defaultDate: '2014-12-25',
-    defaultView: 'month'
+    defaultView: 'dayGridMonth'
   })
 
   beforeEach(function() {

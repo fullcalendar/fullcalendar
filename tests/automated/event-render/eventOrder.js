@@ -3,7 +3,7 @@ import { getEventEls } from './EventRenderUtils'
 describe('eventOrder', function() {
   pushOptions({
     defaultDate: '2018-01-01',
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     eventRender: function(arg) {
       arg.el.setAttribute('data-event-id', arg.event.id)
     }

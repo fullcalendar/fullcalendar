@@ -4,7 +4,7 @@ import RRulePlugin from '@fullcalendar/rrule'
 describe('rrule plugin', function() {
   pushOptions({
     plugins: [ RRulePlugin, DayGridPlugin ],
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     now: '2018-09-07',
     timeZone: 'UTC'
   })
@@ -50,7 +50,7 @@ describe('rrule plugin', function() {
 
   it('can expand monthly recurrence', function() {
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       now: '2018-12-25T12:00:00',
       events: [ {
         rrule: {

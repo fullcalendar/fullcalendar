@@ -2,7 +2,7 @@ describe('slotLabelFormat', function() {
 
   pushOptions({
     defaultDate: '2014-06-04',
-    defaultView: 'week'
+    defaultView: 'timeGridWeek'
   })
 
   function getAxisText() {

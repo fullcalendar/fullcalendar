@@ -8,7 +8,7 @@ describe('showNonCurrentDates', function() {
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2017-06-01'
     })
 
@@ -20,7 +20,7 @@ describe('showNonCurrentDates', function() {
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       defaultDate: '2017-06-01'
     })
 

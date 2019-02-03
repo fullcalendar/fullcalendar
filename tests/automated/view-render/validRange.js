@@ -7,7 +7,7 @@ describe('validRange rendering', function() {
 
     describe('when month view', function() {
       pushOptions({
-        defaultView: 'month',
+        defaultView: 'dayGridMonth',
         defaultDate: '2017-06-01',
         validRange: { start: '2017-06-07' }
       })
@@ -20,7 +20,7 @@ describe('validRange rendering', function() {
 
     describe('when in week view', function() {
       pushOptions({
-        defaultView: 'week',
+        defaultView: 'timeGridWeek',
         defaultDate: '2017-06-08',
         validRange: { start: '2017-06-06' }
       })
@@ -36,7 +36,7 @@ describe('validRange rendering', function() {
 
     describe('when month view', function() {
       pushOptions({
-        defaultView: 'month',
+        defaultView: 'dayGridMonth',
         defaultDate: '2017-06-01',
         validRange: { end: '2017-06-07' }
       })
@@ -49,7 +49,7 @@ describe('validRange rendering', function() {
 
     describe('when in week view', function() {
       pushOptions({
-        defaultView: 'week',
+        defaultView: 'timeGridWeek',
         defaultDate: '2017-06-08',
         validRange: { end: '2017-06-06' }
       })

@@ -7,7 +7,7 @@ import { parseMarker, addMs } from '@fullcalendar/core'
 describe('allDay change', function() {
   pushOptions({
     timeZone: 'UTC',
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     now: '2018-09-03',
     scrollTime: 0,
     editable: true,

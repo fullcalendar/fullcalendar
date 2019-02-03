@@ -5,7 +5,7 @@ describe('themeSystem', function() {
 
   pushOptions({
     plugins: [ BootstrapPlugin, TimeGridPlugin ],
-    defaultView: 'week'
+    defaultView: 'timeGridWeek'
   })
 
   it('can be changed dynamically', function() {

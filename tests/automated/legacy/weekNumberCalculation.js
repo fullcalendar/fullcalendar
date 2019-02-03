@@ -14,7 +14,7 @@ describe('weekNumberCalculation', function() {
     return parseInt(text.replace(/\D/g, ''), 10)
   }
 
-  [ 'dayGridDay', 'day' ].forEach(function(viewType) {
+  [ 'dayGridDay', 'timeGridDay' ].forEach(function(viewType) {
     describe('when in ' + viewType + ' view', function() {
       pushOptions({
         defaultView: viewType

@@ -2,7 +2,7 @@ describe('eventLimitClick', function() { // simulate a click
 
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     eventLimit: 3,
     events: [
       { title: 'event1', start: '2014-07-29' },
@@ -30,7 +30,7 @@ describe('eventLimitClick', function() { // simulate a click
   describe('when set to "week"', function() {
 
     pushOptions({
-      eventLimitClick: 'week'
+      eventLimitClick: 'timeGridWeek'
     })
 
     it('should go to week if it is one of the available views', function() {
@@ -38,12 +38,12 @@ describe('eventLimitClick', function() { // simulate a click
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,week,day'
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }
       })
       $('.fc-more').simulate('click')
       var view = currentCalendar.view
-      expect(view.type).toBe('week')
+      expect(view.type).toBe('timeGridWeek')
     })
   })
 
@@ -58,12 +58,12 @@ describe('eventLimitClick', function() { // simulate a click
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,week,day'
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }
       })
       $('.fc-more').simulate('click')
       var view = currentCalendar.view
-      expect(view.type).toBe('day')
+      expect(view.type).toBe('timeGridDay')
     })
   })
 
@@ -73,12 +73,12 @@ describe('eventLimitClick', function() { // simulate a click
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,dayGridWeek,dayGridDay'
+        right: 'dayGridMonth,dayGridWeek,dayGridDay'
       }
     })
     $('.fc-more').simulate('click')
     var view = currentCalendar.view
-    expect(view.type).toBe('week')
+    expect(view.type).toBe('timeGridWeek')
   })
 
   it('works with custom function and all the arguments are correct', function() {
@@ -104,7 +104,7 @@ describe('eventLimitClick', function() { // simulate a click
     })
     $('.fc-more').simulate('click')
     var view = currentCalendar.view
-    expect(view.type).toBe('day')
+    expect(view.type).toBe('timeGridDay')
   })
 
 })

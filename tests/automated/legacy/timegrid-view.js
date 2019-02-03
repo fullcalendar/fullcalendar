@@ -14,7 +14,7 @@ describe('timeGrid view rendering', function() {
 
   describe('when dir is ltr', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       dir: 'ltr'
     })
 
@@ -34,7 +34,7 @@ describe('timeGrid view rendering', function() {
 
   describe('when dir is rtl', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       dir: 'rtl'
     })
 

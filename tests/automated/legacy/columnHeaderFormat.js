@@ -4,11 +4,11 @@ describe('columnHeaderFormat', function() {
   describe('when not set', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: /^Sun$/, selector: 'th.fc-day-header.fc-sun' },
+      { view: 'dayGridMonth', expected: /^Sun$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^Sun 5[/ ]11$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'week', expected: /^Sun 5[/ ]11$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^Sun 5[/ ]11$/, selector: 'th.fc-widget-header.fc-sun' },
       { view: 'dayGridDay', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'day', expected: /^Sunday$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^Sunday$/, selector: 'th.fc-widget-header.fc-sun' }
     ]
 
     beforeEach(function() {
@@ -30,8 +30,8 @@ describe('columnHeaderFormat', function() {
   describe('when columnHeaderFormat is set on a per-view basis', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'day', expected: /^Sunday, May 11$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'dayGridMonth', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' },
+      { view: 'timeGridDay', expected: /^Sunday, May 11$/, selector: 'th.fc-widget-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^Sunday, 5[/ ]11$/, selector: 'th.fc-day-header.fc-sun' }
     ]
 
@@ -59,11 +59,11 @@ describe('columnHeaderFormat', function() {
   describe('when locale is French', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: /^dim\.$/, selector: 'th.fc-day-header.fc-sun' },
+      { view: 'dayGridMonth', expected: /^dim\.$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^dim\. 11[/ ]0?5$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'week', expected: /^dim\. 11[/ ]0?5$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^dim\. 11[/ ]0?5$/, selector: 'th.fc-widget-header.fc-sun' },
       { view: 'dayGridDay', expected: /^dimanche$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'day', expected: /^dimanche$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^dimanche$/, selector: 'th.fc-widget-header.fc-sun' }
     ]
 
     beforeEach(function() {
@@ -86,11 +86,11 @@ describe('columnHeaderFormat', function() {
   describe('when locale is en-gb', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: /^Sun$/, selector: 'th.fc-day-header.fc-sun' },
+      { view: 'dayGridMonth', expected: /^Sun$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^Sun 11[/ ]0?5$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'week', expected: /^Sun 11[/ ]0?5$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^Sun 11[/ ]0?5$/, selector: 'th.fc-widget-header.fc-sun' },
       { view: 'dayGridDay', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'day', expected: /^Sunday$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^Sunday$/, selector: 'th.fc-widget-header.fc-sun' }
     ]
 
     beforeEach(function() {
@@ -113,11 +113,11 @@ describe('columnHeaderFormat', function() {
   describe('when locale is Korean', function() {
 
     var viewWithFormat = [
-      { view: 'month', expected: /^일$/, selector: 'th.fc-day-header.fc-sun' },
+      { view: 'dayGridMonth', expected: /^일$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'week', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-widget-header.fc-sun' },
       { view: 'dayGridDay', expected: /^일요일$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'day', expected: /^일요일$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^일요일$/, selector: 'th.fc-widget-header.fc-sun' }
     ]
 
     beforeEach(function() {

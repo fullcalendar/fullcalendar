@@ -4,7 +4,7 @@ describe('event constraint', function() {
 
   pushOptions({
     defaultDate: '2014-11-10',
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     scrollTime: '00:00'
   })
   describe('when used with a specific date range', function() {
@@ -26,7 +26,7 @@ describe('event constraint', function() {
         describe('when in month view with timed event', function() {
           it('allows a drag, respects time of day', function(done) {
             var options = {}
-            options.defaultView = 'month'
+            options.defaultView = 'dayGridMonth'
             options.events = [ {
               start: '2014-11-10T05:00:00',
               end: '2014-11-10T07:00:00',
@@ -127,7 +127,7 @@ describe('event constraint', function() {
             })
           })
           describe('when in month view', function() {
-            pushOptions({defaultView: 'month'})
+            pushOptions({defaultView: 'dayGridMonth'})
             describe('with timed event and all-day constraint', function() {
               it('does not allow a drag', function(done) {
                 var options = {}
@@ -626,7 +626,7 @@ describe('event constraint', function() {
       })
 
       describe('when in month view', function() {
-        pushOptions({defaultView: 'month'})
+        pushOptions({defaultView: 'dayGridMonth'})
         describe('when the event ID constraint matches no events', function() {
           it('does not allow a drag', function(done) {
             var options = {}
@@ -650,7 +650,7 @@ describe('selectConstraint', function() {
 
   pushOptions({
     defaultDate: '2014-11-10',
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     scrollTime: '00:00'
   })
 
@@ -729,7 +729,7 @@ describe('selectConstraint', function() {
         })
       })
       describe('when in month view', function() {
-        pushOptions({defaultView: 'month'})
+        pushOptions({defaultView: 'dayGridMonth'})
         describe('when an all-day constraint', function() {
           it('does not allow a selection', function(done) {
             var options = {}
@@ -891,7 +891,7 @@ describe('selectConstraint', function() {
         it('does not allow a selection', function(done) {
           var options = {}
 
-          options.defaultView = 'month'
+          options.defaultView = 'dayGridMonth'
           options.selectConstraint = 'yooo'
           testSelection(options, '2014-11-12', '2014-11-15', false, done)
         })

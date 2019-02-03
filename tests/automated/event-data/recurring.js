@@ -3,7 +3,7 @@ describe('recurring events', function() {
 
   describe('when timed events in local timezone', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       defaultDate: '2017-07-03',
       timeZone: 'local',
       events: [
@@ -26,7 +26,7 @@ describe('recurring events', function() {
 
   describe('when give recur range', function() {
     pushOptions({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2017-07-03',
       events: [
         { startTime: '09:00', endTime: '11:00', startRecur: '2017-07-05', endRecur: '2017-07-08' }

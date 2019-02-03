@@ -5,7 +5,7 @@ describe('eventMouseEnter', function() {
     scrollTime: '00:00:00'
   })
 
-  ;[ 'month', 'week' ].forEach(function(viewName) {
+  ;[ 'dayGridMonth', 'timeGridWeek' ].forEach(function(viewName) {
     describe('for ' + viewName + ' view', function() {
 
       pushOptions({

@@ -10,7 +10,7 @@ import { expectButtonEnabled } from './ToolbarUtils'
 
 describe('today button', function() {
   pushOptions({
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     now: '2017-06-30'
   })
 

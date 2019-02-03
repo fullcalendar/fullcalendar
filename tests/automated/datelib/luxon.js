@@ -118,7 +118,7 @@ describe('luxon plugin', function() {
 
     it('produces event time text', function() {
       initCalendar({
-        defaultView: 'month',
+        defaultView: 'dayGridMonth',
         now: '2018-09-06',
         displayEventEnd: false,
         eventTimeFormat: 'HH:mm:ss\'abc\'',

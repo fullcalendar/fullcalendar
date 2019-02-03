@@ -2,7 +2,7 @@
 describe('dayGrid view rendering', function() {
 
   pushOptions({
-    defaultView: 'month'
+    defaultView: 'dayGridMonth'
   })
 
   describe('when dir is ltr', function() {

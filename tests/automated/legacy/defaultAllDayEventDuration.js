@@ -4,7 +4,7 @@ describe('defaultAllDayEventDuration', function() {
 
   pushOptions({
     defaultDate: '2014-05-01',
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     timeZone: 'UTC'
   })
 
@@ -55,7 +55,7 @@ describe('defaultAllDayEventDuration', function() {
 
     describeOptions('defaultView', {
       'with dayGridWeek view': 'dayGridWeek',
-      'with week view': 'week'
+      'with week view': 'timeGridWeek'
     }, function() {
       it('renders an all-day event with no `end` to appear to have the default duration', function(done) {
         initCalendar({

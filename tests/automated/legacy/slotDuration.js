@@ -6,7 +6,7 @@ describe('slotDuration', function() {
     describe('in week', function() {
       it('should have slots 1440/30 slots', function() {
         initCalendar({
-          defaultView: 'week'
+          defaultView: 'timeGridWeek'
         })
         var slotCount = $('.fc-slats tr').length
         expect(slotCount).toEqual(Math.ceil(minutesInADay / 30))
@@ -15,7 +15,7 @@ describe('slotDuration', function() {
     describe('in day', function() {
       it('should have slots 1440/30 slots', function() {
         initCalendar({
-          defaultView: 'day'
+          defaultView: 'timeGridDay'
         })
         var slotCount = $('.fc-slats tr').length
         expect(slotCount).toEqual(Math.ceil(minutesInADay / 30))
@@ -27,7 +27,7 @@ describe('slotDuration', function() {
     describe('in week', function() {
       it('should have slots 1440/30 slots', function() {
         initCalendar({
-          defaultView: 'week'
+          defaultView: 'timeGridWeek'
         })
         var slotCount = $('.fc-slats tr').length
         expect(slotCount).toEqual(Math.ceil(minutesInADay / 30))
@@ -36,7 +36,7 @@ describe('slotDuration', function() {
     describe('in day', function() {
       it('should have slots 1440/30 slots', function() {
         initCalendar({
-          defaultView: 'day'
+          defaultView: 'timeGridDay'
         })
         var slotCount = $('.fc-slats tr').length
         expect(slotCount).toEqual(Math.ceil(minutesInADay / 30))
@@ -52,7 +52,7 @@ describe('slotDuration', function() {
       slotMinutesList.forEach(function(slotMinutes) {
         it('should have slots 1440/x slots', function() {
           initCalendar({
-            defaultView: 'week',
+            defaultView: 'timeGridWeek',
             slotDuration: { minutes: slotMinutes }
           })
           var slotCount = $('.fc-slats tr').length
@@ -66,7 +66,7 @@ describe('slotDuration', function() {
       slotMinutesList.forEach(function(slotMinutes) {
         it('should have slots 1440/x slots', function() {
           initCalendar({
-            defaultView: 'day',
+            defaultView: 'timeGridDay',
             slotDuration: { minutes: slotMinutes }
           })
           var slotCount = $('.fc-slats tr').length

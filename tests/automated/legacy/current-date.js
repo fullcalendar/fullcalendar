@@ -231,17 +231,17 @@ describe('current date', function() {
   // -----
 
   function describeWhenInMonth(func) {
-    describeWhenIn('month', func)
+    describeWhenIn('dayGridMonth', func)
   }
 
   function describeWhenInWeek(func) {
     describeWhenIn('dayGridWeek', func)
-    describeWhenIn('week', func)
+    describeWhenIn('timeGridWeek', func)
   }
 
   function describeWhenInDay(func) {
     describeWhenIn('dayGridDay', func)
-    describeWhenIn('day', func)
+    describeWhenIn('timeGridDay', func)
   }
 
   function describeWhenIn(viewName, func) {

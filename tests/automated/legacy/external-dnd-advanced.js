@@ -35,7 +35,7 @@ describe('advanced external dnd', function() {
   })
 
   describe('in timeGrid slots', function() {
-    pushOptions({defaultView: 'week'})
+    pushOptions({defaultView: 'timeGridWeek'})
     describe('when no element event data', function() {
       describe('when given duration through defaultTimedEventDuration', function() {
         pushOptions({
@@ -290,7 +290,7 @@ describe('advanced external dnd', function() {
 
   describe('in month whole-days', function() {
     pushOptions({
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
 
     describe('when event data is given', function() {

@@ -4,7 +4,7 @@ describe('button text', function() {
     header: {
       left: 'prevYear,prev,today,next,nextYear',
       center: '',
-      right: 'month,dayGridWeek,dayGridDay,week,day'
+      right: 'dayGridMonth,dayGridWeek,dayGridDay,timeGridWeek,timeGridDay'
     }
   })
 

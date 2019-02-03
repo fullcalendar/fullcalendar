@@ -14,7 +14,7 @@ describe('maxTime', function() {
     describe('in week', function() {
       it('should start at 12am', function() {
         initCalendar({
-          defaultView: 'week'
+          defaultView: 'timeGridWeek'
         })
         var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
         expect(lastSlotText).toEqual('11pm')
@@ -24,7 +24,7 @@ describe('maxTime', function() {
     describe('in day', function() {
       it('should start at 12am', function() {
         initCalendar({
-          defaultView: 'day'
+          defaultView: 'timeGridDay'
         })
         var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
         expect(lastSlotText).toEqual('11pm')
@@ -40,7 +40,7 @@ describe('maxTime', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber, function() {
           initCalendar({
-            defaultView: 'week',
+            defaultView: 'timeGridWeek',
             maxTime: { hours: hourNumber }
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
@@ -54,7 +54,7 @@ describe('maxTime', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber, function() {
           initCalendar({
-            defaultView: 'day',
+            defaultView: 'timeGridDay',
             maxTime: hourNumber + ':00' // in addition, test string duration input
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
@@ -73,7 +73,7 @@ describe('maxTime', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber + ':20', function() {
           initCalendar({
-            defaultView: 'week',
+            defaultView: 'timeGridWeek',
             maxTime: { hours: hourNumber, minutes: 20 }
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()
@@ -88,7 +88,7 @@ describe('maxTime', function() {
       hourNumbers.forEach(function(hourNumber) {
         it('should end at ' + hourNumber + ':20', function() {
           initCalendar({
-            defaultView: 'day',
+            defaultView: 'timeGridDay',
             maxTime: { hours: hourNumber, minutes: 20 }
           })
           var lastSlotText = $('.fc-slats tr:not(.fc-minor):last .fc-time').text()

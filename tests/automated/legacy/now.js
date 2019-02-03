@@ -6,7 +6,7 @@ describe('now', function() {
 
   describe('when month view', function() {
     pushOptions({
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
     it('changes the highlighted day when customized', function() {
       initCalendar({
@@ -20,7 +20,7 @@ describe('now', function() {
 
   describe('when week view', function() {
     pushOptions({
-      defaultView: 'week'
+      defaultView: 'timeGridWeek'
     })
     it('changes the highlighted day when customized', function() {
       initCalendar({
@@ -33,7 +33,7 @@ describe('now', function() {
 
   it('accepts a function that returns a Date', function() {
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       now: function() {
         return new Date('2014-05-01')
       }
@@ -45,7 +45,7 @@ describe('now', function() {
 
   it('accepts a function that returns a date string', function() {
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       now: function() {
         return '2014-05-01'
       }

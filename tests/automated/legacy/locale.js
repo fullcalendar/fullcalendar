@@ -3,7 +3,7 @@ describe('locale', function() {
   it('works when certain locale has no FC settings defined', function() {
     initCalendar({
       locale: 'en-asdf',
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       defaultDate: '2014-12-25',
       events: [
         { title: 'Christmas', start: '2014-12-25T10:00:00' }
@@ -19,7 +19,7 @@ describe('locale', function() {
     initCalendar({
       locale: 'es',
       defaultDate: '2016-07-10',
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
 
     var calendarEl = currentCalendar.el

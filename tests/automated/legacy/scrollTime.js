@@ -1,7 +1,7 @@
 describe('scrollTime', function() {
 
   pushOptions({
-    defaultView: 'week'
+    defaultView: 'timeGridWeek'
   })
 
   it('accepts a string Duration', function() {

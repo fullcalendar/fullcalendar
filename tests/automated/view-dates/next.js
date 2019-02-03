@@ -9,7 +9,7 @@ describe('next', function() {
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'week'
+      defaultView: 'timeGridWeek'
     })
 
     describe('when dateIncrement not specified', function() {
@@ -40,7 +40,7 @@ describe('next', function() {
 
   describe('when in a month view', function() {
     pushOptions({
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
 
     describe('when dateIncrement not specified', function() {

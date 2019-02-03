@@ -1,7 +1,7 @@
 describe('eventLimit popover', function() {
 
   pushOptions({
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     defaultDate: '2014-08-01',
     eventLimit: 3,
     events: [

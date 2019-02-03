@@ -4,7 +4,7 @@ describe('gotoDate', function() {
   it('will update calendar\'s date even if no navigation', function() {
     initCalendar({
       defaultDate: '2018-12-25',
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
 
     expect(currentCalendar.getDate()).toEqualDate('2018-12-25')
@@ -23,7 +23,7 @@ describe('gotoDate', function() {
 
     it('works when called right after initialization', function() {
       initCalendar({
-        defaultView: 'month',
+        defaultView: 'dayGridMonth',
         defaultDate: '2017-03-30'
       })
       currentCalendar.gotoDate('2017-06-01')
@@ -31,7 +31,7 @@ describe('gotoDate', function() {
 
     it('works when called right after initialization when date already in range', function() {
       initCalendar({
-        defaultView: 'month',
+        defaultView: 'dayGridMonth',
         defaultDate: '2017-03-30'
       })
       currentCalendar.gotoDate('2017-03-01')

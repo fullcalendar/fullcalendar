@@ -19,7 +19,7 @@ describe('eventDrop', function() {
 
   describe('when in month view', function() {
     beforeEach(function() {
-      options.defaultView = 'month'
+      options.defaultView = 'dayGridMonth'
     });
 
     // TODO: test that event's dragged via touch that don't wait long enough for longPressDelay
@@ -150,7 +150,7 @@ describe('eventDrop', function() {
 
   describe('when in timeGrid view', function() {
     beforeEach(function() {
-      options.defaultView = 'week'
+      options.defaultView = 'timeGridWeek'
     });
 
     [ false, true ].forEach(function(isTouch) {

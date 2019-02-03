@@ -8,7 +8,7 @@ describe('validRange', function() {
 
   describe('when one week view', function() { // a view that has date-alignment by default
     pushOptions({
-      defaultView: 'week' // default range = 2017-06-04 - 2017-06-11
+      defaultView: 'timeGridWeek' // default range = 2017-06-04 - 2017-06-11
     })
 
     describe('when default range is partially before validRange', function() {
@@ -132,7 +132,7 @@ describe('validRange', function() {
 
   describe('when hiddenDays causes no days to be active', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       defaultDate: '2017-10-04',
       hiddenDays: [ 6 ], // Sunday, last day within natural week range
       validRange: {

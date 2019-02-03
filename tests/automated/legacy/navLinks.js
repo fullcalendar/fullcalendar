@@ -10,7 +10,7 @@ describe('navLinks', function() {
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,week,day,listWeek' // affects which view is jumped to by default
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' // affects which view is jumped to by default
       },
       dateClick: function() { }
     }
@@ -19,13 +19,13 @@ describe('navLinks', function() {
 
   describe('in month view', function() {
     beforeEach(function() {
-      options.defaultView = 'month'
+      options.defaultView = 'dayGridMonth'
     })
 
     it('moves to day', function() {
       initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
-      expectDayView('day', '2016-08-09')
+      expectDayView('timeGridDay', '2016-08-09')
       expect(options.dateClick).not.toHaveBeenCalled()
     })
 
@@ -33,18 +33,18 @@ describe('navLinks', function() {
     it('moves to two different days', function() {
       initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
-      expectDayView('day', '2016-08-09')
+      expectDayView('timeGridDay', '2016-08-09')
       expect(options.dateClick).not.toHaveBeenCalled()
-      currentCalendar.changeView('month')
+      currentCalendar.changeView('dayGridMonth')
       $.simulateMouseClick(getDayGridNumberEl('2016-08-10'))
-      expectDayView('day', '2016-08-10')
+      expectDayView('timeGridDay', '2016-08-10')
     })
 
     it('moves to day specifically', function() {
       options.navLinkDayClick = 'day'
       initCalendar(options)
       $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
-      expectDayView('day', '2016-08-09')
+      expectDayView('timeGridDay', '2016-08-09')
       expect(options.dateClick).not.toHaveBeenCalled()
     })
 
@@ -76,7 +76,7 @@ describe('navLinks', function() {
       it('moves to week', function() {
         initCalendar(options)
         $.simulateMouseClick(getDayGridClassicWeekLinks().eq(1))
-        expectWeekView('week', '2016-08-07')
+        expectWeekView('timeGridWeek', '2016-08-07')
         expect(options.dateClick).not.toHaveBeenCalled()
       })
 
@@ -84,7 +84,7 @@ describe('navLinks', function() {
         options.weekNumbersWithinDays = true
         initCalendar(options)
         $.simulateMouseClick(getDayGridEmbeddedWeekLinks().eq(1))
-        expectWeekView('week', '2016-08-07')
+        expectWeekView('timeGridWeek', '2016-08-07')
         expect(options.dateClick).not.toHaveBeenCalled()
       })
     })
@@ -97,13 +97,13 @@ describe('navLinks', function() {
 
   describe('in week view', function() {
     beforeEach(function() {
-      options.defaultView = 'week'
+      options.defaultView = 'timeGridWeek'
     })
 
     it('moves to day view', function() {
       initCalendar(options)
       $.simulateMouseClick(getDayHeaderLink('2016-08-15'))
-      expectDayView('day', '2016-08-15')
+      expectDayView('timeGridDay', '2016-08-15')
       expect(options.dateClick).not.toHaveBeenCalled()
     })
   })
@@ -122,21 +122,21 @@ describe('navLinks', function() {
     it('moves to day view', function() {
       initCalendar(options)
       $.simulateMouseClick(getListDayHeaderLink('2016-08-20'))
-      expectDayView('day', '2016-08-20')
+      expectDayView('timeGridDay', '2016-08-20')
       expect(options.dateClick).not.toHaveBeenCalled()
     })
   })
 
   describe('in day view', function() {
     beforeEach(function() {
-      options.defaultView = 'day'
+      options.defaultView = 'timeGridDay'
     })
 
     it('moves to week view', function() {
       options.weekNumbers = true
       initCalendar(options)
       $.simulateMouseClick(getTimeGridWeekNumberLink())
-      expectWeekView('week', '2016-08-14')
+      expectWeekView('timeGridWeek', '2016-08-14')
       expect(options.dateClick).not.toHaveBeenCalled()
     })
 

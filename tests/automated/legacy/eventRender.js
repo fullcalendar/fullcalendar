@@ -47,7 +47,7 @@ describe('eventRender', function() {
   describe('when in month view', function() {
 
     pushOptions({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       events: [ {
         title: 'my event',
         start: '2014-11-12'
@@ -189,7 +189,7 @@ describe('eventRender', function() {
   describe('when in week view', function() {
 
     pushOptions({
-      defaultView: 'week'
+      defaultView: 'timeGridWeek'
     })
 
     describe('with a foreground event', function() {

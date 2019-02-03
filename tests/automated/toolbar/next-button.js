@@ -10,7 +10,7 @@ import { expectButtonEnabled } from './ToolbarUtils'
 
 describe('next button', function() {
   pushOptions({
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     defaultDate: '2017-06-08'
   })
 
@@ -70,7 +70,7 @@ describe('next button', function() {
   describe('when defaultDate is constrained forward to validRange and next week is valid', function() {
     pushOptions({
       defaultDate: '2017-07-17',
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       validRange: { start: '2036-05-03', end: '2036-06-01' }
     })
     it('is enabled', function() {

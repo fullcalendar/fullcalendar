@@ -1,7 +1,7 @@
 
 describe('implicit unselection', function() {
   pushOptions({
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     fixedWeekCount: true,
     now: '2018-09-11'
   })

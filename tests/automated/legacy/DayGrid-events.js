@@ -4,7 +4,7 @@ import { getFirstEventEl, getSingleEl } from '../event-render/EventRenderUtils'
 describe('DayGrid event rendering', function() {
   pushOptions({
     defaultDate: '2014-08-01', // 2014-07-27 - 2014-10-07 (excl)
-    defaultView: 'month'
+    defaultView: 'dayGridMonth'
   })
 
   describe('when LTR', function() {

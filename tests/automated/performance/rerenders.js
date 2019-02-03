@@ -14,19 +14,19 @@ describe('rerender performance', function() {
 
   ;[
     {
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       classes: { DayGrid },
       changeToView: 'list' // does not have DayGrid!
     },
     {
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       classes: { DayGrid, TimeGrid },
       changeToView: 'list' // does not have DayGrid!
     },
     {
       defaultView: 'listWeek',
       classes: { ListView },
-      changeToView: 'month'
+      changeToView: 'dayGridMonth'
     }
   ].forEach(function(settings) {
 

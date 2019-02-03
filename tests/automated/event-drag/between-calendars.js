@@ -42,7 +42,7 @@ describe('dragging events between calendars', function() {
       plugins: [ InteractionPlugin, DayGridPlugin ],
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       editable: true,
       events: [
         { start: '2019-01-01', id: 'a' }
@@ -58,7 +58,7 @@ describe('dragging events between calendars', function() {
       plugins: [ InteractionPlugin, DayGridPlugin ],
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       editable: true,
       droppable: true,
       drop: function(info) {
@@ -100,7 +100,7 @@ describe('dragging events between calendars', function() {
       scrollTime: '00:00',
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
-      defaultView: 'day',
+      defaultView: 'timeGridDay',
       editable: true,
       events: [
         { start: '2019-01-01T00:00:00', id: 'a' }
@@ -112,7 +112,7 @@ describe('dragging events between calendars', function() {
       scrollTime: '00:00',
       timeZone: 'UTC',
       defaultDate: DEFAULT_DATE,
-      defaultView: 'day',
+      defaultView: 'timeGridDay',
       editable: true,
       droppable: true,
       eventReceive: function(info) {

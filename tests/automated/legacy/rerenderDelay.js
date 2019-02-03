@@ -15,7 +15,7 @@ describe('rerenderDelay', function() {
 
     initCalendar({
       defaultDate: '2016-12-04',
-      defaultView: 'day',
+      defaultView: 'timeGridDay',
       events: eventSource1,
       rerenderDelay: 0, // will still debounce despite being zero
       _eventsPositioned: function() {

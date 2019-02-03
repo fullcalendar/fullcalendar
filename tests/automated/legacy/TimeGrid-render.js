@@ -6,7 +6,7 @@ import { getSlotEls } from '../lib/time-grid'
 
 describe('Agenda view rendering', function() {
   pushOptions({
-    defaultView: 'week'
+    defaultView: 'timeGridWeek'
   })
 
   describe('when LTR', function() {

@@ -24,7 +24,7 @@ describe('select method', function() {
       })
       describe('when in month view', function() {
         beforeEach(function() {
-          options.defaultView = 'month'
+          options.defaultView = 'dayGridMonth'
         })
         describe('when called with all-day date strings', function() {
           describe('when in bounds', function() {
@@ -92,7 +92,7 @@ describe('select method', function() {
       })
       describe('when in week view', function() { // May 25 - 31
         beforeEach(function() {
-          options.defaultView = 'week'
+          options.defaultView = 'timeGridWeek'
           options.scrollTime = '01:00:00' // so that most events will be below the divider
           options.height = 400 // short enought to make scrolling happen
         })

@@ -8,7 +8,7 @@ export { TimeGridView, AbstractTimeGridView, buildDayTable, buildDayRanges, Time
 export { default as TimeGrid } from './TimeGrid'
 
 export default createPlugin({
-  defaultView: 'week',
+  defaultView: 'timeGridWeek',
   viewConfigs: {
 
     timeGrid: {
@@ -18,12 +18,12 @@ export default createPlugin({
       slotEventOverlap: true // a bad name. confused with overlap/constraint system
     },
 
-    day: {
+    timeGridDay: {
       type: 'timeGrid',
       duration: { days: 1 }
     },
 
-    week: {
+    timeGridWeek: {
       type: 'timeGrid',
       duration: { weeks: 1 }
     }

@@ -23,7 +23,7 @@ describe('select callback', function() {
       })
       describe('when in month view', function() {
         beforeEach(function() {
-          options.defaultView = 'month'
+          options.defaultView = 'dayGridMonth'
         })
         it('gets fired correctly when the user selects cells', function(done) {
           options.select = function(arg) {
@@ -99,7 +99,7 @@ describe('select callback', function() {
 
       describe('when in week view', function() {
         beforeEach(function() {
-          options.defaultView = 'week'
+          options.defaultView = 'timeGridWeek'
         })
         describe('when selecting all-day slots', function() {
           it('gets fired correctly when the user selects cells', function(done) {

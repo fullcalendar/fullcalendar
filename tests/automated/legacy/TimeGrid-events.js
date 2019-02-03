@@ -4,7 +4,7 @@ describe('TimeGrid event rendering', function() {
 
   pushOptions({
     defaultDate: '2014-08-23',
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     scrollTime: '00:00:00'
   })
 

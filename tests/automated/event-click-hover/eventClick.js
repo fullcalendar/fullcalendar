@@ -3,7 +3,7 @@ import { getSingleEl, getSingleBackgroundEventEl } from '../event-render/EventRe
 describe('eventClick', function() {
   pushOptions({
     defaultDate: '2018-08-31',
-    defaultView: 'month'
+    defaultView: 'dayGridMonth'
   })
 
   it('receives correct args', function(done) {

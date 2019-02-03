@@ -2,7 +2,7 @@
 describe('lazyFetching', function() {
   pushOptions({
     timeZone: 'UTC',
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     defaultDate: '2017-10-04'
   })
 
@@ -21,7 +21,7 @@ describe('lazyFetching', function() {
       spyOn(options, 'events').and.callThrough()
 
       initCalendar(options)
-      currentCalendar.changeView('week')
+      currentCalendar.changeView('timeGridWeek')
       currentCalendar.next()
       currentCalendar.next()
       currentCalendar.next()
@@ -49,7 +49,7 @@ describe('lazyFetching', function() {
       spyOn(options, 'events')
 
       initCalendar(options)
-      currentCalendar.changeView('week')
+      currentCalendar.changeView('timeGridWeek')
       currentCalendar.next()
       currentCalendar.next()
       currentCalendar.next()

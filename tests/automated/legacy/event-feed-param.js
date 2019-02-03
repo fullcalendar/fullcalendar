@@ -3,7 +3,7 @@ describe('event feed params', function() {
 
   pushOptions({
     defaultDate: '2014-05-01',
-    defaultView: 'month'
+    defaultView: 'dayGridMonth'
   })
 
   beforeEach(function() {

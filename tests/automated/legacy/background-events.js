@@ -26,7 +26,7 @@ describe('background events', function() {
   })
 
   describe('when in month view', function() {
-    pushOptions({ defaultView: 'month' })
+    pushOptions({ defaultView: 'dayGridMonth' })
 
     describe('when LTR', function() {
       it('render correctly on a single day', function(done) {
@@ -356,7 +356,7 @@ describe('background events', function() {
       // disabled for v4
       xit('can be activated when rendering set on the source', function(done) {
         var options = {}
-        options.defaultView = 'month'
+        options.defaultView = 'dayGridMonth'
         options.eventSources = [ {
           rendering: 'background',
           events: [ {
@@ -376,7 +376,7 @@ describe('background events', function() {
       // disabled for v4
       xit('can be activated when rendering set on the source', function(done) {
         var options = {}
-        options.defaultView = 'week'
+        options.defaultView = 'timeGridWeek'
         options.eventSources = [ {
           rendering: 'background',
           events: [ {
@@ -394,7 +394,7 @@ describe('background events', function() {
   })
 
   describe('when in week view', function() {
-    pushOptions({ defaultView: 'week' })
+    pushOptions({ defaultView: 'timeGridWeek' })
 
     describe('when LTR', function() {
       it('render correctly on one day', function(done) {

@@ -9,7 +9,7 @@ describe('eventResizableFromStart', function() {
   describe('for DayGrid', function() {
     pushOptions({
       defaultDate: '2019-08-26',
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       events: [
         { start: '2019-08-27', title: 'all day event' }
       ]

@@ -2,7 +2,7 @@ describe('removeEventSources', function() {
 
   pushOptions({
     defaultDate: '2014-08-01',
-    defaultView: 'day',
+    defaultView: 'timeGridDay',
     eventSources: [
       buildEventSource(1),
       buildEventSource(2),

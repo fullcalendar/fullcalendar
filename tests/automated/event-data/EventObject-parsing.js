@@ -4,7 +4,7 @@ describe('Event Object parsing', function() {
   it('records _id as an extended prop', function() {
     initCalendar({
       currentDate: '2017-09-05',
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       events: [
         { _id: 'a', start: '2017-09-05' }
       ]
@@ -16,7 +16,7 @@ describe('Event Object parsing', function() {
 
   it('parses an all-day event with timed same-day start/end', function() {
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2017-11-01',
       timeZone: 'local',
       events: [

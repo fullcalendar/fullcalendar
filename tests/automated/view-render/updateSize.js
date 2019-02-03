@@ -5,7 +5,7 @@ describe('updateSize method', function() {
     var $el = $('<div style="display:none" />').appendTo('body')
 
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       contentHeight: 600
     }, $el)
 

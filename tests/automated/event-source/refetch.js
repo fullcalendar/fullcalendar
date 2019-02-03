@@ -12,7 +12,7 @@ describe('event source refetch', function() {
 
   pushOptions({
     now: '2015-08-07',
-    defaultView: 'day',
+    defaultView: 'timeGridDay',
     scrollTime: '00:00',
     eventSources: [
       {

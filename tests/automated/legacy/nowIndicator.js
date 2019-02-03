@@ -15,7 +15,7 @@ describe('now indicator', function() {
 
   describe('when in month view', function() {
     beforeEach(function() {
-      options.defaultView = 'month'
+      options.defaultView = 'dayGridMonth'
     })
 
     it('doesn\'t render even when activated', function() {
@@ -26,7 +26,7 @@ describe('now indicator', function() {
 
   describe('when in week view', function() {
     beforeEach(function() {
-      options.defaultView = 'week'
+      options.defaultView = 'timeGridWeek'
     })
 
     it('doesn\'t render by default', function() {

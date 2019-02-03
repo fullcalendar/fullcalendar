@@ -13,7 +13,7 @@ describe('weekNumbers', function() {
   describe('when using month view', function() {
 
     pushOptions({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       fixedWeekCount: true // will make 6 rows
     })
 
@@ -260,7 +260,7 @@ describe('weekNumbers', function() {
   describe('when using an timeGrid view', function() {
 
     pushOptions({
-      defaultView: 'week'
+      defaultView: 'timeGridWeek'
     })
 
     describe('with default weekNumbers', function() {

@@ -12,7 +12,7 @@ describe('prev', function() {
 
   describe('when in a week view', function() {
     pushOptions({
-      defaultView: 'week'
+      defaultView: 'timeGridWeek'
     })
 
     it('moves back by one week', function() {

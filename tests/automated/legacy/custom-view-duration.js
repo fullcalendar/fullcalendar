@@ -219,7 +219,7 @@ describe('custom view', function() {
         buttonText: 'awesome'
       }
       options.header = {
-        center: 'custom,month'
+        center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
       initCalendar(options)
@@ -239,7 +239,7 @@ describe('custom view', function() {
         buttonText: 'awesome'
       }
       options.header = {
-        center: 'custom,month'
+        center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
       initCalendar(options)
@@ -259,7 +259,7 @@ describe('custom view', function() {
         buttonText: 'awesome'
       }
       options.header = {
-        center: 'custom,month'
+        center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
       initCalendar(options)
@@ -276,7 +276,7 @@ describe('custom view', function() {
         duration: { days: 1 }
       }
       options.header = {
-        center: 'custom,month'
+        center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
       initCalendar(options)
@@ -294,7 +294,7 @@ describe('custom view', function() {
         buttonText: 'awesome'
       }
       options.header = {
-        center: 'custom,month'
+        center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
       initCalendar(options)
@@ -311,7 +311,7 @@ describe('custom view', function() {
         buttonText: 'awesome'
       }
       options.header = {
-        center: 'custom,month'
+        center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
       initCalendar(options)
@@ -328,7 +328,7 @@ describe('custom view', function() {
         buttonText: 'awesome'
       }
       options.header = {
-        center: 'dayGridFourDay,month'
+        center: 'dayGridFourDay,dayGridMonth'
       }
       options.defaultView = 'dayGridFourDay'
       initCalendar(options)
@@ -350,7 +350,7 @@ describe('custom view', function() {
           })
         ],
         header: {
-          center: 'crazy,month'
+          center: 'crazy,dayGridMonth'
         },
         defaultView: 'crazy'
       })

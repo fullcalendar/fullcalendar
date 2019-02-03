@@ -4,7 +4,7 @@ describe('eventAllow', function() {
 
   pushOptions({
     now: '2016-09-04',
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     scrollTime: '00:00',
     editable: true,
     events: [

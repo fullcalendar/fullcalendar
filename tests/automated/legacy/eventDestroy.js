@@ -25,7 +25,7 @@ describe('eventDestroy', function() {
   describe('when in month view', function() { // for issue 2017
 
     pushOptions({
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
 
     it('gets called with removeEvents method', function(done) {
@@ -40,7 +40,7 @@ describe('eventDestroy', function() {
   describe('when in week view', function() { // for issue 2017
 
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       scrollTime: '00:00:00'
     })
 

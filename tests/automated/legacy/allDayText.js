@@ -6,7 +6,7 @@ describe('allDayText', function() {
     describe('in week', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'week'
+          defaultView: 'timeGridWeek'
         }
         initCalendar(options)
         var allDayText = getAllDayAxisElText()
@@ -16,7 +16,7 @@ describe('allDayText', function() {
     describe('in day', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'day'
+          defaultView: 'timeGridDay'
         }
         initCalendar(options)
         var allDayText = getAllDayAxisElText()
@@ -29,7 +29,7 @@ describe('allDayText', function() {
     describe('in week', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'week',
+          defaultView: 'timeGridWeek',
           allDaySlot: true
         }
         initCalendar(options)
@@ -40,7 +40,7 @@ describe('allDayText', function() {
     describe('in day', function() {
       it('should default allDayText to using \'all-day\'', function() {
         var options = {
-          defaultView: 'day',
+          defaultView: 'timeGridDay',
           allDaySlot: true
         }
         initCalendar(options)
@@ -54,7 +54,7 @@ describe('allDayText', function() {
     describe('in week', function() {
       it('should use the locale\'s all-day value', function() {
         var options = {
-          defaultView: 'week',
+          defaultView: 'timeGridWeek',
           allDaySlot: true,
           locale: 'pt-br'
         }
@@ -66,7 +66,7 @@ describe('allDayText', function() {
     describe('in day', function() {
       it('should use the locale\'s all-day value', function() {
         var options = {
-          defaultView: 'day',
+          defaultView: 'timeGridDay',
           allDaySlot: true,
           locale: 'pt-br'
         }
@@ -81,7 +81,7 @@ describe('allDayText', function() {
     describe('in week', function() {
       it('should show specified all day text', function() {
         var options = {
-          defaultView: 'week',
+          defaultView: 'timeGridWeek',
           allDaySlot: true,
           allDayText: 'axis-phosy'
         }
@@ -93,7 +93,7 @@ describe('allDayText', function() {
     describe('in day', function() {
       it('should show specified all day text', function() {
         var options = {
-          defaultView: 'day',
+          defaultView: 'timeGridDay',
           allDayText: 'axis-phosy'
         }
         initCalendar(options)

@@ -3,7 +3,7 @@ import { getVisibleEventEls, getFirstEventEl } from '../event-render/EventRender
 
 describe('event dragging on repeating events', function() {
   pushOptions({
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     defaultDate: '2017-02-12',
     editable: true,
     events: [
@@ -27,7 +27,7 @@ describe('event dragging on repeating events', function() {
 
     // event range needs out large (month) then scope down (week)
     // so that the new view receives out-of-range events.
-    currentCalendar.changeView('week')
+    currentCalendar.changeView('timeGridWeek')
 
     TimeGridEventDragUtils.drag('2017-02-16T16:00:00', '2017-02-16T12:00:00')
       .then(function(res) {

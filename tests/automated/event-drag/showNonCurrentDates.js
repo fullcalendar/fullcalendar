@@ -4,7 +4,7 @@ import * as DayGridRenderUtils from '../view-render/DayGridRenderUtils'
 
 describe('showNonCurrentDates event dragging', function() {
   pushOptions({
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     defaultDate: '2017-06-01',
     showNonCurrentDates: false,
     events: [

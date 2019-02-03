@@ -2,7 +2,7 @@ describe('eventLimitText', function() {
 
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     eventLimit: 3,
     events: [
       { title: 'event1', start: '2014-07-29' },

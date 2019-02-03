@@ -10,7 +10,7 @@ describe('event resize mirror', function() {
 
   describe('in month view', function() {
     pushOptions({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       events: [
         { start: '2018-12-03', title: 'all day event' }
       ]
@@ -54,7 +54,7 @@ describe('event resize mirror', function() {
 
   describe('in timeGrid view', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       scrollTime: '00:00',
       slotDuration: '01:00',
       snapDuration: '01:00',

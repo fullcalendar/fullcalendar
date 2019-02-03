@@ -16,14 +16,14 @@ describe('scroll state', function() {
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'month'
+      defaultView: 'dayGridMonth'
     })
     defineTests()
   })
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       scrollTime: '00:00'
     })
     defineTests()

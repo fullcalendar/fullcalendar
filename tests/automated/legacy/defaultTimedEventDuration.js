@@ -4,7 +4,7 @@ describe('defaultTimedEventDuration', function() {
 
   pushOptions({
     defaultDate: '2014-05-01',
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     timeZone: 'UTC'
   })
 
@@ -52,7 +52,7 @@ describe('defaultTimedEventDuration', function() {
     describe('with week view', function() {
 
       pushOptions({
-        defaultView: 'week'
+        defaultView: 'timeGridWeek'
       })
 
       it('renders a timed event with no `end` to appear to have the default duration', function(done) {

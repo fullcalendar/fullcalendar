@@ -1,7 +1,7 @@
 describe('fixedWeekCount', function() {
 
   pushOptions({
-    defaultView: 'month',
+    defaultView: 'dayGridMonth',
     defaultDate: '2014-07-01' // has 5 weeks
   })
 

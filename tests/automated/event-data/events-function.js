@@ -6,7 +6,7 @@ describe('events as a function', function() {
 
   it('requests the correct dates when days at the start/end of the month are hidden', function(done) {
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2013-06-01', // June 2013 has first day as Saturday, and last as Sunday!
       weekends: false,
       fixedWeekCount: false,
@@ -22,7 +22,7 @@ describe('events as a function', function() {
 
   it('does not request dates excluded by showNonCurrentDates:false', function(done) {
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2013-06-01',
       showNonCurrentDates: false,
       events: function(arg, callback) {
@@ -35,7 +35,7 @@ describe('events as a function', function() {
 
   it('requests a timed range when minTime is negative', function(done) {
     initCalendar({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       defaultDate: '2017-06-08',
       minTime: { hours: -2 },
       events: function(arg, callback) {
@@ -48,7 +48,7 @@ describe('events as a function', function() {
 
   it('requests a timed range when maxTime exceeds 24 hours', function(done) {
     initCalendar({
-      defaultView: 'week',
+      defaultView: 'timeGridWeek',
       defaultDate: '2017-06-08',
       maxTime: '26:00',
       events: function(arg, callback) {

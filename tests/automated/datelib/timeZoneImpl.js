@@ -9,7 +9,7 @@ export function testTimeZoneImpl(timeZoneImplPlugin) {
 
     it('computes correct offset for named timezone for View dates', function() {
       initCalendar({
-        defaultView: 'month',
+        defaultView: 'dayGridMonth',
         now: '2018-09-01',
         timeZone: 'Europe/Moscow',
         events: [

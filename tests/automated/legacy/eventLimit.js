@@ -8,9 +8,9 @@ describe('eventLimit', function() {
   describe('as a number', function() {
 
     describeOptions('defaultView', {
-      'when in month view': 'month',
+      'when in month view': 'dayGridMonth',
       'when in dayGridWeek view': 'dayGridWeek',
-      'when in week view': 'week'
+      'when in week view': 'timeGridWeek'
     }, function() {
 
       it('doesn\'t display a more link when limit is more than the # of events', function() {
@@ -146,7 +146,7 @@ describe('eventLimit', function() {
     describe('in month view', function() {
 
       pushOptions({
-        defaultView: 'month',
+        defaultView: 'dayGridMonth',
         events: [
           { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
           { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
@@ -182,7 +182,7 @@ describe('eventLimit', function() {
     })
 
     describeOptions('defaultView', {
-      'when in month view': 'month',
+      'when in month view': 'dayGridMonth',
       'when in dayGridWeek view': 'dayGridWeek'
     }, function() {
 
@@ -199,7 +199,7 @@ describe('eventLimit', function() {
     describe('in week view', function() {
 
       pushOptions({
-        defaultView: 'week'
+        defaultView: 'timeGridWeek'
       })
 
       it('behaves as if limit is 5', function() {

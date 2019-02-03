@@ -10,7 +10,7 @@ describe('nextDayThreshold', function() {
     initCalendar({
       nextDayThreshold: '10:00:00',
       defaultDate: '2014-06',
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       events: [
         {
           title: 'event1',
@@ -26,7 +26,7 @@ describe('nextDayThreshold', function() {
     initCalendar({
       nextDayThreshold: '10:00:00',
       defaultDate: '2014-06',
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       events: [
         {
           title: 'event1',
@@ -42,7 +42,7 @@ describe('nextDayThreshold', function() {
     initCalendar({
       nextDayThreshold: '10:00:00',
       defaultDate: '2014-06',
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       events: [
         {
           title: 'event1',
@@ -56,7 +56,7 @@ describe('nextDayThreshold', function() {
 
   it('won\'t render an event that ends before the first day\'s threshold', function() {
     initCalendar({
-      defaultView: 'month',
+      defaultView: 'dayGridMonth',
       defaultDate: '2017-10-01',
       nextDayThreshold: '09:00:00',
       events: [ {

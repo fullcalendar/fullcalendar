@@ -2,7 +2,7 @@ describe('getEventSource', function() {
 
   pushOptions({
     now: '2015-08-07',
-    defaultView: 'week',
+    defaultView: 'timeGridWeek',
     eventSources: [
       {
         events: [
