@@ -667,7 +667,8 @@ export default class Calendar {
     let spec
 
     viewType = viewType || 'day' // day is default zoom
-    spec = this.viewSpecs[viewType]
+    spec = this.viewSpecs[viewType] ||
+      this.getUnitViewSpec(viewType)
 
     this.unselect()
 
@@ -682,6 +683,30 @@ export default class Calendar {
         type: 'SET_DATE',
         dateMarker
       })
+    }
+  }
+
+
+  // Given a duration singular unit, like "week" or "day", finds a matching view spec.
+  // Preference is given to views that have corresponding buttons.
+  getUnitViewSpec(unit: string): ViewSpec | null {
+    let viewTypes
+    let i
+    let spec
+
+    // put views that have buttons first. there will be duplicates, but oh well
+    viewTypes = this.component.header.viewsWithButtons // TODO: include footer as well?
+    for (let viewType in this.viewSpecs) {
+      viewTypes.push(viewType)
+    }
+
+    for (i = 0; i < viewTypes.length; i++) {
+      spec = this.viewSpecs[viewTypes[i]]
+      if (spec) {
+        if (spec.singleUnit === unit) {
+          return spec
+        }
+      }
     }
   }
 

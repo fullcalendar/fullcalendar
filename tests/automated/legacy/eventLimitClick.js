@@ -33,6 +33,19 @@ describe('eventLimitClick', function() { // simulate a click
       eventLimitClick: 'timeGridWeek'
     })
 
+    it('should go to dayGridWeek if it is one of the available views', function() {
+      initCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,dayGridWeek,dayGridDay'
+        }
+      })
+      $('.fc-more').simulate('click')
+      var view = currentCalendar.view
+      expect(view.type).toBe('dayGridWeek')
+    })
+
     it('should go to week if it is one of the available views', function() {
       initCalendar({
         header: {
@@ -51,6 +64,19 @@ describe('eventLimitClick', function() { // simulate a click
 
     pushOptions({
       eventLimitClick: 'timeGridDay'
+    })
+
+    it('should go to dayGridDay if it is one of the available views', function() {
+      initCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,dayGridWeek,dayGridDay'
+        }
+      })
+      $('.fc-more').simulate('click')
+      var view = currentCalendar.view
+      expect(view.type).toBe('dayGridDay')
     })
 
     it('should go to day if it is one of the available views', function() {
