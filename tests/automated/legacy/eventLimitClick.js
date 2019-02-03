@@ -30,7 +30,7 @@ describe('eventLimitClick', function() { // simulate a click
   describe('when set to "week"', function() {
 
     pushOptions({
-      eventLimitClick: 'timeGridWeek'
+      eventLimitClick: 'week'
     })
 
     it('should go to dayGridWeek if it is one of the available views', function() {
@@ -60,10 +60,10 @@ describe('eventLimitClick', function() { // simulate a click
     })
   })
 
-  describe('when set to "timeGridDay"', function() {
+  describe('when set to "day"', function() {
 
     pushOptions({
-      eventLimitClick: 'timeGridDay'
+      eventLimitClick: 'day'
     })
 
     it('should go to dayGridDay if it is one of the available views', function() {

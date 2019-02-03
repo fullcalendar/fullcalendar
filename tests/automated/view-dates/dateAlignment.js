@@ -8,7 +8,7 @@ describe('dateAlignment', function() {
   describe('when week alignment', function() {
     pushOptions({
       defaultView: 'timeGrid',
-      dateAlignment: 'timeGridWeek',
+      dateAlignment: 'week',
       defaultDate: '2017-06-15'
     })
 
