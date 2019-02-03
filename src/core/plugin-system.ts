@@ -30,7 +30,7 @@ export interface PluginDefInput {
   dateSelectionTransformers?: dateSelectionJoinTransformer[]
   datePointTransforms?: DatePointTransform[]
   dateSpanTransforms?: DateSpanTransform[]
-  viewConfigs?: ViewConfigInputHash
+  views?: ViewConfigInputHash
   viewSpecTransformers?: ViewSpecTransformer[]
   viewPropsTransformers?: ViewPropsTransformerClass[]
   isPropsValid?: isPropsValidTester
@@ -56,7 +56,7 @@ export interface PluginHooks {
   dateSelectionTransformers: dateSelectionJoinTransformer[]
   datePointTransforms: DatePointTransform[]
   dateSpanTransforms: DateSpanTransform[]
-  viewConfigs: ViewConfigInputHash // TODO: parse before gets to this step?
+  views: ViewConfigInputHash // TODO: parse before gets to this step?
   viewSpecTransformers: ViewSpecTransformer[]
   viewPropsTransformers: ViewPropsTransformerClass[]
   isPropsValid: isPropsValidTester | null
@@ -101,7 +101,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     dateSelectionTransformers: input.dateSelectionTransformers || [],
     datePointTransforms: input.datePointTransforms || [],
     dateSpanTransforms: input.dateSpanTransforms || [],
-    viewConfigs: input.viewConfigs || {},
+    views: input.views || {},
     viewSpecTransformers: input.viewSpecTransformers || [],
     viewPropsTransformers: input.viewPropsTransformers || [],
     isPropsValid: input.isPropsValid || null,
@@ -134,7 +134,7 @@ export class PluginSystem {
       dateSelectionTransformers: [],
       datePointTransforms: [],
       dateSpanTransforms: [],
-      viewConfigs: {},
+      views: {},
       viewSpecTransformers: [],
       viewPropsTransformers: [],
       isPropsValid: null,
@@ -177,7 +177,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     dateSelectionTransformers: hooks0.dateSelectionTransformers.concat(hooks1.dateSelectionTransformers),
     datePointTransforms: hooks0.datePointTransforms.concat(hooks1.datePointTransforms),
     dateSpanTransforms: hooks0.dateSpanTransforms.concat(hooks1.dateSpanTransforms),
-    viewConfigs: { ...hooks0.viewConfigs, ...hooks1.viewConfigs },
+    views: { ...hooks0.views, ...hooks1.views },
     viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
     viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
     isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,

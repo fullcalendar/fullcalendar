@@ -9,7 +9,7 @@ export { default as DayBgRow } from './DayBgRow'
 
 export default createPlugin({
   defaultView: 'dayGridMonth',
-  viewConfigs: {
+  views: {
 
     dayGrid: DayGridView,
 

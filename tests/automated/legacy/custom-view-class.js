@@ -57,7 +57,7 @@ describe('custom view class', function() {
     initCalendar({
       plugins: [
         createPlugin({
-          viewConfigs: {
+          views: {
             custom: CustomView
           }
         })

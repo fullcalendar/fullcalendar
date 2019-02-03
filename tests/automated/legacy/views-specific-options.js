@@ -132,7 +132,7 @@ describe('view-specific options', function() {
       plugins: [
         DayGridPlugin,
         createPlugin({
-          viewConfigs: {
+          views: {
             superBasic: SuperDayGridView
           }
         })
@@ -160,7 +160,7 @@ describe('view-specific options', function() {
       plugins: [
         DayGridPlugin,
         createPlugin({
-          viewConfigs: {
+          views: {
             superBasic: SuperDayGridView
           }
         })

@@ -360,7 +360,7 @@ describe('custom view', function() {
       initCalendar({
         plugins: [
           createPlugin({
-            viewConfigs: {
+            views: {
               crazy: CrazyView
             }
           })

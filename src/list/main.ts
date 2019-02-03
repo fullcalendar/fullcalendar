@@ -4,7 +4,7 @@ import ListView from './ListView'
 export { ListView }
 
 export default createPlugin({
-  viewConfigs: {
+  views: {
 
     list: {
       class: ListView,

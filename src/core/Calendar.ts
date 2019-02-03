@@ -23,7 +23,7 @@ import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
 import { createEmptyEventStore, EventStore, eventTupleToStore } from './structs/event-store'
 import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui'
-import { buildViewSpecs, ViewSpecHash } from './structs/view-spec'
+import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
 import { __assign } from 'tslib'
@@ -558,7 +558,7 @@ export default class Calendar {
 
     // ineffecient to do every time?
     this.viewSpecs = buildViewSpecs(
-      pluginHooks.viewConfigs,
+      pluginHooks.views,
       this.optionsManager,
       pluginHooks.viewSpecTransformers
     )

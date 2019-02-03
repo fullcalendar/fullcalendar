@@ -9,7 +9,7 @@ export { default as TimeGrid } from './TimeGrid'
 
 export default createPlugin({
   defaultView: 'timeGridWeek',
-  viewConfigs: {
+  views: {
 
     timeGrid: {
       class: TimeGridView,
