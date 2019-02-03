@@ -38,7 +38,7 @@ describe('eventLimitClick', function() { // simulate a click
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,dayGridWeek,dayGridDay'
+          right: 'dayGridMonth,dayGridWeek,dayGridDay'
         }
       })
       $('.fc-more').simulate('click')
@@ -71,7 +71,7 @@ describe('eventLimitClick', function() { // simulate a click
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,dayGridWeek,dayGridDay'
+          right: 'dayGridMonth,dayGridWeek,dayGridDay'
         }
       })
       $('.fc-more').simulate('click')
