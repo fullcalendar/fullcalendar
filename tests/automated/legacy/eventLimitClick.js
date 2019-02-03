@@ -47,10 +47,10 @@ describe('eventLimitClick', function() { // simulate a click
     })
   })
 
-  describe('when set to "day"', function() {
+  describe('when set to "timeGridDay"', function() {
 
     pushOptions({
-      eventLimitClick: 'day'
+      eventLimitClick: 'timeGridDay'
     })
 
     it('should go to day if it is one of the available views', function() {
@@ -69,7 +69,7 @@ describe('eventLimitClick', function() { // simulate a click
 
   it('works with an explicit view name', function() {
     initCalendar({
-      eventLimitClick: 'week',
+      eventLimitClick: 'timeGridWeek',
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -99,7 +99,7 @@ describe('eventLimitClick', function() { // simulate a click
   it('works with custom function, and can return a view name', function() {
     initCalendar({
       eventLimitClick: function(cellInfo, jsEvent) {
-        return 'day'
+        return 'timeGridDay'
       }
     })
     $('.fc-more').simulate('click')
