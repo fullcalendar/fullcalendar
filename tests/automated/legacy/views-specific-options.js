@@ -89,6 +89,40 @@ describe('view-specific options', function() {
     })
   })
 
+  it('can target week views', function() {
+    initCalendar({
+      views: {
+        week: {
+          titleFormat: function() { return 'special!!!' }
+        }
+      }
+    })
+    testEachView({
+      month: 'default',
+      dayGridWeek: 'special!!!',
+      dayGridDay: 'default',
+      week: 'special!!!',
+      day: 'default'
+    })
+  })
+
+  it('can target day views', function() {
+    initCalendar({
+      views: {
+        day: {
+          titleFormat: function() { return 'special!!!' }
+        }
+      }
+    })
+    testEachView({
+      month: 'default',
+      dayGridWeek: 'default',
+      dayGridDay: 'special!!!',
+      week: 'default',
+      day: 'special!!!'
+    })
+  })
+
   it('can implicitly target a View subclass', function() {
 
     class SuperDayGridView extends DayGridView {
