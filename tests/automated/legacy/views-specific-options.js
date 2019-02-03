@@ -21,37 +21,37 @@ describe('view-specific options', function() {
     })
   }
 
-  it('can target a specific view (month)', function() {
+  it('can target a specific view (dayGridMonth)', function() {
     initCalendar({
       views: {
-        month: {
+        dayGridMonth: {
           titleFormat: function() { return 'special!!!' }
         }
       }
     })
     testEachView({
-      month: 'special!!!',
+      dayGridMonth: 'special!!!',
       dayGridWeek: 'default',
       dayGridDay: 'default',
-      week: 'default',
-      day: 'default'
+      timeGridWeek: 'default',
+      timeGridDay: 'default'
     })
   })
 
-  it('can target a specific view (week)', function() {
+  it('can target a specific view (timeGridWeek)', function() {
     initCalendar({
       views: {
-        week: {
+        timeGridWeek: {
           titleFormat: function() { return 'special!!!' }
         }
       }
     })
     testEachView({
-      month: 'default',
+      dayGridMonth: 'default',
       dayGridWeek: 'default',
       dayGridDay: 'default',
-      week: 'special!!!',
-      day: 'default'
+      timeGridWeek: 'special!!!',
+      timeGridDay: 'default'
     })
   })
 
@@ -64,11 +64,11 @@ describe('view-specific options', function() {
       }
     })
     testEachView({
-      month: 'special!!!',
+      dayGridMonth: 'special!!!',
       dayGridWeek: 'special!!!',
       dayGridDay: 'special!!!',
-      week: 'default',
-      day: 'default'
+      timeGridWeek: 'default',
+      timeGridDay: 'default'
     })
   })
 
@@ -81,11 +81,11 @@ describe('view-specific options', function() {
       }
     })
     testEachView({
-      month: 'default',
+      dayGridMonth: 'default',
       dayGridWeek: 'default',
       dayGridDay: 'default',
-      week: 'special!!!',
-      day: 'special!!!'
+      timeGridWeek: 'special!!!',
+      timeGridDay: 'special!!!'
     })
   })
 
@@ -98,11 +98,11 @@ describe('view-specific options', function() {
       }
     })
     testEachView({
-      month: 'default',
+      dayGridMonth: 'default',
       dayGridWeek: 'special!!!',
       dayGridDay: 'default',
-      week: 'special!!!',
-      day: 'default'
+      timeGridWeek: 'special!!!',
+      timeGridDay: 'default'
     })
   })
 
@@ -115,11 +115,11 @@ describe('view-specific options', function() {
       }
     })
     testEachView({
-      month: 'default',
+      dayGridMonth: 'default',
       dayGridWeek: 'default',
       dayGridDay: 'special!!!',
-      week: 'default',
-      day: 'special!!!'
+      timeGridWeek: 'default',
+      timeGridDay: 'special!!!'
     })
   })
 
@@ -146,7 +146,7 @@ describe('view-specific options', function() {
 
     testEachView({
       superBasic: 'special!!!',
-      month: 'special!!!',
+      dayGridMonth: 'special!!!',
       dayGridDay: 'special!!!'
     })
   })
@@ -174,7 +174,7 @@ describe('view-specific options', function() {
 
     testEachView({
       superBasic: 'special!!!',
-      month: 'special!!!',
+      dayGridMonth: 'special!!!',
       dayGridDay: 'special!!!'
     })
   })
