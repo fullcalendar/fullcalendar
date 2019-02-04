@@ -25,8 +25,8 @@ export default createPlugin({
 
     dayGridMonth: {
       type: 'dayGrid',
+      duration: { months: 1 },
       monthMode: true,
-      duration: { months: 1 }, // important for prev/next
       fixedWeekCount: true
     }
 
