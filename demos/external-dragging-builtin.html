@@ -15,7 +15,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     var Calendar = FullCalendar.Calendar;
-    var Draggable = FullCalendarPlugins.interaction.Draggable
+    var Draggable = FullCalendarInteraction.Draggable
 
     /* initialize the external events
     -----------------------------------------------------------------*/
@@ -48,7 +48,7 @@
 
     var calendarEl = document.getElementById('calendar');
     var calendar = new Calendar(calendarEl, {
-      plugins: [ 'interaction', 'daygrid', 'timegrid', 'list' ],
+      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
       header: {
         left: 'prev,next today',
         center: 'title',

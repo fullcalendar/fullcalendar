@@ -4,6 +4,7 @@ import ArrayEventSourcePlugin from './event-sources/array-event-source'
 import FuncEventSourcePlugin from './event-sources/func-event-source'
 import JsonFeedEventSourcePlugin from './event-sources/json-feed-event-source'
 import SimpleRecurrencePlugin from './structs/recurring-event-simple'
+import { capitaliseFirstLetter } from './util/misc'
 
 export const config = {} as any // TODO: make these options
 
@@ -138,16 +139,19 @@ const INTERNAL_PLUGINS: PluginDef[] = [
 ]
 
 export function refinePluginDefs(pluginInputs: any[]): PluginDef[] {
-  let globalHash = window['FullCalendarPlugins'] || {}
   let plugins = []
 
   for (let pluginInput of pluginInputs) {
+
     if (typeof pluginInput === 'string') {
-      if (!globalHash[pluginInput]) {
-        console.warn('You must have ' + pluginInput + '.js plugin file loaded.')
+      let globalName = 'FullCalendar' + capitaliseFirstLetter(pluginInput)
+
+      if (!window[globalName]) {
+        console.warn('Plugin file not loaded for ' + pluginInput)
       } else {
-        plugins.push(globalHash[pluginInput].default) // is an ES6 module
+        plugins.push(window[globalName].default) // is an ES6 module
       }
+
     } else {
       plugins.push(pluginInput)
     }

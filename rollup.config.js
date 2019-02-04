@@ -18,8 +18,7 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 let packageGlobals = {
   luxon: 'luxon',
   moment: 'moment',
-  rrule: 'rrule',
-  '@fullcalendar/core': 'FullCalendar'
+  rrule: 'rrule'
 }
 
 let packagePaths = tsConfig.compilerOptions.paths
@@ -45,10 +44,13 @@ function getDefaultPlugins() { // need to be instantiated each time
 
 for (let packageName of packageNames) {
   let packagePath = packagePaths[packageName][0]
-  let packageDirName = path.basename(path.dirname(packagePath))
+  let packageDir = path.dirname(packagePath)
+  let packageMeta = require('./' + packageDir + '/package.json')
 
-  if (!packageGlobals[packageName]) {
-    packageGlobals[packageName] = 'FullCalendarPlugins.' + packageDirName
+  if (packageMeta.browserGlobal) {
+    packageGlobals[packageName] = packageMeta.browserGlobal
+  } else {
+    console.log('NEED browserGlobal in package ' + packageName)
   }
 }
 
