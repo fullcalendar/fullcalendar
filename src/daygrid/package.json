@@ -1,3 +1,4 @@
 {
-  "title": "FullCalendar Day Grid Plugin"
+  "title": "FullCalendar Day Grid Plugin",
+  "browserGlobal": "FullCalendarDayGrid"
 }

@@ -1,3 +1,4 @@
 {
-  "title": "FullCalendar List View Plugin"
+  "title": "FullCalendar List View Plugin",
+  "browserGlobal": "FullCalendarList"
 }

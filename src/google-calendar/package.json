@@ -1,3 +1,4 @@
 {
-  "title": "FullCalendar Google Calendar Plugin"
+  "title": "FullCalendar Google Calendar Plugin",
+  "browserGlobal": "FullCalendarGoogleCalendar"
 }
