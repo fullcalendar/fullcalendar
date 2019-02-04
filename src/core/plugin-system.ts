@@ -3,7 +3,7 @@ import { eventDefParserFunc } from './structs/event'
 import { eventDefMutationApplier } from './structs/event-mutation'
 import Calendar, { DatePointTransform, DateSpanTransform, CalendarInteractionClass } from './Calendar'
 import { ViewConfigInputHash } from './structs/view-config'
-import { ViewSpecTransformer, ViewSpec } from './structs/view-spec'
+import { ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
 import { isPropsValidTester } from './validation'
@@ -13,7 +13,6 @@ import { EventResizeJoinTransforms } from './interactions/event-resizing'
 import { ExternalDefTransform } from './interactions/external-element-dragging'
 import { InteractionClass } from './interactions/interaction'
 import { ThemeClass } from './theme/Theme'
-import { __assign } from 'tslib'
 import { EventSourceDef } from './structs/event-source'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { RecurringType } from './structs/recurring-event'
@@ -31,7 +30,6 @@ export interface PluginDefInput {
   datePointTransforms?: DatePointTransform[]
   dateSpanTransforms?: DateSpanTransform[]
   views?: ViewConfigInputHash
-  viewSpecTransformers?: ViewSpecTransformer[]
   viewPropsTransformers?: ViewPropsTransformerClass[]
   isPropsValid?: isPropsValidTester
   externalDefTransforms?: ExternalDefTransform[]
@@ -57,7 +55,6 @@ export interface PluginHooks {
   datePointTransforms: DatePointTransform[]
   dateSpanTransforms: DateSpanTransform[]
   views: ViewConfigInputHash // TODO: parse before gets to this step?
-  viewSpecTransformers: ViewSpecTransformer[]
   viewPropsTransformers: ViewPropsTransformerClass[]
   isPropsValid: isPropsValidTester | null
   externalDefTransforms: ExternalDefTransform[]
@@ -102,7 +99,6 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     datePointTransforms: input.datePointTransforms || [],
     dateSpanTransforms: input.dateSpanTransforms || [],
     views: input.views || {},
-    viewSpecTransformers: input.viewSpecTransformers || [],
     viewPropsTransformers: input.viewPropsTransformers || [],
     isPropsValid: input.isPropsValid || null,
     externalDefTransforms: input.externalDefTransforms || [],
@@ -135,7 +131,6 @@ export class PluginSystem {
       datePointTransforms: [],
       dateSpanTransforms: [],
       views: {},
-      viewSpecTransformers: [],
       viewPropsTransformers: [],
       isPropsValid: null,
       externalDefTransforms: [],
@@ -178,7 +173,6 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     datePointTransforms: hooks0.datePointTransforms.concat(hooks1.datePointTransforms),
     dateSpanTransforms: hooks0.dateSpanTransforms.concat(hooks1.dateSpanTransforms),
     views: { ...hooks0.views, ...hooks1.views },
-    viewSpecTransformers: hooks0.viewSpecTransformers.concat(hooks1.viewSpecTransformers),
     viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
     isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,
     externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms),
@@ -187,7 +181,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     eventDropTransformers: hooks0.eventDropTransformers.concat(hooks1.eventDropTransformers),
     calendarInteractions: hooks0.calendarInteractions.concat(hooks1.calendarInteractions),
     componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions),
-    themeClasses: __assign({}, hooks0.themeClasses, hooks1.themeClasses),
+    themeClasses: { ...hooks0.themeClasses, ...hooks1.themeClasses },
     eventSourceDefs: hooks0.eventSourceDefs.concat(hooks1.eventSourceDefs),
     cmdFormatter: hooks1.cmdFormatter || hooks0.cmdFormatter,
     recurringTypes: hooks0.recurringTypes.concat(hooks1.recurringTypes),

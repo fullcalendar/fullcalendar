@@ -559,8 +559,7 @@ export default class Calendar {
     // ineffecient to do every time?
     this.viewSpecs = buildViewSpecs(
       pluginHooks.views,
-      this.optionsManager,
-      pluginHooks.viewSpecTransformers
+      this.optionsManager
     )
 
     // ineffecient to do every time?

@@ -109,7 +109,7 @@ export { default as FillRenderer } from './component/renderers/FillRenderer'
 
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
-export { ViewSpec, ViewSpecTransformer } from './structs/view-spec'
+export { ViewSpec } from './structs/view-spec'
 export { DateSpan, DateSpanApi, DatePointApi, isDateSpansEqual } from './structs/date-span'
 
 export { DateMarker, addDays, startOfDay, addMs, addWeeks, diffWeeks, diffWholeWeeks, diffWholeDays, diffDayAndTime, diffDays, isValidDate } from './datelib/marker'

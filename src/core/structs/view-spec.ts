@@ -26,21 +26,13 @@ export interface ViewSpec {
 
 export type ViewSpecHash = { [viewType: string]: ViewSpec }
 
-export type ViewSpecTransformer = (viewSpec: ViewSpec) => ViewSpec
-
-export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionsManager: OptionsManager, transformers: ViewSpecTransformer[]): ViewSpecHash {
+export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionsManager: OptionsManager): ViewSpecHash {
   let defaultConfigs = parseViewConfigs(defaultInputs)
   let overrideConfigs = parseViewConfigs(optionsManager.overrides.views)
   let viewDefs = compileViewDefs(defaultConfigs, overrideConfigs)
 
   return mapHash(viewDefs, function(viewDef) {
-    let viewSpec = buildViewSpec(viewDef, overrideConfigs, optionsManager)
-
-    for (let transformer of transformers) {
-      viewSpec = transformer(viewSpec)
-    }
-
-    return viewSpec
+    return buildViewSpec(viewDef, overrideConfigs, optionsManager)
   })
 }
 
