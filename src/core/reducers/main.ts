@@ -64,7 +64,7 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
     case 'SET_DATE':
       if (
         !currentDateProfile.activeRange ||
-        !rangeContainsMarker(currentDateProfile.activeRange, action.dateMarker)
+        !rangeContainsMarker(currentDateProfile.currentRange, action.dateMarker)
       ) {
         newDateProfile = calendar.dateProfileGenerators[viewType].build(
           action.dateMarker,
