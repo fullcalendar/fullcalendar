@@ -57,8 +57,8 @@ if {
   # build everything
   npm run dist &&
 
-  # # test in headless browser
-  # npm run test-single &&
+  # test in headless browser
+  npm run test-single &&
 
   # commit new files
   git add -f dist package.json package-lock.json &&
