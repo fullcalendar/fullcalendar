@@ -1,4 +1,9 @@
 
+v4.0.0-beta.3 (2019-02-06)
+--------------------------
+NPM problems. Had to push another release. No code changes.
+
+
 v4.0.0-beta.2 (2019-02-06)
 --------------------------
 
