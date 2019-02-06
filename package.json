@@ -87,5 +87,7 @@
     "test-ci": "gulp dist && npm run test-single",
     "lint": "gulp lint",
     "dist": "gulp lint dist archive"
-  }
+  },
+  "version": "4.0.0-beta.2",
+  "releaseDate": "2019-02-06"
 }
