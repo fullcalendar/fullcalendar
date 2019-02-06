@@ -61,6 +61,7 @@ function buildPackageConfig(packageName, overrides) {
 
   delete res.devDependencies
   delete res.scripts
+  delete res.browserGlobal
 
   let peerDependencies = overrides.peerDependencies
   let dependencies = overrides.dependencies
