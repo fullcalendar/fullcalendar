@@ -7,6 +7,13 @@ const tsConfig = require('../tsconfig')
 
 let packagePaths = tsConfig.compilerOptions.paths
 
+const VERSION_PRECISION = '' // '^'
+if (!VERSION_PRECISION) {
+  console.log('TODO')
+  console.log('TODO: for official release, change VERSION_PRECISION')
+  console.log('TODO')
+}
+
 gulp.task('package-meta', [ 'package-meta:text', 'package-meta:json' ])
 
 gulp.task('package-meta:text', function() {
@@ -70,7 +77,7 @@ function buildPackageConfig(packageName, overrides) {
     if (!peerDependencies) {
       peerDependencies = {}
     }
-    peerDependencies['@fullcalendar/core'] = '^' + (rootPackageConfig.version || '0.0.0')
+    peerDependencies['@fullcalendar/core'] = VERSION_PRECISION + (rootPackageConfig.version || '0.0.0')
   }
 
   if (peerDependencies) {
@@ -100,7 +107,7 @@ function processDependencyMap(inputMap) {
       let dependencyPath = packagePaths[dependencyName][0]
 
       if (dependencyPath.match(/^src\//)) {
-        outputMap[dependencyName] = '^' + (rootPackageConfig.version || '0.0.0')
+        outputMap[dependencyName] = VERSION_PRECISION + (rootPackageConfig.version || '0.0.0')
       }
     } else {
       console.error('Unknown dependency', dependencyName)
