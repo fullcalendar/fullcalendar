@@ -1,6 +1,6 @@
 
-v4.0.0-beta.3 (2019-02-06)
---------------------------
+v4.0.0-beta.3/4 (2019-02-06)
+----------------------------
 NPM problems. Had to push another release. No code changes.
 
 
