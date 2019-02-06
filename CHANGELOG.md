@@ -14,6 +14,7 @@ BIG changes since last alpha release:
 - Bower support dropped
 - Composer support *temporarily* dropped
 - a new npm-run based dev workflow
+- bundled via Rollup (instead of Webpack)
 
 Smaller changes since last alpha release:
 - no need to specify `timeZoneImpl` setting. simply use luxon or moment-timezone plugin instead
