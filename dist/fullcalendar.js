@@ -12467,6 +12467,12 @@ var AgendaView = /** @class */ (function (_super) {
         });
         return _this;
     }
+    AgendaView.prototype.prepareHits = function () {
+        this.timeGrid.prepareHits();
+        if (this.dayGrid) {
+            this.dayGrid.prepareHits();
+        }
+    };
     // Instantiates the TimeGrid object this view needs. Draws from this.timeGridClass
     AgendaView.prototype.instantiateTimeGrid = function () {
         var timeGrid = new this.timeGridClass(this);

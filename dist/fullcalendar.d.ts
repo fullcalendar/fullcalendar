@@ -2346,6 +2346,7 @@ declare module 'fullcalendar/AgendaView' {
 	    axisWidth: any;
 	    usesMinMaxTime: boolean;
 	    constructor(calendar: any, viewSpec: any);
+	    prepareHits(): void;
 	    instantiateTimeGrid(): any;
 	    instantiateDayGrid(): any;
 	    renderSkeleton(): void;
