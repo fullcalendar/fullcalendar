@@ -55,6 +55,12 @@ export default class AgendaView extends View {
     })
   }
 
+  prepareHits() {
+    this.timeGrid.prepareHits()
+    if (this.dayGrid) {
+      this.dayGrid.prepareHits()
+    }
+  }
 
   // Instantiates the TimeGrid object this view needs. Draws from this.timeGridClass
   instantiateTimeGrid() {
