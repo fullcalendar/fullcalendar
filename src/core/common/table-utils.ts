@@ -19,7 +19,7 @@ export function computeFallbackHeaderFormat(datesRepDistinctDays: boolean, dayCn
 }
 
 export function renderDateCell(
-  date: DateMarker,
+  dateMarker: DateMarker,
   dateProfile: DateProfile,
   datesRepDistinctDays,
   colCnt,
@@ -29,7 +29,7 @@ export function renderDateCell(
   otherAttrs?
 ): string {
   let { view, dateEnv, theme, options } = context
-  let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
+  let isDateValid = rangeContainsMarker(dateProfile.activeRange, dateMarker) // TODO: called too frequently. cache somehow.
   let classNames = [
     'fc-day-header',
     theme.getClass('widgetHeader')
@@ -37,13 +37,17 @@ export function renderDateCell(
   let innerHtml
 
   if (typeof options.columnHeaderHtml === 'function') {
-    innerHtml = options.columnHeaderHtml(date)
+    innerHtml = options.columnHeaderHtml(
+      dateEnv.toDate(dateMarker)
+    )
   } else if (typeof options.columnHeaderText === 'function') {
     innerHtml = htmlEscape(
-      options.columnHeaderText(date)
+      options.columnHeaderText(
+        dateEnv.toDate(dateMarker)
+      )
     )
   } else {
-    innerHtml = htmlEscape(dateEnv.format(date, colHeadFormat))
+    innerHtml = htmlEscape(dateEnv.format(dateMarker, colHeadFormat))
   }
 
   // if only one row of days, the classNames on the header can represent the specific days beneath
@@ -51,16 +55,16 @@ export function renderDateCell(
     classNames = classNames.concat(
       // includes the day-of-week class
       // noThemeHighlight=true (don't highlight the header)
-      getDayClasses(date, dateProfile, context, true)
+      getDayClasses(dateMarker, dateProfile, context, true)
     )
   } else {
-    classNames.push('fc-' + DAY_IDS[date.getUTCDay()]) // only add the day-of-week class
+    classNames.push('fc-' + DAY_IDS[dateMarker.getUTCDay()]) // only add the day-of-week class
   }
 
   return '' +
     '<th class="' + classNames.join(' ') + '"' +
       ((isDateValid && datesRepDistinctDays) ?
-        ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' :
+        ' data-date="' + dateEnv.formatIso(dateMarker, { omitTime: true }) + '"' :
         '') +
         (colspan > 1 ?
           ' colspan="' + colspan + '"' :
@@ -73,7 +77,7 @@ export function renderDateCell(
         // don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
         buildGotoAnchorHtml(
           view,
-          { date, forceOff: !datesRepDistinctDays || colCnt === 1 },
+          { date: dateMarker, forceOff: !datesRepDistinctDays || colCnt === 1 },
           innerHtml
         ) :
         // if not valid, display text, but no link

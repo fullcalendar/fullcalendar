@@ -2,10 +2,7 @@ import { getFirstDayEl } from './DayGridRenderUtils'
 
 describe('columnHeaderHtml', function() {
   pushOptions({
-    defaultDate: '2014-05-11',
-    columnHeaderHtml: function(date) {
-      return '<div class="test">' + currentCalendar.formatDate(date, { weekday: 'long' }) + '</div>'
-    }
+    defaultDate: '2014-05-11'
   })
 
   describeOptions('defaultView', {
@@ -15,15 +12,33 @@ describe('columnHeaderHtml', function() {
   }, function() {
 
     it('should contain custom HTML', function() {
-      initCalendar()
-      expect(hasCustomHtml()).toBe(true)
+      initCalendar({
+        columnHeaderHtml: function(date) {
+          return '<div class="test">' + currentCalendar.formatDate(date, { weekday: 'long' }) + '</div>'
+        }
+      })
+
+      var firstHeader = getFirstDayEl()
+      expect(firstHeader.find('.test').length).toBe(1)
+      expect(firstHeader.text()).toBe('Sunday')
     })
   })
 
-  function hasCustomHtml() {
-    var firstHeader = getFirstDayEl()
+  describeTimeZones(function(tz) {
 
-    return firstHeader.find('.test').length === 1 && firstHeader.text() === 'Sunday'
-  }
+    it('receives correct date', function() {
+      let dates = []
+
+      initCalendar({
+        defaultView: 'timeGridDay',
+        columnHeaderHtml: function(date) {
+          dates.push(date)
+        }
+      })
+
+      expect(dates.length).toBe(1)
+      expect(dates[0]).toEqualDate(tz.createDate('2014-05-11'))
+    })
+  })
 
 })
