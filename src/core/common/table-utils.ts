@@ -73,7 +73,7 @@ export function renderDateCell(
         // don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
         buildGotoAnchorHtml(
           view,
-          { date: date, forceOff: !datesRepDistinctDays || colCnt === 1 },
+          { date, forceOff: !datesRepDistinctDays || colCnt === 1 },
           innerHtml
         ) :
         // if not valid, display text, but no link

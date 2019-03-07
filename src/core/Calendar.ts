@@ -188,19 +188,20 @@ export default class Calendar {
       let gotoOptions: any = anchorEl.getAttribute('data-goto')
       gotoOptions = gotoOptions ? JSON.parse(gotoOptions) : {}
 
-      let date = this.dateEnv.createMarker(gotoOptions.date)
+      let { dateEnv } = this
+      let dateMarker = dateEnv.createMarker(gotoOptions.date)
       let viewType = gotoOptions.type
 
       // property like "navLinkDayClick". might be a string or a function
       let customAction = this.viewOpt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
 
       if (typeof customAction === 'function') {
-        customAction(date, ev)
+        customAction(dateEnv.toDate(dateMarker), ev)
       } else {
         if (typeof customAction === 'string') {
           viewType = customAction
         }
-        this.zoomTo(date, viewType)
+        this.zoomTo(dateMarker, viewType)
       }
     })
 

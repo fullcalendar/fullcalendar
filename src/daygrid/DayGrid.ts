@@ -380,7 +380,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
     if (this.renderProps.cellWeekNumbersVisible && (date.getUTCDay() === weekCalcFirstDow)) {
       html += buildGotoAnchorHtml(
         view,
-        { date: date, type: 'week' },
+        { date, type: 'week' },
         { 'class': 'fc-week-number' },
         dateEnv.format(date, WEEK_NUM_FORMAT) // inner HTML
       )

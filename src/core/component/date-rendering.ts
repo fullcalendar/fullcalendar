@@ -7,7 +7,7 @@ import { DateProfile } from '../DateProfileGenerator'
 
 // Generates HTML for an anchor to another view into the calendar.
 // Will either generate an <a> tag or a non-clickable <span> tag, depending on enabled settings.
-// `gotoOptions` can either be a date input, or an object with the form:
+// `gotoOptions` can either be a DateMarker, or an object with the form:
 // { date, type, forceOff }
 // `type` is a view-type like "day" or "week". default value is "day".
 // `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
@@ -18,14 +18,13 @@ export function buildGotoAnchorHtml(component: Component<any>, gotoOptions, attr
   let forceOff
   let finalOptions
 
-  if (gotoOptions instanceof Date || typeof gotoOptions !== 'object') {
+  if (gotoOptions instanceof Date) {
     date = gotoOptions // a single date-like input
   } else {
     date = gotoOptions.date
     type = gotoOptions.type
     forceOff = gotoOptions.forceOff
   }
-  date = dateEnv.createMarker(date) // if a string, parse it
 
   finalOptions = { // for serialization into the link
     date: dateEnv.formatIso(date, { omitTime: true }),
