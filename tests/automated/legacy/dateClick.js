@@ -117,6 +117,33 @@ describe('dateClick', function() {
               // for simulating the mousedown/mouseup/click (relevant for selectable)
               slotRow.simulate('drag')
             })
+
+            // https://github.com/fullcalendar/fullcalendar/issues/4539
+            it('fires correctly when clicking on a timed slot NEAR END', function(done) {
+              var options = {}
+              // make sure the click slot will be in scroll view
+              options.contentHeight = 500
+              options.scrollTime = '23:00:00'
+
+              options.dateClick = function(arg) {
+                expect(arg.date instanceof Date).toEqual(true)
+                expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination
+                expect(typeof arg.view).toEqual('object') // "
+                expect(arg.allDay).toEqual(false)
+                expect(arg.date).toEqualDate('2014-05-28T23:30:00Z')
+                expect(arg.dateStr).toEqual('2014-05-28T23:30:00Z')
+                done()
+              }
+
+              initCalendar(options)
+
+              // the LAST row is 23:30
+              var slotRow = $('.fc-slats tr:eq(47) td:not(.fc-time)')
+
+              // for simulating the mousedown/mouseup/click (relevant for selectable)
+              slotRow.simulate('drag')
+            })
+
           })
         })
       })

@@ -173,7 +173,7 @@ export default class HitDragging {
 
         if (
           // must be within the element's bounds
-          positionLeft >= 0 && positionTop < width &&
+          positionLeft >= 0 && positionLeft < width &&
           positionTop >= 0 && positionTop < height
         ) {
           let hit = component.queryHit(positionLeft, positionTop, width, height)

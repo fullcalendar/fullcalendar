@@ -383,6 +383,36 @@ describe('eventDrop', function() {
         )
       })
     })
+
+    // https://github.com/fullcalendar/fullcalendar/issues/4503
+    describe('when dragging to one of the last slots', function() {
+      it('should work', function(done) {
+        options.scrollTime = '23:00:00'
+        options.height = 400 // short enough to make scrolling happen
+        options.events = [ {
+          title: 'timed event',
+          start: '2014-06-11T18:00:00', // should be in view without scrolling
+          allDay: false
+        } ]
+
+        init(
+          function() {
+            $('.fc-event .fc-time').simulate('drag', {
+              end: $('.fc-slats tr:eq(47)')
+            })
+          },
+          function() {
+            var event = currentCalendar.getEvents()[0]
+
+            expect(event.start).toEqualDate('2014-06-11T23:30:00Z')
+            expect(event.end).toBeNull()
+            expect(event.allDay).toBe(false)
+
+            done()
+          }
+        )
+      })
+    })
   })
 
   // Initialize a calendar, run a drag, and do type-checking of all arguments for all handlers.

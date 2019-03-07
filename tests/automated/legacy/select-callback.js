@@ -146,7 +146,9 @@ describe('select callback', function() {
             })
           })
         })
+
         describe('when selecting timed slots', function() {
+
           it('gets fired correctly when the user selects slots', function(done) {
             options.select = function(arg) {
               expect(arg.start instanceof Date).toEqual(true)
@@ -169,6 +171,25 @@ describe('select callback', function() {
               }
             })
           })
+
+          // https://github.com/fullcalendar/fullcalendar/issues/4505
+          it('gets fired correctly when the user selects slots NEAR THE END', function(done) {
+            options.scrollTime = '24:00'
+            options.select = function(arg) {
+              expect(arg.start).toEqualDate('2014-05-28T16:00:00Z')
+              expect(arg.end).toEqualDate('2014-05-29T00:00:00Z')
+            }
+            spyOn(options, 'select').and.callThrough()
+            initCalendar(options)
+            $('.fc-slats tr:eq(32) td:not(.fc-time)').simulate('drag', { // middle will be 2014-05-28T09:00:00
+              end: $('.fc-slats tr:eq(47)'), // the last slot
+              callback: function() {
+                expect(options.select).toHaveBeenCalled()
+                done()
+              }
+            })
+          })
+
           it('gets fired correctly when the user selects slots via touch', function(done) {
             options.select = function(arg) {
               expect(arg.start instanceof Date).toEqual(true)
@@ -195,6 +216,7 @@ describe('select callback', function() {
               })
             }, 100) // for FF
           })
+
           it('gets fired correctly when the user selects slots in a different day', function(done) {
             options.select = function(arg) {
               expect(arg.start instanceof Date).toEqual(true)
@@ -218,6 +240,7 @@ describe('select callback', function() {
               }
             })
           })
+
           it('gets fired correctly when the user selects a single slot', function(done) {
             options.select = function(arg) {
               expect(arg.start instanceof Date).toEqual(true)
@@ -239,6 +262,7 @@ describe('select callback', function() {
               }
             })
           })
+
         })
       })
     })
