@@ -101,26 +101,21 @@ describe('events as a json feed', function() {
     })
   })
 
-  it('accepts a data object', function(done) {
+  it('requests POST correctly', function(done) {
 
-    XHRMock.get(/^my-feed\.php/, function(req, res) {
-      expect(req.url().query).toEqual({
-        timeZone: 'UTC',
-        start: '2014-04-27T00:00:00Z',
-        end: '2014-06-08T00:00:00Z',
-        customParam: 'yes'
-      })
+    XHRMock.post(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({})
+      expect(req.body()).toEqual('start=2014-04-27T00%3A00%3A00Z&end=2014-06-08T00%3A00%3A00Z&timeZone=UTC')
       done()
       return res.status(200).header('content-type', 'application/json').body('[]')
     })
 
     initCalendar({
-      eventSources: [ {
+      events: {
         url: 'my-feed.php',
-        data: {
-          customParam: 'yes'
-        }
-      } ]
+        method: 'POST'
+      },
+      timeZone: 'UTC'
     })
   })
 
