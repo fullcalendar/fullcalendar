@@ -124,7 +124,7 @@ describe('events as a json feed', function() {
     })
   })
 
-  it('accepts a dynamic data function', function(done) {
+  it('accepts an extraParams object', function(done) {
 
     XHRMock.get(/^my-feed\.php/, function(req, res) {
       expect(req.url().query).toEqual({
@@ -140,7 +140,30 @@ describe('events as a json feed', function() {
     initCalendar({
       eventSources: [ {
         url: 'my-feed.php',
-        data: function() {
+        extraParams: {
+          customParam: 'heckyeah'
+        }
+      } ]
+    })
+  })
+
+  it('accepts a dynamic extraParams function', function(done) {
+
+    XHRMock.get(/^my-feed\.php/, function(req, res) {
+      expect(req.url().query).toEqual({
+        timeZone: 'UTC',
+        start: '2014-04-27T00:00:00Z',
+        end: '2014-06-08T00:00:00Z',
+        customParam: 'heckyeah'
+      })
+      done()
+      return res.status(200).header('content-type', 'application/json').body('[]')
+    })
+
+    initCalendar({
+      eventSources: [ {
+        url: 'my-feed.php',
+        extraParams: function() {
           return {
             customParam: 'heckyeah'
           }

@@ -26,7 +26,7 @@ let eventSourceDef: EventSourceDef = {
     return {
       url: raw.url,
       method: (raw.method || 'GET').toUpperCase(),
-      extraParams: raw.data,
+      extraParams: raw.extraParams,
       startParam: raw.startParam,
       endParam: raw.endParam,
       timeZoneParam: raw.timeZoneParam
