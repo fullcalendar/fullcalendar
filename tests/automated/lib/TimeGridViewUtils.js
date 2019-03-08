@@ -1,3 +1,6 @@
+
+// this file is about DAY grid???
+
 const DAY_GRID_CLASS = 'fc-day-grid'
 
 export function getDayGridSlotEls() {

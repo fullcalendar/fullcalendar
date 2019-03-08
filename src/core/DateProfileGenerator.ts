@@ -1,5 +1,5 @@
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
-import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator } from './datelib/duration'
+import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator, durationsEqual } from './datelib/duration'
 import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, rangesEqual } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
@@ -447,7 +447,10 @@ export default class DateProfileGenerator {
 
 }
 
+// TODO: find a way to avoid comparing DateProfiles. it's tedious
 export function isDateProfilesEqual(p0: DateProfile, p1: DateProfile) {
   return rangesEqual(p0.activeRange, p1.activeRange) &&
-    rangesEqual(p0.validRange, p1.validRange)
+    rangesEqual(p0.validRange, p1.validRange) &&
+    durationsEqual(p0.minTime, p1.minTime) &&
+    durationsEqual(p0.maxTime, p1.maxTime)
 }
