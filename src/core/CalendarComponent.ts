@@ -11,7 +11,7 @@ import { BusinessHoursInput, parseBusinessHours } from './structs/business-hours
 import { memoize } from './util/memoize'
 import { computeHeightAndMargins } from './util/dom-geom'
 import { createFormatter } from './datelib/formatting'
-import { diffWholeDays } from './datelib/marker'
+import { diffWholeDays, DateMarker } from './datelib/marker'
 import { memoizeRendering } from './component/memoized-rendering'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
@@ -105,21 +105,21 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     this.freezeHeight()
 
     let title = this.computeTitle(props.dateProfile, props.viewSpec.options)
-    this._renderToolbars(props.viewSpec, props.dateProfile, props.dateProfileGenerator, title)
+    this._renderToolbars(props.viewSpec, props.dateProfile, props.currentDate, props.dateProfileGenerator, title)
     this.renderView(props, title)
 
     this.updateSize()
     this.thawHeight()
   }
 
-  renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator, title: string) {
+  renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, currentDate: DateMarker, dateProfileGenerator: DateProfileGenerator, title: string) {
     let headerLayout = this.opt('header')
     let footerLayout = this.opt('footer')
 
     let now = this.calendar.getNow()
     let todayInfo = dateProfileGenerator.build(now)
-    let prevInfo = dateProfileGenerator.buildPrev(dateProfile)
-    let nextInfo = dateProfileGenerator.buildNext(dateProfile)
+    let prevInfo = dateProfileGenerator.buildPrev(dateProfile, currentDate)
+    let nextInfo = dateProfileGenerator.buildNext(dateProfile, currentDate)
 
     let toolbarProps = {
       title,

@@ -54,11 +54,11 @@ function reduceDateProfile(currentDateProfile: DateProfile | null, action: Actio
   switch (action.type) {
 
     case 'PREV':
-      newDateProfile = calendar.dateProfileGenerators[viewType].buildPrev(currentDateProfile)
+      newDateProfile = calendar.dateProfileGenerators[viewType].buildPrev(currentDateProfile, currentDate)
       break
 
     case 'NEXT':
-      newDateProfile = calendar.dateProfileGenerators[viewType].buildNext(currentDateProfile)
+      newDateProfile = calendar.dateProfileGenerators[viewType].buildNext(currentDateProfile, currentDate)
       break
 
     case 'SET_DATE':

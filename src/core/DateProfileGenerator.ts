@@ -4,6 +4,7 @@ import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rang
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
 import Calendar from './Calendar'
+import { computeVisibleDayRange } from './util/misc'
 
 
 export interface DateProfile {
@@ -44,11 +45,11 @@ export default class DateProfileGenerator {
 
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
-  buildPrev(currentDateProfile: DateProfile): DateProfile {
+  buildPrev(currentDateProfile: DateProfile, currentDate: DateMarker): DateProfile {
     let { dateEnv } = this
 
     let prevDate = dateEnv.subtract(
-      currentDateProfile.currentRange.start,
+      currentDate,
       currentDateProfile.dateIncrement
     )
 
@@ -57,11 +58,11 @@ export default class DateProfileGenerator {
 
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
-  buildNext(currentDateProfile: DateProfile): DateProfile {
+  buildNext(currentDateProfile: DateProfile, currentDate: DateMarker): DateProfile {
     let { dateEnv } = this
 
     let nextDate = dateEnv.add(
-      currentDateProfile.currentRange.start,
+      currentDate,
       currentDateProfile.dateIncrement
     )
 
@@ -356,8 +357,14 @@ export default class DateProfileGenerator {
     }
 
     if (val) {
-      return parseRange(val, this.dateEnv)
+      val = parseRange(val, this.dateEnv)
     }
+
+    if (val) {
+      val = computeVisibleDayRange(val)
+    }
+
+    return val
   }
 
 

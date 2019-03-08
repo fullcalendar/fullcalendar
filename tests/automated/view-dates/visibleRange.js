@@ -1,3 +1,4 @@
+import { addLocalDays, startOfLocalDay, startOfUtcDay, addUtcDays } from '../lib/date-math'
 import { expectActiveRange } from './ViewDateUtils'
 
 describe('visibleRange', function() {
@@ -81,7 +82,7 @@ describe('visibleRange', function() {
     describe('when a function', function() {
       var defaultDateInput = '2017-06-08T12:30:00'
 
-      it('receives the calendar\'s defaultDate, with local timezone', function() {
+      it('receives the calendar\'s defaultDate, with local timezone, and emits local range', function() {
         var matched = false
 
         initCalendar({
@@ -93,13 +94,20 @@ describe('visibleRange', function() {
             if (date.valueOf() === new Date(defaultDateInput).valueOf()) {
               matched = true
             }
+
+            let dayStart = startOfLocalDay(date)
+            return {
+              start: addLocalDays(dayStart, -1),
+              end: addLocalDays(dayStart, 2)
+            }
           }
         })
 
         expect(matched).toBe(true)
+        expectActiveRange('2017-06-07', '2017-06-10')
       })
 
-      it('receives the calendar\'s defaultDate, with UTC timezone', function() {
+      it('receives the calendar\'s defaultDate, with UTC timezone, and emits UTC range', function() {
         var matched = false
 
         initCalendar({
@@ -111,10 +119,35 @@ describe('visibleRange', function() {
             if (date.valueOf() === new Date(defaultDateInput + 'Z').valueOf()) {
               matched = true
             }
+
+            let dayStart = startOfUtcDay(date)
+            return {
+              start: addUtcDays(dayStart, -1),
+              end: addUtcDays(dayStart, 2)
+            }
           }
         })
 
         expect(matched).toBe(true)
+        expectActiveRange('2017-06-07', '2017-06-10')
+      })
+
+      // https://github.com/fullcalendar/fullcalendar/issues/4517
+      it('can emit and timed UTC range that will be rounded', function() {
+        initCalendar({
+          dateIncrement: { days: 3 },
+          timeZone: 'UTC',
+          defaultDate: defaultDateInput,
+          visibleRange: function(date) {
+            return {
+              start: addUtcDays(date, -1), // 2017-06-07T12:30:00 -> 2017-06-07
+              end: addUtcDays(date, 2) // 2017-06-10T12:30:00 -> 2017-06-11
+            }
+          }
+        })
+        expectActiveRange('2017-06-07', '2017-06-11')
+        currentCalendar.prev()
+        expectActiveRange('2017-06-04', '2017-06-08')
       })
 
     })
@@ -222,4 +255,5 @@ describe('visibleRange', function() {
       expectActiveRange('2015-06-07', '2015-06-14')
     })
   })
+
 })
