@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../../dist/core/main.css' rel='stylesheet' />
+<link href='../../dist/daygrid/main.css' rel='stylesheet' />
+<script src='../../dist/core/main.js'></script>
+<script src='../../dist/interaction/main.js'></script>
+<script src='../../dist/daygrid/main.js'></script>
+<script>
+
+  // from https://github.com/fullcalendar/fullcalendar/issues/4506
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar')
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ 'dayGrid' ],
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth'
+      },
+      windowResize: function() {
+        var ratio = calendarRatio()
+        console.log('set ratio', ratio)
+        calendar.setOption('aspectRatio', ratio)
+      },
+      aspectRatio: calendarRatio()
+    })
+
+    calendar.render()
+
+    function calendarRatio() {
+      return Math.random() * 10
+    }
+
+  })
+
+</script>
+<style>
+
+  body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+
+</body>
+</html>

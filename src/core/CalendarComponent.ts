@@ -249,7 +249,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     } else {
       this.viewHeight = Math.round(
         this.contentEl.offsetWidth /
-        Math.max(this.opt('aspectRatio'), .5)
+        Math.max(calendar.opt('aspectRatio'), .5)
       )
     }
   }

@@ -95,7 +95,7 @@ export default class Calendar {
   removeNavLinkListener: any
 
   windowResizeProxy: any
-  isResizing: boolean
+  isHandlingWindowResize: boolean
 
   state: CalendarState
   actionQueue = []
@@ -488,7 +488,7 @@ export default class Calendar {
     this.handleOptions(this.optionsManager.computed)
 
     if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
-      this.resizeComponent()
+      this.updateSize()
     } else if (name === 'timeZone') {
       this.dispatch({
         type: 'CHANGE_TIMEZONE',
@@ -830,31 +830,21 @@ export default class Calendar {
 
 
   windowResize(ev: Event) {
-    if ((ev as any).target === window) { // not a jqui resize event
-      if (this.resizeComponent()) { // returns true on success
-        this.publiclyTrigger('windowResize', [ this.view ])
-      }
+    if (
+      !this.isHandlingWindowResize &&
+      this.component && // why?
+      (ev as any).target === window // not a jqui resize event
+    ) {
+      this.isHandlingWindowResize = true
+      this.updateSize()
+      this.publiclyTrigger('windowResize', [ this.view ])
+      this.isHandlingWindowResize = false
     }
   }
 
 
   updateSize() { // public
-    this.resizeComponent()
-  }
-
-
-  resizeComponent(): boolean {
-
-    if (!this.isResizing && this.component) {
-
-      this.isResizing = true
-      this.component.updateSize(true) // isResize=true
-      this.isResizing = false
-
-      return true // signal success
-    }
-
-    return false
+    this.component.updateSize(true)
   }
 
 
