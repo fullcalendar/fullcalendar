@@ -181,7 +181,7 @@ export interface OptionsInputBase {
   datesDestroy?(arg: { view: View, el: HTMLElement }): void
   dayRender?(arg: { view: View, date: Date, allDay: boolean, el: HTMLElement }): void
   windowResize?(view: View): void
-  dateClick?(arg: { date: Date, allDay: boolean, resource: any, el: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
+  dateClick?(arg: { date: Date, allDay: boolean, resource: any, dayEl: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   eventClick?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): boolean | void
   eventMouseEnter?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
