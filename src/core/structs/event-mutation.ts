@@ -50,9 +50,10 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
   // and thus, we need to mark the event as having a real end
   if (
     standardProps.hasEnd == null &&
+    eventConfig.durationEditable &&
     willDeltasAffectDuration(
       eventConfig.startEditable ? mutation.startDelta : null,
-      eventConfig.durationEditable ? mutation.endDelta : null
+      mutation.endDelta || null
     )
   ) {
     standardProps.hasEnd = true // TODO: is this mutation okay?
@@ -122,7 +123,10 @@ function applyMutationToEventInstance(
       start: copy.range.start,
       end: calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
     }
-  } else if (mutation.endDelta && eventConfig.durationEditable) {
+  } else if (
+    mutation.endDelta &&
+    (eventConfig.durationEditable || !willDeltasAffectDuration(mutation.startDelta || null, mutation.endDelta))
+  ) {
     copy.range = {
       start: copy.range.start,
       end: dateEnv.add(copy.range.end, mutation.endDelta)

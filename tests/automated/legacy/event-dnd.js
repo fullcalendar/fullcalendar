@@ -102,6 +102,33 @@ describe('eventDrop', function() {
       })
     })
 
+    // https://github.com/fullcalendar/fullcalendar/issues/4458
+    describe('when dragging an event back in time when duration not editable', function() {
+      it('should work', function(done) {
+        options.defaultDate = '2019-01-16'
+        options.eventDurationEditable = false
+        options.events = [ {
+          title: 'event',
+          start: '2019-01-16T10:30:00+00:00',
+          end: '2019-01-16T12:30:00+00:00'
+        } ]
+
+        init(
+          function() {
+            $('.fc-event').simulate('drag', {
+              dx: $('.fc-day').width() * -2 // back two day
+            })
+          },
+          function(arg) {
+            expect(arg.delta).toEqual(createDuration({ day: -2 }))
+            expect(arg.event.start).toEqualDate('2019-01-14T10:30:00+00:00')
+            expect(arg.event.end).toEqualDate('2019-01-14T12:30:00+00:00')
+            done()
+          }
+        )
+      })
+    })
+
     // TODO: tests for eventMouseEnter/eventMouseLeave firing correctly when no dragging
     it('should not fire any eventMouseEnter/eventMouseLeave events while dragging', function(done) { // issue 1297
       options.events = [
