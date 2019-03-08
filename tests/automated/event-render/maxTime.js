@@ -1,4 +1,5 @@
 import { checkEventRendering } from './TimeGridEventRenderUtils'
+import { directionallyTestSeg } from './DayGridEventRenderUtils'
 
 describe('event rendering with maxTime', function() {
   pushOptions({
@@ -25,4 +26,23 @@ describe('event rendering with maxTime', function() {
       expect(res.isMatch).toBe(true)
     })
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/4483
+  it('displays events on the last day', function() {
+    initCalendar({
+      defaultView: 'dayGridWeek',
+      maxTime: '20:00',
+      events: [
+        { start: '2017-03-19', end: '2017-03-26' }
+      ]
+    })
+
+    directionallyTestSeg({
+      firstCol: 0,
+      lastCol: 6,
+      isStart: true,
+      isEnd: true
+    }, 'ltr')
+  })
+
 })
