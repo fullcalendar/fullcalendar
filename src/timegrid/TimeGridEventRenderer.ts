@@ -14,7 +14,7 @@ Does not own rendering. Use for low-level util methods by TimeGrid.
 export default class TimeGridEventRenderer extends FgEventRenderer {
 
   timeGrid: TimeGrid
-  segsByCol: any
+  segsByCol: any // within each col, events are ordered
   fullTimeFormat: DateFormatter
 
 
@@ -34,8 +34,16 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
   // Given an array of foreground segments, render a DOM element for each, computes position,
   // and attaches to the column inner-container elements.
   attachSegs(segs: Seg[], mirrorInfo) {
-    this.segsByCol = this.timeGrid.groupSegsByCol(segs)
-    this.timeGrid.attachSegsByCol(this.segsByCol, this.timeGrid.fgContainerEls)
+    let segsByCol = this.timeGrid.groupSegsByCol(segs)
+
+    // order the segs within each column
+    // TODO: have groupSegsByCol do this?
+    for (let col = 0; col < segsByCol.length; col++) {
+      segsByCol[col] = this.sortEventSegs(segsByCol[col])
+    }
+
+    this.segsByCol = segsByCol
+    this.timeGrid.attachSegsByCol(segsByCol, this.timeGrid.fgContainerEls)
   }
 
 
@@ -171,13 +179,13 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
 
   // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
+  // Assumed the segs are already ordered.
   // NOTE: Also reorders the given array by date!
   computeSegHorizontals(segs: Seg[]) {
     let levels
     let level0
     let i
 
-    segs = this.sortEventSegs(segs) // order by certain criteria
     levels = buildSlotSegLevels(segs)
     computeForwardSlotSegs(levels)
 
