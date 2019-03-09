@@ -18,6 +18,7 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 let packageGlobals = {
   luxon: 'luxon',
   moment: 'moment',
+  'moment-timezone/builds/moment-timezone-with-data': 'moment', // see moment-timezone/main.ts
   rrule: 'rrule'
 }
 

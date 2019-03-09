@@ -1,5 +1,10 @@
 import moment from 'moment'
-// import 'moment-timezone' // rollup includes weird require() markup
+
+// can't simply import 'moment-timezone' because it attempts to load a JSON file,
+// which the end-programmer might not have a loader setup for.
+// the file we are importing is pre-built to have the lib + timezone data.
+import 'moment-timezone/builds/moment-timezone-with-data'
+
 import { NamedTimeZoneImpl, createPlugin } from '@fullcalendar/core'
 
 
