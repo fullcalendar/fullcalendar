@@ -1,16 +1,16 @@
 import { getDayGridRowDayElAtIndex } from '../view-render/DayGridRenderUtils'
 import { getFirstEventEl } from './EventRenderUtils'
 
-  /*
-  opts:
-    - el (optional)
-    - row (optional)
-    - firstCol
-    - lastCol
-    - isStart
-    - isEnd
-  */
- export function directionallyTestSeg(opts, dir) {
+/*
+opts:
+  - el (optional)
+  - row (optional)
+  - firstCol
+  - lastCol
+  - isStart
+  - isEnd
+*/
+export function directionallyTestSeg(opts, dir) {
   var el = opts.el ? $(opts.el) : getFirstEventEl()
 
   var row = opts.row || 0

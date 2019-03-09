@@ -1,5 +1,5 @@
 import { checkEventRendering } from './TimeGridEventRenderUtils'
-import { getTimeAxisInfo } from '../view-render/TimeGridRenderUtils';
+import { getTimeAxisInfo } from '../view-render/TimeGridRenderUtils'
 
 describe('minTime', function() {
   pushOptions({
