@@ -182,7 +182,7 @@ export default class PointerDragging {
       target.removeEventListener('touchmove', this.handleTouchMove)
       target.removeEventListener('touchend', this.handleTouchEnd)
       target.removeEventListener('touchcancel', this.handleTouchEnd)
-      window.removeEventListener('scroll', this.handleTouchScroll, true) // wasCaptured=true
+      window.removeEventListener('scroll', this.handleTouchScroll, true) // useCaptured=true
 
       this.emitter.trigger('pointerup', this.createEventFromTouch(ev))
 
@@ -242,7 +242,7 @@ export default class PointerDragging {
 
   destroyScrollWatch() {
     if (this.shouldWatchScroll) {
-      window.removeEventListener('scroll', this.handleScroll, true) // wasCaptured=true
+      window.removeEventListener('scroll', this.handleScroll, true) // useCaptured=true
     }
   }
 
