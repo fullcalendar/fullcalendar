@@ -28,8 +28,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
   isDelayEnded: boolean = false
   isDistanceSurpassed: boolean = false
   delayTimeoutId: number | null = null
-  origX?: number
-  origY?: number
+
 
   constructor(containerEl: HTMLElement) {
     super()
@@ -69,9 +68,6 @@ export default class FeaturefulElementDragging extends ElementDragging {
       if (!this.pointer.shouldIgnoreMove) {
         // actions related to initiating dragstart+dragmove+dragend...
 
-        this.origX = ev.pageX
-        this.origY = ev.pageY
-
         this.mirror.setIsVisible(false) // reset. caller must set-visible
         this.mirror.start(ev.subjectEl as HTMLElement, ev.pageX, ev.pageY) // must happen on first pointer down
 
@@ -90,12 +86,11 @@ export default class FeaturefulElementDragging extends ElementDragging {
       this.emitter.trigger('pointermove', ev)
 
       if (!this.isDistanceSurpassed) {
-        let dx = ev.pageX - this.origX!
-        let dy = ev.pageY - this.origY!
         let minDistance = this.minDistance
         let distanceSq // current distance from the origin, squared
+        let { deltaX, deltaY } = ev
 
-        distanceSq = dx * dx + dy * dy
+        distanceSq = deltaX * deltaX + deltaY * deltaY
         if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
           this.handleDistanceSurpassed(ev)
         }

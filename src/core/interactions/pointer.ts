@@ -5,4 +5,6 @@ export interface PointerDragEvent {
   subjectEl: EventTarget
   pageX: number
   pageY: number
+  deltaX: number
+  deltaY: number
 }

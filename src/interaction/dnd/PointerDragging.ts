@@ -36,6 +36,8 @@ export default class PointerDragging {
   isDragging: boolean = false
   isTouchDragging: boolean = false
   wasTouchScroll: boolean = false
+  origPageX: number
+  origPageY: number
   prevPageX: number
   prevPageY: number
   prevScrollX: number // at time of last pointer pageX/pageY capture
@@ -101,8 +103,7 @@ export default class PointerDragging {
       isPrimaryMouseButton(ev) &&
       this.tryStart(ev)
     ) {
-      let pev = createEventFromMouse(ev, this.subjectEl!)
-
+      let pev = this.createEventFromMouse(ev, true)
       this.emitter.trigger('pointerdown', pev)
       this.initScrollWatch(pev)
 
@@ -115,7 +116,7 @@ export default class PointerDragging {
   }
 
   handleMouseMove = (ev: MouseEvent) => {
-    let pev = createEventFromMouse(ev, this.subjectEl!)
+    let pev = this.createEventFromMouse(ev)
     this.recordCoords(pev)
     this.emitter.trigger('pointermove', pev)
   }
@@ -124,7 +125,7 @@ export default class PointerDragging {
     document.removeEventListener('mousemove', this.handleMouseMove)
     document.removeEventListener('mouseup', this.handleMouseUp)
 
-    this.emitter.trigger('pointerup', createEventFromMouse(ev, this.subjectEl!))
+    this.emitter.trigger('pointerup', this.createEventFromMouse(ev))
 
     this.cleanup() // call last so that pointerup has access to props
   }
@@ -141,7 +142,7 @@ export default class PointerDragging {
     if (this.tryStart(ev)) {
       this.isTouchDragging = true
 
-      let pev = createEventFromTouch(ev, this.subjectEl!)
+      let pev = this.createEventFromTouch(ev, true)
       this.emitter.trigger('pointerdown', pev)
       this.initScrollWatch(pev)
 
@@ -169,7 +170,7 @@ export default class PointerDragging {
   }
 
   handleTouchMove = (ev: TouchEvent) => {
-    let pev = createEventFromTouch(ev, this.subjectEl!)
+    let pev = this.createEventFromTouch(ev)
     this.recordCoords(pev)
     this.emitter.trigger('pointermove', pev)
   }
@@ -183,7 +184,7 @@ export default class PointerDragging {
       target.removeEventListener('touchcancel', this.handleTouchEnd)
       window.removeEventListener('scroll', this.handleTouchScroll, true) // wasCaptured=true
 
-      this.emitter.trigger('pointerup', createEventFromTouch(ev, this.subjectEl!))
+      this.emitter.trigger('pointerup', this.createEventFromTouch(ev))
 
       this.cleanup() // call last so that pointerup has access to props
       this.isTouchDragging = false
@@ -224,12 +225,17 @@ export default class PointerDragging {
 
   handleScroll = (ev: UIEvent) => {
     if (!this.shouldIgnoreMove) {
+      let pageX = (window.pageXOffset - this.prevScrollX) + this.prevPageX
+      let pageY = (window.pageYOffset - this.prevScrollY) + this.prevPageY
+
       this.emitter.trigger('pointermove', {
         origEvent: ev,
         isTouch: this.isTouchDragging,
         subjectEl: this.subjectEl,
-        pageX: (window.pageXOffset - this.prevScrollX) + this.prevPageX,
-        pageY: (window.pageYOffset - this.prevScrollY) + this.prevPageY
+        pageX,
+        pageY,
+        deltaX: pageX - this.origPageX,
+        deltaY: pageY - this.origPageY
       } as PointerDragEvent)
     }
   }
@@ -240,44 +246,71 @@ export default class PointerDragging {
     }
   }
 
-}
 
+  // Event Normalization
+  // ----------------------------------------------------------------------------------------------------
 
-// Event Normalization
-// ----------------------------------------------------------------------------------------------------
+  createEventFromMouse(ev: MouseEvent, isFirst?: boolean): PointerDragEvent {
+    let deltaX = 0
+    let deltaY = 0
 
-function createEventFromMouse(ev: MouseEvent, subjectEl: EventTarget): PointerDragEvent {
-  return {
-    origEvent: ev,
-    isTouch: false,
-    subjectEl,
-    pageX: ev.pageX,
-    pageY: ev.pageY
-  }
-}
+    // TODO: repeat code
+    if (isFirst) {
+      this.origPageX = ev.pageX
+      this.origPageY = ev.pageY
+    } else {
+      deltaX = ev.pageX - this.origPageX
+      deltaY = ev.pageY - this.origPageY
+    }
 
-function createEventFromTouch(ev: TouchEvent, subjectEl: EventTarget): PointerDragEvent {
-  let touches = ev.touches
-  let pageX
-  let pageY
-
-  // if touch coords available, prefer,
-  // because FF would give bad ev.pageX ev.pageY
-  if (touches && touches.length) {
-    pageX = touches[0].pageX
-    pageY = touches[0].pageY
-  } else {
-    pageX = (ev as any).pageX
-    pageY = (ev as any).pageY
+    return {
+      origEvent: ev,
+      isTouch: false,
+      subjectEl: this.subjectEl,
+      pageX: ev.pageX,
+      pageY: ev.pageY,
+      deltaX,
+      deltaY
+    }
   }
 
-  return {
-    origEvent: ev,
-    isTouch: true,
-    subjectEl,
-    pageX,
-    pageY
+  createEventFromTouch(ev: TouchEvent, isFirst?: boolean): PointerDragEvent {
+    let touches = ev.touches
+    let pageX
+    let pageY
+    let deltaX = 0
+    let deltaY = 0
+
+    // if touch coords available, prefer,
+    // because FF would give bad ev.pageX ev.pageY
+    if (touches && touches.length) {
+      pageX = touches[0].pageX
+      pageY = touches[0].pageY
+    } else {
+      pageX = (ev as any).pageX
+      pageY = (ev as any).pageY
+    }
+
+    // TODO: repeat code
+    if (isFirst) {
+      this.origPageX = pageX
+      this.origPageY = pageY
+    } else {
+      deltaX = pageX - this.origPageX
+      deltaY = pageY - this.origPageY
+    }
+
+    return {
+      origEvent: ev,
+      isTouch: true,
+      subjectEl: this.subjectEl,
+      pageX,
+      pageY,
+      deltaX,
+      deltaY
+    }
   }
+
 }
 
 // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
