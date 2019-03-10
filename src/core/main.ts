@@ -50,7 +50,8 @@ export {
   intersectRects,
   Rect, pointInsideRect,
   constrainPoint,
-  getRectCenter, diffPoints, Point
+  getRectCenter, diffPoints, Point,
+  translateRect
 } from './util/geom'
 
 export { isPropsEqual, mapHash, filterHash } from './util/object'

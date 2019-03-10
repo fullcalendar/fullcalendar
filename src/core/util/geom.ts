@@ -37,6 +37,16 @@ export function intersectRects(rect1: Rect, rect2: Rect): Rect | false {
 }
 
 
+export function translateRect(rect: Rect, deltaX: number, deltaY: number): Rect {
+  return {
+    left: rect.left + deltaX,
+    right: rect.right + deltaX,
+    top: rect.top + deltaY,
+    bottom: rect.bottom + deltaY
+  }
+}
+
+
 // Returns a new point that will have been moved to reside within the given rectangle
 export function constrainPoint(point: Point, rect: Rect): Point {
   return {
