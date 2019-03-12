@@ -147,12 +147,12 @@ export function elementMatches(el: HTMLElement, selector: string): HTMLElement {
 
 // accepts multiple subject els
 // returns a real array. good for methods like forEach
-export function findElements(container: HTMLElement[] | HTMLElement, selector: string): HTMLElement[] {
+export function findElements(container: HTMLElement[] | HTMLElement | NodeList, selector: string): HTMLElement[] {
   let containers = container instanceof HTMLElement ? [ container ] : container
   let allMatches: HTMLElement[] = []
 
   for (let i = 0; i < containers.length; i++) {
-    let matches = containers[i].querySelectorAll(selector)
+    let matches = (containers[i] as HTMLElement).querySelectorAll(selector)
 
     for (let j = 0; j < matches.length; j++) {
       allMatches.push(matches[j] as HTMLElement)
