@@ -67,7 +67,7 @@ export default class AutoScroller {
 
       if (xDelta < 0) {
         this.everMovedLeft = true
-      } else if (yDelta > 0) {
+      } else if (xDelta > 0) {
         this.everMovedRight = true
       }
 
