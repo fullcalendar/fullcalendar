@@ -45,46 +45,10 @@ TODO: more distinction between this file and common.css
 
 /* Icons (inline elements with styled text that mock arrow icons)
 --------------------------------------------------------------------------------------------------
-svgs from https://feathericons.com/
+from https://feathericons.com/ and built with IcoMoon
 */
 
-.fc-icon {
-  display: inline-block;
-  height: 1.6em;
-  width: 1.6em;
-  margin: -0.2em; // because the icon set has a lot of padding around each icon
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-}
-
-.fc-icon-left-single-arrow {
-  background-image: dataurl('src/core/common/svg/chevron-left.svg')
-}
-
-.fc-icon-right-single-arrow {
-  background-image: dataurl('src/core/common/svg/chevron-right.svg')
-}
-
-.fc-icon-left-double-arrow {
-  background-image: dataurl('src/core/common/svg/chevrons-left.svg')
-}
-
-.fc-icon-right-double-arrow {
-  background-image: dataurl('src/core/common/svg/chevrons-right.svg')
-}
-
-.fc-icon-expand {
-  background-image: dataurl('src/core/common/svg/plus-square.svg')
-}
-
-.fc-icon-contract {
-  background-image: dataurl('src/core/common/svg/minus-square.svg')
-}
-
-.fc-icon-x {
-  background-image: dataurl('src/core/common/svg/x.svg')
-}
+@import './icons/icons';
 
 
 /* Buttons
@@ -252,12 +216,6 @@ Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
 .fc-unthemed .fc-popover {
   border-width: 1px;
   border-style: solid;
-}
-
-.fc-unthemed .fc-popover .fc-header .fc-close {
-  font-size: .8em;
-  position: relative;
-  top: 0.1em;
 }
 
 

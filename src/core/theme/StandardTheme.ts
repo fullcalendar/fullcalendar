@@ -26,10 +26,10 @@ StandardTheme.prototype.classes = {
 StandardTheme.prototype.baseIconClass = 'fc-icon'
 StandardTheme.prototype.iconClasses = {
   close: 'fc-icon-x',
-  prev: 'fc-icon-left-single-arrow',
-  next: 'fc-icon-right-single-arrow',
-  prevYear: 'fc-icon-left-double-arrow',
-  nextYear: 'fc-icon-right-double-arrow'
+  prev: 'fc-icon-chevron-left',
+  next: 'fc-icon-chevron-right',
+  prevYear: 'fc-icon-chevrons-left',
+  nextYear: 'fc-icon-chevrons-right'
 }
 
 StandardTheme.prototype.iconOverrideOption = 'buttonIcons'
