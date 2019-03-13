@@ -49,81 +49,40 @@ TODO: more distinction between this file and common.css
 .fc-icon {
   display: inline-block;
   height: 1em;
-  line-height: 1em;
-  font-size: 1em;
-  text-align: center;
-  overflow: hidden;
-  font-family: "Courier New", Courier, monospace;
-
-  /* don't allow browser text-selection */
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  width: 1em;
+  background-size: cover;
 }
 
-/*
-Acceptable font-family overrides for individual icons:
-  "Arial", sans-serif
-  "Times New Roman", serif
-
-NOTE: use percentage font sizes or else old IE chokes
-*/
-
-.fc-icon:after {
-  position: relative;
+.fc-icon-left-single-arrow {
+  background-image: dataurl('src/core/common/svg/baseline-accessible-24px.svg')
 }
 
-.fc-icon-left-single-arrow:after {
-  content: "\02039";
-  font-weight: bold;
-  font-size: 200%;
-  top: -7%;
+.fc-icon-right-single-arrow {
+  background-image: dataurl('src/core/common/svg/baseline-accessible_forward-24px.svg')
 }
 
-.fc-icon-right-single-arrow:after {
-  content: "\0203A";
-  font-weight: bold;
-  font-size: 200%;
-  top: -7%;
+.fc-icon-left-double-arrow {
+  background-image: dataurl('src/core/common/svg/baseline-accessible_forward-24px.svg')
 }
 
-.fc-icon-left-double-arrow:after {
-  content: "\000AB";
-  font-size: 160%;
-  top: -7%;
+.fc-icon-right-double-arrow {
+  background-image: dataurl('src/core/common/svg/baseline-accessible_forward-24px.svg')
 }
 
-.fc-icon-right-double-arrow:after {
-  content: "\000BB";
-  font-size: 160%;
-  top: -7%;
+.fc-icon-left-triangle {
+  background-image: dataurl('src/core/common/svg/baseline-accessible_forward-24px.svg')
 }
 
-.fc-icon-left-triangle:after {
-  content: "\25C4";
-  font-size: 125%;
-  top: 3%;
+.fc-icon-right-triangle {
+  background-image: dataurl('src/core/common/svg/baseline-accessible_forward-24px.svg')
 }
 
-.fc-icon-right-triangle:after {
-  content: "\25BA";
-  font-size: 125%;
-  top: 3%;
+.fc-icon-down-triangle {
+  background-image: dataurl('src/core/common/svg/baseline-accessible_forward-24px.svg')
 }
 
-.fc-icon-down-triangle:after {
-  content: "\25BC";
-  font-size: 125%;
-  top: 2%;
-}
-
-.fc-icon-x:after {
-  content: "\000D7";
-  font-size: 200%;
-  top: 6%;
+.fc-icon-x {
+  background-image: dataurl('src/core/common/svg/baseline-accessible_forward-24px.svg')
 }
 
 
