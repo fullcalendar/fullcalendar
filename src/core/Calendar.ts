@@ -446,7 +446,7 @@ export default class Calendar {
     })
 
     if (savedScroll) {
-      component.view.applyScroll(savedScroll)
+      component.view.applyScroll(savedScroll, false)
     }
 
     if (this.isViewUpdated) {

@@ -380,14 +380,14 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  popScroll() {
-    this.applyQueuedScroll()
+  popScroll(isResize: boolean) {
+    this.applyQueuedScroll(isResize)
     this.queuedScroll = null
   }
 
 
-  applyQueuedScroll() {
-    this.applyScroll(this.queuedScroll || {})
+  applyQueuedScroll(isResize: boolean) {
+    this.applyScroll(this.queuedScroll || {}, isResize)
   }
 
 
@@ -402,7 +402,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  applyScroll(scroll) {
+  applyScroll(scroll, isResize: boolean) {
 
     if (scroll.isDateInit) {
       delete scroll.isDateInit
