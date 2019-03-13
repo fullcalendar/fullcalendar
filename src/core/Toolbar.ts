@@ -60,9 +60,8 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
     this.viewsWithButtons = []
 
     appendToElement(el, this.renderSection('left', layout.left))
-    appendToElement(el, this.renderSection('right', layout.right))
     appendToElement(el, this.renderSection('center', layout.center))
-    appendToElement(el, '<div class="fc-clear"></div>')
+    appendToElement(el, this.renderSection('right', layout.right))
   }
 
 
@@ -133,8 +132,7 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
 
               buttonClasses = [
                 'fc-' + buttonName + '-button',
-                theme.getClass('button'),
-                theme.getClass('stateDefault')
+                theme.getClass('button')
               ]
 
               if (buttonText) {
@@ -151,89 +149,12 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
                 '>' + buttonInnerHtml + '</button>'
               )
 
-              let allowInteraction = function() {
-                const activeClassName = theme.getClass('stateActive')
-                const disabledClassName = theme.getClass('stateDisabled')
-
-                return (!activeClassName || !buttonEl.classList.contains(activeClassName)) &&
-                  (!disabledClassName || !buttonEl.classList.contains(disabledClassName))
-              }
-
-              buttonEl.addEventListener('click', function(ev) {
-                const disabledClassName = theme.getClass('stateDisabled')
-                const hoverClassName = theme.getClass('stateHover')
-
-                // don't process clicks for disabled buttons
-                if (!disabledClassName || !buttonEl.classList.contains(disabledClassName)) {
-
-                  buttonClick(ev)
-
-                  // after the click action, if the button becomes the "active" tab, or disabled,
-                  // it should never have a hover class, so remove it now.
-                  if (!allowInteraction() && hoverClassName) {
-                    buttonEl.classList.remove(hoverClassName)
-                  }
-                }
-              })
-
-              buttonEl.addEventListener('mousedown', function(ev) {
-                const downClassName = theme.getClass('stateDown')
-
-                // the *down* effect (mouse pressed in).
-                // only on buttons that are not the "active" tab, or disabled
-                if (allowInteraction() && downClassName) {
-                  buttonEl.classList.add(downClassName)
-                }
-              })
-
-              buttonEl.addEventListener('mouseup', function(ev) {
-                const downClassName = theme.getClass('stateDown')
-
-                // undo the *down* effect
-                if (downClassName) {
-                  buttonEl.classList.remove(downClassName)
-                }
-              })
-
-              buttonEl.addEventListener('mouseenter', function(ev) {
-                const hoverClassName = theme.getClass('stateHover')
-
-                // the *hover* effect.
-                // only on buttons that are not the "active" tab, or disabled
-                if (allowInteraction() && hoverClassName) {
-                  buttonEl.classList.add(hoverClassName)
-                }
-              })
-
-              buttonEl.addEventListener('mouseleave', function(ev) {
-                const hoverClassName = theme.getClass('stateHover')
-                const downClassName = theme.getClass('stateDown')
-
-                // undo the *hover* effect
-                if (hoverClassName) {
-                  buttonEl.classList.remove(hoverClassName)
-                }
-                if (downClassName) {
-                  buttonEl.classList.remove(downClassName) // if mouseleave happens before mouseup
-                }
-              })
+              buttonEl.addEventListener('click', buttonClick)
 
               groupChildren.push(buttonEl)
             }
           }
         })
-
-        if (isOnlyButtons && groupChildren.length > 0) {
-          let cornerLeftClassName = theme.getClass('cornerLeft')
-          let cornerRightClassName = theme.getClass('cornerRight')
-
-          if (cornerLeftClassName) {
-            groupChildren[0].classList.add(cornerLeftClassName)
-          }
-          if (cornerRightClassName) {
-            groupChildren[groupChildren.length - 1].classList.add(cornerRightClassName)
-          }
-        }
 
         if (groupChildren.length > 1) {
           groupEl = document.createElement('div')
@@ -278,7 +199,7 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
 
 
   updateActiveButton(buttonName?) {
-    let className = this.theme.getClass('stateActive')
+    let className = this.theme.getClass('buttonActive')
 
     findElements(this.el, 'button').forEach((buttonEl) => { // fyi, themed buttons don't have .fc-button
       if (buttonName && buttonEl.classList.contains('fc-' + buttonName + '-button')) {
@@ -291,16 +212,8 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
 
 
   toggleButtonEnabled(buttonName, bool) {
-    let disabledClassName = this.theme.getClass('stateDisabled')
-
     findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
       buttonEl.disabled = !bool
-
-      if (bool) {
-        buttonEl.classList.remove(disabledClassName)
-      } else {
-        buttonEl.classList.add(disabledClassName)
-      }
     })
   }
 

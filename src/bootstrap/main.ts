@@ -12,8 +12,7 @@ BootstrapTheme.prototype.classes = {
 
   buttonGroup: 'btn-group',
   button: 'btn btn-primary',
-  stateActive: 'active',
-  stateDisabled: 'disabled',
+  buttonActive: 'active',
 
   today: 'alert alert-info', // the plain `info` class requires `.table`, too much to ask
 

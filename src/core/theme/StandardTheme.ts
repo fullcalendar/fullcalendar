@@ -9,14 +9,8 @@ StandardTheme.prototype.classes = {
   widgetContent: 'fc-widget-content',
 
   buttonGroup: 'fc-button-group',
-  button: 'fc-button',
-  cornerLeft: 'fc-corner-left',
-  cornerRight: 'fc-corner-right',
-  stateDefault: 'fc-state-default',
-  stateActive: 'fc-state-active',
-  stateDisabled: 'fc-state-disabled',
-  stateHover: 'fc-state-hover',
-  stateDown: 'fc-state-down',
+  button: 'fc-button fc-button-primary',
+  buttonActive: 'fc-button-active',
 
   popoverHeader: 'fc-widget-header',
   popoverContent: 'fc-widget-content',
