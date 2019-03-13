@@ -18,12 +18,8 @@
 
 /* inner content */
 
-.fc-toolbar > * > * {
+.fc-toolbar > * > :not(:first-child) {
   margin-left: .75em; // space between
-
-  &:first-child {
-    margin-left: 0;
-  }
 }
 
 .fc-toolbar h2 {

@@ -87,7 +87,41 @@ TODO: more distinction between this file and common.css
 
 
 /* Buttons
---------------------------------------------------------------------------------------------------*/
+--------------------------------------------------------------------------------------------------
+Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
+*/
+
+/* reset */
+
+.fc-button {
+  border-radius: 0;
+  overflow: visible;
+  text-transform: none;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.fc-button:focus {
+  outline: 1px dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.fc-button {
+  -webkit-appearance: button;
+}
+
+.fc-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.fc-button::-moz-focus-inner {
+  padding: 0;
+  border-style: none;
+}
+
+/* theme */
 
 .fc-button {
   display: inline-block;
@@ -105,7 +139,6 @@ TODO: more distinction between this file and common.css
   font-size: 1em;
   line-height: 1.5;
   border-radius: 0.25em;
-  cursor: pointer;
 }
 
 .fc-button:hover {
@@ -122,6 +155,8 @@ TODO: more distinction between this file and common.css
 .fc-button:disabled {
   opacity: 0.65;
 }
+
+/* "primary" coloring */
 
 .fc-button-primary {
   color: #fff;
