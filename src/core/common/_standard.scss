@@ -163,6 +163,7 @@ Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
 
 .fc-button .fc-icon {
   vertical-align: middle;
+  font-size: 1.5em; // bump up the size (but don't make it bigger than line-height of button, which is 1.5em also)
 }
 
 
