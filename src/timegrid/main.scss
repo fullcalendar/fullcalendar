@@ -157,10 +157,17 @@
 }
 
 
-/* Generic Vertical Event
---------------------------------------------------------------------------------------------------*/
+/* TimeGrid Event Styling
+----------------------------------------------------------------------------------------------------
+We use the full "fc-time-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
 
-.fc-v-event.fc-not-start { /* events that are continuing from another day */
+.fc-time-grid-event {
+  margin-bottom: 1px;
+}
+
+.fc-time-grid-event.fc-not-start { /* events that are continuing from another day */
   /* replace space made by the top border with padding */
   border-top-width: 0;
   padding-top: 1px;
@@ -170,7 +177,7 @@
   border-top-right-radius: 0;
 }
 
-.fc-v-event.fc-not-end {
+.fc-time-grid-event.fc-not-end {
   /* replace space made by the top border with padding */
   border-bottom-width: 0;
   padding-bottom: 1px;
@@ -180,29 +187,9 @@
   border-bottom-right-radius: 0;
 }
 
-
-/* TimeGrid Event Styling
-----------------------------------------------------------------------------------------------------
-We use the full "fc-time-grid-event" class instead of using descendants because the event won't
-be a descendant of the grid when it is being dragged.
-*/
-
-.fc-time-grid-event {
-  overflow: hidden; /* don't let the bg flow over rounded corners */
-}
-
-.fc-time-grid-event.fc-selected {
-  /* need to allow touch resizers to extend outside event's bounding box */
-  /* common fc-selected styles hide the fc-bg, so don't need this anyway */
-  overflow: visible;
-}
-
-.fc-time-grid-event.fc-selected .fc-bg {
-  display: none; /* hide semi-white background, to appear darker */
-}
-
 .fc-time-grid-event .fc-content {
-  overflow: hidden; /* for when .fc-selected */
+  overflow: hidden;
+  max-height: 100%;
 }
 
 .fc-time-grid-event .fc-time,

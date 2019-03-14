@@ -115,7 +115,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
     let fullTimeText // more verbose time text. for the print stylesheet
     let startTimeText // just the start time text
 
-    classes.unshift('fc-time-grid-event', 'fc-v-event')
+    classes.unshift('fc-time-grid-event')
 
     // if the event appears to span more than one day...
     if (isMultiDayRange(eventRange.range)) {
@@ -163,7 +163,6 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
             ''
             ) +
         '</div>' +
-        '<div class="fc-bg"></div>' +
         /* TODO: write CSS for this
         (isResizableFromStart ?
           '<div class="fc-resizer fc-start-resizer"></div>' :

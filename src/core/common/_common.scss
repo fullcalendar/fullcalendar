@@ -266,12 +266,12 @@ temporary rendered events).
   font-size: .85em;
   line-height: 1.4;
   border-radius: 3px;
-  border: 1px solid #3a87ad; /* default BORDER color */
+  border: 1px solid #3788d8;
 }
 
 .fc-event,
 .fc-event-dot {
-  background-color: #3a87ad; /* default BACKGROUND color */
+  background-color: #3788d8; /* default BACKGROUND color */
 }
 
 .fc-event,
@@ -288,12 +288,6 @@ temporary rendered events).
 .fc-not-allowed, /* causes a "warning" cursor. applied on body */
 .fc-not-allowed .fc-event { /* to override an event's custom cursor */
   cursor: not-allowed;
-}
-
-.fc-event .fc-bg { /* the generic .fc-bg already does position */
-  z-index: 1;
-  background: #fff;
-  opacity: .25;
 }
 
 .fc-event .fc-content {
@@ -342,6 +336,20 @@ temporary rendered events).
 .fc-event.fc-selected {
   z-index: 9999 !important; /* overcomes inline z-index */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.fc-event.fc-selected:after {
+  content: "";
+  position: absolute;
+  z-index: 1; /* same z-index as fc-bg, behind text */
+  /* overcome the borders */
+  top: -1px;
+  right: -1px;
+  bottom: -1px;
+  left: -1px;
+  /* darkening effect */
+  background: #000;
+  opacity: .25;
 }
 
 
@@ -460,20 +468,6 @@ tr:first-child > td > .fc-day-grid-event {
 }
 .fc-mirror-skeleton tr:first-child > td > .fc-day-grid-event {
   margin-top: 0; /* except for mirror skeleton */
-}
-
-.fc-day-grid-event.fc-selected:after {
-  content: "";
-  position: absolute;
-  z-index: 1; /* same z-index as fc-bg, behind text */
-  /* overcome the borders */
-  top: -1px;
-  right: -1px;
-  bottom: -1px;
-  left: -1px;
-  /* darkening effect */
-  background: #000;
-  opacity: .25;
 }
 
 .fc-day-grid-event .fc-content { /* force events to be one-line tall */
