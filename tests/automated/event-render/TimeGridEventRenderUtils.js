@@ -53,7 +53,7 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
       elRect.left >= expectedRect.left &&
       elRect.right <= expectedRect.right &&
       Math.abs(elRect.top - expectedRect.top) < 1 &&
-      Math.abs(elRect.bottom - expectedRect.bottom) < 1
+      Math.abs(elRect.bottom + 1 - expectedRect.bottom) < 1 // add 1 because of bottom margin!
     )) {
       console.log('rects do not match')
       return false

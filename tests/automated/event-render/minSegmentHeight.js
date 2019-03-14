@@ -18,7 +18,7 @@ describe('short event rendering with timeGridEventMinHeight', function() {
       initCalendar()
       var el = EventRenderUtils.getSingleEl()
 
-      expect(el.outerHeight()).toEqual(25)
+      expect(el.outerHeight()).toEqual(25 - 1) // because of the bottom margin
     })
   })
 

@@ -21,10 +21,10 @@ describe('buttonIcons', function() {
       var nextYearBtn = $cal.find('.fc-nextYear-button')
       var prevYearBtn = $cal.find('.fc-prevYear-button')
 
-      expect(prevBtn.find('span:first')).toHaveClass('fc-icon-left-single-arrow')
-      expect(nextBtn.find('span:first')).toHaveClass('fc-icon-right-single-arrow')
-      expect(nextYearBtn.find('span:first')).toHaveClass('fc-icon-right-double-arrow')
-      expect(prevYearBtn.find('span:first')).toHaveClass('fc-icon-left-double-arrow')
+      expect(prevBtn.find('span:first')).toHaveClass('fc-icon-chevron-left')
+      expect(nextBtn.find('span:first')).toHaveClass('fc-icon-chevron-right')
+      expect(nextYearBtn.find('span:first')).toHaveClass('fc-icon-chevrons-right')
+      expect(prevYearBtn.find('span:first')).toHaveClass('fc-icon-chevrons-left')
     })
   })
 
@@ -62,8 +62,8 @@ describe('buttonIcons', function() {
     it('buttonIcons is ignored', function() {
       initCalendar()
       var $cal = $(currentCalendar.el)
-      var classesToSearch = [ '.fc-icon-left-single-arrow', '.fc-icon-right-double-arrow',
-        '.fc-icon-right-single-arrow', '.fc-icon-left-double-arrow' ]
+      var classesToSearch = [ '.fc-icon-chevron-left', '.fc-icon-chevrons-right',
+        '.fc-icon-chevron-right', '.fc-icon-chevrons-left' ]
 
       for (var i = 0; i < classesToSearch.length; i++) {
         var cls = classesToSearch[i]
