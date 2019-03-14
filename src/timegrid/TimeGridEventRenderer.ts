@@ -273,6 +273,10 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
     for (let seg of segs) {
       applyStyle(seg.el, this.generateSegCss(seg))
 
+      if (seg.level > 0) {
+        seg.el.classList.add('fc-time-grid-event-inset')
+      }
+
       // if the event is short that the title will be cut off,
       // attach a className that condenses the title into the time area.
       if (seg.eventRange.def.title && seg.bottom - seg.top < 30) {

@@ -167,6 +167,11 @@ be a descendant of the grid when it is being dragged.
   margin-bottom: 1px;
 }
 
+.fc-time-grid-event-inset {
+  -webkit-box-shadow: 0px 0px 0px 1px #fff;
+          box-shadow: 0px 0px 0px 1px #fff;
+}
+
 .fc-time-grid-event.fc-not-start { /* events that are continuing from another day */
   /* replace space made by the top border with padding */
   border-top-width: 0;
