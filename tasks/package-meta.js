@@ -90,6 +90,7 @@ function buildPackageConfig(packageName, overrides) {
   }
 
   res.main = 'main.js'
+  res.unpkg = 'main.min.js'
   res.types = 'main.d.ts'
 
   return res

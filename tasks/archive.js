@@ -1,9 +1,6 @@
 const gulp = require('gulp')
 const filter = require('gulp-filter')
 const modify = require('gulp-modify-file')
-const uglify = require('gulp-uglify')
-const cssmin = require('gulp-cssmin')
-const rename = require('gulp-rename')
 const zip = require('gulp-zip')
 
 // determines the name of the ZIP file
@@ -24,51 +21,17 @@ gulp.task('archive', [ 'archive:files' ], function() {
 
 gulp.task('archive:files', [
   'archive:packages',
-  'archive:packages:minjs',
-  'archive:packages:mincss',
   'archive:demos',
   'archive:vendor',
   'archive:meta'
 ])
 
-gulp.task('archive:packages', [ 'build' ], function() {
+gulp.task('archive:packages', [ 'build', 'minify' ], function() {
   return gulp.src([
     'dist/**/*.{js,css}'
   ]).pipe(
     gulp.dest('tmp/' + archiveId + '/packages')
   )
-})
-
-gulp.task('archive:packages:minjs', [ 'archive:packages' ], function() {
-  return gulp.src([
-    'tmp/' + archiveId + '/packages/*/*.js',
-    '!**/*.min.js' // avoid double minify
-  ], { base: '.' })
-    .pipe(
-      uglify({
-        preserveComments: 'some' // keep comments starting with !
-      })
-    )
-    .pipe(
-      rename({ extname: '.min.js' })
-    )
-    .pipe(gulp.dest('.'))
-})
-
-gulp.task('archive:packages:mincss', [ 'archive:packages' ], function() {
-  return gulp.src([
-    'tmp/' + archiveId + '/packages/*/*.css',
-    '!**/*.min.css' // avoid double minify
-  ], { base: '.' })
-    .pipe(
-      cssmin()
-    )
-    .pipe(
-      rename({ extname: '.min.css' })
-    )
-    .pipe(
-      gulp.dest('.')
-    )
 })
 
 gulp.task('archive:meta', function() {
