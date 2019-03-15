@@ -12,6 +12,7 @@ package="$1" # a short name like 'core'
 version="$2"
 release_tag="$3"
 production_str="$4"
+RELEASES_ROOT="../fullcalendar-site/fullcalendar-releases"
 
 if [[ ! "$package" ]]
 then
@@ -33,11 +34,19 @@ fi
 
 if [[ "$production_str" == "" ]]
 then
+
+  echo "Copying to fullcalendar-releases dir..."
+  mkdir -p "$RELEASES_ROOT/$package"
+  rm -rf "$RELEASES_ROOT/$package/$version" # clear to dir nesting doesn't happen
+  cp -r "dist/$package" "$RELEASES_ROOT/$package/$version"
+
   echo "Publishing to DEV NPM INSTALLATION..."
   npm_registry_str="--registry http://localhost:4873"
+  # actual publish happens later in script...
 
 elif [[ "$production_str" == "--production" ]]
 then
+
   echo "Pushing to Github..."
 
   # push the current branch (assumes tracking is set up) and the tag
@@ -46,6 +55,7 @@ then
 
   echo "Publishing to LIVE NPM..."
   npm_registry_str=""
+  # actual publish happens later in script...
 
 else
   echo "Invalid flag $production_str. Aborting"
