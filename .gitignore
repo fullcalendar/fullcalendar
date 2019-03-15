@@ -8,6 +8,3 @@ tmp
 node_modules
 npm-debug.log
 package-lock.json
-
-# temporary
-bin/publish-release-all.sh

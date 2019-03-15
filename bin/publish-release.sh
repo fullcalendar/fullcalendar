@@ -28,7 +28,7 @@ fi
 
 if [[ "$release_tag" != "latest" ]] && [[ "$release_tag" != "beta" ]] && [[ "$release_tag" != "alpha" ]]
 then
-  echo "Invalid third argument scope '$release_tag'. Aborting."
+  echo "Invalid third argument release tag '$release_tag'. Aborting."
   exit 1
 fi
 
