@@ -3,16 +3,18 @@ const mkdirp = require('mkdirp')
 const path = require('path')
 const gulp = require('gulp')
 const rootPackageConfig = require('../package.json')
+const rootPackageVersion = rootPackageConfig.version || '0.0.0'
 const tsConfig = require('../tsconfig')
+const packagePaths = tsConfig.compilerOptions.paths
 
-let packagePaths = tsConfig.compilerOptions.paths
-
-const VERSION_PRECISION = '' // '^'
-if (!VERSION_PRECISION) {
-  console.log('TODO')
-  console.log('TODO: for official release, change VERSION_PRECISION')
-  console.log('TODO')
+let versionPrecision
+if (rootPackageVersion.indexOf('-') !== -1) {
+  console.log('Prerelease detected. Using exact version precision.')
+  versionPrecision = ''
+} else {
+  versionPrecision = '^'
 }
+
 
 gulp.task('package-meta', [ 'package-meta:text', 'package-meta:json' ])
 
@@ -78,7 +80,7 @@ function buildPackageConfig(packageName, overrides) {
     if (!peerDependencies) {
       peerDependencies = {}
     }
-    peerDependencies['@fullcalendar/core'] = VERSION_PRECISION + (rootPackageConfig.version || '0.0.0')
+    peerDependencies['@fullcalendar/core'] = versionPrecision + rootPackageVersion
   }
 
   if (peerDependencies) {
@@ -109,7 +111,7 @@ function processDependencyMap(inputMap) {
       let dependencyPath = packagePaths[dependencyName][0]
 
       if (dependencyPath.match(/^src\//)) {
-        outputMap[dependencyName] = VERSION_PRECISION + (rootPackageConfig.version || '0.0.0')
+        outputMap[dependencyName] = versionPrecision + rootPackageVersion
       }
     } else {
       console.error('Unknown dependency', dependencyName)
