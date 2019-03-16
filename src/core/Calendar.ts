@@ -308,7 +308,7 @@ export default class Calendar {
       }
 
       if (oldState.dateProfile !== newState.dateProfile || this.needsFullRerender) {
-        if (oldState.dateProfile) {
+        if (oldState.dateProfile && view) { // why would view be null!?
           this.publiclyTrigger('datesDestroy', [
             {
               view,
@@ -320,7 +320,7 @@ export default class Calendar {
       }
 
       if (oldState.viewType !== newState.viewType || this.needsFullRerender) {
-        if (oldState.viewType) {
+        if (oldState.viewType && view) { // why would view be null!?
           this.publiclyTrigger('viewSkeletonDestroy', [
             {
               view,
