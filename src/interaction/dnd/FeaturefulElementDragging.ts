@@ -195,4 +195,8 @@ export default class FeaturefulElementDragging extends ElementDragging {
     this.mirrorNeedsRevert = bool
   }
 
+  setAutoScrollEnabled(bool: boolean) {
+    this.autoScroller.isEnabled = bool
+  }
+
 }

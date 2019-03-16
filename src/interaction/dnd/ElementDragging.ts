@@ -35,4 +35,8 @@ export default abstract class ElementDragging {
     // optional if subclass doesn't want to support a mirror
   }
 
+  setAutoScrollEnabled(bool: boolean) {
+    // optional
+  }
+
 }
