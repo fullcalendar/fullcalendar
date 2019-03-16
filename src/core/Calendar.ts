@@ -319,7 +319,11 @@ export default class Calendar {
         this.isDatesUpdated = true
       }
 
-      if (oldState.viewType !== newState.viewType || this.needsFullRerender) {
+      if (
+        oldState.viewType !== newState.viewType ||
+        (this.component && (this.component.props.viewSpec !== this.viewSpecs[newState.viewType])) ||
+        this.needsFullRerender
+      ) {
         if (oldState.viewType) {
           this.publiclyTrigger('viewSkeletonDestroy', [
             {
