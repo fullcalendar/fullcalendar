@@ -94,11 +94,10 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
     this.el.innerHTML =
       '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
-        '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
         '<span class="fc-title">' +
           htmlEscape(title) +
         '</span>' +
-        '<div class="fc-clear"></div>' +
+        '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
       '</div>' +
       '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
         '<div class="fc-event-container"></div>' +

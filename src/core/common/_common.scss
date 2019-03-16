@@ -42,7 +42,15 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 .fc-popover .fc-header { /* TODO: be more consistent with fc-head/fc-body */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   padding: 2px 4px;
+}
+
+.fc-rtl .fc-popover .fc-header {
+  flex-direction: row-reverse;
 }
 
 .fc-popover .fc-header .fc-title {
@@ -51,16 +59,8 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc-popover .fc-header .fc-close {
   cursor: pointer;
-}
-
-.fc-ltr .fc-popover .fc-header .fc-title,
-.fc-rtl .fc-popover .fc-header .fc-close {
-  float: left;
-}
-
-.fc-rtl .fc-popover .fc-header .fc-title,
-.fc-ltr .fc-popover .fc-header .fc-close {
-  float: right;
+  opacity: 0.65;
+  font-size: 1.1em;
 }
 
 
@@ -77,10 +77,6 @@ hr.fc-divider {
   margin: 0;
   padding: 0 0 2px; /* height is unreliable across browsers, so use padding */
   border-width: 1px 0;
-}
-
-.fc-clear {
-  clear: both;
 }
 
 .fc-bg,
