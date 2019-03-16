@@ -76,7 +76,6 @@ export interface OptionsInputBase {
   customButtons?: { [name: string]: CustomButtonInput }
   buttonIcons?: boolean | ButtonIconsInput
   themeSystem?: 'standard' | string
-  themeButtonIcons?: boolean | ButtonIconsInput
   bootstrapFontAwesome?: boolean | ButtonIconsInput,
   firstDay?: number
   dir?: 'ltr' | 'rtl' | 'auto'
