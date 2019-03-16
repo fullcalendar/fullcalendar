@@ -704,7 +704,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
     a.addEventListener('click', (ev) => {
       let clickOption = this.opt('eventLimitClick')
-      let date = this.props.cells[row][col].date
+      let _col = this.isRtl ? this.colCnt - col - 1 : col // HACK: props.cells has different dir system?
+      let date = this.props.cells[row][_col].date
       let moreEl = ev.currentTarget as HTMLElement
       let dayEl = this.getCellEl(row, col)
       let allSegs = this.getCellSegs(row, col)
@@ -743,6 +744,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   // Reveals the popover that displays all events within a cell
   showSegPopover(row, col, moreLink: HTMLElement, segs) {
     let { calendar, view, theme } = this
+    let _col = this.isRtl ? this.colCnt - col - 1 : col // HACK: props.cells has different dir system?
     let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
@@ -764,7 +766,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
           el
         )
         this.updateSegPopoverTile(
-          this.props.cells[row][col].date,
+          this.props.cells[row][_col].date,
           segs
         )
       },
