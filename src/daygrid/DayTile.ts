@@ -109,20 +109,22 @@ export default class DayTile extends DateComponent<DayTileProps> {
   queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
     let date = (this.props as any).date // HACK
 
-    return {
-      component: this,
-      dateSpan: {
-        allDay: true,
-        range: { start: date, end: addDays(date, 1) }
-      },
-      dayEl: this.el,
-      rect: {
-        left: 0,
-        top: 0,
-        right: elWidth,
-        bottom: elHeight
-      },
-      layer: 1
+    if (positionLeft < elWidth && positionTop < elHeight) {
+      return {
+        component: this,
+        dateSpan: {
+          allDay: true,
+          range: { start: date, end: addDays(date, 1) }
+        },
+        dayEl: this.el,
+        rect: {
+          left: 0,
+          top: 0,
+          right: elWidth,
+          bottom: elHeight
+        },
+        layer: 1
+      }
     }
   }
 
