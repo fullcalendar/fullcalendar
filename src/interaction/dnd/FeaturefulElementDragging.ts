@@ -1,7 +1,6 @@
-import { PointerDragEvent, preventSelection, allowSelection, preventContextMenu, allowContextMenu } from '@fullcalendar/core'
+import { PointerDragEvent, preventSelection, allowSelection, preventContextMenu, allowContextMenu, ElementDragging } from '@fullcalendar/core'
 import PointerDragging from './PointerDragging'
 import ElementMirror from './ElementMirror'
-import ElementDragging from './ElementDragging'
 import AutoScroller from './AutoScroller'
 
 /*
@@ -31,7 +30,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
 
   constructor(containerEl: HTMLElement) {
-    super()
+    super(containerEl)
 
     let pointer = this.pointer = new PointerDragging(containerEl)
     pointer.emitter.on('pointerdown', this.onPointerDown)

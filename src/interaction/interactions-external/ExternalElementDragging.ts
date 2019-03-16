@@ -13,9 +13,9 @@ import {
   elementMatches,
   enableCursor, disableCursor,
   isInteractionValid,
-  View
+  View,
+  ElementDragging
 } from '@fullcalendar/core'
-import ElementDragging from '../dnd/ElementDragging'
 import HitDragging from '../interactions/HitDragging'
 import { __assign } from 'tslib'
 

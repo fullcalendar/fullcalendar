@@ -1,6 +1,5 @@
-import { PointerDragEvent } from '@fullcalendar/core'
+import { PointerDragEvent, ElementDragging } from '@fullcalendar/core'
 import PointerDragging from '../dnd/PointerDragging'
-import ElementDragging from '../dnd/ElementDragging'
 
 /*
 Detects when a *THIRD-PARTY* drag-n-drop system interacts with elements.
@@ -16,7 +15,7 @@ export default class InferredElementDragging extends ElementDragging {
   currentMirrorEl: HTMLElement | null = null
 
   constructor(containerEl: HTMLElement) {
-    super()
+    super(containerEl)
 
     let pointer = this.pointer = new PointerDragging(containerEl)
     pointer.emitter.on('pointerdown', this.handlePointerDown)

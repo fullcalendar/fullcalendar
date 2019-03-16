@@ -6,9 +6,9 @@ import {
   rangeContainsRange,
   Hit,
   InteractionSettingsStore,
-  mapHash
+  mapHash,
+  ElementDragging
 } from '@fullcalendar/core'
-import ElementDragging from '../dnd/ElementDragging'
 import OffsetTracker from '../OffsetTracker'
 
 /*
