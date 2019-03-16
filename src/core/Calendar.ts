@@ -319,11 +319,7 @@ export default class Calendar {
         this.isDatesUpdated = true
       }
 
-      if (
-        oldState.viewType !== newState.viewType ||
-        (this.component && (this.component.props.viewSpec !== this.viewSpecs[newState.viewType])) ||
-        this.needsFullRerender
-      ) {
+      if (oldState.viewType !== newState.viewType || this.needsFullRerender) {
         if (oldState.viewType) {
           this.publiclyTrigger('viewSkeletonDestroy', [
             {
@@ -493,25 +489,29 @@ export default class Calendar {
 
     if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
       this.updateSize()
-    } else if (name === 'timeZone') {
-      this.dispatch({
-        type: 'CHANGE_TIMEZONE',
-        oldDateEnv
-      })
     } else if (name === 'defaultDate' || name === 'defaultView') {
       // can't change date this way. use gotoDate instead
     } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
       // doesn't affect rendering. only interactions.
     } else {
-
-      /* HACK
-      has the same effect as calling this.requestRerender(true)
-      but recomputes the state's dateProfile
-      */
       this.needsFullRerender = true
-      this.dispatch({
-        type: 'SET_VIEW_TYPE',
-        viewType: this.state.viewType
+      this.batchRendering(() => {
+
+        if (name === 'timeZone') {
+          this.dispatch({
+            type: 'CHANGE_TIMEZONE',
+            oldDateEnv
+          })
+        }
+
+        /* HACK
+        has the same effect as calling this.requestRerender(true)
+        but recomputes the state's dateProfile
+        */
+        this.dispatch({
+          type: 'SET_VIEW_TYPE',
+          viewType: this.state.viewType
+        })
       })
     }
   }
