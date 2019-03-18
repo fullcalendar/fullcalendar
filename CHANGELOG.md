@@ -1,4 +1,18 @@
 
+v4.0.1 (2019-03-18)
+-------------------
+
+Read about all the changes in v4:
+https://fullcalendar.io/docs/upgrading-from-v3
+
+Advancements since latest prerelease:
+- New styling for buttons and icons in header. New styling for events.
+- Bugfixes: #4539, #4503, #4534, #4505, #4477, #4467, #4454, #4458, #4483,
+  #4517, #4506, #4435, #4498, #4497, #4446, #4432, #4530
+
+NOTE: version "4.0.0" was skipped because of an NPM publishing error
+
+
 v4.0.0-beta.3/4 (2019-02-06)
 ----------------------------
 NPM problems. Had to push another release. No code changes.
