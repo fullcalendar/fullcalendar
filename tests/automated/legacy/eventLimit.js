@@ -168,9 +168,13 @@ describe('eventLimit', function() {
         initCalendar()
         var rowEls = $('.fc-day-grid .fc-row').slice(0, -1) // remove last b/c it will be a different height
         expect(rowEls.length).toBeGreaterThan(0)
-        var height = rowEls.height()
+
+        var firstRowHeight = Math.round(rowEls[0].getBoundingClientRect().height)
+
         rowEls.each(function(i, node) {
-          expect($(node).height()).toBe(height)
+          expect(
+            Math.round(node.getBoundingClientRect().height)
+          ).toBe(firstRowHeight)
         })
       })
 
