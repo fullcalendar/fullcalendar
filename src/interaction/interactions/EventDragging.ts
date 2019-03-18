@@ -83,7 +83,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
     mirror.revertDuration = component.opt('dragRevertDuration')
 
     let isValid =
-      this.component.isValidSegDownEl(origTarget) &&
+      component.isValidSegDownEl(origTarget) &&
       !elementClosest(origTarget, '.fc-resizer')
 
     dragging.setIgnoreMove(!isValid)

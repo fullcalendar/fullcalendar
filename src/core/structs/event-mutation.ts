@@ -125,7 +125,13 @@ function applyMutationToEventInstance(
     }
   } else if (
     mutation.endDelta &&
-    (eventConfig.durationEditable || !willDeltasAffectDuration(mutation.startDelta || null, mutation.endDelta))
+    (
+      eventConfig.durationEditable ||
+      !willDeltasAffectDuration( // TODO: nonDRY logic above
+        eventConfig.startEditable ? mutation.startDelta : null,
+        mutation.endDelta
+      )
+    )
   ) {
     copy.range = {
       start: copy.range.start,
