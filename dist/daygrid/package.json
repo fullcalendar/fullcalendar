@@ -1,0 +1,31 @@
+{
+  "name": "@fullcalendar/daygrid",
+  "title": "FullCalendar Day Grid Plugin",
+  "description": "Full-sized drag & drop event calendar",
+  "keywords": [
+    "calendar",
+    "event",
+    "full-sized"
+  ],
+  "homepage": "https://fullcalendar.io/",
+  "bugs": "https://fullcalendar.io/reporting-bugs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fullcalendar/fullcalendar.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Adam Shaw",
+    "email": "arshaw@arshaw.com",
+    "url": "http://arshaw.com/"
+  },
+  "copyright": "2019 Adam Shaw",
+  "version": "4.0.1",
+  "releaseDate": "2019-03-18",
+  "peerDependencies": {
+    "@fullcalendar/core": "^4.0.1"
+  },
+  "main": "main.js",
+  "unpkg": "main.min.js",
+  "types": "main.d.ts"
+}
