@@ -21,7 +21,7 @@ import {
 export function getBoundingRects(els) {
   return $(els).map(function(i, node) {
     return getBoundingRect(node)
-  })
+  }).get()
 }
 
 
@@ -80,7 +80,7 @@ export function getTrailingBoundingRect(els, dir = 'ltr') {
 export function sortBoundingRects(els, dir) {
   const rects = els.map(function(i, node) {
     return getBoundingRect(node)
-  })
+  }).get()
   rects.sort(function(a, b) {
     if (dir === 'rtl') {
       return b.right - a.right

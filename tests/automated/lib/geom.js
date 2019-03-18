@@ -97,11 +97,9 @@ export function isRectsSimilar(rect1, rect2) {
 }
 
 function isRectsHSimilar(rect1, rect2) {
-  // 1, because of possible borders
-  return (Math.abs(rect1.left - rect2.left) <= 2) && (Math.abs(rect1.right - rect2.right) <= 2)
+  return (Math.abs(rect1.left - rect2.left) <= 2) && (Math.abs(rect1.right - rect2.right) <= 3) // :(
 }
 
 function isRectsVSimilar(rect1, rect2) {
-  // 1, because of possible borders
-  return (Math.abs(rect1.top - rect2.top) <= 2) && (Math.abs(rect1.bottom - rect2.bottom) <= 2)
+  return (Math.abs(rect1.top - rect2.top) <= 2) && (Math.abs(rect1.bottom - rect2.bottom) <= 3) // :(
 }
