@@ -8,7 +8,7 @@ https://stackoverflow.com/a/33909265/96342
 Given an ISO8601 string with no timezone part, parses as UTC
 */
 export function parseUtcDate(str) {
-  let parts = str.split(/\D/);
+  let parts = str.split(/\D/)
 
   if (parts.length > 6) { // has timezone info. will correctly parse
     return new Date(str)
@@ -20,7 +20,7 @@ export function parseUtcDate(str) {
       parts[3] ? parseInt(parts[3]) : 0,
       parts[4] ? parseInt(parts[4]) : 0,
       parts[5] ? parseInt(parts[5]) : 0
-    ));
+    ))
   }
 }
 
@@ -28,7 +28,7 @@ export function parseUtcDate(str) {
 Given an ISO8601 string with no timezone part, parses as local
 */
 export function parseLocalDate(str) {
-  let parts = str.split(/\D/);
+  let parts = str.split(/\D/)
 
   if (parts.length > 6) { // has timezone info
     throw new Error('Don\'t pass timezone info to parseLocalDate. Use parseUtcDate instead.')
@@ -40,6 +40,6 @@ export function parseLocalDate(str) {
       parts[3] ? parseInt(parts[3]) : 0,
       parts[4] ? parseInt(parts[4]) : 0,
       parts[5] ? parseInt(parts[5]) : 0
-    );
+    )
   }
 }
