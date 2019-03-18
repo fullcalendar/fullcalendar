@@ -274,14 +274,14 @@ describe('eventResize', function() {
           function(arg) {
             expect(arg.endDelta).toEqual(createDuration({ hour: 2, minute: 30 }))
 
-            expect(arg.event.start).toEqualDate('2014-06-11T05:00:00') // local
-            expect(arg.event.end).toEqualDate('2014-06-11T09:30:00') // local
+            expect(arg.event.start).toEqualLocalDate('2014-06-11T05:00:00')
+            expect(arg.event.end).toEqualLocalDate('2014-06-11T09:30:00')
 
             arg.revert()
             var event = currentCalendar.getEvents()[0]
 
-            expect(event.start).toEqualDate('2014-06-11T05:00:00') // local
-            expect(event.end).toEqualDate('2014-06-11T07:00:00') // local
+            expect(event.start).toEqualLocalDate('2014-06-11T05:00:00')
+            expect(event.end).toEqualLocalDate('2014-06-11T07:00:00')
 
             done()
           }

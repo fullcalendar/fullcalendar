@@ -1,4 +1,5 @@
 import { getTimeTexts } from './TimeGridEventRenderUtils'
+import { parseLocalDate } from '../lib/date-parsing'
 
 describe('the time text on events', function() {
 
@@ -24,13 +25,13 @@ describe('the time text on events', function() {
         getTimeTexts()
       ).toEqual([
         currentCalendar.formatRange(
-          new Date('2017-07-03T23:00:00'),
-          new Date('2017-07-04T00:00:00'),
+          parseLocalDate('2017-07-03T23:00:00'),
+          parseLocalDate('2017-07-04T00:00:00'),
           FORMAT
         ),
         currentCalendar.formatRange(
-          new Date('2017-07-04T00:00:00'),
-          new Date('2017-07-04T13:00:00'),
+          parseLocalDate('2017-07-04T00:00:00'),
+          parseLocalDate('2017-07-04T13:00:00'),
           FORMAT
         )
       ])

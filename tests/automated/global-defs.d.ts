@@ -39,6 +39,7 @@ declare namespace jasmine {
 
   interface Matchers<T> {
     toEqualDate: any
+    toEqualLocalDate: any
     toEqualNow: any
     toBeBoundedBy: any
     toIntersectWith: any

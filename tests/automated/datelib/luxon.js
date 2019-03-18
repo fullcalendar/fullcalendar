@@ -46,9 +46,9 @@ describe('luxon plugin', function() {
         let event = calendar.getEvents()[0]
         var start = toDateTime(event.start, calendar)
         var end = toDateTime(event.end, calendar)
-        expect(start.toJSDate()).toEqualDate('2018-09-05T12:00:00') // compare to local
+        expect(start.toJSDate()).toEqualLocalDate('2018-09-05T12:00:00')
         expect(start.zoneName).toMatch('/') // has a named timezone
-        expect(end.toJSDate()).toEqualDate('2018-09-05T18:00:00') // compare to local
+        expect(end.toJSDate()).toEqualLocalDate('2018-09-05T18:00:00')
         expect(end.zoneName).toMatch('/') // has a named timezone
       })
 

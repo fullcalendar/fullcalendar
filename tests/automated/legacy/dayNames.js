@@ -2,9 +2,10 @@ import { getHeaderEl } from '../view-render/DayGridRenderUtils'
 import { DAY_CLASSES } from '../lib/constants'
 import { removeLtrCharCodes } from '../lib/string'
 import { addDays } from '@fullcalendar/core'
+import { parseUtcDate } from '../lib/date-parsing'
 
 describe('day names', function() {
-  var sundayDate = new Date('2014-05-25T06:00:00')
+  var sundayDate = parseUtcDate('2019-03-17')
   var locales = [ 'es', 'fr', 'de', 'zh-cn', 'nl' ]
 
   pushOptions({
@@ -22,7 +23,7 @@ describe('day names', function() {
       DAY_CLASSES.forEach(function(cls, index) {
         var dayDate = addDays(sundayDate, index)
         var dayText = removeLtrCharCodes(
-          dayDate.toLocaleString('en', { weekday: 'long' })
+          dayDate.toLocaleString('en', { weekday: 'long', timeZone: 'UTC' })
         )
 
         it('should be ' + dayText, function() {
@@ -39,7 +40,7 @@ describe('day names', function() {
         DAY_CLASSES.forEach(function(cls, index, classes) {
           var dayDate = addDays(sundayDate, index)
           var dayText = removeLtrCharCodes(
-            dayDate.toLocaleString(locale, { weekday: 'long' })
+            dayDate.toLocaleString(locale, { weekday: 'long', timeZone: 'UTC' })
           )
 
           it('should be the translation for ' + dayText, function() {

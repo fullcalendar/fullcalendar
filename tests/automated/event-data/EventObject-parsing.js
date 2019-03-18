@@ -31,7 +31,7 @@ describe('Event Object parsing', function() {
 
     let events = currentCalendar.getEvents()
     expect(events.length).toBe(1)
-    expect(events[0].start).toEqualDate('2017-11-01T00:00:00') // local
+    expect(events[0].start).toEqualLocalDate('2017-11-01T00:00:00')
     expect(events[0].end).toBe(null)
   })
 

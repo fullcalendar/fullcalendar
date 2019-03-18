@@ -34,8 +34,8 @@ describe('moment plugin', function() {
         let event = calendar.getEvents()[0]
         var startMom = toMoment(event.start, calendar)
         var endMom = toMoment(event.end, calendar)
-        expect(startMom.toDate()).toEqualDate('2018-09-05T12:00:00') // compare to local
-        expect(endMom.toDate()).toEqualDate('2018-09-05T18:00:00') // compare to local
+        expect(startMom.toDate()).toEqualLocalDate('2018-09-05T12:00:00')
+        expect(endMom.toDate()).toEqualLocalDate('2018-09-05T18:00:00')
       })
 
     })

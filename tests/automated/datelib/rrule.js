@@ -1,5 +1,6 @@
 import DayGridPlugin from '@fullcalendar/daygrid'
 import RRulePlugin from '@fullcalendar/rrule'
+import { parseUtcDate, parseLocalDate } from '../lib/date-parsing'
 
 describe('rrule plugin', function() {
   pushOptions({
@@ -130,7 +131,7 @@ describe('rrule plugin', function() {
       events: [
         {
           rrule: {
-            dtstart: new Date('2018-09-04'), // no allDay info
+            dtstart: parseUtcDate('2018-09-04'), // no allDay info
             freq: 'weekly'
           }
         }
@@ -150,7 +151,7 @@ describe('rrule plugin', function() {
         events: [
           {
             rrule: {
-              dtstart: new Date('2018-09-04'), // no allDay info
+              dtstart: parseUtcDate('2018-09-04'), // no allDay info
               freq: 'weekly'
             }
           }
@@ -170,7 +171,7 @@ describe('rrule plugin', function() {
       events: [
         {
           rrule: {
-            dtstart: new Date('2018-09-04T05:00:00').toISOString(),
+            dtstart: parseLocalDate('2018-09-04T05:00:00').toISOString(),
             freq: 'weekly'
           }
         }
@@ -178,7 +179,7 @@ describe('rrule plugin', function() {
     })
     let events = getSortedEvents()
     expect(events.length).toBe(5)
-    expect(events[0].start).toEqualDate('2018-09-04T05:00:00') // local
+    expect(events[0].start).toEqualLocalDate('2018-09-04T05:00:00')
     expect(events[0].end).toBe(null)
     expect(events[0].allDay).toBe(false)
   })

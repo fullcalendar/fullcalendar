@@ -1,4 +1,5 @@
 import { addDays } from '@fullcalendar/core'
+import { parseUtcDate } from '../lib/date-parsing'
 
 describe('current date', function() {
   var TITLE_FORMAT = {
@@ -38,7 +39,7 @@ describe('current date', function() {
       })
       it('should initialize at the date, given a Date object', function() {
         var options = {}
-        options.defaultDate = new Date('2011-03-10')
+        options.defaultDate = parseUtcDate('2011-03-10')
         initCalendar(options)
         expectViewDates('2011-03-06', '2011-03-13')
         expect(currentCalendar.getDate()).toEqualDate('2011-03-10')
@@ -76,7 +77,7 @@ describe('current date', function() {
       })
       it('should go to a date when given a Date object', function() {
         initCalendar()
-        currentCalendar.gotoDate(new Date('2015-04-01'))
+        currentCalendar.gotoDate(parseUtcDate('2015-04-01'))
         expectViewDates('2015-03-29', '2015-04-05')
       })
     })

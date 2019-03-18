@@ -37,7 +37,7 @@ describe('columnHeaderHtml', function() {
       })
 
       expect(dates.length).toBe(1)
-      expect(dates[0]).toEqualDate(tz.createDate('2014-05-11'))
+      expect(dates[0]).toEqualDate(tz.parseDate('2014-05-11'))
     })
   })
 

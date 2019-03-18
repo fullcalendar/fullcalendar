@@ -1,4 +1,5 @@
 import { expectActiveRange, expectRenderRange } from './ViewDateUtils'
+import { parseUtcDate } from '../lib/date-parsing'
 
 describe('validRange', function() {
   pushOptions({
@@ -89,7 +90,7 @@ describe('validRange', function() {
 
       it('can return a range object with Date objects', function() {
         var validRangeSpy = spyOnCalendarCallback('validRange', function() {
-          return { start: new Date('2017-06-06') }
+          return { start: parseUtcDate('2017-06-06') }
         })
 
         initCalendar()

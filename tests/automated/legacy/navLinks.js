@@ -60,7 +60,7 @@ describe('navLinks', function() {
 
       it('executes a custom handler', function() {
         options.navLinkDayClick = function(date, ev) {
-          expect(date).toEqualDate(tz.createDate('2016-08-09'))
+          expect(date).toEqualDate(tz.parseDate('2016-08-09'))
           expect(typeof ev).toBe('object')
         }
         spyOn(options, 'navLinkDayClick').and.callThrough()

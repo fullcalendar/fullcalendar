@@ -17,9 +17,9 @@ describe('events as a function', function() {
       events: function(arg, callback) {
         testEventFunctionParams(arg, callback)
         expect(arg.timeZone).toEqual('local')
-        expect(arg.start).toEqualDate('2014-04-27T00:00:00') // local
+        expect(arg.start).toEqualLocalDate('2014-04-27T00:00:00')
         expect(arg.startStr).toMatch(/^2014-04-27T00:00:00[-+]/)
-        expect(arg.end).toEqualDate('2014-06-08T00:00:00') // local
+        expect(arg.end).toEqualLocalDate('2014-06-08T00:00:00')
         expect(arg.endStr).toMatch(/^2014-06-08T00:00:00[-+]/)
         callback([])
         done()

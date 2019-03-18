@@ -1,5 +1,6 @@
 import { addLocalDays, startOfLocalDay, startOfUtcDay, addUtcDays } from '../lib/date-math'
 import { expectActiveRange } from './ViewDateUtils'
+import { parseUtcDate, parseLocalDate } from '../lib/date-parsing'
 
 describe('visibleRange', function() {
 
@@ -91,7 +92,7 @@ describe('visibleRange', function() {
           visibleRange: function(date) {
             // this function will receive the date for prev/next,
             // which should be ignored. make sure just one call matches.
-            if (date.valueOf() === new Date(defaultDateInput).valueOf()) {
+            if (date.valueOf() === parseLocalDate(defaultDateInput).valueOf()) {
               matched = true
             }
 
@@ -116,7 +117,7 @@ describe('visibleRange', function() {
           visibleRange: function(date) {
             // this function will receive the date for prev/next,
             // which should be ignored. make sure just one call matches.
-            if (date.valueOf() === new Date(defaultDateInput + 'Z').valueOf()) {
+            if (date.valueOf() === parseUtcDate(defaultDateInput).valueOf()) {
               matched = true
             }
 

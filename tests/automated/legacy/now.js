@@ -1,3 +1,5 @@
+import { parseUtcDate } from '../lib/date-parsing'
+
 describe('now', function() {
 
   pushOptions({
@@ -35,7 +37,7 @@ describe('now', function() {
     initCalendar({
       defaultView: 'dayGridMonth',
       now: function() {
-        return new Date('2014-05-01')
+        return parseUtcDate('2014-05-01')
       }
     })
     var todayCell = $('td.fc-today', currentCalendar.el)

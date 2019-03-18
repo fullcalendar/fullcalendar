@@ -1,3 +1,4 @@
+import { parseUtcDate, parseLocalDate } from './date-parsing'
 
 beforeEach(function() {
   jasmine.addMatchers({
@@ -8,7 +9,7 @@ beforeEach(function() {
           var result
 
           if (typeof expected === 'string') {
-            expected = new Date(expected)
+            expected = parseUtcDate(expected)
           }
 
           if (!(actual instanceof Date)) {
@@ -25,6 +26,39 @@ beforeEach(function() {
             result = {
               pass: false,
               message: 'Date ' + actual.toUTCString() + ' does not equal ' + expected.toUTCString()
+            }
+          } else {
+            result = { pass: true }
+          }
+
+          return result
+        }
+      }
+    },
+
+    toEqualLocalDate() {
+      return {
+        compare: function(actual, expected) {
+          var result
+
+          if (typeof expected === 'string') {
+            expected = parseLocalDate(expected)
+          }
+
+          if (!(actual instanceof Date)) {
+            result = {
+              pass: false,
+              message: 'Actual value ' + actual + ' needs to be an instance of a Date'
+            }
+          } else if (!(expected instanceof Date)) {
+            result = {
+              pass: false,
+              message: 'Expected value ' + expected + ' needs to be an instance of a Date'
+            }
+          } else if (actual.valueOf() !== expected.valueOf()) {
+            result = {
+              pass: false,
+              message: 'Date ' + actual.toString() + ' does not equal ' + expected.toString()
             }
           } else {
             result = { pass: true }

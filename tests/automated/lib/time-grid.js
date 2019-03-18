@@ -1,6 +1,7 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib/utils'
 import { startOfDay, createDuration } from '@fullcalendar/core'
+import { parseUtcDate } from './date-parsing'
 
 const TIME_GRID_CLASS = 'fc-time-grid'
 const NON_BUSINESS_CLASS = 'fc-nonbusiness'
@@ -156,7 +157,7 @@ export function getSlotElByIndex(index) {
 }
 
 export function getSlotElByTime(timeMs) {
-  let date = new Date('2016-01-01')
+  let date = parseUtcDate('2016-01-01')
   date = new Date(date.valueOf() + timeMs)
 
   if (date.getUTCDate() === 1) { // ensure no time overflow/underflow

@@ -227,7 +227,7 @@ describe('external drag and drop', function() {
         it('works with timezone as "local"', function(done) { // for issue 2225
           options.timeZone = 'local'
           options.drop = function(arg) {
-            expect(arg.date).toEqualDate('2014-08-20T01:00:00') // local
+            expect(arg.date).toEqualLocalDate('2014-08-20T01:00:00')
             done()
           }
 
