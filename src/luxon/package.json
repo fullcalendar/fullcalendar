@@ -1,5 +1,7 @@
 {
   "title": "FullCalendar Luxon Plugin",
+  "description": "A connector to the Luxon date library",
+  "homepage": "https://fullcalendar.io/docs/luxon-plugin",
   "browserGlobal": "FullCalendarLuxon",
   "peerDependencies": {
     "luxon": ""

@@ -1,4 +1,6 @@
 {
   "title": "FullCalendar Interaction Plugin",
+  "description": "Provides functionality for event drag-n-drop, resizing, dateClick, and selectable actions",
+  "homepage": "https://fullcalendar.io/docs/editable",
   "browserGlobal": "FullCalendarInteraction"
 }

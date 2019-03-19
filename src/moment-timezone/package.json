@@ -1,5 +1,7 @@
 {
   "title": "FullCalendar Moment Timezone Plugin",
+  "description": "A connector to the moment-timezone library",
+  "homepage": "https://fullcalendar.io/docs/moment-plugins#moment-timezone",
   "browserGlobal": "FullCalendarMomentTimezone",
   "peerDependencies": {
     "moment": "",

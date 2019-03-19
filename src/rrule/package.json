@@ -1,5 +1,7 @@
 {
   "title": "FullCalendar RRule Plugin",
+  "description": "A connector to the RRule library, for recurring events",
+  "homepage": "https://fullcalendar.io/docs/rrule-plugin",
   "browserGlobal": "FullCalendarRrule",
   "peerDependencies": {
     "rrule": ""

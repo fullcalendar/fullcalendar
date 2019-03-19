@@ -1,5 +1,7 @@
 {
   "title": "FullCalendar Moment Plugin",
+  "description": "A connector to the MomentJS date library",
+  "homepage": "https://fullcalendar.io/docs/moment-plugins",
   "browserGlobal": "FullCalendarMoment",
   "peerDependencies": {
     "moment": ""

@@ -1,4 +1,6 @@
 {
   "title": "FullCalendar List View Plugin",
+  "description": "View your events as a bulleted list",
+  "homepage": "https://fullcalendar.io/docs/list-view",
   "browserGlobal": "FullCalendarList"
 }
