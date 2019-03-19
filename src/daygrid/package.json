@@ -1,6 +1,6 @@
 {
   "title": "FullCalendar Day Grid Plugin",
   "description": "Display events on Month view or DayGrid view",
-  "homepage": "https://fullcalendar.io/docs/month-view",
+  "docs": "https://fullcalendar.io/docs/month-view",
   "browserGlobal": "FullCalendarDayGrid"
 }

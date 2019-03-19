@@ -1,6 +1,6 @@
 {
   "title": "FullCalendar Core Package",
   "description": "Provides core functionality, including the Calendar class",
-  "homepage": "https://fullcalendar.io/docs/initialize-es6",
+  "docs": "https://fullcalendar.io/docs/initialize-es6",
   "browserGlobal": "FullCalendar"
 }

@@ -1,6 +1,6 @@
 {
   "title": "FullCalendar Google Calendar Plugin",
   "description": "Fetch events from a public Google Calendar feed",
-  "homepage": "https://fullcalendar.io/docs/google-calendar",
+  "docs": "https://fullcalendar.io/docs/google-calendar",
   "browserGlobal": "FullCalendarGoogleCalendar"
 }

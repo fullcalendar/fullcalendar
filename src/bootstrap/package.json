@@ -1,6 +1,6 @@
 {
   "title": "FullCalendar Bootstrap Plugin",
   "description": "Bootstrap 4 theming for your calendar",
-  "homepage": "https://fullcalendar.io/docs/bootstrap-theme",
+  "docs": "https://fullcalendar.io/docs/bootstrap-theme",
   "browserGlobal": "FullCalendarBootstrap"
 }
