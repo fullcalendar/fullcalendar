@@ -2,6 +2,7 @@ const path = require('path')
 const gulp = require('gulp')
 const shell = require('gulp-shell')
 const modify = require('gulp-modify-file')
+const fcBuildUtils = require('./util')
 const rootPackageConfig = require('../package.json')
 
 gulp.task('build', [ 'build:raw' ], function() {
@@ -39,13 +40,7 @@ function modifySource(content, filePath) {
   })
 
   content = BANNER + content
-
-  content = content.replace(
-    /<%=\s*(\w+)\s*%>/g,
-    function(wholeMatch, varName) {
-      return vars[varName] || ''
-    }
-  )
+  content = fcBuildUtils.renderSimpleTemplate(content, vars)
 
   return content
 }
