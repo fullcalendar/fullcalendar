@@ -5,7 +5,11 @@ const modify = require('gulp-modify-file')
 const rootPackageConfig = require('../package.json')
 
 gulp.task('build', [ 'build:raw' ], function() {
-  return gulp.src('dist/*/*.{js,css}', { base: '.' })
+  return gulp.src([
+    'dist/*/*.{js,css}',
+    '!**/*.min.js',
+    '!**/*.min.css'
+  ], { base: '.' })
     .pipe(
       modify(modifySource)
     )
