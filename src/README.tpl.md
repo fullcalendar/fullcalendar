@@ -3,4 +3,6 @@
 
 <%= description %>
 
-This package was created from the [FullCalendar monorepo](<%= repository.homepage %>).
+[View the docs &raquo;](<%= homepage %>)
+
+This package was created from the [FullCalendar monorepo &raquo;](<%= repository.homepage %>).
