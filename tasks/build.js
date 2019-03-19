@@ -24,15 +24,18 @@ gulp.task('build:raw', shell.task(
 
 const BANNER =
   '/*!\n' +
-  '<%= name %> v<%= version %>\n' +
+  '<%= title %> v<%= version %>\n' +
   'Docs & License: <%= homepage %>\n' +
   '(c) <%= copyright %>\n' +
   '*/\n'
 
 function modifySource(content, filePath) {
   let packageName = path.basename(path.dirname(filePath))
-  let vars = Object.assign(rootPackageConfig, {
-    name: '@fullcalendar/' + packageName // TODO: unite this logic
+
+  // TODO: unite this logic
+  let specificPackageConfig = require(path.join('../src', packageName, 'package.json'))
+  let vars = Object.assign({}, rootPackageConfig, specificPackageConfig, {
+    name: '@fullcalendar/' + packageName
   })
 
   content = BANNER + content
