@@ -16,7 +16,7 @@ exports.mapHashVals = function(hash, func) {
 
 exports.renderSimpleTemplate = function(content, vars) {
   return content.replace(
-    /<%=\s*([\w\.]+)\s*%>/g,
+    /<%=\s*([\w.]+)\s*%>/g,
     function(wholeMatch, varName) {
       return querySubProperty(vars, varName) || ''
     }

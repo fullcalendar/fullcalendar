@@ -44,7 +44,7 @@ gulp.task(
 
   fcBuildUtils.mapHashVals(packagePaths, function(singlePackagePaths, packageName) {
     let shortPackageName = path.basename(packageName) // using path utils for normal strings :(
-    let singlePackagePath = packagePaths[packageName][0]
+    let singlePackagePath = singlePackagePaths[0]
     let overridePath = path.dirname(singlePackagePath) + '/package.json'
     let overrides = require('../' + overridePath) // TODO: this logic is in a lot of places
     let subtaskName = 'package-meta:readme:' + shortPackageName
