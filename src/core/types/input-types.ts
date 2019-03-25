@@ -96,7 +96,7 @@ export interface OptionsInputBase {
   eventLimitClick?: 'popover' | 'week' | 'day' | string | ((cellinfo: CellInfo, jsevent: Event) => void)
   timeZone?: string | boolean
   now?: DateInput | (() => DateInput)
-  defaultView?: string
+  defaultView?: CalendarDefaultView
   allDaySlot?: boolean
   allDayText?: string
   slotDuration?: DurationInput
@@ -213,3 +213,10 @@ export interface OptionsInput extends OptionsInputBase {
   views?: { [viewId: string]: ViewOptionsInput }
   plugins?: (PluginDef | string)[]
 }
+
+export type CalendarDefaultView =
+  | 'dayGridMonth'
+  | 'dayGridWeek'
+  | 'dayGridDay'
+  | 'timeGridWeek'
+  | 'timeGridDay';
