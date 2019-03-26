@@ -1,3 +1,4 @@
+import { isArraysEqual } from './array'
 
 // Merges an array of objects into a single object.
 // The second argument allows for an array of property names who's object values will be merged together.
@@ -102,4 +103,40 @@ export function isPropsEqual(obj0, obj1): boolean {
   }
 
   return true
+}
+
+
+export function anyKeysRemoved(obj0, obj1) {
+  for (let prop in obj0) {
+    if (!(prop in obj1)) {
+      return true
+    }
+  }
+  return false
+}
+
+// will go recursively one level deep
+export function computeChangedProps(obj0, obj1) {
+  let res = {}
+
+  for (let prop in obj1) {
+
+    if (!(prop in obj0)) {
+      res[prop] = obj1[prop]
+
+    } else {
+      let val0 = obj0[prop]
+      let val1 = obj1[prop]
+
+      if (
+        val0 !== val1 &&
+        !(Array.isArray(val0) && Array.isArray(val1) && isArraysEqual(val0, val1)) &&
+        !(typeof val0 === 'object' && typeof val1 === 'object' && isPropsEqual(val0, val1))
+      ) {
+        res[prop] = val1
+      }
+    }
+  }
+
+  return res
 }

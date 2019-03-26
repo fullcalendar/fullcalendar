@@ -1,6 +1,7 @@
 import { firstDefined } from './util/misc'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
 import { parseRawLocales, buildLocale } from './datelib/locale'
+import { __assign } from 'tslib'
 
 
 export default class OptionsManager {
@@ -19,8 +20,21 @@ export default class OptionsManager {
   }
 
 
-  add(name, value) {
-    this.dynamicOverrides[name] = value
+  add(props) {
+    __assign(this.overrides, props)
+    this.compute()
+  }
+
+
+  addDynamic(props) {
+    __assign(this.dynamicOverrides, props)
+    this.compute()
+  }
+
+
+  reset(props) {
+    this.overrides = props
+    this.dynamicOverrides = {}
     this.compute()
   }
 

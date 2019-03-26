@@ -13,7 +13,7 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
-import { mapHash, isPropsEqual } from './util/object'
+import { mapHash, isPropsEqual, anyKeysRemoved, computeChangedProps } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
@@ -53,6 +53,15 @@ export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 
 export type CalendarInteraction = { destroy() }
 export type CalendarInteractionClass = { new(calendar: Calendar): CalendarInteraction }
+
+const SPECIAL_OPTIONS = {
+  events(events, calendar) {
+    console.log('handle events', events, calendar)
+  },
+  eventSources(eventSources, calendar) {
+    console.log('handle eventSources', eventSources, calendar)
+  }
+}
 
 export default class Calendar {
 
@@ -481,23 +490,72 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  setOption(name: string, value: any) {
-    let oldDateEnv = this.dateEnv
+  setOption(name: string, val) {
+    this._setOptions({ [name]: val }, 'dynamic')
+  }
 
-    this.optionsManager.add(name, value)
+
+  // not for public use
+  resetOptions(options) {
+    let oldOptions = this.optionsManager.overrides
+    let normalOptions = {}
+    let specialOptions = {}
+
+    for (let name in options) {
+      if (SPECIAL_OPTIONS[name]) {
+        specialOptions[name] = options[name]
+      } else {
+        normalOptions[name] = options[name]
+      }
+    }
+
+    if (anyKeysRemoved(oldOptions, normalOptions)) {
+      this._setOptions(options, 'reset')
+    } else {
+      this._setOptions(computeChangedProps(oldOptions, options))
+    }
+
+    // handle special options last
+    for (let name in specialOptions) {
+      SPECIAL_OPTIONS[name](specialOptions[name], this)
+    }
+  }
+
+
+  _setOptions(options, mode?: 'dynamic' | 'reset') {
+    let oldDateEnv = this.dateEnv // do this before handleOptions
+    let isTimeZoneDirty = false
+    let isSizeDirty = true
+    let needsFullRerender = false
+
+    for (let name in options) {
+      if (/^(height|contentHeight|aspectRatio)$/.test(name)) {
+        isSizeDirty = true
+      } else if (/^(defaultDate|defaultView)$/.test(name)) {
+        // can't change date this way. use gotoDate instead
+      } else if (name === 'timeZone') {
+        isTimeZoneDirty = true
+      } else {
+        needsFullRerender = true
+      }
+    }
+
+    if (mode === 'reset') {
+      needsFullRerender = true
+      this.optionsManager.reset(options)
+    } else if (mode === 'dynamic') {
+      this.optionsManager.addDynamic(options) // takes higher precedence
+    } else {
+      this.optionsManager.add(options)
+    }
+
     this.handleOptions(this.optionsManager.computed)
 
-    if (name === 'height' || name === 'contentHeight' || name === 'aspectRatio') {
-      this.updateSize()
-    } else if (name === 'defaultDate' || name === 'defaultView') {
-      // can't change date this way. use gotoDate instead
-    } else if (/^(event|select)(Overlap|Constraint|Allow)$/.test(name)) {
-      // doesn't affect rendering. only interactions.
-    } else {
+    if (needsFullRerender) {
       this.needsFullRerender = true
       this.batchRendering(() => {
 
-        if (name === 'timeZone') {
+        if (isTimeZoneDirty) {
           this.dispatch({
             type: 'CHANGE_TIMEZONE',
             oldDateEnv
@@ -513,6 +571,8 @@ export default class Calendar {
           viewType: this.state.viewType
         })
       })
+    } if (isSizeDirty) {
+      this.updateSize()
     }
   }
 
@@ -648,7 +708,7 @@ export default class Calendar {
 
     if (dateOrRange) {
       if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
-        this.optionsManager.add('visibleRange', dateOrRange) // will not rerender
+        this.optionsManager.addDynamic({ visibleRange: dateOrRange }) // will not rerender
         this.handleOptions(this.optionsManager.computed) // ...but yuck
       } else { // a date
         dateMarker = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate
