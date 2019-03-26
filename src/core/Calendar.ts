@@ -60,6 +60,9 @@ const SPECIAL_OPTIONS = {
   },
   eventSources(eventSources, calendar) {
     console.log('handle eventSources', eventSources, calendar)
+  },
+  plugins(plugins, calendar) {
+    console.log('handle plugins', plugins, calendar)
   }
 }
 
@@ -533,10 +536,12 @@ export default class Calendar {
         isSizeDirty = true
       } else if (/^(defaultDate|defaultView)$/.test(name)) {
         // can't change date this way. use gotoDate instead
-      } else if (name === 'timeZone') {
-        isTimeZoneDirty = true
       } else {
         needsFullRerender = true
+
+        if (name === 'timeZone') {
+          isTimeZoneDirty = true
+        }
       }
     }
 
@@ -908,7 +913,9 @@ export default class Calendar {
 
 
   updateSize() { // public
-    this.component.updateSize(true)
+    if (this.component) { // when?
+      this.component.updateSize(true)
+    }
   }
 
 
