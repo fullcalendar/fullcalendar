@@ -34,7 +34,6 @@ export default class OptionsManager {
 
   reset(props) {
     this.overrides = props
-    this.dynamicOverrides = {}
     this.compute()
   }
 
