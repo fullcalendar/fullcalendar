@@ -13,10 +13,10 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
-import { mapHash, isPropsEqual, anyKeysRemoved, computeChangedProps } from './util/object'
+import { mapHash, isPropsEqual, anyKeysRemoved, computeChangedProps, hashValuesToArray, isObjsSimilar } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
-import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
+import { EventSourceInput, parseEventSource, EventSourceHash, EventSource } from './structs/event-source'
 import { EventInput, parseEvent, EventDefHash } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
@@ -53,18 +53,6 @@ export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 
 export type CalendarInteraction = { destroy() }
 export type CalendarInteractionClass = { new(calendar: Calendar): CalendarInteraction }
-
-const SPECIAL_OPTIONS = {
-  events(events, calendar) {
-    console.log('handle events', events, calendar)
-  },
-  eventSources(eventSources, calendar) {
-    console.log('handle eventSources', eventSources, calendar)
-  },
-  plugins(plugins, calendar) {
-    console.log('handle plugins', plugins, calendar)
-  }
-}
 
 export default class Calendar {
 
@@ -137,12 +125,7 @@ export default class Calendar {
     this.pluginSystem = new PluginSystem()
 
     // only do once. don't do in handleOptions. because can't remove plugins
-    let pluginDefs = refinePluginDefs(
-      this.optionsManager.computed.plugins || []
-    )
-    for (let pluginDef of pluginDefs) {
-      this.pluginSystem.add(pluginDef)
-    }
+    this.addPluginInputs(this.optionsManager.computed.plugins || [])
 
     this.handleOptions(this.optionsManager.computed)
     this.publiclyTrigger('_init') // for tests
@@ -152,6 +135,15 @@ export default class Calendar {
       .map((calendarInteractionClass) => {
         return new calendarInteractionClass(this)
       })
+  }
+
+
+  addPluginInputs(pluginInputs) {
+    let pluginDefs = refinePluginDefs(pluginInputs)
+
+    for (let pluginDef of pluginDefs) {
+      this.pluginSystem.add(pluginDef)
+    }
   }
 
 
@@ -519,16 +511,19 @@ export default class Calendar {
       }
     }
 
-    if (anyKeysRemoved(oldNormalOptions, normalOptions)) {
-      this._setOptions(options, 'reset')
-    } else {
-      this._setOptions(computeChangedProps(oldNormalOptions, normalOptions))
-    }
+    this.batchRendering(() => { // if both _setOptions and special options want to rerender
 
-    // handle special options last
-    for (let name in specialOptions) {
-      SPECIAL_OPTIONS[name](specialOptions[name], this)
-    }
+      if (anyKeysRemoved(oldNormalOptions, normalOptions)) {
+        this._setOptions(options, 'reset')
+      } else {
+        this._setOptions(computeChangedProps(oldNormalOptions, normalOptions))
+      }
+
+      // handle special options last
+      for (let name in specialOptions) {
+        SPECIAL_OPTIONS[name](specialOptions[name], this)
+      }
+    })
   }
 
 
@@ -1341,4 +1336,53 @@ function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, 
   }
 
   return eventUiBases
+}
+
+
+
+const SPECIAL_OPTIONS = {
+  events(events, calendar) {
+    handleEventSources([ events ], calendar)
+  },
+  eventSources: handleEventSources,
+  plugins: handlePlugins
+}
+
+
+function handleEventSources(inputs, calendar: Calendar) {
+  let unfoundSources: EventSource[] = hashValuesToArray(calendar.state.eventSources)
+  let newInputs = []
+
+  for (let input of inputs) {
+    let inputFound = false
+
+    for (let i = 0; i < unfoundSources.length; i++) {
+      if (isObjsSimilar(unfoundSources[i]._raw, input)) {
+        unfoundSources.splice(i, 1) // delete
+        inputFound = true
+        break
+      }
+    }
+
+    if (!inputFound) {
+      newInputs.push(input)
+    }
+  }
+
+  for (let unfoundSource of unfoundSources) {
+    calendar.dispatch({
+      type: 'REMOVE_EVENT_SOURCE',
+      sourceId: unfoundSource.sourceId
+    })
+  }
+
+  for (let newInput of newInputs) {
+    calendar.addEventSource(newInput)
+  }
+}
+
+
+// shortcoming: won't remove plugins
+function handlePlugins(inputs, calendar: Calendar) {
+  calendar.addPluginInputs(inputs) // will gracefully handle duplicates
 }

@@ -65,6 +65,7 @@ export type EventSourceInput =
   string // a URL for a JSON feed
 
 export interface EventSource {
+  _raw: any
   sourceId: string
   sourceDefId: number // one of the few IDs that's a NUMBER not a string
   meta: any
@@ -122,12 +123,15 @@ export function parseEventSource(raw: EventSourceInput, calendar: Calendar): Eve
     let meta = def.parseMeta(raw)
 
     if (meta) {
-      return parseEventSourceProps(
+      let res = parseEventSourceProps(
         typeof raw === 'object' ? raw : {},
         meta,
         i,
         calendar
       )
+
+      res._raw = raw
+      return res
     }
   }
 

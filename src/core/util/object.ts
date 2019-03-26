@@ -88,6 +88,17 @@ export function arrayToHash(a): { [key: string]: true } {
 }
 
 
+export function hashValuesToArray(obj) {
+  let a = []
+
+  for (let key in obj) {
+    a.push(obj[key])
+  }
+
+  return a
+}
+
+
 export function isPropsEqual(obj0, obj1): boolean {
 
   for (let key in obj0) {
@@ -125,18 +136,42 @@ export function computeChangedProps(obj0, obj1) {
       res[prop] = obj1[prop]
 
     } else {
-      let val0 = obj0[prop]
-      let val1 = obj1[prop]
-
-      if (
-        val0 !== val1 &&
-        !(Array.isArray(val0) && Array.isArray(val1) && isArraysEqual(val0, val1)) &&
-        !(typeof val0 === 'object' && typeof val1 === 'object' && isPropsEqual(val0, val1))
-      ) {
-        res[prop] = val1
+      if (!isValuesSimilar(obj0[prop], obj1[prop])) {
+        res[prop] = obj1[prop]
       }
     }
   }
 
   return res
+}
+
+// will go recursively one level deep
+export function isObjsSimilar(obj0, obj1) {
+
+  for (let prop in obj0) {
+    if (!(prop in obj1)) {
+      return false
+    }
+  }
+
+  for (let prop in obj1) {
+
+    if (!(prop in obj0)) {
+      return false
+
+    } else {
+      if (!isValuesSimilar(obj0[prop], obj1[prop])) {
+        return false
+      }
+    }
+  }
+
+  return true
+}
+
+
+function isValuesSimilar(val0, val1) {
+  return val0 === val1 ||
+    (Array.isArray(val0) && Array.isArray(val1) && isArraysEqual(val0, val1)) ||
+    (typeof val0 === 'object' && typeof val1 === 'object' && isPropsEqual(val0, val1))
 }
