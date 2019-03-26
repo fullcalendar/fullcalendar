@@ -498,11 +498,18 @@ export default class Calendar {
   }
 
 
-  // not for public use
+  // not really for public use
   resetOptions(options) {
     let oldOptions = this.optionsManager.overrides
+    let oldNormalOptions = {}
     let normalOptions = {}
     let specialOptions = {}
+
+    for (let name in oldOptions) {
+      if (!SPECIAL_OPTIONS[name]) {
+        oldNormalOptions[name] = oldOptions[name]
+      }
+    }
 
     for (let name in options) {
       if (SPECIAL_OPTIONS[name]) {
@@ -512,10 +519,10 @@ export default class Calendar {
       }
     }
 
-    if (anyKeysRemoved(oldOptions, normalOptions)) {
+    if (anyKeysRemoved(oldNormalOptions, normalOptions)) {
       this._setOptions(options, 'reset')
     } else {
-      this._setOptions(computeChangedProps(oldOptions, options))
+      this._setOptions(computeChangedProps(oldNormalOptions, normalOptions))
     }
 
     // handle special options last
@@ -528,7 +535,7 @@ export default class Calendar {
   _setOptions(options, mode?: 'dynamic' | 'reset') {
     let oldDateEnv = this.dateEnv // do this before handleOptions
     let isTimeZoneDirty = false
-    let isSizeDirty = true
+    let isSizeDirty = false
     let needsFullRerender = false
 
     for (let name in options) {
