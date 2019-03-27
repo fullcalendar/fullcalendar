@@ -557,7 +557,7 @@ export default class Calendar {
     })
   }
 
- processOptions(options, mode?: 'dynamic' | 'reset') {
+  processOptions(options, mode?: 'dynamic' | 'reset') {
     let oldDateEnv = this.dateEnv // do this before handleOptions
     let isTimeZoneDirty = false
     let isSizeDirty = false

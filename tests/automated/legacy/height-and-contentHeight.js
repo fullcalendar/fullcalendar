@@ -1,4 +1,4 @@
-import { getFirstDateEl } from "../lib/ViewUtils"
+import { getFirstDateEl } from '../lib/ViewUtils'
 
 (function() {
 
