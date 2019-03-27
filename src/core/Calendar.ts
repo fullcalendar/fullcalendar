@@ -176,11 +176,13 @@ export default class Calendar {
     if (this.component) {
       this.unbindHandlers()
       this.component.destroy() // don't null-out. in case API needs access
-      this.component = null
+      this.component = null // umm ???
 
       for (let interaction of this.calendarInteractions) {
         interaction.destroy()
       }
+
+      this.publiclyTrigger('_destroyed')
     }
   }
 
