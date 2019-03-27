@@ -54,7 +54,8 @@ export {
   translateRect
 } from './util/geom'
 
-export { isPropsEqual, mapHash, filterHash } from './util/object'
+export { mapHash, filterHash } from './util/object'
+export { isObjectsSimilar, isValuesSimilar } from './util/object-similarity'
 
 export {
   findElements,

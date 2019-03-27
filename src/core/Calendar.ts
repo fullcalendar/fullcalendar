@@ -13,7 +13,8 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
-import { mapHash, isPropsEqual, anyKeysRemoved, computeChangedProps } from './util/object'
+import { mapHash } from './util/object'
+import { isObjectsSimilar, anyKeysRemoved, computeChangedProps } from './util/object-similarity'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
@@ -77,7 +78,7 @@ export default class Calendar {
   private buildTheme = memoize(buildTheme)
   private buildEventUiSingleBase = memoize(this._buildEventUiSingleBase)
   private buildSelectionConfig = memoize(this._buildSelectionConfig)
-  private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
+  private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isObjectsSimilar)
   private buildEventUiBases = memoize(buildEventUiBases)
 
   eventUiBases: EventUiHash // solely for validation system

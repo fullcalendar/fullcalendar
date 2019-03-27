@@ -1,6 +1,7 @@
 import { createPlugin } from './plugin-system'
 import { Calendar } from './main'
-import { hashValuesToArray, isObjsSimilar } from './util/object'
+import { hashValuesToArray } from './util/object'
+import { isValuesSimilar } from './util/object-similarity'
 import { EventSource } from './structs/event-source'
 
 export default createPlugin({
@@ -21,7 +22,7 @@ function handleEventSources(inputs, calendar: Calendar) {
     let inputFound = false
 
     for (let i = 0; i < unfoundSources.length; i++) {
-      if (isObjsSimilar(unfoundSources[i]._raw, input)) {
+      if (isValuesSimilar(unfoundSources[i]._raw, input, 2)) {
         unfoundSources.splice(i, 1) // delete
         inputFound = true
         break
