@@ -376,7 +376,10 @@ export default class Calendar {
     this.renderingPauseDepth++
     func()
     this.renderingPauseDepth--
-    this.requestRerender()
+
+    if (this.needsRerender) {
+      this.requestRerender()
+    }
   }
 
 
@@ -536,7 +539,7 @@ export default class Calendar {
     let oldDateEnv = this.dateEnv // do this before handleOptions
     let isTimeZoneDirty = false
     let isSizeDirty = false
-    let needsFullRerender = false
+    let anyDifficultOptions = false
 
     for (let name in options) {
       if (/^(height|contentHeight|aspectRatio)$/.test(name)) {
@@ -544,7 +547,7 @@ export default class Calendar {
       } else if (/^(defaultDate|defaultView)$/.test(name)) {
         // can't change date this way. use gotoDate instead
       } else {
-        needsFullRerender = true
+        anyDifficultOptions = true
 
         if (name === 'timeZone') {
           isTimeZoneDirty = true
@@ -553,7 +556,7 @@ export default class Calendar {
     }
 
     if (mode === 'reset') {
-      needsFullRerender = true
+      anyDifficultOptions = true
       this.optionsManager.reset(options)
     } else if (mode === 'dynamic') {
       this.optionsManager.addDynamic(options) // takes higher precedence
@@ -561,9 +564,9 @@ export default class Calendar {
       this.optionsManager.add(options)
     }
 
-    this.handleOptions(this.optionsManager.computed)
+    if (anyDifficultOptions) {
+      this.handleOptions(this.optionsManager.computed)
 
-    if (needsFullRerender) {
       this.needsFullRerender = true
       this.batchRendering(() => {
 
