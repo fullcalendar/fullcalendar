@@ -1,3 +1,5 @@
+import { getFirstDateEl } from "../lib/ViewUtils"
+
 (function() {
 
   [ 'height', 'contentHeight' ].forEach(function(heightProp) {
@@ -35,9 +37,14 @@
       // relies on asAMethod (boolean)
       // otherOptions: other calendar options to dynamically set (assumes asAMethod)
       function init(heightVal) {
+
         if (asAMethod) {
+
           initCalendar({}, calendarEl)
+          var dateEl = getFirstDateEl()
           currentCalendar.setOption(heightProp, heightVal)
+          expect(getFirstDateEl()).toBe(dateEl)
+
         } else {
           initCalendar({ [heightProp]: heightVal }, calendarEl)
         }
