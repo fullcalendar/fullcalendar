@@ -1,7 +1,7 @@
 import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
 import { eventDefMutationApplier } from './structs/event-mutation'
-import Calendar, { DatePointTransform, DateSpanTransform, CalendarInteractionClass } from './Calendar'
+import Calendar, { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './Calendar'
 import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
@@ -46,6 +46,7 @@ export interface PluginDefInput {
   namedTimeZonedImpl?: NamedTimeZoneImplClass
   defaultView?: string
   elementDraggingImpl?: ElementDraggingClass
+  optionChangeHandlers?: OptionChangeHandlerMap
 }
 
 export interface PluginHooks {
@@ -72,6 +73,7 @@ export interface PluginHooks {
   namedTimeZonedImpl?: NamedTimeZoneImplClass
   defaultView: string
   elementDraggingImpl?: ElementDraggingClass
+  optionChangeHandlers: OptionChangeHandlerMap
 }
 
 export interface PluginDef extends PluginHooks {
@@ -116,7 +118,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     recurringTypes: input.recurringTypes || [],
     namedTimeZonedImpl: input.namedTimeZonedImpl,
     defaultView: input.defaultView || '',
-    elementDraggingImpl: input.elementDraggingImpl
+    elementDraggingImpl: input.elementDraggingImpl,
+    optionChangeHandlers: input.optionChangeHandlers || {}
   }
 }
 
@@ -149,7 +152,8 @@ export class PluginSystem {
       recurringTypes: [],
       namedTimeZonedImpl: null,
       defaultView: '',
-      elementDraggingImpl: null
+      elementDraggingImpl: null,
+      optionChangeHandlers: {}
     }
     this.addedHash = {}
   }
@@ -192,6 +196,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     recurringTypes: hooks0.recurringTypes.concat(hooks1.recurringTypes),
     namedTimeZonedImpl: hooks1.namedTimeZonedImpl || hooks0.namedTimeZonedImpl,
     defaultView: hooks0.defaultView || hooks1.defaultView, // put earlier plugins FIRST
-    elementDraggingImpl: hooks0.elementDraggingImpl || hooks1.elementDraggingImpl // "
+    elementDraggingImpl: hooks0.elementDraggingImpl || hooks1.elementDraggingImpl, // "
+    optionChangeHandlers: { ...hooks0.optionChangeHandlers, ...hooks1.optionChangeHandlers }
   }
 }

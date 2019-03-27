@@ -13,10 +13,10 @@ import { Duration, createDuration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
-import { mapHash, isPropsEqual, anyKeysRemoved, computeChangedProps, hashValuesToArray, isObjsSimilar } from './util/object'
+import { mapHash, isPropsEqual, anyKeysRemoved, computeChangedProps } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
-import { EventSourceInput, parseEventSource, EventSourceHash, EventSource } from './structs/event-source'
+import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
 import { EventInput, parseEvent, EventDefHash } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
@@ -53,6 +53,9 @@ export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 
 export type CalendarInteraction = { destroy() }
 export type CalendarInteractionClass = { new(calendar: Calendar): CalendarInteraction }
+
+export type OptionChangeHandler = (propValue: any, calendar: Calendar) => void
+export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
 export default class Calendar {
 
@@ -492,19 +495,20 @@ export default class Calendar {
 
   // not really for public use
   resetOptions(options) {
+    let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
     let oldOptions = this.optionsManager.overrides
     let oldNormalOptions = {}
     let normalOptions = {}
     let specialOptions = {}
 
     for (let name in oldOptions) {
-      if (!SPECIAL_OPTIONS[name]) {
+      if (!changeHandlers[name]) {
         oldNormalOptions[name] = oldOptions[name]
       }
     }
 
     for (let name in options) {
-      if (SPECIAL_OPTIONS[name]) {
+      if (changeHandlers[name]) {
         specialOptions[name] = options[name]
       } else {
         normalOptions[name] = options[name]
@@ -521,7 +525,7 @@ export default class Calendar {
 
       // handle special options last
       for (let name in specialOptions) {
-        SPECIAL_OPTIONS[name](specialOptions[name], this)
+        changeHandlers[name](specialOptions[name], this)
       }
     })
   }
@@ -1336,53 +1340,4 @@ function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, 
   }
 
   return eventUiBases
-}
-
-
-
-const SPECIAL_OPTIONS = {
-  events(events, calendar) {
-    handleEventSources([ events ], calendar)
-  },
-  eventSources: handleEventSources,
-  plugins: handlePlugins
-}
-
-
-function handleEventSources(inputs, calendar: Calendar) {
-  let unfoundSources: EventSource[] = hashValuesToArray(calendar.state.eventSources)
-  let newInputs = []
-
-  for (let input of inputs) {
-    let inputFound = false
-
-    for (let i = 0; i < unfoundSources.length; i++) {
-      if (isObjsSimilar(unfoundSources[i]._raw, input)) {
-        unfoundSources.splice(i, 1) // delete
-        inputFound = true
-        break
-      }
-    }
-
-    if (!inputFound) {
-      newInputs.push(input)
-    }
-  }
-
-  for (let unfoundSource of unfoundSources) {
-    calendar.dispatch({
-      type: 'REMOVE_EVENT_SOURCE',
-      sourceId: unfoundSource.sourceId
-    })
-  }
-
-  for (let newInput of newInputs) {
-    calendar.addEventSource(newInput)
-  }
-}
-
-
-// shortcoming: won't remove plugins
-function handlePlugins(inputs, calendar: Calendar) {
-  calendar.addPluginInputs(inputs) // will gracefully handle duplicates
 }

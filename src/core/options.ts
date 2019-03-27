@@ -5,6 +5,7 @@ import FuncEventSourcePlugin from './event-sources/func-event-source'
 import JsonFeedEventSourcePlugin from './event-sources/json-feed-event-source'
 import SimpleRecurrencePlugin from './structs/recurring-event-simple'
 import { capitaliseFirstLetter } from './util/misc'
+import DefaultOptionChangeHandlers from './option-change-handlers'
 
 export const config = {} as any // TODO: make these options
 
@@ -128,7 +129,8 @@ const INTERNAL_PLUGINS: PluginDef[] = [
   ArrayEventSourcePlugin,
   FuncEventSourcePlugin,
   JsonFeedEventSourcePlugin,
-  SimpleRecurrencePlugin
+  SimpleRecurrencePlugin,
+  DefaultOptionChangeHandlers
 ]
 
 export function refinePluginDefs(pluginInputs: any[]): PluginDef[] {
