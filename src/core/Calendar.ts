@@ -491,13 +491,9 @@ export default class Calendar {
   // Options
   // -----------------------------------------------------------------------------------------------------------------
 
-
-  setOption(name: string, val) {
-    this._setOptions({ [name]: val }, 'dynamic')
-  }
-
-
-  // not really for public use
+  /*
+  Not meant for public API
+  */
   resetOptions(options) {
     let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
     let oldOptions = this.optionsManager.overrides
@@ -519,12 +515,12 @@ export default class Calendar {
       }
     }
 
-    this.batchRendering(() => { // if both _setOptions and special options want to rerender
+    this.batchRendering(() => { // for if both setOptions and special options want to rerender
 
       if (anyKeysRemoved(oldNormalOptions, normalOptions)) {
-        this._setOptions(options, 'reset')
+        this.processOptions(options, 'reset')
       } else {
-        this._setOptions(computeChangedProps(oldNormalOptions, normalOptions))
+        this.processOptions(computeChangedProps(oldNormalOptions, normalOptions))
       }
 
       // handle special options last
@@ -534,8 +530,34 @@ export default class Calendar {
     })
   }
 
+  /*
+  Not meant for public API. Won't give the same precedence that setOption does
+  */
+  setOptions(options) {
+    let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
+    let normalOptions = {}
+    let specialOptions = {}
 
-  _setOptions(options, mode?: 'dynamic' | 'reset') {
+    for (let name in options) {
+      if (changeHandlers[name]) {
+        specialOptions[name] = options[name]
+      } else {
+        normalOptions[name] = options[name]
+      }
+    }
+
+    this.batchRendering(() => { // for if both setOptions and special options want to rerender
+
+      this.processOptions(normalOptions)
+
+      // handle special options last
+      for (let name in specialOptions) {
+        changeHandlers[name](specialOptions[name], this)
+      }
+    })
+  }
+
+ processOptions(options, mode?: 'dynamic' | 'reset') {
     let oldDateEnv = this.dateEnv // do this before handleOptions
     let isTimeZoneDirty = false
     let isSizeDirty = false
@@ -565,7 +587,7 @@ export default class Calendar {
     }
 
     if (anyDifficultOptions) {
-      this.handleOptions(this.optionsManager.computed)
+      this.handleOptions(this.optionsManager.computed) // only for "difficult" options
 
       this.needsFullRerender = true
       this.batchRendering(() => {
@@ -592,6 +614,11 @@ export default class Calendar {
   }
 
 
+  setOption(name: string, val) {
+    this.processOptions({ [name]: val }, 'dynamic')
+  }
+
+
   getOption(name: string) { // getter, used externally
     return this.optionsManager.computed[name]
   }
@@ -611,7 +638,9 @@ export default class Calendar {
     return this.viewSpecs[this.state.viewType].options
   }
 
-
+  /*
+  rebuilds things based off of a complete set of refined options
+  */
   handleOptions(options) {
     let pluginHooks = this.pluginSystem.hooks
 
