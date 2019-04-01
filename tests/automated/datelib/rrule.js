@@ -89,6 +89,28 @@ describe('rrule plugin', function() {
     expect(events[3].start).toEqualDate('2018-09-25T13:00:00Z')
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/4596
+  it('expands a range that starts exactly at the current view\'s start', function() {
+    initCalendar({
+      defaultDate: '2019-04-02',
+      defaultView: 'dayGridDay',
+      events: [
+        {
+          title: 'event with everyday with range',
+          allDay: true,
+          rrule: {
+            freq: 'daily',
+            dtstart: '2019-04-02',
+            until: '2019-04-09'
+          }
+        }
+      ]
+    })
+    let events = getSortedEvents()
+    expect(events.length).toBeGreaterThanOrEqual(1)
+    expect(events[0].start).toEqualDate('2019-04-02')
+  })
+
   it('expands events with a duration', function() {
     initCalendar({
       events: [
