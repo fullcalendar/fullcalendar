@@ -2,9 +2,9 @@
 export default {
   code: "pt-br",
   buttonText: {
-    prevText: "Anterior",
-    nextText: "Próximo",
-    currentText: "Hoje",
+    prev: "Anterior",
+    next: "Próximo",
+    today: "Hoje",
     month: "Mês",
     week: "Semana",
     day: "Dia",
