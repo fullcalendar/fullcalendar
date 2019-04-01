@@ -13,7 +13,7 @@ import { BusinessHoursInput } from '../structs/business-hours'
 import EventApi from '../api/EventApi'
 import { AllowFunc, ConstraintInput, OverlapFunc } from '../validation'
 import { PluginDef } from '../plugin-system'
-import { LocaleSingularArg, LocalePluralArg } from '../datelib/locale'
+import { LocaleSingularArg, RawLocale } from '../datelib/locale'
 
 
 export interface ToolbarInput {
@@ -118,7 +118,7 @@ export interface OptionsInputBase {
   dateAlignment?: string
   duration?: DurationInput
   dayCount?: number
-  locales?: LocalePluralArg
+  locales?: RawLocale[]
   locale?: LocaleSingularArg
   eventTimeFormat?: FormatterInput
   columnHeader?: boolean

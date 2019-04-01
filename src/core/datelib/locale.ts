@@ -1,9 +1,8 @@
-import { mergeProps } from '../util/object'
+import { mergeProps, hashValuesToArray } from '../util/object'
 import { __assign } from 'tslib'
 
 export type LocaleCodeArg = string | string[]
 export type LocaleSingularArg = LocaleCodeArg | RawLocale
-export type LocalePluralArg = (string | RawLocale)[]
 
 export interface Locale {
   codeArg: LocaleCodeArg
@@ -50,29 +49,19 @@ const RAW_EN_LOCALE = {
   noEventsMessage: 'No events to display'
 }
 
-export function parseRawLocales(inputPlural: LocalePluralArg): RawLocaleInfo {
-  let globalArray = window['FullCalendarLocalesAll'] || []
-  let globalMap = window['FullCalendarLocales'] || {}
-  let rawLocaleArray: RawLocale[] = []
-
-  for (let inputItem of inputPlural) {
-    if (typeof inputItem === 'string') {
-      if (globalMap[inputItem]) {
-        rawLocaleArray.push(globalMap[inputItem])
-      } else {
-        console.warn('You must have ' + inputItem + '.js locale file loaded.')
-      }
-    } else {
-      rawLocaleArray.push(inputItem)
-    }
-  }
-
-  let defaultCode = rawLocaleArray.length ? rawLocaleArray[0].code : 'en'
+export function parseRawLocales(explicitRawLocales: RawLocale[]): RawLocaleInfo {
+  let defaultCode = explicitRawLocales.length > 0 ? explicitRawLocales[0].code : 'en'
+  let globalArray = window['FullCalendarLocalesAll'] || [] // from locales-all.js
+  let globalObject = window['FullCalendarLocales'] || {} // from locales/*.js. keys are meaningless
+  let allRawLocales = globalArray.concat( // globalArray is low prio
+    hashValuesToArray(globalObject), // medium prio
+    explicitRawLocales // highest prio
+  )
   let rawLocaleMap = {
-    en: RAW_EN_LOCALE
+    en: RAW_EN_LOCALE // necessary?
   }
 
-  for (let rawLocale of rawLocaleArray.concat(globalArray)) {
+  for (let rawLocale of allRawLocales) {
     rawLocaleMap[rawLocale.code] = rawLocale
   }
 
