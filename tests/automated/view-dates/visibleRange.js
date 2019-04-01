@@ -148,7 +148,7 @@ describe('visibleRange', function() {
         })
         expectActiveRange('2017-06-07', '2017-06-11')
         currentCalendar.prev()
-        expectActiveRange('2017-06-04', '2017-06-08')
+        expectActiveRange('2017-06-04', '2017-06-07') // second computation will round down the end
       })
 
     })

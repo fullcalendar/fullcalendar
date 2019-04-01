@@ -49,7 +49,7 @@ export default class DateProfileGenerator {
     let { dateEnv } = this
 
     let prevDate = dateEnv.subtract(
-      currentDate,
+      dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
       currentDateProfile.dateIncrement
     )
 
@@ -62,7 +62,7 @@ export default class DateProfileGenerator {
     let { dateEnv } = this
 
     let nextDate = dateEnv.add(
-      currentDate,
+      dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
       currentDateProfile.dateIncrement
     )
 

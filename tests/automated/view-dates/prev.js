@@ -33,4 +33,27 @@ describe('prev', function() {
       })
     })
   })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/4595
+  it('can navigate back when starting late in month', function() {
+    initCalendar({
+      defaultDate: '2019-03-31T12:00',
+      defaultView: 'dayGridMonth'
+    })
+    expectActiveRange('2019-02-24', '2019-04-07')
+    currentCalendar.prev()
+    expectActiveRange('2019-01-27', '2019-03-10')
+  })
+
+  // related to #4595
+  it('can navigate forward when starting late in month', function() {
+    initCalendar({
+      defaultDate: '2019-03-31T12:00',
+      defaultView: 'dayGridMonth'
+    })
+    expectActiveRange('2019-02-24', '2019-04-07')
+    currentCalendar.next()
+    expectActiveRange('2019-03-31', '2019-05-12')
+  })
+
 })
