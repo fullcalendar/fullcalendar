@@ -232,7 +232,9 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
     return !(this.props as any).eventDrag && // HACK
       !(this.props as any).eventResize && // HACK
       !elementClosest(el, '.fc-mirror') &&
-      !this.isInPopover(el) // how to determine if not in a sub-component???
+      (this.isPopover() || !this.isInPopover(el))
+      // ^above line ensures we don't detect a seg interaction within a nested component.
+      // it's a HACK because it only supports a popover as the nested component.
   }
 
 
@@ -246,10 +248,13 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   }
 
 
-  // is the element inside of an inner popover?
+  isPopover() {
+    return this.el.classList.contains('fc-popover')
+  }
+
+
   isInPopover(el: HTMLElement) {
-    let popoverEl = elementClosest(el, '.fc-popover')
-    return popoverEl && popoverEl !== this.el // if the current component IS a popover, okay
+    return Boolean(elementClosest(el, '.fc-popover'))
   }
 
 }

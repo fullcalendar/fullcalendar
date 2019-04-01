@@ -276,6 +276,27 @@ describe('eventLimit popover', function() {
     expect($('.fc-more-popover')).not.toBeVisible()
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/4584
+  it('doesn\'t fire a dateClick', function(done) {
+    let dateClickCalled = false
+
+    spyOnCalendarCallback('dateClick', function() {
+      dateClickCalled = true
+    })
+
+    initCalendar()
+    init()
+
+    let $headerEl = $('.fc-popover .fc-header')
+    expect($headerEl).toBeVisible()
+
+    $.simulateMouseClick($headerEl) // better for actual coordinates i think
+    setTimeout(function() { // because click would take some time to register
+      expect(dateClickCalled).toBe(false)
+      done()
+    }, 500)
+  })
+
   it('doesn\'t close when user clicks somewhere inside of the popover', function() {
     initCalendar()
     init()
