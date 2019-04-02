@@ -52,4 +52,32 @@ describe('external event dragging', function() {
     })
   })
 
+  // https://github.com/fullcalendar/fullcalendar/issues/4575
+  it('provides eventAllow with a valid event with null start/end', function(done) {
+    initCalendar({
+      defaultView: 'dayGridMonth',
+      defaultDate: '2019-04-01',
+      droppable: true,
+      defaultAllDayEventDuration: { days: 2 },
+      eventAllow(dropInfo, draggedEvent) {
+        expect(draggedEvent.id).toBe('a')
+        expect(draggedEvent.title).toBe('hey')
+        expect(draggedEvent.start).toBe(null)
+        expect(draggedEvent.end).toBe(null)
+        done()
+      }
+    })
+
+    thirdPartyDraggable = new Draggable($dragEl[0], {
+      eventData: {
+        id: 'a',
+        title: 'hey'
+      }
+    })
+
+    $dragEl.simulate('drag', {
+      end: getDayEl('2019-04-02')
+    })
+  })
+
 })

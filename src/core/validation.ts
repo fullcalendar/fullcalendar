@@ -128,8 +128,6 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
 
     // allow (a function)
     for (let subjectAllow of subjectConfig.allows) {
-      let origDef = state.eventStore.defs[subjectDef.defId]
-      let origInstance = state.eventStore.instances[subjectInstanceId]
 
       let subjectDateSpan: DateSpan = {
         ...dateSpanMeta,
@@ -137,9 +135,19 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
         allDay: subjectDef.allDay
       }
 
+      let origDef = state.eventStore.defs[subjectDef.defId]
+      let origInstance = state.eventStore.instances[subjectInstanceId]
+      let eventApi
+
+      if (origDef) { // was previously in the calendar
+        eventApi = new EventApi(calendar, origDef, origInstance)
+      } else { // was an external event
+        eventApi = new EventApi(calendar, subjectDef) // no instance, because had no dates
+      }
+
       if (!subjectAllow(
         calendar.buildDateSpanApi(subjectDateSpan),
-        new EventApi(calendar, origDef, origInstance)
+        eventApi
       )) {
         return false
       }
