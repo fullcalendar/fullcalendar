@@ -3,7 +3,7 @@ import { Duration, createDuration, subtractDurations } from '../datelib/duration
 import { arrayToHash } from '../util/object'
 import { refineProps } from '../util/misc'
 import { RecurringType, ParsedRecurring } from './recurring-event'
-import { EventInput, EventDef } from './event'
+import { EventInput } from './event'
 import { DateRange, intersectRanges } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
 import { createPlugin } from '../plugin-system'
@@ -26,7 +26,7 @@ interface SimpleParsedRecurring extends ParsedRecurring {
 
 let recurring: RecurringType = {
 
-  parse(rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv): SimpleParsedRecurring | null {
+  parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): SimpleParsedRecurring | null {
     let createMarker = dateEnv.createMarker.bind(dateEnv)
     let processors = {
       daysOfWeek: null,
@@ -46,19 +46,9 @@ let recurring: RecurringType = {
       }
     }
 
-    let allDay
-
-    if (props.startTime || props.endTime) {
-      allDay = false
-    } else if (allDayDefault != null) {
-      allDay = allDayDefault
-    } else {
-      allDay = true
-    }
-
     if (anyValid) {
       return {
-        allDay,
+        allDayGuess: Boolean(!props.startTime && !props.endTime),
         duration: (props.startTime && props.endTime) ?
           subtractDurations(props.endTime, props.startTime) :
           null,
@@ -69,7 +59,7 @@ let recurring: RecurringType = {
     return null
   },
 
-  expand(typeData: SimpleRecurringData, eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
+  expand(typeData: SimpleRecurringData, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
     let clippedFramingRange = intersectRanges(
       framingRange,
       { start: typeData.startRecur, end: typeData.endRecur }

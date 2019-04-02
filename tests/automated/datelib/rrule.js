@@ -28,6 +28,21 @@ describe('rrule plugin', function() {
     expect(events[4].start).toEqualDate('2018-10-02T13:00:00Z')
   })
 
+  it('respects allDay when an rrule string', function() {
+    initCalendar({
+      events: [
+        {
+          allDay: true,
+          rrule: 'DTSTART:20180904T130000\nRRULE:FREQ=WEEKLY'
+        }
+      ]
+    })
+    let events = getSortedEvents()
+    expect(events[0].start).toEqualDate('2018-09-04') // should round down
+    expect(events[0].allDay).toBe(true)
+    expect(events[0].extendedProps).toEqual({}) // didnt accumulate allDay or rrule props
+  })
+
   it('expands events when given an rrule object', function() {
     initCalendar({
       events: [

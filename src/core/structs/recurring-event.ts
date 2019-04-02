@@ -3,26 +3,24 @@ import { DateRange } from '../datelib/date-range'
 import { DateEnv } from '../datelib/env'
 import { Duration } from '../datelib/duration'
 import { DateMarker, startOfDay } from '../datelib/marker'
+import { __assign } from 'tslib'
 
 /*
 The plugin system for defining how a recurring event is expanded into individual instances.
 */
 
 export interface ParsedRecurring {
-  allDay: boolean // last fallback to be used
-  duration: Duration | null // signals hasEnd
   typeData: any
+  allDayGuess: boolean | null
+  duration: Duration | null // signals hasEnd
 }
 
 export interface RecurringType {
-  parse: (rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
-  expand: (typeData: any, eventDef: EventDef, framingRange: DateRange, dateEnv: DateEnv) => DateMarker[]
+  parse: (rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv) => ParsedRecurring | null
+  expand: (typeData: any, framingRange: DateRange, dateEnv: DateEnv) => DateMarker[]
 }
 
 
-/*
-KNOWN BUG: will populate lefovers only up until a recurring type works
-*/
 export function parseRecurring(
   eventInput: EventInput,
   allDayDefault: boolean | null,
@@ -31,15 +29,32 @@ export function parseRecurring(
   leftovers: any
 ) {
   for (let i = 0; i < recurringTypes.length; i++) {
-    let parsed = recurringTypes[i].parse(eventInput, allDayDefault, leftovers, dateEnv) as ParsedRecurring
+    let localLeftovers = {} as any
+    let parsed = recurringTypes[i].parse(eventInput, localLeftovers, dateEnv) as ParsedRecurring
 
     if (parsed) {
-      return { // more efficient way to do this?
-        allDay: parsed.allDay,
+
+      let allDay = localLeftovers.allDay
+      delete localLeftovers.allDay // remove from leftovers
+      if (allDay == null) {
+        allDay = allDayDefault
+        if (allDay == null) {
+          allDay = parsed.allDayGuess
+          if (allDay == null) {
+            allDay = false
+          }
+        }
+      }
+
+      __assign(leftovers, localLeftovers)
+
+      return {
+        allDay,
         duration: parsed.duration,
         typeData: parsed.typeData,
         typeId: i
       }
+
     }
   }
 
@@ -59,7 +74,6 @@ export function expandRecurringRanges(
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
   let markers = typeDef.expand(
     eventDef.recurringDef.typeData,
-    eventDef,
     framingRange,
     dateEnv
   )

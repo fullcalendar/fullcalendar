@@ -5,7 +5,6 @@ import {
   EventInput,
   refineProps,
   DateEnv,
-  EventDef,
   DateRange,
   DateMarker,
   createDuration,
@@ -23,16 +22,16 @@ const EVENT_DEF_PROPS = {
 
 let recurring: RecurringType = {
 
-  parse(rawEvent: EventInput, allDayDefault: boolean | null, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
+  parse(rawEvent: EventInput, leftoverProps: any, dateEnv: DateEnv): RRuleParsedRecurring | null {
     if (rawEvent.rrule != null) {
       let props = refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps)
-      let parsed = parseRRule(props.rrule, allDayDefault, dateEnv)
+      let parsed = parseRRule(props.rrule, dateEnv)
 
       if (parsed) {
         return {
-          allDay: parsed.allDay,
-          duration: props.duration,
-          typeData: parsed.rrule
+          typeData: parsed.rrule,
+          allDayGuess: parsed.allDayGuess,
+          duration: props.duration
         }
       }
     }
@@ -40,7 +39,7 @@ let recurring: RecurringType = {
     return null
   },
 
-  expand(rrule: RRule, eventDef: EventDef, framingRange: DateRange): DateMarker[] {
+  expand(rrule: RRule, framingRange: DateRange): DateMarker[] {
     // we WANT an inclusive start and in exclusive end, but the js rrule lib will only do either BOTH
     // inclusive or BOTH exclusive, which is stupid: https://github.com/jakubroztocil/rrule/issues/84
     // Workaround: make inclusive, which will generate extra occurences, and then trim.
@@ -56,24 +55,22 @@ export default createPlugin({
   recurringTypes: [ recurring ]
 })
 
-function parseRRule(input, allDayDefault: boolean | null, dateEnv: DateEnv) {
+function parseRRule(input, dateEnv: DateEnv) {
+  let allDayGuess = null
+  let rrule
 
   if (typeof input === 'string') {
-    return {
-      rrule: rrulestr(input),
-      allDay: false
-    }
+    rrule = rrulestr(input)
 
   } else if (typeof input === 'object' && input) { // non-null object
     let refined = { ...input } // copy
-    let allDay = allDayDefault
 
     if (typeof refined.dtstart === 'string') {
       let dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart)
 
       if (dtstartMeta) {
         refined.dtstart = dtstartMeta.marker
-        allDay = dtstartMeta.isTimeUnspecified
+        allDayGuess = dtstartMeta.isTimeUnspecified
       } else {
         delete refined.dtstart
       }
@@ -97,14 +94,11 @@ function parseRRule(input, allDayDefault: boolean | null, dateEnv: DateEnv) {
       refined.byweekday = convertConstants(refined.byweekday) // the plural version
     }
 
-    if (allDay == null) { // if not specific event after allDayDefault
-      allDay = true
-    }
+    rrule = new RRule(refined)
+  }
 
-    return {
-      rrule: new RRule(refined),
-      allDay
-    }
+  if (rrule) {
+    return { rrule, allDayGuess }
   }
 
   return null
