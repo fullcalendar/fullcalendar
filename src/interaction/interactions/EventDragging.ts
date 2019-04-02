@@ -158,7 +158,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
           mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingCalendar.eventUiBases, mutation, receivingCalendar)
           interaction.mutatedEvents = mutatedRelevantEvents
 
-          if (!this.component.isInteractionValid(interaction)) {
+          if (!receivingComponent.isInteractionValid(interaction)) {
             isInvalid = true
             mutation = null
 

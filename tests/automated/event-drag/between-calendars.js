@@ -37,6 +37,7 @@ describe('dragging events between calendars', function() {
 
   it('fires all triggers', function(done) {
     let triggerNames = []
+    let eventAllowCalled = false
 
     calendar0 = new Calendar(el0, {
       plugins: [ InteractionPlugin, DayGridPlugin ],
@@ -61,14 +62,18 @@ describe('dragging events between calendars', function() {
       defaultView: 'dayGridMonth',
       editable: true,
       droppable: true,
-      drop: function(info) {
+      drop(info) {
         triggerNames.push('drop')
         expect(info.draggedEl).toBe(eventEl)
         expect(info.date).toEqualDate('2019-01-05')
         expect(info.dateStr).toBe('2019-01-05')
         expect(info.allDay).toBe(true)
       },
-      eventReceive: function(info) {
+      eventAllow() {
+        eventAllowCalled = true
+        return true
+      },
+      eventReceive(info) {
         triggerNames.push('eventReceive')
         expect(info.draggedEl).toBe(eventEl)
         expect(info.event.start).toEqualDate('2019-01-05')
@@ -88,6 +93,7 @@ describe('dragging events between calendars', function() {
       end: point1,
       callback: function() {
         expect(triggerNames).toEqual([ 'eventLeave', 'drop', 'eventReceive' ])
+        expect(eventAllowCalled).toBe(true)
         done()
       }
     })
