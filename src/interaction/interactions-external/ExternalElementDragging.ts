@@ -216,7 +216,7 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
     defProps,
     dragMeta.sourceId,
     dateSpan.allDay,
-    Boolean(dragMeta.duration), // hasEnd
+    calendar.opt('forceEventDuration') || Boolean(dragMeta.duration), // hasEnd
     calendar
   )
 
