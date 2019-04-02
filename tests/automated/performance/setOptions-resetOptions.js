@@ -65,6 +65,18 @@ describeValues({
     expect(getFirstDateEl()).toBe(dateEl)
   })
 
+  it('rerenders events when mutating same array', function() {
+    let options = buildOptions()
+    let { events } = options
+
+    calendar = new Calendar($calendarEl[0], options)
+    calendar.render()
+
+    events.push({ start: '2019-04-01T05:00:00' })
+    mutateOptions(calendar, { events })
+    expect(calendar.getEvents().length).toBe(events.length)
+  })
+
   it('doesn\'t rerender anything for a defaultView change', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()

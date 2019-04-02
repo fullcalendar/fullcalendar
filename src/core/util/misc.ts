@@ -412,6 +412,17 @@ export function refineProps(rawProps: GenericHash, processors: GenericHash, defa
   return refined
 }
 
+/*
+Get a snapshot of an object, so we can compare it to later revisions.
+Intentionally only works with arrays, jaja
+*/
+export function freezeRaw(raw) {
+  if (Array.isArray(raw)) {
+    return Array.prototype.slice.call(raw)
+  }
+  return raw
+}
+
 
 /* Date stuff that doesn't belong in datelib core
 ----------------------------------------------------------------------------------------------------------------------*/

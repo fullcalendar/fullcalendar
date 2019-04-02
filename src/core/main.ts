@@ -24,6 +24,7 @@ export {
   flexibleCompare,
   computeVisibleDayRange,
   refineProps,
+  freezeRaw,
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
   isMultiDayRange,
   distributeHeight,
