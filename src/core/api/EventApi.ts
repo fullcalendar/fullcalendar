@@ -203,7 +203,7 @@ export default class EventApi {
     }
   }
 
-  private mutate(mutation: EventMutation) {
+  mutate(mutation: EventMutation) { // meant to be private. but plugins need access
     let def = this._def
     let instance = this._instance
 
