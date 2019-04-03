@@ -8,7 +8,7 @@ export default {
   dir: 'rtl',
   buttonText: {
     prev: "قبلی",
-    nex: "بعدی",
+    next: "بعدی",
     today: "امروز",
     month: "ماه",
     week: "هفته",
