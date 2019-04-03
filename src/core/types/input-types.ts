@@ -201,6 +201,7 @@ export interface OptionsInputBase {
   drop?(arg: { date: Date, dateStr: string, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: View }): void
   eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: View }): void
   eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: View }): void
+  viewSkeletonRender?(arg: { el: HTMLElement, view: View }): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {
