@@ -118,5 +118,5 @@ If you have edited code (including **tests** and **translations**) and would lik
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
 [sass]: https://sass-lang.com/install
-[Google JavaScript Style Guide]: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
+[Google JavaScript Style Guide]: https://google.github.io/styleguide/jsguide.html
 [Automated Test Readme]: https://github.com/fullcalendar/fullcalendar/wiki/Automated-Tests
