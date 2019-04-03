@@ -202,6 +202,7 @@ export interface OptionsInputBase {
   eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: View }): void
   eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: View }): void
   viewSkeletonRender?(arg: { el: HTMLElement, view: View }): void
+  viewSkeletonDestroy?(arg: { el: HTMLElement, view: View }): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {
