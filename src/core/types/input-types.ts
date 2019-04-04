@@ -76,7 +76,7 @@ export interface OptionsInputBase {
   customButtons?: { [name: string]: CustomButtonInput }
   buttonIcons?: boolean | ButtonIconsInput
   themeSystem?: 'standard' | string
-  bootstrapFontAwesome?: boolean | ButtonIconsInput,
+  bootstrapFontAwesome?: boolean | ButtonIconsInput
   firstDay?: number
   dir?: 'ltr' | 'rtl' | 'auto'
   weekends?: boolean
@@ -142,11 +142,9 @@ export interface OptionsInputBase {
   defaultTimedEventDuration?: DurationInput
   cmdFormatter?: string
   defaultRangeSeparator?: string
-
   selectConstraint?: ConstraintInput
   selectOverlap?: boolean | OverlapFunc
   selectAllow?: AllowFunc
-
   editable?: boolean
   eventStartEditable?: boolean
   eventDurationEditable?: boolean
@@ -159,7 +157,6 @@ export interface OptionsInputBase {
   eventBorderColor?: string
   eventTextColor?: string
   eventColor?: string
-
   events?: EventSourceInput
   eventSources?: EventSourceInput[]
   allDayDefault?: boolean
@@ -175,7 +172,9 @@ export interface OptionsInputBase {
   eventLongPressDelay?: number
   droppable?: boolean
   dropAccept?: string | ((draggable: any) => boolean)
-
+  eventDataTransform?: EventInputTransformer
+  allDayMaintainDuration?: boolean
+  eventResizableFromStart?: boolean
   datesRender?(arg: { view: View, el: HTMLElement }): void
   datesDestroy?(arg: { view: View, el: HTMLElement }): void
   dayRender?(arg: { view: View, date: Date, allDay: boolean, el: HTMLElement }): void
@@ -186,7 +185,6 @@ export interface OptionsInputBase {
   eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
   select?(arg: { start: Date, end: Date, startStr: string, endStr: string, allDay: boolean, resource: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
   unselect?(arg: { view: View, jsEvent: Event }): void
-  eventDataTransform?: EventInputTransformer
   loading?(isLoading: boolean, view: View): void
   eventRender?(arg: { event: EventApi, el: HTMLElement, view: View }): void
   eventPositioned?(arg: { event: EventApi, el: HTMLElement, view: View }): void
@@ -203,6 +201,7 @@ export interface OptionsInputBase {
   eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: View }): void
   viewSkeletonRender?(arg: { el: HTMLElement, view: View }): void
   viewSkeletonDestroy?(arg: { el: HTMLElement, view: View }): void
+  _destroyed?(): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {
