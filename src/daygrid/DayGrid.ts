@@ -609,7 +609,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
           moreLink = this.renderMoreLink(row, col, segsBelow)
           moreWrap = createElement('div', null, moreLink)
           td.appendChild(moreWrap)
-          moreNodes.push(moreWrap[0])
+          moreNodes.push(moreWrap)
         }
         col++
       }
