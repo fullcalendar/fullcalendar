@@ -79,4 +79,22 @@ describe('dayRender', function() {
     expect($(currentCalendar.el).find('td[data-date="2014-05-01"]')).toHaveClass('mycustomclass')
   })
 
+  it('gets called for TimeGrid views', function() {
+    var callCnt = 0
+    var options = {
+      defaultView: 'timeGridWeek',
+      defaultDate: '2014-05-01',
+      allDaySlot: false, // turn off. fires its own dayRender
+      dayRender(arg) {
+        expect(arg.date instanceof Date).toBe(true)
+        expect(arg.el instanceof HTMLElement).toBe(true)
+        expect(typeof arg.view).toBe('object')
+        callCnt++
+      }
+    }
+
+    initCalendar(options)
+    expect(callCnt).toBe(7)
+  })
+
 })

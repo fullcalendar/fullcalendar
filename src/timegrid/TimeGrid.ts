@@ -367,7 +367,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   _renderColumns(cells: TimeGridCell[], dateProfile: DateProfile) {
-    let { theme } = this
+    let { theme, dateEnv, view } = this
 
     let bgRow = new DayBgRow(this.context)
     this.rootBgContainerEl.innerHTML =
@@ -380,6 +380,16 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       '</table>'
 
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
+
+    for (let col = 0; col < this.colCnt; col++) {
+      this.publiclyTrigger('dayRender', [
+        {
+          date: dateEnv.toDate(cells[col].date),
+          el: this.colEls[col],
+          view
+        }
+      ])
+    }
 
     if (this.isRtl) {
       this.colEls.reverse()
