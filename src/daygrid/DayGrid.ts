@@ -408,9 +408,12 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   updateSize(isResize: boolean) {
     let { fillRenderer, eventRenderer, mirrorRenderer } = this
 
-    if (isResize || this.isCellSizesDirty) {
-      this.buildColPositions()
-      this.buildRowPositions()
+    if (
+      isResize ||
+      this.isCellSizesDirty ||
+      this.view.calendar.isEventsUpdated // hack
+    ) {
+      this.buildPositionCaches()
       this.isCellSizesDirty = false
     }
 
