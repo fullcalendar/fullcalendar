@@ -70,6 +70,10 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     )
   }
 
+  buildPositionCaches() {
+    this.timeGrid.buildPositionCaches()
+  }
+
   queryHit(positionLeft: number, positionTop: number): Hit {
     let rawHit = this.timeGrid.positionToHit(positionLeft, positionTop)
 

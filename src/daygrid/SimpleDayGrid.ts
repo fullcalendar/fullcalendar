@@ -60,6 +60,10 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     })
   }
 
+  buildPositionCaches() {
+    this.dayGrid.buildPositionCaches()
+  }
+
   queryHit(positionLeft: number, positionTop: number): Hit {
     let rawHit = this.dayGrid.positionToHit(positionLeft, positionTop)
 

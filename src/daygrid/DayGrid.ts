@@ -427,6 +427,12 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   }
 
 
+  buildPositionCaches() {
+    this.buildColPositions()
+    this.buildRowPositions()
+  }
+
+
   buildColPositions() {
     this.colPositions.build()
   }

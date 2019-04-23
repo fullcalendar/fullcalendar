@@ -641,6 +641,12 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
+  buildPositionCaches() {
+    this.buildColPositions()
+    this.buildSlatPositions()
+  }
+
+
   buildColPositions() {
     this.colPositions.build()
   }
