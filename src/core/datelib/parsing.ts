@@ -1,42 +1,39 @@
 import { isValidDate } from './marker'
 
-const ISO_START = /^\s*\d{4}-\d\d-\d\d([T ]\d)?/
-const ISO_TZO_RE = /(?:(Z)|([-+])(\d\d)(?::(\d\d))?)$/
+
+const ISO_RE = /^\s*(\d{4})(-(\d{2})(-(\d{2})([T ](\d{2}):(\d{2})(:(\d{2})(\.(\d+))?)?(Z|(([-+])(\d{2})(:?(\d{2}))?))?)?)?)?$/
 
 export function parse(str) {
-  let timeZoneOffset = null
-  let isTimeUnspecified = false
-  let m = ISO_START.exec(str)
+  let m = ISO_RE.exec(str)
 
   if (m) {
-    isTimeUnspecified = !m[1]
+    let marker = new Date(Date.UTC(
+      Number(m[1]),
+      m[3] ? Number(m[3]) - 1 : 0,
+      Number(m[5] || 1),
+      Number(m[7] || 0),
+      Number(m[8] || 0),
+      Number(m[10] || 0),
+      m[12] ? Number('0.' + m[12]) * 1000 : 0
+    ))
 
-    if (isTimeUnspecified) {
-      str += 'T00:00:00Z'
-    } else {
-      str = str.replace(ISO_TZO_RE, function(whole, z, sign, minutes, seconds) {
-        if (z) {
-          timeZoneOffset = 0
-        } else {
-          timeZoneOffset = (
-            parseInt(minutes, 10) * 60 +
-            parseInt(seconds || 0, 10)
-          ) * (sign === '-' ? -1 : 1)
-        }
-        return ''
-      }) + 'Z' // otherwise will parse in local
+    if (isValidDate(marker)) {
+      let timeZoneOffset = null
+
+      if (m[13]) {
+        timeZoneOffset = (m[15] === '-' ? -1 : 1) * (
+          Number(m[16] || 0) * 60 +
+          Number(m[18] || 0)
+        )
+      }
+
+      return {
+        marker,
+        isTimeUnspecified: !m[6],
+        timeZoneOffset
+      }
     }
   }
 
-  let marker = new Date(str)
-
-  if (!isValidDate(marker)) {
-    return null
-  }
-
-  return {
-    marker,
-    isTimeUnspecified,
-    timeZoneOffset
-  }
+  return null
 }

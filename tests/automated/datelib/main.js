@@ -156,6 +156,18 @@ describe('datelib', function() {
         expect(res.isTimeUnspecified).toBe(false)
       })
 
+      it('parses a time with no \'T\'', function() {
+        var res = env.createMarkerMeta('2018-06-08 01:00:00')
+        var date = env.toDate(res.marker)
+        expect(date).toEqual(new Date(Date.UTC(2018, 5, 8, 1, 0)))
+      })
+
+      it('parses just a month', function() {
+        var res = env.createMarkerMeta('2018-06')
+        var date = env.toDate(res.marker)
+        expect(date).toEqual(new Date(Date.UTC(2018, 5, 1)))
+      })
+
       it('detects presence of time even if timezone', function() {
         var res = env.createMarkerMeta('2018-06-08T00:00:00+12:00')
         expect(res.isTimeUnspecified).toBe(false)
@@ -630,6 +642,13 @@ describe('datelib', function() {
         var res = env.createMarkerMeta('2018-06-08T00:00:00+12:00')
         var date = env.toDate(res.marker)
         expect(date).toEqual(new Date(Date.UTC(2018, 5, 8)))
+        expect(res.forcedTzo).toBe(12 * 60)
+      })
+
+      it('parses as UTC after stripping and with a forcedTzo, alt format', function() {
+        var res = env.createMarkerMeta('2018-06-08T01:01:01.100+1200')
+        var date = env.toDate(res.marker)
+        expect(date).toEqual(new Date(Date.UTC(2018, 5, 8, 1, 1, 1, 100)))
         expect(res.forcedTzo).toBe(12 * 60)
       })
 
