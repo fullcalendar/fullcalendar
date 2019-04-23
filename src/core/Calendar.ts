@@ -800,12 +800,19 @@ export default class Calendar {
   // Given a duration singular unit, like "week" or "day", finds a matching view spec.
   // Preference is given to views that have corresponding buttons.
   getUnitViewSpec(unit: string): ViewSpec | null {
-    let viewTypes
+    let { component } = this
+    let viewTypes = []
     let i
     let spec
 
-    // put views that have buttons first. there will be duplicates, but oh well
-    viewTypes = this.component.header.viewsWithButtons // TODO: include footer as well?
+    // put views that have buttons first. there will be duplicates, but oh
+    if (component.header) {
+      viewTypes.push(...component.header.viewsWithButtons)
+    }
+    if (component.footer) {
+      viewTypes.push(...component.footer.viewsWithButtons)
+    }
+
     for (let viewType in this.viewSpecs) {
       viewTypes.push(viewType)
     }

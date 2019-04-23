@@ -31,6 +31,15 @@ describe('navLinks', function() {
         expect(options.dateClick).not.toHaveBeenCalled()
       })
 
+      // https://github.com/fullcalendar/fullcalendar/issues/4619
+      it('moves to day when no toolbars', function() {
+        options.header = null
+        initCalendar(options)
+        $.simulateMouseClick(getDayGridNumberEl('2016-08-09'))
+        expectDayView('dayGridDay', '2016-08-09') // is hash-key order-dependent I think :(
+        expect(options.dateClick).not.toHaveBeenCalled()
+      })
+
       // https://github.com/fullcalendar/fullcalendar/issues/3869
       it('moves to two different days', function() {
         initCalendar(options)
