@@ -175,6 +175,7 @@ export interface OptionsInputBase {
   eventDataTransform?: EventInputTransformer
   allDayMaintainDuration?: boolean
   eventResizableFromStart?: boolean
+  timeGridEventMinHeight?: number
   datesRender?(arg: { view: View, el: HTMLElement }): void
   datesDestroy?(arg: { view: View, el: HTMLElement }): void
   dayRender?(arg: { view: View, date: Date, allDay: boolean, el: HTMLElement }): void
