@@ -4,7 +4,7 @@ import {
   ScrollComponent,
   View, ViewSpec, DateProfileGenerator,
   ComponentContext,
-  createDuration, createFormatter, diffDays,
+  createFormatter, diffDays,
   buildGotoAnchorHtml, getAllDayHtml
 } from '@fullcalendar/core'
 import { DayGrid } from '@fullcalendar/daygrid'
@@ -248,9 +248,8 @@ export default abstract class TimeGridView extends View {
 
 
   // Computes the initial pre-configured scroll state prior to allowing the user to change it
-  computeInitialDateScroll() {
-    let scrollTime = createDuration(this.opt('scrollTime'))
-    let top = this.timeGrid.computeTimeTop(scrollTime.milliseconds)
+  computeDateScroll(timeMs: number) {
+    let top = this.timeGrid.computeTimeTop(timeMs)
 
     // zoom can give weird floating-point values. rather scroll a little bit further
     top = Math.ceil(top)

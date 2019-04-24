@@ -154,7 +154,9 @@ export default abstract class View extends DateComponent<ViewProps> {
 
   renderDatesWrap(dateProfile: DateProfile) {
     this.renderDates(dateProfile)
-    this.addScroll({ isDateInit: true })
+    this.addScroll({
+      timeMs: createDuration(this.opt('scrollTime')).milliseconds
+    })
     this.startNowIndicator(dateProfile) // shouldn't render yet because updateSize will be called soon
   }
 
@@ -403,12 +405,13 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   applyScroll(scroll, isResize: boolean) {
+    let { timeMs } = scroll
 
-    if (scroll.isDateInit) {
-      delete scroll.isDateInit
+    if (timeMs != null) {
+      delete scroll.timeMs
 
       if (this.props.dateProfile) { // dates rendered yet?
-        __assign(scroll, this.computeInitialDateScroll())
+        __assign(scroll, this.computeDateScroll(timeMs))
       }
     }
 
@@ -418,7 +421,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  computeInitialDateScroll() {
+  computeDateScroll(timeMs: number) {
     return {} // subclasses must implement
   }
 
@@ -430,6 +433,14 @@ export default abstract class View extends DateComponent<ViewProps> {
 
   applyDateScroll(scroll) {
      // subclasses must implement
+  }
+
+
+  // for API
+  scrollToTime(time: Duration) {
+    this.applyScroll({
+      timeMs: time.milliseconds
+    }, false)
   }
 
 }

@@ -9,7 +9,7 @@ import { Locale, buildLocale, parseRawLocales, RawLocaleMap } from './datelib/lo
 import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
-import { Duration, createDuration } from './datelib/duration'
+import { Duration, createDuration, DurationInput } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
@@ -1322,6 +1322,17 @@ export default class Calendar {
     this.dispatch({ type: 'FETCH_EVENT_SOURCES' })
   }
 
+
+  // Scroll
+  // -----------------------------------------------------------------------------------------------------------------
+
+  scrollToTime(timeInput: DurationInput) {
+    let time = createDuration(timeInput)
+
+    if (time) {
+      this.component.view.scrollToTime(time)
+    }
+  }
 
 }
 

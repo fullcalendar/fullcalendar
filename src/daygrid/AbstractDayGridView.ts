@@ -243,7 +243,7 @@ export default abstract class DayGridView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  computeInitialDateScroll() {
+  computeDateScroll(timeMs: number) {
     return { top: 0 }
   }
 
