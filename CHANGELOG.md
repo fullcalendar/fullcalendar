@@ -5,7 +5,7 @@ v4.1.0 (2019-04-24)
 - scrollToTime method
 - ISO8601 datetime strings with no 'T' not parsed in Safari (#4610)
 - all-day dropped events after third not being draggable (#4616)
-- dateClick/selecting sometime report wrong dates after calendar resize (#4680)
+- dateClick/selecting sometime report wrong dates after calendar resize (#4608)
 - js error when using navLinks with header=false (#4619)
 - js error when more+ link and multiple async event sources (#4585)
 - timeGridEventMinHeight is not defined in OptionsInput interface (#4605)
