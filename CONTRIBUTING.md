@@ -33,7 +33,7 @@ Please edit the original files in the `locales/` directory. DO NOT edit anything
 
 ## Getting Set Up
 
-You will need [Git][git], [Node][node] and NPM installed. You will also need [SASS][sass] globally installed.
+You will need [Git][git], [Node][node] and NPM installed.
 
 Then, clone FullCalendar's git repo:
 
