@@ -80,7 +80,7 @@ export default class EventDragging extends Interaction {
       {
         el: this.draggingSeg.el,
         event: new EventApi(calendar, eventRange.def, eventRange.instance),
-        jsEvent: ev.origEvent,
+        jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view: this.component.view
       }
     ])
@@ -163,7 +163,7 @@ export default class EventDragging extends Interaction {
       {
         el: this.draggingSeg.el,
         event: eventApi,
-        jsEvent: ev.origEvent,
+        jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view
       }
     ])

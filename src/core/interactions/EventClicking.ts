@@ -43,7 +43,7 @@ export default class EventClicking extends Interaction {
             seg.eventRange.def,
             seg.eventRange.instance
           ),
-          jsEvent: ev,
+          jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
           view: component.view
         }
       ])

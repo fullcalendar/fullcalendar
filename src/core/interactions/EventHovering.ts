@@ -54,7 +54,7 @@ export default class EventHovering extends Interaction {
     }
   }
 
-  triggerEvent(publicEvName: string, ev: Event | null, segEl: HTMLElement) {
+  triggerEvent(publicEvName: 'eventMouseEnter' | 'eventMouseLeave', ev: Event | null, segEl: HTMLElement) {
     let { component } = this
     let seg = getElSeg(segEl)!
 
@@ -67,7 +67,7 @@ export default class EventHovering extends Interaction {
             seg.eventRange.def,
             seg.eventRange.instance
           ),
-          jsEvent: ev,
+          jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
           view: component.view
         }
       ])

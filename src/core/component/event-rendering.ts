@@ -117,7 +117,7 @@ export function hasBgRendering(def: EventDef) {
   return def.rendering === 'background' || def.rendering === 'inverse-background'
 }
 
-export function filterSegsViaEls(view: View, segs: Seg[], isMirror) {
+export function filterSegsViaEls(view: View, segs: Seg[], isMirror: boolean) {
 
   if (view.hasPublicHandlers('eventRender')) {
     segs = segs.filter(function(seg) {
