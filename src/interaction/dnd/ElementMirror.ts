@@ -22,10 +22,13 @@ export default class ElementMirror {
   revertDuration: number = 0
 
   start(sourceEl: HTMLElement, pageX: number, pageY: number) {
+    let parentOffsetX = this.parentNode.getBoundingClientRect().left - this.parentNode.offsetLeft;
+    let parentOffsetY = this.parentNode.getBoundingClientRect().top - this.parentNode.offsetTop;
+
     this.sourceEl = sourceEl
     this.sourceElRect = this.sourceEl.getBoundingClientRect()
-    this.origScreenX = pageX - window.pageXOffset
-    this.origScreenY = pageY - window.pageYOffset
+    this.origScreenX = pageX - window.pageXOffset + parentOffsetX
+    this.origScreenY = pageY - window.pageYOffset + parentOffsetY
     this.deltaX = 0
     this.deltaY = 0
     this.updateElPosition()
@@ -83,13 +86,16 @@ export default class ElementMirror {
     let mirrorEl = this.mirrorEl!
     let finalSourceElRect = this.sourceEl!.getBoundingClientRect() // because autoscrolling might have happened
 
+    let parentOffsetX = this.parentNode.getBoundingClientRect().left - this.parentNode.offsetLeft;
+    let parentOffsetY = this.parentNode.getBoundingClientRect().top - this.parentNode.offsetTop;
+
     mirrorEl.style.transition =
       'top ' + revertDuration + 'ms,' +
       'left ' + revertDuration + 'ms'
 
     applyStyle(mirrorEl, {
-      left: finalSourceElRect.left,
-      top: finalSourceElRect.top
+      left: finalSourceElRect.left - parentOffsetX,
+      top: finalSourceElRect.top - parentOffsetY
     })
 
     whenTransitionDone(mirrorEl, () => {
