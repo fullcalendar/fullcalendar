@@ -10,6 +10,9 @@ export function isValuesSimilar(val0, val1, depth = 1) {
   } else if (Array.isArray(val0) && Array.isArray(val1)) {
     return isArraysSimilar(val0, val1, depth)
 
+  } else if (val0 instanceof Date && val1 instanceof Date) {
+    return val0.valueOf() === val1.valueOf()
+
   } else if (typeof val0 === 'object' && val0 && typeof val1 === 'object' && val1) { // non-null objects
     return isObjectsSimilar(val0, val1, depth)
 
@@ -49,17 +52,21 @@ export function isObjectsSimilar(obj0, obj1, depth = 1) {
   } else if (depth > 0) {
 
     for (let prop in obj0) {
-      if (!(prop in obj1)) {
-        return false
+      if (obj0.hasOwnProperty(prop)) {
+        if (!(prop in obj1)) {
+          return false
+        }
       }
     }
 
     for (let prop in obj1) {
-      if (!(prop in obj0)) {
-        return false
-      } else {
-        if (!isValuesSimilar(obj0[prop], obj1[prop], depth - 1)) {
+      if (obj1.hasOwnProperty(prop)) {
+        if (!(prop in obj0)) {
           return false
+        } else {
+          if (!isValuesSimilar(obj0[prop], obj1[prop], depth - 1)) {
+            return false
+          }
         }
       }
     }
