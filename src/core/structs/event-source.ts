@@ -1,4 +1,4 @@
-import { refineProps, freezeRaw } from '../util/misc'
+import { refineProps } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
@@ -130,7 +130,7 @@ export function parseEventSource(raw: EventSourceInput, calendar: Calendar): Eve
         calendar
       )
 
-      res._raw = freezeRaw(raw)
+      res._raw = raw
       return res
     }
   }
