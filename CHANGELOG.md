@@ -2,7 +2,7 @@
 v4.1.0 (2019-04-24)
 -------------------
 
-- scrollToTime method
+- scrollToTime method (#467)
 - ISO8601 datetime strings with no 'T' not parsed in Safari (#4610)
 - all-day dropped events after third not being draggable (#4616)
 - dateClick/selecting sometime report wrong dates after calendar resize (#4608)

@@ -1,4 +1,8 @@
 
+/*
+depth=1 means look at immediate children
+depth=0 means only look at val identities
+*/
 export function isValuesSimilar(val0, val1, depth = 1) {
   if (val0 === val1) {
     return true

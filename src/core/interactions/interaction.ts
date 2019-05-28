@@ -20,6 +20,7 @@ export type InteractionClass = { new(settings: InteractionSettings): Interaction
 export interface InteractionSettingsInput {
   el: HTMLElement
   useEventCenter?: boolean
+  // TODO: add largeUnit
 }
 
 export interface InteractionSettings {
