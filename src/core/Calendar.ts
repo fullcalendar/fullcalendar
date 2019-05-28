@@ -522,7 +522,9 @@ export default class Calendar {
       if (anyKeysRemoved(oldNormalOptions, normalOptions)) {
         this.processOptions(options, 'reset')
       } else {
-        this.processOptions(computeChangedProps(oldNormalOptions, normalOptions))
+        this.processOptions(
+          computeChangedProps(oldNormalOptions, normalOptions, 2) // depth 2 is enough to get props in header/footer
+        )
       }
 
       // handle special options last

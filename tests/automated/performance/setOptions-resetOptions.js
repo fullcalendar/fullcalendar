@@ -18,6 +18,14 @@ function buildOptions() {
   }
 }
 
+function buildToolbar() {
+  return {
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+  }
+}
+
 describeValues({
   setOptions: mutateOptionsViaChange,
   resetOptions: mutateOptionsViaReset
@@ -65,17 +73,25 @@ describeValues({
     expect(getFirstDateEl()).toBe(dateEl)
   })
 
-  it('rerenders events when mutating same array', function() {
-    let options = buildOptions()
-    let { events } = options
+  if (mutateOptions === mutateOptionsViaReset) { // only for resetOptions
 
-    calendar = new Calendar($calendarEl[0], options)
-    calendar.render()
+    it('doesn\'t rerender when toolbar objects are the same', function() {
+      calendar = new Calendar($calendarEl[0], {
+        ...buildOptions(),
+        header: buildToolbar(),
+        footer: buildToolbar()
+      })
+      calendar.render()
+      let dateEl = getFirstDateEl()
 
-    events.push({ start: '2019-04-01T05:00:00' })
-    mutateOptions(calendar, { events })
-    expect(calendar.getEvents().length).toBe(events.length)
-  })
+      mutateOptions(calendar, {
+        header: buildToolbar(),
+        footer: buildToolbar()
+      })
+
+      expect(getFirstDateEl()).toBe(dateEl)
+    })
+  }
 
   it('doesn\'t rerender anything for a defaultView change', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
