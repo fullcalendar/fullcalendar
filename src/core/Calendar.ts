@@ -14,7 +14,7 @@ import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
 import { mapHash } from './util/object'
-import { isObjectsSimilar, anyKeysRemoved, computeChangedProps } from './util/object-similarity'
+import { isObjectsSimilar, anyKeysRemoved, computeChangedProps, isValuesSimilar } from './util/object-similarity'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
@@ -57,6 +57,8 @@ export type CalendarInteractionClass = { new(calendar: Calendar): CalendarIntera
 
 export type OptionChangeHandler = (propValue: any, calendar: Calendar) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
+
+const OPTION_CMP_DEPTH = 2 // must be >= 2
 
 export default class Calendar {
 
@@ -517,13 +519,13 @@ export default class Calendar {
       }
     }
 
-    this.batchRendering(() => { // for if both setOptions and special options want to rerender
+    this.batchRendering(() => { // for if both processOptions and special options want to rerender
 
       if (anyKeysRemoved(oldNormalOptions, normalOptions)) {
         this.processOptions(options, 'reset')
       } else {
         this.processOptions(
-          computeChangedProps(oldNormalOptions, normalOptions, 2) // depth 2 is enough to get props in header/footer
+          computeChangedProps(oldNormalOptions, normalOptions, OPTION_CMP_DEPTH) // depth 2 is enough to get props in header/footer
         )
       }
 
@@ -539,18 +541,21 @@ export default class Calendar {
   */
   setOptions(options) {
     let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
+    let oldOptions = this.optionsManager.overrides
     let normalOptions = {}
     let specialOptions = {}
 
     for (let name in options) {
-      if (changeHandlers[name]) {
-        specialOptions[name] = options[name]
-      } else {
-        normalOptions[name] = options[name]
+      if (!isValuesSimilar(oldOptions[name], options[name], OPTION_CMP_DEPTH - 1)) {
+        if (changeHandlers[name]) {
+          specialOptions[name] = options[name]
+        } else {
+          normalOptions[name] = options[name]
+        }
       }
     }
 
-    this.batchRendering(() => { // for if both setOptions and special options want to rerender
+    this.batchRendering(() => { // for if both processOptions and special options want to rerender
 
       this.processOptions(normalOptions)
 

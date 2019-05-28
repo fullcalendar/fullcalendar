@@ -73,25 +73,22 @@ describeValues({
     expect(getFirstDateEl()).toBe(dateEl)
   })
 
-  if (mutateOptions === mutateOptionsViaReset) { // only for resetOptions
-
-    it('doesn\'t rerender when toolbar objects are the same', function() {
-      calendar = new Calendar($calendarEl[0], {
-        ...buildOptions(),
-        header: buildToolbar(),
-        footer: buildToolbar()
-      })
-      calendar.render()
-      let dateEl = getFirstDateEl()
-
-      mutateOptions(calendar, {
-        header: buildToolbar(),
-        footer: buildToolbar()
-      })
-
-      expect(getFirstDateEl()).toBe(dateEl)
+  it('doesn\'t rerender when toolbar objects are the same', function() {
+    calendar = new Calendar($calendarEl[0], {
+      ...buildOptions(),
+      header: buildToolbar(),
+      footer: buildToolbar()
     })
-  }
+    calendar.render()
+    let dateEl = getFirstDateEl()
+
+    mutateOptions(calendar, {
+      header: buildToolbar(),
+      footer: buildToolbar()
+    })
+
+    expect(getFirstDateEl()).toBe(dateEl)
+  })
 
   it('doesn\'t rerender anything for a defaultView change', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
