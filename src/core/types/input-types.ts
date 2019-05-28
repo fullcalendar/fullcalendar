@@ -176,6 +176,16 @@ export interface OptionsInputBase {
   allDayMaintainDuration?: boolean
   eventResizableFromStart?: boolean
   timeGridEventMinHeight?: number
+  allDayHtml?: string
+  eventDragMinDistance?: number
+  eventSourceFailure?: any
+  eventSourceSuccess?: any
+  forceEventDuration?: boolean
+  progressiveEventRendering?: boolean
+  selectLongPressDelay?: number
+  selectMinDistance?: number
+  timeZoneParam?: string
+  titleRangeSeparator?: string
   datesRender?(arg: { view: View, el: HTMLElement }): void
   datesDestroy?(arg: { view: View, el: HTMLElement }): void
   dayRender?(arg: { view: View, date: Date, allDay: boolean, el: HTMLElement }): void
