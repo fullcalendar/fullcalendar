@@ -20,20 +20,15 @@ export default class OptionsManager {
   }
 
 
-  add(props) {
-    __assign(this.overrides, props)
-    this.compute()
-  }
+  mutate(updates, removals: string[], isDynamic?: boolean) {
+    let overrideHash = isDynamic ? this.dynamicOverrides : this.overrides
 
+    __assign(overrideHash, updates)
 
-  addDynamic(props) {
-    __assign(this.dynamicOverrides, props)
-    this.compute()
-  }
+    for (let propName of removals) {
+      delete overrideHash[propName]
+    }
 
-
-  reset(props) {
-    this.overrides = props
     this.compute()
   }
 

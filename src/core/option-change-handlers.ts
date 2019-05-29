@@ -1,20 +1,19 @@
 import { createPlugin } from './plugin-system'
 import { Calendar } from './main'
 import { hashValuesToArray } from './util/object'
-import { isValuesSimilar } from './util/object-similarity'
 import { EventSource } from './structs/event-source'
 
 export default createPlugin({
   optionChangeHandlers: {
-    events(events, calendar) {
-      handleEventSources([ events ], calendar)
+    events(events, calendar, deepEquals) {
+      handleEventSources([ events ], calendar, deepEquals)
     },
     eventSources: handleEventSources,
     plugins: handlePlugins
   }
 })
 
-function handleEventSources(inputs, calendar: Calendar) {
+function handleEventSources(inputs, calendar: Calendar, deepEquals) {
   let unfoundSources: EventSource[] = hashValuesToArray(calendar.state.eventSources)
   let newInputs = []
 
@@ -22,7 +21,7 @@ function handleEventSources(inputs, calendar: Calendar) {
     let inputFound = false
 
     for (let i = 0; i < unfoundSources.length; i++) {
-      if (isValuesSimilar(unfoundSources[i]._raw, input, 2)) {
+      if (deepEquals(unfoundSources[i]._raw, input)) {
         unfoundSources.splice(i, 1) // delete
         inputFound = true
         break

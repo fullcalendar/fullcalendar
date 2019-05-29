@@ -1,3 +1,4 @@
+import { default as deepEquals } from 'fast-deep-equal'
 import { Calendar } from '@fullcalendar/core'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { getFirstDateEl } from '../lib/ViewUtils'
@@ -18,18 +19,7 @@ function buildOptions() {
   }
 }
 
-function buildToolbar() {
-  return {
-    left: 'prev,next today',
-    center: 'title',
-    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-  }
-}
-
-describeValues({
-  setOptions: mutateOptionsViaChange,
-  resetOptions: mutateOptionsViaReset
-}, function(mutateOptions) {
+describe('mutateOptions', function() {
   let $calendarEl
   let calendar
 
@@ -42,6 +32,10 @@ describeValues({
     $calendarEl.remove()
   })
 
+  function mutateOptions(updates) {
+    calendar.mutateOptions(updates, [], false, deepEquals)
+  }
+
   it('will react to a single option and keep scroll', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()
@@ -51,7 +45,7 @@ describeValues({
     let scrollTop = scrollEl.scrollTop
     expect(scrollTop).toBeGreaterThan(0)
 
-    mutateOptions(calendar, { allDaySlot: false })
+    mutateOptions({ allDaySlot: false })
 
     expect(calendar.getOption('allDaySlot')).toBe(false)
     expect(allDaySlotDisplayed()).toBe(false)
@@ -63,7 +57,7 @@ describeValues({
     calendar.render()
     let dateEl = getFirstDateEl()
 
-    mutateOptions(calendar, {
+    mutateOptions({
       events: [
         { start: '2019-04-01T00:00:00' }
       ]
@@ -73,29 +67,12 @@ describeValues({
     expect(getFirstDateEl()).toBe(dateEl)
   })
 
-  it('doesn\'t rerender when toolbar objects are the same', function() {
-    calendar = new Calendar($calendarEl[0], {
-      ...buildOptions(),
-      header: buildToolbar(),
-      footer: buildToolbar()
-    })
-    calendar.render()
-    let dateEl = getFirstDateEl()
-
-    mutateOptions(calendar, {
-      header: buildToolbar(),
-      footer: buildToolbar()
-    })
-
-    expect(getFirstDateEl()).toBe(dateEl)
-  })
-
   it('doesn\'t rerender anything for a defaultView change', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()
     let dateEl = getFirstDateEl()
 
-    mutateOptions(calendar, {
+    mutateOptions({
       defaultView: 'timeGridDay'
     })
 
@@ -104,11 +81,3 @@ describeValues({
   })
 
 })
-
-function mutateOptionsViaChange(calendar, changedOptions) {
-  calendar.setOptions(changedOptions)
-}
-
-function mutateOptionsViaReset(calendar, changedOptions) {
-  calendar.resetOptions({ ...buildOptions(), ...changedOptions })
-}

@@ -13,8 +13,7 @@ import { Duration, createDuration, DurationInput } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
-import { mapHash } from './util/object'
-import { isObjectsSimilar, anyKeysRemoved, computeChangedProps, isValuesSimilar } from './util/object-similarity'
+import { mapHash, isPropsEqual } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
@@ -55,10 +54,8 @@ export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 export type CalendarInteraction = { destroy() }
 export type CalendarInteractionClass = { new(calendar: Calendar): CalendarInteraction }
 
-export type OptionChangeHandler = (propValue: any, calendar: Calendar) => void
+export type OptionChangeHandler = (propValue: any, calendar: Calendar, deepEquals) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
-
-const OPTION_CMP_DEPTH = 2 // must be >= 2
 
 export default class Calendar {
 
@@ -80,7 +77,7 @@ export default class Calendar {
   private buildTheme = memoize(buildTheme)
   private buildEventUiSingleBase = memoize(this._buildEventUiSingleBase)
   private buildSelectionConfig = memoize(this._buildSelectionConfig)
-  private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isObjectsSimilar)
+  private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
 
   eventUiBases: EventUiHash // solely for validation system
@@ -495,136 +492,9 @@ export default class Calendar {
   // Options
   // -----------------------------------------------------------------------------------------------------------------
 
-  /*
-  Not meant for public API
-  */
-  resetOptions(options) {
-    let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
-    let oldOptions = this.optionsManager.overrides
-    let oldNormalOptions = {}
-    let normalOptions = {}
-    let specialOptions = {}
-
-    for (let name in oldOptions) {
-      if (!changeHandlers[name]) {
-        oldNormalOptions[name] = oldOptions[name]
-      }
-    }
-
-    for (let name in options) {
-      if (changeHandlers[name]) {
-        specialOptions[name] = options[name]
-      } else {
-        normalOptions[name] = options[name]
-      }
-    }
-
-    this.batchRendering(() => { // for if both processOptions and special options want to rerender
-
-      if (anyKeysRemoved(oldNormalOptions, normalOptions)) {
-        this.processOptions(options, 'reset')
-      } else {
-        this.processOptions(
-          computeChangedProps(oldNormalOptions, normalOptions, OPTION_CMP_DEPTH) // depth 2 is enough to get props in header/footer
-        )
-      }
-
-      // handle special options last
-      for (let name in specialOptions) {
-        changeHandlers[name](specialOptions[name], this)
-      }
-    })
-  }
-
-  /*
-  Not meant for public API. Won't give the same precedence that setOption does
-  */
-  setOptions(options) {
-    let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
-    let oldOptions = this.optionsManager.overrides
-    let normalOptions = {}
-    let specialOptions = {}
-
-    for (let name in options) {
-      if (!isValuesSimilar(oldOptions[name], options[name], OPTION_CMP_DEPTH - 1)) {
-        if (changeHandlers[name]) {
-          specialOptions[name] = options[name]
-        } else {
-          normalOptions[name] = options[name]
-        }
-      }
-    }
-
-    this.batchRendering(() => { // for if both processOptions and special options want to rerender
-
-      this.processOptions(normalOptions)
-
-      // handle special options last
-      for (let name in specialOptions) {
-        changeHandlers[name](specialOptions[name], this)
-      }
-    })
-  }
-
-  processOptions(options, mode?: 'dynamic' | 'reset') {
-    let oldDateEnv = this.dateEnv // do this before handleOptions
-    let isTimeZoneDirty = false
-    let isSizeDirty = false
-    let anyDifficultOptions = false
-
-    for (let name in options) {
-      if (/^(height|contentHeight|aspectRatio)$/.test(name)) {
-        isSizeDirty = true
-      } else if (/^(defaultDate|defaultView)$/.test(name)) {
-        // can't change date this way. use gotoDate instead
-      } else {
-        anyDifficultOptions = true
-
-        if (name === 'timeZone') {
-          isTimeZoneDirty = true
-        }
-      }
-    }
-
-    if (mode === 'reset') {
-      anyDifficultOptions = true
-      this.optionsManager.reset(options)
-    } else if (mode === 'dynamic') {
-      this.optionsManager.addDynamic(options) // takes higher precedence
-    } else {
-      this.optionsManager.add(options)
-    }
-
-    if (anyDifficultOptions) {
-      this.handleOptions(this.optionsManager.computed) // only for "difficult" options
-
-      this.needsFullRerender = true
-      this.batchRendering(() => {
-
-        if (isTimeZoneDirty) {
-          this.dispatch({
-            type: 'CHANGE_TIMEZONE',
-            oldDateEnv
-          })
-        }
-
-        /* HACK
-        has the same effect as calling this.requestRerender(true)
-        but recomputes the state's dateProfile
-        */
-        this.dispatch({
-          type: 'SET_VIEW_TYPE',
-          viewType: this.state.viewType
-        })
-      })
-    } if (isSizeDirty) {
-      this.updateSize()
-    }
-  }
-
 
   setOption(name: string, val) {
-    this.processOptions({ [name]: val }, 'dynamic')
+    this.mutateOptions({ [name]: val }, [], true)
   }
 
 
@@ -645,6 +515,81 @@ export default class Calendar {
 
   viewOpts() {
     return this.viewSpecs[this.state.viewType].options
+  }
+
+  /*
+  handles option changes (like a diff)
+  */
+  mutateOptions(updates, removals: string[], isDynamic?: boolean, deepEquals?) {
+    let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
+    let normalUpdates = {}
+    let specialUpdates = {}
+    let oldDateEnv = this.dateEnv // do this before handleOptions
+    let isTimeZoneDirty = false
+    let isSizeDirty = false
+    let anyDifficultOptions = Boolean(removals.length)
+
+    for (let name in updates) {
+      if (changeHandlers[name]) {
+        specialUpdates[name] = updates[name]
+      } else {
+        normalUpdates[name] = updates[name]
+      }
+    }
+
+    for (let name in normalUpdates) {
+      if (/^(height|contentHeight|aspectRatio)$/.test(name)) {
+        isSizeDirty = true
+      } else if (/^(defaultDate|defaultView)$/.test(name)) {
+        // can't change date this way. use gotoDate instead
+      } else {
+        anyDifficultOptions = true
+
+        if (name === 'timeZone') {
+          isTimeZoneDirty = true
+        }
+      }
+    }
+
+    this.optionsManager.mutate(normalUpdates, removals, isDynamic)
+
+    if (anyDifficultOptions) {
+      this.handleOptions(this.optionsManager.computed)
+      this.needsFullRerender = true
+    }
+
+    this.batchRendering(() => {
+
+      if (anyDifficultOptions) {
+
+        if (isTimeZoneDirty) {
+          this.dispatch({
+            type: 'CHANGE_TIMEZONE',
+            oldDateEnv
+          })
+        }
+
+        /* HACK
+        has the same effect as calling this.requestRerender(true)
+        but recomputes the state's dateProfile
+        */
+        this.dispatch({
+          type: 'SET_VIEW_TYPE',
+          viewType: this.state.viewType
+        })
+
+      } else if (isSizeDirty) {
+        this.updateSize()
+      }
+
+      // special updates
+      if (deepEquals) {
+        for (let name in specialUpdates) {
+          changeHandlers[name](specialUpdates[name], this, deepEquals)
+        }
+      }
+
+    })
   }
 
   /*
@@ -761,7 +706,7 @@ export default class Calendar {
 
     if (dateOrRange) {
       if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
-        this.optionsManager.addDynamic({ visibleRange: dateOrRange }) // will not rerender
+        this.optionsManager.mutate({ visibleRange: dateOrRange }, []) // will not rerender
         this.handleOptions(this.optionsManager.computed) // ...but yuck
       } else { // a date
         dateMarker = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate

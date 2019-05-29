@@ -1,6 +1,7 @@
 import path from 'path'
 import glob from 'glob'
-import resolve from 'rollup-plugin-node-resolve'
+import nodeResolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
 import multiEntry from 'rollup-plugin-multi-entry'
 import multiEntryArray from './rollup-plugin-multi-entry-array'
 import sourcemaps from 'rollup-plugin-sourcemaps'
@@ -34,7 +35,10 @@ let watchOptions = {
 }
 
 function getDefaultPlugins() { // need to be instantiated each time
-  let plugins = [ resolve() ] // for tslib
+  let plugins = [
+    nodeResolve(), // for tslib
+    commonjs() // for fast-deep-equal import
+  ]
 
   if (isDev) {
     plugins.push(sourcemaps()) // for reading/writing sourcemaps
