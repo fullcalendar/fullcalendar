@@ -8,7 +8,7 @@ export default {
   buttonText: {
     prev: "Forrige",
     next: "Næste",
-    today: "Idag",
+    today: "I dag",
     month: "Måned",
     week: "Uge",
     day: "Dag",
