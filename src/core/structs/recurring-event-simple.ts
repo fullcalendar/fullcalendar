@@ -47,11 +47,19 @@ let recurring: RecurringType = {
     }
 
     if (anyValid) {
+      let duration: Duration = null
+
+      if ('duration' in leftoverProps) {
+        duration = createDuration(leftoverProps.duration)
+        delete leftoverProps.duration
+      }
+      if (!duration && props.startTime && props.endTime) {
+        duration = subtractDurations(props.endTime, props.startTime)
+      }
+
       return {
         allDayGuess: Boolean(!props.startTime && !props.endTime),
-        duration: (props.startTime && props.endTime) ?
-          subtractDurations(props.endTime, props.startTime) :
-          null,
+        duration,
         typeData: props // doesn't need endTime anymore but oh well
       }
     }

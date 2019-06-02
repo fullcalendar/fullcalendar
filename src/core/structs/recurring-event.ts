@@ -67,6 +67,7 @@ Event MUST have a recurringDef
 */
 export function expandRecurringRanges(
   eventDef: EventDef,
+  duration: Duration,
   framingRange: DateRange,
   dateEnv: DateEnv,
   recurringTypes: RecurringType[]
@@ -74,7 +75,10 @@ export function expandRecurringRanges(
   let typeDef = recurringTypes[eventDef.recurringDef.typeId]
   let markers = typeDef.expand(
     eventDef.recurringDef.typeData,
-    framingRange,
+    {
+      start: dateEnv.subtract(framingRange.start, duration), // for when event starts before framing range and goes into
+      end: framingRange.end
+    },
     dateEnv
   )
 

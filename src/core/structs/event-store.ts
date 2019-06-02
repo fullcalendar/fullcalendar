@@ -67,7 +67,6 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
     let def = defs[defId]
 
     if (def.recurringDef) {
-      let starts = expandRecurringRanges(def, framingRange, calendar.dateEnv, calendar.pluginSystem.hooks.recurringTypes)
       let duration = def.recurringDef.duration
 
       if (!duration) {
@@ -75,6 +74,8 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
           calendar.defaultAllDayEventDuration :
           calendar.defaultTimedEventDuration
       }
+
+      let starts = expandRecurringRanges(def, duration, framingRange, calendar.dateEnv, calendar.pluginSystem.hooks.recurringTypes)
 
       for (let start of starts) {
         let instance = createEventInstance(defId, {
