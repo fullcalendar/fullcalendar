@@ -1,4 +1,4 @@
-import { default as deepEquals } from 'fast-deep-equal'
+import deepEqual from 'fast-deep-equal'
 import { Calendar } from '@fullcalendar/core'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { getFirstDateEl } from '../lib/ViewUtils'
@@ -33,7 +33,7 @@ describe('mutateOptions', function() {
   })
 
   function mutateOptions(updates) {
-    calendar.mutateOptions(updates, [], false, deepEquals)
+    calendar.mutateOptions(updates, [], false, deepEqual)
   }
 
   it('will react to a single option and keep scroll', function() {
