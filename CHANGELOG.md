@@ -1,4 +1,10 @@
 
+v4.2.0
+------
+- internal Calendar::setOptions method removed (never meant to be public)
+- fix sass compilation (#4669)
+
+
 v4.1.0 (2019-04-24)
 -------------------
 
