@@ -1,8 +1,9 @@
 
 v4.2.0
 ------
+- fix recurring event expansion when event starts before view and has duration (#4617, #4635)
+- simple event recurring now allows a duration property on the event object
 - internal Calendar::setOptions method removed (never meant to be public)
-- fix sass compilation (#4669)
 
 
 v4.1.0 (2019-04-24)
