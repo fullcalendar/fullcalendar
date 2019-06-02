@@ -17,7 +17,7 @@ import {
 import HitDragging, { isHitsEqual } from './HitDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
-import { ExternalDropApi } from '../interactions-external/ExternalElementDragging'
+import { EventDropTransformers } from '../../core/interactions/event-dragging'
 
 
 export default class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
@@ -115,7 +115,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
         {
           el: this.subjectSeg.el,
           event: new EventApi(initialCalendar, eventRange.def, eventRange.instance),
-          jsEvent: ev.origEvent,
+          jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
           view: this.component.view
         }
       ])
@@ -228,7 +228,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
         {
           el: this.subjectSeg.el,
           event: eventApi,
-          jsEvent: ev.origEvent,
+          jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
           view: initialView
         }
       ])
@@ -243,14 +243,15 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
             eventStore: mutatedRelevantEvents
           })
 
-          let eventDropArg = {}
+          let transformed: ReturnType<EventDropTransformers> = {}
 
           for (let transformer of initialCalendar.pluginSystem.hooks.eventDropTransformers) {
-            __assign(eventDropArg, transformer(this.validMutation, initialCalendar))
+            __assign(transformed, transformer(this.validMutation, initialCalendar))
           }
 
-          __assign(eventDropArg, {
-            el: ev.subjectEl,
+          const eventDropArg = {
+            ...transformed, // don't use __assign here because it's not type-safe
+            el: ev.subjectEl as HTMLElement,
             delta: this.validMutation.startDelta!,
             oldEvent: eventApi,
             event: new EventApi( // the data AFTER the mutation
@@ -266,7 +267,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
             },
             jsEvent: ev.origEvent,
             view: initialView
-          })
+          }
 
           initialCalendar.publiclyTrigger('eventDrop', [ eventDropArg ])
 
@@ -275,7 +276,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
 
           initialCalendar.publiclyTrigger('eventLeave', [
             {
-              draggedEl: ev.subjectEl,
+              draggedEl: ev.subjectEl as HTMLElement,
               event: eventApi,
               view: initialView
             }
@@ -298,22 +299,23 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
             })
           }
 
-          let dropArg = receivingCalendar.buildDatePointApi(finalHit.dateSpan) as ExternalDropApi
-          dropArg.draggedEl = ev.subjectEl as HTMLElement
-          dropArg.jsEvent = ev.origEvent
-          dropArg.view = finalHit.component as View // ?
-
+          let dropArg = {
+            ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),
+            draggedEl: ev.subjectEl as HTMLElement,
+            jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
+            view: finalHit.component as View // should this be finalHit.component.view? See #4644
+          }
           receivingCalendar.publiclyTrigger('drop', [ dropArg ])
 
           receivingCalendar.publiclyTrigger('eventReceive', [
             {
-              draggedEl: ev.subjectEl,
+              draggedEl: ev.subjectEl as HTMLElement,
               event: new EventApi( // the data AFTER the mutation
                 receivingCalendar,
                 mutatedRelevantEvents.defs[eventDef.defId],
                 mutatedRelevantEvents.instances[eventInstance.instanceId]
               ),
-              view: finalHit.component
+              view: finalHit.component as View // should this be finalHit.component.view? See #4644
             }
           ])
         }

@@ -130,12 +130,12 @@ export default class ExternalElementDragging {
       let finalHit = this.hitDragging.finalHit!
       let finalView = finalHit.component.view
       let dragMeta = this.dragMeta!
-      let arg = receivingCalendar.buildDatePointApi(finalHit.dateSpan) as ExternalDropApi
-
-      arg.draggedEl = pev.subjectEl as HTMLElement
-      arg.jsEvent = pev.origEvent
-      arg.view = finalView
-
+      let arg = {
+        ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),
+        draggedEl: pev.subjectEl as HTMLElement,
+        jsEvent: pev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
+        view: finalView
+      }
       receivingCalendar.publiclyTrigger('drop', [ arg ])
 
       if (dragMeta.create) {
@@ -154,7 +154,7 @@ export default class ExternalElementDragging {
         // signal that an external event landed
         receivingCalendar.publiclyTrigger('eventReceive', [
           {
-            draggedEl: pev.subjectEl,
+            draggedEl: pev.subjectEl as HTMLElement,
             event: new EventApi(
               receivingCalendar,
               droppableEvent.def,

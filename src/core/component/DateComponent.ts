@@ -10,6 +10,8 @@ import EventApi from '../api/EventApi'
 import FgEventRenderer from './renderers/FgEventRenderer'
 import FillRenderer from './renderers/FillRenderer'
 import { EventInteractionState } from '../interactions/event-interaction-state'
+import View from '../View'
+import { EventHandlerName, EventHandlerArgs } from '../types/input-types'
 
 export type DateComponentHash = { [uid: string]: DateComponent<any> }
 
@@ -153,21 +155,21 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // TODO: move to Calendar
 
 
-  publiclyTrigger(name, args) {
+  publiclyTrigger<T extends EventHandlerName>(name: T, args?: EventHandlerArgs<T>) {
     let calendar = this.calendar
 
     return calendar.publiclyTrigger(name, args)
   }
 
 
-  publiclyTriggerAfterSizing(name, args) {
+  publiclyTriggerAfterSizing<T extends EventHandlerName>(name: T, args: EventHandlerArgs<T>) {
     let calendar = this.calendar
 
     return calendar.publiclyTriggerAfterSizing(name, args)
   }
 
 
-  hasPublicHandlers(name) {
+  hasPublicHandlers<T extends EventHandlerName>(name: T) {
     let calendar = this.calendar
 
     return calendar.hasPublicHandlers(name)
@@ -191,7 +193,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
             isStart: seg.isStart,
             isEnd: seg.isEnd,
             el: seg.el,
-            view: this // ?
+            view: this as unknown as View // safe to cast because this method is only called on context.view
           }
         ])
       }
@@ -221,7 +223,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
             ),
             isMirror: isMirrors,
             el: seg.el,
-            view: this // ?
+            view: this as unknown as View // safe to cast because this method is only called on context.view
           }
         ])
       }
