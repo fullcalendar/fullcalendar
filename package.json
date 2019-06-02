@@ -92,5 +92,7 @@
     "test-ci": "gulp dist && npm run test-single",
     "lint": "gulp lint",
     "dist": "gulp lint dist archive"
-  }
+  },
+  "version": "4.2.0",
+  "releaseDate": "2019-06-02"
 }
