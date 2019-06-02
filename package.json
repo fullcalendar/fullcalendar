@@ -85,7 +85,7 @@
     "tsc-watch": "tsc --watch --sourceMap",
     "rollup": "rollup -c --environment BUILD:production",
     "rollup-watch": "sleep 5 && rollup -c --environment BUILD:development --watch",
-    "sass": "sass --update --no-source-map $(bin/sass-args.js)",
+    "sass": "sass --update --sourcemap=none $(bin/sass-args.js)",
     "sass-watch": "sass --watch $(bin/sass-args.js)",
     "test": "karma start karma.config.js --auto-watch",
     "test-single": "karma start karma.config.js --browsers ChromeHeadless_custom --single-run",
