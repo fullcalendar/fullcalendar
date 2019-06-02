@@ -6,7 +6,7 @@ before_install:
 
 language: node_js
 node_js:
-  - node # implies latest version
+  - "11" # restore back to "node" (without quotes) when Travis is compatible with Node 12
 
 cache:
   directories:
