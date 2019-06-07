@@ -24,11 +24,11 @@ gulp.task('build:raw', shell.task(
 ))
 
 const BANNER =
-  '/*!\n' +
-  '<%= title %> v<%= version %>\n' +
-  'Docs & License: <%= homepage %>\n' +
-  '(c) <%= copyright %>\n' +
-  '*/\n'
+  '/*! ' +
+  '<%= title %> v<%= version %> ' +
+  'Docs & License: <%= homepage %> ' +
+  '(c) <%= copyright %> ' +
+  '*/ '
 
 function modifySource(content, filePath) {
   let packageName = path.basename(path.dirname(filePath))

@@ -15,6 +15,7 @@
     "noImplicitUseStrict": true,
     "importHelpers": true,
     "baseUrl": ".",
+    "sourceMap": true,
     "paths": {
       "@fullcalendar/core": [ "src/core/main" ],
       "@fullcalendar/interaction": [ "src/interaction/main" ],

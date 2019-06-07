@@ -7,14 +7,7 @@ import multiEntryArray from './rollup-plugin-multi-entry-array'
 import sourcemaps from 'rollup-plugin-sourcemaps'
 import rootPackageConfig from './package.json'
 import tsConfig from './tsconfig.json'
-
-let isDev
-if (!/^(development|production)$/.test(process.env.BUILD)) {
-  console.warn('BUILD environment not specified. Assuming \'development\'')
-  isDev = true
-} else {
-  isDev = process.env.BUILD === 'development'
-}
+import copy from 'rollup-plugin-copy-glob'
 
 let packageGlobals = {
   luxon: 'luxon',
@@ -37,12 +30,9 @@ let watchOptions = {
 function getDefaultPlugins() { // need to be instantiated each time
   let plugins = [
     nodeResolve(), // for tslib
-    commonjs() // for fast-deep-equal import
+    commonjs(), // for fast-deep-equal import
+    sourcemaps() // for reading/writing sourcemaps
   ]
-
-  if (isDev) {
-    plugins.push(sourcemaps()) // for reading/writing sourcemaps
-  }
 
   return plugins
 }
@@ -74,6 +64,24 @@ export default [
   buildTestConfig()
 ]
 
+// transforms from build-time paths to the source paths after NPM install
+function sourcemapPathTransformer(relativePath) {
+
+  // e.g. "../../../locales/af.js" -> "../locales/af.js"
+  // e.g. "../../../tmp/tsc-output/locales/vi.js" -> "../locales/vi.js"
+  relativePath = relativePath.replace(/^(\.\.\/\.\.\/\.\.\/locales|\.\.\/\.\.\/\.\.\/tmp\/tsc-output\/locales)/, './locales')
+
+  // e.g. "../../tmp/tsc-output/locales/vi.js" -> "./locales/vi.js"
+  // e.g. "../../locales/af.js" -> "./locales/af.js"
+  relativePath = relativePath.replace(/^(\.\.\/\.\.\/locales|\.\.\/\.\.\/tmp\/tsc-output\/locales)/, './locales')
+
+  // e.g. "../../src/core/util/dom-event.ts" -> "../core/src/util/dom-event.ts"
+  // e.g. "../../tmp/tsc-output/src/core/util/geom.js" -> "../core/src/util/geom.js"
+  relativePath = relativePath.replace(/(\.\.\/src|\.\.\/tmp\/tsc-output\/src)\/(\w+)\//, '$2/src/')
+
+  return relativePath
+}
+
 function buildPackageConfig(packageName) {
   let packagePath = packagePaths[packageName][0]
   let packageDirName = path.basename(path.dirname(packagePath))
@@ -89,9 +97,16 @@ function buildPackageConfig(packageName) {
       exports: 'named',
       name: packageGlobals[packageName],
       format: 'umd',
-      sourcemap: isDev
+      sourcemap: true,
+      sourcemapPathTransform: sourcemapPathTransformer
     },
-    plugins: getDefaultPlugins()
+    plugins: [
+      ...getDefaultPlugins(),
+      copy([
+        { files: 'src/' + packageDirName + '/**', dest: 'dist/' + packageDirName + '/src' },
+        { files: 'locales/**', dest: 'dist/' + packageDirName + '/src/locales' }
+      ])
+    ]
   }
 }
 
@@ -113,7 +128,8 @@ function buildLocaleConfigs() {
         globals: packageGlobals,
         name: 'FullCalendarLocales.' + localeName,
         format: 'umd',
-        sourcemap: isDev
+        sourcemap: true,
+        sourcemapPathTransform: sourcemapPathTransformer
       },
       plugins: getDefaultPlugins()
     })
@@ -130,7 +146,8 @@ function buildLocaleConfigs() {
       globals: packageGlobals,
       name: 'FullCalendarLocalesAll',
       format: 'umd',
-      sourcemap: isDev
+      sourcemap: true,
+      sourcemapPathTransform: sourcemapPathTransformer
     },
     plugins: getDefaultPlugins().concat([
       multiEntryArray()
@@ -154,7 +171,8 @@ function buildTestConfig() {
       globals: packageGlobals,
       exports: 'none',
       format: 'umd',
-      sourcemap: isDev
+      sourcemap: true,
+      sourcemapPathTransform: sourcemapPathTransformer
     },
     plugins: getDefaultPlugins().concat([
       multiEntry({

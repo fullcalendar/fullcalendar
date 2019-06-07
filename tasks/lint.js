@@ -20,7 +20,8 @@ ONLY checks two things:
 gulp.task('lint:js:built', [ 'build' ], function() {
   return gulp.src([
     'dist/**/*.js',
-    '!**/*.min.js'
+    '!**/*.min.js',
+    '!dist/*/src/**' // don't lint sourcemaps' source code
   ])
     .pipe(
       eslint({

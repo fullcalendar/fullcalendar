@@ -28,7 +28,11 @@ gulp.task('archive:files', [
 
 gulp.task('archive:packages', [ 'build', 'minify' ], function() {
   return gulp.src([
-    'dist/**/*.{js,css}'
+    'dist/**/*.{js,css,map,d.ts}',
+    'dist/*/src/**', // source code for sourcemaps
+    'dist/*/LICENSE.*',
+    'dist/*/README.*',
+    'dist/*/package.json'
   ]).pipe(
     gulp.dest('tmp/' + archiveId + '/packages')
   )

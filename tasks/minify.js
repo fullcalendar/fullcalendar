@@ -11,7 +11,8 @@ gulp.task('minify', [
 gulp.task('minify:js', [ 'build' ], function() {
   return gulp.src([
     'dist/*/*.js',
-    '!**/*.min.js' // avoid double minify
+    '!**/*.min.js', // avoid double minify
+    '!dist/*/src/**' // don't minify sourcemaps' source code
   ], { base: '.' })
     .pipe(
       uglify({
@@ -27,7 +28,8 @@ gulp.task('minify:js', [ 'build' ], function() {
 gulp.task('minify:css', [ 'build' ], function() {
   return gulp.src([
     'dist/*/*.css',
-    '!**/*.min.css' // avoid double minify
+    '!**/*.min.css', // avoid double minify
+    '!dist/*/src/**' // don't minify sourcemaps' source code
   ], { base: '.' })
     .pipe(
       cssmin()

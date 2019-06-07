@@ -66,6 +66,7 @@
     "native-promise-only": "^0.8.1",
     "rollup": "1.8.0",
     "rollup-plugin-commonjs": "^9.0.0",
+    "rollup-plugin-copy-glob": "^0.3.0",
     "rollup-plugin-multi-entry": "^2.1.0",
     "rollup-plugin-node-resolve": "4.0.1",
     "rollup-plugin-sourcemaps": "^0.4.2",
