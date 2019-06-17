@@ -66,7 +66,8 @@ export class DateEnv {
     if (settings.weekNumberCalculation === 'ISO') {
       this.weekDow = 1
       this.weekDoy = 4
-    } else if (typeof settings.firstDay === 'number') {
+    }
+    if (typeof settings.firstDay === 'number') {
       this.weekDow = settings.firstDay
     }
 
