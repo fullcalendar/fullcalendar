@@ -59,6 +59,24 @@ describe('First Day', function() {
     })
   })
 
+  describe('when setting firstDay to 2 and weekNumberCalculation to ISO', function() {
+    pushOptions({
+      firstDay: 2,
+      weekNumberCalculation: 'ISO'
+    })
+    it('should make Tuesday the first day of the week', function() {
+      initCalendar()
+      var daysOfWeek = $('.fc-day-header')
+      expect(daysOfWeek[1]).toHaveClass('fc-tue')
+      expect(daysOfWeek[2]).toHaveClass('fc-wed')
+      expect(daysOfWeek[3]).toHaveClass('fc-thu')
+      expect(daysOfWeek[4]).toHaveClass('fc-fri')
+      expect(daysOfWeek[5]).toHaveClass('fc-sat')
+      expect(daysOfWeek[6]).toHaveClass('fc-sun')
+      expect(daysOfWeek[0]).toHaveClass('fc-mon')
+    })
+  })
+
   describe('when setting firstDay to 2', function() {
     pushOptions({
       firstDay: 2
