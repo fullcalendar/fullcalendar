@@ -247,4 +247,5 @@ export interface OptionsInput extends OptionsInputBase {
   buttonText?: ButtonTextCompoundInput
   views?: { [viewId: string]: ViewOptionsInput }
   plugins?: (PluginDef | string)[]
+  googleCalendarApiKey?: string
 }
