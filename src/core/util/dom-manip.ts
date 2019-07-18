@@ -118,7 +118,7 @@ export function removeElement(el: HTMLElement) {
 
 // from https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
 const matchesMethod=function(s) {
-  var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+  let matches = (this.document || this.ownerDocument).querySelectorAll(s),
   i = matches.length;
   while (--i >= 0 && matches.item(i) !== this) {}
   return i > -1;
@@ -126,7 +126,7 @@ const matchesMethod=function(s) {
 
 const closestMethod = function (selector) {
   // polyfill
-  var el = this;
+  let el = this;
   if (!document.documentElement.contains(el)) {
   return null;
   }
