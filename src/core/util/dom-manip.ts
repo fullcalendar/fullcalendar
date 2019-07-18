@@ -118,26 +118,26 @@ export function removeElement(el: HTMLElement) {
 
 // from https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
 const matchesMethod = function(s) {
-    let matches = (this.document || this.ownerDocument).querySelectorAll(s)
-    let i = matches.length;
-    while (--i >= 0 && matches.item(i) !== this) {}
-    return i > -1
-  };
+  let matches = (this.document || this.ownerDocument).querySelectorAll(s)
+  let i = matches.length
+  while (--i >= 0 && matches.item(i) !== this) {}
+  return i > -1
+}
 
 const closestMethod = function (selector) {
-    // polyfill
-    let el = this
-    if (!document.documentElement.contains(el)) {
+  // polyfill
+  let el = this
+  if (!document.documentElement.contains(el)) {
     return null
   }
   do {
     if (elementMatches(el, selector)) {
-    return el
+      return el
   }
-    el = el.parentElement || el.parentNode;
+    el = el.parentElement || el.parentNode
   } while (el !== null && el.nodeType === 1)
-    return null
-};
+  return null
+}
 
 export function elementClosest(el: HTMLElement, selector: string): HTMLElement {
   return closestMethod.call(el, selector)
