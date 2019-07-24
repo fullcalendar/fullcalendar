@@ -134,7 +134,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
       this.delayTimeoutId = setTimeout(() => {
         this.delayTimeoutId = null
         this.handleDelayEnd(ev)
-      }, this.delay)
+      }, this.delay) as any // not assignable to number!
     } else {
       this.handleDelayEnd(ev)
     }

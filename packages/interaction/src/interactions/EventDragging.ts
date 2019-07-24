@@ -12,12 +12,12 @@ import {
   EventApi,
   View,
   eventDragMutationMassager,
-  Interaction, InteractionSettings, interactionSettingsStore
+  Interaction, InteractionSettings, interactionSettingsStore,
+  EventDropTransformers
 } from '@fullcalendar/core'
 import HitDragging, { isHitsEqual } from './HitDragging'
 import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
-import { EventDropTransformers } from '../../core/interactions/event-dragging'
 
 
 export default class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging

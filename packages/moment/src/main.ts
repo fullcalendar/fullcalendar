@@ -17,7 +17,7 @@ export function toMoment(date: Date, calendar: Calendar): moment.Moment {
 }
 
 export function toDuration(fcDuration: Duration): moment.Duration {
-  return moment.duration(fcDuration) // momment accepts all the props that fc.Duration already has!
+  return moment.duration(fcDuration) // moment accepts all the props that fc.Duration already has!
 }
 
 
