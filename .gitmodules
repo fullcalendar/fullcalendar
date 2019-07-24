@@ -1,0 +1,3 @@
+[submodule "packages-premium"]
+	path = packages-premium
+	url = git@github.com:fullcalendar/fullcalendar-scheduler.git
