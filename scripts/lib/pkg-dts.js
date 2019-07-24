@@ -1,5 +1,5 @@
 const path = require('path')
-const bundleDts = require('dts-bundle').bundle
+const bundleDts = require('@arshaw/dts-bundle').bundle
 const { pkgStructs } = require('./pkg-struct')
 
 

@@ -41,6 +41,7 @@
     "ci": "./scripts/ci.sh"
   },
   "devDependencies": {
+    "@arshaw/dts-bundle": "^0.7.3-fork.1",
     "@types/jasmine": "^3.3.12",
     "@types/jasmine-jquery": "^1.5.33",
     "@types/jquery": "^3.3.29",
@@ -50,7 +51,6 @@
     "components-jqueryui": "github:components/jqueryui",
     "concurrently": "^4.1.1",
     "dragula": "^3.7.2",
-    "dts-bundle": "github:arshaw/dts-bundle#dist",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.2",
