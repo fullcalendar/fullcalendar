@@ -10,3 +10,6 @@
 [submodule "packages-contrib/angular"]
 	path = packages-contrib/angular
 	url = git@github.com:fullcalendar/fullcalendar-angular.git
+[submodule "example-projects"]
+	path = example-projects
+	url = git@github.com:fullcalendar/fullcalendar-example-projects.git
