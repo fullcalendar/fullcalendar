@@ -1,11 +1,15 @@
 
 module.exports = {
   packages: [
-    { path: 'packages/*', distDir: 'dist' },
-    { path: 'packages-premium/*', distDir: 'dist' },
+    { path: 'packages/*', distDir: ourPkgDist },
+    { path: 'packages-premium/*', distDir: ourPkgDist },
     { path: 'packages-contrib/react', distDir: 'dist' },
     { path: 'packages-contrib/vue', distDir: 'dist' },
     { path: 'packages-contrib/angular', distDir: 'dist/fullcalendar' },
     'example-projects/*'
   ]
+}
+
+function ourPkgDist(relPath) {
+  return relPath.match(/__tests__/) ? '' : 'dist'
 }
