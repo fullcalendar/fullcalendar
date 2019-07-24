@@ -1,9 +1,6 @@
 
 sudo: false # route build to the container-based infrastructure for a faster build
 
-before_install:
-  - gem install sass
-
 language: node_js
 node_js:
   - "11" # restore back to "node" (without quotes) when Travis is compatible with Node 12
@@ -15,8 +12,5 @@ cache:
 env:
   global:
     - TZ="America/Los_Angeles" # for Headless Chrome. otherwise will be UTC, bad for tests
-  matrix:
-    - CMD=test-ci
-    - CMD=lint
 
-script: npm run $CMD
+script: npm run ci

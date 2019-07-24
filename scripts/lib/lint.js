@@ -1,15 +1,15 @@
-const gulp = require('gulp')
+const { parallel, src } = require('gulp')
 const eslint = require('gulp-eslint')
-const shell = require('gulp-shell')
+const { shellTask } = require('./util')
 
-gulp.task('lint', [
-  'lint:ts',
-  'lint:js:built',
-  'lint:js:node',
-  'lint:js:tests'
-])
 
-gulp.task('lint:ts', shell.task('tslint --project .'))
+exports.lint = parallel(
+  shellTask('tslint --project .'),
+  lintBuiltJs, // assumes already built!
+  lintNodeJs,
+  lintTests
+)
+
 
 /*
 ONLY checks two things:
@@ -17,9 +17,10 @@ ONLY checks two things:
 - does not access any globals. this is important because the typescript compiler allows
   accessing globals that are defined in the project for tests (tests/automated/globals.d.ts)
 */
-gulp.task('lint:js:built', [ 'build' ], function() {
-  return gulp.src([
-    'dist/**/*.js',
+function lintBuiltJs() {
+  return src([
+    'package?(-premium)/*/dist/**/*.js',
+    '!**/*.esm.js', // ESM has non-browser syntax. doing only the UMD is sufficient
     '!**/*.min.js'
   ])
     .pipe(
@@ -31,13 +32,13 @@ gulp.task('lint:js:built', [ 'build' ], function() {
     )
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
-})
+}
 
-gulp.task('lint:js:node', function() {
-  return gulp.src([
+
+function lintNodeJs() {
+  return src([
     '*.js', // config files in root
-    'bin/*.js',
-    'tasks/**/*.js'
+    'scripts/**/*.js'
   ])
     .pipe(
       eslint({
@@ -47,15 +48,16 @@ gulp.task('lint:js:node', function() {
     )
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
-})
+}
+
 
 /*
 we would want to use tslint with jsRules:true, but doesn't work at all,
 because of tslint-config-standard possibly
 */
-gulp.task('lint:js:tests', function() {
-  return gulp.src([
-    'tests/automated/**/*.js'
+function lintTests() {
+  return src([
+    'package?(-premium)/__tests__/**/*.js'
   ])
     .pipe(
       eslint({
@@ -66,4 +68,4 @@ gulp.task('lint:js:tests', function() {
     )
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
-})
+}

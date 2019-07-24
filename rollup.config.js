@@ -1,171 +1,256 @@
-import path from 'path'
-import glob from 'glob'
-import nodeResolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
-import multiEntry from 'rollup-plugin-multi-entry'
-import multiEntryArray from './rollup-plugin-multi-entry-array'
-import sourcemaps from 'rollup-plugin-sourcemaps'
-import rootPackageConfig from './package.json'
-import tsConfig from './tsconfig.json'
+const path = require('path')
+const { readFileSync } = require('fs')
+const glob = require('glob')
+const nodeResolve = require('rollup-plugin-node-resolve')
+const commonjs = require('rollup-plugin-commonjs')
+const multiEntry = require('rollup-plugin-multi-entry')
+const sourcemaps = require('rollup-plugin-sourcemaps')
+const alias = require('rollup-plugin-alias')
+const handleBars = require('handlebars')
+const { pkgStructs } = require('./scripts/lib/pkg-struct')
 
-let isDev
-if (!/^(development|production)$/.test(process.env.BUILD)) {
-  console.warn('BUILD environment not specified. Assuming \'development\'')
-  isDev = true
-} else {
-  isDev = process.env.BUILD === 'development'
-}
 
-let packageGlobals = {
+const EXTERNAL_BROWSER_GLOBALS = {
   luxon: 'luxon',
-  moment: 'moment',
-  'moment-timezone/builds/moment-timezone-with-data': 'moment', // see moment-timezone/main.ts
-  rrule: 'rrule'
+  rrule: 'rrule',
+  moment: 'moment'
 }
 
-let packagePaths = tsConfig.compilerOptions.paths
-let packageNames = Object.keys(packagePaths)
+const EXTERNAL_BROWSER_GLOBAL_HACKS = {
+  'moment-timezone/builds/moment-timezone-with-data': 'moment' // see moment-timezone/src/main.ts
+}
 
-/*
-KNOWN BUG: when watching test files that don't have any import statements, tsc transpiles ALL files.
-*/
-let watchOptions = {
-  chokidar: true, // better than default watch util. doesn't fire change events on stat changes (like last opened)
+const WATCH_OPTIONS = {
+  chokidar: { // better than default watch util. doesn't fire change events on stat changes (like last opened)
+    awaitWriteFinish: { // because tsc/rollup sometimes takes a long time to write and triggers two recompiles
+      stabilityThreshold: 500,
+      pollInterval: 100
+    }
+  },
   clearScreen: false // let tsc do the screan clearing
 }
 
-function getDefaultPlugins() { // need to be instantiated each time
+const renderBanner = handleBars.compile(
+  readFileSync('packages/banner.tpl', { encoding: 'utf8' })
+)
+
+
+module.exports = buildConfigs()
+
+
+function buildConfigs() {
+  let isDev = detectIsDev()
+  let ownBrowserGlobals = {}
+
+  for (let pkgStruct of pkgStructs) {
+    ownBrowserGlobals[pkgStruct.name] = pkgStruct.browserGlobal
+  }
+
+  return [
+    ...buildPkgConfigs(ownBrowserGlobals, isDev),
+    ...buildLocaleConfigs(ownBrowserGlobals),
+    buildTestConfig() // must be last b/c depends on built pkgs+locales
+  ]
+}
+
+
+// FullCalendar Packages
+// ----------------------------------------------------------------------------------------------------
+
+
+function buildPkgConfigs(ownBrowserGlobals, isDev) {
+  return pkgStructs.map((pkgStruct) => buildPkgConfig(pkgStruct, ownBrowserGlobals, isDev))
+}
+
+
+function buildPkgConfig(pkgStruct, ownBrowserGlobals, isDev) {
+  let banner = renderBanner(pkgStruct.jsonObj)
+
+  let external = Object.keys(Object.assign(
+    {},
+    EXTERNAL_BROWSER_GLOBAL_HACKS, // apply to all because didn't have per-pkg data from package.json's
+    ownBrowserGlobals,
+    pkgStruct.jsonObj.dependencies || {},
+    pkgStruct.jsonObj.peerDependencies || {}
+  ))
+
   let plugins = [
-    nodeResolve(), // for tslib
-    commonjs() // for fast-deep-equal import
+    nodeResolve({
+      only: [ 'tslib' ] // the only external module we want to bundle
+    })
   ]
 
   if (isDev) {
-    plugins.push(sourcemaps()) // for reading/writing sourcemaps
+    plugins.push(sourcemaps())
   }
-
-  return plugins
-}
-
-for (let packageName of packageNames) {
-  let packagePath = packagePaths[packageName][0]
-  let packageDir = path.dirname(packagePath)
-  let packageMeta = require('./' + packageDir + '/package.json')
-
-  if (packageMeta.browserGlobal) {
-    packageGlobals[packageName] = packageMeta.browserGlobal
-  } else {
-    console.log('NEED browserGlobal in package ' + packageName)
-  }
-}
-
-let externalPackageNames = Object.keys(
-  Object.assign(
-    {},
-    packageGlobals,
-    rootPackageConfig.dependencies, // hopefully covered in packageGlobals
-    rootPackageConfig.peerDependencies // (if not, rollup will give an error)
-  )
-)
-
-export default [
-  ...packageNames.map(buildPackageConfig),
-  ...buildLocaleConfigs(),
-  buildTestConfig()
-]
-
-function buildPackageConfig(packageName) {
-  let packagePath = packagePaths[packageName][0]
-  let packageDirName = path.basename(path.dirname(packagePath))
 
   return {
     onwarn,
-    watch: watchOptions,
-    input: 'tmp/tsc-output/' + packagePath + '.js',
-    external: externalPackageNames,
-    output: {
-      file: 'dist/' + packageDirName + '/main.js',
-      globals: packageGlobals,
-      exports: 'named',
-      name: packageGlobals[packageName],
-      format: 'umd',
-      sourcemap: isDev
-    },
-    plugins: getDefaultPlugins()
+    watch: WATCH_OPTIONS,
+    input: path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js'),
+    external,
+    output: [
+      {
+        file: path.join(pkgStruct.distDir, 'main.js'),
+        format: 'umd',
+        name: pkgStruct.browserGlobal,
+        globals: {
+          ...ownBrowserGlobals,
+          ...EXTERNAL_BROWSER_GLOBALS,
+          ...EXTERNAL_BROWSER_GLOBAL_HACKS
+        },
+        exports: 'named',
+        sourcemap: isDev,
+        banner
+      },
+      {
+        file: path.join(pkgStruct.distDir, 'main.esm.js'),
+        format: 'esm',
+        sourcemap: isDev,
+        banner
+      }
+    ],
+    plugins
   }
 }
 
-function buildLocaleConfigs() {
-  let localePaths = glob.sync('tmp/tsc-output/locales/*.js')
+
+// Locales
+// ----------------------------------------------------------------------------------------------------
+
+
+function buildLocaleConfigs(ownBrowserGlobals) {
+  let corePkgStruct = getCorePkgStruct()
+  let coreTmpDir = path.join('tmp/tsc-output', corePkgStruct.srcDir)
+  let localePaths = glob.sync('locales/*.js', { cwd: coreTmpDir })
+  let external = Object.keys(ownBrowserGlobals)
   let configs = []
 
   for (let localePath of localePaths) {
-    let localeJsName = path.basename(localePath)
-    let localeName = localeJsName.replace(/\..*$/, '')
+    let localeName = path.basename(localePath).replace(/\..*$/, '')
 
     configs.push({
       onwarn,
-      watch: watchOptions,
-      input: localePath,
-      external: externalPackageNames,
+      watch: WATCH_OPTIONS,
+      input: path.join(coreTmpDir, localePath),
+      external,
       output: {
-        file: 'dist/core/locales/' + localeJsName,
-        globals: packageGlobals,
+        file: path.join(corePkgStruct.distDir, localePath),
+        globals: ownBrowserGlobals,
         name: 'FullCalendarLocales.' + localeName,
-        format: 'umd',
-        sourcemap: isDev
-      },
-      plugins: getDefaultPlugins()
+        format: 'umd'
+      }
     })
   }
 
   // ALL locales in one file
   configs.push({
     onwarn,
-    watch: watchOptions,
-    input: localePaths,
-    external: externalPackageNames,
+    watch: WATCH_OPTIONS,
+    input: localePaths.map(localePath => path.join(coreTmpDir, localePath)),
+    external,
     output: {
-      file: 'dist/core/locales-all.js',
-      globals: packageGlobals,
+      file: path.join(corePkgStruct.distDir, 'locales-all.js'),
+      globals: ownBrowserGlobals,
       name: 'FullCalendarLocalesAll',
-      format: 'umd',
-      sourcemap: isDev
+      format: 'umd'
     },
-    plugins: getDefaultPlugins().concat([
-      multiEntryArray()
-    ])
+    plugins: [
+      multiEntry({ exports: 'array' })
+    ]
   })
 
   return configs
 }
 
+
+// Tests
+// ----------------------------------------------------------------------------------------------------
+
+
 function buildTestConfig() {
+
+  let plugins = [
+    multiEntry({
+      exports: false // don't combine all the exports. no need, and would collide
+    }),
+    nodeResolve({
+      customResolveOptions: {
+        // tests can access all the dependencies they declared. these deps will be bundled.
+        // apparently this setting is inefficient.
+        // IMPORTANT: our internal package.jsons need to be written first
+        paths: [
+          'packages/__tests__/node_modules',
+          'packages-premium/__tests__/node_modules'
+        ]
+      }
+    }),
+    alias({
+      // the alias to the non-premium tests. must be absolute
+      'package-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src')
+    }),
+    commonjs(), // for fast-deep-equal import
+    sourcemaps()
+  ]
+
   return {
     onwarn,
-    watch: watchOptions,
+    watch: WATCH_OPTIONS,
     input: [
-      'tmp/tsc-output/tests/automated/globals.js', // needs to be first
-      'tmp/tsc-output/tests/automated/**/*.js'
+      'tmp/tsc-output/packages/__tests__/src/globals.js',
+      'tmp/tsc-output/packages/__tests__/src/**/*.js',
+      'tmp/tsc-output/packages-premium/__tests__/src/globals.js',
+      'tmp/tsc-output/packages-premium/__tests__/src/**/*.js'
     ],
-    external: externalPackageNames,
+    external: [
+      // HACK: because hoisting is no yet implemented for the monorepo-tool, when we require our packages,
+      // *their* dependencies are not deduped, we we get multiple instances of the below libraries in the bundle.
+      // Until hoisting is implemented, make these external and include them manually from karma.config.js.
+      'luxon',
+      'rrule',
+      'moment',
+      'moment/locale/es',
+      'moment-timezone/builds/moment-timezone-with-data'
+    ],
     output: {
-      file: 'tmp/automated-tests.js',
-      globals: packageGlobals,
-      exports: 'none',
-      format: 'umd',
-      sourcemap: isDev
+      file: 'tmp/tests.js',
+      globals: Object.assign({}, EXTERNAL_BROWSER_GLOBALS, EXTERNAL_BROWSER_GLOBAL_HACKS), // HACK (continued)
+      format: 'iife',
+      sourcemap: true
     },
-    plugins: getDefaultPlugins().concat([
-      multiEntry({
-        exports: false // otherwise will complain about exported utils
-      })
-    ])
+    plugins
   }
 }
 
+
+// Utils
+// ----------------------------------------------------------------------------------------------------
+
+
+function getCorePkgStruct() {
+  for (let pkgStruct of pkgStructs) {
+    if (pkgStruct.name === '@fullcalendar/core') {
+      return pkgStruct
+    }
+  }
+
+  throw new Error('No core package')
+}
+
+
 function onwarn(warning, warn) {
-  if (warning.code !== 'PLUGIN_WARNING') {
-    // warn(warning)
+  // ignore circ dep warnings. too numerous and hard to fix right now
+  if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+    warn(warning)
+  }
+}
+
+
+function detectIsDev() {
+  if (!/^(development|production)$/.test(process.env.BUILD)) {
+    console.warn('BUILD environment not specified. Assuming \'development\'')
+    return true
+  } else {
+    return process.env.BUILD === 'development'
   }
 }

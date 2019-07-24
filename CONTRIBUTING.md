@@ -23,7 +23,7 @@ In the description of your [Pull Request][Using Pull Requests], please include r
 
 ## Contributing Locales
 
-Please edit the original files in the `locales/` directory. DO NOT edit anything in the `dist/` directory. The build system will responsible for merging FullCalendar's `locales/` data with the [MomentJS locale data].
+Please edit the original files in the `packages/core/locales/` directory.
 
 
 ## Other Ways to Contribute
@@ -52,7 +52,7 @@ When modifying files, please do not edit the generated or minified files in the 
 
 ## Development Workflow
 
-After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and demos. You can either manually rebuild each time you make a change:
+After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and examples. You can either manually rebuild each time you make a change:
 
 	npm run build
 
