@@ -1,3 +1,5 @@
+import frLocale from '@fullcalendar/core/locales/fr'
+
 describe('eventLimitText', function() {
 
   pushOptions({
@@ -31,14 +33,14 @@ describe('eventLimitText', function() {
 
   it('has a default value that is affected by the custom locale', function() {
     initCalendar({
-      locale: 'fr'
+      locale: frLocale
     })
     expect($('.fc-more')).toHaveText('+2 en plus')
   })
 
   it('is not affected by a custom locale when the value is explicitly specified', function() {
     initCalendar({
-      locale: 'fr',
+      locale: frLocale,
       eventLimitText: 'extra'
     })
     expect($('.fc-more')).toHaveText('+2 extra')

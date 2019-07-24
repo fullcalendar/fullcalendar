@@ -1,3 +1,5 @@
+import frLocale from '@fullcalendar/core/locales/fr'
+
 describe('titleFormat', function() {
 
   var SELECTOR = '.fc-toolbar h2'
@@ -75,7 +77,7 @@ describe('titleFormat', function() {
       initCalendar({
         defaultDate: '2014-06-12',
         titleRangeSeparator: ' - ',
-        locale: 'fr'
+        locale: frLocale
       })
     })
 

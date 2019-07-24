@@ -1,3 +1,5 @@
+import arLocale from '@fullcalendar/core/locales/ar'
+
 describe('weekNumberCalculation', function() {
 
   pushOptions({
@@ -31,7 +33,7 @@ describe('weekNumberCalculation', function() {
       it('should display a locale-specific local week number', function() {
         initCalendar({
           defaultDate: '2013-11-23', // a Saturday
-          locale: 'ar',
+          locale: arLocale,
           weekNumberCalculation: 'local'
         })
         expect(getRenderedWeekText()).toMatch(/٤٨|48/)

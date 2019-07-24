@@ -2,6 +2,8 @@ import { Calendar } from '@fullcalendar/core'
 import MomentPlugin, { toMoment, toDuration } from '@fullcalendar/moment'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
+import 'moment/locale/es' // only test spanish
+
 
 describe('moment plugin', function() {
 

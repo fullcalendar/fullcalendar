@@ -1,11 +1,19 @@
+
+/// <reference path="./global-defs.d.ts" />
+
+
+// NOTE: a bunch of other top-level JS files in karma.config.js
+
 import './hacks'
 import './lib/simulate'
 import './lib/date-matchers'
+
 import { Calendar } from '@fullcalendar/core'
 import InteractionPlugin from '@fullcalendar/interaction'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import ListPlugin from '@fullcalendar/list'
+
 import { __assign } from 'tslib'
 import { parseLocalDate, parseUtcDate } from './lib/date-parsing'
 
@@ -238,7 +246,7 @@ __assign(window, {
 // Defaults that apply to all tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-const DEFAULT_PLUGINS = [
+export const DEFAULT_PLUGINS = [
   InteractionPlugin,
   DayGridPlugin,
   TimeGridPlugin,

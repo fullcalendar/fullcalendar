@@ -1,4 +1,11 @@
+import esLocale from '@fullcalendar/core/locales/es'
+import frLocale from '@fullcalendar/core/locales/fr'
+import arLocale from '@fullcalendar/core/locales/ar'
+
 describe('locale', function() {
+  pushOptions({
+    locales: [ esLocale, frLocale, arLocale ]
+  })
 
   it('works when certain locale has no FC settings defined', function() {
     initCalendar({

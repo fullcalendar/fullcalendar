@@ -1,3 +1,5 @@
+import enGbLocale from '@fullcalendar/core/locales/en-gb'
+
 describe('eventTimeFormat', function() {
 
   pushOptions({
@@ -26,7 +28,7 @@ describe('eventTimeFormat', function() {
 
     it('renders correctly when default and the locale is customized', function() {
       initCalendar({
-        locale: 'en-gb'
+        locale: enGbLocale
       })
       expect(getRenderedEventTime()).toBe('15')
     })
@@ -52,7 +54,7 @@ describe('eventTimeFormat', function() {
 
     it('renders correctly when default and the locale is customized', function() {
       initCalendar({
-        locale: 'en-gb'
+        locale: enGbLocale
       })
       expect(getRenderedEventTime()).toBe('15:00 - 17:00')
     })

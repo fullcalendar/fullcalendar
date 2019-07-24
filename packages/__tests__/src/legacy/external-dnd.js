@@ -3,8 +3,9 @@ import { Calendar } from '@fullcalendar/core'
 import InteractionPlugin, { ThirdPartyDraggable } from '@fullcalendar/interaction'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
+import 'components-jqueryui' // for .sortable and .draggable
 
-describe('external drag and drop', function() {
+describe('external drag and drop with jquery UI', function() {
 
   // TODO: fill out tests for droppable/drop, with RTL
 

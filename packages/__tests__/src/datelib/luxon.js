@@ -1,20 +1,18 @@
 import { Calendar } from '@fullcalendar/core'
+import esLocale from '@fullcalendar/core/locales/es'
 import LuxonPlugin, { toDateTime, toDuration } from '@fullcalendar/luxon'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
 import { testTimeZoneImpl } from './timeZoneImpl'
-import * as luxon from 'luxon'
 
-if (!luxon) {
-  console.log('Luxon not present. Skipping related tests.')
-}
 
-// eslint-disable-next-line
-luxon &&
 describe('luxon plugin', function() {
 
   const PLUGINS = [ LuxonPlugin, DayGridPlugin ] // for `new Calendar`
-  pushOptions({ plugins: PLUGINS }) // for initCalendar
+
+  pushOptions({ // for initCalendar
+    plugins: PLUGINS
+  })
 
   testTimeZoneImpl(LuxonPlugin)
 
@@ -73,7 +71,7 @@ describe('luxon plugin', function() {
       let calendar = new Calendar(document.createElement('div'), {
         plugins: PLUGINS,
         events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
-        locale: 'es'
+        locale: esLocale
       })
       let event = calendar.getEvents()[0]
       var datetime = toDateTime(event.start, calendar)
@@ -103,7 +101,7 @@ describe('luxon plugin', function() {
       let calendar = new Calendar(document.createElement('div'), {
         plugins: PLUGINS,
         defaultTimedEventDuration: '05:00',
-        locale: 'es'
+        locale: esLocale
       })
 
       // hacky way to have a duration parsed

@@ -1,3 +1,4 @@
+import frLocale from '@fullcalendar/core/locales/fr'
 import { View, createPlugin } from '@fullcalendar/core'
 
 describe('custom view', function() {
@@ -283,37 +284,37 @@ describe('custom view', function() {
     })
 
     it('accepts locale\'s single-unit-match override', function() {
-      var options = {
-        views: {}
-      }
-      options.locale = 'fr'
-      options.views.custom = {
-        type: 'dayGrid',
-        duration: { days: 1 }
-      }
-      options.header = {
-        center: 'custom,dayGridMonth'
-      }
-      options.defaultView = 'custom'
-      initCalendar(options)
+      initCalendar({
+        locale: frLocale,
+        header: {
+          center: 'custom,dayGridMonth'
+        },
+        defaultView: 'custom',
+        views: {
+          custom: {
+            type: 'dayGrid',
+            duration: { days: 1 }
+          }
+        }
+      })
       expect($('.fc-custom-button')).toHaveText('Jour')
     })
 
     it('accepts explicit View-Specific buttonText, overriding locale\'s single-unit-match override', function() {
-      var options = {
-        views: {}
-      }
-      options.locale = 'fr'
-      options.views.custom = {
-        type: 'dayGrid',
-        duration: { days: 1 },
-        buttonText: 'awesome'
-      }
-      options.header = {
-        center: 'custom,dayGridMonth'
-      }
-      options.defaultView = 'custom'
-      initCalendar(options)
+      initCalendar({
+        locale: frLocale,
+        header: {
+          center: 'custom,dayGridMonth'
+        },
+        defaultView: 'custom',
+        views: {
+          custom: {
+            type: 'dayGrid',
+            duration: { days: 1 },
+            buttonText: 'awesome'
+          }
+        }
+      })
       expect($('.fc-custom-button')).toHaveText('awesome')
     })
 

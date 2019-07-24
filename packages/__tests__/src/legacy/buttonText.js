@@ -1,3 +1,5 @@
+import frLocale from '@fullcalendar/core/locales/fr'
+
 describe('button text', function() {
 
   pushOptions({
@@ -115,7 +117,7 @@ describe('button text', function() {
   describe('when locale is not default', function() {
 
     pushOptions({
-      locale: 'fr'
+      locale: frLocale
     })
 
     describe('with default buttonIcons', function() {

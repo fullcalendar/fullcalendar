@@ -1,3 +1,5 @@
+import enGbLocale from '@fullcalendar/core/locales/en-gb'
+
 describe('slotLabelFormat', function() {
 
   pushOptions({
@@ -16,7 +18,7 @@ describe('slotLabelFormat', function() {
 
   it('renders correctly when default and the locale is customized', function() {
     initCalendar({
-      locale: 'en-gb'
+      locale: enGbLocale
     })
     expect(getAxisText()).toBe('00')
   })

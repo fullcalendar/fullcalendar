@@ -1,3 +1,4 @@
+import frLocale from '@fullcalendar/core/locales/fr'
 import { getMoreEl, getMorePopoverTitle } from '../view-render/DayGridRenderUtils'
 
 describe('dayPopoverFormat', function() {
@@ -23,7 +24,7 @@ describe('dayPopoverFormat', function() {
 
   it('is affected by the current locale when the value is default', function() {
     initCalendar({
-      locale: 'fr'
+      locale: frLocale
     })
     getMoreEl().simulate('click')
     expect(getMorePopoverTitle()).toBe('29 juillet 2014')
@@ -31,7 +32,7 @@ describe('dayPopoverFormat', function() {
 
   it('still maintains the same format when explicitly set, and there is a locale', function() {
     initCalendar({
-      locale: 'fr',
+      locale: frLocale,
       dayPopoverFormat: { year: 'numeric' }
     })
     getMoreEl().simulate('click')

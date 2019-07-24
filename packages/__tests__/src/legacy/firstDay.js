@@ -1,3 +1,5 @@
+import enGbLocale from '@fullcalendar/core/locales/en-gb'
+
 describe('First Day', function() {
 
   describe('when using default settings', function() {
@@ -179,7 +181,7 @@ describe('First Day', function() {
 
   it('should have a different default value based on the locale', function() {
     initCalendar({
-      locale: 'en-gb'
+      locale: enGbLocale
     })
     // firstDay will be 1 (Monday) in Great Britain
     var daysOfWeek = $('.fc-day-header')

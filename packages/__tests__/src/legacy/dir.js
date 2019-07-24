@@ -1,8 +1,10 @@
+import arLocale from '@fullcalendar/core/locales/ar'
+
 describe('dir', function() {
 
   it('has it\'s default value computed differently based off of the locale', function() {
     initCalendar({
-      locale: 'ar' // Arabic is RTL
+      locale: arLocale // Arabic is RTL
     })
     expect(currentCalendar.getOption('dir')).toEqual('rtl')
   })

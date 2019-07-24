@@ -1,3 +1,4 @@
+import arLocale from '@fullcalendar/core/locales/ar'
 import { getDayOfWeekHeaderElTopElText } from '../view-render/DayGridRenderUtils'
 
 describe('dayNumbers', function() {
@@ -8,7 +9,7 @@ describe('dayNumbers', function() {
   it('respects locale in month view', function() {
     initCalendar({
       defaultView: 'dayGridMonth',
-      locale: 'ar'
+      locale: arLocale
     })
     expect(getDayOfWeekHeaderElTopElText('2018-01-01')).toMatch(/1|١٤?/) // normal 1, or an Arabic 1
   })

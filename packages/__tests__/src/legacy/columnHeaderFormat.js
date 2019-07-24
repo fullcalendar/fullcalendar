@@ -1,3 +1,6 @@
+import frLocale from '@fullcalendar/core/locales/fr'
+import enGbLocale from '@fullcalendar/core/locales/en-gb'
+import koLocale from '@fullcalendar/core/locales/ko'
 
 describe('columnHeaderFormat', function() {
 
@@ -69,7 +72,7 @@ describe('columnHeaderFormat', function() {
     beforeEach(function() {
       initCalendar({
         defaultDate: '2014-05-11',
-        locale: 'fr'
+        locale: frLocale
       })
     })
 
@@ -96,7 +99,7 @@ describe('columnHeaderFormat', function() {
     beforeEach(function() {
       initCalendar({
         defaultDate: '2014-05-11',
-        locale: 'en-gb'
+        locale: enGbLocale
       })
     })
 
@@ -123,7 +126,7 @@ describe('columnHeaderFormat', function() {
     beforeEach(function() {
       initCalendar({
         defaultDate: '2014-05-11',
-        locale: 'ko'
+        locale: koLocale
       })
     })
 

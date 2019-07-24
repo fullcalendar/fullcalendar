@@ -1,3 +1,4 @@
+import ptBrLocale from '@fullcalendar/core/locales/pt-br'
 import { getAllDayAxisElText } from '../view-render/DayGridRenderUtils'
 
 describe('allDayText', function() {
@@ -56,7 +57,7 @@ describe('allDayText', function() {
         var options = {
           defaultView: 'timeGridWeek',
           allDaySlot: true,
-          locale: 'pt-br'
+          locale: ptBrLocale
         }
         initCalendar(options)
         var allDayText = getAllDayAxisElText()
@@ -68,7 +69,7 @@ describe('allDayText', function() {
         var options = {
           defaultView: 'timeGridDay',
           allDaySlot: true,
-          locale: 'pt-br'
+          locale: ptBrLocale
         }
         initCalendar(options)
         var allDayText = getAllDayAxisElText()

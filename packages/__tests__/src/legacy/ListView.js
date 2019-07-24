@@ -1,3 +1,4 @@
+import frLocale from '@fullcalendar/core/locales/fr'
 import {
   getEmptyMessageElsCount,
   getListHeadingElAltElText,
@@ -148,9 +149,9 @@ describe('ListView rendering', function() {
 
       // regression test for when localized event dates get unlocalized and leak into view rendering
       it('renders dates and times in locale', function() {
-        var options = {}
-        options.locale = 'fr'
-        initCalendar(options)
+        initCalendar({
+          locale: frLocale
+        })
 
         var days = getDayInfo()
         var events = getEventInfo()

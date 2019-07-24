@@ -1,3 +1,5 @@
+import esLocale from '@fullcalendar/core/locales/es'
+
 describe('weekLabel', function() {
 
   pushOptions({
@@ -24,7 +26,7 @@ describe('weekLabel', function() {
 
       it('renders correctly when unspecified and when locale is customized', function() {
         initCalendar({
-          locale: 'es'
+          locale: esLocale
         })
         expect(getRenderedWeekNumberTitle()).toBe('Sm')
       })
