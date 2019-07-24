@@ -4,3 +4,6 @@
 [submodule "packages-contrib/vue"]
 	path = packages-contrib/vue
 	url = git@github.com:fullcalendar/fullcalendar-vue.git
+[submodule "packages-contrib/react"]
+	path = packages-contrib/react
+	url = git@github.com:fullcalendar/fullcalendar-react.git
