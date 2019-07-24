@@ -1,6 +1,15 @@
 {
+  "private": true,
+  "name": "@fullcalendar/daygrid",
+  "version": "4.2.0",
   "title": "FullCalendar Day Grid Plugin",
   "description": "Display events on Month view or DayGrid view",
   "docs": "https://fullcalendar.io/docs/month-view",
-  "browserGlobal": "FullCalendarDayGrid"
+  "browserGlobal": "FullCalendarDayGrid",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.2.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~4.2.0"
+  }
 }
