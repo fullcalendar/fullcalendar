@@ -3,7 +3,7 @@ import { getViewContainerEl } from '../lib/ViewUtils'
 describe('aspectRatio', function() {
 
   function getCalendarElement(width) {
-    return $('<div id="calendar">').appendTo('body').width(width)[0]
+    return $('<div id="calendar" style="max-width:none">').appendTo('body').width(width)[0]
   }
 
   describe('when default settings are used', function() {

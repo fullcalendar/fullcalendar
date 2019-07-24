@@ -166,9 +166,9 @@ describe('ListView rendering', function() {
 
         expect(events.length).toBe(2)
         expect(events[0].title).toBe('event 1')
-        expect(events[0].timeText).toBe('07:00')
+        expect(events[0].timeText).toMatch(/^0?7:00$/)
         expect(events[1].title).toBe('event 2')
-        expect(events[1].timeText).toBe('09:00 - 11:00')
+        expect(events[1].timeText).toMatch(/^0?9:00 - 11:00$/)
       })
     })
 
