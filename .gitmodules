@@ -1,15 +1,15 @@
 [submodule "packages-premium"]
 	path = packages-premium
-	url = git@github.com:fullcalendar/fullcalendar-scheduler.git
+	url = https://github.com/fullcalendar/fullcalendar-scheduler.git
 [submodule "packages-contrib/vue"]
 	path = packages-contrib/vue
-	url = git@github.com:fullcalendar/fullcalendar-vue.git
+	url = https://github.com/fullcalendar/fullcalendar-vue.git
 [submodule "packages-contrib/react"]
 	path = packages-contrib/react
-	url = git@github.com:fullcalendar/fullcalendar-react.git
+	url = https://github.com/fullcalendar/fullcalendar-react.git
 [submodule "packages-contrib/angular"]
 	path = packages-contrib/angular
-	url = git@github.com:fullcalendar/fullcalendar-angular.git
+	url = https://github.com/fullcalendar/fullcalendar-angular.git
 [submodule "example-projects"]
 	path = example-projects
-	url = git@github.com:fullcalendar/fullcalendar-example-projects.git
+	url = https://github.com/fullcalendar/fullcalendar-example-projects.git
