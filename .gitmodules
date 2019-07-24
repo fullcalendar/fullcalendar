@@ -7,3 +7,6 @@
 [submodule "packages-contrib/react"]
 	path = packages-contrib/react
 	url = git@github.com:fullcalendar/fullcalendar-react.git
+[submodule "packages-contrib/angular"]
+	path = packages-contrib/angular
+	url = git@github.com:fullcalendar/fullcalendar-angular.git
