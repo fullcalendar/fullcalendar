@@ -44,8 +44,7 @@ function writePremiumArchive() {
   return writeArchive({
     archiveName: 'fullcalendar-scheduler',
     pkgFiles: [
-      'packages/*/dist/**',
-      'packages-premium/*/dist/**'
+      'packages?(-premium)/*/dist/**'
     ],
     exampleHtmlFiles: [
       '*+(resource|timeline)*.html',

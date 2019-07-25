@@ -2,7 +2,7 @@ const path = require('path')
 
 
 const BASE_JSON = 'package.json'
-const PREMIUM_JSON = 'packages-premium/package.base.json'
+const PREMIUM_JSON = 'packages-premium/package.json'
 
 
 exports.buildPkgJsonObj = buildPkgJsonObj

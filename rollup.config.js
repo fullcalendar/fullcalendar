@@ -197,10 +197,8 @@ function buildTestConfig() {
     onwarn,
     watch: WATCH_OPTIONS,
     input: [
-      'tmp/tsc-output/packages/__tests__/src/globals.js',
-      'tmp/tsc-output/packages/__tests__/src/**/*.js',
-      'tmp/tsc-output/packages-premium/__tests__/src/globals.js',
-      'tmp/tsc-output/packages-premium/__tests__/src/**/*.js'
+      'tmp/tsc-output/packages?(-premium)/__tests__/src/globals.js',
+      'tmp/tsc-output/packages?(-premium)/__tests__/src/**/*.js'
     ],
     external: [
       // HACK: because hoisting is no yet implemented for the monorepo-tool, when we require our packages,
