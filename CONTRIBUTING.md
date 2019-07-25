@@ -45,9 +45,9 @@ Enter the directory and install FullCalendar's dependencies:
 	npm install
 
 
-## What to edit
+## What to Edit
 
-When modifying files, please do not edit the generated or minified files in the `dist/` directory. Please edit the original `src/` files.
+When modifying files, please do not edit generated files in the `dist/` directories. Please edit the original files in the `src/` directories.
 
 
 ## Development Workflow
@@ -59,10 +59,6 @@ After you make code changes, you'll want to compile the JS/CSS so that it can be
 Or, you can run a script that automatically rebuilds whenever you save a source file:
 
 	npm run watch
-
-When you are finished, run the following command to write the distributable files into the `./dist/` directory:
-
-	npm run dist
 
 If you want to clean up the generated files, run:
 
