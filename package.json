@@ -39,7 +39,9 @@
     "sass:watch": "sass --watch $(scripts/sass-args.js)",
     "test": "karma start karma.config.js --auto-watch",
     "test:single": "karma start karma.config.js --browsers ChromeHeadless_custom --single-run",
-    "ci": "./scripts/ci.sh"
+    "ci": "./scripts/ci.sh",
+    "archive": "gulp archive",
+    "postversion": "monorepo publish"
   },
   "devDependencies": {
     "@arshaw/dts-bundle": "^0.7.3-fork.1",
