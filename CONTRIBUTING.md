@@ -65,6 +65,15 @@ If you want to clean up the generated files, run:
 	npm run clean
 
 
+## Git
+
+Because this repo has a few git submodules, it will be very convenient to set your default `git push` behavior to be recursive. Do something like this:
+
+```
+git config --global push.recurseSubmodules on-demand
+```
+
+
 ## Style Guide
 
 Please follow the [Google JavaScript Style Guide] as closely as possible. With the following exceptions:
