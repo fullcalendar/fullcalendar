@@ -19,12 +19,14 @@ export default function requestJson(method: string, url: string, params: object,
 
   xhr.onload = function() {
     if (xhr.status >= 200 && xhr.status < 400) {
+      let res = null
       try {
-        let res = JSON.parse(xhr.responseText)
-        successCallback(res, xhr)
+        res = JSON.parse(xhr.responseText)
       } catch (err) {
         failureCallback('Failure parsing JSON', xhr)
+        return
       }
+      successCallback(res, xhr)
     } else {
       failureCallback('Request failed', xhr)
     }
