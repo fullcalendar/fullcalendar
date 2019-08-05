@@ -1,4 +1,11 @@
 
+next
+----
+build system:
+- using a more portable SASS (#4626, #4651, #4671)
+- distributing an ESM file, referenced by package.json's `module`
+
+
 v4.2.0 (2019-06-02)
 -------------------
 - fix recurring event expansion when event starts before view and has duration (#4617, #4635)
