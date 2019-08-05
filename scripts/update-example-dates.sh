@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
-# always immediately exit upon error
-set -e
+set -e # always immediately exit upon error
 
-# start in project root
-cd "`dirname $0`/.."
+cd "`dirname $0`/.." # start in project root
 
-./bin/require-clean-working-tree.sh examples
+./scripts/require-clean-working-tree.sh examples
 
 read -p "Enter new year (4 digits): " year
 read -p "Enter new month (2 digits): " month
@@ -25,6 +23,6 @@ find examples -type f \( -name '*.html' -o -name '*.json' \) -print0 \
 
 # build the commit
 git add examples
-git commit --quiet -m "updated demo dates"
+git commit --quiet -m "updated example dates"
 
 echo "Success."
