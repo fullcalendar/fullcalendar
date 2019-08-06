@@ -81,7 +81,7 @@ export type EventHandlerName =
   'eventDragStart' | 'eventDragStop' | 'eventDrop' | '_destroyed' | 'drop' |
   'eventResizeStart' | 'eventResizeStop' | 'eventResize' | 'eventReceive' |
   'eventLeave' | 'viewSkeletonRender' | 'viewSkeletonDestroy' | '_noEventDrop' |
-  '_noEventResize' | 'eventLimitClick' |
+  '_noEventResize' | 'eventLimitClick' | 'nowIndicatorRender' |
   'resourceRender' // BAD: put in Scheduler somehow
 
 export type EventHandlerArgs<T extends EventHandlerName> =
@@ -236,6 +236,7 @@ export interface OptionsInputBase {
   _noEventDrop?(): void
   _noEventResize?(): void
   resourceRender?(arg: { resource: any, el: HTMLElement, view: View }): void
+  nowIndicatorRender?(arg: { view: View }): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {
