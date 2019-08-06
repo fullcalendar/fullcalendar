@@ -17,7 +17,7 @@ const buildJs = exports.buildJs = series(
 
 const watchJs = exports.watchJs = series(
   writePkgJsons, // important for node-resolution
-  shellTask('npm:tsc'),
+  shellTask('npm:tsc:debug'),
   parallel(
     shellTask('npm:tsc:watch'), // will be fast 2nd time b/c of incremental:true
     shellTask('npm:rollup:watch')
