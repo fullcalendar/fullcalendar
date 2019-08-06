@@ -3,12 +3,27 @@ import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv, requestJso
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
 
-const STANDARD_PROPS = {
+const STANDARD_PROPS = { // for event source parsing
   url: String,
   googleCalendarApiKey: String, // TODO: rename with no prefix?
   googleCalendarId: String,
   data: null
 }
+
+
+declare module '@fullcalendar/core' {
+  interface OptionsInput {
+    googleCalendarApiKey?: string
+  }
+}
+
+declare module '@fullcalendar/core/structs/event-source' {
+  interface ExtendedEventSourceInput {
+    googleCalendarApiKey?: string
+    googleCalendarId?: string
+  }
+}
+
 
 let eventSourceDef: EventSourceDef = {
 

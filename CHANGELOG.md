@@ -2,6 +2,7 @@
 next
 ----
 
+- googleCalendarApiKey added to typescript options definition (#4772)
 - sourcemaps removed from dist (accidentally included in previous version)
 - moment/luxon formatting same-day range with dash (#4686)
 - error importing moment plugin into typescript project (#4691, #4680, #4580)
