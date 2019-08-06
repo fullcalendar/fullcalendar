@@ -60,7 +60,16 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
       findViewNameBySubclass(theClass, defaultConfigs)
   }
 
-  let superDef = superType ? ensureViewDef(superType, hash, defaultConfigs, overrideConfigs) : null
+  let superDef: ViewDef | null = null
+
+  if (superType) {
+
+    if (superType === viewType) {
+      throw new Error('Can\'t have a custom view type that references itself')
+    }
+
+    superDef = ensureViewDef(superType, hash, defaultConfigs, overrideConfigs)
+  }
 
   if (!theClass && superDef) {
     theClass = superDef.class

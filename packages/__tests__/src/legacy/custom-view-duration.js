@@ -375,4 +375,24 @@ describe('custom view', function() {
       expect($('.fc-crazy-button')).toHaveText('crazy')
     })
   })
+
+  it('throws an error when type is self', function() {
+    let error = null
+
+    try {
+      initCalendar({
+        defaultView: 'month',
+        views: {
+          month: {
+            type: 'month'
+          }
+        }
+      })
+    } catch (_error) {
+      error = _error
+    }
+
+    expect(error).toBeTruthy()
+    expect(error.message).toBe('Can\'t have a custom view type that references itself')
+  })
 })
