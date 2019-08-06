@@ -63,11 +63,12 @@ export class DateEnv {
     this.weekDow = settings.locale.week.dow
     this.weekDoy = settings.locale.week.doy
 
-    if (settings.weekNumberCalculation === 'ISO') {
+    if (typeof settings.firstDay === 'number') {
+      this.weekDow = settings.firstDay
+    }
+    else if (settings.weekNumberCalculation === 'ISO') {
       this.weekDow = 1
       this.weekDoy = 4
-    } else if (typeof settings.firstDay === 'number') {
-      this.weekDow = settings.firstDay
     }
 
     if (typeof settings.weekNumberCalculation === 'function') {
