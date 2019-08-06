@@ -170,6 +170,16 @@ describe('luxon plugin', function() {
       expect(s).toEqual('3 September, 2018 asdf - 5 October, 2019 asdf')
     })
 
+    it('renders the same if same day', function() {
+      let calendar = new Calendar(document.createElement('div'), {
+        plugins: PLUGINS
+      })
+      let s
+
+      s = calendar.formatRange('2018-09-03T00:00:00', '2018-09-03T23:59:59', 'MMMM d yyyy')
+      expect(s).toEqual('September 3 2018')
+    })
+
     it('inherits defaultRangeSeparator', function() {
       let calendar = new Calendar(document.createElement('div'), {
         plugins: PLUGINS,

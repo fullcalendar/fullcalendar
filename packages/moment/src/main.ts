@@ -123,7 +123,12 @@ function parseCmdStr(cmdStr: string): CmdParts {
   }
 }
 
-function formatRange(cmd: CmdParts, formatStart: (cmdStr: string) => string, formatEnd: (cmdStr: string) => string, separator: string): string {
+function formatRange(
+  cmd: CmdParts,
+  formatStart: (cmdStr: string) => string,
+  formatEnd: (cmdStr: string) => string,
+  separator: string
+): string {
   if (cmd.middle) {
     let startHead = formatStart(cmd.head)
     let startMiddle = formatRange(cmd.middle, formatStart, formatEnd, separator)
@@ -140,5 +145,12 @@ function formatRange(cmd: CmdParts, formatStart: (cmdStr: string) => string, for
     }
   }
 
-  return formatStart(cmd.whole) + separator + formatEnd(cmd.whole)
+  let startWhole = formatStart(cmd.whole)
+  let endWhole = formatEnd(cmd.whole)
+
+  if (startWhole === endWhole) {
+    return startWhole
+  } else {
+    return startWhole + separator + endWhole
+  }
 }
