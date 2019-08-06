@@ -8,6 +8,9 @@ import {
 import DayGrid, { DayGridSeg } from './DayGrid'
 
 
+const EMPTY_CELL_HTML = '<td style="pointer-events:none"></td>'
+
+
 export default class DayGridFillRenderer extends FillRenderer {
 
   fillSegTag: string = 'td' // override the default tag name
@@ -75,7 +78,7 @@ export default class DayGridFillRenderer extends FillRenderer {
     if (startCol > 0) {
       appendToElement(trEl,
         // will create (startCol + 1) td's
-        new Array(startCol + 1).join('<td></td>')
+        new Array(startCol + 1).join(EMPTY_CELL_HTML)
       )
     }
 
@@ -85,7 +88,7 @@ export default class DayGridFillRenderer extends FillRenderer {
     if (endCol < colCnt) {
       appendToElement(trEl,
         // will create (colCnt - endCol) td's
-        new Array(colCnt - endCol + 1).join('<td></td>')
+        new Array(colCnt - endCol + 1).join(EMPTY_CELL_HTML)
       )
     }
 

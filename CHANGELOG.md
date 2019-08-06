@@ -2,6 +2,7 @@
 next
 ----
 
+- some background events wouldn't recieve eventClick or hovering (#3148, #4750)
 - fix infinite recursion when custom view type is itself (#4198)
 - respect firstDay setting when weekNumberCalculation set to ISO (#4734)
 - fix typo in Danish (#4708)
