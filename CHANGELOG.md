@@ -2,6 +2,7 @@
 next
 ----
 
+- adjust typescript def for setExtendedProp (#4679)
 - googleCalendarApiKey added to typescript options definition (#4772)
 - sourcemaps removed from dist (accidentally included in previous version)
 - moment/luxon formatting same-day range with dash (#4686)

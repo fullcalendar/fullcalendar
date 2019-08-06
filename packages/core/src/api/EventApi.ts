@@ -61,7 +61,7 @@ export default class EventApi {
     }
   }
 
-  setExtendedProp(name: string, val: string) {
+  setExtendedProp(name: string, val: any) {
     this.mutate({
       extendedProps: { [name]: val }
     })
