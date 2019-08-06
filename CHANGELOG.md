@@ -2,16 +2,15 @@
 next
 ----
 
+- respect firstDay setting when weekNumberCalculation set to ISO (#4734)
 - fix typo in Danish (#4708)
 - adjust typescript def for setExtendedProp (#4679)
 - googleCalendarApiKey added to typescript options definition (#4772)
-- sourcemaps removed from dist (accidentally included in previous version)
 - moment/luxon formatting same-day range with dash (#4686)
 - error importing moment plugin into typescript project (#4691, #4680, #4580)
-
-build system:
-- using a more portable SASS (#4626, #4651, #4671)
+- sourcemaps removed from dist (accidentally included in previous version)
 - distributing an ESM file, referenced by package.json's `module`
+- using a more portable SASS (#4626, #4651, #4671)
 
 
 v4.2.0 (2019-06-02)
