@@ -1,6 +1,9 @@
 
 next
 ----
+
+- error importing moment plugin into typescript project (#4691, #4680, #4580)
+
 build system:
 - using a more portable SASS (#4626, #4651, #4671)
 - distributing an ESM file, referenced by package.json's `module`
