@@ -447,10 +447,20 @@ export default class DateProfileGenerator {
 
 }
 
+
 // TODO: find a way to avoid comparing DateProfiles. it's tedious
 export function isDateProfilesEqual(p0: DateProfile, p1: DateProfile) {
-  return rangesEqual(p0.activeRange, p1.activeRange) &&
-    rangesEqual(p0.validRange, p1.validRange) &&
+  return rangesEqual(p0.validRange, p1.validRange) &&
+    rangesEqual(p0.activeRange, p1.activeRange) &&
+    rangesEqual(p0.renderRange, p1.renderRange) &&
     durationsEqual(p0.minTime, p1.minTime) &&
     durationsEqual(p0.maxTime, p1.maxTime)
+  /*
+  TODO: compare more?
+    currentRange: DateRange
+    currentRangeUnit: string
+    isRangeAllDay: boolean
+    isValid: boolean
+    dateIncrement: Duration
+  */
 }

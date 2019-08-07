@@ -2,6 +2,7 @@
 next
 ----
 
+- solve JS errors when switching views and using showNonCurrentDates (#4677, #4767)
 - prevent unnecessary scrollbars from appearing in daygrid views (4624, #4732)
 - draggedEvent start time is null in eventAllow when switching resources (#4932)
 - scrollToTime method honors a whole duration, not just a time (#4935)
