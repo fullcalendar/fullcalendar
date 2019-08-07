@@ -563,7 +563,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   getTotalSlatHeight() {
-    return this.slatContainerEl.offsetHeight
+    return this.slatContainerEl.getBoundingClientRect().height
   }
 
 

@@ -245,10 +245,11 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     } else if (typeof heightInput === 'function') { // exists and is a function
       this.viewHeight = heightInput() - this.queryToolbarsHeight()
     } else if (heightInput === 'parent') { // set to height of parent element
-      this.viewHeight = (this.el.parentNode as HTMLElement).offsetHeight - this.queryToolbarsHeight()
+      let parentEl = this.el.parentNode as HTMLElement
+      this.viewHeight = parentEl.getBoundingClientRect().height - this.queryToolbarsHeight()
     } else {
       this.viewHeight = Math.round(
-        this.contentEl.offsetWidth /
+        this.contentEl.getBoundingClientRect().width /
         Math.max(calendar.opt('aspectRatio'), .5)
       )
     }
@@ -274,7 +275,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
   freezeHeight() {
     applyStyle(this.el, {
-      height: this.el.offsetHeight,
+      height: this.el.getBoundingClientRect().height,
       overflow: 'hidden'
     })
   }

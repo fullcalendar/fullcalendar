@@ -77,7 +77,8 @@ export default abstract class TimeGridView extends View {
       )
 
       // have the day-grid extend it's coordinate area over the <hr> dividing the two grids
-      this.dayGrid.bottomCoordPadding = (this.el.querySelector('.fc-divider') as HTMLElement).offsetHeight
+      let dividerEl = this.el.querySelector('.fc-divider') as HTMLElement
+      this.dayGrid.bottomCoordPadding = dividerEl.getBoundingClientRect().height
     }
   }
 

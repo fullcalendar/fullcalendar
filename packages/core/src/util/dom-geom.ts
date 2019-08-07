@@ -22,8 +22,11 @@ export function computeEdges(el, getPadding = false): EdgeInfo {
   let borderRight = parseInt(computedStyle.borderRightWidth, 10) || 0
   let borderTop = parseInt(computedStyle.borderTopWidth, 10) || 0
   let borderBottom = parseInt(computedStyle.borderBottomWidth, 10) || 0
+
+  // must use offset(Width|Height) because compatible with client(Width|Height)
   let scrollbarLeftRight = sanitizeScrollbarWidth(el.offsetWidth - el.clientWidth - borderLeft - borderRight)
   let scrollbarBottom = sanitizeScrollbarWidth(el.offsetHeight - el.clientHeight - borderTop - borderBottom)
+
   let res: EdgeInfo = {
     borderLeft,
     borderRight,

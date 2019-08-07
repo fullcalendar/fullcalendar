@@ -125,7 +125,7 @@ export function matchCellWidths(els: HTMLElement[]) {
   els.forEach(function(el) {
     let innerEl = el.firstChild // hopefully an element
     if (innerEl instanceof HTMLElement) {
-      let innerWidth = innerEl.offsetWidth
+      let innerWidth = innerEl.getBoundingClientRect().width
       if (innerWidth > maxInnerWidth) {
         maxInnerWidth = innerWidth
       }
@@ -154,7 +154,9 @@ export function subtractInnerElHeight(outerEl: HTMLElement, innerEl: HTMLElement
   applyStyle(outerEl, reflowStyleProps)
   applyStyle(innerEl, reflowStyleProps)
 
-  let diff = outerEl.offsetHeight - innerEl.offsetHeight // grab the dimensions
+  let diff = // grab the dimensions
+    outerEl.getBoundingClientRect().height -
+    innerEl.getBoundingClientRect().height
 
   // undo hack
   let resetStyleProps = { position: '', left: '' }
