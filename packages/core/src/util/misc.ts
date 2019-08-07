@@ -1,5 +1,5 @@
 import { applyStyle } from './dom-manip'
-import { computeHeightAndMargins } from './dom-geom'
+import { computeVMargins } from './dom-geom'
 import { preventDefault } from './dom-event'
 import { DateMarker, startOfDay, addDays, diffDays, diffDayAndTime } from '../datelib/marker'
 import { Duration, asRoughMs, createDuration } from '../datelib/duration'
@@ -74,12 +74,13 @@ export function distributeHeight(els: HTMLElement[], availableHeight, shouldRedi
   // important to query for heights in a single first pass (to avoid reflow oscillation).
   els.forEach(function(el, i) {
     let minOffset = i === els.length - 1 ? minOffset2 : minOffset1
-    let naturalOffset = computeHeightAndMargins(el)
+    let naturalHeight = el.getBoundingClientRect().height
+    let naturalOffset = naturalHeight + computeVMargins(el)
 
     if (naturalOffset < minOffset) {
       flexEls.push(el)
       flexOffsets.push(naturalOffset)
-      flexHeights.push(el.offsetHeight)
+      flexHeights.push(naturalHeight)
     } else {
       // this element stretches past recommended height (non-expandable). mark the space as occupied.
       usedHeight += naturalOffset

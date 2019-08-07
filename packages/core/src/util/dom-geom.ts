@@ -95,9 +95,14 @@ function computeViewportRect(): Rect {
 
 
 export function computeHeightAndMargins(el: HTMLElement) {
+  return el.getBoundingClientRect().height + computeVMargins(el)
+}
+
+
+export function computeVMargins(el: HTMLElement) {
   let computed = window.getComputedStyle(el)
-  return el.getBoundingClientRect().height +
-    parseInt(computed.marginTop, 10) +
+
+  return parseInt(computed.marginTop, 10) +
     parseInt(computed.marginBottom, 10)
 }
 
