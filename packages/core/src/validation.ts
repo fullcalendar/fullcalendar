@@ -127,6 +127,9 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
     }
 
     // allow (a function)
+
+    let calendarEventStore = calendar.state.eventStore // need global-to-calendar, not local to component (splittable)state
+
     for (let subjectAllow of subjectConfig.allows) {
 
       let subjectDateSpan: DateSpan = {
@@ -135,8 +138,8 @@ function isInteractionPropsValid(state: SplittableProps, calendar: Calendar, dat
         allDay: subjectDef.allDay
       }
 
-      let origDef = state.eventStore.defs[subjectDef.defId]
-      let origInstance = state.eventStore.instances[subjectInstanceId]
+      let origDef = calendarEventStore.defs[subjectDef.defId]
+      let origInstance = calendarEventStore.instances[subjectInstanceId]
       let eventApi
 
       if (origDef) { // was previously in the calendar
