@@ -6,6 +6,7 @@ const commonjs = require('rollup-plugin-commonjs')
 const multiEntry = require('rollup-plugin-multi-entry')
 const sourcemaps = require('rollup-plugin-sourcemaps')
 const alias = require('rollup-plugin-alias')
+const cleanup = require('rollup-plugin-cleanup')
 const handleBars = require('handlebars')
 const { pkgStructs } = require('./scripts/lib/pkg-struct')
 
@@ -82,6 +83,10 @@ function buildPkgConfig(pkgStruct, ownBrowserGlobals, isDev) {
 
   if (isDev) {
     plugins.push(sourcemaps())
+
+    // HACK: there's a bug with sourcemap reading and watching: the first rebuild includes the intermediate
+    // sourceMappingURL comments, confusing consumers of the generated sourcemap. Forcefully remove these comments.
+    plugins.push(cleanup({ comments: 'none' }))
   }
 
   return {

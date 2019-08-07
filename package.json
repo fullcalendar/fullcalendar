@@ -88,6 +88,7 @@
     "native-promise-only": "^0.8.1",
     "rollup": "1.8.0",
     "rollup-plugin-alias": "^1.5.2",
+    "rollup-plugin-cleanup": "^3.1.1",
     "rollup-plugin-commonjs": "^9.0.0",
     "rollup-plugin-includepaths": "^0.2.3",
     "rollup-plugin-multi-entry": "github:arshaw/rollup-plugin-multi-entry#dist",
