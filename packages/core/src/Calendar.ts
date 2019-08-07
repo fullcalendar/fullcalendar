@@ -1280,10 +1280,10 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
   scrollToTime(timeInput: DurationInput) {
-    let time = createDuration(timeInput)
+    let duration = createDuration(timeInput)
 
-    if (time) {
-      this.component.view.scrollToTime(time)
+    if (duration) {
+      this.component.view.scrollToDuration(duration)
     }
   }
 

@@ -12,7 +12,8 @@ import {
   buildGotoAnchorHtml,
   ComponentContext,
   ViewSpec,
-  DateProfileGenerator
+  DateProfileGenerator,
+  Duration
 } from '@fullcalendar/core'
 import DayGridDateProfileGenerator from './DayGridDateProfileGenerator'
 import DayGrid from './DayGrid'
@@ -243,7 +244,7 @@ export default abstract class DayGridView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  computeDateScroll(timeMs: number) {
+  computeDateScroll(duration: Duration) {
     return { top: 0 }
   }
 

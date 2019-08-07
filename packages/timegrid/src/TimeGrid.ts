@@ -573,15 +573,15 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     if (!startOfDayDate) {
       startOfDayDate = startOfDay(when)
     }
-    return this.computeTimeTop(when.valueOf() - startOfDayDate.valueOf())
+    return this.computeTimeTop(createDuration(when.valueOf() - startOfDayDate.valueOf()))
   }
 
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
-  computeTimeTop(timeMs: number) {
+  computeTimeTop(duration: Duration) {
     let len = this.slatEls.length
     let dateProfile = this.props.dateProfile
-    let slatCoverage = (timeMs - asRoughMs(dateProfile.minTime)) / asRoughMs(this.slotDuration) // floating-point value of # of slots covered
+    let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.minTime)) / asRoughMs(this.slotDuration) // floating-point value of # of slots covered
     let slatIndex
     let slatRemainder
 

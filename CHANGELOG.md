@@ -2,6 +2,7 @@
 next
 ----
 
+- scrollToTime method honors a whole duration, not just a time (#4935)
 - some background events wouldn't recieve eventClick or hovering (#3148, #4750)
 - fix infinite recursion when custom view type is itself (#4198)
 - respect firstDay setting when weekNumberCalculation set to ISO (#4734)
