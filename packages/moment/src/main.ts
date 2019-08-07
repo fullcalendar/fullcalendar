@@ -74,8 +74,8 @@ function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | 
   } else if (timeZone === 'UTC') {
     mom = moment.utc(input)
 
-  } else if ((moment as any).tz) {
-    mom = (moment as any).tz(input, timeZone)
+  } else if (moment.tz) {
+    mom = moment.tz(input, timeZone)
 
   } else {
     mom = moment.utc(input)
