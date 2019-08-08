@@ -2,6 +2,7 @@
 next
 ----
 
+- calling Calendar::render after initial render causes bad sizing (#4718, #4723)
 - when list views destroyed, wouldn't call eventDestroy (#4727)
 - solve JS errors when switching views and using showNonCurrentDates (#4677, #4767)
 - prevent unnecessary scrollbars from appearing in daygrid views (4624, #4732)

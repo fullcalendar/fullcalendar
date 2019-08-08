@@ -137,7 +137,12 @@ export default abstract class View extends DateComponent<ViewProps> {
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
     let { calendar } = this
 
-    if (isResize || calendar.isViewUpdated || calendar.isDatesUpdated || calendar.isEventsUpdated) {
+    if (
+      isResize || // HACKS...
+      calendar.isViewUpdated ||
+      calendar.isDatesUpdated ||
+      calendar.isEventsUpdated
+    ) {
       // sort of the catch-all sizing
       // anything that might cause dimension changes
       this.updateBaseSize(isResize, viewHeight, isAuto)

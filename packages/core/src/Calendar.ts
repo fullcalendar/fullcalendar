@@ -442,6 +442,10 @@ export default class Calendar {
         theme: this.theme,
         options: this.optionsManager.computed
       }, this.el)
+
+      this.isViewUpdated = true
+      this.isDatesUpdated = true
+      this.isEventsUpdated = true
     }
 
     component.receiveProps({
