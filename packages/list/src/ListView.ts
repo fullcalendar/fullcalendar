@@ -89,8 +89,8 @@ export default class ListView extends View {
   destroy() {
     super.destroy()
 
+    this.renderContent.unrender()
     this.scroller.destroy() // will remove the Grid too
-
     this.calendar.unregisterInteractiveComponent(this)
   }
 

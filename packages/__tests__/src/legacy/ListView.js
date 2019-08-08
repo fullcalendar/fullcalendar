@@ -52,14 +52,26 @@ describe('ListView rendering', function() {
       })
 
       it('filters events through eventRender', function() {
-        var options = {}
-        options.eventRender = function(arg) {
-          replaceEventElDotElWithEl($(arg.el), '<span class="custom-icon" />')
-        }
-
-        initCalendar(options)
+        initCalendar({
+          eventRender(arg) {
+            replaceEventElDotElWithEl($(arg.el), '<span class="custom-icon" />')
+          }
+        })
 
         expect($('.custom-icon').length).toBe(2)
+      })
+
+      it('filters events through eventDestroy', function() {
+        let callCnt = 0
+
+        initCalendar({
+          eventDestroy() {
+            callCnt++
+          }
+        })
+
+        currentCalendar.destroy()
+        expect(callCnt).toBe(2)
       })
     })
 
