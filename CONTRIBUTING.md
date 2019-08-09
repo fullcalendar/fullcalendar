@@ -64,6 +64,7 @@ If you want to clean up the generated files, run:
 
 	npm run clean
 
+*Note*: If a parent directory contains any @fullcalendar/* libraries as dependencies for other projects, NPM will fail to compile FullCalendar using either `npm run build` or `npm run watch`.
 
 ## Git
 
