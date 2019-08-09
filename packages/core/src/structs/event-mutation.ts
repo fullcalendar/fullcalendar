@@ -1,4 +1,4 @@
-import { Duration, asRoughMs, durationsEqual } from '../datelib/duration'
+import { Duration } from '../datelib/duration'
 import { EventStore, createEmptyEventStore } from './event-store'
 import { EventDef, EventInstance } from './event'
 import Calendar from '../Calendar'
