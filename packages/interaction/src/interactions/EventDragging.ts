@@ -84,7 +84,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
 
     let isValid =
       component.isValidSegDownEl(origTarget) &&
-      !elementClosest(origTarget, '.fc-resizer')
+      !elementClosest(origTarget, '.fc-resizer') // NOT on a resizer
 
     dragging.setIgnoreMove(!isValid)
 
