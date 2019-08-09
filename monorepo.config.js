@@ -1,5 +1,6 @@
 
 module.exports = {
+  npmClientArgs: [ '--registry', 'http://localhost:4873' ],
   packages: [
     { path: 'packages?(-premium)/*', distDir: ourPkgDist },
     { path: 'packages-contrib/react', distDir: 'dist' },
