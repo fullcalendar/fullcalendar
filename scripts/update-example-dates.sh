@@ -10,8 +10,7 @@ read -p "Do you want to update the example dates? (y/N): " yn
 
 if [[ "$yn" != "y" ]]
 then
-  echo "Aborting."
-  exit 1
+  exit 0 # won't signal failure
 fi
 
 read -p "Enter new year (4 digits): " year
