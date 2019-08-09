@@ -5,8 +5,15 @@ set -e # always immediately exit upon error
 cd "`dirname $0`/.." # start in project root
 
 
-read -p "Do you want to update the example dates? (y/N): " yn
+version_arg="$1"
+if [[ -z "$version_arg" ]]
+then
+  echo "Please supply a version arg"
+  exit 1
+fi
 
+
+read -p "Do you want to update the example dates? (y/N): " yn
 if [[ "$yn" == "y" ]]
 then
   ./scripts/update-example-dates.sh
@@ -18,4 +25,4 @@ npm run archive
 
 
 # after version script completes, will call postversion hook, which calls `monorepo publish`
-npx monorepo version
+npx monorepo version "$version_arg"
