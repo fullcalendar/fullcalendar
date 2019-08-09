@@ -42,7 +42,8 @@
     "test:single": "karma start karma.config.js --browsers ChromeHeadless_custom --single-run",
     "ci": "./scripts/ci.sh",
     "archive": "gulp archive",
-    "postversion": "monorepo publish"
+    "preversion": "./scripts/update-example-dates.sh && npm run ci && npm run archive",
+    "postversion": "monorepo publish && git push --recurse-submodules=on-demand"
   },
   "devDependencies": {
     "@arshaw/dts-bundle": "^0.7.3-fork.1",

@@ -6,6 +6,14 @@ cd "`dirname $0`/.." # start in project root
 
 ./scripts/require-clean-working-tree.sh examples
 
+read -p "Do you want to update the example dates? (y/N): " yn
+
+if [[ "$yn" != "y" ]]
+then
+  echo "Aborting."
+  exit 1
+fi
+
 read -p "Enter new year (4 digits): " year
 read -p "Enter new month (2 digits): " month
 
