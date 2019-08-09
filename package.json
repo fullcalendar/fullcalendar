@@ -42,7 +42,8 @@
     "test:single": "karma start karma.config.js --browsers ChromeHeadless_custom --single-run",
     "ci": "./scripts/ci.sh",
     "archive": "gulp archive",
-    "preversion": "./scripts/update-example-dates.sh && npm run ci && npm run archive",
+    "preversion": "./scripts/update-example-dates.sh",
+    "version": "npm run ci && npm run archive",
     "postversion": "monorepo publish && git push --recurse-submodules=on-demand"
   },
   "devDependencies": {
