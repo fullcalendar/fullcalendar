@@ -214,7 +214,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
     if (this.isDragging) {
       let initialCalendar = this.component.calendar
       let initialView = this.component.view
-      let { receivingCalendar } = this
+      let { receivingCalendar, validMutation } = this
       let eventDef = this.eventRange!.def
       let eventInstance = this.eventRange!.instance
       let eventApi = new EventApi(initialCalendar, eventDef, eventInstance)
@@ -233,7 +233,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
         }
       ])
 
-      if (this.validMutation) {
+      if (validMutation) {
 
         // dropped within same calendar
         if (receivingCalendar === initialCalendar) {
@@ -246,13 +246,13 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
           let transformed: ReturnType<EventDropTransformers> = {}
 
           for (let transformer of initialCalendar.pluginSystem.hooks.eventDropTransformers) {
-            __assign(transformed, transformer(this.validMutation, initialCalendar))
+            __assign(transformed, transformer(validMutation, initialCalendar))
           }
 
           const eventDropArg = {
             ...transformed, // don't use __assign here because it's not type-safe
             el: ev.subjectEl as HTMLElement,
-            delta: this.validMutation.startDelta!,
+            delta: validMutation.datesDelta!,
             oldEvent: eventApi,
             event: new EventApi( // the data AFTER the mutation
               initialCalendar,
@@ -417,8 +417,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
   }
 
   let mutation: EventMutation = {
-    startDelta: delta,
-    endDelta: delta,
+    datesDelta: delta,
     standardProps
   }
 

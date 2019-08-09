@@ -4,7 +4,7 @@ import { UNSCOPED_EVENT_UI_PROPS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
 import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/misc'
-import { subtractDurations, DurationInput, createDuration } from '../datelib/duration'
+import { DurationInput, createDuration, durationsEqual } from '../datelib/duration'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
 import EventSourceApi from './EventSourceApi'
 
@@ -74,15 +74,12 @@ export default class EventApi {
     if (start && this._instance) { // TODO: warning if parsed bad
       let instanceRange = this._instance.range
       let startDelta = diffDates(instanceRange.start, start, dateEnv, options.granularity) // what if parsed bad!?
-      let endDelta = null
 
       if (options.maintainDuration) {
-        let origDuration = diffDates(instanceRange.start, instanceRange.end, dateEnv, options.granularity)
-        let newDuration = diffDates(start, instanceRange.end, dateEnv, options.granularity)
-        endDelta = subtractDurations(origDuration, newDuration)
+        this.mutate({ datesDelta: startDelta })
+      } else {
+        this.mutate({ startDelta })
       }
-
-      this.mutate({ startDelta, endDelta })
     }
   }
 
@@ -139,10 +136,16 @@ export default class EventApi {
 
       if (end) {
         let endDelta = diffDates(instanceRange.end, end, dateEnv, options.granularity)
-        this.mutate({ startDelta, endDelta, standardProps })
-      } else {
+
+        if (durationsEqual(startDelta, endDelta)) {
+          this.mutate({ datesDelta: startDelta, standardProps })
+        } else {
+          this.mutate({ startDelta, endDelta, standardProps })
+        }
+
+      } else { // means "clear the end"
         standardProps.hasEnd = false
-        this.mutate({ startDelta, standardProps })
+        this.mutate({ datesDelta: startDelta, standardProps })
       }
     }
   }
@@ -167,7 +170,7 @@ export default class EventApi {
     let delta = createDuration(deltaInput)
 
     if (delta) { // TODO: warning if parsed bad
-      this.mutate({ startDelta: delta, endDelta: delta })
+      this.mutate({ datesDelta: delta })
     }
   }
 

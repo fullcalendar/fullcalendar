@@ -8,12 +8,13 @@ import { createElement } from './util/dom-manip'
 import { ComponentContext } from './component/Component'
 import DateComponent from './component/DateComponent'
 import { EventStore } from './structs/event-store'
-import { EventUiHash } from './component/event-ui'
+import { EventUiHash, EventUi } from './component/event-ui'
 import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { memoizeRendering } from './component/memoized-rendering'
 import { __assign } from 'tslib'
+import { EventDef } from './structs/event'
 
 export interface ViewProps {
   dateProfile: DateProfile
@@ -216,6 +217,25 @@ export default abstract class View extends DateComponent<ViewProps> {
       props.dateProfile.activeRange,
       allDay ? this.nextDayThreshold : null
     ).fg
+  }
+
+  computeEventDraggable(eventDef: EventDef, eventUi: EventUi) {
+    let transformers = this.calendar.pluginSystem.hooks.isDraggableTransformers
+    let val = eventUi.startEditable
+
+    for (let transformer of transformers) {
+      val = transformer(val, eventDef, eventUi, this)
+    }
+
+    return val
+  }
+
+  computeEventStartResizable(eventDef: EventDef, eventUi: EventUi) {
+    return eventUi.durationEditable && this.opt('eventResizableFromStart')
+  }
+
+  computeEventEndResizable(eventDef: EventDef, eventUi: EventUi) {
+    return eventUi.durationEditable
   }
 
 

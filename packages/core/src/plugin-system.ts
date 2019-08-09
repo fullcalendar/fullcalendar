@@ -7,7 +7,7 @@ import { ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
 import { isPropsValidTester } from './validation'
-import { eventDragMutationMassager, EventDropTransformers } from './interactions/event-dragging'
+import { eventDragMutationMassager, eventIsDraggableTransformer, EventDropTransformers } from './interactions/event-dragging'
 import { dateSelectionJoinTransformer } from './interactions/date-selecting'
 import { EventResizeJoinTransforms } from './interactions/event-resizing'
 import { ExternalDefTransform } from './interactions/external-element-dragging'
@@ -25,6 +25,7 @@ export interface PluginDefInput {
   deps?: PluginDef[]
   reducers?: reducerFunc[]
   eventDefParsers?: eventDefParserFunc[]
+  isDraggableTransformers?: eventIsDraggableTransformer[]
   eventDragMutationMassagers?: eventDragMutationMassager[]
   eventDefMutationAppliers?: eventDefMutationApplier[]
   dateSelectionTransformers?: dateSelectionJoinTransformer[]
@@ -52,6 +53,7 @@ export interface PluginDefInput {
 export interface PluginHooks {
   reducers: reducerFunc[]
   eventDefParsers: eventDefParserFunc[]
+  isDraggableTransformers: eventIsDraggableTransformer[]
   eventDragMutationMassagers: eventDragMutationMassager[]
   eventDefMutationAppliers: eventDefMutationApplier[]
   dateSelectionTransformers: dateSelectionJoinTransformer[]
@@ -98,6 +100,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     deps: input.deps || [],
     reducers: input.reducers || [],
     eventDefParsers: input.eventDefParsers || [],
+    isDraggableTransformers: input.isDraggableTransformers || [],
     eventDragMutationMassagers: input.eventDragMutationMassagers || [],
     eventDefMutationAppliers: input.eventDefMutationAppliers || [],
     dateSelectionTransformers: input.dateSelectionTransformers || [],
@@ -132,6 +135,7 @@ export class PluginSystem {
     this.hooks = {
       reducers: [],
       eventDefParsers: [],
+      isDraggableTransformers: [],
       eventDragMutationMassagers: [],
       eventDefMutationAppliers: [],
       dateSelectionTransformers: [],
@@ -176,6 +180,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
   return {
     reducers: hooks0.reducers.concat(hooks1.reducers),
     eventDefParsers: hooks0.eventDefParsers.concat(hooks1.eventDefParsers),
+    isDraggableTransformers: hooks0.isDraggableTransformers.concat(hooks1.isDraggableTransformers),
     eventDragMutationMassagers: hooks0.eventDragMutationMassagers.concat(hooks1.eventDragMutationMassagers),
     eventDefMutationAppliers: hooks0.eventDefMutationAppliers.concat(hooks1.eventDefMutationAppliers),
     dateSelectionTransformers: hooks0.dateSelectionTransformers.concat(hooks1.dateSelectionTransformers),

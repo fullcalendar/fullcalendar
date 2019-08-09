@@ -12,8 +12,9 @@ A data structure for how to modify an EventDef/EventInstance within an EventStor
 */
 
 export interface EventMutation {
-  startDelta?: Duration
-  endDelta?: Duration
+  datesDelta?: Duration // body start+end moving together. for dragging
+  startDelta?: Duration // for resizing
+  endDelta?: Duration // for resizing
   standardProps?: any // for the def. should not include extendedProps
   extendedProps?: any // for the def
 }
@@ -51,10 +52,7 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
   if (
     standardProps.hasEnd == null &&
     eventConfig.durationEditable &&
-    willDeltasAffectDuration(
-      eventConfig.startEditable ? mutation.startDelta : null,
-      mutation.endDelta || null
-    )
+    (mutation.startDelta || mutation.endDelta)
   ) {
     standardProps.hasEnd = true // TODO: is this mutation okay?
   }
@@ -80,20 +78,6 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
   return copy
 }
 
-function willDeltasAffectDuration(startDelta: Duration | null, endDelta: Duration | null) {
-  if (startDelta && !asRoughMs(startDelta)) { startDelta = null }
-  if (endDelta && !asRoughMs(endDelta)) { endDelta = null }
-
-  if (!startDelta && !endDelta) {
-    return false
-  }
-
-  if (Boolean(startDelta) !== Boolean(endDelta)) {
-    return true
-  }
-
-  return !durationsEqual(startDelta, endDelta)
-}
 
 function applyMutationToEventInstance(
   eventInstance: EventInstance,
@@ -111,10 +95,24 @@ function applyMutationToEventInstance(
     copy.range = computeAlignedDayRange(copy.range)
   }
 
-  if (mutation.startDelta && eventConfig.startEditable) {
+  if (mutation.datesDelta && eventConfig.startEditable) {
+    copy.range = {
+      start: dateEnv.add(copy.range.start, mutation.datesDelta),
+      end: dateEnv.add(copy.range.end, mutation.datesDelta)
+    }
+  }
+
+  if (mutation.startDelta && eventConfig.durationEditable) {
     copy.range = {
       start: dateEnv.add(copy.range.start, mutation.startDelta),
       end: copy.range.end
+    }
+  }
+
+  if (mutation.endDelta && eventConfig.durationEditable) {
+    copy.range = {
+      start: copy.range.start,
+      end: dateEnv.add(copy.range.end, mutation.endDelta)
     }
   }
 
@@ -122,20 +120,6 @@ function applyMutationToEventInstance(
     copy.range = {
       start: copy.range.start,
       end: calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
-    }
-  } else if (
-    mutation.endDelta &&
-    (
-      eventConfig.durationEditable ||
-      !willDeltasAffectDuration( // TODO: nonDRY logic above
-        eventConfig.startEditable ? mutation.startDelta : null,
-        mutation.endDelta
-      )
-    )
-  ) {
-    copy.range = {
-      start: copy.range.start,
-      end: dateEnv.add(copy.range.end, mutation.endDelta)
     }
   }
 

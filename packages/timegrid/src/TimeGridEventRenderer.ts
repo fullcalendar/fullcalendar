@@ -102,13 +102,14 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   // Renders the HTML for a single event segment's default rendering
   renderSegHtml(seg: Seg, mirrorInfo) {
+    let { view } = this.context
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
     let allDay = eventDef.allDay
-    let isDraggable = eventUi.startEditable
-    let isResizableFromStart = seg.isStart && eventUi.durationEditable && this.context.options.eventResizableFromStart
-    let isResizableFromEnd = seg.isEnd && eventUi.durationEditable
+    let isDraggable = view.computeEventDraggable(eventDef, eventUi)
+    let isResizableFromStart = seg.isStart && view.computeEventStartResizable(eventDef, eventUi)
+    let isResizableFromEnd = seg.isEnd && view.computeEventEndResizable(eventDef, eventUi)
     let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeText

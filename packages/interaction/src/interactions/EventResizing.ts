@@ -225,7 +225,7 @@ function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRan
     hit0.component.largeUnit
   )
 
-  let props = {} as any
+  let props = {} as EventMutation
 
   for (let transform of transforms) {
     let res = transform(hit0, hit1)
