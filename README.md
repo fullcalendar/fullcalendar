@@ -17,4 +17,4 @@ A full-sized drag & drop event calendar (jQuery plugin). [Project website &raquo
 - [@fullcalendar/moment-timezone](https://www.npmjs.com/package/@fullcalendar/moment-timezone)
 - [@fullcalendar/bootstrap](https://www.npmjs.com/package/@fullcalendar/bootstrap)
 
-For more info [view the upgrade guide &raquo;](https://fullcalendar.io/docs/upgrading-from-v3)
+For more info, [view the upgrade guide &raquo;](https://fullcalendar.io/docs/upgrading-from-v3)
