@@ -6,9 +6,11 @@ const commonjs = require('rollup-plugin-commonjs')
 const multiEntry = require('rollup-plugin-multi-entry')
 const sourcemaps = require('rollup-plugin-sourcemaps')
 const alias = require('rollup-plugin-alias')
+const replace = require('rollup-plugin-replace')
 const cleanup = require('rollup-plugin-cleanup')
 const handleBars = require('handlebars')
 const { pkgStructs } = require('./scripts/lib/pkg-struct')
+const rootPkgJsonData = require('./package.json')
 
 
 const EXTERNAL_BROWSER_GLOBALS = {
@@ -78,6 +80,14 @@ function buildPkgConfig(pkgStruct, ownBrowserGlobals, isDev) {
   let plugins = [
     nodeResolve({
       only: [ 'tslib' ] // the only external module we want to bundle
+    }),
+    replace({
+      delimiters: [ '<%= ', ' %>' ],
+      values: {
+        version: rootPkgJsonData.version,
+        releaseDate: new Date().toISOString().replace(/T.*/, '')
+          // ^TODO: store this in package.json for easier old-release recreation
+      }
     })
   ]
 
