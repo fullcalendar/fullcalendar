@@ -44,8 +44,7 @@
     "archive": "gulp archive",
     "preversion": "./scripts/update-example-dates.sh && npm run clean",
     "version": "npm run ci && npm run archive",
-    "xxxpostversion": "monorepo publish && git push --recurse-submodules=on-demand",
-    "postversion": "echo NICE $npm_package_version"
+    "postversion": "monorepo publish && echo 'EXEC: git push --recurse-submodules=on-demand' && echo 'STILL NEED TO PUSH ALL TAGS'"
   },
   "devDependencies": {
     "@arshaw/dts-bundle": "^0.7.3-fork.1",
