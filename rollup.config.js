@@ -86,7 +86,7 @@ function buildPkgConfig(pkgStruct, ownBrowserGlobals, isDev) {
       values: {
         version: rootPkgJsonData.version,
         releaseDate: new Date().toISOString().replace(/T.*/, '')
-          // ^TODO: store this in package.json for easier old-release recreation
+        // ^TODO: store this in package.json for easier old-release recreation
       }
     })
   ]
