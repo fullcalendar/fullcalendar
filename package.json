@@ -29,7 +29,7 @@
     "build": "gulp build",
     "watch": "gulp watch",
     "lint": "gulp lint",
-    "clean": "rm -rf tmp archives && monorepo exec rm -rf dist",
+    "clean": "rm -rf tmp archives && monorepo exec rm -rf dist && monorepo run clean",
     "tsc": "tsc -p tsconfig.json",
     "tsc:debug": "tsc --sourceMap -p tsconfig.json",
     "tsc:watch": "tsc --sourceMap --watch -p tsconfig.json",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@arshaw/dts-bundle": "^0.7.3-fork.1",
-    "@arshaw/monorepo-tool": "^0.0.1",
+    "@arshaw/monorepo-tool": "0.0.2",
     "@types/jasmine": "^3.3.12",
     "@types/jasmine-jquery": "^1.5.33",
     "@types/jquery": "^3.3.29",
