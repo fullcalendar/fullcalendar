@@ -38,13 +38,13 @@ fi
 success=0
 if {
   # ensures stray files stay out of the release
-  gulp clean &&
+  npx gulp clean &&
 
   # update package manager json files with version number and release date
-  gulp bump --version=$version &&
+  npx gulp bump --version=$version &&
 
   # build all dist files, lint, and run tests
-  gulp release
+  npx gulp release
 }
 then
   # save reference to current branch
