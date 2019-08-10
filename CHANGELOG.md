@@ -1,4 +1,12 @@
 
+v4.3.1 (2019-08-10)
+-------------------
+
+- `FullCalendar.version` had incorrect text
+- scheduler's releaseDate not written correctly,
+  resulting in license key warning always showing.
+
+
 v4.3.0 (2019-08-09)
 -------------------
 
