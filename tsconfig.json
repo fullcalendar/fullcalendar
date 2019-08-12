@@ -37,8 +37,7 @@
       "package-tests/*": [ "packages/__tests__/src/*" ]
     },
     "rootDir": ".",
-    "outDir": "tmp/tsc-output",
-    "incremental": true
+    "outDir": "tmp/tsc-output"
   },
   "include": [
     "packages/*/src/main.ts",

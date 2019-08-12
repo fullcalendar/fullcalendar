@@ -19,7 +19,7 @@ const watchJs = exports.watchJs = series(
   writePkgJsons, // important for node-resolution
   shellTask('npm:tsc:debug'),
   parallel(
-    shellTask('npm:tsc:watch'), // will be fast 2nd time b/c of incremental:true
+    shellTask('npm:tsc:watch'), // TODO: better system then two consecutive compiles
     shellTask('npm:rollup:watch')
   )
 )
