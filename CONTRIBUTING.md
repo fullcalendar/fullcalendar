@@ -33,7 +33,7 @@ Please edit the original files in the `packages/core/locales/` directory.
 
 ## Getting Set Up
 
-You will need [Git][git], [Node][node] and NPM installed. You will also need [SASS][sass] globally installed.
+You will need [Git][git], [Node][node] and NPM installed.
 
 Then, clone FullCalendar's git repo:
 
@@ -122,6 +122,5 @@ If you have edited code (including **tests** and **translations**) and would lik
 [MomentJS locale data]: https://github.com/moment/moment/tree/develop/locale
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
-[sass]: https://sass-lang.com/install
 [Google JavaScript Style Guide]: https://google.github.io/styleguide/jsguide.html
 [Automated Test Readme]: https://github.com/fullcalendar/fullcalendar/wiki/Automated-Tests
