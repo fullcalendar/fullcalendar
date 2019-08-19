@@ -236,7 +236,7 @@ export interface OptionsInputBase {
   _noEventDrop?(): void
   _noEventResize?(): void
   resourceRender?(arg: { resource: any, el: HTMLElement, view: View }): void
-  nowIndicatorRender?(arg: { view: View }): void
+  nowIndicatorRender?(arg: { view: View , els: HTMLElement[]}): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {

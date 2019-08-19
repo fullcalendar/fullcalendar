@@ -7,6 +7,7 @@ describe('nowIndicatorRender', function () {
             nowIndicator: true,
             nowIndicatorRender: function (arg) {
               expect(arg.view).toEqual(currentCalendar.view)
+              expect(arg.els).toEqual(jasmine.any(Array));
             }
         };
         spyOn(options, 'nowIndicatorRender').and.callThrough();

@@ -547,7 +547,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     }
 
     this.nowIndicatorEls = nodes
-    this.publiclyTrigger('nowIndicatorRender', [{ view: this.view }])
+    this.publiclyTrigger('nowIndicatorRender', [{ view: this.view, els: this.nowIndicatorEls }])
   }
 
 
