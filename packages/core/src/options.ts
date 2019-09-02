@@ -15,7 +15,7 @@ export const globalDefaults = {
   titleRangeSeparator: ' \u2013 ', // en dash
 
   defaultTimedEventDuration: '01:00:00',
-  defaultAllDayEventDuration: { day: 1 },
+  defaultAllDayEventDuration: { days: 1 },
   forceEventDuration: false,
   nextDayThreshold: '00:00:00',
 
