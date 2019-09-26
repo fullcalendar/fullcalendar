@@ -35,7 +35,7 @@ export default class ListEventRenderer extends FgEventRenderer {
 
   // generates the HTML for a single event row
   renderSegHtml(seg: Seg) {
-    let { view, theme } = this.context
+    let { theme, options } = this.context
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventInstance = eventRange.instance
@@ -46,7 +46,7 @@ export default class ListEventRenderer extends FgEventRenderer {
     let timeHtml
 
     if (eventDef.allDay) {
-      timeHtml = getAllDayHtml(view)
+      timeHtml = getAllDayHtml(options)
     } else if (isMultiDayRange(eventRange.range)) {
       if (seg.isStart) {
         timeHtml = htmlEscape(this._getTimeText(
@@ -61,7 +61,7 @@ export default class ListEventRenderer extends FgEventRenderer {
           false // allDay
         ))
       } else { // inner segment that lasts the whole day
-        timeHtml = getAllDayHtml(view)
+        timeHtml = getAllDayHtml(options)
       }
     } else {
       // Display the normal time text for the *event's* times

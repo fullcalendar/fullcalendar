@@ -39,11 +39,12 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
   constructor(settings: InteractionSettings) {
     super(settings)
     let { component } = this
+    let { options } = component.context
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.pointer.selector = EventDragging.SELECTOR
     dragging.touchScrollAllowed = false
-    dragging.autoScroller.isEnabled = component.opt('dragScroll')
+    dragging.autoScroller.isEnabled = options.dragScroll
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsStore)
     hitDragging.useSubjectCenter = settings.useEventCenter
@@ -62,7 +63,8 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
     let origTarget = ev.origEvent.target as HTMLElement
     let { component, dragging } = this
     let { mirror } = dragging
-    let initialCalendar = component.calendar
+    let { options } = component.context
+    let initialCalendar = component.context.calendar
     let subjectSeg = this.subjectSeg = getElSeg(ev.subjectEl as HTMLElement)!
     let eventRange = this.eventRange = subjectSeg.eventRange!
     let eventInstanceId = eventRange.instance!.instanceId
@@ -72,7 +74,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
       eventInstanceId
     )
 
-    dragging.minDistance = ev.isTouch ? 0 : component.opt('eventDragMinDistance')
+    dragging.minDistance = ev.isTouch ? 0 : options.eventDragMinDistance
     dragging.delay =
       // only do a touch delay if touch and this event hasn't been selected yet
       (ev.isTouch && eventInstanceId !== component.props.eventSelection) ?
@@ -80,7 +82,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
         null
 
     mirror.parentNode = initialCalendar.el
-    mirror.revertDuration = component.opt('dragRevertDuration')
+    mirror.revertDuration = options.dragRevertDuration
 
     let isValid =
       component.isValidSegDownEl(origTarget) &&
@@ -95,7 +97,8 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    let initialCalendar = this.component.calendar
+    let { context } = this.component
+    let initialCalendar = context.calendar
     let eventRange = this.eventRange!
     let eventInstanceId = eventRange.instance.instanceId
 
@@ -116,7 +119,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
           el: this.subjectSeg.el,
           event: new EventApi(initialCalendar, eventRange.def, eventRange.instance),
           jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-          view: this.component.view
+          view: context.view
         }
       ])
     }
@@ -130,7 +133,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
 
     let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
-    let initialCalendar = this.component.calendar
+    let initialCalendar = this.component.context.calendar
 
     // states based on new hit
     let receivingCalendar: Calendar | null = null
@@ -146,11 +149,12 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
 
     if (hit) {
       let receivingComponent = hit.component
-      receivingCalendar = receivingComponent.calendar
+      receivingCalendar = receivingComponent.context.calendar
+      let receivingOptions = receivingComponent.context.options
 
       if (
         initialCalendar === receivingCalendar ||
-        receivingComponent.opt('editable') && receivingComponent.opt('droppable')
+        receivingOptions.editable && receivingOptions.droppable
       ) {
         mutation = computeEventMutation(initialHit, hit, receivingCalendar.pluginSystem.hooks.eventDragMutationMassagers)
 
@@ -212,8 +216,9 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
   handleDragEnd = (ev: PointerDragEvent) => {
 
     if (this.isDragging) {
-      let initialCalendar = this.component.calendar
-      let initialView = this.component.view
+      let { context } = this.component
+      let initialCalendar = context.calendar
+      let initialView = context.view
       let { receivingCalendar, validMutation } = this
       let eventDef = this.eventRange!.def
       let eventInstance = this.eventRange!.instance
@@ -330,7 +335,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
 
   // render a drag state on the next receivingCalendar
   displayDrag(nextCalendar: Calendar | null, state: EventInteractionState) {
-    let initialCalendar = this.component.calendar
+    let initialCalendar = this.component.context.calendar
     let prevCalendar = this.receivingCalendar
 
     // does the previous calendar need to be cleared?
@@ -361,7 +366,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
   }
 
   clearDrag() {
-    let initialCalendar = this.component.calendar
+    let initialCalendar = this.component.context.calendar
     let { receivingCalendar } = this
 
     if (receivingCalendar) {
@@ -395,7 +400,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
 
   if (dateSpan0.allDay !== dateSpan1.allDay) {
     standardProps.allDay = dateSpan1.allDay
-    standardProps.hasEnd = hit1.component.opt('allDayMaintainDuration')
+    standardProps.hasEnd = hit1.component.context.options.allDayMaintainDuration
 
     if (dateSpan1.allDay) {
       // means date1 is already start-of-day,
@@ -406,7 +411,7 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
 
   let delta = diffDates(
     date0, date1,
-    hit0.component.dateEnv,
+    hit0.component.context.dateEnv,
     hit0.component === hit1.component ?
       hit0.component.largeUnit :
       null
@@ -429,10 +434,11 @@ function computeEventMutation(hit0: Hit, hit1: Hit, massagers: eventDragMutation
 }
 
 function getComponentTouchDelay(component: DateComponent<any>): number | null {
-  let delay = component.opt('eventLongPressDelay')
+  let { options } = component.context
+  let delay = options.eventLongPressDelay
 
   if (delay == null) {
-    delay = component.opt('longPressDelay')
+    delay = options.longPressDelay
   }
 
   return delay

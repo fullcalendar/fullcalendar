@@ -2,16 +2,42 @@ import Calendar from '../Calendar'
 import View from '../View'
 import Theme from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
+import { parseFieldSpecs } from '../util/misc'
+import { createDuration, Duration } from '../datelib/duration'
 
 let guid = 0
 
-export interface ComponentContext {
-  options: any
-  dateEnv: DateEnv
-  theme: Theme
-  calendar: Calendar
-  view: View
+
+export class ComponentContext {
+
+  isRtl: boolean
+  eventOrderSpecs: any
+  nextDayThreshold: Duration
+
+  constructor(
+    public calendar: Calendar,
+    public theme: Theme,
+    public dateEnv: DateEnv,
+    public options: any,
+    public view?: View
+  ) {
+    this.isRtl = options.dir === 'rtl'
+    this.eventOrderSpecs = parseFieldSpecs(options.eventOrder)
+    this.nextDayThreshold = createDuration(options.nextDayThreshold)
+  }
+
+  extend(options?: any, view?: View) {
+    return new ComponentContext(
+      this.calendar,
+      this.theme,
+      this.dateEnv,
+      options || this.options,
+      view || this.view
+    )
+  }
+
 }
+
 
 export type EqualityFuncHash = { [propName: string]: (obj0, obj1) => boolean }
 
@@ -21,29 +47,10 @@ export default class Component<PropsType> {
 
   uid: string
   props: PropsType | null
-
-  // context vars
   context: ComponentContext
-  dateEnv: DateEnv
-  theme: Theme
-  view: View
-  calendar: Calendar
-  isRtl: boolean
 
-  constructor(context: ComponentContext, isView?: boolean) {
-
-    // HACK to populate view at top of component instantiation call chain
-    if (isView) {
-      context.view = this as any
-    }
-
+  constructor() {
     this.uid = String(guid++)
-    this.context = context
-    this.dateEnv = context.dateEnv
-    this.theme = context.theme
-    this.view = context.view
-    this.calendar = context.calendar
-    this.isRtl = this.opt('dir') === 'rtl'
   }
 
   static addEqualityFuncs(newFuncs: EqualityFuncHash) {
@@ -53,8 +60,8 @@ export default class Component<PropsType> {
     }
   }
 
-  opt(name) {
-    return this.context.options[name]
+  setContext(context: ComponentContext) {
+    this.context = context
   }
 
   receiveProps(props: PropsType) {

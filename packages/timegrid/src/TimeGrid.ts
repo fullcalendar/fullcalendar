@@ -116,8 +116,16 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
 
 
-  constructor(context: ComponentContext, el: HTMLElement, renderProps: RenderProps) {
-    super(context, el)
+  constructor(el: HTMLElement, renderProps: RenderProps) {
+    super(el)
+
+    this.renderProps = renderProps
+  }
+
+
+  setContext(context: ComponentContext) {
+    let { theme } = context
+    let { el } = this
 
     let eventRenderer = this.eventRenderer = new TimeGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new TimeGridFillRenderer(this)
@@ -175,13 +183,11 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     el.innerHTML =
       '<div class="fc-bg"></div>' +
       '<div class="fc-slats"></div>' +
-      '<hr class="fc-divider ' + this.theme.getClass('widgetHeader') + '" style="display:none" />'
+      '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
 
     this.rootBgContainerEl = el.querySelector('.fc-bg')
     this.slatContainerEl = el.querySelector('.fc-slats')
     this.bottomRuleEl = el.querySelector('.fc-divider')
-
-    this.renderProps = renderProps
   }
 
 
@@ -190,9 +196,10 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   // Parses various options into properties of this object
+  // MUST have context already set
   processOptions() {
-    let slotDuration = this.opt('slotDuration')
-    let snapDuration = this.opt('snapDuration')
+    let { options } = this.context
+    let { slotDuration, snapDuration } = options
     let snapsPerSlot
     let input
 
@@ -212,7 +219,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
     // might be an array value (for TimelineView).
     // if so, getting the most granular entry (the last one probably).
-    input = this.opt('slotLabelFormat')
+    input = options.slotLabelFormat
     if (Array.isArray(input)) {
       input = input[input.length - 1]
     }
@@ -224,7 +231,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       meridiem: 'short'
     })
 
-    input = this.opt('slotLabelInterval')
+    input = options.slotLabelInterval
     this.labelInterval = input ?
       createDuration(input) :
       this.computeLabelInterval(slotDuration)
@@ -303,7 +310,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   _renderSlats(dateProfile: DateProfile) {
-    let { theme } = this
+    let { theme } = this.context
 
     this.slatContainerEl.innerHTML =
       '<table class="' + theme.getClass('tableGrid') + '">' +
@@ -325,7 +332,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   // Generates the HTML for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
   renderSlatRowHtml(dateProfile: DateProfile) {
-    let { dateEnv, theme, isRtl } = this
+    let { dateEnv, theme, isRtl } = this.context
     let html = ''
     let dayStart = startOfDay(dateProfile.renderRange.start)
     let slotTime = dateProfile.minTime
@@ -367,7 +374,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   _renderColumns(cells: TimeGridCell[], dateProfile: DateProfile) {
-    let { theme, dateEnv, view } = this
+    let { calendar, view, isRtl, theme, dateEnv } = this.context
 
     let bgRow = new DayBgRow(this.context)
     this.rootBgContainerEl.innerHTML =
@@ -382,7 +389,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
     for (let col = 0; col < this.colCnt; col++) {
-      this.publiclyTrigger('dayRender', [
+      calendar.publiclyTrigger('dayRender', [
         {
           date: dateEnv.toDate(cells[col].date),
           el: this.colEls[col],
@@ -391,7 +398,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       ])
     }
 
-    if (this.isRtl) {
+    if (isRtl) {
       this.colEls.reverse()
     }
 
@@ -418,6 +425,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   // Renders the DOM that the view's content will live in
   renderContentSkeleton() {
+    let { isRtl } = this.context
     let parts = []
     let skeletonEl: HTMLElement
 
@@ -439,7 +447,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       )
     }
 
-    if (this.isRtl) {
+    if (isRtl) {
       parts.reverse()
     }
 
@@ -458,7 +466,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     this.highlightContainerEls = findElements(skeletonEl, '.fc-highlight-container')
     this.businessContainerEls = findElements(skeletonEl, '.fc-business-container')
 
-    if (this.isRtl) {
+    if (isRtl) {
       this.colContainerEls.reverse()
       this.mirrorContainerEls.reverse()
       this.fgContainerEls.reverse()
@@ -607,7 +615,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   // For each segment in an array, computes and assigns its top and bottom properties
   computeSegVerticals(segs) {
-    let eventMinHeight = this.opt('timeGridEventMinHeight')
+    let { options } = this.context
+    let eventMinHeight = options.timeGridEventMinHeight
     let i
     let seg
     let dayDate
@@ -671,7 +680,8 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
   positionToHit(positionLeft, positionTop) {
-    let { dateEnv, snapsPerSlot, slatPositions, colPositions } = this
+    let { dateEnv } = this.context
+    let { snapsPerSlot, slatPositions, colPositions } = this
 
     let colIndex = colPositions.leftToIndex(positionLeft)
     let slatIndex = slatPositions.topToIndex(positionTop)
@@ -763,7 +773,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
   _renderDateSelection(segs: Seg[]) {
     if (segs) {
-      if (this.opt('selectMirror')) {
+      if (this.context.options.selectMirror) {
         this.mirrorRenderer.renderSegs(segs, { isSelecting: true })
       } else {
         this.fillRenderer.renderSegs('highlight', segs)

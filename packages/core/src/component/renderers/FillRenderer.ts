@@ -1,7 +1,7 @@
 import { cssToStr } from '../../util/html'
 import { htmlToElements, removeElement, elementMatches } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
-import { filterSegsViaEls } from '../event-rendering'
+import { filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import { ComponentContext } from '../Component'
 
 
@@ -38,7 +38,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
     this.segsByType[type] = renderedSegs
 
     if (type === 'bgEvent') {
-      this.context.view.triggerRenderedSegs(renderedSegs, false) // isMirror=false
+      triggerRenderedSegs(this.context, renderedSegs, false) // isMirror=false
     }
 
     this.dirtySizeFlags[type] = true
@@ -52,7 +52,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
     if (segs) {
 
       if (type === 'bgEvent') {
-        this.context.view.triggerWillRemoveSegs(segs, false) // isMirror=false
+        triggerWillRemoveSegs(this.context, segs, false) // isMirror=false
       }
 
       this.detachSegs(type, segs)
@@ -85,7 +85,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
 
       if (type === 'bgEvent') {
         segs = filterSegsViaEls(
-          this.context.view,
+          this.context,
           segs,
           false // isMirror. background events can never be mirror elements
         )

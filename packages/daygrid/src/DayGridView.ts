@@ -1,7 +1,6 @@
 import {
   DayHeader,
   ComponentContext,
-  ViewSpec,
   DateProfileGenerator,
   DateProfile,
   ViewProps,
@@ -20,17 +19,18 @@ export default class DayGridView extends AbstractDayGridView {
 
   private buildDayTable = memoize(buildDayTable)
 
-  constructor(_context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
-    super(_context, viewSpec, dateProfileGenerator, parentEl)
+  setContext(context: ComponentContext) {
+    super.setContext(context)
 
-    if (this.opt('columnHeader')) {
+    if (context.options.columnHeader) {
       this.header = new DayHeader(
-        this.context,
         this.el.querySelector('.fc-head-container')
       )
+      this.header.setContext(context)
     }
 
-    this.simpleDayGrid = new SimpleDayGrid(this.context, this.dayGrid)
+    this.simpleDayGrid = new SimpleDayGrid(this.dayGrid)
+    this.simpleDayGrid.setContext(context)
   }
 
   destroy() {
@@ -49,7 +49,7 @@ export default class DayGridView extends AbstractDayGridView {
     let { dateProfile } = this.props
 
     let dayTable = this.dayTable =
-      this.buildDayTable(dateProfile, this.dateProfileGenerator)
+      this.buildDayTable(dateProfile, props.dateProfileGenerator)
 
     if (this.header) {
       this.header.receiveProps({
@@ -71,7 +71,7 @@ export default class DayGridView extends AbstractDayGridView {
       eventDrag: props.eventDrag,
       eventResize: props.eventResize,
       isRigid: this.hasRigidRows(),
-      nextDayThreshold: this.nextDayThreshold
+      nextDayThreshold: this.context.nextDayThreshold
     })
   }
 

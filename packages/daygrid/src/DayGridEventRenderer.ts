@@ -81,8 +81,9 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // the segments. Returns object with a bunch of internal data about how the render was calculated.
   // NOTE: modifies rowSegs
   renderSegRow(row, rowSegs) {
+    let { isRtl } = this.context
     let { dayGrid } = this
-    let { colCnt, isRtl } = dayGrid
+    let { colCnt } = dayGrid
     let segLevels = this.buildSegLevels(rowSegs) // group into sub-arrays of levels
     let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
     let tbody = document.createElement('tbody')
@@ -155,7 +156,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
       let introHtml = dayGrid.renderProps.renderIntroHtml()
       if (introHtml) {
-        if (dayGrid.isRtl) {
+        if (isRtl) {
           appendToElement(tr, introHtml)
         } else {
           prependToElement(tr, introHtml)
@@ -179,7 +180,8 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
   // Stacks a flat array of segments, which are all assumed to be in the same row, into subarrays of vertical levels.
   // NOTE: modifies segs
   buildSegLevels(segs: Seg[]) {
-    let { isRtl, colCnt } = this.dayGrid
+    let { isRtl } = this.context
+    let { colCnt } = this.dayGrid
     let levels = []
     let i
     let seg

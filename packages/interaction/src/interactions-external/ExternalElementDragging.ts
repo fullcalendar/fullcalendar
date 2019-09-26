@@ -79,7 +79,7 @@ export default class ExternalElementDragging {
     }
 
     if (hit) {
-      receivingCalendar = hit.component.calendar
+      receivingCalendar = hit.component.context.calendar
 
       if (this.canDropElOnCalendar(ev.subjectEl as HTMLElement, receivingCalendar)) {
 
@@ -128,7 +128,7 @@ export default class ExternalElementDragging {
 
     if (receivingCalendar && droppableEvent) {
       let finalHit = this.hitDragging.finalHit!
-      let finalView = finalHit.component.view
+      let finalView = finalHit.component.context.view
       let dragMeta = this.dragMeta!
       let arg = {
         ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),

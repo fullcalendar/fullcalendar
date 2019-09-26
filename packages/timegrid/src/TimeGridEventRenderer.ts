@@ -3,7 +3,8 @@ import {
   removeElement, applyStyle,
   createFormatter, DateFormatter,
   FgEventRenderer, buildSegCompareObj,
-  Seg, isMultiDayRange, compareByFieldSpecs
+  Seg, isMultiDayRange, compareByFieldSpecs,
+  computeEventDraggable, computeEventStartResizable, computeEventEndResizable
 } from '@fullcalendar/core'
 import TimeGrid from './TimeGrid'
 
@@ -102,14 +103,13 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
   // Renders the HTML for a single event segment's default rendering
   renderSegHtml(seg: Seg, mirrorInfo) {
-    let { view } = this.context
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
     let allDay = eventDef.allDay
-    let isDraggable = view.computeEventDraggable(eventDef, eventUi)
-    let isResizableFromStart = seg.isStart && view.computeEventStartResizable(eventDef, eventUi)
-    let isResizableFromEnd = seg.isEnd && view.computeEventEndResizable(eventDef, eventUi)
+    let isDraggable = computeEventDraggable(this.context, eventDef, eventUi)
+    let isResizableFromStart = seg.isStart && computeEventStartResizable(this.context, eventDef, eventUi)
+    let isResizableFromEnd = seg.isEnd && computeEventEndResizable(this.context, eventDef, eventUi)
     let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeText
@@ -254,7 +254,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
       // put segments that are closer to initial edge first (and favor ones with no coords yet)
       { field: 'backwardCoord', order: 1 }
     ].concat(
-      this.context.view.eventOrderSpecs
+      this.context.eventOrderSpecs
     )
 
     objs.sort(function(obj0, obj1) {
@@ -294,7 +294,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
     let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
     let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point
     let props = this.timeGrid.generateSegVerticalCss(seg) as any // get top/bottom first
-    let isRtl = this.timeGrid.isRtl
+    let isRtl = this.context.isRtl
     let left // amount of space from left edge, a fraction of the total width
     let right // amount of space from right edge, a fraction of the total width
 

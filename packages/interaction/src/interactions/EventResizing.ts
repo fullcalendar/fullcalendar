@@ -37,7 +37,7 @@ export default class EventDragging extends Interaction {
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.pointer.selector = '.fc-resizer'
     dragging.touchScrollAllowed = false
-    dragging.autoScroller.isEnabled = component.opt('dragScroll')
+    dragging.autoScroller.isEnabled = component.context.options.dragScroll
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsToStore(settings))
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
@@ -55,7 +55,7 @@ export default class EventDragging extends Interaction {
     let seg = this.querySeg(ev)!
     let eventRange = this.eventRange = seg.eventRange!
 
-    this.dragging.minDistance = component.opt('eventDragMinDistance')
+    this.dragging.minDistance = component.context.options.eventDragMinDistance
 
     // if touch, need to be working with a selected event
     this.dragging.setIgnoreMove(
@@ -65,7 +65,7 @@ export default class EventDragging extends Interaction {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    let calendar = this.component.calendar
+    let { calendar, view } = this.component.context
     let eventRange = this.eventRange!
 
     this.relevantEvents = getRelevantEvents(
@@ -81,13 +81,13 @@ export default class EventDragging extends Interaction {
         el: this.draggingSeg.el,
         event: new EventApi(calendar, eventRange.def, eventRange.instance),
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-        view: this.component.view
+        view
       }
     ])
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
-    let calendar = this.component.calendar
+    let calendar = this.component.context.calendar
     let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
     let eventInstance = this.eventRange.instance!
@@ -151,8 +151,7 @@ export default class EventDragging extends Interaction {
   }
 
   handleDragEnd = (ev: PointerDragEvent) => {
-    let calendar = this.component.calendar
-    let view = this.component.view
+    let { calendar, view } = this.component.context
     let eventDef = this.eventRange!.def
     let eventInstance = this.eventRange!.instance
     let eventApi = new EventApi(calendar, eventDef, eventInstance)
@@ -215,7 +214,7 @@ export default class EventDragging extends Interaction {
 }
 
 function computeMutation(hit0: Hit, hit1: Hit, isFromStart: boolean, instanceRange: DateRange, transforms: EventResizeJoinTransforms[]): EventMutation | null {
-  let dateEnv = hit0.component.dateEnv
+  let dateEnv = hit0.component.context.dateEnv
   let date0 = hit0.dateSpan.range.start
   let date1 = hit1.dateSpan.range.start
 

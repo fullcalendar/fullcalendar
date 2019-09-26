@@ -42,27 +42,31 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
 
 
-  constructor(context: ComponentContext, el: HTMLElement) {
-    super(context)
+  constructor(el: HTMLElement) {
+    super()
 
     this.el = el
+    this.computeTitle = memoize(computeTitle)
 
     prependToElement(
       el,
       this.contentEl = createElement('div', { className: 'fc-view-container' })
     )
+  }
 
-    let { calendar } = this
+  setContext(context: ComponentContext) {
+    super.setContext(context)
+
+    this.toggleElClassNames(true)
+
+    let { calendar } = context
+
     for (let modifyViewContainer of calendar.pluginSystem.hooks.viewContainerModifiers) {
       modifyViewContainer(this.contentEl, calendar)
     }
 
-    this.toggleElClassNames(true)
-
-    this.computeTitle = memoize(computeTitle)
-
     this.parseBusinessHours = memoize((input) => {
-      return parseBusinessHours(input, this.calendar)
+      return parseBusinessHours(input, calendar)
     })
   }
 
@@ -85,10 +89,12 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     super.destroy()
   }
 
+  // needs context already assigned
   toggleElClassNames(bool: boolean) {
+    let { theme, options } = this.context
     let classList = this.el.classList
-    let dirClassName = 'fc-' + this.opt('dir')
-    let themeClassName = this.theme.getClass('widget')
+    let dirClassName = 'fc-' + options.dir
+    let themeClassName = theme.getClass('widget')
 
     if (bool) {
       classList.add('fc')
@@ -105,18 +111,21 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     this.freezeHeight()
 
     let title = this.computeTitle(props.dateProfile, props.viewSpec.options)
-    this._renderToolbars(props.viewSpec, props.dateProfile, props.currentDate, props.dateProfileGenerator, title)
+    this._renderToolbars(props.viewSpec, props.dateProfile, props.currentDate, title)
     this.renderView(props, title)
 
     this.updateSize()
     this.thawHeight()
   }
 
-  renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, currentDate: DateMarker, dateProfileGenerator: DateProfileGenerator, title: string) {
-    let headerLayout = this.opt('header')
-    let footerLayout = this.opt('footer')
+  renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, currentDate: DateMarker, title: string) {
+    let { context, header, footer } = this
+    let { options, calendar } = context
+    let headerLayout = options.header
+    let footerLayout = options.footer
+    let { dateProfileGenerator } = this.props
 
-    let now = this.calendar.getNow()
+    let now = calendar.getNow()
     let todayInfo = dateProfileGenerator.build(now)
     let prevInfo = dateProfileGenerator.buildPrev(dateProfile, currentDate)
     let nextInfo = dateProfileGenerator.buildNext(dateProfile, currentDate)
@@ -130,36 +139,39 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     }
 
     if (headerLayout) {
-      if (!this.header) {
-        this.header = new Toolbar(this.context, 'fc-header-toolbar')
-        prependToElement(this.el, this.header.el)
+      if (!header) {
+        header = this.header = new Toolbar('fc-header-toolbar')
+        header.setContext(context)
+        prependToElement(this.el, header.el)
       }
-      this.header.receiveProps({
+      header.receiveProps({
         layout: headerLayout,
         ...toolbarProps
       })
-    } else if (this.header) {
-      this.header.destroy()
-      this.header = null
+    } else if (header) {
+      header.destroy()
+      header = this.header = null
     }
 
     if (footerLayout) {
-      if (!this.footer) {
-        this.footer = new Toolbar(this.context, 'fc-footer-toolbar')
-        appendToElement(this.el, this.footer.el)
+      if (!footer) {
+        footer = this.footer = new Toolbar('fc-footer-toolbar')
+        footer.setContext(context)
+        appendToElement(this.el, footer.el)
       }
-      this.footer.receiveProps({
+      footer.receiveProps({
         layout: footerLayout,
         ...toolbarProps
       })
-    } else if (this.footer) {
-      this.footer.destroy()
-      this.footer = null
+    } else if (footer) {
+      footer.destroy()
+      footer = this.footer = null
     }
   }
 
   renderView(props: CalendarComponentProps, title: string) {
     let { view } = this
+    let { calendar, options } = this.context
     let { viewSpec, dateProfileGenerator } = props
 
     if (!view || view.viewSpec !== viewSpec) {
@@ -168,18 +180,10 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         view.destroy()
       }
 
-      view = this.view = new viewSpec['class'](
-        {
-          calendar: this.calendar,
-          view: null, // HACK. will get populated by Component
-          dateEnv: this.dateEnv,
-          theme: this.theme,
-          options: viewSpec.options
-        },
-        viewSpec,
-        dateProfileGenerator,
-        this.contentEl
-      )
+      view = this.view = new viewSpec['class'](viewSpec, this.contentEl)
+      let viewContext = this.context.extend(viewSpec.options, view)
+      view.setContext(viewContext)
+
     } else {
       view.addScroll(view.queryScroll())
     }
@@ -187,6 +191,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     view.title = title // for the API
 
     let viewProps = {
+      dateProfileGenerator,
       dateProfile: props.dateProfile,
       businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
       eventStore: props.eventStore,
@@ -197,12 +202,12 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       eventResize: props.eventResize
     }
 
-    let transformers = this.buildViewPropTransformers(this.calendar.pluginSystem.hooks.viewPropsTransformers)
+    let transformers = this.buildViewPropTransformers(calendar.pluginSystem.hooks.viewPropsTransformers)
 
     for (let transformer of transformers) {
       __assign(
         viewProps,
-        transformer.transform(viewProps, viewSpec, props, view)
+        transformer.transform(viewProps, viewSpec, props, options)
       )
     }
 
@@ -230,7 +235,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   }
 
   computeHeightVars() {
-    let { calendar } = this // yuck. need to handle dynamic options
+    let { calendar } = this.context // yuck. need to handle dynamic options
     let heightInput = calendar.opt('height')
     let contentHeightInput = calendar.opt('contentHeight')
 

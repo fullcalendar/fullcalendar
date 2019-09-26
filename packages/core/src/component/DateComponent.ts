@@ -1,4 +1,4 @@
-import Component, { ComponentContext } from './Component'
+import Component from './Component'
 import { EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInstanceHash } from '../structs/event'
@@ -6,12 +6,9 @@ import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from '../interactions/hit'
 import { elementClosest, removeElement } from '../util/dom-manip'
 import { isDateSelectionValid, isInteractionValid } from '../validation'
-import EventApi from '../api/EventApi'
 import FgEventRenderer from './renderers/FgEventRenderer'
 import FillRenderer from './renderers/FillRenderer'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import View from '../View'
-import { EventHandlerName, EventHandlerArgs } from '../types/input-types'
 
 export type DateComponentHash = { [uid: string]: DateComponent<any> }
 
@@ -57,8 +54,8 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   el: HTMLElement // passed in to constructor
 
 
-  constructor(context: ComponentContext, el: HTMLElement, isView?: boolean) {
-    super(context, isView)
+  constructor(el: HTMLElement) {
+    super()
 
     this.el = el
   }
@@ -121,7 +118,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // -----------------------------------------------------------------------------------------------------------------
 
   isInteractionValid(interaction: EventInteractionState) {
-    let { calendar } = this
+    let { calendar } = this.context
     let dateProfile = (this.props as any).dateProfile // HACK
     let instances = interaction.mutatedEvents.instances
 
@@ -137,6 +134,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   }
 
   isDateSelectionValid(selection: DateSpan): boolean {
+    let { calendar } = this.context
     let dateProfile = (this.props as any).dateProfile // HACK
 
     if (
@@ -146,88 +144,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
       return false
     }
 
-    return isDateSelectionValid(selection, this.calendar)
-  }
-
-
-  // Triggering
-  // -----------------------------------------------------------------------------------------------------------------
-  // TODO: move to Calendar
-
-
-  publiclyTrigger<T extends EventHandlerName>(name: T, args?: EventHandlerArgs<T>) {
-    let calendar = this.calendar
-
-    return calendar.publiclyTrigger(name, args)
-  }
-
-
-  publiclyTriggerAfterSizing<T extends EventHandlerName>(name: T, args: EventHandlerArgs<T>) {
-    let calendar = this.calendar
-
-    return calendar.publiclyTriggerAfterSizing(name, args)
-  }
-
-
-  hasPublicHandlers<T extends EventHandlerName>(name: T) {
-    let calendar = this.calendar
-
-    return calendar.hasPublicHandlers(name)
-  }
-
-
-  triggerRenderedSegs(segs: Seg[], isMirrors: boolean) {
-    let { calendar } = this
-
-    if (this.hasPublicHandlers('eventPositioned')) {
-
-      for (let seg of segs) {
-        this.publiclyTriggerAfterSizing('eventPositioned', [
-          {
-            event: new EventApi(
-              calendar,
-              seg.eventRange.def,
-              seg.eventRange.instance
-            ),
-            isMirror: isMirrors,
-            isStart: seg.isStart,
-            isEnd: seg.isEnd,
-            el: seg.el,
-            view: this as unknown as View // safe to cast because this method is only called on context.view
-          }
-        ])
-      }
-    }
-
-    if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
-      calendar.afterSizingTriggers._eventsPositioned = [ null ] // fire once
-    }
-  }
-
-  triggerWillRemoveSegs(segs: Seg[], isMirrors: boolean) {
-    let { calendar } = this
-
-    for (let seg of segs) {
-      calendar.trigger('eventElRemove', seg.el)
-    }
-
-    if (this.hasPublicHandlers('eventDestroy')) {
-
-      for (let seg of segs) {
-        this.publiclyTrigger('eventDestroy', [
-          {
-            event: new EventApi(
-              calendar,
-              seg.eventRange.def,
-              seg.eventRange.instance
-            ),
-            isMirror: isMirrors,
-            el: seg.el,
-            view: this as unknown as View // safe to cast because this method is only called on context.view
-          }
-        ])
-      }
-    }
+    return isDateSelectionValid(selection, calendar)
   }
 
 

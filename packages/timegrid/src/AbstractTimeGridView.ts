@@ -2,7 +2,7 @@ import {
   findElements, createElement, htmlEscape,
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
   ScrollComponent,
-  View, ViewSpec, DateProfileGenerator,
+  View,
   ComponentContext,
   createFormatter, diffDays,
   buildGotoAnchorHtml, getAllDayHtml, Duration
@@ -31,13 +31,7 @@ export default abstract class TimeGridView extends View {
   protected splitter = new AllDaySplitter()
 
 
-  constructor(
-    context: ComponentContext,
-    viewSpec: ViewSpec,
-    dateProfileGenerator: DateProfileGenerator,
-    parentEl: HTMLElement
-  ) {
-    super(context, viewSpec, dateProfileGenerator, parentEl)
+  setContext(context: ComponentContext) {
 
     this.el.classList.add('fc-timeGrid-view')
     this.el.innerHTML = this.renderSkeletonHtml()
@@ -54,18 +48,17 @@ export default abstract class TimeGridView extends View {
     timeGridWrapEl.appendChild(timeGridEl)
 
     this.timeGrid = new TimeGrid(
-      this.context,
       timeGridEl,
       {
         renderBgIntroHtml: this.renderTimeGridBgIntroHtml,
         renderIntroHtml: this.renderTimeGridIntroHtml
       }
     )
+    this.timeGrid.setContext(context)
 
-    if (this.opt('allDaySlot')) { // should we display the "all-day" area?
+    if (context.options.allDaySlot) { // should we display the "all-day" area?
 
       this.dayGrid = new DayGrid( // the all-day subcomponent of this view
-        this.context,
         this.el.querySelector('.fc-day-grid'),
         {
           renderNumberIntroHtml: this.renderDayGridIntroHtml, // don't want numbers
@@ -75,6 +68,7 @@ export default abstract class TimeGridView extends View {
           cellWeekNumbersVisible: false
         }
       )
+      this.dayGrid.setContext(context)
 
       // have the day-grid extend it's coordinate area over the <hr> dividing the two grids
       let dividerEl = this.el.querySelector('.fc-divider') as HTMLElement
@@ -103,11 +97,11 @@ export default abstract class TimeGridView extends View {
   // Builds the HTML skeleton for the view.
   // The day-grid and time-grid components will render inside containers defined by this HTML.
   renderSkeletonHtml() {
-    let { theme } = this
+    let { theme, options } = this.context
 
     return '' +
       '<table class="' + theme.getClass('tableGrid') + '">' +
-        (this.opt('columnHeader') ?
+        (options.columnHeader ?
           '<thead class="fc-head">' +
             '<tr>' +
               '<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
@@ -118,7 +112,7 @@ export default abstract class TimeGridView extends View {
         '<tbody class="fc-body">' +
           '<tr>' +
             '<td class="' + theme.getClass('widgetContent') + '">' +
-              (this.opt('allDaySlot') ?
+              (options.allDaySlot ?
                 '<div class="fc-day-grid"></div>' +
                 '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" />' :
                 ''
@@ -197,7 +191,7 @@ export default abstract class TimeGridView extends View {
     if (this.dayGrid) {
       this.dayGrid.removeSegPopover() // kill the "more" popover if displayed
 
-      eventLimit = this.opt('eventLimit')
+      eventLimit = this.context.options.eventLimit
       if (eventLimit && typeof eventLimit !== 'number') {
         eventLimit = TIMEGRID_ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
       }
@@ -281,18 +275,19 @@ export default abstract class TimeGridView extends View {
 
   // Generates the HTML that will go before the day-of week header cells
   renderHeadIntroHtml = () => {
-    let { theme, dateEnv } = this
+    let { theme, dateEnv, options } = this.context
     let range = this.props.dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
     let weekText
 
-    if (this.opt('weekNumbers')) {
+    if (options.weekNumbers) {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
       return '' +
         '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '" ' + this.axisStyleAttr() + '>' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-            this,
+            options,
+            dateEnv,
             { date: range.start, type: 'week', forceOff: dayCnt > 1 },
             htmlEscape(weekText) // inner HTML
           ) +
@@ -318,7 +313,7 @@ export default abstract class TimeGridView extends View {
 
   // Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
   renderTimeGridBgIntroHtml = () => {
-    let { theme } = this
+    let { theme } = this.context
 
     return '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + this.axisStyleAttr() + '></td>'
   }
@@ -337,12 +332,12 @@ export default abstract class TimeGridView extends View {
 
   // Generates the HTML that goes before the all-day cells
   renderDayGridBgIntroHtml = () => {
-    let { theme } = this
+    let { theme, options } = this.context
 
     return '' +
       '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + this.axisStyleAttr() + '>' +
         '<span>' + // needed for matchCellWidths
-          getAllDayHtml(this) +
+          getAllDayHtml(options) +
         '</span>' +
       '</td>'
   }

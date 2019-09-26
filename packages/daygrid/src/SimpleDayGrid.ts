@@ -34,10 +34,14 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
 
   private slicer = new DayGridSlicer()
 
-  constructor(context: ComponentContext, dayGrid: DayGrid) {
-    super(context, dayGrid.el)
+  constructor(dayGrid: DayGrid) {
+    super(dayGrid.el)
 
     this.dayGrid = dayGrid
+  }
+
+  setContext(context: ComponentContext) {
+    super.setContext(context)
 
     context.calendar.registerInteractiveComponent(this, { el: this.dayGrid.el })
   }
@@ -45,7 +49,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
   destroy() {
     super.destroy()
 
-    this.calendar.unregisterInteractiveComponent(this)
+    this.context.calendar.unregisterInteractiveComponent(this)
   }
 
   render(props: SimpleDayGridProps) {

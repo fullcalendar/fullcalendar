@@ -100,8 +100,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
 
 
-  constructor(context, el, renderProps: RenderProps) {
-    super(context, el)
+  constructor(el, renderProps: RenderProps) {
+    super(el)
 
     let eventRenderer = this.eventRenderer = new DayGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new DayGridFillRenderer(this)
@@ -211,7 +211,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
 
   _renderCells(cells: DayGridCell[][], isRigid: boolean) {
-    let { view, dateEnv } = this
+    let { calendar, view, isRtl, dateEnv } = this.context
     let { rowCnt, colCnt } = this
     let html = ''
     let row
@@ -225,7 +225,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
     this.rowEls = findElements(this.el, '.fc-row')
     this.cellEls = findElements(this.el, '.fc-day, .fc-disabled-day')
 
-    if (this.isRtl) {
+    if (isRtl) {
       this.cellEls.reverse()
     }
 
@@ -246,7 +246,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
     // trigger dayRender with each cell's element
     for (row = 0; row < rowCnt; row++) {
       for (col = 0; col < colCnt; col++) {
-        this.publiclyTrigger('dayRender', [
+        calendar.publiclyTrigger('dayRender', [
           {
             date: dateEnv.toDate(cells[row][col].date),
             el: this.getCellEl(row, col),
@@ -268,7 +268,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   // Generates the HTML for a single row, which is a div that wraps a table.
   // `row` is the row number.
   renderDayRowHtml(row, isRigid) {
-    let { theme } = this
+    let { theme } = this.context
     let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
 
     if (isRigid) {
@@ -319,13 +319,14 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
 
   renderNumberTrHtml(row: number) {
+    let { isRtl } = this.context
     let intro = this.renderProps.renderNumberIntroHtml(row, this)
 
     return '' +
       '<tr>' +
-        (this.isRtl ? '' : intro) +
+        (isRtl ? '' : intro) +
         this.renderNumberCellsHtml(row) +
-        (this.isRtl ? intro : '') +
+        (isRtl ? intro : '') +
       '</tr>'
   }
 
@@ -340,7 +341,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
       htmls.push(this.renderNumberCellHtml(date))
     }
 
-    if (this.isRtl) {
+    if (this.context.isRtl) {
       htmls.reverse()
     }
 
@@ -351,7 +352,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   // Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
   // The number row will only exist if either day numbers or week numbers are turned on.
   renderNumberCellHtml(date) {
-    let { view, dateEnv } = this
+    let { dateEnv, options } = this.context
     let html = ''
     let isDateValid = rangeContainsMarker(this.props.dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let isDayNumberVisible = this.getIsDayNumbersVisible() && isDateValid
@@ -379,7 +380,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
     if (this.renderProps.cellWeekNumbersVisible && (date.getUTCDay() === weekCalcFirstDow)) {
       html += buildGotoAnchorHtml(
-        view,
+        options,
+        dateEnv,
         { date, type: 'week' },
         { 'class': 'fc-week-number' },
         dateEnv.format(date, WEEK_NUM_FORMAT) // inner HTML
@@ -388,7 +390,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
     if (isDayNumberVisible) {
       html += buildGotoAnchorHtml(
-        view,
+        options,
+        dateEnv,
         date,
         { 'class': 'fc-day-number' },
         dateEnv.format(date, DAY_NUM_FORMAT) // inner HTML
@@ -406,12 +409,13 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
 
   updateSize(isResize: boolean) {
+    let { calendar } = this.context
     let { fillRenderer, eventRenderer, mirrorRenderer } = this
 
     if (
       isResize ||
       this.isCellSizesDirty ||
-      this.view.calendar.isEventsUpdated // hack
+      calendar.isEventsUpdated // hack
     ) {
       this.buildPositionCaches()
       this.isCellSizesDirty = false
@@ -589,7 +593,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   // `row` is the row number.
   // `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
   limitRow(row, levelLimit) {
-    let { colCnt, isRtl } = this
+    let { colCnt } = this
+    let { isRtl } = this.context
     let rowStruct = this.eventRenderer.rowStructs[row]
     let moreNodes = [] // array of "more" <a> links and <td> DOM nodes
     let col = 0 // col #, left-to-right (not chronologically)
@@ -707,13 +712,13 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   // Renders an <a> element that represents hidden event element for a cell.
   // Responsible for attaching click handler as well.
   renderMoreLink(row, col, hiddenSegs) {
-    let { view, dateEnv } = this
+    let { calendar, view, dateEnv, options, isRtl } = this.context
 
     let a = createElement('a', { className: 'fc-more' })
     a.innerText = this.getMoreLinkText(hiddenSegs.length)
     a.addEventListener('click', (ev) => {
-      let clickOption = this.opt('eventLimitClick')
-      let _col = this.isRtl ? this.colCnt - col - 1 : col // HACK: props.cells has different dir system?
+      let clickOption = options.eventLimitClick
+      let _col = isRtl ? this.colCnt - col - 1 : col // HACK: props.cells has different dir system?
       let date = this.props.cells[row][_col].date
       let moreEl = ev.currentTarget as HTMLElement
       let dayEl = this.getCellEl(row, col)
@@ -725,7 +730,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
       if (typeof clickOption === 'function') {
         // the returned value can be an atomic option
-        clickOption = this.publiclyTrigger('eventLimitClick', [
+        clickOption = calendar.publiclyTrigger('eventLimitClick', [
           {
             date: dateEnv.toDate(date),
             allDay: true,
@@ -742,7 +747,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
       if (clickOption === 'popover') {
         this.showSegPopover(row, col, moreEl, reslicedAllSegs)
       } else if (typeof clickOption === 'string') { // a view name
-        view.calendar.zoomTo(date, clickOption)
+        calendar.zoomTo(date, clickOption)
       }
     })
 
@@ -752,8 +757,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
   // Reveals the popover that displays all events within a cell
   showSegPopover(row, col, moreLink: HTMLElement, segs) {
-    let { calendar, view, theme } = this
-    let _col = this.isRtl ? this.colCnt - col - 1 : col // HACK: props.cells has different dir system?
+    let { calendar, view, theme, isRtl } = this.context
+    let _col = isRtl ? this.colCnt - col - 1 : col // HACK: props.cells has different dir system?
     let moreWrap = moreLink.parentNode as HTMLElement // the <div> wrapper around the <a>
     let topEl: HTMLElement // the element we want to match the top coordinate of
     let options
@@ -770,10 +775,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
       top: computeRect(topEl).top,
       autoHide: true, // when the user clicks elsewhere, hide the popover
       content: (el) => {
-        this.segPopoverTile = new DayTile(
-          this.context,
-          el
-        )
+        this.segPopoverTile = new DayTile(el)
+        this.segPopoverTile.setContext(this.context)
         this.updateSegPopoverTile(
           this.props.cells[row][_col].date,
           segs
@@ -789,7 +792,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
     // Determine horizontal coordinate.
     // We use the moreWrap instead of the <td> to avoid border confusion.
-    if (this.isRtl) {
+    if (isRtl) {
       options.right = computeRect(moreWrap).right + 1 // +1 to be over cell border
     } else {
       options.left = computeRect(moreWrap).left - 1 // -1 to be over cell border
@@ -834,7 +837,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
   // Generates the text that should be inside a "more" link, given the number of events it represents
   getMoreLinkText(num) {
-    let opt = this.opt('eventLimitText')
+    let opt = this.context.options.eventLimitText
 
     if (typeof opt === 'function') {
       return opt(num)

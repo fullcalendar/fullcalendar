@@ -3,7 +3,7 @@ import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
 import { EventUi } from '../event-ui'
-import { EventRenderRange, filterSegsViaEls } from '../event-rendering'
+import { EventRenderRange, filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import { Seg } from '../DateComponent'
 import { ComponentContext } from '../Component'
 
@@ -37,12 +37,12 @@ export default abstract class FgEventRenderer {
     this.attachSegs(segs, mirrorInfo)
 
     this.isSizeDirty = true
-    this.context.view.triggerRenderedSegs(this.segs, Boolean(mirrorInfo))
+    triggerRenderedSegs(this.context, this.segs, Boolean(mirrorInfo))
   }
 
 
   unrender(_segs: Seg[], mirrorInfo?) {
-    this.context.view.triggerWillRemoveSegs(this.segs, Boolean(mirrorInfo))
+    triggerWillRemoveSegs(this.context, this.segs, Boolean(mirrorInfo))
     this.detachSegs(this.segs)
     this.segs = []
   }
@@ -102,7 +102,7 @@ export default abstract class FgEventRenderer {
         }
       })
 
-      segs = filterSegsViaEls(this.context.view, segs, Boolean(mirrorInfo))
+      segs = filterSegsViaEls(this.context, segs, Boolean(mirrorInfo))
     }
 
     return segs
@@ -227,7 +227,7 @@ export default abstract class FgEventRenderer {
 
 
   sortEventSegs(segs): Seg[] {
-    let specs = this.context.view.eventOrderSpecs
+    let specs = this.context.eventOrderSpecs
     let objs = segs.map(buildSegCompareObj)
 
     objs.sort(function(obj0, obj1) {

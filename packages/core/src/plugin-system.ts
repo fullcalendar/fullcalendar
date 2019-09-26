@@ -4,7 +4,7 @@ import { eventDefMutationApplier } from './structs/event-mutation'
 import Calendar, { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './Calendar'
 import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpec } from './structs/view-spec'
-import View, { ViewProps } from './View'
+import { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
 import { isPropsValidTester } from './validation'
 import { eventDragMutationMassager, eventIsDraggableTransformer, EventDropTransformers } from './interactions/event-dragging'
@@ -86,7 +86,7 @@ export interface PluginDef extends PluginHooks {
 export type ViewPropsTransformerClass = new() => ViewPropsTransformer
 
 export interface ViewPropsTransformer {
-  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps, view: View): any
+  transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps, allOptions: any): any
 }
 
 export type ViewContainerModifier = (contentEl: HTMLElement, calendar: Calendar) => void

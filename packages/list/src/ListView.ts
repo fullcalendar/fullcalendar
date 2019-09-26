@@ -12,11 +12,9 @@ import {
   createFormatter,
   DateRange,
   intersectRanges,
-  DateProfileGenerator,
   DateProfile,
   buildGotoAnchorHtml,
   ComponentContext,
-  ViewSpec,
   EventUiHash,
   EventRenderRange,
   sliceEventStore,
@@ -43,8 +41,10 @@ export default class ListView extends View {
   private renderContent: MemoizedRendering<[Seg[]]>
 
 
-  constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
-    super(context, viewSpec, dateProfileGenerator, parentEl)
+  setContext(context: ComponentContext) {
+    super.setContext(context)
+
+    let { calendar, theme } = context
 
     let eventRenderer = this.eventRenderer = new ListEventRenderer(this)
     this.renderContent = memoizeRendering(
@@ -54,7 +54,7 @@ export default class ListView extends View {
 
     this.el.classList.add('fc-list-view')
 
-    let listViewClassNames = (this.theme.getClass('listView') || '').split(' ') // wish we didn't have to do this
+    let listViewClassNames = (theme.getClass('listView') || '').split(' ') // wish we didn't have to do this
     for (let listViewClassName of listViewClassNames) {
       if (listViewClassName) { // in case input was empty string
         this.el.classList.add(listViewClassName)
@@ -69,7 +69,7 @@ export default class ListView extends View {
     this.el.appendChild(this.scroller.el)
     this.contentEl = this.scroller.el // shortcut
 
-    context.calendar.registerInteractiveComponent(this, {
+    calendar.registerInteractiveComponent(this, {
       el: this.el
       // TODO: make aware that it doesn't do Hits
     })
@@ -91,7 +91,7 @@ export default class ListView extends View {
 
     this.renderContent.unrender()
     this.scroller.destroy() // will remove the Grid too
-    this.calendar.unregisterInteractiveComponent(this)
+    this.context.calendar.unregisterInteractiveComponent(this)
   }
 
 
@@ -121,7 +121,7 @@ export default class ListView extends View {
         eventStore,
         eventUiBases,
         this.props.dateProfile.activeRange,
-        this.nextDayThreshold
+        this.context.nextDayThreshold
       ).fg,
       dayRanges
     )
@@ -140,7 +140,7 @@ export default class ListView extends View {
 
 
   eventRangeToSegs(eventRange: EventRenderRange, dayRanges: DateRange[]) {
-    let { dateEnv, nextDayThreshold } = this
+    let { dateEnv, nextDayThreshold } = this.context
     let range = eventRange.range
     let allDay = eventRange.def.allDay
     let dayIndex
@@ -191,7 +191,7 @@ export default class ListView extends View {
       '<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
       '<div class="fc-list-empty-wrap1">' +
       '<div class="fc-list-empty">' +
-        htmlEscape(this.opt('noEventsMessage')) +
+        htmlEscape(this.context.options.noEventsMessage) +
       '</div>' +
       '</div>' +
       '</div>'
@@ -200,11 +200,12 @@ export default class ListView extends View {
 
   // called by ListEventRenderer
   renderSegList(allSegs) {
+    let { theme } = this.context
     let segsByDay = this.groupSegsByDay(allSegs) // sparse array
     let dayIndex
     let daySegs
     let i
-    let tableEl = htmlToElement('<table class="fc-list-table ' + this.calendar.theme.getClass('tableList') + '"><tbody></tbody></table>')
+    let tableEl = htmlToElement('<table class="fc-list-table ' + theme.getClass('tableList') + '"><tbody></tbody></table>')
     let tbodyEl = tableEl.querySelector('tbody')
 
     for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
@@ -246,16 +247,16 @@ export default class ListView extends View {
 
   // generates the HTML for the day headers that live amongst the event rows
   buildDayHeaderRow(dayDate) {
-    let { dateEnv } = this
-    let mainFormat = createFormatter(this.opt('listDayFormat')) // TODO: cache
-    let altFormat = createFormatter(this.opt('listDayAltFormat')) // TODO: cache
+    let { theme, dateEnv, options } = this.context
+    let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
+    let altFormat = createFormatter(options.listDayAltFormat) // TODO: cache
 
     return createElement('tr', {
       className: 'fc-list-heading',
       'data-date': dateEnv.formatIso(dayDate, { omitTime: true })
     }, '<td class="' + (
-      this.calendar.theme.getClass('tableListHeading') ||
-      this.calendar.theme.getClass('widgetHeader')
+      theme.getClass('tableListHeading') ||
+      theme.getClass('widgetHeader')
     ) + '" colspan="3">' +
       (mainFormat ?
         buildGotoAnchorHtml(

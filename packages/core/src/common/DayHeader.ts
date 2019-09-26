@@ -14,17 +14,27 @@ export interface DayTableHeaderProps {
 
 export default class DayHeader extends Component<DayTableHeaderProps> {
 
+  parentEl: HTMLElement
   el: HTMLElement
   thead: HTMLElement
 
-  constructor(context: ComponentContext, parentEl: HTMLElement) {
-    super(context)
+  constructor(parentEl: HTMLElement) {
+    super()
+
+    this.parentEl = parentEl
+  }
+
+  setContext(context: ComponentContext) {
+    super.setContext(context)
+
+    let { theme } = context
+    let { parentEl } = this
 
     parentEl.innerHTML = '' // because might be nbsp
     parentEl.appendChild(
       this.el = htmlToElement(
-        '<div class="fc-row ' + this.theme.getClass('headerRow') + '">' +
-          '<table class="' + this.theme.getClass('tableGrid') + '">' +
+        '<div class="fc-row ' + theme.getClass('headerRow') + '">' +
+          '<table class="' + theme.getClass('tableGrid') + '">' +
             '<thead></thead>' +
           '</table>' +
         '</div>'
@@ -47,7 +57,7 @@ export default class DayHeader extends Component<DayTableHeaderProps> {
     }
 
     let colHeadFormat = createFormatter(
-      this.opt('columnHeaderFormat') ||
+      this.context.options.columnHeaderFormat ||
       computeFallbackHeaderFormat(datesRepDistinctDays, dates.length)
     )
 
@@ -64,7 +74,7 @@ export default class DayHeader extends Component<DayTableHeaderProps> {
       )
     }
 
-    if (this.isRtl) {
+    if (this.context.isRtl) {
       parts.reverse()
     }
 

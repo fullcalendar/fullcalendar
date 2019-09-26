@@ -1,22 +1,20 @@
-import { parseFieldSpecs } from './util/misc'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { DateMarker, addMs } from './datelib/marker'
 import { createDuration, Duration } from './datelib/duration'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { ViewSpec } from './structs/view-spec'
 import { createElement } from './util/dom-manip'
-import { ComponentContext } from './component/Component'
 import DateComponent from './component/DateComponent'
 import { EventStore } from './structs/event-store'
-import { EventUiHash, EventUi } from './component/event-ui'
+import { EventUiHash } from './component/event-ui'
 import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { memoizeRendering } from './component/memoized-rendering'
 import { __assign } from 'tslib'
-import { EventDef } from './structs/event'
 
 export interface ViewProps {
+  dateProfileGenerator: DateProfileGenerator
   dateProfile: DateProfile
   businessHours: EventStore
   eventStore: EventStore
@@ -41,14 +39,10 @@ export default abstract class View extends DateComponent<ViewProps> {
   hasHandlers: EmitterInterface['hasHandlers']
 
   viewSpec: ViewSpec
-  dateProfileGenerator: DateProfileGenerator
   type: string // subclass' view name (string). for the API
   title: string // the text that will be displayed in the header's title. SET BY CALLER for API
 
   queuedScroll: any
-
-  eventOrderSpecs: any // criteria for ordering events when they have same date/time
-  nextDayThreshold: Duration
 
   // now indicator
   isNowIndicatorRendered: boolean
@@ -66,18 +60,13 @@ export default abstract class View extends DateComponent<ViewProps> {
   private renderEventResizeMem = memoizeRendering(this.renderEventResizeWrap, this.unrenderEventResizeWrap, [ this.renderDatesMem ])
 
 
-  constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
+  constructor(viewSpec: ViewSpec, parentEl: HTMLElement) {
     super(
-      context,
-      createElement('div', { className: 'fc-view fc-' + viewSpec.type + '-view' }),
-      true // isView (HACK)
+      createElement('div', { className: 'fc-view fc-' + viewSpec.type + '-view' })
     )
 
     this.viewSpec = viewSpec
-    this.dateProfileGenerator = dateProfileGenerator
     this.type = viewSpec.type
-    this.eventOrderSpecs = parseFieldSpecs(this.opt('eventOrder'))
-    this.nextDayThreshold = createDuration(this.opt('nextDayThreshold'))
 
     parentEl.appendChild(this.el)
     this.initialize()
@@ -93,19 +82,19 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   get activeStart(): Date {
-    return this.dateEnv.toDate(this.props.dateProfile.activeRange.start)
+    return this.context.dateEnv.toDate(this.props.dateProfile.activeRange.start)
   }
 
   get activeEnd(): Date {
-    return this.dateEnv.toDate(this.props.dateProfile.activeRange.end)
+    return this.context.dateEnv.toDate(this.props.dateProfile.activeRange.end)
   }
 
   get currentStart(): Date {
-    return this.dateEnv.toDate(this.props.dateProfile.currentRange.start)
+    return this.context.dateEnv.toDate(this.props.dateProfile.currentRange.start)
   }
 
   get currentEnd(): Date {
-    return this.dateEnv.toDate(this.props.dateProfile.currentRange.end)
+    return this.context.dateEnv.toDate(this.props.dateProfile.currentRange.end)
   }
 
 
@@ -136,7 +125,7 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
-    let { calendar } = this
+    let { calendar } = this.context
 
     if (
       isResize || // HACKS...
@@ -161,7 +150,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   renderDatesWrap(dateProfile: DateProfile) {
     this.renderDates(dateProfile)
     this.addScroll({
-      duration: createDuration(this.opt('scrollTime'))
+      duration: createDuration(this.context.options.scrollTime)
     })
     this.startNowIndicator(dateProfile) // shouldn't render yet because updateSize will be called soon
   }
@@ -215,27 +204,8 @@ export default abstract class View extends DateComponent<ViewProps> {
       eventStore,
       props.eventUiBases,
       props.dateProfile.activeRange,
-      allDay ? this.nextDayThreshold : null
+      allDay ? this.context.nextDayThreshold : null
     ).fg
-  }
-
-  computeEventDraggable(eventDef: EventDef, eventUi: EventUi) {
-    let transformers = this.calendar.pluginSystem.hooks.isDraggableTransformers
-    let val = eventUi.startEditable
-
-    for (let transformer of transformers) {
-      val = transformer(val, eventDef, eventUi, this)
-    }
-
-    return val
-  }
-
-  computeEventStartResizable(eventDef: EventDef, eventUi: EventUi) {
-    return eventUi.durationEditable && this.opt('eventResizableFromStart')
-  }
-
-  computeEventEndResizable(eventDef: EventDef, eventUi: EventUi) {
-    return eventUi.durationEditable
   }
 
 
@@ -304,17 +274,17 @@ export default abstract class View extends DateComponent<ViewProps> {
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
   startNowIndicator(dateProfile: DateProfile) {
-    let { dateEnv } = this
+    let { calendar, dateEnv, options } = this.context
     let unit
     let update
     let delay // ms wait value
 
-    if (this.opt('nowIndicator')) {
+    if (options.nowIndicator) {
       unit = this.getNowIndicatorUnit(dateProfile)
       if (unit) {
         update = this.updateNowIndicator.bind(this)
 
-        this.initialNowDate = this.calendar.getNow()
+        this.initialNowDate = calendar.getNow()
         this.initialNowQueriedMs = new Date().valueOf()
 
         // wait until the beginning of the next interval

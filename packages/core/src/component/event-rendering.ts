@@ -4,10 +4,10 @@ import { DateRange, invertRanges, intersectRanges } from '../datelib/date-range'
 import { Duration } from '../datelib/duration'
 import { computeVisibleDayRange } from '../util/misc'
 import { Seg } from './DateComponent'
-import View from '../View'
 import EventApi from '../api/EventApi'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
+import { ComponentContext } from './Component'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
@@ -117,14 +117,15 @@ export function hasBgRendering(def: EventDef) {
   return def.rendering === 'background' || def.rendering === 'inverse-background'
 }
 
-export function filterSegsViaEls(view: View, segs: Seg[], isMirror: boolean) {
+export function filterSegsViaEls(context: ComponentContext, segs: Seg[], isMirror: boolean) {
+  let { calendar, view } = context
 
-  if (view.hasPublicHandlers('eventRender')) {
+  if (calendar.hasPublicHandlers('eventRender')) {
     segs = segs.filter(function(seg) {
-      let custom = view.publiclyTrigger('eventRender', [
+      let custom = calendar.publiclyTrigger('eventRender', [
         {
           event: new EventApi(
-            view.calendar,
+            calendar,
             seg.eventRange.def,
             seg.eventRange.instance
           ),
@@ -185,4 +186,86 @@ export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
   uis.push(eventDef.ui)
 
   return combineEventUis(uis)
+}
+
+
+// triggers
+
+export function triggerRenderedSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
+  let { calendar, view } = context
+
+  if (calendar.hasPublicHandlers('eventPositioned')) {
+
+    for (let seg of segs) {
+      calendar.publiclyTriggerAfterSizing('eventPositioned', [
+        {
+          event: new EventApi(
+            calendar,
+            seg.eventRange.def,
+            seg.eventRange.instance
+          ),
+          isMirror: isMirrors,
+          isStart: seg.isStart,
+          isEnd: seg.isEnd,
+          el: seg.el,
+          view
+        }
+      ])
+    }
+  }
+
+  if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
+    calendar.afterSizingTriggers._eventsPositioned = [ null ] // fire once
+  }
+}
+
+export function triggerWillRemoveSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
+  let { calendar, view } = context
+
+  for (let seg of segs) {
+    calendar.trigger('eventElRemove', seg.el)
+  }
+
+  if (calendar.hasPublicHandlers('eventDestroy')) {
+
+    for (let seg of segs) {
+      calendar.publiclyTrigger('eventDestroy', [
+        {
+          event: new EventApi(
+            calendar,
+            seg.eventRange.def,
+            seg.eventRange.instance
+          ),
+          isMirror: isMirrors,
+          el: seg.el,
+          view
+        }
+      ])
+    }
+  }
+}
+
+
+// is-interactable
+
+export function computeEventDraggable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
+  let { calendar, view } = context
+  let transformers = calendar.pluginSystem.hooks.isDraggableTransformers
+  let val = eventUi.startEditable
+
+  for (let transformer of transformers) {
+    val = transformer(val, eventDef, eventUi, view)
+  }
+
+  return val
+}
+
+
+export function computeEventStartResizable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
+  return eventUi.durationEditable && context.options.eventResizableFromStart
+}
+
+
+export function computeEventEndResizable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
+  return eventUi.durationEditable
 }

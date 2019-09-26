@@ -20,11 +20,12 @@ export default class DateSelecting extends Interaction {
   constructor(settings: InteractionSettings) {
     super(settings)
     let { component } = settings
+    let { options } = component.context
 
     let dragging = this.dragging = new FeaturefulElementDragging(component.el)
     dragging.touchScrollAllowed = false
-    dragging.minDistance = component.opt('selectMinDistance') || 0
-    dragging.autoScroller.isEnabled = component.opt('dragScroll')
+    dragging.minDistance = options.selectMinDistance || 0
+    dragging.autoScroller.isEnabled = options.dragScroll
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsToStore(settings))
     hitDragging.emitter.on('pointerdown', this.handlePointerDown)
@@ -39,7 +40,9 @@ export default class DateSelecting extends Interaction {
 
   handlePointerDown = (ev: PointerDragEvent) => {
     let { component, dragging } = this
-    let canSelect = component.opt('selectable') &&
+    let { options } = component.context
+
+    let canSelect = options.selectable &&
       component.isValidDateDownEl(ev.origEvent.target as HTMLElement)
 
     // don't bother to watch expensive moves if component won't do selection
@@ -50,11 +53,11 @@ export default class DateSelecting extends Interaction {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    this.component.calendar.unselect(ev) // unselect previous selections
+    this.component.context.calendar.unselect(ev) // unselect previous selections
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
-    let calendar = this.component.calendar
+    let { calendar } = this.component.context
     let dragSelection: DateSpan | null = null
     let isInvalid = false
 
@@ -92,7 +95,7 @@ export default class DateSelecting extends Interaction {
     if (this.dragSelection) {
 
       // selection is already rendered, so just need to report selection
-      this.component.calendar.triggerDateSelect(this.dragSelection, pev)
+      this.component.context.calendar.triggerDateSelect(this.dragSelection, pev)
 
       this.dragSelection = null
     }
@@ -101,10 +104,11 @@ export default class DateSelecting extends Interaction {
 }
 
 function getComponentTouchDelay(component: DateComponent<any>): number {
-  let delay = component.opt('selectLongPressDelay')
+  let { options } = component.context
+  let delay = options.selectLongPressDelay
 
   if (delay == null) {
-    delay = component.opt('longPressDelay')
+    delay = options.longPressDelay
   }
 
   return delay

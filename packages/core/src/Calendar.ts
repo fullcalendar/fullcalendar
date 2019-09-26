@@ -36,6 +36,7 @@ import EventHovering from './interactions/EventHovering'
 import StandardTheme from './theme/StandardTheme'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
+import { ComponentContext } from './component/Component'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -435,13 +436,14 @@ export default class Calendar {
         component.destroy()
       }
 
-      component = this.component = new CalendarComponent({
-        calendar: this,
-        view: null, // HACK. will get populated by Component
-        dateEnv: this.dateEnv,
-        theme: this.theme,
-        options: this.optionsManager.computed
-      }, this.el)
+      component = this.component = new CalendarComponent(this.el)
+      component.setContext(new ComponentContext(
+        this,
+        this.theme,
+        this.dateEnv,
+        this.optionsManager.computed,
+        null
+      ))
 
       this.isViewUpdated = true
       this.isDatesUpdated = true
@@ -451,8 +453,8 @@ export default class Calendar {
     component.receiveProps({
       ...state,
       viewSpec,
-      dateProfile: state.dateProfile,
       dateProfileGenerator: this.dateProfileGenerators[viewType],
+      dateProfile: state.dateProfile,
       eventStore: renderableEventStore,
       eventUiBases,
       dateSelection: state.dateSelection,

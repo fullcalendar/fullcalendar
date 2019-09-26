@@ -1,6 +1,6 @@
 import { htmlEscape } from './util/html'
 import { htmlToElement, appendToElement, findElements, createElement, removeElement } from './util/dom-manip'
-import Component, { ComponentContext } from './component/Component'
+import Component from './component/Component'
 import { ViewSpec } from './structs/view-spec'
 import { memoizeRendering } from './component/memoized-rendering'
 
@@ -29,8 +29,8 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
   private _updateNext = memoizeRendering(this.updateNext, null, [ this._renderLayout ])
 
 
-  constructor(context: ComponentContext, extraClassName) {
-    super(context)
+  constructor(extraClassName) {
+    super()
 
     this.el = createElement('div', { className: 'fc-toolbar ' + extraClassName })
   }
@@ -71,7 +71,7 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
 
 
   renderSection(position, buttonStr) {
-    let { theme, calendar } = this
+    let { theme, calendar } = this.context
     let optionsManager = calendar.optionsManager
     let viewSpecs = calendar.viewSpecs
     let sectionEl = createElement('div', { className: 'fc-' + position })
@@ -199,7 +199,8 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
 
 
   updateActiveButton(buttonName?) {
-    let className = this.theme.getClass('buttonActive')
+    let { theme } = this.context
+    let className = theme.getClass('buttonActive')
 
     findElements(this.el, 'button').forEach((buttonEl) => { // fyi, themed buttons don't have .fc-button
       if (buttonName && buttonEl.classList.contains('fc-' + buttonName + '-button')) {

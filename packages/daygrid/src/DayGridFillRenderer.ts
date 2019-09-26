@@ -53,7 +53,8 @@ export default class DayGridFillRenderer extends FillRenderer {
   // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
   renderFillRow(type, seg: Seg): HTMLElement {
     let { dayGrid } = this
-    let { colCnt, isRtl } = dayGrid
+    let { isRtl } = this.context
+    let { colCnt } = dayGrid
     let leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
     let rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
     let startCol = leftCol
@@ -94,7 +95,7 @@ export default class DayGridFillRenderer extends FillRenderer {
 
     let introHtml = dayGrid.renderProps.renderIntroHtml()
     if (introHtml) {
-      if (dayGrid.isRtl) {
+      if (isRtl) {
         appendToElement(trEl, introHtml)
       } else {
         prependToElement(trEl, introHtml)

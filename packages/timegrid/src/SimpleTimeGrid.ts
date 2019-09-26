@@ -36,10 +36,14 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   private dayRanges: DateRange[] // for now indicator
   private slicer = new TimeGridSlicer()
 
-  constructor(context: ComponentContext, timeGrid: TimeGrid) {
-    super(context, timeGrid.el)
+  constructor(timeGrid: TimeGrid) {
+    super(timeGrid.el)
 
     this.timeGrid = timeGrid
+  }
+
+  setContext(context: ComponentContext) {
+    super.setContext(context)
 
     context.calendar.registerInteractiveComponent(this, {
       el: this.timeGrid.el
@@ -49,12 +53,13 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
   destroy() {
     super.destroy()
 
-    this.calendar.unregisterInteractiveComponent(this)
+    this.context.calendar.unregisterInteractiveComponent(this)
   }
 
   render(props: SimpleTimeGridProps) {
+    let { dateEnv } = this.context
     let { dateProfile, dayTable } = props
-    let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, this.dateEnv)
+    let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, dateEnv)
 
     this.timeGrid.receiveProps({
       ...this.slicer.sliceProps(props, dateProfile, null, this.timeGrid, dayRanges),

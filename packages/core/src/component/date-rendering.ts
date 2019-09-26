@@ -1,8 +1,9 @@
 import { htmlEscape, attrsToStr } from '../util/html'
 import { DateMarker, startOfDay, addDays, DAY_IDS } from '../datelib/marker'
 import { rangeContainsMarker } from '../datelib/date-range'
-import Component, { ComponentContext } from '../component/Component'
+import { ComponentContext } from '../component/Component'
 import { DateProfile } from '../DateProfileGenerator'
+import { DateEnv } from '../datelib/env'
 
 
 // Generates HTML for an anchor to another view into the calendar.
@@ -11,8 +12,7 @@ import { DateProfile } from '../DateProfileGenerator'
 // { date, type, forceOff }
 // `type` is a view-type like "day" or "week". default value is "day".
 // `attrs` and `innerHtml` are use to generate the rest of the HTML tag.
-export function buildGotoAnchorHtml(component: Component<any>, gotoOptions, attrs, innerHtml?) {
-  let { dateEnv } = component
+export function buildGotoAnchorHtml(allOptions: any, dateEnv: DateEnv, gotoOptions, attrs, innerHtml?) {
   let date
   let type
   let forceOff
@@ -39,7 +39,7 @@ export function buildGotoAnchorHtml(component: Component<any>, gotoOptions, attr
   attrs = attrs ? ' ' + attrsToStr(attrs) : '' // will have a leading space
   innerHtml = innerHtml || ''
 
-  if (!forceOff && component.opt('navLinks')) {
+  if (!forceOff && allOptions.navLinks) {
     return '<a' + attrs +
       ' data-goto="' + htmlEscape(JSON.stringify(finalOptions)) + '">' +
       innerHtml +
@@ -52,14 +52,14 @@ export function buildGotoAnchorHtml(component: Component<any>, gotoOptions, attr
 }
 
 
-export function getAllDayHtml(component: Component<any>) {
-  return component.opt('allDayHtml') || htmlEscape(component.opt('allDayText'))
+export function getAllDayHtml(allOptions: any) {
+  return allOptions.allDayHtml || htmlEscape(allOptions.allDayText)
 }
 
 
 // Computes HTML classNames for a single-day element
 export function getDayClasses(date: DateMarker, dateProfile: DateProfile, context: ComponentContext, noThemeHighlight?) {
-  let { calendar, view, theme, dateEnv } = context
+  let { calendar, options, theme, dateEnv } = context
   let classes = []
   let todayStart: DateMarker
   let todayEnd: DateMarker
@@ -70,7 +70,7 @@ export function getDayClasses(date: DateMarker, dateProfile: DateProfile, contex
     classes.push('fc-' + DAY_IDS[date.getUTCDay()])
 
     if (
-      view.opt('monthMode') &&
+      options.monthMode &&
       dateEnv.getMonth(date) !== dateEnv.getMonth(dateProfile.currentRange.start)
     ) {
       classes.push('fc-other-month')

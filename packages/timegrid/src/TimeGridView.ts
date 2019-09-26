@@ -1,7 +1,6 @@
 import {
   DateProfileGenerator, DateProfile,
   ComponentContext,
-  ViewSpec,
   DayHeader,
   DaySeries,
   DayTable,
@@ -21,25 +20,22 @@ export default class TimeGridView extends AbstractTimeGridView {
 
   private buildDayTable = memoize(buildDayTable)
 
-  constructor(
-    _context: ComponentContext,
-    viewSpec: ViewSpec,
-    dateProfileGenerator: DateProfileGenerator,
-    parentEl: HTMLElement
-  ) {
-    super(_context, viewSpec, dateProfileGenerator, parentEl)
+  setContext(context: ComponentContext) {
+    super.setContext(context)
 
-    if (this.opt('columnHeader')) {
+    if (context.options.columnHeader) {
       this.header = new DayHeader(
-        this.context,
         this.el.querySelector('.fc-head-container')
       )
+      this.header.setContext(context)
     }
 
-    this.simpleTimeGrid = new SimpleTimeGrid(this.context, this.timeGrid)
+    this.simpleTimeGrid = new SimpleTimeGrid(this.timeGrid)
+    this.simpleTimeGrid.setContext(context)
 
     if (this.dayGrid) {
-      this.simpleDayGrid = new SimpleDayGrid(this.context, this.dayGrid)
+      this.simpleDayGrid = new SimpleDayGrid(this.dayGrid)
+      this.simpleDayGrid.setContext(context)
     }
   }
 
@@ -60,8 +56,9 @@ export default class TimeGridView extends AbstractTimeGridView {
   render(props: ViewProps) {
     super.render(props) // for flags for updateSize
 
-    let { dateProfile } = this.props
-    let dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator)
+    let { dateProfile, dateProfileGenerator } = this.props
+    let { nextDayThreshold } = this.context
+    let dayTable = this.buildDayTable(dateProfile, dateProfileGenerator)
     let splitProps = this.splitter.splitProps(props)
 
     if (this.header) {
@@ -84,7 +81,7 @@ export default class TimeGridView extends AbstractTimeGridView {
         ...splitProps['allDay'],
         dateProfile,
         dayTable,
-        nextDayThreshold: this.nextDayThreshold,
+        nextDayThreshold,
         isRigid: false
       })
     }

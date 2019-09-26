@@ -28,7 +28,7 @@ export function renderDateCell(
   colspan?,
   otherAttrs?
 ): string {
-  let { view, dateEnv, theme, options } = context
+  let { dateEnv, theme, options } = context
   let isDateValid = rangeContainsMarker(dateProfile.activeRange, dateMarker) // TODO: called too frequently. cache somehow.
   let classNames = [
     'fc-day-header',
@@ -76,7 +76,8 @@ export function renderDateCell(
       (isDateValid ?
         // don't make a link if the heading could represent multiple days, or if there's only one day (forceOff)
         buildGotoAnchorHtml(
-          view,
+          options,
+          dateEnv,
           { date: dateMarker, forceOff: !datesRepDistinctDays || colCnt === 1 },
           innerHtml
         ) :

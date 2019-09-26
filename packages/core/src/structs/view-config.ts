@@ -2,8 +2,6 @@ import View from '../View'
 import { ViewSpec } from './view-spec'
 import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
-import { ComponentContext } from '../component/Component'
-import DateProfileGenerator from '../DateProfileGenerator'
 
 /*
 A view-config represents information for either:
@@ -12,10 +10,7 @@ B) options to customize an existing view, in which case only provides options.
 */
 
 export type ViewClass = new(
-  context: ComponentContext,
   viewSpec: ViewSpec,
-  dateProfileGenerator:
-  DateProfileGenerator,
   parentEl: HTMLElement
 ) => View
 

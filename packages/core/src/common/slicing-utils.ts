@@ -89,7 +89,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
       expandRecurring(
         businessHours,
         computeActiveRange(dateProfile, Boolean(nextDayThreshold)),
-        component.calendar
+        component.context.calendar
       ),
       {},
       dateProfile,
@@ -162,7 +162,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
       return []
     }
 
-    let eventRange = fabricateEventRange(dateSpan, eventUiBases, component.calendar)
+    let eventRange = fabricateEventRange(dateSpan, eventUiBases, component.context.calendar)
     let segs = this.sliceRange(dateSpan.range, ...extraArgs)
 
     for (let seg of segs) {

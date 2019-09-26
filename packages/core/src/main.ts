@@ -159,7 +159,7 @@ export { computeFallbackHeaderFormat, renderDateCell } from './common/table-util
 export { default as DaySeries } from './common/DaySeries'
 
 export { EventInteractionState } from './interactions/event-interaction-state'
-export { EventRenderRange, sliceEventStore, hasBgRendering, getElSeg } from './component/event-rendering'
+export { EventRenderRange, sliceEventStore, hasBgRendering, getElSeg, computeEventDraggable, computeEventStartResizable, computeEventEndResizable } from './component/event-rendering'
 
 export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
 

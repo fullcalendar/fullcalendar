@@ -10,10 +10,8 @@ import {
   ScrollComponent,
   View,
   buildGotoAnchorHtml,
-  ComponentContext,
-  ViewSpec,
-  DateProfileGenerator,
-  Duration
+  Duration,
+  ComponentContext
 } from '@fullcalendar/core'
 import DayGridDateProfileGenerator from './DayGridDateProfileGenerator'
 import DayGrid from './DayGrid'
@@ -35,8 +33,10 @@ export default abstract class DayGridView extends View {
   weekNumberWidth: number
 
 
-  constructor(context: ComponentContext, viewSpec: ViewSpec, dateProfileGenerator: DateProfileGenerator, parentEl: HTMLElement) {
-    super(context, viewSpec, dateProfileGenerator, parentEl)
+  setContext(context: ComponentContext) {
+    super.setContext(context)
+
+    let { options } = this.context
 
     this.el.classList.add('fc-dayGrid-view')
     this.el.innerHTML = this.renderSkeletonHtml()
@@ -54,8 +54,8 @@ export default abstract class DayGridView extends View {
 
     let cellWeekNumbersVisible
 
-    if (this.opt('weekNumbers')) {
-      if (this.opt('weekNumbersWithinDays')) {
+    if (options.weekNumbers) {
+      if (options.weekNumbersWithinDays) {
         cellWeekNumbersVisible = true
         this.colWeekNumbersVisible = false
       } else {
@@ -68,7 +68,6 @@ export default abstract class DayGridView extends View {
     }
 
     this.dayGrid = new DayGrid(
-      this.context,
       dayGridEl,
       {
         renderNumberIntroHtml: this.renderDayGridNumberIntroHtml,
@@ -78,6 +77,7 @@ export default abstract class DayGridView extends View {
         cellWeekNumbersVisible
       }
     )
+    this.dayGrid.setContext(context)
   }
 
 
@@ -91,11 +91,11 @@ export default abstract class DayGridView extends View {
   // Builds the HTML skeleton for the view.
   // The day-grid component will render inside of a container defined by this HTML.
   renderSkeletonHtml() {
-    let { theme } = this
+    let { theme, options } = this.context
 
     return '' +
       '<table class="' + theme.getClass('tableGrid') + '">' +
-        (this.opt('columnHeader') ?
+        (options.columnHeader ?
           '<thead class="fc-head">' +
             '<tr>' +
               '<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
@@ -123,7 +123,7 @@ export default abstract class DayGridView extends View {
 
   // Determines whether each row should have a constant height
   hasRigidRows() {
-    let eventLimit = this.opt('eventLimit')
+    let eventLimit = this.context.options.eventLimit
 
     return eventLimit && typeof eventLimit !== 'number'
   }
@@ -143,7 +143,7 @@ export default abstract class DayGridView extends View {
   // Refreshes the horizontal dimensions of the view
   updateBaseSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
     let { dayGrid } = this
-    let eventLimit = this.opt('eventLimit')
+    let eventLimit = this.context.options.eventLimit
     let headRowEl = (this as any).header ? (this as any).header.el : null // HACK
     let scrollerHeight
     let scrollbarWidths
@@ -220,7 +220,7 @@ export default abstract class DayGridView extends View {
   // Sets the height of just the DayGrid component in this view
   setGridHeight(height, isAuto) {
 
-    if (this.opt('monthMode')) {
+    if (this.context.options.monthMode) {
 
       // if auto, make the height of each row the height that it would be if there were 6 weeks
       if (isAuto) {
@@ -267,13 +267,13 @@ export default abstract class DayGridView extends View {
 
   // Generates the HTML that will go before the day-of week header cells
   renderHeadIntroHtml = () => {
-    let { theme } = this
+    let { theme, options } = this.context
 
     if (this.colWeekNumbersVisible) {
       return '' +
         '<th class="fc-week-number ' + theme.getClass('widgetHeader') + '" ' + this.weekNumberStyleAttr() + '>' +
           '<span>' + // needed for matchCellWidths
-            htmlEscape(this.opt('weekLabel')) +
+            htmlEscape(options.weekLabel) +
           '</span>' +
         '</th>'
     }
@@ -288,14 +288,15 @@ export default abstract class DayGridView extends View {
 
   // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
   renderDayGridNumberIntroHtml = (row: number, dayGrid: DayGrid) => {
-    let { dateEnv } = this
+    let { options, dateEnv } = this.context
     let weekStart = dayGrid.props.cells[row][0].date
 
     if (this.colWeekNumbersVisible) {
       return '' +
         '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-            this,
+            options,
+            dateEnv,
             { date: weekStart, type: 'week', forceOff: dayGrid.colCnt === 1 },
             dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
           ) +
@@ -308,7 +309,7 @@ export default abstract class DayGridView extends View {
 
   // Generates the HTML that goes before the day bg cells for each day-row
   renderDayGridBgIntroHtml = () => {
-    let { theme } = this
+    let { theme } = this.context
 
     if (this.colWeekNumbersVisible) {
       return '<td class="fc-week-number ' + theme.getClass('widgetContent') + '" ' + this.weekNumberStyleAttr() + '></td>'
