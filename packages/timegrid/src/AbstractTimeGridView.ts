@@ -32,6 +32,7 @@ export default abstract class TimeGridView extends View {
 
 
   setContext(context: ComponentContext) {
+    super.setContext(context)
 
     this.el.classList.add('fc-timeGrid-view')
     this.el.innerHTML = this.renderSkeletonHtml()

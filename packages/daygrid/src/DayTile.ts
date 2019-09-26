@@ -29,8 +29,9 @@ export default class DayTile extends DateComponent<DayTileProps> {
   private renderEventDrag: MemoizedRendering<[EventInstanceHash]>
   private renderEventResize: MemoizedRendering<[EventInstanceHash]>
 
-  constructor(el: HTMLElement) {
-    super(el)
+
+  setContext(context: ComponentContext) {
+    super.setContext(context)
 
     let eventRenderer = this.eventRenderer = new DayTileEventRenderer(this)
 
@@ -61,10 +62,6 @@ export default class DayTile extends DateComponent<DayTileProps> {
       eventRenderer.showByHash.bind(eventRenderer),
       [ renderFrame ]
     )
-  }
-
-  setContext(context: ComponentContext) {
-    super.setContext(context)
 
     context.calendar.registerInteractiveComponent(this, {
       el: this.el,

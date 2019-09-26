@@ -19,7 +19,8 @@ import {
   getDayClasses,
   DateProfile,
   memoizeRendering,
-  MemoizedRendering
+  MemoizedRendering,
+  ComponentContext
 } from '@fullcalendar/core'
 import Popover from './Popover'
 import DayGridEventRenderer from './DayGridEventRenderer'
@@ -103,6 +104,13 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   constructor(el, renderProps: RenderProps) {
     super(el)
 
+    this.renderProps = renderProps
+  }
+
+  setContext(context: ComponentContext) {
+    super.setContext(context)
+
+    // these need the context!
     let eventRenderer = this.eventRenderer = new DayGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new DayGridFillRenderer(this)
     this.mirrorRenderer = new DayGridMirrorRenderer(this)
@@ -153,8 +161,6 @@ export default class DayGrid extends DateComponent<DayGridProps> {
       this._unrenderEventResize,
       [ renderCells ]
     )
-
-    this.renderProps = renderProps
   }
 
 

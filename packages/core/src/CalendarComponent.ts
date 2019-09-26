@@ -299,7 +299,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 // -----------------------------------------------------------------------------------------------------------------
 
 // Computes what the title at the top of the calendar should be for this view
-function computeTitle(dateProfile, viewOptions) {
+function computeTitle(this: CalendarComponent, dateProfile, viewOptions) {
   let range: DateRange
 
   // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
@@ -309,7 +309,7 @@ function computeTitle(dateProfile, viewOptions) {
     range = dateProfile.activeRange
   }
 
-  return this.dateEnv.formatRange(
+  return this.context.dateEnv.formatRange(
     range.start,
     range.end,
     createFormatter(

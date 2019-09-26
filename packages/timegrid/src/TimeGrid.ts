@@ -124,9 +124,12 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   setContext(context: ComponentContext) {
+    super.setContext(context)
+
     let { theme } = context
     let { el } = this
 
+    // these need the context!
     let eventRenderer = this.eventRenderer = new TimeGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new TimeGridFillRenderer(this)
     this.mirrorRenderer = new TimeGridMirrorRenderer(this)

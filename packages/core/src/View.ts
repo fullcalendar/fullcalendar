@@ -103,7 +103,7 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   render(props: ViewProps) {
-    this.renderDatesMem(props.dateProfile)
+    this.renderDatesMem(props.dateProfile, props.dateProfileGenerator)
     this.renderBusinessHoursMem(props.businessHours)
     this.renderDateSelectionMem(props.dateSelection)
     this.renderEventsMem(props.eventStore)
@@ -147,12 +147,12 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Date Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderDatesWrap(dateProfile: DateProfile) {
+  renderDatesWrap(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
     this.renderDates(dateProfile)
     this.addScroll({
       duration: createDuration(this.context.options.scrollTime)
     })
-    this.startNowIndicator(dateProfile) // shouldn't render yet because updateSize will be called soon
+    this.startNowIndicator(dateProfile, dateProfileGenerator) // shouldn't render yet because updateSize will be called soon
   }
 
   unrenderDatesWrap() {
@@ -273,14 +273,14 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Immediately render the current time indicator and begins re-rendering it at an interval,
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
-  startNowIndicator(dateProfile: DateProfile) {
+  startNowIndicator(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
     let { calendar, dateEnv, options } = this.context
     let unit
     let update
     let delay // ms wait value
 
     if (options.nowIndicator) {
-      unit = this.getNowIndicatorUnit(dateProfile)
+      unit = this.getNowIndicatorUnit(dateProfile, dateProfileGenerator)
       if (unit) {
         update = this.updateNowIndicator.bind(this)
 
@@ -349,7 +349,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  getNowIndicatorUnit(dateProfile: DateProfile) {
+  getNowIndicatorUnit(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
     // subclasses should implement
   }
 

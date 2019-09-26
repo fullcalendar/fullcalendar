@@ -260,7 +260,8 @@ export default class ListView extends View {
     ) + '" colspan="3">' +
       (mainFormat ?
         buildGotoAnchorHtml(
-          this,
+          options,
+          dateEnv,
           dayDate,
           { 'class': 'fc-list-heading-main' },
           htmlEscape(dateEnv.format(dayDate, mainFormat)) // inner HTML
@@ -268,7 +269,8 @@ export default class ListView extends View {
         '') +
       (altFormat ?
         buildGotoAnchorHtml(
-          this,
+          options,
+          dateEnv,
           dayDate,
           { 'class': 'fc-list-heading-alt' },
           htmlEscape(dateEnv.format(dayDate, altFormat)) // inner HTML
