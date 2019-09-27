@@ -5,7 +5,8 @@ import {
   View,
   ComponentContext,
   createFormatter, diffDays,
-  buildGotoAnchorHtml, getAllDayHtml, Duration
+  buildGotoAnchorHtml, getAllDayHtml, Duration, ViewProps,
+  memoizeRendering
 } from '@fullcalendar/core'
 import { DayGrid } from '@fullcalendar/daygrid'
 import TimeGrid from './TimeGrid'
@@ -20,7 +21,7 @@ const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
 // Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-export default abstract class TimeGridView extends View {
+export default abstract class AbstractTimeGridView extends View {
 
   timeGrid: TimeGrid // the main time-grid subcomponent of this view
   dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
@@ -29,10 +30,22 @@ export default abstract class TimeGridView extends View {
   axisWidth: any // the width of the time axis running down the side
 
   protected splitter = new AllDaySplitter()
+  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
 
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
+  render(props: ViewProps, context: ComponentContext) {
+    this.renderSkeleton(context)
+  }
+
+
+  destroy() {
+    super.destroy()
+
+    this.renderSkeleton.unrender()
+  }
+
+
+  _renderSkeleton(context: ComponentContext) {
 
     this.el.classList.add('fc-timeGrid-view')
     this.el.innerHTML = this.renderSkeletonHtml()
@@ -55,7 +68,6 @@ export default abstract class TimeGridView extends View {
         renderIntroHtml: this.renderTimeGridIntroHtml
       }
     )
-    this.timeGrid.setContext(context)
 
     if (context.options.allDaySlot) { // should we display the "all-day" area?
 
@@ -69,7 +81,6 @@ export default abstract class TimeGridView extends View {
           cellWeekNumbersVisible: false
         }
       )
-      this.dayGrid.setContext(context)
 
       // have the day-grid extend it's coordinate area over the <hr> dividing the two grids
       let dividerEl = this.el.querySelector('.fc-divider') as HTMLElement
@@ -78,8 +89,8 @@ export default abstract class TimeGridView extends View {
   }
 
 
-  destroy() {
-    super.destroy()
+  _unrenderSkeleton() {
+    this.el.classList.remove('fc-timeGrid-view')
 
     this.timeGrid.destroy()
 
@@ -352,4 +363,4 @@ export default abstract class TimeGridView extends View {
 
 }
 
-TimeGridView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering
+AbstractTimeGridView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering

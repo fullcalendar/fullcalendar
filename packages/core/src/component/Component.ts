@@ -60,21 +60,27 @@ export default class Component<PropsType> {
     }
   }
 
-  setContext(context: ComponentContext) {
+  receiveProps(props: PropsType, context: ComponentContext) {
+    let oldContext = this.context
     this.context = context
-  }
 
-  receiveProps(props: PropsType) {
+    if (!oldContext) {
+      this.firstContext(context)
+    }
+
     let { anyChanges, comboProps } = recycleProps(this.props || {}, props, this.equalityFuncs)
 
     this.props = comboProps
 
     if (anyChanges) {
-      this.render(comboProps)
+      this.render(comboProps, context)
     }
   }
 
-  protected render(props: PropsType) {
+  protected render(props: PropsType, context: ComponentContext) {
+  }
+
+  firstContext(context: ComponentContext) {
   }
 
   // after destroy is called, this component won't ever be used again

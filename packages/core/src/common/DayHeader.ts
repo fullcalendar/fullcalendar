@@ -4,6 +4,7 @@ import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat, renderDateCell } from './table-utils'
+import { memoizeRendering } from '../component/memoized-rendering'
 
 export interface DayTableHeaderProps {
   dates: DateMarker[]
@@ -18,15 +19,60 @@ export default class DayHeader extends Component<DayTableHeaderProps> {
   el: HTMLElement
   thead: HTMLElement
 
+  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
+
+
   constructor(parentEl: HTMLElement) {
     super()
 
     this.parentEl = parentEl
   }
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
 
+  render(props: DayTableHeaderProps, context: ComponentContext) {
+    let { dates, datesRepDistinctDays } = props
+    let parts = []
+
+    this.renderSkeleton(context)
+
+    if (props.renderIntroHtml) {
+      parts.push(props.renderIntroHtml())
+    }
+
+    let colHeadFormat = createFormatter(
+      context.options.columnHeaderFormat ||
+      computeFallbackHeaderFormat(datesRepDistinctDays, dates.length)
+    )
+
+    for (let date of dates) {
+      parts.push(
+        renderDateCell(
+          date,
+          props.dateProfile,
+          datesRepDistinctDays,
+          dates.length,
+          colHeadFormat,
+          context
+        )
+      )
+    }
+
+    if (context.isRtl) {
+      parts.reverse()
+    }
+
+    this.thead.innerHTML = '<tr>' + parts.join('') + '</tr>'
+  }
+
+
+  destroy() {
+    super.destroy()
+
+    this.renderSkeleton.unrender()
+  }
+
+
+  _renderSkeleton(context: ComponentContext) {
     let { theme } = context
     let { parentEl } = this
 
@@ -44,41 +90,9 @@ export default class DayHeader extends Component<DayTableHeaderProps> {
     this.thead = this.el.querySelector('thead')
   }
 
-  destroy() {
+
+  _unrenderSkeleton() {
     removeElement(this.el)
-  }
-
-  render(props: DayTableHeaderProps) {
-    let { dates, datesRepDistinctDays } = props
-    let parts = []
-
-    if (props.renderIntroHtml) {
-      parts.push(props.renderIntroHtml())
-    }
-
-    let colHeadFormat = createFormatter(
-      this.context.options.columnHeaderFormat ||
-      computeFallbackHeaderFormat(datesRepDistinctDays, dates.length)
-    )
-
-    for (let date of dates) {
-      parts.push(
-        renderDateCell(
-          date,
-          props.dateProfile,
-          datesRepDistinctDays,
-          dates.length,
-          colHeadFormat,
-          this.context
-        )
-      )
-    }
-
-    if (this.context.isRtl) {
-      parts.reverse()
-    }
-
-    this.thead.innerHTML = '<tr>' + parts.join('') + '</tr>'
   }
 
 }

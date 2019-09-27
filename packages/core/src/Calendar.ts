@@ -72,6 +72,7 @@ export default class Calendar {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
+  private buildComponentContext = memoize(buildComponentContext)
   private parseRawLocales = memoize(parseRawLocales)
   private buildLocale = memoize(buildLocale)
   private buildDateEnv = memoize(buildDateEnv)
@@ -437,13 +438,6 @@ export default class Calendar {
       }
 
       component = this.component = new CalendarComponent(this.el)
-      component.setContext(new ComponentContext(
-        this,
-        this.theme,
-        this.dateEnv,
-        this.optionsManager.computed,
-        null
-      ))
 
       this.isViewUpdated = true
       this.isDatesUpdated = true
@@ -461,7 +455,11 @@ export default class Calendar {
       eventSelection: state.eventSelection,
       eventDrag: state.eventDrag,
       eventResize: state.eventResize
-    })
+    }, this.buildComponentContext(
+      this.theme,
+      this.dateEnv,
+      this.optionsManager.computed
+    ))
 
     if (savedScroll) {
       component.view.applyScroll(savedScroll, false)
@@ -1300,6 +1298,11 @@ EmitterMixin.mixInto(Calendar)
 
 // for memoizers
 // -----------------------------------------------------------------------------------------------------------------
+
+
+function buildComponentContext(this: Calendar, theme: Theme, dateEnv: DateEnv, options) {
+  return new ComponentContext(this, theme, dateEnv, options, null)
+}
 
 
 function buildDateEnv(locale: Locale, timeZone, namedTimeZoneImpl: NamedTimeZoneImplClass, firstDay, weekNumberCalculation, weekLabel, cmdFormatter: CmdFormatterFunc) {

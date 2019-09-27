@@ -105,10 +105,6 @@ export default class DayGrid extends DateComponent<DayGridProps> {
     super(el)
 
     this.renderProps = renderProps
-  }
-
-  setContext(context: ComponentContext) {
-    super.setContext(context)
 
     let eventRenderer = this.eventRenderer = new DayGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new DayGridFillRenderer(this)
@@ -163,9 +159,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   }
 
 
-  render(props: DayGridProps) {
-    let { context } = this
-
+  render(props: DayGridProps, context: ComponentContext) {
     let cells = props.cells
     this.rowCnt = cells.length
     this.colCnt = cells[0].length
@@ -209,7 +203,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
       eventSelection: ownProps.eventSelection,
       eventDragInstances: ownProps.eventDrag ? ownProps.eventDrag.affectedInstances : null,
       eventResizeInstances: ownProps.eventResize ? ownProps.eventResize.affectedInstances : null
-    })
+    }, this.context)
   }
 
 
@@ -783,7 +777,6 @@ export default class DayGrid extends DateComponent<DayGridProps> {
       autoHide: true, // when the user clicks elsewhere, hide the popover
       content: (el) => {
         this.segPopoverTile = new DayTile(el)
-        this.segPopoverTile.setContext(this.context)
         this.updateSegPopoverTile(
           this.props.cells[row][_col].date,
           segs

@@ -11,6 +11,7 @@ import {
 import AbstractDayGridView from './AbstractDayGridView'
 import SimpleDayGrid from './SimpleDayGrid'
 
+
 export default class DayGridView extends AbstractDayGridView {
 
   header: DayHeader
@@ -19,32 +20,9 @@ export default class DayGridView extends AbstractDayGridView {
 
   private buildDayTable = memoize(buildDayTable)
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
 
-    if (context.options.columnHeader) {
-      this.header = new DayHeader(
-        this.el.querySelector('.fc-head-container')
-      )
-      this.header.setContext(context)
-    }
-
-    this.simpleDayGrid = new SimpleDayGrid(this.dayGrid)
-    this.simpleDayGrid.setContext(context)
-  }
-
-  destroy() {
-    super.destroy()
-
-    if (this.header) {
-      this.header.destroy()
-    }
-
-    this.simpleDayGrid.destroy()
-  }
-
-  render(props: ViewProps) {
-    super.render(props)
+  render(props: ViewProps, context: ComponentContext) {
+    super.render(props, context) // will call _renderSkeleton/_unrenderSkeleton
 
     let { dateProfile } = this.props
 
@@ -57,7 +35,7 @@ export default class DayGridView extends AbstractDayGridView {
         dates: dayTable.headerDates,
         datesRepDistinctDays: dayTable.rowCnt === 1,
         renderIntroHtml: this.renderHeadIntroHtml
-      })
+      }, context)
     }
 
     this.simpleDayGrid.receiveProps({
@@ -72,7 +50,31 @@ export default class DayGridView extends AbstractDayGridView {
       eventResize: props.eventResize,
       isRigid: this.hasRigidRows(),
       nextDayThreshold: this.context.nextDayThreshold
-    })
+    }, context)
+  }
+
+
+  _renderSkeleton(context: ComponentContext) {
+    super._renderSkeleton(context)
+
+    if (context.options.columnHeader) {
+      this.header = new DayHeader(
+        this.el.querySelector('.fc-head-container')
+      )
+    }
+
+    this.simpleDayGrid = new SimpleDayGrid(this.dayGrid)
+  }
+
+
+  _unrenderSkeleton() {
+    super._unrenderSkeleton()
+
+    if (this.header) {
+      this.header.destroy()
+    }
+
+    this.simpleDayGrid.destroy()
   }
 
 }

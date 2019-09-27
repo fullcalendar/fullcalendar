@@ -23,7 +23,9 @@ import {
   EventSegUiInteractionState,
   DateProfile,
   memoizeRendering,
-  MemoizedRendering
+  MemoizedRendering,
+  Theme,
+  memoize
 } from '@fullcalendar/core'
 import { DayBgRow } from '@fullcalendar/daygrid'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
@@ -105,8 +107,10 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   highlightContainerEls: HTMLElement[]
   businessContainerEls: HTMLElement[]
 
-  private renderSlats = memoizeRendering(this._renderSlats)
-  private renderColumns: MemoizedRendering<[TimeGridCell[], DateProfile]>
+  private processOptions = memoize(this._processOptions)
+  private renderSkeleton = memoizeRendering(this._renderSkeleton)
+  private renderSlats = memoizeRendering(this._renderSlats, null, [ this.renderSkeleton ])
+  private renderColumns = memoizeRendering(this._renderColumns, this._unrenderColumns, [ this.renderSkeleton ])
   private renderBusinessHours: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
   private renderDateSelection: MemoizedRendering<[TimeGridSeg[]]>
   private renderBgEvents: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
@@ -120,23 +124,11 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     super(el)
 
     this.renderProps = renderProps
-  }
 
-
-  setContext(context: ComponentContext) {
-    super.setContext(context)
-
-    let { theme } = context
-    let { el } = this
-
+    let { renderColumns } = this
     let eventRenderer = this.eventRenderer = new TimeGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new TimeGridFillRenderer(this)
     this.mirrorRenderer = new TimeGridMirrorRenderer(this)
-
-    let renderColumns = this.renderColumns = memoizeRendering(
-      this._renderColumns,
-      this._unrenderColumns
-    )
 
     this.renderBusinessHours = memoizeRendering(
       fillRenderer.renderSegs.bind(fillRenderer, 'businessHours'),
@@ -179,17 +171,6 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       this._unrenderEventResize,
       [ renderColumns ]
     )
-
-    this.processOptions()
-
-    el.innerHTML =
-      '<div class="fc-bg"></div>' +
-      '<div class="fc-slats"></div>' +
-      '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
-
-    this.rootBgContainerEl = el.querySelector('.fc-bg')
-    this.slatContainerEl = el.querySelector('.fc-slats')
-    this.bottomRuleEl = el.querySelector('.fc-divider')
   }
 
 
@@ -199,8 +180,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   // Parses various options into properties of this object
   // MUST have context already set
-  processOptions() {
-    let { options } = this.context
+  _processOptions(options) {
     let { slotDuration, snapDuration } = options
     let snapsPerSlot
     let input
@@ -263,12 +243,13 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  render(props: TimeGridProps) {
-    let { context } = this
+  render(props: TimeGridProps, context: ComponentContext) {
+    this.processOptions(context.options)
 
     let cells = props.cells
     this.colCnt = cells.length
 
+    this.renderSkeleton(context.theme)
     this.renderSlats(props.dateProfile)
     this.renderColumns(props.cells, props.dateProfile)
     this.renderBusinessHours(context, props.businessHourSegs)
@@ -287,6 +268,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     // should unrender everything else too
     this.renderSlats.unrender()
     this.renderColumns.unrender()
+    this.renderSkeleton.unrender()
   }
 
 
@@ -310,6 +292,20 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     fillRenderer.assignSizes(isResize)
     eventRenderer.assignSizes(isResize)
     mirrorRenderer.assignSizes(isResize)
+  }
+
+
+  _renderSkeleton(theme: Theme) {
+    let { el } = this
+
+    el.innerHTML =
+      '<div class="fc-bg"></div>' +
+      '<div class="fc-slats"></div>' +
+      '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
+
+    this.rootBgContainerEl = el.querySelector('.fc-bg')
+    this.slatContainerEl = el.querySelector('.fc-slats')
+    this.bottomRuleEl = el.querySelector('.fc-divider')
   }
 
 

@@ -22,7 +22,8 @@ import {
   memoize,
   MemoizedRendering,
   memoizeRendering,
-  Seg
+  Seg,
+  ViewSpec
 } from '@fullcalendar/core'
 import ListEventRenderer from './ListEventRenderer'
 
@@ -38,19 +39,55 @@ export default class ListView extends View {
 
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
+  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
   private renderContent: MemoizedRendering<[ComponentContext, Seg[]]>
 
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
-
-    let { calendar, theme } = context
+  constructor(viewSpec: ViewSpec, parentEl: HTMLElement) {
+    super(viewSpec, parentEl)
 
     let eventRenderer = this.eventRenderer = new ListEventRenderer(this)
     this.renderContent = memoizeRendering(
       eventRenderer.renderSegs.bind(eventRenderer),
-      eventRenderer.unrender.bind(eventRenderer)
+      eventRenderer.unrender.bind(eventRenderer),
+      [ this.renderSkeleton ]
     )
+  }
+
+
+  firstContext(context: ComponentContext) {
+    context.calendar.registerInteractiveComponent(this, {
+      el: this.el
+      // TODO: make aware that it doesn't do Hits
+    })
+  }
+
+
+  render(props: ViewProps, context: ComponentContext) {
+    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
+    this.dayDates = dayDates
+
+    this.renderSkeleton(context)
+
+    this.renderContent(
+      context,
+      this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
+    )
+  }
+
+
+  destroy() {
+    super.destroy()
+
+    this.renderSkeleton.unrender()
+    this.renderContent.unrender()
+
+    this.context.calendar.unregisterInteractiveComponent(this)
+  }
+
+
+  _renderSkeleton(context: ComponentContext) {
+    let { theme } = context
 
     this.el.classList.add('fc-list-view')
 
@@ -68,31 +105,13 @@ export default class ListView extends View {
 
     this.el.appendChild(this.scroller.el)
     this.contentEl = this.scroller.el // shortcut
-
-    calendar.registerInteractiveComponent(this, {
-      el: this.el
-      // TODO: make aware that it doesn't do Hits
-    })
   }
 
 
-  render(props: ViewProps) {
-    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
-    this.dayDates = dayDates
+  _unrenderSkeleton() {
+    // TODO: remove classNames
 
-    this.renderContent(
-      this.context,
-      this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
-    )
-  }
-
-
-  destroy() {
-    super.destroy()
-
-    this.renderContent.unrender()
     this.scroller.destroy() // will remove the Grid too
-    this.context.calendar.unregisterInteractiveComponent(this)
   }
 
 

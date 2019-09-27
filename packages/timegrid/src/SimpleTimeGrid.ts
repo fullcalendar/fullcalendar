@@ -42,9 +42,7 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     this.timeGrid = timeGrid
   }
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
-
+  firstContext(context: ComponentContext) {
     context.calendar.registerInteractiveComponent(this, {
       el: this.timeGrid.el
     })
@@ -56,7 +54,7 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     this.context.calendar.unregisterInteractiveComponent(this)
   }
 
-  render(props: SimpleTimeGridProps) {
+  render(props: SimpleTimeGridProps, context: ComponentContext) {
     let { dateEnv } = this.context
     let { dateProfile, dayTable } = props
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, dateEnv)
@@ -65,7 +63,7 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
       ...this.slicer.sliceProps(props, dateProfile, null, this.timeGrid, dayRanges),
       dateProfile,
       cells: dayTable.cells[0]
-    })
+    }, context)
   }
 
   renderNowIndicator(date: DateMarker) {

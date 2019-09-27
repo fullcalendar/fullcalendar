@@ -11,7 +11,10 @@ import {
   View,
   buildGotoAnchorHtml,
   Duration,
-  ComponentContext
+  ComponentContext,
+  ViewProps,
+  memoize,
+  memoizeRendering
 } from '@fullcalendar/core'
 import DayGridDateProfileGenerator from './DayGridDateProfileGenerator'
 import DayGrid from './DayGrid'
@@ -24,20 +27,49 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 // It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-export default abstract class DayGridView extends View {
+export default abstract class AbstractDayGridView extends View {
 
   scroller: ScrollComponent
   dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
 
   colWeekNumbersVisible: boolean
+  cellWeekNumbersVisible: boolean
   weekNumberWidth: number
 
+  private processOptions = memoize(this._processOptions)
+  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
 
-    let { options } = this.context
+  _processOptions(options) {
+    if (options.weekNumbers) {
+      if (options.weekNumbersWithinDays) {
+        this.cellWeekNumbersVisible = true
+        this.colWeekNumbersVisible = false
+      } else {
+        this.cellWeekNumbersVisible = false
+        this.colWeekNumbersVisible = true
+      }
+    } else {
+      this.colWeekNumbersVisible = false
+      this.cellWeekNumbersVisible = false
+    }
+  }
 
+
+  render(props: ViewProps, context: ComponentContext) {
+    this.processOptions(context.options)
+    this.renderSkeleton(context)
+  }
+
+
+  destroy() {
+    super.destroy()
+
+    this.renderSkeleton.unrender()
+  }
+
+
+  _renderSkeleton(context: ComponentContext) {
     this.el.classList.add('fc-dayGrid-view')
     this.el.innerHTML = this.renderSkeletonHtml()
 
@@ -52,21 +84,6 @@ export default abstract class DayGridView extends View {
     let dayGridEl = createElement('div', { className: 'fc-day-grid' })
     dayGridContainerEl.appendChild(dayGridEl)
 
-    let cellWeekNumbersVisible
-
-    if (options.weekNumbers) {
-      if (options.weekNumbersWithinDays) {
-        cellWeekNumbersVisible = true
-        this.colWeekNumbersVisible = false
-      } else {
-        cellWeekNumbersVisible = false
-        this.colWeekNumbersVisible = true
-      }
-    } else {
-      this.colWeekNumbersVisible = false
-      cellWeekNumbersVisible = false
-    }
-
     this.dayGrid = new DayGrid(
       dayGridEl,
       {
@@ -74,19 +91,19 @@ export default abstract class DayGridView extends View {
         renderBgIntroHtml: this.renderDayGridBgIntroHtml,
         renderIntroHtml: this.renderDayGridIntroHtml,
         colWeekNumbersVisible: this.colWeekNumbersVisible,
-        cellWeekNumbersVisible
+        cellWeekNumbersVisible: this.cellWeekNumbersVisible
       }
     )
-    this.dayGrid.setContext(context)
   }
 
 
-  destroy() {
-    super.destroy()
+  _unrenderSkeleton() {
+    this.el.classList.remove('fc-dayGrid-view')
 
     this.dayGrid.destroy()
     this.scroller.destroy()
   }
+
 
   // Builds the HTML skeleton for the view.
   // The day-grid component will render inside of a container defined by this HTML.
@@ -332,4 +349,4 @@ export default abstract class DayGridView extends View {
 
 }
 
-DayGridView.prototype.dateProfileGeneratorClass = DayGridDateProfileGenerator
+AbstractDayGridView.prototype.dateProfileGeneratorClass = DayGridDateProfileGenerator

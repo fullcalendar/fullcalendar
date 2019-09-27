@@ -40,9 +40,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     this.dayGrid = dayGrid
   }
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
-
+  firstContext(context: ComponentContext) {
     context.calendar.registerInteractiveComponent(this, { el: this.dayGrid.el })
   }
 
@@ -52,7 +50,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     this.context.calendar.unregisterInteractiveComponent(this)
   }
 
-  render(props: SimpleDayGridProps) {
+  render(props: SimpleDayGridProps, context: ComponentContext) {
     let { dayGrid } = this
     let { dateProfile, dayTable } = props
 
@@ -61,7 +59,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
       dateProfile,
       cells: dayTable.cells,
       isRigid: props.isRigid
-    })
+    }, context)
   }
 
   buildPositionCaches() {

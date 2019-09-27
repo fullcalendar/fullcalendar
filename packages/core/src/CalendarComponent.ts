@@ -38,7 +38,9 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   isHeightAuto: boolean
   viewHeight: number
 
-  private _renderToolbars = memoizeRendering(this.renderToolbars)
+  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
+  private renderToolbars = memoizeRendering(this._renderToolbars, null, [ this.renderSkeleton ])
+  private buildComponentContext = memoize(buildComponentContext)
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
 
 
@@ -48,26 +50,22 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     this.el = el
     this.computeTitle = memoize(computeTitle)
 
-    prependToElement(
-      el,
-      this.contentEl = createElement('div', { className: 'fc-view-container' })
-    )
+    this.parseBusinessHours = memoize((input) => {
+      return parseBusinessHours(input, this.context.calendar)
+    })
   }
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
+  render(props: CalendarComponentProps, context: ComponentContext) {
+    this.freezeHeight()
 
-    this.toggleElClassNames(true)
+    let title = this.computeTitle(props.dateProfile, props.viewSpec.options)
 
-    let { calendar } = context
+    this.renderSkeleton(context)
+    this.renderToolbars(props.viewSpec, props.dateProfile, props.currentDate, title)
+    this.renderView(props, title)
 
-    for (let modifyViewContainer of calendar.pluginSystem.hooks.viewContainerModifiers) {
-      modifyViewContainer(this.contentEl, calendar)
-    }
-
-    this.parseBusinessHours = memoize((input) => {
-      return parseBusinessHours(input, calendar)
-    })
+    this.updateSize()
+    this.thawHeight()
   }
 
   destroy() {
@@ -79,19 +77,34 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       this.footer.destroy()
     }
 
-    if (this.view) {
-      this.view.destroy()
-    }
-
-    removeElement(this.contentEl)
-    this.toggleElClassNames(false)
+    this.renderSkeleton.unrender() // will call destroyView
 
     super.destroy()
   }
 
-  // needs context already assigned
-  toggleElClassNames(bool: boolean) {
-    let { theme, options } = this.context
+  _renderSkeleton(context: ComponentContext) {
+    this.toggleElClassNames(true, context)
+
+    prependToElement(
+      this.el,
+      this.contentEl = createElement('div', { className: 'fc-view-container' })
+    )
+
+    let { calendar } = context
+
+    for (let modifyViewContainer of calendar.pluginSystem.hooks.viewContainerModifiers) {
+      modifyViewContainer(this.contentEl, calendar)
+    }
+  }
+
+  _unrenderSkeleton() {
+    this.destroyView() // weird to have this here
+    removeElement(this.contentEl)
+    this.toggleElClassNames(false, this.context)
+  }
+
+  toggleElClassNames(bool: boolean, context: ComponentContext) {
+    let { theme, options } = context
     let classList = this.el.classList
     let dirClassName = 'fc-' + options.dir
     let themeClassName = theme.getClass('widget')
@@ -107,18 +120,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     }
   }
 
-  render(props: CalendarComponentProps) {
-    this.freezeHeight()
-
-    let title = this.computeTitle(props.dateProfile, props.viewSpec.options)
-    this._renderToolbars(props.viewSpec, props.dateProfile, props.currentDate, title)
-    this.renderView(props, title)
-
-    this.updateSize()
-    this.thawHeight()
-  }
-
-  renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, currentDate: DateMarker, title: string) {
+  _renderToolbars(viewSpec: ViewSpec, dateProfile: DateProfile, currentDate: DateMarker, title: string) {
     let { context, header, footer } = this
     let { options, calendar } = context
     let headerLayout = options.header
@@ -141,13 +143,12 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     if (headerLayout) {
       if (!header) {
         header = this.header = new Toolbar('fc-header-toolbar')
-        header.setContext(context)
         prependToElement(this.el, header.el)
       }
       header.receiveProps({
         layout: headerLayout,
         ...toolbarProps
-      })
+      }, context)
     } else if (header) {
       header.destroy()
       header = this.header = null
@@ -156,13 +157,12 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     if (footerLayout) {
       if (!footer) {
         footer = this.footer = new Toolbar('fc-footer-toolbar')
-        footer.setContext(context)
         appendToElement(this.el, footer.el)
       }
       footer.receiveProps({
         layout: footerLayout,
         ...toolbarProps
-      })
+      }, context)
     } else if (footer) {
       footer.destroy()
       footer = this.footer = null
@@ -181,8 +181,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       }
 
       view = this.view = new viewSpec['class'](viewSpec, this.contentEl)
-      let viewContext = this.context.extend(viewSpec.options, view)
-      view.setContext(viewContext)
 
     } else {
       view.addScroll(view.queryScroll())
@@ -211,7 +209,14 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       )
     }
 
-    view.receiveProps(viewProps)
+    view.receiveProps(viewProps, this.buildComponentContext(this.context, viewSpec, view))
+  }
+
+  destroyView() {
+    if (this.view) {
+      this.view.destroy()
+      this.view = null
+    }
   }
 
 
@@ -343,6 +348,12 @@ function computeTitleFormat(dateProfile) {
       return { year: 'numeric', month: 'long', day: 'numeric' }
     }
   }
+}
+
+
+// build a context scoped to the view
+function buildComponentContext(context: ComponentContext, viewSpec: ViewSpec, view: View) {
+  return context.extend(viewSpec.options, view)
 }
 
 

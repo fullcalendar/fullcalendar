@@ -30,8 +30,8 @@ export default class DayTile extends DateComponent<DayTileProps> {
   private renderEventResize: MemoizedRendering<[EventInstanceHash]>
 
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
+  constructor(el: HTMLElement) {
+    super(el)
 
     let eventRenderer = this.eventRenderer = new DayTileEventRenderer(this)
 
@@ -62,20 +62,25 @@ export default class DayTile extends DateComponent<DayTileProps> {
       eventRenderer.showByHash.bind(eventRenderer),
       [ renderFrame ]
     )
+  }
 
+
+  firstContext(context: ComponentContext) {
     context.calendar.registerInteractiveComponent(this, {
       el: this.el,
       useEventCenter: false
     })
   }
 
-  render(props: DayTileProps) {
+
+  render(props: DayTileProps, context: ComponentContext) {
     this.renderFrame(props.date)
-    this.renderFgEvents(this.context, props.fgSegs)
+    this.renderFgEvents(context, props.fgSegs)
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDragInstances)
     this.renderEventResize(props.eventResizeInstances)
   }
+
 
   destroy() {
     super.destroy()
@@ -84,6 +89,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
     this.context.calendar.unregisterInteractiveComponent(this)
   }
+
 
   _renderFrame(date: DateMarker) {
     let { theme, dateEnv, options } = this.context
@@ -106,6 +112,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
     this.segContainerEl = this.el.querySelector('.fc-event-container')
   }
+
 
   queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
     let date = (this.props as any).date // HACK

@@ -12,6 +12,7 @@ import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { memoizeRendering } from './component/memoized-rendering'
 import { __assign } from 'tslib'
+import { ComponentContext } from './component/Component'
 
 export interface ViewProps {
   dateProfileGenerator: DateProfileGenerator
@@ -102,7 +103,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  render(props: ViewProps) {
+  render(props: ViewProps, context: ComponentContext) {
     this.renderDatesMem(props.dateProfile, props.dateProfileGenerator)
     this.renderBusinessHoursMem(props.businessHours)
     this.renderDateSelectionMem(props.dateSelection)

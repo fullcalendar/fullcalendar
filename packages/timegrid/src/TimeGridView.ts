@@ -20,27 +20,61 @@ export default class TimeGridView extends AbstractTimeGridView {
 
   private buildDayTable = memoize(buildDayTable)
 
-  setContext(context: ComponentContext) {
-    super.setContext(context)
+
+  render(props: ViewProps, context: ComponentContext) {
+    super.render(props, context) // for flags for updateSize. also _renderSkeleton/_unrenderSkeleton
+
+    let { dateProfile, dateProfileGenerator } = this.props
+    let { nextDayThreshold } = context
+    let dayTable = this.buildDayTable(dateProfile, dateProfileGenerator)
+    let splitProps = this.splitter.splitProps(props)
+
+    if (this.header) {
+      this.header.receiveProps({
+        dateProfile,
+        dates: dayTable.headerDates,
+        datesRepDistinctDays: true,
+        renderIntroHtml: this.renderHeadIntroHtml
+      }, context)
+    }
+
+    this.simpleTimeGrid.receiveProps({
+      ...splitProps['timed'],
+      dateProfile,
+      dayTable
+    }, context)
+
+    if (this.simpleDayGrid) {
+      this.simpleDayGrid.receiveProps({
+        ...splitProps['allDay'],
+        dateProfile,
+        dayTable,
+        nextDayThreshold,
+        isRigid: false
+      }, context)
+    }
+  }
+
+
+  _renderSkeleton(context: ComponentContext) {
+    super._renderSkeleton(context)
 
     if (context.options.columnHeader) {
       this.header = new DayHeader(
         this.el.querySelector('.fc-head-container')
       )
-      this.header.setContext(context)
     }
 
     this.simpleTimeGrid = new SimpleTimeGrid(this.timeGrid)
-    this.simpleTimeGrid.setContext(context)
 
     if (this.dayGrid) {
       this.simpleDayGrid = new SimpleDayGrid(this.dayGrid)
-      this.simpleDayGrid.setContext(context)
     }
   }
 
-  destroy() {
-    super.destroy()
+
+  _unrenderSkeleton() {
+    super._unrenderSkeleton()
 
     if (this.header) {
       this.header.destroy()
@@ -53,45 +87,13 @@ export default class TimeGridView extends AbstractTimeGridView {
     }
   }
 
-  render(props: ViewProps) {
-    super.render(props) // for flags for updateSize
-
-    let { dateProfile, dateProfileGenerator } = this.props
-    let { nextDayThreshold } = this.context
-    let dayTable = this.buildDayTable(dateProfile, dateProfileGenerator)
-    let splitProps = this.splitter.splitProps(props)
-
-    if (this.header) {
-      this.header.receiveProps({
-        dateProfile,
-        dates: dayTable.headerDates,
-        datesRepDistinctDays: true,
-        renderIntroHtml: this.renderHeadIntroHtml
-      })
-    }
-
-    this.simpleTimeGrid.receiveProps({
-      ...splitProps['timed'],
-      dateProfile,
-      dayTable
-    })
-
-    if (this.simpleDayGrid) {
-      this.simpleDayGrid.receiveProps({
-        ...splitProps['allDay'],
-        dateProfile,
-        dayTable,
-        nextDayThreshold,
-        isRigid: false
-      })
-    }
-  }
 
   renderNowIndicator(date) {
     this.simpleTimeGrid.renderNowIndicator(date)
   }
 
 }
+
 
 export function buildDayTable(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator): DayTable {
   let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
