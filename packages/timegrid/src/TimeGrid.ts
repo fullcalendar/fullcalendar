@@ -107,10 +107,10 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   private renderSlats = memoizeRendering(this._renderSlats)
   private renderColumns: MemoizedRendering<[TimeGridCell[], DateProfile]>
-  private renderBusinessHours: MemoizedRendering<[TimeGridSeg[]]>
+  private renderBusinessHours: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
   private renderDateSelection: MemoizedRendering<[TimeGridSeg[]]>
-  private renderBgEvents: MemoizedRendering<[TimeGridSeg[]]>
-  private renderFgEvents: MemoizedRendering<[TimeGridSeg[]]>
+  private renderBgEvents: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
+  private renderFgEvents: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
   private renderEventSelection: MemoizedRendering<[string]>
   private renderEventDrag: MemoizedRendering<[EventSegUiInteractionState]>
   private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
@@ -129,7 +129,6 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     let { theme } = context
     let { el } = this
 
-    // these need the context!
     let eventRenderer = this.eventRenderer = new TimeGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new TimeGridFillRenderer(this)
     this.mirrorRenderer = new TimeGridMirrorRenderer(this)
@@ -265,15 +264,17 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   render(props: TimeGridProps) {
+    let { context } = this
+
     let cells = props.cells
     this.colCnt = cells.length
 
     this.renderSlats(props.dateProfile)
     this.renderColumns(props.cells, props.dateProfile)
-    this.renderBusinessHours(props.businessHourSegs)
+    this.renderBusinessHours(context, props.businessHourSegs)
     this.renderDateSelection(props.dateSelectionSegs)
-    this.renderFgEvents(props.fgEventSegs)
-    this.renderBgEvents(props.bgEventSegs)
+    this.renderFgEvents(context, props.fgEventSegs)
+    this.renderBgEvents(context, props.bgEventSegs)
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDrag)
     this.renderEventResize(props.eventResize)
@@ -732,9 +733,9 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       this.eventRenderer.hideByHash(state.affectedInstances)
 
       if (state.isEvent) {
-        this.mirrorRenderer.renderSegs(state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
+        this.mirrorRenderer.renderSegs(this.context, state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
       } else {
-        this.fillRenderer.renderSegs('highlight', state.segs)
+        this.fillRenderer.renderSegs('highlight', this.context, state.segs)
       }
     }
   }
@@ -743,8 +744,12 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   _unrenderEventDrag(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.showByHash(state.affectedInstances)
-      this.mirrorRenderer.unrender(state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
-      this.fillRenderer.unrender('highlight')
+
+      if (state.isEvent) {
+        this.mirrorRenderer.unrender(this.context, state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
+      } else {
+        this.fillRenderer.unrender('highlight', this.context)
+      }
     }
   }
 
@@ -756,7 +761,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   _renderEventResize(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.hideByHash(state.affectedInstances)
-      this.mirrorRenderer.renderSegs(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
+      this.mirrorRenderer.renderSegs(this.context, state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
     }
   }
 
@@ -764,7 +769,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   _unrenderEventResize(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.showByHash(state.affectedInstances)
-      this.mirrorRenderer.unrender(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
+      this.mirrorRenderer.unrender(this.context, state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
     }
   }
 
@@ -777,17 +782,22 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   _renderDateSelection(segs: Seg[]) {
     if (segs) {
       if (this.context.options.selectMirror) {
-        this.mirrorRenderer.renderSegs(segs, { isSelecting: true })
+        this.mirrorRenderer.renderSegs(this.context, segs, { isSelecting: true })
       } else {
-        this.fillRenderer.renderSegs('highlight', segs)
+        this.fillRenderer.renderSegs('highlight', this.context, segs)
       }
     }
   }
 
 
   _unrenderDateSelection(segs: Seg[]) {
-    this.mirrorRenderer.unrender(segs, { isSelecting: true })
-    this.fillRenderer.unrender('highlight')
+    if (segs) {
+      if (this.context.options.selectMirror) {
+        this.mirrorRenderer.unrender(this.context, segs, { isSelecting: true })
+      } else {
+        this.fillRenderer.unrender('highlight', this.context)
+      }
+    }
   }
 
 }

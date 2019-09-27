@@ -19,7 +19,7 @@ export default class DayGridEventRenderer extends SimpleDayGridEventRenderer {
 
 
   constructor(dayGrid: DayGrid) {
-    super(dayGrid.context)
+    super()
 
     this.dayGrid = dayGrid
   }

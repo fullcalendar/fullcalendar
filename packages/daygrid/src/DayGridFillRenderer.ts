@@ -3,7 +3,8 @@ import {
   appendToElement,
   prependToElement,
   FillRenderer,
-  Seg
+  Seg,
+  ComponentContext
 } from '@fullcalendar/core'
 import DayGrid, { DayGridSeg } from './DayGrid'
 
@@ -17,12 +18,12 @@ export default class DayGridFillRenderer extends FillRenderer {
   dayGrid: DayGrid
 
   constructor(dayGrid: DayGrid) {
-    super(dayGrid.context)
+    super()
 
     this.dayGrid = dayGrid
   }
 
-  renderSegs(type: string, segs: DayGridSeg[]) {
+  renderSegs(type: string, context: ComponentContext, segs: DayGridSeg[]) {
 
     // don't render timed background events
     if (type === 'bgEvent') {
@@ -31,7 +32,7 @@ export default class DayGridFillRenderer extends FillRenderer {
       })
     }
 
-    super.renderSegs(type, segs)
+    super.renderSegs(type, context, segs)
   }
 
   attachSegs(type, segs: Seg[]) {

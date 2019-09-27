@@ -14,7 +14,7 @@ export default class ListEventRenderer extends FgEventRenderer {
 
 
   constructor(listView: ListView) {
-    super(listView.context)
+    super()
 
     this.listView = listView
   }

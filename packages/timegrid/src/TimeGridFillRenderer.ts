@@ -9,7 +9,7 @@ export default class TimeGridFillRenderer extends FillRenderer {
   timeGrid: TimeGrid
 
   constructor(timeGrid: TimeGrid) {
-    super(timeGrid.context)
+    super()
 
     this.timeGrid = timeGrid
   }

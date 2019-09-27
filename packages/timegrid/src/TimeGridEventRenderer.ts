@@ -4,7 +4,7 @@ import {
   createFormatter, DateFormatter,
   FgEventRenderer, buildSegCompareObj,
   Seg, isMultiDayRange, compareByFieldSpecs,
-  computeEventDraggable, computeEventStartResizable, computeEventEndResizable
+  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext
 } from '@fullcalendar/core'
 import TimeGrid from './TimeGrid'
 
@@ -20,10 +20,16 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
 
 
   constructor(timeGrid: TimeGrid) {
-    super(timeGrid.context)
+    super()
 
     this.timeGrid = timeGrid
+  }
 
+
+  renderSegs(context: ComponentContext, segs: Seg[], mirrorInfo?) {
+    super.renderSegs(context, segs, mirrorInfo)
+
+    // TODO: dont do every time. memoize
     this.fullTimeFormat = createFormatter({
       hour: 'numeric',
       minute: '2-digit',

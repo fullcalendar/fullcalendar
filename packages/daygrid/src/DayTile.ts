@@ -24,7 +24,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
   segContainerEl: HTMLElement
 
   private renderFrame: MemoizedRendering<[DateMarker]>
-  private renderFgEvents: MemoizedRendering<[Seg[]]>
+  private renderFgEvents: MemoizedRendering<[ComponentContext, Seg[]]>
   private renderEventSelection: MemoizedRendering<[string]>
   private renderEventDrag: MemoizedRendering<[EventInstanceHash]>
   private renderEventResize: MemoizedRendering<[EventInstanceHash]>
@@ -71,7 +71,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
   render(props: DayTileProps) {
     this.renderFrame(props.date)
-    this.renderFgEvents(props.fgSegs)
+    this.renderFgEvents(this.context, props.fgSegs)
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDragInstances)
     this.renderEventResize(props.eventResizeInstances)
@@ -137,7 +137,7 @@ export class DayTileEventRenderer extends SimpleDayGridEventRenderer {
   dayTile: DayTile
 
   constructor(dayTile) {
-    super(dayTile.context)
+    super()
 
     this.dayTile = dayTile
   }

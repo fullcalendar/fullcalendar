@@ -16,8 +16,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
   dirtySizeFlags: any = {}
 
 
-  constructor(context: ComponentContext) {
-    this.context = context
+  constructor() {
     this.containerElsByType = {}
     this.segsByType = {}
   }
@@ -28,7 +27,9 @@ export default abstract class FillRenderer { // use for highlight, background ev
   }
 
 
-  renderSegs(type, segs: Seg[]) {
+  renderSegs(type: string, context: ComponentContext, segs: Seg[]) {
+    this.context = context
+
     let renderedSegs = this.renderSegEls(type, segs) // assignes `.el` to each seg. returns successfully rendered segs
     let containerEls = this.attachSegs(type, renderedSegs)
 
@@ -40,7 +41,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
     this.segsByType[type] = renderedSegs
 
     if (type === 'bgEvent') {
-      triggerRenderedSegs(this.context, renderedSegs, false) // isMirror=false
+      triggerRenderedSegs(context, renderedSegs, false) // isMirror=false
     }
 
     this.dirtySizeFlags[type] = true
@@ -48,13 +49,13 @@ export default abstract class FillRenderer { // use for highlight, background ev
 
 
   // Unrenders a specific type of fill that is currently rendered on the grid
-  unrender(type) {
+  unrender(type: string, context: ComponentContext) {
     let segs = this.segsByType[type]
 
     if (segs) {
 
       if (type === 'bgEvent') {
-        triggerWillRemoveSegs(this.context, segs, false) // isMirror=false
+        triggerWillRemoveSegs(context, segs, false) // isMirror=false
       }
 
       this.detachSegs(type, segs)

@@ -38,7 +38,7 @@ export default class ListView extends View {
 
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
-  private renderContent: MemoizedRendering<[Seg[]]>
+  private renderContent: MemoizedRendering<[ComponentContext, Seg[]]>
 
 
   setContext(context: ComponentContext) {
@@ -81,6 +81,7 @@ export default class ListView extends View {
     this.dayDates = dayDates
 
     this.renderContent(
+      this.context,
       this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
     )
   }

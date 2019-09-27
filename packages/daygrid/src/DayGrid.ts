@@ -92,10 +92,10 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   segPopoverTile: DayTile
 
   private renderCells: MemoizedRendering<[DayGridCell[][], boolean]>
-  private renderBusinessHours: MemoizedRendering<[DayGridSeg[]]>
-  private renderDateSelection: MemoizedRendering<[DayGridSeg[]]>
-  private renderBgEvents: MemoizedRendering<[DayGridSeg[]]>
-  private renderFgEvents: MemoizedRendering<[DayGridSeg[]]>
+  private renderBusinessHours: MemoizedRendering<[ComponentContext, DayGridSeg[]]>
+  private renderDateSelection: MemoizedRendering<[ComponentContext, DayGridSeg[]]>
+  private renderBgEvents: MemoizedRendering<[ComponentContext, DayGridSeg[]]>
+  private renderFgEvents: MemoizedRendering<[ComponentContext, DayGridSeg[]]>
   private renderEventSelection: MemoizedRendering<[string]>
   private renderEventDrag: MemoizedRendering<[EventSegUiInteractionState]>
   private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
@@ -110,7 +110,6 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   setContext(context: ComponentContext) {
     super.setContext(context)
 
-    // these need the context!
     let eventRenderer = this.eventRenderer = new DayGridEventRenderer(this)
     let fillRenderer = this.fillRenderer = new DayGridFillRenderer(this)
     this.mirrorRenderer = new DayGridMirrorRenderer(this)
@@ -165,15 +164,17 @@ export default class DayGrid extends DateComponent<DayGridProps> {
 
 
   render(props: DayGridProps) {
+    let { context } = this
+
     let cells = props.cells
     this.rowCnt = cells.length
     this.colCnt = cells[0].length
 
     this.renderCells(cells, props.isRigid)
-    this.renderBusinessHours(props.businessHourSegs)
-    this.renderDateSelection(props.dateSelectionSegs)
-    this.renderBgEvents(props.bgEventSegs)
-    this.renderFgEvents(props.fgEventSegs)
+    this.renderBusinessHours(context, props.businessHourSegs)
+    this.renderDateSelection(context, props.dateSelectionSegs)
+    this.renderBgEvents(context, props.bgEventSegs)
+    this.renderFgEvents(context, props.fgEventSegs)
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDrag)
     this.renderEventResize(props.eventResize)
@@ -500,7 +501,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   _renderEventDrag(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.hideByHash(state.affectedInstances)
-      this.fillRenderer.renderSegs('highlight', state.segs)
+      this.fillRenderer.renderSegs('highlight', this.context, state.segs)
     }
   }
 
@@ -508,7 +509,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   _unrenderEventDrag(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.showByHash(state.affectedInstances)
-      this.fillRenderer.unrender('highlight')
+      this.fillRenderer.unrender('highlight', this.context)
     }
   }
 
@@ -520,8 +521,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   _renderEventResize(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.hideByHash(state.affectedInstances)
-      this.fillRenderer.renderSegs('highlight', state.segs)
-      this.mirrorRenderer.renderSegs(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
+      this.fillRenderer.renderSegs('highlight', this.context, state.segs)
+      this.mirrorRenderer.renderSegs(this.context, state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
     }
   }
 
@@ -529,8 +530,8 @@ export default class DayGrid extends DateComponent<DayGridProps> {
   _unrenderEventResize(state: EventSegUiInteractionState) {
     if (state) {
       this.eventRenderer.showByHash(state.affectedInstances)
-      this.fillRenderer.unrender('highlight')
-      this.mirrorRenderer.unrender(state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
+      this.fillRenderer.unrender('highlight', this.context)
+      this.mirrorRenderer.unrender(this.context, state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
     }
   }
 

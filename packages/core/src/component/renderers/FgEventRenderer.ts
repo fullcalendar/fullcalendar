@@ -21,12 +21,9 @@ export default abstract class FgEventRenderer {
   isSizeDirty: boolean = false
 
 
-  constructor(context: ComponentContext) {
+  renderSegs(context: ComponentContext, segs: Seg[], mirrorInfo?) {
     this.context = context
-  }
 
-
-  renderSegs(segs: Seg[], mirrorInfo?) {
     this.rangeUpdated() // called too frequently :(
 
     // render an `.el` on each seg
@@ -41,7 +38,7 @@ export default abstract class FgEventRenderer {
   }
 
 
-  unrender(_segs: Seg[], mirrorInfo?) {
+  unrender(context: ComponentContext, _segs: Seg[], mirrorInfo?) {
     triggerWillRemoveSegs(this.context, this.segs, Boolean(mirrorInfo))
     this.detachSegs(this.segs)
     this.segs = []
