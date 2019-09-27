@@ -67,40 +67,6 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   }
 
 
-  // TODO: WHAT ABOUT (sourceSeg && sourceSeg.component.doesDragMirror)
-  //
-  // Event Drag-n-Drop Rendering (for both events and external elements)
-  // ---------------------------------------------------------------------------------------------------------------
-  /*
-  renderEventDragSegs(state: EventSegUiInteractionState) {
-    if (state) {
-      let { isEvent, segs, sourceSeg } = state
-
-      if (this.eventRenderer) {
-        this.eventRenderer.hideByHash(state.affectedInstances)
-      }
-
-      // if the user is dragging something that is considered an event with real event data,
-      // and this component likes to do drag mirrors OR the component where the seg came from
-      // likes to do drag mirrors, then render a drag mirror.
-      if (isEvent && (this.doesDragMirror || sourceSeg && sourceSeg.component.doesDragMirror)) {
-        if (this.mirrorRenderer) {
-          this.mirrorRenderer.renderSegs(segs, { isDragging: true, sourceSeg })
-        }
-      }
-
-      // if it would be impossible to render a drag mirror OR this component likes to render
-      // highlights, then render a highlight.
-      if (!isEvent || this.doesDragHighlight) {
-        if (this.fillRenderer) {
-          this.fillRenderer.renderSegs('highlight', segs)
-        }
-      }
-    }
-  }
-  */
-
-
   // Hit System
   // -----------------------------------------------------------------------------------------------------------------
 

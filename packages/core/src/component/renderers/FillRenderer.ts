@@ -4,7 +4,9 @@ import { Seg } from '../DateComponent'
 import { filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import { ComponentContext } from '../Component'
 
-
+/*
+TODO: when refactoring this class, make a new FillRenderer instance for each `type`
+*/
 export default abstract class FillRenderer { // use for highlight, background events, business hours
 
   context: ComponentContext
