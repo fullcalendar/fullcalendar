@@ -31,7 +31,7 @@ describe('scroll state', function() {
 
   function defineTests() {
 
-    it('should be maintained when moving resizing window', function(done) {
+    it('should be maintained when resizing window', function(done) {
       var scrollEl
       var scroll0
 

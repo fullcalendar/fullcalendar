@@ -35,11 +35,13 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   el: HTMLElement
   contentEl: HTMLElement
 
+  elClassNames: string[] = []
+  savedScroll: any // hack
   isHeightAuto: boolean
   viewHeight: number
 
   private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
-  private renderToolbars = memoizeRendering(this._renderToolbars, null, [ this.renderSkeleton ])
+  private renderToolbars = memoizeRendering(this._renderToolbars, this._unrenderToolbars, [ this.renderSkeleton ])
   private buildComponentContext = memoize(buildComponentContext)
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
 
@@ -83,7 +85,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   }
 
   _renderSkeleton(context: ComponentContext) {
-    this.toggleElClassNames(true, context)
+    this.updateElClassNames(context)
 
     prependToElement(
       this.el,
@@ -98,25 +100,42 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   }
 
   _unrenderSkeleton() {
-    this.destroyView() // weird to have this here
+
+    // weird to have this here
+    if (this.view) {
+      this.savedScroll = this.view.queryScroll()
+      this.view.destroy()
+      this.view = null
+    }
+
     removeElement(this.contentEl)
-    this.toggleElClassNames(false, this.context)
+    this.removeElClassNames()
   }
 
-  toggleElClassNames(bool: boolean, context: ComponentContext) {
-    let { theme, options } = context
+  removeElClassNames() {
     let classList = this.el.classList
-    let dirClassName = 'fc-' + options.dir
-    let themeClassName = theme.getClass('widget')
 
-    if (bool) {
-      classList.add('fc')
-      classList.add(dirClassName)
-      classList.add(themeClassName)
-    } else {
-      classList.remove('fc')
-      classList.remove(dirClassName)
-      classList.remove(themeClassName)
+    for (let className of this.elClassNames) {
+      classList.remove(className)
+    }
+
+    this.elClassNames = []
+  }
+
+  updateElClassNames(context: ComponentContext) {
+    this.removeElClassNames()
+
+    let { theme, options } = context
+    this.elClassNames = [
+      'fc',
+      'fc-' + options.dir,
+      theme.getClass('widget')
+    ]
+
+    let classList = this.el.classList
+
+    for (let className of this.elClassNames) {
+      classList.add(className)
     }
   }
 
@@ -169,6 +188,17 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     }
   }
 
+  _unrenderToolbars() {
+    if (this.header) {
+      this.header.destroy()
+      this.header = null
+    }
+    if (this.footer) {
+      this.footer.destroy()
+      this.footer = null
+    }
+  }
+
   renderView(props: CalendarComponentProps, title: string) {
     let { view } = this
     let { calendar, options } = this.context
@@ -182,8 +212,10 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
       view = this.view = new viewSpec['class'](viewSpec, this.contentEl)
 
-    } else {
-      view.addScroll(view.queryScroll())
+      if (this.savedScroll) {
+        view.addScroll(this.savedScroll, true)
+        this.savedScroll = null
+      }
     }
 
     view.title = title // for the API
@@ -212,13 +244,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     view.receiveProps(viewProps, this.buildComponentContext(this.context, viewSpec, view))
   }
 
-  destroyView() {
-    if (this.view) {
-      this.view.destroy()
-      this.view = null
-    }
-  }
-
 
   // Sizing
   // -----------------------------------------------------------------------------------------------------------------
@@ -228,10 +253,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
     if (!view) {
       return // why?
-    }
-
-    if (isResize) {
-      view.addScroll(view.queryScroll())
     }
 
     if (isResize || this.isHeightAuto == null) {

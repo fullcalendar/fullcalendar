@@ -108,7 +108,6 @@ export default class Calendar {
 
   // isDisplaying: boolean = false // installed in DOM? accepting renders?
   needsRerender: boolean = false // needs a render?
-  needsFullRerender: boolean = false
   isRendering: boolean = false // currently in the executeRender function?
   renderingPauseDepth: number = 0
   renderableEventStore: EventStore
@@ -164,11 +163,12 @@ export default class Calendar {
 
   render() {
     if (!this.component) {
+      this.component = new CalendarComponent(this.el)
       this.renderableEventStore = createEmptyEventStore()
       this.bindHandlers()
       this.executeRender()
     } else {
-      this.requestRerender(true)
+      this.requestRerender()
     }
   }
 
@@ -312,13 +312,13 @@ export default class Calendar {
 
       let view = this.component && this.component.view
 
-      if (oldState.eventStore !== newState.eventStore || this.needsFullRerender) {
+      if (oldState.eventStore !== newState.eventStore) {
         if (oldState.eventStore) {
           this.isEventsUpdated = true
         }
       }
 
-      if (oldState.dateProfile !== newState.dateProfile || this.needsFullRerender) {
+      if (oldState.dateProfile !== newState.dateProfile) {
         if (oldState.dateProfile && view) { // why would view be null!?
           this.publiclyTrigger('datesDestroy', [
             {
@@ -330,7 +330,7 @@ export default class Calendar {
         this.isDatesUpdated = true
       }
 
-      if (oldState.viewType !== newState.viewType || this.needsFullRerender) {
+      if (oldState.viewType !== newState.viewType) {
         if (oldState.viewType && view) { // why would view be null!?
           this.publiclyTrigger('viewSkeletonDestroy', [
             {
@@ -356,9 +356,8 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  requestRerender(needsFull = false) {
+  requestRerender() {
     this.needsRerender = true
-    this.needsFullRerender = this.needsFullRerender || needsFull
     this.delayedRerender() // will call a debounced-version of tryRerender
   }
 
@@ -390,14 +389,11 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
   executeRender() {
-    let { needsFullRerender } = this // save before clearing
-
     // clear these BEFORE the render so that new values will accumulate during render
     this.needsRerender = false
-    this.needsFullRerender = false
 
     this.isRendering = true
-    this.renderComponent(needsFullRerender)
+    this.renderComponent()
     this.isRendering = false
 
     // received a rerender request while rendering
@@ -409,11 +405,10 @@ export default class Calendar {
   /*
   don't call this directly. use executeRender instead
   */
-  renderComponent(needsFull) {
+  renderComponent() {
     let { state, component } = this
     let { viewType } = state
     let viewSpec = this.viewSpecs[viewType]
-    let savedScroll = (needsFull && component) ? component.view.queryScroll() : null
 
     if (!viewSpec) {
       throw new Error(`View type "${viewType}" is not valid`)
@@ -429,20 +424,6 @@ export default class Calendar {
     let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options)
     let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
-
-    if (needsFull || !component) {
-
-      if (component) {
-        component.freezeHeight() // next component will unfreeze it
-        component.destroy()
-      }
-
-      component = this.component = new CalendarComponent(this.el)
-
-      this.isViewUpdated = true
-      this.isDatesUpdated = true
-      this.isEventsUpdated = true
-    }
 
     component.receiveProps({
       ...state,
@@ -460,10 +441,6 @@ export default class Calendar {
       this.dateEnv,
       this.optionsManager.computed
     ))
-
-    if (savedScroll) {
-      component.view.applyScroll(savedScroll, false)
-    }
 
     if (this.isViewUpdated) {
       this.isViewUpdated = false
@@ -559,7 +536,6 @@ export default class Calendar {
 
     if (anyDifficultOptions) {
       this.handleOptions(this.optionsManager.computed)
-      this.needsFullRerender = true
     }
 
     this.batchRendering(() => {
@@ -574,7 +550,7 @@ export default class Calendar {
         }
 
         /* HACK
-        has the same effect as calling this.requestRerender(true)
+        has the same effect as calling this.requestRerender()
         but recomputes the state's dateProfile
         */
         this.dispatch({

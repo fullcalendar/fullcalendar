@@ -114,6 +114,11 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
+  beforeUpdate() {
+    this.addScroll(this.queryScroll())
+  }
+
+
   destroy() {
     super.destroy()
 
@@ -128,6 +133,10 @@ export default abstract class View extends DateComponent<ViewProps> {
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
     let { calendar } = this.context
 
+    if (isResize) {
+      this.addScroll(this.queryScroll()) // NOTE: same code as in beforeUpdate
+    }
+
     if (
       isResize || // HACKS...
       calendar.isViewUpdated ||
@@ -138,6 +147,8 @@ export default abstract class View extends DateComponent<ViewProps> {
       // anything that might cause dimension changes
       this.updateBaseSize(isResize, viewHeight, isAuto)
     }
+
+    // NOTE: popScroll is called by CalendarComponent
   }
 
 
@@ -373,10 +384,11 @@ export default abstract class View extends DateComponent<ViewProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  addScroll(scroll) {
-    let queuedScroll = this.queuedScroll || (this.queuedScroll = {})
-
-    __assign(queuedScroll, scroll)
+  addScroll(scroll, isForced?: boolean) {
+    if (isForced) {
+      scroll.isForced = isForced
+    }
+    __assign(this.queuedScroll || (this.queuedScroll = {}), scroll)
   }
 
 
@@ -387,7 +399,9 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   applyQueuedScroll(isResize: boolean) {
-    this.applyScroll(this.queuedScroll || {}, isResize)
+    if (this.queuedScroll) {
+      this.applyScroll(this.queuedScroll, isResize)
+    }
   }
 
 
@@ -403,9 +417,9 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   applyScroll(scroll, isResize: boolean) {
-    let { duration } = scroll
+    let { duration, isForced } = scroll
 
-    if (duration != null) {
+    if (duration != null && !isForced) {
       delete scroll.duration
 
       if (this.props.dateProfile) { // dates rendered yet?

@@ -73,7 +73,16 @@ export default class Component<PropsType> {
     this.props = comboProps
 
     if (anyChanges) {
+
+      if (oldContext) {
+        this.beforeUpdate()
+      }
+
       this.render(comboProps, context)
+
+      if (oldContext) {
+        this.afterUpdate()
+      }
     }
   }
 
@@ -81,6 +90,12 @@ export default class Component<PropsType> {
   }
 
   firstContext(context: ComponentContext) {
+  }
+
+  beforeUpdate() {
+  }
+
+  afterUpdate() {
   }
 
   // after destroy is called, this component won't ever be used again
