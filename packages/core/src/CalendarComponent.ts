@@ -226,6 +226,10 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   updateSize(isResize = false) {
     let { view } = this
 
+    if (!view) {
+      return // why?
+    }
+
     if (isResize) {
       view.addScroll(view.queryScroll())
     }

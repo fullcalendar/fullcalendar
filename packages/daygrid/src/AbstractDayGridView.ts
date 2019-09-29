@@ -57,6 +57,8 @@ export default abstract class AbstractDayGridView extends View {
 
 
   render(props: ViewProps, context: ComponentContext) {
+    super.render(props, context)
+
     this.processOptions(context.options)
     this.renderSkeleton(context)
   }

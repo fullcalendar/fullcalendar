@@ -53,6 +53,8 @@ export default class TimeGridView extends AbstractTimeGridView {
         isRigid: false
       }, context)
     }
+
+    this.startNowIndicator(dateProfile, dateProfileGenerator)
   }
 
 

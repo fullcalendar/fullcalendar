@@ -60,7 +60,7 @@ export default class SimpleTimeGrid extends DateComponent<SimpleTimeGridProps> {
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTable, dateProfile, dateEnv)
 
     this.timeGrid.receiveProps({
-      ...this.slicer.sliceProps(props, dateProfile, null, this.timeGrid, dayRanges),
+      ...this.slicer.sliceProps(props, dateProfile, null, context.calendar, this.timeGrid, dayRanges),
       dateProfile,
       cells: dayTable.cells[0]
     }, context)

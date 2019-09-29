@@ -21,6 +21,11 @@ export default class OptionsManager {
 
 
   mutate(updates, removals: string[], isDynamic?: boolean) {
+
+    if (!Object.keys(updates).length && !removals.length) {
+      return
+    }
+
     let overrideHash = isDynamic ? this.dynamicOverrides : this.overrides
 
     __assign(overrideHash, updates)

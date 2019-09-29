@@ -104,7 +104,7 @@ export default abstract class View extends DateComponent<ViewProps> {
 
 
   render(props: ViewProps, context: ComponentContext) {
-    this.renderDatesMem(props.dateProfile, props.dateProfileGenerator)
+    this.renderDatesMem(props.dateProfile)
     this.renderBusinessHoursMem(props.businessHours)
     this.renderDateSelectionMem(props.dateSelection)
     this.renderEventsMem(props.eventStore)
@@ -148,12 +148,11 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Date Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderDatesWrap(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
+  renderDatesWrap(dateProfile: DateProfile) {
     this.renderDates(dateProfile)
     this.addScroll({
       duration: createDuration(this.context.options.scrollTime)
     })
-    this.startNowIndicator(dateProfile, dateProfileGenerator) // shouldn't render yet because updateSize will be called soon
   }
 
   unrenderDatesWrap() {
@@ -274,14 +273,16 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Immediately render the current time indicator and begins re-rendering it at an interval,
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
+  // USAGE: must be called manually from subclasses' render methods! don't need to call stopNowIndicator tho
   startNowIndicator(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
     let { calendar, dateEnv, options } = this.context
     let unit
     let update
     let delay // ms wait value
 
-    if (options.nowIndicator) {
+    if (options.nowIndicator && !this.initialNowDate) {
       unit = this.getNowIndicatorUnit(dateProfile, dateProfileGenerator)
+
       if (unit) {
         update = this.updateNowIndicator.bind(this)
 
@@ -333,17 +334,18 @@ export default abstract class View extends DateComponent<ViewProps> {
   // Immediately unrenders the view's current time indicator and stops any re-rendering timers.
   // Won't cause side effects if indicator isn't rendered.
   stopNowIndicator() {
+
+    if (this.nowIndicatorTimeoutID) {
+      clearTimeout(this.nowIndicatorTimeoutID)
+      this.nowIndicatorTimeoutID = null
+    }
+
+    if (this.nowIndicatorIntervalID) {
+      clearInterval(this.nowIndicatorIntervalID)
+      this.nowIndicatorIntervalID = null
+    }
+
     if (this.isNowIndicatorRendered) {
-
-      if (this.nowIndicatorTimeoutID) {
-        clearTimeout(this.nowIndicatorTimeoutID)
-        this.nowIndicatorTimeoutID = null
-      }
-      if (this.nowIndicatorIntervalID) {
-        clearInterval(this.nowIndicatorIntervalID)
-        this.nowIndicatorIntervalID = null
-      }
-
       this.unrenderNowIndicator()
       this.isNowIndicatorRendered = false
     }

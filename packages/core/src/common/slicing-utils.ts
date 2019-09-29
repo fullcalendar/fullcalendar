@@ -9,6 +9,7 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { Duration } from '../datelib/duration'
 import { memoize } from '../util/memoize'
 import { DateMarker, addMs } from '../datelib/marker'
+import Calendar from '../Calendar'
 
 export interface SliceableProps {
   dateSelection: DateSpan
@@ -44,6 +45,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     props: SliceableProps,
     dateProfile: DateProfile,
     nextDayThreshold: Duration | null,
+    calendar: Calendar,
     component: DateComponent<any>, // TODO: kill
     ...extraArgs: ExtraArgs
   ): SlicedProps<SegType> {
@@ -52,7 +54,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
 
     return {
       dateSelectionSegs: this.sliceDateSelection(props.dateSelection, eventUiBases, component, ...extraArgs),
-      businessHourSegs: this.sliceBusinessHours(props.businessHours, dateProfile, nextDayThreshold, component, ...extraArgs),
+      businessHourSegs: this.sliceBusinessHours(props.businessHours, dateProfile, nextDayThreshold, calendar, component, ...extraArgs),
       fgEventSegs: eventSegs.fg,
       bgEventSegs: eventSegs.bg,
       eventDrag: this.sliceEventDrag(props.eventDrag, eventUiBases, dateProfile, nextDayThreshold, component, ...extraArgs),
@@ -78,6 +80,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     businessHours: EventStore,
     dateProfile: DateProfile,
     nextDayThreshold: Duration | null,
+    calendar: Calendar,
     component: DateComponent<any>, // TODO: kill
     ...extraArgs: ExtraArgs
   ): SegType[] {
@@ -89,7 +92,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
       expandRecurring(
         businessHours,
         computeActiveRange(dateProfile, Boolean(nextDayThreshold)),
-        component.context.calendar
+        calendar
       ),
       {},
       dateProfile,

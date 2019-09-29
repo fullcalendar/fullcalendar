@@ -34,6 +34,8 @@ export default abstract class AbstractTimeGridView extends View {
 
 
   render(props: ViewProps, context: ComponentContext) {
+    super.render(props, context)
+
     this.renderSkeleton(context)
   }
 

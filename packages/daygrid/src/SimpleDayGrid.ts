@@ -55,7 +55,7 @@ export default class SimpleDayGrid extends DateComponent<SimpleDayGridProps> {
     let { dateProfile, dayTable } = props
 
     dayGrid.receiveProps({
-      ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, dayGrid, dayTable),
+      ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayGrid, dayTable),
       dateProfile,
       cells: dayTable.cells,
       isRigid: props.isRigid

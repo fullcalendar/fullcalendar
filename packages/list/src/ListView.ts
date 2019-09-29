@@ -64,6 +64,8 @@ export default class ListView extends View {
 
 
   render(props: ViewProps, context: ComponentContext) {
+    super.render(props, context)
+
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
     this.dayDates = dayDates
 
