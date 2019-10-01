@@ -57,7 +57,7 @@ export default class DateSelecting extends Interaction {
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean) => {
-    let { calendar } = this.component.context
+    let { calendar, pluginHooks } = this.component.context
     let dragSelection: DateSpan | null = null
     let isInvalid = false
 
@@ -65,7 +65,7 @@ export default class DateSelecting extends Interaction {
       dragSelection = joinHitsIntoSelection(
         this.hitDragging.initialHit!,
         hit,
-        calendar.pluginSystem.hooks.dateSelectionTransformers
+        pluginHooks.dateSelectionTransformers
       )
 
       if (!dragSelection || !this.component.isDateSelectionValid(dragSelection)) {

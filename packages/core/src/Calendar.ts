@@ -438,6 +438,7 @@ export default class Calendar {
       eventResize: state.eventResize
     }, this.buildComponentContext(
       this,
+      this.pluginSystem.hooks,
       this.theme,
       this.dateEnv,
       this.optionsManager.computed

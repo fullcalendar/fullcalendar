@@ -94,9 +94,9 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       this.contentEl = createElement('div', { className: 'fc-view-container' })
     )
 
-    let { calendar } = context
+    let { calendar, pluginHooks } = context
 
-    for (let modifyViewContainer of calendar.pluginSystem.hooks.viewContainerModifiers) {
+    for (let modifyViewContainer of pluginHooks.viewContainerModifiers) {
       modifyViewContainer(this.contentEl, calendar)
     }
   }
@@ -203,7 +203,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
   renderView(props: CalendarComponentProps, title: string) {
     let { view } = this
-    let { calendar, options } = this.context
+    let { pluginHooks, options } = this.context
     let { viewSpec, dateProfileGenerator } = props
 
     if (!view || view.viewSpec !== viewSpec) {
@@ -234,7 +234,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       eventResize: props.eventResize
     }
 
-    let transformers = this.buildViewPropTransformers(calendar.pluginSystem.hooks.viewPropsTransformers)
+    let transformers = this.buildViewPropTransformers(pluginHooks.viewPropsTransformers)
 
     for (let transformer of transformers) {
       __assign(

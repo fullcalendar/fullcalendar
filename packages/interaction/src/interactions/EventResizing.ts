@@ -87,7 +87,7 @@ export default class EventDragging extends Interaction {
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
-    let calendar = this.component.context.calendar
+    let { calendar, pluginHooks } = this.component.context
     let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
     let eventInstance = this.eventRange.instance!
@@ -107,7 +107,7 @@ export default class EventDragging extends Interaction {
         hit,
         (ev.subjectEl as HTMLElement).classList.contains('fc-start-resizer'),
         eventInstance.range,
-        calendar.pluginSystem.hooks.eventResizeJoinTransforms
+        pluginHooks.eventResizeJoinTransforms
       )
     }
 
