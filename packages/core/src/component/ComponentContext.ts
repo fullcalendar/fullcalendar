@@ -6,34 +6,44 @@ import { parseFieldSpecs } from '../util/misc'
 import { createDuration, Duration } from '../datelib/duration'
 
 
-export default class ComponentContext {
-
+export default interface ComponentContext {
+  calendar: Calendar
+  view?: View
+  dateEnv: DateEnv
+  theme: Theme
+  options: any
   isRtl: boolean
   eventOrderSpecs: any
   nextDayThreshold: Duration
+}
 
-  // TODO: move plugin system into here
 
-  constructor(
-    public calendar: Calendar,
-    public theme: Theme,
-    public dateEnv: DateEnv,
-    public options: any,
-    public view?: View
-  ) {
-    this.isRtl = options.dir === 'rtl'
-    this.eventOrderSpecs = parseFieldSpecs(options.eventOrder)
-    this.nextDayThreshold = createDuration(options.nextDayThreshold)
+export function buildComponentContext(
+  calendar: Calendar,
+  theme: Theme,
+  dateEnv: DateEnv,
+  options: any,
+  view?: View
+): ComponentContext {
+  return {
+    calendar,
+    view,
+    dateEnv,
+    theme,
+    options,
+    isRtl: options.dir === 'rtl',
+    eventOrderSpecs: parseFieldSpecs(options.eventOrder),
+    nextDayThreshold: createDuration(options.nextDayThreshold)
   }
+}
 
-  extend(options?: any, view?: View) {
-    return new ComponentContext(
-      this.calendar,
-      this.theme,
-      this.dateEnv,
-      options || this.options,
-      view || this.view
-    )
-  }
 
+export function extendComponentContext(context: ComponentContext, options?: any, view?: View): ComponentContext {
+  return buildComponentContext(
+    context.calendar,
+    context.theme,
+    context.dateEnv,
+    options || context.options,
+    view || context.view
+  )
 }

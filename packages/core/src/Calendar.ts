@@ -36,7 +36,7 @@ import EventHovering from './interactions/EventHovering'
 import StandardTheme from './theme/StandardTheme'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
-import ComponentContext from './component/ComponentContext'
+import { buildComponentContext } from './component/ComponentContext'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -437,6 +437,7 @@ export default class Calendar {
       eventDrag: state.eventDrag,
       eventResize: state.eventResize
     }, this.buildComponentContext(
+      this,
       this.theme,
       this.dateEnv,
       this.optionsManager.computed
@@ -1274,11 +1275,6 @@ EmitterMixin.mixInto(Calendar)
 
 // for memoizers
 // -----------------------------------------------------------------------------------------------------------------
-
-
-function buildComponentContext(this: Calendar, theme: Theme, dateEnv: DateEnv, options) {
-  return new ComponentContext(this, theme, dateEnv, options, null)
-}
 
 
 function buildDateEnv(locale: Locale, timeZone, namedTimeZoneImpl: NamedTimeZoneImplClass, firstDay, weekNumberCalculation, weekLabel, cmdFormatter: CmdFormatterFunc) {

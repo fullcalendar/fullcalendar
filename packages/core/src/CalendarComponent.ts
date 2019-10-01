@@ -1,5 +1,5 @@
 import Component from './component/Component'
-import ComponentContext from './component/ComponentContext'
+import ComponentContext, { extendComponentContext } from './component/ComponentContext'
 import { ViewSpec } from './structs/view-spec'
 import View from './View'
 import Toolbar from './Toolbar'
@@ -380,7 +380,7 @@ function computeTitleFormat(dateProfile) {
 
 // build a context scoped to the view
 function buildComponentContext(context: ComponentContext, viewSpec: ViewSpec, view: View) {
-  return context.extend(viewSpec.options, view)
+  return extendComponentContext(context, viewSpec.options, view)
 }
 
 
