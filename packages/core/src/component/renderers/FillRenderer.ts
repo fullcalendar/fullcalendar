@@ -2,7 +2,7 @@ import { cssToStr } from '../../util/html'
 import { htmlToElements, removeElement, elementMatches } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
 import { filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
-import { ComponentContext } from '../Component'
+import ComponentContext from '../ComponentContext'
 
 /*
 TODO: when refactoring this class, make a new FillRenderer instance for each `type`

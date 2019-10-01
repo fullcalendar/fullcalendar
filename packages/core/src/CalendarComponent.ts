@@ -1,4 +1,5 @@
-import Component, { ComponentContext } from './component/Component'
+import Component from './component/Component'
+import ComponentContext from './component/ComponentContext'
 import { ViewSpec } from './structs/view-spec'
 import View from './View'
 import Toolbar from './Toolbar'
@@ -16,6 +17,7 @@ import { memoizeRendering } from './component/memoized-rendering'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
+
 
 export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec

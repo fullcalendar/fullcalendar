@@ -3,7 +3,7 @@ import { htmlEscape } from '../util/html'
 import { buildGotoAnchorHtml, getDayClasses } from '../component/date-rendering'
 import { DateMarker, DAY_IDS } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
-import { ComponentContext } from '../component/Component'
+import ComponentContext from '../component/ComponentContext'
 
 // Computes a default column header formatting string if `colFormat` is not explicitly defined
 export function computeFallbackHeaderFormat(datesRepDistinctDays: boolean, dayCnt: number) {

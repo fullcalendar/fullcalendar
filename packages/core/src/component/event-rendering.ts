@@ -7,7 +7,7 @@ import { Seg } from './DateComponent'
 import EventApi from '../api/EventApi'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
-import { ComponentContext } from './Component'
+import ComponentContext from './ComponentContext'
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi

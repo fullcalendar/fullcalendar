@@ -5,7 +5,7 @@ import { compareByFieldSpecs } from '../../util/misc'
 import { EventUi } from '../event-ui'
 import { EventRenderRange, filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import { Seg } from '../DateComponent'
-import { ComponentContext } from '../Component'
+import ComponentContext from '../ComponentContext'
 
 
 export default abstract class FgEventRenderer {

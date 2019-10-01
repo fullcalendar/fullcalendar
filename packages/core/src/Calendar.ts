@@ -36,7 +36,7 @@ import EventHovering from './interactions/EventHovering'
 import StandardTheme from './theme/StandardTheme'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
-import { ComponentContext } from './component/Component'
+import ComponentContext from './component/ComponentContext'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement

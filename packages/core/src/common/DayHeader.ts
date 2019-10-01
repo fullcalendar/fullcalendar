@@ -1,4 +1,5 @@
-import Component, { ComponentContext } from '../component/Component'
+import Component from '../component/Component'
+import ComponentContext from '../component/ComponentContext'
 import { htmlToElement, removeElement } from '../util/dom-manip'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'

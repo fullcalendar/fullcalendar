@@ -1,7 +1,7 @@
 import { htmlEscape, attrsToStr } from '../util/html'
 import { DateMarker, startOfDay, addDays, DAY_IDS } from '../datelib/marker'
 import { rangeContainsMarker } from '../datelib/date-range'
-import { ComponentContext } from '../component/Component'
+import ComponentContext from '../component/ComponentContext'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
 

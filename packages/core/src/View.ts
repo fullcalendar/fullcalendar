@@ -12,7 +12,7 @@ import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { memoizeRendering } from './component/memoized-rendering'
 import { __assign } from 'tslib'
-import { ComponentContext } from './component/Component'
+import ComponentContext from './component/ComponentContext'
 
 export interface ViewProps {
   dateProfileGenerator: DateProfileGenerator
