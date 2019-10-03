@@ -1,7 +1,4 @@
 import {
-  htmlToElement,
-  createElement,
-  htmlEscape,
   subtractInnerElHeight,
   View,
   ViewProps,
@@ -9,21 +6,19 @@ import {
   DateMarker,
   addDays,
   startOfDay,
-  createFormatter,
   DateRange,
   intersectRanges,
   DateProfile,
-  buildGotoAnchorHtml,
   ComponentContext,
   EventUiHash,
   EventRenderRange,
   sliceEventStore,
   EventStore,
   memoize,
-  MemoizedRendering,
-  memoizeRendering,
   Seg,
-  ViewSpec
+  ViewSpec,
+  renderer,
+  renderViewEl
 } from '@fullcalendar/core'
 import ListEventRenderer from './ListEventRenderer'
 
@@ -32,88 +27,55 @@ Responsible for the scroller, and forwarding event-related actions into the "gri
 */
 export default class ListView extends View {
 
-  scroller: ScrollComponent
-  contentEl: HTMLElement
-
-  dayDates: DateMarker[] // TOOD: kill this. only have it because ListEventRenderer
-
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
-  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
-  private renderContent: MemoizedRendering<[ComponentContext, Seg[]]>
+  private renderSkeleton = renderer(renderSkeleton)
+  private renderScroller = renderer(ScrollComponent)
+  private renderEvents = renderer(ListEventRenderer)
+
+  // for sizing
+  private eventRenderer: ListEventRenderer
+  private scroller: ScrollComponent
 
 
-  constructor(viewSpec: ViewSpec, parentEl: HTMLElement) {
-    super(viewSpec, parentEl)
+  render(props: ViewProps) {
+    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
 
-    let eventRenderer = this.eventRenderer = new ListEventRenderer(this)
-    this.renderContent = memoizeRendering(
-      eventRenderer.renderSegs.bind(eventRenderer),
-      eventRenderer.unrender.bind(eventRenderer),
-      [ this.renderSkeleton ]
-    )
+    let rootEl = this.renderSkeleton({
+      viewSpec: props.viewSpec
+    })
+
+    this.scroller = this.renderScroller({
+      overflowX: 'hidden',
+      overflowY: 'auto'
+    }, {
+      parent: rootEl
+    })
+
+    this.eventRenderer = this.renderEvents({
+      segs: this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges),
+      dayDates,
+      contentEl: this.scroller.el,
+      selectedInstanceId: props.eventSelection, // TODO: rename
+      hiddenInstances: // TODO: more convenient
+        (props.eventDrag ? props.eventDrag.affectedEvents : null) ||
+        (props.eventResize ? props.eventResize.affectedEvents : null)
+    })
+
+    return [ rootEl ]
   }
 
 
-  firstContext(context: ComponentContext) {
-    context.calendar.registerInteractiveComponent(this, {
-      el: this.el
+  componentDidMount() {
+    this.context.calendar.registerInteractiveComponent(this, {
+      el: this.mountedEls[0]
       // TODO: make aware that it doesn't do Hits
     })
   }
 
 
-  render(props: ViewProps, context: ComponentContext) {
-    super.render(props, context)
-
-    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
-    this.dayDates = dayDates
-
-    this.renderSkeleton(context)
-
-    this.renderContent(
-      context,
-      this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
-    )
-  }
-
-
-  destroy() {
-    super.destroy()
-
-    this.renderSkeleton.unrender()
-    this.renderContent.unrender()
-
+  componentWillUnmount() {
     this.context.calendar.unregisterInteractiveComponent(this)
-  }
-
-
-  _renderSkeleton(context: ComponentContext) {
-    let { theme } = context
-
-    this.el.classList.add('fc-list-view')
-
-    let listViewClassNames = (theme.getClass('listView') || '').split(' ') // wish we didn't have to do this
-    for (let listViewClassName of listViewClassNames) {
-      if (listViewClassName) { // in case input was empty string
-        this.el.classList.add(listViewClassName)
-      }
-    }
-
-    this.scroller = new ScrollComponent(
-      'hidden', // overflow x
-      'auto' // overflow y
-    )
-
-    this.el.appendChild(this.scroller.el)
-    this.contentEl = this.scroller.el // shortcut
-  }
-
-
-  _unrenderSkeleton() {
-    // TODO: remove classNames
-
-    this.scroller.destroy() // will remove the Grid too
   }
 
 
@@ -133,7 +95,7 @@ export default class ListView extends View {
 
   computeScrollerHeight(viewHeight) {
     return viewHeight -
-      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
+      subtractInnerElHeight(this.mountedEls[0], this.scroller.el) // everything that's NOT the scroller
   }
 
 
@@ -207,103 +169,24 @@ export default class ListView extends View {
     return segs
   }
 
-
-  renderEmptyMessage() {
-    this.contentEl.innerHTML =
-      '<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
-      '<div class="fc-list-empty-wrap1">' +
-      '<div class="fc-list-empty">' +
-        htmlEscape(this.context.options.noEventsMessage) +
-      '</div>' +
-      '</div>' +
-      '</div>'
-  }
-
-
-  // called by ListEventRenderer
-  renderSegList(allSegs) {
-    let { theme } = this.context
-    let segsByDay = this.groupSegsByDay(allSegs) // sparse array
-    let dayIndex
-    let daySegs
-    let i
-    let tableEl = htmlToElement('<table class="fc-list-table ' + theme.getClass('tableList') + '"><tbody></tbody></table>')
-    let tbodyEl = tableEl.querySelector('tbody')
-
-    for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
-      daySegs = segsByDay[dayIndex]
-
-      if (daySegs) { // sparse array, so might be undefined
-
-        // append a day header
-        tbodyEl.appendChild(this.buildDayHeaderRow(this.dayDates[dayIndex]))
-
-        daySegs = this.eventRenderer.sortEventSegs(daySegs)
-
-        for (i = 0; i < daySegs.length; i++) {
-          tbodyEl.appendChild(daySegs[i].el) // append event row
-        }
-      }
-    }
-
-    this.contentEl.innerHTML = ''
-    this.contentEl.appendChild(tableEl)
-  }
-
-
-  // Returns a sparse array of arrays, segs grouped by their dayIndex
-  groupSegsByDay(segs) {
-    let segsByDay = [] // sparse array
-    let i
-    let seg
-
-    for (i = 0; i < segs.length; i++) {
-      seg = segs[i];
-      (segsByDay[seg.dayIndex] || (segsByDay[seg.dayIndex] = []))
-        .push(seg)
-    }
-
-    return segsByDay
-  }
-
-
-  // generates the HTML for the day headers that live amongst the event rows
-  buildDayHeaderRow(dayDate) {
-    let { theme, dateEnv, options } = this.context
-    let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
-    let altFormat = createFormatter(options.listDayAltFormat) // TODO: cache
-
-    return createElement('tr', {
-      className: 'fc-list-heading',
-      'data-date': dateEnv.formatIso(dayDate, { omitTime: true })
-    }, '<td class="' + (
-      theme.getClass('tableListHeading') ||
-      theme.getClass('widgetHeader')
-    ) + '" colspan="3">' +
-      (mainFormat ?
-        buildGotoAnchorHtml(
-          options,
-          dateEnv,
-          dayDate,
-          { 'class': 'fc-list-heading-main' },
-          htmlEscape(dateEnv.format(dayDate, mainFormat)) // inner HTML
-        ) :
-        '') +
-      (altFormat ?
-        buildGotoAnchorHtml(
-          options,
-          dateEnv,
-          dayDate,
-          { 'class': 'fc-list-heading-alt' },
-          htmlEscape(dateEnv.format(dayDate, altFormat)) // inner HTML
-        ) :
-        '') +
-    '</td>') as HTMLTableRowElement
-  }
-
 }
 
 ListView.prototype.fgSegSelector = '.fc-list-item' // which elements accept event actions
+
+
+function renderSkeleton(props: { viewSpec: ViewSpec }, context: ComponentContext) {
+  let rootEl = renderViewEl(props.viewSpec.type)
+  rootEl.classList.add('fc-list-view')
+
+  let listViewClassNames = (context.theme.getClass('listView') || '').split(' ') // wish we didn't have to do this
+  for (let listViewClassName of listViewClassNames) {
+    if (listViewClassName) { // in case input was empty string
+      rootEl.classList.add(listViewClassName)
+    }
+  }
+
+  return rootEl
+}
 
 
 function computeDateVars(dateProfile: DateProfile) {

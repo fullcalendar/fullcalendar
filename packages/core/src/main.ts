@@ -106,7 +106,7 @@ export { default as ComponentContext } from './component/ComponentContext'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
 export { default as View, ViewProps } from './View'
-export { default as FgEventRenderer, buildSegCompareObj } from './component/renderers/FgEventRenderer'
+export { default as FgEventRenderer, buildSegCompareObj, BaseFgEventRendererProps } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer } from './component/renderers/FillRenderer'
 
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'

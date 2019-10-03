@@ -5,74 +5,93 @@ import { compareByFieldSpecs } from '../../util/misc'
 import { EventUi } from '../event-ui'
 import { EventRenderRange, filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import { Seg } from '../DateComponent'
+import { Component } from '../../view-framework'
 import ComponentContext from '../ComponentContext'
+import { memoize } from '../../util/memoize'
+import { renderer } from '../../view-framework'
 
 
-export default abstract class FgEventRenderer {
+export interface BaseFgEventRendererProps {
+  segs: Seg[]
+  mirrorInfo?: any
+  selectedInstanceId?: string
+  hiddenInstances: { [instanceId: string]: any }
+}
 
-  context: ComponentContext
+export default abstract class FgEventRenderer<
+  FgEventRendererProps extends BaseFgEventRendererProps = BaseFgEventRendererProps
+> extends Component<FgEventRendererProps> {
 
-  // derived from options
-  eventTimeFormat: DateFormatter
-  displayEventTime: boolean
-  displayEventEnd: boolean
+  private updateComputedOptions = memoize(this._updateComputedOptions)
+  private renderSegsPlain = renderer(this._renderSegsPlain, this._unrenderSegsPlain)
+  private renderSelectedInstance = renderer(renderSelectedInstance, unrenderSelectedInstance)
+  private renderHiddenInstances = renderer(renderHiddenInstances, unrenderHiddenInstances)
 
-  segs: Seg[] = []
-  isSizeDirty: boolean = false
+  // internal state
+  private segs: Seg[] = [] // for sizing funcs
+  private isSizeDirty: boolean = false // NOTE: should also flick this when attaching segs to new containers
+
+  // computed options
+  protected eventTimeFormat: DateFormatter
+  protected displayEventTime: boolean
+  protected displayEventEnd: boolean
 
 
-  renderSegs(context: ComponentContext, segs: Seg[], mirrorInfo?) {
-    this.context = context
+  renderSeg(props: FgEventRendererProps, context: ComponentContext) {
+    this.updateComputedOptions(context.options)
 
-    this.rangeUpdated() // called too frequently :(
+    let segs = this.segs = this.renderSegsPlain({
+      segs: props.segs,
+      mirrorInfo: props.mirrorInfo
+    })
 
-    // render an `.el` on each seg
-    // returns a subset of the segs. segs that were actually rendered
-    segs = this.renderSegEls(segs, mirrorInfo)
+    this.renderSelectedInstance({
+      segs,
+      instanceId: props.selectedInstanceId
+    })
 
-    this.segs = segs
-    this.attachSegs(segs, mirrorInfo)
+    this.renderHiddenInstances({
+      segs,
+      hiddenInstances: props.hiddenInstances
+    })
 
-    this.isSizeDirty = true
-    triggerRenderedSegs(this.context, this.segs, Boolean(mirrorInfo))
+    return segs
   }
 
 
-  unrender(context: ComponentContext, _segs: Seg[], mirrorInfo?) {
-    triggerWillRemoveSegs(this.context, this.segs, Boolean(mirrorInfo))
-    this.detachSegs(this.segs)
-    this.segs = []
-  }
-
-
-  abstract renderSegHtml(seg: Seg, mirrorInfo): string
-  abstract attachSegs(segs: Seg[], mirrorInfo)
-  abstract detachSegs(segs: Seg[])
-
-
-  // Updates values that rely on options and also relate to range
-  rangeUpdated() {
-    let { options } = this.context
-    let displayEventTime
-    let displayEventEnd
-
-    this.eventTimeFormat = createFormatter(
+  _updateComputedOptions(options: any) {
+    let eventTimeFormat = createFormatter(
       options.eventTimeFormat || this.computeEventTimeFormat(),
       options.defaultRangeSeparator
     )
 
-    displayEventTime = options.displayEventTime
+    let displayEventTime = options.displayEventTime
     if (displayEventTime == null) {
       displayEventTime = this.computeDisplayEventTime() // might be based off of range
     }
 
-    displayEventEnd = options.displayEventEnd
+    let displayEventEnd = options.displayEventEnd
     if (displayEventEnd == null) {
       displayEventEnd = this.computeDisplayEventEnd() // might be based off of range
     }
 
+    this.eventTimeFormat = eventTimeFormat
     this.displayEventTime = displayEventTime
     this.displayEventEnd = displayEventEnd
+  }
+
+
+  // doesn't worry about selection/hidden state
+  _renderSegsPlain({ segs, mirrorInfo } : { segs: Seg[], mirrorInfo: any }, context: ComponentContext) {
+    segs = this.renderSegEls(segs, mirrorInfo)
+    this.isSizeDirty = true
+    triggerRenderedSegs(context, segs, Boolean(mirrorInfo)) // will use publiclyTriggerAfterSizing, will fire later
+    return segs
+  }
+
+
+  _unrenderSegsPlain({ mirrorInfo }: { segs: Seg[], mirrorInfo: any }, context: ComponentContext, segs: Seg[]) {
+    triggerWillRemoveSegs(context, segs, Boolean(mirrorInfo))
   }
 
 
@@ -106,7 +125,11 @@ export default abstract class FgEventRenderer {
   }
 
 
+  abstract renderSegHtml(seg: Seg, mirrorInfo): string
+
+
   // Generic utility for generating the HTML classNames for an event segment's element
+  // TODO: move to outside func
   getSegClasses(seg: Seg, isDraggable, isResizable, mirrorInfo) {
     let classes = [
       'fc-event',
@@ -214,6 +237,7 @@ export default abstract class FgEventRenderer {
 
 
   // Utility for generating event skin-related CSS properties
+  // TODO: move to outside func
   getSkinCss(ui: EventUi) {
     return {
       'background-color': ui.backgroundColor,
@@ -223,6 +247,7 @@ export default abstract class FgEventRenderer {
   }
 
 
+  // TODO: move to outside func
   sortEventSegs(segs): Seg[] {
     let specs = this.context.eventOrderSpecs
     let objs = segs.map(buildSegCompareObj)
@@ -235,6 +260,10 @@ export default abstract class FgEventRenderer {
       return c._seg
     })
   }
+
+
+  // Sizing
+  // ----------------------------------------------------------------------------------------------------
 
 
   computeSizes(force: boolean) {
@@ -259,57 +288,59 @@ export default abstract class FgEventRenderer {
   assignSegSizes(segs: Seg[]) {
   }
 
+}
 
-  // Manipulation on rendered segs
+
+// Manipulation on rendered segs
+// ----------------------------------------------------------------------------------------------------
+// TODO: slow. use more hashes to quickly reference relevant elements
 
 
-  hideByHash(hash) {
-    if (hash) {
-      for (let seg of this.segs) {
-        if (hash[seg.eventRange.instance.instanceId]) {
-          seg.el.style.visibility = 'hidden'
-        }
+function renderHiddenInstances({ segs, hiddenInstances }: { segs: Seg[], hiddenInstances: { [instanceId: string]: any } }) {
+  if (hiddenInstances) {
+    for (let seg of segs) {
+      if (hiddenInstances[seg.eventRange.instance.instanceId]) {
+        seg.el.style.visibility = 'hidden'
       }
     }
   }
+}
 
 
-  showByHash(hash) {
-    if (hash) {
-      for (let seg of this.segs) {
-        if (hash[seg.eventRange.instance.instanceId]) {
-          seg.el.style.visibility = ''
-        }
+function unrenderHiddenInstances({ segs, hiddenInstances }: { segs: Seg[], hiddenInstances: { [instanceId: string]: any } }) {
+  if (hiddenInstances) {
+    for (let seg of segs) {
+      if (hiddenInstances[seg.eventRange.instance.instanceId]) {
+        seg.el.style.visibility = ''
       }
     }
   }
+}
 
 
-  selectByInstanceId(instanceId: string) {
-    if (instanceId) {
-      for (let seg of this.segs) {
-        let eventInstance = seg.eventRange.instance
-        if (
-          eventInstance && eventInstance.instanceId === instanceId &&
-          seg.el // necessary?
-        ) {
-          seg.el.classList.add('fc-selected')
-        }
+function renderSelectedInstance({ segs, instanceId }: { segs: Seg[], instanceId: string }) {
+  if (instanceId) {
+    for (let seg of segs) {
+      let eventInstance = seg.eventRange.instance
+      if (
+        eventInstance && eventInstance.instanceId === instanceId &&
+        seg.el // necessary?
+      ) {
+        seg.el.classList.add('fc-selected')
       }
     }
   }
+}
 
 
-  unselectByInstanceId(instanceId: string) {
-    if (instanceId) {
-      for (let seg of this.segs) {
-        if (seg.el) { // necessary?
-          seg.el.classList.remove('fc-selected')
-        }
+function unrenderSelectedInstance({ segs, instanceId }: { segs: Seg[], instanceId: string }) {
+  if (instanceId) {
+    for (let seg of segs) {
+      if (seg.el) { // necessary?
+        seg.el.classList.remove('fc-selected')
       }
     }
   }
-
 }
 
 

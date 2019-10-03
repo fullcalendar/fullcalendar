@@ -1,13 +1,17 @@
 import { htmlEscape } from './util/html'
-import { htmlToElement, appendToElement, findElements, createElement, removeElement } from './util/dom-manip'
-import Component from './component/Component'
+import { htmlToElement, appendToElement, findElements, createElement } from './util/dom-manip'
+import ComponentContext from './component/ComponentContext'
+import { Component, renderer } from './view-framework'
 import { ViewSpec } from './structs/view-spec'
-import { memoizeRendering } from './component/memoized-rendering'
+import Calendar from './Calendar'
+import Theme from './theme/Theme'
+
 
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export interface ToolbarRenderProps {
+  extraClassName: string
   layout: any
   title: string
   activeButton: string
@@ -18,60 +22,52 @@ export interface ToolbarRenderProps {
 
 export default class Toolbar extends Component<ToolbarRenderProps> {
 
-  el: HTMLElement
-  viewsWithButtons: any
+  private renderBase = renderer(this._renderBase)
+  private renderTitle = renderer(renderTitle)
+  private renderActiveButton = renderer(renderActiveButton, unrenderActiveButton)
+  private renderToday = renderer(toggleButtonEnabled.bind(null, 'today'))
+  private renderPrev = renderer(toggleButtonEnabled.bind(null, 'prev'))
+  private renderNext = renderer(toggleButtonEnabled.bind(null, 'next'))
 
-  private _renderLayout = memoizeRendering(this.renderLayout, this.unrenderLayout)
-  private _updateTitle = memoizeRendering(this.updateTitle, null, [ this._renderLayout ])
-  private _updateActiveButton = memoizeRendering(this.updateActiveButton, null, [ this._renderLayout ])
-  private _updateToday = memoizeRendering(this.updateToday, null, [ this._renderLayout ])
-  private _updatePrev = memoizeRendering(this.updatePrev, null, [ this._renderLayout ])
-  private _updateNext = memoizeRendering(this.updateNext, null, [ this._renderLayout ])
-
-
-  constructor(extraClassName) {
-    super()
-
-    this.el = createElement('div', { className: 'fc-toolbar ' + extraClassName })
-  }
-
-
-  destroy() {
-    super.destroy()
-
-    this._renderLayout.unrender() // should unrender everything else
-    removeElement(this.el)
-  }
+  public viewsWithButtons: string[]
 
 
   render(props: ToolbarRenderProps) {
-    this._renderLayout(props.layout)
-    this._updateTitle(props.title)
-    this._updateActiveButton(props.activeButton)
-    this._updateToday(props.isTodayEnabled)
-    this._updatePrev(props.isPrevEnabled)
-    this._updateNext(props.isNextEnabled)
+
+    let el = this.renderBase({
+      extraClassName: props.extraClassName,
+      layout: props.layout
+    })
+
+    this.renderTitle({ el, text: props.title })
+    this.renderActiveButton({ el, buttonName: props.activeButton })
+    this.renderToday({ el, isEnabled: props.isTodayEnabled })
+    this.renderPrev({ el, isEnabled: props.isPrevEnabled })
+    this.renderNext({ el, isEnabled: props.isNextEnabled })
+
+    return [ el ]
   }
 
 
-  renderLayout(layout) {
-    let { el } = this
+  /*
+  the wrapper el and the left/center/right layout
+  */
+  _renderBase({ extraClassName , layout }, context: ComponentContext) {
+    let { theme, calendar } = context
+
+    let el = createElement('div', { className: 'fc-toolbar ' + extraClassName }, [
+      this.renderSection('left', layout.left, theme, calendar),
+      this.renderSection('center', layout.center, theme, calendar),
+      this.renderSection('right', layout.right, theme, calendar)
+    ])
 
     this.viewsWithButtons = []
 
-    appendToElement(el, this.renderSection('left', layout.left))
-    appendToElement(el, this.renderSection('center', layout.center))
-    appendToElement(el, this.renderSection('right', layout.right))
+    return el
   }
 
 
-  unrenderLayout() {
-    this.el.innerHTML = ''
-  }
-
-
-  renderSection(position, buttonStr) {
-    let { theme, calendar } = this.context
+  renderSection(position, buttonStr, theme: Theme, calendar: Calendar) {
     let optionsManager = calendar.optionsManager
     let viewSpecs = calendar.viewSpecs
     let sectionEl = createElement('div', { className: 'fc-' + position })
@@ -175,47 +171,39 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
     return sectionEl
   }
 
-
-  updateToday(isTodayEnabled) {
-    this.toggleButtonEnabled('today', isTodayEnabled)
-  }
+}
 
 
-  updatePrev(isPrevEnabled) {
-    this.toggleButtonEnabled('prev', isPrevEnabled)
-  }
+function renderTitle(props: { el: HTMLElement, text: string }) {
+  findElements(props.el, 'h2').forEach(function(titleEl) {
+    titleEl.innerText = props.text
+  })
+}
 
 
-  updateNext(isNextEnabled) {
-    this.toggleButtonEnabled('next', isNextEnabled)
-  }
+function renderActiveButton(props: { el: HTMLElement, buttonName: string }, context: ComponentContext) {
+  let { buttonName } = props
+  let className = context.theme.getClass('buttonActive')
+
+  findElements(props.el, 'button').forEach((buttonEl) => { // fyi, themed buttons don't have .fc-button
+    if (buttonEl.classList.contains('fc-' + buttonName + '-button')) {
+      buttonEl.classList.add(className)
+    }
+  })
+}
 
 
-  updateTitle(text) {
-    findElements(this.el, 'h2').forEach(function(titleEl) {
-      titleEl.innerText = text
-    })
-  }
+function unrenderActiveButton(props: { el: HTMLElement, buttonName: string }, context: ComponentContext) {
+  let className = context.theme.getClass('buttonActive')
+
+  findElements(props.el, 'button').forEach((buttonEl) => { // fyi, themed buttons don't have .fc-button
+    buttonEl.classList.remove(className)
+  })
+}
 
 
-  updateActiveButton(buttonName?) {
-    let { theme } = this.context
-    let className = theme.getClass('buttonActive')
-
-    findElements(this.el, 'button').forEach((buttonEl) => { // fyi, themed buttons don't have .fc-button
-      if (buttonName && buttonEl.classList.contains('fc-' + buttonName + '-button')) {
-        buttonEl.classList.add(className)
-      } else {
-        buttonEl.classList.remove(className)
-      }
-    })
-  }
-
-
-  toggleButtonEnabled(buttonName, bool) {
-    findElements(this.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
-      buttonEl.disabled = !bool
-    })
-  }
-
+function toggleButtonEnabled(buttonName: string, props: { el: HTMLElement, isEnabled: boolean }) {
+  findElements(props.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
+    buttonEl.disabled = !props.isEnabled
+  })
 }

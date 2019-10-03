@@ -1,6 +1,7 @@
 import { computeEdges } from '../util/dom-geom'
-import { removeElement, createElement, applyStyle, applyStyleProp } from '../util/dom-manip'
+import { createElement, applyStyle, applyStyleProp } from '../util/dom-manip'
 import { ElementScrollController } from './scroll-controller'
+import { Component } from '../view-framework'
 
 export interface ScrollbarWidths {
   left: number
@@ -8,35 +9,30 @@ export interface ScrollbarWidths {
   bottom: number
 }
 
+export interface ScrollComponentProps {
+  overflowX: string
+  overflowY: string
+}
+
 /*
 Embodies a div that has potential scrollbars
 */
-export default class ScrollComponent extends ElementScrollController {
+export default class ScrollComponent extends Component<ScrollComponentProps> {
 
-  overflowX: string
-  overflowY: string
+  el = createElement('div', { className: 'fc-scroller' })
+  controller = new ElementScrollController(this.el)
 
-  constructor(overflowX: string, overflowY: string) {
-    super(
-      createElement('div', {
-        className: 'fc-scroller'
-      })
-    )
-    this.overflowX = overflowX
-    this.overflowY = overflowY
-    this.applyOverflow()
+
+  render(props: ScrollComponentProps) {
+    this.applyOverflow(props)
+    return [ this.el ]
   }
 
 
   // sets to natural height, unlocks overflow
   clear() {
     this.setHeight('auto')
-    this.applyOverflow()
-  }
-
-
-  destroy() {
-    removeElement(this.el)
+    this.applyOverflow(this.props)
   }
 
 
@@ -44,10 +40,10 @@ export default class ScrollComponent extends ElementScrollController {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  applyOverflow() {
+  applyOverflow(props: ScrollComponentProps) {
     applyStyle(this.el, {
-      overflowX: this.overflowX,
-      overflowY: this.overflowY
+      overflowX: props.overflowX,
+      overflowY: props.overflowY
     })
   }
 
@@ -56,22 +52,22 @@ export default class ScrollComponent extends ElementScrollController {
   // Useful for preserving scrollbar widths regardless of future resizes.
   // Can pass in scrollbarWidths for optimization.
   lockOverflow(scrollbarWidths: ScrollbarWidths) {
-    let overflowX = this.overflowX
-    let overflowY = this.overflowY
+    let { controller } = this
+    let { overflowX, overflowY } = this.props
 
     scrollbarWidths = scrollbarWidths || this.getScrollbarWidths()
 
     if (overflowX === 'auto') {
       overflowX = (
           scrollbarWidths.bottom || // horizontal scrollbars?
-          this.canScrollHorizontally() // OR scrolling pane with massless scrollbars?
+          controller.canScrollHorizontally() // OR scrolling pane with massless scrollbars?
         ) ? 'scroll' : 'hidden'
     }
 
     if (overflowY === 'auto') {
       overflowY = (
           scrollbarWidths.left || scrollbarWidths.right || // horizontal scrollbars?
-          this.canScrollVertically() // OR scrolling pane with massless scrollbars?
+          controller.canScrollVertically() // OR scrolling pane with massless scrollbars?
         ) ? 'scroll' : 'hidden'
     }
 
