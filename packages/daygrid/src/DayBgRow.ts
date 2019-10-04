@@ -3,7 +3,9 @@ import {
   DateMarker,
   getDayClasses,
   rangeContainsMarker,
-  DateProfile
+  DateProfile,
+  CCComponent as Component,
+  createElement
 } from '@fullcalendar/core'
 
 export interface DayBgCell {
@@ -17,15 +19,9 @@ export interface DayBgRowProps {
   renderIntroHtml?: () => string
 }
 
-export default class DayBgRow {
+export default class DayBgRow extends Component<DayBgRowProps> {
 
-  context: ComponentContext
-
-  constructor(context: ComponentContext) {
-    this.context = context
-  }
-
-  renderHtml(props: DayBgRowProps) {
+  render(props: DayBgRowProps, context: ComponentContext) {
     let parts = []
 
     if (props.renderIntroHtml) {
@@ -37,21 +33,21 @@ export default class DayBgRow {
         renderCellHtml(
           cell.date,
           props.dateProfile,
-          this.context,
+          context,
           cell.htmlAttrs
         )
       )
     }
 
     if (!props.cells.length) {
-      parts.push('<td class="fc-day ' + this.context.theme.getClass('widgetContent') + '"></td>')
+      parts.push('<td class="fc-day ' + context.theme.getClass('widgetContent') + '"></td>')
     }
 
     if (this.context.options.dir === 'rtl') {
       parts.reverse()
     }
 
-    return '<tr>' + parts.join('') + '</tr>'
+    return createElement('tr', {}, parts.join(''))
   }
 
 }

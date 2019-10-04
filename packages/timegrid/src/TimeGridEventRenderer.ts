@@ -1,93 +1,136 @@
 import {
   htmlEscape, cssToStr,
-  removeElement, applyStyle,
+  applyStyle,
   createFormatter, DateFormatter,
   FgEventRenderer, buildSegCompareObj,
   Seg, isMultiDayRange, compareByFieldSpecs,
-  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext
+  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, renderer
 } from '@fullcalendar/core'
-import TimeGrid from './TimeGrid'
+import TimeGrid, { attachSegs, detachSegs } from './TimeGrid'
+
+export interface TimeGridEventRendererProps extends BaseFgEventRendererProps {
+  containerEls: HTMLElement[]
+}
 
 /*
 Only handles foreground segs.
 Does not own rendering. Use for low-level util methods by TimeGrid.
 */
-export default class TimeGridEventRenderer extends FgEventRenderer {
+export default class TimeGridEventRenderer extends FgEventRenderer<TimeGridEventRendererProps> {
 
-  timeGrid: TimeGrid
-  segsByCol: any // within each col, events are ordered
-  fullTimeFormat: DateFormatter
+  attachSegs = renderer(attachSegs, detachSegs)
 
+  // computed options
+  private fullTimeFormat: DateFormatter
 
-  constructor(timeGrid: TimeGrid) {
-    super()
-
-    this.timeGrid = timeGrid
-  }
+  // for sizing
+  private segsByCol: any
 
 
-  renderSegs(context: ComponentContext, segs: Seg[], mirrorInfo?) {
-    super.renderSegs(context, segs, mirrorInfo)
+  _updateComputedOptions(options) {
+    super._updateComputedOptions(options)
 
-    // TODO: dont do every time. memoize
     this.fullTimeFormat = createFormatter({
       hour: 'numeric',
       minute: '2-digit',
-      separator: this.context.options.defaultRangeSeparator
+      separator: options.defaultRangeSeparator
     })
   }
 
 
-  // Given an array of foreground segments, render a DOM element for each, computes position,
-  // and attaches to the column inner-container elements.
-  attachSegs(segs: Seg[], mirrorInfo) {
-    let segsByCol = this.timeGrid.groupSegsByCol(segs)
+  render(props: TimeGridEventRendererProps, context: ComponentContext) {
+    let segs = this.renderSegs({
+      segs: props.segs,
+      mirrorInfo: props.mirrorInfo,
+      selectedInstanceId: props.selectedInstanceId,
+      hiddenInstances: props.hiddenInstances
+    }, context)
 
-    // order the segs within each column
-    // TODO: have groupSegsByCol do this?
-    for (let col = 0; col < segsByCol.length; col++) {
-      segsByCol[col] = this.sortEventSegs(segsByCol[col])
-    }
-
-    this.segsByCol = segsByCol
-    this.timeGrid.attachSegsByCol(segsByCol, this.timeGrid.fgContainerEls)
-  }
-
-
-  detachSegs(segs: Seg[]) {
-    segs.forEach(function(seg) {
-      removeElement(seg.el)
+    this.segsByCol = this.attachSegs({
+      segs,
+      containerEls: props.containerEls
     })
-
-    this.segsByCol = null
   }
 
 
-  computeSegSizes(allSegs: Seg[]) {
-    let { timeGrid, segsByCol } = this
-    let colCnt = timeGrid.colCnt
+  computeSegSizes(allSegs: Seg[], timeGrid: TimeGrid) {
+    let { segsByCol } = this
+    let colCnt = timeGrid.props.cells.length
 
     timeGrid.computeSegVerticals(allSegs) // horizontals relies on this
 
-    if (segsByCol) {
-      for (let col = 0; col < colCnt; col++) {
-        this.computeSegHorizontals(segsByCol[col]) // compute horizontal coordinates, z-index's, and reorder the array
+    for (let col = 0; col < colCnt; col++) {
+      computeSegHorizontals(segsByCol[col], this.context) // compute horizontal coordinates, z-index's, and reorder the array
+    }
+  }
+
+
+  assignSegSizes(allSegs: Seg[], timeGrid: TimeGrid) {
+    let { segsByCol } = this
+    let colCnt = timeGrid.props.cells.length
+
+    timeGrid.assignSegVerticals(allSegs) // horizontals relies on this
+
+    for (let col = 0; col < colCnt; col++) {
+      this.assignSegCss(segsByCol[col], timeGrid)
+    }
+  }
+
+
+  // Given foreground event segments that have already had their position coordinates computed,
+  // assigns position-related CSS values to their elements.
+  assignSegCss(segs: Seg[], timeGrid: TimeGrid) {
+
+    for (let seg of segs) {
+      applyStyle(seg.el, this.generateSegCss(seg, timeGrid))
+
+      if (seg.level > 0) {
+        seg.el.classList.add('fc-time-grid-event-inset')
+      }
+
+      // if the event is short that the title will be cut off,
+      // attach a className that condenses the title into the time area.
+      if (seg.eventRange.def.title && seg.bottom - seg.top < 30) {
+        seg.el.classList.add('fc-short') // TODO: "condensed" is a better name
       }
     }
   }
 
 
-  assignSegSizes(allSegs: Seg[]) {
-    let { timeGrid, segsByCol } = this
-    let colCnt = timeGrid.colCnt
+  // Generates an object with CSS properties/values that should be applied to an event segment element.
+  // Contains important positioning-related properties that should be applied to any event element, customized or not.
+  generateSegCss(seg: Seg, timeGrid: TimeGrid) {
+    let { isRtl, options } = this.context
+    let shouldOverlap = options.slotEventOverlap
+    let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
+    let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point
+    let props = timeGrid.generateSegVerticalCss(seg) as any // get top/bottom first
+    let left // amount of space from left edge, a fraction of the total width
+    let right // amount of space from right edge, a fraction of the total width
 
-    timeGrid.assignSegVerticals(allSegs) // horizontals relies on this
-
-    if (segsByCol) {
-      for (let col = 0; col < colCnt; col++) {
-        this.assignSegCss(segsByCol[col])
-      }
+    if (shouldOverlap) {
+      // double the width, but don't go beyond the maximum forward coordinate (1.0)
+      forwardCoord = Math.min(1, backwardCoord + (forwardCoord - backwardCoord) * 2)
     }
+
+    if (isRtl) {
+      left = 1 - forwardCoord
+      right = backwardCoord
+    } else {
+      left = backwardCoord
+      right = 1 - forwardCoord
+    }
+
+    props.zIndex = seg.level + 1 // convert from 0-base to 1-based
+    props.left = left * 100 + '%'
+    props.right = right * 100 + '%'
+
+    if (shouldOverlap && seg.forwardPressure) {
+      // add padding to the edge so that forward stacked events don't cover the resizer's icon
+      props[isRtl ? 'marginLeft' : 'marginRight'] = 10 * 2 // 10 is a guesstimate of the icon's width
+    }
+
+    return props
   }
 
 
@@ -183,152 +226,93 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
       '</a>'
   }
 
-
-  // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
-  // Assumed the segs are already ordered.
-  // NOTE: Also reorders the given array by date!
-  computeSegHorizontals(segs: Seg[]) {
-    let levels
-    let level0
-    let i
-
-    levels = buildSlotSegLevels(segs)
-    computeForwardSlotSegs(levels)
-
-    if ((level0 = levels[0])) {
-
-      for (i = 0; i < level0.length; i++) {
-        computeSlotSegPressures(level0[i])
-      }
-
-      for (i = 0; i < level0.length; i++) {
-        this.computeSegForwardBack(level0[i], 0, 0)
-      }
-    }
-  }
+}
 
 
-  // Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
-  // from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
-  // seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
-  //
-  // The segment might be part of a "series", which means consecutive segments with the same pressure
-  // who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
-  // segments behind this one in the current series, and `seriesBackwardCoord` is the starting
-  // coordinate of the first segment in the series.
-  computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardCoord) {
-    let forwardSegs = seg.forwardSegs
-    let i
+// Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
+// Assumed the segs are already ordered.
+// NOTE: Also reorders the given array by date!
+function computeSegHorizontals(segs: Seg[], context: ComponentContext) {
+  let levels
+  let level0
+  let i
 
-    if (seg.forwardCoord === undefined) { // not already computed
+  levels = buildSlotSegLevels(segs)
+  computeForwardSlotSegs(levels)
 
-      if (!forwardSegs.length) {
+  if ((level0 = levels[0])) {
 
-        // if there are no forward segments, this segment should butt up against the edge
-        seg.forwardCoord = 1
-      } else {
-
-        // sort highest pressure first
-        this.sortForwardSegs(forwardSegs)
-
-        // this segment's forwardCoord will be calculated from the backwardCoord of the
-        // highest-pressure forward segment.
-        this.computeSegForwardBack(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord)
-        seg.forwardCoord = forwardSegs[0].backwardCoord
-      }
-
-      // calculate the backwardCoord from the forwardCoord. consider the series
-      seg.backwardCoord = seg.forwardCoord -
-        (seg.forwardCoord - seriesBackwardCoord) / // available width for series
-        (seriesBackwardPressure + 1) // # of segments in the series
-
-      // use this segment's coordinates to computed the coordinates of the less-pressurized
-      // forward segments
-      for (i = 0; i < forwardSegs.length; i++) {
-        this.computeSegForwardBack(forwardSegs[i], 0, seg.forwardCoord)
-      }
-    }
-  }
-
-
-  sortForwardSegs(forwardSegs: Seg[]) {
-    let objs = forwardSegs.map(buildTimeGridSegCompareObj)
-
-    let specs = [
-      // put higher-pressure first
-      { field: 'forwardPressure', order: -1 },
-      // put segments that are closer to initial edge first (and favor ones with no coords yet)
-      { field: 'backwardCoord', order: 1 }
-    ].concat(
-      this.context.eventOrderSpecs
-    )
-
-    objs.sort(function(obj0, obj1) {
-      return compareByFieldSpecs(obj0, obj1, specs)
-    })
-
-    return objs.map(function(c) {
-      return c._seg
-    })
-  }
-
-
-  // Given foreground event segments that have already had their position coordinates computed,
-  // assigns position-related CSS values to their elements.
-  assignSegCss(segs: Seg[]) {
-
-    for (let seg of segs) {
-      applyStyle(seg.el, this.generateSegCss(seg))
-
-      if (seg.level > 0) {
-        seg.el.classList.add('fc-time-grid-event-inset')
-      }
-
-      // if the event is short that the title will be cut off,
-      // attach a className that condenses the title into the time area.
-      if (seg.eventRange.def.title && seg.bottom - seg.top < 30) {
-        seg.el.classList.add('fc-short') // TODO: "condensed" is a better name
-      }
-    }
-  }
-
-
-  // Generates an object with CSS properties/values that should be applied to an event segment element.
-  // Contains important positioning-related properties that should be applied to any event element, customized or not.
-  generateSegCss(seg: Seg) {
-    let shouldOverlap = this.context.options.slotEventOverlap
-    let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
-    let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point
-    let props = this.timeGrid.generateSegVerticalCss(seg) as any // get top/bottom first
-    let isRtl = this.context.isRtl
-    let left // amount of space from left edge, a fraction of the total width
-    let right // amount of space from right edge, a fraction of the total width
-
-    if (shouldOverlap) {
-      // double the width, but don't go beyond the maximum forward coordinate (1.0)
-      forwardCoord = Math.min(1, backwardCoord + (forwardCoord - backwardCoord) * 2)
+    for (i = 0; i < level0.length; i++) {
+      computeSlotSegPressures(level0[i])
     }
 
-    if (isRtl) {
-      left = 1 - forwardCoord
-      right = backwardCoord
+    for (i = 0; i < level0.length; i++) {
+      computeSegForwardBack(level0[i], 0, 0, context)
+    }
+  }
+}
+
+
+// Calculate seg.forwardCoord and seg.backwardCoord for the segment, where both values range
+// from 0 to 1. If the calendar is left-to-right, the seg.backwardCoord maps to "left" and
+// seg.forwardCoord maps to "right" (via percentage). Vice-versa if the calendar is right-to-left.
+//
+// The segment might be part of a "series", which means consecutive segments with the same pressure
+// who's width is unknown until an edge has been hit. `seriesBackwardPressure` is the number of
+// segments behind this one in the current series, and `seriesBackwardCoord` is the starting
+// coordinate of the first segment in the series.
+function computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardCoord, context: ComponentContext) {
+  let forwardSegs = seg.forwardSegs
+  let i
+
+  if (seg.forwardCoord === undefined) { // not already computed
+
+    if (!forwardSegs.length) {
+
+      // if there are no forward segments, this segment should butt up against the edge
+      seg.forwardCoord = 1
     } else {
-      left = backwardCoord
-      right = 1 - forwardCoord
+
+      // sort highest pressure first
+      sortForwardSegs(forwardSegs, context)
+
+      // this segment's forwardCoord will be calculated from the backwardCoord of the
+      // highest-pressure forward segment.
+      computeSegForwardBack(forwardSegs[0], seriesBackwardPressure + 1, seriesBackwardCoord, context)
+      seg.forwardCoord = forwardSegs[0].backwardCoord
     }
 
-    props.zIndex = seg.level + 1 // convert from 0-base to 1-based
-    props.left = left * 100 + '%'
-    props.right = right * 100 + '%'
+    // calculate the backwardCoord from the forwardCoord. consider the series
+    seg.backwardCoord = seg.forwardCoord -
+      (seg.forwardCoord - seriesBackwardCoord) / // available width for series
+      (seriesBackwardPressure + 1) // # of segments in the series
 
-    if (shouldOverlap && seg.forwardPressure) {
-      // add padding to the edge so that forward stacked events don't cover the resizer's icon
-      props[isRtl ? 'marginLeft' : 'marginRight'] = 10 * 2 // 10 is a guesstimate of the icon's width
+    // use this segment's coordinates to computed the coordinates of the less-pressurized
+    // forward segments
+    for (i = 0; i < forwardSegs.length; i++) {
+      this.computeSegForwardBack(forwardSegs[i], 0, seg.forwardCoord)
     }
-
-    return props
   }
+}
 
+
+function sortForwardSegs(forwardSegs: Seg[], eventOrderSpecs) {
+  let objs = forwardSegs.map(buildTimeGridSegCompareObj)
+
+  let specs = [
+    // put higher-pressure first
+    { field: 'forwardPressure', order: -1 },
+    // put segments that are closer to initial edge first (and favor ones with no coords yet)
+    { field: 'backwardCoord', order: 1 }
+  ].concat(eventOrderSpecs)
+
+  objs.sort(function(obj0, obj1) {
+    return compareByFieldSpecs(obj0, obj1, specs)
+  })
+
+  return objs.map(function(c) {
+    return c._seg
+  })
 }
 
 

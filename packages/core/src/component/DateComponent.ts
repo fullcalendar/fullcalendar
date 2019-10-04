@@ -1,13 +1,11 @@
-import Component from './Component'
+import { Component } from '../view-framework'
 import { EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInstanceHash } from '../structs/event'
 import { rangeContainsRange } from '../datelib/date-range'
 import { Hit } from '../interactions/hit'
-import { elementClosest, removeElement } from '../util/dom-manip'
+import { elementClosest } from '../util/dom-manip'
 import { isDateSelectionValid, isInteractionValid } from '../validation'
-import FgEventRenderer from './renderers/FgEventRenderer'
-import FillRenderer from './renderers/FillRenderer'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 
 export type DateComponentHash = { [uid: string]: DateComponent<any> }
@@ -35,7 +33,7 @@ PURPOSES:
 - hook up to fg, fill, and mirror renderers
 - interface for dragging and hits
 */
-export default class DateComponent<PropsType> extends Component<PropsType> {
+export default abstract class DateComponent<PropsType> extends Component<PropsType> {
 
   // self-config, overridable by subclasses. must set on prototype
   fgSegSelector: string // lets eventRender produce elements without fc-event class
@@ -46,25 +44,6 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
   // of the date areas. if not defined, assumes to be day and time granularity.
   // TODO: port isTimeScale into same system?
   largeUnit: any
-
-  eventRenderer: FgEventRenderer
-  mirrorRenderer: FgEventRenderer
-  fillRenderer: FillRenderer
-
-  el: HTMLElement // passed in to constructor
-
-
-  constructor(el: HTMLElement) {
-    super()
-
-    this.el = el
-  }
-
-  destroy() {
-    super.destroy()
-
-    removeElement(this.el)
-  }
 
 
   // Hit System
@@ -138,7 +117,7 @@ export default class DateComponent<PropsType> extends Component<PropsType> {
 
 
   isPopover() {
-    return this.el.classList.contains('fc-popover')
+    return this.mountedEls[0].classList.contains('fc-popover')
   }
 
 

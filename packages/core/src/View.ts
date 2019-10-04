@@ -3,18 +3,17 @@ import { DateMarker, addMs } from './datelib/marker'
 import { createDuration, Duration } from './datelib/duration'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { ViewSpec } from './structs/view-spec'
-import { createElement } from './util/dom-manip'
 import DateComponent from './component/DateComponent'
 import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'
 import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
-import { memoizeRendering } from './component/memoized-rendering'
 import { __assign } from 'tslib'
-import ComponentContext from './component/ComponentContext'
+import { createElement } from './util/dom-manip'
 
 export interface ViewProps {
+  viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator
   dateProfile: DateProfile
   businessHours: EventStore
@@ -39,11 +38,8 @@ export default abstract class View extends DateComponent<ViewProps> {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  viewSpec: ViewSpec
   type: string // subclass' view name (string). for the API
   title: string // the text that will be displayed in the header's title. SET BY CALLER for API
-
-  queuedScroll: any
 
   // now indicator
   isNowIndicatorRendered: boolean
@@ -51,31 +47,6 @@ export default abstract class View extends DateComponent<ViewProps> {
   initialNowQueriedMs: number // ms time the getNow was called
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
-
-  private renderDatesMem = memoizeRendering(this.renderDatesWrap, this.unrenderDatesWrap)
-  private renderBusinessHoursMem = memoizeRendering(this.renderBusinessHours, this.unrenderBusinessHours, [ this.renderDatesMem ])
-  private renderDateSelectionMem = memoizeRendering(this.renderDateSelectionWrap, this.unrenderDateSelectionWrap, [ this.renderDatesMem ])
-  private renderEventsMem = memoizeRendering(this.renderEvents, this.unrenderEvents, [ this.renderDatesMem ])
-  private renderEventSelectionMem = memoizeRendering(this.renderEventSelectionWrap, this.unrenderEventSelectionWrap, [ this.renderEventsMem ])
-  private renderEventDragMem = memoizeRendering(this.renderEventDragWrap, this.unrenderEventDragWrap, [ this.renderDatesMem ])
-  private renderEventResizeMem = memoizeRendering(this.renderEventResizeWrap, this.unrenderEventResizeWrap, [ this.renderDatesMem ])
-
-
-  constructor(viewSpec: ViewSpec, parentEl: HTMLElement) {
-    super(
-      createElement('div', { className: 'fc-view fc-' + viewSpec.type + '-view' })
-    )
-
-    this.viewSpec = viewSpec
-    this.type = viewSpec.type
-
-    parentEl.appendChild(this.el)
-    this.initialize()
-  }
-
-
-  initialize() { // convenient for sublcasses
-  }
 
 
   // Date Setting/Unsetting
@@ -99,42 +70,32 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  // General Rendering
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  render(props: ViewProps, context: ComponentContext) {
-    this.renderDatesMem(props.dateProfile)
-    this.renderBusinessHoursMem(props.businessHours)
-    this.renderDateSelectionMem(props.dateSelection)
-    this.renderEventsMem(props.eventStore)
-    this.renderEventSelectionMem(props.eventSelection)
-    this.renderEventDragMem(props.eventDrag)
-    this.renderEventResizeMem(props.eventResize)
-  }
-
-
-  beforeUpdate() {
-    this.addScroll(this.queryScroll())
-  }
-
-
-  destroy() {
-    super.destroy()
-
-    this.renderDatesMem.unrender() // should unrender everything else
-  }
-
-
   // Sizing
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  componentDidMount() {
+    this.applyScroll({ duration: createDuration(this.context.options.scrollTime) }, false)
+  }
+
+
+  getSnapshotBeforeUpdate() {
+    return this.queryScroll()
+  }
+
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.applyScroll(snapshot, false)
+  }
+
+
+  // called from CalendarComponent
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
     let { calendar } = this.context
+    let scrollState
 
-    if (isResize) {
-      this.addScroll(this.queryScroll()) // NOTE: same code as in beforeUpdate
+    if (isResize) { // if NOT a resize, scroll state will be maintained via getSnapshotBeforeUpdate/componentDidUpdate
+      scrollState = this.queryScroll()
     }
 
     if (
@@ -148,7 +109,9 @@ export default abstract class View extends DateComponent<ViewProps> {
       this.updateBaseSize(isResize, viewHeight, isAuto)
     }
 
-    // NOTE: popScroll is called by CalendarComponent
+    if (isResize) {
+      this.applyScroll(scrollState, true)
+    }
   }
 
 
@@ -156,56 +119,9 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  // Date Rendering
-  // -----------------------------------------------------------------------------------------------------------------
-
-  renderDatesWrap(dateProfile: DateProfile) {
-    this.renderDates(dateProfile)
-    this.addScroll({
-      duration: createDuration(this.context.options.scrollTime)
-    })
-  }
-
-  unrenderDatesWrap() {
-    this.stopNowIndicator()
-    this.unrenderDates()
-  }
-
-  renderDates(dateProfile: DateProfile) {}
-  unrenderDates() {}
-
-
-  // Business Hours
-  // -----------------------------------------------------------------------------------------------------------------
-
-  renderBusinessHours(businessHours: EventStore) {}
-  unrenderBusinessHours() {}
-
-
-  // Date Selection
-  // -----------------------------------------------------------------------------------------------------------------
-
-  renderDateSelectionWrap(selection: DateSpan) {
-    if (selection) {
-      this.renderDateSelection(selection)
-    }
-  }
-
-  unrenderDateSelectionWrap(selection: DateSpan) {
-    if (selection) {
-      this.unrenderDateSelection(selection)
-    }
-  }
-
-  renderDateSelection(selection: DateSpan) {}
-  unrenderDateSelection(selection: DateSpan) {}
-
-
   // Event Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  renderEvents(eventStore: EventStore) {}
-  unrenderEvents() {}
 
   // util for subclasses
   sliceEvents(eventStore: EventStore, allDay: boolean): EventRenderRange[] {
@@ -220,65 +136,8 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  // Event Selection
+  // Now Indicator
   // -----------------------------------------------------------------------------------------------------------------
-
-  renderEventSelectionWrap(instanceId: string) {
-    if (instanceId) {
-      this.renderEventSelection(instanceId)
-    }
-  }
-
-  unrenderEventSelectionWrap(instanceId: string) {
-    if (instanceId) {
-      this.unrenderEventSelection(instanceId)
-    }
-  }
-
-  renderEventSelection(instanceId: string) {}
-  unrenderEventSelection(instanceId: string) {}
-
-
-  // Event Drag
-  // -----------------------------------------------------------------------------------------------------------------
-
-  renderEventDragWrap(state: EventInteractionState) {
-    if (state) {
-      this.renderEventDrag(state)
-    }
-  }
-
-  unrenderEventDragWrap(state: EventInteractionState) {
-    if (state) {
-      this.unrenderEventDrag(state)
-    }
-  }
-
-  renderEventDrag(state: EventInteractionState) {}
-  unrenderEventDrag(state: EventInteractionState) {}
-
-
-  // Event Resize
-  // -----------------------------------------------------------------------------------------------------------------
-
-  renderEventResizeWrap(state: EventInteractionState) {
-    if (state) {
-      this.renderEventResize(state)
-    }
-  }
-
-  unrenderEventResizeWrap(state: EventInteractionState) {
-    if (state) {
-      this.unrenderEventResize(state)
-    }
-  }
-
-  renderEventResize(state: EventInteractionState) {}
-  unrenderEventResize(state: EventInteractionState) {}
-
-
-  /* Now Indicator
-  ------------------------------------------------------------------------------------------------------------------*/
 
 
   // Immediately render the current time indicator and begins re-rendering it at an interval,
@@ -380,29 +239,9 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  /* Scroller
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  addScroll(scroll, isForced?: boolean) {
-    if (isForced) {
-      scroll.isForced = isForced
-    }
-    __assign(this.queuedScroll || (this.queuedScroll = {}), scroll)
-  }
-
-
-  popScroll(isResize: boolean) {
-    this.applyQueuedScroll(isResize)
-    this.queuedScroll = null
-  }
-
-
-  applyQueuedScroll(isResize: boolean) {
-    if (this.queuedScroll) {
-      this.applyScroll(this.queuedScroll, isResize)
-    }
-  }
+  // Scroller
+  // -----------------------------------------------------------------------------------------------------------------
+  // QUESTION: do we need to have date-scroll separate?
 
 
   queryScroll() {
@@ -459,3 +298,8 @@ EmitterMixin.mixInto(View)
 
 View.prototype.usesMinMaxTime = false
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator
+
+
+export function renderViewEl(type: string) {
+  return createElement('div', { className: 'fc-view fc-' + type + '-view' })
+}

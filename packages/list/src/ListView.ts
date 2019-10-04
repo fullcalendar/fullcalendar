@@ -45,11 +45,9 @@ export default class ListView extends View {
       viewSpec: props.viewSpec
     })
 
-    this.scroller = this.renderScroller({
+    this.scroller = this.renderScroller(rootEl, {
       overflowX: 'hidden',
       overflowY: 'auto'
-    }, {
-      parent: rootEl
     })
 
     this.eventRenderer = this.renderEvents({
@@ -58,11 +56,11 @@ export default class ListView extends View {
       contentEl: this.scroller.el,
       selectedInstanceId: props.eventSelection, // TODO: rename
       hiddenInstances: // TODO: more convenient
-        (props.eventDrag ? props.eventDrag.affectedEvents : null) ||
-        (props.eventResize ? props.eventResize.affectedEvents : null)
+        (props.eventDrag ? props.eventDrag.affectedEvents.instances : null) ||
+        (props.eventResize ? props.eventResize.affectedEvents.instances : null)
     })
 
-    return [ rootEl ]
+    return rootEl
   }
 
 

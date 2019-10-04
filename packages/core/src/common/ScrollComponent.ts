@@ -25,7 +25,8 @@ export default class ScrollComponent extends Component<ScrollComponentProps> {
 
   render(props: ScrollComponentProps) {
     this.applyOverflow(props)
-    return [ this.el ]
+
+    return this.el
   }
 
 

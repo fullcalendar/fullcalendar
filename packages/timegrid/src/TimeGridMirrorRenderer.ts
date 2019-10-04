@@ -1,32 +1,25 @@
 import { Seg } from '@fullcalendar/core'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
+import TimeGrid from './TimeGrid'
 
 
 export default class TimeGridMirrorRenderer extends TimeGridEventRenderer {
 
-  sourceSeg: Seg
 
-  attachSegs(segs: Seg[], mirrorInfo) {
-    this.segsByCol = this.timeGrid.groupSegsByCol(segs)
-    this.timeGrid.attachSegsByCol(this.segsByCol, this.timeGrid.mirrorContainerEls)
-
-    this.sourceSeg = mirrorInfo.sourceSeg
-  }
-
-  generateSegCss(seg: Seg) {
-    let props = super.generateSegCss(seg)
-    let { sourceSeg } = this
+  generateSegCss(seg: Seg, timeGrid: TimeGrid) {
+    let cssProps = super.generateSegCss(seg, timeGrid)
+    let { sourceSeg } = this.props.mirrorInfo
 
     if (sourceSeg && sourceSeg.col === seg.col) {
-      let sourceSegProps = super.generateSegCss(sourceSeg)
+      let sourceSegProps = super.generateSegCss(sourceSeg, timeGrid)
 
-      props.left = sourceSegProps.left
-      props.right = sourceSegProps.right
-      props.marginLeft = sourceSegProps.marginLeft
-      props.marginRight = sourceSegProps.marginRight
+      cssProps.left = sourceSegProps.left
+      cssProps.right = sourceSegProps.right
+      cssProps.marginLeft = sourceSegProps.marginLeft
+      cssProps.marginRight = sourceSegProps.marginRight
     }
 
-    return props
+    return cssProps
   }
 
 }

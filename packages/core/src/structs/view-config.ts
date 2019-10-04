@@ -1,7 +1,7 @@
 import View from '../View'
-import { ViewSpec } from './view-spec'
 import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
+import { RenderEngine } from '../view-framework'
 
 /*
 A view-config represents information for either:
@@ -10,8 +10,7 @@ B) options to customize an existing view, in which case only provides options.
 */
 
 export type ViewClass = new(
-  viewSpec: ViewSpec,
-  parentEl: HTMLElement
+  renderEngine: RenderEngine
 ) => View
 
 export interface ViewConfigObjectInput {

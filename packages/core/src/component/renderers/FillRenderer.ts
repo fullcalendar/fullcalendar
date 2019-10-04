@@ -1,71 +1,50 @@
 import { cssToStr } from '../../util/html'
-import { htmlToElements, removeElement, elementMatches } from '../../util/dom-manip'
+import { htmlToElements, elementMatches } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
 import { filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import ComponentContext from '../ComponentContext'
+import { Component, renderer} from '../../view-framework'
 
-/*
-TODO: when refactoring this class, make a new FillRenderer instance for each `type`
-*/
-export default abstract class FillRenderer { // use for highlight, background events, business hours
+export interface BaseFillRendererProps {
+  segs: Seg[]
+  type: string
+}
 
-  context: ComponentContext
+// use for highlight, background events, business hours
+export default abstract class FillRenderer<FillRendererProps extends BaseFillRendererProps> extends Component<FillRendererProps> {
+
+  renderSegs = renderer(this._renderSegs, this._unrenderSegs)
+
   fillSegTag: string = 'div'
-  containerElsByType: any // a hash of element sets used for rendering each fill. Keyed by fill name.
-  segsByType: any
-  dirtySizeFlags: any = {}
+
+  // for sizing
+  private segs: Seg[]
+  private isSizeDirty = false
 
 
-  constructor() {
-    this.containerElsByType = {}
-    this.segsByType = {}
-  }
+  _renderSegs(props: BaseFillRendererProps, context: ComponentContext) {
+    let segs = this.segs = this.renderSegEls(props.segs, props.type) // assignes `.el` to each seg. returns successfully rendered segs
 
-
-  getSegsByType(type: string) {
-    return this.segsByType[type] || []
-  }
-
-
-  renderSegs(type: string, context: ComponentContext, segs: Seg[]) {
-    this.context = context
-
-    let renderedSegs = this.renderSegEls(type, segs) // assignes `.el` to each seg. returns successfully rendered segs
-    let containerEls = this.attachSegs(type, renderedSegs)
-
-    if (containerEls) {
-      (this.containerElsByType[type] || (this.containerElsByType[type] = []))
-        .push(...containerEls)
+    if (props.type === 'bgEvent') {
+      triggerRenderedSegs(context, segs, false) // isMirror=false
     }
 
-    this.segsByType[type] = renderedSegs
-
-    if (type === 'bgEvent') {
-      triggerRenderedSegs(context, renderedSegs, false) // isMirror=false
-    }
-
-    this.dirtySizeFlags[type] = true
+    this.isSizeDirty = true
+    return segs
   }
 
 
   // Unrenders a specific type of fill that is currently rendered on the grid
-  unrender(type: string, context: ComponentContext) {
-    let segs = this.segsByType[type]
-
-    if (segs) {
-
-      if (type === 'bgEvent') {
-        triggerWillRemoveSegs(context, segs, false) // isMirror=false
-      }
-
-      this.detachSegs(type, segs)
+  _unrenderSegs(props: BaseFillRendererProps, context: ComponentContext, segs: Seg[]) {
+    if (props.type === 'bgEvent') {
+      triggerWillRemoveSegs(context, segs, false) // isMirror=false. will use publiclyTriggerAfterSizing so will fire after
     }
   }
 
 
   // Renders and assigns an `el` property for each fill segment. Generic enough to work with different types.
   // Only returns segments that successfully rendered.
-  renderSegEls(type, segs: Seg[]) {
+  renderSegEls(segs: Seg[], type: string) {
     let html = ''
     let i
 
@@ -73,7 +52,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
 
       // build a large concatenation of segment HTML
       for (i = 0; i < segs.length; i++) {
-        html += this.renderSegHtml(type, segs[i])
+        html += this.renderSegHtml(segs[i])
       }
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -105,7 +84,8 @@ export default abstract class FillRenderer { // use for highlight, background ev
 
 
   // Builds the HTML needed for one fill segment. Generic enough to work with different types.
-  renderSegHtml(type, seg: Seg) {
+  renderSegHtml(seg: Seg) {
+    let { type } = this.props
     let css = null
     let classNames = []
 
@@ -132,44 +112,26 @@ export default abstract class FillRenderer { // use for highlight, background ev
   }
 
 
-  abstract attachSegs(type, segs: Seg[]): HTMLElement[] | void
-
-
-  detachSegs(type, segs: Seg[]) {
-    let containerEls = this.containerElsByType[type]
-
-    if (containerEls) {
-      containerEls.forEach(removeElement)
-      delete this.containerElsByType[type]
+  computeSizes(force: boolean, userComponent: any) {
+    if (force || this.isSizeDirty) {
+      this.computeSegSizes(this.segs, userComponent)
     }
   }
 
 
-  computeSizes(force: boolean) {
-    for (let type in this.segsByType) {
-      if (force || this.dirtySizeFlags[type]) {
-        this.computeSegSizes(this.segsByType[type])
-      }
+  assignSizes(force: boolean, userComponent: any) {
+    if (force || this.isSizeDirty) {
+      this.assignSegSizes(this.segs, userComponent)
+      this.isSizeDirty = false
     }
   }
 
 
-  assignSizes(force: boolean) {
-    for (let type in this.segsByType) {
-      if (force || this.dirtySizeFlags[type]) {
-        this.assignSegSizes(this.segsByType[type])
-      }
-    }
-
-    this.dirtySizeFlags = {}
+  computeSegSizes(seg: Seg[], userComponent: any) {
   }
 
 
-  computeSegSizes(segs: Seg[]) {
-  }
-
-
-  assignSegSizes(segs: Seg[]) {
+  assignSegSizes(seg: Seg[], userComponent: any) {
   }
 
 }

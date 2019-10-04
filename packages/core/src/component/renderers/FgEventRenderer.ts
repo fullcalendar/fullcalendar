@@ -15,7 +15,7 @@ export interface BaseFgEventRendererProps {
   segs: Seg[]
   mirrorInfo?: any
   selectedInstanceId?: string
-  hiddenInstances: { [instanceId: string]: any }
+  hiddenInstances?: { [instanceId: string]: any }
 }
 
 export default abstract class FgEventRenderer<
@@ -37,7 +37,7 @@ export default abstract class FgEventRenderer<
   protected displayEventEnd: boolean
 
 
-  renderSeg(props: FgEventRendererProps, context: ComponentContext) {
+  renderSegs(props: BaseFgEventRendererProps, context: ComponentContext) {
     this.updateComputedOptions(context.options)
 
     let segs = this.segs = this.renderSegsPlain({
@@ -247,45 +247,30 @@ export default abstract class FgEventRenderer<
   }
 
 
-  // TODO: move to outside func
-  sortEventSegs(segs): Seg[] {
-    let specs = this.context.eventOrderSpecs
-    let objs = segs.map(buildSegCompareObj)
-
-    objs.sort(function(obj0, obj1) {
-      return compareByFieldSpecs(obj0, obj1, specs)
-    })
-
-    return objs.map(function(c) {
-      return c._seg
-    })
-  }
-
-
   // Sizing
   // ----------------------------------------------------------------------------------------------------
 
 
-  computeSizes(force: boolean) {
+  computeSizes(force: boolean, userComponent: any) {
     if (force || this.isSizeDirty) {
-      this.computeSegSizes(this.segs)
+      this.computeSegSizes(this.segs, userComponent)
     }
   }
 
 
-  assignSizes(force: boolean) {
+  assignSizes(force: boolean, userComponent: any) {
     if (force || this.isSizeDirty) {
-      this.assignSegSizes(this.segs)
+      this.assignSegSizes(this.segs, userComponent)
       this.isSizeDirty = false
     }
   }
 
 
-  computeSegSizes(segs: Seg[]) {
+  computeSegSizes(segs: Seg[], userComponent: any) {
   }
 
 
-  assignSegSizes(segs: Seg[]) {
+  assignSegSizes(segs: Seg[], userComponent: any) {
   }
 
 }
@@ -341,6 +326,19 @@ function unrenderSelectedInstance({ segs, instanceId }: { segs: Seg[], instanceI
       }
     }
   }
+}
+
+
+export function sortEventSegs(segs, eventOrderSpecs): Seg[] {
+  let objs = segs.map(buildSegCompareObj)
+
+  objs.sort(function(obj0, obj1) {
+    return compareByFieldSpecs(obj0, obj1, eventOrderSpecs)
+  })
+
+  return objs.map(function(c) {
+    return c._seg
+  })
 }
 
 

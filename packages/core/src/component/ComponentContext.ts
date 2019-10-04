@@ -20,35 +20,10 @@ export default interface ComponentContext {
 }
 
 
-export function buildComponentContext(
-  calendar: Calendar,
-  pluginHooks: PluginHooks,
-  theme: Theme,
-  dateEnv: DateEnv,
-  options: any,
-  view?: View
-): ComponentContext {
+export function computeContextProps(options: any) {
   return {
-    calendar,
-    pluginHooks,
-    view,
-    dateEnv,
-    theme,
-    options,
     isRtl: options.dir === 'rtl',
     eventOrderSpecs: parseFieldSpecs(options.eventOrder),
     nextDayThreshold: createDuration(options.nextDayThreshold)
   }
-}
-
-
-export function extendComponentContext(context: ComponentContext, options?: any, view?: View): ComponentContext {
-  return buildComponentContext(
-    context.calendar,
-    context.pluginHooks,
-    context.theme,
-    context.dateEnv,
-    options || context.options,
-    view || context.view
-  )
 }

@@ -45,7 +45,7 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
     this.renderPrev({ el, isEnabled: props.isPrevEnabled })
     this.renderNext({ el, isEnabled: props.isNextEnabled })
 
-    return [ el ]
+    return el
   }
 
 

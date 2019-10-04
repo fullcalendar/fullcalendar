@@ -22,10 +22,9 @@ import {
   Seg,
   EventSegUiInteractionState,
   DateProfile,
-  memoizeRendering,
-  MemoizedRendering,
-  Theme,
-  memoize
+  sortEventSegs,
+  memoize,
+  renderer,
 } from '@fullcalendar/core'
 import { DayBgRow } from '@fullcalendar/daygrid'
 import TimeGridEventRenderer from './TimeGridEventRenderer'
@@ -63,6 +62,7 @@ export interface TimeGridCell {
 }
 
 export interface TimeGridProps {
+  renderProps: RenderProps
   dateProfile: DateProfile
   cells: TimeGridCell[]
   businessHourSegs: TimeGridSeg[]
@@ -76,15 +76,13 @@ export interface TimeGridProps {
 
 export default class TimeGrid extends DateComponent<TimeGridProps> {
 
-  renderProps: RenderProps
-
+  // computed options
   slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
   snapDuration: Duration // granularity of time for dragging and selecting
   snapsPerSlot: any
   labelFormat: DateFormatter // formatting string for times running along vertical axis
   labelInterval: Duration // duration of how often a label should be displayed for a slot
 
-  colCnt: number
   colEls: HTMLElement[] // cells elements in the day-row background
   slatContainerEl: HTMLElement // div that wraps all the slat rows
   slatEls: HTMLElement[] // elements running horizontally across all columns
@@ -95,83 +93,23 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   isSlatSizesDirty: boolean = false
   isColSizesDirty: boolean = false
 
-  rootBgContainerEl: HTMLElement
-  bottomRuleEl: HTMLElement // hidden by default
+  bottomRuleEl: HTMLElement // hidden by default. controlled by parent components!?
   contentSkeletonEl: HTMLElement
   colContainerEls: HTMLElement[] // containers for each column
 
-  // inner-containers for each column where different types of segs live
-  fgContainerEls: HTMLElement[]
-  bgContainerEls: HTMLElement[]
-  mirrorContainerEls: HTMLElement[]
-  highlightContainerEls: HTMLElement[]
-  businessContainerEls: HTMLElement[]
+  processOptions = memoize(this._processOptions)
+  renderSkeleton = renderer(renderSkeleton)
+  renderSlats = renderer(this._renderSlats)
+  renderBgColumns = renderer(this._renderBgColumns)
+  renderDayBgRow = renderer(DayBgRow)
+  renderContentSkeleton = renderer(renderContentSkeleton)
+  renderMirrorEvents = renderer(TimeGridMirrorRenderer)
+  renderFgEvents = renderer(TimeGridEventRenderer)
+  renderBgEvents = renderer(TimeGridFillRenderer)
+  renderBusinessHours = renderer(TimeGridFillRenderer)
+  renderDateSelection = renderer(TimeGridFillRenderer)
 
-  private processOptions = memoize(this._processOptions)
-  private renderSkeleton = memoizeRendering(this._renderSkeleton)
-  private renderSlats = memoizeRendering(this._renderSlats, null, [ this.renderSkeleton ])
-  private renderColumns = memoizeRendering(this._renderColumns, this._unrenderColumns, [ this.renderSkeleton ])
-  private renderBusinessHours: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
-  private renderDateSelection: MemoizedRendering<[TimeGridSeg[]]>
-  private renderBgEvents: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
-  private renderFgEvents: MemoizedRendering<[ComponentContext, TimeGridSeg[]]>
-  private renderEventSelection: MemoizedRendering<[string]>
-  private renderEventDrag: MemoizedRendering<[EventSegUiInteractionState]>
-  private renderEventResize: MemoizedRendering<[EventSegUiInteractionState]>
-
-
-  constructor(el: HTMLElement, renderProps: RenderProps) {
-    super(el)
-
-    this.renderProps = renderProps
-
-    let { renderColumns } = this
-    let eventRenderer = this.eventRenderer = new TimeGridEventRenderer(this)
-    let fillRenderer = this.fillRenderer = new TimeGridFillRenderer(this)
-    this.mirrorRenderer = new TimeGridMirrorRenderer(this)
-
-    this.renderBusinessHours = memoizeRendering(
-      fillRenderer.renderSegs.bind(fillRenderer, 'businessHours'),
-      fillRenderer.unrender.bind(fillRenderer, 'businessHours'),
-      [ renderColumns ]
-    )
-
-    this.renderDateSelection = memoizeRendering(
-      this._renderDateSelection,
-      this._unrenderDateSelection,
-      [ renderColumns ]
-    )
-
-    this.renderFgEvents = memoizeRendering(
-      eventRenderer.renderSegs.bind(eventRenderer),
-      eventRenderer.unrender.bind(eventRenderer),
-      [ renderColumns ]
-    )
-
-    this.renderBgEvents = memoizeRendering(
-      fillRenderer.renderSegs.bind(fillRenderer, 'bgEvent'),
-      fillRenderer.unrender.bind(fillRenderer, 'bgEvent'),
-      [ renderColumns ]
-    )
-
-    this.renderEventSelection = memoizeRendering(
-      eventRenderer.selectByInstanceId.bind(eventRenderer),
-      eventRenderer.unselectByInstanceId.bind(eventRenderer),
-      [ this.renderFgEvents ]
-    )
-
-    this.renderEventDrag = memoizeRendering(
-      this._renderEventDrag,
-      this._unrenderEventDrag,
-      [ renderColumns ]
-    )
-
-    this.renderEventResize = memoizeRendering(
-      this._renderEventResize,
-      this._unrenderEventResize,
-      [ renderColumns ]
-    )
-  }
+  segRenderers: (TimeGridEventRenderer | TimeGridFillRenderer)[]
 
 
   /* Options
@@ -216,26 +154,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     input = options.slotLabelInterval
     this.labelInterval = input ?
       createDuration(input) :
-      this.computeLabelInterval(slotDuration)
-  }
-
-
-  // Computes an automatic value for slotLabelInterval
-  computeLabelInterval(slotDuration) {
-    let i
-    let labelInterval
-    let slotsPerLabel
-
-    // find the smallest stock label interval that results in more than one slots-per-label
-    for (i = AGENDA_STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
-      labelInterval = createDuration(AGENDA_STOCK_SUB_DURATIONS[i])
-      slotsPerLabel = wholeDivideDurations(labelInterval, slotDuration)
-      if (slotsPerLabel !== null && slotsPerLabel > 1) {
-        return labelInterval
-      }
-    }
-
-    return slotDuration // fall back
+      computeLabelInterval(slotDuration)
   }
 
 
@@ -244,36 +163,112 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   render(props: TimeGridProps, context: ComponentContext) {
-    this.processOptions(context.options)
+    let { options } = context
+    this.processOptions(options)
 
-    let cells = props.cells
-    this.colCnt = cells.length
+    let {
+      rootEl,
+      rootBgContainerEl,
+      contentSkeletonEl,
+      bottomRuleEl,
+      slatContainerEl
+    } = this.renderSkeleton()
 
-    this.renderSkeleton(context.theme)
-    this.renderSlats(props.dateProfile)
-    this.renderColumns(props.cells, props.dateProfile)
-    this.renderBusinessHours(context, props.businessHourSegs)
-    this.renderDateSelection(props.dateSelectionSegs)
-    this.renderFgEvents(context, props.fgEventSegs)
-    this.renderBgEvents(context, props.bgEventSegs)
-    this.renderEventSelection(props.eventSelection)
-    this.renderEventDrag(props.eventDrag)
-    this.renderEventResize(props.eventResize)
+    this.renderBgColumns(rootBgContainerEl, {
+      rootEl,
+      cells: props.cells,
+      dateProfile: props.dateProfile,
+      renderProps: props.renderProps
+    })
+
+    this.renderSlats(slatContainerEl, {
+      rootEl,
+      dateProfile: props.dateProfile
+    })
+
+    let {
+      colContainerEls,
+      businessContainerEls,
+      bgContainerEls,
+      fgContainerEls,
+      highlightContainerEls,
+      mirrorContainerEls
+    } = this.renderContentSkeleton(contentSkeletonEl, {
+      colCnt: props.cells.length,
+      renderProps: props.renderProps
+    })
+
+    let segRenderers = [
+      this.renderBusinessHours({
+        type: 'businessHours',
+        containerEls: businessContainerEls,
+        segs: props.businessHourSegs,
+      }),
+      this.renderDateSelection({
+        type: 'highlight',
+        containerEls: highlightContainerEls,
+        segs: options.selectMirror ? null : props.dateSelectionSegs
+      }),
+      this.renderBgEvents({
+        type: 'bgEvent',
+        containerEls: bgContainerEls,
+        segs: props.bgEventSegs
+      }),
+      this.renderFgEvents({
+        containerEls: fgContainerEls,
+        segs: props.fgEventSegs,
+        selectedInstanceId: props.eventSelection, // TODO: rename
+        hiddenInstances: // TODO: more convenient
+          (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+          (props.eventResize ? props.eventResize.affectedInstances : null)
+      })
+    ]
+
+    let mirrorRenderer = this.handleMirror(props, mirrorContainerEls, options)
+    if (mirrorRenderer) {
+      segRenderers.push(mirrorRenderer)
+    }
+
+    this.segRenderers = segRenderers
+    this.contentSkeletonEl = contentSkeletonEl
+    this.bottomRuleEl = bottomRuleEl
+    this.colContainerEls = colContainerEls
+
+    return rootEl
   }
 
 
-  destroy() {
-    super.destroy()
+  handleMirror(props: TimeGridProps, mirrorContainerEls: HTMLElement[], options): TimeGridEventRenderer | null {
 
-    // should unrender everything else too
-    this.renderSlats.unrender()
-    this.renderColumns.unrender()
-    this.renderSkeleton.unrender()
+    if (props.dateSelectionSegs && options.selectMirror) { // can use non-existent like this!?
+      return this.renderMirrorEvents({
+        containerEls: mirrorContainerEls,
+        segs: props.dateSelectionSegs,
+        mirrorInfo: { isSelecting: true }
+      })
+
+    } else if (props.eventDrag) {
+      return this.renderMirrorEvents({
+        containerEls: mirrorContainerEls,
+        segs: props.eventDrag.segs,
+        mirrorInfo: { isDragging: true, sourceSeg: props.eventDrag.sourceSeg }
+      })
+
+    } else if (props.eventResize) {
+      return this.renderMirrorEvents({
+        containerEls: mirrorContainerEls,
+        segs: props.eventResize.segs,
+        mirrorInfo: { isDragging: true, sourceSeg: props.eventResize.sourceSeg }
+      })
+
+    } else {
+      return this.renderMirrorEvents(false)
+    }
   }
 
 
   updateSize(isResize: boolean) {
-    let { fillRenderer, eventRenderer, mirrorRenderer } = this
+    let { segRenderers } = this
 
     if (isResize || this.isSlatSizesDirty) {
       this.buildSlatPositions()
@@ -285,48 +280,37 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       this.isColSizesDirty = false
     }
 
-    fillRenderer.computeSizes(isResize)
-    eventRenderer.computeSizes(isResize)
-    mirrorRenderer.computeSizes(isResize)
+    for (let segRenderer of segRenderers) {
+      segRenderer.computeSizes(isResize, this)
+    }
 
-    fillRenderer.assignSizes(isResize)
-    eventRenderer.assignSizes(isResize)
-    mirrorRenderer.assignSizes(isResize)
+    for (let segRenderer of segRenderers) {
+      segRenderer.assignSizes(isResize, this)
+    }
   }
 
 
-  _renderSkeleton(theme: Theme) {
-    let { el } = this
+  _renderSlats(
+    { rootEl, dateProfile }: { rootEl: HTMLElement, dateProfile: DateProfile },
+    context: ComponentContext
+  ) {
+    let tableEl = createElement(
+      'table',
+      { className: context.theme.getClass('tableGrid') },
+      this.renderSlatRowHtml(dateProfile)
+    )
 
-    el.innerHTML =
-      '<div class="fc-bg"></div>' +
-      '<div class="fc-slats"></div>' +
-      '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
-
-    this.rootBgContainerEl = el.querySelector('.fc-bg')
-    this.slatContainerEl = el.querySelector('.fc-slats')
-    this.bottomRuleEl = el.querySelector('.fc-divider')
-  }
-
-
-  _renderSlats(dateProfile: DateProfile) {
-    let { theme } = this.context
-
-    this.slatContainerEl.innerHTML =
-      '<table class="' + theme.getClass('tableGrid') + '">' +
-        this.renderSlatRowHtml(dateProfile) +
-      '</table>'
-
-    this.slatEls = findElements(this.slatContainerEl, 'tr')
+    let slatEls = this.slatEls = findElements(tableEl, 'tr')
 
     this.slatPositions = new PositionCache(
-      this.el,
-      this.slatEls,
+      rootEl,
+      slatEls,
       false,
       true // vertical
     )
-
     this.isSlatSizesDirty = true
+
+    return [ tableEl ]
   }
 
 
@@ -373,26 +357,29 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  _renderColumns(cells: TimeGridCell[], dateProfile: DateProfile) {
-    let { calendar, view, isRtl, theme, dateEnv } = this.context
+  // goes behind the slats
+  _renderBgColumns(
+    { rootEl, cells, dateProfile, renderProps }: { rootEl: HTMLElement, cells: TimeGridCell[], dateProfile: DateProfile, renderProps: any },
+    context: ComponentContext
+  ) {
+    let { calendar, view, isRtl, theme, dateEnv } = context
 
-    let bgRow = new DayBgRow(this.context)
-    this.rootBgContainerEl.innerHTML =
-      '<table class="' + theme.getClass('tableGrid') + '">' +
-        bgRow.renderHtml({
-          cells,
-          dateProfile,
-          renderIntroHtml: this.renderProps.renderBgIntroHtml
-        }) +
-      '</table>'
+    let tableEl = createElement('table', { className: theme.getClass('tableGrid') }, '<tbody />')
+    let tbodyEl = tableEl.querySelector('tbody')
 
-    this.colEls = findElements(this.el, '.fc-day, .fc-disabled-day')
+    this.renderDayBgRow(tbodyEl, {
+      cells,
+      dateProfile,
+      renderIntroHtml: renderProps.renderBgIntroHtml
+    })
 
-    for (let col = 0; col < this.colCnt; col++) {
+    let colEls = this.colEls = findElements(tbodyEl, '.fc-day, .fc-disabled-day')
+
+    for (let col = 0; col < cells.length; col++) {
       calendar.publiclyTrigger('dayRender', [
         {
           date: dateEnv.toDate(cells[col].date),
-          el: this.colEls[col],
+          el: colEls[col],
           view
         }
       ])
@@ -403,118 +390,14 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     }
 
     this.colPositions = new PositionCache(
-      this.el,
-      this.colEls,
+      rootEl,
+      colEls,
       true, // horizontal
       false
     )
-
-    this.renderContentSkeleton()
     this.isColSizesDirty = true
-  }
 
-
-  _unrenderColumns() {
-    this.unrenderContentSkeleton()
-  }
-
-
-  /* Content Skeleton
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Renders the DOM that the view's content will live in
-  renderContentSkeleton() {
-    let { isRtl } = this.context
-    let parts = []
-    let skeletonEl: HTMLElement
-
-    parts.push(
-      this.renderProps.renderIntroHtml()
-    )
-
-    for (let i = 0; i < this.colCnt; i++) {
-      parts.push(
-        '<td>' +
-          '<div class="fc-content-col">' +
-            '<div class="fc-event-container fc-mirror-container"></div>' +
-            '<div class="fc-event-container"></div>' +
-            '<div class="fc-highlight-container"></div>' +
-            '<div class="fc-bgevent-container"></div>' +
-            '<div class="fc-business-container"></div>' +
-          '</div>' +
-        '</td>'
-      )
-    }
-
-    if (isRtl) {
-      parts.reverse()
-    }
-
-    skeletonEl = this.contentSkeletonEl = htmlToElement(
-      '<div class="fc-content-skeleton">' +
-        '<table>' +
-          '<tr>' + parts.join('') + '</tr>' +
-        '</table>' +
-      '</div>'
-    )
-
-    this.colContainerEls = findElements(skeletonEl, '.fc-content-col')
-    this.mirrorContainerEls = findElements(skeletonEl, '.fc-mirror-container')
-    this.fgContainerEls = findElements(skeletonEl, '.fc-event-container:not(.fc-mirror-container)')
-    this.bgContainerEls = findElements(skeletonEl, '.fc-bgevent-container')
-    this.highlightContainerEls = findElements(skeletonEl, '.fc-highlight-container')
-    this.businessContainerEls = findElements(skeletonEl, '.fc-business-container')
-
-    if (isRtl) {
-      this.colContainerEls.reverse()
-      this.mirrorContainerEls.reverse()
-      this.fgContainerEls.reverse()
-      this.bgContainerEls.reverse()
-      this.highlightContainerEls.reverse()
-      this.businessContainerEls.reverse()
-    }
-
-    this.el.appendChild(skeletonEl)
-  }
-
-
-  unrenderContentSkeleton() {
-    removeElement(this.contentSkeletonEl)
-  }
-
-
-  // Given a flat array of segments, return an array of sub-arrays, grouped by each segment's col
-  groupSegsByCol(segs) {
-    let segsByCol = []
-    let i
-
-    for (i = 0; i < this.colCnt; i++) {
-      segsByCol.push([])
-    }
-
-    for (i = 0; i < segs.length; i++) {
-      segsByCol[segs[i].col].push(segs[i])
-    }
-
-    return segsByCol
-  }
-
-
-  // Given segments grouped by column, insert the segments' elements into a parallel array of container
-  // elements, each living within a column.
-  attachSegsByCol(segsByCol, containerEls: HTMLElement[]) {
-    let col
-    let segs
-    let i
-
-    for (col = 0; col < this.colCnt; col++) { // iterate each column grouping
-      segs = segsByCol[col]
-
-      for (i = 0; i < segs.length; i++) {
-        containerEls[col].appendChild(segs[i].el)
-      }
-    }
+    return [ tableEl ]
   }
 
 
@@ -614,7 +497,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
 
   // For each segment in an array, computes and assigns its top and bottom properties
-  computeSegVerticals(segs) {
+  computeSegVerticals(segs: Seg[]) {
     let { options } = this.context
     let eventMinHeight = options.timeGridEventMinHeight
     let i
@@ -719,81 +602,149 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     }
   }
 
-
-  /* Event Drag Visualization
-  ------------------------------------------------------------------------------------------------------------------*/
+}
 
 
-  _renderEventDrag(state: EventSegUiInteractionState) {
-    if (state) {
-      this.eventRenderer.hideByHash(state.affectedInstances)
+// Computes an automatic value for slotLabelInterval
+function computeLabelInterval(slotDuration) {
+  let i
+  let labelInterval
+  let slotsPerLabel
 
-      if (state.isEvent) {
-        this.mirrorRenderer.renderSegs(this.context, state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
-      } else {
-        this.fillRenderer.renderSegs('highlight', this.context, state.segs)
-      }
+  // find the smallest stock label interval that results in more than one slots-per-label
+  for (i = AGENDA_STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
+    labelInterval = createDuration(AGENDA_STOCK_SUB_DURATIONS[i])
+    slotsPerLabel = wholeDivideDurations(labelInterval, slotDuration)
+    if (slotsPerLabel !== null && slotsPerLabel > 1) {
+      return labelInterval
     }
   }
 
+  return slotDuration // fall back
+}
 
-  _unrenderEventDrag(state: EventSegUiInteractionState) {
-    if (state) {
-      this.eventRenderer.showByHash(state.affectedInstances)
 
-      if (state.isEvent) {
-        this.mirrorRenderer.unrender(this.context, state.segs, { isDragging: true, sourceSeg: state.sourceSeg })
-      } else {
-        this.fillRenderer.unrender('highlight', this.context)
-      }
-    }
+function renderSkeleton(props: {}, context: ComponentContext) {
+  let rootEl = createElement(
+    'div',
+    { className: 'fc-time-grid' },
+    '<div class="fc-bg"></div>' +
+    '<div class="fc-slats"></div>' +
+    '<div class="fc-content-skeleton">' +
+    '<hr class="fc-divider ' + context.theme.getClass('widgetHeader') + '" style="display:none" />'
+  )
+
+  return {
+    rootEl,
+    rootBgContainerEl: rootEl.querySelector('.fc-bg') as HTMLElement,
+    slatContainerEl: rootEl.querySelector('.fc-slats') as HTMLElement,
+    contentSkeletonEl: rootEl.querySelector('.fc-content-skeleton') as HTMLElement,
+    bottomRuleEl: rootEl.querySelector('.fc-divider') as HTMLElement
+  }
+}
+
+
+// Renders the DOM that the view's content will live in
+// goes in front of the slats
+function renderContentSkeleton({ colCnt, renderProps }: { colCnt: number, renderProps: any  }, context: ComponentContext) {
+  let { isRtl } = context
+  let parts = []
+
+  parts.push(
+    renderProps.renderIntroHtml()
+  )
+
+  for (let i = 0; i < colCnt; i++) {
+    parts.push(
+      '<td>' +
+        '<div class="fc-content-col">' +
+          '<div class="fc-event-container fc-mirror-container"></div>' +
+          '<div class="fc-event-container"></div>' +
+          '<div class="fc-highlight-container"></div>' +
+          '<div class="fc-bgevent-container"></div>' +
+          '<div class="fc-business-container"></div>' +
+        '</div>' +
+      '</td>'
+    )
   }
 
-
-  /* Event Resize Visualization
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  _renderEventResize(state: EventSegUiInteractionState) {
-    if (state) {
-      this.eventRenderer.hideByHash(state.affectedInstances)
-      this.mirrorRenderer.renderSegs(this.context, state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
-    }
+  if (isRtl) {
+    parts.reverse()
   }
 
+  let tableEl = htmlToElement(
+    '<div class="fc-content-skeleton">' +
+      '<table>' +
+        '<tr>' + parts.join('') + '</tr>' +
+      '</table>' +
+    '</div>'
+  )
 
-  _unrenderEventResize(state: EventSegUiInteractionState) {
-    if (state) {
-      this.eventRenderer.showByHash(state.affectedInstances)
-      this.mirrorRenderer.unrender(this.context, state.segs, { isResizing: true, sourceSeg: state.sourceSeg })
-    }
+  let colContainerEls = findElements(tableEl, '.fc-content-col')
+  let mirrorContainerEls = findElements(tableEl, '.fc-mirror-container')
+  let fgContainerEls = findElements(tableEl, '.fc-event-container:not(.fc-mirror-container)')
+  let bgContainerEls = findElements(tableEl, '.fc-bgevent-container')
+  let highlightContainerEls = findElements(tableEl, '.fc-highlight-container')
+  let businessContainerEls = findElements(tableEl, '.fc-business-container')
+
+  if (isRtl) {
+    colContainerEls.reverse()
+    mirrorContainerEls.reverse()
+    fgContainerEls.reverse()
+    bgContainerEls.reverse()
+    highlightContainerEls.reverse()
+    businessContainerEls.reverse()
   }
 
+  return {
+    rootEl: tableEl,
+    colContainerEls,
+    businessContainerEls,
+    bgContainerEls,
+    fgContainerEls,
+    highlightContainerEls,
+    mirrorContainerEls
+  }
+}
 
-  /* Selection
-  ------------------------------------------------------------------------------------------------------------------*/
 
+// Given segments grouped by column, insert the segments' elements into a parallel array of container
+// elements, each living within a column.
+export function attachSegs({ segs, containerEls }: { segs: Seg[], containerEls: HTMLElement[] }, context: ComponentContext) {
+  let segsByCol = groupSegsByCol(segs, containerEls.length)
 
-  // Renders a visual indication of a selection. Overrides the default, which was to simply render a highlight.
-  _renderDateSelection(segs: Seg[]) {
-    if (segs) {
-      if (this.context.options.selectMirror) {
-        this.mirrorRenderer.renderSegs(this.context, segs, { isSelecting: true })
-      } else {
-        this.fillRenderer.renderSegs('highlight', this.context, segs)
-      }
-    }
+  for (let col = 0; col < segsByCol.length; col++) {
+    segsByCol[col] = sortEventSegs(segsByCol[col], context.eventOrderSpecs)
   }
 
+  for (let col = 0; col < containerEls.length; col++) { // iterate each column grouping
+    let segs = segsByCol[col]
 
-  _unrenderDateSelection(segs: Seg[]) {
-    if (segs) {
-      if (this.context.options.selectMirror) {
-        this.mirrorRenderer.unrender(this.context, segs, { isSelecting: true })
-      } else {
-        this.fillRenderer.unrender('highlight', this.context)
-      }
+    for (let seg of segs) {
+      containerEls[col].appendChild(seg.el)
     }
   }
+}
 
+
+export function detachSegs({ segs, containerEls }: { segs: Seg[], containerEls: HTMLElement[] }) {
+  segs.forEach(function(seg) {
+    removeElement(seg.el)
+  })
+}
+
+
+function groupSegsByCol(segs, colCnt) {
+  let segsByCol = []
+  let i
+
+  for (i = 0; i < colCnt; i++) {
+    segsByCol.push([])
+  }
+
+  for (i = 0; i < segs.length; i++) {
+    segsByCol[segs[i].col].push(segs[i])
+  }
+
+  return segsByCol
 }
