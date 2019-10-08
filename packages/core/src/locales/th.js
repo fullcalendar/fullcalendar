@@ -8,6 +8,9 @@ export default {
   buttonText: {
     prev: "ก่อนหน้า",
     next: "ถัดไป",
+    prevYear: 'ปีก่อนหน้า',
+    nextYear: 'ปีถัดไป',
+    year: 'ปี',
     today: "วันนี้",
     month: "เดือน",
     week: "สัปดาห์",
