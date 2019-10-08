@@ -6,7 +6,7 @@ export default {
     doy: 4  // The week that contains Jan 4th is the first week of the year.
   },
   buttonText: {
-    prev: "ย้อน",
+    prev: "ก่อนหน้า",
     next: "ถัดไป",
     today: "วันนี้",
     month: "เดือน",
