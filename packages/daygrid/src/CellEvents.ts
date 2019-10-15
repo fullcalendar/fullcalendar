@@ -2,15 +2,14 @@ import {
   htmlEscape, cssToStr,
   FgEventRenderer,
   Seg,
-  computeEventDraggable, computeEventStartResizable, computeEventEndResizable
+  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, BaseFgEventRendererProps
 } from '@fullcalendar/core'
 
 
 /* Event-rendering methods for the DayGrid class
 ----------------------------------------------------------------------------------------------------------------------*/
 
-// "Simple" is bad a name. has nothing to do with SimpleDayGrid
-export default abstract class SimpleDayGridEventRenderer extends FgEventRenderer {
+export default abstract class CellEvents<Props extends BaseFgEventRendererProps> extends FgEventRenderer<Props> {
 
 
   // Builds the HTML to be used for the default element for an individual segment

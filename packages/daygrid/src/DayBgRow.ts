@@ -3,9 +3,7 @@ import {
   DateMarker,
   getDayClasses,
   rangeContainsMarker,
-  DateProfile,
-  CCComponent as Component,
-  createElement
+  DateProfile
 } from '@fullcalendar/core'
 
 export interface DayBgCell {
@@ -19,38 +17,38 @@ export interface DayBgRowProps {
   renderIntroHtml?: () => string
 }
 
-export default class DayBgRow extends Component<DayBgRowProps> {
+/*
+not a real component! was easier this way
+*/
+export function renderDayBgRowHtml(props: DayBgRowProps, context: ComponentContext) {
+  let parts = []
 
-  render(props: DayBgRowProps, context: ComponentContext) {
-    let parts = []
-
-    if (props.renderIntroHtml) {
-      parts.push(props.renderIntroHtml())
-    }
-
-    for (let cell of props.cells) {
-      parts.push(
-        renderCellHtml(
-          cell.date,
-          props.dateProfile,
-          context,
-          cell.htmlAttrs
-        )
-      )
-    }
-
-    if (!props.cells.length) {
-      parts.push('<td class="fc-day ' + context.theme.getClass('widgetContent') + '"></td>')
-    }
-
-    if (this.context.options.dir === 'rtl') {
-      parts.reverse()
-    }
-
-    return createElement('tr', {}, parts.join(''))
+  if (props.renderIntroHtml) {
+    parts.push(props.renderIntroHtml())
   }
 
+  for (let cell of props.cells) {
+    parts.push(
+      renderCellHtml(
+        cell.date,
+        props.dateProfile,
+        context,
+        cell.htmlAttrs
+      )
+    )
+  }
+
+  if (!props.cells.length) {
+    parts.push('<td class="fc-day ' + context.theme.getClass('widgetContent') + '"></td>')
+  }
+
+  if (context.options.dir === 'rtl') {
+    parts.reverse()
+  }
+
+  return '<tr>' + parts.join('') + '</tr>'
 }
+
 
 function renderCellHtml(date: DateMarker, dateProfile: DateProfile, context: ComponentContext, otherAttrs?) {
   let { dateEnv, theme } = context

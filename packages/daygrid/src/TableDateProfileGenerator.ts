@@ -4,7 +4,8 @@ import {
   DateRange
 } from '@fullcalendar/core'
 
-export default class DayGridDateProfileGenerator extends DateProfileGenerator {
+export default class TableDateProfileGenerator extends DateProfileGenerator {
+
 
   // Computes the date range that will be rendered.
   buildRenderRange(currentRange, currentRangeUnit, isRangeAllDay): DateRange {

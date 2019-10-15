@@ -1,5 +1,5 @@
 import {
-  htmlEscape, createElement, findElements,
+  htmlEscape, findElements,
   matchCellWidths,
   uncompensateScroll,
   compensateScroll,
@@ -7,37 +7,91 @@ import {
   distributeHeight,
   undistributeHeight,
   createFormatter,
-  ScrollComponent,
+  Scroller,
   View,
   buildGotoAnchorHtml,
   Duration,
   ComponentContext,
-  ViewProps,
   memoize,
-  memoizeRendering
+  renderer,
+  renderViewEl
 } from '@fullcalendar/core'
-import DayGridDateProfileGenerator from './DayGridDateProfileGenerator'
-import DayGrid from './DayGrid'
+import Table, { TableRenderProps } from './Table'
+import TableDateProfileGenerator from './TableDateProfileGenerator'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
 
 /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
 ----------------------------------------------------------------------------------------------------------------------*/
-// It is a manager for a DayGrid subcomponent, which does most of the heavy lifting.
+// It is a manager for a Table subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
-export default abstract class AbstractDayGridView extends View {
-
-  scroller: ScrollComponent
-  dayGrid: DayGrid // the main subcomponent that does most of the heavy lifting
-
-  colWeekNumbersVisible: boolean
-  cellWeekNumbersVisible: boolean
-  weekNumberWidth: number
+export default abstract class TableView extends View {
 
   private processOptions = memoize(this._processOptions)
-  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
+  private renderSkeleton = renderer(this._renderSkeleton)
+  private renderScroller = renderer(Scroller)
+
+  private scroller: Scroller
+
+  // computed options
+  private colWeekNumbersVisible: boolean
+  private cellWeekNumbersVisible: boolean
+  private weekNumberWidth: number
+
+
+  renderLayout(options: { type: string }, context: ComponentContext) {
+    this.processOptions(context.options)
+
+    let { rootEl, headerWrapEl, contentWrapEl } = this.renderSkeleton(true, options)
+
+    let scroller = this.renderScroller(contentWrapEl, {
+      overflowX: 'hidden',
+      overflowY: 'auto'
+    })
+
+    let tableWrapEl = scroller.rootEl
+    tableWrapEl.classList.add('fc-day-grid-container') // TODO: avoid every time
+
+    this.scroller = scroller
+
+    return {
+      rootEl,
+      headerWrapEl,
+      tableWrapEl
+    }
+  }
+
+
+  _renderSkeleton({ type }: { type: string }, context: ComponentContext) {
+    let { theme, options } = context
+
+    let el = renderViewEl(type)
+    el.classList.add('fc-dayGrid-view')
+    el.innerHTML = '' +
+      '<table class="' + theme.getClass('tableGrid') + '">' +
+        (options.columnHeader ?
+          '<thead class="fc-head">' +
+            '<tr>' +
+              '<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
+            '</tr>' +
+          '</thead>' :
+          ''
+          ) +
+        '<tbody class="fc-body">' +
+          '<tr>' +
+            '<td class="' + theme.getClass('widgetContent') + '"></td>' +
+          '</tr>' +
+        '</tbody>' +
+      '</table>'
+
+    return {
+      rootEl: el,
+      headerWrapEl: options.columnHeader ? (el.querySelector('.fc-head-container') as HTMLElement) : null,
+      contentWrapEl: el.querySelector('.fc-body > tr > td') as HTMLElement
+    }
+  }
 
 
   _processOptions(options) {
@@ -56,81 +110,6 @@ export default abstract class AbstractDayGridView extends View {
   }
 
 
-  render(props: ViewProps, context: ComponentContext) {
-    super.render(props, context)
-
-    this.processOptions(context.options)
-    this.renderSkeleton(context)
-  }
-
-
-  destroy() {
-    super.destroy()
-
-    this.renderSkeleton.unrender()
-  }
-
-
-  _renderSkeleton(context: ComponentContext) {
-    this.el.classList.add('fc-dayGrid-view')
-    this.el.innerHTML = this.renderSkeletonHtml()
-
-    this.scroller = new ScrollComponent(
-      'hidden', // overflow x
-      'auto' // overflow y
-    )
-
-    let dayGridContainerEl = this.scroller.el
-    this.el.querySelector('.fc-body > tr > td').appendChild(dayGridContainerEl)
-    dayGridContainerEl.classList.add('fc-day-grid-container')
-    let dayGridEl = createElement('div', { className: 'fc-day-grid' })
-    dayGridContainerEl.appendChild(dayGridEl)
-
-    this.dayGrid = new DayGrid(
-      dayGridEl,
-      {
-        renderNumberIntroHtml: this.renderDayGridNumberIntroHtml,
-        renderBgIntroHtml: this.renderDayGridBgIntroHtml,
-        renderIntroHtml: this.renderDayGridIntroHtml,
-        colWeekNumbersVisible: this.colWeekNumbersVisible,
-        cellWeekNumbersVisible: this.cellWeekNumbersVisible
-      }
-    )
-  }
-
-
-  _unrenderSkeleton() {
-    this.el.classList.remove('fc-dayGrid-view')
-
-    this.dayGrid.destroy()
-    this.scroller.destroy()
-  }
-
-
-  // Builds the HTML skeleton for the view.
-  // The day-grid component will render inside of a container defined by this HTML.
-  renderSkeletonHtml() {
-    let { theme, options } = this.context
-
-    return '' +
-      '<table class="' + theme.getClass('tableGrid') + '">' +
-        (options.columnHeader ?
-          '<thead class="fc-head">' +
-            '<tr>' +
-              '<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
-            '</tr>' +
-          '</thead>' :
-          ''
-          ) +
-        '<tbody class="fc-body">' +
-          '<tr>' +
-            '<td class="' + theme.getClass('widgetContent') + '"></td>' +
-          '</tr>' +
-        '</tbody>' +
-      '</table>'
-  }
-
-
   // Generates an HTML attribute string for setting the width of the week number column, if it is known
   weekNumberStyleAttr() {
     if (this.weekNumberWidth != null) {
@@ -140,36 +119,19 @@ export default abstract class AbstractDayGridView extends View {
   }
 
 
-  // Determines whether each row should have a constant height
-  hasRigidRows() {
-    let eventLimit = this.context.options.eventLimit
-
-    return eventLimit && typeof eventLimit !== 'number'
-  }
-
-
   /* Dimensions
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
-    super.updateSize(isResize, viewHeight, isAuto) // will call updateBaseSize. important that executes first
-
-    this.dayGrid.updateSize(isResize)
-  }
-
-
   // Refreshes the horizontal dimensions of the view
-  updateBaseSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
-    let { dayGrid } = this
-    let eventLimit = this.context.options.eventLimit
-    let headRowEl = (this as any).header ? (this as any).header.el : null // HACK
+  updateLayoutHeight(headRowEl: HTMLElement | null, table: Table, viewHeight: number, isAuto: boolean, options) {
+    let eventLimit = options.eventLimit
     let scrollerHeight
     let scrollbarWidths
 
     // hack to give the view some height prior to dayGrid's columns being rendered
     // TODO: separate setting height from scroller VS dayGrid.
-    if (!dayGrid.rowEls) {
+    if (!table.rowEls) {
       if (!isAuto) {
         scrollerHeight = this.computeScrollerHeight(viewHeight)
         this.scroller.setHeight(scrollerHeight)
@@ -180,7 +142,7 @@ export default abstract class AbstractDayGridView extends View {
     if (this.colWeekNumbersVisible) {
       // Make sure all week number cells running down the side have the same width.
       this.weekNumberWidth = matchCellWidths(
-        findElements(this.el, '.fc-week-number')
+        findElements(this.rootEl, '.fc-week-number')
       )
     }
 
@@ -190,21 +152,19 @@ export default abstract class AbstractDayGridView extends View {
       uncompensateScroll(headRowEl)
     }
 
-    dayGrid.removeSegPopover() // kill the "more" popover if displayed
-
     // is the event limit a constant level number?
     if (eventLimit && typeof eventLimit === 'number') {
-      dayGrid.limitRows(eventLimit) // limit the levels first so the height can redistribute after
+      table.limitRows(eventLimit) // limit the levels first so the height can redistribute after
     }
 
     // distribute the height to the rows
     // (viewHeight is a "recommended" value if isAuto)
     scrollerHeight = this.computeScrollerHeight(viewHeight)
-    this.setGridHeight(scrollerHeight, isAuto)
+    this.setGridHeight(table, scrollerHeight, isAuto, options)
 
     // is the event limit dynamically calculated?
     if (eventLimit && typeof eventLimit !== 'number') {
-      dayGrid.limitRows(eventLimit) // limit the levels after the grid's row heights have been set
+      table.limitRows(eventLimit) // limit the levels after the grid's row heights have been set
     }
 
     if (!isAuto) { // should we force dimensions of the scroll container?
@@ -232,28 +192,29 @@ export default abstract class AbstractDayGridView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(viewHeight) {
     return viewHeight -
-      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
+      subtractInnerElHeight(this.rootEl, this.scroller.el) // everything that's NOT the scroller
   }
 
 
-  // Sets the height of just the DayGrid component in this view
-  setGridHeight(height, isAuto) {
+  // Sets the height of just the Table component in this view
+  setGridHeight(table: Table, height, isAuto, options) {
+    let { rowEls } = table
 
-    if (this.context.options.monthMode) {
+    if (options.monthMode) {
 
       // if auto, make the height of each row the height that it would be if there were 6 weeks
       if (isAuto) {
-        height *= this.dayGrid.rowCnt / 6
+        height *= rowEls.length / 6
       }
 
-      distributeHeight(this.dayGrid.rowEls, height, !isAuto) // if auto, don't compensate for height-hogging rows
+      distributeHeight(rowEls, height, !isAuto) // if auto, don't compensate for height-hogging rows
 
     } else {
 
       if (isAuto) {
-        undistributeHeight(this.dayGrid.rowEls) // let the rows be their natural height with no expanding
+        undistributeHeight(rowEls) // let the rows be their natural height with no expanding
       } else {
-        distributeHeight(this.dayGrid.rowEls, height, true) // true = compensate for height-hogging rows
+        distributeHeight(rowEls, height, true) // true = compensate for height-hogging rows
       }
     }
   }
@@ -269,13 +230,13 @@ export default abstract class AbstractDayGridView extends View {
 
 
   queryDateScroll() {
-    return { top: this.scroller.getScrollTop() }
+    return { top: this.scroller.controller.getScrollTop() }
   }
 
 
   applyDateScroll(scroll) {
     if (scroll.top !== undefined) {
-      this.scroller.setScrollTop(scroll.top)
+      this.scroller.controller.setScrollTop(scroll.top)
     }
   }
 
@@ -301,14 +262,16 @@ export default abstract class AbstractDayGridView extends View {
   }
 
 
-  /* Day Grid Rendering
+  /* Table Rendering
   ------------------------------------------------------------------------------------------------------------------*/
 
 
   // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
-  renderDayGridNumberIntroHtml = (row: number, dayGrid: DayGrid) => {
+  renderNumberIntroHtml = (row: number, table: Table) => {
     let { options, dateEnv } = this.context
-    let weekStart = dayGrid.props.cells[row][0].date
+    let cells = table.props.cells
+    let weekStart = cells[row][0].date
+    let colCnt = cells[0].length
 
     if (this.colWeekNumbersVisible) {
       return '' +
@@ -316,7 +279,7 @@ export default abstract class AbstractDayGridView extends View {
           buildGotoAnchorHtml( // aside from link, important for matchCellWidths
             options,
             dateEnv,
-            { date: weekStart, type: 'week', forceOff: dayGrid.colCnt === 1 },
+            { date: weekStart, type: 'week', forceOff: colCnt === 1 },
             dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
           ) +
         '</td>'
@@ -327,7 +290,7 @@ export default abstract class AbstractDayGridView extends View {
 
 
   // Generates the HTML that goes before the day bg cells for each day-row
-  renderDayGridBgIntroHtml = () => {
+  renderBgIntroHtml = () => {
     let { theme } = this.context
 
     if (this.colWeekNumbersVisible) {
@@ -338,9 +301,9 @@ export default abstract class AbstractDayGridView extends View {
   }
 
 
-  // Generates the HTML that goes before every other type of row generated by DayGrid.
+  // Generates the HTML that goes before every other type of row generated by Table.
   // Affects mirror-skeleton and highlight-skeleton rows.
-  renderDayGridIntroHtml = () => {
+  renderIntroHtml = () => {
 
     if (this.colWeekNumbersVisible) {
       return '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '></td>'
@@ -349,6 +312,23 @@ export default abstract class AbstractDayGridView extends View {
     return ''
   }
 
+
+  tableRenderProps: TableRenderProps = {
+    renderNumberIntroHtml: this.renderNumberIntroHtml,
+    renderBgIntroHtml: this.renderBgIntroHtml,
+    renderIntroHtml: this.renderIntroHtml,
+    colWeekNumbersVisible: this.colWeekNumbersVisible,
+    cellWeekNumbersVisible: this.cellWeekNumbersVisible
+  }
+
 }
 
-AbstractDayGridView.prototype.dateProfileGeneratorClass = DayGridDateProfileGenerator
+TableView.prototype.dateProfileGeneratorClass = TableDateProfileGenerator
+
+
+// Determines whether each row should have a constant height
+export function hasRigidRows(options) {
+  let eventLimit = options.eventLimit
+
+  return eventLimit && typeof eventLimit !== 'number'
+}

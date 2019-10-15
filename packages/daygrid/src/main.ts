@@ -1,17 +1,18 @@
 import { createPlugin } from '@fullcalendar/core'
-import DayGridView from './DayGridView'
+import DayTableView from './DayTableView'
 
-export { default as SimpleDayGrid, DayGridSlicer } from './SimpleDayGrid'
-export { default as DayGrid, DayGridSeg } from './DayGrid'
-export { default as AbstractDayGridView } from './AbstractDayGridView'
-export { default as DayGridView, buildDayTable as buildBasicDayTable } from './DayGridView'
-export { default as DayBgRow } from './DayBgRow'
+export { default as DayTable, DayTableSlicer } from './DayTable'
+export { default as Table, TableSeg } from './Table'
+export { default as TableView } from './TableView'
+export { buildDayTableModel } from './DayTableView'
+export { renderDayBgRowHtml } from './DayBgRow'
+export { DayTableView as DayGridView } // export as old name!
 
 export default createPlugin({
   defaultView: 'dayGridMonth',
   views: {
 
-    dayGrid: DayGridView,
+    dayGrid: DayTableView, // sort of a name mismatch. okay
 
     dayGridDay: {
       type: 'dayGrid',

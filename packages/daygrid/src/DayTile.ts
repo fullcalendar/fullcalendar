@@ -4,118 +4,63 @@ import {
   createFormatter,
   Hit,
   addDays, DateMarker,
-  removeElement,
   ComponentContext,
   EventInstanceHash,
-  memoizeRendering, MemoizedRendering
+  renderer
 } from '@fullcalendar/core'
-import SimpleDayGridEventRenderer from './SimpleDayGridEventRenderer'
+import DayTileEvents from './DayTileEvents'
+import { htmlToElements } from '@fullcalendar/core/util/dom-manip'
 
 export interface DayTileProps {
   date: DateMarker
   fgSegs: Seg[]
-  eventSelection: string
-  eventDragInstances: EventInstanceHash
-  eventResizeInstances: EventInstanceHash
+  selectedInstanceId: string
+  hiddenInstances: EventInstanceHash
 }
 
 export default class DayTile extends DateComponent<DayTileProps> {
 
-  segContainerEl: HTMLElement
-
-  private renderFrame: MemoizedRendering<[DateMarker]>
-  private renderFgEvents: MemoizedRendering<[ComponentContext, Seg[]]>
-  private renderEventSelection: MemoizedRendering<[string]>
-  private renderEventDrag: MemoizedRendering<[EventInstanceHash]>
-  private renderEventResize: MemoizedRendering<[EventInstanceHash]>
+  private renderFrame = renderer(renderFrame)
+  private renderEvents = renderer(DayTileEvents)
 
 
-  constructor(el: HTMLElement) {
-    super(el)
+  render(props: DayTileProps) {
+    let { rootEls, segContainerEl } = this.renderFrame(true, {
+      date: props.date
+    })
 
-    let eventRenderer = this.eventRenderer = new DayTileEventRenderer(this)
+    this.renderEvents(true, {
+      segs: props.fgSegs,
+      segContainerEl,
+      selectedInstanceId: props.selectedInstanceId,
+      hiddenInstances: props.hiddenInstances
+    })
 
-    let renderFrame = this.renderFrame = memoizeRendering(
-      this._renderFrame
-    )
-
-    this.renderFgEvents = memoizeRendering(
-      eventRenderer.renderSegs.bind(eventRenderer),
-      eventRenderer.unrender.bind(eventRenderer),
-      [ renderFrame ]
-    )
-
-    this.renderEventSelection = memoizeRendering(
-      eventRenderer.selectByInstanceId.bind(eventRenderer),
-      eventRenderer.unselectByInstanceId.bind(eventRenderer),
-      [ this.renderFgEvents ]
-    )
-
-    this.renderEventDrag = memoizeRendering(
-      eventRenderer.hideByHash.bind(eventRenderer),
-      eventRenderer.showByHash.bind(eventRenderer),
-      [ renderFrame ]
-    )
-
-    this.renderEventResize = memoizeRendering(
-      eventRenderer.hideByHash.bind(eventRenderer),
-      eventRenderer.showByHash.bind(eventRenderer),
-      [ renderFrame ]
-    )
+    return rootEls
   }
 
 
-  firstContext(context: ComponentContext) {
-    context.calendar.registerInteractiveComponent(this, {
-      el: this.el,
+  componentDidMount() {
+    let { calendar } = this.context
+
+    calendar.releaseAfterSizingTriggers() // hack for eventPositioned
+
+    // HACK referencing parent's elements.
+    // also, if parent's elements change, this will break.
+    calendar.registerInteractiveComponent(this, {
+      el: this.location.parent,
       useEventCenter: false
     })
   }
 
 
-  render(props: DayTileProps, context: ComponentContext) {
-    this.renderFrame(props.date)
-    this.renderFgEvents(context, props.fgSegs)
-    this.renderEventSelection(props.eventSelection)
-    this.renderEventDrag(props.eventDragInstances)
-    this.renderEventResize(props.eventResizeInstances)
-  }
-
-
-  destroy() {
-    super.destroy()
-
-    this.renderFrame.unrender() // should unrender everything else
-
+  componentWillUnmount() {
     this.context.calendar.unregisterInteractiveComponent(this)
   }
 
 
-  _renderFrame(date: DateMarker) {
-    let { theme, dateEnv, options } = this.context
-
-    let title = dateEnv.format(
-      date,
-      createFormatter(options.dayPopoverFormat) // TODO: cache
-    )
-
-    this.el.innerHTML =
-      '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
-        '<span class="fc-title">' +
-          htmlEscape(title) +
-        '</span>' +
-        '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
-      '</div>' +
-      '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
-        '<div class="fc-event-container"></div>' +
-      '</div>'
-
-    this.segContainerEl = this.el.querySelector('.fc-event-container')
-  }
-
-
   queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
-    let date = (this.props as any).date // HACK
+    let date = this.props.date
 
     if (positionLeft < elWidth && positionTop < elHeight) {
       return {
@@ -124,7 +69,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
           allDay: true,
           range: { start: date, end: addDays(date, 1) }
         },
-        dayEl: this.el,
+        dayEl: this.location.parent, // HACK
         rect: {
           left: 0,
           top: 0,
@@ -139,26 +84,28 @@ export default class DayTile extends DateComponent<DayTileProps> {
 }
 
 
-export class DayTileEventRenderer extends SimpleDayGridEventRenderer {
+function renderFrame(props: { date: DateMarker }, context: ComponentContext) {
+  let { theme, dateEnv, options } = context
 
-  dayTile: DayTile
+  let title = dateEnv.format(
+    props.date,
+    createFormatter(options.dayPopoverFormat) // TODO: cache
+  )
 
-  constructor(dayTile) {
-    super()
+  let els = htmlToElements(
+    '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
+      '<span class="fc-title">' +
+        htmlEscape(title) +
+      '</span>' +
+      '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
+    '</div>' +
+    '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
+      '<div class="fc-event-container"></div>' +
+    '</div>'
+  )
 
-    this.dayTile = dayTile
+  return {
+    rootEls: els,
+    segContainerEl: els[1].querySelector('.fc-event-container') as HTMLElement
   }
-
-  attachSegs(segs: Seg[]) {
-    for (let seg of segs) {
-      this.dayTile.segContainerEl.appendChild(seg.el)
-    }
-  }
-
-  detachSegs(segs: Seg[]) {
-    for (let seg of segs) {
-      removeElement(seg.el)
-    }
-  }
-
 }
