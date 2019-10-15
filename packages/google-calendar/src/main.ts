@@ -170,7 +170,8 @@ function gcalItemToRawEventDef(item, gcalTimezone) {
     end: item.end.dateTime || item.end.date, // same
     url: url,
     location: item.location,
-    description: item.description
+    description: item.description,
+    extendedProps: item.extendedProperties || null;
   }
 }
 
