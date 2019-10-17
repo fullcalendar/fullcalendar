@@ -1,8 +1,49 @@
 
+v4.3.1 (2019-08-10)
+-------------------
+
+- `FullCalendar.version` had incorrect text
+- scheduler's releaseDate not written correctly,
+  resulting in license key warning always showing.
+
+
+v4.3.0 (2019-08-09)
+-------------------
+
+- HTML/CSS for timeline events has been refactored. BREAKING CHANGE if customized CSS.
+- timeline event titles sometimes overflow outside of element when time (#4928)
+- eventStartEditable false is not compatible with eventResourceEditable true (#4930)
+- calling Calendar::render after initial render causes bad sizing (#4718, #4723)
+- when list views destroyed, wouldn't call eventDestroy (#4727)
+- solve JS errors when switching views and using showNonCurrentDates (#4677, #4767)
+- prevent unnecessary scrollbars from appearing in daygrid views (4624, #4732)
+- draggedEvent start time is null in eventAllow when switching resources (#4932)
+- scrollToTime method honors a whole duration, not just a time (#4935)
+- some background events wouldn't recieve eventClick or hovering (#3148, #4750)
+- fix infinite recursion when custom view type is itself (#4198)
+- respect firstDay setting when weekNumberCalculation set to ISO (#4734)
+- fix typo in Danish (#4708)
+- adjust typescript def for setExtendedProp (#4679)
+- googleCalendarApiKey added to typescript options definition (#4772)
+- moment/luxon formatting same-day range with dash (#4686)
+- error importing moment plugin into typescript project (#4691, #4680, #4580)
+- refs to sourcemaps removed from dist (accidentally included in previous version)
+- distributing an ESM file, referenced by package.json's `module`
+- using a more portable SASS (#4626, #4651, #4671)
+
+
+v4.2.0 (2019-06-02)
+-------------------
+
+- fix recurring event expansion when event starts before view and has duration (#4617, #4635)
+- simple event recurring now allows a duration property on the event object
+- internal Calendar::setOptions method removed (never meant to be public)
+
+
 v4.1.0 (2019-04-24)
 -------------------
 
-- scrollToTime method
+- scrollToTime method (#467)
 - ISO8601 datetime strings with no 'T' not parsed in Safari (#4610)
 - all-day dropped events after third not being draggable (#4616)
 - dateClick/selecting sometime report wrong dates after calendar resize (#4608)

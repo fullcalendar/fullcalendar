@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "@fullcalendar/interaction",
+  "version": "4.3.0",
+  "title": "FullCalendar Interaction Plugin",
+  "description": "Provides functionality for event drag-n-drop, resizing, dateClick, and selectable actions",
+  "docs": "https://fullcalendar.io/docs/editable",
+  "browserGlobal": "FullCalendarInteraction",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.3.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~4.3.0"
+  }
+}

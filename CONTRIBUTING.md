@@ -23,7 +23,7 @@ In the description of your [Pull Request][Using Pull Requests], please include r
 
 ## Contributing Locales
 
-Please edit the original files in the `locales/` directory. DO NOT edit anything in the `dist/` directory. The build system will responsible for merging FullCalendar's `locales/` data with the [MomentJS locale data].
+Please edit the original files in the `packages/core/locales/` directory.
 
 
 ## Other Ways to Contribute
@@ -33,7 +33,7 @@ Please edit the original files in the `locales/` directory. DO NOT edit anything
 
 ## Getting Set Up
 
-You will need [Git][git], [Node][node] and NPM installed. You will also need [SASS][sass] globally installed.
+You will need [Git][git], [Node][node] and NPM installed.
 
 Then, clone FullCalendar's git repo:
 
@@ -45,14 +45,14 @@ Enter the directory and install FullCalendar's dependencies:
 	npm install
 
 
-## What to edit
+## What to Edit
 
-When modifying files, please do not edit the generated or minified files in the `dist/` directory. Please edit the original `src/` files.
+When modifying files, please do not edit generated files in the `dist/` directories. Please edit the original files in the `src/` directories.
 
 
 ## Development Workflow
 
-After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and demos. You can either manually rebuild each time you make a change:
+After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and examples. You can either manually rebuild each time you make a change:
 
 	npm run build
 
@@ -60,13 +60,18 @@ Or, you can run a script that automatically rebuilds whenever you save a source 
 
 	npm run watch
 
-When you are finished, run the following command to write the distributable files into the `./dist/` directory:
-
-	npm run dist
-
 If you want to clean up the generated files, run:
 
 	npm run clean
+
+
+## Git
+
+Because this repo has a few git submodules, it will be very convenient to set your default `git push` behavior to be recursive. Do something like this:
+
+```
+git config --global push.recurseSubmodules on-demand
+```
 
 
 ## Style Guide
@@ -117,6 +122,5 @@ If you have edited code (including **tests** and **translations**) and would lik
 [MomentJS locale data]: https://github.com/moment/moment/tree/develop/locale
 [git]: http://git-scm.com/
 [node]: http://nodejs.org/
-[sass]: https://sass-lang.com/install
 [Google JavaScript Style Guide]: https://google.github.io/styleguide/jsguide.html
 [Automated Test Readme]: https://github.com/fullcalendar/fullcalendar/wiki/Automated-Tests

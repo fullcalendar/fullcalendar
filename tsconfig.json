@@ -9,37 +9,41 @@
       "scripthost"
     ],
     "allowSyntheticDefaultImports": true,
-    "allowJs": true,
-    "checkJs": true,
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,
     "importHelpers": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": true,
     "baseUrl": ".",
     "paths": {
-      "@fullcalendar/core": [ "src/core/main" ],
-      "@fullcalendar/interaction": [ "src/interaction/main" ],
-      "@fullcalendar/daygrid": [ "src/daygrid/main" ],
-      "@fullcalendar/timegrid": [ "src/timegrid/main" ],
-      "@fullcalendar/list": [ "src/list/main" ],
-      "@fullcalendar/google-calendar": [ "src/google-calendar/main" ],
-      "@fullcalendar/rrule": [ "src/rrule/main" ],
-      "@fullcalendar/luxon": [ "src/luxon/main" ],
-      "@fullcalendar/moment": [ "src/moment/main" ],
-      "@fullcalendar/moment-timezone": [ "src/moment-timezone/main" ],
-      "@fullcalendar/bootstrap": [ "src/bootstrap/main" ]
+      "@fullcalendar/core": [ "packages/core/src/main" ],
+      "@fullcalendar/core/*": [ "packages/core/src/*" ],
+      "@fullcalendar/interaction": [ "packages/interaction/src/main" ],
+      "@fullcalendar/daygrid": [ "packages/daygrid/src/main" ],
+      "@fullcalendar/timegrid": [ "packages/timegrid/src/main" ],
+      "@fullcalendar/list": [ "packages/list/src/main" ],
+      "@fullcalendar/rrule": [ "packages/rrule/src/main" ],
+      "@fullcalendar/luxon": [ "packages/luxon/src/main" ],
+      "@fullcalendar/moment": [ "packages/moment/src/main" ],
+      "@fullcalendar/moment-timezone": [ "packages/moment-timezone/src/main" ],
+      "@fullcalendar/google-calendar": [ "packages/google-calendar/src/main" ],
+      "@fullcalendar/bootstrap": [ "packages/bootstrap/src/main" ],
+      "@fullcalendar/timeline": [ "packages-premium/timeline/src/main" ],
+      "@fullcalendar/resource-common": [ "packages-premium/resource-common/src/main" ],
+      "@fullcalendar/resource-timeline": [ "packages-premium/resource-timeline/src/main" ],
+      "@fullcalendar/resource-daygrid": [ "packages-premium/resource-daygrid/src/main" ],
+      "@fullcalendar/resource-timegrid": [ "packages-premium/resource-timegrid/src/main" ],
+      "package-tests/*": [ "packages/__tests__/src/*" ]
     },
-    "types": [
-      "luxon",
-      "jquery",
-      "jasmine",
-      "jasmine-jquery"
-    ],
+    "rootDir": ".",
     "outDir": "tmp/tsc-output"
   },
   "include": [
-    "src/*/main.ts",
-    "locales/*.js",
-    "tests/automated/global-defs.d.ts",
-    "tests/automated/**/*.js"
+    "packages/*/src/main.ts",
+    "packages/core/src/locales/*.js",
+    "packages/__tests__/src/**/*.js",
+    "packages-premium/*/src/main.ts",
+    "packages-premium/__tests__/src/**/*.js"
   ]
 }

@@ -1,8 +1,7 @@
-dist
-archives
-tmp
 
-.sass-cache
+/tmp
+/archives
+dist
 
 # npm
 node_modules

@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "dependencies": {
+    "@fullcalendar/core": "*",
+    "@fullcalendar/interaction": "*",
+    "@fullcalendar/daygrid": "*",
+    "@fullcalendar/timegrid": "*",
+    "@fullcalendar/list": "*",
+    "@fullcalendar/rrule": "*",
+    "@fullcalendar/luxon": "*",
+    "@fullcalendar/moment": "*",
+    "@fullcalendar/moment-timezone": "*",
+    "@fullcalendar/google-calendar": "*",
+    "@fullcalendar/bootstrap": "*"
+  }
+}

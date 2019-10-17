@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "@fullcalendar/core",
+  "version": "4.3.1",
+  "title": "FullCalendar Core Package",
+  "description": "Provides core functionality, including the Calendar class",
+  "docs": "https://fullcalendar.io/docs/initialize-es6",
+  "browserGlobal": "FullCalendar"
+}

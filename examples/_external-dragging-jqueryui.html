@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../packages/core/dist/main.css' rel='stylesheet' />
+<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
+<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
+<script src='../node_modules/jquery/dist/jquery.js'></script>
+<script src='../node_modules/components-jqueryui/jquery-ui.js'></script>
+<script src='../packages/core/dist/main.js'></script>
+<script src='../packages/interaction/dist/main.js'></script>
+<script src='../packages/daygrid/dist/main.js'></script>
+<script src='../packages/timegrid/dist/main.js'></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var Calendar = FullCalendar.Calendar;
+    var ThirdPartyDraggable = FullCalendarInteraction.ThirdPartyDraggable;
+
+    new ThirdPartyDraggable({
+      mirrorSelector: '.ui-draggable-dragging'
+    })
+
+    /* initialize the external events
+    -----------------------------------------------------------------*/
+
+    $('#external-events .fc-event').each(function() {
+
+      // store data so the calendar knows to render an event upon drop
+      $(this).attr('data-event', JSON.stringify({
+        title: $.trim($(this).text()), // use the element's text as the event title
+        stick: true // maintain when user navigates (see docs on the renderEvent method)
+      }));
+
+      // make the event draggable using jQuery UI
+      $(this).draggable({
+        zIndex: 999,
+        revert: true,      // will cause the event to go back to its
+        revertDuration: 0  //  original position after the drag
+      });
+
+    });
+
+    /* initialize the calendar
+    -----------------------------------------------------------------*/
+
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new Calendar(calendarEl, {
+      plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      editable: true,
+      droppable: true, // this allows things to be dropped onto the calendar
+      drop: function(arg) {
+        // is the "remove after drop" checkbox checked?
+        if ($('#drop-remove').is(':checked')) {
+          // if so, remove the element from the "Draggable Events" list
+          $(arg.draggedEl).remove();
+        }
+      }
+    });
+    calendar.render();
+
+  });
+
+</script>
+<style>
+
+  body {
+    margin-top: 40px;
+    font-size: 14px;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  }
+
+  #wrap {
+    width: 1100px;
+    margin: 0 auto;
+  }
+
+  #external-events {
+    float: left;
+    width: 150px;
+    padding: 0 10px;
+    border: 1px solid #ccc;
+    background: #eee;
+    text-align: left;
+  }
+
+  #external-events h4 {
+    font-size: 16px;
+    margin-top: 0;
+    padding-top: 1em;
+  }
+
+  #external-events .fc-event {
+    margin: 10px 0;
+    cursor: pointer;
+  }
+
+  #external-events p {
+    margin: 1.5em 0;
+    font-size: 11px;
+    color: #666;
+  }
+
+  #external-events p input {
+    margin: 0;
+    vertical-align: middle;
+  }
+
+  #calendar {
+    float: right;
+    width: 900px;
+  }
+
+</style>
+</head>
+<body>
+  <div id='wrap'>
+
+    <div id='external-events'>
+      <h4>Draggable Events</h4>
+      <div class='fc-event'>My Event 1</div>
+      <div class='fc-event'>My Event 2</div>
+      <div class='fc-event'>My Event 3</div>
+      <div class='fc-event'>My Event 4</div>
+      <div class='fc-event'>My Event 5</div>
+      <p>
+        <input type='checkbox' id='drop-remove' />
+        <label for='drop-remove'>remove after drop</label>
+      </p>
+    </div>
+
+    <div id='calendar'></div>
+
+    <div style='clear:both'></div>
+
+  </div>
+</body>
+</html>

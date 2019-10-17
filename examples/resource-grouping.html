@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../packages/core/dist/main.css' rel='stylesheet' />
+<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
+<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
+<link href='../packages-premium/timeline/dist/main.css' rel='stylesheet' />
+<link href='../packages-premium/resource-timeline/dist/main.css' rel='stylesheet' />
+<script src='../packages/core/dist/main.js'></script>
+<script src='../packages/interaction/dist/main.js'></script>
+<script src='../packages/daygrid/dist/main.js'></script>
+<script src='../packages/timegrid/dist/main.js'></script>
+<script src='../packages-premium/timeline/dist/main.js'></script>
+<script src='../packages-premium/resource-common/dist/main.js'></script>
+<script src='../packages-premium/resource-timeline/dist/main.js'></script>
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'resourceTimeline' ],
+      now: '2019-08-07',
+      editable: true,
+      aspectRatio: 1.8,
+      scrollTime: '00:00',
+      header: {
+        left: 'today prev,next',
+        center: 'title',
+        right: 'resourceTimelineDay,resourceTimelineThreeDays,timeGridWeek,dayGridMonth'
+      },
+      defaultView: 'resourceTimelineDay',
+      views: {
+        resourceTimelineThreeDays: {
+          type: 'resourceTimeline',
+          duration: { days: 3 },
+          buttonText: '3 days'
+        }
+      },
+      resourceGroupField: 'building',
+      resources: [
+        { id: 'a', building: '460 Bryant', title: 'Auditorium A' },
+        { id: 'b', building: '460 Bryant', title: 'Auditorium B', eventColor: 'green' },
+        { id: 'c', building: '460 Bryant', title: 'Auditorium C', eventColor: 'orange' },
+        { id: 'd', building: '460 Bryant', title: 'Auditorium D', children: [
+          { id: 'd1', title: 'Room D1', occupancy: 10 },
+          { id: 'd2', title: 'Room D2', occupancy: 10 }
+        ] },
+        { id: 'e', building: '460 Bryant', title: 'Auditorium E' },
+        { id: 'f', building: '460 Bryant', title: 'Auditorium F', eventColor: 'red' },
+        { id: 'g', building: '564 Pacific', title: 'Auditorium G' },
+        { id: 'h', building: '564 Pacific', title: 'Auditorium H' },
+        { id: 'i', building: '564 Pacific', title: 'Auditorium I' },
+        { id: 'j', building: '564 Pacific', title: 'Auditorium J' },
+        { id: 'k', building: '564 Pacific', title: 'Auditorium K' },
+        { id: 'l', building: '564 Pacific', title: 'Auditorium L' },
+        { id: 'm', building: '564 Pacific', title: 'Auditorium M' },
+        { id: 'n', building: '564 Pacific', title: 'Auditorium N' },
+        { id: 'o', building: '564 Pacific', title: 'Auditorium O' },
+        { id: 'p', building: '564 Pacific', title: 'Auditorium P' },
+        { id: 'q', building: '564 Pacific', title: 'Auditorium Q' },
+        { id: 'r', building: '564 Pacific', title: 'Auditorium R' },
+        { id: 's', building: '564 Pacific', title: 'Auditorium S' },
+        { id: 't', building: '564 Pacific', title: 'Auditorium T' },
+        { id: 'u', building: '564 Pacific', title: 'Auditorium U' },
+        { id: 'v', building: '564 Pacific', title: 'Auditorium V' },
+        { id: 'w', building: '564 Pacific', title: 'Auditorium W' },
+        { id: 'x', building: '564 Pacific', title: 'Auditorium X' },
+        { id: 'y', building: '564 Pacific', title: 'Auditorium Y' },
+        { id: 'z', building: '564 Pacific', title: 'Auditorium Z' }
+      ],
+      events: [
+        { id: '1', resourceId: 'b', start: '2019-08-07T02:00:00', end: '2019-08-07T07:00:00', title: 'event 1' },
+        { id: '2', resourceId: 'c', start: '2019-08-07T05:00:00', end: '2019-08-07T22:00:00', title: 'event 2' },
+        { id: '3', resourceId: 'd', start: '2019-08-06', end: '2019-08-08', title: 'event 3' },
+        { id: '4', resourceId: 'e', start: '2019-08-07T03:00:00', end: '2019-08-07T08:00:00', title: 'event 4' },
+        { id: '5', resourceId: 'f', start: '2019-08-07T00:30:00', end: '2019-08-07T02:30:00', title: 'event 5' }
+      ]
+    });
+
+    calendar.render();
+  });
+
+</script>
+<style>
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 50px auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "@fullcalendar/rrule",
+  "version": "4.3.0",
+  "title": "FullCalendar RRule Plugin",
+  "description": "A connector to the RRule library, for recurring events",
+  "docs": "https://fullcalendar.io/docs/rrule-plugin",
+  "browserGlobal": "FullCalendarRrule",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "rrule": "^2.6.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "rrule": "^2.6.0"
+  }
+}

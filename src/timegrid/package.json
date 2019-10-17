@@ -1,9 +1,0 @@
-{
-  "title": "FullCalendar Time Grid Plugin",
-  "description": "Display your events on a grid of time slots",
-  "docs": "https://fullcalendar.io/docs/timegrid-view",
-  "browserGlobal": "FullCalendarTimeGrid",
-  "dependencies": {
-    "@fullcalendar/daygrid": ""
-  }
-}

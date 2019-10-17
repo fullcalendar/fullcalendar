@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "name": "@fullcalendar/moment-timezone",
+  "version": "4.3.0",
+  "title": "FullCalendar Moment Timezone Plugin",
+  "description": "A connector to the moment-timezone library",
+  "docs": "https://fullcalendar.io/docs/moment-plugins#moment-timezone",
+  "browserGlobal": "FullCalendarMomentTimezone",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25"
+  },
+  "devDependencies": {
+    "@types/moment": "^2.13.0",
+    "@fullcalendar/core": "~4.3.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25"
+  }
+}

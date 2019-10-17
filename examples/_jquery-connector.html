@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../packages/core/dist/main.css' rel='stylesheet' />
+<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
+<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
+<link href='../packages/list/dist/main.css' rel='stylesheet' />
+<script src='../packages/core/dist/main.js'></script>
+<script src='../packages/interaction/dist/main.js'></script>
+<script src='../packages/daygrid/dist/main.js'></script>
+<script src='../packages/timegrid/dist/main.js'></script>
+<script src='../packages/list/dist/main.js'></script>
+<script src='../node_modules/jquery/dist/jquery.min.js'></script>
+<script>
+
+  // The jQuery Connector
+  // ----------------------------------------------------------------------------------------------------
+
+  $.fn.fullCalendar = function(options) {
+    var args = Array.prototype.slice.call(arguments, 1) // for a possible method call
+    var res = this // what this function will return (the current jQuery object by default)
+
+    this.each(function(i, el) { // loop each DOM element involved
+      var $el = $(el)
+      var calendar = $el.data('fullCalendar') // get the existing calendar object (if any)
+      var singleRes // the returned value of this single method call
+
+      // a method call
+      if (typeof options === 'string') {
+
+        if (options === 'getCalendar') {
+
+          if (!i) { // first element only
+            res = calendar
+          }
+
+        } else if (options === 'destroy') { // don't warn if no calendar object
+
+          if (calendar) {
+            calendar.destroy()
+            $el.removeData('fullCalendar')
+          }
+
+        } else if (!calendar) {
+
+          console.warn('Attempting to call a FullCalendar method on an element with no calendar.')
+
+        } else if ($.isFunction(calendar[options])) {
+
+          singleRes = calendar[options].apply(calendar, args)
+
+          if (!i) {
+            res = singleRes // record the first method call result
+          }
+
+        } else {
+          console.warn("'" + options + "' is an unknown FullCalendar method.")
+        }
+
+      // an initialization
+      } else {
+
+        if (calendar) {
+          console.warn('Can\'t initialize another calendar on the same element.')
+        } else {
+          calendar = new FullCalendar.Calendar(el, options)
+          $el.data('fullCalendar', calendar)
+          calendar.render()
+        }
+      }
+    })
+
+    return res
+  }
+
+
+  // The Actual Example
+  // ----------------------------------------------------------------------------------------------------
+
+  $(document).ready(function() {
+    var $calendar = $('#calendar')
+
+    $calendar.fullCalendar({
+      plugins: [ 'dayGrid', 'timeGrid', 'list', 'interaction' ],
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+      },
+      defaultDate: '2019-08-12',
+      navLinks: true, // can click day/week names to navigate views
+      editable: true,
+      eventLimit: true, // allow "more" link when too many events
+      events: [
+        {
+          title: 'All Day Event',
+          start: '2019-08-01',
+        },
+        {
+          title: 'Long Event',
+          start: '2019-08-07',
+          end: '2019-08-10'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2019-08-09T16:00:00'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2019-08-16T16:00:00'
+        },
+        {
+          title: 'Conference',
+          start: '2019-08-11',
+          end: '2019-08-13'
+        },
+        {
+          title: 'Meeting',
+          start: '2019-08-12T10:30:00',
+          end: '2019-08-12T12:30:00'
+        },
+        {
+          title: 'Lunch',
+          start: '2019-08-12T12:00:00'
+        },
+        {
+          title: 'Meeting',
+          start: '2019-08-12T14:30:00'
+        },
+        {
+          title: 'Happy Hour',
+          start: '2019-08-12T17:30:00'
+        },
+        {
+          title: 'Dinner',
+          start: '2019-08-12T20:00:00'
+        },
+        {
+          title: 'Birthday Party',
+          start: '2019-08-13T07:00:00'
+        },
+        {
+          title: 'Click for Google',
+          url: 'http://google.com/',
+          start: '2019-08-28'
+        }
+      ]
+    })
+
+    $('#prev-button').on('click', function() {
+      $calendar.fullCalendar('prev')
+    })
+
+    $('#next-button').on('click', function() {
+      $calendar.fullCalendar('next')
+    })
+
+    $('#gotoDate-button').on('click', function() {
+      $calendar.fullCalendar('gotoDate', '2019-08-01')
+    })
+  })
+
+</script>
+<style>
+
+  body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <button id='prev-button'>prev</button>
+  <button id='next-button'>next</button>
+  <button id='gotoDate-button'>goto year 2000</button>
+
+  <div id='calendar'></div>
+
+</body>
+</html>

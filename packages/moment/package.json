@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "name": "@fullcalendar/moment",
+  "version": "4.3.0",
+  "title": "FullCalendar Moment Plugin",
+  "description": "A connector to the MomentJS date library",
+  "docs": "https://fullcalendar.io/docs/moment-plugins",
+  "browserGlobal": "FullCalendarMoment",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "@types/moment": "^2.13.0",
+    "moment": "^2.24.0"
+  }
+}

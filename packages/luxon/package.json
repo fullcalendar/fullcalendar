@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "@fullcalendar/luxon",
+  "version": "4.3.0",
+  "title": "FullCalendar Luxon Plugin",
+  "description": "A connector to the Luxon date library",
+  "docs": "https://fullcalendar.io/docs/luxon-plugin",
+  "browserGlobal": "FullCalendarLuxon",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "luxon": "^1.12.1"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "luxon": "^1.12.1"
+  }
+}
