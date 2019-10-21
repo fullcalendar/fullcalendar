@@ -1,4 +1,4 @@
-import { RRule, rrulestr } from 'rrule'
+import { RRule, RRuleSet, rrulestr } from 'rrule'
 import {
   RecurringType,
   ParsedRecurring,
@@ -94,14 +94,41 @@ function parseRRule(input, dateEnv: DateEnv) {
       refined.byweekday = convertConstants(refined.byweekday) // the plural version
     }
 
-    rrule = new RRule(refined)
-  }
+    const exdates = getExArray(refined, 'exdate')
+    const exrules = getExArray(refined, 'exrule')
 
-  if (rrule) {
-    return { rrule, allDayGuess }
-  }
+    rrule = new RRule(refined)
+
+    if (exrules.length || exdates.length) {
+      const rruleSet = new RRuleSet()
+      rruleSet.rrule(rrule)
+
+      exrules.forEach(function(rule) {
+        rruleSet.exrule(parseRRule(rule, dateEnv).rrule)
+      })
+
+      exdates.forEach(rruleSet.exdate)
+
+      return { rrule: rruleSet, allDayGuess }
+    } else if (rrule) {
+      return { rrule, allDayGuess }
+    }
 
   return null
+}
+
+function getExArray(input, key) {
+  let arr;
+
+  if (input[key + 's']) {
+    arr = input[key + 's']
+    delete input[key + 's']
+  } else if (input[key]) {
+    arr = [ input[key] ]
+    delete input[key]
+  }
+
+  return arr || []
 }
 
 function convertConstants(input) {
