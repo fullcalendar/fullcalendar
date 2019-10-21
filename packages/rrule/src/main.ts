@@ -103,7 +103,7 @@ function parseRRule(input, dateEnv: DateEnv) {
       const rruleSet = new RRuleSet()
       rruleSet.rrule(rrule)
 
-      exrules.forEach((obj) => {
+      exrules.forEach(function (obj) {
         let rule = parseRRule(obj, dateEnv)
         if (rule && rule.rrule) {
           rruleSet.exrule(rule.rrule)
@@ -113,6 +113,7 @@ function parseRRule(input, dateEnv: DateEnv) {
       exdates.forEach(rruleSet.exdate)
 
       return { rrule: rruleSet, allDayGuess }
+    }
   }
 
   if (rrule) {
