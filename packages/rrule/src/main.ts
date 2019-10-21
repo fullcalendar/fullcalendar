@@ -124,7 +124,7 @@ function parseRRule(input, dateEnv: DateEnv) {
 }
 
 function getExArray(input, key) {
-  let arr;
+  let arr
 
   if (input[key + 's']) {
     arr = input[key + 's']
