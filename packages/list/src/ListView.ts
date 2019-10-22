@@ -2,7 +2,7 @@ import {
   subtractInnerElHeight,
   View,
   ViewProps,
-  ScrollComponent,
+  Scroller,
   DateMarker,
   addDays,
   startOfDay,
@@ -20,7 +20,7 @@ import {
   renderer,
   renderViewEl
 } from '@fullcalendar/core'
-import ListEventRenderer from './ListEventRenderer'
+import ListViewEvents from './ListViewEvents'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -30,18 +30,18 @@ export default class ListView extends View {
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
   private renderSkeleton = renderer(renderSkeleton)
-  private renderScroller = renderer(ScrollComponent)
-  private renderEvents = renderer(ListEventRenderer)
+  private renderScroller = renderer(Scroller)
+  private renderEvents = renderer(ListViewEvents)
 
   // for sizing
-  private eventRenderer: ListEventRenderer
-  private scroller: ScrollComponent
+  private eventRenderer: ListViewEvents
+  private scroller: Scroller
 
 
   render(props: ViewProps) {
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
 
-    let rootEl = this.renderSkeleton({
+    let rootEl = this.renderSkeleton(true, {
       viewSpec: props.viewSpec
     })
 
@@ -50,7 +50,7 @@ export default class ListView extends View {
       overflowY: 'auto'
     })
 
-    this.eventRenderer = this.renderEvents({
+    this.eventRenderer = this.renderEvents(true, {
       segs: this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges),
       dayDates,
       contentEl: this.scroller.el,
@@ -66,7 +66,7 @@ export default class ListView extends View {
 
   componentDidMount() {
     this.context.calendar.registerInteractiveComponent(this, {
-      el: this.mountedEls[0]
+      el: this.rootEl
       // TODO: make aware that it doesn't do Hits
     })
   }
@@ -80,8 +80,8 @@ export default class ListView extends View {
   updateSize(isResize, viewHeight, isAuto) {
     super.updateSize(isResize, viewHeight, isAuto)
 
-    this.eventRenderer.computeSizes(isResize)
-    this.eventRenderer.assignSizes(isResize)
+    this.eventRenderer.computeSizes(isResize, this)
+    this.eventRenderer.assignSizes(isResize, this)
 
     this.scroller.clear() // sets height to 'auto' and clears overflow
 
@@ -93,7 +93,7 @@ export default class ListView extends View {
 
   computeScrollerHeight(viewHeight) {
     return viewHeight -
-      subtractInnerElHeight(this.mountedEls[0], this.scroller.el) // everything that's NOT the scroller
+      subtractInnerElHeight(this.rootEl, this.scroller.el) // everything that's NOT the scroller
   }
 
 

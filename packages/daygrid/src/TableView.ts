@@ -44,9 +44,9 @@ export default abstract class TableView extends View {
   renderLayout(options: { type: string }, context: ComponentContext) {
     this.processOptions(context.options)
 
-    let { rootEl, headerWrapEl, contentWrapEl } = this.renderSkeleton(true, options)
+    let res = this.renderSkeleton(true, options)
 
-    let scroller = this.renderScroller(contentWrapEl, {
+    let scroller = this.renderScroller(res.contentWrapEl, {
       overflowX: 'hidden',
       overflowY: 'auto'
     })
@@ -56,11 +56,7 @@ export default abstract class TableView extends View {
 
     this.scroller = scroller
 
-    return {
-      rootEl,
-      headerWrapEl,
-      tableWrapEl
-    }
+    return res
   }
 
 

@@ -15,18 +15,18 @@ import {
 } from '@fullcalendar/core'
 
 
-export interface ListEventRendererProps extends BaseFgEventRendererProps {
+export interface ListViewEventsProps extends BaseFgEventRendererProps {
   contentEl: HTMLElement
   dayDates: Date[]
 }
 
 
-export default class ListEventRenderer extends FgEventRenderer<ListEventRendererProps> {
+export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps> {
 
   attachSegs = renderer(attachSegs)
 
 
-  render(props: ListEventRendererProps, context: ComponentContext) {
+  render(props: ListViewEventsProps, context: ComponentContext) {
     let segs = this.renderSegs({
       segs: props.segs,
       mirrorInfo: props.mirrorInfo,
@@ -34,7 +34,7 @@ export default class ListEventRenderer extends FgEventRenderer<ListEventRenderer
       hiddenInstances: props.hiddenInstances
     }, context)
 
-    this.attachSegs({
+    this.attachSegs(true, {
       segs,
       dayDates: props.dayDates,
       contentEl: props.contentEl
