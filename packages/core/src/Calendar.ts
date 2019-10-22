@@ -36,7 +36,8 @@ import EventHovering from './interactions/EventHovering'
 import StandardTheme from './theme/StandardTheme'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
-import { buildComponentContext } from './component/ComponentContext'
+import { computeContextProps } from './component/ComponentContext'
+import { RenderEngine, TaskQueue } from './view-framework'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -72,7 +73,7 @@ export default class Calendar {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  private buildComponentContext = memoize(buildComponentContext)
+  private computeContextProps = memoize(computeContextProps)
   private parseRawLocales = memoize(parseRawLocales)
   private buildLocale = memoize(buildLocale)
   private buildDateEnv = memoize(buildDateEnv)
@@ -103,16 +104,10 @@ export default class Calendar {
   isHandlingWindowResize: boolean
 
   state: CalendarState
-  actionQueue = []
-  isReducing: boolean = false
-
-  // isDisplaying: boolean = false // installed in DOM? accepting renders?
-  needsRerender: boolean = false // needs a render?
-  isRendering: boolean = false // currently in the executeRender function?
-  renderingPauseDepth: number = 0
+  actionQueue: TaskQueue<Action>
+  renderEngine: RenderEngine
   renderableEventStore: EventStore
-  buildDelayedRerender = memoize(buildDelayedRerender)
-  delayedRerender: any
+
   afterSizingTriggers: any = {}
   isViewUpdated: boolean = false
   isDatesUpdated: boolean = false
@@ -127,6 +122,11 @@ export default class Calendar {
 
     this.optionsManager = new OptionsManager(overrides || {})
     this.pluginSystem = new PluginSystem()
+
+    this.actionQueue = new TaskQueue({ // no delay. simply so that nested dispatches dont happen
+      runTask: this.runAction.bind(this),
+      drained: this.updateComponent.bind(this)
+    })
 
     // only do once. don't do in handleOptions. because can't remove plugins
     this.addPluginInputs(this.optionsManager.computed.plugins || [])
@@ -163,20 +163,20 @@ export default class Calendar {
 
   render() {
     if (!this.component) {
-      this.component = new CalendarComponent(this.el)
+      this.renderEngine = new RenderEngine(this.optionsManager.computed.rerenderDelay)
+      this.component = new CalendarComponent(this.renderEngine)
       this.renderableEventStore = createEmptyEventStore()
-      this.bindHandlers()
-      this.executeRender()
-    } else {
-      this.requestRerender()
+      this.bindHandlers() // TODO: have CalendarComponent handle this?
     }
+
+    this.updateComponent()
   }
 
 
   destroy() {
     if (this.component) {
       this.unbindHandlers()
-      this.component.destroy() // don't null-out. in case API needs access
+      this.component.unmount() // don't null-out. in case API needs access
       this.component = null // umm ???
 
       for (let interaction of this.calendarInteractions) {
@@ -288,99 +288,50 @@ export default class Calendar {
 
   dispatch(action: Action) {
     this.actionQueue.push(action)
+    this.actionQueue.requestRun()
+  }
 
-    if (!this.isReducing) {
-      this.isReducing = true
-      let oldState = this.state
 
-      while (this.actionQueue.length) {
-        this.state = this.reduce(
-          this.state,
-          this.actionQueue.shift(),
-          this
-        )
-      }
+  runAction(action: Action) {
+    let oldState = this.state
+    let newState = this.state = reduce(this.state, action, this)
 
-      let newState = this.state
-      this.isReducing = false
-
-      if (!oldState.loadingLevel && newState.loadingLevel) {
-        this.publiclyTrigger('loading', [ true ])
-      } else if (oldState.loadingLevel && !newState.loadingLevel) {
-        this.publiclyTrigger('loading', [ false ])
-      }
-
-      let view = this.component && this.component.view
-
-      if (oldState.eventStore !== newState.eventStore) {
-        if (oldState.eventStore) {
-          this.isEventsUpdated = true
-        }
-      }
-
-      if (oldState.dateProfile !== newState.dateProfile) {
-        if (oldState.dateProfile && view) { // why would view be null!?
-          this.publiclyTrigger('datesDestroy', [
-            {
-              view,
-              el: view.el
-            }
-          ])
-        }
-        this.isDatesUpdated = true
-      }
-
-      if (oldState.viewType !== newState.viewType) {
-        if (oldState.viewType && view) { // why would view be null!?
-          this.publiclyTrigger('viewSkeletonDestroy', [
-            {
-              view,
-              el: view.el
-            }
-          ])
-        }
-        this.isViewUpdated = true
-      }
-
-      this.requestRerender()
+    if (!oldState.loadingLevel && newState.loadingLevel) {
+      this.publiclyTrigger('loading', [ true ])
+    } else if (oldState.loadingLevel && !newState.loadingLevel) {
+      this.publiclyTrigger('loading', [ false ])
     }
-  }
 
+    let view = this.component && this.component.view
 
-  reduce(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
-    return reduce(state, action, calendar)
-  }
-
-
-  // Render Queue
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  requestRerender() {
-    this.needsRerender = true
-    this.delayedRerender() // will call a debounced-version of tryRerender
-  }
-
-
-  tryRerender() {
-    if (
-      this.component && // must be accepting renders
-      this.needsRerender && // indicates that a rerender was requested
-      !this.renderingPauseDepth && // not paused
-      !this.isRendering // not currently in the render loop
-    ) {
-      this.executeRender()
+    if (oldState.eventStore !== newState.eventStore) {
+      if (oldState.eventStore) {
+        this.isEventsUpdated = true
+      }
     }
-  }
 
+    if (oldState.dateProfile !== newState.dateProfile) {
+      if (oldState.dateProfile && view) { // why would view be null!?
+        this.publiclyTrigger('datesDestroy', [
+          {
+            view,
+            el: view.rootEl
+          }
+        ])
+      }
+      this.isDatesUpdated = true
+    }
 
-  batchRendering(func) {
-    this.renderingPauseDepth++
-    func()
-    this.renderingPauseDepth--
-
-    if (this.needsRerender) {
-      this.requestRerender()
+    if (oldState.viewType !== newState.viewType) {
+      if (oldState.viewType && view) { // why would view be null!?
+        this.publiclyTrigger('viewSkeletonDestroy', [
+          {
+            view,
+            el: view.rootEl
+          }
+        ])
+      }
+      this.isViewUpdated = true
     }
   }
 
@@ -388,27 +339,32 @@ export default class Calendar {
   // Rendering
   // -----------------------------------------------------------------------------------------------------------------
 
-  executeRender() {
-    // clear these BEFORE the render so that new values will accumulate during render
-    this.needsRerender = false
 
-    this.isRendering = true
-    this.renderComponent()
-    this.isRendering = false
+  batchRendering(func) {
+    let { renderEngine } = this
 
-    // received a rerender request while rendering
-    if (this.needsRerender) {
-      this.delayedRerender()
+    if (renderEngine) {
+      renderEngine.updateQueue.pause()
+      func()
+      renderEngine.updateQueue.resume()
+    } else {
+      func()
     }
   }
+
 
   /*
   don't call this directly. use executeRender instead
   */
-  renderComponent() {
+  updateComponent() {
     let { state, component } = this
     let { viewType } = state
     let viewSpec = this.viewSpecs[viewType]
+    let rawOptions = this.optionsManager.computed
+
+    if (!component) {
+      return
+    }
 
     if (!viewSpec) {
       throw new Error(`View type "${viewType}" is not valid`)
@@ -425,7 +381,7 @@ export default class Calendar {
     let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
-    component.receiveProps({
+    component.update(this.el, {
       ...state,
       viewSpec,
       dateProfileGenerator: this.dateProfileGenerators[viewType],
@@ -436,20 +392,21 @@ export default class Calendar {
       eventSelection: state.eventSelection,
       eventDrag: state.eventDrag,
       eventResize: state.eventResize
-    }, this.buildComponentContext(
-      this,
-      this.pluginSystem.hooks,
-      this.theme,
-      this.dateEnv,
-      this.optionsManager.computed
-    ))
+    }, {
+      calendar: this,
+      pluginHooks: this.pluginSystem.hooks,
+      theme: this.theme,
+      dateEnv: this.dateEnv,
+      options: rawOptions,
+      ...this.computeContextProps(rawOptions)
+    })
 
     if (this.isViewUpdated) {
       this.isViewUpdated = false
       this.publiclyTrigger('viewSkeletonRender', [
         {
           view: component.view,
-          el: component.view.el
+          el: component.view.rootEl
         }
       ])
     }
@@ -459,7 +416,7 @@ export default class Calendar {
       this.publiclyTrigger('datesRender', [
         {
           view: component.view,
-          el: component.view.el
+          el: component.view.rootEl
         }
       ])
     }
@@ -467,8 +424,6 @@ export default class Calendar {
     if (this.isEventsUpdated) {
       this.isEventsUpdated = false
     }
-
-    this.releaseAfterSizingTriggers()
   }
 
 
@@ -552,7 +507,7 @@ export default class Calendar {
         }
 
         /* HACK
-        has the same effect as calling this.requestRerender()
+        has the same effect as calling this.updateComponent()
         but recomputes the state's dateProfile
         */
         this.dispatch({
@@ -582,7 +537,6 @@ export default class Calendar {
 
     this.defaultAllDayEventDuration = createDuration(options.defaultAllDayEventDuration)
     this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
-    this.delayedRerender = this.buildDelayedRerender(options.rerenderDelay)
     this.theme = this.buildTheme(options)
 
     let available = this.parseRawLocales(options.locales)
@@ -895,7 +849,7 @@ export default class Calendar {
 
 
   updateSize() { // public
-    if (this.component) { // when?
+    if (this.component) {
       this.component.updateSize(true)
     }
   }
@@ -1295,17 +1249,6 @@ function buildDateEnv(locale: Locale, timeZone, namedTimeZoneImpl: NamedTimeZone
 function buildTheme(this: Calendar, calendarOptions) {
   let themeClass = this.pluginSystem.hooks.themeClasses[calendarOptions.themeSystem] || StandardTheme
   return new themeClass(calendarOptions)
-}
-
-
-function buildDelayedRerender(this: Calendar, wait) {
-  let func = this.tryRerender.bind(this)
-
-  if (wait != null) {
-    func = debounce(func, wait)
-  }
-
-  return func
 }
 
 

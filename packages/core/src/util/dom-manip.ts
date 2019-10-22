@@ -163,8 +163,8 @@ export function findElements(container: HTMLElement[] | HTMLElement | NodeListOf
 }
 
 // accepts multiple subject els
-// only queries direct child elements
-export function findChildren(parent: HTMLElement[] | HTMLElement, selector?: string): HTMLElement[] {
+// only queries direct child elements // TODO: rename to findDirectChildren!
+export function findDirectChildren(parent: HTMLElement[] | HTMLElement, selector?: string): HTMLElement[] {
   let parents = parent instanceof HTMLElement ? [ parent ] : parent
   let allMatches = []
 

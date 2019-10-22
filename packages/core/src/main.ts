@@ -44,7 +44,6 @@ export {
 } from './util/array'
 
 export { memoize, memoizeOutput } from './util/memoize'
-export { memoizeRendering, MemoizedRendering } from './component/memoized-rendering'
 
 export {
   intersectRects,
@@ -58,7 +57,7 @@ export { mapHash, filterHash, isPropsEqual } from './util/object'
 
 export {
   findElements,
-  findChildren,
+  findDirectChildren,
   htmlToElement,
   createElement,
   insertAfterElement,
@@ -98,16 +97,15 @@ export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin
 export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual, rangesIntersect, rangeContainsRange } from './datelib/date-range'
 export { default as Mixin } from './common/Mixin'
 export { default as PositionCache } from './common/PositionCache'
-export { default as ScrollComponent, ScrollbarWidths } from './common/ScrollComponent'
+export { default as Scroller, ScrollerProps, ScrollbarWidths } from './common/Scroller'
 export { ScrollController, ElementScrollController, WindowScrollController } from './common/scroll-controller'
 export { default as Theme } from './theme/Theme'
-export { default as Component } from './component/Component'
 export { default as ComponentContext } from './component/ComponentContext'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
-export { default as View, ViewProps } from './View'
-export { default as FgEventRenderer, buildSegCompareObj, BaseFgEventRendererProps } from './component/renderers/FgEventRenderer'
-export { default as FillRenderer } from './component/renderers/FillRenderer'
+export { default as View, ViewProps, renderViewEl } from './View'
+export { default as FgEventRenderer, buildSegCompareObj, BaseFgEventRendererProps, sortEventSegs } from './component/renderers/FgEventRenderer'
+export { default as FillRenderer, BaseFillRendererProps } from './component/renderers/FillRenderer'
 
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
@@ -157,12 +155,12 @@ export { CalendarComponentProps } from './CalendarComponent'
 export { default as DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
 
-export { default as DaySeries } from './common/DaySeries'
+export { default as DaySeries } from './common/DaySeriesModel'
 
 export { EventInteractionState } from './interactions/event-interaction-state'
 export { EventRenderRange, sliceEventStore, hasBgRendering, getElSeg, computeEventDraggable, computeEventStartResizable, computeEventEndResizable } from './component/event-rendering'
 
-export { default as DayTable, DayTableSeg, DayTableCell } from './common/DayTable'
+export { default as DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel'
 
 export { default as Slicer, SlicedProps } from './common/slicing-utils'
 
@@ -171,3 +169,5 @@ export { Constraint, ConstraintInput, AllowFunc, isPropsValid, isInteractionVali
 export { default as EventApi } from './api/EventApi'
 
 export { default as requestJson } from './util/requestJson'
+
+export { Component, renderer } from './view-framework'

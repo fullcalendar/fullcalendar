@@ -34,16 +34,16 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
 
   render(props: ToolbarRenderProps) {
 
-    let el = this.renderBase({
+    let el = this.renderBase(true, {
       extraClassName: props.extraClassName,
       layout: props.layout
     })
 
-    this.renderTitle({ el, text: props.title })
-    this.renderActiveButton({ el, buttonName: props.activeButton })
-    this.renderToday({ el, isEnabled: props.isTodayEnabled })
-    this.renderPrev({ el, isEnabled: props.isPrevEnabled })
-    this.renderNext({ el, isEnabled: props.isNextEnabled })
+    this.renderTitle(true, { el, text: props.title })
+    this.renderActiveButton(true, { el, buttonName: props.activeButton })
+    this.renderToday(true, { el, isEnabled: props.isTodayEnabled })
+    this.renderPrev(true, { el, isEnabled: props.isPrevEnabled })
+    this.renderNext(true, { el, isEnabled: props.isNextEnabled })
 
     return el
   }
@@ -190,6 +190,8 @@ function renderActiveButton(props: { el: HTMLElement, buttonName: string }, cont
       buttonEl.classList.add(className)
     }
   })
+
+  return props
 }
 
 

@@ -33,7 +33,7 @@ PURPOSES:
 - hook up to fg, fill, and mirror renderers
 - interface for dragging and hits
 */
-export default abstract class DateComponent<PropsType> extends Component<PropsType> {
+export default abstract class DateComponent<PropsType, StateType = {}> extends Component<PropsType, StateType> {
 
   // self-config, overridable by subclasses. must set on prototype
   fgSegSelector: string // lets eventRender produce elements without fc-event class
@@ -117,7 +117,7 @@ export default abstract class DateComponent<PropsType> extends Component<PropsTy
 
 
   isPopover() {
-    return this.mountedEls[0].classList.contains('fc-popover')
+    return this.rootEl.classList.contains('fc-popover')
   }
 
 

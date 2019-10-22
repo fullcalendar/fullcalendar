@@ -89,33 +89,16 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  // called from CalendarComponent
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
-    let { calendar } = this.context
-    let scrollState
-
-    if (isResize) { // if NOT a resize, scroll state will be maintained via getSnapshotBeforeUpdate/componentDidUpdate
-      scrollState = this.queryScroll()
-    }
-
-    if (
-      isResize || // HACKS...
-      calendar.isViewUpdated ||
-      calendar.isDatesUpdated ||
-      calendar.isEventsUpdated
-    ) {
-      // sort of the catch-all sizing
-      // anything that might cause dimension changes
-      this.updateBaseSize(isResize, viewHeight, isAuto)
-    }
-
-    if (isResize) {
-      this.applyScroll(scrollState, true)
-    }
   }
 
 
-  updateBaseSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
+  isLayoutSizeDirty() {
+    let { calendar } = this.context
+
+    return calendar.isViewUpdated ||
+      calendar.isDatesUpdated ||
+      calendar.isEventsUpdated
   }
 
 

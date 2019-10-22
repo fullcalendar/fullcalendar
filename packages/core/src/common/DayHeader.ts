@@ -1,40 +1,25 @@
-import Component from '../component/Component'
+import { Component } from '../view-framework'
 import ComponentContext from '../component/ComponentContext'
-import { htmlToElement, removeElement } from '../util/dom-manip'
+import { htmlToElement } from '../util/dom-manip'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat, renderDateCell } from './table-utils'
-import { memoizeRendering } from '../component/memoized-rendering'
 
-export interface DayTableHeaderProps {
+export interface DayHeaderProps {
   dates: DateMarker[]
   dateProfile: DateProfile
   datesRepDistinctDays: boolean
   renderIntroHtml?: () => string
 }
 
-export default class DayHeader extends Component<DayTableHeaderProps> {
-
-  parentEl: HTMLElement
-  el: HTMLElement
-  thead: HTMLElement
-
-  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
+export default class DayHeader extends Component<DayHeaderProps> {
 
 
-  constructor(parentEl: HTMLElement) {
-    super()
-
-    this.parentEl = parentEl
-  }
-
-
-  render(props: DayTableHeaderProps, context: ComponentContext) {
+  render(props: DayHeaderProps, context: ComponentContext) {
+    let { theme } = context
     let { dates, datesRepDistinctDays } = props
     let parts = []
-
-    this.renderSkeleton(context)
 
     if (props.renderIntroHtml) {
       parts.push(props.renderIntroHtml())
@@ -62,38 +47,15 @@ export default class DayHeader extends Component<DayTableHeaderProps> {
       parts.reverse()
     }
 
-    this.thead.innerHTML = '<tr>' + parts.join('') + '</tr>'
-  }
-
-
-  destroy() {
-    super.destroy()
-
-    this.renderSkeleton.unrender()
-  }
-
-
-  _renderSkeleton(context: ComponentContext) {
-    let { theme } = context
-    let { parentEl } = this
-
-    parentEl.innerHTML = '' // because might be nbsp
-    parentEl.appendChild(
-      this.el = htmlToElement(
-        '<div class="fc-row ' + theme.getClass('headerRow') + '">' +
-          '<table class="' + theme.getClass('tableGrid') + '">' +
-            '<thead></thead>' +
-          '</table>' +
-        '</div>'
-      )
+    return htmlToElement(
+      '<div class="fc-row ' + theme.getClass('headerRow') + '">' +
+        '<table class="' + theme.getClass('tableGrid') + '">' +
+          '<thead>' +
+            '<tr>' + parts.join('') + '</tr>' +
+          '</thead>' +
+        '</table>' +
+      '</div>'
     )
-
-    this.thead = this.el.querySelector('thead')
-  }
-
-
-  _unrenderSkeleton() {
-    removeElement(this.el)
   }
 
 }

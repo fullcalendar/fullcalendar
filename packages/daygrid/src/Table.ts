@@ -2,7 +2,7 @@ import {
   createElement,
   insertAfterElement,
   findElements,
-  findChildren,
+  findDirectChildren,
   removeElement,
   computeRect,
   PositionCache,
@@ -546,7 +546,7 @@ export default class Table extends Component<TableProps, TableState> {
     rowStruct
   ): (number | false) {
     let rowBottom = rowEl.getBoundingClientRect().bottom // relative to viewport!
-    let trEls = findChildren(rowStruct.tbodyEl) as HTMLTableRowElement[]
+    let trEls = findDirectChildren(rowStruct.tbodyEl) as HTMLTableRowElement[]
     let i
     let trEl: HTMLTableRowElement
 
@@ -608,7 +608,7 @@ export default class Table extends Component<TableProps, TableState> {
       levelSegs = rowStruct.segLevels[levelLimit - 1]
       cellMatrix = rowStruct.cellMatrix
 
-      limitedNodes = findChildren(rowStruct.tbodyEl).slice(levelLimit) // get level <tr> elements past the limit
+      limitedNodes = findDirectChildren(rowStruct.tbodyEl).slice(levelLimit) // get level <tr> elements past the limit
       limitedNodes.forEach(function(node) {
         node.classList.add('fc-limited') // hide elements and get a simple DOM-nodes array
       })

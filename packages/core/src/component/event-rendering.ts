@@ -191,7 +191,7 @@ export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
 
 // triggers
 
-export function triggerRenderedSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
+export function triggerPositionedSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
   let { calendar, view } = context
 
   if (calendar.hasPublicHandlers('eventPositioned')) {

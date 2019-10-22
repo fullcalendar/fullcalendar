@@ -1,7 +1,7 @@
 import { cssToStr } from '../../util/html'
 import { htmlToElements, elementMatches } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
-import { filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
+import { filterSegsViaEls, triggerPositionedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import ComponentContext from '../ComponentContext'
 import { Component, renderer} from '../../view-framework'
 
@@ -19,25 +19,29 @@ export default abstract class FillRenderer<FillRendererProps extends BaseFillRen
 
   // for sizing
   private segs: Seg[]
-  private isSizeDirty = false
+  private isSizeDirty: boolean = false // NOTE: should also flick this when attaching segs to new containers
 
 
-  _renderSegs(props: BaseFillRendererProps, context: ComponentContext) {
-    let segs = this.segs = this.renderSegEls(props.segs, props.type) // assignes `.el` to each seg. returns successfully rendered segs
+  _renderSegs({ segs, type }: BaseFillRendererProps, context: ComponentContext) {
 
-    if (props.type === 'bgEvent') {
-      triggerRenderedSegs(context, segs, false) // isMirror=false
+    // assignes `.el` to each seg. returns successfully rendered segs, a SUBSET
+    segs = this.renderSegEls(segs, type)
+
+    if (type === 'bgEvent') {
+      triggerPositionedSegs(context, segs, false) // isMirror=false
     }
 
+    this.segs = segs
     this.isSizeDirty = true
+
     return segs
   }
 
 
   // Unrenders a specific type of fill that is currently rendered on the grid
-  _unrenderSegs(props: BaseFillRendererProps, context: ComponentContext, segs: Seg[]) {
-    if (props.type === 'bgEvent') {
-      triggerWillRemoveSegs(context, segs, false) // isMirror=false. will use publiclyTriggerAfterSizing so will fire after
+  _unrenderSegs(segs: Seg[], context: ComponentContext) {
+    if (this.props.type === 'bgEvent') {
+      triggerWillRemoveSegs(context, segs, false) // isMirror=false
     }
   }
 
@@ -122,8 +126,9 @@ export default abstract class FillRenderer<FillRendererProps extends BaseFillRen
   assignSizes(force: boolean, userComponent: any) {
     if (force || this.isSizeDirty) {
       this.assignSegSizes(this.segs, userComponent)
-      this.isSizeDirty = false
     }
+
+    this.isSizeDirty = false
   }
 
 

@@ -3,7 +3,7 @@ import { createFormatter, DateFormatter } from '../../datelib/formatting'
 import { htmlToElements } from '../../util/dom-manip'
 import { compareByFieldSpecs } from '../../util/misc'
 import { EventUi } from '../event-ui'
-import { EventRenderRange, filterSegsViaEls, triggerRenderedSegs, triggerWillRemoveSegs } from '../event-rendering'
+import { EventRenderRange, filterSegsViaEls, triggerPositionedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import { Seg } from '../DateComponent'
 import { Component } from '../../view-framework'
 import ComponentContext from '../ComponentContext'
@@ -40,20 +40,22 @@ export default abstract class FgEventRenderer<
   renderSegs(props: BaseFgEventRendererProps, context: ComponentContext) {
     this.updateComputedOptions(context.options)
 
-    let segs = this.segs = this.renderSegsPlain({
+    let { segs } = this.renderSegsPlain(true, {
       segs: props.segs,
       mirrorInfo: props.mirrorInfo
     })
 
-    this.renderSelectedInstance({
+    this.renderSelectedInstance(true, {
       segs,
       instanceId: props.selectedInstanceId
     })
 
-    this.renderHiddenInstances({
+    this.renderHiddenInstances(true, {
       segs,
       hiddenInstances: props.hiddenInstances
     })
+
+    this.segs = segs
 
     return segs
   }
@@ -83,15 +85,17 @@ export default abstract class FgEventRenderer<
 
   // doesn't worry about selection/hidden state
   _renderSegsPlain({ segs, mirrorInfo } : { segs: Seg[], mirrorInfo: any }, context: ComponentContext) {
-    segs = this.renderSegEls(segs, mirrorInfo)
-    this.isSizeDirty = true
-    triggerRenderedSegs(context, segs, Boolean(mirrorInfo)) // will use publiclyTriggerAfterSizing, will fire later
-    return segs
+    let isMirror = Boolean(mirrorInfo)
+    segs = this.renderSegEls(segs, mirrorInfo) // returns a subset!
+
+    triggerPositionedSegs(context, segs, false) // isMirror=false
+
+    return { segs, isMirror }
   }
 
 
-  _unrenderSegsPlain({ mirrorInfo }: { segs: Seg[], mirrorInfo: any }, context: ComponentContext, segs: Seg[]) {
-    triggerWillRemoveSegs(context, segs, Boolean(mirrorInfo))
+  _unrenderSegsPlain({ segs, isMirror }: { segs: Seg[], isMirror: boolean }, context: ComponentContext) {
+    triggerWillRemoveSegs(context, segs, isMirror)
   }
 
 
@@ -261,8 +265,9 @@ export default abstract class FgEventRenderer<
   assignSizes(force: boolean, userComponent: any) {
     if (force || this.isSizeDirty) {
       this.assignSegSizes(this.segs, userComponent)
-      this.isSizeDirty = false
     }
+
+    this.isSizeDirty = false
   }
 
 
@@ -281,7 +286,9 @@ export default abstract class FgEventRenderer<
 // TODO: slow. use more hashes to quickly reference relevant elements
 
 
-function renderHiddenInstances({ segs, hiddenInstances }: { segs: Seg[], hiddenInstances: { [instanceId: string]: any } }) {
+function renderHiddenInstances(props: { segs: Seg[], hiddenInstances: { [instanceId: string]: any } }) {
+  let { segs, hiddenInstances } = props
+
   if (hiddenInstances) {
     for (let seg of segs) {
       if (hiddenInstances[seg.eventRange.instance.instanceId]) {
@@ -289,6 +296,8 @@ function renderHiddenInstances({ segs, hiddenInstances }: { segs: Seg[], hiddenI
       }
     }
   }
+
+  return props
 }
 
 
@@ -303,7 +312,9 @@ function unrenderHiddenInstances({ segs, hiddenInstances }: { segs: Seg[], hidde
 }
 
 
-function renderSelectedInstance({ segs, instanceId }: { segs: Seg[], instanceId: string }) {
+function renderSelectedInstance(props: { segs: Seg[], instanceId: string }) {
+  let { segs, instanceId } = props
+
   if (instanceId) {
     for (let seg of segs) {
       let eventInstance = seg.eventRange.instance
@@ -315,6 +326,8 @@ function renderSelectedInstance({ segs, instanceId }: { segs: Seg[], instanceId:
       }
     }
   }
+
+  return props
 }
 
 
