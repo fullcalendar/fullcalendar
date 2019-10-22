@@ -1,12 +1,12 @@
 import { Seg } from '@fullcalendar/core'
-import TimeGridEventRenderer from './TimeGridEventRenderer'
-import TimeGrid from './TimeGrid'
+import TimeColsEvents from './TimeColsEvents'
+import TimeCols from './TimeCols'
 
 
-export default class TimeGridMirrorRenderer extends TimeGridEventRenderer {
+export default class TimeColsMirrorEvents extends TimeColsEvents {
 
 
-  generateSegCss(seg: Seg, timeGrid: TimeGrid) {
+  generateSegCss(seg: Seg, timeGrid: TimeCols) {
     let cssProps = super.generateSegCss(seg, timeGrid)
     let { sourceSeg } = this.props.mirrorInfo
 

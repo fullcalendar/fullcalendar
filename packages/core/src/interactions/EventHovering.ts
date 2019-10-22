@@ -17,7 +17,7 @@ export default class EventHovering extends Interaction {
     let { component } = settings
 
     this.removeHoverListeners = listenToHoverBySelector(
-      component.el,
+      component.rootEl,
       component.fgSegSelector + ',' + component.bgSegSelector,
       this.handleSegEnter,
       this.handleSegLeave

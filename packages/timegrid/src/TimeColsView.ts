@@ -1,119 +1,70 @@
 import {
-  findElements, createElement, htmlEscape,
+  findElements, htmlEscape,
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
-  ScrollComponent,
+  Scroller,
   View,
   ComponentContext,
   createFormatter, diffDays,
-  buildGotoAnchorHtml, getAllDayHtml, Duration, ViewProps,
-  memoizeRendering
+  buildGotoAnchorHtml, getAllDayHtml, Duration,
+  DateMarker,
+  renderViewEl,
+  renderer
 } from '@fullcalendar/core'
-import { DayGrid } from '@fullcalendar/daygrid'
-import TimeGrid from './TimeGrid'
+import { TimeColsRenderProps } from './TimeCols'
+import Table, { TableRenderProps } from 'packages/daygrid/src/Table'
+import { TimeCols } from './main'
 import AllDaySplitter from './AllDaySplitter'
 
-const TIMEGRID_ALL_DAY_EVENT_LIMIT = 5
+const ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
 
 
 /* An abstract class for all timegrid-related views. Displays one more columns with time slots running vertically.
 ----------------------------------------------------------------------------------------------------------------------*/
-// Is a manager for the TimeGrid subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
+// Is a manager for the TimeCols subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-export default abstract class AbstractTimeGridView extends View {
+export default abstract class TimeColsView extends View {
 
-  timeGrid: TimeGrid // the main time-grid subcomponent of this view
-  dayGrid: DayGrid // the "all-day" subcomponent. if all-day is turned off, this will be null
+  private renderSkeleton = renderer(this._renderSkeleton)
+  private renderScroller = renderer(Scroller)
 
-  scroller: ScrollComponent
-  axisWidth: any // the width of the time axis running down the side
+  protected allDaySplitter = new AllDaySplitter() // for use by subclasses
+  private scroller: Scroller
+  private axisWidth: any // the width of the time axis running down the side
+  private dividerEl: HTMLElement
 
-  protected splitter = new AllDaySplitter()
-  private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
 
+  abstract getAllDayTableObj(): { table: Table } | null
 
-  render(props: ViewProps, context: ComponentContext) {
-    super.render(props, context)
-
-    this.renderSkeleton(context)
+  abstract getTimeColsObj(): {
+    timeCols: TimeCols,
+    getNowIndicatorUnit: () => string,
+    renderNowIndicator: (d: DateMarker) => void,
+    unrenderNowIndicator: () => void
   }
 
 
-  destroy() {
-    super.destroy()
+  renderLayout(props: { type: string }, context: ComponentContext) {
+    let res = this.renderSkeleton(true, { type: props.type })
 
-    this.renderSkeleton.unrender()
+    let scroller = this.renderScroller(res.contentWrapEl, {
+      overflowX: 'hidden',
+      overflowY: 'auto'
+    })
+
+    this.scroller = scroller
+
+    return res
   }
 
 
-  _renderSkeleton(context: ComponentContext) {
+  _renderSkeleton(props: { type: string }, context: ComponentContext) {
+    let { theme, options } = context
 
-    this.el.classList.add('fc-timeGrid-view')
-    this.el.innerHTML = this.renderSkeletonHtml()
-
-    this.scroller = new ScrollComponent(
-      'hidden', // overflow x
-      'auto' // overflow y
-    )
-
-    let timeGridWrapEl = this.scroller.el
-    this.el.querySelector('.fc-body > tr > td').appendChild(timeGridWrapEl)
-    timeGridWrapEl.classList.add('fc-time-grid-container')
-    let timeGridEl = createElement('div', { className: 'fc-time-grid' })
-    timeGridWrapEl.appendChild(timeGridEl)
-
-    this.timeGrid = new TimeGrid(
-      timeGridEl,
-      {
-        renderBgIntroHtml: this.renderTimeGridBgIntroHtml,
-        renderIntroHtml: this.renderTimeGridIntroHtml
-      }
-    )
-
-    if (context.options.allDaySlot) { // should we display the "all-day" area?
-
-      this.dayGrid = new DayGrid( // the all-day subcomponent of this view
-        this.el.querySelector('.fc-day-grid'),
-        {
-          renderNumberIntroHtml: this.renderDayGridIntroHtml, // don't want numbers
-          renderBgIntroHtml: this.renderDayGridBgIntroHtml,
-          renderIntroHtml: this.renderDayGridIntroHtml,
-          colWeekNumbersVisible: false,
-          cellWeekNumbersVisible: false
-        }
-      )
-
-      // have the day-grid extend it's coordinate area over the <hr> dividing the two grids
-      let dividerEl = this.el.querySelector('.fc-divider') as HTMLElement
-      this.dayGrid.bottomCoordPadding = dividerEl.getBoundingClientRect().height
-    }
-  }
-
-
-  _unrenderSkeleton() {
-    this.el.classList.remove('fc-timeGrid-view')
-
-    this.timeGrid.destroy()
-
-    if (this.dayGrid) {
-      this.dayGrid.destroy()
-    }
-
-    this.scroller.destroy()
-  }
-
-
-  /* Rendering
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Builds the HTML skeleton for the view.
-  // The day-grid and time-grid components will render inside containers defined by this HTML.
-  renderSkeletonHtml() {
-    let { theme, options } = this.context
-
-    return '' +
+    let el = renderViewEl(props.type)
+    el.classList.add('fc-timeGrid-view')
+    el.innerHTML = '' +
       '<table class="' + theme.getClass('tableGrid') + '">' +
         (options.columnHeader ?
           '<thead class="fc-head">' +
@@ -127,7 +78,6 @@ export default abstract class AbstractTimeGridView extends View {
           '<tr>' +
             '<td class="' + theme.getClass('widgetContent') + '">' +
               (options.allDaySlot ?
-                '<div class="fc-day-grid"></div>' +
                 '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" />' :
                 ''
                 ) +
@@ -135,6 +85,23 @@ export default abstract class AbstractTimeGridView extends View {
           '</tr>' +
         '</tbody>' +
       '</table>'
+
+    this.dividerEl = options.allDaySlot ? (el.querySelector('.fc-divider') as HTMLElement) : null
+
+    return {
+      rootEl: el,
+      headerWrapEl: options.columnHeader ? (el.querySelector('.fc-head-container') as HTMLElement) : null,
+      contentWrapEl: el.querySelector('.fc-body > tr > td') as HTMLElement
+    }
+  }
+
+
+  componentDidMount() {
+    let allDayTable = this.getAllDayTableObj()
+
+    if (allDayTable) {
+      allDayTable.table.bottomCoordPadding = this.dividerEl.getBoundingClientRect().height
+    }
   }
 
 
@@ -143,17 +110,17 @@ export default abstract class AbstractTimeGridView extends View {
 
 
   getNowIndicatorUnit() {
-    return this.timeGrid.getNowIndicatorUnit()
+    return this.getTimeColsObj().getNowIndicatorUnit()
   }
 
 
-  // subclasses should implement
-  // renderNowIndicator(date: DateMarker) {
-  // }
+  renderNowIndicator(date) {
+    this.getTimeColsObj().renderNowIndicator(date)
+  }
 
 
   unrenderNowIndicator() {
-    this.timeGrid.unrenderNowIndicator()
+    this.getTimeColsObj().unrenderNowIndicator()
   }
 
 
@@ -161,29 +128,21 @@ export default abstract class AbstractTimeGridView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
-    super.updateSize(isResize, viewHeight, isAuto) // will call updateBaseSize. important that executes first
-
-    this.timeGrid.updateSize(isResize)
-
-    if (this.dayGrid) {
-      this.dayGrid.updateSize(isResize)
-    }
-  }
+  abstract updateSize(isResize: boolean, viewHeight: number, isAuto: boolean)
 
 
   // Adjusts the vertical dimensions of the view to the specified values
-  updateBaseSize(isResize, viewHeight, isAuto) {
+  updateLayoutSize(timeCols: TimeCols, table: Table | null, viewHeight, isAuto) {
     let eventLimit
     let scrollerHeight
     let scrollbarWidths
 
     // make all axis cells line up
-    this.axisWidth = matchCellWidths(findElements(this.el, '.fc-axis'))
+    this.axisWidth = matchCellWidths(findElements(this.rootEl, '.fc-axis'))
 
     // hack to give the view some height prior to timeGrid's columns being rendered
     // TODO: separate setting height from scroller VS timeGrid.
-    if (!this.timeGrid.colEls) {
+    if (!timeCols.colEls) {
       if (!isAuto) {
         scrollerHeight = this.computeScrollerHeight(viewHeight)
         this.scroller.setHeight(scrollerHeight)
@@ -192,25 +151,24 @@ export default abstract class AbstractTimeGridView extends View {
     }
 
     // set of fake row elements that must compensate when scroller has scrollbars
-    let noScrollRowEls: HTMLElement[] = findElements(this.el, '.fc-row').filter((node) => {
+    let noScrollRowEls: HTMLElement[] = findElements(this.rootEl, '.fc-row').filter((node) => {
       return !this.scroller.el.contains(node)
     })
 
     // reset all dimensions back to the original state
-    this.timeGrid.bottomRuleEl.style.display = 'none' // will be shown later if this <hr> is necessary
+    timeCols.bottomRuleEl.style.display = 'none' // will be shown later if this <hr> is necessary
     this.scroller.clear() // sets height to 'auto' and clears overflow
     noScrollRowEls.forEach(uncompensateScroll)
 
     // limit number of events in the all-day area
-    if (this.dayGrid) {
-      this.dayGrid.removeSegPopover() // kill the "more" popover if displayed
+    if (table) {
 
       eventLimit = this.context.options.eventLimit
       if (eventLimit && typeof eventLimit !== 'number') {
-        eventLimit = TIMEGRID_ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
+        eventLimit = ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
       }
       if (eventLimit) {
-        this.dayGrid.limitRows(eventLimit)
+        table.limitRows(eventLimit)
       }
     }
 
@@ -238,8 +196,8 @@ export default abstract class AbstractTimeGridView extends View {
 
       // if there's any space below the slats, show the horizontal rule.
       // this won't cause any new overflow, because lockOverflow already called.
-      if (this.timeGrid.getTotalSlatHeight() < scrollerHeight) {
-        this.timeGrid.bottomRuleEl.style.display = ''
+      if (timeCols.getTotalSlatHeight() < scrollerHeight) {
+        timeCols.bottomRuleEl.style.display = ''
       }
     }
   }
@@ -248,7 +206,7 @@ export default abstract class AbstractTimeGridView extends View {
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(viewHeight) {
     return viewHeight -
-      subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
+      subtractInnerElHeight(this.rootEl, this.scroller.el) // everything that's NOT the scroller
   }
 
 
@@ -258,7 +216,7 @@ export default abstract class AbstractTimeGridView extends View {
 
   // Computes the initial pre-configured scroll state prior to allowing the user to change it
   computeDateScroll(duration: Duration) {
-    let top = this.timeGrid.computeTimeTop(duration)
+    let top = this.getTimeColsObj().timeCols.computeTimeTop(duration)
 
     // zoom can give weird floating-point values. rather scroll a little bit further
     top = Math.ceil(top)
@@ -272,13 +230,13 @@ export default abstract class AbstractTimeGridView extends View {
 
 
   queryDateScroll() {
-    return { top: this.scroller.getScrollTop() }
+    return { top: this.scroller.controller.getScrollTop() }
   }
 
 
   applyDateScroll(scroll) {
     if (scroll.top !== undefined) {
-      this.scroller.setScrollTop(scroll.top)
+      this.scroller.controller.setScrollTop(scroll.top)
     }
   }
 
@@ -321,12 +279,12 @@ export default abstract class AbstractTimeGridView extends View {
   }
 
 
-  /* Time Grid Render Methods
+  /* TimeCols Render Methods
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Generates the HTML that goes before the bg of the TimeGrid slot area. Long vertical column.
-  renderTimeGridBgIntroHtml = () => {
+  // Generates the HTML that goes before the bg of the TimeCols slot area. Long vertical column.
+  renderTimeColsBgIntroHtml = () => {
     let { theme } = this.context
 
     return '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + this.axisStyleAttr() + '></td>'
@@ -335,17 +293,23 @@ export default abstract class AbstractTimeGridView extends View {
 
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
-  renderTimeGridIntroHtml = () => {
+  renderTimeColsIntroHtml = () => {
     return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>'
   }
 
 
-  /* Day Grid Render Methods
+  timeColsRenderProps: TimeColsRenderProps = {
+    renderBgIntroHtml: this.renderTimeColsBgIntroHtml,
+    renderIntroHtml: this.renderTimeColsIntroHtml
+  }
+
+
+  /* Table Component Render Methods
   ------------------------------------------------------------------------------------------------------------------*/
 
 
   // Generates the HTML that goes before the all-day cells
-  renderDayGridBgIntroHtml = () => {
+  renderTableBgIntroHtml = () => {
     let { theme, options } = this.context
 
     return '' +
@@ -359,10 +323,19 @@ export default abstract class AbstractTimeGridView extends View {
 
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
-  renderDayGridIntroHtml = () => {
+  renderTableIntroHtml = () => {
     return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>'
+  }
+
+
+  tableRenderProps: TableRenderProps = {
+    renderNumberIntroHtml: this.renderTableIntroHtml, // don't want numbers
+    renderBgIntroHtml: this.renderTableBgIntroHtml,
+    renderIntroHtml: this.renderTableIntroHtml,
+    colWeekNumbersVisible: false,
+    cellWeekNumbersVisible: false
   }
 
 }
 
-AbstractTimeGridView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering
+TimeColsView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering

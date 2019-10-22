@@ -16,7 +16,7 @@ export default class DateClicking extends Interaction {
     let { component } = settings
 
     // we DO want to watch pointer moves because otherwise finalHit won't get populated
-    this.dragging = new FeaturefulElementDragging(component.el)
+    this.dragging = new FeaturefulElementDragging(component.rootEl)
     this.dragging.autoScroller.isEnabled = false
 
     let hitDragging = this.hitDragging = new HitDragging(this.dragging, interactionSettingsToStore(settings))

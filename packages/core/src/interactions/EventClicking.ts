@@ -14,7 +14,7 @@ export default class EventClicking extends Interaction {
     let { component } = settings
 
     this.destroy = listenBySelector(
-      component.el,
+      component.rootEl,
       'click',
       component.fgSegSelector + ',' + component.bgSegSelector,
       this.handleSegClick

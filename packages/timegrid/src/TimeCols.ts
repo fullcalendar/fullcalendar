@@ -18,7 +18,7 @@ import {
   createFormatter,
   formatIsoTimeString,
   ComponentContext,
-  DateComponent,
+  Component,
   Seg,
   EventSegUiInteractionState,
   DateProfile,
@@ -26,10 +26,10 @@ import {
   memoize,
   renderer,
 } from '@fullcalendar/core'
-import { DayBgRow } from '@fullcalendar/daygrid'
-import TimeGridEventRenderer from './TimeGridEventRenderer'
-import TimeGridMirrorRenderer from './TimeGridMirrorRenderer'
-import TimeGridFillRenderer from './TimeGridFillRenderer'
+import { renderDayBgRowHtml } from '@fullcalendar/daygrid'
+import TimeColsEvents from './TimeColsEvents'
+import TimeColsMirrorEvents from './TimeColsMirrorEvents'
+import TimeColsFills from './TimeColsFills'
 
 
 /* A component that renders one or more columns of vertical time slots
@@ -37,7 +37,7 @@ import TimeGridFillRenderer from './TimeGridFillRenderer'
 
 // potential nice values for the slot-duration and interval-duration
 // from largest to smallest
-const AGENDA_STOCK_SUB_DURATIONS = [
+const STOCK_SUB_DURATIONS = [
   { hours: 1 },
   { minutes: 30 },
   { minutes: 15 },
@@ -45,36 +45,47 @@ const AGENDA_STOCK_SUB_DURATIONS = [
   { seconds: 15 }
 ]
 
-export interface RenderProps {
+export interface TimeColsRenderProps {
   renderBgIntroHtml: () => string
   renderIntroHtml: () => string
 }
 
-export interface TimeGridSeg extends Seg {
+export interface TimeColsSeg extends Seg {
   col: number
   start: DateMarker
   end: DateMarker
 }
 
-export interface TimeGridCell {
+export interface TimeColsCell {
   date: DateMarker
   htmlAttrs?: string
 }
 
-export interface TimeGridProps {
-  renderProps: RenderProps
+export interface TimeColsProps {
+  renderProps: TimeColsRenderProps
   dateProfile: DateProfile
-  cells: TimeGridCell[]
-  businessHourSegs: TimeGridSeg[]
-  bgEventSegs: TimeGridSeg[]
-  fgEventSegs: TimeGridSeg[]
-  dateSelectionSegs: TimeGridSeg[]
+  cells: TimeColsCell[]
+  businessHourSegs: TimeColsSeg[]
+  bgEventSegs: TimeColsSeg[]
+  fgEventSegs: TimeColsSeg[]
+  dateSelectionSegs: TimeColsSeg[]
   eventSelection: string
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
 }
 
-export default class TimeGrid extends DateComponent<TimeGridProps> {
+export default class TimeCols extends Component<TimeColsProps> {
+
+  processOptions = memoize(this._processOptions)
+  renderSkeleton = renderer(renderSkeleton)
+  renderSlats = renderer(this._renderSlats)
+  renderBgColumns = renderer(this._renderBgColumns)
+  renderContentSkeleton = renderer(renderContentSkeleton)
+  renderMirrorEvents = renderer(TimeColsMirrorEvents)
+  renderFgEvents = renderer(TimeColsEvents)
+  renderBgEvents = renderer(TimeColsFills)
+  renderBusinessHours = renderer(TimeColsFills)
+  renderDateSelection = renderer(TimeColsFills)
 
   // computed options
   slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
@@ -97,19 +108,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   contentSkeletonEl: HTMLElement
   colContainerEls: HTMLElement[] // containers for each column
 
-  processOptions = memoize(this._processOptions)
-  renderSkeleton = renderer(renderSkeleton)
-  renderSlats = renderer(this._renderSlats)
-  renderBgColumns = renderer(this._renderBgColumns)
-  renderDayBgRow = renderer(DayBgRow)
-  renderContentSkeleton = renderer(renderContentSkeleton)
-  renderMirrorEvents = renderer(TimeGridMirrorRenderer)
-  renderFgEvents = renderer(TimeGridEventRenderer)
-  renderBgEvents = renderer(TimeGridFillRenderer)
-  renderBusinessHours = renderer(TimeGridFillRenderer)
-  renderDateSelection = renderer(TimeGridFillRenderer)
-
-  segRenderers: (TimeGridEventRenderer | TimeGridFillRenderer)[]
+  segRenderers: (TimeColsEvents | TimeColsFills | null)[]
 
 
   /* Options
@@ -162,7 +161,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  render(props: TimeGridProps, context: ComponentContext) {
+  render(props: TimeColsProps, context: ComponentContext) {
     let { options } = context
     this.processOptions(options)
 
@@ -172,7 +171,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
       contentSkeletonEl,
       bottomRuleEl,
       slatContainerEl
-    } = this.renderSkeleton()
+    } = this.renderSkeleton(true)
 
     this.renderBgColumns(rootBgContainerEl, {
       rootEl,
@@ -199,35 +198,35 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     })
 
     let segRenderers = [
-      this.renderBusinessHours({
+      this.renderBusinessHours(true, {
         type: 'businessHours',
         containerEls: businessContainerEls,
         segs: props.businessHourSegs,
       }),
-      this.renderDateSelection({
+
+      this.renderDateSelection(true, {
         type: 'highlight',
         containerEls: highlightContainerEls,
-        segs: options.selectMirror ? null : props.dateSelectionSegs
+        segs: options.selectMirror ? null : props.dateSelectionSegs // do highlight if NO mirror
       }),
-      this.renderBgEvents({
+
+      this.renderBgEvents(true, {
         type: 'bgEvent',
         containerEls: bgContainerEls,
         segs: props.bgEventSegs
       }),
-      this.renderFgEvents({
+
+      this.renderFgEvents(true, {
         containerEls: fgContainerEls,
         segs: props.fgEventSegs,
-        selectedInstanceId: props.eventSelection, // TODO: rename
+        selectedInstanceId: props.eventSelection,
         hiddenInstances: // TODO: more convenient
           (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
           (props.eventResize ? props.eventResize.affectedInstances : null)
-      })
-    ]
+      }),
 
-    let mirrorRenderer = this.handleMirror(props, mirrorContainerEls, options)
-    if (mirrorRenderer) {
-      segRenderers.push(mirrorRenderer)
-    }
+      this.handleMirror(props, mirrorContainerEls, options)
+    ]
 
     this.segRenderers = segRenderers
     this.contentSkeletonEl = contentSkeletonEl
@@ -238,27 +237,27 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  handleMirror(props: TimeGridProps, mirrorContainerEls: HTMLElement[], options): TimeGridEventRenderer | null {
+  handleMirror(props: TimeColsProps, mirrorContainerEls: HTMLElement[], options): TimeColsEvents | null {
 
-    if (props.dateSelectionSegs && options.selectMirror) { // can use non-existent like this!?
-      return this.renderMirrorEvents({
-        containerEls: mirrorContainerEls,
-        segs: props.dateSelectionSegs,
-        mirrorInfo: { isSelecting: true }
-      })
-
-    } else if (props.eventDrag) {
-      return this.renderMirrorEvents({
+    if (props.eventDrag) {
+      return this.renderMirrorEvents(true, {
         containerEls: mirrorContainerEls,
         segs: props.eventDrag.segs,
         mirrorInfo: { isDragging: true, sourceSeg: props.eventDrag.sourceSeg }
       })
 
     } else if (props.eventResize) {
-      return this.renderMirrorEvents({
+      return this.renderMirrorEvents(true, {
         containerEls: mirrorContainerEls,
         segs: props.eventResize.segs,
         mirrorInfo: { isDragging: true, sourceSeg: props.eventResize.sourceSeg }
+      })
+
+    } else if (options.selectMirror) {
+      return this.renderMirrorEvents(true, {
+        containerEls: mirrorContainerEls,
+        segs: props.dateSelectionSegs,
+        mirrorInfo: { isSelecting: true }
       })
 
     } else {
@@ -281,11 +280,15 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     }
 
     for (let segRenderer of segRenderers) {
-      segRenderer.computeSizes(isResize, this)
+      if (segRenderer) {
+        segRenderer.computeSizes(isResize, this)
+      }
     }
 
     for (let segRenderer of segRenderers) {
-      segRenderer.assignSizes(isResize, this)
+      if (segRenderer) {
+        segRenderer.assignSizes(isResize, this)
+      }
     }
   }
 
@@ -359,21 +362,22 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
 
   // goes behind the slats
   _renderBgColumns(
-    { rootEl, cells, dateProfile, renderProps }: { rootEl: HTMLElement, cells: TimeGridCell[], dateProfile: DateProfile, renderProps: any },
+    { rootEl, cells, dateProfile, renderProps }: { rootEl: HTMLElement, cells: TimeColsCell[], dateProfile: DateProfile, renderProps: any },
     context: ComponentContext
   ) {
     let { calendar, view, isRtl, theme, dateEnv } = context
 
-    let tableEl = createElement('table', { className: theme.getClass('tableGrid') }, '<tbody />')
-    let tbodyEl = tableEl.querySelector('tbody')
+    let tableEl = createElement(
+      'table',
+      { className: theme.getClass('tableGrid') },
+      renderDayBgRowHtml({
+        cells,
+        dateProfile,
+        renderIntroHtml: renderProps.renderBgIntroHtml
+      }, context)
+    )
 
-    this.renderDayBgRow(tbodyEl, {
-      cells,
-      dateProfile,
-      renderIntroHtml: renderProps.renderBgIntroHtml
-    })
-
-    let colEls = this.colEls = findElements(tbodyEl, '.fc-day, .fc-disabled-day')
+    let colEls = this.colEls = findElements(tableEl, '.fc-day, .fc-disabled-day')
 
     for (let col = 0; col < cells.length; col++) {
       calendar.publiclyTrigger('dayRender', [
@@ -410,7 +414,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
   }
 
 
-  renderNowIndicator(segs: TimeGridSeg[], date) {
+  renderNowIndicator(segs: TimeColsSeg[], date) {
 
     // HACK: if date columns not ready for some reason (scheduler)
     if (!this.colContainerEls) {
@@ -612,8 +616,8 @@ function computeLabelInterval(slotDuration) {
   let slotsPerLabel
 
   // find the smallest stock label interval that results in more than one slots-per-label
-  for (i = AGENDA_STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
-    labelInterval = createDuration(AGENDA_STOCK_SUB_DURATIONS[i])
+  for (i = STOCK_SUB_DURATIONS.length - 1; i >= 0; i--) {
+    labelInterval = createDuration(STOCK_SUB_DURATIONS[i])
     slotsPerLabel = wholeDivideDurations(labelInterval, slotDuration)
     if (slotsPerLabel !== null && slotsPerLabel > 1) {
       return labelInterval
@@ -724,10 +728,12 @@ export function attachSegs({ segs, containerEls }: { segs: Seg[], containerEls: 
       containerEls[col].appendChild(seg.el)
     }
   }
+
+  return segs
 }
 
 
-export function detachSegs({ segs, containerEls }: { segs: Seg[], containerEls: HTMLElement[] }) {
+export function detachSegs(segs: Seg[]) {
   segs.forEach(function(seg) {
     removeElement(seg.el)
   })

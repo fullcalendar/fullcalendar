@@ -6,17 +6,17 @@ import {
   Seg, isMultiDayRange, compareByFieldSpecs,
   computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, renderer
 } from '@fullcalendar/core'
-import TimeGrid, { attachSegs, detachSegs } from './TimeGrid'
+import TimeCols, { attachSegs, detachSegs } from './TimeCols'
 
-export interface TimeGridEventRendererProps extends BaseFgEventRendererProps {
+export interface TimeColsEventsProps extends BaseFgEventRendererProps {
   containerEls: HTMLElement[]
 }
 
 /*
 Only handles foreground segs.
-Does not own rendering. Use for low-level util methods by TimeGrid.
+Does not own rendering. Use for low-level util methods by TimeCols.
 */
-export default class TimeGridEventRenderer extends FgEventRenderer<TimeGridEventRendererProps> {
+export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps> {
 
   attachSegs = renderer(attachSegs, detachSegs)
 
@@ -38,7 +38,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer<TimeGridEvent
   }
 
 
-  render(props: TimeGridEventRendererProps, context: ComponentContext) {
+  render(props: TimeColsEventsProps, context: ComponentContext) {
     let segs = this.renderSegs({
       segs: props.segs,
       mirrorInfo: props.mirrorInfo,
@@ -46,14 +46,14 @@ export default class TimeGridEventRenderer extends FgEventRenderer<TimeGridEvent
       hiddenInstances: props.hiddenInstances
     }, context)
 
-    this.segsByCol = this.attachSegs({
+    this.segsByCol = this.attachSegs(true, {
       segs,
       containerEls: props.containerEls
     })
   }
 
 
-  computeSegSizes(allSegs: Seg[], timeGrid: TimeGrid) {
+  computeSegSizes(allSegs: Seg[], timeGrid: TimeCols) {
     let { segsByCol } = this
     let colCnt = timeGrid.props.cells.length
 
@@ -65,7 +65,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer<TimeGridEvent
   }
 
 
-  assignSegSizes(allSegs: Seg[], timeGrid: TimeGrid) {
+  assignSegSizes(allSegs: Seg[], timeGrid: TimeCols) {
     let { segsByCol } = this
     let colCnt = timeGrid.props.cells.length
 
@@ -79,7 +79,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer<TimeGridEvent
 
   // Given foreground event segments that have already had their position coordinates computed,
   // assigns position-related CSS values to their elements.
-  assignSegCss(segs: Seg[], timeGrid: TimeGrid) {
+  assignSegCss(segs: Seg[], timeGrid: TimeCols) {
 
     for (let seg of segs) {
       applyStyle(seg.el, this.generateSegCss(seg, timeGrid))
@@ -99,7 +99,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer<TimeGridEvent
 
   // Generates an object with CSS properties/values that should be applied to an event segment element.
   // Contains important positioning-related properties that should be applied to any event element, customized or not.
-  generateSegCss(seg: Seg, timeGrid: TimeGrid) {
+  generateSegCss(seg: Seg, timeGrid: TimeCols) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
     let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
