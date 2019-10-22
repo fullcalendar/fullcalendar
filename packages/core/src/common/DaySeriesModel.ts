@@ -9,7 +9,7 @@ export interface DaySeriesSeg {
   isEnd: boolean
 }
 
-export default class DaySeries {
+export default class DaySeriesModel {
 
   cnt: number
   dates: DateMarker[] // whole-day dates for each column. left to right

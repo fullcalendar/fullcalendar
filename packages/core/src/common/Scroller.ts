@@ -9,7 +9,7 @@ export interface ScrollbarWidths {
   bottom: number
 }
 
-export interface ScrollComponentProps {
+export interface ScrollerProps {
   overflowX: string
   overflowY: string
 }
@@ -17,13 +17,13 @@ export interface ScrollComponentProps {
 /*
 Embodies a div that has potential scrollbars
 */
-export default class ScrollComponent extends Component<ScrollComponentProps> {
+export default class Scroller extends Component<ScrollerProps> {
 
   el = createElement('div', { className: 'fc-scroller' })
   controller = new ElementScrollController(this.el)
 
 
-  render(props: ScrollComponentProps) {
+  render(props: ScrollerProps) {
     this.applyOverflow(props)
 
     return this.el
@@ -41,7 +41,7 @@ export default class ScrollComponent extends Component<ScrollComponentProps> {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  applyOverflow(props: ScrollComponentProps) {
+  applyOverflow(props: ScrollerProps) {
     applyStyle(this.el, {
       overflowX: props.overflowX,
       overflowY: props.overflowY

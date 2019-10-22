@@ -1,4 +1,4 @@
-import DaySeries from './DaySeries'
+import DaySeries from './DaySeriesModel'
 import { DateRange } from '../datelib/date-range'
 import { DateMarker } from '../datelib/marker'
 import { Seg } from '../component/DateComponent'
@@ -14,7 +14,7 @@ export interface DayTableCell {
   htmlAttrs?: string
 }
 
-export default class DayTable {
+export default class DayTableModel {
 
   rowCnt: number
   colCnt: number
