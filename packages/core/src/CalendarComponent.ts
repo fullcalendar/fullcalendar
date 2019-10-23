@@ -72,6 +72,8 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         ...toolbarProps
       })
       innerEls.push(header.rootEl)
+    } else {
+      this.renderHeader(false)
     }
 
     let viewContainerEl = this.renderViewContainer(true)
@@ -85,6 +87,8 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
         ...toolbarProps
       })
       innerEls.push(footer.rootEl)
+    } else {
+      this.renderFooter(false)
     }
 
     this.viewContainerEl = viewContainerEl
