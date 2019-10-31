@@ -273,6 +273,22 @@ export default class ListView extends View {
     let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
     let altFormat = createFormatter(options.listDayAltFormat) // TODO: cache
 
+    let extraHtml = '';
+
+    if (Array.isArray(options.listColumns)) {
+      extraHtml = options.listColumns.map(([ columnHeader ]) => {
+        if (typeof columnHeader === 'function') {
+          return columnHeader(dayDate, this)
+        } else {
+          return `<td class="fc-widget-header">
+            <span class="fc-list-heading-main">
+              ${ columnHeader }
+            </span>
+          </td>`
+        }
+      }).join('\n');
+    }
+
     return createElement('tr', {
       className: 'fc-list-heading',
       'data-date': dateEnv.formatIso(dayDate, { omitTime: true })
@@ -298,7 +314,7 @@ export default class ListView extends View {
           htmlEscape(dateEnv.format(dayDate, altFormat)) // inner HTML
         ) :
         '') +
-    '</td>') as HTMLTableRowElement
+    '</td>' + extraHtml) as HTMLTableRowElement
   }
 
 }

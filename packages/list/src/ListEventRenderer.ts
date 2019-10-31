@@ -7,6 +7,15 @@ import {
 } from '@fullcalendar/core'
 import ListView from './ListView'
 
+function getObjectValue(obj, path = '') {
+  return path
+    .split('.')
+    .reduce(function(acc, attr) {
+      if ((acc != null ? acc[attr] : undefined) != null) {
+        return acc[attr];
+      }
+    }, obj);
+};
 
 export default class ListEventRenderer extends FgEventRenderer {
 
@@ -72,6 +81,20 @@ export default class ListEventRenderer extends FgEventRenderer {
       classes.push('fc-has-url')
     }
 
+    let extraHtml = ''
+
+    if (Array.isArray(this.context.options.listColumns)) {
+      extraHtml = this.context.options.listColumns.map(([ columnHeader, columnBody ]) => {
+        if (typeof columnBody === 'function') {
+          return columnBody(eventDef, this)
+        } else {
+          return `<td class="fc-list-item-column fc-widget-content">
+            <a>${ getObjectValue(eventDef, columnBody) }</a>
+          </td>`
+        }
+      }).join('\n');
+    }
+
     return '<tr class="' + classes.join(' ') + '">' +
       (this.displayEventTime ?
         '<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
@@ -90,6 +113,7 @@ export default class ListEventRenderer extends FgEventRenderer {
           htmlEscape(eventDef.title || '') +
         '</a>' +
       '</td>' +
+      extraHtml +
     '</tr>'
   }
 
