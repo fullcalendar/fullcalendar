@@ -89,7 +89,7 @@ export default class ListEventRenderer extends FgEventRenderer {
           return columnBody(eventDef, this)
         } else {
           return `<td class="fc-list-item-column fc-widget-content">
-            <a>${ getObjectValue(eventDef, columnBody) }</a>
+            <a>${ getObjectValue(eventDef, columnBody) || '' }</a>
           </td>`
         }
       }).join('\n');
