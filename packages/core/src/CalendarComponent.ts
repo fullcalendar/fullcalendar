@@ -112,7 +112,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   _setClassNames(props: {}, context: ComponentContext) {
-    let classList = this.location.parentEl.classList
+    let classList = this.props.parentEl.classList
     let classNames: string[] = [
       'fc',
       'fc-' + context.options.dir,
@@ -128,7 +128,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   _unsetClassNames(classNames: string[]) {
-    let classList = this.location.parentEl.classList
+    let classList = this.props.parentEl.classList
 
     for (let className of classNames) {
       classList.remove(className)
@@ -244,7 +244,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
     } else if (typeof heightInput === 'function') { // exists and is a function
       this.viewHeight = heightInput() - this.queryToolbarsHeight()
     } else if (heightInput === 'parent') { // set to height of parent element
-      let parentEl = this.location.parentEl.parentNode as HTMLElement
+      let parentEl = this.props.parentEl.parentNode as HTMLElement
       this.viewHeight = parentEl.getBoundingClientRect().height - this.queryToolbarsHeight()
     } else {
       this.viewHeight = Math.round(
@@ -275,7 +275,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   freezeHeight() {
-    let rootEl = this.location.parentEl
+    let rootEl = this.props.parentEl
 
     applyStyle(rootEl, {
       height: rootEl.getBoundingClientRect().height,
@@ -285,7 +285,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   thawHeight() {
-    let rootEl = this.location.parentEl
+    let rootEl = this.props.parentEl
 
     applyStyle(rootEl, {
       height: '',

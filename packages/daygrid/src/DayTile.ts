@@ -49,7 +49,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
     // HACK referencing parent's elements.
     // also, if parent's elements change, this will break.
     calendar.registerInteractiveComponent(this, {
-      el: this.location.parentEl,
+      el: this.props.parentEl, // HACK
       useEventCenter: false
     })
   }
@@ -70,7 +70,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
           allDay: true,
           range: { start: date, end: addDays(date, 1) }
         },
-        dayEl: this.location.parentEl, // HACK
+        dayEl: this.props.parentEl, // HACK
         rect: {
           left: 0,
           top: 0,
