@@ -1,4 +1,4 @@
-import { Component } from '../view-framework'
+import { Component, DomLocation } from '../view-framework'
 import ComponentContext from '../component/ComponentContext'
 import { htmlToElement } from '../util/dom-manip'
 import { DateMarker } from '../datelib/marker'
@@ -6,7 +6,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat, renderDateCell } from './table-utils'
 
-export interface DayHeaderProps {
+export interface DayHeaderProps extends DomLocation {
   dates: DateMarker[]
   dateProfile: DateProfile
   datesRepDistinctDays: boolean

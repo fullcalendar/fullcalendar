@@ -46,7 +46,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
       hiddenInstances: props.hiddenInstances
     }, context)
 
-    this.segsByCol = this.attachSegs(true, {
+    this.segsByCol = this.attachSegs({
       segs,
       containerEls: props.containerEls
     })

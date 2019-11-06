@@ -3,7 +3,7 @@ Huge thanks to these people:
 https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalendar/index.d.ts
 */
 
-import View from '../View'
+import ViewApi from '../ViewApi'
 import { EventSourceInput, EventInputTransformer } from '../structs/event-source'
 import { Duration, DurationInput } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
@@ -112,7 +112,7 @@ export interface OptionsInputBase {
   windowResizeDelay?: number
   eventLimit?: boolean | number
   eventLimitClick?: 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string |
-    ((arg: { date: Date, allDay: boolean, dayEl: HTMLElement, moreEl: HTMLElement, segs: any[], hiddenSegs: any[], jsEvent: MouseEvent, view: View }) => void),
+    ((arg: { date: Date, allDay: boolean, dayEl: HTMLElement, moreEl: HTMLElement, segs: any[], hiddenSegs: any[], jsEvent: MouseEvent, view: ViewApi }) => void),
   timeZone?: string | boolean
   now?: DateInput | (() => DateInput)
   defaultView?: string
@@ -205,37 +205,37 @@ export interface OptionsInputBase {
   selectMinDistance?: number
   timeZoneParam?: string
   titleRangeSeparator?: string
-  datesRender?(arg: { view: View, el: HTMLElement }): void
-  datesDestroy?(arg: { view: View, el: HTMLElement }): void
-  dayRender?(arg: { view: View, date: Date, allDay?: boolean, el: HTMLElement }): void
-  windowResize?(view: View): void
-  dateClick?(arg: { date: Date, dateStr: string, allDay: boolean, resource?: any, dayEl: HTMLElement, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
-  eventClick?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): boolean | void
-  eventMouseEnter?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  select?(arg: { start: Date, end: Date, startStr: string, endStr: string, allDay: boolean, resource?: any, jsEvent: MouseEvent, view: View }): void // resource for Scheduler
-  unselect?(arg: { view: View, jsEvent: Event }): void
+  datesRender?(arg: { view: ViewApi, el: HTMLElement }): void
+  datesDestroy?(arg: { view: ViewApi, el: HTMLElement }): void
+  dayRender?(arg: { view: ViewApi, date: Date, allDay?: boolean, el: HTMLElement }): void
+  windowResize?(view: ViewApi): void
+  dateClick?(arg: { date: Date, dateStr: string, allDay: boolean, resource?: any, dayEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void // resource for Scheduler
+  eventClick?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }): boolean | void
+  eventMouseEnter?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }): void
+  eventMouseLeave?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }): void
+  select?(arg: { start: Date, end: Date, startStr: string, endStr: string, allDay: boolean, resource?: any, jsEvent: MouseEvent, view: ViewApi }): void // resource for Scheduler
+  unselect?(arg: { view: ViewApi, jsEvent: Event }): void
   loading?(isLoading: boolean): void
-  eventRender?(arg: { isMirror: boolean, isStart: boolean, isEnd: boolean, event: EventApi, el: HTMLElement, view: View }): void
-  eventPositioned?(arg: { isMirror: boolean, isStart: boolean, isEnd: boolean, event: EventApi, el: HTMLElement, view: View }): void
-  _eventsPositioned?(arg: { view: View }): void
-  eventDestroy?(arg: { isMirror: boolean, event: EventApi, el: HTMLElement, view: View }): void
-  eventDragStart?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: View }): void
-  eventDragStop?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: View }): void
-  eventDrop?(arg: { el: HTMLElement, event: EventApi, oldEvent: EventApi, delta: Duration, revert: () => void, jsEvent: Event, view: View }): void
-  eventResizeStart?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  eventResizeStop?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: View }): void
-  eventResize?(arg: { el: HTMLElement, startDelta: Duration, endDelta: Duration, prevEvent: EventApi, event: EventApi, revert: () => void, jsEvent: Event, view: View }): void
-  drop?(arg: { date: Date, dateStr: string, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: View }): void
-  eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: View }): void
-  eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: View }): void
-  viewSkeletonRender?(arg: { el: HTMLElement, view: View }): void
-  viewSkeletonDestroy?(arg: { el: HTMLElement, view: View }): void
+  eventRender?(arg: { isMirror: boolean, isStart: boolean, isEnd: boolean, event: EventApi, el: HTMLElement, view: ViewApi }): void
+  eventPositioned?(arg: { isMirror: boolean, isStart: boolean, isEnd: boolean, event: EventApi, el: HTMLElement, view: ViewApi }): void
+  _eventsPositioned?(arg: { view: ViewApi }): void
+  eventDestroy?(arg: { isMirror: boolean, event: EventApi, el: HTMLElement, view: ViewApi }): void
+  eventDragStart?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void
+  eventDragStop?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void
+  eventDrop?(arg: { el: HTMLElement, event: EventApi, oldEvent: EventApi, delta: Duration, revert: () => void, jsEvent: Event, view: ViewApi }): void
+  eventResizeStart?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }): void
+  eventResizeStop?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }): void
+  eventResize?(arg: { el: HTMLElement, startDelta: Duration, endDelta: Duration, prevEvent: EventApi, event: EventApi, revert: () => void, jsEvent: Event, view: ViewApi }): void
+  drop?(arg: { date: Date, dateStr: string, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void
+  eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: ViewApi }): void
+  eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: ViewApi }): void
+  viewSkeletonRender?(arg: { el: HTMLElement, view: ViewApi }): void
+  viewSkeletonDestroy?(arg: { el: HTMLElement, view: ViewApi }): void
   _destroyed?(): void
   _init?(): void
   _noEventDrop?(): void
   _noEventResize?(): void
-  resourceRender?(arg: { resource: any, el: HTMLElement, view: View }): void
+  resourceRender?(arg: { resource: any, el: HTMLElement, view: ViewApi }): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {

@@ -7,6 +7,8 @@ export type EventSourceFunc = (
   arg: {
     start: Date
     end: Date
+    startStr: string
+    endStr: string
     timeZone: string
   },
   successCallback: (events: EventInput[]) => void,

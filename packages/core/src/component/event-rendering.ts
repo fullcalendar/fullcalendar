@@ -249,12 +249,12 @@ export function triggerWillRemoveSegs(context: ComponentContext, segs: Seg[], is
 // is-interactable
 
 export function computeEventDraggable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
-  let { pluginHooks, view } = context
+  let { pluginHooks, calendar } = context
   let transformers = pluginHooks.isDraggableTransformers
   let val = eventUi.startEditable
 
   for (let transformer of transformers) {
-    val = transformer(val, eventDef, eventUi, view)
+    val = transformer(val, eventDef, eventUi, calendar.component.view) // yuck
   }
 
   return val

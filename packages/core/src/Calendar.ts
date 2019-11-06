@@ -7,15 +7,15 @@ import Theme from './theme/Theme'
 import { OptionsInput, EventHandlerName, EventHandlerArgs } from './types/input-types'
 import { Locale, buildLocale, parseRawLocales, RawLocaleMap } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
-import { DateMarker, startOfDay } from './datelib/marker'
+import { DateMarker, startOfDay, diffWholeDays } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { Duration, createDuration, DurationInput } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize, memoizeOutput } from './util/memoize'
 import { mapHash, isPropsEqual } from './util/object'
-import { DateRangeInput } from './datelib/date-range'
-import DateProfileGenerator from './DateProfileGenerator'
+import { DateRangeInput, DateRange } from './datelib/date-range'
+import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
 import { EventInput, parseEvent, EventDefHash } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
@@ -37,7 +37,8 @@ import StandardTheme from './theme/StandardTheme'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
 import { computeContextProps } from './component/ComponentContext'
-import { RenderEngine, TaskQueue } from './view-framework'
+import { TaskRunner, renderer, DelayedRunner } from './view-framework'
+import ViewApi from './ViewApi'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -82,6 +83,8 @@ export default class Calendar {
   private buildSelectionConfig = memoize(this._buildSelectionConfig)
   private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
+  private buildViewApi = memoize(buildViewApi)
+  private computeTitle = memoize(computeTitle)
 
   eventUiBases: EventUiHash // solely for validation system
   selectionConfig: EventUi // doesn't need all the info EventUi provides. only validation-related. TODO: separate data structs
@@ -104,8 +107,8 @@ export default class Calendar {
   isHandlingWindowResize: boolean
 
   state: CalendarState
-  actionQueue: TaskQueue<Action>
-  renderEngine: RenderEngine
+  renderRunner: DelayedRunner
+  actionRunner: TaskRunner<Action>
   renderableEventStore: EventStore
 
   afterSizingTriggers: any = {}
@@ -114,24 +117,34 @@ export default class Calendar {
   isEventsUpdated: boolean = false
 
   el: HTMLElement
+  renderCalendarComponent = renderer(CalendarComponent)
   component: CalendarComponent
+
+  view: ViewApi // public API
 
 
   constructor(el: HTMLElement, overrides?: OptionsInput) {
     this.el = el
 
-    this.optionsManager = new OptionsManager(overrides || {})
+    let optionsManager = this.optionsManager = new OptionsManager(overrides || {})
     this.pluginSystem = new PluginSystem()
 
-    this.actionQueue = new TaskQueue({ // no delay. simply so that nested dispatches dont happen
-      runTask: this.runAction.bind(this),
-      drained: this.updateComponent.bind(this)
-    })
+    let renderRunner = this.renderRunner = new DelayedRunner(
+      this.updateComponent.bind(this)
+    )
+
+    this.actionRunner = new TaskRunner(
+      this.runAction.bind(this),
+      (actions) => {
+        let doDelay = computeDoDelay(actions)
+        renderRunner.request(doDelay ? optionsManager.computed.rerenderDelay : null)
+      }
+    )
 
     // only do once. don't do in handleOptions. because can't remove plugins
-    this.addPluginInputs(this.optionsManager.computed.plugins || [])
+    this.addPluginInputs(optionsManager.computed.plugins || [])
 
-    this.handleOptions(this.optionsManager.computed)
+    this.handleOptions(optionsManager.computed)
     this.publiclyTrigger('_init') // for tests
     this.hydrate()
 
@@ -151,20 +164,12 @@ export default class Calendar {
   }
 
 
-  // public API
-  get view(): View {
-    return this.component ? this.component.view : null
-  }
-
-
   // Public API for rendering
   // -----------------------------------------------------------------------------------------------------------------
 
 
   render() {
     if (!this.component) {
-      this.renderEngine = new RenderEngine(this.optionsManager.computed.rerenderDelay)
-      this.component = new CalendarComponent(this.renderEngine)
       this.renderableEventStore = createEmptyEventStore()
       this.bindHandlers() // TODO: have CalendarComponent handle this?
     }
@@ -176,8 +181,8 @@ export default class Calendar {
   destroy() {
     if (this.component) {
       this.unbindHandlers()
-      this.component.unmount() // don't null-out. in case API needs access
-      this.component = null // umm ???
+      this.renderCalendarComponent(false)
+      this.component = null
 
       for (let interaction of this.calendarInteractions) {
         interaction.destroy()
@@ -287,8 +292,7 @@ export default class Calendar {
 
 
   dispatch(action: Action) {
-    this.actionQueue.push(action)
-    this.actionQueue.requestRun()
+    this.actionRunner.request(action)
   }
 
 
@@ -302,7 +306,8 @@ export default class Calendar {
       this.publiclyTrigger('loading', [ false ])
     }
 
-    let view = this.component && this.component.view
+    let viewComponent = this.component && this.component.view
+    let viewApi = this.view
 
     if (oldState.eventStore !== newState.eventStore) {
       if (oldState.eventStore) {
@@ -311,11 +316,11 @@ export default class Calendar {
     }
 
     if (oldState.dateProfile !== newState.dateProfile) {
-      if (oldState.dateProfile && view) { // why would view be null!?
+      if (oldState.dateProfile && viewComponent) { // why would view be null!?
         this.publiclyTrigger('datesDestroy', [
           {
-            view,
-            el: view.rootEl
+            view: viewApi,
+            el: viewComponent.rootEl
           }
         ])
       }
@@ -323,11 +328,11 @@ export default class Calendar {
     }
 
     if (oldState.viewType !== newState.viewType) {
-      if (oldState.viewType && view) { // why would view be null!?
+      if (oldState.viewType && viewComponent) { // why would view be null!?
         this.publiclyTrigger('viewSkeletonDestroy', [
           {
-            view,
-            el: view.rootEl
+            view: viewApi,
+            el: viewComponent.rootEl
           }
         ])
       }
@@ -341,15 +346,11 @@ export default class Calendar {
 
 
   batchRendering(func) {
-    let { renderEngine } = this
+    let { renderRunner } = this
 
-    if (renderEngine) {
-      renderEngine.updateQueue.pause()
-      func()
-      renderEngine.updateQueue.resume()
-    } else {
-      func()
-    }
+    renderRunner.pause()
+    func()
+    renderRunner.resume()
   }
 
 
@@ -357,14 +358,10 @@ export default class Calendar {
   don't call this directly. use executeRender instead
   */
   updateComponent() {
-    let { state, component } = this
+    let { state } = this
     let { viewType } = state
     let viewSpec = this.viewSpecs[viewType]
     let rawOptions = this.optionsManager.computed
-
-    if (!component) {
-      return
-    }
 
     if (!viewSpec) {
       throw new Error(`View type "${viewType}" is not valid`)
@@ -381,7 +378,11 @@ export default class Calendar {
     let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
-    component.update(this.el, {
+    let title = this.computeTitle(state.dateProfile, this.dateEnv, viewSpec.options)
+    let viewApi = this.view = this.buildViewApi(viewSpec.type, title, state.dateProfile, this.dateEnv)
+
+    let component = this.renderCalendarComponent({
+      parentEl: this.el,
       ...state,
       viewSpec,
       dateProfileGenerator: this.dateProfileGenerators[viewType],
@@ -391,9 +392,11 @@ export default class Calendar {
       dateSelection: state.dateSelection,
       eventSelection: state.eventSelection,
       eventDrag: state.eventDrag,
-      eventResize: state.eventResize
+      eventResize: state.eventResize,
+      title
     }, {
       calendar: this,
+      view: viewApi,
       pluginHooks: this.pluginSystem.hooks,
       theme: this.theme,
       dateEnv: this.dateEnv,
@@ -405,7 +408,7 @@ export default class Calendar {
       this.isViewUpdated = false
       this.publiclyTrigger('viewSkeletonRender', [
         {
-          view: component.view,
+          view: viewApi,
           el: component.view.rootEl
         }
       ])
@@ -415,7 +418,7 @@ export default class Calendar {
       this.isDatesUpdated = false
       this.publiclyTrigger('datesRender', [
         {
-          view: component.view,
+          view: viewApi,
           el: component.view.rootEl
         }
       ])
@@ -956,7 +959,7 @@ export default class Calendar {
 
 
   // TODO: receive pev?
-  triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, view: View, ev: UIEvent) {
+  triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, view: ViewApi, ev: UIEvent) {
     const arg = {
       ...this.buildDatePointApi(dateSpan),
       dayEl,
@@ -1271,4 +1274,74 @@ function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, 
   }
 
   return eventUiBases
+}
+
+
+function buildViewApi(type: string, title: string, dateProfile: DateProfile, dateEnv: DateEnv) {
+  return new ViewApi(type, title, dateProfile, dateEnv)
+}
+
+
+// Title and Date Formatting
+// -----------------------------------------------------------------------------------------------------------------
+
+
+// Computes what the title at the top of the calendar should be for this view
+function computeTitle(dateProfile, dateEnv: DateEnv, viewOptions) {
+  let range: DateRange
+
+  // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
+  if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
+    range = dateProfile.currentRange
+  } else { // for day units or smaller, use the actual day range
+    range = dateProfile.activeRange
+  }
+
+  return dateEnv.formatRange(
+    range.start,
+    range.end,
+    createFormatter(
+      viewOptions.titleFormat || computeTitleFormat(dateProfile),
+      viewOptions.titleRangeSeparator
+    ),
+    { isEndExclusive: dateProfile.isRangeAllDay }
+  )
+}
+
+
+// Generates the format string that should be used to generate the title for the current date range.
+// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
+function computeTitleFormat(dateProfile) {
+  let currentRangeUnit = dateProfile.currentRangeUnit
+
+  if (currentRangeUnit === 'year') {
+    return { year: 'numeric' }
+  } else if (currentRangeUnit === 'month') {
+    return { year: 'numeric', month: 'long' } // like "September 2014"
+  } else {
+    let days = diffWholeDays(
+      dateProfile.currentRange.start,
+      dateProfile.currentRange.end
+    )
+    if (days !== null && days > 1) {
+      // multi-day range. shorter, like "Sep 9 - 10 2014"
+      return { year: 'numeric', month: 'short', day: 'numeric' }
+    } else {
+      // one day. longer, like "September 9 2014"
+      return { year: 'numeric', month: 'long', day: 'numeric' }
+    }
+  }
+}
+
+
+function computeDoDelay(actions: Action[]) {
+  for (let action of actions) {
+    switch (action.type) {
+      case 'INIT':
+      case 'SET_EVENT_DRAG':
+      case 'SET_EVENT_RESIZE':
+        return false
+    }
+  }
+  return true
 }

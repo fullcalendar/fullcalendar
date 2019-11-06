@@ -45,10 +45,11 @@ export default abstract class TimeColsView extends View {
   }
 
 
-  renderLayout(props: { type: string }, context: ComponentContext) {
-    let res = this.renderSkeleton(true, { type: props.type })
+  renderLayout(props: { type: string }) {
+    let res = this.renderSkeleton({ type: props.type })
 
-    let scroller = this.renderScroller(res.contentWrapEl, {
+    let scroller = this.renderScroller({
+      parentEl: res.contentWrapEl,
       overflowX: 'hidden',
       overflowY: 'auto'
     })

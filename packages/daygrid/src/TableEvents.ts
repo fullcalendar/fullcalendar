@@ -36,7 +36,7 @@ export default class TableEvents extends CellEvents<TableEventsProps> {
       hiddenInstances: props.hiddenInstances
     }, context)
 
-    let rowStructs = this.attachSegs(true, {
+    let rowStructs = this.attachSegs({
       renderProps: props.renderProps,
       segs,
       rowEls: props.rowEls,

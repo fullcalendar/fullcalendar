@@ -1,7 +1,10 @@
-import { DayGrid } from '@fullcalendar/daygrid'
-import { TimeGrid } from '@fullcalendar/timegrid'
+import { DayTable } from '@fullcalendar/daygrid'
+import { DayTimeCols } from '@fullcalendar/timegrid'
 import { ListView } from '@fullcalendar/list'
 
+/*
+these tests will only work as long as each component has an updateSize method
+*/
 describe('rerender performance', function() {
 
   pushOptions({
@@ -15,13 +18,13 @@ describe('rerender performance', function() {
   ;[
     {
       defaultView: 'dayGridMonth',
-      classes: { DayGrid },
-      changeToView: 'list' // does not have DayGrid!
+      classes: { DayTable },
+      changeToView: 'list' // does not have DayTable!
     },
     {
       defaultView: 'timeGridWeek',
-      classes: { DayGrid, TimeGrid },
-      changeToView: 'list' // does not have DayGrid!
+      classes: { DayTable, DayTimeCols },
+      changeToView: 'list' // does not have DayTable!
     },
     {
       defaultView: 'listWeek',

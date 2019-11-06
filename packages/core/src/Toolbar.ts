@@ -1,7 +1,7 @@
 import { htmlEscape } from './util/html'
 import { htmlToElement, appendToElement, findElements, createElement } from './util/dom-manip'
 import ComponentContext from './component/ComponentContext'
-import { Component, renderer } from './view-framework'
+import { Component, renderer, DomLocation } from './view-framework'
 import { ViewSpec } from './structs/view-spec'
 import Calendar from './Calendar'
 import Theme from './theme/Theme'
@@ -10,7 +10,7 @@ import Theme from './theme/Theme'
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export interface ToolbarRenderProps {
+export interface ToolbarRenderProps extends DomLocation {
   extraClassName: string
   layout: any
   title: string
@@ -20,7 +20,7 @@ export interface ToolbarRenderProps {
   isNextEnabled: boolean
 }
 
-export default class Toolbar extends Component<ToolbarRenderProps> {
+export default class Toolbar extends Component<ToolbarRenderProps, ComponentContext> {
 
   private renderBase = renderer(this._renderBase)
   private renderTitle = renderer(renderTitle)
@@ -34,16 +34,16 @@ export default class Toolbar extends Component<ToolbarRenderProps> {
 
   render(props: ToolbarRenderProps) {
 
-    let el = this.renderBase(true, {
+    let el = this.renderBase({
       extraClassName: props.extraClassName,
       layout: props.layout
     })
 
-    this.renderTitle(true, { el, text: props.title })
-    this.renderActiveButton(true, { el, buttonName: props.activeButton })
-    this.renderToday(true, { el, isEnabled: props.isTodayEnabled })
-    this.renderPrev(true, { el, isEnabled: props.isPrevEnabled })
-    this.renderNext(true, { el, isEnabled: props.isNextEnabled })
+    this.renderTitle({ el, text: props.title })
+    this.renderActiveButton({ el, buttonName: props.activeButton })
+    this.renderToday({ el, isEnabled: props.isTodayEnabled })
+    this.renderPrev({ el, isEnabled: props.isPrevEnabled })
+    this.renderNext({ el, isEnabled: props.isNextEnabled })
 
     return el
   }

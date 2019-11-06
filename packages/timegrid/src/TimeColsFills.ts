@@ -13,12 +13,12 @@ export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
 
 
   render(props: TimeColsFillsProps) {
-    let segs = this.renderSegs(true, {
+    let segs = this.renderSegs({
       type: props.type,
       segs: props.segs
     })
 
-    this.attachSegs(true, {
+    this.attachSegs({
       segs,
       containerEls: props.containerEls
     })

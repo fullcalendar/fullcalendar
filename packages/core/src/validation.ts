@@ -30,7 +30,7 @@ export function isDateSelectionValid(dateSelection: DateSpan, calendar: Calendar
 }
 
 function isNewPropsValid(newProps, calendar: Calendar) {
-  let view = calendar.view
+  let view = calendar.component.view
 
   let props = {
     businessHours: view ? view.props.businessHours : createEmptyEventStore(), // why? yuck

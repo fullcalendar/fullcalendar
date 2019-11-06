@@ -356,6 +356,7 @@ describe('custom view', function() {
       // also sorta tests plugin system
 
       class CrazyView extends View {
+        render() {}
       }
 
       initCalendar({

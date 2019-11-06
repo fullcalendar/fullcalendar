@@ -1,30 +1,30 @@
 import ComponentContext, { computeContextProps } from './component/ComponentContext'
-import { Component, renderer } from './view-framework'
+import { Component, renderer, DomLocation } from './view-framework'
 import { ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
 import Toolbar from './Toolbar'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { createElement, applyStyle } from './util/dom-manip'
-import { rangeContainsMarker, DateRange } from './datelib/date-range'
+import { rangeContainsMarker } from './datelib/date-range'
 import { EventUiHash } from './component/event-ui'
 import { parseBusinessHours } from './structs/business-hours'
 import { memoize } from './util/memoize'
 import { computeHeightAndMargins } from './util/dom-geom'
-import { createFormatter } from './datelib/formatting'
-import { diffWholeDays, DateMarker } from './datelib/marker'
+import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
-import { ViewClass } from './structs/view-config'
+import { listRenderer } from './view-framework'
 
 
-export interface CalendarComponentProps extends CalendarState {
+export type CalendarComponentProps = DomLocation & CalendarState & {
   viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator // for the current view
   eventUiBases: EventUiHash
+  title: string
 }
 
-export default class CalendarComponent extends Component<CalendarComponentProps> {
+export default class CalendarComponent extends Component<CalendarComponentProps, ComponentContext> {
 
   view: View
   header: Toolbar
@@ -33,11 +33,9 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   isHeightAuto: boolean
   viewHeight: number
 
-  private computeTitle = memoize(computeTitle)
   private parseBusinessHours = memoize((input) => {
     return parseBusinessHours(input, this.context.calendar)
   })
-  private buildViewComponent = renderer(this._buildViewComponent, this._clearViewComponent)
   private computeViewContextProps = memoize(computeContextProps)
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private updateClassNames = renderer(this._setClassNames, this._unsetClassNames)
@@ -45,20 +43,20 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   private buildToolbarProps = memoize(this._buildToolbarProps)
   private renderHeader = renderer(Toolbar)
   private renderFooter = renderer(Toolbar)
+  private renderViews = listRenderer()
 
 
   /*
   renders INSIDE of an outer div
   */
   render(props: CalendarComponentProps, context: ComponentContext) {
-    let title = this.computeTitle(props.dateProfile, props.viewSpec.options)
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
       props.dateProfile,
       props.dateProfileGenerator,
       props.currentDate,
       context.calendar.getNow(),
-      title
+      props.title
     )
     let innerEls: HTMLElement[] = []
 
@@ -66,7 +64,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     this.updateClassNames(true)
 
     if (context.options.header) {
-      let header = this.renderHeader(true, {
+      let header = this.renderHeader({
         extraClassName: 'fc-header-toolbar',
         layout: context.options.header,
         ...toolbarProps
@@ -77,11 +75,11 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     }
 
     let viewContainerEl = this.renderViewContainer(true)
-    this.renderView(props, title, viewContainerEl, context)
+    this.renderView(props, viewContainerEl, context)
     innerEls.push(viewContainerEl)
 
     if (context.options.footer) {
-      let footer = this.renderFooter(true, {
+      let footer = this.renderFooter({
         extraClassName: 'fc-footer-toolbar',
         layout: context.options.footer,
         ...toolbarProps
@@ -114,7 +112,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
 
   _setClassNames(props: {}, context: ComponentContext) {
-    let classList = this.location.parent.classList
+    let classList = this.location.parentEl.classList
     let classNames: string[] = [
       'fc',
       'fc-' + context.options.dir,
@@ -130,7 +128,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
 
   _unsetClassNames(classNames: string[]) {
-    let classList = this.location.parent.classList
+    let classList = this.location.parentEl.classList
 
     for (let className of classNames) {
       classList.remove(className)
@@ -171,13 +169,9 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
   }
 
 
-  renderView(props: CalendarComponentProps, title: string, viewContainerEl: HTMLElement, context: ComponentContext) {
+  renderView(props: CalendarComponentProps, viewContainerEl: HTMLElement, context: ComponentContext) {
     let { pluginHooks, options } = context
     let { viewSpec } = props
-
-    let view = this.view = this.buildViewComponent(true, { viewClass: viewSpec.class })
-    view.type = viewSpec.type
-    view.title = title
 
     let viewProps: ViewProps = {
       viewSpec,
@@ -201,26 +195,21 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
       )
     }
 
-    view.update(
-      viewContainerEl,
-      viewProps,
+    let views = this.renderViews({
+      parentEl: viewContainerEl
+    }, [
       {
-        ...context,
-        view,
-        options: viewSpec.options,
-        ...this.computeViewContextProps(viewSpec.options)
+        id: '',
+        componentClass: viewSpec.class,
+        props: viewProps
       }
-    )
-  }
+    ], {
+      ...context,
+      options: viewSpec.options,
+      ...this.computeViewContextProps(viewSpec.options)
+    })
 
-
-  _buildViewComponent(props: { viewClass: ViewClass }) {
-    return new props.viewClass(this.renderEngine)
-  }
-
-
-  _clearViewComponent(view: View) {
-    view.unmount()
+    this.view = views[0] as View
   }
 
 
@@ -255,7 +244,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     } else if (typeof heightInput === 'function') { // exists and is a function
       this.viewHeight = heightInput() - this.queryToolbarsHeight()
     } else if (heightInput === 'parent') { // set to height of parent element
-      let parentEl = this.location.parent.parentNode as HTMLElement
+      let parentEl = this.location.parentEl.parentNode as HTMLElement
       this.viewHeight = parentEl.getBoundingClientRect().height - this.queryToolbarsHeight()
     } else {
       this.viewHeight = Math.round(
@@ -286,7 +275,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
 
   freezeHeight() {
-    let rootEl = this.location.parent
+    let rootEl = this.location.parentEl
 
     applyStyle(rootEl, {
       height: rootEl.getBoundingClientRect().height,
@@ -296,7 +285,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
 
 
   thawHeight() {
-    let rootEl = this.location.parent
+    let rootEl = this.location.parentEl
 
     applyStyle(rootEl, {
       height: '',
@@ -304,58 +293,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps>
     })
   }
 
-}
-
-
-// Title and Date Formatting
-// -----------------------------------------------------------------------------------------------------------------
-
-
-// Computes what the title at the top of the calendar should be for this view
-function computeTitle(this: CalendarComponent, dateProfile, viewOptions) {
-  let range: DateRange
-
-  // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-  if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
-    range = dateProfile.currentRange
-  } else { // for day units or smaller, use the actual day range
-    range = dateProfile.activeRange
-  }
-
-  return this.context.dateEnv.formatRange(
-    range.start,
-    range.end,
-    createFormatter(
-      viewOptions.titleFormat || computeTitleFormat(dateProfile),
-      viewOptions.titleRangeSeparator
-    ),
-    { isEndExclusive: dateProfile.isRangeAllDay }
-  )
-}
-
-
-// Generates the format string that should be used to generate the title for the current date range.
-// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-function computeTitleFormat(dateProfile) {
-  let currentRangeUnit = dateProfile.currentRangeUnit
-
-  if (currentRangeUnit === 'year') {
-    return { year: 'numeric' }
-  } else if (currentRangeUnit === 'month') {
-    return { year: 'numeric', month: 'long' } // like "September 2014"
-  } else {
-    let days = diffWholeDays(
-      dateProfile.currentRange.start,
-      dateProfile.currentRange.end
-    )
-    if (days !== null && days > 1) {
-      // multi-day range. shorter, like "Sep 9 - 10 2014"
-      return { year: 'numeric', month: 'short', day: 'numeric' }
-    } else {
-      // one day. longer, like "September 9 2014"
-      return { year: 'numeric', month: 'long', day: 'numeric' }
-    }
-  }
 }
 
 

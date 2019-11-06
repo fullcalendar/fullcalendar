@@ -34,16 +34,19 @@ export default class DayTimeColsView extends TimeColsView {
       rootEl,
       headerWrapEl,
       contentWrapEl
-    } = this.renderLayout({ type: props.viewSpec.type }, context)
+    } = this.renderLayout({ type: props.viewSpec.type })
 
-    this.renderDayHeader(headerWrapEl, { // might be null
+    this.renderDayHeader({
+      parentEl: headerWrapEl, // might be null
       dateProfile,
       dates: dayTableModel.headerDates,
       datesRepDistinctDays: true,
       renderIntroHtml: this.renderHeadIntroHtml
     })
 
-    let allDayTable = this.renderDayTable({ parent: contentWrapEl, prepend: true }, { // might be null... TODO: make sure API handles this!!!
+    let allDayTable = this.renderDayTable({
+      parentEl: contentWrapEl, // might be null
+      prepend: true,
       ...splitProps['allDay'],
       dateProfile,
       dayTableModel,
@@ -52,14 +55,15 @@ export default class DayTimeColsView extends TimeColsView {
       renderProps: this.tableRenderProps
     })
 
-    let timeCols = this.renderDayTimeCols(contentWrapEl, {
+    let timeCols = this.renderDayTimeCols({
+      parentEl: contentWrapEl,
       ...splitProps['timed'],
       dateProfile,
       dayTableModel,
       renderProps: this.timeColsRenderProps
     })
 
-    this.startNowIndicator(dateProfile, dateProfileGenerator)
+    this.startNowIndicator()
 
     this.allDayTable = allDayTable
     this.timeCols = timeCols

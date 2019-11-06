@@ -13,11 +13,12 @@ import {
   Slicer,
   Hit,
   ComponentContext,
-  renderer
+  renderer,
+  DomLocation
 } from '@fullcalendar/core'
 import TimeCols, { TimeColsSeg, TimeColsRenderProps } from './TimeCols'
 
-export interface DayTimeColsProps {
+export interface DayTimeColsProps extends DomLocation {
   renderProps: TimeColsRenderProps
   dateProfile: DateProfile | null
   dayTableModel: DayTableModel
@@ -47,14 +48,14 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
     let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
 
-    let timeCols = this.renderTimeCols(true, {
+    let timeCols = this.renderTimeCols({
       ...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges),
       renderProps: props.renderProps,
       dateProfile,
       cells: dayTableModel.cells[0] // give the first row
     })
 
-    this.registerInteractive(true, { el: timeCols.rootEl })
+    this.registerInteractive({ el: timeCols.rootEl })
 
     this.dayRanges = dayRanges
     this.timeCols = timeCols

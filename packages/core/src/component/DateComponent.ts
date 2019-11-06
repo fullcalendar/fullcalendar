@@ -7,13 +7,14 @@ import { Hit } from '../interactions/hit'
 import { elementClosest } from '../util/dom-manip'
 import { isDateSelectionValid, isInteractionValid } from '../validation'
 import { EventInteractionState } from '../interactions/event-interaction-state'
+import ComponentContext from '../component/ComponentContext'
 
-export type DateComponentHash = { [uid: string]: DateComponent<any> }
+export type DateComponentHash = { [uid: string]: DateComponent<any, any> }
 
 // NOTE: for fg-events, eventRange.range is NOT sliced,
 // thus, we need isStart/isEnd
 export interface Seg {
-  component?: DateComponent<any>
+  component?: DateComponent<any, any>
   isStart: boolean
   isEnd: boolean
   eventRange?: EventRenderRange
@@ -33,7 +34,7 @@ PURPOSES:
 - hook up to fg, fill, and mirror renderers
 - interface for dragging and hits
 */
-export default abstract class DateComponent<PropsType, StateType = {}> extends Component<PropsType, StateType> {
+export default abstract class DateComponent<Props, State={}, Snapshot={}> extends Component<Props, ComponentContext, State, Snapshot> {
 
   // self-config, overridable by subclasses. must set on prototype
   fgSegSelector: string // lets eventRender produce elements without fc-event class

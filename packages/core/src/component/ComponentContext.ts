@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import View from '../View'
+import ViewApi from '../ViewApi'
 import Theme from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
 import { parseFieldSpecs } from '../util/misc'
@@ -10,7 +10,7 @@ import { PluginHooks } from '../plugin-system'
 export default interface ComponentContext {
   calendar: Calendar
   pluginHooks: PluginHooks
-  view?: View
+  view?: ViewApi
   dateEnv: DateEnv
   theme: Theme
   options: any

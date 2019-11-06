@@ -27,6 +27,7 @@ import TableMirrorEvents from './TableMirrorEvents'
 import TableFills from './TableFills'
 import DayTile from './DayTile'
 import { renderDayBgRowHtml } from './DayBgRow'
+import { DomLocation } from '@fullcalendar/core/view-framework'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -65,7 +66,7 @@ export interface CellModel {
   htmlAttrs?: string
 }
 
-export interface TableProps {
+export interface TableProps extends DomLocation {
   renderProps: TableRenderProps
   dateProfile: DateProfile
   cells: CellModel[][]
@@ -82,7 +83,7 @@ export interface TableProps {
   isRigid: boolean
 }
 
-export default class Table extends Component<TableProps, TableState> {
+export default class Table extends Component<TableProps, ComponentContext, TableState> {
 
   private renderCells = renderer(this._renderCells)
   private renderFgEvents = renderer(TableEvents)
@@ -108,7 +109,7 @@ export default class Table extends Component<TableProps, TableState> {
     let segPopoverState = state.segPopover
     let colCnt = props.cells[0].length
 
-    let { rootEl, rowEls, cellEls } = this.renderCells(true, {
+    let { rootEl, rowEls, cellEls } = this.renderCells({
       renderProps: props.renderProps,
       dateProfile: props.dateProfile,
       cells: props.cells,
@@ -116,7 +117,7 @@ export default class Table extends Component<TableProps, TableState> {
     })
 
     if (props.eventDrag) {
-      this.renderHighlight(true, {
+      this.renderHighlight({
         type: 'highlight',
         renderProps: props.renderProps,
         segs: props.eventDrag.segs,
@@ -124,7 +125,7 @@ export default class Table extends Component<TableProps, TableState> {
         colCnt
       })
     } else {
-      this.renderHighlight(true, {
+      this.renderHighlight({
         type: 'highlight',
         renderProps: props.renderProps,
         segs: props.dateSelectionSegs,
@@ -133,7 +134,7 @@ export default class Table extends Component<TableProps, TableState> {
       })
     }
 
-    this.renderBusinessHours(true, {
+    this.renderBusinessHours({
       type: 'businessHours',
       renderProps: props.renderProps,
       segs: props.businessHourSegs,
@@ -141,7 +142,7 @@ export default class Table extends Component<TableProps, TableState> {
       colCnt
     })
 
-    this.renderBgEvents(true, {
+    this.renderBgEvents({
       type: 'bgEvent',
       renderProps: props.renderProps,
       segs: props.bgEventSegs,
@@ -149,7 +150,7 @@ export default class Table extends Component<TableProps, TableState> {
       colCnt
     })
 
-    let eventsRenderer = this.renderFgEvents(true, {
+    let eventsRenderer = this.renderFgEvents({
       renderProps: props.renderProps,
       segs: props.fgEventSegs,
       rowEls,
@@ -161,7 +162,7 @@ export default class Table extends Component<TableProps, TableState> {
     })
 
     if (props.eventResize) {
-      this.renderMirrorEvents(true, {
+      this.renderMirrorEvents({
         renderProps: props.renderProps,
         segs: props.eventResize.segs,
         rowEls,
@@ -176,9 +177,10 @@ export default class Table extends Component<TableProps, TableState> {
       segPopoverState &&
       segPopoverState.origFgSegs === props.fgEventSegs // will close popover when events change
     ) {
-      let viewEl = context.view.rootEl
+      let viewEl = context.calendar.component.view.rootEl // yuck
 
-      let popover = this.renderPopover(viewEl, { // will be outside of all scrollers within the view
+      let popover = this.renderPopover({ // will be outside of all scrollers within the view
+        parentEl: viewEl,
         top: segPopoverState.top,
         left: segPopoverState.left,
         right: segPopoverState.right,
@@ -186,7 +188,8 @@ export default class Table extends Component<TableProps, TableState> {
         clippingEl: viewEl
       })
 
-      this.renderTileForPopover(popover.rootEl, { // renders the close icon too, for clicking
+      this.renderTileForPopover({ // renders the close icon too, for clicking
+        parentEl: popover.rootEl,
         date: state.segPopover.date,
         fgSegs: state.segPopover.fgSegs,
         selectedInstanceId: props.eventSelection,
@@ -728,7 +731,7 @@ export default class Table extends Component<TableProps, TableState> {
       if (clickOption === 'popover') {
         let _col = isRtl ? colCnt - col - 1 : col // HACK: props.cells has different dir system?
         let topEl = rowCnt === 1
-          ? context.view.rootEl // will cause the popover to cover any sort of header
+          ? context.calendar.component.view.rootEl // will cause the popover to cover any sort of header
           : rowEls[row] // will align with top of row
         let left, right
 

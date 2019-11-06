@@ -34,7 +34,7 @@ export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps>
       hiddenInstances: props.hiddenInstances
     }, context)
 
-    this.attachSegs(true, {
+    this.attachSegs({
       segs,
       dayDates: props.dayDates,
       contentEl: props.contentEl

@@ -39,12 +39,12 @@ export default class TableFills extends FillRenderer<TableFillsProps> {
       })
     }
 
-    segs = this.renderSegs(true, {
+    segs = this.renderSegs({
       type: props.type,
       segs
     })
 
-    this.attachSegs(true, {
+    this.attachSegs({
       type: props.type,
       renderProps: props.renderProps,
       segs,

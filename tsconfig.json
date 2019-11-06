@@ -16,6 +16,7 @@
     "allowJs": true,
     "checkJs": true,
     "baseUrl": ".",
+    "strictBindCallApply": true,
     "paths": {
       "@fullcalendar/core": [ "packages/core/src/main" ],
       "@fullcalendar/core/*": [ "packages/core/src/*" ],

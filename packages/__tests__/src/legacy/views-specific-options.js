@@ -153,7 +153,7 @@ describe('view-specific options', function() {
 
   it('can implicitly target an old-school View subclass', function() {
 
-    function SuperDayGridView() { DayGridView.apply(this, arguments) }
+    function SuperDayGridView() { DayGridView.apply(this, /** @type {any} */ (arguments)) }
     SuperDayGridView.prototype = Object.create(DayGridView.prototype)
 
     initCalendar({

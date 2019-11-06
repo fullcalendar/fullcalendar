@@ -41,16 +41,17 @@ export default class ListView extends View {
   render(props: ViewProps) {
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
 
-    let rootEl = this.renderSkeleton(true, {
+    let rootEl = this.renderSkeleton({
       viewSpec: props.viewSpec
     })
 
-    this.scroller = this.renderScroller(rootEl, {
+    this.scroller = this.renderScroller({
+      parentEl: rootEl,
       overflowX: 'hidden',
       overflowY: 'auto'
     })
 
-    this.eventRenderer = this.renderEvents(true, {
+    this.eventRenderer = this.renderEvents({
       segs: this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges),
       dayDates,
       contentEl: this.scroller.el,

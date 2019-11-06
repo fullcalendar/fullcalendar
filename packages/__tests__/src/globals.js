@@ -99,7 +99,10 @@ function initCalendar(moreOptions, el) {
 }
 
 function getCurrentOptions() {
-  return $.extend.apply($, [ {} ].concat(optionsStack))
+  /** @type {any} */
+  let args = [ {} ].concat(optionsStack)
+
+  return $.extend.apply($, args)
 }
 
 
@@ -117,30 +120,42 @@ function describeOptions(optName, hash, callback) {
     optName = null
   }
 
-  $.each(hash, function(desc, val) {
-    var opts
+  $.each(
+    hash,
+    /**
+     * @param desc {string}
+     */
+    function(desc, val) {
+      var opts
 
-    if (optName) {
-      opts = {}
-      opts[optName] = val
-    } else {
-      opts = val
+      if (optName) {
+        opts = {}
+        opts[optName] = val
+      } else {
+        opts = val
+      }
+      opts = $.extend(true, {}, opts)
+
+      describe(desc, function() {
+        pushOptions(opts)
+        callback(val)
+      })
     }
-    opts = $.extend(true, {}, opts)
-
-    describe(desc, function() {
-      pushOptions(opts)
-      callback(val)
-    })
-  })
+  )
 }
 
 function describeValues(hash, callback) {
-  $.each(hash, function(desc, val) {
-    describe(desc, function() {
-      callback(val)
-    })
-  })
+  $.each(
+    hash,
+    /**
+     * @param desc {string}
+     */
+    function(desc, val) {
+      describe(desc, function() {
+        callback(val)
+      })
+    }
+  )
 }
 
 

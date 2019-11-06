@@ -27,18 +27,20 @@ export default class DayTableView extends TableView {
     let { dateProfile } = props
     let dayTableModel = this.buildDayTableModel(dateProfile, props.dateProfileGenerator)
 
-    let { rootEl, headerWrapEl, tableWrapEl } = this.renderLayout({
+    let { rootEl, headerWrapEl, contentWrapEl } = this.renderLayout({
       type: props.viewSpec.type
     }, context)
 
-    this.header = this.renderHeader(headerWrapEl, { // location might be null
+    this.header = this.renderHeader({
+      parentEl: headerWrapEl, // might be null
       dateProfile,
       dates: dayTableModel.headerDates,
       datesRepDistinctDays: dayTableModel.rowCnt === 1,
       renderIntroHtml: this.renderHeadIntroHtml
     })
 
-    this.table = this.renderTable(tableWrapEl, {
+    this.table = this.renderTable({
+      parentEl: contentWrapEl,
       renderProps: this.tableRenderProps,
       dateProfile,
       dayTableModel,

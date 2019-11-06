@@ -11,7 +11,7 @@ export interface BaseFillRendererProps {
 }
 
 // use for highlight, background events, business hours
-export default abstract class FillRenderer<FillRendererProps extends BaseFillRendererProps> extends Component<FillRendererProps> {
+export default abstract class FillRenderer<FillRendererProps extends BaseFillRendererProps> extends Component<FillRendererProps, ComponentContext> {
 
   renderSegs = renderer(this._renderSegs, this._unrenderSegs)
 

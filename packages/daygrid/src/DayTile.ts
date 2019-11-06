@@ -6,12 +6,13 @@ import {
   addDays, DateMarker,
   ComponentContext,
   EventInstanceHash,
-  renderer
+  renderer,
+  DomLocation,
+  htmlToElements
 } from '@fullcalendar/core'
 import DayTileEvents from './DayTileEvents'
-import { htmlToElements } from '@fullcalendar/core/util/dom-manip'
 
-export interface DayTileProps {
+export interface DayTileProps extends DomLocation {
   date: DateMarker
   fgSegs: Seg[]
   selectedInstanceId: string
@@ -25,11 +26,11 @@ export default class DayTile extends DateComponent<DayTileProps> {
 
 
   render(props: DayTileProps) {
-    let { rootEls, segContainerEl } = this.renderFrame(true, {
+    let { rootEls, segContainerEl } = this.renderFrame({
       date: props.date
     })
 
-    this.renderEvents(true, {
+    this.renderEvents({
       segs: props.fgSegs,
       segContainerEl,
       selectedInstanceId: props.selectedInstanceId,
@@ -48,7 +49,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
     // HACK referencing parent's elements.
     // also, if parent's elements change, this will break.
     calendar.registerInteractiveComponent(this, {
-      el: this.location.parent,
+      el: this.location.parentEl,
       useEventCenter: false
     })
   }
@@ -69,7 +70,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
           allDay: true,
           range: { start: date, end: addDays(date, 1) }
         },
-        dayEl: this.location.parent, // HACK
+        dayEl: this.location.parentEl, // HACK
         rect: {
           left: 0,
           top: 0,

@@ -2,9 +2,9 @@ import { createPlugin } from '@fullcalendar/core'
 import TimeColsView from './TimeColsView'
 import DayTimeColsView, { buildDayTableModel } from './DayTimeColsView'
 import { TimeColsSeg, TimeColsRenderProps } from './TimeCols'
-import { DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
+import { default as DayTimeCols, DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
 
-export { DayTimeColsView, TimeColsView, buildDayTableModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg, TimeColsRenderProps }
+export { DayTimeCols, DayTimeColsView, TimeColsView, buildDayTableModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg, TimeColsRenderProps }
 export { default as TimeCols } from './TimeCols'
 
 export default createPlugin({

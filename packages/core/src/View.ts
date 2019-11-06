@@ -38,36 +38,12 @@ export default abstract class View extends DateComponent<ViewProps> {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  type: string // subclass' view name (string). for the API
-  title: string // the text that will be displayed in the header's title. SET BY CALLER for API
-
   // now indicator
   isNowIndicatorRendered: boolean
   initialNowDate: DateMarker // result first getNow call
   initialNowQueriedMs: number // ms time the getNow was called
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
-
-
-  // Date Setting/Unsetting
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  get activeStart(): Date {
-    return this.context.dateEnv.toDate(this.props.dateProfile.activeRange.start)
-  }
-
-  get activeEnd(): Date {
-    return this.context.dateEnv.toDate(this.props.dateProfile.activeRange.end)
-  }
-
-  get currentStart(): Date {
-    return this.context.dateEnv.toDate(this.props.dateProfile.currentRange.start)
-  }
-
-  get currentEnd(): Date {
-    return this.context.dateEnv.toDate(this.props.dateProfile.currentRange.end)
-  }
 
 
   // Sizing
@@ -127,14 +103,14 @@ export default abstract class View extends DateComponent<ViewProps> {
   // which is defined by this.getNowIndicatorUnit().
   // TODO: somehow do this for the current whole day's background too
   // USAGE: must be called manually from subclasses' render methods! don't need to call stopNowIndicator tho
-  startNowIndicator(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
+  startNowIndicator() {
     let { calendar, dateEnv, options } = this.context
     let unit
     let update
     let delay // ms wait value
 
     if (options.nowIndicator && !this.initialNowDate) {
-      unit = this.getNowIndicatorUnit(dateProfile, dateProfileGenerator)
+      unit = this.getNowIndicatorUnit()
 
       if (unit) {
         update = this.updateNowIndicator.bind(this)
@@ -205,7 +181,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  getNowIndicatorUnit(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
+  getNowIndicatorUnit() {
     // subclasses should implement
   }
 

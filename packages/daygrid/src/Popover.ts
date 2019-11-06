@@ -6,10 +6,10 @@ import {
   createElement,
   applyStyle,
   listenBySelector,
-  computeClippingRect, computeRect, Component, ComponentContext
+  computeClippingRect, computeRect, Component, ComponentContext, DomLocation
 } from '@fullcalendar/core'
 
-export interface PopoverProps {
+export interface PopoverProps extends DomLocation {
   clippingEl: HTMLElement
   extraClassName?: string
   top?: number
@@ -18,7 +18,7 @@ export interface PopoverProps {
   onClose?: () => void
 }
 
-export default class Popover extends Component<PopoverProps> {
+export default class Popover extends Component<PopoverProps, ComponentContext> {
 
 
   render(props: PopoverProps, context: ComponentContext) {

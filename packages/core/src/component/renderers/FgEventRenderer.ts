@@ -20,7 +20,7 @@ export interface BaseFgEventRendererProps {
 
 export default abstract class FgEventRenderer<
   FgEventRendererProps extends BaseFgEventRendererProps = BaseFgEventRendererProps
-> extends Component<FgEventRendererProps> {
+> extends Component<FgEventRendererProps, ComponentContext> {
 
   private updateComputedOptions = memoize(this._updateComputedOptions)
   private renderSegsPlain = renderer(this._renderSegsPlain, this._unrenderSegsPlain)
@@ -40,17 +40,17 @@ export default abstract class FgEventRenderer<
   renderSegs(props: BaseFgEventRendererProps, context: ComponentContext) {
     this.updateComputedOptions(context.options)
 
-    let { segs } = this.renderSegsPlain(true, {
+    let { segs } = this.renderSegsPlain({
       segs: props.segs,
       mirrorInfo: props.mirrorInfo
     })
 
-    this.renderSelectedInstance(true, {
+    this.renderSelectedInstance({
       segs,
       instanceId: props.selectedInstanceId
     })
 
-    this.renderHiddenInstances(true, {
+    this.renderHiddenInstances({
       segs,
       hiddenInstances: props.hiddenInstances
     })

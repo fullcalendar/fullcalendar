@@ -59,6 +59,7 @@ export {
   findElements,
   findDirectChildren,
   htmlToElement,
+  htmlToElements,
   createElement,
   insertAfterElement,
   prependToElement,
@@ -104,6 +105,7 @@ export { default as ComponentContext } from './component/ComponentContext'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
 export { default as View, ViewProps, renderViewEl } from './View'
+export { default as ViewApi } from './ViewApi'
 export { default as FgEventRenderer, buildSegCompareObj, BaseFgEventRendererProps, sortEventSegs } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer, BaseFillRendererProps } from './component/renderers/FillRenderer'
 
@@ -170,4 +172,4 @@ export { default as EventApi } from './api/EventApi'
 
 export { default as requestJson } from './util/requestJson'
 
-export { Component, renderer } from './view-framework'
+export { Component, renderer, DomLocation, listRenderer, ListRendererItem } from './view-framework'

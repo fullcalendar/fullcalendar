@@ -11,11 +11,12 @@ import {
   Slicer,
   Hit,
   ComponentContext,
-  renderer
+  renderer,
+  DomLocation
 } from '@fullcalendar/core'
 import { default as Table, TableSeg, TableRenderProps } from './Table'
 
-export interface DayTableProps {
+export interface DayTableProps extends DomLocation {
   renderProps: TableRenderProps
   dateProfile: DateProfile | null
   dayTableModel: DayTableModel
@@ -30,19 +31,19 @@ export interface DayTableProps {
   isRigid: boolean
 }
 
-export default class DayTable extends DateComponent<DayTableProps> {
+export default class DayTable extends DateComponent<DayTableProps, ComponentContext> {
 
   private renderTable = renderer(Table)
   private registerInteractive = renderer(this._registerInteractive, this._unregisterInteractive)
-
   private slicer = new DayTableSlicer()
+
   table: Table
 
 
   render(props: DayTableProps, context: ComponentContext) {
     let { dateProfile, dayTableModel } = props
 
-    let table = this.renderTable(true, {
+    let table = this.table = this.renderTable({
       ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayTableModel),
       dateProfile,
       cells: dayTableModel.cells,
@@ -50,11 +51,10 @@ export default class DayTable extends DateComponent<DayTableProps> {
       renderProps: props.renderProps
     })
 
-    this.registerInteractive(true, {
+    this.registerInteractive({
       el: table.rootEl
     })
 
-    this.table = table
     return table
   }
 

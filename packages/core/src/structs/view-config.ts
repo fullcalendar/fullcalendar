@@ -1,7 +1,7 @@
-import View from '../View'
+import View, { ViewProps } from '../View'
 import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
-import { RenderEngine } from '../view-framework'
+import { ComponentContext } from '@fullcalendar/core'
 
 /*
 A view-config represents information for either:
@@ -10,7 +10,8 @@ B) options to customize an existing view, in which case only provides options.
 */
 
 export type ViewClass = new(
-  renderEngine: RenderEngine
+  props: ViewProps,
+  context: ComponentContext
 ) => View
 
 export interface ViewConfigObjectInput {

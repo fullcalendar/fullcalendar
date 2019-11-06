@@ -10,7 +10,6 @@ import {
   diffDates, enableCursor, disableCursor,
   EventRenderRange, getElSeg,
   EventApi,
-  View,
   eventDragMutationMassager,
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers
@@ -308,7 +307,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
             ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),
             draggedEl: ev.subjectEl as HTMLElement,
             jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-            view: finalHit.component as View // should this be finalHit.component.view? See #4644
+            view: finalHit.component.context.view
           }
           receivingCalendar.publiclyTrigger('drop', [ dropArg ])
 
@@ -320,7 +319,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
                 mutatedRelevantEvents.defs[eventDef.defId],
                 mutatedRelevantEvents.instances[eventInstance.instanceId]
               ),
-              view: finalHit.component as View // should this be finalHit.component.view? See #4644
+              view: finalHit.component.context.view
             }
           ])
         }

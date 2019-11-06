@@ -25,6 +25,7 @@ import {
   sortEventSegs,
   memoize,
   renderer,
+  DomLocation,
 } from '@fullcalendar/core'
 import { renderDayBgRowHtml } from '@fullcalendar/daygrid'
 import TimeColsEvents from './TimeColsEvents'
@@ -74,7 +75,7 @@ export interface TimeColsProps {
   eventResize: EventSegUiInteractionState | null
 }
 
-export default class TimeCols extends Component<TimeColsProps> {
+export default class TimeCols extends Component<TimeColsProps, ComponentContext> {
 
   processOptions = memoize(this._processOptions)
   renderSkeleton = renderer(renderSkeleton)
@@ -173,14 +174,16 @@ export default class TimeCols extends Component<TimeColsProps> {
       slatContainerEl
     } = this.renderSkeleton(true)
 
-    this.renderBgColumns(rootBgContainerEl, {
+    this.renderBgColumns({
+      parentEl: rootBgContainerEl,
       rootEl,
       cells: props.cells,
       dateProfile: props.dateProfile,
       renderProps: props.renderProps
     })
 
-    this.renderSlats(slatContainerEl, {
+    this.renderSlats({
+      parentEl: slatContainerEl,
       rootEl,
       dateProfile: props.dateProfile
     })
@@ -192,31 +195,32 @@ export default class TimeCols extends Component<TimeColsProps> {
       fgContainerEls,
       highlightContainerEls,
       mirrorContainerEls
-    } = this.renderContentSkeleton(contentSkeletonEl, {
+    } = this.renderContentSkeleton({
+      parentEl: contentSkeletonEl,
       colCnt: props.cells.length,
       renderProps: props.renderProps
     })
 
     let segRenderers = [
-      this.renderBusinessHours(true, {
+      this.renderBusinessHours({
         type: 'businessHours',
         containerEls: businessContainerEls,
         segs: props.businessHourSegs,
       }),
 
-      this.renderDateSelection(true, {
+      this.renderDateSelection({
         type: 'highlight',
         containerEls: highlightContainerEls,
         segs: options.selectMirror ? null : props.dateSelectionSegs // do highlight if NO mirror
       }),
 
-      this.renderBgEvents(true, {
+      this.renderBgEvents({
         type: 'bgEvent',
         containerEls: bgContainerEls,
         segs: props.bgEventSegs
       }),
 
-      this.renderFgEvents(true, {
+      this.renderFgEvents({
         containerEls: fgContainerEls,
         segs: props.fgEventSegs,
         selectedInstanceId: props.eventSelection,
@@ -240,21 +244,21 @@ export default class TimeCols extends Component<TimeColsProps> {
   handleMirror(props: TimeColsProps, mirrorContainerEls: HTMLElement[], options): TimeColsEvents | null {
 
     if (props.eventDrag) {
-      return this.renderMirrorEvents(true, {
+      return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.eventDrag.segs,
         mirrorInfo: { isDragging: true, sourceSeg: props.eventDrag.sourceSeg }
       })
 
     } else if (props.eventResize) {
-      return this.renderMirrorEvents(true, {
+      return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.eventResize.segs,
         mirrorInfo: { isDragging: true, sourceSeg: props.eventResize.sourceSeg }
       })
 
     } else if (options.selectMirror) {
-      return this.renderMirrorEvents(true, {
+      return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.dateSelectionSegs,
         mirrorInfo: { isSelecting: true }
@@ -294,7 +298,7 @@ export default class TimeCols extends Component<TimeColsProps> {
 
 
   _renderSlats(
-    { rootEl, dateProfile }: { rootEl: HTMLElement, dateProfile: DateProfile },
+    { rootEl, dateProfile }: { rootEl: HTMLElement, dateProfile: DateProfile } & DomLocation,
     context: ComponentContext
   ) {
     let tableEl = createElement(
@@ -362,7 +366,7 @@ export default class TimeCols extends Component<TimeColsProps> {
 
   // goes behind the slats
   _renderBgColumns(
-    { rootEl, cells, dateProfile, renderProps }: { rootEl: HTMLElement, cells: TimeColsCell[], dateProfile: DateProfile, renderProps: any },
+    { rootEl, cells, dateProfile, renderProps }: { rootEl: HTMLElement, cells: TimeColsCell[], dateProfile: DateProfile, renderProps: any } & DomLocation,
     context: ComponentContext
   ) {
     let { calendar, view, isRtl, theme, dateEnv } = context
@@ -650,7 +654,7 @@ function renderSkeleton(props: {}, context: ComponentContext) {
 
 // Renders the DOM that the view's content will live in
 // goes in front of the slats
-function renderContentSkeleton({ colCnt, renderProps }: { colCnt: number, renderProps: any  }, context: ComponentContext) {
+function renderContentSkeleton({ colCnt, renderProps }: { colCnt: number, renderProps: any  } & DomLocation, context: ComponentContext) {
   let { isRtl } = context
   let parts = []
 
