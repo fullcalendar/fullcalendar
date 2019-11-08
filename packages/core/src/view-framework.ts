@@ -519,7 +519,42 @@ export interface ListRendererItem<ComponentType> {
 
 
 export function listRenderer(): (location: DomLocation, inputs: ListRendererItem<any>[], contextOverride?: any) => Component<any>[] {
-  return null as any
+  let theRenderer
+  let currentComponentClass
+  let currentComponent
+
+  // STUB. works for one element
+  return function(location: DomLocation, inputs: ListRendererItem<any>[], contextOverride?: any): Component<any>[] {
+    let input = inputs[0]
+
+    if (!location || !location.parentEl) {
+      if (theRenderer) {
+        theRenderer.call(this, false)
+        theRenderer = null
+        currentComponentClass = null
+        currentComponent = null
+      }
+
+    } else {
+      if (input.componentClass !== currentComponentClass) {
+        if (theRenderer) {
+          theRenderer.call(this, false)
+          theRenderer = null
+          currentComponentClass = null
+          currentComponent = null
+        }
+      }
+
+      if (!theRenderer) {
+        currentComponentClass = input.componentClass
+        theRenderer = renderer(currentComponentClass)
+      }
+
+      currentComponent = theRenderer.call(this, { ...location, ...input.props }, contextOverride)
+    }
+
+    return currentComponent ? [ currentComponent ] : []
+  }
 }
 
 
