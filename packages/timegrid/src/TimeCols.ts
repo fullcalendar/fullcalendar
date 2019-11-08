@@ -24,8 +24,7 @@ import {
   DateProfile,
   sortEventSegs,
   memoize,
-  renderer,
-  DomLocation,
+  renderer
 } from '@fullcalendar/core'
 import { renderDayBgRowHtml } from '@fullcalendar/daygrid'
 import TimeColsEvents from './TimeColsEvents'
@@ -172,7 +171,7 @@ export default class TimeCols extends Component<TimeColsProps, ComponentContext>
       contentSkeletonEl,
       bottomRuleEl,
       slatContainerEl
-    } = this.renderSkeleton(true)
+    } = this.renderSkeleton({})
 
     this.renderBgColumns({
       parentEl: rootBgContainerEl,
@@ -298,7 +297,7 @@ export default class TimeCols extends Component<TimeColsProps, ComponentContext>
 
 
   _renderSlats(
-    { rootEl, dateProfile }: { rootEl: HTMLElement, dateProfile: DateProfile } & DomLocation,
+    { rootEl, dateProfile }: { rootEl: HTMLElement, dateProfile: DateProfile },
     context: ComponentContext
   ) {
     let tableEl = createElement(
@@ -366,7 +365,7 @@ export default class TimeCols extends Component<TimeColsProps, ComponentContext>
 
   // goes behind the slats
   _renderBgColumns(
-    { rootEl, cells, dateProfile, renderProps }: { rootEl: HTMLElement, cells: TimeColsCell[], dateProfile: DateProfile, renderProps: any } & DomLocation,
+    { rootEl, cells, dateProfile, renderProps }: { rootEl: HTMLElement, cells: TimeColsCell[], dateProfile: DateProfile, renderProps: any },
     context: ComponentContext
   ) {
     let { calendar, view, isRtl, theme, dateEnv } = context
@@ -654,7 +653,7 @@ function renderSkeleton(props: {}, context: ComponentContext) {
 
 // Renders the DOM that the view's content will live in
 // goes in front of the slats
-function renderContentSkeleton({ colCnt, renderProps }: { colCnt: number, renderProps: any  } & DomLocation, context: ComponentContext) {
+function renderContentSkeleton({ colCnt, renderProps }: { colCnt: number, renderProps: any  }, context: ComponentContext) {
   let { isRtl } = context
   let parts = []
 

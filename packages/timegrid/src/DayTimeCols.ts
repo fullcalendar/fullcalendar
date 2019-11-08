@@ -14,11 +14,10 @@ import {
   Hit,
   ComponentContext,
   renderer,
-  DomLocation
 } from '@fullcalendar/core'
 import TimeCols, { TimeColsSeg, TimeColsRenderProps } from './TimeCols'
 
-export interface DayTimeColsProps extends DomLocation {
+export interface DayTimeColsProps {
   renderProps: TimeColsRenderProps
   dateProfile: DateProfile | null
   dayTableModel: DayTableModel

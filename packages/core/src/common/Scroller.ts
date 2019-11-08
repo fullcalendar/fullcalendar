@@ -1,7 +1,7 @@
 import { computeEdges } from '../util/dom-geom'
 import { createElement, applyStyle, applyStyleProp } from '../util/dom-manip'
 import { ElementScrollController } from './scroll-controller'
-import { Component, DomLocation } from '../view-framework'
+import { Component } from '../view-framework'
 
 export interface ScrollbarWidths {
   left: number
@@ -9,7 +9,7 @@ export interface ScrollbarWidths {
   bottom: number
 }
 
-export interface ScrollerProps extends DomLocation {
+export interface ScrollerProps {
   overflowX: string
   overflowY: string
 }

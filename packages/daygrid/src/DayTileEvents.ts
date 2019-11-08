@@ -2,8 +2,7 @@ import {
   Seg,
   ComponentContext,
   BaseFgEventRendererProps,
-  renderer,
-  DomLocation
+  renderer
 } from '@fullcalendar/core'
 import CellEvents from './CellEvents'
 
@@ -34,6 +33,6 @@ export default class DayTileEvents extends CellEvents<DayTileEventsProps> {
 }
 
 
-function attachSegs(props: { segs: Seg[] } & DomLocation) {
+function attachSegs(props: { segs: Seg[] }) {
   return props.segs.map((seg) => seg.el)
 }

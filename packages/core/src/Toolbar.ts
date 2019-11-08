@@ -1,7 +1,7 @@
 import { htmlEscape } from './util/html'
 import { htmlToElement, appendToElement, findElements, createElement } from './util/dom-manip'
 import ComponentContext from './component/ComponentContext'
-import { Component, renderer, DomLocation } from './view-framework'
+import { Component, renderer } from './view-framework'
 import { ViewSpec } from './structs/view-spec'
 import Calendar from './Calendar'
 import Theme from './theme/Theme'
@@ -10,7 +10,7 @@ import Theme from './theme/Theme'
 /* Toolbar with buttons and title
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export interface ToolbarRenderProps extends DomLocation {
+export interface ToolbarRenderProps {
   extraClassName: string
   layout: any
   title: string

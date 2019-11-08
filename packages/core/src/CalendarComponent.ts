@@ -1,5 +1,5 @@
 import ComponentContext, { computeContextProps } from './component/ComponentContext'
-import { Component, renderer, DomLocation } from './view-framework'
+import { Component, renderer } from './view-framework'
 import { ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
 import Toolbar from './Toolbar'
@@ -17,7 +17,7 @@ import { __assign } from 'tslib'
 import { listRenderer } from './view-framework'
 
 
-export type CalendarComponentProps = DomLocation & CalendarState & {
+export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator // for the current view
   eventUiBases: EventUiHash
@@ -74,7 +74,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
       this.renderHeader(false)
     }
 
-    let viewContainerEl = this.renderViewContainer(true)
+    let viewContainerEl = this.renderViewContainer({})
     this.renderView(props, viewContainerEl, context)
     innerEls.push(viewContainerEl)
 
@@ -112,7 +112,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   _setClassNames(props: {}, context: ComponentContext) {
-    let classList = this.props.parentEl.classList
+    let classList = this.location.parentEl.classList
     let classNames: string[] = [
       'fc',
       'fc-' + context.options.dir,
@@ -128,7 +128,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   _unsetClassNames(classNames: string[]) {
-    let classList = this.props.parentEl.classList
+    let classList = this.location.parentEl.classList
 
     for (let className of classNames) {
       classList.remove(className)
@@ -244,7 +244,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
     } else if (typeof heightInput === 'function') { // exists and is a function
       this.viewHeight = heightInput() - this.queryToolbarsHeight()
     } else if (heightInput === 'parent') { // set to height of parent element
-      let parentEl = this.props.parentEl.parentNode as HTMLElement
+      let parentEl = this.location.parentEl.parentNode as HTMLElement
       this.viewHeight = parentEl.getBoundingClientRect().height - this.queryToolbarsHeight()
     } else {
       this.viewHeight = Math.round(
@@ -275,7 +275,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   freezeHeight() {
-    let rootEl = this.props.parentEl
+    let rootEl = this.location.parentEl
 
     applyStyle(rootEl, {
       height: rootEl.getBoundingClientRect().height,
@@ -285,7 +285,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   thawHeight() {
-    let rootEl = this.props.parentEl
+    let rootEl = this.location.parentEl
 
     applyStyle(rootEl, {
       height: '',

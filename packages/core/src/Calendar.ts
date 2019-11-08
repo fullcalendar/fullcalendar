@@ -37,7 +37,8 @@ import StandardTheme from './theme/StandardTheme'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
 import { computeContextProps } from './component/ComponentContext'
-import { TaskRunner, renderer, DelayedRunner } from './view-framework'
+import { renderer } from './view-framework'
+import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
 
 export interface DateClickApi extends DatePointApi {
@@ -103,7 +104,7 @@ export default class Calendar {
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
   removeNavLinkListener: any
 
-  windowResizeProxy: any
+  windowResizeProxy: any // TODO: use DelayedRunner for this instead of debounce!
   isHandlingWindowResize: boolean
 
   state: CalendarState

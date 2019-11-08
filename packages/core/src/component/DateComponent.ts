@@ -34,7 +34,7 @@ PURPOSES:
 - hook up to fg, fill, and mirror renderers
 - interface for dragging and hits
 */
-export default abstract class DateComponent<Props, State={}, Snapshot={}> extends Component<Props, ComponentContext, State, Snapshot> {
+export default abstract class DateComponent<Props, State={}, RenderResult=void, Snapshot={}> extends Component<Props, ComponentContext, State, RenderResult, Snapshot> {
 
   // self-config, overridable by subclasses. must set on prototype
   fgSegSelector: string // lets eventRender produce elements without fc-event class

@@ -6,10 +6,10 @@ import {
   createElement,
   applyStyle,
   listenBySelector,
-  computeClippingRect, computeRect, Component, ComponentContext, DomLocation
+  computeClippingRect, computeRect, Component, ComponentContext
 } from '@fullcalendar/core'
 
-export interface PopoverProps extends DomLocation {
+export interface PopoverProps {
   clippingEl: HTMLElement
   extraClassName?: string
   top?: number

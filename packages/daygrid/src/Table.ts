@@ -27,7 +27,6 @@ import TableMirrorEvents from './TableMirrorEvents'
 import TableFills from './TableFills'
 import DayTile from './DayTile'
 import { renderDayBgRowHtml } from './DayBgRow'
-import { DomLocation } from '@fullcalendar/core/view-framework'
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
@@ -66,7 +65,7 @@ export interface CellModel {
   htmlAttrs?: string
 }
 
-export interface TableProps extends DomLocation {
+export interface TableProps {
   renderProps: TableRenderProps
   dateProfile: DateProfile
   cells: CellModel[][]
@@ -177,7 +176,7 @@ export default class Table extends Component<TableProps, ComponentContext, Table
       segPopoverState &&
       segPopoverState.origFgSegs === props.fgEventSegs // will close popover when events change
     ) {
-      let viewEl = context.calendar.component.view.rootEl // yuck
+      let viewEl = context.calendar.component.view.rootEl as HTMLElement // yuck
 
       let popover = this.renderPopover({ // will be outside of all scrollers within the view
         parentEl: viewEl,

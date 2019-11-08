@@ -11,12 +11,11 @@ import {
   Slicer,
   Hit,
   ComponentContext,
-  renderer,
-  DomLocation
+  renderer
 } from '@fullcalendar/core'
 import { default as Table, TableSeg, TableRenderProps } from './Table'
 
-export interface DayTableProps extends DomLocation {
+export interface DayTableProps {
   renderProps: TableRenderProps
   dateProfile: DateProfile | null
   dayTableModel: DayTableModel
