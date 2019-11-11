@@ -60,7 +60,7 @@ export default abstract class View extends DateComponent<ViewProps> {
   }
 
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps, prevState, snapshot) { // how do we know children element will be done?
     this.applyScroll(snapshot, false)
   }
 

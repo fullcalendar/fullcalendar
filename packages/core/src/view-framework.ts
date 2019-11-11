@@ -6,6 +6,13 @@ import { __assign } from 'tslib'
 let guid = 0
 
 
+// TODO: accept no args to render method. if no args, never rerenders!!!!
+// htmlToNodes
+// htmlToEl
+// PRO over preact: guaranteed to update children first
+// document this.state/props
+// TODO: id should be optional. only warn on collision
+
 // top-level renderer
 // ----------------------------------------------------------------------------------------------------
 
@@ -184,7 +191,7 @@ export abstract class Component<Props, Context={}, State={}, RenderResult=void, 
   renderEngine: RenderEngine
   childUnmounts: (() => void)[] = []
 
-  uid = String(guid++)
+  uid = String(guid++) // not used internally here. but other places can use it
   isMounted = false
   location: Partial<DomLocation> = {}
   rootEls: Node[] = [] // TODO: rename to rootNodes?
@@ -208,12 +215,12 @@ export abstract class Component<Props, Context={}, State={}, RenderResult=void, 
   componentDidMount() {
   }
 
-  getSnapshotBeforeUpdate(prevProps: Props, prevState: State, prevContext: Context) {
-    return {} as Snapshot
+  shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: Context) {
+    return true
   }
 
-  shouldComponentUpdate(nextProps: Props, nextState: State, prevContext: Context) {
-    return true
+  getSnapshotBeforeUpdate(prevProps: Props, prevState: State, prevContext: Context) {
+    return {} as Snapshot
   }
 
   componentDidUpdate(prevProps: Props, prevState: State, snapshot: Snapshot) {

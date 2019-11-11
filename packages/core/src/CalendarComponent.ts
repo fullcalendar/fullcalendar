@@ -40,7 +40,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private updateClassNames = renderer(this._setClassNames, this._unsetClassNames)
   private renderViewContainer = renderer(this._renderViewContainer)
-  private buildToolbarProps = memoize(this._buildToolbarProps)
+  private buildToolbarProps = memoize(buildToolbarProps)
   private renderHeader = renderer(Toolbar)
   private renderFooter = renderer(Toolbar)
   private renderViews = listRenderer()
@@ -61,7 +61,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
     let innerEls: HTMLElement[] = []
 
     this.freezeHeight() // thawed after render
-    this.updateClassNames(true)
+    this.updateClassNames({})
 
     if (context.options.header) {
       let header = this.renderHeader({
@@ -144,28 +144,6 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
     }
 
     return viewContainerEl
-  }
-
-
-  _buildToolbarProps(
-    viewSpec: ViewSpec,
-    dateProfile: DateProfile,
-    dateProfileGenerator: DateProfileGenerator,
-    currentDate: DateMarker,
-    now: DateMarker,
-    title: string
-  ) {
-    let todayInfo = dateProfileGenerator.build(now)
-    let prevInfo = dateProfileGenerator.buildPrev(dateProfile, currentDate)
-    let nextInfo = dateProfileGenerator.buildNext(dateProfile, currentDate)
-
-    return {
-      title,
-      activeButton: viewSpec.type,
-      isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentRange, now),
-      isPrevEnabled: prevInfo.isValid,
-      isNextEnabled: nextInfo.isValid
-    }
   }
 
 
@@ -293,6 +271,27 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
     })
   }
 
+}
+
+function buildToolbarProps(
+  viewSpec: ViewSpec,
+  dateProfile: DateProfile,
+  dateProfileGenerator: DateProfileGenerator,
+  currentDate: DateMarker,
+  now: DateMarker,
+  title: string
+) {
+  let todayInfo = dateProfileGenerator.build(now)
+  let prevInfo = dateProfileGenerator.buildPrev(dateProfile, currentDate)
+  let nextInfo = dateProfileGenerator.buildNext(dateProfile, currentDate)
+
+  return {
+    title,
+    activeButton: viewSpec.type,
+    isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentRange, now),
+    isPrevEnabled: prevInfo.isValid,
+    isNextEnabled: nextInfo.isValid
+  }
 }
 
 
