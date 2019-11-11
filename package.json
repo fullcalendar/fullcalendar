@@ -105,5 +105,8 @@
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.5.3",
     "xhr-mock": "^2.4.1"
+  },
+  "dependencies": {
+    "preact": "^10.0.5"
   }
 }
