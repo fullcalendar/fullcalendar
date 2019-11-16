@@ -36,6 +36,7 @@ export default class ListView extends View {
   contentEl: HTMLElement
 
   dayDates: DateMarker[] // TOOD: kill this. only have it because ListEventRenderer
+  nowIndicatorEls: HTMLElement[]
 
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
@@ -66,15 +67,19 @@ export default class ListView extends View {
   render(props: ViewProps, context: ComponentContext) {
     super.render(props, context)
 
-    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
-    this.dayDates = dayDates
+    let { dateProfile, dateProfileGenerator,
+          eventStore, eventUiBases } = this.props
+    let { dayDates, dayRanges } = this.computeDateVars(dateProfile)
 
+    this.dayDates = dayDates
     this.renderSkeleton(context)
 
     this.renderContent(
       context,
-      this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
+      this.eventStoreToSegs(eventStore, eventUiBases, dayRanges)
     )
+
+    this.startNowIndicator(dateProfile, dateProfileGenerator)
   }
 
 
@@ -116,6 +121,27 @@ export default class ListView extends View {
     this.scroller.destroy() // will remove the Grid too
   }
 
+  /* Now Indicator
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  getNowIndicatorUnit() {
+    return 'minute' // will refresh on the minute
+  }
+
+
+  renderNowIndicator(segs, date) {
+    let top = this.computeDateTop(date)
+    let nodes = []
+    let i
+  }
+
+  unrenderNowIndicator() {
+    if (this.nowIndicatorEls) {
+      this.nowIndicatorEls.forEach(removeElement)
+      this.nowIndicatorEls = null
+    }
+  }
 
   updateSize(isResize, viewHeight, isAuto) {
     super.updateSize(isResize, viewHeight, isAuto)
