@@ -1,6 +1,7 @@
 import {
   htmlToElement,
   createElement,
+  removeElement,
   htmlEscape,
   subtractInnerElHeight,
   View,
@@ -130,10 +131,7 @@ export default class ListView extends View {
   }
 
 
-  renderNowIndicator(segs, date) {
-    let top = this.computeDateTop(date)
-    let nodes = []
-    let i
+  renderNowIndicator(date) {
   }
 
   unrenderNowIndicator() {
