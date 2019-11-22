@@ -164,7 +164,7 @@ export default class HitDragging {
       let component = droppableStore[id].component
       let offsetTracker = offsetTrackers[id]
 
-      if (offsetTracker.isWithinClipping(offsetLeft, offsetTop)) {
+      if (offsetTracker && offsetTracker.isWithinClipping(offsetLeft, offsetTop)) {
         let originLeft = offsetTracker.computeLeft()
         let originTop = offsetTracker.computeTop()
         let positionLeft = offsetLeft - originLeft
