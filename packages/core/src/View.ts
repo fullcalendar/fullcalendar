@@ -1,5 +1,5 @@
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
-import { DateMarker, addMs } from './datelib/marker'
+import { DateMarker } from './datelib/marker'
 import { createDuration, Duration } from './datelib/duration'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { ViewSpec } from './structs/view-spec'
@@ -334,9 +334,7 @@ export default abstract class View extends DateComponent<ViewProps> {
       this.initialNowDate // activated before?
     ) {
       this.unrenderNowIndicator() // won't unrender if unnecessary
-      this.renderNowIndicator(
-        addMs(this.initialNowDate, new Date().valueOf() - this.initialNowQueriedMs)
-      )
+      this.renderNowIndicator(new Date())
       this.isNowIndicatorRendered = true
     }
   }

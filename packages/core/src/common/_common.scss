@@ -534,6 +534,23 @@ a.fc-more:hover {
   border: 0 solid red;
 }
 
+.fc-now-indicator-list {
+  border-top: red solid 2px;
+  position: relative;
+  margin-left: 126px;
+
+  &::before {
+    background: red;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    content: "";
+    position: absolute;
+    height: 12px;
+    margin-top: -7px;
+    width: 12px;
+    z-index: 504;
+  }
+}
 
 /* Utilities
 --------------------------------------------------------------------------------------------------*/

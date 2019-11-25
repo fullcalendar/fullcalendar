@@ -35,15 +35,14 @@ export default class ListView extends View {
 
   scroller: ScrollComponent
   contentEl: HTMLElement
+  nowIndicatorEl: HTMLElement
 
   dayDates: DateMarker[] // TOOD: kill this. only have it because ListEventRenderer
-  nowIndicatorEls: HTMLElement[]
 
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
   private renderSkeleton = memoizeRendering(this._renderSkeleton, this._unrenderSkeleton)
   private renderContent: MemoizedRendering<[ComponentContext, Seg[]]>
-
 
   constructor(viewSpec: ViewSpec, parentEl: HTMLElement) {
     super(viewSpec, parentEl)
@@ -125,19 +124,34 @@ export default class ListView extends View {
   /* Now Indicator
   ------------------------------------------------------------------------------------------------------------------*/
 
-
   getNowIndicatorUnit() {
     return 'minute' // will refresh on the minute
   }
 
-
   renderNowIndicator(date) {
+    let { dateProfile, eventStore, eventUiBases } = this.props
+    let { dayRanges } = this.computeDateVars(dateProfile)
+
+    if (!this.nowIndicatorEl) {
+      this.nowIndicatorEl = createElement('tr', { className: 'fc-now-indicator-list' }) as HTMLTableRowElement
+    }
+
+    const segs = this.eventStoreToSegs(eventStore, eventUiBases, dayRanges)
+
+    for (let i = 0; i < segs.length; i++) {
+      if (segs[i].end < date) {
+        continue
+      }
+      segs[i].el.parentNode.insertBefore(this.nowIndicatorEl, segs[i].el.nextSibling)
+      break
+    }
+
   }
 
   unrenderNowIndicator() {
-    if (this.nowIndicatorEls) {
-      this.nowIndicatorEls.forEach(removeElement)
-      this.nowIndicatorEls = null
+    if (this.nowIndicatorEl) {
+      removeElement(this.nowIndicatorEl)
+      this.nowIndicatorEl = null
     }
   }
 
