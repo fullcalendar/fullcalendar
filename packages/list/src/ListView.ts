@@ -139,13 +139,11 @@ export default class ListView extends View {
     const segs = this.eventStoreToSegs(eventStore, eventUiBases, dayRanges)
 
     for (let i = 0; i < segs.length; i++) {
-      if (segs[i].end < date) {
-        continue
+      if (segs[i].end > date) {
+        segs[i].el.parentNode.insertBefore(this.nowIndicatorEl, segs[i].el.nextSibling)
+        break
       }
-      segs[i].el.parentNode.insertBefore(this.nowIndicatorEl, segs[i].el.nextSibling)
-      break
     }
-
   }
 
   unrenderNowIndicator() {
