@@ -2,9 +2,14 @@
 // Creating
 // ----------------------------------------------------------------------------------------------------------------
 
+const containerTagHash = {
+  '<tr': 'tbody',
+  '<td': 'tr'
+}
+
 export function htmlToElement(html: string): HTMLElement {
   html = html.trim()
-  let container = document.createElement('div')
+  let container = document.createElement(computeContainerTag(html))
   container.innerHTML = html
   return container.firstChild as HTMLElement
 }
@@ -15,9 +20,16 @@ export function htmlToElements(html: string): HTMLElement[] {
 
 function htmlToNodeList(html: string): NodeList {
   html = html.trim()
-  let container = document.createElement('div')
+  let container = document.createElement(computeContainerTag(html))
   container.innerHTML = html
   return container.childNodes
+}
+
+// assumes html already trimmed and tag names are lowercase
+function computeContainerTag(html: string) {
+  return containerTagHash[
+    html.substr(0, 3) // faster than using regex
+  ] || 'div'
 }
 
 
