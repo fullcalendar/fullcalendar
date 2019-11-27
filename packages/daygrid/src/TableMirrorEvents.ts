@@ -1,21 +1,21 @@
 import {
-  htmlToElement, renderer, ComponentContext, removeElement
+  htmlToElement, subrenderer, ComponentContext, removeElement
 } from '@fullcalendar/core'
 import TableEvents, { renderSegRows, TableEventsProps } from './TableEvents'
 
 
 export default class TableMirrorEvents extends TableEvents {
 
-  protected attachSegs = renderer(attachSegs, detachSegs)
+  protected attachSegs = subrenderer(attachSegs, detachSegs)
 
 }
 
 
 // Renders the given foreground event segments onto the grid
-function attachSegs({ segs, rowEls, colCnt, renderProps, mirrorInfo }: TableEventsProps, context: ComponentContext) {
-  let { sourceSeg } = mirrorInfo
+function attachSegs({ segs, rowEls, colCnt, renderIntro, mirrorInfo }: TableEventsProps, context: ComponentContext) {
+  let sourceSeg = mirrorInfo && mirrorInfo.sourceSeg
 
-  let rowStructs = renderSegRows(segs, rowEls.length, colCnt, renderProps, context)
+  let rowStructs = renderSegRows(segs, rowEls.length, colCnt, renderIntro, context)
 
   // inject each new event skeleton into each associated row
   rowEls.forEach(function(rowNode, row) {

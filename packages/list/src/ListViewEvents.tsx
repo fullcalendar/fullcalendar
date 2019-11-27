@@ -3,16 +3,16 @@ import {
   FgEventRenderer,
   Seg,
   isMultiDayRange,
-  getAllDayHtml,
   BaseFgEventRendererProps,
   ComponentContext,
   createFormatter,
-  createElement,
-  buildGotoAnchorHtml,
   htmlToElement,
-  renderer,
-  sortEventSegs
+  subrenderer,
+  sortEventSegs,
+  renderVNodes,
+  GotoAnchor
 } from '@fullcalendar/core'
+import { h } from 'preact'
 
 
 export interface ListViewEventsProps extends BaseFgEventRendererProps {
@@ -23,7 +23,7 @@ export interface ListViewEventsProps extends BaseFgEventRendererProps {
 
 export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps> {
 
-  attachSegs = renderer(attachSegs)
+  private attachSegs = subrenderer(attachSegs, detachSegs)
 
 
   render(props: ListViewEventsProps, context: ComponentContext) {
@@ -32,7 +32,7 @@ export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps>
       mirrorInfo: props.mirrorInfo,
       selectedInstanceId: props.selectedInstanceId,
       hiddenInstances: props.hiddenInstances
-    }, context)
+    })
 
     this.attachSegs({
       segs,
@@ -52,33 +52,45 @@ export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps>
     let url = eventDef.url
     let classes = [ 'fc-list-item' ].concat(eventUi.classNames)
     let bgColor = eventUi.backgroundColor
+    let timeText
     let timeHtml
 
     if (eventDef.allDay) {
-      timeHtml = getAllDayHtml(options)
+      timeHtml = options.allDayHtml
+      timeText = options.allDayText
+
     } else if (isMultiDayRange(eventRange.range)) {
+
       if (seg.isStart) {
-        timeHtml = htmlEscape(this._getTimeText(
+        timeText = this._getTimeText(
           eventInstance.range.start,
           seg.end,
           false // allDay
-        ))
+        )
+
       } else if (seg.isEnd) {
-        timeHtml = htmlEscape(this._getTimeText(
+        timeText = this._getTimeText(
           seg.start,
           eventInstance.range.end,
           false // allDay
-        ))
+        )
+
       } else { // inner segment that lasts the whole day
-        timeHtml = getAllDayHtml(options)
+        timeHtml = options.allDayHtml
+        timeText = options.allDayText
       }
+
     } else {
       // Display the normal time text for the *event's* times
-      timeHtml = htmlEscape(this.getTimeText(eventRange))
+      timeText = this.getTimeText(eventRange)
     }
 
     if (url) {
       classes.push('fc-has-url')
+    }
+
+    if (timeText) {
+      timeHtml = htmlEscape(timeText)
     }
 
     return '<tr class="' + classes.join(' ') + '">' +
@@ -115,12 +127,19 @@ export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps>
 }
 
 
-function attachSegs(props: { segs, dayDates: Date[], contentEl: HTMLElement }, context: ComponentContext) {
-  if (props.segs.length) {
-    renderSegList(props.segs, props.dayDates, props.contentEl, context)
+function attachSegs({ segs, dayDates, contentEl }: { segs, dayDates: Date[], contentEl: HTMLElement }, context: ComponentContext) {
+  if (segs.length) {
+    renderSegList(segs, dayDates, contentEl, context)
   } else {
-    renderEmptyMessage(props.contentEl, context)
+    renderEmptyMessage(contentEl, context)
   }
+
+  return contentEl
+}
+
+
+function detachSegs(contentEl: HTMLElement) {
+  contentEl.innerHTML = ''
 }
 
 
@@ -163,7 +182,6 @@ function renderSegList(allSegs, dayDates: Date[], contentEl: HTMLElement, contex
     }
   }
 
-  contentEl.innerHTML = '' // will unrender previous renders
   contentEl.appendChild(tableEl)
 }
 
@@ -174,32 +192,48 @@ function buildDayHeaderRow(dayDate, context: ComponentContext) {
   let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
   let altFormat = createFormatter(options.listDayAltFormat) // TODO: cache
 
-  return createElement('tr', {
-    className: 'fc-list-heading',
-    'data-date': dateEnv.formatIso(dayDate, { omitTime: true })
-  }, '<td class="' + (
-    theme.getClass('tableListHeading') ||
-    theme.getClass('widgetHeader')
-  ) + '" colspan="3">' +
-    (mainFormat ?
-      buildGotoAnchorHtml(
-        options,
-        dateEnv,
-        dayDate,
-        { 'class': 'fc-list-heading-main' },
-        htmlEscape(dateEnv.format(dayDate, mainFormat)) // inner HTML
-      ) :
-      '') +
-    (altFormat ?
-      buildGotoAnchorHtml(
-        options,
-        dateEnv,
-        dayDate,
-        { 'class': 'fc-list-heading-alt' },
-        htmlEscape(dateEnv.format(dayDate, altFormat)) // inner HTML
-      ) :
-      '') +
-  '</td>') as HTMLTableRowElement
+  let tr = document.createElement('tr')
+  tr.className = 'fc-list-heading'
+  tr.setAttribute('data-date', dateEnv.formatIso(dayDate, { omitTime: true }))
+
+  let td = document.createElement('td')
+  td.className = theme.getClass('tableListHeading') + ' ' + theme.getClass('widgetHeader')
+  td.colSpan = 3
+  tr.appendChild(td)
+
+  let inners = []
+
+  if (mainFormat) {
+    inners.push(
+      ...renderVNodes(
+        <GotoAnchor
+          navLinks={options.navLinks}
+          gotoOptions={dayDate}
+          extraAttrs={{ 'class': 'fc-list-heading-main' }}
+        >{dateEnv.format(dayDate, mainFormat)}</GotoAnchor>,
+        context
+      )
+    )
+  }
+
+  if (altFormat) {
+    inners.push(
+      ...renderVNodes(
+        <GotoAnchor
+          navLinks={options.navLinks}
+          gotoOptions={dayDate}
+          extraAttrs={{ 'class': 'fc-list-heading-alt' }}
+        >{dateEnv.format(dayDate, altFormat)}</GotoAnchor>,
+        context
+      )
+    )
+  }
+
+  for (let inner of inners) {
+    td.appendChild(inner)
+  }
+
+  return tr
 }
 
 

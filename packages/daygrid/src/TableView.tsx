@@ -1,5 +1,5 @@
 import {
-  htmlEscape, findElements,
+  findElements,
   matchCellWidths,
   uncompensateScroll,
   compensateScroll,
@@ -9,15 +9,14 @@ import {
   createFormatter,
   Scroller,
   View,
-  buildGotoAnchorHtml,
   Duration,
-  ComponentContext,
   memoize,
-  renderer,
-  renderViewEl
+  getViewClassNames,
+  GotoAnchor
 } from '@fullcalendar/core'
-import Table, { TableRenderProps } from './Table'
+import Table from './Table'
 import TableDateProfileGenerator from './TableDateProfileGenerator'
+import { VNode, h, createRef, ComponentChildren } from 'preact'
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
@@ -27,71 +26,55 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 // It is a manager for a Table subcomponent, which does most of the heavy lifting.
 // It is responsible for managing width/height.
 
+
 export default abstract class TableView extends View {
 
   private processOptions = memoize(this._processOptions)
-  private renderSkeleton = renderer(this._renderSkeleton)
-  private renderScroller = renderer(Scroller)
-
-  private scroller: Scroller
+  private rootElRef = createRef<HTMLDivElement>()
+  private scrollerRef = createRef<Scroller>()
 
   // computed options
-  private colWeekNumbersVisible: boolean
-  private cellWeekNumbersVisible: boolean
-  private weekNumberWidth: number
+  protected colWeekNumbersVisible: boolean
+  protected cellWeekNumbersVisible: boolean
+  protected weekNumberWidth: number
+
+  getRootEl() { return this.rootElRef.current }
 
 
-  renderLayout(options: { type: string }, context: ComponentContext) {
-    this.processOptions(context.options)
+  renderLayout(headerContent: ComponentChildren, bodyContent: ComponentChildren) {
+    let { theme, options } = this.context
+    let classNames = getViewClassNames(this.props.viewSpec).concat('fc-dayGrid-view')
 
-    let res = this.renderSkeleton(options)
+    this.processOptions(options)
 
-    let scroller = this.renderScroller({
-      parentEl: res.contentWrapEl,
-      overflowX: 'hidden',
-      overflowY: 'auto'
-    })
-
-    let tableWrapEl = scroller.rootEl
-    tableWrapEl.classList.add('fc-day-grid-container') // TODO: avoid every time
-
-    this.scroller = scroller
-
-    return res
+    return (
+      <div ref={this.rootElRef} class={classNames.join(' ')}>
+        <table class={theme.getClass('tableGrid')}>
+          {options.columnHeader &&
+            <thead class='fc-head'>
+              <tr>
+                <td class={'fc-head-container ' + theme.getClass('widgetHeader')}>
+                  {headerContent}
+                </td>
+              </tr>
+            </thead>
+          }
+          <tbody class='fc-body'>
+            <tr>
+              <td class={theme.getClass('widgetContent')}>
+                <Scroller ref={this.scrollerRef} overflowX='hidden' overflowY='auto' extraClassName='fc-day-grid-container'>
+                  {bodyContent}
+                </Scroller>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )
   }
 
 
-  _renderSkeleton({ type }: { type: string }, context: ComponentContext) {
-    let { theme, options } = context
-
-    let el = renderViewEl(type)
-    el.classList.add('fc-dayGrid-view')
-    el.innerHTML = '' +
-      '<table class="' + theme.getClass('tableGrid') + '">' +
-        (options.columnHeader ?
-          '<thead class="fc-head">' +
-            '<tr>' +
-              '<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
-            '</tr>' +
-          '</thead>' :
-          ''
-          ) +
-        '<tbody class="fc-body">' +
-          '<tr>' +
-            '<td class="' + theme.getClass('widgetContent') + '"></td>' +
-          '</tr>' +
-        '</tbody>' +
-      '</table>'
-
-    return {
-      rootEl: el,
-      headerWrapEl: options.columnHeader ? (el.querySelector('.fc-head-container') as HTMLElement) : null,
-      contentWrapEl: el.querySelector('.fc-body > tr > td') as HTMLElement
-    }
-  }
-
-
-  _processOptions(options) {
+  private _processOptions(options) {
     if (options.weekNumbers) {
       if (options.weekNumbersWithinDays) {
         this.cellWeekNumbersVisible = true
@@ -108,11 +91,11 @@ export default abstract class TableView extends View {
 
 
   // Generates an HTML attribute string for setting the width of the week number column, if it is known
-  weekNumberStyleAttr() {
+  weekNumberStyles() {
     if (this.weekNumberWidth != null) {
-      return 'style="width:' + this.weekNumberWidth + 'px"'
+      return { width: this.weekNumberWidth }
     }
-    return ''
+    return {}
   }
 
 
@@ -122,6 +105,8 @@ export default abstract class TableView extends View {
 
   // Refreshes the horizontal dimensions of the view
   updateLayoutHeight(headRowEl: HTMLElement | null, table: Table, viewHeight: number, isAuto: boolean, options) {
+    let rootEl = this.rootElRef.current
+    let scroller = this.scrollerRef.current
     let eventLimit = options.eventLimit
     let scrollerHeight
     let scrollbarWidths
@@ -131,7 +116,7 @@ export default abstract class TableView extends View {
     if (!table.rowEls) {
       if (!isAuto) {
         scrollerHeight = this.computeScrollerHeight(viewHeight)
-        this.scroller.setHeight(scrollerHeight)
+        scroller.setHeight(scrollerHeight)
       }
       return
     }
@@ -139,12 +124,12 @@ export default abstract class TableView extends View {
     if (this.colWeekNumbersVisible) {
       // Make sure all week number cells running down the side have the same width.
       this.weekNumberWidth = matchCellWidths(
-        findElements(this.rootEl, '.fc-week-number')
+        findElements(rootEl, '.fc-week-number')
       )
     }
 
     // reset all heights to be natural
-    this.scroller.clear()
+    scroller.clear()
     if (headRowEl) {
       uncompensateScroll(headRowEl)
     }
@@ -166,8 +151,8 @@ export default abstract class TableView extends View {
 
     if (!isAuto) { // should we force dimensions of the scroll container?
 
-      this.scroller.setHeight(scrollerHeight)
-      scrollbarWidths = this.scroller.getScrollbarWidths()
+      scroller.setHeight(scrollerHeight)
+      scrollbarWidths = scroller.getScrollbarWidths()
 
       if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
@@ -177,19 +162,21 @@ export default abstract class TableView extends View {
 
         // doing the scrollbar compensation might have created text overflow which created more height. redo
         scrollerHeight = this.computeScrollerHeight(viewHeight)
-        this.scroller.setHeight(scrollerHeight)
+        scroller.setHeight(scrollerHeight)
       }
 
       // guarantees the same scrollbar widths
-      this.scroller.lockOverflow(scrollbarWidths)
+      scroller.lockOverflow(scrollbarWidths)
     }
   }
 
 
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(viewHeight) {
-    return viewHeight -
-      subtractInnerElHeight(this.rootEl, this.scroller.el) // everything that's NOT the scroller
+    let rootEl = this.rootElRef.current
+    let scroller = this.scrollerRef.current
+
+    return viewHeight - subtractInnerElHeight(rootEl, scroller.rootEl) // everything that's NOT the scroller
   }
 
 
@@ -227,13 +214,17 @@ export default abstract class TableView extends View {
 
 
   queryDateScroll() {
-    return { top: this.scroller.controller.getScrollTop() }
+    let scroller = this.scrollerRef.current
+
+    return { top: scroller.controller.getScrollTop() }
   }
 
 
   applyDateScroll(scroll) {
+    let scroller = this.scrollerRef.current
+
     if (scroll.top !== undefined) {
-      this.scroller.controller.setScrollTop(scroll.top)
+      scroller.controller.setScrollTop(scroll.top)
     }
   }
 
@@ -243,19 +234,21 @@ export default abstract class TableView extends View {
 
 
   // Generates the HTML that will go before the day-of week header cells
-  renderHeadIntroHtml = () => {
+  renderHeadIntro = (): VNode[] => {
     let { theme, options } = this.context
 
     if (this.colWeekNumbersVisible) {
-      return '' +
-        '<th class="fc-week-number ' + theme.getClass('widgetHeader') + '" ' + this.weekNumberStyleAttr() + '>' +
-          '<span>' + // needed for matchCellWidths
-            htmlEscape(options.weekLabel) +
-          '</span>' +
-        '</th>'
+      // inner span needed for matchCellWidths
+      return [
+        <th class={'fc-week-number ' + theme.getClass('widgetHeader')} style={this.weekNumberStyles()}>
+          <span>
+            {options.weekLabel}
+          </span>
+        </th>
+      ]
     }
 
-    return ''
+    return []
   }
 
 
@@ -264,58 +257,53 @@ export default abstract class TableView extends View {
 
 
   // Generates the HTML that will go before content-skeleton cells that display the day/week numbers
-  renderNumberIntroHtml = (row: number, table: Table) => {
+  renderNumberIntro = (row: number, cells: any): VNode[] => {
     let { options, dateEnv } = this.context
-    let cells = table.props.cells
     let weekStart = cells[row][0].date
     let colCnt = cells[0].length
 
     if (this.colWeekNumbersVisible) {
-      return '' +
-        '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '>' +
-          buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-            options,
-            dateEnv,
-            { date: weekStart, type: 'week', forceOff: colCnt === 1 },
-            dateEnv.format(weekStart, WEEK_NUM_FORMAT) // inner HTML
-          ) +
-        '</td>'
+
+      // aside from link, the GotoAnchor is important for matchCellWidths
+      return [
+        <td class='fc-week-number' style={this.weekNumberStyles()}>
+          <GotoAnchor
+            navLinks={options.navLinks}
+            gotoOptions={{ date: weekStart, type: 'week', forceOff: colCnt === 1 }}
+          >{dateEnv.format(weekStart, WEEK_NUM_FORMAT)}</GotoAnchor>
+        </td>
+      ]
     }
 
-    return ''
+    return []
   }
 
 
   // Generates the HTML that goes before the day bg cells for each day-row
-  renderBgIntroHtml = () => {
+  renderBgIntro = (): VNode[] => {
     let { theme } = this.context
 
     if (this.colWeekNumbersVisible) {
-      return '<td class="fc-week-number ' + theme.getClass('widgetContent') + '" ' + this.weekNumberStyleAttr() + '></td>'
+      return [
+        <td class={'fc-week-number ' + theme.getClass('widgetContent')} style={this.weekNumberStyles()}></td>
+      ]
     }
 
-    return ''
+    return []
   }
 
 
   // Generates the HTML that goes before every other type of row generated by Table.
   // Affects mirror-skeleton and highlight-skeleton rows.
-  renderIntroHtml = () => {
+  renderIntro = (): VNode[] => {
 
     if (this.colWeekNumbersVisible) {
-      return '<td class="fc-week-number" ' + this.weekNumberStyleAttr() + '></td>'
+      return [
+        <td class='fc-week-number' style={this.weekNumberStyles()}></td>
+      ]
     }
 
-    return ''
-  }
-
-
-  tableRenderProps: TableRenderProps = {
-    renderNumberIntroHtml: this.renderNumberIntroHtml,
-    renderBgIntroHtml: this.renderBgIntroHtml,
-    renderIntroHtml: this.renderIntroHtml,
-    colWeekNumbersVisible: this.colWeekNumbersVisible,
-    cellWeekNumbersVisible: this.cellWeekNumbersVisible
+    return []
   }
 
 }

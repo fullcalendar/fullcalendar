@@ -1,19 +1,18 @@
 import {
-  findElements, htmlEscape,
+  findElements,
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
   Scroller,
   View,
-  ComponentContext,
   createFormatter, diffDays,
-  buildGotoAnchorHtml, getAllDayHtml, Duration,
+  Duration,
   DateMarker,
-  renderViewEl,
-  renderer
+  getViewClassNames,
+  GotoAnchor,
 } from '@fullcalendar/core'
-import { TimeColsRenderProps } from './TimeCols'
-import Table, { TableRenderProps } from 'packages/daygrid/src/Table'
+import { Table } from '@fullcalendar/daygrid'
 import { TimeCols } from './main'
 import AllDaySplitter from './AllDaySplitter'
+import { h, ComponentChildren, createRef } from 'preact'
 
 const ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -26,14 +25,16 @@ const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
 
 export default abstract class TimeColsView extends View {
 
-  private renderSkeleton = renderer(this._renderSkeleton)
-  private renderScroller = renderer(Scroller)
-
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
-  private scroller: Scroller
-  private axisWidth: any // the width of the time axis running down the side
-  private dividerEl: HTMLElement
 
+  private rootElRef = createRef<HTMLDivElement>()
+  private dividerElRef = createRef<HTMLHRElement>()
+  private scrollerRef = createRef<Scroller>()
+  private axisWidth: any // the width of the time axis running down the side
+
+
+  // abstract requirements
+  // ----------------------------------------------------------------------------------------------------
 
   abstract getAllDayTableObj(): { table: Table } | null
 
@@ -44,65 +45,70 @@ export default abstract class TimeColsView extends View {
     unrenderNowIndicator: () => void
   }
 
-
-  renderLayout(props: { type: string }) {
-    let res = this.renderSkeleton({ type: props.type })
-
-    let scroller = this.renderScroller({
-      parentEl: res.contentWrapEl,
-      overflowX: 'hidden',
-      overflowY: 'auto'
-    })
-
-    this.scroller = scroller
-
-    return res
-  }
+  getRootEl() { return this.rootElRef.current }
 
 
-  _renderSkeleton(props: { type: string }, context: ComponentContext) {
-    let { theme, options } = context
+  // rendering
+  // ----------------------------------------------------------------------------------------------------
 
-    let el = renderViewEl(props.type)
-    el.classList.add('fc-timeGrid-view')
-    el.innerHTML = '' +
-      '<table class="' + theme.getClass('tableGrid') + '">' +
-        (options.columnHeader ?
-          '<thead class="fc-head">' +
-            '<tr>' +
-              '<td class="fc-head-container ' + theme.getClass('widgetHeader') + '">&nbsp;</td>' +
-            '</tr>' +
-          '</thead>' :
-          ''
-          ) +
-        '<tbody class="fc-body">' +
-          '<tr>' +
-            '<td class="' + theme.getClass('widgetContent') + '">' +
-              (options.allDaySlot ?
-                '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" />' :
-                ''
-                ) +
-            '</td>' +
-          '</tr>' +
-        '</tbody>' +
-      '</table>'
 
-    this.dividerEl = options.allDaySlot ? (el.querySelector('.fc-divider') as HTMLElement) : null
+  renderLayout(
+    headerChildren: ComponentChildren | null,
+    allDayChildren: ComponentChildren | null,
+    timeChildren: ComponentChildren
+  ) {
+    let { theme } = this.context
+    let classNames = getViewClassNames(this.props.viewSpec).concat('fc-timeGrid-view')
 
-    return {
-      rootEl: el,
-      headerWrapEl: options.columnHeader ? (el.querySelector('.fc-head-container') as HTMLElement) : null,
-      contentWrapEl: el.querySelector('.fc-body > tr > td') as HTMLElement
-    }
+    return (
+      <div class={classNames.join(' ')} ref={this.rootElRef}>
+        <table class={theme.getClass('tableGrid')}>
+          {headerChildren &&
+            <thead class='fc-head'>
+              <tr>
+                <td class={'fc-head-container ' + theme.getClass('widgetHeader')}>
+                  {headerChildren}
+                </td>
+              </tr>
+            </thead>
+          }
+          <tbody class='fc-body'>
+            <tr>
+              <td class={theme.getClass('widgetContent')}>
+                {allDayChildren}
+                {allDayChildren &&
+                  <hr class={'fc-divider ' + theme.getClass('widgetHeader')} ref={this.dividerElRef}/>
+                }
+                <Scroller
+                  ref={this.scrollerRef}
+                  overflowX='hidden'
+                  overflowY='auto'
+                >
+                  {timeChildren}
+                </Scroller>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )
   }
 
 
   componentDidMount() {
     let allDayTable = this.getAllDayTableObj()
+    let dividerEl = this.dividerElRef.current
 
     if (allDayTable) {
-      allDayTable.table.bottomCoordPadding = this.dividerEl.getBoundingClientRect().height
+      allDayTable.table.bottomCoordPadding = dividerEl.getBoundingClientRect().height
     }
+
+    this.startNowIndicator()
+  }
+
+
+  componentWillUnmount() {
+    this.stopNowIndicator()
   }
 
 
@@ -134,31 +140,33 @@ export default abstract class TimeColsView extends View {
 
   // Adjusts the vertical dimensions of the view to the specified values
   updateLayoutSize(timeCols: TimeCols, table: Table | null, viewHeight, isAuto) {
+    let rootEl = this.rootElRef.current
+    let scroller = this.scrollerRef.current
     let eventLimit
     let scrollerHeight
     let scrollbarWidths
 
     // make all axis cells line up
-    this.axisWidth = matchCellWidths(findElements(this.rootEl, '.fc-axis'))
+    this.axisWidth = matchCellWidths(findElements(rootEl, '.fc-axis'))
 
     // hack to give the view some height prior to timeGrid's columns being rendered
     // TODO: separate setting height from scroller VS timeGrid.
     if (!timeCols.colEls) {
       if (!isAuto) {
         scrollerHeight = this.computeScrollerHeight(viewHeight)
-        this.scroller.setHeight(scrollerHeight)
+        scroller.setHeight(scrollerHeight)
       }
       return
     }
 
     // set of fake row elements that must compensate when scroller has scrollbars
-    let noScrollRowEls: HTMLElement[] = findElements(this.rootEl, '.fc-row').filter((node) => {
-      return !this.scroller.el.contains(node)
+    let noScrollRowEls: HTMLElement[] = findElements(rootEl, '.fc-row').filter((node) => {
+      return !scroller.rootEl.contains(node)
     })
 
     // reset all dimensions back to the original state
     timeCols.bottomRuleEl.style.display = 'none' // will be shown later if this <hr> is necessary
-    this.scroller.clear() // sets height to 'auto' and clears overflow
+    scroller.clear() // sets height to 'auto' and clears overflow
     noScrollRowEls.forEach(uncompensateScroll)
 
     // limit number of events in the all-day area
@@ -176,8 +184,8 @@ export default abstract class TimeColsView extends View {
     if (!isAuto) { // should we force dimensions of the scroll container?
 
       scrollerHeight = this.computeScrollerHeight(viewHeight)
-      this.scroller.setHeight(scrollerHeight)
-      scrollbarWidths = this.scroller.getScrollbarWidths()
+      scroller.setHeight(scrollerHeight)
+      scrollbarWidths = scroller.getScrollbarWidths()
 
       if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
 
@@ -189,11 +197,11 @@ export default abstract class TimeColsView extends View {
         // the scrollbar compensation might have changed text flow, which might affect height, so recalculate
         // and reapply the desired height to the scroller.
         scrollerHeight = this.computeScrollerHeight(viewHeight)
-        this.scroller.setHeight(scrollerHeight)
+        scroller.setHeight(scrollerHeight)
       }
 
       // guarantees the same scrollbar widths
-      this.scroller.lockOverflow(scrollbarWidths)
+      scroller.lockOverflow(scrollbarWidths)
 
       // if there's any space below the slats, show the horizontal rule.
       // this won't cause any new overflow, because lockOverflow already called.
@@ -206,8 +214,10 @@ export default abstract class TimeColsView extends View {
 
   // given a desired total height of the view, returns what the height of the scroller should be
   computeScrollerHeight(viewHeight) {
-    return viewHeight -
-      subtractInnerElHeight(this.rootEl, this.scroller.el) // everything that's NOT the scroller
+    let rootEl = this.rootElRef.current
+    let scroller = this.scrollerRef.current
+
+    return viewHeight - subtractInnerElHeight(rootEl, scroller.rootEl) // everything that's NOT the scroller
   }
 
 
@@ -231,13 +241,17 @@ export default abstract class TimeColsView extends View {
 
 
   queryDateScroll() {
-    return { top: this.scroller.controller.getScrollTop() }
+    let scroller = this.scrollerRef.current
+
+    return { top: scroller.controller.getScrollTop() }
   }
 
 
   applyDateScroll(scroll) {
+    let scroller = this.scrollerRef.current
+
     if (scroll.top !== undefined) {
-      this.scroller.controller.setScrollTop(scroll.top)
+      scroller.controller.setScrollTop(scroll.top)
     }
   }
 
@@ -247,7 +261,7 @@ export default abstract class TimeColsView extends View {
 
 
   // Generates the HTML that will go before the day-of week header cells
-  renderHeadIntroHtml = () => {
+  renderHeadIntro = () => {
     let { theme, dateEnv, options } = this.context
     let range = this.props.dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
@@ -256,27 +270,28 @@ export default abstract class TimeColsView extends View {
     if (options.weekNumbers) {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
-      return '' +
-        '<th class="fc-axis fc-week-number ' + theme.getClass('widgetHeader') + '" ' + this.axisStyleAttr() + '>' +
-          buildGotoAnchorHtml( // aside from link, important for matchCellWidths
-            options,
-            dateEnv,
-            { date: range.start, type: 'week', forceOff: dayCnt > 1 },
-            htmlEscape(weekText) // inner HTML
-          ) +
-        '</th>'
-    } else {
-      return '<th class="fc-axis ' + theme.getClass('widgetHeader') + '" ' + this.axisStyleAttr() + '></th>'
+      return [
+        <th class={'fc-axis fc-week-number ' + theme.getClass('widgetHeader')} style={this.getAxisStyles()}>
+          <GotoAnchor
+            navLinks={options.navLinks}
+            gotoOptions={{ date: range.start, type: 'week', forceOff: dayCnt > 1 }}
+          >{weekText}</GotoAnchor>
+        </th>
+      ]
     }
+
+    return [
+      <th class={'fc-axis ' + theme.getClass('widgetHeader')} style={this.getAxisStyles()}></th>
+    ]
   }
 
 
   // Generates an HTML attribute string for setting the width of the axis, if it is known
-  axisStyleAttr() {
+  getAxisStyles() {
     if (this.axisWidth != null) {
-      return 'style="width:' + this.axisWidth + 'px"'
+      return { width: this.axisWidth }
     }
-    return ''
+    return {}
   }
 
 
@@ -285,23 +300,21 @@ export default abstract class TimeColsView extends View {
 
 
   // Generates the HTML that goes before the bg of the TimeCols slot area. Long vertical column.
-  renderTimeColsBgIntroHtml = () => {
+  renderTimeColsBgIntro = () => {
     let { theme } = this.context
 
-    return '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + this.axisStyleAttr() + '></td>'
+    return [
+      <td class={'fc-axis ' + theme.getClass('widgetContent')} style={this.getAxisStyles()}></td>
+    ]
   }
 
 
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
-  renderTimeColsIntroHtml = () => {
-    return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>'
-  }
-
-
-  timeColsRenderProps: TimeColsRenderProps = {
-    renderBgIntroHtml: this.renderTimeColsBgIntroHtml,
-    renderIntroHtml: this.renderTimeColsIntroHtml
+  renderTimeColsIntro = () => {
+    return [
+      <td class='fc-axis' style={this.getAxisStyles()}></td>
+    ]
   }
 
 
@@ -310,31 +323,30 @@ export default abstract class TimeColsView extends View {
 
 
   // Generates the HTML that goes before the all-day cells
-  renderTableBgIntroHtml = () => {
+  renderTableBgIntro = () => {
     let { theme, options } = this.context
+    let spanAttrs = {} as any
 
-    return '' +
-      '<td class="fc-axis ' + theme.getClass('widgetContent') + '" ' + this.axisStyleAttr() + '>' +
-        '<span>' + // needed for matchCellWidths
-          getAllDayHtml(options) +
-        '</span>' +
-      '</td>'
+    if (typeof options.allDayHtml === 'string') {
+      spanAttrs.dangerouslySetInnerHTML = { __html: options.allDayHtml }
+    }
+
+    return [
+      <td class={'fc-axis ' + theme.getClass('widgetContent')} style={this.getAxisStyles()}>
+        <span {...spanAttrs}>
+          {options.allDayText}
+        </span>
+      </td>
+    ]
   }
 
 
   // Generates the HTML that goes before all other types of cells.
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
-  renderTableIntroHtml = () => {
-    return '<td class="fc-axis" ' + this.axisStyleAttr() + '></td>'
-  }
-
-
-  tableRenderProps: TableRenderProps = {
-    renderNumberIntroHtml: this.renderTableIntroHtml, // don't want numbers
-    renderBgIntroHtml: this.renderTableBgIntroHtml,
-    renderIntroHtml: this.renderTableIntroHtml,
-    colWeekNumbersVisible: false,
-    cellWeekNumbersVisible: false
+  renderTableIntro = () => {
+    return [
+      <td class='fc-axis' style={this.getAxisStyles()}></td>
+    ]
   }
 
 }

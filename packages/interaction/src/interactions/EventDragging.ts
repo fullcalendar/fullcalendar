@@ -40,7 +40,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
     let { component } = this
     let { options } = component.context
 
-    let dragging = this.dragging = new FeaturefulElementDragging(component.rootEl)
+    let dragging = this.dragging = new FeaturefulElementDragging(settings.el)
     dragging.pointer.selector = EventDragging.SELECTOR
     dragging.touchScrollAllowed = false
     dragging.autoScroller.isEnabled = options.dragScroll

@@ -1,5 +1,4 @@
 
-
 export class DelayedRunner {
 
   private isDirty: boolean = false
@@ -13,23 +12,45 @@ export class DelayedRunner {
 
   request(delay?: number) {
     this.isDirty = true
-    this.clearTimeout()
 
-    if (delay == null) {
-      this.tryDrain()
-    } else {
-      this.timeoutId = setTimeout(this.tryDrain.bind(this), delay) as unknown as number // NOT OPTIMAL! TODO: look at debounce
+    if (!this.pauseDepth) {
+      this.clearTimeout()
+
+      if (delay == null) {
+        this.drain()
+      } else {
+        this.timeoutId = setTimeout(this.drain.bind(this), delay) as unknown as number // NOT OPTIMAL! TODO: look at debounce
+      }
     }
   }
 
   pause() {
-    this.clearTimeout()
-    this.pauseDepth++
+    this.setPauseDepth(1)
   }
 
   resume() {
-    this.pauseDepth--
-    this.tryDrain()
+    this.setPauseDepth(0)
+  }
+
+  whilePaused(func) {
+    this.setPauseDepth(this.pauseDepth + 1)
+    func()
+    this.setPauseDepth(this.pauseDepth - 1)
+  }
+
+  private setPauseDepth(depth: number) {
+    let oldDepth = this.pauseDepth
+    this.pauseDepth = depth // for this.drain() call
+
+    if (depth) { // wants to pause
+      if (!oldDepth) {
+        this.clearTimeout()
+      }
+    } else { // wants to unpause
+      if (oldDepth) {
+        this.drain()
+      }
+    }
   }
 
   private clearTimeout() {
@@ -39,8 +60,8 @@ export class DelayedRunner {
     }
   }
 
-  private tryDrain() {
-    if (!this.pauseDepth && this.isDirty) {
+  drain() {
+    if (this.isDirty && !this.pauseDepth) {
       this.isDirty = false
       this.drained()
     }
@@ -52,12 +73,18 @@ export class DelayedRunner {
     }
   }
 
+  clear() {
+    this.pause()
+    this.isDirty = false
+  }
+
 }
 
 
 export class TaskRunner<Task> {
 
   private isRunning = false
+  private isPaused = false
   private queue: Task[] = []
   private delayedRunner: DelayedRunner
 
@@ -65,7 +92,7 @@ export class TaskRunner<Task> {
     private runTaskOption?: (task: Task) => void,
     private drainedOption?: (completedTasks: Task[]) => void
   ) {
-    this.delayedRunner = new DelayedRunner(this.tryDrain.bind(this))
+    this.delayedRunner = new DelayedRunner(this.drain.bind(this))
   }
 
   request(task: Task, delay?: number) {
@@ -73,10 +100,10 @@ export class TaskRunner<Task> {
     this.delayedRunner.request(delay)
   }
 
-  private tryDrain() {
+  drain() {
     let { queue } = this
 
-    if (!this.isRunning && queue.length) {
+    if (!this.isRunning && !this.isPaused && queue.length) {
       this.isRunning = true
 
       let completedTasks: Task[] = []
@@ -90,6 +117,15 @@ export class TaskRunner<Task> {
       this.isRunning = false
       this.drained(completedTasks)
     }
+  }
+
+  pause() {
+    this.isPaused = true
+  }
+
+  resume() {
+    this.isPaused = false
+    this.drain()
   }
 
   protected runTask(task: Task) {

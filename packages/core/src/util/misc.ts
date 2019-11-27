@@ -7,6 +7,13 @@ import { DateEnv } from '../datelib/env'
 import { DateRange, OpenDateRange } from '../datelib/date-range'
 
 
+let guidNumber = 0
+
+export function guid() {
+  return String(guidNumber++)
+}
+
+
 /* FullCalendar-specific DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
@@ -327,41 +334,6 @@ export function firstDefined(...args) {
     if (args[i] !== undefined) {
       return args[i]
     }
-  }
-}
-
-
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds.
-// leading edge, instead of the trailing.
-// https://github.com/jashkenas/underscore/blob/1.6.0/underscore.js#L714
-export function debounce(func, wait) {
-  let timeout
-  let args
-  let context
-  let timestamp
-  let result
-
-  let later = function() {
-    let last = new Date().valueOf() - timestamp
-    if (last < wait) {
-      timeout = setTimeout(later, wait - last)
-    } else {
-      timeout = null
-      result = func.apply(context, args)
-      context = args = null
-    }
-  }
-
-  return function() {
-    context = this
-    args = arguments
-    timestamp = new Date().valueOf()
-    if (!timeout) {
-      timeout = setTimeout(later, wait)
-    }
-    return result
   }
 }
 

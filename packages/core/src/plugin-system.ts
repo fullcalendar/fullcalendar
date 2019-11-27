@@ -18,6 +18,7 @@ import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { RecurringType } from './structs/recurring-event'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
 import { ElementDraggingClass } from './interactions/ElementDragging'
+import { guid } from './util/misc'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -92,11 +93,9 @@ export interface ViewPropsTransformer {
 export type ViewContainerModifier = (contentEl: HTMLElement, calendar: Calendar) => void
 
 
-let uid = 0
-
 export function createPlugin(input: PluginDefInput): PluginDef {
   return {
-    id: String(uid++),
+    id: guid(),
     deps: input.deps || [],
     reducers: input.reducers || [],
     eventDefParsers: input.eventDefParsers || [],

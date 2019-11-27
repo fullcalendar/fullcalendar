@@ -10,7 +10,7 @@ import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { __assign } from 'tslib'
-import { createElement } from './util/dom-manip'
+
 
 export interface ViewProps {
   viewSpec: ViewSpec
@@ -25,7 +25,7 @@ export interface ViewProps {
   eventResize: EventInteractionState | null
 }
 
-export default abstract class View extends DateComponent<ViewProps> {
+export default abstract class View<State={}> extends DateComponent<ViewProps, State> {
 
   // config properties, initialized after class on prototype
   usesMinMaxTime: boolean // whether minTime/maxTime will affect the activeRange. Views must opt-in.
@@ -44,6 +44,8 @@ export default abstract class View extends DateComponent<ViewProps> {
   initialNowQueriedMs: number // ms time the getNow was called
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
+
+  abstract getRootEl(): HTMLElement
 
 
   // Sizing
@@ -259,6 +261,9 @@ View.prototype.usesMinMaxTime = false
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator
 
 
-export function renderViewEl(type: string) {
-  return createElement('div', { className: 'fc-view fc-' + type + '-view' })
+export function getViewClassNames(viewSpec: ViewSpec) {
+  return [
+    'fc-view',
+    'fc-' + viewSpec.type + '-view'
+  ]
 }

@@ -16,11 +16,11 @@ import {
   EventStore,
   memoize,
   Seg,
-  ViewSpec,
-  renderer,
-  renderViewEl
+  subrenderer,
+  getViewClassNames
 } from '@fullcalendar/core'
 import ListViewEvents from './ListViewEvents'
+import { h, createRef } from 'preact'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -29,52 +29,67 @@ export default class ListView extends View {
 
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
-  private renderSkeleton = renderer(renderSkeleton)
-  private renderScroller = renderer(Scroller)
-  private renderEvents = renderer(ListViewEvents)
-
-  // for sizing
+  private renderEvents = subrenderer(ListViewEvents)
+  private rootEl: HTMLDivElement
+  private scrollerRef = createRef<Scroller>()
   private eventRenderer: ListViewEvents
-  private scroller: Scroller
+
+  getRootEl() { return this.rootEl }
 
 
-  render(props: ViewProps) {
+  render(props: ViewProps, state: {}, context: ComponentContext) {
+    let classNames = getViewClassNames(props.viewSpec).concat('fc-list-view')
+    let themeClassName = context.theme.getClass('listView')
+
+    if (themeClassName) {
+      classNames.push(themeClassName)
+    }
+
+    return (
+      <div ref={this.setRootEl} class={classNames.join(' ')}>
+        <Scroller ref={this.scrollerRef} overflowX='hidden' overflowY='auto' />
+      </div>
+    )
+  }
+
+
+  setRootEl = (rootEl: HTMLDivElement | null) => {
+    this.rootEl = rootEl
+
+    if (rootEl) {
+      this.context.calendar.registerInteractiveComponent(this, { // TODO: make aware that it doesn't do Hits
+        el: rootEl
+      })
+    } else {
+      this.context.calendar.unregisterInteractiveComponent(this)
+      this.subrenderDestroy()
+    }
+  }
+
+
+  componentDidMount() {
+    this.subrender()
+  }
+
+
+  componentDidUpdate() {
+    this.subrender()
+  }
+
+
+  subrender() {
+    let { props } = this
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
-
-    let rootEl = this.renderSkeleton({
-      viewSpec: props.viewSpec
-    })
-
-    this.scroller = this.renderScroller({
-      parentEl: rootEl,
-      overflowX: 'hidden',
-      overflowY: 'auto'
-    })
 
     this.eventRenderer = this.renderEvents({
       segs: this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges),
       dayDates,
-      contentEl: this.scroller.el,
+      contentEl: this.scrollerRef.current.rootEl,
       selectedInstanceId: props.eventSelection, // TODO: rename
       hiddenInstances: // TODO: more convenient
         (props.eventDrag ? props.eventDrag.affectedEvents.instances : null) ||
         (props.eventResize ? props.eventResize.affectedEvents.instances : null)
     })
-
-    return rootEl
-  }
-
-
-  componentDidMount() {
-    this.context.calendar.registerInteractiveComponent(this, {
-      el: this.rootEl
-      // TODO: make aware that it doesn't do Hits
-    })
-  }
-
-
-  componentWillUnmount() {
-    this.context.calendar.unregisterInteractiveComponent(this)
   }
 
 
@@ -84,17 +99,20 @@ export default class ListView extends View {
     this.eventRenderer.computeSizes(isResize, this)
     this.eventRenderer.assignSizes(isResize, this)
 
-    this.scroller.clear() // sets height to 'auto' and clears overflow
+    let scroller = this.scrollerRef.current
+    scroller.clear() // sets height to 'auto' and clears overflow
 
     if (!isAuto) {
-      this.scroller.setHeight(this.computeScrollerHeight(viewHeight))
+      scroller.setHeight(this.computeScrollerHeight(viewHeight))
     }
   }
 
 
   computeScrollerHeight(viewHeight) {
-    return viewHeight -
-      subtractInnerElHeight(this.rootEl, this.scroller.el) // everything that's NOT the scroller
+    let { rootEl } = this
+    let scrollerEl = this.scrollerRef.current.rootEl
+
+    return viewHeight - subtractInnerElHeight(rootEl, scrollerEl) // everything that's NOT the scroller
   }
 
 
@@ -171,21 +189,6 @@ export default class ListView extends View {
 }
 
 ListView.prototype.fgSegSelector = '.fc-list-item' // which elements accept event actions
-
-
-function renderSkeleton(props: { viewSpec: ViewSpec }, context: ComponentContext) {
-  let rootEl = renderViewEl(props.viewSpec.type)
-  rootEl.classList.add('fc-list-view')
-
-  let listViewClassNames = (context.theme.getClass('listView') || '').split(' ') // wish we didn't have to do this
-  for (let listViewClassName of listViewClassNames) {
-    if (listViewClassName) { // in case input was empty string
-      rootEl.classList.add(listViewClassName)
-    }
-  }
-
-  return rootEl
-}
 
 
 function computeDateVars(dateProfile: DateProfile) {

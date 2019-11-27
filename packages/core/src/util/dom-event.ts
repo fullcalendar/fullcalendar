@@ -10,25 +10,36 @@ export function preventDefault(ev) {
 // Event Delegation
 // ----------------------------------------------------------------------------------------------------------------
 
+
+export function buildDelegationHandler(
+  selector: string,
+  handler: (ev: Event, matchedTarget: HTMLElement) => void
+) {
+  return function(ev: Event) {
+    let matchedChild = elementClosest(ev.target as HTMLElement, selector)
+
+    if (matchedChild) {
+      handler.call(matchedChild, ev, matchedChild)
+    }
+  }
+}
+
+
 export function listenBySelector(
   container: HTMLElement,
   eventType: string,
   selector: string,
   handler: (ev: Event, matchedTarget: HTMLElement) => void
 ) {
-  function realHandler(ev: Event) {
-    let matchedChild = elementClosest(ev.target as HTMLElement, selector)
-    if (matchedChild) {
-      handler.call(matchedChild, ev, matchedChild)
-    }
-  }
+  let attachedHandler = buildDelegationHandler(selector, handler)
 
-  container.addEventListener(eventType, realHandler)
+  container.addEventListener(eventType, attachedHandler)
 
   return function() {
-    container.removeEventListener(eventType, realHandler)
+    container.removeEventListener(eventType, attachedHandler)
   }
 }
+
 
 export function listenToHoverBySelector(
   container: HTMLElement,

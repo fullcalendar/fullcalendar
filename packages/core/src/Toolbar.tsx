@@ -1,18 +1,14 @@
-import { htmlEscape } from './util/html'
-import { htmlToElement, appendToElement, findElements, createElement } from './util/dom-manip'
-import ComponentContext from './component/ComponentContext'
-import { Component, renderer } from './view-framework'
-import { ViewSpec } from './structs/view-spec'
-import Calendar from './Calendar'
-import Theme from './theme/Theme'
+import { h, createRef } from 'preact'
+import { BaseComponent } from './view-framework-util'
+import { ToolbarModel, ToolbarWidget } from './toolbar-parse'
 
 
-/* Toolbar with buttons and title
-----------------------------------------------------------------------------------------------------------------------*/
-
-export interface ToolbarRenderProps {
+export interface ToolbarProps extends ToolbarContent {
   extraClassName: string
-  layout: any
+  model: ToolbarModel
+}
+
+export interface ToolbarContent {
   title: string
   activeButton: string
   isTodayEnabled: boolean
@@ -20,192 +16,108 @@ export interface ToolbarRenderProps {
   isNextEnabled: boolean
 }
 
-export default class Toolbar extends Component<ToolbarRenderProps, ComponentContext> {
 
-  private renderBase = renderer(this._renderBase)
-  private renderTitle = renderer(renderTitle)
-  private renderActiveButton = renderer(renderActiveButton, unrenderActiveButton)
-  private renderToday = renderer(toggleButtonEnabled.bind(null, 'today'))
-  private renderPrev = renderer(toggleButtonEnabled.bind(null, 'prev'))
-  private renderNext = renderer(toggleButtonEnabled.bind(null, 'next'))
+export default class Toolbar extends BaseComponent<ToolbarProps> {
 
-  public viewsWithButtons: string[]
+  private rootElRef = createRef<HTMLDivElement>()
+
+  public get rootEl() { return this.rootElRef.current }
 
 
-  render(props: ToolbarRenderProps) {
+  render(props: ToolbarProps) {
+    let { model } = props
 
-    let el = this.renderBase({
-      extraClassName: props.extraClassName,
-      layout: props.layout
-    })
-
-    this.renderTitle({ el, text: props.title })
-    this.renderActiveButton({ el, buttonName: props.activeButton })
-    this.renderToday({ el, isEnabled: props.isTodayEnabled })
-    this.renderPrev({ el, isEnabled: props.isPrevEnabled })
-    this.renderNext({ el, isEnabled: props.isNextEnabled })
-
-    return el
+    return (
+      <div ref={this.rootElRef} class={'fc-toolbar ' + props.extraClassName}>
+        {this.renderSection('left', model.left)}
+        {this.renderSection('center', model.center)}
+        {this.renderSection('right', model.right)}
+      </div>
+    )
   }
 
 
-  /*
-  the wrapper el and the left/center/right layout
-  */
-  _renderBase({ extraClassName , layout }, context: ComponentContext) {
-    let { theme, calendar } = context
+  renderSection(position: string, widgetGroups: ToolbarWidget[][] | null) {
+    let { props } = this
 
-    let el = createElement('div', { className: 'fc-toolbar ' + extraClassName }, [
-      this.renderSection('left', layout.left, theme, calendar),
-      this.renderSection('center', layout.center, theme, calendar),
-      this.renderSection('right', layout.right, theme, calendar)
-    ])
-
-    this.viewsWithButtons = []
-
-    return el
+    if (widgetGroups) {
+      return (
+        <ToolbarSection
+          position={position}
+          widgetGroups={widgetGroups}
+          title={props.title}
+          activeButton={props.activeButton}
+          isTodayEnabled={props.isTodayEnabled}
+          isPrevEnabled={props.isPrevEnabled}
+          isNextEnabled={props.isNextEnabled}
+        />
+      )
+    }
   }
 
+}
 
-  renderSection(position, buttonStr, theme: Theme, calendar: Calendar) {
-    let optionsManager = calendar.optionsManager
-    let viewSpecs = calendar.viewSpecs
-    let sectionEl = createElement('div', { className: 'fc-' + position })
-    let calendarCustomButtons = optionsManager.computed.customButtons || {}
-    let calendarButtonTextOverrides = optionsManager.overrides.buttonText || {}
-    let calendarButtonText = optionsManager.computed.buttonText || {}
 
-    if (buttonStr) {
-      buttonStr.split(' ').forEach((buttonGroupStr, i) => {
-        let groupChildren = []
-        let isOnlyButtons = true
-        let groupEl
+interface ToolbarSectionProps extends ToolbarContent {
+  position: string
+  widgetGroups: ToolbarWidget[][]
+}
 
-        buttonGroupStr.split(',').forEach((buttonName, j) => {
-          let customButtonProps
-          let viewSpec: ViewSpec
-          let buttonClick
-          let buttonIcon // only one of these will be set
-          let buttonText // "
-          let buttonInnerHtml
-          let buttonClasses
-          let buttonEl: HTMLElement
-          let buttonAriaAttr
+class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
 
-          if (buttonName === 'title') {
-            groupChildren.push(htmlToElement('<h2>&nbsp;</h2>')) // we always want it to take up height
-            isOnlyButtons = false
-          } else {
+  render(props: ToolbarSectionProps) {
+    let { theme } = this.context
 
-            if ((customButtonProps = calendarCustomButtons[buttonName])) {
-              buttonClick = function(ev) {
-                if (customButtonProps.click) {
-                  customButtonProps.click.call(buttonEl, ev)
-                }
-              };
-              (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
-              (buttonIcon = theme.getIconClass(buttonName)) ||
-              (buttonText = customButtonProps.text)
-            } else if ((viewSpec = viewSpecs[buttonName])) {
-              this.viewsWithButtons.push(buttonName)
-              buttonClick = function() {
-                calendar.changeView(buttonName)
-              };
-              (buttonText = viewSpec.buttonTextOverride) ||
-              (buttonIcon = theme.getIconClass(buttonName)) ||
-              (buttonText = viewSpec.buttonTextDefault)
-            } else if (calendar[buttonName]) { // a calendar method
-              buttonClick = function() {
-                calendar[buttonName]()
-              };
-              (buttonText = calendarButtonTextOverrides[buttonName]) ||
-              (buttonIcon = theme.getIconClass(buttonName)) ||
-              (buttonText = calendarButtonText[buttonName])
-              //            ^ everything else is considered default
-            }
+    return (
+      <div class={'fc-' + props.position}>
+        {props.widgetGroups.map((widgetGroup: ToolbarWidget[]) => {
+          let children = []
+          let isOnlyButtons = true
 
-            if (buttonClick) {
+          for (let widget of widgetGroup) {
+            let { buttonName, buttonClick, buttonText, buttonIcon } = widget
 
-              buttonClasses = [
-                'fc-' + buttonName + '-button',
-                theme.getClass('button')
-              ]
-
-              if (buttonText) {
-                buttonInnerHtml = htmlEscape(buttonText)
-                buttonAriaAttr = ''
-              } else if (buttonIcon) {
-                buttonInnerHtml = "<span class='" + buttonIcon + "'></span>"
-                buttonAriaAttr = ' aria-label="' + buttonName + '"'
-              }
-
-              buttonEl = htmlToElement( // type="button" so that it doesn't submit a form
-                '<button type="button" class="' + buttonClasses.join(' ') + '"' +
-                  buttonAriaAttr +
-                '>' + buttonInnerHtml + '</button>'
+            if (buttonName === 'title') {
+              isOnlyButtons = false
+              children.push(
+                <h2>{props.title}</h2>
               )
 
-              buttonEl.addEventListener('click', buttonClick)
+            } else {
+              let ariaAttrs = buttonIcon ? { 'aria-label': buttonName } : {}
 
-              groupChildren.push(buttonEl)
+              let buttonClasses = [ 'fc-' + buttonName + '-button', theme.getClass('button') ]
+              if (buttonName === props.activeButton) {
+                buttonClasses.push(theme.getClass('buttonActive'))
+              }
+
+              let isDisabled =
+                (!props.isTodayEnabled && buttonName === 'today') ||
+                (!props.isPrevEnabled && buttonName === 'prev') ||
+                (!props.isNextEnabled && buttonName === 'next')
+
+              children.push(
+                <button
+                  disabled={isDisabled}
+                  class={buttonClasses.join(' ')}
+                  onClick={buttonClick}
+                  { ...ariaAttrs }
+                >{ buttonText || (buttonIcon ? <span class={buttonIcon} /> : '')}</button>
+              )
             }
           }
-        })
 
-        if (groupChildren.length > 1) {
-          groupEl = document.createElement('div')
+          if (children.length > 1) {
+            let groupClasses = (isOnlyButtons && theme.getClass('buttonGroup')) || ''
 
-          let buttonGroupClassName = theme.getClass('buttonGroup')
-          if (isOnlyButtons && buttonGroupClassName) {
-            groupEl.classList.add(buttonGroupClassName)
+            return (<div class={groupClasses}>{children}</div>)
+          } else {
+            return children[0]
           }
 
-          appendToElement(groupEl, groupChildren)
-          sectionEl.appendChild(groupEl)
-        } else {
-          appendToElement(sectionEl, groupChildren) // 1 or 0 children
-        }
-      })
-    }
-
-    return sectionEl
+        })}
+      </div>
+    )
   }
 
-}
-
-
-function renderTitle(props: { el: HTMLElement, text: string }) {
-  findElements(props.el, 'h2').forEach(function(titleEl) {
-    titleEl.innerText = props.text
-  })
-}
-
-
-function renderActiveButton(props: { el: HTMLElement, buttonName: string }, context: ComponentContext) {
-  let { buttonName } = props
-  let className = context.theme.getClass('buttonActive')
-
-  findElements(props.el, 'button').forEach((buttonEl) => { // fyi, themed buttons don't have .fc-button
-    if (buttonEl.classList.contains('fc-' + buttonName + '-button')) {
-      buttonEl.classList.add(className)
-    }
-  })
-
-  return props
-}
-
-
-function unrenderActiveButton(props: { el: HTMLElement, buttonName: string }, context: ComponentContext) {
-  let className = context.theme.getClass('buttonActive')
-
-  findElements(props.el, 'button').forEach((buttonEl) => { // fyi, themed buttons don't have .fc-button
-    buttonEl.classList.remove(className)
-  })
-}
-
-
-function toggleButtonEnabled(buttonName: string, props: { el: HTMLElement, isEnabled: boolean }) {
-  findElements(props.el, '.fc-' + buttonName + '-button').forEach((buttonEl: HTMLButtonElement) => {
-    buttonEl.disabled = !props.isEnabled
-  })
 }

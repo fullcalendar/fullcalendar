@@ -1,4 +1,4 @@
-import { createElement, removeElement } from './dom-manip'
+import { removeElement, applyStyle } from './dom-manip'
 
 
 // Logic for determining if, when the element is right-to-left, the scrollbar appears on the left side
@@ -13,17 +13,17 @@ export function getIsRtlScrollbarOnLeft() { // responsible for caching the compu
 }
 
 function computeIsRtlScrollbarOnLeft() { // creates an offscreen test element, then removes it
-  let outerEl = createElement('div', {
-    style: {
-      position: 'absolute',
-      top: -1000,
-      left: 0,
-      border: 0,
-      padding: 0,
-      overflow: 'scroll',
-      direction: 'rtl'
-    }
-  }, '<div></div>')
+  let outerEl = document.createElement('div')
+  applyStyle(outerEl, {
+    position: 'absolute',
+    top: -1000,
+    left: 0,
+    border: 0,
+    padding: 0,
+    overflow: 'scroll',
+    direction: 'rtl'
+  })
+  outerEl.innerHTML = '<div></div>'
 
   document.body.appendChild(outerEl)
   let innerEl = outerEl.firstChild as HTMLElement

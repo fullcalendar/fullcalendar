@@ -4,6 +4,7 @@ import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { Action } from './types'
+import { guid } from '../util/misc'
 
 export default function(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, calendar: Calendar): EventSourceHash {
   switch (action.type) {
@@ -46,9 +47,6 @@ export default function(eventSources: EventSourceHash, action: Action, dateProfi
       return eventSources
   }
 }
-
-
-let uid = 0
 
 
 function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, calendar: Calendar): EventSourceHash {
@@ -122,7 +120,7 @@ function fetchSourcesByIds(
 
 function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: Calendar) {
   let sourceDef = calendar.pluginSystem.hooks.eventSourceDefs[eventSource.sourceDefId]
-  let fetchId = String(uid++)
+  let fetchId = guid()
 
   sourceDef.fetch(
     {

@@ -10,13 +10,12 @@ import {
   DateRange,
   Slicer,
   Hit,
-  ComponentContext,
-  renderer
+  ComponentContext
 } from '@fullcalendar/core'
-import { default as Table, TableSeg, TableRenderProps } from './Table'
+import Table, { TableSeg  } from './Table'
+import { h, createRef, VNode } from 'preact'
 
 export interface DayTableProps {
-  renderProps: TableRenderProps
   dateProfile: DateProfile | null
   dayTableModel: DayTableModel
   nextDayThreshold: Duration
@@ -28,43 +27,50 @@ export interface DayTableProps {
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
   isRigid: boolean
+  renderNumberIntro: (row: number, cells: any) => VNode[]
+  renderBgIntro: () => VNode[]
+  renderIntro: () => VNode[]
+  colWeekNumbersVisible: boolean // week numbers render in own column? (caller does HTML via intro)
+  cellWeekNumbersVisible: boolean // display week numbers in day cell?
 }
 
 export default class DayTable extends DateComponent<DayTableProps, ComponentContext> {
 
-  private renderTable = renderer(Table)
-  private registerInteractive = renderer(this._registerInteractive, this._unregisterInteractive)
   private slicer = new DayTableSlicer()
+  private tableRef = createRef<Table>()
 
-  table: Table
+  get table() { return this.tableRef.current }
 
 
-  render(props: DayTableProps, context: ComponentContext) {
+  render(props: DayTableProps, state: {}, context: ComponentContext) {
     let { dateProfile, dayTableModel } = props
 
-    let table = this.table = this.renderTable({
-      ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayTableModel),
-      dateProfile,
-      cells: dayTableModel.cells,
-      isRigid: props.isRigid,
-      renderProps: props.renderProps
-    })
-
-    this.registerInteractive({
-      el: table.rootEl
-    })
-
-    return table
+    return (
+      <Table
+        ref={this.tableRef}
+        rootElRef={this.handleRootEl}
+        { ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayTableModel) }
+        dateProfile={dateProfile}
+        cells={dayTableModel.cells}
+        isRigid={props.isRigid}
+        renderNumberIntro={props.renderNumberIntro}
+        renderBgIntro={props.renderBgIntro}
+        renderIntro={props.renderIntro}
+        colWeekNumbersVisible={props.colWeekNumbersVisible}
+        cellWeekNumbersVisible={props.cellWeekNumbersVisible}
+      />
+    )
   }
 
 
-  _registerInteractive({ el }: { el: HTMLElement }, context: ComponentContext) {
-    context.calendar.registerInteractiveComponent(this, { el })
-  }
+  handleRootEl = (rootEl: HTMLDivElement | null) => {
+    let { calendar } = this.context
 
-
-  _unregisterInteractive(funcState: void, context: ComponentContext) {
-    context.calendar.unregisterInteractiveComponent(this)
+    if (rootEl) {
+      calendar.registerInteractiveComponent(this, { el: rootEl })
+    } else {
+      calendar.unregisterInteractiveComponent(this)
+    }
   }
 
 

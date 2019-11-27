@@ -3,7 +3,6 @@
 ------------------------------------------------------------------------------------------------------------------------*/
 
 import {
-  createElement,
   applyStyle,
   listenBySelector,
   computeClippingRect, computeRect, Component, ComponentContext
@@ -22,17 +21,14 @@ export default class Popover extends Component<PopoverProps, ComponentContext> {
 
 
   render(props: PopoverProps, context: ComponentContext) {
-    let el = createElement('div', {
-      className: [
-        'fc-popover',
-        context.theme.getClass('popover'),
-        props.extraClassName || ''
-      ].join(' '),
-      style: {
-        top: '0',
-        left: '0'
-      }
-    })
+    let el = document.createElement('div')
+    el.className = [
+      'fc-popover',
+      context.theme.getClass('popover'),
+      props.extraClassName || ''
+    ].join(' ')
+    el.style.top = '0'
+    el.style.left = '0'
 
     if (props.onClose) {
       // when a click happens on anything inside with a 'fc-close' className, hide the popover

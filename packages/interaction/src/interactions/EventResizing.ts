@@ -34,7 +34,7 @@ export default class EventDragging extends Interaction {
     super(settings)
     let { component } = settings
 
-    let dragging = this.dragging = new FeaturefulElementDragging(component.rootEl)
+    let dragging = this.dragging = new FeaturefulElementDragging(settings.el)
     dragging.pointer.selector = '.fc-resizer'
     dragging.touchScrollAllowed = false
     dragging.autoScroller.isEnabled = component.context.options.dragScroll

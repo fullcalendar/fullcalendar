@@ -1,10 +1,9 @@
-import ComponentContext, { computeContextProps } from './component/ComponentContext'
-import { Component, renderer } from './view-framework'
+import ComponentContext, { ComponentContextType, buildContext } from './component/ComponentContext'
 import { ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
 import Toolbar from './Toolbar'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
-import { createElement, applyStyle } from './util/dom-manip'
+import { applyStyle } from './util/dom-manip'
 import { rangeContainsMarker } from './datelib/date-range'
 import { EventUiHash } from './component/event-ui'
 import { parseBusinessHours } from './structs/business-hours'
@@ -14,140 +13,155 @@ import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
-import { listRenderer } from './view-framework'
+import { h, Fragment, createRef } from 'preact'
+import { BaseComponent, subrenderer } from './view-framework-util'
+import { buildDelegationHandler } from './util/dom-event'
+import { capitaliseFirstLetter } from './util/misc'
+import { DelayedRunner } from './util/runner'
 
 
 export interface CalendarComponentProps extends CalendarState {
+  rootEl: HTMLElement
   viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator // for the current view
   eventUiBases: EventUiHash
   title: string
 }
 
-export default class CalendarComponent extends Component<CalendarComponentProps, ComponentContext> {
+export default class CalendarComponent extends BaseComponent<CalendarComponentProps> {
 
-  view: View
-  header: Toolbar
-  footer: Toolbar
+  private buildViewContext = memoize(buildContext)
+  private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.context.calendar))
+  private buildViewPropTransformers = memoize(buildViewPropTransformers)
+  private buildToolbarProps = memoize(buildToolbarProps)
+  private updateClassNames = subrenderer(setClassNames, unsetClassNames)
+  private handleNavLinkClick = buildDelegationHandler('a[data-goto]', this._handleNavLinkClick.bind(this))
+
+  headerRef = createRef<Toolbar>()
+  footerRef = createRef<Toolbar>()
+  viewRef = createRef<View>()
   viewContainerEl: HTMLElement
+
+  isSizingDirty = false
   isHeightAuto: boolean
   viewHeight: number
 
-  private parseBusinessHours = memoize((input) => {
-    return parseBusinessHours(input, this.context.calendar)
-  })
-  private computeViewContextProps = memoize(computeContextProps)
-  private buildViewPropTransformers = memoize(buildViewPropTransformers)
-  private updateClassNames = renderer(this._setClassNames, this._unsetClassNames)
-  private renderViewContainer = renderer(this._renderViewContainer)
-  private buildToolbarProps = memoize(buildToolbarProps)
-  private renderHeader = renderer(Toolbar)
-  private renderFooter = renderer(Toolbar)
-  private renderViews = listRenderer()
+  get view() { return this.viewRef.current }
 
 
   /*
   renders INSIDE of an outer div
   */
-  render(props: CalendarComponentProps, context: ComponentContext) {
+  render(props: CalendarComponentProps, state: {}, context: ComponentContext) {
+    let { calendar, header, footer } = context
+
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
       props.dateProfile,
       props.dateProfileGenerator,
       props.currentDate,
-      context.calendar.getNow(),
+      calendar.getNow(),
       props.title
     )
-    let innerEls: HTMLElement[] = []
 
     this.freezeHeight() // thawed after render
-    this.updateClassNames({})
+    this.isSizingDirty = true
 
-    if (context.options.header) {
-      let header = this.renderHeader({
-        extraClassName: 'fc-header-toolbar',
-        layout: context.options.header,
-        ...toolbarProps
-      })
-      innerEls.push(header.rootEl)
-    } else {
-      this.renderHeader(false)
-    }
+    this.updateClassNames({ rootEl: props.rootEl })
 
-    let viewContainerEl = this.renderViewContainer({})
-    this.renderView(props, viewContainerEl, context)
-    innerEls.push(viewContainerEl)
-
-    if (context.options.footer) {
-      let footer = this.renderFooter({
-        extraClassName: 'fc-footer-toolbar',
-        layout: context.options.footer,
-        ...toolbarProps
-      })
-      innerEls.push(footer.rootEl)
-    } else {
-      this.renderFooter(false)
-    }
-
-    this.viewContainerEl = viewContainerEl
-    return innerEls
+    return (
+      <Fragment>
+        {header ?
+          <Toolbar
+            ref={this.headerRef}
+            extraClassName='fc-header-toolbar'
+            model={header}
+            { ...toolbarProps }
+            /> :
+          null
+        }
+        <div class='fc-view-container' ref={this.setViewContainerEl} onClick={this.handleNavLinkClick}>
+          {this.renderView(props, this.context)}
+        </div>
+        {footer ?
+          <Toolbar
+            ref={this.footerRef}
+            extraClassName='fc-footer-toolbar'
+            model={footer}
+            { ...toolbarProps }
+            /> :
+          null
+        }
+      </Fragment>
+    )
   }
+
+
+  resizeRunner = new DelayedRunner(() => {
+    this.updateSize(true)
+    let { calendar, view } = this.context
+    calendar.publiclyTrigger('windowResize', [ view ])
+  })
 
 
   componentDidMount() {
-    this.afterRender()
+    window.addEventListener('resize', this.handleWindowResize)
   }
 
 
-  componentDidUpdate() {
-    this.afterRender()
+  componentWillUnmount() {
+    this.resizeRunner.clear()
+    window.removeEventListener('resize', this.handleWindowResize)
   }
 
 
-  afterRender() {
-    this.thawHeight()
-    this.updateSize()
-    this.context.calendar.releaseAfterSizingTriggers()
-  }
-
-
-  _setClassNames(props: {}, context: ComponentContext) {
-    let classList = this.location.parentEl.classList
-    let classNames: string[] = [
-      'fc',
-      'fc-' + context.options.dir,
-      context.theme.getClass('widget')
-    ]
-
-    for (let className of classNames) {
-      classList.add(className)
-    }
-
-    return classNames
-  }
-
-
-  _unsetClassNames(classNames: string[]) {
-    let classList = this.location.parentEl.classList
-
-    for (let className of classNames) {
-      classList.remove(className)
+  handleWindowResize = (ev: UIEvent) => {
+    if (ev.target === window) { // avoid jqui events
+      let { options } = this.context
+      this.resizeRunner.request(options.windowResizeDelay)
     }
   }
 
 
-  _renderViewContainer(props: {}, context: ComponentContext) {
-    let viewContainerEl = createElement('div', { className: 'fc-view-container' })
+  _handleNavLinkClick(ev: UIEvent, anchorEl: HTMLElement) {
+    let { dateEnv, calendar } = this.context
 
-    for (let modifyViewContainer of context.pluginHooks.viewContainerModifiers) {
-      modifyViewContainer(viewContainerEl, context.calendar)
+    let gotoOptions: any = anchorEl.getAttribute('data-goto')
+    gotoOptions = gotoOptions ? JSON.parse(gotoOptions) : {}
+
+    let dateMarker = dateEnv.createMarker(gotoOptions.date)
+    let viewType = gotoOptions.type
+
+    // property like "navLinkDayClick". might be a string or a function
+    let customAction = calendar.viewOpt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
+
+    if (typeof customAction === 'function') {
+      customAction(dateEnv.toDate(dateMarker), ev)
+
+    } else {
+      if (typeof customAction === 'string') {
+        viewType = customAction
+      }
+
+      calendar.zoomTo(dateMarker, viewType)
     }
-
-    return viewContainerEl
   }
 
 
-  renderView(props: CalendarComponentProps, viewContainerEl: HTMLElement, context: ComponentContext) {
+  setViewContainerEl = (viewContainerEl: HTMLElement | null) => {
+    let { pluginHooks, calendar } = this.context
+
+    if (viewContainerEl) {
+      this.viewContainerEl = viewContainerEl
+
+      for (let modifyViewContainer of pluginHooks.viewContainerModifiers) {
+        modifyViewContainer(viewContainerEl, calendar)
+      }
+    }
+  }
+
+
+  renderView(props: CalendarComponentProps, context: ComponentContext) {
     let { pluginHooks, options } = context
     let { viewSpec } = props
 
@@ -173,21 +187,25 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
       )
     }
 
-    let views = this.renderViews({
-      parentEl: viewContainerEl
-    }, [
-      {
-        id: '',
-        componentClass: viewSpec.class,
-        props: viewProps
-      }
-    ], {
-      ...context,
-      options: viewSpec.options,
-      ...this.computeViewContextProps(viewSpec.options)
-    })
+    let viewContext = this.buildViewContext(
+      context.calendar,
+      context.pluginHooks,
+      context.dateEnv,
+      context.theme,
+      context.view,
+      viewSpec.options
+    )
 
-    this.view = views[0] as View
+    let ViewClass = viewSpec.class
+
+    return (
+      <ComponentContextType.Provider value={viewContext}>
+        <ViewClass
+          ref={this.viewRef}
+          { ...viewProps }
+          />
+      </ComponentContextType.Provider>
+    )
   }
 
 
@@ -196,13 +214,21 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   updateSize(isResize = false) {
+    this.resizeRunner.whilePaused(() => {
+      if (isResize || this.isSizingDirty) {
 
-    if (isResize || this.isHeightAuto == null) {
-      this.computeHeightVars()
-    }
+        if (isResize || this.isHeightAuto == null) {
+          this.computeHeightVars()
+        }
 
-    this.view.updateSize(isResize, this.viewHeight, this.isHeightAuto)
-    this.view.updateNowIndicator() // we need to guarantee this will run after updateSize
+        let view = this.viewRef.current
+        view.updateSize(isResize, this.viewHeight, this.isHeightAuto)
+        view.updateNowIndicator()
+
+        this.thawHeight()
+        this.isSizingDirty = true
+      }
+    })
   }
 
 
@@ -222,7 +248,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
     } else if (typeof heightInput === 'function') { // exists and is a function
       this.viewHeight = heightInput() - this.queryToolbarsHeight()
     } else if (heightInput === 'parent') { // set to height of parent element
-      let parentEl = this.location.parentEl.parentNode as HTMLElement
+      let parentEl = this.props.rootEl.parentNode as HTMLElement
       this.viewHeight = parentEl.getBoundingClientRect().height - this.queryToolbarsHeight()
     } else {
       this.viewHeight = Math.round(
@@ -234,14 +260,16 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   queryToolbarsHeight() {
+    let header = this.headerRef.current
+    let footer = this.footerRef.current
     let height = 0
 
-    if (this.header) {
-      height += computeHeightAndMargins(this.header.rootEl)
+    if (header) {
+      height += computeHeightAndMargins(header.rootEl)
     }
 
-    if (this.footer) {
-      height += computeHeightAndMargins(this.footer.rootEl)
+    if (footer) {
+      height += computeHeightAndMargins(footer.rootEl)
     }
 
     return height
@@ -253,7 +281,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   freezeHeight() {
-    let rootEl = this.location.parentEl
+    let { rootEl } = this.props
 
     applyStyle(rootEl, {
       height: rootEl.getBoundingClientRect().height,
@@ -263,7 +291,7 @@ export default class CalendarComponent extends Component<CalendarComponentProps,
 
 
   thawHeight() {
-    let rootEl = this.location.parentEl
+    let { rootEl } = this.props
 
     applyStyle(rootEl, {
       height: '',
@@ -291,6 +319,35 @@ function buildToolbarProps(
     isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentRange, now),
     isPrevEnabled: prevInfo.isValid,
     isNextEnabled: nextInfo.isValid
+  }
+}
+
+
+// Outer Div Rendering
+// -----------------------------------------------------------------------------------------------------------------
+
+
+function setClassNames({ rootEl }: { rootEl: HTMLElement }, context: ComponentContext) {
+  let classList = rootEl.classList
+  let classNames: string[] = [
+    'fc',
+    'fc-' + context.options.dir,
+    context.theme.getClass('widget')
+  ]
+
+  for (let className of classNames) {
+    classList.add(className)
+  }
+
+  return { rootEl, classNames }
+}
+
+
+function unsetClassNames({ rootEl, classNames }: { rootEl: HTMLElement, classNames: string[] }) {
+  let classList = rootEl.classList
+
+  for (let className of classNames) {
+    classList.remove(className)
   }
 }
 

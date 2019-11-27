@@ -22,7 +22,7 @@ export default class DateSelecting extends Interaction {
     let { component } = settings
     let { options } = component.context
 
-    let dragging = this.dragging = new FeaturefulElementDragging(component.rootEl)
+    let dragging = this.dragging = new FeaturefulElementDragging(settings.el)
     dragging.touchScrollAllowed = false
     dragging.minDistance = options.selectMinDistance || 0
     dragging.autoScroller.isEnabled = options.dragScroll

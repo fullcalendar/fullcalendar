@@ -5,10 +5,9 @@ import { compareByFieldSpecs } from '../../util/misc'
 import { EventUi } from '../event-ui'
 import { EventRenderRange, filterSegsViaEls, triggerPositionedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import { Seg } from '../DateComponent'
-import { Component } from '../../view-framework'
 import ComponentContext from '../ComponentContext'
 import { memoize } from '../../util/memoize'
-import { renderer } from '../../view-framework'
+import { subrenderer, SubRenderer } from '../../view-framework-util'
 
 
 export interface BaseFgEventRendererProps {
@@ -20,12 +19,12 @@ export interface BaseFgEventRendererProps {
 
 export default abstract class FgEventRenderer<
   FgEventRendererProps extends BaseFgEventRendererProps = BaseFgEventRendererProps
-> extends Component<FgEventRendererProps, ComponentContext> {
+> extends SubRenderer<FgEventRendererProps> {
 
   private updateComputedOptions = memoize(this._updateComputedOptions)
-  private renderSegsPlain = renderer(this._renderSegsPlain, this._unrenderSegsPlain)
-  private renderSelectedInstance = renderer(renderSelectedInstance, unrenderSelectedInstance)
-  private renderHiddenInstances = renderer(renderHiddenInstances, unrenderHiddenInstances)
+  private renderSegsPlain = subrenderer(this._renderSegsPlain, this._unrenderSegsPlain)
+  private renderSelectedInstance = subrenderer(renderSelectedInstance, unrenderSelectedInstance)
+  private renderHiddenInstances = subrenderer(renderHiddenInstances, unrenderHiddenInstances)
 
   // internal state
   private segs: Seg[] = [] // for sizing funcs
@@ -37,8 +36,8 @@ export default abstract class FgEventRenderer<
   protected displayEventEnd: boolean
 
 
-  renderSegs(props: BaseFgEventRendererProps, context: ComponentContext) {
-    this.updateComputedOptions(context.options)
+  renderSegs(props: BaseFgEventRendererProps) {
+    this.updateComputedOptions(this.context.options)
 
     let { segs } = this.renderSegsPlain({
       segs: props.segs,
@@ -56,12 +55,13 @@ export default abstract class FgEventRenderer<
     })
 
     this.segs = segs
+    this.isSizeDirty = true
 
     return segs
   }
 
 
-  _updateComputedOptions(options: any) {
+  private _updateComputedOptions(options: any) {
     let eventTimeFormat = createFormatter(
       options.eventTimeFormat || this.computeEventTimeFormat(),
       options.defaultRangeSeparator
@@ -271,11 +271,11 @@ export default abstract class FgEventRenderer<
   }
 
 
-  computeSegSizes(segs: Seg[], userComponent: any) {
+  protected computeSegSizes(segs: Seg[], userComponent: any) {
   }
 
 
-  assignSegSizes(segs: Seg[], userComponent: any) {
+  protected assignSegSizes(segs: Seg[], userComponent: any) {
   }
 
 }

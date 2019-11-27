@@ -22,7 +22,7 @@ export default class DayTileEvents extends CellEvents<DayTileEventsProps> {
       mirrorInfo: props.mirrorInfo,
       selectedInstanceId: props.selectedInstanceId,
       hiddenInstances: props.hiddenInstances
-    }, context)
+    })
 
     this.attachSegs({
       parentEl: props.segContainerEl,

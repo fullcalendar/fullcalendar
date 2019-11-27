@@ -1,4 +1,4 @@
-import { refineProps } from '../util/misc'
+import { refineProps, guid } from '../util/misc'
 import { DateInput } from '../datelib/env'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
@@ -81,8 +81,6 @@ export const DATE_PROPS = {
   allDay: null
 }
 
-let uid = 0
-
 
 export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar, allowOpenRange?: boolean): EventTuple | null {
   let allDayDefault = computeIsAllDayDefault(sourceId, calendar)
@@ -131,7 +129,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
   let leftovers = {}
   let def = pluckNonDateProps(raw, calendar, leftovers) as EventDef
 
-  def.defId = String(uid++)
+  def.defId = guid()
   def.sourceId = sourceId
   def.allDay = allDay
   def.hasEnd = hasEnd
@@ -161,7 +159,8 @@ export function createEventInstance(
   forcedEndTzo?: number
 ): EventInstance {
   return {
-    instanceId: String(uid++),
+    instanceId: guid()
+,
     defId,
     range,
     forcedStartTzo: forcedStartTzo == null ? null : forcedStartTzo,

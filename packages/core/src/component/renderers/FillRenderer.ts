@@ -3,7 +3,7 @@ import { htmlToElements, elementMatches } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
 import { filterSegsViaEls, triggerPositionedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import ComponentContext from '../ComponentContext'
-import { Component, renderer} from '../../view-framework'
+import { SubRenderer, subrenderer } from '../../view-framework-util'
 
 export interface BaseFillRendererProps {
   segs: Seg[]
@@ -11,9 +11,9 @@ export interface BaseFillRendererProps {
 }
 
 // use for highlight, background events, business hours
-export default abstract class FillRenderer<FillRendererProps extends BaseFillRendererProps> extends Component<FillRendererProps, ComponentContext> {
+export default abstract class FillRenderer<FillRendererProps extends BaseFillRendererProps> extends SubRenderer<FillRendererProps> {
 
-  renderSegs = renderer(this._renderSegs, this._unrenderSegs)
+  renderSegs = subrenderer(this._renderSegs, this._unrenderSegs)
 
   fillSegTag: string = 'div'
 

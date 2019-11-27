@@ -14,7 +14,6 @@ export { BusinessHoursInput, parseBusinessHours } from './structs/business-hours
 
 export {
   applyAll,
-  debounce,
   padStart,
   isInt,
   capitaliseFirstLetter,
@@ -30,7 +29,8 @@ export {
   undistributeHeight,
   preventSelection, allowSelection, preventContextMenu, allowContextMenu,
   compareNumbers, enableCursor, disableCursor,
-  diffDates
+  diffDates,
+  guid
 } from './util/misc'
 
 export {
@@ -60,7 +60,6 @@ export {
   findDirectChildren,
   htmlToElement,
   htmlToElements,
-  createElement,
   insertAfterElement,
   prependToElement,
   removeElement,
@@ -75,7 +74,8 @@ export {
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
 export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps } from './component/event-splitting'
-export { buildGotoAnchorHtml, getAllDayHtml, getDayClasses } from './component/date-rendering'
+export { getDayClasses } from './component/date-rendering'
+export { default as GotoAnchor } from './component/GotoAnchor'
 
 export {
   preventDefault,
@@ -104,7 +104,7 @@ export { default as Theme } from './theme/Theme'
 export { default as ComponentContext } from './component/ComponentContext'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
-export { default as View, ViewProps, renderViewEl } from './View'
+export { default as View, ViewProps, getViewClassNames } from './View'
 export { default as ViewApi } from './ViewApi'
 export { default as FgEventRenderer, buildSegCompareObj, BaseFgEventRendererProps, sortEventSegs } from './component/renderers/FgEventRenderer'
 export { default as FillRenderer, BaseFillRendererProps } from './component/renderers/FillRenderer'
@@ -155,7 +155,8 @@ export { reducerFunc, Action, CalendarState } from './reducers/types'
 export { CalendarComponentProps } from './CalendarComponent'
 
 export { default as DayHeader } from './common/DayHeader'
-export { computeFallbackHeaderFormat, renderDateCell } from './common/table-utils'
+export { computeFallbackHeaderFormat } from './common/table-utils'
+export { default as TableDateCell } from './common/TableDateCell'
 
 export { default as DaySeries } from './common/DaySeriesModel'
 
@@ -172,4 +173,5 @@ export { default as EventApi } from './api/EventApi'
 
 export { default as requestJson } from './util/requestJson'
 
-export { Component, renderer, DomLocation, listRenderer, ListRendererItem } from './view-framework'
+export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes } from './view-framework-util'
+export { DelayedRunner } from './util/runner'

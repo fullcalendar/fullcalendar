@@ -12,13 +12,13 @@ import {
   DateMarker,
   Slicer,
   Hit,
-  ComponentContext,
-  renderer,
+  ComponentContext
 } from '@fullcalendar/core'
-import TimeCols, { TimeColsSeg, TimeColsRenderProps } from './TimeCols'
+import TimeCols, { TimeColsSeg } from './TimeCols'
+import { h, createRef, VNode } from 'preact'
+
 
 export interface DayTimeColsProps {
-  renderProps: TimeColsRenderProps
   dateProfile: DateProfile | null
   dayTableModel: DayTableModel
   businessHours: EventStore
@@ -28,48 +28,49 @@ export interface DayTimeColsProps {
   eventSelection: string
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
+  renderBgIntro: () => VNode[]
+  renderIntro: () => VNode[]
 }
+
 
 export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
   private buildDayRanges = memoize(buildDayRanges)
-  private renderTimeCols = renderer(TimeCols)
-  private registerInteractive = renderer(this._registerInteractive, this._unregisterInteractive)
-
   private dayRanges: DateRange[] // for now indicator
   private slicer = new DayTimeColsSlicer()
-  timeCols: TimeCols
+  private timeColsRef = createRef<TimeCols>()
+
+  get timeCols() { return this.timeColsRef.current }
 
 
-  render(props: DayTimeColsProps, context: ComponentContext) {
+  render(props: DayTimeColsProps, state: {}, context: ComponentContext) {
     let { dateEnv } = context
     let { dateProfile, dayTableModel } = props
+    let dayRanges = this.dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
 
-    let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
-
-    let timeCols = this.renderTimeCols({
-      ...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges),
-      renderProps: props.renderProps,
-      dateProfile,
-      cells: dayTableModel.cells[0] // give the first row
-    })
-
-    this.registerInteractive({ el: timeCols.rootEl })
-
-    this.dayRanges = dayRanges
-    this.timeCols = timeCols
-
-    return timeCols
+    // give it the first row of cells
+    return (
+      <TimeCols
+        ref={this.timeColsRef}
+        rootElRef={this.handleRootEl}
+        {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
+        dateProfile={dateProfile}
+        cells={dayTableModel.cells[0]}
+        renderBgIntro={props.renderBgIntro}
+        renderIntro={props.renderIntro}
+      />
+    )
   }
 
 
-  _registerInteractive({ el }: { el: HTMLElement }, context: ComponentContext) {
-    context.calendar.registerInteractiveComponent(this, { el })
-  }
+  handleRootEl = (rootEl: HTMLDivElement | null) => {
+    let { calendar } = this.context
 
-
-  _unregisterInteractive(funcState: void, context: ComponentContext) {
-    context.calendar.unregisterInteractiveComponent(this)
+    if (rootEl) {
+      calendar.registerInteractiveComponent(this, { el: rootEl })
+    } else {
+      calendar.unregisterInteractiveComponent(this)
+    }
   }
 
 
@@ -102,7 +103,8 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
 
   queryHit(positionLeft: number, positionTop: number): Hit {
-    let rawHit = this.timeCols.positionToHit(positionLeft, positionTop)
+    let timeCols = this.timeColsRef.current
+    let rawHit = timeCols.positionToHit(positionLeft, positionTop)
 
     if (rawHit) {
       return {

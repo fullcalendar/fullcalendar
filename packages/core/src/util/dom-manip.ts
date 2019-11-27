@@ -2,44 +2,9 @@
 // Creating
 // ----------------------------------------------------------------------------------------------------------------
 
-const elementPropHash = { // when props given to createElement should be treated as props, not attributes
-  className: true,
-  colSpan: true,
-  rowSpan: true
-}
-
-const containerTagHash = {
-  '<tr': 'tbody',
-  '<td': 'tr'
-}
-
-export function createElement(tagName: string, attrs: object | null, content?: ElementContent): HTMLElement {
-  let el: HTMLElement = document.createElement(tagName)
-
-  if (attrs) {
-    for (let attrName in attrs) {
-      if (attrName === 'style') {
-        applyStyle(el, attrs[attrName])
-      } else if (elementPropHash[attrName]) {
-        el[attrName] = attrs[attrName]
-      } else {
-        el.setAttribute(attrName, attrs[attrName])
-      }
-    }
-  }
-
-  if (typeof content === 'string') {
-    el.innerHTML = content // shortcut. no need to process HTML in any way
-  } else if (content != null) {
-    appendToElement(el, content)
-  }
-
-  return el
-}
-
 export function htmlToElement(html: string): HTMLElement {
   html = html.trim()
-  let container = document.createElement(computeContainerTag(html))
+  let container = document.createElement('div')
   container.innerHTML = html
   return container.firstChild as HTMLElement
 }
@@ -50,16 +15,9 @@ export function htmlToElements(html: string): HTMLElement[] {
 
 function htmlToNodeList(html: string): NodeList {
   html = html.trim()
-  let container = document.createElement(computeContainerTag(html))
+  let container = document.createElement('div')
   container.innerHTML = html
   return container.childNodes
-}
-
-// assumes html already trimmed and tag names are lowercase
-function computeContainerTag(html: string) {
-  return containerTagHash[
-    html.substr(0, 3) // faster than using regex
-  ] || 'div'
 }
 
 
@@ -187,7 +145,7 @@ export function findDirectChildren(parent: HTMLElement[] | HTMLElement, selector
 // Attributes
 // ----------------------------------------------------------------------------------------------------------------
 
-export function forceClassName(el: HTMLElement, className: string, bool) { // might not be used anywhere
+export function forceClassName(el: HTMLElement, className: string, bool) { // instead of classList.toggle, which IE doesn't support
   if (bool) {
     el.classList.add(className)
   } else {

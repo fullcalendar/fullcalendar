@@ -7,9 +7,10 @@ import {
   ComponentContext,
   removeElement,
   BaseFillRendererProps,
-  renderer
+  subrenderer,
+  renderVNodes
 } from '@fullcalendar/core'
-import { TableRenderProps } from './Table'
+import { VNode } from 'preact'
 
 
 const EMPTY_CELL_HTML = '<td style="pointer-events:none"></td>'
@@ -17,16 +18,16 @@ const EMPTY_CELL_HTML = '<td style="pointer-events:none"></td>'
 
 export interface TableFillsProps extends BaseFillRendererProps {
   type: string
-  renderProps: TableRenderProps
   rowEls: HTMLElement[]
   colCnt: number
+  renderIntro: () => VNode[]
 }
 
 export default class TableFills extends FillRenderer<TableFillsProps> {
 
   fillSegTag: string = 'td' // override the default tag name
 
-  private attachSegs = renderer(attachSegs, detachSegs)
+  private attachSegs = subrenderer(attachSegs, detachSegs)
 
 
   render(props: TableFillsProps) {
@@ -46,10 +47,10 @@ export default class TableFills extends FillRenderer<TableFillsProps> {
 
     this.attachSegs({
       type: props.type,
-      renderProps: props.renderProps,
       segs,
       rowEls: props.rowEls,
-      colCnt: props.colCnt
+      colCnt: props.colCnt,
+      renderIntro: props.renderIntro
     })
   }
 
@@ -80,7 +81,7 @@ function detachSegs(els: HTMLElement[]) {
 
 
 // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-function renderFillRow(seg: Seg, { colCnt, type, renderProps }: TableFillsProps, context: ComponentContext): HTMLElement {
+function renderFillRow(seg: Seg, { colCnt, type, renderIntro }: TableFillsProps, context: ComponentContext): HTMLElement {
   let { isRtl } = context
   let leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
   let rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
@@ -120,13 +121,12 @@ function renderFillRow(seg: Seg, { colCnt, type, renderProps }: TableFillsProps,
     )
   }
 
-  let introHtml = renderProps.renderIntroHtml()
-  if (introHtml) {
-    if (isRtl) {
-      appendToElement(trEl, introHtml)
-    } else {
-      prependToElement(trEl, introHtml)
-    }
+  let introEls = renderVNodes(renderIntro(), context)
+
+  if (isRtl) {
+    appendToElement(trEl, introEls)
+  } else {
+    prependToElement(trEl, introEls)
   }
 
   return skeletonEl

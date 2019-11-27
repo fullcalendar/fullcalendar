@@ -1,4 +1,4 @@
-import { Component } from '../view-framework'
+import { BaseComponent } from '../view-framework-util'
 import { EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInstanceHash } from '../structs/event'
@@ -7,7 +7,7 @@ import { Hit } from '../interactions/hit'
 import { elementClosest } from '../util/dom-manip'
 import { isDateSelectionValid, isInteractionValid } from '../validation'
 import { EventInteractionState } from '../interactions/event-interaction-state'
-import ComponentContext from '../component/ComponentContext'
+import { guid } from '../util/misc'
 
 export type DateComponentHash = { [uid: string]: DateComponent<any, any> }
 
@@ -30,11 +30,15 @@ export interface EventSegUiInteractionState {
 }
 
 /*
+an INTERACTABLE date component
+
 PURPOSES:
 - hook up to fg, fill, and mirror renderers
 - interface for dragging and hits
 */
-export default abstract class DateComponent<Props, State={}, RenderResult=void, Snapshot={}> extends Component<Props, ComponentContext, State, RenderResult, Snapshot> {
+export default abstract class DateComponent<Props={}, State={}> extends BaseComponent<Props, State> {
+
+  uid = guid()
 
   // self-config, overridable by subclasses. must set on prototype
   fgSegSelector: string // lets eventRender produce elements without fc-event class

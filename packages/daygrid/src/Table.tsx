@@ -1,57 +1,40 @@
 import {
-  createElement,
   insertAfterElement,
-  findElements,
   findDirectChildren,
   removeElement,
   computeRect,
   PositionCache,
   addDays,
-  DateMarker,
-  createFormatter,
-  Component,
   EventSegUiInteractionState,
   Seg,
-  rangeContainsMarker,
   intersectRanges,
   EventRenderRange,
-  buildGotoAnchorHtml,
-  getDayClasses,
-  DateProfile,
+  BaseComponent,
   ComponentContext,
-  renderer
+  subrenderer,
+  setRef
 } from '@fullcalendar/core'
-import Popover from './Popover'
 import TableEvents from './TableEvents'
 import TableMirrorEvents from './TableMirrorEvents'
 import TableFills from './TableFills'
-import DayTile from './DayTile'
-import { renderDayBgRowHtml } from './DayBgRow'
-
-const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
-const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
+// import Popover from './Popover'
+// import DayTile from './DayTile'
+import { h, Ref } from 'preact'
+import TableSkeleton, { TableSkeletonProps } from './TableSkeleton'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export interface TableRenderProps {
-  renderNumberIntroHtml: (row: number, dayGrid: Table) => string
-  renderBgIntroHtml: () => string
-  renderIntroHtml: () => string
-  colWeekNumbersVisible: boolean // week numbers render in own column? (caller does HTML via intro)
-  cellWeekNumbersVisible: boolean // display week numbers in day cell?
-}
-
-interface TableState {
-  segPopover: {
-    origFgSegs: Seg[]
-    date: Date
-    fgSegs: Seg[]
-    top: number
-    left?: number
-    right? :number
-  }
+export interface TableProps extends TableSkeletonProps {
+  businessHourSegs: TableSeg[]
+  bgEventSegs: TableSeg[]
+  fgEventSegs: TableSeg[]
+  dateSelectionSegs: TableSeg[]
+  eventSelection: string
+  eventDrag: EventSegUiInteractionState | null
+  eventResize: EventSegUiInteractionState | null
+  rootElRef?: Ref<HTMLDivElement>
 }
 
 export interface TableSeg extends Seg {
@@ -60,65 +43,129 @@ export interface TableSeg extends Seg {
   lastCol: number
 }
 
-export interface CellModel {
-  date: DateMarker
-  htmlAttrs?: string
+interface TableState {
+  segPopover: SegPopoverState
 }
 
-export interface TableProps {
-  renderProps: TableRenderProps
-  dateProfile: DateProfile
-  cells: CellModel[][]
-  businessHourSegs: TableSeg[]
-  bgEventSegs: TableSeg[]
-  fgEventSegs: TableSeg[]
-  dateSelectionSegs: TableSeg[]
-  eventSelection: string
-  eventDrag: EventSegUiInteractionState | null
-  eventResize: EventSegUiInteractionState | null
-
-  // isRigid determines whether the individual rows should ignore the contents and be a constant height.
-  // Relies on the view's colCnt and rowCnt. In the future, this component should probably be self-sufficient.
-  isRigid: boolean
+interface SegPopoverState {
+  origFgSegs: Seg[]
+  date: Date
+  fgSegs: Seg[]
+  top: number
+  left?: number
+  right? :number
 }
 
-export default class Table extends Component<TableProps, ComponentContext, TableState> {
 
-  private renderCells = renderer(this._renderCells)
-  private renderFgEvents = renderer(TableEvents)
-  private renderMirrorEvents = renderer(TableMirrorEvents)
-  private renderBgEvents = renderer(TableFills)
-  private renderBusinessHours = renderer(TableFills)
-  private renderHighlight = renderer(TableFills)
-  private renderPopover = renderer(Popover)
-  private renderTileForPopover = renderer(DayTile)
+export default class Table extends BaseComponent<TableProps, TableState> {
 
-  bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
+  private renderFgEvents = subrenderer(TableEvents)
+  private renderMirrorEvents = subrenderer(TableMirrorEvents)
+  private renderBgEvents = subrenderer(TableFills)
+  private renderBusinessHours = subrenderer(TableFills)
+  private renderHighlight = subrenderer(TableFills)
 
-  rowStructs: any
+  rootEl: HTMLElement
   rowEls: HTMLElement[] // set of fake row elements
   cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
+  rowStructs: any
 
   isCellSizesDirty: boolean = false
   rowPositions: PositionCache
   colPositions: PositionCache
+  bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
 
-  render(props: TableProps, context: ComponentContext, state: TableState) {
+  render(props: TableProps) {
+    return (
+      <TableSkeleton
+        handleDom={this.handleSkeletonDom}
+        dateProfile={props.dateProfile}
+        cells={props.cells}
+        isRigid={props.isRigid}
+        renderNumberIntro={props.renderNumberIntro}
+        renderBgIntro={props.renderBgIntro}
+        renderIntro={props.renderIntro}
+        colWeekNumbersVisible={props.colWeekNumbersVisible}
+        cellWeekNumbersVisible={props.cellWeekNumbersVisible}
+      />
+    )
+  }
+
+
+  /*
     let segPopoverState = state.segPopover
-    let colCnt = props.cells[0].length
 
-    let { rootEl, rowEls, cellEls } = this.renderCells({
-      renderProps: props.renderProps,
-      dateProfile: props.dateProfile,
-      cells: props.cells,
-      isRigid: props.isRigid
-    })
+    {(segPopoverState && segPopoverState.origFgSegs === props.fgEventSegs) && // clear on new event segs
+      <Popover // not high enough z-index!!!???
+        top={segPopoverState.top}
+        left={segPopoverState.left}
+        right={segPopoverState.right}
+        onClose={this.onPopoverClose} // TODO: onCloseRequest
+      >
+        <DayTile // TODO: what about content being different than title!!!!
+          date={segPopoverState.date}
+          fgSegs={segPopoverState.fgSegs}
+          selectedInstanceId={props.eventSelection}
+          hiddenInstances={ // TODO: more convenient
+            (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+            (props.eventResize ? props.eventResize.affectedInstances : null)
+          }
+          />
+      </Popover>
+    }
+  */
+
+
+ handleSkeletonDom = (rootEl: HTMLDivElement | null, rowEls: HTMLElement[] | null, cellEls: HTMLElement[] | null) => {
+    setRef(this.props.rootElRef, rootEl)
+
+    if (!rootEl) {
+      this.subrenderDestroy()
+
+    } else {
+      let { cells } = this.props
+      let colCnt = cells[0].length
+
+      this.rowPositions = new PositionCache(
+        rootEl,
+        rowEls,
+        false,
+        true // vertical
+      )
+
+      this.colPositions = new PositionCache(
+        rootEl,
+        cellEls.slice(0, colCnt), // only the first row
+        true, // horizontal
+        false
+      )
+
+      this.rowEls = rowEls
+      this.cellEls = cellEls
+      this.isCellSizesDirty = true
+    }
+  }
+
+
+  componentDidMount() {
+    this.subrender()
+  }
+
+
+  componentDidUpdate() {
+    this.subrender()
+  }
+
+
+  subrender() {
+    let { props, rowEls } = this
+    let colCnt = props.cells[0].length
 
     if (props.eventDrag) {
       this.renderHighlight({
         type: 'highlight',
-        renderProps: props.renderProps,
+        renderIntro: props.renderIntro,
         segs: props.eventDrag.segs,
         rowEls,
         colCnt
@@ -126,7 +173,7 @@ export default class Table extends Component<TableProps, ComponentContext, Table
     } else {
       this.renderHighlight({
         type: 'highlight',
-        renderProps: props.renderProps,
+        renderIntro: props.renderIntro,
         segs: props.dateSelectionSegs,
         rowEls,
         colCnt
@@ -135,7 +182,7 @@ export default class Table extends Component<TableProps, ComponentContext, Table
 
     this.renderBusinessHours({
       type: 'businessHours',
-      renderProps: props.renderProps,
+      renderIntro: props.renderIntro,
       segs: props.businessHourSegs,
       rowEls,
       colCnt
@@ -143,14 +190,14 @@ export default class Table extends Component<TableProps, ComponentContext, Table
 
     this.renderBgEvents({
       type: 'bgEvent',
-      renderProps: props.renderProps,
+      renderIntro: props.renderIntro,
       segs: props.bgEventSegs,
       rowEls,
       colCnt
     })
 
     let eventsRenderer = this.renderFgEvents({
-      renderProps: props.renderProps,
+      renderIntro: props.renderIntro,
       segs: props.fgEventSegs,
       rowEls,
       colCnt,
@@ -160,9 +207,11 @@ export default class Table extends Component<TableProps, ComponentContext, Table
         (props.eventResize ? props.eventResize.affectedInstances : null)
     })
 
+    this.rowStructs = eventsRenderer.rowStructs
+
     if (props.eventResize) {
       this.renderMirrorEvents({
-        renderProps: props.renderProps,
+        renderIntro: props.renderIntro,
         segs: props.eventResize.segs,
         rowEls,
         colCnt,
@@ -171,253 +220,11 @@ export default class Table extends Component<TableProps, ComponentContext, Table
     } else {
       this.renderMirrorEvents(false)
     }
-
-    if (
-      segPopoverState &&
-      segPopoverState.origFgSegs === props.fgEventSegs // will close popover when events change
-    ) {
-      let viewEl = context.calendar.component.view.rootEl as HTMLElement // yuck
-
-      let popover = this.renderPopover({ // will be outside of all scrollers within the view
-        parentEl: viewEl,
-        top: segPopoverState.top,
-        left: segPopoverState.left,
-        right: segPopoverState.right,
-        onClose: this.onPopoverClose,
-        clippingEl: viewEl
-      })
-
-      this.renderTileForPopover({ // renders the close icon too, for clicking
-        parentEl: popover.rootEl,
-        date: state.segPopover.date,
-        fgSegs: state.segPopover.fgSegs,
-        selectedInstanceId: props.eventSelection,
-        hiddenInstances: // TODO: more convenient
-          (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-          (props.eventResize ? props.eventResize.affectedInstances : null)
-      })
-
-    } else {
-      this.renderPopover(false)
-      this.renderTileForPopover(false)
-    }
-
-    this.rowEls = rowEls
-    this.cellEls = cellEls
-    this.rowStructs = eventsRenderer.rowStructs
-
-    return rootEl
   }
 
 
   onPopoverClose = () => {
     this.setState({ segPopover: null })
-  }
-
-
-  /* Date Rendering
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  _renderCells(
-    { cells, isRigid, dateProfile, renderProps }: { cells: CellModel[][], isRigid: boolean, dateProfile: DateProfile, renderProps: any },
-    context: ComponentContext
-  ) {
-    let { calendar, view, isRtl, dateEnv } = context
-    let rowCnt = cells.length
-    let colCnt = cells[0].length
-    let html = ''
-    let row
-    let col
-
-    for (row = 0; row < rowCnt; row++) {
-      html += this.renderDayRowHtml(row, isRigid, cells, dateProfile, renderProps, context)
-    }
-
-    let el = createElement('div', { className: 'fc-day-grid' }, html)
-
-    let rowEls = findElements(el, '.fc-row')
-    let cellEls = findElements(el, '.fc-day, .fc-disabled-day')
-
-    if (isRtl) {
-      cellEls.reverse()
-    }
-
-    this.rowPositions = new PositionCache(
-      el,
-      rowEls,
-      false,
-      true // vertical
-    )
-
-    this.colPositions = new PositionCache(
-      el,
-      cellEls.slice(0, colCnt), // only the first row
-      true,
-      false // horizontal
-    )
-
-    // trigger dayRender with each cell's element
-    for (row = 0; row < rowCnt; row++) {
-      for (col = 0; col < colCnt; col++) {
-        calendar.publiclyTrigger('dayRender', [
-          {
-            date: dateEnv.toDate(cells[row][col].date),
-            el: this.getCellEl(row, col),
-            view
-          }
-        ])
-      }
-    }
-
-    this.isCellSizesDirty = true
-
-    return {
-      rootEl: el,
-      rowEls,
-      cellEls
-    }
-  }
-
-
-  // Generates the HTML for a single row, which is a div that wraps a table.
-  // `row` is the row number.
-  renderDayRowHtml(row, isRigid, cells, dateProfile, renderProps, context: ComponentContext) {
-    let { theme } = context
-    let classes = [ 'fc-row', 'fc-week', theme.getClass('dayRow') ]
-
-    if (isRigid) {
-      classes.push('fc-rigid')
-    }
-
-    return '' +
-      '<div class="' + classes.join(' ') + '">' +
-        '<div class="fc-bg">' +
-          '<table class="' + theme.getClass('tableGrid') + '">' +
-            renderDayBgRowHtml({
-              cells: cells[row],
-              dateProfile,
-              renderIntroHtml: renderProps.renderBgIntroHtml
-            }, context) +
-          '</table>' +
-        '</div>' +
-        '<div class="fc-content-skeleton">' +
-          '<table>' +
-            (this.getIsNumbersVisible(renderProps, cells.length) ?
-              '<thead>' +
-                this.renderNumberTrHtml(row, cells, dateProfile, renderProps, context) +
-              '</thead>' :
-              ''
-              ) +
-          '</table>' +
-        '</div>' +
-      '</div>'
-  }
-
-
-  getIsNumbersVisible(renderProps, rowCnt) {
-    return this.getIsDayNumbersVisible(rowCnt) ||
-      renderProps.cellWeekNumbersVisible ||
-      renderProps.colWeekNumbersVisible
-  }
-
-
-  getIsDayNumbersVisible(rowCnt) {
-    return rowCnt > 1
-  }
-
-
-  /* Grid Number Rendering
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  renderNumberTrHtml(row: number, cells, dateProfile, renderProps, context: ComponentContext) {
-    let intro = renderProps.renderNumberIntroHtml(row, this)
-
-    return '' +
-      '<tr>' +
-        (context.isRtl ? '' : intro) +
-        this.renderNumberCellsHtml(row, cells, dateProfile, renderProps, context) +
-        (context.isRtl ? intro : '') +
-      '</tr>'
-  }
-
-
-  renderNumberCellsHtml(row, cells, dateProfile: DateProfile, renderProps, context: ComponentContext) {
-    let rowCnt = cells.length
-    let colCnt = cells[row].length
-    let htmls = []
-    let col
-    let date
-
-    for (col = 0; col < colCnt; col++) {
-      date = cells[row][col].date
-
-      htmls.push(
-        this.renderNumberCellHtml(date, dateProfile, renderProps, rowCnt, context)
-      )
-    }
-
-    if (context.isRtl) {
-      htmls.reverse()
-    }
-
-    return htmls.join('')
-  }
-
-
-  // Generates the HTML for the <td>s of the "number" row in the DayGrid's content skeleton.
-  // The number row will only exist if either day numbers or week numbers are turned on.
-  renderNumberCellHtml(date, dateProfile: DateProfile, renderProps, rowCnt, context: ComponentContext) {
-    let { dateEnv, options } = context
-    let html = ''
-    let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
-    let isDayNumberVisible = this.getIsDayNumbersVisible(rowCnt) && isDateValid
-    let classes
-    let weekCalcFirstDow
-
-    if (!isDayNumberVisible && !renderProps.cellWeekNumbersVisible) {
-      // no numbers in day cell (week number must be along the side)
-      return '<td></td>' //  will create an empty space above events :(
-    }
-
-    classes = getDayClasses(date, dateProfile, context)
-    classes.unshift('fc-day-top')
-
-    if (renderProps.cellWeekNumbersVisible) {
-      weekCalcFirstDow = dateEnv.weekDow
-    }
-
-    html += '<td class="' + classes.join(' ') + '"' +
-      (isDateValid ?
-        ' data-date="' + dateEnv.formatIso(date, { omitTime: true }) + '"' :
-        ''
-        ) +
-      '>'
-
-    if (renderProps.cellWeekNumbersVisible && (date.getUTCDay() === weekCalcFirstDow)) {
-      html += buildGotoAnchorHtml(
-        options,
-        dateEnv,
-        { date, type: 'week' },
-        { 'class': 'fc-week-number' },
-        dateEnv.format(date, WEEK_NUM_FORMAT) // inner HTML
-      )
-    }
-
-    if (isDayNumberVisible) {
-      html += buildGotoAnchorHtml(
-        options,
-        dateEnv,
-        date,
-        { 'class': 'fc-day-number' },
-        dateEnv.format(date, DAY_NUM_FORMAT) // inner HTML
-      )
-    }
-
-    html += '</td>'
-
-    return html
   }
 
 
@@ -460,6 +267,7 @@ export default class Table extends Component<TableProps, ComponentContext, Table
 
   /* Hit System
   ------------------------------------------------------------------------------------------------------------------*/
+
 
   positionToHit(leftPosition, topPosition) {
     let { colPositions, rowPositions } = this
@@ -598,7 +406,8 @@ export default class Table extends Component<TableProps, ComponentContext, Table
         if (segsBelow.length) {
           td = cellMatrix[levelLimit - 1][col]
           moreLink = this.renderMoreLink(row, col, segsBelow, cells, rowEls, rowStructs, context)
-          moreWrap = createElement('div', null, moreLink)
+          moreWrap = document.createElement('div')
+          moreWrap.appendChild(moreLink)
           td.appendChild(moreWrap)
           moreNodes.push(moreWrap)
         }
@@ -640,7 +449,9 @@ export default class Table extends Component<TableProps, ComponentContext, Table
 
           // make a replacement <td> for each column the segment occupies. will be one for each colspan
           for (j = 0; j < colSegsBelow.length; j++) {
-            moreTd = createElement('td', { className: 'fc-more-cell', rowSpan }) as HTMLTableCellElement
+            moreTd = document.createElement('td')
+            moreTd.className = 'fc-more-cell'
+            moreTd.rowSpan = rowSpan
             segsBelow = colSegsBelow[j]
             moreLink = this.renderMoreLink(
               row,
@@ -651,7 +462,8 @@ export default class Table extends Component<TableProps, ComponentContext, Table
               rowStructs,
               context
             )
-            moreWrap = createElement('div', null, moreLink)
+            moreWrap = document.createElement('div')
+            moreWrap.appendChild(moreLink)
             moreTd.appendChild(moreWrap)
             segMoreNodes.push(moreTd)
             moreNodes.push(moreTd)
@@ -697,7 +509,8 @@ export default class Table extends Component<TableProps, ComponentContext, Table
     let rowCnt = cells.length
     let colCnt = cells[0].length
 
-    let a = createElement('a', { className: 'fc-more' })
+    let a = document.createElement('a')
+    a.className = 'fc-more'
     a.innerText = getMoreLinkText(hiddenSegs.length, options)
     a.addEventListener('click', (ev) => {
       let clickOption = options.eventLimitClick
@@ -730,7 +543,7 @@ export default class Table extends Component<TableProps, ComponentContext, Table
       if (clickOption === 'popover') {
         let _col = isRtl ? colCnt - col - 1 : col // HACK: props.cells has different dir system?
         let topEl = rowCnt === 1
-          ? context.calendar.component.view.rootEl // will cause the popover to cover any sort of header
+          ? context.calendar.component.viewContainerEl // will cause the popover to cover any sort of header
           : rowEls[row] // will align with top of row
         let left, right
 

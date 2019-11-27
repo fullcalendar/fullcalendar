@@ -1,5 +1,4 @@
 import {
-  createElement,
   removeElement,
   appendToElement,
   prependToElement,
@@ -7,23 +6,25 @@ import {
   BaseFgEventRendererProps,
   ComponentContext,
   sortEventSegs,
-  renderer
+  subrenderer,
+  renderVNodes
 } from '@fullcalendar/core'
 import CellEvents from './CellEvents'
+import { VNode } from 'preact'
 
 
 /* Event-rendering methods for the Table class
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export interface TableEventsProps extends BaseFgEventRendererProps {
-  renderProps: any
   rowEls: HTMLElement[]
   colCnt: number
+  renderIntro: () => VNode[]
 }
 
 export default class TableEvents extends CellEvents<TableEventsProps> {
 
-  protected attachSegs = renderer(attachSegs, detachSegs)
+  protected attachSegs = subrenderer(attachSegs, detachSegs)
 
   rowStructs: any
 
@@ -34,16 +35,14 @@ export default class TableEvents extends CellEvents<TableEventsProps> {
       mirrorInfo: props.mirrorInfo,
       selectedInstanceId: props.selectedInstanceId,
       hiddenInstances: props.hiddenInstances
-    }, context)
-
-    let rowStructs = this.attachSegs({
-      renderProps: props.renderProps,
-      segs,
-      rowEls: props.rowEls,
-      colCnt: props.colCnt
     })
 
-    this.rowStructs = rowStructs
+    this.rowStructs = this.attachSegs({
+      segs,
+      rowEls: props.rowEls,
+      colCnt: props.colCnt,
+      renderIntro: props.renderIntro
+    })
   }
 
 
@@ -56,9 +55,9 @@ export default class TableEvents extends CellEvents<TableEventsProps> {
 
 
 // Renders the given foreground event segments onto the grid
-function attachSegs({ segs, rowEls, colCnt, renderProps }: TableEventsProps, context: ComponentContext) {
+function attachSegs({ segs, rowEls, colCnt, renderIntro }: TableEventsProps, context: ComponentContext) {
 
-  let rowStructs = renderSegRows(segs, rowEls.length, colCnt, renderProps, context)
+  let rowStructs = renderSegRows(segs, rowEls.length, colCnt, renderIntro, context)
 
   // append to each row's content skeleton
   rowEls.forEach(function(rowNode, i) {
@@ -82,7 +81,7 @@ function detachSegs(rowStructs) {
 // Uses the given events array to generate <tbody> elements that should be appended to each row's content skeleton.
 // Returns an array of rowStruct objects (see the bottom of `renderSegRow`).
 // PRECONDITION: each segment shoud already have a rendered and assigned `.el`
-export function renderSegRows(segs: Seg[], rowCnt: number, colCnt: number, renderProps, context: ComponentContext) {
+export function renderSegRows(segs: Seg[], rowCnt: number, colCnt: number, renderIntro, context: ComponentContext) {
   let rowStructs = []
   let segRows
   let row
@@ -92,7 +91,7 @@ export function renderSegRows(segs: Seg[], rowCnt: number, colCnt: number, rende
   // iterate each row of segment groupings
   for (row = 0; row < segRows.length; row++) {
     rowStructs.push(
-      renderSegRow(row, segRows[row], colCnt, renderProps, context)
+      renderSegRow(row, segRows[row], colCnt, renderIntro, context)
     )
   }
 
@@ -103,7 +102,7 @@ export function renderSegRows(segs: Seg[], rowCnt: number, colCnt: number, rende
 // Given a row # and an array of segments all in the same row, render a <tbody> element, a skeleton that contains
 // the segments. Returns object with a bunch of internal data about how the render was calculated.
 // NOTE: modifies rowSegs
-function renderSegRow(row, rowSegs, colCnt: number, renderProps, context: ComponentContext) {
+function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: ComponentContext) {
   let { isRtl } = context
   let segLevels = buildSegLevels(rowSegs, colCnt, context) // group into sub-arrays of levels
   let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
@@ -156,7 +155,9 @@ function renderSegRow(row, rowSegs, colCnt: number, renderProps, context: Compon
         emptyCellsUntil(leftCol)
 
         // create a container that occupies or more columns. append the event element.
-        td = createElement('td', { className: 'fc-event-container' }, seg.el) as HTMLTableCellElement
+        td = document.createElement('td')
+        td.className = 'fc-event-container'
+        td.appendChild(seg.el)
         if (leftCol !== rightCol) {
           td.colSpan = rightCol - leftCol + 1
         } else { // a single-column segment
@@ -175,13 +176,12 @@ function renderSegRow(row, rowSegs, colCnt: number, renderProps, context: Compon
 
     emptyCellsUntil(colCnt) // finish off the row
 
-    let introHtml = renderProps.renderIntroHtml()
-    if (introHtml) {
-      if (isRtl) {
-        appendToElement(tr, introHtml)
-      } else {
-        prependToElement(tr, introHtml)
-      }
+    let introEls = renderVNodes(renderIntro(), context)
+
+    if (isRtl) {
+      appendToElement(tr, introEls)
+    } else {
+      prependToElement(tr, introEls)
     }
 
     tbody.appendChild(tr)

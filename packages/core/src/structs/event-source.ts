@@ -1,4 +1,4 @@
-import { refineProps } from '../util/misc'
+import { refineProps, guid } from '../util/misc'
 import { EventInput } from './event'
 import Calendar from '../Calendar'
 import { DateRange } from '../datelib/date-range'
@@ -107,7 +107,6 @@ const SIMPLE_SOURCE_PROPS = {
   failure: Function
 }
 
-let uid = 0
 
 export function doesSourceNeedRange(eventSource: EventSource, calendar: Calendar) {
   let defs = calendar.pluginSystem.hooks.eventSourceDefs
@@ -148,7 +147,7 @@ function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sour
   props.latestFetchId = ''
   props.fetchRange = null
   props.publicId = String(raw.id || '')
-  props.sourceId = String(uid++)
+  props.sourceId = guid()
   props.sourceDefId = sourceDefId
   props.meta = meta
   props.ui = ui

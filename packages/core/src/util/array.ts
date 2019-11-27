@@ -1,4 +1,9 @@
 
+
+// TODO: new util arrayify?
+// Array.prototype.slice.call(
+
+
 export function removeMatching(array, testFunc) {
   let removeCnt = 0
   let i = 0

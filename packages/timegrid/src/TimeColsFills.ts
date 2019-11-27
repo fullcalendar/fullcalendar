@@ -1,5 +1,5 @@
 import {
-  FillRenderer, Seg, renderer, BaseFillRendererProps
+  FillRenderer, Seg, subrenderer, BaseFillRendererProps
 } from '@fullcalendar/core'
 import TimeCols, { attachSegs, detachSegs } from './TimeCols'
 
@@ -9,7 +9,7 @@ export interface TimeColsFillsProps extends BaseFillRendererProps {
 
 export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
 
-  private attachSegs = renderer(attachSegs, detachSegs)
+  private attachSegs = subrenderer(attachSegs, detachSegs)
 
 
   render(props: TimeColsFillsProps) {

@@ -4,7 +4,7 @@ import {
   createFormatter, DateFormatter,
   FgEventRenderer, buildSegCompareObj,
   Seg, isMultiDayRange, compareByFieldSpecs,
-  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, renderer
+  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, subrenderer
 } from '@fullcalendar/core'
 import TimeCols, { attachSegs, detachSegs } from './TimeCols'
 
@@ -18,33 +18,22 @@ Does not own rendering. Use for low-level util methods by TimeCols.
 */
 export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps> {
 
-  attachSegs = renderer(attachSegs, detachSegs)
+  private updateFormatter = subrenderer(this._updateFormatter)
+  private attachSegs = subrenderer(attachSegs, detachSegs)
 
-  // computed options
-  private fullTimeFormat: DateFormatter
-
-  // for sizing
-  private segsByCol: any
-
-
-  _updateComputedOptions(options) {
-    super._updateComputedOptions(options)
-
-    this.fullTimeFormat = createFormatter({
-      hour: 'numeric',
-      minute: '2-digit',
-      separator: options.defaultRangeSeparator
-    })
-  }
+  private fullTimeFormat: DateFormatter // computed options
+  private segsByCol: any // for sizing
 
 
   render(props: TimeColsEventsProps, context: ComponentContext) {
+    this.updateFormatter(context.options)
+
     let segs = this.renderSegs({
       segs: props.segs,
       mirrorInfo: props.mirrorInfo,
       selectedInstanceId: props.selectedInstanceId,
       hiddenInstances: props.hiddenInstances
-    }, context)
+    })
 
     this.segsByCol = this.attachSegs({
       segs,
@@ -53,11 +42,20 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
   }
 
 
-  computeSegSizes(allSegs: Seg[], timeGrid: TimeCols) {
-    let { segsByCol } = this
-    let colCnt = timeGrid.props.cells.length
+  _updateFormatter(allOptions) {
+    this.fullTimeFormat = createFormatter({
+      hour: 'numeric',
+      minute: '2-digit',
+      separator: allOptions.defaultRangeSeparator
+    })
+  }
 
-    timeGrid.computeSegVerticals(allSegs) // horizontals relies on this
+
+  computeSegSizes(allSegs: Seg[], timeCols: TimeCols) {
+    let { segsByCol } = this
+    let colCnt = timeCols.props.cells.length
+
+    timeCols.computeSegVerticals(allSegs) // horizontals relies on this
 
     for (let col = 0; col < colCnt; col++) {
       computeSegHorizontals(segsByCol[col], this.context) // compute horizontal coordinates, z-index's, and reorder the array
@@ -65,24 +63,24 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
   }
 
 
-  assignSegSizes(allSegs: Seg[], timeGrid: TimeCols) {
+  assignSegSizes(allSegs: Seg[], timeCols: TimeCols) {
     let { segsByCol } = this
-    let colCnt = timeGrid.props.cells.length
+    let colCnt = timeCols.props.cells.length
 
-    timeGrid.assignSegVerticals(allSegs) // horizontals relies on this
+    timeCols.assignSegVerticals(allSegs) // horizontals relies on this
 
     for (let col = 0; col < colCnt; col++) {
-      this.assignSegCss(segsByCol[col], timeGrid)
+      this.assignSegCss(segsByCol[col], timeCols)
     }
   }
 
 
   // Given foreground event segments that have already had their position coordinates computed,
   // assigns position-related CSS values to their elements.
-  assignSegCss(segs: Seg[], timeGrid: TimeCols) {
+  assignSegCss(segs: Seg[], timeCols: TimeCols) {
 
     for (let seg of segs) {
-      applyStyle(seg.el, this.generateSegCss(seg, timeGrid))
+      applyStyle(seg.el, this.generateSegCss(seg, timeCols))
 
       if (seg.level > 0) {
         seg.el.classList.add('fc-time-grid-event-inset')
@@ -99,12 +97,12 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
   // Generates an object with CSS properties/values that should be applied to an event segment element.
   // Contains important positioning-related properties that should be applied to any event element, customized or not.
-  generateSegCss(seg: Seg, timeGrid: TimeCols) {
+  generateSegCss(seg: Seg, timeCols: TimeCols) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
     let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
     let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point
-    let props = timeGrid.generateSegVerticalCss(seg) as any // get top/bottom first
+    let props = timeCols.generateSegVerticalCss(seg) as any // get top/bottom first
     let left // amount of space from left edge, a fraction of the total width
     let right // amount of space from right edge, a fraction of the total width
 
@@ -290,7 +288,7 @@ function computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardC
     // use this segment's coordinates to computed the coordinates of the less-pressurized
     // forward segments
     for (i = 0; i < forwardSegs.length; i++) {
-      this.computeSegForwardBack(forwardSegs[i], 0, seg.forwardCoord)
+      computeSegForwardBack(forwardSegs[i], 0, seg.forwardCoord, context)
     }
   }
 }
