@@ -59,7 +59,7 @@ export default class DayTableView extends TableView {
     let header = this.headerRef.current
     let table = this.tableRef.current
 
-    if (this.isLayoutSizeDirty()) {
+    if (isResize || this.isLayoutSizeDirty()) {
       this.updateLayoutHeight(
         header ? header.rootEl : null,
         table.table,

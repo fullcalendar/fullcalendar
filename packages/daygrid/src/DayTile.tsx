@@ -1,15 +1,14 @@
 import {
   DateComponent, Seg,
-  htmlEscape,
-  createFormatter,
   Hit,
   addDays, DateMarker,
-  ComponentContext,
   EventInstanceHash,
-  renderer,
-  htmlToElements
+  subrenderer,
+  elementClosest
 } from '@fullcalendar/core'
 import DayTileEvents from './DayTileEvents'
+import { h, createRef } from 'preact'
+
 
 export interface DayTileProps {
   date: DateMarker
@@ -20,42 +19,56 @@ export interface DayTileProps {
 
 export default class DayTile extends DateComponent<DayTileProps> {
 
-  private renderFrame = renderer(renderFrame)
-  private renderEvents = renderer(DayTileEvents)
+  private renderEvents = subrenderer(DayTileEvents)
+  private rootElRef = createRef<HTMLDivElement>()
+  private popoverEl: HTMLElement // HACK. contains this component
 
 
-  render(props: DayTileProps) {
-    let { rootEls, segContainerEl } = this.renderFrame({
-      date: props.date
-    })
-
-    this.renderEvents({
-      segs: props.fgSegs,
-      segContainerEl,
-      selectedInstanceId: props.selectedInstanceId,
-      hiddenInstances: props.hiddenInstances
-    })
-
-    return rootEls
+  render() {
+    return (
+      <div class='fc-event-container' ref={this.rootElRef} />
+    )
   }
 
 
   componentDidMount() {
-    let { calendar } = this.context
+    let rootEl = this.rootElRef.current
+    let popoverEl = this.popoverEl = elementClosest(rootEl, '.fc-popover')
 
-    calendar.releaseAfterSizingTriggers() // hack for eventPositioned
+    this.subrender()
 
     // HACK referencing parent's elements.
     // also, if parent's elements change, this will break.
-    calendar.registerInteractiveComponent(this, {
-      el: this.location.parentEl, // HACK
+    this.context.calendar.registerInteractiveComponent(this, {
+      el: popoverEl,
       useEventCenter: false
     })
   }
 
 
+  componentDidUpdate() {
+    this.subrender()
+  }
+
+
   componentWillUnmount() {
     this.context.calendar.unregisterInteractiveComponent(this)
+    this.subrenderDestroy()
+  }
+
+
+  subrender() {
+    let { props } = this
+    let rootEl = this.rootElRef.current
+
+    this.renderEvents({
+      segs: props.fgSegs,
+      segContainerEl: rootEl,
+      selectedInstanceId: props.selectedInstanceId,
+      hiddenInstances: props.hiddenInstances
+    })
+
+    this.context.calendar.releaseAfterSizingTriggers() // hack for eventPositioned
   }
 
 
@@ -69,7 +82,7 @@ export default class DayTile extends DateComponent<DayTileProps> {
           allDay: true,
           range: { start: date, end: addDays(date, 1) }
         },
-        dayEl: this.location.parentEl, // HACK
+        dayEl: this.popoverEl,
         rect: {
           left: 0,
           top: 0,
@@ -81,31 +94,9 @@ export default class DayTile extends DateComponent<DayTileProps> {
     }
   }
 
-}
 
-
-function renderFrame(props: { date: DateMarker }, context: ComponentContext) {
-  let { theme, dateEnv, options } = context
-
-  let title = dateEnv.format(
-    props.date,
-    createFormatter(options.dayPopoverFormat) // TODO: cache
-  )
-
-  let els = htmlToElements(
-    '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
-      '<span class="fc-title">' +
-        htmlEscape(title) +
-      '</span>' +
-      '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
-    '</div>' +
-    '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
-      '<div class="fc-event-container"></div>' +
-    '</div>'
-  )
-
-  return {
-    rootEls: els,
-    segContainerEl: els[1].querySelector('.fc-event-container') as HTMLElement
+  isPopover() {
+    return true // HACK for hit system
   }
+
 }

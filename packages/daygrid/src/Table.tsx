@@ -2,7 +2,6 @@ import {
   insertAfterElement,
   findDirectChildren,
   removeElement,
-  computeRect,
   PositionCache,
   addDays,
   EventSegUiInteractionState,
@@ -12,14 +11,15 @@ import {
   BaseComponent,
   ComponentContext,
   subrenderer,
-  setRef
+  setRef,
+  createFormatter
 } from '@fullcalendar/core'
 import TableEvents from './TableEvents'
 import TableMirrorEvents from './TableMirrorEvents'
 import TableFills from './TableFills'
-// import Popover from './Popover'
-// import DayTile from './DayTile'
-import { h, Ref } from 'preact'
+import Popover from './Popover'
+import DayTile from './DayTile'
+import { h, Ref, Fragment, createRef } from 'preact'
 import TableSkeleton, { TableSkeletonProps } from './TableSkeleton'
 
 
@@ -50,10 +50,9 @@ interface TableState {
 interface SegPopoverState {
   origFgSegs: Seg[]
   date: Date
+  title: string
   fgSegs: Seg[]
-  top: number
-  left?: number
-  right? :number
+  alignmentEl: HTMLElement
 }
 
 
@@ -64,6 +63,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   private renderBgEvents = subrenderer(TableFills)
   private renderBusinessHours = subrenderer(TableFills)
   private renderHighlight = subrenderer(TableFills)
+  private popoverRef = createRef<Popover>()
 
   rootEl: HTMLElement
   rowEls: HTMLElement[] // set of fake row elements
@@ -78,46 +78,53 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
   render(props: TableProps) {
     return (
-      <TableSkeleton
-        handleDom={this.handleSkeletonDom}
-        dateProfile={props.dateProfile}
-        cells={props.cells}
-        isRigid={props.isRigid}
-        renderNumberIntro={props.renderNumberIntro}
-        renderBgIntro={props.renderBgIntro}
-        renderIntro={props.renderIntro}
-        colWeekNumbersVisible={props.colWeekNumbersVisible}
-        cellWeekNumbersVisible={props.cellWeekNumbersVisible}
-      />
+      <Fragment>
+        <TableSkeleton
+          handleDom={this.handleSkeletonDom}
+          dateProfile={props.dateProfile}
+          cells={props.cells}
+          isRigid={props.isRigid}
+          renderNumberIntro={props.renderNumberIntro}
+          renderBgIntro={props.renderBgIntro}
+          renderIntro={props.renderIntro}
+          colWeekNumbersVisible={props.colWeekNumbersVisible}
+          cellWeekNumbersVisible={props.cellWeekNumbersVisible}
+        />
+        {this.renderPopover()}
+      </Fragment>
     )
   }
 
 
-  /*
-    let segPopoverState = state.segPopover
+  renderPopover() {
+    let { props } = this
+    let segPopoverState = this.state.segPopover
 
-    {(segPopoverState && segPopoverState.origFgSegs === props.fgEventSegs) && // clear on new event segs
-      <Popover // not high enough z-index!!!???
-        top={segPopoverState.top}
-        left={segPopoverState.left}
-        right={segPopoverState.right}
-        onClose={this.onPopoverClose} // TODO: onCloseRequest
-      >
-        <DayTile // TODO: what about content being different than title!!!!
-          date={segPopoverState.date}
-          fgSegs={segPopoverState.fgSegs}
-          selectedInstanceId={props.eventSelection}
-          hiddenInstances={ // TODO: more convenient
-            (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-            (props.eventResize ? props.eventResize.affectedInstances : null)
-          }
+    if (segPopoverState && segPopoverState.origFgSegs === props.fgEventSegs) { // clear on new event segs
+      return (
+        <Popover
+          extraClassName='fc-more-popover'
+          title={segPopoverState.title}
+          alignmentEl={segPopoverState.alignmentEl}
+          onClose={this.handlePopoverClose}
+          ref={this.popoverRef}
+        >
+          <DayTile
+            date={segPopoverState.date}
+            fgSegs={segPopoverState.fgSegs}
+            selectedInstanceId={props.eventSelection}
+            hiddenInstances={ // TODO: more convenient
+              (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+              (props.eventResize ? props.eventResize.affectedInstances : null)
+            }
           />
-      </Popover>
+        </Popover>
+      )
     }
-  */
+  }
 
 
- handleSkeletonDom = (rootEl: HTMLDivElement | null, rowEls: HTMLElement[] | null, cellEls: HTMLElement[] | null) => {
+  handleSkeletonDom = (rootEl: HTMLDivElement | null, rowEls: HTMLElement[] | null, cellEls: HTMLElement[] | null) => {
     setRef(this.props.rootElRef, rootEl)
 
     if (!rootEl) {
@@ -223,7 +230,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   }
 
 
-  onPopoverClose = () => {
+  handlePopoverClose = () => {
     this.setState({ segPopover: null })
   }
 
@@ -234,6 +241,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
   updateSize(isResize: boolean) {
     let { calendar } = this.context
+    let popover = this.popoverRef.current
 
     if (
       isResize ||
@@ -242,6 +250,10 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     ) {
       this.buildPositionCaches()
       this.isCellSizesDirty = false
+    }
+
+    if (popover) {
+      popover.updateSize()
     }
   }
 
@@ -506,7 +518,6 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   // Responsible for attaching click handler as well.
   renderMoreLink(row, col, hiddenSegs, cells, rowEls, rowStructs, context: ComponentContext) {
     let { calendar, view, dateEnv, options, isRtl } = context
-    let rowCnt = cells.length
     let colCnt = cells[0].length
 
     let a = document.createElement('a')
@@ -542,27 +553,16 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
       if (clickOption === 'popover') {
         let _col = isRtl ? colCnt - col - 1 : col // HACK: props.cells has different dir system?
-        let topEl = rowCnt === 1
-          ? context.calendar.component.viewContainerEl // will cause the popover to cover any sort of header
-          : rowEls[row] // will align with top of row
-        let left, right
-
-        // Determine horizontal coordinate.
-        // We use the moreWrap instead of the <td> to avoid border confusion.
-        if (isRtl) {
-          right = computeRect(moreEl.parentNode).right + 1 // +1 to be over cell border
-        } else {
-          left = computeRect(moreEl.parentNode).left - 1 // -1 to be over cell border
-        }
+        let date = cells[row][_col].date
+        let title = dateEnv.format(date, createFormatter(options.dayPopoverFormat)) // TODO: cache formatter
 
         this.setState({
           segPopover: {
             origFgSegs: this.props.fgEventSegs,
-            date: cells[row][_col].date,
+            date,
+            title,
             fgSegs: reslicedAllSegs,
-            top: computeRect(topEl).top,
-            left,
-            right
+            alignmentEl: dayEl
           }
         })
 

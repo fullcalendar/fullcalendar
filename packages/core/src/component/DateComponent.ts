@@ -121,8 +121,8 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
   }
 
 
-  isPopover() {
-    return this.rootEl.classList.contains('fc-popover')
+  isPopover() { // HACK. should be overridden by any components that know that they live within a popover
+    return false
   }
 
 

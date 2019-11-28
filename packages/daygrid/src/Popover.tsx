@@ -1,95 +1,112 @@
-
-/* A rectangular panel that is absolutely positioned over other content
-------------------------------------------------------------------------------------------------------------------------*/
-
 import {
-  applyStyle,
-  listenBySelector,
-  computeClippingRect, computeRect, Component, ComponentContext
+  applyStyle, BaseComponent, ComponentContext, DelayedRunner
 } from '@fullcalendar/core'
+import { h, ComponentChildren, createRef } from 'preact'
 
 export interface PopoverProps {
-  clippingEl: HTMLElement
+  title: string
+  children?: ComponentChildren
   extraClassName?: string
-  top?: number
-  left?: number
-  right?: number
+  alignmentEl: HTMLElement
   onClose?: () => void
 }
 
-export default class Popover extends Component<PopoverProps, ComponentContext> {
+const PADDING_FROM_VIEWPORT = 10
+const SCROLL_DEBOUNCE = 10
 
 
-  render(props: PopoverProps, context: ComponentContext) {
-    let el = document.createElement('div')
-    el.className = [
-      'fc-popover',
-      context.theme.getClass('popover'),
-      props.extraClassName || ''
-    ].join(' ')
-    el.style.top = '0'
-    el.style.left = '0'
+export default class Popover extends BaseComponent<PopoverProps> {
 
-    if (props.onClose) {
-      // when a click happens on anything inside with a 'fc-close' className, hide the popover
-      listenBySelector(el, 'click', '.fc-close', props.onClose)
-    }
+  private rootElRef = createRef<HTMLDivElement>()
+  private repositioner = new DelayedRunner(this.updateSize.bind(this))
 
-    return el
+
+  render(props: PopoverProps, state: {}, context: ComponentContext) {
+    let { theme } = context
+    let classNames = [ 'fc-popover', context.theme.getClass('popover'), props.extraClassName ]
+
+    return (
+      <div class={classNames.join(' ')} ref={this.rootElRef}>
+        <div class={'fc-header ' + theme.getClass('popoverHeader')}>
+          <span class='fc-title'>
+            {props.title}
+          </span>
+          <span class={'fc-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick}></span>
+        </div>
+        <div class={'fc-body ' + theme.getClass('popoverContent')}>
+          {props.children}
+        </div>
+      </div>
+    )
   }
 
 
   componentDidMount() {
-    positionEl(this.rootEl, this.props)
-
-    document.addEventListener('mousedown', this.onDocumentMousedown)
+    document.addEventListener('mousedown', this.handleDocumentMousedown)
+    document.addEventListener('scroll', this.handleDocumentScroll)
+    this.updateSize()
   }
 
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown', this.onDocumentMousedown)
+    document.removeEventListener('mousedown', this.handleDocumentMousedown)
+    document.removeEventListener('scroll', this.handleDocumentScroll)
   }
 
 
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
-  onDocumentMousedown = (ev) => {
+  handleDocumentMousedown = (ev) => {
     let { onClose } = this.props
+    let rootEl = this.rootElRef.current
 
     // only hide the popover if the click happened outside the popover
-    if (onClose && !this.rootEl.contains(ev.target)) {
+    if (onClose && !rootEl.contains(ev.target)) {
       onClose()
     }
   }
 
-}
 
-
-// Positions the popover optimally, using the top/left/right options
-function positionEl(el: HTMLElement, props: PopoverProps) {
-  let elDims = el.getBoundingClientRect() // only used for width,height
-  let origin = computeRect(el.offsetParent)
-  let clippingRect = computeClippingRect(props.clippingEl)
-  let top // the "position" (not "offset") values for the popover
-  let left //
-
-  // compute top and left
-  top = props.top || 0
-  if (props.left !== undefined) {
-    left = props.left
-  } else if (props.right !== undefined) {
-    left = props.right - elDims.width // derive the left value from the right value
-  } else {
-    left = 0
+  handleDocumentScroll = () => {
+    this.repositioner.request(SCROLL_DEBOUNCE)
   }
 
-  // constrain to the view port. if constrained by two edges, give precedence to top/left
-  top = Math.min(top, clippingRect.bottom - elDims.height - this.margin)
-  top = Math.max(top, clippingRect.top + this.margin)
-  left = Math.min(left, clippingRect.right - elDims.width - this.margin)
-  left = Math.max(left, clippingRect.left + this.margin)
 
-  applyStyle(el, {
-    top: top - origin.top,
-    left: left - origin.left
-  })
+  handleCloseClick = () => {
+    let { onClose } = this.props
+
+    if (onClose) {
+      onClose()
+    }
+  }
+
+
+  /*
+  NOTE: the popover is position:fixed, so coordinates are relative to the viewport
+  NOTE: the PARENT calls this as well, on window resize. we would have wanted to use the repositioner,
+        but need to ensure that all other components have updated size first (for alignmentEl)
+  */
+  updateSize() {
+    let { alignmentEl } = this.props
+    let rootEl = this.rootElRef.current
+    let dims = rootEl.getBoundingClientRect() // only used for width,height
+    let alignment = alignmentEl.getBoundingClientRect()
+
+    let top = alignment.top
+    top = Math.min(top, window.innerHeight - dims.height - PADDING_FROM_VIEWPORT)
+    top = Math.max(top, PADDING_FROM_VIEWPORT)
+
+    let left: number
+
+    if (this.context.isRtl) {
+      left = alignment.right - dims.width
+    } else {
+      left = alignment.left
+    }
+
+    left = Math.min(left, window.innerWidth - dims.width - PADDING_FROM_VIEWPORT)
+    left = Math.max(left, PADDING_FROM_VIEWPORT)
+
+    applyStyle(rootEl, { top, left })
+  }
+
 }

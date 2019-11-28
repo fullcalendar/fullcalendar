@@ -2,7 +2,8 @@ import {
   Seg,
   ComponentContext,
   BaseFgEventRendererProps,
-  renderer
+  subrenderer,
+  removeElement
 } from '@fullcalendar/core'
 import CellEvents from './CellEvents'
 
@@ -13,7 +14,7 @@ export interface DayTileEventsProps extends BaseFgEventRendererProps {
 
 export default class DayTileEvents extends CellEvents<DayTileEventsProps> {
 
-  attachSegs = renderer(attachSegs)
+  attachSegs = subrenderer(attachSegs, detachSegs)
 
 
   render(props: DayTileEventsProps, context: ComponentContext) {
@@ -33,6 +34,15 @@ export default class DayTileEvents extends CellEvents<DayTileEventsProps> {
 }
 
 
-function attachSegs(props: { segs: Seg[] }) {
-  return props.segs.map((seg) => seg.el)
+function attachSegs({ segs, parentEl }: { segs: Seg[], parentEl: HTMLElement }) {
+  for (let seg of segs) {
+    parentEl.appendChild(seg.el)
+  }
+
+  return segs
+}
+
+
+function detachSegs(segs: Seg[]) {
+  segs.forEach((seg) => removeElement(seg.el))
 }

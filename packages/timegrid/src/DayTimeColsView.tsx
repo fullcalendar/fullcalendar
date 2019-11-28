@@ -62,19 +62,19 @@ export default class DayTimeColsView extends TimeColsView {
 
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
     let timeCols = this.timeColsRef.current
-    let dayTableRef = this.dayTableRef.current
+    let dayTable = this.dayTableRef.current
 
     if (isResize || this.isLayoutSizeDirty()) {
       this.updateLayoutSize(
         timeCols.timeCols,
-        dayTableRef ? dayTableRef.table : null,
+        dayTable ? dayTable.table : null,
         viewHeight,
         isAuto
       )
     }
 
-    if (dayTableRef) {
-      dayTableRef.updateSize(isResize)
+    if (dayTable) {
+      dayTable.updateSize(isResize)
     }
 
     timeCols.updateSize(isResize)
