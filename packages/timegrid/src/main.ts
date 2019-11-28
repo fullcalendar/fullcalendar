@@ -5,7 +5,12 @@ import { TimeGridSeg } from './TimeGrid'
 import { TimeGridSlicer, buildDayRanges } from './SimpleTimeGrid'
 
 export { TimeGridView, AbstractTimeGridView, buildDayTable, buildDayRanges, TimeGridSlicer, TimeGridSeg }
-export { default as TimeGrid } from './TimeGrid'
+export { default as TimeGrid, TimeGridProps, TimeGridCell, RenderProps,  } from './TimeGrid'
+export { default as AllDaySplitter } from './AllDaySplitter'
+export { default as SimpleTimeGrid, SimpleTimeGridProps } from './SimpleTimeGrid'
+export { default as TimeGridEventRenderer } from './TimeGridEventRenderer'
+export { default as TimeGridFillRenderer } from './TimeGridFillRenderer'
+export { default as TimeGridMirrorRenderer } from './TimeGridMirrorRenderer'
 
 export default createPlugin({
   defaultView: 'timeGridWeek',

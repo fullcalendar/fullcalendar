@@ -2,6 +2,7 @@ import { createPlugin } from '@fullcalendar/core'
 import ListView from './ListView'
 
 export { ListView }
+export { default as ListEventRenderer } from './ListEventRenderer'
 
 export default createPlugin({
   views: {
