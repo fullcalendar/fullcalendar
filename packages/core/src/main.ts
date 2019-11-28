@@ -189,7 +189,7 @@ export { CalendarSystem, createCalendarSystem, registerCalendarSystem } from './
 export { NamedTimeZoneImpl, NamedTimeZoneImplClass } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'
 
-export { 
+export {
   EventSourceDef, EventSource, EventSourceHash, EventInputTransformer, EventSourceError, EventSourceErrorResponseHandler,
   EventSourceFetcher, EventSourceInput, EventSourceSuccessResponseHandler, ExtendedEventSourceInput, doesSourceNeedRange,
   parseEventSource
