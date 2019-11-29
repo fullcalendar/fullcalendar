@@ -50,7 +50,7 @@ export default abstract class SimpleDayGridEventRenderer extends FgEventRenderer
           ''
           ) +
         (skinCss ?
-          ' style="' + skinCss + '"' :
+          ' data-calendar-style="' + skinCss + '"' :
           ''
           ) +
       '>' +

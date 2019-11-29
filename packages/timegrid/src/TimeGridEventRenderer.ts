@@ -149,7 +149,7 @@ export default class TimeGridEventRenderer extends FgEventRenderer {
         ''
         ) +
       (skinCss ?
-        ' style="' + skinCss + '"' :
+        ' data-calendar-style="' + skinCss + '"' :
         ''
         ) +
       '>' +

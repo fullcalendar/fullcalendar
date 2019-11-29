@@ -81,7 +81,7 @@ export default class ListEventRenderer extends FgEventRenderer {
       '<td class="fc-list-item-marker ' + theme.getClass('widgetContent') + '">' +
         '<span class="fc-event-dot"' +
         (bgColor ?
-          ' style="background-color:' + bgColor + '"' :
+          ' data-calendar-style="background-color:' + bgColor + '"' :
           '') +
         '></span>' +
       '</td>' +

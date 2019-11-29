@@ -9,7 +9,7 @@ import {
 import DayGrid, { DayGridSeg } from './DayGrid'
 
 
-const EMPTY_CELL_HTML = '<td style="pointer-events:none"></td>'
+const EMPTY_CELL_HTML = '<td data-calendar-style="pointer-events:none"></td>'
 
 
 export default class DayGridFillRenderer extends FillRenderer {

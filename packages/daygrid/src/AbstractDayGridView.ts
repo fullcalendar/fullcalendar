@@ -134,7 +134,7 @@ export default abstract class AbstractDayGridView extends View {
   // Generates an HTML attribute string for setting the width of the week number column, if it is known
   weekNumberStyleAttr() {
     if (this.weekNumberWidth != null) {
-      return 'style="width:' + this.weekNumberWidth + 'px"'
+      return 'data-calendar-style="width:' + this.weekNumberWidth + 'px"'
     }
     return ''
   }

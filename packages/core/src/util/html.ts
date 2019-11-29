@@ -1,4 +1,3 @@
-
 export function htmlEscape(s) {
   return (s + '').replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -22,6 +21,15 @@ export function cssToStr(cssProps) {
   }
 
   return statements.join(';')
+}
+
+// Convert data-calendar-style attribute to css
+export function dataToStyle(root?) {
+  const rootElement = root || document
+  rootElement.querySelectorAll('*[data-calendar-style]').forEach(node => {
+    node.style = node.dataset.calendarStyle
+    node.removeAttribute('data-calendar-style')
+  })
 }
 
 

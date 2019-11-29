@@ -127,7 +127,7 @@ export default abstract class FillRenderer { // use for highlight, background ev
 
     return '<' + this.fillSegTag +
       (classNames.length ? ' class="' + classNames.join(' ') + '"' : '') +
-      (css ? ' style="' + cssToStr(css) + '"' : '') +
+      (css ? ' data-calendar-style="' + cssToStr(css) + '"' : '') +
       '></' + this.fillSegTag + '>'
   }
 

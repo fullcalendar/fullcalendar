@@ -301,7 +301,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     el.innerHTML =
       '<div class="fc-bg"></div>' +
       '<div class="fc-slats"></div>' +
-      '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" style="display:none" />'
+      '<hr class="fc-divider ' + theme.getClass('widgetHeader') + '" data-calendar-style="display:none" />'
 
     this.rootBgContainerEl = el.querySelector('.fc-bg')
     this.slatContainerEl = el.querySelector('.fc-slats')
