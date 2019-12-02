@@ -23,6 +23,7 @@ export default class DayTableView extends TableView {
   render(props: ViewProps, state: {}, context: ComponentContext) {
     let { dateProfile } = props
     let dayTableModel = this.buildDayTableModel(dateProfile, props.dateProfileGenerator)
+    let { colWeekNumbersVisible, cellWeekNumbersVisible } = this.processOptions(context.options)
 
     return this.renderLayout(
       <DayHeader
@@ -48,8 +49,8 @@ export default class DayTableView extends TableView {
         renderNumberIntro={this.renderNumberIntro}
         renderBgIntro={this.renderBgIntro}
         renderIntro={this.renderIntro}
-        colWeekNumbersVisible={this.colWeekNumbersVisible}
-        cellWeekNumbersVisible={this.cellWeekNumbersVisible}
+        colWeekNumbersVisible={colWeekNumbersVisible}
+        cellWeekNumbersVisible={cellWeekNumbersVisible}
       />
     )
   }
@@ -64,8 +65,7 @@ export default class DayTableView extends TableView {
         header ? header.rootEl : null,
         table.table,
         viewHeight,
-        isAuto,
-        this.context.options
+        isAuto
       )
     }
 

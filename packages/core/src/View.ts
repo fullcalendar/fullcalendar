@@ -52,21 +52,6 @@ export default abstract class View<State={}> extends DateComponent<ViewProps, St
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  componentDidMount() {
-    this.applyScroll({ duration: createDuration(this.context.options.scrollTime) }, false)
-  }
-
-
-  getSnapshotBeforeUpdate() {
-    return this.queryScroll()
-  }
-
-
-  componentDidUpdate(prevProps, prevState, snapshot) { // how do we know children element will be done?
-    this.applyScroll(snapshot, false)
-  }
-
-
   updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
   }
 
@@ -202,55 +187,26 @@ export default abstract class View<State={}> extends DateComponent<ViewProps, St
 
   // Scroller
   // -----------------------------------------------------------------------------------------------------------------
-  // QUESTION: do we need to have date-scroll separate?
 
 
-  queryScroll() {
-    let scroll = {} as any
+  scrollToInitialTime() {
+    let duration = createDuration(this.context.options.scrollTime)
 
-    if (this.props.dateProfile) { // dates rendered yet?
-      __assign(scroll, this.queryDateScroll())
-    }
-
-    return scroll
+    this.scrollToTime(duration)
   }
 
 
-  applyScroll(scroll, isResize: boolean) {
-    let { duration, isForced } = scroll
-
-    if (duration != null && !isForced) {
-      delete scroll.duration
-
-      if (this.props.dateProfile) { // dates rendered yet?
-        __assign(scroll, this.computeDateScroll(duration))
-      }
-    }
-
-    if (this.props.dateProfile) { // dates rendered yet?
-      this.applyDateScroll(scroll)
-    }
+  scrollToTime(duration: Duration) {
+    // subclasses can implement
   }
 
 
-  computeDateScroll(duration: Duration) {
-    return {} // subclasses must implement
-  }
+  // HACKs
+  // -----------------------------------------------------------------------------------------------------------------
 
 
-  queryDateScroll() {
-    return {} // subclasses must implement
-  }
-
-
-  applyDateScroll(scroll) {
-     // subclasses must implement
-  }
-
-
-  // for API
-  scrollToDuration(duration: Duration) {
-    this.applyScroll({ duration }, false)
+  afterSizing(callback) {
+    this.context.calendar.afterSizing(callback)
   }
 
 }

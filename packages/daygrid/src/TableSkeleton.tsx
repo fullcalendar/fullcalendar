@@ -39,7 +39,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
 
 
-  render(props: TableSkeletonProps) {
+  render() {
     let rowCnt = this.props.cells.length
     let rowNodes: VNode[] = []
 

@@ -8,6 +8,7 @@ import {
   DateMarker,
   getViewClassNames,
   GotoAnchor,
+  ViewProps
 } from '@fullcalendar/core'
 import { Table } from '@fullcalendar/daygrid'
 import { TimeCols } from './main'
@@ -104,6 +105,25 @@ export default abstract class TimeColsView extends View {
     }
 
     this.startNowIndicator()
+    this.scrollToInitialTime()
+  }
+
+
+  getSnapshotBeforeUpdate() {
+    let scroller = this.scrollerRef.current
+
+    return { scrollTop: scroller.controller.getScrollTop() }
+  }
+
+
+  componentDidUpdate(prevProps: ViewProps, prevState: {}, snapshot) {
+
+    if (prevProps.dateProfile !== this.props.dateProfile) {
+      this.scrollToInitialTime()
+
+    } else {
+      this.scrollTop(snapshot.scrollTop)
+    }
   }
 
 
@@ -225,6 +245,24 @@ export default abstract class TimeColsView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
+  scrollToTime(duration: Duration) {
+    this.afterSizing(() => { // hack
+      let top = this.computeDateScroll(duration)
+
+      this.scrollTop(top)
+    })
+  }
+
+
+  scrollTop(top: number) {
+    this.afterSizing(() => { // hack
+      let scroller = this.scrollerRef.current
+
+      scroller.controller.setScrollTop(top)
+    })
+  }
+
+
   // Computes the initial pre-configured scroll state prior to allowing the user to change it
   computeDateScroll(duration: Duration) {
     let top = this.getTimeColsObj().timeCols.computeTimeTop(duration)
@@ -236,23 +274,7 @@ export default abstract class TimeColsView extends View {
       top++ // to overcome top border that slots beyond the first have. looks better
     }
 
-    return { top }
-  }
-
-
-  queryDateScroll() {
-    let scroller = this.scrollerRef.current
-
-    return { top: scroller.controller.getScrollTop() }
-  }
-
-
-  applyDateScroll(scroll) {
-    let scroller = this.scrollerRef.current
-
-    if (scroll.top !== undefined) {
-      scroller.controller.setScrollTop(scroll.top)
-    }
+    return top
   }
 
 

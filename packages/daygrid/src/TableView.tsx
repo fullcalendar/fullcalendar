@@ -29,14 +29,11 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
 export default abstract class TableView extends View {
 
-  private processOptions = memoize(this._processOptions)
+  protected processOptions = memoize(this._processOptions)
   private rootElRef = createRef<HTMLDivElement>()
   private scrollerRef = createRef<Scroller>()
-
-  // computed options
-  protected colWeekNumbersVisible: boolean
-  protected cellWeekNumbersVisible: boolean
-  protected weekNumberWidth: number
+  private colWeekNumbersVisible: boolean // computed option
+  private weekNumberWidth: number
 
   getRootEl() { return this.rootElRef.current }
 
@@ -75,18 +72,25 @@ export default abstract class TableView extends View {
 
 
   private _processOptions(options) {
+    let cellWeekNumbersVisible: boolean
+    let colWeekNumbersVisible: boolean
+
     if (options.weekNumbers) {
       if (options.weekNumbersWithinDays) {
-        this.cellWeekNumbersVisible = true
-        this.colWeekNumbersVisible = false
+        cellWeekNumbersVisible = true
+        colWeekNumbersVisible = false
       } else {
-        this.cellWeekNumbersVisible = false
-        this.colWeekNumbersVisible = true
+        cellWeekNumbersVisible = false
+        colWeekNumbersVisible = true
       }
     } else {
-      this.colWeekNumbersVisible = false
-      this.cellWeekNumbersVisible = false
+      colWeekNumbersVisible = false
+      cellWeekNumbersVisible = false
     }
+
+    this.colWeekNumbersVisible = colWeekNumbersVisible
+
+    return { cellWeekNumbersVisible, colWeekNumbersVisible }
   }
 
 
@@ -104,9 +108,11 @@ export default abstract class TableView extends View {
 
 
   // Refreshes the horizontal dimensions of the view
-  updateLayoutHeight(headRowEl: HTMLElement | null, table: Table, viewHeight: number, isAuto: boolean, options) {
+  // TODO: dont pass in optinos
+  updateLayoutHeight(headRowEl: HTMLElement | null, table: Table, viewHeight: number, isAuto: boolean) {
     let rootEl = this.rootElRef.current
     let scroller = this.scrollerRef.current
+    let { options } = this.context
     let eventLimit = options.eventLimit
     let scrollerHeight
     let scrollbarWidths
@@ -200,31 +206,6 @@ export default abstract class TableView extends View {
       } else {
         distributeHeight(rowEls, height, true) // true = compensate for height-hogging rows
       }
-    }
-  }
-
-
-  /* Scroll
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  computeDateScroll(duration: Duration) {
-    return { top: 0 }
-  }
-
-
-  queryDateScroll() {
-    let scroller = this.scrollerRef.current
-
-    return { top: scroller.controller.getScrollTop() }
-  }
-
-
-  applyDateScroll(scroll) {
-    let scroller = this.scrollerRef.current
-
-    if (scroll.top !== undefined) {
-      scroller.controller.setScrollTop(scroll.top)
     }
   }
 
