@@ -34,8 +34,6 @@ export default abstract class TableView extends View {
   private colWeekNumbersVisible: boolean // computed option
   private weekNumberWidth: number
 
-  getRootEl() { return this.rootElRef.current }
-
 
   renderLayout(headerContent: ComponentChildren, bodyContent: ComponentChildren) {
     let { theme, options } = this.context

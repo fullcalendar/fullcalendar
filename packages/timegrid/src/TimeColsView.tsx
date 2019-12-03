@@ -46,8 +46,6 @@ export default abstract class TimeColsView extends View {
     unrenderNowIndicator: () => void
   }
 
-  getRootEl() { return this.rootElRef.current }
-
 
   // rendering
   // ----------------------------------------------------------------------------------------------------

@@ -34,8 +34,6 @@ export default class ListView extends View {
   private scrollerRef = createRef<Scroller>()
   private eventRenderer: ListViewEvents
 
-  getRootEl() { return this.rootEl }
-
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
     let classNames = getViewClassNames(props.viewSpec).concat('fc-list-view')

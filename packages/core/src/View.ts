@@ -45,8 +45,6 @@ export default abstract class View<State={}> extends DateComponent<ViewProps, St
   nowIndicatorTimeoutID: any // for refresh timing of now indicator
   nowIndicatorIntervalID: any // "
 
-  abstract getRootEl(): HTMLElement
-
 
   // Sizing
   // -----------------------------------------------------------------------------------------------------------------

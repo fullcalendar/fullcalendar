@@ -273,7 +273,7 @@ export default class Calendar {
         this.publiclyTrigger('datesDestroy', [
           {
             view: viewApi,
-            el: viewComponent.getRootEl()
+            el: viewComponent.base as HTMLElement
           }
         ])
       }
@@ -285,7 +285,7 @@ export default class Calendar {
         this.publiclyTrigger('viewSkeletonDestroy', [
           {
             view: viewApi,
-            el: viewComponent.getRootEl()
+            el: viewComponent.base as HTMLElement
           }
         ])
       }
@@ -356,7 +356,7 @@ export default class Calendar {
       this.publiclyTrigger('viewSkeletonRender', [
         {
           view: viewApi,
-          el: viewComponent.getRootEl()
+          el: viewComponent.base as HTMLElement
         }
       ])
     }
@@ -366,7 +366,7 @@ export default class Calendar {
       this.publiclyTrigger('datesRender', [
         {
           view: viewApi,
-          el: viewComponent.getRootEl()
+          el: viewComponent.base as HTMLElement
         }
       ])
     }
