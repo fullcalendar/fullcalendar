@@ -578,6 +578,10 @@ export default class Calendar {
   }
 
 
+  // Post-sizing hacks (kill after updateSize refactor)
+  // -----------------------------------------------------------------------------------------------------------------
+
+
   afterSizing(callback) {
     this.afterSizingCallbacks.push(callback)
   }
