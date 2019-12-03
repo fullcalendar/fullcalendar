@@ -1,5 +1,5 @@
 import { h, createRef } from './vdom'
-import { BaseComponent } from './view-framework-util'
+import { BaseComponent } from './vdom-util'
 import { ToolbarModel, ToolbarWidget } from './toolbar-parse'
 
 

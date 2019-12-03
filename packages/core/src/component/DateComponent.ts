@@ -1,4 +1,4 @@
-import { BaseComponent } from '../view-framework-util'
+import { BaseComponent } from '../vdom-util'
 import { EventRenderRange } from './event-rendering'
 import { DateSpan } from '../structs/date-span'
 import { EventInstanceHash } from '../structs/event'

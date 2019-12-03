@@ -7,7 +7,7 @@ import ComponentContext from '../component/ComponentContext'
 import { h } from '../vdom'
 import { __assign } from 'tslib'
 import { DateFormatter } from '../datelib/formatting'
-import { BaseComponent } from '../view-framework-util'
+import { BaseComponent } from '../vdom-util'
 
 
 export interface TableDateCellProps {

@@ -174,5 +174,5 @@ export { default as EventApi } from './api/EventApi'
 export { default as requestJson } from './util/requestJson'
 
 export * from './vdom'
-export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes } from './view-framework-util'
+export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes } from './vdom-util'
 export { DelayedRunner } from './util/runner'

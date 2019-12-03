@@ -3,7 +3,7 @@ import { htmlToElements, elementMatches } from '../../util/dom-manip'
 import { Seg } from '../DateComponent'
 import { filterSegsViaEls, triggerPositionedSegs, triggerWillRemoveSegs } from '../event-rendering'
 import ComponentContext from '../ComponentContext'
-import { SubRenderer, subrenderer } from '../../view-framework-util'
+import { SubRenderer, subrenderer } from '../../vdom-util'
 
 export interface BaseFillRendererProps {
   segs: Seg[]

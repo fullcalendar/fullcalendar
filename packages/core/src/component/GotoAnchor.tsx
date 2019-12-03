@@ -1,5 +1,5 @@
 import { h, ComponentChildren } from '../vdom'
-import { BaseComponent } from '../view-framework-util'
+import { BaseComponent } from '../vdom-util'
 import ComponentContext from './ComponentContext'
 import { __assign } from 'tslib'
 

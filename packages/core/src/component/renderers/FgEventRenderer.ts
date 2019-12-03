@@ -7,7 +7,7 @@ import { EventRenderRange, filterSegsViaEls, triggerPositionedSegs, triggerWillR
 import { Seg } from '../DateComponent'
 import ComponentContext from '../ComponentContext'
 import { memoize } from '../../util/memoize'
-import { subrenderer, SubRenderer } from '../../view-framework-util'
+import { subrenderer, SubRenderer } from '../../vdom-util'
 
 
 export interface BaseFgEventRendererProps {

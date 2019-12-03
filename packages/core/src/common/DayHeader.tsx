@@ -1,4 +1,4 @@
-import { BaseComponent } from '../view-framework-util'
+import { BaseComponent } from '../vdom-util'
 import ComponentContext from '../component/ComponentContext'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
