@@ -1,4 +1,5 @@
 import {
+  h, createRef, VNode,
   DateProfile,
   EventStore,
   EventUiHash,
@@ -13,7 +14,7 @@ import {
   ComponentContext
 } from '@fullcalendar/core'
 import Table, { TableSeg  } from './Table'
-import { h, createRef, VNode } from 'preact'
+
 
 export interface DayTableProps {
   dateProfile: DateProfile | null

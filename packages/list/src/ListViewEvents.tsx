@@ -1,4 +1,5 @@
 import {
+  h,
   htmlEscape,
   FgEventRenderer,
   Seg,
@@ -12,7 +13,6 @@ import {
   renderVNodes,
   GotoAnchor
 } from '@fullcalendar/core'
-import { h } from 'preact'
 
 
 export interface ListViewEventsProps extends BaseFgEventRendererProps {

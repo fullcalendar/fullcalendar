@@ -1,4 +1,5 @@
 import {
+  VNode, h, createRef, ComponentChildren,
   findElements,
   matchCellWidths,
   uncompensateScroll,
@@ -15,7 +16,7 @@ import {
 } from '@fullcalendar/core'
 import Table from './Table'
 import TableDateProfileGenerator from './TableDateProfileGenerator'
-import { VNode, h, createRef, ComponentChildren } from 'preact'
+
 
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 

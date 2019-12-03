@@ -1,4 +1,5 @@
 import {
+  h, VNode,
   BaseComponent,
   DateProfile,
   ComponentContext,
@@ -7,7 +8,6 @@ import {
   guid
 } from '@fullcalendar/core'
 import { DayBgRow } from '@fullcalendar/daygrid'
-import { h, VNode } from 'preact'
 
 
 export interface TimeColsBgProps {

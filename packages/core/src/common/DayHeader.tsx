@@ -4,8 +4,8 @@ import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
-import { VNode, h, createRef } from 'preact'
-import { TableDateCell } from '@fullcalendar/core'
+import { VNode, h, createRef } from '../vdom'
+import TableDateCell from './TableDateCell'
 
 export interface DayHeaderProps {
   dates: DateMarker[]

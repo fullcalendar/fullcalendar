@@ -1,4 +1,5 @@
 import {
+  h, VNode,
   BaseComponent,
   DateProfile,
   ComponentContext,
@@ -14,7 +15,7 @@ import {
   findElements,
   guid
 } from '@fullcalendar/core'
-import { h, VNode } from 'preact'
+
 
 export interface TimeColsSlatsProps {
   dateProfile: DateProfile

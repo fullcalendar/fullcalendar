@@ -1,5 +1,5 @@
-import { VNode, h } from 'preact'
 import {
+  VNode, h,
   DateProfile,
   DateMarker,
   BaseComponent,

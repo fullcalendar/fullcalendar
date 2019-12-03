@@ -1,4 +1,5 @@
 import {
+  h, createRef,
   subtractInnerElHeight,
   View,
   ViewProps,
@@ -20,7 +21,6 @@ import {
   getViewClassNames
 } from '@fullcalendar/core'
 import ListViewEvents from './ListViewEvents'
-import { h, createRef } from 'preact'
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".

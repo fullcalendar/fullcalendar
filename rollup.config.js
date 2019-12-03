@@ -77,9 +77,17 @@ function buildPkgConfig(pkgStruct, ownBrowserGlobals, isDev) {
     pkgStruct.jsonObj.peerDependencies || {}
   ))
 
+  // embed typescript utils
+  let allowExternalBundled = [ 'tslib' ]
+
+  // embed preact only in the core package
+  if (pkgStruct.name === '@fullcalendar/core') {
+    allowExternalBundled.push('preact')
+  }
+
   let plugins = [
     nodeResolve({
-      only: [ 'tslib' ] // the only external module we want to bundle
+      only: allowExternalBundled
     }),
     replace({
       delimiters: [ '<%= ', ' %>' ],

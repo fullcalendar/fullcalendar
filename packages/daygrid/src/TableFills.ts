@@ -1,4 +1,5 @@
 import {
+  VNode,
   htmlToElement,
   appendToElement,
   prependToElement,
@@ -10,7 +11,6 @@ import {
   subrenderer,
   renderVNodes
 } from '@fullcalendar/core'
-import { VNode } from 'preact'
 
 
 const EMPTY_CELL_HTML = '<td style="pointer-events:none"></td>'

@@ -1,4 +1,5 @@
 import {
+  h, createRef,
   DayHeader,
   ComponentContext,
   DateProfileGenerator,
@@ -10,7 +11,6 @@ import {
 } from '@fullcalendar/core'
 import TableView, { hasRigidRows } from './TableView'
 import DayTable from './DayTable'
-import { h, createRef } from 'preact'
 
 
 export default class DayTableView extends TableView {

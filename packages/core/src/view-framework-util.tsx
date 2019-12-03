@@ -1,4 +1,4 @@
-import { Component, h, Fragment, Ref, ComponentChildren, render } from 'preact'
+import { Component, h, Fragment, Ref, ComponentChildren, render } from './vdom'
 import ComponentContext, { ComponentContextType } from './component/ComponentContext'
 import { __assign } from 'tslib'
 

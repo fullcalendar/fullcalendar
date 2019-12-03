@@ -1,4 +1,5 @@
 import {
+  h, createRef, VNode,
   DateComponent,
   DateProfile,
   EventStore,
@@ -15,7 +16,6 @@ import {
   ComponentContext
 } from '@fullcalendar/core'
 import TimeCols, { TimeColsSeg } from './TimeCols'
-import { h, createRef, VNode } from 'preact'
 
 
 export interface DayTimeColsProps {

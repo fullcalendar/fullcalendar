@@ -1,4 +1,5 @@
 import {
+  VNode,
   removeElement,
   appendToElement,
   prependToElement,
@@ -10,7 +11,6 @@ import {
   renderVNodes
 } from '@fullcalendar/core'
 import CellEvents from './CellEvents'
-import { VNode } from 'preact'
 
 
 /* Event-rendering methods for the Table class

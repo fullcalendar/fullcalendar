@@ -1,4 +1,5 @@
 import {
+  h, createRef,
   DateComponent, Seg,
   Hit,
   addDays, DateMarker,
@@ -7,7 +8,6 @@ import {
   elementClosest
 } from '@fullcalendar/core'
 import DayTileEvents from './DayTileEvents'
-import { h, createRef } from 'preact'
 
 
 export interface DayTileProps {

@@ -1,4 +1,5 @@
 import {
+  h, ComponentChildren, createRef,
   findElements,
   matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
   Scroller,
@@ -13,7 +14,7 @@ import {
 import { Table } from '@fullcalendar/daygrid'
 import { TimeCols } from './main'
 import AllDaySplitter from './AllDaySplitter'
-import { h, ComponentChildren, createRef } from 'preact'
+
 
 const ALL_DAY_EVENT_LIMIT = 5
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })

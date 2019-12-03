@@ -1,4 +1,4 @@
-import { h, ComponentChildren } from 'preact'
+import { h, ComponentChildren } from '../vdom'
 import { BaseComponent } from '../view-framework-util'
 import ComponentContext from './ComponentContext'
 import { __assign } from 'tslib'

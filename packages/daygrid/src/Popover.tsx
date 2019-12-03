@@ -1,7 +1,8 @@
 import {
+  h, ComponentChildren, createRef,
   applyStyle, BaseComponent, ComponentContext, DelayedRunner
 } from '@fullcalendar/core'
-import { h, ComponentChildren, createRef } from 'preact'
+
 
 export interface PopoverProps {
   title: string

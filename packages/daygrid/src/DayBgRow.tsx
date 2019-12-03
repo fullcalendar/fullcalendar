@@ -1,4 +1,5 @@
 import {
+  h, VNode,
   ComponentContext,
   DateMarker,
   getDayClasses,
@@ -6,7 +7,7 @@ import {
   DateProfile,
   BaseComponent
 } from '@fullcalendar/core'
-import { h, VNode } from 'preact'
+
 
 export interface DayBgCell {
   date: DateMarker

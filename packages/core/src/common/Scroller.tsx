@@ -1,6 +1,6 @@
 import { computeEdges } from '../util/dom-geom'
 import { ElementScrollController } from './scroll-controller'
-import { Component, h, ComponentChildren } from 'preact'
+import { Component, h, ComponentChildren } from '../vdom'
 import { __assign } from 'tslib'
 
 export interface ScrollbarWidths {

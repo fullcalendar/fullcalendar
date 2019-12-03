@@ -1,4 +1,5 @@
 import {
+  h, createRef,
   DateProfileGenerator, DateProfile,
   ComponentContext,
   DayHeader,
@@ -10,7 +11,6 @@ import {
 import { DayTable } from '@fullcalendar/daygrid'
 import TimeColsView from './TimeColsView'
 import DayTimeCols from './DayTimeCols'
-import { h, createRef } from 'preact'
 
 
 export default class DayTimeColsView extends TimeColsView {

@@ -5,7 +5,7 @@ import { DateEnv } from '../datelib/env'
 import { parseFieldSpecs } from '../util/misc'
 import { createDuration, Duration } from '../datelib/duration'
 import { PluginHooks } from '../plugin-system'
-import { createContext } from 'preact'
+import { createContext } from '../vdom'
 import { parseToolbars, ToolbarModel } from '../toolbar-parse'
 
 

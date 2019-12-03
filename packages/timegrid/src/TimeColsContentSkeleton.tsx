@@ -1,10 +1,10 @@
 import {
+  h, VNode,
   BaseComponent,
   ComponentContext,
   findElements,
   guid,
 } from '@fullcalendar/core'
-import { h, VNode } from 'preact'
 
 
 export interface TimeColsContentSkeletonProps {

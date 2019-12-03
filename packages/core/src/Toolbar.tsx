@@ -1,4 +1,4 @@
-import { h, createRef } from 'preact'
+import { h, createRef } from './vdom'
 import { BaseComponent } from './view-framework-util'
 import { ToolbarModel, ToolbarWidget } from './toolbar-parse'
 

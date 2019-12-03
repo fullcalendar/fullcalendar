@@ -1,4 +1,5 @@
 import {
+  h, Ref, Fragment, createRef,
   insertAfterElement,
   findDirectChildren,
   removeElement,
@@ -19,7 +20,6 @@ import TableMirrorEvents from './TableMirrorEvents'
 import TableFills from './TableFills'
 import Popover from './Popover'
 import DayTile from './DayTile'
-import { h, Ref, Fragment, createRef } from 'preact'
 import TableSkeleton, { TableSkeletonProps } from './TableSkeleton'
 
 
