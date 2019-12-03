@@ -13,7 +13,7 @@ export default abstract class CellEvents<Props extends BaseFgEventRendererProps>
 
 
   // Builds the HTML to be used for the default element for an individual segment
-  renderSegHtml(seg: Seg, mirrorInfo) {
+  renderSegHtml(seg: Seg, isDragging: boolean, isResizing: boolean) {
     let { context } = this
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
@@ -22,7 +22,7 @@ export default abstract class CellEvents<Props extends BaseFgEventRendererProps>
     let isDraggable = computeEventDraggable(context, eventDef, eventUi)
     let isResizableFromStart = allDay && seg.isStart && computeEventStartResizable(context, eventDef, eventUi)
     let isResizableFromEnd = allDay && seg.isEnd && computeEventEndResizable(context, eventDef, eventUi)
-    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo)
+    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, isDragging, isResizing)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeHtml = ''
     let timeText

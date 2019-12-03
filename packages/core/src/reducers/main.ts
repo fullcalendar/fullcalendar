@@ -161,7 +161,7 @@ function reduceEventDrag(currentDrag: EventInteractionState | null, action: Acti
         affectedEvents: newDrag.affectedEvents,
         mutatedEvents: newDrag.mutatedEvents,
         isEvent: newDrag.isEvent,
-        origSeg: newDrag.origSeg
+        interactingSeg: newDrag.interactingSeg
       }
 
     case 'UNSET_EVENT_DRAG':
@@ -182,7 +182,7 @@ function reduceEventResize(currentResize: EventInteractionState | null, action: 
         affectedEvents: newResize.affectedEvents,
         mutatedEvents: newResize.mutatedEvents,
         isEvent: newResize.isEvent,
-        origSeg: newResize.origSeg
+        interactingSeg: newResize.interactingSeg
       }
 
     case 'UNSET_EVENT_RESIZE':

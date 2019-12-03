@@ -86,7 +86,10 @@ export default class ListView extends View {
       selectedInstanceId: props.eventSelection, // TODO: rename
       hiddenInstances: // TODO: more convenient
         (props.eventDrag ? props.eventDrag.affectedEvents.instances : null) ||
-        (props.eventResize ? props.eventResize.affectedEvents.instances : null)
+        (props.eventResize ? props.eventResize.affectedEvents.instances : null),
+      isDragging: false,
+      isResizing: false,
+      isSelecting: false
     })
   }
 

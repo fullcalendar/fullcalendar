@@ -75,7 +75,7 @@ export default class ExternalElementDragging {
       affectedEvents: createEmptyEventStore(),
       mutatedEvents: createEmptyEventStore(),
       isEvent: this.dragMeta!.create,
-      origSeg: null
+      interactingSeg: null
     }
 
     if (hit) {

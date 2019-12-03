@@ -211,7 +211,10 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       selectedInstanceId: props.eventSelection,
       hiddenInstances: // TODO: more convenient
         (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-        (props.eventResize ? props.eventResize.affectedInstances : null)
+        (props.eventResize ? props.eventResize.affectedInstances : null),
+      isDragging: false,
+      isResizing: false,
+      isSelecting: false
     })
 
     this.rowStructs = eventsRenderer.rowStructs
@@ -222,7 +225,10 @@ export default class Table extends BaseComponent<TableProps, TableState> {
         segs: props.eventResize.segs,
         rowEls,
         colCnt,
-        mirrorInfo: { isResizing: true, sourceSeg: props.eventResize.sourceSeg }
+        isDragging: false,
+        isResizing: true,
+        isSelecting: false,
+        interactingSeg: props.eventResize.interactingSeg
       })
     } else {
       this.renderMirrorEvents(false)

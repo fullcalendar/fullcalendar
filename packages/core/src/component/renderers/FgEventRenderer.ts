@@ -12,9 +12,12 @@ import { subrenderer, SubRenderer } from '../../vdom-util'
 
 export interface BaseFgEventRendererProps {
   segs: Seg[]
-  mirrorInfo?: any
   selectedInstanceId?: string
   hiddenInstances?: { [instanceId: string]: any }
+  isDragging: boolean
+  isResizing: boolean
+  isSelecting: boolean
+  interactingSeg?: any
 }
 
 export default abstract class FgEventRenderer<
@@ -41,7 +44,9 @@ export default abstract class FgEventRenderer<
 
     let { segs } = this.renderSegsPlain({
       segs: props.segs,
-      mirrorInfo: props.mirrorInfo
+      isDragging: props.isDragging,
+      isResizing: props.isResizing,
+      isSelecting: props.isSelecting
     })
 
     this.renderSelectedInstance({
@@ -84,11 +89,14 @@ export default abstract class FgEventRenderer<
 
 
   // doesn't worry about selection/hidden state
-  _renderSegsPlain({ segs, mirrorInfo } : { segs: Seg[], mirrorInfo: any }, context: ComponentContext) {
-    let isMirror = Boolean(mirrorInfo)
-    segs = this.renderSegEls(segs, mirrorInfo) // returns a subset!
+  _renderSegsPlain(
+    { segs, isDragging, isResizing, isSelecting } : { segs: Seg[], isDragging: boolean, isResizing: boolean, isSelecting: boolean },
+    context: ComponentContext
+  ) {
+    let isMirror = isDragging || isResizing || isSelecting
+    segs = this.renderSegEls(segs, isDragging, isResizing) // returns a subset!
 
-    triggerPositionedSegs(context, segs, false) // isMirror=false
+    triggerPositionedSegs(context, segs, isMirror)
 
     return { segs, isMirror }
   }
@@ -101,7 +109,7 @@ export default abstract class FgEventRenderer<
 
   // Renders and assigns an `el` property for each foreground event segment.
   // Only returns segments that successfully rendered.
-  renderSegEls(segs: Seg[], mirrorInfo) {
+  renderSegEls(segs: Seg[], isDragging: boolean, isResizing: boolean) {
     let html = ''
     let i
 
@@ -109,7 +117,7 @@ export default abstract class FgEventRenderer<
 
       // build a large concatenation of event segment HTML
       for (i = 0; i < segs.length; i++) {
-        html += this.renderSegHtml(segs[i], mirrorInfo)
+        html += this.renderSegHtml(segs[i], isDragging, isResizing)
       }
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -122,19 +130,19 @@ export default abstract class FgEventRenderer<
         }
       })
 
-      segs = filterSegsViaEls(this.context, segs, Boolean(mirrorInfo))
+      segs = filterSegsViaEls(this.context, segs, isDragging || isResizing)
     }
 
     return segs
   }
 
 
-  abstract renderSegHtml(seg: Seg, mirrorInfo): string
+  abstract renderSegHtml(seg: Seg, isDragging: boolean, isResizing: boolean): string
 
 
   // Generic utility for generating the HTML classNames for an event segment's element
   // TODO: move to outside func
-  getSegClasses(seg: Seg, isDraggable, isResizable, mirrorInfo) {
+  getSegClasses(seg: Seg, isDraggable, isResizable, isDragging: boolean, isResizing: boolean) {
     let classes = [
       'fc-event',
       seg.isStart ? 'fc-start' : 'fc-not-start',
@@ -149,14 +157,14 @@ export default abstract class FgEventRenderer<
       classes.push('fc-resizable')
     }
 
-    if (mirrorInfo) {
+    if (isDragging || isResizing) {
       classes.push('fc-mirror')
 
-      if (mirrorInfo.isDragging) {
+      if (isDragging) {
         classes.push('fc-dragging')
       }
 
-      if (mirrorInfo.isResizing) {
+      if (isResizing) {
         classes.push('fc-resizing')
       }
     }

@@ -26,7 +26,7 @@ export interface EventSegUiInteractionState {
   affectedInstances: EventInstanceHash
   segs: Seg[]
   isEvent: boolean
-  sourceSeg: any
+  interactingSeg: any
 }
 
 /*

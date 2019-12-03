@@ -143,7 +143,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
       affectedEvents: relevantEvents,
       mutatedEvents: createEmptyEventStore(),
       isEvent: true,
-      origSeg: this.subjectSeg
+      interactingSeg: this.subjectSeg
     }
 
     if (hit) {
@@ -349,7 +349,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
             affectedEvents: state.affectedEvents,
             mutatedEvents: createEmptyEventStore(),
             isEvent: true,
-            origSeg: state.origSeg
+            interactingSeg: state.interactingSeg
           }
         })
 

@@ -12,8 +12,7 @@ export default class TableMirrorEvents extends TableEvents {
 
 
 // Renders the given foreground event segments onto the grid
-function attachSegs({ segs, rowEls, colCnt, renderIntro, mirrorInfo }: TableEventsProps, context: ComponentContext) {
-  let sourceSeg = mirrorInfo && mirrorInfo.sourceSeg
+function attachSegs({ segs, rowEls, colCnt, renderIntro, interactingSeg }: TableEventsProps, context: ComponentContext) {
 
   let rowStructs = renderSegRows(segs, rowEls.length, colCnt, renderIntro, context)
 
@@ -24,8 +23,8 @@ function attachSegs({ segs, rowEls, colCnt, renderIntro, mirrorInfo }: TableEven
     let skeletonTop
 
     // If there is an original segment, match the top position. Otherwise, put it at the row's top level
-    if (sourceSeg && sourceSeg.row === row) {
-      skeletonTopEl = sourceSeg.el
+    if (interactingSeg && interactingSeg.row === row) {
+      skeletonTopEl = interactingSeg.el
     } else {
       skeletonTopEl = rowNode.querySelector('.fc-content-skeleton tbody')
 

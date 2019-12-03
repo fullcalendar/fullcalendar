@@ -154,7 +154,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
             affectedEvents: affectedStores[key] || EMPTY_EVENT_STORE,
             mutatedEvents: mutatedStores[key] || EMPTY_EVENT_STORE,
             isEvent: interaction.isEvent,
-            origSeg: interaction.origSeg
+            interactingSeg: interaction.interactingSeg
           }
         }
       }

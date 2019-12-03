@@ -8,10 +8,10 @@ export default class TimeColsMirrorEvents extends TimeColsEvents {
 
   generateSegCss(seg: Seg, timeGrid: TimeCols) {
     let cssProps = super.generateSegCss(seg, timeGrid)
-    let { sourceSeg } = this.props.mirrorInfo
+    let { interactingSeg } = this.props
 
-    if (sourceSeg && sourceSeg.col === seg.col) {
-      let sourceSegProps = super.generateSegCss(sourceSeg, timeGrid)
+    if (interactingSeg && interactingSeg.col === seg.col) {
+      let sourceSegProps = super.generateSegCss(interactingSeg, timeGrid)
 
       cssProps.left = sourceSegProps.left
       cssProps.right = sourceSegProps.right

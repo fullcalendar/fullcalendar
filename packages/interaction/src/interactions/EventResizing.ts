@@ -98,7 +98,7 @@ export default class EventDragging extends Interaction {
       affectedEvents: relevantEvents,
       mutatedEvents: createEmptyEventStore(),
       isEvent: true,
-      origSeg: this.draggingSeg
+      interactingSeg: this.draggingSeg
     }
 
     if (hit) {

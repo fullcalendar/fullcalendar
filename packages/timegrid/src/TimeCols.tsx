@@ -220,7 +220,10 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         selectedInstanceId: props.eventSelection,
         hiddenInstances: // TODO: more convenient
           (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-          (props.eventResize ? props.eventResize.affectedInstances : null)
+          (props.eventResize ? props.eventResize.affectedInstances : null),
+        isDragging: false,
+        isResizing: false,
+        isSelecting: false
       }),
       this.subrenderMirror(props, this.mirrorContainerEls, options)
     ]
@@ -232,21 +235,29 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
       return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.eventDrag.segs,
-        mirrorInfo: { isDragging: true, sourceSeg: props.eventDrag.sourceSeg }
+        isDragging: true,
+        isResizing: false,
+        isSelecting: false,
+        interactingSeg: props.eventDrag.interactingSeg
       })
 
     } else if (props.eventResize) {
       return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.eventResize.segs,
-        mirrorInfo: { isDragging: true, sourceSeg: props.eventResize.sourceSeg }
+        isDragging: true,
+        isResizing: false,
+        isSelecting: false,
+        interactingSeg: props.eventResize.interactingSeg
       })
 
     } else if (options.selectMirror) {
       return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.dateSelectionSegs,
-        mirrorInfo: { isSelecting: true }
+        isDragging: false,
+        isResizing: false,
+        isSelecting: true
       })
 
     } else {

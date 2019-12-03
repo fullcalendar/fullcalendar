@@ -5,5 +5,5 @@ export interface EventInteractionState { // is this ever used alone?
   affectedEvents: EventStore
   mutatedEvents: EventStore
   isEvent: boolean
-  origSeg: Seg | null
+  interactingSeg: Seg | null
 }

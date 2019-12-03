@@ -32,16 +32,22 @@ export default class TableEvents extends CellEvents<TableEventsProps> {
   render(props: TableEventsProps, context: ComponentContext) {
     let segs = this.renderSegs({
       segs: props.segs,
-      mirrorInfo: props.mirrorInfo,
       selectedInstanceId: props.selectedInstanceId,
-      hiddenInstances: props.hiddenInstances
-    })
+      hiddenInstances: props.hiddenInstances,
+      isDragging: props.isDragging,
+      isResizing: props.isResizing,
+      isSelecting: props.isSelecting
+    }) // doesn't need interactingSeg
 
     this.rowStructs = this.attachSegs({
       segs,
       rowEls: props.rowEls,
       colCnt: props.colCnt,
-      renderIntro: props.renderIntro
+      renderIntro: props.renderIntro,
+      isDragging: props.isDragging,
+      isResizing: props.isResizing,
+      isSelecting: props.isSelecting,
+      interactingSeg: props.interactingSeg
     })
   }
 

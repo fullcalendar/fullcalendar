@@ -65,7 +65,10 @@ export default class DayTile extends DateComponent<DayTileProps> {
       segs: props.fgSegs,
       segContainerEl: rootEl,
       selectedInstanceId: props.selectedInstanceId,
-      hiddenInstances: props.hiddenInstances
+      hiddenInstances: props.hiddenInstances,
+      isDragging: false,
+      isResizing: false,
+      isSelecting: false
     })
 
     this.context.calendar.releaseAfterSizingTriggers() // hack for eventPositioned

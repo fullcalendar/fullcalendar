@@ -20,9 +20,12 @@ export default class DayTileEvents extends CellEvents<DayTileEventsProps> {
   render(props: DayTileEventsProps, context: ComponentContext) {
     let segs = this.renderSegs({
       segs: props.segs,
-      mirrorInfo: props.mirrorInfo,
       selectedInstanceId: props.selectedInstanceId,
-      hiddenInstances: props.hiddenInstances
+      hiddenInstances: props.hiddenInstances,
+      isDragging: props.isDragging,
+      isResizing: props.isResizing,
+      isSelecting: props.isSelecting,
+      interactingSeg: props.interactingSeg
     })
 
     this.attachSegs({

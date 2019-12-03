@@ -30,9 +30,12 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
     let segs = this.renderSegs({
       segs: props.segs,
-      mirrorInfo: props.mirrorInfo,
       selectedInstanceId: props.selectedInstanceId,
-      hiddenInstances: props.hiddenInstances
+      hiddenInstances: props.hiddenInstances,
+      isDragging: props.isDragging,
+      isResizing: props.isResizing,
+      isSelecting: props.isSelecting,
+      interactingSeg: props.interactingSeg
     })
 
     this.segsByCol = this.attachSegs({
@@ -149,7 +152,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
 
   // Renders the HTML for a single event segment's default rendering
-  renderSegHtml(seg: Seg, mirrorInfo) {
+  renderSegHtml(seg: Seg, isDragging: boolean, isResizing: boolean) {
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
@@ -157,7 +160,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
     let isDraggable = computeEventDraggable(this.context, eventDef, eventUi)
     let isResizableFromStart = seg.isStart && computeEventStartResizable(this.context, eventDef, eventUi)
     let isResizableFromEnd = seg.isEnd && computeEventEndResizable(this.context, eventDef, eventUi)
-    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, mirrorInfo)
+    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, isDragging, isResizing)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeText
     let fullTimeText // more verbose time text. for the print stylesheet
