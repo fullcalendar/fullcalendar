@@ -29,7 +29,7 @@ export abstract class BaseComponent<Props={}, State={}> extends Component<Props,
   shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: ComponentContext) {
     return !compareObjs(this.props, nextProps, this.propEquality) ||
       !compareObjs(this.state, nextState, this.stateEquality) ||
-      !compareObjs(this.context, nextContext)
+      this.context !== nextContext
   }
 
   subrenderDestroy: typeof subrenderDestroy
@@ -197,7 +197,7 @@ function buildFuncSubRenderer(renderFunc, unrenderFunc) {
       } else if (
         !compareObjs(props, currentProps) || (
           renderFunc.length > 1 && // has second arg? cares about context?
-          !compareObjs(context, currentContext)
+          context !== currentContext
         )
       ) {
         unrenderFunc && unrenderFunc.call(thisContext, renderRes, context)

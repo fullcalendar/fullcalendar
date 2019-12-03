@@ -82,7 +82,6 @@ export default class Calendar {
   private parseRawLocales = memoize(parseRawLocales)
   private buildDateEnv = memoize(buildDateEnv)
   private computeTitle = memoize(computeTitle)
-  private buildViewApi = memoize(buildViewApi)
   private buildTheme = memoize(buildTheme)
   private buildContext = memoize(buildContext)
   private buildEventUiSingleBase = memoize(buildEventUiSingleBase)
@@ -523,13 +522,33 @@ export default class Calendar {
       throw new Error(`View type "${viewType}" is not valid`)
     }
 
-    let title = this.computeTitle(dateProfile, dateEnv, viewSpec.options)
     let theme = this.buildTheme(rawOptions, pluginHooks)
+    let title = this.computeTitle(dateProfile, dateEnv, viewSpec.options)
     let viewApi = this.buildViewApi(viewType, title, dateProfile, dateEnv)
     let context = this.buildContext(this, pluginHooks, dateEnv, theme, viewApi, rawOptions)
 
     this.context = context
     this.selectionConfig = this.buildSelectionConfig(rawOptions) // MUST happen after dateEnv assigned :(
+  }
+
+
+  /*
+  will only create a new instance when viewType is changed
+  */
+  buildViewApi(viewType: string, title: string, dateProfile: DateProfile, dateEnv: DateEnv) {
+    let { view } = this
+
+    if (!view || view.type !== viewType) {
+      view = this.view = { type: viewType } as ViewApi
+    }
+
+    view.title = title
+    view.activeStart = dateEnv.toDate(dateProfile.activeRange.start)
+    view.activeEnd = dateEnv.toDate(dateProfile.activeRange.end)
+    view.currentStart = dateEnv.toDate(dateProfile.currentRange.start)
+    view.currentEnd = dateEnv.toDate(dateProfile.currentRange.end)
+
+    return view
   }
 
 
@@ -1196,11 +1215,6 @@ function buildTheme(rawOptions, pluginHooks: PluginHooks) {
   let themeClass = pluginHooks.themeClasses[rawOptions.themeSystem] || StandardTheme
 
   return new themeClass(rawOptions)
-}
-
-
-function buildViewApi(type: string, title: string, dateProfile: DateProfile, dateEnv: DateEnv) {
-  return new ViewApi(type, title, dateProfile, dateEnv)
 }
 
 
