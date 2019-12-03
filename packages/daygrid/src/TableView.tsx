@@ -9,7 +9,6 @@ import {
   createFormatter,
   Scroller,
   View,
-  Duration,
   memoize,
   getViewClassNames,
   GotoAnchor

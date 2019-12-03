@@ -94,8 +94,8 @@ export default class ListView extends View {
 
 
   updateSize(isResize, viewHeight, isAuto) {
-    super.updateSize(isResize, viewHeight, isAuto)
 
+    // efficient. uses flags
     this.eventRenderer.computeSizes(isResize, this)
     this.eventRenderer.assignSizes(isResize, this)
 
