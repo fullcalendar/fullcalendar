@@ -167,11 +167,26 @@ export default class Calendar {
       this.renderableEventStore = createEmptyEventStore()
       this.bindHandlers()
       this.executeRender()
+      this.dataToStyle()
     } else {
       this.requestRerender()
     }
   }
 
+  dataToStyle() {
+    document.querySelectorAll('*[data-calendar-style]').forEach(node => {
+      const hasStyleAttribute = !!node.attributes['style']
+      const hasNewStyleValue = !!node.attributes['data-calendar-style'].value
+
+      if (!hasStyleAttribute && hasNewStyleValue) {
+        node['style'] = node.attributes['data-calendar-style'].value
+      } else if (hasStyleAttribute && hasNewStyleValue) {
+        node['style'] = node.attributes['style'].value + node.attributes['data-calendar-style'].value
+      }
+
+      node.removeAttribute('data-calendar-style')
+    })
+  }
 
   destroy() {
     if (this.component) {
@@ -424,7 +439,6 @@ export default class Calendar {
     let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options)
     let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
-
     component.receiveProps({
       ...state,
       viewSpec,

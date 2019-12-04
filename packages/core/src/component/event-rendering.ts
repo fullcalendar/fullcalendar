@@ -3,7 +3,6 @@ import { EventStore } from '../structs/event-store'
 import { DateRange, invertRanges, intersectRanges } from '../datelib/date-range'
 import { Duration } from '../datelib/duration'
 import { computeVisibleDayRange } from '../util/misc'
-import { dataToStyle } from '../util/html'
 import { Seg } from './DateComponent'
 import EventApi from '../api/EventApi'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui'
@@ -152,9 +151,6 @@ export function filterSegsViaEls(context: ComponentContext, segs: Seg[], isMirro
   for (let seg of segs) {
     setElSeg(seg.el, seg)
   }
-
-  setTimeout(dataToStyle, 1)
-
   return segs
 }
 

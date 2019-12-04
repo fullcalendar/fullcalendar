@@ -23,16 +23,6 @@ export function cssToStr(cssProps) {
   return statements.join(';')
 }
 
-// Convert data-calendar-style attribute to css
-export function dataToStyle(root?) {
-  const rootElement = root || document
-  rootElement.querySelectorAll('*[data-calendar-style]').forEach(node => {
-    node.style = node.dataset.calendarStyle
-    node.removeAttribute('data-calendar-style')
-  })
-}
-
-
 // Given an object hash of HTML attribute names to values,
 // generates a string that can be injected between < > in HTML
 export function attrsToStr(attrs) {

@@ -35,8 +35,7 @@ export {
 
 export {
   htmlEscape,
-  cssToStr,
-  dataToStyle
+  cssToStr
 } from './util/html'
 
 export {

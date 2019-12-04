@@ -256,6 +256,7 @@ export default class TimeGrid extends DateComponent<TimeGridProps> {
     this.renderDateSelection(props.dateSelectionSegs)
     this.renderFgEvents(context, props.fgEventSegs)
     this.renderBgEvents(context, props.bgEventSegs)
+    context.calendar.dataToStyle()
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDrag)
     this.renderEventResize(props.eventResize)
