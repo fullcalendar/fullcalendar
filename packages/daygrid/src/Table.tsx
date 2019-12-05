@@ -360,7 +360,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       }
 
       if (rowLevelLimit !== false) {
-        this.limitRow(row, rowLevelLimit, rowEls, rowStructs, cells, context)
+        this.limitRow(row, rowLevelLimit, rowStructs, cells, context)
       }
     }
   }
@@ -395,8 +395,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   // Limits the given grid row to the maximum number of levels and injects "more" links if necessary.
   // `row` is the row number.
   // `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
-  limitRow(row, levelLimit, rowEls, rowStructs, cells, context: ComponentContext) {
-    let { isRtl } = context
+  limitRow(row, levelLimit, rowStructs, cells, context: ComponentContext) {
     let colCnt = cells[0].length
     let rowStruct = rowStructs[row]
     let moreNodes = [] // array of "more" <a> links and <td> DOM nodes
@@ -423,7 +422,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
         segsBelow = getCellSegs(rowStructs[row], col, levelLimit)
         if (segsBelow.length) {
           td = cellMatrix[levelLimit - 1][col]
-          moreLink = this.renderMoreLink(row, col, segsBelow, cells, rowEls, rowStructs, context)
+          moreLink = this.renderMoreLink(row, col, segsBelow, cells, rowStructs, context)
           moreWrap = document.createElement('div')
           moreWrap.appendChild(moreLink)
           td.appendChild(moreWrap)
@@ -445,15 +444,14 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       // iterate though segments in the last allowable level
       for (i = 0; i < levelSegs.length; i++) {
         seg = levelSegs[i]
-        let leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
-        let rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
+        let { firstCol, lastCol } = seg
 
-        emptyCellsUntil(leftCol) // process empty cells before the segment
+        emptyCellsUntil(firstCol) // process empty cells before the segment
 
         // determine *all* segments below `seg` that occupy the same columns
         colSegsBelow = []
         totalSegsBelow = 0
-        while (col <= rightCol) {
+        while (col <= lastCol) {
           segsBelow = getCellSegs(rowStructs[row], col, levelLimit)
           colSegsBelow.push(segsBelow)
           totalSegsBelow += segsBelow.length
@@ -461,7 +459,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
         }
 
         if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
-          td = cellMatrix[levelLimit - 1][leftCol] // the segment's parent cell
+          td = cellMatrix[levelLimit - 1][firstCol] // the segment's parent cell
           rowSpan = td.rowSpan || 1
           segMoreNodes = []
 
@@ -473,10 +471,9 @@ export default class Table extends BaseComponent<TableProps, TableState> {
             segsBelow = colSegsBelow[j]
             moreLink = this.renderMoreLink(
               row,
-              leftCol + j,
+              firstCol + j,
               [ seg ].concat(segsBelow), // count seg as hidden too
               cells,
-              rowEls,
               rowStructs,
               context
             )
@@ -522,17 +519,15 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
   // Renders an <a> element that represents hidden event element for a cell.
   // Responsible for attaching click handler as well.
-  renderMoreLink(row, col, hiddenSegs, cells, rowEls, rowStructs, context: ComponentContext) {
-    let { calendar, view, dateEnv, options, isRtl } = context
-    let colCnt = cells[0].length
+  renderMoreLink(row, col, hiddenSegs, cells, rowStructs, context: ComponentContext) {
+    let { calendar, view, dateEnv, options } = context
 
     let a = document.createElement('a')
     a.className = 'fc-more'
     a.innerText = getMoreLinkText(hiddenSegs.length, options)
     a.addEventListener('click', (ev) => {
       let clickOption = options.eventLimitClick
-      let _col = isRtl ? colCnt - col - 1 : col // HACK: props.cells has different dir system?
-      let date = cells[row][_col].date
+      let date = cells[row][col].date
       let moreEl = ev.currentTarget as HTMLElement
       let dayEl = this.getCellEl(row, col)
       let allSegs = getCellSegs(rowStructs[row], col)
@@ -558,8 +553,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       }
 
       if (clickOption === 'popover') {
-        let _col = isRtl ? colCnt - col - 1 : col // HACK: props.cells has different dir system?
-        let date = cells[row][_col].date
+        let date = cells[row][col].date
         let title = dateEnv.format(date, createFormatter(options.dayPopoverFormat)) // TODO: cache formatter
 
         this.setState({

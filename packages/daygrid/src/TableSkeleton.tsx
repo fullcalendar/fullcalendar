@@ -193,7 +193,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
 
 
   handleRootEl = (rootEl: HTMLElement | null) => {
-    let { isRtl, calendar, view, dateEnv } = this.context
+    let { calendar, view, dateEnv, isRtl } = this.context
     let { cells, handleDom } = this.props
     let rowEls = null
     let cellEls = null
@@ -203,10 +203,14 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
       let colCnt = cells[0].length
 
       rowEls = findElements(rootEl, '.fc-row')
-      cellEls = findElements(rootEl, '.fc-day, .fc-disabled-day')
 
-      if (isRtl) {
-        cellEls.reverse() // TODO: reverse before calling dayRender?
+      cellEls = []
+      for (let rowEl of rowEls) {
+        let rowCellEls = findElements(rowEl, '.fc-day, .fc-disabled-day')
+        if (isRtl) {
+          rowCellEls.reverse()
+        }
+        cellEls.push(...rowCellEls)
       }
 
       // trigger dayRender with each cell's element

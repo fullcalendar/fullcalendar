@@ -110,7 +110,7 @@ export function renderSegRows(segs: Seg[], rowCnt: number, colCnt: number, rende
 // NOTE: modifies rowSegs
 function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: ComponentContext) {
   let { isRtl } = context
-  let segLevels = buildSegLevels(rowSegs, colCnt, context) // group into sub-arrays of levels
+  let segLevels = buildSegLevels(rowSegs, context) // group into sub-arrays of levels
   let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
   let tbody = document.createElement('tbody')
   let segMatrix = [] // lookup for which segments are rendered into which level+col cells
@@ -133,7 +133,12 @@ function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: Compon
         td.rowSpan = (td.rowSpan || 1) + 1
       } else {
         td = document.createElement('td')
-        tr.appendChild(td)
+
+        if (isRtl) {
+          tr.insertBefore(td, tr.firstChild)
+        } else {
+          tr.appendChild(td)
+        }
       }
       cellMatrix[i][col] = td
       loneCellMatrix[i][col] = td
@@ -155,28 +160,31 @@ function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: Compon
     if (levelSegs) {
       for (j = 0; j < levelSegs.length; j++) { // iterate through segments in level
         seg = levelSegs[j]
-        let leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
-        let rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
+        let { firstCol, lastCol } = seg
 
-        emptyCellsUntil(leftCol)
+        emptyCellsUntil(firstCol)
 
         // create a container that occupies or more columns. append the event element.
         td = document.createElement('td')
         td.className = 'fc-event-container'
         td.appendChild(seg.el)
-        if (leftCol !== rightCol) {
-          td.colSpan = rightCol - leftCol + 1
+        if (firstCol !== lastCol) {
+          td.colSpan = lastCol - firstCol + 1
         } else { // a single-column segment
           loneCellMatrix[i][col] = td
         }
 
-        while (col <= rightCol) {
+        while (col <= lastCol) {
           cellMatrix[i][col] = td
           segMatrix[i][col] = seg
           col++
         }
 
-        tr.appendChild(td)
+        if (isRtl) {
+          tr.insertBefore(td, tr.firstChild)
+        } else {
+          tr.appendChild(td)
+        }
       }
     }
 
@@ -206,8 +214,7 @@ function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: Compon
 
 // Stacks a flat array of segments, which are all assumed to be in the same row, into subarrays of vertical levels.
 // NOTE: modifies segs
-function buildSegLevels(segs: Seg[], colCnt: number, context: ComponentContext) {
-  let { isRtl } = context
+function buildSegLevels(segs: Seg[], context: ComponentContext) {
   let levels = []
   let i
   let seg
@@ -229,8 +236,6 @@ function buildSegLevels(segs: Seg[], colCnt: number, context: ComponentContext) 
 
     // `j` now holds the desired subrow index
     seg.level = j
-    seg.leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol // for sorting only
-    seg.rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol // for sorting only
 
     // create new level array if needed and append segment
     ;(levels[j] || (levels[j] = [])).push(seg)
@@ -282,7 +287,7 @@ function isDaySegCollision(seg: Seg, otherSegs: Seg) {
 }
 
 
-// A cmp function for determining the leftmost event
+// A cmp function for determining the first event
 function compareDaySegCols(a: Seg, b: Seg) {
-  return a.leftCol - b.leftCol
+  return a.firstCol - b.lastCol
 }

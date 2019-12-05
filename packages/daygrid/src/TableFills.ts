@@ -83,10 +83,8 @@ function detachSegs(els: HTMLElement[]) {
 // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
 function renderFillRow(seg: Seg, { colCnt, type, renderIntro }: TableFillsProps, context: ComponentContext): HTMLElement {
   let { isRtl } = context
-  let leftCol = isRtl ? (colCnt - 1 - seg.lastCol) : seg.firstCol
-  let rightCol = isRtl ? (colCnt - 1 - seg.firstCol) : seg.lastCol
-  let startCol = leftCol
-  let endCol = rightCol + 1
+  let startCol = seg.firstCol
+  let endCol = seg.lastCol + 1
   let className
   let skeletonEl: HTMLElement
   let trEl: HTMLTableRowElement
@@ -105,20 +103,31 @@ function renderFillRow(seg: Seg, { colCnt, type, renderIntro }: TableFillsProps,
   trEl = skeletonEl.getElementsByTagName('tr')[0]
 
   if (startCol > 0) {
-    appendToElement(trEl,
-      // will create (startCol + 1) td's
-      new Array(startCol + 1).join(EMPTY_CELL_HTML)
-    )
+    let emptyCellHtml = new Array(startCol + 1).join(EMPTY_CELL_HTML) // will create (startCol + 1) td's
+
+    if (isRtl) {
+      prependToElement(trEl, emptyCellHtml)
+    } else {
+      appendToElement(trEl, emptyCellHtml)
+    }
   }
 
-  (seg.el as HTMLTableCellElement).colSpan = endCol - startCol
-  trEl.appendChild(seg.el)
+  ;(seg.el as HTMLTableCellElement).colSpan = endCol - startCol
+
+  if (isRtl) {
+    trEl.insertBefore(seg.el, trEl.firstChild)
+  } else {
+    trEl.appendChild(seg.el)
+  }
 
   if (endCol < colCnt) {
-    appendToElement(trEl,
-      // will create (colCnt - endCol) td's
-      new Array(colCnt - endCol + 1).join(EMPTY_CELL_HTML)
-    )
+    let emptyCellHtml = new Array(colCnt - endCol + 1).join(EMPTY_CELL_HTML)
+
+    if (isRtl) {
+      prependToElement(trEl, emptyCellHtml)
+    } else {
+      appendToElement(trEl, emptyCellHtml)
+    }
   }
 
   let introEls = renderVNodes(renderIntro(), context)
