@@ -207,7 +207,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
       this.renderDateSelection({
         type: 'highlight',
         containerEls: this.highlightContainerEls,
-        segs: options.selectMirror ? null : props.dateSelectionSegs // do highlight if NO mirror
+        segs: options.selectMirror ? [] : props.dateSelectionSegs // do highlight if NO mirror
       }),
       this.renderBgEvents({
         type: 'bgEvent',

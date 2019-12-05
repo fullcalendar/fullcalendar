@@ -152,7 +152,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
 
   // Renders the HTML for a single event segment's default rendering
-  renderSegHtml(seg: Seg, isDragging: boolean, isResizing: boolean) {
+  renderSegHtml(seg: Seg, isDragging: boolean, isResizing: boolean, isSelecting: boolean) {
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventUi = eventRange.ui
@@ -160,7 +160,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
     let isDraggable = computeEventDraggable(this.context, eventDef, eventUi)
     let isResizableFromStart = seg.isStart && computeEventStartResizable(this.context, eventDef, eventUi)
     let isResizableFromEnd = seg.isEnd && computeEventEndResizable(this.context, eventDef, eventUi)
-    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, isDragging, isResizing)
+    let classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd, isDragging, isResizing, isSelecting)
     let skinCss = cssToStr(this.getSkinCss(eventUi))
     let timeText
     let fullTimeText // more verbose time text. for the print stylesheet

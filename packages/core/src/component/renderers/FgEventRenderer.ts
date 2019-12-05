@@ -93,9 +93,9 @@ export default abstract class FgEventRenderer<
     { segs, isDragging, isResizing, isSelecting } : { segs: Seg[], isDragging: boolean, isResizing: boolean, isSelecting: boolean },
     context: ComponentContext
   ) {
-    let isMirror = isDragging || isResizing || isSelecting
-    segs = this.renderSegEls(segs, isDragging, isResizing) // returns a subset!
+    segs = this.renderSegEls(segs, isDragging, isResizing, isSelecting) // returns a subset!
 
+    let isMirror = isDragging || isResizing || isSelecting
     triggerPositionedSegs(context, segs, isMirror)
 
     return { segs, isMirror }
@@ -109,7 +109,7 @@ export default abstract class FgEventRenderer<
 
   // Renders and assigns an `el` property for each foreground event segment.
   // Only returns segments that successfully rendered.
-  renderSegEls(segs: Seg[], isDragging: boolean, isResizing: boolean) {
+  renderSegEls(segs: Seg[], isDragging: boolean, isResizing: boolean, isSelecting: boolean) {
     let html = ''
     let i
 
@@ -117,7 +117,7 @@ export default abstract class FgEventRenderer<
 
       // build a large concatenation of event segment HTML
       for (i = 0; i < segs.length; i++) {
-        html += this.renderSegHtml(segs[i], isDragging, isResizing)
+        html += this.renderSegHtml(segs[i], isDragging, isResizing, isSelecting)
       }
 
       // Grab individual elements from the combined HTML string. Use each as the default rendering.
@@ -130,19 +130,19 @@ export default abstract class FgEventRenderer<
         }
       })
 
-      segs = filterSegsViaEls(this.context, segs, isDragging || isResizing)
+      segs = filterSegsViaEls(this.context, segs, isDragging || isResizing || isSelecting)
     }
 
     return segs
   }
 
 
-  abstract renderSegHtml(seg: Seg, isDragging: boolean, isResizing: boolean): string
+  abstract renderSegHtml(seg: Seg, isDragging: boolean, isResizing: boolean, isSelecting: boolean): string
 
 
   // Generic utility for generating the HTML classNames for an event segment's element
   // TODO: move to outside func
-  getSegClasses(seg: Seg, isDraggable, isResizable, isDragging: boolean, isResizing: boolean) {
+  getSegClasses(seg: Seg, isDraggable, isResizable, isDragging: boolean, isResizing: boolean, isSelecting: boolean) {
     let classes = [
       'fc-event',
       seg.isStart ? 'fc-start' : 'fc-not-start',
@@ -157,7 +157,7 @@ export default abstract class FgEventRenderer<
       classes.push('fc-resizable')
     }
 
-    if (isDragging || isResizing) {
+    if (isDragging || isResizing || isSelecting) {
       classes.push('fc-mirror')
 
       if (isDragging) {
