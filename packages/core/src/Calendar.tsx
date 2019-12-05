@@ -102,6 +102,8 @@ export default class Calendar {
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
 
   state: CalendarState
+  isRendering = false
+  isRendered = false
   renderRunner: DelayedRunner
   actionRunner: TaskRunner<Action> // for reducer. bad name
   afterSizingTriggers: any = {}
@@ -125,7 +127,6 @@ export default class Calendar {
     let renderRunner = this.renderRunner = new DelayedRunner(
       this.updateComponent.bind(this)
     )
-    renderRunner.pause() // start out paused, until .render() is called
 
     let actionRunner = this.actionRunner = new TaskRunner(
       this.runAction.bind(this),
@@ -164,25 +165,18 @@ export default class Calendar {
 
 
   render() {
-    if (!this.component) {
+    if (!this.isRendering) {
+      this.isRendering = true
       this.renderableEventStore = createEmptyEventStore()
+      this.renderRunner.request()
     }
-
-    this.renderRunner.resume() // will run tasks immediately and ignore any delay
   }
 
 
   destroy() {
-    this.renderRunner.pause()
-
-    if (this.component) {
-      render(null, this.el)
-
-      for (let interaction of this.calendarInteractions) {
-        interaction.destroy()
-      }
-
-      this.publiclyTrigger('_destroyed')
+    if (this.isRendering) {
+      this.isRendering = false
+      this.renderRunner.request()
     }
   }
 
@@ -302,10 +296,20 @@ export default class Calendar {
   }
 
 
-  /*
-  don't call this directly. use executeRender instead
-  */
   updateComponent() {
+    if (this.isRendering) {
+      this.renderComponent()
+      this.isRendered = true
+    } else {
+      if (this.isRendered) {
+        this.destroyComponent()
+        this.isRendered = false
+      }
+    }
+  }
+
+
+  renderComponent() {
     let { context, state } = this
     let { viewType } = state
     let viewSpec = this.viewSpecs[viewType]
@@ -374,6 +378,17 @@ export default class Calendar {
     }
 
     this.releaseAfterSizingTriggers()
+  }
+
+
+  destroyComponent() {
+    render(null, this.el)
+
+    for (let interaction of this.calendarInteractions) {
+      interaction.destroy()
+    }
+
+    this.publiclyTrigger('_destroyed')
   }
 
 
