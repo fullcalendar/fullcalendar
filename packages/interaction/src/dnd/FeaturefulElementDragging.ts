@@ -43,6 +43,10 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
   destroy() {
     this.pointer.destroy()
+
+    // HACK: simulate a pointer-up to end the current drag
+    // TODO: fire 'dragend' directly and stop interaction. discourage use of pointerup event (b/c might not fire)
+    this.onPointerUp({} as any)
   }
 
   onPointerDown = (ev: PointerDragEvent) => {
@@ -64,7 +68,10 @@ export default class FeaturefulElementDragging extends ElementDragging {
 
       this.emitter.trigger('pointerdown', ev)
 
-      if (!this.pointer.shouldIgnoreMove) {
+      if (
+        this.isInteracting && // not destroyed via pointerdown handler
+        !this.pointer.shouldIgnoreMove
+      ) {
         // actions related to initiating dragstart+dragmove+dragend...
 
         this.mirror.setIsVisible(false) // reset. caller must set-visible
@@ -80,7 +87,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
   }
 
   onPointerMove = (ev: PointerDragEvent) => {
-    if (this.isInteracting) { // if false, still waiting for previous drag's revert
+    if (this.isInteracting) {
 
       this.emitter.trigger('pointermove', ev)
 
@@ -109,7 +116,7 @@ export default class FeaturefulElementDragging extends ElementDragging {
   }
 
   onPointerUp = (ev: PointerDragEvent) => {
-    if (this.isInteracting) { // if false, still waiting for previous drag's revert
+    if (this.isInteracting) {
       this.isInteracting = false
 
       allowSelection(document.body)
