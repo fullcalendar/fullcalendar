@@ -365,8 +365,9 @@ export function sortEventSegs(segs, eventOrderSpecs): Seg[] {
 
 // returns a object with all primitive props that can be compared
 export function buildSegCompareObj(seg: Seg) {
-  let eventDef = seg.eventRange.def
-  let range = seg.eventRange.instance.range
+  let { eventRange } = seg
+  let eventDef = eventRange.def
+  let range = eventRange.instance ? eventRange.instance.range : eventRange.range
   let start = range.start ? range.start.valueOf() : 0 // TODO: better support for open-range events
   let end = range.end ? range.end.valueOf() : 0 // "
 

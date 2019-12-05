@@ -348,7 +348,6 @@ export default class Calendar {
 
     calendarComponent.updateSize(false)
     this.drainAfterSizingCallbacks()
-    this.releaseAfterSizingTriggers()
 
     if (this.isViewUpdated) {
       this.isViewUpdated = false
@@ -373,6 +372,8 @@ export default class Calendar {
     if (this.isEventsUpdated) {
       this.isEventsUpdated = false
     }
+
+    this.releaseAfterSizingTriggers()
   }
 
 

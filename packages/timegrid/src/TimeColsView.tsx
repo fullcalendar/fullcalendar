@@ -83,6 +83,7 @@ export default abstract class TimeColsView extends View {
                   ref={this.scrollerRef}
                   overflowX='hidden'
                   overflowY='auto'
+                  extraClassName='fc-time-grid-container'
                 >
                   {timeChildren}
                 </Scroller>
@@ -347,15 +348,17 @@ export default abstract class TimeColsView extends View {
   renderTableBgIntro = () => {
     let { theme, options } = this.context
     let spanAttrs = {} as any
+    let child = options.allDayText
 
     if (typeof options.allDayHtml === 'string') {
       spanAttrs.dangerouslySetInnerHTML = { __html: options.allDayHtml }
+      child = null
     }
 
     return [
       <td class={'fc-axis ' + theme.getClass('widgetContent')} style={this.getAxisStyles()}>
         <span {...spanAttrs}>
-          {options.allDayText}
+          {child}
         </span>
       </td>
     ]

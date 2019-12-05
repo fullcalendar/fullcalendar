@@ -1,9 +1,10 @@
 
 export class DelayedRunner {
 
-  private isDirty: boolean = false
-  private timeoutId: number = 0
+  private isRunning = false
   private pauseDepth: number = 0
+  private isDirty = false
+  private timeoutId: number = 0
 
   constructor(
     private drainedOption?: () => void
@@ -61,9 +62,15 @@ export class DelayedRunner {
   }
 
   drain() {
-    if (this.isDirty && !this.pauseDepth) {
-      this.isDirty = false
-      this.drained()
+    if (!this.isRunning && !this.pauseDepth) {
+      this.isRunning = true
+
+      while (this.isDirty) {
+        this.isDirty = false
+        this.drained() // might set isDirty to true again
+      }
+
+      this.isRunning = false
     }
   }
 
@@ -84,7 +91,7 @@ export class DelayedRunner {
 export class TaskRunner<Task> {
 
   private isRunning = false
-  private isPaused = false
+  private pauseDepth = 0
   private queue: Task[] = []
   private delayedRunner: DelayedRunner
 
@@ -103,29 +110,50 @@ export class TaskRunner<Task> {
   drain() {
     let { queue } = this
 
-    if (!this.isRunning && !this.isPaused && queue.length) {
+    if (!this.isRunning && !this.pauseDepth) {
       this.isRunning = true
 
-      let completedTasks: Task[] = []
-      let task: Task
+      while (queue.length) {
+        let completedTasks: Task[] = []
+        let task: Task
 
-      while (task = queue.shift()) {
-        this.runTask(task)
-        completedTasks.push(task)
+        while (task = queue.shift()) {
+          this.runTask(task)
+          completedTasks.push(task)
+        }
+
+        this.drained(completedTasks)
       }
 
       this.isRunning = false
-      this.drained(completedTasks)
     }
   }
 
   pause() {
-    this.isPaused = true
+    this.setPauseDepth(1)
   }
 
   resume() {
-    this.isPaused = false
-    this.drain()
+    this.setPauseDepth(0)
+  }
+
+  whilePaused(func) {
+    this.setPauseDepth(this.pauseDepth + 1)
+    func()
+    this.setPauseDepth(this.pauseDepth - 1)
+  }
+
+  private setPauseDepth(depth: number) {
+    let oldDepth = this.pauseDepth
+    this.pauseDepth = depth // for this.drain() call
+
+    if (depth) { // wants to pause
+      ;
+    } else { // wants to unpause
+      if (oldDepth) {
+        this.drain()
+      }
+    }
   }
 
   protected runTask(task: Task) {

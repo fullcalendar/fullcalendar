@@ -169,7 +169,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     let { props, rowEls } = this
     let colCnt = props.cells[0].length
 
-    if (props.eventDrag) {
+    if (props.eventDrag && props.eventDrag.segs.length) { // messy check
       this.renderHighlight({
         type: 'highlight',
         renderIntro: props.renderIntro,

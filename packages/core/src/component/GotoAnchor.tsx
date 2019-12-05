@@ -40,6 +40,7 @@ export default class GotoAnchor extends BaseComponent<GotoAnchorProps> {
     }
 
     let attrs = {} as any
+    let children = props.children
 
     if (props.extraAttrs) {
       __assign(attrs, props.extraAttrs)
@@ -47,15 +48,16 @@ export default class GotoAnchor extends BaseComponent<GotoAnchorProps> {
 
     if (typeof props.htmlContent === 'string') {
       attrs.dangerouslySetInnerHTML = { __html: props.htmlContent }
+      children = null
     }
 
     if (!forceOff && props.navLinks) {
       return (
-        <a {...attrs} data-goto={JSON.stringify(finalOptions)}>{props.children}</a>
+        <a {...attrs} data-goto={JSON.stringify(finalOptions)}>{children}</a>
       )
     } else {
       return (
-        <span {...attrs}>{props.children}</span>
+        <span {...attrs}>{children}</span>
       )
     }
   }

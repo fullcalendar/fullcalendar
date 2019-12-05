@@ -71,26 +71,24 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
     return (
       <Fragment>
-        {header ?
+        {header &&
           <Toolbar
             ref={this.headerRef}
             extraClassName='fc-header-toolbar'
             model={header}
             { ...toolbarProps }
-            /> :
-          null
+            />
         }
         <div class='fc-view-container' ref={this.setViewContainerEl} onClick={this.handleNavLinkClick}>
           {this.renderView(props, this.context)}
         </div>
-        {footer ?
+        {footer &&
           <Toolbar
             ref={this.footerRef}
             extraClassName='fc-footer-toolbar'
             model={footer}
             { ...toolbarProps }
-            /> :
-          null
+            />
         }
       </Fragment>
     )
@@ -110,6 +108,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
 
   componentWillUnmount() {
+    this.subrenderDestroy()
     this.resizeRunner.clear()
     window.removeEventListener('resize', this.handleWindowResize)
   }

@@ -231,7 +231,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
 
   subrenderMirror(props: TimeColsProps, mirrorContainerEls: HTMLElement[], options): TimeColsEvents | null {
-    if (props.eventDrag) {
+    if (props.eventDrag && props.eventDrag.segs.length) { // messy check
       return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.eventDrag.segs,
