@@ -8,7 +8,7 @@ describe('destroy', function() {
         dir: 'ltr'
       })
       currentCalendar.destroy()
-      expect($('#calendar')[0].className).toBe('')
+      expect(currentCalendar.el.className).toBe('')
     })
   })
 
@@ -18,7 +18,7 @@ describe('destroy', function() {
         dir: 'rtl'
       })
       currentCalendar.destroy()
-      expect($('#calendar')[0].className).toBe('')
+      expect(currentCalendar.el.className).toBe('')
     })
   })
 
@@ -28,7 +28,7 @@ describe('destroy', function() {
     it('cleans up all classNames on the root element', function() {
       initCalendar()
       currentCalendar.destroy()
-      expect($('#calendar')[0].className).toBe('')
+      expect(currentCalendar.el.className).toBe('')
     })
   })
 
