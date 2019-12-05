@@ -37,22 +37,20 @@ export default class Toolbar extends BaseComponent<ToolbarProps> {
   }
 
 
-  renderSection(position: string, widgetGroups: ToolbarWidget[][] | null) {
+  renderSection(position: string, widgetGroups: ToolbarWidget[][]) {
     let { props } = this
 
-    if (widgetGroups) {
-      return (
-        <ToolbarSection
-          position={position}
-          widgetGroups={widgetGroups}
-          title={props.title}
-          activeButton={props.activeButton}
-          isTodayEnabled={props.isTodayEnabled}
-          isPrevEnabled={props.isPrevEnabled}
-          isNextEnabled={props.isNextEnabled}
-        />
-      )
-    }
+    return (
+      <ToolbarSection
+        position={position}
+        widgetGroups={widgetGroups}
+        title={props.title}
+        activeButton={props.activeButton}
+        isTodayEnabled={props.isTodayEnabled}
+        isPrevEnabled={props.isPrevEnabled}
+        isNextEnabled={props.isNextEnabled}
+      />
+    )
   }
 
 }

@@ -3,9 +3,9 @@ import Calendar from './Calendar'
 import Theme from './theme/Theme'
 
 export interface ToolbarModel {
-  left: ToolbarWidget[][] | null
-  center: ToolbarWidget[][] | null
-  right: ToolbarWidget[][] | null
+  left: ToolbarWidget[][]
+  center: ToolbarWidget[][]
+  right: ToolbarWidget[][]
 }
 
 export interface ToolbarWidget {
@@ -25,9 +25,9 @@ export function parseToolbars(allOptions, theme: Theme, calendar: Calendar) {
 
 function parseToolbar(raw, theme: Theme, calendar: Calendar, viewsWithButtons: string[]): ToolbarModel {
   return {
-    left: raw.left ? parseSection(raw.left, theme, calendar, viewsWithButtons) : null,
-    center: raw.center ? parseSection(raw.center, theme, calendar, viewsWithButtons) : null,
-    right: raw.right ? parseSection(raw.right, theme, calendar, viewsWithButtons) : null
+    left: raw.left ? parseSection(raw.left, theme, calendar, viewsWithButtons) : [],
+    center: raw.center ? parseSection(raw.center, theme, calendar, viewsWithButtons) : [],
+    right: raw.right ? parseSection(raw.right, theme, calendar, viewsWithButtons) : []
   }
 }
 
