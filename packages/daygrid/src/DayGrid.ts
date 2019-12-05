@@ -169,6 +169,7 @@ export default class DayGrid extends DateComponent<DayGridProps> {
     this.renderDateSelection(context, props.dateSelectionSegs)
     this.renderBgEvents(context, props.bgEventSegs)
     this.renderFgEvents(context, props.fgEventSegs)
+    context.calendar.dataToStyle()
     this.renderEventSelection(props.eventSelection)
     this.renderEventDrag(props.eventDrag)
     this.renderEventResize(props.eventResize)

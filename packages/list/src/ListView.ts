@@ -75,6 +75,7 @@ export default class ListView extends View {
       context,
       this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
     )
+    context.calendar.dataToStyle()
   }
 
 
