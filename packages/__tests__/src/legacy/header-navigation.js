@@ -13,47 +13,62 @@ describe('header navigation', function() {
   })
 
   describe('and click next', function() {
-    it('should change view to next month', function() {
+    it('should change view to next month', function(done) {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-next-button').simulate('click')
-      var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualDate('2010-03-01')
+      setTimeout(function() {
+        var newDate = currentCalendar.getDate()
+        expect(newDate).toEqualDate('2010-03-01')
+        done()
+      })
     })
   })
 
   describe('and click prev', function() {
-    it('should change view to prev month', function() {
+    it('should change view to prev month', function(done) {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-prev-button').simulate('click')
-      var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualDate('2010-01-01')
+      setTimeout(function() {
+        var newDate = currentCalendar.getDate()
+        expect(newDate).toEqualDate('2010-01-01')
+        done()
+      })
     })
   })
 
   describe('and click prevYear', function() {
-    it('should change view to prev month', function() {
+    it('should change view to prev month', function(done) {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-prevYear-button').simulate('click')
-      var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualDate('2009-02-01')
+      setTimeout(function() {
+        var newDate = currentCalendar.getDate()
+        expect(newDate).toEqualDate('2009-02-01')
+        done()
+      })
     })
   })
 
   describe('and click nextYear', function() {
-    it('should change view to prev month', function() {
+    it('should change view to prev month', function(done) {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-nextYear-button').simulate('click')
-      var newDate = currentCalendar.getDate()
-      expect(newDate).toEqualDate('2011-02-01')
+      setTimeout(function() {
+        var newDate = currentCalendar.getDate()
+        expect(newDate).toEqualDate('2011-02-01')
+        done()
+      })
     })
   })
 
   describe('and click today', function() {
-    it('should change view to prev month', function() {
+    it('should change view to prev month', function(done) {
       currentCalendar.gotoDate('2010-02-01')
       $('.fc-today-button').simulate('click')
-      var newDate = currentCalendar.getDate() // will be ambig zone
-      expect(newDate).toEqualNow()
+      setTimeout(function() {
+        var newDate = currentCalendar.getDate() // will be ambig zone
+        expect(newDate).toEqualNow()
+        done()
+      })
     })
   })
 })

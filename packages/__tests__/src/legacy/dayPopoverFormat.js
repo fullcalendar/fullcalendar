@@ -14,29 +14,38 @@ describe('dayPopoverFormat', function() {
     ]
   })
 
-  it('can be set to a custom value', function() {
+  it('can be set to a custom value', function(done) {
     initCalendar({
       dayPopoverFormat: { month: 'long', day: 'numeric' }
     })
     getMoreEl().simulate('click')
-    expect(getMorePopoverTitle()).toBe('July 29')
+    setTimeout(function() {
+      expect(getMorePopoverTitle()).toBe('July 29')
+      done()
+    })
   })
 
-  it('is affected by the current locale when the value is default', function() {
+  it('is affected by the current locale when the value is default', function(done) {
     initCalendar({
       locale: frLocale
     })
     getMoreEl().simulate('click')
-    expect(getMorePopoverTitle()).toBe('29 juillet 2014')
+    setTimeout(function() {
+      expect(getMorePopoverTitle()).toBe('29 juillet 2014')
+      done()
+    })
   })
 
-  it('still maintains the same format when explicitly set, and there is a locale', function() {
+  it('still maintains the same format when explicitly set, and there is a locale', function(done) {
     initCalendar({
       locale: frLocale,
       dayPopoverFormat: { year: 'numeric' }
     })
     getMoreEl().simulate('click')
-    expect(getMorePopoverTitle()).toBe('2014')
+    setTimeout(function() {
+      expect(getMorePopoverTitle()).toBe('2014')
+      done()
+    })
   })
 
 })

@@ -74,7 +74,7 @@ describe('unselectAuto', function() {
       unselectAuto: false
     })
 
-    it('keeps current selection when clicking elsewhere in DOM', function() {
+    it('keeps current selection when clicking elsewhere in DOM', function(done) {
       initCalendar()
       currentCalendar.select('2014-12-01', '2014-12-03')
 
@@ -85,7 +85,10 @@ describe('unselectAuto', function() {
         .simulate('mouseup')
         .simulate('click')
 
-      expect($('.fc-highlight').length).toBeGreaterThan(0)
+      setTimeout(function() {
+        expect($('.fc-highlight').length).toBeGreaterThan(0)
+        done()
+      })
     })
   })
 })

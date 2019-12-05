@@ -12,16 +12,23 @@ describe('eventLimitClick', function() { // simulate a click
     ]
   })
 
+  function openWithClick() {
+    $('.fc-more').simulate('click')
+  }
+
   describe('when set to "popover"', function() {
 
     pushOptions({
       eventLimitClick: 'popover'
     })
 
-    it('renders a popover upon click', function() {
+    it('renders a popover upon click', function(done) {
       initCalendar()
-      $('.fc-more').simulate('click')
-      expect($('.fc-more-popover')).toBeVisible()
+      openWithClick()
+      setTimeout(function() {
+        expect($('.fc-more-popover')).toBeVisible()
+        done()
+      })
     })
 
     // more popover tests are done in eventLimit-popover
@@ -33,7 +40,7 @@ describe('eventLimitClick', function() { // simulate a click
       eventLimitClick: 'week'
     })
 
-    it('should go to dayGridWeek if it is one of the available views', function() {
+    it('should go to dayGridWeek if it is one of the available views', function(done) {
       initCalendar({
         header: {
           left: 'prev,next today',
@@ -41,12 +48,15 @@ describe('eventLimitClick', function() { // simulate a click
           right: 'dayGridMonth,dayGridWeek,dayGridDay'
         }
       })
-      $('.fc-more').simulate('click')
-      var view = currentCalendar.view
-      expect(view.type).toBe('dayGridWeek')
+      openWithClick()
+      setTimeout(function() {
+        var view = currentCalendar.view
+        expect(view.type).toBe('dayGridWeek')
+        done()
+      })
     })
 
-    it('should go to week if it is one of the available views', function() {
+    it('should go to week if it is one of the available views', function(done) {
       initCalendar({
         header: {
           left: 'prev,next today',
@@ -54,9 +64,12 @@ describe('eventLimitClick', function() { // simulate a click
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }
       })
-      $('.fc-more').simulate('click')
-      var view = currentCalendar.view
-      expect(view.type).toBe('timeGridWeek')
+      openWithClick()
+      setTimeout(function() {
+        var view = currentCalendar.view
+        expect(view.type).toBe('timeGridWeek')
+        done()
+      })
     })
   })
 
@@ -66,7 +79,7 @@ describe('eventLimitClick', function() { // simulate a click
       eventLimitClick: 'day'
     })
 
-    it('should go to dayGridDay if it is one of the available views', function() {
+    it('should go to dayGridDay if it is one of the available views', function(done) {
       initCalendar({
         header: {
           left: 'prev,next today',
@@ -74,12 +87,15 @@ describe('eventLimitClick', function() { // simulate a click
           right: 'dayGridMonth,dayGridWeek,dayGridDay'
         }
       })
-      $('.fc-more').simulate('click')
-      var view = currentCalendar.view
-      expect(view.type).toBe('dayGridDay')
+      openWithClick()
+      setTimeout(function() {
+        var view = currentCalendar.view
+        expect(view.type).toBe('dayGridDay')
+        done()
+      })
     })
 
-    it('should go to day if it is one of the available views', function() {
+    it('should go to day if it is one of the available views', function(done) {
       initCalendar({
         header: {
           left: 'prev,next today',
@@ -87,13 +103,16 @@ describe('eventLimitClick', function() { // simulate a click
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }
       })
-      $('.fc-more').simulate('click')
-      var view = currentCalendar.view
-      expect(view.type).toBe('timeGridDay')
+      openWithClick()
+      setTimeout(function() {
+        var view = currentCalendar.view
+        expect(view.type).toBe('timeGridDay')
+        done()
+      })
     })
   })
 
-  it('works with an explicit view name', function() {
+  it('works with an explicit view name', function(done) {
     initCalendar({
       eventLimitClick: 'timeGridWeek',
       header: {
@@ -102,12 +121,15 @@ describe('eventLimitClick', function() { // simulate a click
         right: 'dayGridMonth,dayGridWeek,dayGridDay'
       }
     })
-    $('.fc-more').simulate('click')
-    var view = currentCalendar.view
-    expect(view.type).toBe('timeGridWeek')
+    openWithClick()
+    setTimeout(function() {
+      var view = currentCalendar.view
+      expect(view.type).toBe('timeGridWeek')
+      done()
+    })
   })
 
-  it('works with custom function and all the arguments are correct', function() {
+  it('works with custom function and all the arguments are correct', function(done) {
     initCalendar({
       eventLimitClick: function(arg) {
         expect(typeof arg).toBe('object')
@@ -119,18 +141,22 @@ describe('eventLimitClick', function() { // simulate a click
         expect(typeof arg.jsEvent).toBe('object')
       }
     })
-    $('.fc-more').simulate('click')
+    openWithClick()
+    setTimeout(done)
   })
 
-  it('works with custom function, and can return a view name', function() {
+  it('works with custom function, and can return a view name', function(done) {
     initCalendar({
       eventLimitClick: function(cellInfo, jsEvent) {
         return 'timeGridDay'
       }
     })
-    $('.fc-more').simulate('click')
-    var view = currentCalendar.view
-    expect(view.type).toBe('timeGridDay')
+    openWithClick()
+    setTimeout(function() {
+      var view = currentCalendar.view
+      expect(view.type).toBe('timeGridDay')
+      done()
+    })
   })
 
 })

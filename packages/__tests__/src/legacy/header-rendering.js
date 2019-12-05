@@ -125,9 +125,10 @@ describe('header rendering', function() {
           right: 'title'
         }
       }, el)
-      $('.fc-next-button').simulate('click')
 
+      $('.fc-next-button').simulate('click')
       setTimeout(function() { // wait to see if handler was called
+
         expect(unloadCalled).toBe(false)
         cleanup()
         done()

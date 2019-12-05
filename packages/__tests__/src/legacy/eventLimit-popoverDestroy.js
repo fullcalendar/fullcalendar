@@ -14,7 +14,7 @@ describe('eventLimit popover', function() {
     handleWindowResize: false // because showing the popover causes scrollbars and fires resize
   })
 
-  it('closes when user clicks the X and trigger eventDestroy for every render', function() {
+  it('closes when user clicks the X and trigger eventDestroy for every render', function(done) {
     var eventsRendered = {}
     var renderCount = 0
     var activated = false
@@ -30,19 +30,25 @@ describe('eventLimit popover', function() {
         --renderCount
       }
     })
+
     // Activate flags and pop event limit popover
     activated = true
     $('.fc-more').simulate('click')
+    setTimeout(function() {
 
-    expect($('.fc-more-popover')).toBeVisible()
-    $('.fc-more-popover .fc-close')
-      .simulate('click')
-    expect($('.fc-more-popover')).not.toBeVisible()
-    expect(Object.keys(eventsRendered).length).toEqual(0)
-    expect(renderCount).toEqual(0)
+      expect($('.fc-more-popover')).toBeVisible()
+
+      $('.fc-more-popover .fc-close').simulate('click')
+      setTimeout(function() {
+        expect($('.fc-more-popover')).not.toBeVisible()
+        expect(Object.keys(eventsRendered).length).toEqual(0)
+        expect(renderCount).toEqual(0)
+        done()
+      })
+    })
   })
 
-  it('closes when user clicks outside of the popover and trigger eventDestroy for every render', function() {
+  it('closes when user clicks outside of the popover and trigger eventDestroy for every render', function(done) {
     var eventsRendered = {}
     var renderCount = 0
     var activated = false
@@ -58,14 +64,22 @@ describe('eventLimit popover', function() {
         --renderCount
       }
     })
+
     // Activate flags and pop event limit popover
     activated = true
     $('.fc-more').simulate('click')
+    setTimeout(function() {
 
-    expect($('.fc-more-popover')).toBeVisible()
-    $('body').simulate('mousedown').simulate('click')
-    expect($('.fc-more-popover')).not.toBeVisible()
-    expect(Object.keys(eventsRendered).length).toEqual(0)
-    expect(renderCount).toEqual(0)
+      expect($('.fc-more-popover')).toBeVisible()
+
+      $('body').simulate('mousedown').simulate('click')
+      setTimeout(function() {
+
+        expect($('.fc-more-popover')).not.toBeVisible()
+        expect(Object.keys(eventsRendered).length).toEqual(0)
+        expect(renderCount).toEqual(0)
+        done()
+      })
+    })
   })
 })
