@@ -108,7 +108,7 @@ const closestMethod = Element.prototype.closest || function(selector) {
 }
 
 export function elementClosest(el: HTMLElement, selector: string): HTMLElement {
-  return closestMethod.call(el, selector)
+  return (closestMethod as any).call(el, selector)
 }
 
 export function elementMatches(el: HTMLElement, selector: string): HTMLElement {

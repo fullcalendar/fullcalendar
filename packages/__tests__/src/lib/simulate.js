@@ -35,6 +35,8 @@ $.simulate.prototype.simulateEvent = function(elem, type, options) {
 
 $.simulate.prototype.simulateWindowResize = function() {
   // from https://stackoverflow.com/a/1818513/96342
+
+  /** @type {any} */
   let event
 
   if (typeof Event !== 'undefined') {
