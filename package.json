@@ -89,6 +89,7 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "native-promise-only": "^0.8.1",
+    "preact": "^10.0.5",
     "rollup": "^1.8.0",
     "rollup-plugin-alias": "^1.5.2",
     "rollup-plugin-cleanup": "^3.1.1",
@@ -106,8 +107,5 @@
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.7.3",
     "xhr-mock": "^2.4.1"
-  },
-  "dependencies": {
-    "preact": "^10.0.5"
   }
 }
