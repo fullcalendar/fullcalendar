@@ -1,6 +1,6 @@
 
 export function expectRenderRange(start, end) {
-  var dateProfile = currentCalendar.component.props // not a great way to get this info
+  let { dateProfile } = currentCalendar.component.props // not a great way to get this info
 
   expect(dateProfile.renderRange.start).toEqualDate(start)
   expect(dateProfile.renderRange.end).toEqualDate(end)
@@ -8,7 +8,7 @@ export function expectRenderRange(start, end) {
 
 
 export function expectActiveRange(start, end) {
-  var currentView = currentCalendar.view
+  let currentView = currentCalendar.view
 
   expect(currentView.activeStart).toEqualDate(start)
   expect(currentView.activeEnd).toEqualDate(end)

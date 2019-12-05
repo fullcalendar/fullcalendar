@@ -105,7 +105,7 @@ describe('visibleRange', function() {
         })
 
         expect(matched).toBe(true)
-        expectActiveRange('2017-06-07', '2017-06-10')
+        expectActiveRange(parseLocalDate('2017-06-07'), parseLocalDate('2017-06-10'))
       })
 
       it('receives the calendar\'s defaultDate, with UTC timezone, and emits UTC range', function() {

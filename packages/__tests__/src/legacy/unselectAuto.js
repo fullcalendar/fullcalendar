@@ -1,4 +1,3 @@
-import { View } from '@fullcalendar/core'
 
 describe('unselectAuto', function() {
 
@@ -30,7 +29,7 @@ describe('unselectAuto', function() {
             expect($('.fc-highlight').length).toBe(0)
 
             expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
-            expect(arg.view instanceof View).toBe(true)
+            expect(typeof arg.view).toBe('object')
 
             done()
           }
@@ -54,7 +53,7 @@ describe('unselectAuto', function() {
             expect($('.fc-highlight').length).toBe(0)
 
             expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
-            expect(arg.view instanceof View).toBe(true)
+            expect(typeof arg.view).toBe('object')
 
             done()
           }
