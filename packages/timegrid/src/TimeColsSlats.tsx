@@ -71,7 +71,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
         </td>
 
       rowsNodes.push(
-        <tr data-time={formatIsoTimeString(slotDate)} class={isLabeled ? 'fc-minor' : ''}>
+        <tr data-time={formatIsoTimeString(slotDate)} class={isLabeled ? '' : 'fc-minor'}>
           {!isRtl && axisNode}
           <td class={theme.getClass('widgetContent')}></td>
           {isRtl && axisNode}
