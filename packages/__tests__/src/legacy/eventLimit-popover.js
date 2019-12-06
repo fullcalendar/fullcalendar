@@ -287,7 +287,7 @@ describe('eventLimit popover', function() {
     'when in dayGridWeek view': 'dayGridWeek',
     'when in week view': 'timeGridWeek'
   }, function() {
-    xit('aligns with top of header', function(done) {
+    it('aligns with top of header', function(done) {
       initCalendar()
       openWithClick()
       setTimeout(function() {

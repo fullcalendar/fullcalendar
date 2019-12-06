@@ -177,6 +177,14 @@ export default class Table extends BaseComponent<TableProps, TableState> {
         rowEls,
         colCnt
       })
+    } else if (props.eventResize && props.eventResize.segs.length) { // messy check
+      this.renderHighlight({
+        type: 'highlight',
+        renderIntro: props.renderIntro,
+        segs: props.eventResize.segs,
+        rowEls,
+        colCnt
+      })
     } else {
       this.renderHighlight({
         type: 'highlight',
