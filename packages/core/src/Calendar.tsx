@@ -32,7 +32,7 @@ import EventClicking from './interactions/EventClicking'
 import EventHovering from './interactions/EventHovering'
 import StandardTheme from './theme/StandardTheme'
 import ComponentContext, { ComponentContextType, buildContext } from './component/ComponentContext'
-import { render, h, createRef } from './vdom'
+import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
 
@@ -169,6 +169,7 @@ export default class Calendar {
       this.isRendering = true
       this.renderableEventStore = createEmptyEventStore()
       this.renderRunner.request()
+      flushToDom()
     }
   }
 
