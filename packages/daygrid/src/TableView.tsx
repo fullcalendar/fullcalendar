@@ -27,7 +27,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 // It is responsible for managing width/height.
 
 
-export default abstract class TableView extends View {
+export default abstract class TableView<State={}> extends View<State> {
 
   protected processOptions = memoize(this._processOptions)
   private rootElRef = createRef<HTMLDivElement>()
@@ -106,7 +106,6 @@ export default abstract class TableView extends View {
 
 
   // Refreshes the horizontal dimensions of the view
-  // TODO: dont pass in optinos
   updateLayoutHeight(headRowEl: HTMLElement | null, table: Table, viewHeight: number, isAuto: boolean) {
     let rootEl = this.rootElRef.current
     let scroller = this.scrollerRef.current
