@@ -173,6 +173,25 @@ export default class ListView extends View {
       subtractInnerElHeight(this.el, this.scroller.el) // everything that's NOT the scroller
   }
 
+  /* Scroll
+  ------------------------------------------------------------------------------------------------------------------*/
+
+
+  computeDateScroll(duration: Duration) {
+    return { top: 0 }
+  }
+
+
+  queryDateScroll() {
+    return { top: this.scroller.getScrollTop() }
+  }
+
+
+  applyDateScroll(scroll) {
+    if (scroll.top !== undefined) {
+      this.scroller.setScrollTop(scroll.top)
+    }
+  }
 
   _eventStoreToSegs(eventStore: EventStore, eventUiBases: EventUiHash, dayRanges: DateRange[]): Seg[] {
     return this.eventRangesToSegs(
