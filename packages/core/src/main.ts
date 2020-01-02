@@ -88,7 +88,6 @@ export {
   computeEdges,
   computeHeightAndMargins,
   getClippingParents,
-  computeClippingRect,
   computeRect
 } from './util/dom-geom'
 
@@ -101,7 +100,7 @@ export { default as PositionCache } from './common/PositionCache'
 export { default as Scroller, ScrollerProps, ScrollbarWidths } from './common/Scroller'
 export { ScrollController, ElementScrollController, WindowScrollController } from './common/scroll-controller'
 export { default as Theme } from './theme/Theme'
-export { default as ComponentContext } from './component/ComponentContext'
+export { default as ComponentContext, ComponentContextType } from './component/ComponentContext'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
 export { default as View, ViewProps, getViewClassNames } from './View'
@@ -174,5 +173,5 @@ export { default as EventApi } from './api/EventApi'
 export { default as requestJson } from './util/requestJson'
 
 export * from './vdom'
-export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes } from './vdom-util'
+export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes, buildMapSubRenderer } from './vdom-util'
 export { DelayedRunner } from './util/runner'

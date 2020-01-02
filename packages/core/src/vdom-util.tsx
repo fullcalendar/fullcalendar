@@ -213,6 +213,56 @@ function buildFuncSubRenderer(renderFunc, unrenderFunc) {
 }
 
 
+export function buildMapSubRenderer(subRendererClass: SubRendererClass<any>) {
+  let currentInstances = {}
+
+  function destroyAll() {
+    for (let key in currentInstances) {
+      currentInstances[key].destroy()
+    }
+    currentInstances = {}
+  }
+
+  return function(this: SubRendererOwner, propMap) { // what about passing in Context?
+    let context = this.context
+
+    if (!propMap) {
+      destroyAll()
+
+    } else {
+
+      for (let key in currentInstances) {
+        if (!propMap[key]) {
+          currentInstances[key].destroy()
+          delete currentInstances[key]
+        }
+      }
+
+      for (let key in propMap) {
+        let props = propMap[key]
+        let instance = currentInstances[key]
+
+        if (!instance) {
+          instance = currentInstances[key] = new subRendererClass(props, context) // TODO: pass in state???
+          instance.render(props, context)
+
+        } else if (
+          !compareObjs(props, instance.props, instance.propEquality) ||
+          !compareObjs(context, instance.context)
+        ) {
+          instance.unrender()
+          instance.props = props
+          instance.context = context
+          instance.render(props, context)
+        }
+      }
+    }
+
+    return currentInstances
+  }
+}
+
+
 function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any> = {}) {
 
   if (oldProps === newProps) {

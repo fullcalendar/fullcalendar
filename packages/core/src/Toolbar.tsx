@@ -1,4 +1,4 @@
-import { h, createRef } from './vdom'
+import { h } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { ToolbarModel, ToolbarWidget } from './toolbar-parse'
 
@@ -19,16 +19,12 @@ export interface ToolbarContent {
 
 export default class Toolbar extends BaseComponent<ToolbarProps> {
 
-  private rootElRef = createRef<HTMLDivElement>()
-
-  public get rootEl() { return this.rootElRef.current }
-
 
   render(props: ToolbarProps) {
     let { model } = props
 
     return (
-      <div ref={this.rootElRef} class={'fc-toolbar ' + props.extraClassName}>
+      <div class={'fc-toolbar ' + props.extraClassName}>
         {this.renderSection('left', model.left)}
         {this.renderSection('center', model.center)}
         {this.renderSection('right', model.right)}

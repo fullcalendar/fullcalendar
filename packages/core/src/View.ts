@@ -23,6 +23,7 @@ export interface ViewProps {
   eventSelection: string
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
+  isHeightAuto: boolean
 }
 
 export default abstract class View<State={}> extends DateComponent<ViewProps, State> {

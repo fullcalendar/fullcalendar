@@ -413,12 +413,7 @@ export default class Calendar {
 
 
   viewOpt(name: string) { // getter, used internally
-    return this.viewOpts()[name]
-  }
-
-
-  viewOpts() {
-    return this.viewSpecs[this.state.viewType].options
+    return this.viewSpecs[this.state.viewType].options[name]
   }
 
   /*

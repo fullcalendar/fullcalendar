@@ -1,4 +1,4 @@
-import { Rect, intersectRects } from './geom'
+import { Rect } from './geom'
 import { sanitizeScrollbarWidth, getIsRtlScrollbarOnLeft } from './scrollbars'
 
 export interface EdgeInfo {
@@ -87,16 +87,6 @@ export function computeRect(el): Rect {
 }
 
 
-function computeViewportRect(): Rect {
-  return {
-    left: window.pageXOffset,
-    right: window.pageXOffset + document.documentElement.clientWidth,
-    top: window.pageYOffset,
-    bottom: window.pageYOffset + document.documentElement.clientHeight
-  }
-}
-
-
 export function computeHeightAndMargins(el: HTMLElement) {
   return el.getBoundingClientRect().height + computeVMargins(el)
 }
@@ -129,16 +119,4 @@ export function getClippingParents(el: HTMLElement): HTMLElement[] {
   }
 
   return parents
-}
-
-
-export function computeClippingRect(el: HTMLElement): Rect {
-  return getClippingParents(el)
-    .map(function(el) {
-      return computeInnerRect(el)
-    })
-    .concat(computeViewportRect())
-    .reduce(function(rect0, rect1) {
-      return intersectRects(rect0, rect1) || rect1 // should always intersect
-    })
 }
