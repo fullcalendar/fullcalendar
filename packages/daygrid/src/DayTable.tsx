@@ -28,6 +28,7 @@ export interface DayTableProps {
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
   isRigid: boolean
+  colGroupNode: VNode
   renderNumberIntro: (row: number, cells: any) => VNode[]
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
@@ -54,6 +55,7 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
         dateProfile={dateProfile}
         cells={dayTableModel.cells}
         isRigid={props.isRigid}
+        colGroupNode={props.colGroupNode}
         renderNumberIntro={props.renderNumberIntro}
         renderBgIntro={props.renderBgIntro}
         renderIntro={props.renderIntro}
@@ -72,11 +74,6 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
     } else {
       calendar.unregisterInteractiveComponent(this)
     }
-  }
-
-
-  updateSize(isResize: boolean) {
-    this.table.updateSize(isResize)
   }
 
 

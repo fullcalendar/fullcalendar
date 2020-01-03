@@ -15,10 +15,6 @@ StandardTheme.prototype.classes = {
   popoverHeader: 'fc-widget-header',
   popoverContent: 'fc-widget-content',
 
-  // day grid
-  headerRow: 'fc-widget-header',
-  dayRow: 'fc-widget-content',
-
   // list view
   listView: 'fc-widget-content'
 }

@@ -9,6 +9,7 @@ import {
 
 export interface TimeColsContentSkeletonProps {
   colCnt: number
+  colGroupNode: VNode
   renderIntro: () => VNode[]
   handleDom?: (rootEl: HTMLElement | null, containers: TimeColsContentSkeletonContainers | null) => void
 }
@@ -51,6 +52,7 @@ export default class TimeColsContentSkeleton extends BaseComponent<TimeColsConte
     return ( // guid rerenders whole DOM every time
       <div class='fc-content-skeleton' ref={this.handleRootEl} key={guid()}>
         <table>
+          {props.colGroupNode}
           <tr>{cellNodes}</tr>
         </table>
       </div>

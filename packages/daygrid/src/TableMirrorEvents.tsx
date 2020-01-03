@@ -1,5 +1,5 @@
 import {
-  htmlToElement, subrenderer, ComponentContext, removeElement
+  subrenderer, ComponentContext, removeElement, renderVNodes, h
 } from '@fullcalendar/core'
 import TableEvents, { renderSegRows, TableEventsProps } from './TableEvents'
 
@@ -12,13 +12,20 @@ export default class TableMirrorEvents extends TableEvents {
 
 
 // Renders the given foreground event segments onto the grid
-function attachSegs({ segs, rowEls, colCnt, renderIntro, interactingSeg }: TableEventsProps, context: ComponentContext) {
+function attachSegs({ segs, rowEls, colCnt, colGroupNode, renderIntro, interactingSeg }: TableEventsProps, context: ComponentContext) {
 
   let rowStructs = renderSegRows(segs, rowEls.length, colCnt, renderIntro, context)
 
   // inject each new event skeleton into each associated row
   rowEls.forEach(function(rowNode, row) {
-    let skeletonEl = htmlToElement('<div class="fc-mirror-skeleton"><table></table></div>') // will be absolutely positioned
+    let skeletonEl = renderVNodes(
+      <div class='fc-mirror-skeleton'>
+        <table>
+          {colGroupNode}
+        </table>
+      </div>,
+      context
+    )[0] as HTMLElement
     let skeletonTopEl: HTMLElement
     let skeletonTop
 

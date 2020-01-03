@@ -28,6 +28,7 @@ export interface DayTimeColsProps {
   eventSelection: string
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
+  colGroupNode: VNode
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
 }
@@ -56,6 +57,7 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
         {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
         dateProfile={dateProfile}
         cells={dayTableModel.cells[0]}
+        colGroupNode={props.colGroupNode}
         renderBgIntro={props.renderBgIntro}
         renderIntro={props.renderIntro}
       />
@@ -71,11 +73,6 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
     } else {
       calendar.unregisterInteractiveComponent(this)
     }
-  }
-
-
-  updateSize(isResize: boolean) {
-    this.timeCols.updateSize(isResize)
   }
 
 

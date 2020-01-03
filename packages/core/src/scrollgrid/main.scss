@@ -1,0 +1,87 @@
+
+.scrollgrid {
+  width: 100%;
+}
+
+.scrollgrid--rtl { // temporary
+  direction: rtl;
+}
+
+.scrollgrid,
+.scrollgrid table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.scrollgrid--forprint {
+  table-layout: auto;
+}
+
+.scrollgrid--vgrow {
+  height: 100%;
+}
+
+.scrollgrid th,
+.scrollgrid td {
+  border: 1px solid #ddd;
+  padding: 0;
+  vertical-align: top;
+}
+
+.scrollgrid table {
+  border-style: hidden;
+}
+
+.cell-content {
+  padding: 10px;
+}
+.shrink {
+  float: left;
+  white-space: nowrap;
+}
+.scrollgrid--rtl .shrink {
+  float: right;
+}
+
+.scrollgrid__section { // a <tr>
+  height: 1px;
+}
+
+.scrollgrid__section--vgrow {
+  height: auto;
+
+  > td {
+    height: 100%;
+  }
+}
+
+
+.clippedscroller {
+  overflow: hidden;
+  position: relative; // will be override by .vgrow--absolute
+}
+
+
+// TODO: use .table--vgrow, .clippedscroller--vgrow instead?
+
+.hgrow {
+  width: 100%;
+}
+
+.vgrow {
+  height: 100%;
+}
+
+.vgrow--absolute {
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.scrollgrid__section:not(.scrollgrid__section--vgrow) table.vgrow > * > tr > * { // important for IE!
+  height: 100%;
+}

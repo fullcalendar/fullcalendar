@@ -32,6 +32,7 @@
       "@fullcalendar/moment-timezone": [ "packages/moment-timezone/src/main" ],
       "@fullcalendar/google-calendar": [ "packages/google-calendar/src/main" ],
       "@fullcalendar/bootstrap": [ "packages/bootstrap/src/main" ],
+      "@fullcalendar/scrollgrid": [ "packages-premium/scrollgrid/src/main" ],
       "@fullcalendar/timeline": [ "packages-premium/timeline/src/main" ],
       "@fullcalendar/resource-common": [ "packages-premium/resource-common/src/main" ],
       "@fullcalendar/resource-timeline": [ "packages-premium/resource-timeline/src/main" ],

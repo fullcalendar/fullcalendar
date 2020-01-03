@@ -13,6 +13,7 @@ import { DayBgRow } from '@fullcalendar/daygrid'
 export interface TimeColsBgProps {
   dateProfile: DateProfile
   cells: TimeColsCell[]
+  colGroupNode: VNode
   renderIntro: () => VNode[]
   handleDom?: (rootEl: HTMLElement | null, colEls: HTMLElement[] | null) => void
 }
@@ -32,6 +33,7 @@ export default class TimeColsBg extends BaseComponent<TimeColsBgProps> {
     return ( // guid rerenders whole DOM every time
       <div class='fc-bg' ref={this.handleRootEl} key={guid()}>
         <table class={theme.getClass('tableGrid')}>
+          {props.colGroupNode}
           <DayBgRow
             cells={props.cells}
             dateProfile={props.dateProfile}

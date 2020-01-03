@@ -13,7 +13,8 @@ import {
   ComponentContext,
   subrenderer,
   setRef,
-  createFormatter
+  createFormatter,
+  VNode
 } from '@fullcalendar/core'
 import TableEvents from './TableEvents'
 import TableMirrorEvents from './TableMirrorEvents'
@@ -35,6 +36,7 @@ export interface TableProps extends TableSkeletonProps {
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
   rootElRef?: Ref<HTMLDivElement>
+  colGroupNode: VNode
 }
 
 export interface TableSeg extends Seg {
@@ -89,6 +91,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
           renderIntro={props.renderIntro}
           colWeekNumbersVisible={props.colWeekNumbersVisible}
           cellWeekNumbersVisible={props.cellWeekNumbersVisible}
+          colGroupNode={props.colGroupNode}
         />
         {this.renderPopover()}
       </Fragment>
@@ -157,11 +160,13 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
   componentDidMount() {
     this.subrender()
+    this.resize()
   }
 
 
   componentDidUpdate() {
     this.subrender()
+    this.resize()
   }
 
 
@@ -212,6 +217,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     })
 
     let eventsRenderer = this.renderFgEvents({
+      colGroupNode: props.colGroupNode,
       renderIntro: props.renderIntro,
       segs: props.fgEventSegs,
       rowEls,
@@ -229,6 +235,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
     if (props.eventResize) {
       this.renderMirrorEvents({
+        colGroupNode: props.colGroupNode,
         renderIntro: props.renderIntro,
         segs: props.eventResize.segs,
         rowEls,
@@ -253,7 +260,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  updateSize(isResize: boolean) {
+  resize(isResize?: boolean) { // gaahhhhhhhhh
     let { calendar } = this.context
     let popover = this.popoverRef.current
 

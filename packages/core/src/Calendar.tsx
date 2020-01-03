@@ -351,7 +351,7 @@ export default class Calendar {
     let calendarComponent = this.component
     let viewComponent = calendarComponent.view
 
-    calendarComponent.updateSize(false)
+    // calendarComponent.updateSize(false)
     this.drainAfterSizingCallbacks()
 
     if (this.isViewUpdated) {

@@ -23,10 +23,7 @@ export {
   flexibleCompare,
   computeVisibleDayRange,
   refineProps,
-  matchCellWidths, uncompensateScroll, compensateScroll, subtractInnerElHeight,
   isMultiDayRange,
-  distributeHeight,
-  undistributeHeight,
   preventSelection, allowSelection, preventContextMenu, allowContextMenu,
   compareNumbers, enableCursor, disableCursor,
   diffDates,
@@ -97,7 +94,6 @@ export { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin
 export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual, rangesIntersect, rangeContainsRange } from './datelib/date-range'
 export { default as Mixin } from './common/Mixin'
 export { default as PositionCache } from './common/PositionCache'
-export { default as Scroller, ScrollerProps, ScrollbarWidths } from './common/Scroller'
 export { ScrollController, ElementScrollController, WindowScrollController } from './common/scroll-controller'
 export { default as Theme } from './theme/Theme'
 export { default as ComponentContext, ComponentContextType } from './component/ComponentContext'
@@ -175,3 +171,14 @@ export { default as requestJson } from './util/requestJson'
 export * from './vdom'
 export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes, buildMapSubRenderer } from './vdom-util'
 export { DelayedRunner } from './util/runner'
+
+export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgrid/SimpleScrollGrid'
+export {
+  CssDimValue, ScrollerLike, SectionConfig, ColCss, ChunkConfig, doSizingHacks, hasShrinkWidth, renderMicroColGroup,
+  getScrollGridClassNames, getSectionClassNames, getChunkVGrow, getNeedsYScrolling, renderChunkContent, getForceScrollbars, getShrinkWidth,
+  getChunkClassNames, ChunkContentCallbackArgs
+} from './scrollgrid/util'
+export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
+export { getScrollbarWidths } from './util/scrollbar-width'
+export { default as RefMap } from './util/RefMap'
+export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'

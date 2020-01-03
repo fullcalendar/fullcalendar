@@ -7,6 +7,7 @@ import { computeFallbackHeaderFormat } from './table-utils'
 import { VNode, h, createRef } from '../vdom'
 import TableDateCell from './TableDateCell'
 
+
 export interface DayHeaderProps {
   dates: DateMarker[]
   dateProfile: DateProfile
@@ -14,7 +15,8 @@ export interface DayHeaderProps {
   renderIntro?: () => VNode[]
 }
 
-export default class DayHeader extends BaseComponent<DayHeaderProps> {
+
+export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename to DayHeaderTr?
 
   private rootElRef = createRef<HTMLDivElement>()
 
@@ -22,7 +24,6 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> {
 
 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {
-    let { theme } = context
     let { dates, datesRepDistinctDays } = props
     let cells: VNode[] = []
 
@@ -52,13 +53,7 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> {
     }
 
     return (
-      <div ref={this.rootElRef} class={'fc-row ' + theme.getClass('headerRow')}>
-        <table class={theme.getClass('tableGrid')}>
-          <thead>
-            <tr>{cells}</tr>
-          </thead>
-        </table>
-      </div>
+      <tr>{cells}</tr>
     )
   }
 

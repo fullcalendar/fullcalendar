@@ -1,18 +1,20 @@
-import { removeElement, applyStyle } from './dom-manip'
+import { removeElement, applyStyle } from '@fullcalendar/core'
 
 
-// Logic for determining if, when the element is right-to-left, the scrollbar appears on the left side
+let _isRtlScrollbarOnLeft: boolean | null = null
 
-let isRtlScrollbarOnLeft: boolean | null = null
 
 export function getIsRtlScrollbarOnLeft() { // responsible for caching the computation
-  if (isRtlScrollbarOnLeft === null) {
-    isRtlScrollbarOnLeft = computeIsRtlScrollbarOnLeft()
+  if (_isRtlScrollbarOnLeft === null) {
+    _isRtlScrollbarOnLeft = computeIsRtlScrollbarOnLeft()
   }
-  return isRtlScrollbarOnLeft
+  return _isRtlScrollbarOnLeft
 }
 
+
 function computeIsRtlScrollbarOnLeft() { // creates an offscreen test element, then removes it
+
+  // TODO: use htmlToElement
   let outerEl = document.createElement('div')
   applyStyle(outerEl, {
     position: 'absolute',
@@ -31,13 +33,4 @@ function computeIsRtlScrollbarOnLeft() { // creates an offscreen test element, t
 
   removeElement(outerEl)
   return res
-}
-
-
-// The scrollbar width computations in computeEdges are sometimes flawed when it comes to
-// retina displays, rounding, and IE11. Massage them into a usable value.
-export function sanitizeScrollbarWidth(width: number) {
-  width = Math.max(0, width) // no negatives
-  width = Math.round(width)
-  return width
 }

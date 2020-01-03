@@ -7,7 +7,7 @@ const containerTagHash = {
   '<td': 'tr'
 }
 
-export function htmlToElement(html: string): HTMLElement {
+export function htmlToElement(html: string): HTMLElement { // TODO: use renderVNodes instead?
   html = html.trim()
   let container = document.createElement(computeContainerTag(html))
   container.innerHTML = html

@@ -1,5 +1,3 @@
-import { applyStyle } from './dom-manip'
-import { computeVMargins } from './dom-geom'
 import { preventDefault } from './dom-event'
 import { DateMarker, startOfDay, addDays, diffDays, diffDayAndTime } from '../datelib/marker'
 import { Duration, asRoughMs, createDuration } from '../datelib/duration'
@@ -18,35 +16,6 @@ export function guid() {
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
-// Given the scrollbar widths of some other container, create borders/margins on rowEls in order to match the left
-// and right space that was offset by the scrollbars. A 1-pixel border first, then margin beyond that.
-export function compensateScroll(rowEl: HTMLElement, scrollbarWidths) {
-  if (scrollbarWidths.left) {
-    applyStyle(rowEl, {
-      borderLeftWidth: 1,
-      marginLeft: scrollbarWidths.left - 1
-    })
-  }
-  if (scrollbarWidths.right) {
-    applyStyle(rowEl, {
-      borderRightWidth: 1,
-      marginRight: scrollbarWidths.right - 1
-    })
-  }
-}
-
-
-// Undoes compensateScroll and restores all borders/margins
-export function uncompensateScroll(rowEl: HTMLElement) {
-  applyStyle(rowEl, {
-    marginLeft: '',
-    marginRight: '',
-    borderLeftWidth: '',
-    borderRightWidth: ''
-  })
-}
-
-
 // Make the mouse cursor express that an event is not allowed in the current area
 export function disableCursor() {
   document.body.classList.add('fc-not-allowed')
@@ -56,121 +25,6 @@ export function disableCursor() {
 // Returns the mouse cursor to its original look
 export function enableCursor() {
   document.body.classList.remove('fc-not-allowed')
-}
-
-
-// Given a total available height to fill, have `els` (essentially child rows) expand to accomodate.
-// By default, all elements that are shorter than the recommended height are expanded uniformly, not considering
-// any other els that are already too tall. if `shouldRedistribute` is on, it considers these tall rows and
-// reduces the available height.
-export function distributeHeight(els: HTMLElement[], availableHeight, shouldRedistribute) {
-
-  // *FLOORING NOTE*: we floor in certain places because zoom can give inaccurate floating-point dimensions,
-  // and it is better to be shorter than taller, to avoid creating unnecessary scrollbars.
-
-  let minOffset1 = Math.floor(availableHeight / els.length) // for non-last element
-  let minOffset2 = Math.floor(availableHeight - minOffset1 * (els.length - 1)) // for last element *FLOORING NOTE*
-  let flexEls = [] // elements that are allowed to expand. array of DOM nodes
-  let flexOffsets = [] // amount of vertical space it takes up
-  let flexHeights = [] // actual css height
-  let usedHeight = 0
-
-  undistributeHeight(els) // give all elements their natural height
-
-  // find elements that are below the recommended height (expandable).
-  // important to query for heights in a single first pass (to avoid reflow oscillation).
-  els.forEach(function(el, i) {
-    let minOffset = i === els.length - 1 ? minOffset2 : minOffset1
-    let naturalHeight = el.getBoundingClientRect().height
-    let naturalOffset = naturalHeight + computeVMargins(el)
-
-    if (naturalOffset < minOffset) {
-      flexEls.push(el)
-      flexOffsets.push(naturalOffset)
-      flexHeights.push(naturalHeight)
-    } else {
-      // this element stretches past recommended height (non-expandable). mark the space as occupied.
-      usedHeight += naturalOffset
-    }
-  })
-
-  // readjust the recommended height to only consider the height available to non-maxed-out rows.
-  if (shouldRedistribute) {
-    availableHeight -= usedHeight
-    minOffset1 = Math.floor(availableHeight / flexEls.length)
-    minOffset2 = Math.floor(availableHeight - minOffset1 * (flexEls.length - 1)) // *FLOORING NOTE*
-  }
-
-  // assign heights to all expandable elements
-  flexEls.forEach(function(el, i) {
-    let minOffset = i === flexEls.length - 1 ? minOffset2 : minOffset1
-    let naturalOffset = flexOffsets[i]
-    let naturalHeight = flexHeights[i]
-    let newHeight = minOffset - (naturalOffset - naturalHeight) // subtract the margin/padding
-
-    if (naturalOffset < minOffset) { // we check this again because redistribution might have changed things
-      el.style.height = newHeight + 'px'
-    }
-  })
-}
-
-
-// Undoes distrubuteHeight, restoring all els to their natural height
-export function undistributeHeight(els: HTMLElement[]) {
-  els.forEach(function(el) {
-    el.style.height = ''
-  })
-}
-
-
-// Given `els`, a set of <td> cells, find the cell with the largest natural width and set the widths of all the
-// cells to be that width.
-// PREREQUISITE: if you want a cell to take up width, it needs to have a single inner element w/ display:inline
-export function matchCellWidths(els: HTMLElement[]) {
-  let maxInnerWidth = 0
-
-  els.forEach(function(el) {
-    let innerEl = el.firstChild // hopefully an element
-    if (innerEl instanceof HTMLElement) {
-      let innerWidth = innerEl.getBoundingClientRect().width
-      if (innerWidth > maxInnerWidth) {
-        maxInnerWidth = innerWidth
-      }
-    }
-  })
-
-  maxInnerWidth++ // sometimes not accurate of width the text needs to stay on one line. insurance
-
-  els.forEach(function(el) {
-    el.style.width = maxInnerWidth + 'px'
-  })
-
-  return maxInnerWidth
-}
-
-
-// Given one element that resides inside another,
-// Subtracts the height of the inner element from the outer element.
-export function subtractInnerElHeight(outerEl: HTMLElement, innerEl: HTMLElement) {
-
-  // effin' IE8/9/10/11 sometimes returns 0 for dimensions. this weird hack was the only thing that worked
-  let reflowStyleProps = {
-    position: 'relative', // cause a reflow, which will force fresh dimension recalculation
-    left: -1 // ensure reflow in case the el was already relative. negative is less likely to cause new scroll
-  }
-  applyStyle(outerEl, reflowStyleProps)
-  applyStyle(innerEl, reflowStyleProps)
-
-  let diff = // grab the dimensions
-    outerEl.getBoundingClientRect().height -
-    innerEl.getBoundingClientRect().height
-
-  // undo hack
-  let resetStyleProps = { position: '', left: '' }
-  applyStyle(outerEl, resetStyleProps)
-  applyStyle(innerEl, resetStyleProps)
-
-  return diff
 }
 
 

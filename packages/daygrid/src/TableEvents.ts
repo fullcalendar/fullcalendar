@@ -19,6 +19,7 @@ import CellEvents from './CellEvents'
 export interface TableEventsProps extends BaseFgEventRendererProps {
   rowEls: HTMLElement[]
   colCnt: number
+  colGroupNode: VNode
   renderIntro: () => VNode[]
 }
 
@@ -43,6 +44,7 @@ export default class TableEvents extends CellEvents<TableEventsProps> {
       segs,
       rowEls: props.rowEls,
       colCnt: props.colCnt,
+      colGroupNode: props.colGroupNode,
       renderIntro: props.renderIntro,
       isDragging: props.isDragging,
       isResizing: props.isResizing,

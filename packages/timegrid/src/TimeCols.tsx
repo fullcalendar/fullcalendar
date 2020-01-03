@@ -1,5 +1,5 @@
 import {
-  h, VNode, createRef, Ref,
+  h, VNode, Ref,
   removeElement,
   applyStyle,
   PositionCache,
@@ -46,6 +46,7 @@ export interface TimeColsProps {
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
   rootElRef?: Ref<HTMLDivElement>
+  colGroupNode: VNode
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
 }
@@ -68,7 +69,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   private snapDuration: Duration // granularity of time for dragging and selecting
   private snapsPerSlot: any
 
-  private bottomRuleElRef = createRef<HTMLHRElement>()
   private contentSkeletonEl: HTMLElement
   private colContainerEls: HTMLElement[] // containers for each column
   private businessContainerEls: HTMLElement[]
@@ -87,8 +87,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   private isColSizesDirty: boolean = false
   private segRenderers: (TimeColsEvents | TimeColsFills | null)[]
 
-  get bottomRuleEl() { return this.bottomRuleElRef.current }
-
 
   /* Rendering
   ------------------------------------------------------------------------------------------------------------------*/
@@ -103,6 +101,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         <TimeColsBg
           dateProfile={props.dateProfile}
           cells={props.cells}
+          colGroupNode={props.colGroupNode}
           renderIntro={props.renderBgIntro}
           handleDom={this.handleBgDom}
         />
@@ -113,10 +112,10 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         />
         <TimeColsContentSkeleton
           colCnt={props.cells.length}
+          colGroupNode={props.colGroupNode}
           renderIntro={props.renderIntro}
           handleDom={this.handleContentSkeletonDom}
         />
-        <hr class={'fc-divider ' + context.theme.getClass('widgetHeader')} ref={this.bottomRuleElRef} />
       </div>
     )
   }
@@ -186,11 +185,13 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
   componentDidMount() {
     this.subrender()
+    this.resize()
   }
 
 
   componentDidUpdate() {
     this.subrender()
+    this.resize()
   }
 
 
@@ -266,7 +267,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
-  updateSize(isResize: boolean) {
+  resize(isResize?: boolean) { // gahhhhhhhh
     let { segRenderers } = this
 
     if (isResize || this.isSlatSizesDirty) {

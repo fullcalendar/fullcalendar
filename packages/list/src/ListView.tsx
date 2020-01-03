@@ -1,6 +1,5 @@
 import {
   h, createRef,
-  subtractInnerElHeight,
   View,
   ViewProps,
   Scroller,
@@ -30,8 +29,7 @@ export default class ListView extends View {
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
   private renderEvents = subrenderer(ListViewEvents)
-  private rootEl: HTMLDivElement
-  private scrollerRef = createRef<Scroller>()
+  private scrollerElRef = createRef<HTMLDivElement>()
   private eventRenderer: ListViewEvents
 
 
@@ -45,15 +43,18 @@ export default class ListView extends View {
 
     return (
       <div ref={this.setRootEl} class={classNames.join(' ')}>
-        <Scroller ref={this.scrollerRef} overflowX='hidden' overflowY='auto' />
+        <Scroller
+          elRef={this.scrollerElRef}
+          vGrow={!props.isHeightAuto}
+          overflowX='hidden'
+          overflowY='auto'
+        />
       </div>
     )
   }
 
 
   setRootEl = (rootEl: HTMLDivElement | null) => {
-    this.rootEl = rootEl
-
     if (rootEl) {
       this.context.calendar.registerInteractiveComponent(this, { // TODO: make aware that it doesn't do Hits
         el: rootEl
@@ -67,11 +68,13 @@ export default class ListView extends View {
 
   componentDidMount() {
     this.subrender()
+    this.resize()
   }
 
 
   componentDidUpdate() {
     this.subrender()
+    this.resize() // called too often!!!
   }
 
 
@@ -82,7 +85,7 @@ export default class ListView extends View {
     this.eventRenderer = this.renderEvents({
       segs: this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges),
       dayDates,
-      contentEl: this.scrollerRef.current.rootEl,
+      contentEl: this.scrollerElRef.current,
       selectedInstanceId: props.eventSelection, // TODO: rename
       hiddenInstances: // TODO: more convenient
         (props.eventDrag ? props.eventDrag.affectedEvents.instances : null) ||
@@ -94,26 +97,9 @@ export default class ListView extends View {
   }
 
 
-  updateSize(isResize, viewHeight, isAuto) {
-
-    // efficient. uses flags
+  resize(isResize?: boolean) { // TODO: have caller use this flag!!!!!!
     this.eventRenderer.computeSizes(isResize, this)
     this.eventRenderer.assignSizes(isResize, this)
-
-    let scroller = this.scrollerRef.current
-    scroller.clear() // sets height to 'auto' and clears overflow
-
-    if (!isAuto) {
-      scroller.setHeight(this.computeScrollerHeight(viewHeight))
-    }
-  }
-
-
-  computeScrollerHeight(viewHeight) {
-    let { rootEl } = this
-    let scrollerEl = this.scrollerRef.current.rootEl
-
-    return viewHeight - subtractInnerElHeight(rootEl, scrollerEl) // everything that's NOT the scroller
   }
 
 

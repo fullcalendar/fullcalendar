@@ -47,23 +47,6 @@ export default abstract class View<State={}> extends DateComponent<ViewProps, St
   nowIndicatorIntervalID: any // "
 
 
-  // Sizing
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
-  }
-
-
-  isLayoutSizeDirty() {
-    let { calendar } = this.context
-
-    return calendar.isViewUpdated ||
-      calendar.isDatesUpdated ||
-      calendar.isEventsUpdated
-  }
-
-
   // Event Rendering
   // -----------------------------------------------------------------------------------------------------------------
 

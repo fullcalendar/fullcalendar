@@ -1,20 +1,14 @@
 import {
-  VNode, h, createRef, ComponentChildren,
-  findElements,
-  matchCellWidths,
-  uncompensateScroll,
-  compensateScroll,
-  subtractInnerElHeight,
-  distributeHeight,
-  undistributeHeight,
+  VNode, h,
   createFormatter,
-  Scroller,
   View,
   memoize,
   getViewClassNames,
-  GotoAnchor
+  GotoAnchor,
+  SimpleScrollGrid,
+  SimpleScrollGridSection,
+  ChunkContentCallbackArgs
 } from '@fullcalendar/core'
-import Table from './Table'
 import TableDateProfileGenerator from './TableDateProfileGenerator'
 
 
@@ -30,40 +24,43 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 export default abstract class TableView<State={}> extends View<State> {
 
   protected processOptions = memoize(this._processOptions)
-  private rootElRef = createRef<HTMLDivElement>()
-  private scrollerRef = createRef<Scroller>()
   private colWeekNumbersVisible: boolean // computed option
-  private weekNumberWidth: number
 
 
-  renderLayout(headerContent: ComponentChildren, bodyContent: ComponentChildren) {
-    let { theme, options } = this.context
+  renderLayout(headerRowContent: VNode | null, bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode) {
     let classNames = getViewClassNames(this.props.viewSpec).concat('fc-dayGrid-view')
 
-    this.processOptions(options)
+    this.processOptions(this.context.options)
+
+    let sections: SimpleScrollGridSection[] = []
+
+    if (headerRowContent) {
+      sections.push({
+        type: 'head',
+        className: 'fc-head',
+        chunk: {
+          scrollerClassName: 'fc-head-container',
+          rowContent: headerRowContent
+        }
+      })
+    }
+
+    sections.push({
+      type: 'body',
+      className: 'fc-body',
+      chunk: {
+        scrollerClassName: 'fc-day-grid-container',
+        content: bodyContent
+      }
+    })
 
     return (
-      <div ref={this.rootElRef} class={classNames.join(' ')}>
-        <table class={theme.getClass('tableGrid')}>
-          {options.columnHeader &&
-            <thead class='fc-head'>
-              <tr>
-                <td class={'fc-head-container ' + theme.getClass('widgetHeader')}>
-                  {headerContent}
-                </td>
-              </tr>
-            </thead>
-          }
-          <tbody class='fc-body'>
-            <tr>
-              <td class={theme.getClass('widgetContent')}>
-                <Scroller ref={this.scrollerRef} overflowX='hidden' overflowY='auto' extraClassName='fc-day-grid-container'>
-                  {bodyContent}
-                </Scroller>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class={classNames.join(' ')}>
+        <SimpleScrollGrid
+          vGrow={!this.props.isHeightAuto}
+          cols={[ { width: 'shrink' } ]}
+          sections={sections}
+        />
       </div>
     )
   }
@@ -92,119 +89,20 @@ export default abstract class TableView<State={}> extends View<State> {
   }
 
 
-  // Generates an HTML attribute string for setting the width of the week number column, if it is known
-  weekNumberStyles() {
-    if (this.weekNumberWidth != null) {
-      return { width: this.weekNumberWidth }
-    }
-    return {}
-  }
-
-
   /* Dimensions
   ------------------------------------------------------------------------------------------------------------------*/
 
+  // TODO: give eventLimit to DayTable
 
-  // Refreshes the horizontal dimensions of the view
-  updateLayoutHeight(headRowEl: HTMLElement | null, table: Table, viewHeight: number, isAuto: boolean) {
-    let rootEl = this.rootElRef.current
-    let scroller = this.scrollerRef.current
-    let { options } = this.context
-    let eventLimit = options.eventLimit
-    let scrollerHeight
-    let scrollbarWidths
+  // // is the event limit a constant level number?
+  // if (eventLimit && typeof eventLimit === 'number') {
+  //   table.limitRows(eventLimit) // limit the levels first so the height can redistribute after
+  // }
 
-    // hack to give the view some height prior to dayGrid's columns being rendered
-    // TODO: separate setting height from scroller VS dayGrid.
-    if (!table.rowEls) {
-      if (!isAuto) {
-        scrollerHeight = this.computeScrollerHeight(viewHeight)
-        scroller.setHeight(scrollerHeight)
-      }
-      return
-    }
-
-    if (this.colWeekNumbersVisible) {
-      // Make sure all week number cells running down the side have the same width.
-      this.weekNumberWidth = matchCellWidths(
-        findElements(rootEl, '.fc-week-number')
-      )
-    }
-
-    // reset all heights to be natural
-    scroller.clear()
-    if (headRowEl) {
-      uncompensateScroll(headRowEl)
-    }
-
-    // is the event limit a constant level number?
-    if (eventLimit && typeof eventLimit === 'number') {
-      table.limitRows(eventLimit) // limit the levels first so the height can redistribute after
-    }
-
-    // distribute the height to the rows
-    // (viewHeight is a "recommended" value if isAuto)
-    scrollerHeight = this.computeScrollerHeight(viewHeight)
-    this.setGridHeight(table, scrollerHeight, isAuto, options)
-
-    // is the event limit dynamically calculated?
-    if (eventLimit && typeof eventLimit !== 'number') {
-      table.limitRows(eventLimit) // limit the levels after the grid's row heights have been set
-    }
-
-    if (!isAuto) { // should we force dimensions of the scroll container?
-
-      scroller.setHeight(scrollerHeight)
-      scrollbarWidths = scroller.getScrollbarWidths()
-
-      if (scrollbarWidths.left || scrollbarWidths.right) { // using scrollbars?
-
-        if (headRowEl) {
-          compensateScroll(headRowEl, scrollbarWidths)
-        }
-
-        // doing the scrollbar compensation might have created text overflow which created more height. redo
-        scrollerHeight = this.computeScrollerHeight(viewHeight)
-        scroller.setHeight(scrollerHeight)
-      }
-
-      // guarantees the same scrollbar widths
-      scroller.lockOverflow(scrollbarWidths)
-    }
-  }
-
-
-  // given a desired total height of the view, returns what the height of the scroller should be
-  computeScrollerHeight(viewHeight) {
-    let rootEl = this.rootElRef.current
-    let scroller = this.scrollerRef.current
-
-    return viewHeight - subtractInnerElHeight(rootEl, scroller.rootEl) // everything that's NOT the scroller
-  }
-
-
-  // Sets the height of just the Table component in this view
-  setGridHeight(table: Table, height, isAuto, options) {
-    let { rowEls } = table
-
-    if (options.monthMode) {
-
-      // if auto, make the height of each row the height that it would be if there were 6 weeks
-      if (isAuto) {
-        height *= rowEls.length / 6
-      }
-
-      distributeHeight(rowEls, height, !isAuto) // if auto, don't compensate for height-hogging rows
-
-    } else {
-
-      if (isAuto) {
-        undistributeHeight(rowEls) // let the rows be their natural height with no expanding
-      } else {
-        distributeHeight(rowEls, height, true) // true = compensate for height-hogging rows
-      }
-    }
-  }
+  // // is the event limit dynamically calculated?
+  // if (eventLimit && typeof eventLimit !== 'number') {
+  //   table.limitRows(eventLimit) // limit the levels after the grid's row heights have been set
+  // }
 
 
   /* Header Rendering
@@ -216,9 +114,8 @@ export default abstract class TableView<State={}> extends View<State> {
     let { theme, options } = this.context
 
     if (this.colWeekNumbersVisible) {
-      // inner span needed for matchCellWidths
       return [
-        <th class={'fc-week-number ' + theme.getClass('widgetHeader')} style={this.weekNumberStyles()}>
+        <th class={'fc-week-number fc-shrink ' + theme.getClass('widgetHeader')}>
           <span>
             {options.weekLabel}
           </span>
@@ -241,10 +138,8 @@ export default abstract class TableView<State={}> extends View<State> {
     let colCnt = cells[0].length
 
     if (this.colWeekNumbersVisible) {
-
-      // aside from link, the GotoAnchor is important for matchCellWidths
       return [
-        <td class='fc-week-number' style={this.weekNumberStyles()}>
+        <td class='fc-week-number fc-shrink'>
           <GotoAnchor
             navLinks={options.navLinks}
             gotoOptions={{ date: weekStart, type: 'week', forceOff: colCnt === 1 }}
@@ -263,7 +158,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <td class={'fc-week-number ' + theme.getClass('widgetContent')} style={this.weekNumberStyles()}></td>
+        <td class={'fc-week-number fc-shrink ' + theme.getClass('widgetContent')}></td>
       ]
     }
 
@@ -277,7 +172,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <td class='fc-week-number' style={this.weekNumberStyles()}></td>
+        <td class='fc-week-number fc-shrink'></td>
       ]
     }
 

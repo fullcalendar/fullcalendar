@@ -13,6 +13,7 @@ interface SubRendererOwner {
 }
 
 
+// TODO: make a HOC instead
 export abstract class BaseComponent<Props={}, State={}> extends Component<Props, State> implements SubRendererOwner {
 
   static addPropsEquality = addPropsEquality
@@ -140,7 +141,7 @@ function buildClassSubRenderer(subRendererClass: SubRendererClass<any>) {
     }
   }
 
-  return function(this: SubRendererOwner, props: any) {
+  return function(this: SubRendererOwner, props: any) { // what about passing in Context?
     let context = this.context
 
     if (!props) {
@@ -181,7 +182,7 @@ function buildFuncSubRenderer(renderFunc, unrenderFunc) {
     }
   }
 
-  return function(this: SubRendererOwner, props: any) {
+  return function(this: SubRendererOwner, props: any) { // what about passing in Context?
     thisContext = this
     let context = thisContext.context
 

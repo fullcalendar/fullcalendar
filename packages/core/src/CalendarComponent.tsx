@@ -3,12 +3,10 @@ import { ViewSpec } from './structs/view-spec'
 import View, { ViewProps } from './View'
 import Toolbar from './Toolbar'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
-import { applyStyle } from './util/dom-manip'
 import { rangeContainsMarker } from './datelib/date-range'
 import { EventUiHash } from './component/event-ui'
 import { parseBusinessHours } from './structs/business-hours'
 import { memoize } from './util/memoize'
-import { computeHeightAndMargins } from './util/dom-geom'
 import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
@@ -18,6 +16,8 @@ import { BaseComponent, subrenderer } from './vdom-util'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
 import { DelayedRunner } from './util/runner'
+import { applyStyleProp } from './util/dom-manip'
+import ViewContainer from './ViewContainer'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -34,17 +34,14 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.context.calendar))
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
-  private updateClassNames = subrenderer(setClassNames, unsetClassNames)
+  private updateOuterClassNames = subrenderer(setClassNames, unsetClassNames)
+  private updateOuterHeight = subrenderer(setHeight, unsetHeight)
   private handleNavLinkClick = buildDelegationHandler('a[data-goto]', this._handleNavLinkClick.bind(this))
 
   headerRef = createRef<Toolbar>()
   footerRef = createRef<Toolbar>()
   viewRef = createRef<View>()
   viewContainerEl: HTMLElement
-
-  isSizingDirty = false
-  isHeightAuto: boolean
-  viewHeight: number
 
   get view() { return this.viewRef.current }
 
@@ -53,7 +50,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   renders INSIDE of an outer div
   */
   render(props: CalendarComponentProps, state: {}, context: ComponentContext) {
-    let { calendar, header, footer } = context
+    let { calendar, options, header, footer } = context
 
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
@@ -64,10 +61,23 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
       props.title
     )
 
-    this.freezeHeight() // thawed after render
-    this.isSizingDirty = true
+    let calendarHeight: string | number = ''
+    let viewHeight: string | number = ''
+    let viewAspectRatio: number | undefined
 
-    this.updateClassNames({ rootEl: props.rootEl })
+    if (isHeightAuto(options)) {
+      viewHeight = 'auto'
+      viewAspectRatio = options.aspectRatio
+    } else if (options.height != null) {
+      calendarHeight = options.height
+    } else if (options.contentHeight != null) {
+      viewHeight = options.contentHeight
+    }
+
+    // TODO: move this somewhere after real render!
+    // move to Calendar class?
+    this.updateOuterClassNames({ el: props.rootEl })
+    this.updateOuterHeight({ el: props.rootEl, height: calendarHeight })
 
     return (
       <Fragment>
@@ -77,18 +87,18 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
             extraClassName='fc-header-toolbar'
             model={header}
             { ...toolbarProps }
-            />
+          />
         }
-        <div class='fc-view-container' ref={this.setViewContainerEl} onClick={this.handleNavLinkClick}>
+        <ViewContainer height={viewHeight} aspectRatio={viewAspectRatio} elRef={this.setViewContainerEl} onClick={this.handleNavLinkClick}>
           {this.renderView(props, this.context)}
-        </div>
+        </ViewContainer>
         {footer &&
           <Toolbar
             ref={this.footerRef}
             extraClassName='fc-footer-toolbar'
             model={footer}
             { ...toolbarProps }
-            />
+          />
         }
       </Fragment>
     )
@@ -96,7 +106,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
 
   resizeRunner = new DelayedRunner(() => {
-    this.updateSize(true)
+    // TODO: call updateSize or something
     let { calendar, view } = this.context
     calendar.publiclyTrigger('windowResize', [ view ])
   })
@@ -174,7 +184,8 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
       dateSelection: props.dateSelection,
       eventSelection: props.eventSelection,
       eventDrag: props.eventDrag,
-      eventResize: props.eventResize
+      eventResize: props.eventResize,
+      isHeightAuto: isHeightAuto(options)
     }
 
     let transformers = this.buildViewPropTransformers(pluginHooks.viewPropsTransformers)
@@ -213,92 +224,13 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
 
   updateSize(isResize = false) {
-    this.resizeRunner.whilePaused(() => {
-      if (isResize || this.isSizingDirty) {
-
-        if (isResize || this.isHeightAuto == null) {
-          this.computeHeightVars()
-        }
-
-        let view = this.viewRef.current
-        view.updateSize(isResize, this.viewHeight, this.isHeightAuto)
-        view.updateNowIndicator()
-
-        this.thawHeight()
-        this.isSizingDirty = true
-      }
-    })
-  }
-
-
-  computeHeightVars() {
-    let { calendar } = this.context // yuck. need to handle dynamic options
-    let heightInput = calendar.opt('height')
-    let contentHeightInput = calendar.opt('contentHeight')
-
-    this.isHeightAuto = heightInput === 'auto' || contentHeightInput === 'auto'
-
-    if (typeof contentHeightInput === 'number') { // exists and not 'auto'
-      this.viewHeight = contentHeightInput
-    } else if (typeof contentHeightInput === 'function') { // exists and is a function
-      this.viewHeight = contentHeightInput()
-    } else if (typeof heightInput === 'number') { // exists and not 'auto'
-      this.viewHeight = heightInput - this.queryToolbarsHeight()
-    } else if (typeof heightInput === 'function') { // exists and is a function
-      this.viewHeight = heightInput() - this.queryToolbarsHeight()
-    } else if (heightInput === 'parent') { // set to height of parent element
-      let parentEl = this.props.rootEl.parentNode as HTMLElement
-      this.viewHeight = parentEl.getBoundingClientRect().height - this.queryToolbarsHeight()
-    } else {
-      this.viewHeight = Math.round(
-        this.viewContainerEl.getBoundingClientRect().width /
-        Math.max(calendar.opt('aspectRatio'), .5)
-      )
-    }
-  }
-
-
-  queryToolbarsHeight() {
-    let header = this.headerRef.current
-    let footer = this.footerRef.current
-    let height = 0
-
-    if (header) {
-      height += computeHeightAndMargins(header.rootEl)
-    }
-
-    if (footer) {
-      height += computeHeightAndMargins(footer.rootEl)
-    }
-
-    return height
-  }
-
-
-  // Height "Freezing"
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  freezeHeight() {
-    let { rootEl } = this.props
-
-    applyStyle(rootEl, {
-      height: rootEl.getBoundingClientRect().height,
-      overflow: 'hidden'
-    })
-  }
-
-
-  thawHeight() {
-    let { rootEl } = this.props
-
-    applyStyle(rootEl, {
-      height: '',
-      overflow: ''
-    })
+    // TODO
+    // this.resizeRunner.whilePaused(() => {
+    // })
   }
 
 }
+
 
 function buildToolbarProps(
   viewSpec: ViewSpec,
@@ -322,12 +254,17 @@ function buildToolbarProps(
 }
 
 
+function isHeightAuto(options) {
+  return options.height === 'auto' || options.contentHeight === 'auto'
+}
+
+
 // Outer Div Rendering
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function setClassNames({ rootEl }: { rootEl: HTMLElement }, context: ComponentContext) {
-  let classList = rootEl.classList
+function setClassNames({ el }: { el: HTMLElement }, context: ComponentContext) {
+  let classList = el.classList
   let classNames: string[] = [
     'fc',
     'fc-' + context.options.dir,
@@ -338,17 +275,28 @@ function setClassNames({ rootEl }: { rootEl: HTMLElement }, context: ComponentCo
     classList.add(className)
   }
 
-  return { rootEl, classNames }
+  return { el, classNames }
 }
 
 
-function unsetClassNames({ rootEl, classNames }: { rootEl: HTMLElement, classNames: string[] }) {
-  let classList = rootEl.classList
+function unsetClassNames({ el, classNames }: { el: HTMLElement, classNames: string[] }) {
+  let classList = el.classList
 
   for (let className of classNames) {
     classList.remove(className)
   }
 }
+
+
+function setHeight({ el, height }: { el: HTMLElement, height: any }) {
+  applyStyleProp(el, 'height', height)
+  return el
+}
+
+function unsetHeight(el: HTMLElement) {
+  applyStyleProp(el, 'height', '')
+}
+
 
 
 // Plugin

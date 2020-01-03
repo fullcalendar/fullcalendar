@@ -1,5 +1,6 @@
 import { Rect } from './geom'
-import { sanitizeScrollbarWidth, getIsRtlScrollbarOnLeft } from './scrollbars'
+import { getIsRtlScrollbarOnLeft } from './scrollbar-side'
+import { getScrollbarWidths } from './scrollbar-width'
 
 export interface EdgeInfo {
   borderLeft: number
@@ -16,16 +17,14 @@ export interface EdgeInfo {
 }
 
 
-export function computeEdges(el, getPadding = false): EdgeInfo {
+export function computeEdges(el: HTMLElement, getPadding = false): EdgeInfo { // cache somehow?
   let computedStyle = window.getComputedStyle(el)
   let borderLeft = parseInt(computedStyle.borderLeftWidth, 10) || 0
   let borderRight = parseInt(computedStyle.borderRightWidth, 10) || 0
   let borderTop = parseInt(computedStyle.borderTopWidth, 10) || 0
   let borderBottom = parseInt(computedStyle.borderBottomWidth, 10) || 0
-
-  // must use offset(Width|Height) because compatible with client(Width|Height)
-  let scrollbarLeftRight = sanitizeScrollbarWidth(el.offsetWidth - el.clientWidth - borderLeft - borderRight)
-  let scrollbarBottom = sanitizeScrollbarWidth(el.offsetHeight - el.clientHeight - borderTop - borderBottom)
+  let scrollbarLeftRight = el.clientHeight < el.scrollHeight ? getScrollbarWidths().y : 0
+  let scrollbarBottom = el.clientWidth < el.scrollWidth ? getScrollbarWidths().x : 0
 
   let res: EdgeInfo = {
     borderLeft,
@@ -54,8 +53,8 @@ export function computeEdges(el, getPadding = false): EdgeInfo {
 }
 
 
-export function computeInnerRect(el, goWithinPadding = false) {
-  let outerRect = computeRect(el)
+export function computeInnerRect(el, goWithinPadding = false, doFromWindowViewport?: boolean) {
+  let outerRect = doFromWindowViewport ? el.getBoundingClientRect() : computeRect(el)
   let edges = computeEdges(el, goWithinPadding)
   let res = {
     left: outerRect.left + edges.borderLeft + edges.scrollbarLeft,

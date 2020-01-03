@@ -6,7 +6,8 @@ import {
   DaySeries,
   DayTableModel,
   memoize,
-  ViewProps
+  ViewProps,
+  ChunkContentCallbackArgs
 } from '@fullcalendar/core'
 import { DayTable } from '@fullcalendar/daygrid'
 import TimeColsView from './TimeColsView'
@@ -34,50 +35,34 @@ export default class DayTimeColsView extends TimeColsView {
           datesRepDistinctDays={true}
           renderIntro={this.renderHeadIntro}
         />,
-      options.allDaySlot &&
+      options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
         <DayTable
           ref={this.dayTableRef}
           {...splitProps['allDay']}
           dateProfile={dateProfile}
           dayTableModel={dayTableModel}
           nextDayThreshold={nextDayThreshold}
+          colGroupNode={contentArg.colGroupNode}
           isRigid={false}
           renderNumberIntro={this.renderTableIntro}
           renderBgIntro={this.renderTableBgIntro}
           renderIntro={this.renderTableIntro}
           colWeekNumbersVisible={false}
           cellWeekNumbersVisible={false}
-        />,
-      <DayTimeCols
-        ref={this.timeColsRef}
-        {...splitProps['timed']}
-        dateProfile={dateProfile}
-        dayTableModel={dayTableModel}
-        renderBgIntro={this.renderTimeColsBgIntro}
-        renderIntro={this.renderTimeColsIntro}
-      />
-    )
-  }
-
-
-  updateSize(isResize: boolean, viewHeight: number, isAuto: boolean) {
-    let timeCols = this.timeColsRef.current
-    let dayTable = this.dayTableRef.current
-
-    if (isResize || this.isLayoutSizeDirty()) {
-      this.updateLayoutSize(
-        timeCols.timeCols,
-        dayTable ? dayTable.table : null,
-        viewHeight,
-        isAuto
+        />
+      )),
+      (contentArg: ChunkContentCallbackArgs) => (
+        <DayTimeCols
+          ref={this.timeColsRef}
+          {...splitProps['timed']}
+          dateProfile={dateProfile}
+          dayTableModel={dayTableModel}
+          colGroupNode={contentArg.colGroupNode}
+          renderBgIntro={this.renderTimeColsBgIntro}
+          renderIntro={this.renderTimeColsIntro}
+        />
       )
-    }
-
-    if (dayTable) {
-      dayTable.updateSize(isResize)
-    }
-
-    timeCols.updateSize(isResize)
+    )
   }
 
 
