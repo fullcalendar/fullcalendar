@@ -42,7 +42,7 @@ export interface ChunkContentCallbackArgs {
 }
 
 
-export function getShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL!
+export function computeShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL!
   let shrinkEls = findElements(chunkEls, '.shrink')
   let largestWidth = 0
 
@@ -94,7 +94,7 @@ export interface ScrollerLike { // have scrollers implement?
 }
 
 
-export function getForceScrollbars(scrollers: ScrollerLike[], axis: 'X' | 'Y') {
+export function computeForceScrollbars(scrollers: ScrollerLike[], axis: 'X' | 'Y') {
   let methodName = 'needs' + axis + 'Scrolling'
   let needsScrollbars = false
 

@@ -68,13 +68,19 @@ export default class ListView extends View {
 
   componentDidMount() {
     this.subrender()
-    this.resize()
+    this.handleSizing(false)
+    this.context.addResizeHandler(this.handleSizing)
   }
 
 
   componentDidUpdate() {
     this.subrender()
-    this.resize() // called too often!!!
+    this.handleSizing(false)
+  }
+
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleSizing)
   }
 
 
@@ -97,9 +103,9 @@ export default class ListView extends View {
   }
 
 
-  resize(isResize?: boolean) { // TODO: have caller use this flag!!!!!!
-    this.eventRenderer.computeSizes(isResize, this)
-    this.eventRenderer.assignSizes(isResize, this)
+  handleSizing = (forced: boolean) => {
+    this.eventRenderer.computeSizes(forced, this)
+    this.eventRenderer.assignSizes(forced, this)
   }
 
 

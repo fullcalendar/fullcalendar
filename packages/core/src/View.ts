@@ -182,15 +182,6 @@ export default abstract class View<State={}> extends DateComponent<ViewProps, St
     // subclasses can implement
   }
 
-
-  // HACKs
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  afterSizing(callback) {
-    this.context.calendar.afterSizing(callback)
-  }
-
 }
 
 EmitterMixin.mixInto(View)

@@ -1,4 +1,5 @@
 import Calendar from '../Calendar'
+import { ResizeHandler } from '../CalendarComponent'
 import ViewApi from '../ViewApi'
 import Theme from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
@@ -25,6 +26,8 @@ export default interface ComponentContext {
   header: ToolbarModel | null
   footer: ToolbarModel | null
   viewsWithButtons: string[]
+  addResizeHandler: (handler: ResizeHandler) => void
+  removeResizeHandler: (handler: ResizeHandler) => void
 }
 
 
@@ -43,7 +46,9 @@ export function buildContext(
     theme,
     view,
     options,
-    ...computeContextProps(options, theme, calendar)
+    ...computeContextProps(options, theme, calendar),
+    addResizeHandler: calendar.component.addResizeHandler,
+    removeResizeHandler: calendar.component.removeResizeHandler
   }
 }
 

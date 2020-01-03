@@ -1,6 +1,7 @@
 import { Component, h, Fragment, Ref, ComponentChildren, render } from './vdom'
 import ComponentContext, { ComponentContextType } from './component/ComponentContext'
 import { __assign } from 'tslib'
+import { isPropsEqual, getUnequalProps } from './util/object'
 
 
 export type EqualityFuncs<ObjType> = {
@@ -314,4 +315,25 @@ export function renderVNodes(children: ComponentChildren, context: ComponentCont
   )
 
   return Array.prototype.slice.call(containerEl.childNodes)
+}
+
+
+export function componentNeedsResize<P, S>(prevProps: P, props: P, prevState: S, state: S, stateIsSizing: { [K in keyof S]?: boolean }) {
+  if (!isPropsEqual(prevProps, props)) {
+    return true
+  }
+
+  let unequalState = getUnequalProps(prevState, state)
+
+  if (!unequalState.length) {
+    return true // if neither props nor state changed, that means context changed, so definitely do a resize!
+  }
+
+  for (let key of unequalState) {
+    if (!stateIsSizing[key]) {
+      return true
+    }
+  }
+
+  return false
 }

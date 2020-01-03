@@ -118,14 +118,9 @@ export default abstract class TimeColsView extends View {
   }
 
 
-  componentDidUpdate(prevProps: ViewProps, prevState: {}, snapshot) {
-    // not working on window resize!!!??
-
+  componentDidUpdate(prevProps: ViewProps) {
     if (prevProps.dateProfile !== this.props.dateProfile) {
       this.scrollToInitialTime()
-
-    } else {
-      this.scrollTop(snapshot.scrollTop)
     }
   }
 
@@ -174,20 +169,10 @@ export default abstract class TimeColsView extends View {
 
 
   scrollToTime(duration: Duration) {
-    this.afterSizing(() => { // hack
-      let top = this.computeDateScroll(duration)
+    let scrollTop = this.computeDateScroll(duration)
+    let scrollerEl = this.scrollerElRef.current
 
-      this.scrollTop(top)
-    })
-  }
-
-
-  scrollTop(top: number) {
-    this.afterSizing(() => { // hack
-      let scrollerEl = this.scrollerElRef.current
-
-      scrollerEl.scrollTop = top
-    })
+    scrollerEl.scrollTop = scrollTop
   }
 
 

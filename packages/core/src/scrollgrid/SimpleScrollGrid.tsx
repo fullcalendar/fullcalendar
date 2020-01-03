@@ -1,10 +1,10 @@
 import { VNode, h } from '../vdom'
 import ComponentContext from '../component/ComponentContext'
-import { BaseComponent, setRef } from '../vdom-util'
+import { BaseComponent, setRef, componentNeedsResize } from '../vdom-util'
 import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
-import { ColCss, SectionConfig, renderMicroColGroup, getShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
-  renderChunkContent, getChunkVGrow, doSizingHacks, getForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames } from './util'
+import { ColCss, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
+  renderChunkContent, getChunkVGrow, doSizingHacks, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames } from './util'
 
 
 export interface SimpleScrollGridProps {
@@ -21,6 +21,11 @@ export interface SimpleScrollGridSection extends SectionConfig {
 interface SimpleScrollGridState {
   shrinkWidth?: number
   forceYScrollbars: boolean
+}
+
+const STATE_IS_SIZING = {
+  shrinkWidth: true,
+  forceYScrollbars: true
 }
 
 
@@ -81,33 +86,41 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
   }
 
 
+  _handleScrollerElRef(scrollerEl: HTMLElement | null, key: string, chunkConfig: ChunkConfig) {
+    setRef(chunkConfig.scrollerElRef, scrollerEl)
+  }
+
+
   componentDidMount() {
-    this.componentDidRender()
+    this.handleSizing()
+    this.context.addResizeHandler(this.handleSizing)
   }
 
 
-  componentDidUpdate() {
-    this.componentDidRender()
+  componentDidUpdate(prevProps: SimpleScrollGridProps, prevState: SimpleScrollGridState) {
+    if (componentNeedsResize(prevProps, this.props, prevState, this.state, STATE_IS_SIZING)) {
+      this.handleSizing()
+    }
   }
 
 
-  componentDidRender() {
-    doSizingHacks(this.base as HTMLElement) // TODO: not every time
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleSizing)
+  }
+
+
+  handleSizing = () => {
+    doSizingHacks(this.base as HTMLElement)
 
     if (hasShrinkWidth(this.props.cols)) {
       this.setState({
-        shrinkWidth: getShrinkWidth(this.scrollerElRefs.getCurrents())
+        shrinkWidth: computeShrinkWidth(this.scrollerElRefs.getCurrents())
       })
     }
 
-    this.setState({ // TODO: only for resizing
-      forceYScrollbars: getForceScrollbars(this.scrollerRefs.getCurrents(), 'Y')
+    this.setState({
+      forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getCurrents(), 'Y')
     })
-  }
-
-
-  _handleScrollerElRef(scrollerEl: HTMLElement | null, key: string, chunkConfig: ChunkConfig) {
-    setRef(chunkConfig.scrollerElRef, scrollerEl)
   }
 
 

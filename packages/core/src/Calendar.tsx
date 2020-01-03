@@ -107,7 +107,6 @@ export default class Calendar {
   renderRunner: DelayedRunner
   actionRunner: TaskRunner<Action> // for reducer. bad name
   afterSizingTriggers: any = {}
-  afterSizingCallbacks = []
   isViewUpdated: boolean = false
   isDatesUpdated: boolean = false
   isEventsUpdated: boolean = false
@@ -351,9 +350,6 @@ export default class Calendar {
     let calendarComponent = this.component
     let viewComponent = calendarComponent.view
 
-    // calendarComponent.updateSize(false)
-    this.drainAfterSizingCallbacks()
-
     if (this.isViewUpdated) {
       this.isViewUpdated = false
       this.publiclyTrigger('viewSkeletonRender', [
@@ -594,20 +590,6 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  afterSizing(callback) {
-    this.afterSizingCallbacks.push(callback)
-  }
-
-
-  drainAfterSizingCallbacks() {
-    let { afterSizingCallbacks } = this
-
-    while (afterSizingCallbacks.length) {
-      (afterSizingCallbacks.shift())()
-    }
-  }
-
-
   publiclyTriggerAfterSizing<T extends EventHandlerName>(name: T, args: EventHandlerArgs<T>) {
     let { afterSizingTriggers } = this;
 
@@ -827,7 +809,7 @@ export default class Calendar {
 
   updateSize() { // public
     if (this.component) {
-      this.component.updateSize(true)
+      this.component.triggerResizeHandlers(true)
     }
   }
 
@@ -1198,8 +1180,6 @@ export default class Calendar {
     if (duration) {
       this.component.view.scrollToTime(duration)
     }
-
-    this.drainAfterSizingCallbacks() // hack
   }
 
 }

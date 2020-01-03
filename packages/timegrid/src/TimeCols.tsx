@@ -185,13 +185,19 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
   componentDidMount() {
     this.subrender()
-    this.resize()
+    this.handleSizing(false)
+    this.context.addResizeHandler(this.handleSizing)
   }
 
 
   componentDidUpdate() {
     this.subrender()
-    this.resize()
+    this.handleSizing(false)
+  }
+
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleSizing)
   }
 
 
@@ -267,28 +273,28 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
-  resize(isResize?: boolean) { // gahhhhhhhh
+  handleSizing = (forced: boolean) => {
     let { segRenderers } = this
 
-    if (isResize || this.isSlatSizesDirty) {
+    if (forced || this.isSlatSizesDirty) {
       this.buildSlatPositions()
       this.isSlatSizesDirty = false
     }
 
-    if (isResize || this.isColSizesDirty) {
+    if (forced || this.isColSizesDirty) {
       this.buildColPositions()
       this.isColSizesDirty = false
     }
 
     for (let segRenderer of segRenderers) {
       if (segRenderer) {
-        segRenderer.computeSizes(isResize, this)
+        segRenderer.computeSizes(forced, this)
       }
     }
 
     for (let segRenderer of segRenderers) {
       if (segRenderer) {
-        segRenderer.assignSizes(isResize, this)
+        segRenderer.assignSizes(forced, this)
       }
     }
   }

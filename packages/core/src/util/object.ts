@@ -120,3 +120,26 @@ export function isPropsEqual(obj0, obj1) {
 
   return true
 }
+
+
+export function getUnequalProps(obj0, obj1) {
+  let keys: string[] = []
+
+  for (let key in obj0) {
+    if (hasOwnProperty.call(obj0, key)) {
+      if (!(key in obj1)) {
+        keys.push(key)
+      }
+    }
+  }
+
+  for (let key in obj1) {
+    if (hasOwnProperty.call(obj1, key)) {
+      if (obj0[key] !== obj1[key]) {
+        keys.push(key)
+      }
+    }
+  }
+
+  return keys
+}

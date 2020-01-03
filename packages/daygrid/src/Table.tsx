@@ -160,13 +160,19 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
   componentDidMount() {
     this.subrender()
-    this.resize()
+    this.handleSizing(false)
+    this.context.addResizeHandler(this.handleSizing)
   }
 
 
   componentDidUpdate() {
     this.subrender()
-    this.resize()
+    this.handleSizing(false)
+  }
+
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleSizing)
   }
 
 
@@ -260,12 +266,12 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  resize(isResize?: boolean) { // gaahhhhhhhhh
+  handleSizing = (forced: boolean) => {
     let { calendar } = this.context
     let popover = this.popoverRef.current
 
     if (
-      isResize ||
+      forced ||
       this.isCellSizesDirty ||
       calendar.isEventsUpdated // hack
     ) {

@@ -18,6 +18,7 @@ import { capitaliseFirstLetter } from './util/misc'
 import { DelayedRunner } from './util/runner'
 import { applyStyleProp } from './util/dom-manip'
 import ViewContainer from './ViewContainer'
+import { removeExact } from './util/array'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -28,6 +29,8 @@ export interface CalendarComponentProps extends CalendarState {
   title: string
 }
 
+export type ResizeHandler = (force: boolean) => void
+
 export default class CalendarComponent extends BaseComponent<CalendarComponentProps> {
 
   private buildViewContext = memoize(buildContext)
@@ -37,11 +40,10 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   private updateOuterClassNames = subrenderer(setClassNames, unsetClassNames)
   private updateOuterHeight = subrenderer(setHeight, unsetHeight)
   private handleNavLinkClick = buildDelegationHandler('a[data-goto]', this._handleNavLinkClick.bind(this))
-
-  headerRef = createRef<Toolbar>()
-  footerRef = createRef<Toolbar>()
-  viewRef = createRef<View>()
-  viewContainerEl: HTMLElement
+  private headerRef = createRef<Toolbar>()
+  private footerRef = createRef<Toolbar>()
+  private viewRef = createRef<View>()
+  private resizeHandlers: ResizeHandler[] = []
 
   get view() { return this.viewRef.current }
 
@@ -105,13 +107,6 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   }
 
 
-  resizeRunner = new DelayedRunner(() => {
-    // TODO: call updateSize or something
-    let { calendar, view } = this.context
-    calendar.publiclyTrigger('windowResize', [ view ])
-  })
-
-
   componentDidMount() {
     window.addEventListener('resize', this.handleWindowResize)
   }
@@ -121,14 +116,6 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
     this.subrenderDestroy()
     this.resizeRunner.clear()
     window.removeEventListener('resize', this.handleWindowResize)
-  }
-
-
-  handleWindowResize = (ev: UIEvent) => {
-    if (ev.target === window) { // avoid jqui events
-      let { options } = this.context
-      this.resizeRunner.request(options.windowResizeDelay)
-    }
   }
 
 
@@ -161,8 +148,6 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
     let { pluginHooks, calendar } = this.context
 
     if (viewContainerEl) {
-      this.viewContainerEl = viewContainerEl
-
       for (let modifyViewContainer of pluginHooks.viewContainerModifiers) {
         modifyViewContainer(viewContainerEl, calendar)
       }
@@ -223,10 +208,39 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  updateSize(isResize = false) {
-    // TODO
-    // this.resizeRunner.whilePaused(() => {
-    // })
+  resizeRunner = new DelayedRunner(() => {
+    this.triggerResizeHandlers(false)
+    let { calendar, view } = this.context
+    calendar.publiclyTrigger('windowResize', [ view ])
+  })
+
+
+  handleWindowResize = (ev: UIEvent) => {
+    let { options } = this.context
+
+    if (
+      options.handleWindowResize &&
+      ev.target === window // avoid jqui events
+    ) {
+      this.resizeRunner.request(options.windowResizeDelay)
+    }
+  }
+
+
+  addResizeHandler = (handler: ResizeHandler) => {
+    this.resizeHandlers.push(handler)
+  }
+
+
+  removeResizeHandler = (handler: ResizeHandler) => {
+    removeExact(this.resizeHandlers, handler)
+  }
+
+
+  triggerResizeHandlers(forced: boolean) {
+    for (let handler of this.resizeHandlers) {
+      handler(forced)
+    }
   }
 
 }
