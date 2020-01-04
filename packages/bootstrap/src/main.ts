@@ -4,24 +4,17 @@ export class BootstrapTheme extends Theme {
 }
 
 BootstrapTheme.prototype.classes = {
-  widget: 'fc-bootstrap',
-
-  tableGrid: 'table-bordered', // avoid `table` class b/c don't want margins. only border color
-  tableList: 'table', // `table` class creates bottom margin but who cares
-  tableListHeading: 'table-active',
-
+  root: 'fc-bootstrap',
+  table: 'table table-bordered',
+  tableCellActive: 'table-active',
   buttonGroup: 'btn-group',
   button: 'btn btn-primary',
   buttonActive: 'active',
-
-  today: 'alert alert-info', // the plain `info` class requires `.table`, too much to ask
-
   popover: 'card card-primary',
   popoverHeader: 'card-header',
   popoverContent: 'card-body',
-
-  // list view
-  listView: 'card card-primary'
+  today: 'alert alert-info', // the plain `info` class requires `.table`, too much to ask
+  bordered: 'card card-primary'
 }
 
 BootstrapTheme.prototype.baseIconClass = 'fa'

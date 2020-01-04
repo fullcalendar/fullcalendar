@@ -282,7 +282,7 @@ function setClassNames({ el }: { el: HTMLElement }, context: ComponentContext) {
   let classNames: string[] = [
     'fc',
     'fc-' + context.options.dir,
-    context.theme.getClass('widget')
+    context.theme.getClass('root')
   ]
 
   for (let className of classNames) {

@@ -73,7 +73,7 @@ export default abstract class TimeColsView extends View {
         }
       })
       sections.push({
-        outerContent: <hr class={'fc-divider ' + theme.getClass('widgetHeader')} ref={this.dividerElRef} />
+        outerContent: <hr class={'fc-divider ' + theme.getClass('tableCellHeader')} ref={this.dividerElRef} />
       })
     }
 
@@ -174,7 +174,7 @@ export default abstract class TimeColsView extends View {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
       return [
-        <th class={'fc-axis fc-week-number fc-shrink ' + theme.getClass('widgetHeader')} style={this.getAxisStyles()}>
+        <th class={'fc-axis fc-week-number fc-shrink ' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}>
           <GotoAnchor
             navLinks={options.navLinks}
             gotoOptions={{ date: range.start, type: 'week', forceOff: dayCnt > 1 }}
@@ -184,7 +184,7 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <th class={'fc-axis fc-shrink ' + theme.getClass('widgetHeader')} style={this.getAxisStyles()}></th>
+      <th class={'fc-axis fc-shrink ' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}></th>
     ]
   }
 
@@ -207,7 +207,7 @@ export default abstract class TimeColsView extends View {
     let { theme } = this.context
 
     return [
-      <td class={'fc-axis fc-shrink ' + theme.getClass('widgetContent')} style={this.getAxisStyles()}></td>
+      <td class={'fc-axis fc-shrink ' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}></td>
     ]
   }
 
@@ -237,7 +237,7 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <td class={'fc-axis fc-shrink ' + theme.getClass('widgetContent')} style={this.getAxisStyles()}>
+      <td class={'fc-axis fc-shrink ' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}>
         <span {...spanAttrs}>
           {child}
         </span>

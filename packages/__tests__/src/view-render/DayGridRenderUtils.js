@@ -15,7 +15,7 @@ const MORE_CLASS = 'fc-more'
 const HEADER_CLASS = 'fc-header'
 const TITLE_CLASS = 'fc-title'
 const MORE_POPOVER_CLASS = 'fc-more-popover'
-const WIDGET_HEADER_CLASS = 'fc-widget-header'
+const DAY_HEADER_SELECTOR = '.fc-scrolltable th'
 const HEAD_CONTAINER_CLASS = 'fc-head-container'
 const DIVIDER_CLASS = 'fc-divider'
 const RESIZER_CLASS = 'fc-resizer'
@@ -119,7 +119,7 @@ export function getDayGridRowDayElAtIndex(index) {
 }
 
 export function getHeaderTopEls() {
-  return $(`.${WIDGET_HEADER_CLASS}`)
+  return $(DAY_HEADER_SELECTOR)
     .not(`.${ROW_CLASS}`)
     .not(`.${HEAD_CONTAINER_CLASS}`)
     .not(`.${DIVIDER_CLASS}`)

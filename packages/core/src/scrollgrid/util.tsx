@@ -182,7 +182,7 @@ export function getScrollGridClassNames(vGrow: boolean, context: ComponentContex
   let classNames = [
     'scrollgrid',
     (context.isRtl ? 'scrollgrid--rtl' : 'scrollgrid--ltr'), // TODO: kill this
-    context.theme.getClass('tableGrid')
+    context.theme.getClass('table')
   ]
 
   if (vGrow) {
@@ -206,6 +206,6 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
 
 export function getChunkClassNames(sectionConfig: SectionConfig, context: ComponentContext) {
   return context.theme.getClass(
-    sectionConfig.type === 'body' ? 'widgetContent' : 'widgetHeader'
+    sectionConfig.type === 'body' ? 'tableCellNormal' : 'tableCellHeader'
   )
 }

@@ -4,19 +4,10 @@ export default class StandardTheme extends Theme {
 }
 
 StandardTheme.prototype.classes = {
-  widget: 'fc-unthemed',
-  widgetHeader: 'fc-widget-header',
-  widgetContent: 'fc-widget-content',
-
+  root: 'fc-unthemed',
   buttonGroup: 'fc-button-group',
   button: 'fc-button fc-button-primary',
-  buttonActive: 'fc-button-active',
-
-  popoverHeader: 'fc-widget-header',
-  popoverContent: 'fc-widget-content',
-
-  // list view
-  listView: 'fc-widget-content'
+  buttonActive: 'fc-button-active'
 }
 
 StandardTheme.prototype.baseIconClass = 'fc-icon'

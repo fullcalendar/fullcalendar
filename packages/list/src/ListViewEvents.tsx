@@ -98,18 +98,18 @@ export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps>
 
     return '<tr class="' + classes.join(' ') + '">' +
       (this.displayEventTime ?
-        '<td class="fc-list-item-time ' + theme.getClass('widgetContent') + '">' +
+        '<td class="fc-list-item-time ' + theme.getClass('tableCellNormal') + '">' +
           (timeHtml || '') +
         '</td>' :
         '') +
-      '<td class="fc-list-item-marker ' + theme.getClass('widgetContent') + '">' +
+      '<td class="fc-list-item-marker ' + theme.getClass('tableCellNormal') + '">' +
         '<span class="fc-event-dot"' +
         (bgColor ?
           ' style="background-color:' + bgColor + '"' :
           '') +
         '></span>' +
       '</td>' +
-      '<td class="fc-list-item-title ' + theme.getClass('widgetContent') + '">' +
+      '<td class="fc-list-item-title ' + theme.getClass('tableCellNormal') + '">' +
         '<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
           htmlEscape(eventDef.title || '') +
         '</a>' +
@@ -164,7 +164,7 @@ function renderSegList(allSegs, dayDates: Date[], contentEl: HTMLElement, contex
   let dayIndex
   let daySegs
   let i
-  let tableEl = htmlToElement('<table class="fc-list-table ' + theme.getClass('tableList') + '"><tbody></tbody></table>')
+  let tableEl = htmlToElement('<table class="fc-list-table ' + theme.getClass('table') + '"><tbody></tbody></table>')
   let tbodyEl = tableEl.querySelector('tbody')
 
   for (dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
@@ -200,7 +200,7 @@ function buildDayHeaderRow(dayDate, context: ComponentContext) {
   tr.setAttribute('data-date', dateEnv.formatIso(dayDate, { omitTime: true }))
 
   let td = document.createElement('td')
-  td.className = theme.getClass('tableListHeading') + ' ' + theme.getClass('widgetHeader')
+  td.className = theme.getClass('tableCellActive') + ' ' + theme.getClass('tableCellHeader')
   td.colSpan = 3
   tr.appendChild(td)
 

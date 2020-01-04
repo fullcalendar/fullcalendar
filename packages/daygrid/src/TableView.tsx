@@ -115,7 +115,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <th class={'fc-week-number fc-shrink ' + theme.getClass('widgetHeader')}>
+        <th class={'fc-week-number fc-shrink ' + theme.getClass('tableCellHeader')}>
           <span>
             {options.weekLabel}
           </span>
@@ -158,7 +158,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <td class={'fc-week-number fc-shrink ' + theme.getClass('widgetContent')}></td>
+        <td class={'fc-week-number fc-shrink ' + theme.getClass('tableCellNormal')}></td>
       ]
     }
 

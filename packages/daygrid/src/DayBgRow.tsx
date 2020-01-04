@@ -43,7 +43,7 @@ export default class DayBgRow extends BaseComponent<DayBgRowProps> {
 
     if (!props.cells.length) {
       parts.push(
-        <td class={'fc-day ' + context.theme.getClass('widgetContent')}></td>
+        <td class={'fc-day ' + context.theme.getClass('tableCellNormal')}></td>
       )
     }
 
@@ -65,7 +65,7 @@ function renderCell(date: DateMarker, dateProfile: DateProfile, context: Compone
   let classes = getDayClasses(date, dateProfile, context)
   let dataAttrs = isDateValid ? { 'data-date': dateEnv.formatIso(date, { omitTime: true }) } : {}
 
-  classes.unshift('fc-day', theme.getClass('widgetContent'))
+  classes.unshift('fc-day', theme.getClass('tableCellNormal'))
 
   return (
     <td

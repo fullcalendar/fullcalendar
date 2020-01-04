@@ -20,6 +20,10 @@
   color: #fff;
 }
 
+.fc-bootstrap .table {
+  margin-bottom: 0;
+}
+
 .fc-bootstrap .fc-popover.card {
   position: absolute; // because .card sets it to position:relative
 }

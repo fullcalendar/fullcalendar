@@ -62,7 +62,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
       isLabeled = wholeDivideDurations(slotIterator, labelInterval) !== null
 
       let axisNode =
-        <td class={'fc-axis fc-time ' + theme.getClass('widgetContent')}>
+        <td class={'fc-axis fc-time ' + theme.getClass('tableCellNormal')}>
           {isLabeled &&
             <span>
               {dateEnv.format(slotDate, labelFormat)}
@@ -73,7 +73,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
       rowsNodes.push(
         <tr data-time={formatIsoTimeString(slotDate)} class={isLabeled ? '' : 'fc-minor'}>
           {!isRtl && axisNode}
-          <td class={theme.getClass('widgetContent')}></td>
+          <td class={theme.getClass('tableCellNormal')}></td>
           {isRtl && axisNode}
         </tr>
       )
@@ -84,7 +84,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
     return ( // guid rerenders whole DOM every time
       <div class='fc-slats' ref={this.handleRootEl} key={guid()}>
-        <table class={theme.getClass('tableGrid')}>
+        <table class={theme.getClass('table')}>
           {rowsNodes}
         </table>
       </div>

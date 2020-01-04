@@ -72,7 +72,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
     return (
       <div class={classes.join(' ')}>
         <div class='fc-bg'>
-          <table class={theme.getClass('tableGrid')}>
+          <table class={theme.getClass('table')}>
             {props.colGroupNode}
             <DayBgRow
               cells={props.cells[row]}

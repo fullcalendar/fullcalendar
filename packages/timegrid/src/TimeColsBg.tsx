@@ -32,7 +32,7 @@ export default class TimeColsBg extends BaseComponent<TimeColsBgProps> {
 
     return ( // guid rerenders whole DOM every time
       <div class='fc-bg' ref={this.handleRootEl} key={guid()}>
-        <table class={theme.getClass('tableGrid')}>
+        <table class={theme.getClass('table')}>
           {props.colGroupNode}
           <DayBgRow
             cells={props.cells}

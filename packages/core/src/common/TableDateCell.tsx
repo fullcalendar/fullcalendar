@@ -28,7 +28,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> {
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, dateMarker) // TODO: called too frequently. cache somehow.
     let classNames = [
       'fc-day-header',
-      theme.getClass('widgetHeader')
+      theme.getClass('tableCellHeader')
     ]
     let innerText
     let innerHtml

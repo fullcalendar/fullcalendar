@@ -35,7 +35,7 @@ export default class ListView extends View {
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
     let classNames = getViewClassNames(props.viewSpec).concat('fc-list-view')
-    let themeClassName = context.theme.getClass('listView')
+    let themeClassName = context.theme.getClass('bordered')
 
     if (themeClassName) {
       classNames.push(themeClassName)
