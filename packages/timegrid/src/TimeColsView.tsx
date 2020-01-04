@@ -3,7 +3,6 @@ import {
   View,
   createFormatter, diffDays,
   Duration,
-  DateMarker,
   getViewClassNames,
   GotoAnchor,
   ViewProps,
@@ -39,13 +38,7 @@ export default abstract class TimeColsView extends View {
   // ----------------------------------------------------------------------------------------------------
 
   abstract getAllDayTableObj(): { table: Table } | null
-
-  abstract getTimeColsObj(): {
-    timeCols: TimeCols,
-    getNowIndicatorUnit: () => string,
-    renderNowIndicator: (d: DateMarker) => void,
-    unrenderNowIndicator: () => void
-  }
+  abstract getTimeColsObj(): { timeCols: TimeCols }
 
 
   // rendering
@@ -113,7 +106,6 @@ export default abstract class TimeColsView extends View {
       allDayTable.table.bottomCoordPadding = dividerEl.getBoundingClientRect().height
     }
 
-    this.startNowIndicator()
     this.scrollToInitialTime()
   }
 
@@ -122,30 +114,6 @@ export default abstract class TimeColsView extends View {
     if (prevProps.dateProfile !== this.props.dateProfile) {
       this.scrollToInitialTime()
     }
-  }
-
-
-  componentWillUnmount() {
-    this.stopNowIndicator()
-  }
-
-
-  /* Now Indicator
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  getNowIndicatorUnit() {
-    return this.getTimeColsObj().getNowIndicatorUnit()
-  }
-
-
-  renderNowIndicator(date) {
-    this.getTimeColsObj().renderNowIndicator(date)
-  }
-
-
-  unrenderNowIndicator() {
-    this.getTimeColsObj().unrenderNowIndicator()
   }
 
 

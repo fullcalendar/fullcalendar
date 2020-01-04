@@ -5,7 +5,7 @@ import { TimeColsSeg } from './TimeCols'
 import { default as DayTimeCols, DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildDayTableModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
-export { default as TimeCols } from './TimeCols'
+export { default as TimeCols, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'
 
 export default createPlugin({
   defaultView: 'timeGridWeek',

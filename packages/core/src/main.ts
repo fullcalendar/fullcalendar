@@ -182,3 +182,5 @@ export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/
 export { getScrollbarWidths } from './util/scrollbar-width'
 export { default as RefMap } from './util/RefMap'
 export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
+
+export { default as NowTimer, NowTimerCallback } from './NowTimer'

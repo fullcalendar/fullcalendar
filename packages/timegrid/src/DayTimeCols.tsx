@@ -13,9 +13,10 @@ import {
   DateMarker,
   Slicer,
   Hit,
-  ComponentContext
+  ComponentContext,
+  NowTimer
 } from '@fullcalendar/core'
-import TimeCols, { TimeColsSeg } from './TimeCols'
+import TimeCols, { TimeColsSeg, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'
 
 
 export interface DayTimeColsProps {
@@ -33,18 +34,24 @@ export interface DayTimeColsProps {
   renderIntro: () => VNode[]
 }
 
+interface DayTimeColsState {
+  nowIndicatorDate: DateMarker
+  nowIndicatorSegs: TimeColsSeg[]
+}
 
-export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
+
+export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTimeColsState> {
 
   private buildDayRanges = memoize(buildDayRanges)
   private dayRanges: DateRange[] // for now indicator
   private slicer = new DayTimeColsSlicer()
   private timeColsRef = createRef<TimeCols>()
+  private nowTimer: NowTimer
 
-  get timeCols() { return this.timeColsRef.current }
+  get timeCols() { return this.timeColsRef.current } // used for view's computeDateScroll :(
 
 
-  render(props: DayTimeColsProps, state: {}, context: ComponentContext) {
+  render(props: DayTimeColsProps, state: DayTimeColsState, context: ComponentContext) {
     let { dateEnv } = context
     let { dateProfile, dayTableModel } = props
     let dayRanges = this.dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
@@ -60,6 +67,8 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
         colGroupNode={props.colGroupNode}
         renderBgIntro={props.renderBgIntro}
         renderIntro={props.renderIntro}
+        nowIndicatorDate={state.nowIndicatorDate}
+        nowIndicatorSegs={state.nowIndicatorSegs}
       />
     )
   }
@@ -76,21 +85,20 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
   }
 
 
-  getNowIndicatorUnit() {
-    return this.timeCols.getNowIndicatorUnit()
+  componentDidMount() {
+    this.nowTimer = this.context.createNowIndicatorTimer(TIME_COLS_NOW_INDICATOR_UNIT, (dateMarker: DateMarker) => {
+      this.setState({
+        nowIndicatorDate: dateMarker,
+        nowIndicatorSegs: this.slicer.sliceNowDate(dateMarker, this.context.calendar, this.dayRanges)
+      })
+    })
   }
 
 
-  renderNowIndicator(date: DateMarker) {
-    this.timeCols.renderNowIndicator(
-      this.slicer.sliceNowDate(date, this.context.calendar, this.dayRanges),
-      date
-    )
-  }
-
-
-  unrenderNowIndicator() {
-    this.timeCols.unrenderNowIndicator()
+  componentWillUnmount() {
+    if (this.nowTimer) {
+      this.nowTimer.destroy()
+    }
   }
 
 
@@ -100,8 +108,7 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
 
   queryHit(positionLeft: number, positionTop: number): Hit {
-    let timeCols = this.timeColsRef.current
-    let rawHit = timeCols.positionToHit(positionLeft, positionTop)
+    let rawHit = this.timeCols.positionToHit(positionLeft, positionTop)
 
     if (rawHit) {
       return {

@@ -35,6 +35,8 @@ import ComponentContext, { ComponentContextType, buildContext } from './componen
 import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
+import NowTimer, { NowTimerCallback } from './NowTimer'
+
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -970,6 +972,13 @@ export default class Calendar {
     }
 
     return this.dateEnv.createMarker(now)
+  }
+
+
+  createNowIndicatorTimer(unit: string, callback: NowTimerCallback) {
+    if (this.opt('nowIndicator')) {
+      return new NowTimer(this.getNow(), unit, this.dateEnv, callback)
+    }
   }
 
 

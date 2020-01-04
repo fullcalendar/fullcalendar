@@ -8,6 +8,7 @@ import { createDuration, Duration } from '../datelib/duration'
 import { PluginHooks } from '../plugin-system'
 import { createContext } from '../vdom'
 import { parseToolbars, ToolbarModel } from '../toolbar-parse'
+import NowTimer, { NowTimerCallback } from '../NowTimer'
 
 
 export const ComponentContextType = createContext({}) // for Components
@@ -28,6 +29,7 @@ export default interface ComponentContext {
   viewsWithButtons: string[]
   addResizeHandler: (handler: ResizeHandler) => void
   removeResizeHandler: (handler: ResizeHandler) => void
+  createNowIndicatorTimer: (unit: string, callback: NowTimerCallback) => NowTimer | null
 }
 
 
@@ -48,7 +50,8 @@ export function buildContext(
     options,
     ...computeContextProps(options, theme, calendar),
     addResizeHandler: calendar.component.addResizeHandler,
-    removeResizeHandler: calendar.component.removeResizeHandler
+    removeResizeHandler: calendar.component.removeResizeHandler,
+    createNowIndicatorTimer: calendar.createNowIndicatorTimer
   }
 }
 

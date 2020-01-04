@@ -49,7 +49,11 @@ export interface TimeColsProps {
   colGroupNode: VNode
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
+  nowIndicatorDate: DateMarker
+  nowIndicatorSegs: TimeColsSeg[]
 }
+
+export const TIME_COLS_NOW_INDICATOR_UNIT = 'minute'
 
 
 /* A component that renders one or more columns of vertical time slots
@@ -63,6 +67,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   private renderBgEvents = subrenderer(TimeColsFills)
   private renderBusinessHours = subrenderer(TimeColsFills)
   private renderDateSelection = subrenderer(TimeColsFills)
+  private renderNowIndicator = subrenderer(this._renderNowIndicator, this._unrenderNowIndicator)
 
   // computed options
   private slotDuration: Duration // duration of a "slot", a distinct time segment on given day, visualized by lines
@@ -79,7 +84,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   public colEls: HTMLElement[] // cells elements in the day-row background
   private rootSlatEl: HTMLElement // div that wraps all the slat rows
   private slatEls: HTMLElement[] // elements running horizontally across all columns
-  private nowIndicatorEls: HTMLElement[]
 
   private colPositions: PositionCache
   private slatPositions: PositionCache
@@ -234,6 +238,11 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
       }),
       this.subrenderMirror(props, this.mirrorContainerEls, options)
     ]
+
+    this.renderNowIndicator({
+      date: props.nowIndicatorDate,
+      segs: props.nowIndicatorSegs
+    })
   }
 
 
@@ -304,20 +313,9 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  getNowIndicatorUnit() {
-    return 'minute' // will refresh on the minute
-  }
-
-
-  renderNowIndicator(segs: TimeColsSeg[], date) {
-
-    // HACK: if date columns not ready for some reason (scheduler)
-    if (!this.colContainerEls) {
-      return
-    }
-
+  _renderNowIndicator({ date, segs }: { date: DateMarker, segs: TimeColsSeg[] }) {
     let top = this.computeDateTop(date)
-    let nodes = []
+    let nodes: HTMLElement[] = []
     let i
 
     // render lines within the columns
@@ -338,15 +336,12 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
       nodes.push(arrowEl)
     }
 
-    this.nowIndicatorEls = nodes
+    return nodes
   }
 
 
-  unrenderNowIndicator() {
-    if (this.nowIndicatorEls) {
-      this.nowIndicatorEls.forEach(removeElement)
-      this.nowIndicatorEls = null
-    }
+  _unrenderNowIndicator(nodes: HTMLElement[]) {
+    nodes.forEach(removeElement)
   }
 
 
