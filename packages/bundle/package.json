@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@fullcalendar/core": "4.3.0",
+    "@fullcalendar/interaction": "4.3.0",
+    "@fullcalendar/daygrid": "4.3.0",
+    "@fullcalendar/timegrid": "4.3.0",
+    "@fullcalendar/list": "4.3.0"
+  }
+}
