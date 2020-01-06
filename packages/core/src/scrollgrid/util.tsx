@@ -68,6 +68,9 @@ export function doSizingHacks(rootEl: HTMLElement) { // TODO: needs to run on wi
   //     tableEl.style.position = 'relative'
   //   }
   // }
+  //
+  // from scss:
+  // width: 100%; /* hack to force re-sizing this inner element when scrollbars appear/disappear */
 
   // for Firefox for all cells
   // for Safari(?) for cells with rowspans
