@@ -4,6 +4,7 @@ const fs = require('fs')
 const readFile = util.promisify(fs.readFile)
 const writeFile = util.promisify(fs.writeFile)
 const copyFile = util.promisify(fs.copyFile)
+const fileExists = util.promisify(fs.exists)
 const mkdirp = util.promisify(require('mkdirp'))
 const concurrently = require('concurrently')
 
@@ -14,6 +15,7 @@ exports.readFile = betterReadFile
 exports.writeFile = betterWriteFile
 exports.writeFileSync = betterWriteFileSync
 exports.copyFile = betterCopyFile
+exports.fileExists = fileExists
 
 
 function shellTask(...tasks) {
@@ -35,7 +37,7 @@ function promisifyVinyl(vinyl) {
 }
 
 
-function betterReadFile(destPath, content) {
+function betterReadFile(destPath) {
   return readFile(destPath, { encoding: 'utf8' })
 }
 
