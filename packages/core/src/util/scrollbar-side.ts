@@ -1,4 +1,4 @@
-import { removeElement, applyStyle } from '@fullcalendar/core'
+import { removeElement, applyStyle } from '../util/dom-manip'
 
 
 let _isRtlScrollbarOnLeft: boolean | null = null

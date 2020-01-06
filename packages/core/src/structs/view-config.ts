@@ -1,7 +1,7 @@
 import View, { ViewProps } from '../View'
 import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
-import { ComponentContext } from '@fullcalendar/core'
+import ComponentContext from '../component/ComponentContext'
 
 /*
 A view-config represents information for either:

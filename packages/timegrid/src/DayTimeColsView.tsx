@@ -16,7 +16,7 @@ import DayTimeCols from './DayTimeCols'
 
 export default class DayTimeColsView extends TimeColsView {
 
-  private buildDayTableModel = memoize(buildDayTableModel)
+  private buildTimeColsModel = memoize(buildTimeColsModel)
   private dayTableRef = createRef<DayTable>()
   private timeColsRef = createRef<DayTimeCols>()
 
@@ -24,7 +24,7 @@ export default class DayTimeColsView extends TimeColsView {
   render(props: ViewProps, state: {}, context: ComponentContext) {
     let { dateProfile, dateProfileGenerator } = props
     let { nextDayThreshold, options } = context
-    let dayTableModel = this.buildDayTableModel(dateProfile, dateProfileGenerator)
+    let dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator)
     let splitProps = this.allDaySplitter.splitProps(props)
 
     return this.renderLayout(
@@ -78,7 +78,7 @@ export default class DayTimeColsView extends TimeColsView {
 }
 
 
-export function buildDayTableModel(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
+export function buildTimeColsModel(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
   let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
 
   return new DayTableModel(daySeries, false)
