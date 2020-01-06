@@ -5,7 +5,6 @@
   "title": "FullCalendar Moment Timezone Plugin",
   "description": "A connector to the moment-timezone library",
   "docs": "https://fullcalendar.io/docs/moment-plugins#moment-timezone",
-  "browserGlobal": "FullCalendarMomentTimezone",
   "peerDependencies": {
     "@fullcalendar/core": "~4.3.0",
     "moment": "^2.24.0",

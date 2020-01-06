@@ -5,7 +5,6 @@
   "title": "FullCalendar Luxon Plugin",
   "description": "A connector to the Luxon date library",
   "docs": "https://fullcalendar.io/docs/luxon-plugin",
-  "browserGlobal": "FullCalendarLuxon",
   "peerDependencies": {
     "@fullcalendar/core": "~4.3.0",
     "luxon": "^1.12.1"
