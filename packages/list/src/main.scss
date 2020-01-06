@@ -1,3 +1,4 @@
+@import '~@fullcalendar/core/styles/_vars.scss';
 
 /* List View
 --------------------------------------------------------------------------------------------------*/
@@ -17,9 +18,8 @@
   direction: rtl; /* unlike core views, leverage browser RTL */
 }
 
-.fc-list-view {
-  border-width: 1px;
-  border-style: solid;
+.fc-unthemed .fc-list-view {
+  border: 1px solid $unthemed-border-color;
 }
 
 /* table resets */
@@ -47,6 +47,10 @@
   font-weight: bold;
 }
 
+.fc-unthemed .fc-list-heading td {
+  background: $unthemed-muted-bg-color;
+}
+
 .fc-ltr .fc-list-heading-main { float: left; }
 .fc-ltr .fc-list-heading-alt { float: right; }
 
@@ -54,6 +58,10 @@
 .fc-rtl .fc-list-heading-alt { float: left; }
 
 /* event list items */
+
+.fc-unthemed .fc-list-item:hover td {
+  background-color: #f5f5f5;
+}
 
 .fc-list-item.fc-has-url {
   cursor: pointer; /* whole row will be clickable */
