@@ -81,7 +81,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
             />
           </table>
         </div>
-        <div class="fc-content-skeleton">
+        <div class='fc-content-skeleton'>
           <table>
             {props.colGroupNode}
             {this.getIsNumbersVisible() &&
