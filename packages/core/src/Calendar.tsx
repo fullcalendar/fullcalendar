@@ -24,7 +24,6 @@ import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
 import { PluginSystem, PluginHooks } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
 import { __assign } from 'tslib'
-import { refinePluginDefs } from './options'
 import DateComponent from './component/DateComponent'
 import { PointerDragEvent } from './interactions/pointer'
 import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore, InteractionClass } from './interactions/interaction'
@@ -36,6 +35,7 @@ import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
 import NowTimer, { NowTimerCallback } from './NowTimer'
+import { defaultPlugins } from './default-plugins'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -123,7 +123,7 @@ export default class Calendar {
     this.el = el
 
     let optionsManager = this.optionsManager = new OptionsManager(overrides || {})
-    this.pluginSystem = new PluginSystem()
+    let pluginSystem = this.pluginSystem = new PluginSystem()
 
     let renderRunner = this.renderRunner = new DelayedRunner(
       this.updateComponent.bind(this)
@@ -138,7 +138,12 @@ export default class Calendar {
     )
     actionRunner.pause()
 
-    this.addPluginInputs(optionsManager.computed.plugins || []) // only do once. don't do in onOptionsChange. because can't remove plugins
+    // only do once. don't do in onOptionsChange. because can't remove plugins
+    let pluginDefs = defaultPlugins.concat(optionsManager.computed.plugins || [])
+    for (let pluginDef of pluginDefs) {
+      pluginSystem.add(pluginDef)
+    }
+
     this.onOptionsChange()
 
     this.publiclyTrigger('_init') // for tests
@@ -149,15 +154,6 @@ export default class Calendar {
       .map((calendarInteractionClass) => {
         return new calendarInteractionClass(this)
       })
-  }
-
-
-  addPluginInputs(pluginInputs) {
-    let pluginDefs = refinePluginDefs(pluginInputs)
-
-    for (let pluginDef of pluginDefs) {
-      this.pluginSystem.add(pluginDef)
-    }
   }
 
 

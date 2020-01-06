@@ -185,3 +185,4 @@ export { default as RefMap } from './util/RefMap'
 export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
 
 export { default as NowTimer, NowTimerCallback } from './NowTimer'
+export { addDefaultPlugins, addDefaultPluginIfGlobal } from './default-plugins'

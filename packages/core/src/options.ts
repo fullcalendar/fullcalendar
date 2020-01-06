@@ -1,11 +1,4 @@
 import { mergeProps } from './util/object'
-import { PluginDef } from './plugin-system'
-import ArrayEventSourcePlugin from './event-sources/array-event-source'
-import FuncEventSourcePlugin from './event-sources/func-event-source'
-import JsonFeedEventSourcePlugin from './event-sources/json-feed-event-source'
-import SimpleRecurrencePlugin from './structs/recurring-event-simple'
-import { capitaliseFirstLetter } from './util/misc'
-import DefaultOptionChangeHandlers from './option-change-handlers'
 
 export const config = {} as any // TODO: make these options
 
@@ -119,38 +112,4 @@ let complexOptions = [ // names of options that are objects whose properties sho
 // Merges an array of option objects into a single object
 export function mergeOptions(optionObjs) {
   return mergeProps(optionObjs, complexOptions)
-}
-
-
-
-// TODO: move this stuff to a "plugin"-related file...
-
-const INTERNAL_PLUGINS: PluginDef[] = [
-  ArrayEventSourcePlugin,
-  FuncEventSourcePlugin,
-  JsonFeedEventSourcePlugin,
-  SimpleRecurrencePlugin,
-  DefaultOptionChangeHandlers
-]
-
-export function refinePluginDefs(pluginInputs: any[]): PluginDef[] {
-  let plugins = []
-
-  for (let pluginInput of pluginInputs) {
-
-    if (typeof pluginInput === 'string') {
-      let globalName = 'FullCalendar' + capitaliseFirstLetter(pluginInput)
-
-      if (!window[globalName]) {
-        console.warn('Plugin file not loaded for ' + pluginInput)
-      } else {
-        plugins.push(window[globalName].default) // is an ES6 module
-      }
-
-    } else {
-      plugins.push(pluginInput)
-    }
-  }
-
-  return INTERNAL_PLUGINS.concat(plugins)
 }
