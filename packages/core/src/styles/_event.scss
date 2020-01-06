@@ -1,0 +1,122 @@
+
+.fc-event {
+  position: relative; /* for resize handle and other inner positioning */
+  display: block; /* make the <a> tag block */
+  font-size: .85em;
+  line-height: 1.4;
+  border-radius: 3px;
+  border: 1px solid #3788d8;
+}
+
+.fc-event,
+.fc-event-dot {
+  background-color: #3788d8; /* default BACKGROUND color */
+}
+
+.fc-event,
+.fc-event:hover {
+  color: #fff; /* default TEXT color */
+  text-decoration: none; /* if <a> has an href */
+}
+
+.fc-event[href],
+.fc-event.fc-draggable {
+  cursor: pointer; /* give events with links and draggable events a hand mouse pointer */
+}
+
+.fc-not-allowed, /* causes a "warning" cursor. applied on body */
+.fc-not-allowed .fc-event { /* to override an event's custom cursor */
+  cursor: not-allowed;
+}
+
+.fc-event .fc-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* resizer (cursor AND touch devices) */
+
+.fc-event .fc-resizer {
+  position: absolute;
+  z-index: 4;
+}
+
+/* resizer (touch devices) */
+
+.fc-event .fc-resizer {
+  display: none;
+}
+
+.fc-event.fc-allow-mouse-resize .fc-resizer,
+.fc-event.fc-selected .fc-resizer {
+  /* only show when hovering or selected (with touch) */
+  display: block;
+}
+
+/* hit area */
+
+.fc-event.fc-selected .fc-resizer:before {
+  /* 40x40 touch area */
+  content: "";
+  position: absolute;
+  z-index: 9999; /* user of this util can scope within a lower z-index */
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  margin-top: -20px;
+}
+
+
+/* Event Selection (only for touch devices)
+--------------------------------------------------------------------------------------------------*/
+
+.fc-event.fc-selected {
+  z-index: 9999 !important; /* overcomes inline z-index */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.fc-event.fc-selected:after {
+  content: "";
+  position: absolute;
+  z-index: 1; /* same z-index as fc-bg, behind text */
+  /* overcome the borders */
+  top: -1px;
+  right: -1px;
+  bottom: -1px;
+  left: -1px;
+  /* darkening effect */
+  background: #000;
+  opacity: .25;
+}
+
+
+/* Event Dragging
+--------------------------------------------------------------------------------------------------*/
+
+.fc-event.fc-dragging.fc-selected {
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+}
+
+.fc-event.fc-dragging:not(.fc-selected) {
+  opacity: .75;
+}
+
+
+/* For Print
+--------------------------------------------------------------------------------------------------*/
+
+@media print {
+
+  .fc-event {
+    background: #fff !important;
+    color: #000 !important;
+    page-break-inside: avoid;
+  }
+
+  .fc-event .fc-resizer {
+    display: none;
+  }
+
+}

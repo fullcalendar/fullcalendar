@@ -1,5 +1,6 @@
 import { createPlugin } from '@fullcalendar/core'
 import DayTableView from './DayTableView'
+import './main.scss'
 
 export { default as DayTable, DayTableSlicer } from './DayTable'
 export { default as Table, TableSeg } from './Table'

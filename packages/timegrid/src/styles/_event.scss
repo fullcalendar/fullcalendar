@@ -1,0 +1,190 @@
+
+/* TimeGrid Event Containment
+--------------------------------------------------------------------------------------------------*/
+
+.fc-ltr .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
+  margin: 0 2.5% 0 2px;
+}
+
+.fc-rtl .fc-time-grid .fc-event-container { /* space on the sides of events for RTL */
+  margin: 0 2px 0 2.5%;
+}
+
+.fc-time-grid .fc-event,
+.fc-time-grid .fc-bgevent {
+  position: absolute;
+  z-index: 1; /* scope inner z-index's */
+}
+
+.fc-time-grid .fc-bgevent {
+  /* background events always span full width */
+  left: 0;
+  right: 0;
+}
+
+
+/* TimeGrid Event Styling
+----------------------------------------------------------------------------------------------------
+We use the full "fc-time-grid-event" class instead of using descendants because the event won't
+be a descendant of the grid when it is being dragged.
+*/
+
+.fc-time-grid-event {
+  margin-bottom: 1px;
+}
+
+.fc-time-grid-event-inset {
+  -webkit-box-shadow: 0px 0px 0px 1px #fff;
+          box-shadow: 0px 0px 0px 1px #fff;
+}
+
+.fc-time-grid-event.fc-not-start { /* events that are continuing from another day */
+  /* replace space made by the top border with padding */
+  border-top-width: 0;
+  padding-top: 1px;
+
+  /* remove top rounded corners */
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.fc-time-grid-event.fc-not-end {
+  /* replace space made by the top border with padding */
+  border-bottom-width: 0;
+  padding-bottom: 1px;
+
+  /* remove bottom rounded corners */
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.fc-time-grid-event .fc-content {
+  overflow: hidden;
+  max-height: 100%;
+}
+
+.fc-time-grid-event .fc-time,
+.fc-time-grid-event .fc-title {
+  padding: 0 1px;
+}
+
+.fc-time-grid-event .fc-time {
+  font-size: .85em;
+  white-space: nowrap;
+}
+
+/* short mode, where time and title are on the same line */
+
+.fc-time-grid-event.fc-short .fc-content {
+  /* don't wrap to second line (now that contents will be inline) */
+  white-space: nowrap;
+}
+
+.fc-time-grid-event.fc-short .fc-time,
+.fc-time-grid-event.fc-short .fc-title {
+  /* put the time and title on the same line */
+  display: inline-block;
+  vertical-align: top;
+}
+
+.fc-time-grid-event.fc-short .fc-time span {
+  display: none; /* don't display the full time text... */
+}
+
+.fc-time-grid-event.fc-short .fc-time:before {
+  content: attr(data-start); /* ...instead, display only the start time */
+}
+
+.fc-time-grid-event.fc-short .fc-time:after {
+  content: "\000A0-\000A0"; /* seperate with a dash, wrapped in nbsp's */
+}
+
+.fc-time-grid-event.fc-short .fc-title {
+  font-size: .85em; /* make the title text the same size as the time */
+  padding: 0; /* undo padding from above */
+}
+
+/* resizer (cursor device) */
+
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 8px;
+  overflow: hidden;
+  line-height: 8px;
+  font-size: 11px;
+  font-family: monospace;
+  text-align: center;
+  cursor: s-resize;
+}
+
+.fc-time-grid-event.fc-allow-mouse-resize .fc-resizer:after {
+  content: "=";
+}
+
+/* resizer (touch device) */
+
+.fc-time-grid-event.fc-selected .fc-resizer {
+  /* 10x10 dot */
+  border-radius: 5px;
+  border-width: 1px;
+  width: 8px;
+  height: 8px;
+  border-style: solid;
+  border-color: inherit;
+  background: #fff;
+  /* horizontally center */
+  left: 50%;
+  margin-left: -5px;
+  /* center on the bottom edge */
+  bottom: -5px;
+}
+
+
+@media print {
+
+  /* naturally position events, vertically stacking them */
+  .fc-time-grid .fc-event {
+    position: static !important;
+    margin: 3px 2px !important;
+  }
+
+  /* for events that continue to a future day, give the bottom border back */
+  .fc-time-grid .fc-event.fc-not-end {
+    border-bottom-width: 1px !important;
+  }
+
+  /* indicate the event continues via "..." text */
+  .fc-time-grid .fc-event.fc-not-end:after {
+    content: "...";
+  }
+
+  /* for events that are continuations from previous days, give the top border back */
+  .fc-time-grid .fc-event.fc-not-start {
+    border-top-width: 1px !important;
+  }
+
+  /* indicate the event is a continuation via "..." text */
+  .fc-time-grid .fc-event.fc-not-start:before {
+    content: "...";
+  }
+
+  /* time */
+
+  /* undo a previous declaration and let the time text span to a second line */
+  .fc-time-grid .fc-event .fc-time {
+    white-space: normal !important;
+  }
+
+  /* hide the the time that is normally displayed... */
+  .fc-time-grid .fc-event .fc-time span {
+    display: none;
+  }
+
+  /* ...replace it with a more verbose version (includes AM/PM) stored in an html attribute */
+  .fc-time-grid .fc-event .fc-time:after {
+    content: attr(data-full);
+  }
+
+}

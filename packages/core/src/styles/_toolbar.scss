@@ -1,7 +1,4 @@
 
-/* Toolbar
---------------------------------------------------------------------------------------------------*/
-
 .fc-toolbar {
   display: flex;
   justify-content: space-between;
@@ -25,4 +22,16 @@
 .fc-toolbar h2 {
   font-size: 1.75em;
   margin: 0;
+}
+
+
+@media print {
+
+  // don't display any button-related controls
+  // TODO: better to put in _button/_button-group.scss ?
+  .fc-button-group,
+  .fc button {
+    display: none;
+  }
+
 }

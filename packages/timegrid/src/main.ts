@@ -3,6 +3,7 @@ import TimeColsView from './TimeColsView'
 import DayTimeColsView, { buildDayTableModel } from './DayTimeColsView'
 import { TimeColsSeg } from './TimeCols'
 import { default as DayTimeCols, DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
+import './main.scss'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildDayTableModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
 export { default as TimeCols, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'

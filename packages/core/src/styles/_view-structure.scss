@@ -1,0 +1,23 @@
+
+.fc {
+  display: flex;
+  flex-direction: column;
+}
+
+.fc-view-container {
+  flex-grow: 1;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    flex-grow: 1;
+  }
+}
+
+.fc-view, /* scope positioning and z-index's for everything within the view */
+.fc-view > table { /* so dragged elements can be above the view's main element */
+  position: relative;
+  z-index: 1;
+}

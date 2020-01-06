@@ -1,0 +1,15 @@
+
+.fc-scroller {
+  -webkit-overflow-scrolling: touch;
+}
+
+
+@media print {
+
+  /* kill the scrollbars and allow natural height */
+  .fc-scroller {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+}

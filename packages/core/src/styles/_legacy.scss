@@ -1,0 +1,168 @@
+
+
+/* Misc Reusable Components
+--------------------------------------------------------------------------------------------------*/
+
+.fc-bg,
+.fc-bgevent-skeleton,
+.fc-highlight-skeleton,
+.fc-mirror-skeleton {
+  /* these element should always cling to top-left/right corners */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.fc-bg {
+  bottom: 0; /* strech bg to bottom edge */
+}
+
+.fc-bg table {
+  height: 100%; /* strech bg to bottom edge */
+}
+
+
+/* Fake Table Rows
+--------------------------------------------------------------------------------------------------*/
+
+.fc .fc-row { /* extra precedence to overcome themes forcing a 1px border */
+  /* no visible border by default. but make available if need be (scrollbar width compensation) */
+  border-style: solid;
+  border-width: 0;
+}
+
+.fc-row table {
+  /* don't put left/right border on anything within a fake row.
+     the outer tbody will worry about this */
+  border-left: 0 hidden transparent;
+  border-right: 0 hidden transparent;
+
+  /* no bottom borders on rows */
+  border-bottom: 0 hidden transparent;
+}
+
+.fc-row:first-child table {
+  border-top: 0 hidden transparent; /* no top border on first row */
+}
+
+
+/* Day Row (used within the header and the DayGrid)
+--------------------------------------------------------------------------------------------------*/
+
+.fc-row {
+  position: relative;
+}
+
+.fc-row .fc-bg {
+  z-index: 1;
+}
+
+/* highlighting cells & background event skeleton */
+
+.fc-row .fc-bgevent-skeleton,
+.fc-row .fc-highlight-skeleton {
+  bottom: 0; /* stretch skeleton to bottom of row */
+}
+
+.fc-row .fc-bgevent-skeleton table,
+.fc-row .fc-highlight-skeleton table {
+  height: 100%; /* stretch skeleton to bottom of row */
+}
+
+.fc-row .fc-highlight-skeleton td,
+.fc-row .fc-bgevent-skeleton td {
+  border-color: transparent;
+}
+
+.fc-row .fc-bgevent-skeleton {
+  z-index: 2;
+
+}
+
+.fc-row .fc-highlight-skeleton {
+  z-index: 3;
+}
+
+/*
+row content (which contains day/week numbers and events) as well as "mirror" (which contains
+temporary rendered events).
+*/
+
+.fc-row .fc-content-skeleton {
+  position: relative;
+  z-index: 4;
+  padding-bottom: 2px; /* matches the space above the events */
+}
+
+.fc-row .fc-mirror-skeleton {
+  z-index: 5;
+}
+
+.fc .fc-row .fc-content-skeleton table,
+.fc .fc-row .fc-content-skeleton td,
+.fc .fc-row .fc-mirror-skeleton td {
+  /* see-through to the background below */
+  /* extra precedence to prevent theme-provided backgrounds */
+  background: none; /* in case <td>s are globally styled */
+  border-color: transparent;
+}
+
+.fc-row .fc-content-skeleton td,
+.fc-row .fc-mirror-skeleton td {
+  /* don't put a border between events and/or the day number */
+  border-bottom: 0;
+}
+
+.fc-row .fc-content-skeleton tbody td, /* cells with events inside (so NOT the day number cell) */
+.fc-row .fc-mirror-skeleton tbody td {
+  /* don't put a border between event cells */
+  border-top: 0;
+}
+
+
+/* popover that appears when "more" link is clicked */
+
+.fc-day-grid .fc-row {
+  z-index: 1; /* make the "more" popover one higher than this */
+}
+
+
+@media print {
+
+  /* kill the overlaid, absolutely-positioned components */
+  /* common... */
+  .fc-bg,
+  .fc-bgevent-skeleton,
+  .fc-highlight-skeleton,
+  .fc-mirror-skeleton,
+  /* for timegrid. within cells within table skeletons... */
+  .fc-bgevent-container,
+  .fc-business-container,
+  .fc-highlight-container,
+  .fc-mirror-container {
+    display: none;
+  }
+
+  /* don't force a min-height on rows (for DayGrid) */
+  .fc tbody .fc-row {
+    height: auto !important; /* undo height that JS set in distributeHeight */
+    min-height: 0 !important; /* undo the min-height from each view's specific stylesheet */
+  }
+
+  .fc tbody .fc-row .fc-content-skeleton {
+    position: static; /* undo .fc-rigid */
+    padding-bottom: 0 !important; /* use a more border-friendly method for this... */
+  }
+
+  .fc tbody .fc-row .fc-content-skeleton tbody tr:last-child td { /* only works in newer browsers */
+    padding-bottom: 1em; /* ...gives space within the skeleton. also ensures min height in a way */
+  }
+
+  .fc tbody .fc-row .fc-content-skeleton table {
+    /* provides a min-height for the row, but only effective for IE, which exaggerates this value,
+      making it look more like 3em. for other browers, it will already be this tall */
+    height: 1em;
+  }
+
+}

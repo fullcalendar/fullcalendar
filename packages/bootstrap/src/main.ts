@@ -1,4 +1,5 @@
 import { Theme, createPlugin } from '@fullcalendar/core'
+import './main.scss'
 
 export class BootstrapTheme extends Theme {
 }

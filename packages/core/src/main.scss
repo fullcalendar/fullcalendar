@@ -1,11 +1,16 @@
 
-@import './scrollgrid/main';
-
-@import './common/common';
-@import './common/standard';
-@import './toolbar';
-@import './view';
-
-@media print {
-  @import './common/print';
-}
+@import './styles/vars';
+@import './styles/resets';
+@import './styles/utils';
+@import './styles/event';
+@import './styles/event-horizontal';
+@import './styles/event-limit';
+@import './styles/icons/main';
+@import './styles/button';
+@import './styles/button-group';
+@import './styles/toolbar';
+@import './styles/popover';
+@import './styles/scroller';
+@import './styles/scrollgrid';
+@import './styles/view-structure';
+@import './styles/legacy';
