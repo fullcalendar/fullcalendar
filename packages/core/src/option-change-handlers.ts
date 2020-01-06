@@ -1,4 +1,4 @@
-import { createPlugin } from './plugin-system'
+import { createPlugin, PluginDef } from './plugin-system'
 import { Calendar } from './main'
 import { hashValuesToArray } from './util/object'
 import { EventSource } from './structs/event-source'
@@ -46,6 +46,6 @@ function handleEventSources(inputs, calendar: Calendar, deepEqual) {
 }
 
 // shortcoming: won't remove plugins
-function handlePlugins(inputs, calendar: Calendar) {
-  calendar.addPluginInputs(inputs) // will gracefully handle duplicates
+function handlePlugins(pluginDefs: PluginDef[], calendar: Calendar) {
+  calendar.addPluginDefs(pluginDefs) // will gracefully handle duplicates
 }

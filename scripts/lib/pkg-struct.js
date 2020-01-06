@@ -1,7 +1,9 @@
 const path = require('path')
-const { existsSync } = require('fs')
+const { existsSync, readFileSync } = require('fs')
 const { buildPkgJsonObj } = require('./pkg-json-obj')
 
+
+const IS_GLOBAL_ATTACHMENT_RE = /^\s*addDefaultPluginIfGlobal\(/m
 
 exports.pkgStructs = buildPkgStructs()
 
@@ -30,25 +32,30 @@ function buildPkgStructs() {
 function buildPkgStruct(pkgName, mainPath) {
   let isPremium = mainPath.indexOf('packages-premium/') !== -1
   let dir = path.dirname(path.dirname(mainPath))
+  let dirFileName = path.basename(dir)
+  let isCore = dirFileName === 'core'
+  let isBundle = dirFileName === 'bundle'
   let jsonPath = path.join(process.cwd(), dir, 'package.json')
 
   if (existsSync(jsonPath)) {
     let origJsonObj = require(jsonPath) // not yet combined with more root-level json
-    let browserGlobal = origJsonObj.browserGlobal
 
-    if (!browserGlobal) {
-      throw new Error('Must specify browserGlobal in', jsonPath)
-
-    } else {
-      return {
-        name: pkgName,
-        isPremium,
-        dir, // relative to project root
-        srcDir: path.join(dir, 'src'), // relative to project root
-        distDir: path.join(dir, 'dist'), // relative to project root
-        jsonObj: buildPkgJsonObj(origJsonObj, isPremium),
-        browserGlobal
-      }
+    return {
+      name: pkgName,
+      isCore,
+      isBundle,
+      isPremium,
+      isGlobalAttachment: isGlobalAttachment(mainPath),
+      dir, // relative to project root
+      srcDir: path.join(dir, 'src'), // relative to project root
+      distDir: path.join(dir, 'dist'), // relative to project root
+      jsonObj: buildPkgJsonObj(origJsonObj, isPremium)
     }
   }
+}
+
+
+function isGlobalAttachment(mainPath) {
+  let content = readFileSync(mainPath + '.ts', 'utf8') // TODO: support .tsx
+  return IS_GLOBAL_ATTACHMENT_RE.test(content)
 }

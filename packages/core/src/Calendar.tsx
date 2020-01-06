@@ -21,7 +21,7 @@ import EventApi from './api/EventApi'
 import { createEmptyEventStore, eventTupleToStore, EventStore } from './structs/event-store'
 import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui'
 import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
-import { PluginSystem, PluginHooks } from './plugin-system'
+import { PluginSystem, PluginHooks, PluginDef } from './plugin-system'
 import CalendarComponent from './CalendarComponent'
 import { __assign } from 'tslib'
 import DateComponent from './component/DateComponent'
@@ -123,7 +123,7 @@ export default class Calendar {
     this.el = el
 
     let optionsManager = this.optionsManager = new OptionsManager(overrides || {})
-    let pluginSystem = this.pluginSystem = new PluginSystem()
+    this.pluginSystem = new PluginSystem()
 
     let renderRunner = this.renderRunner = new DelayedRunner(
       this.updateComponent.bind(this)
@@ -139,10 +139,9 @@ export default class Calendar {
     actionRunner.pause()
 
     // only do once. don't do in onOptionsChange. because can't remove plugins
-    let pluginDefs = defaultPlugins.concat(optionsManager.computed.plugins || [])
-    for (let pluginDef of pluginDefs) {
-      pluginSystem.add(pluginDef)
-    }
+    this.addPluginDefs(
+      defaultPlugins.concat(optionsManager.computed.plugins || [])
+    )
 
     this.onOptionsChange()
 
@@ -154,6 +153,13 @@ export default class Calendar {
       .map((calendarInteractionClass) => {
         return new calendarInteractionClass(this)
       })
+  }
+
+
+  addPluginDefs(pluginDefs: PluginDef[]) {
+    for (let pluginDef of pluginDefs) {
+      this.pluginSystem.add(pluginDef)
+    }
   }
 
 

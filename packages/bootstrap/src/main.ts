@@ -1,4 +1,4 @@
-import { Theme, createPlugin } from '@fullcalendar/core'
+import { Theme, createPlugin, addDefaultPluginIfGlobal } from '@fullcalendar/core'
 import './main.scss'
 
 export class BootstrapTheme extends Theme {
@@ -31,8 +31,11 @@ BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome'
 BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'
 BootstrapTheme.prototype.iconOverridePrefix = 'fa-'
 
-export default createPlugin({
+let plugin = createPlugin({
   themeClasses: {
     bootstrap: BootstrapTheme
   }
 })
+
+export default plugin
+addDefaultPluginIfGlobal(plugin)
