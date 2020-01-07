@@ -20,6 +20,7 @@
     "baseUrl": ".",
     "strictBindCallApply": true,
     "paths": {
+      "fullcalendar": [ "packages/bundle/src/main" ],
       "@fullcalendar/core": [ "packages/core/src/main" ],
       "@fullcalendar/core/*": [ "packages/core/src/*" ],
       "@fullcalendar/interaction": [ "packages/interaction/src/main" ],
@@ -32,6 +33,7 @@
       "@fullcalendar/moment-timezone": [ "packages/moment-timezone/src/main" ],
       "@fullcalendar/google-calendar": [ "packages/google-calendar/src/main" ],
       "@fullcalendar/bootstrap": [ "packages/bootstrap/src/main" ],
+      "fullcalendar-scheduler": [ "packages-premium/bundle/src/main" ],
       "@fullcalendar/scrollgrid": [ "packages-premium/scrollgrid/src/main" ],
       "@fullcalendar/timeline": [ "packages-premium/timeline/src/main" ],
       "@fullcalendar/resource-common": [ "packages-premium/resource-common/src/main" ],
