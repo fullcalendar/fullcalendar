@@ -1,6 +1,6 @@
 import * as momentNs from 'moment'
 const moment = momentNs as any // the directly callable function
-import { Calendar, Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
+import { Calendar, Duration, VerboseFormattingArg, createPlugin, addDefaultPluginIfGlobal } from '@fullcalendar/core'
 
 
 export function toMoment(date: Date, calendar: Calendar): momentNs.Moment {
@@ -54,9 +54,13 @@ function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
   ).format(cmd.whole) // TODO: test for this
 }
 
-export default createPlugin({
+
+let plugin = createPlugin({
   cmdFormatter: formatWithCmdStr
 })
+
+export default plugin
+addDefaultPluginIfGlobal(plugin)
 
 
 function createMomentFormatFunc(mom: momentNs.Moment) {

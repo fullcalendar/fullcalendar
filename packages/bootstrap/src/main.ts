@@ -1,4 +1,4 @@
-import { Theme, createPlugin, addDefaultPluginIfGlobal } from '@fullcalendar/core'
+import { Theme, createPlugin } from '@fullcalendar/core'
 import './main.scss'
 
 export class BootstrapTheme extends Theme {
@@ -38,4 +38,3 @@ let plugin = createPlugin({
 })
 
 export default plugin
-addDefaultPluginIfGlobal(plugin)
