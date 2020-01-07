@@ -1,8 +1,9 @@
 const path = require('path')
+const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const scss = require('rollup-plugin-scss')
 const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, stripScssTildeImporter, onwarn } = require('./rollup-util')
-const { pkgStructs, pkgStructHash } = require('./pkg-struct')
+const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 
 
 module.exports = function(isDev) {
@@ -20,6 +21,11 @@ module.exports = function(isDev) {
     }
   }
 
+  configs.push(
+    ...buildLocaleConfigs(),
+    buildLocalesAllConfig()
+  )
+
   return configs
 }
 
@@ -33,7 +39,7 @@ function buildBundleConfig(pkgStruct, isDev) {
     output: {
       format: 'umd',
       file: path.join(pkgStruct.distDir, 'main.js'),
-      name: EXTERNAL_BROWSER_GLOBALS['fullcalendar'],
+      name: EXTERNAL_BROWSER_GLOBALS['fullcalendar'], // TODO: make it a separarate const???
       banner,
       sourcemap: isDev
     },
@@ -55,6 +61,13 @@ function buildBundleConfig(pkgStruct, isDev) {
 }
 
 
+const OUTRO = `
+if (exports.globalPlugins) {
+  exports.globalPlugins.push(exports.default)
+  delete exports.default
+}
+`
+
 function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
   let banner = renderBanner(pkgStruct.jsonObj)
   let inputFile = path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js')
@@ -66,9 +79,10 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
       file: path.join(bundleDistDir, pkgStruct.shortName + '.js'),
       name: EXTERNAL_BROWSER_GLOBALS['fullcalendar'], // tack on to existing global
       extend: true, // don't overwrite whats already on the UMD global
-      exports: 'named', // allows export of default AND named. the `default` keys will collide, but who cares
+      exports: 'named', // allows export of default AND named
       globals: EXTERNAL_BROWSER_GLOBALS,
       banner,
+      outro: OUTRO,
       sourcemap: isDev
     },
     plugins: [
@@ -88,6 +102,39 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
         }
       }
     ],
+    watch: WATCH_OPTIONS,
+    onwarn
+  }
+}
+
+
+function buildLocaleConfigs() { // for EACH
+  let corePkg = getCorePkgStruct()
+  let bundleStruct = getNonPremiumBundle()
+  let localePaths = glob.sync('locales/*.js', { cwd: corePkg.tscDir })
+
+  return localePaths.map((localePath, i) => ({
+    input: path.join(corePkg.tscDir, localePath),
+    output: {
+      format: 'umd',
+      name: 'FullCalendarLocales.add',
+      file: path.join(bundleStruct.distDir, localePath)
+    }
+  }))
+}
+
+
+function buildLocalesAllConfig() {
+  let corePkgStruct = getCorePkgStruct()
+  let bundleStruct = getNonPremiumBundle()
+
+  return {
+    input: path.join(corePkgStruct.distDir, 'locales-all.js'),
+    output: {
+      format: 'umd',
+      name: 'FullCalendarLocales',
+      file: path.join(bundleStruct.distDir, 'locales-all.js'),
+    },
     watch: WATCH_OPTIONS,
     onwarn
   }

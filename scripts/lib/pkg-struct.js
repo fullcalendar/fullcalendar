@@ -1,9 +1,7 @@
 const path = require('path')
-const { existsSync, readFileSync } = require('fs')
+const { existsSync } = require('fs')
 const { buildPkgJsonObj } = require('./pkg-json-obj')
 
-
-const IS_GLOBAL_ATTACHMENT_RE = /^\s*addDefaultPluginIfGlobal\(/m
 
 let pkgStructs = buildPkgStructs()
 let pkgStructHash = {}
@@ -14,6 +12,8 @@ for (let pkgStruct of pkgStructs) {
 
 exports.pkgStructs = pkgStructs
 exports.pkgStructHash = pkgStructHash
+exports.getCorePkgStruct = getCorePkgStruct
+exports.getNonPremiumBundle = getNonPremiumBundle
 
 
 function buildPkgStructs() {
@@ -47,6 +47,7 @@ function buildPkgStruct(pkgName, mainPath) {
 
   if (existsSync(jsonPath)) {
     let origJsonObj = require(jsonPath) // not yet combined with more root-level json
+    let srcDir = path.join(dir, 'src') // relative to project root
 
     return {
       name: pkgName,
@@ -54,9 +55,9 @@ function buildPkgStruct(pkgName, mainPath) {
       isCore,
       isBundle,
       isPremium,
-      isGlobalAttachment: isGlobalAttachment(mainPath),
       dir, // relative to project root
-      srcDir: path.join(dir, 'src'), // relative to project root
+      srcDir,
+      tscDir: path.join('tmp/tsc-output', srcDir), // TODO: use elsewhere!!!
       distDir: path.join(dir, 'dist'), // relative to project root
       jsonObj: buildPkgJsonObj(origJsonObj, isPremium, isBundle)
     }
@@ -64,7 +65,28 @@ function buildPkgStruct(pkgName, mainPath) {
 }
 
 
-function isGlobalAttachment(mainPath) {
-  let content = readFileSync(mainPath + '.ts', 'utf8') // TODO: support .tsx
-  return IS_GLOBAL_ATTACHMENT_RE.test(content)
+// TODO: stop making these funcs!!!
+
+function getCorePkgStruct() {
+  for (let pkgStruct of pkgStructs) {
+    if (pkgStruct.isCore) {
+      return pkgStruct
+    }
+  }
+
+  throw new Error('No core package')
 }
+
+
+function getNonPremiumBundle() {
+  let matches = pkgStructs.filter(
+    (pkgStruct) => pkgStruct.isBundle && !pkgStruct.isPremium
+  )
+
+  if (!matches.length) {
+    throw new Error('No non-premium bundle')
+  }
+
+  return matches[0]
+}
+

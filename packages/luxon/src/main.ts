@@ -1,5 +1,5 @@
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
-import { Calendar, Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin, addDefaultPluginIfGlobal } from '@fullcalendar/core'
+import { Calendar, Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
 
 export function toDateTime(date: Date, calendar: Calendar): LuxonDateTime {
 
@@ -72,13 +72,10 @@ function formatWithCmdStr(cmdStr: string, arg: VerboseFormattingArg) {
 }
 
 
-let plugin = createPlugin({
+export default createPlugin({
   cmdFormatter: formatWithCmdStr,
   namedTimeZonedImpl: LuxonNamedTimeZone
 })
-
-export default plugin
-addDefaultPluginIfGlobal(plugin)
 
 
 function luxonToArray(datetime: LuxonDateTime): number[] {

@@ -1,4 +1,4 @@
-import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv, requestJson, addDefaultPluginIfGlobal } from '@fullcalendar/core'
+import { createPlugin, EventSourceDef, refineProps, addDays, DateEnv, requestJson } from '@fullcalendar/core'
 
 // TODO: expose somehow
 const API_BASE = 'https://www.googleapis.com/calendar/v3/calendars'
@@ -184,9 +184,6 @@ function injectQsComponent(url, component) {
   })
 }
 
-let plugin = createPlugin({
+export default createPlugin({
   eventSourceDefs: [ eventSourceDef ]
 })
-
-export default plugin
-addDefaultPluginIfGlobal(plugin)

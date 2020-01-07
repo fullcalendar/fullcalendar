@@ -8,8 +8,7 @@ import {
   DateRange,
   DateMarker,
   createDuration,
-  createPlugin,
-  addDefaultPluginIfGlobal
+  createPlugin
 } from '@fullcalendar/core'
 
 interface RRuleParsedRecurring extends ParsedRecurring {
@@ -52,12 +51,11 @@ let recurring: RecurringType = {
 
 }
 
-let plugin = createPlugin({
+
+export default createPlugin({
   recurringTypes: [ recurring ]
 })
 
-export default plugin
-addDefaultPluginIfGlobal(plugin)
 
 function parseRRule(input, dateEnv: DateEnv) {
   let allDayGuess = null

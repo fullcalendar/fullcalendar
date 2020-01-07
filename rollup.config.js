@@ -8,14 +8,12 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 
 
 const buildModuleConfigs = require('./scripts/lib/rollup-modules')
-const buildLocaleConfigs = require('./scripts/lib/rollup-locales')
 const buildBundleConfigs = require('./scripts/lib/rollup-bundles')
 const buildTestConfig = require('./scripts/lib/rollup-tests')
 
 
 module.exports = [
   ...buildModuleConfigs(isDev),
-  ...buildLocaleConfigs(isDev),
   ...buildBundleConfigs(isDev),
   buildTestConfig()
 ]

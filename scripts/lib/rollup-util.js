@@ -59,17 +59,6 @@ const SCSS_PATH_RE = /\.scss$/i
 const TILDE_PATH_RE = /^~/
 
 
-exports.getCorePkgStruct = function() {
-  for (let pkgStruct of pkgStructs) {
-    if (pkgStruct.isCore) {
-      return pkgStruct
-    }
-  }
-
-  throw new Error('No core package')
-}
-
-
 exports.onwarn = function(warning, warn) {
   // ignore circ dep warnings. too numerous and hard to fix right now
   if (warning.code !== 'CIRCULAR_DEPENDENCY') {

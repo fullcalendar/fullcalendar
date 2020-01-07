@@ -16,19 +16,6 @@ export let defaultPlugins: PluginDef[] = [
 ]
 
 
-export function addDefaultPlugins(pluginDefs: PluginDef[]) {
+export function addDefaultPlugins(pluginDefs: PluginDef[]) { // TODO: redo
   defaultPlugins.push(...pluginDefs)
-}
-
-
-export function addDefaultPluginIfGlobal(pluginDef: PluginDef) {
-  if (isGlobal()) {
-    defaultPlugins.push(pluginDef)
-  }
-}
-
-
-function isGlobal() {
-  let globalNs = window['FullCalendar']
-  return globalNs && globalNs.addDefaultPluginIfGlobal === addDefaultPluginIfGlobal
 }
