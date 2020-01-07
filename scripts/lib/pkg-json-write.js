@@ -6,6 +6,9 @@ const { pkgStructs } = require('./pkg-struct')
 exports.writePkgJsons = writePkgJsons
 
 
+// NOTE: the content of jsonObj is generated in pkg-struct.js
+
+
 function writePkgJsons() {
   return Promise.all(
     pkgStructs.map((pkgStruct) => {

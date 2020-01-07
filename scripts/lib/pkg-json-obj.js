@@ -8,7 +8,7 @@ const PREMIUM_JSON = 'packages-premium/package.json'
 exports.buildPkgJsonObj = buildPkgJsonObj
 
 
-function buildPkgJsonObj(origJsonObj, isPremium) {
+function buildPkgJsonObj(origJsonObj, isPremium, isBundle) {
   let merged = Object.assign({}, getBaseJsonObj(isPremium))
 
   // things we don't want on inherit from the roots
@@ -22,13 +22,16 @@ function buildPkgJsonObj(origJsonObj, isPremium) {
   delete merged.private
   delete merged.devDependencies
   delete merged.scripts
-  delete merged.browserGlobal
 
-  // additions
-  merged.main = 'main.js'
-  merged.module = 'main.esm.js'
-  merged.unpkg = 'main.min.js'
-  merged.types = 'main.d.ts'
+  // additions...
+
+  if (isBundle) {
+    merged.main = 'main.js' // will be umd
+    merged.unpkg = 'main.min.js'
+  } else {
+    merged.module = 'main.js'
+    merged.types = 'main.d.ts' // TODO: make work for bundle
+  }
 
   return merged
 }
