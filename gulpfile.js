@@ -4,54 +4,50 @@ const { writePkgJsons } = require('./scripts/lib/pkg-json-write')
 const { bundlPkgDefs } = require('./scripts/lib/pkg-dts')
 const { writePkgReadmes } = require('./scripts/lib/pkg-readme')
 const { writePkgLicenses } = require('./scripts/lib/pkg-license')
-const { minifyJs, minifyCss } = require('./scripts/lib/minify')
+const { minifyJs, minifyCss } = require('./scripts/lib/minify') // combine into one task?
 const { lint } = require('./scripts/lib/lint')
 const { archive } = require('./scripts/lib/archive')
-
-
-const buildJs = exports.buildJs = series(
-  writePkgJsons, // important for node-resolution
-  shellTask('npm:tsc'),
-  shellTask('npm:rollup')
-)
-
-const watchJs = exports.watchJs = series(
-  writePkgJsons, // important for node-resolution
-  shellTask('npm:tsc:debug'),
-  parallel(
-    shellTask('npm:tsc:watch'), // TODO: better system then two consecutive compiles
-    shellTask('npm:rollup:watch')
-  )
-)
+const { copyScss, watchScss } = require('./scripts/lib/pkg-scss') // watchScss is a bad name!!!
+const { writeLocales, watchLocales } = require('./scripts/lib/locales')
 
 const buildDts = exports.dts = series(
   shellTask('npm:tsc:dts'), // generates granular .d.ts files
   bundlPkgDefs // combines them
 )
 
-exports.build = parallel(
-  writePkgLicenses,
-  writePkgReadmes,
-  buildDts,
-  series(
-    buildJs,
-    minifyJs
-  ),
-  series(
-    shellTask('npm:sass'),
-    minifyCss
-  )
-)
-
-exports.watch = parallel( // doesn't do everything build does
-  watchJs,
-  shellTask('npm:sass:watch')
-)
-
-exports.minify = parallel(minifyJs, minifyCss)
-
 exports.lint = lint
 exports.archive = archive
 exports.json = writePkgJsons
 exports.readme = writePkgReadmes
 exports.license = writePkgLicenses
+exports.locales = writeLocales
+exports.minify = parallel(minifyJs, minifyCss)
+
+exports.build = series(
+  writePkgJsons, // important for node-resolution
+  shellTask('npm:tsc'),
+  parallel(
+    shellTask('npm:rollup'),
+    writePkgLicenses,
+    writePkgReadmes,
+    writeLocales, // needs tsc
+    copyScss,
+    buildDts
+  ),
+  parallel(minifyJs, minifyCss)
+)
+
+exports.watch = series(
+  writePkgJsons, // important for node-resolution. doesn't watch!
+  shellTask('npm:tsc:debug'),
+  parallel(
+    shellTask('npm:tsc:watch'), // TODO: better system than two consecutive compiles
+    shellTask('npm:rollup:watch'),
+    writePkgLicenses, // doesn't watch!
+    writePkgReadmes, // doesn't watch!
+    series(writeLocales, watchLocales), // needs tsc
+    series(copyScss, watchScss),
+    buildDts // doesn't watch!
+  )
+  // doesn't minify!
+)

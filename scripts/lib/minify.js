@@ -10,8 +10,7 @@ exports.minifyCss = minifyCss
 
 function minifyJs() {
   return src([
-    'packages?(-premium)/*/dist/*.js',
-    '!**/*.esm.js', // don't minify our generated ECMAScript modules
+    'packages?(-premium)/bundle/dist/*.js',
     '!**/*.min.js' // avoid double minify
   ], { base: '.' })
     .pipe(
@@ -32,7 +31,7 @@ function minifyJs() {
 
 function minifyCss() {
   return src([
-    'packages?(-premium)/*/dist/*.css',
+    'packages?(-premium)/bundle/dist/*.css',
     '!**/*.min.css' // avoid double minify
   ], { base: '.' })
     .pipe(
