@@ -46,12 +46,10 @@
     "outDir": "tmp/tsc-output"
   },
   "include": [
-    "packages/*/src/main.ts",
-    "packages/*/src/main.tsx",
-    "packages/core/src/locales/*.js",
-    "packages/__tests__/src/**/*.js",
-    "packages-premium/*/src/main.ts",
-    "packages-premium/*/src/main.tsx",
-    "packages-premium/__tests__/src/**/*.js"
+    "packages/*/src/main.*",
+    "packages/core/src/locales/*",
+    "packages/__tests__/src/**/*",
+    "packages-premium/*/src/main.*",
+    "packages-premium/__tests__/src/**/*"
   ]
 }

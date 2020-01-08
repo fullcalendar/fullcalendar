@@ -11,7 +11,7 @@ import { parseToolbars, ToolbarModel } from '../toolbar-parse'
 import NowTimer, { NowTimerCallback } from '../NowTimer'
 
 
-export const ComponentContextType = createContext({}) // for Components
+export const ComponentContextType = createContext<ComponentContext>({} as any) // for Components
 
 
 export default interface ComponentContext {

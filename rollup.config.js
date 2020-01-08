@@ -9,11 +9,11 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 
 const buildModuleConfigs = require('./scripts/lib/rollup-modules')
 const buildBundleConfigs = require('./scripts/lib/rollup-bundles')
-const buildTestConfig = require('./scripts/lib/rollup-tests')
+const buildTestConfigs = require('./scripts/lib/rollup-tests')
 
 
 module.exports = [
   ...buildModuleConfigs(isDev),
   ...buildBundleConfigs(isDev),
-  buildTestConfig()
+  ...buildTestConfigs()
 ]

@@ -1,4 +1,5 @@
 const path = require('path')
+const glob = require('glob')
 const multiEntry = require('rollup-plugin-multi-entry')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const alias = require('rollup-plugin-alias')
@@ -9,6 +10,14 @@ const { EXTERNAL_BROWSER_GLOBALS, WATCH_OPTIONS, stripScssTildeImporter, onwarn 
 
 
 module.exports = function() {
+  return [
+    buildMainConfig(),
+    buildForManuaTests()
+  ]
+}
+
+
+function buildMainConfig() {
   let nodeModulesDirs = [
     'packages/__tests__/node_modules',
     'packages-premium/__tests__/node_modules'
@@ -17,7 +26,8 @@ module.exports = function() {
   return {
     input: [
       'tmp/tsc-output/packages?(-premium)/__tests__/src/globals.js',
-      'tmp/tsc-output/packages?(-premium)/__tests__/src/**/*.js'
+      'tmp/tsc-output/packages?(-premium)/__tests__/src/**/*.js',
+      '!tmp/tsc-output/packages?(-premium)/__tests__/src/for-manual/**'
     ],
     output: {
       file: 'tmp/tests.js',
@@ -53,5 +63,21 @@ module.exports = function() {
     ],
     watch: WATCH_OPTIONS,
     onwarn
+  }
+}
+
+
+function buildForManuaTests() {
+  return {
+    input: glob.sync('tmp/tsc-output/packages?(-premium)/__tests__/src/for-manual/**/*.js'),
+    external: Object.keys(EXTERNAL_BROWSER_GLOBALS),
+    output: {
+      dir: 'tmp/tests-manual',
+      format: 'iife',
+      globals: EXTERNAL_BROWSER_GLOBALS
+    },
+    plugins: [
+      nodeResolve()
+    ]
   }
 }

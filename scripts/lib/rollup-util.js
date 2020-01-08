@@ -4,12 +4,12 @@ const cleanup = require('rollup-plugin-cleanup')
 const sourcemaps = require('rollup-plugin-sourcemaps')
 const replace = require('rollup-plugin-replace')
 const handleBars = require('handlebars')
-const { pkgStructs } = require('./pkg-struct')
 const rootPkgJsonData = require('../../package.json')
 
 
 exports.EXTERNAL_BROWSER_GLOBALS = {
   fullcalendar: 'FullCalendar', // if this gets updated, update codebase...
+  'fullcalendar-scheduler': 'FullCalendar',
   luxon: 'luxon',
   rrule: 'rrule',
   moment: 'moment',
