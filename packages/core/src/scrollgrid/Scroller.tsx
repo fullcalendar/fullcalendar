@@ -48,23 +48,8 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
   handleEl = (el: HTMLElement) => {
     this.el = el
-
     setRef(this.props.elRef, el)
   }
-
-
-  // getSnapshotBeforeUpdate() {
-  //   return {
-  //     scrollLeft: this.el.scrollLeft,
-  //     scrollTop: this.el.scrollTop
-  //   }
-  // }
-
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   this.el.scrollLeft = snapshot.scrollLeft
-  //   this.el.scrollTop = snapshot.scrollTop
-  // }
 
 
   needsXScrolling() {
