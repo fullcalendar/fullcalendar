@@ -68,7 +68,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
     let needsYScrolling = getNeedsYScrolling(this.props, sectionConfig, chunkConfig) // TODO: do lazily
     let overflowY: OverflowValue = this.state.forceYScrollbars ? 'scroll' : (needsYScrolling ? 'auto' : 'hidden')
-    let content = renderChunkContent(sectionConfig, chunkConfig, microColGroupNode, '')
+    let content = renderChunkContent(sectionConfig, chunkConfig, microColGroupNode, '', true)
 
     return (
       <td class={getChunkClassNames(sectionConfig, this.context)} ref={chunkConfig.elRef}>

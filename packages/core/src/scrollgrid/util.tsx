@@ -122,7 +122,13 @@ export function getNeedsYScrolling(props: { vGrow?: boolean }, sectionConfig: Se
 }
 
 
-export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, microColGroupNode: VNode, chunkTableMinWidth: CssDimValue) {
+export function renderChunkContent(
+  sectionConfig: SectionConfig,
+  chunkConfig: ChunkConfig,
+  microColGroupNode: VNode,
+  chunkTableMinWidth: CssDimValue,
+  isSizingReady: boolean
+) {
   let vGrowRows = sectionConfig.vGrowRows || chunkConfig.vGrowRows
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
@@ -130,7 +136,7 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
       colGroupNode: microColGroupNode,
       rowsGrow: vGrowRows,
       type: sectionConfig.type,
-      isSizingReady: true, // TODO!!!!!!
+      isSizingReady,
       minWidth: chunkTableMinWidth
     }) :
     h('table', {
