@@ -47,17 +47,30 @@
   white-space: nowrap;
 }
 
-.fc--ltr .shrink {
+.fc-ltr .shrink {
   float: left;
 }
 
-.fc--rtl .shrink {
+.fc-rtl .shrink {
   float: right;
 }
 
 
-@media print { // TODO: use fc-print, just like everywhere else
-  .scrollgrid {
-    table-layout: auto;
+.scrollgrid.scrollgrid--forprint { // will eventually have precedence of `.fc-print .scrollgrid`
+  table-layout: auto;
+}
+
+.scrollgrid--forprint {
+
+  .cell-content-wrap {
+    height: auto !important; // override inline
   }
+
+  .fc-sticky {
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+  }
+
 }

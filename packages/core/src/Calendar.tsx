@@ -36,6 +36,7 @@ import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
 import NowTimer, { NowTimerCallback } from './NowTimer'
 import { globalPlugins } from './global-plugins'
+import { removeExact } from './util/array'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -57,6 +58,8 @@ export type CalendarInteractionClass = { new(calendar: Calendar): CalendarIntera
 
 export type OptionChangeHandler = (propValue: any, calendar: Calendar, deepEqual) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
+
+export type ResizeHandler = (force: boolean) => void
 
 export default class Calendar {
 
@@ -98,6 +101,7 @@ export default class Calendar {
   public dateEnv: DateEnv
   public defaultAllDayEventDuration: Duration
   public defaultTimedEventDuration: Duration
+  private resizeHandlers: ResizeHandler[] = []
 
   // interaction
   calendarInteractions: CalendarInteraction[]
@@ -173,6 +177,7 @@ export default class Calendar {
       this.renderableEventStore = createEmptyEventStore()
       this.renderRunner.request()
       flushToDom()
+      window.addEventListener('resize', this.handleWindowResize)
     }
   }
 
@@ -181,6 +186,8 @@ export default class Calendar {
     if (this.isRendering) {
       this.isRendering = false
       this.renderRunner.request()
+      this.resizeRunner.clear()
+      window.removeEventListener('resize', this.handleWindowResize)
     }
   }
 
@@ -812,8 +819,45 @@ export default class Calendar {
 
 
   updateSize() { // public
-    if (this.component) {
-      this.component.triggerResizeHandlers(true)
+    this.triggerResizeHandlers(true)
+  }
+
+
+  // RE-Sizing
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  resizeRunner = new DelayedRunner(() => {
+    this.triggerResizeHandlers(false)
+    this.publiclyTrigger('windowResize', [ this.context.view ])
+  })
+
+
+  handleWindowResize = (ev: UIEvent) => {
+    let { options } = this.context
+
+    if (
+      options.handleWindowResize &&
+      ev.target === window // avoid jqui events
+    ) {
+      this.resizeRunner.request(options.windowResizeDelay)
+    }
+  }
+
+
+  addResizeHandler = (handler: ResizeHandler) => {
+    this.resizeHandlers.push(handler)
+  }
+
+
+  removeResizeHandler = (handler: ResizeHandler) => {
+    removeExact(this.resizeHandlers, handler)
+  }
+
+
+  triggerResizeHandlers(forced: boolean) {
+    for (let handler of this.resizeHandlers) {
+      handler(forced)
     }
   }
 

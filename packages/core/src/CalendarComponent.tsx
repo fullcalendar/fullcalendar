@@ -15,10 +15,8 @@ import { h, Fragment, createRef } from './vdom'
 import { BaseComponent, subrenderer } from './vdom-util'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
-import { DelayedRunner } from './util/runner'
 import { applyStyleProp } from './util/dom-manip'
 import ViewContainer from './ViewContainer'
-import { removeExact } from './util/array'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -28,8 +26,6 @@ export interface CalendarComponentProps extends CalendarState {
   eventUiBases: EventUiHash
   title: string
 }
-
-export type ResizeHandler = (force: boolean) => void
 
 export default class CalendarComponent extends BaseComponent<CalendarComponentProps> {
 
@@ -43,7 +39,6 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
   private viewRef = createRef<View>()
-  private resizeHandlers: ResizeHandler[] = []
 
   get view() { return this.viewRef.current }
 
@@ -107,15 +102,8 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   }
 
 
-  componentDidMount() {
-    window.addEventListener('resize', this.handleWindowResize)
-  }
-
-
   componentWillUnmount() {
     this.subrenderDestroy()
-    this.resizeRunner.clear()
-    window.removeEventListener('resize', this.handleWindowResize)
   }
 
 
@@ -201,46 +189,6 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
           />
       </ComponentContextType.Provider>
     )
-  }
-
-
-  // Sizing
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  resizeRunner = new DelayedRunner(() => {
-    this.triggerResizeHandlers(false)
-    let { calendar, view } = this.context
-    calendar.publiclyTrigger('windowResize', [ view ])
-  })
-
-
-  handleWindowResize = (ev: UIEvent) => {
-    let { options } = this.context
-
-    if (
-      options.handleWindowResize &&
-      ev.target === window // avoid jqui events
-    ) {
-      this.resizeRunner.request(options.windowResizeDelay)
-    }
-  }
-
-
-  addResizeHandler = (handler: ResizeHandler) => {
-    this.resizeHandlers.push(handler)
-  }
-
-
-  removeResizeHandler = (handler: ResizeHandler) => {
-    removeExact(this.resizeHandlers, handler)
-  }
-
-
-  triggerResizeHandlers(forced: boolean) {
-    for (let handler of this.resizeHandlers) {
-      handler(forced)
-    }
   }
 
 }

@@ -1,5 +1,5 @@
 import Calendar from '../Calendar'
-import { ResizeHandler } from '../CalendarComponent'
+import { ResizeHandler } from '../Calendar'
 import ViewApi from '../ViewApi'
 import Theme from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
@@ -49,8 +49,8 @@ export function buildContext(
     view,
     options,
     ...computeContextProps(options, theme, calendar),
-    addResizeHandler: calendar.component.addResizeHandler,
-    removeResizeHandler: calendar.component.removeResizeHandler,
+    addResizeHandler: calendar.addResizeHandler,
+    removeResizeHandler: calendar.removeResizeHandler,
     createNowIndicatorTimer: calendar.createNowIndicatorTimer
   }
 }
