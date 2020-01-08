@@ -16,13 +16,6 @@ module.exports = function(config) {
     files: [
       'packages/__tests__/src/base.css',
 
-      // fullcalendar CSS must be manually included :(
-      'packages/core/dist/main.css', // always needs to be first
-      'packages/daygrid/dist/main.css', // because timegrid depends on it
-      'packages-premium/timeline/dist/main.css', // because resource-timeline depends on it
-      'packages?(-premium)/*/dist/main.css',
-      { pattern: 'packages?(-premium)/*/dist/main.css.map', included: false, nocache: true, watched: false },
-
       // tests dependencies that are old or depend on order, so put them first
       'node_modules/jquery/dist/jquery.js', // because of jquery-simulate and needing-to-be-first
       'node_modules/jquery-simulate/jquery.simulate.js', // operates on global jQuery
@@ -40,7 +33,8 @@ module.exports = function(config) {
 
       'tmp/test-config.js', // a way to dump variables into the test environment
       'tmp/tests.js',
-      { pattern: 'tmp/tests.js.map', included: false, nocache: true, watched: false }
+      'tmp/tests.css',
+      { pattern: 'tmp/tests.*.map', included: false, nocache: true, watched: false }
     ],
 
     // make console errors aware of source files
