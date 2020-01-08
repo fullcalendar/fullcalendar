@@ -18,9 +18,7 @@ exports.archive = parallel(
 function writeStandardArchive() {
   return writeArchive({
     archiveName: 'fullcalendar',
-    pkgFiles: [
-      'packages/*/dist/**'
-    ],
+    bundleDir: 'packages/bundle',
     exampleHtmlFiles: [
       '*.html',
       '!*+(resource|timeline)*.html',
@@ -40,12 +38,14 @@ function writeStandardArchive() {
 }
 
 
+/*
+TODO: for examples, instead of looking for (resource|timeline) in the filename,
+leverage whether the html file includes packages-premium/bundle or not.
+*/
 function writePremiumArchive() {
   return writeArchive({
     archiveName: 'fullcalendar-scheduler',
-    pkgFiles: [
-      'packages?(-premium)/*/dist/**'
-    ],
+    bundleDir: 'packages-premium/bundle',
     exampleHtmlFiles: [
       '*+(resource|timeline)*.html',
       '!_*.html'
@@ -76,18 +76,13 @@ function writeArchive(options) {
 
 
 function writeArchiveFiles(options) {
+  let bundleDistDir = path.join(options.bundleDir, 'dist')
   let tmpDir = path.join('tmp/archives', options.archiveName)
 
-  // packages/whatever/dist/file.js -> packages/whatever/file.js
   let writingPkgs = promisifyVinyl(
-    src(
-      options.pkgFiles.concat([ '!**/dist' ]), // hack to prevent empty dist dir
-      { base: '.' }
-    ).pipe(
-      rename((pathParts) => {
-        pathParts.dirname = transformPkgPath(pathParts.dirname)
-      })
-    ).pipe(dest(tmpDir))
+    src('**', { cwd: bundleDistDir, base: bundleDistDir }).pipe(
+      dest(path.join(tmpDir, 'lib'))
+    )
   )
 
   let writingOtherExampleFiles = promisifyVinyl(
@@ -131,9 +126,10 @@ function writeExampleHtmlAndVendor(exampleHtmlFiles, tmpDir) {
 
   function transformResourcePath(resourcePath) {
 
-    if (resourcePath.indexOf('../packages') === 0) { // one of our package files
-      resourcePath = transformPkgPath(resourcePath)
-    }
+    resourcePath = resourcePath.replace(
+      /^\.\.\/packages(-premium)?\/bundle\/dist\b/,
+      '../lib'
+    )
 
     resourcePath = resourcePath.replace(
       /^\.\.\/(node_modules\/.*\/([^/]+))$/,
@@ -154,9 +150,4 @@ function writeExampleHtmlAndVendor(exampleHtmlFiles, tmpDir) {
       )
     }
   })
-}
-
-
-function transformPkgPath(path) {
-  return path.replace(/(^|\/)dist(\/|$)/, '$2')
 }
