@@ -12,11 +12,16 @@ exports.writePkgLicenses = writePkgLicenses
 
 function writePkgLicenses() {
   return Promise.all(
-    pkgStructs.map(function(pkgStruct) {
-      let srcPath = pkgStruct.isPremium ? PREMIUM_LICENSE : NORMAL_LICENSE
-      let destPath = path.join(pkgStruct.distDir, path.basename(srcPath))
-
-      return copyFile(srcPath, destPath)
-    })
+    pkgStructs.map((pkgStruct) => (
+      pkgStruct.isBundle ? Promise.resolve() : writePkgLicense(pkgStruct)
+    ))
   )
+}
+
+
+function writePkgLicense(pkgStruct) {
+  let srcPath = pkgStruct.isPremium ? PREMIUM_LICENSE : NORMAL_LICENSE
+  let destPath = path.join(pkgStruct.distDir, path.basename(srcPath))
+
+  return copyFile(srcPath, destPath)
 }

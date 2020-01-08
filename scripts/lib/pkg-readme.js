@@ -12,9 +12,9 @@ async function writePkgReadmes() {
   let template = handleBars.compile(templateText)
 
   return Promise.all(
-    pkgStructs.map((pkgStruct) => {
-      return writePkgReadme(pkgStruct, template)
-    })
+    pkgStructs.map((pkgStruct) => (
+      pkgStruct.isBundle ? Promise.resolve() : writePkgReadme(pkgStruct, template)
+    ))
   )
 }
 
