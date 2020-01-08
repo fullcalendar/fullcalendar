@@ -2,26 +2,17 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../packages/core/dist/main.css' rel='stylesheet' />
-<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/list/dist/main.css' rel='stylesheet' />
-<script src='../packages/core/dist/main.js'></script>
-<script src='../packages/interaction/dist/main.js'></script>
-<script src='../packages/daygrid/dist/main.js'></script>
-<script src='../packages/timegrid/dist/main.js'></script>
-<script src='../packages/list/dist/main.js'></script>
+<link href='../packages/bundle/dist/main.css' rel='stylesheet' />
+<script src='../packages/bundle/dist/main.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
-    var Calendar = FullCalendar.Calendar;
-    var Draggable = FullCalendarInteraction.Draggable
 
     /* initialize the external events
     -----------------------------------------------------------------*/
 
     var containerEl = document.getElementById('external-events-list');
-    new Draggable(containerEl, {
+    new FullCalendar.Draggable(containerEl, {
       itemSelector: '.fc-event',
       eventData: function(eventEl) {
         return {
@@ -36,7 +27,7 @@
     //   containerEl.querySelectorAll('.fc-event')
     // );
     // eventEls.forEach(function(eventEl) {
-    //   new Draggable(eventEl, {
+    //   new FullCalendar.Draggable(eventEl, {
     //     eventData: {
     //       title: eventEl.innerText.trim(),
     //     }
@@ -47,8 +38,7 @@
     -----------------------------------------------------------------*/
 
     var calendarEl = document.getElementById('calendar');
-    var calendar = new Calendar(calendarEl, {
-      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',

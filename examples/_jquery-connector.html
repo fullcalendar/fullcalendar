@@ -2,15 +2,8 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../packages/core/dist/main.css' rel='stylesheet' />
-<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/list/dist/main.css' rel='stylesheet' />
-<script src='../packages/core/dist/main.js'></script>
-<script src='../packages/interaction/dist/main.js'></script>
-<script src='../packages/daygrid/dist/main.js'></script>
-<script src='../packages/timegrid/dist/main.js'></script>
-<script src='../packages/list/dist/main.js'></script>
+<link href='../packages/bundle/dist/main.css' rel='stylesheet' />
+<script src='../packages/bundle/dist/main.js'></script>
 <script src='../node_modules/jquery/dist/jquery.min.js'></script>
 <script>
 
@@ -82,7 +75,6 @@
     var $calendar = $('#calendar')
 
     $calendar.fullCalendar({
-      plugins: [ 'dayGrid', 'timeGrid', 'list', 'interaction' ],
       header: {
         left: 'prev,next today',
         center: 'title',

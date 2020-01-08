@@ -2,22 +2,15 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../packages/core/dist/main.css' rel='stylesheet' />
-<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
+<link href='../packages/bundle/dist/main.css' rel='stylesheet' />
 <script src='../node_modules/jquery/dist/jquery.js'></script>
 <script src='../node_modules/components-jqueryui/jquery-ui.js'></script>
-<script src='../packages/core/dist/main.js'></script>
-<script src='../packages/interaction/dist/main.js'></script>
-<script src='../packages/daygrid/dist/main.js'></script>
-<script src='../packages/timegrid/dist/main.js'></script>
+<script src='../packages/bundle/dist/main.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
-    var Calendar = FullCalendar.Calendar;
-    var ThirdPartyDraggable = FullCalendarInteraction.ThirdPartyDraggable;
 
-    new ThirdPartyDraggable({
+    new FullCalendar.ThirdPartyDraggable({
       mirrorSelector: '.ui-draggable-dragging'
     })
 
@@ -45,8 +38,7 @@
     -----------------------------------------------------------------*/
 
     var calendarEl = document.getElementById('calendar');
-    var calendar = new Calendar(calendarEl, {
-      plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',

@@ -3,19 +3,12 @@
 <head>
 <meta charset='utf-8' />
 <link href='../node_modules/dragula/dist/dragula.css' rel='stylesheet' />
-<link href='../packages/core/dist/main.css' rel='stylesheet' />
-<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
+<link href='../packages/bundle/dist/main.css' rel='stylesheet' />
 <script src='../node_modules/dragula/dist/dragula.js'></script>
-<script src='../packages/core/dist/main.js'></script>
-<script src='../packages/interaction/dist/main.js'></script>
-<script src='../packages/daygrid/dist/main.js'></script>
-<script src='../packages/timegrid/dist/main.js'></script>
+<script src='../packages/bundle/dist/main.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
-    var Calendar = FullCalendar.Calendar;
-    var ThirdPartyDraggable = FullCalendarInteraction.ThirdPartyDraggable;
 
     /* initialize the external events
     -----------------------------------------------------------------*/
@@ -27,7 +20,7 @@
       copy: true
     });
 
-    new ThirdPartyDraggable(containerEl, {
+    new FullCalendar.ThirdPartyDraggable(containerEl, {
       itemSelector: '.fc-event',
       mirrorSelector: '.gu-mirror',
       eventData: function(eventEl) {
@@ -46,7 +39,7 @@
     //     title: eventEl.innerText.trim()
     //   }));
     // });
-    // new ThirdPartyDraggable({
+    // new FullCalendar.ThirdPartyDraggable({
     //   mirrorSelector: '.gu-mirror'
     // })
 
@@ -54,8 +47,7 @@
     -----------------------------------------------------------------*/
 
     var calendarEl = document.getElementById('calendar');
-    var calendar = new Calendar(calendarEl, {
-      plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       header: {
         left: 'prev,next today',
         center: 'title',

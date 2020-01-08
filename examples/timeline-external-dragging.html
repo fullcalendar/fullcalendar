@@ -2,29 +2,17 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../packages/core/dist/main.css' rel='stylesheet' />
-<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
-<link href='../packages-premium/timeline/dist/main.css' rel='stylesheet' />
-<link href='../packages-premium/resource-timeline/dist/main.css' rel='stylesheet' />
-<script src='../packages/core/dist/main.js'></script>
-<script src='../packages/interaction/dist/main.js'></script>
-<script src='../packages/daygrid/dist/main.js'></script>
-<script src='../packages/timegrid/dist/main.js'></script>
-<script src='../packages-premium/timeline/dist/main.js'></script>
-<script src='../packages-premium/resource-common/dist/main.js'></script>
-<script src='../packages-premium/resource-timeline/dist/main.js'></script>
+<link href='../packages-premium/bundle/dist/main.css' rel='stylesheet' />
+<script src='../packages-premium/bundle/dist/main.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
-    var Calendar = FullCalendar.Calendar;
-    var Draggable = FullCalendarInteraction.Draggable;
 
     /* initialize the external events
     -----------------------------------------------------------------*/
 
     var containerEl = document.getElementById('external-events');
-    new Draggable(containerEl, {
+    new FullCalendar.Draggable(containerEl, {
       itemSelector: '.fc-event',
       eventData: function(eventEl) {
         return {
@@ -33,13 +21,11 @@
       }
     });
 
-
     /* initialize the calendar
     -----------------------------------------------------------------*/
 
     var calendarEl = document.getElementById('calendar');
-    var calendar = new Calendar(calendarEl, {
-      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'resourceTimeline' ],
+    var calendar = new FullCalendar.Calendar(calendarEl, {
       now: '2019-08-07',
       editable: true, // enable draggable events
       droppable: true, // this allows things to be dropped onto the calendar

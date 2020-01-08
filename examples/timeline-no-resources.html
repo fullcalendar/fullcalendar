@@ -2,16 +2,8 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='../packages/core/dist/main.css' rel='stylesheet' />
-<link href='../packages/daygrid/dist/main.css' rel='stylesheet' />
-<link href='../packages/timegrid/dist/main.css' rel='stylesheet' />
-<link href='../packages-premium/timeline/dist/main.css' rel='stylesheet' />
-<script src='../packages/core/dist/main.js'></script>
-<script src='../packages/interaction/dist/main.js'></script>
-<script src='../packages/daygrid/dist/main.js'></script>
-<script src='../packages/timegrid/dist/main.js'></script>
-<script src='../packages-premium/timeline/dist/main.js'></script>
-<script src='../packages-premium/resource-common/dist/main.js'></script>
+<link href='../packages-premium/bundle/dist/main.css' rel='stylesheet' />
+<script src='../packages-premium/bundle/dist/main.js'></script>
 <script>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -19,7 +11,6 @@
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
       selectable: true,
-      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'timeline' ],
       now: '2019-08-07',
       editable: true, // enable draggable events
       aspectRatio: 1.8,
