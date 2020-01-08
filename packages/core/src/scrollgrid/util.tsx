@@ -60,7 +60,7 @@ export function doSizingHacks(rootEl: HTMLElement) { // TODO: needs to run on wi
 
   // // for Safari
   // // TODO: in Scroller class?
-  // let hGrowTables = findElements(rootEl, '.scroller > table.hgrow')
+  // let hGrowTables = findElements(rootEl, '.scroller > table')
   // for (let tableEl of hGrowTables) {
   //   if (tableEl.style.position == 'relative') {
   //     tableEl.style.position = ''
@@ -134,7 +134,7 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
       minWidth: chunkTableMinWidth
     }) :
     h('table', {
-      class: [ 'hgrow', (vGrowRows ? 'vgrow' : '') ].join(' '),
+      class: (vGrowRows ? 'vgrow' : ''),
       style: {
         minWidth: chunkTableMinWidth // because colMinWidths arent enough
       }
@@ -184,12 +184,11 @@ export function hasShrinkWidth(cols: ColCss[]) {
 export function getScrollGridClassNames(vGrow: boolean, context: ComponentContext) {
   let classNames = [
     'scrollgrid',
-    (context.isRtl ? 'scrollgrid--rtl' : 'scrollgrid--ltr'), // TODO: kill this
     context.theme.getClass('table')
   ]
 
   if (vGrow) {
-    classNames.push('scrollgrid--vgrow')
+    classNames.push('vgrow')
   }
 
   return classNames
@@ -200,7 +199,7 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
   let classNames = [ 'scrollgrid__section', 'scrollgrid__' + sectionConfig.type, sectionConfig.className ]
 
   if (wholeTableVGrow && sectionConfig.vGrow && sectionConfig.maxHeight == null) {
-    classNames.push('scrollgrid__section--vgrow')
+    classNames.push('vgrow')
   }
 
   return classNames

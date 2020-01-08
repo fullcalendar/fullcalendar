@@ -1,87 +1,63 @@
 
 .scrollgrid {
-  width: 100%;
-}
 
-.scrollgrid--rtl { // temporary
-  direction: rtl;
-}
+  &, table { // root AND inner tables
+    width: 100%; // because tables don't normally do this
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
 
-.scrollgrid,
-.scrollgrid table {
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
-}
+  > * > tr > * { // cells
+    padding: 0 !important;
+  }
 
-.scrollgrid--forprint {
-  table-layout: auto;
-}
+  table { // inner tables
+    border-style: hidden; // kill outer border
 
-.scrollgrid--vgrow {
-  height: 100%;
-}
+    &.vgrow > * > tr > * { // cells
+      height: 100%; // hack for IE
+    }
+  }
 
-.scrollgrid th,
-.scrollgrid td {
-  border: 1px solid #ddd;
-  padding: 0;
-  vertical-align: top;
-}
-
-.scrollgrid table {
-  border-style: hidden;
-}
-
-.cell-content {
-  padding: 10px;
-}
-.shrink {
-  float: left;
-  white-space: nowrap;
-}
-.scrollgrid--rtl .shrink {
-  float: right;
 }
 
 .scrollgrid__section { // a <tr>
   height: 1px;
-}
 
-.scrollgrid__section--vgrow {
-  height: auto;
+  &.vgrow {
+    height: auto; // undo 1px height. will cancel height:100% also
 
-  > td {
-    height: 100%;
+    > td {
+      height: 100%;
+    }
   }
 }
 
-
 .clippedscroller {
+  position: relative;
   overflow: hidden;
-  position: relative; // will be override by .vgrow--absolute
+}
+
+.cell-content { // this and cell-content-wrap are used for row height syncing
+  padding: 10px;
+}
+
+.shrink {
+  white-space: nowrap;
+}
+
+.fc--ltr .shrink {
+  float: left;
+}
+
+.fc--rtl .shrink {
+  float: right;
 }
 
 
-// TODO: use .table--vgrow, .clippedscroller--vgrow instead?
-
-.hgrow {
-  width: 100%;
-}
-
-.vgrow {
-  height: 100%;
-}
-
-.vgrow--absolute {
-  height: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.scrollgrid__section:not(.scrollgrid__section--vgrow) table.vgrow > * > tr > * { // important for IE!
-  height: 100%;
+@media print { // TODO: use fc-print, just like everywhere else
+  .scrollgrid {
+    table-layout: auto;
+  }
 }

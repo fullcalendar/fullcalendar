@@ -40,6 +40,19 @@ td.fc-today {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+.vgrow {
+  height: 100%;
+}
+
+.vgrow--abs {
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 
 .fc-unthemed {
 
