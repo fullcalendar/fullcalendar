@@ -89,7 +89,7 @@ export function arrayToHash(a): { [key: string]: true } {
 }
 
 
-export function hashValuesToArray(obj) {
+export function hashValuesToArray(obj) { // can't use Object.values yet because of no IE support
   let a = []
 
   for (let key in obj) {

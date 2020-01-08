@@ -2,7 +2,7 @@ import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin
 import OptionsManager from './OptionsManager'
 import View from './View'
 import { OptionsInput, EventHandlerName, EventHandlerArgs } from './types/input-types'
-import { buildLocale, parseRawLocales, RawLocaleMap } from './datelib/locale'
+import { buildLocale, organizeRawLocales, RawLocaleMap } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay, diffWholeDays } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
@@ -35,7 +35,7 @@ import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
 import NowTimer, { NowTimerCallback } from './NowTimer'
-import { defaultPlugins } from './default-plugins'
+import { globalPlugins } from './global-plugins'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -81,7 +81,7 @@ export default class Calendar {
 
   // derived state
   // TODO: make these all private
-  private parseRawLocales = memoize(parseRawLocales)
+  private organizeRawLocales = memoize(organizeRawLocales)
   private buildDateEnv = memoize(buildDateEnv)
   private computeTitle = memoize(computeTitle)
   private buildTheme = memoize(buildTheme)
@@ -140,7 +140,7 @@ export default class Calendar {
 
     // only do once. don't do in onOptionsChange. because can't remove plugins
     this.addPluginDefs(
-      defaultPlugins.concat(optionsManager.computed.plugins || [])
+      globalPlugins.concat(optionsManager.computed.plugins || [])
     )
 
     this.onOptionsChange()
@@ -499,7 +499,7 @@ export default class Calendar {
     let pluginHooks = this.pluginSystem.hooks
     let rawOptions = this.optionsManager.computed
 
-    let availableLocaleData = this.parseRawLocales(rawOptions.locales)
+    let availableLocaleData = this.organizeRawLocales(rawOptions.locales)
     let dateEnv = this.buildDateEnv(rawOptions, pluginHooks, availableLocaleData)
 
     this.availableRawLocales = availableLocaleData.map

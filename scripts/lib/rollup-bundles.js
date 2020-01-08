@@ -61,6 +61,11 @@ function buildBundleConfig(pkgStruct, isDev) {
 }
 
 
+/*
+if the exports object has the globalPlugins property, that means the exports object
+is the same as the root fullcalendar namespace, which means we're executing as browser globals.
+in this case, register the plugin globally. also, undo attaching a useless `default` export.
+*/
 const OUTRO = `
 if (exports.globalPlugins) {
   exports.globalPlugins.push(exports.default)
@@ -113,14 +118,18 @@ function buildLocaleConfigs() { // for EACH
   let bundleStruct = getNonPremiumBundle()
   let localePaths = glob.sync('locales/*.js', { cwd: corePkg.tscDir })
 
-  return localePaths.map((localePath, i) => ({
-    input: path.join(corePkg.tscDir, localePath),
-    output: {
-      format: 'umd',
-      name: 'FullCalendarLocales.add',
-      file: path.join(bundleStruct.distDir, localePath)
+  return localePaths.map((localePath) => {
+    let localeCode = path.basename(localePath).replace(/\.[^.]*$/, '')
+
+    return {
+      input: path.join(corePkg.tscDir, localePath),
+      output: {
+        format: 'umd',
+        name: 'FullCalendarLocales.' + localeCode, // code isn't used, but needs to be unique
+        file: path.join(bundleStruct.distDir, localePath)
+      }
     }
-  }))
+  })
 }
 
 

@@ -1,3 +1,5 @@
+import { hashValuesToArray } from './object'
+
 
 export default class RefMap<RefType, OtherArgs extends any[] = []> {
 
@@ -36,7 +38,7 @@ export default class RefMap<RefType, OtherArgs extends any[] = []> {
 
 
   getCurrents() {
-    return Object.values(this.currentMap)
+    return hashValuesToArray(this.currentMap)
   }
 
 }

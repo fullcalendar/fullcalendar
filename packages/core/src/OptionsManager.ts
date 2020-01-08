@@ -1,6 +1,6 @@
 import { firstDefined } from './util/misc'
 import { globalDefaults, rtlDefaults, mergeOptions } from './options'
-import { parseRawLocales, buildLocale } from './datelib/locale'
+import { organizeRawLocales, buildLocale } from './datelib/locale'
 import { __assign } from 'tslib'
 
 
@@ -53,7 +53,7 @@ export default class OptionsManager {
       this.overrides.locale,
       globalDefaults.locale
     )
-    let available = parseRawLocales(locales)
+    let available = organizeRawLocales(locales) // also done in Calendar :(
     let localeDefaults = buildLocale(locale || available.defaultCode, available.map).options
 
     let dir = firstDefined( // based on options computed so far, is direction RTL?
