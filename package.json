@@ -100,7 +100,6 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rrule": "^2.6.2",
     "shelljs": "^0.8.3",
-    "tslib": "^1.9.3",
     "tslint": "^5.16.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.7.3",

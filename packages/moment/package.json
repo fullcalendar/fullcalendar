@@ -5,6 +5,9 @@
   "title": "FullCalendar Moment Plugin",
   "description": "A connector to the MomentJS date library",
   "docs": "https://fullcalendar.io/docs/moment-plugins",
+  "dependencies": {
+    "tslib": "^1.9.3"
+  },
   "peerDependencies": {
     "@fullcalendar/core": "~4.3.0",
     "moment": "^2.24.0"

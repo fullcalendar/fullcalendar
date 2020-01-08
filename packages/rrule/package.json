@@ -5,6 +5,9 @@
   "title": "FullCalendar RRule Plugin",
   "description": "A connector to the RRule library, for recurring events",
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
+  "dependencies": {
+    "tslib": "^1.9.3"
+  },
   "peerDependencies": {
     "@fullcalendar/core": "~4.3.0",
     "rrule": "^2.6.0"

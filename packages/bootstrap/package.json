@@ -5,6 +5,9 @@
   "title": "FullCalendar Bootstrap Plugin",
   "description": "Bootstrap 4 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap-theme",
+  "dependencies": {
+    "tslib": "^1.9.3"
+  },
   "peerDependencies": {
     "@fullcalendar/core": "~4.3.0"
   },
