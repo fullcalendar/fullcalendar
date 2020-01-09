@@ -2,7 +2,7 @@ const path = require('path')
 const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const scss = require('rollup-plugin-scss')
-const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, stripScssTildeImporter, onwarn } = require('./rollup-util')
+const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, stripScssTildeImporter, isScssPath, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 
 
@@ -44,6 +44,7 @@ function buildBundleConfig(pkgStruct, isDev) {
       sourcemap: isDev
     },
     plugins: [
+      watchSubdirSassIncludes,
       nodeResolve({
         customResolveOptions: {
           paths: [ nodeModulesDir ] // for requiring other packages
@@ -98,6 +99,7 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
       {
         // use the resolvedId hook to rename the import of @fullcalendar/core -> fullcalendar.
         // otherwise, we could have used the exernals config option all the way.
+        // nodeResolve seems to take precedence (thus the tslib hack). PUT THIS FIRST?s
         resolveId(id) {
           if (id === inputFile) { return inputFile }
           if (id === 'tslib') { return { id, external: false } }

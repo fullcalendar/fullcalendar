@@ -1,5 +1,6 @@
 const { readFileSync } = require('fs')
 const path = require('path')
+const glob = require('glob')
 const cleanup = require('rollup-plugin-cleanup')
 const sourcemaps = require('rollup-plugin-sourcemaps')
 const replace = require('rollup-plugin-replace')
@@ -79,4 +80,19 @@ exports.isRelPath = function(path) {
 
 exports.isScssPath = function(path) {
   return SCSS_PATH_RE.test(path)
+}
+
+
+exports.watchSubdirSassIncludes = { // a rollup plugin
+  transform(code, id) {
+    if (exports.isScssPath(id)) { // yuck
+      let allStyleFiles = glob.sync(
+        path.join(path.dirname(id), '**/*.{scss,sass,css}')
+      )
+      for (let styleFile of allStyleFiles) {
+        this.addWatchFile(styleFile)
+      }
+    }
+    return null
+  }
 }
