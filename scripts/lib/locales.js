@@ -1,9 +1,9 @@
 const path = require('path')
 const glob = require('glob')
 const handleBars = require('handlebars')
-const { readFile, writeFile } = require('./util')
+const { readFile, writeFile, watch } = require('./util')
 const { getCorePkgStruct } = require('./pkg-struct')
-const { src, dest, parallel, watch } = require('gulp')
+const { src, dest, parallel } = require('gulp')
 
 
 let corePkg = getCorePkgStruct()

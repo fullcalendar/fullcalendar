@@ -7,8 +7,9 @@ const copyFile = util.promisify(fs.copyFile)
 const fileExists = util.promisify(fs.exists)
 const mkdirp = util.promisify(require('mkdirp'))
 const concurrently = require('concurrently')
+const { watch } = require('gulp')
 
-
+exports.watch = betterWatch
 exports.shellTask = shellTask
 exports.promisifyVinyl = promisifyVinyl
 exports.readFile = betterReadFile
@@ -16,6 +17,18 @@ exports.writeFile = betterWriteFile
 exports.writeFileSync = betterWriteFileSync
 exports.copyFile = betterCopyFile
 exports.fileExists = fileExists
+
+
+function betterWatch() {
+  let watcher = watch.apply(null, arguments)
+
+  return new Promise((resolve) => {
+    process.on('SIGINT', function() {
+      watcher.close()
+      resolve()
+    })
+  })
+}
 
 
 function shellTask(...tasks) {

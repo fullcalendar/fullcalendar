@@ -1,5 +1,5 @@
 const { parallel, series } = require('gulp')
-const { shellTask } = require('./scripts/lib/util')
+const { shellTask, watch } = require('./scripts/lib/util')
 const { writePkgJsons } = require('./scripts/lib/pkg-json-write')
 const { bundlPkgDefs } = require('./scripts/lib/pkg-dts')
 const { writePkgReadmes } = require('./scripts/lib/pkg-readme')
@@ -7,7 +7,7 @@ const { writePkgLicenses } = require('./scripts/lib/pkg-license')
 const { minifyJs, minifyCss } = require('./scripts/lib/minify') // combine into one task?
 const { lint } = require('./scripts/lib/lint')
 const { archive } = require('./scripts/lib/archive')
-const { copyScss, watchScss } = require('./scripts/lib/pkg-scss') // watchScss is a bad name!!!
+const { copyScss, watchScss } = require('./scripts/lib/pkg-scss') // watchScss is a bad name!
 const { writeLocales, watchLocales } = require('./scripts/lib/locales')
 
 const buildDts = exports.dts = series(
@@ -37,16 +37,19 @@ exports.build = series(
   parallel(minifyJs, minifyCss)
 )
 
+
 exports.watch = series(
   writePkgJsons, // important for node-resolution. doesn't watch!
   shellTask('npm:tsc:debug'),
   parallel(
-    shellTask('npm:tsc:watch'), // TODO: better system than two consecutive compiles
+    shellTask('npm:tsc:watch'), // TODO: better system. does two consecutive compiles
     shellTask('npm:rollup:watch'),
     writePkgLicenses, // doesn't watch!
     writePkgReadmes, // doesn't watch!
-    series(writeLocales, watchLocales), // needs tsc
-    series(copyScss, watchScss),
+    watchLocales,
+    watchScss,
+    watchLocales, // needs tsc
+    watchScss,
     buildDts // doesn't watch!
   )
   // doesn't minify!

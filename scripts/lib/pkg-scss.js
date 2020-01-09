@@ -1,5 +1,6 @@
-const { src, dest, watch, series } = require('gulp')
+const { src, dest } = require('gulp')
 const rename = require('gulp-rename')
+const { watch } = require('./util')
 
 
 const GLOB = 'packages?(-premium)/*/src/**/*.scss'

@@ -17,7 +17,10 @@ module.exports = function(isDev) {
         buildNonBundleConfig(pkgStructHash[name], pkgStruct.distDir, isDev)
       ))
 
-      configs.push(bundleConfig, ...nonBundleConfigs)
+      configs.push(
+        bundleConfig,
+        ...nonBundleConfigs
+      )
     }
   }
 
