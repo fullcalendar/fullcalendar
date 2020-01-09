@@ -11,6 +11,7 @@ export interface SimpleScrollGridProps {
   cols: ColCss[]
   sections: SimpleScrollGridSection[]
   vGrow?: boolean
+  forPrint?: boolean
   height?: CssDimValue // TODO: give to real ScrollGrid
 }
 

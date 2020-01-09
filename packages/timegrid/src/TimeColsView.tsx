@@ -50,8 +50,9 @@ export default abstract class TimeColsView extends View {
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
   ) {
+    let { props } = this
     let { theme } = this.context
-    let classNames = getViewClassNames(this.props.viewSpec).concat('fc-timeGrid-view')
+    let classNames = getViewClassNames(props.viewSpec).concat('fc-timeGrid-view')
     let sections: SimpleScrollGridSection[] = []
 
     if (headerRowContent) {
@@ -90,6 +91,7 @@ export default abstract class TimeColsView extends View {
     return (
       <div class={classNames.join(' ')} ref={this.rootElRef}>
         <SimpleScrollGrid
+          forPrint={props.forPrint}
           cols={[ { width: 'shrink' } ]}
           sections={sections}
         />

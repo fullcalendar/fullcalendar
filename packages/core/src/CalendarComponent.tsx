@@ -27,7 +27,11 @@ export interface CalendarComponentProps extends CalendarState {
   title: string
 }
 
-export default class CalendarComponent extends BaseComponent<CalendarComponentProps> {
+interface CalendarComponentState {
+  forPrint: boolean
+}
+
+export default class CalendarComponent extends BaseComponent<CalendarComponentProps, CalendarComponentState> {
 
   private buildViewContext = memoize(buildContext)
   private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.context.calendar))
@@ -42,11 +46,15 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
   get view() { return this.viewRef.current }
 
+  state = {
+    forPrint: false
+  }
+
 
   /*
   renders INSIDE of an outer div
   */
-  render(props: CalendarComponentProps, state: {}, context: ComponentContext) {
+  render(props: CalendarComponentProps, state: CalendarComponentState, context: ComponentContext) {
     let { calendar, options, header, footer } = context
 
     let toolbarProps = this.buildToolbarProps(
@@ -73,7 +81,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
     // TODO: move this somewhere after real render!
     // move to Calendar class?
-    this.updateOuterClassNames({ el: props.rootEl })
+    this.updateOuterClassNames({ el: props.rootEl, forPrint: state.forPrint })
     this.updateOuterHeight({ el: props.rootEl, height: calendarHeight })
 
     return (
@@ -102,8 +110,25 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   }
 
 
+  componentDidMount() {
+    window.addEventListener('beforeprint', this.handleBeforePrint)
+    window.addEventListener('afterprint', this.handleAfterPrint)
+  }
+
+
   componentWillUnmount() {
+    window.removeEventListener('beforeprint', this.handleBeforePrint)
+    window.removeEventListener('afterprint', this.handleAfterPrint)
     this.subrenderDestroy()
+  }
+
+
+  handleBeforePrint = () => {
+    this.setState({ forPrint: true })
+  }
+
+  handleAfterPrint = () => {
+    this.setState({ forPrint: false })
   }
 
 
@@ -158,7 +183,8 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
       eventSelection: props.eventSelection,
       eventDrag: props.eventDrag,
       eventResize: props.eventResize,
-      isHeightAuto: isHeightAuto(options)
+      isHeightAuto: isHeightAuto(options),
+      forPrint: this.state.forPrint
     }
 
     let transformers = this.buildViewPropTransformers(pluginHooks.viewPropsTransformers)
@@ -225,13 +251,17 @@ function isHeightAuto(options) {
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function setClassNames({ el }: { el: HTMLElement }, context: ComponentContext) {
+function setClassNames({ el, forPrint }: { el: HTMLElement, forPrint: boolean }, context: ComponentContext) {
   let classList = el.classList
   let classNames: string[] = [
     'fc',
     'fc-' + context.options.dir,
     context.theme.getClass('root')
   ]
+
+  if (forPrint) {
+    classNames.push('fc-print')
+  }
 
   for (let className of classNames) {
     classList.add(className)

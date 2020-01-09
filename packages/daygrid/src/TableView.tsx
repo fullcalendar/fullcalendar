@@ -28,7 +28,8 @@ export default abstract class TableView<State={}> extends View<State> {
 
 
   renderLayout(headerRowContent: VNode | null, bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode) {
-    let classNames = getViewClassNames(this.props.viewSpec).concat('fc-dayGrid-view')
+    let { props } = this
+    let classNames = getViewClassNames(props.viewSpec).concat('fc-dayGrid-view')
 
     this.processOptions(this.context.options)
 
@@ -57,7 +58,8 @@ export default abstract class TableView<State={}> extends View<State> {
     return (
       <div class={classNames.join(' ')}>
         <SimpleScrollGrid
-          vGrow={!this.props.isHeightAuto}
+          vGrow={!props.isHeightAuto}
+          forPrint={props.forPrint}
           cols={[ { width: 'shrink' } ]}
           sections={sections}
         />
