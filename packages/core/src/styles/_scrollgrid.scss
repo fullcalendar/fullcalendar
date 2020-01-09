@@ -14,12 +14,12 @@
 
   table { // inner tables
     border-style: hidden; // kill outer border
-
-    &.vgrow > * > tr > * { // cells
-      height: 100%; // hack for IE
-    }
   }
 
+}
+
+table.vgrow > * > tr > * { // cells
+  height: auto; // if height is set, rows wont expand evenly
 }
 
 .scrollgrid__section { // a <tr>
@@ -34,7 +34,7 @@
   height: auto; // undo 1px height. will cancel height:100% also
 
   > td {
-    height: 100%;
+    height: auto;
   }
 }
 
