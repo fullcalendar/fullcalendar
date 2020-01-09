@@ -25,12 +25,16 @@
 .scrollgrid__section { // a <tr>
   height: 1px;
 
-  &.vgrow {
-    height: auto; // undo 1px height. will cancel height:100% also
+  > td {
+    height: 1px; // needs a height so vgrow's within grow
+  }
+}
 
-    > td {
-      height: 100%;
-    }
+.scrollgrid__section.vgrow {
+  height: auto; // undo 1px height. will cancel height:100% also
+
+  > td {
+    height: 100%;
   }
 }
 

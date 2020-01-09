@@ -1,6 +1,6 @@
 import { VNode, h, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
-import { computeInnerRect } from '../util/dom-geom'
+// import { computeInnerRect } from '../util/dom-geom'
 import ComponentContext from '../component/ComponentContext'
 
 
@@ -72,22 +72,22 @@ export function doSizingHacks(rootEl: HTMLElement) { // TODO: needs to run on wi
   // from scss:
   // width: 100%; /* hack to force re-sizing this inner element when scrollbars appear/disappear */
 
-  // for Firefox for all cells
-  // for Safari(?) for cells with rowspans
-  let vGrowEls = findElements(rootEl, 'td > .vgrow')
-  for (let vGrowEl of vGrowEls) {
-    let cellEl = vGrowEl.parentNode as HTMLElement
-    let cellInnerRect = computeInnerRect(cellEl, true) // TODO: cache!
-    let cellInnerHeight = cellInnerRect.bottom - cellInnerRect.top
-    let vGrowHeight = vGrowEl.getBoundingClientRect().height
-    let lacking = cellInnerHeight - vGrowHeight
+  // // for Firefox for all cells
+  // // for Safari(?) for cells with rowspans
+  // let vGrowEls = findElements(rootEl, 'td > .vgrow')
+  // for (let vGrowEl of vGrowEls) {
+  //   let cellEl = vGrowEl.parentNode as HTMLElement
+  //   let cellInnerRect = computeInnerRect(cellEl, true) // TODO: cache!
+  //   let cellInnerHeight = cellInnerRect.bottom - cellInnerRect.top
+  //   let vGrowHeight = vGrowEl.getBoundingClientRect().height
+  //   let lacking = cellInnerHeight - vGrowHeight
 
-    if (lacking > 0.5) {
-      let cellEl = vGrowEl.parentNode as HTMLElement
-      cellEl.style.position = 'relative'
-      vGrowEl.classList.add('vgrow--absolute')
-    }
-  }
+  //   if (lacking > 0.5) {
+  //     let cellEl = vGrowEl.parentNode as HTMLElement
+  //     cellEl.style.position = 'relative'
+  //     vGrowEl.classList.add('vgrow--absolute')
+  //   }
+  // }
 }
 
 
