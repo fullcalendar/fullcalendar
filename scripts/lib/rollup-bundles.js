@@ -1,7 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
-const scss = require('rollup-plugin-scss')
+const sass = require('rollup-plugin-sass') // NOTE: rollup-plugin-*scss* confused include paths roots. file bug?
 const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, stripScssTildeImporter, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 
@@ -53,7 +53,8 @@ function buildBundleConfig(pkgStruct, isDev) {
           paths: [ nodeModulesDir ] // for requiring other packages
         }
       }),
-      scss({
+      sass({
+        output: true, // to a .css file
         includePaths: [ nodeModulesDir ], // for including scss in other packages
         importer: stripScssTildeImporter
       }),
