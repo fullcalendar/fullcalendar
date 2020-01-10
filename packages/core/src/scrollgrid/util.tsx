@@ -27,9 +27,9 @@ export interface ChunkConfig {
   rowContent?: VNode
   vGrowRows?: boolean
   needsSizing?: boolean
-  scrollerClassName?: string // give this to NormalScrollGrid too ... make a classname for the <td> too
   scrollerElRef?: Ref<HTMLDivElement>
   elRef?: Ref<HTMLTableCellElement>
+  className?: string // on the <td>
 }
 
 export interface ChunkContentCallbackArgs {
@@ -166,7 +166,11 @@ export function getScrollGridClassNames(vGrow: boolean, context: ComponentContex
 
 
 export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGrow: boolean) {
-  let classNames = [ 'scrollgrid__section', 'scrollgrid__' + sectionConfig.type, sectionConfig.className ]
+  let classNames = [
+    'scrollgrid__section',
+    'fc-' + sectionConfig.type, // fc-head, fc-body, fc-foot
+    sectionConfig.className
+  ]
 
   if (wholeTableVGrow && sectionConfig.vGrow && sectionConfig.maxHeight == null) {
     classNames.push('vgrow')
@@ -176,8 +180,9 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
 }
 
 
-export function getChunkClassNames(sectionConfig: SectionConfig, context: ComponentContext) {
-  return context.theme.getClass(
-    sectionConfig.type === 'body' ? 'tableCellNormal' : 'tableCellHeader'
-  )
+export function getChunkClassNames(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, context: ComponentContext) {
+  return [
+    chunkConfig.className,
+    context.theme.getClass(sectionConfig.type === 'body' ? 'tableCellNormal' : 'tableCellHeader')
+  ].join(' ')
 }

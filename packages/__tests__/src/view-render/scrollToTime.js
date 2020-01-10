@@ -11,7 +11,7 @@ describe('scrollToTime method', function() {
     // NOTE: c&p'd from scrollTime tests
     var slotCell = $('.fc-slats tr:eq(4)') // 2am slot
     var slotTop = slotCell.position().top
-    var scrollContainer = $('.fc-time-grid-container')
+    var scrollContainer = $('.fc-scrollgrid .fc-body:last-child .fc-scroller')
     var scrollTop = scrollContainer.scrollTop()
     var diff = Math.abs(slotTop - scrollTop)
     expect(slotTop).toBeGreaterThan(0)

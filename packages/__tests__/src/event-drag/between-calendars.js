@@ -131,7 +131,7 @@ describe('dragging events between calendars', function() {
 
     let eventEl = getSingleEl()[0]
     let point0 = getRectCenter(eventEl.getBoundingClientRect())
-    let point1 = getRectCenter(el1.querySelector('.fc-time-grid-container').getBoundingClientRect())
+    let point1 = getRectCenter(el1.querySelector('.fc-scrollgrid .fc-body:last-child .fc-scroller').getBoundingClientRect())
 
     $(eventEl).simulate('drag', {
       point: point0,

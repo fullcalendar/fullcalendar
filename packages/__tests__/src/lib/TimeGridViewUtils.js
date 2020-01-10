@@ -1,6 +1,6 @@
 
 export function getTimeGridScroller() { // returns DOM node
-  return document.querySelector('.fc-scroller.fc-time-grid-container')
+  return document.querySelector('.fc-scrollgrid .fc-body:last-child .fc-scroller')
 }
 
 export function allDaySlotDisplayed() {

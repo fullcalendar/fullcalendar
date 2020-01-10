@@ -107,7 +107,7 @@ describe('select method', function() {
               initCalendar(options)
               currentCalendar.select('2014-05-26T06:00:00', '2014-05-26T08:00:00')
               expect($('.fc-highlight')).toBeVisible()
-              var slotAreaTop = $('.fc-time-grid-container').offset().top
+              var slotAreaTop = $('.fc-scrollgrid .fc-body:last-child .fc-scroller').offset().top
               var overlayTop = $('.fc-highlight').offset().top
               expect(overlayTop).toBeGreaterThan(slotAreaTop)
             })
@@ -142,7 +142,7 @@ describe('select method', function() {
               initCalendar(options)
               currentCalendar.select('2014-05-26', '2014-05-28')
               expect($('.fc-highlight')).toBeVisible()
-              var slotAreaTop = $('.fc-time-grid-container').offset().top
+              var slotAreaTop = $('.fc-scrollgrid .fc-body:last-child .fc-scroller').offset().top
               var overlayTop = $('.fc-highlight').offset().top
               expect(overlayTop).toBeLessThan(slotAreaTop)
             })

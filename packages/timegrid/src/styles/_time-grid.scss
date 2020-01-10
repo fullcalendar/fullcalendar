@@ -37,7 +37,6 @@
 /* TimeGrid Structure
 --------------------------------------------------------------------------------------------------*/
 
-.fc-time-grid-container, /* so scroll container's z-index is below all-day */
 .fc-time-grid { /* so slats/bg/content/etc positions get scoped within here */
   position: relative;
   z-index: 1;

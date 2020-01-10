@@ -77,12 +77,12 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     // making it so there's never be scrollbars
     if (vGrow) {
       return (
-        <td class={getChunkClassNames(sectionConfig, this.context)} ref={chunkConfig.elRef}>
+        <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
           <div style={{ position: 'relative' }} class='vgrow'>
             <Scroller
               ref={this.scrollerRefs.createRef(sectionI)}
               elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
-              className={[ chunkConfig.scrollerClassName, vGrow ? 'vgrow--absolute' : '' ].join(' ')}
+              className='vgrow--absolute'
               overflowY={overflowY}
               overflowX='hidden'
               maxHeight={sectionConfig.maxHeight}
@@ -93,11 +93,10 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       )
     } else {
       return (
-        <td class={getChunkClassNames(sectionConfig, this.context)} ref={chunkConfig.elRef}>
+        <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
           <Scroller
             ref={this.scrollerRefs.createRef(sectionI)}
             elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
-            className={[ chunkConfig.scrollerClassName ].join(' ')}
             overflowY={overflowY}
             overflowX='hidden'
             maxHeight={sectionConfig.maxHeight}

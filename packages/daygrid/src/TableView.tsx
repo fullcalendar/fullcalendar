@@ -38,9 +38,7 @@ export default abstract class TableView<State={}> extends View<State> {
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        className: 'fc-head',
         chunk: {
-          scrollerClassName: 'fc-head-container',
           rowContent: headerRowContent
         }
       })
@@ -48,9 +46,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     sections.push({
       type: 'body',
-      className: 'fc-body',
       chunk: {
-        scrollerClassName: 'fc-day-grid-container',
         content: bodyContent
       }
     })

@@ -58,9 +58,7 @@ export default abstract class TimeColsView extends View {
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        className: 'fc-head',
         chunk: {
-          scrollerClassName: 'fc-head-container', // needed for anything?
           rowContent: headerRowContent
         }
       })
@@ -80,10 +78,8 @@ export default abstract class TimeColsView extends View {
 
     sections.push({
       type: 'body',
-      className: 'fc-body', // should we use above?
       chunk: {
         scrollerElRef: this.scrollerElRef,
-        scrollerClassName: 'fc-time-grid-container',
         content: timeContent
       }
     })
