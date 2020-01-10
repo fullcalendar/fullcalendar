@@ -33,7 +33,7 @@ const STATE_IS_SIZING = {
 export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps> {
 
   scrollerRefs = new RefMap<Scroller>()
-  scrollerElRefs = new RefMap<HTMLElement, [ChunkConfig]>(this._handleScrollerElRef.bind(this))
+  scrollerElRefs = new RefMap<HTMLElement, [ChunkConfig]>(this._handleScrollerEl.bind(this))
 
   state = {
     forceYScrollbars: false
@@ -113,7 +113,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
   }
 
 
-  _handleScrollerElRef(scrollerEl: HTMLElement | null, key: string, chunkConfig: ChunkConfig) {
+  _handleScrollerEl(scrollerEl: HTMLElement | null, key: string, chunkConfig: ChunkConfig) {
     setRef(chunkConfig.scrollerElRef, scrollerEl)
   }
 
