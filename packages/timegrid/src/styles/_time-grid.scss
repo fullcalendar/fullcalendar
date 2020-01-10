@@ -1,4 +1,8 @@
 
+.fc-timeGrid-view .fc-divider { // TODO: better selector
+  padding-bottom: 2px;
+}
+
 /* TimeGridView all-day area
 --------------------------------------------------------------------------------------------------*/
 
@@ -54,8 +58,7 @@
   z-index: 1;
 }
 
-.fc-time-grid .fc-slats,
-.fc-time-grid > hr { /* the <hr> TimeGridView injects when grid is shorter than scroller */
+.fc-time-grid .fc-slats {
   position: relative;
   z-index: 2;
 }

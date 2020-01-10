@@ -29,7 +29,7 @@ export default abstract class TimeColsView extends View {
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
 
   private rootElRef = createRef<HTMLDivElement>()
-  private dividerElRef = createRef<HTMLHRElement>()
+  private dividerElRef = createRef<HTMLTableCellElement>()
   private scrollerElRef = createRef<HTMLDivElement>()
   private axisWidth: any // the width of the time axis running down the side
 
@@ -72,7 +72,11 @@ export default abstract class TimeColsView extends View {
         }
       })
       sections.push({
-        outerContent: <hr class={'fc-divider ' + theme.getClass('tableCellHeader')} ref={this.dividerElRef} />
+        outerContent: (
+          <tr>
+            <td class={'fc-divider ' + theme.getClass('tableCellHeader')} ref={this.dividerElRef} colSpan={0} />
+          </tr>
+        )
       })
     }
 

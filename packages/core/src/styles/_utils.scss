@@ -1,11 +1,4 @@
 
-hr.fc-divider {
-  height: 0;
-  margin: 0;
-  padding: 0 0 2px; /* height is unreliable across browsers, so use padding */
-  border-width: 1px 0;
-}
-
 td.fc-today {
   border-style: double; /* overcome neighboring borders */
 }
