@@ -20,6 +20,7 @@ import {
 export interface TimeColsSlatsProps {
   dateProfile: DateProfile
   slotDuration: Duration
+  colGroupNode: VNode
   handleDom?: (rootEl: HTMLElement | null, slatEls: HTMLElement[] | null) => void
 }
 
@@ -44,7 +45,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
   render(props: TimeColsSlatsProps, state: {}, context: ComponentContext) {
     let { dateEnv, theme, isRtl, options } = context
-    let { dateProfile, slotDuration } = props
+    let { dateProfile, slotDuration, colGroupNode } = props
 
     let labelInterval = this.getLabelInterval(options.slotLabelInterval, slotDuration)
     let labelFormat = this.getLabelFormat(options.slotLabelFormat)
@@ -85,6 +86,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     return ( // guid rerenders whole DOM every time
       <div class='fc-slats' ref={this.handleRootEl} key={guid()}>
         <table class={theme.getClass('table')}>
+          {colGroupNode}
           {rowsNodes}
         </table>
       </div>

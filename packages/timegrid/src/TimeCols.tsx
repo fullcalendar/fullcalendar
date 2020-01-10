@@ -112,6 +112,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         <TimeColsSlats
           dateProfile={props.dateProfile}
           slotDuration={this.slotDuration}
+          colGroupNode={props.colGroupNode /* relies on there only being a single <col> for the axis */}
           handleDom={this.handleSlatDom}
         />
         <TimeColsContentSkeleton
