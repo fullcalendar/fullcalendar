@@ -33,6 +33,8 @@
 }
 
 .fc-row table {
+  width: 100%;
+
   /* don't put left/right border on anything within a fake row.
      the outer tbody will worry about this */
   border-left: 0 hidden transparent;

@@ -140,12 +140,12 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
     if (hasShrinkWidth(this.props.cols)) {
       this.setState({
-        shrinkWidth: computeShrinkWidth(this.scrollerElRefs.getCurrents())
+        shrinkWidth: computeShrinkWidth(this.scrollerElRefs.getAll())
       })
     }
 
     this.setState({
-      forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getCurrents(), 'Y')
+      forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getAll(), 'Y')
     })
   }
 

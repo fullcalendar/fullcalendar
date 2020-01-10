@@ -12,16 +12,15 @@ import {
   Duration,
   createFormatter,
   memoize,
-  findElements,
-  guid
+  Fragment,
+  RefMap
 } from '@fullcalendar/core'
 
 
 export interface TimeColsSlatsProps {
   dateProfile: DateProfile
   slotDuration: Duration
-  colGroupNode: VNode
-  handleDom?: (rootEl: HTMLElement | null, slatEls: HTMLElement[] | null) => void
+  onReceiveSlatEls?: (slatEls: HTMLElement[] | null) => void
 }
 
 // potential nice values for the slot-duration and interval-duration
@@ -39,13 +38,14 @@ for the horizontal "slats" that run width-wise. Has a time axis on a side. Depen
 */
 export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
+  private slatElRefs = new RefMap<HTMLTableRowElement>()
   private getLabelInterval = memoize(getLabelInterval)
   private getLabelFormat = memoize(getLabelFormat)
 
 
   render(props: TimeColsSlatsProps, state: {}, context: ComponentContext) {
     let { dateEnv, theme, isRtl, options } = context
-    let { dateProfile, slotDuration, colGroupNode } = props
+    let { dateProfile, slotDuration } = props
 
     let labelInterval = this.getLabelInterval(options.slotLabelInterval, slotDuration)
     let labelFormat = this.getLabelFormat(options.slotLabelFormat)
@@ -56,6 +56,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     let slotDate // will be on the view's first day, but we only care about its time
     let isLabeled
     let rowsNodes: VNode[] = []
+    let i = 0
 
     // Calculate the time for each slot
     while (asRoughMs(slotTime) < asRoughMs(dateProfile.maxTime)) {
@@ -72,7 +73,11 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
         </td>
 
       rowsNodes.push(
-        <tr data-time={formatIsoTimeString(slotDate)} class={isLabeled ? '' : 'fc-minor'}>
+        <tr
+          ref={this.slatElRefs.createRef(i)}
+          data-time={formatIsoTimeString(slotDate)}
+          class={isLabeled ? '' : 'fc-minor'}
+        >
           {!isRtl && axisNode}
           <td class={theme.getClass('tableCellNormal')}></td>
           {isRtl && axisNode}
@@ -81,29 +86,35 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
       slotTime = addDurations(slotTime, slotDuration)
       slotIterator = addDurations(slotIterator, slotDuration)
+      i++
     }
 
-    return ( // guid rerenders whole DOM every time
-      <div class='fc-slats' ref={this.handleRootEl} key={guid()}>
-        <table class={theme.getClass('table')}>
-          {colGroupNode}
-          {rowsNodes}
-        </table>
-      </div>
-    )
+    return (<Fragment>{rowsNodes}</Fragment>)
   }
 
 
-  handleRootEl = (rootEl: HTMLElement | null) => {
-    let { handleDom } = this.props
-    let slatEls = null
+  componentDidMount() {
+    this.sendDom()
+  }
 
-    if (rootEl) {
-      slatEls = findElements(rootEl, 'tr')
+
+  componentDidUpdate() {
+    this.sendDom()
+  }
+
+
+  componentWillUnmount() {
+    let { onReceiveSlatEls } = this.props
+    if (onReceiveSlatEls) {
+      onReceiveSlatEls(null)
     }
+  }
 
-    if (handleDom) {
-      handleDom(rootEl, slatEls)
+
+  sendDom() {
+    let { onReceiveSlatEls } = this.props
+    if (onReceiveSlatEls) {
+      onReceiveSlatEls(this.slatElRefs.collect())
     }
   }
 

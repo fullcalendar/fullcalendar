@@ -67,9 +67,8 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   private renderHighlight = subrenderer(TableFills)
   private popoverRef = createRef<Popover>()
 
-  rootEl: HTMLElement
   rowEls: HTMLElement[] // set of fake row elements
-  cellEls: HTMLElement[] // set of whole-day elements comprising the row's background
+  cellEls: HTMLElement[][] // set of whole-day elements comprising the row's background
   rowStructs: any
 
   isCellSizesDirty: boolean = false
@@ -82,7 +81,6 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     return (
       <Fragment>
         <TableSkeleton
-          handleDom={this.handleSkeletonDom}
           dateProfile={props.dateProfile}
           cells={props.cells}
           isRigid={props.isRigid}
@@ -92,6 +90,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
           colWeekNumbersVisible={props.colWeekNumbersVisible}
           cellWeekNumbersVisible={props.cellWeekNumbersVisible}
           colGroupNode={props.colGroupNode}
+          onReceiveEls={this.handleSkeletonEls}
         />
         {this.renderPopover()}
       </Fragment>
@@ -127,15 +126,14 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   }
 
 
-  handleSkeletonDom = (rootEl: HTMLDivElement | null, rowEls: HTMLElement[] | null, cellEls: HTMLElement[] | null) => {
-    setRef(this.props.rootElRef, rootEl)
+  handleSkeletonEls = (rowEls: HTMLElement[] | null, cellEls: HTMLElement[][] | null) => {
+    let rootEl: HTMLElement = null
 
-    if (!rootEl) {
+    if (!rowEls) {
       this.subrenderDestroy()
 
     } else {
-      let { cells } = this.props
-      let colCnt = cells[0].length
+      rootEl = rowEls[0].parentNode as HTMLElement
 
       this.rowPositions = new PositionCache(
         rootEl,
@@ -146,7 +144,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
       this.colPositions = new PositionCache(
         rootEl,
-        cellEls.slice(0, colCnt), // only the first row
+        cellEls[0], // only the first row
         true, // horizontal
         false
       )
@@ -155,6 +153,8 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       this.cellEls = cellEls
       this.isCellSizesDirty = true
     }
+
+    setRef(this.props.rootElRef, rootEl)
   }
 
 
@@ -340,9 +340,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
 
   getCellEl(row, col) {
-    let colCnt = this.props.cells[0].length
-
-    return this.cellEls[row * colCnt + col]
+    return this.cellEls[row][col]
   }
 
 

@@ -20,11 +20,11 @@ import {
   memoize,
   subrenderer
 } from '@fullcalendar/core'
+import { DayBgRow, DayBgCellModel } from '@fullcalendar/daygrid'
 import TimeColsEvents from './TimeColsEvents'
 import TimeColsMirrorEvents from './TimeColsMirrorEvents'
 import TimeColsFills from './TimeColsFills'
 import TimeColsSlats from './TimeColsSlats'
-import TimeColsBg, { TimeColsCell } from './TimeColsBg'
 import TimeColsContentSkeleton, { TimeColsContentSkeletonContainers } from './TimeColsContentSkeleton'
 import { __assign } from 'tslib'
 
@@ -37,7 +37,7 @@ export interface TimeColsSeg extends Seg {
 
 export interface TimeColsProps {
   dateProfile: DateProfile
-  cells: TimeColsCell[]
+  cells: DayBgCellModel[]
   businessHourSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
   fgEventSegs: TimeColsSeg[]
@@ -82,7 +82,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   private fgContainerEls: HTMLElement[]
   private mirrorContainerEls: HTMLElement[]
   public colEls: HTMLElement[] // cells elements in the day-row background
-  private rootSlatEl: HTMLElement // div that wraps all the slat rows
+  private slatRootEl: HTMLElement // div that wraps all the slat rows
   private slatEls: HTMLElement[] // elements running horizontally across all columns
 
   private colPositions: PositionCache
@@ -97,30 +97,43 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
 
   render(props: TimeColsProps, state: {}, context: ComponentContext) {
+    let { theme } = context
 
     this.processOptions(context.options)
 
     return (
       <div class='fc-time-grid' ref={props.rootElRef}>
-        <TimeColsBg
-          dateProfile={props.dateProfile}
-          cells={props.cells}
-          colGroupNode={props.colGroupNode}
-          renderIntro={props.renderBgIntro}
-          handleDom={this.handleBgDom}
-        />
-        <TimeColsSlats
-          dateProfile={props.dateProfile}
-          slotDuration={this.slotDuration}
-          colGroupNode={props.colGroupNode /* relies on there only being a single <col> for the axis */}
-          handleDom={this.handleSlatDom}
-        />
-        <TimeColsContentSkeleton
-          colCnt={props.cells.length}
-          colGroupNode={props.colGroupNode}
-          renderIntro={props.renderIntro}
-          handleDom={this.handleContentSkeletonDom}
-        />
+        <div class='fc-bg'>
+          <table class={theme.getClass('table')}>
+            {props.colGroupNode}
+            <DayBgRow
+              dateProfile={props.dateProfile}
+              cells={props.cells}
+              renderIntro={props.renderBgIntro}
+              onReceiveCellEls={this.handleBgCellEls}
+            />
+          </table>
+        </div>
+        <div class='fc-slats'>
+          <table class={theme.getClass('table')}>
+            {props.colGroupNode /* relies on there only being a single <col> for the axis */}
+            <TimeColsSlats
+              dateProfile={props.dateProfile}
+              slotDuration={this.slotDuration}
+              onReceiveSlatEls={this.handleSlatEls}
+            />
+          </table>
+        </div>
+        <div class='fc-content-skeleton'>
+          <table>
+            {props.colGroupNode}
+            <TimeColsContentSkeleton
+              colCnt={props.cells.length}
+              renderIntro={props.renderIntro}
+              onReceiveContainerEls={this.handleContainerEls /* expensive, but TimeColsContentSkeleton rerender is rare */}
+            />
+          </table>
+        </div>
       </div>
     )
   }
@@ -148,12 +161,12 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
-  handleBgDom = (bgEl: HTMLElement | null, colEls: HTMLElement[] | null) => {
-    if (bgEl) {
+  handleBgCellEls = (colEls: HTMLElement[] | null) => {
+    if (colEls) {
       this.colEls = colEls
       this.isColSizesDirty = true
       this.colPositions = new PositionCache(
-        bgEl,
+        colEls[0].parentNode as HTMLElement,
         colEls,
         true, // horizontal
         false
@@ -162,13 +175,13 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
-  handleSlatDom = (rootSlatEl: HTMLElement | null, slatEls: HTMLElement[] | null) => {
-    if (rootSlatEl) {
-      this.rootSlatEl = rootSlatEl
+  handleSlatEls = (slatEls: HTMLElement[] | null) => {
+    if (slatEls) {
+      let slatRootEl = this.slatRootEl = slatEls[0].parentNode as HTMLElement
       this.slatEls = slatEls
       this.isSlatSizesDirty = true
       this.slatPositions = new PositionCache(
-        rootSlatEl,
+        slatRootEl,
         slatEls,
         false,
         true // vertical
@@ -177,7 +190,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
-  handleContentSkeletonDom = (contentSkeletonEl: HTMLElement | null, containers: TimeColsContentSkeletonContainers | null) => {
+  handleContainerEls = (containers: TimeColsContentSkeletonContainers | null, contentSkeletonEl: HTMLElement | null) => {
     if (!contentSkeletonEl) {
       this.subrenderDestroy()
 
@@ -356,7 +369,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
 
   getTotalSlatHeight() {
-    return this.rootSlatEl.getBoundingClientRect().height
+    return this.slatRootEl.getBoundingClientRect().height
   }
 
 

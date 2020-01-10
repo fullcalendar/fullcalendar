@@ -118,8 +118,8 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <th class={'fc-week-number fc-shrink ' + theme.getClass('tableCellHeader')}>
-          <span>
+        <th class={'fc-week-number ' + theme.getClass('tableCellHeader')}>
+          <span class='shrink'>
             {options.weekLabel}
           </span>
         </th>
@@ -142,10 +142,11 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <td class='fc-week-number fc-shrink'>
+        <td class='fc-week-number'>
           <GotoAnchor
             navLinks={options.navLinks}
             gotoOptions={{ date: weekStart, type: 'week', forceOff: colCnt === 1 }}
+            extraAttrs={{ className: 'shrink' }}
           >{dateEnv.format(weekStart, WEEK_NUM_FORMAT)}</GotoAnchor>
         </td>
       ]
@@ -161,7 +162,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <td class={'fc-week-number fc-shrink ' + theme.getClass('tableCellNormal')}></td>
+        <td class={'fc-week-number ' + theme.getClass('tableCellNormal')}></td>
       ]
     }
 
@@ -175,7 +176,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     if (this.colWeekNumbersVisible) {
       return [
-        <td class='fc-week-number fc-shrink'></td>
+        <td class='fc-week-number '></td>
       ]
     }
 

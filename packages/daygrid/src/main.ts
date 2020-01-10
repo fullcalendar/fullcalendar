@@ -6,7 +6,7 @@ export { default as DayTable, DayTableSlicer } from './DayTable'
 export { default as Table, TableSeg } from './Table'
 export { default as TableView, hasRigidRows } from './TableView'
 export { buildDayTableModel } from './DayTableView'
-export { default as DayBgRow } from './DayBgRow'
+export { default as DayBgRow, DayBgCellModel } from './DayBgRow'
 export { DayTableView as DayGridView } // export as old name!
 
 export default createPlugin({

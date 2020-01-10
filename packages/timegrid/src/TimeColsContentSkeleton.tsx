@@ -1,17 +1,15 @@
 import {
   h, VNode,
   BaseComponent,
-  ComponentContext,
   findElements,
-  guid,
+  createRef,
 } from '@fullcalendar/core'
 
 
 export interface TimeColsContentSkeletonProps {
   colCnt: number
-  colGroupNode: VNode
   renderIntro: () => VNode[]
-  handleDom?: (rootEl: HTMLElement | null, containers: TimeColsContentSkeletonContainers | null) => void
+  onReceiveContainerEls?: (containers: TimeColsContentSkeletonContainers | null, rootEl: HTMLElement | null) => void
 }
 
 export interface TimeColsContentSkeletonContainers {
@@ -26,9 +24,10 @@ export interface TimeColsContentSkeletonContainers {
 
 export default class TimeColsContentSkeleton extends BaseComponent<TimeColsContentSkeletonProps> {
 
+  rootElRef = createRef<HTMLTableRowElement>()
 
-  render(props: TimeColsContentSkeletonProps, state: {}, context: ComponentContext) {
-    let { isRtl } = context
+
+  render(props: TimeColsContentSkeletonProps) {
     let cellNodes: VNode[] = props.renderIntro()
 
     for (let i = 0; i < props.colCnt; i++) {
@@ -45,26 +44,35 @@ export default class TimeColsContentSkeleton extends BaseComponent<TimeColsConte
       )
     }
 
-    if (isRtl) {
-      cellNodes.reverse()
-    }
-
-    return ( // guid rerenders whole DOM every time
-      <div class='fc-content-skeleton' ref={this.handleRootEl} key={guid()}>
-        <table>
-          {props.colGroupNode}
-          <tr>{cellNodes}</tr>
-        </table>
-      </div>
+    return (
+      <tr ref={this.rootElRef}>{cellNodes}</tr>
     )
   }
 
 
-  handleRootEl = (rootEl: HTMLElement | null) => {
-    let { handleDom } = this.props
-    let containers: TimeColsContentSkeletonContainers | null = null
+  componentDidMount() {
+    this.sendDom()
+  }
 
-    if (rootEl) {
+
+  componentDidUpdate() {
+    this.sendDom()
+  }
+
+
+  componentWillUnmount() {
+    let { onReceiveContainerEls } = this.props
+    if (onReceiveContainerEls) {
+      onReceiveContainerEls(null, null)
+    }
+  }
+
+
+  sendDom() {
+    let { onReceiveContainerEls } = this.props
+
+    if (onReceiveContainerEls) {
+      let rootEl = this.rootElRef.current
       let colContainerEls = findElements(rootEl, '.fc-content-col')
       let mirrorContainerEls = findElements(rootEl, '.fc-mirror-container')
       let fgContainerEls = findElements(rootEl, '.fc-event-container:not(.fc-mirror-container)')
@@ -72,27 +80,14 @@ export default class TimeColsContentSkeleton extends BaseComponent<TimeColsConte
       let highlightContainerEls = findElements(rootEl, '.fc-highlight-container')
       let businessContainerEls = findElements(rootEl, '.fc-business-container')
 
-      if (this.context.isRtl) {
-        colContainerEls.reverse()
-        mirrorContainerEls.reverse()
-        fgContainerEls.reverse()
-        bgContainerEls.reverse()
-        highlightContainerEls.reverse()
-        businessContainerEls.reverse()
-      }
-
-      containers = {
+      onReceiveContainerEls({
         colContainerEls,
         mirrorContainerEls,
         fgContainerEls,
         bgContainerEls,
         highlightContainerEls,
         businessContainerEls
-      }
-    }
-
-    if (handleDom) {
-      handleDom(rootEl, containers)
+      }, rootEl)
     }
   }
 

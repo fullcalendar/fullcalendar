@@ -2,75 +2,85 @@ import {
   h, VNode,
   ComponentContext,
   DateMarker,
-  getDayClasses,
-  rangeContainsMarker,
   DateProfile,
-  BaseComponent
+  BaseComponent,
+  RefMap
 } from '@fullcalendar/core'
+import DayBgCell from './DayBgCell'
 
 
-export interface DayBgCell {
+export interface DayBgCellModel {
   date: DateMarker
   htmlAttrs?: object
 }
 
 export interface DayBgRowProps {
-  cells: DayBgCell[]
+  cells: DayBgCellModel[]
   dateProfile: DateProfile
   renderIntro?: () => VNode[]
+  onReceiveCellEls?: (cellEls: HTMLElement[] | null) => void
 }
 
 
 export default class DayBgRow extends BaseComponent<DayBgRowProps> {
 
+  cellElRefs = new RefMap<HTMLTableCellElement>()
+
+
   render(props: DayBgRowProps, state: {}, context: ComponentContext) {
+    let { cells } = props
     let parts: VNode[] = []
 
     if (props.renderIntro) {
       parts.push(...props.renderIntro())
     }
 
-    for (let cell of props.cells) {
+    for (let i = 0; i < cells.length; i++) {
+      let cell = cells[i]
+
       parts.push(
-        renderCell(
-          cell.date,
-          props.dateProfile,
-          context,
-          cell.htmlAttrs
-        )
+        <DayBgCell
+          date={cell.date}
+          dateProfile={props.dateProfile}
+          otherAttrs={cell.htmlAttrs}
+          elRef={this.cellElRefs.createRef(i)}
+        />
       )
     }
 
-    if (!props.cells.length) {
+    if (!cells.length) {
       parts.push(
         <td class={'fc-day ' + context.theme.getClass('tableCellNormal')}></td>
       )
     }
 
-    if (context.options.dir === 'rtl') {
-      parts.reverse()
-    }
-
-    return (
-      <tr>{parts}</tr>
-    )
+    return (<tr>{parts}</tr>)
   }
 
-}
+
+  componentDidMount() {
+    this.sendDom()
+  }
 
 
-function renderCell(date: DateMarker, dateProfile: DateProfile, context: ComponentContext, otherAttrs?: object) {
-  let { dateEnv, theme } = context
-  let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
-  let classes = getDayClasses(date, dateProfile, context)
-  let dataAttrs = isDateValid ? { 'data-date': dateEnv.formatIso(date, { omitTime: true }) } : {}
+  componentDidUpdate() {
+    this.sendDom()
+  }
 
-  classes.unshift('fc-day', theme.getClass('tableCellNormal'))
 
-  return (
-    <td
-      class={classes.join(' ')}
-      { ...dataAttrs }
-      {...otherAttrs }></td>
-  )
+  componentWillUnmount() {
+    let { onReceiveCellEls } = this.props
+    if (onReceiveCellEls) {
+      onReceiveCellEls(null)
+    }
+  }
+
+
+  sendDom() {
+    let { onReceiveCellEls } = this.props
+    if (onReceiveCellEls) {
+      onReceiveCellEls(this.cellElRefs.collect())
+    }
+  }
+
 }

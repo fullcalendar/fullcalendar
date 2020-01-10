@@ -48,10 +48,6 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
       )
     }
 
-    if (context.isRtl) {
-      cells.reverse()
-    }
-
     return (
       <tr>{cells}</tr>
     )

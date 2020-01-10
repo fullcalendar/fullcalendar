@@ -4,9 +4,13 @@ import { __assign } from 'tslib'
 import { isPropsEqual, getUnequalProps } from './util/object'
 
 
-export type EqualityFuncs<ObjType> = {
-  [K in keyof ObjType]?: (a: ObjType[K], b: ObjType[K]) => boolean
+type EqualityFunc<T> = (a: T, b: T) => boolean
+type EqualityThing<T> = EqualityFunc<T> | true
+
+export type EqualityFuncs<ObjType> = { // not really just a "func" anymore
+  [K in keyof ObjType]?: EqualityThing<ObjType[K]>
 }
+
 
 interface SubRendererOwner {
   context: ComponentContext
@@ -272,12 +276,7 @@ function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any> = {})
   }
 
   for (let key in newProps) {
-    if (
-      key in oldProps && (
-        oldProps[key] === newProps[key] ||
-        (equalityFuncs[key] && equalityFuncs[key](oldProps[key], newProps[key]))
-      )
-    ) {
+    if (key in oldProps && isObjValsEqual(oldProps[key], newProps[key], equalityFuncs[key], key)) {
       ; // equal
     } else {
       return false
@@ -292,6 +291,24 @@ function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any> = {})
   }
 
   return true
+}
+
+const ON_RE = /^on[A-Z]/ // will match things like onReceive
+
+/*
+assumed "true" equality for handler names like "onReceiveSomething"
+*/
+function isObjValsEqual<T>(val0: T, val1: T, comparator: EqualityThing<T>, key: string) {
+  if (val0 === val1 || comparator === true) {
+    return true
+  }
+  if (comparator) {
+    return comparator(val0, val1)
+  }
+  if (ON_RE.test(key)) {
+    return true
+  }
+  return false
 }
 
 
