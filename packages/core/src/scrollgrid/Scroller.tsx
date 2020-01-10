@@ -11,7 +11,7 @@ export interface ScrollerProps {
   vGrow?: boolean
   maxHeight?: CssDimValue
   style?: object // complex object, bad for purecomponent, but who cares because has children anyway
-  className?: string
+  className?: string // can kill at some pt?
   children?: ComponentChildren
   elRef?: Ref<HTMLElement>
 }
@@ -19,7 +19,7 @@ export interface ScrollerProps {
 
 export default class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLike {
 
-  private el: HTMLElement
+  private el: HTMLElement // TODO: just use this.base?
 
 
   render(props: ScrollerProps) {
@@ -49,6 +49,47 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
   handleEl = (el: HTMLElement) => {
     this.el = el
     setRef(this.props.elRef, el)
+  }
+
+
+  componentDidMount() {
+    this.handleSizing()
+    this.context.addResizeHandler(this.handleSizing)
+  }
+
+
+  componentDidUpdate(prevProps: ScrollerProps) {
+    this.handleSizing()
+  }
+
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleSizing)
+  }
+
+
+  handleSizing = () => { // SIZING HACKS
+    let rootEl = this.el
+    let childNodes = rootEl.childNodes
+
+    if (childNodes.length === 1) {
+      let tableEl = childNodes[0] as HTMLElement
+      if (tableEl.nodeName === 'TABLE') {
+
+        // for IE tables vertically expanding really jankily, esp DURING scrolling
+        // do first. might affect y-scrollbars which affect clientWidth
+        if (tableEl.classList.contains('vgrow')) {
+          tableEl.style.height = (rootEl.clientHeight - 1) + 'px' // -1 for IE
+        }
+
+        // for Safari bug, change in y-scrollbars wouldn't change table width (with 100% width)
+        // won't do anything if the <col>s already have an opinion about width
+        // important not do when no scrollbars. was getting false positives.
+        if (this.props.overflowY !== 'hidden') {
+          tableEl.style.width = rootEl.clientWidth + 'px'
+        }
+      }
+    }
   }
 
 

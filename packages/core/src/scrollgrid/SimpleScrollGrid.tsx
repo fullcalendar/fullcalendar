@@ -4,7 +4,7 @@ import { BaseComponent, setRef, componentNeedsResize } from '../vdom-util'
 import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
 import { ColCss, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
-  renderChunkContent, getChunkVGrow, doSizingHacks, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames } from './util'
+  renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames } from './util'
 
 
 export interface SimpleScrollGridProps {
@@ -70,20 +70,42 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     let needsYScrolling = getNeedsYScrolling(this.props, sectionConfig, chunkConfig) // TODO: do lazily
     let overflowY: OverflowValue = this.state.forceYScrollbars ? 'scroll' : (needsYScrolling ? 'auto' : 'hidden')
     let content = renderChunkContent(sectionConfig, chunkConfig, microColGroupNode, '', true)
+    let vGrow = getChunkVGrow(this.props, sectionConfig, chunkConfig)
 
-    return (
-      <td class={getChunkClassNames(sectionConfig, this.context)} ref={chunkConfig.elRef}>
-        <Scroller
-          ref={this.scrollerRefs.createRef(sectionI)}
-          elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
-          className={chunkConfig.scrollerClassName}
-          overflowY={overflowY}
-          overflowX='hidden'
-          maxHeight={sectionConfig.maxHeight}
-          vGrow={getChunkVGrow(this.props, sectionConfig, chunkConfig)}
-        >{content}</Scroller>
-      </td>
-    )
+    // TODO: cleaner solution
+    // in browsers other than Chrome, the height of the inner table was taking precedence over scroller's liquid height,
+    // making it so there's never be scrollbars
+    if (vGrow) {
+      return (
+        <td class={getChunkClassNames(sectionConfig, this.context)} ref={chunkConfig.elRef}>
+          <div style={{ position: 'relative' }} class='vgrow'>
+            <Scroller
+              ref={this.scrollerRefs.createRef(sectionI)}
+              elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
+              className={[ chunkConfig.scrollerClassName, vGrow ? 'vgrow--absolute' : '' ].join(' ')}
+              overflowY={overflowY}
+              overflowX='hidden'
+              maxHeight={sectionConfig.maxHeight}
+              vGrow={vGrow}
+            >{content}</Scroller>
+          </div>
+        </td>
+      )
+    } else {
+      return (
+        <td class={getChunkClassNames(sectionConfig, this.context)} ref={chunkConfig.elRef}>
+          <Scroller
+            ref={this.scrollerRefs.createRef(sectionI)}
+            elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
+            className={[ chunkConfig.scrollerClassName ].join(' ')}
+            overflowY={overflowY}
+            overflowX='hidden'
+            maxHeight={sectionConfig.maxHeight}
+            vGrow={vGrow}
+          >{content}</Scroller>
+        </td>
+      )
+    }
   }
 
 
@@ -111,7 +133,6 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
 
   handleSizing = () => {
-    doSizingHacks(this.base as HTMLElement)
 
     if (hasShrinkWidth(this.props.cols)) {
       this.setState({

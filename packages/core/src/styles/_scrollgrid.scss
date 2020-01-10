@@ -18,15 +18,11 @@
 
 }
 
-table.vgrow > * > tr > * { // cells
-  height: auto; // if height is set, rows wont expand evenly
-}
-
 .scrollgrid__section { // a <tr>
-  height: 1px;
+  height: 0;
 
   > td {
-    height: 1px; // needs a height so vgrow's within grow
+    height: 0; // needs a height so vgrow's within grow
   }
 }
 
@@ -34,7 +30,7 @@ table.vgrow > * > tr > * { // cells
   height: auto; // undo 1px height. will cancel height:100% also
 
   > td {
-    height: auto;
+    height: 100%; // FF needs this instead of auto
   }
 }
 
