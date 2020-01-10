@@ -13,9 +13,6 @@
 
 
   table {
-    width: 100%;
-    box-sizing: border-box; /* fix scrollbar issue in firefox */
-    table-layout: fixed;
     border-collapse: collapse;
     border-spacing: 0;
     font-size: 1em; /* normalize cross-browser */

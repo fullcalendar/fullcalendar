@@ -22,19 +22,14 @@
   border: 1px solid $unthemed-border-color;
 }
 
-/* table resets */
-
 .fc .fc-list-table {
-  table-layout: auto; /* for shrinkwrapping cell content */
-}
+  width: 100%;
+  border-style: hidden; // kill outer border. already on fc-list-view
 
-.fc-list-table td {
-  border-width: 1px 0 0;
-  padding: 8px 14px;
-}
-
-.fc-list-table tr:first-child td {
-  border-top-width: 0;
+  td, th { // needs to be high precedence to overcome reset :(
+    padding: 8px 14px;
+    border-width: 1px 0 0;
+  }
 }
 
 /* day headings with the list */

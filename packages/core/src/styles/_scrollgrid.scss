@@ -4,8 +4,6 @@
   &, table { // root AND inner tables
     width: 100%; // because tables don't normally do this
     table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
   }
 
   > * > tr > * { // cells
