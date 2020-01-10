@@ -2,7 +2,7 @@ const path = require('path')
 const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const scss = require('rollup-plugin-scss')
-const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, stripScssTildeImporter, isScssPath, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
+const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, stripScssTildeImporter, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 
 

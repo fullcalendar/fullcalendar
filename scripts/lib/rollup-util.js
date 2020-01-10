@@ -83,7 +83,10 @@ exports.isScssPath = function(path) {
 }
 
 
-exports.watchSubdirSassIncludes = { // a rollup plugin
+// a rollup plugin
+// TODO: rename to watchSassIncludesInDir
+// TODO: only look at names like _*.scss
+exports.watchSubdirSassIncludes = {
   transform(code, id) {
     if (exports.isScssPath(id)) { // yuck
       let allStyleFiles = glob.sync(
