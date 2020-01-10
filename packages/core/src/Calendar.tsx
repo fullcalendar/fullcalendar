@@ -1021,7 +1021,7 @@ export default class Calendar {
   }
 
 
-  createNowIndicatorTimer(unit: string, callback: NowTimerCallback) {
+  createNowIndicatorTimer = (unit: string, callback: NowTimerCallback) => { // attaches to context, needs to be bound
     if (this.opt('nowIndicator')) {
       return new NowTimer(this.getNow(), unit, this.dateEnv, callback)
     }

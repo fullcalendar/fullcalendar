@@ -314,6 +314,11 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
 
   _renderNowIndicator({ date, segs }: { date: DateMarker, segs: TimeColsSeg[] }) {
+
+    if (!date) {
+      return []
+    }
+
     let top = this.computeDateTop(date)
     let nodes: HTMLElement[] = []
     let i

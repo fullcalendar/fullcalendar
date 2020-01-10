@@ -172,17 +172,18 @@ export default abstract class TimeColsView extends View {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
       return [
-        <th class={'fc-axis fc-week-number fc-shrink ' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}>
+        <th class={'fc-axis fc-week-number' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}>
           <GotoAnchor
             navLinks={options.navLinks}
             gotoOptions={{ date: range.start, type: 'week', forceOff: dayCnt > 1 }}
+            extraAttrs={{ className: 'shrink' }}
           >{weekText}</GotoAnchor>
         </th>
       ]
     }
 
     return [
-      <th class={'fc-axis fc-shrink ' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}></th>
+      <th class={'fc-axis' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}></th>
     ]
   }
 
@@ -205,7 +206,7 @@ export default abstract class TimeColsView extends View {
     let { theme } = this.context
 
     return [
-      <td class={'fc-axis fc-shrink ' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}></td>
+      <td class={'fc-axis' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}></td>
     ]
   }
 
@@ -214,7 +215,7 @@ export default abstract class TimeColsView extends View {
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderTimeColsIntro = () => {
     return [
-      <td class='fc-axis fc-shrink' style={this.getAxisStyles()}></td>
+      <td class='fc-axis' style={this.getAxisStyles()}></td>
     ]
   }
 
@@ -235,8 +236,8 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <td class={'fc-axis fc-shrink ' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}>
-        <span {...spanAttrs}>
+      <td class={'fc-axis' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}>
+        <span {...spanAttrs} class='shrink'>
           {child}
         </span>
       </td>
@@ -248,7 +249,7 @@ export default abstract class TimeColsView extends View {
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderTableIntro = () => {
     return [
-      <td class='fc-axis fc-shrink' style={this.getAxisStyles()}></td>
+      <td class='fc-axis' style={this.getAxisStyles()}></td>
     ]
   }
 

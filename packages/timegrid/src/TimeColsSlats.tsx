@@ -64,7 +64,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
       let axisNode =
         <td class={'fc-axis fc-time ' + theme.getClass('tableCellNormal')}>
           {isLabeled &&
-            <span>
+            <span class='shrink'>
               {dateEnv.format(slotDate, labelFormat)}
             </span>
           }

@@ -33,6 +33,11 @@ export default abstract class TableView<State={}> extends View<State> {
 
     this.processOptions(this.context.options)
 
+    let cols = []
+    if (this.colWeekNumbersVisible) {
+      cols.push({ width: 'shrink' })
+    }
+
     let sections: SimpleScrollGridSection[] = []
 
     if (headerRowContent) {
@@ -56,7 +61,7 @@ export default abstract class TableView<State={}> extends View<State> {
         <SimpleScrollGrid
           vGrow={!props.isHeightAuto}
           forPrint={props.forPrint}
-          cols={[ { width: 'shrink' } ]}
+          cols={cols}
           sections={sections}
         />
       </div>

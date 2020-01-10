@@ -53,6 +53,11 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
 
   renderSection(sectionConfig: SimpleScrollGridSection, sectionI: number, microColGroupNode: VNode) {
+
+    if (sectionConfig.outerContent) {
+      return sectionConfig.outerContent
+    }
+
     return (
       <tr class={getSectionClassNames(sectionConfig, this.props.vGrow).join(' ')}>
         {this.renderChunkTd(sectionConfig, sectionI, microColGroupNode, sectionConfig.chunk)}
