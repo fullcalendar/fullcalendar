@@ -84,3 +84,7 @@ export default class DayBgRow extends BaseComponent<DayBgRowProps> {
   }
 
 }
+
+DayBgRow.addPropsEquality({
+  onReceiveCellEls: true
+})

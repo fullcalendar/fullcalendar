@@ -51,6 +51,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     sections.push({
       type: 'body',
+      vGrow: true,
       chunk: {
         content: bodyContent
       }

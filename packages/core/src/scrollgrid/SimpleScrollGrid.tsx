@@ -54,7 +54,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
   renderSection(sectionConfig: SimpleScrollGridSection, sectionI: number, microColGroupNode: VNode) {
 
-    if (sectionConfig.outerContent) {
+    if ('outerContent' in sectionConfig) {
       return sectionConfig.outerContent
     }
 
@@ -68,7 +68,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
   renderChunkTd(sectionConfig: SimpleScrollGridSection, sectionI: number, microColGroupNode: VNode, chunkConfig: ChunkConfig) {
 
-    if (chunkConfig.outerContent) {
+    if ('outerContent' in chunkConfig) {
       return chunkConfig.outerContent
     }
 

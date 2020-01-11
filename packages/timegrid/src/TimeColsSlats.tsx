@@ -162,3 +162,7 @@ function computeLabelInterval(slotDuration) {
 
   return slotDuration // fall back
 }
+
+TimeColsSlats.addPropsEquality({
+  onReceiveSlatEls: true
+})

@@ -18,7 +18,7 @@ export interface ViewContainerProps {
 export default class ViewContainer extends BaseComponent<ViewContainerProps> {
 
   render(props: ViewContainerProps) {
-    if (props.height != null) {
+    if (props.height) { // TODO: better test
       return (
         <div class='fc-view-container' style={{ height: props.height }} ref={props.elRef} onClick={props.onClick}>
           {props.children}
@@ -26,10 +26,8 @@ export default class ViewContainer extends BaseComponent<ViewContainerProps> {
       )
     } else {
       return (
-        <div class='fc-view-container' style={{ paddingBottom: (props.aspectRatio * 100 + '%'), position: 'relative' }} >
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-            {props.children}
-          </div>
+        <div class='fc-view-container fc-view-container--aspectratio' style={{ paddingBottom: ((1 / props.aspectRatio) * 100 + '%') }} >
+          {props.children}
         </div>
       )
     }

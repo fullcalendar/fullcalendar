@@ -68,11 +68,10 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
     let calendarHeight: string | number = ''
     let viewHeight: string | number = ''
-    let viewAspectRatio: number | undefined
+    let viewAspectRatio: number | undefined = options.aspectRatio
 
     if (isHeightAuto(options)) {
       viewHeight = 'auto'
-      viewAspectRatio = options.aspectRatio
     } else if (options.height != null) {
       calendarHeight = options.height
     } else if (options.contentHeight != null) {

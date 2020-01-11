@@ -174,3 +174,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
   }
 
 }
+
+TableSkeleton.addPropsEquality({
+  onReceiveEls: true
+})

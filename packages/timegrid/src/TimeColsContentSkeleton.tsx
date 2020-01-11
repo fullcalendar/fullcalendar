@@ -92,3 +92,7 @@ export default class TimeColsContentSkeleton extends BaseComponent<TimeColsConte
   }
 
 }
+
+TimeColsContentSkeleton.addPropsEquality({
+  onReceiveContainerEls: true
+})

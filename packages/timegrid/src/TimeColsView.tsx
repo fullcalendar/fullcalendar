@@ -82,6 +82,7 @@ export default abstract class TimeColsView extends View {
 
     sections.push({
       type: 'body',
+      vGrow: true,
       chunk: {
         scrollerElRef: this.scrollerElRef,
         content: timeContent
@@ -92,6 +93,7 @@ export default abstract class TimeColsView extends View {
       <div class={classNames.join(' ')} ref={this.rootElRef}>
         <SimpleScrollGrid
           forPrint={props.forPrint}
+          vGrow={!props.isHeightAuto}
           cols={[ { width: 'shrink' } ]}
           sections={sections}
         />
