@@ -9,7 +9,7 @@ import {
 export interface TimeColsContentSkeletonProps {
   colCnt: number
   renderIntro: () => VNode[]
-  onReceiveContainerEls?: (containers: TimeColsContentSkeletonContainers | null, rootEl: HTMLElement | null) => void
+  onReceiveContainerEls?: (containers: TimeColsContentSkeletonContainers | null) => void
 }
 
 export interface TimeColsContentSkeletonContainers {
@@ -63,7 +63,7 @@ export default class TimeColsContentSkeleton extends BaseComponent<TimeColsConte
   componentWillUnmount() {
     let { onReceiveContainerEls } = this.props
     if (onReceiveContainerEls) {
-      onReceiveContainerEls(null, null)
+      onReceiveContainerEls(null)
     }
   }
 
@@ -87,7 +87,7 @@ export default class TimeColsContentSkeleton extends BaseComponent<TimeColsConte
         bgContainerEls,
         highlightContainerEls,
         businessContainerEls
-      }, rootEl)
+      })
     }
   }
 

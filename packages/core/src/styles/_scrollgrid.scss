@@ -37,6 +37,10 @@
   overflow: hidden;
 }
 
+.scroller {
+  position: relative; // for abs-positioned elements within
+}
+
 .shrink {
   white-space: nowrap;
 }

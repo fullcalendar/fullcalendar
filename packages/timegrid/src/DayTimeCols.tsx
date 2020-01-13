@@ -37,7 +37,6 @@ export interface DayTimeColsProps {
 
 interface DayTimeColsState {
   nowIndicatorDate: DateMarker
-  nowIndicatorSegs: TimeColsSeg[]
 }
 
 
@@ -69,7 +68,7 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
         renderBgIntro={props.renderBgIntro}
         renderIntro={props.renderIntro}
         nowIndicatorDate={state.nowIndicatorDate}
-        nowIndicatorSegs={state.nowIndicatorSegs}
+        nowIndicatorSegs={state.nowIndicatorDate && this.slicer.sliceNowDate(state.nowIndicatorDate, this.context.calendar, this.dayRanges)}
       />
     )
   }
@@ -112,8 +111,7 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
 
   handleNowDate = (date: DateMarker) => {
     this.setState({
-      nowIndicatorDate: date,
-      nowIndicatorSegs: this.slicer.sliceNowDate(date, this.context.calendar, this.dayRanges)
+      nowIndicatorDate: date
     })
   }
 

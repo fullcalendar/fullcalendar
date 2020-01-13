@@ -18,7 +18,8 @@ import {
   DateProfile,
   sortEventSegs,
   memoize,
-  subrenderer
+  subrenderer,
+  setRef
 } from '@fullcalendar/core'
 import { DayBgRow, DayBgCellModel } from '@fullcalendar/daygrid'
 import TimeColsEvents from './TimeColsEvents'
@@ -74,7 +75,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   private snapDuration: Duration // granularity of time for dragging and selecting
   private snapsPerSlot: any
 
-  private contentSkeletonEl: HTMLElement
+  private rootEl: HTMLElement
   private colContainerEls: HTMLElement[] // containers for each column
   private businessContainerEls: HTMLElement[]
   private highlightContainerEls: HTMLElement[]
@@ -102,7 +103,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
     this.processOptions(context.options)
 
     return (
-      <div class='fc-time-grid' ref={props.rootElRef}>
+      <div class='fc-time-grid' ref={this.handleRootEl}>
         <div class='fc-bg'>
           <table class={theme.getClass('table')}>
             {props.colGroupNode}
@@ -161,6 +162,12 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
+  handleRootEl = (rootEl: HTMLElement | null) => {
+    this.rootEl = rootEl
+    setRef(this.props.rootElRef, rootEl)
+  }
+
+
   handleBgCellEls = (colEls: HTMLElement[] | null) => {
     if (colEls) {
       this.colEls = colEls
@@ -190,12 +197,10 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
-  handleContainerEls = (containers: TimeColsContentSkeletonContainers | null, contentSkeletonEl: HTMLElement | null) => {
-    if (!contentSkeletonEl) {
+  handleContainerEls = (containers: TimeColsContentSkeletonContainers | null) => {
+    if (!containers) {
       this.subrenderDestroy()
-
     } else {
-      this.contentSkeletonEl = contentSkeletonEl
       __assign(this, containers)
     }
   }
@@ -252,11 +257,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
       }),
       this.subrenderMirror(props, this.mirrorContainerEls, options)
     ]
-
-    this.renderNowIndicator({
-      date: props.nowIndicatorDate,
-      segs: props.nowIndicatorSegs
-    })
   }
 
 
@@ -320,6 +320,11 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         segRenderer.assignSizes(forced, this)
       }
     }
+
+    this.renderNowIndicator({ // why in sizing???
+      date: this.props.nowIndicatorDate,
+      segs: this.props.nowIndicatorSegs
+    })
   }
 
 
@@ -351,7 +356,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
       let arrowEl = document.createElement('div')
       arrowEl.className = 'fc-now-indicator fc-now-indicator-arrow'
       arrowEl.style.top = top + 'px'
-      this.contentSkeletonEl.appendChild(arrowEl)
+      this.rootEl.appendChild(arrowEl)
       nodes.push(arrowEl)
     }
 

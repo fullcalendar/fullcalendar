@@ -34,6 +34,8 @@ export default class NowTimer extends SubRenderer {
       callback(addMs(initialNowDate, new Date().valueOf() - initialNowQueriedMs))
     }
 
+    update()
+
     // wait until the beginning of the next interval
     let delay = dateEnv.add(
       dateEnv.startOf(initialNowDate, unit),
