@@ -14,6 +14,7 @@ import {
   Slicer,
   Hit,
   ComponentContext,
+  subrenderer,
   NowTimer
 } from '@fullcalendar/core'
 import TimeCols, { TimeColsSeg, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'
@@ -43,10 +44,10 @@ interface DayTimeColsState {
 export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTimeColsState> {
 
   private buildDayRanges = memoize(buildDayRanges)
+  private updateNowTimer = subrenderer(NowTimer)
   private dayRanges: DateRange[] // for now indicator
   private slicer = new DayTimeColsSlicer()
   private timeColsRef = createRef<TimeCols>()
-  private nowTimer: NowTimer
 
   get timeCols() { return this.timeColsRef.current } // used for view's computeDateScroll :(
 
@@ -86,19 +87,34 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
 
 
   componentDidMount() {
-    this.nowTimer = this.context.createNowIndicatorTimer(TIME_COLS_NOW_INDICATOR_UNIT, (dateMarker: DateMarker) => {
-      this.setState({
-        nowIndicatorDate: dateMarker,
-        nowIndicatorSegs: this.slicer.sliceNowDate(dateMarker, this.context.calendar, this.dayRanges)
-      })
-    })
+    this.subrender()
+  }
+
+
+  componentDidUpdate() {
+    this.subrender()
   }
 
 
   componentWillUnmount() {
-    if (this.nowTimer) {
-      this.nowTimer.destroy()
-    }
+    this.subrenderDestroy()
+  }
+
+
+  subrender() {
+    this.updateNowTimer({
+      enabled: this.context.options.nowIndicator,
+      unit: TIME_COLS_NOW_INDICATOR_UNIT,
+      callback: this.handleNowDate
+    })
+  }
+
+
+  handleNowDate = (date: DateMarker) => {
+    this.setState({
+      nowIndicatorDate: date,
+      nowIndicatorSegs: this.slicer.sliceNowDate(date, this.context.calendar, this.dayRanges)
+    })
   }
 
 

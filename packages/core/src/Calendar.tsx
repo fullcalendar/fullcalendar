@@ -34,7 +34,6 @@ import ComponentContext, { ComponentContextType, buildContext } from './componen
 import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
-import NowTimer, { NowTimerCallback } from './NowTimer'
 import { globalPlugins } from './global-plugins'
 import { removeExact } from './util/array'
 
@@ -60,6 +59,7 @@ export type OptionChangeHandler = (propValue: any, calendar: Calendar, deepEqual
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
 export type ResizeHandler = (force: boolean) => void
+
 
 export default class Calendar {
 
@@ -1018,13 +1018,6 @@ export default class Calendar {
     }
 
     return this.dateEnv.createMarker(now)
-  }
-
-
-  createNowIndicatorTimer = (unit: string, callback: NowTimerCallback) => { // attaches to context, needs to be bound
-    if (this.opt('nowIndicator')) {
-      return new NowTimer(this.getNow(), unit, this.dateEnv, callback)
-    }
   }
 
 

@@ -1,18 +1,33 @@
 import { DateMarker, addMs } from './datelib/marker'
 import { createDuration } from './datelib/duration'
-import { DateEnv } from './datelib/env'
+import { SubRenderer } from './vdom-util'
+import ComponentContext from './component/ComponentContext'
 
+
+export interface NowTimerProps {
+  enabled: boolean
+  unit: string
+  callback: NowTimerCallback
+}
 
 export type NowTimerCallback = (now: DateMarker) => void
 
 
-export default class NowTimer {
+export default class NowTimer extends SubRenderer {
 
   private timeoutId: any
   private intervalId: any
 
 
-  constructor(initialNowDate: DateMarker, unit: string, dateEnv: DateEnv, callback: NowTimerCallback) {
+  render(props: NowTimerProps, context: ComponentContext) {
+
+    if (!props.enabled) {
+      return
+    }
+
+    let { dateEnv } = context
+    let { unit, callback } = props
+    let initialNowDate = context.calendar.getNow()
     let initialNowQueriedMs = new Date().valueOf()
 
     function update() {
@@ -41,7 +56,7 @@ export default class NowTimer {
   }
 
 
-  destroy() {
+  unrender() {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
       this.timeoutId = null
