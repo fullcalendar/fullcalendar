@@ -1,8 +1,5 @@
 {
   "private": true,
-  "dependencies": {
-    "tslib": "^1.9.3"
-  },
   "devDependencies": {
     "@fullcalendar/core": "4.3.1",
     "@fullcalendar/interaction": "4.3.0",
