@@ -3,12 +3,12 @@ import ComponentContext from '../component/ComponentContext'
 import { BaseComponent, setRef, componentNeedsResize } from '../vdom-util'
 import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
-import { ColCss, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
+import { ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
   renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames } from './util'
 
 
 export interface SimpleScrollGridProps {
-  cols: ColCss[]
+  cols: ColProps[]
   sections: SimpleScrollGridSection[]
   vGrow?: boolean
   forPrint?: boolean

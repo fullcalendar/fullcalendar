@@ -6,10 +6,10 @@ import ComponentContext from '../component/ComponentContext'
 export type CssDimValue = string | number
 
 
-export interface ColCss {
+export interface ColProps {
   width?: CssDimValue
   minWidth?: CssDimValue
-  [otherProp: string]: any
+  span?: number
 }
 
 export interface SectionConfig {
@@ -117,30 +117,24 @@ export function renderChunkContent(
 }
 
 
-export function renderMicroColGroup(cols: ColCss[], shrinkWidth?: number) { // TODO: make this SuperColumn-only!???
+export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) { // TODO: make this SuperColumn-only!???
   return (
     <colgroup>
-      {cols.map((colCss, i) => {
-        let className = '' // HACK
-
-        if (colCss.width === 'shrink') {
-          colCss = { ...colCss, width: shrinkWidth || 0 }
-        }
-
-        if (colCss.className !== undefined) { // gahhhhh
-          className = colCss.className
-          colCss = { ...colCss }
-          delete colCss.className
-        }
-
-        return (<col className={className} style={colCss}></col>)
-      })}
+      {cols.map((colProps) => (
+        <col
+          span={colProps.span || 1}
+          style={{
+            width: colProps.width === 'shrink' ? (shrinkWidth || 0) : (colProps.width || ''),
+            minWidth: colProps.minWidth || ''
+          }}
+        />
+      ))}
     </colgroup>
   )
 }
 
 
-export function hasShrinkWidth(cols: ColCss[]) {
+export function hasShrinkWidth(cols: ColProps[]) {
   for (let col of cols) {
     if (col.width === 'shrink') {
       return true
