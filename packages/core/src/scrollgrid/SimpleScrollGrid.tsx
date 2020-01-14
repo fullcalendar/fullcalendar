@@ -5,6 +5,7 @@ import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
 import { ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
   renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames } from './util'
+import { memoize } from '../util/memoize'
 
 
 export interface SimpleScrollGridProps {
@@ -32,6 +33,7 @@ const STATE_IS_SIZING = {
 
 export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps> {
 
+  renderMicroColGroup = memoize(renderMicroColGroup) // yucky to memoize VNodes, but much more efficient for consumers
   scrollerRefs = new RefMap<Scroller>()
   scrollerElRefs = new RefMap<HTMLElement, [ChunkConfig]>(this._handleScrollerEl.bind(this))
 
@@ -42,7 +44,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
   render(props: SimpleScrollGridProps, state: SimpleScrollGridState, context: ComponentContext) {
     let sectionConfigs = props.sections || []
-    let microColGroupNode = renderMicroColGroup(props.cols, state.shrinkWidth)
+    let microColGroupNode = this.renderMicroColGroup(props.cols, state.shrinkWidth)
 
     return (
       <table class={getScrollGridClassNames(props.vGrow, context).join(' ')} style={{ height: props.height }}>
