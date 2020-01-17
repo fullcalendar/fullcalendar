@@ -7,7 +7,6 @@ const { writePkgLicenses } = require('./scripts/lib/pkg-license')
 const { minifyJs, minifyCss } = require('./scripts/lib/minify') // combine into one task? make part of rollup?
 const { lint } = require('./scripts/lib/lint')
 const { archive } = require('./scripts/lib/archive')
-const { copyScss, watchScss } = require('./scripts/lib/pkg-scss') // watchScss is a bad name!
 const { writeLocales, watchLocales } = require('./scripts/lib/locales')
 
 const buildDts = exports.dts = series(
@@ -25,7 +24,6 @@ exports.minify = parallel(minifyJs, minifyCss)
 
 exports.build = series(
   writePkgJsons, // important for node-resolution
-  copyScss,
   shellTask('npm:tsc'),
   writeLocales, // needs tsc
   parallel(
@@ -39,7 +37,6 @@ exports.build = series(
 
 exports.watch = series(
   writePkgJsons, // important for node-resolution
-  copyScss,
   parallel(
     shellTask('npm:tsc:watch'),
     series(
@@ -50,8 +47,7 @@ exports.watch = series(
         writePkgLicenses, // doesn't watch!
         writePkgReadmes, // doesn't watch!
         buildDts, // doesn't watch!
-        watchLocales, // TODO: ignore initial
-        watchScss // TODO: ignore initial
+        watchLocales // TODO: ignore initial
       )
     )
   )

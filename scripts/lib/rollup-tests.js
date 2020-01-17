@@ -3,10 +3,9 @@ const glob = require('glob')
 const multiEntry = require('rollup-plugin-multi-entry')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const alias = require('rollup-plugin-alias')
-const scss = require('rollup-plugin-scss')
 const commonjs = require('rollup-plugin-commonjs')
 const sourcemaps = require('rollup-plugin-sourcemaps')
-const { EXTERNAL_BROWSER_GLOBALS, WATCH_OPTIONS, stripScssTildeImporter, onwarn } = require('./rollup-util')
+const { EXTERNAL_BROWSER_GLOBALS, WATCH_OPTIONS, onwarn } = require('./rollup-util')
 
 
 module.exports = function() {
@@ -53,10 +52,6 @@ function buildMainConfig() {
       alias({
         // the alias to the non-premium tests. must be absolute
         'package-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src')
-      }),
-      scss({
-        includePaths: nodeModulesDirs,
-        importer: stripScssTildeImporter
       }),
       commonjs(), // for fast-deep-equal import
       sourcemaps()

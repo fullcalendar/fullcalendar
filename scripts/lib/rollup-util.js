@@ -68,11 +68,6 @@ exports.onwarn = function(warning, warn) {
 }
 
 
-exports.stripScssTildeImporter = function(path) { // for the rollup-scss plugin
-  return { file: path.replace(TILDE_PATH_RE, '') }
-}
-
-
 exports.isRelPath = function(path) {
   return REL_PATH_RE.test(path)
 }
