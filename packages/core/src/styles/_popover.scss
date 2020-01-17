@@ -31,11 +31,11 @@
 .fc-unthemed {
 
   .fc-popover {
-    border: 1px solid $unthemed-border-color;
+    border: 1px solid var(--unthemed-border-color);
     background: #fff;
 
     .fc-header {
-      background: $unthemed-muted-bg-color;
+      background: var(--unthemed-muted-bg-color);
     }
   }
 

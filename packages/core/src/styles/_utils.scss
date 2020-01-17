@@ -59,8 +59,8 @@ td.fc-today {
   }
 
   .fc-divider {
-    border: 1px solid $unthemed-border-color;
-    background: $unthemed-muted-bg-color;
+    border: 1px solid var(--unthemed-border-color);
+    background: var(--unthemed-muted-bg-color);
   }
 
 }
