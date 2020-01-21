@@ -1,14 +1,21 @@
 const path = require('path')
+const { readFileSync } = require('fs')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const sass = require('rollup-plugin-sass')
 const { renderBanner, isRelPath, isScssPath, TEMPLATE_PLUGIN, SOURCEMAP_PLUGINS, WATCH_OPTIONS, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
-const { pkgStructs } = require('./pkg-struct')
+const { pkgStructs, getCorePkgStruct } = require('./pkg-struct')
 
 
 module.exports = function(isDev) {
   return pkgStructs.filter((pkgStruct) => !pkgStruct.isBundle)
     .map((pkgStruct) => buildPkgConfig(pkgStruct, isDev))
 }
+
+
+const coreVarsScssString = readFileSync(
+  path.join(getCorePkgStruct().srcDir, 'styles/_vars.scss'),
+  'utf8'
+)
 
 
 function buildPkgConfig(pkgStruct, isDev) {
@@ -37,6 +44,10 @@ function buildPkgConfig(pkgStruct, isDev) {
       nodeResolve(),
       sass({
         output: true, // to a .css file
+        options: {
+          // core already has sass vars imported, but inject them for other modules
+          data: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n'
+        }
       }),
       TEMPLATE_PLUGIN,
       ...(isDev ? SOURCEMAP_PLUGINS : []),

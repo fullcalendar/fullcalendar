@@ -5,6 +5,7 @@ const nodeResolve = require('rollup-plugin-node-resolve')
 const alias = require('rollup-plugin-alias')
 const commonjs = require('rollup-plugin-commonjs')
 const sourcemaps = require('rollup-plugin-sourcemaps')
+const postCss = require('rollup-plugin-postcss')
 const { EXTERNAL_BROWSER_GLOBALS, WATCH_OPTIONS, onwarn } = require('./rollup-util')
 
 
@@ -54,6 +55,9 @@ function buildMainConfig() {
         'package-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src')
       }),
       commonjs(), // for fast-deep-equal import
+      postCss({
+        extract: true // to separate .css file
+      }),
       sourcemaps()
     ],
     watch: WATCH_OPTIONS,

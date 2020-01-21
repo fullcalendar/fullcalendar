@@ -1,6 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
+const postCss = require('rollup-plugin-postcss')
 const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 
@@ -52,6 +53,9 @@ function buildBundleConfig(pkgStruct, isDev) {
           paths: [ nodeModulesDir ] // for requiring other packages
         }
       }),
+      postCss({
+        extract: true // to separate .css file
+      }),
       ...(isDev ? SOURCEMAP_PLUGINS : [])
     ],
     watch: WATCH_OPTIONS,
@@ -72,6 +76,10 @@ if (exports.globalPlugins) {
 }
 `
 
+/*
+modules we don't want in the main bundle file but want as separate files in the same dir.
+can't have CSS.
+*/
 function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
   let banner = renderBanner(pkgStruct.jsonObj)
   let inputFile = path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js')

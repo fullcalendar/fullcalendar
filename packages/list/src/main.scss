@@ -18,7 +18,8 @@
 }
 
 .fc-unthemed .fc-list-view {
-  border: 1px solid var(--unthemed-border-color);
+  border: 1px solid $fc-unthemed-border-color;
+  border: 1px solid var(--fc-unthemed-border-color, $fc-unthemed-border-color);
 }
 
 .fc .fc-list-table {
@@ -42,7 +43,8 @@
 }
 
 .fc-unthemed .fc-list-heading td {
-  background: var(--unthemed-muted-bg-color);
+  background: $fc-unthemed-muted-bg-color;
+  background: var(--fc-unthemed-muted-bg-color, $fc-unthemed-muted-bg-color);
 }
 
 .fc-ltr .fc-list-heading-main { float: left; }

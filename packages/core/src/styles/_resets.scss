@@ -52,7 +52,8 @@
 .fc-unthemed {
 
   td, th {
-    border: 1px solid var(--unthemed-border-color);
+    border: 1px solid $fc-unthemed-border-color;
+    border: 1px solid var(--fc-unthemed-border-color, $fc-unthemed-border-color);
   }
 
 }

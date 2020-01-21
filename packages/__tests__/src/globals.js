@@ -3,6 +3,7 @@
 
 
 // NOTE: a bunch of other top-level JS files in karma.config.js
+// TODO: could include base.css from here
 
 import './hacks'
 import './lib/simulate'
