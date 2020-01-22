@@ -6,10 +6,6 @@
     table-layout: fixed;
   }
 
-  > * > tr > * { // cells
-    padding: 0 !important;
-  }
-
   table { // inner tables
     border-style: hidden; // kill outer border
   }
@@ -21,6 +17,12 @@
 
   > td {
     height: 0; // needs a height so vgrow's within grow
+  }
+}
+
+.fc .scrollgrid__section { // more precedence to overcome theme
+  th, td {
+    padding: 0 !important;
   }
 }
 

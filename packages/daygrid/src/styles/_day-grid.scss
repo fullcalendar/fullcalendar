@@ -2,68 +2,156 @@
 /* DayGridView
 --------------------------------------------------------------------------------------------------*/
 
-/* day row structure */
-
-.fc-dayGridWeek-view .fc-content-skeleton,
-.fc-dayGridDay-view .fc-content-skeleton {
-  /* there may be week numbers in these views, so no padding-top */
-  padding-bottom: 1em; /* ensure a space at bottom of cell for user selecting/clicking */
+.fc-day-grid {
+  position: relative; // because containers z-index'd children
+  z-index: 1;         // "
+  display: flex;
+  flex-direction: column;
 }
 
-.fc-dayGrid-view .fc-body .fc-row {
-  min-height: 4em; /* ensure that all rows are at least this tall */
+.fc-day-grid .fc-row {
+  flex-grow: 1;
+  position: relative; // for housing the skeletons
+  min-height: 4em; // ensure that all rows are at least this tall
 }
 
-/* a "rigid" row will take up a constant amount of height because content-skeleton is absolute */
-
-.fc-row.fc-rigid {
+.fc-day-grid .fc-row.fc-rigid { // TODO: make this a modifier class on fc-day-grid
+  // a "rigid" row will take up a constant amount of height because content-skeleton is absolute
   overflow: hidden;
 }
 
-.fc-row.fc-rigid .fc-content-skeleton {
+
+// BORDER
+
+.fc-day-grid .fc-row {
+  border-width: 1px 0 0;
+
+  &:first-child {
+    border-top-width: 0;
+  }
+}
+
+.fc-unthemed .fc-day-grid .fc-row {
+  border-style: solid;
+  border-color: $fc-unthemed-border-color;
+  border-color: var(--fc-unthemed-border-color, $fc-unthemed-border-color);
+}
+
+
+// SKELETONS
+// the order:
+// .fc-bg
+// .fc-bgevent-skeleton
+// .fc-highlight-skeleton
+// .fc-content-skeleton
+// .fc-mirror-skeleton
+
+.fc-day-grid .fc-row .fc-content-skeleton {
+  position: relative;
+}
+
+.fc-day-grid .fc-row > .fc-bg,
+.fc-day-grid .fc-row > .fc-bgevent-skeleton,
+.fc-day-grid .fc-row > .fc-highlight-skeleton,
+.fc-day-grid .fc-row.fc-rigid > .fc-content-skeleton,
+.fc-day-grid .fc-row > .fc-mirror-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.fc-day-grid .fc-row > .fc-bg,
+.fc-day-grid .fc-row > .fc-bgevent-skeleton,
+.fc-day-grid .fc-row > .fc-highlight-skeleton,
+.fc-day-grid .fc-row > .fc-mirror-skeleton {
+  & > table {
+    height: 100%; // everything but the content-skeleton creates height
+  }
+}
+
+.fc-day-grid .fc-row > .fc-bgevent-skeleton,
+.fc-day-grid .fc-row > .fc-highlight-skeleton,
+.fc-day-grid .fc-row > .fc-content-skeleton,
+.fc-day-grid .fc-row > .fc-mirror-skeleton {
+  th, td {
+    border-color: transparent;
+  }
+}
+
+.fc-day-grid .fc-row > .fc-bg { z-index: 1; }
+.fc-day-grid .fc-row > .fc-bgevent-skeleton { z-index: 2;}
+.fc-day-grid .fc-row > .fc-highlight-skeleton { z-index: 3; }
+.fc-day-grid .fc-row > .fc-content-skeleton { z-index: 4; }
+.fc-day-grid .fc-row > .fc-mirror-skeleton { z-index: 5; }
+
+
+// CONTENT SKELETON
+
+.fc-day-grid .fc-row > .fc-content-skeleton {
+  padding-bottom: 1em; // ensure a space at bottom of cell for user selecting/clicking
+}
+
+.fc-day-grid .fc-row.fc-rigid > .fc-content-skeleton {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
 }
 
-/* week and day number styling */
-
-.fc-day-top.fc-other-month {
-  opacity: 0.3;
-}
-
-.fc-dayGrid-view .fc-week-number,
-.fc-dayGrid-view .fc-day-number {
+.fc-day-grid .fc-week-number,
+.fc-day-grid .fc-day-number {
   padding: 2px;
 }
 
-.fc-dayGrid-view th.fc-week-number,
-.fc-dayGrid-view th.fc-day-number {
-  padding: 0 2px; /* column headers can't have as much v space */
+.fc-day-grid .fc-day-top.fc-other-month { // TODO: why is other-month not on fc-day?
+  opacity: 0.3;
 }
 
-.fc-ltr .fc-dayGrid-view .fc-day-top .fc-day-number { float: right; }
-.fc-rtl .fc-dayGrid-view .fc-day-top .fc-day-number { float: left; }
-
-.fc-ltr .fc-dayGrid-view .fc-day-top .fc-week-number { float: left; border-radius: 0 0 3px 0; }
-.fc-rtl .fc-dayGrid-view .fc-day-top .fc-week-number { float: right; border-radius: 0 0 0 3px; }
-
-.fc-dayGrid-view .fc-day-top .fc-week-number {
+.fc-day-grid .fc-day-top .fc-week-number {
   min-width: 1.5em;
   text-align: center;
   background-color: #f2f2f2;
   color: #808080;
 }
 
-/* when week/day number have own column */
+.fc-ltr .fc-day-grid .fc-day-top .fc-day-number { float: right; }
+.fc-rtl .fc-day-grid .fc-day-top .fc-day-number { float: left; }
 
-.fc-dayGrid-view td.fc-week-number {
-  text-align: center;
-}
+.fc-ltr .fc-day-grid .fc-day-top .fc-week-number { float: left; border-radius: 0 0 3px 0; }
+.fc-rtl .fc-day-grid .fc-day-top .fc-week-number { float: right; border-radius: 0 0 0 3px; }
 
-.fc-dayGrid-view td.fc-week-number > * {
-  /* work around the way we do column resizing and ensure a minimum width */
-  display: inline-block;
-  min-width: 1.25em;
+
+@media print {
+
+  // don't force a min-height on rows
+  .fc-day-grid .fc-row {
+    height: auto !important; /* undo height that JS set in distributeHeight */
+    min-height: 0 !important; /* undo the min-height from each view's specific stylesheet */
+  }
+
+  // kill the overlaid, absolutely-positioned components
+  .fc-day-grid .fc-row > .fc-bg,
+  .fc-day-grid .fc-row > .fc-bgevent-skeleton,
+  .fc-day-grid .fc-row > .fc-highlight-skeleton,
+  .fc-day-grid .fc-row > .fc-mirror-skeleton {
+    display: none;
+  }
+
+  .fc-day-grid .fc-row > .fc-content-skeleton {
+    position: static; /* undo .fc-rigid */
+    padding-bottom: 0 !important; /* use a more border-friendly method for this... */
+  }
+
+  .fc-day-grid .fc-row > .fc-content-skeleton tbody tr:last-child td { /* only works in newer browsers */
+    padding-bottom: 1em; /* ...gives space within the skeleton. also ensures min height in a way */
+  }
+
+  .fc-day-grid .fc-row > .fc-content-skeleton table {
+    /* provides a min-height for the row, but only effective for IE, which exaggerates this value,
+      making it look more like 3em. for other browers, it will already be this tall */
+    height: 1em;
+  }
+
 }

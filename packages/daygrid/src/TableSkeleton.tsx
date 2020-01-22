@@ -22,6 +22,7 @@ export interface TableSkeletonProps {
   colWeekNumbersVisible: boolean // week numbers render in own column? (caller does HTML via intro)
   cellWeekNumbersVisible: boolean // display week numbers in day cell?
   colGroupNode: VNode
+  vGrow: boolean
 }
 
 export interface CellModel {
@@ -36,7 +37,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
   cellElRefs = new RefMap<HTMLTableCellElement[]>() // the bg cells
 
 
-  render() {
+  render(props: TableSkeletonProps) {
     let rowCnt = this.props.cells.length
     let rowNodes: VNode[] = []
 
@@ -47,7 +48,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
     }
 
     return (
-      <div class='fc-day-grid'>
+      <div class={'fc-day-grid' + (props.vGrow ? ' vgrow' : '')}>
         {rowNodes}
       </div>
     )
@@ -85,7 +86,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
   renderDayRow(row) {
     let { theme } = this.context
     let { props } = this
-    let classes = [ 'fc-row', 'fc-week' ]
+    let classes = [ 'fc-row', 'fc-week', theme.getClass('bordered') ]
 
     if (props.isRigid) {
       classes.push('fc-rigid')

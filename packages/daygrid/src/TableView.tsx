@@ -93,22 +93,6 @@ export default abstract class TableView<State={}> extends View<State> {
   }
 
 
-  /* Dimensions
-  ------------------------------------------------------------------------------------------------------------------*/
-
-  // TODO: give eventLimit to DayTable
-
-  // // is the event limit a constant level number?
-  // if (eventLimit && typeof eventLimit === 'number') {
-  //   table.limitRows(eventLimit) // limit the levels first so the height can redistribute after
-  // }
-
-  // // is the event limit dynamically calculated?
-  // if (eventLimit && typeof eventLimit !== 'number') {
-  //   table.limitRows(eventLimit) // limit the levels after the grid's row heights have been set
-  // }
-
-
   /* Header Rendering
   ------------------------------------------------------------------------------------------------------------------*/
 
@@ -189,8 +173,7 @@ export default abstract class TableView<State={}> extends View<State> {
 TableView.prototype.dateProfileGeneratorClass = TableDateProfileGenerator
 
 
-// Determines whether each row should have a constant height
-export function hasRigidRows(options) {
+export function isEventLimitAuto(options) { // TODO: use in other places?
   let eventLimit = options.eventLimit
 
   return eventLimit && typeof eventLimit !== 'number'

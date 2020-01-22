@@ -17,6 +17,7 @@ import AllDaySplitter from './AllDaySplitter'
 
 
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
+const AUTO_ALL_DAY_EVENT_LIMIT = 5
 
 
 /* An abstract class for all timegrid-related views. Displays one more columns with time slots running vertically.
@@ -124,16 +125,14 @@ export default abstract class TimeColsView extends View {
   /* Dimensions
   ------------------------------------------------------------------------------------------------------------------*/
 
-  // const ALL_DAY_EVENT_LIMIT = 5
-  //
-  // let eventLimit
-  // eventLimit = this.context.options.eventLimit
-  // if (eventLimit && typeof eventLimit !== 'number') {
-  //   eventLimit = ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
-  // }
-  // if (eventLimit) {
-  //   table.limitRows(eventLimit)
-  // }
+
+  getAllDayEventLimit() {
+    let eventLimit = this.context.options.eventLimit
+    if (eventLimit && typeof eventLimit !== 'number') {
+      eventLimit = AUTO_ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
+    }
+    return eventLimit
+  }
 
 
   /* Scroll

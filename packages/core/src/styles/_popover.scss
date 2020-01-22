@@ -1,6 +1,6 @@
 
 .fc-popover {
-  position: fixed;
+  position: fixed !important; // override bootstrap!
   top: 0; // for when not positioned yet
   box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }

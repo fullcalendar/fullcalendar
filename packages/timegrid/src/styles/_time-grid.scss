@@ -1,81 +1,52 @@
 
-.fc-timeGrid-view .fc-divider { // TODO: better selector
-  padding-bottom: 2px;
-}
-
-/* TimeGridView all-day area
---------------------------------------------------------------------------------------------------*/
-
-.fc-timeGrid-view .fc-day-grid {
-  position: relative;
-  z-index: 2; /* so the "more.." popover will be over the time grid */
-}
-
-.fc-timeGrid-view .fc-day-grid .fc-row {
-  min-height: 3em; /* all-day section will never get shorter than this */
-}
-
-.fc-timeGrid-view .fc-day-grid .fc-row .fc-content-skeleton {
-  padding-bottom: 1em; /* give space underneath events for clicking/selecting days */
-}
-
-
-/* TimeGrid axis running down the side (for both the all-day area and the slot area)
---------------------------------------------------------------------------------------------------*/
-
-.fc .fc-axis { /* .fc to overcome default cell styles */
-  vertical-align: middle;
-  padding: 0 4px;
-  white-space: nowrap;
-}
-
-.fc-ltr .fc-axis {
-  text-align: right;
-}
-
-.fc-rtl .fc-axis {
-  text-align: left;
-}
-
-
-/* TimeGrid Structure
---------------------------------------------------------------------------------------------------*/
-
-.fc-time-grid { /* so slats/bg/content/etc positions get scoped within here */
-  position: relative;
-  z-index: 1;
-}
-
 .fc-time-grid {
-  min-height: 100%; /* so if height setting is 'auto', .fc-bg stretches to fill height */
+  position: relative; // for housing skeletons
+  z-index: 1; // because containers z-index'd children
 }
 
-.fc-time-grid table { /* don't put outer borders on slats/bg/content/etc */
-  border: 0 hidden transparent;
-}
+
+// SKELETONS
+// order:
+// .fc-bg
+// .fc-slats
+// .fc-content-skeleton
 
 .fc-time-grid > .fc-bg {
+  position: absolute;
   z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  & > table {
+    height: 100%;
+  }
 }
 
-.fc-time-grid .fc-slats {
+.fc-time-grid > .fc-slats {
   position: relative;
   z-index: 2;
 }
 
-.fc-time-grid .fc-content-col {
-  position: relative; /* because now-indicator lives directly inside */
-}
-
-.fc-time-grid .fc-content-skeleton {
+.fc-time-grid > .fc-content-skeleton {
   position: absolute;
   z-index: 3;
   top: 0;
   left: 0;
   right: 0;
+
+  & > table {
+    height: 100%;
+  }
 }
 
-/* divs within a cell within the fc-content-skeleton */
+.fc-time-grid .fc-content-col { // <td>s within .fc-content-skeleton
+  position: relative;
+}
+
+
+// elements that live WITHIN each .fc-content-col
 
 .fc-time-grid .fc-business-container {
   position: relative;
@@ -97,69 +68,59 @@
   z-index: 4;
 }
 
-.fc-time-grid .fc-now-indicator-line {
+.fc-time-grid .fc-now-indicator-line { // will be absolute
   z-index: 5;
 }
 
-.fc-time-grid .fc-mirror-container { /* also is fc-event-container */
+.fc-time-grid .fc-mirror-container {
   position: relative;
   z-index: 6;
 }
 
 
-/* TimeGrid Slats (lines that run horizontally)
---------------------------------------------------------------------------------------------------*/
-
-.fc-time-grid .fc-slats td {
-  height: 1.5em;
-  border-bottom: 0; /* each cell is responsible for its top border */
-}
-
-.fc-time-grid .fc-slats .fc-minor td {
-  border-top-style: dotted;
-}
-
-
-/* TimeGrid Highlighting Slots
---------------------------------------------------------------------------------------------------*/
-
-.fc-time-grid .fc-highlight-container { /* a div within a cell within the fc-highlight-skeleton */
-  position: relative; /* scopes the left/right of the fc-highlight to be in the column */
-}
+// highlight (within .fc-highlight-container)
 
 .fc-time-grid .fc-highlight {
   position: absolute;
   left: 0;
   right: 0;
-  /* top and bottom will be in by JS */
+}
+
+
+// SLATS (lines that run horizontally)
+
+.fc-time-grid > .fc-slats td {
+  height: 1.5em;
+  border-bottom: 0; /* each cell is responsible for its top border */
+}
+
+.fc-time-grid > .fc-slats .fc-minor td {
+  border-top-style: dotted;
 }
 
 
 @media print {
 
-  /* undo the min-height 100% trick used to fill the container's height */
-  .fc-time-grid {
-    min-height: 0 !important;
-  }
-
-  /* don't display the side axis at all ("all-day" and time cells) */
-  .fc-timeGrid-view .fc-axis {
-    display: none;
-  }
-
-  /* don't display the horizontal lines */
-  .fc-slats,
-  .fc-time-grid hr { /* this hr is used when height is underused and needs to be filled */
-    display: none !important; /* important overrides inline declaration */
+  // kill the overlaid, absolutely-positioned components
+  .fc-time-grid > .fc-bg,
+  .fc-time-grid > .fc-slats,
+  .fc-time-grid .fc-bgevent-skeleton,
+  .fc-time-grid .fc-highlight-skeleton,
+  .fc-time-grid .fc-mirror-skeleton,
+  .fc-time-grid .fc-bgevent-container,
+  .fc-time-grid .fc-business-container,
+  .fc-time-grid .fc-highlight-container,
+  .fc-time-grid .fc-mirror-container {
+    display: none !important; // important overrides inline declaration for .fc-slats
   }
 
   /* let the container that holds the events be naturally positioned and create real height */
-  .fc-time-grid .fc-content-skeleton {
+  .fc-time-grid > .fc-content-skeleton {
     position: static;
   }
 
   /* in case there are no events, we still want some height */
-  .fc-time-grid .fc-content-skeleton table {
+  .fc-time-grid > .fc-content-skeleton table {
     height: 4em;
   }
 

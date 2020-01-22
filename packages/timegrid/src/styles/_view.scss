@@ -1,0 +1,36 @@
+
+// all-day area
+
+.fc-timeGrid-view .fc-day-grid .fc-row {
+  min-height: 3em; /* all-day section will never get shorter than this */
+}
+
+.fc-timeGrid-view .fc-day-grid .fc-row .fc-content-skeleton {
+  padding-bottom: 1em; /* give space underneath events for clicking/selecting days */
+}
+
+
+// the divider between daygrid the timegrid
+// high precedence to overcome theme
+// TODO: better selector. add className to HTML (.fc-timeGrid-view-divider?)
+.fc .fc-timeGrid-view .fc-divider {
+  padding: 0 0 2px;
+}
+
+
+// axis, for the timegrid AND the daygrid
+
+.fc-timeGrid-view .fc-axis {
+  vertical-align: middle;
+  padding: 0 4px;
+}
+
+
+@media print {
+
+  /* don't display the side axis at all ("all-day" and time cells) */
+  .fc-timeGrid-view .fc-axis {
+    display: none;
+  }
+
+}

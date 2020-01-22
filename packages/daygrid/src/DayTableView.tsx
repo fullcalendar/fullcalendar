@@ -10,7 +10,7 @@ import {
   DayTableModel,
   ChunkContentCallbackArgs,
 } from '@fullcalendar/core'
-import TableView, { hasRigidRows } from './TableView'
+import TableView, { isEventLimitAuto } from './TableView'
 import DayTable from './DayTable'
 
 
@@ -48,7 +48,7 @@ export default class DayTableView extends TableView {
           eventSelection={props.eventSelection}
           eventDrag={props.eventDrag}
           eventResize={props.eventResize}
-          isRigid={hasRigidRows(context.options)}
+          isRigid={isEventLimitAuto(context.options) && !props.isHeightAuto}
           nextDayThreshold={context.nextDayThreshold}
           colGroupNode={contentArg.colGroupNode}
           renderNumberIntro={this.renderNumberIntro}
@@ -56,6 +56,8 @@ export default class DayTableView extends TableView {
           renderIntro={this.renderIntro}
           colWeekNumbersVisible={colWeekNumbersVisible}
           cellWeekNumbersVisible={cellWeekNumbersVisible}
+          eventLimit={options.eventLimit}
+          vGrow={!props.isHeightAuto}
         />
       )
     )

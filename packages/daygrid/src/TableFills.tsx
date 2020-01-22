@@ -1,6 +1,5 @@
 import {
   VNode,
-  htmlToElement,
   appendToElement,
   prependToElement,
   FillRenderer,
@@ -9,7 +8,8 @@ import {
   removeElement,
   BaseFillRendererProps,
   subrenderer,
-  renderVNodes
+  renderVNodes,
+  h
 } from '@fullcalendar/core'
 
 
@@ -21,6 +21,7 @@ export interface TableFillsProps extends BaseFillRendererProps {
   rowEls: HTMLElement[]
   colCnt: number
   renderIntro: () => VNode[]
+  colGroupNode: VNode
 }
 
 export default class TableFills extends FillRenderer<TableFillsProps> {
@@ -50,7 +51,8 @@ export default class TableFills extends FillRenderer<TableFillsProps> {
       segs,
       rowEls: props.rowEls,
       colCnt: props.colCnt,
-      renderIntro: props.renderIntro
+      renderIntro: props.renderIntro,
+      colGroupNode: props.colGroupNode
     })
   }
 
@@ -81,7 +83,7 @@ function detachSegs(els: HTMLElement[]) {
 
 
 // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
-function renderFillRow(seg: Seg, { colCnt, type, renderIntro }: TableFillsProps, context: ComponentContext): HTMLElement {
+function renderFillRow(seg: Seg, { colCnt, type, renderIntro, colGroupNode }: TableFillsProps, context: ComponentContext): HTMLElement {
   let { isRtl } = context
   let startCol = seg.firstCol
   let endCol = seg.lastCol + 1
@@ -95,11 +97,15 @@ function renderFillRow(seg: Seg, { colCnt, type, renderIntro }: TableFillsProps,
     className = type.toLowerCase()
   }
 
-  skeletonEl = htmlToElement(
-    '<div class="fc-' + className + '-skeleton">' +
-      '<table><tr></tr></table>' +
-    '</div>'
-  )
+  skeletonEl = renderVNodes(
+    <div class={'fc-' + className + '-skeleton'}>
+      <table>
+        {colGroupNode}
+        <tr />
+      </table>
+    </div>,
+    context
+  )[0] as HTMLElement
   trEl = skeletonEl.getElementsByTagName('tr')[0]
 
   if (startCol > 0) {

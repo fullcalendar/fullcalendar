@@ -1,4 +1,14 @@
 
+/*
+this class is used for:
+- left/right resizers (esp for touch)
+  - hiding/showing --- used .fc-event-resizer general class for this
+      based on .fc-event-selected/.fc-event-allow-mouse-resize
+  - the dot --- use a subclass of the subcomponent for this like fc-event-resizer-dot
+- edges for start/end  ---- implement separately for each event type
+- vertically expand the touch area when it's selected --- use mixin
+*/
+
 /* bigger touch area when selected */
 .fc-h-event.fc-selected:before {
   content: "";

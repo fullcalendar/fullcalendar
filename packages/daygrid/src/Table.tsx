@@ -37,6 +37,8 @@ export interface TableProps extends TableSkeletonProps {
   eventResize: EventSegUiInteractionState | null
   rootElRef?: Ref<HTMLDivElement>
   colGroupNode: VNode
+  eventLimit: boolean | number
+  vGrow: boolean
 }
 
 export interface TableSeg extends Seg {
@@ -91,6 +93,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
           cellWeekNumbersVisible={props.cellWeekNumbersVisible}
           colGroupNode={props.colGroupNode}
           onReceiveEls={this.handleSkeletonEls}
+          vGrow={props.vGrow}
         />
         {this.renderPopover()}
       </Fragment>
@@ -183,6 +186,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     if (props.eventDrag && props.eventDrag.segs.length) { // messy check
       this.renderHighlight({
         type: 'highlight',
+        colGroupNode: props.colGroupNode,
         renderIntro: props.renderIntro,
         segs: props.eventDrag.segs,
         rowEls,
@@ -191,6 +195,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     } else if (props.eventResize && props.eventResize.segs.length) { // messy check
       this.renderHighlight({
         type: 'highlight',
+        colGroupNode: props.colGroupNode,
         renderIntro: props.renderIntro,
         segs: props.eventResize.segs,
         rowEls,
@@ -199,6 +204,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     } else {
       this.renderHighlight({
         type: 'highlight',
+        colGroupNode: props.colGroupNode,
         renderIntro: props.renderIntro,
         segs: props.dateSelectionSegs,
         rowEls,
@@ -208,6 +214,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
     this.renderBusinessHours({
       type: 'businessHours',
+      colGroupNode: props.colGroupNode,
       renderIntro: props.renderIntro,
       segs: props.businessHourSegs,
       rowEls,
@@ -216,6 +223,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
     this.renderBgEvents({
       type: 'bgEvent',
+      colGroupNode: props.colGroupNode,
       renderIntro: props.renderIntro,
       segs: props.bgEventSegs,
       rowEls,
@@ -275,6 +283,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       this.isCellSizesDirty ||
       calendar.isEventsUpdated // hack
     ) {
+      this.updateEventLimitSizing()
       this.buildPositionCaches()
       this.isCellSizesDirty = false
     }
@@ -356,8 +365,17 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  limitRows(eventLimit) {
-    this._limitRows(eventLimit, this.rowEls, this.rowStructs, this.props.cells, this.context)
+  updateEventLimitSizing() {
+    let { props, rowStructs } = this
+
+    if (props.vGrow) {
+      this._limitRows(props.eventLimit, this.rowEls, rowStructs, this.props.cells, this.context)
+
+    } else {
+      for (let row = 0; row < rowStructs.length; row++) {
+        this.unlimitRow(row, rowStructs)
+      }
+    }
   }
 
 
