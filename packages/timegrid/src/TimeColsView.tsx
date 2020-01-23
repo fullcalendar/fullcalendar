@@ -241,10 +241,12 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <td class={'fc-axis' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}>
-        <span {...spanAttrs} class='shrink'>
-          {child}
-        </span>
+      <td class={'shrink fc-axis' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}>
+        <div data-fc-width-all={1}>
+          <span {...spanAttrs} data-fc-width-content={1}>
+            {child}
+          </span>
+        </div>
       </td>
     ]
   }

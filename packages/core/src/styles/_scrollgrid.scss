@@ -17,11 +17,6 @@
 
   > td {
     height: 0; // needs a height so vgrow's within grow
-  }
-}
-
-.fc .scrollgrid__section { // more precedence to overcome theme
-  th, td {
     padding: 0 !important;
   }
 }
@@ -41,18 +36,6 @@
 
 .scroller {
   position: relative; // for abs-positioned elements within
-}
-
-.shrink {
-  white-space: nowrap;
-}
-
-.fc-ltr .shrink {
-  float: left;
-}
-
-.fc-rtl .shrink {
-  float: right;
 }
 
 

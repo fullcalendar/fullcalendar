@@ -1,6 +1,7 @@
 import { VNode, h, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
 import ComponentContext from '../component/ComponentContext'
+import { computeSmallestCellWidth } from '../util/misc'
 
 
 export type CssDimValue = string | number
@@ -42,13 +43,14 @@ export interface ChunkContentCallbackArgs {
 
 
 export function computeShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL!
-  let shrinkEls = findElements(chunkEls, '.shrink')
+  let shrinkCells = findElements(chunkEls, '.shrink')
   let largestWidth = 0
 
-  for (let shrinkEl of shrinkEls) {
-    let cellWidth = shrinkEl.getBoundingClientRect().width + 1 // HACK for simulating a border
-
-    largestWidth = Math.max(largestWidth, cellWidth)
+  for (let shrinkCell of shrinkCells) {
+    largestWidth = Math.max(
+      largestWidth,
+      computeSmallestCellWidth(shrinkCell)
+    )
   }
 
   return largestWidth

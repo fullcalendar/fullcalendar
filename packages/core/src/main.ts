@@ -28,7 +28,8 @@ export {
   preventSelection, allowSelection, preventContextMenu, allowContextMenu,
   compareNumbers, enableCursor, disableCursor,
   diffDates,
-  guid
+  guid,
+  computeSmallestCellWidth
 } from './util/misc'
 
 export {

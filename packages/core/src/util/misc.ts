@@ -305,3 +305,22 @@ export function diffDates(date0: DateMarker, date1: DateMarker, dateEnv: DateEnv
     return diffDayAndTime(date0, date1) // returns a duration
   }
 }
+
+
+/* FC-specific DOM dimension stuff
+----------------------------------------------------------------------------------------------------------------------*/
+
+export function computeSmallestCellWidth(cellEl: HTMLElement) {
+  let allWidthEl = cellEl.querySelector('[data-fc-width-all]')
+  let contentWidthEl = cellEl.querySelector('[data-fc-width-content]')
+
+  if (!allWidthEl) {
+    throw new Error('needs data-fc-width-all') // TODO: use const
+  }
+  if (!contentWidthEl) {
+    throw new Error('needs data-fc-width-content')
+  }
+
+  return cellEl.getBoundingClientRect().width - allWidthEl.getBoundingClientRect().width + // the cell padding+border
+    contentWidthEl.getBoundingClientRect().width
+}

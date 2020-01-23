@@ -22,7 +22,11 @@
 
 .fc-timeGrid-view .fc-axis {
   vertical-align: middle;
-  padding: 0 4px;
+
+  span { // bad selector
+    white-space: nowrap;
+    padding: 0 4px;
+  }
 }
 
 

@@ -63,14 +63,18 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
       slotDate = dateEnv.add(dayStart, slotTime)
       isLabeled = wholeDivideDurations(slotIterator, labelInterval) !== null
 
+      let classNames = [ 'fc-axis', 'fc-time', theme.getClass('tableCellNormal') ]
       let axisNode =
-        <td class={'fc-axis fc-time ' + theme.getClass('tableCellNormal')}>
-          {isLabeled &&
-            <span class='shrink'>
-              {dateEnv.format(slotDate, labelFormat)}
-            </span>
-          }
-        </td>
+        isLabeled ?
+          <td class={classNames.concat('shrink').join(' ')}>
+            <div data-fc-width-all={1}>
+              <span data-fc-width-content={1}>
+                {dateEnv.format(slotDate, labelFormat)}
+              </span>
+            </div>
+          </td>
+          :
+          <td class={classNames.join(' ')} />
 
       rowsNodes.push(
         <tr
