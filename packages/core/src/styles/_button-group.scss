@@ -24,16 +24,32 @@
   z-index: 1;
 }
 
-.fc-button-group > .fc-button:not(:first-child) {
-  margin-left: -1px;
+.fc-ltr {
+
+  .fc-button-group > .fc-button:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .fc-button-group > .fc-button:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
 }
 
-.fc-button-group > .fc-button:not(:last-child) {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
+.fc-rtl {
 
-.fc-button-group > .fc-button:not(:first-child) {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  .fc-button-group > .fc-button:not(:first-child) {
+    margin-right: -1px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .fc-button-group > .fc-button:not(:last-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
 }

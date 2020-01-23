@@ -111,7 +111,6 @@ export function renderSegRows(segs: Seg[], rowCnt: number, colCnt: number, rende
 // the segments. Returns object with a bunch of internal data about how the render was calculated.
 // NOTE: modifies rowSegs
 function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: ComponentContext) {
-  let { isRtl } = context
   let segLevels = buildSegLevels(rowSegs, context) // group into sub-arrays of levels
   let levelCnt = Math.max(1, segLevels.length) // ensure at least one level
   let tbody = document.createElement('tbody')
@@ -135,12 +134,7 @@ function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: Compon
         td.rowSpan = (td.rowSpan || 1) + 1
       } else {
         td = document.createElement('td')
-
-        if (isRtl) {
-          tr.insertBefore(td, tr.firstChild)
-        } else {
-          tr.appendChild(td)
-        }
+        tr.appendChild(td)
       }
       cellMatrix[i][col] = td
       loneCellMatrix[i][col] = td
@@ -182,23 +176,14 @@ function renderSegRow(row, rowSegs, colCnt: number, renderIntro, context: Compon
           col++
         }
 
-        if (isRtl) {
-          tr.insertBefore(td, tr.firstChild)
-        } else {
-          tr.appendChild(td)
-        }
+        tr.appendChild(td)
       }
     }
 
     emptyCellsUntil(colCnt) // finish off the row
 
     let introEls = renderVNodes(renderIntro(), context)
-
-    if (isRtl) {
-      appendToElement(tr, introEls)
-    } else {
-      prependToElement(tr, introEls)
-    }
+    prependToElement(tr, introEls)
 
     tbody.appendChild(tr)
   }

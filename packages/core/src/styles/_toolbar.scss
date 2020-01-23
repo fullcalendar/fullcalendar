@@ -13,17 +13,26 @@
   margin-top: 1.5em;
 }
 
-/* inner content */
-
-.fc-toolbar > * > :not(:first-child) {
-  margin-left: .75em; // space between
-}
-
 .fc-toolbar h2 {
   font-size: 1.75em;
   margin: 0;
 }
 
+.fc-ltr {
+
+  .fc-toolbar > * > :not(:first-child) {
+    margin-left: .75em; // space between
+  }
+
+}
+
+.fc-rtl {
+
+  .fc-toolbar > * > :not(:first-child) {
+    margin-right: .75em; // space between
+  }
+
+}
 
 @media print {
 

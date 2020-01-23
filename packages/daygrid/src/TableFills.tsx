@@ -84,7 +84,6 @@ function detachSegs(els: HTMLElement[]) {
 
 // Generates the HTML needed for one row of a fill. Requires the seg's el to be rendered.
 function renderFillRow(seg: Seg, { colCnt, type, renderIntro, colGroupNode }: TableFillsProps, context: ComponentContext): HTMLElement {
-  let { isRtl } = context
   let startCol = seg.firstCol
   let endCol = seg.lastCol + 1
   let className
@@ -110,39 +109,19 @@ function renderFillRow(seg: Seg, { colCnt, type, renderIntro, colGroupNode }: Ta
 
   if (startCol > 0) {
     let emptyCellHtml = new Array(startCol + 1).join(EMPTY_CELL_HTML) // will create (startCol + 1) td's
-
-    if (isRtl) {
-      prependToElement(trEl, emptyCellHtml)
-    } else {
-      appendToElement(trEl, emptyCellHtml)
-    }
+    appendToElement(trEl, emptyCellHtml)
   }
 
   ;(seg.el as HTMLTableCellElement).colSpan = endCol - startCol
-
-  if (isRtl) {
-    trEl.insertBefore(seg.el, trEl.firstChild)
-  } else {
-    trEl.appendChild(seg.el)
-  }
+  trEl.appendChild(seg.el)
 
   if (endCol < colCnt) {
     let emptyCellHtml = new Array(colCnt - endCol + 1).join(EMPTY_CELL_HTML)
-
-    if (isRtl) {
-      prependToElement(trEl, emptyCellHtml)
-    } else {
-      appendToElement(trEl, emptyCellHtml)
-    }
+    appendToElement(trEl, emptyCellHtml)
   }
 
   let introEls = renderVNodes(renderIntro(), context)
-
-  if (isRtl) {
-    appendToElement(trEl, introEls)
-  } else {
-    prependToElement(trEl, introEls)
-  }
+  prependToElement(trEl, introEls)
 
   return skeletonEl
 }
