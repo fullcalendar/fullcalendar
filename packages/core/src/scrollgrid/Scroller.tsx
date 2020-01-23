@@ -59,7 +59,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   componentDidUpdate(prevProps: ScrollerProps) {
-    this.handleSizing()
+    this.handleSizing(prevProps.overflowY !== this.props.overflowY)
   }
 
 
@@ -68,7 +68,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
   }
 
 
-  handleSizing = () => { // SIZING HACKS
+  handleSizing = (overflowYChanged?: boolean) => { // SIZING HACKS
     let rootEl = this.el
     let childNodes = rootEl.childNodes
 
@@ -84,8 +84,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
         // for Safari bug, change in y-scrollbars wouldn't change table width (with 100% width)
         // won't do anything if the <col>s already have an opinion about width
-        // important not do when no scrollbars. was getting false positives.
-        if (this.props.overflowY !== 'hidden') {
+        if (overflowYChanged) {
           tableEl.style.width = rootEl.clientWidth + 'px'
         }
       }

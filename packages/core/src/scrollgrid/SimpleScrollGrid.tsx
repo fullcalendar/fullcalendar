@@ -109,14 +109,17 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     } else {
       return (
         <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
-          <Scroller
-            ref={this.scrollerRefs.createRef(sectionI)}
-            elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
-            overflowY={overflowY}
-            overflowX='hidden'
-            maxHeight={sectionConfig.maxHeight}
-            vGrow={vGrow}
-          >{content}</Scroller>
+          <div>{/* when we didn't have this, preact was recycling the ref, and removing it
+            (not not adding it back yet) before recomputing the scrollbar-forcing  */}
+            <Scroller
+              ref={this.scrollerRefs.createRef(sectionI)}
+              elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
+              overflowY={overflowY}
+              overflowX='hidden'
+              maxHeight={sectionConfig.maxHeight}
+              vGrow={vGrow}
+            >{content}</Scroller>
+          </div>
         </td>
       )
     }
@@ -148,7 +151,10 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
   handleSizing = () => {
 
-    if (hasShrinkWidth(this.props.cols)) {
+    if (
+      !this.props.forPrint && // temporary? do in ScrollGrid?
+      hasShrinkWidth(this.props.cols)
+    ) {
       this.setState({
         shrinkWidth: computeShrinkWidth(this.scrollerElRefs.getAll())
       })
