@@ -11,7 +11,7 @@ import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
-import { h, Fragment, createRef } from './vdom'
+import { h, Fragment, createRef, flushToDom } from './vdom'
 import { BaseComponent, subrenderer } from './vdom-util'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
@@ -124,6 +124,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
   handleBeforePrint = () => {
     this.setState({ forPrint: true })
+    flushToDom()
   }
 
   handleAfterPrint = () => {
@@ -182,7 +183,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
       eventSelection: props.eventSelection,
       eventDrag: props.eventDrag,
       eventResize: props.eventResize,
-      isHeightAuto: isHeightAuto(options),
+      isHeightAuto: this.state.forPrint || isHeightAuto(options),
       forPrint: this.state.forPrint
     }
 
@@ -260,6 +261,8 @@ function setClassNames({ el, forPrint }: { el: HTMLElement, forPrint: boolean },
 
   if (forPrint) {
     classNames.push('fc-print')
+  } else {
+    classNames.push('fc-screen')
   }
 
   for (let className of classNames) {

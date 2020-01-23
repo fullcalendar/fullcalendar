@@ -44,10 +44,18 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
   render(props: SimpleScrollGridProps, state: SimpleScrollGridState, context: ComponentContext) {
     let sectionConfigs = props.sections || []
-    let microColGroupNode = this.renderMicroColGroup(props.cols, state.shrinkWidth)
+
+    let microColGroupNode = props.forPrint ?
+        <colgroup></colgroup> : // temporary
+        this.renderMicroColGroup(props.cols, state.shrinkWidth)
+
+    let classNames = getScrollGridClassNames(props.vGrow, context)
+    if (props.forPrint) { // temporary
+      classNames.push('scrollgrid--forprint')
+    }
 
     return (
-      <table class={getScrollGridClassNames(props.vGrow, context).join(' ')} style={{ height: props.height }}>
+      <table class={classNames.join(' ')} style={{ height: props.height }}>
         {sectionConfigs.map((sectionConfig, sectionI) => this.renderSection(sectionConfig, sectionI, microColGroupNode))}
       </table>
     )

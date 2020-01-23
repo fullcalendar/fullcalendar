@@ -1,7 +1,6 @@
 import {
   VNode,
   removeElement,
-  appendToElement,
   prependToElement,
   Seg,
   BaseFgEventRendererProps,

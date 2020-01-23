@@ -52,6 +52,7 @@ export interface TimeColsProps {
   renderIntro: () => VNode[]
   nowIndicatorDate: DateMarker
   nowIndicatorSegs: TimeColsSeg[]
+  forPrint: boolean
 }
 
 export const TIME_COLS_NOW_INDICATOR_UNIT = 'minute'
@@ -253,7 +254,8 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
           (props.eventResize ? props.eventResize.affectedInstances : null),
         isDragging: false,
         isResizing: false,
-        isSelecting: false
+        isSelecting: false,
+        forPrint: props.forPrint
       }),
       this.subrenderMirror(props, this.mirrorContainerEls, options)
     ]
@@ -268,7 +270,8 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         isDragging: true,
         isResizing: false,
         isSelecting: false,
-        interactingSeg: props.eventDrag.interactingSeg
+        interactingSeg: props.eventDrag.interactingSeg,
+        forPrint: props.forPrint
       })
 
     } else if (props.eventResize) {
@@ -278,7 +281,8 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         isDragging: true,
         isResizing: false,
         isSelecting: false,
-        interactingSeg: props.eventResize.interactingSeg
+        interactingSeg: props.eventResize.interactingSeg,
+        forPrint: props.forPrint
       })
 
     } else if (options.selectMirror) {
@@ -287,7 +291,8 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         segs: props.dateSelectionSegs,
         isDragging: false,
         isResizing: false,
-        isSelecting: true
+        isSelecting: true,
+        forPrint: props.forPrint
       })
 
     } else {

@@ -34,12 +34,12 @@
 
 }
 
-@media print {
+.fc-print {
 
   // don't display any button-related controls
   // TODO: better to put in _button/_button-group.scss ?
   .fc-button-group,
-  .fc button {
+  button {
     display: none;
   }
 

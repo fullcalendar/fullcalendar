@@ -33,6 +33,7 @@ export interface DayTimeColsProps {
   colGroupNode: VNode
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
+  forPrint: boolean
 }
 
 interface DayTimeColsState {
@@ -69,6 +70,7 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
         renderIntro={props.renderIntro}
         nowIndicatorDate={state.nowIndicatorDate}
         nowIndicatorSegs={state.nowIndicatorDate && this.slicer.sliceNowDate(state.nowIndicatorDate, this.context.calendar, this.dayRanges)}
+        forPrint={props.forPrint}
       />
     )
   }
