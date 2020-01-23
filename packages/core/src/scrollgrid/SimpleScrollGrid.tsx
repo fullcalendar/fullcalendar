@@ -97,7 +97,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
             <Scroller
               ref={this.scrollerRefs.createRef(sectionI)}
               elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
-              className='vgrow--absolute'
+              className={'vgrow--absolute' /* needed for sizing within table. TODO fix position:relative above */}
               overflowY={overflowY}
               overflowX='hidden'
               maxHeight={sectionConfig.maxHeight}

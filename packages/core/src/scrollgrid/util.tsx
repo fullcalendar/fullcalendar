@@ -126,7 +126,9 @@ export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) { //
         <col
           span={colProps.span || 1}
           style={{
-            width: colProps.width === 'shrink' ? (shrinkWidth || 0) : (colProps.width || ''),
+            /* why 4? if we do 0, it will kill any border, which are needed for computeSmallestCellWidth
+            4 accounts for 2 2-pixel borders. TODO: better solution? */
+            width: colProps.width === 'shrink' ? (shrinkWidth || 4) : (colProps.width || ''),
             minWidth: colProps.minWidth || ''
           }}
         />
