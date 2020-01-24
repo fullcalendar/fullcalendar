@@ -1,5 +1,5 @@
 import {
-  h, Ref, Fragment, createRef,
+  h, Fragment, createRef,
   insertAfterElement,
   findDirectChildren,
   removeElement,
@@ -12,7 +12,6 @@ import {
   BaseComponent,
   ComponentContext,
   subrenderer,
-  setRef,
   createFormatter,
   VNode
 } from '@fullcalendar/core'
@@ -35,7 +34,6 @@ export interface TableProps extends TableSkeletonProps {
   eventSelection: string
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
-  rootElRef?: Ref<HTMLDivElement>
   colGroupNode: VNode
   eventLimit: boolean | number
   vGrow: boolean
@@ -92,6 +90,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
           colWeekNumbersVisible={props.colWeekNumbersVisible}
           cellWeekNumbersVisible={props.cellWeekNumbersVisible}
           colGroupNode={props.colGroupNode}
+          elRef={props.elRef}
           onReceiveEls={this.handleSkeletonEls}
           vGrow={props.vGrow}
         />
@@ -156,8 +155,6 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       this.cellEls = cellEls
       this.isCellSizesDirty = true
     }
-
-    setRef(this.props.rootElRef, rootEl)
   }
 
 

@@ -34,7 +34,8 @@ export default class DayBgCell extends BaseComponent<DayBgCellProps> {
     return (
       <td
         ref={this.handleEl}
-        key={dateStr /* fresh rerender for new date, mostly because of dayRender */}
+        key={dateStr /* fresh rerender for new date, mostly because of dayRender
+          TODO: only do if there are dayRender triggers!!! */}
         class={classes.join(' ')}
         { ...dataAttrs }
         { ...otherAttrs }

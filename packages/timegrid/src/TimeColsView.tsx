@@ -177,12 +177,14 @@ export default abstract class TimeColsView extends View {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
       return [
-        <th class={'fc-axis fc-week-number' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}>
-          <GotoAnchor
-            navLinks={options.navLinks}
-            gotoOptions={{ date: range.start, type: 'week', forceOff: dayCnt > 1 }}
-            extraAttrs={{ className: 'shrink' }}
-          >{weekText}</GotoAnchor>
+        <th class={'fc-axis shrink fc-week-number' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}>
+          <div data-fc-width-all={1}>
+            <GotoAnchor
+              navLinks={options.navLinks}
+              gotoOptions={{ date: range.start, type: 'week', forceOff: dayCnt > 1 }}
+              extraAttrs={{ 'data-fc-width-content': 1 }}
+            >{weekText}</GotoAnchor>
+          </div>
         </th>
       ]
     }

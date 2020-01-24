@@ -52,7 +52,7 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
     return (
       <Table
         ref={this.tableRef}
-        rootElRef={this.handleRootEl}
+        elRef={this.handleRootEl}
         { ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayTableModel) }
         dateProfile={dateProfile}
         cells={dayTableModel.cells}

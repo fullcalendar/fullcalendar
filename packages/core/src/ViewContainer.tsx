@@ -12,25 +12,28 @@ export interface ViewContainerProps {
 }
 
 
-// TODO: shouldn't the the fc-view be the inner container???
 // TODO: do function component?
-// TODO: use classnames instead of css props
 export default class ViewContainer extends BaseComponent<ViewContainerProps> {
 
   render(props: ViewContainerProps) {
+    let classNames = [ 'fc-view-container' ]
+    let height: CssDimValue = ''
+    let paddingBottom: CssDimValue = ''
+
     if (props.height) { // TODO: better test
-      return (
-        <div class='fc-view-container' style={{ height: props.height }} ref={props.elRef} onClick={props.onClick}>
-          {props.children}
-        </div>
-      )
+      height = props.height
     } else {
-      return (
-        <div class='fc-view-container fc-view-container--aspectratio' style={{ paddingBottom: ((1 / props.aspectRatio) * 100 + '%') }} >
-          {props.children}
-        </div>
-      )
+      classNames.push('fc-view-container--aspectratio')
+      paddingBottom = (1 / props.aspectRatio) * 100 + '%'
     }
+
+    return (
+      <div
+        ref={props.elRef}
+        onClick={props.onClick}
+        class={classNames.join(' ')} style={{ height, paddingBottom }}
+      >{props.children}</div>
+    )
   }
 
 }

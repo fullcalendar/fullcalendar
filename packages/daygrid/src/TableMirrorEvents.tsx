@@ -15,6 +15,7 @@ export default class TableMirrorEvents extends TableEvents {
 function attachSegs({ segs, rowEls, colCnt, colGroupNode, renderIntro, interactingSeg }: TableEventsProps, context: ComponentContext) {
 
   let rowStructs = renderSegRows(segs, rowEls.length, colCnt, renderIntro, context)
+  let skeletonEls: HTMLElement[] = []
 
   // inject each new event skeleton into each associated row
   rowEls.forEach(function(rowNode, row) {
@@ -47,15 +48,13 @@ function attachSegs({ segs, rowEls, colCnt, colGroupNode, renderIntro, interacti
     skeletonEl.querySelector('table').appendChild(rowStructs[row].tbodyEl)
 
     rowNode.appendChild(skeletonEl)
+    skeletonEls.push(skeletonEl)
   })
 
-
-  return rowStructs
+  return skeletonEls
 }
 
 
-function detachSegs(rowStructs) {
-  for (let rowStruct of rowStructs) {
-    removeElement(rowStruct.tbodyEl)
-  }
+function detachSegs(skeletonEls: HTMLElement[]) {
+  skeletonEls.forEach(removeElement)
 }

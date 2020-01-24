@@ -3,13 +3,15 @@ import {
   DateProfile,
   DateMarker,
   BaseComponent,
-  RefMap
+  RefMap,
+  Ref
 } from '@fullcalendar/core'
 import DayBgRow from './DayBgRow'
 import TableSkeletonDayCell from './TableSkeletonDayCell'
 
 
 export interface TableSkeletonProps {
+  elRef?: Ref<HTMLDivElement>
   onReceiveEls?: (rowEls: HTMLElement[] | null, cellEls: HTMLElement[][] | null) => void
   dateProfile: DateProfile
   cells: CellModel[][] // cells-BY-ROW
@@ -48,7 +50,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
     }
 
     return (
-      <div class={'fc-day-grid' + (props.vGrow ? ' vgrow' : '')}>
+      <div class={'fc-day-grid' + (props.vGrow ? ' vgrow' : '')} ref={props.elRef}>
         {rowNodes}
       </div>
     )
