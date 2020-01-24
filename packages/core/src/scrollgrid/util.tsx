@@ -178,9 +178,7 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
 }
 
 
+// need a method for this still?
 export function getChunkClassNames(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, context: ComponentContext) {
-  return [
-    chunkConfig.className,
-    context.theme.getClass(sectionConfig.type === 'body' ? 'tableCellNormal' : 'tableCellHeader')
-  ].join(' ')
+  return chunkConfig.className
 }

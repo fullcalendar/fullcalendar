@@ -44,7 +44,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
 
   render(props: TimeColsSlatsProps, state: {}, context: ComponentContext) {
-    let { dateEnv, theme, isRtl, options } = context
+    let { dateEnv, isRtl, options } = context
     let { dateProfile, slotDuration } = props
 
     let labelInterval = this.getLabelInterval(options.slotLabelInterval, slotDuration)
@@ -63,7 +63,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
       slotDate = dateEnv.add(dayStart, slotTime)
       isLabeled = wholeDivideDurations(slotIterator, labelInterval) !== null
 
-      let classNames = [ 'fc-axis', 'fc-time', theme.getClass('tableCellNormal') ]
+      let classNames = [ 'fc-axis', 'fc-time' ]
       let axisNode =
         isLabeled ?
           <td class={classNames.concat('shrink').join(' ')}>
@@ -83,7 +83,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
           class={isLabeled ? '' : 'fc-minor'}
         >
           {!isRtl && axisNode}
-          <td class={theme.getClass('tableCellNormal')}></td>
+          <td />
           {isRtl && axisNode}
         </tr>
       )

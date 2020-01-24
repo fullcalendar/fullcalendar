@@ -99,11 +99,11 @@ export default abstract class TableView<State={}> extends View<State> {
 
   // Generates the HTML that will go before the day-of week header cells
   renderHeadIntro = (): VNode[] => {
-    let { theme, options } = this.context
+    let { options } = this.context
 
     if (this.colWeekNumbersVisible) {
       return [
-        <th class={'shrink fc-week-number ' + theme.getClass('tableCellHeader')}>
+        <th class='shrink fc-week-number'>
           <div data-fc-width-all={1}>
             <span data-fc-width-content={1}>
               {options.weekLabel}
@@ -149,11 +149,9 @@ export default abstract class TableView<State={}> extends View<State> {
 
   // Generates the HTML that goes before the day bg cells for each day-row
   renderBgIntro = (): VNode[] => {
-    let { theme } = this.context
-
     if (this.colWeekNumbersVisible) {
       return [
-        <td class={'fc-week-number ' + theme.getClass('tableCellNormal')}></td>
+        <td class='fc-week-number'></td>
       ]
     }
 

@@ -6,16 +6,16 @@ export class BootstrapTheme extends Theme {
 
 BootstrapTheme.prototype.classes = {
   root: 'fc-bootstrap',
-  table: 'table table-bordered',
-  tableCellActive: 'table-active',
+  table: 'table-bordered',
+  tableCellShaded: 'table-active',
   buttonGroup: 'btn-group',
   button: 'btn btn-primary',
   buttonActive: 'active',
   popover: 'card card-primary',
   popoverHeader: 'card-header',
   popoverContent: 'card-body',
-  today: 'alert alert-info', // the plain `info` class requires `.table`, too much to ask
-  bordered: 'card card-primary'
+  today: 'alert alert-info',
+  bordered: 'card card-primary fc-bootstrap-bordered'
 }
 
 BootstrapTheme.prototype.baseIconClass = 'fa'

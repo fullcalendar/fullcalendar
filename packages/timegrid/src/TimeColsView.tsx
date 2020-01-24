@@ -52,7 +52,6 @@ export default abstract class TimeColsView extends View {
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
   ) {
     let { props } = this
-    let { theme } = this.context
     let classNames = getViewClassNames(props.viewSpec).concat('fc-timeGrid-view')
     let sections: SimpleScrollGridSection[] = []
 
@@ -75,7 +74,11 @@ export default abstract class TimeColsView extends View {
       sections.push({
         outerContent: (
           <tr>
-            <td class={'fc-divider ' + theme.getClass('tableCellHeader')} ref={this.dividerElRef} colSpan={0} />
+            <td
+              ref={this.dividerElRef}
+              class={'fc-divider ' + this.context.theme.getClass('tableCellShaded')}
+              colSpan={0}
+            />
           </tr>
         )
       })
@@ -168,7 +171,7 @@ export default abstract class TimeColsView extends View {
 
   // Generates the HTML that will go before the day-of week header cells
   renderHeadIntro = () => {
-    let { theme, dateEnv, options } = this.context
+    let { dateEnv, options } = this.context
     let range = this.props.dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
     let weekText
@@ -177,7 +180,7 @@ export default abstract class TimeColsView extends View {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
       return [
-        <th class={'fc-axis shrink fc-week-number' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}>
+        <th class={'fc-axis shrink fc-week-number'} style={this.getAxisStyles()}>
           <div data-fc-width-all={1}>
             <GotoAnchor
               navLinks={options.navLinks}
@@ -190,7 +193,7 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <th class={'fc-axis' + theme.getClass('tableCellHeader')} style={this.getAxisStyles()}></th>
+      <th class='fc-axis' style={this.getAxisStyles()}></th>
     ]
   }
 
@@ -210,10 +213,8 @@ export default abstract class TimeColsView extends View {
 
   // Generates the HTML that goes before the bg of the TimeCols slot area. Long vertical column.
   renderTimeColsBgIntro = () => {
-    let { theme } = this.context
-
     return [
-      <td class={'fc-axis' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}></td>
+      <td class='fc-axis' style={this.getAxisStyles()}></td>
     ]
   }
 
@@ -233,7 +234,7 @@ export default abstract class TimeColsView extends View {
 
   // Generates the HTML that goes before the all-day cells
   renderTableBgIntro = () => {
-    let { theme, options } = this.context
+    let { options } = this.context
     let spanAttrs = {} as any
     let child = options.allDayText
 
@@ -243,7 +244,7 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <td class={'shrink fc-axis' + theme.getClass('tableCellNormal')} style={this.getAxisStyles()}>
+      <td class='shrink fc-axis' style={this.getAxisStyles()}>
         <div data-fc-width-all={1}>
           <span {...spanAttrs} data-fc-width-content={1}>
             {child}

@@ -28,6 +28,10 @@
   position: absolute; // because .card sets it to position:relative
 }
 
+.fc .fc-bootstrap-bordered {
+  background: transparent; // some themes provide background. undo
+}
+
 
 /* Popover
 --------------------------------------------------------------------------------------------------*/

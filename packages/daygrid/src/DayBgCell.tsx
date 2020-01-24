@@ -29,7 +29,7 @@ export default class DayBgCell extends BaseComponent<DayBgCellProps> {
     let dateStr = context.dateEnv.formatIso(date, { omitTime: true })
     let dataAttrs = isDateValid ? { 'data-date': dateStr } : {}
 
-    classes.unshift('fc-day', context.theme.getClass('tableCellNormal'))
+    classes.unshift('fc-day')
 
     return (
       <td

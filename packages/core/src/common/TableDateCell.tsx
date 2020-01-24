@@ -23,13 +23,10 @@ export interface TableDateCellProps {
 export default class TableDateCell extends BaseComponent<TableDateCellProps> {
 
   render(props: TableDateCellProps, state: {}, context: ComponentContext) {
-    let { dateEnv, theme, options } = context
+    let { dateEnv, options } = context
     let { dateMarker, dateProfile, datesRepDistinctDays } = props
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, dateMarker) // TODO: called too frequently. cache somehow.
-    let classNames = [
-      'fc-day-header',
-      theme.getClass('tableCellHeader')
-    ]
+    let classNames = [ 'fc-day-header' ]
     let innerText
     let innerHtml
 

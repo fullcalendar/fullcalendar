@@ -50,7 +50,7 @@ export default class DayBgRow extends BaseComponent<DayBgRowProps> {
 
     if (!cells.length) {
       parts.push(
-        <td class={'fc-day ' + context.theme.getClass('tableCellNormal')}></td>
+        <td class='fc-day'></td>
       )
     }
 

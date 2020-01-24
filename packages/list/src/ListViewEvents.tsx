@@ -47,7 +47,7 @@ export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps>
 
   // generates the HTML for a single event row
   renderSegHtml(seg: Seg) {
-    let { theme, options } = this.context
+    let { options } = this.context
     let eventRange = seg.eventRange
     let eventDef = eventRange.def
     let eventInstance = eventRange.instance
@@ -98,18 +98,18 @@ export default class ListViewEvents extends FgEventRenderer<ListViewEventsProps>
 
     return '<tr class="' + classes.join(' ') + '">' +
       (this.displayEventTime ?
-        '<td class="fc-list-item-time ' + theme.getClass('tableCellNormal') + '">' +
+        '<td class="fc-list-item-time">' +
           (timeHtml || '') +
         '</td>' :
         '') +
-      '<td class="fc-list-item-marker ' + theme.getClass('tableCellNormal') + '">' +
+      '<td class="fc-list-item-marker">' +
         '<span class="fc-event-dot"' +
         (bgColor ?
           ' style="background-color:' + bgColor + '"' :
           '') +
         '></span>' +
       '</td>' +
-      '<td class="fc-list-item-title ' + theme.getClass('tableCellNormal') + '">' +
+      '<td class="fc-list-item-title">' +
         '<a' + (url ? ' href="' + htmlEscape(url) + '"' : '') + '>' +
           htmlEscape(eventDef.title || '') +
         '</a>' +
@@ -200,7 +200,7 @@ function buildDayHeaderRow(dayDate, context: ComponentContext) {
   tr.setAttribute('data-date', dateEnv.formatIso(dayDate, { omitTime: true }))
 
   let td = document.createElement('td')
-  td.className = theme.getClass('tableCellActive') + ' ' + theme.getClass('tableCellHeader')
+  td.className = theme.getClass('tableCellShaded')
   td.colSpan = 3
   tr.appendChild(td)
 
