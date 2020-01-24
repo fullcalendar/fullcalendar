@@ -44,7 +44,7 @@
 }
 
 
-@media print {
+.fc-print {
 
   .fc-popover {
     display: none; /* never display the "more.." popover in print mode */
