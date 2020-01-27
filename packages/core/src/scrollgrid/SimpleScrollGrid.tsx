@@ -15,6 +15,7 @@ export interface SimpleScrollGridProps {
   vGrow?: boolean
   forPrint?: boolean
   height?: CssDimValue // TODO: give to real ScrollGrid
+  onSized?: () => void
 }
 
 export interface SimpleScrollGridSection extends SectionConfig {
@@ -197,6 +198,11 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
         scrollerClientWidths: computeScrollerClientWidths(this.scrollerElRefs),
         scrollerClientHeights: computeScrollerClientHeights(this.scrollerElRefs)
       })
+
+    } else {
+      if (this.props.onSized) {
+        this.props.onSized()
+      }
     }
   }
 

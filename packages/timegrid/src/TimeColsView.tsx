@@ -33,6 +33,7 @@ export default abstract class TimeColsView extends View {
   private dividerElRef = createRef<HTMLTableCellElement>()
   private scrollerElRef = createRef<HTMLDivElement>()
   private axisWidth: any // the width of the time axis running down the side
+  private needsInitialScroll = false
 
 
   // abstract requirements
@@ -100,6 +101,7 @@ export default abstract class TimeColsView extends View {
           vGrow={!props.isHeightAuto}
           cols={[ { width: 'shrink' } ]}
           sections={sections}
+          onSized={this.handleGridSized}
         />
       </div>
     )
@@ -114,12 +116,20 @@ export default abstract class TimeColsView extends View {
       allDayTable.table.bottomCoordPadding = dividerEl.getBoundingClientRect().height
     }
 
-    this.scrollToInitialTime()
+    this.needsInitialScroll = true
   }
 
 
   componentDidUpdate(prevProps: ViewProps) {
     if (prevProps.dateProfile !== this.props.dateProfile) {
+      this.needsInitialScroll = true
+    }
+  }
+
+
+  handleGridSized = () => {
+    if (this.needsInitialScroll) {
+      this.needsInitialScroll = false
       this.scrollToInitialTime()
     }
   }
