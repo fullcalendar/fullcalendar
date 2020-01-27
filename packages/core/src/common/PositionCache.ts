@@ -45,6 +45,27 @@ export default class PositionCache {
   }
 
 
+  // HACK for when DOM isn't ready yet but we coords for intermediate rendering
+  buildZeros() {
+    let len = this.els.length
+    let zeros = []
+
+    for (let i = 0; i < len; i++) {
+      zeros.push(0)
+    }
+
+    if (this.isHorizontal) {
+      this.lefts = zeros
+      this.rights = zeros
+    }
+
+    if (this.isVertical) {
+      this.tops = zeros
+      this.bottoms = zeros
+    }
+  }
+
+
   // Populates the left/right internal coordinate arrays
   buildElHorizontals(originClientLeft: number) {
     let lefts = []

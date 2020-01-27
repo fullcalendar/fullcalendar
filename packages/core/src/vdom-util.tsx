@@ -331,6 +331,7 @@ export function renderVNodes(children: ComponentChildren, context: ComponentCont
 }
 
 
+// TODO: kill this at some pt???
 export function componentNeedsResize<P, S>(prevProps: P, props: P, prevState: S, state: S, stateIsSizing: { [K in keyof S]?: boolean }) {
   if (!isPropsEqual(prevProps, props)) {
     return true

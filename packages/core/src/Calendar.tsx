@@ -823,7 +823,7 @@ export default class Calendar {
 
 
   resizeRunner = new DelayedRunner(() => {
-    this.triggerResizeHandlers(false)
+    this.triggerResizeHandlers(true) // should window resizes be considered "forced" ?
     this.publiclyTrigger('windowResize', [ this.context.view ])
   })
 

@@ -2,6 +2,7 @@
 .fc-time-grid {
   position: relative; // for housing skeletons
   z-index: 1; // because containers z-index'd children
+  min-height: 100%; // fill height always ... even when slat table doesn't grow
 }
 
 

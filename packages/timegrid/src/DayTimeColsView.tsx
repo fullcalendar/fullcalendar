@@ -42,7 +42,7 @@ export default class DayTimeColsView extends TimeColsView {
           dateProfile={dateProfile}
           dayTableModel={dayTableModel}
           nextDayThreshold={nextDayThreshold}
-          colGroupNode={contentArg.colGroupNode}
+          colGroupNode={contentArg.tableColGroupNode}
           isRigid={false}
           renderNumberIntro={this.renderTableIntro}
           renderBgIntro={this.renderTableBgIntro}
@@ -59,10 +59,13 @@ export default class DayTimeColsView extends TimeColsView {
           {...splitProps['timed']}
           dateProfile={dateProfile}
           dayTableModel={dayTableModel}
-          colGroupNode={contentArg.colGroupNode}
           renderBgIntro={this.renderTimeColsBgIntro}
           renderIntro={this.renderTimeColsIntro}
           forPrint={props.forPrint}
+          tableColGroupNode={contentArg.tableColGroupNode}
+          tableWidth={contentArg.tableWidth}
+          tableHeight={contentArg.tableHeight}
+          allowSizing={contentArg.isSizingReady}
         />
       )
     )

@@ -15,7 +15,8 @@ import {
   Hit,
   ComponentContext,
   subrenderer,
-  NowTimer
+  NowTimer,
+  CssDimValue
 } from '@fullcalendar/core'
 import TimeCols, { TimeColsSeg, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'
 
@@ -30,10 +31,13 @@ export interface DayTimeColsProps {
   eventSelection: string
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
-  colGroupNode: VNode
+  tableColGroupNode: VNode
+  tableWidth: CssDimValue
+  tableHeight: CssDimValue
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
   forPrint: boolean
+  allowSizing: boolean
 }
 
 interface DayTimeColsState {
@@ -65,12 +69,15 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
         {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
         dateProfile={dateProfile}
         cells={dayTableModel.cells[0]}
-        colGroupNode={props.colGroupNode}
+        tableColGroupNode={props.tableColGroupNode}
+        tableWidth={props.tableWidth}
+        tableHeight={props.tableHeight}
         renderBgIntro={props.renderBgIntro}
         renderIntro={props.renderIntro}
         nowIndicatorDate={state.nowIndicatorDate}
         nowIndicatorSegs={state.nowIndicatorDate && this.slicer.sliceNowDate(state.nowIndicatorDate, this.context.calendar, this.dayRanges)}
         forPrint={props.forPrint}
+        allowSizing={props.allowSizing}
       />
     )
   }

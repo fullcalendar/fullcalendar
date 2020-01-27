@@ -68,7 +68,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
     let calendarHeight: string | number = ''
     let viewHeight: string | number = ''
-    let viewAspectRatio: number | undefined = options.aspectRatio
+    let viewAspectRatio: number | undefined
 
     if (isHeightAuto(options)) {
       viewHeight = 'auto'
@@ -76,6 +76,8 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
       calendarHeight = options.height
     } else if (options.contentHeight != null) {
       viewHeight = options.contentHeight
+    } else {
+      viewAspectRatio = options.aspectRatio
     }
 
     // TODO: move this somewhere after real render!
@@ -93,7 +95,12 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
             { ...toolbarProps }
           />
         }
-        <ViewContainer height={viewHeight} aspectRatio={viewAspectRatio} elRef={this.setViewContainerEl} onClick={this.handleNavLinkClick}>
+        <ViewContainer
+          height={viewHeight}
+          aspectRatio={viewAspectRatio}
+          elRef={this.setViewContainerEl}
+          onClick={this.handleNavLinkClick}
+        >
           {this.renderView(props, this.context)}
         </ViewContainer>
         {footer &&

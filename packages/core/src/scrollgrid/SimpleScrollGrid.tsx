@@ -1,10 +1,11 @@
 import { VNode, h } from '../vdom'
 import ComponentContext from '../component/ComponentContext'
-import { BaseComponent, setRef, componentNeedsResize } from '../vdom-util'
+import { BaseComponent, setRef } from '../vdom-util'
 import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
 import { ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
-  renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames } from './util'
+  renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames, computeScrollerClientWidths, computeScrollerClientHeights,
+  } from './util'
 import { memoize } from '../util/memoize'
 
 
@@ -21,24 +22,37 @@ export interface SimpleScrollGridSection extends SectionConfig {
 }
 
 interface SimpleScrollGridState {
-  shrinkWidth?: number
-  forceYScrollbars: boolean
+  isSizingReady: boolean
+  shrinkWidth: null | number
+  forceYScrollbars: null | boolean
+  scrollerClientWidths: null | { [index: string]: number }
+  scrollerClientHeights: null | { [index: string]: number }
 }
 
-const STATE_IS_SIZING = {
-  shrinkWidth: true,
-  forceYScrollbars: true
+const INITIAL_SIZING_STATE: SimpleScrollGridState = {
+  isSizingReady: false,
+  shrinkWidth: null,
+  forceYScrollbars: null,
+  scrollerClientWidths: null,
+  scrollerClientHeights: null
 }
 
 
-export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps> {
+export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, SimpleScrollGridState> {
 
   renderMicroColGroup = memoize(renderMicroColGroup) // yucky to memoize VNodes, but much more efficient for consumers
   scrollerRefs = new RefMap<Scroller>()
   scrollerElRefs = new RefMap<HTMLElement, [ChunkConfig]>(this._handleScrollerEl.bind(this))
 
-  state = {
-    forceYScrollbars: false
+  state = INITIAL_SIZING_STATE
+
+
+  static getDerivedStateFromProps(props, state: SimpleScrollGridState) {
+    if (state.isSizingReady) { // from a prop change
+      return INITIAL_SIZING_STATE
+    } else if (state.scrollerClientWidths) { // the last sizing-state was just set
+      return { isSizingReady: true }
+    }
   }
 
 
@@ -82,14 +96,24 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       return chunkConfig.outerContent
     }
 
+    let { state } = this
+    let { isSizingReady } = state
+
     let needsYScrolling = getNeedsYScrolling(this.props, sectionConfig, chunkConfig) // TODO: do lazily
-    let overflowY: OverflowValue = this.state.forceYScrollbars ? 'scroll' : (needsYScrolling ? 'auto' : 'hidden')
-    let content = renderChunkContent(sectionConfig, chunkConfig, microColGroupNode, '', true)
+    let overflowY: OverflowValue = state.forceYScrollbars ? 'scroll' : (needsYScrolling ? 'auto' : 'hidden')
     let vGrow = getChunkVGrow(this.props, sectionConfig, chunkConfig)
+
+    let content = renderChunkContent(sectionConfig, chunkConfig, {
+      tableColGroupNode: microColGroupNode,
+      tableMinWidth: '',
+      tableWidth: isSizingReady ? state.scrollerClientWidths[sectionI] : '',
+      tableHeight: isSizingReady ? state.scrollerClientHeights[sectionI] : '', // TODO: subtract 1 for IE?????
+      isSizingReady
+    })
 
     // TODO: cleaner solution
     // in browsers other than Chrome, the height of the inner table was taking precedence over scroller's liquid height,
-    // making it so there's never be scrollbars
+    // making it so there's never be scrollbars (thus the position:relative div)
     if (vGrow) {
       return (
         <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
@@ -132,37 +156,55 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
 
   componentDidMount() {
-    this.handleSizing()
-    this.context.addResizeHandler(this.handleSizing)
+    if (!this.props.forPrint) {
+      this.adjustSizing()
+    }
+
+    this.context.addResizeHandler(this.handleResize)
   }
 
 
   componentDidUpdate(prevProps: SimpleScrollGridProps, prevState: SimpleScrollGridState) {
-    if (componentNeedsResize(prevProps, this.props, prevState, this.state, STATE_IS_SIZING)) {
-      this.handleSizing()
+    if (!this.props.forPrint) { // repeat code
+      this.adjustSizing()
     }
   }
 
 
   componentWillUnmount() {
-    this.context.removeResizeHandler(this.handleSizing)
+    this.context.removeResizeHandler(this.handleResize)
   }
 
 
-  handleSizing = () => {
+  adjustSizing() {
+    let { state } = this
 
-    if (
-      !this.props.forPrint && // temporary? do in ScrollGrid?
-      hasShrinkWidth(this.props.cols)
-    ) {
+    if (state.shrinkWidth == null) {
       this.setState({
-        shrinkWidth: computeShrinkWidth(this.scrollerElRefs.getAll())
+        shrinkWidth:
+          hasShrinkWidth(this.props.cols) ? // TODO: do this optimization for ScrollGrid
+            computeShrinkWidth(this.scrollerElRefs.getAll())
+            : 0
+      })
+
+    } else if (state.forceYScrollbars == null) {
+      this.setState({
+        forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getAll(), 'Y')
+      })
+
+    } else if (!state.scrollerClientWidths) {
+      this.setState({
+        scrollerClientWidths: computeScrollerClientWidths(this.scrollerElRefs),
+        scrollerClientHeights: computeScrollerClientHeights(this.scrollerElRefs)
       })
     }
+  }
 
-    this.setState({
-      forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getAll(), 'Y')
-    })
+
+  handleResize = () => {
+    if (!this.props.forPrint) {
+      this.forceUpdate() // getDerivedStateFromProps will clear the sizing state
+    }
   }
 
 

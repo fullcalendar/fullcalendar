@@ -14,7 +14,7 @@ import TableView, { isEventLimitAuto } from './TableView'
 import DayTable from './DayTable'
 
 
-export default class DayTableView extends TableView {
+export default class DayTableView extends TableView { // TODO: use clientWidth/clientHeight
 
   private buildDayTableModel = memoize(buildDayTableModel)
   private headerRef = createRef<DayHeader>()
@@ -50,7 +50,7 @@ export default class DayTableView extends TableView {
           eventResize={props.eventResize}
           isRigid={isEventLimitAuto(context.options) && !props.isHeightAuto}
           nextDayThreshold={context.nextDayThreshold}
-          colGroupNode={contentArg.colGroupNode}
+          colGroupNode={contentArg.tableColGroupNode}
           renderNumberIntro={this.renderNumberIntro}
           renderBgIntro={this.renderBgIntro}
           renderIntro={this.renderIntro}

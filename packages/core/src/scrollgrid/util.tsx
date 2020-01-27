@@ -2,6 +2,8 @@ import { VNode, h, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
 import ComponentContext from '../component/ComponentContext'
 import { computeSmallestCellWidth } from '../util/misc'
+import { mapHash } from '../util/object'
+import RefMap from '../util/RefMap'
 
 
 export type CssDimValue = string | number
@@ -27,18 +29,17 @@ export interface ChunkConfig {
   content?: (contentProps: ChunkContentCallbackArgs) => VNode
   rowContent?: VNode
   vGrowRows?: boolean
-  needsSizing?: boolean
   scrollerElRef?: Ref<HTMLDivElement>
   elRef?: Ref<HTMLTableCellElement>
   className?: string // on the <td>
 }
 
 export interface ChunkContentCallbackArgs {
-  colGroupNode: VNode
-  rowsGrow: boolean
-  type: string
+  tableColGroupNode: VNode
+  tableMinWidth: CssDimValue
+  tableWidth: CssDimValue
+  tableHeight: CssDimValue
   isSizingReady: boolean
-  minWidth: CssDimValue
 }
 
 
@@ -88,30 +89,31 @@ export function getNeedsYScrolling(props: { vGrow?: boolean }, sectionConfig: Se
 }
 
 
-export function renderChunkContent(
-  sectionConfig: SectionConfig,
-  chunkConfig: ChunkConfig,
-  microColGroupNode: VNode,
-  chunkTableMinWidth: CssDimValue,
+export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: {
+  tableColGroupNode: VNode,
+  tableMinWidth: CssDimValue,
+  tableWidth: CssDimValue,
+  tableHeight: CssDimValue,
   isSizingReady: boolean
-) {
-  let vGrowRows = sectionConfig.vGrowRows || chunkConfig.vGrowRows
+}) {
+  let tableHeight = (sectionConfig.vGrowRows || chunkConfig.vGrowRows) ? arg.tableHeight : ''
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content({
-      colGroupNode: microColGroupNode,
-      rowsGrow: vGrowRows,
-      type: sectionConfig.type,
-      isSizingReady,
-      minWidth: chunkTableMinWidth
+      tableColGroupNode: arg.tableColGroupNode,
+      tableMinWidth: arg.tableMinWidth,
+      tableWidth: arg.tableWidth,
+      tableHeight,
+      isSizingReady: arg.isSizingReady,
     }) :
     h('table', {
-      class: (vGrowRows ? 'vgrow' : ''),
       style: {
-        minWidth: chunkTableMinWidth // because colMinWidths arent enough
+        minWidth: arg.tableMinWidth, // because colMinWidths arent enough
+        width: arg.tableWidth,
+        height: tableHeight // css `height` on a <table> serves as a min-height
       }
     }, [
-      microColGroupNode,
+      arg.tableColGroupNode,
       h('tbody', {}, chunkConfig.rowContent)
     ])
 
@@ -126,15 +128,20 @@ export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) { //
         <col
           span={colProps.span || 1}
           style={{
-            /* why 4? if we do 0, it will kill any border, which are needed for computeSmallestCellWidth
-            4 accounts for 2 2-pixel borders. TODO: better solution? */
-            width: colProps.width === 'shrink' ? (shrinkWidth || 4) : (colProps.width || ''),
+            width: colProps.width === 'shrink' ? sanitizeShrinkWidth(shrinkWidth) : (colProps.width || ''),
             minWidth: colProps.minWidth || ''
           }}
         />
       ))}
     </colgroup>
   )
+}
+
+
+export function sanitizeShrinkWidth(shrinkWidth?: number) {
+  /* why 4? if we do 0, it will kill any border, which are needed for computeSmallestCellWidth
+  4 accounts for 2 2-pixel borders. TODO: better solution? */
+  return shrinkWidth == null ? 4 : shrinkWidth
 }
 
 
@@ -181,4 +188,17 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
 // need a method for this still?
 export function getChunkClassNames(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, context: ComponentContext) {
   return chunkConfig.className
+}
+
+
+// IE sometimes reports a certain clientHeight, but when inner content is set to that height,
+// some sort of rounding error causes it to spill out and create unnecessary scrollbars. Compensate.
+const CLIENT_HEIGHT_WIGGLE = /Trident/.test(navigator.userAgent) ? 1 : 0
+
+export function computeScrollerClientWidths(scrollerElRefs: RefMap<HTMLElement, any>) {
+  return mapHash(scrollerElRefs.currentMap, (scrollerEl) => scrollerEl.clientWidth)
+}
+
+export function computeScrollerClientHeights(scrollerElRefs: RefMap<HTMLElement, any>) {
+  return mapHash(scrollerElRefs.currentMap, (scrollerEl) => scrollerEl.clientHeight - CLIENT_HEIGHT_WIGGLE)
 }

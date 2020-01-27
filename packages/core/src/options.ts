@@ -80,8 +80,9 @@ export const globalDefaults = {
   windowResizeDelay: 100, // milliseconds before an updateSize happens
 
   longPressDelay: 1000,
-  eventDragMinDistance: 5 // only applies to mouse
+  eventDragMinDistance: 5, // only applies to mouse
 
+  expandRows: false
 }
 
 

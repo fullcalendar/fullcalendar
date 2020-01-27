@@ -51,7 +51,7 @@ export default abstract class TimeColsView extends View {
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
   ) {
-    let { props } = this
+    let { context, props } = this
     let classNames = getViewClassNames(props.viewSpec).concat('fc-timeGrid-view')
     let sections: SimpleScrollGridSection[] = []
 
@@ -76,8 +76,7 @@ export default abstract class TimeColsView extends View {
           <tr>
             <td
               ref={this.dividerElRef}
-              class={'fc-divider ' + this.context.theme.getClass('tableCellShaded')}
-              colSpan={0}
+              class={'fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
@@ -87,6 +86,7 @@ export default abstract class TimeColsView extends View {
     sections.push({
       type: 'body',
       vGrow: true,
+      vGrowRows: Boolean(context.options.expandRows),
       chunk: {
         scrollerElRef: this.scrollerElRef,
         content: timeContent

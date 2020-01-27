@@ -178,7 +178,9 @@ export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgr
 export {
   CssDimValue, ScrollerLike, SectionConfig, ColProps, ChunkConfig, hasShrinkWidth, renderMicroColGroup,
   getScrollGridClassNames, getSectionClassNames, getChunkVGrow, getNeedsYScrolling, renderChunkContent, computeForceScrollbars, computeShrinkWidth,
-  getChunkClassNames, ChunkContentCallbackArgs
+  getChunkClassNames, ChunkContentCallbackArgs,
+  computeScrollerClientWidths, computeScrollerClientHeights,
+  sanitizeShrinkWidth
 } from './scrollgrid/util'
 export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'

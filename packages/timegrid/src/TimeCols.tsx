@@ -19,7 +19,8 @@ import {
   sortEventSegs,
   memoize,
   subrenderer,
-  setRef
+  setRef,
+  CssDimValue
 } from '@fullcalendar/core'
 import { DayBgRow, DayBgCellModel } from '@fullcalendar/daygrid'
 import TimeColsEvents from './TimeColsEvents'
@@ -47,12 +48,15 @@ export interface TimeColsProps {
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
   rootElRef?: Ref<HTMLDivElement>
-  colGroupNode: VNode
+  tableColGroupNode: VNode
+  tableWidth: CssDimValue
+  tableHeight: CssDimValue
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
   nowIndicatorDate: DateMarker
   nowIndicatorSegs: TimeColsSeg[]
   forPrint: boolean
+  allowSizing: boolean
 }
 
 export const TIME_COLS_NOW_INDICATOR_UNIT = 'minute'
@@ -89,8 +93,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
   private colPositions: PositionCache
   private slatPositions: PositionCache
-  private isSlatSizesDirty: boolean = false
-  private isColSizesDirty: boolean = false
   private segRenderers: (TimeColsEvents | TimeColsFills | null)[]
 
 
@@ -107,7 +109,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
       <div class='fc-time-grid' ref={this.handleRootEl}>
         <div class='fc-bg'>
           <table class={theme.getClass('table')}>
-            {props.colGroupNode}
+            {props.tableColGroupNode}
             <DayBgRow
               dateProfile={props.dateProfile}
               cells={props.cells}
@@ -117,8 +119,15 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
           </table>
         </div>
         <div class='fc-slats'>
-          <table class={theme.getClass('table')}>
-            {props.colGroupNode /* relies on there only being a single <col> for the axis */}
+          <table
+            class={theme.getClass('table') + ' vgrow' /* why not use rowsGrow like resource view? */}
+            style={{
+              // TODO: add minWidth
+              width: props.tableWidth,
+              height: props.tableHeight
+            }}
+          >
+            {props.tableColGroupNode /* relies on there only being a single <col> for the axis */}
             <TimeColsSlats
               dateProfile={props.dateProfile}
               slotDuration={this.slotDuration}
@@ -128,7 +137,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         </div>
         <div class='fc-content-skeleton'>
           <table>
-            {props.colGroupNode}
+            {props.tableColGroupNode}
             <TimeColsContentSkeleton
               colCnt={props.cells.length}
               renderIntro={props.renderIntro}
@@ -172,7 +181,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   handleBgCellEls = (colEls: HTMLElement[] | null) => {
     if (colEls) {
       this.colEls = colEls
-      this.isColSizesDirty = true
       this.colPositions = new PositionCache(
         colEls[0].parentNode as HTMLElement,
         colEls,
@@ -187,7 +195,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
     if (slatEls) {
       let slatRootEl = this.slatRootEl = slatEls[0].parentNode as HTMLElement
       this.slatEls = slatEls
-      this.isSlatSizesDirty = true
       this.slatPositions = new PositionCache(
         slatRootEl,
         slatEls,
@@ -209,14 +216,14 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
   componentDidMount() {
     this.subrender()
-    this.handleSizing(false)
+    this.handleSizing()
     this.context.addResizeHandler(this.handleSizing)
   }
 
 
   componentDidUpdate() {
     this.subrender()
-    this.handleSizing(false)
+    this.handleSizing()
   }
 
 
@@ -301,28 +308,26 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
   }
 
 
-  handleSizing = (forced: boolean) => {
+  handleSizing = () => {
     let { segRenderers } = this
 
-    if (forced || this.isSlatSizesDirty) {
-      this.buildSlatPositions()
-      this.isSlatSizesDirty = false
-    }
-
-    if (forced || this.isColSizesDirty) {
-      this.buildColPositions()
-      this.isColSizesDirty = false
+    if (this.props.allowSizing) {
+      this.slatPositions.build()
+      this.colPositions.build()
+    } else {
+      this.slatPositions.buildZeros()
+      this.colPositions.buildZeros()
     }
 
     for (let segRenderer of segRenderers) {
       if (segRenderer) {
-        segRenderer.computeSizes(forced, this)
+        segRenderer.computeSizes(true, this) // TODO: always forced!?
       }
     }
 
     for (let segRenderer of segRenderers) {
       if (segRenderer) {
-        segRenderer.assignSizes(forced, this)
+        segRenderer.assignSizes(true, this) // TODO: always forced!?
       }
     }
 
@@ -469,17 +474,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
 
 
   buildPositionCaches() {
-    this.buildColPositions()
-    this.buildSlatPositions()
-  }
-
-
-  buildColPositions() {
     this.colPositions.build()
-  }
-
-
-  buildSlatPositions() {
     this.slatPositions.build()
   }
 

@@ -20,11 +20,11 @@ export default class ViewContainer extends BaseComponent<ViewContainerProps> {
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
 
-    if (props.height) { // TODO: better test
-      height = props.height
-    } else {
+    if (props.aspectRatio) { // TODO: better test
       classNames.push('fc-view-container--aspectratio')
       paddingBottom = (1 / props.aspectRatio) * 100 + '%'
+    } else {
+      height = props.height
     }
 
     return (
