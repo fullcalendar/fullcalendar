@@ -32,15 +32,15 @@
 .clippedscroller {
   position: relative;
   overflow: hidden;
-  direction: ltr; // hack for chrome doing the .scroller's right/left wrong for rtl. undone below...
+  direction: ltr; // hack for chrome doing the scroller's right/left wrong for rtl. undone below...
 }
 
-.fc-rtl .clippedscroller > .scroller { // undo hack
+.fc-rtl .clippedscroller > .fc-scroller { // undo hack
   direction: rtl;
 }
 
 
-.scroller {
+.fc-scroller {
   position: relative; // for abs-positioned elements within
 }
 

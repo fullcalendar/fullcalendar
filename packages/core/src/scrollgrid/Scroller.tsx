@@ -22,7 +22,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   render(props: ScrollerProps) {
-    let className = [ 'scroller' ]
+    let className = [ 'fc-scroller' ]
 
     if (props.className) {
       className = className.concat(props.className)

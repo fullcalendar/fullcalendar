@@ -235,8 +235,8 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       colCnt,
       selectedInstanceId: props.eventSelection,
       hiddenInstances: // TODO: more convenient
-        (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-        (props.eventResize ? props.eventResize.affectedInstances : null),
+        (props.eventDrag && props.eventDrag.segs.length ? props.eventDrag.affectedInstances : null) ||
+        (props.eventResize && props.eventResize.segs.length ? props.eventResize.affectedInstances : null),
       isDragging: false,
       isResizing: false,
       isSelecting: false
@@ -244,7 +244,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
     this.rowStructs = eventsRenderer.rowStructs
 
-    if (props.eventResize) {
+    if (props.eventResize && props.eventResize.segs.length) { // messy check
       this.renderMirrorEvents({
         colGroupNode: props.colGroupNode,
         renderIntro: props.renderIntro,

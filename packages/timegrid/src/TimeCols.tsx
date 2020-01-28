@@ -257,8 +257,8 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         segs: props.fgEventSegs,
         selectedInstanceId: props.eventSelection,
         hiddenInstances: // TODO: more convenient
-          (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-          (props.eventResize ? props.eventResize.affectedInstances : null),
+          (props.eventDrag && props.eventDrag.segs.length ? props.eventDrag.affectedInstances : null) ||
+          (props.eventResize && props.eventResize.segs.length ? props.eventResize.affectedInstances : null),
         isDragging: false,
         isResizing: false,
         isSelecting: false,
@@ -281,7 +281,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps> {
         forPrint: props.forPrint
       })
 
-    } else if (props.eventResize) {
+    } else if (props.eventResize && props.eventResize.segs.length) {
       return this.renderMirrorEvents({
         containerEls: mirrorContainerEls,
         segs: props.eventResize.segs,
