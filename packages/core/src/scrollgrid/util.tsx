@@ -31,10 +31,11 @@ export interface ChunkConfig {
   outerContent?: VNode
   content?: ChunkConfigContent
   rowContent?: ChunkConfigRowContent
+  rowSelector?: string
   vGrowRows?: boolean
   scrollerElRef?: Ref<HTMLDivElement>
   elRef?: Ref<HTMLTableCellElement>
-  className?: string // on the <td>
+  className?: string // on the wrapping chunk <td>. impossible in print view
 }
 
 export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?

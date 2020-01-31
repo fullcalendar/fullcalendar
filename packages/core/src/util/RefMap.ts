@@ -7,7 +7,7 @@ TODO: make OtherArgs a single object to avoid spreading?
 export default class RefMap<RefType, OtherArgs extends any[] = []> {
 
   public currentMap: { [key: string]: RefType } = {}
-  public otherArgsMap: { [key: string]: OtherArgs } = {}
+  private otherArgsMap: { [key: string]: OtherArgs } = {}
   private callbackMap: { [key: string]: (val: RefType | null) => void } = {}
 
 
@@ -45,7 +45,7 @@ export default class RefMap<RefType, OtherArgs extends any[] = []> {
   }
 
 
-  collect(
+  collect( // TODO: check callers that don't care about order. should use getAll instead
     startIndex = 0,
     endIndex?: number,
     step = 1,
