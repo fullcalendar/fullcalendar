@@ -29,10 +29,6 @@ export default abstract class FgEventRenderer<
   private renderSelectedInstance = subrenderer(renderSelectedInstance, unrenderSelectedInstance)
   private renderHiddenInstances = subrenderer(renderHiddenInstances, unrenderHiddenInstances)
 
-  // internal state
-  private segs: Seg[] = [] // for sizing funcs
-  private isSizeDirty: boolean = false // NOTE: should also flick this when attaching segs to new containers
-
   // computed options
   protected eventTimeFormat: DateFormatter
   protected displayEventTime: boolean
@@ -58,9 +54,6 @@ export default abstract class FgEventRenderer<
       segs,
       hiddenInstances: props.hiddenInstances
     })
-
-    this.segs = segs
-    this.isSizeDirty = true
 
     return segs
   }
@@ -256,34 +249,6 @@ export default abstract class FgEventRenderer<
       'border-color': ui.borderColor,
       color: ui.textColor
     }
-  }
-
-
-  // Sizing
-  // ----------------------------------------------------------------------------------------------------
-
-
-  computeSizes(force: boolean, userComponent: any) {
-    if (force || this.isSizeDirty) {
-      this.computeSegSizes(this.segs, userComponent)
-    }
-  }
-
-
-  assignSizes(force: boolean, userComponent: any) {
-    if (force || this.isSizeDirty) {
-      this.assignSegSizes(this.segs, userComponent)
-    }
-
-    this.isSizeDirty = false
-  }
-
-
-  protected computeSegSizes(segs: Seg[], userComponent: any) {
-  }
-
-
-  protected assignSegSizes(segs: Seg[], userComponent: any) {
   }
 
 }

@@ -1,5 +1,5 @@
 import {
-  h, createRef,
+  h,
   DateProfileGenerator, DateProfile,
   ComponentContext,
   DayHeader,
@@ -17,8 +17,6 @@ import DayTimeCols from './DayTimeCols'
 export default class DayTimeColsView extends TimeColsView {
 
   private buildTimeColsModel = memoize(buildTimeColsModel)
-  private dayTableRef = createRef<DayTable>()
-  private timeColsRef = createRef<DayTimeCols>()
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
@@ -37,7 +35,6 @@ export default class DayTimeColsView extends TimeColsView {
         />,
       options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
         <DayTable
-          ref={this.dayTableRef}
           {...splitProps['allDay']}
           dateProfile={dateProfile}
           dayTableModel={dayTableModel}
@@ -55,7 +52,6 @@ export default class DayTimeColsView extends TimeColsView {
       )),
       (contentArg: ChunkContentCallbackArgs) => (
         <DayTimeCols
-          ref={this.timeColsRef}
           {...splitProps['timed']}
           dateProfile={dateProfile}
           dayTableModel={dayTableModel}
@@ -63,22 +59,13 @@ export default class DayTimeColsView extends TimeColsView {
           renderIntro={this.renderTimeColsIntro}
           forPrint={props.forPrint}
           tableColGroupNode={contentArg.tableColGroupNode}
-          tableWidth={contentArg.tableWidth}
-          tableHeight={contentArg.tableHeight}
-          allowSizing={contentArg.isSizingReady}
+          tableMinWidth={contentArg.tableMinWidth}
+          clientWidth={contentArg.clientWidth}
+          clientHeight={contentArg.clientHeight}
+          onScrollTop={this.handleScrollTop}
         />
       )
     )
-  }
-
-
-  getAllDayTableObj() {
-    return this.dayTableRef.current
-  }
-
-
-  getTimeColsObj() {
-    return this.timeColsRef.current
   }
 
 }

@@ -1218,10 +1218,10 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
   scrollToTime(timeInput: DurationInput) {
-    let duration = createDuration(timeInput)
+    let time = createDuration(timeInput)
 
-    if (duration) {
-      this.component.view.scrollToTime(duration)
+    if (time) {
+      this.trigger('scrollRequest', { time })
     }
   }
 

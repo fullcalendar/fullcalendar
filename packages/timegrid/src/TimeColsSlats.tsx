@@ -12,16 +12,26 @@ import {
   Duration,
   createFormatter,
   memoize,
-  Fragment,
-  RefMap
+  RefMap,
+  CssDimValue,
+  createRef,
+  PositionCache
 } from '@fullcalendar/core'
 
 
-export interface TimeColsSlatsProps {
+export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
+  clientWidth: CssDimValue
+  clientHeight: CssDimValue
+  tableMinWidth: CssDimValue
+  tableColGroupNode: VNode
+  onCoords?: (coords: PositionCache | null) => void
+}
+
+interface TimeColsSlatsContentProps {
   dateProfile: DateProfile
   slotDuration: Duration
-  onReceiveSlatEls?: (slatEls: HTMLElement[] | null) => void
 }
+
 
 // potential nice values for the slot-duration and interval-duration
 // from largest to smallest
@@ -36,16 +46,91 @@ const STOCK_SUB_DURATIONS = [
 /*
 for the horizontal "slats" that run width-wise. Has a time axis on a side. Depends on RTL.
 */
+
+
 export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
-  private slatElRefs = new RefMap<HTMLTableRowElement>()
+  rootElRef = createRef<HTMLDivElement>()
+  slatElRefs = new RefMap<HTMLTableRowElement>()
+
+
+  render(props: TimeColsSlatsProps, state: {}, context: ComponentContext) {
+    let { theme } = context
+
+    return (
+      <div class='fc-slats' ref={this.rootElRef}>
+        <table
+          class={theme.getClass('table') + ' vgrow' /* why not use rowsGrow like resource view? */}
+          style={{
+            minWidth: props.tableMinWidth,
+            width: props.clientWidth,
+            height: props.clientHeight
+          }}
+        >
+          {props.tableColGroupNode /* relies on there only being a single <col> for the axis */}
+          <TimeColsSlatsBody
+            slatElRefs={this.slatElRefs}
+            dateProfile={props.dateProfile}
+            slotDuration={props.slotDuration}
+          />
+        </table>
+      </div>
+    )
+  }
+
+
+  componentDidMount() {
+    this.handleSizing()
+    this.context.addResizeHandler(this.handleSizing)
+  }
+
+
+  componentDidUpdate() {
+    this.handleSizing()
+  }
+
+
+  componentWillUnmount() {
+    this.context.removeResizeHandler(this.handleSizing)
+
+    if (this.props.onCoords) {
+      this.props.onCoords(null)
+    }
+  }
+
+
+  handleSizing = () => {
+    let { props } = this
+
+    if (props.onCoords && props.clientHeight) {
+      props.onCoords(
+        new PositionCache(
+          this.rootElRef.current,
+          this.slatElRefs.collect(),
+          false,
+          true // vertical
+        )
+      )
+    }
+  }
+
+}
+
+
+interface TimeColsSlatsBodyProps extends TimeColsSlatsContentProps {
+  slatElRefs: RefMap<HTMLTableRowElement>
+}
+
+
+class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
+
   private getLabelInterval = memoize(getLabelInterval)
   private getLabelFormat = memoize(getLabelFormat)
 
 
-  render(props: TimeColsSlatsProps, state: {}, context: ComponentContext) {
+  render(props: TimeColsSlatsBodyProps, state: {}, context: ComponentContext) {
     let { dateEnv, isRtl, options } = context
-    let { dateProfile, slotDuration } = props
+    let { dateProfile, slotDuration, slatElRefs } = props
 
     let labelInterval = this.getLabelInterval(options.slotLabelInterval, slotDuration)
     let labelFormat = this.getLabelFormat(options.slotLabelFormat)
@@ -78,7 +163,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
       rowsNodes.push(
         <tr
-          ref={this.slatElRefs.createRef(i)}
+          ref={slatElRefs.createRef(i)}
           data-time={formatIsoTimeString(slotDate)}
           class={isLabeled ? '' : 'fc-minor'}
         >
@@ -93,33 +178,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
       i++
     }
 
-    return (<Fragment>{rowsNodes}</Fragment>)
-  }
-
-
-  componentDidMount() {
-    this.sendDom()
-  }
-
-
-  componentDidUpdate() {
-    this.sendDom()
-  }
-
-
-  componentWillUnmount() {
-    let { onReceiveSlatEls } = this.props
-    if (onReceiveSlatEls) {
-      onReceiveSlatEls(null)
-    }
-  }
-
-
-  sendDom() {
-    let { onReceiveSlatEls } = this.props
-    if (onReceiveSlatEls) {
-      onReceiveSlatEls(this.slatElRefs.collect())
-    }
+    return (<tbody>{rowsNodes}</tbody>)
   }
 
 }

@@ -17,10 +17,6 @@ export default abstract class FillRenderer<FillRendererProps extends BaseFillRen
 
   fillSegTag: string = 'div'
 
-  // for sizing
-  private segs: Seg[]
-  private isSizeDirty: boolean = false // NOTE: should also flick this when attaching segs to new containers
-
 
   _renderSegs({ segs, type }: BaseFillRendererProps, context: ComponentContext) {
 
@@ -30,9 +26,6 @@ export default abstract class FillRenderer<FillRendererProps extends BaseFillRen
     if (type === 'bgEvent') {
       triggerPositionedSegs(context, segs, false) // isMirror=false
     }
-
-    this.segs = segs
-    this.isSizeDirty = true
 
     return segs
   }
@@ -113,30 +106,6 @@ export default abstract class FillRenderer<FillRendererProps extends BaseFillRen
       (classNames.length ? ' class="' + classNames.join(' ') + '"' : '') +
       (css ? ' style="' + cssToStr(css) + '"' : '') +
       '></' + this.fillSegTag + '>'
-  }
-
-
-  computeSizes(force: boolean, userComponent: any) {
-    if (force || this.isSizeDirty) {
-      this.computeSegSizes(this.segs, userComponent)
-    }
-  }
-
-
-  assignSizes(force: boolean, userComponent: any) {
-    if (force || this.isSizeDirty) {
-      this.assignSegSizes(this.segs, userComponent)
-    }
-
-    this.isSizeDirty = false
-  }
-
-
-  computeSegSizes(seg: Seg[], userComponent: any) {
-  }
-
-
-  assignSegSizes(seg: Seg[], userComponent: any) {
   }
 
 }

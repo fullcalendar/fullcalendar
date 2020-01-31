@@ -9,24 +9,26 @@ import {
   Seg,
   intersectRanges,
   EventRenderRange,
-  BaseComponent,
   ComponentContext,
   subrenderer,
   createFormatter,
-  VNode
+  VNode,
+  RefMap,
+  DateComponent,
+  setRef
 } from '@fullcalendar/core'
 import TableEvents from './TableEvents'
 import TableMirrorEvents from './TableMirrorEvents'
 import TableFills from './TableFills'
 import Popover from './Popover'
 import DayTile from './DayTile'
-import TableSkeleton, { TableSkeletonProps } from './TableSkeleton'
+import TableSkeleton, { TableBaseProps } from './TableSkeleton'
 
 
 /* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export interface TableProps extends TableSkeletonProps {
+export interface TableProps extends TableBaseProps {
   businessHourSegs: TableSeg[]
   bgEventSegs: TableSeg[]
   fgEventSegs: TableSeg[]
@@ -58,7 +60,7 @@ interface SegPopoverState {
 }
 
 
-export default class Table extends BaseComponent<TableProps, TableState> {
+export default class Table extends DateComponent<TableProps, TableState> {
 
   private renderFgEvents = subrenderer(TableEvents)
   private renderMirrorEvents = subrenderer(TableMirrorEvents)
@@ -66,21 +68,32 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   private renderBusinessHours = subrenderer(TableFills)
   private renderHighlight = subrenderer(TableFills)
   private popoverRef = createRef<Popover>()
+  private rootEl: HTMLElement
+  private rowElRefs = new RefMap<HTMLTableRowElement>()
+  private cellElRefs: RefMap<HTMLTableCellElement>[] = []
 
-  rowEls: HTMLElement[] // set of fake row elements
-  cellEls: HTMLElement[][] // set of whole-day elements comprising the row's background
   rowStructs: any
-
-  isCellSizesDirty: boolean = false
   rowPositions: PositionCache
   colPositions: PositionCache
-  bottomCoordPadding: number = 0 // hack for extending the hit area for the last row of the coordinate grid
 
 
   render(props: TableProps) {
+
+    // CRAZINESS. TODO: refactor RefMap system
+    let rowCnt = props.cells.length
+    if (rowCnt < this.cellElRefs.length) {
+      this.cellElRefs = this.cellElRefs.slice(0, props.cells.length)
+    }
+    for (let i = 0; i < rowCnt; i++) {
+      if (!this.cellElRefs[i]) {
+        this.cellElRefs[i] = new RefMap()
+      }
+    }
+
     return (
       <Fragment>
         <TableSkeleton
+          rootElRef={this.handleRootEl}
           dateProfile={props.dateProfile}
           cells={props.cells}
           isRigid={props.isRigid}
@@ -90,8 +103,8 @@ export default class Table extends BaseComponent<TableProps, TableState> {
           colWeekNumbersVisible={props.colWeekNumbersVisible}
           cellWeekNumbersVisible={props.cellWeekNumbersVisible}
           colGroupNode={props.colGroupNode}
-          elRef={props.elRef}
-          onReceiveEls={this.handleSkeletonEls}
+          rowElRefs={this.rowElRefs}
+          cellElRefs={this.cellElRefs}
           vGrow={props.vGrow}
         />
         {this.renderPopover()}
@@ -128,46 +141,29 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   }
 
 
-  handleSkeletonEls = (rowEls: HTMLElement[] | null, cellEls: HTMLElement[][] | null) => {
-    let rootEl: HTMLElement = null
+  handleRootEl = (rootEl: HTMLElement | null) => {
+    this.rootEl = rootEl
 
-    if (!rowEls) {
+    if (!rootEl) {
       this.subrenderDestroy()
+    }
 
-    } else {
-      rootEl = rowEls[0].parentNode as HTMLElement
-
-      this.rowPositions = new PositionCache(
-        rootEl,
-        rowEls,
-        false,
-        true // vertical
-      )
-
-      this.colPositions = new PositionCache(
-        rootEl,
-        cellEls[0], // only the first row
-        true, // horizontal
-        false
-      )
-
-      this.rowEls = rowEls
-      this.cellEls = cellEls
-      this.isCellSizesDirty = true
+    if (this.props.rootElRef) {
+      setRef(this.props.rootElRef, rootEl)
     }
   }
 
 
   componentDidMount() {
     this.subrender()
-    this.handleSizing(false)
+    this.handleSizing()
     this.context.addResizeHandler(this.handleSizing)
   }
 
 
   componentDidUpdate() {
     this.subrender()
-    this.handleSizing(false)
+    this.handleSizing()
   }
 
 
@@ -177,7 +173,8 @@ export default class Table extends BaseComponent<TableProps, TableState> {
 
 
   subrender() {
-    let { props, rowEls } = this
+    let { props } = this
+    let rowEls = this.rowElRefs.collect()
     let colCnt = props.cells[0].length
 
     if (props.eventDrag && props.eventDrag.segs.length) { // messy check
@@ -235,8 +232,8 @@ export default class Table extends BaseComponent<TableProps, TableState> {
       colCnt,
       selectedInstanceId: props.eventSelection,
       hiddenInstances: // TODO: more convenient
-        (props.eventDrag && props.eventDrag.segs.length ? props.eventDrag.affectedInstances : null) ||
-        (props.eventResize && props.eventResize.segs.length ? props.eventResize.affectedInstances : null),
+        (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+        (props.eventResize ? props.eventResize.affectedInstances : null),
       isDragging: false,
       isResizing: false,
       isSelecting: false
@@ -271,43 +268,29 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  handleSizing = (forced: boolean) => {
-    let { calendar } = this.context
+  handleSizing = () => { // TODO: make much more optimal!!!
+    this.updateEventLimitSizing()
+
+    this.rowPositions = new PositionCache(
+      this.rootEl,
+      this.rowElRefs.collect(),
+      false,
+      true // vertical
+    )
+
+    this.colPositions = new PositionCache(
+      this.rootEl,
+      this.cellElRefs[0].collect(), // only the first row
+      true, // horizontal
+      false
+    )
+
     let popover = this.popoverRef.current
-
-    if (
-      forced ||
-      this.isCellSizesDirty ||
-      calendar.isEventsUpdated // hack
-    ) {
-      this.updateEventLimitSizing()
-      this.buildPositionCaches()
-      this.isCellSizesDirty = false
-    }
-
     if (popover) {
       popover.updateSize()
     }
   }
 
-
-  buildPositionCaches() {
-    this.buildColPositions()
-    this.buildRowPositions()
-  }
-
-
-  buildColPositions() {
-    this.colPositions.build()
-  }
-
-
-  buildRowPositions() {
-    let rowCnt = this.props.cells.length
-
-    this.rowPositions.build()
-    this.rowPositions.bottoms[rowCnt - 1] += this.bottomCoordPadding // hack
-  }
 
 
   /* Hit System
@@ -345,15 +328,14 @@ export default class Table extends BaseComponent<TableProps, TableState> {
   // FYI: the first column is the leftmost column, regardless of date
 
 
-  getCellEl(row, col) {
-    return this.cellEls[row][col]
+  private getCellEl(row, col) {
+    return this.cellElRefs[row].currentMap[col]
   }
 
 
-  getCellRange(row, col) {
+  private getCellRange(row, col) {
     let start = this.props.cells[row][col].date
     let end = addDays(start, 1)
-
     return { start, end }
   }
 
@@ -366,7 +348,7 @@ export default class Table extends BaseComponent<TableProps, TableState> {
     let { props, rowStructs } = this
 
     if (props.vGrow) {
-      this._limitRows(props.eventLimit, this.rowEls, rowStructs, this.props.cells, this.context)
+      this._limitRows(props.eventLimit, this.rowElRefs.collect(), rowStructs, this.props.cells, this.context)
 
     } else {
       for (let row = 0; row < rowStructs.length; row++) {

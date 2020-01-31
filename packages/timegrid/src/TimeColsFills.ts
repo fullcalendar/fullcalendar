@@ -1,10 +1,10 @@
-import {
-  FillRenderer, Seg, subrenderer, BaseFillRendererProps
-} from '@fullcalendar/core'
-import TimeCols, { attachSegs, detachSegs } from './TimeCols'
+import { FillRenderer, subrenderer, BaseFillRendererProps } from '@fullcalendar/core'
+import { attachSegs, detachSegs } from './TimeCols'
+import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
 export interface TimeColsFillsProps extends BaseFillRendererProps {
   containerEls: HTMLElement[]
+  coords: TimeColsSlatsCoords
 }
 
 export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
@@ -13,6 +13,8 @@ export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
 
 
   render(props: TimeColsFillsProps) {
+    let { coords } = props
+
     let segs = this.renderSegs({
       type: props.type,
       segs: props.segs
@@ -22,16 +24,11 @@ export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
       segs,
       containerEls: props.containerEls
     })
-  }
 
-
-  computeSegSizes(segs: Seg[], timeGrid: TimeCols) {
-    timeGrid.computeSegVerticals(segs)
-  }
-
-
-  assignSegSizes(segs: Seg[], timeGrid: TimeCols) {
-    timeGrid.assignSegVerticals(segs)
+    if (coords) {
+      coords.computeSegVerticals(segs)
+      coords.assignSegVerticals(segs)
+    }
   }
 
 }

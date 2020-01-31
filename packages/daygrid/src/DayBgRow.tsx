@@ -9,22 +9,20 @@ import {
 import DayBgCell from './DayBgCell'
 
 
+export interface DayBgRowProps {
+  cells: DayBgCellModel[]
+  dateProfile: DateProfile
+  cellElRefs: RefMap<HTMLTableCellElement>
+  renderIntro?: () => VNode[]
+}
+
 export interface DayBgCellModel {
   date: DateMarker
   htmlAttrs?: object
 }
 
-export interface DayBgRowProps {
-  cells: DayBgCellModel[]
-  dateProfile: DateProfile
-  renderIntro?: () => VNode[]
-  onReceiveCellEls?: (cellEls: HTMLElement[] | null) => void
-}
-
 
 export default class DayBgRow extends BaseComponent<DayBgRowProps> {
-
-  cellElRefs = new RefMap<HTMLTableCellElement>()
 
 
   render(props: DayBgRowProps, state: {}, context: ComponentContext) {
@@ -43,7 +41,7 @@ export default class DayBgRow extends BaseComponent<DayBgRowProps> {
           date={cell.date}
           dateProfile={props.dateProfile}
           otherAttrs={cell.htmlAttrs}
-          elRef={this.cellElRefs.createRef(i)}
+          elRef={props.cellElRefs.createRef(i)}
         />
       )
     }
@@ -57,34 +55,4 @@ export default class DayBgRow extends BaseComponent<DayBgRowProps> {
     return (<tr>{parts}</tr>)
   }
 
-
-  componentDidMount() {
-    this.sendDom()
-  }
-
-
-  componentDidUpdate() {
-    this.sendDom()
-  }
-
-
-  componentWillUnmount() {
-    let { onReceiveCellEls } = this.props
-    if (onReceiveCellEls) {
-      onReceiveCellEls(null)
-    }
-  }
-
-
-  sendDom() {
-    let { onReceiveCellEls } = this.props
-    if (onReceiveCellEls) {
-      onReceiveCellEls(this.cellElRefs.collect())
-    }
-  }
-
 }
-
-DayBgRow.addPropsEquality({
-  onReceiveCellEls: true
-})

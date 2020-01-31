@@ -1,17 +1,17 @@
 import { Seg } from '@fullcalendar/core'
 import TimeColsEvents from './TimeColsEvents'
-import TimeCols from './TimeCols'
+import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
 
 export default class TimeColsMirrorEvents extends TimeColsEvents {
 
 
-  generateSegCss(seg: Seg, timeGrid: TimeCols) {
-    let cssProps = super.generateSegCss(seg, timeGrid)
+  generateSegCss(seg: Seg, slatCoords: TimeColsSlatsCoords) {
+    let cssProps = super.generateSegCss(seg, slatCoords)
     let { interactingSeg } = this.props
 
     if (interactingSeg && interactingSeg.col === seg.col) {
-      let sourceSegProps = super.generateSegCss(interactingSeg, timeGrid)
+      let sourceSegProps = super.generateSegCss(interactingSeg, slatCoords)
 
       cssProps.left = sourceSegProps.left
       cssProps.right = sourceSegProps.right

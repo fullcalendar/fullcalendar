@@ -38,6 +38,11 @@ export function removeExact(array, exactVal) {
 }
 
 export function isArraysEqual(a0, a1) {
+
+  if (a0 === a1) {
+    return true
+  }
+
   let len = a0.length
   let i
 

@@ -55,10 +55,6 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  buildPositionCaches() {
-  }
-
-
   queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
     return null // this should be abstract
   }

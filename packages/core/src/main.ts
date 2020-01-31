@@ -180,7 +180,8 @@ export {
   getScrollGridClassNames, getSectionClassNames, getChunkVGrow, getNeedsYScrolling, renderChunkContent, computeForceScrollbars, computeShrinkWidth,
   getChunkClassNames, ChunkContentCallbackArgs,
   computeScrollerClientWidths, computeScrollerClientHeights,
-  sanitizeShrinkWidth
+  sanitizeShrinkWidth,
+  ChunkConfigRowContent, ChunkConfigContent
 } from './scrollgrid/util'
 export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'
@@ -188,4 +189,5 @@ export { default as RefMap } from './util/RefMap'
 export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
 
 export { default as NowTimer, NowTimerCallback } from './NowTimer'
+export { default as ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'

@@ -140,8 +140,6 @@ export default class HitDragging {
 
   prepareHits() {
     this.offsetTrackers = mapHash(this.droppableStore, function(interactionSettings) {
-      interactionSettings.component.buildPositionCaches()
-
       return new OffsetTracker(interactionSettings.el)
     })
   }

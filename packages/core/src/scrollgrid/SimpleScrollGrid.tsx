@@ -7,6 +7,8 @@ import { ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getSc
   renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames, computeScrollerClientWidths, computeScrollerClientHeights,
   } from './util'
 import { memoize } from '../util/memoize'
+import { isPropsEqual } from '../util/object'
+import { guid } from '../util/misc'
 
 
 export interface SimpleScrollGridProps {
@@ -15,7 +17,6 @@ export interface SimpleScrollGridProps {
   vGrow?: boolean
   forPrint?: boolean
   height?: CssDimValue // TODO: give to real ScrollGrid
-  onSized?: () => void
 }
 
 export interface SimpleScrollGridSection extends SectionConfig {
@@ -23,19 +24,11 @@ export interface SimpleScrollGridSection extends SectionConfig {
 }
 
 interface SimpleScrollGridState {
-  isSizingReady: boolean
-  shrinkWidth: null | number
-  forceYScrollbars: null | boolean
-  scrollerClientWidths: null | { [index: string]: number }
-  scrollerClientHeights: null | { [index: string]: number }
-}
-
-const INITIAL_SIZING_STATE: SimpleScrollGridState = {
-  isSizingReady: false,
-  shrinkWidth: null,
-  forceYScrollbars: null,
-  scrollerClientWidths: null,
-  scrollerClientHeights: null
+  shrinkWidth: number | null
+  forceYScrollbars: boolean
+  scrollerClientWidths: { [index: string]: number }
+  scrollerClientHeights: { [index: string]: number }
+  sizingId: string
 }
 
 
@@ -45,15 +38,12 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
   scrollerRefs = new RefMap<Scroller>()
   scrollerElRefs = new RefMap<HTMLElement, [ChunkConfig]>(this._handleScrollerEl.bind(this))
 
-  state = INITIAL_SIZING_STATE
-
-
-  static getDerivedStateFromProps(props, state: SimpleScrollGridState) {
-    if (state.isSizingReady) { // from a prop change
-      return INITIAL_SIZING_STATE
-    } else if (state.scrollerClientWidths) { // the last sizing-state was just set
-      return { isSizingReady: true }
-    }
+  state = {
+    shrinkWidth: null,
+    forceYScrollbars: false,
+    scrollerClientWidths: {},
+    scrollerClientHeights: {},
+    sizingId: ''
   }
 
 
@@ -98,7 +88,6 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     }
 
     let { state } = this
-    let { isSizingReady } = state
 
     let needsYScrolling = getNeedsYScrolling(this.props, sectionConfig, chunkConfig) // TODO: do lazily
     let overflowY: OverflowValue = state.forceYScrollbars ? 'scroll' : (needsYScrolling ? 'auto' : 'hidden')
@@ -107,9 +96,9 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     let content = renderChunkContent(sectionConfig, chunkConfig, {
       tableColGroupNode: microColGroupNode,
       tableMinWidth: '',
-      tableWidth: isSizingReady ? state.scrollerClientWidths[sectionI] : '',
-      tableHeight: isSizingReady ? state.scrollerClientHeights[sectionI] : '', // TODO: subtract 1 for IE?????
-      isSizingReady
+      clientWidth: state.scrollerClientWidths[sectionI] || '',
+      clientHeight: state.scrollerClientHeights[sectionI] || '',
+      rowSyncHeights: []
     })
 
     // TODO: cleaner solution
@@ -157,59 +146,45 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
 
   componentDidMount() {
-    if (!this.props.forPrint) {
-      this.adjustSizing()
-    }
-
-    this.context.addResizeHandler(this.handleResize)
+    this.handleSizing(true)
+    this.context.addResizeHandler(this.handleSizing)
   }
 
 
-  componentDidUpdate(prevProps: SimpleScrollGridProps, prevState: SimpleScrollGridState) {
-    if (!this.props.forPrint) { // repeat code
-      this.adjustSizing()
-    }
+  componentDidUpdate(prevProps: SimpleScrollGridProps) {
+    // TODO: need better solution when state contains non-sizing things
+    this.handleSizing(!isPropsEqual(this.props, prevProps))
   }
 
 
   componentWillUnmount() {
-    this.context.removeResizeHandler(this.handleResize)
+    this.context.removeResizeHandler(this.handleSizing)
   }
 
 
-  adjustSizing() {
-    let { state } = this
-
-    if (state.shrinkWidth == null) {
+  handleSizing = (isExternalChange: boolean) => {
+    if (isExternalChange && !this.props.forPrint) {
+      let sizingId = guid()
       this.setState({
+        sizingId,
         shrinkWidth:
           hasShrinkWidth(this.props.cols) ? // TODO: do this optimization for ScrollGrid
             computeShrinkWidth(this.scrollerElRefs.getAll())
             : 0
+      }, () => {
+        if (sizingId === this.state.sizingId) {
+          this.setState({
+            forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getAll(), 'Y')
+          }, () => {
+            if (sizingId === this.state.sizingId) {
+              this.setState({
+                scrollerClientWidths: computeScrollerClientWidths(this.scrollerElRefs),
+                scrollerClientHeights: computeScrollerClientHeights(this.scrollerElRefs)
+              })
+            }
+          })
+        }
       })
-
-    } else if (state.forceYScrollbars == null) {
-      this.setState({
-        forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getAll(), 'Y')
-      })
-
-    } else if (!state.scrollerClientWidths) {
-      this.setState({
-        scrollerClientWidths: computeScrollerClientWidths(this.scrollerElRefs),
-        scrollerClientHeights: computeScrollerClientHeights(this.scrollerElRefs)
-      })
-
-    } else {
-      if (this.props.onSized) {
-        this.props.onSized()
-      }
-    }
-  }
-
-
-  handleResize = () => {
-    if (!this.props.forPrint) {
-      this.forceUpdate() // getDerivedStateFromProps will clear the sizing state
     }
   }
 
@@ -217,3 +192,9 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
   // TODO: can do a really simple print-view. dont need to join rows
 
 }
+
+SimpleScrollGrid.addStateEquality({
+  scrollerClientWidths: isPropsEqual,
+  scrollerClientHeights: isPropsEqual,
+  sizingId: true // never update base on this
+})

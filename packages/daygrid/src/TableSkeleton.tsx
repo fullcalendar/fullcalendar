@@ -10,9 +10,13 @@ import DayBgRow from './DayBgRow'
 import TableSkeletonDayCell from './TableSkeletonDayCell'
 
 
-export interface TableSkeletonProps {
-  elRef?: Ref<HTMLDivElement>
-  onReceiveEls?: (rowEls: HTMLElement[] | null, cellEls: HTMLElement[][] | null) => void
+export interface TableSkeletonProps extends TableBaseProps {
+  rowElRefs?: RefMap<HTMLDivElement>
+  cellElRefs?: RefMap<HTMLTableCellElement>[]
+}
+
+export interface TableBaseProps {
+  rootElRef?: Ref<HTMLDivElement>
   dateProfile: DateProfile
   cells: CellModel[][] // cells-BY-ROW
   isRigid: boolean
@@ -35,9 +39,6 @@ export interface CellModel {
 
 export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
 
-  rowElRefs = new RefMap<HTMLDivElement>()
-  cellElRefs = new RefMap<HTMLTableCellElement[]>() // the bg cells
-
 
   render(props: TableSkeletonProps) {
     let rowCnt = this.props.cells.length
@@ -50,36 +51,10 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
     }
 
     return (
-      <div class={'fc-day-grid' + (props.vGrow ? ' vgrow' : '')} ref={props.elRef}>
+      <div class={'fc-day-grid' + (props.vGrow ? ' vgrow' : '')} ref={props.rootElRef}>
         {rowNodes}
       </div>
     )
-  }
-
-
-  componentDidMount() {
-    this.sendDom()
-  }
-
-
-  componentDidUpdate() {
-    this.sendDom()
-  }
-
-
-  componentWillUnmount() {
-    let { onReceiveEls } = this.props
-    if (onReceiveEls) {
-      onReceiveEls(null, null)
-    }
-  }
-
-
-  sendDom() {
-    let { onReceiveEls } = this.props
-    if (onReceiveEls) {
-      onReceiveEls(this.rowElRefs.collect(), this.cellElRefs.collect())
-    }
   }
 
 
@@ -95,7 +70,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
     }
 
     return (
-      <div class={classes.join(' ')} ref={this.rowElRefs.createRef(row)}>
+      <div class={classes.join(' ')} ref={props.rowElRefs.createRef(row)}>
         <div class='fc-bg'>
           <table class={theme.getClass('table')}>
             {props.colGroupNode}
@@ -104,9 +79,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
                 cells={props.cells[row]}
                 dateProfile={props.dateProfile}
                 renderIntro={props.renderBgIntro}
-                onReceiveCellEls={(bgCellEls: HTMLTableCellElement[] | null) => {
-                  this.cellElRefs.handleValue(bgCellEls, row)
-                }}
+                cellElRefs={props.cellElRefs[row]}
               />
             </tbody>
           </table>
@@ -177,7 +150,3 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
   }
 
 }
-
-TableSkeleton.addPropsEquality({
-  onReceiveEls: true
-})

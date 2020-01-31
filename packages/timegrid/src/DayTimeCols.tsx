@@ -32,12 +32,13 @@ export interface DayTimeColsProps {
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
   tableColGroupNode: VNode
-  tableWidth: CssDimValue
-  tableHeight: CssDimValue
+  tableMinWidth: CssDimValue
+  clientWidth: CssDimValue
+  clientHeight: CssDimValue
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
+  onScrollTop?: (scrollTop: number) => void
   forPrint: boolean
-  allowSizing: boolean
 }
 
 interface DayTimeColsState {
@@ -52,8 +53,6 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
   private dayRanges: DateRange[] // for now indicator
   private slicer = new DayTimeColsSlicer()
   private timeColsRef = createRef<TimeCols>()
-
-  get timeCols() { return this.timeColsRef.current } // used for view's computeDateScroll :(
 
 
   render(props: DayTimeColsProps, state: DayTimeColsState, context: ComponentContext) {
@@ -70,14 +69,15 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
         dateProfile={dateProfile}
         cells={dayTableModel.cells[0]}
         tableColGroupNode={props.tableColGroupNode}
-        tableWidth={props.tableWidth}
-        tableHeight={props.tableHeight}
+        tableMinWidth={props.tableMinWidth}
+        clientWidth={props.clientWidth}
+        clientHeight={props.clientHeight}
         renderBgIntro={props.renderBgIntro}
         renderIntro={props.renderIntro}
         nowIndicatorDate={state.nowIndicatorDate}
         nowIndicatorSegs={state.nowIndicatorDate && this.slicer.sliceNowDate(state.nowIndicatorDate, this.context.calendar, this.dayRanges)}
+        onScrollTop={props.onScrollTop}
         forPrint={props.forPrint}
-        allowSizing={props.allowSizing}
       />
     )
   }
@@ -125,13 +125,8 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
   }
 
 
-  buildPositionCaches() {
-    this.timeCols.buildPositionCaches()
-  }
-
-
   queryHit(positionLeft: number, positionTop: number): Hit {
-    let rawHit = this.timeCols.positionToHit(positionLeft, positionTop)
+    let rawHit = this.timeColsRef.current.positionToHit(positionLeft, positionTop)
 
     if (rawHit) {
       return {

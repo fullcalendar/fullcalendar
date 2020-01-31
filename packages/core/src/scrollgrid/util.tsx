@@ -24,22 +24,25 @@ export interface SectionConfig {
   vGrowRows?: boolean // TODO: how to get a bottom rule?
 }
 
+export type ChunkConfigContent = (contentProps: ChunkContentCallbackArgs) => VNode
+export type ChunkConfigRowContent = VNode | ChunkConfigContent
+
 export interface ChunkConfig {
   outerContent?: VNode
-  content?: (contentProps: ChunkContentCallbackArgs) => VNode
-  rowContent?: VNode
+  content?: ChunkConfigContent
+  rowContent?: ChunkConfigRowContent
   vGrowRows?: boolean
   scrollerElRef?: Ref<HTMLDivElement>
   elRef?: Ref<HTMLTableCellElement>
   className?: string // on the <td>
 }
 
-export interface ChunkContentCallbackArgs {
+export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   tableColGroupNode: VNode
   tableMinWidth: CssDimValue
-  tableWidth: CssDimValue
-  tableHeight: CssDimValue
-  isSizingReady: boolean
+  clientWidth: CssDimValue
+  clientHeight: CssDimValue
+  rowSyncHeights: number[]
 }
 
 
@@ -89,52 +92,51 @@ export function getNeedsYScrolling(props: { vGrow?: boolean }, sectionConfig: Se
 }
 
 
-export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: {
-  tableColGroupNode: VNode,
-  tableMinWidth: CssDimValue,
-  tableWidth: CssDimValue,
-  tableHeight: CssDimValue,
-  isSizingReady: boolean
-}) {
-  let tableHeight = (sectionConfig.vGrowRows || chunkConfig.vGrowRows) ? arg.tableHeight : ''
+export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: ChunkContentCallbackArgs) {
+  let vGrowRows = sectionConfig.vGrowRows || chunkConfig.vGrowRows
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
-    chunkConfig.content({
-      tableColGroupNode: arg.tableColGroupNode,
-      tableMinWidth: arg.tableMinWidth,
-      tableWidth: arg.tableWidth,
-      tableHeight,
-      isSizingReady: arg.isSizingReady,
-    }) :
+    chunkConfig.content(arg) :
     h('table', {
       style: {
         minWidth: arg.tableMinWidth, // because colMinWidths arent enough
-        width: arg.tableWidth,
-        height: tableHeight // css `height` on a <table> serves as a min-height
+        width: arg.clientWidth,
+        height: vGrowRows ? arg.clientHeight : '' // css `height` on a <table> serves as a min-height
       }
     }, [
       arg.tableColGroupNode,
-      h('tbody', {}, chunkConfig.rowContent)
+      h('tbody', {}, typeof chunkConfig.rowContent === 'function' ? chunkConfig.rowContent(arg) : chunkConfig.rowContent)
     ])
 
   return content
 }
 
 
-export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) { // TODO: make this SuperColumn-only!???
-  return (
-    <colgroup>
-      {cols.map((colProps) => (
+// TODO: make this SuperColumn-only?
+export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) {
+  let colNodes: VNode[] = []
+
+  /*
+  for ColProps with spans, it would have been great to make a single <col span="">
+  HOWEVER, Chrome was getting messing up distributing the width to <td>/<th> elements with colspans.
+  SOLUTION: making individual <col> elements makes Chrome behave.
+  */
+  for (let colProps of cols) {
+    let span = colProps.span || 1
+
+    for (let i = 0; i < span; i++) {
+      colNodes.push(
         <col
-          span={colProps.span || 1}
           style={{
             width: colProps.width === 'shrink' ? sanitizeShrinkWidth(shrinkWidth) : (colProps.width || ''),
             minWidth: colProps.minWidth || ''
           }}
         />
-      ))}
-    </colgroup>
-  )
+      )
+    }
+  }
+
+  return (<colgroup>{colNodes}</colgroup>)
 }
 
 

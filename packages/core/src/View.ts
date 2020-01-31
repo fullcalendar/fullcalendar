@@ -1,5 +1,4 @@
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
-import { createDuration, Duration } from './datelib/duration'
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { ViewSpec } from './structs/view-spec'
 import DateComponent from './component/DateComponent'
@@ -54,22 +53,6 @@ export default abstract class View<State={}> extends DateComponent<ViewProps, St
       props.dateProfile.activeRange,
       allDay ? this.context.nextDayThreshold : null
     ).fg
-  }
-
-
-  // Scroller
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  scrollToInitialTime() {
-    let duration = createDuration(this.context.options.scrollTime)
-
-    this.scrollToTime(duration)
-  }
-
-
-  scrollToTime(duration: Duration) {
-    // subclasses can implement
   }
 
 }

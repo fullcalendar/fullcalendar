@@ -8,6 +8,7 @@ import { createDuration, Duration } from '../datelib/duration'
 import { PluginHooks } from '../plugin-system'
 import { createContext } from '../vdom'
 import { parseToolbars, ToolbarModel } from '../toolbar-parse'
+import ScrollResponder, { ScrollRequestHandler } from '../ScrollResponder'
 
 
 export const ComponentContextType = createContext<ComponentContext>({} as any) // for Components
@@ -28,6 +29,7 @@ export default interface ComponentContext {
   viewsWithButtons: string[]
   addResizeHandler: (handler: ResizeHandler) => void
   removeResizeHandler: (handler: ResizeHandler) => void
+  createScrollResponder: (execFunc: ScrollRequestHandler) => ScrollResponder
 }
 
 
@@ -48,7 +50,10 @@ export function buildContext(
     options,
     ...computeContextProps(options, theme, calendar),
     addResizeHandler: calendar.addResizeHandler,
-    removeResizeHandler: calendar.removeResizeHandler
+    removeResizeHandler: calendar.removeResizeHandler,
+    createScrollResponder(execFunc: ScrollRequestHandler) {
+      return new ScrollResponder(calendar, execFunc)
+    }
   }
 }
 

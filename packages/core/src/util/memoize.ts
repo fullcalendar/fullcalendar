@@ -23,11 +23,15 @@ function isArgsEqual(args0, args1, equality?) {
   }
 
   for (let i = 0; i < len; i++) {
-    if (
-      (equality && equality[i]) ?
-        !equality[i](args0[i], args1[i]) :
-        args0[i] !== args1[i]
-    ) {
+    let eq = equality && equality[i]
+
+    if (eq === true) {
+      ;
+    } else if (eq) {
+      if (!eq(args0[i], args1[i])) {
+        return false
+      }
+    } else if (args0[i] !== args1[i]) {
       return false
     }
   }

@@ -43,8 +43,6 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
   private slicer = new DayTableSlicer()
   private tableRef = createRef<Table>()
 
-  get table() { return this.tableRef.current }
-
 
   render(props: DayTableProps, state: {}, context: ComponentContext) {
     let { dateProfile, dayTableModel } = props
@@ -52,7 +50,7 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
     return (
       <Table
         ref={this.tableRef}
-        elRef={this.handleRootEl}
+        rootElRef={this.handleRootEl}
         { ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayTableModel) }
         dateProfile={dateProfile}
         cells={dayTableModel.cells}
@@ -81,13 +79,8 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
   }
 
 
-  buildPositionCaches() {
-    this.table.buildPositionCaches()
-  }
-
-
   queryHit(positionLeft: number, positionTop: number): Hit {
-    let rawHit = this.table.positionToHit(positionLeft, positionTop)
+    let rawHit = this.tableRef.current.positionToHit(positionLeft, positionTop)
 
     if (rawHit) {
       return {

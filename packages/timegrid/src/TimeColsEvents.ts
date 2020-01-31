@@ -6,11 +6,13 @@ import {
   Seg, isMultiDayRange, compareByFieldSpecs,
   computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, subrenderer
 } from '@fullcalendar/core'
-import TimeCols, { attachSegs, detachSegs } from './TimeCols'
+import { attachSegs, detachSegs } from './TimeCols'
+import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
 export interface TimeColsEventsProps extends BaseFgEventRendererProps {
   containerEls: HTMLElement[]
   forPrint: boolean
+  coords: TimeColsSlatsCoords
 }
 
 /*
@@ -27,6 +29,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
 
   render(props: TimeColsEventsProps, context: ComponentContext) {
+    let { coords } = props
     this.updateFormatter(context.options)
 
     let segs = this.renderSegs({
@@ -43,6 +46,11 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
       segs,
       containerEls: props.containerEls
     })
+
+    if (coords) {
+      this.computeSegSizes(segs, coords)
+      this.assignSegSizes(segs, coords)
+    }
   }
 
 
@@ -55,11 +63,11 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
   }
 
 
-  computeSegSizes(allSegs: Seg[], timeCols: TimeCols) {
+  computeSegSizes(allSegs: Seg[], slatCoords: TimeColsSlatsCoords) {
     let { segsByCol } = this
-    let colCnt = timeCols.props.cells.length
+    let colCnt = slatCoords.cells.length
 
-    timeCols.computeSegVerticals(allSegs) // horizontals relies on this
+    slatCoords.computeSegVerticals(allSegs) // horizontals relies on this
 
     for (let col = 0; col < colCnt; col++) {
       computeSegHorizontals(segsByCol[col], this.context) // compute horizontal coordinates, z-index's, and reorder the array
@@ -67,24 +75,24 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
   }
 
 
-  assignSegSizes(allSegs: Seg[], timeCols: TimeCols) {
+  assignSegSizes(allSegs: Seg[], slatCoords: TimeColsSlatsCoords) {
     let { segsByCol } = this
-    let colCnt = timeCols.props.cells.length
+    let colCnt = slatCoords.cells.length
 
-    timeCols.assignSegVerticals(allSegs) // horizontals relies on this
+    slatCoords.assignSegVerticals(allSegs) // horizontals relies on this
 
     for (let col = 0; col < colCnt; col++) {
-      this.assignSegCss(segsByCol[col], timeCols)
+      this.assignSegCss(segsByCol[col], slatCoords)
     }
   }
 
 
   // Given foreground event segments that have already had their position coordinates computed,
   // assigns position-related CSS values to their elements.
-  assignSegCss(segs: Seg[], timeCols: TimeCols) {
+  assignSegCss(segs: Seg[], slatCoords: TimeColsSlatsCoords) {
 
     for (let seg of segs) {
-      applyStyle(seg.el, this.generateSegCss(seg, timeCols))
+      applyStyle(seg.el, this.generateSegCss(seg, slatCoords))
 
       if (seg.level > 0) {
         seg.el.classList.add('fc-time-grid-event-inset')
@@ -97,6 +105,8 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
         seg.eventRange.def.title && seg.bottom - seg.top < 30
       ) {
         seg.el.classList.add('fc-short') // TODO: "condensed" is a better name
+      } else {
+        seg.el.classList.remove('fc-short') // ugh
       }
     }
   }
@@ -104,12 +114,12 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
   // Generates an object with CSS properties/values that should be applied to an event segment element.
   // Contains important positioning-related properties that should be applied to any event element, customized or not.
-  generateSegCss(seg: Seg, timeCols: TimeCols) {
+  generateSegCss(seg: Seg, slatCoords: TimeColsSlatsCoords) {
     let { isRtl, options } = this.context
     let shouldOverlap = options.slotEventOverlap
     let backwardCoord = seg.backwardCoord // the left side if LTR. the right side if RTL. floating-point
     let forwardCoord = seg.forwardCoord // the right side if LTR. the left side if RTL. floating-point
-    let props = timeCols.generateSegVerticalCss(seg) as any // get top/bottom first
+    let props = slatCoords.generateSegVerticalCss(seg) as any // get top/bottom first
     let left // amount of space from left edge, a fraction of the total width
     let right // amount of space from right edge, a fraction of the total width
 
@@ -242,6 +252,12 @@ function computeSegHorizontals(segs: Seg[], context: ComponentContext) {
   let level0
   let i
 
+  // why do we need to clear!?
+  for (let seg of segs) {
+    seg.forwardCoord = null
+    seg.backwardCoord = null
+  }
+
   levels = buildSlotSegLevels(segs)
   computeForwardSlotSegs(levels)
 
@@ -270,7 +286,7 @@ function computeSegForwardBack(seg: Seg, seriesBackwardPressure, seriesBackwardC
   let forwardSegs = seg.forwardSegs
   let i
 
-  if (seg.forwardCoord === undefined) { // not already computed
+  if (seg.forwardCoord == null) { // not already computed
 
     if (!forwardSegs.length) {
 

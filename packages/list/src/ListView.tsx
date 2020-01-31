@@ -30,7 +30,6 @@ export default class ListView extends View {
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
   private renderEvents = subrenderer(ListViewEvents)
   private scrollerElRef = createRef<HTMLDivElement>()
-  private eventRenderer: ListViewEvents
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
@@ -68,19 +67,11 @@ export default class ListView extends View {
 
   componentDidMount() {
     this.subrender()
-    this.handleSizing(false)
-    this.context.addResizeHandler(this.handleSizing)
   }
 
 
   componentDidUpdate() {
     this.subrender()
-    this.handleSizing(false)
-  }
-
-
-  componentWillUnmount() {
-    this.context.removeResizeHandler(this.handleSizing)
   }
 
 
@@ -88,7 +79,7 @@ export default class ListView extends View {
     let { props } = this
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
 
-    this.eventRenderer = this.renderEvents({
+    this.renderEvents({
       segs: this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges),
       dayDates,
       contentEl: this.scrollerElRef.current,
@@ -100,12 +91,6 @@ export default class ListView extends View {
       isResizing: false,
       isSelecting: false
     })
-  }
-
-
-  handleSizing = (forced: boolean) => {
-    this.eventRenderer.computeSizes(forced, this)
-    this.eventRenderer.assignSizes(forced, this)
   }
 
 

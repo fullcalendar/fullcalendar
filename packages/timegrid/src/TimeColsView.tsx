@@ -2,17 +2,13 @@ import {
   h, createRef,
   View,
   createFormatter, diffDays,
-  Duration,
   getViewClassNames,
   GotoAnchor,
-  ViewProps,
   SimpleScrollGridSection,
   VNode,
   SimpleScrollGrid,
   ChunkContentCallbackArgs
 } from '@fullcalendar/core'
-import { Table } from '@fullcalendar/daygrid'
-import { TimeCols } from './main'
 import AllDaySplitter from './AllDaySplitter'
 
 
@@ -28,19 +24,8 @@ const AUTO_ALL_DAY_EVENT_LIMIT = 5
 export default abstract class TimeColsView extends View {
 
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
-
   private rootElRef = createRef<HTMLDivElement>()
-  private dividerElRef = createRef<HTMLTableCellElement>()
   private scrollerElRef = createRef<HTMLDivElement>()
-  private axisWidth: any // the width of the time axis running down the side
-  private needsInitialScroll = false
-
-
-  // abstract requirements
-  // ----------------------------------------------------------------------------------------------------
-
-  abstract getAllDayTableObj(): { table: Table } | null
-  abstract getTimeColsObj(): { timeCols: TimeCols }
 
 
   // rendering
@@ -76,7 +61,6 @@ export default abstract class TimeColsView extends View {
         outerContent: (
           <tr>
             <td
-              ref={this.dividerElRef}
               class={'fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
@@ -101,37 +85,14 @@ export default abstract class TimeColsView extends View {
           vGrow={!props.isHeightAuto}
           cols={[ { width: 'shrink' } ]}
           sections={sections}
-          onSized={this.handleGridSized}
         />
       </div>
     )
   }
 
 
-  componentDidMount() {
-    let allDayTable = this.getAllDayTableObj()
-    let dividerEl = this.dividerElRef.current
-
-    if (allDayTable) {
-      allDayTable.table.bottomCoordPadding = dividerEl.getBoundingClientRect().height
-    }
-
-    this.needsInitialScroll = true
-  }
-
-
-  componentDidUpdate(prevProps: ViewProps) {
-    if (prevProps.dateProfile !== this.props.dateProfile) {
-      this.needsInitialScroll = true
-    }
-  }
-
-
-  handleGridSized = () => {
-    if (this.needsInitialScroll) {
-      this.needsInitialScroll = false
-      this.scrollToInitialTime()
-    }
+  handleScrollTop = (scrollTop: number) => {
+    this.scrollerElRef.current.scrollTop = scrollTop
   }
 
 
@@ -147,32 +108,6 @@ export default abstract class TimeColsView extends View {
     return eventLimit
   }
 
-
-  /* Scroll
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  scrollToTime(duration: Duration) {
-    let scrollTop = this.computeDateScroll(duration)
-    let scrollerEl = this.scrollerElRef.current
-
-    scrollerEl.scrollTop = scrollTop
-  }
-
-
-  // Computes the initial pre-configured scroll state prior to allowing the user to change it
-  computeDateScroll(duration: Duration) {
-    let top = this.getTimeColsObj().timeCols.computeTimeTop(duration)
-
-    // zoom can give weird floating-point values. rather scroll a little bit further
-    top = Math.ceil(top)
-
-    if (top) {
-      top++ // to overcome top border that slots beyond the first have. looks better
-    }
-
-    return top
-  }
 
 
   /* Header Render Methods
@@ -190,7 +125,7 @@ export default abstract class TimeColsView extends View {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
       return [
-        <th class={'fc-axis shrink fc-week-number'} style={this.getAxisStyles()}>
+        <th class={'fc-axis shrink fc-week-number'}>
           <div data-fc-width-all={1}>
             <GotoAnchor
               navLinks={options.navLinks}
@@ -203,17 +138,8 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <th class='fc-axis' style={this.getAxisStyles()}></th>
+      <th class='fc-axis'></th>
     ]
-  }
-
-
-  // Generates an HTML attribute string for setting the width of the axis, if it is known
-  getAxisStyles() {
-    if (this.axisWidth != null) {
-      return { width: this.axisWidth }
-    }
-    return {}
   }
 
 
@@ -224,7 +150,7 @@ export default abstract class TimeColsView extends View {
   // Generates the HTML that goes before the bg of the TimeCols slot area. Long vertical column.
   renderTimeColsBgIntro = () => {
     return [
-      <td class='fc-axis' style={this.getAxisStyles()}></td>
+      <td class='fc-axis'></td>
     ]
   }
 
@@ -233,7 +159,7 @@ export default abstract class TimeColsView extends View {
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderTimeColsIntro = () => {
     return [
-      <td class='fc-axis' style={this.getAxisStyles()}></td>
+      <td class='fc-axis'></td>
     ]
   }
 
@@ -254,7 +180,7 @@ export default abstract class TimeColsView extends View {
     }
 
     return [
-      <td class='shrink fc-axis' style={this.getAxisStyles()}>
+      <td class='shrink fc-axis'>
         <div data-fc-width-all={1}>
           <span {...spanAttrs} data-fc-width-content={1}>
             {child}
@@ -269,7 +195,7 @@ export default abstract class TimeColsView extends View {
   // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
   renderTableIntro = () => {
     return [
-      <td class='fc-axis' style={this.getAxisStyles()}></td>
+      <td class='fc-axis'></td>
     ]
   }
 
