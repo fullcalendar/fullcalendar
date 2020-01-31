@@ -21,7 +21,7 @@ import {
 
 export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
   clientWidth: CssDimValue
-  clientHeight: CssDimValue
+  minHeight: CssDimValue
   tableMinWidth: CssDimValue
   tableColGroupNode: VNode
   onCoords?: (coords: PositionCache | null) => void
@@ -64,7 +64,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
           style={{
             minWidth: props.tableMinWidth,
             width: props.clientWidth,
-            height: props.clientHeight
+            height: props.minHeight
           }}
         >
           {props.tableColGroupNode /* relies on there only being a single <col> for the axis */}
@@ -102,7 +102,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
   handleSizing = () => {
     let { props } = this
 
-    if (props.onCoords && props.clientHeight) {
+    if (props.onCoords && props.clientWidth) { // clientWidth means sizing has stabilized
       props.onCoords(
         new PositionCache(
           this.rootElRef.current,

@@ -62,7 +62,8 @@ export default class DayTimeColsView extends TimeColsView {
           tableMinWidth={contentArg.tableMinWidth}
           clientWidth={contentArg.clientWidth}
           clientHeight={contentArg.clientHeight}
-          onScrollTop={this.handleScrollTop}
+          vGrowRows={contentArg.vGrowRows}
+          onScrollTopRequest={this.handleScrollTopRequest}
         />
       )
     )

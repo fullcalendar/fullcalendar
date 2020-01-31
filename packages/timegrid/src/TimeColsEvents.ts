@@ -256,6 +256,7 @@ function computeSegHorizontals(segs: Seg[], context: ComponentContext) {
   for (let seg of segs) {
     seg.forwardCoord = null
     seg.backwardCoord = null
+    seg.forwardPressure = null
   }
 
   levels = buildSlotSegLevels(segs)
@@ -396,7 +397,7 @@ function computeSlotSegPressures(seg: Seg) {
   let i
   let forwardSeg
 
-  if (seg.forwardPressure === undefined) { // not already computed
+  if (seg.forwardPressure == null) { // not already computed
 
     for (i = 0; i < forwardSegs.length; i++) {
       forwardSeg = forwardSegs[i]

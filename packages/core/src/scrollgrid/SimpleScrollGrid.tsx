@@ -98,6 +98,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       tableMinWidth: '',
       clientWidth: state.scrollerClientWidths[sectionI] || '',
       clientHeight: state.scrollerClientHeights[sectionI] || '',
+      vGrowRows: sectionConfig.vGrowRows || chunkConfig.vGrowRows,
       rowSyncHeights: []
     })
 

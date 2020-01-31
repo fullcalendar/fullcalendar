@@ -42,11 +42,12 @@ export interface TimeColsProps {
   tableMinWidth: CssDimValue
   clientWidth: CssDimValue
   clientHeight: CssDimValue
+  vGrowRows: boolean
   renderBgIntro: () => VNode[]
   renderIntro: () => VNode[]
   nowIndicatorDate: DateMarker
   nowIndicatorSegs: TimeColsSeg[]
-  onScrollTop?: (scrollTop: number) => void
+  onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean
 }
 
@@ -99,7 +100,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
           dateProfile={dateProfile}
           slotDuration={slotDuration}
           clientWidth={props.clientWidth}
-          clientHeight={props.clientHeight}
+          minHeight={props.vGrowRows ? props.clientHeight : ''}
           tableMinWidth={props.tableMinWidth}
           tableColGroupNode={props.tableColGroupNode}
           onCoords={this.handleSlatCoords}
@@ -143,17 +144,17 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
 
 
   handleScrollRequest = (request: ScrollRequest) => {
-    let { onScrollTop } = this.props
+    let { onScrollTopRequest } = this.props
     let { slatCoords } = this.state
 
-    if (onScrollTop && slatCoords) {
+    if (onScrollTopRequest && slatCoords) {
 
       if (request.time) {
         let top = slatCoords.computeTimeTop(request.time)
         top = Math.ceil(top) // zoom can give weird floating-point values. rather scroll a little bit further
         if (top) { top++ } // to overcome top border that slots beyond the first have. looks better
 
-        onScrollTop(top)
+        onScrollTopRequest(top)
       }
 
       return true

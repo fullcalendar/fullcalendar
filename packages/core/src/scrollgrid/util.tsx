@@ -42,6 +42,7 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   tableMinWidth: CssDimValue
   clientWidth: CssDimValue
   clientHeight: CssDimValue
+  vGrowRows: boolean
   rowSyncHeights: number[]
 }
 

@@ -91,7 +91,7 @@ export default abstract class TimeColsView extends View {
   }
 
 
-  handleScrollTop = (scrollTop: number) => {
+  handleScrollTopRequest = (scrollTop: number) => {
     this.scrollerElRef.current.scrollTop = scrollTop
   }
 
