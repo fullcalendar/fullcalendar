@@ -1,60 +1,57 @@
+import { isArraysEqual } from './array'
 
-export function memoize<T>(workerFunc: T, equality?): T {
+
+// TODO: better typings!!!
+
+
+export function memoize<T>(workerFunc: T, resEquality?: (res0, res1) => boolean): T {
   let args
   let res
 
   return function() {
-    if (!args || !isArgsEqual(args, arguments, equality)) {
+    if (!args || !isArraysEqual(args, arguments)) { // the arguments have changed?...
       args = arguments
-      res = (workerFunc as any).apply(this, arguments)
+
+      let newRes = (workerFunc as any).apply(this, arguments)
+
+      if (res === undefined || !(resEquality ? resEquality(newRes, res) : newRes === res)) {
+        res = newRes // the result has changed
+      }
     }
 
     return res
   } as any
 }
 
-// TODO: merge with isArraysEqual?
-// TODO: better solution that links the function with the equality checks. like subrenderer?
-function isArgsEqual(args0, args1, equality?) {
-  let len = args0.length
 
-  if (len !== args1.length) {
-    return false
-  }
-
-  for (let i = 0; i < len; i++) {
-    let eq = equality && equality[i]
-
-    if (eq === true) {
-      ;
-    } else if (eq) {
-      if (!eq(args0[i], args1[i])) {
-        return false
-      }
-    } else if (args0[i] !== args1[i]) {
-      return false
-    }
-  }
-
-  return true
-}
-
-
-/*
-always executes the workerFunc, but if the result is equal to the previous result,
-return the previous result instead.
-TODO: somehow use memoize with equality funcs instead?
-*/
-export function memoizeOutput<T>(workerFunc: T, equalityFunc: (output0, output1) => boolean): T {
-  let cachedRes = null
+export function memoizeParallel<Res>(workerFunc: (...args: any[]) => Res, resEquality?: (res0, res1) => boolean): (...args: any[]) => Res[] {
+  let memoizers = []
 
   return function() {
-    let newRes = (workerFunc as any).apply(this, arguments)
+    let argCnt = arguments.length
+    let memoizerCnt = arguments[0].length
+    let i
+    let allRes = []
 
-    if (cachedRes === null || !(cachedRes === newRes || equalityFunc(cachedRes, newRes))) {
-      cachedRes = newRes
+    memoizers.splice(memoizerCnt) // remove excess
+
+    // add new
+    for (i = memoizers.length; i < memoizerCnt; i++) {
+      memoizers[i] = memoize(workerFunc, resEquality)
     }
 
-    return cachedRes
+    for (i = 0; i < memoizerCnt; i++) {
+      let args = []
+
+      for (let argIndex = 0; argIndex < argCnt; argIndex++) {
+        args.push(arguments[argIndex][i])
+      }
+
+      allRes.push(
+        memoizers[i].apply(this, args)
+      )
+    }
+
+    return allRes
   } as any
 }

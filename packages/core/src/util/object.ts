@@ -143,3 +143,49 @@ export function getUnequalProps(obj0, obj1) {
 
   return keys
 }
+
+
+
+export type EqualityFunc<T> = (a: T, b: T) => boolean
+export type EqualityThing<T> = EqualityFunc<T> | true
+
+export type EqualityFuncs<ObjType> = { // not really just a "func" anymore
+  [K in keyof ObjType]?: EqualityThing<ObjType[K]>
+}
+
+export function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any> = {}) {
+
+  if (oldProps === newProps) {
+    return true
+  }
+
+  for (let key in newProps) {
+    if (key in oldProps && isObjValsEqual(oldProps[key], newProps[key], equalityFuncs[key])) {
+      ; // equal
+    } else {
+      return false
+    }
+  }
+
+  // check for props that were omitted in the new
+  for (let key in oldProps) {
+    if (!(key in newProps)) {
+      return false
+    }
+  }
+
+  return true
+}
+
+/*
+assumed "true" equality for handler names like "onReceiveSomething"
+*/
+function isObjValsEqual<T>(val0: T, val1: T, comparator: EqualityThing<T>) {
+  if (val0 === val1 || comparator === true) {
+    return true
+  }
+  if (comparator) {
+    return comparator(val0, val1)
+  }
+  return false
+}

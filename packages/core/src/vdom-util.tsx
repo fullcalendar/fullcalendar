@@ -1,15 +1,7 @@
 import { Component, h, Fragment, Ref, ComponentChildren, render } from './vdom'
 import ComponentContext, { ComponentContextType } from './component/ComponentContext'
 import { __assign } from 'tslib'
-import { isPropsEqual, getUnequalProps } from './util/object'
-
-
-type EqualityFunc<T> = (a: T, b: T) => boolean
-type EqualityThing<T> = EqualityFunc<T> | true
-
-export type EqualityFuncs<ObjType> = { // not really just a "func" anymore
-  [K in keyof ObjType]?: EqualityThing<ObjType[K]>
-}
+import { compareObjs, EqualityFuncs } from './util/object'
 
 
 interface SubRendererOwner {
@@ -269,45 +261,6 @@ export function buildMapSubRenderer(subRendererClass: SubRendererClass<any>) {
 }
 
 
-function compareObjs(oldProps, newProps, equalityFuncs: EqualityFuncs<any> = {}) {
-
-  if (oldProps === newProps) {
-    return true
-  }
-
-  for (let key in newProps) {
-    if (key in oldProps && isObjValsEqual(oldProps[key], newProps[key], equalityFuncs[key])) {
-      ; // equal
-    } else {
-      return false
-    }
-  }
-
-  // check for props that were omitted in the new
-  for (let key in oldProps) {
-    if (!(key in newProps)) {
-      return false
-    }
-  }
-
-  return true
-}
-
-
-/*
-assumed "true" equality for handler names like "onReceiveSomething"
-*/
-function isObjValsEqual<T>(val0: T, val1: T, comparator: EqualityThing<T>) {
-  if (val0 === val1 || comparator === true) {
-    return true
-  }
-  if (comparator) {
-    return comparator(val0, val1)
-  }
-  return false
-}
-
-
 export function setRef<RefType>(ref: Ref<RefType> | void, current: RefType) {
   if (typeof ref === 'function') {
     ref(current)
@@ -328,26 +281,4 @@ export function renderVNodes(children: ComponentChildren, context: ComponentCont
   )
 
   return Array.prototype.slice.call(containerEl.childNodes)
-}
-
-
-// TODO: kill this at some pt???
-export function componentNeedsResize<P, S>(prevProps: P, props: P, prevState: S, state: S, stateIsSizing: { [K in keyof S]?: boolean }) {
-  if (!isPropsEqual(prevProps, props)) {
-    return true
-  }
-
-  let unequalState = getUnequalProps(prevState, state)
-
-  if (!unequalState.length) {
-    return true // if neither props nor state changed, that means context changed, so definitely do a resize!
-  }
-
-  for (let key of unequalState) {
-    if (!stateIsSizing[key]) {
-      return true
-    }
-  }
-
-  return false
 }

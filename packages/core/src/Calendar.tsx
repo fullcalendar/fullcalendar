@@ -9,7 +9,7 @@ import { createFormatter } from './datelib/formatting'
 import { createDuration, DurationInput, Duration } from './datelib/duration'
 import reduce from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
-import { memoize, memoizeOutput } from './util/memoize'
+import { memoize } from './util/memoize'
 import { mapHash, isPropsEqual } from './util/object'
 import { DateRangeInput, DateRange } from './datelib/date-range'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
@@ -91,7 +91,7 @@ export default class Calendar {
   private buildContext = memoize(buildContext)
   private buildEventUiSingleBase = memoize(buildEventUiSingleBase)
   private buildSelectionConfig = memoize(buildSelectionConfig)
-  private buildEventUiBySource = memoizeOutput(buildEventUiBySource, isPropsEqual)
+  private buildEventUiBySource = memoize(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
   private renderableEventStore: EventStore
   public eventUiBases: EventUiHash // needed for validation system

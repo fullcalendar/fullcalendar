@@ -114,7 +114,6 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
 }
 
 
-// TODO: make this SuperColumn-only?
 export function renderMicroColGroup(cols: ColProps[], shrinkWidth?: number) {
   let colNodes: VNode[] = []
 

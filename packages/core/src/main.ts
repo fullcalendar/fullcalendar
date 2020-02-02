@@ -42,7 +42,7 @@ export {
   isArraysEqual
 } from './util/array'
 
-export { memoize, memoizeOutput } from './util/memoize'
+export { memoize, memoizeParallel } from './util/memoize'
 
 export {
   intersectRects,
@@ -52,7 +52,7 @@ export {
   translateRect
 } from './util/geom'
 
-export { mapHash, filterHash, isPropsEqual } from './util/object'
+export { mapHash, filterHash, isPropsEqual, compareObjs } from './util/object'
 
 export {
   findElements,
@@ -171,7 +171,7 @@ export { default as EventApi } from './api/EventApi'
 export { default as requestJson } from './util/requestJson'
 
 export * from './vdom'
-export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes, buildMapSubRenderer, componentNeedsResize } from './vdom-util'
+export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes, buildMapSubRenderer } from './vdom-util'
 export { DelayedRunner } from './util/runner'
 
 export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgrid/SimpleScrollGrid'
