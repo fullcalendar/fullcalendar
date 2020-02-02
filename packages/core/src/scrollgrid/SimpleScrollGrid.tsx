@@ -102,42 +102,20 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       rowSyncHeights: []
     })
 
-    // TODO: cleaner solution
-    // in browsers other than Chrome, the height of the inner table was taking precedence over scroller's liquid height,
-    // making it so there's never be scrollbars (thus the position:relative div)
-    if (vGrow) {
-      return (
-        <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
-          <div style={{ position: 'relative' }} class='vgrow'>
-            <Scroller
-              ref={this.scrollerRefs.createRef(sectionI)}
-              elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
-              className={'vgrow--absolute' /* needed for sizing within table. TODO fix position:relative above */}
-              overflowY={overflowY}
-              overflowX='hidden'
-              maxHeight={sectionConfig.maxHeight}
-              vGrow={vGrow}
-            >{content}</Scroller>
-          </div>
-        </td>
-      )
-    } else {
-      return (
-        <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
-          <div>{/* when we didn't have this, preact was recycling the ref, and removing it
-            (not not adding it back yet) before recomputing the scrollbar-forcing  */}
-            <Scroller
-              ref={this.scrollerRefs.createRef(sectionI)}
-              elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
-              overflowY={overflowY}
-              overflowX='hidden'
-              maxHeight={sectionConfig.maxHeight}
-              vGrow={vGrow}
-            >{content}</Scroller>
-          </div>
-        </td>
-      )
-    }
+    return (
+      <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
+        <div class={'scrollerharness' + (vGrow ? ' vgrow' : '')}>
+          <Scroller
+            ref={this.scrollerRefs.createRef(sectionI)}
+            elRef={this.scrollerElRefs.createRef(sectionI, chunkConfig)}
+            overflowY={overflowY}
+            overflowX='hidden'
+            maxHeight={sectionConfig.maxHeight}
+            vGrow={vGrow}
+          >{content}</Scroller>
+        </div>
+      </td>
+    )
   }
 
 

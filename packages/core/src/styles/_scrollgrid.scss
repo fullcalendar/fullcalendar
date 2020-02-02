@@ -29,6 +29,20 @@
   }
 }
 
+// poor man's clippedscroller
+// needed to make give precedence to section growing before contents within scroller
+.scrollerharness.vgrow {
+  position: relative;
+
+  > .fc-scroller {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+  }
+}
+
 .clippedscroller {
   position: relative;
   overflow: hidden;
@@ -62,4 +76,25 @@
     bottom: 0 !important;
   }
 
+}
+
+// for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
+.fc-scrollgrid-vgrow-cell-hack {
+  td, th {
+    position: relative;
+
+    > .vgrow {
+      height: auto !important;
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+}
+
+// for most browsers, if a height isn't set on the table, can't do vgrow within cells
+.scrollgrid__section table {
+  height: 1px; // serves as a min-height. harmless
 }
