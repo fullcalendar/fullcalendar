@@ -23,41 +23,33 @@ it('list view rerenders well', function(done) {
     eventRenderCnt = 0
   }
 
-  function expectSomeViewRendering() {
-    expect(listSpy.renderCount).toBeLessThanOrEqual(2)
-    expect(listSpy.sizingCount).toBeLessThanOrEqual(2)
+  function expectViewRendered(bool) {
+    expect(listSpy.renderCount).toBe(bool ? 1 : 0)
   }
 
-  function expectNoViewRendering() {
-    expect(listSpy.renderCount).toBe(0)
-    expect(listSpy.sizingCount).toBe(0)
-  }
-
-  expectSomeViewRendering()
+  expectViewRendered(true)
   expect(eventRenderCnt).toBe(1)
 
   resetCounts()
   currentCalendar.next()
-  expectSomeViewRendering()
+  expectViewRendered(true)
   expect(eventRenderCnt).toBe(0) // event will be out of view
 
   resetCounts()
   currentCalendar.changeView('dayGridWeek') // switch away
-  expectNoViewRendering()
+  expectViewRendered(false)
   expect(eventRenderCnt).toBe(0)
 
   resetCounts()
-  currentCalendar.changeView('timeGridWeek') // return to view
-  expectSomeViewRendering()
+  currentCalendar.changeView('listWeek') // return to view
+  expectViewRendered(true)
   expect(eventRenderCnt).toBe(0) // event still out of view
 
   resetCounts()
   $(window).simulate('resize')
   setTimeout(function() {
 
-    // allow some rerendering as a result of handleSizing, but that's it
-    expect(listSpy.renderCount).toBeLessThanOrEqual(1)
-    expect(listSpy.sizingCount).toBeLessThanOrEqual(2)
+    expect(listSpy.renderCount).toBe(0)
     expect(eventRenderCnt).toBe(0)
 
     listSpy.detach()

@@ -11,7 +11,7 @@ import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
-import { h, Fragment, createRef, flushToDom } from './vdom'
+import { h, Fragment, createRef } from './vdom'
 import { BaseComponent, subrenderer } from './vdom-util'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
@@ -30,6 +30,7 @@ export interface CalendarComponentProps extends CalendarState {
 interface CalendarComponentState {
   forPrint: boolean
 }
+
 
 export default class CalendarComponent extends BaseComponent<CalendarComponentProps, CalendarComponentState> {
 
@@ -134,7 +135,6 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
   handleBeforePrint = () => {
     this.setState({ forPrint: true })
-    flushToDom()
   }
 
   handleAfterPrint = () => {

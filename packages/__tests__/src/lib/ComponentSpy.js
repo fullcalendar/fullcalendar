@@ -2,23 +2,16 @@
 export default class ComponentSpy {
 
   renderCount = 0
-  sizingCount = 0
 
 
   constructor(ComponentClass, debugClassName) {
     this.ComponentClass = ComponentClass
     let origDidMount = this.origDidMount = ComponentClass.prototype.componentDidMount
     let origDidUpdate = this.origDidUpdate = ComponentClass.prototype.componentDidUpdate
-    let origHandleSizing = null
     let watcher = this
 
     ComponentClass.prototype.componentDidMount = function() {
       watcher.renderCount++
-
-      if (this.handleSizing) {
-        origHandleSizing = this.handleSizing
-        this.handleSizing = handleSizing
-      }
 
       if (debugClassName) {
         console.log(debugClassName + '::componentDidMount', watcher.renderCount)
@@ -40,22 +33,11 @@ export default class ComponentSpy {
         origDidUpdate.apply(this, arguments)
       }
     }
-
-    function handleSizing() {
-      watcher.sizingCount++
-
-      if (debugClassName) {
-        console.log(debugClassName + '::handleSizing', watcher.sizingCount)
-      }
-
-      origHandleSizing.apply(this, arguments)
-    }
   }
 
 
   resetCounts() {
     this.renderCount = 0
-    this.sizingCount = 0
   }
 
 

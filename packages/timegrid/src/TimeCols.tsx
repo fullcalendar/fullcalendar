@@ -61,7 +61,6 @@ export const TIME_COLS_NOW_INDICATOR_UNIT = 'minute'
 
 interface TimeColsState {
   slatCoords?: TimeColsSlatsCoords
-  colCoords?: PositionCache
 }
 
 
@@ -71,6 +70,7 @@ interface TimeColsState {
 export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
   private processSlotOptions = memoize(processSlotOptions)
+  private colCoords: PositionCache
   private slotDuration: Duration
   private snapDuration: Duration
   private snapsPerSlot: number
@@ -163,7 +163,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
 
 
   handlColCoords = (colCoords: PositionCache | null) => {
-    this.setState({ colCoords })
+    this.colCoords = colCoords
   }
 
 
@@ -184,8 +184,8 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
 
   positionToHit(positionLeft, positionTop) {
     let { dateEnv } = this.context
-    let { colCoords, slatCoords } = this.state
-    let { snapsPerSlot, snapDuration } = this
+    let { slatCoords } = this.state
+    let { snapsPerSlot, snapDuration, colCoords } = this
 
     let colIndex = colCoords.leftToIndex(positionLeft)
     let slatIndex = slatCoords.positions.topToIndex(positionTop)

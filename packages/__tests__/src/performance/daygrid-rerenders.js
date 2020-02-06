@@ -26,44 +26,43 @@ it('daygrid view rerenders well', function(done) {
     eventRenderCnt = 0
   }
 
-  function expectSomeViewRendering() {
-    expect(headerSpy.renderCount).toBeLessThanOrEqual(2)
-    expect(gridSpy.renderCount).toBeLessThanOrEqual(2)
-    expect(gridSpy.sizingCount).toBeLessThanOrEqual(2)
+  function expectHeaderRendered(bool) {
+    expect(headerSpy.renderCount).toBe(bool ? 1 : 0)
   }
 
-  function expectNoViewRendering() {
-    expect(headerSpy.renderCount).toBe(0)
-    expect(gridSpy.renderCount).toBe(0)
-    expect(gridSpy.sizingCount).toBe(0)
+  function expectGridRendered(bool) {
+    // 2nd render is for shrinkWidth
+    expect(gridSpy.renderCount).toBeLessThanOrEqual(bool ? 2 : 0)
   }
 
-  expectSomeViewRendering()
+  expectHeaderRendered(true)
+  expectGridRendered(true)
   expect(eventRenderCnt).toBe(1)
 
   resetCounts()
   currentCalendar.next()
-  expectSomeViewRendering()
+  expectHeaderRendered(true)
+  expectGridRendered(true)
   expect(eventRenderCnt).toBe(0) // event will be out of view
 
   resetCounts()
   currentCalendar.changeView('listWeek') // switch away
-  expectNoViewRendering()
+  expectHeaderRendered(false)
+  expectGridRendered(false)
   expect(eventRenderCnt).toBe(0)
 
   resetCounts()
   currentCalendar.changeView('dayGridMonth') // return to view
-  expectSomeViewRendering()
+  expectHeaderRendered(true)
+  expectGridRendered(true)
   expect(eventRenderCnt).toBe(0) // event still out of view
 
   resetCounts()
   $(window).simulate('resize')
   setTimeout(function() {
 
-    // allow some rerendering as a result of handleSizing, but that's it
-    expect(headerSpy.renderCount).toBeLessThanOrEqual(1)
-    expect(gridSpy.renderCount).toBeLessThanOrEqual(1)
-    expect(gridSpy.sizingCount).toBeLessThanOrEqual(2)
+    expectHeaderRendered(false)
+    expectGridRendered(true) // receives new coords
     expect(eventRenderCnt).toBe(0)
 
     headerSpy.detach()

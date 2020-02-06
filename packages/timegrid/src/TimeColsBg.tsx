@@ -40,29 +40,26 @@ export default class TimeColsBg extends BaseComponent<TimeColsBgProps> {
 
 
   componentDidMount() {
-    this.handleSizing()
-    this.context.addResizeHandler(this.handleSizing)
+    this.updateCoords()
   }
 
 
   componentDidUpdate() {
-    this.handleSizing()
+    this.updateCoords()
   }
 
 
   componentWillUnmount() {
-    this.context.removeResizeHandler(this.handleSizing)
-
     if (this.props.onCoords) {
       this.props.onCoords(null)
     }
   }
 
 
-  handleSizing = () => {
+  updateCoords() {
     let { props } = this
 
-    if (props.onCoords && props.tableColGroupNode && props.clientWidth) {
+    if (props.onCoords && props.clientWidth) { // clientWidth means sizing has stabilized
       props.onCoords(
         new PositionCache(
           this.rootElRef.current,

@@ -146,8 +146,8 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       let sizingId = guid()
       this.setState({
         sizingId,
-        shrinkWidth:
-          hasShrinkWidth(this.props.cols) ? // TODO: do this optimization for ScrollGrid
+        shrinkWidth: // will create each chunk's <colgroup>
+          hasShrinkWidth(this.props.cols) ?
             computeShrinkWidth(this.scrollerElRefs.getAll())
             : 0
       }, () => {
@@ -156,7 +156,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
             forceYScrollbars: computeForceScrollbars(this.scrollerRefs.getAll(), 'Y')
           }, () => {
             if (sizingId === this.state.sizingId) {
-              this.setState({
+              this.setState({ // will set each chunk's clientWidth
                 scrollerClientWidths: computeScrollerClientWidths(this.scrollerElRefs),
                 scrollerClientHeights: computeScrollerClientHeights(this.scrollerElRefs)
               })

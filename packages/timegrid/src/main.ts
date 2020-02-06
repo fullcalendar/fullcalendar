@@ -7,6 +7,8 @@ import './main.scss'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildTimeColsModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
 export { default as TimeCols, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'
+export { TimeColsSlatsBody } from './TimeColsSlats'
+export { TimeColsContentBody } from './TimeColsContent'
 export { default as TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 export default createPlugin({

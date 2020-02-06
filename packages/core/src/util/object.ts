@@ -100,7 +100,11 @@ export function hashValuesToArray(obj) { // can't use Object.values yet because 
 }
 
 
-export function isPropsEqual(obj0, obj1) {
+export function isPropsEqual(obj0, obj1) { // TODO: merge with compareObjs
+
+  if (obj0 === obj1) {
+    return true
+  }
 
   for (let key in obj0) {
     if (hasOwnProperty.call(obj0, key)) {

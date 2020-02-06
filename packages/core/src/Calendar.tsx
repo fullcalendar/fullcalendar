@@ -176,7 +176,6 @@ export default class Calendar {
       this.isRendering = true
       this.renderableEventStore = createEmptyEventStore()
       this.renderRunner.request()
-      flushToDom()
       window.addEventListener('resize', this.handleWindowResize)
     }
   }
@@ -357,6 +356,7 @@ export default class Calendar {
       </ComponentContextType.Provider>,
       this.el
     )
+    flushToDom()
 
     let calendarComponent = this.component
     let viewComponent = calendarComponent.view

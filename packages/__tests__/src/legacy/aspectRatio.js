@@ -10,13 +10,13 @@ describe('aspectRatio', function() {
 
     var elementWidth = 675
 
-    it('fc-content should use the ratio 1:35 to set height', function() {
+    it('view div should use the ratio 1:35 to set height', function() {
       initCalendar({}, getCalendarElement(elementWidth))
       var height = getViewContainerEl().height()
       expect(Math.round(height)).toEqual(500)
     })
 
-    it('fc-content should have width of div', function() {
+    it('view div should have width of div', function() {
       initCalendar({}, getCalendarElement(elementWidth))
       var width = getViewContainerEl().width()
       expect(Math.round(width)).toEqual(elementWidth)

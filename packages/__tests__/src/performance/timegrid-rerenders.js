@@ -1,13 +1,12 @@
 import { DayHeader } from '@fullcalendar/core'
-import { Table } from '@fullcalendar/daygrid'
-import { TimeCols } from '@fullcalendar/timegrid'
+import { TimeColsSlatsBody, TimeColsContentBody } from '@fullcalendar/timegrid'
 import ComponentSpy from '../lib/ComponentSpy'
 
 
 it('timegrid view rerenders well', function(done) {
   let headerSpy = new ComponentSpy(DayHeader)
-  let dayGridSpy = new ComponentSpy(Table)
-  let timeGridSpy = new ComponentSpy(TimeCols)
+  let slatsSpy = new ComponentSpy(TimeColsSlatsBody)
+  let colContentSpy = new ComponentSpy(TimeColsContentBody)
   let eventRenderCnt = 0
 
   initCalendar({
@@ -24,60 +23,62 @@ it('timegrid view rerenders well', function(done) {
 
   function resetCounts() {
     headerSpy.resetCounts()
-    dayGridSpy.resetCounts()
-    timeGridSpy.resetCounts()
+    slatsSpy.resetCounts()
+    colContentSpy.resetCounts()
     eventRenderCnt = 0
   }
 
-  function expectSomeViewRendering() {
-    expect(headerSpy.renderCount).toBeLessThanOrEqual(2)
-    expect(dayGridSpy.renderCount).toBeLessThanOrEqual(2)
-    expect(dayGridSpy.sizingCount).toBeLessThanOrEqual(2)
-    expect(timeGridSpy.renderCount).toBeLessThanOrEqual(2)
-    expect(timeGridSpy.sizingCount).toBeLessThanOrEqual(2)
+  function expectHeaderRendered(bool) {
+    expect(headerSpy.renderCount).toBe(bool ? 1 : 0)
   }
 
-  function expectNoViewRendering() {
-    expect(headerSpy.renderCount).toBe(0)
-    expect(dayGridSpy.renderCount).toBe(0)
-    expect(dayGridSpy.sizingCount).toBe(0)
-    expect(timeGridSpy.renderCount).toBe(0)
-    expect(timeGridSpy.sizingCount).toBe(0)
+  function expectSlatsRendered(bool) {
+    expect(slatsSpy.renderCount).toBe(bool ? 1 : 0)
   }
 
-  expectSomeViewRendering()
+  function expectColContentRendered(bool) {
+    // 2nd rerender is when receives slat coords
+    expect(colContentSpy.renderCount).toBeLessThanOrEqual(bool ? 2 : 0)
+  }
+
+  expectHeaderRendered(true)
+  expectSlatsRendered(true)
+  expectColContentRendered(true)
   expect(eventRenderCnt).toBe(1)
 
   resetCounts()
   currentCalendar.next()
-  expectSomeViewRendering()
+  expectHeaderRendered(true)
+  expectSlatsRendered(true)
+  expectColContentRendered(true)
   expect(eventRenderCnt).toBe(0) // event will be out of view
 
   resetCounts()
   currentCalendar.changeView('listWeek') // switch away
-  expectNoViewRendering()
+  expectHeaderRendered(false)
+  expectSlatsRendered(false)
+  expectColContentRendered(false)
   expect(eventRenderCnt).toBe(0)
 
   resetCounts()
   currentCalendar.changeView('timeGridWeek') // return to view
-  expectSomeViewRendering()
+  expectHeaderRendered(true)
+  expectSlatsRendered(true)
+  expectColContentRendered(true)
   expect(eventRenderCnt).toBe(0) // event still out of view
 
   resetCounts()
   $(window).simulate('resize')
   setTimeout(function() {
 
-    // allow some rerendering as a result of handleSizing, but that's it
-    expect(headerSpy.renderCount).toBeLessThanOrEqual(1)
-    expect(dayGridSpy.renderCount).toBeLessThanOrEqual(1)
-    expect(dayGridSpy.sizingCount).toBeLessThanOrEqual(2)
-    expect(timeGridSpy.renderCount).toBeLessThanOrEqual(1)
-    expect(timeGridSpy.sizingCount).toBeLessThanOrEqual(2)
+    expectHeaderRendered(false)
+    expectSlatsRendered(false)
+    expectColContentRendered(true) // should have adjust based of new slat coords
     expect(eventRenderCnt).toBe(0)
 
     headerSpy.detach()
-    dayGridSpy.detach()
-    timeGridSpy.detach()
+    slatsSpy.detach()
+    colContentSpy.detach()
 
     done()
   }, 1) // more than windowResizeDelay

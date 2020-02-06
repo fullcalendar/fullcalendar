@@ -65,11 +65,11 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
 }
 
 
-interface TimeColsContentBodyProps extends TimeColsContentBaseProps {
+export interface TimeColsContentBodyProps extends TimeColsContentBaseProps {
   nowIndicatorTop: number
 }
 
-interface TimeColsContentBaseProps {
+export interface TimeColsContentBaseProps {
   colCnt: number
   businessHourSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
@@ -85,7 +85,7 @@ interface TimeColsContentBaseProps {
 }
 
 
-class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps> {
+export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps> {
 
   private renderMirrorEvents = subrenderer(TimeColsMirrorEvents)
   private renderFgEvents = subrenderer(TimeColsEvents)

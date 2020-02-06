@@ -80,26 +80,23 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
 
   componentDidMount() {
-    this.handleSizing()
-    this.context.addResizeHandler(this.handleSizing)
+    this.updateCoords()
   }
 
 
   componentDidUpdate() {
-    this.handleSizing()
+    this.updateCoords()
   }
 
 
   componentWillUnmount() {
-    this.context.removeResizeHandler(this.handleSizing)
-
     if (this.props.onCoords) {
       this.props.onCoords(null)
     }
   }
 
 
-  handleSizing = () => {
+  updateCoords() {
     let { props } = this
 
     if (props.onCoords && props.clientWidth) { // clientWidth means sizing has stabilized
@@ -117,12 +114,12 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 }
 
 
-interface TimeColsSlatsBodyProps extends TimeColsSlatsContentProps {
+export interface TimeColsSlatsBodyProps extends TimeColsSlatsContentProps {
   slatElRefs: RefMap<HTMLTableRowElement>
 }
 
 
-class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
+export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
   private getLabelInterval = memoize(getLabelInterval)
   private getLabelFormat = memoize(getLabelFormat)
