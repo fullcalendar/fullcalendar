@@ -1,18 +1,18 @@
 import {
   h, VNode,
   BaseComponent,
-  findElements,
   subrenderer,
-  removeElement,
   EventSegUiInteractionState,
   CssDimValue,
   DateMarker,
+  RefMap
 } from '@fullcalendar/core'
 import TimeColsMirrorEvents from './TimeColsMirrorEvents'
 import TimeColsEvents from './TimeColsEvents'
 import TimeColsFills from './TimeColsFills'
 import { TimeColsSeg } from './TimeCols'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
+import TimeColsNowIndicator from './TimeColsNowIndicator'
 
 
 export interface TimeColsContentProps extends TimeColsContentBaseProps {
@@ -92,14 +92,14 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
   private renderBgEvents = subrenderer(TimeColsFills)
   private renderBusinessHours = subrenderer(TimeColsFills)
   private renderDateSelection = subrenderer(TimeColsFills)
-  private renderNowIndicator = subrenderer(this._renderNowIndicator, this._unrenderNowIndicator)
+  private renderNowIndicator = subrenderer(TimeColsNowIndicator)
 
-  private colContainerEls: HTMLElement[]
-  private mirrorContainerEls: HTMLElement[]
-  private fgContainerEls: HTMLElement[]
-  private bgContainerEls: HTMLElement[]
-  private highlightContainerEls: HTMLElement[]
-  private businessContainerEls: HTMLElement[]
+  private colContainerRefs = new RefMap<HTMLElement>()
+  private mirrorContainerRefs = new RefMap<HTMLElement>()
+  private fgContainerRefs = new RefMap<HTMLElement>()
+  private bgContainerRefs = new RefMap<HTMLElement>()
+  private highlightContainerRefs = new RefMap<HTMLElement>()
+  private businessContainerRefs = new RefMap<HTMLElement>()
 
 
   render(props: TimeColsContentBodyProps) {
@@ -108,34 +108,22 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
     for (let i = 0; i < props.colCnt; i++) {
       cellNodes.push(
         <td>
-          <div class='fc-content-col'>
-            <div class='fc-event-container fc-mirror-container'></div>
-            <div class='fc-event-container'></div>
-            <div class='fc-highlight-container'></div>
-            <div class='fc-bgevent-container'></div>
-            <div class='fc-business-container'></div>
+          <div class='fc-content-col' ref={this.colContainerRefs.createRef(i)}>
+            <div class='fc-event-container fc-mirror-container' ref={this.mirrorContainerRefs.createRef(i)} />
+            <div class='fc-event-container' ref={this.fgContainerRefs.createRef(i)} />
+            <div class='fc-highlight-container' ref={this.highlightContainerRefs.createRef(i)} />
+            <div class='fc-bgevent-container' ref={this.bgContainerRefs.createRef(i)} />
+            <div class='fc-business-container' ref={this.businessContainerRefs.createRef(i)} />
           </div>
         </td>
       )
     }
 
     return (
-      <tbody ref={this.handleRootEl}>
+      <tbody>
         <tr>{cellNodes}</tr>
       </tbody>
     )
-  }
-
-
-  handleRootEl = (rootEl: HTMLElement) => {
-    if (rootEl) {
-      this.colContainerEls = findElements(rootEl, '.fc-content-col')
-      this.mirrorContainerEls = findElements(rootEl, '.fc-mirror-container')
-      this.fgContainerEls = findElements(rootEl, '.fc-event-container:not(.fc-mirror-container)')
-      this.bgContainerEls = findElements(rootEl, '.fc-bgevent-container')
-      this.highlightContainerEls = findElements(rootEl, '.fc-highlight-container')
-      this.businessContainerEls = findElements(rootEl, '.fc-business-container')
-    }
   }
 
 
@@ -160,27 +148,27 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
 
     this.renderBusinessHours({
       type: 'businessHours',
-      containerEls: this.businessContainerEls,
+      containerEls: this.businessContainerRefs.collect(),
       segs: props.businessHourSegs,
       coords: props.coords
     })
 
     this.renderDateSelection({
       type: 'highlight',
-      containerEls: this.highlightContainerEls,
+      containerEls: this.highlightContainerRefs.collect(),
       segs: options.selectMirror ? [] : props.dateSelectionSegs, // do highlight if NO mirror
       coords: props.coords
     })
 
     this.renderBgEvents({
       type: 'bgEvent',
-      containerEls: this.bgContainerEls,
+      containerEls: this.bgContainerRefs.collect(),
       segs: props.bgEventSegs,
       coords: props.coords
     })
 
     this.renderFgEvents({
-      containerEls: this.fgContainerEls,
+      containerEls: this.fgContainerRefs.collect(),
       segs: props.fgEventSegs,
       selectedInstanceId: props.eventSelection,
       hiddenInstances: // TODO: more convenient
@@ -193,12 +181,13 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
       coords: props.coords
     })
 
-    this.subrenderMirror(this.mirrorContainerEls, options)
+    this.subrenderMirror(this.mirrorContainerRefs.collect(), options)
 
     this.renderNowIndicator({
+      colContainerEls: this.colContainerRefs.collect(),
       nowIndicatorTop: props.nowIndicatorTop,
       segs: props.nowIndicatorSegs
-    })
+    } as any) // WTF
   }
 
 
@@ -243,33 +232,6 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
     } else {
       return this.renderMirrorEvents(false)
     }
-  }
-
-
-  _renderNowIndicator({ nowIndicatorTop, segs }: { nowIndicatorTop: number | null, segs: TimeColsSeg[] }) {
-
-    if (nowIndicatorTop == null) {
-      return []
-    }
-
-    let nodes: HTMLElement[] = []
-    let i
-
-    // render lines within the columns
-    for (i = 0; i < segs.length; i++) {
-      let lineEl = document.createElement('div')
-      lineEl.className = 'fc-now-indicator fc-now-indicator-line'
-      lineEl.style.top = nowIndicatorTop + 'px'
-      this.colContainerEls[segs[i].col].appendChild(lineEl)
-      nodes.push(lineEl)
-    }
-
-    return nodes
-  }
-
-
-  _unrenderNowIndicator(nodes: HTMLElement[]) {
-    nodes.forEach(removeElement)
   }
 
 }

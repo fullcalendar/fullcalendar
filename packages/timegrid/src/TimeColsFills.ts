@@ -1,4 +1,4 @@
-import { FillRenderer, subrenderer, BaseFillRendererProps } from '@fullcalendar/core'
+import { FillRenderer, subrenderer, BaseFillRendererProps, isArraysEqual } from '@fullcalendar/core'
 import { attachSegs, detachSegs } from './TimeCols'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
@@ -32,3 +32,7 @@ export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
   }
 
 }
+
+TimeColsFills.addPropsEquality({
+  containerEls: isArraysEqual
+})

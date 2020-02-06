@@ -4,7 +4,7 @@ import {
   createFormatter, DateFormatter,
   FgEventRenderer, buildSegCompareObj,
   Seg, isMultiDayRange, compareByFieldSpecs,
-  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, subrenderer
+  computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, subrenderer, isArraysEqual
 } from '@fullcalendar/core'
 import { attachSegs, detachSegs } from './TimeCols'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
@@ -242,6 +242,10 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
   }
 
 }
+
+TimeColsEvents.addPropsEquality({
+  containerEls: isArraysEqual
+})
 
 
 // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
