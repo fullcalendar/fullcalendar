@@ -24,7 +24,7 @@ import TimeColsSlats from './TimeColsSlats'
 import TimeColsContent from './TimeColsContent'
 import TimeColsBg from './TimeColsBg'
 import { __assign } from 'tslib'
-import TimeColsSlatsCoords from './TimeColsSlatsCoords'
+import TimeColsSlatsCoords, { TimeColsSlatsCoordsProps } from './TimeColsSlatsCoords'
 
 
 export interface TimeColsProps {
@@ -60,7 +60,7 @@ export interface TimeColsSeg extends Seg {
 export const TIME_COLS_NOW_INDICATOR_UNIT = 'minute'
 
 interface TimeColsState {
-  slatCoords?: TimeColsSlatsCoords
+  slatPositions?: PositionCache
 }
 
 
@@ -70,20 +70,29 @@ interface TimeColsState {
 export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
   private processSlotOptions = memoize(processSlotOptions)
-  private colCoords: PositionCache
-  private slotDuration: Duration
+  private buildSlatCoords = memoize(buildSlatCoords)
   private snapDuration: Duration
   private snapsPerSlot: number
   private scrollResponder: ScrollResponder
+  private colCoords: PositionCache
+  private slatCoords: TimeColsSlatsCoords
 
 
   render(props: TimeColsProps, state: TimeColsState, context: ComponentContext) {
+    let { options } = context
     let { dateProfile } = props
 
-    let { slotDuration, snapDuration, snapsPerSlot } = this.processSlotOptions(context.options)
-    this.slotDuration = slotDuration
+    let { slotDuration, snapDuration, snapsPerSlot } = this.processSlotOptions(options)
     this.snapDuration = snapDuration
     this.snapsPerSlot = snapsPerSlot
+
+    this.slatCoords = this.buildSlatCoords({
+      positions: state.slatPositions,
+      dateProfile: props.dateProfile,
+      slotDuration,
+      cells: props.cells,
+      eventMinHeight: options.timeGridEventMinHeight
+    })
 
     return (
       <div class='fc-time-grid' ref={props.rootElRef}>
@@ -120,7 +129,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
           clientWidth={props.clientWidth}
           tableMinWidth={props.tableMinWidth}
           tableColGroupNode={props.tableColGroupNode}
-          coords={state.slatCoords}
+          coords={this.slatCoords}
           forPrint={props.forPrint}
         />
       </div>
@@ -145,7 +154,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
 
   handleScrollRequest = (request: ScrollRequest) => {
     let { onScrollTopRequest } = this.props
-    let { slatCoords } = this.state
+    let { slatCoords } = this
 
     if (onScrollTopRequest && slatCoords) {
 
@@ -167,32 +176,22 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
   }
 
 
-  handleSlatCoords = (coords: PositionCache | null) => {
-    let { props } = this
-
-    let slatCoords = coords ? new TimeColsSlatsCoords(
-      coords,
-      props.dateProfile,
-      this.slotDuration,
-      props.cells,
-      this.context
-    ) : null
-
-    this.setState({ slatCoords })
+  handleSlatCoords = (slatPositions: PositionCache | null) => {
+    this.setState({ slatPositions })
   }
 
 
   positionToHit(positionLeft, positionTop) {
     let { dateEnv } = this.context
-    let { slatCoords } = this.state
     let { snapsPerSlot, snapDuration, colCoords } = this
+    let { slatPositions } = this.state
 
     let colIndex = colCoords.leftToIndex(positionLeft)
-    let slatIndex = slatCoords.positions.topToIndex(positionTop)
+    let slatIndex = slatPositions.topToIndex(positionTop)
 
     if (colIndex != null && slatIndex != null) {
-      let slatTop = slatCoords.positions.tops[slatIndex]
-      let slatHeight = slatCoords.positions.getHeight(slatIndex)
+      let slatTop = slatPositions.tops[slatIndex]
+      let slatHeight = slatPositions.getHeight(slatIndex)
       let partial = (positionTop - slatTop) / slatHeight // floating point number between 0 and 1
       let localSnapIndex = Math.floor(partial * snapsPerSlot) // the snap # relative to start of slat
       let snapIndex = slatIndex * snapsPerSlot + localSnapIndex
@@ -287,4 +286,13 @@ function processSlotOptions(options) {
   }
 
   return { slotDuration, snapDuration, snapsPerSlot }
+}
+
+
+function buildSlatCoords(slatCoordProps: TimeColsSlatsCoordsProps) {
+  if (slatCoordProps.positions) {
+    return new TimeColsSlatsCoords(slatCoordProps)
+  } else {
+    return null
+  }
 }

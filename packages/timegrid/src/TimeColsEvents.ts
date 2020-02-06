@@ -65,7 +65,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
   computeSegSizes(allSegs: Seg[], slatCoords: TimeColsSlatsCoords) {
     let { segsByCol } = this
-    let colCnt = slatCoords.cells.length
+    let colCnt = this.props.containerEls.length
 
     slatCoords.computeSegVerticals(allSegs) // horizontals relies on this
 
@@ -77,7 +77,7 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
   assignSegSizes(allSegs: Seg[], slatCoords: TimeColsSlatsCoords) {
     let { segsByCol } = this
-    let colCnt = slatCoords.cells.length
+    let colCnt = this.props.containerEls.length
 
     slatCoords.assignSegVerticals(allSegs) // horizontals relies on this
 

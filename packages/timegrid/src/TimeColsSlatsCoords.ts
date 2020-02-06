@@ -1,22 +1,25 @@
-import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, Seg, applyStyle, ComponentContext, rangeContainsMarker } from '@fullcalendar/core'
+import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, Seg, applyStyle, rangeContainsMarker } from '@fullcalendar/core'
 import { DayBgCellModel } from '@fullcalendar/daygrid'
+
+
+export interface TimeColsSlatsCoordsProps {
+  positions: PositionCache
+  dateProfile: DateProfile
+  slotDuration: Duration
+  cells: DayBgCellModel[]
+  eventMinHeight: number
+}
 
 
 export default class TimeColsSlatsCoords {
 
 
-  constructor(
-    public positions: PositionCache,
-    private dateProfile: DateProfile,
-    private slotDuration: Duration,
-    public cells: DayBgCellModel[],
-    private context: ComponentContext
-  ) {
+  constructor(private props: TimeColsSlatsCoordsProps) {
   }
 
 
   safeComputeTop(date: DateMarker | null) {
-    if (date && rangeContainsMarker(this.dateProfile.currentRange, date)) {
+    if (date && rangeContainsMarker(this.props.dateProfile.currentRange, date)) {
       return this.computeDateTop(date)
     }
   }
@@ -34,9 +37,9 @@ export default class TimeColsSlatsCoords {
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
   computeTimeTop(duration: Duration) {
-    let { positions, dateProfile } = this
+    let { positions, dateProfile, slotDuration } = this.props
     let len = positions.els.length
-    let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.minTime)) / asRoughMs(this.slotDuration) // floating-point value of # of slots covered
+    let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.minTime)) / asRoughMs(slotDuration) // floating-point value of # of slots covered
     let slatIndex
     let slatRemainder
 
@@ -62,15 +65,14 @@ export default class TimeColsSlatsCoords {
 
   // For each segment in an array, computes and assigns its top and bottom properties
   computeSegVerticals(segs: Seg[]) {
-    let { options } = this.context
-    let eventMinHeight = options.timeGridEventMinHeight
+    let { eventMinHeight, cells } = this.props
     let i
     let seg
     let dayDate
 
     for (i = 0; i < segs.length; i++) {
       seg = segs[i]
-      dayDate = this.cells[seg.col].date
+      dayDate = cells[seg.col].date
 
       seg.top = this.computeDateTop(seg.start, dayDate)
       seg.bottom = Math.max(
