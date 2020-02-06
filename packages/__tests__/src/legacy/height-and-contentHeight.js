@@ -15,7 +15,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
       ]
 
       if (heightProp === 'height') {
-        heightPropDescriptions.push({ description: 'as "parent"', height: 'parent', heightWrapper: true })
+        heightPropDescriptions.push({ description: 'as "100%"', height: '100%', heightWrapper: true })
       }
 
       pushOptions({
