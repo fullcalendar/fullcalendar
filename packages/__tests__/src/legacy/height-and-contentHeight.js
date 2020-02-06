@@ -95,7 +95,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                       init(testInfo.height)
                       diff = Math.abs(heightElm.outerHeight() - 600)
                       expect(diff).toBeLessThan(2)
-                      expect('.fc-scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                      expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
                     })
                   })
 
@@ -120,7 +120,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                       })
 
                       expect(tallRow.outerHeight()).toBeGreaterThan(shortHeight * 2) // much taller
-                      expect('.fc-scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                      expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
                     })
                   })
 
@@ -139,7 +139,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                     it('height is correct and scrollbars show up', function() {
                       init(testInfo.height)
                       expectHeight(600)
-                      expect($('.fc-scrollgrid .fc-body:last-child .fc-scroller')).toHaveScrollbars()
+                      expect($('.scrollgrid .fc-body:last-child .fc-scroller')).toHaveScrollbars()
                     })
                   })
                 })
@@ -159,7 +159,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                 it('height is really tall and there are no scrollbars', function() {
                   init('auto')
                   expect(heightElm.outerHeight()).toBeGreaterThan(1000) // pretty tall
-                  expect($('.fc-scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
+                  expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
                 })
               })
             });
@@ -185,7 +185,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                       it('should be the specified height, with no scrollbars', function() {
                         init(testInfo.height)
                         expectHeight(600)
-                        expect('.fc-scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                        expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
                       })
                     })
 
@@ -196,7 +196,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                       it('should have the correct height, with scrollbars', function() {
                         init(testInfo.height)
                         expectHeight(600)
-                        expect('.fc-scrollgrid .fc-body:last-child .fc-scroller').toHaveScrollbars()
+                        expect('.scrollgrid .fc-body:last-child .fc-scroller').toHaveScrollbars()
                       })
                     })
                   })
@@ -209,7 +209,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                   it('should be really tall with no scrollbars', function() {
                     init('auto')
                     expect(heightElm.outerHeight()).toBeGreaterThan(1000) // pretty tall
-                    expect('.fc-scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                    expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
                   })
                 })
               })
@@ -258,7 +258,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                         it('should be the correct height, with scrollbars and no filler hr', function() {
                           init(testInfo.height)
                           expectHeight(600)
-                          expect($('.fc-scrollgrid .fc-body:last-child .fc-scroller')).toHaveScrollbars()
+                          expect($('.scrollgrid .fc-body:last-child .fc-scroller')).toHaveScrollbars()
                           expect($('.fc-time-grid > hr')).not.toBeVisible()
                         })
                       })
@@ -273,7 +273,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                     it('should be really short with no scrollbars nor horizontal rule', function() {
                       init('auto')
                       expect(heightElm.outerHeight()).toBeLessThan(500) // pretty short
-                      expect($('.fc-scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
+                      expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
                       expect($('.fc-time-grid > hr')).not.toBeVisible()
                     })
                   })
@@ -286,7 +286,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                     it('should be really tall with no scrollbars nor horizontal rule', function() {
                       init('auto')
                       expect(heightElm.outerHeight()).toBeGreaterThan(900) // pretty tall
-                      expect($('.fc-scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
+                      expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
                       expect($('.fc-time-grid > hr')).not.toBeVisible()
                     })
                   })

@@ -9,7 +9,8 @@ import {
   BaseFillRendererProps,
   subrenderer,
   renderVNodes,
-  h
+  h,
+  isArraysEqual
 } from '@fullcalendar/core'
 
 
@@ -57,6 +58,10 @@ export default class TableFills extends FillRenderer<TableFillsProps> {
   }
 
 }
+
+TableFills.addPropsEquality({
+  rowEls: isArraysEqual
+})
 
 
 function attachSegs(props: TableFillsProps, context: ComponentContext) {

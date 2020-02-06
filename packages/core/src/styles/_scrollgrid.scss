@@ -81,7 +81,7 @@
 }
 
 // for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
-.fc-scrollgrid-vgrow-cell-hack {
+.scrollgrid-vgrow-cell-hack {
   td, th {
     position: relative;
 

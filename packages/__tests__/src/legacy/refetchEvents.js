@@ -23,7 +23,7 @@ describe('refetchEvents', function() {
           }, 100)
         },
         _eventsPositioned: function() {
-          var scrollEl = $('.fc-scrollgrid .fc-body:last-child .fc-scroller')
+          var scrollEl = $('.scrollgrid .fc-body:last-child .fc-scroller')
           renderCalls++
           if (renderCalls === 1) {
             setTimeout(function() {

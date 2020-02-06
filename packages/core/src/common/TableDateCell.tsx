@@ -67,7 +67,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> {
       __assign(attrs, props.otherAttrs)
     }
 
-    return (
+    return ( // TODO: add a key somehow (date+resource) ???
       <th class={classNames.join(' ')} {...attrs}>
         {isDateValid &&
           <GotoAnchor

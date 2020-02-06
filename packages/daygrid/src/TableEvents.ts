@@ -7,7 +7,8 @@ import {
   ComponentContext,
   sortEventSegs,
   subrenderer,
-  renderVNodes
+  renderVNodes,
+  isArraysEqual
 } from '@fullcalendar/core'
 import CellEvents from './CellEvents'
 
@@ -59,6 +60,10 @@ export default class TableEvents extends CellEvents<TableEventsProps> {
   }
 
 }
+
+TableEvents.addPropsEquality({
+  rowEls: isArraysEqual
+})
 
 
 // Renders the given foreground event segments onto the grid

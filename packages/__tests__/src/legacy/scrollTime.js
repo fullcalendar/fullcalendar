@@ -11,7 +11,7 @@ describe('scrollTime', function() {
     })
     var slotCell = $('.fc-slats tr:eq(4)') // 2am slot
     var slotTop = slotCell.position().top
-    var scrollContainer = $('.fc-scrollgrid .fc-body:last-child .fc-scroller')
+    var scrollContainer = $('.scrollgrid .fc-body:last-child .fc-scroller')
     var scrollTop = scrollContainer.scrollTop()
     var diff = Math.abs(slotTop - scrollTop)
     expect(slotTop).toBeGreaterThan(0)
@@ -26,7 +26,7 @@ describe('scrollTime', function() {
     })
     var slotCell = $('.fc-slats tr:eq(4)') // 2am slot
     var slotTop = slotCell.position().top
-    var scrollContainer = $('.fc-scrollgrid .fc-body:last-child .fc-scroller')
+    var scrollContainer = $('.scrollgrid .fc-body:last-child .fc-scroller')
     var scrollTop = scrollContainer.scrollTop()
     var diff = Math.abs(slotTop - scrollTop)
     expect(slotTop).toBeGreaterThan(0)

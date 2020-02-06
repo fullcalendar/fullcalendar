@@ -116,7 +116,7 @@ export function getDayGridRowDayElAtIndex(index) {
 }
 
 export function getHeaderTopEls() {
-  return $('.fc-scrollgrid .fc-head th')
+  return $('.scrollgrid .fc-head th')
 }
 
 export function getBackgroundEventElsResizerEls() {
