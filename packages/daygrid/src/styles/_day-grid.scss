@@ -119,6 +119,16 @@
 .fc-ltr .fc-day-grid .fc-day-top .fc-week-number { float: left; border-radius: 0 0 3px 0; }
 .fc-rtl .fc-day-grid .fc-day-top .fc-week-number { float: right; border-radius: 0 0 0 3px; }
 
+.fc-day-grid .fc-row > .fc-bgevent-skeleton,
+.fc-day-grid .fc-row > .fc-highlight-skeleton,
+.fc-day-grid .fc-row > .fc-content-skeleton,
+.fc-day-grid .fc-row > .fc-mirror-skeleton {
+  th, td {
+    border-top: 0;
+    border-bottom: 0;
+  }
+}
+
 
 .fc-screen {
 
@@ -146,16 +156,6 @@
 
   .fc-day-grid .fc-row > .fc-content-skeleton > table {
     height: 4em;
-  }
-
-  .fc-day-grid .fc-row > .fc-bgevent-skeleton,
-  .fc-day-grid .fc-row > .fc-highlight-skeleton,
-  .fc-day-grid .fc-row > .fc-content-skeleton,
-  .fc-day-grid .fc-row > .fc-mirror-skeleton {
-    th, td {
-      border-top-color: transparent;
-      border-bottom-color: transparent;
-    }
   }
 
   // kill the overlaid, absolutely-positioned components

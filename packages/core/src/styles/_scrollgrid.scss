@@ -10,6 +10,9 @@
     border-style: hidden; // kill outer border
   }
 
+  th, td {
+    padding: 0;
+  }
 }
 
 .scrollgrid__section { // a <tr>
@@ -17,7 +20,6 @@
 
   > td {
     height: 0; // needs a height so vgrow's within grow
-    padding: 0 !important;
   }
 }
 

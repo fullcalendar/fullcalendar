@@ -10,9 +10,6 @@ be a descendant of the grid when it is being dragged.
   padding: 0 1px;
 }
 
-tr:first-child > td > .fc-day-grid-event {
-  margin-top: 2px; /* a little bit more space before the first event */
-}
 .fc-mirror-skeleton tr:first-child > td > .fc-day-grid-event {
   margin-top: 0; /* except for mirror skeleton */
 }
