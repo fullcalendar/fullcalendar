@@ -5,6 +5,7 @@ import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
 import { ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
   renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames, computeScrollerClientWidths, computeScrollerClientHeights,
+  isColPropsEqual
   } from './util'
 import { memoize } from '../util/memoize'
 import { isPropsEqual } from '../util/object'
@@ -34,6 +35,7 @@ interface SimpleScrollGridState {
 
 export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, SimpleScrollGridState> {
 
+  processCols = memoize((a) => a, isColPropsEqual) // so we get same `cols` props every time
   renderMicroColGroup = memoize(renderMicroColGroup) // yucky to memoize VNodes, but much more efficient for consumers
   scrollerRefs = new RefMap<Scroller>()
   scrollerElRefs = new RefMap<HTMLElement, [ChunkConfig]>(this._handleScrollerEl.bind(this))
@@ -49,10 +51,11 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
   render(props: SimpleScrollGridProps, state: SimpleScrollGridState, context: ComponentContext) {
     let sectionConfigs = props.sections || []
+    let cols = this.processCols(props.cols)
 
     let microColGroupNode = props.forPrint ?
         <colgroup></colgroup> : // temporary
-        this.renderMicroColGroup(props.cols, state.shrinkWidth)
+        this.renderMicroColGroup(cols, state.shrinkWidth)
 
     let classNames = getScrollGridClassNames(props.vGrow, context)
     if (props.forPrint) { // temporary

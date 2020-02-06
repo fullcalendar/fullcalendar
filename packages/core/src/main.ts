@@ -181,7 +181,8 @@ export {
   getChunkClassNames, ChunkContentCallbackArgs,
   computeScrollerClientWidths, computeScrollerClientHeights,
   sanitizeShrinkWidth,
-  ChunkConfigRowContent, ChunkConfigContent
+  ChunkConfigRowContent, ChunkConfigContent,
+  isColPropsEqual
 } from './scrollgrid/util'
 export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'

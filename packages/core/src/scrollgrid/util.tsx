@@ -2,8 +2,9 @@ import { VNode, h, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
 import ComponentContext from '../component/ComponentContext'
 import { computeSmallestCellWidth } from '../util/misc'
-import { mapHash } from '../util/object'
+import { mapHash, isPropsEqual } from '../util/object'
 import RefMap from '../util/RefMap'
+import { isArraysEqual } from '../util/array'
 
 
 export type CssDimValue = string | number
@@ -111,6 +112,11 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
     ])
 
   return content
+}
+
+
+export function isColPropsEqual(cols0: ColProps[], cols1: ColProps[]) {
+  return isArraysEqual(cols0, cols1, isPropsEqual)
 }
 
 
