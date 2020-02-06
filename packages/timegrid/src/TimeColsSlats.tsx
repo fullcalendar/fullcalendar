@@ -17,6 +17,7 @@ import {
   createRef,
   PositionCache
 } from '@fullcalendar/core'
+import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
 
 export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
@@ -24,7 +25,7 @@ export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
   minHeight: CssDimValue
   tableMinWidth: CssDimValue
   tableColGroupNode: VNode
-  onCoords?: (coords: PositionCache | null) => void
+  onCoords?: (coords: TimeColsSlatsCoords | null) => void
 }
 
 interface TimeColsSlatsContentProps {
@@ -101,11 +102,15 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
     if (props.onCoords && props.clientWidth) { // clientWidth means sizing has stabilized
       props.onCoords(
-        new PositionCache(
-          this.rootElRef.current,
-          this.slatElRefs.collect(),
-          false,
-          true // vertical
+        new TimeColsSlatsCoords(
+          new PositionCache(
+            this.rootElRef.current,
+            this.slatElRefs.collect(),
+            false,
+            true // vertical
+          ),
+          props.dateProfile,
+          props.slotDuration
         )
       )
     }

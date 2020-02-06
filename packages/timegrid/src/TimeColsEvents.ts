@@ -6,6 +6,7 @@ import {
   Seg, isMultiDayRange, compareByFieldSpecs,
   computeEventDraggable, computeEventStartResizable, computeEventEndResizable, ComponentContext, BaseFgEventRendererProps, subrenderer, isArraysEqual
 } from '@fullcalendar/core'
+import { DayBgCellModel } from '@fullcalendar/daygrid'
 import { attachSegs, detachSegs } from './TimeCols'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
@@ -13,6 +14,7 @@ export interface TimeColsEventsProps extends BaseFgEventRendererProps {
   containerEls: HTMLElement[]
   forPrint: boolean
   coords: TimeColsSlatsCoords
+  cells: DayBgCellModel[]
 }
 
 /*
@@ -64,20 +66,24 @@ export default class TimeColsEvents extends FgEventRenderer<TimeColsEventsProps>
 
 
   computeSegSizes(allSegs: Seg[], slatCoords: TimeColsSlatsCoords) {
-    let { segsByCol } = this
-    let colCnt = this.props.containerEls.length
+    let { segsByCol, props, context } = this
+    let colCnt = props.cells.length
 
-    slatCoords.computeSegVerticals(allSegs) // horizontals relies on this
+    slatCoords.computeSegVerticals(
+      allSegs,
+      props.cells,
+      context.options.timeGridEventMinHeight
+    )
 
     for (let col = 0; col < colCnt; col++) {
-      computeSegHorizontals(segsByCol[col], this.context) // compute horizontal coordinates, z-index's, and reorder the array
+      computeSegHorizontals(segsByCol[col], context) // compute horizontal coordinates, z-index's, and reorder the array
     }
   }
 
 
   assignSegSizes(allSegs: Seg[], slatCoords: TimeColsSlatsCoords) {
     let { segsByCol } = this
-    let colCnt = this.props.containerEls.length
+    let colCnt = this.props.cells.length
 
     slatCoords.assignSegVerticals(allSegs) // horizontals relies on this
 

@@ -13,6 +13,7 @@ import TimeColsFills from './TimeColsFills'
 import { TimeColsSeg } from './TimeCols'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import TimeColsNowIndicator from './TimeColsNowIndicator'
+import { DayBgCellModel } from '@fullcalendar/daygrid'
 
 
 export interface TimeColsContentProps extends TimeColsContentBaseProps {
@@ -37,7 +38,7 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
         }}>
           {props.tableColGroupNode}
           <TimeColsContentBody
-            colCnt={props.colCnt}
+            cells={props.cells}
             businessHourSegs={props.businessHourSegs}
             bgEventSegs={props.bgEventSegs}
             fgEventSegs={props.fgEventSegs}
@@ -70,7 +71,7 @@ export interface TimeColsContentBodyProps extends TimeColsContentBaseProps {
 }
 
 export interface TimeColsContentBaseProps {
-  colCnt: number
+  cells: DayBgCellModel[]
   businessHourSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
   fgEventSegs: TimeColsSeg[]
@@ -104,8 +105,9 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
 
   render(props: TimeColsContentBodyProps) {
     let cellNodes: VNode[] = props.renderIntro()
+    let cellCnt = props.cells.length
 
-    for (let i = 0; i < props.colCnt; i++) {
+    for (let i = 0; i < cellCnt; i++) {
       cellNodes.push(
         <td>
           <div class='fc-content-col' ref={this.colContainerRefs.createRef(i)}>
@@ -150,21 +152,24 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
       type: 'businessHours',
       containerEls: this.businessContainerRefs.collect(),
       segs: props.businessHourSegs,
-      coords: props.coords
+      coords: props.coords,
+      cells: props.cells
     })
 
     this.renderDateSelection({
       type: 'highlight',
       containerEls: this.highlightContainerRefs.collect(),
       segs: options.selectMirror ? [] : props.dateSelectionSegs, // do highlight if NO mirror
-      coords: props.coords
+      coords: props.coords,
+      cells: props.cells
     })
 
     this.renderBgEvents({
       type: 'bgEvent',
       containerEls: this.bgContainerRefs.collect(),
       segs: props.bgEventSegs,
-      coords: props.coords
+      coords: props.coords,
+      cells: props.cells
     })
 
     this.renderFgEvents({
@@ -178,7 +183,8 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
       isResizing: false,
       isSelecting: false,
       forPrint: props.forPrint,
-      coords: props.coords
+      coords: props.coords,
+      cells: props.cells
     })
 
     this.subrenderMirror(this.mirrorContainerRefs.collect(), options)
@@ -203,7 +209,8 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
         isSelecting: false,
         interactingSeg: props.eventDrag.interactingSeg,
         forPrint: props.forPrint,
-        coords: props.coords
+        coords: props.coords,
+        cells: props.cells
       })
 
     } else if (props.eventResize && props.eventResize.segs.length) {
@@ -215,7 +222,8 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
         isSelecting: false,
         interactingSeg: props.eventResize.interactingSeg,
         forPrint: props.forPrint,
-        coords: props.coords
+        coords: props.coords,
+        cells: props.cells
       })
 
     } else if (options.selectMirror) {
@@ -226,7 +234,8 @@ export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps>
         isResizing: false,
         isSelecting: true,
         forPrint: props.forPrint,
-        coords: props.coords
+        coords: props.coords,
+        cells: props.cells
       })
 
     } else {

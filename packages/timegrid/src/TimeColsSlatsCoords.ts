@@ -2,24 +2,19 @@ import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateP
 import { DayBgCellModel } from '@fullcalendar/daygrid'
 
 
-export interface TimeColsSlatsCoordsProps {
-  positions: PositionCache
-  dateProfile: DateProfile
-  slotDuration: Duration
-  cells: DayBgCellModel[]
-  eventMinHeight: number
-}
-
-
 export default class TimeColsSlatsCoords {
 
 
-  constructor(private props: TimeColsSlatsCoordsProps) {
+  constructor(
+    public positions: PositionCache,
+    private dateProfile: DateProfile,
+    private slotDuration: Duration
+  ) {
   }
 
 
   safeComputeTop(date: DateMarker | null) {
-    if (date && rangeContainsMarker(this.props.dateProfile.currentRange, date)) {
+    if (date && rangeContainsMarker(this.dateProfile.currentRange, date)) {
       return this.computeDateTop(date)
     }
   }
@@ -37,7 +32,7 @@ export default class TimeColsSlatsCoords {
 
   // Computes the top coordinate, relative to the bounds of the grid, of the given time (a Duration).
   computeTimeTop(duration: Duration) {
-    let { positions, dateProfile, slotDuration } = this.props
+    let { positions, dateProfile, slotDuration } = this
     let len = positions.els.length
     let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.minTime)) / asRoughMs(slotDuration) // floating-point value of # of slots covered
     let slatIndex
@@ -64,8 +59,7 @@ export default class TimeColsSlatsCoords {
 
 
   // For each segment in an array, computes and assigns its top and bottom properties
-  computeSegVerticals(segs: Seg[]) {
-    let { eventMinHeight, cells } = this.props
+  computeSegVerticals(segs: Seg[], cells: DayBgCellModel[], eventMinHeight: number) {
     let i
     let seg
     let dayDate

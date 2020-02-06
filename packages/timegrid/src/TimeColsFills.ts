@@ -1,11 +1,15 @@
 import { FillRenderer, subrenderer, BaseFillRendererProps, isArraysEqual } from '@fullcalendar/core'
+import { DayBgCellModel } from '@fullcalendar/daygrid'
 import { attachSegs, detachSegs } from './TimeCols'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
+
 
 export interface TimeColsFillsProps extends BaseFillRendererProps {
   containerEls: HTMLElement[]
   coords: TimeColsSlatsCoords
+  cells: DayBgCellModel[]
 }
+
 
 export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
 
@@ -26,7 +30,7 @@ export default class TimeColsFills extends FillRenderer<TimeColsFillsProps> {
     })
 
     if (coords) {
-      coords.computeSegVerticals(segs)
+      coords.computeSegVerticals(segs, props.cells, 0)
       coords.assignSegVerticals(segs)
     }
   }
