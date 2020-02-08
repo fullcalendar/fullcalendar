@@ -114,14 +114,13 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
 
 
   renderNumberTr(row: number) {
-    let { props, context } = this
+    let { props } = this
     let intro = props.renderNumberIntro(row, props.cells)
 
     return (
       <tr>
-        {!context.isRtl && intro}
+        {intro}
         {this.renderNumberCells(row)}
-        {context.isRtl && intro}
       </tr>
     )
   }

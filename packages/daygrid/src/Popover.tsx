@@ -9,6 +9,7 @@ export interface PopoverProps {
   children?: ComponentChildren
   extraClassName?: string
   alignmentEl: HTMLElement
+  topAlignmentEl?: HTMLElement
   onClose?: () => void
 }
 
@@ -87,12 +88,12 @@ export default class Popover extends BaseComponent<PopoverProps> {
         but need to ensure that all other components have updated size first (for alignmentEl)
   */
   updateSize() {
-    let { alignmentEl } = this.props
+    let { alignmentEl, topAlignmentEl } = this.props
     let rootEl = this.rootElRef.current
     let dims = rootEl.getBoundingClientRect() // only used for width,height
     let alignment = alignmentEl.getBoundingClientRect()
 
-    let top = alignment.top
+    let top = topAlignmentEl ? topAlignmentEl.getBoundingClientRect().top : alignment.top
     top = Math.min(top, window.innerHeight - dims.height - PADDING_FROM_VIEWPORT)
     top = Math.max(top, PADDING_FROM_VIEWPORT)
 

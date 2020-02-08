@@ -21,6 +21,7 @@ export interface SimpleScrollGridProps {
 }
 
 export interface SimpleScrollGridSection extends SectionConfig {
+  key?: string
   chunk?: ChunkConfig
 }
 
@@ -77,7 +78,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     }
 
     return (
-      <tr class={getSectionClassNames(sectionConfig, this.props.vGrow).join(' ')}>
+      <tr key={sectionConfig.key} class={getSectionClassNames(sectionConfig, this.props.vGrow).join(' ')}>
         {this.renderChunkTd(sectionConfig, sectionI, microColGroupNode, sectionConfig.chunk)}
       </tr>
     )

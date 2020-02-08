@@ -48,6 +48,7 @@ export default class DayTimeColsView extends TimeColsView {
           cellWeekNumbersVisible={false}
           eventLimit={this.getAllDayEventLimit()}
           vGrow={false}
+          headerAlignElRef={this.headerElRef}
         />
       )),
       (contentArg: ChunkContentCallbackArgs) => (

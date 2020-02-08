@@ -58,6 +58,7 @@ export default class DayTableView extends TableView { // TODO: use clientWidth/c
           cellWeekNumbersVisible={cellWeekNumbersVisible}
           eventLimit={options.eventLimit}
           vGrow={!props.isHeightAuto}
+          headerAlignElRef={this.headerElRef}
         />
       )
     )

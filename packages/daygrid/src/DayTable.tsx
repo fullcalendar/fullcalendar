@@ -11,7 +11,8 @@ import {
   DateRange,
   Slicer,
   Hit,
-  ComponentContext
+  ComponentContext,
+  RefObject
 } from '@fullcalendar/core'
 import Table, { TableSeg  } from './Table'
 
@@ -36,6 +37,7 @@ export interface DayTableProps {
   cellWeekNumbersVisible: boolean // display week numbers in day cell?
   eventLimit: boolean | number
   vGrow: boolean
+  headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
 }
 
 export default class DayTable extends DateComponent<DayTableProps, ComponentContext> {
@@ -63,6 +65,7 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
         cellWeekNumbersVisible={props.cellWeekNumbersVisible}
         eventLimit={props.eventLimit}
         vGrow={props.vGrow}
+        headerAlignElRef={props.headerAlignElRef}
       />
     )
   }

@@ -1,6 +1,6 @@
 import { Rect } from './geom'
 import { getIsRtlScrollbarOnLeft } from './scrollbar-side'
-import { getScrollbarWidths } from './scrollbar-width'
+import { computeScrollbarWidthsForEl } from './scrollbar-width'
 
 export interface EdgeInfo {
   borderLeft: number
@@ -23,8 +23,9 @@ export function computeEdges(el: HTMLElement, getPadding = false): EdgeInfo { //
   let borderRight = parseInt(computedStyle.borderRightWidth, 10) || 0
   let borderTop = parseInt(computedStyle.borderTopWidth, 10) || 0
   let borderBottom = parseInt(computedStyle.borderBottomWidth, 10) || 0
-  let scrollbarLeftRight = el.clientHeight < el.scrollHeight ? getScrollbarWidths().y : 0
-  let scrollbarBottom = el.clientWidth < el.scrollWidth ? getScrollbarWidths().x : 0
+  let badScrollbarWidths = computeScrollbarWidthsForEl(el) // includes border!
+  let scrollbarLeftRight = badScrollbarWidths.y - borderLeft - borderRight
+  let scrollbarBottom = badScrollbarWidths.x - borderTop - borderBottom
 
   let res: EdgeInfo = {
     borderLeft,

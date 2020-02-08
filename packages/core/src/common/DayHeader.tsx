@@ -4,7 +4,7 @@ import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
-import { VNode, h, createRef } from '../vdom'
+import { VNode, h } from '../vdom'
 import TableDateCell from './TableDateCell'
 
 
@@ -17,10 +17,6 @@ export interface DayHeaderProps {
 
 
 export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename to DayHeaderTr?
-
-  private rootElRef = createRef<HTMLDivElement>()
-
-  get rootEl() { return this.rootElRef.current }
 
 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {

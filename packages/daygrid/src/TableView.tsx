@@ -7,7 +7,8 @@ import {
   GotoAnchor,
   SimpleScrollGrid,
   SimpleScrollGridSection,
-  ChunkContentCallbackArgs
+  ChunkContentCallbackArgs,
+  createRef
 } from '@fullcalendar/core'
 import TableDateProfileGenerator from './TableDateProfileGenerator'
 
@@ -24,6 +25,7 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 export default abstract class TableView<State={}> extends View<State> {
 
   protected processOptions = memoize(this._processOptions)
+  protected headerElRef = createRef<HTMLTableCellElement>()
   private colWeekNumbersVisible: boolean // computed option
 
 
@@ -44,6 +46,7 @@ export default abstract class TableView<State={}> extends View<State> {
       sections.push({
         type: 'head',
         chunk: {
+          elRef: this.headerElRef,
           rowContent: headerRowContent
         }
       })

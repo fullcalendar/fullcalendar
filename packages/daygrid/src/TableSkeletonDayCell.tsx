@@ -7,8 +7,6 @@ import {
   getDayClasses,
   GotoAnchor,
   ComponentContext,
-  Ref,
-  setRef,
   createFormatter
 } from '@fullcalendar/core'
 
@@ -18,7 +16,6 @@ export interface TableSkeletonDayCellProps {
   dateProfile: DateProfile
   isDayNumbersVisible: boolean
   cellWeekNumbersVisible: boolean
-  elRef?: Ref<HTMLTableCellElement>
 }
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
@@ -55,7 +52,6 @@ export default class TableSkeletonDayCell extends BaseComponent<TableSkeletonDay
 
     return (
       <td
-        ref={this.handleEl}
         key={dateStr /* fresh rerender for new date, mostly because of dayRender */}
         class={classNames.join(' ')}
         {...attrs}
@@ -76,25 +72,6 @@ export default class TableSkeletonDayCell extends BaseComponent<TableSkeletonDay
         }
       </td>
     )
-  }
-
-
-  handleEl = (el: HTMLTableCellElement | null) => {
-    let { props } = this
-
-    if (el) {
-      let { calendar, view, dateEnv } = this.context
-
-      calendar.publiclyTrigger('dayRender', [
-        {
-          date: dateEnv.toDate(props.date),
-          el,
-          view
-        }
-      ])
-    }
-
-    setRef(props.elRef, el)
   }
 
 }

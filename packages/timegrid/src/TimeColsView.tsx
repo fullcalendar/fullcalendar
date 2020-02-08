@@ -24,8 +24,9 @@ const AUTO_ALL_DAY_EVENT_LIMIT = 5
 export default abstract class TimeColsView extends View {
 
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
+  protected headerElRef = createRef<HTMLTableCellElement>()
   private rootElRef = createRef<HTMLDivElement>()
-  private scrollerElRef = createRef<HTMLDivElement>()
+  private scrollerElRef = window['asdf'] = createRef<HTMLDivElement>()
 
 
   // rendering
@@ -45,6 +46,7 @@ export default abstract class TimeColsView extends View {
       sections.push({
         type: 'head',
         chunk: {
+          elRef: this.headerElRef,
           rowContent: headerRowContent
         }
       })
@@ -52,6 +54,7 @@ export default abstract class TimeColsView extends View {
 
     if (allDayContent) {
       sections.push({
+        key: 'all-day',
         type: 'body',
         chunk: {
           content: allDayContent
@@ -69,6 +72,7 @@ export default abstract class TimeColsView extends View {
     }
 
     sections.push({
+      key: 'timed',
       type: 'body',
       vGrow: true,
       vGrowRows: Boolean(context.options.expandRows),

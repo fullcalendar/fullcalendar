@@ -80,7 +80,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
     } else if (options.contentHeight != null) {
       viewHeight = options.contentHeight
     } else {
-      viewAspectRatio = options.aspectRatio
+      viewAspectRatio = Math.max(options.aspectRatio, 0.5) // prevent from getting too tall
     }
 
     // TODO: move this somewhere after real render!

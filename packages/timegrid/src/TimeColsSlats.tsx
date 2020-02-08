@@ -131,7 +131,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
 
   render(props: TimeColsSlatsBodyProps, state: {}, context: ComponentContext) {
-    let { dateEnv, isRtl, options } = context
+    let { dateEnv, options } = context
     let { dateProfile, slotDuration, slatElRefs } = props
 
     let labelInterval = this.getLabelInterval(options.slotLabelInterval, slotDuration)
@@ -169,9 +169,8 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
           data-time={formatIsoTimeString(slotDate)}
           class={isLabeled ? '' : 'fc-minor'}
         >
-          {!isRtl && axisNode}
+          {axisNode}
           <td />
-          {isRtl && axisNode}
         </tr>
       )
 

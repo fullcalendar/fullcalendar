@@ -15,7 +15,8 @@ import {
   VNode,
   RefMap,
   DateComponent,
-  setRef
+  setRef,
+  RefObject
 } from '@fullcalendar/core'
 import TableEvents from './TableEvents'
 import TableMirrorEvents from './TableMirrorEvents'
@@ -39,6 +40,7 @@ export interface TableProps extends TableBaseProps {
   colGroupNode: VNode
   eventLimit: boolean | number
   vGrow: boolean
+  headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
 }
 
 export interface TableSeg extends Seg {
@@ -123,6 +125,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
           extraClassName='fc-more-popover'
           title={segPopoverState.title}
           alignmentEl={segPopoverState.alignmentEl}
+          topAlignmentEl={props.cells.length === 1 ? props.headerAlignElRef.current : null /* align with header top when only one row */}
           onClose={this.handlePopoverClose}
           ref={this.popoverRef}
         >
@@ -347,7 +350,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
   updateEventLimitSizing() {
     let { props, rowStructs } = this
 
-    if (props.vGrow) {
+    if (props.eventLimit) {
       this._limitRows(props.eventLimit, this.rowElRefs.collect(), rowStructs, this.props.cells, this.context)
 
     } else {
