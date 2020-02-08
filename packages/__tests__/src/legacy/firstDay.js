@@ -61,7 +61,10 @@ describe('First Day', function() {
     })
   })
 
-  describe('when setting firstDay to 2', function() {
+  describeOptions('dir', {
+    'when LTR': 'ltr',
+    'when RTL': 'rtl'
+  }, function() {
     pushOptions({
       firstDay: 2
     })
@@ -176,24 +179,6 @@ describe('First Day', function() {
         firstDay: 4
       })
       expect($('.fc-day-header')[0]).toHaveClass('fc-thu')
-    })
-  })
-
-  describe('when first day is set to Tuesday and dir is rtl', function() {
-    pushOptions({
-      firstDay: 2,
-      dir: 'rtl'
-    })
-    it('should put days mon, sun, sat ...', function() {
-      initCalendar()
-      var daysOfWeek = $('.fc-day-header')
-      expect(daysOfWeek[0]).toHaveClass('fc-mon')
-      expect(daysOfWeek[1]).toHaveClass('fc-sun')
-      expect(daysOfWeek[2]).toHaveClass('fc-sat')
-      expect(daysOfWeek[3]).toHaveClass('fc-fri')
-      expect(daysOfWeek[4]).toHaveClass('fc-thu')
-      expect(daysOfWeek[5]).toHaveClass('fc-wed')
-      expect(daysOfWeek[6]).toHaveClass('fc-tue')
     })
   })
 

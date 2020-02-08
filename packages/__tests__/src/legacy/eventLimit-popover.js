@@ -52,7 +52,7 @@ describe('eventLimit popover', function() {
       })
       openWithClick()
       setTimeout(function() {
-        var cell = $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(4)')
+        var cell = $('.fc-day-grid .fc-row:eq(0) .fc-bg td:not(.fc-axis):eq(2)')
         var cellRight = cell.offset().left + cell.outerWidth()
         var popover = $('.fc-more-popover')
         var popoverRight = popover.offset().left + popover.outerWidth()
@@ -292,7 +292,7 @@ describe('eventLimit popover', function() {
       openWithClick()
       setTimeout(function() {
         var popoverTop = $('.fc-more-popover').offset().top
-        var headTop = $('.fc-view > table > thead .fc-row').offset().top
+        var headTop = $('.fc-view .fc-head .fc-scroller').offset().top
         var diff = Math.abs(popoverTop - headTop)
         expect(diff).toBeLessThan(2)
         done()

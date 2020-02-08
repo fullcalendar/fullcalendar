@@ -58,3 +58,7 @@ export function getEmptyMessageEls() {
 export function getEmptyMessageElsCount() {
   return getEmptyMessageEls().length
 }
+
+export function getListViewScrollerEl() {
+  return $('.fc-list-view .fc-scroller')
+}

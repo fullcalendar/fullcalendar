@@ -270,7 +270,7 @@ describe('eventDrop', function() {
         init(
           function() {
             var allDayGrid = $('.fc-timeGrid-view .fc-day-grid')
-            var hr = allDayGrid.next('hr')
+            var hr = $('.fc-timeGrid-view .fc-divider')
             $('.fc-event').simulate('drag', {
               dx: $('th.fc-wed').width() * -1,
               dy: allDayGrid.outerHeight() + hr.outerHeight()

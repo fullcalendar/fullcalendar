@@ -10,8 +10,7 @@ import { getFirstDateEl } from '../lib/ViewUtils'
 
       /** @type {any} */
       var heightPropDescriptions = [
-        { description: 'as a number', height: 600 },
-        { description: 'as a function', height: getParentHeight, heightWrapper: true }
+        { description: 'as a number', height: 600 }
       ]
 
       if (heightProp === 'height') {
@@ -29,10 +28,6 @@ import { getFirstDateEl } from '../lib/ViewUtils'
       afterEach(function() {
         calendarEl.remove()
       })
-
-      function getParentHeight() {
-        return calendarEl.parent().height()
-      }
 
       // relies on asAMethod (boolean)
       // otherOptions: other calendar options to dynamically set (assumes asAMethod)
@@ -238,28 +233,15 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                         })
                       }
 
-                      describe('with only a few slots', function() {
-                        pushOptions({
-                          minTime: '06:00:00',
-                          maxTime: '10:00:00'
-                        })
-                        it('should be the correct height, with a horizontal rule to occupy space', function() {
-                          init(testInfo.height)
-                          expectHeight(600)
-                          expect($('.fc-time-grid > hr')).toBeVisible()
-                        })
-                      })
-
                       describe('with many slots', function() {
                         pushOptions({
                           minTime: '00:00:00',
                           maxTime: '24:00:00'
                         })
-                        it('should be the correct height, with scrollbars and no filler hr', function() {
+                        it('should be the correct height, with scrollbars', function() {
                           init(testInfo.height)
                           expectHeight(600)
                           expect($('.scrollgrid .fc-body:last-child .fc-scroller')).toHaveScrollbars()
-                          expect($('.fc-time-grid > hr')).not.toBeVisible()
                         })
                       })
                     })
@@ -274,7 +256,6 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                       init('auto')
                       expect(heightElm.outerHeight()).toBeLessThan(500) // pretty short
                       expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
-                      expect($('.fc-time-grid > hr')).not.toBeVisible()
                     })
                   })
 
@@ -287,7 +268,6 @@ import { getFirstDateEl } from '../lib/ViewUtils'
                       init('auto')
                       expect(heightElm.outerHeight()).toBeGreaterThan(900) // pretty tall
                       expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
-                      expect($('.fc-time-grid > hr')).not.toBeVisible()
                     })
                   })
                 })

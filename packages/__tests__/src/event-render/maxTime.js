@@ -42,7 +42,7 @@ describe('event rendering with maxTime', function() {
       lastCol: 6,
       isStart: true,
       isEnd: true
-    }, 'ltr')
+    })
   })
 
 })

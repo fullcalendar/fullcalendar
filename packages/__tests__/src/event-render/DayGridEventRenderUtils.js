@@ -10,23 +10,15 @@ opts:
   - isStart
   - isEnd
 */
-export function directionallyTestSeg(opts, dir) {
+export function directionallyTestSeg(opts) {
   var el = opts.el ? $(opts.el) : getFirstEventEl()
 
   var row = opts.row || 0
   var rowTds = getDayGridRowDayElAtIndex(row)
   expect(rowTds.length).toBeGreaterThan(1)
 
-  var leftCol
-  var rightCol
-  if (dir === 'rtl') {
-    leftCol = rowTds.length - opts.lastCol - 1
-    rightCol = rowTds.length - opts.firstCol - 1
-  } else {
-    leftCol = opts.firstCol
-    rightCol = opts.lastCol
-  }
-
+  var leftCol = opts.firstCol
+  var rightCol = opts.lastCol
   var col, td
 
   for (col = leftCol; col <= rightCol; col++) {

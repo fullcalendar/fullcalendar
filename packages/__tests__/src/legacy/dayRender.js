@@ -10,7 +10,7 @@ describe('dayRender', function() {
       dayRender: function(arg) {
         expect(arg.date instanceof Date).toEqual(true)
         expect(formatIsoDay(arg.date)).toEqual(arg.el.getAttribute('data-date'))
-        expect(arg.el).toBeInDOM()
+        expect(arg.el instanceof HTMLElement).toBe(true)
       }
     }
 
@@ -19,23 +19,7 @@ describe('dayRender', function() {
     expect(options.dayRender.calls.count()).toEqual(42)
   })
 
-  it('is called when view is changed', function() {
-    var options = {
-      defaultView: 'dayGridMonth',
-      fixedWeekCount: true,
-      defaultDate: '2014-05-01',
-      dayRender: function(arg) { }
-    }
-
-    spyOn(options, 'dayRender').and.callThrough()
-    initCalendar(options)
-    options.dayRender.calls.reset()
-    currentCalendar.changeView('dayGridWeek')
-    expect(options.dayRender.calls.count()).toEqual(7)
-  })
-
-  // called if the date is navigated to a different visible range
-  it('is called when view is changed', function() {
+  it('is called when date range is changed', function() {
     var options = {
       defaultView: 'dayGridWeek',
       defaultDate: '2014-05-01',
@@ -76,7 +60,7 @@ describe('dayRender', function() {
     }
 
     initCalendar(options)
-    expect($(currentCalendar.el).find('td[data-date="2014-05-01"]')).toHaveClass('mycustomclass')
+    expect($(currentCalendar.el).find('.fc-bg td[data-date="2014-05-01"]')).toHaveClass('mycustomclass')
   })
 
   it('gets called for TimeGrid views', function() {

@@ -9,9 +9,9 @@ describe('columnHeaderFormat', function() {
     var viewWithFormat = [
       { view: 'dayGridMonth', expected: /^Sun$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^Sun 5[/ ]11$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridWeek', expected: /^Sun 5[/ ]11$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^Sun 5[/ ]11$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridDay', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridDay', expected: /^Sunday$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' }
     ]
 
     beforeEach(function() {
@@ -34,7 +34,7 @@ describe('columnHeaderFormat', function() {
 
     var viewWithFormat = [
       { view: 'dayGridMonth', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridDay', expected: /^Sunday, May 11$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridDay', expected: /^Sunday, May 11$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^Sunday, 5[/ ]11$/, selector: 'th.fc-day-header.fc-sun' }
     ]
 
@@ -64,9 +64,9 @@ describe('columnHeaderFormat', function() {
     var viewWithFormat = [
       { view: 'dayGridMonth', expected: /^dim\.$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^dim\. 11[/ ]0?5$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridWeek', expected: /^dim\. 11[/ ]0?5$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^dim\. 11[/ ]0?5$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridDay', expected: /^dimanche$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridDay', expected: /^dimanche$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^dimanche$/, selector: 'th.fc-day-header.fc-sun' }
     ]
 
     beforeEach(function() {
@@ -91,9 +91,9 @@ describe('columnHeaderFormat', function() {
     var viewWithFormat = [
       { view: 'dayGridMonth', expected: /^Sun$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^Sun 11[/ ]0?5$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridWeek', expected: /^Sun 11[/ ]0?5$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^Sun 11[/ ]0?5$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridDay', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridDay', expected: /^Sunday$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^Sunday$/, selector: 'th.fc-day-header.fc-sun' }
     ]
 
     beforeEach(function() {
@@ -118,9 +118,9 @@ describe('columnHeaderFormat', function() {
     var viewWithFormat = [
       { view: 'dayGridMonth', expected: /^일$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridWeek', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridWeek', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-widget-header.fc-sun' },
+      { view: 'timeGridWeek', expected: /^5[.월] 11[.일] \(?일\)?$/, selector: 'th.fc-day-header.fc-sun' },
       { view: 'dayGridDay', expected: /^일요일$/, selector: 'th.fc-day-header.fc-sun' },
-      { view: 'timeGridDay', expected: /^일요일$/, selector: 'th.fc-widget-header.fc-sun' }
+      { view: 'timeGridDay', expected: /^일요일$/, selector: 'th.fc-day-header.fc-sun' }
     ]
 
     beforeEach(function() {

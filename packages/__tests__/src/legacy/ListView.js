@@ -7,9 +7,9 @@ import {
   getListEventEls,
   getListEventElsCount,
   getListEventElTimeText,
-  getListEventElTitle
+  getListEventElTitle,
+  getListViewScrollerEl
 } from '../lib/ListViewUtils'
-import { getScrollerEl } from '../lib/MonthViewUtils'
 import { replaceEventElDotElWithEl } from '../event-render/EventRenderUtils'
 
 describe('ListView rendering', function() {
@@ -455,7 +455,7 @@ describe('ListView rendering', function() {
       initCalendar({
         header: false
       }, $el)
-      let $scrollEl = getScrollerEl()
+      let $scrollEl = getListViewScrollerEl()
       expect(
         $scrollEl[0].scrollHeight
       ).toBeGreaterThan(
@@ -470,7 +470,7 @@ describe('ListView rendering', function() {
         header: false,
         height: 'auto'
       }, $el)
-      let $scrollEl = getScrollerEl()
+      let $scrollEl = getListViewScrollerEl()
       expect(
         Math.abs($scrollEl[0].scrollHeight - $scrollEl[0].clientHeight)
       ).toBeLessThan(2)

@@ -19,7 +19,7 @@ describe('daygrid view with updated dimensions', function() {
     }, $wrapper.children().get(0))
 
     $wrapper.width(400)
-    // currentCalendar.updateSize()
+    currentCalendar.updateSize()
 
     getDayEl('2019-04-02').simulate('drag') // a click
   })

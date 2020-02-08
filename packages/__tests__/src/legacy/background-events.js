@@ -497,7 +497,7 @@ describe('background events', function() {
         } ]
         options._eventsPositioned = function() {
           expect(getBackgroundEventEls().length).toBe(1)
-          expect(queryBgEventsInCol(4).length).toBe(1)
+          expect(queryBgEventsInCol(2).length).toBe(1)
           expect(getBackgroundEventEls()).toBeBelow('.fc-slats tr:eq(0)') // should be 1am (eq(1)) but FF cmplaining
           expect(getBackgroundEventEls()).toBeAbove('.fc-slats tr:eq(10)') // 5am
           done()
@@ -514,7 +514,7 @@ describe('background events', function() {
         options._eventsPositioned = function() {
           expect(getBackgroundEventEls().length).toBe(2)
           expect(queryBgEventsInCol(3).length).toBe(1)
-          expect(queryBgEventsInCol(4).length).toBe(1)
+          expect(queryBgEventsInCol(2).length).toBe(1)
           done()
         }
         initCalendar(options)
@@ -535,11 +535,11 @@ describe('background events', function() {
           // time area
           expect(getTimeGridNonBusinessDayEls().length).toBe(11)
           expect(queryNonBusinessSegsInCol(0).length).toBe(1)
-          expect(queryNonBusinessSegsInCol(1).length).toBe(1)
+          expect(queryNonBusinessSegsInCol(1).length).toBe(2)
           expect(queryNonBusinessSegsInCol(2).length).toBe(2)
           expect(queryNonBusinessSegsInCol(3).length).toBe(2)
           expect(queryNonBusinessSegsInCol(4).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(5).length).toBe(2)
+          expect(queryNonBusinessSegsInCol(5).length).toBe(1)
           expect(queryNonBusinessSegsInCol(6).length).toBe(1)
         })
       })
@@ -713,9 +713,9 @@ describe('background events', function() {
             expect(getBackgroundEventEls().length).toBe(8)
             expect(queryBgEventsInCol(0).length).toBe(1)
             expect(queryBgEventsInCol(1).length).toBe(1)
-            expect(queryBgEventsInCol(2).length).toBe(1)
+            expect(queryBgEventsInCol(2).length).toBe(2)
             expect(queryBgEventsInCol(3).length).toBe(1)
-            expect(queryBgEventsInCol(4).length).toBe(2)
+            expect(queryBgEventsInCol(4).length).toBe(1)
             expect(queryBgEventsInCol(5).length).toBe(1)
             expect(queryBgEventsInCol(6).length).toBe(1)
             // TODO: maybe check y coords

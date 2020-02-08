@@ -23,7 +23,6 @@ describe('theme switching', function() {
 
   function verifyStandardTheme() {
     expect($('.fc-unthemed')).toBeInDOM()
-    expect($('.fc-widget-header')).toBeInDOM()
   }
 
   function verifyBootstrapTheme() {

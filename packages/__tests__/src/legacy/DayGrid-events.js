@@ -187,7 +187,7 @@ describe('DayGrid event rendering', function() {
     function testSeg(calendarOptions, testSegOptions) {
       calendarOptions.dir = dir
       initCalendar(calendarOptions)
-      directionallyTestSeg(testSegOptions, dir)
+      directionallyTestSeg(testSegOptions)
     }
   }
 

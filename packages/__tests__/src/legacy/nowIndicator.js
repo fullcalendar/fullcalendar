@@ -1,7 +1,6 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { isElWithinRtl } from '../lib/dom-misc'
 import { getTimeGridLine } from '../lib/time-grid'
-import { TimeCols } from '@fullcalendar/timegrid'
 
 describe('now indicator', function() {
   var options
@@ -64,25 +63,6 @@ describe('now indicator', function() {
           })
         })
       })
-    })
-
-    // https://github.com/fullcalendar/fullcalendar/issues/3872
-    it('doesnt double render indicator arrow', function(done) {
-
-      // force the indicator to update every second
-      var getNowIndicatorUnit = spyOnMethod(TimeCols, 'getNowIndicatorUnit', true)
-        .and.returnValue('second')
-
-      options.defaultDate = '2016-01-01' // does NOT have "now" in view
-      options.nowIndicator = true
-      initCalendar(options)
-      currentCalendar.today() // the bug only happens after navigate
-
-      setTimeout(function() {
-        expect($('.fc-now-indicator-arrow').length).toBe(1)
-        getNowIndicatorUnit.restore()
-        done()
-      }, 2100) // allows for more than 1 update
     })
   })
 
