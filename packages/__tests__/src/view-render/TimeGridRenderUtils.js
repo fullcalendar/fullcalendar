@@ -107,7 +107,7 @@ function computeDays() {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
       date: parseMarker(
-        $(node).data('date')
+        node.getAttribute('data-date')
       ).marker
     })
   }).get()
@@ -124,7 +124,7 @@ function computeSlots() {
     var rect = node.getBoundingClientRect()
     return $.extend({}, rect, {
       startTimeMs: createDuration(
-        $(node).data('time')
+        node.getAttribute('data-time')
       ).milliseconds
     })
   }).get()

@@ -89,7 +89,7 @@ describe('eventOrder', function() {
 
   function getEventOrder() {
     return getEventEls().map(function(i, node) {
-      return $(node).data('event-id')
+      return node.getAttribute('data-event-id')
     }).get()
   }
 })

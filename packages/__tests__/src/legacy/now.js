@@ -15,7 +15,7 @@ describe('now', function() {
         now: '2014-05-06'
       })
       var todayCell = $('td.fc-today', currentCalendar.el)
-      var todayDate = todayCell.data('date')
+      var todayDate = todayCell[0].getAttribute('data-date')
       expect(todayDate).toEqual('2014-05-06')
     })
   })
@@ -29,7 +29,7 @@ describe('now', function() {
         now: '2014-04-29T12:00:00'
       })
       var todayCell = $('td.fc-today', currentCalendar.el)
-      expect(todayCell.data('date')).toBe('2014-04-29')
+      expect(todayCell[0].getAttribute('data-date')).toBe('2014-04-29')
     })
   })
 
@@ -41,7 +41,7 @@ describe('now', function() {
       }
     })
     var todayCell = $('td.fc-today', currentCalendar.el)
-    var todayDate = todayCell.data('date')
+    var todayDate = todayCell[0].getAttribute('data-date')
     expect(todayDate).toEqual('2014-05-01')
   })
 
@@ -53,7 +53,7 @@ describe('now', function() {
       }
     })
     var todayCell = $('td.fc-today', currentCalendar.el)
-    var todayDate = todayCell.data('date')
+    var todayDate = todayCell[0].getAttribute('data-date')
     expect(todayDate).toEqual('2014-05-01')
   })
 

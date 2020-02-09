@@ -218,7 +218,7 @@ describe('navLinks', function() {
 
   function getDayGridDates() {
     return $('.fc-day-grid .fc-day').map(function(i, el) {
-      return new Date($(el).data('date'))
+      return new Date(el.getAttribute('data-date'))
     }).get()
   }
 

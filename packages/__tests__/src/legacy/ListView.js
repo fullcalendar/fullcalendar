@@ -502,7 +502,7 @@ describe('ListView rendering', function() {
       return {
         mainText: getListHeadingElMainElText($el) || '',
         altText: getListHeadingElAltElText($el) || '',
-        date: new Date($el.data('date'))
+        date: new Date(el.getAttribute('data-date'))
       }
     }).get()
   }

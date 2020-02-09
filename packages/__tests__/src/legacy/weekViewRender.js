@@ -15,7 +15,7 @@ describe('weekViewRender', function() {
 
       $('th.fc-day-header', currentCalendar.el).each(function(i, headerNode) {
         var headerEl = $(headerNode)
-        var dateMatchesToday = headerEl.data('date') === nowStr
+        var dateMatchesToday = headerNode.getAttribute('data-date') === nowStr
         var hasTodayClass = headerEl.hasClass('fc-today')
 
         expect(dateMatchesToday).toBe(hasTodayClass)

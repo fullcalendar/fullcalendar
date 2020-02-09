@@ -96,7 +96,6 @@ export function getTimeGridLine(date) { // not in Scheduler
 export function getTimeGridTop(targetTimeMs) {
   const topBorderWidth = 1 // TODO: kill
   let slotEls = getSlotElByTime(targetTimeMs)
-  let slotEl
 
   // exact slot match
   if (slotEls.length === 1) {
@@ -108,17 +107,17 @@ export function getTimeGridTop(targetTimeMs) {
   let prevSlotTimeMs = null
 
   for (let i = 0; i < slotEls.length; i++) { // traverse earlier to later
-    slotEl = slotEls[i]
-    slotEl = $(slotEl)
+    let slotEl = slotEls[i]
+    let $slotEl = $(slotEl)
 
     prevSlotTimeMs = slotTimeMs
-    slotTimeMs = createDuration(slotEl.data('time')).milliseconds
+    slotTimeMs = createDuration(slotEl.getAttribute('data-time')).milliseconds
 
     // is target time between start of previous slot but before this one?
     if (targetTimeMs < slotTimeMs) {
       // before first slot
       if (!prevSlotTimeMs) {
-        return slotEl.offset().top + topBorderWidth
+        return $slotEl.offset().top + topBorderWidth
       } else {
         const prevSlotEl = slotEls.eq(i - 1)
         return prevSlotEl.offset().top + // previous slot top
