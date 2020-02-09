@@ -20,7 +20,7 @@ describe('eventRender', function() {
       })
 
       describe('with foreground event', function() {
-        it('receives correct args AND can modify the element', function(done) {
+        it('receives correct args AND can modify the element', function() {
           var options = {
             eventRender: function(arg) {
               expect(typeof arg.event).toBe('object')
@@ -30,15 +30,13 @@ describe('eventRender', function() {
               expect(typeof arg.view).toBe('object')
               expect(arg.isMirror).toBe(false)
               $(arg.el).css('font-size', '20px')
-            },
-            _eventsPositioned: function() {
-              expect($(gridSelector).find('.fc-event').css('font-size')).toBe('20px')
-              expect(options.eventRender).toHaveBeenCalled()
-              done()
             }
           }
           spyOn(options, 'eventRender').and.callThrough()
           initCalendar(options)
+
+          expect($(gridSelector).find('.fc-event').css('font-size')).toBe('20px')
+          expect(options.eventRender).toHaveBeenCalled()
         })
       })
     })
@@ -55,33 +53,31 @@ describe('eventRender', function() {
     })
 
     describe('with a foreground event', function() {
-      it('can return a new element', function(done) {
+
+      it('can return a new element', function() {
         var options = {
           eventRender: function(arg) {
             return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .sup').length).toBe(1)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .sup').length).toBe(1)
+        expect(options.eventRender).toHaveBeenCalled()
       })
-      it('can return false and cancel rendering', function(done) {
+
+      it('can return false and cancel rendering', function() {
         var options = {
-          eventRender: function(arg) {
+          eventRender() {
             return false
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .fc-event').length).toBe(0)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .fc-event').length).toBe(0)
+        expect(options.eventRender).toHaveBeenCalled()
       })
     })
 
@@ -95,7 +91,7 @@ describe('eventRender', function() {
         } ]
       })
 
-      it('receives correct args AND can modify the element', function(done) {
+      it('receives correct args AND can modify the element', function() {
         var options = {
           eventRender: function(arg) {
             expect(typeof arg.event).toBe('object')
@@ -105,59 +101,51 @@ describe('eventRender', function() {
             expect(typeof arg.view).toBe('object')
             $(arg.el).css('font-size', '20px')
           },
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .fc-bgevent').css('font-size')).toBe('20px')
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
-          }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .fc-bgevent').css('font-size')).toBe('20px')
+        expect(options.eventRender).toHaveBeenCalled()
       })
 
-      it('can return a new element', function(done) {
+      it('can return a new element', function() {
         var options = {
           eventRender: function(arg) {
             return $('<td class="sup" style="background-color:green">sup g</td>')[0]
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .sup').length).toBe(1)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .sup').length).toBe(1)
+        expect(options.eventRender).toHaveBeenCalled()
       })
 
-      it('won\'t rendering when returning a new element of the wrong type', function(done) {
+      it('won\'t rendering when returning a new element of the wrong type', function() {
         var options = {
           eventRender: function(arg) {
             return $('<div class="sup" style="background-color:green">sup g</div>')[0]
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .sup').length).toBe(0)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .sup').length).toBe(0)
+        expect(options.eventRender).toHaveBeenCalled()
       })
 
-      it('can return false and cancel rendering', function(done) {
+      it('can return false and cancel rendering', function() {
         var options = {
           eventRender: function(arg) {
             return false
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
+        expect(options.eventRender).toHaveBeenCalled()
       })
     })
 
@@ -171,17 +159,15 @@ describe('eventRender', function() {
         } ]
       })
 
-      it('won\'t render or call eventRender', function(done) {
+      it('won\'t render or call eventRender', function() {
         var options = {
           eventRender: function(arg) {},
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
-            expect(options.eventRender).not.toHaveBeenCalled()
-            done()
-          }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
+        expect(options.eventRender).not.toHaveBeenCalled()
       })
     })
   })
@@ -201,34 +187,30 @@ describe('eventRender', function() {
         } ]
       })
 
-      it('can return a new element', function(done) {
+      it('can return a new element', function() {
         var options = {
           eventRender: function(arg) {
             return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-time-grid .sup').length).toBe(1)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-time-grid .sup').length).toBe(1)
+        expect(options.eventRender).toHaveBeenCalled()
       })
 
-      it('can return false and cancel rendering', function(done) {
+      it('can return false and cancel rendering', function() {
         var options = {
           eventRender: function(arg) {
             return false
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-time-grid .fc-event').length).toBe(0)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-time-grid .fc-event').length).toBe(0)
+        expect(options.eventRender).toHaveBeenCalled()
       })
     })
 
@@ -242,7 +224,7 @@ describe('eventRender', function() {
         } ]
       })
 
-      it('receives correct args AND can modify the element', function(done) {
+      it('receives correct args AND can modify the element', function() {
         var options = {
           eventRender: function(arg) {
             expect(typeof arg.event).toBe('object')
@@ -251,64 +233,56 @@ describe('eventRender', function() {
             expect(arg.el instanceof HTMLElement).toBe(true)
             expect(typeof arg.view).toBe('object')
             $(arg.el).css('font-size', '20px')
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-time-grid .fc-bgevent').css('font-size')).toBe('20px')
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-time-grid .fc-bgevent').css('font-size')).toBe('20px')
+        expect(options.eventRender).toHaveBeenCalled()
       })
 
-      it('can return a new element', function(done) {
+      it('can return a new element', function() {
         var options = {
           eventRender: function() {
             return $('<div class="fc-bgevent sup" style="background-color:green">sup g</div>')[0]
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-time-grid .sup').length).toBe(1)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-time-grid .sup').length).toBe(1)
+        expect(options.eventRender).toHaveBeenCalled()
       })
 
-      it('won\'t rendering when returning a new element of the wrong type', function(done) {
+      it('won\'t rendering when returning a new element of the wrong type', function() {
         var options = {
           eventRender: function() {
             return $('<p class="fc-bgevent sup" style="background-color:green">sup g</p>')[0]
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-time-grid .sup').length).toBe(0)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-time-grid .sup').length).toBe(0)
+        expect(options.eventRender).toHaveBeenCalled()
       })
-      it('can return false and cancel rendering', function(done) {
+
+      it('can return false and cancel rendering', function() {
         var options = {
           eventRender: function() {
             return false
-          },
-          _eventsPositioned: function() {
-            expect($('.fc-time-grid .fc-bgevent').length).toBe(0)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-time-grid .fc-bgevent').length).toBe(0)
+        expect(options.eventRender).toHaveBeenCalled()
       })
     })
 
     describe('with an all-day background event', function() { // not exactly related to eventRender!
-
       pushOptions({
         events: [ {
           title: 'my event',
@@ -317,18 +291,16 @@ describe('eventRender', function() {
         } ]
       })
 
-      it('will render in all-day AND timed slots', function(done) {
+      it('will render in all-day AND timed slots', function() {
         var options = {
-          eventRender: function() {},
-          _eventsPositioned: function() {
-            expect($('.fc-day-grid .fc-bgevent').length).toBe(1)
-            expect($('.fc-time-grid .fc-bgevent').length).toBe(1)
-            expect(options.eventRender).toHaveBeenCalled()
-            done()
-          }
+          eventRender: function() {}
         }
         spyOn(options, 'eventRender').and.callThrough()
         initCalendar(options)
+
+        expect($('.fc-day-grid .fc-bgevent').length).toBe(1)
+        expect($('.fc-time-grid .fc-bgevent').length).toBe(1)
+        expect(options.eventRender).toHaveBeenCalled()
       })
     })
   })

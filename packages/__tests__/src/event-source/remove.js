@@ -3,9 +3,7 @@ describe('event source remove', function() {
     defaultDate: '2014-08-01'
   })
 
-  it('correctly removes events provided via `eventSources` at initialization', function(done) {
-    var callCnt = 0
-
+  it('correctly removes events provided via `eventSources` at initialization', function() {
     initCalendar({
       eventSources: [ {
         id: '5',
@@ -13,18 +11,12 @@ describe('event source remove', function() {
           { title: 'event1', start: '2014-08-01' },
           { title: 'event2', start: '2014-08-02' }
         ]
-      } ],
-      _eventsPositioned() {
-        callCnt++
-        if (callCnt === 1) {
-          expectEventCnt(2)
-          currentCalendar.getEventSourceById('5').remove()
-        } else if (callCnt === 2) {
-          expectEventCnt(0)
-          done()
-        }
-      }
+      } ]
     })
+
+    expectEventCnt(2)
+    currentCalendar.getEventSourceById('5').remove()
+    expectEventCnt(0)
   })
 
   it('won\'t render removed events when subsequent addEventSource', function(done) {

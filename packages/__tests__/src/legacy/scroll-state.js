@@ -52,37 +52,25 @@ describe('scroll state', function() {
       }, 0)
     })
 
-    it('should be maintained when after rerendering events', function(done) {
-      var calls = 0
-      var eventEl0
-      var eventEl1
-      var scrollEl
-      var scroll0
-
+    it('should be maintained when after rerendering events', function() {
       initCalendar({
         events: [ {
           start: '2015-02-20'
-        } ],
-        _eventsPositioned: function() {
-          if (++calls === 1) {
-            eventEl0 = $('.fc-event', calendarEl)
-            expect(eventEl0.length).toBe(1)
-
-            setTimeout(function() { // wait until after browser's scroll state is applied
-              scrollEl.scrollTop(9999) // all the way
-              scroll0 = scrollEl.scrollTop()
-              currentCalendar.render()
-            }, 0)
-          } else {
-            eventEl1 = $('.fc-event', calendarEl)
-            expect(eventEl1.length).toBe(1)
-            expect(eventEl1[0]).not.toBe(eventEl0[0]) // ensure it a rerender
-            expect(scrollEl.scrollTop()).toBe(scroll0)
-            done()
-          }
-        }
+        } ]
       }, calendarEl)
-      scrollEl = $('.fc-scroller', calendarEl)
+
+      let scrollEl = $('.fc-scroller', calendarEl)
+      let eventEl0 = $('.fc-event', calendarEl)
+      expect(eventEl0.length).toBe(1)
+
+      scrollEl.scrollTop(9999) // all the way
+      let scroll0 = scrollEl.scrollTop()
+      currentCalendar.render()
+
+      let eventEl1 = $('.fc-event', calendarEl)
+      expect(eventEl1.length).toBe(1)
+      expect(eventEl1[0]).not.toBe(eventEl0[0]) // ensure it a rerender
+      expect(scrollEl.scrollTop()).toBe(scroll0)
     })
   }
 })

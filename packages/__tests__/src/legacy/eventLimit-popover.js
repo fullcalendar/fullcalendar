@@ -501,20 +501,17 @@ describe('eventLimit popover', function() {
       ],
       eventRender: function() {},
       eventPositioned: function() {},
-      _eventsPositioned: function() {},
       eventDestroy: function() {}
     }
 
     spyOn(options, 'eventRender')
     spyOn(options, 'eventPositioned')
-    spyOn(options, '_eventsPositioned')
     spyOn(options, 'eventDestroy')
 
     initCalendar(options)
 
     expect(options.eventRender.calls.count()).toBe(4)
     expect(options.eventPositioned.calls.count()).toBe(4)
-    expect(options._eventsPositioned.calls.count()).toBe(1)
     expect(options.eventDestroy.calls.count()).toBe(0)
 
     openWithClick()
@@ -522,7 +519,6 @@ describe('eventLimit popover', function() {
 
       expect(options.eventRender.calls.count()).toBe(8) // +4
       expect(options.eventPositioned.calls.count()).toBe(8) // +4
-      expect(options._eventsPositioned.calls.count()).toBe(2) // +1
       expect(options.eventDestroy.calls.count()).toBe(0)
 
       closeWithClick()
@@ -530,7 +526,6 @@ describe('eventLimit popover', function() {
 
         expect(options.eventRender.calls.count()).toBe(8)
         expect(options.eventPositioned.calls.count()).toBe(8)
-        expect(options._eventsPositioned.calls.count()).toBe(2)
         expect(options.eventDestroy.calls.count()).toBe(4) // +4
 
         done()

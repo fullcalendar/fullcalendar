@@ -96,6 +96,7 @@ export function getTimeGridLine(date) { // not in Scheduler
 export function getTimeGridTop(targetTimeMs) {
   const topBorderWidth = 1 // TODO: kill
   let slotEls = getSlotElByTime(targetTimeMs)
+  let $slotEl // used within loop, but we access last val
 
   // exact slot match
   if (slotEls.length === 1) {
@@ -108,7 +109,7 @@ export function getTimeGridTop(targetTimeMs) {
 
   for (let i = 0; i < slotEls.length; i++) { // traverse earlier to later
     let slotEl = slotEls[i]
-    let $slotEl = $(slotEl)
+    $slotEl = $(slotEl)
 
     prevSlotTimeMs = slotTimeMs
     slotTimeMs = createDuration(slotEl.getAttribute('data-time')).milliseconds
@@ -134,9 +135,9 @@ export function getTimeGridTop(targetTimeMs) {
   // guess the duration of the last slot, based on previous duration
   const slotMsDuration = slotTimeMs - prevSlotTimeMs
 
-  return slotEl.offset().top + // last slot's top
+  return $slotEl.offset().top + // last slot's top
     topBorderWidth +
-    (slotEl.outerHeight() *
+    ($slotEl.outerHeight() *
     Math.min(1, (targetTimeMs - slotTimeMs) / slotMsDuration)) // don't go past end of last slot
 }
 

@@ -117,37 +117,30 @@ describe('removeEvents', function() {
 
   // Verifies the actions in removeFunc executed correctly by calling checkFunc.
   function go(events, removeFunc, checkFunc, doneFunc) {
-    var called = false
     initCalendar({
-      events: events,
-      _eventsPositioned: function() {
-        if (!called) { // don't execute on subsequent removeEvents/next/prev
-          called = true
-
-          checkAllEvents() // make sure all events initially rendered correctly
-
-          removeFunc() // remove the events
-          setTimeout(function() { // because the event rerender will be queued because we're a level deep
-
-            checkFunc() // check correctness
-
-            // move the calendar back out of view, then back in
-            currentCalendar.next()
-            currentCalendar.prev()
-
-            // array event sources should maintain the same state
-            // whereas "dynamic" event sources should refetch and reset the state
-            if ($.isArray(events)) {
-              checkFunc() // for issue 2187
-            } else {
-              checkAllEvents()
-            }
-
-            doneFunc()
-          }, 0)
-        }
-      }
+      events
     })
+
+    checkAllEvents() // make sure all events initially rendered correctly
+    removeFunc() // remove the events
+    setTimeout(function() { // because the event rerender will be queued because we're a level deep
+
+      checkFunc() // check correctness
+
+      // move the calendar back out of view, then back in
+      currentCalendar.next()
+      currentCalendar.prev()
+
+      // array event sources should maintain the same state
+      // whereas "dynamic" event sources should refetch and reset the state
+      if ($.isArray(events)) {
+        checkFunc() // for issue 2187
+      } else {
+        checkAllEvents()
+      }
+
+      doneFunc()
+    }, 0)
   }
 
 

@@ -57,7 +57,7 @@ describe('defaultAllDayEventDuration', function() {
       'with dayGridWeek view': 'dayGridWeek',
       'with week view': 'timeGridWeek'
     }, function() {
-      it('renders an all-day event with no `end` to appear to have the default duration', function(done) {
+      it('renders an all-day event with no `end` to appear to have the default duration', function() {
         initCalendar({
           defaultAllDayEventDuration: { days: 2 },
           events: [
@@ -74,16 +74,14 @@ describe('defaultAllDayEventDuration', function() {
               allDay: true,
               start: '2014-04-28'
             }
-          ],
-          _eventsPositioned: function() {
-            var eventElms = getEventEls()
-            var width0 = eventElms.eq(0).outerWidth()
-            var width1 = eventElms.eq(1).outerWidth()
-            expect(width0).toBeGreaterThan(0)
-            expect(width0).toEqual(width1)
-            done()
-          }
+          ]
         })
+
+        var eventElms = getEventEls()
+        var width0 = eventElms.eq(0).outerWidth()
+        var width1 = eventElms.eq(1).outerWidth()
+        expect(width0).toBeGreaterThan(0)
+        expect(width0).toEqual(width1)
       })
     })
   })

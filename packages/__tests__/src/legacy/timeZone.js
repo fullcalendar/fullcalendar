@@ -26,14 +26,11 @@ describe('timeZone', function() {
   })
 
 
-  it('receives events correctly when local timezone', function(done) {
+  it('receives events correctly when local timezone', function() {
     initCalendar({
-      timeZone: 'local',
-      _eventsPositioned: function() {
-        expectLocalTimezone()
-        done()
-      }
+      timeZone: 'local'
     })
+    expectLocalTimezone()
   })
 
   function expectLocalTimezone() {
@@ -49,14 +46,11 @@ describe('timeZone', function() {
   }
 
 
-  it('receives events correctly when UTC timezone', function(done) {
+  it('receives events correctly when UTC timezone', function() {
     initCalendar({
-      timeZone: 'UTC',
-      _eventsPositioned: function() {
-        expectUtcTimezone()
-        done()
-      }
+      timeZone: 'UTC'
     })
+    expectUtcTimezone()
   })
 
   function expectUtcTimezone() {
@@ -72,14 +66,11 @@ describe('timeZone', function() {
   }
 
 
-  it('receives events correctly when custom timezone', function(done) {
+  it('receives events correctly when custom timezone', function() {
     initCalendar({
-      timeZone: 'America/Chicago',
-      _eventsPositioned: function() {
-        expectCustomTimezone()
-        done()
-      }
+      timeZone: 'America/Chicago'
     })
+    expectCustomTimezone()
   })
 
   function expectCustomTimezone() {
@@ -95,34 +86,23 @@ describe('timeZone', function() {
   }
 
 
-  it('can be set dynamically', function(done) {
-    var callCnt = 0
-
+  it('can be set dynamically', function() {
     initCalendar({
-      timeZone: 'local',
-      _eventsPositioned: function() {
-        callCnt++
-        if (callCnt === 1) {
-
-          expectLocalTimezone()
-          currentCalendar.setOption('timeZone', 'UTC') // will cause second call...
-
-        } else if (callCnt === 2) {
-
-          var allDayEvent = currentCalendar.getEventById('1')
-          var timedEvent = currentCalendar.getEventById('2')
-          var zonedEvent = currentCalendar.getEventById('3')
-          expect(allDayEvent.allDay).toEqual(true)
-          expect(allDayEvent.start).toEqualDate('2014-05-02')
-          expect(timedEvent.allDay).toEqual(false)
-          expect(timedEvent.start).toEqualLocalDate('2014-05-10T12:00:00') // was parsed as LOCAL originally
-          expect(zonedEvent.allDay).toEqual(false)
-          expect(zonedEvent.start).toEqualDate('2014-05-10T14:00:00+11:00')
-
-          done()
-        }
-      }
+      timeZone: 'local'
     })
+
+    expectLocalTimezone()
+
+    currentCalendar.setOption('timeZone', 'UTC')
+    var allDayEvent = currentCalendar.getEventById('1')
+    var timedEvent = currentCalendar.getEventById('2')
+    var zonedEvent = currentCalendar.getEventById('3')
+    expect(allDayEvent.allDay).toEqual(true)
+    expect(allDayEvent.start).toEqualDate('2014-05-02')
+    expect(timedEvent.allDay).toEqual(false)
+    expect(timedEvent.start).toEqualLocalDate('2014-05-10T12:00:00') // was parsed as LOCAL originally
+    expect(zonedEvent.allDay).toEqual(false)
+    expect(zonedEvent.start).toEqualDate('2014-05-10T14:00:00+11:00')
   })
 
 })

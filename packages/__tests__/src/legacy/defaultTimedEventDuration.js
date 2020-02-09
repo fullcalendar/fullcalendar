@@ -55,7 +55,7 @@ describe('defaultTimedEventDuration', function() {
         defaultView: 'timeGridWeek'
       })
 
-      it('renders a timed event with no `end` to appear to have the default duration', function(done) {
+      it('renders a timed event with no `end` to appear to have the default duration', function() {
         initCalendar({
           defaultTimedEventDuration: '01:15:00',
           events: [
@@ -72,16 +72,14 @@ describe('defaultTimedEventDuration', function() {
               allDay: false,
               start: '2014-05-02T04:00:00'
             }
-          ],
-          _eventsPositioned: function() {
-            var eventElms = getEventEls()
-            var height0 = eventElms.eq(0).outerHeight()
-            var height1 = eventElms.eq(1).outerHeight()
-            expect(height0).toBeGreaterThan(0)
-            expect(height0).toEqual(height1)
-            done()
-          }
+          ]
         })
+
+        var eventElms = getEventEls()
+        var height0 = eventElms.eq(0).outerHeight()
+        var height1 = eventElms.eq(1).outerHeight()
+        expect(height0).toBeGreaterThan(0)
+        expect(height0).toEqual(height1)
       })
     })
 
@@ -91,8 +89,7 @@ describe('defaultTimedEventDuration', function() {
         defaultView: 'dayGridWeek'
       })
 
-      it('renders a timed event with no `end` to appear to have the default duration', function(done) {
-
+      it('renders a timed event with no `end` to appear to have the default duration', function() {
         initCalendar({
           defaultTimedEventDuration: { days: 2 },
           events: [
@@ -109,16 +106,14 @@ describe('defaultTimedEventDuration', function() {
               allDay: false,
               start: '2014-04-28T04:00:00'
             }
-          ],
-          _eventsPositioned: function() {
-            var eventElms = getEventEls()
-            var width0 = eventElms.eq(0).outerWidth()
-            var width1 = eventElms.eq(1).outerWidth()
-            expect(width0).toBeGreaterThan(0)
-            expect(width0).toEqual(width1)
-            done()
-          }
+          ]
         })
+
+        var eventElms = getEventEls()
+        var width0 = eventElms.eq(0).outerWidth()
+        var width1 = eventElms.eq(1).outerWidth()
+        expect(width0).toBeGreaterThan(0)
+        expect(width0).toEqual(width1)
       })
     })
   })
