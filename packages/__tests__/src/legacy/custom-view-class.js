@@ -21,23 +21,20 @@ describe('custom view class', function() {
         expect(eventRanges[0].range.start instanceof Date).toBe(true)
         expect(eventRanges[0].range.end instanceof Date).toBe(true)
 
-        let dateSelection = props.dateSpan
-        expect(typeof dateSelection).toBe('object')
-        expect(dateSelection.allDay).toBe(true)
-        expect(dateSelection.range.start instanceof Date).toBe(true)
-        expect(dateSelection.range.end instanceof Date).toBe(true)
-      }
-
-      updateSize(isResize, height, isAuto) {
-        expect(typeof isResize).toBe('boolean')
-        expect(typeof height).toBe('number')
-        expect(typeof isAuto).toBe('boolean')
+        let dateSelection = props.dateSelection
+        if (!dateSelection) {
+          expect(dateSelection).toBe(null)
+        } else {
+          expect(typeof dateSelection).toBe('object')
+          expect(dateSelection.allDay).toBe(true)
+          expect(dateSelection.range.start instanceof Date).toBe(true)
+          expect(dateSelection.range.end instanceof Date).toBe(true)
+        }
       }
 
     }
 
     spyOn(CustomView.prototype, 'render').and.callThrough()
-    spyOn(CustomView.prototype, 'updateSize').and.callThrough()
 
     initCalendar({
       plugins: [
@@ -59,9 +56,8 @@ describe('custom view class', function() {
     })
 
     expect(CustomView.prototype.render).toHaveBeenCalled()
-    expect(CustomView.prototype.updateSize).toHaveBeenCalled()
 
-    currentCalendar.rerenderEvents()
+    currentCalendar.render()
 
     expect(CustomView.prototype.render).toHaveBeenCalled()
 

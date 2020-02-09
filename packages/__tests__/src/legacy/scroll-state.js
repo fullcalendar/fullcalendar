@@ -71,7 +71,7 @@ describe('scroll state', function() {
             setTimeout(function() { // wait until after browser's scroll state is applied
               scrollEl.scrollTop(9999) // all the way
               scroll0 = scrollEl.scrollTop()
-              currentCalendar.rerenderEvents()
+              currentCalendar.render()
             }, 0)
           } else {
             eventEl1 = $('.fc-event', calendarEl)
