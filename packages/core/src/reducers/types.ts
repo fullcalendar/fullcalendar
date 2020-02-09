@@ -62,5 +62,4 @@ export type Action =
   { type: 'MUTATE_EVENTS', instanceId: string, mutation: EventMutation, fromApi?: boolean } |
   { type: 'REMOVE_EVENT_DEF', defId: string } |
   { type: 'REMOVE_EVENT_INSTANCES', instances: EventInstanceHash } |
-  { type: 'REMOVE_ALL_EVENTS' } |
-  { type: 'RESET_EVENTS' }
+  { type: 'REMOVE_ALL_EVENTS' }

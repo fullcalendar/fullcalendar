@@ -11,9 +11,9 @@ import { BaseComponent } from '../vdom-util'
 
 
 export interface TableDateCellProps {
+  distinctDateStr: string
   dateMarker: DateMarker
   dateProfile: DateProfile
-  datesRepDistinctDays: boolean
   colCnt: number
   colHeadFormat: DateFormatter
   colSpan?: number
@@ -24,7 +24,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> {
 
   render(props: TableDateCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
-    let { dateMarker, dateProfile, datesRepDistinctDays } = props
+    let { dateMarker, dateProfile, distinctDateStr } = props
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, dateMarker) // TODO: called too frequently. cache somehow.
     let classNames = [ 'fc-day-header' ]
     let innerText
@@ -43,7 +43,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> {
     }
 
     // if only one row of days, the classNames on the header can represent the specific days beneath
-    if (datesRepDistinctDays) {
+    if (distinctDateStr) {
       classNames = classNames.concat(
         // includes the day-of-week class
         // noThemeHighlight=true (don't highlight the header)
@@ -55,8 +55,8 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> {
 
     let attrs = {} as any
 
-    if (isDateValid && datesRepDistinctDays) {
-      attrs['data-date'] = dateEnv.formatIso(dateMarker, { omitTime: true })
+    if (isDateValid && distinctDateStr) {
+      attrs['data-date'] = distinctDateStr
     }
 
     if (props.colSpan > 1) {
@@ -72,7 +72,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> {
         {isDateValid &&
           <GotoAnchor
             navLinks={options.navLinks}
-            gotoOptions={{ date: dateMarker, forceOff: isDateValid && (!datesRepDistinctDays || props.colCnt === 1) }}
+            gotoOptions={{ date: dateMarker, forceOff: isDateValid && (!distinctDateStr || props.colCnt === 1) }}
             htmlContent={innerHtml}
           >{innerText}</GotoAnchor>
         }

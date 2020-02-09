@@ -79,12 +79,6 @@ export default function(eventStore: EventStore, action: Action, eventSources: Ev
     case 'REMOVE_ALL_EVENTS':
       return createEmptyEventStore()
 
-    case 'RESET_EVENTS':
-      return { // returns a new object with the same contents
-        defs: eventStore.defs,
-        instances: eventStore.instances
-      }
-
     default:
       return eventStore
   }

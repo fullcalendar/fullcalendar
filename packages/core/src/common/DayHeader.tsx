@@ -20,6 +20,7 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
 
 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {
+    let { dateEnv } = this.context
     let { dates, datesRepDistinctDays } = props
     let cells: VNode[] = []
 
@@ -33,11 +34,14 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
     )
 
     for (let date of dates) {
+      let distinctDateStr = datesRepDistinctDays ? dateEnv.formatIso(date, { omitTime: true }) : ''
+
       cells.push(
         <TableDateCell
+          key={distinctDateStr || date.getDay()}
+          distinctDateStr={distinctDateStr}
           dateMarker={date}
           dateProfile={props.dateProfile}
-          datesRepDistinctDays={datesRepDistinctDays}
           colCnt={dates.length}
           colHeadFormat={colHeadFormat}
         />

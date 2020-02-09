@@ -36,6 +36,7 @@ import { TaskRunner, DelayedRunner } from './util/runner'
 import ViewApi from './ViewApi'
 import { globalPlugins } from './global-plugins'
 import { removeExact } from './util/array'
+import { guid } from './util/misc'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -177,6 +178,9 @@ export default class Calendar {
       this.renderableEventStore = createEmptyEventStore()
       this.renderRunner.request()
       window.addEventListener('resize', this.handleWindowResize)
+    } else {
+      // hack for RERENDERING
+      this.setOption('renderId', guid())
     }
   }
 
@@ -1138,11 +1142,6 @@ export default class Calendar {
 
   removeAllEvents() {
     this.dispatch({ type: 'REMOVE_ALL_EVENTS' })
-  }
-
-
-  rerenderEvents() { // API method. destroys old events if previously rendered.
-    this.dispatch({ type: 'RESET_EVENTS' })
   }
 
 
