@@ -27,7 +27,7 @@ export interface SimpleScrollGridSection extends SectionConfig {
 
 interface SimpleScrollGridState {
   shrinkWidth: number | null
-  forceYScrollbars: boolean
+  forceYScrollbars: boolean | null
   scrollerClientWidths: { [index: string]: number }
   scrollerClientHeights: { [index: string]: number }
   sizingId: string
@@ -41,9 +41,9 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
   scrollerRefs = new RefMap<Scroller>()
   scrollerElRefs = new RefMap<HTMLElement, [ChunkConfig]>(this._handleScrollerEl.bind(this))
 
-  state = {
+  state: SimpleScrollGridState = {
     shrinkWidth: null,
-    forceYScrollbars: false,
+    forceYScrollbars: null,
     scrollerClientWidths: {},
     scrollerClientHeights: {},
     sizingId: ''
@@ -93,9 +93,13 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
     let { state } = this
 
-    let needsYScrolling = getNeedsYScrolling(this.props, sectionConfig, chunkConfig) // TODO: do lazily
-    let overflowY: OverflowValue = state.forceYScrollbars ? 'scroll' : (needsYScrolling ? 'auto' : 'hidden')
+    let needsYScrolling = getAllowYScrolling(this.props, sectionConfig, chunkConfig) // TODO: do lazily
     let vGrow = getChunkVGrow(this.props, sectionConfig, chunkConfig)
+
+    let overflowY: OverflowValue =
+      state.forceYScrollbars === true ? 'scroll' :
+      (state.forceYScrollbars === false || !needsYScrolling) ? 'hidden' :
+      'auto'
 
     let content = renderChunkContent(sectionConfig, chunkConfig, {
       tableColGroupNode: microColGroupNode,
@@ -150,9 +154,9 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       let sizingId = guid()
       this.setState({
         sizingId,
-        shrinkWidth: // will create each chunk's <colgroup>
-          hasShrinkWidth(this.props.cols) ?
-            computeShrinkWidth(this.scrollerElRefs.getAll())
+        shrinkWidth: // will create each chunk's <colgroup>. TODO: precompute hasShrinkWidth
+          hasShrinkWidth(this.props.cols)
+            ? computeShrinkWidth(this.scrollerElRefs.getAll())
             : 0
       }, () => {
         if (sizingId === this.state.sizingId) {
