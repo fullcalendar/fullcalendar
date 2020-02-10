@@ -3,7 +3,7 @@ import ComponentContext from '../component/ComponentContext'
 import { BaseComponent, setRef } from '../vdom-util'
 import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
-import { ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getNeedsYScrolling,
+import { ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getAllowYScrolling,
   renderChunkContent, getChunkVGrow, computeForceScrollbars, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames, computeScrollerClientWidths, computeScrollerClientHeights,
   isColPropsEqual
   } from './util'

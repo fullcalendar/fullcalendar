@@ -177,7 +177,7 @@ export { DelayedRunner } from './util/runner'
 export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgrid/SimpleScrollGrid'
 export {
   CssDimValue, ScrollerLike, SectionConfig, ColProps, ChunkConfig, hasShrinkWidth, renderMicroColGroup,
-  getScrollGridClassNames, getSectionClassNames, getChunkVGrow, getNeedsYScrolling, renderChunkContent, computeForceScrollbars, computeShrinkWidth,
+  getScrollGridClassNames, getSectionClassNames, getChunkVGrow, getAllowYScrolling, renderChunkContent, computeForceScrollbars, computeShrinkWidth,
   getChunkClassNames, ChunkContentCallbackArgs,
   computeScrollerClientWidths, computeScrollerClientHeights,
   sanitizeShrinkWidth,

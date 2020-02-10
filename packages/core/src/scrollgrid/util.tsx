@@ -90,7 +90,7 @@ export function getChunkVGrow(props: { vGrow?: boolean }, sectionConfig: Section
 }
 
 
-export function getNeedsYScrolling(props: { vGrow?: boolean }, sectionConfig: SectionConfig, chunkConfig: ChunkConfig) {
+export function getAllowYScrolling(props: { vGrow?: boolean }, sectionConfig: SectionConfig, chunkConfig: ChunkConfig) {
   return (sectionConfig.maxHeight != null || (props.vGrow && sectionConfig.vGrow)) && !chunkConfig.vGrowRows
 }
 
