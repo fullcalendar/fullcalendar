@@ -166,15 +166,16 @@ describe('eventLimit', function() {
 
       it('renders the heights of all the rows the same, regardless of # of events', function() {
         initCalendar()
-        var rowEls = $('.fc-day-grid .fc-row').slice(0, -1) // remove last b/c it will be a different height
+        var rowEls = $('.fc-day-grid .fc-row')
         expect(rowEls.length).toBeGreaterThan(0)
 
-        var firstRowHeight = Math.round(rowEls[0].getBoundingClientRect().height)
+        let rowHeights = rowEls.map((i, rowEl) => rowEl.getBoundingClientRect().height).get() // jQuery -> array
+        let totalHeight = rowHeights.reduce((prev, current) => prev + current, 0)
+        let aveHeight = totalHeight / rowHeights.length
 
-        rowEls.each(function(i, node) {
-          expect(
-            Math.round(node.getBoundingClientRect().height)
-          ).toBe(firstRowHeight)
+        rowHeights.forEach((rowHeight) => {
+          let diff = Math.abs(rowHeight - aveHeight)
+          expect(diff).toBeLessThan(1)
         })
       })
 

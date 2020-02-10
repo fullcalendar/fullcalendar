@@ -31,8 +31,8 @@ it('daygrid view rerenders well', function(done) {
   }
 
   function expectGridRendered(bool) {
-    // 2nd render is for shrinkWidth
-    expect(gridSpy.renderCount).toBeLessThanOrEqual(bool ? 2 : 0)
+    // 2nd render is for receiving clientWidth, 2nd is for shrinkWidth. TODO: optimize!
+    expect(gridSpy.renderCount).toBeLessThanOrEqual(bool ? 3 : 0)
   }
 
   expectHeaderRendered(true)
