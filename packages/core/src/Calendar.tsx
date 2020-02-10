@@ -819,6 +819,7 @@ export default class Calendar {
 
   updateSize() { // public
     this.triggerResizeHandlers(true)
+    flushToDom()
   }
 
 

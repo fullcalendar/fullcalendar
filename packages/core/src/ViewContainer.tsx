@@ -21,7 +21,7 @@ export default class ViewContainer extends BaseComponent<ViewContainerProps> {
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
 
-    if (props.aspectRatio || props.vGrow) {
+    if (props.aspectRatio || props.vGrow || props.height) {
       classNames.push('fc-view-container--absview')
     }
 
