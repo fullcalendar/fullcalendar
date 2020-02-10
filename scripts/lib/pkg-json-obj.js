@@ -29,7 +29,7 @@ function buildPkgJsonObj(origJsonObj, isPremium, isBundle) {
     merged.main = 'main.js' // will be umd
     merged.unpkg = 'main.min.js'
   } else {
-    merged.module = 'main.js'
+    merged.main = 'main.js' // will be an ES module even tho using `main` not `module`
     merged.types = 'main.d.ts' // TODO: make work for bundle
   }
 
