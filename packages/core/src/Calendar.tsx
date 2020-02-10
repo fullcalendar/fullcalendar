@@ -436,6 +436,7 @@ export default class Calendar {
     let specialUpdates = {}
     let oldDateEnv = this.dateEnv // do this before onOptionsChange
     let isTimeZoneDirty = false
+    let isSizeDirty = false
     let anyDifficultOptions = Boolean(removals.length)
 
     for (let name in updates) {
@@ -447,7 +448,9 @@ export default class Calendar {
     }
 
     for (let name in normalUpdates) {
-      if (/^(defaultDate|defaultView)$/.test(name)) {
+      if (/^(height|contentHeight|aspectRatio)$/.test(name)) {
+        isSizeDirty = true
+      } else if (/^(defaultDate|defaultView)$/.test(name)) {
         // can't change date this way. use gotoDate instead
       } else {
         anyDifficultOptions = true // I guess all options are "difficult" ?
@@ -484,6 +487,8 @@ export default class Calendar {
           viewType: this.state.viewType
         })
 
+      } else if (isSizeDirty) {
+        this.updateSize()
       }
 
       // special updates
