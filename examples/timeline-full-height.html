@@ -10,11 +10,10 @@ document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    // windowResizeDelay: 1000,
     height: '100%',
-    // nowIndicator: true,
-    editable: true, // enable draggable events
     aspectRatio: 1.8,
+    editable: true, // enable draggable events
+    now: '2019-08-07',
     scrollTime: '00:00', // undo default 6am scrollTime
     header: {
       left: 'today prev,next',
