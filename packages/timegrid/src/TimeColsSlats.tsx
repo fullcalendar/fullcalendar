@@ -51,8 +51,8 @@ for the horizontal "slats" that run width-wise. Has a time axis on a side. Depen
 
 export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
-  rootElRef = createRef<HTMLDivElement>()
-  slatElRefs = new RefMap<HTMLTableRowElement>()
+  private rootElRef = createRef<HTMLDivElement>()
+  private slatElRefs = new RefMap<HTMLTableRowElement>()
 
 
   render(props: TimeColsSlatsProps, state: {}, context: ComponentContext) {
@@ -81,12 +81,12 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
 
   componentDidMount() {
-    this.updateCoords()
+    this.updateSizing()
   }
 
 
   componentDidUpdate() {
-    this.updateCoords()
+    this.updateSizing()
   }
 
 
@@ -97,7 +97,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
   }
 
 
-  updateCoords() {
+  updateSizing() {
     let { props } = this
 
     if (props.onCoords && props.clientWidth) { // clientWidth means sizing has stabilized
