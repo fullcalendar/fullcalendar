@@ -33,6 +33,12 @@ function bundlePkgDef(pkgStruct) {
 // this allows ambient declaration merging to grab onto it.
 // workaround for https://github.com/Microsoft/TypeScript/issues/14080
 function transformDefaultClassExports(moduleBody) {
+
+  // HACK
+  // remove imports to style files.
+  // has nothing to do with default class exports.
+  moduleBody = moduleBody.replace(/import ['"][^'"]*\.s?css['"];/, '');
+
   return moduleBody.replace(/^(\s*)export default (abstract )?class ([\w]+)/mg, function(m0, m1, m2, m3) {
     return m1 + 'export { ' + m3 + ' as default, ' + m3 + ' };\n' +
       m1 + (m2 || '') + 'class ' + m3
