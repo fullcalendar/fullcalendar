@@ -4,7 +4,8 @@ import {
   DateMarker,
   BaseComponent,
   RefMap,
-  Ref
+  Ref,
+  CssDimValue
 } from '@fullcalendar/core'
 import DayBgRow from './DayBgRow'
 import TableSkeletonDayCell from './TableSkeletonDayCell'
@@ -29,6 +30,7 @@ export interface TableBaseProps {
   cellWeekNumbersVisible: boolean // display week numbers in day cell?
   colGroupNode: VNode
   vGrow: boolean
+  clientWidth: CssDimValue
 }
 
 export interface CellModel {
@@ -51,7 +53,7 @@ export default class TableSkeleton extends BaseComponent<TableSkeletonProps> {
     }
 
     return (
-      <div class={'fc-day-grid' + (props.vGrow ? ' vgrow' : '')} ref={props.rootElRef}>
+      <div class={'fc-day-grid' + (props.vGrow ? ' vgrow' : '')} ref={props.rootElRef} style={{ width: props.clientWidth }}>
         {rowNodes}
       </div>
     )

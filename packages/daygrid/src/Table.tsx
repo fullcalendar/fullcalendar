@@ -108,6 +108,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
           rowElRefs={this.rowElRefs}
           cellElRefs={this.cellElRefs}
           vGrow={props.vGrow}
+          clientWidth={props.clientWidth}
         />
         {this.renderPopover()}
       </Fragment>

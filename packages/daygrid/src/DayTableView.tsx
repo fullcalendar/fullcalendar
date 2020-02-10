@@ -59,6 +59,7 @@ export default class DayTableView extends TableView { // TODO: use clientWidth/c
           eventLimit={options.eventLimit}
           vGrow={!props.isHeightAuto}
           headerAlignElRef={this.headerElRef}
+          clientWidth={contentArg.clientWidth}
         />
       )
     )

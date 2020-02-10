@@ -12,7 +12,8 @@ import {
   Slicer,
   Hit,
   ComponentContext,
-  RefObject
+  RefObject,
+  CssDimValue
 } from '@fullcalendar/core'
 import Table, { TableSeg  } from './Table'
 
@@ -38,6 +39,7 @@ export interface DayTableProps {
   eventLimit: boolean | number
   vGrow: boolean
   headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
+  clientWidth: CssDimValue
 }
 
 export default class DayTable extends DateComponent<DayTableProps, ComponentContext> {
@@ -66,6 +68,7 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
         eventLimit={props.eventLimit}
         vGrow={props.vGrow}
         headerAlignElRef={props.headerAlignElRef}
+        clientWidth={props.clientWidth}
       />
     )
   }
