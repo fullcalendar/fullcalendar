@@ -20,7 +20,7 @@ module.exports = function(config) {
       'node_modules/jquery/dist/jquery.js', // because of jquery-simulate and needing-to-be-first
       'node_modules/jquery-simulate/jquery.simulate.js', // operates on global jQuery
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
-      'node_modules/native-promise-only/lib/npo.src.js', // needed by xhr-mock for IE11
+      'node_modules/es6-promise/dist/es6-promise.auto.js', // needed by xhr-mock for IE11
       'node_modules/xhr-mock/dist/xhr-mock.js', // esm requires node libs
 
       // hack for hoisting workaround. see rollup.config.js
