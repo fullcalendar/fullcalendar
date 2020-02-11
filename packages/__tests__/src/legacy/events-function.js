@@ -22,7 +22,7 @@ describe('events as a function', function() {
         expect(arg.end).toEqualLocalDate('2014-06-08T00:00:00')
         expect(arg.endStr).toMatch(/^2014-06-08T00:00:00[-+]/)
         callback([])
-        done()
+        setTimeout(done) // :(
       }
     })
   })
@@ -38,7 +38,7 @@ describe('events as a function', function() {
         expect(arg.end).toEqualDate('2014-06-08T00:00:00Z')
         expect(arg.endStr).toEqual('2014-06-08T00:00:00Z')
         callback([])
-        done()
+        setTimeout(done) // :(
       }
     })
   })
@@ -54,7 +54,7 @@ describe('events as a function', function() {
         expect(arg.end).toEqualDate('2014-06-08T00:00:00Z')
         expect(arg.endStr).toEqual('2014-06-08T00:00:00') // no Z
         callback([])
-        done()
+        setTimeout(done) // :(
       }
     })
   })
@@ -77,7 +77,7 @@ describe('events as a function', function() {
           expect(arg.timeZone).toEqual('UTC')
           expect(arg.start).toEqualDate('2014-04-27')
           expect(arg.end).toEqualDate('2014-06-08')
-          done()
+          setTimeout(done) // :(
         }
       }
     }
@@ -109,7 +109,7 @@ describe('events as a function', function() {
       eventRender: function(arg) {
         expect(eventSource.events.calls.count()).toEqual(1)
         expect(arg.el).toHaveClass('customeventclass')
-        done()
+        setTimeout(done) // :(
       }
     })
   })
@@ -127,7 +127,7 @@ describe('events as a function', function() {
       },
       _eventsPositioned() {
         expect(currentCalendar.getEvents().length).toBe(1)
-        done()
+        setTimeout(done) // :(
       }
     })
   })
