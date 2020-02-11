@@ -1,8 +1,6 @@
 # FullCalendar
 
-<!-- TODO: figure out why failing, SOON!
 [![Build Status](https://travis-ci.com/fullcalendar/fullcalendar.svg?branch=master)](https://travis-ci.com/fullcalendar/fullcalendar)
--->
 
 A full-sized drag & drop JavaScript event calendar
 
