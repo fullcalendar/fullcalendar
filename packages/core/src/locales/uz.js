@@ -1,5 +1,6 @@
 
-$.fullCalendar.locale("uz", {
+export default {
+  code: "uz",
 	buttonText: {
 		month: "Oy",
 		week: "Xafta",
@@ -11,4 +12,4 @@ $.fullCalendar.locale("uz", {
 		return "+ yana " + n;
 	},
 	noEventsMessage: "Ko'rsatish uchun voqealar yo'q"
-});
+}
