@@ -7,6 +7,7 @@ const STANDARD_PROPS = { // for event source parsing
   url: String,
   googleCalendarApiKey: String, // TODO: rename with no prefix?
   googleCalendarId: String,
+  googleCalendarApiBase: String,
   data: null
 }
 
@@ -21,6 +22,7 @@ declare module '@fullcalendar/core/structs/event-source' {
   interface ExtendedEventSourceInput {
     googleCalendarApiKey?: string
     googleCalendarId?: string
+    googleCalendarApiBase?: string
   }
 }
 
@@ -110,7 +112,11 @@ function parseGoogleCalendarId(url) {
 
 
 function buildUrl(meta) {
-  return API_BASE + '/' + encodeURIComponent(meta.googleCalendarId) + '/events'
+  let apiBase = meta.googleCalendarApiBase
+  if (!apiBase) {
+    apiBase = API_BASE
+  }
+  return apiBase + '/' + encodeURIComponent(meta.googleCalendarId) + '/events'
 }
 
 
