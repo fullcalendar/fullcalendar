@@ -16,7 +16,7 @@ describe('Google Calendar plugin', function() {
   var HOLIDAY_CALENDAR_ID = 'en.usa#holiday@group.v.calendar.google.com'
 
   // Google sometimes stops returning old events. Will need to update this sometimes.
-  var DEFAULT_MONTH = '2018-05'
+  var DEFAULT_MONTH = '2020-05'
   // var REQUEST_START = '2018-04-28T00:00:00Z' // one day before, by design
   // var REQUEST_END = '2018-06-11T00:00:00Z' // one day after, by design
   var NUM_EVENTS = 3 // only two holidays
