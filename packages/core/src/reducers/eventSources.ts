@@ -90,6 +90,7 @@ function isSourceDirty(eventSource: EventSource, fetchRange: DateRange, calendar
   } else {
     return !calendar.opt('lazyFetching') ||
       !eventSource.fetchRange ||
+      eventSource.isFetching || // always cancel outdated in-progress fetches
       fetchRange.start < eventSource.fetchRange.start ||
       fetchRange.end > eventSource.fetchRange.end
   }
@@ -193,7 +194,7 @@ function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId:
       [sourceId]: {
         ...eventSource,
         isFetching: false,
-        fetchRange
+        fetchRange // also serves as a marker that at least one fetch has completed
       }
     }
   }

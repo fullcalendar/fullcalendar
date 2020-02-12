@@ -25,7 +25,8 @@ describe('slotLabelFormat', function() {
 
   it('renders correctly when customized', function() {
     initCalendar({
-      slotLabelFormat: { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }
+      slotLabelFormat: { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false },
+      locale: 'en-GB' // for 00:00 instead of 24:00
     })
     expect(getAxisText()).toBe('00:00:00')
   })

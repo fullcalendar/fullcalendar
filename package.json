@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "fullcalendar",
-  "version": "4.3.1",
+  "version": "4.4.0",
   "title": "FullCalendar",
   "description": "Full-sized drag & drop event calendar",
   "keywords": [
@@ -82,7 +82,7 @@
     "karma-jasmine": "^1.1.2",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-verbose-reporter": "0.0.6",
-    "luxon": "^1.17.2",
+    "luxon": "^1.22.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",

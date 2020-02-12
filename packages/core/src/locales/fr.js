@@ -13,7 +13,7 @@ export default {
     month: "Mois",
     week: "Semaine",
     day: "Jour",
-    list: "Mon planning"
+    list: "Planning"
   },
   weekLabel: "Sem.",
   allDayHtml: "Toute la<br/>journée",
