@@ -1,4 +1,13 @@
 
+v4.3.2 (2020-02-11)
+-------------------
+
+- configurable `googleCalendarApiBase` (#4974)
+- fix: navigating prev/next quickly might miss an event-source fetch (#4975)
+- new locales: ug (#180), uz (#3553)
+- locale fixes: fr (#5236), az (#5185), th (#5069), el (#5010), pt-br (#3812)
+
+
 v4.3.1 (2019-08-10)
 -------------------
 
