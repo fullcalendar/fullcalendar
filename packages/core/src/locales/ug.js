@@ -1,6 +1,6 @@
 
 export default {
-  code: "ug-cn",
+  code: "ug",
   buttonText: {
     month: "ئاي",
     week: "ھەپتە",
