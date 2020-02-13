@@ -90,6 +90,11 @@ export default class Popover extends BaseComponent<PopoverProps> {
   updateSize() {
     let { alignmentEl, topAlignmentEl } = this.props
     let rootEl = this.rootElRef.current
+
+    if (!rootEl) {
+      return // not sure why this was null, but we shouldn't let external components call updateSize() anyway
+    }
+
     let dims = rootEl.getBoundingClientRect() // only used for width,height
     let alignment = alignmentEl.getBoundingClientRect()
 
