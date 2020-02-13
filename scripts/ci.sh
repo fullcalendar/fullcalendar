@@ -5,9 +5,11 @@ set -e # always immediately exit upon error
 npm run clean
 npm run build
 npm run test:single
-npm run lint
+# npm run lint # for v5!!!
 
-EXCLUDE_PKGS=''
+# for v5!!!
+# EXCLUDE_PKGS=''
+EXCLUDE_PKGS='example-projects/angular'
 
 # all angular-related packages have e2e tests that require a complicated CI setup.
 # (see .travis.yml in each project). Skip altogether for now.
