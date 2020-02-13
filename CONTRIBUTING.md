@@ -37,12 +37,16 @@ You will need [Git][git], [Node][node] and NPM installed.
 
 Then, clone FullCalendar's git repo:
 
-	git clone git://github.com/fullcalendar/fullcalendar.git
+	git clone --single-branch --branch v5-jest --recursive git://github.com/fullcalendar/fullcalendar.git
+
+The recursive flag will clone all submodules as well. fullcalendar-scheduler and the example projects are located within submodules.
 
 Enter the directory and install FullCalendar's dependencies:
 
 	cd fullcalendar
 	npm install
+
+*NOTE:* The install command will take a LONG time. We are working to fix this.
 
 
 ## Development Workflow
