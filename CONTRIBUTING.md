@@ -45,11 +45,6 @@ Enter the directory and install FullCalendar's dependencies:
 	npm install
 
 
-## What to Edit
-
-When modifying files, please do not edit generated files in the `dist/` directories. Please edit the original files in the `src/` directories.
-
-
 ## Development Workflow
 
 After you make code changes, you'll want to compile the JS/CSS so that it can be previewed from the tests and examples. You can either manually rebuild each time you make a change:
@@ -63,6 +58,19 @@ Or, you can run a script that automatically rebuilds whenever you save a source 
 If you want to clean up the generated files, run:
 
 	npm run clean
+
+
+## Running Test
+
+To run the Karma tests, you must first run `npm run watch`. Then, in separate console, run:
+
+  npm run test
+
+You will be given a URL to visit in your browser. When you visit this URL the tests will automatically run.
+
+If you want to execute the tests headlessly, run:
+
+  npm run test:single
 
 
 ## Git
