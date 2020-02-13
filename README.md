@@ -1,5 +1,5 @@
 
-# FullCalendar [![Build Status](https://travis-ci.com/fullcalendar/fullcalendar.svg?branch=v5)](https://travis-ci.com/fullcalendar/fullcalendar)
+# FullCalendar [![Build Status](https://travis-ci.com/fullcalendar/fullcalendar.svg?branch=v5-jest)](https://travis-ci.com/fullcalendar/fullcalendar)
 
 A full-sized drag & drop JavaScript event calendar
 
