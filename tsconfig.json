@@ -41,7 +41,7 @@
       "@fullcalendar/resource-timeline": [ "packages-premium/resource-timeline/src/main" ],
       "@fullcalendar/resource-daygrid": [ "packages-premium/resource-daygrid/src/main" ],
       "@fullcalendar/resource-timegrid": [ "packages-premium/resource-timegrid/src/main" ],
-      "package-tests/*": [ "packages/__tests__/src/*" ]
+      "test-lib/*": [ "packages/__tests__/src/lib/*" ]
     },
     "rootDir": ".",
     "outDir": "tmp/tsc-output"

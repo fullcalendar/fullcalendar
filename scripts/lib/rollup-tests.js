@@ -68,8 +68,8 @@ function buildConfig(options) {
       },
       alias({ // needs to go before node-resolve/commonjs so that alias resolution takes precedence
 
-        // the alias to the non-premium tests. must be absolute // TODO: test-lib -> packages/__tests__/lib
-        'package-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src'),
+        // the alias to the non-premium tests. must be absolute
+        'test-lib': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src/lib'),
 
         // despite using rollup/node for compilation, we want to bundle builds that runs in a real browser
         // also for HACK below
