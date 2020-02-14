@@ -1,9 +1,21 @@
 const { writeFileSync } = require('./scripts/lib/util')
 
-writeConfig()
+let cmdArgs = process.argv.slice(2)
+let isRealCiEnv = Boolean(process.env.CI)
+let isCi = isRealCiEnv || cmdArgs.indexOf('ci') !== -1
+
+writeFileSync(
+  'tmp/tests-compiled/old/config.js',
+  'window.karmaConfig = ' + JSON.stringify({
+    isCi: Boolean(process.env.CI)
+  })
+)
 
 module.exports = function(config) {
   config.set({
+    singleRun: isCi,
+    autoWatch: !isCi,
+    browsers: isCi ? [ 'ChromeHeadless_custom' ] : [],
 
     // base path, that will be used to resolve files and exclude
     basePath: '',
@@ -61,15 +73,4 @@ module.exports = function(config) {
       }
     }
   })
-}
-
-function writeConfig() {
-  let config = {
-    isCi: Boolean(process.env.CI)
-  }
-
-  writeFileSync(
-    'tmp/tests-compiled/old/config.js',
-    'window.karmaConfig = ' + JSON.stringify(config)
-  )
 }
