@@ -32,14 +32,13 @@ module.exports = function(config) {
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
 
       'tmp/tests-compiled/old/config.js', // a way to dump variables into the test environment
-      'tmp/tests-compiled/old/main.js',
-      'tmp/tests-compiled/old/main.css',
+      'tmp/tests-compiled/old/main.+(js|css)',
       { pattern: 'tmp/tests-compiled/old/*.map', included: false, nocache: true, watched: false }
     ],
 
     // make console errors aware of source files
     preprocessors: {
-      'tmp/tests-compiled/old/*.js': [ 'sourcemap' ]
+      'tmp/tests-compiled/old/*.+(js|css)': [ 'sourcemap' ]
     },
 
     // test results reporter to use
