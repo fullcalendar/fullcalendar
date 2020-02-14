@@ -1,5 +1,5 @@
-import { formatIsoDay } from '../datelib/utils'
-import { getBackgroundEventEls } from '../event-render/EventRenderUtils'
+import { formatIsoDay } from './datelib-utils'
+import { getBackgroundEventEls } from './EventRenderUtils'
 
 const DAY_GRID_CLASS = 'fc-day-grid'
 const ROW_CLASS = 'fc-row'

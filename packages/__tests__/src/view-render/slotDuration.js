@@ -1,4 +1,4 @@
-import * as TimeGridRenderUtils from './TimeGridRenderUtils'
+import * as TimeGridRenderUtils from '../lib/TimeGridRenderUtils'
 
 
 describe('slotDuration', function() {

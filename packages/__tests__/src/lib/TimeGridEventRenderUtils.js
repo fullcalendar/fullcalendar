@@ -1,5 +1,5 @@
 import { getEventEls, getEventElTimeText } from './EventRenderUtils'
-import { computeSpanRects } from '../view-render/TimeGridRenderUtils'
+import { computeSpanRects } from './TimeGridRenderUtils'
 
 export function getTimeTexts() {
   return getEventEls().map(function(i, eventEl) {

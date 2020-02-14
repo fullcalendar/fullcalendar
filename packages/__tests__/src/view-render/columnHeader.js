@@ -1,4 +1,4 @@
-import { hasHeaderEl } from './DayGridRenderUtils'
+import { hasHeaderEl } from '../lib/DayGridRenderUtils'
 
 describe('columnHeader', function() {
   pushOptions({

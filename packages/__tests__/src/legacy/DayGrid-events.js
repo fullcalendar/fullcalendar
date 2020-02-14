@@ -1,6 +1,6 @@
-import { getDayGridRowElAtIndex } from '../view-render/DayGridRenderUtils'
-import { getSingleEl } from '../event-render/EventRenderUtils'
-import { directionallyTestSeg } from '../event-render/DayGridEventRenderUtils'
+import { getDayGridRowElAtIndex } from '../lib/DayGridRenderUtils'
+import { getSingleEl } from '../lib/EventRenderUtils'
+import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils'
 
 describe('DayGrid event rendering', function() {
   pushOptions({

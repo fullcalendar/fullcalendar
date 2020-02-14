@@ -1,5 +1,5 @@
-import { getEventEls } from '../event-render/EventRenderUtils'
-import { getDayEl } from './DayGridRenderUtils'
+import { getEventEls } from '../lib/EventRenderUtils'
+import { getDayEl } from '../lib/DayGridRenderUtils'
 
 describe('timegrid all-day slot', function() {
   pushOptions({

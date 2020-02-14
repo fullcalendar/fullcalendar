@@ -1,4 +1,4 @@
-import { getHeaderTopEls } from './../view-render/DayGridRenderUtils'
+import { getHeaderTopEls } from './../lib/DayGridRenderUtils'
 import { DAY_CLASSES } from '../lib/constants'
 
 

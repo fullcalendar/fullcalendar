@@ -1,5 +1,5 @@
-import { getRectCenter, subtractPoints, addPoints } from '../lib/geom'
-import * as EventRenderUtils from '../event-render/EventRenderUtils'
+import { getRectCenter, subtractPoints, addPoints } from './geom'
+import * as EventRenderUtils from './EventRenderUtils'
 
 
 export function resize(point0, point1, fromStart, debug) {

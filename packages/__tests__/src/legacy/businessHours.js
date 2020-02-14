@@ -7,8 +7,8 @@ import {
   getTimeGridDayEls,
   getTimeGridNonBusinessDayEls
 } from '../lib/time-grid'
-import { ensureDate } from '../datelib/utils'
-import { getDayGridNonBusinessDayEls } from '../view-render/DayGridRenderUtils'
+import { ensureDate } from '../lib/datelib-utils'
+import { getDayGridNonBusinessDayEls } from '../lib/DayGridRenderUtils'
 import { startOfDay } from '@fullcalendar/core'
 
 

@@ -1,4 +1,4 @@
-import { getDayEl } from './DayGridRenderUtils'
+import { getDayEl } from '../lib/DayGridRenderUtils'
 
 describe('daygrid view with updated dimensions', function() {
 

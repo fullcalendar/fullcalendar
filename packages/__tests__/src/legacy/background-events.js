@@ -3,14 +3,14 @@ import {
   getBackgroundEventEls,
   getEventEls,
   getSingleBackgroundEventEl
-} from '../event-render/EventRenderUtils'
+} from '../lib/EventRenderUtils'
 import {
   getBackgroundEventElsResizerEls,
   getDayGridNonBusinessDayEls,
   getNonBusinessDayEls,
   getDayGridRowEls
 
-} from '../view-render/DayGridRenderUtils'
+} from '../lib/DayGridRenderUtils'
 import {
   getTimeGridNonBusinessDayEls,
   queryBgEventsInCol,

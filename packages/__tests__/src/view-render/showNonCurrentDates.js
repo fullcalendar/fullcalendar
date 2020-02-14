@@ -1,4 +1,4 @@
-import { expectDayRange } from './ViewRenderUtils'
+import { expectDayRange } from '../lib/ViewRenderUtils'
 
 
 describe('showNonCurrentDates', function() {

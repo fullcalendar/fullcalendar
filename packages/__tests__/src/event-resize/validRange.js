@@ -1,5 +1,5 @@
-import * as EventResizeUtils from './EventResizeUtils'
-import * as DayGridRenderUtils from '../view-render/DayGridRenderUtils'
+import * as EventResizeUtils from '../lib/EventResizeUtils'
+import * as DayGridRenderUtils from '../lib/DayGridRenderUtils'
 
 describe('validRange event resizing', function() {
 

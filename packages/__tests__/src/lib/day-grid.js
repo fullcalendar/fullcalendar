@@ -1,4 +1,4 @@
-import { formatIsoDay } from '../datelib/utils'
+import { formatIsoDay } from './datelib-utils'
 
 
 export function getDayGridDayEls(date) {

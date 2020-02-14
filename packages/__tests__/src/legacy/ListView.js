@@ -10,7 +10,7 @@ import {
   getListEventElTitle,
   getListViewScrollerEl
 } from '../lib/ListViewUtils'
-import { replaceEventElDotElWithEl } from '../event-render/EventRenderUtils'
+import { replaceEventElDotElWithEl } from '../lib/EventRenderUtils'
 
 describe('ListView rendering', function() {
   pushOptions({

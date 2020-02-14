@@ -1,4 +1,4 @@
-import { expectActiveRange } from './ViewDateUtils'
+import { expectActiveRange } from '../lib/ViewDateUtils'
 
 describe('view duration', function() {
   pushOptions({

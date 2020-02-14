@@ -1,5 +1,5 @@
-import { expectActiveRange } from '../view-dates/ViewDateUtils'
-import * as TimeGridRenderUtils from '../view-render/TimeGridRenderUtils'
+import { expectActiveRange } from '../lib/ViewDateUtils'
+import * as TimeGridRenderUtils from '../lib/TimeGridRenderUtils'
 
 
 describe('changeView', function() {

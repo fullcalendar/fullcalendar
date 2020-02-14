@@ -2,8 +2,8 @@ import { Calendar } from '@fullcalendar/core'
 import InteractionPlugin from '@fullcalendar/interaction'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
-import { getSingleEl } from '../event-render/EventRenderUtils'
-import { getDayEl } from '../view-render/DayGridRenderUtils'
+import { getSingleEl } from '../lib/EventRenderUtils'
+import { getDayEl } from '../lib/DayGridRenderUtils'
 import { getRectCenter } from '../lib/geom'
 
 describe('dragging events between calendars', function() {

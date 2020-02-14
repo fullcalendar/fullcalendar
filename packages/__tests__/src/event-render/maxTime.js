@@ -1,5 +1,5 @@
-import { checkEventRendering } from './TimeGridEventRenderUtils'
-import { directionallyTestSeg } from './DayGridEventRenderUtils'
+import { checkEventRendering } from '../lib/TimeGridEventRenderUtils'
+import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils'
 
 describe('event rendering with maxTime', function() {
   pushOptions({

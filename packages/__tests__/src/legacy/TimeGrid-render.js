@@ -1,7 +1,7 @@
 import {
   getFirstDayEl, getTimeGridHeaderAxisEl,
   getDayGridAxisEl, getSlatElAxisEl,
-  getSlatElGridEls, getFirstDayGridDayEl } from './../view-render/DayGridRenderUtils'
+  getSlatElGridEls, getFirstDayGridDayEl } from './../lib/DayGridRenderUtils'
 import { getSlotEls } from '../lib/time-grid'
 
 describe('Agenda view rendering', function() {

@@ -1,13 +1,13 @@
-import { formatIsoDay } from '../datelib/utils'
+import { formatIsoDay } from './datelib-utils'
 import { getTimeGridDayEls, getSlotElByIndex } from './time-grid'
-import { getDayEl } from '../view-render/DayGridRenderUtils'
+import { getDayEl } from './DayGridRenderUtils'
 import {
   getEventElResizerEl,
   getEventElTitleEl,
   getEventElTimeEl,
   getFirstEventEl,
   getLastEventEl
-} from '../event-render/EventRenderUtils'
+} from './EventRenderUtils'
 import { parseMarker, addDays } from '@fullcalendar/core'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {

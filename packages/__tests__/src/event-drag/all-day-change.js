@@ -1,7 +1,7 @@
-import { drag } from './EventDragUtils'
-import { computeSpanRects } from '../view-render/TimeGridRenderUtils'
-import { getDayEl } from '../view-render/DayGridRenderUtils'
-import { getEventEls } from '../event-render/EventRenderUtils'
+import { drag } from '../lib/EventDragUtils'
+import { computeSpanRects } from '../lib/TimeGridRenderUtils'
+import { getDayEl } from '../lib/DayGridRenderUtils'
+import { getEventEls } from '../lib/EventRenderUtils'
 import { parseMarker, addMs } from '@fullcalendar/core'
 
 describe('allDay change', function() {

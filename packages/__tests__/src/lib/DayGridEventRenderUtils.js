@@ -1,4 +1,4 @@
-import { getDayGridRowDayElAtIndex } from '../view-render/DayGridRenderUtils'
+import { getDayGridRowDayElAtIndex } from './DayGridRenderUtils'
 import { getFirstEventEl } from './EventRenderUtils'
 
 /*

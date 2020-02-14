@@ -1,5 +1,5 @@
 import { getScrollerEl } from '../lib/MonthViewUtils'
-import { getEventEls } from '../event-render/EventRenderUtils'
+import { getEventEls } from '../lib/EventRenderUtils'
 
 describe('refetchEvents', function() {
 

@@ -1,5 +1,5 @@
-import { getBoundingRect } from '../lib/dom-geom'
-import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib/utils'
+import { getBoundingRect } from './dom-geom'
+import { formatIsoDay, formatIsoTime, ensureDate } from './datelib-utils'
 import { startOfDay, createDuration } from '@fullcalendar/core'
 import { parseUtcDate } from './date-parsing'
 

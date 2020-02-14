@@ -1,4 +1,4 @@
-import { expectActiveRange } from './ViewDateUtils'
+import { expectActiveRange } from '../lib/ViewDateUtils'
 
 /*
 SEE ALSO: next/prev

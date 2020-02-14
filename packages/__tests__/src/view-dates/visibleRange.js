@@ -1,5 +1,5 @@
 import { addLocalDays, startOfLocalDay, startOfUtcDay, addUtcDays } from '../lib/date-math'
-import { expectActiveRange } from './ViewDateUtils'
+import { expectActiveRange } from '../lib/ViewDateUtils'
 import { parseUtcDate, parseLocalDate } from '../lib/date-parsing'
 
 describe('visibleRange', function() {

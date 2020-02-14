@@ -1,5 +1,5 @@
 import * as EventResizeUtils from './EventResizeUtils'
-import { computeSpanRects } from '../view-render/TimeGridRenderUtils'
+import { computeSpanRects } from './TimeGridRenderUtils'
 
 
 export function resize(startDate, endDate, fromStart, debug) {

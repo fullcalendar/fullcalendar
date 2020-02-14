@@ -1,5 +1,5 @@
 import arLocale from '@fullcalendar/core/locales/ar'
-import { getDayOfWeekHeaderElTopElText } from '../view-render/DayGridRenderUtils'
+import { getDayOfWeekHeaderElTopElText } from '../lib/DayGridRenderUtils'
 
 describe('dayNumbers', function() {
   pushOptions({

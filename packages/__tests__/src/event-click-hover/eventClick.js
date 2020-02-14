@@ -1,4 +1,4 @@
-import { getSingleEl, getSingleBackgroundEventEl } from '../event-render/EventRenderUtils'
+import { getSingleEl, getSingleBackgroundEventEl } from '../lib/EventRenderUtils'
 
 describe('eventClick', function() {
   pushOptions({

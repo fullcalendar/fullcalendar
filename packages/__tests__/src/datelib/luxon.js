@@ -2,7 +2,7 @@ import { Calendar } from '@fullcalendar/core'
 import esLocale from '@fullcalendar/core/locales/es'
 import LuxonPlugin, { toDateTime, toDuration } from '@fullcalendar/luxon'
 import DayGridPlugin from '@fullcalendar/daygrid'
-import { getSingleEl, getEventElTimeText } from '../event-render/EventRenderUtils'
+import { getSingleEl, getEventElTimeText } from '../lib/EventRenderUtils'
 import { testTimeZoneImpl } from './timeZoneImpl'
 
 

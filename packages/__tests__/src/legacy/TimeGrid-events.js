@@ -1,4 +1,4 @@
-import { getEventElAtIndex, getEventElTimeEl, getSingleEl } from '../event-render/EventRenderUtils'
+import { getEventElAtIndex, getEventElTimeEl, getSingleEl } from '../lib/EventRenderUtils'
 
 describe('TimeGrid event rendering', function() {
 

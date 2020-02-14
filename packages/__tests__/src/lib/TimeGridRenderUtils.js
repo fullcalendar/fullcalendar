@@ -1,6 +1,6 @@
 import { getDayOfWeekHeaderEls } from './DayGridRenderUtils' // bad to rely on day grid
-import { getSlotEls } from '../lib/time-grid'
-import { ensureDate } from '../datelib/utils'
+import { getSlotEls } from './time-grid'
+import { ensureDate } from './datelib-utils'
 import { addDays, addMs, parseMarker, createDuration } from '@fullcalendar/core'
 
 export function getTimeAxisInfo() {

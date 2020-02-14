@@ -1,4 +1,4 @@
-import { formatIsoDay } from '../datelib/utils'
+import { formatIsoDay } from '../lib/datelib-utils'
 
 describe('navLinks', function() {
   var options

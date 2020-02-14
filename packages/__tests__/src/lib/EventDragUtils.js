@@ -1,5 +1,5 @@
-import { getRectCenter, intersectRects } from '../lib/geom'
-import * as EventRenderUtils from '../event-render/EventRenderUtils'
+import { getRectCenter, intersectRects } from './geom'
+import * as EventRenderUtils from './EventRenderUtils'
 
 /*
 TODO: Don't rely on legacy simulateDrag

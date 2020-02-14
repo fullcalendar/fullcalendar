@@ -1,4 +1,4 @@
-import { getTitleText } from './ToolbarUtils'
+import { getTitleText } from '../lib/ToolbarUtils'
 
 describe('calendar title', function() {
   pushOptions({

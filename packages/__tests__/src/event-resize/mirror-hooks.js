@@ -1,5 +1,5 @@
-import { resize as dayGridResize } from './DayGridEventResizeUtils'
-import { resize as timeGridResize } from './TimeGridResizeUtils'
+import { resize as dayGridResize } from '../lib/DayGridEventResizeUtils'
+import { resize as timeGridResize } from '../lib/TimeGridResizeUtils'
 
 describe('event resize mirror', function() {
   pushOptions({

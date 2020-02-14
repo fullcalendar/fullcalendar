@@ -2,7 +2,7 @@ import deepEqual from 'fast-deep-equal'
 import { Calendar } from '@fullcalendar/core'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { getFirstDateEl } from '../lib/ViewUtils'
-import { getEventEls } from '../event-render/EventRenderUtils'
+import { getEventEls } from '../lib/EventRenderUtils'
 import { getTimeGridScroller, allDaySlotDisplayed } from '../lib/TimeGridViewUtils'
 
 function buildOptions() {

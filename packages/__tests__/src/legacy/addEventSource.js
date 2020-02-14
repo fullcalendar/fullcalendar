@@ -1,4 +1,4 @@
-import { getEventEls } from './../event-render/EventRenderUtils'
+import { getEventEls } from '../lib/EventRenderUtils'
 
 describe('addEventSource', function() {
   var eventArray = [

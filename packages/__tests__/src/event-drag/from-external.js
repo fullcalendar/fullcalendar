@@ -1,5 +1,5 @@
 import { Draggable } from '@fullcalendar/interaction'
-import { getDayEl } from '../view-render/DayGridRenderUtils'
+import { getDayEl } from '../lib/DayGridRenderUtils'
 
 describe('external event dragging', function() {
   var $dragEl

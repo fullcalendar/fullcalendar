@@ -1,4 +1,4 @@
-import { expectActiveRange, expectRenderRange } from './ViewDateUtils'
+import { expectActiveRange, expectRenderRange } from '../lib/ViewDateUtils'
 import { parseUtcDate } from '../lib/date-parsing'
 
 describe('validRange', function() {

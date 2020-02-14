@@ -1,4 +1,4 @@
-import { getSingleEl, getEventElTimeEl } from '../event-render/EventRenderUtils'
+import { getSingleEl, getEventElTimeEl } from '../lib/EventRenderUtils'
 
 describe('displayEventEnd', function() {
 

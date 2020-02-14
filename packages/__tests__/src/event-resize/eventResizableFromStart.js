@@ -1,4 +1,4 @@
-import { resize } from './DayGridEventResizeUtils'
+import { resize } from '../lib/DayGridEventResizeUtils'
 
 describe('eventResizableFromStart', function() {
   pushOptions({

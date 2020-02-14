@@ -1,4 +1,4 @@
-import { getTimeTexts } from './TimeGridEventRenderUtils'
+import { getTimeTexts } from '../lib/TimeGridEventRenderUtils'
 import { parseLocalDate } from '../lib/date-parsing'
 
 describe('the time text on events', function() {

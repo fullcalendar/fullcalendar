@@ -1,4 +1,4 @@
-import { getHeaderEl } from '../view-render/DayGridRenderUtils'
+import { getHeaderEl } from '../lib/DayGridRenderUtils'
 import { DAY_CLASSES } from '../lib/constants'
 import { removeLtrCharCodes } from '../lib/string'
 import { addDays } from '@fullcalendar/core'

@@ -6,7 +6,7 @@ SEE ALSO:
 - visibleRange, dateAlignment, dateIncrement
 */
 
-import { expectButtonEnabled } from './ToolbarUtils'
+import { expectButtonEnabled } from '../lib/ToolbarUtils'
 
 describe('next button', function() {
   pushOptions({

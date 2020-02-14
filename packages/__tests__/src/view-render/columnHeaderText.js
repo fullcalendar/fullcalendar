@@ -1,4 +1,4 @@
-import { getFirstDayEl } from './DayGridRenderUtils'
+import { getFirstDayEl } from '../lib/DayGridRenderUtils'
 
 describe('columnHeaderText', function() {
   pushOptions({

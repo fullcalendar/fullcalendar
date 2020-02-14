@@ -1,4 +1,4 @@
-import * as DayGridEventDragUtils from './DayGridEventDragUtils'
+import * as DayGridEventDragUtils from '../lib/DayGridEventDragUtils'
 
 
 describe('validRange event dragging', function() {

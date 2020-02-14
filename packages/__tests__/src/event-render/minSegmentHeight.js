@@ -1,4 +1,4 @@
-import * as EventRenderUtils from './EventRenderUtils'
+import * as EventRenderUtils from '../lib/EventRenderUtils'
 
 describe('short event rendering with timeGridEventMinHeight', function() {
   pushOptions({

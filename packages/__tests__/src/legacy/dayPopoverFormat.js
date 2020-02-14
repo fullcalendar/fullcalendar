@@ -1,5 +1,5 @@
 import frLocale from '@fullcalendar/core/locales/fr'
-import { getMoreEl, getMorePopoverTitle } from '../view-render/DayGridRenderUtils'
+import { getMoreEl, getMorePopoverTitle } from '../lib/DayGridRenderUtils'
 
 describe('dayPopoverFormat', function() {
 

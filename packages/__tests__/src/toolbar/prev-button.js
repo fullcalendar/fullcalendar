@@ -6,7 +6,7 @@ SEE ALSO:
 - other range intersection tests handled by next-button
 */
 
-import { expectButtonEnabled } from './ToolbarUtils'
+import { expectButtonEnabled } from '../lib/ToolbarUtils'
 
 describe('prev button', function() {
   pushOptions({
