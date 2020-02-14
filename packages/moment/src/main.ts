@@ -1,9 +1,8 @@
-import * as momentNs from 'moment'
-const moment = momentNs as any // the directly callable function
+import moment from 'moment'
 import { Calendar, Duration, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
 
 
-export function toMoment(date: Date, calendar: Calendar): momentNs.Moment {
+export function toMoment(date: Date, calendar: Calendar): moment.Moment {
 
   if (!(calendar instanceof Calendar)) {
     throw new Error('must supply a Calendar instance')
@@ -17,7 +16,7 @@ export function toMoment(date: Date, calendar: Calendar): momentNs.Moment {
   )
 }
 
-export function toDuration(fcDuration: Duration): momentNs.Duration {
+export function toDuration(fcDuration: Duration): moment.Duration {
   return moment.duration(fcDuration) // moment accepts all the props that fc.Duration already has!
 }
 
@@ -60,14 +59,14 @@ export default createPlugin({
 })
 
 
-function createMomentFormatFunc(mom: momentNs.Moment) {
+function createMomentFormatFunc(mom: moment.Moment) {
   return function(cmdStr) {
     return cmdStr ? mom.format(cmdStr) : '' // because calling with blank string results in ISO8601 :(
   }
 }
 
-function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | null, locale: string): momentNs.Moment {
-  let mom: momentNs.Moment
+function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | null, locale: string): moment.Moment {
+  let mom: moment.Moment
 
   if (timeZone === 'local') {
     mom = moment(input)
@@ -75,8 +74,8 @@ function convertToMoment(input: any, timeZone: string, timeZoneOffset: number | 
   } else if (timeZone === 'UTC') {
     mom = moment.utc(input)
 
-  } else if (moment.tz) {
-    mom = moment.tz(input, timeZone)
+  } else if ((moment as any).tz) {
+    mom = (moment as any).tz(input, timeZone)
 
   } else {
     mom = moment.utc(input)

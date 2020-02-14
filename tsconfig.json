@@ -3,6 +3,7 @@
     "target": "es5",
     "module": "es6",
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "lib": [
       "dom",
       "es2015",

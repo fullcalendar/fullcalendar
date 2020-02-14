@@ -52,7 +52,7 @@ function buildPkgConfig(pkgStruct, isDev) {
       TEMPLATE_PLUGIN,
       ...(isDev ? SOURCEMAP_PLUGINS : []),
       {
-        resolveId(id) {
+        resolveId(id) { // TODO: not DRY
           if (isScssPath(id) && isRelPath(id)) {
             anyCss = true
             return { id: path.join(process.cwd(), pkgStruct.srcDir, id), external: false }

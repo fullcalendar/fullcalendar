@@ -12,32 +12,22 @@ module.exports = function(config) {
     frameworks: [ 'jasmine' ],
 
     // list of files / patterns to load in the browser
-    // TODO: to test IE11, must comment-out luxon test
     files: [
-      'packages/__tests__/src/base.css',
 
-      // tests dependencies that are old or depend on order, so put them first
+      // jquery-related deps should attach globally first
       'node_modules/jquery/dist/jquery.js', // because of jquery-simulate and needing-to-be-first
       'node_modules/jquery-simulate/jquery.simulate.js', // operates on global jQuery
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
 
-      // hack for hoisting workaround. see rollup.config.js
-      // TODO: afterwards, remove as many of these entries as possible from the root package.json
-      'node_modules/luxon/build/global/luxon.js',
-      'node_modules/rrule/dist/es5/rrule.js',
-      'node_modules/moment/moment.js',
-      'node_modules/moment/locale/es.js',
-      'node_modules/moment-timezone/builds/moment-timezone-with-data.js',
-
-      'tmp/test-config.js', // a way to dump variables into the test environment
-      'tmp/tests.js',
-      'tmp/tests.css',
-      { pattern: 'tmp/tests.*.map', included: false, nocache: true, watched: false }
+      'tmp/tests-compiled/old/config.js', // a way to dump variables into the test environment
+      'tmp/tests-compiled/old/main.js',
+      'tmp/tests-compiled/old/main.css',
+      { pattern: 'tmp/tests-compiled/old/*.map', included: false, nocache: true, watched: false }
     ],
 
     // make console errors aware of source files
     preprocessors: {
-      '**/*.js': ['sourcemap']
+      'tmp/tests-compiled/old/*.js': [ 'sourcemap' ]
     },
 
     // test results reporter to use
@@ -79,7 +69,7 @@ function writeConfig() {
   }
 
   writeFileSync(
-    'tmp/test-config.js',
+    'tmp/tests-compiled/old/config.js',
     'window.karmaConfig = ' + JSON.stringify(config)
   )
 }

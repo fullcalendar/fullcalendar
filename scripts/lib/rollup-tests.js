@@ -6,52 +6,82 @@ const alias = require('rollup-plugin-alias')
 const commonjs = require('rollup-plugin-commonjs')
 const sourcemaps = require('rollup-plugin-sourcemaps')
 const postCss = require('rollup-plugin-postcss')
-const { EXTERNAL_BROWSER_GLOBALS, WATCH_OPTIONS, onwarn } = require('./rollup-util')
+const { WATCH_OPTIONS, onwarn, isStylePath, isRelPath } = require('./rollup-util')
 
 
 module.exports = function() {
-  return [
-    buildMainConfig(),
-    buildForManuaTests()
+  let nonMainEntryPoints = glob.sync('tmp/tsc-output/packages?(-premium)/__tests__/src/*.js').filter((entryPoint) => (
+    !path.basename(entryPoint).match(/^main\./)
+  ))
+
+  let configs = [
+    buildConfig({
+      input: [
+        'tmp/tsc-output/packages?(-premium)/__tests__/src/main.js',
+        'tmp/tsc-output/packages?(-premium)/__tests__/src/*/**/*.js',
+        '!tmp/tsc-output/packages?(-premium)/__tests__/src/lib/**/*.js' // don't make lib files entrypoints
+      ],
+      outputFile: 'tmp/tests-compiled/old/main.js'
+    })
   ]
+
+  for (let nonMainEntryPoint of nonMainEntryPoints) {
+    configs.push(
+      buildConfig({
+        input: nonMainEntryPoint,
+        outputFile: path.join('tmp/tests-compiled/old', path.basename(nonMainEntryPoint))
+      })
+    )
+  }
+
+  return configs
 }
 
 
-function buildMainConfig() {
+function buildConfig(options) {
   let nodeModulesDirs = [
     'packages/__tests__/node_modules',
     'packages-premium/__tests__/node_modules'
   ]
 
   return {
-    input: [
-      'tmp/tsc-output/packages?(-premium)/__tests__/src/globals.js',
-      'tmp/tsc-output/packages?(-premium)/__tests__/src/**/*.js',
-      '!tmp/tsc-output/packages?(-premium)/__tests__/src/for-manual/**'
-    ],
+    input: options.input,
     output: {
-      file: 'tmp/tests.js',
+      file: options.outputFile,
       format: 'iife',
-      globals: EXTERNAL_BROWSER_GLOBALS,
       sourcemap: true
     },
-    // HACK: because hoisting is no yet implemented for the monorepo-tool, when we require our packages,
-    // *their* dependencies are not deduped, we we get multiple instances of the below libraries in the bundle.
-    // Until hoisting is implemented, make these external and include them manually from karma.config.js.
-    external: Object.keys(EXTERNAL_BROWSER_GLOBALS).concat([
-      'moment/locale/es'
-    ]),
     plugins: [
       multiEntry({
         exports: false // don't combine all the exports. no need, and would collide
       }),
+      {
+        resolveId(id, importer) { // TODO: not really DRY
+          if (isStylePath(id) && isRelPath(id) && importer.match('/tmp/tsc-output/')) {
+            let resourcePath = importer.replace('/tmp/tsc-output/', '/')
+            resourcePath = path.dirname(resourcePath)
+            resourcePath = path.join(resourcePath, id)
+            return { id: resourcePath, external: false }
+          }
+          return null
+        }
+      },
       alias({ // needs to go before node-resolve/commonjs so that alias resolution takes precedence
 
         // the alias to the non-premium tests. must be absolute // TODO: test-lib -> packages/__tests__/lib
         'package-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src'),
 
-        // despite using rollup/node for compilation, we want to bundle the version that runs in a real browser
-        'xhr-mock': path.join(process.cwd(), './node_modules/xhr-mock/dist/xhr-mock.js')
+        // despite using rollup/node for compilation, we want to bundle builds that runs in a real browser
+        // also for HACK below
+        'xhr-mock': path.join(process.cwd(), './node_modules/xhr-mock/dist/xhr-mock.js'),
+        'luxon': path.join(process.cwd(), 'node_modules/luxon/build/cjs-browser/luxon.js'),
+
+        // HACK
+        // because the monorepo-tool doesn't support hoisting, it's likely we'll get multiple version of 3rd party packages.
+        // explicitly map some references to top-level packages.
+        'moment/locale/es': path.join(process.cwd(), 'node_modules/moment/locale/es.js'), // needs to go before moment
+        'moment': path.join(process.cwd(), 'node_modules/moment/moment.js'),
+        'moment-timezone/builds/moment-timezone-with-data': path.join(process.cwd(), 'node_modules/moment-timezone/builds/moment-timezone-with-data.js'),
       }),
       nodeResolve({
         customResolveOptions: {
@@ -66,21 +96,5 @@ function buildMainConfig() {
     ],
     watch: WATCH_OPTIONS,
     onwarn
-  }
-}
-
-
-function buildForManuaTests() {
-  return {
-    input: glob.sync('tmp/tsc-output/packages?(-premium)/__tests__/src/for-manual/**/*.js'),
-    external: Object.keys(EXTERNAL_BROWSER_GLOBALS),
-    output: {
-      dir: 'tmp/tests-manual',
-      format: 'iife',
-      globals: EXTERNAL_BROWSER_GLOBALS
-    },
-    plugins: [
-      nodeResolve()
-    ]
   }
 }

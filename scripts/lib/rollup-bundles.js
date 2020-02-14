@@ -92,7 +92,7 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
       name: EXTERNAL_BROWSER_GLOBALS['fullcalendar'], // tack on to existing global
       extend: true, // don't overwrite whats already on the UMD global
       exports: 'named', // allows export of default AND named
-      globals: EXTERNAL_BROWSER_GLOBALS,
+      globals: EXTERNAL_BROWSER_GLOBALS, // because these pkgStructs are connectors to third party plugins, and we dont want to include 3rd party files!
       banner,
       outro: OUTRO,
       sourcemap: isDev

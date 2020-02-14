@@ -78,6 +78,11 @@ exports.isScssPath = function(path) {
 }
 
 
+exports.isStylePath = function(path) {
+  return /\.s?css$/i.test(path)
+}
+
+
 // a rollup plugin
 // TODO: rename to watchSassIncludesInDir
 // TODO: only look at names like _*.scss

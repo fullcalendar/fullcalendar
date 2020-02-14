@@ -1,5 +1,4 @@
-import * as momentNs from 'moment'
-const moment = momentNs as any // the directly callable function
+import moment from 'moment'
 
 // can't simply import 'moment-timezone' because it attempts to load a JSON file,
 // which the end-programmer might not have a loader setup for.
@@ -12,11 +11,11 @@ import { NamedTimeZoneImpl, createPlugin } from '@fullcalendar/core'
 class MomentNamedTimeZone extends NamedTimeZoneImpl {
 
   offsetForArray(a: number[]): number {
-    return moment.tz(a, this.timeZoneName).utcOffset()
+    return (moment as any).tz(a, this.timeZoneName).utcOffset()
   }
 
   timestampToArray(ms: number): number[] {
-    return moment.tz(ms, this.timeZoneName).toArray()
+    return (moment as any).tz(ms, this.timeZoneName).toArray()
   }
 
 }

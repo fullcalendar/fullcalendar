@@ -1,22 +1,9 @@
 
-/// <reference path="./global-defs.d.ts" />
-
-
-// NOTE: a bunch of other top-level JS files in karma.config.js
-// TODO: could include base.css from here
-
-import './hacks'
-import './lib/simulate'
-import './lib/date-matchers'
+/// <reference path="./global-test-utils-defs.d.ts" />
 
 import { Calendar } from '@fullcalendar/core'
-import InteractionPlugin from '@fullcalendar/interaction'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import TimeGridPlugin from '@fullcalendar/timegrid'
-import ListPlugin from '@fullcalendar/list'
-
 import { __assign } from 'tslib'
-import { parseLocalDate, parseUtcDate } from './lib/date-parsing'
+import { parseLocalDate, parseUtcDate } from './date-parsing'
 
 
 // Setup / Teardown
@@ -256,20 +243,4 @@ __assign(window, {
   oneCall,
   spyOnMethod,
   spyCall
-})
-
-
-// Defaults that apply to all tests
-// ---------------------------------------------------------------------------------------------------------------------
-
-export const DEFAULT_PLUGINS = [
-  InteractionPlugin,
-  DayGridPlugin,
-  TimeGridPlugin,
-  ListPlugin
-]
-
-pushOptions({
-  timeZone: 'UTC',
-  plugins: DEFAULT_PLUGINS
 })
