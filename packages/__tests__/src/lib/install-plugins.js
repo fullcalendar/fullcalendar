@@ -3,9 +3,15 @@ import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import ListPlugin from '@fullcalendar/list'
 
-export default [
+const plugins = [
   InteractionPlugin,
   DayGridPlugin,
   TimeGridPlugin,
   ListPlugin
 ]
+
+pushOptions({
+  plugins
+})
+
+export default plugins

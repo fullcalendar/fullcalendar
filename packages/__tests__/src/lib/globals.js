@@ -1,5 +1,5 @@
 
-/// <reference path="./global-test-utils-defs.d.ts" />
+/// <reference path="./global-defs.d.ts" />
 
 import { Calendar } from '@fullcalendar/core'
 import { __assign } from 'tslib'
@@ -243,4 +243,16 @@ __assign(window, {
   oneCall,
   spyOnMethod,
   spyCall
+})
+
+
+// Other Important Global Stuff
+// ---------------------------------------------------------------------------------------------------------------------
+
+import './hacks'
+import './simulate'
+import './date-matchers'
+
+pushOptions({
+  timeZone: 'UTC'
 })
