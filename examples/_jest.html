@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <link href='https://cdn.jsdelivr.net/npm/mocha@7.0.1/mocha.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/mocha@7.0.1/mocha.js'></script>
+    <script>mocha.setup('bdd')</script>
+    <script src='../node_modules/jest-browser-globals/build-es5/index.js'></script>
+    <script>
+
+      describe('cool thing', function() {
+        test('that is works', function() {
+          expect(5).toBe(6);
+        });
+      });
+
+    </script>
+  </head>
+  <body>
+    <div id='mocha'></div>
+    <script>mocha.run()</script>
+  </body>
+</html>

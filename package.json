@@ -75,6 +75,7 @@
     "handlebars": "^4.1.2",
     "jasmine-core": "2.5.2",
     "jasmine-jquery": "^2.1.1",
+    "jest-browser-globals": "^25.1.0-beta",
     "jquery": "^3.4.0",
     "jquery-simulate": "github:jquery/jquery-simulate",
     "karma": "^0.13.22",
