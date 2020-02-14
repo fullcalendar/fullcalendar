@@ -56,7 +56,6 @@
     "components-jqueryui": "github:components/jqueryui",
     "concurrently": "^4.1.1",
     "dragula": "^3.7.2",
-    "es6-promise": "^4.2.8",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.2",
