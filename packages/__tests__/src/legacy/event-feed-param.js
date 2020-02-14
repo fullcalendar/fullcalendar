@@ -1,3 +1,4 @@
+import XHRMock from 'xhr-mock'
 
 describe('event feed params', function() {
 

@@ -103,6 +103,6 @@
     "tslint": "^5.16.0",
     "tslint-config-standard": "^8.0.1",
     "typescript": "^3.7.3",
-    "xhr-mock": "^2.4.1"
+    "xhr-mock": "^2.5.1"
   }
 }

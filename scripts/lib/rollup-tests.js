@@ -45,14 +45,18 @@ function buildMainConfig() {
       multiEntry({
         exports: false // don't combine all the exports. no need, and would collide
       }),
+      alias({ // needs to go before node-resolve/commonjs so that alias resolution takes precedence
+
+        // the alias to the non-premium tests. must be absolute // TODO: test-lib -> packages/__tests__/lib
+        'package-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src'),
+
+        // despite using rollup/node for compilation, we want to bundle the version that runs in a real browser
+        'xhr-mock': path.join(process.cwd(), './node_modules/xhr-mock/dist/xhr-mock.js')
+      }),
       nodeResolve({
         customResolveOptions: {
           paths: nodeModulesDirs
         }
-      }),
-      alias({
-        // the alias to the non-premium tests. must be absolute
-        'package-tests': path.join(process.cwd(), 'tmp/tsc-output/packages/__tests__/src')
       }),
       commonjs(), // for fast-deep-equal import
       postCss({

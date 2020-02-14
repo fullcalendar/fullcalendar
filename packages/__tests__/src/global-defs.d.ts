@@ -15,8 +15,6 @@ declare let spyOnMethod: any
 declare let spyCall: any
 declare let oneCall: any
 
-declare let XHRMock: any
-
 interface Function {
   calls: any // for jasmine spies
 }

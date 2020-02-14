@@ -20,7 +20,6 @@ module.exports = function(config) {
       'node_modules/jquery/dist/jquery.js', // because of jquery-simulate and needing-to-be-first
       'node_modules/jquery-simulate/jquery.simulate.js', // operates on global jQuery
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
-      'node_modules/xhr-mock/dist/xhr-mock.js', // esm requires node libs
 
       // hack for hoisting workaround. see rollup.config.js
       // TODO: afterwards, remove as many of these entries as possible from the root package.json
