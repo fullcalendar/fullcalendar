@@ -48,10 +48,12 @@
     "outDir": "tmp/tsc-output"
   },
   "include": [
-    "packages/*/src/main.*",
-    "packages/core/src/locales/*",
-    "packages/__tests__/src/**/*",
-    "packages-premium/*/src/main.*",
-    "packages-premium/__tests__/src/**/*"
+    "packages*/*/src/main.*",
+    "packages*/__tests__/**/*",
+    "packages/core/src/locales/*"
+  ],
+  "exclude": [
+    "packages-contrib",
+    "node_modules"
   ]
 }
