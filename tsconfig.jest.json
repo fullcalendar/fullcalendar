@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "checkJs": false
+  },
+  "include": [
+    "packages*/__tests__/integration/**/*",
+  ]
+}
