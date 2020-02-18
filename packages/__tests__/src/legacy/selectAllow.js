@@ -1,4 +1,5 @@
-import { selectTimeGrid } from '../lib/time-grid'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { waitDateSelect } from '../lib/wrappers/interaction-util'
 
 describe('selectAllow', function() {
 
@@ -20,14 +21,15 @@ describe('selectAllow', function() {
     }
     spyOn(options, 'selectAllow').and.callThrough()
 
-    initCalendar(options)
+    let calendar = initCalendar(options)
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    let selecting = timeGridWrapper.selectDates('2016-09-04T01:00:00Z', '2016-09-04T05:00:00Z')
 
-    selectTimeGrid('2016-09-04T01:00:00Z', '2016-09-04T05:00:00Z')
-      .then(function(selectInfo) {
-        expect(selectInfo).toBeFalsy()
-        expect(options.selectAllow).toHaveBeenCalled()
-        done()
-      })
+    waitDateSelect(calendar, selecting).then((selectInfo) => {
+      expect(selectInfo).toBeFalsy()
+      expect(options.selectAllow).toHaveBeenCalled()
+      done()
+    })
   })
 
   it('allows selecting when returning true', function(done) {
@@ -38,15 +40,16 @@ describe('selectAllow', function() {
     }
     spyOn(options, 'selectAllow').and.callThrough()
 
-    initCalendar(options)
+    let calendar = initCalendar(options)
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    let selecting = timeGridWrapper.selectDates('2016-09-04T01:00:00Z', '2016-09-04T05:00:00Z')
 
-    selectTimeGrid('2016-09-04T01:00:00Z', '2016-09-04T05:00:00Z')
-      .then(function(selectInfo) {
-        expect(typeof selectInfo).toBe('object')
-        expect(selectInfo.start).toEqualDate('2016-09-04T01:00:00Z')
-        expect(selectInfo.end).toEqualDate('2016-09-04T05:30:00Z')
-        expect(options.selectAllow).toHaveBeenCalled()
-        done()
-      })
+    waitDateSelect(calendar, selecting).then((selectInfo) => {
+      expect(typeof selectInfo).toBe('object')
+      expect(selectInfo.start).toEqualDate('2016-09-04T01:00:00Z')
+      expect(selectInfo.end).toEqualDate('2016-09-04T05:30:00Z')
+      expect(options.selectAllow).toHaveBeenCalled()
+      done()
+    })
   })
 })

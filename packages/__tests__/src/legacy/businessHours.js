@@ -1,15 +1,8 @@
 // most other businessHours tests are in background-events.js
 
-import { getBoundingRect } from '../lib/dom-geom'
 import { doElsMatchSegs } from '../lib/segs'
-import {
-  getTimeGridTop,
-  getTimeGridDayEls,
-  getTimeGridNonBusinessDayEls
-} from '../lib/time-grid'
-import { ensureDate } from '../lib/datelib-utils'
-import { getDayGridNonBusinessDayEls } from '../lib/DayGridRenderUtils'
-import { startOfDay } from '@fullcalendar/core'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('businessHours', function() {
@@ -21,16 +14,18 @@ describe('businessHours', function() {
   })
 
   it('doesn\'t break when starting out in a larger month time range', function() {
-    initCalendar() // start out in the month range
+    let calendar = initCalendar() // start out in the month range
+
     currentCalendar.changeView('timeGridWeek')
     currentCalendar.next() // move out of the original month range...
     currentCalendar.next() // ... out. should render correctly.
 
     // whole days
-    expect(getDayGridNonBusinessDayEls().length).toBe(2) // each multi-day stretch is one element
+    let dayGridWrapper = new TimeGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getNonBusinessDayEls().length).toBe(2) // each multi-day stretch is one element
 
     // timed area
-    expect(isTimeGridNonBusinessSegsRendered([
+    expect(isTimeGridNonBusinessSegsRendered(calendar, [
       // sun
       { start: '2014-12-07T00:00', end: '2014-12-08T00:00' },
       // mon
@@ -58,25 +53,27 @@ describe('businessHours', function() {
     [ 'timeGridWeek', 'dayGridMonth' ].forEach(function(viewName) {
 
       it('allows dynamic turning on', function() {
-        initCalendar({
+        let calendar = initCalendar({
           defaultView: viewName,
           businessHours: false
         })
+        let calendarWrapper = new CalendarWrapper(calendar)
 
-        expect(queryNonBusinessSegs().length).toBe(0)
+        expect(calendarWrapper.getNonBusinessDayEls().length).toBe(0)
         currentCalendar.setOption('businessHours', true)
-        expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
+        expect(calendarWrapper.getNonBusinessDayEls().length).toBeGreaterThan(0)
       })
 
       it('allows dynamic turning off', function() {
-        initCalendar({
+        let calendar = initCalendar({
           defaultView: viewName,
           businessHours: true
         })
+        let calendarWrapper = new CalendarWrapper(calendar)
 
-        expect(queryNonBusinessSegs().length).toBeGreaterThan(0)
+        expect(calendarWrapper.getNonBusinessDayEls().length).toBeGreaterThan(0)
         currentCalendar.setOption('businessHours', false)
-        expect(queryNonBusinessSegs().length).toBe(0)
+        expect(calendarWrapper.getNonBusinessDayEls().length).toBe(0)
       })
     })
   })
@@ -85,7 +82,7 @@ describe('businessHours', function() {
   describe('for multiple day-of-week definitions', function() {
 
     it('rendes two day-of-week groups', function() {
-      initCalendar({
+      let calendar = initCalendar({
         defaultDate: '2014-12-07',
         defaultView: 'timeGridWeek',
         businessHours: [
@@ -103,7 +100,7 @@ describe('businessHours', function() {
       })
 
       // timed area
-      expect(isTimeGridNonBusinessSegsRendered([
+      expect(isTimeGridNonBusinessSegsRendered(calendar, [
         // sun
         { start: '2014-12-07T00:00', end: '2014-12-08T00:00' },
         // mon
@@ -127,7 +124,7 @@ describe('businessHours', function() {
     })
 
     it('wont\'t process businessHour items that omit dow', function() {
-      initCalendar({
+      let calendar = initCalendar({
         defaultDate: '2014-12-07',
         defaultView: 'timeGridWeek',
         businessHours: [
@@ -145,7 +142,7 @@ describe('businessHours', function() {
       })
 
       // timed area
-      expect(isTimeGridNonBusinessSegsRendered([
+      expect(isTimeGridNonBusinessSegsRendered(calendar, [
         // sun
         { start: '2014-12-07T00:00', end: '2014-12-08T00:00' },
         // mon
@@ -168,62 +165,26 @@ describe('businessHours', function() {
 
 
   it('will grey-out a totally non-business-hour view', function() {
-    initCalendar({
+    let calendar = initCalendar({
       defaultDate: '2016-07-23', // sat
       defaultView: 'timeGridDay',
       businessHours: true
     })
 
     // timed area
-    expect(isTimeGridNonBusinessSegsRendered([
+    expect(isTimeGridNonBusinessSegsRendered(calendar, [
       { start: '2016-07-23T00:00', end: '2016-07-24T00:00' }
     ])).toBe(true)
   })
 
 
-  function queryNonBusinessSegs() {
-    return $('.fc-nonbusiness')
-  }
-
-  /* inspired by other proj...
-  ------------------------------------------------------------------------------------------------------------------ */
-
-  function isTimeGridNonBusinessSegsRendered(segs) {
-    return doElsMatchSegs(getTimeGridNonBusinessDayEls(), segs, getTimeGridRect)
-  }
-
-  function getTimeGridRect(start, end) {
-    var obj
-    if (typeof start === 'object') {
-      obj = start
-      start = obj.start
-      end = obj.end
-    }
-
-    start = ensureDate(start)
-    end = ensureDate(end)
-
-    var startDay = startOfDay(start)
-    var endDay = startOfDay(end)
-    var startTimeMs = start.valueOf() - startDay.valueOf()
-    var endTimeMs = end.valueOf() - endDay.valueOf()
-
-    if (startDay.valueOf() === endDay.valueOf()) {
-      endTimeMs = end.valueOf() - endDay.valueOf()
-    } else if (end < start) {
-      endTimeMs = startTimeMs
-    } else {
-      endTimeMs = 1000 * 60 * 60 * 24 // whole day
-    }
-
-    var dayEls = getTimeGridDayEls(start)
-    var dayRect = getBoundingRect(dayEls)
-    return {
-      left: dayRect.left,
-      right: dayRect.right,
-      top: getTimeGridTop(startTimeMs),
-      bottom: getTimeGridTop(endTimeMs)
-    }
+  function isTimeGridNonBusinessSegsRendered(calendar, segs) {
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    return doElsMatchSegs(
+      timeGridWrapper.getNonBusinessDayEls(),
+      segs,
+      timeGridWrapper.getRect.bind(timeGridWrapper)
+    )
   }
 
 })

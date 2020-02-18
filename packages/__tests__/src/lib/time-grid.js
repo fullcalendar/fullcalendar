@@ -1,96 +1,6 @@
-import { getBoundingRect } from './dom-geom'
-import { formatIsoDay, formatIsoTime, ensureDate } from './datelib-utils'
-import { startOfDay, createDuration } from '@fullcalendar/core'
+import { formatIsoTime } from './datelib-utils'
+import { createDuration } from '@fullcalendar/core'
 import { parseUtcDate } from './date-parsing'
-
-const TIME_GRID_CLASS = 'fc-time-grid'
-const NON_BUSINESS_CLASS = 'fc-nonbusiness'
-const CONTENT_SKELETON_CLASS = 'fc-content-skeleton'
-const AXIS_CLASS = 'fc-axis'
-const BACKGROUND_EVENT_CLASS = 'fc-bgevent'
-
-export function dragTimeGridEvent(eventEl, dropDate) {
-  var deferred = $.Deferred()
-  var modifiedEvent = null
-
-  currentCalendar.on('eventDragStop', function() {
-    setTimeout(function() { // wait for eventDrop to be called
-      deferred.resolve(modifiedEvent)
-    })
-  })
-  currentCalendar.on('eventDrop', function(arg) {
-    modifiedEvent = arg.event
-  })
-
-  eventEl.simulate('drag', {
-    localPoint: { left: '50%', top: 1 }, // 1 for zoom
-    end: getTimeGridPoint(dropDate)
-  })
-
-  return deferred.promise()
-}
-
-
-export function selectTimeGrid(start, inclusiveEnd) {
-  var deferred = $.Deferred()
-  var selectInfo = null
-
-  currentCalendar.on('select', function(arg) {
-    selectInfo = arg
-  })
-
-  getTimeGridDayEls(start).simulate('drag', {
-    point: getTimeGridPoint(start),
-    end: getTimeGridPoint(inclusiveEnd),
-    onRelease: function() {
-      setTimeout(function() { // wait for eventDrop to be called
-        deferred.resolve(selectInfo)
-      })
-    }
-  })
-
-  return deferred.promise()
-}
-
-
-export function getTimeGridPoint(date) {
-  date = ensureDate(date)
-
-  var day = startOfDay(date)
-  var timeMs = date.valueOf() - day.valueOf()
-  var top = getTimeGridTop(timeMs)
-  var dayEls = getTimeGridDayEls(date)
-  var dayRect
-
-  expect(dayEls.length).toBe(1)
-  dayRect = getBoundingRect(dayEls.eq(0))
-
-  return {
-    left: (dayRect.left + dayRect.right) / 2,
-    top: top
-  }
-}
-
-
-export function getTimeGridLine(date) { // not in Scheduler
-  date = ensureDate(date)
-
-  var day = startOfDay(date)
-  var timeMs = date.valueOf() - day.valueOf()
-  var top = getTimeGridTop(timeMs)
-  var dayEls = getTimeGridDayEls(date)
-  var dayRect
-
-  expect(dayEls.length).toBe(1)
-  dayRect = getBoundingRect(dayEls.eq(0))
-
-  return {
-    left: dayRect.left,
-    right: dayRect.right,
-    top: top,
-    bottom: top
-  }
-}
 
 
 export function getTimeGridTop(targetTimeMs) {
@@ -142,21 +52,12 @@ export function getTimeGridTop(targetTimeMs) {
 }
 
 
-export function getTimeGridDayEls(date) {
-  date = ensureDate(date)
-  return $('.fc-time-grid .fc-day[data-date="' + formatIsoDay(date) + '"]')
-}
-
 export function getSlotEls() {
   return $('.fc-time-grid .fc-slats tr[data-time]')
 }
 
 
-export function getSlotElByIndex(index) {
-  return $(`.fc-slats tr:eq(${index})`)
-}
-
-export function getSlotElByTime(timeMs) {
+function getSlotElByTime(timeMs) {
   let date = parseUtcDate('2016-01-01')
   date = new Date(date.valueOf() + timeMs)
 
@@ -165,21 +66,4 @@ export function getSlotElByTime(timeMs) {
   } else {
     return $()
   }
-}
-
-export function getTimeGridNonBusinessDayEls() {
-  return $(`.${TIME_GRID_CLASS} .${NON_BUSINESS_CLASS}`)
-}
-
-export function queryBgEventsInCol(col) {
-  return $(`.${TIME_GRID_CLASS} .${CONTENT_SKELETON_CLASS} td:not(.${AXIS_CLASS}):eq(${col}) .${BACKGROUND_EVENT_CLASS}`)
-}
-
-export function queryNonBusinessSegsInCol(col) {
-  return $(`.${TIME_GRID_CLASS} .${CONTENT_SKELETON_CLASS} td:not(.${AXIS_CLASS}):eq(${col}) .${NON_BUSINESS_CLASS}`)
-}
-
-// TODO: discourage use
-export function getTimeGridDowEls(dayAbbrev) {
-  return $(`.fc-time-grid .fc-day.fc-${dayAbbrev}`)
 }

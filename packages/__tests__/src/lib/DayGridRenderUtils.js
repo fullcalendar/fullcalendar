@@ -72,11 +72,11 @@ export function getTimeGridHeaderAxisEl() {
 }
 
 export function getSlatElAxisEl(slatEl) {
-  return slatEl.find(`.${AXIS_CLASS}`)
+  return $(slatEl).find(`.${AXIS_CLASS}`)
 }
 
 export function getSlatElGridEls(slatEl) {
-  return slatEl.find(`td:not(.${AXIS_CLASS})`)
+  return $(slatEl).find(`td:not(.${AXIS_CLASS})`)
 }
 
 export function getDayGridAxisEl() {

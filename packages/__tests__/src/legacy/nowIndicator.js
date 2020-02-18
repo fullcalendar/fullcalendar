@@ -1,6 +1,6 @@
 import { getBoundingRect } from '../lib/dom-geom'
 import { isElWithinRtl } from '../lib/dom-misc'
-import { getTimeGridLine } from '../lib/time-grid'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('now indicator', function() {
   var options
@@ -52,14 +52,14 @@ describe('now indicator', function() {
           })
 
           it('renders on correct time', function() {
-            initCalendar(options)
-            isNowIndicatorRenderedAt('2015-12-26T06:00:00Z')
+            let calendar = initCalendar(options)
+            isNowIndicatorRenderedAt(calendar, '2015-12-26T06:00:00Z')
           })
 
           it('renders on correct time2', function() {
             options.now = '2015-12-20T02:30:00'
-            initCalendar(options)
-            isNowIndicatorRenderedAt('2015-12-20T02:30:00Z')
+            let calendar = initCalendar(options)
+            isNowIndicatorRenderedAt(calendar, '2015-12-20T02:30:00Z')
           })
         })
       })
@@ -70,8 +70,9 @@ describe('now indicator', function() {
     return $('.fc-now-indicator').length > 0
   }
 
-  function isNowIndicatorRenderedAt(date) {
-    var line = getTimeGridLine(date)
+  function isNowIndicatorRenderedAt(calendar, date) {
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    var line = timeGridWrapper.getLine(date)
     var lineEl = $('.fc-now-indicator-line')
     var arrowEl = $('.fc-now-indicator-arrow')
 

@@ -15,6 +15,11 @@ export default class DayGridWrapper {
   }
 
   // TODO: discourage use
+  getNonBusinessDayEls() {
+    return findElements(this.el, '.fc-nonbusiness')
+  }
+
+  // TODO: discourage use
   getDowEls(dayAbbrev) {
     return findElements(this.el, `.fc-row:first-child td.fc-day.fc-${dayAbbrev}`)
   }

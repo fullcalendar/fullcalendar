@@ -1,5 +1,4 @@
 import { formatIsoDay } from './datelib-utils'
-import { getTimeGridDayEls, getSlotElByIndex } from './time-grid'
 import { getDayEl } from './DayGridRenderUtils'
 import {
   getEventElResizerEl,
@@ -9,6 +8,7 @@ import {
   getLastEventEl
 } from './EventRenderUtils'
 import { parseMarker, addDays } from '@fullcalendar/core'
+import TimeGridViewWrapper from './wrappers/TimeGridViewWrapper'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
   var eventsRendered = false
@@ -17,11 +17,11 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
   options._eventsPositioned = function() {
     var calendar = currentCalendar
     var isDraggingExternal = false
-    var dayEl
-    var eventEl
-    var dragEl
+    var $dayEl
+    var $eventEl
+    var $dragEl
     var slatIndex
-    var slatEl
+    var $slatEl
     var dx, dy
     var allowed
 
@@ -38,32 +38,33 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dropDateHasTime = true
     }
 
-    eventEl = eventClassName ? $(`.${eventClassName}:first`) : getFirstEventEl()
-    expect(eventEl.length).toBe(1)
+    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : getFirstEventEl()
+    expect($eventEl.length).toBe(1)
 
     if (dropDateHasTime) {
-      dragEl = getEventElTimeEl(eventEl)
-      dayEl = getTimeGridDayEls(dropDate)
+      var timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      $dragEl = getEventElTimeEl($eventEl)
+      $dayEl = $(timeGridWrapper.getDayEls(dropDate))
       slatIndex = dropDate.getUTCHours() * 2 + (dropDate.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
-      slatEl = getSlotElByIndex(slatIndex)
-      expect(slatEl.length).toBe(1)
-      dy = slatEl.offset().top - eventEl.offset().top
+      $slatEl = $(timeGridWrapper.getSlotElByIndex(slatIndex))
+      expect($slatEl.length).toBe(1)
+      dy = $slatEl.offset().top - $eventEl.offset().top
     } else {
-      dragEl = getEventElTitleEl(eventEl)
-      dayEl = getDayEl(dropDate)
-      dy = dayEl.offset().top - eventEl.offset().top
+      $dragEl = getEventElTitleEl($eventEl)
+      $dayEl = getDayEl(dropDate)
+      dy = $dayEl.offset().top - $eventEl.offset().top
     }
 
-    if (!dragEl.length) {
+    if (!$dragEl.length) {
       isDraggingExternal = true
-      dragEl = eventEl // well, not really an "event" element anymore
+      $dragEl = $eventEl // well, not really an "event" element anymore
     }
 
-    expect(dragEl.length).toBe(1)
-    expect(dayEl.length).toBe(1)
-    dx = dayEl.offset().left - eventEl.offset().left
+    expect($dragEl.length).toBe(1)
+    expect($dayEl.length).toBe(1)
+    dx = $dayEl.offset().left - $eventEl.offset().left
 
-    dragEl.simulate('drag', {
+    $dragEl.simulate('drag', {
       dx: dx,
       dy: dy,
       onBeforeRelease: function() {
@@ -109,11 +110,11 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
   options.editable = true
   options._eventsPositioned = function() {
     var calendar = currentCalendar
-    var lastDayEl
+    var $lastDayEl
     var lastSlatIndex
-    var lastSlatEl
-    var eventEl
-    var dragEl
+    var $lastSlatEl
+    var $eventEl
+    var $dragEl
     var dx, dy
     var allowed
 
@@ -130,27 +131,28 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       resizeDateHasTime = true
     }
 
-    eventEl = eventClassName ? $(`.${eventClassName}:first`) : getLastEventEl()
-    dragEl = getEventElResizerEl(eventEl)
+    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : getLastEventEl()
+    $dragEl = getEventElResizerEl($eventEl)
 
     if (resizeDateHasTime) {
-      lastDayEl = getTimeGridDayEls(resizeDate)
+      var timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      $lastDayEl = $(timeGridWrapper.getDayEls(resizeDate))
       lastSlatIndex = resizeDate.getUTCHours() * 2 + (resizeDate.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
-      lastSlatEl = getSlotElByIndex(lastSlatIndex - 1)
-      expect(lastSlatEl.length).toBe(1)
-      dy = lastSlatEl.offset().top + lastSlatEl.outerHeight() - (eventEl.offset().top + eventEl.outerHeight())
+      $lastSlatEl = $(timeGridWrapper.getSlotElByIndex(lastSlatIndex - 1))
+      expect($lastSlatEl.length).toBe(1)
+      dy = $lastSlatEl.offset().top + $lastSlatEl.outerHeight() - ($eventEl.offset().top + $eventEl.outerHeight())
     } else {
-      lastDayEl = getDayEl(addDays(resizeDate, -1))
-      dy = lastDayEl.offset().top - eventEl.offset().top
+      $lastDayEl = getDayEl(addDays(resizeDate, -1))
+      dy = $lastDayEl.offset().top - $eventEl.offset().top
     }
 
-    expect(lastDayEl.length).toBe(1)
-    expect(eventEl.length).toBe(1)
-    expect(dragEl.length).toBe(1)
-    dx = lastDayEl.offset().left + lastDayEl.outerWidth() - 2 - (eventEl.offset().left + eventEl.outerWidth())
+    expect($lastDayEl.length).toBe(1)
+    expect($eventEl.length).toBe(1)
+    expect($dragEl.length).toBe(1)
+    dx = $lastDayEl.offset().left + $lastDayEl.outerWidth() - 2 - ($eventEl.offset().left + $eventEl.outerWidth())
 
-    dragEl.simulate('mouseover') // resizer only shows up on mouseover
-    dragEl.simulate('drag', {
+    $dragEl.simulate('mouseover') // resizer only shows up on mouseover
+    $dragEl.simulate('drag', {
       dx: dx,
       dy: dy,
       onBeforeRelease: function() {
@@ -183,11 +185,11 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
 
 export function testSelection(options, start, end, expectSuccess, callback) {
   var successfulSelection = false
-  var firstDayEl, lastDayEl
+  var $firstDayEl, $lastDayEl
   var firstSlatIndex, lastSlatIndex
-  var firstSlatEl, lastSlatEl
+  var $firstSlatEl, $lastSlatEl
   var dx, dy
-  var dragEl
+  var $dragEl
   var allowed
 
   var allDay = false
@@ -214,28 +216,29 @@ export function testSelection(options, start, end, expectSuccess, callback) {
   initCalendar(options)
 
   if (!allDay) {
-    firstDayEl = getTimeGridDayEls(start)
-    lastDayEl = getTimeGridDayEls(end)
+    var timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+    $firstDayEl = $(timeGridWrapper.getDayEls(start))
+    $lastDayEl = $(timeGridWrapper.getDayEls(end))
     firstSlatIndex = start.getUTCHours() * 2 + (start.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
     lastSlatIndex = end.getUTCHours() * 2 + (end.getUTCMinutes() / 30) - 1 // assumes slotDuration:'30:00'
-    firstSlatEl = getSlotElByIndex(firstSlatIndex)
-    lastSlatEl = getSlotElByIndex(lastSlatIndex)
-    expect(firstSlatEl.length).toBe(1)
-    expect(lastSlatEl.length).toBe(1)
-    dy = lastSlatEl.offset().top - firstSlatEl.offset().top
-    dragEl = firstSlatEl
+    $firstSlatEl = $(timeGridWrapper.getSlotElByIndex(firstSlatIndex))
+    $lastSlatEl = $(timeGridWrapper.getSlotElByIndex(lastSlatIndex))
+    expect($firstSlatEl.length).toBe(1)
+    expect($lastSlatEl.length).toBe(1)
+    dy = $lastSlatEl.offset().top - $firstSlatEl.offset().top
+    $dragEl = $firstSlatEl
   } else {
-    firstDayEl = getDayEl(start)
-    lastDayEl = getDayEl(new Date(end.valueOf() - 1)) // inclusive
-    dy = lastDayEl.offset().top - firstDayEl.offset().top
-    dragEl = firstDayEl
+    $firstDayEl = getDayEl(start)
+    $lastDayEl = getDayEl(new Date(end.valueOf() - 1)) // inclusive
+    dy = $lastDayEl.offset().top - $firstDayEl.offset().top
+    $dragEl = $firstDayEl
   }
 
-  expect(firstDayEl.length).toBe(1)
-  expect(lastDayEl.length).toBe(1)
-  dx = lastDayEl.offset().left - firstDayEl.offset().left
+  expect($firstDayEl.length).toBe(1)
+  expect($lastDayEl.length).toBe(1)
+  dx = $lastDayEl.offset().left - $firstDayEl.offset().left
 
-  dragEl.simulate('drag', {
+  $dragEl.simulate('drag', {
     dx: dx,
     dy: dy,
     onBeforeRelease: function() {

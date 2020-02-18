@@ -9,13 +9,8 @@ import {
   getDayGridNonBusinessDayEls,
   getNonBusinessDayEls,
   getDayGridRowEls
-
 } from '../lib/DayGridRenderUtils'
-import {
-  getTimeGridNonBusinessDayEls,
-  queryBgEventsInCol,
-  queryNonBusinessSegsInCol
-} from '../lib/time-grid'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('background events', function() {
 
@@ -349,15 +344,17 @@ describe('background events', function() {
     describe('when LTR', function() {
 
       it('render correctly on one day', function() {
-        initCalendar({
+        let calendar = initCalendar({
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
             rendering: 'background'
           } ]
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
         expect(getBackgroundEventEls().length).toBe(1)
-        expect(queryBgEventsInCol(2).length).toBe(1) // column 2
+        expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1) // column 2
         expect(getBackgroundEventEls()).toBeBelow('.fc-slats tr:eq(0)') // should be 1am (eq(1)) but FF cmplaning
         expect(getBackgroundEventEls()).toBeAbove('.fc-slats tr:eq(10)') // 5am
         expect(getEventEls().length).toBe(0)
@@ -365,20 +362,22 @@ describe('background events', function() {
       })
 
       it('render correctly spanning multiple days', function() {
-        initCalendar({
+        let calendar = initCalendar({
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-05T05:00:00',
             rendering: 'background'
           } ]
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
         expect(getBackgroundEventEls().length).toBe(2)
-        expect(queryBgEventsInCol(2).length).toBe(1)
-        expect(queryBgEventsInCol(3).length).toBe(1)
+        expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
+        expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(1)
       })
 
       it('render correctly when two span on top of each other', function() {
-        initCalendar({
+        let calendar = initCalendar({
           events: [
             {
               start: '2014-11-04T01:00:00',
@@ -392,43 +391,48 @@ describe('background events', function() {
             }
           ]
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
         expect(getBackgroundEventEls().length).toBe(4)
-        expect(queryBgEventsInCol(2).length).toBe(2)
-        expect(queryBgEventsInCol(3).length).toBe(2)
+        expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(2)
+        expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(2)
         // TODO: maybe check y coords
       })
 
       describe('when businessHours', function() {
 
         it('renders correctly if assumed default', function() {
-          initCalendar({
+          let calendar = initCalendar({
             businessHours: true
           })
-          expect(getDayGridNonBusinessDayEls().length).toBe(2) // whole days in the day area
-          expect(getTimeGridNonBusinessDayEls().length).toBe(12) // strips of gray on the timed area
+          let viewWrapper = new TimeGridViewWrapper(calendar)
+          expect(viewWrapper.dayGrid.getNonBusinessDayEls().length).toBe(2) // whole days in the day area
+          expect(viewWrapper.timeGrid.getNonBusinessDayEls().length).toBe(12) // strips of gray on the timed area
         })
 
         it('renders correctly if custom', function() {
-          initCalendar({
+          let calendar = initCalendar({
             businessHours: {
               startTime: '02:00',
               endTime: '06:00',
               daysOfWeek: [ 1, 2, 3, 4 ] // Mon-Thu
             }
           })
+          let viewWrapper = new TimeGridViewWrapper(calendar)
 
           // whole days
-          expect(getDayGridNonBusinessDayEls().length).toBe(2) // each multi-day stretch is one element
+          expect(viewWrapper.dayGrid.getNonBusinessDayEls().length).toBe(2) // each multi-day stretch is one element
 
           // time area
-          expect(getTimeGridNonBusinessDayEls().length).toBe(11)
-          expect(queryNonBusinessSegsInCol(0).length).toBe(1)
-          expect(queryNonBusinessSegsInCol(1).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(2).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(3).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(4).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(5).length).toBe(1)
-          expect(queryNonBusinessSegsInCol(6).length).toBe(1)
+          let timeGridWrapper = viewWrapper.timeGrid
+          expect(timeGridWrapper.getNonBusinessDayEls().length).toBe(11)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(1).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(2).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(3).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(4).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(6).length).toBe(1)
         })
       })
     })
@@ -439,55 +443,61 @@ describe('background events', function() {
       })
 
       it('render correctly on one day', function() {
-        initCalendar({
+        let calendar = initCalendar({
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
             rendering: 'background'
           } ]
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
         expect(getBackgroundEventEls().length).toBe(1)
-        expect(queryBgEventsInCol(2).length).toBe(1)
+        expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
         expect(getBackgroundEventEls()).toBeBelow('.fc-slats tr:eq(0)') // should be 1am (eq(1)) but FF cmplaining
         expect(getBackgroundEventEls()).toBeAbove('.fc-slats tr:eq(10)') // 5am
       })
 
       it('render correctly spanning multiple days', function() {
-        initCalendar({
+        let calendar = initCalendar({
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-05T05:00:00',
             rendering: 'background'
           } ]
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
         expect(getBackgroundEventEls().length).toBe(2)
-        expect(queryBgEventsInCol(3).length).toBe(1)
-        expect(queryBgEventsInCol(2).length).toBe(1)
+        expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(1)
+        expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
       })
 
       describe('when businessHours', function() {
 
         it('renders correctly if custom', function() {
-          initCalendar({
+          let calendar = initCalendar({
             businessHours: {
               startTime: '02:00',
               endTime: '06:00',
               daysOfWeek: [ 1, 2, 3, 4 ] // Mon-Thu
             }
           })
+          let viewWrapper = new TimeGridViewWrapper(calendar)
 
           // whole days
           expect(getDayGridNonBusinessDayEls().length).toBe(2) // each stretch of days is one element
 
           // time area
-          expect(getTimeGridNonBusinessDayEls().length).toBe(11)
-          expect(queryNonBusinessSegsInCol(0).length).toBe(1)
-          expect(queryNonBusinessSegsInCol(1).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(2).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(3).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(4).length).toBe(2)
-          expect(queryNonBusinessSegsInCol(5).length).toBe(1)
-          expect(queryNonBusinessSegsInCol(6).length).toBe(1)
+          let timeGridWrapper = viewWrapper.timeGrid
+          expect(timeGridWrapper.getNonBusinessDayEls().length).toBe(11)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(1).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(2).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(3).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(4).length).toBe(2)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryNonBusinessSegsInCol(6).length).toBe(1)
         })
       })
     })
@@ -497,79 +507,87 @@ describe('background events', function() {
       describe('when LTR', function() {
 
         it('render correctly on one day', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-04T05:00:00',
               rendering: 'inverse-background'
             } ]
           })
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
           expect(getBackgroundEventEls().length).toBe(8)
-          expect(queryBgEventsInCol(0).length).toBe(1)
-          expect(queryBgEventsInCol(1).length).toBe(1)
-          expect(queryBgEventsInCol(2).length).toBe(2)
-          expect(queryBgEventsInCol(3).length).toBe(1)
-          expect(queryBgEventsInCol(4).length).toBe(1)
-          expect(queryBgEventsInCol(5).length).toBe(1)
-          expect(queryBgEventsInCol(6).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(1).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(2)
+          expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(4).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(6).length).toBe(1)
           // TODO: maybe check y coords
         })
 
         it('render correctly spanning multiple days', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-05T05:00:00',
               rendering: 'inverse-background'
             } ]
           })
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
           expect(getBackgroundEventEls().length).toBe(7)
-          expect(queryBgEventsInCol(0).length).toBe(1)
-          expect(queryBgEventsInCol(1).length).toBe(1)
-          expect(queryBgEventsInCol(2).length).toBe(1)
-          expect(queryBgEventsInCol(3).length).toBe(1)
-          expect(queryBgEventsInCol(4).length).toBe(1)
-          expect(queryBgEventsInCol(5).length).toBe(1)
-          expect(queryBgEventsInCol(6).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(1).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(4).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(6).length).toBe(1)
           // TODO: maybe check y coords
         })
 
         it('render correctly when starts before start of week', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               start: '2014-10-30T01:00:00',
               end: '2014-11-04T05:00:00',
               rendering: 'inverse-background'
             } ]
           })
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
           expect(getBackgroundEventEls().length).toBe(5)
-          expect(queryBgEventsInCol(0).length).toBe(0)
-          expect(queryBgEventsInCol(1).length).toBe(0)
-          expect(queryBgEventsInCol(2).length).toBe(1)
-          expect(queryBgEventsInCol(3).length).toBe(1)
-          expect(queryBgEventsInCol(4).length).toBe(1)
-          expect(queryBgEventsInCol(5).length).toBe(1)
-          expect(queryBgEventsInCol(6).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(0).length).toBe(0)
+          expect(timeGridWrapper.queryBgEventsInCol(1).length).toBe(0)
+          expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(4).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(6).length).toBe(1)
           // TODO: maybe check y coords
         })
 
         it('render correctly when ends after end of week', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-12T05:00:00',
               rendering: 'inverse-background'
             } ]
           })
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
           expect(getBackgroundEventEls().length).toBe(3)
-          expect(queryBgEventsInCol(0).length).toBe(1)
-          expect(queryBgEventsInCol(1).length).toBe(1)
-          expect(queryBgEventsInCol(2).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(1).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
           // TODO: maybe check y coords
         })
 
         it('render correctly with two related events, in reverse order', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [
               {
                 groupId: 'hello',
@@ -585,19 +603,21 @@ describe('background events', function() {
               }
             ]
           })
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
           expect(getBackgroundEventEls().length).toBe(9)
-          expect(queryBgEventsInCol(0).length).toBe(1)
-          expect(queryBgEventsInCol(1).length).toBe(2)
-          expect(queryBgEventsInCol(2).length).toBe(1)
-          expect(queryBgEventsInCol(3).length).toBe(2)
-          expect(queryBgEventsInCol(4).length).toBe(1)
-          expect(queryBgEventsInCol(5).length).toBe(1)
-          expect(queryBgEventsInCol(6).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(1).length).toBe(2)
+          expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(2)
+          expect(timeGridWrapper.queryBgEventsInCol(4).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(6).length).toBe(1)
           // TODO: maybe check y coords
         })
 
         it('render correctly with two related events, nested', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [
               {
                 groupId: 'hello',
@@ -613,14 +633,16 @@ describe('background events', function() {
               }
             ]
           })
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
           expect(getBackgroundEventEls().length).toBe(8)
-          expect(queryBgEventsInCol(0).length).toBe(1)
-          expect(queryBgEventsInCol(1).length).toBe(1)
-          expect(queryBgEventsInCol(2).length).toBe(1)
-          expect(queryBgEventsInCol(3).length).toBe(2)
-          expect(queryBgEventsInCol(4).length).toBe(1)
-          expect(queryBgEventsInCol(5).length).toBe(1)
-          expect(queryBgEventsInCol(6).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(1).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(2)
+          expect(timeGridWrapper.queryBgEventsInCol(4).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(6).length).toBe(1)
           expect(getBackgroundEventEls().eq(3)).toBeAbove('.fc-slats tr:eq(2)') // first part before 1am
           expect(getBackgroundEventEls().eq(4)).toBeBelow('.fc-slats tr:eq(9)') // second part after 5am
         })
@@ -633,21 +655,23 @@ describe('background events', function() {
         })
 
         it('render correctly on one day', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-04T05:00:00',
               rendering: 'inverse-background'
             } ]
           })
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
           expect(getBackgroundEventEls().length).toBe(8)
-          expect(queryBgEventsInCol(0).length).toBe(1)
-          expect(queryBgEventsInCol(1).length).toBe(1)
-          expect(queryBgEventsInCol(2).length).toBe(2)
-          expect(queryBgEventsInCol(3).length).toBe(1)
-          expect(queryBgEventsInCol(4).length).toBe(1)
-          expect(queryBgEventsInCol(5).length).toBe(1)
-          expect(queryBgEventsInCol(6).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(0).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(1).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(2)
+          expect(timeGridWrapper.queryBgEventsInCol(3).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(4).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(5).length).toBe(1)
+          expect(timeGridWrapper.queryBgEventsInCol(6).length).toBe(1)
           // TODO: maybe check y coords
         })
       })

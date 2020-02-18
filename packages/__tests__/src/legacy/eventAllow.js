@@ -1,4 +1,6 @@
-import { dragTimeGridEvent } from '../lib/time-grid'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { waitEventDrag } from '../lib/wrappers/interaction-util'
 
 describe('eventAllow', function() {
 
@@ -28,31 +30,43 @@ describe('eventAllow', function() {
     }
     spyOn(options, 'eventAllow').and.callThrough()
 
-    initCalendar(options)
+    let calendar = initCalendar(options)
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-    dragTimeGridEvent($('.fc-event'), '2016-09-04T03:00:00')
-      .then(function(modifiedEvent) {
-        expect(modifiedEvent).toBeFalsy() // drop failure?
-        expect(options.eventAllow).toHaveBeenCalled()
-        done()
-      })
+    let dragging = timeGridWrapper.dragEventToDate(
+      calendarWrapper.getFirstEventEl(),
+      '2016-09-04T03:00:00'
+    )
+
+    waitEventDrag(calendar, dragging).then((modifiedEvent) => {
+      expect(modifiedEvent).toBeFalsy() // drop failure?
+      expect(options.eventAllow).toHaveBeenCalled()
+      done()
+    })
   })
 
   it('allows dragging when returning true', function(done) {
     var options = {
-      eventAllow: function(dropInfo, event) {
+      eventAllow() {
         return true
       }
     }
     spyOn(options, 'eventAllow').and.callThrough()
 
-    initCalendar(options)
+    let calendar = initCalendar(options)
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-    dragTimeGridEvent($('.fc-event'), '2016-09-04T03:00:00Z')
-      .then(function(modifiedEvent) {
-        expect(modifiedEvent.start).toEqualDate('2016-09-04T03:00:00Z')
-        expect(options.eventAllow).toHaveBeenCalled()
-        done()
-      })
+    let dragging = timeGridWrapper.dragEventToDate(
+      calendarWrapper.getFirstEventEl(),
+      '2016-09-04T03:00:00Z'
+    )
+
+    waitEventDrag(calendar, dragging).then((modifiedEvent) => {
+      expect(modifiedEvent.start).toEqualDate('2016-09-04T03:00:00Z')
+      expect(options.eventAllow).toHaveBeenCalled()
+      done()
+    })
   })
 })
