@@ -27,6 +27,7 @@ function watchChanges() {
 
   watcher.on('all', (event, path) => { // TODO: debounce?
     if (path.match(/\.js$/)) {
+      console.log('[test-index] ' + event + ': ' + path)
       _buildTestIndex()
     }
   })
