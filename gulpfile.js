@@ -9,6 +9,7 @@ const { lint } = require('./scripts/lib/lint')
 const { archive } = require('./scripts/lib/archive')
 const { writeLocales, watchLocales } = require('./scripts/lib/locales')
 const { buildTestIndex } = require('./scripts/lib/tests-index')
+const { runTsc, runTscWatch } = require('./scripts/lib/tsc')
 
 const buildDts = exports.dts = series(
   shellTask('npm:tsc:dts'), // generates granular .d.ts files
@@ -25,7 +26,7 @@ exports.minify = parallel(minifyJs, minifyCss)
 
 exports.build = series(
   writePkgJsons, // important for node-resolution
-  shellTask('npm:tsc'),
+  () => runTsc(),
   writeLocales, // needs tsc
   () => buildTestIndex(), // needs tsc. needs to happen before rollup
   parallel(
@@ -39,33 +40,17 @@ exports.build = series(
 
 exports.watch = series(
   writePkgJsons, // important for node-resolution
-  parallel(
-    shellTask('npm:tsc:watch'),
-    series(
-      waitTsc,
-      writeLocales, // needs tsc
-      () => buildTestIndex(), // needs tsc. needs to happen before rollup
-      parallel(
-        shellTask('npm:rollup:watch'), // needs tsc, copied scss, generated locales
-        writePkgLicenses, // doesn't watch!
-        writePkgReadmes, // doesn't watch!
-        buildDts, // doesn't watch!
-        watchLocales, // TODO: ignore initial
-        () => buildTestIndex(true) // onlyWatch=true
-      )
+  () => runTscWatch(),
+  series(
+    writeLocales, // needs tsc
+    () => buildTestIndex(true), // needs tsc. watch=true
+    parallel(
+      shellTask('npm:rollup:watch'), // needs tsc, copied scss, generated locales
+      writePkgLicenses, // doesn't watch!
+      writePkgReadmes, // doesn't watch!
+      buildDts, // doesn't watch!
+      watchLocales // TODO: ignore initial
     )
   )
 ) // doesn't minify!
 // BUG: right after clean, when watching, tsc re-compiles a lot (must be watching something)
-
-
-async function waitTsc() {
-  let dir = 'tmp/tsc-output' // TODO: make a constant
-  let dirExists = await fileExists(dir)
-
-  if (!dirExists) {
-    await mkdirp(dir)
-  }
-
-  return whenFirstModified(dir, { delay: 1000, disableGlobbing: true })
-}

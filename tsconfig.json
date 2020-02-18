@@ -9,6 +9,7 @@
       "es2015",
       "scripthost"
     ],
+    "incremental": true,
     "allowSyntheticDefaultImports": true,
     "noUnusedLocals": true,
     "noImplicitUseStrict": true,

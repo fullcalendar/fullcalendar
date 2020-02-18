@@ -11,36 +11,34 @@ const chokidar = require('chokidar')
 let tmpDir = path.join(__dirname, '../../tmp')
 
 
-exports.buildTestIndex = (onlyWatch) => { // onlyWatch implies skip initial
-  if (onlyWatch) {
-    let dirs = glob.sync('tsc-output/packages*/__tests__/src', { cwd: tmpDir })
-    console.log('[test-index] Watching for changes...', dirs)
-
-    let watcher = chokidar.watch(dirs, { // TODO: await?
-      cwd: tmpDir,
-      ignoreInitial: true
-    })
-
-    watcher.on('all', (event, path) => { // TODO: debounce?
-      if (path.match(/\.js$/)) {
-        doit()
-      }
-    })
-
-    process.on('SIGINT', function() {
-      console.log('[test-index] No longer watching for changes.')
-      watcher.close()
-    })
-
-    return Promise.resolve()
-
-  } else {
-    return doit()
-  }
+exports.buildTestIndex = (watch) => {
+  return _buildTestIndex().then(() => watch && watchChanges())
 }
 
 
-function doit() {
+function watchChanges() {
+  let dirs = glob.sync('tsc-output/packages*/__tests__/src', { cwd: tmpDir })
+  console.log('[test-index] Watching for changes...', dirs)
+
+  let watcher = chokidar.watch(dirs, {
+    cwd: tmpDir,
+    ignoreInitial: true
+  })
+
+  watcher.on('all', (event, path) => { // TODO: debounce?
+    if (path.match(/\.js$/)) {
+      _buildTestIndex()
+    }
+  })
+
+  process.on('SIGINT', function() {
+    console.log('[test-index] No longer watching for changes.')
+    watcher.close()
+  })
+}
+
+
+function _buildTestIndex() {
   return new Promise((resolve, reject) => {
     exec(
       'find tsc-output/packages*/__tests__/src -mindepth 2 -name \'*.js\' -print0 | ' +
