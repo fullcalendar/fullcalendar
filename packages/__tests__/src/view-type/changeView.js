@@ -1,5 +1,5 @@
 import { expectActiveRange } from '../lib/ViewDateUtils'
-import * as TimeGridRenderUtils from '../lib/TimeGridRenderUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('changeView', function() {
@@ -43,7 +43,10 @@ describe('changeView', function() {
 
       expect(currentCalendar.view.type).toBe('timeGridWeek')
       checkViewIntegrity()
-      expect(TimeGridRenderUtils.isStructureValid()).toBe(true)
+
+      let timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+      expect(timeGridWrapper.isStructureValid()).toBe(true)
+
       currentCalendar.changeView('dayGridWeek')
 
       expect(currentCalendar.view.type).toBe('dayGridWeek')

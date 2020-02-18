@@ -1,6 +1,6 @@
 import * as EventDragUtils from './EventDragUtils'
-import { computeSpanRects } from './TimeGridRenderUtils'
 import { parseMarker, addMs } from '@fullcalendar/core'
+import TimeGridViewWrapper from './wrappers/TimeGridViewWrapper'
 
 export function drag(startDate, endDate, debug) {
 
@@ -12,12 +12,14 @@ export function drag(startDate, endDate, debug) {
     endDate = parseMarker(endDate).marker
   }
 
-  var startRect = computeSpanRects(
+  var timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+
+  var startRect = timeGridWrapper.computeSpanRects(
     startDate,
     addMs(startDate, 1000 * 60 * 30) // hardcoded 30 minute slot :(
   )[0]
 
-  var endRect = computeSpanRects(
+  var endRect = timeGridWrapper.computeSpanRects(
     endDate,
     addMs(endDate, 1000 * 60 * 30) // hardcoded 30 minute slot :(
   )[0]

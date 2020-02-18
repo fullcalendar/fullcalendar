@@ -1,8 +1,8 @@
 import { drag } from '../lib/EventDragUtils'
-import { computeSpanRects } from '../lib/TimeGridRenderUtils'
 import { getDayEl } from '../lib/DayGridRenderUtils'
 import { getEventEls } from '../lib/EventRenderUtils'
 import { parseMarker, addMs } from '@fullcalendar/core'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('allDay change', function() {
   pushOptions({
@@ -24,7 +24,8 @@ describe('allDay change', function() {
     function doDrag() {
       let startRect = getDayEl('2018-09-03')[0].getBoundingClientRect()
       let endDate = parseMarker('2018-09-03T02:00:00').marker
-      var endRect = computeSpanRects(
+      let timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+      var endRect = timeGridWrapper.computeSpanRects(
         endDate,
         addMs(endDate, 1000 * 60 * 30) // hardcoded 30 minute slot :(
       )[0]

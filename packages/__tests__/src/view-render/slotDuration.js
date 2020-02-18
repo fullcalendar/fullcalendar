@@ -1,4 +1,4 @@
-import * as TimeGridRenderUtils from '../lib/TimeGridRenderUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('slotDuration', function() {
@@ -22,8 +22,10 @@ describe('slotDuration', function() {
         maxTime: '03:00'
       })
       it('render slots correctly', function() {
-        initCalendar()
-        expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
+        let calendar = initCalendar()
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
+        expect(timeGridWrapper.getTimeAxisInfo()).toEqual([
           { text: '00:00', isMajor: true },
           { text: '01:00', isMajor: true },
           { text: '02:00', isMajor: true }
@@ -37,8 +39,10 @@ describe('slotDuration', function() {
         maxTime: '03:20'
       })
       it('render slots correctly', function() {
-        initCalendar()
-        expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
+        let calendar = initCalendar()
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
+        expect(timeGridWrapper.getTimeAxisInfo()).toEqual([
           { text: '00:20', isMajor: true },
           { text: '01:20', isMajor: true },
           { text: '02:20', isMajor: true }
@@ -59,8 +63,10 @@ describe('slotDuration', function() {
         maxTime: '03:00'
       })
       it('render slots correctly', function() {
-        initCalendar()
-        expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
+        let calendar = initCalendar()
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
+        expect(timeGridWrapper.getTimeAxisInfo()).toEqual([
           { text: '00:00', isMajor: true },
           { text: '', isMajor: false },
           { text: '01:00', isMajor: true },
@@ -77,8 +83,10 @@ describe('slotDuration', function() {
         maxTime: '03:20'
       })
       it('render slots correctly', function() {
-        initCalendar()
-        expect(TimeGridRenderUtils.getTimeAxisInfo()).toEqual([
+        let calendar = initCalendar()
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
+        expect(timeGridWrapper.getTimeAxisInfo()).toEqual([
           { text: '00:20', isMajor: true },
           { text: '', isMajor: false },
           { text: '01:20', isMajor: true },

@@ -1,9 +1,10 @@
 import * as EventResizeUtils from './EventResizeUtils'
-import { computeSpanRects } from './TimeGridRenderUtils'
+import TimeGridViewWrapper from './wrappers/TimeGridViewWrapper'
 
 
 export function resize(startDate, endDate, fromStart, debug) {
-  let rects = computeSpanRects(startDate, endDate)
+  let timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+  let rects = timeGridWrapper.computeSpanRects(startDate, endDate)
   let firstRect = rects[0]
   let lastRect = rects[rects.length - 1]
 

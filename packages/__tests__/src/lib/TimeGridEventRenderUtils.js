@@ -1,5 +1,6 @@
 import { getEventEls, getEventElTimeText } from './EventRenderUtils'
-import { computeSpanRects } from './TimeGridRenderUtils'
+import TimeGridViewWrapper from './wrappers/TimeGridViewWrapper'
+
 
 export function getTimeTexts() {
   return getEventEls().map(function(i, eventEl) {
@@ -21,7 +22,8 @@ export function checkEventRendering(start, end) {
     end = new Date(end)
   }
 
-  var expectedRects = computeSpanRects(start, end)
+  var timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+  var expectedRects = timeGridWrapper.computeSpanRects(start, end)
   var eventEls = getEventEls() // sorted by DOM order. not good for RTL
   var isMatch = checkEventRenderingMatch(expectedRects, eventEls)
 

@@ -1,5 +1,5 @@
 import { expectActiveRange } from '../lib/ViewDateUtils'
-import * as TimeGridRenderUtils from '../lib/TimeGridRenderUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('next', function() {
@@ -32,9 +32,10 @@ describe('next', function() {
     })
 
     it('does not duplicate-render skeleton', function() {
-      initCalendar()
-      currentCalendar.next()
-      expect(TimeGridRenderUtils.isStructureValid()).toBe(true)
+      let calendar = initCalendar()
+      calendar.next()
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      expect(timeGridWrapper.isStructureValid()).toBe(true)
     })
   })
 

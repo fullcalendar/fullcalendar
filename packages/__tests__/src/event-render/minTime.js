@@ -1,5 +1,5 @@
 import { checkEventRendering } from '../lib/TimeGridEventRenderUtils'
-import { getTimeAxisInfo } from '../lib/TimeGridRenderUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('minTime', function() {
   pushOptions({
@@ -31,8 +31,10 @@ describe('minTime', function() {
   })
 
   it('can be changed dynamically', function() {
-    initCalendar()
+    let calendar = initCalendar()
     currentCalendar.setOption('minTime', '09:00')
-    expect(getTimeAxisInfo()[0].text).toBe('9am')
+
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    expect(timeGridWrapper.getTimeAxisInfo()[0].text).toBe('9am')
   })
 })
