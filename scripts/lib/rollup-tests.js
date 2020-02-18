@@ -1,6 +1,5 @@
 const path = require('path')
 const glob = require('glob')
-const multiEntry = require('rollup-plugin-multi-entry')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const alias = require('rollup-plugin-alias')
 const commonjs = require('rollup-plugin-commonjs')
@@ -48,9 +47,6 @@ function buildConfig(options) {
       sourcemap: true
     },
     plugins: [
-      multiEntry({
-        exports: false // don't combine all the exports. no need, and would collide
-      }),
       {
         resolveId(id, importer) { // TODO: not really DRY
           if (isStylePath(id) && isRelPath(id) && importer.match('/tmp/tsc-output/')) {
