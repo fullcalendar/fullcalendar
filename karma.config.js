@@ -5,7 +5,7 @@ let isRealCiEnv = Boolean(process.env.CI)
 let isCi = isRealCiEnv || cmdArgs.indexOf('ci') !== -1
 
 writeFileSync(
-  'tmp/tests-compiled/old/config.js',
+  'tmp/tests-compiled/config.js',
   'window.karmaConfig = ' + JSON.stringify({
     isCi: Boolean(process.env.CI)
   })
@@ -31,15 +31,15 @@ module.exports = function(config) {
       'node_modules/jquery-simulate/jquery.simulate.js', // operates on global jQuery
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
 
-      'tmp/tests-compiled/old/config.js', // a way to dump variables into the test environment
-      'tmp/tests-compiled/old/main.js',
-      { pattern: 'tmp/tests-compiled/old/main.css', watched: false  }, // let the JS cause the refresh
-      { pattern: 'tmp/tests-compiled/old/*.map', included: false, nocache: true, watched: false }
+      'tmp/tests-compiled/config.js', // a way to dump variables into the test environment
+      'tmp/tests-compiled/main.js',
+      { pattern: 'tmp/tests-compiled/main.css', watched: false  }, // let the JS cause the refresh
+      { pattern: 'tmp/tests-compiled/*.map', included: false, nocache: true, watched: false }
     ],
 
     // make console errors aware of source files
     preprocessors: {
-      'tmp/tests-compiled/old/*.+(js|css)': [ 'sourcemap' ]
+      'tmp/tests-compiled/*.+(js|css)': [ 'sourcemap' ]
     },
 
     // test results reporter to use

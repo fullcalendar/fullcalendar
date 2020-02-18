@@ -17,7 +17,7 @@ module.exports = function() {
   let configs = [
     buildConfig({
       input: 'tmp/tests-index.js',
-      outputFile: 'tmp/tests-compiled/old/main.js'
+      outputFile: 'tmp/tests-compiled/main.js'
     })
   ]
 
@@ -25,7 +25,7 @@ module.exports = function() {
     configs.push(
       buildConfig({
         input: nonMainEntryPoint,
-        outputFile: path.join('tmp/tests-compiled/old', path.basename(nonMainEntryPoint))
+        outputFile: path.join('tmp/tests-compiled', path.basename(nonMainEntryPoint))
       })
     )
   }
