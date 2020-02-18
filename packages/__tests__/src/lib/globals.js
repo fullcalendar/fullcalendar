@@ -77,13 +77,15 @@ function initCalendar(moreOptions, el) {
     newCalendar = window['currentCalendar'] = this
   }
 
-  new Calendar($el[0], options)
+  var cool = new Calendar($el[0], options)
 
   if (newCalendar === window['currentCalendar']) {
     newCalendar.render()
   } else {
     newCalendar.destroy()
   }
+
+  return cool
 }
 
 function getCurrentOptions() {

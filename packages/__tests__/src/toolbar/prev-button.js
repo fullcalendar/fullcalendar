@@ -6,7 +6,7 @@ SEE ALSO:
 - other range intersection tests handled by next-button
 */
 
-import { expectButtonEnabled } from '../lib/ToolbarUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('prev button', function() {
   pushOptions({
@@ -16,8 +16,7 @@ describe('prev button', function() {
 
   describe('when there is no specified validRange', function() {
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('prev', true)
+      expectEnabled(initCalendar(), true)
     })
   })
 
@@ -27,8 +26,7 @@ describe('prev button', function() {
       dateIncrement: { years: 1 } // prev range is 2016-06-05 - 2016-06-12
     })
     it('is disabled', function() {
-      initCalendar()
-      expectButtonEnabled('prev', false)
+      expectEnabled(initCalendar(), false)
     })
   })
 
@@ -41,8 +39,7 @@ describe('prev button', function() {
     })
 
     it('when prev date range is partially before validRange', function() {
-      initCalendar()
-      expectButtonEnabled('prev', false)
+      expectEnabled(initCalendar(), false)
     })
   })
 
@@ -54,8 +51,7 @@ describe('prev button', function() {
       dateIncrement: { years: 1 } // prev range is 2016-06-05 - 2016-06-12
     })
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('prev', true)
+      expectEnabled(initCalendar(), true)
     })
   })
 
@@ -66,8 +62,13 @@ describe('prev button', function() {
       validRange: { start: '2017-03-20', end: '2017-03-30' }
     })
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('prev', true)
+      expectEnabled(initCalendar(), true)
     })
   })
+
+  function expectEnabled(calendar, bool) {
+    let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+    expect(toolbarWrapper.getButtonEnabled('prev')).toBe(bool)
+  }
+
 })

@@ -1,4 +1,4 @@
-import { getTitleText } from '../lib/ToolbarUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('calendar title', function() {
   pushOptions({
@@ -7,14 +7,16 @@ describe('calendar title', function() {
 
   describe('when switching to and from a view', function() {
     it('updates the title at each switch', function() {
-      initCalendar({
+      let calendar = initCalendar({
         defaultView: 'dayGridMonth'
       })
-      expect(getTitleText()).toBe('March 2017')
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+
+      expect(toolbarWrapper.getTitleText()).toBe('March 2017')
       currentCalendar.changeView('timeGridWeek')
-      expect(getTitleText()).toBe('Mar 26 – Apr 1, 2017')
+      expect(toolbarWrapper.getTitleText()).toBe('Mar 26 – Apr 1, 2017')
       currentCalendar.changeView('dayGridMonth')
-      expect(getTitleText()).toBe('March 2017')
+      expect(toolbarWrapper.getTitleText()).toBe('March 2017')
     })
   })
 })

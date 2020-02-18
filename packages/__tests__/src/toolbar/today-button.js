@@ -6,7 +6,7 @@ SEE ALSO:
 - other range intersection tests handled by next-button
 */
 
-import { expectButtonEnabled } from '../lib/ToolbarUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('today button', function() {
   pushOptions({
@@ -19,8 +19,7 @@ describe('today button', function() {
       defaultDate: '2017-06-01'
     })
     it('is disabled', function() {
-      initCalendar()
-      expectButtonEnabled('today', false)
+      expectEnabled(initCalendar(), false)
     })
   })
 
@@ -29,8 +28,7 @@ describe('today button', function() {
       defaultDate: '2017-07-01'
     })
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('today', true)
+      expectEnabled(initCalendar(), true)
     })
   })
 
@@ -41,8 +39,7 @@ describe('today button', function() {
 
     describe('when no specified validRange', function() {
       it('is enabled', function() {
-        initCalendar()
-        expectButtonEnabled('today', true)
+        expectEnabled(initCalendar(), true)
       })
     })
 
@@ -51,9 +48,14 @@ describe('today button', function() {
         validRange: { start: '2017-07-02' } // previous day is visible in the June
       })
       it('is disabled', function() {
-        initCalendar()
-        expectButtonEnabled('today', false)
+        expectEnabled(initCalendar(), false)
       })
     })
   })
+
+  function expectEnabled(calendar, bool) {
+    let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+    expect(toolbarWrapper.getButtonEnabled('today')).toBe(bool)
+  }
+
 })

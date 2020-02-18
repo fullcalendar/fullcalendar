@@ -6,7 +6,7 @@ SEE ALSO:
 - visibleRange, dateAlignment, dateIncrement
 */
 
-import { expectButtonEnabled } from '../lib/ToolbarUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('next button', function() {
   pushOptions({
@@ -16,8 +16,7 @@ describe('next button', function() {
 
   describe('when there is no validRange', function() {
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('next', true)
+      expectEnabled(initCalendar(), true)
     })
   })
 
@@ -27,8 +26,7 @@ describe('next button', function() {
       dateIncrement: { years: 1 } // next range is 2018-06-03 - 2018-06-10
     })
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('next', true)
+      expectEnabled(initCalendar(), true)
     })
   })
 
@@ -38,8 +36,7 @@ describe('next button', function() {
       dateIncrement: { years: 1 } // next range is 2018-06-03 - 2018-06-10
     })
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('next', true)
+      expectEnabled(initCalendar(), true)
     })
   })
 
@@ -49,8 +46,7 @@ describe('next button', function() {
       dateIncrement: { years: 1 } // next range is 2018-06-03 - 2018-06-10
     })
     it('is disabled', function() {
-      initCalendar()
-      expectButtonEnabled('next', false)
+      expectEnabled(initCalendar(), false)
     })
   })
 
@@ -62,8 +58,7 @@ describe('next button', function() {
       dateIncrement: { years: 1 } // next range is 2018-06-03 - 2018-06-10
     })
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('next', true)
+      expectEnabled(initCalendar(), true)
     })
   })
 
@@ -74,8 +69,13 @@ describe('next button', function() {
       validRange: { start: '2036-05-03', end: '2036-06-01' }
     })
     it('is enabled', function() {
-      initCalendar()
-      expectButtonEnabled('next', true)
+      expectEnabled(initCalendar(), true)
     })
   })
+
+  function expectEnabled(calendar, bool) {
+    let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+    expect(toolbarWrapper.getButtonEnabled('next')).toBe(bool)
+  }
+
 })
