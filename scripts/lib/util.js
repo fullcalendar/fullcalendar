@@ -9,7 +9,6 @@ const mkdirp = util.promisify(require('mkdirp'))
 const concurrently = require('concurrently')
 const { watch } = require('gulp')
 
-exports.whenFirstModified = whenFirstModified
 exports.watch = betterWatch
 exports.watchTask = watchTask
 exports.shellTask = shellTask
@@ -29,25 +28,6 @@ function betterWatch() {
     process.on('SIGINT', function() {
       watcher.close()
       resolve()
-    })
-  })
-}
-
-
-// function firstModifiedTask() { // TODO: general taskify (with description?)
-//   let args = arguments
-//   return function() {
-//     return whenFirstModified.apply(null, args) // can just use bind?
-//   }
-// }
-
-
-function whenFirstModified(glob, options) {
-  return new Promise((resolve) => {
-    let watcher = watch(glob, options || {}, function(cb) {
-      watcher.close()
-      resolve()
-      cb()
     })
   })
 }

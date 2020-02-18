@@ -1,5 +1,5 @@
 const { parallel, series } = require('gulp')
-const { shellTask, whenFirstModified, fileExists, mkdirp } = require('./scripts/lib/util')
+const { shellTask } = require('./scripts/lib/util')
 const { writePkgJsons } = require('./scripts/lib/pkg-json-write')
 const { bundlPkgDefs } = require('./scripts/lib/pkg-dts')
 const { writePkgReadmes } = require('./scripts/lib/pkg-readme')
