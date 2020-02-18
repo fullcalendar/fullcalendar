@@ -8,6 +8,7 @@ const { minifyJs, minifyCss } = require('./scripts/lib/minify') // combine into 
 const { lint } = require('./scripts/lib/lint')
 const { archive } = require('./scripts/lib/archive')
 const { writeLocales, watchLocales } = require('./scripts/lib/locales')
+const { buildTestIndex } = require('./scripts/lib/tests-index')
 
 const buildDts = exports.dts = series(
   shellTask('npm:tsc:dts'), // generates granular .d.ts files
@@ -26,6 +27,7 @@ exports.build = series(
   writePkgJsons, // important for node-resolution
   shellTask('npm:tsc'),
   writeLocales, // needs tsc
+  () => buildTestIndex(), // needs tsc. needs to happen before rollup
   parallel(
     shellTask('npm:rollup'), // needs tsc, copied scss, generated locales
     writePkgLicenses,
@@ -42,12 +44,14 @@ exports.watch = series(
     series(
       waitTsc,
       writeLocales, // needs tsc
+      () => buildTestIndex(), // needs tsc. needs to happen before rollup
       parallel(
         shellTask('npm:rollup:watch'), // needs tsc, copied scss, generated locales
         writePkgLicenses, // doesn't watch!
         writePkgReadmes, // doesn't watch!
         buildDts, // doesn't watch!
-        watchLocales // TODO: ignore initial
+        watchLocales, // TODO: ignore initial
+        () => buildTestIndex(true) // onlyWatch=true
       )
     )
   )

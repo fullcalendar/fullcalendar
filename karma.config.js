@@ -32,7 +32,8 @@ module.exports = function(config) {
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js', // weird this/root reference confuses rollup
 
       'tmp/tests-compiled/old/config.js', // a way to dump variables into the test environment
-      'tmp/tests-compiled/old/main.+(js|css)',
+      'tmp/tests-compiled/old/main.js',
+      { pattern: 'tmp/tests-compiled/old/main.css', watched: false  }, // let the JS cause the refresh
       { pattern: 'tmp/tests-compiled/old/*.map', included: false, nocache: true, watched: false }
     ],
 
@@ -54,10 +55,6 @@ module.exports = function(config) {
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
-
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-    autoWatchBatchDelay: 1000, // try to fix karma crashing on imcomplete syntax
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,

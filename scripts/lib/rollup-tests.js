@@ -16,11 +16,7 @@ module.exports = function() {
 
   let configs = [
     buildConfig({
-      input: [
-        'tmp/tsc-output/packages?(-premium)/__tests__/src/main.js',
-        'tmp/tsc-output/packages?(-premium)/__tests__/src/*/**/*.js',
-        '!tmp/tsc-output/packages?(-premium)/__tests__/src/lib/**/*.js' // don't make lib files entrypoints
-      ],
+      input: 'tmp/tests-index.js',
       outputFile: 'tmp/tests-compiled/old/main.js'
     })
   ]
