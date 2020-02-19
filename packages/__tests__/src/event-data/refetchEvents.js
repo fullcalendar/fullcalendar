@@ -1,5 +1,5 @@
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import { getEventEls } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('refetchEvents', function() {
 
@@ -23,7 +23,9 @@ describe('refetchEvents', function() {
       ]
     }, el)
 
-    expect(getEventEls().length).toBe(8)
+    let calendarWrapper = new CalendarWrapper(calendar)
+
+    expect(calendarWrapper.getEventEls().length).toBe(8)
 
     let viewWrapper = new DayGridViewWrapper(calendar)
     scrollEl = viewWrapper.getScrollerEl()
@@ -34,7 +36,7 @@ describe('refetchEvents', function() {
     expect(scrollTop).toBeGreaterThan(10)
 
     currentCalendar.refetchEvents()
-    expect(getEventEls().length).toBe(8)
+    expect(calendarWrapper.getEventEls().length).toBe(8)
     expect(scrollEl.scrollTop).toBe(scrollTop)
   })
 })

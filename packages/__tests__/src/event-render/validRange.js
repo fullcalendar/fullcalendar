@@ -1,4 +1,4 @@
-import * as EventRenderUtils from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('validRange event rendering', function() {
 
@@ -19,9 +19,14 @@ describe('validRange event rendering', function() {
         })
 
         it('truncates the event\'s beginning', function() {
-          initCalendar()
-          EventRenderUtils.expectIsStart(false)
-          EventRenderUtils.expectIsEnd(true)
+          let calendar = initCalendar()
+          let calendarWrapper = new CalendarWrapper(calendar)
+
+          let eventEl = calendarWrapper.getFirstEventEl()
+          let eventInfo = calendarWrapper.getEventElInfo(eventEl)
+
+          expect(eventInfo.isStart).toBe(false)
+          expect(eventInfo.isEnd).toBe(true)
           // TODO: more test about positioning
         })
       })
@@ -45,9 +50,14 @@ describe('validRange event rendering', function() {
         })
 
         it('truncates the event\'s end', function() {
-          initCalendar()
-          EventRenderUtils.expectIsStart(true)
-          EventRenderUtils.expectIsEnd(false)
+          let calendar = initCalendar()
+          let calendarWrapper = new CalendarWrapper(calendar)
+
+          let eventEl = calendarWrapper.getFirstEventEl()
+          let eventInfo = calendarWrapper.getEventElInfo(eventEl)
+
+          expect(eventInfo.isStart).toBe(true)
+          expect(eventInfo.isEnd).toBe(false)
           // TODO: more test about positioning
         })
       })

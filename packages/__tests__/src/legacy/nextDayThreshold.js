@@ -1,4 +1,4 @@
-import { getEventEls } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('nextDayThreshold', function() {
 
@@ -55,7 +55,7 @@ describe('nextDayThreshold', function() {
   })
 
   it('won\'t render an event that ends before the first day\'s threshold', function() {
-    initCalendar({
+    let calendar = initCalendar({
       defaultView: 'dayGridMonth',
       defaultDate: '2017-10-01',
       nextDayThreshold: '09:00:00',
@@ -64,8 +64,9 @@ describe('nextDayThreshold', function() {
         end: '2017-10-01T08:00:00'
       } ]
     })
+    let calendarWrapper = new CalendarWrapper(calendar)
 
-    expect(getEventEls().length).toBe(0)
+    expect(calendarWrapper.getEventEls().length).toBe(0)
   })
 
 

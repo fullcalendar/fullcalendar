@@ -1,9 +1,8 @@
 import deepEqual from 'fast-deep-equal'
 import { Calendar } from '@fullcalendar/core'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import { getFirstDateEl } from '../lib/ViewUtils'
-import { getEventEls } from '../lib/EventRenderUtils'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 function buildOptions() {
   return {
@@ -57,7 +56,9 @@ describe('mutateOptions', function() {
   it('rerenders events without rerendering view', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()
-    let dateEl = getFirstDateEl()
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let dateEl = calendarWrapper.getFirstDateEl()
 
     mutateOptions({
       events: [
@@ -65,21 +66,23 @@ describe('mutateOptions', function() {
       ]
     })
 
-    expect(getEventEls().length).toBe(1)
-    expect(getFirstDateEl()).toBe(dateEl)
+    expect(calendarWrapper.getEventEls().length).toBe(1)
+    expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)
   })
 
   it('doesn\'t rerender anything for a defaultView change', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()
-    let dateEl = getFirstDateEl()
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let dateEl = calendarWrapper.getFirstDateEl()
 
     mutateOptions({
       defaultView: 'timeGridDay'
     })
 
     expect(calendar.view.type).toBe('timeGridWeek')
-    expect(getFirstDateEl()).toBe(dateEl)
+    expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)
   })
 
 })

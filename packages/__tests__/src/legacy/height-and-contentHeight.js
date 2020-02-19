@@ -1,4 +1,4 @@
-import { getFirstDateEl } from '../lib/ViewUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 (function() {
 
@@ -35,10 +35,12 @@ import { getFirstDateEl } from '../lib/ViewUtils'
 
         if (asAMethod) {
 
-          initCalendar({}, calendarEl)
-          var dateEl = getFirstDateEl()
+          let calendar = initCalendar({}, calendarEl)
+          let calendarWrapper = new CalendarWrapper(calendar)
+          var dateEl = calendarWrapper.getFirstDateEl()
+
           currentCalendar.setOption(heightProp, heightVal)
-          expect(getFirstDateEl()).toBe(dateEl)
+          expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)
 
         } else {
           initCalendar({ [heightProp]: heightVal }, calendarEl)

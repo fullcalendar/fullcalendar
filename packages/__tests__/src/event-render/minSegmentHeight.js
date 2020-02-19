@@ -1,4 +1,4 @@
-import * as EventRenderUtils from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('short event rendering with timeGridEventMinHeight', function() {
   pushOptions({
@@ -15,10 +15,10 @@ describe('short event rendering with timeGridEventMinHeight', function() {
     })
 
     it('renders the event having full width and the timeGridEventMinHeight height value', function() {
-      initCalendar()
-      var el = EventRenderUtils.getSingleEl()
+      let calendar = initCalendar()
+      let eventEl = new CalendarWrapper(calendar).getFirstEventEl()
 
-      expect(el.outerHeight()).toEqual(25 - 1) // because of the bottom margin
+      expect(eventEl.offsetHeight).toEqual(25 - 1) // because of the bottom margin
     })
   })
 

@@ -1,4 +1,4 @@
-import { getSingleEl, getEventElTimeEl } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('displayEventEnd', function() {
 
@@ -21,7 +21,7 @@ describe('displayEventEnd', function() {
 
       describe('with an all-day event', function() {
         it('displays no time text', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               title: 'timed event',
               start: '2014-06-13',
@@ -29,26 +29,26 @@ describe('displayEventEnd', function() {
               allDay: true
             } ]
           })
-          expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
+          expectEventTimeText(calendar, '')
         })
       })
 
       describe('with a timed event with no end time', function() {
         it('displays only the start time text', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               title: 'timed event',
               start: '2014-06-13T01:00:00',
               allDay: false
             } ]
           })
-          expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
+          expectEventTimeText(calendar, '1:00 AM')
         })
       })
 
       describe('with a timed event with an end time', function() {
         it('displays only the start time text', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               title: 'timed event',
               start: '2014-06-13T01:00:00',
@@ -56,7 +56,7 @@ describe('displayEventEnd', function() {
               allDay: false
             } ]
           })
-          expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
+          expectEventTimeText(calendar, '1:00 AM')
         })
       })
     })
@@ -69,7 +69,7 @@ describe('displayEventEnd', function() {
 
       describe('with an all-day event', function() {
         it('displays no time text', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               title: 'timed event',
               start: '2014-06-13',
@@ -77,26 +77,26 @@ describe('displayEventEnd', function() {
               allDay: true
             } ]
           })
-          expect(getEventElTimeEl(getSingleEl()).length).toBe(0)
+          expectEventTimeText(calendar, '')
         })
       })
 
       describe('with a timed event with no end time', function() {
         it('displays only the start time text', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               title: 'timed event',
               start: '2014-06-13T01:00:00',
               allDay: false
             } ]
           })
-          expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
+          expectEventTimeText(calendar, '1:00 AM')
         })
       })
 
       describe('with a timed event given an invalid end time', function() {
         it('displays only the start time text', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               title: 'timed event',
               start: '2014-06-13T01:00:00',
@@ -104,13 +104,13 @@ describe('displayEventEnd', function() {
               allDay: false
             } ]
           })
-          expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM')
+          expectEventTimeText(calendar, '1:00 AM')
         })
       })
 
       describe('with a timed event with an end time', function() {
         it('displays both the start and end time text', function() {
-          initCalendar({
+          let calendar = initCalendar({
             events: [ {
               title: 'timed event',
               start: '2014-06-13T01:00:00',
@@ -118,9 +118,18 @@ describe('displayEventEnd', function() {
               allDay: false
             } ]
           })
-          expect(getEventElTimeEl(getSingleEl())).toHaveText('1:00 AM - 2:00 AM')
+          expectEventTimeText(calendar, '1:00 AM - 2:00 AM')
         })
       })
     })
   })
+
+  function expectEventTimeText(calendar, timeText) {
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let eventEl = calendarWrapper.getFirstEventEl()
+    let eventInfo = calendarWrapper.getEventElInfo(eventEl)
+
+    expect(eventInfo.timeText).toBe(timeText)
+  }
+
 })

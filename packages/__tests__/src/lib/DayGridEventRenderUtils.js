@@ -36,14 +36,14 @@ export function directionallyTestSeg(opts) {
   }
 
   if (opts.isStart) {
-    expect(el).toHaveClass(DayGridWrapper.eventIsStartClassName)
+    expect(el).toHaveClass(DayGridWrapper.EVENT_IS_START_CLASSNAME)
   } else {
-    expect(el).not.toHaveClass(DayGridWrapper.eventIsStartClassName)
+    expect(el).not.toHaveClass(DayGridWrapper.EVENT_IS_START_CLASSNAME)
   }
 
   if (opts.isEnd) {
-    expect(el).toHaveClass(DayGridWrapper.eventIsEndClassName)
+    expect(el).toHaveClass(DayGridWrapper.EVENT_IS_END_CLASSNAME)
   } else {
-    expect(el).not.toHaveClass(DayGridWrapper.eventIsEndClassName)
+    expect(el).not.toHaveClass(DayGridWrapper.EVENT_IS_END_CLASSNAME)
   }
 }

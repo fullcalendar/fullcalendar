@@ -1,4 +1,4 @@
-import { getViewContainerEl } from '../lib/ViewUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('aspectRatio', function() {
 
@@ -11,14 +11,18 @@ describe('aspectRatio', function() {
     var elementWidth = 675
 
     it('view div should use the ratio 1:35 to set height', function() {
-      initCalendar({}, getCalendarElement(elementWidth))
-      var rect = getViewContainerEl().getBoundingClientRect()
+      let calendar = initCalendar({}, getCalendarElement(elementWidth))
+      let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+      let rect = viewContainerEl.getBoundingClientRect()
       expect(Math.round(rect.height)).toEqual(500)
     })
 
     it('view div should have width of div', function() {
-      initCalendar({}, getCalendarElement(elementWidth))
-      var rect = getViewContainerEl().getBoundingClientRect()
+      let calendar = initCalendar({}, getCalendarElement(elementWidth))
+      let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+      var rect = viewContainerEl.getBoundingClientRect()
       expect(Math.round(rect.width)).toEqual(elementWidth)
     })
 
@@ -35,14 +39,18 @@ describe('aspectRatio', function() {
       })
 
       it('should not change the width', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         expect(Math.round(rect.width)).toEqual(elementWidth)
       })
 
       it('should set the height to width sizes very close to ratio of 2', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(200)
       })
@@ -56,14 +64,18 @@ describe('aspectRatio', function() {
       })
 
       it('should not change the width', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         expect(Math.round(rect.width)).toEqual(elementWidth)
       })
 
       it('should set the height to width sizes very close to ratio of 2', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(100)
       })
@@ -77,14 +89,18 @@ describe('aspectRatio', function() {
       })
 
       it('should not change the width', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         expect(Math.round(rect.width)).toEqual(elementWidth)
       })
 
       it('should set the height to width ratio to 0.5', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
@@ -98,14 +114,18 @@ describe('aspectRatio', function() {
       })
 
       it('should not change the width', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         expect(Math.round(rect.width)).toEqual(elementWidth)
       })
 
       it('should set the height to width ratio to 0.5', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
@@ -119,14 +139,18 @@ describe('aspectRatio', function() {
       })
 
       it('should not change the width', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         expect(Math.round(rect.width)).toEqual(elementWidth)
       })
 
       it('should set the height to width ratio to 0.5', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
@@ -140,16 +164,20 @@ describe('aspectRatio', function() {
       })
 
       it('should not change the width', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var rect = getViewContainerEl().getBoundingClientRect()
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var rect = viewContainerEl.getBoundingClientRect()
         expect(Math.round(rect.width)).toEqual(elementWidth)
       })
 
       it('should cause rows to be natural height', function() {
-        initCalendar({}, getCalendarElement(elementWidth))
-        var actualHeight = getViewContainerEl().getBoundingClientRect().height
+        let calendar = initCalendar({}, getCalendarElement(elementWidth))
+        let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
+
+        var actualHeight = viewContainerEl.getBoundingClientRect().height
         $('tr.fc-week td:first-child > div').css('min-height', '').css('background', 'red')
-        var naturalHeight = getViewContainerEl().getBoundingClientRect().height
+        var naturalHeight = viewContainerEl.getBoundingClientRect().height
         expect(Math.round(actualHeight)).toEqual(Math.round(naturalHeight))
       })
 

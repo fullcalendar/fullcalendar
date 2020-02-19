@@ -1,4 +1,4 @@
-import { getEventElAtIndex, getEventElTimeEl, getSingleEl } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('TimeGrid event rendering', function() {
 
@@ -9,64 +9,82 @@ describe('TimeGrid event rendering', function() {
   })
 
   it('renders the start and end time of an event that spans only 1 day', function() {
-    initCalendar({
+    let calendar = initCalendar({
       events: [ {
         title: 'event1',
         start: '2014-08-18T02:00:00',
         end: '2014-08-18T22:00:00'
       } ]
     })
-    expect(getEventElTimeEl(getSingleEl())).toHaveText('2:00 - 10:00')
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let eventEl = calendarWrapper.getFirstEventEl()
+    let eventText = calendarWrapper.getEventElInfo(eventEl).timeText
+
+    expect(eventText).toBe('2:00 - 10:00')
   })
 
   it('renders time to/from midnight for an event that spans two days', function() {
-    initCalendar({
+    let calendar = initCalendar({
       events: [ {
         title: 'event1',
         start: '2014-08-18T02:00:00',
         end: '2014-08-19T22:00:00'
       } ]
     })
-    var seg1 = getEventElAtIndex(0)
-    var seg2 = getEventElAtIndex(1)
-    expect(getEventElTimeEl(seg1)).toHaveText('2:00 - 12:00')
-    expect(getEventElTimeEl(seg2)).toHaveText('12:00 - 10:00')
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let eventEls = calendarWrapper.getEventEls()
+    let eventText0 = calendarWrapper.getEventElInfo(eventEls[0]).timeText
+    let eventText1 = calendarWrapper.getEventElInfo(eventEls[1]).timeText
+
+    expect(eventText0).toBe('2:00 - 12:00')
+    expect(eventText1).toBe('12:00 - 10:00')
   })
 
   it('renders no time on an event segment that spans through an entire day', function() {
-    initCalendar({
+    let calendar = initCalendar({
       events: [ {
         title: 'event1',
         start: '2014-08-18T02:00:00',
         end: '2014-08-20T22:00:00'
       } ]
     })
-    var seg2 = getEventElAtIndex(1)
-    expect(seg2).toBeInDOM()
-    expect(getEventElTimeEl(seg2)).not.toBeInDOM()
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let eventEls = calendarWrapper.getEventEls()
+    let eventText1 = calendarWrapper.getEventElInfo(eventEls[1]).timeText
+
+    expect(eventText1).toBe('')
   })
 
   it('renders an event with no url with no <a> href', function() {
-    initCalendar({
+    let calendar = initCalendar({
       events: [ {
         title: 'event1',
         start: '2014-08-18T02:00:00'
       } ]
     })
-    var seg = getSingleEl()
-    expect(seg).not.toHaveAttr('href')
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let eventEl = calendarWrapper.getFirstEventEl()
+
+    expect(eventEl).not.toHaveAttr('href')
   })
 
   it('renders an event with a url with an <a> href', function() {
-    initCalendar({
+    let calendar = initCalendar({
       events: [ {
         title: 'event1',
         start: '2014-08-18T02:00:00',
         url: 'http://google.com/'
       } ]
     })
-    var seg = getSingleEl()
-    expect(seg).toHaveAttr('href')
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let eventEl = calendarWrapper.getFirstEventEl()
+
+    expect(eventEl).toHaveAttr('href')
   })
 
 })

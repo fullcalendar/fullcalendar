@@ -1,14 +1,8 @@
 import { formatIsoDay } from './datelib-utils'
-import {
-  getEventElResizerEl,
-  getEventElTitleEl,
-  getEventElTimeEl,
-  getFirstEventEl,
-  getLastEventEl
-} from './EventRenderUtils'
 import { parseMarker, addDays } from '@fullcalendar/core'
 import TimeGridViewWrapper from './wrappers/TimeGridViewWrapper'
 import DayGridViewWrapper from './wrappers/DayGridViewWrapper'
+import CalendarWrapper from './wrappers/CalendarWrapper'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
   var eventsRendered = false
@@ -38,12 +32,12 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dropDateHasTime = true
     }
 
-    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : getFirstEventEl()
+    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : $(new CalendarWrapper(calendar).getFirstEventEl())
     expect($eventEl.length).toBe(1)
 
     if (dropDateHasTime) {
       var timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
-      $dragEl = getEventElTimeEl($eventEl)
+      $dragEl = $eventEl.find('.' + CalendarWrapper.EVENT_TIME_CLASSNAME)
       $dayEl = $(timeGridWrapper.getDayEls(dropDate))
       slatIndex = dropDate.getUTCHours() * 2 + (dropDate.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
       $slatEl = $(timeGridWrapper.getSlotElByIndex(slatIndex))
@@ -51,7 +45,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dy = $slatEl.offset().top - $eventEl.offset().top
     } else {
       var dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-      $dragEl = getEventElTitleEl($eventEl)
+      $dragEl = $eventEl.find('.' + CalendarWrapper.EVENT_TITLE_CLASSNAME)
       $dayEl = $(dayGridWrapper.getDayEl(dropDate))
       dy = $dayEl.offset().top - $eventEl.offset().top
     }
@@ -132,8 +126,11 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       resizeDateHasTime = true
     }
 
-    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : getLastEventEl()
-    $dragEl = getEventElResizerEl($eventEl)
+    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : (() => {
+      let eventEls = new CalendarWrapper(calendar).getEventEls()
+      return $(eventEls[eventEls.length - 1]) // the last one
+    })()
+    $dragEl = $eventEl.find('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
 
     if (resizeDateHasTime) {
       var timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid

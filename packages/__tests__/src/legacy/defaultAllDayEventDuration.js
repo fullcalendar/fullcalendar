@@ -1,4 +1,4 @@
-import { getEventEls } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('defaultAllDayEventDuration', function() {
 
@@ -57,8 +57,9 @@ describe('defaultAllDayEventDuration', function() {
       'with dayGridWeek view': 'dayGridWeek',
       'with week view': 'timeGridWeek'
     }, function() {
+
       it('renders an all-day event with no `end` to appear to have the default duration', function() {
-        initCalendar({
+        let calendar = initCalendar({
           defaultAllDayEventDuration: { days: 2 },
           events: [
             {
@@ -77,9 +78,11 @@ describe('defaultAllDayEventDuration', function() {
           ]
         })
 
-        var eventElms = getEventEls()
-        var width0 = eventElms.eq(0).outerWidth()
-        var width1 = eventElms.eq(1).outerWidth()
+        let calendarWrapper = new CalendarWrapper(calendar)
+        var eventElms = calendarWrapper.getEventEls()
+
+        var width0 = eventElms[0].offsetWidth
+        var width1 = eventElms[1].offsetWidth
         expect(width0).toBeGreaterThan(0)
         expect(width0).toEqual(width1)
       })

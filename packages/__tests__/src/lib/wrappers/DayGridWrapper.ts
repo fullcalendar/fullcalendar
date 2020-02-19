@@ -1,11 +1,12 @@
 import { findElements } from '@fullcalendar/core'
 import { formatIsoDay } from '../datelib-utils'
 import { getRectCenter, intersectRects, addPoints, subtractPoints } from '../geom'
+import CalendarWrapper from './CalendarWrapper'
 
 export default class DayGridWrapper {
 
-  static eventIsStartClassName = 'fc-start'
-  static eventIsEndClassName = 'fc-end'
+  static EVENT_IS_START_CLASSNAME = 'fc-start'
+  static EVENT_IS_END_CLASSNAME = 'fc-end'
 
 
   constructor(private el: HTMLElement) {
@@ -124,7 +125,9 @@ export default class DayGridWrapper {
 
       $(eventEl).simulate('mouseover') // so that resize handle is revealed
 
-      var resizerEl = eventEl.querySelector(fromStart ? '.fc-start-resizer' : '.fc-end-resizer')
+      var resizerEl = eventEl.querySelector(
+        '.' + (fromStart ? CalendarWrapper.EVENT_START_RESIZER_CLASSNAME : CalendarWrapper.EVENT_END_RESIZER_CLASSNAME)
+      )
       var resizerRect = resizerEl.getBoundingClientRect()
       var resizerCenter = getRectCenter(resizerRect)
 

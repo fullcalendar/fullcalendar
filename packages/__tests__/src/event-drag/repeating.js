@@ -1,4 +1,3 @@
-import { getVisibleEventEls, getFirstEventEl } from '../lib/EventRenderUtils'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 import { waitEventDrag } from '../lib/wrappers/interaction-util'
@@ -43,24 +42,24 @@ describe('event dragging on repeating events', function() {
 
   it('hides other repeating events when dragging', function(done) {
 
-    initCalendar({
-      eventDragStart: function() {
+    let calendar = initCalendar({
+
+      eventDragStart() {
         setTimeout(function() { // try go execute DURING the drag
-          expect(
-            getVisibleEventEls().filter(function(i, node) {
-              return $(node).css('visibility') !== 'hidden'
-            }).length
-          ).toBe(1)
+          let visibleEventEls = filterVisibleEls(calendarWrapper.getEventEls())
+          expect(visibleEventEls.length).toBe(1)
         }, 0)
       },
-      eventDrop: function() {
+
+      eventDrop() {
         setTimeout(function() {
           done()
         }, 10)
       }
     })
+    let calendarWrapper = new CalendarWrapper(calendar)
 
-    getFirstEventEl().simulate('drag', {
+    $(calendarWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
@@ -69,7 +68,7 @@ describe('event dragging on repeating events', function() {
   // inverse of above test
   it('doesnt accidentally hide all non-id events when dragging', function(done) {
 
-    initCalendar({
+    let calendar = initCalendar({
       events: [
         {
           title: 'Regular Event',
@@ -80,26 +79,33 @@ describe('event dragging on repeating events', function() {
           start: '2017-02-16T16:00:00'
         }
       ],
-      eventDragStart: function() {
+
+      eventDragStart() {
         setTimeout(function() { // try go execute DURING the drag
-          expect(
-            getVisibleEventEls().filter(function(i, node) {
-              return $(node).css('visibility') !== 'hidden'
-            }).length
-          ).toBe(2) // the dragging event AND the other regular event
+          let visibleEventEls = filterVisibleEls(calendarWrapper.getEventEls())
+          expect(visibleEventEls.length).toBe(2) // the dragging event AND the other regular event
         }, 0)
       },
-      eventDrop: function() {
+
+      eventDrop() {
         setTimeout(function() {
           done()
         }, 10)
       }
     })
+    let calendarWrapper = new CalendarWrapper(calendar)
 
-    getFirstEventEl().simulate('drag', {
+    $(calendarWrapper.getFirstEventEl()).simulate('drag', {
       dx: 100,
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
   })
+
+  function filterVisibleEls(els) {
+    return els.filter((el) => {
+      let $el = $(el)
+      return $el.is(':visible') && $el.css('visibility') !== 'hidden'
+    })
+  }
 
 })

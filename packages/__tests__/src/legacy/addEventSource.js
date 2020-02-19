@@ -1,4 +1,4 @@
-import { getEventEls } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('addEventSource', function() {
   var eventArray = [
@@ -105,6 +105,8 @@ describe('addEventSource', function() {
   // has internal info on all the events.
   function checkAllEvents() {
     expect(currentCalendar.getEvents().length).toEqual(3)
-    expect(getEventEls().length).toEqual(3)
+
+    let calendarWrapper = new CalendarWrapper(currentCalendar)
+    expect(calendarWrapper.getEventEls().length).toEqual(3)
   }
 })

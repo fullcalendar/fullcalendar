@@ -1,13 +1,15 @@
 import { getRectCenter, subtractPoints, addPoints } from './geom'
-import * as EventRenderUtils from './EventRenderUtils'
+import CalendarWrapper from './wrappers/CalendarWrapper'
 
 
 export function resize(point0, point1, fromStart, debug) {
-  var eventEl = EventRenderUtils.getSingleEl()
+  var $eventEl = $(new CalendarWrapper(currentCalendar).getFirstEventEl())
 
-  eventEl.simulate('mouseover') // so that resize handle is revealed
+  $eventEl.simulate('mouseover') // so that resize handle is revealed
 
-  var resizerEl = eventEl.find(fromStart ? '.fc-start-resizer' : '.fc-end-resizer')
+  var resizerEl = $eventEl.find(
+    '.' + (fromStart ? CalendarWrapper.EVENT_START_RESIZER_CLASSNAME : CalendarWrapper.EVENT_END_RESIZER_CLASSNAME)
+  )
   var resizerRect = resizerEl[0].getBoundingClientRect()
   var resizerCenter = getRectCenter(resizerRect)
 

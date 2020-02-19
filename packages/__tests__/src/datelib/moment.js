@@ -1,8 +1,8 @@
 import { Calendar } from '@fullcalendar/core'
 import MomentPlugin, { toMoment, toDuration } from '@fullcalendar/moment'
 import DayGridPlugin from '@fullcalendar/daygrid'
-import { getSingleEl, getEventElTimeText } from '../lib/EventRenderUtils'
 import 'moment/locale/es' // only test spanish
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 
 describe('moment plugin', function() {
@@ -77,7 +77,7 @@ describe('moment plugin', function() {
   describe('date formatting', function() {
 
     it('produces event time text', function() {
-      initCalendar({
+      let calendar = initCalendar({
         defaultView: 'dayGridMonth',
         now: '2018-09-06',
         displayEventEnd: false,
@@ -86,7 +86,12 @@ describe('moment plugin', function() {
           { title: 'my event', start: '2018-09-06T13:30:20' }
         ]
       })
-      expect(getEventElTimeText(getSingleEl())).toBe('13:30:20!')
+
+      let calendarWrapper = new CalendarWrapper(calendar)
+      let eventEl = calendarWrapper.getFirstEventEl()
+      let eventInfo = calendarWrapper.getEventElInfo(eventEl)
+
+      expect(eventInfo.timeText).toBe('13:30:20!')
     })
 
   })

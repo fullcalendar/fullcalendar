@@ -44,7 +44,8 @@ describe('ListView rendering', function() {
       it('filters events through eventRender', function() {
         initCalendar({
           eventRender(arg) {
-            $(arg.el).find(ListViewWrapper.dotSelector).replaceWith('<span class="custom-icon" />')
+            $(arg.el).find('.' + ListViewWrapper.EVENT_DOT_CLASSNAME)
+              .replaceWith('<span class="custom-icon" />')
           }
         })
 

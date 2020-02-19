@@ -1,4 +1,4 @@
-import { getEventEls } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('defaultTimedEventDuration', function() {
 
@@ -56,7 +56,7 @@ describe('defaultTimedEventDuration', function() {
       })
 
       it('renders a timed event with no `end` to appear to have the default duration', function() {
-        initCalendar({
+        let calendar = initCalendar({
           defaultTimedEventDuration: '01:15:00',
           events: [
             {
@@ -75,9 +75,11 @@ describe('defaultTimedEventDuration', function() {
           ]
         })
 
-        var eventElms = getEventEls()
-        var height0 = eventElms.eq(0).outerHeight()
-        var height1 = eventElms.eq(1).outerHeight()
+        let calendarWrapper = new CalendarWrapper(calendar)
+        var eventElms = calendarWrapper.getEventEls()
+
+        var height0 = eventElms[0].offsetHeight
+        var height1 = eventElms[1].offsetHeight
         expect(height0).toBeGreaterThan(0)
         expect(height0).toEqual(height1)
       })
@@ -90,7 +92,7 @@ describe('defaultTimedEventDuration', function() {
       })
 
       it('renders a timed event with no `end` to appear to have the default duration', function() {
-        initCalendar({
+        let calendar = initCalendar({
           defaultTimedEventDuration: { days: 2 },
           events: [
             {
@@ -109,9 +111,11 @@ describe('defaultTimedEventDuration', function() {
           ]
         })
 
-        var eventElms = getEventEls()
-        var width0 = eventElms.eq(0).outerWidth()
-        var width1 = eventElms.eq(1).outerWidth()
+        let calendarWrapper = new CalendarWrapper(calendar)
+        var eventElms = calendarWrapper.getEventEls()
+
+        var width0 = eventElms[0].offsetWidth
+        var width1 = eventElms[1].offsetWidth
         expect(width0).toBeGreaterThan(0)
         expect(width0).toEqual(width1)
       })

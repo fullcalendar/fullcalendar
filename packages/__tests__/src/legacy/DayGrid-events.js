@@ -1,6 +1,6 @@
-import { getSingleEl } from '../lib/EventRenderUtils'
 import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 
 describe('DayGrid event rendering', function() {
@@ -223,26 +223,26 @@ describe('DayGrid event rendering', function() {
   })
 
   it('renders an event with no url with no <a> href', function() {
-    var options = {}
-    options.events = [ {
-      title: 'event1',
-      start: '2014-08-01'
-    } ]
-    initCalendar(options)
-    var seg = getSingleEl()
-    expect(seg).not.toHaveAttr('href')
+    let calendar = initCalendar({
+      events: [ {
+        title: 'event1',
+        start: '2014-08-01'
+      } ]
+    })
+    let eventEl = new CalendarWrapper(calendar).getFirstEventEl()
+    expect(eventEl).not.toHaveAttr('href')
   })
 
   it('renders an event with a url with an <a> href', function() {
-    var options = {}
-    options.events = [ {
-      title: 'event1',
-      start: '2014-08-01',
-      url: 'http://google.com/'
-    } ]
-    initCalendar(options)
-    var seg = getSingleEl()
-    expect(seg).toHaveAttr('href')
+    let calendar = initCalendar({
+      events: [ {
+        title: 'event1',
+        start: '2014-08-01',
+        url: 'http://google.com/'
+      } ]
+    })
+    let eventEl = new CalendarWrapper(calendar).getFirstEventEl()
+    expect(eventEl).toHaveAttr('href')
   })
 
 })

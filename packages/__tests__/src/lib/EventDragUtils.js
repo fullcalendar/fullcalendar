@@ -1,5 +1,5 @@
 import { getRectCenter, intersectRects } from './geom'
-import * as EventRenderUtils from './EventRenderUtils'
+import CalendarWrapper from './wrappers/CalendarWrapper'
 
 /*
 TODO: Don't rely on legacy simulateDrag
@@ -7,16 +7,16 @@ Given the rectangles of the origin and destination
 slot or day area.
 */
 export function drag(rect0, rect1, debug) {
-  var el = EventRenderUtils.getSingleEl()
+  var eventEl = new CalendarWrapper(currentCalendar).getFirstEventEl()
 
-  var elRect = el[0].getBoundingClientRect()
+  var eventRect = eventEl.getBoundingClientRect()
   var point0 = getRectCenter(
-    intersectRects(elRect, rect0)
+    intersectRects(eventRect, rect0)
   )
   var point1 = getRectCenter(rect1)
   var deferred = $.Deferred()
 
-  el.simulate('drag', {
+  $(eventEl).simulate('drag', {
     point: point0,
     end: point1,
     debug: debug

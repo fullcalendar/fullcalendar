@@ -4,7 +4,7 @@ import { Calendar, findElements } from '@fullcalendar/core'
 
 export default class ListViewWrapper extends ViewWrapper {
 
-  static dotSelector = '.fc-event-dot'
+  static EVENT_DOT_CLASSNAME = 'fc-event-dot'
 
 
   constructor(calendar: Calendar) {

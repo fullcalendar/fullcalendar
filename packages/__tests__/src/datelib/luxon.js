@@ -2,8 +2,8 @@ import { Calendar } from '@fullcalendar/core'
 import esLocale from '@fullcalendar/core/locales/es'
 import LuxonPlugin, { toDateTime, toDuration } from '@fullcalendar/luxon'
 import DayGridPlugin from '@fullcalendar/daygrid'
-import { getSingleEl, getEventElTimeText } from '../lib/EventRenderUtils'
 import { testTimeZoneImpl } from '../lib/timeZoneImpl'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 
 describe('luxon plugin', function() {
@@ -115,7 +115,7 @@ describe('luxon plugin', function() {
   describe('date formatting', function() {
 
     it('produces event time text', function() {
-      initCalendar({
+      let calendar = initCalendar({
         defaultView: 'dayGridMonth',
         now: '2018-09-06',
         displayEventEnd: false,
@@ -124,7 +124,12 @@ describe('luxon plugin', function() {
           { title: 'my event', start: '2018-09-06T13:30:20' }
         ]
       })
-      expect(getEventElTimeText(getSingleEl())).toBe('13:30:20abc')
+
+      let calendarWrapper = new CalendarWrapper(calendar)
+      let eventEl = calendarWrapper.getFirstEventEl()
+      let eventInfo = calendarWrapper.getEventElInfo(eventEl)
+
+      expect(eventInfo.timeText).toBe('13:30:20abc')
     })
 
   })

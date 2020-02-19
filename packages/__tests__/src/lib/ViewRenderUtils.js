@@ -1,5 +1,6 @@
 import { formatIsoDay } from './datelib-utils'
 import { addDays } from '@fullcalendar/core'
+import CalendarWrapper from './wrappers/CalendarWrapper'
 
 
 export function expectDayRange(start, end) {
@@ -35,11 +36,12 @@ export function expectDay(date, bool) {
     date = new Date(date)
   }
 
-  var els = $('td.fc-day[data-date="' + formatIsoDay(date) + '"]')
+  var calendarWrapper = new CalendarWrapper(currentCalendar)
+  var dayEl = calendarWrapper.getDateCellEl(formatIsoDay(date))
 
   if (bool) {
-    expect(els).toBeInDOM()
+    expect(dayEl).toBeTruthy()
   } else {
-    expect(els).not.toBeInDOM()
+    expect(dayEl).toBeFalsy()
   }
 }

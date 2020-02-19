@@ -1,4 +1,3 @@
-import { getEventEls } from '../lib/EventRenderUtils'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 
@@ -24,10 +23,10 @@ describe('timegrid all-day slot', function() {
       calendar.addEvent({ start: '2019-04-23' })
     })
 
-    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
-    let dayWidth = $(timeGridWrapper.getDayEls('2019-04-23')).width()
+    let dayGridWrapper = new TimeGridViewWrapper(calendar).dayGrid
+    let dayWidth = $(dayGridWrapper.getDayEls('2019-04-23')).width()
+    let lastEventEl = dayGridWrapper.getEventEls()[2]
 
-    let lastEventEl = getEventEls()[2]
     $(lastEventEl).simulate('drag', {
       localPoint: { left: '50%', top: '99%' },
       dx: dayWidth

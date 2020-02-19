@@ -2,9 +2,9 @@ import { Calendar } from '@fullcalendar/core'
 import InteractionPlugin from '@fullcalendar/interaction'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
-import { getSingleEl } from '../lib/EventRenderUtils'
 import { getRectCenter } from '../lib/geom'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 
 describe('dragging events between calendars', function() {
@@ -84,9 +84,11 @@ describe('dragging events between calendars', function() {
     calendar0.render()
     calendar1.render()
 
-    let dayGridWrapper = new DayGridViewWrapper(calendar1).dayGrid
-    let eventEl = getSingleEl()[0]
-    let dayEl = dayGridWrapper.getDayEls('2019-01-05')[0]
+    let dayGridWrapper0 = new DayGridViewWrapper(calendar0).dayGrid
+    let dayGridWrapper1 = new DayGridViewWrapper(calendar1).dayGrid
+
+    let eventEl = dayGridWrapper0.getEventEls()[0]
+    let dayEl = dayGridWrapper1.getDayEls('2019-01-05')[0]
     let point0 = getRectCenter(eventEl.getBoundingClientRect())
     let point1 = getRectCenter(dayEl.getBoundingClientRect())
 
@@ -131,7 +133,7 @@ describe('dragging events between calendars', function() {
     calendar0.render()
     calendar1.render()
 
-    let eventEl = getSingleEl()[0]
+    let eventEl = new CalendarWrapper(calendar0).getEventEls()[0]
     let point0 = getRectCenter(eventEl.getBoundingClientRect())
     let point1 = getRectCenter(el1.querySelector('.scrollgrid .fc-body:last-child .fc-scroller').getBoundingClientRect())
 

@@ -1,4 +1,4 @@
-import { getEventEls } from '../lib/EventRenderUtils'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('eventOrder', function() {
   pushOptions({
@@ -88,8 +88,8 @@ describe('eventOrder', function() {
   })
 
   function getEventOrder() {
-    return getEventEls().map(function(i, node) {
-      return node.getAttribute('data-event-id')
-    }).get()
+    return new CalendarWrapper(currentCalendar).getEventEls().map(function(el) {
+      return el.getAttribute('data-event-id')
+    })
   }
 })
