@@ -20,4 +20,9 @@ export default class DayGridViewWrapper extends ViewWrapper {
     return new DayGridWrapper(this.el.querySelector('.fc-day-grid'))
   }
 
+
+  getScrollerEl() {
+    return this.el.querySelector('.scrollgrid .fc-body:last-child .fc-scroller')
+  }
+
 }

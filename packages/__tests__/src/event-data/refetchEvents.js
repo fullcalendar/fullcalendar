@@ -1,4 +1,4 @@
-import { getScrollerEl } from '../lib/MonthViewUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import { getEventEls } from '../lib/EventRenderUtils'
 
 describe('refetchEvents', function() {
@@ -8,7 +8,7 @@ describe('refetchEvents', function() {
     var scrollEl
     var scrollTop
 
-    initCalendar({
+    let calendar = initCalendar({
       defaultView: 'dayGridMonth',
       defaultDate: '2017-04-25',
       events: [
@@ -25,15 +25,16 @@ describe('refetchEvents', function() {
 
     expect(getEventEls().length).toBe(8)
 
-    scrollEl = getScrollerEl()
-    scrollEl.scrollTop(1000)
-    scrollTop = scrollEl.scrollTop()
+    let viewWrapper = new DayGridViewWrapper(calendar)
+    scrollEl = viewWrapper.getScrollerEl()
+    scrollEl.scrollTop = 1000
+    scrollTop = scrollEl.scrollTop
 
     // verify that we queried the correct scroller el
     expect(scrollTop).toBeGreaterThan(10)
 
     currentCalendar.refetchEvents()
     expect(getEventEls().length).toBe(8)
-    expect(scrollEl.scrollTop()).toBe(scrollTop)
+    expect(scrollEl.scrollTop).toBe(scrollTop)
   })
 })
