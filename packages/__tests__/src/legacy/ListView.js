@@ -1,5 +1,4 @@
 import frLocale from '@fullcalendar/core/locales/fr'
-import { replaceEventElDotElWithEl } from '../lib/EventRenderUtils'
 import ListViewWrapper from '../lib/wrappers/ListViewWrapper'
 
 describe('ListView rendering', function() {
@@ -45,7 +44,7 @@ describe('ListView rendering', function() {
       it('filters events through eventRender', function() {
         initCalendar({
           eventRender(arg) {
-            replaceEventElDotElWithEl($(arg.el), '<span class="custom-icon" />')
+            $(arg.el).find(ListViewWrapper.dotSelector).replaceWith('<span class="custom-icon" />')
           }
         })
 

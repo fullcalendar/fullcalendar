@@ -4,17 +4,8 @@ const TITLE_CLASS = 'fc-title'
 const RESIZER_CLASS = 'fc-resizer'
 const START_CLASS = 'fc-start'
 const END_CLASS = 'fc-end'
-const DAY_CLASS = 'fc-day'
-const EVENT_DOT_CLASS = 'fc-event-dot'
 const BACKGROUND_EVENT_CLASS = 'fc-bgevent'
 
-export function getEventElDotEl(el) {
-  return el.find(`.${EVENT_DOT_CLASS}`)
-}
-
-export function replaceEventElDotElWithEl(eventEl, newDotEl) {
-  return getEventElDotEl(eventEl).replaceWith(newDotEl)
-}
 
 export function expectIsStart(bool) {
   var el = getSingleEl()
@@ -36,16 +27,14 @@ export function expectIsEnd(bool) {
   }
 }
 
+
+
 export function getEventElTimeText(el) {
   return $(el).find(`.${TIME_CLASS}`).text()
 }
 
 export function getVisibleEventEls() {
   return $(`.${EVENT_CLASS}:visible`)
-}
-
-export function getDayEls() {
-  return $(`.${DAY_CLASS}`)
 }
 
 export function getEventEls() {
@@ -91,8 +80,4 @@ export function getSingleBackgroundEventEl() {
 
 export function getEventElTimeEl(el) {
   return el.find(`.${TIME_CLASS}`)
-}
-
-export function getEventElsWithCustomClass(customClass) {
-  return $(`.${customClass}`)
 }
