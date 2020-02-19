@@ -7,7 +7,7 @@ let isCi = isRealCiEnv || cmdArgs.indexOf('ci') !== -1
 writeFileSync(
   'tmp/tests-compiled/config.js',
   'window.karmaConfig = ' + JSON.stringify({
-    isCi: Boolean(process.env.CI)
+    isCi: isRealCiEnv
   })
 )
 

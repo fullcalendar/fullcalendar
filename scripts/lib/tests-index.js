@@ -70,7 +70,7 @@ function _buildTestIndex() {
           } else {
             stdout = stdout.trim()
             let lines = !stdout ? [] : stdout.split('\n')
-            files = lines.map((line) => line.trim().split(':')[0])
+            files = lines.map((line) => line.trim().split(':')[0]) // TODO: do a max split of 1
             files = uniqStrs(files)
             console.log(
               '[test-index] Compiling only test files that have fdescribe/fit:\n' +
