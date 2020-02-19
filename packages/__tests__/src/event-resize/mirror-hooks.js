@@ -1,5 +1,8 @@
 import { resize as dayGridResize } from '../lib/DayGridEventResizeUtils'
-import { resize as timeGridResize } from '../lib/TimeGridResizeUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { waitEventResize } from '../lib/wrappers/interaction-util'
+
 
 describe('event resize mirror', function() {
   pushOptions({
@@ -69,7 +72,7 @@ describe('event resize mirror', function() {
       let normalRenderCalls = 0
       let normalDestroyCalls = 0
 
-      initCalendar({
+      let calendar = initCalendar({
         eventRender(info) {
           if (info.isMirror) {
             mirrorRenderCalls++
@@ -86,8 +89,15 @@ describe('event resize mirror', function() {
         }
       })
 
-      // drag TWO snaps
-      timeGridResize('2018-12-25T02:00:00', '2018-12-25T04:00:00').then(function() {
+      let eventEl = new CalendarWrapper(calendar).getFirstEventEl()
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let resizing = timeGridWrapper.resizeEvent(
+        eventEl,
+        '2018-12-25T02:00:00',
+        '2018-12-25T04:00:00' // drag TWO snaps
+      )
+
+      waitEventResize(calendar, resizing).then(() => {
         expect(mirrorRenderCalls).toBe(3)
         expect(mirrorDestroyCalls).toBe(3)
 

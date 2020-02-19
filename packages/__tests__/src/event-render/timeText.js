@@ -1,5 +1,6 @@
-import { getTimeTexts } from '../lib/TimeGridEventRenderUtils'
 import { parseLocalDate } from '../lib/date-parsing'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+
 
 describe('the time text on events', function() {
 
@@ -13,7 +14,7 @@ describe('the time text on events', function() {
     it('renders segs with correct local timezone', function() {
       var FORMAT = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }
 
-      initCalendar({
+      let calendar = initCalendar({
         timeZone: 'local',
         eventTimeFormat: FORMAT,
         events: [
@@ -21,9 +22,10 @@ describe('the time text on events', function() {
         ]
       })
 
-      expect(
-        getTimeTexts()
-      ).toEqual([
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let timeText = timeGridWrapper.getEventTimeTexts()
+
+      expect(timeText).toEqual([
         currentCalendar.formatRange(
           parseLocalDate('2017-07-03T23:00:00'),
           parseLocalDate('2017-07-04T00:00:00'),

@@ -96,6 +96,3 @@ export function getEventElTimeEl(el) {
 export function getEventElsWithCustomClass(customClass) {
   return $(`.${customClass}`)
 }
-
-
-

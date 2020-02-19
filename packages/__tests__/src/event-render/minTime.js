@@ -1,4 +1,3 @@
-import { checkEventRendering } from '../lib/TimeGridEventRenderUtils'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('minTime', function() {
@@ -19,8 +18,9 @@ describe('minTime', function() {
       })
 
       it('renders two event elements in the correct places', function() {
-        initCalendar()
-        var res = checkEventRendering(
+        let calendar = initCalendar()
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let res = timeGridWrapper.checkEventRendering(
           '2017-03-22T22:00:00Z',
           '2017-03-23T00:00:00Z'
         )

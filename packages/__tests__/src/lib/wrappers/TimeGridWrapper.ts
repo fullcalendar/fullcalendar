@@ -1,7 +1,8 @@
-import { findElements, startOfDay, createDuration, parseMarker, addDays, addMs } from '@fullcalendar/core'
+import { findElements, startOfDay, createDuration, parseMarker, addDays, addMs, getRectCenter } from '@fullcalendar/core'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib-utils'
 import { parseUtcDate } from '../date-parsing'
 import { getBoundingRect } from '../dom-geom'
+import { addPoints } from '../geom'
 
 
 export default class TimeGridWrapper {
@@ -91,14 +92,21 @@ export default class TimeGridWrapper {
   }
 
 
-  resizeEvent(eventEl: HTMLElement, newEndDate) {
+  resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate) {
     return new Promise((resolve) => {
       $(eventEl).simulate('mouseover') // resizer only shows on hover
-      $(eventEl).find('.fc-resizer')
-        .simulate('drag', {
-          end: this.getPoint(newEndDate),
-          onRelease: () => resolve()
-        })
+
+      let resizerEl = eventEl.querySelector('.fc-resizer')
+      let resizerPoint = getRectCenter(resizerEl.getBoundingClientRect())
+      let origPoint = this.getPoint(origEndDate)
+      let yCorrect = resizerPoint.top - origPoint.top
+      let destPoint = this.getPoint(newEndDate)
+      destPoint = addPoints(destPoint, { left: 0, top: yCorrect })
+
+      $(resizerEl).simulate('drag', {
+        end: destPoint,
+        onRelease: () => resolve()
+      })
     })
   }
 
@@ -159,7 +167,7 @@ export default class TimeGridWrapper {
   }
 
 
-  getPoint(date) {
+  getPoint(date) { // gives offset to window topleft, like getBoundingClientRect
     date = ensureDate(date)
 
     var day = startOfDay(date)
@@ -414,4 +422,72 @@ export default class TimeGridWrapper {
     return slots
   }
 
+
+  getEventEls() {
+    return findElements(this.el, '.fc-event')
+  }
+
+
+  getEventTimeTexts() {
+    return this.getEventEls().map(function(eventEl) {
+      return $(eventEl.querySelector('.fc-time')).text()
+    })
+  }
+
+
+  /*
+  Returns a boolean.
+  TODO: check isStart/isEnd.
+  */
+  checkEventRendering(start, end) {
+
+    if (typeof start === 'string') {
+      start = new Date(start)
+    }
+    if (typeof end === 'string') {
+      end = new Date(end)
+    }
+
+    var expectedRects = this.computeSpanRects(start, end)
+    var eventEls = this.getEventEls() // sorted by DOM order. not good for RTL
+    var isMatch = checkEventRenderingMatch(expectedRects, eventEls)
+
+    return {
+      rects: expectedRects,
+      els: eventEls,
+      length: eventEls.length,
+      isMatch: isMatch
+    }
+  }
+
+}
+
+
+function checkEventRenderingMatch(expectedRects, eventEls) {
+  var expectedLength = expectedRects.length
+  var i, expectedRect
+  var elRect
+
+  if (eventEls.length !== expectedLength) {
+    console.log('does not match element count')
+    return false
+  }
+
+  for (i = 0; i < expectedLength; i++) {
+    expectedRect = expectedRects[i]
+    elRect = eventEls[i].getBoundingClientRect()
+
+    // horizontally contained AND vertically really similar?
+    if (!(
+      elRect.left >= expectedRect.left &&
+      elRect.right <= expectedRect.right &&
+      Math.abs(elRect.top - expectedRect.top) < 1 &&
+      Math.abs(elRect.bottom + 1 - expectedRect.bottom) < 1 // add 1 because of bottom margin!
+    )) {
+      console.log('rects do not match')
+      return false
+    }
+  }
+
+  return true
 }

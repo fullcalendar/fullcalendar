@@ -3,7 +3,7 @@ import { Calendar } from '@fullcalendar/core'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { getFirstDateEl } from '../lib/ViewUtils'
 import { getEventEls } from '../lib/EventRenderUtils'
-import { getTimeGridScroller, allDaySlotDisplayed } from '../lib/TimeGridViewUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 function buildOptions() {
   return {
@@ -40,7 +40,9 @@ describe('mutateOptions', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()
 
-    let scrollEl = getTimeGridScroller()
+    let viewWrapper = new TimeGridViewWrapper(calendar)
+    let scrollEl = viewWrapper.getScrollerEl()
+
     scrollEl.scrollTop = 100
     let scrollTop = scrollEl.scrollTop
     expect(scrollTop).toBeGreaterThan(0)
@@ -48,8 +50,8 @@ describe('mutateOptions', function() {
     mutateOptions({ allDaySlot: false })
 
     expect(calendar.getOption('allDaySlot')).toBe(false)
-    expect(allDaySlotDisplayed()).toBe(false)
-    expect(getTimeGridScroller().scrollTop).toBe(scrollTop)
+    expect(viewWrapper.dayGrid).toBeFalsy()
+    expect(scrollEl.scrollTop).toBe(scrollTop)
   })
 
   it('rerenders events without rerendering view', function() {

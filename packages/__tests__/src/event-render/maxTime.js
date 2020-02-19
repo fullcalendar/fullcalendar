@@ -1,5 +1,5 @@
-import { checkEventRendering } from '../lib/TimeGridEventRenderUtils'
 import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('event rendering with maxTime', function() {
   pushOptions({
@@ -17,8 +17,9 @@ describe('event rendering with maxTime', function() {
     })
 
     it('renders two event elements in the correct places', function() {
-      initCalendar()
-      var res = checkEventRendering(
+      let calendar = initCalendar()
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let res = timeGridWrapper.checkEventRendering(
         '2017-03-22T00:00:00Z',
         '2017-03-22T02:00:00Z'
       )
