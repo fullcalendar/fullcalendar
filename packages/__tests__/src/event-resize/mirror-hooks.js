@@ -1,8 +1,7 @@
-import { resize as dayGridResize } from '../lib/DayGridEventResizeUtils'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 import { waitEventResize } from '../lib/wrappers/interaction-util'
-
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
 describe('event resize mirror', function() {
   pushOptions({
@@ -25,7 +24,7 @@ describe('event resize mirror', function() {
       let normalRenderCalls = 0
       let normalDestroyCalls = 0
 
-      initCalendar({
+      let calendar = initCalendar({
         eventRender(info) {
           if (info.isMirror) {
             mirrorRenderCalls++
@@ -42,8 +41,14 @@ describe('event resize mirror', function() {
         }
       })
 
-      // drag TWO days
-      dayGridResize('2018-12-03', '2018-12-05').then(function() {
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+      let resizing = dayGridWrapper.resizeEvent( // drag TWO days
+        dayGridWrapper.getEventEls()[0],
+        '2018-12-03',
+        '2018-12-05'
+      )
+
+      waitEventResize(calendar, resizing).then(() => {
         expect(mirrorRenderCalls).toBe(3)
         expect(mirrorDestroyCalls).toBe(3)
 

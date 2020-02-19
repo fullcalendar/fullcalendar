@@ -1,8 +1,9 @@
-import { getHeaderEl } from '../lib/DayGridRenderUtils'
 import { DAY_CLASSES } from '../lib/constants'
 import { removeLtrCharCodes } from '../lib/string'
 import { addDays } from '@fullcalendar/core'
 import { parseUtcDate } from '../lib/date-parsing'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+
 
 describe('day names', function() {
   var sundayDate = parseUtcDate('2019-03-17')
@@ -16,6 +17,7 @@ describe('day names', function() {
     pushOptions({
       defaultView: 'dayGridDay'
     })
+
     describe('when locale is default', function() {
       pushOptions({
         locale: 'en'
@@ -27,10 +29,11 @@ describe('day names', function() {
         )
 
         it('should be ' + dayText, function() {
-          initCalendar({
+          let calendar = initCalendar({
             now: dayDate
           })
-          expect(getHeaderEl().find(`.${cls}`)).toHaveText(dayText)
+          let headerWrapper = new DayGridViewWrapper(calendar).header
+          expect(headerWrapper.el.querySelector(`.${cls}`)).toHaveText(dayText)
         })
       })
     })
@@ -44,13 +47,12 @@ describe('day names', function() {
           )
 
           it('should be the translation for ' + dayText, function() {
-
-            initCalendar({
+            let calendar = initCalendar({
               locale: locale,
               now: dayDate
             })
-
-            expect(getHeaderEl().find(`.${cls}`)).toHaveText(dayText)
+            let headerWrapper = new DayGridViewWrapper(calendar).header
+            expect(headerWrapper.el.querySelector(`.${cls}`)).toHaveText(dayText)
           })
         })
       })

@@ -1,4 +1,5 @@
-import { resize } from '../lib/DayGridEventResizeUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { waitEventResize } from '../lib/wrappers/interaction-util'
 
 describe('eventResizableFromStart', function() {
   pushOptions({
@@ -16,14 +17,20 @@ describe('eventResizableFromStart', function() {
     })
 
     it('allows resizing from start', function(done) {
-      initCalendar()
+      let calendar = initCalendar()
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-      resize('2019-08-27', '2019-08-26', true).then(function() {
-        let event = currentCalendar.getEvents()[0]
+      let resizing = dayGridWrapper.resizeEvent(
+        dayGridWrapper.getEventEls()[0],
+        '2019-08-27',
+        '2019-08-26',
+        true // resize-from-start
+      )
 
+      waitEventResize(calendar, resizing).then(() => {
+        let event = calendar.getEvents()[0]
         expect(event.start).toEqualDate('2019-08-26')
         expect(event.end).toEqualDate('2019-08-28')
-
         done()
       })
     })

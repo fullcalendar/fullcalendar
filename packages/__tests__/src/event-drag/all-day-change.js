@@ -1,8 +1,8 @@
 import { drag } from '../lib/EventDragUtils'
-import { getDayEl } from '../lib/DayGridRenderUtils'
-import { getEventEls } from '../lib/EventRenderUtils'
 import { parseMarker, addMs } from '@fullcalendar/core'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { intersectRects } from '../lib/geom'
+
 
 describe('allDay change', function() {
   pushOptions({
@@ -22,13 +22,20 @@ describe('allDay change', function() {
     })
 
     function doDrag() {
-      let startRect = getDayEl('2018-09-03')[0].getBoundingClientRect()
+      let viewWrapper = new TimeGridViewWrapper(currentCalendar)
+      let dayGridWrapper = viewWrapper.dayGrid
+      let timeGridWrapper = viewWrapper.timeGrid
+
+      let startRect = intersectRects(
+        dayGridWrapper.getDayEls('2018-09-03')[0].getBoundingClientRect(),
+        dayGridWrapper.getEventEls()[0].getBoundingClientRect()
+      )
       let endDate = parseMarker('2018-09-03T02:00:00').marker
-      let timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
       var endRect = timeGridWrapper.computeSpanRects(
         endDate,
         addMs(endDate, 1000 * 60 * 30) // hardcoded 30 minute slot :(
       )[0]
+
       return drag(startRect, endRect, false) // debug=false
     }
 
@@ -76,8 +83,13 @@ describe('allDay change', function() {
     })
 
     function doDrag() {
-      let startRect = getEventEls()[0].getBoundingClientRect()
-      let endRect = getDayEl('2018-09-03')[0].getBoundingClientRect()
+      let viewWrapper = new TimeGridViewWrapper(currentCalendar)
+      let dayGridWrapper = viewWrapper.dayGrid
+      let timeGridWrapper = viewWrapper.timeGrid
+
+      let startRect = timeGridWrapper.getEventEls()[0].getBoundingClientRect()
+      let endRect = dayGridWrapper.getDayEls('2018-09-03')[0].getBoundingClientRect()
+
       return drag(startRect, endRect, false) // debug=false
     }
 

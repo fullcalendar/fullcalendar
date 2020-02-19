@@ -1,5 +1,6 @@
 import frLocale from '@fullcalendar/core/locales/fr'
-import { getMoreEl, getMorePopoverTitle } from '../lib/DayGridRenderUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+
 
 describe('dayPopoverFormat', function() {
 
@@ -15,35 +16,41 @@ describe('dayPopoverFormat', function() {
   })
 
   it('can be set to a custom value', function(done) {
-    initCalendar({
+    let calendar = initCalendar({
       dayPopoverFormat: { month: 'long', day: 'numeric' }
     })
-    getMoreEl().simulate('click')
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    $(dayGridWrapper.getMoreEl()).simulate('click')
     setTimeout(function() {
-      expect(getMorePopoverTitle()).toBe('July 29')
+      expect(dayGridWrapper.getMorePopoverTitle()).toBe('July 29')
       done()
     })
   })
 
   it('is affected by the current locale when the value is default', function(done) {
-    initCalendar({
+    let calendar = initCalendar({
       locale: frLocale
     })
-    getMoreEl().simulate('click')
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    $(dayGridWrapper.getMoreEl()).simulate('click')
     setTimeout(function() {
-      expect(getMorePopoverTitle()).toBe('29 juillet 2014')
+      expect(dayGridWrapper.getMorePopoverTitle()).toBe('29 juillet 2014')
       done()
     })
   })
 
   it('still maintains the same format when explicitly set, and there is a locale', function(done) {
-    initCalendar({
+    let calendar = initCalendar({
       locale: frLocale,
       dayPopoverFormat: { year: 'numeric' }
     })
-    getMoreEl().simulate('click')
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    $(dayGridWrapper.getMoreEl()).simulate('click')
     setTimeout(function() {
-      expect(getMorePopoverTitle()).toBe('2014')
+      expect(dayGridWrapper.getMorePopoverTitle()).toBe('2014')
       done()
     })
   })

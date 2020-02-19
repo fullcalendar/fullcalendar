@@ -1,4 +1,5 @@
-import { hasHeaderEl } from '../lib/DayGridRenderUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('columnHeader', function() {
   pushOptions({
@@ -9,7 +10,8 @@ describe('columnHeader', function() {
     'when month view': 'dayGridMonth',
     'when timeGrid view': 'timeGridDay',
     'when dayGrid view': 'dayGridDay'
-  }, function() {
+  }, function(viewName) {
+    let ViewWrapper = viewName.match(/^dayGrid/) ? DayGridViewWrapper : TimeGridViewWrapper
 
     describe('when on', function() {
       pushOptions({
@@ -17,8 +19,9 @@ describe('columnHeader', function() {
       })
 
       it('should show header', function() {
-        initCalendar()
-        expect(hasHeaderEl()).toBe(true)
+        let calendar = initCalendar()
+        let viewWrapper = new ViewWrapper(calendar)
+        expect(viewWrapper.header).toBeTruthy()
       })
     })
 
@@ -28,8 +31,9 @@ describe('columnHeader', function() {
       })
 
       it('should not show header', function() {
-        initCalendar()
-        expect(hasHeaderEl()).toBe(false)
+        let calendar = initCalendar()
+        let viewWrapper = new ViewWrapper(calendar)
+        expect(viewWrapper.header).toBeFalsy()
       })
     })
   })

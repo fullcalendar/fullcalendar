@@ -16,7 +16,7 @@ export default class TimeGridWrapper {
   }
 
 
-  getDayEls(date) { // TODO: rename
+  getDayEls(date) { // TODO: rename. make singular name
     date = ensureDate(date)
     return findElements(this.el, '.fc-day[data-date="' + formatIsoDay(date) + '"]')
   }
@@ -24,6 +24,16 @@ export default class TimeGridWrapper {
 
   getSlotEls() { // TODO: rename "slat"
     return findElements(this.el, '.fc-slats tr[data-time]')
+  }
+
+
+  getSlotAxisEls() {
+    return findElements(this.el, '.fc-slats tr[data-time] .fc-axis')
+  }
+
+
+  getSlotNonAxisEls() {
+    return findElements(this.el, '.fc-slats tr[data-time] td:not(.fc-axis)')
   }
 
 
@@ -423,8 +433,13 @@ export default class TimeGridWrapper {
   }
 
 
-  getEventEls() {
+  getEventEls() { // FG events
     return findElements(this.el, '.fc-event')
+  }
+
+
+  getBgEventEls() {
+    return findElements(this.el, '.fc-bgevent')
   }
 
 

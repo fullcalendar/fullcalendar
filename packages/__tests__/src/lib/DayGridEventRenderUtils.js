@@ -1,5 +1,5 @@
-import { getDayGridRowDayElAtIndex } from './DayGridRenderUtils'
-import { getFirstEventEl } from './EventRenderUtils'
+import DayGridViewWrapper from './wrappers/DayGridViewWrapper'
+import DayGridWrapper from './wrappers/DayGridWrapper'
 
 /*
 opts:
@@ -11,10 +11,12 @@ opts:
   - isEnd
 */
 export function directionallyTestSeg(opts) {
-  var el = opts.el ? $(opts.el) : getFirstEventEl()
+  var dayGridWrapper = new DayGridViewWrapper(currentCalendar).dayGrid
+  var el = opts.el ? $(opts.el) : dayGridWrapper.getEventEls()[0]
 
   var row = opts.row || 0
-  var rowTds = getDayGridRowDayElAtIndex(row)
+  var rowTds = dayGridWrapper.getDayElsInRow(row)
+
   expect(rowTds.length).toBeGreaterThan(1)
 
   var leftCol = opts.firstCol
@@ -22,26 +24,26 @@ export function directionallyTestSeg(opts) {
   var col, td
 
   for (col = leftCol; col <= rightCol; col++) {
-    td = rowTds.eq(col)
+    td = rowTds[col]
     expect(el).toIntersectWith(td)
   }
 
   for (col = 0; col < rowTds.length; col++) {
     if (col < leftCol || col > rightCol) {
-      td = rowTds.eq(col)
+      td = rowTds[col]
       expect(el).not.toIntersectWith(td)
     }
   }
 
   if (opts.isStart) {
-    expect(el).toHaveClass('fc-start')
+    expect(el).toHaveClass(DayGridWrapper.eventIsStartClassName)
   } else {
-    expect(el).not.toHaveClass('fc-start')
+    expect(el).not.toHaveClass(DayGridWrapper.eventIsStartClassName)
   }
 
   if (opts.isEnd) {
-    expect(el).toHaveClass('fc-end')
+    expect(el).toHaveClass(DayGridWrapper.eventIsEndClassName)
   } else {
-    expect(el).not.toHaveClass('fc-end')
+    expect(el).not.toHaveClass(DayGridWrapper.eventIsEndClassName)
   }
 }

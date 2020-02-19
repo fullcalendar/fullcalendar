@@ -8,6 +8,7 @@ slot or day area.
 */
 export function drag(rect0, rect1, debug) {
   var el = EventRenderUtils.getSingleEl()
+
   var elRect = el[0].getBoundingClientRect()
   var point0 = getRectCenter(
     intersectRects(elRect, rect0)

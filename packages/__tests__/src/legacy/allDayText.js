@@ -1,27 +1,23 @@
 import ptBrLocale from '@fullcalendar/core/locales/pt-br'
-import { getAllDayAxisElText } from '../lib/DayGridRenderUtils'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('allDayText', function() {
 
   describe('when allDaySlots is not set', function() {
     describe('in week', function() {
       it('should default allDayText to using \'all-day\'', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridWeek'
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('all-day')
+        })
+        expectAllDayTextToBe(calendar, 'all-day')
       })
     })
     describe('in day', function() {
       it('should default allDayText to using \'all-day\'', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridDay'
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('all-day')
+        })
+        expectAllDayTextToBe(calendar, 'all-day')
       })
     })
   })
@@ -29,24 +25,20 @@ describe('allDayText', function() {
   describe('when allDaySlots is set true', function() {
     describe('in week', function() {
       it('should default allDayText to using \'all-day\'', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridWeek',
           allDaySlot: true
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('all-day')
+        })
+        expectAllDayTextToBe(calendar, 'all-day')
       })
     })
     describe('in day', function() {
       it('should default allDayText to using \'all-day\'', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridDay',
           allDaySlot: true
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('all-day')
+        })
+        expectAllDayTextToBe(calendar, 'all-day')
       })
     })
   })
@@ -54,26 +46,22 @@ describe('allDayText', function() {
   describe('when allDaySlots is set true and locale is not default', function() {
     describe('in week', function() {
       it('should use the locale\'s all-day value', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridWeek',
           allDaySlot: true,
           locale: ptBrLocale
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('dia inteiro')
+        })
+        expectAllDayTextToBe(calendar, 'dia inteiro')
       })
     })
     describe('in day', function() {
       it('should use the locale\'s all-day value', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridDay',
           allDaySlot: true,
           locale: ptBrLocale
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('dia inteiro')
+        })
+        expectAllDayTextToBe(calendar, 'dia inteiro')
       })
     })
   })
@@ -81,26 +69,29 @@ describe('allDayText', function() {
   describe('when allDaySlots is set true and allDayText is specified', function() {
     describe('in week', function() {
       it('should show specified all day text', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridWeek',
           allDaySlot: true,
           allDayText: 'axis-phosy'
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('axis-phosy')
+        })
+        expectAllDayTextToBe(calendar, 'axis-phosy')
       })
     })
     describe('in day', function() {
       it('should show specified all day text', function() {
-        var options = {
+        let calendar = initCalendar({
           defaultView: 'timeGridDay',
           allDayText: 'axis-phosy'
-        }
-        initCalendar(options)
-        var allDayText = getAllDayAxisElText()
-        expect(allDayText).toEqual('axis-phosy')
+        })
+        expectAllDayTextToBe(calendar, 'axis-phosy')
       })
     })
   })
+
+  function expectAllDayTextToBe(calendar, text) {
+    let viewWrapper = new TimeGridViewWrapper(calendar)
+    let allDayText = viewWrapper.getAllDayAxisElText()
+    expect(allDayText).toBe(text)
+  }
+
 })

@@ -3,8 +3,9 @@ import InteractionPlugin from '@fullcalendar/interaction'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import { getSingleEl } from '../lib/EventRenderUtils'
-import { getDayEl } from '../lib/DayGridRenderUtils'
 import { getRectCenter } from '../lib/geom'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+
 
 describe('dragging events between calendars', function() {
   let DEFAULT_DATE = '2019-01-01'
@@ -83,8 +84,9 @@ describe('dragging events between calendars', function() {
     calendar0.render()
     calendar1.render()
 
+    let dayGridWrapper = new DayGridViewWrapper(calendar1).dayGrid
     let eventEl = getSingleEl()[0]
-    let dayEl = getDayEl('2019-01-05')[1] // the one from the SECOND calendar
+    let dayEl = dayGridWrapper.getDayEls('2019-01-05')[0]
     let point0 = getRectCenter(eventEl.getBoundingClientRect())
     let point1 = getRectCenter(dayEl.getBoundingClientRect())
 

@@ -1,4 +1,5 @@
-import * as DayGridEventDragUtils from '../lib/DayGridEventDragUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { waitEventDrag } from '../lib/wrappers/interaction-util'
 
 
 describe('validRange event dragging', function() {
@@ -17,12 +18,19 @@ describe('validRange event dragging', function() {
       })
 
       it('won\'t go before validRange', function(done) {
-        initCalendar()
-        DayGridEventDragUtils.drag('2017-06-08', '2017-06-06')
-          .then(function(res) {
-            expect(res).toBe(false)
-          })
-          .then(done)
+        let calendar = initCalendar()
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+        let dragging = dayGridWrapper.dragEventToDate(
+          dayGridWrapper.getEventEls()[0],
+          '2017-06-08',
+          '2017-06-06'
+        )
+
+        waitEventDrag(calendar, dragging).then((res) => {
+          expect(res).toBe(false)
+          done()
+        })
       })
     })
   })
@@ -41,12 +49,19 @@ describe('validRange event dragging', function() {
       })
 
       it('won\'t go after validRange', function(done) {
-        initCalendar()
-        DayGridEventDragUtils.drag('2017-06-05', '2017-06-08')
-          .then(function(res) {
-            expect(res).toBe(false)
-          })
-          .then(done)
+        let calendar = initCalendar()
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+        let dragging = dayGridWrapper.dragEventToDate(
+          dayGridWrapper.getEventEls()[0],
+          '2017-06-05',
+          '2017-06-08'
+        )
+
+        waitEventDrag(calendar, dragging).then((res) => {
+          expect(res).toBe(false)
+          done()
+        })
       })
     })
   })

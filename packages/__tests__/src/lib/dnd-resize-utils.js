@@ -1,5 +1,4 @@
 import { formatIsoDay } from './datelib-utils'
-import { getDayEl } from './DayGridRenderUtils'
 import {
   getEventElResizerEl,
   getEventElTitleEl,
@@ -9,6 +8,7 @@ import {
 } from './EventRenderUtils'
 import { parseMarker, addDays } from '@fullcalendar/core'
 import TimeGridViewWrapper from './wrappers/TimeGridViewWrapper'
+import DayGridViewWrapper from './wrappers/DayGridViewWrapper'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
   var eventsRendered = false
@@ -50,8 +50,9 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       expect($slatEl.length).toBe(1)
       dy = $slatEl.offset().top - $eventEl.offset().top
     } else {
+      var dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
       $dragEl = getEventElTitleEl($eventEl)
-      $dayEl = getDayEl(dropDate)
+      $dayEl = $(dayGridWrapper.getDayEl(dropDate))
       dy = $dayEl.offset().top - $eventEl.offset().top
     }
 
@@ -142,7 +143,8 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       expect($lastSlatEl.length).toBe(1)
       dy = $lastSlatEl.offset().top + $lastSlatEl.outerHeight() - ($eventEl.offset().top + $eventEl.outerHeight())
     } else {
-      $lastDayEl = getDayEl(addDays(resizeDate, -1))
+      var dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+      $lastDayEl = $(dayGridWrapper.getDayEl(addDays(resizeDate, -1)))
       dy = $lastDayEl.offset().top - $eventEl.offset().top
     }
 
@@ -228,8 +230,9 @@ export function testSelection(options, start, end, expectSuccess, callback) {
     dy = $lastSlatEl.offset().top - $firstSlatEl.offset().top
     $dragEl = $firstSlatEl
   } else {
-    $firstDayEl = getDayEl(start)
-    $lastDayEl = getDayEl(new Date(end.valueOf() - 1)) // inclusive
+    var dayGridWrapper = new DayGridViewWrapper(currentCalendar).dayGrid
+    $firstDayEl = $(dayGridWrapper.getDayEl(start))
+    $lastDayEl = $(dayGridWrapper.getDayEl(new Date(end.valueOf() - 1))) // inclusive
     dy = $lastDayEl.offset().top - $firstDayEl.offset().top
     $dragEl = $firstDayEl
   }

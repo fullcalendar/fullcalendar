@@ -1,4 +1,5 @@
-import { getDayEl } from '../lib/DayGridRenderUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+
 
 describe('daygrid view with updated dimensions', function() {
 
@@ -8,7 +9,7 @@ describe('daygrid view with updated dimensions', function() {
     ).appendTo('body')
     $wrapper.width(200)
 
-    initCalendar({
+    let calendar = initCalendar({
       defaultDate: '2019-04-01',
       defaultView: 'dayGridMonth',
       dateClick(arg) {
@@ -19,8 +20,9 @@ describe('daygrid view with updated dimensions', function() {
     }, $wrapper.children().get(0))
 
     $wrapper.width(400)
-    currentCalendar.updateSize()
+    calendar.updateSize()
 
-    getDayEl('2019-04-02').simulate('drag') // a click
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    $(dayGridWrapper.getDayEl('2019-04-02')).simulate('drag') // a click
   })
 })

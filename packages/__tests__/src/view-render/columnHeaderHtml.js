@@ -1,4 +1,5 @@
-import { getFirstDayEl } from '../lib/DayGridRenderUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('columnHeaderHtml', function() {
   pushOptions({
@@ -9,18 +10,20 @@ describe('columnHeaderHtml', function() {
     'when month view': 'dayGridMonth',
     'when timeGrid view': 'timeGridDay',
     'when dayGrid view': 'dayGridDay'
-  }, function() {
+  }, function(viewName) {
+    let ViewWrapper = viewName.match(/^dayGrid/) ? DayGridViewWrapper : TimeGridViewWrapper
 
     it('should contain custom HTML', function() {
-      initCalendar({
+      let calendar = initCalendar({
         columnHeaderHtml: function(date) {
           return '<div class="test">' + currentCalendar.formatDate(date, { weekday: 'long' }) + '</div>'
         }
       })
+      let headerWrapper = new ViewWrapper(calendar).header
 
-      var firstHeader = getFirstDayEl()
-      expect(firstHeader.find('.test').length).toBe(1)
-      expect(firstHeader.text()).toBe('Sunday')
+      var $firstCellEl = $(headerWrapper.getCellEls()[0])
+      expect($firstCellEl.find('.test').length).toBe(1)
+      expect($firstCellEl.text()).toBe('Sunday')
     })
   })
 

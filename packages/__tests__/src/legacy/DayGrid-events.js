@@ -1,6 +1,7 @@
-import { getDayGridRowElAtIndex } from '../lib/DayGridRenderUtils'
 import { getSingleEl } from '../lib/EventRenderUtils'
 import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+
 
 describe('DayGrid event rendering', function() {
   pushOptions({
@@ -192,30 +193,33 @@ describe('DayGrid event rendering', function() {
   }
 
   it('rendering of events across weeks stays consistent', function() {
-    var options = {}
-    options.events = [
-      {
-        title: 'event1',
-        start: '2014-08-01',
-        end: '2014-08-04',
-        className: 'event1'
-      },
-      {
-        title: 'event2',
-        start: '2014-08-02',
-        end: '2014-08-05',
-        className: 'event2'
-      }
-    ]
-    initCalendar(options)
-    var row0 = getDayGridRowElAtIndex(0)
-    var row0event1 = row0.find('.event1')
-    var row0event2 = row0.find('.event2')
-    var row1 = getDayGridRowElAtIndex(1)
-    var row1event1 = row1.find('.event1')
-    var row1event2 = row1.find('.event2')
-    expect(row0event1.offset().top).toBeLessThan(row0event2.offset().top)
-    expect(row1event1.offset().top).toBeLessThan(row1event2.offset().top)
+    let calendar = initCalendar({
+      events: [
+        {
+          title: 'event1',
+          start: '2014-08-01',
+          end: '2014-08-04',
+          className: 'event1'
+        },
+        {
+          title: 'event2',
+          start: '2014-08-02',
+          end: '2014-08-05',
+          className: 'event2'
+        }
+      ]
+    })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    var row0 = dayGridWrapper.getRowEl(0)
+    var row0event1 = row0.querySelector('.event1')
+    var row0event2 = row0.querySelector('.event2')
+    var row1 = dayGridWrapper.getRowEl(1)
+    var row1event1 = row1.querySelector('.event1')
+    var row1event2 = row1.querySelector('.event2')
+
+    expect($(row0event1).offset().top).toBeLessThan($(row0event2).offset().top)
+    expect($(row1event1).offset().top).toBeLessThan($(row1event2).offset().top)
   })
 
   it('renders an event with no url with no <a> href', function() {
