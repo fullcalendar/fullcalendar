@@ -34,6 +34,11 @@ export default class CalendarWrapper {
   }
 
 
+  getViewEl() {
+    return this.calendar.el.querySelector('.fc-view')
+  }
+
+
   // DISCOURAGE use of the following...
 
 

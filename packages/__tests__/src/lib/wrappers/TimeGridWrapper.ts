@@ -16,6 +16,11 @@ export default class TimeGridWrapper {
   }
 
 
+  getMirrorEls() {
+    return findElements(this.el, '.fc-event.fc-mirror')
+  }
+
+
   getDayEls(date) { // TODO: rename. make singular name
     date = ensureDate(date)
     return findElements(this.el, '.fc-day[data-date="' + formatIsoDay(date) + '"]')
@@ -110,7 +115,7 @@ export default class TimeGridWrapper {
   }
 
 
-  resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate) {
+  resizeEvent(eventEl: HTMLElement, origEndDate, newEndDate, onBeforeRelease?) {
     return new Promise((resolve) => {
       $(eventEl).simulate('mouseover') // resizer only shows on hover
 
@@ -123,8 +128,36 @@ export default class TimeGridWrapper {
 
       $(resizerEl).simulate('drag', {
         end: destPoint,
+        onBeforeRelease,
         onRelease: () => resolve()
       })
+    })
+  }
+
+
+  resizeEventTouch(eventEl: HTMLElement, origEndDate, newEndDate) {
+    return new Promise((resolve) => {
+      setTimeout(() => { // wait for calendar to accept touch :(
+        $(eventEl).simulate('drag', {
+          isTouch: true,
+          localPoint: { left: '50%', top: '90%' },
+          delay: 200,
+          onRelease: () => {
+            let resizerEl = eventEl.querySelector('.fc-resizer')
+            let resizerPoint = getRectCenter(resizerEl.getBoundingClientRect())
+            let origPoint = this.getPoint(origEndDate)
+            let yCorrect = resizerPoint.top - origPoint.top
+            let destPoint = this.getPoint(newEndDate)
+            destPoint = addPoints(destPoint, { left: 0, top: yCorrect })
+
+            $(resizerEl).simulate('drag', {
+              isTouch: true,
+              end: destPoint,
+              onRelease: () => resolve()
+            })
+          }
+        })
+      }, 0)
     })
   }
 
@@ -443,6 +476,11 @@ export default class TimeGridWrapper {
 
   getEventEls() { // FG events
     return findElements(this.el, '.fc-event')
+  }
+
+
+  getFirstEventEl() {
+    return this.el.querySelector('.fc-event') as HTMLElement
   }
 
 

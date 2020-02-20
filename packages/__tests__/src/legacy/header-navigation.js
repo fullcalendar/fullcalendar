@@ -1,5 +1,6 @@
-describe('header navigation', function() {
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
+describe('header navigation', function() {
   pushOptions({
     header: {
       left: 'next,prev,prevYear,nextYear today',
@@ -8,16 +9,16 @@ describe('header navigation', function() {
     }
   })
 
-  beforeEach(function() {
-    initCalendar()
-  })
-
   describe('and click next', function() {
     it('should change view to next month', function(done) {
-      currentCalendar.gotoDate('2010-02-01')
-      $('.fc-next-button').simulate('click')
+      let calendar = initCalendar()
+      calendar.gotoDate('2010-02-01')
+
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      $(toolbarWrapper.getButtonEl('next')).simulate('click')
       setTimeout(function() {
-        var newDate = currentCalendar.getDate()
+
+        var newDate = calendar.getDate()
         expect(newDate).toEqualDate('2010-03-01')
         done()
       })
@@ -26,10 +27,14 @@ describe('header navigation', function() {
 
   describe('and click prev', function() {
     it('should change view to prev month', function(done) {
-      currentCalendar.gotoDate('2010-02-01')
-      $('.fc-prev-button').simulate('click')
+      let calendar = initCalendar()
+      calendar.gotoDate('2010-02-01')
+
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      $(toolbarWrapper.getButtonEl('prev')).simulate('click')
       setTimeout(function() {
-        var newDate = currentCalendar.getDate()
+
+        var newDate = calendar.getDate()
         expect(newDate).toEqualDate('2010-01-01')
         done()
       })
@@ -38,10 +43,14 @@ describe('header navigation', function() {
 
   describe('and click prevYear', function() {
     it('should change view to prev month', function(done) {
-      currentCalendar.gotoDate('2010-02-01')
-      $('.fc-prevYear-button').simulate('click')
+      let calendar = initCalendar()
+      calendar.gotoDate('2010-02-01')
+
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      $(toolbarWrapper.getButtonEl('prevYear')).simulate('click')
       setTimeout(function() {
-        var newDate = currentCalendar.getDate()
+
+        var newDate = calendar.getDate()
         expect(newDate).toEqualDate('2009-02-01')
         done()
       })
@@ -50,10 +59,14 @@ describe('header navigation', function() {
 
   describe('and click nextYear', function() {
     it('should change view to prev month', function(done) {
-      currentCalendar.gotoDate('2010-02-01')
-      $('.fc-nextYear-button').simulate('click')
+      let calendar = initCalendar()
+      calendar.gotoDate('2010-02-01')
+
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      $(toolbarWrapper.getButtonEl('nextYear')).simulate('click')
       setTimeout(function() {
-        var newDate = currentCalendar.getDate()
+
+        var newDate = calendar.getDate()
         expect(newDate).toEqualDate('2011-02-01')
         done()
       })
@@ -62,10 +75,14 @@ describe('header navigation', function() {
 
   describe('and click today', function() {
     it('should change view to prev month', function(done) {
-      currentCalendar.gotoDate('2010-02-01')
-      $('.fc-today-button').simulate('click')
+      let calendar = initCalendar()
+      calendar.gotoDate('2010-02-01')
+
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      $(toolbarWrapper.getButtonEl('today')).simulate('click')
       setTimeout(function() {
-        var newDate = currentCalendar.getDate() // will be ambig zone
+
+        var newDate = calendar.getDate() // will be ambig zone
         expect(newDate).toEqualNow()
         done()
       })

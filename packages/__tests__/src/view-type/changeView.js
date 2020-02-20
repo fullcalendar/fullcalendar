@@ -1,5 +1,6 @@
 import { expectActiveRange } from '../lib/ViewDateUtils'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 
 describe('changeView', function() {
@@ -9,20 +10,20 @@ describe('changeView', function() {
   })
 
   it('can change views', function() {
-    initCalendar()
-    currentCalendar.changeView('timeGridWeek')
+    let calendar = initCalendar()
+    calendar.changeView('timeGridWeek')
     expectActiveRange('2017-06-04', '2017-06-11')
   })
 
   it('can change views and navigate date', function() {
-    initCalendar()
-    currentCalendar.changeView('timeGridDay', '2017-06-26')
+    let calendar = initCalendar()
+    calendar.changeView('timeGridDay', '2017-06-26')
     expectActiveRange('2017-06-26', '2017-06-27')
   })
 
   it('can change views and change activeRange', function() {
-    initCalendar()
-    currentCalendar.changeView('timeGrid', {
+    let calendar = initCalendar()
+    calendar.changeView('timeGrid', {
       start: '2017-07-04',
       end: '2017-07-08'
     })
@@ -33,38 +34,38 @@ describe('changeView', function() {
 
     // serves as a smoke test too
     it('correctly renders original view again', function() {
-      initCalendar({
+      let calendar = initCalendar({
         defaultView: 'dayGridMonth'
       })
 
-      expect(currentCalendar.view.type).toBe('dayGridMonth')
-      checkViewIntegrity()
-      currentCalendar.changeView('timeGridWeek')
+      expect(calendar.view.type).toBe('dayGridMonth')
+      checkViewIntegrity(calendar)
+      calendar.changeView('timeGridWeek')
 
-      expect(currentCalendar.view.type).toBe('timeGridWeek')
-      checkViewIntegrity()
+      expect(calendar.view.type).toBe('timeGridWeek')
+      checkViewIntegrity(calendar)
 
-      let timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
       expect(timeGridWrapper.isStructureValid()).toBe(true)
 
-      currentCalendar.changeView('dayGridWeek')
+      calendar.changeView('dayGridWeek')
 
-      expect(currentCalendar.view.type).toBe('dayGridWeek')
-      checkViewIntegrity()
-      currentCalendar.changeView('listWeek')
+      expect(calendar.view.type).toBe('dayGridWeek')
+      checkViewIntegrity(calendar)
+      calendar.changeView('listWeek')
 
-      expect(currentCalendar.view.type).toBe('listWeek')
-      checkViewIntegrity()
-      currentCalendar.changeView('dayGridMonth')
+      expect(calendar.view.type).toBe('listWeek')
+      checkViewIntegrity(calendar)
+      calendar.changeView('dayGridMonth')
 
-      expect(currentCalendar.view.type).toBe('dayGridMonth')
-      checkViewIntegrity()
+      expect(calendar.view.type).toBe('dayGridMonth')
+      checkViewIntegrity(calendar)
     })
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/3689
   it('can when switching to/from view while loading events', function(done) {
-    initCalendar({
+    let calendar = initCalendar({
       header: {
         left: 'title dayGridDay timeGridDay'
       },
@@ -79,26 +80,24 @@ describe('changeView', function() {
       }
     })
 
-    currentCalendar.changeView('dayGridDay')
-    checkViewIntegrity()
-    expect(currentCalendar.view.type).toBe('dayGridDay')
+    calendar.changeView('dayGridDay')
+    checkViewIntegrity(calendar)
+    expect(calendar.view.type).toBe('dayGridDay')
 
     setTimeout(function() {
-      currentCalendar.changeView('timeGridDay')
-      checkViewIntegrity()
-      expect(currentCalendar.view.type).toBe('timeGridDay')
+      calendar.changeView('timeGridDay')
+      checkViewIntegrity(calendar)
+      expect(calendar.view.type).toBe('timeGridDay')
       done()
     }, 200)
   })
 
-  function checkViewIntegrity() {
-    var $el = $('.fc-view')
+
+  function checkViewIntegrity(calendar) {
+    var $el = $(new CalendarWrapper(calendar).getViewEl())
     expect($el).toBeInDOM()
     expect($el.children().length).toBeGreaterThan(0)
     expect($el.text()).toBeTruthy()
-    expect(
-      $el.find('[data-date]').length +
-      $el.find('.fc-list-empty').length
-    ).toBeGreaterThan(0)
   }
+
 })

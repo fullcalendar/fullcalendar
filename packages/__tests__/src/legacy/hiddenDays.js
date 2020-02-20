@@ -1,72 +1,85 @@
+import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+
 describe('hiddenDays', function() {
+  const DOW_CLASSNAMES = CalendarWrapper.DOW_CLASSNAMES
 
   describe('when using default', function() {
-    beforeEach(function() {
-      initCalendar()
-    })
+
     it('should show 7 days of the week', function() {
-      var daysCount = $('.fc-day-header').length
+      let calendar = initCalendar()
+      let headerWrapper = new DayGridViewWrapper(calendar).header
+      let daysCount = headerWrapper.getCellEls().length
       expect(daysCount).toEqual(7)
     })
   })
 
   describe('when setting an empty hiddenDays', function() {
-    beforeEach(function() {
-      initCalendar({
-        hiddenDays: []
-      })
+    pushOptions({
+      hiddenDays: []
     })
+
     it('should return 7 days of the week', function() {
-      var daysCount = $('.fc-day-header').length
+      let calendar = initCalendar()
+      let headerWrapper = new DayGridViewWrapper(calendar).header
+      let daysCount = headerWrapper.getCellEls().length
       expect(daysCount).toEqual(7)
     })
   })
 
   describe('when setting hiddenDays with 1', function() {
-    beforeEach(function() {
-      initCalendar({
-        hiddenDays: [ 1 ]
-      })
+    pushOptions({
+      hiddenDays: [ 1 ]
     })
+
     it('should return 6 days', function() {
-      var daysCount = $('.fc-day-header').length
+      let calendar = initCalendar()
+      let headerWrapper = new DayGridViewWrapper(calendar).header
+      let daysCount = headerWrapper.getCellEls().length
       expect(daysCount).toEqual(6)
     })
-    it('should return sun,tue,wed..sat days', function() {
-      var daysOfWeek = $('.fc-day-header')
-      expect(daysOfWeek[0]).toHaveClass('fc-sun')
-      expect(daysOfWeek[1]).toHaveClass('fc-tue')
-      expect(daysOfWeek[5]).toHaveClass('fc-sat')
+
+    it('should return sun,tue,wed,thu,fri,sat days', function() {
+      let calendar = initCalendar()
+      let headerWrapper = new DayGridViewWrapper(calendar).header
+      let dowEls = headerWrapper.getCellEls()
+      expect(dowEls[0]).toHaveClass(DOW_CLASSNAMES[0])
+      expect(dowEls[1]).toHaveClass(DOW_CLASSNAMES[2])
+      expect(dowEls[2]).toHaveClass(DOW_CLASSNAMES[3])
+      expect(dowEls[3]).toHaveClass(DOW_CLASSNAMES[4])
+      expect(dowEls[4]).toHaveClass(DOW_CLASSNAMES[5])
+      expect(dowEls[5]).toHaveClass(DOW_CLASSNAMES[6])
     })
+
     it('should expect 7th day to be undefined', function() {
-      var daysOfWeek = $('.fc-day-header')
-      expect(daysOfWeek[6]).toBeUndefined()
+      let calendar = initCalendar()
+      let headerWrapper = new DayGridViewWrapper(calendar).header
+      let dowEls = headerWrapper.getCellEls()
+      expect(dowEls[6]).toBeUndefined()
     })
   })
 
   describe('when setting hiddenDays with 3,5', function() {
-    beforeEach(function() {
-      initCalendar({
-        hiddenDays: [ 3, 5 ]
-      })
+    pushOptions({
+      hiddenDays: [ 3, 5 ]
     })
+
     it('should return 6 days', function() {
-      var daysCount = $('.fc-day-header').length
+      let calendar = initCalendar()
+      let headerWrapper = new DayGridViewWrapper(calendar).header
+      let daysCount = headerWrapper.getCellEls().length
       expect(daysCount).toEqual(5)
     })
+
     it('should return s,m,t,t,s ', function() {
-      var daysOfWeek = $('.fc-day-header')
-      expect(daysOfWeek[0]).toHaveClass('fc-sun')
-      expect(daysOfWeek[1]).toHaveClass('fc-mon')
-      expect(daysOfWeek[2]).toHaveClass('fc-tue')
-      expect(daysOfWeek[3]).toHaveClass('fc-thu')
-      expect(daysOfWeek[4]).toHaveClass('fc-sat')
-    })
-    it('should expect wed and fri be undefined', function() {
-      var fri = $('.fc-day-header.fc-fri')[0]
-      var wed = $('.fc-day-header.fc-wed')[0]
-      expect(fri).toBeUndefined()
-      expect(wed).toBeUndefined()
+      let calendar = initCalendar()
+      let headerWrapper = new DayGridViewWrapper(calendar).header
+      let dowEls = headerWrapper.getCellEls()
+      expect(dowEls[0]).toHaveClass(DOW_CLASSNAMES[0])
+      expect(dowEls[1]).toHaveClass(DOW_CLASSNAMES[1])
+      expect(dowEls[2]).toHaveClass(DOW_CLASSNAMES[2])
+      expect(dowEls[3]).toHaveClass(DOW_CLASSNAMES[4])
+      expect(dowEls[4]).toHaveClass(DOW_CLASSNAMES[6])
     })
   })
 

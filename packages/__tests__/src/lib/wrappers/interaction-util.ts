@@ -39,6 +39,23 @@ export function waitEventResize(calendar: Calendar, dragging: Promise<any>) {
 }
 
 
+export function waitEventResize2(calendar: Calendar, dragging: Promise<any>) {
+  return new Promise<any>((resolve) => {
+    let theArg = false
+
+    calendar.on('eventResize', function(arg) {
+      theArg = arg
+    })
+
+    dragging.then(() => {
+      setTimeout(function() { // wait for eventResize to fire
+        resolve(theArg)
+      })
+    })
+  })
+}
+
+
 export function waitDateSelect(calendar: Calendar, dragging: Promise<any>) {
   return new Promise<any>((resolve) => {
     let selectInfo = null

@@ -105,6 +105,11 @@ export default class DayGridWrapper {
   }
 
 
+  getFirstEventEl() {
+    return this.el.querySelector('.fc-event') as HTMLElement
+  }
+
+
   dragEventToDate(eventEl: HTMLElement, startDate, endDate) {
     return new Promise((resolve) => {
       let rect0 = this.getDayEl(startDate).getBoundingClientRect()
@@ -144,6 +149,38 @@ export default class DayGridWrapper {
         end: endPoint,
         onRelease: () => resolve()
       })
+    })
+  }
+
+
+  resizeEventTouch(eventEl: HTMLElement, origEndDate, newEndDate, fromStart?) {
+    return new Promise((resolve) => {
+      let rect0 = this.getDayEl(origEndDate).getBoundingClientRect()
+      let rect1 = this.getDayEl(newEndDate).getBoundingClientRect()
+
+      setTimeout(() => { // wait for calendar to accept touch :(
+        $(eventEl).simulate('drag', {
+          isTouch: true,
+          delay: 200,
+          onRelease: () => {
+            var resizerEl = eventEl.querySelector(
+              '.' + (fromStart ? CalendarWrapper.EVENT_START_RESIZER_CLASSNAME : CalendarWrapper.EVENT_END_RESIZER_CLASSNAME)
+            )
+            var resizerRect = resizerEl.getBoundingClientRect()
+            var resizerCenter = getRectCenter(resizerRect)
+
+            var vector = subtractPoints(resizerCenter, rect0)
+            var endPoint = addPoints(rect1, vector)
+
+            $(resizerEl).simulate('drag', {
+              isTouch: true,
+              point: resizerCenter,
+              end: endPoint,
+              onRelease: () => resolve()
+            })
+          }
+        })
+      }, 0)
     })
   }
 
