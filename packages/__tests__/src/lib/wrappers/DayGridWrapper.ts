@@ -89,6 +89,11 @@ export default class DayGridWrapper {
   }
 
 
+  getRowEls() {
+    return findElements(this.el, '.fc-row')
+  }
+
+
   getBgEventEls(row?) {
     let parentEl = row == null ? this.el : this.getRowEl(row)
     return findElements(parentEl, '.fc-bgevent')

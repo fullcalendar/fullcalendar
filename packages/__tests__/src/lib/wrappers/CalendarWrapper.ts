@@ -3,11 +3,19 @@ import ToolbarWrapper from './ToolbarWrapper'
 
 export default class CalendarWrapper {
 
+  static EVENT_CLASSNAME = 'fc-event' // TODO: put this everywhere?
+  static EVENT_IS_START_CLASSNAME = 'fc-start'
+  static EVENT_IS_END_CLASSNAME = 'fc-end'
   static EVENT_TIME_CLASSNAME = 'fc-time'
   static EVENT_TITLE_CLASSNAME = 'fc-title'
   static EVENT_RESIZER_CLASSNAME = 'fc-resizer'
   static EVENT_START_RESIZER_CLASSNAME = 'fc-start-resizer'
   static EVENT_END_RESIZER_CLASSNAME = 'fc-end-resizer'
+  static BG_EVENT_CLASSNAME = 'fc-bgevent'
+  static TODAY_CLASSNAME = 'fc-today'
+  static PAST_CLASSNAME = 'fc-past'
+  static FUTURE_CLASSNAME = 'fc-future'
+  static DOW_CLASSNAMES = [ 'fc-sun', 'fc-mon', 'fc-tue', 'fc-wed', 'fc-thu', 'fc-fri', 'fc-sat' ]
 
 
   constructor(private calendar: Calendar) {
@@ -56,7 +64,7 @@ export default class CalendarWrapper {
 
 
   getBgEventEls() {
-    return findElements(this.calendar.el, '.fc-bgevent')
+    return findElements(this.calendar.el, '.' + CalendarWrapper.BG_EVENT_CLASSNAME)
   }
 
 
@@ -67,6 +75,11 @@ export default class CalendarWrapper {
 
   getDateCellEl(dateStr: string) {
     return this.calendar.el.querySelector('td.fc-day[data-date="' + dateStr + '"]')
+  }
+
+
+  hasLicenseMessage() {
+    return $('.fc-license-message', this.calendar.el).is(':visible')
   }
 
 

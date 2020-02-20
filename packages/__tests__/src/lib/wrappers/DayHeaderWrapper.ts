@@ -1,4 +1,5 @@
 import { findElements } from '@fullcalendar/core'
+import { parseIsoAsUtc } from '../datelib-utils'
 
 
 export default class DayHeaderWrapper {
@@ -7,6 +8,13 @@ export default class DayHeaderWrapper {
 
 
   constructor(public el: HTMLElement) {
+  }
+
+
+  getDates() {
+    return this.getCellEls().map((cellEl) => {
+      return parseIsoAsUtc(cellEl.getAttribute('data-date'))
+    })
   }
 
 

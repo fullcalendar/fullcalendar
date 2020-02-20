@@ -81,6 +81,14 @@ export default class TimeGridWrapper {
   }
 
 
+  hasNowIndicator() {
+    return Boolean(
+      this.el.querySelector('.fc-now-indicator-arrow') &&
+      this.el.querySelector('.fc-now-indicator-line')
+    )
+  }
+
+
   getTimeAxisInfo() {
     return $('.fc-slats tr[data-time]', this.el).map(function(i, tr) {
       return {
