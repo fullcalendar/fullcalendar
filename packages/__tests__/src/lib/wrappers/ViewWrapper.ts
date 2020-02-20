@@ -2,7 +2,7 @@ import { Calendar } from '@fullcalendar/core'
 
 export default class ViewWrapper {
 
-  protected el: HTMLElement
+  el: HTMLElement // TODO: make protected?
 
   constructor(calendar: Calendar, className: string) {
     let viewEl = calendar.el.querySelector('.fc-view') as HTMLElement
