@@ -1,6 +1,6 @@
+import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 
 describe('unselectAuto', function() {
-
   pushOptions({
     selectable: true,
     defaultDate: '2014-12-25',
@@ -16,27 +16,25 @@ describe('unselectAuto', function() {
   })
 
   describe('when enabled', function() {
-
     pushOptions({
       unselectAuto: true
     })
 
     describe('when clicking away', function() {
+
       it('unselects the current selection when clicking elsewhere in DOM', function(done) {
-
-        initCalendar({
+        let calendar = initCalendar({
           unselect: function(arg) {
-            expect($('.fc-highlight').length).toBe(0)
-
+            expect(dayGridWrapper.getHighlightEls().length).toBe(0)
             expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
             expect(typeof arg.view).toBe('object')
-
             done()
           }
         })
-        currentCalendar.select('2014-12-01', '2014-12-03')
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-        expect($('.fc-highlight').length).toBeGreaterThan(0)
+        calendar.select('2014-12-01', '2014-12-03')
+        expect(dayGridWrapper.getHighlightEls().length).toBeGreaterThan(0)
 
         $('#otherthing')
           .simulate('mousedown')
@@ -46,38 +44,37 @@ describe('unselectAuto', function() {
     })
 
     describe('when clicking another date', function() {
+
       it('unselects the current selection when clicking elsewhere in DOM', function(done) {
-
-        initCalendar({
+        let calendar = initCalendar({
           unselect: function(arg) {
-            expect($('.fc-highlight').length).toBe(0)
-
+            expect(dayGridWrapper.getHighlightEls().length).toBe(0)
             expect('currentTarget' in arg.jsEvent).toBe(true) // a JS event
             expect(typeof arg.view).toBe('object')
-
             done()
           }
         })
-        currentCalendar.select('2014-12-01', '2014-12-03')
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-        expect($('.fc-highlight').length).toBeGreaterThan(0)
+        calendar.select('2014-12-01', '2014-12-03')
+        expect(dayGridWrapper.getHighlightEls().length).toBeGreaterThan(0)
 
-        $('.fc-day[data-date="2014-12-04"]').simulate('drag')
+        $(dayGridWrapper.getDayEl('2014-12-04')).simulate('drag')
       })
     })
   })
 
   describe('when disabled', function() {
-
     pushOptions({
       unselectAuto: false
     })
 
     it('keeps current selection when clicking elsewhere in DOM', function(done) {
-      initCalendar()
-      currentCalendar.select('2014-12-01', '2014-12-03')
+      let calendar = initCalendar()
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-      expect($('.fc-highlight').length).toBeGreaterThan(0)
+      calendar.select('2014-12-01', '2014-12-03')
+      expect(dayGridWrapper.getHighlightEls().length).toBeGreaterThan(0)
 
       $('#otherthing')
         .simulate('mousedown')
@@ -85,7 +82,7 @@ describe('unselectAuto', function() {
         .simulate('click')
 
       setTimeout(function() {
-        expect($('.fc-highlight').length).toBeGreaterThan(0)
+        expect(dayGridWrapper.getHighlightEls().length).toBeGreaterThan(0)
         done()
       })
     })

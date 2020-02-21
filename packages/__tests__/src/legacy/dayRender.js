@@ -1,4 +1,5 @@
 import { formatIsoDay } from '../lib/datelib-utils'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
 describe('dayRender', function() {
 
@@ -59,8 +60,10 @@ describe('dayRender', function() {
       }
     }
 
-    initCalendar(options)
-    expect($(currentCalendar.el).find('.fc-bg td[data-date="2014-05-01"]')).toHaveClass('mycustomclass')
+    let calendar = initCalendar(options)
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    let dayEl = dayGridWrapper.getDayEl('2014-05-01')
+    expect(dayEl).toHaveClass('mycustomclass')
   })
 
   it('gets called for TimeGrid views', function() {

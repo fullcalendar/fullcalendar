@@ -104,6 +104,17 @@ export default class TimeGridWrapper {
   }
 
 
+  getLastMajorAxisInfo() {
+    let cells = this.getTimeAxisInfo()
+
+    for (let i = cells.length - 1; i >= 0; i--) {
+      if (cells[i].isMajor) {
+        return cells[i]
+      }
+    }
+  }
+
+
   dragEventToDate(eventEl: HTMLElement, dropDate) {
     return new Promise((resolve) => {
       $(eventEl).simulate('drag', {

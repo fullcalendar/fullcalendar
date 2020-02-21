@@ -29,6 +29,12 @@ export default class CalendarWrapper {
   }
 
 
+  get footer() {
+    let toolbarEl = this.calendar.el.querySelector('.fc-footer-toolbar') as HTMLElement
+    return toolbarEl ? new ToolbarWrapper(toolbarEl) : null
+  }
+
+
   getViewContainerEl() {
     return this.calendar.el.querySelector('.fc-view-container')
   }

@@ -110,6 +110,11 @@ export default class DayGridWrapper {
   }
 
 
+  getHighlightEls() { // FG events
+    return findElements(this.el, '.fc-highlight')
+  }
+
+
   dragEventToDate(eventEl: HTMLElement, startDate, endDate) {
     return new Promise((resolve) => {
       let rect0 = this.getDayEl(startDate).getBoundingClientRect()

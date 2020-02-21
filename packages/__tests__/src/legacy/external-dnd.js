@@ -4,376 +4,410 @@ import InteractionPlugin, { ThirdPartyDraggable } from '@fullcalendar/interactio
 import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import 'components-jqueryui' // for .sortable and .draggable
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+
 
 describe('external drag and drop with jquery UI', function() {
+  pushOptions({
+    plugins: [ InteractionPlugin, TimeGridPlugin, DayGridPlugin ],
+    defaultDate: '2014-08-23',
+    defaultView: 'dayGridMonth',
+    droppable: true
+  })
+
 
   // TODO: fill out tests for droppable/drop, with RTL
 
-  var doSortable
-  var options
-  var thirdPartyDraggable
+  let thirdPartyDraggable
 
   beforeEach(function() {
-    doSortable = false
-    options = {
-      plugins: [ InteractionPlugin, TimeGridPlugin, DayGridPlugin ],
-      defaultDate: '2014-08-23',
-      defaultView: 'dayGridMonth',
-      droppable: true
-    }
-
     $('body').append(
       '<div id="sidebar" style="width:200px">' +
-        '<a class="fc-event event1">event 1</a>' +
-        '<a class="fc-event event2">event 2</a>' +
+        `<a class="${CalendarWrapper.EVENT_CLASSNAME} event1">event 1</a>` +
+        `<a class="${CalendarWrapper.EVENT_CLASSNAME} event2">event 2</a>` +
       '</div>' +
-      '<div id="cal" style="width:600px;position:absolute;top:10px;left:220px">' +
-      '</div>'
+      '<div id="cal" style="width:600px;position:absolute;top:10px;left:220px" />'
     )
 
     thirdPartyDraggable = new ThirdPartyDraggable({
-      itemSelector: '#sidebar .fc-event'
+      itemSelector: `#sidebar .${CalendarWrapper.EVENT_CLASSNAME}`
     })
   })
 
   afterEach(function() {
-    var el = currentCalendar.el
-    currentCalendar.destroy()
-    $(el).remove()
     $('#sidebar').remove()
+    $('#cal').remove()
     thirdPartyDraggable.destroy()
   })
 
-  function init() {
-    if (doSortable) {
-      $('#sidebar').sortable()
-    } else {
-      $('#sidebar a').draggable()
-    }
-    initCalendar(options)
+  function initCalendarInContainer(options) {
+    return initCalendar(options, $('#cal')[0])
   }
 
-  function getMonthCell(row, col) {
-    return $('.fc-day-grid .fc-row:eq(' + row + ') .fc-bg td:not(.fc-axis):eq(' + col + ')')
-  }
 
-  [ false, true ].forEach(function(_doSortable) {
-    describe(_doSortable ? 'with sortable' : 'with draggable', function() {
-      beforeEach(function() {
-        doSortable = _doSortable
+  describeValues({
+    'with draggable': () => $('#sidebar a').draggable(),
+    'with sortable': () => $('#sidebar').sortable()
+  }, function(initDnd) {
+
+    describe('in month view', function() {
+      pushOptions({
+        defaultView: 'dayGridMonth'
       })
 
-      describe('in month view', function() {
-
-        beforeEach(function() {
-          options.defaultView = 'dayGridMonth'
-        })
-
-        it('works after the view is changed', function(done) { // issue 2240
-          var callCnt = 0
-
-          options.drop = function(arg) {
+      it('works after the view is changed', function(done) { // issue 2240
+        let callCnt = 0
+        let calendar = initCalendarInContainer({
+          drop: function(arg) {
             if (callCnt === 0) {
               expect(arg.date).toEqualDate('2014-08-06')
 
-              currentCalendar.next()
-              currentCalendar.prev()
+              calendar.next()
+              calendar.prev()
 
-              setTimeout(function() {
+              setTimeout(function() { // weird
                 $('#sidebar .event1').remove()
-
                 $('#sidebar .event2').simulate('drag', {
-                  end: getMonthCell(1, 3)
+                  end: dayGridWrapper.getDayEl('2014-08-06')
                 })
               }, 0)
+
             } else if (callCnt === 1) {
               expect(arg.date).toEqualDate('2014-08-06')
-              done()
+              setTimeout(done) // weird
             }
+
             callCnt++
           }
+        })
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-          init()
+        initDnd()
+        setTimeout(function() { // weird
+          $('#sidebar .event1').simulate('drag', {
+            end: dayGridWrapper.getDayEl('2014-08-06')
+          })
+        })
+      })
 
-          setTimeout(function() { // needed for IE8
+      describe('dropAccept', function() {
+
+        it('works with a className that does match', function(done) {
+          let options = {
+            dropAccept: '.event1',
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
+
+          let calendar = initCalendarInContainer(options)
+          let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+          initDnd()
+          setTimeout(function() { // weird
             $('#sidebar .event1').simulate('drag', {
-              end: getMonthCell(1, 3)
+              end: dayGridWrapper.getDayEl('2014-08-06'),
+              callback: function() {
+                expect(options.drop).toHaveBeenCalled()
+                done()
+              }
             })
-          }, 0)
+          })
         })
 
-        describe('dropAccept', function() {
+        it('prevents a classNames that doesn\'t match', function(done) {
+          let options = {
+            dropAccept: '.event2',
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
 
-          it('works with a className that does match', function(done) {
-            options.dropAccept = '.event1'
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
+          let calendar = initCalendarInContainer(options)
+          let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-            init()
-
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: getMonthCell(1, 3),
-                callback: function() {
-                  expect(options.drop).toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
+          initDnd()
+          setTimeout(function() { // weird
+            $('#sidebar .event1').simulate('drag', {
+              end: dayGridWrapper.getDayEl('2014-08-06'),
+              callback: function() {
+                expect(options.drop).not.toHaveBeenCalled()
+                done()
+              }
+            })
           })
+        })
 
-          it('prevents a classNames that doesn\'t match', function(done) {
-            options.dropAccept = '.event2'
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
-
-            init()
-
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: getMonthCell(1, 3),
-                callback: function() {
-                  expect(options.drop).not.toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
-          })
-
-          it('works with a filter function that returns true', function(done) {
-            options.dropAccept = function(el) {
+        it('works with a filter function that returns true', function(done) {
+          let options = {
+            dropAccept(el) {
               expect(el instanceof HTMLElement).toBe(true)
               return true
-            }
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
+            },
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
 
-            init()
+          let calendar = initCalendarInContainer(options)
+          let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: getMonthCell(1, 3),
-                callback: function() {
-                  expect(options.drop).toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
+          initDnd()
+          setTimeout(function() { // weird
+            $('#sidebar .event1').simulate('drag', {
+              end: dayGridWrapper.getDayEl('2014-08-06'),
+              callback: function() {
+                expect(options.drop).toHaveBeenCalled()
+                done()
+              }
+            })
           })
+        })
 
-          it('prevents a drop with a filter function that returns false', function(done) {
-            options.dropAccept = function(el) {
+        it('prevents a drop with a filter function that returns false', function(done) {
+          let options = {
+            dropAccept(el) {
               expect(el instanceof HTMLElement).toBe(true)
               return false
-            }
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
+            },
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
 
-            init()
+          let calendar = initCalendarInContainer(options)
+          let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: getMonthCell(1, 3),
-                callback: function() {
-                  expect(options.drop).not.toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
+          initDnd()
+          setTimeout(function() { // weird
+            $('#sidebar .event1').simulate('drag', {
+              end: dayGridWrapper.getDayEl('2014-08-06'),
+              callback: function() {
+                expect(options.drop).not.toHaveBeenCalled()
+                done()
+              }
+            })
           })
         })
       })
+    })
 
-      describe('in timeGrid view', function() {
+    describe('in timeGrid view', function() {
+      pushOptions({
+        defaultView: 'timeGridWeek',
+        dragScroll: false,
+        scrollTime: '00:00:00'
+      })
 
-        beforeEach(function() {
-          options.defaultView = 'timeGridWeek'
-          options.dragScroll = false
-          options.scrollTime = '00:00:00'
-        })
-
-        it('works after the view is changed', function(done) {
-          var callCnt = 0
-
-          options.drop = function(arg) {
+      it('works after the view is changed', function(done) {
+        let callCnt = 0
+        let calendar = initCalendarInContainer({
+          drop(arg) {
             if (callCnt === 0) {
               expect(arg.date).toEqualDate('2014-08-20T01:00:00Z')
 
               currentCalendar.next()
               currentCalendar.prev()
 
-              setTimeout(function() { // needed for IE8, for firing the second time, for some reason
+              setTimeout(function() { // weird
                 $('#sidebar .event1').remove()
-
                 $('#sidebar .event2').simulate('drag', {
-                  end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
+                  end: timeGridWrapper.getPoint('2014-08-20T01:00:00')
                 })
               }, 0)
+
             } else if (callCnt === 1) {
               expect(arg.date).toEqualDate('2014-08-20T01:00:00Z')
-              done()
+              setTimeout(done) // weird
             }
+
             callCnt++
           }
-
-          init()
-
-          setTimeout(function() { // needed for IE8
-            $('#sidebar .event1').simulate('drag', {
-              end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20
-            })
-          }, 0)
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-        it('works with timezone as "local"', function(done) { // for issue 2225
-          options.timeZone = 'local'
-          options.drop = function(arg) {
+        initDnd()
+        setTimeout(function() { // weird
+          $('#sidebar .event1').simulate('drag', {
+            end: timeGridWrapper.getPoint('2014-08-20T01:00:00')
+          })
+        })
+      })
+
+      it('works with timezone as "local"', function(done) { // for issue 2225
+        let calendar = initCalendarInContainer({
+          timeZone: 'local',
+          drop(arg) {
             expect(arg.date).toEqualLocalDate('2014-08-20T01:00:00')
             done()
           }
-
-          init()
-
-          setTimeout(function() { // needed for IE8
-            $('#sidebar .event1').simulate('drag', {
-              end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, LOCAL TIME
-            })
-          }, 0)
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-        it('works with timezone as "UTC"', function(done) { // for issue 2225
-          options.timeZone = 'UTC'
-          options.drop = function(arg) {
+        initDnd()
+        setTimeout(function() {
+          $('#sidebar .event1').simulate('drag', {
+            end: timeGridWrapper.getPoint('2014-08-20T01:00:00')
+          })
+        })
+      })
+
+      it('works with timezone as "UTC"', function(done) { // for issue 2225
+        let calendar = initCalendarInContainer({
+          timeZone: 'UTC',
+          drop(arg) {
             expect(arg.date).toEqualDate('2014-08-20T01:00:00Z')
             done()
           }
+        })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-          init()
+        initDnd()
+        setTimeout(function() { // weird
+          $('#sidebar .event1').simulate('drag', {
+            end: timeGridWrapper.getPoint('2014-08-20T01:00:00')
+          })
+        })
+      })
 
-          setTimeout(function() { // needed for IE8
+      describe('dropAccept', function() {
+
+        it('works with a className that does match', function(done) {
+          let options = {
+            dropAccept: '.event1',
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
+
+          let calendar = initCalendarInContainer(options)
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+
+          initDnd()
+          setTimeout(function() { // weird
             $('#sidebar .event1').simulate('drag', {
-              end: $('.fc-slats tr:eq(2)') // middle is 1:00am on 2014-08-20, UTC TIME
+              end: timeGridWrapper.getPoint('2014-08-20T01:00:00'),
+              callback: function() {
+                expect(options.drop).toHaveBeenCalled()
+                done()
+              }
             })
-          }, 0)
+          })
         })
 
-        describe('dropAccept', function() {
+        it('prevents a classNames that doesn\'t match', function(done) {
+          let options = {
+            dropAccept: '.event2',
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
 
-          it('works with a className that does match', function(done) {
-            options.dropAccept = '.event1'
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
+          let calendar = initCalendarInContainer(options)
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-            init()
-
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: $('.fc-slats tr:eq(2)'),
-                callback: function() {
-                  expect(options.drop).toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
+          initDnd()
+          setTimeout(function() { // weird
+            $('#sidebar .event1').simulate('drag', {
+              end: timeGridWrapper.getPoint('2014-08-20T01:00:00'),
+              callback: function() {
+                expect(options.drop).not.toHaveBeenCalled()
+                done()
+              }
+            })
           })
+        })
 
-          it('prevents a classNames that doesn\'t match', function(done) {
-            options.dropAccept = '.event2'
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
-
-            init()
-
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: $('.fc-slats tr:eq(2)'),
-                callback: function() {
-                  expect(options.drop).not.toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
-          })
-
-          it('works with a filter function that returns true', function(done) {
-            options.dropAccept = function(el) {
+        it('works with a filter function that returns true', function(done) {
+          let options = {
+            dropAccept(el) {
               expect(el instanceof HTMLElement).toBe(true)
               return true
-            }
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
+            },
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
 
-            init()
+          let calendar = initCalendarInContainer(options)
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: $('.fc-slats tr:eq(2)'),
-                callback: function() {
-                  expect(options.drop).toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
+          initDnd()
+          setTimeout(function() { // weird
+            $('#sidebar .event1').simulate('drag', {
+              end: timeGridWrapper.getPoint('2014-08-20T01:00:00'),
+              callback: function() {
+                expect(options.drop).toHaveBeenCalled()
+                done()
+              }
+            })
           })
+        })
 
-          it('prevents a drop with a filter function that returns false', function(done) {
-            options.dropAccept = function(el) {
+        it('prevents a drop with a filter function that returns false', function(done) {
+          let options = {
+            dropAccept(el) {
               expect(el instanceof HTMLElement).toBe(true)
               return false
-            }
-            options.drop = function() { }
-            spyOn(options, 'drop').and.callThrough()
+            },
+            drop() { }
+          }
+          spyOn(options, 'drop').and.callThrough()
 
-            init()
+          let calendar = initCalendarInContainer(options)
+          let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
 
-            setTimeout(function() { // needed for IE8
-              $('#sidebar .event1').simulate('drag', {
-                end: $('.fc-slats tr:eq(2)'),
-                callback: function() {
-                  expect(options.drop).not.toHaveBeenCalled()
-                  done()
-                }
-              })
-            }, 0)
+          initDnd()
+          setTimeout(function() { // weird
+            $('#sidebar .event1').simulate('drag', {
+              end: timeGridWrapper.getPoint('2014-08-20T01:00:00'),
+              callback: function() {
+                expect(options.drop).not.toHaveBeenCalled()
+                done()
+              }
+            })
           })
         })
       })
-
-      // Issue 2433
-      it('should not have drag handlers cleared when other calendar navigates', function() {
-        init()
-        var el1 = currentCalendar.el
-        var el2 = $('<div id="calendar2">').insertAfter(el1)
-        var currentCalendar2 = new Calendar(el2[0], options)
-        currentCalendar2.render()
-
-        var docListenerCounter = new ListenerCounter(document)
-        docListenerCounter.startWatching()
-
-        currentCalendar.next()
-        expect(docListenerCounter.stopWatching()).toBe(0)
-
-        currentCalendar2.destroy()
-        el2.remove()
-      })
     })
+
+    // Issue 2433
+    it('should not have drag handlers cleared when other calendar navigates', function() {
+      let calendar0 = initCalendarInContainer()
+      initDnd()
+
+      let el0 = calendar0.el
+      let $el1 = $('<div id="calendar2">').insertAfter(el0)
+      let calendar1 = new Calendar($el1[0], getCurrentOptions())
+      calendar1.render()
+
+      let docListenerCounter = new ListenerCounter(document)
+      docListenerCounter.startWatching()
+
+      calendar0.next()
+      expect(docListenerCounter.stopWatching()).toBe(0)
+
+      calendar1.destroy()
+      $el1.remove()
+    })
+
   })
 
   // https://github.com/fullcalendar/fullcalendar/issues/2926
   it('gives a mouseup event to the drop handler', function(done) {
-    options.drop = function(info) {
-      expect(info.jsEvent.type).toBe('mouseup')
+    let options = {
+      drop(info) {
+        expect(info.jsEvent.type).toBe('mouseup')
+      }
     }
     spyOn(options, 'drop').and.callThrough()
 
-    init()
+    let calendar = initCalendarInContainer(options)
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-    $('#sidebar .event1').simulate('drag', {
-      end: getMonthCell(1, 3),
-      callback: function() {
-        expect(options.drop).toHaveBeenCalled()
-        done()
-      }
+    setTimeout(function() { // weird
+      $('#sidebar .event1').draggable().simulate('drag', {
+        end: dayGridWrapper.getDayEl('2014-08-06'),
+        callback: function() {
+          expect(options.drop).toHaveBeenCalled()
+          done()
+        }
+      })
     })
   })
 
