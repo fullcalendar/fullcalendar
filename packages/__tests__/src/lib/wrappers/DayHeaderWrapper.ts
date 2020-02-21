@@ -28,6 +28,11 @@ export default class DayHeaderWrapper {
   }
 
 
+  getAxisText() {
+    return $(this.getAxisEl()).text()
+  }
+
+
   getWeekNumberEl() {
     return this.el.querySelector('.fc-week-number')
   }

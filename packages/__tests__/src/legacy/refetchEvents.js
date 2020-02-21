@@ -1,12 +1,13 @@
+import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
+
 describe('refetchEvents', function() {
 
   // there IS a similar test in automated-better, but does month view
   describe('when timeGrid events are rerendered', function() {
 
     it('keeps scroll after refetchEvents', function(done) {
-      var renderCalls = 0
-
-      initCalendar({
+      let renderCalls = 0
+      let calendar = initCalendar({
         now: '2015-08-07',
         scrollTime: '00:00',
         height: 400, // makes this test more consistent across viewports
@@ -23,17 +24,21 @@ describe('refetchEvents', function() {
           }, 100)
         },
         _eventsPositioned: function() {
-          var scrollEl = $('.scrollgrid .fc-body:last-child .fc-scroller')
+          let viewWrapper = new TimeGridViewWrapper(calendar)
+          let scrollEl = viewWrapper.getScrollerEl()
+
           renderCalls++
+
           if (renderCalls === 1) {
             setTimeout(function() {
-              scrollEl.scrollTop(100)
+              scrollEl.scrollTop = 100
               setTimeout(function() {
                 currentCalendar.refetchEvents()
               }, 100)
             }, 100)
+
           } else if (renderCalls === 2) {
-            expect(scrollEl.scrollTop()).toBe(100)
+            expect(scrollEl.scrollTop).toBe(100)
             done()
           }
         }

@@ -6,6 +6,8 @@ export default class CalendarWrapper {
   static EVENT_CLASSNAME = 'fc-event' // TODO: put this everywhere?
   static EVENT_IS_START_CLASSNAME = 'fc-start'
   static EVENT_IS_END_CLASSNAME = 'fc-end'
+  static EVENT_IS_NOT_START_CLASSNAME = 'fc-not-start'
+  static EVENT_IS_NOT_END_CLASSNAME = 'fc-not-end'
   static EVENT_TIME_CLASSNAME = 'fc-time'
   static EVENT_TITLE_CLASSNAME = 'fc-title'
   static EVENT_RESIZER_CLASSNAME = 'fc-resizer'
@@ -60,6 +62,11 @@ export default class CalendarWrapper {
 
   getFirstEventEl() {
     return this.calendar.el.querySelector('.fc-event') as HTMLElement
+  }
+
+
+  getTodayEls() {
+    return findElements(this.calendar.el, '.fc-today')
   }
 
 

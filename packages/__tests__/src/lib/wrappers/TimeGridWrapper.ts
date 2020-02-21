@@ -173,13 +173,42 @@ export default class TimeGridWrapper {
   }
 
 
-  selectDates(start, inclusiveEnd) {
+  selectDates(start, end) {
+    let startPoint = this.getPoint(start)
+    let endPoint = this.getPoint(end, true)
+
+    startPoint.top += 2
+    endPoint.top -= 2
+
     return new Promise((resolve) => {
       $(this.getDayEls(start)).simulate('drag', {
-        point: this.getPoint(start),
-        end: this.getPoint(inclusiveEnd),
+        // debug: true,
+        point: startPoint,
+        end: endPoint,
         onRelease: () => resolve()
       })
+    })
+  }
+
+
+  selectDatesTouch(start, end) {
+    let dayEls = this.getDayEls(start)
+    let startPoint = this.getPoint(start)
+    let endPoint = this.getPoint(end, true)
+
+    startPoint.top += 2
+    endPoint.top -= 2
+
+    return new Promise((resolve) => {
+      setTimeout(() => { // wait for calendar to accept touch :(
+        // QUESTION: why do we not need to do press-down first?
+        $(dayEls).simulate('drag', {
+          isTouch: true,
+          point: startPoint,
+          end: endPoint,
+          onRelease: () => resolve()
+        })
+      }, 0)
     })
   }
 
@@ -229,13 +258,19 @@ export default class TimeGridWrapper {
   }
 
 
-  getPoint(date) { // gives offset to window topleft, like getBoundingClientRect
+  getPoint(date, isEnd?) { // gives offset to window topleft, like getBoundingClientRect
     date = ensureDate(date)
 
     var day = startOfDay(date)
     var timeMs = date.valueOf() - day.valueOf()
+
+    if (isEnd && !timeMs) {
+      day = addDays(day, -1)
+      timeMs = date.valueOf() - day.valueOf()
+    }
+
     var top = this.getTimeTop(timeMs)
-    var dayEls = this.getDayEls(date)
+    var dayEls = this.getDayEls(day)
     var dayRect
 
     expect(dayEls.length).toBe(1)

@@ -74,8 +74,49 @@ export default class DayGridWrapper {
   }
 
 
+  openMorePopover(index?) {
+    if (index == null) {
+      $(this.getMoreEl()).simulate('click')
+    } else {
+      $(this.el.querySelectorAll('.fc-more')[index]).simulate('click')
+    }
+  }
+
+
   getMorePopoverEl() {
-    return this.el.parentNode.querySelector('.fc-more-popover') // popover lives as a sibling
+    return this.el.parentNode.querySelector('.fc-more-popover') as HTMLElement // popover lives as a sibling
+  }
+
+
+  getMorePopoverHeaderEl() {
+    return this.getMorePopoverEl().querySelector('.fc-header') as HTMLElement
+  }
+
+
+  getMorePopoverEventEls() {
+    return findElements(this.getMorePopoverEl(), '.fc-event')
+  }
+
+
+  getMorePopoverEventCnt() { // fg
+    return this.getMorePopoverEventEls().length
+  }
+
+
+  getMorePopoverEventTitles() {
+    return this.getMorePopoverEventEls().map((el) => {
+      return $(el.querySelector('.fc-title')).text()
+    })
+  }
+
+
+  getMorePopoverBgEventCnt() {
+    return this.getMorePopoverEl().querySelectorAll('.fc-bgevent').length
+  }
+
+
+  closeMorePopover() {
+    $(this.getMorePopoverEl().querySelector('.fc-close')).simulate('click')
   }
 
 
@@ -112,6 +153,33 @@ export default class DayGridWrapper {
 
   getHighlightEls() { // FG events
     return findElements(this.el, '.fc-highlight')
+  }
+
+
+  selectDates(start, inclusiveEnd) {
+    return new Promise((resolve) => {
+      $(this.getDayEls(start)).simulate('drag', {
+        point: getRectCenter(this.getDayEl(start).getBoundingClientRect()),
+        end: getRectCenter(this.getDayEl(inclusiveEnd).getBoundingClientRect()),
+        onRelease: () => resolve()
+      })
+    })
+  }
+
+
+  selectDatesTouch(start, inclusiveEnd) {
+    return new Promise((resolve) => {
+      let startEl = this.getDayEl(start)
+
+      setTimeout(() => { // wait for calendar to accept touch :(
+        // QUESTION: why do we not need to do press-down first?
+        $(startEl).simulate('drag', {
+          isTouch: true,
+          end: getRectCenter(this.getDayEl(inclusiveEnd).getBoundingClientRect()),
+          onRelease: () => resolve()
+        })
+      }, 0)
+    })
   }
 
 
