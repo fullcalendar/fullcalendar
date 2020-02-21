@@ -28,7 +28,7 @@ export default class DayHeaderWrapper {
   }
 
 
-  getAxisText() {
+  getAxisText() { // not used?
     return $(this.getAxisEl()).text()
   }
 

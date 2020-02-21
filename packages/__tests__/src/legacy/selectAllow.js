@@ -47,7 +47,7 @@ describe('selectAllow', function() {
     waitDateSelect(calendar, selecting).then((selectInfo) => {
       expect(typeof selectInfo).toBe('object')
       expect(selectInfo.start).toEqualDate('2016-09-04T01:00:00Z')
-      expect(selectInfo.end).toEqualDate('2016-09-04T05:30:00Z')
+      expect(selectInfo.end).toEqualDate('2016-09-04T05:00:00Z')
       expect(options.selectAllow).toHaveBeenCalled()
       done()
     })

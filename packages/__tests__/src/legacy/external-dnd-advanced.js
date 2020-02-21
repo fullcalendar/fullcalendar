@@ -1,5 +1,6 @@
 import { testEventDrag } from '../lib/dnd-resize-utils'
 import { ThirdPartyDraggable } from '@fullcalendar/interaction'
+import 'components-jqueryui' // for .sortable and .draggable
 
 // TODO: Use the built-in Draggable for some of these tests
 

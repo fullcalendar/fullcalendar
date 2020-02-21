@@ -10,7 +10,7 @@ describe('slotLabelFormat', function() {
 
   it('renders correctly when default', function() {
     let calendar = initCalendar()
-    expectAxisText(calendar, '12em')
+    expectAxisText(calendar, '12am')
   })
 
   it('renders correctly when default and the locale is customized', function() {
@@ -30,9 +30,9 @@ describe('slotLabelFormat', function() {
 
 
   function expectAxisText(calendar, expectedText) {
-    let headerWrapper = new TimeGridViewWrapper(calendar).header
-    let axisText = headerWrapper.getAxisText()
-    expect(axisText).toBe(expectedText)
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    let axisTexts = timeGridWrapper.getAxisTexts()
+    expect(axisTexts[0]).toBe(expectedText)
   }
 
 })

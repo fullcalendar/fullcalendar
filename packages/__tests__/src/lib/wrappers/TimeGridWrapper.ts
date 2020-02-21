@@ -32,6 +32,11 @@ export default class TimeGridWrapper {
   }
 
 
+  getAxisTexts() {
+    return this.getSlotAxisEls().map((el) => $(el).text())
+  }
+
+
   getSlotAxisEls() {
     return findElements(this.el, '.fc-slats tr[data-time] .fc-axis')
   }
