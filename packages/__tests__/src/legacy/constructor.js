@@ -1,3 +1,4 @@
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
 describe('constructor', function() {
 
@@ -47,31 +48,17 @@ describe('constructor', function() {
   })
 
   describe('when called on a div', function() {
-    beforeEach(function() {
-      initCalendar()
+
+    it('should contain a toolbar', function() {
+      let calendar = initCalendar()
+      let calendarWrapper = new CalendarWrapper(calendar)
+      expect(calendarWrapper.toolbar).toBeTruthy()
     })
 
-    it('should contain a table fc-toolbar', function() {
-      var header = $(currentCalendar.el).find('.fc-toolbar')
-      expect(header[0]).not.toBeUndefined()
-    })
-
-    it('should contain a div fc-view-container', function() {
-      var content = $(currentCalendar.el).find('.fc-view-container')
-      expect(content[0]).not.toBeUndefined()
-    })
-
-    it('should only contain 2 elements', function() {
-      var calenderNodeCount = $(currentCalendar.el).find('>').length
-      expect(calenderNodeCount).toEqual(2)
-    })
-
-    describe('and then called again', function() {
-      it('should still only have a single set of calendar [header,content]', function() {
-        initCalendar()
-        var count = $(currentCalendar.el).find('>').length
-        expect(count).toEqual(2)
-      })
+    it('should contain a view-container el', function() {
+      let calendar = initCalendar()
+      let calendarWrapper = new CalendarWrapper(calendar)
+      expect(calendarWrapper.getViewContainerEl()).toBeTruthy()
     })
   })
 })

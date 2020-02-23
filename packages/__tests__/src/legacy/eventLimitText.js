@@ -1,7 +1,7 @@
 import frLocale from '@fullcalendar/core/locales/fr'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
 describe('eventLimitText', function() {
-
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',
@@ -15,34 +15,38 @@ describe('eventLimitText', function() {
   })
 
   it('allows a string', function() {
-    initCalendar({
+    let calendar = initCalendar({
       eventLimitText: 'extra'
     })
-    expect($('.fc-more')).toHaveText('+2 extra')
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getMoreEl()).toHaveText('+2 extra')
   })
 
   it('allows a function', function() {
-    initCalendar({
+    let calendar = initCalendar({
       eventLimitText: function(n) {
         expect(typeof n).toBe('number')
         return 'there are ' + n + ' more events!'
       }
     })
-    expect($('.fc-more')).toHaveText('there are 2 more events!')
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getMoreEl()).toHaveText('there are 2 more events!')
   })
 
   it('has a default value that is affected by the custom locale', function() {
-    initCalendar({
+    let calendar = initCalendar({
       locale: frLocale
     })
-    expect($('.fc-more')).toHaveText('+2 en plus')
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getMoreEl()).toHaveText('+2 en plus')
   })
 
   it('is not affected by a custom locale when the value is explicitly specified', function() {
-    initCalendar({
+    let calendar = initCalendar({
       locale: frLocale,
       eventLimitText: 'extra'
     })
-    expect($('.fc-more')).toHaveText('+2 extra')
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getMoreEl()).toHaveText('+2 extra')
   })
 })

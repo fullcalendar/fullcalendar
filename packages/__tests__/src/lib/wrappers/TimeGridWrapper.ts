@@ -1,4 +1,4 @@
-import { findElements, startOfDay, createDuration, parseMarker, addDays, addMs, getRectCenter } from '@fullcalendar/core'
+import { findElements, startOfDay, createDuration, parseMarker, addDays, addMs, getRectCenter, asRoughMs } from '@fullcalendar/core'
 import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib-utils'
 import { parseUtcDate } from '../date-parsing'
 import { getBoundingRect } from '../dom-geom'
@@ -7,7 +7,7 @@ import { addPoints } from '../geom'
 
 export default class TimeGridWrapper {
 
-  constructor(private el: HTMLElement) {
+  constructor(public el: HTMLElement) {
   }
 
 
@@ -76,6 +76,11 @@ export default class TimeGridWrapper {
 
   queryNonBusinessSegsInCol(col) {
     return $(`.fc-content-skeleton td:not(.fc-axis):eq(${col}) .fc-nonbusiness`, this.el).get()
+  }
+
+
+  getHighlightEls() { // FG events
+    return findElements(this.el, '.fc-highlight')
   }
 
 
@@ -310,6 +315,10 @@ export default class TimeGridWrapper {
 
 
   getTimeTop(targetTimeMs) {
+    if (typeof targetTimeMs !== 'number') {
+      targetTimeMs = asRoughMs(createDuration(targetTimeMs))
+    }
+
     const topBorderWidth = 1 // TODO: kill
     let slotEl = this.getSlotElByTime(targetTimeMs)
     let $slotEl // used within loop, but we access last val

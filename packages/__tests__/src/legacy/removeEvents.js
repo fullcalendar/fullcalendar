@@ -1,3 +1,5 @@
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
+
 describe('removeEvents', function() {
 
   pushOptions({
@@ -38,7 +40,8 @@ describe('removeEvents', function() {
           },
           function() {
             expect(currentCalendar.getEvents().length).toEqual(0)
-            expect($('.fc-event').length).toEqual(0)
+            let calendarWrapper = new CalendarWrapper(currentCalendar)
+            expect(calendarWrapper.getEventEls().length).toEqual(0)
           },
           done
         )
@@ -56,7 +59,8 @@ describe('removeEvents', function() {
           },
           function() {
             expect(currentCalendar.getEvents().length).toEqual(2)
-            expect($('.fc-event').length).toEqual(2)
+            let calendarWrapper = new CalendarWrapper(currentCalendar)
+            expect(calendarWrapper.getEventEls().length).toEqual(2)
             expect($('.event-zero').length).toEqual(1)
             expect($('.event-two').length).toEqual(1)
           },
@@ -75,7 +79,8 @@ describe('removeEvents', function() {
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)
-        expect($('.fc-event').length).toEqual(2)
+        let calendarWrapper = new CalendarWrapper(currentCalendar)
+        expect(calendarWrapper.getEventEls().length).toEqual(2)
         expect($('.event-zero').length).toEqual(1)
         expect($('.event-two').length).toEqual(1)
       },
@@ -91,7 +96,8 @@ describe('removeEvents', function() {
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)
-        expect($('.fc-event').length).toEqual(2)
+        let calendarWrapper = new CalendarWrapper(currentCalendar)
+        expect(calendarWrapper.getEventEls().length).toEqual(2)
         expect($('.event-zero').length).toEqual(1)
         expect($('.event-two').length).toEqual(1)
       },
@@ -107,7 +113,8 @@ describe('removeEvents', function() {
       },
       function() {
         expect(currentCalendar.getEvents().length).toEqual(2)
-        expect($('.fc-event').length).toEqual(2)
+        let calendarWrapper = new CalendarWrapper(currentCalendar)
+        expect(calendarWrapper.getEventEls().length).toEqual(2)
         expect($('.event-zero').length).toEqual(0)
         expect($('.event-non-zero').length).toEqual(2)
       },
@@ -148,7 +155,8 @@ describe('removeEvents', function() {
   // has internal info on all the events.
   function checkAllEvents() {
     expect(currentCalendar.getEvents().length).toEqual(3)
-    expect($('.fc-event').length).toEqual(3)
+    let calendarWrapper = new CalendarWrapper(currentCalendar)
+    expect(calendarWrapper.getEventEls().length).toEqual(3)
   }
 
 })

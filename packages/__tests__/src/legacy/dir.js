@@ -1,4 +1,5 @@
 import arLocale from '@fullcalendar/core/locales/ar'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('dir', function() {
 
@@ -18,13 +19,13 @@ describe('dir', function() {
     })
     var $el = $(currentCalendar.el)
 
-    expect($el).toHaveClass('fc-ltr')
-    expect($el).not.toHaveClass('fc-rtl')
+    expect($el).toHaveClass(CalendarWrapper.LTR_CLASSNAME)
+    expect($el).not.toHaveClass(CalendarWrapper.RTL_CLASSNAME)
 
     currentCalendar.setOption('dir', 'rtl')
 
-    expect($el).toHaveClass('fc-rtl')
-    expect($el).not.toHaveClass('fc-ltr')
+    expect($el).toHaveClass(CalendarWrapper.RTL_CLASSNAME)
+    expect($el).not.toHaveClass(CalendarWrapper.LTR_CLASSNAME)
   })
 
 })

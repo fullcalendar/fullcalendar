@@ -15,7 +15,7 @@ describe('customButtons', function() {
       header: { left: 'mybutton', center: '', right: '' }
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
-    let buttonInfo = toolbarWrapper.getCustomButtonInfo('mybutton')
+    let buttonInfo = toolbarWrapper.getButtonInfo('mybutton')
     expect(buttonInfo.text).toBe('asdf')
   })
 
@@ -27,7 +27,7 @@ describe('customButtons', function() {
       header: { left: 'mybutton', center: '', right: '' }
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
-    let buttonInfo = toolbarWrapper.getCustomButtonInfo('mybutton')
+    let buttonInfo = toolbarWrapper.getButtonInfo('mybutton')
     expect(buttonInfo.iconName).toBe('asdf')
   })
 
@@ -40,7 +40,7 @@ describe('customButtons', function() {
       header: { left: 'mybutton', center: '', right: '' }
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
-    let buttonInfo = toolbarWrapper.getCustomButtonInfo('mybutton', 'fa')
+    let buttonInfo = toolbarWrapper.getButtonInfo('mybutton', 'fa')
     expect(buttonInfo.iconName).toBe('asdf')
   })
 

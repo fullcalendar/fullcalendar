@@ -11,7 +11,7 @@ export default class ToolbarWrapper {
   }
 
 
-  getCustomButtonInfo(name, iconPrefix='fc-icon') { // prefix doesnt have dash
+  getButtonInfo(name, iconPrefix='fc-icon') { // prefix doesnt have dash
     let el = this.getButtonEl(name)
 
     if (el) {

@@ -74,6 +74,26 @@ export default class DayGridWrapper {
   }
 
 
+  getWeekNavLinkEls(isEmbedded) { // along the sides of the row
+    return isEmbedded
+      ? findElements(this.el, '.fc-day-top a.fc-week-number')
+      : findElements(this.el, '.fc-week-number a')
+  }
+
+
+  getNavLinkEl(date) {
+    if (typeof date === 'string') {
+      date = new Date(date)
+    }
+    return this.el.querySelector(`.fc-day-top[data-date="${formatIsoDay(date)}"] a:not(.fc-week-number)`)
+  }
+
+
+  clickNavLink(date) {
+    $.simulateMouseClick(this.getNavLinkEl(date))
+  }
+
+
   openMorePopover(index?) {
     if (index == null) {
       $(this.getMoreEl()).simulate('click')
@@ -153,6 +173,11 @@ export default class DayGridWrapper {
 
   getHighlightEls() { // FG events
     return findElements(this.el, '.fc-highlight')
+  }
+
+
+  clickDate(date) {
+    $.simulateMouseClick(this.getDayEl(date))
   }
 
 

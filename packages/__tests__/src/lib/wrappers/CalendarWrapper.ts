@@ -18,6 +18,11 @@ export default class CalendarWrapper {
   static PAST_CLASSNAME = 'fc-past'
   static FUTURE_CLASSNAME = 'fc-future'
   static DOW_CLASSNAMES = [ 'fc-sun', 'fc-mon', 'fc-tue', 'fc-wed', 'fc-thu', 'fc-fri', 'fc-sat' ]
+  static LTR_CLASSNAME = 'fc-ltr'
+  static RTL_CLASSNAME = 'fc-rtl'
+  static BOOTSTRAP_CLASSNAME = 'fc-bootstrap'
+  static UNTHEMED_CLASSNAME = 'fc-unthemed'
+  static ROOT_CLASSNAME = 'fc'
 
 
   constructor(private calendar: Calendar) {
@@ -43,7 +48,12 @@ export default class CalendarWrapper {
 
 
   getViewEl() {
-    return this.calendar.el.querySelector('.fc-view')
+    return this.calendar.el.querySelector('.fc-view') as HTMLElement
+  }
+
+
+  getViewName() {
+    return this.getViewEl().getAttribute('class').match(/fc-(\w+)-view/)[1]
   }
 
 

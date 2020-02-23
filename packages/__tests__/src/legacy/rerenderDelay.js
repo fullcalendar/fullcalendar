@@ -1,3 +1,5 @@
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
+
 describe('rerenderDelay', function() {
 
   it('batches together many event renders', function(done) {
@@ -13,7 +15,7 @@ describe('rerenderDelay', function() {
     var extraEvent2 = { title: 'event6', start: '2016-12-04T06:00:00', className: 'event6', id: '6' }
     var eventRenderCnt = 0
 
-    initCalendar({
+    let calendar = initCalendar({
       defaultDate: '2016-12-04',
       defaultView: 'timeGridDay',
       events: eventSource1,
@@ -37,19 +39,20 @@ describe('rerenderDelay', function() {
         }
       }
     })
+    let calendarWrapper = new CalendarWrapper(calendar)
 
-    expect($('.fc-event').length).toBe(2)
+    expect(calendarWrapper.getEventEls().length).toBe(2)
 
     currentCalendar.addEventSource(eventSource2)
-    expect($('.fc-event').length).toBe(2)
+    expect(calendarWrapper.getEventEls().length).toBe(2)
 
     currentCalendar.addEvent(extraEvent1)
-    expect($('.fc-event').length).toBe(2)
+    expect(calendarWrapper.getEventEls().length).toBe(2)
 
     var refined2 = currentCalendar.addEvent(extraEvent2)
-    expect($('.fc-event').length).toBe(2)
+    expect(calendarWrapper.getEventEls().length).toBe(2)
 
     refined2.remove()
-    expect($('.fc-event').length).toBe(2)
+    expect(calendarWrapper.getEventEls().length).toBe(2)
   })
 })

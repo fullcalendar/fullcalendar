@@ -1,3 +1,5 @@
+import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
+
 describe('scrollTime', function() {
 
   pushOptions({
@@ -5,30 +7,32 @@ describe('scrollTime', function() {
   })
 
   it('accepts a string Duration', function() {
-    initCalendar({
+    let calendar = initCalendar({
       scrollTime: '02:00:00',
       height: 400 // short enough to make scrolling happen
     })
-    var slotCell = $('.fc-slats tr:eq(4)') // 2am slot
-    var slotTop = slotCell.position().top
-    var scrollContainer = $('.scrollgrid .fc-body:last-child .fc-scroller')
-    var scrollTop = scrollContainer.scrollTop()
-    var diff = Math.abs(slotTop - scrollTop)
+    let viewWrapper = new TimeGridViewWrapper(calendar)
+    let timeGridWrapper = viewWrapper.timeGrid
+    let slotTop = viewWrapper.timeGrid.getTimeTop('02:00:00') - $(timeGridWrapper.el).offset().top
+    let scrollTop = viewWrapper.getScrollerEl().scrollTop
+    let diff = Math.abs(slotTop - scrollTop)
+
     expect(slotTop).toBeGreaterThan(0)
     expect(scrollTop).toBeGreaterThan(0)
     expect(diff).toBeLessThan(3)
   })
 
   it('accepts a Duration object', function() {
-    initCalendar({
+    let calendar = initCalendar({
       scrollTime: { hours: 2 },
       height: 400 // short enough to make scrolling happen
     })
-    var slotCell = $('.fc-slats tr:eq(4)') // 2am slot
-    var slotTop = slotCell.position().top
-    var scrollContainer = $('.scrollgrid .fc-body:last-child .fc-scroller')
-    var scrollTop = scrollContainer.scrollTop()
-    var diff = Math.abs(slotTop - scrollTop)
+    let viewWrapper = new TimeGridViewWrapper(calendar)
+    let timeGridWrapper = viewWrapper.timeGrid
+    let slotTop = timeGridWrapper.getTimeTop('02:00:00') - $(timeGridWrapper.el).offset().top
+    let scrollTop = viewWrapper.getScrollerEl().scrollTop
+    let diff = Math.abs(slotTop - scrollTop)
+
     expect(slotTop).toBeGreaterThan(0)
     expect(scrollTop).toBeGreaterThan(0)
     expect(diff).toBeLessThan(3)

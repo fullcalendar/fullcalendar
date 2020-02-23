@@ -1,44 +1,46 @@
-describe('footer rendering', function() {
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
+describe('footer rendering', function() {
   pushOptions({
     defaultDate: '2014-06-04',
     defaultView: 'timeGridWeek'
   })
 
   describe('when supplying footer options', function() {
-    it('should append a .fc-footer-toolbar to the DOM', function() {
-      initCalendar({
+    it('should append a footer element to the DOM', function() {
+      let calendar = initCalendar({
         footer: {
           left: 'next,prev',
           center: 'prevYear today nextYear timeGridDay,timeGridWeek',
           right: 'title'
         }
       })
-      var footer = $('#calendar .fc-footer-toolbar')
-      expect(footer.length).toBe(1)
+      let calendarWrapper = new CalendarWrapper(calendar)
+      expect(calendarWrapper.footer).toBeTruthy()
     })
   })
 
   describe('when setting footer to false', function() {
     it('should not have footer table', function() {
-      initCalendar({
+      let calendar = initCalendar({
         footer: false
       })
-      expect($('.fc-footer-toolbar')).not.toBeInDOM()
+      let calendarWrapper = new CalendarWrapper(calendar)
+      expect(calendarWrapper.footer).toBeFalsy()
     })
   })
 
   it('allow for dynamically changing', function() {
-    initCalendar({
+    let calendar = initCalendar({
       footer: {
         left: 'next,prev',
         center: 'prevYear today nextYear timeGridDay,timeGridWeek',
         right: 'title'
       }
     })
-    expect($('.fc-footer-toolbar')).toBeInDOM()
+    let calendarWrapper = new CalendarWrapper(calendar)
+    expect(calendarWrapper.footer).toBeTruthy()
     currentCalendar.setOption('footer', false)
-    expect($('.fc-footer-toolbar')).not.toBeInDOM()
+    expect(calendarWrapper.footer).toBeFalsy()
   })
-
 })

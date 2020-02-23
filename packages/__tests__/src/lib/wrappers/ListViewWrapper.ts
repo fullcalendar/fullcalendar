@@ -1,5 +1,6 @@
 import ViewWrapper from './ViewWrapper'
 import { Calendar, findElements } from '@fullcalendar/core'
+import { formatIsoDay } from '../datelib-utils'
 
 
 export default class ListViewWrapper extends ViewWrapper {
@@ -51,6 +52,19 @@ export default class ListViewWrapper extends ViewWrapper {
 
   hasEmptyMessage() {
     return Boolean(this.el.querySelector('.fc-list-empty'))
+  }
+
+
+  getNavLinkEl(dayDate) {
+    if (typeof dayDate === 'string') {
+      dayDate = new Date(dayDate)
+    }
+    return this.el.querySelector('.fc-list-heading[data-date="' + formatIsoDay(dayDate) + '"] a.fc-list-heading-main')
+  }
+
+
+  clickNavLink(dayDate) {
+    $.simulateMouseClick(this.getNavLinkEl(dayDate))
   }
 
 }

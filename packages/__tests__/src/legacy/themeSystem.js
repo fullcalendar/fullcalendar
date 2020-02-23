@@ -1,57 +1,67 @@
 import BootstrapPlugin from '@fullcalendar/bootstrap'
 import TimeGridPlugin from '@fullcalendar/timegrid'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('themeSystem', function() {
-
   pushOptions({
     plugins: [ BootstrapPlugin, TimeGridPlugin ],
-    defaultView: 'timeGridWeek'
+    defaultView: 'timeGridWeek',
+    header: {
+      left: '',
+      center: '',
+      right: 'next'
+    }
   })
 
   it('can be changed dynamically', function() {
-    initCalendar()
+    let calendar = initCalendar()
+    let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+    let buttonInfo = toolbarWrapper.getButtonInfo('next')
 
-    expect($('.fc')).toHaveClass('fc-unthemed')
-    expect($('.fc')).not.toHaveClass('fc-bootstrap')
-    expect($('.fc-toolbar button .fc-icon').length).toBeGreaterThan(0)
-    expect($('.fc-toolbar button .fa').length).toBe(0) // FontAwesome icon
+    expect(calendar.el).toHaveClass(CalendarWrapper.ROOT_CLASSNAME)
+    expect(calendar.el).toHaveClass(CalendarWrapper.UNTHEMED_CLASSNAME)
+    expect(calendar.el).not.toHaveClass(CalendarWrapper.BOOTSTRAP_CLASSNAME)
+    expect(buttonInfo.iconName).toBeTruthy()
     expect($('.table-bordered').length).toBe(0)
 
-    $('.fc-scroller').scrollTop(99999) // scroll all the way down
-    var scrollTop = $('.fc-scroller').scrollTop()
+    let viewWrapper = new TimeGridViewWrapper(calendar)
+    let scrollEl = viewWrapper.getScrollerEl()
+
+    scrollEl.scrollTop = 99999 // scroll all the way down
+    let scrollTop = scrollEl.scrollTop
 
     // change option!
-    currentCalendar.setOption('themeSystem', 'bootstrap')
+    calendar.setOption('themeSystem', 'bootstrap')
 
-    expect($('.fc')).toHaveClass('fc-bootstrap')
-    expect($('.fc')).not.toHaveClass('fc-unthemed')
-    expect($('.fc-toolbar button .fc-icon').length).toBe(0)
-    expect($('.fc-toolbar button .fa').length).toBeGreaterThan(0) // FontAwesome icon
+    buttonInfo = toolbarWrapper.getButtonInfo('next', 'fa')
+    expect(calendar.el).toHaveClass(CalendarWrapper.ROOT_CLASSNAME)
+    expect(calendar.el).toHaveClass(CalendarWrapper.BOOTSTRAP_CLASSNAME)
+    expect(calendar.el).not.toHaveClass(CalendarWrapper.UNTHEMED_CLASSNAME)
+    expect(buttonInfo.iconName).toBeTruthy()
     expect($('.table-bordered').length).toBeGreaterThan(0)
 
     // similar scroll state after the change
-    expect(Math.abs(scrollTop - $('.fc-scroller').scrollTop())).toBeLessThan(5)
+    expect(Math.abs(scrollTop - scrollEl.scrollTop)).toBeLessThan(5)
   })
-
 
   // this tests the options setter with a single hash argument.
   // TODO: not best place for this.
   it('can be change with other options', function() {
-    initCalendar()
+    let calendar = initCalendar()
 
-    expect($('.fc')).toHaveClass('fc-unthemed')
-    expect($('.fc')).not.toHaveClass('fc-bootstrap')
-    expect($('.fc-nonbusiness').length).toBe(0)
+    expect(calendar.el).toHaveClass(CalendarWrapper.ROOT_CLASSNAME)
+    expect(calendar.el).toHaveClass(CalendarWrapper.UNTHEMED_CLASSNAME)
+    expect(calendar.el).not.toHaveClass(CalendarWrapper.BOOTSTRAP_CLASSNAME)
 
     // change option!
-    currentCalendar.batchRendering(function() {
-      currentCalendar.setOption('themeSystem', 'bootstrap')
-      currentCalendar.setOption('businessHours', true)
+    calendar.batchRendering(function() {
+      calendar.setOption('themeSystem', 'bootstrap')
+      calendar.setOption('businessHours', true)
     })
 
-    expect($('.fc')).toHaveClass('fc-bootstrap')
-    expect($('.fc')).not.toHaveClass('fc-unthemed')
-    expect($('.fc-nonbusiness').length).toBeGreaterThan(0)
+    expect(calendar.el).toHaveClass(CalendarWrapper.ROOT_CLASSNAME)
+    expect(calendar.el).toHaveClass(CalendarWrapper.BOOTSTRAP_CLASSNAME)
+    expect(calendar.el).not.toHaveClass(CalendarWrapper.UNTHEMED_CLASSNAME)
   })
-
 })

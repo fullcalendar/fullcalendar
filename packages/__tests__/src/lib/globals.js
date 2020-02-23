@@ -38,7 +38,8 @@ function pushOptions(options) {
 }
 
 // called within an `it`
-function spyOnCalendarCallback(name, func) {
+// needs to be called *before* initCalendar
+function spyOnCalendarCallback(name, func = function(){}) {
 
   /** @type {any} */
   var options = {}
