@@ -125,11 +125,12 @@ export default class TimeGridWrapper {
   }
 
 
-  dragEventToDate(eventEl: HTMLElement, dropDate) {
+  dragEventToDate(eventEl: HTMLElement, dropDate, onBeforeRelease?) {
     return new Promise((resolve) => {
       $(eventEl).simulate('drag', {
-        localPoint: { left: '50%', top: 1 }, // 1 for zoom
+        localPoint: { left: '50%', top: 5 }, // ahhh 5. overcome divider sometimes
         end: this.getPoint(dropDate),
+        onBeforeRelease,
         onRelease: () => resolve()
       })
     })
@@ -611,4 +612,11 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
   }
 
   return true
+}
+
+
+export function queryEventElInfo(eventEl: HTMLElement) {
+  return {
+    timeText: $(eventEl.querySelector('.fc-time')).text()
+  }
 }

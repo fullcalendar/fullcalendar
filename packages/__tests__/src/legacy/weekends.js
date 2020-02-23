@@ -1,24 +1,23 @@
+import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 
 describe('when weekends option is set', function() {
 
   it('should show sat and sun if true', function() {
-    initCalendar({
+    let calendar = initCalendar({
       weekends: true
     })
-    var sun = $('.fc-day-header.fc-sun')[0]
-    var sat = $('.fc-day-header.fc-sun')[0]
-    expect(sun).toBeDefined()
-    expect(sat).toBeDefined()
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getDayEls(0).length).toBeGreaterThan(0) // 0=sunday
+    expect(dayGridWrapper.getDayEls(6).length).toBeGreaterThan(0) // 6=saturday
   })
 
   it('should not show sat and sun if false', function() {
-    initCalendar({
+    let calendar = initCalendar({
       weekends: false
     })
-    var sun = $('.fc-day-header.fc-sun')[0]
-    var sat = $('.fc-day-header.fc-sun')[0]
-    expect(sun).not.toBeDefined()
-    expect(sat).not.toBeDefined()
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+    expect(dayGridWrapper.getDayEls(0).length).toBe(0) // 0=sunday
+    expect(dayGridWrapper.getDayEls(6).length).toBe(0) // 6=saturday
   })
 
 })

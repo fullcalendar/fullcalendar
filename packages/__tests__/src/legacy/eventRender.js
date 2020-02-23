@@ -1,5 +1,8 @@
-describe('eventRender', function() {
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
+describe('eventRender', function() {
   pushOptions({
     defaultDate: '2014-11-12',
     scrollTime: '00:00:00',
@@ -9,41 +12,36 @@ describe('eventRender', function() {
     } ]
   })
 
-  $.each({
-    dayGridMonth: '.fc-day-grid',
-    timeGridWeek: '.fc-time-grid'
-  }, function(viewName, gridSelector) {
-    describe('when in ' + viewName + ' view', function() {
+  describeOptions('defaultView', {
+    'when in day-grid': 'dayGridMonth',
+    'when in time-grid': 'timeGridWeek'
+  }, function() {
 
-      pushOptions({
-        defaultView: viewName
-      })
-
-      describe('with foreground event', function() {
-        it('receives correct args AND can modify the element', function() {
-          var options = {
-            eventRender: function(arg) {
-              expect(typeof arg.event).toBe('object')
-              expect(arg.event.rendering).toBe('')
-              expect(arg.event.start).toBeDefined()
-              expect(arg.el instanceof HTMLElement).toBe(true)
-              expect(typeof arg.view).toBe('object')
-              expect(arg.isMirror).toBe(false)
-              $(arg.el).css('font-size', '20px')
-            }
+    describe('with foreground event', function() {
+      it('receives correct args AND can modify the element', function() {
+        var options = {
+          eventRender: function(arg) {
+            expect(typeof arg.event).toBe('object')
+            expect(arg.event.rendering).toBe('')
+            expect(arg.event.start).toBeDefined()
+            expect(arg.el instanceof HTMLElement).toBe(true)
+            expect(typeof arg.view).toBe('object')
+            expect(arg.isMirror).toBe(false)
+            $(arg.el).css('font-size', '20px')
           }
-          spyOn(options, 'eventRender').and.callThrough()
-          initCalendar(options)
+        }
+        spyOn(options, 'eventRender').and.callThrough()
+        let calendar = initCalendar(options)
+        let calendarWrapper = new CalendarWrapper(calendar)
+        let eventEl = calendarWrapper.getFirstEventEl()
 
-          expect($(gridSelector).find('.fc-event').css('font-size')).toBe('20px')
-          expect(options.eventRender).toHaveBeenCalled()
-        })
+        expect($(eventEl).css('font-size')).toBe('20px')
+        expect(options.eventRender).toHaveBeenCalled()
       })
     })
   })
 
   describe('when in month view', function() {
-
     pushOptions({
       defaultView: 'dayGridMonth',
       events: [ {
@@ -55,34 +53,37 @@ describe('eventRender', function() {
     describe('with a foreground event', function() {
 
       it('can return a new element', function() {
-        var options = {
-          eventRender: function(arg) {
-            return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
+        let options = {
+          eventRender() {
+            return $(`<div class="sup ${CalendarWrapper.EVENT_CLASSNAME}" style="background-color:green">sup g</div>`)[0]
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let eventEl = dayGridWrapper.getFirstEventEl()
 
-        expect($('.fc-day-grid .sup').length).toBe(1)
+        expect(eventEl).toHaveClass('sup')
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('can return false and cancel rendering', function() {
-        var options = {
+        let options = {
           eventRender() {
             return false
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let eventEls = dayGridWrapper.getEventEls()
 
-        expect($('.fc-day-grid .fc-event').length).toBe(0)
+        expect(eventEls.length).toBe(0)
         expect(options.eventRender).toHaveBeenCalled()
       })
     })
 
     describe('with an all-day background event', function() {
-
       pushOptions({
         events: [ {
           title: 'my event',
@@ -92,65 +93,74 @@ describe('eventRender', function() {
       })
 
       it('receives correct args AND can modify the element', function() {
-        var options = {
-          eventRender: function(arg) {
+        let options = {
+          eventRender(arg) {
             expect(typeof arg.event).toBe('object')
             expect(arg.event.rendering).toBe('background')
             expect(arg.event.start).toBeDefined()
             expect(arg.el instanceof HTMLElement).toBe(true)
             expect(typeof arg.view).toBe('object')
             $(arg.el).css('font-size', '20px')
-          },
+          }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let bgEventEls = dayGridWrapper.getBgEventEls()
 
-        expect($('.fc-day-grid .fc-bgevent').css('font-size')).toBe('20px')
+        expect(bgEventEls.length).toBe(1)
+        expect($(bgEventEls).css('font-size')).toBe('20px')
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('can return a new element', function() {
-        var options = {
-          eventRender: function(arg) {
-            return $('<td class="sup" style="background-color:green">sup g</td>')[0]
+        let options = {
+          eventRender() {
+            return $(`<td class="sup ${CalendarWrapper.BG_EVENT_CLASSNAME}" style="background-color:green">sup g</td>`)[0]
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let bgEventEls = dayGridWrapper.getBgEventEls()
 
-        expect($('.fc-day-grid .sup').length).toBe(1)
+        expect(bgEventEls.length).toBe(1)
+        expect(bgEventEls[0]).toHaveClass('sup')
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('won\'t rendering when returning a new element of the wrong type', function() {
-        var options = {
-          eventRender: function(arg) {
-            return $('<div class="sup" style="background-color:green">sup g</div>')[0]
+        let options = {
+          eventRender() {
+            return $(`<div class="sup ${CalendarWrapper.BG_EVENT_CLASSNAME}" style="background-color:green">sup g</div>`)[0]
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let bgEventEls = dayGridWrapper.getBgEventEls()
 
-        expect($('.fc-day-grid .sup').length).toBe(0)
+        expect(bgEventEls.length).toBe(0)
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('can return false and cancel rendering', function() {
-        var options = {
+        let options = {
           eventRender: function(arg) {
             return false
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let bgEventEls = dayGridWrapper.getBgEventEls()
 
-        expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
+        expect(bgEventEls.length).toBe(0)
         expect(options.eventRender).toHaveBeenCalled()
       })
     })
 
     describe('with a timed background event', function() { // not exactly related to eventRender!
-
       pushOptions({
         events: [ {
           title: 'my event',
@@ -160,26 +170,26 @@ describe('eventRender', function() {
       })
 
       it('won\'t render or call eventRender', function() {
-        var options = {
-          eventRender: function(arg) {},
+        let options = {
+          eventRender() {}
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+        let bgEventEls = dayGridWrapper.getBgEventEls()
 
-        expect($('.fc-day-grid .fc-bgevent').length).toBe(0)
+        expect(bgEventEls.length).toBe(0)
         expect(options.eventRender).not.toHaveBeenCalled()
       })
     })
   })
 
   describe('when in week view', function() {
-
     pushOptions({
       defaultView: 'timeGridWeek'
     })
 
     describe('with a foreground event', function() {
-
       pushOptions({
         events: [ {
           title: 'my event',
@@ -188,34 +198,38 @@ describe('eventRender', function() {
       })
 
       it('can return a new element', function() {
-        var options = {
-          eventRender: function(arg) {
-            return $('<div class="fc-event sup" style="background-color:green">sup g</div>')[0]
+        let options = {
+          eventRender() {
+            return $(`<div class="${CalendarWrapper.EVENT_CLASSNAME} sup" style="background-color:green">sup g</div>`)[0]
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let eventEls = timeGridWrapper.getEventEls()
 
-        expect($('.fc-time-grid .sup').length).toBe(1)
+        expect(eventEls.length).toBe(1)
+        expect(eventEls[0]).toHaveClass('sup')
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('can return false and cancel rendering', function() {
-        var options = {
-          eventRender: function(arg) {
+        let options = {
+          eventRender() {
             return false
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let eventEls = timeGridWrapper.getEventEls()
 
-        expect($('.fc-time-grid .fc-event').length).toBe(0)
+        expect(eventEls.length).toBe(0)
         expect(options.eventRender).toHaveBeenCalled()
       })
     })
 
     describe('with a timed background event', function() {
-
       pushOptions({
         events: [ {
           title: 'my event',
@@ -225,7 +239,7 @@ describe('eventRender', function() {
       })
 
       it('receives correct args AND can modify the element', function() {
-        var options = {
+        let options = {
           eventRender: function(arg) {
             expect(typeof arg.event).toBe('object')
             expect(arg.event.rendering).toBe('background')
@@ -236,48 +250,58 @@ describe('eventRender', function() {
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let bgEventEls = timeGridWrapper.getBgEventEls()
 
-        expect($('.fc-time-grid .fc-bgevent').css('font-size')).toBe('20px')
+        expect(bgEventEls.length).toBe(1)
+        expect($(bgEventEls[0]).css('font-size')).toBe('20px')
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('can return a new element', function() {
-        var options = {
+        let options = {
           eventRender: function() {
-            return $('<div class="fc-bgevent sup" style="background-color:green">sup g</div>')[0]
+            return $(`<div class="sup ${CalendarWrapper.BG_EVENT_CLASSNAME}" style="background-color:green">sup g</div>`)[0]
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let bgEventEls = timeGridWrapper.getBgEventEls()
 
-        expect($('.fc-time-grid .sup').length).toBe(1)
+        expect(bgEventEls.length).toBe(1)
+        expect(bgEventEls[0]).toHaveClass('sup')
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('won\'t rendering when returning a new element of the wrong type', function() {
-        var options = {
-          eventRender: function() {
-            return $('<p class="fc-bgevent sup" style="background-color:green">sup g</p>')[0]
+        let options = {
+          eventRender() {
+            return $(`<p class="sup ${CalendarWrapper.BG_EVENT_CLASSNAME}" style="background-color:green">sup g</p>`)[0]
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let bgEventEls = timeGridWrapper.getBgEventEls()
 
-        expect($('.fc-time-grid .sup').length).toBe(0)
+        expect(bgEventEls.length).toBe(0)
         expect(options.eventRender).toHaveBeenCalled()
       })
 
       it('can return false and cancel rendering', function() {
-        var options = {
-          eventRender: function() {
+        let options = {
+          eventRender() {
             return false
           }
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        let bgEventEls = timeGridWrapper.getBgEventEls()
 
-        expect($('.fc-time-grid .fc-bgevent').length).toBe(0)
+        expect(bgEventEls.length).toBe(0)
         expect(options.eventRender).toHaveBeenCalled()
       })
     })
@@ -292,14 +316,15 @@ describe('eventRender', function() {
       })
 
       it('will render in all-day AND timed slots', function() {
-        var options = {
+        let options = {
           eventRender: function() {}
         }
         spyOn(options, 'eventRender').and.callThrough()
-        initCalendar(options)
+        let calendar = initCalendar(options)
+        let viewWrapper = new TimeGridViewWrapper(calendar)
 
-        expect($('.fc-day-grid .fc-bgevent').length).toBe(1)
-        expect($('.fc-time-grid .fc-bgevent').length).toBe(1)
+        expect(viewWrapper.dayGrid.getBgEventEls().length).toBe(1)
+        expect(viewWrapper.timeGrid.getBgEventEls().length).toBe(1)
         expect(options.eventRender).toHaveBeenCalled()
       })
     })

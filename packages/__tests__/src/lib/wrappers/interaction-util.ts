@@ -22,6 +22,27 @@ export function waitEventDrag(calendar: Calendar, dragging: Promise<any>) {
 }
 
 
+export function waitEventDrag2(calendar: Calendar, dragging: Promise<any>) {
+  return new Promise<any>((resolve) => {
+    let theArg = false
+
+    calendar.on('eventDrop', function(arg) {
+      theArg = arg
+    })
+
+    calendar.on('_noEventDrop', function() {
+      resolve(false)
+    })
+
+    dragging.then(() => {
+      setTimeout(function() { // wait for eventDrop to fire
+        resolve(theArg)
+      })
+    })
+  })
+}
+
+
 export function waitEventResize(calendar: Calendar, dragging: Promise<any>) {
   return new Promise<any>((resolve) => {
     let modifiedEvent = false

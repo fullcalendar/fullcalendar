@@ -1,7 +1,7 @@
 import frLocale from '@fullcalendar/core/locales/fr'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('button text', function() {
-
   pushOptions({
     header: {
       left: 'prevYear,prev,today,next,nextYear',
@@ -15,24 +15,24 @@ describe('button text', function() {
     describe('with default buttonIcons', function() {
 
       it('should contain default text values', function() {
-        initCalendar()
+        let calendar = initCalendar()
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
         // will have button icons, to text will be empty
-        expect($('.fc-next-button')).toHaveText('')
-        expect($('.fc-nextYear-button')).toHaveText('')
-        expect($('.fc-prev-button')).toHaveText('')
-        expect($('.fc-prevYear-button')).toHaveText('')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('')
+        expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('')
+        expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('')
 
-        expect($('.fc-today-button')).toHaveText('today')
-        expect($('.fc-dayGridMonth-button')).toHaveText('month')
-        expect($('.fc-dayGridWeek-button')).toHaveText('week')
-        expect($('.fc-timeGridWeek-button')).toHaveText('week')
-        expect($('.fc-dayGridDay-button')).toHaveText('day')
-        expect($('.fc-dayGridDay-button')).toHaveText('day')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('today')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('month')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('week')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('week')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('day')
       })
 
       it('should contain specified text values', function() {
-        initCalendar({
+        let calendar = initCalendar({
           buttonText: {
             prev: '<-',
             next: '->',
@@ -44,47 +44,46 @@ describe('button text', function() {
             day: 'dei'
           }
         })
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-        expect($('.fc-next-button')).toHaveText('->')
-        expect($('.fc-nextYear-button')).toHaveText('-->')
-        expect($('.fc-prev-button')).toHaveText('<-')
-        expect($('.fc-prevYear-button')).toHaveText('<--')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('->')
+        expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('-->')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('<-')
+        expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('<--')
 
-        expect($('.fc-today-button')).toHaveText('tidei')
-        expect($('.fc-dayGridMonth-button')).toHaveText('mun')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-timeGridWeek-button')).toHaveText('wiki')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-dayGridWeek-button')).toHaveText('wiki')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('tidei')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('mun')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('wiki')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('dei')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('wiki')
       })
 
     })
 
     describe('with buttonIcons turned off', function() {
-
       pushOptions({
         buttonIcons: false
       })
 
       it('should contain default text values', function() {
-        initCalendar()
+        let calendar = initCalendar()
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
         // will have actual text now
-        expect($('.fc-next-button')).toHaveText('next')
-        expect($('.fc-nextYear-button')).toHaveText('next year')
-        expect($('.fc-prev-button')).toHaveText('prev')
-        expect($('.fc-prevYear-button')).toHaveText('prev year')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('next')
+        expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('next year')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('prev')
+        expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('prev year')
 
-        expect($('.fc-today-button')).toHaveText('today')
-        expect($('.fc-dayGridMonth-button')).toHaveText('month')
-        expect($('.fc-dayGridWeek-button')).toHaveText('week')
-        expect($('.fc-timeGridWeek-button')).toHaveText('week')
-        expect($('.fc-dayGridDay-button')).toHaveText('day')
-        expect($('.fc-dayGridDay-button')).toHaveText('day')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('today')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('month')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('week')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('day')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('week')
       })
 
       it('should contain specified text values', function() {
-        initCalendar({
+        let calendar = initCalendar({
           buttonText: {
             prev: '<-',
             next: '->',
@@ -96,18 +95,18 @@ describe('button text', function() {
             day: 'dei'
           }
         })
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-        expect($('.fc-next-button')).toHaveText('->')
-        expect($('.fc-nextYear-button')).toHaveText('-->')
-        expect($('.fc-prev-button')).toHaveText('<-')
-        expect($('.fc-prevYear-button')).toHaveText('<--')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('->')
+        expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('-->')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('<-')
+        expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('<--')
 
-        expect($('.fc-today-button')).toHaveText('tidei')
-        expect($('.fc-dayGridMonth-button')).toHaveText('mun')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-timeGridWeek-button')).toHaveText('wiki')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-dayGridWeek-button')).toHaveText('wiki')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('tidei')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('mun')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('wiki')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('dei')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('wiki')
       })
 
     })
@@ -115,7 +114,6 @@ describe('button text', function() {
   })
 
   describe('when locale is not default', function() {
-
     pushOptions({
       locale: frLocale
     })
@@ -123,24 +121,24 @@ describe('button text', function() {
     describe('with default buttonIcons', function() {
 
       it('should contain default text values', function() {
-        initCalendar()
+        let calendar = initCalendar()
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
         // will contain icons, so will contain no text
-        expect($('.fc-next-button')).toHaveText('')
-        expect($('.fc-nextYear-button')).toHaveText('')
-        expect($('.fc-prev-button')).toHaveText('')
-        expect($('.fc-prevYear-button')).toHaveText('')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('')
+        expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('')
+        expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('')
 
-        expect($('.fc-today-button')).toHaveText('Aujourd\'hui')
-        expect($('.fc-dayGridMonth-button')).toHaveText('Mois')
-        expect($('.fc-dayGridWeek-button')).toHaveText('Semaine')
-        expect($('.fc-timeGridWeek-button')).toHaveText('Semaine')
-        expect($('.fc-dayGridDay-button')).toHaveText('Jour')
-        expect($('.fc-dayGridDay-button')).toHaveText('Jour')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('Aujourd\'hui')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('Mois')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('Semaine')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('Jour')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('Semaine')
       })
 
       it('should contain specified text values', function() {
-        initCalendar({
+        let calendar = initCalendar({
           buttonText: {
             prev: '<-',
             next: '->',
@@ -152,48 +150,48 @@ describe('button text', function() {
             day: 'dei'
           }
         })
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-        expect($('.fc-next-button')).toHaveText('->')
-        expect($('.fc-nextYear-button')).toHaveText('-->')
-        expect($('.fc-prev-button')).toHaveText('<-')
-        expect($('.fc-prevYear-button')).toHaveText('<--')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('->')
+        expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('-->')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('<-')
+        expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('<--')
 
-        expect($('.fc-today-button')).toHaveText('tidei')
-        expect($('.fc-dayGridMonth-button')).toHaveText('mun')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-timeGridWeek-button')).toHaveText('wiki')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-dayGridWeek-button')).toHaveText('wiki')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('tidei')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('mun')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('wiki')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('dei')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('wiki')
       })
 
     })
 
     describe('with buttonIcons turned off', function() {
-
       pushOptions({
         buttonIcons: false
       })
 
       it('should contain default text values', function() {
-        initCalendar()
+        let calendar = initCalendar()
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
         // will have the locale's actual text now
-        expect($('.fc-next-button')).toHaveText('Suivant')
-        expect($('.fc-prev-button')).toHaveText('Précédent')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('Suivant')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('Précédent')
         /// / locales files don't have data for prev/next *year*
-        // expect($('.fc-nextYear-button')).toHaveText('Suivant');
-        // expect($('.fc-prevYear-button')).toHaveText('Précédent');
+        // expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('Suivant');
+        // expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('Précédent');
 
-        expect($('.fc-today-button')).toHaveText('Aujourd\'hui')
-        expect($('.fc-dayGridMonth-button')).toHaveText('Mois')
-        expect($('.fc-dayGridWeek-button')).toHaveText('Semaine')
-        expect($('.fc-timeGridWeek-button')).toHaveText('Semaine')
-        expect($('.fc-dayGridDay-button')).toHaveText('Jour')
-        expect($('.fc-dayGridDay-button')).toHaveText('Jour')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('Aujourd\'hui')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('Mois')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('Semaine')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('Semaine')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('Jour')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('Jour')
       })
 
       it('should contain specified text values', function() {
-        initCalendar({
+        let calendar = initCalendar({
           buttonText: {
             prev: '<-',
             next: '->',
@@ -205,22 +203,19 @@ describe('button text', function() {
             day: 'dei'
           }
         })
+        let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-        expect($('.fc-next-button')).toHaveText('->')
-        expect($('.fc-nextYear-button')).toHaveText('-->')
-        expect($('.fc-prev-button')).toHaveText('<-')
-        expect($('.fc-prevYear-button')).toHaveText('<--')
+        expect(toolbarWrapper.getButtonInfo('next').text).toBe('->')
+        expect(toolbarWrapper.getButtonInfo('nextYear').text).toBe('-->')
+        expect(toolbarWrapper.getButtonInfo('prev').text).toBe('<-')
+        expect(toolbarWrapper.getButtonInfo('prevYear').text).toBe('<--')
 
-        expect($('.fc-today-button')).toHaveText('tidei')
-        expect($('.fc-dayGridMonth-button')).toHaveText('mun')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-timeGridWeek-button')).toHaveText('wiki')
-        expect($('.fc-dayGridDay-button')).toHaveText('dei')
-        expect($('.fc-dayGridWeek-button')).toHaveText('wiki')
+        expect(toolbarWrapper.getButtonInfo('today').text).toBe('tidei')
+        expect(toolbarWrapper.getButtonInfo('dayGridMonth').text).toBe('mun')
+        expect(toolbarWrapper.getButtonInfo('dayGridWeek').text).toBe('wiki')
+        expect(toolbarWrapper.getButtonInfo('dayGridDay').text).toBe('dei')
+        expect(toolbarWrapper.getButtonInfo('timeGridWeek').text).toBe('wiki')
       })
-
     })
-
   })
-
 })

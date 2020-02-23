@@ -1,5 +1,7 @@
-describe('eventLimitClick', function() { // simulate a click
+import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
+import DayGridWrapper from '../lib/wrappers/DayGridWrapper'
 
+describe('eventLimitClick', function() { // simulate a click
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',
@@ -12,10 +14,6 @@ describe('eventLimitClick', function() { // simulate a click
     ]
   })
 
-  function openWithClick() {
-    $('.fc-more').simulate('click')
-  }
-
   describe('when set to "popover"', function() {
 
     pushOptions({
@@ -23,10 +21,12 @@ describe('eventLimitClick', function() { // simulate a click
     })
 
     it('renders a popover upon click', function(done) {
-      initCalendar()
-      openWithClick()
+      let calendar = initCalendar()
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+      dayGridWrapper.openMorePopover()
       setTimeout(function() {
-        expect($('.fc-more-popover')).toBeVisible()
+        expect(dayGridWrapper.getMorePopoverEl()).toBeVisible()
         done()
       })
     })
@@ -41,14 +41,16 @@ describe('eventLimitClick', function() { // simulate a click
     })
 
     it('should go to dayGridWeek if it is one of the available views', function(done) {
-      initCalendar({
+      let calendar = initCalendar({
         header: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,dayGridWeek,dayGridDay'
         }
       })
-      openWithClick()
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+      dayGridWrapper.openMorePopover()
       setTimeout(function() {
         var view = currentCalendar.view
         expect(view.type).toBe('dayGridWeek')
@@ -57,14 +59,16 @@ describe('eventLimitClick', function() { // simulate a click
     })
 
     it('should go to week if it is one of the available views', function(done) {
-      initCalendar({
+      let calendar = initCalendar({
         header: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }
       })
-      openWithClick()
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+      dayGridWrapper.openMorePopover()
       setTimeout(function() {
         var view = currentCalendar.view
         expect(view.type).toBe('timeGridWeek')
@@ -80,14 +84,16 @@ describe('eventLimitClick', function() { // simulate a click
     })
 
     it('should go to dayGridDay if it is one of the available views', function(done) {
-      initCalendar({
+      let calendar = initCalendar({
         header: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,dayGridWeek,dayGridDay'
         }
       })
-      openWithClick()
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+      dayGridWrapper.openMorePopover()
       setTimeout(function() {
         var view = currentCalendar.view
         expect(view.type).toBe('dayGridDay')
@@ -96,14 +102,16 @@ describe('eventLimitClick', function() { // simulate a click
     })
 
     it('should go to day if it is one of the available views', function(done) {
-      initCalendar({
+      let calendar = initCalendar({
         header: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }
       })
-      openWithClick()
+      let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+      dayGridWrapper.openMorePopover()
       setTimeout(function() {
         var view = currentCalendar.view
         expect(view.type).toBe('timeGridDay')
@@ -113,7 +121,7 @@ describe('eventLimitClick', function() { // simulate a click
   })
 
   it('works with an explicit view name', function(done) {
-    initCalendar({
+    let calendar = initCalendar({
       eventLimitClick: 'timeGridWeek',
       header: {
         left: 'prev,next today',
@@ -121,7 +129,9 @@ describe('eventLimitClick', function() { // simulate a click
         right: 'dayGridMonth,dayGridWeek,dayGridDay'
       }
     })
-    openWithClick()
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    dayGridWrapper.openMorePopover()
     setTimeout(function() {
       var view = currentCalendar.view
       expect(view.type).toBe('timeGridWeek')
@@ -130,28 +140,32 @@ describe('eventLimitClick', function() { // simulate a click
   })
 
   it('works with custom function and all the arguments are correct', function(done) {
-    initCalendar({
+    let calendar = initCalendar({
       eventLimitClick: function(arg) {
         expect(typeof arg).toBe('object')
         expect(arg.date).toEqualDate('2014-07-29')
         expect(arg.dayEl.getAttribute('data-date')).toBe('2014-07-29')
         expect(arg.hiddenSegs.length).toBe(2)
         expect(arg.segs.length).toBe(4)
-        expect(arg.moreEl).toHaveClass('fc-more')
+        expect(arg.moreEl).toHaveClass(DayGridWrapper.MORE_LINK_CLASSNAME)
         expect(typeof arg.jsEvent).toBe('object')
       }
     })
-    openWithClick()
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    dayGridWrapper.openMorePopover()
     setTimeout(done)
   })
 
   it('works with custom function, and can return a view name', function(done) {
-    initCalendar({
+    let calendar = initCalendar({
       eventLimitClick: function(cellInfo, jsEvent) {
         return 'timeGridDay'
       }
     })
-    openWithClick()
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
+
+    dayGridWrapper.openMorePopover()
     setTimeout(function() {
       var view = currentCalendar.view
       expect(view.type).toBe('timeGridDay')

@@ -7,6 +7,7 @@ export default class DayGridWrapper {
 
   static EVENT_IS_START_CLASSNAME = 'fc-start'
   static EVENT_IS_END_CLASSNAME = 'fc-end'
+  static MORE_LINK_CLASSNAME = 'fc-more'
 
 
   constructor(private el: HTMLElement) {
@@ -26,11 +27,15 @@ export default class DayGridWrapper {
   }
 
 
-  getDayEls(date) { // TODO: return single el
-    if (typeof date === 'string') {
-      date = new Date(date)
+  getDayEls(date) { // TODO: return single el??? accept 'tues'
+    if (typeof date === 'number') {
+      return findElements(this.el, `.fc-day.${CalendarWrapper.DOW_CLASSNAMES[date]}`)
+    } else {
+      if (typeof date === 'string') {
+        date = new Date(date)
+      }
+      return findElements(this.el, '.fc-day[data-date="' + formatIsoDay(date) + '"]')
     }
-    return findElements(this.el, '.fc-day[data-date="' + formatIsoDay(date) + '"]')
   }
 
 
@@ -208,20 +213,34 @@ export default class DayGridWrapper {
   }
 
 
-  dragEventToDate(eventEl: HTMLElement, startDate, endDate) {
+  dragEventToDate(eventEl: HTMLElement, startDate, endDate, isTouch?) {
     return new Promise((resolve) => {
-      let rect0 = this.getDayEl(startDate).getBoundingClientRect()
-      let rect1 = this.getDayEl(endDate).getBoundingClientRect()
+      if (!startDate) {
+        let rect1 = this.getDayEl(endDate).getBoundingClientRect()
+        let point1 = getRectCenter(rect1)
 
-      let eventRect = eventEl.getBoundingClientRect()
-      let point0 = getRectCenter(intersectRects(eventRect, rect0))
-      let point1 = getRectCenter(rect1)
+        $(eventEl).simulate('drag', {
+          isTouch: isTouch || false,
+          delay: isTouch ? 200 : 0, // bad to hardcode ms
+          end: point1,
+          onRelease: () => resolve()
+        })
+      } else {
+        let rect0 = this.getDayEl(startDate).getBoundingClientRect()
+        let rect1 = this.getDayEl(endDate).getBoundingClientRect()
 
-      $(eventEl).simulate('drag', {
-        point: point0,
-        end: point1,
-        onRelease: () => resolve()
-      })
+        let eventRect = eventEl.getBoundingClientRect()
+        let point0 = getRectCenter(intersectRects(eventRect, rect0))
+        let point1 = getRectCenter(rect1)
+
+        $(eventEl).simulate('drag', {
+          isTouch: isTouch || false,
+          delay: isTouch ? 200 : 0, // bad to hardcode ms
+          point: point0,
+          end: point1,
+          onRelease: () => resolve()
+        })
+      }
     })
   }
 

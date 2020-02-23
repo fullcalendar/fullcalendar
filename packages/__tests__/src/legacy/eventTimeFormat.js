@@ -1,7 +1,7 @@
 import enGbLocale from '@fullcalendar/core/locales/en-gb'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('eventTimeFormat', function() {
-
   pushOptions({
     defaultDate: '2014-06-04',
     events: [ {
@@ -11,64 +11,57 @@ describe('eventTimeFormat', function() {
     } ]
   })
 
-  function getRenderedEventTime() {
-    return $('.fc-event:first .fc-time').text()
-  }
-
   describe('when in month view', function() {
-
     pushOptions({
       defaultView: 'dayGridMonth'
     })
 
     it('renders correctly when default', function() {
-      initCalendar()
-      expect(getRenderedEventTime()).toBe('3p')
+      let calendar = initCalendar()
+      expectEventTimeText(calendar, '3p')
     })
 
     it('renders correctly when default and the locale is customized', function() {
-      initCalendar({
+      let calendar = initCalendar({
         locale: enGbLocale
       })
-      expect(getRenderedEventTime()).toBe('15')
+      expectEventTimeText(calendar, '15')
     })
 
     it('renders correctly when customized', function() {
-      initCalendar({
+      let calendar = initCalendar({
         eventTimeFormat: { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }
       })
-      expect(getRenderedEventTime()).toBe('15:00:00')
+      expectEventTimeText(calendar, '15:00:00')
     })
   })
 
   describe('when in week view', function() {
-
     pushOptions({
       defaultView: 'timeGridWeek'
     })
 
     it('renders correctly when default', function() {
-      initCalendar()
-      expect(getRenderedEventTime()).toBe('3:00 - 5:00')
+      let calendar = initCalendar()
+      expectEventTimeText(calendar, '3:00 - 5:00')
     })
 
     it('renders correctly when default and the locale is customized', function() {
-      initCalendar({
+      let calendar = initCalendar({
         locale: enGbLocale
       })
-      expect(getRenderedEventTime()).toBe('15:00 - 17:00')
+      expectEventTimeText(calendar, '15:00 - 17:00')
     })
 
     it('renders correctly when customized', function() {
-      initCalendar({
+      let calendar = initCalendar({
         eventTimeFormat: { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }
       })
-      expect(getRenderedEventTime()).toBe('15:00:00 - 17:00:00')
+      expectEventTimeText(calendar, '15:00:00 - 17:00:00')
     })
   })
 
   describe('when in multi-day custom dayGrid view', function() {
-
     pushOptions({
       views: {
         dayGridTwoDay: {
@@ -80,21 +73,28 @@ describe('eventTimeFormat', function() {
     })
 
     it('defaults to no end time', function() {
-      initCalendar()
-      expect(getRenderedEventTime()).toBe('3p')
+      let calendar = initCalendar()
+      expectEventTimeText(calendar, '3p')
     })
   })
 
   describe('when in dayGridDay view', function() {
-
     pushOptions({
       defaultView: 'dayGridDay'
     })
 
-
     it('defaults to showing the end time', function() {
-      initCalendar()
-      expect(getRenderedEventTime()).toBe('3p - 5p')
+      let calendar = initCalendar()
+      expectEventTimeText(calendar, '3p - 5p')
     })
   })
+
+
+  function expectEventTimeText(calendar, expected) {
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let firstEventEl = calendarWrapper.getFirstEventEl()
+    let eventInfo = calendarWrapper.getEventElInfo(firstEventEl)
+    expect(eventInfo.timeText).toBe(expected)
+  }
+
 })

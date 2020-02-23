@@ -1,5 +1,6 @@
-describe('eventLimit popover', function() {
+import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 
+describe('eventLimit popover', function() {
   pushOptions({
     defaultView: 'dayGridMonth',
     defaultDate: '2014-08-01',
@@ -18,7 +19,8 @@ describe('eventLimit popover', function() {
     var eventsRendered = {}
     var renderCount = 0
     var activated = false
-    initCalendar({
+
+    let calendar = initCalendar({
       eventRender: function(eventObject, element, view) {
         if (activated) {
           eventsRendered[eventObject.title] = eventObject
@@ -30,17 +32,18 @@ describe('eventLimit popover', function() {
         --renderCount
       }
     })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
     // Activate flags and pop event limit popover
     activated = true
-    $('.fc-more').simulate('click')
+    dayGridWrapper.openMorePopover()
     setTimeout(function() {
 
-      expect($('.fc-more-popover')).toBeVisible()
+      expect(dayGridWrapper.getMorePopoverEl()).toBeVisible()
 
-      $('.fc-more-popover .fc-close').simulate('click')
+      dayGridWrapper.closeMorePopover()
       setTimeout(function() {
-        expect($('.fc-more-popover')).not.toBeVisible()
+        expect(dayGridWrapper.getMorePopoverEl()).not.toBeVisible()
         expect(Object.keys(eventsRendered).length).toEqual(0)
         expect(renderCount).toEqual(0)
         done()
@@ -52,7 +55,8 @@ describe('eventLimit popover', function() {
     var eventsRendered = {}
     var renderCount = 0
     var activated = false
-    initCalendar({
+
+    let calendar = initCalendar({
       eventRender: function(eventObject, element, view) {
         if (activated) {
           eventsRendered[eventObject.title] = eventObject
@@ -64,18 +68,19 @@ describe('eventLimit popover', function() {
         --renderCount
       }
     })
+    let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
     // Activate flags and pop event limit popover
     activated = true
-    $('.fc-more').simulate('click')
+    dayGridWrapper.openMorePopover()
     setTimeout(function() {
 
-      expect($('.fc-more-popover')).toBeVisible()
+      expect(dayGridWrapper.getMorePopoverEl()).toBeVisible()
 
       $('body').simulate('mousedown').simulate('click')
       setTimeout(function() {
 
-        expect($('.fc-more-popover')).not.toBeVisible()
+        expect(dayGridWrapper.getMorePopoverEl()).not.toBeVisible()
         expect(Object.keys(eventsRendered).length).toEqual(0)
         expect(renderCount).toEqual(0)
         done()
