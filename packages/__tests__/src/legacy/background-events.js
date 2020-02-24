@@ -2,9 +2,9 @@ import { RED_REGEX } from '../lib/dom-misc'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
-describe('background events', function() {
+// SEE ALSO: event-color.js
 
-  // SEE ALSO: event-color.js
+describe('background events', function() {
   pushOptions({
     defaultDate: '2014-11-04',
     scrollTime: '00:00'
@@ -29,7 +29,7 @@ describe('background events', function() {
 
         expect(allBgEls.length).toBe(1)
         expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
-        expect(allBgEls[0]).toBeLeftOf('.fc-day[data-date="2014-11-05"]')
+        expect(allBgEls[0]).toBeLeftOf(dayGridWrapper.getDayEl('2014-11-05'))
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
@@ -49,8 +49,8 @@ describe('background events', function() {
         expect(allBgEls.length).toBe(2)
         expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
         expect(dayGridWrapper.getBgEventEls(2).length).toBe(1)
-        expect(allBgEls[0]).toBeRightOf('.fc-day[data-date="2014-11-03"]')
-        expect(allBgEls[1]).toBeLeftOf('.fc-day[data-date="2014-11-12"]')
+        expect(allBgEls[0]).toBeRightOf(dayGridWrapper.getDayEl('2014-11-03'))
+        expect(allBgEls[1]).toBeLeftOf(dayGridWrapper.getDayEl('2014-11-12'))
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
@@ -75,8 +75,8 @@ describe('background events', function() {
 
         expect(allBgEls.length).toBe(2)
         expect(dayGridWrapper.getBgEventEls(1).length).toBe(2)
-        expect(allBgEls[0]).toBeRightOf('.fc-day[data-date="2014-11-02"]')
-        expect(allBgEls[1]).toBeLeftOf('.fc-day[data-date="2014-11-08"]')
+        expect(allBgEls[0]).toBeRightOf(dayGridWrapper.getDayEl('2014-11-02'))
+        expect(allBgEls[1]).toBeLeftOf(dayGridWrapper.getDayEl('2014-11-08'))
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
@@ -97,7 +97,7 @@ describe('background events', function() {
 
           expect(allBgEls.length).toBe(1)
           expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
-          expect(allBgEls).toBeRightOf('.fc-day-grid .fc-row:eq(1) .fc-week-number')
+          expect(allBgEls).toBeRightOf(dayGridWrapper.getWeekCell(1))
           expect(dayGridWrapper.getEventEls().length).toBe(0)
         })
       })
@@ -128,7 +128,7 @@ describe('background events', function() {
 
         expect(allBgEls.length).toBe(1)
         expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
-        expect(allBgEls[0]).toBeRightOf('.fc-day[data-date="2014-11-06"]')
+        expect(allBgEls[0]).toBeRightOf(dayGridWrapper.getDayEl('2014-11-06'))
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
@@ -148,8 +148,8 @@ describe('background events', function() {
         expect(allBgEls.length).toBe(2)
         expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
         expect(dayGridWrapper.getBgEventEls(2).length).toBe(1)
-        expect(allBgEls[0]).toBeLeftOf('.fc-day[data-date="2014-11-02"]')
-        expect(allBgEls[1]).toBeRightOf('.fc-day[data-date="2014-11-12"]')
+        expect(allBgEls[0]).toBeLeftOf(dayGridWrapper.getDayEl('2014-11-02'))
+        expect(allBgEls[1]).toBeRightOf(dayGridWrapper.getDayEl('2014-11-12'))
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
@@ -169,7 +169,7 @@ describe('background events', function() {
 
           expect(allBgEls.length).toBe(1)
           expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
-          expect(allBgEls[0]).toBeLeftOf('.fc-day-grid .fc-row:eq(1) .fc-week-number span')
+          expect(allBgEls[0]).toBeLeftOf(dayGridWrapper.getWeekCell(1))
           expect(dayGridWrapper.getEventEls().length).toBe(0)
         })
       })
@@ -200,10 +200,10 @@ describe('background events', function() {
           let secondRowBgEls = dayGridWrapper.getBgEventEls(1)
 
           expect(secondRowBgEls[0])
-            .toBeLeftOf('.fc-day[data-date="2014-11-05"]')
+            .toBeLeftOf(dayGridWrapper.getDayEl('2014-11-05'))
 
           expect(secondRowBgEls[1])
-            .toBeRightOf('.fc-day[data-date="2014-11-03"]')
+            .toBeRightOf(dayGridWrapper.getDayEl('2014-11-03'))
 
           expect(dayGridWrapper.getEventEls().length).toBe(0)
         })
@@ -228,10 +228,10 @@ describe('background events', function() {
           expect(dayGridWrapper.getBgEventEls(5).length).toBe(1)
 
           expect(dayGridWrapper.getBgEventEls(1)[0])
-            .toBeLeftOf('.fc-day[data-date="2014-11-05"]')
+            .toBeLeftOf(dayGridWrapper.getDayEl('2014-11-05'))
 
           expect(dayGridWrapper.getBgEventEls(2)[0])
-            .toBeRightOf('.fc-day[data-date="2014-11-09"]')
+            .toBeRightOf(dayGridWrapper.getDayEl('2014-11-09'))
 
           expect(dayGridWrapper.getEventEls().length).toBe(0)
         })
@@ -255,7 +255,7 @@ describe('background events', function() {
           expect(dayGridWrapper.getBgEventEls(5).length).toBe(1)
 
           expect(dayGridWrapper.getBgEventEls(1))
-            .toBeRightOf('.fc-day[data-date="2014-11-04"]')
+            .toBeRightOf(dayGridWrapper.getDayEl('2014-11-04'))
         })
 
         it('render correctly when ends after end of month', function() {
@@ -278,7 +278,7 @@ describe('background events', function() {
           expect(dayGridWrapper.getBgEventEls(5).length).toBe(0)
 
           expect(dayGridWrapper.getBgEventEls(4))
-            .toBeLeftOf('.fc-day[data-date="2014-11-28"]')
+            .toBeLeftOf(dayGridWrapper.getDayEl('2014-11-28'))
         })
 
         it('render correctly with two related events, in reverse order', function() {
@@ -390,10 +390,15 @@ describe('background events', function() {
         let allBgEvents = timeGridWrapper.getBgEventEls()
 
         expect(allBgEvents.length).toBe(1)
-        expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1) // column 2
-        expect(allBgEvents[0]).toBeBelow('.fc-slats tr:eq(0)') // should be 1am (eq(1)) but FF cmplaning
-        expect(allBgEvents[0]).toBeAbove('.fc-slats tr:eq(10)') // 5am
-        expect(timeGridWrapper.getEventEls().length).toBe(0)
+        expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1) // column
+        expect(timeGridWrapper.getEventEls().length).toBe(0) // no fg events
+
+        let rect = allBgEvents[0].getBoundingClientRect()
+        let topDiff = Math.abs(rect.top - timeGridWrapper.getTimeTop('01:00:00')) // TODO: make more exact
+        let bottomDiff = Math.abs(rect.bottom - timeGridWrapper.getTimeTop('05:00:00'))
+
+        expect(topDiff).toBeLessThanOrEqual(1)
+        expect(bottomDiff).toBeLessThanOrEqual(1)
       })
 
       it('render correctly spanning multiple days', function() {
@@ -491,8 +496,13 @@ describe('background events', function() {
 
         expect(allBgEls.length).toBe(1)
         expect(timeGridWrapper.queryBgEventsInCol(2).length).toBe(1)
-        expect(allBgEls[0]).toBeBelow('.fc-slats tr:eq(0)') // should be 1am (eq(1)) but FF cmplaining
-        expect(allBgEls[0]).toBeAbove('.fc-slats tr:eq(10)') // 5am
+
+        let rect = allBgEls[0].getBoundingClientRect()
+        let topDiff = Math.abs(rect.top - timeGridWrapper.getTimeTop('01:00:00'))
+        let bottomDiff = Math.abs(rect.bottom - timeGridWrapper.getTimeTop('05:00:00'))
+
+        expect(topDiff).toBeLessThanOrEqual(1) // TODO: tighten up
+        expect(bottomDiff).toBeLessThanOrEqual(1)
       })
 
       it('render correctly spanning multiple days', function() {
@@ -682,8 +692,11 @@ describe('background events', function() {
           expect(timeGridWrapper.queryBgEventsInCol(4).length).toBe(1)
           expect(timeGridWrapper.queryBgEventsInCol(5).length).toBe(1)
           expect(timeGridWrapper.queryBgEventsInCol(6).length).toBe(1)
-          expect(allBgEls[3]).toBeAbove('.fc-slats tr:eq(2)') // first part before 1am
-          expect(allBgEls[4]).toBeBelow('.fc-slats tr:eq(9)') // second part after 5am
+
+          expect(allBgEls[3].getBoundingClientRect().top)
+            .toBeLessThan(timeGridWrapper.getTimeTop('01:00:00'))
+          expect(allBgEls[4].getBoundingClientRect().bottom)
+            .toBeGreaterThan(timeGridWrapper.getTimeTop('05:00:00'))
         })
 
       })

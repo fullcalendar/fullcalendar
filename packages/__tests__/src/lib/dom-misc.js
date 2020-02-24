@@ -34,11 +34,6 @@ export function getStockScrollbarWidths(dir) {
 }
 
 
-export function isElWithinRtl(el) {
-  return el.closest('.fc').hasClass('fc-rtl')
-}
-
-
 beforeEach(function() {
   jasmine.addMatchers({
 

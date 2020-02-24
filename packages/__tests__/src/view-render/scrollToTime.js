@@ -1,19 +1,22 @@
+import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
+
 describe('scrollToTime method', function() {
 
   it('accepts a object duration input', function() {
-    initCalendar({
+    let calendar = initCalendar({
       scrollTime: 0,
       defaultView: 'timeGridWeek'
     })
+    let viewWrapper = new TimeGridViewWrapper(calendar)
 
-    currentCalendar.scrollToTime({ hours: 2 })
+    calendar.scrollToTime({ hours: 2 })
 
     // NOTE: c&p'd from scrollTime tests
-    var slotCell = $('.fc-slats tr:eq(4)') // 2am slot
-    var slotTop = slotCell.position().top
-    var scrollContainer = $('.scrollgrid .fc-body:last-child .fc-scroller')
-    var scrollTop = scrollContainer.scrollTop()
+    var slotTop = viewWrapper.timeGrid.getTimeTop('02:00:00') - viewWrapper.timeGrid.el.getBoundingClientRect().top
+    var scrollEl = viewWrapper.getScrollerEl()
+    var scrollTop = scrollEl.scrollTop
     var diff = Math.abs(slotTop - scrollTop)
+
     expect(slotTop).toBeGreaterThan(0)
     expect(scrollTop).toBeGreaterThan(0)
     expect(diff).toBeLessThan(3)

@@ -1,4 +1,6 @@
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper'
 
 describe('short event rendering with timeGridEventMinHeight', function() {
   pushOptions({
@@ -31,22 +33,26 @@ describe('short event rendering with timeGridEventMinHeight', function() {
     })
 
     it('renders the second short event side by side with the first one', function() {
-      initCalendar()
-      var el2 = $('.fc-short').eq(1)
+      let calendar = initCalendar()
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let eventEls = timeGridWrapper.getEventEls()
 
-      expect(el2.css('left')).not.toEqual('0px')
+      expect(queryEventElInfo(eventEls[1]).isShort).toBe(true)
+      expect($(eventEls[1]).css('left')).not.toEqual('0px')
     })
 
     it('prevents the events to overlap when we pass the slotEventOverlap: false option', function() {
-      initCalendar({
+      let calendar = initCalendar({
         slotEventOverlap: false
       })
+      let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+      let eventEls = timeGridWrapper.getEventEls()
 
-      var el1 = $('.fc-short').eq(0)
-      var el2 = $('.fc-short').eq(1)
+      expect(queryEventElInfo(eventEls[0]).isShort).toBe(true)
+      expect(queryEventElInfo(eventEls[1]).isShort).toBe(true)
 
-      expect(el1.css('left')).toEqual('0px')
-      expect(el2.css('left')).not.toEqual('0px')
+      expect($(eventEls[0]).css('left')).toEqual('0px')
+      expect($(eventEls[1]).css('left')).not.toEqual('0px')
     })
   })
 })

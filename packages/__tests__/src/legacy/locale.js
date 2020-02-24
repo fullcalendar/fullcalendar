@@ -1,6 +1,8 @@
 import esLocale from '@fullcalendar/core/locales/es'
 import frLocale from '@fullcalendar/core/locales/fr'
 import arLocale from '@fullcalendar/core/locales/ar'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('locale', function() {
   pushOptions({
@@ -8,7 +10,7 @@ describe('locale', function() {
   })
 
   it('works when certain locale has no FC settings defined', function() {
-    initCalendar({
+    let calendar = initCalendar({
       locale: 'en-asdf',
       defaultView: 'timeGridWeek',
       defaultDate: '2014-12-25',
@@ -16,29 +18,33 @@ describe('locale', function() {
         { title: 'Christmas', start: '2014-12-25T10:00:00' }
       ]
     })
-    expect(
-      $('.fc-day-header:first').text()
-    ).toMatch(/^Sun\.? 12[-/ ]21$/)
-    expect($('.fc-event .fc-time')).toHaveText('10:00')
+    let headerWrapper = new TimeGridViewWrapper(calendar).header
+
+    expect(headerWrapper.getCellText(0)).toMatch(/^Sun\.? 12[-/ ]21$/)
+
+    let calendarWrapper = new CalendarWrapper(calendar)
+    let eventEl = calendarWrapper.getFirstEventEl()
+    let eventInfo = calendarWrapper.getEventElInfo(eventEl)
+
+    expect(eventInfo.timeText).toBe('10:00')
   })
 
   it('allows dynamic setting', function() {
-    initCalendar({
+    let calendar = initCalendar({
       locale: 'es',
       defaultDate: '2016-07-10',
       defaultView: 'dayGridMonth'
     })
+    let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-    var calendarEl = currentCalendar.el
-
-    expect($('h2', calendarEl)).toHaveText('julio de 2016')
-    expect($(calendarEl)).not.toHaveClass('fc-rtl')
+    expect(toolbarWrapper.getTitleText()).toBe('julio de 2016')
+    expect(calendar.getOption('dir')).toBe('ltr')
 
     currentCalendar.setOption('locale', 'fr')
-    expect($('h2', calendarEl)).toHaveText('juillet 2016')
+    expect(toolbarWrapper.getTitleText()).toBe('juillet 2016')
 
     currentCalendar.setOption('locale', 'ar') // NOTE: we had problems testing for RTL title text
-    expect($(calendarEl)).toHaveClass('fc-rtl')
+    expect(calendar.getOption('dir')).toBe('rtl')
   })
 
 })

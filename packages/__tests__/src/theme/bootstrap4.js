@@ -1,5 +1,6 @@
 import BootstrapPlugin from '@fullcalendar/bootstrap'
 import DayGridPlugin from '@fullcalendar/daygrid'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('bootstrap theme', function() {
   pushOptions({
@@ -13,26 +14,32 @@ describe('bootstrap theme', function() {
     })
 
     it('renders default', function() {
-      initCalendar()
-      expect($('.fa')).toHaveClass('fa-chevron-right')
+      let calendar = initCalendar()
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      let buttonInfo = toolbarWrapper.getButtonInfo('next', 'fa')
+
+      expect(buttonInfo.iconName).toBe('chevron-right')
     })
 
     it('renders a customized icon', function() {
-      initCalendar({
+      let calendar = initCalendar({
         bootstrapFontAwesome: {
           next: 'asdf'
         }
       })
-      expect($('.fa')).toHaveClass('fa-asdf')
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      let buttonInfo = toolbarWrapper.getButtonInfo('next', 'fa')
+
+      expect(buttonInfo.iconName).toBe('asdf')
     })
 
     it('renders text when specified as false', function() {
-      initCalendar({
+      let calendar = initCalendar({
         bootstrapFontAwesome: false
       })
-      expect($('.fa')).not.toBeInDOM()
-      expect($('.fc-next-button')).toHaveText('next')
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+
+      expect(toolbarWrapper.getButtonInfo('next', 'fa').iconName).toBeFalsy()
     })
   })
-
 })

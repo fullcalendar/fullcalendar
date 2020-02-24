@@ -42,6 +42,15 @@ export default class DayHeaderWrapper {
   }
 
 
+  getCellInfo() { // all
+    return this.getCellEls().map((cellEl) => ({
+      text: $(cellEl).text(),
+      date: parseIsoAsUtc(cellEl.getAttribute('data-date')),
+      isToday: cellEl.classList.contains('fc-today')
+    }))
+  }
+
+
   getAxisEl() {
     return this.el.querySelector('.fc-axis')
   }

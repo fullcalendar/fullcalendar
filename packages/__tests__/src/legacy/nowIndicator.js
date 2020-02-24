@@ -1,86 +1,63 @@
 import { getBoundingRect } from '../lib/dom-geom'
-import { isElWithinRtl } from '../lib/dom-misc'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('now indicator', function() {
-  var options
-
-  beforeEach(function() {
-    options = {
-      now: '2015-12-26T06:00:00',
-      scrollTime: '00:00'
-    }
+  pushOptions({
+    now: '2015-12-26T06:00:00',
+    scrollTime: '00:00',
+    defaultView: 'timeGridWeek'
   })
 
-  describe('when in month view', function() {
-    beforeEach(function() {
-      options.defaultView = 'dayGridMonth'
-    })
-
-    it('doesn\'t render even when activated', function() {
-      initCalendar(options)
-      expect(isNowIndicatorRendered()).toBe(false)
-    })
+  it('doesn\'t render by default', function() {
+    let calendar = initCalendar()
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    expect(timeGridWrapper.hasNowIndicator()).toBe(false)
   })
 
-  describe('when in week view', function() {
-    beforeEach(function() {
-      options.defaultView = 'timeGridWeek'
+  describe('when activated', function() {
+    pushOptions({
+      nowIndicator: true
     })
 
-    it('doesn\'t render by default', function() {
-      initCalendar(options)
-      expect(isNowIndicatorRendered()).toBe(false)
-    })
+    describeOptions('dir', {
+      'when LTR': 'ltr',
+      'when RTL': 'rtl'
+    }, function() {
 
-    describe('when activated', function() {
-      beforeEach(function() {
-        options.nowIndicator = true
-      });
-
-      [ 'ltr', 'rtl' ].forEach(function(dir) {
-
-        describe('when ' + dir, function() {
-          beforeEach(function() {
-            options.dir = dir
-          })
-
-          it('doesn\'t render when out of view', function() {
-            options.defaultDate = '2015-12-27' // sun of next week
-            initCalendar(options)
-            expect(isNowIndicatorRendered()).toBe(false)
-          })
-
-          it('renders on correct time', function() {
-            let calendar = initCalendar(options)
-            isNowIndicatorRenderedAt(calendar, '2015-12-26T06:00:00Z')
-          })
-
-          it('renders on correct time2', function() {
-            options.now = '2015-12-20T02:30:00'
-            let calendar = initCalendar(options)
-            isNowIndicatorRenderedAt(calendar, '2015-12-20T02:30:00Z')
-          })
+      it('doesn\'t render when out of view', function() {
+        let calendar = initCalendar({
+          defaultDate: '2015-12-27' // sun of next week
         })
+        let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+        expect(timeGridWrapper.hasNowIndicator()).toBe(false)
+      })
+
+      it('renders on correct time', function() {
+        let calendar = initCalendar()
+        isNowIndicatorRenderedAt(calendar, '2015-12-26T06:00:00Z')
+      })
+
+      it('renders on correct time2', function() {
+        let calendar = initCalendar({
+          now: '2015-12-20T02:30:00'
+        })
+        isNowIndicatorRenderedAt(calendar, '2015-12-20T02:30:00Z')
       })
     })
   })
 
-  function isNowIndicatorRendered() {
-    return $('.fc-now-indicator').length > 0
-  }
 
   function isNowIndicatorRenderedAt(calendar, date) {
     let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
-    var line = timeGridWrapper.getLine(date)
-    var lineEl = $('.fc-now-indicator-line')
-    var arrowEl = $('.fc-now-indicator-arrow')
+    let line = timeGridWrapper.getLine(date)
+    let lineEl = timeGridWrapper.getNowIndicatorLineEl()
+    let arrowEl = timeGridWrapper.getNowIndicatorArrowEl()
 
-    expect(lineEl.length).toBe(1)
-    expect(arrowEl.length).toBe(1)
+    expect(lineEl).toBeTruthy()
+    expect(arrowEl).toBeTruthy()
 
-    var lineElRect = getBoundingRect(lineEl)
-    var arrowElRect = getBoundingRect(arrowEl)
+    let lineElRect = getBoundingRect(lineEl)
+    let arrowElRect = getBoundingRect(arrowEl)
 
     expect(Math.abs(
       (lineElRect.top + lineElRect.bottom) / 2 -
@@ -91,11 +68,13 @@ describe('now indicator', function() {
       line.top
     )).toBeLessThan(2)
 
-    var timeGridRect = getBoundingRect('.fc-time-grid')
-    if (isElWithinRtl(arrowEl)) {
+    let timeGridRect = getBoundingRect(timeGridWrapper.el)
+
+    if (calendar.getOption('dir') === 'rtl') {
       expect(Math.abs(
         arrowElRect.right - timeGridRect.right
       )).toBeLessThan(2)
+
     } else {
       expect(Math.abs(
         arrowElRect.left - timeGridRect.left

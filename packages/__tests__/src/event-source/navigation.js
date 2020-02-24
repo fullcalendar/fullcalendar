@@ -1,10 +1,11 @@
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
 describe('event fetching while date-navigating', function() {
 
   // https://github.com/fullcalendar/fullcalendar/issues/4975
   it('renders events when doing next() and then prev()', function(done) {
 
-    initCalendar({
+    let calendar = initCalendar({
       defaultView: 'dayGridMonth',
       defaultDate: '2020-02-11',
       events: function(arg, callback) {
@@ -25,6 +26,7 @@ describe('event fetching while date-navigating', function() {
         }
       }
     })
+    let calendarWrapper = new CalendarWrapper(calendar)
 
     setTimeout(function() {
 
@@ -34,7 +36,7 @@ describe('event fetching while date-navigating', function() {
         currentCalendar.prev()
         setTimeout(function() {
 
-          expect($('.fc-event').length).toBe(1)
+          expect(calendarWrapper.getEventEls().length).toBe(1)
           done()
 
         }, 1000) // after everything

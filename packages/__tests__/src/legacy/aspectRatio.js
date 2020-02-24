@@ -8,7 +8,7 @@ describe('aspectRatio', function() {
 
   describe('when default settings are used', function() {
 
-    var elementWidth = 675
+    const elementWidth = 675
 
     it('view div should use the ratio 1:35 to set height', function() {
       let calendar = initCalendar({}, getCalendarElement(elementWidth))
@@ -25,15 +25,13 @@ describe('aspectRatio', function() {
       var rect = viewContainerEl.getBoundingClientRect()
       expect(Math.round(rect.width)).toEqual(elementWidth)
     })
-
   })
 
   describe('when initializing the aspectRatio', function() {
 
-    var elementWidth = 1000
+    const elementWidth = 1000
 
     describe('to 2', function() {
-
       pushOptions({
         aspectRatio: 2
       })
@@ -54,11 +52,9 @@ describe('aspectRatio', function() {
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(200)
       })
-
     })
 
     describe('to 1', function() {
-
       pushOptions({
         aspectRatio: 1
       })
@@ -79,11 +75,9 @@ describe('aspectRatio', function() {
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(100)
       })
-
     })
 
     describe('to less than 0.5', function() {
-
       pushOptions({
         aspectRatio: 0.4
       })
@@ -108,7 +102,6 @@ describe('aspectRatio', function() {
     })
 
     describe('to negative', function() {
-
       pushOptions({
         aspectRatio: -2
       })
@@ -129,11 +122,9 @@ describe('aspectRatio', function() {
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
-
     })
 
     describe('to zero', function() {
-
       pushOptions({
         aspectRatio: 0
       })
@@ -154,11 +145,9 @@ describe('aspectRatio', function() {
         var ratio = Math.round(rect.width / rect.height * 100)
         expect(Math.round(ratio)).toEqual(50)
       })
-
     })
 
     describe('to very large', function() {
-
       pushOptions({
         aspectRatio: 4000
       })
@@ -175,14 +164,10 @@ describe('aspectRatio', function() {
         let calendar = initCalendar({}, getCalendarElement(elementWidth))
         let viewContainerEl = new CalendarWrapper(calendar).getViewContainerEl()
 
-        var actualHeight = viewContainerEl.getBoundingClientRect().height
-        $('tr.fc-week td:first-child > div').css('min-height', '').css('background', 'red')
+        let actualHeight = viewContainerEl.getBoundingClientRect().height
         var naturalHeight = viewContainerEl.getBoundingClientRect().height
         expect(Math.round(actualHeight)).toEqual(Math.round(naturalHeight))
       })
-
     })
-
   })
-
 })

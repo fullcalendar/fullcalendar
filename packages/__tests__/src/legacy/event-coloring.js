@@ -1,13 +1,13 @@
 import { RED_REGEX } from '../lib/dom-misc'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('event coloring', function() {
-
   pushOptions({
-    defaultDate: '2014-11-04'
+    defaultDate: '2014-11-04',
+    allDaySlot: false
   })
 
   describe('when in month view', function() {
-
     pushOptions({
       defaultView: 'dayGridMonth'
     })
@@ -16,10 +16,8 @@ describe('event coloring', function() {
   })
 
   describe('when in week view', function() {
-
     pushOptions({
-      defaultView: 'timeGridWeek',
-      allDaySlot: false
+      defaultView: 'timeGridWeek'
     })
 
     defineViewTests(true)
@@ -219,8 +217,12 @@ describe('event coloring', function() {
   }
 
   function getEventCss(prop, rendering) {
-    var el = $(rendering === 'background' ? '.fc-bgevent' : '.fc-event')
-    return el.css(prop)
+    let calendarWrapper = new CalendarWrapper(currentCalendar)
+    let eventEl = rendering === 'background'
+      ? calendarWrapper.getBgEventEls()[0]
+      : calendarWrapper.getEventEls()[0]
+
+    return $(eventEl).css(prop)
   }
 
   function getTestEvent(defaultOptions, extraOptions) {
@@ -240,6 +242,6 @@ describe('event coloring', function() {
       options.start += 'T01:00:00'
     }
     return options
-  };
+  }
 
 })

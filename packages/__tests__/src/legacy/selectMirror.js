@@ -1,3 +1,5 @@
+import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
+
 describe('selectMirror', function() {
 
   pushOptions({
@@ -8,7 +10,7 @@ describe('selectMirror', function() {
   })
 
   it('goes through eventRender and eventPositioned', function() {
-    initCalendar({
+    let calendar = initCalendar({
       eventRender(arg) {
         expect(arg.isMirror).toBe(true)
         $(arg.el).addClass('eventDidRender')
@@ -19,9 +21,12 @@ describe('selectMirror', function() {
       }
     })
 
-    currentCalendar.select('2014-08-04T01:00:00Z', '2014-08-04T04:00:00Z')
+    calendar.select('2014-08-04T01:00:00Z', '2014-08-04T04:00:00Z')
 
-    expect($('.fc-mirror')).toHaveClass('eventDidRender')
-    expect($('.fc-mirror')).toHaveClass('eventDidPosition')
+    let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
+    let mirrorEls = timeGridWrapper.getMirrorEls()
+    expect(mirrorEls.length).toBe(1)
+    expect(mirrorEls[0]).toHaveClass('eventDidRender')
+    expect(mirrorEls[0]).toHaveClass('eventDidPosition')
   })
 })

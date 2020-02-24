@@ -1,5 +1,6 @@
-describe('removeEventSources', function() {
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
+describe('removeEventSources', function() {
   pushOptions({
     defaultDate: '2014-08-01',
     defaultView: 'timeGridDay',
@@ -10,28 +11,32 @@ describe('removeEventSources', function() {
     ]
   })
 
-  describe('when called with no arguments', function() { //
+  describe('when called with no arguments', function() {
+
     it('removes all sources', function() {
+      let calendar = initCalendar()
+      let calendarWrapper = new CalendarWrapper(calendar)
 
-      initCalendar()
-      expect($('.fc-event').length).toBe(3)
+      expect(calendarWrapper.getEventEls().length).toBe(3)
 
-      currentCalendar.removeAllEventSources()
+      calendar.removeAllEventSources()
 
-      expect($('.fc-event').length).toBe(0)
+      expect(calendarWrapper.getEventEls().length).toBe(0)
     })
   })
 
   describe('when called with specific IDs', function() {
+
     it('removes only events with matching sources', function() {
+      let calendar = initCalendar()
+      let calendarWrapper = new CalendarWrapper(calendar)
 
-      initCalendar()
-      expect($('.fc-event').length).toBe(3)
+      expect(calendarWrapper.getEventEls().length).toBe(3)
 
-      currentCalendar.getEventSourceById(1).remove()
-      currentCalendar.getEventSourceById(3).remove()
+      calendar.getEventSourceById(1).remove()
+      calendar.getEventSourceById(3).remove()
 
-      expect($('.fc-event').length).toBe(1)
+      expect(calendarWrapper.getEventEls().length).toBe(1)
       expect($('.event2').length).toBe(1)
     })
   })

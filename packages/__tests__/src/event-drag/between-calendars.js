@@ -5,6 +5,7 @@ import TimeGridPlugin from '@fullcalendar/timegrid'
 import { getRectCenter } from '../lib/geom'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('dragging events between calendars', function() {
@@ -89,11 +90,9 @@ describe('dragging events between calendars', function() {
 
     let eventEl = dayGridWrapper0.getEventEls()[0]
     let dayEl = dayGridWrapper1.getDayEls('2019-01-05')[0]
-    let point0 = getRectCenter(eventEl.getBoundingClientRect())
     let point1 = getRectCenter(dayEl.getBoundingClientRect())
 
     $(eventEl).simulate('drag', {
-      point: point0,
       end: point1,
       callback: function() {
         expect(triggerNames).toEqual([ 'eventLeave', 'drop', 'eventReceive' ])
@@ -133,12 +132,11 @@ describe('dragging events between calendars', function() {
     calendar0.render()
     calendar1.render()
 
-    let eventEl = new CalendarWrapper(calendar0).getEventEls()[0]
-    let point0 = getRectCenter(eventEl.getBoundingClientRect())
-    let point1 = getRectCenter(el1.querySelector('.scrollgrid .fc-body:last-child .fc-scroller').getBoundingClientRect())
+    let eventEl = new CalendarWrapper(calendar0).getEventEls()[0] // of the source calendar
+    let destViewWrapper = new TimeGridViewWrapper(calendar1)
+    let point1 = getRectCenter(destViewWrapper.getScrollerEl().getBoundingClientRect())
 
     $(eventEl).simulate('drag', {
-      point: point0,
       end: point1
     })
   })

@@ -32,7 +32,8 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dropDateHasTime = true
     }
 
-    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : $(new CalendarWrapper(calendar).getFirstEventEl())
+    let calendarWrapper = new CalendarWrapper(calendar)
+    $eventEl = eventClassName ? $(`.${eventClassName}:first`) : $(calendarWrapper.getFirstEventEl())
     expect($eventEl.length).toBe(1)
 
     if (dropDateHasTime) {
@@ -63,7 +64,7 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
       dx: dx,
       dy: dy,
       onBeforeRelease: function() {
-        allowed = !$('body').hasClass('fc-not-allowed')
+        allowed = calendarWrapper.isAllowingDragging()
         expect(allowed).toBe(expectSuccess)
       },
       onRelease: function() {
@@ -126,8 +127,9 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       resizeDateHasTime = true
     }
 
+    let calendarWrapper = new CalendarWrapper(calendar)
     $eventEl = eventClassName ? $(`.${eventClassName}:first`) : (() => {
-      let eventEls = new CalendarWrapper(calendar).getEventEls()
+      let eventEls = calendarWrapper.getEventEls()
       return $(eventEls[eventEls.length - 1]) // the last one
     })()
     $dragEl = $eventEl.find('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
@@ -155,7 +157,7 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
       dx: dx,
       dy: dy,
       onBeforeRelease: function() {
-        allowed = !$('body').hasClass('fc-not-allowed')
+        allowed = calendarWrapper.isAllowingDragging()
       },
       onRelease: function() {
         var eventObj
@@ -212,10 +214,12 @@ export function testSelection(options, start, end, expectSuccess, callback) {
       arg.end.valueOf() === end.valueOf()
   }
   spyOn(options, 'select').and.callThrough()
-  initCalendar(options)
+
+  let calendar = initCalendar(options)
+  let calendarWrapper = new CalendarWrapper(calendar)
 
   if (!allDay) {
-    var timeGridWrapper = new TimeGridViewWrapper(currentCalendar).timeGrid
+    var timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
     $firstDayEl = $(timeGridWrapper.getDayEls(start))
     $lastDayEl = $(timeGridWrapper.getDayEls(end))
     firstSlatIndex = start.getUTCHours() * 2 + (start.getUTCMinutes() / 30) // assumes slotDuration:'30:00'
@@ -227,7 +231,7 @@ export function testSelection(options, start, end, expectSuccess, callback) {
     dy = $lastSlatEl.offset().top - $firstSlatEl.offset().top
     $dragEl = $firstSlatEl
   } else {
-    var dayGridWrapper = new DayGridViewWrapper(currentCalendar).dayGrid
+    var dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     $firstDayEl = $(dayGridWrapper.getDayEl(start))
     $lastDayEl = $(dayGridWrapper.getDayEl(new Date(end.valueOf() - 1))) // inclusive
     dy = $lastDayEl.offset().top - $firstDayEl.offset().top
@@ -242,7 +246,7 @@ export function testSelection(options, start, end, expectSuccess, callback) {
     dx: dx,
     dy: dy,
     onBeforeRelease: function() {
-      allowed = !$('body').hasClass('fc-not-allowed')
+      allowed = calendarWrapper.isAllowingDragging()
     },
     onRelease: function() {
       if (expectSuccess) {

@@ -1,6 +1,8 @@
+import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
+
 describe('weekViewRender', function() {
 
-  var nowStr = '2018-05-28'
+  const nowStr = '2018-05-28' // is a Monday
 
   pushOptions({
     now: nowStr,
@@ -9,23 +11,13 @@ describe('weekViewRender', function() {
 
   describe('verify th class for today', function() {
 
-    it('should have fc-today class only on "today"', function() {
-      initCalendar()
-      var foundToday = false
+    it('should have today class only on "today"', function() {
+      let calendar = initCalendar()
+      let headerWrapper = new TimeGridViewWrapper(calendar).header
+      let cellInfo = headerWrapper.getCellInfo()
 
-      $('th.fc-day-header', currentCalendar.el).each(function(i, headerNode) {
-        var headerEl = $(headerNode)
-        var dateMatchesToday = headerNode.getAttribute('data-date') === nowStr
-        var hasTodayClass = headerEl.hasClass('fc-today')
-
-        expect(dateMatchesToday).toBe(hasTodayClass)
-
-        if (hasTodayClass) {
-          foundToday = true
-        }
-      })
-
-      expect(foundToday).toBe(true)
+      expect(cellInfo[1].date).toEqualDate(nowStr)
+      expect(cellInfo[1].isToday).toBe(true)
     })
   })
 })

@@ -1,4 +1,5 @@
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
 describe('nextDayThreshold', function() {
 
@@ -7,7 +8,7 @@ describe('nextDayThreshold', function() {
   //   TODO: detect 2 or more different types of Duration-ish parsing
 
   it('renders an event before the threshold', function() {
-    initCalendar({
+    let calendar = initCalendar({
       nextDayThreshold: '10:00:00',
       defaultDate: '2014-06',
       defaultView: 'dayGridMonth',
@@ -19,11 +20,11 @@ describe('nextDayThreshold', function() {
         }
       ]
     })
-    expect(renderedDayCount()).toBe(2)
+    expect(renderedDayCount(calendar)).toBe(2)
   })
 
   it('renders an event equal to the threshold', function() {
-    initCalendar({
+    let calendar = initCalendar({
       nextDayThreshold: '10:00:00',
       defaultDate: '2014-06',
       defaultView: 'dayGridMonth',
@@ -35,11 +36,11 @@ describe('nextDayThreshold', function() {
         }
       ]
     })
-    expect(renderedDayCount()).toBe(3)
+    expect(renderedDayCount(calendar)).toBe(3)
   })
 
   it('renders an event after the threshold', function() {
-    initCalendar({
+    let calendar = initCalendar({
       nextDayThreshold: '10:00:00',
       defaultDate: '2014-06',
       defaultView: 'dayGridMonth',
@@ -51,7 +52,7 @@ describe('nextDayThreshold', function() {
         }
       ]
     })
-    expect(renderedDayCount()).toBe(3)
+    expect(renderedDayCount(calendar)).toBe(3)
   })
 
   it('won\'t render an event that ends before the first day\'s threshold', function() {
@@ -70,12 +71,17 @@ describe('nextDayThreshold', function() {
   })
 
 
-  function renderedDayCount() { // assumes only one event on the calendar
-    var cellWidth = $('.fc-sun').outerWidth() // works with dayGrid and timeGrid
-    var totalWidth = 0
-    $('.fc-event').each(function() {
+  function renderedDayCount(calendar) { // assumes only one event on the calendar
+    let headerWrapper = new DayGridViewWrapper(calendar).header
+    let dayEl = headerWrapper.getCellEl(0)
+    let cellWidth = $(dayEl).outerWidth() // works with dayGrid and timeGrid
+    let totalWidth = 0
+
+    let eventEls = new CalendarWrapper(calendar).getEventEls()
+    $(eventEls).each(function() {
       totalWidth += $(this).outerWidth()
     })
+
     return Math.round(totalWidth / cellWidth)
   }
 

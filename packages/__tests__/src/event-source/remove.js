@@ -1,10 +1,12 @@
+import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
+
 describe('event source remove', function() {
   pushOptions({
     defaultDate: '2014-08-01'
   })
 
   it('correctly removes events provided via `eventSources` at initialization', function() {
-    initCalendar({
+    let calendar = initCalendar({
       eventSources: [ {
         id: '5',
         events: [
@@ -13,15 +15,19 @@ describe('event source remove', function() {
         ]
       } ]
     })
+    let calendarWrapper = new CalendarWrapper(calendar)
 
-    expectEventCnt(2)
-    currentCalendar.getEventSourceById('5').remove()
-    expectEventCnt(0)
+    expect(calendar.getEvents().length).toBe(2)
+    expect(calendarWrapper.getEventEls().length).toBe(2)
+
+    calendar.getEventSourceById('5').remove()
+
+    expect(calendar.getEvents().length).toBe(0)
+    expect(calendarWrapper.getEventEls().length).toBe(0)
   })
 
   it('won\'t render removed events when subsequent addEventSource', function(done) {
-
-    var source1 = {
+    let source1 = {
       id: '1',
       events: function(arg, callback) {
         setTimeout(function() {
@@ -34,7 +40,7 @@ describe('event source remove', function() {
       }
     }
 
-    var source2 = {
+    let source2 = {
       id: '2',
       events: function(arg, callback) {
         setTimeout(function() {
@@ -47,10 +53,11 @@ describe('event source remove', function() {
       }
     }
 
-    initCalendar({
+    let calendar = initCalendar({
       eventSources: [ source1 ],
       _eventsPositioned() {
-        if (!$('.fc-event').length) {
+        let eventEls = new CalendarWrapper(this).getEventEls()
+        if (!eventEls.length) {
           ; // might have rendered no events after removeEventSource call
         } else {
           expect($('.event1').length).toBe(0)
@@ -60,13 +67,7 @@ describe('event source remove', function() {
       }
     })
 
-    currentCalendar.getEventSourceById('1').remove()
-    currentCalendar.addEventSource(source2)
+    calendar.getEventSourceById('1').remove()
+    calendar.addEventSource(source2)
   })
-
-  function expectEventCnt(cnt) {
-    expect($('.fc-event').length).toBe(cnt)
-    expect(currentCalendar.getEvents().length).toBe(cnt)
-  }
-
 })

@@ -1,17 +1,8 @@
+import { getLegacyWeekNumberCounts } from "../lib/wrappers/DayGridWrapper"
+
 describe('weekNumbers', function() {
 
-  var counts
-
-  beforeEach(function() {
-    counts = {}
-  })
-
-  afterEach(function() {
-    currentCalendar.destroy()
-  })
-
   describe('when using month view', function() {
-
     pushOptions({
       defaultView: 'dayGridMonth',
       fixedWeekCount: true // will make 6 rows
@@ -22,7 +13,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should not display week numbers at all', function() {
           initCalendar()
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -32,7 +23,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -42,7 +33,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -60,7 +51,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -70,7 +61,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -80,7 +71,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -96,9 +87,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should display week numbers along the side only', function() {
           initCalendar()
-          counts = getCounts()
-          // TODO: Is it possible to remove class fc-week-number from
-          // headers and fillers, bringing allWeekNumbers down to 6?
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.colWeekNumbers).toEqual(6)
           expect(counts.cellWeekNumbers).toEqual(0)
           expect(counts.cornerWeekNumbers).toEqual(0)
@@ -110,9 +99,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
-          // TODO: Is it possible to remove class fc-week-number from
-          // headers and fillers, bringing allWeekNumbers down to 6?
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.colWeekNumbers).toEqual(6)
           expect(counts.cellWeekNumbers).toEqual(0)
           expect(counts.cornerWeekNumbers).toEqual(0)
@@ -124,7 +111,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.colWeekNumbers).toEqual(0)
           expect(counts.cellWeekNumbers).toEqual(6)
           expect(counts.cornerWeekNumbers).toEqual(0)
@@ -146,7 +133,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should not display week numbers at all', function() {
           initCalendar()
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -156,7 +143,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -166,7 +153,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -182,7 +169,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should not display week numbers at all', function() {
           initCalendar()
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -192,7 +179,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -202,7 +189,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -218,9 +205,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should display week numbers along the side only', function() {
           initCalendar()
-          counts = getCounts()
-          // TODO: Is it possible to remove class fc-week-number from
-          // headers and fillers, bringing allWeekNumbers down to 1?
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.colWeekNumbers).toEqual(1)
           expect(counts.cellWeekNumbers).toEqual(0)
           expect(counts.cornerWeekNumbers).toEqual(0)
@@ -232,9 +217,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
-          // TODO: Is it possible to remove class fc-week-number from
-          // headers and fillers, bringing allWeekNumbers down to 1?
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.colWeekNumbers).toEqual(1)
           expect(counts.cellWeekNumbers).toEqual(0)
           expect(counts.cornerWeekNumbers).toEqual(0)
@@ -246,7 +229,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.colWeekNumbers).toEqual(0)
           expect(counts.cellWeekNumbers).toEqual(1)
           expect(counts.cornerWeekNumbers).toEqual(0)
@@ -268,7 +251,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should not display week numbers at all', function() {
           initCalendar()
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -278,7 +261,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -288,7 +271,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -304,7 +287,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should not display week numbers at all', function() {
           initCalendar()
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -314,7 +297,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -324,7 +307,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(0)
         })
       })
@@ -340,7 +323,7 @@ describe('weekNumbers', function() {
       describe('and default weekNumbersWithinDays', function() {
         it('should display week numbers in the top left corner only', function() {
           initCalendar()
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(1)
           expect(counts.colWeekNumbers).toEqual(0)
           expect(counts.cellWeekNumbers).toEqual(0)
@@ -353,7 +336,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: false
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(1)
           expect(counts.colWeekNumbers).toEqual(0)
           expect(counts.cellWeekNumbers).toEqual(0)
@@ -366,7 +349,7 @@ describe('weekNumbers', function() {
           initCalendar({
             weekNumbersWithinDays: true
           })
-          counts = getCounts()
+          let counts = getLegacyWeekNumberCounts()
           expect(counts.allWeekNumbers).toEqual(1)
           expect(counts.colWeekNumbers).toEqual(0)
           expect(counts.cellWeekNumbers).toEqual(0)
@@ -378,14 +361,4 @@ describe('weekNumbers', function() {
 
   })
 
-  function getCounts() {
-    var t = {}
-
-    t.allWeekNumbers = $('.fc-week-number').length
-    t.colWeekNumbers = $('.fc-content-skeleton thead td.fc-week-number').length
-    t.cellWeekNumbers = $('.fc-content-skeleton thead .fc-day-top span.fc-week-number').length
-    t.cornerWeekNumbers = $('.fc-head .fc-axis.fc-week-number').length
-
-    return t
-  }
 })

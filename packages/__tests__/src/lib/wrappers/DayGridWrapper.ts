@@ -79,10 +79,25 @@ export default class DayGridWrapper {
   }
 
 
+  getMoreEls() {
+    return findElements(this.el, '.fc-more')
+  }
+
+
   getWeekNavLinkEls(isEmbedded) { // along the sides of the row
     return isEmbedded
       ? findElements(this.el, '.fc-day-top a.fc-week-number')
       : findElements(this.el, '.fc-week-number a')
+  }
+
+
+  getWeekCell(rowIndex) {
+    return this.el.querySelector(`.fc-row:nth-child(${rowIndex + 1}) td.fc-week-number`)
+  }
+
+
+  getWeekNumberText(rowIndex) {
+    return $(this.el.querySelector(`.fc-row:nth-child(${rowIndex + 1}) .fc-content-skeleton thead td.fc-week-number`)).text()
   }
 
 
@@ -301,4 +316,14 @@ export default class DayGridWrapper {
     })
   }
 
+}
+
+
+export function getLegacyWeekNumberCounts() {
+  return {
+    allWeekNumbers: $('.fc-week-number').length,
+    colWeekNumbers: $('.fc-content-skeleton thead td.fc-week-number').length,
+    cellWeekNumbers: $('.fc-content-skeleton thead .fc-day-top span.fc-week-number').length, // within-the-cell
+    cornerWeekNumbers: $('.fc-head .fc-axis.fc-week-number').length
+  }
 }

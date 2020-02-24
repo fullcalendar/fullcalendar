@@ -97,10 +97,24 @@ export default class TimeGridWrapper {
 
 
   hasNowIndicator() {
-    return Boolean(
-      this.el.querySelector('.fc-now-indicator-arrow') &&
-      this.el.querySelector('.fc-now-indicator-line')
-    )
+    let hasArrow = Boolean(this.getNowIndicatorArrowEl())
+    let hasLine = Boolean(this.getNowIndicatorLineEl())
+
+    if (hasArrow !== hasLine) {
+      throw new Error('Inconsistent now-indicator rendering state')
+    } else {
+      return hasArrow
+    }
+  }
+
+
+  getNowIndicatorArrowEl() {
+    return this.el.querySelector('.fc-now-indicator-arrow')
+  }
+
+
+  getNowIndicatorLineEl() {
+    return this.el.querySelector('.fc-now-indicator-line')
   }
 
 
@@ -617,6 +631,7 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
 
 export function queryEventElInfo(eventEl: HTMLElement) {
   return {
-    timeText: $(eventEl.querySelector('.fc-time')).text()
+    timeText: $(eventEl.querySelector('.fc-time')).text(),
+    isShort: eventEl.classList.contains('fc-short')
   }
 }

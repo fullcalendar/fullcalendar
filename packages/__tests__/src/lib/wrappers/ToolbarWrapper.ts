@@ -16,7 +16,7 @@ export default class ToolbarWrapper {
 
     if (el) {
       let iconEl = el.querySelector(`.${iconPrefix}`)
-      let iconNameMatch = iconEl && iconEl.className.match(new RegExp(`${iconPrefix}-(\\w+)`))
+      let iconNameMatch = iconEl && iconEl.className.match(new RegExp(`${iconPrefix}-([^ ]+)`))
 
       return {
         text: $(el).text(),
@@ -36,4 +36,36 @@ export default class ToolbarWrapper {
     return this.el.querySelector('h2').innerText.trim()
   }
 
+
+  getSectionContent(sectionName) { // sectionName like left/center/right
+    let sectionEl = this.el.querySelector(`.fc-${sectionName}`) as HTMLElement
+
+    return processSectionItems(sectionEl)
+  }
+
+}
+
+
+function processSectionItems(sectionEl: HTMLElement) {
+  let children = Array.prototype.slice.call(sectionEl.children) as HTMLElement[]
+
+  return children.map((childEl) => {
+    if (childEl.classList.contains('fc-button')) {
+      return {
+        type: 'button',
+        name: childEl.className.match(/fc-(\w+)-button/)[1]
+      }
+    } else if (childEl.classList.contains('fc-button-group')) {
+      return {
+        type: 'button-group',
+        children: processSectionItems(childEl)
+      }
+    } else if (childEl.nodeName === 'H2') {
+      return {
+        type: 'title'
+      }
+    } else {
+      throw new Error('Unknown type of content in header')
+    }
+  })
 }

@@ -43,7 +43,7 @@ export default class CalendarWrapper {
 
 
   getViewContainerEl() {
-    return this.calendar.el.querySelector('.fc-view-container')
+    return this.calendar.el.querySelector('.fc-view-container') as HTMLElement
   }
 
 
@@ -108,6 +108,11 @@ export default class CalendarWrapper {
 
   hasLicenseMessage() {
     return $('.fc-license-message', this.calendar.el).is(':visible')
+  }
+
+
+  isAllowingDragging() {
+    return !$('body').hasClass('fc-not-allowed')
   }
 
 
