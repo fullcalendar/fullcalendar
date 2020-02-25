@@ -1,6 +1,7 @@
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 import { waitEventDrag } from '../lib/wrappers/interaction-util'
+import { filterVisibleEls } from '../lib/dom-misc'
 
 describe('event dragging on repeating events', function() {
   pushOptions({
@@ -100,12 +101,5 @@ describe('event dragging on repeating events', function() {
       duration: 100 // ample time for separate eventDragStart/eventDrop
     })
   })
-
-  function filterVisibleEls(els) {
-    return els.filter((el) => {
-      let $el = $(el)
-      return $el.is(':visible') && $el.css('visibility') !== 'hidden'
-    })
-  }
 
 })

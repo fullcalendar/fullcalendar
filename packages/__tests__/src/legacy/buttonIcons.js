@@ -1,5 +1,6 @@
 import BootstrapPlugin from '@fullcalendar/bootstrap'
 import DayGridPlugin from '@fullcalendar/daygrid'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('buttonIcons', function() {
   pushOptions({
@@ -14,22 +15,22 @@ describe('buttonIcons', function() {
   describe('when buttonIcons is not set', function() {
 
     it('should have default values', function() {
-      initCalendar()
-      var $cal = $(currentCalendar.el)
-      var prevBtn = $cal.find('.fc-prev-button')
-      var nextBtn = $cal.find('.fc-next-button')
-      var nextYearBtn = $cal.find('.fc-nextYear-button')
-      var prevYearBtn = $cal.find('.fc-prevYear-button')
+      let calendar = initCalendar()
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-      expect(prevBtn.find('span:first')).toHaveClass('fc-icon-chevron-left')
-      expect(nextBtn.find('span:first')).toHaveClass('fc-icon-chevron-right')
-      expect(nextYearBtn.find('span:first')).toHaveClass('fc-icon-chevrons-right')
-      expect(prevYearBtn.find('span:first')).toHaveClass('fc-icon-chevrons-left')
+      let prevBtn = toolbarWrapper.getButtonInfo('prev')
+      let nextBtn = toolbarWrapper.getButtonInfo('next')
+      let nextYearBtn = toolbarWrapper.getButtonInfo('nextYear')
+      let prevYearBtn = toolbarWrapper.getButtonInfo('prevYear')
+
+      expect(prevBtn.iconName).toBe('chevron-left')
+      expect(nextBtn.iconName).toBe('chevron-right')
+      expect(nextYearBtn.iconName).toBe('chevrons-right')
+      expect(prevYearBtn.iconName).toBe('chevrons-left')
     })
   })
 
   describe('when buttonIcons is set and theme is falsy', function() {
-
     pushOptions({
       buttonIcons: {
         prev: 'some-icon-left',
@@ -40,35 +41,31 @@ describe('buttonIcons', function() {
     })
 
     it('should have the set values', function() {
-      initCalendar()
-      var $cal = $(currentCalendar.el)
-      var prevBtn = $cal.find('.fc-prev-button')
-      var prevYearBtn = $cal.find('.fc-prevYear-button')
-      var nextYearBtn = $cal.find('.fc-nextYear-button')
+      let calendar = initCalendar()
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-      expect(prevBtn.find('span:first')).toHaveClass('fc-icon-some-icon-left')
-      expect(prevBtn.find('span:first')).toHaveClass('fc-icon-some-icon-left')
-      expect(prevYearBtn.find('span:first')).toHaveClass('fc-icon-some-icon-leftYear')
-      expect(nextYearBtn.find('span:first')).toHaveClass('fc-icon-some-icon-rightYear')
+      let prevBtn = toolbarWrapper.getButtonInfo('prev')
+      let nextYearBtn = toolbarWrapper.getButtonInfo('nextYear')
+      let prevYearBtn = toolbarWrapper.getButtonInfo('prevYear')
+
+      expect(prevBtn.iconName).toBe('some-icon-left')
+      expect(prevBtn.iconName).toBe('some-icon-left')
+      expect(prevYearBtn.iconName).toBe('some-icon-leftYear')
+      expect(nextYearBtn.iconName).toBe('some-icon-rightYear')
     })
   })
 
   describe('when theme is set', function() {
-
     pushOptions({
       themeSystem: 'bootstrap'
     })
 
     it('buttonIcons is ignored', function() {
-      initCalendar()
-      var $cal = $(currentCalendar.el)
-      var classesToSearch = [ '.fc-icon-chevron-left', '.fc-icon-chevrons-right',
-        '.fc-icon-chevron-right', '.fc-icon-chevrons-left' ]
+      let calendar = initCalendar()
+      let toolbarWrapper = new CalendarWrapper(calendar).toolbar
+      let prevButtonInfo = toolbarWrapper.getButtonInfo('prev') // NOT called with 'fa'
 
-      for (var i = 0; i < classesToSearch.length; i++) {
-        var cls = classesToSearch[i]
-        expect($cal.find(cls).length).toBe(0)
-      };
+      expect(prevButtonInfo.iconName).toBeFalsy()
     })
   })
 })

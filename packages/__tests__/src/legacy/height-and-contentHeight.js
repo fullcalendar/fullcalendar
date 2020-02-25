@@ -1,11 +1,14 @@
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import '../lib/dom-misc'
 
 (function() {
 
   [ 'height', 'contentHeight' ].forEach(function(heightProp) {
     describe(heightProp, function() {
-      var calendarEl
-      var heightElm
+      var $calendarEl
+      var heightEl // HTMLElement
       var asAMethod
 
       /** @type {any} */
@@ -22,39 +25,42 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
       })
 
       beforeEach(function() {
-        calendarEl = $('<div />').appendTo('body').width(900)
+        $calendarEl = $('<div />').appendTo('body').width(900)
       })
 
       afterEach(function() {
-        calendarEl.remove()
+        $calendarEl.remove()
       })
 
       // relies on asAMethod (boolean)
       // otherOptions: other calendar options to dynamically set (assumes asAMethod)
       function init(heightVal) {
+        let calendar
 
         if (asAMethod) {
 
-          let calendar = initCalendar({}, calendarEl)
+          calendar = initCalendar({}, $calendarEl[0])
           let calendarWrapper = new CalendarWrapper(calendar)
           var dateEl = calendarWrapper.getFirstDateEl()
 
-          currentCalendar.setOption(heightProp, heightVal)
+          calendar.setOption(heightProp, heightVal)
           expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)
 
         } else {
-          initCalendar({ [heightProp]: heightVal }, calendarEl)
+          calendar = initCalendar({ [heightProp]: heightVal }, $calendarEl[0])
         }
 
         if (heightProp === 'height') {
-          heightElm = $('.fc')
+          heightEl = calendar.el
         } else {
-          heightElm = $('.fc-view')
+          heightEl = new CalendarWrapper(calendar).getViewEl()
         }
+
+        return calendar
       }
 
       function expectHeight(heightVal) {
-        var diff = Math.abs(heightElm.outerHeight() - heightVal)
+        var diff = Math.abs(heightEl.offsetHeight - heightVal)
         expect(diff).toBeLessThan(2) // off-by-one or exactly the same. for zoom, and firefox
       }
 
@@ -79,7 +85,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
                   if (testInfo.heightWrapper) {
                     beforeEach(function() {
-                      calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
+                      $calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
                     })
                     afterEach(function() {
                       $('#calendar-container').remove()
@@ -88,11 +94,12 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
                   describe('when there are no events', function() {
                     it('should be the specified height, with no scrollbars', function() {
-                      var diff
-                      init(testInfo.height)
-                      diff = Math.abs(heightElm.outerHeight() - 600)
+                      let calendar = init(testInfo.height)
+                      let viewWrapper = new DayGridViewWrapper(calendar)
+                      let diff = Math.abs(heightEl.offsetHeight - 600)
+
                       expect(diff).toBeLessThan(2)
-                      expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                      expect(viewWrapper.getScrollerEl()).not.toHaveScrollbars()
                     })
                   })
 
@@ -102,22 +109,23 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                     })
 
                     it('should take away height from other rows, but not do scrollbars', function() {
-                      init(testInfo.height)
-                      var rows = $('.fc-day-grid .fc-row')
-                      var tallRow = rows.eq(1)
-                      var shortRows = rows.not(tallRow) // 0, 2, 3, 4, 5
-                      var shortHeight = shortRows.eq(0).outerHeight()
+                      let calendar = init(testInfo.height)
+                      let viewWrapper = new DayGridViewWrapper(calendar)
+                      let $rows = $(viewWrapper.dayGrid.getRowEls())
+                      let $tallRow = $rows.eq(1)
+                      let $shortRows = $rows.not($tallRow) // 0, 2, 3, 4, 5
+                      let shortHeight = $shortRows.eq(0).outerHeight()
 
                       expectHeight(600)
 
-                      shortRows.each(function(i, node) {
-                        var rowHeight = $(node).outerHeight()
-                        var diff = Math.abs(rowHeight - shortHeight)
+                      $shortRows.each(function(i, node) {
+                        let rowHeight = $(node).outerHeight()
+                        let diff = Math.abs(rowHeight - shortHeight)
                         expect(diff).toBeLessThan(10) // all roughly the same
                       })
 
-                      expect(tallRow.outerHeight()).toBeGreaterThan(shortHeight * 2) // much taller
-                      expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                      expect($tallRow.outerHeight()).toBeGreaterThan(shortHeight * 2) // much taller
+                      expect(viewWrapper.getScrollerEl()).not.toHaveScrollbars()
                     })
                   })
 
@@ -134,9 +142,11 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                     })
 
                     it('height is correct and scrollbars show up', function() {
-                      init(testInfo.height)
+                      let calendar = init(testInfo.height)
+                      let viewWrapper = new DayGridViewWrapper(calendar)
+
                       expectHeight(600)
-                      expect($('.scrollgrid .fc-body:last-child .fc-scroller')).toHaveScrollbars()
+                      expect(viewWrapper.getScrollerEl()).toHaveScrollbars()
                     })
                   })
                 })
@@ -153,10 +163,13 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                     repeatClone({ title: 'event5', start: '2014-09-01' }, 9)
                   )
                 })
+
                 it('height is really tall and there are no scrollbars', function() {
-                  init('auto')
-                  expect(heightElm.outerHeight()).toBeGreaterThan(1000) // pretty tall
-                  expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
+                  let calendar = init('auto')
+                  let viewWrapper = new DayGridViewWrapper(calendar)
+
+                  expect(heightEl.offsetHeight).toBeGreaterThan(1000) // pretty tall
+                  expect(viewWrapper.getScrollerEl()).not.toHaveScrollbars()
                 })
               })
             });
@@ -171,7 +184,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                   describe(testInfo.description, function() {
                     if (testInfo.heightWrapper) {
                       beforeEach(function() {
-                        calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
+                        $calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
                       })
                       afterEach(function() {
                         $('#calendar-container').remove()
@@ -180,9 +193,11 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
                     describe('when there are no events', function() {
                       it('should be the specified height, with no scrollbars', function() {
-                        init(testInfo.height)
+                        let calendar = init(testInfo.height)
+                        let viewWrapper = new DayGridViewWrapper(calendar)
+
                         expectHeight(600)
-                        expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                        expect(viewWrapper.getScrollerEl()).not.toHaveScrollbars()
                       })
                     })
 
@@ -190,10 +205,13 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                       pushOptions({
                         events: repeatClone({ title: 'event', start: '2014-08-01' }, 100)
                       })
+
                       it('should have the correct height, with scrollbars', function() {
-                        init(testInfo.height)
+                        let calendar = init(testInfo.height)
+                        let viewWrapper = new DayGridViewWrapper(calendar)
+
                         expectHeight(600)
-                        expect('.scrollgrid .fc-body:last-child .fc-scroller').toHaveScrollbars()
+                        expect(viewWrapper.getScrollerEl()).toHaveScrollbars()
                       })
                     })
                   })
@@ -204,9 +222,11 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                     events: repeatClone({ title: 'event', start: '2014-08-01' }, 100)
                   })
                   it('should be really tall with no scrollbars', function() {
-                    init('auto')
-                    expect(heightElm.outerHeight()).toBeGreaterThan(1000) // pretty tall
-                    expect('.scrollgrid .fc-body:last-child .fc-scroller').not.toHaveScrollbars()
+                    let calendar = init('auto')
+                    let viewWrapper = new DayGridViewWrapper(calendar)
+
+                    expect(heightEl.offsetHeight).toBeGreaterThan(1000) // pretty tall
+                    expect(viewWrapper.getScrollerEl()).not.toHaveScrollbars()
                   })
                 })
               })
@@ -228,7 +248,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                     describe(testInfo.description, function() {
                       if (testInfo.heightWrapper) {
                         beforeEach(function() {
-                          calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
+                          $calendarEl.wrap('<div id="calendar-container" style="height: 600px;" />')
                         })
                         afterEach(function() {
                           $('#calendar-container').remove()
@@ -241,9 +261,11 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                           maxTime: '24:00:00'
                         })
                         it('should be the correct height, with scrollbars', function() {
-                          init(testInfo.height)
+                          let calendar = init(testInfo.height)
+                          let viewWrapper = new TimeGridViewWrapper(calendar)
+
                           expectHeight(600)
-                          expect($('.scrollgrid .fc-body:last-child .fc-scroller')).toHaveScrollbars()
+                          expect(viewWrapper.getScrollerEl()).toHaveScrollbars()
                         })
                       })
                     })
@@ -255,9 +277,11 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                       maxTime: '10:00:00'
                     })
                     it('should be really short with no scrollbars nor horizontal rule', function() {
-                      init('auto')
-                      expect(heightElm.outerHeight()).toBeLessThan(500) // pretty short
-                      expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
+                      let calendar = init('auto')
+                      let viewWrapper = new TimeGridViewWrapper(calendar)
+
+                      expect(heightEl.offsetHeight).toBeLessThan(500) // pretty short
+                      expect(viewWrapper.getScrollerEl()).not.toHaveScrollbars()
                     })
                   })
 
@@ -266,10 +290,13 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
                       minTime: '00:00:00',
                       maxTime: '24:00:00'
                     })
+
                     it('should be really tall with no scrollbars nor horizontal rule', function() {
-                      init('auto')
-                      expect(heightElm.outerHeight()).toBeGreaterThan(900) // pretty tall
-                      expect($('.scrollgrid .fc-body:last-child .fc-scroller')).not.toHaveScrollbars()
+                      let calendar = init('auto')
+                      let viewWrapper = new TimeGridViewWrapper(calendar)
+
+                      expect(heightEl.offsetHeight).toBeGreaterThan(900) // pretty tall
+                      expect(viewWrapper.getScrollerEl()).not.toHaveScrollbars()
                     })
                   })
                 })

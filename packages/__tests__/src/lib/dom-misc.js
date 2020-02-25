@@ -34,6 +34,16 @@ export function getStockScrollbarWidths(dir) {
 }
 
 
+export function filterVisibleEls(els) {
+  return els.filter((el) => {
+    let $el = $(el)
+    return $el.is(':visible') && $el.css('visibility') !== 'hidden'
+  })
+}
+
+
+// TODO: make sure these matchers are loaded globally first
+
 beforeEach(function() {
   jasmine.addMatchers({
 
