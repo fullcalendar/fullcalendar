@@ -1,5 +1,5 @@
 
-v4.3.2 (2020-02-11)
+v4.4.0 (2020-02-11)
 -------------------
 
 - configurable `googleCalendarApiBase` (#4974)
