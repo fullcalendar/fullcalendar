@@ -156,11 +156,13 @@ export function filterSegsViaEls(context: ComponentContext, segs: Seg[], isMirro
 }
 
 function setElSeg(el: HTMLElement, seg: Seg) {
-  (el as any).fcSeg = seg
+  if (el) {
+    (el as any).fcSeg = seg
+  }
 }
 
 export function getElSeg(el: HTMLElement): Seg | null {
-  return (el as any).fcSeg || null
+  return el ? (el as any).fcSeg : null
 }
 
 

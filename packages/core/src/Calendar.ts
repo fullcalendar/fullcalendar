@@ -882,7 +882,7 @@ export default class Calendar {
     if (
       !this.isHandlingWindowResize &&
       this.component && // why?
-      (ev as any).target === window // not a jqui resize event
+      (ev && (ev as any).target === window) // not a jqui resize event
     ) {
       this.isHandlingWindowResize = true
       this.updateSize()

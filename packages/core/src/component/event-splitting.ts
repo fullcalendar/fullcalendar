@@ -120,7 +120,7 @@ export default abstract class Splitter<PropsType extends SplittableProps = Split
     let splitHashes: { [key: string]: EventUiHash } = {}
 
     for (let defId in eventUiBases) {
-      if (defId) { // not the '' key
+      if (defId && defKeys && defKeys[defId]) { // not the '' key
         for (let key of defKeys[defId]) {
 
           if (!splitHashes[key]) {
