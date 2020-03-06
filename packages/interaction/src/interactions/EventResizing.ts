@@ -18,7 +18,7 @@ import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
 
 
-export default class EventDragging extends Interaction {
+export default class EventResizing extends Interaction {
 
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
@@ -112,7 +112,7 @@ export default class EventDragging extends Interaction {
     }
 
     if (mutation) {
-      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, calendar.eventUiBases, mutation, calendar)
+      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, calendar.eventUiBases, mutation, calendar, eventInstance.instanceId)
       interaction.mutatedEvents = mutatedRelevantEvents
 
       if (!this.component.isInteractionValid(interaction)) {

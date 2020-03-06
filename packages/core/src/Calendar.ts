@@ -17,7 +17,7 @@ import { mapHash, isPropsEqual } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
 import DateProfileGenerator from './DateProfileGenerator'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
-import { EventInput, parseEvent, EventDefHash } from './structs/event'
+import { EventInput, parseEvent, EventDefHash, EventInstance, EventDef } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import EventSourceApi from './api/EventSourceApi'
 import EventApi from './api/EventApi'
@@ -36,6 +36,7 @@ import EventHovering from './interactions/EventHovering'
 import StandardTheme from './theme/StandardTheme'
 import { CmdFormatterFunc } from './datelib/formatting-cmd'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
+import { EventMutation } from './structs/event-mutation'
 
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
@@ -56,6 +57,8 @@ export type CalendarInteractionClass = { new(calendar: Calendar): CalendarIntera
 
 export type OptionChangeHandler = (propValue: any, calendar: Calendar, deepEqual) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
+
+export type TransformEventMutationHandler = (mutation: EventMutation, subInstance: EventInstance, subDef: EventDef, eventInstance: EventInstance, eventDef: EventDef) => EventMutation
 
 export default class Calendar {
 
@@ -87,6 +90,7 @@ export default class Calendar {
   viewSpecs: ViewSpecHash
   dateProfileGenerators: { [viewName: string]: DateProfileGenerator }
   theme: Theme
+  transformEventMutation: TransformEventMutationHandler
   dateEnv: DateEnv
   availableRawLocales: RawLocaleMap
   pluginSystem: PluginSystem
@@ -606,6 +610,7 @@ export default class Calendar {
     this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
     this.delayedRerender = this.buildDelayedRerender(options.rerenderDelay)
     this.theme = this.buildTheme(options)
+    this.transformEventMutation = options.transformEventMutation
 
     let available = this.parseRawLocales(options.locales)
     this.availableRawLocales = available.map

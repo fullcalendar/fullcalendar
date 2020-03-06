@@ -20,7 +20,7 @@ export interface EventMutation {
 }
 
 // applies the mutation to ALL defs/instances within the event store
-export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, calendar: Calendar): EventStore {
+export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, calendar: Calendar, eventInstanceId?: string): EventStore {
   let eventConfigs = compileEventUis(eventStore.defs, eventConfigBase)
   let dest = createEmptyEventStore()
 
@@ -34,7 +34,16 @@ export function applyMutationToEventStore(eventStore: EventStore, eventConfigBas
     let instance = eventStore.instances[instanceId]
     let def = dest.defs[instance.defId] // important to grab the newly modified def
 
-    dest.instances[instanceId] = applyMutationToEventInstance(instance, def, eventConfigs[instance.defId], mutation, calendar)
+    if (eventInstanceId && calendar.transformEventMutation) {
+      const eventInstance = eventStore.instances[eventInstanceId]
+      const eventDef = dest.defs[eventInstance.defId] // important to grab the newly modified def
+
+      const transformedMutation = calendar.transformEventMutation(mutation, instance, def, eventInstance, eventDef)
+
+      dest.instances[instanceId] = applyMutationToEventInstance(instance, def, eventConfigs[instance.defId], transformedMutation, calendar)
+    } else {
+      dest.instances[instanceId] = applyMutationToEventInstance(instance, def, eventConfigs[instance.defId], mutation, calendar)
+    }
   }
 
   return dest
