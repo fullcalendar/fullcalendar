@@ -129,6 +129,8 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
     }
 
     let relevantEvents = this.relevantEvents!
+    let eventRange = this.eventRange!
+    let eventInstanceId = eventRange.instance.instanceId
     let initialHit = this.hitDragging.initialHit!
     let initialCalendar = this.component.calendar
 
@@ -155,7 +157,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
         mutation = computeEventMutation(initialHit, hit, receivingCalendar.pluginSystem.hooks.eventDragMutationMassagers)
 
         if (mutation) {
-          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingCalendar.eventUiBases, mutation, receivingCalendar)
+          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingCalendar.eventUiBases, mutation, receivingCalendar, eventInstanceId)
           interaction.mutatedEvents = mutatedRelevantEvents
 
           if (!receivingComponent.isInteractionValid(interaction)) {

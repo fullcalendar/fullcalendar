@@ -58,7 +58,8 @@ export type CalendarInteractionClass = { new(calendar: Calendar): CalendarIntera
 export type OptionChangeHandler = (propValue: any, calendar: Calendar, deepEqual) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
-export type TransformEventMutationHandler = (mutation: EventMutation, subInstance: EventInstance, subDef: EventDef, eventInstance: EventInstance, eventDef: EventDef) => EventMutation
+export type TransformEventInstanceMutationHandler = (mutation: EventMutation, subInstance: EventInstance, subDef: EventDef, eventInstance: EventInstance, eventDef: EventDef) => EventMutation
+export type TransformEventDefMutationHandler = (mutation: EventMutation, subDef: EventDef, eventInstance: EventInstance) => EventMutation
 
 export default class Calendar {
 
@@ -90,7 +91,8 @@ export default class Calendar {
   viewSpecs: ViewSpecHash
   dateProfileGenerators: { [viewName: string]: DateProfileGenerator }
   theme: Theme
-  transformEventMutation: TransformEventMutationHandler
+  transformEventInstanceMutation: TransformEventInstanceMutationHandler
+  transformEventDefMutation: TransformEventDefMutationHandler
   dateEnv: DateEnv
   availableRawLocales: RawLocaleMap
   pluginSystem: PluginSystem
@@ -610,7 +612,8 @@ export default class Calendar {
     this.defaultTimedEventDuration = createDuration(options.defaultTimedEventDuration)
     this.delayedRerender = this.buildDelayedRerender(options.rerenderDelay)
     this.theme = this.buildTheme(options)
-    this.transformEventMutation = options.transformEventMutation
+    this.transformEventInstanceMutation = options.transformEventInstanceMutation
+    this.transformEventDefMutation = options.transformEventDefMutation
 
     let available = this.parseRawLocales(options.locales)
     this.availableRawLocales = available.map

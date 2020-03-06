@@ -36,37 +36,46 @@
           buttonText: '2 days',
         }
       },
-      transformEventMutation: (mutation, subInstance, subDef, eventInstance, eventDef) => {
+      transformEventInstanceMutation: (mutation, subInstance, subDef, eventInstance, eventDef) => {
         // we're mutating drag target - apply mutation as is
         if (eventInstance.instanceId === subInstance.instanceId) {
           return mutation;
         }
 
-        const intersectingSubEvents = eventDef.extendedProps.subEventIds.filter(value => subDef.extendedProps.subEventIds.indexOf(value) !== -1)
-        // sub-events are not intersecting with our event - drag event only if it is later than ours
-        if (intersectingSubEvents.length === 0) {
-          if (subInstance.range.start >= eventInstance.range.start) {
-            return { ...mutation, endDelta: undefined, datesDelta: mutation.endDelta }
+        if(mutation.endDelta) {
+          const intersectingSubEvents = eventDef.extendedProps.subEventIds.filter(value => subDef.extendedProps.subEventIds.indexOf(value) !== -1)
+          // sub-events are not intersecting with our event - drag event only if it is later than ours
+          if (intersectingSubEvents.length === 0) {
+            if (subInstance.range.start >= eventInstance.range.start) {
+              return { ...mutation, endDelta: undefined, datesDelta: mutation.endDelta }
+            } else {
+              return { ...mutation, endDelta: undefined }
+            }
           } else {
-            return { ...mutation, endDelta: undefined }
-          }
-        } else {
-          // sub-events are present
-          if (eventDef.extendedProps.subEventIds.length > 0) {
-            const subEventDeltaMs = mutation.endDelta.milliseconds / eventDef.extendedProps.subEventIds.length
-            const scaledMutationEndDeltaMs = subEventDeltaMs * intersectingSubEvents.length
-            const scaledMutationDatesDeltaMs = subEventDeltaMs * eventDef.extendedProps.subEventIds.indexOf(intersectingSubEvents[0])
+            // sub-events are present
+            if (eventDef.extendedProps.subEventIds.length > 0) {
+              const subEventDeltaMs = mutation.endDelta.milliseconds / eventDef.extendedProps.subEventIds.length
+              const scaledMutationEndDeltaMs = subEventDeltaMs * intersectingSubEvents.length
+              const scaledMutationDatesDeltaMs = subEventDeltaMs * eventDef.extendedProps.subEventIds.indexOf(intersectingSubEvents[0])
 
-            return {
-              ...mutation, endDelta: {
-                ...mutation.endDelta, milliseconds: scaledMutationEndDeltaMs
-              }, datesDelta: {
-                ...mutation.endDelta, milliseconds: scaledMutationDatesDeltaMs
-              }
-            };
+              return {
+                ...mutation, endDelta: {
+                  ...mutation.endDelta, milliseconds: scaledMutationEndDeltaMs
+                }, datesDelta: {
+                  ...mutation.endDelta, milliseconds: scaledMutationDatesDeltaMs
+                }
+              };
+            }
           }
-          return mutation
         }
+
+        return mutation
+      },
+      transformEventDefMutation: (mutation, subDef, eventInstance) => {
+        if(subDef.defId !== eventInstance.defId) {
+          return { ...mutation, resourceMutation: undefined }
+        }
+        return mutation;
       },
 
       //// uncomment this line to hide the all-day slot
