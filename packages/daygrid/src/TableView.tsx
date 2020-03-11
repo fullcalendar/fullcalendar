@@ -21,7 +21,10 @@ export default abstract class TableView<State={}> extends View<State> {
   protected headerElRef = createRef<HTMLTableCellElement>()
 
 
-  renderSimpleLayout(headerRowContent: VNode | null, bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode) {
+  renderSimpleLayout(
+    headerRowContent: VNode | null,
+    bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode
+  ) {
     let { props } = this
     let classNames = getViewClassNames(props.viewSpec).concat('fc-dayGrid-view')
     let sections: SimpleScrollGridSection[] = []
@@ -54,6 +57,22 @@ export default abstract class TableView<State={}> extends View<State> {
         />
       </div>
     )
+  }
+
+
+  renderHScrollLayout(
+    headerRowContent: VNode | null,
+    bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode,
+    columnMinWidth: number
+  ) {
+    // let colConfigs = []
+    // if (hasAxis) {
+    //   colConfigs.push({ width: 'shrink' })
+    // }
+
+    if (!this.context.pluginHooks.scrollGridImpl) {
+      throw new Error('No ScrollGrid implementation')
+    }
   }
 
 }

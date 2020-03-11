@@ -26,36 +26,39 @@ export default class DayTableView extends TableView {
     let { dateProfile } = props
     let dayTableModel = this.buildDayTableModel(dateProfile, props.dateProfileGenerator)
 
-    return this.renderSimpleLayout(
-      options.columnHeader &&
-        <DayHeader
-          ref={this.headerRef}
-          dateProfile={dateProfile}
-          dates={dayTableModel.headerDates}
-          datesRepDistinctDays={dayTableModel.rowCnt === 1}
-        />,
-      (contentArg: ChunkContentCallbackArgs) => (
-        <DayTable
-          ref={this.tableRef}
-          dateProfile={dateProfile}
-          dayTableModel={dayTableModel}
-          businessHours={props.businessHours}
-          dateSelection={props.dateSelection}
-          eventStore={props.eventStore}
-          eventUiBases={props.eventUiBases}
-          eventSelection={props.eventSelection}
-          eventDrag={props.eventDrag}
-          eventResize={props.eventResize}
-          nextDayThreshold={context.nextDayThreshold}
-          colGroupNode={contentArg.tableColGroupNode}
-          eventLimit={options.eventLimit}
-          vGrowRows={!props.isHeightAuto}
-          headerAlignElRef={this.headerElRef}
-          clientWidth={contentArg.clientWidth}
-          clientHeight={contentArg.clientHeight}
-        />
-      )
+    let headerContent = options.columnHeader &&
+      <DayHeader
+        ref={this.headerRef}
+        dateProfile={dateProfile}
+        dates={dayTableModel.headerDates}
+        datesRepDistinctDays={dayTableModel.rowCnt === 1}
+      />
+
+    let bodyContent = (contentArg: ChunkContentCallbackArgs) => (
+      <DayTable
+        ref={this.tableRef}
+        dateProfile={dateProfile}
+        dayTableModel={dayTableModel}
+        businessHours={props.businessHours}
+        dateSelection={props.dateSelection}
+        eventStore={props.eventStore}
+        eventUiBases={props.eventUiBases}
+        eventSelection={props.eventSelection}
+        eventDrag={props.eventDrag}
+        eventResize={props.eventResize}
+        nextDayThreshold={context.nextDayThreshold}
+        colGroupNode={contentArg.tableColGroupNode}
+        eventLimit={options.eventLimit}
+        vGrowRows={!props.isHeightAuto}
+        headerAlignElRef={this.headerElRef}
+        clientWidth={contentArg.clientWidth}
+        clientHeight={contentArg.clientHeight}
+      />
     )
+
+    return options.columnMinWidth
+      ? this.renderHScrollLayout(headerContent, bodyContent, options.columnMinWidth)
+      : this.renderSimpleLayout(headerContent, bodyContent)
   }
 
 }
