@@ -101,7 +101,6 @@ export interface OptionsInputBase {
   hiddenDays?: number[]
   fixedWeekCount?: boolean
   weekNumbers?: boolean
-  weekNumbersWithinDays?: boolean
   weekNumberCalculation?: 'local' | 'ISO' | ((m: Date) => number)
   businessHours?: BusinessHoursInput
   showNonCurrentDates?: boolean

@@ -10,7 +10,7 @@ this class is used for:
 */
 
 /* bigger touch area when selected */
-.fc-h-event.fc-selected:before {
+.fc-h-event.fc-event-selected:before {
   content: "";
   position: absolute;
   z-index: 3; /* below resizers */
@@ -20,10 +20,30 @@ this class is used for:
   right: 0;
 }
 
+
+.fc-h-event {
+  position: relative; /* for resize handle and other inner positioning */
+  display: block; /* make the <a> tag block */
+  font-size: .85em;
+  line-height: 1.4;
+  border: 1px solid #3788d8;
+  background-color: #3788d8;
+  color: #fff; /* default TEXT color. TODO: test hovering over <a> when HREF and theme */
+  text-decoration: none; /* if <a> has an href */
+}
+
+
+.fc-h-event .fc-event-time,
+.fc-h-event .fc-event-title {
+  display: inline;
+}
+
+
+
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */
 
-.fc-ltr .fc-h-event.fc-not-start,
-.fc-rtl .fc-h-event.fc-not-end {
+.fc-ltr .fc-h-event:not(.fc-event-start),
+.fc-rtl .fc-h-event:not(.fc-event-end) {
   margin-left: 0;
   border-left-width: 0;
   padding-left: 1px; /* replace the border with padding */
@@ -31,8 +51,8 @@ this class is used for:
   border-bottom-left-radius: 0;
 }
 
-.fc-ltr .fc-h-event.fc-not-end,
-.fc-rtl .fc-h-event.fc-not-start {
+.fc-ltr .fc-h-event:not(.fc-event-end),
+.fc-rtl .fc-h-event:not(.fc-event-start) {
   margin-right: 0;
   border-right-width: 0;
   padding-right: 1px; /* replace the border with padding */
@@ -43,22 +63,22 @@ this class is used for:
 /* resizer (cursor AND touch devices) */
 
 /* left resizer  */
-.fc-ltr .fc-h-event .fc-start-resizer,
-.fc-rtl .fc-h-event .fc-end-resizer {
+.fc-ltr .fc-h-event .fc-event-resizer-start,
+.fc-rtl .fc-h-event .fc-event-resizer-end {
   cursor: w-resize;
   left: -1px; /* overcome border */
 }
 
 /* right resizer */
-.fc-ltr .fc-h-event .fc-end-resizer,
-.fc-rtl .fc-h-event .fc-start-resizer {
+.fc-ltr .fc-h-event .fc-event-resizer-end,
+.fc-rtl .fc-h-event .fc-event-resizer-start {
   cursor: e-resize;
   right: -1px; /* overcome border */
 }
 
 /* resizer (mouse devices) */
 
-.fc-h-event.fc-allow-mouse-resize .fc-resizer {
+.fc-h-event.fc-allow-mouse-resize .fc-event-resizer {
   width: 7px;
   top: -1px; /* overcome top border */
   bottom: -1px; /* overcome bottom border */
@@ -66,7 +86,7 @@ this class is used for:
 
 /* resizer (touch devices) */
 
-.fc-h-event.fc-selected .fc-resizer {
+.fc-h-event.fc-event-selected .fc-event-resizer {
   /* 8x8 little dot */
   border-radius: 4px;
   border-width: 1px;
@@ -81,13 +101,13 @@ this class is used for:
 }
 
 /* left resizer  */
-.fc-ltr .fc-h-event.fc-selected .fc-start-resizer,
-.fc-rtl .fc-h-event.fc-selected .fc-end-resizer {
+.fc-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
+.fc-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
   margin-left: -4px; /* centers the 8x8 dot on the left edge */
 }
 
 /* right resizer */
-.fc-ltr .fc-h-event.fc-selected .fc-end-resizer,
-.fc-rtl .fc-h-event.fc-selected .fc-start-resizer {
+.fc-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
+.fc-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
   margin-right: -4px; /* centers the 8x8 dot on the right edge */
 }

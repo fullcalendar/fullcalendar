@@ -12,19 +12,21 @@ import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
 import { h, Fragment, createRef } from './vdom'
-import { BaseComponent, subrenderer } from './vdom-util'
+import { BaseComponent } from './vdom-util'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
-import { applyStyleProp } from './util/dom-manip'
 import ViewContainer from './ViewContainer'
+import { CssDimValue } from './scrollgrid/util'
+import Theme from './theme/Theme'
 
 
 export interface CalendarComponentProps extends CalendarState {
-  rootEl: HTMLElement
   viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator // for the current view
   eventUiBases: EventUiHash
   title: string
+  onClassNameChange?: (classNameHash) => void // will be fired with [] on cleanup
+  onHeightChange?: (height: CssDimValue) => void // will be fired with '' on cleanup
 }
 
 interface CalendarComponentState {
@@ -38,8 +40,8 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.context.calendar))
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
-  private updateOuterClassNames = subrenderer(setClassNames, unsetClassNames)
-  private updateOuterHeight = subrenderer(setHeight, unsetHeight)
+  private reportClassNames = memoize(reportClassNames)
+  private reportHeight = memoize(reportHeight)
   private handleNavLinkClick = buildDelegationHandler('a[data-goto]', this._handleNavLinkClick.bind(this))
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
@@ -83,10 +85,13 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
       viewAspectRatio = Math.max(options.aspectRatio, 0.5) // prevent from getting too tall
     }
 
-    // TODO: move this somewhere after real render!
-    // move to Calendar class?
-    this.updateOuterClassNames({ el: props.rootEl, forPrint: state.forPrint })
-    this.updateOuterHeight({ el: props.rootEl, height: calendarHeight })
+    if (props.onClassNameChange) {
+      this.reportClassNames(props.onClassNameChange, state.forPrint, options.dir, context.theme)
+    }
+
+    if (props.onHeightChange) {
+      this.reportHeight(props.onHeightChange, calendarHeight)
+    }
 
     return (
       <Fragment>
@@ -102,10 +107,10 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
           vGrow={viewVGrow}
           height={viewHeight}
           aspectRatio={viewAspectRatio}
-          elRef={this.setViewContainerEl}
           onClick={this.handleNavLinkClick}
         >
           {this.renderView(props, this.context)}
+          {this.buildAppendContent()}
         </ViewContainer>
         {footer &&
           <Toolbar
@@ -129,7 +134,14 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   componentWillUnmount() {
     window.removeEventListener('beforeprint', this.handleBeforePrint)
     window.removeEventListener('afterprint', this.handleAfterPrint)
-    this.subrenderDestroy()
+
+    if (this.props.onClassNameChange) {
+      this.props.onClassNameChange([])
+    }
+
+    if (this.props.onHeightChange) {
+      this.props.onHeightChange('')
+    }
   }
 
 
@@ -167,14 +179,12 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   }
 
 
-  setViewContainerEl = (viewContainerEl: HTMLElement | null) => {
+  buildAppendContent() {
     let { pluginHooks, calendar } = this.context
 
-    if (viewContainerEl) {
-      for (let modifyViewContainer of pluginHooks.viewContainerModifiers) {
-        modifyViewContainer(viewContainerEl, calendar)
-      }
-    }
+    return pluginHooks.viewContainerAppends.map(
+      (buildAppendContent) => buildAppendContent(calendar)
+    )
   }
 
 
@@ -227,6 +237,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
     )
   }
 
+
 }
 
 
@@ -261,12 +272,16 @@ function isHeightAuto(options) {
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function setClassNames({ el, forPrint }: { el: HTMLElement, forPrint: boolean }, context: ComponentContext) {
-  let classList = el.classList
+function reportClassNames(onClassNameChange, forPrint: boolean, dir: string, theme: Theme) {
+  onClassNameChange(computeClassNames(forPrint, dir, theme))
+}
+
+
+function computeClassNames(forPrint: boolean, dir: string, theme: Theme) {
   let classNames: string[] = [
     'fc',
-    'fc-' + context.options.dir,
-    context.theme.getClass('root')
+    'fc-' + dir,
+    theme.getClass('root')
   ]
 
   if (forPrint) {
@@ -275,30 +290,12 @@ function setClassNames({ el, forPrint }: { el: HTMLElement, forPrint: boolean },
     classNames.push('fc-screen')
   }
 
-  for (let className of classNames) {
-    classList.add(className)
-  }
-
-  return { el, classNames }
+  return classNames
 }
 
 
-function unsetClassNames({ el, classNames }: { el: HTMLElement, classNames: string[] }) {
-  let classList = el.classList
-
-  for (let className of classNames) {
-    classList.remove(className)
-  }
-}
-
-
-function setHeight({ el, height }: { el: HTMLElement, height: any }) {
-  applyStyleProp(el, 'height', height)
-  return el
-}
-
-function unsetHeight(el: HTMLElement) {
-  applyStyleProp(el, 'height', '')
+function reportHeight(onHeightChange, height: CssDimValue) {
+  onHeightChange(height)
 }
 
 

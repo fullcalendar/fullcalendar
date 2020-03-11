@@ -1,35 +1,37 @@
 import {
-  h, Fragment, createRef,
-  insertAfterElement,
-  findDirectChildren,
-  removeElement,
-  PositionCache,
-  addDays,
   EventSegUiInteractionState,
-  Seg,
-  intersectRanges,
-  EventRenderRange,
-  ComponentContext,
-  subrenderer,
-  createFormatter,
   VNode,
-  RefMap,
   DateComponent,
+  RefObject,
+  CssDimValue,
+  h,
+  PositionCache,
+  Ref,
+  memoize,
+  addDays,
+  RefMap,
   setRef,
-  RefObject
+  ComponentContext,
+  DateRange,
+  NowTimer,
+  DateMarker,
+  DateProfile,
 } from '@fullcalendar/core'
-import TableEvents from './TableEvents'
-import TableMirrorEvents from './TableMirrorEvents'
-import TableFills from './TableFills'
-import Popover from './Popover'
-import DayTile from './DayTile'
-import TableSkeleton, { TableBaseProps } from './TableSkeleton'
+import TableSeg, { splitSegsByRow, splitInteractionByRow } from './TableSeg'
+import TableRow, { RowMoreLinkArg } from './TableRow'
+import { TableCellModel } from './TableCell'
+import MorePopover from './MorePopover'
 
 
-/* A component that renders a grid of whole-days that runs horizontally. There can be multiple rows, one per week.
-----------------------------------------------------------------------------------------------------------------------*/
-
-export interface TableProps extends TableBaseProps {
+export interface TableProps {
+  elRef?: Ref<HTMLDivElement>
+  cells: TableCellModel[][] // cells-BY-ROW
+  dateProfile: DateProfile
+  renderRowIntro?: () => VNode
+  colGroupNode: VNode
+  vGrowRows: boolean
+  clientWidth: CssDimValue
+  clientHeight: CssDimValue
   businessHourSegs: TableSeg[]
   bgEventSegs: TableSeg[]
   fgEventSegs: TableSeg[]
@@ -37,268 +39,168 @@ export interface TableProps extends TableBaseProps {
   eventSelection: string
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
-  colGroupNode: VNode
   eventLimit: boolean | number
-  vGrow: boolean
-  headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
-}
-
-export interface TableSeg extends Seg {
-  row: number
-  firstCol: number
-  lastCol: number
+  headerAlignElRef?: RefObject<HTMLElement>
 }
 
 interface TableState {
-  segPopover: SegPopoverState
+  morePopoverState: MorePopoverState | null
 }
 
-interface SegPopoverState {
-  origFgSegs: Seg[]
-  date: Date
-  title: string
-  fgSegs: Seg[]
-  alignmentEl: HTMLElement
+interface MorePopoverState extends RowMoreLinkArg {
+  currentFgEventSegs: TableSeg[]
 }
 
 
 export default class Table extends DateComponent<TableProps, TableState> {
 
-  private renderFgEvents = subrenderer(TableEvents)
-  private renderMirrorEvents = subrenderer(TableMirrorEvents)
-  private renderBgEvents = subrenderer(TableFills)
-  private renderBusinessHours = subrenderer(TableFills)
-  private renderHighlight = subrenderer(TableFills)
-  private popoverRef = createRef<Popover>()
+  private splitBusinessHourSegs = memoize(splitSegsByRow)
+  private splitBgEventSegs = memoize(splitSegsByRow)
+  private splitFgEventSegs = memoize(splitSegsByRow)
+  private splitDateSelectionSegs = memoize(splitSegsByRow)
+  private splitEventDrag = memoize(splitInteractionByRow)
+  private splitEventResize = memoize(splitInteractionByRow)
   private rootEl: HTMLElement
-  private rowElRefs = new RefMap<HTMLTableRowElement>()
-  private cellElRefs: RefMap<HTMLTableCellElement>[] = []
-
-  rowStructs: any
-  rowPositions: PositionCache
-  colPositions: PositionCache
+  private rowRefs = new RefMap<TableRow>()
+  private rowPositions: PositionCache
+  private colPositions: PositionCache
 
 
-  render(props: TableProps) {
-
-    // CRAZINESS. TODO: refactor RefMap system
+  render(props: TableProps, state: TableState, context: ComponentContext) {
+    let { morePopoverState } = state
     let rowCnt = props.cells.length
-    if (rowCnt < this.cellElRefs.length) {
-      this.cellElRefs = this.cellElRefs.slice(0, props.cells.length)
-    }
-    for (let i = 0; i < rowCnt; i++) {
-      if (!this.cellElRefs[i]) {
-        this.cellElRefs[i] = new RefMap()
-      }
+
+    let businessHourSegsByRow = this.splitBusinessHourSegs(props.businessHourSegs, rowCnt)
+    let bgEventSegsByRow = this.splitBgEventSegs(props.bgEventSegs, rowCnt)
+    let fgEventSegsByRow = this.splitFgEventSegs(props.fgEventSegs, rowCnt)
+    let dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, rowCnt)
+    let eventDragByRow = this.splitEventDrag(props.eventDrag, rowCnt)
+    let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
+
+    let classNames = [ 'fc-daygrid' ]
+    if (props.vGrowRows && props.eventLimit === true) {
+      classNames.push('fc-daygrid-constantrowheight')
     }
 
     return (
-      <Fragment>
-        <TableSkeleton
-          rootElRef={this.handleRootEl}
-          dateProfile={props.dateProfile}
-          cells={props.cells}
-          isRigid={props.isRigid}
-          renderNumberIntro={props.renderNumberIntro}
-          renderBgIntro={props.renderBgIntro}
-          renderIntro={props.renderIntro}
-          colWeekNumbersVisible={props.colWeekNumbersVisible}
-          cellWeekNumbersVisible={props.cellWeekNumbersVisible}
-          colGroupNode={props.colGroupNode}
-          rowElRefs={this.rowElRefs}
-          cellElRefs={this.cellElRefs}
-          vGrow={props.vGrow}
-          clientWidth={props.clientWidth}
-        />
-        {this.renderPopover()}
-      </Fragment>
+      <div class={classNames.join(' ')} ref={this.handleRootEl}>
+        <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => [
+          <table style={{
+            width: props.clientWidth,
+            height: props.vGrowRows ? props.clientHeight : ''
+          }}>
+            {props.colGroupNode}
+            <tbody>
+              {props.cells.map((cells, row) => (
+                <TableRow
+                  ref={this.rowRefs.createRef(row)}
+                  key={cells[0].date.toISOString() /* best? or put key on cell? or use diff formatter? */}
+                  enableNumbers={rowCnt > 1}
+                  todayRange={todayRange}
+                  dateProfile={props.dateProfile}
+                  cells={cells}
+                  renderIntro={props.renderRowIntro}
+                  businessHourSegs={businessHourSegsByRow[row]}
+                  eventSelection={props.eventSelection}
+                  bgEventSegs={bgEventSegsByRow[row]}
+                  fgEventSegs={fgEventSegsByRow[row]}
+                  dateSelectionSegs={dateSelectionSegsByRow[row]}
+                  eventDrag={eventDragByRow[row]}
+                  eventResize={eventResizeByRow[row]}
+                  eventLimit={props.eventLimit}
+                  clientWidth={props.clientWidth}
+                  onMoreClick={this.handleMoreLinkClick}
+                />
+              ))}
+            </tbody>
+          </table>,
+          (morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
+            <MorePopover
+              date={state.morePopoverState.date}
+              segs={state.morePopoverState.allSegs}
+              alignmentEl={state.morePopoverState.dayEl}
+              topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}
+              onCloseClick={this.handleMorePopoverClose}
+              selectedInstanceId={props.eventSelection}
+              hiddenInstances={ // yuck
+                (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
+                (props.eventResize ? props.eventResize.affectedInstances : null) ||
+                {}
+              }
+              todayRange={todayRange}
+            />
+        ]} />
+      </div>
     )
-  }
-
-
-  renderPopover() {
-    let { props } = this
-    let segPopoverState = this.state.segPopover
-
-    if (segPopoverState && segPopoverState.origFgSegs === props.fgEventSegs) { // clear on new event segs
-      return (
-        <Popover
-          extraClassName='fc-more-popover'
-          title={segPopoverState.title}
-          alignmentEl={segPopoverState.alignmentEl}
-          topAlignmentEl={props.cells.length === 1 ? props.headerAlignElRef.current : null /* align with header top when only one row */}
-          onClose={this.handlePopoverClose}
-          ref={this.popoverRef}
-        >
-          <DayTile
-            date={segPopoverState.date}
-            fgSegs={segPopoverState.fgSegs}
-            selectedInstanceId={props.eventSelection}
-            hiddenInstances={ // TODO: more convenient
-              (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-              (props.eventResize ? props.eventResize.affectedInstances : null)
-            }
-          />
-        </Popover>
-      )
-    }
   }
 
 
   handleRootEl = (rootEl: HTMLElement | null) => {
     this.rootEl = rootEl
+    setRef(this.props.elRef, rootEl)
+  }
 
-    if (!rootEl) {
-      this.subrenderDestroy()
+
+  handleMoreLinkClick = (arg: RowMoreLinkArg) => {
+    let { calendar, view, options, dateEnv } = this.context
+    let clickOption = options.eventLimitClick
+
+    if (typeof clickOption === 'function') {
+      // the returned value can be an atomic option
+      clickOption = calendar.publiclyTrigger('eventLimitClick', [
+        {
+          date: dateEnv.toDate(arg.date),
+          allDay: true,
+          dayEl: arg.dayEl,
+          moreEl: null, // moreEl, // TODO
+          segs: arg.allSegs,
+          hiddenSegs: arg.hiddenSegs,
+          jsEvent: arg.ev as MouseEvent, // TODO: better
+          view
+        }
+      ])
     }
 
-    if (this.props.rootElRef) {
-      setRef(this.props.rootElRef, rootEl)
+    if (clickOption === 'popover') {
+      this.setState({
+        morePopoverState: {
+          ...arg,
+          currentFgEventSegs: this.props.fgEventSegs
+        }
+      })
+
+    } else if (typeof clickOption === 'string') { // a view name
+      calendar.zoomTo(arg.date, clickOption)
     }
   }
 
 
-  componentDidMount() {
-    this.subrender()
-    this.handleSizing()
-    this.context.addResizeHandler(this.handleSizing)
-  }
-
-
-  componentDidUpdate() {
-    this.subrender()
-    this.handleSizing()
-  }
-
-
-  componentWillUnmount() {
-    this.context.removeResizeHandler(this.handleSizing)
-  }
-
-
-  subrender() {
-    let { props } = this
-    let rowEls = this.rowElRefs.collect()
-    let colCnt = props.cells[0].length
-
-    if (props.eventDrag && props.eventDrag.segs.length) { // messy check
-      this.renderHighlight({
-        type: 'highlight',
-        colGroupNode: props.colGroupNode,
-        renderIntro: props.renderIntro,
-        segs: props.eventDrag.segs,
-        rowEls,
-        colCnt
-      })
-    } else if (props.eventResize && props.eventResize.segs.length) { // messy check
-      this.renderHighlight({
-        type: 'highlight',
-        colGroupNode: props.colGroupNode,
-        renderIntro: props.renderIntro,
-        segs: props.eventResize.segs,
-        rowEls,
-        colCnt
-      })
-    } else {
-      this.renderHighlight({
-        type: 'highlight',
-        colGroupNode: props.colGroupNode,
-        renderIntro: props.renderIntro,
-        segs: props.dateSelectionSegs,
-        rowEls,
-        colCnt
-      })
-    }
-
-    this.renderBusinessHours({
-      type: 'businessHours',
-      colGroupNode: props.colGroupNode,
-      renderIntro: props.renderIntro,
-      segs: props.businessHourSegs,
-      rowEls,
-      colCnt
+  handleMorePopoverClose = () => {
+    this.setState({
+      morePopoverState: null
     })
-
-    this.renderBgEvents({
-      type: 'bgEvent',
-      colGroupNode: props.colGroupNode,
-      renderIntro: props.renderIntro,
-      segs: props.bgEventSegs,
-      rowEls,
-      colCnt
-    })
-
-    let eventsRenderer = this.renderFgEvents({
-      colGroupNode: props.colGroupNode,
-      renderIntro: props.renderIntro,
-      segs: props.fgEventSegs,
-      rowEls,
-      colCnt,
-      selectedInstanceId: props.eventSelection,
-      hiddenInstances: // TODO: more convenient
-        (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-        (props.eventResize ? props.eventResize.affectedInstances : null),
-      isDragging: false,
-      isResizing: false,
-      isSelecting: false
-    })
-
-    this.rowStructs = eventsRenderer.rowStructs
-
-    if (props.eventResize && props.eventResize.segs.length) { // messy check
-      this.renderMirrorEvents({
-        colGroupNode: props.colGroupNode,
-        renderIntro: props.renderIntro,
-        segs: props.eventResize.segs,
-        rowEls,
-        colCnt,
-        isDragging: false,
-        isResizing: true,
-        isSelecting: false,
-        interactingSeg: props.eventResize.interactingSeg
-      })
-    } else {
-      this.renderMirrorEvents(false)
-    }
   }
 
 
-  handlePopoverClose = () => {
-    this.setState({ segPopover: null })
-  }
+  // Hit System
+  // ----------------------------------------------------------------------------------------------------
 
 
-  /* Sizing
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  handleSizing = () => { // TODO: make much more optimal!!!
-    this.updateEventLimitSizing()
-
+  prepareHits() {
     this.rowPositions = new PositionCache(
       this.rootEl,
-      this.rowElRefs.collect(),
+      this.rowRefs.collect().map((rowObj) => rowObj.cellElRefs.currentMap[0]), // first cell el in each row
       false,
       true // vertical
     )
 
     this.colPositions = new PositionCache(
       this.rootEl,
-      this.cellElRefs[0].collect(), // only the first row
+      this.rowRefs.currentMap[0].cellElRefs.collect(), // cell els in first row
       true, // horizontal
       false
     )
-
-    let popover = this.popoverRef.current
-    if (popover) {
-      popover.updateSize()
-    }
   }
-
-
-
-  /* Hit System
-  ------------------------------------------------------------------------------------------------------------------*/
 
 
   positionToHit(leftPosition, topPosition) {
@@ -327,13 +229,8 @@ export default class Table extends DateComponent<TableProps, TableState> {
   }
 
 
-  /* Cell System
-  ------------------------------------------------------------------------------------------------------------------*/
-  // FYI: the first column is the leftmost column, regardless of date
-
-
   private getCellEl(row, col) {
-    return this.cellElRefs[row].currentMap[col]
+    return this.rowRefs.currentMap[row].cellElRefs.currentMap[col]
   }
 
 
@@ -343,318 +240,4 @@ export default class Table extends DateComponent<TableProps, TableState> {
     return { start, end }
   }
 
-
-  /* More+ Link Popover
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  updateEventLimitSizing() {
-    let { props, rowStructs } = this
-
-    if (props.eventLimit) {
-      this._limitRows(props.eventLimit, this.rowElRefs.collect(), rowStructs, this.props.cells, this.context)
-
-    } else {
-      for (let row = 0; row < rowStructs.length; row++) {
-        this.unlimitRow(row, rowStructs)
-      }
-    }
-  }
-
-
-  // Limits the number of "levels" (vertically stacking layers of events) for each row of the grid.
-  // `levelLimit` can be false (don't limit), a number, or true (should be computed).
-  _limitRows(levelLimit, rowEls, rowStructs, cells, context: ComponentContext) {
-    let row // row #
-    let rowLevelLimit
-
-    for (row = 0; row < rowStructs.length; row++) {
-      this.unlimitRow(row, rowStructs)
-
-      if (!levelLimit) {
-        rowLevelLimit = false
-      } else if (typeof levelLimit === 'number') {
-        rowLevelLimit = levelLimit
-      } else {
-        rowLevelLimit = this.computeRowLevelLimit(rowEls[row], rowStructs[row])
-      }
-
-      if (rowLevelLimit !== false) {
-        this.limitRow(row, rowLevelLimit, rowStructs, cells, context)
-      }
-    }
-  }
-
-
-  // Computes the number of levels a row will accomodate without going outside its bounds.
-  // Assumes the row is "rigid" (maintains a constant height regardless of what is inside).
-  // `row` is the row number.
-  computeRowLevelLimit(
-    rowEl, // the containing "fake" row div
-    rowStruct
-  ): (number | false) {
-    let rowBottom = rowEl.getBoundingClientRect().bottom // relative to viewport!
-    let trEls = findDirectChildren(rowStruct.tbodyEl) as HTMLTableRowElement[]
-    let i
-    let trEl: HTMLTableRowElement
-
-    // Reveal one level <tr> at a time and stop when we find one out of bounds
-    for (i = 0; i < trEls.length; i++) {
-      trEl = trEls[i]
-      trEl.classList.remove('fc-limited') // reset to original state (reveal)
-
-      if (trEl.getBoundingClientRect().bottom > rowBottom) {
-        return i
-      }
-    }
-
-    return false // should not limit at all
-  }
-
-
-  // Limits the given grid row to the maximum number of levels and injects "more" links if necessary.
-  // `row` is the row number.
-  // `levelLimit` is a number for the maximum (inclusive) number of levels allowed.
-  limitRow(row, levelLimit, rowStructs, cells, context: ComponentContext) {
-    let colCnt = cells[0].length
-    let rowStruct = rowStructs[row]
-    let moreNodes = [] // array of "more" <a> links and <td> DOM nodes
-    let col = 0 // col #, left-to-right (not chronologically)
-    let levelSegs // array of segment objects in the last allowable level, ordered left-to-right
-    let cellMatrix // a matrix (by level, then column) of all <td> elements in the row
-    let limitedNodes // array of temporarily hidden level <tr> and segment <td> DOM nodes
-    let i
-    let seg
-    let segsBelow // array of segment objects below `seg` in the current `col`
-    let totalSegsBelow // total number of segments below `seg` in any of the columns `seg` occupies
-    let colSegsBelow // array of segment arrays, below seg, one for each column (offset from segs's first column)
-    let td: HTMLTableCellElement
-    let rowSpan
-    let segMoreNodes // array of "more" <td> cells that will stand-in for the current seg's cell
-    let j
-    let moreTd: HTMLTableCellElement
-    let moreWrap
-    let moreLink
-
-    // Iterates through empty level cells and places "more" links inside if need be
-    let emptyCellsUntil = (endCol) => { // goes from current `col` to `endCol`
-      while (col < endCol) {
-        segsBelow = getCellSegs(rowStructs[row], col, levelLimit)
-        if (segsBelow.length) {
-          td = cellMatrix[levelLimit - 1][col]
-          moreLink = this.renderMoreLink(row, col, segsBelow, cells, rowStructs, context)
-          moreWrap = document.createElement('div')
-          moreWrap.appendChild(moreLink)
-          td.appendChild(moreWrap)
-          moreNodes.push(moreWrap)
-        }
-        col++
-      }
-    }
-
-    if (levelLimit && levelLimit < rowStruct.segLevels.length) { // is it actually over the limit?
-      levelSegs = rowStruct.segLevels[levelLimit - 1]
-      cellMatrix = rowStruct.cellMatrix
-
-      limitedNodes = findDirectChildren(rowStruct.tbodyEl).slice(levelLimit) // get level <tr> elements past the limit
-      limitedNodes.forEach(function(node) {
-        node.classList.add('fc-limited') // hide elements and get a simple DOM-nodes array
-      })
-
-      // iterate though segments in the last allowable level
-      for (i = 0; i < levelSegs.length; i++) {
-        seg = levelSegs[i]
-        let { firstCol, lastCol } = seg
-
-        emptyCellsUntil(firstCol) // process empty cells before the segment
-
-        // determine *all* segments below `seg` that occupy the same columns
-        colSegsBelow = []
-        totalSegsBelow = 0
-        while (col <= lastCol) {
-          segsBelow = getCellSegs(rowStructs[row], col, levelLimit)
-          colSegsBelow.push(segsBelow)
-          totalSegsBelow += segsBelow.length
-          col++
-        }
-
-        if (totalSegsBelow) { // do we need to replace this segment with one or many "more" links?
-          td = cellMatrix[levelLimit - 1][firstCol] // the segment's parent cell
-          rowSpan = td.rowSpan || 1
-          segMoreNodes = []
-
-          // make a replacement <td> for each column the segment occupies. will be one for each colspan
-          for (j = 0; j < colSegsBelow.length; j++) {
-            moreTd = document.createElement('td')
-            moreTd.className = 'fc-more-cell'
-            moreTd.rowSpan = rowSpan
-            segsBelow = colSegsBelow[j]
-            moreLink = this.renderMoreLink(
-              row,
-              firstCol + j,
-              [ seg ].concat(segsBelow), // count seg as hidden too
-              cells,
-              rowStructs,
-              context
-            )
-            moreWrap = document.createElement('div')
-            moreWrap.appendChild(moreLink)
-            moreTd.appendChild(moreWrap)
-            segMoreNodes.push(moreTd)
-            moreNodes.push(moreTd)
-          }
-
-          td.classList.add('fc-limited')
-          insertAfterElement(td, segMoreNodes)
-
-          limitedNodes.push(td)
-        }
-      }
-
-      emptyCellsUntil(colCnt) // finish off the level
-      rowStruct.moreEls = moreNodes // for easy undoing later
-      rowStruct.limitedEls = limitedNodes // for easy undoing later
-    }
-  }
-
-
-  // Reveals all levels and removes all "more"-related elements for a grid's row.
-  // `row` is a row number.
-  unlimitRow(row, rowStructs) {
-    let rowStruct = rowStructs[row]
-
-    if (rowStruct.moreEls) {
-      rowStruct.moreEls.forEach(removeElement)
-      rowStruct.moreEls = null
-    }
-
-    if (rowStruct.limitedEls) {
-      rowStruct.limitedEls.forEach(function(limitedEl) {
-        limitedEl.classList.remove('fc-limited')
-      })
-      rowStruct.limitedEls = null
-    }
-  }
-
-
-  // Renders an <a> element that represents hidden event element for a cell.
-  // Responsible for attaching click handler as well.
-  renderMoreLink(row, col, hiddenSegs, cells, rowStructs, context: ComponentContext) {
-    let { calendar, view, dateEnv, options } = context
-
-    let a = document.createElement('a')
-    a.className = 'fc-more'
-    a.innerText = getMoreLinkText(hiddenSegs.length, options)
-    a.addEventListener('click', (ev) => {
-      let clickOption = options.eventLimitClick
-      let date = cells[row][col].date
-      let moreEl = ev.currentTarget as HTMLElement
-      let dayEl = this.getCellEl(row, col)
-      let allSegs = getCellSegs(rowStructs[row], col)
-
-      // rescope the segments to be within the cell's date
-      let reslicedAllSegs = resliceDaySegs(allSegs, date)
-      let reslicedHiddenSegs = resliceDaySegs(hiddenSegs, date)
-
-      if (typeof clickOption === 'function') {
-        // the returned value can be an atomic option
-        clickOption = calendar.publiclyTrigger('eventLimitClick', [
-          {
-            date: dateEnv.toDate(date),
-            allDay: true,
-            dayEl: dayEl,
-            moreEl: moreEl,
-            segs: reslicedAllSegs,
-            hiddenSegs: reslicedHiddenSegs,
-            jsEvent: ev,
-            view
-          }
-        ])
-      }
-
-      if (clickOption === 'popover') {
-        let date = cells[row][col].date
-        let title = dateEnv.format(date, createFormatter(options.dayPopoverFormat)) // TODO: cache formatter
-
-        this.setState({
-          segPopover: {
-            origFgSegs: this.props.fgEventSegs,
-            date,
-            title,
-            fgSegs: reslicedAllSegs,
-            alignmentEl: dayEl
-          }
-        })
-
-      } else if (typeof clickOption === 'string') { // a view name
-        calendar.zoomTo(date, clickOption)
-      }
-    })
-
-    return a
-  }
-
-}
-
-
-// Given the events within an array of segment objects, reslice them to be in a single day
-function resliceDaySegs(segs, dayDate) {
-  let dayStart = dayDate
-  let dayEnd = addDays(dayStart, 1)
-  let dayRange = { start: dayStart, end: dayEnd }
-  let newSegs = []
-
-  for (let seg of segs) {
-    let eventRange = seg.eventRange
-    let origRange = eventRange.range
-    let slicedRange = intersectRanges(origRange, dayRange)
-
-    if (slicedRange) {
-      newSegs.push({
-        ...seg,
-        eventRange: {
-          def: eventRange.def,
-          ui: { ...eventRange.ui, durationEditable: false }, // hack to disable resizing
-          instance: eventRange.instance,
-          range: slicedRange
-        } as EventRenderRange,
-        isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
-        isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
-      })
-    }
-  }
-
-  return newSegs
-}
-
-
-// Generates the text that should be inside a "more" link, given the number of events it represents
-function getMoreLinkText(num, options) {
-  let opt = options.eventLimitText
-
-  if (typeof opt === 'function') {
-    return opt(num)
-  } else {
-    return '+' + num + ' ' + opt
-  }
-}
-
-
-// Returns segments within a given cell.
-// If `startLevel` is specified, returns only events including and below that level. Otherwise returns all segs.
-function getCellSegs(rowStruct, col, startLevel?) {
-  let segMatrix = rowStruct.segMatrix
-  let level = startLevel || 0
-  let segs = []
-  let seg
-
-  while (level < segMatrix.length) {
-    seg = segMatrix[level][col]
-    if (seg) {
-      segs.push(seg)
-    }
-    level++
-  }
-
-  return segs
 }

@@ -8,13 +8,13 @@ import {
   memoize,
   DaySeries,
   DayTableModel,
-  ChunkContentCallbackArgs,
+  ChunkContentCallbackArgs
 } from '@fullcalendar/core'
-import TableView, { isEventLimitAuto } from './TableView'
+import TableView from './TableView'
 import DayTable from './DayTable'
 
 
-export default class DayTableView extends TableView { // TODO: use clientWidth/clientHeight
+export default class DayTableView extends TableView {
 
   private buildDayTableModel = memoize(buildDayTableModel)
   private headerRef = createRef<DayHeader>()
@@ -25,7 +25,6 @@ export default class DayTableView extends TableView { // TODO: use clientWidth/c
     let { options } = context
     let { dateProfile } = props
     let dayTableModel = this.buildDayTableModel(dateProfile, props.dateProfileGenerator)
-    let { colWeekNumbersVisible, cellWeekNumbersVisible } = this.processOptions(options)
 
     return this.renderLayout(
       options.columnHeader &&
@@ -34,7 +33,6 @@ export default class DayTableView extends TableView { // TODO: use clientWidth/c
           dateProfile={dateProfile}
           dates={dayTableModel.headerDates}
           datesRepDistinctDays={dayTableModel.rowCnt === 1}
-          renderIntro={this.renderHeadIntro}
         />,
       (contentArg: ChunkContentCallbackArgs) => (
         <DayTable
@@ -48,18 +46,13 @@ export default class DayTableView extends TableView { // TODO: use clientWidth/c
           eventSelection={props.eventSelection}
           eventDrag={props.eventDrag}
           eventResize={props.eventResize}
-          isRigid={isEventLimitAuto(context.options) && !props.isHeightAuto}
           nextDayThreshold={context.nextDayThreshold}
           colGroupNode={contentArg.tableColGroupNode}
-          renderNumberIntro={this.renderNumberIntro}
-          renderBgIntro={this.renderBgIntro}
-          renderIntro={this.renderIntro}
-          colWeekNumbersVisible={colWeekNumbersVisible}
-          cellWeekNumbersVisible={cellWeekNumbersVisible}
           eventLimit={options.eventLimit}
-          vGrow={!props.isHeightAuto}
+          vGrowRows={!props.isHeightAuto}
           headerAlignElRef={this.headerElRef}
           clientWidth={contentArg.clientWidth}
+          clientHeight={contentArg.clientHeight}
         />
       )
     )

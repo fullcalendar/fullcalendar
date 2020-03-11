@@ -19,6 +19,7 @@ import { RecurringType } from './structs/recurring-event'
 import { NamedTimeZoneImplClass } from './datelib/timezone'
 import { ElementDraggingClass } from './interactions/ElementDragging'
 import { guid } from './util/misc'
+import { ComponentChildren } from './vdom'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -37,7 +38,7 @@ export interface PluginDefInput {
   isPropsValid?: isPropsValidTester
   externalDefTransforms?: ExternalDefTransform[]
   eventResizeJoinTransforms?: EventResizeJoinTransforms[]
-  viewContainerModifiers?: ViewContainerModifier[]
+  viewContainerAppends?: ViewContainerAppend[]
   eventDropTransformers?: EventDropTransformers[]
   componentInteractions?: InteractionClass[]
   calendarInteractions?: CalendarInteractionClass[]
@@ -65,7 +66,7 @@ export interface PluginHooks {
   isPropsValid: isPropsValidTester | null
   externalDefTransforms: ExternalDefTransform[]
   eventResizeJoinTransforms: EventResizeJoinTransforms[]
-  viewContainerModifiers: ViewContainerModifier[]
+  viewContainerAppends: ViewContainerAppend[]
   eventDropTransformers: EventDropTransformers[]
   componentInteractions: InteractionClass[]
   calendarInteractions: CalendarInteractionClass[]
@@ -90,7 +91,7 @@ export interface ViewPropsTransformer {
   transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps, allOptions: any): any
 }
 
-export type ViewContainerModifier = (contentEl: HTMLElement, calendar: Calendar) => void
+export type ViewContainerAppend = (calendar: Calendar) => ComponentChildren
 
 
 export function createPlugin(input: PluginDefInput): PluginDef {
@@ -110,7 +111,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     isPropsValid: input.isPropsValid || null,
     externalDefTransforms: input.externalDefTransforms || [],
     eventResizeJoinTransforms: input.eventResizeJoinTransforms || [],
-    viewContainerModifiers: input.viewContainerModifiers || [],
+    viewContainerAppends: input.viewContainerAppends || [],
     eventDropTransformers: input.eventDropTransformers || [],
     componentInteractions: input.componentInteractions || [],
     calendarInteractions: input.calendarInteractions || [],
@@ -145,7 +146,7 @@ export class PluginSystem {
       isPropsValid: null,
       externalDefTransforms: [],
       eventResizeJoinTransforms: [],
-      viewContainerModifiers: [],
+      viewContainerAppends: [],
       eventDropTransformers: [],
       componentInteractions: [],
       calendarInteractions: [],
@@ -190,7 +191,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,
     externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms),
     eventResizeJoinTransforms: hooks0.eventResizeJoinTransforms.concat(hooks1.eventResizeJoinTransforms),
-    viewContainerModifiers: hooks0.viewContainerModifiers.concat(hooks1.viewContainerModifiers),
+    viewContainerAppends: hooks0.viewContainerAppends.concat(hooks1.viewContainerAppends),
     eventDropTransformers: hooks0.eventDropTransformers.concat(hooks1.eventDropTransformers),
     calendarInteractions: hooks0.calendarInteractions.concat(hooks1.calendarInteractions),
     componentInteractions: hooks0.componentInteractions.concat(hooks1.componentInteractions),

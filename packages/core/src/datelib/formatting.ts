@@ -41,8 +41,8 @@ export interface DateFormattingContext {
 }
 
 export interface DateFormatter {
-  format(date: ZonedMarker, context: DateFormattingContext)
-  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext)
+  format(date: ZonedMarker, context: DateFormattingContext): string
+  formatRange(start: ZonedMarker, end: ZonedMarker, context: DateFormattingContext): string
 }
 
 // TODO: use Intl.DateTimeFormatOptions

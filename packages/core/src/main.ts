@@ -33,16 +33,11 @@ export {
 } from './util/misc'
 
 export {
-  htmlEscape,
-  cssToStr
-} from './util/html'
-
-export {
   removeExact,
   isArraysEqual
 } from './util/array'
 
-export { memoize, memoizeParallel } from './util/memoize'
+export { memoize, memoizeArraylike, memoizeHashlike } from './util/memoize'
 
 export {
   intersectRects,
@@ -52,28 +47,23 @@ export {
   translateRect
 } from './util/geom'
 
-export { mapHash, filterHash, isPropsEqual, compareObjs } from './util/object'
+export { mapHash, filterHash, isPropsEqual, compareObjs, buildHashFromArray, collectFromHash } from './util/object'
 
 export {
   findElements,
   findDirectChildren,
   htmlToElement,
-  htmlToElements,
-  insertAfterElement,
-  prependToElement,
   removeElement,
-  appendToElement,
   applyStyle,
   applyStyleProp,
   elementMatches,
-  elementClosest,
-  forceClassName
+  elementClosest
 } from './util/dom-manip'
 
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
 export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps } from './component/event-splitting'
-export { getDayClasses } from './component/date-rendering'
+export { getDayClassNames, getDateMeta, getDayMeta, getSlatClassNames, DateMeta } from './component/date-rendering'
 export { default as GotoAnchor } from './component/GotoAnchor'
 
 export {
@@ -103,8 +93,6 @@ export { default as DateComponent, Seg, EventSegUiInteractionState } from './com
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
 export { default as View, ViewProps, getViewClassNames } from './View'
 export { default as ViewApi } from './ViewApi'
-export { default as FgEventRenderer, buildSegCompareObj, BaseFgEventRendererProps, sortEventSegs } from './component/renderers/FgEventRenderer'
-export { default as FillRenderer, BaseFillRendererProps } from './component/renderers/FillRenderer'
 
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 export { ViewDef } from './structs/view-def'
@@ -147,7 +135,7 @@ export { RecurringType, ParsedRecurring } from './structs/recurring-event'
 
 export { DragMetaInput, DragMeta, parseDragMeta } from './structs/drag-meta'
 
-export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerModifier } from './plugin-system'
+export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerAppend } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
 export { CalendarComponentProps } from './CalendarComponent'
 
@@ -158,7 +146,13 @@ export { default as TableDateCell } from './common/TableDateCell'
 export { default as DaySeries } from './common/DaySeriesModel'
 
 export { EventInteractionState } from './interactions/event-interaction-state'
-export { EventRenderRange, sliceEventStore, hasBgRendering, getElSeg, computeEventDraggable, computeEventStartResizable, computeEventEndResizable } from './component/event-rendering'
+export {
+  EventRenderRange, sliceEventStore, hasBgRendering, setElSeg, getElSeg,
+  computeSegDraggable, computeSegStartResizable, computeSegEndResizable,
+  EventInnerContentProps, getEventClassNames, buildSegTimeText,
+  buildSegCompareObj, sortEventSegs,
+  getSegMeta
+} from './component/event-rendering'
 
 export { default as DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel'
 
@@ -171,24 +165,31 @@ export { default as EventApi } from './api/EventApi'
 export { default as requestJson } from './util/requestJson'
 
 export * from './vdom'
-export { subrenderer, SubRenderer, BaseComponent, setRef, renderVNodes, buildMapSubRenderer } from './vdom-util'
+export { BaseComponent, setRef } from './vdom-util'
 export { DelayedRunner } from './util/runner'
 
 export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgrid/SimpleScrollGrid'
 export {
   CssDimValue, ScrollerLike, SectionConfig, ColProps, ChunkConfig, hasShrinkWidth, renderMicroColGroup,
-  getScrollGridClassNames, getSectionClassNames, getChunkVGrow, getAllowYScrolling, renderChunkContent, computeForceScrollbars, computeShrinkWidth,
+  getScrollGridClassNames, getSectionClassNames, getChunkVGrow, getAllowYScrolling, renderChunkContent, computeShrinkWidth,
   getChunkClassNames, ChunkContentCallbackArgs,
-  computeScrollerClientWidths, computeScrollerClientHeights,
+  CLIENT_HEIGHT_WIGGLE,
   sanitizeShrinkWidth,
   ChunkConfigRowContent, ChunkConfigContent,
   isColPropsEqual
 } from './scrollgrid/util'
+export { getCanVGrowWithinCell} from './scrollgrid/table-styling'
 export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'
 export { default as RefMap } from './util/RefMap'
 export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
 
-export { default as NowTimer, NowTimerCallback } from './NowTimer'
+export { default as NowTimer } from './NowTimer'
 export { default as ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
+export {
+  MountHook, MountHookProps,
+  ClassNamesHook, ClassNamesHookProps,
+  InnerContentHook, InnerContentHookProps
+} from './render-hook'
+export { default as StandardEvent, StandardEventProps, MinimalEventProps } from './StandardEvent'

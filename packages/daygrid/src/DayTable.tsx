@@ -10,16 +10,17 @@ import {
   DateComponent,
   DateRange,
   Slicer,
-  Hit,
   ComponentContext,
   RefObject,
-  CssDimValue
+  CssDimValue,
+  Hit
 } from '@fullcalendar/core'
-import Table, { TableSeg  } from './Table'
+import Table from './Table'
+import TableSeg from './TableSeg'
 
 
 export interface DayTableProps {
-  dateProfile: DateProfile | null
+  dateProfile: DateProfile
   dayTableModel: DayTableModel
   nextDayThreshold: Duration
   businessHours: EventStore
@@ -29,17 +30,13 @@ export interface DayTableProps {
   eventSelection: string
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
-  isRigid: boolean
   colGroupNode: VNode
-  renderNumberIntro: (row: number, cells: any) => VNode[]
-  renderBgIntro: () => VNode[]
-  renderIntro: () => VNode[]
-  colWeekNumbersVisible: boolean // week numbers render in own column? (caller does HTML via intro)
-  cellWeekNumbersVisible: boolean // display week numbers in day cell?
+  renderRowIntro?: () => VNode
   eventLimit: boolean | number
-  vGrow: boolean
+  vGrowRows: boolean
   headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
   clientWidth: CssDimValue
+  clientHeight: CssDimValue
 }
 
 export default class DayTable extends DateComponent<DayTableProps, ComponentContext> {
@@ -54,21 +51,17 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
     return (
       <Table
         ref={this.tableRef}
-        rootElRef={this.handleRootEl}
+        elRef={this.handleRootEl}
         { ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayTableModel) }
-        dateProfile={dateProfile}
         cells={dayTableModel.cells}
-        isRigid={props.isRigid}
+        dateProfile={dateProfile}
         colGroupNode={props.colGroupNode}
-        renderNumberIntro={props.renderNumberIntro}
-        renderBgIntro={props.renderBgIntro}
-        renderIntro={props.renderIntro}
-        colWeekNumbersVisible={props.colWeekNumbersVisible}
-        cellWeekNumbersVisible={props.cellWeekNumbersVisible}
+        renderRowIntro={props.renderRowIntro}
         eventLimit={props.eventLimit}
-        vGrow={props.vGrow}
+        vGrowRows={props.vGrowRows}
         headerAlignElRef={props.headerAlignElRef}
         clientWidth={props.clientWidth}
+        clientHeight={props.clientHeight}
       />
     )
   }
@@ -82,6 +75,11 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
     } else {
       calendar.unregisterInteractiveComponent(this)
     }
+  }
+
+
+  prepareHits() {
+    this.tableRef.current.prepareHits()
   }
 
 

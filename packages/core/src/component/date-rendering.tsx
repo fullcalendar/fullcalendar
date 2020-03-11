@@ -1,43 +1,91 @@
-import { DateMarker, startOfDay, addDays, DAY_IDS } from '../datelib/marker'
-import { rangeContainsMarker } from '../datelib/date-range'
-import ComponentContext from '../component/ComponentContext'
+import { DateMarker, DAY_IDS } from '../datelib/marker'
+import { rangeContainsMarker, DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
+import Theme from '../theme/Theme'
 
 
-// Computes HTML classNames for a single-day element
-export function getDayClasses(date: DateMarker, dateProfile: DateProfile, context: ComponentContext, noThemeHighlight?) {
-  let { calendar, options, theme, dateEnv } = context
-  let classes = []
-  let todayStart: DateMarker
-  let todayEnd: DateMarker
+export interface DateMeta {
+  dow: number
+  isDisabled: boolean
+  isOther: boolean // like, is it in the non-current "other" month
+  isToday: boolean
+  isPast: boolean
+  isFuture: boolean
+}
 
-  if (!rangeContainsMarker(dateProfile.activeRange, date)) {
-    classes.push('fc-disabled-day')
-  } else {
-    classes.push('fc-' + DAY_IDS[date.getUTCDay()])
 
-    if (
-      options.monthMode &&
-      dateEnv.getMonth(date) !== dateEnv.getMonth(dateProfile.currentRange.start)
-    ) {
-      classes.push('fc-other-month')
-    }
+export function getDateMeta(exactDate: DateMarker, todayRange?: DateRange, nowDate?: DateMarker): DateMeta { // TODO: disallow optional
+  return {
+    dow: nowDate.getUTCDay(),
+    isDisabled: false,
+    isOther: false,
+    isToday: todayRange && rangeContainsMarker(todayRange, exactDate),
+    isPast: nowDate && exactDate < nowDate,
+    isFuture: nowDate && exactDate > nowDate
+  }
+}
 
-    todayStart = startOfDay(calendar.getNow())
-    todayEnd = addDays(todayStart, 1)
 
-    if (date < todayStart) {
-      classes.push('fc-past')
-    } else if (date >= todayEnd) {
-      classes.push('fc-future')
-    } else {
-      classes.push('fc-today')
+export function getDayMeta(dayDate: DateMarker, todayRange?: DateRange, dateProfile?: DateProfile): DateMeta { // TODO: disallow optional
+  return {
+    dow: dayDate.getUTCDay(),
+    isDisabled: dateProfile && !rangeContainsMarker(dateProfile.activeRange, dayDate),
+    isOther: dateProfile && !rangeContainsMarker(dateProfile.currentRange, dayDate),
+    isToday: todayRange && dayDate.valueOf() === todayRange.start.valueOf(),
+    isPast: todayRange && dayDate < todayRange.start,
+    isFuture: todayRange && dayDate >= todayRange.end
+  }
+}
 
-      if (noThemeHighlight !== true) {
-        classes.push(theme.getClass('today'))
-      }
-    }
+
+export function getDayClassNames(meta: DateMeta, theme: Theme) {
+  let classNames: string[] = [
+    'fc-day',
+    'fc-day-' + DAY_IDS[meta.dow]
+  ]
+
+  if (meta.isDisabled) { // TODO: shouldn't we avoid all other classnames if disabled?
+    classNames.push('fc-day-disabled')
   }
 
-  return classes
+  if (meta.isToday) {
+    classNames.push('fc-day-today')
+    classNames.push(theme.getClass('today'))
+  }
+
+  if (meta.isPast) {
+    classNames.push('fc-day-past')
+  }
+
+  if (meta.isFuture) {
+    classNames.push('fc-day-future')
+  }
+
+  if (meta.isOther) {
+    classNames.push('fc-day-other')
+  }
+
+  return classNames
+}
+
+
+export function getSlatClassNames(meta: DateMeta, theme: Theme) {
+  let classNames: string[] = [
+    'fc-slat'
+  ]
+
+  if (meta.isToday) {
+    classNames.push('fc-slat-today')
+    classNames.push(theme.getClass('today'))
+  }
+
+  if (meta.isPast) {
+    classNames.push('fc-slat-past')
+  }
+
+  if (meta.isFuture) {
+    classNames.push('fc-slat-future')
+  }
+
+  return classNames
 }

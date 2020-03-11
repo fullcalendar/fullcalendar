@@ -3,10 +3,11 @@ import DayTableView from './DayTableView'
 import './main.scss'
 
 export { default as DayTable, DayTableSlicer } from './DayTable'
-export { default as Table, TableSeg } from './Table'
-export { default as TableView, isEventLimitAuto } from './TableView'
+export { default as Table } from './Table'
+export { default as TableSeg } from './TableSeg'
+export { TableCellModel } from './TableCell'
+export { default as TableView } from './TableView'
 export { buildDayTableModel } from './DayTableView'
-export { default as DayBgRow, DayBgCellModel } from './DayBgRow'
 export { DayTableView as DayGridView } // export as old name!
 
 export default createPlugin({

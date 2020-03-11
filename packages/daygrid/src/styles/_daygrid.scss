@@ -1,0 +1,113 @@
+
+.fc-daygrid {
+  position: relative;
+  z-index: 1;
+}
+
+.fc-daygrid-day-inner {
+  position: relative;
+  min-height: 100%; // works better than height:100% for some reason
+}
+
+.scrollgrid-vgrow-cell-hack .fc-daygrid-day-inner {
+  position: static;
+}
+
+.fc-daygrid-day-header {
+  padding: 4px;
+  text-align: right;
+}
+
+.fc-daygrid-day-events:before {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.fc-daygrid-day-events {
+  margin: 0 4px;
+  margin-bottom: 0 !important; // put bottom padding on fc-daygrid-day-inner instead
+  position: relative;
+  min-height: 3em;
+}
+
+.fc-daygrid-constantrowheight .fc-daygrid-day-events {
+  position: absolute;
+  left: 0;
+  right: 0;
+  min-height: 0;
+}
+
+.fc-daygrid-event-harness { // dont do margins either!!!
+  padding-bottom: 2px;
+  // margin-top: 0 !important; // was overriding JS :(
+}
+
+.fc-daygrid-event-harness-abs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+
+.fc-daygrid-day {
+  .fc-bgevent,
+  .fc-highlight,
+  .fc-nonbusiness {
+    z-index: 1; // TODO: more specific
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+.fc-daygrid .fc-event {
+  position: relative;
+  z-index: 2;
+}
+
+.fc-daygrid .fc-event.fc-event-mirror {
+  position: relative;
+  z-index: 3;
+}
+
+.fc-daygrid .fc-more {
+  position: relative;
+  z-index: 2;
+  font-size: .85em;
+
+  a {
+    cursor: pointer; // TODO: add reset?
+  }
+}
+
+.fc-daygrid .fc-popover {
+  z-index: 4;
+}
+
+.fc-more-popover-content {
+  padding: 10px;
+  min-width: 220px;
+}
+
+
+.fc-daygrid-week-number {
+  padding: 2px;
+  min-width: 1.5em;
+  text-align: center;
+  background-color: #f2f2f2;
+  color: #808080;
+}
+
+.fc-ltr .fc-daygrid-week-number {
+  float: left;
+  border-radius: 0 0 3px 0;
+}
+
+.fc-rtl .fc-daygrid-week-number {
+  float: right;
+  border-radius: 0 0 0 3px;
+}

@@ -1,6 +1,6 @@
 import {
-  h, ComponentChildren, createRef,
-  applyStyle, BaseComponent, ComponentContext, DelayedRunner
+  h, ComponentChildren,
+  applyStyle, BaseComponent, ComponentContext, DelayedRunner, Ref
 } from '@fullcalendar/core'
 
 
@@ -11,6 +11,7 @@ export interface PopoverProps {
   alignmentEl: HTMLElement
   topAlignmentEl?: HTMLElement
   onClose?: () => void
+  elRef?: Ref<HTMLDivElement>
 }
 
 const PADDING_FROM_VIEWPORT = 10
@@ -19,7 +20,6 @@ const SCROLL_DEBOUNCE = 10
 
 export default class Popover extends BaseComponent<PopoverProps> {
 
-  private rootElRef = createRef<HTMLDivElement>()
   private repositioner = new DelayedRunner(this.updateSize.bind(this))
 
 
@@ -28,7 +28,7 @@ export default class Popover extends BaseComponent<PopoverProps> {
     let classNames = [ 'fc-popover', context.theme.getClass('popover'), props.extraClassName ]
 
     return (
-      <div class={classNames.join(' ')} ref={this.rootElRef}>
+      <div class={classNames.join(' ')} ref={props.elRef}>
         <div class={'fc-header ' + theme.getClass('popoverHeader')}>
           <span class='fc-title'>
             {props.title}
@@ -59,7 +59,7 @@ export default class Popover extends BaseComponent<PopoverProps> {
   // Triggered when the user clicks *anywhere* in the document, for the autoHide feature
   handleDocumentMousedown = (ev) => {
     let { onClose } = this.props
-    let rootEl = this.rootElRef.current
+    let rootEl = this.base // bad
 
     // only hide the popover if the click happened outside the popover
     if (onClose && !rootEl.contains(ev.target)) {
@@ -82,14 +82,17 @@ export default class Popover extends BaseComponent<PopoverProps> {
   }
 
 
+  // TODO: adjust on window resize
+
+
   /*
   NOTE: the popover is position:fixed, so coordinates are relative to the viewport
   NOTE: the PARENT calls this as well, on window resize. we would have wanted to use the repositioner,
         but need to ensure that all other components have updated size first (for alignmentEl)
   */
-  updateSize() {
+  private updateSize() {
     let { alignmentEl, topAlignmentEl } = this.props
-    let rootEl = this.rootElRef.current
+    let rootEl = this.base as HTMLElement // BAD
 
     if (!rootEl) {
       return // not sure why this was null, but we shouldn't let external components call updateSize() anyway

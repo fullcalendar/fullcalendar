@@ -6,13 +6,15 @@ import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
 import { VNode, h } from '../vdom'
 import TableDateCell from './TableDateCell'
+import NowTimer from '../NowTimer'
+import { DateRange } from '../datelib/date-range'
 
 
 export interface DayHeaderProps {
   dates: DateMarker[]
   dateProfile: DateProfile
   datesRepDistinctDays: boolean
-  renderIntro?: () => VNode[]
+  renderIntro?: () => VNode
 }
 
 
@@ -22,34 +24,33 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {
     let { dateEnv } = this.context
     let { dates, datesRepDistinctDays } = props
-    let cells: VNode[] = []
-
-    if (props.renderIntro) {
-      cells = props.renderIntro()
-    }
 
     let colHeadFormat = createFormatter(
       context.options.columnHeaderFormat ||
       computeFallbackHeaderFormat(datesRepDistinctDays, dates.length)
     )
 
-    for (let date of dates) {
-      let distinctDateStr = datesRepDistinctDays ? dateEnv.formatIso(date, { omitTime: true }) : ''
-
-      cells.push(
-        <TableDateCell
-          key={distinctDateStr || date.getDay()}
-          distinctDateStr={distinctDateStr}
-          dateMarker={date}
-          dateProfile={props.dateProfile}
-          colCnt={dates.length}
-          colHeadFormat={colHeadFormat}
-        />
-      )
-    }
-
     return (
-      <tr>{cells}</tr>
+      <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => (
+        <tr>
+          {props.renderIntro && props.renderIntro()}
+          {dates.map((date) => {
+            let distinctDateStr = datesRepDistinctDays ? dateEnv.formatIso(date, { omitTime: true }) : ''
+
+            return (
+              <TableDateCell
+                key={distinctDateStr || date.getDay()}
+                distinctDateStr={distinctDateStr}
+                date={date}
+                todayRange={todayRange}
+                dateProfile={props.dateProfile}
+                colCnt={dates.length}
+                colHeadFormat={colHeadFormat}
+              />
+            )
+          })}
+        </tr>
+      )} />
     )
   }
 

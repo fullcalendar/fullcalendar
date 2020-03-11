@@ -55,6 +55,10 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
   // -----------------------------------------------------------------------------------------------------------------
 
 
+  prepareHits() {
+  }
+
+
   queryHit(positionLeft: number, positionTop: number, elWidth: number, elHeight: number): Hit | null {
     return null // this should be abstract
   }
@@ -68,7 +72,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
     let dateProfile = (this.props as any).dateProfile // HACK
     let instances = interaction.mutatedEvents.instances
 
-    if (dateProfile) { // HACK for DayTile
+    if (dateProfile) { // HACK for MorePopover
       for (let instanceId in instances) {
         if (!rangeContainsRange(dateProfile.validRange, instances[instanceId].range)) {
           return false
@@ -84,7 +88,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
     let dateProfile = (this.props as any).dateProfile // HACK
 
     if (
-      dateProfile && // HACK for DayTile
+      dateProfile && // HACK for MorePopover
       !rangeContainsRange(dateProfile.validRange, selection.range)
     ) {
       return false
@@ -128,5 +132,5 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
 
 }
 
-DateComponent.prototype.fgSegSelector = '.fc-event-container > *'
-DateComponent.prototype.bgSegSelector = '.fc-bgevent:not(.fc-nonbusiness)'
+DateComponent.prototype.fgSegSelector = '.fc-event'
+DateComponent.prototype.bgSegSelector = '.fc-bgevent'

@@ -37,6 +37,8 @@ import ViewApi from './ViewApi'
 import { globalPlugins } from './global-plugins'
 import { removeExact } from './util/array'
 import { guid } from './util/misc'
+import { CssDimValue } from './scrollgrid/util'
+import { applyStyleProp } from './util/dom-manip'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -118,6 +120,7 @@ export default class Calendar {
   isDatesUpdated: boolean = false
   isEventsUpdated: boolean = false
   el: HTMLElement
+  currentClassNames: string[] = []
   componentRef = createRef<CalendarComponent>()
   view: ViewApi // public API
 
@@ -344,7 +347,6 @@ export default class Calendar {
       <ComponentContextType.Provider value={context}>
         <CalendarComponent
           ref={this.componentRef}
-          rootEl={this.el}
           { ...state }
           viewSpec={viewSpec}
           dateProfileGenerator={this.dateProfileGenerators[viewType]}
@@ -356,6 +358,8 @@ export default class Calendar {
           eventDrag={state.eventDrag}
           eventResize={state.eventResize}
           title={viewApi.title}
+          onClassNameChange={this.handleClassNames}
+          onHeightChange={this.handleHeightChange}
           />
       </ComponentContextType.Provider>,
       this.el
@@ -388,8 +392,6 @@ export default class Calendar {
     if (this.isEventsUpdated) {
       this.isEventsUpdated = false
     }
-
-    this.releaseAfterSizingTriggers()
   }
 
 
@@ -401,6 +403,26 @@ export default class Calendar {
     }
 
     this.publiclyTrigger('_destroyed')
+  }
+
+
+  handleClassNames = (classNames: string[]) => {
+    let { classList } = this.el
+
+    for (let className of this.currentClassNames) {
+      classList.remove(className)
+    }
+
+    for (let className of classNames) {
+      classList.add(className)
+    }
+
+    this.currentClassNames = classNames
+  }
+
+
+  handleHeightChange = (height: CssDimValue) => {
+    applyStyleProp(this.el, 'height', height)
   }
 
 
@@ -593,30 +615,6 @@ export default class Calendar {
     if (optHandler) {
       return optHandler.apply(this, args)
     }
-  }
-
-
-  // Post-sizing hacks (kill after updateSize refactor)
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  publiclyTriggerAfterSizing<T extends EventHandlerName>(name: T, args: EventHandlerArgs<T>) {
-    let { afterSizingTriggers } = this;
-
-    (afterSizingTriggers[name] || (afterSizingTriggers[name] = [])).push(args)
-  }
-
-
-  releaseAfterSizingTriggers() {
-    let { afterSizingTriggers } = this
-
-    for (let name in afterSizingTriggers) {
-      for (let args of afterSizingTriggers[name]) {
-        this.publiclyTrigger(name as EventHandlerName, args)
-      }
-    }
-
-    this.afterSizingTriggers = {}
   }
 
 

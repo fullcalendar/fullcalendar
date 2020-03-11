@@ -112,12 +112,14 @@ export class DateEnv {
 
     if (typeof input === 'number') {
       marker = this.timestampToMarker(input)
+
     } else if (input instanceof Date) {
       input = input.valueOf()
 
       if (!isNaN(input)) {
         marker = this.timestampToMarker(input)
       }
+
     } else if (Array.isArray(input)) {
       marker = arrayToUtcDate(input)
     }
@@ -299,8 +301,8 @@ export class DateEnv {
     return (m1.valueOf() - m0.valueOf()) / asRoughMs(d)
   }
 
-
   // Start-Of
+  // these DON'T return zoned-dates. only UTC start-of dates
 
   startOf(m: DateMarker, unit: string) {
     if (unit === 'year') {

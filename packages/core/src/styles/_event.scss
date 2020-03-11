@@ -4,28 +4,35 @@
 .fc-not-end --> :not(.fc-event-end)
 */
 
-.fc-event {
-  position: relative; /* for resize handle and other inner positioning */
-  display: block; /* make the <a> tag block */
-  font-size: .85em;
-  line-height: 1.4;
-  border-radius: 3px;
-  border: 1px solid #3788d8;
+
+.fc-bgevent,
+.fc-nonbusiness {
+  opacity: 0.3;
 }
 
-.fc-event,
+
 .fc-event-dot {
   background-color: #3788d8; /* default BACKGROUND color */
 }
 
-.fc-event,
-.fc-event:hover {
-  color: #fff; /* default TEXT color */
-  text-decoration: none; /* if <a> has an href */
-}
+
+// TODO: copy and paste to other event types
+// .fc-event {
+//   position: relative; /* for resize handle and other inner positioning */
+//   display: block; /* make the <a> tag block */
+//   font-size: .85em;
+//   line-height: 1.4;
+//   border-radius: 3px;
+//   border: 1px solid #3788d8;
+//   background-color: #3788d8;
+//   color: #fff; /* default TEXT color. TODO: test hovering over <a> when HREF and theme */
+//   text-decoration: none; /* if <a> has an href */
+// }
+
+
 
 .fc-event[href],
-.fc-event.fc-draggable {
+.fc-event.fc-event-draggable {
   cursor: pointer; /* give events with links and draggable events a hand mouse pointer */
 }
 
@@ -34,33 +41,29 @@
   cursor: not-allowed;
 }
 
-.fc-event .fc-content {
-  position: relative;
-  z-index: 2;
-}
 
 /* resizer (cursor AND touch devices) */
 
-.fc-event .fc-resizer {
+.fc-event .fc-event-resizer {
   position: absolute;
   z-index: 4;
 }
 
 /* resizer (touch devices) */
 
-.fc-event .fc-resizer {
+.fc-event .fc-event-resizer {
   display: none;
 }
 
-.fc-event.fc-allow-mouse-resize .fc-resizer,
-.fc-event.fc-selected .fc-resizer {
+.fc-event.fc-allow-mouse-resize .fc-event-resizer,
+.fc-event.fc-selected .fc-event-resizer {
   /* only show when hovering or selected (with touch) */
   display: block;
 }
 
 /* hit area */
 
-.fc-event.fc-selected .fc-resizer:before {
+.fc-event.fc-selected .fc-event-resizer:before {
   /* 40x40 touch area */
   content: "";
   position: absolute;
@@ -120,7 +123,7 @@
     page-break-inside: avoid;
   }
 
-  .fc-event .fc-resizer {
+  .fc-event .fc-event-resizer {
     display: none;
   }
 

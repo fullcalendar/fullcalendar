@@ -1,13 +1,17 @@
 import { EventDef, EventTuple, EventDefHash } from '../structs/event'
 import { EventStore } from '../structs/event-store'
-import { DateRange, invertRanges, intersectRanges } from '../datelib/date-range'
+import { DateRange, invertRanges, intersectRanges, rangeContainsMarker } from '../datelib/date-range'
 import { Duration } from '../datelib/duration'
-import { computeVisibleDayRange } from '../util/misc'
+import { computeVisibleDayRange, compareByFieldSpecs } from '../util/misc'
 import { Seg } from './DateComponent'
 import EventApi from '../api/EventApi'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
 import ComponentContext from './ComponentContext'
+import { DateFormatter } from '../datelib/formatting'
+import { DateMarker } from '../datelib/marker'
+import ViewApi from '../ViewApi'
+
 
 export interface EventRenderRange extends EventTuple {
   ui: EventUi
@@ -15,6 +19,7 @@ export interface EventRenderRange extends EventTuple {
   isStart: boolean
   isEnd: boolean
 }
+
 
 /*
 Specifying nextDayThreshold signals that all-day ranges should be sliced.
@@ -113,64 +118,33 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
   return { bg: bgRanges, fg: fgRanges }
 }
 
+
 export function hasBgRendering(def: EventDef) {
   return def.rendering === 'background' || def.rendering === 'inverse-background'
 }
 
-export function filterSegsViaEls(context: ComponentContext, segs: Seg[], isMirror: boolean) {
-  let { calendar, view } = context
 
-  if (calendar.hasPublicHandlers('eventRender')) {
-    segs = segs.filter(function(seg) {
-      let custom = calendar.publiclyTrigger('eventRender', [
-        {
-          event: new EventApi(
-            calendar,
-            seg.eventRange.def,
-            seg.eventRange.instance
-          ),
-          isMirror,
-          isStart: seg.isStart,
-          isEnd: seg.isEnd,
-          // TODO: include seg.range once all components consistently generate it
-          el: seg.el,
-          view
-        }
-      ])
-
-      if (custom === false) { // means don't render at all
-        return false
-      } else if (custom && custom !== true) {
-        seg.el = custom
-      }
-
-      return true
-    })
-  }
-
-  for (let seg of segs) {
-    setElSeg(seg.el, seg)
-  }
-
-  return segs
-}
-
-function setElSeg(el: HTMLElement, seg: Seg) {
+export function setElSeg(el: HTMLElement, seg: Seg) {
   (el as any).fcSeg = seg
 }
 
+
 export function getElSeg(el: HTMLElement): Seg | null {
-  return (el as any).fcSeg || null
+  return (el as any).fcSeg ||
+    (el.parentNode as any).fcSeg || // for the harness
+    null
 }
 
 
 // event ui computation
+
 
 export function compileEventUis(eventDefs: EventDefHash, eventUiBases: EventUiHash) {
   return mapHash(eventDefs, function(eventDef: EventDef) {
     return compileEventUi(eventDef, eventUiBases)
   })
 }
+
 
 export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
   let uis = []
@@ -189,83 +163,198 @@ export function compileEventUi(eventDef: EventDef, eventUiBases: EventUiHash) {
 }
 
 
-// triggers
+export function sortEventSegs(segs, eventOrderSpecs): Seg[] {
+  let objs = segs.map(buildSegCompareObj)
 
-export function triggerPositionedSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
-  let { calendar, view } = context
+  objs.sort(function(obj0, obj1) {
+    return compareByFieldSpecs(obj0, obj1, eventOrderSpecs)
+  })
 
-  if (calendar.hasPublicHandlers('eventPositioned')) {
-
-    for (let seg of segs) {
-      calendar.publiclyTriggerAfterSizing('eventPositioned', [
-        {
-          event: new EventApi(
-            calendar,
-            seg.eventRange.def,
-            seg.eventRange.instance
-          ),
-          isMirror: isMirrors,
-          isStart: seg.isStart,
-          isEnd: seg.isEnd,
-          el: seg.el,
-          view
-        }
-      ])
-    }
-  }
-
-  if (!calendar.state.loadingLevel) { // avoid initial empty state while pending
-    calendar.afterSizingTriggers._eventsPositioned = [ null ] // fire once
-  }
+  return objs.map(function(c) {
+    return c._seg
+  })
 }
 
-export function triggerWillRemoveSegs(context: ComponentContext, segs: Seg[], isMirrors: boolean) {
-  let { calendar, view } = context
 
-  for (let seg of segs) {
-    calendar.trigger('eventElRemove', seg.el)
-  }
+// returns a object with all primitive props that can be compared
+export function buildSegCompareObj(seg: Seg) {
+  let { eventRange } = seg
+  let eventDef = eventRange.def
+  let range = eventRange.instance ? eventRange.instance.range : eventRange.range
+  let start = range.start ? range.start.valueOf() : 0 // TODO: better support for open-range events
+  let end = range.end ? range.end.valueOf() : 0 // "
 
-  if (calendar.hasPublicHandlers('eventDestroy')) {
-
-    for (let seg of segs) {
-      calendar.publiclyTrigger('eventDestroy', [
-        {
-          event: new EventApi(
-            calendar,
-            seg.eventRange.def,
-            seg.eventRange.instance
-          ),
-          isMirror: isMirrors,
-          el: seg.el,
-          view
-        }
-      ])
-    }
+  return {
+    ...eventDef.extendedProps,
+    ...eventDef,
+    id: eventDef.publicId,
+    start,
+    end,
+    duration: end - start,
+    allDay: Number(eventDef.allDay),
+    _seg: seg // for later retrieval
   }
 }
 
 
-// is-interactable
+// other stuff
 
-export function computeEventDraggable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
+
+export interface EventInnerContentProps { // for *InnerContent handlers
+  event: EventApi
+  timeText: string
+  isDraggable: boolean
+  isStartResizable: boolean
+  isEndResizable: boolean
+  isMirror: boolean
+  isStart: boolean
+  isEnd: boolean
+  isPast: boolean
+  isFuture: boolean
+  isToday: boolean
+  isSelected: boolean
+  isDragging: boolean
+  isResizing: boolean
+  view: ViewApi // specifically for the API
+}
+
+
+export function computeSegDraggable(seg: Seg, context: ComponentContext) {
   let { pluginHooks, calendar } = context
   let transformers = pluginHooks.isDraggableTransformers
-  let val = eventUi.startEditable
+  let { def, ui } = seg.eventRange
+  let val = ui.startEditable
 
   for (let transformer of transformers) {
-    val = transformer(val, eventDef, eventUi, calendar.component.view) // yuck
+    val = transformer(val, def, ui, calendar)
   }
 
   return val
 }
 
 
-export function computeEventStartResizable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
-  return eventUi.durationEditable && context.options.eventResizableFromStart
+export function computeSegStartResizable(seg: Seg, context: ComponentContext) {
+  return seg.isStart && seg.eventRange.ui.durationEditable && context.options.eventResizableFromStart
 }
 
 
-export function computeEventEndResizable(context: ComponentContext, eventDef: EventDef, eventUi: EventUi) {
-  return eventUi.durationEditable
+export function computeSegEndResizable(seg: Seg, context: ComponentContext) {
+  return seg.isEnd && seg.eventRange.ui.durationEditable
+}
+
+
+export function buildSegTimeText(
+  seg: Seg,
+  timeFormat: DateFormatter,
+  context: ComponentContext,
+  defaultDisplayEventTime?: boolean, // defaults to true
+  defaultDisplayEventEnd?: boolean, // defaults to true
+  startOverride?: DateMarker,
+  endOverride?: DateMarker
+) {
+  let { dateEnv, options } = context
+  let { displayEventTime, displayEventEnd } = options
+  let eventDef = seg.eventRange.def
+  let eventInstance = seg.eventRange.instance
+
+  if (displayEventTime == null) { displayEventTime = defaultDisplayEventTime !== false }
+  if (displayEventEnd == null) { displayEventEnd = defaultDisplayEventEnd !== false }
+
+  if (displayEventTime && !eventDef.allDay) {
+    let { range } = eventInstance
+
+    if (displayEventEnd && eventDef.hasEnd) {
+      return dateEnv.formatRange(
+        startOverride || range.start,
+        endOverride || range.end,
+        timeFormat,
+        {
+          forcedStartTzo: startOverride ? null : eventInstance.forcedStartTzo, // nooooooooooooo, give tzo if same date
+          forcedEndTzo: endOverride ? null : eventInstance.forcedEndTzo
+        }
+      )
+
+    } else {
+      return dateEnv.format(
+        startOverride || range.start,
+        timeFormat,
+        {
+          forcedTzo: startOverride ? null : eventInstance.forcedStartTzo // nooooo, same
+        }
+      )
+    }
+  }
+
+  return ''
+}
+
+
+export function getSegMeta(seg: Seg, todayRange: DateRange, nowDate?: DateMarker) { // TODO: make arg order consistent with date util
+  let segRange = seg.eventRange.range
+
+  return {
+    isPast: segRange.end < (nowDate || todayRange.start),
+    isFuture: segRange.start >= (nowDate || todayRange.end),
+    isToday: todayRange && rangeContainsMarker(todayRange, segRange.start)
+  }
+}
+
+
+export function getEventClassNames(props: EventInnerContentProps) { // weird that we use this interface, but convenient
+  let classNames: string[] = [ 'fc-event' ]
+
+  if (props.isMirror) {
+    classNames.push('fc-event-mirror')
+  }
+
+  if (props.isDraggable) {
+    classNames.push('fc-event-draggable')
+  }
+
+  if (props.isStartResizable || props.isEndResizable) {
+    classNames.push('fc-event-resizable')
+  }
+
+  if (props.isDragging) {
+    classNames.push('fc-event-dragging')
+  }
+
+  if (props.isResizing) {
+    classNames.push('fc-event-resizing')
+  }
+
+  if (props.isSelected) {
+    classNames.push('fc-event-selected')
+  }
+
+  if (props.isStart) {
+    classNames.push('fc-event-start')
+  }
+
+  if (props.isEnd) {
+    classNames.push('fc-event-end')
+  }
+
+  if (props.isPast) {
+    classNames.push('fc-event-past')
+  }
+
+  if (props.isToday) {
+    classNames.push('fc-event-today')
+  }
+
+  if (props.isFuture) {
+    classNames.push('fc-event-future')
+  }
+
+  return classNames
+}
+
+
+export function getSkinCss(ui: EventUi) {
+  return {
+    'background-color': ui.backgroundColor,
+    'border-color': ui.borderColor,
+    color: ui.textColor
+  }
 }

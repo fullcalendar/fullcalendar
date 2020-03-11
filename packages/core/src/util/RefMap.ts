@@ -1,74 +1,67 @@
-import { hashValuesToArray } from './object'
+import { hashValuesToArray, collectFromHash } from './object'
 
 /*
 TODO: somehow infer OtherArgs from masterCallback?
-TODO: make OtherArgs a single object to avoid spreading?
+TODO: infer RefType from masterCallback if provided
 */
-export default class RefMap<RefType, OtherArgs extends any[] = []> {
+export default class RefMap<RefType> {
 
   public currentMap: { [key: string]: RefType } = {}
-  private otherArgsMap: { [key: string]: OtherArgs } = {}
+  private depths: { [key: string]: number } = {}
   private callbackMap: { [key: string]: (val: RefType | null) => void } = {}
 
 
-  constructor(public masterCallback?: (val: RefType | null, key: string, ...otherArgs: OtherArgs) => void) {
+  constructor(public masterCallback?: (val: RefType | null, key: string) => void) {
   }
 
 
-  createRef(key: string | number, ...otherArgs: OtherArgs) {
+  createRef(key: string | number) {
     let refCallback = this.callbackMap[key]
 
     if (!refCallback) {
       refCallback = this.callbackMap[key] = (val: RefType | null) => {
-        this.handleValue(val, String(key), ...otherArgs)
+        this.handleValue(val, String(key))
       }
     }
-
-    this.otherArgsMap[key] = otherArgs
 
     return refCallback
   }
 
 
-  handleValue = (val: RefType | null, key: string, ...otherArgs: OtherArgs) => { // bind in case users want to pass it around
+  handleValue = (val: RefType | null, key: string) => { // bind in case users want to pass it around
+    let { depths, currentMap } = this
+    let removed = false
+    let added = false
+
     if (val !== null) {
-      this.currentMap[key] = val
-    } else {
-      delete this.currentMap[key]
+      removed = (key in currentMap) // for bug
+      currentMap[key] = val
+      depths[key] = (depths[key] || 0) + 1
+      added = true
+
+    } else if (--depths[key] === 0) {
+      delete currentMap[key]
       delete this.callbackMap[key]
-      delete this.otherArgsMap[key]
+      removed = true
     }
 
     if (this.masterCallback) {
-      this.masterCallback(val, String(key), ...otherArgs)
+      if (removed) {
+        this.masterCallback(null, String(key))
+      }
+      if (added) {
+        this.masterCallback(val, String(key))
+      }
     }
   }
 
 
   collect( // TODO: check callers that don't care about order. should use getAll instead
-    startIndex = 0,
+    startIndex?: number,
     endIndex?: number,
-    step = 1,
-    filterFunc?: (val: RefType, key: number, ...otherArgs: OtherArgs) => boolean
+    step?: number
   ) {
-    let { currentMap, otherArgsMap } = this
-    let res: RefType[] = []
-
-    if (endIndex == null) {
-      endIndex = Object.keys(currentMap).length
-    }
-
-    for (let i = startIndex; i < endIndex; i += step) {
-      let val = currentMap[i]
-
-      if (val !== undefined) { // will disregard undefined for sparse arrays
-        if (!filterFunc || filterFunc(val, i, ...otherArgsMap[i])) {
-          res.push(val)
-        }
-      }
-    }
-
-    return res
+    return collectFromHash(this.currentMap, startIndex, endIndex, step)
   }
 
 

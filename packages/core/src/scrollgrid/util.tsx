@@ -2,8 +2,7 @@ import { VNode, h, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
 import ComponentContext from '../component/ComponentContext'
 import { computeSmallestCellWidth } from '../util/misc'
-import { mapHash, isPropsEqual } from '../util/object'
-import RefMap from '../util/RefMap'
+import { isPropsEqual } from '../util/object'
 import { isArraysEqual } from '../util/array'
 
 
@@ -32,7 +31,6 @@ export interface ChunkConfig {
   outerContent?: VNode
   content?: ChunkConfigContent
   rowContent?: ChunkConfigRowContent
-  rowSelector?: string
   vGrowRows?: boolean
   scrollerElRef?: Ref<HTMLDivElement>
   elRef?: Ref<HTMLTableCellElement>
@@ -45,7 +43,8 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   clientWidth: CssDimValue
   clientHeight: CssDimValue
   vGrowRows: boolean
-  rowSyncHeights: number[]
+  rowSyncHeights: { [rowKey: string]: number }
+  reportRowHeight?: (rowKey: string, innerEl: HTMLElement) => void // TODO: don't make optional
 }
 
 
@@ -67,21 +66,6 @@ export function computeShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL
 export interface ScrollerLike { // have scrollers implement?
   needsYScrolling(): boolean
   needsXScrolling(): boolean
-}
-
-
-export function computeForceScrollbars(scrollers: ScrollerLike[], axis: 'X' | 'Y') {
-  let methodName = 'needs' + axis + 'Scrolling'
-  let needsScrollbars = false
-
-  for (let scroller of scrollers) {
-    if (scroller[methodName]()) {
-      needsScrollbars = true
-      break
-    }
-  }
-
-  return needsScrollbars
 }
 
 
@@ -202,12 +186,4 @@ export function getChunkClassNames(sectionConfig: SectionConfig, chunkConfig: Ch
 
 // IE sometimes reports a certain clientHeight, but when inner content is set to that height,
 // some sort of rounding error causes it to spill out and create unnecessary scrollbars. Compensate.
-const CLIENT_HEIGHT_WIGGLE = /Trident/.test(navigator.userAgent) ? 1 : 0
-
-export function computeScrollerClientWidths(scrollerElRefs: RefMap<HTMLElement, any>) {
-  return mapHash(scrollerElRefs.currentMap, (scrollerEl) => scrollerEl.clientWidth)
-}
-
-export function computeScrollerClientHeights(scrollerElRefs: RefMap<HTMLElement, any>) {
-  return mapHash(scrollerElRefs.currentMap, (scrollerEl) => scrollerEl.clientHeight - CLIENT_HEIGHT_WIGGLE)
-}
+export const CLIENT_HEIGHT_WIGGLE = /Trident/.test(navigator.userAgent) ? 1 : 0

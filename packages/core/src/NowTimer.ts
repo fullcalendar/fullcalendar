@@ -1,73 +1,102 @@
-import { DateMarker, addMs } from './datelib/marker'
+import { DateMarker, addMs, startOfDay, addDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
-import { SubRenderer } from './vdom-util'
-import ComponentContext from './component/ComponentContext'
+import ComponentContext, { ComponentContextType } from './component/ComponentContext'
+import { ComponentChildren, Component } from './vdom'
+import { DateRange } from './datelib/date-range'
 
 
 export interface NowTimerProps {
-  enabled: boolean
-  unit: string
-  callback: NowTimerCallback
+  unit: string // TODO: add type of unit
+  content: (now: DateMarker, todayRange: DateRange) => ComponentChildren
 }
 
-export type NowTimerCallback = (now: DateMarker) => void
+interface NowTimerState {
+  nowDate: DateMarker
+  todayRange: DateRange
+}
 
 
-export default class NowTimer extends SubRenderer {
+export default class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
-  private timeoutId: any
-  private intervalId: any
+  static contextType = ComponentContextType
+  context: ComponentContext // do this for all components that use the context!!!
+
+  initialNowDate: DateMarker
+  initialNowQueriedMs: number
+  timeoutId: any
 
 
-  render(props: NowTimerProps, context: ComponentContext) {
+  constructor(props: NowTimerProps, context: ComponentContext) {
+    super(props, context)
 
-    if (!props.enabled) {
-      return
-    }
+    this.initialNowDate = context.calendar.getNow()
+    this.initialNowQueriedMs = new Date().valueOf()
 
-    let { dateEnv } = context
-    let { unit, callback } = props
-    let initialNowDate = context.calendar.getNow()
-    let initialNowQueriedMs = new Date().valueOf()
-
-    function update() {
-      callback(addMs(initialNowDate, new Date().valueOf() - initialNowQueriedMs))
-    }
-
-    update()
-
-    // wait until the beginning of the next interval
-    let delay = dateEnv.add(
-      dateEnv.startOf(initialNowDate, unit),
-      createDuration(1, unit)
-    ).valueOf() - initialNowDate.valueOf()
-
-    // TODO: maybe always use setTimeout, waiting until start of next unit
-    this.timeoutId = setTimeout(() => {
-      this.timeoutId = null
-      update()
-
-      if (unit === 'second') {
-        delay = 1000 // every second
-      } else {
-        delay = 1000 * 60 // otherwise, every minute
-      }
-
-      this.intervalId = setInterval(update, delay) // update every interval
-    }, delay)
+    this.state = this.computeTiming().currentState
   }
 
 
-  unrender() {
+  render(props: NowTimerProps, state: NowTimerState) {
+    return props.content(state.nowDate, state.todayRange)
+  }
+
+
+  componentDidMount() {
+    this.setTimeout()
+  }
+
+
+  componentDidUpdate(prevProps: NowTimerProps) {
+    if (prevProps.unit !== this.props.unit) {
+      this.clearTimeout()
+      this.setTimeout()
+    }
+  }
+
+
+  componentWillUnmount() {
+    this.clearTimeout()
+  }
+
+
+  private computeTiming() {
+    let { props, context } = this
+    let unroundedNow = addMs(this.initialNowDate, new Date().valueOf() - this.initialNowQueriedMs)
+    let currentUnitStart = context.dateEnv.startOf(unroundedNow, props.unit)
+    let nextUnitStart = context.dateEnv.add(currentUnitStart, createDuration(1, props.unit))
+    let waitMs = nextUnitStart.valueOf() - unroundedNow.valueOf()
+
+    return {
+      currentState: { nowDate: currentUnitStart, todayRange: buildDayRange(currentUnitStart) } as NowTimerState,
+      nextState: { nowDate: nextUnitStart, todayRange: buildDayRange(nextUnitStart) } as NowTimerState,
+      waitMs
+    }
+  }
+
+
+  private setTimeout() {
+    let { nextState, waitMs } = this.computeTiming()
+
+    this.timeoutId = setTimeout(() => {
+      this.setState(nextState, () => {
+        this.setTimeout()
+      })
+    }, waitMs)
+  }
+
+
+  private clearTimeout() {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
-      this.timeoutId = null
-    }
-
-    if (this.intervalId) {
-      clearInterval(this.intervalId)
-      this.intervalId = null
     }
   }
 
+}
+
+
+function buildDayRange(date: DateMarker): DateRange { // TODO: make this a general util
+  let start = startOfDay(date)
+  let end = addDays(start, 1)
+
+  return { start, end }
 }

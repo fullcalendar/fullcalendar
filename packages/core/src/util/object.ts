@@ -78,11 +78,24 @@ export function mapHash<InputItem, OutputItem>(
 }
 
 
-export function arrayToHash(a): { [key: string]: true } {
+export function arrayToHash(a): { [key: string]: true } { // TODO: rename to strinArrayToHash or something
   let hash = {}
 
   for (let item of a) {
     hash[item] = true
+  }
+
+  return hash
+}
+
+
+export function buildHashFromArray<Item, ItemRes>(a: Item[], func: (item: Item, index: number) => [ string, ItemRes ]) {
+  let hash: { [key: string]: ItemRes } = {}
+
+  for (let i = 0; i < a.length; i++) {
+    let tuple = func(a[i], i)
+
+    hash[tuple[0]] = tuple[1]
   }
 
   return hash
@@ -192,4 +205,28 @@ function isObjValsEqual<T>(val0: T, val1: T, comparator: EqualityThing<T>) {
     return comparator(val0, val1)
   }
   return false
+}
+
+
+export function collectFromHash<Item>(
+  hash: { [key: string]: Item },
+  startIndex = 0,
+  endIndex?: number,
+  step = 1,
+) {
+  let res: Item[] = []
+
+  if (endIndex == null) {
+    endIndex = Object.keys(hash).length
+  }
+
+  for (let i = startIndex; i < endIndex; i += step) {
+    let val = hash[i]
+
+    if (val !== undefined) { // will disregard undefined for sparse arrays
+      res.push(val)
+    }
+  }
+
+  return res
 }

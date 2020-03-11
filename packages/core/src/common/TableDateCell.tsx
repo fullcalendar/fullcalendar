@@ -1,7 +1,7 @@
-import { rangeContainsMarker } from '../datelib/date-range'
-import { getDayClasses } from '../component/date-rendering'
+import { rangeContainsMarker, DateRange } from '../datelib/date-range'
+import { getDayClassNames, getDayMeta } from '../component/date-rendering'
 import GotoAnchor from '../component/GotoAnchor'
-import { DateMarker, DAY_IDS } from '../datelib/marker'
+import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import ComponentContext from '../component/ComponentContext'
 import { h } from '../vdom'
@@ -12,47 +12,41 @@ import { BaseComponent } from '../vdom-util'
 
 export interface TableDateCellProps {
   distinctDateStr: string
-  dateMarker: DateMarker
+  date: DateMarker
   dateProfile: DateProfile
+  todayRange: DateRange
   colCnt: number
   colHeadFormat: DateFormatter
   colSpan?: number
   otherAttrs?: object
 }
 
-export default class TableDateCell extends BaseComponent<TableDateCellProps> {
+export default class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
 
   render(props: TableDateCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
-    let { dateMarker, dateProfile, distinctDateStr } = props
-    let isDateValid = rangeContainsMarker(dateProfile.activeRange, dateMarker) // TODO: called too frequently. cache somehow.
-    let classNames = [ 'fc-day-header' ]
+    let { date, dateProfile, distinctDateStr } = props
+    let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let innerText
     let innerHtml
 
     if (typeof options.columnHeaderHtml === 'function') {
       innerHtml = options.columnHeaderHtml(
-        dateEnv.toDate(dateMarker)
+        dateEnv.toDate(date)
       )
     } else if (typeof options.columnHeaderText === 'function') {
       innerText = options.columnHeaderText(
-        dateEnv.toDate(dateMarker)
+        dateEnv.toDate(date)
       )
     } else {
-      innerText = dateEnv.format(dateMarker, props.colHeadFormat)
+      innerText = dateEnv.format(date, props.colHeadFormat)
     }
 
-    // if only one row of days, the classNames on the header can represent the specific days beneath
-    if (distinctDateStr) {
-      classNames = classNames.concat(
-        // includes the day-of-week class
-        // noThemeHighlight=true (don't highlight the header)
-        getDayClasses(dateMarker, dateProfile, context, true)
-      )
-    } else {
-      classNames.push('fc-' + DAY_IDS[dateMarker.getUTCDay()]) // only add the day-of-week class
-    }
+    let dayMeta = distinctDateStr // if only one row of days, the classNames on the header can represent the specific days beneath
+      ? getDayMeta(date, props.todayRange, props.dateProfile)
+      : getDayMeta(date)
 
+    let classNames = [ 'fc-day-header' ].concat(getDayClassNames(dayMeta, context.theme))
     let attrs = {} as any
 
     if (isDateValid && distinctDateStr) {
@@ -72,7 +66,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> {
         {isDateValid &&
           <GotoAnchor
             navLinks={options.navLinks}
-            gotoOptions={{ date: dateMarker, forceOff: isDateValid && (!distinctDateStr || props.colCnt === 1) }}
+            gotoOptions={{ date, forceOff: isDateValid && (!distinctDateStr || props.colCnt === 1) }}
             htmlContent={innerHtml}
           >{innerText}</GotoAnchor>
         }
