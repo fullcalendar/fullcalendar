@@ -97,8 +97,7 @@ export default class EventDragging extends Interaction {
     let interaction: EventInteractionState = {
       affectedEvents: relevantEvents,
       mutatedEvents: createEmptyEventStore(),
-      isEvent: true,
-      interactingSeg: this.draggingSeg
+      isEvent: true
     }
 
     if (hit) {

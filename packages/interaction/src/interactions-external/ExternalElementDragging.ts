@@ -74,8 +74,7 @@ export default class ExternalElementDragging {
     let interaction: EventInteractionState = {
       affectedEvents: createEmptyEventStore(),
       mutatedEvents: createEmptyEventStore(),
-      isEvent: this.dragMeta!.create,
-      interactingSeg: null
+      isEvent: this.dragMeta!.create
     }
 
     if (hit) {

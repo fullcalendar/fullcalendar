@@ -144,8 +144,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
     let interaction: EventInteractionState = {
       affectedEvents: relevantEvents,
       mutatedEvents: createEmptyEventStore(),
-      isEvent: true,
-      interactingSeg: this.subjectSeg
+      isEvent: true
     }
 
     if (hit) {
@@ -350,8 +349,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
           state: {
             affectedEvents: state.affectedEvents,
             mutatedEvents: createEmptyEventStore(),
-            isEvent: true,
-            interactingSeg: state.interactingSeg
+            isEvent: true
           }
         })
 

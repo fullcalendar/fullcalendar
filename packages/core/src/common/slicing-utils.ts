@@ -145,8 +145,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     return {
       segs: this.sliceEventRanges(rangeRes.fg, extraArgs),
       affectedInstances: interaction.affectedEvents.instances,
-      isEvent: interaction.isEvent,
-      interactingSeg: interaction.interactingSeg
+      isEvent: interaction.isEvent
     }
   }
 

@@ -53,7 +53,6 @@ export function splitInteractionByRow(ui: EventSegUiInteractionState | null, row
       byRow[i] = {
         affectedInstances: ui.affectedInstances,
         isEvent: ui.isEvent,
-        interactingSeg: ui.interactingSeg,
         segs: []
       }
     }
