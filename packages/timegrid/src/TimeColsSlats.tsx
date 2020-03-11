@@ -59,7 +59,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     let { theme } = context
 
     return (
-      <div class='fc-slats' ref={this.rootElRef}>
+      <div class='fc-timegrid-slats' ref={this.rootElRef}>
         <table
           class={theme.getClass('table') + ' vgrow' /* why not use rowsGrow like resource view? */}
           style={{
@@ -162,6 +162,8 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
           </td>
           :
           <td class={classNames.join(' ')} />
+
+      // TODO: move nearly everything to <td>s
 
       rowsNodes.push(
         <tr

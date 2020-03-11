@@ -1,20 +1,19 @@
 
-.fc-time-grid {
+.fc-timegrid {
   position: relative; // for housing skeletons
   z-index: 1; // because containers z-index'd children
   min-height: 100%; // fill height always ... even when slat table doesn't grow
 }
 
 
-// SKELETONS
-// order:
-// .fc-bg
-// .fc-slats
-// .fc-content-skeleton
+.fc-timegrid-slats {
+  position: relative;
+  z-index: 2;
+}
 
-.fc-time-grid > .fc-bg {
+.fc-timegrid-cols {
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   top: 0;
   left: 0;
   right: 0;
@@ -25,109 +24,53 @@
   }
 }
 
-.fc-time-grid > .fc-slats {
+.fc-timegrid-col-inner,
+.fc-timegrid-col-events {
   position: relative;
-  z-index: 2;
+  height: 0;
 }
 
-.fc-time-grid > .fc-content-skeleton {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  left: 0;
-  right: 0;
-
-  & > table {
-    height: 100%;
-  }
+.fc-ltr .fc-timegrid-col-events { /* space on the sides of events for LTR (default) */
+  margin: 0 2.5% 0 2px;
 }
 
-.fc-time-grid .fc-content-col { // <td>s within .fc-content-skeleton
-  position: relative;
+.fc-rtl .fc-timegrid-col-events { /* space on the sides of events for RTL */
+  margin: 0 2px 0 2.5%;
 }
 
 
-// elements that live WITHIN each .fc-content-col
-
-.fc-time-grid .fc-business-container {
-  position: relative;
+.fc-timegrid-col-inner .fc-nonbusiness {
   z-index: 1;
 }
 
-.fc-time-grid .fc-bgevent-container {
-  position: relative;
+.fc-timegrid-col-inner .fc-bgevent {
   z-index: 2;
 }
 
-.fc-time-grid .fc-highlight-container {
-  position: relative;
+.fc-timegrid-col-inner .fc-highlight {
   z-index: 3;
 }
 
-.fc-time-grid .fc-event-container {
-  position: relative;
+.fc-timegrid-col-inner .fc-event {
   z-index: 4;
 }
 
-.fc-time-grid .fc-now-indicator-line { // will be absolute
+.fc-timegrid-col-inner .fc-now-indicator-line {
   z-index: 5;
 }
 
-.fc-time-grid .fc-mirror-container {
-  position: relative;
+.fc-timegrid-col-events {
   z-index: 6;
-}
-
-
-// highlight (within .fc-highlight-container)
-
-.fc-time-grid .fc-highlight {
-  position: absolute;
-  left: 0;
-  right: 0;
 }
 
 
 // SLATS (lines that run horizontally)
 
-.fc-time-grid > .fc-slats td {
+.fc-timegrid-slats td {
   height: 1.5em;
   border-bottom: 0; /* each cell is responsible for its top border */
 }
 
-.fc-time-grid > .fc-slats .fc-minor td {
+.fc-timegrid-slats .fc-minor td {
   border-top-style: dotted;
-}
-
-
-.fc-print {
-
-  // kill the overlaid, absolutely-positioned components
-  .fc-time-grid > .fc-bg,
-  .fc-time-grid > .fc-slats,
-  .fc-time-grid .fc-bgevent-skeleton,
-  .fc-time-grid .fc-highlight-skeleton,
-  .fc-time-grid .fc-mirror-skeleton,
-  .fc-time-grid .fc-bgevent-container,
-  .fc-time-grid .fc-business-container,
-  .fc-time-grid .fc-highlight-container,
-  .fc-time-grid .fc-mirror-container {
-    display: none !important; // important overrides inline declaration for .fc-slats
-  }
-
-  /* let the container that holds the events be naturally positioned and create real height */
-  .fc-time-grid > .fc-content-skeleton {
-    position: static;
-  }
-
-  /* in case there are no events, we still want some height */
-  .fc-time-grid > .fc-content-skeleton table {
-    height: 4em;
-  }
-
-  /* kill the horizontal spacing made by the event container. event margins will be done below */
-  .fc-time-grid .fc-event-container {
-    margin: 0 !important;
-  }
-
 }

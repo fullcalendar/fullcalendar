@@ -14,11 +14,11 @@ import {
   Slicer,
   Hit,
   ComponentContext,
-  subrenderer,
   NowTimer,
   CssDimValue
 } from '@fullcalendar/core'
-import TimeCols, { TimeColsSeg, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'
+import TimeColsSeg from './TimeColsSeg'
+import TimeCols from './TimeCols'
 
 
 export interface DayTimeColsProps {
@@ -36,50 +36,46 @@ export interface DayTimeColsProps {
   clientWidth: CssDimValue
   clientHeight: CssDimValue
   vGrowRows: boolean
-  renderBgIntro: () => VNode[]
-  renderIntro: () => VNode[]
   onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean
 }
 
-interface DayTimeColsState {
-  nowIndicatorDate: DateMarker
-}
 
-
-export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTimeColsState> {
+export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
   private buildDayRanges = memoize(buildDayRanges)
-  private updateNowTimer = subrenderer(NowTimer)
-  private dayRanges: DateRange[] // for now indicator
   private slicer = new DayTimeColsSlicer()
   private timeColsRef = createRef<TimeCols>()
 
 
-  render(props: DayTimeColsProps, state: DayTimeColsState, context: ComponentContext) {
-    let { dateEnv } = context
+  render(props: DayTimeColsProps, state: {}, context: ComponentContext) {
+    let { dateEnv, options, calendar } = context
     let { dateProfile, dayTableModel } = props
-    let dayRanges = this.dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
+    let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
 
     // give it the first row of cells
     return (
-      <TimeCols
-        ref={this.timeColsRef}
-        rootElRef={this.handleRootEl}
-        {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
-        dateProfile={dateProfile}
-        cells={dayTableModel.cells[0]}
-        tableColGroupNode={props.tableColGroupNode}
-        tableMinWidth={props.tableMinWidth}
-        clientWidth={props.clientWidth}
-        clientHeight={props.clientHeight}
-        vGrowRows={props.vGrowRows}
-        renderBgIntro={props.renderBgIntro}
-        renderIntro={props.renderIntro}
-        nowIndicatorDate={state.nowIndicatorDate}
-        nowIndicatorSegs={state.nowIndicatorDate && this.slicer.sliceNowDate(state.nowIndicatorDate, this.context.calendar, this.dayRanges)}
-        onScrollTopRequest={props.onScrollTopRequest}
-        forPrint={props.forPrint}
+      <NowTimer // TODO: would move this further down hierarchy, but sliceNowDate needs it
+        unit={options.nowIndicator ? 'minute' : 'day'}
+        content={(nowDate: DateMarker, todayRange: DateRange) => (
+          <TimeCols
+            ref={this.timeColsRef}
+            rootElRef={this.handleRootEl}
+            {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
+            dateProfile={dateProfile}
+            cells={dayTableModel.cells[0]}
+            tableColGroupNode={props.tableColGroupNode}
+            tableMinWidth={props.tableMinWidth}
+            clientWidth={props.clientWidth}
+            clientHeight={props.clientHeight}
+            vGrowRows={props.vGrowRows}
+            nowDate={nowDate}
+            nowIndicatorSegs={options.nowIndicator && this.slicer.sliceNowDate(nowDate, calendar, dayRanges)}
+            todayRange={todayRange}
+            onScrollTopRequest={props.onScrollTopRequest}
+            forPrint={props.forPrint}
+          />
+        )}
       />
     )
   }
@@ -93,37 +89,6 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps, DayTime
     } else {
       calendar.unregisterInteractiveComponent(this)
     }
-  }
-
-
-  componentDidMount() {
-    this.subrender()
-  }
-
-
-  componentDidUpdate() {
-    this.subrender()
-  }
-
-
-  componentWillUnmount() {
-    this.subrenderDestroy()
-  }
-
-
-  subrender() {
-    this.updateNowTimer({
-      enabled: this.context.options.nowIndicator,
-      unit: TIME_COLS_NOW_INDICATOR_UNIT,
-      callback: this.handleNowDate
-    })
-  }
-
-
-  handleNowDate = (date: DateMarker) => {
-    this.setState({
-      nowIndicatorDate: date
-    })
   }
 
 

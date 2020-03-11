@@ -1,14 +1,12 @@
 import { createPlugin } from '@fullcalendar/core'
 import TimeColsView from './TimeColsView'
 import DayTimeColsView, { buildTimeColsModel } from './DayTimeColsView'
-import { TimeColsSeg } from './TimeCols'
+import TimeColsSeg from './TimeColsSeg'
 import { default as DayTimeCols, DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
 import './main.scss'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildTimeColsModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
-export { default as TimeCols, TIME_COLS_NOW_INDICATOR_UNIT } from './TimeCols'
-export { TimeColsSlatsBody } from './TimeColsSlats'
-export { TimeColsContentBody } from './TimeColsContent'
+export { default as TimeCols } from './TimeCols'
 export { default as TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 export default createPlugin({

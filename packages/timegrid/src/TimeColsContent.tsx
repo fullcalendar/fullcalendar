@@ -1,57 +1,105 @@
 import {
   h, VNode,
   BaseComponent,
-  subrenderer,
   EventSegUiInteractionState,
   CssDimValue,
   DateMarker,
-  RefMap
+  RefMap,
+  createRef,
+  PositionCache,
+  ComponentContext,
+  memoize,
+  DateRange,
+  DateProfile
 } from '@fullcalendar/core'
-import TimeColsMirrorEvents from './TimeColsMirrorEvents'
-import TimeColsEvents from './TimeColsEvents'
-import TimeColsFills from './TimeColsFills'
-import { TimeColsSeg } from './TimeCols'
+import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
+import TimeColsSeg, { splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
-import TimeColsNowIndicator from './TimeColsNowIndicator'
-import { DayBgCellModel } from '@fullcalendar/daygrid'
+import TimeCol from './TimeCol'
 
 
-export interface TimeColsContentProps extends TimeColsContentBaseProps {
+export interface TimeColsContentProps {
+  cells: TableCellModel[]
+  dateProfile: DateProfile
+  nowDate: DateMarker
+  todayRange: DateRange
+  businessHourSegs: TimeColsSeg[]
+  bgEventSegs: TimeColsSeg[]
+  fgEventSegs: TimeColsSeg[]
+  dateSelectionSegs: TimeColsSeg[]
+  eventSelection: string
+  eventDrag: EventSegUiInteractionState | null
+  eventResize: EventSegUiInteractionState | null
+  nowIndicatorSegs: TimeColsSeg[]
+  forPrint: boolean
   clientWidth: CssDimValue
   tableMinWidth: CssDimValue
   tableColGroupNode: VNode
-  nowIndicatorDate: DateMarker | null
-  coords: TimeColsSlatsCoords
+  slatCoords: TimeColsSlatsCoords
+  onColCoords?: (colCoords: PositionCache) => void
 }
 
 
-export default class TimeColsContent extends BaseComponent<TimeColsContentProps> {
+export default class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TODO: rename
 
-  render(props: TimeColsContentProps) {
-    let nowIndicatorTop = props.coords && props.coords.safeComputeTop(props.nowIndicatorDate)
+  private splitFgEventSegs = memoize(splitSegsByCol)
+  private splitBgEventSegs = memoize(splitSegsByCol)
+  private splitBusinessHourSegs = memoize(splitSegsByCol)
+  private splitNowIndicatorSegs = memoize(splitSegsByCol)
+  private splitDateSelectionSegs = memoize(splitSegsByCol)
+  private splitEventDrag = memoize(splitInteractionByCol)
+  private splitEventResize = memoize(splitInteractionByCol)
+  private rootElRef = createRef<HTMLDivElement>()
+  private cellElRefs = new RefMap<HTMLTableCellElement>()
+
+
+  render(props: TimeColsContentProps, state: {}, context: ComponentContext) {
+    let nowIndicatorTop =
+      context.options.nowIndicator &&
+      props.slatCoords &&
+      props.slatCoords.safeComputeTop(props.nowDate)
+
+    let colCnt = props.cells.length
+    let fgEventSegsByRow = this.splitFgEventSegs(props.fgEventSegs, colCnt)
+    let bgEventSegsByRow = this.splitBgEventSegs(props.bgEventSegs, colCnt)
+    let businessHourSegsByRow = this.splitBusinessHourSegs(props.businessHourSegs, colCnt)
+    let nowIndicatorSegsByRow = this.splitNowIndicatorSegs(props.nowIndicatorSegs, colCnt)
+    let dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, colCnt)
+    let eventDragByRow = this.splitEventDrag(props.eventDrag, colCnt)
+    let eventResizeByRow = this.splitEventResize(props.eventResize, colCnt)
 
     return (
-      <div class='fc-content-skeleton'>
+      <div class='fc-timegrid-cols' ref={this.rootElRef}>
         <table style={{
           minWidth: props.tableMinWidth,
           width: props.clientWidth
         }}>
           {props.tableColGroupNode}
-          <TimeColsContentBody
-            cells={props.cells}
-            businessHourSegs={props.businessHourSegs}
-            bgEventSegs={props.bgEventSegs}
-            fgEventSegs={props.fgEventSegs}
-            dateSelectionSegs={props.dateSelectionSegs}
-            eventSelection={props.eventSelection}
-            eventDrag={props.eventDrag}
-            eventResize={props.eventResize}
-            nowIndicatorTop={nowIndicatorTop}
-            nowIndicatorSegs={props.nowIndicatorSegs}
-            coords={props.coords}
-            forPrint={props.forPrint}
-            renderIntro={props.renderIntro}
-          />
+          <tbody>
+            <tr>
+              <td class='fc-timegrid-cols-axis' />
+              {props.cells.map((cell, i) => (
+                <TimeCol
+                  key={cell.date.toISOString()}
+                  elRef={this.cellElRefs.createRef(i)}
+                  date={cell.date}
+                  dateProfile={props.dateProfile}
+                  nowDate={props.nowDate}
+                  todayRange={props.todayRange}
+                  htmlAttrs={cell.htmlAttrs}
+                  fgEventSegs={fgEventSegsByRow[i]}
+                  bgEventSegs={bgEventSegsByRow[i]}
+                  businessHourSegs={businessHourSegsByRow[i]}
+                  nowIndicatorSegs={nowIndicatorSegsByRow[i]}
+                  dateSelectionSegs={dateSelectionSegsByRow[i]}
+                  eventDrag={eventDragByRow[i]}
+                  eventResize={eventResizeByRow[i]}
+                  slatCoords={props.slatCoords}
+                  eventSelection={props.eventSelection}
+                />
+              ))}
+            </tr>
+          </tbody>
         </table>
         {nowIndicatorTop != null &&
           <div
@@ -63,183 +111,29 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
     )
   }
 
-}
-
-
-export interface TimeColsContentBodyProps extends TimeColsContentBaseProps {
-  nowIndicatorTop: number
-}
-
-export interface TimeColsContentBaseProps {
-  cells: DayBgCellModel[]
-  businessHourSegs: TimeColsSeg[]
-  bgEventSegs: TimeColsSeg[]
-  fgEventSegs: TimeColsSeg[]
-  dateSelectionSegs: TimeColsSeg[]
-  eventSelection: string
-  eventDrag: EventSegUiInteractionState | null
-  eventResize: EventSegUiInteractionState | null
-  nowIndicatorSegs: TimeColsSeg[]
-  coords: TimeColsSlatsCoords
-  forPrint: boolean
-  renderIntro: () => VNode[]
-}
-
-
-export class TimeColsContentBody extends BaseComponent<TimeColsContentBodyProps> {
-
-  private renderMirrorEvents = subrenderer(TimeColsMirrorEvents)
-  private renderFgEvents = subrenderer(TimeColsEvents)
-  private renderBgEvents = subrenderer(TimeColsFills)
-  private renderBusinessHours = subrenderer(TimeColsFills)
-  private renderDateSelection = subrenderer(TimeColsFills)
-  private renderNowIndicator = subrenderer(TimeColsNowIndicator)
-
-  private colContainerRefs = new RefMap<HTMLElement>()
-  private mirrorContainerRefs = new RefMap<HTMLElement>()
-  private fgContainerRefs = new RefMap<HTMLElement>()
-  private bgContainerRefs = new RefMap<HTMLElement>()
-  private highlightContainerRefs = new RefMap<HTMLElement>()
-  private businessContainerRefs = new RefMap<HTMLElement>()
-
-
-  render(props: TimeColsContentBodyProps) {
-    let cellNodes: VNode[] = props.renderIntro()
-    let cellCnt = props.cells.length
-
-    for (let i = 0; i < cellCnt; i++) {
-      cellNodes.push(
-        <td>
-          <div class='fc-content-col' ref={this.colContainerRefs.createRef(i)}>
-            <div class='fc-event-container fc-mirror-container' ref={this.mirrorContainerRefs.createRef(i)} />
-            <div class='fc-event-container' ref={this.fgContainerRefs.createRef(i)} />
-            <div class='fc-highlight-container' ref={this.highlightContainerRefs.createRef(i)} />
-            <div class='fc-bgevent-container' ref={this.bgContainerRefs.createRef(i)} />
-            <div class='fc-business-container' ref={this.businessContainerRefs.createRef(i)} />
-          </div>
-        </td>
-      )
-    }
-
-    return (
-      <tbody>
-        <tr>{cellNodes}</tr>
-      </tbody>
-    )
-  }
-
 
   componentDidMount() {
-    this.subrender()
+    this.updateCoords()
   }
 
 
   componentDidUpdate() {
-    this.subrender()
+    this.updateCoords()
   }
 
 
-  componentWillMount() {
-    this.subrenderDestroy()
-  }
-
-
-  subrender() {
-    let { props } = this
-    let { options } = this.context
-
-    this.renderBusinessHours({
-      type: 'businessHours',
-      containerEls: this.businessContainerRefs.collect(),
-      segs: props.businessHourSegs,
-      coords: props.coords,
-      cells: props.cells
-    })
-
-    this.renderDateSelection({
-      type: 'highlight',
-      containerEls: this.highlightContainerRefs.collect(),
-      segs: options.selectMirror ? [] : props.dateSelectionSegs, // do highlight if NO mirror
-      coords: props.coords,
-      cells: props.cells
-    })
-
-    this.renderBgEvents({
-      type: 'bgEvent',
-      containerEls: this.bgContainerRefs.collect(),
-      segs: props.bgEventSegs,
-      coords: props.coords,
-      cells: props.cells
-    })
-
-    this.renderFgEvents({
-      containerEls: this.fgContainerRefs.collect(),
-      segs: props.fgEventSegs,
-      selectedInstanceId: props.eventSelection,
-      hiddenInstances: // TODO: more convenient
-        (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-        (props.eventResize ? props.eventResize.affectedInstances : null),
-      isDragging: false,
-      isResizing: false,
-      isSelecting: false,
-      forPrint: props.forPrint,
-      coords: props.coords,
-      cells: props.cells
-    })
-
-    this.subrenderMirror(this.mirrorContainerRefs.collect(), options)
-
-    this.renderNowIndicator({
-      colContainerEls: this.colContainerRefs.collect(),
-      nowIndicatorTop: props.nowIndicatorTop,
-      segs: props.nowIndicatorSegs
-    } as any) // WTF
-  }
-
-
-  subrenderMirror(mirrorContainerEls: HTMLElement[], options): TimeColsEvents | null {
+  updateCoords() {
     let { props } = this
 
-    if (props.eventDrag && props.eventDrag.segs.length) { // messy check
-      return this.renderMirrorEvents({
-        containerEls: mirrorContainerEls,
-        segs: props.eventDrag.segs,
-        isDragging: true,
-        isResizing: false,
-        isSelecting: false,
-        interactingSeg: props.eventDrag.interactingSeg,
-        forPrint: props.forPrint,
-        coords: props.coords,
-        cells: props.cells
-      })
-
-    } else if (props.eventResize && props.eventResize.segs.length) {
-      return this.renderMirrorEvents({
-        containerEls: mirrorContainerEls,
-        segs: props.eventResize.segs,
-        isDragging: true,
-        isResizing: false,
-        isSelecting: false,
-        interactingSeg: props.eventResize.interactingSeg,
-        forPrint: props.forPrint,
-        coords: props.coords,
-        cells: props.cells
-      })
-
-    } else if (options.selectMirror) {
-      return this.renderMirrorEvents({
-        containerEls: mirrorContainerEls,
-        segs: props.dateSelectionSegs,
-        isDragging: false,
-        isResizing: false,
-        isSelecting: true,
-        forPrint: props.forPrint,
-        coords: props.coords,
-        cells: props.cells
-      })
-
-    } else {
-      return this.renderMirrorEvents(false)
+    if (props.onColCoords && props.clientWidth) { // clientWidth means sizing has stabilized
+      props.onColCoords(
+        new PositionCache(
+          this.rootElRef.current,
+          this.cellElRefs.collect(),
+          true, // horizontal
+          false
+        )
+      )
     }
   }
 

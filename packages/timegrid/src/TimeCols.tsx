@@ -1,6 +1,5 @@
 import {
   h, VNode, Ref,
-  removeElement,
   createDuration,
   addDurations,
   multiplyDuration,
@@ -8,28 +7,28 @@ import {
   DateMarker,
   ComponentContext,
   BaseComponent,
-  Seg,
   EventSegUiInteractionState,
   DateProfile,
-  sortEventSegs,
   memoize,
   CssDimValue,
   PositionCache,
   Duration,
   ScrollResponder,
-  ScrollRequest
+  ScrollRequest,
+  DateRange
 } from '@fullcalendar/core'
-import { DayBgCellModel } from '@fullcalendar/daygrid'
+import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import TimeColsSlats from './TimeColsSlats'
 import TimeColsContent from './TimeColsContent'
-import TimeColsBg from './TimeColsBg'
-import { __assign } from 'tslib'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
+import TimeColsSeg from './TimeColsSeg'
 
 
 export interface TimeColsProps {
   dateProfile: DateProfile
-  cells: DayBgCellModel[]
+  cells: TableCellModel[]
+  nowDate: DateMarker
+  todayRange: DateRange
   businessHourSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
   fgEventSegs: TimeColsSeg[]
@@ -43,21 +42,10 @@ export interface TimeColsProps {
   clientWidth: CssDimValue
   clientHeight: CssDimValue
   vGrowRows: boolean
-  renderBgIntro: () => VNode[]
-  renderIntro: () => VNode[]
-  nowIndicatorDate: DateMarker
   nowIndicatorSegs: TimeColsSeg[]
   onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean
 }
-
-export interface TimeColsSeg extends Seg {
-  col: number
-  start: DateMarker
-  end: DateMarker
-}
-
-export const TIME_COLS_NOW_INDICATOR_UNIT = 'minute'
 
 interface TimeColsState {
   slatCoords?: TimeColsSlatsCoords
@@ -85,16 +73,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
     this.snapsPerSlot = snapsPerSlot
 
     return (
-      <div class='fc-time-grid' ref={props.rootElRef}>
-        <TimeColsBg
-          dateProfile={dateProfile}
-          cells={props.cells}
-          clientWidth={props.clientWidth}
-          tableMinWidth={props.tableMinWidth}
-          tableColGroupNode={props.tableColGroupNode}
-          renderIntro={props.renderBgIntro}
-          onCoords={this.handlColCoords}
-        />
+      <div class='fc-timegrid' ref={props.rootElRef}>
         <TimeColsSlats
           dateProfile={dateProfile}
           slotDuration={slotDuration}
@@ -106,7 +85,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
         />
         <TimeColsContent
           cells={props.cells}
-          renderIntro={props.renderIntro}
+          dateProfile={props.dateProfile}
           businessHourSegs={props.businessHourSegs}
           bgEventSegs={props.bgEventSegs}
           fgEventSegs={props.fgEventSegs}
@@ -114,12 +93,14 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
           eventSelection={props.eventSelection}
           eventDrag={props.eventDrag}
           eventResize={props.eventResize}
-          nowIndicatorDate={props.nowIndicatorDate}
+          todayRange={props.todayRange}
+          nowDate={props.nowDate}
           nowIndicatorSegs={props.nowIndicatorSegs}
           clientWidth={props.clientWidth}
           tableMinWidth={props.tableMinWidth}
           tableColGroupNode={props.tableColGroupNode}
-          coords={state.slatCoords}
+          slatCoords={state.slatCoords}
+          onColCoords={this.handleColCoords}
           forPrint={props.forPrint}
         />
       </div>
@@ -161,7 +142,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
   }
 
 
-  handlColCoords = (colCoords: PositionCache | null) => {
+  handleColCoords = (colCoords: PositionCache | null) => {
     this.colCoords = colCoords
   }
 
@@ -212,52 +193,6 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
     }
   }
 
-}
-
-
-// Given segments grouped by column, insert the segments' elements into a parallel array of container
-// elements, each living within a column.
-export function attachSegs({ segs, containerEls }: { segs: Seg[], containerEls: HTMLElement[] }, context: ComponentContext) {
-  let segsByCol = groupSegsByCol(segs, containerEls.length)
-
-  for (let col = 0; col < segsByCol.length; col++) {
-    segsByCol[col] = sortEventSegs(segsByCol[col], context.eventOrderSpecs)
-  }
-
-  for (let col = 0; col < containerEls.length; col++) { // iterate each column grouping
-    let segs = segsByCol[col]
-
-    for (let seg of segs) {
-      containerEls[col].appendChild(seg.el)
-    }
-  }
-
-  return segsByCol
-}
-
-
-export function detachSegs(segsByCol: Seg[][]) {
-  for (let segGroup of segsByCol) {
-    for (let seg of segGroup) {
-      removeElement(seg.el)
-    }
-  }
-}
-
-
-function groupSegsByCol(segs, colCnt) {
-  let segsByCol = []
-  let i
-
-  for (i = 0; i < colCnt; i++) {
-    segsByCol.push([])
-  }
-
-  for (i = 0; i < segs.length; i++) {
-    segsByCol[segs[i].col].push(segs[i])
-  }
-
-  return segsByCol
 }
 
 

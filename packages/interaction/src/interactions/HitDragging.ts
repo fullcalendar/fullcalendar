@@ -140,6 +140,8 @@ export default class HitDragging {
 
   prepareHits() {
     this.offsetTrackers = mapHash(this.droppableStore, function(interactionSettings) {
+      interactionSettings.component.prepareHits()
+
       return new OffsetTracker(interactionSettings.el)
     })
   }
@@ -185,7 +187,7 @@ export default class HitDragging {
             hit &&
             (
               // make sure the hit is within activeRange, meaning it's not a deal cell
-              !component.props.dateProfile || // hack for DayTile
+              !component.props.dateProfile || // hack for MorePopover
               rangeContainsRange(component.props.dateProfile.activeRange, hit.dateSpan.range)
             ) &&
             (!bestHit || hit.layer > bestHit.layer)

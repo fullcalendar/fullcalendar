@@ -1,9 +1,7 @@
-import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, Seg, applyStyle, rangeContainsMarker } from '@fullcalendar/core'
-import { DayBgCellModel } from '@fullcalendar/daygrid'
+import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateProfile, Duration, rangeContainsMarker } from '@fullcalendar/core'
 
 
 export default class TimeColsSlatsCoords {
-
 
   constructor(
     public positions: PositionCache,
@@ -13,8 +11,8 @@ export default class TimeColsSlatsCoords {
   }
 
 
-  safeComputeTop(date: DateMarker | null) {
-    if (date && rangeContainsMarker(this.dateProfile.currentRange, date)) {
+  safeComputeTop(date: DateMarker) {
+    if (rangeContainsMarker(this.dateProfile.currentRange, date)) {
       return this.computeDateTop(date)
     }
   }
@@ -55,47 +53,6 @@ export default class TimeColsSlatsCoords {
 
     return positions.tops[slatIndex] +
       positions.getHeight(slatIndex) * slatRemainder
-  }
-
-
-  // For each segment in an array, computes and assigns its top and bottom properties
-  computeSegVerticals(segs: Seg[], cells: DayBgCellModel[], eventMinHeight: number) {
-    let i
-    let seg
-    let dayDate
-
-    for (i = 0; i < segs.length; i++) {
-      seg = segs[i]
-      dayDate = cells[seg.col].date
-
-      seg.top = this.computeDateTop(seg.start, dayDate)
-      seg.bottom = Math.max(
-        seg.top + eventMinHeight,
-        this.computeDateTop(seg.end, dayDate)
-      )
-    }
-  }
-
-
-  // Given segments that already have their top/bottom properties computed, applies those values to
-  // the segments' elements.
-  assignSegVerticals(segs) {
-    let i
-    let seg
-
-    for (i = 0; i < segs.length; i++) {
-      seg = segs[i]
-      applyStyle(seg.el, this.generateSegVerticalCss(seg))
-    }
-  }
-
-
-  // Generates an object with CSS properties for the top/bottom coordinates of a segment element
-  generateSegVerticalCss(seg) {
-    return {
-      top: seg.top,
-      bottom: -seg.bottom // flipped because needs to be space beyond bottom edge of event container
-    }
   }
 
 }

@@ -21,7 +21,9 @@ import { __assign } from 'tslib'
 
 export default class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
 
-  static SELECTOR = '.fc-draggable, .fc-resizable' // TODO: test this in IE11
+  // TODO: test this in IE11
+  // QUESTION: why do we need it on the resizable???
+  static SELECTOR = '.fc-event-draggable, .fc-event-resizable'
 
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging
@@ -85,14 +87,14 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
 
     let isValid =
       component.isValidSegDownEl(origTarget) &&
-      !elementClosest(origTarget, '.fc-resizer') // NOT on a resizer
+      !elementClosest(origTarget, '.fc-event-resizer') // NOT on a resizer
 
     dragging.setIgnoreMove(!isValid)
 
     // disable dragging for elements that are resizable (ie, selectable)
     // but are not draggable
     this.isDragging = isValid &&
-      (ev.subjectEl as HTMLElement).classList.contains('fc-draggable')
+      (ev.subjectEl as HTMLElement).classList.contains('fc-event-draggable')
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
@@ -196,7 +198,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
       // render the mirror if no already-rendered mirror
       // TODO: wish we could somehow wait for dispatch to guarantee render
       this.dragging.setMirrorIsVisible(
-        !hit || !document.querySelector('.fc-mirror')
+        !hit || !document.querySelector('.fc-event-mirror')
       )
 
       // assign states based on new hit

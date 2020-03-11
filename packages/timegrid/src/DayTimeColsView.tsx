@@ -40,16 +40,12 @@ export default class DayTimeColsView extends TimeColsView {
           dayTableModel={dayTableModel}
           nextDayThreshold={nextDayThreshold}
           colGroupNode={contentArg.tableColGroupNode}
-          isRigid={false}
-          renderNumberIntro={this.renderTableIntro}
-          renderBgIntro={this.renderTableBgIntro}
-          renderIntro={this.renderTableIntro}
-          colWeekNumbersVisible={false}
-          cellWeekNumbersVisible={false}
+          renderRowIntro={this.renderTableRowIntro}
           eventLimit={this.getAllDayEventLimit()}
-          vGrow={false}
+          vGrowRows={false}
           headerAlignElRef={this.headerElRef}
           clientWidth={contentArg.clientWidth}
+          clientHeight={contentArg.clientHeight}
         />
       )),
       (contentArg: ChunkContentCallbackArgs) => (
@@ -57,8 +53,6 @@ export default class DayTimeColsView extends TimeColsView {
           {...splitProps['timed']}
           dateProfile={dateProfile}
           dayTableModel={dayTableModel}
-          renderBgIntro={this.renderTimeColsBgIntro}
-          renderIntro={this.renderTimeColsIntro}
           forPrint={props.forPrint}
           tableColGroupNode={contentArg.tableColGroupNode}
           tableMinWidth={contentArg.tableMinWidth}

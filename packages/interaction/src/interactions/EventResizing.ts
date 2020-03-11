@@ -35,7 +35,7 @@ export default class EventDragging extends Interaction {
     let { component } = settings
 
     let dragging = this.dragging = new FeaturefulElementDragging(settings.el)
-    dragging.pointer.selector = '.fc-resizer'
+    dragging.pointer.selector = '.fc-event-resizer'
     dragging.touchScrollAllowed = false
     dragging.autoScroller.isEnabled = component.context.options.dragScroll
 
@@ -105,7 +105,7 @@ export default class EventDragging extends Interaction {
       mutation = computeMutation(
         initialHit,
         hit,
-        (ev.subjectEl as HTMLElement).classList.contains('fc-start-resizer'),
+        (ev.subjectEl as HTMLElement).classList.contains('fc-event-resizer-start'),
         eventInstance.range,
         pluginHooks.eventResizeJoinTransforms
       )

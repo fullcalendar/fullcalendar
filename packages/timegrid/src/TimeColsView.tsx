@@ -26,7 +26,7 @@ export default abstract class TimeColsView extends View {
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
   protected headerElRef = createRef<HTMLTableCellElement>()
   private rootElRef = createRef<HTMLDivElement>()
-  private scrollerElRef = window['asdf'] = createRef<HTMLDivElement>()
+  private scrollerElRef = createRef<HTMLDivElement>()
 
 
   // rendering
@@ -128,7 +128,7 @@ export default abstract class TimeColsView extends View {
     if (options.weekNumbers) {
       weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
 
-      return [
+      return (
         <th class={'fc-axis shrink fc-week-number'}>
           <div data-fc-width-all={1}>
             <GotoAnchor
@@ -138,33 +138,12 @@ export default abstract class TimeColsView extends View {
             >{weekText}</GotoAnchor>
           </div>
         </th>
-      ]
+      )
     }
 
-    return [
+    return (
       <th class='fc-axis'></th>
-    ]
-  }
-
-
-  /* TimeCols Render Methods
-  ------------------------------------------------------------------------------------------------------------------*/
-
-
-  // Generates the HTML that goes before the bg of the TimeCols slot area. Long vertical column.
-  renderTimeColsBgIntro = () => {
-    return [
-      <td class='fc-axis'></td>
-    ]
-  }
-
-
-  // Generates the HTML that goes before all other types of cells.
-  // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
-  renderTimeColsIntro = () => {
-    return [
-      <td class='fc-axis'></td>
-    ]
+    )
   }
 
 
@@ -172,8 +151,7 @@ export default abstract class TimeColsView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Generates the HTML that goes before the all-day cells
-  renderTableBgIntro = () => {
+  renderTableRowIntro = () => {
     let { options } = this.context
     let spanAttrs = {} as any
     let child = options.allDayText
@@ -183,7 +161,7 @@ export default abstract class TimeColsView extends View {
       child = null
     }
 
-    return [
+    return (
       <td class='shrink fc-axis'>
         <div data-fc-width-all={1}>
           <span {...spanAttrs} data-fc-width-content={1}>
@@ -191,16 +169,7 @@ export default abstract class TimeColsView extends View {
           </span>
         </div>
       </td>
-    ]
-  }
-
-
-  // Generates the HTML that goes before all other types of cells.
-  // Affects content-skeleton, mirror-skeleton, highlight-skeleton for both the time-grid and day-grid.
-  renderTableIntro = () => {
-    return [
-      <td class='fc-axis'></td>
-    ]
+    )
   }
 
 }
