@@ -168,6 +168,7 @@ export * from './vdom'
 export { BaseComponent, setRef } from './vdom-util'
 export { DelayedRunner } from './util/runner'
 
+export { ScrollGridProps, ScrollGridSectionConfig, ColGroupConfig, ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgrid/SimpleScrollGrid'
 export {
   CssDimValue, ScrollerLike, SectionConfig, ColProps, ChunkConfig, hasShrinkWidth, renderMicroColGroup,

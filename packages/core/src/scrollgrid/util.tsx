@@ -6,7 +6,7 @@ import { isPropsEqual } from '../util/object'
 import { isArraysEqual } from '../util/array'
 
 
-export type CssDimValue = string | number
+export type CssDimValue = string | number // TODO: move to more general file
 
 
 export interface ColProps {

@@ -20,6 +20,7 @@ import { NamedTimeZoneImplClass } from './datelib/timezone'
 import { ElementDraggingClass } from './interactions/ElementDragging'
 import { guid } from './util/misc'
 import { ComponentChildren } from './vdom'
+import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -50,6 +51,7 @@ export interface PluginDefInput {
   defaultView?: string
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers?: OptionChangeHandlerMap
+  scrollGridImpl?: ScrollGridImpl
 }
 
 export interface PluginHooks {
@@ -78,6 +80,7 @@ export interface PluginHooks {
   defaultView: string
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers: OptionChangeHandlerMap
+  scrollGridImpl: ScrollGridImpl | null
 }
 
 export interface PluginDef extends PluginHooks {
@@ -122,7 +125,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     namedTimeZonedImpl: input.namedTimeZonedImpl,
     defaultView: input.defaultView || '',
     elementDraggingImpl: input.elementDraggingImpl,
-    optionChangeHandlers: input.optionChangeHandlers || {}
+    optionChangeHandlers: input.optionChangeHandlers || {},
+    scrollGridImpl: input.scrollGridImpl || null
   }
 }
 
@@ -157,7 +161,8 @@ export class PluginSystem {
       namedTimeZonedImpl: null,
       defaultView: '',
       elementDraggingImpl: null,
-      optionChangeHandlers: {}
+      optionChangeHandlers: {},
+      scrollGridImpl: null
     }
     this.addedHash = {}
   }
@@ -202,6 +207,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     namedTimeZonedImpl: hooks1.namedTimeZonedImpl || hooks0.namedTimeZonedImpl,
     defaultView: hooks0.defaultView || hooks1.defaultView, // put earlier plugins FIRST
     elementDraggingImpl: hooks0.elementDraggingImpl || hooks1.elementDraggingImpl, // "
-    optionChangeHandlers: { ...hooks0.optionChangeHandlers, ...hooks1.optionChangeHandlers }
+    optionChangeHandlers: { ...hooks0.optionChangeHandlers, ...hooks1.optionChangeHandlers },
+    scrollGridImpl: hooks1.scrollGridImpl || hooks0.scrollGridImpl
   }
 }
