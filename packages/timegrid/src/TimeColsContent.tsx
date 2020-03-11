@@ -19,6 +19,7 @@ import TimeCol from './TimeCol'
 
 
 export interface TimeColsContentProps {
+  axis: boolean
   cells: TableCellModel[]
   dateProfile: DateProfile
   nowDate: DateMarker
@@ -77,7 +78,9 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
           {props.tableColGroupNode}
           <tbody>
             <tr>
-              <td class='fc-timegrid-cols-axis' />
+              {props.axis &&
+                <td class='fc-timegrid-cols-axis' />
+              }
               {props.cells.map((cell, i) => (
                 <TimeCol
                   key={cell.date.toISOString()}

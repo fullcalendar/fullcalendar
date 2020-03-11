@@ -15,15 +15,20 @@ import {
   Hit,
   ComponentContext,
   NowTimer,
-  CssDimValue
+  CssDimValue,
+  Duration
 } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeCols from './TimeCols'
+import { TimeSlatMeta } from './TimeColsSlats'
 
 
 export interface DayTimeColsProps {
   dateProfile: DateProfile | null
   dayTableModel: DayTableModel
+  axis: boolean
+  slotDuration: Duration
+  slatMetas: TimeSlatMeta[]
   businessHours: EventStore
   eventStore: EventStore
   eventUiBases: EventUiHash
@@ -63,6 +68,9 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
             rootElRef={this.handleRootEl}
             {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
             dateProfile={dateProfile}
+            axis={props.axis}
+            slatMetas={props.slatMetas}
+            slotDuration={props.slotDuration}
             cells={dayTableModel.cells[0]}
             tableColGroupNode={props.tableColGroupNode}
             tableMinWidth={props.tableMinWidth}

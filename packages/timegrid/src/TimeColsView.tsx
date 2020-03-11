@@ -34,6 +34,7 @@ export default abstract class TimeColsView extends View {
 
 
   renderLayout(
+    hasAxis: boolean,
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
@@ -82,12 +83,17 @@ export default abstract class TimeColsView extends View {
       }
     })
 
+    let colConfigs = []
+    if (hasAxis) {
+      colConfigs.push({ width: 'shrink' })
+    }
+
     return (
       <div class={classNames.join(' ')} ref={this.rootElRef}>
         <SimpleScrollGrid
           forPrint={props.forPrint}
           vGrow={!props.isHeightAuto}
-          cols={[ { width: 'shrink' } ]}
+          cols={colConfigs}
           sections={sections}
         />
       </div>
@@ -119,7 +125,7 @@ export default abstract class TimeColsView extends View {
 
 
   // Generates the HTML that will go before the day-of week header cells
-  renderHeadIntro = () => {
+  renderHeadAxis = () => {
     let { dateEnv, options } = this.context
     let range = this.props.dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
@@ -151,7 +157,7 @@ export default abstract class TimeColsView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderTableRowIntro = () => {
+  renderTableRowAxis = () => {
     let { options } = this.context
     let spanAttrs = {} as any
     let child = options.allDayText

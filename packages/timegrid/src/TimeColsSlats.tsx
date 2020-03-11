@@ -11,11 +11,13 @@ import {
   wholeDivideDurations,
   Duration,
   createFormatter,
-  memoize,
   RefMap,
   CssDimValue,
   createRef,
-  PositionCache
+  PositionCache,
+  DateMarker,
+  DateEnv,
+  ComponentContextType
 } from '@fullcalendar/core'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
@@ -30,7 +32,8 @@ export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
 
 interface TimeColsSlatsContentProps {
   dateProfile: DateProfile
-  slotDuration: Duration
+  axis: boolean
+  slatMetas: TimeSlatMeta[]
 }
 
 
@@ -71,8 +74,9 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
           {props.tableColGroupNode /* relies on there only being a single <col> for the axis */}
           <TimeColsSlatsBody
             slatElRefs={this.slatElRefs}
+            axis={props.axis}
+            slatMetas={props.slatMetas}
             dateProfile={props.dateProfile}
-            slotDuration={props.slotDuration}
           />
         </table>
       </div>
@@ -110,7 +114,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
             true // vertical
           ),
           props.dateProfile,
-          props.slotDuration
+          props.slatMetas
         )
       )
     }
@@ -126,64 +130,99 @@ export interface TimeColsSlatsBodyProps extends TimeColsSlatsContentProps {
 
 export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
-  private getLabelInterval = memoize(getLabelInterval)
-  private getLabelFormat = memoize(getLabelFormat)
-
-
   render(props: TimeColsSlatsBodyProps, state: {}, context: ComponentContext) {
-    let { dateEnv, options } = context
-    let { dateProfile, slotDuration, slatElRefs } = props
+    let { slatElRefs } = props
 
-    let labelInterval = this.getLabelInterval(options.slotLabelInterval, slotDuration)
-    let labelFormat = this.getLabelFormat(options.slotLabelFormat)
-
-    let dayStart = startOfDay(dateProfile.renderRange.start)
-    let slotTime = dateProfile.minTime
-    let slotIterator = createDuration(0)
-    let slotDate // will be on the view's first day, but we only care about its time
-    let isLabeled
-    let rowsNodes: VNode[] = []
-    let i = 0
-
-    // Calculate the time for each slot
-    while (asRoughMs(slotTime) < asRoughMs(dateProfile.maxTime)) {
-      slotDate = dateEnv.add(dayStart, slotTime)
-      isLabeled = wholeDivideDurations(slotIterator, labelInterval) !== null
-
-      let classNames = [ 'fc-axis', 'fc-time' ]
-      let axisNode =
-        isLabeled ?
-          <td class={classNames.concat('shrink').join(' ')}>
-            <div data-fc-width-all={1}>
-              <span data-fc-width-content={1}>
-                {dateEnv.format(slotDate, labelFormat)}
-              </span>
-            </div>
-          </td>
-          :
-          <td class={classNames.join(' ')} />
-
-      // TODO: move nearly everything to <td>s
-
-      rowsNodes.push(
-        <tr
-          ref={slatElRefs.createRef(i)}
-          data-time={formatIsoTimeString(slotDate)}
-          class={isLabeled ? '' : 'fc-minor'}
-        >
-          {axisNode}
-          <td />
-        </tr>
-      )
-
-      slotTime = addDurations(slotTime, slotDuration)
-      slotIterator = addDurations(slotIterator, slotDuration)
-      i++
-    }
-
-    return (<tbody>{rowsNodes}</tbody>)
+    return (
+      <tbody>
+        {props.slatMetas.map((slatMeta, i) => (
+          <tr ref={slatElRefs.createRef(i)}>
+            {props.axis &&
+              <TimeColsAxisCell {...slatMeta} />
+            }
+            <td
+              className={'fc-time' + (!slatMeta.isLabeled ? ' fc-minor' : '')}
+              data-time={slatMeta.isoTimeStr}
+            />
+          </tr>
+        ))}
+      </tbody>
+    )
   }
 
+}
+
+
+const DEFAULT_SLAT_LABEL_FORMAT = {
+  hour: 'numeric',
+  minute: '2-digit',
+  omitZeroMinute: true,
+  meridiem: 'short'
+}
+
+export function TimeColsAxisCell(props: TimeSlatMeta) {
+  let classNames = [ 'fc-time', props.isLabeled ? 'shrink' : 'fc-minor', 'fc-axis' ]
+
+  return (
+    <ComponentContextType.Consumer>
+      {(context: ComponentContext) => {
+        let labelFormat = createFormatter(context.options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT) // TODO: optimize!!!
+
+        return (
+          <td class={classNames.join(' ')} data-time={props.isoTimeStr}>
+            {props.isLabeled &&
+              <div data-fc-width-all={1}>
+                <span data-fc-width-content={1}>
+                  {context.dateEnv.format(props.date, labelFormat)}
+                </span>
+              </div>
+            }
+          </td>
+        )
+      }}
+    </ComponentContextType.Consumer>
+  )
+}
+
+
+export function getSlatLabelFormat(optionInput) {
+  return createFormatter(optionInput || {
+    hour: 'numeric',
+    minute: '2-digit',
+    omitZeroMinute: true,
+    meridiem: 'short'
+  })
+}
+
+
+export interface TimeSlatMeta {
+  date: DateMarker
+  isoTimeStr: string
+  isLabeled: boolean
+}
+
+export function buildSlatMetas(dateProfile: DateProfile, labelIntervalInput, slotDuration: Duration, dateEnv: DateEnv) {
+  let dayStart = startOfDay(dateProfile.renderRange.start)
+  let slatTime = dateProfile.minTime
+  let slatIterator = createDuration(0)
+  let labelInterval = getLabelInterval(labelIntervalInput, slotDuration)
+  let metas: TimeSlatMeta[] = []
+
+  while (asRoughMs(slatTime) < asRoughMs(dateProfile.maxTime)) {
+    let date = dateEnv.add(dayStart, slatTime)
+    let isLabeled = wholeDivideDurations(slatIterator, labelInterval) !== null
+
+    metas.push({
+      date,
+      isoTimeStr: formatIsoTimeString(date),
+      isLabeled
+    })
+
+    slatTime = addDurations(slatTime, slotDuration)
+    slatIterator = addDurations(slatIterator, slotDuration)
+  }
+
+  return metas
 }
 
 
@@ -198,16 +237,6 @@ function getLabelInterval(optionInput, slotDuration: Duration) {
   return optionInput ?
     createDuration(optionInput) :
     computeLabelInterval(slotDuration)
-}
-
-
-function getLabelFormat(optionInput) {
-  return createFormatter(optionInput || {
-    hour: 'numeric',
-    minute: '2-digit',
-    omitZeroMinute: true,
-    meridiem: 'short'
-  })
 }
 
 

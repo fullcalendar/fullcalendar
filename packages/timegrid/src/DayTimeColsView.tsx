@@ -7,31 +7,39 @@ import {
   DayTableModel,
   memoize,
   ViewProps,
-  ChunkContentCallbackArgs
+  ChunkContentCallbackArgs,
+  createDuration
 } from '@fullcalendar/core'
 import { DayTable } from '@fullcalendar/daygrid'
 import TimeColsView from './TimeColsView'
 import DayTimeCols from './DayTimeCols'
+import { buildSlatMetas } from './TimeColsSlats'
 
 
 export default class DayTimeColsView extends TimeColsView {
 
   private buildTimeColsModel = memoize(buildTimeColsModel)
+  private parseSlotDuration = memoize(createDuration)
+  private buildSlatMetas = memoize(buildSlatMetas)
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
     let { dateProfile, dateProfileGenerator } = props
-    let { nextDayThreshold, options } = context
+    let { nextDayThreshold, options, dateEnv } = context
     let dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator)
     let splitProps = this.allDaySplitter.splitProps(props)
+    let slotDuration = this.parseSlotDuration(options.slotDuration)
+    let slatMetas = this.buildSlatMetas(dateProfile, options.slotLabelInterval, slotDuration, dateEnv)
+    let axis = true
 
     return this.renderLayout(
+      axis,
       options.columnHeader &&
         <DayHeader
           dateProfile={dateProfile}
           dates={dayTableModel.headerDates}
           datesRepDistinctDays={true}
-          renderIntro={this.renderHeadIntro}
+          renderIntro={axis ? this.renderHeadAxis : null}
         />,
       options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
         <DayTable
@@ -40,7 +48,7 @@ export default class DayTimeColsView extends TimeColsView {
           dayTableModel={dayTableModel}
           nextDayThreshold={nextDayThreshold}
           colGroupNode={contentArg.tableColGroupNode}
-          renderRowIntro={this.renderTableRowIntro}
+          renderRowIntro={axis ? this.renderTableRowAxis : null}
           eventLimit={this.getAllDayEventLimit()}
           vGrowRows={false}
           headerAlignElRef={this.headerElRef}
@@ -53,6 +61,9 @@ export default class DayTimeColsView extends TimeColsView {
           {...splitProps['timed']}
           dateProfile={dateProfile}
           dayTableModel={dayTableModel}
+          axis={axis}
+          slotDuration={slotDuration}
+          slatMetas={slatMetas}
           forPrint={props.forPrint}
           tableColGroupNode={contentArg.tableColGroupNode}
           tableMinWidth={contentArg.tableMinWidth}

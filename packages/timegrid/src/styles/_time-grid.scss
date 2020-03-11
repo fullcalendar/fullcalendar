@@ -71,6 +71,6 @@
   border-bottom: 0; /* each cell is responsible for its top border */
 }
 
-.fc-timegrid-slats .fc-minor td {
+.fc-timegrid-slats td.fc-minor {
   border-top-style: dotted;
 }

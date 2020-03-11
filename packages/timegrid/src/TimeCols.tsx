@@ -12,13 +12,13 @@ import {
   memoize,
   CssDimValue,
   PositionCache,
-  Duration,
   ScrollResponder,
   ScrollRequest,
-  DateRange
+  DateRange,
+  Duration
 } from '@fullcalendar/core'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
-import TimeColsSlats from './TimeColsSlats'
+import TimeColsSlats, { TimeSlatMeta } from './TimeColsSlats'
 import TimeColsContent from './TimeColsContent'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import TimeColsSeg from './TimeColsSeg'
@@ -27,6 +27,7 @@ import TimeColsSeg from './TimeColsSeg'
 export interface TimeColsProps {
   dateProfile: DateProfile
   cells: TableCellModel[]
+  slotDuration: Duration
   nowDate: DateMarker
   todayRange: DateRange
   businessHourSegs: TimeColsSeg[]
@@ -45,6 +46,8 @@ export interface TimeColsProps {
   nowIndicatorSegs: TimeColsSeg[]
   onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean
+  axis: boolean
+  slatMetas: TimeSlatMeta[]
 }
 
 interface TimeColsState {
@@ -58,25 +61,19 @@ interface TimeColsState {
 export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
   private processSlotOptions = memoize(processSlotOptions)
-  private snapDuration: Duration
-  private snapsPerSlot: number
   private scrollResponder: ScrollResponder
   private colCoords: PositionCache
 
 
   render(props: TimeColsProps, state: TimeColsState, context: ComponentContext) {
-    let { options } = context
     let { dateProfile } = props
-
-    let { slotDuration, snapDuration, snapsPerSlot } = this.processSlotOptions(options)
-    this.snapDuration = snapDuration
-    this.snapsPerSlot = snapsPerSlot
 
     return (
       <div class='fc-timegrid' ref={props.rootElRef}>
         <TimeColsSlats
           dateProfile={dateProfile}
-          slotDuration={slotDuration}
+          axis={props.axis}
+          slatMetas={props.slatMetas}
           clientWidth={props.clientWidth}
           minHeight={props.vGrowRows ? props.clientHeight : ''}
           tableMinWidth={props.tableMinWidth}
@@ -86,6 +83,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
         <TimeColsContent
           cells={props.cells}
           dateProfile={props.dateProfile}
+          axis={props.axis}
           businessHourSegs={props.businessHourSegs}
           bgEventSegs={props.bgEventSegs}
           fgEventSegs={props.fgEventSegs}
@@ -153,9 +151,10 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
 
 
   positionToHit(positionLeft, positionTop) {
-    let { dateEnv } = this.context
-    let { snapsPerSlot, snapDuration, colCoords } = this
+    let { dateEnv, options } = this.context
+    let { colCoords } = this
     let { slatCoords } = this.state
+    let { snapDuration, snapsPerSlot } = this.processSlotOptions(this.props.slotDuration, options.snapDuration)
 
     let colIndex = colCoords.leftToIndex(positionLeft)
     let slatIndex = slatCoords.positions.topToIndex(positionTop)
@@ -196,13 +195,9 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
 }
 
 
-function processSlotOptions(options) {
-  let { slotDuration, snapDuration } = options
-  let snapsPerSlot
-
-  slotDuration = createDuration(slotDuration)
-  snapDuration = snapDuration ? createDuration(snapDuration) : slotDuration
-  snapsPerSlot = wholeDivideDurations(slotDuration, snapDuration)
+function processSlotOptions(slotDuration: Duration, snapDurationInput) {
+  let snapDuration = snapDurationInput ? createDuration(snapDurationInput) : slotDuration
+  let snapsPerSlot = wholeDivideDurations(slotDuration, snapDuration)
 
   if (snapsPerSlot === null) {
     snapDuration = slotDuration
@@ -210,5 +205,5 @@ function processSlotOptions(options) {
     // TODO: say warning?
   }
 
-  return { slotDuration, snapDuration, snapsPerSlot }
+  return { snapDuration, snapsPerSlot }
 }
