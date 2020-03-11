@@ -185,16 +185,6 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
 }
 
 
-export function getSlatLabelFormat(optionInput) {
-  return createFormatter(optionInput || {
-    hour: 'numeric',
-    minute: '2-digit',
-    omitZeroMinute: true,
-    meridiem: 'short'
-  })
-}
-
-
 export interface TimeSlatMeta {
   date: DateMarker
   isoTimeStr: string
