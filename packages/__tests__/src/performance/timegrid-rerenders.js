@@ -1,12 +1,12 @@
 import { DayHeader } from '@fullcalendar/core'
-import { TimeColsSlatsBody, TimeColsContentBody } from '@fullcalendar/timegrid'
+// import { TimeColsSlatsBody, TimeColsContentBody } from '@fullcalendar/timegrid'
 import ComponentSpy from '../lib/ComponentSpy'
 
 
 it('timegrid view rerenders well', function(done) {
   let headerSpy = new ComponentSpy(DayHeader)
-  let slatsSpy = new ComponentSpy(TimeColsSlatsBody)
-  let colContentSpy = new ComponentSpy(TimeColsContentBody)
+  let slatsSpy = new ComponentSpy(null) // TimeColsSlatsBody)
+  let colContentSpy = new ComponentSpy(null) // TimeColsContentBody)
   let eventRenderCnt = 0
 
   initCalendar({
