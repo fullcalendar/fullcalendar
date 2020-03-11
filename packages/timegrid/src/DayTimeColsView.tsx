@@ -30,50 +30,53 @@ export default class DayTimeColsView extends TimeColsView {
     let splitProps = this.allDaySplitter.splitProps(props)
     let slotDuration = this.parseSlotDuration(options.slotDuration)
     let slatMetas = this.buildSlatMetas(dateProfile, options.slotLabelInterval, slotDuration, dateEnv)
-    let axis = true
+    let { columnMinWidth } = options
 
-    return this.renderLayout(
-      axis,
-      options.columnHeader &&
-        <DayHeader
-          dateProfile={dateProfile}
-          dates={dayTableModel.headerDates}
-          datesRepDistinctDays={true}
-          renderIntro={axis ? this.renderHeadAxis : null}
-        />,
-      options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
-        <DayTable
-          {...splitProps['allDay']}
-          dateProfile={dateProfile}
-          dayTableModel={dayTableModel}
-          nextDayThreshold={nextDayThreshold}
-          colGroupNode={contentArg.tableColGroupNode}
-          renderRowIntro={axis ? this.renderTableRowAxis : null}
-          eventLimit={this.getAllDayEventLimit()}
-          vGrowRows={false}
-          headerAlignElRef={this.headerElRef}
-          clientWidth={contentArg.clientWidth}
-          clientHeight={contentArg.clientHeight}
-        />
-      )),
-      (contentArg: ChunkContentCallbackArgs) => (
-        <DayTimeCols
-          {...splitProps['timed']}
-          dateProfile={dateProfile}
-          dayTableModel={dayTableModel}
-          axis={axis}
-          slotDuration={slotDuration}
-          slatMetas={slatMetas}
-          forPrint={props.forPrint}
-          tableColGroupNode={contentArg.tableColGroupNode}
-          tableMinWidth={contentArg.tableMinWidth}
-          clientWidth={contentArg.clientWidth}
-          clientHeight={contentArg.clientHeight}
-          vGrowRows={contentArg.vGrowRows}
-          onScrollTopRequest={this.handleScrollTopRequest}
-        />
-      )
+    let headerContent = options.columnHeader &&
+      <DayHeader
+        dateProfile={dateProfile}
+        dates={dayTableModel.headerDates}
+        datesRepDistinctDays={true}
+        renderIntro={columnMinWidth ? null : this.renderHeadAxis}
+      />
+
+    let allDayContent = options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
+      <DayTable
+        {...splitProps['allDay']}
+        dateProfile={dateProfile}
+        dayTableModel={dayTableModel}
+        nextDayThreshold={nextDayThreshold}
+        colGroupNode={contentArg.tableColGroupNode}
+        renderRowIntro={columnMinWidth ? null : this.renderTableRowAxis}
+        eventLimit={this.getAllDayEventLimit()}
+        vGrowRows={false}
+        headerAlignElRef={this.headerElRef}
+        clientWidth={contentArg.clientWidth}
+        clientHeight={contentArg.clientHeight}
+      />
+    ))
+
+    let timeGridContent = (contentArg: ChunkContentCallbackArgs) => (
+      <DayTimeCols
+        {...splitProps['timed']}
+        dateProfile={dateProfile}
+        dayTableModel={dayTableModel}
+        axis={!columnMinWidth}
+        slotDuration={slotDuration}
+        slatMetas={slatMetas}
+        forPrint={props.forPrint}
+        tableColGroupNode={contentArg.tableColGroupNode}
+        tableMinWidth={contentArg.tableMinWidth}
+        clientWidth={contentArg.clientWidth}
+        clientHeight={contentArg.clientHeight}
+        vGrowRows={contentArg.vGrowRows}
+        onScrollTopRequest={this.handleScrollTopRequest}
+      />
     )
+
+    return columnMinWidth
+      ? this.renderHScrollLayout(headerContent, allDayContent, timeGridContent, columnMinWidth)
+      : this.renderSimpleLayout(headerContent, allDayContent, timeGridContent)
   }
 
 }

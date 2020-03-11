@@ -83,6 +83,8 @@ export const globalDefaults = {
   eventDragMinDistance: 5, // only applies to mouse
 
   expandRows: false
+
+  // columnMinWidth: null
 }
 
 

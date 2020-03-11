@@ -33,8 +33,7 @@ export default abstract class TimeColsView extends View {
   // ----------------------------------------------------------------------------------------------------
 
 
-  renderLayout(
-    hasAxis: boolean,
+  renderSimpleLayout(
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
@@ -83,21 +82,33 @@ export default abstract class TimeColsView extends View {
       }
     })
 
-    let colConfigs = []
-    if (hasAxis) {
-      colConfigs.push({ width: 'shrink' })
-    }
-
     return (
       <div class={classNames.join(' ')} ref={this.rootElRef}>
         <SimpleScrollGrid
           forPrint={props.forPrint}
           vGrow={!props.isHeightAuto}
-          cols={colConfigs}
+          cols={[ { width: 'shrink' } ]}
           sections={sections}
         />
       </div>
     )
+  }
+
+
+  renderHScrollLayout(
+    headerRowContent: VNode | null,
+    allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
+    timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
+    columnMinWidth: number
+  ) {
+    // let colConfigs = []
+    // if (hasAxis) {
+    //   colConfigs.push({ width: 'shrink' })
+    // }
+
+    if (!this.context.pluginHooks.scrollGridImpl) {
+      throw new Error('No ScrollGrid implementation')
+    }
   }
 
 

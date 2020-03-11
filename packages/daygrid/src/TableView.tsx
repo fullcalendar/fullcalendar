@@ -21,7 +21,7 @@ export default abstract class TableView<State={}> extends View<State> {
   protected headerElRef = createRef<HTMLTableCellElement>()
 
 
-  renderLayout(headerRowContent: VNode | null, bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode) {
+  renderSimpleLayout(headerRowContent: VNode | null, bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode) {
     let { props } = this
     let classNames = getViewClassNames(props.viewSpec).concat('fc-dayGrid-view')
     let sections: SimpleScrollGridSection[] = []
