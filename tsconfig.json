@@ -51,7 +51,6 @@
   "include": [
     "packages*/*/src/main.*",
     "packages*/__tests__/src/**/*",
-    "packages*/__tests__/e2e/**/*",
     "packages/core/src/locales/*"
   ],
   "exclude": [
