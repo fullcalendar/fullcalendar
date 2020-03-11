@@ -1,5 +1,5 @@
 import {
-  h, createRef,
+  h,
   View,
   ViewProps,
   Scroller,
@@ -16,10 +16,15 @@ import {
   EventStore,
   memoize,
   Seg,
-  subrenderer,
-  getViewClassNames
+  getViewClassNames,
+  VNode,
+  sortEventSegs,
+  getSegMeta,
+  NowTimer
 } from '@fullcalendar/core'
-import ListViewEvents from './ListViewEvents'
+import ListViewHeaderRow from './ListViewHeaderRow'
+import ListViewEventRow from './ListViewEventRow'
+
 
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
@@ -28,8 +33,6 @@ export default class ListView extends View {
 
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)
-  private renderEvents = subrenderer(ListViewEvents)
-  private scrollerElRef = createRef<HTMLDivElement>()
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
@@ -40,14 +43,21 @@ export default class ListView extends View {
       classNames.push(themeClassName)
     }
 
+    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
+    let eventSegs = this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
+
     return (
       <div ref={this.setRootEl} class={classNames.join(' ')}>
         <Scroller
-          elRef={this.scrollerElRef}
           vGrow={!props.isHeightAuto}
           overflowX='hidden'
           overflowY='auto'
-        />
+        >
+          {eventSegs.length > 0 ?
+            this.renderSegList(eventSegs, dayDates) :
+            this.renderEmptyMessage()
+          }
+        </Scroller>
       </div>
     )
   }
@@ -60,37 +70,68 @@ export default class ListView extends View {
       })
     } else {
       this.context.calendar.unregisterInteractiveComponent(this)
-      this.subrenderDestroy()
     }
   }
 
 
-  componentDidMount() {
-    this.subrender()
+  renderEmptyMessage() {
+    return (
+      <div class='fc-list-empty-wrap2'>
+        <div class='fc-list-empty-wrap1'>
+          <div class='fc-list-empty'>
+            {this.context.options.noEventsMessage}
+          </div>
+        </div>
+      </div>
+    )
   }
 
 
-  componentDidUpdate() {
-    this.subrender()
-  }
+  renderSegList(allSegs: Seg[], dayDates: DateMarker[]) {
+    let { theme, eventOrderSpecs } = this.context
+    let segsByDay = groupSegsByDay(allSegs) // sparse array
 
+    return (
+      <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => {
+        let innerNodes: VNode[] = []
 
-  subrender() {
-    let { props } = this
-    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
+        for (let dayIndex = 0; dayIndex < segsByDay.length; dayIndex++) {
+          let daySegs = segsByDay[dayIndex]
 
-    this.renderEvents({
-      segs: this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges),
-      dayDates,
-      contentEl: this.scrollerElRef.current,
-      selectedInstanceId: props.eventSelection, // TODO: rename
-      hiddenInstances: // TODO: more convenient
-        (props.eventDrag ? props.eventDrag.affectedEvents.instances : null) ||
-        (props.eventResize ? props.eventResize.affectedEvents.instances : null),
-      isDragging: false,
-      isResizing: false,
-      isSelecting: false
-    })
+          if (daySegs) { // sparse array, so might be undefined
+
+            // append a day header
+            innerNodes.push(
+              <ListViewHeaderRow
+                dayDate={dayDates[dayIndex]}
+                todayRange={todayRange}
+              />
+            )
+
+            daySegs = sortEventSegs(daySegs, eventOrderSpecs)
+
+            for (let seg of daySegs) {
+              innerNodes.push(
+                <ListViewEventRow
+                  seg={seg}
+                  isDragging={false}
+                  isResizing={false}
+                  isDateSelecting={false}
+                  isSelected={false}
+                  {...getSegMeta(seg, todayRange, nowDate)}
+                />
+              )
+            }
+          }
+        }
+
+        return (
+          <table class={'fc-list-table ' + theme.getClass('table')}>
+            <tbody>{innerNodes}</tbody>
+          </table>
+        )
+      }} />
+    )
   }
 
 
@@ -166,8 +207,6 @@ export default class ListView extends View {
 
 }
 
-ListView.prototype.fgSegSelector = '.fc-list-item' // which elements accept event actions
-
 
 function computeDateVars(dateProfile: DateProfile) {
   let dayStart = startOfDay(dateProfile.renderRange.start)
@@ -188,4 +227,20 @@ function computeDateVars(dateProfile: DateProfile) {
   }
 
   return { dayDates, dayRanges }
+}
+
+
+// Returns a sparse array of arrays, segs grouped by their dayIndex
+function groupSegsByDay(segs) {
+  let segsByDay = [] // sparse array
+  let i
+  let seg
+
+  for (i = 0; i < segs.length; i++) {
+    seg = segs[i];
+    (segsByDay[seg.dayIndex] || (segsByDay[seg.dayIndex] = []))
+      .push(seg)
+  }
+
+  return segsByDay
 }
