@@ -68,7 +68,10 @@ export default class TableCell extends DateComponent<TableCellProps> {
     let dateStr = dateEnv.formatIso(date, { omitTime: true })
     let zonedDate = dateEnv.toDate(date)
     let dayMeta = getDayMeta(date, props.todayRange, props.dateProfile)
-    let staticProps = { date: zonedDate }
+    let staticProps = {
+      date: zonedDate,
+      view: context.view
+    }
     let dynamicProps = {
       ...staticProps,
       ...dayMeta,
