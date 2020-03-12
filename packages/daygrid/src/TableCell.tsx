@@ -15,7 +15,8 @@ import {
   getDayClassNames,
   DateProfile,
   DateRange,
-  getDayMeta
+  getDayMeta,
+  formatDayString
 } from '@fullcalendar/core'
 
 
@@ -65,7 +66,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
   render(props: TableCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
     let { date } = props
-    let dateStr = dateEnv.formatIso(date, { omitTime: true })
+    let dateStr = formatDayString(date)
     let zonedDate = dateEnv.toDate(date)
     let dayMeta = getDayMeta(date, props.todayRange, props.dateProfile)
     let staticProps = {

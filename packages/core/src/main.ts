@@ -112,7 +112,8 @@ export {
   DateFormatter,
   createFormatter,
   VerboseFormattingArg,
-  formatIsoTimeString
+  formatIsoTimeString,
+  formatDayString
 } from './datelib/formatting'
 export { NamedTimeZoneImpl } from './datelib/timezone'
 export { parse as parseMarker } from './datelib/parsing'

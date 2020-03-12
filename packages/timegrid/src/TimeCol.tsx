@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getDayClassNames, getSegMeta, DateRange, getDayMeta, DateProfile, Fragment, MountHook, setRef, ClassNamesHook, InnerContentHook } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getDayClassNames, getSegMeta, DateRange, getDayMeta, DateProfile, Fragment, MountHook, setRef, ClassNamesHook, InnerContentHook, formatDayString } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -27,8 +27,8 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
 
 
   render(props: TimeColProps, state: {}, context: ComponentContext) {
-    let { dateEnv, options } = context
-    let dateStr = dateEnv.formatIso(props.date, { omitTime: true })
+    let { options } = context
+    let dateStr = formatDayString(props.date)
     let dayMeta = getDayMeta(props.date, props.todayRange, props.dateProfile)
     let staticProps = {
       date: props.date,

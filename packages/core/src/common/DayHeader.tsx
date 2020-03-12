@@ -2,7 +2,7 @@ import { BaseComponent } from '../vdom-util'
 import ComponentContext from '../component/ComponentContext'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
-import { createFormatter } from '../datelib/formatting'
+import { createFormatter, formatDayString } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
 import { VNode, h } from '../vdom'
 import TableDateCell from './TableDateCell'
@@ -22,7 +22,6 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
 
 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {
-    let { dateEnv } = this.context
     let { dates, datesRepDistinctDays } = props
 
     let colHeadFormat = createFormatter(
@@ -35,7 +34,7 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
         <tr>
           {props.renderIntro && props.renderIntro()}
           {dates.map((date) => {
-            let distinctDateStr = datesRepDistinctDays ? dateEnv.formatIso(date, { omitTime: true }) : ''
+            let distinctDateStr = datesRepDistinctDays ? formatDayString(date) : ''
 
             return (
               <TableDateCell

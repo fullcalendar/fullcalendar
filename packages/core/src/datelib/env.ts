@@ -390,6 +390,10 @@ export class DateEnv {
     )
   }
 
+  /*
+  DUMB: the omitTime arg is dumb. if we omit the time, we want to omit the timezone offset. and if we do that,
+  might as well use buildIsoString or some other util directly
+  */
   formatIso(marker: DateMarker, extraOptions: any = {}) {
     let timeZoneOffset = null
 

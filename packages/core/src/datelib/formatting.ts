@@ -69,6 +69,7 @@ export function createFormatter(input: FormatterInput, defaultSeparator?: string
 
 // String Utils
 
+
 // timeZoneOffset is in minutes
 export function buildIsoString(marker: DateMarker, timeZoneOffset?: number, stripZeroTime: boolean = false) {
   let s = marker.toISOString()
@@ -91,11 +92,20 @@ export function buildIsoString(marker: DateMarker, timeZoneOffset?: number, stri
   return s
 }
 
+
+// formats the date, but with no time part
+// TODO: somehow merge with buildIsoString and stripZeroTime
+export function formatDayString(marker: DateMarker) {
+  return marker.toISOString().replace(/T.*$/, '')
+}
+
+
 export function formatIsoTimeString(marker: DateMarker) {
   return padStart(marker.getUTCHours(), 2) + ':' +
     padStart(marker.getUTCMinutes(), 2) + ':' +
     padStart(marker.getUTCSeconds(), 2)
 }
+
 
 export function formatTimeZoneOffset(minutes: number, doIso = false) {
   let sign = minutes < 0 ? '-' : '+'

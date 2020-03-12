@@ -1,6 +1,6 @@
 import {
   BaseComponent, DateMarker, createFormatter, ComponentContext, h, GotoAnchor,
-  getDayMeta, DateRange, getDayClassNames, Ref, MountHook, ClassNamesHook, InnerContentHook
+  getDayMeta, DateRange, getDayClassNames, Ref, MountHook, ClassNamesHook, InnerContentHook, formatDayString
 } from '@fullcalendar/core'
 
 
@@ -42,7 +42,7 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
               <tr
                 ref={rootElRef}
                 className={standardClassNames.concat(customClassNames).join(' ')}
-                data-date={dateEnv.formatIso(dayDate, { omitTime: true })}
+                data-date={formatDayString(dayDate)}
               >
                 <td colSpan={3} className={theme.getClass('tableCellShaded')}>
                   {mainFormat &&
