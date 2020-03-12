@@ -195,3 +195,5 @@ export {
   InnerContentHook, InnerContentHookProps
 } from './render-hook'
 export { default as StandardEvent, StandardEventProps, MinimalEventProps } from './StandardEvent'
+
+export { default as DateHook, DateInnerContentHook } from './common/DateHook'

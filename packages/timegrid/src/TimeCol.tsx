@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getDayClassNames, getSegMeta, DateRange, getDayMeta, DateProfile, Fragment, MountHook, setRef, ClassNamesHook, InnerContentHook, formatDayString } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getDayClassNames, getSegMeta, DateRange, getDayMeta, DateProfile, Fragment, setRef, formatDayString, DateHook, DateInnerContentHook } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -54,62 +54,52 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
       {}
 
     return (
-      <MountHook
-        name='dateCell'
-        handlerProps={staticProps}
-        content={(rootElRef: Ref<HTMLTableCellElement>) => (
-          <ClassNamesHook
-            name='dateCell'
-            handlerProps={dynamicProps}
-            content={(customClassNames) => (
-              <td
-                className={standardClassNames.concat(customClassNames).join(' ')}
-                ref={(el: HTMLElement | null) => {
-                  setRef(props.elRef, el)
-                  setRef(rootElRef, el)
-                }}
-                data-date={dateStr}
-                {...props.htmlAttrs}
-              >
-                <div class='fc-timegrid-col-inner'>
-                  <div class='fc-timegrid-col-events'>
-                    {/* the Fragments scope the keys */}
-                    <Fragment>
-                      {this.renderFgSegs(
-                        mirrorSegs as TimeColsSeg[],
-                        {},
-                        Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
-                        Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
-                        Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
-                        // TODO: pass in left/right instead of using only computeSegTopBottomCss
-                      )}
-                    </Fragment>
-                    <Fragment>
-                      {this.renderFgSegs(
-                        props.fgEventSegs,
-                        interactionAffectedInstances
-                      )}
-                    </Fragment>
-                  </div>
-                  {this.renderNowIndicator(props.nowIndicatorSegs)}
-                  <Fragment>{this.renderFillSegs(props.businessHourSegs, interactionAffectedInstances, 'fc-nonbusiness')}</Fragment>
-                  <Fragment>{this.renderFillSegs(props.bgEventSegs, interactionAffectedInstances, 'fc-bgevent')}</Fragment>
-                  <Fragment>{this.renderFillSegs(props.dateSelectionSegs, interactionAffectedInstances, 'fc-highlight')}</Fragment>
-                </div>
-                <InnerContentHook
-                  name='dateCell'
-                  innerProps={dynamicProps}
-                  outerContent={(innerContentParentRef, innerContent, anySpecified) => (
-                    anySpecified && (
-                      <div class='fc-timegrid-col-misc' ref={innerContentParentRef}>{innerContent}</div>
-                    )
+      <DateHook staticProps={staticProps} dynamicProps={dynamicProps}>
+        {(rootElRef: Ref<HTMLTableCellElement>, customClassNames) => (
+          <td
+            className={standardClassNames.concat(customClassNames).join(' ')}
+            ref={(el: HTMLElement | null) => {
+              setRef(props.elRef, el)
+              setRef(rootElRef, el)
+            }}
+            data-date={dateStr}
+            {...props.htmlAttrs}
+          >
+            <div class='fc-timegrid-col-inner'>
+              <div class='fc-timegrid-col-events'>
+                {/* the Fragments scope the keys */}
+                <Fragment>
+                  {this.renderFgSegs(
+                    mirrorSegs as TimeColsSeg[],
+                    {},
+                    Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
+                    Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
+                    Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
+                    // TODO: pass in left/right instead of using only computeSegTopBottomCss
                   )}
-                />
-              </td>
-            )}
-          />
+                </Fragment>
+                <Fragment>
+                  {this.renderFgSegs(
+                    props.fgEventSegs,
+                    interactionAffectedInstances
+                  )}
+                </Fragment>
+              </div>
+              {this.renderNowIndicator(props.nowIndicatorSegs)}
+              <Fragment>{this.renderFillSegs(props.businessHourSegs, interactionAffectedInstances, 'fc-nonbusiness')}</Fragment>
+              <Fragment>{this.renderFillSegs(props.bgEventSegs, interactionAffectedInstances, 'fc-bgevent')}</Fragment>
+              <Fragment>{this.renderFillSegs(props.dateSelectionSegs, interactionAffectedInstances, 'fc-highlight')}</Fragment>
+            </div>
+            <DateInnerContentHook dynamicProps={dynamicProps}>
+              {(innerContentParentRef, innerContent, anySpecified) => (
+                anySpecified && (
+                  <div class='fc-timegrid-col-misc' ref={innerContentParentRef}>{innerContent}</div>
+                )
+              )}
+            </DateInnerContentHook>
+          </td>
         )}
-      />
+      </DateHook>
     )
   }
 

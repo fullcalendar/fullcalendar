@@ -82,8 +82,10 @@ export interface InnerContentHookProps<InnerProps> {
   name: string
   innerProps: InnerProps
   defaultInnerContent?: (innerProps: InnerProps) => VNode
-  outerContent: (innerContentParentRef: Ref<any>, innerContent: VNode, anySpecified: boolean) => VNode
+  outerContent: InnerContentHookOuterContent
 }
+
+export type InnerContentHookOuterContent = (innerContentParentRef: Ref<any>, innerContent: VNode, anySpecified: boolean) => VNode // TODO: ComponentChildren
 
 
 export class InnerContentHook<InnerProps> extends Component<InnerContentHookProps<InnerProps>> {

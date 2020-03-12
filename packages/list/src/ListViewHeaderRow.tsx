@@ -1,6 +1,6 @@
 import {
   BaseComponent, DateMarker, createFormatter, ComponentContext, h, GotoAnchor,
-  getDayMeta, DateRange, getDayClassNames, Ref, MountHook, ClassNamesHook, InnerContentHook, formatDayString
+  getDayMeta, DateRange, getDayClassNames, Ref, formatDayString, DateHook, DateInnerContentHook
 } from '@fullcalendar/core'
 
 
@@ -31,49 +31,39 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
     )
 
     return (
-      <MountHook
-        name='dateCell'
-        handlerProps={staticProps}
-        content={(rootElRef: Ref<HTMLTableRowElement>) => (
-          <ClassNamesHook
-            name='dateCell'
-            handlerProps={dynamicProps}
-            content={(customClassNames) => (
-              <tr
-                ref={rootElRef}
-                className={standardClassNames.concat(customClassNames).join(' ')}
-                data-date={formatDayString(dayDate)}
-              >
-                <td colSpan={3} className={theme.getClass('tableCellShaded')}>
-                  {mainFormat &&
-                    <GotoAnchor
-                      navLinks={options.navLinks}
-                      gotoOptions={dayDate}
-                      extraAttrs={{ 'class': 'fc-list-heading-main' }}
-                    >{dateEnv.format(dayDate, mainFormat)}</GotoAnchor>
-                  }
-                  <InnerContentHook
-                    name='dateCell'
-                    innerProps={dynamicProps}
-                    outerContent={(innerContentParentRef, innerContent, anySpecified) => (
-                      anySpecified && (
-                        <div class='fc-list-heading-misc' ref={innerContentParentRef}>{innerContent}</div>
-                      )
-                    )}
-                  />
-                  {altFormat &&
-                    <GotoAnchor
-                      navLinks={options.navLinks}
-                      gotoOptions={dayDate}
-                      extraAttrs={{ 'class': 'fc-list-heading-alt' }}
-                    >{dateEnv.format(dayDate, altFormat)}</GotoAnchor>
-                  }
-                </td>
-              </tr>
-            )}
-          />
+      <DateHook staticProps={staticProps} dynamicProps={dynamicProps}>
+        {(rootElRef: Ref<HTMLTableRowElement>, customClassNames: string[]) => (
+          <tr
+            ref={rootElRef}
+            className={standardClassNames.concat(customClassNames).join(' ')}
+            data-date={formatDayString(dayDate)}
+          >
+            <td colSpan={3} className={theme.getClass('tableCellShaded')}>
+              {mainFormat &&
+                <GotoAnchor
+                  navLinks={options.navLinks}
+                  gotoOptions={dayDate}
+                  extraAttrs={{ 'class': 'fc-list-heading-main' }}
+                >{dateEnv.format(dayDate, mainFormat)}</GotoAnchor>
+              }
+              <DateInnerContentHook dynamicProps={dynamicProps}>
+                {(innerContentParentRef, innerContent, anySpecified) => (
+                  anySpecified && (
+                    <div class='fc-list-heading-misc' ref={innerContentParentRef}>{innerContent}</div>
+                  )
+                )}
+              </DateInnerContentHook>
+              {altFormat &&
+                <GotoAnchor
+                  navLinks={options.navLinks}
+                  gotoOptions={dayDate}
+                  extraAttrs={{ 'class': 'fc-list-heading-alt' }}
+                >{dateEnv.format(dayDate, altFormat)}</GotoAnchor>
+              }
+            </td>
+          </tr>
         )}
-      />
+      </DateHook>
     )
   }
 

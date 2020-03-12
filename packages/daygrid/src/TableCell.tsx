@@ -9,14 +9,13 @@ import {
   GotoAnchor,
   CssDimValue,
   setRef,
-  MountHook,
-  ClassNamesHook,
-  InnerContentHook,
   getDayClassNames,
   DateProfile,
   DateRange,
   getDayMeta,
-  formatDayString
+  formatDayString,
+  DateHook,
+  DateInnerContentHook
 } from '@fullcalendar/core'
 
 
@@ -84,72 +83,62 @@ export default class TableCell extends DateComponent<TableCellProps> {
     )
 
     return (
-      <MountHook
-        name='dateCell'
-        handlerProps={staticProps}
-        content={(rootElRef: Ref<HTMLTableCellElement>) => (
-          <ClassNamesHook
-            name='dateCell'
-            handlerProps={dynamicProps}
-            content={(customClassNames) => (
-              <td
-                class={standardClassNames.concat(customClassNames).join(' ')}
-                {...props.htmlAttrs}
-                data-date={dateStr}
-                ref={(el: HTMLTableCellElement | null) => {
-                  setRef(props.elRef, el)
-                  setRef(rootElRef, el)
-                }}
-              >
-                <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! */}>
-                  {props.showWeekNumber &&
-                    <div class='fc-daygrid-week-number'>
-                      <GotoAnchor
-                        navLinks={options.navLinks}
-                        gotoOptions={{ date, type: 'week' }}
-                        extraAttrs={{
-                          'data-fc-width-content': 1
-                        }}
-                      >{dateEnv.format(date, WEEK_NUM_FORMAT)}</GotoAnchor>
-                    </div>
-                  }
-                  {props.showDayNumber &&
-                    <div class='fc-daygrid-day-header'>
-                      <GotoAnchor
-                        navLinks={options.navLinks}
-                        gotoOptions={date}
-                        extraAttrs={{ 'class': 'fc-day-number' }}
-                      >{dateEnv.format(date, DAY_NUM_FORMAT)}</GotoAnchor>
-                    </div>
-                  }
-                  <InnerContentHook
-                    name='dateCell'
-                    innerProps={dynamicProps}
-                    outerContent={(innerContentParentRef, innerContent, anySpecified) => (
-                      anySpecified && (
-                        <div class='fc-daygrid-day-misc' ref={innerContentParentRef}>{innerContent}</div>
-                      )
-                    )}
-                  />
-                  <div
-                    class='fc-daygrid-day-events'
-                    ref={props.fgContentElRef}
-                    style={{ paddingBottom: props.fgPaddingBottom }}
-                  >
-                    {props.fgContent}
-                    {Boolean(props.moreCnt) &&
-                      <div class='fc-more' style={{ marginTop: props.moreMarginTop }}>
-                        <a onClick={this.handleMoreLink}>+{props.moreCnt} more</a>
-                      </div>
-                    }
-                  </div>
-                  {props.bgContent}
+      <DateHook staticProps={staticProps} dynamicProps={dynamicProps}>
+        {(rootElRef: Ref<HTMLTableCellElement>, customClassNames: string[]) => (
+          <td
+            class={standardClassNames.concat(customClassNames).join(' ')}
+            {...props.htmlAttrs}
+            data-date={dateStr}
+            ref={(el: HTMLTableCellElement | null) => {
+              setRef(props.elRef, el)
+              setRef(rootElRef, el)
+            }}
+          >
+            <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! */}>
+              {props.showWeekNumber &&
+                <div class='fc-daygrid-week-number'>
+                  <GotoAnchor
+                    navLinks={options.navLinks}
+                    gotoOptions={{ date, type: 'week' }}
+                    extraAttrs={{
+                      'data-fc-width-content': 1
+                    }}
+                  >{dateEnv.format(date, WEEK_NUM_FORMAT)}</GotoAnchor>
                 </div>
-              </td>
-            )}
-          />
+              }
+              {props.showDayNumber &&
+                <div class='fc-daygrid-day-header'>
+                  <GotoAnchor
+                    navLinks={options.navLinks}
+                    gotoOptions={date}
+                    extraAttrs={{ 'class': 'fc-day-number' }}
+                  >{dateEnv.format(date, DAY_NUM_FORMAT)}</GotoAnchor>
+                </div>
+              }
+              <DateInnerContentHook dynamicProps={dynamicProps}>
+                {(innerContentParentRef, innerContent, anySpecified) => (
+                  anySpecified && (
+                    <div class='fc-daygrid-day-misc' ref={innerContentParentRef}>{innerContent}</div>
+                  )
+                )}
+              </DateInnerContentHook>
+              <div
+                class='fc-daygrid-day-events'
+                ref={props.fgContentElRef}
+                style={{ paddingBottom: props.fgPaddingBottom }}
+              >
+                {props.fgContent}
+                {Boolean(props.moreCnt) &&
+                  <div class='fc-more' style={{ marginTop: props.moreMarginTop }}>
+                    <a onClick={this.handleMoreLink}>+{props.moreCnt} more</a>
+                  </div>
+                }
+              </div>
+              {props.bgContent}
+            </div>
+          </td>
         )}
-      />
+      </DateHook>
     )
   }
 
