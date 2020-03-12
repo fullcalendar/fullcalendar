@@ -1,11 +1,11 @@
-import { Component, VNode, Ref, createRef } from './vdom'
+import { Component, VNode, Ref, createRef, ComponentChildren } from './vdom'
 import ComponentContext, { ComponentContextType } from './component/ComponentContext'
 
 
 export interface MountHookProps<HandlerProps> {
   name: string // TODO: rename to entity or something
   handlerProps: HandlerProps // TODO: these props should not be very dynamic!
-  content: (rootElRef: Ref<any>) => VNode
+  children: (rootElRef: Ref<any>) => ComponentChildren
 }
 
 
@@ -17,7 +17,7 @@ export class MountHook<HandlerProps> extends Component<MountHookProps<HandlerPro
 
 
   render(props: MountHookProps<HandlerProps>) {
-    return props.content(this.rootElRef)
+    return props.children(this.rootElRef)
   }
 
 
@@ -48,7 +48,7 @@ export class MountHook<HandlerProps> extends Component<MountHookProps<HandlerPro
 export interface ClassNamesHookProps<HandlerProps> {
   name: string
   handlerProps: HandlerProps
-  content: (classNames: string[]) => VNode
+  children: (classNames: string[]) => ComponentChildren
 }
 
 
@@ -72,7 +72,7 @@ export class ClassNamesHook<HandlerProps> extends Component<ClassNamesHookProps<
       classNames = []
     }
 
-    return props.content(classNames)
+    return props.children(classNames)
   }
 
 }
@@ -81,11 +81,11 @@ export class ClassNamesHook<HandlerProps> extends Component<ClassNamesHookProps<
 export interface InnerContentHookProps<InnerProps> {
   name: string
   innerProps: InnerProps
-  defaultInnerContent?: (innerProps: InnerProps) => VNode
-  outerContent: InnerContentHookOuterContent
+  defaultInnerContent?: (innerProps: InnerProps) => ComponentChildren
+  children: InnerContentHookOuterContent // the outer content
 }
 
-export type InnerContentHookOuterContent = (innerContentParentRef: Ref<any>, innerContent: VNode, anySpecified: boolean) => VNode // TODO: ComponentChildren
+export type InnerContentHookOuterContent = (innerContentParentRef: Ref<any>, innerContent: ComponentChildren, anySpecified: boolean) => ComponentChildren
 
 
 export class InnerContentHook<InnerProps> extends Component<InnerContentHookProps<InnerProps>> {
@@ -98,29 +98,35 @@ export class InnerContentHook<InnerProps> extends Component<InnerContentHookProp
   render(props: InnerContentHookProps<InnerProps>, state: {}, context: ComponentContext) {
     let { options } = context
     let renderInner = options[props.name + 'InnerContent'] || props.defaultInnerContent
-    let innerContentVNode: VNode
+    let innerContent: ComponentChildren
 
     if (renderInner) {
       let innerContentRaw = renderInner(props.innerProps)
 
-      if ((innerContentRaw as VNode).type) {
-        innerContentVNode = (innerContentRaw as VNode)
+      if (innerContentRaw) {
+        if ( // is ComponentChildren... is there a util for this?
+          (innerContentRaw as VNode).type ||
+          Array.isArray(innerContentRaw) ||
+          typeof innerContentRaw === 'string'
+        ) {
+          innerContent = innerContentRaw
 
-      } else if (this.customContentHandler) {
-        this.customContentHandler.handleProps(innerContentRaw)
+        } else if (this.customContentHandler) {
+          this.customContentHandler.handleProps(innerContentRaw)
 
-      } else if (typeof innerContentRaw === 'string') {
-        this.customContentHandler = new HtmlContentHandler(innerContentRaw)
+        } else if (typeof innerContentRaw === 'object' && innerContentRaw) { // non-null object
 
-      } else if (
-        innerContentRaw instanceof HTMLElement ||
-        typeof (innerContentRaw as NodeList | HTMLElement[]).length === 'number'
-      ) {
-        this.customContentHandler = new DomContentHandler(innerContentRaw as DomMeta)
+          if ('html' in innerContentRaw) {
+            this.customContentHandler = new HtmlContentHandler(innerContentRaw)
+
+          } else if ('domNodes' in innerContentRaw) {
+            this.customContentHandler = new DomContentHandler(innerContentRaw as DomMeta)
+          }
+        }
       }
     }
 
-    return props.outerContent(this.handleInnerContentParent, innerContentVNode, Boolean(renderInner))
+    return props.children(this.handleInnerContentParent, innerContent, Boolean(renderInner))
   }
 
 
@@ -158,31 +164,28 @@ abstract class ContentHandler<RenderMeta> {
 }
 
 
-class HtmlContentHandler extends ContentHandler<string> {
+type HtmlMeta = { html: string }
 
-  render(el: HTMLElement, meta: string) {
-    el.innerHTML = meta
+class HtmlContentHandler extends ContentHandler<HtmlMeta> {
+
+  render(el: HTMLElement, meta: HtmlMeta) {
+    el.innerHTML = meta.html
   }
 
 }
 
 
-type DomMeta = HTMLElement | HTMLElement[] | NodeList
+type DomMeta = { domNodes: Node[] | NodeList }
 
 class DomContentHandler extends ContentHandler<DomMeta> {
 
   render(el: HTMLElement, meta: DomMeta) {
     removeAllChildren(el)
 
-    let length = (meta as HTMLElement[] | NodeList).length
+    let { domNodes } = meta
 
-    if (length != undefined) {
-      for (let i = 0; i < length; i++) {
-        el.appendChild(meta[i])
-      }
-
-    } else if (meta) {
-      el.appendChild(meta as HTMLElement)
+    for (let i = 0; i < domNodes.length; i++) {
+      el.appendChild(domNodes[i])
     }
   }
 

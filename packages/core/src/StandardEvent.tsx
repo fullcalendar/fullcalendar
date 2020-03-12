@@ -68,52 +68,45 @@ export default class StandardEvent extends BaseComponent<StandardEventProps> {
       isResizing: props.isResizing
     }
 
+    let url = seg.eventRange.def.url
+    let anchorAttrs = url ? { href: url } : {}
+    let style = getSkinCss(seg.eventRange.ui)
+    let standardClassNames = props.extraClassNames.concat(
+      getEventClassNames(innerProps),
+    )
+
     return (
-      <MountHook
-        name='event'
-        handlerProps={staticInnerProps}
-        content={(rootElRef) => (
-          <ClassNamesHook
-            name='event'
-            handlerProps={innerProps}
-            content={(customClassNames) => (
-              <InnerContentHook
-                name='event'
-                innerProps={innerProps}
-                defaultInnerContent={props.defaultInnerContent || renderInnerContent}
-                outerContent={(innerContentParentRef, innerContent) => {
-                  let url = seg.eventRange.def.url
-                  let anchorAttrs = url ? { href: url } : {}
-                  let style = getSkinCss(seg.eventRange.ui)
-                  let classNames = props.extraClassNames.concat(
-                    getEventClassNames(innerProps),
-                    customClassNames
-                  )
-
-                  const rootRefFunc = (el: HTMLElement | null) => {
-                    setRef(rootElRef, el)
-                    if (el) { setElSeg(el, seg) }
-                  }
-
-                  return (
-                    <a {...anchorAttrs} style={style} className={classNames.join(' ')} ref={rootRefFunc}>
+      <MountHook name='event' handlerProps={staticInnerProps}>
+        {(rootElRef) => (
+          <ClassNamesHook name='event' handlerProps={innerProps}>
+            {(customClassNames) => (
+              <a
+                {...anchorAttrs}
+                className={standardClassNames.concat(customClassNames).join(' ')}
+                style={style}
+                ref={(el: HTMLElement | null) => {
+                  setRef(rootElRef, el)
+                  if (el) { setElSeg(el, seg) }
+                }}
+              >
+                <InnerContentHook name='event' innerProps={innerProps} defaultInnerContent={props.defaultInnerContent || renderInnerContent}>
+                  {(innerContentParentRef, innerContent) => {
+                    return [
                       <div class='fc-event-inner' ref={innerContentParentRef}>
                         {innerContent}
-                      </div>
-                      {innerProps.isStartResizable &&
-                        <div class='fc-event-resizer fc-event-resizer-start' />
-                      }
-                      {innerProps.isEndResizable &&
+                      </div>,
+                      innerProps.isStartResizable &&
+                        <div class='fc-event-resizer fc-event-resizer-start' />,
+                      innerProps.isEndResizable &&
                         <div class='fc-event-resizer fc-event-resizer-end' />
-                      }
-                    </a>
-                  )
-                }}
-              />
+                    ]
+                  }}
+                </InnerContentHook>
+              </a>
             )}
-          />
+          </ClassNamesHook>
         )}
-      />
+      </MountHook>
     )
   }
 

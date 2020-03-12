@@ -47,19 +47,12 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
     }
 
     return (
-      <MountHook
-        name='event'
-        handlerProps={staticInnerProps}
-        content={(rootElRef) => (
-          <ClassNamesHook
-            name='event'
-            handlerProps={innerProps}
-            content={(customClassNames) => (
-              <InnerContentHook
-                name='event'
-                innerProps={innerProps}
-                defaultInnerContent={renderInnerContent}
-                outerContent={(innerContentParentRef, innerContent) => {
+      <MountHook name='event' handlerProps={staticInnerProps}>
+        {(rootElRef) => (
+          <ClassNamesHook name='event' handlerProps={innerProps}>
+            {(customClassNames) => (
+              <InnerContentHook name='event' innerProps={innerProps} defaultInnerContent={renderInnerContent}>
+                {(innerContentParentRef, innerContent) => {
                   let classNames = [ 'fc-list-item' ].concat(
                     getEventClassNames(innerProps),
                     customClassNames
@@ -77,11 +70,11 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
                     </tr>
                   )
                 }}
-              />
+              </InnerContentHook>
             )}
-          />
+          </ClassNamesHook>
         )}
-      />
+      </MountHook>
     )
   }
 
