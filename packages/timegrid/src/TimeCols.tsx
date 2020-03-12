@@ -77,7 +77,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
           clientWidth={props.clientWidth}
           minHeight={props.vGrowRows ? props.clientHeight : ''}
           tableMinWidth={props.tableMinWidth}
-          tableColGroupNode={props.tableColGroupNode}
+          tableColGroupNode={props.axis ? props.tableColGroupNode : null /* axis depends on the colgroup's shrinking */}
           onCoords={this.handleSlatCoords}
         />
         <TimeColsContent

@@ -141,7 +141,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
               <TimeColsAxisCell {...slatMeta} />
             }
             <td
-              className={'fc-time' + (!slatMeta.isLabeled ? ' fc-minor' : '')}
+              className={'fc-slat fc-time' + (!slatMeta.isLabeled ? ' fc-minor' : '')}
               data-time={slatMeta.isoTimeStr}
             />
           </tr>
@@ -161,7 +161,7 @@ const DEFAULT_SLAT_LABEL_FORMAT = {
 }
 
 export function TimeColsAxisCell(props: TimeSlatMeta) {
-  let classNames = [ 'fc-time', props.isLabeled ? 'shrink' : 'fc-minor', 'fc-axis' ]
+  let classNames = [ 'fc-slat', 'fc-time', props.isLabeled ? 'shrink' : 'fc-minor', 'fc-axis' ]
 
   return (
     <ComponentContextType.Consumer>

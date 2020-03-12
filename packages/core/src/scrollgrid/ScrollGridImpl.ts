@@ -12,7 +12,7 @@ export interface ScrollGridProps {
 
 export interface ScrollGridSectionConfig extends SectionConfig {
   key?: string
-  chunks: ChunkConfig[]
+  chunks?: ChunkConfig[] // TODO: make this mandatory, somehow also accomodate outerContent
 }
 
 export interface ColGroupConfig {

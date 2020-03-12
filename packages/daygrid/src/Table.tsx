@@ -29,6 +29,7 @@ export interface TableProps {
   dateProfile: DateProfile
   renderRowIntro?: () => VNode
   colGroupNode: VNode
+  tableMinWidth: CssDimValue
   vGrowRows: boolean
   clientWidth: CssDimValue
   clientHeight: CssDimValue
@@ -87,6 +88,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
         <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => [
           <table style={{
             width: props.clientWidth,
+            minWidth: props.tableMinWidth,
             height: props.vGrowRows ? props.clientHeight : ''
           }}>
             {props.colGroupNode}

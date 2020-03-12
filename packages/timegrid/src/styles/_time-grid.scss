@@ -66,11 +66,13 @@
 
 // SLATS (lines that run horizontally)
 
-.fc-timegrid-slats td {
+.fc-slat { // a <td>
   height: 1.5em;
-  border-bottom: 0; /* each cell is responsible for its top border */
+  border-bottom: 0 !important;
+    /* each cell is responsible for its top border */
+    /* is !important because competing with theme declarations */
 }
 
-.fc-timegrid-slats td.fc-minor {
+.fc-slat.fc-minor {
   border-top-style: dotted;
 }

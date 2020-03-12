@@ -7,9 +7,12 @@ import {
   SimpleScrollGridSection,
   VNode,
   SimpleScrollGrid,
-  ChunkContentCallbackArgs
+  ChunkContentCallbackArgs,
+  ScrollGridSectionConfig,
+  BaseComponent
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
+import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
 
 
 const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
@@ -99,16 +102,92 @@ export default abstract class TimeColsView extends View {
     headerRowContent: VNode | null,
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
-    columnMinWidth: number
+    colCnt: number,
+    columnMinWidth: number,
+    slatMetas: TimeSlatMeta[]
   ) {
-    // let colConfigs = []
-    // if (hasAxis) {
-    //   colConfigs.push({ width: 'shrink' })
-    // }
+    let ScrollGrid = this.context.pluginHooks.scrollGridImpl
 
-    if (!this.context.pluginHooks.scrollGridImpl) {
+    if (!ScrollGrid) {
       throw new Error('No ScrollGrid implementation')
     }
+
+    let { context, props } = this
+    let classNames = getViewClassNames(props.viewSpec).concat('fc-timeGrid-view')
+    let sections: ScrollGridSectionConfig[] = []
+
+    if (headerRowContent) {
+      sections.push({
+        type: 'head',
+        chunks: [
+          {
+            rowContent: <tr>{this.renderHeadAxis()}</tr>
+          },
+          {
+            elRef: this.headerElRef,
+            rowContent: headerRowContent
+          }
+        ]
+      })
+    }
+
+    if (allDayContent) {
+      sections.push({
+        key: 'all-day',
+        type: 'body',
+        chunks: [
+          {
+            rowContent: <tr>{this.renderTableRowAxis()}</tr>,
+            vGrowRows: true
+          },
+          {
+            content: allDayContent
+          }
+        ]
+      })
+      sections.push({
+        outerContent: (
+          <tr>
+            <td
+              colSpan={2}
+              class={'fc-divider ' + context.theme.getClass('tableCellShaded')}
+            />
+          </tr>
+        )
+      })
+    }
+
+    sections.push({
+      key: 'timed',
+      type: 'body',
+      vGrow: true,
+      vGrowRows: Boolean(context.options.expandRows),
+      chunks: [
+        {
+          rowContent: <TimeBodyAxis slatMetas={slatMetas} />
+        },
+        {
+          scrollerElRef: this.scrollerElRef,
+          content: timeContent
+        }
+      ]
+    })
+
+    return (
+      <div class={classNames.join(' ')} ref={this.rootElRef}>
+        <ScrollGrid
+          forPrint={props.forPrint}
+          vGrow={!props.isHeightAuto}
+          colGroups={[
+            { width: 'shrink', cols: [ { width: 'shrink' } ] }, // TODO: allow no specify cols
+            { cols: [ { span: colCnt, minWidth: columnMinWidth } ] }
+          ]}
+          sections={sections}
+        />
+      </div>
+    )
+
+
   }
 
 
@@ -192,3 +271,21 @@ export default abstract class TimeColsView extends View {
 }
 
 TimeColsView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering
+
+
+/* Thin Axis
+------------------------------------------------------------------------------------------------------------------*/
+
+interface TimeBodyAxisProps {
+  slatMetas: TimeSlatMeta[]
+}
+
+class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> {
+
+  render(props: TimeBodyAxisProps) {
+    return props.slatMetas.map((slatMeta: TimeSlatMeta) => (
+      <tr><TimeColsAxisCell {...slatMeta} /></tr>
+    ))
+  }
+
+}

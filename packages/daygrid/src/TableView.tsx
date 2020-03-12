@@ -5,7 +5,8 @@ import {
   SimpleScrollGrid,
   SimpleScrollGridSection,
   ChunkContentCallbackArgs,
-  createRef
+  createRef,
+  ScrollGridSectionConfig
 } from '@fullcalendar/core'
 import TableDateProfileGenerator from './TableDateProfileGenerator'
 
@@ -63,16 +64,47 @@ export default abstract class TableView<State={}> extends View<State> {
   renderHScrollLayout(
     headerRowContent: VNode | null,
     bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode,
+    colCnt: number,
     columnMinWidth: number
   ) {
-    // let colConfigs = []
-    // if (hasAxis) {
-    //   colConfigs.push({ width: 'shrink' })
-    // }
+    let ScrollGrid = this.context.pluginHooks.scrollGridImpl
 
-    if (!this.context.pluginHooks.scrollGridImpl) {
+    if (!ScrollGrid) {
       throw new Error('No ScrollGrid implementation')
     }
+
+    let { props } = this
+    let classNames = getViewClassNames(props.viewSpec).concat('fc-dayGrid-view')
+    let sections: ScrollGridSectionConfig[] = []
+
+    if (headerRowContent) {
+      sections.push({
+        type: 'head',
+        chunks: [{
+          elRef: this.headerElRef,
+          rowContent: headerRowContent
+        }]
+      })
+    }
+
+    sections.push({
+      type: 'body',
+      vGrow: true,
+      chunks: [{
+        content: bodyContent
+      }]
+    })
+
+    return (
+      <div class={classNames.join(' ')}>
+        <ScrollGrid
+          vGrow={!props.isHeightAuto}
+          forPrint={props.forPrint}
+          colGroups={[ { cols: [ { span: colCnt, minWidth: columnMinWidth } ] } ]}
+          sections={sections}
+        />
+      </div>
+    )
   }
 
 }

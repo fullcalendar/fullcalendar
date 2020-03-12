@@ -59,7 +59,7 @@ export function computeShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL
     )
   }
 
-  return largestWidth
+  return Math.ceil(largestWidth) // <table> elements work best with integers. round up to ensure contents fits
 }
 
 

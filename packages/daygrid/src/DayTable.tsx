@@ -31,6 +31,7 @@ export interface DayTableProps {
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
   colGroupNode: VNode
+  tableMinWidth: CssDimValue
   renderRowIntro?: () => VNode
   eventLimit: boolean | number
   vGrowRows: boolean
@@ -56,6 +57,7 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
         cells={dayTableModel.cells}
         dateProfile={dateProfile}
         colGroupNode={props.colGroupNode}
+        tableMinWidth={props.tableMinWidth}
         renderRowIntro={props.renderRowIntro}
         eventLimit={props.eventLimit}
         vGrowRows={props.vGrowRows}
