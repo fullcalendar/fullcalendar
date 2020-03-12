@@ -84,7 +84,12 @@ export default class Table extends DateComponent<TableProps, TableState> {
     }
 
     return (
-      <div class={classNames.join(' ')} ref={this.handleRootEl}>
+      <div class={classNames.join(' ')} ref={this.handleRootEl} style={{
+        // these props are important to give this wrapper correct dimensions for interactions
+        // TODO: if we set it here, can we avoid giving to inner tables?
+        width: props.clientWidth,
+        minWidth: props.tableMinWidth
+      }}>
         <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => [
           <table style={{
             width: props.clientWidth,
