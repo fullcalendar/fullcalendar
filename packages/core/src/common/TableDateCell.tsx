@@ -6,12 +6,12 @@ import { DateProfile } from '../DateProfileGenerator'
 import ComponentContext from '../component/ComponentContext'
 import { h } from '../vdom'
 import { __assign } from 'tslib'
-import { DateFormatter } from '../datelib/formatting'
+import { DateFormatter, formatDayString } from '../datelib/formatting'
 import { BaseComponent } from '../vdom-util'
 
 
 export interface TableDateCellProps {
-  distinctDateStr: string
+  isDateDistinct: boolean
   date: DateMarker
   dateProfile: DateProfile
   todayRange: DateRange
@@ -25,7 +25,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
 
   render(props: TableDateCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
-    let { date, dateProfile, distinctDateStr } = props
+    let { date, dateProfile, isDateDistinct } = props
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let innerText
 
@@ -37,15 +37,15 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
       innerText = dateEnv.format(date, props.colHeadFormat)
     }
 
-    let dayMeta = distinctDateStr // if only one row of days, the classNames on the header can represent the specific days beneath
+    let dayMeta = isDateDistinct // if only one row of days, the classNames on the header can represent the specific days beneath
       ? getDayMeta(date, props.todayRange, props.dateProfile)
       : getDayMeta(date)
 
     let classNames = [ 'fc-day-header' ].concat(getDayClassNames(dayMeta, context.theme))
     let attrs = {} as any
 
-    if (isDateValid && distinctDateStr) {
-      attrs['data-date'] = distinctDateStr
+    if (isDateValid && isDateDistinct) {
+      attrs['data-date'] = formatDayString(date)
     }
 
     if (props.colSpan > 1) {
@@ -63,7 +63,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
         {isDateValid &&
           <GotoAnchor
             navLinks={options.navLinks}
-            gotoOptions={{ date, forceOff: isDateValid && (!distinctDateStr || props.colCnt === 1) }}
+            gotoOptions={{ date, forceOff: isDateValid && (!isDateDistinct || props.colCnt === 1) }}
           >{innerText}</GotoAnchor>
         }
       </th>

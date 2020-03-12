@@ -95,6 +95,7 @@ export function buildIsoString(marker: DateMarker, timeZoneOffset?: number, stri
 
 // formats the date, but with no time part
 // TODO: somehow merge with buildIsoString and stripZeroTime
+// TODO: rename. omit "string"
 export function formatDayString(marker: DateMarker) {
   return marker.toISOString().replace(/T.*$/, '')
 }
