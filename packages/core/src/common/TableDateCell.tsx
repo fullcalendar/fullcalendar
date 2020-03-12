@@ -28,13 +28,8 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
     let { date, dateProfile, distinctDateStr } = props
     let isDateValid = rangeContainsMarker(dateProfile.activeRange, date) // TODO: called too frequently. cache somehow.
     let innerText
-    let innerHtml
 
-    if (typeof options.columnHeaderHtml === 'function') {
-      innerHtml = options.columnHeaderHtml(
-        dateEnv.toDate(date)
-      )
-    } else if (typeof options.columnHeaderText === 'function') {
+    if (typeof options.columnHeaderText === 'function') {
       innerText = options.columnHeaderText(
         dateEnv.toDate(date)
       )
@@ -61,13 +56,14 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
       __assign(attrs, props.otherAttrs)
     }
 
-    return ( // TODO: add a key somehow (date+resource) ???
+    // if colCnt is 1, we are already in a day-view and don't need a navlink
+
+    return (
       <th class={classNames.join(' ')} {...attrs}>
         {isDateValid &&
           <GotoAnchor
             navLinks={options.navLinks}
             gotoOptions={{ date, forceOff: isDateValid && (!distinctDateStr || props.colCnt === 1) }}
-            htmlContent={innerHtml}
           >{innerText}</GotoAnchor>
         }
       </th>

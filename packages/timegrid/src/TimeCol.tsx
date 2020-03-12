@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getDayClassNames, getSegMeta, DateRange, getDayMeta, DateProfile, Fragment } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getDayClassNames, getSegMeta, DateRange, getDayMeta, DateProfile, Fragment, MountHook, setRef, ClassNamesHook, InnerContentHook } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -29,9 +29,16 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
   render(props: TimeColProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
     let dateStr = dateEnv.formatIso(props.date, { omitTime: true })
-
     let dayMeta = getDayMeta(props.date, props.todayRange, props.dateProfile)
-    let classNames = [ 'fc-timegrid-col' ].concat(
+    let staticProps = {
+      date: props.date,
+      view: context.view
+    }
+    let dynamicProps = {
+      ...staticProps,
+      ...dayMeta
+    }
+    let standardClassNames = [ 'fc-timegrid-col' ].concat(
       getDayClassNames(dayMeta, context.theme)
     )
 
@@ -47,38 +54,62 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
       {}
 
     return (
-      <td
-        className={classNames.join(' ')}
-        ref={props.elRef}
-        data-date={dateStr}
-        {...props.htmlAttrs}
-      >
-        <div class='fc-timegrid-col-inner'>
-          <div class='fc-timegrid-col-events'>
-            {/* the Fragments scope the keys */}
-            <Fragment>
-              {this.renderFgSegs(
-                mirrorSegs as TimeColsSeg[],
-                {},
-                Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
-                Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
-                Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
-                // TODO: pass in left/right instead of using only computeSegTopBottomCss
-              )}
-            </Fragment>
-            <Fragment>
-              {this.renderFgSegs(
-                props.fgEventSegs,
-                interactionAffectedInstances
-              )}
-            </Fragment>
-          </div>
-          {this.renderNowIndicator(props.nowIndicatorSegs)}
-          <Fragment>{this.renderFillSegs(props.businessHourSegs, interactionAffectedInstances, 'fc-nonbusiness')}</Fragment>
-          <Fragment>{this.renderFillSegs(props.bgEventSegs, interactionAffectedInstances, 'fc-bgevent')}</Fragment>
-          <Fragment>{this.renderFillSegs(props.dateSelectionSegs, interactionAffectedInstances, 'fc-highlight')}</Fragment>
-        </div>
-      </td>
+      <MountHook
+        name='dateCell'
+        handlerProps={staticProps}
+        content={(rootElRef: Ref<HTMLTableCellElement>) => (
+          <ClassNamesHook
+            name='dateCell'
+            handlerProps={dynamicProps}
+            content={(customClassNames) => (
+              <td
+                className={standardClassNames.concat(customClassNames).join(' ')}
+                ref={(el: HTMLElement | null) => {
+                  setRef(props.elRef, el)
+                  setRef(rootElRef, el)
+                }}
+                data-date={dateStr}
+                {...props.htmlAttrs}
+              >
+                <div class='fc-timegrid-col-inner'>
+                  <div class='fc-timegrid-col-events'>
+                    {/* the Fragments scope the keys */}
+                    <Fragment>
+                      {this.renderFgSegs(
+                        mirrorSegs as TimeColsSeg[],
+                        {},
+                        Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
+                        Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
+                        Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
+                        // TODO: pass in left/right instead of using only computeSegTopBottomCss
+                      )}
+                    </Fragment>
+                    <Fragment>
+                      {this.renderFgSegs(
+                        props.fgEventSegs,
+                        interactionAffectedInstances
+                      )}
+                    </Fragment>
+                  </div>
+                  {this.renderNowIndicator(props.nowIndicatorSegs)}
+                  <Fragment>{this.renderFillSegs(props.businessHourSegs, interactionAffectedInstances, 'fc-nonbusiness')}</Fragment>
+                  <Fragment>{this.renderFillSegs(props.bgEventSegs, interactionAffectedInstances, 'fc-bgevent')}</Fragment>
+                  <Fragment>{this.renderFillSegs(props.dateSelectionSegs, interactionAffectedInstances, 'fc-highlight')}</Fragment>
+                </div>
+                <InnerContentHook
+                  name='dateCell'
+                  innerProps={dynamicProps}
+                  outerContent={(innerContentParentRef, innerContent, anySpecified) => (
+                    anySpecified && (
+                      <div class='fc-timegrid-col-misc' ref={innerContentParentRef}>{innerContent}</div>
+                    )
+                  )}
+                />
+              </td>
+            )}
+          />
+        )}
+      />
     )
   }
 
