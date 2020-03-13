@@ -192,7 +192,7 @@ export { globalPlugins } from './global-plugins'
 export {
   MountHook, MountHookProps,
   ClassNamesHook, ClassNamesHookProps,
-  InnerContentHook, InnerContentHookProps
+  InnerContentHook, InnerContentHookProps, InnerContentHookOuterContent
 } from './render-hook'
 export { default as StandardEvent, StandardEventProps, MinimalEventProps } from './StandardEvent'
 

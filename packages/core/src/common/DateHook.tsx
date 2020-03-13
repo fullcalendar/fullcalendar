@@ -6,17 +6,17 @@ import { ViewApi } from 'fullcalendar'
 
 
 export interface DateHookProps {
-  staticProps: DateStaticProps
-  dynamicProps: DateDynamicProps
+  staticProps: DateHookStaticProps
+  dynamicProps: DateHookDynamicProps
   children: (rootElRef: Ref<HTMLElement>, customClassNames: string[]) => VNode // TODO: ComponentChildren
 }
 
-interface DateStaticProps {
+interface DateHookStaticProps {
   date: DateMarker
   view: ViewApi
 }
 
-interface DateDynamicProps extends DateStaticProps {
+interface DateHookDynamicProps extends DateHookStaticProps {
   isOther: boolean
   isToday: boolean
   isPast: boolean
@@ -40,7 +40,7 @@ export default function DateHook(props: DateHookProps) {
 
 
 export interface DateInnerContentHookProps {
-  dynamicProps: DateDynamicProps
+  dynamicProps: DateHookDynamicProps
   children: InnerContentHookOuterContent
 }
 
