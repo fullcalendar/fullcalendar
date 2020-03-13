@@ -200,7 +200,7 @@ export function buildSegCompareObj(seg: Seg) {
 // other stuff
 
 
-export interface EventInnerContentProps { // for *InnerContent handlers
+export interface EventMeta { // for *Content handlers
   event: EventApi
   timeText: string
   isDraggable: boolean
@@ -300,7 +300,7 @@ export function getSegMeta(seg: Seg, todayRange: DateRange, nowDate?: DateMarker
 }
 
 
-export function getEventClassNames(props: EventInnerContentProps) { // weird that we use this interface, but convenient
+export function getEventClassNames(props: EventMeta) { // weird that we use this interface, but convenient
   let classNames: string[] = [ 'fc-event' ]
 
   if (props.isMirror) {

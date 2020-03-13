@@ -8,14 +8,9 @@ import {
   ComponentContext,
   GotoAnchor,
   CssDimValue,
-  setRef,
-  getDayClassNames,
   DateProfile,
   DateRange,
-  getDayMeta,
-  formatDayString,
-  DateHook,
-  DateInnerContentHook
+  DayRoot,
 } from '@fullcalendar/core'
 
 
@@ -39,6 +34,7 @@ export interface TableCellProps extends TableCellModel {
 export interface TableCellModel {
   date: DateMarker
   htmlAttrs?: object
+  extraMountProps?: any
 }
 
 export interface MoreLinkArg {
@@ -62,39 +58,28 @@ const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
 export default class TableCell extends DateComponent<TableCellProps> {
 
+
   render(props: TableCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
     let { date } = props
-    let dateStr = formatDayString(date)
-    let zonedDate = dateEnv.toDate(date)
-    let dayMeta = getDayMeta(date, props.todayRange, props.dateProfile)
-    let staticProps = {
-      date: zonedDate,
-      view: context.view
-    }
-    let dynamicProps = {
-      ...staticProps,
-      ...dayMeta,
-      hasEvents: props.hasEvents
-    }
-
-    let standardClassNames = [ 'fc-daygrid-day' ].concat(
-      getDayClassNames(dayMeta, context.theme)
-    )
 
     return (
-      <DateHook staticProps={staticProps} dynamicProps={dynamicProps}>
-        {(rootElRef: Ref<HTMLTableCellElement>, customClassNames: string[]) => (
+      <DayRoot
+        date={date}
+        todayRange={props.todayRange}
+        dateProfile={props.dateProfile}
+        extraMountProps={props.extraMountProps}
+        extraDynamicProps={{ hasEvents: props.hasEvents }}
+        elRef={props.elRef}
+      >
+        {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
           <td
-            class={standardClassNames.concat(customClassNames).join(' ')}
-            {...props.htmlAttrs}
-            data-date={dateStr}
-            ref={(el: HTMLTableCellElement | null) => {
-              setRef(props.elRef, el)
-              setRef(rootElRef, el)
-            }}
+            ref={rootElRef}
+            class={[ 'fc-daygrid-day' ].concat(classNames).join(' ')}
+            {...dataAttrs}
+            {...props.htmlAttrs /* TODO: rename to extraDataAttrs */}
           >
-            <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! */}>
+            <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&
                 <div class='fc-daygrid-week-number'>
                   <GotoAnchor
@@ -115,13 +100,9 @@ export default class TableCell extends DateComponent<TableCellProps> {
                   >{dateEnv.format(date, DAY_NUM_FORMAT)}</GotoAnchor>
                 </div>
               }
-              <DateInnerContentHook dynamicProps={dynamicProps}>
-                {(innerContentParentRef, innerContent, anySpecified) => (
-                  anySpecified && (
-                    <div class='fc-daygrid-day-misc' ref={innerContentParentRef}>{innerContent}</div>
-                  )
-                )}
-              </DateInnerContentHook>
+              {innerContent &&
+                <div class='fc-daygrid-day-misc' ref={innerElRef}>{innerContent}</div>
+              }
               <div
                 class='fc-daygrid-day-events'
                 ref={props.fgContentElRef}
@@ -138,7 +119,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
             </div>
           </td>
         )}
-      </DateHook>
+      </DayRoot>
     )
   }
 

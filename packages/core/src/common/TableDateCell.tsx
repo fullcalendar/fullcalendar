@@ -1,6 +1,6 @@
 import { rangeContainsMarker, DateRange } from '../datelib/date-range'
 import { getDayClassNames, getDayMeta } from '../component/date-rendering'
-import GotoAnchor from '../component/GotoAnchor'
+import GotoAnchor from './GotoAnchor'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import ComponentContext from '../component/ComponentContext'

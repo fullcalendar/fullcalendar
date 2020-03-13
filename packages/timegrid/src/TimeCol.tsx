@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getDayClassNames, getSegMeta, DateRange, getDayMeta, DateProfile, Fragment, setRef, formatDayString, DateHook, DateInnerContentHook } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayRoot } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -11,7 +11,8 @@ export interface TimeColProps {
   dateProfile: DateProfile
   nowDate: DateMarker
   todayRange: DateRange
-  htmlAttrs: any
+  htmlAttrs?: any
+  extraMountProps?: any
   fgEventSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
   businessHourSegs: TimeColsSeg[]
@@ -28,19 +29,6 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
 
   render(props: TimeColProps, state: {}, context: ComponentContext) {
     let { options } = context
-    let dateStr = formatDayString(props.date)
-    let dayMeta = getDayMeta(props.date, props.todayRange, props.dateProfile)
-    let staticProps = {
-      date: props.date,
-      view: context.view
-    }
-    let dynamicProps = {
-      ...staticProps,
-      ...dayMeta
-    }
-    let standardClassNames = [ 'fc-timegrid-col' ].concat(
-      getDayClassNames(dayMeta, context.theme)
-    )
 
     let mirrorSegs: Seg[] = // yuck
       (props.eventDrag && props.eventDrag.segs.length ? props.eventDrag.segs : null) ||
@@ -54,16 +42,13 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
       {}
 
     return (
-      <DateHook staticProps={staticProps} dynamicProps={dynamicProps}>
-        {(rootElRef: Ref<HTMLTableCellElement>, customClassNames) => (
+      <DayRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraMountProps={props.extraMountProps}>
+        {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
           <td
-            className={standardClassNames.concat(customClassNames).join(' ')}
-            ref={(el: HTMLElement | null) => {
-              setRef(props.elRef, el)
-              setRef(rootElRef, el)
-            }}
-            data-date={dateStr}
-            {...props.htmlAttrs}
+            ref={rootElRef}
+            className={[ 'fc-timegrid-col' ].concat(classNames).join(' ')}
+            {...dataAttrs}
+            {...props.htmlAttrs /* TODO: rename to extraDataAttrs */}
           >
             <div class='fc-timegrid-col-inner'>
               <div class='fc-timegrid-col-events'>
@@ -90,16 +75,12 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
               <Fragment>{this.renderFillSegs(props.bgEventSegs, interactionAffectedInstances, 'fc-bgevent')}</Fragment>
               <Fragment>{this.renderFillSegs(props.dateSelectionSegs, interactionAffectedInstances, 'fc-highlight')}</Fragment>
             </div>
-            <DateInnerContentHook dynamicProps={dynamicProps}>
-              {(innerContentParentRef, innerContent, anySpecified) => (
-                anySpecified && (
-                  <div class='fc-timegrid-col-misc' ref={innerContentParentRef}>{innerContent}</div>
-                )
-              )}
-            </DateInnerContentHook>
+            {innerContent &&
+              <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
+            }
           </td>
         )}
-      </DateHook>
+      </DayRoot>
     )
   }
 

@@ -1,6 +1,6 @@
 import {
-  MinimalEventProps, BaseComponent, ComponentContext, MountHook, ClassNamesHook, InnerContentHook, setRef, h, Fragment,
-  EventInnerContentProps, getEventClassNames, setElSeg, EventApi, Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter
+  MinimalEventProps, BaseComponent, ComponentContext, h, Fragment,
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot
 } from "@fullcalendar/core"
 
 
@@ -13,15 +13,9 @@ const DEFAULT_TIME_FORMAT = {
 
 export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
 
-
   render(props: MinimalEventProps, state: {}, context: ComponentContext) {
     let { options } = context
     let { seg } = props
-
-    let staticInnerProps = {
-      event: new EventApi(context.calendar, seg.eventRange.def, seg.eventRange.instance),
-      view: context.view
-    }
 
     // TODO: avoid createFormatter, cache!!! see TODO in StandardEvent
     let timeFormat = createFormatter(
@@ -29,59 +23,32 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
       options.defaultRangeSeparator
     )
 
-    let innerProps: EventInnerContentProps = {
-      ...staticInnerProps,
-      timeText: buildTimeText(seg, timeFormat, context),
-      isDraggable: false,
-      isStartResizable: false,
-      isEndResizable: false,
-      isMirror: false,
-      isStart: seg.isStart,
-      isEnd: seg.isEnd,
-      isPast: props.isPast,
-      isFuture: props.isFuture,
-      isToday: props.isToday,
-      isSelected: props.isSelected,
-      isDragging: props.isDragging,
-      isResizing: props.isResizing
-    }
-
     return (
-      <MountHook name='event' handlerProps={staticInnerProps}>
-        {(rootElRef) => (
-          <ClassNamesHook name='event' handlerProps={innerProps}>
-            {(customClassNames) => (
-              <InnerContentHook name='event' innerProps={innerProps} defaultInnerContent={renderInnerContent}>
-                {(innerContentParentRef, innerContent) => {
-                  let classNames = [ 'fc-list-item' ].concat(
-                    getEventClassNames(innerProps),
-                    customClassNames
-                  )
-
-                  const rootRefFunc = (el: HTMLElement | null) => {
-                    setRef(rootElRef, el)
-                    setRef(innerContentParentRef, el)
-                    if (el) { setElSeg(el, seg) }
-                  }
-
-                  return (
-                    <tr className={classNames.join(' ')} ref={rootRefFunc}>
-                      {innerContent}
-                    </tr>
-                  )
-                }}
-              </InnerContentHook>
-            )}
-          </ClassNamesHook>
+      <EventRoot
+        seg={seg}
+        timeText={buildTimeText(seg, timeFormat, context)}
+        defaultInnerContent={renderInnerContent}
+        isPast={props.isPast}
+        isFuture={props.isFuture}
+        isToday={props.isToday}
+        isSelected={props.isSelected}
+        isDragging={props.isDragging}
+        isResizing={props.isResizing}
+        isDateSelecting={props.isDateSelecting}
+      >
+        {(rootElRef, classNames, style, innerElRef, innerContent) => (
+          <tr className={[ 'fc-list-item' ].concat(classNames).join(' ')} ref={rootElRef}>
+            {innerContent}
+          </tr>
         )}
-      </MountHook>
+      </EventRoot>
     )
   }
 
 }
 
 
-function renderInnerContent(props: EventInnerContentProps) {
+function renderInnerContent(props: EventMeta) {
   let { event } = props
   let url = event.url
   let anchorAttrs = url ? { href: url } : {}

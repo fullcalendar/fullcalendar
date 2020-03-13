@@ -1,6 +1,6 @@
 import { h, ComponentChildren } from '../vdom'
 import { BaseComponent } from '../vdom-util'
-import ComponentContext from './ComponentContext'
+import ComponentContext from '../component/ComponentContext'
 import { __assign } from 'tslib'
 
 export interface GotoAnchorProps {

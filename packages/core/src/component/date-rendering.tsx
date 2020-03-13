@@ -89,3 +89,23 @@ export function getSlatClassNames(meta: DateMeta, theme: Theme) {
 
   return classNames
 }
+
+
+export function getDateTimeClassNames(meta: DateMeta, classNameScope: string, theme: Theme) {
+  let classNames: string[] = [ classNameScope ]
+
+  if (meta.isToday) {
+    classNames.push(`${classNameScope}-today`)
+    classNames.push(theme.getClass('today'))
+  }
+
+  if (meta.isPast) {
+    classNames.push(`${classNameScope}-past`)
+  }
+
+  if (meta.isFuture) {
+    classNames.push(`${classNameScope}-future`)
+  }
+
+  return classNames
+}

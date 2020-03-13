@@ -63,8 +63,8 @@ export {
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
 export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps } from './component/event-splitting'
-export { getDayClassNames, getDateMeta, getDayMeta, getSlatClassNames, DateMeta } from './component/date-rendering'
-export { default as GotoAnchor } from './component/GotoAnchor'
+export { getDayClassNames, getDateMeta, getDayMeta, getSlatClassNames, getDateTimeClassNames, DateMeta } from './component/date-rendering'
+export { default as GotoAnchor } from './common/GotoAnchor'
 
 export {
   preventDefault,
@@ -150,9 +150,9 @@ export { EventInteractionState } from './interactions/event-interaction-state'
 export {
   EventRenderRange, sliceEventStore, hasBgRendering, setElSeg, getElSeg,
   computeSegDraggable, computeSegStartResizable, computeSegEndResizable,
-  EventInnerContentProps, getEventClassNames, buildSegTimeText,
+  getEventClassNames, buildSegTimeText,
   buildSegCompareObj, sortEventSegs,
-  getSegMeta
+  getSegMeta, EventMeta
 } from './component/event-rendering'
 
 export { default as DayTableModel, DayTableSeg, DayTableCell } from './common/DayTableModel'
@@ -189,11 +189,9 @@ export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
 export { default as NowTimer } from './NowTimer'
 export { default as ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
-export {
-  MountHook, MountHookProps,
-  ClassNamesHook, ClassNamesHookProps,
-  InnerContentHook, InnerContentHookProps, InnerContentHookOuterContent
-} from './render-hook'
-export { default as StandardEvent, StandardEventProps, MinimalEventProps } from './StandardEvent'
+export { RenderHook, RenderHookProps } from './common/render-hook'
+export { default as StandardEvent, StandardEventProps } from './common/StandardEvent'
 
-export { default as DateHook, DateInnerContentHook } from './common/DateHook'
+export { DayRoot, DayRootProps } from './common/DayRoot'
+export { DateTimeRoot, DateTimeRootProps } from './common/DateTimeRoot'
+export { EventRoot, MinimalEventProps } from './common/EventRoot'
