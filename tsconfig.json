@@ -49,7 +49,7 @@
     "outDir": "tmp/tsc-output"
   },
   "include": [
-    "packages*/*/src/main.*",
+    "packages*/*/src/**/*",
     "packages*/__tests__/src/**/*",
     "packages/core/src/locales/*"
   ],
