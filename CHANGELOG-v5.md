@@ -68,7 +68,7 @@ When switching between views that share the same type, the view will not be torn
 // called after a day element is added to the DOM
 // the `el` reference will remain the same, however, its contents might change in the future
 // useful for attaching handlers to `el`
-dayDidMount: function(arg) {
+dateDidMount: function(arg) {
   console.log(arg.date); // a Date object
   console.log(arg.el); // an HTMLElement
   console.log(arg.view); // the current View object
@@ -79,7 +79,7 @@ dayDidMount: function(arg) {
 // determines the classNames on the day's `el`
 // called when the day element is created AND every time it is updated
 // these classNames will be in addition the stock classNames such as 'fc-day'
-dayClassNames: function(arg) {
+dateClassNames: function(arg) {
   console.log(arg.date); // a Date object
   console.log(arg.isToday, arg.isPast, arg.isFuture, arg.isOther); // booleans
   console.log(arg.view); // the current View object
@@ -89,7 +89,7 @@ dayClassNames: function(arg) {
 
 // determines the DOM content within the `el`
 // called when the day element is created AND every time it is updated
-dayInnerContent: function(arg) {
+dateInnerContent: function(arg) {
   console.log(arg.date); // a Date object
   console.log(arg.isToday, arg.isPast, arg.isFuture, arg.isOther); // booleans
   console.log(arg.view); // the current View object
@@ -165,9 +165,55 @@ eventInnerContent: function(arg) {
 
 ## Resource Rendering
 
-<del><strong>Calendar::rerenderResources</strong></del> method removed. Call the generic `Calendar::render()` method after initialization instead.
+<del><strong>resourceLabelText</strong></del> removed. Determines the "Resources" text at the top of resource-timeline view. Use `resourceHeaderInnerContent` instead, which can accept the following values:
 
-Currently the `resourceRender` and `resourceColumns.render` work the same, but this will change soon.
+```js
+'some text'
+{ html: 'some html' }
+{ domNodes: [ document.createElement('div') ] }
+JSX // more information to come
+```
+
+<del><strong>resourceRender</strong></del> removed. Used for custom rendering of each resource's title via direct manipulation of the `arg.el` DOM element Use the following callbacks instead:
+
+```js
+// called after each resource label is added to the DOM
+// the `el` reference will remain the same, however, its contents might change in the future
+// useful for attaching handlers to `el`
+resourceLabelDidMount: function(arg) {
+  console.log(arg.resource); // a Resource object
+  console.log(arg.el); // an HTMLElement
+  console.log(arg.view); // the current View object
+
+  // cannot return anything
+},
+
+// determines the DOM content within the `el`
+// called when the resource label element is created AND every time it is updated
+resourceLabelInnerContent: function(arg) {
+  console.log(arg.resource); // a Resource object
+  console.log(arg.view); // the current View object
+
+  // can return...
+  return 'some text';
+  return { html: 'some html' };
+  return { domNodes: [ document.createElement('div') ] };
+  return JSX; // more information to come
+}
+```
+
+<del><strong>resourceText</strong></del> removed as well. Use `resourceLabelInnerContent` instead.
+
+There is a new callback `resourceLabelWillUnmount`.
+
+The <del><strong>resourceGroupText</strong></del> callback has been removed.
+
+The `resourceColumns` option accepts an array of objects. Some of the properties within each object has changed:
+
+- <del><strong>labelText</strong></del> removed. Use `headerInnerContent` instead. Accepts the same argument as `resourceHeaderInnerContent`
+- <del><strong>text</strong></del> and <del><strong>render</strong></del> removed. Use `innerContent` instead. Accepts the same argument as `resourceLabelInnerContent`.
+
+<del><strong>Calendar::rerenderResources</strong></del> method removed. Call the generic `Calendar::render()` method after initialization instead.
 
 
 ## Week Numbers
