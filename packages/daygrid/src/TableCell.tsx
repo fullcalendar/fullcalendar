@@ -33,7 +33,7 @@ export interface TableCellProps extends TableCellModel {
 
 export interface TableCellModel {
   date: DateMarker
-  htmlAttrs?: object
+  extraDataAttrs?: object
   extraMountProps?: any
 }
 
@@ -77,7 +77,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
             ref={rootElRef}
             class={[ 'fc-daygrid-day' ].concat(classNames).join(' ')}
             {...dataAttrs}
-            {...props.htmlAttrs /* TODO: rename to extraDataAttrs */}
+            {...props.extraDataAttrs}
           >
             <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&

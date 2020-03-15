@@ -69,6 +69,7 @@ export function getDayClassNames(meta: DateMeta, theme: Theme) {
 }
 
 
+// TODO: kill
 export function getSlatClassNames(meta: DateMeta, theme: Theme) {
   let classNames: string[] = [
     'fc-slat'

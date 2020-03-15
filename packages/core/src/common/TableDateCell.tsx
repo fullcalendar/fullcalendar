@@ -8,6 +8,7 @@ import { h } from '../vdom'
 import { __assign } from 'tslib'
 import { DateFormatter, formatDayString } from '../datelib/formatting'
 import { BaseComponent } from '../vdom-util'
+import { RenderHook } from './render-hook'
 
 
 export interface TableDateCellProps {
@@ -18,7 +19,8 @@ export interface TableDateCellProps {
   colCnt: number
   colHeadFormat: DateFormatter
   colSpan?: number
-  otherAttrs?: object
+  extraMountProps?: object
+  extraDataAttrs?: object
 }
 
 export default class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
@@ -52,21 +54,38 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
       attrs.colSpan = props.colSpan
     }
 
-    if (props.otherAttrs) {
-      __assign(attrs, props.otherAttrs)
+    if (props.extraDataAttrs) {
+      __assign(attrs, props.extraDataAttrs)
+    }
+
+    let mountProps = {
+      date: dateEnv.toDate(date),
+      view: context.view,
+      ...props.extraMountProps
+    }
+    let dynamicProps = {
+      ...mountProps,
+      ...dayMeta
     }
 
     // if colCnt is 1, we are already in a day-view and don't need a navlink
 
     return (
-      <th class={classNames.join(' ')} {...attrs}>
-        {isDateValid &&
-          <GotoAnchor
-            navLinks={options.navLinks}
-            gotoOptions={{ date, forceOff: isDateValid && (!isDateDistinct || props.colCnt === 1) }}
-          >{innerText}</GotoAnchor>
-        }
-      </th>
+      <RenderHook name='dateHeader' mountProps={mountProps} dynamicProps={dynamicProps}>
+        {(rootElRef, customClassNames, innerElRef, innerContent) => (
+          <th class={classNames.concat(customClassNames).join(' ')} {...attrs} ref={rootElRef}>
+            {isDateValid &&
+              <GotoAnchor
+                navLinks={options.navLinks}
+                gotoOptions={{ date, forceOff: isDateValid && (!isDateDistinct || props.colCnt === 1) }}
+              >{innerText}</GotoAnchor>
+            }
+            {innerContent &&
+              <div class='date-header-misc' ref={innerElRef}>{innerContent}</div>
+            }
+          </th>
+        )}
+      </RenderHook>
     )
   }
 

@@ -11,7 +11,8 @@ export interface DayTableSeg extends Seg {
 
 export interface DayTableCell {
   date: DateMarker
-  htmlAttrs?: object
+  extraMountProps?: object
+  extraDataAttrs?: object
 }
 
 export default class DayTableModel {

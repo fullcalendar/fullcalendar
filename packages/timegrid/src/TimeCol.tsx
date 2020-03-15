@@ -11,7 +11,7 @@ export interface TimeColProps {
   dateProfile: DateProfile
   nowDate: DateMarker
   todayRange: DateRange
-  htmlAttrs?: any
+  extraDataAttrs?: any
   extraMountProps?: any
   fgEventSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
@@ -48,7 +48,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
             ref={rootElRef}
             className={[ 'fc-timegrid-col' ].concat(classNames).join(' ')}
             {...dataAttrs}
-            {...props.htmlAttrs /* TODO: rename to extraDataAttrs */}
+            {...props.extraDataAttrs}
           >
             <div class='fc-timegrid-col-inner'>
               <div class='fc-timegrid-col-events'>

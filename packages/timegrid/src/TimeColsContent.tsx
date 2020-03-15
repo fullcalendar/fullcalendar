@@ -89,7 +89,8 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
                   dateProfile={props.dateProfile}
                   nowDate={props.nowDate}
                   todayRange={props.todayRange}
-                  htmlAttrs={cell.htmlAttrs}
+                  extraMountProps={cell.extraMountProps}
+                  extraDataAttrs={cell.extraDataAttrs}
                   fgEventSegs={fgEventSegsByRow[i]}
                   bgEventSegs={bgEventSegsByRow[i]}
                   businessHourSegs={businessHourSegsByRow[i]}

@@ -8,7 +8,6 @@ export interface GotoAnchorProps {
   gotoOptions: any
   extraAttrs?: object
   children: ComponentChildren
-  htmlContent?: string // fold into extraAttrs?
 }
 
 export default class GotoAnchor extends BaseComponent<GotoAnchorProps> {
@@ -44,11 +43,6 @@ export default class GotoAnchor extends BaseComponent<GotoAnchorProps> {
 
     if (props.extraAttrs) {
       __assign(attrs, props.extraAttrs)
-    }
-
-    if (typeof props.htmlContent === 'string') {
-      attrs.dangerouslySetInnerHTML = { __html: props.htmlContent }
-      children = null
     }
 
     if (!forceOff && props.navLinks) {
