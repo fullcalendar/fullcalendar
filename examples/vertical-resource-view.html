@@ -10,6 +10,8 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+      // dayLabelContent: function(arg) { console.log(arg); return 'test' },
+      // navLinks: true,
       columnMinWidth: 200,
       defaultView: 'resourceTimeGridDay',
       defaultDate: '2020-02-07',
