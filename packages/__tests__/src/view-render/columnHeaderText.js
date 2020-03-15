@@ -2,7 +2,7 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 
-describe('columnHeaderText', function() {
+describe('dayLabelContent as text', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-05-11'
   })
@@ -16,8 +16,8 @@ describe('columnHeaderText', function() {
 
     it('should contain custom HTML escaped text', function() {
       let calendar = initCalendar({
-        columnHeaderText: function(date) {
-          return '<div>Custom ' + currentCalendar.formatDate(date, { weekday: 'long' }) + '</div>'
+        dayLabelContent: function(arg) {
+          return '<div>Custom ' + currentCalendar.formatDate(arg.date, { weekday: 'long' }) + '</div>'
         }
       })
       let headerWrapper = new ViewWrapper(calendar).header
@@ -33,8 +33,8 @@ describe('columnHeaderText', function() {
 
       initCalendar({
         defaultView: 'timeGridDay',
-        columnHeaderText: function(date) {
-          dates.push(date)
+        dayLabelContent: function(arg) {
+          dates.push(arg.date)
         }
       })
 

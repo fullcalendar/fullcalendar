@@ -141,8 +141,6 @@ export interface OptionsInputBase {
   eventTimeFormat?: FormatterInput
   columnHeader?: boolean
   columnHeaderFormat?: FormatterInput
-  columnHeaderText?: string | ((date: DateInput) => string)
-  columnHeaderHtml?: string | ((date: DateInput) => string)
   titleFormat?: FormatterInput
   weekLabel?: string
   displayEventTime?: boolean
