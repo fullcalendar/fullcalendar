@@ -1,5 +1,5 @@
 import {
-  BaseComponent, DateMarker, createFormatter, ComponentContext, h, GotoAnchor, DateRange, DayRoot
+  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayRoot, buildNavLinkData
 } from '@fullcalendar/core'
 
 
@@ -16,6 +16,7 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
     let { dayDate } = props
     let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
     let altFormat = createFormatter(options.listDayAltFormat) // TODO: cache
+    let navLinkData = options.navLinks ? buildNavLinkData(dayDate) : null
 
     return (
       <DayRoot date={dayDate} todayRange={props.todayRange}>
@@ -27,21 +28,17 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
           >
             <td colSpan={3} className={theme.getClass('tableCellShaded')}>
               {mainFormat &&
-                <GotoAnchor
-                  navLinks={options.navLinks}
-                  gotoOptions={dayDate}
-                  extraAttrs={{ 'class': 'fc-list-heading-main' }}
-                >{dateEnv.format(dayDate, mainFormat)}</GotoAnchor>
+                <a data-navlink={navLinkData} className='fc-list-heading-main'>
+                  {dateEnv.format(dayDate, mainFormat)}
+                </a>
               }
               {innerContent &&
                 <div class='fc-list-heading-misc' ref={innerElRef}>{innerContent}</div>
               }
               {altFormat &&
-                <GotoAnchor
-                  navLinks={options.navLinks}
-                  gotoOptions={dayDate}
-                  extraAttrs={{ 'class': 'fc-list-heading-alt' }}
-                >{dateEnv.format(dayDate, altFormat)}</GotoAnchor>
+                <a data-navlink={navLinkData} className='fc-list-heading-alt'>
+                  {dateEnv.format(dayDate, altFormat)}
+                </a>
               }
             </td>
           </tr>

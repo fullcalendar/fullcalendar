@@ -64,7 +64,7 @@ export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStor
 export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps } from './component/event-splitting'
 export { getDayClassNames, getDateMeta, getDayMeta, getSlatClassNames, getDateTimeClassNames, DateMeta } from './component/date-rendering'
-export { default as GotoAnchor } from './common/GotoAnchor'
+export { buildNavLinkData } from './common/nav-link'
 
 export {
   preventDefault,

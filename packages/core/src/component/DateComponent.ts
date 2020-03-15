@@ -115,7 +115,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
 
     return (!segEl || segEl.classList.contains('fc-mirror')) &&
       !elementClosest(el, '.fc-more') && // a "more.." link
-      !elementClosest(el, 'a[data-goto]') && // a clickable nav link
+      !elementClosest(el, 'a[data-navlink]') && // a clickable nav link
       !this.isInPopover(el)
   }
 

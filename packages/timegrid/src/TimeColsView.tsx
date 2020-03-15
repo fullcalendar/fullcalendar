@@ -3,13 +3,13 @@ import {
   View,
   createFormatter, diffDays,
   getViewClassNames,
-  GotoAnchor,
   SimpleScrollGridSection,
   VNode,
   SimpleScrollGrid,
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
-  BaseComponent
+  BaseComponent,
+  buildNavLinkData
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -214,11 +214,13 @@ export default abstract class TimeColsView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  // Generates the HTML that will go before the day-of week header cells
   renderHeadAxis = () => {
     let { dateEnv, options } = this.context
     let range = this.props.dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
+    let navLinkData = (options.navLinks && dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
+      ? buildNavLinkData(range.start, 'week')
+      : null
     let weekText
 
     if (options.weekNumbers) {
@@ -227,11 +229,9 @@ export default abstract class TimeColsView extends View {
       return (
         <th class={'fc-axis shrink fc-week-number'}>
           <div data-fc-width-all={1}>
-            <GotoAnchor
-              navLinks={options.navLinks}
-              gotoOptions={{ date: range.start, type: 'week', forceOff: dayCnt > 1 }}
-              extraAttrs={{ 'data-fc-width-content': 1 }}
-            >{weekText}</GotoAnchor>
+            <a data-navlink={navLinkData} data-fc-width-content={1}>
+              {weekText}
+            </a>
           </div>
         </th>
       )

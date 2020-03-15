@@ -30,11 +30,11 @@
   /* Internal Nav Links
   --------------------------------------------------------------------------------------------------*/
 
-  a[data-goto] {
+  a[data-navlink] {
     cursor: pointer;
   }
 
-  a[data-goto]:hover {
+  a[data-navlink]:hover {
     text-decoration: underline;
   }
 

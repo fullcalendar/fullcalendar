@@ -1,6 +1,5 @@
 import { rangeContainsMarker, DateRange } from '../datelib/date-range'
 import { getDayClassNames, getDayMeta } from '../component/date-rendering'
-import GotoAnchor from './GotoAnchor'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import ComponentContext from '../component/ComponentContext'
@@ -9,6 +8,7 @@ import { __assign } from 'tslib'
 import { DateFormatter, formatDayString } from '../datelib/formatting'
 import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
+import { buildNavLinkData } from './nav-link'
 
 
 export interface TableDateCellProps {
@@ -69,16 +69,18 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
     }
 
     // if colCnt is 1, we are already in a day-view and don't need a navlink
+    let navLinkData = (options.navLinks && isDateValid && isDateDistinct && props.colCnt > 1)
+      ? buildNavLinkData(date)
+      : null
 
     return (
       <RenderHook name='dateHeader' mountProps={mountProps} dynamicProps={dynamicProps}>
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th class={classNames.concat(customClassNames).join(' ')} {...attrs} ref={rootElRef}>
             {isDateValid &&
-              <GotoAnchor
-                navLinks={options.navLinks}
-                gotoOptions={{ date, forceOff: isDateValid && (!isDateDistinct || props.colCnt === 1) }}
-              >{innerText}</GotoAnchor>
+              <a data-navlink={navLinkData}>
+                {innerText}
+              </a>
             }
             {innerContent &&
               <div class='date-header-misc' ref={innerElRef}>{innerContent}</div>

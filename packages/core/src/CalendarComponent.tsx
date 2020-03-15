@@ -42,7 +42,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   private buildToolbarProps = memoize(buildToolbarProps)
   private reportClassNames = memoize(reportClassNames)
   private reportHeight = memoize(reportHeight)
-  private handleNavLinkClick = buildDelegationHandler('a[data-goto]', this._handleNavLinkClick.bind(this))
+  private handleNavLinkClick = buildDelegationHandler('a[data-navlink]', this._handleNavLinkClick.bind(this))
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
   private viewRef = createRef<View>()
@@ -157,11 +157,11 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   _handleNavLinkClick(ev: UIEvent, anchorEl: HTMLElement) {
     let { dateEnv, calendar } = this.context
 
-    let gotoOptions: any = anchorEl.getAttribute('data-goto')
-    gotoOptions = gotoOptions ? JSON.parse(gotoOptions) : {}
+    let navLinkOptions: any = anchorEl.getAttribute('data-navlink')
+    navLinkOptions = navLinkOptions ? JSON.parse(navLinkOptions) : {}
 
-    let dateMarker = dateEnv.createMarker(gotoOptions.date)
-    let viewType = gotoOptions.type
+    let dateMarker = dateEnv.createMarker(navLinkOptions.date)
+    let viewType = navLinkOptions.type
 
     // property like "navLinkDayClick". might be a string or a function
     let customAction = calendar.viewOpt('navLink' + capitaliseFirstLetter(viewType) + 'Click')

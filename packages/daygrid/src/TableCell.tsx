@@ -6,11 +6,11 @@ import {
   DateMarker,
   DateComponent,
   ComponentContext,
-  GotoAnchor,
   CssDimValue,
   DateProfile,
   DateRange,
   DayRoot,
+  buildNavLinkData,
 } from '@fullcalendar/core'
 
 
@@ -82,22 +82,16 @@ export default class TableCell extends DateComponent<TableCellProps> {
             <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&
                 <div class='fc-daygrid-week-number'>
-                  <GotoAnchor
-                    navLinks={options.navLinks}
-                    gotoOptions={{ date, type: 'week' }}
-                    extraAttrs={{
-                      'data-fc-width-content': 1
-                    }}
-                  >{dateEnv.format(date, WEEK_NUM_FORMAT)}</GotoAnchor>
+                  <a data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null} data-fc-width-content={1}>
+                    {dateEnv.format(date, WEEK_NUM_FORMAT)}
+                  </a>
                 </div>
               }
               {props.showDayNumber &&
                 <div class='fc-daygrid-day-header'>
-                  <GotoAnchor
-                    navLinks={options.navLinks}
-                    gotoOptions={date}
-                    extraAttrs={{ 'class': 'fc-day-number' }}
-                  >{dateEnv.format(date, DAY_NUM_FORMAT)}</GotoAnchor>
+                  <a data-navlink={options.navLinks ? buildNavLinkData(date) : null} className='fc-day-number'>
+                    {dateEnv.format(date, DAY_NUM_FORMAT)}
+                  </a>
                 </div>
               }
               {innerContent &&
