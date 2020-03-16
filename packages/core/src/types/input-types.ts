@@ -80,7 +80,7 @@ export type EventHandlerName =
   'eventRender' | 'eventPositioned' | '_eventsPositioned' | 'eventDestroy' |
   'eventDragStart' | 'eventDragStop' | 'eventDrop' | '_destroyed' | 'drop' |
   'eventResizeStart' | 'eventResizeStop' | 'eventResize' | 'eventReceive' |
-  'eventLeave' | 'viewSkeletonRender' | 'viewSkeletonDestroy' | '_noEventDrop' |
+  'eventLeave' | '_noEventDrop' |
   '_noEventResize' | 'eventLimitClick' |
   'resourceRender' // BAD: put in Scheduler somehow
 
@@ -224,8 +224,6 @@ export interface OptionsInputBase {
   drop?(arg: { date: Date, dateStr: string, allDay: boolean, draggedEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void
   eventReceive?(arg: { event: EventApi, draggedEl: HTMLElement, view: ViewApi }): void
   eventLeave?(arg: { draggedEl: HTMLElement, event: EventApi, view: ViewApi }): void
-  viewSkeletonRender?(arg: { el: HTMLElement, view: ViewApi }): void
-  viewSkeletonDestroy?(arg: { el: HTMLElement, view: ViewApi }): void
   _destroyed?(): void
   _init?(): void
   _noEventDrop?(): void

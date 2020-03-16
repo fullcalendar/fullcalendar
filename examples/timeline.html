@@ -10,6 +10,8 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+      // viewDidMount: function(arg) { console.log('viewDidMount', arg) },
+      // viewWillUnmount: function(arg) { console.log('viewWillUnmount', arg) },
       now: '2020-02-07',
       editable: true, // enable draggable events
       aspectRatio: 1.8,

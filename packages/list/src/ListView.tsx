@@ -16,11 +16,11 @@ import {
   EventStore,
   memoize,
   Seg,
-  getViewClassNames,
   VNode,
   sortEventSegs,
   getSegMeta,
-  NowTimer
+  NowTimer,
+  ViewRoot
 } from '@fullcalendar/core'
 import ListViewHeaderRow from './ListViewHeaderRow'
 import ListViewEventRow from './ListViewEventRow'
@@ -36,29 +36,32 @@ export default class ListView extends View {
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
-    let classNames = getViewClassNames(props.viewSpec).concat('fc-list-view')
+    let extraClassNames = [ 'fc-list-view' ]
     let themeClassName = context.theme.getClass('bordered')
-
     if (themeClassName) {
-      classNames.push(themeClassName)
+      extraClassNames.push(themeClassName)
     }
 
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
     let eventSegs = this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
 
     return (
-      <div ref={this.setRootEl} class={classNames.join(' ')}>
-        <Scroller
-          vGrow={!props.isHeightAuto}
-          overflowX='hidden'
-          overflowY='auto'
-        >
-          {eventSegs.length > 0 ?
-            this.renderSegList(eventSegs, dayDates) :
-            this.renderEmptyMessage()
-          }
-        </Scroller>
-      </div>
+      <ViewRoot viewSpec={props.viewSpec} elRef={this.setRootEl}>
+        {(rootElRef, classNames) => (
+          <div ref={rootElRef} class={extraClassNames.concat(classNames).join(' ')}>
+            <Scroller
+              vGrow={!props.isHeightAuto}
+              overflowX='hidden'
+              overflowY='auto'
+            >
+              {eventSegs.length > 0 ?
+                this.renderSegList(eventSegs, dayDates) :
+                this.renderEmptyMessage()
+              }
+            </Scroller>
+          </div>
+        )}
+      </ViewRoot>
     )
   }
 

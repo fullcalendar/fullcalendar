@@ -91,7 +91,7 @@ export { default as Theme } from './theme/Theme'
 export { default as ComponentContext, ComponentContextType } from './component/ComponentContext'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
-export { default as View, ViewProps, getViewClassNames } from './View'
+export { default as View, ViewProps } from './View'
 export { default as ViewApi } from './ViewApi'
 
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'
@@ -195,3 +195,5 @@ export { default as StandardEvent, StandardEventProps } from './common/StandardE
 export { DayRoot, DayRootProps } from './common/DayRoot'
 export { DateTimeRoot, DateTimeRootProps } from './common/DateTimeRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
+
+export { ViewRoot, ViewRootProps } from './common/ViewRoot'

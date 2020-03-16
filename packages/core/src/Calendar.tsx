@@ -268,10 +268,6 @@ export default class Calendar {
       this.publiclyTrigger('loading', [ false ])
     }
 
-    let calendarComponent = this.component
-    let viewComponent = calendarComponent && calendarComponent.view
-    let viewApi = this.view // bad name
-
     if (oldState.eventStore !== newState.eventStore) {
       if (oldState.eventStore) {
         this.isEventsUpdated = true
@@ -283,14 +279,6 @@ export default class Calendar {
     }
 
     if (oldState.viewType !== newState.viewType) {
-      if (oldState.viewType && viewComponent) { // why would view be null!?
-        this.publiclyTrigger('viewSkeletonDestroy', [
-          {
-            view: viewApi,
-            el: viewComponent.base as HTMLElement
-          }
-        ])
-      }
       this.isViewUpdated = true
     }
   }
@@ -358,17 +346,8 @@ export default class Calendar {
     )
     flushToDom()
 
-    let calendarComponent = this.component
-    let viewComponent = calendarComponent.view
-
     if (this.isViewUpdated) {
       this.isViewUpdated = false
-      this.publiclyTrigger('viewSkeletonRender', [
-        {
-          view: viewApi,
-          el: viewComponent.base as HTMLElement
-        }
-      ])
     }
 
     if (this.isDatesUpdated) {

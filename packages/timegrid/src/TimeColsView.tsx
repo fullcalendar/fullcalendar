@@ -2,14 +2,14 @@ import {
   h, createRef,
   View,
   createFormatter, diffDays,
-  getViewClassNames,
   SimpleScrollGridSection,
   VNode,
   SimpleScrollGrid,
   ChunkContentCallbackArgs,
   ScrollGridSectionConfig,
   BaseComponent,
-  buildNavLinkData
+  buildNavLinkData,
+  ViewRoot
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -42,7 +42,6 @@ export default abstract class TimeColsView extends View {
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null
   ) {
     let { context, props } = this
-    let classNames = getViewClassNames(props.viewSpec).concat('fc-timeGrid-view')
     let sections: SimpleScrollGridSection[] = []
 
     if (headerRowContent) {
@@ -86,14 +85,18 @@ export default abstract class TimeColsView extends View {
     })
 
     return (
-      <div class={classNames.join(' ')} ref={this.rootElRef}>
-        <SimpleScrollGrid
-          forPrint={props.forPrint}
-          vGrow={!props.isHeightAuto}
-          cols={[ { width: 'shrink' } ]}
-          sections={sections}
-        />
-      </div>
+      <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
+        {(rootElRef, classNames) => (
+          <div class={[ 'fc-timeGrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
+            <SimpleScrollGrid
+              forPrint={props.forPrint}
+              vGrow={!props.isHeightAuto}
+              cols={[ { width: 'shrink' } ]}
+              sections={sections}
+            />
+          </div>
+        )}
+      </ViewRoot>
     )
   }
 
@@ -113,7 +116,6 @@ export default abstract class TimeColsView extends View {
     }
 
     let { context, props } = this
-    let classNames = getViewClassNames(props.viewSpec).concat('fc-timeGrid-view')
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
@@ -174,20 +176,22 @@ export default abstract class TimeColsView extends View {
     })
 
     return (
-      <div class={classNames.join(' ')} ref={this.rootElRef}>
-        <ScrollGrid
-          forPrint={props.forPrint}
-          vGrow={!props.isHeightAuto}
-          colGroups={[
-            { width: 'shrink', cols: [ { width: 'shrink' } ] }, // TODO: allow no specify cols
-            { cols: [ { span: colCnt, minWidth: columnMinWidth } ] }
-          ]}
-          sections={sections}
-        />
-      </div>
+      <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
+        {(rootElRef, classNames) => (
+          <div class={[ 'fc-timeGrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
+            <ScrollGrid
+              forPrint={props.forPrint}
+              vGrow={!props.isHeightAuto}
+              colGroups={[
+                { width: 'shrink', cols: [ { width: 'shrink' } ] }, // TODO: allow no specify cols
+                { cols: [ { span: colCnt, minWidth: columnMinWidth } ] }
+              ]}
+              sections={sections}
+            />
+          </div>
+        )}
+      </ViewRoot>
     )
-
-
   }
 
 

@@ -1,12 +1,12 @@
 import {
   VNode, h,
   View,
-  getViewClassNames,
   SimpleScrollGrid,
   SimpleScrollGridSection,
   ChunkContentCallbackArgs,
   createRef,
-  ScrollGridSectionConfig
+  ScrollGridSectionConfig,
+  ViewRoot
 } from '@fullcalendar/core'
 import TableDateProfileGenerator from './TableDateProfileGenerator'
 
@@ -27,7 +27,6 @@ export default abstract class TableView<State={}> extends View<State> {
     bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode
   ) {
     let { props } = this
-    let classNames = getViewClassNames(props.viewSpec).concat('fc-dayGrid-view')
     let sections: SimpleScrollGridSection[] = []
 
     if (headerRowContent) {
@@ -49,14 +48,18 @@ export default abstract class TableView<State={}> extends View<State> {
     })
 
     return (
-      <div class={classNames.join(' ')}>
-        <SimpleScrollGrid
-          vGrow={!props.isHeightAuto}
-          forPrint={props.forPrint}
-          cols={[] /* TODO: make optional? */}
-          sections={sections}
-        />
-      </div>
+      <ViewRoot viewSpec={props.viewSpec}>
+        {(rootElRef, classNames) => (
+          <div ref={rootElRef} class={[ 'fc-dayGrid-view' ].concat(classNames).join(' ')}>
+            <SimpleScrollGrid
+              vGrow={!props.isHeightAuto}
+              forPrint={props.forPrint}
+              cols={[] /* TODO: make optional? */}
+              sections={sections}
+            />
+          </div>
+        )}
+      </ViewRoot>
     )
   }
 
@@ -74,7 +77,6 @@ export default abstract class TableView<State={}> extends View<State> {
     }
 
     let { props } = this
-    let classNames = getViewClassNames(props.viewSpec).concat('fc-dayGrid-view')
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
@@ -96,14 +98,18 @@ export default abstract class TableView<State={}> extends View<State> {
     })
 
     return (
-      <div class={classNames.join(' ')}>
-        <ScrollGrid
-          vGrow={!props.isHeightAuto}
-          forPrint={props.forPrint}
-          colGroups={[ { cols: [ { span: colCnt, minWidth: columnMinWidth } ] } ]}
-          sections={sections}
-        />
-      </div>
+      <ViewRoot viewSpec={props.viewSpec}>
+        {(rootElRef, classNames) => (
+          <div ref={rootElRef} class={[ 'fc-dayGrid-view' ].concat(classNames).join(' ')}>
+            <ScrollGrid
+              vGrow={!props.isHeightAuto}
+              forPrint={props.forPrint}
+              colGroups={[ { cols: [ { span: colCnt, minWidth: columnMinWidth } ] } ]}
+              sections={sections}
+            />
+          </div>
+        )}
+      </ViewRoot>
     )
   }
 

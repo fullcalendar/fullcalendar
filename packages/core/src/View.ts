@@ -61,11 +61,3 @@ EmitterMixin.mixInto(View)
 
 View.prototype.usesMinMaxTime = false
 View.prototype.dateProfileGeneratorClass = DateProfileGenerator
-
-
-export function getViewClassNames(viewSpec: ViewSpec) {
-  return [
-    'fc-view',
-    'fc-' + viewSpec.type + '-view'
-  ]
-}
