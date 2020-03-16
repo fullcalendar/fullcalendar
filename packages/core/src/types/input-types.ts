@@ -77,7 +77,6 @@ export type EventHandlerName =
   '_init' | 'selectAllow' | 'eventAllow' | 'eventDataTransform' |
   'dayRender' | 'windowResize' | 'dateClick' | 'eventClick' |
   'eventMouseEnter' | 'eventMouseLeave' | 'select' | 'unselect' | 'loading' |
-  'eventRender' | 'eventPositioned' | '_eventsPositioned' | 'eventDestroy' |
   'eventDragStart' | 'eventDragStop' | 'eventDrop' | '_destroyed' | 'drop' |
   'eventResizeStart' | 'eventResizeStop' | 'eventResize' | 'eventReceive' |
   'eventLeave' | '_noEventDrop' |
@@ -211,10 +210,6 @@ export interface OptionsInputBase {
   select?(arg: { start: Date, end: Date, startStr: string, endStr: string, allDay: boolean, resource?: any, jsEvent: MouseEvent, view: ViewApi }): void // resource for Scheduler
   unselect?(arg: { view: ViewApi, jsEvent: Event }): void
   loading?(isLoading: boolean): void
-  eventRender?(arg: { isMirror: boolean, isStart: boolean, isEnd: boolean, event: EventApi, el: HTMLElement, view: ViewApi }): void
-  eventPositioned?(arg: { isMirror: boolean, isStart: boolean, isEnd: boolean, event: EventApi, el: HTMLElement, view: ViewApi }): void
-  _eventsPositioned?(arg: { view: ViewApi }): void
-  eventDestroy?(arg: { isMirror: boolean, event: EventApi, el: HTMLElement, view: ViewApi }): void
   eventDragStart?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void
   eventDragStop?(arg: { event: EventApi, el: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void
   eventDrop?(arg: { el: HTMLElement, event: EventApi, oldEvent: EventApi, delta: Duration, revert: () => void, jsEvent: Event, view: ViewApi }): void

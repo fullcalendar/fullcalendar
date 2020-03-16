@@ -40,7 +40,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
   uid = guid()
 
   // self-config, overridable by subclasses. must set on prototype
-  fgSegSelector: string // lets eventRender produce elements without fc-event class
+  fgSegSelector: string
   bgSegSelector: string
   // IN SCHEDULER: allowAcrossResources
 
