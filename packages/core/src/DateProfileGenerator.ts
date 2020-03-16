@@ -14,8 +14,8 @@ export interface DateProfile {
   validRange: OpenDateRange
   activeRange: DateRange
   renderRange: DateRange
-  minTime: Duration
-  maxTime: Duration
+  slotMinTime: Duration
+  slotMaxTime: Duration
   isValid: boolean
   dateIncrement: Duration
 }
@@ -75,8 +75,8 @@ export default class DateProfileGenerator {
   // from its previous value. decremented = -1, incremented = 1 (default).
   build(currentDate: DateMarker, direction?, forceToValid = false): DateProfile {
     let validRange: DateRange
-    let minTime = null
-    let maxTime = null
+    let slotMinTime = null
+    let slotMaxTime = null
     let currentInfo
     let isRangeAllDay
     let renderRange: DateRange
@@ -104,9 +104,9 @@ export default class DateProfileGenerator {
       activeRange = intersectRanges(activeRange, currentInfo.range)
     }
 
-    minTime = createDuration(this.options.minTime)
-    maxTime = createDuration(this.options.maxTime)
-    activeRange = this.adjustActiveRange(activeRange, minTime, maxTime)
+    slotMinTime = createDuration(this.options.slotMinTime)
+    slotMaxTime = createDuration(this.options.slotMaxTime)
+    activeRange = this.adjustActiveRange(activeRange, slotMinTime, slotMaxTime)
     activeRange = intersectRanges(activeRange, validRange) // might return null
 
     // it's invalid if the originally requested date is not contained,
@@ -136,10 +136,10 @@ export default class DateProfileGenerator {
       renderRange,
 
       // Duration object that denotes the first visible time of any given day
-      minTime,
+      slotMinTime,
 
       // Duration object that denotes the exclusive visible end time of any given day
-      maxTime,
+      slotMaxTime,
 
       isValid,
 
@@ -195,25 +195,25 @@ export default class DateProfileGenerator {
 
 
   // Returns a new activeRange to have time values (un-ambiguate)
-  // minTime or maxTime causes the range to expand.
-  adjustActiveRange(range: DateRange, minTime: Duration, maxTime: Duration) {
+  // slotMinTime or slotMaxTime causes the range to expand.
+  adjustActiveRange(range: DateRange, slotMinTime: Duration, slotMaxTime: Duration) {
     let { dateEnv } = this
     let start = range.start
     let end = range.end
 
     if ((this.viewSpec.class as any).prototype.usesMinMaxTime) {
 
-      // expand active range if minTime is negative (why not when positive?)
-      if (asRoughDays(minTime) < 0) {
+      // expand active range if slotMinTime is negative (why not when positive?)
+      if (asRoughDays(slotMinTime) < 0) {
         start = startOfDay(start) // necessary?
-        start = dateEnv.add(start, minTime)
+        start = dateEnv.add(start, slotMinTime)
       }
 
-      // expand active range if maxTime is beyond one day (why not when positive?)
-      if (asRoughDays(maxTime) > 1) {
+      // expand active range if slotMaxTime is beyond one day (why not when positive?)
+      if (asRoughDays(slotMaxTime) > 1) {
         end = startOfDay(end) // necessary?
         end = addDays(end, -1)
-        end = dateEnv.add(end, maxTime)
+        end = dateEnv.add(end, slotMaxTime)
       }
     }
 
@@ -453,8 +453,8 @@ export function isDateProfilesEqual(p0: DateProfile, p1: DateProfile) {
   return rangesEqual(p0.validRange, p1.validRange) &&
     rangesEqual(p0.activeRange, p1.activeRange) &&
     rangesEqual(p0.renderRange, p1.renderRange) &&
-    durationsEqual(p0.minTime, p1.minTime) &&
-    durationsEqual(p0.maxTime, p1.maxTime)
+    durationsEqual(p0.slotMinTime, p1.slotMinTime) &&
+    durationsEqual(p0.slotMaxTime, p1.slotMaxTime)
   /*
   TODO: compare more?
     currentRange: DateRange

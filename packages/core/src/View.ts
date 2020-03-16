@@ -28,7 +28,7 @@ export interface ViewProps {
 export default abstract class View<State={}> extends DateComponent<ViewProps, State> {
 
   // config properties, initialized after class on prototype
-  usesMinMaxTime: boolean // whether minTime/maxTime will affect the activeRange. Views must opt-in.
+  usesMinMaxTime: boolean // whether slotMinTime/slotMaxTime will affect the activeRange. Views must opt-in.
   dateProfileGeneratorClass: any // initialized after class. used by Calendar
 
   on: EmitterInterface['on']

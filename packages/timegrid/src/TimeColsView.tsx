@@ -274,7 +274,7 @@ export default abstract class TimeColsView extends View {
 
 }
 
-TimeColsView.prototype.usesMinMaxTime = true // indicates that minTime/maxTime affects rendering
+TimeColsView.prototype.usesMinMaxTime = true // indicates that slotMinTime/slotMaxTime affects rendering
 
 
 /* Thin Axis

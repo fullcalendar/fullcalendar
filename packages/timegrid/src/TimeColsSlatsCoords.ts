@@ -36,13 +36,13 @@ export default class TimeColsSlatsCoords {
     let { positions, dateProfile, slatMetas } = this
     let len = positions.els.length
     let slotDurationMs = slatMetas[1].date.valueOf() - slatMetas[0].date.valueOf() // we assume dates are uniform
-    let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.minTime)) / slotDurationMs // floating-point value of # of slots covered
+    let slatCoverage = (duration.milliseconds - asRoughMs(dateProfile.slotMinTime)) / slotDurationMs // floating-point value of # of slots covered
     let slatIndex
     let slatRemainder
 
     // compute a floating-point number for how many slats should be progressed through.
     // from 0 to number of slats (inclusive)
-    // constrained because minTime/maxTime might be customized.
+    // constrained because slotMinTime/slotMaxTime might be customized.
     slatCoverage = Math.max(0, slatCoverage)
     slatCoverage = Math.min(len, slatCoverage)
 

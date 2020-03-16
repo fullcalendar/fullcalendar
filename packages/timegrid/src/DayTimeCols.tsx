@@ -127,8 +127,8 @@ export function buildDayRanges(dayTableModel: DayTableModel, dateProfile: DatePr
 
   for (let date of dayTableModel.headerDates) {
     ranges.push({
-      start: dateEnv.add(date, dateProfile.minTime),
-      end: dateEnv.add(date, dateProfile.maxTime)
+      start: dateEnv.add(date, dateProfile.slotMinTime),
+      end: dateEnv.add(date, dateProfile.slotMaxTime)
     })
   }
 

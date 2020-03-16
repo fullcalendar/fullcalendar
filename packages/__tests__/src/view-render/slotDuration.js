@@ -16,10 +16,10 @@ describe('slotDuration', function() {
       slotLabelInterval: '01:00'
     })
 
-    describe('when in alignment with minTime', function() {
+    describe('when in alignment with slotMinTime', function() {
       pushOptions({
-        minTime: '00:00',
-        maxTime: '03:00'
+        slotMinTime: '00:00',
+        slotMaxTime: '03:00'
       })
       it('render slots correctly', function() {
         let calendar = initCalendar()
@@ -33,10 +33,10 @@ describe('slotDuration', function() {
       })
     })
 
-    describe('when out of alignment with minTime', function() {
+    describe('when out of alignment with slotMinTime', function() {
       pushOptions({
-        minTime: '00:20',
-        maxTime: '03:20'
+        slotMinTime: '00:20',
+        slotMaxTime: '03:20'
       })
       it('render slots correctly', function() {
         let calendar = initCalendar()
@@ -57,10 +57,10 @@ describe('slotDuration', function() {
       slotLabelInterval: '01:00'
     })
 
-    describe('when in alignment with minTime', function() {
+    describe('when in alignment with slotMinTime', function() {
       pushOptions({
-        minTime: '00:00',
-        maxTime: '03:00'
+        slotMinTime: '00:00',
+        slotMaxTime: '03:00'
       })
       it('render slots correctly', function() {
         let calendar = initCalendar()
@@ -77,10 +77,10 @@ describe('slotDuration', function() {
       })
     })
 
-    describe('when out of alignment with minTime', function() {
+    describe('when out of alignment with slotMinTime', function() {
       pushOptions({
-        minTime: '00:20',
-        maxTime: '03:20'
+        slotMinTime: '00:20',
+        slotMaxTime: '03:20'
       })
       it('render slots correctly', function() {
         let calendar = initCalendar()

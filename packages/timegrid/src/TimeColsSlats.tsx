@@ -234,12 +234,12 @@ export interface TimeSlatMeta {
 
 export function buildSlatMetas(dateProfile: DateProfile, labelIntervalInput, slotDuration: Duration, dateEnv: DateEnv) {
   let dayStart = startOfDay(dateProfile.renderRange.start)
-  let slatTime = dateProfile.minTime
+  let slatTime = dateProfile.slotMinTime
   let slatIterator = createDuration(0)
   let labelInterval = getLabelInterval(labelIntervalInput, slotDuration)
   let metas: TimeSlatMeta[] = []
 
-  while (asRoughMs(slatTime) < asRoughMs(dateProfile.maxTime)) {
+  while (asRoughMs(slatTime) < asRoughMs(dateProfile.slotMaxTime)) {
     let date = dateEnv.add(dayStart, slatTime)
     let isLabeled = wholeDivideDurations(slatIterator, labelInterval) !== null
 

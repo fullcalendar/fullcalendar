@@ -173,7 +173,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
 
       let dayDate = this.props.cells[colIndex].date
       let time = addDurations(
-        this.props.dateProfile.minTime,
+        this.props.dateProfile.slotMinTime,
         multiplyDuration(snapDuration, snapIndex)
       )
 

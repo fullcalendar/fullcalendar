@@ -206,7 +206,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
 }
 
 /*
-for incorporating minTime/maxTime if appropriate
+for incorporating slotMinTime/slotMaxTime if appropriate
 TODO: should be part of DateProfile!
 TimelineDateProfile already does this btw
 */
@@ -218,7 +218,7 @@ function computeActiveRange(dateProfile: DateProfile, isComponentAllDay: boolean
   }
 
   return {
-    start: addMs(range.start, dateProfile.minTime.milliseconds),
-    end: addMs(range.end, dateProfile.maxTime.milliseconds - 864e5) // 864e5 = ms in a day
+    start: addMs(range.start, dateProfile.slotMinTime.milliseconds),
+    end: addMs(range.end, dateProfile.slotMaxTime.milliseconds - 864e5) // 864e5 = ms in a day
   }
 }

@@ -257,8 +257,8 @@ import '../lib/dom-misc'
 
                       describe('with many slots', function() {
                         pushOptions({
-                          minTime: '00:00:00',
-                          maxTime: '24:00:00'
+                          slotMinTime: '00:00:00',
+                          slotMaxTime: '24:00:00'
                         })
                         it('should be the correct height, with scrollbars', function() {
                           let calendar = init(testInfo.height)
@@ -273,8 +273,8 @@ import '../lib/dom-misc'
 
                   describe('as "auto", with only a few slots', function() {
                     pushOptions({
-                      minTime: '06:00:00',
-                      maxTime: '10:00:00'
+                      slotMinTime: '06:00:00',
+                      slotMaxTime: '10:00:00'
                     })
                     it('should be really short with no scrollbars nor horizontal rule', function() {
                       let calendar = init('auto')
@@ -287,8 +287,8 @@ import '../lib/dom-misc'
 
                   describe('as a "auto", with many slots', function() {
                     pushOptions({
-                      minTime: '00:00:00',
-                      maxTime: '24:00:00'
+                      slotMinTime: '00:00:00',
+                      slotMaxTime: '24:00:00'
                     })
 
                     it('should be really tall with no scrollbars nor horizontal rule', function() {

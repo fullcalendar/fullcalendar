@@ -121,8 +121,8 @@ export interface OptionsInputBase {
   slotLabelInterval?: DurationInput
   snapDuration?: DurationInput
   scrollTime?: DurationInput
-  minTime?: DurationInput
-  maxTime?: DurationInput
+  slotMinTime?: DurationInput
+  slotMaxTime?: DurationInput
   slotEventOverlap?: boolean
   listDayFormat?: FormatterInput | boolean
   listDayAltFormat?: FormatterInput | boolean

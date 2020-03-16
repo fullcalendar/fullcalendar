@@ -4,7 +4,7 @@
 <style>
 
   /* http://code.google.com/p/fullcalendar/issues/detail?id=193 */
-  .fc .fc-sat, .fc .fc-sun { background-color:red } 
+  .fc .fc-sat, .fc .fc-sun { background-color:red }
 
 </style>
 <link href='../../dist/fullcalendar.css' rel='stylesheet' />
@@ -21,38 +21,38 @@
 
   $(document).ready(function() {
     $('#calendar').fullCalendar({
-    
+
       header: {
         left: 'nextYear,next,prev,prevYear today',
         center: 'month,week,dayGridWeek,day,dayGridDay',
         right: 'title prev,next'
       },
-      
+
       editable: true,
-      
+
       dir: 'rtl',
       firstDay: 1,
       //weekends: false,
       //hiddenDays: [ 4 ], // hide thursday
 
       //weekNumbers: true,
-      
-      minTime: '8am',
-      maxTime: '11:30pm',
+
+      slotMinTime: '8am',
+      slotMaxTime: '11:30pm',
       firstHour: 9,
-      
+
       monthNames: ["januari", "februari", "maart", "april", "mei", "juni","juli", "augustus", "september", "oktober", "november", "december"],
       monthNamesShort: ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug","sep", "okt", "nov", "dec"],
       dayNames: ['zondag', 'maandag', 'dinsdag', 'woensdag','donderdag', 'vrijdag', 'zaterdag'],
       dayNamesShort: ["zo", "ma", "di", "wo", "do", "vr", "za", "zo"],
-      
+
       //timeFormat: 'H(:mm)t',
       //timeFormat: 'MMMM,dddd',
-      
+
       dayClick: function(dayDate, allDay, ev, view) {
         console.log('dayClick - ' + dayDate + ' - allDay:' + allDay + ' --- ' + view.title);
       },
-      
+
       eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
         console.log('DROP ' + event.title);
         console.log(dayDelta + ' days');
@@ -61,7 +61,7 @@
         console.log(event.start);
         //console.log(minuteDelta + ' minutes');
       },
-      
+
       eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
         console.log('RESIZE!! ' + event.title);
         console.log(dayDelta + ' days');
@@ -69,7 +69,7 @@
         console.log(event.end);
         //console.log(minuteDelta + ' minutes');
       },
-      
+
       events: [
         {
           title: 'All Day Event',

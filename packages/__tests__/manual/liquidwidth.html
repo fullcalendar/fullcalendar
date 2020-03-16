@@ -9,29 +9,29 @@
 <script>
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
       //defaultView: 'week',
-      
-      minTime: '5:30am',
-      maxTime: '5:30pm',
+
+      slotMinTime: '5:30am',
+      slotMaxTime: '5:30pm',
 
       //handleWindowResize: false,
-      
+
       // TODO: there is a bug switching into week from month with a 1280x1024 (with firebug showing)
-      
+
       header: {
         left: 'prev,next today',
         center: 'prev title next',
         right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       editable: true,
-      
+
       events: [
         {
           title: 'All Day Event',
@@ -78,9 +78,9 @@
           url: 'http://google.com/'
         }
       ]
-      
+
     });
-    
+
   });
 
 </script>

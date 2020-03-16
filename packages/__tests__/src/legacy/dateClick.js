@@ -80,11 +80,11 @@ describe('dateClick', function() {
         })
 
         // issue 2217
-        it('fires correctly when clicking on a timed slot, with minTime set', function(done) {
+        it('fires correctly when clicking on a timed slot, with slotMinTime set', function(done) {
           let calendar = initCalendar({
             contentHeight: 500, // make sure the click slot will be in scroll view
             scrollTime: '07:00:00',
-            minTime: '02:00:00',
+            slotMinTime: '02:00:00',
             dateClick(arg) {
               expect(arg.date instanceof Date).toEqual(true)
               expect(typeof arg.jsEvent).toEqual('object') // TODO: more descrimination

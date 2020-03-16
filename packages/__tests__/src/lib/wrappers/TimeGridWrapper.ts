@@ -507,7 +507,7 @@ export default class TimeGridWrapper {
     for (i = mid - 1; i >= 0; i--) {
       ms = slots[i + 1].startTimeMs - slots[i].startTimeMs
 
-      // big deviation? assume moved to previous day (b/c of special minTime)
+      // big deviation? assume moved to previous day (b/c of special slotMinTime)
       if (Math.abs(ms - standardMs) > standardMs * 2) {
         dayOffset--
         slots[i].endTimeMs = slots[i].startTimeMs + standardMs
@@ -526,7 +526,7 @@ export default class TimeGridWrapper {
 
       slots[i].dayOffset = dayOffset
 
-      // big deviation? assume moved to next day (b/c of special maxTime)
+      // big deviation? assume moved to next day (b/c of special slotMaxTime)
       if (Math.abs(ms - standardMs) > standardMs * 2) {
         dayOffset++ // will apply to the next slotStruct
         slots[i].endTimeMs = slots[i].startTimeMs + standardMs

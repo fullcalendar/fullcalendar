@@ -33,11 +33,11 @@ describe('events as a function', function() {
     })
   })
 
-  it('requests a timed range when minTime is negative', function(done) {
+  it('requests a timed range when slotMinTime is negative', function(done) {
     initCalendar({
       defaultView: 'timeGridWeek',
       defaultDate: '2017-06-08',
-      minTime: { hours: -2 },
+      slotMinTime: { hours: -2 },
       events: function(arg, callback) {
         expect(arg.start).toEqualDate('2017-06-03T22:00:00Z')
         expect(arg.end).toEqualDate('2017-06-11T00:00:00Z')
@@ -46,11 +46,11 @@ describe('events as a function', function() {
     })
   })
 
-  it('requests a timed range when maxTime exceeds 24 hours', function(done) {
+  it('requests a timed range when slotMaxTime exceeds 24 hours', function(done) {
     initCalendar({
       defaultView: 'timeGridWeek',
       defaultDate: '2017-06-08',
-      maxTime: '26:00',
+      slotMaxTime: '26:00',
       events: function(arg, callback) {
         expect(arg.start).toEqualDate('2017-06-04T00:00:00Z')
         expect(arg.end).toEqualDate('2017-06-11T02:00:00Z')
