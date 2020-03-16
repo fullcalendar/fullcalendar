@@ -11,6 +11,7 @@
   bottom: 0;
   left: 0;
   right: 0;
+  overflow: hidden;
 
   display: block; /* make the <a> tag block */
   font-size: .85em;
@@ -73,8 +74,9 @@ be a descendant of the grid when it is being dragged.
   border-bottom-right-radius: 0;
 }
 
-.fc-timegrid-event-time {
+.fc-timegrid-event .fc-event-time {
   white-space: nowrap;
+  font-size: .85em;
 }
 
 /* resizer (cursor device) */

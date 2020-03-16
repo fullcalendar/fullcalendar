@@ -38,6 +38,17 @@ this class is used for:
   display: inline;
 }
 
+.fc-h-event .fc-event-time {
+  font-weight: bold;
+}
+
+.fc-ltr .fc-h-event .fc-event-time {
+  margin-right: 2px;
+}
+
+.fc-rtl .fc-h-event .fc-event-time {
+  margin-left: 2px;
+}
 
 
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */

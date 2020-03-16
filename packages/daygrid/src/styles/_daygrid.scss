@@ -7,6 +7,7 @@
 .fc-daygrid-day-inner {
   position: relative;
   min-height: 100%; // works better than height:100% for some reason
+  padding-top: 4px;
 }
 
 .scrollgrid-vgrow-cell-hack .fc-daygrid-day-inner {
@@ -14,7 +15,7 @@
 }
 
 .fc-daygrid-day-header {
-  padding: 4px;
+  padding: 0 4px 4px;
   text-align: right;
 }
 
@@ -110,4 +111,8 @@
 .fc-rtl .fc-daygrid-week-number {
   float: right;
   border-radius: 0 0 0 3px;
+}
+
+.fc-day-other .fc-daygrid-day-header {
+  opacity: 0.3;
 }
