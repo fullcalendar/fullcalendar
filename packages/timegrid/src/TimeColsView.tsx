@@ -106,7 +106,7 @@ export default abstract class TimeColsView extends View {
     allDayContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     timeContent: ((contentArg: ChunkContentCallbackArgs) => VNode) | null,
     colCnt: number,
-    columnMinWidth: number,
+    dayMinWidth: number,
     slatMetas: TimeSlatMeta[]
   ) {
     let ScrollGrid = this.context.pluginHooks.scrollGridImpl
@@ -184,7 +184,7 @@ export default abstract class TimeColsView extends View {
               vGrow={!props.isHeightAuto}
               colGroups={[
                 { width: 'shrink', cols: [ { width: 'shrink' } ] }, // TODO: allow no specify cols
-                { cols: [ { span: colCnt, minWidth: columnMinWidth } ] }
+                { cols: [ { span: colCnt, minWidth: dayMinWidth } ] }
               ]}
               sections={sections}
             />

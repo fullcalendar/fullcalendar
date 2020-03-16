@@ -57,8 +57,8 @@ export default class DayTableView extends TableView {
       />
     )
 
-    return options.columnMinWidth
-      ? this.renderHScrollLayout(headerContent, bodyContent, dayTableModel.colCnt, options.columnMinWidth)
+    return options.dayMinWidth
+      ? this.renderHScrollLayout(headerContent, bodyContent, dayTableModel.colCnt, options.dayMinWidth)
       : this.renderSimpleLayout(headerContent, bodyContent)
   }
 

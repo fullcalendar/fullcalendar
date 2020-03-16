@@ -84,7 +84,7 @@ export const globalDefaults = {
 
   expandRows: false
 
-  // columnMinWidth: null
+  // dayMinWidth: null
 }
 
 

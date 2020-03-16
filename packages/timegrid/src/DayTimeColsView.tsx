@@ -30,14 +30,14 @@ export default class DayTimeColsView extends TimeColsView {
     let splitProps = this.allDaySplitter.splitProps(props)
     let slotDuration = this.parseSlotDuration(options.slotDuration)
     let slatMetas = this.buildSlatMetas(dateProfile, options.slotLabelInterval, slotDuration, dateEnv)
-    let { columnMinWidth } = options
+    let { dayMinWidth } = options
 
     let headerContent = options.dayLabels &&
       <DayHeader
         dateProfile={dateProfile}
         dates={dayTableModel.headerDates}
         datesRepDistinctDays={true}
-        renderIntro={columnMinWidth ? null : this.renderHeadAxis}
+        renderIntro={dayMinWidth ? null : this.renderHeadAxis}
       />
 
     let allDayContent = options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
@@ -48,7 +48,7 @@ export default class DayTimeColsView extends TimeColsView {
         nextDayThreshold={nextDayThreshold}
         tableMinWidth={contentArg.tableMinWidth}
         colGroupNode={contentArg.tableColGroupNode}
-        renderRowIntro={columnMinWidth ? null : this.renderTableRowAxis}
+        renderRowIntro={dayMinWidth ? null : this.renderTableRowAxis}
         eventLimit={this.getAllDayEventLimit()}
         vGrowRows={false}
         headerAlignElRef={this.headerElRef}
@@ -62,7 +62,7 @@ export default class DayTimeColsView extends TimeColsView {
         {...splitProps['timed']}
         dateProfile={dateProfile}
         dayTableModel={dayTableModel}
-        axis={!columnMinWidth}
+        axis={!dayMinWidth}
         slotDuration={slotDuration}
         slatMetas={slatMetas}
         forPrint={props.forPrint}
@@ -75,8 +75,8 @@ export default class DayTimeColsView extends TimeColsView {
       />
     )
 
-    return columnMinWidth
-      ? this.renderHScrollLayout(headerContent, allDayContent, timeGridContent, dayTableModel.colCnt, columnMinWidth, slatMetas)
+    return dayMinWidth
+      ? this.renderHScrollLayout(headerContent, allDayContent, timeGridContent, dayTableModel.colCnt, dayMinWidth, slatMetas)
       : this.renderSimpleLayout(headerContent, allDayContent, timeGridContent)
   }
 

@@ -68,7 +68,7 @@ export default abstract class TableView<State={}> extends View<State> {
     headerRowContent: VNode | null,
     bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode,
     colCnt: number,
-    columnMinWidth: number
+    dayMinWidth: number
   ) {
     let ScrollGrid = this.context.pluginHooks.scrollGridImpl
 
@@ -104,7 +104,7 @@ export default abstract class TableView<State={}> extends View<State> {
             <ScrollGrid
               vGrow={!props.isHeightAuto}
               forPrint={props.forPrint}
-              colGroups={[ { cols: [ { span: colCnt, minWidth: columnMinWidth } ] } ]}
+              colGroups={[ { cols: [ { span: colCnt, minWidth: dayMinWidth } ] } ]}
               sections={sections}
             />
           </div>

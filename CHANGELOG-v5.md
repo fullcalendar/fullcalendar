@@ -7,7 +7,7 @@ Version 5 is still in development. This document explains the currently-implemen
 ## Major NEW Features
 
 - horizontal scrolling in daygrid/timegrid view (#3022)
-  - Activate by setting the new `columnMinWidth` option to a non-zero integer and including `@fullcalendar/scrollgrid` plugin.
+  - Activate by setting the new `dayMinWidth` option to a non-zero integer and including `@fullcalendar/scrollgrid` plugin.
     If you are using a bundle or a ZIP build, no need to include this plugin.
   - In the ZIP, see the following demos: `timegrid-views-hscroll.html` and `vertical-resource-view.html`
 - vertically expand rows in timegrid view (#265) and resource-timeline view (#4897)
