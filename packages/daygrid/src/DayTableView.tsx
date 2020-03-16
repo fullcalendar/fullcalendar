@@ -26,7 +26,7 @@ export default class DayTableView extends TableView {
     let { dateProfile } = props
     let dayTableModel = this.buildDayTableModel(dateProfile, props.dateProfileGenerator)
 
-    let headerContent = options.columnHeader &&
+    let headerContent = options.dayLabels &&
       <DayHeader
         ref={this.headerRef}
         dateProfile={dateProfile}

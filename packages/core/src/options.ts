@@ -13,7 +13,7 @@ export const globalDefaults = {
   nextDayThreshold: '00:00:00',
 
   // display
-  columnHeader: true,
+  dayLabels: true,
   defaultView: '',
   aspectRatio: 1.35,
   header: {

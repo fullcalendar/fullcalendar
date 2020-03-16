@@ -32,7 +32,7 @@ export default class DayTimeColsView extends TimeColsView {
     let slatMetas = this.buildSlatMetas(dateProfile, options.slotLabelInterval, slotDuration, dateEnv)
     let { columnMinWidth } = options
 
-    let headerContent = options.columnHeader &&
+    let headerContent = options.dayLabels &&
       <DayHeader
         dateProfile={dateProfile}
         dates={dayTableModel.headerDates}
