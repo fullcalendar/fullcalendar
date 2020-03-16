@@ -279,14 +279,6 @@ export default class Calendar {
     }
 
     if (oldState.dateProfile !== newState.dateProfile) {
-      if (oldState.dateProfile && viewComponent) { // why would view be null!?
-        this.publiclyTrigger('datesDestroy', [
-          {
-            view: viewApi,
-            el: viewComponent.base as HTMLElement
-          }
-        ])
-      }
       this.isDatesUpdated = true
     }
 
@@ -381,12 +373,6 @@ export default class Calendar {
 
     if (this.isDatesUpdated) {
       this.isDatesUpdated = false
-      this.publiclyTrigger('datesRender', [
-        {
-          view: viewApi,
-          el: viewComponent.base as HTMLElement
-        }
-      ])
     }
 
     if (this.isEventsUpdated) {

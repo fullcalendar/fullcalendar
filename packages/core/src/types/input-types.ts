@@ -74,8 +74,8 @@ export interface DropInfo {
 // which will enable replacing the static list of event handlers below with a simpler
 // `keyof OptionsInputBaseEventHandlers`
 export type EventHandlerName =
-  '_init' | 'selectAllow' | 'eventAllow' | 'eventDataTransform' | 'datesRender' |
-  'datesDestroy' | 'dayRender' | 'windowResize' | 'dateClick' | 'eventClick' |
+  '_init' | 'selectAllow' | 'eventAllow' | 'eventDataTransform' |
+  'dayRender' | 'windowResize' | 'dateClick' | 'eventClick' |
   'eventMouseEnter' | 'eventMouseLeave' | 'select' | 'unselect' | 'loading' |
   'eventRender' | 'eventPositioned' | '_eventsPositioned' | 'eventDestroy' |
   'eventDragStart' | 'eventDragStop' | 'eventDrop' | '_destroyed' | 'drop' |
@@ -202,8 +202,6 @@ export interface OptionsInputBase {
   selectMinDistance?: number
   timeZoneParam?: string
   titleRangeSeparator?: string
-  datesRender?(arg: { view: ViewApi, el: HTMLElement }): void
-  datesDestroy?(arg: { view: ViewApi, el: HTMLElement }): void
   dayRender?(arg: { view: ViewApi, date: Date, allDay?: boolean, el: HTMLElement }): void
   windowResize?(view: ViewApi): void
   dateClick?(arg: { date: Date, dateStr: string, allDay: boolean, resource?: any, dayEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void // resource for Scheduler

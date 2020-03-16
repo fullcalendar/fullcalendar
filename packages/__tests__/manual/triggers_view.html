@@ -27,34 +27,6 @@
       editable: true,
       selectable: true,
 
-      datesRender: function(view, element) {
-        console.log('datesRender');
-        //alert('datesRender');
-        if (verbose) {
-          console.log(' this', this);
-          console.log(' view', view);
-          console.log(' element', element);
-        }
-      },
-
-      _eventsPositioned: function(view) {
-        console.log('_eventsPositioned');
-        if (verbose) {
-          console.log(' this', this);
-          console.log(' view', view);
-        }
-      },
-
-      datesDestroy: function(view, element) {
-        console.log('datesDestroy');
-        //alert('datesDestroy');
-        if (verbose) {
-          console.log(' this', this);
-          console.log(' view', view);
-          console.log(' element', element);
-        }
-      },
-
       eventDestroy: function(event, element) {
         console.log('eventDestroy');
         //alert('eventDestroy');

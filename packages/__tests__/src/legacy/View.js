@@ -17,12 +17,12 @@ describe('View object', function() {
       expect(view.title).toBe('January 2015')
     })
 
-    it('is available in the datesRender callback', function() {
-      var datesRenderSpy = spyOnCalendarCallback('datesRender', function(arg) {
+    it('is available in the viewDidMount callback', function() {
+      var viewDidMountSpy = spyOnCalendarCallback('viewDidMount', function(arg) {
         expect(arg.view.title).toBe('January 2015')
       })
       initCalendar()
-      expect(datesRenderSpy).toHaveBeenCalled()
+      expect(viewDidMountSpy).toHaveBeenCalled()
     })
 
   })
