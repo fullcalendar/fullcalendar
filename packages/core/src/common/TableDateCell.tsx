@@ -1,5 +1,5 @@
 import { DateRange } from '../datelib/date-range'
-import { getDayClassNames, getDayMeta, DateMeta } from '../component/date-rendering'
+import { getDayClassNames, getDateMeta, DateMeta } from '../component/date-rendering'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import ComponentContext from '../component/ComponentContext'
@@ -42,8 +42,8 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
     let { dateEnv, options } = context
     let { date, isDateDistinct } = props
     let dayMeta = isDateDistinct // if only one row of days, the classNames on the header can represent the specific days beneath
-      ? getDayMeta(date, props.todayRange, props.dateProfile)
-      : getDayMeta(date)
+      ? getDateMeta(date, props.todayRange, null, props.dateProfile)
+      : getDateMeta(date)
 
     let classNames = [ 'fc-day-header' ].concat(getDayClassNames(dayMeta, context.theme))
     let text = dateEnv.format(date, props.dayLabelFormat)

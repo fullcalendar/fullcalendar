@@ -63,7 +63,7 @@ export {
 export { EventStore, filterEventStoreDefs, createEmptyEventStore, mergeEventStores, getRelevantEvents, eventTupleToStore } from './structs/event-store'
 export { EventUiHash, EventUi, processScopedUiProps, combineEventUis } from './component/event-ui'
 export { default as Splitter, SplittableProps } from './component/event-splitting'
-export { getDayClassNames, getDateMeta, getDayMeta, getSlatClassNames, getDateTimeClassNames, DateMeta } from './component/date-rendering'
+export { getDayClassNames, getDateMeta, DateMeta, getSlotClassNames } from './component/date-rendering'
 export { buildNavLinkData } from './common/nav-link'
 
 export {
@@ -189,11 +189,10 @@ export { getIsRtlScrollbarOnLeft } from './util/scrollbar-side'
 export { default as NowTimer } from './NowTimer'
 export { default as ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
-export { RenderHook, RenderHookProps } from './common/render-hook'
+export { RenderHook, RenderHookProps, RenderHookPropsChildren } from './common/render-hook'
 export { default as StandardEvent, StandardEventProps } from './common/StandardEvent'
 
 export { DayCellRoot, DayCellRootProps, DayCellDynamicProps } from './common/DayCellRoot'
-export { DateTimeRoot, DateTimeRootProps } from './common/DateTimeRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'

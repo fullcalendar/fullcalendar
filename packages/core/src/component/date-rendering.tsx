@@ -14,26 +14,14 @@ export interface DateMeta {
 }
 
 
-export function getDateMeta(exactDate: DateMarker, todayRange?: DateRange, nowDate?: DateMarker): DateMeta { // TODO: disallow optional
+export function getDateMeta(date: DateMarker, todayRange?: DateRange, nowDate?: DateMarker, dateProfile?: DateProfile): DateMeta {
   return {
-    dow: nowDate.getUTCDay(),
-    isDisabled: false,
-    isOther: false,
-    isToday: todayRange && rangeContainsMarker(todayRange, exactDate),
-    isPast: nowDate && exactDate < nowDate,
-    isFuture: nowDate && exactDate > nowDate
-  }
-}
-
-
-export function getDayMeta(dayDate: DateMarker, todayRange?: DateRange, dateProfile?: DateProfile): DateMeta { // TODO: disallow optional
-  return {
-    dow: dayDate.getUTCDay(),
-    isDisabled: dateProfile && !rangeContainsMarker(dateProfile.activeRange, dayDate),
-    isOther: dateProfile && !rangeContainsMarker(dateProfile.currentRange, dayDate),
-    isToday: todayRange && dayDate.valueOf() === todayRange.start.valueOf(),
-    isPast: todayRange && dayDate < todayRange.start,
-    isFuture: todayRange && dayDate >= todayRange.end
+    dow: date.getUTCDay(),
+    isDisabled: dateProfile && !rangeContainsMarker(dateProfile.activeRange, date),
+    isOther: dateProfile && !rangeContainsMarker(dateProfile.currentRange, date),
+    isToday: todayRange && rangeContainsMarker(todayRange, date),
+    isPast: nowDate ? (date < nowDate) : todayRange ? (date < todayRange.start) : false,
+    isFuture: nowDate ? (date > nowDate) : todayRange ? (date >= todayRange.end) : false
   }
 }
 
@@ -69,10 +57,9 @@ export function getDayClassNames(meta: DateMeta, theme: Theme) {
 }
 
 
-// TODO: kill
-export function getSlatClassNames(meta: DateMeta, theme: Theme) {
+export function getSlotClassNames(meta: DateMeta, theme: Theme) {
   let classNames: string[] = [
-    'fc-slat'
+    'fc-slat' // TODO: rename to "slot" or "slot-label"
   ]
 
   if (meta.isToday) {
@@ -86,26 +73,6 @@ export function getSlatClassNames(meta: DateMeta, theme: Theme) {
 
   if (meta.isFuture) {
     classNames.push('fc-slat-future')
-  }
-
-  return classNames
-}
-
-
-export function getDateTimeClassNames(meta: DateMeta, classNameScope: string, theme: Theme) {
-  let classNames: string[] = [ classNameScope ]
-
-  if (meta.isToday) {
-    classNames.push(`${classNameScope}-today`)
-    classNames.push(theme.getClass('today'))
-  }
-
-  if (meta.isPast) {
-    classNames.push(`${classNameScope}-past`)
-  }
-
-  if (meta.isFuture) {
-    classNames.push(`${classNameScope}-future`)
   }
 
   return classNames

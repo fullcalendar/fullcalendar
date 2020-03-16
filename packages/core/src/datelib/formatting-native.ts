@@ -116,8 +116,10 @@ export class NativeFormatter implements DateFormatter {
         return 'month'
       case 3:
         return 'week'
-      default:
+      case 2:
         return 'day'
+      default:
+        return 'time' // really?
     }
   }
 

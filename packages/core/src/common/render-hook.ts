@@ -8,14 +8,16 @@ export interface RenderHookProps<MountProps, DynamicProps> {
   mountProps: MountProps
   dynamicProps: DynamicProps
   defaultInnerContent?: (dynamicProps: DynamicProps) => ComponentChildren
-  children: (
-    rootElRef: Ref<any>,
-    classNames: string[],
-    innerElRef: Ref<any>,
-    innerContent: ComponentChildren // if falsy, means it wasn't specified
-  ) => ComponentChildren
+  children: RenderHookPropsChildren
   elRef?: Ref<any>
 }
+
+export type RenderHookPropsChildren = (
+  rootElRef: Ref<any>,
+  classNames: string[],
+  innerElRef: Ref<any>,
+  innerContent: ComponentChildren // if falsy, means it wasn't specified
+) => ComponentChildren
 
 
 export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookProps<MountProps, DynamicProps>> {

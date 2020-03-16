@@ -17,7 +17,8 @@ import {
   PositionCache,
   DateMarker,
   DateEnv,
-  ComponentContextType
+  ComponentContextType,
+  RenderHook
 } from '@fullcalendar/core'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
@@ -135,17 +136,31 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
     return (
       <tbody>
-        {props.slatMetas.map((slatMeta, i) => (
-          <tr ref={slatElRefs.createRef(i)}>
-            {props.axis &&
-              <TimeColsAxisCell {...slatMeta} />
-            }
-            <td
-              className={'fc-slat fc-time' + (!slatMeta.isLabeled ? ' fc-minor' : '')}
-              data-time={slatMeta.isoTimeStr}
-            />
-          </tr>
-        ))}
+        {props.slatMetas.map((slatMeta, i) => {
+          let innerProps = {
+            time: slatMeta.time,
+            date: context.dateEnv.toDate(slatMeta.date),
+            view: context.view
+          }
+          let classNames = [ 'fc-slat', 'fc-time', (!slatMeta.isLabeled ? ' fc-minor' : '') ]
+
+          return (
+            <tr ref={slatElRefs.createRef(i)}>
+              {props.axis &&
+                <TimeColsAxisCell {...slatMeta} />
+              }
+              <RenderHook name='slotLane' mountProps={innerProps} dynamicProps={innerProps}>
+                {(rootElRef, customClassNames, innerElRef, innerContent) => (
+                  <td
+                    ref={rootElRef}
+                    className={classNames.concat(customClassNames).join(' ')}
+                    data-time={slatMeta.isoTimeStr}
+                  >{innerContent}</td>
+                )}
+              </RenderHook>
+            </tr>
+          )
+        })}
       </tbody>
     )
   }
@@ -166,27 +181,53 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
   return (
     <ComponentContextType.Consumer>
       {(context: ComponentContext) => {
-        let labelFormat = createFormatter(context.options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT) // TODO: optimize!!!
 
-        return (
-          <td class={classNames.join(' ')} data-time={props.isoTimeStr}>
-            {props.isLabeled &&
-              <div data-fc-width-all={1}>
-                <span data-fc-width-content={1}>
-                  {context.dateEnv.format(props.date, labelFormat)}
-                </span>
-              </div>
-            }
-          </td>
-        )
+        if (!props.isLabeled) {
+          return (
+            <td className={classNames.join(' ')} data-time={props.isoTimeStr} />
+          )
+
+        } else {
+          let { dateEnv, options, view } = context
+          let labelFormat = createFormatter(options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT) // TODO: optimize!!!
+          let mountProps = {
+            time: props.time,
+            date: dateEnv.toDate(props.date),
+            view: view
+          }
+          let dynamicProps = {
+            ...mountProps,
+            text: dateEnv.format(props.date, labelFormat)
+          }
+
+          return (
+            <RenderHook name='slotLabel' mountProps={mountProps} dynamicProps={dynamicProps} defaultInnerContent={renderInnerContent}>
+              {(rootElRef, customClassNames, innerElRef, innerContent) => (
+                <td ref={rootElRef} class={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
+                  <div data-fc-width-all={1}>
+                    <span data-fc-width-content={1} ref={innerElRef}>
+                      {innerContent}
+                    </span>
+                  </div>
+                </td>
+              )}
+            </RenderHook>
+          )
+        }
       }}
     </ComponentContextType.Consumer>
   )
 }
 
 
+function renderInnerContent(props) { // TODO: add types
+  return props.text
+}
+
+
 export interface TimeSlatMeta {
   date: DateMarker
+  time: Duration
   isoTimeStr: string
   isLabeled: boolean
 }
@@ -204,6 +245,7 @@ export function buildSlatMetas(dateProfile: DateProfile, labelIntervalInput, slo
 
     metas.push({
       date,
+      time: slatTime,
       isoTimeStr: formatIsoTimeString(date),
       isLabeled
     })

@@ -1,5 +1,5 @@
 import {
-  MinimalEventProps, BaseComponent, ComponentContext, h, Fragment,
+  MinimalEventProps, BaseComponent, ComponentContext, h,
   Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot
 } from "@fullcalendar/core"
 

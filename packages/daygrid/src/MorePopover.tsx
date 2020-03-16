@@ -1,4 +1,4 @@
-import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getDayMeta, getDayClassNames, getSegMeta } from '@fullcalendar/core'
+import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getDateMeta, getDayClassNames, getSegMeta } from '@fullcalendar/core'
 import TableSeg from './TableSeg'
 import TableEvent from './TableEvent'
 import Popover from './Popover'
@@ -28,7 +28,7 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
 
     let contentClassNames = [ 'fc-more-popover-content' ].concat(
       getDayClassNames(
-        getDayMeta(date, todayRange),
+        getDateMeta(date, todayRange),
         context.theme
       )
     )

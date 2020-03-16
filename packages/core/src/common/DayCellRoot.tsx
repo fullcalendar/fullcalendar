@@ -3,7 +3,7 @@ import { DateMarker } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
-import { getDayMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
+import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
 import { formatDayString, createFormatter } from '../datelib/formatting'
 import { RenderHook } from './render-hook'
 import ViewApi from '../ViewApi'
@@ -47,7 +47,7 @@ export const DayCellRoot = (props: DayCellRootProps) => (
     {(context: ComponentContext) => {
       let { dateEnv, options } = context
       let { date } = props
-      let dayMeta = getDayMeta(date, props.todayRange, props.dateProfile)
+      let dayMeta = getDateMeta(date, props.todayRange, null, props.dateProfile)
       let standardClassNames = getDayClassNames(dayMeta, context.theme)
       let dataAttrs = { 'data-date': formatDayString(date) }
 
