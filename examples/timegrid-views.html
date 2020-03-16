@@ -10,8 +10,13 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+
+      // dayCellContent: function(arg) { console.log('dayCellContent', arg); return 'hi' },
+      // dayCellDidMount: function(arg) { console.log('dayCellDidMount', arg) },
+
       // dayLabels: false,
       // dayLabelFormat: { weekday: 'long' },
+
       header: {
         left: 'prev,next today',
         center: 'title',

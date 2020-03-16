@@ -192,7 +192,7 @@ export { globalPlugins } from './global-plugins'
 export { RenderHook, RenderHookProps } from './common/render-hook'
 export { default as StandardEvent, StandardEventProps } from './common/StandardEvent'
 
-export { DayRoot, DayRootProps } from './common/DayRoot'
+export { DayCellRoot, DayCellRootProps, DayCellDynamicProps } from './common/DayCellRoot'
 export { DateTimeRoot, DateTimeRootProps } from './common/DateTimeRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 

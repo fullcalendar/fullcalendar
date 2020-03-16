@@ -9,8 +9,9 @@ import {
   CssDimValue,
   DateProfile,
   DateRange,
-  DayRoot,
+  DayCellRoot,
   buildNavLinkData,
+  DayCellDynamicProps,
 } from '@fullcalendar/core'
 
 
@@ -52,7 +53,6 @@ export interface HookProps {
   hasEvents: boolean
 }
 
-const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
 const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
 
 
@@ -64,19 +64,21 @@ export default class TableCell extends DateComponent<TableCellProps> {
     let { date } = props
 
     return (
-      <DayRoot
+      <DayCellRoot
         date={date}
         todayRange={props.todayRange}
         dateProfile={props.dateProfile}
+        showDayNumber={props.showDayNumber}
         extraMountProps={props.extraMountProps}
         extraDynamicProps={{ hasEvents: props.hasEvents }}
         elRef={props.elRef}
+        defaultInnerContent={renderInnerContent}
       >
-        {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
+        {(rootElRef, classNames, rootDataAttrs, innerElRef, innerContent) => (
           <td
             ref={rootElRef}
             class={[ 'fc-daygrid-day' ].concat(classNames).join(' ')}
-            {...dataAttrs}
+            {...rootDataAttrs}
             {...props.extraDataAttrs}
           >
             <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
@@ -87,15 +89,10 @@ export default class TableCell extends DateComponent<TableCellProps> {
                   </a>
                 </div>
               }
-              {props.showDayNumber &&
-                <div class='fc-daygrid-day-header'>
-                  <a data-navlink={options.navLinks ? buildNavLinkData(date) : null} className='fc-day-number'>
-                    {dateEnv.format(date, DAY_NUM_FORMAT)}
-                  </a>
-                </div>
-              }
               {innerContent &&
-                <div class='fc-daygrid-day-misc' ref={innerElRef}>{innerContent}</div>
+                <div class='fc-daygrid-day-header' ref={innerElRef}>
+                  {innerContent}
+                </div>
               }
               <div
                 class='fc-daygrid-day-events'
@@ -113,7 +110,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
             </div>
           </td>
         )}
-      </DayRoot>
+      </DayCellRoot>
     )
   }
 
@@ -130,4 +127,15 @@ export default class TableCell extends DateComponent<TableCellProps> {
     }
   }
 
+}
+
+
+function renderInnerContent(props: DayCellDynamicProps) {
+  if (props.dayNumberText) {
+    return (
+      <a data-navlink={props.navLinkData} className='fc-day-number'>
+        {props.dayNumberText}
+      </a>
+    )
+  }
 }

@@ -1,11 +1,16 @@
 import {
-  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayRoot, buildNavLinkData
+  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayCellRoot, DayCellDynamicProps
 } from '@fullcalendar/core'
 
 
 export interface ListViewHeaderRowProps {
   dayDate: DateMarker
   todayRange: DateRange
+}
+
+interface DynamicProps extends DayCellDynamicProps {
+  mainText: string
+  altText: string
 }
 
 
@@ -16,35 +21,43 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
     let { dayDate } = props
     let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
     let altFormat = createFormatter(options.listDayAltFormat) // TODO: cache
-    let navLinkData = options.navLinks ? buildNavLinkData(dayDate) : null
+    let mainText = mainFormat ? dateEnv.format(dayDate, mainFormat) : '' // will ever be falsy?
+    let altText = altFormat ? dateEnv.format(dayDate, altFormat) : '' // will ever be falsy? also, BAD NAME "alt"
 
     return (
-      <DayRoot date={dayDate} todayRange={props.todayRange}>
+      <DayCellRoot date={dayDate}
+        todayRange={props.todayRange}
+        extraDynamicProps={{ mainText, altText }}
+        defaultInnerContent={renderInnerContent}
+      >
         {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
           <tr
             ref={rootElRef}
-            className={classNames.concat([ 'fc-list-heading' ]).join(' ')}
+            className={[ 'fc-list-heading' ].concat(classNames).join(' ')}
             {...dataAttrs}
           >
-            <td colSpan={3} className={theme.getClass('tableCellShaded')}>
-              {mainFormat &&
-                <a data-navlink={navLinkData} className='fc-list-heading-main'>
-                  {dateEnv.format(dayDate, mainFormat)}
-                </a>
-              }
-              {innerContent &&
-                <div class='fc-list-heading-misc' ref={innerElRef}>{innerContent}</div>
-              }
-              {altFormat &&
-                <a data-navlink={navLinkData} className='fc-list-heading-alt'>
-                  {dateEnv.format(dayDate, altFormat)}
-                </a>
-              }
+            <td colSpan={3} className={theme.getClass('tableCellShaded')} ref={innerElRef}>
+              {innerContent}
             </td>
           </tr>
         )}
-      </DayRoot>
+      </DayCellRoot>
     )
   }
 
+}
+
+
+function renderInnerContent(props: DynamicProps) {
+  return [
+    props.mainText &&
+      <a data-navlink={props.navLinkData} className='fc-list-heading-main'>
+        {props.mainText}
+      </a>
+    ,
+    props.altText &&
+      <a data-navlink={props.navLinkData} className='fc-list-heading-alt'>
+        {props.altText}
+      </a>
+  ]
 }
