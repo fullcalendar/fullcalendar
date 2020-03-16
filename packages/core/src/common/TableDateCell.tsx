@@ -18,7 +18,7 @@ export interface TableDateCellProps {
   dateProfile: DateProfile
   todayRange: DateRange
   colCnt: number
-  colHeadFormat: DateFormatter
+  dayLabelFormat: DateFormatter
   colSpan?: number
   extraMountProps?: object
   extraDataAttrs?: object
@@ -46,7 +46,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
       : getDayMeta(date)
 
     let classNames = [ 'fc-day-header' ].concat(getDayClassNames(dayMeta, context.theme))
-    let text = dateEnv.format(date, props.colHeadFormat)
+    let text = dateEnv.format(date, props.dayLabelFormat)
 
     // if colCnt is 1, we are already in a day-view and don't need a navlink
     let navLinkData = (options.navLinks && !dayMeta.isDisabled && isDateDistinct && props.colCnt > 1)

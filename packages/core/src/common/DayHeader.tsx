@@ -24,7 +24,7 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {
     let { dates, datesRepDistinctDays } = props
 
-    let colHeadFormat = createFormatter(
+    let dayLabelFormat = createFormatter(
       context.options.dayLabelFormat ||
       computeFallbackHeaderFormat(datesRepDistinctDays, dates.length)
     )
@@ -42,7 +42,7 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
                 todayRange={todayRange}
                 dateProfile={props.dateProfile}
                 colCnt={dates.length}
-                colHeadFormat={colHeadFormat}
+                dayLabelFormat={dayLabelFormat}
               />
             )
           })}
