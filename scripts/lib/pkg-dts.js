@@ -12,7 +12,9 @@ Assumes granular .d.ts files have already been generated
 function bundlPkgDefs() {
 
   for (let pkgStruct of pkgStructs) {
-    bundlePkgDef(pkgStruct)
+    if (!pkgStruct.isBundle) { // temporary?
+      bundlePkgDef(pkgStruct)
+    }
   }
 
   return Promise.resolve() // need to return a promise even tho bundlePkgDef is synchronous

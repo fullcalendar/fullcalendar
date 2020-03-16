@@ -48,6 +48,7 @@ function writePremiumArchive() {
     bundleDir: 'packages-premium/bundle',
     exampleHtmlFiles: [
       '*+(resource|timeline)*.html',
+      'timegrid-views-hscroll.html', // TEMPORARY. TODO: exclude this file from non-premium
       '!_*.html'
     ],
     exampleOtherFiles: [
