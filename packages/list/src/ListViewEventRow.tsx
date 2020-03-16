@@ -36,9 +36,21 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
         isResizing={props.isResizing}
         isDateSelecting={props.isDateSelecting}
       >
-        {(rootElRef, classNames, style, innerElRef, innerContent) => (
+        {(rootElRef, classNames, style, innerElRef, innerContent, dynamicProps) => (
           <tr className={[ 'fc-list-item' ].concat(classNames).join(' ')} ref={rootElRef}>
-            {innerContent}
+            {dynamicProps.timeText &&
+              <td class='fc-list-item-time'>
+                {dynamicProps.timeText}
+              </td>
+            }
+            <td class='fc-list-item-marker'>
+              <span class='fc-event-dot' style={{
+                backgroundColor: dynamicProps.event.backgroundColor
+              }} />
+            </td>
+            <td class='fc-list-item-title' ref={innerElRef}>
+              {innerContent}
+            </td>
           </tr>
         )}
       </EventRoot>
@@ -54,23 +66,9 @@ function renderInnerContent(props: EventMeta) {
   let anchorAttrs = url ? { href: url } : {}
 
   return (
-    <Fragment>
-      {props.timeText &&
-        <td class='fc-list-item-time'>
-          {props.timeText}
-        </td>
-      }
-      <td class='fc-list-item-marker'>
-        <span class='fc-event-dot' style={{
-          backgroundColor: event.backgroundColor
-        }} />
-      </td>
-      <td class='fc-list-item-title'>
-        <a {...anchorAttrs}>{/* TODO: document how whole row become clickable */}
-          {event.title}
-        </a>
-      </td>
-    </Fragment>
+    <a {...anchorAttrs}>{/* TODO: document how whole row become clickable */}
+      {event.title}
+    </a>
   )
 }
 
