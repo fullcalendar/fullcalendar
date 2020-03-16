@@ -4,7 +4,7 @@ import koLocale from '@fullcalendar/core/locales/ko'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('columnHeaderFormat', function() {
+describe('dayLabelFormat', function() { // TODO: rename file
 
   describe('when not set', function() {
     pushOptions({
@@ -30,13 +30,13 @@ describe('columnHeaderFormat', function() {
     })
   })
 
-  describe('when columnHeaderFormat is set on a per-view basis', function() {
+  describe('when dayLabelFormat is set on a per-view basis', function() {
     pushOptions({
       defaultDate: '2014-05-11',
       views: {
-        month: { columnHeaderFormat: { weekday: 'long' } },
-        day: { columnHeaderFormat: { weekday: 'long', month: 'long', day: 'numeric' } },
-        dayGridWeek: { columnHeaderFormat: { weekday: 'long', month: 'numeric', day: 'numeric' } }
+        month: { dayLabelFormat: { weekday: 'long' } },
+        day: { dayLabelFormat: { weekday: 'long', month: 'long', day: 'numeric' } },
+        dayGridWeek: { dayLabelFormat: { weekday: 'long', month: 'numeric', day: 'numeric' } }
       }
     })
 
@@ -121,7 +121,7 @@ describe('columnHeaderFormat', function() {
       { view: 'timeGridDay', expected: /^일요일$/ }
     ]
 
-    it('should have the translated dates and columnHeaderFormat should be computed differently', function() {
+    it('should have the translated dates and dayLabelFormat should be computed differently', function() {
       let calendar = initCalendar()
 
       for (let viewWithFormat of VIEWS_WITH_FORMAT) {

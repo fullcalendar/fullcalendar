@@ -25,7 +25,7 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
     let { dates, datesRepDistinctDays } = props
 
     let colHeadFormat = createFormatter(
-      context.options.columnHeaderFormat ||
+      context.options.dayLabelFormat ||
       computeFallbackHeaderFormat(datesRepDistinctDays, dates.length)
     )
 

@@ -140,7 +140,7 @@ export interface OptionsInputBase {
   locale?: LocaleSingularArg
   eventTimeFormat?: FormatterInput
   dayLabels?: boolean
-  columnHeaderFormat?: FormatterInput
+  dayLabelFormat?: FormatterInput
   titleFormat?: FormatterInput
   weekLabel?: string
   displayEventTime?: boolean
