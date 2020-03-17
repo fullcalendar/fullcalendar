@@ -11,8 +11,8 @@
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
 
-      // resourceAreaLabelContent: function(arg) { console.log('resourceAreaLabelContent', arg); return 'area-label' },
-      // resourceAreaLabelDidMount: function(arg) { console.log('resourceAreaLabelDidMount', arg) },
+      // resourceAreaHeaderContent: function(arg) { console.log('resourceAreaHeaderContent', arg); return 'area-label' },
+      // resourceAreaHeaderDidMount: function(arg) { console.log('resourceAreaHeaderDidMount', arg) },
 
       // resourceLabelContent: function(arg) { console.log('resourceLabelContent', arg); return 'resource-label' },
       // resourceLabelDidMount: function(arg) { console.log('resourceLabelDidMount', arg) },
@@ -37,14 +37,14 @@
       resourceAreaWidth: '30%',
       resourceAreaColumns: [
         {
-          labelContent: 'Room',
+          headerContent: 'Room',
           field: 'title',
           // cellContent: function(arg) {
           //   return '!' + arg.fieldValue + '!'
           // }
         },
         {
-          labelContent: 'Occupancy',
+          headerContent: 'Occupancy',
           field: 'occupancy',
           // cellContent: function(arg) {
           //   return '#' + arg.fieldValue + '#'
