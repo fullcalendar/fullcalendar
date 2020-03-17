@@ -61,8 +61,14 @@ export function allowContextMenu(el: HTMLElement) {
 /* Object Ordering by Field
 ----------------------------------------------------------------------------------------------------------------------*/
 
+export interface OrderSpec {
+  field?: string
+  order?: number
+  func?: (a, b) => boolean
+}
+
 export function parseFieldSpecs(input) {
-  let specs = []
+  let specs: OrderSpec[] = []
   let tokens = []
   let i
   let token
@@ -93,7 +99,7 @@ export function parseFieldSpecs(input) {
 }
 
 
-export function compareByFieldSpecs(obj0, obj1, fieldSpecs) {
+export function compareByFieldSpecs(obj0, obj1, fieldSpecs: OrderSpec[]) {
   let i
   let cmp
 
@@ -108,7 +114,7 @@ export function compareByFieldSpecs(obj0, obj1, fieldSpecs) {
 }
 
 
-export function compareByFieldSpec(obj0, obj1, fieldSpec) {
+export function compareByFieldSpec(obj0, obj1, fieldSpec: OrderSpec) {
   if (fieldSpec.func) {
     return fieldSpec.func(obj0, obj1)
   }

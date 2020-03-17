@@ -29,7 +29,8 @@ export {
   compareNumbers, enableCursor, disableCursor,
   diffDates,
   guid,
-  computeSmallestCellWidth
+  computeSmallestCellWidth,
+  OrderSpec
 } from './util/misc'
 
 export {
