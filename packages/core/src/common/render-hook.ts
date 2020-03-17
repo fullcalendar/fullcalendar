@@ -5,9 +5,10 @@ import { setRef } from '../vdom-util'
 
 export interface RenderHookProps<MountProps, DynamicProps> {
   name: string
-  mountProps: MountProps
-  dynamicProps: DynamicProps
+  mountProps: MountProps // TODO: make options. a few handlers dont use
+  dynamicProps: DynamicProps // TODO: make options. a few handlers dont use
   defaultInnerContent?: (dynamicProps: DynamicProps) => ComponentChildren
+  options?: object // for using another root object for the options
   children: RenderHookPropsChildren
   elRef?: Ref<any>
 }
@@ -57,12 +58,13 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
 
   private buildClassNames(): string[] {
     let { props } = this
-    let classNames = this.context.options[props.name + 'ClassNames']
+    let classNames = this.getOption(props.name + 'ClassNames')
 
     if (typeof classNames === 'function') {
-      return classNames(props.dynamicProps)
+      classNames = classNames(props.dynamicProps)
+    }
 
-    } else if (Array.isArray(classNames)) {
+    if (Array.isArray(classNames)) {
       return classNames
 
     } else if (typeof classNames === 'string') {
@@ -77,7 +79,7 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
   private renderInnerContent() {
     let { props } = this
     let innerContent: ComponentChildren = null
-    let innerContentRaw = normalizeContent(this.context.options[props.name + 'Content'], props.dynamicProps)
+    let innerContentRaw = normalizeContent(this.getOption(props.name + 'Content'), props.dynamicProps)
 
     if (innerContentRaw === undefined) {
       innerContentRaw = normalizeContent(props.defaultInnerContent, props.dynamicProps)
@@ -119,7 +121,7 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
 
 
   private triggerMountHandler(postfix: string) {
-    let handler = this.context.options[this.props.name + postfix]
+    let handler = this.getOption(this.props.name + postfix)
 
     if (handler) {
       handler({ // TODO: make a better type for this
@@ -134,6 +136,11 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
     if (this.customContentHandler) {
       this.customContentHandler.updateEl(this.innerElRef.current || this.rootEl)
     }
+  }
+
+
+  private getOption(name: string) {
+    return (this.props.options || this.context.options)[name]
   }
 
 }

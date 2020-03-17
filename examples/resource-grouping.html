@@ -10,6 +10,13 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
+
+      // resourceGroupLabelContent: function(arg) { console.log('resourceGroupLabelContent', arg); return 'group-label' },
+      // resourceGroupLabelDidMount: function(arg) { console.log('resourceGroupLabelDidMount', arg) },
+
+      // resourceGroupLaneContent: function(arg) { console.log('resourceGroupLaneContent', arg); return 'group-lane' },
+      // resourceGroupLaneDidMount: function(arg) { console.log('resourceGroupLaneDidMount', arg) },
+
       now: '2020-02-07',
       editable: true,
       aspectRatio: 1.8,
