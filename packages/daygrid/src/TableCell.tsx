@@ -90,7 +90,6 @@ export default class TableCell extends DateComponent<TableCellProps> {
                     <div class={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')} ref={rootElRef}>
                       <a ref={innerElRef}
                         data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null}
-                        class='fc-scrollgrid-shrink-span'
                       >
                         {innerContent}
                       </a>
@@ -99,7 +98,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
                 </WeekNumberRoot>
               }
               {innerContent &&
-                <div class='fc-daygrid-day-header' ref={innerElRef}>
+                <div class='fc-daygrid-day-top' ref={innerElRef}>
                   {innerContent}
                 </div>
               }
@@ -110,14 +109,14 @@ export default class TableCell extends DateComponent<TableCellProps> {
               >
                 {props.fgContent}
                 {Boolean(props.moreCnt) &&
-                  <div class='fc-more' style={{ marginTop: props.moreMarginTop }}>
+                  <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
                     <RenderHook name='moreLink'
                       mountProps={{ view: context.view }}
                       dynamicProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
                       defaultInnerContent={renderMoreLinkInner}
                     >
                       {(rootElRef, classNames, innerElRef, innerContent) => (
-                        <a onClick={this.handleMoreLink} ref={rootElRef} className={classNames.join(' ')}>
+                        <a onClick={this.handleMoreLink} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
                           {innerContent}
                         </a>
                       )}
@@ -152,7 +151,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
 function renderCellHeaderInner(props: DayCellDynamicProps) {
   if (props.dayNumberText) {
     return (
-      <a data-navlink={props.navLinkData} className='fc-day-number'>
+      <a className='fc-daygrid-day-number' data-navlink={props.navLinkData}>
         {props.dayNumberText}
       </a>
     )

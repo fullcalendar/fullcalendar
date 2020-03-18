@@ -31,7 +31,7 @@ export interface DayCellRootProps {
 export interface DayCellMountProps {
   date: DateMarker
   view: ViewApi
-  [extraProp: string]: any
+  [extraProp: string]: any // so can include a resource
 }
 
 export type DayCellDynamicProps = DayCellMountProps & DateMeta & {

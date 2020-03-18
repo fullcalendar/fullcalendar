@@ -1,17 +1,18 @@
 import {
   h, ComponentChildren,
-  applyStyle, BaseComponent, ComponentContext, DelayedRunner, Ref
+  applyStyle, BaseComponent, ComponentContext, DelayedRunner, Ref, setRef
 } from '@fullcalendar/core'
 
 
 export interface PopoverProps {
   title: string
-  children?: ComponentChildren
-  extraClassName?: string
+  extraClassNames?: string[]
+  extraAttrs?: object
   alignmentEl: HTMLElement
   topAlignmentEl?: HTMLElement
   onClose?: () => void
   elRef?: Ref<HTMLDivElement>
+  children?: ComponentChildren
 }
 
 const PADDING_FROM_VIEWPORT = 10
@@ -20,22 +21,28 @@ const SCROLL_DEBOUNCE = 10
 
 export default class Popover extends BaseComponent<PopoverProps> {
 
+  private rootEl: HTMLElement
   private repositioner = new DelayedRunner(this.updateSize.bind(this))
 
 
   render(props: PopoverProps, state: {}, context: ComponentContext) {
     let { theme } = context
-    let classNames = [ 'fc-popover', context.theme.getClass('popover'), props.extraClassName ]
+    let classNames = [
+      'fc-popover',
+      context.theme.getClass('popover')
+    ].concat(
+      props.extraClassNames || []
+    )
 
     return (
-      <div class={classNames.join(' ')} ref={props.elRef}>
-        <div class={'fc-header ' + theme.getClass('popoverHeader')}>
-          <span class='fc-title'>
+      <div class={classNames.join(' ')} {...props.extraAttrs} ref={this.handleRootEl}>
+        <div class={'fc-popover-header ' + theme.getClass('popoverHeader')}>
+          <span class='fc-popover-title'>
             {props.title}
           </span>
-          <span class={'fc-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick}></span>
+          <span class={'fc-popover-close ' + theme.getIconClass('close')} onClick={this.handleCloseClick}></span>
         </div>
-        <div class={'fc-body ' + theme.getClass('popoverContent')}>
+        <div class={'fc-popover-body ' + theme.getClass('popoverContent')}>
           {props.children}
         </div>
       </div>
@@ -53,6 +60,15 @@ export default class Popover extends BaseComponent<PopoverProps> {
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleDocumentMousedown)
     document.removeEventListener('scroll', this.handleDocumentScroll)
+  }
+
+
+  handleRootEl = (el: HTMLElement | null) => {
+    this.rootEl = el
+
+    if (this.props.elRef) {
+      setRef(this.props.elRef, el)
+    }
   }
 
 
@@ -92,7 +108,7 @@ export default class Popover extends BaseComponent<PopoverProps> {
   */
   private updateSize() {
     let { alignmentEl, topAlignmentEl } = this.props
-    let rootEl = this.base as HTMLElement // BAD
+    let { rootEl } = this
 
     if (!rootEl) {
       return // not sure why this was null, but we shouldn't let external components call updateSize() anyway

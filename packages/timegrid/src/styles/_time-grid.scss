@@ -27,7 +27,7 @@
   position: relative;
 }
 
-.fc-timegrid-events {
+.fc-timegrid-col-events {
   position: absolute;
   top: 0;
   left: 0;
@@ -70,11 +70,11 @@
 }
 
 
-.fc-ltr .fc-timegrid-events { /* space on the sides of events for LTR (default) */
+.fc-ltr .fc-timegrid-col-events { /* space on the sides of events for LTR (default) */
   margin: 0 2.5% 0 2px;
 }
 
-.fc-rtl .fc-timegrid-events { /* space on the sides of events for RTL */
+.fc-rtl .fc-timegrid-col-events { /* space on the sides of events for RTL */
   margin: 0 2px 0 2.5%;
 }
 
@@ -82,7 +82,7 @@
   position: absolute;
 }
 
-.fc-timegrid-events { z-index: 4 } // events are z-index-scoped within
+.fc-timegrid-col-events { z-index: 4 } // events are z-index-scoped within
 .fc-timegrid-highlight { z-index: 3 }
 .fc-timegrid-bgevent { z-index: 2 }
 .fc-timegrid-nonbusiness { z-index: 1 }

@@ -137,9 +137,9 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
                 <Fragment>{mirrorFgNodes}</Fragment>
               ]}
               bgContent={[
-                <Fragment>{this.renderFillSegs(highlightSegsByCol[col], 'fc-highlight')}</Fragment>, // Fragment scopes the keys
-                <Fragment>{this.renderFillSegs(businessHoursByCol[col], 'fc-nonbusiness')}</Fragment>,
-                <Fragment>{this.renderFillSegs(bgEventSegsByCol[col], 'fc-bgevent')}</Fragment>
+                <Fragment>{this.renderFillSegs(highlightSegsByCol[col], 'highlight')}</Fragment>, // Fragment scopes the keys
+                <Fragment>{this.renderFillSegs(businessHoursByCol[col], 'nonbusiness')}</Fragment>,
+                <Fragment>{this.renderFillSegs(bgEventSegsByCol[col], 'bgevent')}</Fragment>
               ]}
             />
           )
@@ -279,7 +279,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
   }
 
 
-  renderFillSegs(segs: TableSeg[], className: string) {
+  renderFillSegs(segs: TableSeg[], fillType: string) {
     let { isRtl } = this.context
     let { cellInnerPositions } = this.state
     let nodes: VNode[] = []
@@ -296,7 +296,9 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
         }
 
         nodes.push(
-          <div class={className} style={leftRightCss} />
+          <div class='fc-daygrid-bg-harness' style={leftRightCss}>
+            <div class={`fc-daygrid-${fillType} fc-${fillType}`} />
+          </div>
         )
       }
     }

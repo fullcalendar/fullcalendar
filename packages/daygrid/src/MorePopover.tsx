@@ -1,4 +1,4 @@
-import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getDateMeta, getDayClassNames, getSegMeta } from '@fullcalendar/core'
+import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot } from '@fullcalendar/core'
 import TableSeg from './TableSeg'
 import TableEvent from './TableEvent'
 import Popover from './Popover'
@@ -26,47 +26,47 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
     let { date, hiddenInstances, todayRange } = props
     let title = dateEnv.format(date, createFormatter(options.dayPopoverFormat)) // TODO: cache formatter
 
-    let contentClassNames = [ 'fc-more-popover-content' ].concat(
-      getDayClassNames(
-        getDateMeta(date, todayRange),
-        context.theme
-      )
-    )
-
     return (
-      <Popover
-        elRef={this.handlePopoverEl}
-        title={title}
-        onClose={props.onCloseClick}
-        alignmentEl={props.alignmentEl}
-        topAlignmentEl={props.topAlignmentEl}
-      >
-        <div className={contentClassNames.join(' ')}>
-          {props.segs.map((seg) => {
-            let { eventRange } = seg
-            let instanceId = eventRange.instance.instanceId
+      <DayCellRoot date={date} todayRange={todayRange} elRef={this.handlePopoverEl}>
+        {(rootElRef, dayClassNames, dataAttrs, innerElRef, innerContent) => (
+          <Popover
+            elRef={rootElRef}
+            title={title}
+            extraClassNames={[ 'fc-more-popover' ].concat(dayClassNames)}
+            extraAttrs={dataAttrs}
+            onClose={props.onCloseClick}
+            alignmentEl={props.alignmentEl}
+            topAlignmentEl={props.topAlignmentEl}
+          >
+            {innerContent &&
+              <div class='fc-more-popover-misc' ref={innerElRef}>{innerContent}</div>
+            }
+            {props.segs.map((seg) => {
+              let { eventRange } = seg
+              let instanceId = eventRange.instance.instanceId
 
-            return (
-              <div
-                class='fc-daygrid-event-harness'
-                key={instanceId}
-                style={{
-                  visibility: hiddenInstances[instanceId] ? 'hidden' : ''
-                }}
-              >
-                <TableEvent
-                  seg={seg}
-                  isDragging={false}
-                  isResizing={false}
-                  isDateSelecting={false}
-                  isSelected={instanceId === props.selectedInstanceId}
-                  {...getSegMeta(seg, todayRange)}
-                />
-              </div>
-            )
-          })}
-        </div>
-      </Popover>
+              return (
+                <div
+                  class='fc-daygrid-event-harness'
+                  key={instanceId}
+                  style={{
+                    visibility: hiddenInstances[instanceId] ? 'hidden' : ''
+                  }}
+                >
+                  <TableEvent
+                    seg={seg}
+                    isDragging={false}
+                    isResizing={false}
+                    isDateSelecting={false}
+                    isSelected={instanceId === props.selectedInstanceId}
+                    {...getSegMeta(seg, todayRange)}
+                  />
+                </div>
+              )
+            })}
+          </Popover>
+        )}
+      </DayCellRoot>
     )
   }
 

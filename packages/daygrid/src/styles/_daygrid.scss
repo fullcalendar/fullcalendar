@@ -14,7 +14,7 @@
   position: static;
 }
 
-.fc-daygrid-day-header {
+.fc-daygrid-day-top {
   padding: 0 4px 4px;
   text-align: right;
 }
@@ -32,7 +32,7 @@
   min-height: 3em;
 }
 
-.fc-daygrid-constantrowheight .fc-daygrid-day-events {
+.fc-daygrid-balanced .fc-daygrid-day-events {
   position: absolute;
   left: 0;
   right: 0;
@@ -51,45 +51,51 @@
   right: 0;
 }
 
-
-.fc-daygrid-day {
-  .fc-bgevent,
-  .fc-highlight,
-  .fc-nonbusiness {
-    z-index: 1; // TODO: more specific
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
+.fc-daygrid-bg-harness {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
-.fc-daygrid .fc-event {
+.fc-daygrid-bgevent { z-index: 1 }
+.fc-daygrid-nonbusiness { z-index: 2 }
+.fc-daygrid-highlight { z-index: 3 }
+
+.fc-daygrid-event {
   position: relative;
-  z-index: 2;
-}
-
-.fc-daygrid .fc-event.fc-event-mirror {
-  position: relative;
-  z-index: 3;
-}
-
-.fc-daygrid .fc-more {
-  position: relative;
-  z-index: 2;
-  font-size: .85em;
-
-  a {
-    cursor: pointer; // TODO: add reset?
-  }
-}
-
-.fc-daygrid .fc-popover {
   z-index: 4;
 }
 
-.fc-more-popover-content {
+.fc-daygrid-event.fc-event-mirror {
+  position: relative;
+  z-index: 5;
+}
+
+.fc-daygrid-day-top {
+  position: relative;
+  z-index: 4;
+}
+
+.fc-daygrid-day-bottom {
+  position: relative;
+  z-index: 4;
+  font-size: .85em;
+}
+
+.fc-daygrid-more-link { // TODO: dont put here
+  cursor: pointer;
+}
+
+
+
+
+.fc-daygrid .fc-popover {
+  z-index: 6;
+}
+
+.fc-more-popover .fc-popover-body {
   padding: 10px;
   min-width: 220px;
 }
@@ -113,6 +119,6 @@
   border-radius: 0 0 0 3px;
 }
 
-.fc-day-other .fc-daygrid-day-header {
+.fc-day-other .fc-daygrid-day-top {
   opacity: 0.3;
 }

@@ -51,7 +51,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
             {...props.extraDataAttrs}
           >
             <div class='fc-timegrid-col-origin'>
-              <div class='fc-timegrid-events'>
+              <div class='fc-timegrid-col-events'>
                 {/* the Fragments scope the keys */}
                 <Fragment>
                   {this.renderFgSegs(

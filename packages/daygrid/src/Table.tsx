@@ -82,7 +82,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
 
     let classNames = [ 'fc-daygrid' ]
     if (props.vGrowRows && props.eventLimit === true) {
-      classNames.push('fc-daygrid-constantrowheight')
+      classNames.push('fc-daygrid-balanced')
     }
 
     return (

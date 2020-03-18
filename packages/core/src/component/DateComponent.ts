@@ -114,7 +114,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
     let segEl = elementClosest(el, this.fgSegSelector)
 
     return (!segEl || segEl.classList.contains('fc-mirror')) &&
-      !elementClosest(el, '.fc-more') && // a "more.." link
+      !elementClosest(el, '.fc-daygrid-more-link') && // a "more.." link
       !elementClosest(el, 'a[data-navlink]') && // a clickable nav link
       !this.isInPopover(el)
   }

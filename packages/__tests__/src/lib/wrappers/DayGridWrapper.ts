@@ -7,7 +7,7 @@ export default class DayGridWrapper {
 
   static EVENT_IS_START_CLASSNAME = 'fc-start'
   static EVENT_IS_END_CLASSNAME = 'fc-end'
-  static MORE_LINK_CLASSNAME = 'fc-more'
+  static MORE_LINK_CLASSNAME = 'fc-daygrid-more-link'
 
 
   constructor(private el: HTMLElement) {
@@ -75,12 +75,12 @@ export default class DayGridWrapper {
 
 
   getMoreEl() {
-    return this.el.querySelector('.fc-more')
+    return this.el.querySelector('.fc-daygrid-more-link')
   }
 
 
   getMoreEls() {
-    return findElements(this.el, '.fc-more')
+    return findElements(this.el, '.fc-daygrid-more-link')
   }
 
 
@@ -118,7 +118,7 @@ export default class DayGridWrapper {
     if (index == null) {
       $(this.getMoreEl()).simulate('click')
     } else {
-      $(this.el.querySelectorAll('.fc-more')[index]).simulate('click')
+      $(this.el.querySelectorAll('.fc-daygrid-more-link')[index]).simulate('click')
     }
   }
 
