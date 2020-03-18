@@ -12,6 +12,7 @@ import {
   DayCellRoot,
   buildNavLinkData,
   DayCellDynamicProps,
+  RenderHook,
 } from '@fullcalendar/core'
 
 
@@ -73,7 +74,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
         extraMountProps={props.extraMountProps}
         extraDynamicProps={{ hasEvents: props.hasEvents }}
         elRef={props.elRef}
-        defaultInnerContent={renderInnerContent}
+        defaultInnerContent={renderCellHeaderInner}
       >
         {(rootElRef, classNames, rootDataAttrs, innerElRef, innerContent) => (
           <td
@@ -103,9 +104,17 @@ export default class TableCell extends DateComponent<TableCellProps> {
                 {props.fgContent}
                 {Boolean(props.moreCnt) &&
                   <div class='fc-more' style={{ marginTop: props.moreMarginTop }}>
-                    <a onClick={this.handleMoreLink}>
-                      {props.buildMoreLinkText(props.moreCnt)}
-                    </a>
+                    <RenderHook name='moreLink'
+                      mountProps={{ view: context.view }}
+                      dynamicProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
+                      defaultInnerContent={renderMoreLinkInner}
+                    >
+                      {(rootElRef, classNames, innerElRef, innerContent) => (
+                        <a onClick={this.handleMoreLink} ref={rootElRef} className={classNames.join(' ')}>
+                          {innerContent}
+                        </a>
+                      )}
+                    </RenderHook>
                   </div>
                 }
               </div>
@@ -133,7 +142,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
 }
 
 
-function renderInnerContent(props: DayCellDynamicProps) {
+function renderCellHeaderInner(props: DayCellDynamicProps) {
   if (props.dayNumberText) {
     return (
       <a data-navlink={props.navLinkData} className='fc-day-number'>
@@ -141,4 +150,9 @@ function renderInnerContent(props: DayCellDynamicProps) {
       </a>
     )
   }
+}
+
+
+function renderMoreLinkInner(props) {
+  return props.text
 }

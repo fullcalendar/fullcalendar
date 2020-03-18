@@ -253,12 +253,12 @@ export default class Table extends DateComponent<TableProps, TableState> {
 }
 
 
-function buildBuildMoreLinkText(moreLimitTextInput): (num: number) => string {
-  if (typeof moreLimitTextInput === 'function') {
-    return moreLimitTextInput
+function buildBuildMoreLinkText(moreLinkTextInput): (num: number) => string {
+  if (typeof moreLinkTextInput === 'function') {
+    return moreLinkTextInput
   } else {
     return function(num) {
-      return `+${num} ${moreLimitTextInput}`
+      return `+${num} ${moreLinkTextInput}`
     }
   }
 }
