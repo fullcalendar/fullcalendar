@@ -1207,7 +1207,7 @@ function buildDateEnv(rawOptions: any, pluginHooks: PluginHooks, availableLocale
     locale,
     weekNumberCalculation: rawOptions.weekNumberCalculation,
     firstDay: rawOptions.firstDay,
-    weekLabel: rawOptions.weekLabel,
+    weekText: rawOptions.weekText,
     cmdFormatter: pluginHooks.cmdFormatter
   })
 }

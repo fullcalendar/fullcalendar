@@ -14,7 +14,7 @@ export default {
     day: "Dan",
     list: "Raspored"
   },
-  weekLabel: "Sed",
+  weekText: "Sed",
   allDayText: "Cijeli dan",
   eventLimitText: function(n) {
     return "+ još " + n;

@@ -14,7 +14,7 @@ export default {
     day: "Zi",
     list: "Agendă"
   },
-  weekLabel: "Săpt",
+  weekText: "Săpt",
   allDayText: "Toată ziua",
   eventLimitText: function(n) {
     return "+alte " + n;

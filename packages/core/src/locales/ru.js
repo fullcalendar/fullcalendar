@@ -14,7 +14,7 @@ export default {
     day: "День",
     list: "Повестка дня"
   },
-  weekLabel: "Нед",
+  weekText: "Нед",
   allDayText: "Весь день",
   eventLimitText: function(n) {
     return "+ ещё " + n;

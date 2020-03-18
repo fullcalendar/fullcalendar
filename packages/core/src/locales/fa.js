@@ -15,7 +15,7 @@ export default {
     day: "روز",
     list: "برنامه"
   },
-  weekLabel: "هف",
+  weekText: "هف",
   allDayText: "تمام روز",
   eventLimitText: function(n) {
     return "بیش از " + n;

@@ -17,7 +17,7 @@ export default {
     day: "วัน",
     list: "กำหนดการ"
   },
-  weekLabel: "สัปดาห์",
+  weekText: "สัปดาห์",
   allDayText: "ตลอดวัน",
   eventLimitText: "เพิ่มเติม",
   noEventsMessage: "ไม่มีกิจกรรมที่จะแสดง"

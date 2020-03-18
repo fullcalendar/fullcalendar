@@ -14,7 +14,7 @@ export default {
     day: "Dag",
     list: "Agenda"
   },
-  weekLabel: "Uke",
+  weekText: "Uke",
   allDayText: "Hele dagen",
   eventLimitText: "til",
   noEventsMessage: "Ingen hendelser å vise"

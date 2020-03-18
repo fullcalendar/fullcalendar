@@ -2,7 +2,7 @@ import esLocale from '@fullcalendar/core/locales/es'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper';
 
-describe('weekLabel', function() {
+describe('weekText', function() { // TODO: rename file
   pushOptions({
     weekNumbers: true
   })
@@ -29,7 +29,7 @@ describe('weekLabel', function() {
       it('renders correctly when customized and LTR', function() {
         let calendar = initCalendar({
           dir: 'ltr',
-          weekLabel: 'YO'
+          weekText: 'YO'
         })
         expectWeekNumberTitle(calendar, 'YO')
       })
@@ -37,7 +37,7 @@ describe('weekLabel', function() {
       it('renders correctly when customized and RTL', function() {
         let calendar = initCalendar({
           dir: 'rtl',
-          weekLabel: 'YO'
+          weekText: 'YO'
         })
         expectWeekNumberTitle(calendar, 'YO')
       })

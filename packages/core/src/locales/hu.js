@@ -14,7 +14,7 @@ export default {
     day: "Nap",
     list: "Napló"
   },
-  weekLabel: "Hét",
+  weekText: "Hét",
   allDayText: "Egész nap",
   eventLimitText: "további",
   noEventsMessage: "Nincs megjeleníthető esemény"

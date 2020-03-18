@@ -141,7 +141,7 @@ export interface OptionsInputBase {
   dayLabels?: boolean
   dayLabelFormat?: FormatterInput
   titleFormat?: FormatterInput
-  weekLabel?: string
+  weekText?: string
   displayEventTime?: boolean
   displayEventEnd?: boolean
   eventLimitText?: string | ((eventCnt: number) => string)

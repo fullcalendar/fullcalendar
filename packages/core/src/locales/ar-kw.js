@@ -15,7 +15,7 @@ export default {
     day: "يوم",
     list: "أجندة"
   },
-  weekLabel: "أسبوع",
+  weekText: "أسبوع",
   allDayText: "اليوم كله",
   eventLimitText: "أخرى",
   noEventsMessage: "أي أحداث لعرض"

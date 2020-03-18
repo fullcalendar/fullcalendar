@@ -10,7 +10,7 @@ export default {
     day: "Ден",
     list: "График"
   },
-  weekLabel: "Сед",
+  weekText: "Сед",
   allDayText: "Цел ден",
   eventLimitText: function(n) {
     return "+повеќе " + n;

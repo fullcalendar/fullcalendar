@@ -14,7 +14,7 @@ export default {
     day: "Ngày",
     list: "Lịch biểu"
   },
-  weekLabel: "Tu",
+  weekText: "Tu",
   allDayText: "Cả ngày",
   eventLimitText: function(n) {
     return "+ thêm " + n;

@@ -20,7 +20,7 @@ export interface DateEnvSettings {
   locale: Locale
   weekNumberCalculation?: any
   firstDay?: any,
-  weekLabel?: string,
+  weekText?: string,
   cmdFormatter?: CmdFormatterFunc
 }
 
@@ -44,7 +44,7 @@ export class DateEnv {
   weekDow: number // which day begins the week
   weekDoy: number // which day must be within the year, for computing the first week number
   weekNumberFunc: any
-  weekLabel: string // DON'T LIKE how options are confused with local
+  weekText: string // DON'T LIKE how options are confused with local
   cmdFormatter?: CmdFormatterFunc
 
 
@@ -76,7 +76,7 @@ export class DateEnv {
       this.weekNumberFunc = settings.weekNumberCalculation
     }
 
-    this.weekLabel = settings.weekLabel != null ? settings.weekLabel : settings.locale.options.weekLabel
+    this.weekText = settings.weekText != null ? settings.weekText : settings.locale.options.weekText
 
     this.cmdFormatter = settings.cmdFormatter
   }

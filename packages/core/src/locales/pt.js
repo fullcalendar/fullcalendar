@@ -14,7 +14,7 @@ export default {
     day: "Dia",
     list: "Agenda"
   },
-  weekLabel: "Sem",
+  weekText: "Sem",
   allDayText: "Todo o dia",
   eventLimitText: "mais",
   noEventsMessage: "Não há eventos para mostrar"

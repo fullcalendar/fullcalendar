@@ -15,7 +15,7 @@ import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
 
 
-const WEEK_HEADER_FORMAT = createFormatter({ week: 'short' })
+const DEFAULT_WEEK_NUM_FORMAT = { week: 'short' }
 const AUTO_ALL_DAY_EVENT_LIMIT = 5
 
 
@@ -228,7 +228,8 @@ export default abstract class TimeColsView extends View {
     let weekText
 
     if (options.weekNumbers) {
-      weekText = dateEnv.format(range.start, WEEK_HEADER_FORMAT)
+      let format = createFormatter(options.weekNumberFormat || DEFAULT_WEEK_NUM_FORMAT) // TODO: precompute
+      weekText = dateEnv.format(range.start, format)
 
       return (
         <th class={'fc-axis shrink fc-week-number'}>

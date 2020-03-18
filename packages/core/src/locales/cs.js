@@ -14,7 +14,7 @@ export default {
     day: "Den",
     list: "Agenda"
   },
-  weekLabel: "Týd",
+  weekText: "Týd",
   allDayText: "Celý den",
   eventLimitText: function(n) {
     return "+další: " + n;

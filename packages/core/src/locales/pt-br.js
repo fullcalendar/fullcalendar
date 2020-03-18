@@ -10,7 +10,7 @@ export default {
     day: "Dia",
     list: "Lista"
   },
-  weekLabel: "Sm",
+  weekText: "Sm",
   allDayText: "dia inteiro",
   eventLimitText: function(n) {
     return "mais +" + n;

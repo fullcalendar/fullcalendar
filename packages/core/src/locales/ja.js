@@ -10,7 +10,7 @@ export default {
     day: "日",
     list: "予定リスト"
   },
-  weekLabel: "週",
+  weekText: "週",
   allDayText: "終日",
   eventLimitText: function(n) {
     return "他 " + n + " 件";

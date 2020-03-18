@@ -15,7 +15,7 @@ export default {
     day: "Jour",
     list: "Planning"
   },
-  weekLabel: "Sem.",
+  weekText: "Sem.",
   allDayHtml: "Toute la<br/>journée",
   eventLimitText: "en plus",
   noEventsMessage: "Aucun événement à afficher"

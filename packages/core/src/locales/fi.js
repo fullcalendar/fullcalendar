@@ -14,7 +14,7 @@ export default {
     day: "Päivä",
     list: "Tapahtumat"
   },
-  weekLabel: "Vk",
+  weekText: "Vk",
   allDayText: "Koko päivä",
   eventLimitText: "lisää",
   noEventsMessage: "Ei näytettäviä tapahtumia"

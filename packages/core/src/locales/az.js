@@ -14,7 +14,7 @@ export default {
     day: "Gün",
     list: "Gündəm"
   },
-  weekLabel: "Həftə",
+  weekText: "Həftə",
   allDayText: "Bütün Gün",
   eventLimitText: function(n) {
     return "+ daha çox " + n;

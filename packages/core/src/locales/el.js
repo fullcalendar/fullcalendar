@@ -14,7 +14,7 @@ export default {
     day: "Ημέρα",
     list: "Ατζέντα"
   },
-  weekLabel: "Εβδ",
+  weekText: "Εβδ",
   allDayText: "Ολοήμερο",
   eventLimitText: "περισσότερα",
   noEventsMessage: "Δεν υπάρχουν γεγονότα προς εμφάνιση"

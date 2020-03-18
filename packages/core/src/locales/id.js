@@ -14,7 +14,7 @@ export default {
     day: "Hari",
     list: "Agenda"
   },
-  weekLabel: "Mg",
+  weekText: "Mg",
   allDayHtml: "Sehari<br/>penuh",
   eventLimitText: "lebih",
   noEventsMessage: "Tidak ada acara untuk ditampilkan"

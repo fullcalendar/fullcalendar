@@ -14,7 +14,7 @@ export default {
     day: "Күн",
     list: "Күн тәртібі"
   },
-  weekLabel: "Не",
+  weekText: "Не",
   allDayText: "Күні бойы",
   eventLimitText: function(n) {
     return "+ тағы " + n;

@@ -14,7 +14,7 @@ export default {
     day: "Дан",
     list: "Планер"
   },
-  weekLabel: "Сед",
+  weekText: "Сед",
   allDayText: "Цео дан",
   eventLimitText: function(n) {
     return "+ још " + n;

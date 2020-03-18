@@ -14,5 +14,5 @@ export default {
   allDayText: "כל היום",
   eventLimitText: "אחר",
   noEventsMessage: "אין אירועים להצגה",
-  weekLabel: "שבוע"
+  weekText: "שבוע"
 };

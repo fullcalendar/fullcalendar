@@ -53,7 +53,7 @@ export interface HookProps {
   hasEvents: boolean
 }
 
-const WEEK_NUM_FORMAT = createFormatter({ week: 'numeric' })
+const DEFAULT_WEEK_NUM_FORMAT = { week: 'narrow' }
 
 
 export default class TableCell extends DateComponent<TableCellProps> {
@@ -85,7 +85,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
               {props.showWeekNumber &&
                 <div class='fc-daygrid-week-number'>
                   <a data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null} data-fc-width-content={1}>
-                    {dateEnv.format(date, WEEK_NUM_FORMAT)}
+                    {dateEnv.format(date, createFormatter(options.weekNumberFormat || DEFAULT_WEEK_NUM_FORMAT))}
                   </a>
                 </div>
               }

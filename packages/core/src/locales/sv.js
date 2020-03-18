@@ -14,7 +14,7 @@ export default {
     day: "Dag",
     list: "Program"
   },
-  weekLabel: "v.",
+  weekText: "v.",
   allDayText: "Heldag",
   eventLimitText: "till",
   noEventsMessage: "Inga händelser att visa"

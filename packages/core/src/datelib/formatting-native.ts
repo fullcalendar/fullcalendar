@@ -142,7 +142,7 @@ function buildFormattingFunc(
     return function(date: ZonedMarker) {
       return formatWeekNumber(
         context.computeWeekNumber(date.marker),
-        context.weekLabel,
+        context.weekText,
         context.locale,
         extendedSettings.week
       )
@@ -275,13 +275,13 @@ function injectTzoStr(s: string, tzoStr: string): string {
   return s
 }
 
-function formatWeekNumber(num: number, weekLabel: string, locale: Locale, display?: 'numeric' | 'narrow' | 'short'): string {
+function formatWeekNumber(num: number, weekText: string, locale: Locale, display?: 'numeric' | 'narrow' | 'short'): string {
   let parts = []
 
   if (display === 'narrow') {
-    parts.push(weekLabel)
+    parts.push(weekText)
   } else if (display === 'short') {
-    parts.push(weekLabel, ' ')
+    parts.push(weekText, ' ')
   }
   // otherwise, considered 'numeric'
 

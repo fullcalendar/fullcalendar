@@ -14,7 +14,7 @@ export default {
     day: "दिन",
     list: "कार्यसूची"
   },
-  weekLabel: "हफ्ता",
+  weekText: "हफ्ता",
   allDayText: "सभी दिन",
   eventLimitText: function(n) {
     return "+अधिक " + n;

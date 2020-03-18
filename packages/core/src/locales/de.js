@@ -15,7 +15,7 @@ export default {
     day: "Tag",
     list: "Terminübersicht"
   },
-  weekLabel: "KW",
+  weekText: "KW",
   allDayText: "Ganztägig",
   eventLimitText: function(n) {
     return "+ weitere " + n;

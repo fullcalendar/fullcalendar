@@ -14,7 +14,7 @@ export default {
     day: "Diena",
     list: "Dienas kārtība"
   },
-  weekLabel: "Ned.",
+  weekText: "Ned.",
   allDayText: "Visu dienu",
   eventLimitText: function(n) {
     return "+vēl " + n;

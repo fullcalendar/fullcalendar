@@ -14,7 +14,7 @@ export default {
     day: "Dan",
     list: "Planеr"
   },
-  weekLabel: "Sed",
+  weekText: "Sed",
   allDayText: "Cеo dan",
   eventLimitText: function(n) {
     return "+ još " + n;

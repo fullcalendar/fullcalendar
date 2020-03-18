@@ -14,7 +14,7 @@ export default {
     day: "Ditë",
     list: "Listë"
   },
-  weekLabel: "Ja",
+  weekText: "Ja",
   allDayHtml: "Gjithë<br/>ditën",
   eventLimitText: function(n) {
     return "+më tepër " + n;

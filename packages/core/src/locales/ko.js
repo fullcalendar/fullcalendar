@@ -10,7 +10,7 @@ export default {
     day: "일",
     list: "일정목록"
   },
-  weekLabel: "주",
+  weekText: "주",
   allDayText: "종일",
   eventLimitText: "개",
   noEventsMessage: "일정이 없습니다"

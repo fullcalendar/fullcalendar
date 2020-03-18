@@ -14,7 +14,7 @@ export default {
     day: "Giorno",
     list: "Agenda"
   },
-  weekLabel: "Sm",
+  weekText: "Sm",
   allDayHtml: "Tutto il<br/>giorno",
   eventLimitText: function(n) {
     return "+altri " + n;

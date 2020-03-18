@@ -14,7 +14,7 @@ export default {
     day: "Päev",
     list: "Päevakord"
   },
-  weekLabel: "näd",
+  weekText: "näd",
   allDayText: "Kogu päev",
   eventLimitText: function(n) {
     return "+ veel " + n;
