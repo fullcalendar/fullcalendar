@@ -50,8 +50,8 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
             {...dataAttrs}
             {...props.extraDataAttrs}
           >
-            <div class='fc-timegrid-col-inner'>
-              <div class='fc-timegrid-col-events'>
+            <div class='fc-timegrid-col-origin'>
+              <div class='fc-timegrid-events'>
                 {/* the Fragments scope the keys */}
                 <Fragment>
                   {this.renderFgSegs(
@@ -71,9 +71,9 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
                 </Fragment>
               </div>
               {this.renderNowIndicator(props.nowIndicatorSegs)}
-              <Fragment>{this.renderFillSegs(props.businessHourSegs, interactionAffectedInstances, 'fc-nonbusiness')}</Fragment>
-              <Fragment>{this.renderFillSegs(props.bgEventSegs, interactionAffectedInstances, 'fc-bgevent')}</Fragment>
-              <Fragment>{this.renderFillSegs(props.dateSelectionSegs, interactionAffectedInstances, 'fc-highlight')}</Fragment>
+              <Fragment>{this.renderFillSegs(props.businessHourSegs, 'nonbusiness')}</Fragment>
+              <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bgevent')}</Fragment>
+              <Fragment>{this.renderFillSegs(props.dateSelectionSegs, 'highlight')}</Fragment>
             </div>
             {innerContent &&
               <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
@@ -129,7 +129,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
   }
 
 
-  renderFillSegs(segs: TimeColsSeg[], segIsNoDisplay: { [instanceId: string]: any }, className: string) {
+  renderFillSegs(segs: TimeColsSeg[], fillType: string) {
     let { context, props } = this
 
     if (!props.slatCoords) { return }
@@ -138,7 +138,9 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     computeSegVerticals(segs, props.date, props.slatCoords, context.options.eventMinHeight)
 
     return segs.map((seg) => (
-      <div class={className} style={this.computeSegTopBottomCss(seg)}></div>
+      <div class={`fc-timegrid-bg-harness`} style={this.computeSegTopBottomCss(seg)}>
+        <div class={`fc-timegrid-${fillType} fc-${fillType}`}></div>
+      </div>
     ))
   }
 

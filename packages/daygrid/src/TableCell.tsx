@@ -90,7 +90,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
                     <div class={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')} ref={rootElRef}>
                       <a ref={innerElRef}
                         data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null}
-                        data-fc-width-content={1}
+                        class='fc-scrollgrid-shrink-span'
                       >
                         {innerContent}
                       </a>

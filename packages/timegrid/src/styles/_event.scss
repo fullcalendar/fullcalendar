@@ -1,10 +1,4 @@
 
-.fc-timegrid-event-harness {
-  position: absolute;
-}
-
-
-
 .fc-timegrid-event {
   position: absolute;
   top: 0;
@@ -12,6 +6,7 @@
   left: 0;
   right: 0;
   overflow: hidden;
+  margin-bottom: 1px;
 
   display: block; /* make the <a> tag block */
   font-size: .85em;
@@ -21,31 +16,6 @@
   background-color: #3788d8;
   color: #fff; /* default TEXT color. TODO: test hovering over <a> when HREF and theme */
   text-decoration: none; /* if <a> has an href */
-}
-
-.fc-timegrid .fc-highlight,
-.fc-timegrid .fc-bgevent,
-.fc-timegrid .fc-nonbusiness {
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-
-.fc-timegrid-event { z-index: 5 }
-.fc-timegrid-event.fc-event-mirror { z-index: 4 }
-.fc-timegrid .fc-highlight { z-index: 3 }
-.fc-timegrid .fc-bgevent { z-index: 2 }
-.fc-timegrid .fc-nonbusiness { z-index: 1 }
-
-
-/* TimeGrid Event Styling
-----------------------------------------------------------------------------------------------------
-We use the full "fc-time-grid-event" class instead of using descendants because the event won't
-be a descendant of the grid when it is being dragged.
-*/
-
-.fc-timegrid-event {
-  margin-bottom: 1px;
 }
 
 .fc-timegrid-event-harness-inset .fc-timegrid-event {

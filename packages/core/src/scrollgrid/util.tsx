@@ -49,7 +49,7 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
 
 
 export function computeShrinkWidth(chunkEls: HTMLElement[]) { // all in same COL!
-  let shrinkCells = findElements(chunkEls, '.shrink')
+  let shrinkCells = findElements(chunkEls, '.fc-scrollgrid-shrink')
   let largestWidth = 0
 
   for (let shrinkCell of shrinkCells) {

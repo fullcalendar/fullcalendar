@@ -232,9 +232,13 @@ export default abstract class TimeColsView extends View {
       return (
         <WeekNumberRoot date={range.start} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
-            <th class={[ 'fc-axis shrink', 'fc-week-number' ].concat(classNames).join(' ')} ref={rootElRef}>
-              <div data-fc-width-all={1}>
-                <a data-navlink={navLinkData} data-fc-width-content={1} ref={innerElRef}>
+            <th ref={rootElRef} class={[
+              'fc-timegrid-view-axis',
+              'fc-scrollgrid-shrink',
+              'fc-week-number' // TODO: make part of WeekNumberRoot
+            ].concat(classNames).join(' ')}>
+              <div class='fc-scrollgrid-shrink-block'>
+                <a class='fc-timegrid-view-axis-inner fc-scrollgrid-shrink-span' data-navlink={navLinkData} ref={innerElRef}>
                   {innerContent}
                 </a>
               </div>
@@ -245,7 +249,7 @@ export default abstract class TimeColsView extends View {
     }
 
     return (
-      <th class='fc-axis'></th>
+      <th class='fc-timegrid-view-axis'></th>
     )
   }
 
@@ -260,9 +264,13 @@ export default abstract class TimeColsView extends View {
     return (
       <RenderHook name='allDay' mountProps={innerProps} dynamicProps={innerProps}>
         {(rootElRef, classNames, innerElRef, innerContent) => (
-          <td className={[ 'shrink', 'fc-axis' ].concat(classNames).join(' ')} ref={rootElRef}>
-            <div data-fc-width-all={1}>
-              <span data-fc-width-content={1} ref={innerElRef}>
+          <td ref={rootElRef} className={[
+            'fc-timegrid-view-axis',
+            'fc-scrollgrid-shrink',
+            'fc-allday' // TODO: have RenderHook supply this?
+          ].concat(classNames).join(' ')}>
+            <div class='fc-scrollgrid-shrink-block'>
+              <span class='fc-timegrid-view-axis-inner fc-scrollgrid-shrink-span' ref={innerElRef}>
                 {innerContent}
               </span>
             </div>
@@ -288,7 +296,9 @@ class TimeBodyAxis extends BaseComponent<TimeBodyAxisProps> {
 
   render(props: TimeBodyAxisProps) {
     return props.slatMetas.map((slatMeta: TimeSlatMeta) => (
-      <tr><TimeColsAxisCell {...slatMeta} /></tr>
+      <tr>
+        <TimeColsAxisCell {...slatMeta} />
+      </tr>
     ))
   }
 

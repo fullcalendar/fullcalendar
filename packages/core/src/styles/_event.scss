@@ -10,6 +10,17 @@
   opacity: 0.3;
 }
 
+.fc-bgevent,
+.fc-nonbusiness,
+.fc-highlight {
+  // will always have a harness
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 
 .fc-event-dot {
   background-color: #3788d8; /* default BACKGROUND color */

@@ -5,8 +5,7 @@
   min-height: 100%; // fill height always ... even when slat table doesn't grow
 }
 
-
-.fc-timegrid-slats {
+.fc-timegrid-slots {
   position: relative;
   z-index: 2;
 }
@@ -24,55 +23,66 @@
   }
 }
 
-.fc-timegrid-col-inner,
-.fc-timegrid-col-events {
+.fc-timegrid-col-origin {
   position: relative;
+}
+
+.fc-timegrid-events {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 0;
 }
 
-.fc-ltr .fc-timegrid-col-events { /* space on the sides of events for LTR (default) */
-  margin: 0 2.5% 0 2px;
-}
-
-.fc-rtl .fc-timegrid-col-events { /* space on the sides of events for RTL */
-  margin: 0 2px 0 2.5%;
-}
-
-
-.fc-timegrid-col-inner .fc-nonbusiness {
-  z-index: 1;
-}
-
-.fc-timegrid-col-inner .fc-bgevent {
-  z-index: 2;
-}
-
-.fc-timegrid-col-inner .fc-highlight {
-  z-index: 3;
-}
-
-.fc-timegrid-col-inner .fc-event {
-  z-index: 4;
-}
-
-.fc-timegrid-col-inner .fc-now-indicator-line {
-  z-index: 5;
-}
-
-.fc-timegrid-col-events {
-  z-index: 6;
-}
 
 
 // SLATS (lines that run horizontally)
 
-.fc-slat { // a <td>
+.fc-timegrid-slot { // a <td>
   height: 1.5em;
   border-bottom: 0 !important;
     /* each cell is responsible for its top border */
     /* is !important because competing with theme declarations */
 }
 
-.fc-slat.fc-minor {
-  border-top-style: dotted;
+.fc-timegrid-slot-minor {
+  border-top-style: dotted !important;
 }
+
+.fc .fc-timegrid-view-axis,
+.fc .fc-timegrid-slot-axis {
+  vertical-align: middle;
+}
+
+.fc-timegrid-view-axis-inner,
+.fc-timegrid-slot-axis-inner {
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+
+
+.fc-timegrid-bg-harness {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+
+.fc-ltr .fc-timegrid-events { /* space on the sides of events for LTR (default) */
+  margin: 0 2.5% 0 2px;
+}
+
+.fc-rtl .fc-timegrid-events { /* space on the sides of events for RTL */
+  margin: 0 2px 0 2.5%;
+}
+
+.fc-timegrid-event-harness {
+  position: absolute;
+}
+
+.fc-timegrid-events { z-index: 4 } // events are z-index-scoped within
+.fc-timegrid-highlight { z-index: 3 }
+.fc-timegrid-bgevent { z-index: 2 }
+.fc-timegrid-nonbusiness { z-index: 1 }

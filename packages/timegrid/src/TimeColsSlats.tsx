@@ -63,7 +63,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     let { theme } = context
 
     return (
-      <div class='fc-timegrid-slats' ref={this.rootElRef}>
+      <div class='fc-timegrid-slots' ref={this.rootElRef}>
         <table
           class={theme.getClass('table') + ' vgrow' /* why not use rowsGrow like resource view? */}
           style={{
@@ -142,7 +142,11 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
             date: context.dateEnv.toDate(slatMeta.date),
             view: context.view
           }
-          let classNames = [ 'fc-slat', 'fc-time', (!slatMeta.isLabeled ? ' fc-minor' : '') ]
+          let classNames = [
+            'fc-timegrid-slot',
+            'fc-timegrid-slot-lane',
+            slatMeta.isLabeled ? '' : 'fc-timegrid-slot-minor'
+          ]
 
           return (
             <tr ref={slatElRefs.createRef(i)}>
@@ -176,7 +180,11 @@ const DEFAULT_SLAT_LABEL_FORMAT = {
 }
 
 export function TimeColsAxisCell(props: TimeSlatMeta) {
-  let classNames = [ 'fc-slat', 'fc-time', props.isLabeled ? 'shrink' : 'fc-minor', 'fc-axis' ]
+  let classNames = [
+    'fc-timegrid-slot',
+    'fc-timegrid-slot-axis',
+    props.isLabeled ? 'fc-scrollgrid-shrink' : 'fc-timegrid-slot-minor'
+  ]
 
   return (
     <ComponentContextType.Consumer>
@@ -204,8 +212,8 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             <RenderHook name='slotLabel' mountProps={mountProps} dynamicProps={dynamicProps} defaultInnerContent={renderInnerContent}>
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
                 <td ref={rootElRef} class={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
-                  <div data-fc-width-all={1}>
-                    <span data-fc-width-content={1} ref={innerElRef}>
+                  <div class='fc-scrollgrid-shrink-block'>
+                    <span className='fc-timegrid-slot-axis-inner fc-scrollgrid-shrink-span' ref={innerElRef}>
                       {innerContent}
                     </span>
                   </div>
