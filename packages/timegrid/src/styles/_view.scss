@@ -1,7 +1,5 @@
 
-// the divider between daygrid the timegrid
 // high precedence to overcome theme
-// TODO: better selector. add className to HTML (.fc-timeGrid-view-divider?)
-.fc .fc-timeGrid-view .fc-divider {
+.fc .fc-timegrid-view-divider {
   padding: 0 0 2px;
 }

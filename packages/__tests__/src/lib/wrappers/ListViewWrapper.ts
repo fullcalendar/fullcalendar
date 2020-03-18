@@ -5,7 +5,7 @@ import { formatIsoDay } from '../datelib-utils'
 
 export default class ListViewWrapper extends ViewWrapper {
 
-  static EVENT_DOT_CLASSNAME = 'fc-event-dot'
+  static EVENT_DOT_CLASSNAME = 'fc-list-event-dot'
 
 
   constructor(calendar: Calendar) {
@@ -14,15 +14,15 @@ export default class ListViewWrapper extends ViewWrapper {
 
 
   getEventEls() {
-    return findElements(this.el, '.fc-list-item')
+    return findElements(this.el, '.fc-list-event')
   }
 
 
   getEventInfo() {
     return this.getEventEls().map((eventEl) => {
       return {
-        title: $(eventEl).find('.fc-list-item-title').text(),
-        timeText: $(eventEl).find('.fc-list-item-time').text()
+        title: $(eventEl).find('.fc-list-event-title').text(),
+        timeText: $(eventEl).find('.fc-list-event-time').text()
       }
     })
   }
@@ -32,8 +32,8 @@ export default class ListViewWrapper extends ViewWrapper {
     return this.getHeadingEls().map(function(el) {
       let $el = $(el)
       return {
-        mainText: $el.find('.fc-list-heading-main').text() || '',
-        altText: $el.find('.fc-list-heading-alt').text() || '',
+        mainText: $el.find('.fc-list-day-text').text() || '',
+        altText: $el.find('.fc-list-day-side-text').text() || '',
         date: new Date(el.getAttribute('data-date'))
       }
     })
@@ -41,7 +41,7 @@ export default class ListViewWrapper extends ViewWrapper {
 
 
   getHeadingEls() {
-    return findElements(this.el, '.fc-list-heading')
+    return findElements(this.el, '.fc-list-day')
   }
 
 
@@ -59,7 +59,7 @@ export default class ListViewWrapper extends ViewWrapper {
     if (typeof dayDate === 'string') {
       dayDate = new Date(dayDate)
     }
-    return this.el.querySelector('.fc-list-heading[data-date="' + formatIsoDay(dayDate) + '"] a.fc-list-heading-main')
+    return this.el.querySelector('.fc-list-day[data-date="' + formatIsoDay(dayDate) + '"] a.fc-list-day-text')
   }
 
 

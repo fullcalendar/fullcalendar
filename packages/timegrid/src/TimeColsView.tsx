@@ -89,7 +89,7 @@ export default abstract class TimeColsView extends View {
     return (
       <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div class={[ 'fc-timeGrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div class={[ 'fc-timegrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
               forPrint={props.forPrint}
               vGrow={!props.isHeightAuto}
@@ -154,7 +154,7 @@ export default abstract class TimeColsView extends View {
           <tr>
             <td
               colSpan={2}
-              class={'fc-divider ' + context.theme.getClass('tableCellShaded')}
+              class={'fc-timegrid-view-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
@@ -180,7 +180,7 @@ export default abstract class TimeColsView extends View {
     return (
       <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div class={[ 'fc-timeGrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div class={[ 'fc-timegrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
               forPrint={props.forPrint}
               vGrow={!props.isHeightAuto}

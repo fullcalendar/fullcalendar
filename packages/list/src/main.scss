@@ -4,7 +4,7 @@
 
 /* possibly reusable */
 
-.fc-event-dot {
+.fc-dot {
   display: inline-block;
   width: 10px;
   height: 10px;
@@ -34,78 +34,62 @@
 
 /* day headings with the list */
 
-.fc-list-heading {
+.fc-list-day {
   border-bottom-width: 1px;
 }
 
-.fc-list-heading td {
+.fc-list-day td {
   font-weight: bold;
 }
 
-.fc-unthemed .fc-list-heading td {
+.fc-unthemed .fc-list-day td {
   background: $fc-unthemed-muted-bg-color;
   background: var(--fc-unthemed-muted-bg-color, $fc-unthemed-muted-bg-color);
 }
 
-.fc-ltr .fc-list-heading-main { float: left; }
-.fc-ltr .fc-list-heading-alt { float: right; }
+.fc-ltr .fc-list-day-text { float: left; }
+.fc-ltr .fc-list-day-side-text { float: right; }
 
-.fc-rtl .fc-list-heading-main { float: right; }
-.fc-rtl .fc-list-heading-alt { float: left; }
+.fc-rtl .fc-list-day-text { float: right; }
+.fc-rtl .fc-list-day-side-text { float: left; }
 
 /* event list items */
 
-.fc-unthemed .fc-list-item:hover td {
+.fc-unthemed .fc-list-event:hover td {
   background-color: #f5f5f5;
 }
 
-.fc-list-item.fc-has-url {
+.fc-list-event.fc-has-url {
   cursor: pointer; /* whole row will be clickable */
 }
 
-.fc-list-item-marker,
-.fc-list-item-time {
+.fc-list-event-graphic,
+.fc-list-event-time {
   white-space: nowrap;
   width: 1px;
 }
 
 /* make the dot closer to the event title */
-.fc-ltr .fc-list-item-marker { padding-right: 0; }
-.fc-rtl .fc-list-item-marker { padding-left: 0; }
+.fc-ltr .fc-list-event-graphic { padding-right: 0; }
+.fc-rtl .fc-list-event-graphic { padding-left: 0; }
 
-.fc-list-item-title a {
+.fc-list-event-title a {
   /* every event title cell has an <a> tag */
   text-decoration: none;
   color: inherit;
 }
 
-.fc-list-item-title a[href]:hover {
+.fc-list-event-title a[href]:hover {
   /* hover effect only on titles with hrefs */
   text-decoration: underline;
 }
 
 /* message when no events */
 
-.fc-list-empty-wrap2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.fc-list-empty-wrap1 {
-  width: 100%;
-  height: 100%;
-  display: table;
-}
-
 .fc-list-empty {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-}
-
-.fc-unthemed .fc-list-empty { /* theme will provide own background */
   background-color: #eee;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

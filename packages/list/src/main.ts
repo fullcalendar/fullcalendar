@@ -23,19 +23,19 @@ export default createPlugin({
       type: 'list',
       duration: { weeks: 1 },
       listDayFormat: { weekday: 'long' }, // day-of-week is more important
-      listDayAltFormat: { month: 'long', day: 'numeric', year: 'numeric' }
+      listDaySideFormat: { month: 'long', day: 'numeric', year: 'numeric' }
     },
 
     listMonth: {
       type: 'list',
       duration: { month: 1 },
-      listDayAltFormat: { weekday: 'long' } // day-of-week is nice-to-have
+      listDaySideFormat: { weekday: 'long' } // day-of-week is nice-to-have
     },
 
     listYear: {
       type: 'list',
       duration: { year: 1 },
-      listDayAltFormat: { weekday: 'long' } // day-of-week is nice-to-have
+      listDaySideFormat: { weekday: 'long' } // day-of-week is nice-to-have
     }
 
   }

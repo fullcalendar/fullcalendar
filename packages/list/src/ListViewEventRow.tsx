@@ -37,14 +37,14 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
         isDateSelecting={props.isDateSelecting}
       >
         {(rootElRef, classNames, style, innerElRef, innerContent, dynamicProps) => (
-          <tr className={[ 'fc-list-item' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <tr className={[ 'fc-list-event' ].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context)}
-            <td class='fc-list-item-marker'>
-              <span class='fc-event-dot' style={{
+            <td class='fc-list-event-graphic'>
+              <span class='fc-list-event-dot fc-dot' style={{
                 backgroundColor: dynamicProps.event.backgroundColor
               }} />
             </td>
-            <td class='fc-list-item-title' ref={innerElRef}>
+            <td class='fc-list-event-title' ref={innerElRef}>
               {innerContent}
             </td>
           </tr>
@@ -82,7 +82,7 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
       return (
         <RenderHook name='allDay' mountProps={innerProps} dynamicProps={innerProps}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
-            <td class={[ 'fc-list-item-time' ].concat(classNames).join(' ')} ref={rootElRef}>
+            <td class={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
               {innerContent}
             </td>
           )}
@@ -123,7 +123,7 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
     }
 
     return (
-      <td class='fc-list-item-time'>
+      <td class='fc-list-event-time'>
         {timeText}
       </td>
     )

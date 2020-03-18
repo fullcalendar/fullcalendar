@@ -84,12 +84,8 @@ export default class ListView extends View {
     return (
       <RenderHook name='noEvents' mountProps={innerProps} dynamicProps={innerProps}>
         {(rootElRef, classNames, innerElRef, innerContent) => (
-          <div className={[ 'fc-list-empty-wrap2' ].concat(classNames).join(' ')} ref={rootElRef}>
-            <div class='fc-list-empty-wrap1'>
-              <div class='fc-list-empty' ref={innerElRef}>
-                {innerContent}
-              </div>
-            </div>
+          <div className={[ 'fc-list-empty' ].concat(classNames).join(' ')} ref={rootElRef}>
+            {innerContent}
           </div>
         )}
       </RenderHook>

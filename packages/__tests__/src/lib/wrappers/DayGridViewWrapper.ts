@@ -6,7 +6,7 @@ import DayHeaderWrapper from './DayHeaderWrapper'
 export default class DayGridViewWrapper extends ViewWrapper {
 
   constructor(calendar: Calendar) {
-    super(calendar, 'fc-dayGrid-view')
+    super(calendar, 'fc-daygrid-view')
   }
 
 

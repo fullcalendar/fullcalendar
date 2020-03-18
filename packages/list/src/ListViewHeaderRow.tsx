@@ -8,9 +8,9 @@ export interface ListViewHeaderRowProps {
   todayRange: DateRange
 }
 
-interface DynamicProps extends DayCellDynamicProps {
-  mainText: string
-  altText: string
+interface DynamicProps extends DayCellDynamicProps { // doesn't enforce much since DayCellDynamicProps allow extra props
+  text: string
+  sideText: string
 }
 
 
@@ -20,20 +20,20 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
     let { theme, dateEnv, options } = context
     let { dayDate } = props
     let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
-    let altFormat = createFormatter(options.listDayAltFormat) // TODO: cache
-    let mainText = mainFormat ? dateEnv.format(dayDate, mainFormat) : '' // will ever be falsy?
-    let altText = altFormat ? dateEnv.format(dayDate, altFormat) : '' // will ever be falsy? also, BAD NAME "alt"
+    let sideFormat = createFormatter(options.listDaySideFormat) // TODO: cache
+    let text = mainFormat ? dateEnv.format(dayDate, mainFormat) : '' // will ever be falsy?
+    let sideText = sideFormat ? dateEnv.format(dayDate, sideFormat) : '' // will ever be falsy? also, BAD NAME "alt"
 
     return (
       <DayCellRoot date={dayDate}
         todayRange={props.todayRange}
-        extraDynamicProps={{ mainText, altText }}
+        extraDynamicProps={{ text, sideText }}
         defaultInnerContent={renderInnerContent}
       >
         {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
           <tr
             ref={rootElRef}
-            className={[ 'fc-list-heading' ].concat(classNames).join(' ')}
+            className={[ 'fc-list-day' ].concat(classNames).join(' ')}
             {...dataAttrs}
           >
             <td colSpan={3} className={theme.getClass('tableCellShaded')} ref={innerElRef}>
@@ -50,14 +50,14 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
 
 function renderInnerContent(props: DynamicProps) {
   return [
-    props.mainText &&
-      <a data-navlink={props.navLinkData} className='fc-list-heading-main'>
-        {props.mainText}
+    props.text &&
+      <a className='fc-list-day-text' data-navlink={props.navLinkData}>
+        {props.text}
       </a>
     ,
-    props.altText &&
-      <a data-navlink={props.navLinkData} className='fc-list-heading-alt'>
-        {props.altText}
+    props.sideText &&
+      <a className='fc-list-day-side-text' data-navlink={props.navLinkData}>
+        {props.sideText}
       </a>
   ]
 }

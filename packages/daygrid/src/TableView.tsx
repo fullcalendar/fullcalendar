@@ -50,7 +50,7 @@ export default abstract class TableView<State={}> extends View<State> {
     return (
       <ViewRoot viewSpec={props.viewSpec}>
         {(rootElRef, classNames) => (
-          <div ref={rootElRef} class={[ 'fc-dayGrid-view' ].concat(classNames).join(' ')}>
+          <div ref={rootElRef} class={[ 'fc-daygrid-view' ].concat(classNames).join(' ')}>
             <SimpleScrollGrid
               vGrow={!props.isHeightAuto}
               forPrint={props.forPrint}
@@ -100,7 +100,7 @@ export default abstract class TableView<State={}> extends View<State> {
     return (
       <ViewRoot viewSpec={props.viewSpec}>
         {(rootElRef, classNames) => (
-          <div ref={rootElRef} class={[ 'fc-dayGrid-view' ].concat(classNames).join(' ')}>
+          <div ref={rootElRef} class={[ 'fc-daygrid-view' ].concat(classNames).join(' ')}>
             <ScrollGrid
               vGrow={!props.isHeightAuto}
               forPrint={props.forPrint}
