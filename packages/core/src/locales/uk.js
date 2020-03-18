@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ще " + n + "...";
   },
-  noEventsMessage: "Немає подій для відображення"
+  noEventsContent: "Немає подій для відображення"
 };

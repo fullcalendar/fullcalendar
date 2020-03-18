@@ -15,5 +15,5 @@ export default {
   moreLinkText: function(n) {
     return "mais +" + n;
   },
-  noEventsMessage: "Não há eventos para mostrar"
+  noEventsContent: "Não há eventos para mostrar"
 };

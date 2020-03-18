@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "masih ada " + n + " acara";
   },
-  noEventsMessage: "Tiada peristiwa untuk dipaparkan"
+  noEventsContent: "Tiada peristiwa untuk dipaparkan"
 };

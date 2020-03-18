@@ -20,7 +20,8 @@ import {
   sortEventSegs,
   getSegMeta,
   NowTimer,
-  ViewRoot
+  ViewRoot,
+  RenderHook
 } from '@fullcalendar/core'
 import ListViewHeaderRow from './ListViewHeaderRow'
 import ListViewEventRow from './ListViewEventRow'
@@ -78,14 +79,20 @@ export default class ListView extends View {
 
 
   renderEmptyMessage() {
+    let innerProps = { view: this.context.view }
+
     return (
-      <div class='fc-list-empty-wrap2'>
-        <div class='fc-list-empty-wrap1'>
-          <div class='fc-list-empty'>
-            {this.context.options.noEventsMessage}
+      <RenderHook name='noEvents' mountProps={innerProps} dynamicProps={innerProps}>
+        {(rootElRef, classNames, innerElRef, innerContent) => (
+          <div className={[ 'fc-list-empty-wrap2' ].concat(classNames).join(' ')} ref={rootElRef}>
+            <div class='fc-list-empty-wrap1'>
+              <div class='fc-list-empty' ref={innerElRef}>
+                {innerContent}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+      </RenderHook>
     )
   }
 

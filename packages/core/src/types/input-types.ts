@@ -126,7 +126,6 @@ export interface OptionsInputBase {
   slotEventOverlap?: boolean
   listDayFormat?: FormatterInput | boolean
   listDayAltFormat?: FormatterInput | boolean
-  noEventsMessage?: string
   defaultDate?: DateInput
   nowIndicator?: boolean
   visibleRange?: ((currentDate: Date) => DateRangeInput) | DateRangeInput

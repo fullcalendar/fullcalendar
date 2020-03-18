@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ďalšie: " + n;
   },
-  noEventsMessage: "Žiadne akcie na zobrazenie"
+  noEventsContent: "Žiadne akcie na zobrazenie"
 };

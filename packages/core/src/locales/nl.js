@@ -17,5 +17,5 @@ export default {
   },
   allDayText: "Hele dag",
   moreLinkText: "extra",
-  noEventsMessage: "Geen evenementen om te laten zien"
+  noEventsContent: "Geen evenementen om te laten zien"
 };

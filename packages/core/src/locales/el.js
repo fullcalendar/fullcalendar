@@ -17,5 +17,5 @@ export default {
   weekText: "Εβδ",
   allDayText: "Ολοήμερο",
   moreLinkText: "περισσότερα",
-  noEventsMessage: "Δεν υπάρχουν γεγονότα προς εμφάνιση"
+  noEventsContent: "Δεν υπάρχουν γεγονότα προς εμφάνιση"
 };

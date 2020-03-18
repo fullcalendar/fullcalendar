@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+vēl " + n;
   },
-  noEventsMessage: "Nav notikumu"
+  noEventsContent: "Nav notikumu"
 };

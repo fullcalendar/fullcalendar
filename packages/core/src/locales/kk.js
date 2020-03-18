@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ тағы " + n;
   },
-  noEventsMessage: "Көрсету үшін оқиғалар жоқ"
+  noEventsContent: "Көрсету үшін оқиғалар жоқ"
 };

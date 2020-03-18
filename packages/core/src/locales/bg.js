@@ -18,5 +18,5 @@ export default {
   moreLinkText: function(n) {
     return "+още " + n;
   },
-  noEventsMessage: "Няма събития за показване"
+  noEventsContent: "Няма събития за показване"
 };

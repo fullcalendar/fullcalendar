@@ -47,7 +47,7 @@ const RAW_EN_LOCALE = {
   weekText: 'W',
   allDayText: 'all-day',
   moreLinkText: 'more',
-  noEventsMessage: 'No events to display'
+  noEventsContent: 'No events to display'
 }
 
 

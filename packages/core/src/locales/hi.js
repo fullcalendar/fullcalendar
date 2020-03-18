@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+अधिक " + n;
   },
-  noEventsMessage: "कोई घटनाओं को प्रदर्शित करने के लिए"
+  noEventsContent: "कोई घटनाओं को प्रदर्शित करने के लिए"
 };

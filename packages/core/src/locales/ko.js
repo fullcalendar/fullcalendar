@@ -13,5 +13,5 @@ export default {
   weekText: "주",
   allDayText: "종일",
   moreLinkText: "개",
-  noEventsMessage: "일정이 없습니다"
+  noEventsContent: "일정이 없습니다"
 };

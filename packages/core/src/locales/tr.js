@@ -17,5 +17,5 @@ export default {
   weekText: "Hf",
   allDayText: "Tüm gün",
   moreLinkText: "daha fazla",
-  noEventsMessage: "Gösterilecek etkinlik yok"
+  noEventsContent: "Gösterilecek etkinlik yok"
 };

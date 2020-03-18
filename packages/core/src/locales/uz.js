@@ -11,5 +11,5 @@ export default {
   moreLinkText: function(n) {
     return "+ yana " + n;
   },
-  noEventsMessage: "Ko'rsatish uchun voqealar yo'q"
+  noEventsContent: "Ko'rsatish uchun voqealar yo'q"
 }

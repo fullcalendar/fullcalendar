@@ -18,5 +18,5 @@ export default {
   weekText: "Sm",
   allDayHtml: "Toute la<br/>journée",
   moreLinkText: "en plus",
-  noEventsMessage: "Aucun événement à afficher"
+  noEventsContent: "Aucun événement à afficher"
 };

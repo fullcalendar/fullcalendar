@@ -15,5 +15,5 @@ export default {
   moreLinkText: function(n) {
     return "他 " + n + " 件";
   },
-  noEventsMessage: "表示する予定はありません"
+  noEventsContent: "表示する予定はありません"
 };

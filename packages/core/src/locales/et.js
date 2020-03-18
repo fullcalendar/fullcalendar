@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ veel " + n;
   },
-  noEventsMessage: "Kuvamiseks puuduvad sündmused"
+  noEventsContent: "Kuvamiseks puuduvad sündmused"
 };

@@ -20,5 +20,5 @@ export default {
   moreLinkText: function(n) {
     return "+ weitere " + n;
   },
-  noEventsMessage: "Keine Ereignisse anzuzeigen"
+  noEventsContent: "Keine Ereignisse anzuzeigen"
 };

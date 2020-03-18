@@ -20,5 +20,5 @@ export default {
   moreLinkText: function(n) {
     return "بیش از " + n;
   },
-  noEventsMessage: "هیچ رویدادی به نمایش"
+  noEventsContent: "هیچ رویدادی به نمایش"
 };

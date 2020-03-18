@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+alte " + n;
   },
-  noEventsMessage: "Nu există evenimente de afișat"
+  noEventsContent: "Nu există evenimente de afișat"
 };

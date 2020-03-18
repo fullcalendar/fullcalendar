@@ -17,5 +17,5 @@ export default {
   },
   allDayHtml: "Heeldag",
   moreLinkText: "Addisionele",
-  noEventsMessage: "Daar is geen gebeurtenisse nie"
+  noEventsContent: "Daar is geen gebeurtenisse nie"
 };

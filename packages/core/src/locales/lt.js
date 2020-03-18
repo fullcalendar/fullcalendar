@@ -17,5 +17,5 @@ export default {
   weekText: "SAV",
   allDayText: "Visą dieną",
   moreLinkText: "daugiau",
-  noEventsMessage: "Nėra įvykių rodyti"
+  noEventsContent: "Nėra įvykių rodyti"
 };

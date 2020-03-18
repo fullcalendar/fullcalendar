@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+më tepër " + n;
   },
-  noEventsMessage: "Nuk ka evente për të shfaqur"
+  noEventsContent: "Nuk ka evente për të shfaqur"
 };
