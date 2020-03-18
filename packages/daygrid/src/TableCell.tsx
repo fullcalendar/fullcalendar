@@ -1,5 +1,4 @@
 import {
-  createFormatter,
   Ref,
   ComponentChildren,
   h,
@@ -13,6 +12,7 @@ import {
   buildNavLinkData,
   DayCellDynamicProps,
   RenderHook,
+  WeekNumberRoot,
 } from '@fullcalendar/core'
 
 
@@ -62,7 +62,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
 
 
   render(props: TableCellProps, state: {}, context: ComponentContext) {
-    let { dateEnv, options } = context
+    let { options } = context
     let { date } = props
 
     return (
@@ -85,11 +85,18 @@ export default class TableCell extends DateComponent<TableCellProps> {
           >
             <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&
-                <div class='fc-daygrid-week-number'>
-                  <a data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null} data-fc-width-content={1}>
-                    {dateEnv.format(date, createFormatter(options.weekNumberFormat || DEFAULT_WEEK_NUM_FORMAT))}
-                  </a>
-                </div>
+                <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
+                  {(rootElRef, classNames, innerElRef, innerContent) => (
+                    <div class={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')} ref={rootElRef}>
+                      <a ref={innerElRef}
+                        data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null}
+                        data-fc-width-content={1}
+                      >
+                        {innerContent}
+                      </a>
+                    </div>
+                  )}
+                </WeekNumberRoot>
               }
               {innerContent &&
                 <div class='fc-daygrid-day-header' ref={innerElRef}>

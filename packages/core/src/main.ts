@@ -195,5 +195,6 @@ export { default as StandardEvent, StandardEventProps } from './common/StandardE
 
 export { DayCellRoot, DayCellRootProps, DayCellDynamicProps } from './common/DayCellRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
+export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'

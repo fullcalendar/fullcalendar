@@ -1,7 +1,7 @@
 import {
   h, createRef,
   View,
-  createFormatter, diffDays,
+  diffDays,
   SimpleScrollGridSection,
   VNode,
   SimpleScrollGrid,
@@ -9,7 +9,8 @@ import {
   ScrollGridSectionConfig,
   BaseComponent,
   buildNavLinkData,
-  ViewRoot
+  ViewRoot,
+  WeekNumberRoot
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -219,26 +220,26 @@ export default abstract class TimeColsView extends View {
 
 
   renderHeadAxis = () => {
-    let { dateEnv, options } = this.context
+    let { options } = this.context
     let range = this.props.dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
     let navLinkData = (options.navLinks && dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
       ? buildNavLinkData(range.start, 'week')
       : null
-    let weekText
 
     if (options.weekNumbers) {
-      let format = createFormatter(options.weekNumberFormat || DEFAULT_WEEK_NUM_FORMAT) // TODO: precompute
-      weekText = dateEnv.format(range.start, format)
-
       return (
-        <th class={'fc-axis shrink fc-week-number'}>
-          <div data-fc-width-all={1}>
-            <a data-navlink={navLinkData} data-fc-width-content={1}>
-              {weekText}
-            </a>
-          </div>
-        </th>
+        <WeekNumberRoot date={range.start} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
+          {(rootElRef, classNames, innerElRef, innerContent) => (
+            <th class={[ 'fc-axis shrink', 'fc-week-number' ].concat(classNames).join(' ')} ref={rootElRef}>
+              <div data-fc-width-all={1}>
+                <a data-navlink={navLinkData} data-fc-width-content={1} ref={innerElRef}>
+                  {innerContent}
+                </a>
+              </div>
+            </th>
+          )}
+        </WeekNumberRoot>
       )
     }
 
