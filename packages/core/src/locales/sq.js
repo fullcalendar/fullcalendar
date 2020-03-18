@@ -15,7 +15,7 @@ export default {
     list: "Listë"
   },
   weekText: "Ja",
-  allDayHtml: "Gjithë<br/>ditën",
+  allDayContent: "Gjithë ditën",
   moreLinkText: function(n) {
     return "+më tepër " + n;
   },

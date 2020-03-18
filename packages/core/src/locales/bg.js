@@ -14,7 +14,7 @@ export default {
     day: "Ден",
     list: "График"
   },
-  allDayText: "Цял ден",
+  allDayContent: "Цял ден",
   moreLinkText: function(n) {
     return "+още " + n;
   },

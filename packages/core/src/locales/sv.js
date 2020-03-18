@@ -15,7 +15,7 @@ export default {
     list: "Program"
   },
   weekText: "v.",
-  allDayText: "Heldag",
+  allDayContent: "Heldag",
   moreLinkText: "till",
   noEventsContent: "Inga händelser att visa"
 };

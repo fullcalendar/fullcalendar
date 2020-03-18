@@ -15,7 +15,7 @@ export default {
     list: "Lịch biểu"
   },
   weekText: "Tu",
-  allDayText: "Cả ngày",
+  allDayContent: "Cả ngày",
   moreLinkText: function(n) {
     return "+ thêm " + n;
   },

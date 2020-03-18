@@ -16,7 +16,7 @@ export default {
     list: "Terminübersicht"
   },
   weekText: "KW",
-  allDayText: "Ganztägig",
+  allDayContent: "Ganztägig",
   moreLinkText: function(n) {
     return "+ weitere " + n;
   },

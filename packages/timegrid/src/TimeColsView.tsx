@@ -10,7 +10,8 @@ import {
   BaseComponent,
   buildNavLinkData,
   ViewRoot,
-  WeekNumberRoot
+  WeekNumberRoot,
+  RenderHook
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -254,23 +255,20 @@ export default abstract class TimeColsView extends View {
 
 
   renderTableRowAxis = () => {
-    let { options } = this.context
-    let spanAttrs = {} as any
-    let child = options.allDayText
-
-    if (typeof options.allDayHtml === 'string') {
-      spanAttrs.dangerouslySetInnerHTML = { __html: options.allDayHtml }
-      child = null
-    }
+    let innerProps = { view: this.context.view }
 
     return (
-      <td class='shrink fc-axis'>
-        <div data-fc-width-all={1}>
-          <span {...spanAttrs} data-fc-width-content={1}>
-            {child}
-          </span>
-        </div>
-      </td>
+      <RenderHook name='allDay' mountProps={innerProps} dynamicProps={innerProps}>
+        {(rootElRef, classNames, innerElRef, innerContent) => (
+          <td className={[ 'shrink', 'fc-axis' ].concat(classNames).join(' ')} ref={rootElRef}>
+            <div data-fc-width-all={1}>
+              <span data-fc-width-content={1} ref={innerElRef}>
+                {innerContent}
+              </span>
+            </div>
+          </td>
+        )}
+      </RenderHook>
     )
   }
 

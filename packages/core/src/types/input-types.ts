@@ -115,7 +115,7 @@ export interface OptionsInputBase {
   now?: DateInput | (() => DateInput)
   defaultView?: string
   allDaySlot?: boolean
-  allDayText?: string
+  allDayContent?: string
   slotDuration?: DurationInput
   slotLabelFormat?: FormatterInput
   slotLabelInterval?: DurationInput
@@ -190,7 +190,6 @@ export interface OptionsInputBase {
   allDayMaintainDuration?: boolean
   eventResizableFromStart?: boolean
   timeGridEventMinHeight?: number
-  allDayHtml?: string
   eventDragMinDistance?: number
   eventSourceFailure?: any
   eventSourceSuccess?: any

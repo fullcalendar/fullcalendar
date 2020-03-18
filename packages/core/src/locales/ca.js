@@ -15,7 +15,7 @@ export default {
     list: "Agenda"
   },
   weekText: "Set",
-  allDayText: "Tot el dia",
+  allDayContent: "Tot el dia",
   moreLinkText: "més",
   noEventsContent: "No hi ha esdeveniments per mostrar"
 };

@@ -11,7 +11,7 @@ export default {
     list: "活動列表"
   },
   weekText: "周",
-  allDayText: "整天",
+  allDayContent: "整天",
   moreLinkText: '顯示更多',
   noEventsContent: "没有任何活動"
 };

@@ -11,7 +11,7 @@ export default {
     list: "График"
   },
   weekText: "Сед",
-  allDayText: "Цел ден",
+  allDayContent: "Цел ден",
   moreLinkText: function(n) {
     return "+повеќе " + n;
   },

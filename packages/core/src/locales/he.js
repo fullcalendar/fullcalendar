@@ -11,7 +11,7 @@ export default {
     day: "יום",
     list: "סדר יום"
   },
-  allDayText: "כל היום",
+  allDayContent: "כל היום",
   moreLinkText: "אחר",
   noEventsContent: "אין אירועים להצגה",
   weekText: "שבוע"

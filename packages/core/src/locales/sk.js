@@ -15,7 +15,7 @@ export default {
     list: "Rozvrh"
   },
   weekText: "Ty",
-  allDayText: "Celý deň",
+  allDayContent: "Celý deň",
   moreLinkText: function(n) {
     return "+ďalšie: " + n;
   },

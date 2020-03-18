@@ -16,7 +16,7 @@ export default {
     list: "أجندة"
   },
   weekText: "أسبوع",
-  allDayText: "اليوم كله",
+  allDayContent: "اليوم كله",
   moreLinkText: "أخرى",
   noEventsContent: "أي أحداث لعرض"
 };

@@ -18,7 +18,7 @@ export default {
     list: "กำหนดการ"
   },
   weekText: "สัปดาห์",
-  allDayText: "ตลอดวัน",
+  allDayContent: "ตลอดวัน",
   moreLinkText: "เพิ่มเติม",
   noEventsContent: "ไม่มีกิจกรรมที่จะแสดง"
 };

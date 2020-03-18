@@ -16,7 +16,7 @@ export default {
     list: "Planning"
   },
   weekText: "Sem.",
-  allDayHtml: "Toute la<br/>journée",
+  allDayContent: "Toute la journée",
   moreLinkText: "en plus",
   noEventsContent: "Aucun événement à afficher"
 };

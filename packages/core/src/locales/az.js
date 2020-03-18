@@ -15,7 +15,7 @@ export default {
     list: "Gündəm"
   },
   weekText: "Həftə",
-  allDayText: "Bütün Gün",
+  allDayContent: "Bütün Gün",
   moreLinkText: function(n) {
     return "+ daha çox " + n;
   },

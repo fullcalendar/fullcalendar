@@ -15,7 +15,7 @@ export default {
     list: "Agenda"
   },
   weekText: "Uke",
-  allDayText: "Hele dagen",
+  allDayContent: "Hele dagen",
   moreLinkText: "til",
   noEventsContent: "Ingen hendelser å vise"
 };

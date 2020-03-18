@@ -11,7 +11,7 @@ export default {
     list: "予定リスト"
   },
   weekText: "週",
-  allDayText: "終日",
+  allDayContent: "終日",
   moreLinkText: function(n) {
     return "他 " + n + " 件";
   },

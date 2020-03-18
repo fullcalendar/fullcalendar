@@ -15,7 +15,7 @@ export default {
     list: "Dienas kārtība"
   },
   weekText: "Ned.",
-  allDayText: "Visu dienu",
+  allDayContent: "Visu dienu",
   moreLinkText: function(n) {
     return "+vēl " + n;
   },

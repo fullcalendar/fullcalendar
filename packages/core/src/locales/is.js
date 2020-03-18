@@ -15,7 +15,7 @@ export default {
     list: "Dagskrá"
   },
   weekText: "Vika",
-  allDayHtml: "Allan<br/>daginn",
+  allDayContent: "Allan daginn",
   moreLinkText: "meira",
   noEventsContent: "Engir viðburðir til að sýna"
 };

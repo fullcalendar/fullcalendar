@@ -1,6 +1,6 @@
 import {
   MinimalEventProps, BaseComponent, ComponentContext, h,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot, ComponentChildren, RenderHook
 } from "@fullcalendar/core"
 
 
@@ -26,8 +26,8 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
     return (
       <EventRoot
         seg={seg}
-        timeText={buildTimeText(seg, timeFormat, context)}
-        defaultInnerContent={renderInnerContent}
+        timeText={'' /* BAD. because of all-day content */}
+        defaultInnerContent={renderEventInnerContent}
         isPast={props.isPast}
         isFuture={props.isFuture}
         isToday={props.isToday}
@@ -38,11 +38,7 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
       >
         {(rootElRef, classNames, style, innerElRef, innerContent, dynamicProps) => (
           <tr className={[ 'fc-list-item' ].concat(classNames).join(' ')} ref={rootElRef}>
-            {dynamicProps.timeText &&
-              <td class='fc-list-item-time'>
-                {dynamicProps.timeText}
-              </td>
-            }
+            {buildTimeContent(seg, timeFormat, context)}
             <td class='fc-list-item-marker'>
               <span class='fc-event-dot' style={{
                 backgroundColor: dynamicProps.event.backgroundColor
@@ -60,7 +56,7 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
 }
 
 
-function renderInnerContent(props: EventMeta) {
+function renderEventInnerContent(props: EventMeta) {
   let { event } = props
   let url = event.url
   let anchorAttrs = url ? { href: url } : {}
@@ -73,20 +69,30 @@ function renderInnerContent(props: EventMeta) {
 }
 
 
-function buildTimeText(seg: Seg, timeFormat: DateFormatter, context: ComponentContext) {
-  let { displayEventTime, allDayText } = context.options
-  let eventDef = seg.eventRange.def
-  let eventInstance = seg.eventRange.instance
+function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: ComponentContext): ComponentChildren {
+  let { displayEventTime } = context.options
 
   if (displayEventTime !== false) {
+    let eventDef = seg.eventRange.def
+    let eventInstance = seg.eventRange.instance
+    let timeText: string
 
     if (eventDef.allDay) {
-      return allDayText // TODO: allDayHtml?
+      let innerProps = { view: context.view }
+      return (
+        <RenderHook name='allDay' mountProps={innerProps} dynamicProps={innerProps}>
+          {(rootElRef, classNames, innerElRef, innerContent) => (
+            <td class={[ 'fc-list-item-time' ].concat(classNames).join(' ')} ref={rootElRef}>
+              {innerContent}
+            </td>
+          )}
+        </RenderHook>
+      )
 
     } else if (isMultiDayRange(seg.eventRange.range)) { // TODO: use (!isStart || !isEnd) instead?
 
       if (seg.isStart) {
-        return buildSegTimeText(
+        timeText = buildSegTimeText(
           seg,
           timeFormat,
           context,
@@ -97,7 +103,7 @@ function buildTimeText(seg: Seg, timeFormat: DateFormatter, context: ComponentCo
         )
 
       } else if (seg.isEnd) {
-        return buildSegTimeText(
+        timeText = buildSegTimeText(
           seg,
           timeFormat,
           context,
@@ -106,19 +112,22 @@ function buildTimeText(seg: Seg, timeFormat: DateFormatter, context: ComponentCo
           seg.start,
           eventInstance.range.end
         )
-
-      } else {
-        return allDayText // TODO: allDayHtml?
       }
 
     } else {
-      return buildSegTimeText(
+      timeText = buildSegTimeText(
         seg,
         timeFormat,
         context
       )
     }
+
+    return (
+      <td class='fc-list-item-time'>
+        {timeText}
+      </td>
+    )
   }
 
-  return ''
+  return null
 }

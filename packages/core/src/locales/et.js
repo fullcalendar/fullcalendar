@@ -15,7 +15,7 @@ export default {
     list: "Päevakord"
   },
   weekText: "näd",
-  allDayText: "Kogu päev",
+  allDayContent: "Kogu päev",
   moreLinkText: function(n) {
     return "+ veel " + n;
   },
