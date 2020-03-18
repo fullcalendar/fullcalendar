@@ -61,6 +61,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
   private splitDateSelectionSegs = memoize(splitSegsByRow)
   private splitEventDrag = memoize(splitInteractionByRow)
   private splitEventResize = memoize(splitInteractionByRow)
+  private buildBuildMoreLinkText = memoize(buildBuildMoreLinkText)
   private rootEl: HTMLElement
   private rowRefs = new RefMap<TableRow>()
   private rowPositions: PositionCache
@@ -77,6 +78,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
     let dateSelectionSegsByRow = this.splitDateSelectionSegs(props.dateSelectionSegs, rowCnt)
     let eventDragByRow = this.splitEventDrag(props.eventDrag, rowCnt)
     let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
+    let buildMoreLinkText = this.buildBuildMoreLinkText(context.options.moreLinkText)
 
     let classNames = [ 'fc-daygrid' ]
     if (props.vGrowRows && props.eventLimit === true) {
@@ -116,6 +118,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
                   eventResize={eventResizeByRow[row]}
                   eventLimit={props.eventLimit}
                   clientWidth={props.clientWidth}
+                  buildMoreLinkText={buildMoreLinkText}
                   onMoreClick={this.handleMoreLinkClick}
                 />
               ))}
@@ -247,4 +250,15 @@ export default class Table extends DateComponent<TableProps, TableState> {
     return { start, end }
   }
 
+}
+
+
+function buildBuildMoreLinkText(moreLimitTextInput): (num: number) => string {
+  if (typeof moreLimitTextInput === 'function') {
+    return moreLimitTextInput
+  } else {
+    return function(num) {
+      return `+${num} ${moreLimitTextInput}`
+    }
+  }
 }

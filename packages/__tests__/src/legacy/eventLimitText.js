@@ -1,7 +1,7 @@
 import frLocale from '@fullcalendar/core/locales/fr'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
-describe('eventLimitText', function() {
+describe('moreLinkText', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',
@@ -16,7 +16,7 @@ describe('eventLimitText', function() {
 
   it('allows a string', function() {
     let calendar = initCalendar({
-      eventLimitText: 'extra'
+      moreLinkText: 'extra'
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     expect(dayGridWrapper.getMoreEl()).toHaveText('+2 extra')
@@ -24,7 +24,7 @@ describe('eventLimitText', function() {
 
   it('allows a function', function() {
     let calendar = initCalendar({
-      eventLimitText: function(n) {
+      moreLinkText: function(n) {
         expect(typeof n).toBe('number')
         return 'there are ' + n + ' more events!'
       }
@@ -44,7 +44,7 @@ describe('eventLimitText', function() {
   it('is not affected by a custom locale when the value is explicitly specified', function() {
     let calendar = initCalendar({
       locale: frLocale,
-      eventLimitText: 'extra'
+      moreLinkText: 'extra'
     })
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
     expect(dayGridWrapper.getMoreEl()).toHaveText('+2 extra')

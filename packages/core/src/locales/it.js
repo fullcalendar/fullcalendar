@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Sm",
   allDayHtml: "Tutto il<br/>giorno",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+altri " + n;
   },
   noEventsMessage: "Non ci sono eventi da visualizzare"

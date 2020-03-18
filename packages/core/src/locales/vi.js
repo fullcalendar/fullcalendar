@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Tu",
   allDayText: "Cả ngày",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ thêm " + n;
   },
   noEventsMessage: "Không có sự kiện để hiển thị"

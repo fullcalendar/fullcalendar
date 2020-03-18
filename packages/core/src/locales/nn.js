@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Veke",
   allDayText: "Heile dagen",
-  eventLimitText: "til",
+  moreLinkText: "til",
   noEventsMessage: "Ingen hendelser å vise"
 };

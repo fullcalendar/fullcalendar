@@ -12,7 +12,7 @@ export default {
     list: "סדר יום"
   },
   allDayText: "כל היום",
-  eventLimitText: "אחר",
+  moreLinkText: "אחר",
   noEventsMessage: "אין אירועים להצגה",
   weekText: "שבוע"
 };

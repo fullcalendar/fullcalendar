@@ -42,6 +42,7 @@ export interface TableRowProps {
   dateProfile: DateProfile
   todayRange: DateRange
   enableNumbers: boolean
+  buildMoreLinkText: (num: number) => string
 }
 
 export interface RowMoreLinkArg extends MoreLinkArg {
@@ -126,6 +127,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               extraDataAttrs={cell.extraDataAttrs}
               moreCnt={moreCnts[col]}
               moreMarginTop={moreTops[col] /* rename */}
+              buildMoreLinkText={props.buildMoreLinkText}
               onMoreClick={this.handleMoreClick}
               hasEvents={Boolean(normalFgNodes.length)}
               fgPaddingBottom={paddingBottoms[col]}

@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Ja",
   allDayHtml: "Gjithë<br/>ditën",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+më tepër " + n;
   },
   noEventsMessage: "Nuk ka evente për të shfaqur"

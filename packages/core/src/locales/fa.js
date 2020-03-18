@@ -17,7 +17,7 @@ export default {
   },
   weekText: "هف",
   allDayText: "تمام روز",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "بیش از " + n;
   },
   noEventsMessage: "هیچ رویدادی به نمایش"

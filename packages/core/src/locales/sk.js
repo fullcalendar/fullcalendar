@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Ty",
   allDayText: "Celý deň",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ďalšie: " + n;
   },
   noEventsMessage: "Žiadne akcie na zobrazenie"

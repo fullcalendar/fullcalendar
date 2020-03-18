@@ -12,7 +12,7 @@ export default {
   },
   weekText: "Sm",
   allDayText: "dia inteiro",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "mais +" + n;
   },
   noEventsMessage: "Não há eventos para mostrar"

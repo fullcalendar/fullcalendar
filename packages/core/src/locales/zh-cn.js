@@ -17,7 +17,7 @@ export default {
   },
   weekText: "周",
   allDayText: "全天",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "另外 " + n + " 个";
   },
   noEventsMessage: "没有事件显示"

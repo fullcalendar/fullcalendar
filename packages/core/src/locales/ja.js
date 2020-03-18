@@ -12,7 +12,7 @@ export default {
   },
   weekText: "週",
   allDayText: "終日",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "他 " + n + " 件";
   },
   noEventsMessage: "表示する予定はありません"

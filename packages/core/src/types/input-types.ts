@@ -144,7 +144,7 @@ export interface OptionsInputBase {
   weekText?: string
   displayEventTime?: boolean
   displayEventEnd?: boolean
-  eventLimitText?: string | ((eventCnt: number) => string)
+  moreLinkText?: string | ((eventCnt: number) => string)
   dayPopoverFormat?: FormatterInput
   navLinks?: boolean
   navLinkDayClick?: string | ((date: Date, jsEvent: Event) => void)

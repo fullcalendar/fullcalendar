@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Săpt",
   allDayText: "Toată ziua",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+alte " + n;
   },
   noEventsMessage: "Nu există evenimente de afișat"

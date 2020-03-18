@@ -16,6 +16,6 @@ export default {
   },
   weekText: "As",
   allDayHtml: "Egun<br/>osoa",
-  eventLimitText: "gehiago",
+  moreLinkText: "gehiago",
   noEventsMessage: "Ez dago ekitaldirik erakusteko"
 };

@@ -12,7 +12,7 @@ export default {
   },
   weekText: "Сед",
   allDayText: "Цел ден",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+повеќе " + n;
   },
   noEventsMessage: "Нема настани за прикажување"

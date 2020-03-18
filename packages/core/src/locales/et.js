@@ -16,7 +16,7 @@ export default {
   },
   weekText: "näd",
   allDayText: "Kogu päev",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ veel " + n;
   },
   noEventsMessage: "Kuvamiseks puuduvad sündmused"

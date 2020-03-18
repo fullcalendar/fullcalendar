@@ -12,6 +12,6 @@ export default {
   },
   weekText: "周",
   allDayText: "整天",
-  eventLimitText: '顯示更多',
+  moreLinkText: '顯示更多',
   noEventsMessage: "没有任何活動"
 };

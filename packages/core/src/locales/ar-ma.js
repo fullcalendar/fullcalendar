@@ -17,6 +17,6 @@ export default {
   },
   weekText: "أسبوع",
   allDayText: "اليوم كله",
-  eventLimitText: "أخرى",
+  moreLinkText: "أخرى",
   noEventsMessage: "أي أحداث لعرض"
 };

@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Sm",
   allDayHtml: "Todo<br/>o día",
-  eventLimitText: "máis",
+  moreLinkText: "máis",
   noEventsMessage: "Non hai eventos para amosar"
 };

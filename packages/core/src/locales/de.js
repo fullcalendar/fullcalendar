@@ -17,7 +17,7 @@ export default {
   },
   weekText: "KW",
   allDayText: "Ganztägig",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ weitere " + n;
   },
   noEventsMessage: "Keine Ereignisse anzuzeigen"

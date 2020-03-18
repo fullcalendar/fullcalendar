@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Tydz",
   allDayText: "Cały dzień",
-  eventLimitText: "więcej",
+  moreLinkText: "więcej",
   noEventsMessage: "Brak wydarzeń do wyświetlenia"
 };

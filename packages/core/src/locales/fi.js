@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Vk",
   allDayText: "Koko päivä",
-  eventLimitText: "lisää",
+  moreLinkText: "lisää",
   noEventsMessage: "Ei näytettäviä tapahtumia"
 };

@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Set",
   allDayText: "Tot el dia",
-  eventLimitText: "més",
+  moreLinkText: "més",
   noEventsMessage: "No hi ha esdeveniments per mostrar"
 };

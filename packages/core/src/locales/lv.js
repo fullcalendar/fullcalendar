@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Ned.",
   allDayText: "Visu dienu",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+vēl " + n;
   },
   noEventsMessage: "Nav notikumu"

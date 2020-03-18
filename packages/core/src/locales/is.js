@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Vika",
   allDayHtml: "Allan<br/>daginn",
-  eventLimitText: "meira",
+  moreLinkText: "meira",
   noEventsMessage: "Engir viðburðir til að sýna"
 };

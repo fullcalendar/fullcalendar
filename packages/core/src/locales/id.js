@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Mg",
   allDayHtml: "Sehari<br/>penuh",
-  eventLimitText: "lebih",
+  moreLinkText: "lebih",
   noEventsMessage: "Tidak ada acara untuk ditampilkan"
 };

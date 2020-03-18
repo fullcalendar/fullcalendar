@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Həftə",
   allDayText: "Bütün Gün",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ daha çox " + n;
   },
   noEventsMessage: "Göstərmək üçün hadisə yoxdur"

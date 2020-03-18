@@ -16,7 +16,7 @@ export default {
   },
   weekText: "हफ्ता",
   allDayText: "सभी दिन",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+अधिक " + n;
   },
   noEventsMessage: "कोई घटनाओं को प्रदर्शित करने के लिए"

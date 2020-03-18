@@ -8,7 +8,7 @@ export default {
     list: "Kun tartibi"
   },
   allDayText: "Kun bo'yi",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ yana " + n;
   },
   noEventsMessage: "Ko'rsatish uchun voqealar yo'q"

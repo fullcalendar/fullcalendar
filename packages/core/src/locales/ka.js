@@ -16,7 +16,7 @@ export default {
   },
   weekText: "კვ",
   allDayText: "მთელი დღე",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ კიდევ " + n;
   },
   noEventsMessage: "ღონისძიებები არ არის"

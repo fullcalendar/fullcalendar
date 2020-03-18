@@ -747,7 +747,7 @@ A "more..." link when there are too many events on a day ([304]). Works with mon
 as well as the all-day section of the agenda views. New options:
 - `eventLimit`. a number or `true`
 - `eventLimitClick`. the `"popover`" value will reveal all events in a raised panel (the default)
-- `eventLimitText`
+- `moreLinkText`
 - `dayPopoverFormat`
 
 Changes related to height and scrollbars:

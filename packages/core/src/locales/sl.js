@@ -16,6 +16,6 @@ export default {
   },
   weekText: "Teden",
   allDayText: "Ves dan",
-  eventLimitText: "več",
+  moreLinkText: "več",
   noEventsMessage: "Ni dogodkov za prikaz"
 };

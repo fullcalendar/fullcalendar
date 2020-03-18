@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Не",
   allDayText: "Күні бойы",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ тағы " + n;
   },
   noEventsMessage: "Көрсету үшін оқиғалар жоқ"

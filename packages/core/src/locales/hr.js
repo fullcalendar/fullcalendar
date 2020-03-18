@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Tje",
   allDayText: "Cijeli dan",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ još " + n;
   },
   noEventsMessage: "Nema događaja za prikaz"

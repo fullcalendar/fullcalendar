@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Mg",
   allDayText: "Sepanjang hari",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "masih ada " + n + " acara";
   },
   noEventsMessage: "Tiada peristiwa untuk dipaparkan"

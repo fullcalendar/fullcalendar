@@ -19,6 +19,6 @@ export default {
   },
   weekText: "สัปดาห์",
   allDayText: "ตลอดวัน",
-  eventLimitText: "เพิ่มเติม",
+  moreLinkText: "เพิ่มเติม",
   noEventsMessage: "ไม่มีกิจกรรมที่จะแสดง"
 };

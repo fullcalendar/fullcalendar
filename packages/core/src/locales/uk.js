@@ -16,7 +16,7 @@ export default {
   },
   weekText: "Тиж",
   allDayText: "Увесь день",
-  eventLimitText: function(n) {
+  moreLinkText: function(n) {
     return "+ще " + n + "...";
   },
   noEventsMessage: "Немає подій для відображення"

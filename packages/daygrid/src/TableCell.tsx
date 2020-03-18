@@ -29,6 +29,7 @@ export interface TableCellProps extends TableCellModel {
   showWeekNumber: boolean
   dateProfile: DateProfile
   todayRange: DateRange
+  buildMoreLinkText: (num: number) => string
   onMoreClick?: (arg: MoreLinkArg) => void
 }
 
@@ -102,7 +103,9 @@ export default class TableCell extends DateComponent<TableCellProps> {
                 {props.fgContent}
                 {Boolean(props.moreCnt) &&
                   <div class='fc-more' style={{ marginTop: props.moreMarginTop }}>
-                    <a onClick={this.handleMoreLink}>+{props.moreCnt} more</a>
+                    <a onClick={this.handleMoreLink}>
+                      {props.buildMoreLinkText(props.moreCnt)}
+                    </a>
                   </div>
                 }
               </div>
