@@ -68,7 +68,7 @@ export default abstract class TimeColsView extends View {
         outerContent: (
           <tr>
             <td
-              class={'fc-divider ' + context.theme.getClass('tableCellShaded')}
+              class={'fc-timegrid-view-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )

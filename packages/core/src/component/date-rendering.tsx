@@ -59,20 +59,20 @@ export function getDayClassNames(meta: DateMeta, theme: Theme) {
 
 export function getSlotClassNames(meta: DateMeta, theme: Theme) {
   let classNames: string[] = [
-    'fc-slat' // TODO: rename to "slot" or "slot-label"
+    'fc-slot'
   ]
 
   if (meta.isToday) {
-    classNames.push('fc-slat-today')
+    classNames.push('fc-slot-today')
     classNames.push(theme.getClass('today'))
   }
 
   if (meta.isPast) {
-    classNames.push('fc-slat-past')
+    classNames.push('fc-slot-past')
   }
 
   if (meta.isFuture) {
-    classNames.push('fc-slat-future')
+    classNames.push('fc-slot-future')
   }
 
   return classNames
