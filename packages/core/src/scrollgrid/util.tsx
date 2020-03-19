@@ -31,7 +31,6 @@ export interface ChunkConfig {
   outerContent?: VNode
   content?: ChunkConfigContent
   rowContent?: ChunkConfigRowContent
-  vGrowRows?: boolean
   scrollerElRef?: Ref<HTMLDivElement>
   elRef?: Ref<HTMLTableCellElement>
   className?: string // on the wrapping chunk <td>. impossible in print view
@@ -69,18 +68,19 @@ export interface ScrollerLike { // have scrollers implement?
 }
 
 
-export function getChunkVGrow(props: { vGrow?: boolean }, sectionConfig: SectionConfig, chunkConfig: ChunkConfig) {
-  return (props.vGrow && sectionConfig.vGrow) || chunkConfig.vGrowRows
+export function getDoesSectionVGrow(props: { vGrow?: boolean }, sectionConfig: SectionConfig) {
+  return props.vGrow && sectionConfig.vGrow // does the section vgrow? (need to have whole scrollgrid vgrow as well)
 }
 
 
-export function getAllowYScrolling(props: { vGrow?: boolean }, sectionConfig: SectionConfig, chunkConfig: ChunkConfig) {
-  return (sectionConfig.maxHeight != null || (props.vGrow && sectionConfig.vGrow)) && !chunkConfig.vGrowRows
+export function getAllowYScrolling(props: { vGrow?: boolean }, sectionConfig: SectionConfig) {
+  return sectionConfig.maxHeight != null || // if its possible for the height to max out, we might need scrollbars
+    getDoesSectionVGrow(props, sectionConfig) // if the section is liquid height, it might condense enough to require scrollbars
 }
 
 
 export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: ChunkContentCallbackArgs) {
-  let vGrowRows = sectionConfig.vGrowRows || chunkConfig.vGrowRows
+  let vGrowRows = sectionConfig.vGrowRows
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :

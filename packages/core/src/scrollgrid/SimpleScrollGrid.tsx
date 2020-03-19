@@ -5,7 +5,7 @@ import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
 import {
   ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getAllowYScrolling,
-  renderChunkContent, getChunkVGrow, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames,
+  renderChunkContent, getDoesSectionVGrow, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames,
   isColPropsEqual
 } from './util'
 import { memoize } from '../util/memoize'
@@ -97,8 +97,8 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
     let { state } = this
 
-    let needsYScrolling = getAllowYScrolling(this.props, sectionConfig, chunkConfig) // TODO: do lazily
-    let vGrow = getChunkVGrow(this.props, sectionConfig, chunkConfig)
+    let needsYScrolling = getAllowYScrolling(this.props, sectionConfig) // TODO: do lazily. do in section config?
+    let vGrow = getDoesSectionVGrow(this.props, sectionConfig)
 
     let overflowY: OverflowValue =
       state.forceYScrollbars ? 'scroll' :
@@ -110,7 +110,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       tableMinWidth: '',
       clientWidth: state.scrollerClientWidths[sectionI] || '',
       clientHeight: state.scrollerClientHeights[sectionI] || '',
-      vGrowRows: sectionConfig.vGrowRows || chunkConfig.vGrowRows,
+      vGrowRows: sectionConfig.vGrowRows,
       rowSyncHeights: {}
     })
 

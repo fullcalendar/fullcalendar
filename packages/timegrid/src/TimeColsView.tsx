@@ -142,7 +142,6 @@ export default abstract class TimeColsView extends View {
         chunks: [
           {
             rowContent: <tr>{this.renderTableRowAxis()}</tr>,
-            vGrowRows: true
           },
           {
             content: allDayContent
