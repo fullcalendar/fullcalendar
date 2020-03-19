@@ -61,6 +61,12 @@
 }
 
 
+.fc-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+
 .scrollgrid.scrollgrid--forprint { // will eventually have precedence of `.fc-print .scrollgrid`
   table-layout: auto;
 }
