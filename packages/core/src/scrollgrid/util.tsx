@@ -22,6 +22,7 @@ export interface SectionConfig {
   maxHeight?: number
   vGrow?: boolean
   vGrowRows?: boolean // TODO: how to get a bottom rule?
+  syncRowHeights?: boolean // yuck
 }
 
 export type ChunkConfigContent = (contentProps: ChunkContentCallbackArgs) => VNode
@@ -42,8 +43,9 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   clientWidth: CssDimValue
   clientHeight: CssDimValue
   vGrowRows: boolean
+  syncRowHeights: boolean
   rowSyncHeights: number[]
-  requestHeightSync: () => void
+  reportRowHeightChange: (rowEl: HTMLElement, isStable: boolean) => void
 }
 
 
@@ -85,6 +87,7 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :
     h('table', {
+      className: sectionConfig.syncRowHeights ? 'fc-scrollgrid-height-sync' : '',
       style: {
         minWidth: arg.tableMinWidth, // because colMinWidths arent enough
         width: arg.clientWidth,
