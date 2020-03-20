@@ -76,7 +76,7 @@ export function memoizeArraylike<Args extends any[], Res>( // used at all?
 }
 
 
-export function memoizeHashlike<Args extends any[], Res>(
+export function memoizeHashlike<Args extends any[], Res>( // used?
   workerFunc: (...args: Args) => Res,
   resEquality?: (res0: Res, res1: Res) => boolean,
   teardownFunc?: (res: Res) => void // TODO: change arg order

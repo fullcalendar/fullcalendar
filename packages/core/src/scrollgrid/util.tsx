@@ -42,8 +42,8 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   clientWidth: CssDimValue
   clientHeight: CssDimValue
   vGrowRows: boolean
-  rowSyncHeights: { [rowKey: string]: number }
-  reportRowHeight?: (rowKey: string, innerEl: HTMLElement) => void // TODO: don't make optional
+  rowSyncHeights: number[]
+  requestHeightSync: () => void
 }
 
 
