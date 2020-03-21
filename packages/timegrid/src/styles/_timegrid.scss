@@ -1,4 +1,11 @@
 
+// high precedence to overcome theme
+.fc .fc-timegrid-divider {
+  padding: 0 0 2px;
+}
+
+
+
 .fc-timegrid-body {
   position: relative; // for housing skeletons
   z-index: 1; // because containers z-index'd children

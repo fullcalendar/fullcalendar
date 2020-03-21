@@ -1,4 +1,17 @@
 
+.fc-daygrid-event-harness { // dont do margins either!!!
+  padding-bottom: 2px;
+  // margin-top: 0 !important; // was overriding JS :(
+}
+
+.fc-daygrid-event-harness-abs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+
 .fc-daygrid-event {
   border-radius: 3px;
 }
