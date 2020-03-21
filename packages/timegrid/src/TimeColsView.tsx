@@ -139,9 +139,12 @@ export default abstract class TimeColsView extends View {
       sections.push({
         key: 'all-day',
         type: 'body',
+        syncRowHeights: true,
         chunks: [
           {
-            rowContent: <tr>{this.renderTableRowAxis()}</tr>,
+            rowContent: (contentArg: ChunkContentCallbackArgs) => (
+              <tr>{this.renderTableRowAxis(contentArg.rowSyncHeights[0])}</tr>
+            ),
           },
           {
             content: allDayContent
@@ -236,8 +239,8 @@ export default abstract class TimeColsView extends View {
               'fc-scrollgrid-shrink',
               'fc-week-number' // TODO: make part of WeekNumberRoot
             ].concat(classNames).join(' ')}>
-              <div class='fc-scrollgrid-shrink-block'>
-                <a class='fc-timegrid-view-axis-inner fc-scrollgrid-shrink-span' data-navlink={navLinkData} ref={innerElRef}>
+              <div class='fc-timegrid-view-axis-frame fc-scrollgrid-shrink-frame'>
+                <a class='fc-timegrid-view-axis-cushion fc-scrollgrid-shrink-cushion' data-navlink={navLinkData} ref={innerElRef}>
                   {innerContent}
                 </a>
               </div>
@@ -257,7 +260,9 @@ export default abstract class TimeColsView extends View {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  renderTableRowAxis = () => {
+  // only a one-way height sync. we don't send the axis inner-content height to the DayGrid,
+  // but DayGrid still needs to have classNames on inner elements in order to measure.
+  renderTableRowAxis = (rowHeight?: number) => {
     let innerProps = { view: this.context.view }
 
     return (
@@ -268,8 +273,8 @@ export default abstract class TimeColsView extends View {
             'fc-scrollgrid-shrink',
             'fc-allday' // TODO: have RenderHook supply this?
           ].concat(classNames).join(' ')}>
-            <div class='fc-scrollgrid-shrink-block'>
-              <span class='fc-timegrid-view-axis-inner fc-scrollgrid-shrink-span' ref={innerElRef}>
+            <div class='fc-timegrid-view-axis-frame fc-scrollgrid-shrink-frame' style={{ height: rowHeight }}>
+              <span class='fc-timegrid-view-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                 {innerContent}
               </span>
             </div>

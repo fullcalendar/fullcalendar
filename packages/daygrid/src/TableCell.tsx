@@ -83,7 +83,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
             {...rootDataAttrs}
             {...props.extraDataAttrs}
           >
-            <div class='fc-daygrid-day-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
+            <div class='fc-daygrid-day-inner fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&
                 <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
                   {(rootElRef, classNames, innerElRef, innerContent) => (

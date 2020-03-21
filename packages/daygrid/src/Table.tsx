@@ -93,11 +93,14 @@ export default class Table extends DateComponent<TableProps, TableState> {
         minWidth: props.tableMinWidth
       }}>
         <NowTimer unit='day' content={(nowDate: DateMarker, todayRange: DateRange) => [
-          <table style={{
-            width: props.clientWidth,
-            minWidth: props.tableMinWidth,
-            height: props.vGrowRows ? props.clientHeight : ''
-          }}>
+          <table
+            className='fc-scrollgrid-sync-table'
+            style={{
+              width: props.clientWidth,
+              minWidth: props.tableMinWidth,
+              height: props.vGrowRows ? props.clientHeight : ''
+            }}
+          >
             {props.colGroupNode}
             <tbody>
               {props.cells.map((cells, row) => (

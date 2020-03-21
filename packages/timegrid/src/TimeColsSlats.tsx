@@ -212,8 +212,8 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             <RenderHook name='slotLabel' mountProps={mountProps} dynamicProps={dynamicProps} defaultInnerContent={renderInnerContent}>
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
                 <td ref={rootElRef} class={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
-                  <div class='fc-scrollgrid-shrink-block'>
-                    <span className='fc-timegrid-slot-axis-inner fc-scrollgrid-shrink-span' ref={innerElRef}>
+                  <div class='fc-scrollgrid-shrink-frame'>
+                    <span className='fc-timegrid-slot-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                       {innerContent}
                     </span>
                   </div>

@@ -43,6 +43,7 @@ export interface TableRowProps {
   todayRange: DateRange
   enableNumbers: boolean
   buildMoreLinkText: (num: number) => string
+  innerHeight?: number
 }
 
 export interface RowMoreLinkArg extends MoreLinkArg {

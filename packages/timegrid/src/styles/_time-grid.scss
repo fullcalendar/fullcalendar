@@ -40,7 +40,7 @@
 // SLATS (lines that run horizontally)
 
 .fc-timegrid-slot { // a <td>
-  height: 1.5em;
+  height: 1.5em; // TODO: move to the 'frame' possibly
   border-bottom: 0 !important;
     /* each cell is responsible for its top border */
     /* is !important because competing with theme declarations */
@@ -50,13 +50,17 @@
   border-top-style: dotted !important;
 }
 
-.fc .fc-timegrid-view-axis,
+.fc .fc-timegrid-view-axis-frame {
+  display: flex;
+  align-items: center;
+}
+
 .fc .fc-timegrid-slot-axis {
   vertical-align: middle;
 }
 
-.fc-timegrid-view-axis-inner,
-.fc-timegrid-slot-axis-inner {
+.fc-timegrid-view-axis-cushion,
+.fc-timegrid-slot-axis-cushion {
   white-space: nowrap;
   padding: 0 4px;
 }

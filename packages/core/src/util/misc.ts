@@ -317,14 +317,14 @@ export function diffDates(date0: DateMarker, date1: DateMarker, dateEnv: DateEnv
 ----------------------------------------------------------------------------------------------------------------------*/
 
 export function computeSmallestCellWidth(cellEl: HTMLElement) {
-  let allWidthEl = cellEl.querySelector('.fc-scrollgrid-shrink-block')
-  let contentWidthEl = cellEl.querySelector('.fc-scrollgrid-shrink-span')
+  let allWidthEl = cellEl.querySelector('.fc-scrollgrid-shrink-frame')
+  let contentWidthEl = cellEl.querySelector('.fc-scrollgrid-shrink-cushion')
 
   if (!allWidthEl) {
-    throw new Error('needs fc-scrollgrid-shrink-block className') // TODO: use const
+    throw new Error('needs fc-scrollgrid-shrink-frame className') // TODO: use const
   }
   if (!contentWidthEl) {
-    throw new Error('needs fc-scrollgrid-shrink-span className')
+    throw new Error('needs fc-scrollgrid-shrink-cushion className')
   }
 
   return cellEl.getBoundingClientRect().width - allWidthEl.getBoundingClientRect().width + // the cell padding+border
