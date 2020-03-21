@@ -1,9 +1,12 @@
 const path = require('path')
+const { readFileSync } = require('fs')
 const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
-const postCss = require('rollup-plugin-postcss')
-const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
+const sass = require('rollup-plugin-sass')
+// const postCss = require('rollup-plugin-postcss') // was only used to extra non-sass CSS. obsolete
+const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, watchSubdirSassIncludes, isScssPath } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
+const alias = require('rollup-plugin-alias')
 
 
 module.exports = function(isDev) {
@@ -34,29 +37,47 @@ module.exports = function(isDev) {
 
 
 function buildBundleConfig(pkgStruct, isDev) {
-  let nodeModulesDir = path.join(pkgStruct.dir, 'node_modules')
   let banner = renderBanner(pkgStruct.jsonObj)
+  let anyCss = false
 
   return {
-    input: path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js'),
+    input: path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js'), // TODO: use tscMain
     output: {
       format: 'umd',
       file: path.join(pkgStruct.distDir, 'main.js'),
       name: EXTERNAL_BROWSER_GLOBALS['fullcalendar'], // TODO: make it a separarate const???
       banner,
-      sourcemap: isDev
+      sourcemap: isDev,
+      intro() {
+        if (anyCss) {
+          return 'import \'./main.css\';'
+        }
+        return ''
+      }
     },
     plugins: [
+      alias(buildAliasMap()),
+      nodeResolve(), // for requiring tslib. TODO: whitelist?
       watchSubdirSassIncludes,
-      nodeResolve({
-        customResolveOptions: {
-          paths: [ nodeModulesDir ] // for requiring other packages
+      sass({
+        output: true, // to a .css file
+        options: {
+          // core already has sass vars imported, but inject them for other modules
+          data: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n'
         }
       }),
-      postCss({
-        extract: true // to separate .css file
-      }),
-      ...(isDev ? SOURCEMAP_PLUGINS : [])
+      ...(isDev ? SOURCEMAP_PLUGINS : []),
+      {
+        resolveId(id, importer) { // TODO: not really DRY
+          if (isScssPath(id) && isRelPath(id) && importer.match('/tmp/tsc-output/')) {
+            let resourcePath = importer.replace('/tmp/tsc-output/', '/')
+            resourcePath = path.dirname(resourcePath)
+            resourcePath = path.join(resourcePath, id)
+            return { id: resourcePath, external: false }
+          }
+          return null
+        }
+      },
     ],
     watch: WATCH_OPTIONS,
     onwarn
@@ -98,6 +119,7 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
       sourcemap: isDev
     },
     plugins: [
+      watchSubdirSassIncludes,
       // if we don't provide this whitelist, all external packages get resolved and included :(
       nodeResolve({ only: [ 'tslib' ] }),
       TEMPLATE_PLUGIN,
@@ -109,7 +131,7 @@ function buildNonBundleConfig(pkgStruct, bundleDistDir, isDev) {
         resolveId(id) {
           if (id === inputFile) { return inputFile }
           if (id === 'tslib') { return { id, external: false } }
-          if (id === '@fullcalendar/core') { return { id: 'fullcalendar', external: true } }
+          if (id === '@fullcalendar/core') { return { id: 'fullcalendar', external: true } } // TODO: shouldn't this be 'fullcalendar-scheduler' in some cases?
           if (!isRelPath(id)) { return { id, external: true } }
           return null
         }
@@ -155,4 +177,25 @@ function buildLocalesAllConfig() {
     watch: WATCH_OPTIONS,
     onwarn
   }
+}
+
+
+const coreVarsScssString = readFileSync( // NOT DRY
+  path.join(getCorePkgStruct().srcDir, 'styles/_vars.scss'),
+  'utf8'
+)
+
+
+// TODO: use elsewhere
+// NOTE: can't use `entries` because rollup-plugin-alias is an old version
+function buildAliasMap() {
+  let map = {}
+
+  for (let pkgStruct of pkgStructs) {
+    if (!pkgStruct.isBundle) {
+      map[pkgStruct.name] = path.join(process.cwd(), pkgStruct.tscMain) // needs to be absolute
+    }
+  }
+
+  return map
 }
