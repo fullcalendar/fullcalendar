@@ -4,7 +4,7 @@
   flex-direction: column;
 }
 
-.fc-view-container {
+.fc-view-harness {
   flex-grow: 1;
   position: relative;
 
@@ -16,7 +16,7 @@
   }
 }
 
-.fc-view-container--absview > .fc-view {
+.fc-view-harness-ratio > .fc-view {
   position: absolute;
   top: 0;
   right: 0;

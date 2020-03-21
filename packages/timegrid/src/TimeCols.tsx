@@ -69,7 +69,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
     let { dateProfile } = props
 
     return (
-      <div class='fc-timegrid' ref={props.rootElRef} style={{
+      <div class='fc-timegrid-body' ref={props.rootElRef} style={{
         // these props are important to give this wrapper correct dimensions for interactions
         // TODO: if we set it here, can we avoid giving to inner tables?
         width: props.clientWidth,

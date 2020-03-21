@@ -34,7 +34,7 @@ export interface ChunkConfig {
   rowContent?: ChunkConfigRowContent
   scrollerElRef?: Ref<HTMLDivElement>
   elRef?: Ref<HTMLTableCellElement>
-  className?: string // on the wrapping chunk <td>. impossible in print view
+  tableClassName?: string
 }
 
 export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
@@ -81,13 +81,17 @@ export function getAllowYScrolling(props: { vGrow?: boolean }, sectionConfig: Se
 }
 
 
+// TODO: ONLY use `arg`. force out internal function to use same API
 export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: ChunkContentCallbackArgs) {
   let vGrowRows = sectionConfig.vGrowRows
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :
     h('table', {
-      className: sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : '',
+      className: [
+        chunkConfig.tableClassName,
+        sectionConfig.syncRowHeights ? 'fc-scrollgrid-sync-table' : ''
+      ].join(' '),
       style: {
         minWidth: arg.tableMinWidth, // because colMinWidths arent enough
         width: arg.clientWidth,
@@ -154,7 +158,7 @@ export function hasShrinkWidth(cols: ColProps[]) {
 
 export function getScrollGridClassNames(vGrow: boolean, context: ComponentContext) {
   let classNames = [
-    'scrollgrid',
+    'fc-scrollgrid',
     context.theme.getClass('table')
   ]
 
@@ -168,8 +172,7 @@ export function getScrollGridClassNames(vGrow: boolean, context: ComponentContex
 
 export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGrow: boolean) {
   let classNames = [
-    'scrollgrid__section',
-    'fc-' + sectionConfig.type, // fc-head, fc-body, fc-foot
+    'fc-scrollgrid-section',
     sectionConfig.className
   ]
 
@@ -178,12 +181,6 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
   }
 
   return classNames
-}
-
-
-// need a method for this still?
-export function getChunkClassNames(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, context: ComponentContext) {
-  return chunkConfig.className
 }
 
 

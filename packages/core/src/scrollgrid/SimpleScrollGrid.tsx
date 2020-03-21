@@ -5,7 +5,7 @@ import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
 import {
   ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getAllowYScrolling,
-  renderChunkContent, getDoesSectionVGrow, ChunkConfig, hasShrinkWidth, CssDimValue, getChunkClassNames,
+  renderChunkContent, getDoesSectionVGrow, ChunkConfig, hasShrinkWidth, CssDimValue,
   isColPropsEqual
 } from './util'
 import { memoize } from '../util/memoize'
@@ -60,11 +60,11 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
     let classNames = getScrollGridClassNames(props.vGrow, context)
     if (props.forPrint) { // temporary
-      classNames.push('scrollgrid--forprint')
+      classNames.push('fc-scrollgrid--forprint')
     }
 
     if (!getCanVGrowWithinCell()) {
-      classNames.push('scrollgrid-vgrow-cell-hack')
+      classNames.push('fc-scrollgrid-vgrow-cell-hack')
     }
 
     return (
@@ -117,8 +117,8 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     })
 
     return (
-      <td class={getChunkClassNames(sectionConfig, chunkConfig, this.context)} ref={chunkConfig.elRef}>
-        <div class={'scrollerharness' + (vGrow ? ' vgrow' : '')}>
+      <td ref={chunkConfig.elRef}>
+        <div class={'fc-scroller-harness' + (vGrow ? ' vgrow' : '')}>
           <Scroller
             ref={this.scrollerRefs.createRef(sectionI)}
             elRef={this.scrollerElRefs.createRef(sectionI)}

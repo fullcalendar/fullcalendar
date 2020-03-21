@@ -1,5 +1,5 @@
 
-.fc-timegrid {
+.fc-timegrid-body {
   position: relative; // for housing skeletons
   z-index: 1; // because containers z-index'd children
   min-height: 100%; // fill height always ... even when slat table doesn't grow
@@ -19,7 +19,7 @@
   bottom: 0;
 
   & > table {
-    height: 100%;
+    height: 100% !important;
   }
 }
 
@@ -50,7 +50,7 @@
   border-top-style: dotted !important;
 }
 
-.fc .fc-timegrid-view-axis-frame {
+.fc .fc-timegrid-axis-frame {
   display: flex;
   align-items: center;
 }
@@ -59,7 +59,7 @@
   vertical-align: middle;
 }
 
-.fc-timegrid-view-axis-cushion,
+.fc-timegrid-axis-cushion,
 .fc-timegrid-slot-axis-cushion {
   white-space: nowrap;
   padding: 0 4px;

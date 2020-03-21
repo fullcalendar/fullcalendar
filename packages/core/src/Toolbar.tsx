@@ -63,7 +63,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
     let { theme } = this.context
 
     return (
-      <div class={'fc-' + props.position}>
+      <div class={'fc-toolbar-' + props.position}>
         {props.widgetGroups.map((widgetGroup: ToolbarWidget[]) => {
           let children = []
           let isOnlyButtons = true

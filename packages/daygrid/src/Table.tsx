@@ -80,9 +80,9 @@ export default class Table extends DateComponent<TableProps, TableState> {
     let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
     let buildMoreLinkText = this.buildBuildMoreLinkText(context.options.moreLinkText)
 
-    let classNames = [ 'fc-daygrid' ]
+    let classNames = [ 'fc-daygrid-body' ]
     if (props.vGrowRows && props.eventLimit === true) {
-      classNames.push('fc-daygrid-balanced')
+      classNames.push('fc-daygrid-body-balanced')
     }
 
     return (

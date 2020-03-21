@@ -17,12 +17,12 @@ export interface ViewContainerProps {
 export default class ViewContainer extends BaseComponent<ViewContainerProps> {
 
   render(props: ViewContainerProps) {
-    let classNames = [ 'fc-view-container' ]
+    let classNames = [ 'fc-view-harness' ]
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
 
     if (props.aspectRatio || props.vGrow || props.height) {
-      classNames.push('fc-view-container--absview')
+      classNames.push('fc-view-harness-ratio')
     }
 
     if (props.aspectRatio) {

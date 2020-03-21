@@ -51,6 +51,7 @@ export default abstract class TimeColsView extends View {
         type: 'head',
         chunk: {
           elRef: this.headerElRef,
+          tableClassName: 'fc-col-header',
           rowContent: headerRowContent
         }
       })
@@ -68,7 +69,7 @@ export default abstract class TimeColsView extends View {
         outerContent: (
           <tr>
             <td
-              class={'fc-timegrid-view-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
+              class={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
@@ -89,7 +90,7 @@ export default abstract class TimeColsView extends View {
     return (
       <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div class={[ 'fc-timegrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
               forPrint={props.forPrint}
               vGrow={!props.isHeightAuto}
@@ -156,7 +157,7 @@ export default abstract class TimeColsView extends View {
           <tr>
             <td
               colSpan={2}
-              class={'fc-timegrid-view-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
+              class={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
           </tr>
         )
@@ -182,7 +183,7 @@ export default abstract class TimeColsView extends View {
     return (
       <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
-          <div class={[ 'fc-timegrid-view' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
               forPrint={props.forPrint}
               vGrow={!props.isHeightAuto}
@@ -235,12 +236,12 @@ export default abstract class TimeColsView extends View {
         <WeekNumberRoot date={range.start} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <th ref={rootElRef} class={[
-              'fc-timegrid-view-axis',
+              'fc-timegrid-axis',
               'fc-scrollgrid-shrink',
               'fc-week-number' // TODO: make part of WeekNumberRoot
             ].concat(classNames).join(' ')}>
-              <div class='fc-timegrid-view-axis-frame fc-scrollgrid-shrink-frame'>
-                <a class='fc-timegrid-view-axis-cushion fc-scrollgrid-shrink-cushion' data-navlink={navLinkData} ref={innerElRef}>
+              <div class='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame'>
+                <a class='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' data-navlink={navLinkData} ref={innerElRef}>
                   {innerContent}
                 </a>
               </div>
@@ -251,7 +252,7 @@ export default abstract class TimeColsView extends View {
     }
 
     return (
-      <th class='fc-timegrid-view-axis'></th>
+      <th class='fc-timegrid-axis'></th>
     )
   }
 
@@ -269,12 +270,12 @@ export default abstract class TimeColsView extends View {
       <RenderHook name='allDay' mountProps={innerProps} dynamicProps={innerProps}>
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <td ref={rootElRef} className={[
-            'fc-timegrid-view-axis',
+            'fc-timegrid-axis',
             'fc-scrollgrid-shrink',
             'fc-allday' // TODO: have RenderHook supply this?
           ].concat(classNames).join(' ')}>
-            <div class='fc-timegrid-view-axis-frame fc-scrollgrid-shrink-frame' style={{ height: rowHeight }}>
-              <span class='fc-timegrid-view-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
+            <div class='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' style={{ height: rowHeight }}>
+              <span class='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                 {innerContent}
               </span>
             </div>

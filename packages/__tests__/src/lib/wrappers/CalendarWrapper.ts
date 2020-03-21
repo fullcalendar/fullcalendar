@@ -43,7 +43,7 @@ export default class CalendarWrapper {
 
 
   getViewContainerEl() {
-    return this.calendar.el.querySelector('.fc-view-container') as HTMLElement
+    return this.calendar.el.querySelector('.fc-view-harness') as HTMLElement
   }
 
 

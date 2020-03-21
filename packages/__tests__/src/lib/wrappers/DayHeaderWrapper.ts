@@ -21,18 +21,18 @@ export default class DayHeaderWrapper {
 
 
   getCellEls() {
-    return findElements(this.el, '.fc-day-header')
+    return findElements(this.el, '.fc-col-header-cell')
   }
 
 
   getCellEl(dateOrDow) {
     if (typeof dateOrDow === 'number') {
-      return this.el.querySelector(`.fc-day-header.${CalendarWrapper.DOW_CLASSNAMES[dateOrDow]}`)
+      return this.el.querySelector(`.fc-col-header-cell.${CalendarWrapper.DOW_CLASSNAMES[dateOrDow]}`)
     } else {
       if (typeof dateOrDow === 'string') {
         dateOrDow = parseUtcDate(dateOrDow)
       }
-      return this.el.querySelector(`.fc-day-header[data-date="${formatIsoDay(dateOrDow)}"]`)
+      return this.el.querySelector(`.fc-col-header-cell[data-date="${formatIsoDay(dateOrDow)}"]`)
     }
   }
 
@@ -77,7 +77,7 @@ export default class DayHeaderWrapper {
 
 
   getNavLinkEls() {
-    return findElements(this.el, '.fc-day-header[data-date] a')
+    return findElements(this.el, '.fc-col-header-cell[data-date] a')
   }
 
 
@@ -85,7 +85,7 @@ export default class DayHeaderWrapper {
     if (typeof dayDate === 'string') {
       dayDate = new Date(dayDate)
     }
-    return this.el.querySelector('.fc-day-header[data-date="' + formatIsoDay(dayDate) + '"] a')
+    return this.el.querySelector('.fc-col-header-cell[data-date="' + formatIsoDay(dayDate) + '"] a')
   }
 
 

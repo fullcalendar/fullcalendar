@@ -175,7 +175,7 @@ export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgr
 export {
   CssDimValue, ScrollerLike, SectionConfig, ColProps, ChunkConfig, hasShrinkWidth, renderMicroColGroup,
   getScrollGridClassNames, getSectionClassNames, getDoesSectionVGrow, getAllowYScrolling, renderChunkContent, computeShrinkWidth,
-  getChunkClassNames, ChunkContentCallbackArgs,
+  ChunkContentCallbackArgs,
   CLIENT_HEIGHT_WIGGLE,
   sanitizeShrinkWidth,
   ChunkConfigRowContent, ChunkConfigContent,

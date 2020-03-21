@@ -1,5 +1,5 @@
 
-.fc-daygrid {
+.fc-daygrid-body {
   position: relative;
   z-index: 1;
 }
@@ -10,7 +10,7 @@
   padding-top: 4px;
 }
 
-.scrollgrid-vgrow-cell-hack .fc-daygrid-day-inner {
+.fc-scrollgrid-vgrow-cell-hack .fc-daygrid-day-inner {
   position: static;
 }
 
@@ -32,7 +32,7 @@
   min-height: 3em;
 }
 
-.fc-daygrid-balanced .fc-daygrid-day-events {
+.fc-daygrid-body-balanced .fc-daygrid-day-events {
   position: absolute;
   left: 0;
   right: 0;
