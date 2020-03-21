@@ -3,7 +3,7 @@ const { readFileSync } = require('fs')
 const nodeResolve = require('rollup-plugin-node-resolve')
 // const sass = require('rollup-plugin-sass')
 const scss = require('rollup-plugin-scss') // does correct ordering. BAD BUG: can't have SASS includes with same filename. FILE BUG
-const { renderBanner, isRelPath, isScssPath, TEMPLATE_PLUGIN, SOURCEMAP_PLUGINS, WATCH_OPTIONS, onwarn, watchSubdirSassIncludes } = require('./rollup-util')
+const { renderBanner, isRelPath, isScssPath, TEMPLATE_PLUGIN, SOURCEMAP_PLUGINS, WATCH_OPTIONS, onwarn } = require('./rollup-util')
 const { pkgStructs, getCorePkgStruct } = require('./pkg-struct')
 
 
@@ -41,7 +41,6 @@ function buildPkgConfig(pkgStruct, isDev) {
       return !isRelPath(id)
     },
     plugins: [
-      watchSubdirSassIncludes,
       nodeResolve(),
       // sass({
       //   output: true, // to a .css file
@@ -52,7 +51,8 @@ function buildPkgConfig(pkgStruct, isDev) {
       // }),
       scss({
         output: true, // to a .css file
-        prefix: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n'
+        prefix: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n',
+        watch: path.join(process.cwd(), pkgStruct.srcDir, 'styles') // watch
       }),
       TEMPLATE_PLUGIN,
       ...(isDev ? SOURCEMAP_PLUGINS : []),

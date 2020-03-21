@@ -81,25 +81,3 @@ exports.isScssPath = function(path) {
 exports.isStylePath = function(path) {
   return /\.s?css$/i.test(path)
 }
-
-
-// a rollup plugin
-// TODO: rename to watchSassIncludesInDir
-// TODO: only look at names like _*.scss
-exports.watchSubdirSassIncludes = {
-  transform(code, id) {
-    if (exports.isScssPath(id)) { // yuck
-
-      let allStyleFiles = glob.sync(
-        path.join(path.dirname(id), '**/*.{scss,sass,css}')
-      )
-      allStyleFiles = allStyleFiles.filter((path) => path !== id) // IMPORTANT TO remove the main file itself. already being watched
-      // console.log('ROOT', id, 'WATCHING', allStyleFiles)
-
-      for (let styleFile of allStyleFiles) {
-        this.addWatchFile(styleFile)
-      }
-    }
-    return null
-  }
-}
