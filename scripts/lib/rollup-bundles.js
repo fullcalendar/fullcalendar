@@ -2,7 +2,8 @@ const path = require('path')
 const { readFileSync } = require('fs')
 const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
-const sass = require('rollup-plugin-sass')
+// const sass = require('rollup-plugin-sass')
+const scss = require('rollup-plugin-scss') // does correct ordering
 // const postCss = require('rollup-plugin-postcss') // was only used to extra non-sass CSS. obsolete
 const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, watchSubdirSassIncludes, isScssPath } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
@@ -59,12 +60,16 @@ function buildBundleConfig(pkgStruct, isDev) {
       alias(buildAliasMap()),
       nodeResolve(), // for requiring tslib. TODO: whitelist?
       watchSubdirSassIncludes,
-      sass({
+      // sass({
+      //   output: true, // to a .css file
+      //   options: {
+      //     // core already has sass vars imported, but inject them for other modules
+      //     data: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n'
+      //   }
+      // }),
+      scss({
         output: true, // to a .css file
-        options: {
-          // core already has sass vars imported, but inject them for other modules
-          data: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n'
-        }
+        prefix: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n'
       }),
       ...(isDev ? SOURCEMAP_PLUGINS : []),
       {
