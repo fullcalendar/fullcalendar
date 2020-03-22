@@ -182,7 +182,7 @@ const DEFAULT_SLAT_LABEL_FORMAT = {
 export function TimeColsAxisCell(props: TimeSlatMeta) {
   let classNames = [
     'fc-timegrid-slot',
-    'fc-timegrid-slot-axis',
+    'fc-timegrid-slot-label',
     props.isLabeled ? 'fc-scrollgrid-shrink' : 'fc-timegrid-slot-minor'
   ]
 
@@ -212,8 +212,8 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
             <RenderHook name='slotLabel' mountProps={mountProps} dynamicProps={dynamicProps} defaultInnerContent={renderInnerContent}>
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
                 <td ref={rootElRef} class={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
-                  <div class='fc-scrollgrid-shrink-frame'>
-                    <span className='fc-timegrid-slot-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
+                  <div class='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>
+                    <span className='fc-timegrid-slot-label-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                       {innerContent}
                     </span>
                   </div>

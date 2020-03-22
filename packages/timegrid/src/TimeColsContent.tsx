@@ -79,7 +79,7 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
           <tbody>
             <tr>
               {props.axis &&
-                <td class='fc-timegrid-col-axis' />
+                <td class='fc-timegrid-axis' />
               }
               {props.cells.map((cell, i) => (
                 <TimeCol

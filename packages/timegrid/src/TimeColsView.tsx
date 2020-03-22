@@ -271,10 +271,9 @@ export default abstract class TimeColsView extends View {
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <td ref={rootElRef} className={[
             'fc-timegrid-axis',
-            'fc-scrollgrid-shrink',
-            'fc-allday' // TODO: have RenderHook supply this?
+            'fc-scrollgrid-shrink'
           ].concat(classNames).join(' ')}>
-            <div class='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' style={{ height: rowHeight }}>
+            <div class={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' vgrow' : '')} style={{ height: rowHeight }}>
               <span class='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                 {innerContent}
               </span>

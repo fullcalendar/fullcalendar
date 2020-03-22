@@ -57,19 +57,45 @@
   border-top-style: dotted !important;
 }
 
-.fc .fc-timegrid-axis-frame {
-  display: flex;
-  align-items: center;
+.fc-timegrid-slot-label-cushion {
+  white-space: nowrap;
 }
 
-.fc .fc-timegrid-slot-axis {
-  vertical-align: middle;
+.fc-ltr {
+  .fc-timegrid-axis-frame,
+  .fc-timegrid-slot-label-frame {
+    text-align: right;
+  }
+}
+
+.fc-rtl {
+  .fc-timegrid-axis-frame,
+  .fc-timegrid-slot-label-frame {
+    text-align: left;
+  }
 }
 
 .fc-timegrid-axis-cushion,
-.fc-timegrid-slot-axis-cushion {
-  white-space: nowrap;
+.fc-timegrid-slot-label-cushion {
   padding: 0 4px;
+}
+
+.fc .fc-timegrid-slot-label { // vertical align the slots
+  vertical-align: middle;
+}
+
+
+
+.fc-timegrid-axis-frame {
+  overflow: hidden;
+  display: flex;
+  align-items: center; // vertical align
+  justify-content: flex-end; // horizontal align. matches text-align
+}
+
+.fc-timegrid-axis-cushion {
+  max-width: 60px;
+  flex-shrink: 0; // allows text to expand how it normally would, regardless of constrained width
 }
 
 
