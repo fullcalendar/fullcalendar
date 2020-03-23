@@ -29,6 +29,7 @@ exports.build = series(
   () => runTsc(),
   writeLocales, // needs tsc
   () => buildTestIndex(), // needs tsc. needs to happen before rollup
+  shellTask('npm:sass'),
   parallel(
     shellTask('npm:rollup'), // needs tsc, copied scss, generated locales
     writePkgLicenses,
@@ -44,7 +45,9 @@ exports.watch = series(
   series(
     writeLocales, // needs tsc
     () => buildTestIndex(true), // needs tsc. watch=true
+    shellTask('npm:sass'),
     parallel(
+      shellTask('npm:sass:watch'), // double work :(
       shellTask('npm:rollup:watch'), // needs tsc, copied scss, generated locales
       writePkgLicenses, // doesn't watch!
       writePkgReadmes, // doesn't watch!

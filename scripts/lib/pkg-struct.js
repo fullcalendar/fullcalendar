@@ -48,6 +48,7 @@ function buildPkgStruct(pkgName, mainPath) {
   if (existsSync(jsonPath)) {
     let origJsonObj = require(jsonPath) // not yet combined with more root-level json
     let srcDir = path.join(dir, 'src') // relative to project root
+    let distDir = path.join(dir, 'dist') // relative to project root
     let tscDir = path.join('tmp/tsc-output', srcDir)
 
     return {
@@ -60,7 +61,7 @@ function buildPkgStruct(pkgName, mainPath) {
       srcDir,
       tscDir, // TODO: use elsewhere!!!
       tscMain: path.join(tscDir, path.basename(mainPath)), // TODO: use elsewhere!!! TODO: make an absolute version
-      distDir: path.join(dir, 'dist'), // relative to project root
+      distDir,
       jsonObj: buildPkgJsonObj(origJsonObj, isPremium, isBundle)
     }
   }

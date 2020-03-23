@@ -1,10 +1,7 @@
 const path = require('path')
-const { readFileSync } = require('fs')
 const glob = require('glob')
 const nodeResolve = require('rollup-plugin-node-resolve')
-// const sass = require('rollup-plugin-sass')
-const scss = require('rollup-plugin-scss') // does correct ordering
-// const postCss = require('rollup-plugin-postcss') // was only used to extra non-sass CSS. obsolete
+const postCss = require('rollup-plugin-postcss')
 const { renderBanner, isRelPath, SOURCEMAP_PLUGINS, WATCH_OPTIONS, EXTERNAL_BROWSER_GLOBALS, TEMPLATE_PLUGIN, onwarn, isScssPath } = require('./rollup-util')
 const { pkgStructs, pkgStructHash, getCorePkgStruct, getNonPremiumBundle } = require('./pkg-struct')
 const alias = require('rollup-plugin-alias')
@@ -39,7 +36,6 @@ module.exports = function(isDev) {
 
 function buildBundleConfig(pkgStruct, isDev) {
   let banner = renderBanner(pkgStruct.jsonObj)
-  let anyCss = false
 
   return {
     input: path.join('tmp/tsc-output', pkgStruct.srcDir, 'main.js'), // TODO: use tscMain
@@ -48,36 +44,22 @@ function buildBundleConfig(pkgStruct, isDev) {
       file: path.join(pkgStruct.distDir, 'main.js'),
       name: EXTERNAL_BROWSER_GLOBALS['fullcalendar'], // TODO: make it a separarate const???
       banner,
-      sourcemap: isDev,
-      intro() {
-        if (anyCss) {
-          return 'import \'./main.css\';'
-        }
-        return ''
-      }
+      sourcemap: isDev
     },
     plugins: [
       alias(buildAliasMap()),
       nodeResolve(), // for requiring tslib. TODO: whitelist?
-      // sass({
-      //   output: true, // to a .css file
-      //   options: {
-      //     // core already has sass vars imported, but inject them for other modules
-      //     data: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n'
-      //   }
-      // }),
-      scss({
-        output: true, // to a .css file
-        prefix: (pkgStruct.isCore ? '' : coreVarsScssString) + '\n',
-        watch: path.join(process.cwd(), pkgStruct.srcDir, 'styles')
+      postCss({
+        extract: true // to separate file
       }),
       ...(isDev ? SOURCEMAP_PLUGINS : []),
       {
-        resolveId(id, importer) { // TODO: not really DRY
+        resolveId(id, importer) { // TODO: not really DRY // TODO: use alias instead?
           if (isScssPath(id) && isRelPath(id) && importer.match('/tmp/tsc-output/')) {
             let resourcePath = importer.replace('/tmp/tsc-output/', '/')
-            resourcePath = path.dirname(resourcePath)
-            resourcePath = path.join(resourcePath, id)
+            resourcePath = path.dirname(resourcePath) // the directory of the file
+            resourcePath = resourcePath.replace(/\/src(\/|$)/, '/dist$1')
+            resourcePath = path.join(resourcePath, id.replace('.scss', '.css'))
             return { id: resourcePath, external: false }
           }
           return null
@@ -182,12 +164,6 @@ function buildLocalesAllConfig() {
     onwarn
   }
 }
-
-
-const coreVarsScssString = readFileSync( // NOT DRY
-  path.join(getCorePkgStruct().srcDir, 'styles/_vars.scss'),
-  'utf8'
-)
 
 
 // TODO: use elsewhere
