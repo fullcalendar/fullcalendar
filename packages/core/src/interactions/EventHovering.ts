@@ -41,7 +41,7 @@ export default class EventHovering extends Interaction {
 
   handleSegEnter = (ev: Event, segEl: HTMLElement) => {
     if (getElSeg(segEl)) { // TODO: better way to make sure not hovering over more+ link or its wrapper
-      segEl.classList.add('fc-allow-mouse-resize')
+      segEl.classList.add('fc-event-resizable-mouse')
       this.currentSegEl = segEl
       this.triggerEvent('eventMouseEnter', ev, segEl)
     }
@@ -49,7 +49,7 @@ export default class EventHovering extends Interaction {
 
   handleSegLeave = (ev: Event | null, segEl: HTMLElement) => {
     if (this.currentSegEl) {
-      segEl.classList.remove('fc-allow-mouse-resize')
+      segEl.classList.remove('fc-event-resizable-mouse')
       this.currentSegEl = null
       this.triggerEvent('eventMouseLeave', ev, segEl)
     }

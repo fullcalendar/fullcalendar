@@ -66,15 +66,15 @@
   display: none;
 }
 
-.fc-event.fc-allow-mouse-resize .fc-event-resizer,
-.fc-event.fc-selected .fc-event-resizer {
+.fc-event-resizable-mouse .fc-event-resizer,
+.fc-event-selected .fc-event-resizer {
   /* only show when hovering or selected (with touch) */
   display: block;
 }
 
 /* hit area */
 
-.fc-event.fc-selected .fc-event-resizer:before {
+.fc-event-selected .fc-event-resizer:before {
   /* 40x40 touch area */
   content: "";
   position: absolute;
@@ -91,12 +91,12 @@
 /* Event Selection (only for touch devices)
 --------------------------------------------------------------------------------------------------*/
 
-.fc-event.fc-selected {
+.fc-event-selected {
   z-index: 9999 !important; /* overcomes inline z-index */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.fc-event.fc-selected:after {
+.fc-event-selected:after {
   content: "";
   position: absolute;
   z-index: 1; /* same z-index as fc-bg, behind text */
@@ -114,11 +114,11 @@
 /* Event Dragging
 --------------------------------------------------------------------------------------------------*/
 
-.fc-event.fc-dragging.fc-selected {
+.fc-event-dragging.fc-event-selected {
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
 }
 
-.fc-event.fc-dragging:not(.fc-selected) {
+.fc-event-dragging:not(.fc-event-selected) {
   opacity: .75;
 }
 

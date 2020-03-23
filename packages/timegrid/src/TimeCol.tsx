@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayCellRoot } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayCellRoot, NowIndicatorRoot } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -51,31 +51,33 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
             {...dataAttrs}
             {...props.extraDataAttrs}
           >
-            <div class='fc-timegrid-col-events'>
-              {/* the Fragments scope the keys */}
-              <Fragment>
-                {this.renderFgSegs(
-                  mirrorSegs as TimeColsSeg[],
-                  {},
-                  Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
-                  Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
-                  Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
-                  // TODO: pass in left/right instead of using only computeSegTopBottomCss
-                )}
-              </Fragment>
-              <Fragment>
-                {this.renderFgSegs(
-                  props.fgEventSegs,
-                  interactionAffectedInstances
-                )}
-              </Fragment>
+            <div class='fc-timegrid-col-origin'>
+              <div class='fc-timegrid-col-events'>
+                {/* the Fragments scope the keys */}
+                <Fragment>
+                  {this.renderFgSegs(
+                    mirrorSegs as TimeColsSeg[],
+                    {},
+                    Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
+                    Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
+                    Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
+                    // TODO: pass in left/right instead of using only computeSegTopBottomCss
+                  )}
+                </Fragment>
+                <Fragment>
+                  {this.renderFgSegs(
+                    props.fgEventSegs,
+                    interactionAffectedInstances
+                  )}
+                </Fragment>
+              </div>
+              <div class='fc-timegrid-col-bg'>
+                <Fragment>{this.renderFillSegs(props.businessHourSegs, 'nonbusiness')}</Fragment>
+                <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bgevent')}</Fragment>
+                <Fragment>{this.renderFillSegs(props.dateSelectionSegs, 'highlight')}</Fragment>
+              </div>
+              {this.renderNowIndicator(props.nowIndicatorSegs)}
             </div>
-            <div class='fc-timegrid-col-bg'>
-              <Fragment>{this.renderFillSegs(props.businessHourSegs, 'nonbusiness')}</Fragment>
-              <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bgevent')}</Fragment>
-              <Fragment>{this.renderFillSegs(props.dateSelectionSegs, 'highlight')}</Fragment>
-            </div>
-            {this.renderNowIndicator(props.nowIndicatorSegs)}
             {innerContent && // needs to be after the relatively-positioned events&bg divs
               <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
             }
@@ -152,9 +154,15 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     if (!slatCoords) { return }
 
     return segs.map((seg) => (
-      <div class='fc-now-indicator fc-now-indicator-line' style={{
-        top: slatCoords.computeDateTop(seg.start, date)
-      }} />
+      <NowIndicatorRoot isAxis={false} date={date}>
+        {(rootElRef, classNames, innerElRef, innerContent) => (
+          <div
+            ref={rootElRef}
+            class={[ 'fc-timegrid-now-indicator-line' ].concat(classNames).join(' ')}
+            style={{ top: slatCoords.computeDateTop(seg.start, date) }}
+          >{innerContent}</div>
+        )}
+      </NowIndicatorRoot>
     ))
   }
 

@@ -127,7 +127,7 @@ export default class ElementMirror {
       // would use preventSelection(), but that prevents selectstart, causing problems.
       mirrorEl.classList.add('fc-unselectable')
 
-      mirrorEl.classList.add('fc-dragging')
+      mirrorEl.classList.add('fc-event-dragging')
 
       applyStyle(mirrorEl, {
         position: 'fixed',

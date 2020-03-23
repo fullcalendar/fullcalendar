@@ -10,7 +10,8 @@ import {
   ComponentContext,
   memoize,
   DateRange,
-  DateProfile
+  DateProfile,
+  NowIndicatorRoot
 } from '@fullcalendar/core'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import TimeColsSeg, { splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
@@ -107,10 +108,15 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
           </tbody>
         </table>
         {nowIndicatorTop != null &&
-          <div
-            class='fc-now-indicator fc-now-indicator-arrow'
-            style={{ top: nowIndicatorTop }}
-          />
+          <NowIndicatorRoot isAxis={true} date={props.nowDate}>
+            {(rootElRef, classNames, innerElRef, innerContent) => (
+              <div
+                ref={rootElRef}
+                class={[ 'fc-timegrid-now-indicator-arrow' ].concat(classNames).join(' ')}
+                style={{ top: nowIndicatorTop }}
+              >{innerContent}</div>
+            )}
+          </NowIndicatorRoot>
         }
       </div>
     )

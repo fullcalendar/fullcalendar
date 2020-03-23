@@ -30,18 +30,18 @@
 }
 
 
-
-.fc-timegrid-col-events,
-.fc-timegrid-col-bg {
+.fc-timegrid-col-origin {
   position: relative;
   height: 0;
 }
 
 .fc-timegrid-col-bg {
+  position: relative;
   z-index: 1; // under slots
 }
 
 .fc-timegrid-col-events {
+  position: relative;
   z-index: 3; // above slots
 }
 

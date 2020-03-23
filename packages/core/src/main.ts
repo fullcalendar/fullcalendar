@@ -191,6 +191,7 @@ export { default as ScrollResponder, ScrollRequest } from './ScrollResponder'
 export { globalPlugins } from './global-plugins'
 export { RenderHook, RenderHookProps, RenderHookPropsChildren } from './common/render-hook'
 export { default as StandardEvent, StandardEventProps } from './common/StandardEvent'
+export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'
 
 export { DayCellRoot, DayCellRootProps, DayCellDynamicProps } from './common/DayCellRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'

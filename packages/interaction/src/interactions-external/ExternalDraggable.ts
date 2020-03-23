@@ -61,7 +61,7 @@ export default class ExternalDraggable {
       this.dragging.delay &&
       (ev.subjectEl as HTMLElement).classList.contains('fc-event')
     ) {
-      this.dragging.mirror.getMirrorEl().classList.add('fc-selected')
+      this.dragging.mirror.getMirrorEl().classList.add('fc-event-selected')
     }
   }
 

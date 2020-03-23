@@ -51,7 +51,7 @@
 
 /* resizer (cursor device) */
 
-.fc-timegrid-event.fc-allow-mouse-resize .fc-event-resizer {
+.fc-timegrid-event.fc-event-resizable-mouse .fc-event-resizer {
   left: 0;
   right: 0;
   bottom: 0;
@@ -64,7 +64,7 @@
   cursor: s-resize;
 }
 
-.fc-timegrid-event.fc-allow-mouse-resize .fc-event-resizer:after {
+.fc-timegrid-event.fc-event-resizable-mouse .fc-event-resizer:after {
   content: "=";
 }
 

@@ -89,7 +89,7 @@ this class is used for:
 
 /* resizer (mouse devices) */
 
-.fc-h-event.fc-allow-mouse-resize .fc-event-resizer {
+.fc-h-event.fc-event-resizable-mouse .fc-event-resizer {
   width: 7px;
   top: -1px; /* overcome top border */
   bottom: -1px; /* overcome bottom border */
