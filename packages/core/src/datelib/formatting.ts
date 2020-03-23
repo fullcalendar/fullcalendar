@@ -101,6 +101,7 @@ export function formatDayString(marker: DateMarker) {
 }
 
 
+// TODO: use Date::toISOString and use everything after the T?
 export function formatIsoTimeString(marker: DateMarker) {
   return padStart(marker.getUTCHours(), 2) + ':' +
     padStart(marker.getUTCMinutes(), 2) + ':' +

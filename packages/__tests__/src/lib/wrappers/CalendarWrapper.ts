@@ -14,14 +14,14 @@ export default class CalendarWrapper {
   static EVENT_START_RESIZER_CLASSNAME = 'fc-start-resizer'
   static EVENT_END_RESIZER_CLASSNAME = 'fc-end-resizer'
   static BG_EVENT_CLASSNAME = 'fc-bgevent'
-  static TODAY_CLASSNAME = 'fc-today'
+  static TODAY_CLASSNAME = 'fc-day-today'
   static PAST_CLASSNAME = 'fc-past'
   static FUTURE_CLASSNAME = 'fc-future'
   static DOW_CLASSNAMES = [ 'fc-sun', 'fc-mon', 'fc-tue', 'fc-wed', 'fc-thu', 'fc-fri', 'fc-sat' ]
-  static LTR_CLASSNAME = 'fc-ltr'
-  static RTL_CLASSNAME = 'fc-rtl'
-  static BOOTSTRAP_CLASSNAME = 'fc-bootstrap'
-  static UNTHEMED_CLASSNAME = 'fc-unthemed'
+  static LTR_CLASSNAME = 'fc-dir-ltr'
+  static RTL_CLASSNAME = 'fc-dir-rtl'
+  static BOOTSTRAP_CLASSNAME = 'fc-theme-bootstrap'
+  static UNTHEMED_CLASSNAME = 'fc-theme-standard'
   static ROOT_CLASSNAME = 'fc'
 
 
@@ -76,7 +76,7 @@ export default class CalendarWrapper {
 
 
   getTodayEls() {
-    return findElements(this.calendar.el, '.fc-today')
+    return findElements(this.calendar.el, '.fc-day-today')
   }
 
 

@@ -13,6 +13,7 @@ export interface TimeColProps {
   todayRange: DateRange
   extraDataAttrs?: any
   extraMountProps?: any
+  extraClassNames?: string[]
   fgEventSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
   businessHourSegs: TimeColsSeg[]
@@ -46,36 +47,36 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
         {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
           <td
             ref={rootElRef}
-            className={[ 'fc-timegrid-col' ].concat(classNames).join(' ')}
+            className={[ 'fc-timegrid-col' ].concat(classNames, props.extraClassNames || []).join(' ')}
             {...dataAttrs}
             {...props.extraDataAttrs}
           >
-            <div class='fc-timegrid-col-origin'>
-              <div class='fc-timegrid-col-events'>
-                {/* the Fragments scope the keys */}
-                <Fragment>
-                  {this.renderFgSegs(
-                    mirrorSegs as TimeColsSeg[],
-                    {},
-                    Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
-                    Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
-                    Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
-                    // TODO: pass in left/right instead of using only computeSegTopBottomCss
-                  )}
-                </Fragment>
-                <Fragment>
-                  {this.renderFgSegs(
-                    props.fgEventSegs,
-                    interactionAffectedInstances
-                  )}
-                </Fragment>
-              </div>
-              {this.renderNowIndicator(props.nowIndicatorSegs)}
+            <div class='fc-timegrid-col-events'>
+              {/* the Fragments scope the keys */}
+              <Fragment>
+                {this.renderFgSegs(
+                  mirrorSegs as TimeColsSeg[],
+                  {},
+                  Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
+                  Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
+                  Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
+                  // TODO: pass in left/right instead of using only computeSegTopBottomCss
+                )}
+              </Fragment>
+              <Fragment>
+                {this.renderFgSegs(
+                  props.fgEventSegs,
+                  interactionAffectedInstances
+                )}
+              </Fragment>
+            </div>
+            <div class='fc-timegrid-col-bg'>
               <Fragment>{this.renderFillSegs(props.businessHourSegs, 'nonbusiness')}</Fragment>
               <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bgevent')}</Fragment>
               <Fragment>{this.renderFillSegs(props.dateSelectionSegs, 'highlight')}</Fragment>
             </div>
-            {innerContent &&
+            {this.renderNowIndicator(props.nowIndicatorSegs)}
+            {innerContent && // needs to be after the relatively-positioned events&bg divs
               <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
             }
           </td>
@@ -138,7 +139,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     computeSegVerticals(segs, props.date, props.slatCoords, context.options.eventMinHeight)
 
     return segs.map((seg) => (
-      <div class={`fc-timegrid-bg-harness`} style={this.computeSegTopBottomCss(seg)}>
+      <div class='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
         <div class={`fc-timegrid-${fillType} fc-${fillType}`}></div>
       </div>
     ))

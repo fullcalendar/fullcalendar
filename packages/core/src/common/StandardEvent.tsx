@@ -56,7 +56,7 @@ export default class StandardEvent extends BaseComponent<StandardEventProps> {
             ref={rootElRef}
             {...getSegAnchorAttrs(props.seg)}
           >
-            <div class='fc-event-inner' ref={innerElRef}>
+            <div class='fc-event-main' ref={innerElRef}>
               {innerContent}
             </div>
             {dynamicProps.isStartResizable &&

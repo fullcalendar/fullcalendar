@@ -130,6 +130,7 @@ export default abstract class TimeColsView extends View {
           },
           {
             elRef: this.headerElRef,
+            tableClassName: 'fc-col-header',
             rowContent: headerRowContent
           }
         ]

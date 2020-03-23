@@ -14,12 +14,11 @@
 
 .fc-timegrid-slots {
   position: relative;
-  z-index: 2;
+  z-index: 2; // go above fc-timegrid-cols
 }
 
 .fc-timegrid-cols {
-  position: absolute;
-  z-index: 3;
+  position: absolute; // no z-index. children will decide
   top: 0;
   left: 0;
   right: 0;
@@ -30,17 +29,30 @@
   }
 }
 
-.fc-timegrid-col-origin {
+
+
+.fc-timegrid-col-events,
+.fc-timegrid-col-bg {
   position: relative;
+  height: 0;
+}
+
+.fc-timegrid-col-bg {
+  z-index: 1; // under slots
 }
 
 .fc-timegrid-col-events {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 0;
+  z-index: 3; // above slots
 }
+
+// within events container
+// .fc-timegrid-event { z-index: ? } // decided and assigned in JS
+.fc-timegrid-event.fc-event-mirror { z-index: 9999 } // above all events
+
+// within bg container
+.fc-timegrid-nonbusiness { z-index: 1 }
+.fc-timegrid-bgevent { z-index: 2 }
+.fc-timegrid-highlight { z-index: 3 }
 
 
 
@@ -61,14 +73,14 @@
   white-space: nowrap;
 }
 
-.fc-ltr {
+.fc-dir-ltr {
   .fc-timegrid-axis-frame,
   .fc-timegrid-slot-label-frame {
     text-align: right;
   }
 }
 
-.fc-rtl {
+.fc-dir-rtl {
   .fc-timegrid-axis-frame,
   .fc-timegrid-slot-label-frame {
     text-align: left;
@@ -107,19 +119,14 @@
 }
 
 
-.fc-ltr .fc-timegrid-col-events { /* space on the sides of events for LTR (default) */
+.fc-dir-ltr .fc-timegrid-col-events { /* space on the sides of events for LTR (default) */
   margin: 0 2.5% 0 2px;
 }
 
-.fc-rtl .fc-timegrid-col-events { /* space on the sides of events for RTL */
+.fc-dir-rtl .fc-timegrid-col-events { /* space on the sides of events for RTL */
   margin: 0 2px 0 2.5%;
 }
 
 .fc-timegrid-event-harness {
   position: absolute;
 }
-
-.fc-timegrid-col-events { z-index: 4 } // events are z-index-scoped within
-.fc-timegrid-highlight { z-index: 3 }
-.fc-timegrid-bgevent { z-index: 2 }
-.fc-timegrid-nonbusiness { z-index: 1 }

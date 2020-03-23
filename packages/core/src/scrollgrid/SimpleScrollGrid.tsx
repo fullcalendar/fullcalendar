@@ -59,9 +59,6 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
         this.renderMicroColGroup(cols, state.shrinkWidth)
 
     let classNames = getScrollGridClassNames(props.vGrow, context)
-    if (props.forPrint) { // temporary
-      classNames.push('fc-scrollgrid--forprint')
-    }
 
     if (!getCanVGrowWithinCell()) {
       classNames.push('fc-scrollgrid-vgrow-cell-hack')

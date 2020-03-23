@@ -85,6 +85,7 @@ export default abstract class TableView<State={}> extends View<State> {
         type: 'head',
         chunks: [{
           elRef: this.headerElRef,
+          tableClassName: 'fc-col-header',
           rowContent: headerRowContent
         }]
       })

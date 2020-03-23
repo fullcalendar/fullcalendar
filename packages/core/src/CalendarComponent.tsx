@@ -280,15 +280,10 @@ function reportClassNames(onClassNameChange, forPrint: boolean, dir: string, the
 function computeClassNames(forPrint: boolean, dir: string, theme: Theme) {
   let classNames: string[] = [
     'fc',
-    'fc-' + dir,
+    forPrint ? 'fc-media-print' : 'fc-media-screen',
+    'fc-dir-' + dir,
     theme.getClass('root')
   ]
-
-  if (forPrint) {
-    classNames.push('fc-print')
-  } else {
-    classNames.push('fc-screen')
-  }
 
   return classNames
 }

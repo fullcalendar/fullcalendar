@@ -34,10 +34,11 @@ export interface TableCellProps extends TableCellModel {
   onMoreClick?: (arg: MoreLinkArg) => void
 }
 
-export interface TableCellModel {
+export interface TableCellModel { // combine with DayTableCell?
   date: DateMarker
+  extraMountProps?: object
   extraDataAttrs?: object
-  extraMountProps?: any
+  extraClassNames?: string[]
 }
 
 export interface MoreLinkArg {
@@ -79,11 +80,11 @@ export default class TableCell extends DateComponent<TableCellProps> {
         {(rootElRef, classNames, rootDataAttrs, innerElRef, innerContent) => (
           <td
             ref={rootElRef}
-            class={[ 'fc-daygrid-day' ].concat(classNames).join(' ')}
+            class={[ 'fc-daygrid-day' ].concat(classNames, props.extraClassNames || []).join(' ')}
             {...rootDataAttrs}
             {...props.extraDataAttrs}
           >
-            <div class='fc-daygrid-day-inner fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
+            <div class='fc-daygrid-day-frame fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
               {props.showWeekNumber &&
                 <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
                   {(rootElRef, classNames, innerElRef, innerContent) => (
@@ -124,7 +125,9 @@ export default class TableCell extends DateComponent<TableCellProps> {
                   </div>
                 }
               </div>
-              {props.bgContent}
+              <div class='fc-daygrid-day-bg'>
+                {props.bgContent}
+              </div>
             </div>
           </td>
         )}

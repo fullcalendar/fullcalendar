@@ -40,7 +40,7 @@
   direction: ltr; // hack for chrome doing the scroller's right/left wrong for rtl. undone below...
 }
 
-.fc-rtl .fc-scroller-harness > .fc-scroller { // undo hack
+.fc-dir-rtl .fc-scroller-harness > .fc-scroller { // undo hack
   direction: rtl;
 }
 
@@ -68,20 +68,21 @@
 }
 
 
-.fc-scrollgrid.fc-scrollgrid--forprint { // will eventually have precedence of `.fc-print .fc-scrollgrid`
-  table-layout: auto;
-}
+.fc-media-print {
 
-.fc-scrollgrid--forprint {
+  .fc-scrollgrid {
+    table-layout: auto;
 
-  .fc-sticky {
-    top: 0 !important;
-    right: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
+    .fc-sticky { // TODO: do this more generally
+      top: 0 !important;
+      right: 0 !important;
+      left: 0 !important;
+      bottom: 0 !important;
+    }
   }
 
 }
+
 
 // for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
 .fc-scrollgrid-vgrow-cell-hack {

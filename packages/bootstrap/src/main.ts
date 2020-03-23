@@ -5,7 +5,7 @@ export class BootstrapTheme extends Theme {
 }
 
 BootstrapTheme.prototype.classes = {
-  root: 'fc-bootstrap',
+  root: 'fc-theme-bootstrap', // TODO: compute this off of registered theme name
   table: 'table-bordered',
   tableCellShaded: 'table-active',
   buttonGroup: 'btn-group',

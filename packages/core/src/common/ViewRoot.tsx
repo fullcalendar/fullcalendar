@@ -17,7 +17,7 @@ export const ViewRoot = (props: ViewRootProps) => (
       <RenderHook name='view' mountProps={{ view: context.view }} dynamicProps={{}} elRef={props.elRef}>
         {(rootElRef, customClassNames) => props.children(
           rootElRef,
-          [ 'fc-view', 'fc-view-' + props.viewSpec.type ].concat(customClassNames)
+          [ `fc-${props.viewSpec.type}-view`, 'fc-view' ].concat(customClassNames)
         )}
       </RenderHook>
     )}

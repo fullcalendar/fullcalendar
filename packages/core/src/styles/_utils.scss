@@ -1,6 +1,6 @@
 
-td.fc-today {
-  border-style: double; /* overcome neighboring borders */
+td.fc-day-today {
+  // border-style: double; // overcome neighboring borders
 }
 
 .fc-highlight { /* when user is selecting cells */
@@ -38,9 +38,9 @@ td.fc-today {
 }
 
 
-.fc-unthemed {
+.fc-theme-standard {
 
-  .fc-today {
+  .fc-day-today {
     background: #fcf8e3;
   }
 
@@ -50,10 +50,8 @@ td.fc-today {
   }
 
   .fc-divider {
-    border: 1px solid $fc-unthemed-border-color;
-    border: 1px solid var(--fc-unthemed-border-color, $fc-unthemed-border-color);
-    background: $fc-unthemed-muted-bg-color;
-    background: var(--fc-unthemed-muted-bg-color, $fc-unthemed-muted-bg-color);
+    background: $fc-theme-standard-muted-bg-color;
+    background: var(--fc-theme-standard-muted-bg-color, $fc-theme-standard-muted-bg-color);
   }
 
 }

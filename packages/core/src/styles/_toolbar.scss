@@ -18,7 +18,7 @@
   margin: 0;
 }
 
-.fc-ltr {
+.fc-dir-ltr {
 
   .fc-toolbar > * > :not(:first-child) {
     margin-left: .75em; // space between
@@ -26,7 +26,7 @@
 
 }
 
-.fc-rtl {
+.fc-dir-rtl {
 
   .fc-toolbar > * > :not(:first-child) {
     margin-right: .75em; // space between
@@ -34,7 +34,7 @@
 
 }
 
-.fc-print {
+.fc-media-print {
 
   // don't display any button-related controls
   // TODO: better to put in _button/_button-group.scss ?

@@ -46,7 +46,7 @@ export default class DayHeaderWrapper {
     return this.getCellEls().map((cellEl) => ({
       text: $(cellEl).text(),
       date: parseIsoAsUtc(cellEl.getAttribute('data-date')),
-      isToday: cellEl.classList.contains('fc-today')
+      isToday: cellEl.classList.contains('fc-day-today')
     }))
   }
 

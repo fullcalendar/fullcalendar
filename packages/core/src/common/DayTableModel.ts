@@ -13,6 +13,7 @@ export interface DayTableCell {
   date: DateMarker
   extraMountProps?: object
   extraDataAttrs?: object
+  extraClassNames?: string[]
 }
 
 export default class DayTableModel {

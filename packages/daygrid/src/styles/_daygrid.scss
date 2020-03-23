@@ -4,13 +4,13 @@
   z-index: 1;
 }
 
-.fc-daygrid-day-inner {
+.fc-daygrid-day-frame {
   position: relative;
   min-height: 100%; // works better than height:100% for some reason
   padding-top: 4px;
 }
 
-.fc-scrollgrid-vgrow-cell-hack .fc-daygrid-day-inner {
+.fc-scrollgrid-vgrow-cell-hack .fc-daygrid-day-frame {
   position: static;
 }
 
@@ -27,7 +27,7 @@
 
 .fc-daygrid-day-events {
   margin: 0 4px;
-  margin-bottom: 0 !important; // put bottom padding on fc-daygrid-day-inner instead
+  margin-bottom: 0 !important; // put bottom padding on fc-daygrid-day-frame instead
   position: relative;
   min-height: 3em;
 }
@@ -97,12 +97,12 @@
   color: #808080;
 }
 
-.fc-ltr .fc-daygrid-week-number {
+.fc-dir-ltr .fc-daygrid-week-number {
   float: left;
   border-radius: 0 0 3px 0;
 }
 
-.fc-rtl .fc-daygrid-week-number {
+.fc-dir-rtl .fc-daygrid-week-number {
   float: right;
   border-radius: 0 0 0 3px;
 }

@@ -126,6 +126,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               todayRange={props.todayRange}
               extraMountProps={cell.extraMountProps}
               extraDataAttrs={cell.extraDataAttrs}
+              extraClassNames={cell.extraClassNames}
               moreCnt={moreCnts[col]}
               moreMarginTop={moreTops[col] /* rename */}
               buildMoreLinkText={props.buildMoreLinkText}
