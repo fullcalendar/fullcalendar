@@ -73,6 +73,16 @@
   white-space: nowrap;
 }
 
+.fc-timegrid-axis-frame-liquid {
+  height: 100%;
+}
+
+.fc-liquid-hack {
+  .fc-timegrid-axis-frame-liquid {
+    @include liquid-hack-cell-inner;
+  }
+}
+
 .fc-dir-ltr {
   .fc-timegrid-axis-frame,
   .fc-timegrid-slot-label-frame {

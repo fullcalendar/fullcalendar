@@ -4,7 +4,7 @@ import { CssDimValue } from './scrollgrid/util'
 
 
 export interface ViewContainerProps {
-  vGrow?: boolean
+  liquid?: boolean
   height?: CssDimValue
   aspectRatio?: number
   onClick?: (ev: Event) => void
@@ -21,7 +21,7 @@ export default class ViewContainer extends BaseComponent<ViewContainerProps> {
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
 
-    if (props.aspectRatio || props.vGrow || props.height) {
+    if (props.aspectRatio || props.liquid || props.height) {
       classNames.push('fc-view-harness-ratio')
     }
 

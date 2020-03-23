@@ -79,8 +79,8 @@ export default abstract class TimeColsView extends View {
     sections.push({
       key: 'timed',
       type: 'body',
-      vGrow: true,
-      vGrowRows: Boolean(context.options.expandRows),
+      liquid: true,
+      expandRows: Boolean(context.options.expandRows),
       chunk: {
         scrollerElRef: this.scrollerElRef,
         content: timeContent
@@ -93,7 +93,7 @@ export default abstract class TimeColsView extends View {
           <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
               forPrint={props.forPrint}
-              vGrow={!props.isHeightAuto}
+              liquid={!props.isHeightAuto}
               cols={[ { width: 'shrink' } ]}
               sections={sections}
             />
@@ -168,8 +168,8 @@ export default abstract class TimeColsView extends View {
     sections.push({
       key: 'timed',
       type: 'body',
-      vGrow: true,
-      vGrowRows: Boolean(context.options.expandRows),
+      liquid: true,
+      expandRows: Boolean(context.options.expandRows),
       chunks: [
         {
           rowContent: <TimeBodyAxis slatMetas={slatMetas} />
@@ -187,7 +187,7 @@ export default abstract class TimeColsView extends View {
           <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
               forPrint={props.forPrint}
-              vGrow={!props.isHeightAuto}
+              liquid={!props.isHeightAuto}
               colGroups={[
                 { width: 'shrink', cols: [ { width: 'shrink' } ] }, // TODO: allow no specify cols
                 { cols: [ { span: colCnt, minWidth: dayMinWidth } ] }
@@ -274,7 +274,7 @@ export default abstract class TimeColsView extends View {
             'fc-timegrid-axis',
             'fc-scrollgrid-shrink'
           ].concat(classNames).join(' ')}>
-            <div class={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' vgrow' : '')} style={{ height: rowHeight }}>
+            <div class={'fc-timegrid-axis-frame fc-scrollgrid-shrink-frame' + (rowHeight == null ? ' fc-timegrid-axis-frame-liquid' : '')} style={{ height: rowHeight }}>
               <span class='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' ref={innerElRef}>
                 {innerContent}
               </span>

@@ -1,8 +1,4 @@
 
-td.fc-day-today {
-  // border-style: double; // overcome neighboring borders
-}
-
 .fc-highlight { /* when user is selecting cells */
   background: #bce8f1;
   opacity: .3;
@@ -31,10 +27,6 @@ td.fc-day-today {
           user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-
-.vgrow {
-  height: 100%;
 }
 
 

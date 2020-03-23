@@ -50,7 +50,7 @@ export default class DayTimeColsView extends TimeColsView {
         colGroupNode={contentArg.tableColGroupNode}
         renderRowIntro={dayMinWidth ? null : this.renderTableRowAxis}
         eventLimit={this.getAllDayEventLimit()}
-        vGrowRows={false}
+        expandRows={false}
         headerAlignElRef={this.headerElRef}
         clientWidth={contentArg.clientWidth}
         clientHeight={contentArg.clientHeight}
@@ -70,7 +70,7 @@ export default class DayTimeColsView extends TimeColsView {
         tableMinWidth={contentArg.tableMinWidth}
         clientWidth={contentArg.clientWidth}
         clientHeight={contentArg.clientHeight}
-        vGrowRows={contentArg.vGrowRows}
+        expandRows={contentArg.expandRows}
         onScrollTopRequest={this.handleScrollTopRequest}
       />
     )

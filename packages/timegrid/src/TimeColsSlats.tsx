@@ -65,7 +65,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     return (
       <div class='fc-timegrid-slots' ref={this.rootElRef}>
         <table
-          class={theme.getClass('table') + ' vgrow' /* why not use rowsGrow like resource view? */}
+          class={theme.getClass('table')}
           style={{
             minWidth: props.tableMinWidth,
             width: props.clientWidth,

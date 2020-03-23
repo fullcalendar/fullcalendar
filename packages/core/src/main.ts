@@ -174,14 +174,13 @@ export { ScrollGridProps, ScrollGridSectionConfig, ColGroupConfig, ScrollGridImp
 export { default as SimpleScrollGrid, SimpleScrollGridSection } from './scrollgrid/SimpleScrollGrid'
 export {
   CssDimValue, ScrollerLike, SectionConfig, ColProps, ChunkConfig, hasShrinkWidth, renderMicroColGroup,
-  getScrollGridClassNames, getSectionClassNames, getDoesSectionVGrow, getAllowYScrolling, renderChunkContent, computeShrinkWidth,
+  getScrollGridClassNames, getSectionClassNames, getSectionHasLiquidHeight, getAllowYScrolling, renderChunkContent, computeShrinkWidth,
   ChunkContentCallbackArgs,
   CLIENT_HEIGHT_WIGGLE,
   sanitizeShrinkWidth,
   ChunkConfigRowContent, ChunkConfigContent,
   isColPropsEqual
 } from './scrollgrid/util'
-export { getCanVGrowWithinCell} from './scrollgrid/table-styling'
 export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'
 export { default as RefMap } from './util/RefMap'

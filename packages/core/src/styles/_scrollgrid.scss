@@ -15,51 +15,27 @@
   }
 }
 
+.fc-scrollgrid-liquid {
+  height: 100% !important;
+}
+
+
 .fc-scrollgrid-section { // a <tr>
   height: 0;
 
   > td {
-    height: 0; // needs a height so vgrow's within grow
+    height: 0; // needs a height so inner div within grow
   }
 }
 
-.fc-scrollgrid-section.vgrow {
-  height: auto; // undo 1px height. will cancel height:100% also
+.fc-scrollgrid-section-liquid {
+  height: auto;
 
   > td {
     height: 100%; // FF needs this instead of auto
   }
 }
 
-
-
-
-.fc-scroller-harness {
-  position: relative;
-  overflow: hidden;
-  direction: ltr; // hack for chrome doing the scroller's right/left wrong for rtl. undone below...
-}
-
-.fc-dir-rtl .fc-scroller-harness > .fc-scroller { // undo hack
-  direction: rtl;
-}
-
-.fc-scroller-harness.vgrow {
-  position: relative;
-
-  > .fc-scroller { // redundant. set inline too
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-  }
-}
-
-
-.fc-scroller {
-  position: relative; // for abs-positioned elements within
-}
 
 
 .fc-sticky {
@@ -85,22 +61,14 @@
 
 
 // for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
-.fc-scrollgrid-vgrow-cell-hack {
+// inner-wrappers are responsible for being absolute
+.fc-liquid-hack {
   td, th {
     position: relative;
-
-    > .vgrow {
-      height: auto !important;
-      position: absolute !important;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-    }
   }
 }
 
-// for most browsers, if a height isn't set on the table, can't do vgrow within cells
+// for most browsers, if a height isn't set on the table, can't do liquid-height within cells
 .fc-scrollgrid-section table {
   height: 1px; // serves as a min-height. harmless
 }

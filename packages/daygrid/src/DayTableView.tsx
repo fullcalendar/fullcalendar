@@ -50,7 +50,7 @@ export default class DayTableView extends TableView {
         colGroupNode={contentArg.tableColGroupNode}
         tableMinWidth={contentArg.tableMinWidth}
         eventLimit={options.eventLimit}
-        vGrowRows={!props.isHeightAuto}
+        expandRows={!props.isHeightAuto}
         headerAlignElRef={this.headerElRef}
         clientWidth={contentArg.clientWidth}
         clientHeight={contentArg.clientHeight}

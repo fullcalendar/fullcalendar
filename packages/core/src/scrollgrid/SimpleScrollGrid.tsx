@@ -5,19 +5,18 @@ import Scroller, { OverflowValue } from './Scroller'
 import RefMap from '../util/RefMap'
 import {
   ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getAllowYScrolling,
-  renderChunkContent, getDoesSectionVGrow, ChunkConfig, hasShrinkWidth, CssDimValue,
+  renderChunkContent, getSectionHasLiquidHeight, ChunkConfig, hasShrinkWidth, CssDimValue,
   isColPropsEqual
 } from './util'
 import { memoize } from '../util/memoize'
 import { isPropsEqual } from '../util/object'
 import { getScrollbarWidths } from '../util/scrollbar-width'
-import { getCanVGrowWithinCell } from './table-styling'
 
 
 export interface SimpleScrollGridProps {
   cols: ColProps[]
   sections: SimpleScrollGridSection[]
-  vGrow?: boolean
+  liquid?: boolean
   forPrint?: boolean
   height?: CssDimValue // TODO: give to real ScrollGrid
 }
@@ -58,11 +57,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
         <colgroup></colgroup> : // temporary
         this.renderMicroColGroup(cols, state.shrinkWidth)
 
-    let classNames = getScrollGridClassNames(props.vGrow, context)
-
-    if (!getCanVGrowWithinCell()) {
-      classNames.push('fc-scrollgrid-vgrow-cell-hack')
-    }
+    let classNames = getScrollGridClassNames(props.liquid, context)
 
     return (
       <table class={classNames.join(' ')} style={{ height: props.height }}>
@@ -79,7 +74,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     }
 
     return (
-      <tr key={sectionConfig.key} class={getSectionClassNames(sectionConfig, this.props.vGrow).join(' ')}>
+      <tr key={sectionConfig.key} class={getSectionClassNames(sectionConfig, this.props.liquid).join(' ')}>
         {this.renderChunkTd(sectionConfig, sectionI, microColGroupNode, sectionConfig.chunk)}
       </tr>
     )
@@ -95,7 +90,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
     let { state } = this
 
     let needsYScrolling = getAllowYScrolling(this.props, sectionConfig) // TODO: do lazily. do in section config?
-    let vGrow = getDoesSectionVGrow(this.props, sectionConfig)
+    let isLiquid = getSectionHasLiquidHeight(this.props, sectionConfig)
 
     let overflowY: OverflowValue =
       state.forceYScrollbars ? 'scroll' :
@@ -107,7 +102,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       tableMinWidth: '',
       clientWidth: state.scrollerClientWidths[sectionI] || '',
       clientHeight: state.scrollerClientHeights[sectionI] || '',
-      vGrowRows: sectionConfig.vGrowRows,
+      expandRows: sectionConfig.expandRows,
       syncRowHeights: false,
       rowSyncHeights: [],
       reportRowHeightChange: () => {}
@@ -115,14 +110,15 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
     return (
       <td ref={chunkConfig.elRef}>
-        <div class={'fc-scroller-harness' + (vGrow ? ' vgrow' : '')}>
+        <div class={'fc-scroller-harness' + (isLiquid ? ' fc-scroller-harness-liquid' : '')}>
           <Scroller
             ref={this.scrollerRefs.createRef(sectionI)}
             elRef={this.scrollerElRefs.createRef(sectionI)}
             overflowY={overflowY}
             overflowX='hidden'
             maxHeight={sectionConfig.maxHeight}
-            vGrow={vGrow}
+            liquid={isLiquid}
+            liquidIsAbsolute={true /* because its within a harness */}
           >{content}</Scroller>
         </div>
       </td>

@@ -42,7 +42,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     sections.push({
       type: 'body',
-      vGrow: true,
+      liquid: true,
       chunk: {
         content: bodyContent
       }
@@ -53,7 +53,7 @@ export default abstract class TableView<State={}> extends View<State> {
         {(rootElRef, classNames) => (
           <div ref={rootElRef} class={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
             <SimpleScrollGrid
-              vGrow={!props.isHeightAuto}
+              liquid={!props.isHeightAuto}
               forPrint={props.forPrint}
               cols={[] /* TODO: make optional? */}
               sections={sections}
@@ -93,7 +93,7 @@ export default abstract class TableView<State={}> extends View<State> {
 
     sections.push({
       type: 'body',
-      vGrow: true,
+      liquid: true,
       chunks: [{
         content: bodyContent
       }]
@@ -104,7 +104,7 @@ export default abstract class TableView<State={}> extends View<State> {
         {(rootElRef, classNames) => (
           <div ref={rootElRef} class={[ 'fc-daygrid' ].concat(classNames).join(' ')}>
             <ScrollGrid
-              vGrow={!props.isHeightAuto}
+              liquid={!props.isHeightAuto}
               forPrint={props.forPrint}
               colGroups={[ { cols: [ { span: colCnt, minWidth: dayMinWidth } ] } ]}
               sections={sections}

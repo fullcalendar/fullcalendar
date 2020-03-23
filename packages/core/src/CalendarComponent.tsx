@@ -18,6 +18,7 @@ import { capitaliseFirstLetter } from './util/misc'
 import ViewContainer from './ViewContainer'
 import { CssDimValue } from './scrollgrid/util'
 import Theme from './theme/Theme'
+import { getCanVGrowWithinCell } from './util/table-styling'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -104,7 +105,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
           />
         }
         <ViewContainer
-          vGrow={viewVGrow}
+          liquid={viewVGrow}
           height={viewHeight}
           aspectRatio={viewAspectRatio}
           onClick={this.handleNavLinkClick}
@@ -277,6 +278,7 @@ function reportClassNames(onClassNameChange, forPrint: boolean, dir: string, the
 }
 
 
+// NOTE: can't have any empty! caller gets confused
 function computeClassNames(forPrint: boolean, dir: string, theme: Theme) {
   let classNames: string[] = [
     'fc',
@@ -284,6 +286,10 @@ function computeClassNames(forPrint: boolean, dir: string, theme: Theme) {
     'fc-dir-' + dir,
     theme.getClass('root')
   ]
+
+  if (!getCanVGrowWithinCell()) {
+    classNames.push('fc-liquid-hack')
+  }
 
   return classNames
 }

@@ -8,10 +8,12 @@ export type OverflowValue = 'auto' | 'hidden' | 'scroll'
 export interface ScrollerProps {
   overflowX: OverflowValue
   overflowY: OverflowValue
-  vGrow?: boolean
+  overcomeLeft?: number
+  overcomeRight?: number
+  overcomeBottom?: number
   maxHeight?: CssDimValue
-  style?: object // complex object, bad for purecomponent, but who cares because has children anyway
-  className?: string // can kill at some pt?
+  liquid?: boolean
+  liquidIsAbsolute?: boolean
   children?: ComponentChildren
   elRef?: Ref<HTMLElement>
 }
@@ -23,21 +25,28 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
   render(props: ScrollerProps) {
     let className = [ 'fc-scroller' ]
+    let { liquid, liquidIsAbsolute } = props
+    let isAbsolute = liquid && liquidIsAbsolute
 
-    if (props.className) {
-      className = className.concat(props.className)
-    }
-
-    if (props.vGrow) {
-      className.push('vgrow')
+    if (liquid) {
+      if (liquidIsAbsolute) {
+        className.push('fc-scroller-liquid-absolute')
+      } else {
+        className.push('fc-scroller-liquid')
+      }
     }
 
     return (
       <div ref={this.handleEl} class={className.join(' ')} style={{
-        ...props.style || {},
-        maxHeight: props.maxHeight || '',
         overflowX: props.overflowX,
-        overflowY: props.overflowY
+        overflowY: props.overflowY,
+        left: (isAbsolute && -(props.overcomeLeft || 0)) || '',
+        right: (isAbsolute && -(props.overcomeRight || 0)) || '',
+        bottom: (isAbsolute && -(props.overcomeBottom || 0)) || '',
+        marginLeft: (!isAbsolute && -(props.overcomeLeft || 0)) || '',
+        marginRight: (!isAbsolute && -(props.overcomeRight || 0)) || '',
+        marginBottom: (!isAbsolute && -(props.overcomeBottom || 0)) || '',
+        maxHeight: props.maxHeight || ''
       }}>{props.children}</div>
     )
   }

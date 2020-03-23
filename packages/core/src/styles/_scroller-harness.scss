@@ -1,0 +1,14 @@
+
+.fc-scroller-harness {
+  position: relative;
+  overflow: hidden;
+  direction: ltr; // hack for chrome doing the scroller's right/left wrong for rtl. undone below...
+}
+
+.fc-scroller-harness-liquid {
+  height: 100%;
+}
+
+.fc-dir-rtl .fc-scroller-harness > .fc-scroller { // undo hack
+  direction: rtl;
+}

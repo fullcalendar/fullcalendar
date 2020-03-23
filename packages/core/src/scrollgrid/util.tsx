@@ -20,8 +20,8 @@ export interface SectionConfig {
   type?: 'body' | 'head' | 'foot'
   className?: string
   maxHeight?: number
-  vGrow?: boolean
-  vGrowRows?: boolean // TODO: how to get a bottom rule?
+  liquid?: boolean
+  expandRows?: boolean // TODO: how to get a bottom rule?
   syncRowHeights?: boolean // yuck
 }
 
@@ -42,7 +42,7 @@ export interface ChunkContentCallbackArgs { // TODO: util for wrapping tables!?
   tableMinWidth: CssDimValue
   clientWidth: CssDimValue
   clientHeight: CssDimValue
-  vGrowRows: boolean
+  expandRows: boolean
   syncRowHeights: boolean
   rowSyncHeights: number[]
   reportRowHeightChange: (rowEl: HTMLElement, isStable: boolean) => void
@@ -70,20 +70,20 @@ export interface ScrollerLike { // have scrollers implement?
 }
 
 
-export function getDoesSectionVGrow(props: { vGrow?: boolean }, sectionConfig: SectionConfig) {
-  return props.vGrow && sectionConfig.vGrow // does the section vgrow? (need to have whole scrollgrid vgrow as well)
+export function getSectionHasLiquidHeight(props: { liquid?: boolean }, sectionConfig: SectionConfig) {
+  return props.liquid && sectionConfig.liquid // does the section do liquid-height? (need to have whole scrollgrid liquid-height as well)
 }
 
 
-export function getAllowYScrolling(props: { vGrow?: boolean }, sectionConfig: SectionConfig) {
+export function getAllowYScrolling(props: { liquid?: boolean }, sectionConfig: SectionConfig) {
   return sectionConfig.maxHeight != null || // if its possible for the height to max out, we might need scrollbars
-    getDoesSectionVGrow(props, sectionConfig) // if the section is liquid height, it might condense enough to require scrollbars
+    getSectionHasLiquidHeight(props, sectionConfig) // if the section is liquid height, it might condense enough to require scrollbars
 }
 
 
 // TODO: ONLY use `arg`. force out internal function to use same API
 export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: ChunkConfig, arg: ChunkContentCallbackArgs) {
-  let vGrowRows = sectionConfig.vGrowRows
+  let expandRows = sectionConfig.expandRows
 
   let content: VNode = typeof chunkConfig.content === 'function' ?
     chunkConfig.content(arg) :
@@ -95,7 +95,7 @@ export function renderChunkContent(sectionConfig: SectionConfig, chunkConfig: Ch
       style: {
         minWidth: arg.tableMinWidth, // because colMinWidths arent enough
         width: arg.clientWidth,
-        height: vGrowRows ? arg.clientHeight : '' // css `height` on a <table> serves as a min-height
+        height: expandRows ? arg.clientHeight : '' // css `height` on a <table> serves as a min-height
       }
     }, [
       arg.tableColGroupNode,
@@ -156,14 +156,14 @@ export function hasShrinkWidth(cols: ColProps[]) {
 }
 
 
-export function getScrollGridClassNames(vGrow: boolean, context: ComponentContext) {
+export function getScrollGridClassNames(liquid: boolean, context: ComponentContext) {
   let classNames = [
     'fc-scrollgrid',
     context.theme.getClass('table')
   ]
 
-  if (vGrow) {
-    classNames.push('vgrow')
+  if (liquid) {
+    classNames.push('fc-scrollgrid-liquid')
   }
 
   return classNames
@@ -176,8 +176,8 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
     sectionConfig.className
   ]
 
-  if (wholeTableVGrow && sectionConfig.vGrow && sectionConfig.maxHeight == null) {
-    classNames.push('vgrow')
+  if (wholeTableVGrow && sectionConfig.liquid && sectionConfig.maxHeight == null) {
+    classNames.push('fc-scrollgrid-section-liquid')
   }
 
   return classNames

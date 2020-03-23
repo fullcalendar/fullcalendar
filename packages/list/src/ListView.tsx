@@ -51,7 +51,7 @@ export default class ListView extends View {
         {(rootElRef, classNames) => (
           <div ref={rootElRef} class={extraClassNames.concat(classNames).join(' ')}>
             <Scroller
-              vGrow={!props.isHeightAuto}
+              liquid={!props.isHeightAuto}
               overflowX='hidden'
               overflowY='auto'
             >

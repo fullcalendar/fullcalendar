@@ -6,7 +6,7 @@ import ComponentContext from '../component/ComponentContext'
 export interface ScrollGridProps {
   colGroups?: ColGroupConfig[]
   sections: ScrollGridSectionConfig[]
-  vGrow?: boolean
+  liquid?: boolean
   forPrint?: boolean
 }
 

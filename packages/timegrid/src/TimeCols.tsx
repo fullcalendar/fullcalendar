@@ -42,7 +42,7 @@ export interface TimeColsProps {
   tableMinWidth: CssDimValue
   clientWidth: CssDimValue
   clientHeight: CssDimValue
-  vGrowRows: boolean
+  expandRows: boolean
   nowIndicatorSegs: TimeColsSeg[]
   onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean
@@ -80,7 +80,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
           axis={props.axis}
           slatMetas={props.slatMetas}
           clientWidth={props.clientWidth}
-          minHeight={props.vGrowRows ? props.clientHeight : ''}
+          minHeight={props.expandRows ? props.clientHeight : ''}
           tableMinWidth={props.tableMinWidth}
           tableColGroupNode={props.axis ? props.tableColGroupNode : null /* axis depends on the colgroup's shrinking */}
           onCoords={this.handleSlatCoords}

@@ -40,7 +40,7 @@ export interface DayTimeColsProps {
   tableMinWidth: CssDimValue
   clientWidth: CssDimValue
   clientHeight: CssDimValue
-  vGrowRows: boolean
+  expandRows: boolean
   onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean
 }
@@ -76,7 +76,7 @@ export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
             tableMinWidth={props.tableMinWidth}
             clientWidth={props.clientWidth}
             clientHeight={props.clientHeight}
-            vGrowRows={props.vGrowRows}
+            expandRows={props.expandRows}
             nowDate={nowDate}
             nowIndicatorSegs={options.nowIndicator && this.slicer.sliceNowDate(nowDate, calendar, dayRanges)}
             todayRange={todayRange}

@@ -30,7 +30,7 @@ export interface TableProps {
   renderRowIntro?: () => VNode
   colGroupNode: VNode
   tableMinWidth: CssDimValue
-  vGrowRows: boolean
+  expandRows: boolean
   clientWidth: CssDimValue
   clientHeight: CssDimValue
   businessHourSegs: TableSeg[]
@@ -81,7 +81,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
     let buildMoreLinkText = this.buildBuildMoreLinkText(context.options.moreLinkText)
 
     let classNames = [ 'fc-daygrid-body' ]
-    if (props.vGrowRows && props.eventLimit === true) {
+    if (props.expandRows && props.eventLimit === true) {
       classNames.push('fc-daygrid-body-balanced')
     }
 
@@ -98,7 +98,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
             style={{
               width: props.clientWidth,
               minWidth: props.tableMinWidth,
-              height: props.vGrowRows ? props.clientHeight : ''
+              height: props.expandRows ? props.clientHeight : ''
             }}
           >
             {props.colGroupNode}
