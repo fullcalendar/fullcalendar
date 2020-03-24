@@ -80,8 +80,7 @@ export type EventHandlerName =
   'eventDragStart' | 'eventDragStop' | 'eventDrop' | '_destroyed' | 'drop' |
   'eventResizeStart' | 'eventResizeStop' | 'eventResize' | 'eventReceive' |
   'eventLeave' | '_noEventDrop' |
-  '_noEventResize' | 'eventLimitClick' |
-  'resourceRender' // BAD: put in Scheduler somehow
+  '_noEventResize' | 'eventLimitClick'
 
 export type EventHandlerArgs<T extends EventHandlerName> =
   Parameters<Extract<OptionsInput[T], (...args: any[]) => any>>
@@ -221,7 +220,6 @@ export interface OptionsInputBase {
   _init?(): void
   _noEventDrop?(): void
   _noEventResize?(): void
-  resourceRender?(arg: { resource: any, el: HTMLElement, view: ViewApi }): void
 }
 
 export interface ViewOptionsInput extends OptionsInputBase {

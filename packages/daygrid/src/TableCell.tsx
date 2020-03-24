@@ -23,7 +23,7 @@ export interface TableCellProps extends TableCellModel {
   fgContentElRef?: Ref<HTMLDivElement>
   fgContent: ComponentChildren
   fgPaddingBottom: CssDimValue
-  hasEvents: boolean
+  hasEvents: boolean // TODO: do something with this
   moreCnt: number
   moreMarginTop: number
   showDayNumber: boolean
@@ -53,7 +53,6 @@ export interface HookProps {
   isPast: boolean
   isFuture: boolean
   isToday: boolean
-  hasEvents: boolean
 }
 
 const DEFAULT_WEEK_NUM_FORMAT = { week: 'narrow' }
@@ -73,7 +72,6 @@ export default class TableCell extends DateComponent<TableCellProps> {
         dateProfile={props.dateProfile}
         showDayNumber={props.showDayNumber}
         extraMountProps={props.extraMountProps}
-        extraDynamicProps={{ hasEvents: props.hasEvents }}
         elRef={props.elRef}
         defaultInnerContent={renderCellHeaderInner}
       >
