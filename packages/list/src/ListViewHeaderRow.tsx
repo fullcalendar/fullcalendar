@@ -1,5 +1,5 @@
 import {
-  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayCellRoot, DayCellDynamicProps
+  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayCellRoot, DayCellHookProps
 } from '@fullcalendar/core'
 
 
@@ -8,7 +8,7 @@ export interface ListViewHeaderRowProps {
   todayRange: DateRange
 }
 
-interface DynamicProps extends DayCellDynamicProps { // doesn't enforce much since DayCellDynamicProps allow extra props
+interface HookProps extends DayCellHookProps { // doesn't enforce much since DayCellHookProps allow extra props
   text: string
   sideText: string
 }
@@ -27,7 +27,7 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
     return (
       <DayCellRoot date={dayDate}
         todayRange={props.todayRange}
-        extraDynamicProps={{ text, sideText }}
+        extraHookProps={{ text, sideText }}
         defaultInnerContent={renderInnerContent}
       >
         {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
@@ -48,7 +48,7 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
 }
 
 
-function renderInnerContent(props: DynamicProps) {
+function renderInnerContent(props: HookProps) {
   return [
     props.text &&
       <a className='fc-list-day-text' data-navlink={props.navLinkData}>

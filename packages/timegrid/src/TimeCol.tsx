@@ -12,7 +12,7 @@ export interface TimeColProps {
   nowDate: DateMarker
   todayRange: DateRange
   extraDataAttrs?: any
-  extraMountProps?: any
+  extraHookProps?: any
   extraClassNames?: string[]
   fgEventSegs: TimeColsSeg[]
   bgEventSegs: TimeColsSeg[]
@@ -43,7 +43,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
       {}
 
     return (
-      <DayCellRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraMountProps={props.extraMountProps}>
+      <DayCellRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
         {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
           <td
             ref={rootElRef}

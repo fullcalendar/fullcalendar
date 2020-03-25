@@ -10,7 +10,7 @@ import {
   DateRange,
   DayCellRoot,
   buildNavLinkData,
-  DayCellDynamicProps,
+  DayCellHookProps,
   RenderHook,
   WeekNumberRoot,
 } from '@fullcalendar/core'
@@ -36,7 +36,7 @@ export interface TableCellProps extends TableCellModel {
 
 export interface TableCellModel { // combine with DayTableCell?
   date: DateMarker
-  extraMountProps?: object
+  extraHookProps?: object
   extraDataAttrs?: object
   extraClassNames?: string[]
 }
@@ -71,7 +71,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
         todayRange={props.todayRange}
         dateProfile={props.dateProfile}
         showDayNumber={props.showDayNumber}
-        extraMountProps={props.extraMountProps}
+        extraHookProps={props.extraHookProps}
         elRef={props.elRef}
         defaultInnerContent={renderCellHeaderInner}
       >
@@ -110,8 +110,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
                 {Boolean(props.moreCnt) &&
                   <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
                     <RenderHook name='moreLink'
-                      mountProps={{ view: context.view }}
-                      dynamicProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
+                      hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
                       defaultInnerContent={renderMoreLinkInner}
                     >
                       {(rootElRef, classNames, innerElRef, innerContent) => (
@@ -149,7 +148,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
 }
 
 
-function renderCellHeaderInner(props: DayCellDynamicProps) {
+function renderCellHeaderInner(props: DayCellHookProps) {
   if (props.dayNumberText) {
     return (
       <a className='fc-daygrid-day-number' data-navlink={props.navLinkData}>

@@ -14,7 +14,7 @@ export interface ViewRootProps {
 export const ViewRoot = (props: ViewRootProps) => (
   <ComponentContextType.Consumer>
     {(context: ComponentContext) => (
-      <RenderHook name='view' mountProps={{ view: context.view }} dynamicProps={{}} elRef={props.elRef}>
+      <RenderHook name='view' hookProps={{ view: context.view }} elRef={props.elRef}>
         {(rootElRef, customClassNames) => props.children(
           rootElRef,
           [ `fc-${props.viewSpec.type}-view`, 'fc-view' ].concat(customClassNames)

@@ -90,7 +90,7 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
                   dateProfile={props.dateProfile}
                   nowDate={props.nowDate}
                   todayRange={props.todayRange}
-                  extraMountProps={cell.extraMountProps}
+                  extraHookProps={cell.extraHookProps}
                   extraDataAttrs={cell.extraDataAttrs}
                   extraClassNames={cell.extraClassNames}
                   fgEventSegs={fgEventSegsByRow[i]}

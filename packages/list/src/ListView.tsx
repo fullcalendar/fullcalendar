@@ -79,10 +79,10 @@ export default class ListView extends View {
 
 
   renderEmptyMessage() {
-    let innerProps = { view: this.context.view }
+    let hookProps = { view: this.context.view }
 
     return (
-      <RenderHook name='noEvents' mountProps={innerProps} dynamicProps={innerProps}>
+      <RenderHook name='noEvents' hookProps={hookProps}>
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <div className={[ 'fc-list-empty' ].concat(classNames).join(' ')} ref={rootElRef}>
             {innerContent}

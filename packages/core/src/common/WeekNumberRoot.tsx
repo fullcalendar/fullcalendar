@@ -19,10 +19,10 @@ export const WeekNumberRoot = (props: WeekNumberRootProps) => (
       let format = createFormatter(context.options.weekNumberFormat || props.defaultFormat) // TODO: precompute
       let num = context.dateEnv.computeWeekNumber(date) // TODO: somehow use for formatting as well?
       let text = context.dateEnv.format(date, format)
-      let innerProps = { num, text, date }
+      let hookProps = { num, text, date }
 
       return (
-        <RenderHook name='weekNumber' mountProps={innerProps} dynamicProps={innerProps} defaultInnerContent={renderInner}>
+        <RenderHook name='weekNumber' hookProps={hookProps} defaultInnerContent={renderInner}>
           {props.children}
         </RenderHook>
       )

@@ -137,7 +137,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
     return (
       <tbody>
         {props.slatMetas.map((slatMeta, i) => {
-          let innerProps = {
+          let hookProps = {
             time: slatMeta.time,
             date: context.dateEnv.toDate(slatMeta.date),
             view: context.view
@@ -153,7 +153,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
               {props.axis &&
                 <TimeColsAxisCell {...slatMeta} />
               }
-              <RenderHook name='slotLane' mountProps={innerProps} dynamicProps={innerProps}>
+              <RenderHook name='slotLane' hookProps={hookProps}>
                 {(rootElRef, customClassNames, innerElRef, innerContent) => (
                   <td
                     ref={rootElRef}
@@ -198,18 +198,15 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
         } else {
           let { dateEnv, options, view } = context
           let labelFormat = createFormatter(options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT) // TODO: optimize!!!
-          let mountProps = {
+          let hookProps = {
             time: props.time,
             date: dateEnv.toDate(props.date),
-            view: view
-          }
-          let dynamicProps = {
-            ...mountProps,
+            view: view,
             text: dateEnv.format(props.date, labelFormat)
           }
 
           return (
-            <RenderHook name='slotLabel' mountProps={mountProps} dynamicProps={dynamicProps} defaultInnerContent={renderInnerContent}>
+            <RenderHook name='slotLabel' hookProps={hookProps} defaultInnerContent={renderInnerContent}>
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
                 <td ref={rootElRef} class={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
                   <div class='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>

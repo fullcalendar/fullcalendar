@@ -36,12 +36,12 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
         isResizing={props.isResizing}
         isDateSelecting={props.isDateSelecting}
       >
-        {(rootElRef, classNames, style, innerElRef, innerContent, dynamicProps) => (
+        {(rootElRef, classNames, style, innerElRef, innerContent, hookProps) => (
           <tr className={[ 'fc-list-event' ].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context)}
             <td class='fc-list-event-graphic'>
               <span class='fc-list-event-dot fc-dot' style={{
-                backgroundColor: dynamicProps.event.backgroundColor
+                backgroundColor: hookProps.event.backgroundColor
               }} />
             </td>
             <td class='fc-list-event-title' ref={innerElRef}>
@@ -78,9 +78,8 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
     let timeText: string
 
     if (eventDef.allDay) {
-      let innerProps = { view: context.view }
       return (
-        <RenderHook name='allDay' mountProps={innerProps} dynamicProps={innerProps}>
+        <RenderHook name='allDay' hookProps={{ view: context.view }}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <td class={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
               {innerContent}

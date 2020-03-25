@@ -23,14 +23,14 @@ export interface EventRootProps extends MinimalEventProps {
   timeText: string
   disableDragging?: boolean
   disableResizing?: boolean
-  defaultInnerContent: (dynamicProps: EventMeta) => ComponentChildren
+  defaultInnerContent: (hookProps: EventMeta) => ComponentChildren
   children: (
     rootElRef: Ref<any>,
     classNames: string[],
     style: any,
     innerElRef: Ref<any>,
     innerContent: ComponentChildren,
-    dynamicProps: EventMeta
+    hookProps: EventMeta
   ) => ComponentChildren
 }
 
@@ -39,12 +39,9 @@ export const EventRoot = (props: EventRootProps) => (
   <ComponentContextType.Consumer>
     {(context: ComponentContext) => {
       let { seg } = props
-      let mountProps = {
+      let hookProps = {
         event: new EventApi(context.calendar, seg.eventRange.def, seg.eventRange.instance),
-        view: context.view
-      }
-      let dynamicProps: EventMeta = {
-        ...mountProps,
+        view: context.view,
         timeText: props.timeText,
         isDraggable: !props.disableDragging && computeSegDraggable(seg, context),
         isStartResizable: !props.disableResizing && computeSegStartResizable(seg, context),
@@ -61,13 +58,12 @@ export const EventRoot = (props: EventRootProps) => (
       }
 
       let style = getSkinCss(seg.eventRange.ui)
-      let standardClassNames = getEventClassNames(dynamicProps)
+      let standardClassNames = getEventClassNames(hookProps)
 
       return (
         <RenderHook
           name='event'
-          mountProps={mountProps}
-          dynamicProps={dynamicProps}
+          hookProps={hookProps}
           defaultInnerContent={props.defaultInnerContent}
           elRef={(el: HTMLElement | null) => {
             if (el) {
@@ -76,7 +72,7 @@ export const EventRoot = (props: EventRootProps) => (
           }}
         >
           {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-            rootElRef, standardClassNames.concat(customClassNames), style, innerElRef, innerContent, dynamicProps
+            rootElRef, standardClassNames.concat(customClassNames), style, innerElRef, innerContent, hookProps
           )}
         </RenderHook>
       )

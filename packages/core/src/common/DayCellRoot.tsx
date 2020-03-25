@@ -16,9 +16,8 @@ export interface DayCellRootProps {
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
   dateProfile?: DateProfile // for other/disabled days
-  extraMountProps?: object
-  extraDynamicProps?: object
-  defaultInnerContent?: (dynamicProps: DayCellDynamicProps) => ComponentChildren
+  extraHookProps?: object
+  defaultInnerContent?: (hookProps: DayCellHookProps) => ComponentChildren
   children: (
     rootElRef: Ref<any>,
     classNames: string[],
@@ -28,15 +27,12 @@ export interface DayCellRootProps {
   ) => ComponentChildren
 }
 
-export interface DayCellMountProps {
+export interface DayCellHookProps extends DateMeta {
   date: DateMarker
   view: ViewApi
-  [extraProp: string]: any // so can include a resource
-}
-
-export type DayCellDynamicProps = DayCellMountProps & DateMeta & {
   dayNumberText: string
   navLinkData: string
+  [extraProp: string]: any // so can include a resource
 }
 
 const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
@@ -51,24 +47,18 @@ export const DayCellRoot = (props: DayCellRootProps) => (
       let standardClassNames = getDayClassNames(dayMeta, context.theme)
       let dataAttrs = { 'data-date': formatDayString(date) }
 
-      let mountProps: DayCellMountProps = {
+      let hookProps: DayCellHookProps = {
         date: dateEnv.toDate(date),
         view: context.view,
-        ...props.extraMountProps
-      }
-
-      let dynamicProps: DayCellDynamicProps = {
-        ...mountProps,
+        ...props.extraHookProps,
         ...dayMeta,
         dayNumberText: props.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : '',
-        navLinkData: options.navLinks ? buildNavLinkData(date) : undefined,
-        ...props.extraDynamicProps
+        navLinkData: options.navLinks ? buildNavLinkData(date) : undefined
       }
 
       return (
         <RenderHook name='dayCell'
-          mountProps={mountProps}
-          dynamicProps={dynamicProps}
+          hookProps={hookProps}
           defaultInnerContent={props.defaultInnerContent}
           elRef={props.elRef}
         >

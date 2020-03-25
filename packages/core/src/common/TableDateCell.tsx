@@ -20,20 +20,17 @@ export interface TableDateCellProps {
   colCnt: number
   dayLabelFormat: DateFormatter
   colSpan?: number
-  extraMountProps?: object
+  extraHookProps?: object
   extraDataAttrs?: object
   extraClassNames?: string[]
 }
 
-interface MountProps {
+interface HookProps extends DateMeta {
   date: Date
   view: ViewApi
-  [otherProp: string]: any
-}
-
-type DynamicProps = MountProps & DateMeta & {
   text: string
   navLinkData: string
+  [otherProp: string]: any
 }
 
 
@@ -57,21 +54,17 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
       ? buildNavLinkData(date)
       : null
 
-    let mountProps: MountProps = {
+    let hookProps: HookProps = {
       date: dateEnv.toDate(date),
       view: context.view,
-      ...props.extraMountProps
-    }
-
-    let dynamicProps: DynamicProps = {
-      ...mountProps,
+      ...props.extraHookProps,
       text,
       navLinkData,
       ...dayMeta
     }
 
     return (
-      <RenderHook name='dayLabel' mountProps={mountProps} dynamicProps={dynamicProps} defaultInnerContent={renderInner}>
+      <RenderHook name='dayLabel' hookProps={hookProps} defaultInnerContent={renderInner}>
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}
@@ -88,11 +81,11 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
 }
 
 
-function renderInner(dynamicProps: DynamicProps) {
-  if (!dynamicProps.isDisabled) {
+function renderInner(hookProps: HookProps) {
+  if (!hookProps.isDisabled) {
     return (
-      <a data-navlink={dynamicProps.navLinkData}>
-        {dynamicProps.text}
+      <a data-navlink={hookProps.navLinkData}>
+        {hookProps.text}
       </a>
     )
   }

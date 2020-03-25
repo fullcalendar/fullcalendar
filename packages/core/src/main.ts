@@ -48,7 +48,7 @@ export {
   translateRect
 } from './util/geom'
 
-export { mapHash, filterHash, isPropsEqual, compareObjs, buildHashFromArray, collectFromHash } from './util/object'
+export { mapHash, filterHash, isPropsEqual, compareObjs, buildHashFromArray, collectFromHash, getUnequalProps } from './util/object'
 
 export {
   findElements,
@@ -193,7 +193,7 @@ export { RenderHook, RenderHookProps, RenderHookPropsChildren } from './common/r
 export { default as StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'
 
-export { DayCellRoot, DayCellRootProps, DayCellDynamicProps } from './common/DayCellRoot'
+export { DayCellRoot, DayCellRootProps, DayCellHookProps } from './common/DayCellRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 

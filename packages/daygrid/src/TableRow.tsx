@@ -124,7 +124,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               showWeekNumber={props.enableNumbers && enableWeekNumbers && col === 0}
               dateProfile={props.dateProfile}
               todayRange={props.todayRange}
-              extraMountProps={cell.extraMountProps}
+              extraHookProps={cell.extraHookProps}
               extraDataAttrs={cell.extraDataAttrs}
               extraClassNames={cell.extraClassNames}
               moreCnt={moreCnts[col]}

@@ -11,7 +11,7 @@ export interface DayTableSeg extends Seg {
 
 export interface DayTableCell {
   date: DateMarker
-  extraMountProps?: object
+  extraHookProps?: object
   extraDataAttrs?: object
   extraClassNames?: string[]
 }

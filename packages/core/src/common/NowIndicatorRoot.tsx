@@ -14,15 +14,18 @@ export interface NowIndicatorRootProps {
 export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
   <ComponentContextType.Consumer>
     {(context: ComponentContext) => {
-      let mountProps = { isAxis: props.isAxis, view: context.view }
-      let dynamicProps = { ...mountProps, date: context.dateEnv.toDate(props.date) }
+      let hookProps = {
+        isAxis: props.isAxis,
+        date: context.dateEnv.toDate(props.date),
+        view: context.view
+      }
       let classNames = [
         props.isAxis ? 'fc-now-indicator-axis' : 'fc-now-indicator-line',
         'fc-now-indicator'
       ]
 
       return (
-        <RenderHook name='nowIndicator' mountProps={mountProps} dynamicProps={dynamicProps}>
+        <RenderHook name='nowIndicator' hookProps={hookProps}>
           {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
             rootElRef, classNames.concat(customClassNames), innerElRef, innerContent
           )}

@@ -13,7 +13,7 @@ export interface StandardEventProps extends MinimalEventProps {
   defaultDisplayEventEnd?: boolean // default true
   disableDragging?: boolean // default false
   disableResizing?: boolean // default false
-  defaultInnerContent?: (dynamicProps: EventMeta) => VNode // not used by anyone yet
+  defaultInnerContent?: (hookProps: EventMeta) => VNode // not used by anyone yet
 }
 
 
@@ -49,7 +49,7 @@ export default class StandardEvent extends BaseComponent<StandardEventProps> {
         isFuture={props.isFuture}
         isToday={props.isToday}
       >
-        {(rootElRef, classNames, style, innerElRef, innerContent, dynamicProps) => (
+        {(rootElRef, classNames, style, innerElRef, innerContent, hookProps) => (
           <a
             className={props.extraClassNames.concat(classNames).join(' ')}
             style={style}
@@ -59,10 +59,10 @@ export default class StandardEvent extends BaseComponent<StandardEventProps> {
             <div class='fc-event-main' ref={innerElRef}>
               {innerContent}
             </div>
-            {dynamicProps.isStartResizable &&
+            {hookProps.isStartResizable &&
               <div class='fc-event-resizer fc-event-resizer-start' />
             }
-            {dynamicProps.isEndResizable &&
+            {hookProps.isEndResizable &&
               <div class='fc-event-resizer fc-event-resizer-end' />
             }
           </a>

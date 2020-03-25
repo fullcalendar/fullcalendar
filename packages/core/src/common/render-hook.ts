@@ -3,12 +3,11 @@ import { ComponentContextType } from '../component/ComponentContext'
 import { setRef } from '../vdom-util'
 
 
-export interface RenderHookProps<MountProps, DynamicProps> {
+export interface RenderHookProps<HookProps> {
   name: string
-  mountProps: MountProps // TODO: make options. a few handlers dont use
-  dynamicProps: DynamicProps // TODO: make options. a few handlers dont use
-  defaultInnerContent?: (dynamicProps: DynamicProps) => ComponentChildren
-  options?: object // for using another root object for the options
+  hookProps: HookProps
+  defaultInnerContent?: (hookProps: HookProps) => ComponentChildren
+  options?: object // for using another root object for the options. RENAME
   children: RenderHookPropsChildren
   elRef?: Ref<any>
 }
@@ -21,7 +20,7 @@ export type RenderHookPropsChildren = (
 ) => ComponentChildren
 
 
-export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookProps<MountProps, DynamicProps>> {
+export class RenderHook<HookProps> extends Component<RenderHookProps<HookProps>> {
 
   static contextType = ComponentContextType
 
@@ -30,7 +29,7 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
   private customContentHandler: ContentHandler<any>
 
 
-  render(props: RenderHookProps<MountProps, DynamicProps>) {
+  render(props: RenderHookProps<HookProps>) {
     return props.children(
       this.handleRootEl,
       this.buildClassNames(),
@@ -61,7 +60,7 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
     let classNames = this.getOption(props.name + 'ClassNames')
 
     if (typeof classNames === 'function') {
-      classNames = classNames(props.dynamicProps)
+      classNames = classNames(props.hookProps)
     }
 
     if (Array.isArray(classNames)) {
@@ -79,10 +78,10 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
   private renderInnerContent() {
     let { props } = this
     let innerContent: ComponentChildren = null
-    let innerContentRaw = normalizeContent(this.getOption(props.name + 'Content'), props.dynamicProps)
+    let innerContentRaw = normalizeContent(this.getOption(props.name + 'Content'), props.hookProps)
 
     if (innerContentRaw === undefined) {
-      innerContentRaw = normalizeContent(props.defaultInnerContent, props.dynamicProps)
+      innerContentRaw = normalizeContent(props.defaultInnerContent, props.hookProps)
     }
 
     if (innerContentRaw !== undefined) {
@@ -125,7 +124,7 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
 
     if (handler) {
       handler({ // TODO: make a better type for this
-        ...this.props.mountProps,
+        ...this.props.hookProps,
         el: this.rootEl
       })
     }
@@ -146,9 +145,9 @@ export class RenderHook<MountProps, DynamicProps> extends Component<RenderHookPr
 }
 
 
-function normalizeContent(input, dynamicProps) {
+function normalizeContent(input, hookProps) {
   if (typeof input === 'function') {
-    return input(dynamicProps)
+    return input(hookProps)
   } else {
     return input
   }
