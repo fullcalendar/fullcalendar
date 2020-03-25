@@ -83,7 +83,7 @@ export default class ListView extends View {
 
     return (
       <RenderHook name='noEvents' hookProps={hookProps}>
-        {(rootElRef, classNames, innerElRef, innerContent) => (
+        {(rootElRef, classNames, innerElRef, innerContent) => ( // the defaultContent (noEventsContent) is specified in locales
           <div className={[ 'fc-list-empty' ].concat(classNames).join(' ')} ref={rootElRef}>
             {innerContent}
           </div>
