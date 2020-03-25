@@ -1,7 +1,7 @@
 import { Component, Ref } from './vdom'
 import ComponentContext, { ComponentContextType } from './component/ComponentContext'
 import { __assign } from 'tslib'
-import { compareObjs, EqualityFuncs } from './util/object'
+import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object'
 
 
 // TODO: make a HOC instead
@@ -14,10 +14,16 @@ export abstract class BaseComponent<Props={}, State={}> extends Component<Props,
   context: ComponentContext
   propEquality: EqualityFuncs<Props>
   stateEquality: EqualityFuncs<State>
+  debug: boolean
 
   abstract render(props: Props, state: State, context: ComponentContext) // why aren't arg types being enforced!?
 
   shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: ComponentContext) {
+
+    if (this.debug) {
+      console.log(getUnequalProps(nextProps, this.props), getUnequalProps(nextState, this.state))
+    }
+
     return !compareObjs(this.props, nextProps, this.propEquality) ||
       !compareObjs(this.state, nextState, this.stateEquality) ||
       this.context !== nextContext

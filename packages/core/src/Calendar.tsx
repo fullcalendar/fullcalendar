@@ -104,6 +104,8 @@ export default class Calendar {
   public dateEnv: DateEnv
   public defaultAllDayEventDuration: Duration
   public defaultTimedEventDuration: Duration
+  public slotMinTime: Duration
+  public slotMaxTime: Duration
   private resizeHandlers: ResizeHandler[] = []
 
   // interaction
@@ -500,6 +502,10 @@ export default class Calendar {
 
     // TODO: don't do every time
     this.viewSpecs = buildViewSpecs(pluginHooks.views, this.optionsManager)
+
+    // needs to happen before dateProfileGenerators
+    this.slotMinTime = createDuration(rawOptions.slotMinTime)
+    this.slotMaxTime = createDuration(rawOptions.slotMaxTime)
 
     // needs to happen after dateEnv assigned :( because DateProfileGenerator grabs onto reference
     // TODO: don't do every time

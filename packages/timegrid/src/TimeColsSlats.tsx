@@ -4,7 +4,6 @@ import {
   DateProfile,
   ComponentContext,
   createDuration,
-  startOfDay,
   asRoughMs,
   formatIsoTimeString,
   addDurations,
@@ -77,7 +76,6 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
             slatElRefs={this.slatElRefs}
             axis={props.axis}
             slatMetas={props.slatMetas}
-            dateProfile={props.dateProfile}
           />
         </table>
       </div>
@@ -124,7 +122,9 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 }
 
 
-export interface TimeColsSlatsBodyProps extends TimeColsSlatsContentProps {
+export interface TimeColsSlatsBodyProps {
+  axis: boolean
+  slatMetas: TimeSlatMeta[]
   slatElRefs: RefMap<HTMLTableRowElement>
 }
 
@@ -237,14 +237,14 @@ export interface TimeSlatMeta {
   isLabeled: boolean
 }
 
-export function buildSlatMetas(dateProfile: DateProfile, labelIntervalInput, slotDuration: Duration, dateEnv: DateEnv) {
-  let dayStart = startOfDay(dateProfile.renderRange.start)
-  let slatTime = dateProfile.slotMinTime
+export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, labelIntervalInput, slotDuration: Duration, dateEnv: DateEnv) {
+  let dayStart = new Date(0)
+  let slatTime = slotMinTime
   let slatIterator = createDuration(0)
   let labelInterval = getLabelInterval(labelIntervalInput, slotDuration)
   let metas: TimeSlatMeta[] = []
 
-  while (asRoughMs(slatTime) < asRoughMs(dateProfile.slotMaxTime)) {
+  while (asRoughMs(slatTime) < asRoughMs(slotMaxTime)) {
     let date = dateEnv.add(dayStart, slatTime)
     let isLabeled = wholeDivideDurations(slatIterator, labelInterval) !== null
 

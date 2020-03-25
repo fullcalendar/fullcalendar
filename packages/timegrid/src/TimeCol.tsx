@@ -227,7 +227,7 @@ class TimeColMisc extends BaseComponent<TimeColMiscProps> {
     return (
       <DayCellContent date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
         {(innerElRef, innerContent) => (
-          innerContent && // needs to be after the relatively-positioned events&bg divs
+          innerContent &&
             <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
         )}
       </DayCellContent>

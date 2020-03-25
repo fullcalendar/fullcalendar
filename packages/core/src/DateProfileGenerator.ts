@@ -24,6 +24,8 @@ export interface DateProfile {
 export default class DateProfileGenerator {
 
   viewSpec: ViewSpec
+  slotMinTime: Duration
+  slotMaxTime: Duration
   options: any
   dateEnv: DateEnv
   calendar: Calendar // avoid
@@ -33,6 +35,8 @@ export default class DateProfileGenerator {
   constructor(viewSpec: ViewSpec, calendar: Calendar) {
     this.viewSpec = viewSpec
     this.options = viewSpec.options
+    this.slotMinTime = calendar.slotMinTime
+    this.slotMaxTime = calendar.slotMaxTime
     this.dateEnv = calendar.dateEnv
     this.calendar = calendar
 
@@ -75,8 +79,6 @@ export default class DateProfileGenerator {
   // from its previous value. decremented = -1, incremented = 1 (default).
   build(currentDate: DateMarker, direction?, forceToValid = false): DateProfile {
     let validRange: DateRange
-    let slotMinTime = null
-    let slotMaxTime = null
     let currentInfo
     let isRangeAllDay
     let renderRange: DateRange
@@ -104,9 +106,7 @@ export default class DateProfileGenerator {
       activeRange = intersectRanges(activeRange, currentInfo.range)
     }
 
-    slotMinTime = createDuration(this.options.slotMinTime)
-    slotMaxTime = createDuration(this.options.slotMaxTime)
-    activeRange = this.adjustActiveRange(activeRange, slotMinTime, slotMaxTime)
+    activeRange = this.adjustActiveRange(activeRange)
     activeRange = intersectRanges(activeRange, validRange) // might return null
 
     // it's invalid if the originally requested date is not contained,
@@ -136,10 +136,10 @@ export default class DateProfileGenerator {
       renderRange,
 
       // Duration object that denotes the first visible time of any given day
-      slotMinTime,
+      slotMinTime: this.slotMinTime,
 
       // Duration object that denotes the exclusive visible end time of any given day
-      slotMaxTime,
+      slotMaxTime: this.slotMaxTime,
 
       isValid,
 
@@ -196,8 +196,8 @@ export default class DateProfileGenerator {
 
   // Returns a new activeRange to have time values (un-ambiguate)
   // slotMinTime or slotMaxTime causes the range to expand.
-  adjustActiveRange(range: DateRange, slotMinTime: Duration, slotMaxTime: Duration) {
-    let { dateEnv } = this
+  adjustActiveRange(range: DateRange) {
+    let { dateEnv, slotMinTime, slotMaxTime } = this
     let start = range.start
     let end = range.end
 

@@ -29,7 +29,7 @@ export default class DayTimeColsView extends TimeColsView {
     let dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator)
     let splitProps = this.allDaySplitter.splitProps(props)
     let slotDuration = this.parseSlotDuration(options.slotDuration)
-    let slatMetas = this.buildSlatMetas(dateProfile, options.slotLabelInterval, slotDuration, dateEnv)
+    let slatMetas = this.buildSlatMetas(dateProfile.slotMinTime, dateProfile.slotMaxTime, options.slotLabelInterval, slotDuration, dateEnv)
     let { dayMinWidth } = options
 
     let headerContent = options.dayLabels &&
