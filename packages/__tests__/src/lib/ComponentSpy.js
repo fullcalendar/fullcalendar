@@ -1,5 +1,5 @@
 
-export default class ComponentSpy {
+export default class ComponentSpy { // used by anyone?
 
   renderCount = 0
 
