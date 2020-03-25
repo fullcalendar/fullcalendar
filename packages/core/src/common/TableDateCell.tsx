@@ -64,7 +64,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
     }
 
     return (
-      <RenderHook name='dayLabel' hookProps={hookProps} defaultInnerContent={renderInner}>
+      <RenderHook name='dayLabel' hookProps={hookProps} defaultContent={renderInner}>
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}

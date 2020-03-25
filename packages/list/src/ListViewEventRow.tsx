@@ -27,7 +27,7 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
       <EventRoot
         seg={seg}
         timeText={'' /* BAD. because of all-day content */}
-        defaultInnerContent={renderEventInnerContent}
+        defaultContent={renderEventInnerContent}
         isPast={props.isPast}
         isFuture={props.isFuture}
         isToday={props.isToday}

@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayCellRoot, NowIndicatorRoot } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -44,7 +44,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
 
     return (
       <DayCellRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
-        {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
+        {(rootElRef, classNames, dataAttrs) => (
           <td
             ref={rootElRef}
             className={[ 'fc-timegrid-col' ].concat(classNames, props.extraClassNames || []).join(' ')}
@@ -78,9 +78,11 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
               </div>
               {this.renderNowIndicator(props.nowIndicatorSegs)}
             </div>
-            {innerContent && // needs to be after the relatively-positioned events&bg divs
-              <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
-            }
+            <TimeColMisc
+              date={props.date}
+              todayRange={props.todayRange}
+              extraHookProps={props.extraHookProps}
+            />
           </td>
         )}
       </DayCellRoot>
@@ -210,4 +212,25 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     }
   }
 
+}
+
+
+interface TimeColMiscProps { // should be given nowDate too??
+  date: DateMarker
+  todayRange: DateRange
+  extraHookProps?: any
+}
+
+class TimeColMisc extends BaseComponent<TimeColMiscProps> {
+
+  render(props: TimeColMiscProps) {
+    return (
+      <DayCellContent date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
+        {(innerElRef, innerContent) => (
+          innerContent && // needs to be after the relatively-positioned events&bg divs
+            <div class='fc-timegrid-col-misc' ref={innerElRef}>{innerContent}</div>
+        )}
+      </DayCellContent>
+    )
+  }
 }

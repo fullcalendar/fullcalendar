@@ -23,7 +23,7 @@ export interface EventRootProps extends MinimalEventProps {
   timeText: string
   disableDragging?: boolean
   disableResizing?: boolean
-  defaultInnerContent: (hookProps: EventMeta) => ComponentChildren
+  defaultContent: (hookProps: EventMeta) => ComponentChildren
   children: (
     rootElRef: Ref<any>,
     classNames: string[],
@@ -64,7 +64,7 @@ export const EventRoot = (props: EventRootProps) => (
         <RenderHook
           name='event'
           hookProps={hookProps}
-          defaultInnerContent={props.defaultInnerContent}
+          defaultContent={props.defaultContent}
           elRef={(el: HTMLElement | null) => {
             if (el) {
               setElSeg(el, seg)

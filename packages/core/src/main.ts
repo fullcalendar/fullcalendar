@@ -193,7 +193,7 @@ export { RenderHook, RenderHookProps, RenderHookPropsChildren, MountHook, MountH
 export { default as StandardEvent, StandardEventProps } from './common/StandardEvent'
 export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRoot'
 
-export { DayCellRoot, DayCellRootProps, DayCellHookProps } from './common/DayCellRoot'
+export { DayCellRoot, DayCellRootProps, DayCellContent, DayCellContentProps, DayCellHookProps } from './common/DayCellRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 

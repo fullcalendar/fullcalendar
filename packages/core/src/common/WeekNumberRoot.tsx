@@ -22,7 +22,7 @@ export const WeekNumberRoot = (props: WeekNumberRootProps) => (
       let hookProps = { num, text, date }
 
       return (
-        <RenderHook name='weekNumber' hookProps={hookProps} defaultInnerContent={renderInner}>
+        <RenderHook name='weekNumber' hookProps={hookProps} defaultContent={renderInner}>
           {props.children}
         </RenderHook>
       )

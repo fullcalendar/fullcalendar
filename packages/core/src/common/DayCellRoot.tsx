@@ -2,71 +2,124 @@ import { Ref, ComponentChildren, h } from '../vdom'
 import { DateMarker } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
-import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
+import ComponentContext from '../component/ComponentContext'
 import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
 import { formatDayString, createFormatter } from '../datelib/formatting'
-import { RenderHook } from './render-hook'
+import { buildHookClassNameGenerator, MountHook, ContentHook } from './render-hook'
 import ViewApi from '../ViewApi'
 import { buildNavLinkData } from './nav-link'
+import { BaseComponent } from '../vdom-util'
 
 
-export interface DayCellRootProps {
-  elRef?: Ref<any>
-  date: DateMarker
+const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
+
+interface DayCellHookPropOrigin {
+  date: DateMarker // generic
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
   dateProfile?: DateProfile // for other/disabled days
-  extraHookProps?: object
-  defaultInnerContent?: (hookProps: DayCellHookProps) => ComponentChildren
-  children: (
-    rootElRef: Ref<any>,
-    classNames: string[],
-    rootDataAttrs,
-    innerElRef: Ref<any>,
-    innerContent: ComponentChildren
-  ) => ComponentChildren
 }
 
 export interface DayCellHookProps extends DateMeta {
-  date: DateMarker
+  date: DateMarker // localized
   view: ViewApi
   dayNumberText: string
   navLinkData: string
   [extraProp: string]: any // so can include a resource
 }
 
-const DAY_NUM_FORMAT = createFormatter({ day: 'numeric' })
+
+export interface DayCellRootProps {
+  elRef?: Ref<any>
+  date: DateMarker
+  dateProfile?: DateProfile // for other/disabled days
+  todayRange: DateRange
+  showDayNumber?: boolean // defaults to false
+  extraHookProps?: object
+  children: (
+    rootElRef: Ref<any>,
+    classNames: string[],
+    rootDataAttrs
+  ) => ComponentChildren
+}
+
+export class DayCellRoot extends BaseComponent<DayCellRootProps> {
+
+  buildClassNames = buildHookClassNameGenerator<DayCellHookProps>('dayCell')
 
 
-export const DayCellRoot = (props: DayCellRootProps) => (
-  <ComponentContextType.Consumer>
-    {(context: ComponentContext) => {
-      let { dateEnv, options } = context
-      let { date } = props
-      let dayMeta = getDateMeta(date, props.todayRange, null, props.dateProfile)
-      let standardClassNames = getDayClassNames(dayMeta, context.theme)
-      let dataAttrs = { 'data-date': formatDayString(date) }
+  render(props: DayCellRootProps, state: {}, context: ComponentContext) {
+    let hookPropsOrigin: DayCellHookPropOrigin = {
+      date: props.date,
+      dateProfile: props.dateProfile,
+      todayRange: props.todayRange,
+      showDayNumber: props.showDayNumber
+    }
+    let hookProps = {
+      ...massageHooksProps(hookPropsOrigin, context),
+      ...props.extraHookProps
+    }
+    let customClassNames = this.buildClassNames(hookProps, context, null, hookPropsOrigin) // cacheBuster=hookPropsOrigin
+    let standardClassNames = getDayClassNames(hookProps, context.theme) // can use publicHookProps as input
+    let dataAttrs = { 'data-date': formatDayString(props.date) }
 
-      let hookProps: DayCellHookProps = {
-        date: dateEnv.toDate(date),
-        view: context.view,
-        ...props.extraHookProps,
-        ...dayMeta,
-        dayNumberText: props.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : '',
-        navLinkData: options.navLinks ? buildNavLinkData(date) : undefined
-      }
+    return (
+      <MountHook name='dayCell' hookProps={hookProps} elRef={props.elRef}>
+        {(rootElRef) => props.children(rootElRef, standardClassNames.concat(customClassNames), dataAttrs)}
+      </MountHook>
+    )
+  }
 
-      return (
-        <RenderHook name='dayCell'
-          hookProps={hookProps}
-          defaultInnerContent={props.defaultInnerContent}
-          elRef={props.elRef}
-        >
-          {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-            rootElRef, standardClassNames.concat(customClassNames), dataAttrs, innerElRef, innerContent
-          )}
-        </RenderHook>
-      )
-    }}
-  </ComponentContextType.Consumer>
-)
+}
+
+
+export interface DayCellContentProps {
+  date: DateMarker
+  dateProfile?: DateProfile // for other/disabled days
+  todayRange: DateRange
+  showDayNumber?: boolean // defaults to false
+  extraHookProps?: object
+  defaultContent?: (hookProps: DayCellHookProps) => ComponentChildren
+  children: (
+    innerElRef: Ref<any>,
+    innerContent: ComponentChildren
+  ) => ComponentChildren
+}
+
+export class DayCellContent extends BaseComponent<DayCellContentProps> {
+
+  render(props: DayCellContentProps, state: {}, context: ComponentContext) {
+    let hookPropsOrigin: DayCellHookPropOrigin = {
+      date: props.date,
+      dateProfile: props.dateProfile,
+      todayRange: props.todayRange,
+      showDayNumber: props.showDayNumber
+    }
+    let hookProps = {
+      ...massageHooksProps(hookPropsOrigin, context),
+      ...props.extraHookProps
+    }
+
+    return (
+      <ContentHook name='dayCell' hookProps={hookProps} defaultContent={props.defaultContent}>
+        {props.children}
+      </ContentHook>
+    )
+  }
+
+}
+
+
+function massageHooksProps(input: DayCellHookPropOrigin, context: ComponentContext): DayCellHookProps {
+  let { dateEnv, options } = context
+  let { date } = input
+  let dayMeta = getDateMeta(date, input.todayRange, null, input.dateProfile)
+
+  return {
+    date: dateEnv.toDate(date),
+    view: context.view,
+    ...dayMeta,
+    dayNumberText: input.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : '',
+    navLinkData: options.navLinks ? buildNavLinkData(date) : undefined
+  }
+}

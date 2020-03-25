@@ -1,4 +1,4 @@
-import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot } from '@fullcalendar/core'
+import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent } from '@fullcalendar/core'
 import TableSeg from './TableSeg'
 import TableEvent from './TableEvent'
 import Popover from './Popover'
@@ -28,7 +28,7 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
 
     return (
       <DayCellRoot date={date} todayRange={todayRange} elRef={this.handlePopoverEl}>
-        {(rootElRef, dayClassNames, dataAttrs, innerElRef, innerContent) => (
+        {(rootElRef, dayClassNames, dataAttrs) => (
           <Popover
             elRef={rootElRef}
             title={title}
@@ -38,9 +38,12 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
             alignmentEl={props.alignmentEl}
             topAlignmentEl={props.topAlignmentEl}
           >
-            {innerContent &&
-              <div class='fc-more-popover-misc' ref={innerElRef}>{innerContent}</div>
-            }
+            <DayCellContent date={date} todayRange={todayRange}>
+              {(innerElRef, innerContent) => (
+                innerContent &&
+                  <div class='fc-more-popover-misc' ref={innerElRef}>{innerContent}</div>
+              )}
+            </DayCellContent>
             {props.segs.map((seg) => {
               let { eventRange } = seg
               let instanceId = eventRange.instance.instanceId

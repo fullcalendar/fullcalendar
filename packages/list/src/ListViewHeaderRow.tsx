@@ -1,5 +1,5 @@
 import {
-  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayCellRoot, DayCellHookProps
+  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayCellRoot, DayCellHookProps, DayCellContent
 } from '@fullcalendar/core'
 
 
@@ -23,22 +23,22 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
     let sideFormat = createFormatter(options.listDaySideFormat) // TODO: cache
     let text = mainFormat ? dateEnv.format(dayDate, mainFormat) : '' // will ever be falsy?
     let sideText = sideFormat ? dateEnv.format(dayDate, sideFormat) : '' // will ever be falsy? also, BAD NAME "alt"
-
+    let extraHookProps = { text, sideText }
     return (
-      <DayCellRoot date={dayDate}
-        todayRange={props.todayRange}
-        extraHookProps={{ text, sideText }}
-        defaultInnerContent={renderInnerContent}
-      >
-        {(rootElRef, classNames, dataAttrs, innerElRef, innerContent) => (
+      <DayCellRoot date={dayDate} todayRange={props.todayRange} extraHookProps={extraHookProps}>
+        {(rootElRef, classNames, dataAttrs) => (
           <tr
             ref={rootElRef}
             className={[ 'fc-list-day' ].concat(classNames).join(' ')}
             {...dataAttrs}
           >
-            <td colSpan={3} className={theme.getClass('tableCellShaded')} ref={innerElRef}>
-              {innerContent}
-            </td>
+            <DayCellContent date={dayDate} todayRange={props.todayRange} extraHookProps={extraHookProps} defaultContent={renderInnerContent}>
+              {(innerElRef, innerContent) => (
+                <td colSpan={3} className={theme.getClass('tableCellShaded')} ref={innerElRef}>
+                  {innerContent}
+                </td>
+              )}
+            </DayCellContent>
           </tr>
         )}
       </DayCellRoot>

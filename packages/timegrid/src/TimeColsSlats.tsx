@@ -206,7 +206,7 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
           }
 
           return (
-            <RenderHook name='slotLabel' hookProps={hookProps} defaultInnerContent={renderInnerContent}>
+            <RenderHook name='slotLabel' hookProps={hookProps} defaultContent={renderInnerContent}>
               {(rootElRef, customClassNames, innerElRef, innerContent) => (
                 <td ref={rootElRef} class={classNames.concat(customClassNames).join(' ')} data-time={props.isoTimeStr}>
                   <div class='fc-timegrid-slot-label-frame fc-scrollgrid-shrink-frame'>

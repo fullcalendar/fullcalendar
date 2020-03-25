@@ -8,11 +8,13 @@ import {
   CssDimValue,
   DateProfile,
   DateRange,
-  DayCellRoot,
   buildNavLinkData,
   DayCellHookProps,
   RenderHook,
   WeekNumberRoot,
+  DayCellRoot,
+  DayCellContent,
+  BaseComponent,
 } from '@fullcalendar/core'
 
 
@@ -73,9 +75,8 @@ export default class TableCell extends DateComponent<TableCellProps> {
         showDayNumber={props.showDayNumber}
         extraHookProps={props.extraHookProps}
         elRef={props.elRef}
-        defaultInnerContent={renderCellHeaderInner}
       >
-        {(rootElRef, classNames, rootDataAttrs, innerElRef, innerContent) => (
+        {(rootElRef, classNames, rootDataAttrs) => (
           <td
             ref={rootElRef}
             class={[ 'fc-daygrid-day' ].concat(classNames, props.extraClassNames || []).join(' ')}
@@ -96,11 +97,13 @@ export default class TableCell extends DateComponent<TableCellProps> {
                   )}
                 </WeekNumberRoot>
               }
-              {innerContent &&
-                <div class='fc-daygrid-day-top' ref={innerElRef}>
-                  {innerContent}
-                </div>
-              }
+              <TableCellTop
+                date={date}
+                showDayNumber={props.showDayNumber}
+                dateProfile={props.dateProfile}
+                todayRange={props.todayRange}
+                extraHookProps={props.extraHookProps}
+              />
               <div
                 class='fc-daygrid-day-events'
                 ref={props.fgContentElRef}
@@ -111,7 +114,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
                   <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
                     <RenderHook name='moreLink'
                       hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
-                      defaultInnerContent={renderMoreLinkInner}
+                      defaultContent={renderMoreLinkInner}
                     >
                       {(rootElRef, classNames, innerElRef, innerContent) => (
                         <a onClick={this.handleMoreLink} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
@@ -161,4 +164,38 @@ function renderCellHeaderInner(props: DayCellHookProps) {
 
 function renderMoreLinkInner(props) {
   return props.text
+}
+
+
+
+interface TableCellTopProps {
+  date: DateMarker
+  showDayNumber: boolean
+  dateProfile: DateProfile
+  todayRange: DateRange
+  extraHookProps?: object
+}
+
+class TableCellTop extends BaseComponent<TableCellTopProps> {
+
+  render(props: TableCellTopProps) {
+    return (
+      <DayCellContent
+        date={props.date}
+        todayRange={props.todayRange}
+        dateProfile={props.dateProfile}
+        showDayNumber={props.showDayNumber}
+        extraHookProps={props.extraHookProps}
+        defaultContent={renderCellHeaderInner}
+      >
+        {(innerElRef, innerContent) => (
+          innerContent &&
+            <div class='fc-daygrid-day-top' ref={innerElRef}>
+              {innerContent}
+            </div>
+        )}
+      </DayCellContent>
+    )
+  }
+
 }

@@ -8,7 +8,7 @@ import { RefObject } from 'preact'
 export interface RenderHookProps<HookProps> {
   name: string
   hookProps: HookProps
-  defaultInnerContent?: (hookProps: HookProps) => ComponentChildren
+  defaultContent?: (hookProps: HookProps) => ComponentChildren
   options?: object // for using another root object for the options. RENAME
   children: RenderHookPropsChildren
   elRef?: Ref<any>
@@ -33,7 +33,7 @@ export class RenderHook<HookProps> extends Component<RenderHookProps<HookProps>>
     return (
       <MountHook name={props.name} hookProps={props.hookProps} options={props.options} elRef={this.handleRootEl}>
         {(rootElRef) => (
-          <ContentHook name={props.name} hookProps={props.hookProps} options={props.options} defaultInnerContent={props.defaultInnerContent} backupElRef={this.rootElRef}>
+          <ContentHook name={props.name} hookProps={props.hookProps} options={props.options} defaultContent={props.defaultContent} backupElRef={this.rootElRef}>
             {(innerElRef, innerContent) => props.children(
               rootElRef,
               normalizeClassNames(
@@ -66,7 +66,7 @@ export interface ContentHookProps<HookProps> {
   hookProps: HookProps
   options?: object // will use instead of context. RENAME
   backupElRef?: RefObject<any>
-  defaultInnerContent?: (hookProps: HookProps) => ComponentChildren
+  defaultContent?: (hookProps: HookProps) => ComponentChildren
   children: (
     innerElRef: Ref<any>,
     innerContent: ComponentChildren // if falsy, means it wasn't specified
@@ -103,7 +103,7 @@ export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps
     let innerContentRaw = normalizeContent(rawVal, props.hookProps)
 
     if (innerContentRaw === undefined) {
-      innerContentRaw = normalizeContent(props.defaultInnerContent, props.hookProps)
+      innerContentRaw = normalizeContent(props.defaultContent, props.hookProps)
     }
 
     if (innerContentRaw !== undefined) {
@@ -143,7 +143,7 @@ export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps
 
 export interface MountHookProps<HookProps> {
   name: string
-  elRef: Ref<any> // maybe get rid of once we have better API for caller to combine refs
+  elRef?: Ref<any> // maybe get rid of once we have better API for caller to combine refs
   hookProps: HookProps
   options?: object // will use instead of context
   children: (rootElRef: Ref<any>) => ComponentChildren
@@ -194,28 +194,25 @@ export class MountHook<HookProps> extends Component<MountHookProps<HookProps>> {
 }
 
 
-export function buildHookClassNameGenerator<HookProps, InputHookProps = HookProps>(
-  hookName: string,
-  hookPropMassager?: (inputHookProps: InputHookProps) => HookProps
-) {
+export function buildHookClassNameGenerator<HookProps>(hookName: string) {
   let currentRawGenerator
-  let currentOptionsObj: object
-  let currentInputHookProps: InputHookProps
+  let currentContext: object
+  let currentCacheBuster
   let currentClassNames: string[]
 
-  return function(optionsObj: object, inputHookProps: InputHookProps) {
-    let rawGenerator = optionsObj[hookName + 'ClassNames']
+  return function(hookProps: HookProps, context: ComponentContext, optionsOverride?: object, cacheBusterOverride?: object) {
+    let rawGenerator = (optionsOverride || context.options)[hookName + 'ClassNames']
+    let cacheBuster = cacheBusterOverride || hookProps
 
     if (
       currentRawGenerator !== rawGenerator ||
-      (!currentOptionsObj || !isPropsEqual(currentOptionsObj, optionsObj)) ||
-      (!currentInputHookProps || !isPropsEqual(currentInputHookProps, inputHookProps))
+      currentContext !== context ||
+      (!currentCacheBuster || !isPropsEqual(currentCacheBuster, cacheBuster))
     ) {
-      let massagedHookProps = hookPropMassager ? hookPropMassager(inputHookProps) : inputHookProps
-      currentClassNames = normalizeClassNames(rawGenerator, massagedHookProps)
+      currentClassNames = normalizeClassNames(rawGenerator, hookProps)
       currentRawGenerator = rawGenerator
-      currentInputHookProps = inputHookProps
-      currentOptionsObj = optionsObj
+      currentContext = context
+      currentCacheBuster = cacheBuster
     }
 
     return currentClassNames

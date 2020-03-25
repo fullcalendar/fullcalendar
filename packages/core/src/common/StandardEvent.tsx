@@ -13,7 +13,7 @@ export interface StandardEventProps extends MinimalEventProps {
   defaultDisplayEventEnd?: boolean // default true
   disableDragging?: boolean // default false
   disableResizing?: boolean // default false
-  defaultInnerContent?: (hookProps: EventMeta) => VNode // not used by anyone yet
+  defaultContent?: (hookProps: EventMeta) => VNode // not used by anyone yet
 }
 
 
@@ -40,7 +40,7 @@ export default class StandardEvent extends BaseComponent<StandardEventProps> {
         timeText={timeText}
         disableDragging={props.disableDragging}
         disableResizing={props.disableResizing}
-        defaultInnerContent={renderInnerContent}
+        defaultContent={renderInnerContent}
         isDragging={props.isDragging}
         isResizing={props.isResizing}
         isDateSelecting={props.isDateSelecting}

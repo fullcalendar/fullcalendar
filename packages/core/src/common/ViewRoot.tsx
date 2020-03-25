@@ -19,7 +19,7 @@ export class ViewRoot extends BaseComponent<ViewRootProps> {
 
   render(props: ViewRootProps, state: {}, context: ComponentContext) {
     let hookProps = { view: context.view }
-    let customClassNames = this.buildClassNames(context.options, hookProps)
+    let customClassNames = this.buildClassNames(hookProps, context)
 
     return (
       <MountHook name='view' hookProps={hookProps} elRef={props.elRef}>
