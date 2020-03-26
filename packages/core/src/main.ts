@@ -195,6 +195,7 @@ export { NowIndicatorRoot, NowIndicatorRootProps } from './common/NowIndicatorRo
 
 export { DayCellRoot, DayCellRootProps, DayCellContent, DayCellContentProps, DayCellHookProps } from './common/DayCellRoot'
 export { EventRoot, MinimalEventProps } from './common/EventRoot'
+export { renderFill, BgEvent, BgEventProps } from './common/bg-fill'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'

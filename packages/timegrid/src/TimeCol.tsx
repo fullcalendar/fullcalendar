@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill } from '@fullcalendar/core'
 import TimeColsSeg from './TimeColsSeg'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -144,7 +144,13 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
 
     return segs.map((seg) => (
       <div class='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
-        <div class={`fc-timegrid-${fillType} fc-${fillType}`}></div>
+        {fillType === 'bgevent' ?
+          <BgEvent
+            seg={seg}
+            {...getSegMeta(seg, props.todayRange, props.nowDate)}
+          /> :
+          renderFill(fillType, [ `fc-timegrid-${fillType}` ])
+        }
       </div>
     ))
   }

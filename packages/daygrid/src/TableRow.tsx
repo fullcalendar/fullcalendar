@@ -15,7 +15,9 @@ import {
   ComponentContext,
   getSegMeta,
   DateProfile,
-  Fragment
+  Fragment,
+  BgEvent,
+  renderFill
 } from '@fullcalendar/core'
 import TableSeg, { splitSegsByFirstCol } from './TableSeg'
 import TableCell, { TableCellModel, MoreLinkArg } from './TableCell'
@@ -283,6 +285,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
   renderFillSegs(segs: TableSeg[], fillType: string) {
     let { isRtl } = this.context
+    let { todayRange } = this.props
     let { cellInnerPositions } = this.state
     let nodes: VNode[] = []
 
@@ -299,7 +302,13 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
         nodes.push(
           <div class='fc-daygrid-bg-harness' style={leftRightCss}>
-            <div class={`fc-daygrid-${fillType} fc-${fillType}`} />
+            {fillType === 'bgevent' ?
+              <BgEvent
+                seg={seg}
+                {...getSegMeta(seg, todayRange)}
+              /> :
+              renderFill(fillType, [ `fc-daygrid-${fillType}` ])
+            }
           </div>
         )
       }
