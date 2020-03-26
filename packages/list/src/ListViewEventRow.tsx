@@ -27,6 +27,8 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
       <EventRoot
         seg={seg}
         timeText={'' /* BAD. because of all-day content */}
+        disableDragging={true}
+        disableResizing={true}
         defaultContent={renderEventInnerContent}
         isPast={props.isPast}
         isFuture={props.isFuture}
@@ -37,7 +39,7 @@ export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
         isDateSelecting={props.isDateSelecting}
       >
         {(rootElRef, classNames, style, innerElRef, innerContent, hookProps) => (
-          <tr className={[ 'fc-list-event' ].concat(classNames).join(' ')} ref={rootElRef}>
+          <tr className={[ 'fc-list-event', hookProps.event.url ? 'fc-event-forced-url' : '' ].concat(classNames).join(' ')} ref={rootElRef}>
             {buildTimeContent(seg, timeFormat, context)}
             <td class='fc-list-event-graphic'>
               <span class='fc-list-event-dot fc-dot' style={{

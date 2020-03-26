@@ -33,7 +33,7 @@ export default class EventClicking extends Interaction {
 
       // our way to simulate a link click for elements that can't be <a> tags
       // grab before trigger fired in case trigger trashes DOM thru rerendering
-      let hasUrlContainer = elementClosest(ev.target as HTMLElement, '.fc-has-url')
+      let hasUrlContainer = elementClosest(ev.target as HTMLElement, '.fc-event-forced-url')
       let url = hasUrlContainer ? (hasUrlContainer.querySelector('a[href]') as any).href : ''
 
       calendar.publiclyTrigger('eventClick', [

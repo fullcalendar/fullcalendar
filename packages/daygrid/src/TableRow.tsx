@@ -335,13 +335,14 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
     } else if (isHorizontalChange) {
       let oldSegHeights = this.state.segHeights
+      let newSegHeights = mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl: HTMLElement, instanceId) => (
+        eventHarnessEl.getBoundingClientRect().height ||
+          oldSegHeights[instanceId] || 0 // if seg is hidden for +more link, use previously queried height
+      ))
 
       this.setState({
         maxContentHeight: this.props.eventLimit === true ? this.computeMaxContentHeight() : null,
-        segHeights: mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl: HTMLElement, instanceId) => (
-          eventHarnessEl.getBoundingClientRect().height ||
-            oldSegHeights[instanceId] || 0 // if seg is hidden for +more link, use previously queried height
-        ))
+        segHeights: newSegHeights
       })
     }
   }
