@@ -1,5 +1,5 @@
 import {
-  Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs
+  Seg, DateMarker, buildSegCompareObj, compareByFieldSpecs, sortEventSegs
 } from '@fullcalendar/core'
 import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
@@ -31,13 +31,15 @@ export function computeSegVerticals(segs: Seg[], dayDate: DateMarker, slatCoords
 // NOTE: Also reorders the given array by date!
 function computeSegHorizontals(segs: Seg[], eventOrderSpecs) {
 
-  // IMPORTANT TO CLEAR OLD RESULTS
+  // IMPORTANT TO CLEAR OLD RESULTS :(
   for (let seg of segs) {
     seg.level = null
     seg.forwardCoord = null
     seg.backwardCoord = null
     seg.forwardPressure = null
   }
+
+  segs = sortEventSegs(segs, eventOrderSpecs)
 
   let level0
   let levels = buildSlotSegLevels(segs)
