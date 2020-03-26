@@ -146,6 +146,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
       <div class='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
         {fillType === 'bgevent' ?
           <BgEvent
+            key={seg.eventRange.instance.instanceId}
             seg={seg}
             {...getSegMeta(seg, props.todayRange, props.nowDate)}
           /> :

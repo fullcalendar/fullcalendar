@@ -304,6 +304,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
           <div class='fc-daygrid-bg-harness' style={leftRightCss}>
             {fillType === 'bgevent' ?
               <BgEvent
+                key={seg.eventRange.instance.instanceId}
                 seg={seg}
                 {...getSegMeta(seg, todayRange)}
               /> :
