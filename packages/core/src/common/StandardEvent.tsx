@@ -1,4 +1,4 @@
-import { ComponentContext, h, Fragment, VNode } from '@fullcalendar/core'
+import { ComponentContext, h, Fragment, ComponentChildren } from '@fullcalendar/core'
 import { BaseComponent } from '../vdom-util'
 import { createFormatter } from '../datelib/formatting'
 import { buildSegTimeText, EventMeta } from '../component/event-rendering'
@@ -13,7 +13,7 @@ export interface StandardEventProps extends MinimalEventProps {
   defaultDisplayEventEnd?: boolean // default true
   disableDragging?: boolean // default false
   disableResizing?: boolean // default false
-  defaultContent?: (hookProps: EventMeta) => VNode // not used by anyone yet
+  defaultContent?: (hookProps: EventMeta) => ComponentChildren // not used by anyone yet
 }
 
 
@@ -40,7 +40,7 @@ export default class StandardEvent extends BaseComponent<StandardEventProps> {
         timeText={timeText}
         disableDragging={props.disableDragging}
         disableResizing={props.disableResizing}
-        defaultContent={renderInnerContent}
+        defaultContent={props.defaultContent || renderInnerContent}
         isDragging={props.isDragging}
         isResizing={props.isResizing}
         isDateSelecting={props.isDateSelecting}
