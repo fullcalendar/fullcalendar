@@ -9,7 +9,6 @@ import {
   DateComponent,
   ViewProps
 } from '@fullcalendar/core'
-import TableDateProfileGenerator from './TableDateProfileGenerator'
 
 
 /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
@@ -19,8 +18,6 @@ import TableDateProfileGenerator from './TableDateProfileGenerator'
 
 
 export default abstract class TableView<State={}> extends DateComponent<ViewProps, State> {
-
-  static dateProfileGeneratorClass = TableDateProfileGenerator
 
   protected headerElRef = createRef<HTMLTableCellElement>()
 

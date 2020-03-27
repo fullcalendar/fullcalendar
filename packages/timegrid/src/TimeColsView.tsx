@@ -29,8 +29,6 @@ const AUTO_ALL_DAY_EVENT_LIMIT = 5
 
 export default abstract class TimeColsView extends DateComponent<ViewProps> {
 
-  static usesMinMaxTime = true // indicates that slotMinTime/slotMaxTime affects rendering
-
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
   protected headerElRef = createRef<HTMLTableCellElement>()
   private rootElRef = createRef<HTMLDivElement>()

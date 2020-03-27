@@ -16,6 +16,8 @@ ViewConfig -> ViewDef -> ViewSpec
 export interface ViewSpec {
   type: string
   component: ViewComponentType
+  usesMinMaxTime: boolean
+  dateProfileGeneratorClass: any
   duration: Duration
   durationUnit: string
   singleUnit: string
@@ -86,6 +88,8 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
   return {
     type: viewDef.type,
     component: viewDef.component,
+    usesMinMaxTime: viewDef.usesMinMaxTime,
+    dateProfileGeneratorClass: viewDef.dateProfileGeneratorClass,
     duration,
     durationUnit,
     singleUnit,

@@ -16,6 +16,7 @@ export default createPlugin({
 
     timeGrid: {
       component: DayTimeColsView,
+      usesMinMaxTime: true, // indicates that slotMinTime/slotMaxTime affects rendering
       allDaySlot: true,
       slotDuration: '00:30:00',
       slotEventOverlap: true // a bad name. confused with overlap/constraint system

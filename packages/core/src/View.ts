@@ -25,14 +25,6 @@ export interface ViewProps {
 }
 
 
-// STATIC MEMBERS
-// these can be attached to a View class to change date-computation
-// TODO: make these part of ViewConfigObjectInput somehow
-//
-// usesMinMaxTime: boolean // whether slotMinTime/slotMaxTime will affect the activeRange. Views must opt-in.
-// dateProfileGeneratorClass: any // initialized after class. used by Calendar
-
-
 // HELPERS
 
 /*

@@ -1,6 +1,7 @@
 import { createPlugin } from '@fullcalendar/core'
 import DayTableView from './DayTableView'
 import './main.scss'
+import TableDateProfileGenerator from './TableDateProfileGenerator'
 
 export { default as DayTable, DayTableSlicer } from './DayTable'
 export { default as Table } from './Table'
@@ -14,7 +15,10 @@ export default createPlugin({
   defaultView: 'dayGridMonth',
   views: {
 
-    dayGrid: DayTableView, // sort of a name mismatch. okay
+    dayGrid: {
+      component: DayTableView,
+      dateProfileGeneratorClass: TableDateProfileGenerator
+    },
 
     dayGridDay: {
       type: 'dayGrid',

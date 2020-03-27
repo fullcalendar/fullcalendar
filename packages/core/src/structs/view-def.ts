@@ -1,4 +1,5 @@
 import { ViewConfigHash, ViewComponentType } from './view-config'
+import DateProfileGenerator from '../DateProfileGenerator'
 
 /*
 Represents information for an instantiatable View class along with settings
@@ -7,6 +8,8 @@ that are specific to that view. No other settings, like calendar-wide settings, 
 export interface ViewDef {
   type: string
   component: ViewComponentType
+  usesMinMaxTime: boolean
+  dateProfileGeneratorClass: any
   overrides: any
   defaults: any
 }
@@ -72,9 +75,23 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
     return null // don't throw a warning, might be settings for a single-unit view
   }
 
+  // TODO: better system
+  let usesMinMaxTime = queryProp('usesMinMaxTime')
+  if (usesMinMaxTime == null) {
+    usesMinMaxTime = superDef ? superDef.usesMinMaxTime : false
+  }
+
+  // TODO: better system
+  let dateProfileGeneratorClass = queryProp('dateProfileGeneratorClass')
+  if (!dateProfileGeneratorClass) {
+    dateProfileGeneratorClass = superDef ? superDef.dateProfileGeneratorClass : DateProfileGenerator
+  }
+
   return {
     type: viewType,
     component: theComponent,
+    usesMinMaxTime,
+    dateProfileGeneratorClass,
     defaults: {
       ...(superDef ? superDef.defaults : {}),
       ...(defaultConfig ? defaultConfig.options : {})

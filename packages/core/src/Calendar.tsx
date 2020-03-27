@@ -509,9 +509,7 @@ export default class Calendar {
     // needs to happen after dateEnv assigned :( because DateProfileGenerator grabs onto reference
     // TODO: don't do every time
     this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
-      let dateProfileGeneratorClass = (viewSpec.component as any).dateProfileGeneratorClass // static member
-        || DateProfileGenerator // fallback
-      return new dateProfileGeneratorClass(viewSpec, this)
+      return new viewSpec.dateProfileGeneratorClass(viewSpec, this)
     })
 
     // TODO: don't do every time

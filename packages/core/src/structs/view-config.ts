@@ -16,6 +16,8 @@ export type ViewComponentType = ComponentType<ViewProps> // a class or a functio
 export interface ViewConfigObjectInput { // not strict enough. will basically allow for anything :(
   type?: string
   component?: ViewComponentType
+  usesMinMaxTime?: boolean
+  dateProfileGeneratorClass?: any
   [optionName: string]: any
 }
 
@@ -25,6 +27,8 @@ export type ViewConfigInputHash = { [viewType: string]: ViewConfigInput }
 export interface ViewConfig {
   superType: string
   component: ViewComponentType | null
+  usesMinMaxTime?: boolean
+  dateProfileGeneratorClass?: any
   options: any
 }
 
@@ -36,7 +40,9 @@ export function parseViewConfigs(inputs: ViewConfigInputHash): ViewConfigHash {
 
 const VIEW_DEF_PROPS = {
   type: String,
-  component: null
+  component: null,
+  usesMinMaxTime: Boolean,
+  dateProfileGeneratorClass: null
 }
 
 function parseViewConfig(input: ViewConfigInput): ViewConfig {
@@ -50,6 +56,8 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
   return {
     superType: props.type,
     component: props.component,
+    usesMinMaxTime: props.usesMinMaxTime,
+    dateProfileGeneratorClass: props.dateProfileGeneratorClass,
     options
   }
 }
