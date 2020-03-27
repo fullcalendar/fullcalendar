@@ -142,18 +142,26 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     // BAD: assigns TO THE SEGS THEMSELVES
     computeSegVerticals(segs, props.date, props.slatCoords, context.options.eventMinHeight)
 
-    return segs.map((seg) => (
-      <div class='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
-        {fillType === 'bgevent' ?
-          <BgEvent
-            key={seg.eventRange.instance.instanceId}
-            seg={seg}
-            {...getSegMeta(seg, props.todayRange, props.nowDate)}
-          /> :
-          renderFill(fillType, [ `fc-timegrid-${fillType}` ])
-        }
-      </div>
-    ))
+    return segs.map((seg) => {
+
+      // inverse-background events don't have specific instances
+      // TODO: might be a key collision. better solution
+      let { eventRange } = seg
+      let key = eventRange.instance ? eventRange.instance.instanceId : eventRange.def.defId
+
+      return (
+        <div class='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
+          {fillType === 'bgevent' ?
+            <BgEvent
+              key={key}
+              seg={seg}
+              {...getSegMeta(seg, props.todayRange, props.nowDate)}
+            /> :
+            renderFill(fillType, [ `fc-timegrid-${fillType}` ])
+          }
+        </div>
+      )
+    })
   }
 
 

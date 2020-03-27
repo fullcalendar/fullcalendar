@@ -300,11 +300,16 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
           right: cellInnerPositions.rights[seg.firstCol] - cellInnerPositions.rights[seg.lastCol],
         }
 
+        // inverse-background events don't have specific instances
+        // TODO: might be a key collision. better solution
+        let { eventRange } = seg
+        let key = eventRange.instance ? eventRange.instance.instanceId : eventRange.def.defId
+
         nodes.push(
           <div class='fc-daygrid-bg-harness' style={leftRightCss}>
             {fillType === 'bgevent' ?
               <BgEvent
-                key={seg.eventRange.instance.instanceId}
+                key={key}
                 seg={seg}
                 {...getSegMeta(seg, todayRange)}
               /> :
