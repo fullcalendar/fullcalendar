@@ -8,7 +8,7 @@ describe('print preview', function() {
       { id: '2', start: '2019-04-08T05:00:00' },
       { id: '1', start: '2019-04-08T01:00:00' }
     ],
-    eventRender: function(arg) {
+    eventDidMount: function(arg) {
       arg.el.setAttribute('data-id', arg.event.id)
     }
   })

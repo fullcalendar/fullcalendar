@@ -18,25 +18,25 @@ describe('event resize mirror', function() {
       ]
     })
 
-    it('gets passed through eventDestroy', function(done) {
-      let mirrorRenderCalls = 0
-      let mirrorDestroyCalls = 0
-      let normalRenderCalls = 0
-      let normalDestroyCalls = 0
+    it('gets passed through render hooks', function(done) {
+      let mirrorMountCalls = 0
+      let mirrorContentCalls = 0
+      let mirrorUnmountCalls = 0
 
       let calendar = initCalendar({
-        eventRender(info) {
+        eventDidMount(info) {
           if (info.isMirror) {
-            mirrorRenderCalls++
-          } else {
-            normalRenderCalls++
+            mirrorMountCalls++
           }
         },
-        eventDestroy(info) {
+        eventContent(info) {
           if (info.isMirror) {
-            mirrorDestroyCalls++
-          } else {
-            normalDestroyCalls++
+            mirrorContentCalls++
+          }
+        },
+        eventWillUnmount(info) {
+          if (info.isMirror) {
+            mirrorUnmountCalls++
           }
         }
       })
@@ -49,12 +49,9 @@ describe('event resize mirror', function() {
       )
 
       waitEventResize(calendar, resizing).then(() => {
-        expect(mirrorRenderCalls).toBe(3)
-        expect(mirrorDestroyCalls).toBe(3)
-
-        expect(normalRenderCalls).toBe(2)
-        expect(normalDestroyCalls).toBe(1)
-
+        expect(mirrorMountCalls).toBe(1)
+        expect(mirrorContentCalls).toBe(3)
+        expect(mirrorUnmountCalls).toBe(1)
         done()
       })
     })
@@ -72,24 +69,24 @@ describe('event resize mirror', function() {
     })
 
     it('gets passed through eventDestroy', function(done) {
-      let mirrorRenderCalls = 0
-      let mirrorDestroyCalls = 0
-      let normalRenderCalls = 0
-      let normalDestroyCalls = 0
+      let mirrorMountCalls = 0
+      let mirrorContentCalls = 0
+      let mirrorUnmountCalls = 0
 
       let calendar = initCalendar({
-        eventRender(info) {
+        eventDidMount(info) {
           if (info.isMirror) {
-            mirrorRenderCalls++
-          } else {
-            normalRenderCalls++
+            mirrorMountCalls++
+          }
+        },
+        eventContent(info) {
+          if (info.isMirror) {
+            mirrorContentCalls++
           }
         },
         eventDestroy(info) {
           if (info.isMirror) {
-            mirrorDestroyCalls++
-          } else {
-            normalDestroyCalls++
+            mirrorUnmountCalls++
           }
         }
       })
@@ -103,12 +100,9 @@ describe('event resize mirror', function() {
       )
 
       waitEventResize(calendar, resizing).then(() => {
-        expect(mirrorRenderCalls).toBe(3)
-        expect(mirrorDestroyCalls).toBe(3)
-
-        expect(normalRenderCalls).toBe(2)
-        expect(normalDestroyCalls).toBe(1)
-
+        expect(mirrorMountCalls).toBe(1)
+        expect(mirrorContentCalls).toBe(3)
+        expect(mirrorUnmountCalls).toBe(1)
         done()
       })
     })

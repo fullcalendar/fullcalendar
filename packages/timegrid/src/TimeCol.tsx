@@ -102,7 +102,8 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     if (!props.slatCoords) { return }
 
     // assigns TO THE SEGS THEMSELVES
-    computeSegCoords(segs, props.date, props.slatCoords, context.options.eventMinHeight, context.eventOrderSpecs)
+    // also, receives resorted array
+    segs = computeSegCoords(segs, props.date, props.slatCoords, context.options.eventMinHeight, context.eventOrderSpecs) as TimeColsSeg[]
 
     return segs.map((seg) => {
       let instanceId = seg.eventRange.instance.instanceId

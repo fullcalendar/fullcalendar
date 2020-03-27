@@ -4,7 +4,7 @@ describe('eventOrder', function() {
   pushOptions({
     defaultDate: '2018-01-01',
     defaultView: 'dayGridMonth',
-    eventRender: function(arg) {
+    eventDidMount: function(arg) {
       arg.el.setAttribute('data-event-id', arg.event.id)
     }
   })
@@ -88,8 +88,15 @@ describe('eventOrder', function() {
   })
 
   function getEventOrder() {
-    return new CalendarWrapper(currentCalendar).getEventEls().map(function(el) {
-      return el.getAttribute('data-event-id')
+    let objs = new CalendarWrapper(currentCalendar).getEventEls().map(function(el) {
+      return {
+        id: el.getAttribute('data-event-id'),
+        top: el.getBoundingClientRect().top
+      }
     })
+
+    objs.sort((a, b) => a.top - b.top)
+
+    return objs.map((obj) => obj.id)
   }
 })

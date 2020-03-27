@@ -4,20 +4,16 @@ import ToolbarWrapper from './ToolbarWrapper'
 export default class CalendarWrapper {
 
   static EVENT_CLASSNAME = 'fc-event' // TODO: put this everywhere?
-  static EVENT_IS_START_CLASSNAME = 'fc-start'
-  static EVENT_IS_END_CLASSNAME = 'fc-end'
-  static EVENT_IS_NOT_START_CLASSNAME = 'fc-not-start'
-  static EVENT_IS_NOT_END_CLASSNAME = 'fc-not-end'
-  static EVENT_TIME_CLASSNAME = 'fc-time'
-  static EVENT_TITLE_CLASSNAME = 'fc-title'
-  static EVENT_RESIZER_CLASSNAME = 'fc-resizer'
-  static EVENT_START_RESIZER_CLASSNAME = 'fc-start-resizer'
-  static EVENT_END_RESIZER_CLASSNAME = 'fc-end-resizer'
+  static EVENT_IS_START_CLASSNAME = 'fc-event-start'
+  static EVENT_IS_END_CLASSNAME = 'fc-event-end'
+  static EVENT_TIME_CLASSNAME = 'fc-event-time'
+  static EVENT_TITLE_CLASSNAME = 'fc-event-title'
+  static EVENT_RESIZER_CLASSNAME = 'fc-event-resizer'
+  static EVENT_START_RESIZER_CLASSNAME = 'fc-event-resizer-start'
+  static EVENT_END_RESIZER_CLASSNAME = 'fc-event-resizer-end'
   static BG_EVENT_CLASSNAME = 'fc-bgevent'
   static TODAY_CLASSNAME = 'fc-day-today'
-  static PAST_CLASSNAME = 'fc-past'
-  static FUTURE_CLASSNAME = 'fc-future'
-  static DOW_CLASSNAMES = [ 'fc-sun', 'fc-mon', 'fc-tue', 'fc-wed', 'fc-thu', 'fc-fri', 'fc-sat' ]
+  static DOW_CLASSNAMES = [ 'fc-day-sun', 'fc-day-mon', 'fc-day-tue', 'fc-day-wed', 'fc-day-thu', 'fc-day-fri', 'fc-day-sat' ]
   static LTR_CLASSNAME = 'fc-dir-ltr'
   static RTL_CLASSNAME = 'fc-dir-rtl'
   static BOOTSTRAP_CLASSNAME = 'fc-theme-bootstrap'

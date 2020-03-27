@@ -10,7 +10,7 @@ import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
 export function computeSegCoords(segs: Seg[], dayDate: DateMarker, slatCoords: TimeColsSlatsCoords, eventMinHeight: number, eventOrderSpecs) {
   computeSegVerticals(segs, dayDate, slatCoords, eventMinHeight)
-  computeSegHorizontals(segs, eventOrderSpecs) // requires top/bottom from computeSegVerticals
+  return computeSegHorizontals(segs, eventOrderSpecs) // requires top/bottom from computeSegVerticals
 }
 
 
@@ -55,6 +55,8 @@ function computeSegHorizontals(segs: Seg[], eventOrderSpecs) {
       computeSegForwardBack(seg, 0, 0, eventOrderSpecs)
     }
   }
+
+  return segs
 }
 
 
