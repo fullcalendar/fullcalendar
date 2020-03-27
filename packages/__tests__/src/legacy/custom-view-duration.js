@@ -1,5 +1,5 @@
 import frLocale from '@fullcalendar/core/locales/fr'
-import { View, createPlugin } from '@fullcalendar/core'
+import { createPlugin } from '@fullcalendar/core' // View
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
@@ -428,15 +428,13 @@ describe('custom view', function() {
     it('falls back to view name when view lacks metadata', function() {
       // also sorta tests plugin system
 
-      class CrazyView extends View {
-        render() {}
-      }
-
       let calendar = initCalendar({
         plugins: [
           createPlugin({
             views: {
-              crazy: CrazyView
+              crazy: {
+                content: 'hello world'
+              }
             }
           })
         ],

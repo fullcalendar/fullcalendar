@@ -1,7 +1,10 @@
 import { ViewProps } from '../View'
 import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
-import { ComponentType, Component } from '../vdom'
+import { ComponentType, Component, h } from '../vdom'
+import { ViewRoot } from '../common/ViewRoot'
+import { RenderHook } from '../common/render-hook'
+import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
 
 /*
 A view-config represents information for either:
@@ -30,9 +33,11 @@ export interface ViewConfig {
 
 export type ViewConfigHash = { [viewType: string]: ViewConfig }
 
+
 export function parseViewConfigs(inputs: ViewConfigInputHash): ViewConfigHash {
   return mapHash(inputs, parseViewConfig)
 }
+
 
 const VIEW_DEF_PROPS = {
   type: String,
@@ -44,12 +49,44 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
     input = { component: input }
   }
 
-  let options = {}
+  let options = {} as any
   let props = refineProps(input, VIEW_DEF_PROPS, {}, options)
+  let component = props.component
+
+  if (options.content) {
+    component = createViewHookComponent(options)
+    // TODO: remove content/classNames/didMount/etc from options?
+  }
 
   return {
     superType: props.type,
-    component: props.component,
+    component,
     options
+  }
+}
+
+
+function createViewHookComponent(options) {
+  return function(viewProps: ViewProps) {
+    return (
+      <ComponentContextType.Consumer>
+        {(context: ComponentContext) => (
+          <ViewRoot viewSpec={viewProps.viewSpec}>
+            {(rootElRef, viewClassNames) => {
+              let hookProps = { ...viewProps, nextDayThreshold: context.nextDayThreshold }
+              return (
+                <RenderHook name='' options={options} hookProps={hookProps} elRef={rootElRef}>
+                  {(rootElRef, customClassNames, innerElRef, innerContent) => (
+                    <div className={viewClassNames.concat(customClassNames).join(' ')} ref={rootElRef}>
+                      {innerContent}
+                    </div>
+                  )}
+                </RenderHook>
+              )
+            }}
+          </ViewRoot>
+        )}
+      </ComponentContextType.Consumer>
+    )
   }
 }

@@ -20,6 +20,8 @@ export type RenderHookPropsChildren = (
   innerContent: ComponentChildren // if falsy, means it wasn't specified
 ) => ComponentChildren
 
+// TODO: use capitalizeFirstLetter util
+
 
 export class RenderHook<HookProps> extends Component<RenderHookProps<HookProps>> {
 
@@ -36,7 +38,7 @@ export class RenderHook<HookProps> extends Component<RenderHookProps<HookProps>>
             {(innerElRef, innerContent) => props.children(
               rootElRef,
               normalizeClassNames(
-                (props.options || context.options)[props.name + 'ClassNames'],
+                (props.options || context.options)[props.name ? props.name + 'ClassNames' : 'classNames'],
                 props.hookProps
               ),
               innerElRef,
@@ -98,7 +100,7 @@ export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps
   private renderInnerContent() {
     let { props } = this
     let innerContent: ComponentChildren = null
-    let rawVal = (this.props.options || this.context.options)[props.name + 'Content']
+    let rawVal = (this.props.options || this.context.options)[props.name ? props.name + 'Content' : 'content']
     let innerContentRaw = normalizeContent(rawVal, props.hookProps)
 
     if (innerContentRaw === undefined) {
@@ -161,12 +163,12 @@ export class MountHook<HookProps> extends Component<MountHookProps<HookProps>> {
 
 
   componentDidMount() {
-    this.triggerMountHandler('DidMount')
+    this.triggerMountHandler('DidMount', 'didMount')
   }
 
 
   componentWillUnmount() {
-    this.triggerMountHandler('WillUnmount')
+    this.triggerMountHandler('WillUnmount', 'willUnmount')
   }
 
 
@@ -179,8 +181,9 @@ export class MountHook<HookProps> extends Component<MountHookProps<HookProps>> {
   }
 
 
-  private triggerMountHandler(postfix: string) {
-    let handler = (this.props.options || this.context.options)[this.props.name + postfix]
+  private triggerMountHandler(postfix: string, simplePostfix: string) {
+    let { name } = this.props
+    let handler = (this.props.options || this.context.options)[name ? name + postfix : simplePostfix]
 
     if (handler) {
       handler({ // TODO: make a better type for this
@@ -200,7 +203,7 @@ export function buildHookClassNameGenerator<HookProps>(hookName: string) {
   let currentClassNames: string[]
 
   return function(hookProps: HookProps, context: ComponentContext, optionsOverride?: object, cacheBusterOverride?: object) {
-    let rawGenerator = (optionsOverride || context.options)[hookName + 'ClassNames']
+    let rawGenerator = (optionsOverride || context.options)[hookName ? hookName + 'ClassNames' : 'classNames']
     let cacheBuster = cacheBusterOverride || hookProps
 
     if (

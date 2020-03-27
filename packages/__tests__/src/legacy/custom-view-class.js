@@ -1,16 +1,20 @@
-import { View, createPlugin } from '@fullcalendar/core'
+import { createPlugin, sliceEvents } from '@fullcalendar/core'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
-describe('custom view class', function() {
+describe('custom view class', function() { // TODO: rename file
 
   it('calls all standard methods with correct parameters', function() {
 
-    class CustomView extends View {
+    const CustomViewConfig = {
+      classNames: 'awesome-view',
+      didMount: function() {},
+      willUnmount: function() {},
 
-      render(props) {
+      content(props) {
         expect(props.dateProfile.activeRange.start instanceof Date).toBe(true)
         expect(props.dateProfile.activeRange.end instanceof Date).toBe(true)
 
-        let eventRanges = this.sliceEvents(props.eventStore, true) // allDay=true
+        let eventRanges = sliceEvents(props, true) // allDay=true
         expect(Array.isArray(eventRanges)).toBe(true)
         expect(eventRanges.length).toBe(1)
         expect(typeof eventRanges[0].def).toBe('object')
@@ -30,17 +34,26 @@ describe('custom view class', function() {
           expect(dateSelection.range.start instanceof Date).toBe(true)
           expect(dateSelection.range.end instanceof Date).toBe(true)
         }
-      }
 
+        return { html: '<div class="hello-world">hello world</div>' }
+      }
     }
 
-    spyOn(CustomView.prototype, 'render').and.callThrough()
+    spyOn(CustomViewConfig, 'didMount').and.callThrough()
+    spyOn(CustomViewConfig, 'content').and.callThrough()
+    spyOn(CustomViewConfig, 'willUnmount').and.callThrough()
 
-    initCalendar({
+    function resetCounts() {
+      CustomViewConfig.didMount.calls.reset()
+      CustomViewConfig.content.calls.reset()
+      CustomViewConfig.willUnmount.calls.reset()
+    }
+
+    let calendar = initCalendar({
       plugins: [
         createPlugin({
           views: {
-            custom: CustomView
+            custom: CustomViewConfig
           }
         })
       ],
@@ -54,20 +67,33 @@ describe('custom view class', function() {
         }
       ]
     })
+    let calendarWrapper = new CalendarWrapper(calendar)
 
-    expect(CustomView.prototype.render).toHaveBeenCalled()
+    let viewEl = calendarWrapper.getViewEl()
+    expect(viewEl).toHaveClass('awesome-view')
+    expect($(viewEl).find('.hello-world').length).toBe(1)
 
-    currentCalendar.render()
+    expect(CustomViewConfig.didMount.calls.count()).toBe(1)
+    expect(CustomViewConfig.content.calls.count()).toBe(1)
+    expect(CustomViewConfig.willUnmount.calls.count()).toBe(0)
 
-    expect(CustomView.prototype.render).toHaveBeenCalled()
+    resetCounts()
+    calendar.select('2014-12-25', '2014-01-01')
+    expect(CustomViewConfig.didMount.calls.count()).toBe(0)
+    expect(CustomViewConfig.content.calls.count()).toBe(1)
+    expect(CustomViewConfig.willUnmount.calls.count()).toBe(0)
 
-    currentCalendar.select('2014-12-25', '2014-01-01')
+    resetCounts()
+    calendar.unselect()
+    expect(CustomViewConfig.didMount.calls.count()).toBe(0)
+    expect(CustomViewConfig.content.calls.count()).toBe(1)
+    expect(CustomViewConfig.willUnmount.calls.count()).toBe(0)
 
-    expect(CustomView.prototype.render).toHaveBeenCalled()
-
-    currentCalendar.unselect()
-
-    expect(CustomView.prototype.render).toHaveBeenCalled()
+    resetCounts()
+    calendar.destroy()
+    expect(CustomViewConfig.didMount.calls.count()).toBe(0)
+    expect(CustomViewConfig.content.calls.count()).toBe(0)
+    expect(CustomViewConfig.willUnmount.calls.count()).toBe(1)
   })
 
 })
