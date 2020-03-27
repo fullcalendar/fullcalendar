@@ -1,12 +1,13 @@
 import {
   VNode, h,
-  View,
   SimpleScrollGrid,
   SimpleScrollGridSection,
   ChunkContentCallbackArgs,
   createRef,
   ScrollGridSectionConfig,
-  ViewRoot
+  ViewRoot,
+  DateComponent,
+  ViewProps
 } from '@fullcalendar/core'
 import TableDateProfileGenerator from './TableDateProfileGenerator'
 
@@ -17,7 +18,9 @@ import TableDateProfileGenerator from './TableDateProfileGenerator'
 // It is responsible for managing width/height.
 
 
-export default abstract class TableView<State={}> extends View<State> {
+export default abstract class TableView<State={}> extends DateComponent<ViewProps, State> {
+
+  static dateProfileGeneratorClass = TableDateProfileGenerator
 
   protected headerElRef = createRef<HTMLTableCellElement>()
 
@@ -116,5 +119,3 @@ export default abstract class TableView<State={}> extends View<State> {
   }
 
 }
-
-TableView.prototype.dateProfileGeneratorClass = TableDateProfileGenerator

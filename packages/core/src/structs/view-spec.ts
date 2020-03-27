@@ -3,7 +3,7 @@ import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInpu
 import OptionsManager from '../OptionsManager'
 import { mapHash } from '../util/object'
 import { globalDefaults } from '../options'
-import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewClass } from './view-config'
+import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'
 
 /*
 Represents everything needed to instantiate a new view instance,
@@ -15,7 +15,7 @@ ViewConfig -> ViewDef -> ViewSpec
 */
 export interface ViewSpec {
   type: string
-  class: ViewClass
+  component: ViewComponentType
   duration: Duration
   durationUnit: string
   singleUnit: string
@@ -85,7 +85,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
 
   return {
     type: viewDef.type,
-    class: viewDef.class,
+    component: viewDef.component,
     duration,
     durationUnit,
     singleUnit,

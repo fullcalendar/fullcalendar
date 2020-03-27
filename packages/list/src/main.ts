@@ -8,7 +8,7 @@ export default createPlugin({
   views: {
 
     list: {
-      class: ListView,
+      component: ListView,
       buttonTextKey: 'list', // what to lookup in locale files
       listDayFormat: { month: 'long', day: 'numeric', year: 'numeric' } // like "January 1, 2016"
     },

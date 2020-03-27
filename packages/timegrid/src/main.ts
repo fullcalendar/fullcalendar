@@ -15,7 +15,7 @@ export default createPlugin({
   views: {
 
     timeGrid: {
-      class: DayTimeColsView,
+      component: DayTimeColsView,
       allDaySlot: true,
       slotDuration: '00:30:00',
       slotEventOverlap: true // a bad name. confused with overlap/constraint system

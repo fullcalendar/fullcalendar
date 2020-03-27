@@ -1,13 +1,12 @@
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
-import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import { ViewSpec } from './structs/view-spec'
-import DateComponent from './component/DateComponent'
 import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'
 import { sliceEventStore, EventRenderRange } from './component/event-rendering'
 import { DateSpan } from './structs/date-span'
 import { EventInteractionState } from './interactions/event-interaction-state'
 import { __assign } from 'tslib'
+import { Duration } from './datelib/duration'
 
 
 export interface ViewProps {
@@ -25,39 +24,26 @@ export interface ViewProps {
   forPrint: boolean
 }
 
-export default abstract class View<State={}> extends DateComponent<ViewProps, State> {
 
-  // config properties, initialized after class on prototype
-  usesMinMaxTime: boolean // whether slotMinTime/slotMaxTime will affect the activeRange. Views must opt-in.
-  dateProfileGeneratorClass: any // initialized after class. used by Calendar
-
-  on: EmitterInterface['on']
-  one: EmitterInterface['one']
-  off: EmitterInterface['off']
-  trigger: EmitterInterface['trigger']
-  triggerWith: EmitterInterface['triggerWith']
-  hasHandlers: EmitterInterface['hasHandlers']
+// STATIC MEMBERS
+// these can be attached to a View class to change date-computation
+// TODO: make these part of ViewConfigObjectInput somehow
+//
+// usesMinMaxTime: boolean // whether slotMinTime/slotMaxTime will affect the activeRange. Views must opt-in.
+// dateProfileGeneratorClass: any // initialized after class. used by Calendar
 
 
-  // Event Rendering
-  // -----------------------------------------------------------------------------------------------------------------
+// HELPERS
 
-
-  // util for subclasses
-  sliceEvents(eventStore: EventStore, allDay: boolean): EventRenderRange[] {
-    let { props } = this
-
-    return sliceEventStore(
-      eventStore,
-      props.eventUiBases,
-      props.dateProfile.activeRange,
-      allDay ? this.context.nextDayThreshold : null
-    ).fg
-  }
-
+/*
+if nextDayThreshold is specified, slicing is done in an all-day fashion.
+you can get nextDayThreshold from context.nextDayThreshold
+*/
+export function sliceEvents(props: ViewProps, nextDayThreshold?: Duration): EventRenderRange[] {
+  return sliceEventStore(
+    props.eventStore,
+    props.eventUiBases,
+    props.dateProfile.activeRange,
+    nextDayThreshold
+  ).fg
 }
-
-EmitterMixin.mixInto(View)
-
-View.prototype.usesMinMaxTime = false
-View.prototype.dateProfileGeneratorClass = DateProfileGenerator

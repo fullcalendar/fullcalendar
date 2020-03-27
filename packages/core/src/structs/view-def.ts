@@ -1,4 +1,4 @@
-import { ViewClass, ViewConfigHash } from './view-config'
+import { ViewConfigHash, ViewComponentType } from './view-config'
 
 /*
 Represents information for an instantiatable View class along with settings
@@ -6,7 +6,7 @@ that are specific to that view. No other settings, like calendar-wide settings, 
 */
 export interface ViewDef {
   type: string
-  class: ViewClass
+  component: ViewComponentType
   overrides: any
   defaults: any
 }
@@ -51,15 +51,8 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
       ((overrideConfig && overrideConfig[name] !== null) ? overrideConfig[name] : null)
   }
 
-  let theClass = queryProp('class') as ViewClass
+  let theComponent = queryProp('component') as ViewComponentType
   let superType = queryProp('superType') as string
-
-  if (!superType && theClass) {
-    superType =
-      findViewNameBySubclass(theClass, overrideConfigs) ||
-      findViewNameBySubclass(theClass, defaultConfigs)
-  }
-
   let superDef: ViewDef | null = null
 
   if (superType) {
@@ -71,17 +64,17 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
     superDef = ensureViewDef(superType, hash, defaultConfigs, overrideConfigs)
   }
 
-  if (!theClass && superDef) {
-    theClass = superDef.class
+  if (!theComponent && superDef) {
+    theComponent = superDef.component
   }
 
-  if (!theClass) {
+  if (!theComponent) {
     return null // don't throw a warning, might be settings for a single-unit view
   }
 
   return {
     type: viewType,
-    class: theClass,
+    component: theComponent,
     defaults: {
       ...(superDef ? superDef.defaults : {}),
       ...(defaultConfig ? defaultConfig.options : {})
@@ -91,19 +84,4 @@ function buildViewDef(viewType: string, hash: ViewDefHash, defaultConfigs: ViewC
       ...(overrideConfig ? overrideConfig.options : {})
     }
   }
-}
-
-function findViewNameBySubclass(viewSubclass: ViewClass, configs: ViewConfigHash): string {
-  let superProto = Object.getPrototypeOf(viewSubclass.prototype)
-
-  for (let viewType in configs) {
-    let parsed = configs[viewType]
-
-    // need DIRECT subclass, so instanceof won't do it
-    if (parsed.class && parsed.class.prototype === superProto) {
-      return viewType
-    }
-  }
-
-  return ''
 }

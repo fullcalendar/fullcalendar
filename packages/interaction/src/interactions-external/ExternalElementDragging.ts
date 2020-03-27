@@ -13,8 +13,8 @@ import {
   elementMatches,
   enableCursor, disableCursor,
   isInteractionValid,
-  View,
-  ElementDragging
+  ElementDragging,
+  ViewApi
 } from '@fullcalendar/core'
 import HitDragging from '../interactions/HitDragging'
 import { __assign } from 'tslib'
@@ -24,7 +24,7 @@ export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaIn
 export interface ExternalDropApi extends DatePointApi {
   draggedEl: HTMLElement
   jsEvent: UIEvent
-  view: View
+  view: ViewApi
 }
 
 

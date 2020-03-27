@@ -201,7 +201,7 @@ export default class DateProfileGenerator {
     let start = range.start
     let end = range.end
 
-    if ((this.viewSpec.class as any).prototype.usesMinMaxTime) {
+    if ((this.viewSpec.component as any).usesMinMaxTime) { // static member
 
       // expand active range if slotMinTime is negative (why not when positive?)
       if (asRoughDays(slotMinTime) < 0) {
@@ -209,7 +209,7 @@ export default class DateProfileGenerator {
         start = dateEnv.add(start, slotMinTime)
       }
 
-      // expand active range if slotMaxTime is beyond one day (why not when positive?)
+      // expand active range if slotMaxTime is beyond one day (why not when negative?)
       if (asRoughDays(slotMaxTime) > 1) {
         end = startOfDay(end) // necessary?
         end = addDays(end, -1)

@@ -1,7 +1,7 @@
-import View, { ViewProps } from '../View'
+import { ViewProps } from '../View'
 import { refineProps } from '../util/misc'
 import { mapHash } from '../util/object'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentType, Component } from '../vdom'
 
 /*
 A view-config represents information for either:
@@ -9,23 +9,22 @@ A) creating a new instantiatable view class. in which case, supplied a class/typ
 B) options to customize an existing view, in which case only provides options.
 */
 
-export type ViewClass = new(
-  props: ViewProps,
-  context: ComponentContext
-) => View
+export type ViewComponent = Component<ViewProps> // an instance
 
-export interface ViewConfigObjectInput {
+export type ViewComponentType = ComponentType<ViewProps> // a class or a function
+
+export interface ViewConfigObjectInput { // not strict enough. will basically allow for anything :(
   type?: string
-  class?: ViewClass
+  component?: ViewComponentType
   [optionName: string]: any
 }
 
-export type ViewConfigInput = ViewClass | ViewConfigObjectInput
+export type ViewConfigInput = ViewComponentType | ViewConfigObjectInput
 export type ViewConfigInputHash = { [viewType: string]: ViewConfigInput }
 
 export interface ViewConfig {
   superType: string
-  class: ViewClass | null
+  component: ViewComponentType | null
   options: any
 }
 
@@ -37,12 +36,12 @@ export function parseViewConfigs(inputs: ViewConfigInputHash): ViewConfigHash {
 
 const VIEW_DEF_PROPS = {
   type: String,
-  class: null
+  component: null
 }
 
 function parseViewConfig(input: ViewConfigInput): ViewConfig {
   if (typeof input === 'function') {
-    input = { class: input }
+    input = { component: input }
   }
 
   let options = {}
@@ -50,7 +49,7 @@ function parseViewConfig(input: ViewConfigInput): ViewConfig {
 
   return {
     superType: props.type,
-    class: props.class,
+    component: props.component,
     options
   }
 }

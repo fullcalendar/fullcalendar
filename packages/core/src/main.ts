@@ -92,7 +92,7 @@ export { default as Theme } from './theme/Theme'
 export { default as ComponentContext, ComponentContextType } from './component/ComponentContext'
 export { default as DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
 export { default as Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
-export { default as View, ViewProps } from './View'
+export { ViewProps, sliceEvents } from './View'
 export { default as ViewApi } from './ViewApi'
 
 export { default as DateProfileGenerator, DateProfile } from './DateProfileGenerator'

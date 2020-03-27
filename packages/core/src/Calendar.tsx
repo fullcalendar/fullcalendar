@@ -1,6 +1,5 @@
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import OptionsManager from './OptionsManager'
-import View from './View'
 import { OptionsInput, EventHandlerName, EventHandlerArgs } from './types/input-types'
 import { buildLocale, organizeRawLocales, RawLocaleMap } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
@@ -44,12 +43,12 @@ import { applyStyleProp } from './util/dom-manip'
 export interface DateClickApi extends DatePointApi {
   dayEl: HTMLElement
   jsEvent: UIEvent
-  view: View
+  view: ViewApi
 }
 
 export interface DateSelectionApi extends DateSpanApi {
   jsEvent: UIEvent
-  view: View
+  view: ViewApi
 }
 
 export type DatePointTransform = (dateSpan: DateSpan, calendar: Calendar) => any
@@ -510,7 +509,9 @@ export default class Calendar {
     // needs to happen after dateEnv assigned :( because DateProfileGenerator grabs onto reference
     // TODO: don't do every time
     this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
-      return new viewSpec.class.prototype.dateProfileGeneratorClass(viewSpec, this)
+      let dateProfileGeneratorClass = (viewSpec.component as any).dateProfileGeneratorClass // static member
+        || DateProfileGenerator // fallback
+      return new dateProfileGeneratorClass(viewSpec, this)
     })
 
     // TODO: don't do every time

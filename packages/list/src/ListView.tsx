@@ -1,6 +1,5 @@
 import {
   h,
-  View,
   ViewProps,
   Scroller,
   DateMarker,
@@ -21,7 +20,8 @@ import {
   getSegMeta,
   NowTimer,
   ViewRoot,
-  RenderHook
+  RenderHook,
+  DateComponent
 } from '@fullcalendar/core'
 import ListViewHeaderRow from './ListViewHeaderRow'
 import ListViewEventRow from './ListViewEventRow'
@@ -30,7 +30,7 @@ import ListViewEventRow from './ListViewEventRow'
 /*
 Responsible for the scroller, and forwarding event-related actions into the "grid".
 */
-export default class ListView extends View {
+export default class ListView extends DateComponent<ViewProps> {
 
   private computeDateVars = memoize(computeDateVars)
   private eventStoreToSegs = memoize(this._eventStoreToSegs)

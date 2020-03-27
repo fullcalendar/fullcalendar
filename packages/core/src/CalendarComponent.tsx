@@ -1,6 +1,6 @@
 import ComponentContext, { ComponentContextType, buildContext } from './component/ComponentContext'
 import { ViewSpec } from './structs/view-spec'
-import View, { ViewProps } from './View'
+import { ViewProps } from './View'
 import Toolbar from './Toolbar'
 import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
 import { rangeContainsMarker } from './datelib/date-range'
@@ -19,6 +19,7 @@ import ViewContainer from './ViewContainer'
 import { CssDimValue } from './scrollgrid/util'
 import Theme from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
+import { ViewComponent } from './structs/view-config'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -46,7 +47,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   private handleNavLinkClick = buildDelegationHandler('a[data-navlink]', this._handleNavLinkClick.bind(this))
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
-  private viewRef = createRef<View>()
+  private viewRef = createRef<ViewComponent>()
 
   get view() { return this.viewRef.current }
 
@@ -226,11 +227,11 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
       viewSpec.options
     )
 
-    let ViewClass = viewSpec.class
+    let ViewComponent = viewSpec.component
 
     return (
       <ComponentContextType.Provider value={viewContext}>
-        <ViewClass
+        <ViewComponent
           ref={this.viewRef}
           { ...viewProps }
           />

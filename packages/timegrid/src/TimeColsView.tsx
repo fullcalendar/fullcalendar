@@ -1,6 +1,5 @@
 import {
   h, createRef,
-  View,
   diffDays,
   SimpleScrollGridSection,
   VNode,
@@ -11,7 +10,9 @@ import {
   buildNavLinkData,
   ViewRoot,
   WeekNumberRoot,
-  RenderHook
+  RenderHook,
+  DateComponent,
+  ViewProps
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -26,7 +27,9 @@ const AUTO_ALL_DAY_EVENT_LIMIT = 5
 // Is a manager for the TimeCols subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-export default abstract class TimeColsView extends View {
+export default abstract class TimeColsView extends DateComponent<ViewProps> {
+
+  static usesMinMaxTime = true // indicates that slotMinTime/slotMaxTime affects rendering
 
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
   protected headerElRef = createRef<HTMLTableCellElement>()
@@ -284,8 +287,6 @@ export default abstract class TimeColsView extends View {
   }
 
 }
-
-TimeColsView.prototype.usesMinMaxTime = true // indicates that slotMinTime/slotMaxTime affects rendering
 
 
 /* Thin Axis

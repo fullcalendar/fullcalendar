@@ -1,5 +1,5 @@
 
-export { Component, render, createRef, VNode, Fragment, ComponentChildren, createContext, Ref, h, options as preactOptions, RefObject } from 'preact'
+export { Component, render, createRef, VNode, Fragment, ComponentChildren, createContext, Ref, h, options as preactOptions, RefObject, ComponentType } from 'preact'
 import { Component, h, options, render } from 'preact'
 
 

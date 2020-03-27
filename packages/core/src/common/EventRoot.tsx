@@ -1,10 +1,9 @@
 import { Seg } from '../component/DateComponent'
-import { ComponentChildren, h } from '../vdom'
+import { ComponentChildren, h, Ref } from '../vdom'
 import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
 import EventApi from '../api/EventApi'
 import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
 import { EventMeta, getSkinCss, getEventClassNames } from '../component/event-rendering'
-import { Ref } from 'preact'
 import { RenderHook } from './render-hook'
 
 
