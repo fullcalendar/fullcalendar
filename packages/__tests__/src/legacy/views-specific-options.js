@@ -1,5 +1,5 @@
 import { createPlugin } from '@fullcalendar/core'
-import DayGridPlugin, { DayGridView } from '@fullcalendar/daygrid'
+import DayGridPlugin from '@fullcalendar/daygrid'
 
 describe('view-specific options', function() {
 
@@ -123,17 +123,16 @@ describe('view-specific options', function() {
     })
   })
 
-  it('can implicitly target a View subclass', function() {
-
-    class SuperDayGridView extends DayGridView {
-    }
-
+  it('views that explicitly extend others inherit options', function() {
     initCalendar({
       plugins: [
         DayGridPlugin,
         createPlugin({
           views: {
-            superBasic: SuperDayGridView
+            superBasic: {
+              type: 'dayGrid', // explicitly extend
+              content: 'hello world'
+            }
           }
         })
       ],

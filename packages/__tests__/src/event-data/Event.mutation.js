@@ -11,9 +11,8 @@ describe('event mutations on non-instances', function() {
   describe('with date mutating', function() {
     it('doesn\'t do anything', function() {
       let renderCnt = 0
-
-      initCalendar({
-        eventRender(arg) {
+      let calendar = initCalendar({
+        eventContent(arg) {
           renderCnt++
           if (renderCnt === 2) {
             arg.event.moveStart('-01:00')
@@ -30,7 +29,7 @@ describe('event mutations on non-instances', function() {
 
       expect(renderCnt).toBe(4)
 
-      let event = currentCalendar.getEventById('1')
+      let event = calendar.getEventById('1')
       expect(event.start).toEqualDate('2018-09-04')
       expect(event.end).toBe(null)
       expect(event.allDay).toBe(true)
