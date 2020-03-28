@@ -45,19 +45,19 @@ export const EventRoot = (props: EventRootProps) => (
         isDraggable: !props.disableDragging && computeSegDraggable(seg, context),
         isStartResizable: !props.disableResizing && computeSegStartResizable(seg, context),
         isEndResizable: !props.disableResizing && computeSegEndResizable(seg, context),
-        isMirror: props.isDragging || props.isResizing || props.isDateSelecting,
-        isStart: seg.isStart,
-        isEnd: seg.isEnd,
-        isPast: props.isPast,
-        isFuture: props.isFuture,
-        isToday: props.isToday,
-        isSelected: props.isSelected,
-        isDragging: props.isDragging,
-        isResizing: props.isResizing
+        isMirror: Boolean(props.isDragging || props.isResizing || props.isDateSelecting),
+        isStart: Boolean(seg.isStart),
+        isEnd: Boolean(seg.isEnd),
+        isPast: Boolean(props.isPast),
+        isFuture: Boolean(props.isFuture),
+        isToday: Boolean(props.isToday),
+        isSelected: Boolean(props.isSelected),
+        isDragging: Boolean(props.isDragging),
+        isResizing: Boolean(props.isResizing)
       }
 
       let style = getSkinCss(seg.eventRange.ui)
-      let standardClassNames = getEventClassNames(hookProps)
+      let standardClassNames = getEventClassNames(hookProps).concat(seg.eventRange.ui.classNames)
 
       return (
         <RenderHook
