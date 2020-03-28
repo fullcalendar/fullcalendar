@@ -31,7 +31,7 @@
       resourceLabelContent: function(resource) {
         return 'Auditorium ' + ('' + resource.id).toUpperCase();
       },
-      resourceRender: function(arg) {
+      resourceLabelDidMount: function(arg) {
         if (arg.resource.id == 'h') {
           arg.el.style.backgroundColor = 'rgb(255, 243, 206)';
         }
