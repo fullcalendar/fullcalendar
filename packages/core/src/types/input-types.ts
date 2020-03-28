@@ -75,12 +75,13 @@ export interface DropInfo {
 // `keyof OptionsInputBaseEventHandlers`
 export type EventHandlerName =
   '_init' | 'selectAllow' | 'eventAllow' | 'eventDataTransform' |
-  'dayRender' | 'windowResize' | 'dateClick' | 'eventClick' |
+  'windowResize' | 'dateClick' | 'eventClick' |
   'eventMouseEnter' | 'eventMouseLeave' | 'select' | 'unselect' | 'loading' |
   'eventDragStart' | 'eventDragStop' | 'eventDrop' | '_destroyed' | 'drop' |
   'eventResizeStart' | 'eventResizeStop' | 'eventResize' | 'eventReceive' |
   'eventLeave' | '_noEventDrop' |
-  '_noEventResize' | 'eventLimitClick'
+  '_noEventResize' | 'eventLimitClick' |
+  'eventSourceSuccess' | 'eventSourceFailure'
 
 export type EventHandlerArgs<T extends EventHandlerName> =
   Parameters<Extract<OptionsInput[T], (...args: any[]) => any>>
@@ -198,7 +199,6 @@ export interface OptionsInputBase {
   selectMinDistance?: number
   timeZoneParam?: string
   titleRangeSeparator?: string
-  dayRender?(arg: { view: ViewApi, date: Date, allDay?: boolean, el: HTMLElement }): void
   windowResize?(view: ViewApi): void
   dateClick?(arg: { date: Date, dateStr: string, allDay: boolean, resource?: any, dayEl: HTMLElement, jsEvent: MouseEvent, view: ViewApi }): void // resource for Scheduler
   eventClick?(arg: { el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: ViewApi }): boolean | void
