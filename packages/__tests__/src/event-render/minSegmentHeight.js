@@ -32,7 +32,8 @@ describe('short event rendering with timeGridEventMinHeight', function() {
       ]
     })
 
-    it('renders the second short event side by side with the first one', function() {
+    // disabled because isShort
+    xit('renders the second short event side by side with the first one', function() {
       let calendar = initCalendar()
       let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
       let eventEls = timeGridWrapper.getEventEls()
@@ -41,7 +42,8 @@ describe('short event rendering with timeGridEventMinHeight', function() {
       expect($(eventEls[1]).css('left')).not.toEqual('0px')
     })
 
-    it('prevents the events to overlap when we pass the slotEventOverlap: false option', function() {
+    // disabled because isShort
+    xit('prevents the events to overlap when we pass the slotEventOverlap: false option', function() {
       let calendar = initCalendar({
         slotEventOverlap: false
       })
