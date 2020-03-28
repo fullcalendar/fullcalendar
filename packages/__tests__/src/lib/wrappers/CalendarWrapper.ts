@@ -12,6 +12,8 @@ export default class CalendarWrapper {
   static EVENT_START_RESIZER_CLASSNAME = 'fc-event-resizer-start'
   static EVENT_END_RESIZER_CLASSNAME = 'fc-event-resizer-end'
   static BG_EVENT_CLASSNAME = 'fc-bgevent'
+  static DAY_PAST_CLASSNAME = 'fc-day-past'
+  static DAY_FUTURE_CLASSNAME = 'fc-day-future'
   static TODAY_CLASSNAME = 'fc-day-today'
   static DOW_CLASSNAMES = [ 'fc-day-sun', 'fc-day-mon', 'fc-day-tue', 'fc-day-wed', 'fc-day-thu', 'fc-day-fri', 'fc-day-sat' ]
   static LTR_CLASSNAME = 'fc-dir-ltr'
@@ -78,11 +80,11 @@ export default class CalendarWrapper {
 
   getEventElInfo(eventEl: HTMLElement) {
     return {
-      isStart: eventEl.classList.contains('fc-start'),
-      isEnd: eventEl.classList.contains('fc-end'),
+      isStart: eventEl.classList.contains(CalendarWrapper.EVENT_IS_START_CLASSNAME),
+      isEnd: eventEl.classList.contains(CalendarWrapper.EVENT_IS_END_CLASSNAME),
       timeText: $(eventEl).find('.' + CalendarWrapper.EVENT_TIME_CLASSNAME).text() || '',
-      titleEl: eventEl.querySelector('.fc-title'),
-      resizerEl: eventEl.querySelector('.fc-resizer')
+      titleEl: eventEl.querySelector('.' + CalendarWrapper.EVENT_TITLE_CLASSNAME),
+      resizerEl: eventEl.querySelector('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
     }
   }
 

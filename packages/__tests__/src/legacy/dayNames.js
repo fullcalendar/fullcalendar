@@ -2,7 +2,7 @@ import { removeLtrCharCodes } from '../lib/string'
 import { addDays } from '@fullcalendar/core'
 import { parseUtcDate } from '../lib/date-parsing'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import DayHeaderWrapper from '../lib/wrappers/DayHeaderWrapper'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 
 describe('day names', function() {
@@ -23,7 +23,7 @@ describe('day names', function() {
         locale: 'en'
       })
 
-      DayHeaderWrapper.DOW_CLASSNAMES.forEach(function(dowClassName, index) {
+      CalendarWrapper.DOW_CLASSNAMES.forEach(function(dowClassName, index) {
         var dayDate = addDays(sundayDate, index)
         var dayText = removeLtrCharCodes(
           dayDate.toLocaleString('en', { weekday: 'long', timeZone: 'UTC' })
@@ -42,7 +42,7 @@ describe('day names', function() {
     $.each(locales, function(index, locale) {
       describe('when locale is ' + locale, function() {
 
-        DayHeaderWrapper.DOW_CLASSNAMES.forEach(function(dowClassName, index) {
+        CalendarWrapper.DOW_CLASSNAMES.forEach(function(dowClassName, index) {
           var dayDate = addDays(sundayDate, index)
           var dayText = removeLtrCharCodes(
             dayDate.toLocaleString(locale, { weekday: 'long', timeZone: 'UTC' })

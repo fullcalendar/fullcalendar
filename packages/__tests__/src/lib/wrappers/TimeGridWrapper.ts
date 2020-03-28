@@ -3,6 +3,7 @@ import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib-utils'
 import { parseUtcDate } from '../date-parsing'
 import { getBoundingRect } from '../dom-geom'
 import { addPoints } from '../geom'
+import CalendarWrapper from './CalendarWrapper'
 
 
 export default class TimeGridWrapper {
@@ -27,8 +28,8 @@ export default class TimeGridWrapper {
   }
 
 
-  getSlotEls() { // TODO: rename "slat"
-    return findElements(this.el, '.fc-slats tr[data-time]')
+  getSlotEls() {
+    return findElements(this.el, '.fc-timegrid-slot-label[data-time]')
   }
 
 
@@ -37,18 +38,18 @@ export default class TimeGridWrapper {
   }
 
 
-  getSlotAxisEls() {
-    return findElements(this.el, '.fc-slats tr[data-time] .fc-axis')
+  getSlotAxisEls() { // TODO: rename to label
+    return findElements(this.el, '.fc-timegrid-slot-label[data-time]')
   }
 
 
-  getSlotNonAxisEls() {
-    return findElements(this.el, '.fc-slats tr[data-time] td:not(.fc-axis)')
+  getSlotLaneEls() {
+    return findElements(this.el, '.fc-timegrid-slot-lane[data-time]')
   }
 
 
   getSlotElByIndex(index) { // TODO: rename "slat"
-    return $(`.fc-slats tr:eq(${index})`, this.el).get()
+    return $(`.fc-timegrid-slots tr:eq(${index})`, this.el).get()
   }
 
 
@@ -57,7 +58,7 @@ export default class TimeGridWrapper {
     date = new Date(date.valueOf() + timeMs)
 
     if (date.getUTCDate() === 1) { // ensure no time overflow/underflow
-      return this.el.querySelector('.fc-slats tr[data-time="' + formatIsoTime(date) + '"]')
+      return this.el.querySelector('.fc-timegrid-slot-label[data-time="' + formatIsoTime(date) + '"]')
     } else {
       return null
     }
@@ -69,13 +70,18 @@ export default class TimeGridWrapper {
   }
 
 
+  getColEl(col) {
+    return this.el.querySelectorAll('.fc-timegrid-col')[col] as HTMLElement
+  }
+
+
   queryBgEventsInCol(col) {
-    return $(`.fc-content-skeleton td:not(.fc-axis):eq(${col}) .fc-bgevent`, this.el).get()
+    return findElements(this.getColEl(col), '.fc-bgevent')
   }
 
 
   queryNonBusinessSegsInCol(col) {
-    return $(`.fc-content-skeleton td:not(.fc-axis):eq(${col}) .fc-nonbusiness`, this.el).get()
+    return findElements(this.getColEl(col), '.fc-nonbusiness')
   }
 
 
@@ -86,13 +92,13 @@ export default class TimeGridWrapper {
 
   // TODO: discourage use
   getDowEls(dayAbbrev) {
-    return findElements(this.el, `.fc-day.fc-${dayAbbrev}`)
+    return findElements(this.el, `.fc-day-${dayAbbrev}`)
   }
 
 
   // for https://github.com/fullcalendar/fullcalendar-scheduler/issues/363
   isStructureValid() {
-    return Boolean(this.el.querySelector('.fc-content-skeleton'))
+    return Boolean(this.el.querySelector('.fc-timegrid-slots'))
   }
 
 
@@ -109,20 +115,20 @@ export default class TimeGridWrapper {
 
 
   getNowIndicatorArrowEl() {
-    return this.el.querySelector('.fc-now-indicator-arrow')
+    return this.el.querySelector('.fc-timegrid-now-indicator-arrow')
   }
 
 
   getNowIndicatorLineEl() {
-    return this.el.querySelector('.fc-now-indicator-line')
+    return this.el.querySelector('.fc-timegrid-now-indicator-line')
   }
 
 
   getTimeAxisInfo() {
-    return $('.fc-slats tr[data-time]', this.el).map(function(i, tr) {
+    return $('.fc-timegrid-slot-label[data-time]', this.el).map(function(i, td) {
       return {
-        text: $(tr).find('.fc-time').text(),
-        isMajor: !$(tr).hasClass('fc-minor')
+        text: $(td).text(),
+        isMajor: !$(td).hasClass('fc-timegrid-slot-minor')
       }
     }).get()
   }
@@ -155,7 +161,7 @@ export default class TimeGridWrapper {
     return new Promise((resolve) => {
       $(eventEl).simulate('mouseover') // resizer only shows on hover
 
-      let resizerEl = eventEl.querySelector('.fc-resizer')
+      let resizerEl = eventEl.querySelector('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
       let resizerPoint = getRectCenter(resizerEl.getBoundingClientRect())
       let origPoint = this.getPoint(origEndDate)
       let yCorrect = resizerPoint.top - origPoint.top
@@ -179,7 +185,7 @@ export default class TimeGridWrapper {
           localPoint: { left: '50%', top: '90%' },
           delay: 200,
           onRelease: () => {
-            let resizerEl = eventEl.querySelector('.fc-resizer')
+            let resizerEl = eventEl.querySelector('.' + CalendarWrapper.EVENT_RESIZER_CLASSNAME)
             let resizerPoint = getRectCenter(resizerEl.getBoundingClientRect())
             let origPoint = this.getPoint(origEndDate)
             let yCorrect = resizerPoint.top - origPoint.top
@@ -566,7 +572,7 @@ export default class TimeGridWrapper {
 
   getEventTimeTexts() {
     return this.getEventEls().map(function(eventEl) {
-      return $(eventEl.querySelector('.fc-time')).text()
+      return $(eventEl.querySelector('.fc-event-time')).text()
     })
   }
 
@@ -631,7 +637,7 @@ function checkEventRenderingMatch(expectedRects, eventEls) {
 
 export function queryEventElInfo(eventEl: HTMLElement) {
   return {
-    timeText: $(eventEl.querySelector('.fc-time')).text(),
-    isShort: eventEl.classList.contains('fc-short')
+    timeText: $(eventEl.querySelector('.fc-event-time')).text(),
+    isShort: eventEl.classList.contains('fc-timegrid-event-condensed')
   }
 }

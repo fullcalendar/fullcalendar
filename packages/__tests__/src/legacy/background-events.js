@@ -80,28 +80,6 @@ describe('background events', function() {
         expect(dayGridWrapper.getEventEls().length).toBe(0)
       })
 
-      describe('when weekNumbers', function() {
-
-        it('renders to right of week numbers', function() {
-          let calendar = initCalendar({
-            weekNumbers: true,
-            events: [ {
-              start: '2014-11-02',
-              end: '2014-11-09',
-              rendering: 'background'
-            } ]
-          })
-
-          let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-          let allBgEls = dayGridWrapper.getBgEventEls()
-
-          expect(allBgEls.length).toBe(1)
-          expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
-          expect(allBgEls).toBeRightOf(dayGridWrapper.getWeekCell(1))
-          expect(dayGridWrapper.getEventEls().length).toBe(0)
-        })
-      })
-
       it('renders "business hours" on whole days', function() {
         let calendar = initCalendar({
           businessHours: true
@@ -151,27 +129,6 @@ describe('background events', function() {
         expect(allBgEls[0]).toBeLeftOf(dayGridWrapper.getDayEl('2014-11-02'))
         expect(allBgEls[1]).toBeRightOf(dayGridWrapper.getDayEl('2014-11-12'))
         expect(dayGridWrapper.getEventEls().length).toBe(0)
-      })
-
-      describe('when weekNumbers', function() {
-        it('renders to left of week numbers', function() {
-          let calendar = initCalendar({
-            weekNumbers: true,
-            events: [ {
-              start: '2014-11-02',
-              end: '2014-11-09',
-              rendering: 'background'
-            } ]
-          })
-
-          let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-          let allBgEls = dayGridWrapper.getBgEventEls()
-
-          expect(allBgEls.length).toBe(1)
-          expect(dayGridWrapper.getBgEventEls(1).length).toBe(1)
-          expect(allBgEls[0]).toBeLeftOf(dayGridWrapper.getWeekCell(1))
-          expect(dayGridWrapper.getEventEls().length).toBe(0)
-        })
       })
     })
 

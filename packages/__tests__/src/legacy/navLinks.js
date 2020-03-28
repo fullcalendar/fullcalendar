@@ -106,22 +106,12 @@ describe('navLinks', function() {
 
         it('moves to week', function() {
           let dateClickSpy = spyOnCalendarCallback('dateClick')
-          let calendar = initCalendar()
-          let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
-
-          $.simulateMouseClick(dayGridWrapper.getWeekNavLinkEls(false)[1])
-          expectWeekView(calendar, 'timeGridWeek', tz.parseDate('2016-08-07'))
-          expect(dateClickSpy).not.toHaveBeenCalled()
-        })
-
-        it('moves to week with within-day rendering', function() {
-          let dateClickSpy = spyOnCalendarCallback('dateClick')
           let calendar = initCalendar({
             weekNumbersWithinDays: true
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-          $.simulateMouseClick(dayGridWrapper.getWeekNavLinkEls(true)[1])
+          $.simulateMouseClick(dayGridWrapper.getWeekNavLinkEls()[1])
           expectWeekView(calendar, 'timeGridWeek', tz.parseDate('2016-08-07'))
           expect(dateClickSpy).not.toHaveBeenCalled()
         })
@@ -184,9 +174,9 @@ describe('navLinks', function() {
       let calendar = initCalendar({
         weekNumbers: true
       })
-      let headerWrapper = new TimeGridViewWrapper(calendar).header
+      let viewWrapper = new TimeGridViewWrapper(calendar)
 
-      $.simulateMouseClick(headerWrapper.getWeekNavLinkEl())
+      $.simulateMouseClick(viewWrapper.getHeaderWeekNumberLink())
       expectWeekView(calendar, 'timeGridWeek', '2016-08-14')
       expect(dateClickSpy).not.toHaveBeenCalled()
     })

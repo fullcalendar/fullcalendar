@@ -37,7 +37,7 @@ export default class ListView extends DateComponent<ViewProps> {
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
-    let extraClassNames = [ 'fc-list-view' ]
+    let extraClassNames = [ 'fc-list' ]
     let themeClassName = context.theme.getClass('bordered')
     if (themeClassName) {
       extraClassNames.push(themeClassName)

@@ -74,7 +74,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
             if (buttonName === 'title') {
               isOnlyButtons = false
               children.push(
-                <h2>{props.title}</h2>
+                <h2 className='fc-toolbar-title'>{props.title}</h2>
               )
 
             } else {

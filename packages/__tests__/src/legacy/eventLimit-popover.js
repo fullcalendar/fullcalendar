@@ -232,16 +232,12 @@ describe('eventLimit popover', function() {
         let $lunch1EventEl = $('.lunch1-event', popoverEl)
         let $lunch2EventEl = $('.lunch2-event', popoverEl)
 
-        expect($longEventEl).toHaveClass(CalendarWrapper.EVENT_IS_NOT_START_CLASSNAME)
-        expect($longEventEl).toHaveClass(CalendarWrapper.EVENT_IS_NOT_END_CLASSNAME)
         expect($longEventEl).not.toHaveClass(CalendarWrapper.EVENT_IS_START_CLASSNAME)
         expect($longEventEl).not.toHaveClass(CalendarWrapper.EVENT_IS_END_CLASSNAME);
 
         [ $meetingEventEl, $lunch1EventEl, $lunch2EventEl ].forEach(function($el) {
           expect($el).toHaveClass(CalendarWrapper.EVENT_IS_START_CLASSNAME)
           expect($el).toHaveClass(CalendarWrapper.EVENT_IS_END_CLASSNAME)
-          expect($el).not.toHaveClass(CalendarWrapper.EVENT_IS_NOT_START_CLASSNAME)
-          expect($el).not.toHaveClass(CalendarWrapper.EVENT_IS_NOT_END_CLASSNAME)
         })
 
         done()

@@ -32,8 +32,23 @@ export default class TimeGridViewWrapper extends ViewWrapper {
   }
 
 
+  getHeaderAxisEl() {
+    return this.el.querySelector('.fc-col-header .fc-timegrid-axis')
+  }
+
+
+  getHeaderWeekNumberLink() {
+    return this.getHeaderAxisEl().querySelector('a')
+  }
+
+
+  getHeaderWeekText() { // the title
+    return $(this.getHeaderWeekNumberLink()).text()
+  }
+
+
   getAllDayAxisEl() {
-    return this.el.querySelector('.fc-day-grid > .fc-row > .fc-bg .fc-axis')
+    return this.el.querySelector('.fc-daygrid-body .fc-timegrid-axis')
   }
 
 

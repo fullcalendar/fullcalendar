@@ -40,10 +40,7 @@ export default class DayGridWrapper {
 
 
   getDayNumberText(date) {
-    if (typeof date === 'string') {
-      date = new Date(date)
-    }
-    return $('.fc-day-top[data-date="' + formatIsoDay(date) + '"]', this.el).text()
+    return $(this.getDayEl(date).querySelector('.fc-daygrid-day-top')).text()
   }
 
 
@@ -58,19 +55,15 @@ export default class DayGridWrapper {
   }
 
 
+  // example: gets all the Mondays in the first row of days
   // TODO: discourage use
   getDowEls(dayAbbrev) {
-    return findElements(this.el, `.fc-row:first-child td.fc-day.fc-${dayAbbrev}`)
+    return findElements(this.el, `tr:first-child > td.fc-day-${dayAbbrev}`)
   }
 
 
   getDisabledDayEls() {
-    return findElements(this.el, '.fc-bg .fc-disabled-day')
-  }
-
-
-  getAxisEls() {
-    return findElements(this.el, '.fc-axis')
+    return findElements(this.el, '.fc-day-disabled')
   }
 
 
@@ -84,28 +77,28 @@ export default class DayGridWrapper {
   }
 
 
-  getWeekNavLinkEls(isEmbedded) { // along the sides of the row
-    return isEmbedded
-      ? findElements(this.el, '.fc-day-top a.fc-week-number')
-      : findElements(this.el, '.fc-week-number a')
+  getWeekNavLinkEls() {
+    return findElements(this.el, '.fc-daygrid-week-number[data-navlink]')
   }
 
 
-  getWeekCell(rowIndex) {
-    return this.el.querySelector(`.fc-row:nth-child(${rowIndex + 1}) td.fc-week-number`)
+  getWeekNumberEls() {
+    return findElements(this.el, '.fc-daygrid-week-number')
+  }
+
+
+  getWeekNumberEl(rowIndex) {
+    return this.getRowEl(rowIndex).querySelector('.fc-daygrid-week-number')
   }
 
 
   getWeekNumberText(rowIndex) {
-    return $(this.el.querySelector(`.fc-row:nth-child(${rowIndex + 1}) .fc-content-skeleton thead td.fc-week-number`)).text()
+    return $(this.getWeekNumberEl(rowIndex)).text()
   }
 
 
   getNavLinkEl(date) {
-    if (typeof date === 'string') {
-      date = new Date(date)
-    }
-    return this.el.querySelector(`.fc-day-top[data-date="${formatIsoDay(date)}"] a:not(.fc-week-number)`)
+    return this.getDayEl(date).querySelector('.fc-daygrid-day-number[data-navlink]')
   }
 
 
@@ -129,7 +122,7 @@ export default class DayGridWrapper {
 
 
   getMorePopoverHeaderEl() {
-    return this.getMorePopoverEl().querySelector('.fc-header') as HTMLElement
+    return this.getMorePopoverEl().querySelector('.fc-popover-header') as HTMLElement
   }
 
 
@@ -145,7 +138,7 @@ export default class DayGridWrapper {
 
   getMorePopoverEventTitles() {
     return this.getMorePopoverEventEls().map((el) => {
-      return $(el.querySelector('.fc-title')).text()
+      return $(el.querySelector('.fc-event-title')).text()
     })
   }
 
@@ -156,22 +149,22 @@ export default class DayGridWrapper {
 
 
   closeMorePopover() {
-    $(this.getMorePopoverEl().querySelector('.fc-close')).simulate('click')
+    $(this.getMorePopoverEl().querySelector('.fc-popover-close')).simulate('click')
   }
 
 
   getMorePopoverTitle() {
-    return $(this.getMorePopoverEl().querySelector('.fc-header .fc-title')).text()
+    return $(this.getMorePopoverEl().querySelector('.fc-popover-title')).text()
   }
 
 
   getRowEl(i) {
-    return this.el.querySelector(`.fc-row:nth-child(${i + 1})`) as HTMLElement // nth-child is 1-indexed!
+    return this.el.querySelector(`tr:nth-child(${i + 1})`) as HTMLElement // nth-child is 1-indexed!
   }
 
 
   getRowEls() {
-    return findElements(this.el, '.fc-row')
+    return findElements(this.el, 'tr')
   }
 
 
@@ -316,14 +309,4 @@ export default class DayGridWrapper {
     })
   }
 
-}
-
-
-export function getLegacyWeekNumberCounts() {
-  return {
-    allWeekNumbers: $('.fc-week-number').length,
-    colWeekNumbers: $('.fc-content-skeleton thead td.fc-week-number').length,
-    cellWeekNumbers: $('.fc-content-skeleton thead .fc-day-top span.fc-week-number').length, // within-the-cell
-    cornerWeekNumbers: $('.fc-head .fc-axis.fc-week-number').length
-  }
 }

@@ -14,7 +14,7 @@ describe('weekNumberCalculation', function() {
 
     let getWeekNumberText = viewName.match(/^dayGrid/)
       ? (calendar) => new DayGridViewWrapper(calendar).dayGrid.getWeekNumberText(0)
-      : (calendar) => new TimeGridViewWrapper(calendar).header.getWeekNumberTitle()
+      : (calendar) => new TimeGridViewWrapper(calendar).getHeaderWeekText()
 
     it('should display the American standard when using \'local\'', function() {
       let calendar = initCalendar({

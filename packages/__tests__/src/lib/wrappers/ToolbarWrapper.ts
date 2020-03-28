@@ -33,7 +33,7 @@ export default class ToolbarWrapper {
 
 
   getTitleText() {
-    return this.el.querySelector('h2').innerText.trim()
+    return (this.el.querySelector('.fc-toolbar-title') as HTMLElement).innerText.trim()
   }
 
 

@@ -6,9 +6,6 @@ import CalendarWrapper from './CalendarWrapper'
 
 export default class DayHeaderWrapper {
 
-  static DOW_CLASSNAMES = [ 'fc-sun', 'fc-mon', 'fc-tue', 'fc-wed', 'fc-thu', 'fc-fri', 'fc-sat' ]
-
-
   constructor(public el: HTMLElement) {
   }
 
@@ -48,31 +45,6 @@ export default class DayHeaderWrapper {
       date: parseIsoAsUtc(cellEl.getAttribute('data-date')),
       isToday: cellEl.classList.contains('fc-day-today')
     }))
-  }
-
-
-  getAxisEl() {
-    return this.el.querySelector('.fc-axis')
-  }
-
-
-  getAxisText() { // not used?
-    return $(this.getAxisEl()).text()
-  }
-
-
-  getWeekNumberEl() {
-    return this.el.querySelector('.fc-week-number')
-  }
-
-
-  getWeekNavLinkEl() {
-    return this.el.querySelector('.fc-week-number a')
-  }
-
-
-  getWeekNumberTitle() {
-    return $(this.getWeekNumberEl()).text()
   }
 
 

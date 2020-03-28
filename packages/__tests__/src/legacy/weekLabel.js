@@ -1,13 +1,12 @@
 import esLocale from '@fullcalendar/core/locales/es'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper';
+import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('weekText', function() { // TODO: rename file
   pushOptions({
     weekNumbers: true
   })
 
-  ;[ 'dayGridWeek', 'timeGridWeek' ].forEach(function(viewName) {
+  ;[ 'timeGridWeek' ].forEach(function(viewName) {
 
     describe('when views is ' + viewName, function() {
       pushOptions({
@@ -45,9 +44,8 @@ describe('weekText', function() { // TODO: rename file
 
 
     function expectWeekNumberTitle(calendar, title) {
-      let ViewWrapper = viewName.match(/^dayGrid/) ? DayGridViewWrapper : TimeGridViewWrapper
-      let headerWrapper = new ViewWrapper(calendar).header
-      let text = headerWrapper.getWeekNumberTitle()
+      let viewWrapper = new TimeGridViewWrapper(calendar)
+      let text = viewWrapper.getHeaderWeekText()
         .replace(/\d/g, '').trim() // remove the number
 
       expect(text).toBe(title)

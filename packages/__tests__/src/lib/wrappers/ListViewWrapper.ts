@@ -9,7 +9,7 @@ export default class ListViewWrapper extends ViewWrapper {
 
 
   constructor(calendar: Calendar) {
-    super(calendar, 'fc-list-view')
+    super(calendar, 'fc-list')
   }
 
 

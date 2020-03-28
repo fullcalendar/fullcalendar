@@ -16,18 +16,14 @@
 
 /* view wrapper */
 
-.fc-dir-rtl .fc-list-view {
-  direction: rtl; /* unlike core views, leverage browser RTL */
-}
-
-.fc-theme-standard .fc-list-view {
+.fc-theme-standard .fc-list {
   border: 1px solid $fc-theme-standard-border-color;
   border: 1px solid var(--fc-theme-standard-border-color, $fc-theme-standard-border-color);
 }
 
 .fc .fc-list-table {
   width: 100%;
-  border-style: hidden; // kill outer border. already on fc-list-view
+  border-style: hidden; // kill outer border. already on fc-list
 
   td, th { // needs to be high precedence to overcome reset :(
     padding: 8px 14px;

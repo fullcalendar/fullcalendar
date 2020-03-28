@@ -1,5 +1,5 @@
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
-import DayHeaderWrapper from '../lib/wrappers/DayHeaderWrapper'
+import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('timeGrid view rendering', function() {
   pushOptions({
@@ -8,13 +8,13 @@ describe('timeGrid view rendering', function() {
 
   it('should have have days ordered sun to sat', function() {
     let calendar = initCalendar()
-    let headerWrapper = new TimeGridViewWrapper(calendar).header
-    let axisEl = headerWrapper.getAxisEl()
-    let thEls = headerWrapper.getCellEls()
+    let viewWrapper = new TimeGridViewWrapper(calendar)
+    let axisEl = viewWrapper.getHeaderAxisEl()
+    let thEls = viewWrapper.header.getCellEls()
 
     expect(axisEl).toBeTruthy()
 
-    let dowClassNames = DayHeaderWrapper.DOW_CLASSNAMES
+    let dowClassNames = CalendarWrapper.DOW_CLASSNAMES
 
     for (let i = 0; i < dowClassNames.length; i++) {
       expect(thEls[i]).toHaveClass(dowClassNames[i])

@@ -239,10 +239,9 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <th ref={rootElRef} class={[
               'fc-timegrid-axis',
-              'fc-scrollgrid-shrink',
-              'fc-week-number' // TODO: make part of WeekNumberRoot
+              'fc-scrollgrid-shrink'
             ].concat(classNames).join(' ')}>
-              <div class='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame'>
+              <div class='fc-timegrid-axis-frame fc-scrollgrid-shrink-frame fc-timegrid-axis-frame-liquid'>
                 <a class='fc-timegrid-axis-cushion fc-scrollgrid-shrink-cushion' data-navlink={navLinkData} ref={innerElRef}>
                   {innerContent}
                 </a>
