@@ -116,10 +116,6 @@ export default class Calendar {
   isRendered = false
   renderRunner: DelayedRunner
   actionRunner: TaskRunner<Action> // for reducer. bad name
-  afterSizingTriggers: any = {}
-  isViewUpdated: boolean = false
-  isDatesUpdated: boolean = false
-  isEventsUpdated: boolean = false
   el: HTMLElement
   currentClassNames: string[] = []
   componentRef = createRef<CalendarComponent>()
@@ -268,20 +264,6 @@ export default class Calendar {
     } else if (oldState.loadingLevel && !newState.loadingLevel) {
       this.publiclyTrigger('loading', [ false ])
     }
-
-    if (oldState.eventStore !== newState.eventStore) {
-      if (oldState.eventStore) {
-        this.isEventsUpdated = true
-      }
-    }
-
-    if (oldState.dateProfile !== newState.dateProfile) {
-      this.isDatesUpdated = true
-    }
-
-    if (oldState.viewType !== newState.viewType) {
-      this.isViewUpdated = true
-    }
   }
 
 
@@ -346,18 +328,6 @@ export default class Calendar {
       this.el
     )
     flushToDom()
-
-    if (this.isViewUpdated) {
-      this.isViewUpdated = false
-    }
-
-    if (this.isDatesUpdated) {
-      this.isDatesUpdated = false
-    }
-
-    if (this.isEventsUpdated) {
-      this.isEventsUpdated = false
-    }
   }
 
 
