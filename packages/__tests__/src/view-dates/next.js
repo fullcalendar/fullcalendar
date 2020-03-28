@@ -116,7 +116,7 @@ describe('next', function() {
           var called
 
           initCalendar({
-            datesRender: function() {
+            dayCellDidMount: function() {
               called = true
             }
           })

@@ -15,20 +15,20 @@ describe('eventLimit popover', function() {
     handleWindowResize: false // because showing the popover causes scrollbars and fires resize
   })
 
-  it('closes when user clicks the X and trigger eventDestroy for every render', function(done) {
+  it('closes when user clicks the X and trigger eventWillUnmount for every render', function(done) {
     var eventsRendered = {}
     var renderCount = 0
     var activated = false
 
     let calendar = initCalendar({
-      eventRender: function(eventObject, element, view) {
+      eventDidMount: function(arg) {
         if (activated) {
-          eventsRendered[eventObject.title] = eventObject
+          eventsRendered[arg.title] = true
           ++renderCount
         }
       },
-      eventDestroy: function(eventObject, element, view) {
-        delete eventsRendered[eventObject.title]
+      eventWillUnmount: function(arg) {
+        delete eventsRendered[arg.title]
         --renderCount
       }
     })
@@ -51,20 +51,20 @@ describe('eventLimit popover', function() {
     })
   })
 
-  it('closes when user clicks outside of the popover and trigger eventDestroy for every render', function(done) {
+  it('closes when user clicks outside of the popover and trigger eventWillUnmount for every render', function(done) {
     var eventsRendered = {}
     var renderCount = 0
     var activated = false
 
     let calendar = initCalendar({
-      eventRender: function(eventObject, element, view) {
+      eventDidMount: function(arg) {
         if (activated) {
-          eventsRendered[eventObject.title] = eventObject
+          eventsRendered[arg.title] = true
           ++renderCount
         }
       },
-      eventDestroy: function(eventObject, element, view) {
-        delete eventsRendered[eventObject.title]
+      eventWillUnmount: function(arg) {
+        delete eventsRendered[arg.title]
         --renderCount
       }
     })

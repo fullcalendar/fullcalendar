@@ -91,23 +91,7 @@ describe('event source refetch', function() {
     it('keeps old events and rerenders new', function(done) {
       fetchDelay = 100
 
-      initCalendar({
-        _eventsPositioned() {
-
-          // events from unaffected sources remain
-          expect($('.source2-7').length).toEqual(1)
-
-          // events from old fetch were cleared
-          expect($('.source1-7').length).toEqual(0)
-          expect($('.source3-7').length).toEqual(0)
-
-          // events from new fetch were rendered
-          expect($('.source1-8').length).toEqual(2)
-          expect($('.source3-8').length).toEqual(2)
-
-          done()
-        }
-      })
+      initCalendar()
 
       // increase the number of events for the refetched sources
       eventCount = 2
@@ -115,6 +99,22 @@ describe('event source refetch', function() {
 
       currentCalendar.getEventSourceById('green0').refetch()
       currentCalendar.getEventSourceById('green1').refetch()
+
+      setTimeout(function() {
+
+        // events from unaffected sources remain
+        expect($('.source2-7').length).toEqual(1)
+
+        // events from old fetch were cleared
+        expect($('.source1-7').length).toEqual(0)
+        expect($('.source3-7').length).toEqual(0)
+
+        // events from new fetch were rendered
+        expect($('.source1-8').length).toEqual(2)
+        expect($('.source3-8').length).toEqual(2)
+
+        done()
+      }, fetchDelay + 1)
     })
   })
 

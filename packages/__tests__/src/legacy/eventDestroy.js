@@ -1,4 +1,5 @@
-describe('eventDestroy', function() {
+
+describe('eventWillUnmount', function() { // TODO: rename file
 
   pushOptions({
     defaultDate: '2014-08-01'
@@ -11,7 +12,7 @@ describe('eventDestroy', function() {
 
     initCalendar({
       events: [ singleEventData ],
-      eventDestroy: function(arg) {
+      eventWillUnmount: function(arg) {
         if (callCnt++ === 0) { // only care about the first call. gets called again when calendar is destroyed
           expect(arg.event.id).toBe(singleEventData.id)
           done()

@@ -304,13 +304,10 @@ describe('eventResize', function() {
         })
       })
 
-      it('should run the temporarily rendered event through eventRender', function(done) {
+      it('should run the temporarily rendered event through eventDidMount', function(done) {
         let calendar = initCalendar({
-          eventRender(arg) {
+          eventDidMount(arg) {
             $(arg.el).addClass('eventDidRender')
-          },
-          eventPositioned(arg) {
-            $(arg.el).addClass('eventDidPosition')
           }
         })
 
@@ -324,7 +321,6 @@ describe('eventResize', function() {
             let $mirrorEls = $(timeGridWrapper.getMirrorEls())
             expect($mirrorEls.length).toBe(1)
             expect($mirrorEls).toHaveClass('eventDidRender')
-            expect($mirrorEls).toHaveClass('eventDidPosition')
             onBeforeReleaseCalled = true
           }
         ).then(() => {

@@ -1,5 +1,4 @@
 describe('events as an array', function() {
-
   pushOptions({
     defaultView: 'dayGridMonth',
     defaultDate: '2014-05-01'
@@ -17,7 +16,7 @@ describe('events as an array', function() {
   it('accepts an event using dayGrid form', function(done) {
     initCalendar({
       events: getEventArray(),
-      eventRender: function(arg) {
+      eventDidMount(arg) {
         expect(arg.event.title).toEqual('my event')
         done()
       }
@@ -32,7 +31,7 @@ describe('events as an array', function() {
           events: getEventArray()
         }
       ],
-      eventRender: function(arg) {
+      eventDidMount(arg) {
         expect(arg.event.title).toEqual('my event')
         expect(arg.el).toHaveClass('customeventclass')
         done()
@@ -46,7 +45,7 @@ describe('events as an array', function() {
     var origEvent = eventArray[0]
     initCalendar({
       events: eventArray,
-      eventRender: function(arg) {
+      eventDidMount() {
         expect(origArray).toEqual(eventArray)
         expect(origEvent).toEqual(eventArray[0])
         done()

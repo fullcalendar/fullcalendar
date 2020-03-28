@@ -106,7 +106,7 @@ describe('events as a function', function() {
     initCalendar({
       timeZone: 'UTC',
       eventSources: [ eventSource ],
-      eventRender: function(arg) {
+      eventDidMount(arg) {
         expect(eventSource.events.calls.count()).toEqual(1)
         expect(arg.el).toHaveClass('customeventclass')
         setTimeout(done) // :(
@@ -115,8 +115,8 @@ describe('events as a function', function() {
   })
 
   it('can return a promise-like object', function(done) {
-    initCalendar({
-      events(arg) {
+    let calendar = initCalendar({
+      events() {
         let deferred = $.Deferred() // we want tests to run in IE11, which doesn't have native promises
         setTimeout(function() {
           deferred.resolve([
@@ -124,12 +124,13 @@ describe('events as a function', function() {
           ])
         }, 100)
         return deferred.promise()
-      },
-      _eventsPositioned() {
-        expect(currentCalendar.getEvents().length).toBe(1)
-        setTimeout(done) // :(
       }
     })
+
+    setTimeout(function() {
+      expect(calendar.getEvents().length).toBe(1)
+      setTimeout(done) // :(
+    }, 101)
   })
 
 })

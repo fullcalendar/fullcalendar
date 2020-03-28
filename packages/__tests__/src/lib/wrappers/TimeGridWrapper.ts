@@ -18,7 +18,7 @@ export default class TimeGridWrapper {
 
 
   getMirrorEls() {
-    return findElements(this.el, '.fc-event.fc-mirror')
+    return findElements(this.el, '.fc-event.fc-event-mirror')
   }
 
 

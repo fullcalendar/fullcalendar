@@ -488,42 +488,50 @@ describe('eventLimit popover', function() {
   })
 
   it('calls event render handlers', function(done) {
-    var options = {
+    let options = {
       events: [
         { title: 'event1', start: '2014-07-28', end: '2014-07-30', className: 'event1' },
         { title: 'event2', start: '2014-07-29', end: '2014-07-31', className: 'event2' },
         { title: 'event3', start: '2014-07-29', className: 'event3' },
         { title: 'event4', start: '2014-07-29', className: 'event4' }
       ],
-      eventRender: function() {},
-      eventPositioned: function() {},
-      eventDestroy: function() {}
+      eventDidMount: function() {},
+      eventContent: function() {},
+      eventWillUnmount: function() {}
     }
 
-    spyOn(options, 'eventRender')
-    spyOn(options, 'eventPositioned')
-    spyOn(options, 'eventDestroy')
+    spyOn(options, 'eventDidMount')
+    spyOn(options, 'eventContent')
+    spyOn(options, 'eventWillUnmount')
+
+    function resetCounts() {
+      options.eventDidMount.calls.reset()
+      options.eventContent.calls.reset()
+      options.eventWillUnmount.calls.reset()
+    }
 
     let calendar = initCalendar(options)
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-    expect(options.eventRender.calls.count()).toBe(4)
-    expect(options.eventPositioned.calls.count()).toBe(4)
-    expect(options.eventDestroy.calls.count()).toBe(0)
+    expect(options.eventDidMount.calls.count()).toBe(4)
+    expect(options.eventContent.calls.count()).toBe(4)
+    expect(options.eventWillUnmount.calls.count()).toBe(0)
 
+    resetCounts()
     dayGridWrapper.openMorePopover()
     setTimeout(function() {
 
-      expect(options.eventRender.calls.count()).toBe(8) // +4
-      expect(options.eventPositioned.calls.count()).toBe(8) // +4
-      expect(options.eventDestroy.calls.count()).toBe(0)
+      expect(options.eventDidMount.calls.count()).toBe(4)
+      expect(options.eventContent.calls.count()).toBe(4)
+      expect(options.eventWillUnmount.calls.count()).toBe(0)
 
+      resetCounts()
       dayGridWrapper.closeMorePopover()
       setTimeout(function() {
 
-        expect(options.eventRender.calls.count()).toBe(8)
-        expect(options.eventPositioned.calls.count()).toBe(8)
-        expect(options.eventDestroy.calls.count()).toBe(4) // +4
+        expect(options.eventDidMount.calls.count()).toBe(0)
+        expect(options.eventContent.calls.count()).toBe(0)
+        expect(options.eventWillUnmount.calls.count()).toBe(4)
 
         done()
       })

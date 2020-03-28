@@ -5,10 +5,13 @@ import DayGridViewWrapper from './wrappers/DayGridViewWrapper'
 import CalendarWrapper from './wrappers/CalendarWrapper'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
-  var eventsRendered = false
+  var eventDidMountCnt = 0
 
   options.editable = true
-  options._eventsPositioned = function() {
+  options.eventDidMount = function() {
+    eventDidMountCnt++
+    if (eventDidMountCnt > 1) { return }
+
     var calendar = currentCalendar
     var isDraggingExternal = false
     var $dayEl
@@ -18,9 +21,6 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
     var $slatEl
     var dx, dy
     var allowed
-
-    if (eventsRendered) { return }
-    eventsRendered = true
 
     var dropDateMeta
     var dropDateHasTime
@@ -101,10 +101,13 @@ export function testEventDrag(options, dropDate, expectSuccess, callback, eventC
 
 
 export function testEventResize(options, resizeDate, expectSuccess, callback, eventClassName) {
-  var eventsRendered = false
+  var eventDidMountCnt = 0
 
   options.editable = true
-  options._eventsPositioned = function() {
+  options.eventDidMount = function() {
+    eventDidMountCnt++
+    if (eventDidMountCnt > 1) { return }
+
     var calendar = currentCalendar
     var $lastDayEl
     var lastSlatIndex
@@ -113,9 +116,6 @@ export function testEventResize(options, resizeDate, expectSuccess, callback, ev
     var $dragEl
     var dx, dy
     var allowed
-
-    if (eventsRendered) { return }
-    eventsRendered = true
 
     var resizeDateMeta
     var resizeDateHasTime

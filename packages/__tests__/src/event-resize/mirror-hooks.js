@@ -68,7 +68,7 @@ describe('event resize mirror', function() {
       ]
     })
 
-    it('gets passed through eventDestroy', function(done) {
+    it('gets passed through eventWillUnmount', function(done) {
       let mirrorMountCalls = 0
       let mirrorContentCalls = 0
       let mirrorUnmountCalls = 0
@@ -84,7 +84,7 @@ describe('event resize mirror', function() {
             mirrorContentCalls++
           }
         },
-        eventDestroy(info) {
+        eventWillUnmount(info) {
           if (info.isMirror) {
             mirrorUnmountCalls++
           }

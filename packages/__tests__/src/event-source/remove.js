@@ -54,20 +54,16 @@ describe('event source remove', function() {
     }
 
     let calendar = initCalendar({
-      eventSources: [ source1 ],
-      _eventsPositioned() {
-        let eventEls = new CalendarWrapper(this).getEventEls()
-        if (!eventEls.length) {
-          ; // might have rendered no events after removeEventSource call
-        } else {
-          expect($('.event1').length).toBe(0)
-          expect($('.event2').length).toBe(1)
-          done()
-        }
-      }
+      eventSources: [ source1 ]
     })
 
     calendar.getEventSourceById('1').remove()
     calendar.addEventSource(source2)
+
+    setTimeout(function() {
+      expect($('.event1').length).toBe(0)
+      expect($('.event2').length).toBe(1)
+      done()
+    }, 101)
   })
 })

@@ -28,7 +28,7 @@ export default class TimeGridViewWrapper extends ViewWrapper {
 
 
   getScrollerEl() {
-    return this.el.querySelector('.fc-daygrid-body').parentElement // TODO: use closest
+    return this.el.querySelector('.fc-timegrid-body').parentElement // TODO: use closest
   }
 
 

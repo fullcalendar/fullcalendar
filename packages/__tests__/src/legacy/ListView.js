@@ -41,22 +41,23 @@ describe('ListView rendering', function() {
         expect(events[1].timeText).toBe('all-day')
       })
 
-      it('filters events through eventRender', function() {
+      it('filters events through event hook', function() {
+        let eventMountCnt = 0
+
         initCalendar({
-          eventRender(arg) {
-            $(arg.el).find('.' + ListViewWrapper.EVENT_DOT_CLASSNAME)
-              .replaceWith('<span class="custom-icon" />')
+          eventDidMount() {
+            eventMountCnt++
           }
         })
 
-        expect($('.custom-icon').length).toBe(2)
+        expect(eventMountCnt).toBe(2)
       })
 
-      it('filters events through eventDestroy', function() {
+      it('filters events through eventWillUnmount', function() {
         let callCnt = 0
 
         initCalendar({
-          eventDestroy() {
+          eventWillUnmount() {
             callCnt++
           }
         })

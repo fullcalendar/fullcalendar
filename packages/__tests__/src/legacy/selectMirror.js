@@ -9,24 +9,23 @@ describe('selectMirror', function() {
     selectMirror: true
   })
 
-  it('goes through eventRender and eventPositioned', function() {
-    let calendar = initCalendar({
-      eventRender(arg) {
+  it('goes through eventDidMount', function() {
+    let options = {
+      eventDidMount(arg) {
         expect(arg.isMirror).toBe(true)
-        $(arg.el).addClass('eventDidRender')
-      },
-      eventPositioned(arg) {
-        expect(arg.isMirror).toBe(true)
-        $(arg.el).addClass('eventDidPosition')
       }
-    })
+    }
+
+    spyOn(options, 'eventDidMount').and.callThrough()
+
+    let calendar = initCalendar(options)
 
     calendar.select('2014-08-04T01:00:00Z', '2014-08-04T04:00:00Z')
 
     let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
     let mirrorEls = timeGridWrapper.getMirrorEls()
+
     expect(mirrorEls.length).toBe(1)
-    expect(mirrorEls[0]).toHaveClass('eventDidRender')
-    expect(mirrorEls[0]).toHaveClass('eventDidPosition')
+    expect(options.eventDidMount).toHaveBeenCalled()
   })
 })
