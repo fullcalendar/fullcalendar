@@ -19,9 +19,8 @@ export interface TableDateCellProps {
   colCnt: number
   dayLabelFormat: DateFormatter
   colSpan?: number
-  extraHookProps?: object
   extraDataAttrs?: object
-  extraClassNames?: string[]
+  extraHookProps?: object
 }
 
 interface HookProps extends DateMeta {
@@ -43,8 +42,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
     let dayMeta = getDateMeta(date, props.todayRange, null, props.dateProfile)
 
     let classNames = [ CLASS_NAME ].concat(
-      getDayClassNames(dayMeta, context.theme),
-      props.extraClassNames || []
+      getDayClassNames(dayMeta, context.theme)
     )
     let text = dateEnv.format(date, props.dayLabelFormat)
 

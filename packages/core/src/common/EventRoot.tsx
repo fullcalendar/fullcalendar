@@ -48,9 +48,9 @@ export const EventRoot = (props: EventRootProps) => (
         isMirror: Boolean(props.isDragging || props.isResizing || props.isDateSelecting),
         isStart: Boolean(seg.isStart),
         isEnd: Boolean(seg.isEnd),
-        isPast: Boolean(props.isPast),
-        isFuture: Boolean(props.isFuture),
-        isToday: Boolean(props.isToday),
+        isPast: Boolean(props.isPast), // TODO: don't cast. getDateMeta does it
+        isFuture: Boolean(props.isFuture), // TODO: don't cast. getDateMeta does it
+        isToday: Boolean(props.isToday), // TODO: don't cast. getDateMeta does it
         isSelected: Boolean(props.isSelected),
         isDragging: Boolean(props.isDragging),
         isResizing: Boolean(props.isResizing)

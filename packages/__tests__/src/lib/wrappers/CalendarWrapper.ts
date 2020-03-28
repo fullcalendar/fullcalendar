@@ -14,8 +14,12 @@ export default class CalendarWrapper {
   static BG_EVENT_CLASSNAME = 'fc-bgevent'
   static DAY_PAST_CLASSNAME = 'fc-day-past'
   static DAY_FUTURE_CLASSNAME = 'fc-day-future'
+  static SLOT_PAST_CLASSNAME = 'fc-slot-past'
+  static SLOT_FUTURE_CLASSNAME = 'fc-slot-future'
   static TODAY_CLASSNAME = 'fc-day-today'
+  static SLOT_TODAY_CLASSNAME = 'fc-slot-today'
   static DOW_CLASSNAMES = [ 'fc-day-sun', 'fc-day-mon', 'fc-day-tue', 'fc-day-wed', 'fc-day-thu', 'fc-day-fri', 'fc-day-sat' ]
+  static DOW_SLOT_CLASSNAMES = [ 'fc-slot-sun', 'fc-slot-mon', 'fc-slot-tue', 'fc-slot-wed', 'fc-slot-thu', 'fc-slot-fri', 'fc-slot-sat' ]
   static LTR_CLASSNAME = 'fc-dir-ltr'
   static RTL_CLASSNAME = 'fc-dir-rtl'
   static BOOTSTRAP_CLASSNAME = 'fc-theme-bootstrap'

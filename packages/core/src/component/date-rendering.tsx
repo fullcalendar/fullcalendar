@@ -17,11 +17,11 @@ export interface DateMeta {
 export function getDateMeta(date: DateMarker, todayRange?: DateRange, nowDate?: DateMarker, dateProfile?: DateProfile): DateMeta {
   return {
     dow: date.getUTCDay(),
-    isDisabled: dateProfile && !rangeContainsMarker(dateProfile.activeRange, date),
-    isOther: dateProfile && !rangeContainsMarker(dateProfile.currentRange, date),
-    isToday: todayRange && rangeContainsMarker(todayRange, date),
-    isPast: nowDate ? (date < nowDate) : todayRange ? (date < todayRange.start) : false,
-    isFuture: nowDate ? (date > nowDate) : todayRange ? (date >= todayRange.end) : false
+    isDisabled: Boolean(dateProfile && !rangeContainsMarker(dateProfile.activeRange, date)),
+    isOther: Boolean(dateProfile && !rangeContainsMarker(dateProfile.currentRange, date)),
+    isToday: Boolean(todayRange && rangeContainsMarker(todayRange, date)),
+    isPast: Boolean(nowDate ? (date < nowDate) : todayRange ? (date < todayRange.start) : false),
+    isFuture: Boolean(nowDate ? (date > nowDate) : todayRange ? (date >= todayRange.end) : false)
   }
 }
 
@@ -59,8 +59,13 @@ export function getDayClassNames(meta: DateMeta, theme: Theme) {
 
 export function getSlotClassNames(meta: DateMeta, theme: Theme) {
   let classNames: string[] = [
-    'fc-slot'
+    'fc-slot',
+    'fc-slot-' + DAY_IDS[meta.dow]
   ]
+
+  if (meta.isDisabled) { // TODO: shouldn't we avoid all other classnames if disabled?
+    classNames.push('fc-slot-disabled')
+  }
 
   if (meta.isToday) {
     classNames.push('fc-slot-today')
