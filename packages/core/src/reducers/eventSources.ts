@@ -131,17 +131,13 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: 
     },
     function(res) {
       let { rawEvents } = res
-      let calSuccess = calendar.opt('eventSourceSuccess')
-      let calSuccessRes
       let sourceSuccessRes
 
       if (eventSource.success) {
         sourceSuccessRes = eventSource.success(rawEvents, res.xhr)
       }
-      if (calSuccess) {
-        calSuccessRes = calSuccess(rawEvents, res.xhr)
-      }
 
+      let calSuccessRes = calendar.publiclyTrigger('eventSourceSuccess', [ rawEvents, res.xhr ])
       rawEvents = sourceSuccessRes || calSuccessRes || rawEvents
 
       calendar.dispatch({
@@ -153,16 +149,13 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, calendar: 
       })
     },
     function(error) {
-      let callFailure = calendar.opt('eventSourceFailure')
-
       console.warn(error.message, error)
 
       if (eventSource.failure) {
         eventSource.failure(error)
       }
-      if (callFailure) {
-        callFailure(error)
-      }
+
+      calendar.publiclyTrigger('eventSourceFailure', [ error ])
 
       calendar.dispatch({
         type: 'RECEIVE_EVENT_ERROR',
