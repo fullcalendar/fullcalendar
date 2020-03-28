@@ -103,7 +103,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
   isValidSegDownEl(el: HTMLElement) {
     return !(this.props as any).eventDrag && // HACK
       !(this.props as any).eventResize && // HACK
-      !elementClosest(el, '.fc-mirror') &&
+      !elementClosest(el, '.fc-event-mirror') &&
       (this.isPopover() || !this.isInPopover(el))
       // ^above line ensures we don't detect a seg interaction within a nested component.
       // it's a HACK because it only supports a popover as the nested component.
@@ -113,7 +113,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
   isValidDateDownEl(el: HTMLElement) {
     let segEl = elementClosest(el, this.fgSegSelector)
 
-    return (!segEl || segEl.classList.contains('fc-mirror')) &&
+    return (!segEl || segEl.classList.contains('fc-event-mirror')) &&
       !elementClosest(el, '.fc-daygrid-more-link') && // a "more.." link
       !elementClosest(el, 'a[data-navlink]') && // a clickable nav link
       !this.isInPopover(el)
