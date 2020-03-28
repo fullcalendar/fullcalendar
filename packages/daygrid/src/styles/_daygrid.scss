@@ -90,6 +90,8 @@
 
 
 .fc-daygrid-week-number {
+  position: relative;
+  z-index: 5; // above fc-daygrid-day-top
   padding: 2px;
   min-width: 1.5em;
   text-align: center;
