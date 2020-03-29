@@ -30,11 +30,15 @@ describe('eventWillUnmount', function() { // TODO: rename file
     })
 
     it('gets called with removeEvents method', function(done) {
-      testSingleEvent({
-        id: '1',
-        title: 'event1',
-        date: '2014-08-02'
-      }, done)
+      setTimeout(function() { // needs this or else doesn't work when run all tests together
+
+        testSingleEvent({
+          id: '1',
+          title: 'event1',
+          date: '2014-08-02'
+        }, done)
+
+      }, 0)
     })
   })
 
@@ -46,11 +50,15 @@ describe('eventWillUnmount', function() { // TODO: rename file
     })
 
     it('gets called with removeEvents method', function(done) {
-      testSingleEvent({
-        id: '1',
-        title: 'event1',
-        date: '2014-08-02T02:00:00'
-      }, done)
+      setTimeout(function() { // needs this or else doesn't work when run all tests together
+
+        testSingleEvent({
+          id: '1',
+          title: 'event1',
+          date: '2014-08-02T02:00:00'
+        }, done)
+
+      }, 0)
     })
   })
 
