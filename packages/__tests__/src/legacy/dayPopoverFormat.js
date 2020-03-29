@@ -7,7 +7,7 @@ describe('dayPopoverFormat', function() {
 
   pushOptions({
     defaultDate: '2014-08-01',
-    eventLimit: 3,
+    dayMaxEventRows: 3,
     events: [
       { title: 'event1', start: '2014-07-28', end: '2014-07-30', className: 'event1' },
       { title: 'event2', start: '2014-07-29', end: '2014-07-31', className: 'event2' },
