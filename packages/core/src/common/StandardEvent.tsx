@@ -1,9 +1,11 @@
-import { ComponentContext, h, Fragment, ComponentChildren } from '@fullcalendar/core'
+
+import { ComponentChildren, h, Fragment } from '../vdom'
 import { BaseComponent } from '../vdom-util'
 import { createFormatter } from '../datelib/formatting'
 import { buildSegTimeText, EventMeta } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
 import { Seg } from '../component/DateComponent'
+import ComponentContext from '../component/ComponentContext'
 
 
 export interface StandardEventProps extends MinimalEventProps {
