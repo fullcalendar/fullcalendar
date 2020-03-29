@@ -18,8 +18,9 @@ export interface Seg {
   isStart: boolean
   isEnd: boolean
   eventRange?: EventRenderRange
-  el?: HTMLElement
   [otherProp: string]: any // TODO: remove this. extending Seg will handle this
+  el?: never
+  // NOTE: can sometimes have start/end, which are important values :(
 }
 
 export interface EventSegUiInteractionState {

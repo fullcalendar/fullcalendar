@@ -29,6 +29,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
   hitDragging: HitDragging
 
   // internal state
+  subjectEl: HTMLElement | null = null
   subjectSeg: Seg | null = null // the seg being selected/dragged
   isDragging: boolean = false
   eventRange: EventRenderRange | null = null
@@ -66,6 +67,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
     let { mirror } = dragging
     let { options } = component.context
     let initialCalendar = component.context.calendar
+    this.subjectEl = ev.subjectEl as HTMLElement
     let subjectSeg = this.subjectSeg = getElSeg(ev.subjectEl as HTMLElement)!
     let eventRange = this.eventRange = subjectSeg.eventRange!
     let eventInstanceId = eventRange.instance!.instanceId
@@ -117,7 +119,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
       initialCalendar.unselect(ev) // unselect *date* selection
       initialCalendar.publiclyTrigger('eventDragStart', [
         {
-          el: this.subjectSeg.el,
+          el: this.subjectEl,
           event: new EventApi(initialCalendar, eventRange.def, eventRange.instance),
           jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
           view: context.view
@@ -231,7 +233,7 @@ export default class EventDragging extends Interaction { // TODO: rename to Even
 
       initialCalendar.publiclyTrigger('eventDragStop', [
         {
-          el: this.subjectSeg.el,
+          el: this.subjectEl,
           event: eventApi,
           jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
           view: initialView

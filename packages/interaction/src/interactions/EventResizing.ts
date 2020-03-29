@@ -24,6 +24,7 @@ export default class EventDragging extends Interaction {
   hitDragging: HitDragging
 
   // internal state
+  draggingSegEl: HTMLElement | null = null
   draggingSeg: Seg | null = null // TODO: rename to resizingSeg? subjectSeg?
   eventRange: EventRenderRange | null = null
   relevantEvents: EventStore | null = null
@@ -52,7 +53,8 @@ export default class EventDragging extends Interaction {
 
   handlePointerDown = (ev: PointerDragEvent) => {
     let { component } = this
-    let seg = this.querySeg(ev)!
+    let segEl = this.querySegEl(ev)
+    let seg = getElSeg(segEl)
     let eventRange = this.eventRange = seg.eventRange!
 
     this.dragging.minDistance = component.context.options.eventDragMinDistance
@@ -73,12 +75,14 @@ export default class EventDragging extends Interaction {
       this.eventRange.instance!.instanceId
     )
 
-    this.draggingSeg = this.querySeg(ev)
+    let segEl = this.querySegEl(ev)
+    this.draggingSegEl = segEl
+    this.draggingSeg = getElSeg(segEl)
 
     calendar.unselect()
     calendar.publiclyTrigger('eventResizeStart', [
       {
-        el: this.draggingSeg.el,
+        el: segEl,
         event: new EventApi(calendar, eventRange.def, eventRange.instance),
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view
@@ -159,7 +163,7 @@ export default class EventDragging extends Interaction {
 
     calendar.publiclyTrigger('eventResizeStop', [
       {
-        el: this.draggingSeg.el,
+        el: this.draggingSegEl,
         event: eventApi,
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view
@@ -174,7 +178,7 @@ export default class EventDragging extends Interaction {
 
       calendar.publiclyTrigger('eventResize', [
         {
-          el: this.draggingSeg.el,
+          el: this.draggingSegEl,
           startDelta: this.validMutation.startDelta || createDuration(0),
           endDelta: this.validMutation.endDelta || createDuration(0),
           prevEvent: eventApi,
@@ -206,8 +210,8 @@ export default class EventDragging extends Interaction {
     // okay to keep eventInstance around. useful to set it in handlePointerDown
   }
 
-  querySeg(ev: PointerDragEvent): Seg | null {
-    return getElSeg(elementClosest(ev.subjectEl as HTMLElement, this.component.fgSegSelector))
+  querySegEl(ev: PointerDragEvent) {
+    return elementClosest(ev.subjectEl as HTMLElement, '.fc-event')
   }
 
 }
