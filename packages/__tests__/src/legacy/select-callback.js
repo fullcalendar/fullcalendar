@@ -4,6 +4,8 @@ import InteractionPlugin from '@fullcalendar/interaction'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
+// UNFORTUNATELY, these tests are affected by the window height b/c of autoscrolling
+
 describe('select callback', function() {
   pushOptions({
     defaultDate: '2014-05-25',

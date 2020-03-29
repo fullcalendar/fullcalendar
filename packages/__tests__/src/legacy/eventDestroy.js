@@ -10,7 +10,7 @@ describe('eventWillUnmount', function() { // TODO: rename file
 
     expect(singleEventData.id).toBeTruthy()
 
-    initCalendar({
+    let calendar = initCalendar({
       events: [ singleEventData ],
       eventWillUnmount: function(arg) {
         if (callCnt++ === 0) { // only care about the first call. gets called again when calendar is destroyed
@@ -20,7 +20,7 @@ describe('eventWillUnmount', function() { // TODO: rename file
       }
     })
 
-    currentCalendar.getEventById(singleEventData.id).remove()
+    calendar.getEventById(singleEventData.id).remove()
   }
 
   describe('when in month view', function() { // for issue 2017

@@ -61,7 +61,6 @@ describe('scroll state', function() {
 
       let eventEl1 = new CalendarWrapper(calendar).getEventEls()
       expect(eventEl1.length).toBe(1)
-      expect(eventEl1[0]).not.toBe(eventEl0[0]) // ensure it a rerender
       expect(scrollEl.scrollTop).toBe(scroll0)
     })
   })

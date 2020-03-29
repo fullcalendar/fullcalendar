@@ -68,12 +68,12 @@ export default class CalendarWrapper {
 
 
   getEventEls() { // FG only
-    return findElements(this.calendar.el, '.fc-event')
+    return findElements(this.calendar.el, '.fc-event:not(.fc-bgevent)')
   }
 
 
   getFirstEventEl() {
-    return this.calendar.el.querySelector('.fc-event') as HTMLElement
+    return this.calendar.el.querySelector('.fc-event:not(.fc-bgevent)') as HTMLElement
   }
 
 

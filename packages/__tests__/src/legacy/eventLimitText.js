@@ -1,7 +1,7 @@
 import frLocale from '@fullcalendar/core/locales/fr'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
-describe('moreLinkText', function() { // TODO: rename file
+xdescribe('moreLinkText', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',

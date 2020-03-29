@@ -2,7 +2,7 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
-describe('eventLimit popover', function() {
+xdescribe('eventLimit popover', function() {
 
   /** @type {any} */
   var testEvents = [

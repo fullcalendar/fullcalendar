@@ -1,5 +1,4 @@
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import { waitEventDrag } from '../lib/wrappers/interaction-util'
 
 
 describe('validRange event dragging', function() {
@@ -18,18 +17,20 @@ describe('validRange event dragging', function() {
       })
 
       it('won\'t go before validRange', function(done) {
-        let calendar = initCalendar()
+        let modifiedEvent = false
+        let calendar = initCalendar({
+          eventDrop(arg) {
+            modifiedEvent = arg.event
+          }
+        })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-        let dragging = dayGridWrapper.dragEventToDate(
-          dayGridWrapper.getEventEls()[0],
-          '2017-06-08',
-          '2017-06-06'
-        )
-
-        waitEventDrag(calendar, dragging).then((res) => {
-          expect(res).toBe(false)
-          done()
+        $(dayGridWrapper.getEventEls()).simulate('drag', {
+          end: dayGridWrapper.getDayEl('2017-06-06').previousElementSibling, // the invalid day before
+          callback() {
+            expect(modifiedEvent).toBe(false)
+            done()
+          }
         })
       })
     })
@@ -49,18 +50,20 @@ describe('validRange event dragging', function() {
       })
 
       it('won\'t go after validRange', function(done) {
-        let calendar = initCalendar()
+        let modifiedEvent = false
+        let calendar = initCalendar({
+          eventDrop(arg) {
+            modifiedEvent = arg.event
+          }
+        })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 
-        let dragging = dayGridWrapper.dragEventToDate(
-          dayGridWrapper.getEventEls()[0],
-          '2017-06-05',
-          '2017-06-08'
-        )
-
-        waitEventDrag(calendar, dragging).then((res) => {
-          expect(res).toBe(false)
-          done()
+        $(dayGridWrapper.getEventEls()).simulate('drag', {
+          end: dayGridWrapper.getDayEl('2017-06-08').nextElementSibling, // the invalid day after
+          callback() {
+            expect(modifiedEvent).toBe(false)
+            done()
+          }
         })
       })
     })

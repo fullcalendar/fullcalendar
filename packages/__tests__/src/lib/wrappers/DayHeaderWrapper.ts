@@ -49,7 +49,7 @@ export default class DayHeaderWrapper {
 
 
   getNavLinkEls() {
-    return findElements(this.el, '.fc-col-header-cell[data-date] a')
+    return findElements(this.el, '.fc-col-header-cell[data-date] a[data-navlink]')
   }
 
 

@@ -213,7 +213,6 @@ export default class TimeGridWrapper {
 
     return new Promise((resolve) => {
       $(this.getDayEls(start)).simulate('drag', {
-        // debug: true,
         point: startPoint,
         end: endPoint,
         onRelease: () => resolve()
@@ -556,12 +555,12 @@ export default class TimeGridWrapper {
 
 
   getEventEls() { // FG events
-    return findElements(this.el, '.fc-event')
+    return findElements(this.el, '.fc-timegrid-event')
   }
 
 
   getFirstEventEl() {
-    return this.el.querySelector('.fc-event') as HTMLElement
+    return this.el.querySelector('.fc-timegrid-event') as HTMLElement
   }
 
 

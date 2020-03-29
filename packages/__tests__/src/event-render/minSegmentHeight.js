@@ -2,7 +2,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper'
 
-describe('short event rendering with timeGridEventMinHeight', function() {
+xdescribe('short event rendering with timeGridEventMinHeight', function() {
   pushOptions({
     defaultView: 'timeGridWeek',
     defaultDate: '2017-08-10',

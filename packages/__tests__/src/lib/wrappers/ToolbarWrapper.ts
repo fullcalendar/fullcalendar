@@ -38,7 +38,7 @@ export default class ToolbarWrapper {
 
 
   getSectionContent(sectionName) { // sectionName like left/center/right
-    let sectionEl = this.el.querySelector(`.fc-${sectionName}`) as HTMLElement
+    let sectionEl = this.el.querySelector(`.fc-toolbar-${sectionName}`) as HTMLElement
 
     return processSectionItems(sectionEl)
   }

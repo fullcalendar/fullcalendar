@@ -1,7 +1,7 @@
 import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 import DayGridWrapper from '../lib/wrappers/DayGridWrapper'
 
-describe('eventLimitClick', function() { // simulate a click
+xdescribe('eventLimitClick', function() { // simulate a click
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',

@@ -5,8 +5,8 @@ import CalendarWrapper from './CalendarWrapper'
 
 export default class DayGridWrapper {
 
-  static EVENT_IS_START_CLASSNAME = 'fc-start'
-  static EVENT_IS_END_CLASSNAME = 'fc-end'
+  static EVENT_IS_START_CLASSNAME = 'fc-event-start'
+  static EVENT_IS_END_CLASSNAME = 'fc-event-end'
   static MORE_LINK_CLASSNAME = 'fc-daygrid-more-link'
 
 
@@ -78,7 +78,7 @@ export default class DayGridWrapper {
 
 
   getWeekNavLinkEls() {
-    return findElements(this.el, '.fc-daygrid-week-number[data-navlink]')
+    return findElements(this.el, '.fc-daygrid-week-number a[data-navlink]')
   }
 
 
@@ -175,12 +175,12 @@ export default class DayGridWrapper {
 
 
   getEventEls() { // FG events
-    return findElements(this.el, '.fc-event')
+    return findElements(this.el, '.fc-daygrid-event')
   }
 
 
   getFirstEventEl() {
-    return this.el.querySelector('.fc-event') as HTMLElement
+    return this.el.querySelector('.fc-daygrid-event') as HTMLElement
   }
 
 
