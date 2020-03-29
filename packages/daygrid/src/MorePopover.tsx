@@ -62,6 +62,7 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
                     isResizing={false}
                     isDateSelecting={false}
                     isSelected={instanceId === props.selectedInstanceId}
+                    defaultDisplayEventEnd={false}
                     {...getSegMeta(seg, todayRange)}
                   />
                 </div>

@@ -4,10 +4,11 @@ import { h, StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalenda
 const DEFAULT_TIME_FORMAT = {
   hour: 'numeric',
   minute: '2-digit',
+  meridiem: false
 }
 
 
-export default class TableEvent extends BaseComponent<MinimalEventProps> {
+export default class TimeColEvent extends BaseComponent<MinimalEventProps> {
 
   render(props: MinimalEventProps) {
     return (

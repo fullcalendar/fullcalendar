@@ -260,28 +260,21 @@ export function buildSegTimeText(
   if (displayEventTime == null) { displayEventTime = defaultDisplayEventTime !== false }
   if (displayEventEnd == null) { displayEventEnd = defaultDisplayEventEnd !== false }
 
-  if (displayEventTime && !eventDef.allDay) {
-    let { range } = eventInstance
+  if (displayEventTime && !eventDef.allDay && (seg.isStart || seg.isEnd)) {
+
+    let segStart = startOverride || (seg.isStart ? eventInstance.range.start : (seg.start || seg.eventRange.range.start))
+    let segEnd = endOverride || (seg.isEnd ? eventInstance.range.end : (seg.end || seg.eventRange.range.end))
 
     if (displayEventEnd && eventDef.hasEnd) {
-      return dateEnv.formatRange(
-        startOverride || range.start,
-        endOverride || range.end,
-        timeFormat,
-        {
-          forcedStartTzo: startOverride ? null : eventInstance.forcedStartTzo, // nooooooooooooo, give tzo if same date
-          forcedEndTzo: endOverride ? null : eventInstance.forcedEndTzo
-        }
-      )
+      return dateEnv.formatRange(segStart, segEnd, timeFormat, {
+        forcedStartTzo: startOverride ? null : eventInstance.forcedStartTzo, // nooooooooooooo, give tzo if same date
+        forcedEndTzo: endOverride ? null : eventInstance.forcedEndTzo
+      })
 
     } else {
-      return dateEnv.format(
-        startOverride || range.start,
-        timeFormat,
-        {
-          forcedTzo: startOverride ? null : eventInstance.forcedStartTzo // nooooo, same
-        }
-      )
+      return dateEnv.format(segStart, timeFormat, {
+        forcedTzo: startOverride ? null : eventInstance.forcedStartTzo // nooooo, same
+      })
     }
   }
 

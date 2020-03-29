@@ -77,18 +77,11 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
   if (displayEventTime !== false) {
     let eventDef = seg.eventRange.def
     let eventInstance = seg.eventRange.instance
+    let doAllDay = false
     let timeText: string
 
     if (eventDef.allDay) {
-      return (
-        <RenderHook name='allDay' hookProps={{ view: context.view }}>
-          {(rootElRef, classNames, innerElRef, innerContent) => (
-            <td class={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
-              {innerContent}
-            </td>
-          )}
-        </RenderHook>
-      )
+      doAllDay = true
 
     } else if (isMultiDayRange(seg.eventRange.range)) { // TODO: use (!isStart || !isEnd) instead?
 
@@ -113,6 +106,9 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
           seg.start,
           eventInstance.range.end
         )
+
+      } else {
+        doAllDay = true
       }
 
     } else {
@@ -123,11 +119,24 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
       )
     }
 
-    return (
-      <td class='fc-list-event-time'>
-        {timeText}
-      </td>
-    )
+    if (doAllDay) {
+      return (
+        <RenderHook name='allDay' hookProps={{ view: context.view }}>
+          {(rootElRef, classNames, innerElRef, innerContent) => (
+            <td class={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
+              {innerContent}
+            </td>
+          )}
+        </RenderHook>
+      )
+
+    } else {
+      return (
+        <td class='fc-list-event-time'>
+          {timeText}
+        </td>
+      )
+    }
   }
 
   return null

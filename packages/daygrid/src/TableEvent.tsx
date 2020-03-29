@@ -9,15 +9,19 @@ const DEFAULT_TIME_FORMAT = {
 }
 
 
-export default class TableEvent extends BaseComponent<MinimalEventProps> {
+export interface TableEventProps extends MinimalEventProps {
+  defaultDisplayEventEnd: boolean
+}
 
-  render(props: MinimalEventProps) {
+export default class TableEvent extends BaseComponent<TableEventProps> {
+
+  render(props: TableEventProps) {
     return (
       <StandardEvent
         {...props}
         extraClassNames={[ 'fc-daygrid-event', 'fc-h-event' ]}
         defaultTimeFormat={DEFAULT_TIME_FORMAT}
-        defaultDisplayEventEnd={false}
+        defaultDisplayEventEnd={props.defaultDisplayEventEnd}
         disableResizing={!props.seg.eventRange.def.allDay}
       />
     )

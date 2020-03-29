@@ -221,6 +221,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
     let { context } = this
     let { eventSelection } = this.props
     let { cellInnerPositions, cellContentPositions } = this.state
+    let defaultDisplayEventEnd = this.props.cells.length === 1 // colCnt === 1
     let nodes: VNode[] = []
 
     if (cellInnerPositions && cellContentPositions) {
@@ -272,6 +273,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               isResizing={isResizing}
               isDateSelecting={isDateSelecting}
               isSelected={instanceId === eventSelection}
+              defaultDisplayEventEnd={defaultDisplayEventEnd}
               {...getSegMeta(seg, todayRange)}
             />
           </div>
