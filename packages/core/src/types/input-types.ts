@@ -108,7 +108,8 @@ export interface OptionsInputBase {
   aspectRatio?: number
   handleWindowResize?: boolean
   windowResizeDelay?: number
-  eventLimit?: boolean | number
+  dayMaxEvents?: boolean | number
+  dayMaxEventRows?: boolean | number
   eventLimitClick?: 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string |
     ((arg: { date: Date, allDay: boolean, dayEl: HTMLElement, moreEl: HTMLElement, segs: any[], hiddenSegs: any[], jsEvent: MouseEvent, view: ViewApi }) => void),
   timeZone?: string | boolean

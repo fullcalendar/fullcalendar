@@ -8,9 +8,6 @@ import {
   RefMap,
   mapHash,
   CssDimValue,
-  intersectRanges,
-  addDays,
-  EventRenderRange,
   DateRange,
   ComponentContext,
   getSegMeta,
@@ -38,19 +35,15 @@ export interface TableRowProps {
   eventSelection: string
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
-  eventLimit: boolean | number
+  dayMaxEvents: boolean | number
+  dayMaxEventRows: boolean | number
   clientWidth: CssDimValue
-  onMoreClick?: (arg: RowMoreLinkArg) => void
+  onMoreClick?: (arg: MoreLinkArg) => void
   dateProfile: DateProfile
   todayRange: DateRange
   showDayNumbers: boolean
   buildMoreLinkText: (num: number) => string
   innerHeight?: number
-}
-
-export interface RowMoreLinkArg extends MoreLinkArg {
-  allSegs: TableSeg[]
-  hiddenSegs: TableSeg[]
 }
 
 interface TableRowState {
@@ -77,9 +70,10 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
     let highlightSegsByCol = splitSegsByFirstCol(this.getHighlightSegs(), colCnt)
     let mirrorSegsByCol = splitSegsByFirstCol(this.getMirrorSegs(), colCnt)
 
-    let { paddingBottoms, segsByCol, segIsNoDisplay, segTops, segMarginTops, moreCnts, moreTops } = computeFgSegPlacement(
+    let { paddingBottoms, finalSegsByCol, segsByFirstCol, segIsNoDisplay, segTops, segMarginTops, moreCnts, moreTops } = computeFgSegPlacement(
       props.fgEventSegs,
-      props.eventLimit,
+      props.dayMaxEvents,
+      props.dayMaxEventRows,
       state.segHeights,
       state.maxContentHeight,
       colCnt,
@@ -96,7 +90,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
         {props.renderIntro && props.renderIntro()}
         {props.cells.map((cell, col) => {
           let normalFgNodes = this.renderFgSegs(
-            segsByCol[col],
+            segsByFirstCol[col],
             segIsNoDisplay,
             segTops,
             segMarginTops,
@@ -133,8 +127,10 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               moreCnt={moreCnts[col]}
               moreMarginTop={moreTops[col] /* rename */}
               buildMoreLinkText={props.buildMoreLinkText}
-              onMoreClick={this.handleMoreClick}
+              onMoreClick={props.onMoreClick}
               hasEvents={Boolean(normalFgNodes.length)}
+              allFgSegs={finalSegsByCol[col]}
+              segIsNoDisplay={segIsNoDisplay}
               fgPaddingBottom={paddingBottoms[col]}
               fgContentElRef={this.cellContentElRefs.createRef(col)}
               fgContent={[
@@ -164,20 +160,6 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
       !isPropsEqual(prevProps, this.props),
       prevState.cellContentPositions !== this.state.cellContentPositions
     )
-  }
-
-
-  handleMoreClick = (arg: MoreLinkArg) => {
-    if (this.props.onMoreClick) {
-      let allSegs = resliceDaySegs(this.props.fgEventSegs, arg.date)
-      let hiddenSegs = allSegs.slice(allSegs.length - arg.moreCnt)
-
-      this.props.onMoreClick({
-        ...arg,
-        allSegs,
-        hiddenSegs
-      })
-    }
   }
 
 
@@ -339,7 +321,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
         let offsetParent = cellContentEls[0].offsetParent as HTMLElement
 
         if (offsetParent) { // preact was unmounting the element, but componentDidUpdate was firing after. guard
-          this.setState({
+          this.setState({ // will trigger isHorizontalChange...
             cellInnerPositions: new PositionCache(
               offsetParent,
               cellInnerEls,
@@ -351,21 +333,20 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               cellContentEls,
               true, // isHorizontal (for computeFgSegPlacement)
               true // isVertical (for computeMaxContentHeight)
-            )
+            ),
+            segHeights: null
           })
         }
       }
 
     } else if (isHorizontalChange) {
-      let oldSegHeights = this.state.segHeights
-      let newSegHeights = mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl: HTMLElement, instanceId) => (
-        eventHarnessEl.getBoundingClientRect().height ||
-          oldSegHeights[instanceId] || 0 // if seg is hidden for +more link, use previously queried height
+      let segHeights = mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl) => (
+        eventHarnessEl.getBoundingClientRect().height
       ))
 
       this.setState({
-        maxContentHeight: this.props.eventLimit === true ? this.computeMaxContentHeight() : null,
-        segHeights: newSegHeights
+        maxContentHeight: (this.props.dayMaxEvents === true || this.props.dayMaxEventRows === true) ? this.computeMaxContentHeight() : null,
+        segHeights
       })
     }
   }
@@ -379,35 +360,4 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
     return cellEl.getBoundingClientRect().bottom - contentEl.getBoundingClientRect().top
   }
 
-}
-
-
-// Given the events within an array of segment objects, reslice them to be in a single day
-function resliceDaySegs(segs, dayDate) {
-  let dayStart = dayDate
-  let dayEnd = addDays(dayStart, 1)
-  let dayRange = { start: dayStart, end: dayEnd }
-  let newSegs = []
-
-  for (let seg of segs) {
-    let eventRange = seg.eventRange
-    let origRange = eventRange.range
-    let slicedRange = intersectRanges(origRange, dayRange)
-
-    if (slicedRange) {
-      newSegs.push({
-        ...seg,
-        eventRange: {
-          def: eventRange.def,
-          ui: { ...eventRange.ui, durationEditable: false }, // hack to disable resizing
-          instance: eventRange.instance,
-          range: slicedRange
-        } as EventRenderRange,
-        isStart: seg.isStart && slicedRange.start.valueOf() === origRange.start.valueOf(),
-        isEnd: seg.isEnd && slicedRange.end.valueOf() === origRange.end.valueOf()
-      })
-    }
-  }
-
-  return newSegs
 }

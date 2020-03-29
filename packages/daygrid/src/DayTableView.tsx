@@ -49,7 +49,8 @@ export default class DayTableView extends TableView {
         nextDayThreshold={context.nextDayThreshold}
         colGroupNode={contentArg.tableColGroupNode}
         tableMinWidth={contentArg.tableMinWidth}
-        eventLimit={options.eventLimit}
+        dayMaxEvents={options.dayMaxEvents}
+        dayMaxEventRows={options.dayMaxEventRows}
         expandRows={!props.isHeightAuto}
         headerAlignElRef={this.headerElRef}
         clientWidth={contentArg.clientWidth}

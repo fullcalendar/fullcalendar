@@ -72,7 +72,6 @@ export const globalDefaults = {
 
   // rerenderDelay: null,
 
-  eventLimit: false,
   eventLimitClick: 'popover',
   dayPopoverFormat: { month: 'long', day: 'numeric', year: 'numeric' },
 

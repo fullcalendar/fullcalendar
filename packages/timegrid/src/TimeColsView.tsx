@@ -19,7 +19,7 @@ import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
 
 
 const DEFAULT_WEEK_NUM_FORMAT = { week: 'short' }
-const AUTO_ALL_DAY_EVENT_LIMIT = 5
+const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
 
 
 /* An abstract class for all timegrid-related views. Displays one more columns with time slots running vertically.
@@ -211,12 +211,15 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
   ------------------------------------------------------------------------------------------------------------------*/
 
 
-  getAllDayEventLimit() {
-    let eventLimit = this.context.options.eventLimit
-    if (eventLimit && typeof eventLimit !== 'number') {
-      eventLimit = AUTO_ALL_DAY_EVENT_LIMIT // make sure "auto" goes to a real number
+  getAllDayMaxEventProps() {
+    let { dayMaxEvents, dayMaxEventRows } = this.context.options
+
+    if (dayMaxEvents === true || dayMaxEventRows === true) { // is auto?
+      dayMaxEvents = undefined
+      dayMaxEventRows = AUTO_ALL_DAY_MAX_EVENT_ROWS // make sure "auto" goes to a real number
     }
-    return eventLimit
+
+    return { dayMaxEvents, dayMaxEventRows }
   }
 
 

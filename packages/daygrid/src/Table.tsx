@@ -18,8 +18,8 @@ import {
   DateProfile,
 } from '@fullcalendar/core'
 import TableSeg, { splitSegsByRow, splitInteractionByRow } from './TableSeg'
-import TableRow, { RowMoreLinkArg } from './TableRow'
-import { TableCellModel } from './TableCell'
+import TableRow from './TableRow'
+import { TableCellModel, MoreLinkArg } from './TableCell'
 import MorePopover from './MorePopover'
 
 
@@ -40,7 +40,8 @@ export interface TableProps {
   eventSelection: string
   eventDrag: EventSegUiInteractionState | null
   eventResize: EventSegUiInteractionState | null
-  eventLimit: boolean | number
+  dayMaxEvents: boolean | number
+  dayMaxEventRows: boolean | number
   headerAlignElRef?: RefObject<HTMLElement>
 }
 
@@ -48,7 +49,7 @@ interface TableState {
   morePopoverState: MorePopoverState | null
 }
 
-interface MorePopoverState extends RowMoreLinkArg {
+interface MorePopoverState extends MoreLinkArg {
   currentFgEventSegs: TableSeg[]
 }
 
@@ -81,7 +82,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
     let buildMoreLinkText = this.buildBuildMoreLinkText(context.options.moreLinkText)
 
     let classNames = [ 'fc-daygrid-body' ]
-    if (props.expandRows && props.eventLimit === true) {
+    if (props.expandRows && (props.dayMaxEvents === true || props.dayMaxEventRows === true)) {
       classNames.push('fc-daygrid-body-balanced')
     }
 
@@ -123,7 +124,8 @@ export default class Table extends DateComponent<TableProps, TableState> {
                   dateSelectionSegs={dateSelectionSegsByRow[row]}
                   eventDrag={eventDragByRow[row]}
                   eventResize={eventResizeByRow[row]}
-                  eventLimit={props.eventLimit}
+                  dayMaxEvents={props.dayMaxEvents}
+                  dayMaxEventRows={props.dayMaxEventRows}
                   clientWidth={props.clientWidth}
                   buildMoreLinkText={buildMoreLinkText}
                   onMoreClick={this.handleMoreLinkClick}
@@ -158,7 +160,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
   }
 
 
-  handleMoreLinkClick = (arg: RowMoreLinkArg) => {
+  handleMoreLinkClick = (arg: MoreLinkArg) => {
     let { calendar, view, options, dateEnv } = this.context
     let clickOption = options.eventLimitClick
 

@@ -33,7 +33,8 @@ export interface DayTableProps {
   colGroupNode: VNode
   tableMinWidth: CssDimValue
   renderRowIntro?: () => VNode
-  eventLimit: boolean | number
+  dayMaxEvents: boolean | number
+  dayMaxEventRows: boolean | number
   expandRows: boolean
   headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
   clientWidth: CssDimValue
@@ -59,7 +60,8 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
         colGroupNode={props.colGroupNode}
         tableMinWidth={props.tableMinWidth}
         renderRowIntro={props.renderRowIntro}
-        eventLimit={props.eventLimit}
+        dayMaxEvents={props.dayMaxEvents}
+        dayMaxEventRows={props.dayMaxEventRows}
         expandRows={props.expandRows}
         headerAlignElRef={props.headerAlignElRef}
         clientWidth={props.clientWidth}

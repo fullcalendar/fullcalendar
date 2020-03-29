@@ -11,24 +11,27 @@ interface TableSegPlacement {
 
 export function computeFgSegPlacement( // for one row. TODO: print mode?
   segs: TableSeg[],
-  eventLimit: boolean | number,
+  dayMaxEvents: boolean | number,
+  dayMaxEventRows: boolean | number,
   eventHeights: { [instanceId: string]: number } | null,
   maxContentHeight: number | null,
   colCnt: number,
   eventOrderSpecs: any
 ) {
-  let colPlacements: TableSegPlacement[][] = []
+  let colPlacements: TableSegPlacement[][] = [] // if event spans multiple cols, its present in each col
   let moreCnts: number[] = [] // by-col
   let segIsNoDisplay: { [instanceId: string]: boolean } = {}
   let segTops: { [instanceId: string]: number } = {} // always populated for each seg
   let segMarginTops: { [instanceId: string]: number } = {} // simetimes populated for each seg
   let moreTops: { [col: string]: number } = {}
   let paddingBottoms: { [col: string]: number } = {} // for each cell's inner-wrapper div
-  let segsByCol: TableSeg[][]
+  let segsByFirstCol: TableSeg[][]
+  let finalSegsByCol: TableSeg[][] = [] // has each seg represented in each col. only if ready to do positioning
 
   for (let i = 0; i < colCnt; i++) {
     colPlacements.push([])
     moreCnts.push(0)
+    finalSegsByCol.push([])
   }
 
   segs = sortEventSegs(segs, eventOrderSpecs) as TableSeg[]
@@ -41,52 +44,19 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
       placeSeg(seg, eventHeights[seg.eventRange.instance.instanceId])
     }
 
-    // sort. for eventLimit and segTops computation
+    // sort. for dayMaxEvents and segTops computation
     for (let placements of colPlacements) {
-      placements.sort(cmpPlacements)
+      placements.sort(cmpPlacements) // sorts in-place
     }
 
-    segsByCol = colPlacements.map(extractFirstColSegs) // operates on the sorted cols
+    if (dayMaxEvents === true || dayMaxEventRows === true) {
+      limitByMaxHeight(moreCnts, segIsNoDisplay, colPlacements, maxContentHeight) // populates moreCnts/segIsNoDisplay
 
-    if (eventLimit === true) { // assumes maxContentHeight
+    } else if (typeof dayMaxEvents === 'number') {
+      limitByMaxEvents(moreCnts, segIsNoDisplay, colPlacements, dayMaxEvents) // populates moreCnts/segIsNoDisplay
 
-      for (let col = 0; col < colCnt; col++) {
-        let placements = colPlacements[col]
-        let hiddenCnt = 0
-        let i
-
-        for (i = placements.length - 1; i >= 0; i--) {
-          if (placements[i].bottom > maxContentHeight) {
-            segIsNoDisplay[placements[i].seg.eventRange.instance.instanceId] = true
-            hiddenCnt++
-          } else {
-            break
-          }
-        }
-
-        // remove the lowest remaining, to make space for the +more link
-        // `i` is on the lowest valid seg
-        if (hiddenCnt && i > 0) {
-          segIsNoDisplay[placements[i].seg.eventRange.instance.instanceId] = true
-          hiddenCnt++
-        }
-
-        moreCnts[col] = hiddenCnt
-      }
-
-    } else if (eventLimit) {
-
-      for (let col = 0; col < colCnt; col++) {
-        let placements = colPlacements[col]
-        let hiddenCnt = 0
-
-        for (let i = eventLimit; i < placements.length; i++) {
-          segIsNoDisplay[placements[i].seg.eventRange.instance.instanceId] = true
-          hiddenCnt++
-        }
-
-        moreCnts[col] = hiddenCnt
-      }
+    } else if (typeof dayMaxEventRows === 'number') {
+      limitByMaxRows(moreCnts, segIsNoDisplay, colPlacements, dayMaxEventRows) // populates moreCnts/segIsNoDisplay
     }
 
     // computes segTops/segMarginTops/moreTops/paddingBottoms
@@ -127,8 +97,11 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
       }
     }
 
+    segsByFirstCol = colPlacements.map(extractFirstColSegs) // operates on the sorted cols
+    finalSegsByCol = colPlacements.map(extractAllColSegs)
+
   } else {
-    segsByCol = splitSegsByFirstCol(segs, colCnt)
+    segsByFirstCol = splitSegsByFirstCol(segs, colCnt) // unsorted. that's ok
   }
 
   function placeSeg(seg, segHeight) {
@@ -170,7 +143,8 @@ export function computeFgSegPlacement( // for one row. TODO: print mode?
   }
 
   return {
-    segsByCol,
+    finalSegsByCol,
+    segsByFirstCol,
     segIsNoDisplay,
     segTops,
     segMarginTops,
@@ -194,6 +168,102 @@ function extractFirstColSegs(oneColPlacements: TableSegPlacement[], col: number)
 }
 
 
+function extractAllColSegs(oneColPlacements: TableSegPlacement[], col: number) {
+  let segs: TableSeg[] = []
+
+  for (let placement of oneColPlacements) {
+    segs.push(placement.seg)
+  }
+
+  return segs
+}
+
+
 function cmpPlacements(placement0, placement1) {
   return placement0.top - placement1.top
+}
+
+
+function limitByMaxHeight(hiddenCnts, segIsNoDisplay, colPlacements, maxContentHeight) {
+  limitEvents(hiddenCnts, segIsNoDisplay, colPlacements, true, (placement) => {
+    return placement.bottom <= maxContentHeight
+  })
+}
+
+
+function limitByMaxEvents(hiddenCnts, segIsNoDisplay, colPlacements, dayMaxEvents) {
+  limitEvents(hiddenCnts, segIsNoDisplay, colPlacements, false, (placement, levelIndex) => {
+    return levelIndex < dayMaxEvents
+  })
+}
+
+
+function limitByMaxRows(hiddenCnts, segIsNoDisplay, colPlacements, dayMaxEventRows) {
+  limitEvents(hiddenCnts, segIsNoDisplay, colPlacements, true, (placement, levelIndex) => {
+    return levelIndex < dayMaxEventRows
+  })
+}
+
+
+/*
+populates the given hiddenCnts/segIsNoDisplay, which are supplied empty.
+TODO: return them instead
+*/
+function limitEvents(hiddenCnts, segIsNoDisplay, colPlacements, moreLinkConsumesLevel, isPlacementInBounds) {
+  let colCnt = hiddenCnts.length
+  let segIsVisible = {} as any // TODO: instead, use segIsNoDisplay with true/false?
+  let visibleColPlacements = [] // will mirror colPlacements
+
+  for (let col = 0; col < colCnt; col++) {
+    visibleColPlacements.push([])
+  }
+
+  for (let col = 0; col < colCnt; col++) {
+    let placements = colPlacements[col]
+
+    for (let level = 0; level < placements.length; level++) {
+      let placement = placements[level]
+
+      if (isPlacementInBounds(placement, level)) {
+        recordVisible(placement)
+
+      } else {
+        recordHidden(placement)
+      }
+    }
+  }
+
+  function recordVisible(placement) {
+    let { seg } = placement
+    let { instanceId } = seg.eventRange.instance
+
+    if (!segIsVisible[instanceId]) {
+      segIsVisible[instanceId] = true
+
+      for (let col = seg.firstCol; col <= seg.lastCol; col++) {
+        visibleColPlacements[col].push(placement)
+      }
+    }
+  }
+
+  function recordHidden(placement) {
+    let { seg } = placement
+    let { instanceId } = seg.eventRange.instance
+
+    if (!segIsNoDisplay[instanceId]) {
+      segIsNoDisplay[instanceId] = true
+
+      for (let col = seg.firstCol; col <= seg.lastCol; col++) {
+        let hiddenCnt = ++hiddenCnts[col]
+
+        if (moreLinkConsumesLevel && hiddenCnt === 1) {
+          let lastVisiblePlacement = visibleColPlacements[col].pop()
+
+          if (lastVisiblePlacement) {
+            recordHidden(lastVisiblePlacement)
+          }
+        }
+      }
+    }
+  }
 }
