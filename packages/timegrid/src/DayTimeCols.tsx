@@ -38,8 +38,8 @@ export interface DayTimeColsProps {
   eventResize: EventInteractionState | null
   tableColGroupNode: VNode
   tableMinWidth: CssDimValue
-  clientWidth: CssDimValue
-  clientHeight: CssDimValue
+  clientWidth: number | null
+  clientHeight: number | null
   expandRows: boolean
   onScrollTopRequest?: (scrollTop: number) => void
   forPrint: boolean

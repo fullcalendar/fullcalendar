@@ -87,21 +87,21 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       return chunkConfig.outerContent
     }
 
-    let { state } = this
+    let { forceYScrollbars, scrollerClientWidths, scrollerClientHeights } = this.state
 
     let needsYScrolling = getAllowYScrolling(this.props, sectionConfig) // TODO: do lazily. do in section config?
     let isLiquid = getSectionHasLiquidHeight(this.props, sectionConfig)
 
     let overflowY: OverflowValue =
-      state.forceYScrollbars ? 'scroll' :
+      forceYScrollbars ? 'scroll' :
       !needsYScrolling ? 'hidden' :
       'auto'
 
     let content = renderChunkContent(sectionConfig, chunkConfig, {
       tableColGroupNode: microColGroupNode,
       tableMinWidth: '',
-      clientWidth: state.scrollerClientWidths[sectionI] || '',
-      clientHeight: state.scrollerClientHeights[sectionI] || '',
+      clientWidth: scrollerClientWidths[sectionI] !== undefined ? scrollerClientWidths[sectionI] : null,
+      clientHeight: scrollerClientHeights[sectionI] !== undefined ? scrollerClientHeights[sectionI] : null,
       expandRows: sectionConfig.expandRows,
       syncRowHeights: false,
       rowSyncHeights: [],

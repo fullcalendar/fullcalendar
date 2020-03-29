@@ -40,8 +40,8 @@ export interface TimeColsProps {
   rootElRef?: Ref<HTMLDivElement>
   tableColGroupNode: VNode
   tableMinWidth: CssDimValue
-  clientWidth: CssDimValue
-  clientHeight: CssDimValue
+  clientWidth: number | null
+  clientHeight: number | null
   expandRows: boolean
   nowIndicatorSegs: TimeColsSeg[]
   onScrollTopRequest?: (scrollTop: number) => void

@@ -23,7 +23,7 @@ import TimeColsSlatsCoords from './TimeColsSlatsCoords'
 
 
 export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
-  clientWidth: CssDimValue
+  clientWidth: number | null
   minHeight: CssDimValue
   tableMinWidth: CssDimValue
   tableColGroupNode: VNode
@@ -103,7 +103,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
   updateSizing() {
     let { props } = this
 
-    if (props.onCoords && props.clientWidth) { // clientWidth means sizing has stabilized
+    if (props.onCoords && props.clientWidth !== null) { // means sizing has stabilized
       props.onCoords(
         new TimeColsSlatsCoords(
           new PositionCache(

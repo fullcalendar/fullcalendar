@@ -31,8 +31,8 @@ export interface TableProps {
   colGroupNode: VNode
   tableMinWidth: CssDimValue
   expandRows: boolean
-  clientWidth: CssDimValue
-  clientHeight: CssDimValue
+  clientWidth: number | null
+  clientHeight: number | null
   businessHourSegs: TableSeg[]
   bgEventSegs: TableSeg[]
   fgEventSegs: TableSeg[]

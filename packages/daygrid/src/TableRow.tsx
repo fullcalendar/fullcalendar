@@ -37,7 +37,7 @@ export interface TableRowProps {
   eventResize: EventSegUiInteractionState | null
   dayMaxEvents: boolean | number
   dayMaxEventRows: boolean | number
-  clientWidth: CssDimValue
+  clientWidth: number | null
   onMoreClick?: (arg: MoreLinkArg) => void
   dateProfile: DateProfile
   todayRange: DateRange
@@ -312,7 +312,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
   updateSizing(isExternalChange, isHorizontalChange) {
     if (
       isExternalChange &&
-      this.props.clientWidth // positioning ready?
+      this.props.clientWidth !== null // positioning ready?
     ) {
       let cellInnerEls = this.cellInnerElRefs.collect()
       let cellContentEls = this.cellContentElRefs.collect()

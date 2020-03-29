@@ -34,7 +34,7 @@ export interface TimeColsContentProps {
   eventResize: EventSegUiInteractionState | null
   nowIndicatorSegs: TimeColsSeg[]
   forPrint: boolean
-  clientWidth: CssDimValue
+  clientWidth: number | null
   tableMinWidth: CssDimValue
   tableColGroupNode: VNode
   slatCoords: TimeColsSlatsCoords
@@ -136,7 +136,7 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
   updateCoords() {
     let { props } = this
 
-    if (props.onColCoords && props.clientWidth) { // clientWidth means sizing has stabilized
+    if (props.onColCoords && props.clientWidth !== null) { // means sizing has stabilized
       props.onColCoords(
         new PositionCache(
           this.rootElRef.current,
