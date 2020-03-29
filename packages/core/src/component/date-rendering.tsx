@@ -32,25 +32,27 @@ export function getDayClassNames(meta: DateMeta, theme: Theme) {
     'fc-day-' + DAY_IDS[meta.dow]
   ]
 
-  if (meta.isDisabled) { // TODO: shouldn't we avoid all other classnames if disabled?
+  if (meta.isDisabled) {
     classNames.push('fc-day-disabled')
-  }
 
-  if (meta.isToday) {
-    classNames.push('fc-day-today')
-    classNames.push(theme.getClass('today'))
-  }
+  } else {
 
-  if (meta.isPast) {
-    classNames.push('fc-day-past')
-  }
+    if (meta.isToday) {
+      classNames.push('fc-day-today')
+      classNames.push(theme.getClass('today'))
+    }
 
-  if (meta.isFuture) {
-    classNames.push('fc-day-future')
-  }
+    if (meta.isPast) {
+      classNames.push('fc-day-past')
+    }
 
-  if (meta.isOther) {
-    classNames.push('fc-day-other')
+    if (meta.isFuture) {
+      classNames.push('fc-day-future')
+    }
+
+    if (meta.isOther) {
+      classNames.push('fc-day-other')
+    }
   }
 
   return classNames
@@ -63,21 +65,23 @@ export function getSlotClassNames(meta: DateMeta, theme: Theme) {
     'fc-slot-' + DAY_IDS[meta.dow]
   ]
 
-  if (meta.isDisabled) { // TODO: shouldn't we avoid all other classnames if disabled?
+  if (meta.isDisabled) {
     classNames.push('fc-slot-disabled')
-  }
 
-  if (meta.isToday) {
-    classNames.push('fc-slot-today')
-    classNames.push(theme.getClass('today'))
-  }
+  } else {
 
-  if (meta.isPast) {
-    classNames.push('fc-slot-past')
-  }
+    if (meta.isToday) {
+      classNames.push('fc-slot-today')
+      classNames.push(theme.getClass('today'))
+    }
 
-  if (meta.isFuture) {
-    classNames.push('fc-slot-future')
+    if (meta.isPast) {
+      classNames.push('fc-slot-past')
+    }
+
+    if (meta.isFuture) {
+      classNames.push('fc-slot-future')
+    }
   }
 
   return classNames

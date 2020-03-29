@@ -39,7 +39,8 @@ export interface DayCellRootProps {
   children: (
     rootElRef: Ref<any>,
     classNames: string[],
-    rootDataAttrs
+    rootDataAttrs,
+    isDisabled: boolean
   ) => ComponentChildren
 }
 
@@ -55,17 +56,24 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
       todayRange: props.todayRange,
       showDayNumber: props.showDayNumber
     }
-    let hookProps = {
+    let hookProps = { // it's weird to rely on this internally so much (isDisabled)
       ...massageHooksProps(hookPropsOrigin, context),
       ...props.extraHookProps
     }
-    let customClassNames = this.buildClassNames(hookProps, context, null, hookPropsOrigin) // cacheBuster=hookPropsOrigin
-    let standardClassNames = getDayClassNames(hookProps, context.theme) // can use publicHookProps as input
-    let dataAttrs = { 'data-date': formatDayString(props.date) }
+
+    let classNames = getDayClassNames(hookProps, context.theme).concat(
+      hookProps.isDisabled
+        ? [] // don't use custom classNames if disalbed
+        : this.buildClassNames(hookProps, context, null, hookPropsOrigin) // cacheBuster=hookPropsOrigin
+    )
+
+    let dataAttrs = hookProps.isDisabled ? {} : {
+      'data-date': formatDayString(props.date)
+    }
 
     return (
       <MountHook name='dayCell' hookProps={hookProps} elRef={props.elRef}>
-        {(rootElRef) => props.children(rootElRef, standardClassNames.concat(customClassNames), dataAttrs)}
+        {(rootElRef) => props.children(rootElRef, classNames, dataAttrs, hookProps.isDisabled)}
       </MountHook>
     )
   }
