@@ -1,6 +1,6 @@
 import {
   MinimalEventProps, BaseComponent, ComponentContext, h,
-  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot, ComponentChildren, RenderHook, Fragment
+  Seg, isMultiDayRange, DateFormatter, buildSegTimeText, createFormatter, EventMeta, EventRoot, ComponentChildren, RenderHook
 } from "@fullcalendar/core"
 
 
@@ -65,7 +65,7 @@ function renderEventInnerContent(props: EventMeta) {
 
   return (
     <a {...anchorAttrs}>{/* TODO: document how whole row become clickable */}
-      {event.title || <Fragment>&nbsp;</Fragment>}
+      {event.title}
     </a>
   )
 }
