@@ -338,20 +338,22 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
       if (cellContentEls.length) {
         let offsetParent = cellContentEls[0].offsetParent as HTMLElement
 
-        this.setState({
-          cellInnerPositions: new PositionCache(
-            offsetParent,
-            cellInnerEls,
-            true, // isHorizontal
-            false
-          ),
-          cellContentPositions: new PositionCache(
-            offsetParent,
-            cellContentEls,
-            true, // isHorizontal (for computeFgSegPlacement)
-            true // isVertical (for computeMaxContentHeight)
-          )
-        })
+        if (offsetParent) { // preact was unmounting the element, but componentDidUpdate was firing after. guard
+          this.setState({
+            cellInnerPositions: new PositionCache(
+              offsetParent,
+              cellInnerEls,
+              true, // isHorizontal
+              false
+            ),
+            cellContentPositions: new PositionCache(
+              offsetParent,
+              cellContentEls,
+              true, // isHorizontal (for computeFgSegPlacement)
+              true // isVertical (for computeMaxContentHeight)
+            )
+          })
+        }
       }
 
     } else if (isHorizontalChange) {
