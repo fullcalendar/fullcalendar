@@ -111,7 +111,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
                       ? cells[0].date.toISOString() /* best? or put key on cell? or use diff formatter? */
                       : row // in case there are no cells (like when resource view is loading)
                   }
-                  enableNumbers={rowCnt > 1}
+                  showDayNumbers={rowCnt > 1}
                   todayRange={todayRange}
                   dateProfile={props.dateProfile}
                   cells={cells}

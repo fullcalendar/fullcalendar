@@ -43,7 +43,7 @@ export interface TableRowProps {
   onMoreClick?: (arg: RowMoreLinkArg) => void
   dateProfile: DateProfile
   todayRange: DateRange
-  enableNumbers: boolean
+  showDayNumbers: boolean
   buildMoreLinkText: (num: number) => string
   innerHeight?: number
 }
@@ -70,7 +70,6 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
 
   render(props: TableRowProps, state: TableRowState, context: ComponentContext) {
-    let enableWeekNumbers = context.options.weekNumbers
     let colCnt = props.cells.length
 
     let businessHoursByCol = splitSegsByFirstCol(props.businessHourSegs, colCnt)
@@ -117,13 +116,15 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
             false // date-selecting (because mirror is never drawn for date selection)
           )
 
+          let showWeekNumber = context.options.weekNumbers && col === 0
+
           return (
             <TableCell
               elRef={this.cellElRefs.createRef(col)}
               innerElRef={this.cellInnerElRefs.createRef(col) /* rename */}
               date={cell.date}
-              showDayNumber={props.enableNumbers}
-              showWeekNumber={props.enableNumbers && enableWeekNumbers && col === 0}
+              showDayNumber={props.showDayNumbers || showWeekNumber /* for spacing, we need to force day-numbers if week numbers */}
+              showWeekNumber={showWeekNumber}
               dateProfile={props.dateProfile}
               todayRange={props.todayRange}
               extraHookProps={cell.extraHookProps}
