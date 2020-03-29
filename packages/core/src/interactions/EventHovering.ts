@@ -18,7 +18,7 @@ export default class EventHovering extends Interaction {
 
     this.removeHoverListeners = listenToHoverBySelector(
       settings.el,
-      component.fgSegSelector + ',' + component.bgSegSelector,
+      '.fc-event', // on both fg and bg events
       this.handleSegEnter,
       this.handleSegLeave
     )

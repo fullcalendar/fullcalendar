@@ -40,9 +40,6 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
 
   uid = guid()
 
-  // self-config, overridable by subclasses. must set on prototype
-  fgSegSelector: string
-  bgSegSelector: string
   // IN SCHEDULER: allowAcrossResources
 
   // if defined, holds the unit identified (ex: "year" or "month") that determines the level of granularity
@@ -112,9 +109,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
 
 
   isValidDateDownEl(el: HTMLElement) {
-    let segEl = elementClosest(el, this.fgSegSelector)
-
-    return (!segEl || segEl.classList.contains('fc-event-mirror')) &&
+    return !elementClosest(el, '.fc-event:not(.fc-bgevent)') &&
       !elementClosest(el, '.fc-daygrid-more-link') && // a "more.." link
       !elementClosest(el, 'a[data-navlink]') && // a clickable nav link
       !this.isInPopover(el)
@@ -131,6 +126,3 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
   }
 
 }
-
-DateComponent.prototype.fgSegSelector = '.fc-event'
-DateComponent.prototype.bgSegSelector = '.fc-bgevent'

@@ -11,12 +11,11 @@ export default class EventClicking extends Interaction {
 
   constructor(settings: InteractionSettings) {
     super(settings)
-    let { component } = settings
 
     this.destroy = listenBySelector(
       settings.el,
       'click',
-      component.fgSegSelector + ',' + component.bgSegSelector,
+      '.fc-event', // on both fg and bg events
       this.handleSegClick
     )
   }
