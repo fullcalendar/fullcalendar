@@ -1,11 +1,11 @@
 import frLocale from '@fullcalendar/core/locales/fr'
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
-xdescribe('moreLinkText', function() { // TODO: rename file
+describe('moreLinkText', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',
-    eventLimit: 3,
+    dayMaxEventRows: 3,
     events: [
       { title: 'event1', start: '2014-07-29' },
       { title: 'event2', start: '2014-07-29' },

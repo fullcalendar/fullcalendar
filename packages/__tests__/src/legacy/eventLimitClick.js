@@ -5,7 +5,7 @@ xdescribe('eventLimitClick', function() { // simulate a click
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',
-    eventLimit: 3,
+    dayMaxEventRows: 3,
     events: [
       { title: 'event1', start: '2014-07-29' },
       { title: 'event2', start: '2014-07-29' },
@@ -31,7 +31,7 @@ xdescribe('eventLimitClick', function() { // simulate a click
       })
     })
 
-    // more popover tests are done in eventLimit-popover
+    // more popover tests are done in *-popover.js
   })
 
   describe('when set to "week"', function() {

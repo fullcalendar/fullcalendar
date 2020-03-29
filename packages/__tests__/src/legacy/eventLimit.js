@@ -2,10 +2,10 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import { filterVisibleEls } from '../lib/dom-misc'
 
-xdescribe('eventLimit', function() {
+describe('dayMaxEventRows', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
-    eventLimit: 3
+    dayMaxEventRows: 3
   })
 
   describe('as a number', function() {
@@ -102,8 +102,8 @@ xdescribe('eventLimit', function() {
           events: [
             { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
-            { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
-            { title: 'event2', start: '2014-07-29', end: '2014-07-31' }
+            { title: 'event3', start: '2014-07-28', end: '2014-07-30' },
+            { title: 'event4', start: '2014-07-29', end: '2014-07-31' }
           ]
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
@@ -111,7 +111,7 @@ xdescribe('eventLimit', function() {
         let cells = dayGridWrapper.getDayElsInRow(0)
         expect(moreEls.length).toBe(3)
         expect(moreEls[0]).toHaveText('+1 more')
-        expect(moreEls[0]).toBeBoundedBy(cells[3])
+        expect(moreEls[0]).toBeBoundedBy(cells[1])
       })
 
       it('will render a link in place of a hidden single day event, if covered by a multi-day', function() {
@@ -119,8 +119,8 @@ xdescribe('eventLimit', function() {
           events: [
             { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
-            { title: 'event2', start: '2014-07-28' },
-            { title: 'event2', start: '2014-07-28' }
+            { title: 'event3', start: '2014-07-28' },
+            { title: 'event4', start: '2014-07-28' }
           ]
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
@@ -138,8 +138,8 @@ xdescribe('eventLimit', function() {
           events: [
             { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
             { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
-            { title: 'event2', start: '2014-07-29' },
-            { title: 'event2', start: '2014-07-29' }
+            { title: 'event3', start: '2014-07-29' },
+            { title: 'event4', start: '2014-07-29' }
           ]
         })
         let dayGridWrapper = new ViewWrapper(calendar).dayGrid
@@ -154,7 +154,7 @@ xdescribe('eventLimit', function() {
 
   describe('when auto', function() {
     pushOptions({
-      eventLimit: true
+      dayMaxEvents: true
     })
 
     describe('in month view', function() {
@@ -190,7 +190,7 @@ xdescribe('eventLimit', function() {
 
         rowHeights.forEach((rowHeight) => {
           let diff = Math.abs(rowHeight - aveHeight)
-          expect(diff).toBeLessThan(1)
+          expect(diff).toBeLessThan(2)
         })
       })
 

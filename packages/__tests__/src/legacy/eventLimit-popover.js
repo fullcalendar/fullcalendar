@@ -2,7 +2,7 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
-xdescribe('eventLimit popover', function() {
+describe('more-link popover', function() { // TODO: rename file
 
   /** @type {any} */
   var testEvents = [
@@ -15,7 +15,7 @@ xdescribe('eventLimit popover', function() {
   pushOptions({
     defaultView: 'dayGridMonth',
     defaultDate: '2014-08-01',
-    eventLimit: 3,
+    dayMaxEventRows: 3,
     events: testEvents,
     dragScroll: false, // don't do autoscrolling while dragging. close quarters in PhantomJS
     popoverViewportConstrain: false, // because PhantomJS window is small, don't do smart repositioning
@@ -124,7 +124,7 @@ xdescribe('eventLimit popover', function() {
     it('orders events correctly regardless of ID', function(done) {
       let calendar = initCalendar({
         defaultDate: '2012-03-22',
-        eventLimit: 3,
+        dayMaxEventRows: 3,
         events: [
           {
             id: '39957',
