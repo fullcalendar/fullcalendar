@@ -43,7 +43,7 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
       {}
 
     return (
-      <DayCellRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
+      <DayCellRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps} dateProfile={props.dateProfile}>
         {(rootElRef, classNames, dataAttrs) => (
           <td
             ref={rootElRef}
