@@ -250,7 +250,7 @@ export default class Calendar {
     switch (action.type) {
       case 'SET_EVENT_DRAG':
       case 'SET_EVENT_RESIZE':
-        this.renderRunner.drain()
+        this.renderRunner.tryDrain()
     }
   }
 
@@ -272,7 +272,19 @@ export default class Calendar {
 
 
   batchRendering(func) {
-    this.renderRunner.whilePaused(func)
+    this.renderRunner.pause('batchRendering')
+    func()
+    this.renderRunner.resume('batchRendering')
+  }
+
+
+  pauseRendering() { // available to plugins
+    this.renderRunner.pause('pauseRendering')
+  }
+
+
+  resumeRendering() { // available to plugins
+    this.renderRunner.resume('pauseRendering', true)
   }
 
 

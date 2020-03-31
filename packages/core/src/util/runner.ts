@@ -1,9 +1,12 @@
 
+// TODO: try to DRY-up the pausing systems of each of these classes
+
+
 export class DelayedRunner {
 
   private isRunning = false
-  private pauseDepth: number = 0
   private isDirty = false
+  private pauseDepths: { [scope: string]: number } = {}
   private timeoutId: number = 0
 
   constructor(
@@ -14,55 +17,51 @@ export class DelayedRunner {
   request(delay?: number) {
     this.isDirty = true
 
-    if (!this.pauseDepth) {
+    if (!this.isPaused()) {
       this.clearTimeout()
 
       if (delay == null) {
-        this.drain()
+        this.tryDrain()
       } else {
-        this.timeoutId = setTimeout(this.drain.bind(this), delay) as unknown as number // NOT OPTIMAL! TODO: look at debounce
+        this.timeoutId = setTimeout(this.tryDrain.bind(this), delay) as unknown as number // NOT OPTIMAL! TODO: look at debounce
       }
     }
   }
 
-  pause() {
-    this.setPauseDepth(1)
+  pause(scope = '') {
+    let { pauseDepths } = this
+
+    pauseDepths[scope] = (pauseDepths[scope] || 0) + 1
+
+    this.clearTimeout()
   }
 
-  resume() {
-    this.setPauseDepth(0)
-  }
+  resume(scope = '', force?: boolean) {
+    let { pauseDepths } = this
 
-  whilePaused(func) {
-    this.setPauseDepth(this.pauseDepth + 1)
-    func()
-    this.setPauseDepth(this.pauseDepth - 1)
-  }
+    if (scope in pauseDepths) {
 
-  private setPauseDepth(depth: number) {
-    let oldDepth = this.pauseDepth
-    this.pauseDepth = depth // for this.drain() call
+      if (force) {
+        delete pauseDepths[scope]
 
-    if (depth) { // wants to pause
-      if (!oldDepth) {
-        this.clearTimeout()
+      } else {
+        let depth = --pauseDepths[scope]
+
+        if (depth <= 0) {
+          delete pauseDepths[scope]
+        }
       }
-    } else { // wants to unpause
-      if (oldDepth) {
-        this.drain()
-      }
+
+      this.tryDrain()
     }
   }
 
-  private clearTimeout() {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId)
-      this.timeoutId = 0
-    }
+  isPaused() {
+    return Object.keys(this.pauseDepths).length
   }
 
-  drain() {
-    if (!this.isRunning && !this.pauseDepth) {
+  tryDrain() {
+    if (!this.isRunning && !this.isPaused()) {
       this.isRunning = true
 
       while (this.isDirty) {
@@ -74,24 +73,32 @@ export class DelayedRunner {
     }
   }
 
-  protected drained() {
+  clear() {
+    this.clearTimeout()
+    this.isDirty = false
+    this.pauseDepths = {}
+  }
+
+  private clearTimeout() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId)
+      this.timeoutId = 0
+    }
+  }
+
+  protected drained() { // subclasses can implement
     if (this.drainedOption) {
       this.drainedOption()
     }
   }
 
-  clear() {
-    this.pause()
-    this.isDirty = false
-  }
-
 }
 
 
-export class TaskRunner<Task> {
+export class TaskRunner<Task> { // this class USES the DelayedRunner
 
   private isRunning = false
-  private pauseDepth = 0
+  private pauseDepths: { [scope: string]: number } = {}
   private queue: Task[] = []
   private delayedRunner: DelayedRunner
 
@@ -99,7 +106,7 @@ export class TaskRunner<Task> {
     private runTaskOption?: (task: Task) => void,
     private drainedOption?: (completedTasks: Task[]) => void
   ) {
-    this.delayedRunner = new DelayedRunner(this.drain.bind(this))
+    this.delayedRunner = new DelayedRunner(this.tryDrain.bind(this))
   }
 
   request(task: Task, delay?: number) {
@@ -107,10 +114,40 @@ export class TaskRunner<Task> {
     this.delayedRunner.request(delay)
   }
 
-  drain() {
+  pause(scope = '') {
+    let { pauseDepths } = this
+
+    pauseDepths[scope] = (pauseDepths[scope] || 0) + 1
+  }
+
+  resume(scope = '', force?: boolean) {
+    let { pauseDepths } = this
+
+    if (scope in pauseDepths) {
+
+      if (force) {
+        delete pauseDepths[scope]
+
+      } else {
+        let depth = --pauseDepths[scope]
+
+        if (depth <= 0) {
+          delete pauseDepths[scope]
+        }
+      }
+
+      this.tryDrain()
+    }
+  }
+
+  isPaused() {
+    return Object.keys(this.pauseDepths).length
+  }
+
+  tryDrain() {
     let { queue } = this
 
-    if (!this.isRunning && !this.pauseDepth) {
+    if (!this.isRunning && !this.isPaused()) {
       this.isRunning = true
 
       while (queue.length) {
@@ -129,40 +166,13 @@ export class TaskRunner<Task> {
     }
   }
 
-  pause() {
-    this.setPauseDepth(1)
-  }
-
-  resume() {
-    this.setPauseDepth(0)
-  }
-
-  whilePaused(func) {
-    this.setPauseDepth(this.pauseDepth + 1)
-    func()
-    this.setPauseDepth(this.pauseDepth - 1)
-  }
-
-  private setPauseDepth(depth: number) {
-    let oldDepth = this.pauseDepth
-    this.pauseDepth = depth // for this.drain() call
-
-    if (depth) { // wants to pause
-      ;
-    } else { // wants to unpause
-      if (oldDepth) {
-        this.drain()
-      }
-    }
-  }
-
-  protected runTask(task: Task) {
+  protected runTask(task: Task) { // subclasses can implement
     if (this.runTaskOption) {
       this.runTaskOption(task)
     }
   }
 
-  protected drained(completedTasks: Task[]) {
+  protected drained(completedTasks: Task[]) { // subclasses can implement
     if (this.drainedOption) {
       this.drainedOption(completedTasks)
     }
