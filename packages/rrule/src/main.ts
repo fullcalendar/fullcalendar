@@ -39,11 +39,14 @@ let recurring: RecurringType = {
     return null
   },
 
-  expand(rrule: RRule, framingRange: DateRange): DateMarker[] {
+  expand(rrule: RRule, framingRange: DateRange, dateEnv: DateEnv): DateMarker[] {
     // we WANT an inclusive start and in exclusive end, but the js rrule lib will only do either BOTH
     // inclusive or BOTH exclusive, which is stupid: https://github.com/jakubroztocil/rrule/issues/84
     // Workaround: make inclusive, which will generate extra occurences, and then trim.
     return rrule.between(framingRange.start, framingRange.end, true)
+      .map(function(date) {
+        return dateEnv.createMarker(date)
+      })
       .filter(function(date) {
         return date.valueOf() < framingRange.end.valueOf()
       })
