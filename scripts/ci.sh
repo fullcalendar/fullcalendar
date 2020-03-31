@@ -13,8 +13,12 @@ EXCLUDE_PKGS=''
 # (see .travis.yml in each project). Skip altogether for now.
 if [[ "$CI" == "true" ]]
 then
-  echo "Skipping angular because we're in a CI environment"
+  echo "Skipping everything angular when in a CI environment because of ChromeHeadless problems (fixed?)"
   EXCLUDE_PKGS='**/angular'
+else
+  echo "Skipping angular example project because we sometimes get a 'Maximum call stack size exceeded' when 'flattening the source-map'"
+  echo "TODO: come up with a solution for v5"
+  EXCLUDE_PKGS='example-projects/angular'
 fi
 
 # all contrib projects build/test/lint/etc?
