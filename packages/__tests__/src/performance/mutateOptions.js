@@ -1,4 +1,3 @@
-import deepEqual from 'fast-deep-equal'
 import { Calendar } from '@fullcalendar/core'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
@@ -31,10 +30,6 @@ describe('mutateOptions', function() {
     $calendarEl.remove()
   })
 
-  function mutateOptions(updates) {
-    calendar.mutateOptions(updates, [], false, deepEqual)
-  }
-
   it('will react to a single option and keep scroll', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()
@@ -46,7 +41,7 @@ describe('mutateOptions', function() {
     let scrollTop = scrollEl.scrollTop
     expect(scrollTop).toBeGreaterThan(0)
 
-    mutateOptions({ allDaySlot: false })
+    calendar.mutateOptions({ allDaySlot: false })
 
     expect(calendar.getOption('allDaySlot')).toBe(false)
     expect(viewWrapper.dayGrid).toBeFalsy()
@@ -60,7 +55,7 @@ describe('mutateOptions', function() {
     let calendarWrapper = new CalendarWrapper(calendar)
     let dateEl = calendarWrapper.getFirstDateEl()
 
-    mutateOptions({
+    calendar.mutateOptions({
       events: [
         { start: '2019-04-01T00:00:00' }
       ]
@@ -77,7 +72,7 @@ describe('mutateOptions', function() {
     let calendarWrapper = new CalendarWrapper(calendar)
     let dateEl = calendarWrapper.getFirstDateEl()
 
-    mutateOptions({
+    calendar.mutateOptions({
       defaultView: 'timeGridDay'
     })
 
