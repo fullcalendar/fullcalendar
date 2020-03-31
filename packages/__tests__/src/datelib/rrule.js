@@ -202,7 +202,7 @@ describe('rrule plugin', function() {
     expect(events[0].allDay).toBe(false)
   })
 
-  it('can generate local dates', function() {
+  it('can generate local dates when rrule is defined in object form', function() {
     initCalendar({
       timeZone: 'local',
       events: [
@@ -211,6 +211,24 @@ describe('rrule plugin', function() {
             dtstart: parseLocalDate('2018-09-04T05:00:00').toISOString(),
             freq: 'weekly'
           }
+        }
+      ]
+    })
+    let events = getSortedEvents()
+    expect(events.length).toBe(5)
+    expect(events[0].start).toEqualLocalDate('2018-09-04T05:00:00')
+    expect(events[0].end).toBe(null)
+    expect(events[0].allDay).toBe(false)
+  })
+  
+  it('can generate local dates when rrule is defined as icalendar string', function() {
+    const localDateToUTCIsoString = parseLocalDate('2018-09-04T05:00:00').toISOString()
+    const modified = localDateToUTCIsoString.replace('.000', '').replace(/[\-\:]/g, '')
+    initCalendar({
+      timeZone: 'local',
+      events: [
+        {
+          rrule: `DTSTART:${modified}\nRRULE:FREQ=WEEKLY`,
         }
       ]
     })
