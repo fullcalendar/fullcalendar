@@ -20,6 +20,10 @@ export type RenderHookPropsChildren = (
   innerContent: ComponentChildren // if falsy, means it wasn't specified
 ) => ComponentChildren
 
+export interface ContentTypeHandlers {
+  [contentKey: string]: () => (el: HTMLElement, contentVal: any) => void
+}
+
 // TODO: use capitalizeFirstLetter util
 
 
@@ -77,9 +81,14 @@ export interface ContentHookProps<HookProps> {
 export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps>> {
 
   static contextType = ComponentContextType
+  context: ComponentContext
 
   private innerElRef = createRef()
-  private customContentHandler: ContentHandler<any>
+  private customContentInfo: {
+    contentKey: string
+    contentVal: any
+    handler: (el: HTMLElement, contentVal: any) => void
+  }
 
 
   render(props: ContentHookProps<HookProps>) {
@@ -98,44 +107,53 @@ export class ContentHook<HookProps> extends Component<ContentHookProps<HookProps
 
 
   private renderInnerContent() {
-    let { props } = this
-    let innerContent: ComponentChildren = null
+    let { contentTypeHandlers } = this.context.pluginHooks
+    let { props, customContentInfo } = this
     let rawVal = (this.props.options || this.context.options)[props.name ? props.name + 'Content' : 'content']
-    let innerContentRaw = normalizeContent(rawVal, props.hookProps)
+    let innerContent = normalizeContent(rawVal, props.hookProps)
+    let innerContentVDom: ComponentChildren = null
 
-    if (innerContentRaw === undefined) {
-      innerContentRaw = normalizeContent(props.defaultContent, props.hookProps)
+    if (innerContent === undefined) { // use the default
+      innerContent = normalizeContent(props.defaultContent, props.hookProps)
     }
 
-    if (innerContentRaw !== undefined) {
+    if (innerContent !== undefined) { // we allow custom content handlers to return nothing
 
-      if (isComponentChildren(innerContentRaw)) {
-        innerContent = innerContentRaw
+      if (customContentInfo) {
+        customContentInfo.contentVal = innerContent[customContentInfo.contentKey]
 
       } else {
-        innerContent = [] // signal that something was specified
+        // look for a prop that would indicate a custom content handler is needed
+        for (let contentKey in contentTypeHandlers) {
 
-        if (this.customContentHandler) {
-          this.customContentHandler.meta = innerContentRaw
-
-        // after this point, we know innerContentRaw is not null nor undefined
-        // would have been caught by isComponentChildren
-        } else if ('html' in innerContentRaw) {
-          this.customContentHandler = new HtmlContentHandler(innerContentRaw)
-
-        } else if ('domNodes' in innerContentRaw) {
-          this.customContentHandler = new DomContentHandler(innerContentRaw)
+          if (innerContent[contentKey] !== undefined) {
+            customContentInfo = this.customContentInfo = {
+              contentKey,
+              contentVal: innerContent[contentKey],
+              handler: contentTypeHandlers[contentKey]()
+            }
+            break
+          }
         }
+      }
+
+      if (customContentInfo) {
+        innerContentVDom = [] // signal that something was specified
+      } else {
+        innerContentVDom = innerContent // assume a [p]react vdom node. use it
       }
     }
 
-    return innerContent
+    return innerContentVDom
   }
 
 
   private updateCustomContent() {
-    if (this.customContentHandler) {
-      this.customContentHandler.updateEl(this.innerElRef.current || this.props.backupElRef.current)
+    if (this.customContentInfo) {
+      this.customContentInfo.handler(
+        this.innerElRef.current || this.props.backupElRef.current, // the element to render into
+        this.customContentInfo.contentVal
+      )
     }
   }
 
@@ -245,72 +263,5 @@ function normalizeContent(input, hookProps) {
     return input(hookProps)
   } else {
     return input
-  }
-}
-
-
-function isComponentChildren(input) { // TODO: make this a general util
-  let type = typeof input
-
-  return (type === 'object')
-    ? (
-      !input || // null
-      Array.isArray(input) || // DOM node list
-      input.type // a virtual DOM node
-    )
-    : type.match(/^(undefined|string|number|boolean)$/)
-}
-
-
-abstract class ContentHandler<RenderMeta> {
-
-  private el: HTMLElement
-
-  constructor(public meta: RenderMeta) {
-  }
-
-  updateEl(el: HTMLElement) {
-    this.render(el, this.meta, this.el !== el)
-    this.el = el
-  }
-
-  abstract render(el: HTMLElement, meta: RenderMeta, isInitial: boolean)
-
-}
-
-
-type HtmlMeta = { html: string }
-
-class HtmlContentHandler extends ContentHandler<HtmlMeta> {
-
-  render(el: HTMLElement, meta: HtmlMeta) {
-    el.innerHTML = meta.html
-  }
-
-}
-
-
-type DomMeta = { domNodes: Node[] | NodeList }
-
-class DomContentHandler extends ContentHandler<DomMeta> {
-
-  render(el: HTMLElement, meta: DomMeta) {
-    removeAllChildren(el)
-
-    let { domNodes } = meta
-
-    for (let i = 0; i < domNodes.length; i++) {
-      el.appendChild(domNodes[i])
-    }
-  }
-
-}
-
-
-function removeAllChildren(parentEl: HTMLElement) { // TODO: move to util file
-  let { childNodes } = parentEl
-
-  while (childNodes.length) {
-    parentEl.removeChild(childNodes[0])
   }
 }

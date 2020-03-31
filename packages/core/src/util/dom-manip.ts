@@ -1,3 +1,5 @@
+import { isArraysEqual } from './array'
+
 
 export function htmlToElement(html: string): HTMLElement {
   html = html.trim()
@@ -7,9 +9,27 @@ export function htmlToElement(html: string): HTMLElement {
 }
 
 
-export function removeElement(el: HTMLElement) {
+export function removeElement(el: HTMLElement) { // removes nodes in addition to elements. bad name
   if (el.parentNode) {
     el.parentNode.removeChild(el)
+  }
+}
+
+
+export function injectHtml(el: HTMLElement, html: string) {
+  el.innerHTML = html
+}
+
+
+export function injectDomNodes(el: HTMLElement, domNodes: Node[] | NodeList) {
+  let oldNodes = Array.prototype.slice.call(el.childNodes) // TODO: use array util
+  let newNodes = Array.prototype.slice.call(domNodes) // TODO: use array util
+
+  if (!isArraysEqual(oldNodes, newNodes)) {
+    for (let newNode of newNodes) {
+      el.appendChild(newNode)
+    }
+    oldNodes.forEach(removeElement)
   }
 }
 

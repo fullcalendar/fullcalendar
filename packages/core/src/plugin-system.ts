@@ -21,6 +21,7 @@ import { ElementDraggingClass } from './interactions/ElementDragging'
 import { guid } from './util/misc'
 import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
+import { ContentTypeHandlers } from './common/render-hook'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -52,6 +53,7 @@ export interface PluginDefInput {
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers?: OptionChangeHandlerMap
   scrollGridImpl?: ScrollGridImpl
+  contentTypeHandlers?: ContentTypeHandlers
 }
 
 export interface PluginHooks {
@@ -81,6 +83,7 @@ export interface PluginHooks {
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers: OptionChangeHandlerMap
   scrollGridImpl: ScrollGridImpl | null
+  contentTypeHandlers: ContentTypeHandlers
 }
 
 export interface PluginDef extends PluginHooks {
@@ -126,7 +129,8 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     defaultView: input.defaultView || '',
     elementDraggingImpl: input.elementDraggingImpl,
     optionChangeHandlers: input.optionChangeHandlers || {},
-    scrollGridImpl: input.scrollGridImpl || null
+    scrollGridImpl: input.scrollGridImpl || null,
+    contentTypeHandlers: input.contentTypeHandlers || {}
   }
 }
 
@@ -162,7 +166,8 @@ export class PluginSystem {
       defaultView: '',
       elementDraggingImpl: null,
       optionChangeHandlers: {},
-      scrollGridImpl: null
+      scrollGridImpl: null,
+      contentTypeHandlers: {}
     }
     this.addedHash = {}
   }
@@ -208,6 +213,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     defaultView: hooks0.defaultView || hooks1.defaultView, // put earlier plugins FIRST
     elementDraggingImpl: hooks0.elementDraggingImpl || hooks1.elementDraggingImpl, // "
     optionChangeHandlers: { ...hooks0.optionChangeHandlers, ...hooks1.optionChangeHandlers },
-    scrollGridImpl: hooks1.scrollGridImpl || hooks0.scrollGridImpl
+    scrollGridImpl: hooks1.scrollGridImpl || hooks0.scrollGridImpl,
+    contentTypeHandlers: { ...hooks0.contentTypeHandlers, ...hooks1.contentTypeHandlers }
   }
 }
