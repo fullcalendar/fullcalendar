@@ -5,15 +5,18 @@ import { EventSource } from './structs/event-source'
 
 export default createPlugin({
   optionChangeHandlers: {
-    events(events, calendar, deepEqual) {
-      handleEventSources([ events ], calendar, deepEqual)
+    events(events, calendar) {
+      handleEventSources([ events ], calendar)
     },
     eventSources: handleEventSources,
     plugins: handlePlugins
   }
 })
 
-function handleEventSources(inputs, calendar: Calendar, deepEqual) {
+/*
+BUG: if `event` was supplied, all previously-given `eventSources` will be wiped out
+*/
+function handleEventSources(inputs, calendar: Calendar) {
   let unfoundSources: EventSource[] = hashValuesToArray(calendar.state.eventSources)
   let newInputs = []
 
@@ -21,7 +24,7 @@ function handleEventSources(inputs, calendar: Calendar, deepEqual) {
     let inputFound = false
 
     for (let i = 0; i < unfoundSources.length; i++) {
-      if (deepEqual(unfoundSources[i]._raw, input)) {
+      if (unfoundSources[i]._raw === input) {
         unfoundSources.splice(i, 1) // delete
         inputFound = true
         break

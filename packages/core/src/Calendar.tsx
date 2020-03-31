@@ -57,7 +57,7 @@ export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 export type CalendarInteraction = { destroy() }
 export type CalendarInteractionClass = { new(calendar: Calendar): CalendarInteraction }
 
-export type OptionChangeHandler = (propValue: any, calendar: Calendar, deepEqual) => void
+export type OptionChangeHandler = (propValue: any, calendar: Calendar) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
 export type ResizeHandler = (force: boolean) => void
@@ -388,7 +388,7 @@ export default class Calendar {
   /*
   handles option changes (like a diff)
   */
-  mutateOptions(updates, removals: string[], isDynamic?: boolean, deepEqual?) {
+  mutateOptions(updates, removals: string[] = [], isDynamic?: boolean) {
     let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
     let normalUpdates = {}
     let specialUpdates = {}
@@ -445,10 +445,8 @@ export default class Calendar {
       }
 
       // special updates
-      if (deepEqual) {
-        for (let name in specialUpdates) {
-          changeHandlers[name](specialUpdates[name], this, deepEqual)
-        }
+      for (let name in specialUpdates) {
+        changeHandlers[name](specialUpdates[name], this)
       }
 
     })
