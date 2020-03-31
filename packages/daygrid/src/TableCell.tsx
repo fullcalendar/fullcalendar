@@ -19,7 +19,7 @@ import {
   addDays,
   intersectRanges,
 } from '@fullcalendar/core'
-import { TableSeg } from './main'
+import TableSeg from './TableSeg'
 
 
 export interface TableCellProps extends TableCellModel {
