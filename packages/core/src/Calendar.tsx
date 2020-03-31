@@ -1,6 +1,6 @@
 import { default as EmitterMixin, EmitterInterface } from './common/EmitterMixin'
 import OptionsManager from './OptionsManager'
-import { OptionsInput, EventHandlerName, EventHandlerArgs } from './types/input-types'
+import { OptionsInput } from './types/input-types'
 import { buildLocale, organizeRawLocales, RawLocaleMap } from './datelib/locale'
 import { DateEnv, DateInput } from './datelib/env'
 import { DateMarker, startOfDay, diffWholeDays } from './datelib/marker'
@@ -542,13 +542,13 @@ export default class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  hasPublicHandlers<T extends EventHandlerName>(name: T): boolean {
+  hasPublicHandlers(name): boolean {
     return this.hasHandlers(name) ||
       this.opt(name) // handler specified in options
   }
 
 
-  publiclyTrigger<T extends EventHandlerName>(name: T, args?: EventHandlerArgs<T>) {
+  publiclyTrigger(name, args?) {
     let optHandler = this.opt(name)
 
     this.triggerWith(name, this, args)
