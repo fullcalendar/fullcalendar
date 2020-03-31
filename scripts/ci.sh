@@ -7,9 +7,7 @@ npm run build
 npm run test:ci
 # npm run lint # for v5!!!
 
-# for v5!!!
-# EXCLUDE_PKGS=''
-EXCLUDE_PKGS='example-projects/angular'
+EXCLUDE_PKGS=''
 
 # all angular-related packages have e2e tests that require a complicated CI setup.
 # (see .travis.yml in each project). Skip altogether for now.
