@@ -58,11 +58,36 @@ export default createPlugin({
 function parseRRule(input, dateEnv: DateEnv) {
   let allDayGuess = null
   let rrule
-
+  
   if (typeof input === 'string') {
-    rrule = rrulestr(input)
+    let rruleTemp = rrulestr(input)
 
-  } else if (typeof input === 'object' && input) { // non-null object
+    if (rruleTemp.origOptions.dtstart != null) {
+      rruleTemp.origOptions.dtstart = dateEnv.createMarker(rruleTemp.origOptions.dtstart)
+    }
+
+    if (rruleTemp.origOptions.until != null) {
+      rruleTemp.origOptions.until = dateEnv.createMarker(rruleTemp.origOptions.until)
+    }
+
+    if (rruleTemp.origOptions.freq != null) {
+      rruleTemp.origOptions.freq = convertConstant(rruleTemp.origOptions.freq)
+    }
+
+    if (rruleTemp.origOptions.wkst != null) {
+      rruleTemp.origOptions.wkst = convertConstant(rruleTemp.origOptions.wkst)
+    }
+    else {
+      rruleTemp.origOptions.wkst = (dateEnv.weekDow - 1 + 7) % 7 // convert Sunday-first to Monday-first
+    }
+
+    if (rruleTemp.origOptions.byweekday != null) {
+      rruleTemp.origOptions.byweekday = convertConstants(rruleTemp.origOptions.byweekday) // the plural version
+    }
+
+    rrule = new RRule(rruleTemp.origOptions)
+  }
+  else if (typeof input === 'object' && input) { // non-null object
     let refined = { ...input } // copy
 
     if (typeof refined.dtstart === 'string') {
@@ -71,7 +96,8 @@ function parseRRule(input, dateEnv: DateEnv) {
       if (dtstartMeta) {
         refined.dtstart = dtstartMeta.marker
         allDayGuess = dtstartMeta.isTimeUnspecified
-      } else {
+      }
+      else {
         delete refined.dtstart
       }
     }
@@ -86,7 +112,8 @@ function parseRRule(input, dateEnv: DateEnv) {
 
     if (refined.wkst != null) {
       refined.wkst = convertConstant(refined.wkst)
-    } else {
+    }
+    else {
       refined.wkst = (dateEnv.weekDow - 1 + 7) % 7 // convert Sunday-first to Monday-first
     }
 

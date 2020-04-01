@@ -64,7 +64,7 @@ describe('rrule plugin', function() {
     expect(events[4].start).toEqualDate('2018-10-02T13:00:00Z')
   })
 
-  it('can expand monthly recurrence', function() {
+  it('can expand monthly recurrence when given an rrule object', function() {
     initCalendar({
       defaultView: 'dayGridMonth',
       now: '2018-12-25T12:00:00',
@@ -75,6 +75,21 @@ describe('rrule plugin', function() {
           count: 13,
           bymonthday: [ 13 ]
         }
+      } ]
+    })
+
+    let events = currentCalendar.getEvents()
+    expect(events.length).toBe(1)
+    expect(events[0].start).toEqualDate('2018-12-13')
+  })
+
+  // https://github.com/fullcalendar/fullcalendar/issues/4955
+  it('can expand monthly recurrence when given an rrule string', function() {
+    initCalendar({
+      defaultView: 'dayGridMonth',
+      now: '2018-12-25T12:00:00',
+      events: [ {
+        rrule: 'DTSTART:20181101\nRRULE:FREQ=MONTHLY;COUNT=13;BYMONTHDAY=13'
       } ]
     })
 
@@ -202,7 +217,7 @@ describe('rrule plugin', function() {
     expect(events[0].allDay).toBe(false)
   })
 
-  it('can generate local dates when rrule is defined in object form', function() {
+  it('can generate local dates when given an rrule object', function() {
     initCalendar({
       timeZone: 'local',
       events: [
@@ -220,8 +235,9 @@ describe('rrule plugin', function() {
     expect(events[0].end).toBe(null)
     expect(events[0].allDay).toBe(false)
   })
-  
-  it('can generate local dates when rrule is defined as icalendar string', function() {
+
+  // https://github.com/fullcalendar/fullcalendar/issues/4955
+  it('can generate local dates when given an rrule string', function() {
     const localDateToUTCIsoString = parseLocalDate('2018-09-04T05:00:00').toISOString()
     const modified = localDateToUTCIsoString.replace('.000', '').replace(/[\-\:]/g, '')
     initCalendar({
