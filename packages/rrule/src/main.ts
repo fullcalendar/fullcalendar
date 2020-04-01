@@ -58,7 +58,7 @@ export default createPlugin({
 function parseRRule(input, dateEnv: DateEnv) {
   let allDayGuess = null
   let rrule
-  
+
   if (typeof input === 'string') {
     let rruleTemp = rrulestr(input)
 
@@ -76,8 +76,7 @@ function parseRRule(input, dateEnv: DateEnv) {
 
     if (rruleTemp.origOptions.wkst != null) {
       rruleTemp.origOptions.wkst = convertConstant(rruleTemp.origOptions.wkst)
-    }
-    else {
+    } else {
       rruleTemp.origOptions.wkst = (dateEnv.weekDow - 1 + 7) % 7 // convert Sunday-first to Monday-first
     }
 
@@ -86,8 +85,7 @@ function parseRRule(input, dateEnv: DateEnv) {
     }
 
     rrule = new RRule(rruleTemp.origOptions)
-  }
-  else if (typeof input === 'object' && input) { // non-null object
+  } else if (typeof input === 'object' && input) { // non-null object
     let refined = { ...input } // copy
 
     if (typeof refined.dtstart === 'string') {
@@ -96,8 +94,7 @@ function parseRRule(input, dateEnv: DateEnv) {
       if (dtstartMeta) {
         refined.dtstart = dtstartMeta.marker
         allDayGuess = dtstartMeta.isTimeUnspecified
-      }
-      else {
+      } else {
         delete refined.dtstart
       }
     }
@@ -112,8 +109,7 @@ function parseRRule(input, dateEnv: DateEnv) {
 
     if (refined.wkst != null) {
       refined.wkst = convertConstant(refined.wkst)
-    }
-    else {
+    } else {
       refined.wkst = (dateEnv.weekDow - 1 + 7) % 7 // convert Sunday-first to Monday-first
     }
 
