@@ -23,7 +23,7 @@ export interface TableDateCellProps {
   extraHookProps?: object
 }
 
-interface HookProps extends DateMeta {
+export interface DateHeaderCellHookProps extends DateMeta { // is used publicly as the standard header cell. TODO: move
   date: Date
   view: ViewApi
   text: string
@@ -51,7 +51,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
       ? buildNavLinkData(date)
       : null
 
-    let hookProps: HookProps = {
+    let hookProps: DateHeaderCellHookProps = {
       date: dateEnv.toDate(date),
       view: context.view,
       ...props.extraHookProps,
@@ -111,7 +111,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 
     let text = dateEnv.format(date, props.dayHeaderFormat)
 
-    let hookProps: HookProps = {
+    let hookProps: DateHeaderCellHookProps = {
       date,
       ...dateMeta,
       view: context.view,
@@ -137,7 +137,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 }
 
 
-function renderInner(hookProps: HookProps) {
+function renderInner(hookProps: DateHeaderCellHookProps) {
   if (!hookProps.isDisabled) {
     return (
       <a data-navlink={hookProps.navLinkData}>

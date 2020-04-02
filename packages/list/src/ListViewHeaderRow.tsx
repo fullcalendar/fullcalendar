@@ -1,5 +1,6 @@
 import {
-  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, DayCellRoot, DayCellHookProps, DayCellContent
+  BaseComponent, DateMarker, createFormatter, ComponentContext, h, DateRange, getDateMeta,
+  RenderHook, buildNavLinkData, DateHeaderCellHookProps, getDayClassNames, formatDayString
 } from '@fullcalendar/core'
 
 
@@ -8,7 +9,7 @@ export interface ListViewHeaderRowProps {
   todayRange: DateRange
 }
 
-interface HookProps extends DayCellHookProps { // doesn't enforce much since DayCellHookProps allow extra props
+interface HookProps extends DateHeaderCellHookProps { // doesn't enforce much since DayCellHookProps allow extra props
   text: string
   sideText: string
 }
@@ -16,32 +17,48 @@ interface HookProps extends DayCellHookProps { // doesn't enforce much since Day
 
 export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
+
   render(props: ListViewHeaderRowProps, state: {}, context: ComponentContext) {
     let { theme, dateEnv, options } = context
     let { dayDate } = props
+    let dayMeta = getDateMeta(dayDate, props.todayRange)
     let mainFormat = createFormatter(options.listDayFormat) // TODO: cache
     let sideFormat = createFormatter(options.listDaySideFormat) // TODO: cache
     let text = mainFormat ? dateEnv.format(dayDate, mainFormat) : '' // will ever be falsy?
     let sideText = sideFormat ? dateEnv.format(dayDate, sideFormat) : '' // will ever be falsy? also, BAD NAME "alt"
-    let extraHookProps = { text, sideText }
+
+    let navLinkData = options.navLinks
+      ? buildNavLinkData(dayDate)
+      : null
+
+    let hookProps: HookProps = {
+      date: dateEnv.toDate(dayDate),
+      view: context.view,
+      text,
+      sideText,
+      navLinkData,
+      ...dayMeta
+    }
+
+    let classNames = [ 'fc-list-day' ].concat(
+      getDayClassNames(dayMeta, context.theme)
+    )
+
+    // TODO: make a reusable HOC for dayHeader (used in daygrid/timegrid too)
     return (
-      <DayCellRoot date={dayDate} todayRange={props.todayRange} extraHookProps={extraHookProps}>
-        {(rootElRef, classNames, dataAttrs) => (
+      <RenderHook name='dayHeader' hookProps={hookProps} defaultContent={renderInnerContent}>
+        {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <tr
             ref={rootElRef}
-            className={[ 'fc-list-day' ].concat(classNames).join(' ')}
-            {...dataAttrs}
+            className={classNames.concat(customClassNames).join(' ')}
+            data-date={formatDayString(dayDate)}
           >
-            <DayCellContent date={dayDate} todayRange={props.todayRange} extraHookProps={extraHookProps} defaultContent={renderInnerContent}>
-              {(innerElRef, innerContent) => (
-                <td colSpan={3} className={theme.getClass('tableCellShaded')} ref={innerElRef}>
-                  {innerContent}
-                </td>
-              )}
-            </DayCellContent>
+            <th colSpan={3} className={theme.getClass('tableCellShaded')} ref={innerElRef}>
+              {innerContent}
+            </th>
           </tr>
         )}
-      </DayCellRoot>
+      </RenderHook>
     )
   }
 

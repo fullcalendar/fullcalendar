@@ -143,7 +143,7 @@ export { CalendarComponentProps } from './CalendarComponent'
 
 export { default as DayHeader } from './common/DayHeader'
 export { computeFallbackHeaderFormat } from './common/table-utils'
-export { default as TableDateCell, TableDowCell } from './common/TableDateCell'
+export { default as TableDateCell, TableDowCell, DateHeaderCellHookProps } from './common/TableDateCell'
 
 export { default as DaySeries } from './common/DaySeriesModel'
 
