@@ -6,7 +6,7 @@ it('timegrid view rerenders well', function(done) {
   let slotLaneRenderCnt = 0
   let eventRenderCnt = 0
 
-  initCalendar({
+  let calendar = initCalendar({
     defaultView: 'timeGridWeek',
     defaultDate: '2017-10-04',
     windowResizeDelay: 0,
@@ -45,16 +45,16 @@ it('timegrid view rerenders well', function(done) {
   expect(eventRenderCnt).toBe(1)
 
   resetCounts()
-  currentCalendar.next()
+  calendar.next()
   expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(14)
   expect(slotLabelRenderCnt).toBe(0)
   expect(slotLaneRenderCnt).toBe(0)
   expect(eventRenderCnt).toBe(0) // event will be out of view
 
-  currentCalendar.changeView('listWeek') // switch away
+  calendar.changeView('listWeek') // switch away
   resetCounts()
-  currentCalendar.changeView('timeGridWeek') // return to view
+  calendar.changeView('timeGridWeek') // return to view
   expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(14)
   expect(slotLabelRenderCnt).toBe(24)

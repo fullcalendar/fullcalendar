@@ -4,7 +4,7 @@ it('daygrid view rerenders well', function(done) {
   let dayCellRenderCnt = 0
   let eventRenderCnt = 0
 
-  initCalendar({
+  let calendar = initCalendar({
     defaultView: 'dayGridMonth',
     defaultDate: '2017-10-04',
     windowResizeDelay: 0,
@@ -33,15 +33,15 @@ it('daygrid view rerenders well', function(done) {
   expect(eventRenderCnt).toBe(1)
 
   resetCounts()
-  currentCalendar.next()
+  calendar.next()
 
   expect(dayHeaderRenderCnt).toBe(0) // same day-of-week headers
   expect(dayCellRenderCnt).toBe(42)
   expect(eventRenderCnt).toBe(0) // event will be out of view
 
-  currentCalendar.changeView('listWeek') // switch away
+  calendar.changeView('listWeek') // switch away
   resetCounts()
-  currentCalendar.changeView('dayGridMonth') // return to view
+  calendar.changeView('dayGridMonth') // return to view
   expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(42)
   expect(eventRenderCnt).toBe(0) // event still out of view
