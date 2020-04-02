@@ -11,7 +11,7 @@ export default class CalendarWrapper {
   static EVENT_RESIZER_CLASSNAME = 'fc-event-resizer'
   static EVENT_START_RESIZER_CLASSNAME = 'fc-event-resizer-start'
   static EVENT_END_RESIZER_CLASSNAME = 'fc-event-resizer-end'
-  static BG_EVENT_CLASSNAME = 'fc-bgevent'
+  static BG_EVENT_CLASSNAME = 'fc-bg-event'
   static DAY_PAST_CLASSNAME = 'fc-day-past'
   static DAY_FUTURE_CLASSNAME = 'fc-day-future'
   static SLOT_PAST_CLASSNAME = 'fc-slot-past'
@@ -68,12 +68,12 @@ export default class CalendarWrapper {
 
 
   getEventEls() { // FG only
-    return findElements(this.calendar.el, '.fc-event:not(.fc-bgevent)')
+    return findElements(this.calendar.el, '.fc-event:not(.fc-bg-event)')
   }
 
 
   getFirstEventEl() {
-    return this.calendar.el.querySelector('.fc-event:not(.fc-bgevent)') as HTMLElement
+    return this.calendar.el.querySelector('.fc-event:not(.fc-bg-event)') as HTMLElement
   }
 
 

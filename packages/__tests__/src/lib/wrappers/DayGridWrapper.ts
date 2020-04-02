@@ -144,7 +144,7 @@ export default class DayGridWrapper {
 
 
   getMorePopoverBgEventCnt() {
-    return this.getMorePopoverEl().querySelectorAll('.fc-bgevent').length
+    return this.getMorePopoverEl().querySelectorAll('.fc-bg-event').length
   }
 
 
@@ -170,7 +170,7 @@ export default class DayGridWrapper {
 
   getBgEventEls(row?) {
     let parentEl = row == null ? this.el : this.getRowEl(row)
-    return findElements(parentEl, '.fc-bgevent')
+    return findElements(parentEl, '.fc-bg-event')
   }
 
 

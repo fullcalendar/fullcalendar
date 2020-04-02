@@ -76,7 +76,7 @@ export default class TimeGridWrapper {
 
 
   queryBgEventsInCol(col) {
-    return findElements(this.getColEl(col), '.fc-bgevent')
+    return findElements(this.getColEl(col), '.fc-bg-event')
   }
 
 
@@ -565,7 +565,7 @@ export default class TimeGridWrapper {
 
 
   getBgEventEls() {
-    return findElements(this.el, '.fc-bgevent')
+    return findElements(this.el, '.fc-bg-event')
   }
 
 

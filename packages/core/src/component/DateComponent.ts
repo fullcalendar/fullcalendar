@@ -109,7 +109,7 @@ export default abstract class DateComponent<Props={}, State={}> extends BaseComp
 
 
   isValidDateDownEl(el: HTMLElement) {
-    return !elementClosest(el, '.fc-event:not(.fc-bgevent)') &&
+    return !elementClosest(el, '.fc-event:not(.fc-bg-event)') &&
       !elementClosest(el, '.fc-daygrid-more-link') && // a "more.." link
       !elementClosest(el, 'a[data-navlink]') && // a clickable nav link
       !this.isInPopover(el)

@@ -34,7 +34,7 @@ export const BgEvent = (props: BgEventProps) => (
     isToday={props.isToday}
   >
     {(rootElRef, classNames, style, innerElRef, innerContent) => (
-      <div ref={rootElRef} className={[ 'fc-bgevent' ].concat(classNames).join(' ')} style={style}>
+      <div ref={rootElRef} className={[ 'fc-bg-event' ].concat(classNames).join(' ')} style={style}>
         {innerContent}
       </div>
     )}

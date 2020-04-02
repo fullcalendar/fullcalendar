@@ -5,12 +5,12 @@
 */
 
 
-.fc-bgevent,
+.fc-bg-event,
 .fc-nonbusiness {
   opacity: 0.3;
 }
 
-.fc-bgevent,
+.fc-bg-event,
 .fc-nonbusiness,
 .fc-highlight {
   // will always have a harness
@@ -126,7 +126,7 @@
 /* BG events
 --------------------------------------------------------------------------------------------------*/
 
-.fc-bgevent .fc-event-title {
+.fc-bg-event .fc-event-title {
   margin: .5em;
   font-size: .85em;
   font-style: italic;

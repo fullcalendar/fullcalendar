@@ -4,13 +4,13 @@
   opacity: .3;
 }
 
-.fc-bgevent { /* default look for background events */
+.fc-bg-event { /* default look for background events */
   background: rgb(143, 223, 130);
   opacity: .3;
 }
 
 .fc-nonbusiness { /* default look for non-business-hours areas */
-  /* will inherit .fc-bgevent's styles */
+  /* will inherit .fc-bg-event's styles */
   background: #d7d7d7;
 }
 
