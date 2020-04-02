@@ -4,7 +4,7 @@ import { ToolbarModel, ToolbarWidget } from './toolbar-parse'
 
 
 export interface ToolbarProps extends ToolbarContent {
-  extraClassName: string
+  extraClassName: string // wish this could be array, but easier for pureness
   model: ToolbarModel
 }
 
@@ -22,23 +22,45 @@ export default class Toolbar extends BaseComponent<ToolbarProps> {
 
   render(props: ToolbarProps) {
     let { model } = props
+    let forceLtr = false
+    let startContent, endContent
+    let centerContent = model.center
+
+    if (model.left) {
+      forceLtr = true
+      startContent = model.left
+    } else {
+      startContent = model.start
+    }
+
+    if (model.right) {
+      forceLtr = true
+      endContent = model.right
+    } else {
+      endContent = model.end
+    }
+
+    let classNames = [
+      props.extraClassName || '',
+      'fc-toolbar',
+      forceLtr ? 'fc-toolbar-ltr' : ''
+    ]
 
     return (
-      <div class={'fc-toolbar ' + props.extraClassName}>
-        {this.renderSection('left', model.left)}
-        {this.renderSection('center', model.center)}
-        {this.renderSection('right', model.right)}
+      <div class={classNames.join(' ')}>
+        {this.renderSection(startContent || [])}
+        {this.renderSection(centerContent || [])}
+        {this.renderSection(endContent || [])}
       </div>
     )
   }
 
 
-  renderSection(position: string, widgetGroups: ToolbarWidget[][]) {
+  renderSection(widgetGroups: ToolbarWidget[][]) {
     let { props } = this
 
     return (
       <ToolbarSection
-        position={position}
         widgetGroups={widgetGroups}
         title={props.title}
         activeButton={props.activeButton}
@@ -53,7 +75,6 @@ export default class Toolbar extends BaseComponent<ToolbarProps> {
 
 
 interface ToolbarSectionProps extends ToolbarContent {
-  position: string
   widgetGroups: ToolbarWidget[][]
 }
 
@@ -63,7 +84,7 @@ class ToolbarSection extends BaseComponent<ToolbarSectionProps> {
     let { theme } = this.context
 
     return (
-      <div class={'fc-toolbar-' + props.position}>
+      <div class='fc-toolbar-chunk'>
         {props.widgetGroups.map((widgetGroup: ToolbarWidget[]) => {
           let children = []
           let isOnlyButtons = true

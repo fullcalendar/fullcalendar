@@ -17,9 +17,9 @@ export const globalDefaults = {
   defaultView: '',
   aspectRatio: 1.35,
   header: {
-    left: 'title',
+    start: 'title',
     center: '',
-    right: 'today prev,next'
+    end: 'today prev,next'
   },
   weekends: true,
   weekNumbers: false,
@@ -84,15 +84,6 @@ export const globalDefaults = {
   expandRows: false
 
   // dayMinWidth: null
-}
-
-
-export const rtlDefaults = { // right-to-left defaults
-  header: { // TODO: smarter solution (first/center/last ?)
-    left: 'next,prev today',
-    center: '',
-    right: 'title'
-  }
 }
 
 

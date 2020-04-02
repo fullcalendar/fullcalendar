@@ -5,6 +5,10 @@
   align-items: center;
 }
 
+.fc-dir-rtl .fc-toolbar-ltr {
+  flex-direction: row-reverse;
+}
+
 .fc-toolbar.fc-header-toolbar {
   margin-bottom: 1.5em;
 }

@@ -1,11 +1,10 @@
 import { ViewSpec } from './structs/view-spec'
 import Calendar from './Calendar'
 import Theme from './theme/Theme'
+import { mapHash } from './util/object'
 
 export interface ToolbarModel {
-  left: ToolbarWidget[][]
-  center: ToolbarWidget[][]
-  right: ToolbarWidget[][]
+  [sectionName: string]: ToolbarWidget[][]
 }
 
 export interface ToolbarWidget {
@@ -15,6 +14,7 @@ export interface ToolbarWidget {
   buttonText?: any
 }
 
+// TODO: make separate parsing of header/footer part of options-processing system
 export function parseToolbars(allOptions, theme: Theme, isRtl: boolean, calendar: Calendar) {
   let viewsWithButtons: string[] = []
   let header = allOptions.header ? parseToolbar(allOptions.header, theme, isRtl, calendar, viewsWithButtons) : null
@@ -24,21 +24,21 @@ export function parseToolbars(allOptions, theme: Theme, isRtl: boolean, calendar
 }
 
 function parseToolbar(raw, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarModel {
-  return {
-    left: raw.left ? parseSection(raw.left, theme, isRtl, calendar, viewsWithButtons) : [],
-    center: raw.center ? parseSection(raw.center, theme, isRtl, calendar, viewsWithButtons) : [],
-    right: raw.right ? parseSection(raw.right, theme, isRtl, calendar, viewsWithButtons) : []
-  }
+  return mapHash(raw, (rawSection: any) => parseSection(rawSection, theme, isRtl, calendar, viewsWithButtons))
 }
 
+/*
+BAD: querying icons and text here. should be done at render time
+*/
 function parseSection(sectionStr: string, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarWidget[][] {
   let optionsManager = calendar.optionsManager
   let viewSpecs = calendar.viewSpecs
   let calendarCustomButtons = optionsManager.computed.customButtons || {}
   let calendarButtonTextOverrides = optionsManager.overrides.buttonText || {}
   let calendarButtonText = optionsManager.computed.buttonText || {}
+  let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
 
-  return sectionStr.split(' ').map((buttonGroupStr, i): ToolbarWidget[] => {
+  return sectionSubstrs.map((buttonGroupStr, i): ToolbarWidget[] => {
     return buttonGroupStr.split(',').map((buttonName, j): ToolbarWidget => {
 
       if (buttonName === 'title') {

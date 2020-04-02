@@ -93,7 +93,6 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     options: {
       ...globalDefaults,
       ...viewDef.defaults,
-      ...optionsManager.dirDefaults,
       ...optionsManager.localeDefaults,
       ...optionsManager.overrides,
       ...singleUnitOverrides,
@@ -108,7 +107,6 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
 
     buttonTextDefault:
       queryButtonText(optionsManager.localeDefaults) ||
-      queryButtonText(optionsManager.dirDefaults) ||
       viewDef.defaults.buttonText ||
       queryButtonText(globalDefaults) ||
       viewDef.type // fall back to given view name

@@ -1,12 +1,11 @@
 import { firstDefined } from './util/misc'
-import { globalDefaults, rtlDefaults, mergeOptions } from './options'
+import { globalDefaults, mergeOptions } from './options'
 import { organizeRawLocales, buildLocale } from './datelib/locale'
 import { __assign } from 'tslib'
 
 
 export default class OptionsManager {
 
-  dirDefaults: any // option defaults related to LTR or RTL
   localeDefaults: any // option defaults related to current locale
   overrides: any // option overrides given to the fullCalendar constructor
   dynamicOverrides: any // options set with dynamic setter method. higher precedence than view overrides.
@@ -56,20 +55,10 @@ export default class OptionsManager {
     let available = organizeRawLocales(locales) // also done in Calendar :(
     let localeDefaults = buildLocale(locale || available.defaultCode, available.map).options
 
-    let dir = firstDefined( // based on options computed so far, is direction RTL?
-      this.dynamicOverrides.dir,
-      this.overrides.dir,
-      localeDefaults.dir
-    )
-
-    let dirDefaults = dir === 'rtl' ? rtlDefaults : {}
-
-    this.dirDefaults = dirDefaults
     this.localeDefaults = localeDefaults
 
     this.computed = mergeOptions([ // merge defaults and overrides. lowest to highest precedence
       globalDefaults, // global defaults
-      dirDefaults,
       localeDefaults,
       this.overrides,
       this.dynamicOverrides
