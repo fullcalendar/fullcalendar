@@ -99,7 +99,7 @@ export interface OptionsInputBase {
   now?: DateInput | (() => DateInput)
   defaultView?: string
   allDaySlot?: boolean
-  allDayContent?: string
+  allDayText?: string
   slotDuration?: DurationInput
   slotLabelFormat?: FormatterInput
   slotLabelInterval?: DurationInput

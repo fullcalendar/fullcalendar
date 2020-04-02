@@ -15,7 +15,7 @@ export default {
     list: "Napló"
   },
   weekText: "Hét",
-  allDayContent: "Egész nap",
+  allDayText: "Egész nap",
   moreLinkText: "további",
   noEventsContent: "Nincs megjeleníthető esemény"
 };

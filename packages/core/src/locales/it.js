@@ -15,7 +15,7 @@ export default {
     list: "Agenda"
   },
   weekText: "Sm",
-  allDayContent: "Tutto il giorno",
+  allDayText: "Tutto il giorno",
   moreLinkText: function(n) {
     return "+altri " + n;
   },

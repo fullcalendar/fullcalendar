@@ -15,7 +15,7 @@ export default {
     list: "Agenda"
   },
   weekText: "As",
-  allDayContent: "Egun osoa",
+  allDayText: "Egun osoa",
   moreLinkText: "gehiago",
   noEventsContent: "Ez dago ekitaldirik erakusteko"
 };

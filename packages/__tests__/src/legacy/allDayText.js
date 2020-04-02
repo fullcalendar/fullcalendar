@@ -1,11 +1,11 @@
 import ptBrLocale from '@fullcalendar/core/locales/pt-br'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('allDayContent', function() { // TODO: rename file
+describe('allDayText', function() {
 
   describe('when allDaySlots is not set', function() {
     describe('in week', function() {
-      it('should default allDayContent to using \'all-day\'', function() {
+      it('should default allDayText to using \'all-day\'', function() {
         let calendar = initCalendar({
           defaultView: 'timeGridWeek'
         })
@@ -13,7 +13,7 @@ describe('allDayContent', function() { // TODO: rename file
       })
     })
     describe('in day', function() {
-      it('should default allDayContent to using \'all-day\'', function() {
+      it('should default allDayText to using \'all-day\'', function() {
         let calendar = initCalendar({
           defaultView: 'timeGridDay'
         })
@@ -24,7 +24,7 @@ describe('allDayContent', function() { // TODO: rename file
 
   describe('when allDaySlots is set true', function() {
     describe('in week', function() {
-      it('should default allDayContent to using \'all-day\'', function() {
+      it('should default allDayText to using \'all-day\'', function() {
         let calendar = initCalendar({
           defaultView: 'timeGridWeek',
           allDaySlot: true
@@ -33,7 +33,7 @@ describe('allDayContent', function() { // TODO: rename file
       })
     })
     describe('in day', function() {
-      it('should default allDayContent to using \'all-day\'', function() {
+      it('should default allDayText to using \'all-day\'', function() {
         let calendar = initCalendar({
           defaultView: 'timeGridDay',
           allDaySlot: true
@@ -66,13 +66,13 @@ describe('allDayContent', function() { // TODO: rename file
     })
   })
 
-  describe('when allDaySlots is set true and allDayContent is specified', function() {
+  describe('when allDaySlots is set true and allDayText is specified', function() {
     describe('in week', function() {
       it('should show specified all day text', function() {
         let calendar = initCalendar({
           defaultView: 'timeGridWeek',
           allDaySlot: true,
-          allDayContent: 'axis-phosy'
+          allDayText: 'axis-phosy'
         })
         expectAllDayTextToBe(calendar, 'axis-phosy')
       })
@@ -81,7 +81,7 @@ describe('allDayContent', function() { // TODO: rename file
       it('should show specified all day text', function() {
         let calendar = initCalendar({
           defaultView: 'timeGridDay',
-          allDayContent: 'axis-phosy'
+          allDayText: 'axis-phosy'
         })
         expectAllDayTextToBe(calendar, 'axis-phosy')
       })
@@ -90,8 +90,8 @@ describe('allDayContent', function() { // TODO: rename file
 
   function expectAllDayTextToBe(calendar, text) {
     let viewWrapper = new TimeGridViewWrapper(calendar)
-    let allDayContent = viewWrapper.getAllDayAxisElText()
-    expect(allDayContent).toBe(text)
+    let allDayText = viewWrapper.getAllDayAxisElText()
+    expect(allDayText).toBe(text)
   }
 
 })

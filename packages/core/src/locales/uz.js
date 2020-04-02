@@ -7,7 +7,7 @@ export default {
     day: "Kun",
     list: "Kun tartibi"
   },
-  allDayContent: "Kun bo'yi",
+  allDayText: "Kun bo'yi",
   moreLinkText: function(n) {
     return "+ yana " + n;
   },

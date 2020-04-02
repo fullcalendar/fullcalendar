@@ -15,7 +15,7 @@ export default {
     list: "Agenda"
   },
   weekText: "Týd",
-  allDayContent: "Celý den",
+  allDayText: "Celý den",
   moreLinkText: function(n) {
     return "+další: " + n;
   },

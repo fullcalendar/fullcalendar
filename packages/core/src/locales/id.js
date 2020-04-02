@@ -15,7 +15,7 @@ export default {
     list: "Agenda"
   },
   weekText: "Mg",
-  allDayContent: "Sehari penuh",
+  allDayText: "Sehari penuh",
   moreLinkText: "lebih",
   noEventsContent: "Tidak ada acara untuk ditampilkan"
 };

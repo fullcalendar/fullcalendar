@@ -15,7 +15,7 @@ export default {
     list: "Axenda"
   },
   weekText: "Sm",
-  allDayContent: "Todo o día",
+  allDayText: "Todo o día",
   moreLinkText: "máis",
   noEventsContent: "Non hai eventos para amosar"
 };

@@ -15,7 +15,7 @@ export default {
     list: "Планер"
   },
   weekText: "Сед",
-  allDayContent: "Цео дан",
+  allDayText: "Цео дан",
   moreLinkText: function(n) {
     return "+ још " + n;
   },

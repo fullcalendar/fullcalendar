@@ -15,7 +15,7 @@ export default {
     list: "Күн тәртібі"
   },
   weekText: "Не",
-  allDayContent: "Күні бойы",
+  allDayText: "Күні бойы",
   moreLinkText: function(n) {
     return "+ тағы " + n;
   },

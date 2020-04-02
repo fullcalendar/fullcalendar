@@ -11,7 +11,7 @@ export default {
     list: "Lista"
   },
   weekText: "Sm",
-  allDayContent: "dia inteiro",
+  allDayText: "dia inteiro",
   moreLinkText: function(n) {
     return "mais +" + n;
   },

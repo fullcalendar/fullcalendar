@@ -15,7 +15,7 @@ export default {
     list: "Ατζέντα"
   },
   weekText: "Εβδ",
-  allDayContent: "Ολοήμερο",
+  allDayText: "Ολοήμερο",
   moreLinkText: "περισσότερα",
   noEventsContent: "Δεν υπάρχουν γεγονότα προς εμφάνιση"
 };

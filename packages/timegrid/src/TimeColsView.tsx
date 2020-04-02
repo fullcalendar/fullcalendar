@@ -268,8 +268,15 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
   // only a one-way height sync. we don't send the axis inner-content height to the DayGrid,
   // but DayGrid still needs to have classNames on inner elements in order to measure.
   renderTableRowAxis = (rowHeight?: number) => {
+    let { context } = this
+    let hookProps = {
+      text: context.options.allDayText,
+      view: context.view
+    }
+
     return (
-      <RenderHook name='allDay' hookProps={{ view: this.context.view }}>
+      // TODO: make reusable hook. used in list view too
+      <RenderHook name='allDay' hookProps={hookProps} defaultContent={renderAllDayInner}>
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <td ref={rootElRef} className={[
             'fc-timegrid-axis',
@@ -286,6 +293,10 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
     )
   }
 
+}
+
+function renderAllDayInner(hookProps) {
+  return hookProps.text
 }
 
 

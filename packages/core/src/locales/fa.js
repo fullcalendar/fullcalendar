@@ -16,7 +16,7 @@ export default {
     list: "برنامه"
   },
   weekText: "هف",
-  allDayContent: "تمام روز",
+  allDayText: "تمام روز",
   moreLinkText: function(n) {
     return "بیش از " + n;
   },

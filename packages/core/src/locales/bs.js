@@ -15,7 +15,7 @@ export default {
     list: "Raspored"
   },
   weekText: "Sed",
-  allDayContent: "Cijeli dan",
+  allDayText: "Cijeli dan",
   moreLinkText: function(n) {
     return "+ još " + n;
   },

@@ -11,7 +11,7 @@ export default {
     list: "일정목록"
   },
   weekText: "주",
-  allDayContent: "종일",
+  allDayText: "종일",
   moreLinkText: "개",
   noEventsContent: "일정이 없습니다"
 };

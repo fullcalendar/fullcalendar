@@ -15,7 +15,7 @@ export default {
     list: "कार्यसूची"
   },
   weekText: "हफ्ता",
-  allDayContent: "सभी दिन",
+  allDayText: "सभी दिन",
   moreLinkText: function(n) {
     return "+अधिक " + n;
   },

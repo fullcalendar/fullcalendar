@@ -15,7 +15,7 @@ export default {
     list: "Dnevni red"
   },
   weekText: "Teden",
-  allDayContent: "Ves dan",
+  allDayText: "Ves dan",
   moreLinkText: "več",
   noEventsContent: "Ni dogodkov za prikaz"
 };

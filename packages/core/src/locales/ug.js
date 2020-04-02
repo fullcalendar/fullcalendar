@@ -7,5 +7,5 @@ export default {
     day: "كۈن",
     list: "كۈنتەرتىپ"
   },
-  allDayContent: "پۈتۈن كۈن"
+  allDayText: "پۈتۈن كۈن"
 };

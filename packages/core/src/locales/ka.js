@@ -15,7 +15,7 @@ export default {
     list: "დღის წესრიგი"
   },
   weekText: "კვ",
-  allDayContent: "მთელი დღე",
+  allDayText: "მთელი დღე",
   moreLinkText: function(n) {
     return "+ კიდევ " + n;
   },

@@ -120,8 +120,13 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
     }
 
     if (doAllDay) {
+      let hookProps = {
+        text: context.options.allDayText,
+        view: context.view
+      }
+
       return (
-        <RenderHook name='allDay' hookProps={{ view: context.view }}>
+        <RenderHook name='allDay' hookProps={hookProps} defaultContent={renderAllDayInner}>
           {(rootElRef, classNames, innerElRef, innerContent) => (
             <td class={[ 'fc-list-event-time' ].concat(classNames).join(' ')} ref={rootElRef}>
               {innerContent}
@@ -140,4 +145,9 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
   }
 
   return null
+}
+
+
+function renderAllDayInner(hookProps) {
+  return hookProps.text
 }

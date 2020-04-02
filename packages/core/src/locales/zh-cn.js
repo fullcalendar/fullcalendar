@@ -16,7 +16,7 @@ export default {
     list: "日程"
   },
   weekText: "周",
-  allDayContent: "全天",
+  allDayText: "全天",
   moreLinkText: function(n) {
     return "另外 " + n + " 个";
   },

@@ -15,7 +15,7 @@ export default {
     list: "Ajanda"
   },
   weekText: "Hf",
-  allDayContent: "Tüm gün",
+  allDayText: "Tüm gün",
   moreLinkText: "daha fazla",
   noEventsContent: "Gösterilecek etkinlik yok"
 };

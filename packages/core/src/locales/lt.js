@@ -15,7 +15,7 @@ export default {
     list: "Darbotvarkė"
   },
   weekText: "SAV",
-  allDayContent: "Visą dieną",
+  allDayText: "Visą dieną",
   moreLinkText: "daugiau",
   noEventsContent: "Nėra įvykių rodyti"
 };

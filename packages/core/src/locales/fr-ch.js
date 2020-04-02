@@ -16,7 +16,7 @@ export default {
     list: "Mon planning"
   },
   weekText: "Sm",
-  allDayContent: "Toute la journée",
+  allDayText: "Toute la journée",
   moreLinkText: "en plus",
   noEventsContent: "Aucun événement à afficher"
 };

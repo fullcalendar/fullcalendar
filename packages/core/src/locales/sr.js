@@ -15,7 +15,7 @@ export default {
     list: "Planеr"
   },
   weekText: "Sed",
-  allDayContent: "Cеo dan",
+  allDayText: "Cеo dan",
   moreLinkText: function(n) {
     return "+ još " + n;
   },
