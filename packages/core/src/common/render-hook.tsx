@@ -260,7 +260,7 @@ function normalizeClassNames(classNames, hookProps) {
 
 function normalizeContent(input, hookProps) {
   if (typeof input === 'function') {
-    return input(hookProps)
+    return input(hookProps, h) // give the function the vdom-creation func
   } else {
     return input
   }
