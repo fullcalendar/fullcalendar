@@ -20,5 +20,5 @@ export default {
   moreLinkText: function(n) {
     return "另外 " + n + " 个";
   },
-  noEventsContent: "没有事件显示"
+  noEventsText: "没有事件显示"
 };

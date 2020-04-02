@@ -17,5 +17,5 @@ export default {
   weekText: "As",
   allDayText: "Egun osoa",
   moreLinkText: "gehiago",
-  noEventsContent: "Ez dago ekitaldirik erakusteko"
+  noEventsText: "Ez dago ekitaldirik erakusteko"
 };

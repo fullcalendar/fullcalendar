@@ -13,5 +13,5 @@ export default {
   weekText: "周",
   allDayText: "整天",
   moreLinkText: '顯示更多',
-  noEventsContent: "没有任何活動"
+  noEventsText: "没有任何活動"
 };

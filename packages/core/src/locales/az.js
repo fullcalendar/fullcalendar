@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ daha çox " + n;
   },
-  noEventsContent: "Göstərmək üçün hadisə yoxdur"
+  noEventsText: "Göstərmək üçün hadisə yoxdur"
 };

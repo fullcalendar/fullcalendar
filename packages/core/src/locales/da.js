@@ -17,5 +17,5 @@ export default {
   weekText: "Uge",
   allDayText: "Hele dagen",
   moreLinkText: "flere",
-  noEventsContent: "Ingen arrangementer at vise"
+  noEventsText: "Ingen arrangementer at vise"
 };

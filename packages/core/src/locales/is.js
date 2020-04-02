@@ -17,5 +17,5 @@ export default {
   weekText: "Vika",
   allDayText: "Allan daginn",
   moreLinkText: "meira",
-  noEventsContent: "Engir viðburðir til að sýna"
+  noEventsText: "Engir viðburðir til að sýna"
 };

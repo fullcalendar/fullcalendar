@@ -17,5 +17,5 @@ export default {
   weekText: "v.",
   allDayText: "Heldag",
   moreLinkText: "till",
-  noEventsContent: "Inga händelser att visa"
+  noEventsText: "Inga händelser att visa"
 };

@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ još " + n;
   },
-  noEventsContent: "Nema događaja za prikazivanje"
+  noEventsText: "Nema događaja za prikazivanje"
 };

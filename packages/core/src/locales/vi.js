@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ thêm " + n;
   },
-  noEventsContent: "Không có sự kiện để hiển thị"
+  noEventsText: "Không có sự kiện để hiển thị"
 };

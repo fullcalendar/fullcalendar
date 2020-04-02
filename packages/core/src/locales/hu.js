@@ -17,5 +17,5 @@ export default {
   weekText: "Hét",
   allDayText: "Egész nap",
   moreLinkText: "további",
-  noEventsContent: "Nincs megjeleníthető esemény"
+  noEventsText: "Nincs megjeleníthető esemény"
 };

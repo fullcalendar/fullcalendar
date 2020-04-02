@@ -13,6 +13,6 @@ export default {
   },
   allDayText: "כל היום",
   moreLinkText: "אחר",
-  noEventsContent: "אין אירועים להצגה",
+  noEventsText: "אין אירועים להצגה",
   weekText: "שבוע"
 };

@@ -17,5 +17,5 @@ export default {
   weekText: "W",
   allDayText: "Ganzen Dag",
   moreLinkText: "méi",
-  noEventsContent: "Nee Evenementer ze affichéieren"
+  noEventsText: "Nee Evenementer ze affichéieren"
 };

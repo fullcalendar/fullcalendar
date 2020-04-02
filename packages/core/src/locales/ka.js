@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+ კიდევ " + n;
   },
-  noEventsContent: "ღონისძიებები არ არის"
+  noEventsText: "ღონისძიებები არ არის"
 };

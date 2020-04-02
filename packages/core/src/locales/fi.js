@@ -17,5 +17,5 @@ export default {
   weekText: "Vk",
   allDayText: "Koko päivä",
   moreLinkText: "lisää",
-  noEventsContent: "Ei näytettäviä tapahtumia"
+  noEventsText: "Ei näytettäviä tapahtumia"
 };

@@ -19,5 +19,5 @@ export default {
   moreLinkText: function(n) {
     return "+další: " + n;
   },
-  noEventsContent: "Žádné akce k zobrazení"
+  noEventsText: "Žádné akce k zobrazení"
 };

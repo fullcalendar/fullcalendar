@@ -17,5 +17,5 @@ export default {
   weekText: "Sm",
   allDayText: "Todo el día",
   moreLinkText: "más",
-  noEventsContent: "No hay eventos para mostrar"
+  noEventsText: "No hay eventos para mostrar"
 };

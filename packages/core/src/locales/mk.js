@@ -15,5 +15,5 @@ export default {
   moreLinkText: function(n) {
     return "+повеќе " + n;
   },
-  noEventsContent: "Нема настани за прикажување"
+  noEventsText: "Нема настани за прикажување"
 };

@@ -79,11 +79,15 @@ export default class ListView extends DateComponent<ViewProps> {
 
 
   renderEmptyMessage() {
-    let hookProps = { view: this.context.view }
+    let { context } = this
+    let hookProps = {
+      text: context.options.noEventsText,
+      view: context.view
+    }
 
     return (
-      <RenderHook name='noEvents' hookProps={hookProps}>
-        {(rootElRef, classNames, innerElRef, innerContent) => ( // the defaultContent (noEventsContent) is specified in locales
+      <RenderHook name='noEvents' hookProps={hookProps} defaultContent={renderNoEventsInner}>
+        {(rootElRef, classNames, innerElRef, innerContent) => (
           <div className={[ 'fc-list-empty' ].concat(classNames).join(' ')} ref={rootElRef}>
             {innerContent}
           </div>
@@ -211,6 +215,11 @@ export default class ListView extends DateComponent<ViewProps> {
     return segs
   }
 
+}
+
+
+function renderNoEventsInner(hookProps) {
+  return hookProps.text
 }
 
 
