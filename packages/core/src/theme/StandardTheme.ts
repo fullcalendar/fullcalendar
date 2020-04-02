@@ -18,6 +18,12 @@ StandardTheme.prototype.iconClasses = {
   prevYear: 'fc-icon-chevrons-left',
   nextYear: 'fc-icon-chevrons-right'
 }
+StandardTheme.prototype.rtlIconClasses = {
+  prev: 'fc-icon-chevron-right',
+  next: 'fc-icon-chevron-left',
+  prevYear: 'fc-icon-chevrons-right',
+  nextYear: 'fc-icon-chevrons-left'
+}
 
 StandardTheme.prototype.iconOverrideOption = 'buttonIcons'
 StandardTheme.prototype.iconOverrideCustomButtonOption = 'icon'

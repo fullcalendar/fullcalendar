@@ -15,23 +15,23 @@ export interface ToolbarWidget {
   buttonText?: any
 }
 
-export function parseToolbars(allOptions, theme: Theme, calendar: Calendar) {
+export function parseToolbars(allOptions, theme: Theme, isRtl: boolean, calendar: Calendar) {
   let viewsWithButtons: string[] = []
-  let header = allOptions.header ? parseToolbar(allOptions.header, theme, calendar, viewsWithButtons) : null
-  let footer = allOptions.footer ? parseToolbar(allOptions.footer, theme, calendar, viewsWithButtons) : null
+  let header = allOptions.header ? parseToolbar(allOptions.header, theme, isRtl, calendar, viewsWithButtons) : null
+  let footer = allOptions.footer ? parseToolbar(allOptions.footer, theme, isRtl, calendar, viewsWithButtons) : null
 
   return { header, footer, viewsWithButtons }
 }
 
-function parseToolbar(raw, theme: Theme, calendar: Calendar, viewsWithButtons: string[]): ToolbarModel {
+function parseToolbar(raw, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarModel {
   return {
-    left: raw.left ? parseSection(raw.left, theme, calendar, viewsWithButtons) : [],
-    center: raw.center ? parseSection(raw.center, theme, calendar, viewsWithButtons) : [],
-    right: raw.right ? parseSection(raw.right, theme, calendar, viewsWithButtons) : []
+    left: raw.left ? parseSection(raw.left, theme, isRtl, calendar, viewsWithButtons) : [],
+    center: raw.center ? parseSection(raw.center, theme, isRtl, calendar, viewsWithButtons) : [],
+    right: raw.right ? parseSection(raw.right, theme, isRtl, calendar, viewsWithButtons) : []
   }
 }
 
-function parseSection(sectionStr: string, theme: Theme, calendar: Calendar, viewsWithButtons: string[]): ToolbarWidget[][] {
+function parseSection(sectionStr: string, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarWidget[][] {
   let optionsManager = calendar.optionsManager
   let viewSpecs = calendar.viewSpecs
   let calendarCustomButtons = optionsManager.computed.customButtons || {}
@@ -58,7 +58,7 @@ function parseSection(sectionStr: string, theme: Theme, calendar: Calendar, view
             }
           };
           (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) ||
-          (buttonIcon = theme.getIconClass(buttonName)) ||
+          (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
           (buttonText = customButtonProps.text)
 
         } else if ((viewSpec = viewSpecs[buttonName])) {
@@ -68,7 +68,7 @@ function parseSection(sectionStr: string, theme: Theme, calendar: Calendar, view
             calendar.changeView(buttonName)
           };
           (buttonText = viewSpec.buttonTextOverride) ||
-          (buttonIcon = theme.getIconClass(buttonName)) ||
+          (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
           (buttonText = viewSpec.buttonTextDefault)
 
         } else if (calendar[buttonName]) { // a calendar method
@@ -76,7 +76,7 @@ function parseSection(sectionStr: string, theme: Theme, calendar: Calendar, view
             calendar[buttonName]()
           };
           (buttonText = calendarButtonTextOverrides[buttonName]) ||
-          (buttonIcon = theme.getIconClass(buttonName)) ||
+          (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
           (buttonText = calendarButtonText[buttonName])
           //            ^ everything else is considered default
         }

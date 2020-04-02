@@ -1,27 +1,20 @@
 
 export default class Theme {
 
-  calendarOptions: any
-
   // settings. default values are set after the class
   classes: any
   iconClasses: any
-  baseIconClass: string
-  iconOverrideOption: any
-  iconOverrideCustomButtonOption: any
+  rtlIconClasses: any
+  baseIconClass: string // className that ALL icon elements for this theme should have
+  iconOverrideOption: any // the name of the setting to use for icons. the subclass must set this.
+  iconOverrideCustomButtonOption: any // the name of the setting, *within* each customButtons object, to use for icons
   iconOverridePrefix: string
 
 
   constructor(calendarOptions) {
-    this.calendarOptions = calendarOptions
-    this.processIconOverride()
-  }
-
-
-  processIconOverride() {
     if (this.iconOverrideOption) {
       this.setIconOverride(
-        this.calendarOptions[this.iconOverrideOption]
+        calendarOptions[this.iconOverrideOption]
       )
     }
   }
@@ -41,6 +34,7 @@ export default class Theme {
       }
 
       this.iconClasses = iconClassesCopy
+
     } else if (iconOverrideHash === false) {
       this.iconClasses = {}
     }
@@ -63,8 +57,15 @@ export default class Theme {
   }
 
 
-  getIconClass(buttonName) {
-    let className = this.iconClasses[buttonName]
+  getIconClass(buttonName, isRtl?: boolean) {
+    let className
+
+    if (isRtl && this.rtlIconClasses) {
+      className = this.rtlIconClasses[buttonName] || this.iconClasses[buttonName]
+
+    } else {
+      className = this.iconClasses[buttonName]
+    }
 
     if (className) {
       return this.baseIconClass + ' ' + className

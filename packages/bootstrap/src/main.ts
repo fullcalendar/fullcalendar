@@ -26,6 +26,12 @@ BootstrapTheme.prototype.iconClasses = {
   prevYear: 'fa-angle-double-left',
   nextYear: 'fa-angle-double-right'
 }
+BootstrapTheme.prototype.rtlIconClasses = {
+  prev: 'fa-chevron-right',
+  next: 'fa-chevron-left',
+  prevYear: 'fa-angle-double-right',
+  nextYear: 'fa-angle-double-left'
+}
 
 BootstrapTheme.prototype.iconOverrideOption = 'bootstrapFontAwesome'
 BootstrapTheme.prototype.iconOverrideCustomButtonOption = 'bootstrapFontAwesome'

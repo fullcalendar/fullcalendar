@@ -92,13 +92,6 @@ export const rtlDefaults = { // right-to-left defaults
     left: 'next,prev today',
     center: '',
     right: 'title'
-  },
-  buttonIcons: {
-    // TODO: make RTL support the responibility of the theme
-    prev: 'fc-icon-chevron-right',
-    next: 'fc-icon-chevron-left',
-    prevYear: 'fc-icon-chevrons-right',
-    nextYear: 'fc-icon-chevrons-left'
   }
 }
 

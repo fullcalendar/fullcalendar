@@ -59,10 +59,12 @@ export function buildContext(
 
 
 function computeContextProps(options: any, theme: Theme, calendar: Calendar) {
+  let isRtl = options.dir === 'rtl'
+
   return {
-    isRtl: options.dir === 'rtl',
+    isRtl,
     eventOrderSpecs: parseFieldSpecs(options.eventOrder),
     nextDayThreshold: createDuration(options.nextDayThreshold),
-    ...parseToolbars(options, theme, calendar)
+    ...parseToolbars(options, theme, isRtl, calendar)
   }
 }
