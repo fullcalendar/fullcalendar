@@ -1,6 +1,6 @@
 
 it('timegrid view rerenders well', function(done) {
-  let dayLabelRenderCnt = 0
+  let dayHeaderRenderCnt = 0
   let dayCellRenderCnt = 0
   let slotLabelRenderCnt = 0
   let slotLaneRenderCnt = 0
@@ -13,8 +13,8 @@ it('timegrid view rerenders well', function(done) {
     events: [
       { title: 'event 0', start: '2017-10-04T00:00:00' }
     ],
-    dayLabelContent() {
-      dayLabelRenderCnt++
+    dayHeaderContent() {
+      dayHeaderRenderCnt++
     },
     dayCellContent() {
       dayCellRenderCnt++
@@ -31,14 +31,14 @@ it('timegrid view rerenders well', function(done) {
   })
 
   function resetCounts() {
-    dayLabelRenderCnt = 0
+    dayHeaderRenderCnt = 0
     dayCellRenderCnt = 0
     slotLabelRenderCnt = 0
     slotLaneRenderCnt = 0
     eventRenderCnt = 0
   }
 
-  expect(dayLabelRenderCnt).toBe(7)
+  expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(14) // all-day row AND time cols
   expect(slotLabelRenderCnt).toBe(24) // one slot per every 2 lanes
   expect(slotLaneRenderCnt).toBe(48)
@@ -46,7 +46,7 @@ it('timegrid view rerenders well', function(done) {
 
   resetCounts()
   currentCalendar.next()
-  expect(dayLabelRenderCnt).toBe(7)
+  expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(14)
   expect(slotLabelRenderCnt).toBe(0)
   expect(slotLaneRenderCnt).toBe(0)
@@ -55,7 +55,7 @@ it('timegrid view rerenders well', function(done) {
   currentCalendar.changeView('listWeek') // switch away
   resetCounts()
   currentCalendar.changeView('timeGridWeek') // return to view
-  expect(dayLabelRenderCnt).toBe(7)
+  expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(14)
   expect(slotLabelRenderCnt).toBe(24)
   expect(slotLaneRenderCnt).toBe(48)
@@ -65,7 +65,7 @@ it('timegrid view rerenders well', function(done) {
   $(window).simulate('resize')
   setTimeout(function() {
 
-    expect(dayLabelRenderCnt).toBe(0)
+    expect(dayHeaderRenderCnt).toBe(0)
     expect(dayCellRenderCnt).toBe(0)
     expect(slotLabelRenderCnt).toBe(0)
     expect(slotLaneRenderCnt).toBe(0)

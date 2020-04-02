@@ -1,7 +1,7 @@
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('dayLabels', function() { // TODO: rename file
+describe('dayHeaders', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-05-11'
   })
@@ -15,7 +15,7 @@ describe('dayLabels', function() { // TODO: rename file
 
     describe('when on', function() {
       pushOptions({
-        dayLabels: true
+        dayHeaders: true
       })
 
       it('should show header', function() {
@@ -27,7 +27,7 @@ describe('dayLabels', function() { // TODO: rename file
 
     describe('when off', function() {
       pushOptions({
-        dayLabels: false
+        dayHeaders: false
       })
 
       it('should not show header', function() {

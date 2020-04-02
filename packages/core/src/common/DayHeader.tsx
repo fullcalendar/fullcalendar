@@ -27,8 +27,8 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {
     let { dates, datesRepDistinctDays } = props
 
-    let dayLabelFormat = this.createDayHeaderFormatter(
-      context.options.dayLabelFormat,
+    let dayHeaderFormat = this.createDayHeaderFormatter(
+      context.options.dayHeaderFormat,
       datesRepDistinctDays,
       dates.length
     )
@@ -45,12 +45,12 @@ export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: 
                 todayRange={todayRange}
                 dateProfile={props.dateProfile}
                 colCnt={dates.length}
-                dayLabelFormat={dayLabelFormat}
+                dayHeaderFormat={dayHeaderFormat}
               /> :
               <TableDowCell
                 key={date.getUTCDay()}
                 dow={date.getUTCDay()}
-                dayLabelFormat={dayLabelFormat}
+                dayHeaderFormat={dayHeaderFormat}
               />
           ))}
         </tr>

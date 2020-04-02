@@ -1,6 +1,6 @@
 
 it('daygrid view rerenders well', function(done) {
-  let dayLabelRenderCnt = 0
+  let dayHeaderRenderCnt = 0
   let dayCellRenderCnt = 0
   let eventRenderCnt = 0
 
@@ -11,8 +11,8 @@ it('daygrid view rerenders well', function(done) {
     events: [
       { title: 'event 0', start: '2017-10-04' }
     ],
-    dayLabelContent() {
-      dayLabelRenderCnt++
+    dayHeaderContent() {
+      dayHeaderRenderCnt++
     },
     dayCellContent() {
       dayCellRenderCnt++
@@ -23,26 +23,26 @@ it('daygrid view rerenders well', function(done) {
   })
 
   function resetCounts() {
-    dayLabelRenderCnt = 0
+    dayHeaderRenderCnt = 0
     dayCellRenderCnt = 0
     eventRenderCnt = 0
   }
 
-  expect(dayLabelRenderCnt).toBe(7)
+  expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(42)
   expect(eventRenderCnt).toBe(1)
 
   resetCounts()
   currentCalendar.next()
 
-  expect(dayLabelRenderCnt).toBe(0) // same day-of-week headers
+  expect(dayHeaderRenderCnt).toBe(0) // same day-of-week headers
   expect(dayCellRenderCnt).toBe(42)
   expect(eventRenderCnt).toBe(0) // event will be out of view
 
   currentCalendar.changeView('listWeek') // switch away
   resetCounts()
   currentCalendar.changeView('dayGridMonth') // return to view
-  expect(dayLabelRenderCnt).toBe(7)
+  expect(dayHeaderRenderCnt).toBe(7)
   expect(dayCellRenderCnt).toBe(42)
   expect(eventRenderCnt).toBe(0) // event still out of view
 
@@ -50,7 +50,7 @@ it('daygrid view rerenders well', function(done) {
   $(window).simulate('resize')
   setTimeout(function() {
 
-    expect(dayLabelRenderCnt).toBe(0)
+    expect(dayHeaderRenderCnt).toBe(0)
     expect(dayCellRenderCnt).toBe(0)
     expect(eventRenderCnt).toBe(0)
 

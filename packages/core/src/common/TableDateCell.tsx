@@ -17,7 +17,7 @@ export interface TableDateCellProps {
   dateProfile: DateProfile
   todayRange: DateRange
   colCnt: number
-  dayLabelFormat: DateFormatter
+  dayHeaderFormat: DateFormatter
   colSpan?: number
   extraDataAttrs?: object
   extraHookProps?: object
@@ -44,7 +44,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
     let classNames = [ CLASS_NAME ].concat(
       getDayClassNames(dayMeta, context.theme)
     )
-    let text = dateEnv.format(date, props.dayLabelFormat)
+    let text = dateEnv.format(date, props.dayHeaderFormat)
 
     // if colCnt is 1, we are already in a day-view and don't need a navlink
     let navLinkData = (options.navLinks && !dayMeta.isDisabled && props.colCnt > 1)
@@ -61,7 +61,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
     }
 
     return (
-      <RenderHook name='dayLabel' hookProps={hookProps} defaultContent={renderInner}>
+      <RenderHook name='dayHeader' hookProps={hookProps} defaultContent={renderInner}>
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}
@@ -80,7 +80,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
 
 export interface TableDowCellProps {
   dow: number
-  dayLabelFormat: DateFormatter
+  dayHeaderFormat: DateFormatter
   colSpan?: number
   extraHookProps?: object
   extraDataAttrs?: object
@@ -109,7 +109,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
       props.extraClassNames || []
     )
 
-    let text = dateEnv.format(date, props.dayLabelFormat)
+    let text = dateEnv.format(date, props.dayHeaderFormat)
 
     let hookProps: HookProps = {
       date,
@@ -121,7 +121,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
     }
 
     return (
-      <RenderHook name='dayLabel' hookProps={hookProps} defaultContent={renderInner}>
+      <RenderHook name='dayHeader' hookProps={hookProps} defaultContent={renderInner}>
         {(rootElRef, customClassNames, innerElRef, innerContent) => (
           <th
             ref={rootElRef}

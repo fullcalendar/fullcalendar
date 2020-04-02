@@ -1,7 +1,7 @@
 import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
-describe('dayLabelContent as html', function() { // TODO: rename file
+describe('dayHeaderContent as html', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-05-11'
   })
@@ -15,7 +15,7 @@ describe('dayLabelContent as html', function() { // TODO: rename file
 
     it('should contain custom HTML', function() {
       let calendar = initCalendar({
-        dayLabelContent: function(arg) {
+        dayHeaderContent: function(arg) {
           return { html: '<div class="test">' + currentCalendar.formatDate(arg.date, { weekday: 'long' }) + '</div>' }
         }
       })
@@ -34,7 +34,7 @@ describe('dayLabelContent as html', function() { // TODO: rename file
 
       initCalendar({
         defaultView: 'timeGridDay',
-        dayLabelContent: function(arg) {
+        dayHeaderContent: function(arg) {
           dates.push(arg.date)
         }
       })

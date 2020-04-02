@@ -121,8 +121,8 @@ export interface OptionsInputBase {
   locales?: RawLocale[]
   locale?: LocaleSingularArg
   eventTimeFormat?: FormatterInput
-  dayLabels?: boolean
-  dayLabelFormat?: FormatterInput
+  dayHeaders?: boolean
+  dayHeaderFormat?: FormatterInput
   titleFormat?: FormatterInput
   weekText?: string
   displayEventTime?: boolean
