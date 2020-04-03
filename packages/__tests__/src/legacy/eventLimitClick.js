@@ -1,7 +1,6 @@
 import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
-import DayGridWrapper from '../lib/wrappers/DayGridWrapper'
 
-xdescribe('eventLimitClick', function() { // simulate a click
+describe('eventLimitClick', function() { // simulate a click
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',
@@ -147,7 +146,6 @@ xdescribe('eventLimitClick', function() { // simulate a click
         expect(arg.dayEl.getAttribute('data-date')).toBe('2014-07-29')
         expect(arg.hiddenSegs.length).toBe(2)
         expect(arg.segs.length).toBe(4)
-        expect(arg.moreEl).toHaveClass(DayGridWrapper.MORE_LINK_CLASSNAME)
         expect(typeof arg.jsEvent).toBe('object')
       }
     })

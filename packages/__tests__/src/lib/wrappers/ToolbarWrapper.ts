@@ -37,10 +37,10 @@ export default class ToolbarWrapper {
   }
 
 
-  getSectionContent(sectionName) { // sectionName like left/center/right
-    let sectionEl = this.el.querySelector(`.fc-toolbar-${sectionName}`) as HTMLElement
-
-    return processSectionItems(sectionEl)
+  getSectionContent(index) { // 0=start, 1=center, 2=end
+    return processSectionItems(
+      this.el.querySelectorAll('.fc-toolbar-chunk')[index] as HTMLElement
+    )
   }
 
 }

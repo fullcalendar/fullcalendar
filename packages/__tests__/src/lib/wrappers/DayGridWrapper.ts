@@ -7,7 +7,6 @@ export default class DayGridWrapper {
 
   static EVENT_IS_START_CLASSNAME = 'fc-event-start'
   static EVENT_IS_END_CLASSNAME = 'fc-event-end'
-  static MORE_LINK_CLASSNAME = 'fc-daygrid-more-link'
 
 
   constructor(private el: HTMLElement) {

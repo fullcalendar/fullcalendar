@@ -11,7 +11,7 @@ it('list view rerenders well', function(done) {
     events: [
       { title: 'event 0', start: '2017-10-04' }
     ],
-    dayCellContent() { // bad name for hook
+    dayHeaderContent() {
       dayRenderCnt++
     },
     eventContent() {

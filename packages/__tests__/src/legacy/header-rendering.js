@@ -6,13 +6,13 @@ describe('header rendering', function() {
     let calendar = initCalendar()
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-    expect(toolbarWrapper.getSectionContent('left')).toEqual(
+    expect(toolbarWrapper.getSectionContent(0)).toEqual(
       [ { type: 'title' } ]
     )
 
-    expect(toolbarWrapper.getSectionContent('center')).toEqual([])
+    expect(toolbarWrapper.getSectionContent(1)).toEqual([])
 
-    expect(toolbarWrapper.getSectionContent('right')).toEqual([
+    expect(toolbarWrapper.getSectionContent(2)).toEqual([
       { type: 'button', name: 'today' },
       { type: 'button-group', children: [
         { type: 'button', name: 'prev' },
@@ -31,14 +31,14 @@ describe('header rendering', function() {
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-    expect(toolbarWrapper.getSectionContent('left')).toEqual([
+    expect(toolbarWrapper.getSectionContent(0)).toEqual([
       { type: 'button-group', children: [
         { type: 'button', name: 'next' },
         { type: 'button', name: 'prev' }
       ] }
     ])
 
-    expect(toolbarWrapper.getSectionContent('center')).toEqual([
+    expect(toolbarWrapper.getSectionContent(1)).toEqual([
       { type: 'button', name: 'prevYear' },
       { type: 'button', name: 'today' },
       { type: 'button', name: 'nextYear' },
@@ -48,7 +48,7 @@ describe('header rendering', function() {
       ] }
     ])
 
-    expect(toolbarWrapper.getSectionContent('right')).toEqual([
+    expect(toolbarWrapper.getSectionContent(2)).toEqual([
       { type: 'title' }
     ])
   })
@@ -91,15 +91,15 @@ describe('header rendering', function() {
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
-      expect(toolbarWrapper.getSectionContent('left')).toEqual([
+      expect(toolbarWrapper.getSectionContent(0)).toEqual([
         { type: 'button', name: 'prev' }
       ])
 
-      expect(toolbarWrapper.getSectionContent('center')).toEqual([
+      expect(toolbarWrapper.getSectionContent(1)).toEqual([
         { type: 'button', name: 'today' }
       ])
 
-      expect(toolbarWrapper.getSectionContent('right')).toEqual([
+      expect(toolbarWrapper.getSectionContent(2)).toEqual([
         { type: 'button', name: 'next' }
       ])
     })
