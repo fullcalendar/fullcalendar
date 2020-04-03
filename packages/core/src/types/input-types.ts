@@ -173,7 +173,6 @@ export interface OptionsInputBase {
   eventDataTransform?: EventInputTransformer
   allDayMaintainDuration?: boolean
   eventResizableFromStart?: boolean
-  timeGridEventMinHeight?: number
   eventDragMinDistance?: number
   eventSourceFailure?: any
   eventSourceSuccess?: any
