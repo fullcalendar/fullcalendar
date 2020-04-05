@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@fullcalendar/google-calendar",
-  "version": "4.4.0",
+  "version": "5.0.0-beta",
   "title": "FullCalendar Google Calendar Plugin",
   "description": "Fetch events from a public Google Calendar feed",
   "docs": "https://fullcalendar.io/docs/google-calendar",
@@ -9,9 +9,9 @@
     "tslib": "^1.9.3"
   },
   "peerDependencies": {
-    "@fullcalendar/core": "~4.4.0"
+    "@fullcalendar/core": "5.0.0-beta"
   },
   "devDependencies": {
-    "@fullcalendar/core": "~4.4.0"
+    "@fullcalendar/core": "5.0.0-beta"
   }
 }
