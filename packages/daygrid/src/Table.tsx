@@ -16,6 +16,7 @@ import {
   NowTimer,
   DateMarker,
   DateProfile,
+  EventApi
 } from '@fullcalendar/core'
 import TableSeg, { splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import TableRow from './TableRow'
@@ -160,20 +161,31 @@ export default class Table extends DateComponent<TableProps, TableState> {
   }
 
 
-  handleMoreLinkClick = (arg: MoreLinkArg) => {
+  handleMoreLinkClick = (arg: MoreLinkArg) => { // TODO: bad names "more link click" versus "more click"
     let { calendar, view, options, dateEnv } = this.context
-    let clickOption = options.eventLimitClick
+    let clickOption = options.moreLinkClick
+
+    function segForPublic(seg: TableSeg) {
+      let { def, instance, range } = seg.eventRange
+
+      return {
+        event: new EventApi(calendar, def, instance),
+        start: dateEnv.toDate(range.start),
+        end: dateEnv.toDate(range.end),
+        isStart: seg.isStart,
+        isEnd: seg.isEnd
+      }
+    }
 
     if (typeof clickOption === 'function') {
       // the returned value can be an atomic option
-      clickOption = calendar.publiclyTrigger('eventLimitClick', [
+      // TODO: weird how we don't use the `clickOption`
+      clickOption = calendar.publiclyTrigger('moreLinkClick', [
         {
           date: dateEnv.toDate(arg.date),
           allDay: true,
-          dayEl: arg.dayEl,
-          moreEl: null, // moreEl, // TODO
-          segs: arg.allSegs,
-          hiddenSegs: arg.hiddenSegs,
+          allSegs: arg.allSegs.map(segForPublic),
+          hiddenSegs: arg.hiddenSegs.map(segForPublic),
           jsEvent: arg.ev as MouseEvent, // TODO: better
           view
         }

@@ -69,7 +69,7 @@ export const globalDefaults = {
 
   // rerenderDelay: null,
 
-  eventLimitClick: 'popover',
+  moreLinkClick: 'popover',
   dayPopoverFormat: { month: 'long', day: 'numeric', year: 'numeric' },
 
   handleWindowResize: true,

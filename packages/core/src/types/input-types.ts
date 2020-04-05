@@ -59,9 +59,7 @@ export interface EventSegment {
 
 export interface CellInfo {
   date: Date
-  dayEl: HTMLElement
-  moreEl: HTMLElement
-  segs: EventSegment[]
+  allSegs: EventSegment[]
   hiddenSegs: EventSegment[]
 }
 
@@ -93,8 +91,8 @@ export interface OptionsInputBase {
   windowResizeDelay?: number
   dayMaxEvents?: boolean | number
   dayMaxEventRows?: boolean | number
-  eventLimitClick?: 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string |
-    ((arg: { date: Date, allDay: boolean, dayEl: HTMLElement, moreEl: HTMLElement, segs: any[], hiddenSegs: any[], jsEvent: MouseEvent, view: ViewApi }) => void),
+  moreLinkClick?: 'popover' | 'week' | 'day' | 'timeGridWeek' | 'timeGridDay' | string |
+    ((arg: { date: Date, allDay: boolean, allSegs: any[], hiddenSegs: any[], jsEvent: MouseEvent, view: ViewApi }) => void),
   timeZone?: string | boolean
   now?: DateInput | (() => DateInput)
   defaultView?: string

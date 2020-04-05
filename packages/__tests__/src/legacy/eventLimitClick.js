@@ -1,6 +1,6 @@
 import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 
-describe('eventLimitClick', function() { // simulate a click
+describe('moreLinkClick', function() { // TODO: rename file
   pushOptions({
     defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     defaultView: 'dayGridMonth',
@@ -16,7 +16,7 @@ describe('eventLimitClick', function() { // simulate a click
   describe('when set to "popover"', function() {
 
     pushOptions({
-      eventLimitClick: 'popover'
+      moreLinkClick: 'popover'
     })
 
     it('renders a popover upon click', function(done) {
@@ -36,7 +36,7 @@ describe('eventLimitClick', function() { // simulate a click
   describe('when set to "week"', function() {
 
     pushOptions({
-      eventLimitClick: 'week'
+      moreLinkClick: 'week'
     })
 
     it('should go to dayGridWeek if it is one of the available views', function(done) {
@@ -79,7 +79,7 @@ describe('eventLimitClick', function() { // simulate a click
   describe('when set to "day"', function() {
 
     pushOptions({
-      eventLimitClick: 'day'
+      moreLinkClick: 'day'
     })
 
     it('should go to dayGridDay if it is one of the available views', function(done) {
@@ -121,7 +121,7 @@ describe('eventLimitClick', function() { // simulate a click
 
   it('works with an explicit view name', function(done) {
     let calendar = initCalendar({
-      eventLimitClick: 'timeGridWeek',
+      moreLinkClick: 'timeGridWeek',
       header: {
         left: 'prev,next today',
         center: 'title',
@@ -140,12 +140,11 @@ describe('eventLimitClick', function() { // simulate a click
 
   it('works with custom function and all the arguments are correct', function(done) {
     let calendar = initCalendar({
-      eventLimitClick: function(arg) {
+      moreLinkClick: function(arg) {
         expect(typeof arg).toBe('object')
         expect(arg.date).toEqualDate('2014-07-29')
-        expect(arg.dayEl.getAttribute('data-date')).toBe('2014-07-29')
         expect(arg.hiddenSegs.length).toBe(2)
-        expect(arg.segs.length).toBe(4)
+        expect(arg.allSegs.length).toBe(4)
         expect(typeof arg.jsEvent).toBe('object')
       }
     })
@@ -157,7 +156,7 @@ describe('eventLimitClick', function() { // simulate a click
 
   it('works with custom function, and can return a view name', function(done) {
     let calendar = initCalendar({
-      eventLimitClick: function(cellInfo, jsEvent) {
+      moreLinkClick: function(cellInfo, jsEvent) {
         return 'timeGridDay'
       }
     })
