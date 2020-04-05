@@ -1,6 +1,6 @@
 import { Calendar } from '@fullcalendar/core'
 import esLocale from '@fullcalendar/core/locales/es'
-import LuxonPlugin, { toDateTime, toDuration } from '@fullcalendar/luxon'
+import LuxonPlugin, { toLuxonDateTime, toLuxonDuration } from '@fullcalendar/luxon'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import { testTimeZoneImpl } from '../lib/timeZoneImpl'
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
@@ -16,7 +16,7 @@ describe('luxon plugin', function() {
 
   testTimeZoneImpl(LuxonPlugin)
 
-  describe('toDateTime', function() {
+  describe('toLuxonDateTime', function() {
 
     describe('timezone transfering', function() {
 
@@ -27,8 +27,8 @@ describe('luxon plugin', function() {
           timeZone: 'UTC'
         })
         let event = calendar.getEvents()[0]
-        var start = toDateTime(event.start, calendar)
-        var end = toDateTime(event.end, calendar)
+        var start = toLuxonDateTime(event.start, calendar)
+        var end = toLuxonDateTime(event.end, calendar)
         expect(start.toISO()).toBe('2018-09-05T12:00:00.000Z')
         expect(start.zoneName).toBe('UTC')
         expect(end.toISO()).toBe('2018-09-05T18:00:00.000Z')
@@ -42,8 +42,8 @@ describe('luxon plugin', function() {
           timeZone: 'local'
         })
         let event = calendar.getEvents()[0]
-        var start = toDateTime(event.start, calendar)
-        var end = toDateTime(event.end, calendar)
+        var start = toLuxonDateTime(event.start, calendar)
+        var end = toLuxonDateTime(event.end, calendar)
         expect(start.toJSDate()).toEqualLocalDate('2018-09-05T12:00:00')
         expect(start.zoneName).toMatch('/') // has a named timezone
         expect(end.toJSDate()).toEqualLocalDate('2018-09-05T18:00:00')
@@ -57,8 +57,8 @@ describe('luxon plugin', function() {
           timeZone: 'Europe/Moscow'
         })
         let event = calendar.getEvents()[0]
-        var start = toDateTime(event.start, calendar)
-        var end = toDateTime(event.end, calendar)
+        var start = toLuxonDateTime(event.start, calendar)
+        var end = toLuxonDateTime(event.end, calendar)
         expect(start.toJSDate()).toEqualDate('2018-09-05T12:00:00+03:00')
         expect(start.zoneName).toMatch('Europe/Moscow')
         expect(end.toJSDate()).toEqualDate('2018-09-05T18:00:00+03:00')
@@ -74,13 +74,13 @@ describe('luxon plugin', function() {
         locale: esLocale
       })
       let event = calendar.getEvents()[0]
-      var datetime = toDateTime(event.start, calendar)
+      var datetime = toLuxonDateTime(event.start, calendar)
       expect(datetime.locale).toEqual('es')
     })
 
   })
 
-  describe('toDuration', function() {
+  describe('toLuxonDuration', function() {
 
     it('converts numeric values correctly', function() {
       let calendar = new Calendar(document.createElement('div'), {
@@ -90,8 +90,8 @@ describe('luxon plugin', function() {
       })
 
       // hacky way to have a duration parsed
-      let timedDuration = toDuration(calendar.defaultTimedEventDuration, calendar)
-      let allDayDuration = toDuration(calendar.defaultAllDayEventDuration, calendar)
+      let timedDuration = toLuxonDuration(calendar.defaultTimedEventDuration, calendar)
+      let allDayDuration = toLuxonDuration(calendar.defaultAllDayEventDuration, calendar)
 
       expect(timedDuration.as('hours')).toBe(5)
       expect(allDayDuration.as('days')).toBe(3)
@@ -105,7 +105,7 @@ describe('luxon plugin', function() {
       })
 
       // hacky way to have a duration parsed
-      let timedDuration = toDuration(calendar.defaultTimedEventDuration, calendar)
+      let timedDuration = toLuxonDuration(calendar.defaultTimedEventDuration, calendar)
 
       expect(timedDuration.locale).toBe('es')
     })

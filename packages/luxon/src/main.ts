@@ -1,7 +1,7 @@
 import { DateTime as LuxonDateTime, Duration as LuxonDuration } from 'luxon'
 import { Calendar, Duration, NamedTimeZoneImpl, VerboseFormattingArg, createPlugin } from '@fullcalendar/core'
 
-export function toDateTime(date: Date, calendar: Calendar): LuxonDateTime {
+export function toLuxonDateTime(date: Date, calendar: Calendar): LuxonDateTime {
 
   if (!(calendar instanceof Calendar)) {
     throw new Error('must supply a Calendar instance')
@@ -13,7 +13,7 @@ export function toDateTime(date: Date, calendar: Calendar): LuxonDateTime {
   })
 }
 
-export function toDuration(duration: Duration, calendar: Calendar): LuxonDuration {
+export function toLuxonDuration(duration: Duration, calendar: Calendar): LuxonDuration {
 
   if (!(calendar instanceof Calendar)) {
     throw new Error('must supply a Calendar instance')

@@ -1,5 +1,5 @@
 import { Calendar } from '@fullcalendar/core'
-import MomentPlugin, { toMoment, toDuration } from '@fullcalendar/moment'
+import MomentPlugin, { toMoment, toMomentDuration } from '@fullcalendar/moment'
 import DayGridPlugin from '@fullcalendar/daygrid'
 import 'moment/locale/es' // only test spanish
 import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
@@ -65,8 +65,8 @@ describe('moment plugin', function() {
       })
 
       // hacky way to have a duration parsed
-      let timedDuration = toDuration(calendar.defaultTimedEventDuration)
-      let allDayDuration = toDuration(calendar.defaultAllDayEventDuration)
+      let timedDuration = toMomentDuration(calendar.defaultTimedEventDuration)
+      let allDayDuration = toMomentDuration(calendar.defaultAllDayEventDuration)
 
       expect(timedDuration.asHours()).toBe(5)
       expect(allDayDuration.asDays()).toBe(3)
