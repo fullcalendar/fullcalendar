@@ -42,6 +42,7 @@ export interface TableRowProps {
   dateProfile: DateProfile
   todayRange: DateRange
   showDayNumbers: boolean
+  showWeekNumbers: boolean
   buildMoreLinkText: (num: number) => string
   innerHeight?: number
 }
@@ -110,7 +111,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
             false // date-selecting (because mirror is never drawn for date selection)
           )
 
-          let showWeekNumber = context.options.weekNumbers && col === 0
+          let showWeekNumber = props.showWeekNumbers && col === 0
 
           return (
             <TableCell

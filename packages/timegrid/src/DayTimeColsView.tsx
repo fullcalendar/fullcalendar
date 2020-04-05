@@ -49,6 +49,7 @@ export default class DayTimeColsView extends TimeColsView {
         tableMinWidth={contentArg.tableMinWidth}
         colGroupNode={contentArg.tableColGroupNode}
         renderRowIntro={dayMinWidth ? null : this.renderTableRowAxis}
+        showWeekNumbers={false}
         expandRows={false}
         headerAlignElRef={this.headerElRef}
         clientWidth={contentArg.clientWidth}

@@ -36,6 +36,7 @@ export interface DayTableProps {
   dayMaxEvents: boolean | number
   dayMaxEventRows: boolean | number
   expandRows: boolean
+  showWeekNumbers: boolean
   headerAlignElRef?: RefObject<HTMLElement> // for more popover alignment
   clientWidth: number | null
   clientHeight: number | null
@@ -62,6 +63,7 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
         renderRowIntro={props.renderRowIntro}
         dayMaxEvents={props.dayMaxEvents}
         dayMaxEventRows={props.dayMaxEventRows}
+        showWeekNumbers={props.showWeekNumbers}
         expandRows={props.expandRows}
         headerAlignElRef={props.headerAlignElRef}
         clientWidth={props.clientWidth}

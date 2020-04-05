@@ -51,6 +51,7 @@ export default class DayTableView extends TableView {
         tableMinWidth={contentArg.tableMinWidth}
         dayMaxEvents={options.dayMaxEvents}
         dayMaxEventRows={options.dayMaxEventRows}
+        showWeekNumbers={options.weekNumbers}
         expandRows={!props.isHeightAuto}
         headerAlignElRef={this.headerElRef}
         clientWidth={contentArg.clientWidth}

@@ -32,6 +32,7 @@ export interface TableProps {
   colGroupNode: VNode
   tableMinWidth: CssDimValue
   expandRows: boolean
+  showWeekNumbers: boolean
   clientWidth: number | null
   clientHeight: number | null
   businessHourSegs: TableSeg[]
@@ -114,6 +115,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
                       : row // in case there are no cells (like when resource view is loading)
                   }
                   showDayNumbers={rowCnt > 1}
+                  showWeekNumbers={props.showWeekNumbers}
                   todayRange={todayRange}
                   dateProfile={props.dateProfile}
                   cells={cells}
