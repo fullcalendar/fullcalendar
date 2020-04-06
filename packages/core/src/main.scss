@@ -1,16 +1,22 @@
 
 @import './styles/vars';
-@import './styles/resets';
-@import './styles/utils';
-@import './styles/event-common';
-@import './styles/event-horizontal';
+@import './styles/mixins';
+
+@import './styles/page-root';
+@import './styles/calendar-root';
+
 @import './styles/icons';
 @import './styles/button';
 @import './styles/button-group';
 @import './styles/toolbar';
-@import './styles/popover';
 @import './styles/scroller';
 @import './styles/scroller-harness';
 @import './styles/scrollgrid';
-@import './styles/view-structure';
+@import './styles/sticky';
+@import './styles/view-harness';
 @import './styles/col-header';
+@import './styles/divider';
+@import './styles/bg';
+@import './styles/event';
+@import './styles/h-event';
+@import './styles/dot';

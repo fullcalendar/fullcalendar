@@ -4,7 +4,6 @@ import {
   DateComponent,
   h,
   PositionCache,
-  isPropsEqual,
   RefMap,
   mapHash,
   CssDimValue,
@@ -44,7 +43,6 @@ export interface TableRowProps {
   showDayNumbers: boolean
   showWeekNumbers: boolean
   buildMoreLinkText: (num: number) => string
-  innerHeight?: number
 }
 
 interface TableRowState {
@@ -140,8 +138,8 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               ]}
               bgContent={[
                 <Fragment>{this.renderFillSegs(highlightSegsByCol[col], 'highlight')}</Fragment>, // Fragment scopes the keys
-                <Fragment>{this.renderFillSegs(businessHoursByCol[col], 'nonbusiness')}</Fragment>,
-                <Fragment>{this.renderFillSegs(bgEventSegsByCol[col], 'bgevent')}</Fragment>
+                <Fragment>{this.renderFillSegs(businessHoursByCol[col], 'non-business')}</Fragment>,
+                <Fragment>{this.renderFillSegs(bgEventSegsByCol[col], 'bg-event')}</Fragment>
               ]}
             />
           )
@@ -157,8 +155,18 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
 
   componentDidUpdate(prevProps: TableRowProps, prevState: TableRowState) {
+    let currentProps = this.props
+
     this.updateSizing(
-      !isPropsEqual(prevProps, this.props),
+      // any props changes that could affect sizing
+      // HACKY. fix to prevent moreLink from unmounting during event drag
+      prevProps.cells !== currentProps.cells ||
+        prevProps.fgEventSegs !== currentProps.fgEventSegs ||
+        prevProps.dayMaxEvents !== currentProps.dayMaxEvents ||
+        prevProps.dayMaxEventRows !== currentProps.dayMaxEventRows ||
+        prevProps.clientWidth !== currentProps.clientWidth ||
+        prevProps.showDayNumbers !== currentProps.showDayNumbers ||
+        prevProps.showWeekNumbers !== currentProps.showWeekNumbers,
       prevState.cellContentPositions !== this.state.cellContentPositions
     )
   }
@@ -279,10 +287,10 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
       for (let seg of segs) {
 
         let leftRightCss = isRtl ? {
-          right: '',
+          right: 0,
           left: cellInnerPositions.lefts[seg.lastCol] - cellInnerPositions.lefts[seg.firstCol]
         } : {
-          left: '',
+          left: 0,
           right: cellInnerPositions.rights[seg.firstCol] - cellInnerPositions.rights[seg.lastCol],
         }
 
@@ -293,13 +301,13 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
         nodes.push(
           <div class='fc-daygrid-bg-harness' style={leftRightCss}>
-            {fillType === 'bgevent' ?
+            {fillType === 'bg-event' ?
               <BgEvent
                 key={key}
                 seg={seg}
                 {...getSegMeta(seg, todayRange)}
               /> :
-              renderFill(fillType, [ `fc-daygrid-${fillType}` ])
+              renderFill(fillType)
             }
           </div>
         )
@@ -310,9 +318,9 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
   }
 
 
-  updateSizing(isExternalChange, isHorizontalChange) {
+  updateSizing(isExternalSizingChange, isCellPositionsChanged) {
     if (
-      isExternalChange &&
+      isExternalSizingChange &&
       this.props.clientWidth !== null // positioning ready?
     ) {
       let cellInnerEls = this.cellInnerElRefs.collect()
@@ -321,7 +329,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
       if (cellContentEls.length) {
         let originEl = this.base as HTMLElement // BAD
 
-        this.setState({ // will trigger isHorizontalChange...
+        this.setState({ // will trigger isCellPositionsChanged...
           cellInnerPositions: new PositionCache(
             originEl,
             cellInnerEls,
@@ -338,7 +346,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
         })
       }
 
-    } else if (isHorizontalChange) {
+    } else if (isCellPositionsChanged) {
       let segHeights = mapHash(this.segHarnessRefs.currentMap, (eventHarnessEl) => (
         eventHarnessEl.getBoundingClientRect().height
       ))
@@ -353,10 +361,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
   computeMaxContentHeight() {
     let contentEl = this.cellContentElRefs.currentMap[0]
-    let cellEl = this.cellElRefs.currentMap[0]
-
-    // contentEl guaranteed not to have bottom margin
-    return cellEl.getBoundingClientRect().bottom - contentEl.getBoundingClientRect().top
+    return contentEl.getBoundingClientRect().height
   }
 
 }

@@ -1,0 +1,45 @@
+
+.fc-bg-event,
+.fc-non-business,
+.fc-highlight {
+  // will always have a harness with position:relative/absolute, so absolutely expand
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  opacity: .3;
+}
+
+
+.fc-non-business {
+  background: #d7d7d7;
+}
+
+.fc-bg-event {
+  background: rgb(143, 223, 130);
+}
+
+.fc-highlight {
+  background: #bce8f1;
+}
+
+
+.fc-bg-event .fc-event-title {
+  margin: .5em;
+  font-size: .85em;
+  font-style: italic;
+}
+
+
+// today <td>
+// DIFFERENT SYSTEM, not within a shared container
+
+.fc-theme-standard {
+
+  .fc-day-today {
+    background: #fcf8e3; // TODO: use opacity? will be good for theme too
+  }
+
+}

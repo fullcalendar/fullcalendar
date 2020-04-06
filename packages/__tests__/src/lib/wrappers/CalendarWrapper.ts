@@ -63,7 +63,7 @@ export default class CalendarWrapper {
 
 
   getNonBusinessDayEls() {
-    return findElements(this.calendar.el, '.fc-nonbusiness')
+    return findElements(this.calendar.el, '.fc-non-business')
   }
 
 

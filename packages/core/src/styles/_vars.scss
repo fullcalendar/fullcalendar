@@ -1,3 +1,14 @@
 
 $fc-theme-standard-border-color: #ddd;
 $fc-theme-standard-muted-bg-color: #eee;
+
+$event-resizer-dot-total-width: 8px;
+$event-resizer-dot-border-width: 1px;
+
+$event-resizer-mouse-width: 8px; // rename to thickness
+
+$event-dimmer-z: 1;
+$event-main-z: 2;
+$event-resizer-z: 3;
+
+$now-indicator-color: red;

@@ -1,9 +1,12 @@
 
 /*
 Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
+
+These styles only apply when the standard-theme is activated.
+When it's NOT activated, the fc-button classes won't even be in the DOM.
 */
 
-/* reset */
+// reset
 
 .fc-button {
   border-radius: 0;
@@ -33,7 +36,7 @@ Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
   border-style: none;
 }
 
-/* theme */
+// theme
 
 .fc-button {
   display: inline-block;
@@ -68,7 +71,7 @@ Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
   opacity: 0.65;
 }
 
-/* "primary" coloring */
+// "primary" coloring
 
 .fc-button-primary {
   color: #fff;
@@ -106,7 +109,7 @@ Lots taken from Flatly (MIT): https://bootswatch.com/4/flatly/bootstrap.css
           box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
 }
 
-/* icons within buttons */
+// icons within buttons
 
 .fc-button .fc-icon {
   vertical-align: middle;

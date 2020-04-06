@@ -5,7 +5,7 @@
   align-items: center;
 }
 
-.fc-dir-rtl .fc-toolbar-ltr {
+.fc-dir-rtl .fc-toolbar-ltr { // when the toolbar-chunk positioning system is explicitly left-to-right
   flex-direction: row-reverse;
 }
 
@@ -17,34 +17,19 @@
   margin-top: 1.5em;
 }
 
-.fc-toolbar h2 {
+.fc-toolbar-title {
   font-size: 1.75em;
   margin: 0;
 }
 
 .fc-dir-ltr {
-
   .fc-toolbar > * > :not(:first-child) {
     margin-left: .75em; // space between
   }
-
 }
 
 .fc-dir-rtl {
-
   .fc-toolbar > * > :not(:first-child) {
     margin-right: .75em; // space between
   }
-
-}
-
-.fc-media-print {
-
-  // don't display any button-related controls
-  // TODO: better to put in _button/_button-group.scss ?
-  .fc-button-group,
-  button {
-    display: none;
-  }
-
 }

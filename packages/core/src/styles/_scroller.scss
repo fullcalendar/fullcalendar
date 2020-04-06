@@ -15,14 +15,3 @@
   left: 0;
   bottom: 0;
 }
-
-
-.fc-media-print {
-
-  /* kill the scrollbars and allow natural height */
-  .fc-scroller {
-    overflow: visible !important;
-    height: auto !important;
-  }
-
-}

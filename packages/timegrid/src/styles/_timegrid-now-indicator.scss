@@ -1,19 +1,31 @@
 
+// line
+
 .fc-timegrid-now-indicator-line {
-  z-index: 999; // hack
-  border-top-width: 1px;
+  position: absolute;
+  z-index: $timegrid-now-indicator-z;
   left: 0;
   right: 0;
+  border-style: solid;
+  border-color: $now-indicator-color;
+  border-width: 1px 0 0;
 }
 
+
+// arrow
+
 .fc-timegrid-now-indicator-arrow {
-  z-index: 999; // hack
-  margin-top: -5px; /* vertically center on top coordinate */
+  position: absolute;
+  z-index: $timegrid-now-indicator-z;
+  margin-top: -5px; // vertically center on top coordinate
+  border-style: solid;
+  border-color: $now-indicator-color;
 }
 
 .fc-dir-ltr .fc-timegrid-now-indicator-arrow {
   left: 0;
-  /* triangle pointing right... */
+
+  // triangle pointing right. TODO: mixin
   border-width: 5px 0 5px 6px;
   border-top-color: transparent;
   border-bottom-color: transparent;
@@ -21,7 +33,8 @@
 
 .fc-dir-rtl .fc-timegrid-now-indicator-arrow {
   right: 0;
-  /* triangle pointing left... */
+
+  // triangle pointing left. TODO: mixin
   border-width: 5px 6px 5px 0;
   border-top-color: transparent;
   border-bottom-color: transparent;

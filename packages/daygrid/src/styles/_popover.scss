@@ -1,6 +1,6 @@
 
 .fc-popover {
-  position: fixed !important; // override bootstrap!
+  position: fixed !important; // OVERCOME BOOTSTRAP
   top: 0; // for when not positioned yet
   box-shadow: 0 2px 6px rgba(0,0,0,.15);
 }
@@ -10,7 +10,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 2px 4px;
+  padding: 3px 4px !important; // OVERCOME BOOTSTRAP
 }
 
 .fc-dir-rtl .fc-popover-header {
@@ -27,7 +27,6 @@
   font-size: 1.1em;
 }
 
-
 .fc-theme-standard {
 
   .fc-popover {
@@ -43,11 +42,8 @@
 
 }
 
-
 .fc-media-print {
-
   .fc-popover {
-    display: none; /* never display the "more.." popover in print mode */
+    display: none; // TODO: have JS close the popovers onbeforeprint?
   }
-
 }

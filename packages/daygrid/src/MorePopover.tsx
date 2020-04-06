@@ -50,7 +50,6 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
 
               return (
                 <div
-                  class='fc-daygrid-event-harness'
                   key={instanceId}
                   style={{
                     visibility: hiddenInstances[instanceId] ? 'hidden' : ''

@@ -50,7 +50,7 @@ export default class DayGridWrapper {
 
   // TODO: discourage use
   getNonBusinessDayEls() {
-    return findElements(this.el, '.fc-nonbusiness')
+    return findElements(this.el, '.fc-non-business')
   }
 
 
@@ -77,7 +77,7 @@ export default class DayGridWrapper {
 
 
   getWeekNavLinkEls() {
-    return findElements(this.el, '.fc-daygrid-week-number a[data-navlink]')
+    return findElements(this.el, '.fc-daygrid-week-number[data-navlink]')
   }
 
 

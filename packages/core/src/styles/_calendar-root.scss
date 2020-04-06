@@ -2,6 +2,10 @@
 .fc {
   font-size: 1em;
 
+  // layout of immediate children
+  display: flex;
+  flex-direction: column;
+
   &,
   *,
   *:before,
@@ -19,16 +23,12 @@
   }
 
   th {
-    text-align: center;
+    text-align: center; // is this needed?
   }
 
   th, td {
     vertical-align: top;
   }
-
-
-  /* Internal Nav Links
-  --------------------------------------------------------------------------------------------------*/
 
   a[data-navlink] {
     cursor: pointer;
@@ -57,11 +57,15 @@
 
 }
 
-
 .fc-media-print {
+  max-width: 100%;
+}
 
-  .fc {
-    max-width: 100% !important;
+
+// for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
+// inner-wrappers are responsible for being absolute
+.fc-liquid-hack {
+  td, th {
+    position: relative;
   }
-
 }

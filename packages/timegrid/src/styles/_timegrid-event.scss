@@ -1,87 +1,62 @@
 
+// harness
+
+.fc-timegrid-event-harness-inset .fc-timegrid-event {
+  box-shadow: 0px 0px 0px 1px #fff; // TODO: var
+}
+
+
+// root
+
 .fc-timegrid-event {
   position: absolute;
   top: 0;
-  bottom: 0;
+  bottom: 1px; // stay away from bottom slot line
   left: 0;
   right: 0;
-  overflow: hidden;
-  margin-bottom: 1px;
 
-  display: block; /* make the <a> tag block */
+  // TODO: vars
   font-size: .85em;
-  line-height: 1.4;
   border-radius: 3px;
   border: 1px solid #3788d8;
   background-color: #3788d8;
-  color: #fff; /* default TEXT color. TODO: test hovering over <a> when HREF and theme */
-  text-decoration: none; /* if <a> has an href */
+  color: #fff;
+
+  .fc-event-main {
+    max-height: 100%;
+    overflow: hidden;
+    padding: 1px 1px 0;
+  }
 }
 
-.fc-timegrid-event-harness-inset .fc-timegrid-event {
-  // TODO: make these colors into variables
-  -webkit-box-shadow: 0px 0px 0px 1px #fff;
-          box-shadow: 0px 0px 0px 1px #fff;
-}
 
-.fc-timegrid-event:not(.fc-event-start) { /* events that are continuing from another day */
-  /* replace space made by the top border with padding */
+// kill radius/padding when event continues into future/past
+
+.fc-timegrid-event:not(.fc-event-start) {
+  // replace space made by the top border with padding
   border-top-width: 0;
   padding-top: 1px;
 
-  /* remove top rounded corners */
+  // remove top rounded corners
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
 .fc-timegrid-event:not(.fc-event-end) {
-  /* replace space made by the top border with padding */
+  // replace space made by the top border with padding
   border-bottom-width: 0;
   padding-bottom: 1px;
 
-  /* remove bottom rounded corners */
+  // remove bottom rounded corners
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
+
+// time header
+
 .fc-timegrid-event .fc-event-time {
   white-space: nowrap;
   font-size: .85em;
-}
-
-/* resizer (cursor device) */
-
-.fc-timegrid-event.fc-event-resizable-mouse .fc-event-resizer {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 8px;
-  overflow: hidden;
-  line-height: 8px;
-  font-size: 11px;
-  font-family: monospace;
-  text-align: center;
-  cursor: s-resize;
-}
-
-.fc-timegrid-event.fc-event-resizable-mouse .fc-event-resizer:after {
-  content: "=";
-}
-
-/* resizer (touch device) */
-
-.fc-timegrid-event.fc-event-selected .fc-event-resizer {
-  /* 10x10 dot */
-  border-radius: 5px;
-  border-width: 1px;
-  width: 8px;
-  height: 8px;
-  border-style: solid;
-  border-color: inherit;
-  background: #fff;
-  /* horizontally center */
-  left: 50%;
-  margin-left: -5px;
-  /* center on the bottom edge */
-  bottom: -5px;
+  margin-bottom: 1px;
 }

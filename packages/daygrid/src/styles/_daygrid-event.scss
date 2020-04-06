@@ -1,17 +1,53 @@
 
-.fc-daygrid-event-harness { // dont do margins either!!!
-  padding-bottom: 2px;
-  // margin-top: 0 !important; // was overriding JS :(
-}
-
-.fc-daygrid-event-harness-abs {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-
-
 .fc-daygrid-event {
+  position: relative;
+  white-space: nowrap;
+  margin-bottom: 1px; // spacing between events
+
+  // vars for all of this...
+  font-size: .85em;
+  border: 1px solid #3788d8;
+  background-color: #3788d8;
+  color: #fff;
   border-radius: 3px;
+
+  .fc-event-main {
+    padding: 1px;
+    overflow: hidden;
+  }
+
+  .fc-event-time,
+  .fc-event-title {
+    display: inline;
+  }
+
+  .fc-event-time {
+    font-weight: bold;
+  }
+}
+
+
+// spacing between time and title
+
+.fc-dir-ltr .fc-daygrid-event .fc-event-time {
+  margin-right: 3px; // TODO: var
+}
+
+.fc-dir-rtl .fc-daygrid-event .fc-event-time {
+  margin-left: 3px; // TODO: var
+}
+
+
+// kill radius when event continues into future/past
+
+.fc-dir-ltr .fc-daygrid-event:not(.fc-event-start),
+.fc-dir-rtl .fc-daygrid-event:not(.fc-event-end) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.fc-dir-ltr .fc-daygrid-event:not(.fc-event-end),
+.fc-dir-rtl .fc-daygrid-event:not(.fc-event-start) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }

@@ -66,7 +66,7 @@ export default class TimeGridWrapper {
 
 
   getNonBusinessDayEls() {
-    return findElements(this.el, '.fc-nonbusiness')
+    return findElements(this.el, '.fc-non-business')
   }
 
 
@@ -81,7 +81,7 @@ export default class TimeGridWrapper {
 
 
   queryNonBusinessSegsInCol(col) {
-    return findElements(this.getColEl(col), '.fc-nonbusiness')
+    return findElements(this.getColEl(col), '.fc-non-business')
   }
 
 

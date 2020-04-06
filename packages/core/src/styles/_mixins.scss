@@ -1,9 +1,31 @@
 
-@mixin liquid-hack-cell-inner {
+@mixin liquid-absolute-override {
   height: auto;
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+@mixin event-resizer-dot {
+  border-radius: $event-resizer-dot-total-width / 2;
+  border-width: $event-resizer-dot-border-width;
+  width: $event-resizer-dot-total-width;
+  height: $event-resizer-dot-total-width;
+  border-style: solid;
+  border-color: inherit;
+  background: #fff;
+}
+
+@mixin clearfix {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+@mixin bg-z-indexes {
+  .fc-non-business { z-index: 1 }
+  .fc-bg-event { z-index: 2 }
+  .fc-highlight { z-index: 3 }
 }

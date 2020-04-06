@@ -1,0 +1,9 @@
+
+.fc-theme-standard {
+
+  .fc-divider {
+    background: $fc-theme-standard-muted-bg-color;
+    background: var(--fc-theme-standard-muted-bg-color, $fc-theme-standard-muted-bg-color);
+  }
+
+}

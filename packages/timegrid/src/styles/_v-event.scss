@@ -1,0 +1,68 @@
+
+/*
+A VERTICAL event
+*/
+
+
+.fc-v-event .fc-event-main {
+  position: relative; // specifically for the z-index
+  z-index: $event-main-z;
+}
+
+
+// resizer (mouse AND touch)
+
+.fc-v-event .fc-event-resizer {
+  position: absolute;
+  z-index: $event-resizer-z;
+}
+
+.fc-v-event .fc-event-resizer-start {
+  cursor: n-resize;
+}
+
+.fc-v-event .fc-event-resizer-end {
+  cursor: s-resize;
+}
+
+
+// resizer for MOUSE
+
+.fc-v-event.fc-event-resizable-mouse .fc-event-resizer {
+  height: $event-resizer-mouse-width;
+  left: -1px; // overcome border
+  right: -1px; // overcome border
+}
+
+.fc-v-event.fc-event-resizable-mouse .fc-event-resizer-start {
+  top: -($event-resizer-mouse-width / 2);
+}
+
+.fc-v-event.fc-event-resizable-mouse .fc-event-resizer-end {
+  bottom: -($event-resizer-mouse-width / 2);
+}
+
+
+// resizer for TOUCH (when event is "selected")
+
+.fc-v-event.fc-event-selected .fc-event-resizer {
+  @include event-resizer-dot;
+  left: 50%;
+  margin-left: -($event-resizer-dot-total-width / 2);
+}
+
+.fc-v-event.fc-event-selected .fc-event-resizer-start {
+  top: -($event-resizer-dot-total-width / 2);
+}
+
+.fc-v-event.fc-event-selected .fc-event-resizer-end {
+  bottom: -($event-resizer-dot-total-width / 2);
+}
+
+
+// expand touch area for TOUCH (when event is "selected")
+
+.fc-v-event.fc-event-selected:before {
+  left: -10px;
+  right: -10px;
+}

@@ -1,0 +1,74 @@
+
+/*
+A HORIZONTAL event
+*/
+
+
+.fc-h-event .fc-event-main {
+  position: relative; // specifically for the z-index
+  z-index: $event-main-z;
+}
+
+
+// resizer (mouse AND touch)
+
+.fc-h-event .fc-event-resizer {
+  position: absolute;
+  z-index: $event-resizer-z;
+}
+
+.fc-dir-ltr .fc-h-event .fc-event-resizer-start,
+.fc-dir-rtl .fc-h-event .fc-event-resizer-end {
+  cursor: w-resize;
+}
+
+.fc-dir-ltr .fc-h-event .fc-event-resizer-end,
+.fc-dir-rtl .fc-h-event .fc-event-resizer-start {
+  cursor: e-resize;
+}
+
+
+// resizer for MOUSE
+
+.fc-h-event.fc-event-resizable-mouse .fc-event-resizer {
+  width: $event-resizer-mouse-width;
+  top: -1px; // overcome border
+  bottom: -1px; // overcome border
+}
+
+.fc-dir-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start,
+.fc-dir-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end {
+  left: -($event-resizer-mouse-width / 2);
+}
+
+.fc-dir-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end,
+.fc-dir-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start {
+  right: -($event-resizer-mouse-width / 2);
+}
+
+
+// resizer for TOUCH (when event is "selected")
+
+.fc-h-event.fc-event-selected .fc-event-resizer {
+  @include event-resizer-dot;
+  top: 50%;
+  margin-top: -($event-resizer-dot-total-width / 2);
+}
+
+.fc-dir-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
+.fc-dir-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
+  left: -($event-resizer-dot-total-width / 2);
+}
+
+.fc-dir-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
+.fc-dir-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
+  right: -($event-resizer-dot-total-width / 2);
+}
+
+
+// expand touch area for TOUCH (when event is "selected")
+
+.fc-h-event.fc-event-selected:before {
+  top: -10px;
+  bottom: -10px;
+}

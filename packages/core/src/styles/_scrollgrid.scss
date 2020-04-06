@@ -15,16 +15,27 @@
   }
 }
 
-.fc-scrollgrid-liquid {
-  height: 100% !important;
+.fc-media-print {
+  .fc-scrollgrid {
+    table-layout: auto;
+  }
 }
 
+.fc-scrollgrid-liquid {
+  height: 100%;
+}
 
 .fc-scrollgrid-section { // a <tr>
   height: 0;
 
   > td {
     height: 0; // needs a height so inner div within grow
+  }
+
+  table {
+    height: 1px;
+      // for most browsers, if a height isn't set on the table, can't do liquid-height within cells
+      // serves as a min-height. harmless
   }
 }
 
@@ -34,41 +45,4 @@
   > td {
     height: 100%; // FF needs this instead of auto
   }
-}
-
-
-
-.fc-sticky {
-  position: -webkit-sticky;
-  position: sticky;
-}
-
-
-.fc-media-print {
-
-  .fc-scrollgrid {
-    table-layout: auto;
-
-    .fc-sticky { // TODO: do this more generally
-      top: 0 !important;
-      right: 0 !important;
-      left: 0 !important;
-      bottom: 0 !important;
-    }
-  }
-
-}
-
-
-// for FF, which doesn't expand a 100% div within a table cell. use absolute positioning
-// inner-wrappers are responsible for being absolute
-.fc-liquid-hack {
-  td, th {
-    position: relative;
-  }
-}
-
-// for most browsers, if a height isn't set on the table, can't do liquid-height within cells
-.fc-scrollgrid-section table {
-  height: 1px; // serves as a min-height. harmless
 }

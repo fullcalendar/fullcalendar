@@ -17,13 +17,14 @@ export interface ViewContainerProps {
 export default class ViewContainer extends BaseComponent<ViewContainerProps> {
 
   render(props: ViewContainerProps) {
-    let classNames = [ 'fc-view-harness' ]
+    let classNames = [
+      'fc-view-harness',
+      (props.aspectRatio || props.liquid || props.height)
+        ? 'fc-view-harness-active' // harness controls the height
+        : 'fc-view-harness-passive' // let the view do the height
+    ]
     let height: CssDimValue = ''
     let paddingBottom: CssDimValue = ''
-
-    if (props.aspectRatio || props.liquid || props.height) {
-      classNames.push('fc-view-harness-ratio')
-    }
 
     if (props.aspectRatio) {
       paddingBottom = (1 / props.aspectRatio) * 100 + '%'

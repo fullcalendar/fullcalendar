@@ -1,3 +1,7 @@
 
+@import '../../core/src/styles/vars';
+@import '../../core/src/styles/mixins';
+
+@import './styles/popover';
 @import './styles/daygrid';
 @import './styles/daygrid-event';

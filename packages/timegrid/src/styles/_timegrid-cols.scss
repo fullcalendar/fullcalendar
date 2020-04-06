@@ -1,0 +1,52 @@
+
+.fc-timegrid-cols {
+  position: absolute; // no z-index. children will decide and go above slots
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  & > table {
+    height: 100% !important;
+  }
+}
+
+.fc-timegrid-col-origin {
+  position: relative;
+  height: 0; // all segments position themselves based on this div
+}
+
+
+// fg events
+
+.fc-timegrid-col-events {
+  position: relative;
+  z-index: $timegrid-col-fg-z;
+}
+
+.fc-dir-ltr .fc-timegrid-col-events {
+  margin: 0 2.5% 0 2px;
+}
+
+.fc-dir-rtl .fc-timegrid-col-events {
+  margin: 0 2px 0 2.5%;
+}
+
+.fc-timegrid-event-harness {
+  position: absolute; // top/left/right/bottom will all be set by JS
+}
+
+
+// bg
+
+.fc-timegrid-col-bg {
+  position: relative;
+  z-index: $timegrid-col-bg-z;
+  @include bg-z-indexes;
+}
+
+.fc-timegrid-bg-harness {
+  position: absolute; // top/bottom will be set by JS
+  left: 0;
+  right: 0;
+}

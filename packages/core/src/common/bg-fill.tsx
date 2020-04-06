@@ -4,9 +4,9 @@ import { Seg } from '../component/DateComponent'
 import { EventMeta } from '../component/event-rendering'
 
 
-export function renderFill(fillType: string, extraClassNames: string[]) { // TODO: kill extraClassNames
+export function renderFill(fillType: string) {
   return (
-    <div class={[ `fc-${fillType}` ].concat(extraClassNames).join(' ')} />
+    <div class={`fc-${fillType}`} />
   )
 }
 

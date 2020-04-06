@@ -26,6 +26,7 @@
 
 .fc .fc-bootstrap-bordered {
   background: transparent; // some themes provide background. undo
+  border-radius: 0; // some themes provide border-radius. undo
 }
 
 

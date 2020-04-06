@@ -1,0 +1,104 @@
+
+// link resets
+a.fc-event {
+  display: block;
+  text-decoration: none;
+}
+
+// cursor
+.fc-event[href],
+.fc-event.fc-event-draggable {
+  cursor: pointer;
+}
+
+// print tweaks
+.fc-media-print {
+  .fc-event {
+    page-break-inside: avoid;
+  }
+}
+
+
+// mirror
+// ----------------------------------------------------------------------------------------------------
+
+.fc-event-mirror {
+  z-index: 9999; // always above everything else
+}
+
+
+// dragging
+// ----------------------------------------------------------------------------------------------------
+
+.fc-event-dragging:not(.fc-event-selected) { // MOUSE
+  opacity: .75;
+}
+
+.fc-event-dragging.fc-event-selected { // TOUCH
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+}
+
+
+// resizing
+// ----------------------------------------------------------------------------------------------------
+
+.fc-event .fc-event-resizer {
+  display: none;
+}
+
+.fc-event-resizable-mouse .fc-event-resizer, // MOUSE
+.fc-event-selected .fc-event-resizer { // TOUCH
+  display: block;
+}
+
+.fc-media-print {
+  .fc-event-resizer {
+    display: none;
+  }
+}
+
+
+// selecting (with TOUCH)
+// ----------------------------------------------------------------------------------------------------
+
+// expand main hit area
+// event subclasses should expand it!
+// always use :before
+.fc-event-selected:before {
+  content: "";
+  position: absolute;
+  top: -1px; // overcome border
+  left: -1px; // overcome border
+  right: -1px; // overcome border
+  bottom: -1px; // overcome border
+}
+
+// expand resizer hit area
+.fc-event-selected .fc-event-resizer:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  margin-top: -20px;
+}
+
+// drop-shadow effect
+.fc-event-selected {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+// background dimmer effect
+.fc-event-selected:after {
+  content: "";
+  position: absolute;
+  z-index: $event-dimmer-z;
+  top: -1px; // overcome border
+  left: -1px; // overcome border
+  right: -1px; // overcome border
+  bottom: -1px; // overcome border
+  background: #000;
+  opacity: .25;
+}

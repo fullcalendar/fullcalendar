@@ -72,8 +72,8 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
                 </Fragment>
               </div>
               <div class='fc-timegrid-col-bg'>
-                <Fragment>{this.renderFillSegs(props.businessHourSegs, 'nonbusiness')}</Fragment>
-                <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bgevent')}</Fragment>
+                <Fragment>{this.renderFillSegs(props.businessHourSegs, 'non-business')}</Fragment>
+                <Fragment>{this.renderFillSegs(props.bgEventSegs, 'bg-event')}</Fragment>
                 <Fragment>{this.renderFillSegs(props.dateSelectionSegs, 'highlight')}</Fragment>
               </div>
               {this.renderNowIndicator(props.nowIndicatorSegs)}
@@ -152,13 +152,13 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
 
       return (
         <div class='fc-timegrid-bg-harness' style={this.computeSegTopBottomCss(seg)}>
-          {fillType === 'bgevent' ?
+          {fillType === 'bg-event' ?
             <BgEvent
               key={key}
               seg={seg}
               {...getSegMeta(seg, props.todayRange, props.nowDate)}
             /> :
-            renderFill(fillType, [ `fc-timegrid-${fillType}` ])
+            renderFill(fillType)
           }
         </div>
       )

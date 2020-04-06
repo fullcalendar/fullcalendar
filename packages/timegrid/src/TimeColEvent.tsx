@@ -15,7 +15,7 @@ export default class TimeColEvent extends BaseComponent<MinimalEventProps> {
       <StandardEvent
         {...props}
         defaultTimeFormat={DEFAULT_TIME_FORMAT}
-        extraClassNames={[ 'fc-timegrid-event' ]}
+        extraClassNames={[ 'fc-timegrid-event', 'fc-v-event' ]}
       />
     )
   }
