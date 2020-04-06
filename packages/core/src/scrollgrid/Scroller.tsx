@@ -59,14 +59,14 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   needsXScrolling() {
-    return this.el.scrollWidth > this.el.clientWidth + 1 || // IE shittiness
-      this.props.overflowX === 'auto' && Boolean(this.getXScrollbarWidth()) // hack safeguard
+    return this.el.scrollWidth > this.el.clientWidth // + 1 || // IE shittiness
+      // this.props.overflowX === 'auto' && Boolean(this.getXScrollbarWidth()) // hack safeguard
   }
 
 
   needsYScrolling() {
-    return this.el.scrollHeight > this.el.clientHeight + 1 || // IE shittiness
-      this.props.overflowY === 'auto' && Boolean(this.getYScrollbarWidth()) // hack safeguard
+    return this.el.scrollHeight > this.el.clientHeight // + 1 || // IE shittiness
+      // this.props.overflowY === 'auto' && Boolean(this.getYScrollbarWidth()) // hack safeguard
   }
 
 
