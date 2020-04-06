@@ -1,16 +1,16 @@
 {
   "private": true,
   "devDependencies": {
-    "@fullcalendar/core": "5.0.0-beta",
-    "@fullcalendar/interaction": "5.0.0-beta",
-    "@fullcalendar/daygrid": "5.0.0-beta",
-    "@fullcalendar/timegrid": "5.0.0-beta",
-    "@fullcalendar/list": "5.0.0-beta",
-    "@fullcalendar/bootstrap": "5.0.0-beta",
-    "@fullcalendar/rrule": "5.0.0-beta",
-    "@fullcalendar/moment": "5.0.0-beta",
-    "@fullcalendar/moment-timezone": "5.0.0-beta",
-    "@fullcalendar/luxon": "5.0.0-beta",
-    "@fullcalendar/google-calendar": "5.0.0-beta"
+    "@fullcalendar/core": "5.0.0-beta.1",
+    "@fullcalendar/interaction": "5.0.0-beta.1",
+    "@fullcalendar/daygrid": "5.0.0-beta.1",
+    "@fullcalendar/timegrid": "5.0.0-beta.1",
+    "@fullcalendar/list": "5.0.0-beta.1",
+    "@fullcalendar/bootstrap": "5.0.0-beta.1",
+    "@fullcalendar/rrule": "5.0.0-beta.1",
+    "@fullcalendar/moment": "5.0.0-beta.1",
+    "@fullcalendar/moment-timezone": "5.0.0-beta.1",
+    "@fullcalendar/luxon": "5.0.0-beta.1",
+    "@fullcalendar/google-calendar": "5.0.0-beta.1"
   }
 }
