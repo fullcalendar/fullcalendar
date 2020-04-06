@@ -10,8 +10,10 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
-      now: '2020-02-07',
+      defaultDate: '2020-02-07',
+      nowIndicator: true,
       editable: true,
+      selectable: true,
       aspectRatio: 1.8,
       scrollTime: '00:00',
       header: {
