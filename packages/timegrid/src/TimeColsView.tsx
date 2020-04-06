@@ -12,7 +12,8 @@ import {
   WeekNumberRoot,
   RenderHook,
   DateComponent,
-  ViewProps
+  ViewProps,
+  RefObject
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -30,9 +31,10 @@ const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
 export default abstract class TimeColsView extends DateComponent<ViewProps> {
 
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
-  protected headerElRef = createRef<HTMLTableCellElement>()
-  private rootElRef = createRef<HTMLDivElement>()
-  private scrollerElRef = createRef<HTMLDivElement>()
+
+  protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
+  private rootElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
+  private scrollerElRef: RefObject<HTMLDivElement> = createRef<HTMLDivElement>()
 
 
   // rendering

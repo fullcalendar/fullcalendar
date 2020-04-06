@@ -7,7 +7,8 @@ import {
   ScrollGridSectionConfig,
   ViewRoot,
   DateComponent,
-  ViewProps
+  ViewProps,
+  RefObject
 } from '@fullcalendar/core'
 
 
@@ -19,7 +20,7 @@ import {
 
 export default abstract class TableView<State={}> extends DateComponent<ViewProps, State> {
 
-  protected headerElRef = createRef<HTMLTableCellElement>()
+  protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
 
 
   renderSimpleLayout(
