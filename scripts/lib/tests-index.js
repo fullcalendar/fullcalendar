@@ -65,6 +65,7 @@ function _buildTestIndex() {
             findOutput = findOutput.trim()
             files = !findOutput ? [] : findOutput.split('\n')
             files = uniqStrs(files)
+            files.sort() // work around OS-dependent sorting
             console.log(`[test-index] Compiling all ${files.length} test files.`)
 
           } else {
@@ -72,6 +73,7 @@ function _buildTestIndex() {
             let lines = !stdout ? [] : stdout.split('\n')
             files = lines.map((line) => line.trim().split(':')[0]) // TODO: do a max split of 1
             files = uniqStrs(files)
+            files.sort() // work around OS-dependent sorting
             console.log(
               '[test-index] Compiling only test files that have fdescribe/fit:\n' +
               files.map((file) => ` - ${file}`).join('\n')
@@ -101,6 +103,10 @@ function _buildTestIndex() {
 }
 
 
+/*
+TODO: make unnecessary. have grep do this instead with the -l option:
+https://stackoverflow.com/questions/6637882/how-can-i-use-grep-to-show-just-filenames-on-linux
+*/
 function uniqStrs(a) {
   let hash = {}
   for (let item of a) {
