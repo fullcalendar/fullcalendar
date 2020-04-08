@@ -82,28 +82,31 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
               {props.axis &&
                 <td class='fc-timegrid-axis' />
               }
-              {props.cells.map((cell, i) => (
-                <TimeCol
-                  key={cell.date.toISOString()}
-                  elRef={this.cellElRefs.createRef(i)}
-                  date={cell.date}
-                  dateProfile={props.dateProfile}
-                  nowDate={props.nowDate}
-                  todayRange={props.todayRange}
-                  extraHookProps={cell.extraHookProps}
-                  extraDataAttrs={cell.extraDataAttrs}
-                  extraClassNames={cell.extraClassNames}
-                  fgEventSegs={fgEventSegsByRow[i]}
-                  bgEventSegs={bgEventSegsByRow[i]}
-                  businessHourSegs={businessHourSegsByRow[i]}
-                  nowIndicatorSegs={nowIndicatorSegsByRow[i]}
-                  dateSelectionSegs={dateSelectionSegsByRow[i]}
-                  eventDrag={eventDragByRow[i]}
-                  eventResize={eventResizeByRow[i]}
-                  slatCoords={props.slatCoords}
-                  eventSelection={props.eventSelection}
-                />
-              ))}
+              {props.cells.map((cell, i) => {
+                let key = cell.date.toISOString()
+                return (
+                  <TimeCol
+                    key={key}
+                    elRef={this.cellElRefs.createRef(key)}
+                    date={cell.date}
+                    dateProfile={props.dateProfile}
+                    nowDate={props.nowDate}
+                    todayRange={props.todayRange}
+                    extraHookProps={cell.extraHookProps}
+                    extraDataAttrs={cell.extraDataAttrs}
+                    extraClassNames={cell.extraClassNames}
+                    fgEventSegs={fgEventSegsByRow[i]}
+                    bgEventSegs={bgEventSegsByRow[i]}
+                    businessHourSegs={businessHourSegsByRow[i]}
+                    nowIndicatorSegs={nowIndicatorSegsByRow[i]}
+                    dateSelectionSegs={dateSelectionSegsByRow[i]}
+                    eventDrag={eventDragByRow[i]}
+                    eventResize={eventResizeByRow[i]}
+                    slatCoords={props.slatCoords}
+                    eventSelection={props.eventSelection}
+                  />
+                )
+              })}
             </tr>
           </tbody>
         </table>
@@ -140,7 +143,7 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
       props.onColCoords(
         new PositionCache(
           this.rootElRef.current,
-          this.cellElRefs.collect(),
+          collectCellEls(this.cellElRefs.currentMap, props.cells),
           true, // horizontal
           false
         )
@@ -148,4 +151,12 @@ export default class TimeColsContent extends BaseComponent<TimeColsContentProps>
     }
   }
 
+}
+
+
+function collectCellEls(elMap: { [key: string]: HTMLElement }, cells: TableCellModel[]) {
+  return cells.map((cell) => {
+    let key = cell.date.toISOString() // store in the cell! bad to keep recomputing
+    return elMap[key]
+  })
 }

@@ -108,7 +108,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
         new TimeColsSlatsCoords(
           new PositionCache(
             this.rootElRef.current,
-            this.slatElRefs.collect(),
+            collectSlatEls(this.slatElRefs.currentMap, props.slatMetas),
             false,
             true // vertical
           ),
@@ -119,6 +119,11 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
     }
   }
 
+}
+
+
+function collectSlatEls(elMap: { [key: string]: HTMLElement }, slatMetas: TimeSlatMeta[]) {
+  return slatMetas.map((slatMeta) => elMap[slatMeta.isoTimeStr])
 }
 
 
@@ -149,7 +154,10 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
           ]
 
           return (
-            <tr ref={slatElRefs.createRef(i)}>
+            <tr
+              key={slatMeta.isoTimeStr}
+              ref={slatElRefs.createRef(slatMeta.isoTimeStr)}
+            >
               {props.axis &&
                 <TimeColsAxisCell {...slatMeta} />
               }

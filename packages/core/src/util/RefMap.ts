@@ -34,7 +34,7 @@ export default class RefMap<RefType> {
     let added = false
 
     if (val !== null) {
-      removed = (key in currentMap) // for bug
+      removed = (key in currentMap) // for bug... ACTUALLY: can probably do away with this now that callers don't share numeric indices anymore
       currentMap[key] = val
       depths[key] = (depths[key] || 0) + 1
       added = true
@@ -56,7 +56,9 @@ export default class RefMap<RefType> {
   }
 
 
-  collect( // TODO: check callers that don't care about order. should use getAll instead
+  // TODO: check callers that don't care about order. should use getAll instead
+  // NOTE: this method has become less valuable now that we are encouraged to map order by some other index
+  collect(
     startIndex?: number,
     endIndex?: number,
     step?: number
