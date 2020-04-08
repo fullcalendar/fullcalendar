@@ -68,7 +68,7 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
             ref={rootElRef}
             className={classNames.concat(customClassNames).join(' ')}
             data-date={!dayMeta.isDisabled ? formatDayString(date) : undefined}
-            colSpan={props.colSpan > 1 ? props.colSpan : undefined}
+            colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
             <span
@@ -138,7 +138,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
           <th
             ref={rootElRef}
             className={classNames.concat(customClassNames).join(' ')}
-            colSpan={props.colSpan > 1 ? props.colSpan : undefined}
+            colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
             <span
