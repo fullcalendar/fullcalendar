@@ -19,16 +19,10 @@ export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
         date: context.dateEnv.toDate(props.date),
         view: context.view
       }
-      let classNames = [
-        props.isAxis ? 'fc-now-indicator-axis' : 'fc-now-indicator-line',
-        'fc-now-indicator'
-      ]
 
       return (
         <RenderHook name='nowIndicator' hookProps={hookProps}>
-          {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-            rootElRef, classNames.concat(customClassNames), innerElRef, innerContent
-          )}
+          {props.children}
         </RenderHook>
       )
     }}
