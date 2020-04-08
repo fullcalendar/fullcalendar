@@ -96,22 +96,22 @@ export default class TableCell extends DateComponent<TableCellProps> {
             {...rootDataAttrs}
             {...props.extraDataAttrs}
           >
-            {!isDisabled && // only render inside if not disabled. TODO: what about week number?
-              <div class='fc-daygrid-day-frame fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
-                {props.showWeekNumber &&
-                  <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
-                    {(rootElRef, classNames, innerElRef, innerContent) => (
-                      <a
-                        ref={rootElRef}
-                        class={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')}
-                        data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null}
-                      >
-                        {innerContent}
-                      </a>
-                    )}
-                  </WeekNumberRoot>
-                }
-                <div class='fc-daygrid-day-fg'>
+            <div class='fc-daygrid-day-frame fc-scrollgrid-sync-inner' ref={props.innerElRef /* different from hook system! RENAME */}>
+              {props.showWeekNumber &&
+                <WeekNumberRoot date={date} defaultFormat={DEFAULT_WEEK_NUM_FORMAT}>
+                  {(rootElRef, classNames, innerElRef, innerContent) => (
+                    <a
+                      ref={rootElRef}
+                      class={[ 'fc-daygrid-week-number' ].concat(classNames).join(' ')}
+                      data-navlink={options.navLinks ? buildNavLinkData(date, 'week') : null}
+                    >
+                      {innerContent}
+                    </a>
+                  )}
+                </WeekNumberRoot>
+              }
+              <div class='fc-daygrid-day-fg'>
+                {!isDisabled &&
                   <TableCellTop
                     date={date}
                     showDayNumber={props.showDayNumber}
@@ -119,33 +119,33 @@ export default class TableCell extends DateComponent<TableCellProps> {
                     todayRange={props.todayRange}
                     extraHookProps={props.extraHookProps}
                   />
-                  <div
-                    class='fc-daygrid-day-events'
-                    ref={props.fgContentElRef}
-                    style={{ paddingBottom: props.fgPaddingBottom }}
-                  >
-                    {props.fgContent}
-                    {Boolean(props.moreCnt) &&
-                      <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
-                        <RenderHook name='moreLink'
-                          hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
-                          defaultContent={renderMoreLinkInner}
-                        >
-                          {(rootElRef, classNames, innerElRef, innerContent) => (
-                            <a onClick={this.handleMoreLink} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
-                              {innerContent}
-                            </a>
-                          )}
-                        </RenderHook>
-                      </div>
-                    }
-                  </div>
-                </div>
-                <div class='fc-daygrid-day-bg'>
-                  {props.bgContent}
+                }
+                <div
+                  class='fc-daygrid-day-events'
+                  ref={props.fgContentElRef}
+                  style={{ paddingBottom: props.fgPaddingBottom }}
+                >
+                  {props.fgContent}
+                  {Boolean(props.moreCnt) &&
+                    <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
+                      <RenderHook name='moreLink'
+                        hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
+                        defaultContent={renderMoreLinkInner}
+                      >
+                        {(rootElRef, classNames, innerElRef, innerContent) => (
+                          <a onClick={this.handleMoreLink} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
+                            {innerContent}
+                          </a>
+                        )}
+                      </RenderHook>
+                    </div>
+                  }
                 </div>
               </div>
-            }
+              <div class='fc-daygrid-day-bg'>
+                {props.bgContent}
+              </div>
+            </div>
           </td>
         )}
       </DayCellRoot>
