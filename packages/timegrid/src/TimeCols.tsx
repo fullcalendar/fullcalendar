@@ -5,7 +5,6 @@ import {
   multiplyDuration,
   wholeDivideDurations,
   DateMarker,
-  ComponentContext,
   BaseComponent,
   EventSegUiInteractionState,
   DateProfile,
