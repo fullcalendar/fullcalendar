@@ -65,7 +65,7 @@ export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState
   private colCoords: PositionCache
 
 
-  render(props: TimeColsProps, state: TimeColsState, context: ComponentContext) {
+  render(props: TimeColsProps, state: TimeColsState) {
     let { dateProfile } = props
 
     return (
