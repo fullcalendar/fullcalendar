@@ -8,7 +8,7 @@ import { computeVisibleDayRange } from './util/misc'
 
 
 export interface DateProfile {
-  currentRange: DateRange
+  currentRange: DateRange // TODO: does this include slotMinTime/slotMaxTime?
   currentRangeUnit: string
   isRangeAllDay: boolean
   validRange: OpenDateRange

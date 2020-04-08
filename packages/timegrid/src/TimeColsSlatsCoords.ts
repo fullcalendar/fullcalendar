@@ -12,9 +12,19 @@ export default class TimeColsSlatsCoords {
   }
 
 
-  safeComputeTop(date: DateMarker) {
-    if (rangeContainsMarker(this.dateProfile.currentRange, date)) {
-      return this.computeDateTop(date)
+  safeComputeTop(date: DateMarker) { // TODO: DRY with computeDateTop
+    let { dateProfile } = this
+
+    if (rangeContainsMarker(dateProfile.currentRange, date)) {
+      let startOfDayDate = startOfDay(date)
+      let timeMs = date.valueOf() - startOfDayDate.valueOf()
+
+      if (
+        timeMs >= asRoughMs(dateProfile.slotMinTime) &&
+        timeMs < asRoughMs(dateProfile.slotMaxTime)
+      ) {
+        return this.computeTimeTop(createDuration(timeMs))
+      }
     }
   }
 
