@@ -123,7 +123,7 @@ export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
 
 function collectSlatEls(elMap: { [key: string]: HTMLElement }, slatMetas: TimeSlatMeta[]) {
-  return slatMetas.map((slatMeta) => elMap[slatMeta.isoTimeStr])
+  return slatMetas.map((slatMeta) => elMap[slatMeta.key])
 }
 
 
@@ -155,8 +155,8 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
 
           return (
             <tr
-              key={slatMeta.isoTimeStr}
-              ref={slatElRefs.createRef(slatMeta.isoTimeStr)}
+              key={slatMeta.key}
+              ref={slatElRefs.createRef(slatMeta.key)}
             >
               {props.axis &&
                 <TimeColsAxisCell {...slatMeta} />
@@ -241,6 +241,7 @@ function renderInnerContent(props) { // TODO: add types
 export interface TimeSlatMeta {
   date: DateMarker
   time: Duration
+  key: string
   isoTimeStr: string
   isLabeled: boolean
 }
@@ -259,6 +260,7 @@ export function buildSlatMetas(slotMinTime: Duration, slotMaxTime: Duration, lab
     metas.push({
       date,
       time: slatTime,
+      key: date.toISOString(), // we can't use the isoTimeStr for uniqueness when minTime/maxTime beyone 0h/24h
       isoTimeStr: formatIsoTimeString(date),
       isLabeled
     })
