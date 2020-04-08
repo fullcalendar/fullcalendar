@@ -60,17 +60,9 @@ function parseRRule(input, dateEnv: DateEnv) {
   let rrule
 
   if (typeof input === 'string') {
-    let rruleTemp = rrulestr(input)
+    rrule = rrulestr(input)
+    rrule.fromString = true
 
-    if (rruleTemp.origOptions.dtstart != null) {
-      rruleTemp.origOptions.dtstart = dateEnv.createMarker(rruleTemp.origOptions.dtstart)
-    }
-
-    if (rruleTemp.origOptions.until != null) {
-      rruleTemp.origOptions.until = dateEnv.createMarker(rruleTemp.origOptions.until)
-    }
-
-    rrule = new RRule(rruleTemp.origOptions)
   } else if (typeof input === 'object' && input) { // non-null object
     let refined = { ...input } // copy
 
@@ -104,6 +96,7 @@ function parseRRule(input, dateEnv: DateEnv) {
     }
 
     rrule = new RRule(refined)
+    rrule.fromString = false
   }
 
   if (rrule) {
