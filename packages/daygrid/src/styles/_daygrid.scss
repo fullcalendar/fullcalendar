@@ -1,5 +1,5 @@
 
-$daygrid-top-z: 4; // one more than .fc-highlight's z-inde
+$daygrid-top-z: 4; // one more than .fc-highlight's z-index. WEIRD solution
 $daygrid-week-num-z: 5;
 $daygrid-fg-event-z: 6;
 $daygrid-popover-z: 7;
@@ -97,9 +97,6 @@ $daygrid-popover-z: 7;
 // fg event harness
 
 .fc-daygrid-event-harness {
-  position: relative;
-  z-index: $daygrid-fg-event-z;
-
   &:after {
     @include clearfix; // for when event element has bottom margin
   }
@@ -110,6 +107,10 @@ $daygrid-popover-z: 7;
   top: 0; // fallback
   left: 0; // fallback
   right: 0; // fallback
+}
+
+.fc-daygrid-event:not(.fc-event-mirror) { // TODO: should be in daygrid-event file? needs var
+  z-index: $daygrid-fg-event-z; // is already position:relative
 }
 
 
