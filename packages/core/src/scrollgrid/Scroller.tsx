@@ -59,14 +59,52 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   needsXScrolling() {
-    return this.el.scrollWidth > this.el.clientWidth // + 1 || // IE shittiness
-      // this.props.overflowX === 'auto' && Boolean(this.getXScrollbarWidth()) // hack safeguard
+    if (this.props.overflowX === 'hidden') {
+      return false
+    }
+
+    // testing scrollWidth>clientWidth is unreliable cross-browser when pixel heights aren't integers.
+    // much more reliable to see if children are taller than the scroller, even tho doesn't account for
+    // inner-child margins and absolute positioning
+
+    let { el } = this
+    let realClientWidth = this.el.getBoundingClientRect().width - this.getYScrollbarWidth()
+    let { children } = el
+
+    for (let i = 0; i < children.length; i++) {
+      let childEl = children[i]
+
+      if (childEl.getBoundingClientRect().width > realClientWidth) {
+        return true
+      }
+    }
+
+    return false
   }
 
 
   needsYScrolling() {
-    return this.el.scrollHeight > this.el.clientHeight // + 1 || // IE shittiness
-      // this.props.overflowY === 'auto' && Boolean(this.getYScrollbarWidth()) // hack safeguard
+    if (this.props.overflowY === 'hidden') {
+      return false
+    }
+
+    // testing scrollHeight>clientHeight is unreliable cross-browser when pixel heights aren't integers.
+    // much more reliable to see if children are taller than the scroller, even tho doesn't account for
+    // inner-child margins and absolute positioning
+
+    let { el } = this
+    let realClientHeight = this.el.getBoundingClientRect().height - this.getXScrollbarWidth()
+    let { children } = el
+
+    for (let i = 0; i < children.length; i++) {
+      let childEl = children[i]
+
+      if (childEl.getBoundingClientRect().height > realClientHeight) {
+        return true
+      }
+    }
+
+    return false
   }
 
 
@@ -74,7 +112,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
     if (this.props.overflowX === 'hidden') {
       return 0
     } else {
-      return this.el.offsetHeight - this.el.clientHeight // only works because we guarantee no borders
+      return this.el.offsetHeight - this.el.clientHeight // only works because we guarantee no borders. TODO: add to CSS with important?
     }
   }
 
@@ -83,7 +121,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
     if (this.props.overflowY === 'hidden') {
       return 0
     } else {
-      return this.el.offsetWidth - this.el.clientWidth // only works because we guarantee no borders
+      return this.el.offsetWidth - this.el.clientWidth // only works because we guarantee no borders. TODO: add to CSS with important?
     }
   }
 

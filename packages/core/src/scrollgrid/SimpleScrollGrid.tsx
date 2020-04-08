@@ -191,9 +191,19 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       let scrollerEl = scrollerElRefs.currentMap[sectionI]
 
       if (scrollerEl) {
-        scrollerClientWidths[sectionI] = scrollerEl.offsetWidth - (forceYScrollbars ? scrollbarWidth.y : 0)
-        scrollerClientHeights[sectionI] = scrollerEl.offsetHeight
-        // TODO: need IE wiggle?
+        let harnessEl = scrollerEl.parentNode as HTMLElement // TODO: weird way to get this. need harness b/c doesn't include table borders
+
+        scrollerClientWidths[sectionI] = Math.floor(
+          harnessEl.getBoundingClientRect().width - (
+            forceYScrollbars
+              ? scrollbarWidth.y // use global because scroller might not have scrollbars yet but will need them in future
+              : 0
+          )
+        )
+
+        scrollerClientHeights[sectionI] = Math.floor(
+          harnessEl.getBoundingClientRect().height // never has horizontal scrollbars
+        )
       }
     }
 

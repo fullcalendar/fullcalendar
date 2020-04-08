@@ -182,8 +182,3 @@ export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGr
 
   return classNames
 }
-
-
-// IE sometimes reports a certain clientHeight, but when inner content is set to that height,
-// some sort of rounding error causes it to spill out and create unnecessary scrollbars. Compensate.
-export const CLIENT_HEIGHT_WIGGLE = /Trident/.test(navigator.userAgent) ? 1 : 0

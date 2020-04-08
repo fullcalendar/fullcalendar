@@ -176,7 +176,6 @@ export {
   CssDimValue, ScrollerLike, SectionConfig, ColProps, ChunkConfig, hasShrinkWidth, renderMicroColGroup,
   getScrollGridClassNames, getSectionClassNames, getSectionHasLiquidHeight, getAllowYScrolling, renderChunkContent, computeShrinkWidth,
   ChunkContentCallbackArgs,
-  CLIENT_HEIGHT_WIGGLE,
   sanitizeShrinkWidth,
   ChunkConfigRowContent, ChunkConfigContent,
   isColPropsEqual

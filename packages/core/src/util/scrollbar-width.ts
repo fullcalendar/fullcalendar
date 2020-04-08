@@ -1,7 +1,7 @@
 
 export interface ScrollbarWidths {
   x: number
-  y: number
+  y: number // TODO: rename to vertical. less confusing when dealing with width/height verbage
 }
 
 let _scrollbarWidths: ScrollbarWidths | undefined
