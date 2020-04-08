@@ -22,7 +22,11 @@ import {
 import TableSeg from './TableSeg'
 
 
-export interface TableCellProps extends TableCellModel {
+export interface TableCellProps {
+  date: DateMarker
+  extraHookProps?: object
+  extraDataAttrs?: object
+  extraClassNames?: string[]
   elRef?: Ref<HTMLTableCellElement>
   innerElRef?: Ref<HTMLDivElement>
   bgContent: ComponentChildren
@@ -42,7 +46,8 @@ export interface TableCellProps extends TableCellModel {
   segIsHidden: { [instanceId: string]: boolean } // for more-popover. TODO: rename to be about selected instances
 }
 
-export interface TableCellModel { // combine with DayTableCell?
+export interface TableCellModel { // TODO: move somewhere else. combine with DayTableCell?
+  key: string
   date: DateMarker
   extraHookProps?: object
   extraDataAttrs?: object

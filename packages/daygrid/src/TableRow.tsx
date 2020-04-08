@@ -56,7 +56,7 @@ interface TableRowState {
 
 export default class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
-  public cellElRefs = new RefMap<HTMLTableCellElement>()
+  private cellElRefs = new RefMap<HTMLTableCellElement>()
   private cellInnerElRefs = new RefMap<HTMLElement>()
   private cellContentElRefs = new RefMap<HTMLDivElement>()
   private segHarnessRefs = new RefMap<HTMLDivElement>()
@@ -121,8 +121,9 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
           return (
             <TableCell
-              elRef={this.cellElRefs.createRef(col)}
-              innerElRef={this.cellInnerElRefs.createRef(col) /* rename */}
+              key={cell.key}
+              elRef={this.cellElRefs.createRef(cell.key)}
+              innerElRef={this.cellInnerElRefs.createRef(cell.key) /* rename prop */}
               date={cell.date}
               showDayNumber={props.showDayNumbers || showWeekNumber /* for spacing, we need to force day-numbers if week numbers */}
               showWeekNumber={showWeekNumber}
@@ -139,7 +140,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               allFgSegs={finalSegsByCol[col]}
               segIsHidden={segIsHidden}
               fgPaddingBottom={paddingBottoms[col]}
-              fgContentElRef={this.cellContentElRefs.createRef(col)}
+              fgContentElRef={this.cellContentElRefs.createRef(cell.key)}
               fgContent={[
                 <Fragment>{normalFgNodes}</Fragment>, // Fragment scopes the keys
                 <Fragment>{mirrorFgNodes}</Fragment>
@@ -327,11 +328,13 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
 
   updateSizing(isExternalSizingChange) {
-    if (this.props.clientWidth !== null) { // positioning ready?
+    let { props, cellInnerElRefs, cellContentElRefs } = this
+
+    if (props.clientWidth !== null) { // positioning ready?
 
       if (isExternalSizingChange) {
-        let cellInnerEls = this.cellInnerElRefs.collect()
-        let cellContentEls = this.cellContentElRefs.collect()
+        let cellInnerEls = props.cells.map((cell) => cellInnerElRefs.currentMap[cell.key])
+        let cellContentEls = props.cells.map((cell) => cellContentElRefs.currentMap[cell.key])
 
         if (cellContentEls.length) {
           let originEl = this.base as HTMLElement // BAD
@@ -353,7 +356,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
         }
       }
 
-      let limitByContentHeight = this.props.dayMaxEvents === true || this.props.dayMaxEventRows === true
+      let limitByContentHeight = props.dayMaxEvents === true || props.dayMaxEventRows === true
 
       this.setState({
         segHeights: this.computeSegHeights(),
@@ -371,8 +374,15 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
 
   computeMaxContentHeight() {
-    let contentEl = this.cellContentElRefs.currentMap[0]
+    let contentEl = this.cellContentElRefs.currentMap[this.props.cells[0].key]
     return contentEl.getBoundingClientRect().height
+  }
+
+
+  public getCellEls() {
+    let elMap = this.cellElRefs.currentMap
+
+    return this.props.cells.map((cell) => elMap[cell.key])
   }
 
 }

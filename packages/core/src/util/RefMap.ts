@@ -58,6 +58,7 @@ export default class RefMap<RefType> {
 
   // TODO: check callers that don't care about order. should use getAll instead
   // NOTE: this method has become less valuable now that we are encouraged to map order by some other index
+  // TODO: provide ONE array-export function, buildArray, which fails on non-numeric indexes. caller can manipulate and "collect"
   collect(
     startIndex?: number,
     endIndex?: number,

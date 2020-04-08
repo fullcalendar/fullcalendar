@@ -10,6 +10,7 @@ export interface DayTableSeg extends Seg {
 }
 
 export interface DayTableCell {
+  key: string // probably just the serialized date, but could be other metadata if this col is specific to another entity
   date: DateMarker
   extraHookProps?: object
   extraDataAttrs?: object
@@ -70,9 +71,11 @@ export default class DayTableModel {
     return rows
   }
 
-  private buildCell(row, col) {
+  private buildCell(row, col): DayTableCell {
+    let date = this.daySeries.dates[row * this.colCnt + col]
     return {
-      date: this.daySeries.dates[row * this.colCnt + col]
+      key: date.toISOString(),
+      date
     }
   }
 

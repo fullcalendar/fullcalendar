@@ -222,14 +222,14 @@ export default class Table extends DateComponent<TableProps, TableState> {
   prepareHits() {
     this.rowPositions = new PositionCache(
       this.rootEl,
-      this.rowRefs.collect().map((rowObj) => rowObj.cellElRefs.currentMap[0]), // first cell el in each row
+      this.rowRefs.collect().map((rowObj) => rowObj.getCellEls()[0]), // first cell el in each row. TODO: not optimal
       false,
       true // vertical
     )
 
     this.colPositions = new PositionCache(
       this.rootEl,
-      this.rowRefs.currentMap[0].cellElRefs.collect(), // cell els in first row
+      this.rowRefs.currentMap[0].getCellEls(), // cell els in first row
       true, // horizontal
       false
     )
@@ -263,7 +263,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
 
 
   private getCellEl(row, col) {
-    return this.rowRefs.currentMap[row].cellElRefs.currentMap[col]
+    return this.rowRefs.currentMap[row].getCellEls()[col] // TODO: not optimal
   }
 
 
