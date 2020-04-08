@@ -19,6 +19,7 @@ export interface TableDateCellProps {
   colCnt: number
   dayHeaderFormat: DateFormatter
   colSpan?: number
+  isSticky?: boolean // TODO: get this outta here somehow
   extraDataAttrs?: object
   extraHookProps?: object
 }
@@ -31,7 +32,7 @@ export interface DateHeaderCellHookProps extends DateMeta { // is used publicly 
   [otherProp: string]: any
 }
 
-const CLASS_NAME = 'fc-col-header-cell'
+const CLASS_NAME = 'fc-col-header-cell' // do the cushion too? no
 
 
 export default class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
@@ -69,7 +70,17 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
             data-date={!dayMeta.isDisabled ? formatDayString(date) : undefined}
             colSpan={props.colSpan > 1 ? props.colSpan : undefined}
             {...props.extraDataAttrs}
-          >{innerContent}</th>
+          >
+            <span
+              class={[
+                'fc-col-header-cell-cushion',
+                props.isSticky ? 'fc-sticky' : ''
+              ].join(' ')}
+              ref={innerElRef}
+            >
+              {innerContent}
+            </span>
+          </th>
         )}
       </RenderHook>
     )
@@ -82,6 +93,7 @@ export interface TableDowCellProps {
   dow: number
   dayHeaderFormat: DateFormatter
   colSpan?: number
+  isSticky?: boolean // TODO: get this outta here somehow
   extraHookProps?: object
   extraDataAttrs?: object
   extraClassNames?: string[]
@@ -128,7 +140,17 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
             className={classNames.concat(customClassNames).join(' ')}
             colSpan={props.colSpan > 1 ? props.colSpan : undefined}
             {...props.extraDataAttrs}
-          >{innerContent}</th>
+          >
+            <span
+              class={[
+                'fc-col-header-cell-cushion',
+                props.isSticky ? 'fc-sticky' : ''
+              ].join(' ')}
+              ref={innerElRef}
+            >
+              {innerContent}
+            </span>
+          </th>
         )}
       </RenderHook>
     )
