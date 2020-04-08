@@ -15,11 +15,6 @@ describe('event mutations on non-instances', function() {
         eventContent(arg) {
           renderCnt++
           if (renderCnt === 2) {
-            arg.event.moveStart('-01:00')
-            arg.event.moveEnd('01:00')
-            arg.event.moveDates({ days: 1 })
-            arg.event.setAllDay(false)
-          } else if (renderCnt === 4) {
             arg.event.setStart('2018-08-04')
             arg.event.setEnd('2018-10-04')
             arg.event.setDates('2018-08-04', '2018-10-04')
@@ -27,7 +22,7 @@ describe('event mutations on non-instances', function() {
         }
       })
 
-      expect(renderCnt).toBe(4)
+      expect(renderCnt).toBe(2)
 
       let event = calendar.getEventById('1')
       expect(event.start).toEqualDate('2018-09-04')
