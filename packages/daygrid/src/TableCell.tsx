@@ -39,7 +39,7 @@ export interface TableCellProps extends TableCellModel {
   buildMoreLinkText: (num: number) => string
   onMoreClick?: (arg: MoreLinkArg) => void
   allFgSegs: TableSeg[] // for more-popover. includes segs that aren't rooted in this cell but that pass over it
-  segIsNoDisplay: { [instanceId: string]: boolean } // for more-popover
+  segIsHidden: { [instanceId: string]: boolean } // for more-popover. TODO: rename to be about selected instances
 }
 
 export interface TableCellModel { // combine with DayTableCell?
@@ -154,7 +154,7 @@ export default class TableCell extends DateComponent<TableCellProps> {
     if (props.onMoreClick) {
       let allSegs = resliceDaySegs(props.allFgSegs, props.date)
       let hiddenSegs = allSegs.filter(
-        (seg: TableSeg) => props.segIsNoDisplay[seg.eventRange.instance.instanceId]
+        (seg: TableSeg) => props.segIsHidden[seg.eventRange.instance.instanceId]
       )
 
       props.onMoreClick({
