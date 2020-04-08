@@ -61,7 +61,9 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
 
     return (
       <table class={classNames.join(' ')} style={{ height: props.height }}>
-        {sectionConfigs.map((sectionConfig, sectionI) => this.renderSection(sectionConfig, sectionI, microColGroupNode))}
+        <tbody>
+          {sectionConfigs.map((sectionConfig, sectionI) => this.renderSection(sectionConfig, sectionI, microColGroupNode))}
+        </tbody>
       </table>
     )
   }
