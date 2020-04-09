@@ -167,15 +167,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
     let currentProps = this.props
 
     this.updateSizing(
-      // any props changes that could affect sizing
-      // HACKY. fix to prevent moreLink from unmounting during event drag
-      prevProps.cells !== currentProps.cells ||
-        prevProps.fgEventSegs !== currentProps.fgEventSegs ||
-        prevProps.dayMaxEvents !== currentProps.dayMaxEvents ||
-        prevProps.dayMaxEventRows !== currentProps.dayMaxEventRows ||
-        prevProps.clientWidth !== currentProps.clientWidth ||
-        prevProps.showDayNumbers !== currentProps.showDayNumbers ||
-        prevProps.showWeekNumbers !== currentProps.showWeekNumbers
+      !isPropsEqual(prevProps, currentProps)
     )
   }
 
