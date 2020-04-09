@@ -89,12 +89,16 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
       return chunkConfig.outerContent
     }
 
+    let { props } = this
     let { forceYScrollbars, scrollerClientWidths, scrollerClientHeights } = this.state
 
-    let needsYScrolling = getAllowYScrolling(this.props, sectionConfig) // TODO: do lazily. do in section config?
-    let isLiquid = getSectionHasLiquidHeight(this.props, sectionConfig)
+    let needsYScrolling = getAllowYScrolling(props, sectionConfig) // TODO: do lazily. do in section config?
+    let isLiquid = getSectionHasLiquidHeight(props, sectionConfig)
 
+    // for `!props.liquid` - is WHOLE scrollgrid natural height?
+    // TODO: do same thing in advanced scrollgrid? prolly not b/c always has horizontal scrollbars
     let overflowY: OverflowValue =
+      !props.liquid ? 'visible' :
       forceYScrollbars ? 'scroll' :
       !needsYScrolling ? 'hidden' :
       'auto'
@@ -117,7 +121,7 @@ export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProp
             ref={this.scrollerRefs.createRef(sectionI)}
             elRef={this.scrollerElRefs.createRef(sectionI)}
             overflowY={overflowY}
-            overflowX='hidden'
+            overflowX={!props.liquid ? 'visible' : 'hidden' /* natural height? */}
             maxHeight={sectionConfig.maxHeight}
             liquid={isLiquid}
             liquidIsAbsolute={true /* because its within a harness */}

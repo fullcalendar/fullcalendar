@@ -52,8 +52,8 @@ export default class ListView extends DateComponent<ViewProps> {
           <div ref={rootElRef} class={extraClassNames.concat(classNames).join(' ')}>
             <Scroller
               liquid={!props.isHeightAuto}
-              overflowX='hidden'
-              overflowY='auto'
+              overflowX={props.isHeightAuto ? 'visible' : 'hidden'}
+              overflowY={props.isHeightAuto ? 'visible' : 'auto'}
             >
               {eventSegs.length > 0 ?
                 this.renderSegList(eventSegs, dayDates) :

@@ -3,7 +3,7 @@ import { BaseComponent, setRef } from '../vdom-util'
 import { CssDimValue, ScrollerLike } from './util'
 
 
-export type OverflowValue = 'auto' | 'hidden' | 'scroll'
+export type OverflowValue = 'auto' | 'hidden' | 'scroll' | 'visible'
 
 export interface ScrollerProps {
   overflowX: OverflowValue
@@ -17,6 +17,9 @@ export interface ScrollerProps {
   children?: ComponentChildren
   elRef?: Ref<HTMLElement>
 }
+
+const VISIBLE_HIDDEN_RE = /^(visible|hidden)$/
+
 
 export default class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLike {
 
@@ -59,7 +62,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   needsXScrolling() {
-    if (this.props.overflowX === 'hidden') {
+    if (VISIBLE_HIDDEN_RE.test(this.props.overflowX)) {
       return false
     }
 
@@ -84,7 +87,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   needsYScrolling() {
-    if (this.props.overflowY === 'hidden') {
+    if (VISIBLE_HIDDEN_RE.test(this.props.overflowY)) {
       return false
     }
 
@@ -109,7 +112,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   getXScrollbarWidth() {
-    if (this.props.overflowX === 'hidden') {
+    if (VISIBLE_HIDDEN_RE.test(this.props.overflowX)) {
       return 0
     } else {
       return this.el.offsetHeight - this.el.clientHeight // only works because we guarantee no borders. TODO: add to CSS with important?
@@ -118,7 +121,7 @@ export default class Scroller extends BaseComponent<ScrollerProps> implements Sc
 
 
   getYScrollbarWidth() {
-    if (this.props.overflowY === 'hidden') {
+    if (VISIBLE_HIDDEN_RE.test(this.props.overflowY)) {
       return 0
     } else {
       return this.el.offsetWidth - this.el.clientWidth // only works because we guarantee no borders. TODO: add to CSS with important?
