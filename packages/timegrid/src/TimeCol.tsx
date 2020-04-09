@@ -108,9 +108,12 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     return segs.map((seg) => {
       let instanceId = seg.eventRange.instance.instanceId
       let isMirror = isDragging || isResizing || isDateSelecting
-      let positionCss = isMirror
-        ? { left: 0, right: 0, ...this.computeSegTopBottomCss(seg) } // TODO: use real fg-segs' left/right
-        : this.computeFgSegPositionCss(seg)
+      let positionCss = isMirror ?
+        // will span entire column width
+        // also, won't assign z-index, which is good, fc-event-mirror will overpower other harnesses
+        { left: 0, right: 0, ...this.computeSegTopBottomCss(seg) }
+        :
+        this.computeFgSegPositionCss(seg)
 
       return (
         <div

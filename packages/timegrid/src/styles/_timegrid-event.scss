@@ -1,7 +1,8 @@
 
 // harness
 
-.fc-timegrid-event-harness-inset .fc-timegrid-event {
+.fc-timegrid-event-harness-inset .fc-timegrid-event,
+.fc-timegrid-event.fc-event-mirror {
   box-shadow: 0px 0px 0px 1px #fff; // TODO: var
 }
 
