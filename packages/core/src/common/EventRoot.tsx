@@ -1,10 +1,11 @@
 import { Seg } from '../component/DateComponent'
-import { ComponentChildren, h, Ref } from '../vdom'
-import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
+import { ComponentChildren, h, Ref, createRef } from '../vdom'
+import ComponentContext from '../component/ComponentContext'
 import EventApi from '../api/EventApi'
 import { computeSegDraggable, computeSegStartResizable, computeSegEndResizable, setElSeg } from '../component/event-rendering'
 import { EventMeta, getSkinCss, getEventClassNames } from '../component/event-rendering'
 import { RenderHook } from './render-hook'
+import { BaseComponent } from '../vdom-util'
 
 
 export interface MinimalEventProps {
@@ -34,47 +35,63 @@ export interface EventRootProps extends MinimalEventProps {
 }
 
 
-export const EventRoot = (props: EventRootProps) => (
-  <ComponentContextType.Consumer>
-    {(context: ComponentContext) => {
-      let { seg } = props
-      let hookProps = {
-        event: new EventApi(context.calendar, seg.eventRange.def, seg.eventRange.instance),
-        view: context.view,
-        timeText: props.timeText,
-        isDraggable: !props.disableDragging && computeSegDraggable(seg, context),
-        isStartResizable: !props.disableResizing && computeSegStartResizable(seg, context),
-        isEndResizable: !props.disableResizing && computeSegEndResizable(seg, context),
-        isMirror: Boolean(props.isDragging || props.isResizing || props.isDateSelecting),
-        isStart: Boolean(seg.isStart),
-        isEnd: Boolean(seg.isEnd),
-        isPast: Boolean(props.isPast), // TODO: don't cast. getDateMeta does it
-        isFuture: Boolean(props.isFuture), // TODO: don't cast. getDateMeta does it
-        isToday: Boolean(props.isToday), // TODO: don't cast. getDateMeta does it
-        isSelected: Boolean(props.isSelected),
-        isDragging: Boolean(props.isDragging),
-        isResizing: Boolean(props.isResizing)
-      }
+export class EventRoot extends BaseComponent<EventRootProps> {
 
-      let style = getSkinCss(seg.eventRange.ui)
-      let standardClassNames = getEventClassNames(hookProps).concat(seg.eventRange.ui.classNames)
+  elRef = createRef<HTMLElement>()
 
-      return (
-        <RenderHook
-          name='event'
-          hookProps={hookProps}
-          defaultContent={props.defaultContent}
-          elRef={(el: HTMLElement | null) => {
-            if (el) {
-              setElSeg(el, seg)
-            }
-          }}
-        >
-          {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
-            rootElRef, standardClassNames.concat(customClassNames), style, innerElRef, innerContent, hookProps
-          )}
-        </RenderHook>
-      )
-    }}
-  </ComponentContextType.Consumer>
-)
+
+  render(props: EventRootProps, state: {}, context: ComponentContext) {
+    let { seg } = props
+    let hookProps = {
+      event: new EventApi(context.calendar, seg.eventRange.def, seg.eventRange.instance),
+      view: context.view,
+      timeText: props.timeText,
+      isDraggable: !props.disableDragging && computeSegDraggable(seg, context),
+      isStartResizable: !props.disableResizing && computeSegStartResizable(seg, context),
+      isEndResizable: !props.disableResizing && computeSegEndResizable(seg, context),
+      isMirror: Boolean(props.isDragging || props.isResizing || props.isDateSelecting),
+      isStart: Boolean(seg.isStart),
+      isEnd: Boolean(seg.isEnd),
+      isPast: Boolean(props.isPast), // TODO: don't cast. getDateMeta does it
+      isFuture: Boolean(props.isFuture), // TODO: don't cast. getDateMeta does it
+      isToday: Boolean(props.isToday), // TODO: don't cast. getDateMeta does it
+      isSelected: Boolean(props.isSelected),
+      isDragging: Boolean(props.isDragging),
+      isResizing: Boolean(props.isResizing)
+    }
+
+    let style = getSkinCss(seg.eventRange.ui)
+    let standardClassNames = getEventClassNames(hookProps).concat(seg.eventRange.ui.classNames)
+
+    return (
+      <RenderHook
+        name='event'
+        hookProps={hookProps}
+        defaultContent={props.defaultContent}
+        elRef={this.elRef}
+      >
+        {(rootElRef, customClassNames, innerElRef, innerContent) => props.children(
+          rootElRef, standardClassNames.concat(customClassNames), style, innerElRef, innerContent, hookProps
+        )}
+      </RenderHook>
+    )
+  }
+
+
+  componentDidMount() {
+    setElSeg(this.elRef.current, this.props.seg)
+  }
+
+
+  /*
+  need to re-assign seg to the element if seg changes, even if the element is the same
+  */
+  componentDidUpdate(prevProps: EventRootProps) {
+    let { seg } = this.props
+
+    if (seg !== prevProps.seg) {
+      setElSeg(this.elRef.current, seg)
+    }
+  }
+
+}
