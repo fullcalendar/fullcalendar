@@ -8,7 +8,8 @@ import {
   ViewRoot,
   DateComponent,
   ViewProps,
-  RefObject
+  RefObject,
+  renderScrollShim
 } from '@fullcalendar/core'
 
 
@@ -29,10 +30,12 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
   ) {
     let { props } = this
     let sections: SimpleScrollGridSection[] = []
+    let { viewHeaderSticky } = this.context.options
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
+        isSticky: viewHeaderSticky,
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -48,6 +51,15 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
         content: bodyContent
       }
     })
+
+    if (viewHeaderSticky) {
+      sections.push({
+        type: 'foot',
+        chunk: {
+          content: renderScrollShim
+        }
+      })
+    }
 
     return (
       <ViewRoot viewSpec={props.viewSpec}>
@@ -79,11 +91,13 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
     }
 
     let { props } = this
+    let { viewHeaderSticky } = this.context.options
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
+        isSticky: viewHeaderSticky,
         chunks: [{
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -99,6 +113,14 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
         content: bodyContent
       }]
     })
+
+    if (viewHeaderSticky) {
+      sections.push({
+        type: 'foot',
+        isSticky: true,
+        chunks: [{ content: renderScrollShim }]
+      })
+    }
 
     return (
       <ViewRoot viewSpec={props.viewSpec}>

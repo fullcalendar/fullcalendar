@@ -46,3 +46,59 @@
     height: 100%; // FF needs this instead of auto
   }
 }
+
+
+
+// don't share borders. for sticky cells
+.fc-scrollgrid {
+  border-collapse: separate !important; // OVERCOME RESET. TODO: rethink reset
+  border: 1px solid #ddd; // TODO: variable
+}
+
+
+// left/right borders
+
+.fc-scrollgrid-section > td {
+  border-right: 0; // most sections will just have a left border
+}
+
+.fc-dir-ltr .fc-scrollgrid-section > td:first-child,
+.fc-dir-rtl .fc-scrollgrid-section > td:last-child {
+  border-left: 0;
+}
+
+
+// top/bottom borders
+
+.fc-scrollgrid-section:not(.fc-scrollgrid-section-head) > td {
+  border-bottom: 0; // most sections will just have a top border
+}
+
+.fc-scrollgrid-section-head > td,
+.fc-scrollgrid-section-head + .fc-scrollgrid-section-body > td, // section after the header
+.fc-scrollgrid-section-foot.fc-scrollgrid-section-sticky > td { // target the scroll shim chunk. TODO: another classname?
+  border-top: 0;
+}
+
+
+// stickiness
+
+.fc-scrollgrid-section-head > td { // TODO: rename "header" ?
+  top: 0; // for when sticky
+}
+
+.fc-scrollgrid-section-foot > td { // TODO: rename "footer" ?
+  bottom: 0; // for when sticky
+}
+
+.fc-scrollgrid-section-sticky > td {
+  background: #fff; // TODO: var
+  position: sticky; // TODO: browser prefixes?
+  z-index: 2; // TODO: var
+  // TODO: box-shadow when sticking
+}
+
+.fc-scrollgrid-sticky-shim { // for horizontal scrollbar
+  height: 1px; // needs height to create scrollbars
+  margin-bottom: -1px;
+}

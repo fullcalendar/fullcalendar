@@ -23,6 +23,7 @@ export interface SectionConfig {
   liquid?: boolean
   expandRows?: boolean // TODO: how to get a bottom rule?
   syncRowHeights?: boolean // yuck
+  isSticky?: boolean
 }
 
 export type ChunkConfigContent = (contentProps: ChunkContentCallbackArgs) => VNode
@@ -173,12 +174,27 @@ export function getScrollGridClassNames(liquid: boolean, context: ComponentConte
 export function getSectionClassNames(sectionConfig: SectionConfig, wholeTableVGrow: boolean) {
   let classNames = [
     'fc-scrollgrid-section',
-    sectionConfig.className
+    `fc-scrollgrid-section-${sectionConfig.type}`,
+    sectionConfig.className // used?
   ]
 
   if (wholeTableVGrow && sectionConfig.liquid && sectionConfig.maxHeight == null) {
     classNames.push('fc-scrollgrid-section-liquid')
   }
 
+  if (sectionConfig.isSticky) {
+    classNames.push('fc-scrollgrid-section-sticky')
+  }
+
   return classNames
+}
+
+
+export function renderScrollShim(arg: ChunkContentCallbackArgs) {
+  return (
+    <div class='fc-scrollgrid-sticky-shim' style={{
+      width: arg.clientWidth,
+      minWidth: arg.tableMinWidth
+    }} />
+  )
 }

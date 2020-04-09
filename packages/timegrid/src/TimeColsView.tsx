@@ -13,7 +13,8 @@ import {
   RenderHook,
   DateComponent,
   ViewProps,
-  RefObject
+  RefObject,
+  renderScrollShim
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -48,10 +49,12 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
   ) {
     let { context, props } = this
     let sections: SimpleScrollGridSection[] = []
+    let { viewHeaderSticky } = context.options
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
+        isSticky: viewHeaderSticky,
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -64,13 +67,11 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
       sections.push({
         key: 'all-day',
         type: 'body',
-        chunk: {
-          content: allDayContent
-        }
+        chunk: { content: allDayContent }
       })
       sections.push({
         outerContent: (
-          <tr>
+          <tr class='fc-scrollgrid-section'>
             <td
               class={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
             />
@@ -89,6 +90,14 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
         content: timeContent
       }
     })
+
+    if (viewHeaderSticky) {
+      sections.push({
+        type: 'foot',
+        isSticky: true,
+        chunk: { content: renderScrollShim }
+      })
+    }
 
     return (
       <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
@@ -122,11 +131,13 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     let { context, props } = this
+    let { viewHeaderSticky } = context.options
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
+        isSticky: viewHeaderSticky,
         chunks: [
           {
             rowContent: <tr>{this.renderHeadAxis()}</tr>
@@ -158,7 +169,7 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
       })
       sections.push({
         outerContent: (
-          <tr>
+          <tr class='fc-scrollgrid-section'>
             <td
               colSpan={2}
               class={'fc-timegrid-divider fc-divider ' + context.theme.getClass('tableCellShaded')}
@@ -183,6 +194,18 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
         }
       ]
     })
+
+    if (viewHeaderSticky) {
+      sections.push({
+        key: 'scroll',
+        type: 'foot',
+        isSticky: true,
+        chunks: [
+          { content: renderScrollShim },
+          { content: renderScrollShim }
+        ]
+      })
+    }
 
     return (
       <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
