@@ -6,12 +6,10 @@
 
 .fc-timegrid-slot { // a <td>
   height: 1.5em;
-  border-bottom: 0 !important; // OVERCOME THEME
-    // each cell is responsible for its top border
 }
 
 .fc-timegrid-slot-minor {
-  border-top-style: dotted !important;
+  border-top-style: dotted !important; // OVERCOME THEME
 }
 
 .fc-timegrid-slot-label-cushion {

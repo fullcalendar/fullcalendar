@@ -1,51 +1,55 @@
 
-// all tables
 .fc-scrollgrid {
-  &, table { // root AND inner tables
+
+  // root AND inner tables
+  &, table {
     width: 100%; // because tables don't normally do this
     table-layout: fixed;
+    border-collapse: separate !important; // much better for sticky chunks. OVERCOME reset
   }
-  th, td {
+
+  // inner tables
+  table {
+    border-style: hidden !important; // kill outer border if theme styled it. chunks handle it
+  }
+
+  // all cells
+  tr > * {
     padding: 0;
   }
-}
 
-// root scrollgrid table
-.fc-scrollgrid {
-  border-collapse: separate !important; // much better for sticky chunks. OVERCOME reset
-}
-.fc-media-print .fc-scrollgrid {
-  table-layout: auto;
 }
 .fc-scrollgrid-liquid {
   height: 100%;
 }
-
-// inner tables
-.fc-scrollgrid table {
-  border-collapse: collapse; // much easier to style
-  border-style: hidden; // kill outer border. chunks handle it
+.fc-theme-standard .fc-scrollgrid {
+  border: 1px solid #ddd; // okay because bootstrap does this too
+}
+.fc-media-print .fc-scrollgrid {
+  table-layout: auto;
 }
 
-// dedup chunk left/right borders
-// chunks own their left border
-.fc-dir-ltr .fc-scrollgrid-section > td:not(:last-child) {
-  border-right: 0
-}
-.fc-dir-rtl .fc-scrollgrid-section > td:not(:last-child) {
-  border-left: 0
-}
 
-// dedup chunk top/bottom borders
-// chunks own their top border
-// keep for header...
-.fc-scrollgrid-section:not(.fc-scrollgrid-section-head):not(:last-child) > td {
-  border-bottom: 0
+// dedup top/bottom borders
+// rows own their top border (though header swallows top border of row after)
+.fc-scrollgrid {
+  tr:first-child > * { border-top: 0 }
+  tr:not(.fc-scrollgrid-section-head) > * { border-bottom: 0 }
 }
-
-.fc-scrollgrid-section-head + .fc-scrollgrid-section > td, // ...for the section after header, remove top border
-.fc-scrollgrid-section-foot > td { // and for footer, which can only be a scrollbar, remove as well
+.fc-scrollgrid-section-head + .fc-scrollgrid-section > * {
   border-top: 0;
+}
+
+
+// dedup left/right borders
+// rows own their left border (right border in rtl)
+.fc-dir-ltr .fc-scrollgrid tr > * {
+  &:first-child { border-left: 0 }
+  & { border-right: 0 }
+}
+.fc-dir-rtl .fc-scrollgrid tr > * {
+  &:first-child { border-right: 0 }
+  & { border-left: 0 }
 }
 
 
@@ -75,11 +79,11 @@
 // stickiness
 
 .fc-scrollgrid-section-head > td { // TODO: rename "header" ?
-  top: -1px; // for when sticky. overcome border
+  top: 0; // for when sticky
 }
 
 .fc-scrollgrid-section-foot > td { // TODO: rename "footer" ?
-  bottom: -1px; // for when sticky. overcome border
+  bottom: 0; // for when sticky
 }
 
 .fc-scrollgrid-section-sticky > td {

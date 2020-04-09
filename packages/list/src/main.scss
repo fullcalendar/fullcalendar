@@ -18,6 +18,7 @@
 
 .fc-list-table {
   width: 100%;
+  border-collapse: collapse;
   border-style: hidden !important; // kill outer border. already on fc-list. OVERCOME BOOTSTRAP
 
   td, th {
