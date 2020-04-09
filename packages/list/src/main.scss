@@ -18,11 +18,18 @@
 
 .fc-list-table {
   width: 100%;
-  border-collapse: collapse;
-  border-style: hidden !important; // kill outer border. already on fc-list. OVERCOME BOOTSTRAP
+  border-collapse: separate;
+  border-style: hidden !important; // kill outer border on theme. OVERCOME BOOTSTRAP
 
-  td, th {
+  tr > * {
     padding: 8px 14px;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  tr:first-child > * {
+    border-top: 0;
   }
 }
 
@@ -51,12 +58,6 @@
 
 .fc-list-event.fc-event-forced-url {
   cursor: pointer; // whole row will seem clickable
-}
-
-// no borders in between cells
-.fc-list-event td {
-  border-left-width: 0 !important; // OVERCOME BOOTSTRAP
-  border-right-width: 0 !important; // OVERCOME BOOTSTRAP
 }
 
 .fc-theme-standard {
