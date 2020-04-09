@@ -190,7 +190,7 @@ describe('dayMaxEventRows', function() { // TODO: rename file
 
         rowHeights.forEach((rowHeight) => {
           let diff = Math.abs(rowHeight - aveHeight)
-          expect(diff).toBeLessThan(4)
+          expect(diff).toBeLessThan(2)
         })
       })
 

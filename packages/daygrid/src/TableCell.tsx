@@ -110,37 +110,35 @@ export default class TableCell extends DateComponent<TableCellProps> {
                   )}
                 </WeekNumberRoot>
               }
-              <div class='fc-daygrid-day-fg'>
-                {!isDisabled &&
-                  <TableCellTop
-                    date={date}
-                    showDayNumber={props.showDayNumber}
-                    dateProfile={props.dateProfile}
-                    todayRange={props.todayRange}
-                    extraHookProps={props.extraHookProps}
-                  />
+              {!isDisabled &&
+                <TableCellTop
+                  date={date}
+                  showDayNumber={props.showDayNumber}
+                  dateProfile={props.dateProfile}
+                  todayRange={props.todayRange}
+                  extraHookProps={props.extraHookProps}
+                />
+              }
+              <div
+                class='fc-daygrid-day-events'
+                ref={props.fgContentElRef}
+                style={{ paddingBottom: props.fgPaddingBottom }}
+              >
+                {props.fgContent}
+                {Boolean(props.moreCnt) &&
+                  <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
+                    <RenderHook name='moreLink'
+                      hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
+                      defaultContent={renderMoreLinkInner}
+                    >
+                      {(rootElRef, classNames, innerElRef, innerContent) => (
+                        <a onClick={this.handleMoreLink} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
+                          {innerContent}
+                        </a>
+                      )}
+                    </RenderHook>
+                  </div>
                 }
-                <div
-                  class='fc-daygrid-day-events'
-                  ref={props.fgContentElRef}
-                  style={{ paddingBottom: props.fgPaddingBottom }}
-                >
-                  {props.fgContent}
-                  {Boolean(props.moreCnt) &&
-                    <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
-                      <RenderHook name='moreLink'
-                        hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
-                        defaultContent={renderMoreLinkInner}
-                      >
-                        {(rootElRef, classNames, innerElRef, innerContent) => (
-                          <a onClick={this.handleMoreLink} ref={rootElRef} className={[ 'fc-daygrid-more-link' ].concat(classNames).join(' ')}>
-                            {innerContent}
-                          </a>
-                        )}
-                      </RenderHook>
-                    </div>
-                  }
-                </div>
               </div>
               <div class='fc-daygrid-day-bg'>
                 {props.bgContent}

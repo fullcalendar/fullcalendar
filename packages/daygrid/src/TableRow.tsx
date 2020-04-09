@@ -56,9 +56,9 @@ interface TableRowState {
 
 export default class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
-  private cellElRefs = new RefMap<HTMLTableCellElement>()
-  private cellInnerElRefs = new RefMap<HTMLElement>()
-  private cellContentElRefs = new RefMap<HTMLDivElement>()
+  private cellElRefs = new RefMap<HTMLTableCellElement>() // the <td>
+  private cellInnerElRefs = new RefMap<HTMLElement>() // the fc-daygrid-day-frame
+  private cellContentElRefs = new RefMap<HTMLDivElement>() // the fc-daygrid-day-events
   private segHarnessRefs = new RefMap<HTMLDivElement>()
 
   state: TableRowState = {
@@ -231,7 +231,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
         let isMirror = isDragging || isResizing || isDateSelecting
         let isSelected = selectedInstanceHash[instanceId]
         let isInvisible = segIsHidden[instanceId] || isSelected
-        let isAbsolute = isMirror || isInvisible || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd // TODO: simpler way? NOT DRY
+        let isAbsolute = segIsHidden[instanceId] || isMirror || seg.firstCol !== seg.lastCol || !seg.isStart || !seg.isEnd // TODO: simpler way? NOT DRY
         let marginTop: CssDimValue
         let top: CssDimValue
         let left: CssDimValue
@@ -374,8 +374,11 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
 
   computeMaxContentHeight() {
-    let contentEl = this.cellContentElRefs.currentMap[this.props.cells[0].key]
-    return contentEl.getBoundingClientRect().height
+    let firstKey = this.props.cells[0].key
+    let frameEl = this.cellInnerElRefs.currentMap[firstKey]
+    let eventsEl = this.cellContentElRefs.currentMap[firstKey]
+
+    return frameEl.getBoundingClientRect().bottom - eventsEl.getBoundingClientRect().top
   }
 
 

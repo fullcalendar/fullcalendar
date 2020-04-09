@@ -72,6 +72,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
 
 
   render(props: TableProps, state: TableState, context: ComponentContext) {
+    let { dayMaxEventRows, dayMaxEvents, expandRows } = props
     let { morePopoverState } = state
     let rowCnt = props.cells.length
 
@@ -83,10 +84,21 @@ export default class Table extends DateComponent<TableProps, TableState> {
     let eventResizeByRow = this.splitEventResize(props.eventResize, rowCnt)
     let buildMoreLinkText = this.buildBuildMoreLinkText(context.options.moreLinkText)
 
-    let classNames = [ 'fc-daygrid-body' ]
-    if (props.expandRows && (props.dayMaxEvents === true || props.dayMaxEventRows === true)) {
-      classNames.push('fc-daygrid-body-balanced')
+    let limitViaBalanced = dayMaxEvents === true || dayMaxEventRows === true
+
+    // if rows can't expand to fill fixed height, can't do balanced-height event limit
+    // TODO: best place to normalize these options?
+    if (limitViaBalanced && !expandRows) {
+      limitViaBalanced = false
+      dayMaxEventRows = null
+      dayMaxEvents = null
     }
+
+    let classNames = [
+      'fc-daygrid-body',
+      limitViaBalanced ? 'fc-daygrid-body-balanced' : 'fc-daygrid-body-unbalanced', // will all row heights be equal?
+      expandRows ? '' : 'fc-daygrid-body-natural' // will height of one row depend on the others?
+    ]
 
     return (
       <div class={classNames.join(' ')} ref={this.handleRootEl} style={{
@@ -101,7 +113,7 @@ export default class Table extends DateComponent<TableProps, TableState> {
             style={{
               width: props.clientWidth,
               minWidth: props.tableMinWidth,
-              height: props.expandRows ? props.clientHeight : ''
+              height: expandRows ? props.clientHeight : ''
             }}
           >
             {props.colGroupNode}
@@ -127,8 +139,8 @@ export default class Table extends DateComponent<TableProps, TableState> {
                   dateSelectionSegs={dateSelectionSegsByRow[row]}
                   eventDrag={eventDragByRow[row]}
                   eventResize={eventResizeByRow[row]}
-                  dayMaxEvents={props.dayMaxEvents}
-                  dayMaxEventRows={props.dayMaxEventRows}
+                  dayMaxEvents={dayMaxEvents}
+                  dayMaxEventRows={dayMaxEventRows}
                   clientWidth={props.clientWidth}
                   buildMoreLinkText={buildMoreLinkText}
                   onMoreClick={this.handleMoreLinkClick}
