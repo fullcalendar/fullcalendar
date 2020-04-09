@@ -37,11 +37,11 @@ export default class ListView extends DateComponent<ViewProps> {
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
-    let extraClassNames = [ 'fc-list' ]
-    let themeClassName = context.theme.getClass('bordered')
-    if (themeClassName) {
-      extraClassNames.push(themeClassName)
-    }
+    let extraClassNames = [
+      'fc-list',
+      context.theme.getClass('bordered'),
+      context.options.stickyHeader !== false ? 'fc-list-sticky' : ''
+    ]
 
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
     let eventSegs = this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
