@@ -89,7 +89,7 @@ export default class ListView extends DateComponent<ViewProps> {
       <RenderHook name='noEvents' hookProps={hookProps} defaultContent={renderNoEventsInner}>
         {(rootElRef, classNames, innerElRef, innerContent) => (
           <div className={[ 'fc-list-empty' ].concat(classNames).join(' ')} ref={rootElRef}>
-            <div className='fc-list-empty-inner' ref={innerElRef}>
+            <div className='fc-list-empty-cushion' ref={innerElRef}>
               {innerContent}
             </div>
           </div>
