@@ -179,7 +179,9 @@ export {
   sanitizeShrinkWidth,
   ChunkConfigRowContent, ChunkConfigContent,
   isColPropsEqual,
-  renderScrollShim
+  renderScrollShim,
+  getStickyFooter,
+  getStickyHeader
 } from './scrollgrid/util'
 export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'

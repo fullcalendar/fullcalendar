@@ -9,7 +9,9 @@ import {
   DateComponent,
   ViewProps,
   RefObject,
-  renderScrollShim
+  renderScrollShim,
+  getStickyHeader,
+  getStickyFooter
 } from '@fullcalendar/core'
 
 
@@ -28,14 +30,14 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
     headerRowContent: VNode | null,
     bodyContent: (contentArg: ChunkContentCallbackArgs) => VNode
   ) {
-    let { props } = this
+    let { props, context } = this
     let sections: SimpleScrollGridSection[] = []
-    let { viewHeaderSticky } = this.context.options
+    let stickyHeader = getStickyHeader(context.options)
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: viewHeaderSticky,
+        isSticky: stickyHeader,
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -47,19 +49,8 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
     sections.push({
       type: 'body',
       liquid: true,
-      chunk: {
-        content: bodyContent
-      }
+      chunk: { content: bodyContent }
     })
-
-    if (viewHeaderSticky) {
-      sections.push({
-        type: 'foot',
-        chunk: {
-          content: renderScrollShim
-        }
-      })
-    }
 
     return (
       <ViewRoot viewSpec={props.viewSpec}>
@@ -90,14 +81,15 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
       throw new Error('No ScrollGrid implementation')
     }
 
-    let { props } = this
-    let { viewHeaderSticky } = this.context.options
+    let { props, context } = this
+    let stickyHeader = getStickyHeader(context.options)
+    let stickyFooter = getStickyFooter(context.options)
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: viewHeaderSticky,
+        isSticky: stickyHeader,
         chunks: [{
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -114,7 +106,7 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
       }]
     })
 
-    if (viewHeaderSticky) {
+    if (stickyFooter) {
       sections.push({
         type: 'foot',
         isSticky: true,

@@ -198,3 +198,25 @@ export function renderScrollShim(arg: ChunkContentCallbackArgs) {
     }} />
   )
 }
+
+
+export function getStickyHeader(options) {
+  let { stickyHeader } = options
+
+  if (stickyHeader == null || stickyHeader === 'auto') {
+    stickyHeader = options.height === 'auto' || options.viewHeight === 'auto'
+  }
+
+  return stickyHeader
+}
+
+
+export function getStickyFooter(options) {
+  let { stickyFooter } = options
+
+  if (stickyFooter == null || stickyFooter === 'auto') {
+    stickyFooter = options.height === 'auto' || options.viewHeight === 'auto'
+  }
+
+  return stickyFooter
+}

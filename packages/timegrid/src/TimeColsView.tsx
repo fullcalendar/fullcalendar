@@ -14,7 +14,9 @@ import {
   DateComponent,
   ViewProps,
   RefObject,
-  renderScrollShim
+  renderScrollShim,
+  getStickyHeader,
+  getStickyFooter
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -49,12 +51,12 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
   ) {
     let { context, props } = this
     let sections: SimpleScrollGridSection[] = []
-    let { viewHeaderSticky } = context.options
+    let stickyHeader = getStickyHeader(context.options)
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: viewHeaderSticky,
+        isSticky: stickyHeader,
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -91,14 +93,6 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
       }
     })
 
-    if (viewHeaderSticky) {
-      sections.push({
-        type: 'foot',
-        isSticky: true,
-        chunk: { content: renderScrollShim }
-      })
-    }
-
     return (
       <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
@@ -131,13 +125,14 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     let { context, props } = this
-    let { viewHeaderSticky } = context.options
+    let stickyHeader = getStickyHeader(context.options)
+    let stickyFooter = getStickyFooter(context.options)
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: viewHeaderSticky,
+        isSticky: stickyHeader,
         chunks: [
           {
             rowContent: <tr>{this.renderHeadAxis()}</tr>
@@ -195,7 +190,7 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
       ]
     })
 
-    if (viewHeaderSticky) {
+    if (stickyFooter) {
       sections.push({
         key: 'scroll',
         type: 'foot',
