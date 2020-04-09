@@ -1,29 +1,53 @@
 
+// all tables
 .fc-scrollgrid {
-
   &, table { // root AND inner tables
     width: 100%; // because tables don't normally do this
     table-layout: fixed;
   }
-
-  table { // inner tables
-    border-style: hidden; // kill outer border
-  }
-
   th, td {
     padding: 0;
   }
 }
 
-.fc-media-print {
-  .fc-scrollgrid {
-    table-layout: auto;
-  }
+// root scrollgrid table
+.fc-scrollgrid {
+  border-collapse: separate !important; // much better for sticky chunks. OVERCOME reset
 }
-
+.fc-media-print .fc-scrollgrid {
+  table-layout: auto;
+}
 .fc-scrollgrid-liquid {
   height: 100%;
 }
+
+// inner tables
+.fc-scrollgrid table {
+  border-collapse: collapse; // much easier to style
+  border-style: hidden; // kill outer border. chunks handle it
+}
+
+// dedup chunk left/right borders
+// chunks own their left border
+.fc-dir-ltr .fc-scrollgrid-section > td:not(:last-child) {
+  border-right: 0
+}
+.fc-dir-rtl .fc-scrollgrid-section > td:not(:last-child) {
+  border-left: 0
+}
+
+// dedup chunk top/bottom borders
+// chunks own their top border
+// keep for header...
+.fc-scrollgrid-section:not(.fc-scrollgrid-section-head):not(:last-child) > td {
+  border-bottom: 0
+}
+
+.fc-scrollgrid-section-head + .fc-scrollgrid-section > td, // ...for the section after header, remove top border
+.fc-scrollgrid-section-foot > td { // and for footer, which can only be a scrollbar, remove as well
+  border-top: 0;
+}
+
 
 .fc-scrollgrid-section { // a <tr>
   height: 0;
@@ -48,47 +72,14 @@
 }
 
 
-
-// don't share borders. for sticky cells
-.fc-scrollgrid {
-  border-collapse: separate !important; // OVERCOME RESET. TODO: rethink reset
-  border: 1px solid #ddd; // TODO: variable
-}
-
-
-// left/right borders
-
-.fc-scrollgrid-section > td {
-  border-right: 0; // most sections will just have a left border
-}
-
-.fc-dir-ltr .fc-scrollgrid-section > td:first-child,
-.fc-dir-rtl .fc-scrollgrid-section > td:last-child {
-  border-left: 0;
-}
-
-
-// top/bottom borders
-
-.fc-scrollgrid-section:not(.fc-scrollgrid-section-head) > td {
-  border-bottom: 0; // most sections will just have a top border
-}
-
-.fc-scrollgrid-section-head > td,
-.fc-scrollgrid-section-head + .fc-scrollgrid-section-body > td, // section after the header
-.fc-scrollgrid-section-foot.fc-scrollgrid-section-sticky > td { // target the scroll shim chunk. TODO: another classname?
-  border-top: 0;
-}
-
-
 // stickiness
 
 .fc-scrollgrid-section-head > td { // TODO: rename "header" ?
-  top: 0; // for when sticky
+  top: -1px; // for when sticky. overcome border
 }
 
 .fc-scrollgrid-section-foot > td { // TODO: rename "footer" ?
-  bottom: 0; // for when sticky
+  bottom: -1px; // for when sticky. overcome border
 }
 
 .fc-scrollgrid-section-sticky > td {
