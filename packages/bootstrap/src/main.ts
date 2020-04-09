@@ -14,7 +14,6 @@ BootstrapTheme.prototype.classes = {
   popover: 'card card-primary',
   popoverHeader: 'card-header',
   popoverContent: 'card-body',
-  today: 'alert alert-info',
   bordered: 'card card-primary fc-bootstrap-bordered'
 }
 

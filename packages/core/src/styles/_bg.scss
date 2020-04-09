@@ -36,10 +36,7 @@
 // today <td>
 // DIFFERENT SYSTEM, not within a shared container
 
-.fc-theme-standard {
-
-  .fc-day-today {
-    background: rgba(255, 220, 40, 0.15);
-  }
-
+// for all themes. bootstrap didn't provide a good semi-transparent color for this
+.fc-day-today {
+  background: rgba(255, 220, 40, 0.15);
 }
