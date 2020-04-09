@@ -1,5 +1,6 @@
 
 @import '../../core/src/styles/vars';
+@import '../../core/src/styles/mixins';
 
 
 // the view wrapper
@@ -22,7 +23,6 @@
   border-style: hidden !important; // kill outer border on theme. OVERCOME BOOTSTRAP
 
   tr > * {
-    padding: 8px 14px;
     border-left: 0 !important; // OVERCOME BOOTSTRAP
     border-right: 0 !important; // OVERCOME BOOTSTRAP
     border-top: 0 !important; // OVERCOME BOOTSTRAP
@@ -42,10 +42,26 @@
 }
 
 
+.fc-list-table th {
+  background: #fff; // for when headers are styled to be transparent and sticky. TODO: var
+  padding: 0; // uses an inner-wrapper instead...
+}
+.fc-list-table td,
+.fc-list-day-frame {
+  padding: 8px 14px;
+}
+
+
 // date heading rows
 // ----------------------------------------------------------------------------------------------------
 
-.fc-theme-standard .fc-list-day th {
+.fc-list-day-frame {
+  &:after {
+    @include clearfix; // clear floating
+  }
+}
+
+.fc-theme-standard .fc-list-day-frame {
   background: $fc-theme-standard-muted-bg-color;
   background: var(--fc-theme-standard-muted-bg-color, $fc-theme-standard-muted-bg-color);
 }

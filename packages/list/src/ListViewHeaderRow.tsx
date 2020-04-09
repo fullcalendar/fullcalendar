@@ -53,8 +53,10 @@ export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowPr
             className={classNames.concat(customClassNames).join(' ')}
             data-date={formatDayString(dayDate)}
           >
-            <th colSpan={3} className={theme.getClass('tableCellShaded')} ref={innerElRef}>
-              {innerContent}
+            <th colSpan={3}>
+              <div className={'fc-list-day-frame ' + theme.getClass('tableCellShaded')} ref={innerElRef}>
+                {innerContent}
+              </div>
             </th>
           </tr>
         )}
