@@ -12,6 +12,9 @@
     var calendar = new FullCalendar.Calendar(calendarEl, {
       defaultDate: '2020-02-12',
       editable: true,
+      selectable: true,
+      businessHours: true,
+      // height: 'auto',
       dayMaxEvents: true, // allow "more" link when too many events
       events: [
         {
