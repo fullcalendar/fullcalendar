@@ -123,7 +123,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
             <TableCell
               key={cell.key}
               elRef={this.cellElRefs.createRef(cell.key)}
-              innerElRef={this.cellInnerElRefs.createRef(cell.key) /* rename prop */}
+              innerElRef={this.cellInnerElRefs.createRef(cell.key) /* FF <td> problem, but okay to use for left/right. TODO: rename prop */}
               date={cell.date}
               showDayNumber={props.showDayNumbers || showWeekNumber /* for spacing, we need to force day-numbers if week numbers */}
               showWeekNumber={showWeekNumber}
@@ -367,10 +367,10 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
 
   computeMaxContentHeight() {
     let firstKey = this.props.cells[0].key
-    let frameEl = this.cellInnerElRefs.currentMap[firstKey]
+    let cellEl = this.cellElRefs.currentMap[firstKey]
     let eventsEl = this.cellContentElRefs.currentMap[firstKey]
 
-    return frameEl.getBoundingClientRect().bottom - eventsEl.getBoundingClientRect().top
+    return cellEl.getBoundingClientRect().bottom - eventsEl.getBoundingClientRect().top
   }
 
 
