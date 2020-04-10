@@ -8,7 +8,7 @@ describe('themeSystem', function() {
     plugins: [ BootstrapPlugin, TimeGridPlugin ],
     defaultView: 'timeGridWeek',
     headerToolbar: {
-      left: '',
+      left: 'title',
       center: '',
       right: 'next'
     }
@@ -42,7 +42,7 @@ describe('themeSystem', function() {
     expect($('.table-bordered').length).toBeGreaterThan(0)
 
     // similar scroll state after the change
-    expect(Math.abs(scrollTop - scrollEl.scrollTop)).toBeLessThan(5)
+    expect(Math.abs(scrollTop - scrollEl.scrollTop)).toBeLessThan(10)
   })
 
   // this tests the options setter with a single hash argument.
