@@ -130,6 +130,15 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   componentDidMount() {
     window.addEventListener('beforeprint', this.handleBeforePrint)
     window.addEventListener('afterprint', this.handleAfterPrint)
+
+    this.context.calendar.publiclyTrigger('datesDidUpdate')
+  }
+
+
+  componentDidUpdate(prevProps: CalendarComponentProps) {
+    if (prevProps.dateProfile !== this.props.dateProfile) {
+      this.context.calendar.publiclyTrigger('datesDidUpdate')
+    }
   }
 
 
