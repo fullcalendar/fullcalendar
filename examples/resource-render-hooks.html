@@ -28,8 +28,8 @@
         }
       },
       resourceAreaHeaderContent: 'Rooms',
-      resourceLabelContent: function(resource) {
-        return 'Auditorium ' + ('' + resource.id).toUpperCase();
+      resourceLabelContent: function(arg) {
+        return 'Auditorium ' + arg.resource.id.toUpperCase();
       },
       resourceLabelDidMount: function(arg) {
         if (arg.resource.id == 'h') {
