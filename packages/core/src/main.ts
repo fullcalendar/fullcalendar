@@ -180,8 +180,8 @@ export {
   ChunkConfigRowContent, ChunkConfigContent,
   isColPropsEqual,
   renderScrollShim,
-  getStickyFooter,
-  getStickyHeader
+  getStickyFooterScrollbar,
+  getStickyHeaderDates
 } from './scrollgrid/util'
 export { default as Scroller, ScrollerProps, OverflowValue } from './scrollgrid/Scroller'
 export { getScrollbarWidths } from './util/scrollbar-width'

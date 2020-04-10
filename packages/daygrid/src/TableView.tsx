@@ -10,8 +10,8 @@ import {
   ViewProps,
   RefObject,
   renderScrollShim,
-  getStickyHeader,
-  getStickyFooter
+  getStickyHeaderDates,
+  getStickyFooterScrollbar
 } from '@fullcalendar/core'
 
 
@@ -32,12 +32,12 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
   ) {
     let { props, context } = this
     let sections: SimpleScrollGridSection[] = []
-    let stickyHeader = getStickyHeader(context.options)
+    let stickyHeaderDates = getStickyHeaderDates(context.options)
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: stickyHeader,
+        isSticky: stickyHeaderDates,
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -82,14 +82,14 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
     }
 
     let { props, context } = this
-    let stickyHeader = getStickyHeader(context.options)
-    let stickyFooter = getStickyFooter(context.options)
+    let stickyHeaderDates = getStickyHeaderDates(context.options)
+    let stickyFooterScrollbar = getStickyFooterScrollbar(context.options)
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: stickyHeader,
+        isSticky: stickyHeaderDates,
         chunks: [{
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -106,7 +106,7 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
       }]
     })
 
-    if (stickyFooter) {
+    if (stickyFooterScrollbar) {
       sections.push({
         type: 'foot',
         isSticky: true,

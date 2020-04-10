@@ -40,7 +40,7 @@ export default class ListView extends DateComponent<ViewProps> {
     let extraClassNames = [
       'fc-list',
       context.theme.getClass('bordered'),
-      context.options.stickyHeader !== false ? 'fc-list-sticky' : ''
+      context.options.stickyHeaderDates !== false ? 'fc-list-sticky' : ''
     ]
 
     let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)

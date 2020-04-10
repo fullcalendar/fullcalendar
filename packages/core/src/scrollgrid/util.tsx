@@ -200,23 +200,23 @@ export function renderScrollShim(arg: ChunkContentCallbackArgs) {
 }
 
 
-export function getStickyHeader(options) {
-  let { stickyHeader } = options
+export function getStickyHeaderDates(options) {
+  let { stickyHeaderDates } = options
 
-  if (stickyHeader == null || stickyHeader === 'auto') {
-    stickyHeader = options.height === 'auto' || options.viewHeight === 'auto'
+  if (stickyHeaderDates == null || stickyHeaderDates === 'auto') {
+    stickyHeaderDates = options.height === 'auto' || options.viewHeight === 'auto'
   }
 
-  return stickyHeader
+  return stickyHeaderDates
 }
 
 
-export function getStickyFooter(options) {
-  let { stickyFooter } = options
+export function getStickyFooterScrollbar(options) {
+  let { stickyFooterScrollbar } = options
 
-  if (stickyFooter == null || stickyFooter === 'auto') {
-    stickyFooter = options.height === 'auto' || options.viewHeight === 'auto'
+  if (stickyFooterScrollbar == null || stickyFooterScrollbar === 'auto') {
+    stickyFooterScrollbar = options.height === 'auto' || options.viewHeight === 'auto'
   }
 
-  return stickyFooter
+  return stickyFooterScrollbar
 }

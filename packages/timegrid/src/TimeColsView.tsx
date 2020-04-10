@@ -15,8 +15,8 @@ import {
   ViewProps,
   RefObject,
   renderScrollShim,
-  getStickyHeader,
-  getStickyFooter
+  getStickyHeaderDates,
+  getStickyFooterScrollbar
 } from '@fullcalendar/core'
 import AllDaySplitter from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
@@ -51,12 +51,12 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
   ) {
     let { context, props } = this
     let sections: SimpleScrollGridSection[] = []
-    let stickyHeader = getStickyHeader(context.options)
+    let stickyHeaderDates = getStickyHeaderDates(context.options)
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: stickyHeader,
+        isSticky: stickyHeaderDates,
         chunk: {
           elRef: this.headerElRef,
           tableClassName: 'fc-col-header',
@@ -125,14 +125,14 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     let { context, props } = this
-    let stickyHeader = getStickyHeader(context.options)
-    let stickyFooter = getStickyFooter(context.options)
+    let stickyHeaderDates = getStickyHeaderDates(context.options)
+    let stickyFooterScrollbar = getStickyFooterScrollbar(context.options)
     let sections: ScrollGridSectionConfig[] = []
 
     if (headerRowContent) {
       sections.push({
         type: 'head',
-        isSticky: stickyHeader,
+        isSticky: stickyHeaderDates,
         chunks: [
           {
             rowContent: <tr>{this.renderHeadAxis()}</tr>
@@ -190,7 +190,7 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
       ]
     })
 
-    if (stickyFooter) {
+    if (stickyFooterScrollbar) {
       sections.push({
         key: 'scroll',
         type: 'foot',
