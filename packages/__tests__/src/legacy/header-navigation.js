@@ -2,7 +2,7 @@ import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
 describe('header navigation', function() {
   pushOptions({
-    header: {
+    headerToolbar: {
       left: 'next,prev,prevYear,nextYear today',
       center: '',
       right: 'title'

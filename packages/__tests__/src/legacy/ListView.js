@@ -443,7 +443,7 @@ describe('ListView rendering', function() {
 
     it('makes scrollbars', function() {
       let $el = $('<div style="width:300px" />').appendTo('body')
-      let calendar = initCalendar({ header: false }, $el)
+      let calendar = initCalendar({ headerToolbar: false }, $el)
       let viewWrapper = new ListViewWrapper(calendar)
       let scrollEl = viewWrapper.getScrollerEl()
 
@@ -459,7 +459,7 @@ describe('ListView rendering', function() {
     it('doesn\'t have scrollbars when height is \'auto\'', function() {
       let $el = $('<div style="width:300px" />').appendTo('body')
       let calendar = initCalendar({
-        header: false,
+        headerToolbar: false,
         height: 'auto'
       }, $el)
       let viewWrapper = new ListViewWrapper(calendar)

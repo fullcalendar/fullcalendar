@@ -12,7 +12,7 @@ describe('customButtons', function() {
       customButtons: {
         mybutton: { text: 'asdf' }
       },
-      header: { left: 'mybutton', center: '', right: '' }
+      headerToolbar: { left: 'mybutton', center: '', right: '' }
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     let buttonInfo = toolbarWrapper.getButtonInfo('mybutton')
@@ -24,7 +24,7 @@ describe('customButtons', function() {
       customButtons: {
         mybutton: { icon: 'asdf' }
       },
-      header: { left: 'mybutton', center: '', right: '' }
+      headerToolbar: { left: 'mybutton', center: '', right: '' }
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     let buttonInfo = toolbarWrapper.getButtonInfo('mybutton')
@@ -37,7 +37,7 @@ describe('customButtons', function() {
       customButtons: {
         mybutton: { bootstrapFontAwesome: 'asdf' }
       },
-      header: { left: 'mybutton', center: '', right: '' }
+      headerToolbar: { left: 'mybutton', center: '', right: '' }
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     let buttonInfo = toolbarWrapper.getButtonInfo('mybutton', 'fa')

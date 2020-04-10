@@ -16,7 +16,7 @@ export default createPlugin({
     listDay: {
       type: 'list',
       duration: { days: 1 },
-      listDayFormat: { weekday: 'long' } // day-of-week is all we need. full date is probably in header
+      listDayFormat: { weekday: 'long' } // day-of-week is all we need. full date is probably in headerToolbar
     },
 
     listWeek: {

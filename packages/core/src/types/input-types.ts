@@ -69,8 +69,8 @@ export interface DropInfo {
 }
 
 export interface OptionsInputBase {
-  header?: boolean | ToolbarInput
-  footer?: boolean | ToolbarInput
+  headerToolbar?: boolean | ToolbarInput
+  footerToolbar?: boolean | ToolbarInput
   customButtons?: { [name: string]: CustomButtonInput }
   buttonIcons?: boolean | ButtonIconsInput
   themeSystem?: 'standard' | string

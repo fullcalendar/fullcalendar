@@ -4,7 +4,7 @@ import DayGridPlugin from '@fullcalendar/daygrid'
 describe('view-specific options', function() {
 
   pushOptions({
-    header: {
+    headerToolbar: {
       left: 'prev,next',
       center: 'title',
       right: 'dayGridMonth,dayGridWeek,dayGridDay,timeGridWeek,timeGridDay'

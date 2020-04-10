@@ -65,7 +65,7 @@ function processSectionItems(sectionEl: HTMLElement) {
         type: 'title'
       }
     } else {
-      throw new Error('Unknown type of content in header')
+      throw new Error('Unknown type of content in toolbar')
     }
   })
 }

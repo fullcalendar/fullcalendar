@@ -12,16 +12,16 @@
   // (recreated on a Windows XP machine, after restarting)
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
       year: 2010,
       month: 2,
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -32,13 +32,13 @@
           title: 'Yay Tehran!',
           start: '2010-03-21' // should NOT show up on the 20th
           //allDay: false // if uncommented, will show 1am
-          
+
           // HOWEVER, when set to 2010-03-21T00:30:00, this ends up being 2010-03-21T01:30:00
           // should it be 2010-03-21T01:00:00 instead!!??
         }
       ]
     });
-    
+
   });
 
 </script>

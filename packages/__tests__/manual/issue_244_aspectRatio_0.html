@@ -9,9 +9,9 @@
 <script>
 
   $(document).ready(function() {
-    
+
     $('#calendar').fullCalendar({
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -19,9 +19,9 @@
       defaultView: 'week', // month view also looked scrunched
       aspectRatio: 0
     });
-    
+
     // shouldnt allow aspectRatios to *actually* go under .5
-    
+
   });
 
 </script>

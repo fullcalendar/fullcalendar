@@ -60,7 +60,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
   renders INSIDE of an outer div
   */
   render(props: CalendarComponentProps, state: CalendarComponentState, context: ComponentContext) {
-    let { calendar, options, header, footer } = context
+    let { calendar, options, headerToolbar, footerToolbar } = context
 
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
@@ -97,11 +97,11 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
 
     return (
       <Fragment>
-        {header &&
+        {headerToolbar &&
           <Toolbar
             ref={this.headerRef}
             extraClassName='fc-header-toolbar'
-            model={header}
+            model={headerToolbar}
             { ...toolbarProps }
           />
         }
@@ -114,11 +114,11 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
           {this.renderView(props, this.context)}
           {this.buildAppendContent()}
         </ViewContainer>
-        {footer &&
+        {footerToolbar &&
           <Toolbar
             ref={this.footerRef}
             extraClassName='fc-footer-toolbar'
-            model={footer}
+            model={footerToolbar}
             { ...toolbarProps }
           />
         }

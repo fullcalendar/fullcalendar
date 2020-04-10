@@ -16,7 +16,7 @@ export const globalDefaults = {
   dayHeaders: true,
   defaultView: '',
   aspectRatio: 1.35,
-  header: {
+  headerToolbar: {
     start: 'title',
     center: '',
     end: 'today prev,next'
@@ -85,8 +85,8 @@ export const globalDefaults = {
 
 
 let complexOptions = [ // names of options that are objects whose properties should be combined
-  'header',
-  'footer',
+  'headerToolbar',
+  'footerToolbar',
   'buttonText',
   'buttonIcons'
 ]

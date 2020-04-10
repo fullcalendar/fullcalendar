@@ -9,10 +9,10 @@
 <script>
 
   $(document).ready(function() {
-    
+
     $('#calendar').fullCalendar({
       defaultDate: '2010-01-01',
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -20,7 +20,7 @@
       editable: true,
       events: "many_events_json.txt"
     });
-    
+
   });
 
 </script>

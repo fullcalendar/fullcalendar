@@ -14,13 +14,13 @@ export interface ToolbarWidget {
   buttonText?: any
 }
 
-// TODO: make separate parsing of header/footer part of options-processing system
+// TODO: make separate parsing of headerToolbar/footerToolbar part of options-processing system
 export function parseToolbars(allOptions, theme: Theme, isRtl: boolean, calendar: Calendar) {
   let viewsWithButtons: string[] = []
-  let header = allOptions.header ? parseToolbar(allOptions.header, theme, isRtl, calendar, viewsWithButtons) : null
-  let footer = allOptions.footer ? parseToolbar(allOptions.footer, theme, isRtl, calendar, viewsWithButtons) : null
+  let headerToolbar = allOptions.headerToolbar ? parseToolbar(allOptions.headerToolbar, theme, isRtl, calendar, viewsWithButtons) : null
+  let footerToolbar = allOptions.footerToolbar ? parseToolbar(allOptions.footerToolbar, theme, isRtl, calendar, viewsWithButtons) : null
 
-  return { header, footer, viewsWithButtons }
+  return { headerToolbar, footerToolbar, viewsWithButtons }
 }
 
 function parseToolbar(raw, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarModel {

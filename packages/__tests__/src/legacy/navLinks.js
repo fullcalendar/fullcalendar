@@ -8,7 +8,7 @@ describe('navLinks', function() {
   pushOptions({
     now: '2016-08-20',
     navLinks: true,
-    header: {
+    headerToolbar: {
       left: 'prev,next today',
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' // affects which view is jumped to by default
@@ -36,7 +36,7 @@ describe('navLinks', function() {
       it('moves to day when no toolbars', function() {
         let dateClickSpy = spyOnCalendarCallback('dateClick')
         let calendar = initCalendar({
-          header: null
+          headerToolbar: null
         })
         let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
 

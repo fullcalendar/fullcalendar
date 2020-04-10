@@ -5,7 +5,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 describe('buttonIcons', function() {
   pushOptions({
     plugins: [ DayGridPlugin, BootstrapPlugin ],
-    header: {
+    headerToolbar: {
       left: 'prev,next today',
       center: 'title',
       right: 'prevYear, nextYear'

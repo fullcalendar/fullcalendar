@@ -10,7 +10,7 @@ describe('bootstrap theme', function() {
 
   describe('fa', function() {
     pushOptions({
-      header: { left: '', center: '', right: 'next' }
+      headerToolbar: { left: '', center: '', right: 'next' }
     })
 
     it('renders default', function() {

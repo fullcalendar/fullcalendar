@@ -3,7 +3,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('button text', function() {
   pushOptions({
-    header: {
+    headerToolbar: {
       left: 'prevYear,prev,today,next,nextYear',
       center: '',
       right: 'dayGridMonth,dayGridWeek,dayGridDay,timeGridWeek,timeGridDay'

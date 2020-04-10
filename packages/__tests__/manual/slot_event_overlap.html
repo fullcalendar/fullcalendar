@@ -9,9 +9,9 @@
 <script>
 
   $(document).ready(function() {
-    
+
     $('#calendar').fullCalendar({
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -29,7 +29,7 @@
     });
 
     $('#calendar-nooverlap').fullCalendar({
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -48,7 +48,7 @@
     });
 
     $('#calendar-rtl').fullCalendar({
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -67,7 +67,7 @@
     });
 
     $('#calendar-rtl-nooverlap').fullCalendar({
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -85,7 +85,7 @@
         testOverlap($('#calendar-rtl-nooverlap'), false, true);
       }
     });
-    
+
   });
 
   function testOverlap(el, allowOverlap, isRtl) {

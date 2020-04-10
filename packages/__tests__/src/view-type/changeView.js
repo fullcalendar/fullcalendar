@@ -66,7 +66,7 @@ describe('changeView', function() {
   // https://github.com/fullcalendar/fullcalendar/issues/3689
   it('can when switching to/from view while loading events', function(done) {
     let calendar = initCalendar({
-      header: {
+      headerToolbar: {
         left: 'title dayGridDay timeGridDay'
       },
       defaultView: 'timeGridDay',

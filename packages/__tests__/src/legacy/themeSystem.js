@@ -7,7 +7,7 @@ describe('themeSystem', function() {
   pushOptions({
     plugins: [ BootstrapPlugin, TimeGridPlugin ],
     defaultView: 'timeGridWeek',
-    header: {
+    headerToolbar: {
       left: '',
       center: '',
       right: 'next'

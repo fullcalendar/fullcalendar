@@ -24,8 +24,8 @@ export default interface ComponentContext {
   isRtl: boolean
   eventOrderSpecs: any
   nextDayThreshold: Duration
-  header: ToolbarModel | null
-  footer: ToolbarModel | null
+  headerToolbar: ToolbarModel | null
+  footerToolbar: ToolbarModel | null
   viewsWithButtons: string[]
   addResizeHandler: (handler: ResizeHandler) => void
   removeResizeHandler: (handler: ResizeHandler) => void

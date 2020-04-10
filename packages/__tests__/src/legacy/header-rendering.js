@@ -1,8 +1,8 @@
 import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
-describe('header rendering', function() {
+describe('headerToolbar rendering', function() { // TODO: rename file
 
-  it('renders the default header option', function() {
+  it('renders the default headerToolbar option', function() {
     let calendar = initCalendar()
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -21,9 +21,9 @@ describe('header rendering', function() {
     ])
   })
 
-  it('renders a given header option', function() {
+  it('renders a given headerToolbar option', function() {
     let calendar = initCalendar({
-      header: {
+      headerToolbar: {
         left: 'next,prev',
         center: 'prevYear today nextYear timeGridDay,timeGridWeek',
         right: 'title'
@@ -53,12 +53,12 @@ describe('header rendering', function() {
     ])
   })
 
-  describe('when setting header to false', function() {
+  describe('when setting headerToolbar to false', function() {
     pushOptions({
-      header: false
+      headerToolbar: false
     })
 
-    it('should not have header table', function() {
+    it('should not have headerToolbar', function() {
       let calendar = initCalendar()
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 
@@ -71,7 +71,7 @@ describe('header rendering', function() {
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
     expect(toolbarWrapper).toBeTruthy()
 
-    calendar.setOption('header', false)
+    calendar.setOption('headerToolbar', false)
     toolbarWrapper = new CalendarWrapper(calendar).toolbar
     expect(toolbarWrapper).toBeFalsy()
   })
@@ -83,7 +83,7 @@ describe('header rendering', function() {
 
     it('renders left and right literally', function() {
       let calendar = initCalendar({
-        header: {
+        headerToolbar: {
           left: 'prev',
           center: 'today',
           right: 'next'
@@ -127,7 +127,7 @@ describe('header rendering', function() {
       }
 
       let calendar = initCalendar({
-        header: {
+        headerToolbar: {
           left: 'prev,next',
           right: 'title'
         }

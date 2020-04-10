@@ -41,7 +41,7 @@ describe('moreLinkClick', function() { // TODO: rename file
 
     it('should go to dayGridWeek if it is one of the available views', function(done) {
       let calendar = initCalendar({
-        header: {
+        headerToolbar: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,dayGridWeek,dayGridDay'
@@ -59,7 +59,7 @@ describe('moreLinkClick', function() { // TODO: rename file
 
     it('should go to week if it is one of the available views', function(done) {
       let calendar = initCalendar({
-        header: {
+        headerToolbar: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
@@ -84,7 +84,7 @@ describe('moreLinkClick', function() { // TODO: rename file
 
     it('should go to dayGridDay if it is one of the available views', function(done) {
       let calendar = initCalendar({
-        header: {
+        headerToolbar: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,dayGridWeek,dayGridDay'
@@ -102,7 +102,7 @@ describe('moreLinkClick', function() { // TODO: rename file
 
     it('should go to day if it is one of the available views', function(done) {
       let calendar = initCalendar({
-        header: {
+        headerToolbar: {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
@@ -122,7 +122,7 @@ describe('moreLinkClick', function() { // TODO: rename file
   it('works with an explicit view name', function(done) {
     let calendar = initCalendar({
       moreLinkClick: 'timeGridWeek',
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,dayGridWeek,dayGridDay'

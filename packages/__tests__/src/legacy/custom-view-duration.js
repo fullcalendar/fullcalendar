@@ -280,7 +280,7 @@ describe('custom view', function() {
         duration: { days: 4 },
         buttonText: 'awesome'
       }
-      options.header = {
+      options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
@@ -304,7 +304,7 @@ describe('custom view', function() {
         duration: { days: 1 },
         buttonText: 'awesome'
       }
-      options.header = {
+      options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
@@ -328,7 +328,7 @@ describe('custom view', function() {
         duration: { days: 2 },
         buttonText: 'awesome'
       }
-      options.header = {
+      options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
@@ -343,7 +343,7 @@ describe('custom view', function() {
     it('accepts locale\'s single-unit-match override', function() {
       let calendar = initCalendar({
         locale: frLocale,
-        header: {
+        headerToolbar: {
           center: 'custom,dayGridMonth'
         },
         defaultView: 'custom',
@@ -364,7 +364,7 @@ describe('custom view', function() {
     it('accepts explicit View-Specific buttonText, overriding locale\'s single-unit-match override', function() {
       let calendar = initCalendar({
         locale: frLocale,
-        header: {
+        headerToolbar: {
           center: 'custom,dayGridMonth'
         },
         defaultView: 'custom',
@@ -392,7 +392,7 @@ describe('custom view', function() {
         duration: { days: 4 },
         buttonText: 'awesome'
       }
-      options.header = {
+      options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
       options.defaultView = 'custom'
@@ -413,7 +413,7 @@ describe('custom view', function() {
         duration: { days: 4 },
         buttonText: 'awesome'
       }
-      options.header = {
+      options.headerToolbar = {
         center: 'dayGridFourDay,dayGridMonth'
       }
       options.defaultView = 'dayGridFourDay'
@@ -438,7 +438,7 @@ describe('custom view', function() {
             }
           })
         ],
-        header: {
+        headerToolbar: {
           center: 'crazy,dayGridMonth'
         },
         defaultView: 'crazy'

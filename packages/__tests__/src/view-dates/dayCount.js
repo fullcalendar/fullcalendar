@@ -60,7 +60,7 @@ describe('dayCount', function() {
     initCalendar({
       defaultDate: '2018-06-11',
       defaultView: 'timeGridTwoDay',
-      header: {
+      headerToolbar: {
         left: 'prev,next',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridTwoDay'

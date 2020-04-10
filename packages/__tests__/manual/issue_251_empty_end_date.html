@@ -9,14 +9,14 @@
 <script>
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
-    
+
     $('#calendar').fullCalendar({
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
@@ -30,7 +30,7 @@
         }
       ]
     });
-    
+
   });
 
 </script>

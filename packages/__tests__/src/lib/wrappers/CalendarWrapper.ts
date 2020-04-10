@@ -31,14 +31,14 @@ export default class CalendarWrapper {
   }
 
 
-  // TODO: distinguish between header/footer
+  // TODO: distinguish between header/footerToolbar
   get toolbar() {
     let toolbarEl = this.calendar.el.querySelector('.fc-toolbar') as HTMLElement
     return toolbarEl ? new ToolbarWrapper(toolbarEl) : null
   }
 
 
-  get footer() {
+  get footerToolbar() {
     let toolbarEl = this.calendar.el.querySelector('.fc-footer-toolbar') as HTMLElement
     return toolbarEl ? new ToolbarWrapper(toolbarEl) : null
   }

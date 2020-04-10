@@ -2,11 +2,11 @@
 <html>
 <head>
 <style>
-  
+
   .activeDay {
     background:#eee !important;
   }
-  
+
 </style>
 <link href='../../dist/fullcalendar.css' rel='stylesheet' />
 <link href='../../dist/fullcalendar.print.css' rel='stylesheet' media='print' />
@@ -16,24 +16,24 @@
 <script>
 
   $(document).ready(function() {
-  
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
     var prevDay = null;
-    
+
     $('#calendar').fullCalendar({
-      header: {
+      headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,week,dayGridWeek,day,dayGridDay'
       },
       editable: true,
       dayClick: function(date, allDay, jsEvent, view) {
-        
+
         $('#calendar').fullCalendar( 'gotoDate', date);
-        
+
       },
       events: [
         {
@@ -82,7 +82,7 @@
         }
       ]
     });
-    
+
   });
 
 </script>
@@ -103,7 +103,7 @@
 </style>
 </head>
 <body>
-  
+
   <h1>gotoDate test page</h1>
   <p>
     This page is to test refactoring of gotoDate to check whether or not to call render() based on view.visStart and view.visEnd.
