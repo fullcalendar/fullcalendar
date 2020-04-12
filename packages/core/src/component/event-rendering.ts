@@ -67,7 +67,8 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
         } else {
           inverseBgByDefId[instance.defId].push(slicedRange)
         }
-      } else {
+
+      } else if (def.rendering !== 'none') {
         (def.rendering === 'background' ? bgRanges : fgRanges).push({
           def,
           ui,
