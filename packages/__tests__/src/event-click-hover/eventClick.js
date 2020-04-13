@@ -30,10 +30,10 @@ describe('eventClick', function() {
   it('fires on a background event', function(done) {
     let calendar = initCalendar({
       events: [
-        { start: '2018-08-31', rendering: 'background' }
+        { start: '2018-08-31', display: 'background' }
       ],
       eventClick(arg) {
-        expect(arg.event.rendering).toBe('background')
+        expect(arg.event.display).toBe('background')
         done()
       }
     })

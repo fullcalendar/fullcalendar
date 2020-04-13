@@ -144,12 +144,12 @@ describe('event coloring', function() {
   }
 
 
-  function testBackgroundColor(eventHasTime, rendering) {
+  function testBackgroundColor(eventHasTime, display) {
 
     var eventOptions = getEventOptions(eventHasTime)
 
-    if (typeof rendering !== 'undefined') {
-      eventOptions.rendering = rendering
+    if (typeof display !== 'undefined') {
+      eventOptions.display = display
     }
 
     it('should accept the global eventColor for background color', function() {
@@ -157,7 +157,7 @@ describe('event coloring', function() {
         eventColor: 'red',
         events: [ getTestEvent(eventOptions) ]
       })
-      expect(getEventCss('background-color', rendering)).toMatch(RED_REGEX)
+      expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
     it('should accept the global eventBackgroundColor', function() {
@@ -166,7 +166,7 @@ describe('event coloring', function() {
         eventBackgroundColor: 'red',
         events: [ getTestEvent(eventOptions) ]
       })
-      expect(getEventCss('background-color', rendering)).toMatch(RED_REGEX)
+      expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
     it('should accept an event source\'s color for the background', function() {
@@ -177,7 +177,7 @@ describe('event coloring', function() {
           events: [ getTestEvent(eventOptions) ]
         } ]
       })
-      expect(getEventCss('background-color', rendering)).toMatch(RED_REGEX)
+      expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
     it('should accept an event source\'s backgroundColor', function() {
@@ -188,7 +188,7 @@ describe('event coloring', function() {
           events: [ getTestEvent(eventOptions) ]
         } ]
       })
-      expect(getEventCss('background-color', rendering)).toMatch(RED_REGEX)
+      expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
     it('should accept an event object\'s color for the background', function() {
@@ -200,7 +200,7 @@ describe('event coloring', function() {
           events: [ eventInput ]
         } ]
       })
-      expect(getEventCss('background-color', rendering)).toMatch(RED_REGEX)
+      expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
 
     it('should accept an event object\'s backgroundColor', function() {
@@ -212,13 +212,13 @@ describe('event coloring', function() {
           events: [ eventInput ]
         } ]
       })
-      expect(getEventCss('background-color', rendering)).toMatch(RED_REGEX)
+      expect(getEventCss('background-color', display)).toMatch(RED_REGEX)
     })
   }
 
-  function getEventCss(prop, rendering) {
+  function getEventCss(prop, display) {
     let calendarWrapper = new CalendarWrapper(currentCalendar)
-    let eventEl = rendering === 'background'
+    let eventEl = display === 'background'
       ? calendarWrapper.getBgEventEls()[0]
       : calendarWrapper.getEventEls()[0]
 

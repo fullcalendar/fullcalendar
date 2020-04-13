@@ -20,7 +20,7 @@ describe('background events', function() {
           events: [ {
             title: 'hi',
             start: '2014-11-04',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
 
@@ -39,7 +39,7 @@ describe('background events', function() {
             title: 'hi',
             start: '2014-11-04',
             end: '2014-11-11',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
 
@@ -60,12 +60,12 @@ describe('background events', function() {
             {
               start: '2014-11-04',
               end: '2014-11-07',
-              rendering: 'background'
+              display: 'background'
             },
             {
               start: '2014-11-05',
               end: '2014-11-08',
-              rendering: 'background'
+              display: 'background'
             }
           ]
         })
@@ -97,7 +97,7 @@ describe('background events', function() {
           events: [ {
             title: 'hi',
             start: '2014-11-04',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
 
@@ -116,7 +116,7 @@ describe('background events', function() {
             title: 'hi',
             start: '2014-11-04',
             end: '2014-11-11',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
 
@@ -141,7 +141,7 @@ describe('background events', function() {
             events: [ {
               title: 'hi',
               start: '2014-11-04',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -171,7 +171,7 @@ describe('background events', function() {
               title: 'hi',
               start: '2014-11-04',
               end: '2014-11-11',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -198,7 +198,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-10-24',
               end: '2014-11-06',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -220,7 +220,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-11-27',
               end: '2014-12-08',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
 
@@ -244,12 +244,12 @@ describe('background events', function() {
               {
                 groupId: 'hi',
                 start: '2014-11-06',
-                rendering: 'inverse-background'
+                display: 'inverse-background'
               },
               {
                 groupId: 'hi',
                 start: '2014-11-04',
-                rendering: 'inverse-background'
+                display: 'inverse-background'
               }
             ]
           })
@@ -274,7 +274,7 @@ describe('background events', function() {
             events: [ {
               title: 'hi',
               start: '2014-11-04',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -296,7 +296,7 @@ describe('background events', function() {
         let calendar = initCalendar({
           defaultView: 'dayGridMonth',
           eventSources: [ {
-            rendering: 'background',
+            display: 'background',
             events: [ {
               start: '2014-11-04'
             } ]
@@ -315,7 +315,7 @@ describe('background events', function() {
         let calendar = initCalendar({
           defaultView: 'timeGridWeek',
           eventSources: [ {
-            rendering: 'background',
+            display: 'background',
             events: [ {
               start: '2014-11-04T01:00:00'
             } ]
@@ -339,7 +339,7 @@ describe('background events', function() {
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
 
@@ -363,7 +363,7 @@ describe('background events', function() {
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-05T05:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -379,12 +379,12 @@ describe('background events', function() {
             {
               start: '2014-11-04T01:00:00',
               end: '2014-11-05T05:00:00',
-              rendering: 'background'
+              display: 'background'
             },
             {
               start: '2014-11-04T03:00:00',
               end: '2014-11-05T08:00:00',
-              rendering: 'background'
+              display: 'background'
             }
           ]
         })
@@ -444,7 +444,7 @@ describe('background events', function() {
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-04T05:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
 
@@ -467,7 +467,7 @@ describe('background events', function() {
           events: [ {
             start: '2014-11-04T01:00:00',
             end: '2014-11-05T05:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -516,7 +516,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-04T05:00:00',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -537,7 +537,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-05T05:00:00',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -558,7 +558,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-10-30T01:00:00',
               end: '2014-11-04T05:00:00',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -579,7 +579,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-12T05:00:00',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -598,13 +598,13 @@ describe('background events', function() {
                 groupId: 'hello',
                 start: '2014-11-05T01:00:00',
                 end: '2014-11-05T05:00:00',
-                rendering: 'inverse-background'
+                display: 'inverse-background'
               },
               {
                 groupId: 'hello',
                 start: '2014-11-03T01:00:00',
                 end: '2014-11-03T05:00:00',
-                rendering: 'inverse-background'
+                display: 'inverse-background'
               }
             ]
           })
@@ -628,13 +628,13 @@ describe('background events', function() {
                 groupId: 'hello',
                 start: '2014-11-05T01:00:00',
                 end: '2014-11-05T05:00:00',
-                rendering: 'inverse-background'
+                display: 'inverse-background'
               },
               {
                 groupId: 'hello',
                 start: '2014-11-05T02:00:00',
                 end: '2014-11-05T04:00:00',
-                rendering: 'inverse-background'
+                display: 'inverse-background'
               }
             ]
           })
@@ -668,7 +668,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-11-04T01:00:00',
               end: '2014-11-04T05:00:00',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -692,7 +692,7 @@ describe('background events', function() {
             events: [ {
               start: '2014-01-01T01:00:00',
               end: '2014-01-01T05:00:00',
-              rendering: 'inverse-background'
+              display: 'inverse-background'
             } ]
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -705,7 +705,7 @@ describe('background events', function() {
       let calendar = initCalendar({
         events: [ {
           start: '2014-11-04T01:00:00',
-          rendering: 'background',
+          display: 'background',
           color: 'red'
         } ]
       })
@@ -718,7 +718,7 @@ describe('background events', function() {
       let calendar = initCalendar({
         events: [ {
           start: '2014-11-04T01:00:00',
-          rendering: 'background',
+          display: 'background',
           backgroundColor: 'red'
         } ]
       })
@@ -733,7 +733,7 @@ describe('background events', function() {
           color: 'red',
           events: [ {
             start: '2014-11-04T01:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         } ]
       })
@@ -748,7 +748,7 @@ describe('background events', function() {
           backgroundColor: 'red',
           events: [ {
             start: '2014-11-04T01:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         } ]
       })
@@ -763,7 +763,7 @@ describe('background events', function() {
         eventSources: [ {
           events: [ {
             start: '2014-11-04T01:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         } ]
       })
@@ -778,7 +778,7 @@ describe('background events', function() {
         eventSources: [ {
           events: [ {
             start: '2014-11-04T01:00:00',
-            rendering: 'background'
+            display: 'background'
           } ]
         } ]
       })

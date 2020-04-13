@@ -36,7 +36,7 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
     let def = eventStore.defs[defId]
     let ui = eventUis[def.defId]
 
-    if (ui.rendering === 'inverse-background') {
+    if (ui.display === 'inverse-background') {
       if (def.groupId) {
         inverseBgByGroupId[def.groupId] = []
 
@@ -62,15 +62,15 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
     let slicedRange = intersectRanges(normalRange, framingRange)
 
     if (slicedRange) {
-      if (ui.rendering === 'inverse-background') {
+      if (ui.display === 'inverse-background') {
         if (def.groupId) {
           inverseBgByGroupId[def.groupId].push(slicedRange)
         } else {
           inverseBgByDefId[instance.defId].push(slicedRange)
         }
 
-      } else if (ui.rendering !== 'none') {
-        (ui.rendering === 'background' ? bgRanges : fgRanges).push({
+      } else if (ui.display !== 'none') {
+        (ui.display === 'background' ? bgRanges : fgRanges).push({
           def,
           ui,
           instance,
@@ -122,7 +122,7 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
 
 
 export function hasBgRendering(def: EventDef) {
-  return def.ui.rendering === 'background' || def.ui.rendering === 'inverse-background'
+  return def.ui.display === 'background' || def.ui.display === 'inverse-background'
 }
 
 

@@ -258,5 +258,5 @@ import './date-matchers'
 
 pushOptions({
   timeZone: 'UTC',
-  eventRendering: 'auto'
+  eventDisplay: 'auto'
 })

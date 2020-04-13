@@ -1,9 +1,9 @@
 import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent } from '@fullcalendar/core'
 import TableSeg from './TableSeg'
 import TableBlockEvent from './TableBlockEvent'
-import TableDotEvent from './TableDotEvent'
+import TableListItemEvent from './TableListItemEvent'
 import Popover from './Popover'
-import { isDotRendering } from './event-rendering'
+import { hasListItemDisplay } from './event-rendering'
 
 
 export interface MorePopoverProps {
@@ -58,8 +58,8 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
                     visibility: hiddenInstances[instanceId] ? 'hidden' : ''
                   }}
                 >
-                  {isDotRendering(eventRange) ?
-                    <TableDotEvent
+                  {hasListItemDisplay(eventRange) ?
+                    <TableListItemEvent
                       seg={seg}
                       isDragging={false}
                       isSelected={instanceId === props.selectedInstanceId}

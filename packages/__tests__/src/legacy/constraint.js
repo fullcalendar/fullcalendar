@@ -603,7 +603,7 @@ describe('event constraint', function() {
               id: 'yo',
               start: '2014-11-13T01:00:00',
               end: '2014-11-13T04:00:00',
-              rendering: 'background'
+              display: 'background'
             }
           ]
           testEventDrag(options, '2014-11-13T04:00:00', false, done, 'dragging-event')
@@ -856,7 +856,7 @@ describe('selectConstraint', function() {
           groupId: 'yo',
           start: '2014-11-12T02:00:00',
           end: '2014-11-12T05:00:00',
-          rendering: 'background'
+          display: 'background'
         } ]
         options.selectConstraint = 'yo'
         testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T04:00:00Z', true, done)
@@ -871,7 +871,7 @@ describe('selectConstraint', function() {
           groupId: 'yo',
           start: '2014-11-12T02:00:00',
           end: '2014-11-12T05:00:00',
-          rendering: 'background'
+          display: 'background'
         } ]
         options.selectConstraint = 'yo'
         testSelection(options, '2014-11-12T03:00:00Z', '2014-11-12T06:00:00Z', false, done)

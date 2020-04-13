@@ -158,7 +158,7 @@ function applyMutationToRelated(eventStore: EventStore, instanceId: string, muta
   let relevant = getRelevantEvents(eventStore, instanceId)
   let eventConfigBase = fromApi ?
     { '': { // HACK. always allow API to mutate events
-      rendering: '',
+      display: '',
       startEditable: true,
       durationEditable: true,
       constraints: [],

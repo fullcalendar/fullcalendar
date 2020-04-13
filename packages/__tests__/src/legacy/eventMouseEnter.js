@@ -47,11 +47,11 @@ describe('eventMouseEnter', function() {
     initCalendar({
       events: [ {
         start: '2014-08-02',
-        rendering: 'background',
+        display: 'background',
         className: 'event'
       } ],
       eventMouseEnter(arg) {
-        expect(arg.event.rendering).toBe('background')
+        expect(arg.event.display).toBe('background')
         mouseoverCalled = true
       },
       eventMouseLeave() {

@@ -21,7 +21,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
         let options = {
           eventContent(arg) {
             expect(typeof arg.event).toBe('object')
-            expect(arg.event.rendering).toBe('')
+            expect(arg.event.display).toBe('')
             expect(arg.event.start).toBeDefined()
             expect(typeof arg.view).toBe('object')
             expect(arg.isMirror).toBe(false)
@@ -77,7 +77,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
         events: [ {
           title: 'my event',
           start: '2014-11-12',
-          rendering: 'background'
+          display: 'background'
         } ]
       })
 
@@ -85,7 +85,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
         let options = {
           eventContent(arg) {
             expect(typeof arg.event).toBe('object')
-            expect(arg.event.rendering).toBe('background')
+            expect(arg.event.display).toBe('background')
             expect(arg.event.start).toBeDefined()
             expect(typeof arg.view).toBe('object')
           },

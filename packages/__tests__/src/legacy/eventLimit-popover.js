@@ -88,7 +88,7 @@ describe('more-link popover', function() { // TODO: rename file
         events: testEvents.concat([
           {
             start: '2014-07-29',
-            rendering: 'background'
+            display: 'background'
           }
         ])
       })

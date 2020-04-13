@@ -126,7 +126,7 @@ describe('dateClick', function() {
       defaultView: 'dayGridMonth',
       events: [ {
         start: '2014-05-06',
-        rendering: 'background'
+        display: 'background'
       } ],
       dateClick(info) {
         expect(info.dateStr).toBe('2014-05-06')
