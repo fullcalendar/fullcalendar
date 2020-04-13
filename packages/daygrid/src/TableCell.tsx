@@ -174,14 +174,8 @@ export default class TableCell extends DateComponent<TableCellProps> {
 }
 
 
-function renderCellHeaderInner(props: DayCellHookProps) {
-  if (props.dayNumberText) {
-    return (
-      <a className='fc-daygrid-day-number' data-navlink={props.navLinkData}>
-        {props.dayNumberText}
-      </a>
-    )
-  }
+function renderTopInner(props: DayCellHookProps) {
+  return props.dayNumberText
 }
 
 
@@ -239,12 +233,17 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
         dateProfile={props.dateProfile}
         showDayNumber={props.showDayNumber}
         extraHookProps={props.extraHookProps}
-        defaultContent={renderCellHeaderInner}
+        defaultContent={renderTopInner}
       >
         {(innerElRef, innerContent) => (
           innerContent &&
             <div class='fc-daygrid-day-top' ref={innerElRef}>
-              {innerContent}
+              <a
+                className='fc-daygrid-day-number'
+                data-navlink={this.context.options.navLinks ? buildNavLinkData(props.date) : null}
+              >
+                {innerContent}
+              </a>
             </div>
         )}
       </DayCellContent>

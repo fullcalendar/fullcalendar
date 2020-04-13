@@ -7,7 +7,6 @@ import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rende
 import { formatDayString, createFormatter } from '../datelib/formatting'
 import { buildHookClassNameGenerator, MountHook, ContentHook } from './render-hook'
 import ViewApi from '../ViewApi'
-import { buildNavLinkData } from './nav-link'
 import { BaseComponent } from '../vdom-util'
 
 
@@ -24,7 +23,6 @@ export interface DayCellHookProps extends DateMeta {
   date: DateMarker // localized
   view: ViewApi
   dayNumberText: string
-  navLinkData: string
   [extraProp: string]: any // so can include a resource
 }
 
@@ -119,7 +117,7 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
 
 
 function massageHooksProps(input: DayCellHookPropOrigin, context: ComponentContext): DayCellHookProps {
-  let { dateEnv, options } = context
+  let { dateEnv } = context
   let { date } = input
   let dayMeta = getDateMeta(date, input.todayRange, null, input.dateProfile)
 
@@ -127,7 +125,6 @@ function massageHooksProps(input: DayCellHookPropOrigin, context: ComponentConte
     date: dateEnv.toDate(date),
     view: context.view,
     ...dayMeta,
-    dayNumberText: input.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : '',
-    navLinkData: options.navLinks ? buildNavLinkData(date) : undefined
+    dayNumberText: input.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : ''
   }
 }
