@@ -61,12 +61,11 @@ export interface EventTuple {
 export type EventInstanceHash = { [instanceId: string]: EventInstance }
 export type EventDefHash = { [defId: string]: EventDef }
 
-export const NON_DATE_PROPS = {
+export const NON_DATE_PROPS = { // ...that are NOT in the EventUi object
   id: String,
   groupId: String,
   title: String,
   url: String,
-  rendering: String,
   extendedProps: null
 }
 

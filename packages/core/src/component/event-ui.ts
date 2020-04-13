@@ -97,7 +97,7 @@ export function processScopedUiProps(prefix: string, rawScoped: any, calendar: C
 }
 
 const EMPTY_EVENT_UI: EventUi = {
-  rendering: '',
+  rendering: null,
   startEditable: null,
   durationEditable: null,
   constraints: [],
@@ -116,7 +116,7 @@ export function combineEventUis(uis: EventUi[]): EventUi {
 
 function combineTwoEventUis(item0: EventUi, item1: EventUi): EventUi { // hash1 has higher precedence
   return {
-    rendering: item1.rendering || item0.rendering,
+    rendering: item1.rendering != null ? item1.rendering : item0.rendering,
     startEditable: item1.startEditable != null ? item1.startEditable : item0.startEditable,
     durationEditable: item1.durationEditable != null ? item1.durationEditable : item0.durationEditable,
     constraints: item0.constraints.concat(item1.constraints),
