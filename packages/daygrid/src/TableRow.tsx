@@ -90,8 +90,8 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
     )
 
     let selectedInstanceHash = // TODO: messy way to compute this
-      (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-      (props.eventResize ? props.eventResize.affectedInstances : null) ||
+      (props.eventDrag && props.eventDrag.affectedInstances) ||
+      (props.eventResize && props.eventResize.affectedInstances) ||
       {}
 
     return (
@@ -114,8 +114,8 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
             {},
             {},
             props.todayRange,
-            Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check
-            Boolean(props.eventResize && props.eventResize.segs.length), // messy check
+            Boolean(props.eventDrag),
+            Boolean(props.eventResize),
             false // date-selecting (because mirror is never drawn for date selection)
           )
 

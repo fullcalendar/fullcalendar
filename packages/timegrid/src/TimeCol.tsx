@@ -32,14 +32,14 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
     let { options } = context
 
     let mirrorSegs: Seg[] = // yuck
-      (props.eventDrag && props.eventDrag.segs.length ? props.eventDrag.segs : null) ||
-      (props.eventResize && props.eventResize.segs.length ? props.eventResize.segs : null) ||
-      (options.selectMirror ? props.dateSelectionSegs : null) ||
+      (props.eventDrag && props.eventDrag.segs) ||
+      (props.eventResize && props.eventResize.segs) ||
+      (options.selectMirror && props.dateSelectionSegs) ||
       []
 
     let interactionAffectedInstances = // TODO: messy way to compute this
-      (props.eventDrag && props.eventDrag.segs.length ? props.eventDrag.affectedInstances : null) ||
-      (props.eventResize && props.eventResize.segs.length ? props.eventResize.affectedInstances : null) ||
+      (props.eventDrag && props.eventDrag.affectedInstances) ||
+      (props.eventResize && props.eventResize.affectedInstances) ||
       {}
 
     return (
@@ -58,9 +58,9 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
                   {this.renderFgSegs(
                     mirrorSegs as TimeColsSeg[],
                     {},
-                    Boolean(props.eventDrag && props.eventDrag.segs.length), // messy check!
-                    Boolean(props.eventResize && props.eventResize.segs.length), // messy check!
-                    Boolean(options.selectMirror && props.dateSelectionSegs.length) // messy check!
+                    Boolean(props.eventDrag),
+                    Boolean(props.eventResize),
+                    Boolean(options.selectMirror)
                     // TODO: pass in left/right instead of using only computeSegTopBottomCss
                   )}
                 </Fragment>
