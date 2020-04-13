@@ -27,6 +27,7 @@ export function addMs(m: DateMarker, n: number) {
 
 
 // Diffing (all return floats)
+// TODO: why not use ranges?
 
 export function diffWeeks(m0, m1) {
   return diffDays(m0, m1) / 7
