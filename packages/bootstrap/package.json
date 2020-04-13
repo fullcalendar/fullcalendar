@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@fullcalendar/bootstrap",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.2",
   "title": "FullCalendar Bootstrap Plugin",
   "description": "Bootstrap 4 theming for your calendar",
   "docs": "https://fullcalendar.io/docs/bootstrap-theme",
@@ -9,9 +9,9 @@
     "tslib": "^1.9.3"
   },
   "peerDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.1"
+    "@fullcalendar/core": "5.0.0-beta.2"
   },
   "devDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.1"
+    "@fullcalendar/core": "5.0.0-beta.2"
   }
 }

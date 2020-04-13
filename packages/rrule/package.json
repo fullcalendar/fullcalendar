@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@fullcalendar/rrule",
-  "version": "5.0.0-beta.1",
+  "version": "5.0.0-beta.2",
   "title": "FullCalendar RRule Plugin",
   "description": "A connector to the RRule library, for recurring events",
   "docs": "https://fullcalendar.io/docs/rrule-plugin",
@@ -9,11 +9,11 @@
     "tslib": "^1.9.3"
   },
   "peerDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.1",
+    "@fullcalendar/core": "5.0.0-beta.2",
     "rrule": "^2.6.0"
   },
   "devDependencies": {
-    "@fullcalendar/core": "5.0.0-beta.1",
+    "@fullcalendar/core": "5.0.0-beta.2",
     "rrule": "^2.6.0"
   }
 }
