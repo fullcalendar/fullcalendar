@@ -42,7 +42,7 @@ export const globalDefaults = {
 
   timeZone: 'local', // TODO: throw error if given falsy value?
 
-  // allDayDefault: undefined,
+  // defaultAllDay: undefined,
 
   // locale
   locales: [],

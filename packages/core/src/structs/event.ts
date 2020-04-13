@@ -78,11 +78,11 @@ export const DATE_PROPS = {
 
 
 export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar, allowOpenRange?: boolean): EventTuple | null {
-  let allDayDefault = computeIsAllDayDefault(sourceId, calendar)
+  let defaultAllDay = computeIsdefaultAllDay(sourceId, calendar)
   let leftovers0 = {}
   let recurringRes = parseRecurring(
     raw, // raw, but with single-event stuff stripped out
-    allDayDefault,
+    defaultAllDay,
     calendar.dateEnv,
     calendar.pluginSystem.hooks.recurringTypes,
     leftovers0 // will populate with non-recurring props
@@ -101,7 +101,7 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
 
   } else {
     let leftovers1 = {}
-    let singleRes = parseSingle(raw, allDayDefault, calendar, leftovers1, allowOpenRange)
+    let singleRes = parseSingle(raw, defaultAllDay, calendar, leftovers1, allowOpenRange)
 
     if (singleRes) {
       let def = parseEventDef(leftovers1, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)
@@ -164,7 +164,7 @@ export function createEventInstance(
 }
 
 
-function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: Calendar, leftovers?, allowOpenRange?: boolean) {
+function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: Calendar, leftovers?, allowOpenRange?: boolean) {
   let props = pluckDateProps(raw, leftovers)
   let allDay = props.allDay
   let startMeta
@@ -186,8 +186,8 @@ function parseSingle(raw: EventInput, allDayDefault: boolean | null, calendar: C
   }
 
   if (allDay == null) {
-    if (allDayDefault != null) {
-      allDay = allDayDefault
+    if (defaultAllDay != null) {
+      allDay = defaultAllDay
     } else {
       // fall back to the date props LAST
       allDay = (!startMeta || startMeta.isTimeUnspecified) &&
@@ -258,16 +258,16 @@ function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers?) {
 }
 
 
-function computeIsAllDayDefault(sourceId: string, calendar: Calendar): boolean | null {
+function computeIsdefaultAllDay(sourceId: string, calendar: Calendar): boolean | null {
   let res = null
 
   if (sourceId) {
     let source = calendar.state.eventSources[sourceId]
-    res = source.allDayDefault
+    res = source.defaultAllDay
   }
 
   if (res == null) {
-    res = calendar.opt('allDayDefault')
+    res = calendar.opt('defaultAllDay')
   }
 
   return res

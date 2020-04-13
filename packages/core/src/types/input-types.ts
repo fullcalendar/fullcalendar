@@ -155,7 +155,7 @@ export interface OptionsInputBase {
   eventColor?: string
   events?: EventSourceInput
   eventSources?: EventSourceInput[]
-  allDayDefault?: boolean
+  defaultAllDay?: boolean
   startParam?: string
   endParam?: string
   lazyFetching?: boolean

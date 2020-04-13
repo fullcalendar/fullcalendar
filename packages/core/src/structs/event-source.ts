@@ -25,7 +25,7 @@ export type EventSourceErrorResponseHandler = (error: EventSourceError) => void
 
 export interface ExtendedEventSourceInput {
   id?: string | number // only accept number?
-  allDayDefault?: boolean
+  defaultAllDay?: boolean
   eventDataTransform?: EventInputTransformer
 
   // array or function (TODO: move this to array-event-source/func-event-source?)
@@ -73,7 +73,7 @@ export interface EventSource {
   isFetching: boolean
   latestFetchId: string
   fetchRange: DateRange | null
-  allDayDefault: boolean | null
+  defaultAllDay: boolean | null
   eventDataTransform: EventInputTransformer
   ui: EventUi
   success: EventSourceSuccessResponseHandler | null
@@ -101,7 +101,7 @@ export interface EventSourceDef {
 
 const SIMPLE_SOURCE_PROPS = {
   id: String,
-  allDayDefault: Boolean,
+  defaultAllDay: Boolean,
   eventDataTransform: Function,
   success: Function,
   failure: Function

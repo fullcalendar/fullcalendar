@@ -23,7 +23,7 @@ export interface RecurringType {
 
 export function parseRecurring(
   eventInput: EventInput,
-  allDayDefault: boolean | null,
+  defaultAllDay: boolean | null,
   dateEnv: DateEnv,
   recurringTypes: RecurringType[],
   leftovers: any
@@ -37,7 +37,7 @@ export function parseRecurring(
       let allDay = localLeftovers.allDay
       delete localLeftovers.allDay // remove from leftovers
       if (allDay == null) {
-        allDay = allDayDefault
+        allDay = defaultAllDay
         if (allDay == null) {
           allDay = parsed.allDayGuess
           if (allDay == null) {

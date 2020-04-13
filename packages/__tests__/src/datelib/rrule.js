@@ -162,9 +162,9 @@ describe('rrule plugin', function() {
     expect(events[0].allDay).toBe(true)
   })
 
-  it('inherits allDayDefault from source', function() {
+  it('inherits defaultAllDay from source', function() {
     initCalendar({
-      allDayDefault: false,
+      defaultAllDay: false,
       events: [
         {
           rrule: {
@@ -181,10 +181,10 @@ describe('rrule plugin', function() {
     expect(events[0].allDay).toBe(false)
   })
 
-  it('inherits allDayDefault from source setting', function() {
+  it('inherits defaultAllDay from source setting', function() {
     initCalendar({
       eventSources: [ {
-        allDayDefault: false,
+        defaultAllDay: false,
         events: [
           {
             rrule: {

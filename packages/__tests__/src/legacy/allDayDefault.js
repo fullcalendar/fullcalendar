@@ -1,5 +1,5 @@
 
-describe('allDayDefault', function() {
+describe('defaultAllDay', function() { // TODO: rename file
   describe('when undefined', function() {
 
     it('guesses false if T in ISO8601 start date', function() {
@@ -91,7 +91,7 @@ describe('allDayDefault', function() {
 
     it('has an effect when an event\'s allDay is not specified', function() {
       initCalendar({
-        allDayDefault: false,
+        defaultAllDay: false,
         events: [
           {
             id: '1',
@@ -105,7 +105,7 @@ describe('allDayDefault', function() {
 
     it('has no effect when an event\'s allDay is specified', function() {
       initCalendar({
-        allDayDefault: false,
+        defaultAllDay: false,
         events: [
           {
             id: '1',
@@ -122,13 +122,13 @@ describe('allDayDefault', function() {
 
 })
 
-describe('source.allDayDefault', function() {
+describe('source.defaultAllDay', function() {
 
   it('has an effect when an event\'s allDay is not specified', function() {
     initCalendar({
       eventSources: [
         {
-          allDayDefault: false,
+          defaultAllDay: false,
           events: [
             {
               id: '1',
@@ -142,12 +142,12 @@ describe('source.allDayDefault', function() {
     expect(eventObj.allDay).toEqual(false)
   })
 
-  it('a true value can override the global allDayDefault', function() {
+  it('a true value can override the global defaultAllDay', function() {
     initCalendar({
-      allDayDefault: false,
+      defaultAllDay: false,
       eventSources: [
         {
-          allDayDefault: true,
+          defaultAllDay: true,
           events: [
             {
               id: '1',
@@ -161,12 +161,12 @@ describe('source.allDayDefault', function() {
     expect(eventObj.allDay).toEqual(true)
   })
 
-  it('a false value can override the global allDayDefault', function() {
+  it('a false value can override the global defaultAllDay', function() {
     initCalendar({
-      allDayDefault: true,
+      defaultAllDay: true,
       eventSources: [
         {
-          allDayDefault: false,
+          defaultAllDay: false,
           events: [
             {
               id: '1',
@@ -184,7 +184,7 @@ describe('source.allDayDefault', function() {
     initCalendar({
       eventSources: [
         {
-          allDayDefault: true,
+          defaultAllDay: true,
           events: [
             {
               id: '1',

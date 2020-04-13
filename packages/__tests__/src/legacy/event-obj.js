@@ -5,7 +5,7 @@ describe('event object creation', function() {
   NOTE: Where possible, if there is a specific option that affects event object creation
   behavior, write your tests in the individual file for that option, instead of here.
   Examples of this:
-    allDayDefault (tests allDay guessing behavior too)
+    defaultAllDay (tests allDay guessing behavior too)
     eventDataTransform
     forceEventDuration
 
