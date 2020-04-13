@@ -27,13 +27,11 @@
 // --- the rectangle ("block") style of event ---
 
 .fc-daygrid-block-event {
-
-  // vars for all of this...
-  border: 1px solid #3788d8;
-  background-color: #3788d8;
-  color: #fff;
+  border: 1px solid #3788d8; // TODO: var
+  background-color: #3788d8; // TODO: var
 
   .fc-event-main {
+    color: #fff; // better to be within the <a> tag, for theme. TODO: var
     padding: 1px;
     overflow: hidden;
   }

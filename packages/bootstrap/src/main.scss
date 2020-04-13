@@ -11,11 +11,6 @@
   border-radius: 0;
 }
 
-.fc-theme-bootstrap a.fc-event:not([href]):not([tabindex]) {
-  // bootstrap has a rule that sets these links to color:inherit. override.
-  color: #fff;
-}
-
 .fc-theme-bootstrap .table {
   margin-bottom: 0;
 }

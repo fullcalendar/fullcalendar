@@ -21,9 +21,9 @@
   border-radius: 3px;
   border: 1px solid #3788d8;
   background-color: #3788d8;
-  color: #fff;
 
   .fc-event-main {
+    color: #fff; // better to be within the <a> tag, for theme. TODO: var
     max-height: 100%;
     overflow: hidden;
     padding: 1px 1px 0;
