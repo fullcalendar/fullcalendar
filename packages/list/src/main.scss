@@ -97,6 +97,14 @@
   width: 1px;
 }
 
+.fc-list-event-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #3788d8; // TODO: var
+}
+
 // make the dot closer to the event title
 .fc-dir-ltr .fc-list-event-graphic { padding-right: 0 }
 .fc-dir-rtl .fc-list-event-graphic { padding-left: 0 }
