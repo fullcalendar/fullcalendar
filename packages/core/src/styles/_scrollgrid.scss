@@ -31,12 +31,13 @@
 
 
 // dedup top/bottom borders
-// rows own their top border (though header swallows top border of row after)
-.fc-scrollgrid {
-  tr:first-child > * { border-top: 0 }
-  tr:not(.fc-scrollgrid-section-head) > * { border-bottom: 0 }
+// rows own their top border for the most part
+.fc-scrollgrid tr:not(.fc-scrollgrid-section-head) > * { // but header still owns its bottom border
+  border-bottom: 0;
 }
-.fc-scrollgrid-section-head + .fc-scrollgrid-section > * {
+.fc-scrollgrid tr:first-child > *,
+.fc-scrollgrid-section-head + .fc-scrollgrid-section > *, // the section right after the header
+.fc .fc-scrollgrid-section-foot > * { // the foot, because it's usually just scrollbars
   border-top: 0;
 }
 
