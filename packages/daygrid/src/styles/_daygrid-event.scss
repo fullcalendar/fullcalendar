@@ -64,9 +64,14 @@
   .fc-event-title {
     font-weight: bold;
   }
+
+  &:hover,
+  &.fc-event-mirror {
+    background: rgba(0, 0, 0, .1);
+  }
 }
 
-.fc-daygrid-event-dot {
+.fc-daygrid-event-dot { // the actual dot
   display: inline-block;
   margin: 0 4px;
   width: 8px;
