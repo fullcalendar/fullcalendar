@@ -13,14 +13,11 @@ Utils for parsing event-input data. Each util parses a subset of the event-input
 It's up to the caller to stitch them together into an aggregate object like an EventStore.
 */
 
-export type EventRenderingChoice = '' | 'background' | 'inverse-background' | 'none'
-
 export interface EventNonDateInput extends UnscopedEventUiInput {
   id?: string | number
   groupId?: string | number
   title?: string
   url?: string
-  rendering?: EventRenderingChoice
   extendedProps?: object
   [extendedProp: string]: any
 }
@@ -44,7 +41,6 @@ export interface EventDef {
   recurringDef: { typeId: number, typeData: any, duration: Duration | null } | null
   title: string
   url: string
-  rendering: EventRenderingChoice
   ui: EventUi
   extendedProps: any
 }

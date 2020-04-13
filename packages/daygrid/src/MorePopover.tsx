@@ -1,7 +1,9 @@
 import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent } from '@fullcalendar/core'
 import TableSeg from './TableSeg'
 import TableEvent from './TableEvent'
+import TableDotEvent from './TableDotEvent'
 import Popover from './Popover'
+import { isDotRendering } from './event-rendering'
 
 
 export interface MorePopoverProps {
@@ -50,20 +52,30 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
 
               return (
                 <div
+                  className='fc-daygrid-event-harness'
                   key={instanceId}
                   style={{
                     visibility: hiddenInstances[instanceId] ? 'hidden' : ''
                   }}
                 >
-                  <TableEvent
-                    seg={seg}
-                    isDragging={false}
-                    isResizing={false}
-                    isDateSelecting={false}
-                    isSelected={instanceId === props.selectedInstanceId}
-                    defaultDisplayEventEnd={false}
-                    {...getSegMeta(seg, todayRange)}
-                  />
+                  {isDotRendering(eventRange) ?
+                    <TableDotEvent
+                      seg={seg}
+                      isDragging={false}
+                      isSelected={instanceId === props.selectedInstanceId}
+                      defaultDisplayEventEnd={false}
+                      {...getSegMeta(seg, todayRange)}
+                    /> :
+                    <TableEvent
+                      seg={seg}
+                      isDragging={false}
+                      isResizing={false}
+                      isDateSelecting={false}
+                      isSelected={instanceId === props.selectedInstanceId}
+                      defaultDisplayEventEnd={false}
+                      {...getSegMeta(seg, todayRange)}
+                    />
+                  }
                 </div>
               )
             })}

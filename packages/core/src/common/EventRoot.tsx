@@ -42,10 +42,16 @@ export class EventRoot extends BaseComponent<EventRootProps> {
 
   render(props: EventRootProps, state: {}, context: ComponentContext) {
     let { seg } = props
-    let hookProps = {
-      event: new EventApi(context.calendar, seg.eventRange.def, seg.eventRange.instance),
+    let { eventRange } = seg
+    let { ui } = eventRange
+
+    let hookProps: EventMeta = {
+      event: new EventApi(context.calendar, eventRange.def, eventRange.instance),
       view: context.view,
       timeText: props.timeText,
+      textColor: ui.textColor,
+      backgroundColor: ui.backgroundColor,
+      borderColor: ui.borderColor,
       isDraggable: !props.disableDragging && computeSegDraggable(seg, context),
       isStartResizable: !props.disableResizing && computeSegStartResizable(seg, context),
       isEndResizable: !props.disableResizing && computeSegEndResizable(seg, context),
@@ -60,8 +66,8 @@ export class EventRoot extends BaseComponent<EventRootProps> {
       isResizing: Boolean(props.isResizing)
     }
 
-    let style = getSkinCss(seg.eventRange.ui)
-    let standardClassNames = getEventClassNames(hookProps).concat(seg.eventRange.ui.classNames)
+    let style = getSkinCss(ui)
+    let standardClassNames = getEventClassNames(hookProps).concat(ui.classNames)
 
     return (
       <RenderHook

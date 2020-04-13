@@ -34,8 +34,9 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
+    let ui = eventUis[def.defId]
 
-    if (def.rendering === 'inverse-background') {
+    if (ui.rendering === 'inverse-background') {
       if (def.groupId) {
         inverseBgByGroupId[def.groupId] = []
 
@@ -61,15 +62,15 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
     let slicedRange = intersectRanges(normalRange, framingRange)
 
     if (slicedRange) {
-      if (def.rendering === 'inverse-background') {
+      if (ui.rendering === 'inverse-background') {
         if (def.groupId) {
           inverseBgByGroupId[def.groupId].push(slicedRange)
         } else {
           inverseBgByDefId[instance.defId].push(slicedRange)
         }
 
-      } else if (def.rendering !== 'none') {
-        (def.rendering === 'background' ? bgRanges : fgRanges).push({
+      } else if (ui.rendering !== 'none') {
+        (ui.rendering === 'background' ? bgRanges : fgRanges).push({
           def,
           ui,
           instance,
@@ -121,7 +122,7 @@ export function sliceEventStore(eventStore: EventStore, eventUiBases: EventUiHas
 
 
 export function hasBgRendering(def: EventDef) {
-  return def.rendering === 'background' || def.rendering === 'inverse-background'
+  return def.ui.rendering === 'background' || def.ui.rendering === 'inverse-background'
 }
 
 
@@ -204,6 +205,9 @@ export function buildSegCompareObj(seg: Seg) {
 export interface EventMeta { // for *Content handlers
   event: EventApi
   timeText: string
+  backgroundColor: string // TODO: add other EventUi props?
+  borderColor: string     //
+  textColor: string       //
   isDraggable: boolean
   isStartResizable: boolean
   isEndResizable: boolean

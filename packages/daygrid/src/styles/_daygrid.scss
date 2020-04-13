@@ -100,6 +100,9 @@ $daygrid-popover-z: 6;
 // fg event harness
 
 .fc-daygrid-event-harness {
+  &:before {
+    @include clearfix; // for when event element has top margin
+  }
   &:after {
     @include clearfix; // for when event element has bottom margin
   }
@@ -123,6 +126,7 @@ $daygrid-popover-z: 6;
   position: relative;
   z-index: $daygrid-text-z;
   font-size: .85em;
+  margin: 2px 3px 0;
 }
 
 .fc-daygrid-more-link {

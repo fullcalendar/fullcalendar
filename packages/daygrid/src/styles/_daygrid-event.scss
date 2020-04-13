@@ -2,23 +2,40 @@
 .fc-daygrid-event {
   position: relative;
   white-space: nowrap;
-  margin-bottom: 1px; // spacing between events
+  margin: 1px 0; // spacing between events
+  border-radius: 3px; // dot event needs this to when selected
 
-  // vars for all of this...
+  // TODO: vars
   font-size: .85em;
-  border: 1px solid #3788d8;
-  background-color: #3788d8;
-  color: #fff;
-  border-radius: 3px;
-
-  .fc-event-main {
-    padding: 1px;
-    overflow: hidden;
-  }
 
   .fc-event-time,
   .fc-event-title {
     display: inline;
+  }
+}
+
+// spacing between time and title
+.fc-dir-ltr .fc-daygrid-event .fc-event-time {
+  margin-right: 3px; // TODO: var
+}
+.fc-dir-rtl .fc-daygrid-event .fc-event-time {
+  margin-left: 3px; // TODO: var
+}
+
+
+
+// --- the rectangle ("block") style of event ---
+
+.fc-daygrid-block-event {
+
+  // vars for all of this...
+  border: 1px solid #3788d8;
+  background-color: #3788d8;
+  color: #fff;
+
+  .fc-event-main {
+    padding: 1px;
+    overflow: hidden;
   }
 
   .fc-event-time {
@@ -26,28 +43,35 @@
   }
 }
 
-
-// spacing between time and title
-
-.fc-dir-ltr .fc-daygrid-event .fc-event-time {
-  margin-right: 3px; // TODO: var
-}
-
-.fc-dir-rtl .fc-daygrid-event .fc-event-time {
-  margin-left: 3px; // TODO: var
-}
-
-
 // kill radius when event continues into future/past
-
-.fc-dir-ltr .fc-daygrid-event:not(.fc-event-start),
-.fc-dir-rtl .fc-daygrid-event:not(.fc-event-end) {
+.fc-dir-ltr .fc-daygrid-block-event:not(.fc-event-start),
+.fc-dir-rtl .fc-daygrid-block-event:not(.fc-event-end) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-
-.fc-dir-ltr .fc-daygrid-event:not(.fc-event-end),
-.fc-dir-rtl .fc-daygrid-event:not(.fc-event-start) {
+.fc-dir-ltr .fc-daygrid-block-event:not(.fc-event-end),
+.fc-dir-rtl .fc-daygrid-block-event:not(.fc-event-start) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+
+// --- the dot style of event ---
+// (time and title are already display:inline b/c they're spans)
+
+.fc-daygrid-dot-event {
+  padding: 2px 0;
+
+  .fc-event-title {
+    font-weight: bold;
+  }
+}
+
+.fc-daygrid-event-dot {
+  display: inline-block;
+  margin: 0 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3788d8; // TODO: var
 }

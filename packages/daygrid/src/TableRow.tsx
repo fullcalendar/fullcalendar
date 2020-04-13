@@ -18,8 +18,10 @@ import {
 } from '@fullcalendar/core'
 import TableSeg, { splitSegsByFirstCol } from './TableSeg'
 import TableCell, { TableCellModel, MoreLinkArg } from './TableCell'
+import TableDotEvent from './TableDotEvent'
 import TableEvent from './TableEvent'
 import { computeFgSegPlacement } from './event-placement'
+import { isDotRendering } from './event-rendering'
 
 
 // TODO: attach to window resize?
@@ -260,15 +262,24 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
               right: right || ''
             }}
           >
-            <TableEvent
-              seg={seg}
-              isDragging={isDragging}
-              isResizing={isResizing}
-              isDateSelecting={isDateSelecting}
-              isSelected={instanceId === eventSelection}
-              defaultDisplayEventEnd={defaultDisplayEventEnd}
-              {...getSegMeta(seg, todayRange)}
-            />
+            {isDotRendering(eventRange) ?
+              <TableDotEvent
+                seg={seg}
+                isDragging={isDragging}
+                isSelected={instanceId === eventSelection}
+                defaultDisplayEventEnd={defaultDisplayEventEnd}
+                {...getSegMeta(seg, todayRange)}
+              /> :
+              <TableEvent
+                seg={seg}
+                isDragging={isDragging}
+                isResizing={isResizing}
+                isDateSelecting={isDateSelecting}
+                isSelected={instanceId === eventSelection}
+                defaultDisplayEventEnd={defaultDisplayEventEnd}
+                {...getSegMeta(seg, todayRange)}
+              />
+            }
           </div>
         )
       }
