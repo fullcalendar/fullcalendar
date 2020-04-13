@@ -11,6 +11,7 @@ Changes since beta.1:
   - `defaultView` -> `initialView`
   - `defaultDate` -> `initialDate`
   - `allDayDefault` -> `defaultAllDay`
+  - `dir` -> `direction`
   - `eventRendering` -> `eventDisplay` (and `display` in event objects)
 - fix: sometimes event dragging and selecting broken after switching views (#5346)
 - fix: most likely fixed problem with infinite loop (#5352)
