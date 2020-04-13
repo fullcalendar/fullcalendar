@@ -55,7 +55,7 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
 
     if (headerRowContent) {
       sections.push({
-        type: 'head',
+        type: 'header',
         isSticky: stickyHeaderDates,
         chunk: {
           elRef: this.headerElRef,
@@ -131,7 +131,7 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
 
     if (headerRowContent) {
       sections.push({
-        type: 'head',
+        type: 'header',
         isSticky: stickyHeaderDates,
         chunks: [
           {
@@ -193,7 +193,7 @@ export default abstract class TimeColsView extends DateComponent<ViewProps> {
     if (stickyFooterScrollbar) {
       sections.push({
         key: 'scroll',
-        type: 'foot',
+        type: 'footer',
         isSticky: true,
         chunks: [
           { content: renderScrollShim },

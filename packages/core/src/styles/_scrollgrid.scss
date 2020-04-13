@@ -32,12 +32,12 @@
 
 // dedup top/bottom borders
 // rows own their top border for the most part
-.fc-scrollgrid tr:not(.fc-scrollgrid-section-head) > * { // but header still owns its bottom border
+.fc-scrollgrid tr:not(.fc-scrollgrid-section-header) > * { // but header still owns its bottom border
   border-bottom: 0;
 }
 .fc-scrollgrid tr:first-child > *,
-.fc-scrollgrid-section-head + .fc-scrollgrid-section > *, // the section right after the header
-.fc .fc-scrollgrid-section-foot > * { // the foot, because it's usually just scrollbars
+.fc-scrollgrid-section-header + .fc-scrollgrid-section > *, // the section right after the header
+.fc .fc-scrollgrid-section-footer > * { // the foot, because it's usually just scrollbars
   border-top: 0;
 }
 
@@ -79,11 +79,11 @@
 
 // stickiness
 
-.fc-scrollgrid-section-head > td { // TODO: rename "header" ?
+.fc-scrollgrid-section-header > td {
   top: 0; // for when sticky
 }
 
-.fc-scrollgrid-section-foot > td { // TODO: rename "footer" ?
+.fc-scrollgrid-section-footer > td {
   bottom: 0; // for when sticky
 }
 

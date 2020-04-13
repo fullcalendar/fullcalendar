@@ -17,7 +17,7 @@ export interface ColProps {
 
 export interface SectionConfig {
   outerContent?: VNode
-  type?: 'body' | 'head' | 'foot'
+  type?: 'body' | 'header' | 'footer'
   className?: string
   maxHeight?: number
   liquid?: boolean

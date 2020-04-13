@@ -36,7 +36,7 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
 
     if (headerRowContent) {
       sections.push({
-        type: 'head',
+        type: 'header',
         isSticky: stickyHeaderDates,
         chunk: {
           elRef: this.headerElRef,
@@ -88,7 +88,7 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
 
     if (headerRowContent) {
       sections.push({
-        type: 'head',
+        type: 'header',
         isSticky: stickyHeaderDates,
         chunks: [{
           elRef: this.headerElRef,
@@ -108,7 +108,7 @@ export default abstract class TableView<State={}> extends DateComponent<ViewProp
 
     if (stickyFooterScrollbar) {
       sections.push({
-        type: 'foot',
+        type: 'footer',
         isSticky: true,
         chunks: [{ content: renderScrollShim }]
       })
