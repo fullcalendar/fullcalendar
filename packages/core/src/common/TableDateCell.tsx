@@ -28,7 +28,6 @@ export interface DateHeaderCellHookProps extends DateMeta { // is used publicly 
   date: Date
   view: ViewApi
   text: string
-  navLinkData: string
   [otherProp: string]: any
 }
 
@@ -57,7 +56,6 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
       view: context.view,
       ...props.extraHookProps,
       text,
-      navLinkData,
       ...dayMeta
     }
 
@@ -71,15 +69,18 @@ export default class TableDateCell extends BaseComponent<TableDateCellProps> { /
             colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
-            <span
-              class={[
-                'fc-col-header-cell-cushion',
-                props.isSticky ? 'fc-sticky' : ''
-              ].join(' ')}
-              ref={innerElRef}
-            >
-              {innerContent}
-            </span>
+            {!dayMeta.isDisabled &&
+              <a
+                data-navlink={navLinkData}
+                class={[
+                  'fc-col-header-cell-cushion',
+                  props.isSticky ? 'fc-sticky' : ''
+                ].join(' ')}
+                ref={innerElRef}
+              >
+                {innerContent}
+              </a>
+            }
           </th>
         )}
       </RenderHook>
@@ -128,8 +129,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
       ...dateMeta,
       view: context.view,
       ...props.extraHookProps,
-      text,
-      navLinkData: null,
+      text
     }
 
     return (
@@ -141,7 +141,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
             colSpan={props.colSpan}
             {...props.extraDataAttrs}
           >
-            <span
+            <a
               class={[
                 'fc-col-header-cell-cushion',
                 props.isSticky ? 'fc-sticky' : ''
@@ -149,7 +149,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
               ref={innerElRef}
             >
               {innerContent}
-            </span>
+            </a>
           </th>
         )}
       </RenderHook>
@@ -160,11 +160,5 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
 
 
 function renderInner(hookProps: DateHeaderCellHookProps) {
-  if (!hookProps.isDisabled) {
-    return (
-      <a data-navlink={hookProps.navLinkData}>
-        {hookProps.text}
-      </a>
-    )
-  }
+  return hookProps.text
 }
