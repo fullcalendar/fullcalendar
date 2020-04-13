@@ -22,7 +22,7 @@
   border-color: $now-indicator-color;
 }
 
-.fc-dir-ltr .fc-timegrid-now-indicator-arrow {
+.fc-direction-ltr .fc-timegrid-now-indicator-arrow {
   left: 0;
 
   // triangle pointing right. TODO: mixin
@@ -31,7 +31,7 @@
   border-bottom-color: transparent;
 }
 
-.fc-dir-rtl .fc-timegrid-now-indicator-arrow {
+.fc-direction-rtl .fc-timegrid-now-indicator-arrow {
   right: 0;
 
   // triangle pointing left. TODO: mixin

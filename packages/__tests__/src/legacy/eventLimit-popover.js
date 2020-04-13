@@ -32,7 +32,7 @@ describe('more-link popover', function() { // TODO: rename file
 
     it('aligns horizontally with left edge of cell if LTR', function(done) {
       let calendar = initCalendar({
-        dir: 'ltr'
+        direction: 'ltr'
       })
       let dayGridWrapper = new ViewWrapper(calendar).dayGrid
 
@@ -48,7 +48,7 @@ describe('more-link popover', function() { // TODO: rename file
 
     it('aligns horizontally with left edge of cell if RTL', function(done) {
       let calendar = initCalendar({
-        dir: 'rtl'
+        direction: 'rtl'
       })
       let dayGridWrapper = new ViewWrapper(calendar).dayGrid
 

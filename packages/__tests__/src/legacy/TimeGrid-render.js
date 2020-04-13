@@ -7,7 +7,7 @@ describe('Agenda view rendering', function() {
 
   describe('when LTR', function() {
     pushOptions({
-      dir: 'ltr'
+      direction: 'ltr'
     })
 
     it('renders the axis on the left', function() {
@@ -30,7 +30,7 @@ describe('Agenda view rendering', function() {
 
   describe('when RTL', function() {
     pushOptions({
-      dir: 'rtl'
+      direction: 'rtl'
     })
 
     it('renders the axis on the right', function() {

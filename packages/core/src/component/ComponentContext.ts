@@ -59,7 +59,7 @@ export function buildContext(
 
 
 function computeContextProps(options: any, theme: Theme, calendar: Calendar) {
-  let isRtl = options.dir === 'rtl'
+  let isRtl = options.direction === 'rtl'
 
   return {
     isRtl,

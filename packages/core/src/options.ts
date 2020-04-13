@@ -47,7 +47,7 @@ export const globalDefaults = {
   // locale
   locales: [],
   locale: '', // blank values means it will compute based off locales[]
-  // dir: will get this from the default locale
+  // direction: will get this from the default locale
   // buttonIcons: null,
 
   themeSystem: 'standard',

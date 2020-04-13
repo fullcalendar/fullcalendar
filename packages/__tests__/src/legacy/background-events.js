@@ -90,7 +90,7 @@ describe('background events', function() {
     })
 
     describe('when RTL', function() {
-      pushOptions({dir: 'rtl'})
+      pushOptions({direction: 'rtl'})
 
       it('render correctly on a single day', function() {
         let calendar = initCalendar({
@@ -267,7 +267,7 @@ describe('background events', function() {
       })
 
       describe('when RTL', function() {
-        pushOptions({ dir: 'rtl' })
+        pushOptions({ direction: 'rtl' })
 
         it('render correctly on a single day', function() {
           let calendar = initCalendar({
@@ -436,7 +436,7 @@ describe('background events', function() {
 
     describe('when RTL', function() {
       pushOptions({
-        dir: 'rtl'
+        direction: 'rtl'
       })
 
       it('render correctly on one day', function() {
@@ -660,7 +660,7 @@ describe('background events', function() {
 
       describe('when RTL', function() {
         pushOptions({
-          dir: 'rtl'
+          direction: 'rtl'
         })
 
         it('render correctly on one day', function() {

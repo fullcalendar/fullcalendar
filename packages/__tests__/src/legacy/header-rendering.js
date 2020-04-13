@@ -76,9 +76,9 @@ describe('headerToolbar rendering', function() { // TODO: rename file
     expect(toolbarWrapper).toBeFalsy()
   })
 
-  describeOptions('dir', {
-    'when dir is LTR': 'ltr',
-    'when dir is RTL': 'rtl'
+  describeOptions('direction', {
+    'when direction is LTR': 'ltr',
+    'when direction is RTL': 'rtl'
   }, function() {
 
     it('renders left and right literally', function() {

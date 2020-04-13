@@ -27,7 +27,7 @@ describe('weekText', function() { // TODO: rename file
 
       it('renders correctly when customized and LTR', function() {
         let calendar = initCalendar({
-          dir: 'ltr',
+          direction: 'ltr',
           weekText: 'YO'
         })
         expectWeekNumberTitle(calendar, 'YO')
@@ -35,7 +35,7 @@ describe('weekText', function() { // TODO: rename file
 
       it('renders correctly when customized and RTL', function() {
         let calendar = initCalendar({
-          dir: 'rtl',
+          direction: 'rtl',
           weekText: 'YO'
         })
         expectWeekNumberTitle(calendar, 'YO')

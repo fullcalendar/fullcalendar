@@ -76,11 +76,11 @@ $daygrid-popover-z: 6;
   padding: 4px; // TODO: variable
 }
 
-.fc-dir-ltr .fc-daygrid-day-number {
+.fc-direction-ltr .fc-daygrid-day-number {
   float: right;
 }
 
-.fc-dir-rtl .fc-daygrid-day-number {
+.fc-direction-rtl .fc-daygrid-day-number {
   float: left;
 }
 
@@ -161,12 +161,12 @@ $daygrid-popover-z: 6;
   color: #808080; // TODO: var
 }
 
-.fc-dir-ltr .fc-daygrid-week-number {
+.fc-direction-ltr .fc-daygrid-week-number {
   left: 0;
   border-radius: 0 0 3px 0;
 }
 
-.fc-dir-rtl .fc-daygrid-week-number {
+.fc-direction-rtl .fc-daygrid-week-number {
   right: 0;
   border-radius: 0 0 0 3px;
 }

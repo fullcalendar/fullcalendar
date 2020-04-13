@@ -11,6 +11,6 @@
   height: 100%;
 }
 
-.fc-dir-rtl .fc-scroller-harness > .fc-scroller { // undo above hack
+.fc-direction-rtl .fc-scroller-harness > .fc-scroller { // undo above hack
   direction: rtl;
 }

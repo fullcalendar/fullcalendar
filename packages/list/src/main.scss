@@ -66,13 +66,13 @@
   background: var(--fc-theme-standard-muted-bg-color, $fc-theme-standard-muted-bg-color);
 }
 
-.fc-dir-ltr .fc-list-day-text,
-.fc-dir-rtl .fc-list-day-side-text {
+.fc-direction-ltr .fc-list-day-text,
+.fc-direction-rtl .fc-list-day-side-text {
   float: left;
 }
 
-.fc-dir-ltr .fc-list-day-side-text,
-.fc-dir-rtl .fc-list-day-text {
+.fc-direction-ltr .fc-list-day-side-text,
+.fc-direction-rtl .fc-list-day-text {
   float: right;
 }
 
@@ -106,8 +106,8 @@
 }
 
 // make the dot closer to the event title
-.fc-dir-ltr .fc-list-event-graphic { padding-right: 0 }
-.fc-dir-rtl .fc-list-event-graphic { padding-left: 0 }
+.fc-direction-ltr .fc-list-event-graphic { padding-right: 0 }
+.fc-direction-rtl .fc-list-event-graphic { padding-left: 0 }
 
 // reset <a> styling
 .fc-list-event-title a {

@@ -5,7 +5,7 @@
   align-items: center;
 }
 
-.fc-dir-rtl .fc-toolbar-ltr { // when the toolbar-chunk positioning system is explicitly left-to-right
+.fc-direction-rtl .fc-toolbar-ltr { // when the toolbar-chunk positioning system is explicitly left-to-right
   flex-direction: row-reverse;
 }
 
@@ -22,13 +22,13 @@
   margin: 0;
 }
 
-.fc-dir-ltr {
+.fc-direction-ltr {
   .fc-toolbar > * > :not(:first-child) {
     margin-left: .75em; // space between
   }
 }
 
-.fc-dir-rtl {
+.fc-direction-rtl {
   .fc-toolbar > * > :not(:first-child) {
     margin-right: .75em; // space between
   }

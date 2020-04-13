@@ -23,14 +23,14 @@
 
 // slots AND axis cells (top-left corner of view including the "all-day" text)
 
-.fc-dir-ltr {
+.fc-direction-ltr {
   .fc-timegrid-axis-frame,
   .fc-timegrid-slot-label-frame {
     text-align: right;
   }
 }
 
-.fc-dir-rtl {
+.fc-direction-rtl {
   .fc-timegrid-axis-frame,
   .fc-timegrid-slot-label-frame {
     text-align: left;

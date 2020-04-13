@@ -17,13 +17,13 @@ A HORIZONTAL event
   z-index: $event-resizer-z;
 }
 
-.fc-dir-ltr .fc-h-event .fc-event-resizer-start,
-.fc-dir-rtl .fc-h-event .fc-event-resizer-end {
+.fc-direction-ltr .fc-h-event .fc-event-resizer-start,
+.fc-direction-rtl .fc-h-event .fc-event-resizer-end {
   cursor: w-resize;
 }
 
-.fc-dir-ltr .fc-h-event .fc-event-resizer-end,
-.fc-dir-rtl .fc-h-event .fc-event-resizer-start {
+.fc-direction-ltr .fc-h-event .fc-event-resizer-end,
+.fc-direction-rtl .fc-h-event .fc-event-resizer-start {
   cursor: e-resize;
 }
 
@@ -36,13 +36,13 @@ A HORIZONTAL event
   bottom: -1px; // overcome border
 }
 
-.fc-dir-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start,
-.fc-dir-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end {
+.fc-direction-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start,
+.fc-direction-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end {
   left: -($event-resizer-mouse-width / 2);
 }
 
-.fc-dir-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end,
-.fc-dir-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start {
+.fc-direction-ltr .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-end,
+.fc-direction-rtl .fc-h-event.fc-event-resizable-mouse .fc-event-resizer-start {
   right: -($event-resizer-mouse-width / 2);
 }
 
@@ -55,13 +55,13 @@ A HORIZONTAL event
   margin-top: -($event-resizer-dot-total-width / 2);
 }
 
-.fc-dir-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
-.fc-dir-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
+.fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-start,
+.fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-end {
   left: -($event-resizer-dot-total-width / 2);
 }
 
-.fc-dir-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
-.fc-dir-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
+.fc-direction-ltr .fc-h-event.fc-event-selected .fc-event-resizer-end,
+.fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
   right: -($event-resizer-dot-total-width / 2);
 }
 

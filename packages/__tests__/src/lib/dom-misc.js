@@ -4,7 +4,7 @@ export const GREEN_REGEX = /green|rgb\(0,\s*255,\s*0\)/
 export const BLUE_REGEX = /blue|rgb\(0,\s*0,\s*255\)/
 
 
-export function getStockScrollbarWidths(dir) {
+export function getStockScrollbarWidths(direction) {
   var el = $('<div><div style="position:relative"/></div>')
     .css({
       position: 'absolute',
@@ -13,7 +13,7 @@ export function getStockScrollbarWidths(dir) {
       border: 0,
       padding: 0,
       overflow: 'scroll',
-      direction: dir || 'ltr'
+      direction: direction || 'ltr'
     })
     .appendTo('body')
 

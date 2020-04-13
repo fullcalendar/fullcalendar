@@ -10,12 +10,12 @@
 <script>
 
   $(document).ready(function() {
-    var dir = 'ltr';
+    var direction = 'ltr';
     var businessHours = false;
 
-    $('#change-dir-button').on('click', function() {
-      dir = dir === 'ltr' ? 'rtl' : 'ltr';
-      $('#calendar').fullCalendar('option', 'dir', dir);
+    $('#change-direction-button').on('click', function() {
+      direction = direction === 'ltr' ? 'rtl' : 'ltr';
+      $('#calendar').fullCalendar('option', 'direction', direction);
     });
 
     $('#change-businessHours-button').on('click', function() {
@@ -24,16 +24,16 @@
     });
 
     $('#change-all-button').on('click', function() {
-      dir = dir === 'ltr' ? 'rtl' : 'ltr';
+      direction = direction === 'ltr' ? 'rtl' : 'ltr';
       businessHours = !businessHours;
       $('#calendar').fullCalendar('option', {
-        dir: dir,
+        direction: direction,
         businessHours: businessHours
       });
     });
 
     $('#calendar').fullCalendar({
-      dir: dir,
+      direction: direction,
       businessHours: businessHours,
       headerToolbar: {
         left: 'prev,next today',
@@ -103,7 +103,7 @@
 </style>
 </head>
 <body>
-  <button id='change-dir-button'>change dir</button>
+  <button id='change-direction-button'>change direction</button>
   <button id='change-businessHours-button'>change businessHours</button>
   <button id='change-all-button'>change all</button>
 

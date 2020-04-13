@@ -76,7 +76,7 @@ export interface OptionsInputBase {
   themeSystem?: 'standard' | string
   bootstrapFontAwesome?: boolean | ButtonIconsInput
   firstDay?: number
-  dir?: 'ltr' | 'rtl' | 'auto'
+  direction?: 'ltr' | 'rtl' | 'auto'
   weekends?: boolean
   hiddenDays?: number[]
   fixedWeekCount?: boolean

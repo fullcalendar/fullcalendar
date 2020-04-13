@@ -19,7 +19,7 @@ describe('now indicator', function() {
       nowIndicator: true
     })
 
-    describeOptions('dir', {
+    describeOptions('direction', {
       'when LTR': 'ltr',
       'when RTL': 'rtl'
     }, function() {
@@ -70,7 +70,7 @@ describe('now indicator', function() {
 
     let timeGridRect = getBoundingRect(timeGridWrapper.el)
 
-    if (calendar.getOption('dir') === 'rtl') {
+    if (calendar.getOption('direction') === 'rtl') {
       expect(Math.abs(
         arrowElRect.right - timeGridRect.right
       )).toBeLessThan(2)

@@ -15,10 +15,10 @@
 }
 
 // spacing between time and title
-.fc-dir-ltr .fc-daygrid-event .fc-event-time {
+.fc-direction-ltr .fc-daygrid-event .fc-event-time {
   margin-right: 3px; // TODO: var
 }
-.fc-dir-rtl .fc-daygrid-event .fc-event-time {
+.fc-direction-rtl .fc-daygrid-event .fc-event-time {
   margin-left: 3px; // TODO: var
 }
 
@@ -44,13 +44,13 @@
 }
 
 // kill radius when event continues into future/past
-.fc-dir-ltr .fc-daygrid-block-event:not(.fc-event-start),
-.fc-dir-rtl .fc-daygrid-block-event:not(.fc-event-end) {
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-start),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-end) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-.fc-dir-ltr .fc-daygrid-block-event:not(.fc-event-end),
-.fc-dir-rtl .fc-daygrid-block-event:not(.fc-event-start) {
+.fc-direction-ltr .fc-daygrid-block-event:not(.fc-event-end),
+.fc-direction-rtl .fc-daygrid-block-event:not(.fc-event-start) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }

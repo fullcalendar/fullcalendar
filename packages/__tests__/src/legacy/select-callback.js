@@ -13,7 +13,7 @@ describe('select callback', function() {
     longPressDelay: 100
   })
 
-  describeOptions('dir', {
+  describeOptions('direction', {
     'when LTR': 'ltr',
     'when RTL': 'rtl'
   }, function() {

@@ -43,11 +43,11 @@
 
 // dedup left/right borders
 // rows own their left border (right border in rtl)
-.fc-dir-ltr .fc-scrollgrid tr > * {
+.fc-direction-ltr .fc-scrollgrid tr > * {
   &:first-child { border-left: 0 }
   & { border-right: 0 }
 }
-.fc-dir-rtl .fc-scrollgrid tr > * {
+.fc-direction-rtl .fc-scrollgrid tr > * {
   &:first-child { border-right: 0 }
   & { border-left: 0 }
 }

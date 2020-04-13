@@ -15,7 +15,7 @@ describe('select method', function() {
     - for dayGrid/month views, when given timed dates, should really be all-day
   */
 
-  describeOptions('dir', {
+  describeOptions('direction', {
     'when LTR': 'ltr',
     'when RTL': 'rtl'
   }, function() {

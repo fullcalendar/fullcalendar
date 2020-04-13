@@ -20,8 +20,8 @@ export default class CalendarWrapper {
   static SLOT_TODAY_CLASSNAME = 'fc-slot-today'
   static DOW_CLASSNAMES = [ 'fc-day-sun', 'fc-day-mon', 'fc-day-tue', 'fc-day-wed', 'fc-day-thu', 'fc-day-fri', 'fc-day-sat' ]
   static DOW_SLOT_CLASSNAMES = [ 'fc-slot-sun', 'fc-slot-mon', 'fc-slot-tue', 'fc-slot-wed', 'fc-slot-thu', 'fc-slot-fri', 'fc-slot-sat' ]
-  static LTR_CLASSNAME = 'fc-dir-ltr'
-  static RTL_CLASSNAME = 'fc-dir-rtl'
+  static LTR_CLASSNAME = 'fc-direction-ltr'
+  static RTL_CLASSNAME = 'fc-direction-rtl'
   static BOOTSTRAP_CLASSNAME = 'fc-theme-bootstrap'
   static UNTHEMED_CLASSNAME = 'fc-theme-standard'
   static ROOT_CLASSNAME = 'fc'

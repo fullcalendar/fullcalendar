@@ -1,7 +1,7 @@
 
 export default {
   code: "he",
-  dir: 'rtl',
+  direction: 'rtl',
   buttonText: {
     prev: "הקודם",
     next: "הבא",

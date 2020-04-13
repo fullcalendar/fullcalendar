@@ -16,7 +16,7 @@ describe('DayGrid event rendering', function() {
     initMonthTesting('rtl')
   })
 
-  function initMonthTesting(dir) {
+  function initMonthTesting(direction) {
     it('correctly renders an event starting before view\'s start', function() {
       var options = {}
       options.events = [
@@ -186,7 +186,7 @@ describe('DayGrid event rendering', function() {
     })
 
     function testSeg(calendarOptions, testSegOptions) {
-      calendarOptions.dir = dir
+      calendarOptions.direction = direction
       initCalendar(calendarOptions)
       directionallyTestSeg(testSegOptions)
     }

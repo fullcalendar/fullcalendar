@@ -42,13 +42,13 @@ describe('computeEdges', function() {
     })
   }
 
-  function defineTest(isScrolling, dir, cssProps) {
+  function defineTest(isScrolling, direction, cssProps) {
     it('computes correct widths', function() {
       var el = $(
         '<div style="position:absolute" />'
       )
         .css('overflow', isScrolling ? 'scroll' : 'hidden')
-        .css('direction', dir)
+        .css('direction', direction)
         .css(cssProps)
         .append('<div style="position:relative;width:100px;height:100px" />')
         .appendTo('body')
@@ -57,7 +57,7 @@ describe('computeEdges', function() {
       var correctWidths
 
       if (isScrolling) {
-        correctWidths = getStockScrollbarWidths(dir)
+        correctWidths = getStockScrollbarWidths(direction)
       } else {
         correctWidths = { left: 0, right: 0, bottom: 0 }
       }

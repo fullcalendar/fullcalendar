@@ -88,7 +88,7 @@ export default class CalendarComponent extends BaseComponent<CalendarComponentPr
     }
 
     if (props.onClassNameChange) {
-      this.reportClassNames(props.onClassNameChange, state.forPrint, options.dir, context.theme)
+      this.reportClassNames(props.onClassNameChange, state.forPrint, options.direction, context.theme)
     }
 
     if (props.onHeightChange) {
@@ -283,17 +283,17 @@ function isHeightAuto(options) {
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function reportClassNames(onClassNameChange, forPrint: boolean, dir: string, theme: Theme) {
-  onClassNameChange(computeClassNames(forPrint, dir, theme))
+function reportClassNames(onClassNameChange, forPrint: boolean, direction: string, theme: Theme) {
+  onClassNameChange(computeClassNames(forPrint, direction, theme))
 }
 
 
 // NOTE: can't have any empty! caller gets confused
-function computeClassNames(forPrint: boolean, dir: string, theme: Theme) {
+function computeClassNames(forPrint: boolean, direction: string, theme: Theme) {
   let classNames: string[] = [
     'fc',
     forPrint ? 'fc-media-print' : 'fc-media-screen',
-    'fc-dir-' + dir,
+    'fc-direction-' + direction,
     theme.getClass('root')
   ]
 

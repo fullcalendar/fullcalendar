@@ -24,7 +24,7 @@
   z-index: 1;
 }
 
-.fc-dir-ltr {
+.fc-direction-ltr {
 
   .fc-button-group > .fc-button:not(:first-child) {
     margin-left: -1px;
@@ -39,7 +39,7 @@
 
 }
 
-.fc-dir-rtl {
+.fc-direction-rtl {
 
   .fc-button-group > .fc-button:not(:first-child) {
     margin-right: -1px;

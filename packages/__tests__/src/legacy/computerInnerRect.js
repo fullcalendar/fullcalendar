@@ -16,13 +16,13 @@ describe('computeInnerRect', function() {
   describeValues({
     'when LTR': 'ltr',
     'when RTL': 'rtl'
-  }, function(dir) {
+  }, function(direction) {
     var el
 
     beforeEach(function() {
       el = $('<div/>')
         .css({
-          direction: dir,
+          direction: direction,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -80,7 +80,7 @@ describe('computeInnerRect', function() {
         el.css('overflow', 'scroll')
       })
 
-      var stockScrollbars = getStockScrollbarWidths(dir)
+      var stockScrollbars = getStockScrollbarWidths(direction)
 
       it('goes within border and scrollbars', function() {
         expect(computeInnerRect(el[0])).toEqual({
