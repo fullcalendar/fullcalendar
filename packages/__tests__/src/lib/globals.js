@@ -257,5 +257,6 @@ import './simulate'
 import './date-matchers'
 
 pushOptions({
-  timeZone: 'UTC'
+  timeZone: 'UTC',
+  eventRendering: 'auto'
 })
