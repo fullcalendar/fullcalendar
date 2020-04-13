@@ -3,7 +3,7 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('dateClick', function() {
   pushOptions({
-    defaultDate: '2014-05-27',
+    initialDate: '2014-05-27',
     selectable: false,
     timeZone: 'UTC'
   })
@@ -20,7 +20,7 @@ describe('dateClick', function() {
 
       describe('when in month view', function() {
         pushOptions({
-          defaultView: 'dayGridMonth'
+          initialView: 'dayGridMonth'
         })
 
         it('fires correctly when clicking on a cell', function(done) {
@@ -42,7 +42,7 @@ describe('dateClick', function() {
 
       describe('when in week view', function() {
         pushOptions({
-          defaultView: 'timeGridWeek'
+          initialView: 'timeGridWeek'
         })
 
         it('fires correctly when clicking on an all-day slot', function(done) {
@@ -123,7 +123,7 @@ describe('dateClick', function() {
 
   it('will still fire if clicked on background event', function(done) {
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       events: [ {
         start: '2014-05-06',
         display: 'background'

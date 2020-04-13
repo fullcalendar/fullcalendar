@@ -70,7 +70,7 @@ describe('footerToolbar navigation', function() { // TODO: rename file
   describe('and click today', function() {
     it('should change view to prev month', function(done) {
       let calendar = initCalendar({
-        defaultDate: '2010-03-15' // something other than the `now` date
+        initialDate: '2010-03-15' // something other than the `now` date
       })
       let toolbarWrapper = new CalendarWrapper(calendar).footerToolbar
 

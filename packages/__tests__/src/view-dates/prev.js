@@ -7,12 +7,12 @@ import { expectActiveRange } from '../lib/ViewDateUtils'
 
 describe('prev', function() {
   pushOptions({
-    defaultDate: '2017-06-08'
+    initialDate: '2017-06-08'
   })
 
   describe('when in a week view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     it('moves back by one week', function() {
@@ -37,8 +37,8 @@ describe('prev', function() {
   // https://github.com/fullcalendar/fullcalendar/issues/4595
   it('can navigate back when starting late in month', function() {
     initCalendar({
-      defaultDate: '2019-03-31T12:00',
-      defaultView: 'dayGridMonth'
+      initialDate: '2019-03-31T12:00',
+      initialView: 'dayGridMonth'
     })
     expectActiveRange('2019-02-24', '2019-04-07')
     currentCalendar.prev()
@@ -48,8 +48,8 @@ describe('prev', function() {
   // related to #4595
   it('can navigate forward when starting late in month', function() {
     initCalendar({
-      defaultDate: '2019-03-31T12:00',
-      defaultView: 'dayGridMonth'
+      initialDate: '2019-03-31T12:00',
+      initialView: 'dayGridMonth'
     })
     expectActiveRange('2019-02-24', '2019-04-07')
     currentCalendar.next()

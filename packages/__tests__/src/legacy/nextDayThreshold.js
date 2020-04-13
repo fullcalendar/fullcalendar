@@ -10,8 +10,8 @@ describe('nextDayThreshold', function() {
   it('renders an event before the threshold', function() {
     let calendar = initCalendar({
       nextDayThreshold: '10:00:00',
-      defaultDate: '2014-06',
-      defaultView: 'dayGridMonth',
+      initialDate: '2014-06',
+      initialView: 'dayGridMonth',
       events: [
         {
           title: 'event1',
@@ -26,8 +26,8 @@ describe('nextDayThreshold', function() {
   it('renders an event equal to the threshold', function() {
     let calendar = initCalendar({
       nextDayThreshold: '10:00:00',
-      defaultDate: '2014-06',
-      defaultView: 'dayGridMonth',
+      initialDate: '2014-06',
+      initialView: 'dayGridMonth',
       events: [
         {
           title: 'event1',
@@ -42,8 +42,8 @@ describe('nextDayThreshold', function() {
   it('renders an event after the threshold', function() {
     let calendar = initCalendar({
       nextDayThreshold: '10:00:00',
-      defaultDate: '2014-06',
-      defaultView: 'dayGridMonth',
+      initialDate: '2014-06',
+      initialView: 'dayGridMonth',
       events: [
         {
           title: 'event1',
@@ -57,8 +57,8 @@ describe('nextDayThreshold', function() {
 
   it('won\'t render an event that ends before the first day\'s threshold', function() {
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2017-10-01',
+      initialView: 'dayGridMonth',
+      initialDate: '2017-10-01',
       nextDayThreshold: '09:00:00',
       events: [ {
         start: '2017-09-30T08:00:00',

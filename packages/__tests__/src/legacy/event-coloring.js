@@ -3,13 +3,13 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('event coloring', function() {
   pushOptions({
-    defaultDate: '2014-11-04',
+    initialDate: '2014-11-04',
     allDaySlot: false
   })
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     defineViewTests(false)
@@ -17,7 +17,7 @@ describe('event coloring', function() {
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     defineViewTests(true)

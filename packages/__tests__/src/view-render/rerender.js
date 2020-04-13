@@ -4,8 +4,8 @@ describe('rerendering a calendar', function() {
 
   it('keeps sizing', function() {
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2019-08-08',
+      initialView: 'dayGridMonth',
+      initialDate: '2019-08-08',
       dayMaxEventRows: 3,
       events: [
         { date: '2019-08-08', title: 'event' },

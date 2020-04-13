@@ -1,6 +1,6 @@
 describe('eventMouseEnter', function() {
   pushOptions({
-    defaultDate: '2014-08-01',
+    initialDate: '2014-08-01',
     scrollTime: '00:00:00'
   })
 
@@ -8,7 +8,7 @@ describe('eventMouseEnter', function() {
     describe('for ' + viewName + ' view', function() {
 
       pushOptions({
-        defaultView: viewName
+        initialView: viewName
       })
 
       it('doesn\'t trigger a eventMouseLeave when updating an event', function(done) {

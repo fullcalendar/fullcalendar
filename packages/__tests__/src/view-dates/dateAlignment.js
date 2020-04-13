@@ -7,9 +7,9 @@ describe('dateAlignment', function() {
 
   describe('when week alignment', function() {
     pushOptions({
-      defaultView: 'timeGrid',
+      initialView: 'timeGrid',
       dateAlignment: 'week',
-      defaultDate: '2017-06-15'
+      initialDate: '2017-06-15'
     })
 
     describe('when 3 day duration', function() {
@@ -40,10 +40,10 @@ describe('dateAlignment', function() {
   // https://github.com/fullcalendar/fullcalendar/issues/4363
   describe('when year alignment', function() {
     pushOptions({
-      defaultView: 'dayGrid',
+      initialView: 'dayGrid',
       duration: { months: 1 },
       dateAlignment: 'year',
-      defaultDate: '2017-06-15'
+      initialDate: '2017-06-15'
     })
 
     it('aligns with first day of year', function() {

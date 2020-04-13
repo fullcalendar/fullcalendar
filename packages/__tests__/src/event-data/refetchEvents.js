@@ -9,8 +9,8 @@ describe('refetchEvents', function() {
     var scrollTop
 
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2017-04-25',
+      initialView: 'dayGridMonth',
+      initialDate: '2017-04-25',
       events: [
         { start: '2017-04-04', title: 'event' },
         { start: '2017-04-04', title: 'event' },

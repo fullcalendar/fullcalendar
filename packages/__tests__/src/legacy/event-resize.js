@@ -6,14 +6,14 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('eventResize', function() {
   pushOptions({
-    defaultDate: '2014-06-11',
+    initialDate: '2014-06-11',
     editable: true,
     longPressDelay: 100
   })
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     describe('when resizing an all-day event with mouse', function() {
@@ -110,7 +110,7 @@ describe('eventResize', function() {
 
   describe('when in timeGrid view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     describe('when resizing an all-day event', function() {

@@ -19,7 +19,7 @@ describe('navLinks', function() {
 
     describe('in month view', function() {
       pushOptions({
-        defaultView: 'dayGridMonth'
+        initialView: 'dayGridMonth'
       })
 
       it('moves to day', function() {
@@ -128,7 +128,7 @@ describe('navLinks', function() {
 
   describe('in week view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     it('moves to day view', function() {
@@ -144,7 +144,7 @@ describe('navLinks', function() {
 
   describe('in listWeek', function() {
     pushOptions({
-      defaultView: 'listWeek',
+      initialView: 'listWeek',
       events: [
         {
           title: 'event 1',
@@ -166,7 +166,7 @@ describe('navLinks', function() {
 
   describe('in day view', function() {
     pushOptions({
-      defaultView: 'timeGridDay'
+      initialView: 'timeGridDay'
     })
 
     it('moves to week view', function() {

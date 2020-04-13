@@ -4,8 +4,8 @@ describe('timeZone', function() {
   // Verification of a correct AJAX *request* is done in events-json-feed.js
 
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2014-05-01',
+    initialView: 'dayGridMonth',
+    initialDate: '2014-05-01',
     events: [
       {
         id: '1',

@@ -12,8 +12,8 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 describe('external drag and drop with jquery UI', function() {
   pushOptions({
     plugins: [ InteractionPlugin, TimeGridPlugin, DayGridPlugin ],
-    defaultDate: '2014-08-23',
-    defaultView: 'dayGridMonth',
+    initialDate: '2014-08-23',
+    initialView: 'dayGridMonth',
     droppable: true
   })
 
@@ -54,7 +54,7 @@ describe('external drag and drop with jquery UI', function() {
 
     describe('in month view', function() {
       pushOptions({
-        defaultView: 'dayGridMonth'
+        initialView: 'dayGridMonth'
       })
 
       it('works after the view is changed', function(done) { // issue 2240
@@ -192,7 +192,7 @@ describe('external drag and drop with jquery UI', function() {
 
     describe('in timeGrid view', function() {
       pushOptions({
-        defaultView: 'timeGridWeek',
+        initialView: 'timeGridWeek',
         dragScroll: false,
         scrollTime: '00:00:00'
       })

@@ -1,8 +1,8 @@
 describe('forceEventDuration', function() {
 
   pushOptions({
-    defaultDate: '2014-05-01',
-    defaultView: 'dayGridMonth'
+    initialDate: '2014-05-01',
+    initialView: 'dayGridMonth'
   })
 
   describe('when turned off', function() {

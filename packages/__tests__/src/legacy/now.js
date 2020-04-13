@@ -4,12 +4,12 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 describe('now', function() {
 
   pushOptions({
-    defaultDate: '2014-05-01'
+    initialDate: '2014-05-01'
   })
 
   describe('when month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     it('changes the highlighted day when customized', function() {
@@ -22,7 +22,7 @@ describe('now', function() {
 
   describe('when week view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     it('changes the highlighted day when customized', function() {
@@ -35,7 +35,7 @@ describe('now', function() {
 
   it('accepts a function that returns a Date', function() {
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       now: function() {
         return parseUtcDate('2014-05-01')
       }
@@ -45,7 +45,7 @@ describe('now', function() {
 
   it('accepts a function that returns a date string', function() {
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       now: function() {
         return '2014-05-01'
       }

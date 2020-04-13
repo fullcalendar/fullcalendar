@@ -2,8 +2,8 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 
 describe('moreLinkClick', function() { // TODO: rename file
   pushOptions({
-    defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
-    defaultView: 'dayGridMonth',
+    initialDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
+    initialView: 'dayGridMonth',
     dayMaxEventRows: 3,
     events: [
       { title: 'event1', start: '2014-07-29' },

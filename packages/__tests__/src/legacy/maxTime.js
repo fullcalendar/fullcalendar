@@ -4,14 +4,14 @@ describe('slotMaxTime', function() { // TODO: rename file
 
   describe('when using the default settings', function() {
 
-    describeOptions('defaultView', {
+    describeOptions('initialView', {
       'in week': 'timeGridWeek',
       'in day': 'timeGridDay'
     }, function() {
 
       it('should start at 12am', function() {
         let calendar = initCalendar({
-          defaultView: 'timeGridWeek'
+          initialView: 'timeGridWeek'
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
         let lastMajor = timeGridWrapper.getLastMajorAxisInfo()
@@ -29,7 +29,7 @@ describe('slotMaxTime', function() { // TODO: rename file
 
         it('should end at ' + hourNumber, function() {
           let calendar = initCalendar({
-            defaultView: 'timeGridWeek',
+            initialView: 'timeGridWeek',
             slotMaxTime: { hours: hourNumber }
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -45,7 +45,7 @@ describe('slotMaxTime', function() { // TODO: rename file
 
         it('should end at ' + hourNumber, function() {
           let calendar = initCalendar({
-            defaultView: 'timeGridDay',
+            initialView: 'timeGridDay',
             slotMaxTime: hourNumber + ':00' // in addition, test string duration input
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -66,7 +66,7 @@ describe('slotMaxTime', function() { // TODO: rename file
 
         it('should end at ' + hourNumber + ':20', function() {
           let calendar = initCalendar({
-            defaultView: 'timeGridWeek',
+            initialView: 'timeGridWeek',
             slotMaxTime: { hours: hourNumber, minutes: 20 }
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -83,7 +83,7 @@ describe('slotMaxTime', function() { // TODO: rename file
 
         it('should end at ' + hourNumber + ':20', function() {
           let calendar = initCalendar({
-            defaultView: 'timeGridDay',
+            initialView: 'timeGridDay',
             slotMaxTime: { hours: hourNumber, minutes: 20 }
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid

@@ -1,11 +1,11 @@
 fdescribe('', function() {
   pushOptions({
-    defaultDate: ''
+    initialDate: ''
   })
 
   describe('', function() {
     pushOptions({
-      defaultView: ''
+      initialView: ''
     })
 
     fit('', function() {

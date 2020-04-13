@@ -10,8 +10,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('next button', function() {
   pushOptions({
-    defaultView: 'timeGridWeek',
-    defaultDate: '2017-06-08'
+    initialView: 'timeGridWeek',
+    initialDate: '2017-06-08'
   })
 
   describe('when there is no validRange', function() {
@@ -52,8 +52,8 @@ describe('next button', function() {
 
   describe('when day after current day is a hidden day', function() {
     pushOptions({
-      defaultDate: '2017-03-31',
-      defaultView: 'dayGridDay',
+      initialDate: '2017-03-31',
+      initialView: 'dayGridDay',
       weekends: false,
       dateIncrement: { years: 1 } // next range is 2018-06-03 - 2018-06-10
     })
@@ -62,10 +62,10 @@ describe('next button', function() {
     })
   })
 
-  describe('when defaultDate is constrained forward to validRange and next week is valid', function() {
+  describe('when initialDate is constrained forward to validRange and next week is valid', function() {
     pushOptions({
-      defaultDate: '2017-07-17',
-      defaultView: 'timeGridWeek',
+      initialDate: '2017-07-17',
+      initialView: 'timeGridWeek',
       validRange: { start: '2036-05-03', end: '2036-06-01' }
     })
     it('is enabled', function() {

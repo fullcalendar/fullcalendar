@@ -5,8 +5,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('changeView', function() {
   pushOptions({
-    defaultDate: '2017-06-08',
-    defaultView: 'dayGridMonth'
+    initialDate: '2017-06-08',
+    initialView: 'dayGridMonth'
   })
 
   it('can change views', function() {
@@ -35,7 +35,7 @@ describe('changeView', function() {
     // serves as a smoke test too
     it('correctly renders original view again', function() {
       let calendar = initCalendar({
-        defaultView: 'dayGridMonth'
+        initialView: 'dayGridMonth'
       })
 
       expect(calendar.view.type).toBe('dayGridMonth')
@@ -69,7 +69,7 @@ describe('changeView', function() {
       headerToolbar: {
         left: 'title dayGridDay timeGridDay'
       },
-      defaultView: 'timeGridDay',
+      initialView: 'timeGridDay',
       now: '2017-06-08T01:00:00',
       events: function(fetchInfo, successCallback) {
         setTimeout(function() {

@@ -3,10 +3,10 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('dayHeaders', function() { // TODO: rename file
   pushOptions({
-    defaultDate: '2014-05-11'
+    initialDate: '2014-05-11'
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when month view': 'dayGridMonth',
     'when timeGrid view': 'timeGridDay',
     'when dayGrid view': 'dayGridDay'

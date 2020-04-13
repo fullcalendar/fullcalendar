@@ -3,7 +3,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('timeGrid view rendering', function() {
   pushOptions({
-    defaultView: 'timeGridWeek'
+    initialView: 'timeGridWeek'
   })
 
   it('should have have days ordered sun to sat', function() {

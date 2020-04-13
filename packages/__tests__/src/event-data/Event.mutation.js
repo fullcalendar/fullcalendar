@@ -1,7 +1,7 @@
 
 describe('event mutations on non-instances', function() {
   pushOptions({
-    defaultView: 'dayGridWeek',
+    initialView: 'dayGridWeek',
     now: '2018-09-03',
     events: [
       { id: '1', start: '2018-09-04', display: 'inverse-background' } // will make two segs

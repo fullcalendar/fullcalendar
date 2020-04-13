@@ -3,13 +3,13 @@ import { expectDay } from '../lib/ViewRenderUtils'
 
 describe('dayCount', function() {
   pushOptions({
-    defaultDate: '2017-03-15', // wed
+    initialDate: '2017-03-15', // wed
     weekends: false
   })
 
   describeOptions({
     'when specified as top-level options': {
-      defaultView: 'dayGrid',
+      initialView: 'dayGrid',
       dayCount: 5
     },
     'when specified as custom view': {
@@ -19,7 +19,7 @@ describe('dayCount', function() {
           dayCount: 5
         }
       },
-      defaultView: 'myCustomView'
+      initialView: 'myCustomView'
     }
   }, function() {
     it('renders the exact day count', function() {
@@ -37,7 +37,7 @@ describe('dayCount', function() {
 
   it('can span multiple weeks', function() {
     initCalendar({
-      defaultView: 'timeGrid',
+      initialView: 'timeGrid',
       dayCount: 9
     })
     expectActiveRange('2017-03-15', '2017-03-28')
@@ -58,8 +58,8 @@ describe('dayCount', function() {
 
   it('can navigate in reverse with a small dateIncrement split by hidden days', function() {
     initCalendar({
-      defaultDate: '2018-06-11',
-      defaultView: 'timeGridTwoDay',
+      initialDate: '2018-06-11',
+      initialView: 'timeGridTwoDay',
       headerToolbar: {
         left: 'prev,next',
         center: 'title',

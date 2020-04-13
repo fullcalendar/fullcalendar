@@ -2,8 +2,8 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('slotMinTime', function() { // TODO: rename file
   pushOptions({
-    defaultView: 'timeGridWeek',
-    defaultDate: '2017-03-22',
+    initialView: 'timeGridWeek',
+    initialDate: '2017-03-22',
     scrollTime: '00:00'
   })
 

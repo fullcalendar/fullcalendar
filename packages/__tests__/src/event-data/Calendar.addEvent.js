@@ -1,7 +1,7 @@
 
 describe('addEvent', function() {
   pushOptions({
-    defaultDate: '2018-09-07'
+    initialDate: '2018-09-07'
   })
 
   it('will re-add an event that was previously removed', function() {

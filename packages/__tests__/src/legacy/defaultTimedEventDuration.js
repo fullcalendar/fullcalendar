@@ -3,8 +3,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 describe('defaultTimedEventDuration', function() {
 
   pushOptions({
-    defaultDate: '2014-05-01',
-    defaultView: 'dayGridMonth',
+    initialDate: '2014-05-01',
+    initialView: 'dayGridMonth',
     timeZone: 'UTC'
   })
 
@@ -52,7 +52,7 @@ describe('defaultTimedEventDuration', function() {
     describe('with week view', function() {
 
       pushOptions({
-        defaultView: 'timeGridWeek'
+        initialView: 'timeGridWeek'
       })
 
       it('renders a timed event with no `end` to appear to have the default duration', function() {
@@ -88,7 +88,7 @@ describe('defaultTimedEventDuration', function() {
     describe('with dayGridWeek view', function() {
 
       pushOptions({
-        defaultView: 'dayGridWeek'
+        initialView: 'dayGridWeek'
       })
 
       it('renders a timed event with no `end` to appear to have the default duration', function() {

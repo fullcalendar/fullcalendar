@@ -5,7 +5,7 @@ describe('selectAllow', function() {
 
   pushOptions({
     now: '2016-09-04',
-    defaultView: 'timeGridWeek',
+    initialView: 'timeGridWeek',
     scrollTime: '00:00',
     selectable: true
   })

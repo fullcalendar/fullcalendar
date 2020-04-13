@@ -8,7 +8,7 @@ describe('calendar title', function() {
   describe('when switching to and from a view', function() {
     it('updates the title at each switch', function() {
       let calendar = initCalendar({
-        defaultView: 'dayGridMonth'
+        initialView: 'dayGridMonth'
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 

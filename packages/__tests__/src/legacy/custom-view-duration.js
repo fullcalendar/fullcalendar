@@ -14,8 +14,8 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { days: 4 }
     }
-    options.defaultView = 'dayGridFourDay'
-    options.defaultDate = '2014-12-25'
+    options.initialView = 'dayGridFourDay'
+    options.initialDate = '2014-12-25'
 
     let calendar = initCalendar(options)
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -23,7 +23,7 @@ describe('custom view', function() {
 
     expect(dayGridWrapper.getRowEls().length).toBe(1)
     expect(dayEls.length).toBe(4)
-    expect(dayEls[0].getAttribute('data-date')).toBe('2014-12-25') // starts on defaultDate
+    expect(dayEls[0].getAttribute('data-date')).toBe('2014-12-25') // starts on initialDate
   })
 
   it('renders a 2 week dayGrid view', function() {
@@ -34,8 +34,8 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { weeks: 2 }
     }
-    options.defaultView = 'dayGridTwoWeek'
-    options.defaultDate = '2014-12-25'
+    options.initialView = 'dayGridTwoWeek'
+    options.initialDate = '2014-12-25'
     options.firstDay = 2 // Tues
 
     let calendar = initCalendar(options)
@@ -57,7 +57,7 @@ describe('custom view', function() {
       duration: { days: 4 },
       titleFormat: function() { return 'special' }
     }
-    options.defaultView = 'dayGridFourDay'
+    options.initialView = 'dayGridFourDay'
 
     let calendar = initCalendar(options)
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -75,7 +75,7 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { days: 4 }
     }
-    options.defaultView = 'dayGridFourDay'
+    options.initialView = 'dayGridFourDay'
 
     let calendar = initCalendar(options)
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -94,7 +94,7 @@ describe('custom view', function() {
       duration: { days: 4 },
       titleFormat: function() { return 'dayGridfourweekttitle' }
     }
-    options.defaultView = 'dayGridFourDay'
+    options.initialView = 'dayGridFourDay'
 
     let calendar = initCalendar(options)
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -112,7 +112,7 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { weeks: 1 }
     }
-    options.defaultView = 'dayGridOneWeek'
+    options.initialView = 'dayGridOneWeek'
 
     let calendar = initCalendar(options)
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -134,7 +134,7 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { weeks: 1 }
     }
-    options.defaultView = 'dayGridOneWeek'
+    options.initialView = 'dayGridOneWeek'
 
     let calendar = initCalendar(options)
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -154,7 +154,7 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { weeks: 2 }
     }
-    options.defaultView = 'dayGridTwoWeek'
+    options.initialView = 'dayGridTwoWeek'
 
     let calendar = initCalendar(options)
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -170,8 +170,8 @@ describe('custom view', function() {
       type: 'timeGrid',
       duration: { days: 4 }
     }
-    options.defaultView = 'timeGridFourDay'
-    options.defaultDate = '2014-12-25'
+    options.initialView = 'timeGridFourDay'
+    options.initialDate = '2014-12-25'
 
     let calendar = initCalendar(options)
     let viewWrapper = new TimeGridViewWrapper(calendar)
@@ -180,7 +180,7 @@ describe('custom view', function() {
     expect(viewWrapper.dayGrid.getRowEls().length).toBe(1)
     expect(viewWrapper.dayGrid.getAllDayEls().length).toBe(4)
     expect(timeGridDayEls.length).toBe(4)
-    expect(timeGridDayEls[0].getAttribute('data-date')).toBe('2014-12-25') // starts on defaultDate
+    expect(timeGridDayEls[0].getAttribute('data-date')).toBe('2014-12-25') // starts on initialDate
   })
 
   it('renders a two week timeGrid view', function() {
@@ -191,8 +191,8 @@ describe('custom view', function() {
       type: 'timeGrid',
       duration: { weeks: 2 }
     }
-    options.defaultView = 'timeGridTwoWeek'
-    options.defaultDate = '2014-12-25'
+    options.initialView = 'timeGridTwoWeek'
+    options.initialDate = '2014-12-25'
 
     let calendar = initCalendar(options)
     let viewWrapper = new TimeGridViewWrapper(calendar)
@@ -212,8 +212,8 @@ describe('custom view', function() {
       type: 'timeGrid',
       duration: { months: 2 }
     }
-    options.defaultView = 'timeGridTwoWeek'
-    options.defaultDate = '2014-11-27'
+    options.initialView = 'timeGridTwoWeek'
+    options.initialDate = '2014-11-27'
 
     let calendar = initCalendar(options)
     let viewWrapper = new TimeGridViewWrapper(calendar)
@@ -234,8 +234,8 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { months: 2 }
     }
-    options.defaultView = 'dayGridTwoWeek'
-    options.defaultDate = '2014-11-27'
+    options.initialView = 'dayGridTwoWeek'
+    options.initialDate = '2014-11-27'
 
     let calendar = initCalendar(options)
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -255,8 +255,8 @@ describe('custom view', function() {
       type: 'dayGrid',
       duration: { years: 1 }
     }
-    options.defaultView = 'dayGridYear'
-    options.defaultDate = '2014-11-27'
+    options.initialView = 'dayGridYear'
+    options.initialDate = '2014-11-27'
 
     let calendar = initCalendar(options)
     let dayGridWrapper = new DayGridViewWrapper(calendar).dayGrid
@@ -283,7 +283,7 @@ describe('custom view', function() {
       options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
-      options.defaultView = 'custom'
+      options.initialView = 'custom'
 
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -307,7 +307,7 @@ describe('custom view', function() {
       options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
-      options.defaultView = 'custom'
+      options.initialView = 'custom'
 
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -331,7 +331,7 @@ describe('custom view', function() {
       options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
-      options.defaultView = 'custom'
+      options.initialView = 'custom'
 
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -346,7 +346,7 @@ describe('custom view', function() {
         headerToolbar: {
           center: 'custom,dayGridMonth'
         },
-        defaultView: 'custom',
+        initialView: 'custom',
         views: {
           custom: {
             type: 'dayGrid',
@@ -367,7 +367,7 @@ describe('custom view', function() {
         headerToolbar: {
           center: 'custom,dayGridMonth'
         },
-        defaultView: 'custom',
+        initialView: 'custom',
         views: {
           custom: {
             type: 'dayGrid',
@@ -395,7 +395,7 @@ describe('custom view', function() {
       options.headerToolbar = {
         center: 'custom,dayGridMonth'
       }
-      options.defaultView = 'custom'
+      options.initialView = 'custom'
 
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -416,7 +416,7 @@ describe('custom view', function() {
       options.headerToolbar = {
         center: 'dayGridFourDay,dayGridMonth'
       }
-      options.defaultView = 'dayGridFourDay'
+      options.initialView = 'dayGridFourDay'
 
       let calendar = initCalendar(options)
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -441,7 +441,7 @@ describe('custom view', function() {
         headerToolbar: {
           center: 'crazy,dayGridMonth'
         },
-        defaultView: 'crazy'
+        initialView: 'crazy'
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
       let buttonInfo = toolbarWrapper.getButtonInfo('crazy')
@@ -455,7 +455,7 @@ describe('custom view', function() {
 
     try {
       initCalendar({
-        defaultView: 'month',
+        initialView: 'month',
         views: {
           month: {
             type: 'month'

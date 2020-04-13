@@ -3,7 +3,7 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('select method', function() {
   pushOptions({
-    defaultDate: '2014-05-25',
+    initialDate: '2014-05-25',
     selectable: true
   })
 
@@ -22,7 +22,7 @@ describe('select method', function() {
 
     describe('when in month view', function() {
       pushOptions({
-        defaultView: 'dayGridMonth'
+        initialView: 'dayGridMonth'
       })
 
       describe('when called with all-day date strings', function() {
@@ -104,7 +104,7 @@ describe('select method', function() {
 
     describe('when in week view', function() { // May 25 - 31
       pushOptions({
-        defaultView: 'timeGridWeek',
+        initialView: 'timeGridWeek',
         scrollTime: '01:00:00', // so that most events will be below the divider
         height: 400 // short enought to make scrolling happen
       })

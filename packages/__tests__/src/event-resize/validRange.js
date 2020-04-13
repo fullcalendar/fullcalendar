@@ -5,8 +5,8 @@ describe('validRange event resizing', function() {
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2017-06-01',
+      initialView: 'dayGridMonth',
+      initialDate: '2017-06-01',
       validRange: { end: '2017-06-09' },
       events: [
         { start: '2017-06-04', end: '2017-06-07' }

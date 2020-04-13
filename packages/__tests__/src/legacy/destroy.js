@@ -33,7 +33,7 @@ describe('destroy', function() {
   })
 
   pushOptions({
-    defaultDate: '2014-12-01',
+    initialDate: '2014-12-01',
     droppable: true, // likely to attach document handler
     editable: true, // same
     events: [
@@ -41,7 +41,7 @@ describe('destroy', function() {
     ]
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when in dayGridWeek view': 'dayGridWeek',
     'when in week view': 'timeGridWeek',
     'when in listWeek view': 'listWeek',

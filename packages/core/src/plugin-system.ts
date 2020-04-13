@@ -49,7 +49,7 @@ export interface PluginDefInput {
   cmdFormatter?: CmdFormatterFunc
   recurringTypes?: RecurringType[]
   namedTimeZonedImpl?: NamedTimeZoneImplClass
-  defaultView?: string
+  initialView?: string
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers?: OptionChangeHandlerMap
   scrollGridImpl?: ScrollGridImpl
@@ -79,7 +79,7 @@ export interface PluginHooks {
   cmdFormatter?: CmdFormatterFunc
   recurringTypes: RecurringType[]
   namedTimeZonedImpl?: NamedTimeZoneImplClass
-  defaultView: string
+  initialView: string
   elementDraggingImpl?: ElementDraggingClass
   optionChangeHandlers: OptionChangeHandlerMap
   scrollGridImpl: ScrollGridImpl | null
@@ -126,7 +126,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
     cmdFormatter: input.cmdFormatter,
     recurringTypes: input.recurringTypes || [],
     namedTimeZonedImpl: input.namedTimeZonedImpl,
-    defaultView: input.defaultView || '',
+    initialView: input.initialView || '',
     elementDraggingImpl: input.elementDraggingImpl,
     optionChangeHandlers: input.optionChangeHandlers || {},
     scrollGridImpl: input.scrollGridImpl || null,
@@ -163,7 +163,7 @@ export class PluginSystem {
       cmdFormatter: null,
       recurringTypes: [],
       namedTimeZonedImpl: null,
-      defaultView: '',
+      initialView: '',
       elementDraggingImpl: null,
       optionChangeHandlers: {},
       scrollGridImpl: null,
@@ -210,7 +210,7 @@ function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
     cmdFormatter: hooks1.cmdFormatter || hooks0.cmdFormatter,
     recurringTypes: hooks0.recurringTypes.concat(hooks1.recurringTypes),
     namedTimeZonedImpl: hooks1.namedTimeZonedImpl || hooks0.namedTimeZonedImpl,
-    defaultView: hooks0.defaultView || hooks1.defaultView, // put earlier plugins FIRST
+    initialView: hooks0.initialView || hooks1.initialView, // put earlier plugins FIRST
     elementDraggingImpl: hooks0.elementDraggingImpl || hooks1.elementDraggingImpl, // "
     optionChangeHandlers: { ...hooks0.optionChangeHandlers, ...hooks1.optionChangeHandlers },
     scrollGridImpl: hooks1.scrollGridImpl || hooks0.scrollGridImpl,

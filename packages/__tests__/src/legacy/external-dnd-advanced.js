@@ -31,14 +31,14 @@ describe('advanced external dnd', function() {
   })
 
   pushOptions({
-    defaultDate: '2014-11-13',
+    initialDate: '2014-11-13',
     scrollTime: '00:00:00',
     droppable: true
   })
 
   describe('in timeGrid slots', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     describe('when no element event data', function() {
@@ -305,7 +305,7 @@ describe('advanced external dnd', function() {
 
   describe('in month whole-days', function() {
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     describe('when event data is given', function() {

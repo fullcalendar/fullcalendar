@@ -4,13 +4,13 @@ import { filterVisibleEls } from '../lib/dom-misc'
 
 describe('dayMaxEventRows', function() { // TODO: rename file
   pushOptions({
-    defaultDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
+    initialDate: '2014-08-01', // important that it is the first week, so works w/ month + week views
     dayMaxEventRows: 3
   })
 
   describe('as a number', function() {
 
-    describeOptions('defaultView', {
+    describeOptions('initialView', {
       'when in month view': 'dayGridMonth',
       'when in dayGridWeek view': 'dayGridWeek',
       'when in week view': 'timeGridWeek'
@@ -160,7 +160,7 @@ describe('dayMaxEventRows', function() { // TODO: rename file
     describe('in month view', function() {
 
       pushOptions({
-        defaultView: 'dayGridMonth',
+        initialView: 'dayGridMonth',
         events: [
           { title: 'event1', start: '2014-07-28', end: '2014-07-30' },
           { title: 'event2', start: '2014-07-28', end: '2014-07-30' },
@@ -203,7 +203,7 @@ describe('dayMaxEventRows', function() { // TODO: rename file
       })
     })
 
-    describeOptions('defaultView', {
+    describeOptions('initialView', {
       'when in month view': 'dayGridMonth',
       'when in dayGridWeek view': 'dayGridWeek'
     }, function() {
@@ -221,7 +221,7 @@ describe('dayMaxEventRows', function() { // TODO: rename file
 
     describe('in week view', function() {
       pushOptions({
-        defaultView: 'timeGridWeek'
+        initialView: 'timeGridWeek'
       })
 
       it('behaves as if limit is 5', function() {

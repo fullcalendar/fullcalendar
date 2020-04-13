@@ -3,7 +3,7 @@ import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
 describe('eventDidMount+eventContent', function() { // TODO: rename file
   pushOptions({
-    defaultDate: '2014-11-12',
+    initialDate: '2014-11-12',
     scrollTime: '00:00:00',
     events: [ {
       title: 'my event',
@@ -11,7 +11,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
     } ]
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when in day-grid': 'dayGridMonth',
     'when in time-grid': 'timeGridWeek'
   }, function() {
@@ -46,7 +46,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       events: [ {
         title: 'my event',
         start: '2014-11-12'

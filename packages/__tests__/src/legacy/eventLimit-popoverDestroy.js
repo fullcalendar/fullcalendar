@@ -2,8 +2,8 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 
 describe('more-link popover', function() { // TODO: rename file
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2014-08-01',
+    initialView: 'dayGridMonth',
+    initialDate: '2014-08-01',
     dayMaxEventRows: 3,
     events: [
       { title: 'event1', start: '2014-07-28', end: '2014-07-30', className: 'event1' },

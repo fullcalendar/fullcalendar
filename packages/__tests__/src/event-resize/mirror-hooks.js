@@ -6,13 +6,13 @@ import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 describe('event resize mirror', function() {
   pushOptions({
     editable: true,
-    defaultDate: '2018-12-25',
+    initialDate: '2018-12-25',
     eventDragMinDistance: 0 // so mirror will render immediately upon mousedown
   })
 
   describe('in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       events: [
         { start: '2018-12-03', title: 'all day event' }
       ]
@@ -59,7 +59,7 @@ describe('event resize mirror', function() {
 
   describe('in timeGrid view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek',
+      initialView: 'timeGridWeek',
       scrollTime: '00:00',
       slotDuration: '01:00',
       snapDuration: '01:00',

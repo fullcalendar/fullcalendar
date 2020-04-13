@@ -8,8 +8,8 @@ describe('showNonCurrentDates', function() {
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2017-06-01'
+      initialView: 'dayGridMonth',
+      initialDate: '2017-06-01'
     })
 
     it('does not render other months\' dates', function() {
@@ -20,8 +20,8 @@ describe('showNonCurrentDates', function() {
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek',
-      defaultDate: '2017-06-01'
+      initialView: 'timeGridWeek',
+      initialDate: '2017-06-01'
     })
 
     it('has no effect', function() {
@@ -33,8 +33,8 @@ describe('showNonCurrentDates', function() {
   it('works when disabling weekends and switching views', function() {
     initCalendar({
       weekends: false,
-      defaultView: 'dayGridMonth',
-      defaultDate: '2019-06-07' // only shows problem when start date is a weekend!
+      initialView: 'dayGridMonth',
+      initialDate: '2019-06-07' // only shows problem when start date is a weekend!
     })
     currentCalendar.next()
     currentCalendar.setOption('weekends', true)
@@ -43,8 +43,8 @@ describe('showNonCurrentDates', function() {
 
   it('works when switching views with same formal duration but different rendered duration', function() {
     initCalendar({
-      defaultView: 'listMonth', // something other than than dayGridMonth
-      defaultDate: '2019-01-01'
+      initialView: 'listMonth', // something other than than dayGridMonth
+      initialDate: '2019-01-01'
     })
     currentCalendar.changeView('dayGridMonth')
     expectDayRange('2019-01-01', '2019-02-01')

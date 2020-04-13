@@ -6,7 +6,7 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 describe('themeSystem', function() {
   pushOptions({
     plugins: [ BootstrapPlugin, TimeGridPlugin ],
-    defaultView: 'timeGridWeek',
+    initialView: 'timeGridWeek',
     headerToolbar: {
       left: 'title',
       center: '',

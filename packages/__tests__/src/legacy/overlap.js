@@ -5,8 +5,8 @@ describe('event overlap', function() {
 
   beforeEach(function() {
     options = {
-      defaultDate: '2014-11-04',
-      defaultView: 'timeGridWeek',
+      initialDate: '2014-11-04',
+      initialView: 'timeGridWeek',
       scrollTime: '00:00'
     }
   })
@@ -189,7 +189,7 @@ describe('event overlap', function() {
       })
       describe('when in month view', function() {
         beforeEach(function() {
-          options.defaultView = 'dayGridMonth'
+          options.initialView = 'dayGridMonth'
         })
         describe('with all-day subject and all-day other', function() {
           it('does not allow dragging', function(done) {
@@ -612,8 +612,8 @@ describe('selectOverlap', function() {
 
   beforeEach(function() {
     options = {
-      defaultDate: '2014-11-12',
-      defaultView: 'timeGridWeek',
+      initialDate: '2014-11-12',
+      initialView: 'timeGridWeek',
       scrollTime: '00:00'
     }
   })
@@ -703,7 +703,7 @@ describe('selectOverlap', function() {
       })
       describe('when in month view', function() {
         beforeEach(function() {
-          options.defaultView = 'dayGridMonth'
+          options.initialView = 'dayGridMonth'
         })
         describe('with all-day event', function() {
           it('does not allow selection', function(done) {

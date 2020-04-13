@@ -14,15 +14,15 @@ describe('current date', function() {
   pushOptions({
     titleFormat: TITLE_FORMAT,
     titleRangeSeparator: ' - ',
-    defaultDate: '2014-06-01',
+    initialDate: '2014-06-01',
     timeZone: 'UTC'
   })
 
-  describe('defaultDate & getDate', function() { // keep getDate
+  describe('initialDate & getDate', function() { // keep getDate
     describeWhenInMonth(function() {
       it('should initialize at the date', function() {
         let calendar = initCalendar({
-          defaultDate: '2011-03-10'
+          initialDate: '2011-03-10'
         })
         expectViewDates(calendar, '2011-02-27', '2011-04-10', '2011-03-01', '2011-04-01')
         let currentDate = calendar.getDate()
@@ -33,14 +33,14 @@ describe('current date', function() {
     describeWhenInWeek(function() {
       it('should initialize at the date, given a date string', function() {
         let calendar = initCalendar({
-          defaultDate: '2011-03-10'
+          initialDate: '2011-03-10'
         })
         expectViewDates(calendar, '2011-03-06', '2011-03-13')
         expect(calendar.getDate()).toEqualDate('2011-03-10')
       })
       it('should initialize at the date, given a Date object', function() {
         let calendar = initCalendar({
-          defaultDate: parseUtcDate('2011-03-10')
+          initialDate: parseUtcDate('2011-03-10')
         })
         expectViewDates(calendar, '2011-03-06', '2011-03-13')
         expect(calendar.getDate()).toEqualDate('2011-03-10')
@@ -49,7 +49,7 @@ describe('current date', function() {
     describeWhenInDay(function() {
       it('should initialize at the date', function() {
         let calendar = initCalendar({
-          defaultDate: '2011-03-10'
+          initialDate: '2011-03-10'
         })
         expectViewDates(calendar, '2011-03-10')
         expect(calendar.getDate()).toEqualDate('2011-03-10')
@@ -178,7 +178,7 @@ describe('current date', function() {
       it('should display the current month even if first day of month', function() {
         let calendar = initCalendar({
           now: '2014-06-01', // a Sunday
-          defaultDate: '2014-06-01', // a Sunday
+          initialDate: '2014-06-01', // a Sunday
           weekends: false
         })
         let view = calendar.view
@@ -190,7 +190,7 @@ describe('current date', function() {
       it('should display the current month', function() {
         let calendar = initCalendar({
           now: '2014-05-04', // a Sunday
-          defaultDate: '2014-05-04', // a Sunday
+          initialDate: '2014-05-04', // a Sunday
           weekends: false
         })
         let view = calendar.view
@@ -202,7 +202,7 @@ describe('current date', function() {
       describe('when navigating back a month', function() {
         it('should not skip months', function() {
           let calendar = initCalendar({
-            defaultDate: '2014-07-07',
+            initialDate: '2014-07-07',
             weekends: false
           })
           let view = calendar.view
@@ -219,7 +219,7 @@ describe('current date', function() {
       it('should display the next visible day', function() {
         let calendar = initCalendar({
           now: '2014-06-01', // a Sunday
-          defaultDate: '2014-06-01', // a Sunday
+          initialDate: '2014-06-01', // a Sunday
           weekends: false
         })
         let view = calendar.view
@@ -251,7 +251,7 @@ describe('current date', function() {
 
   function describeWhenIn(viewName, func) {
     describe('when in ' + viewName, function() {
-      pushOptions({defaultView: viewName})
+      pushOptions({initialView: viewName})
       func()
     })
   }

@@ -3,8 +3,8 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('timegrid all-day slot', function() {
   pushOptions({
-    defaultDate: '2019-04-23',
-    defaultView: 'timeGridWeek',
+    initialDate: '2019-04-23',
+    initialView: 'timeGridWeek',
     editable: true
   })
 

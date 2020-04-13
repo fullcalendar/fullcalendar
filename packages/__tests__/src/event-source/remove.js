@@ -2,7 +2,7 @@ import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
 describe('event source remove', function() {
   pushOptions({
-    defaultDate: '2014-08-01'
+    initialDate: '2014-08-01'
   })
 
   it('correctly removes events provided via `eventSources` at initialization', function() {

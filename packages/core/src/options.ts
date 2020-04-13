@@ -14,7 +14,7 @@ export const globalDefaults = {
 
   // display
   dayHeaders: true,
-  defaultView: '',
+  initialView: '',
   aspectRatio: 1.35,
   headerToolbar: {
     start: 'title',

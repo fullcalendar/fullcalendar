@@ -6,7 +6,7 @@ describe('View object', function() {
   */
 
   pushOptions({
-    defaultDate: '2015-01-01'
+    initialDate: '2015-01-01'
   })
 
   describe('title', function() {

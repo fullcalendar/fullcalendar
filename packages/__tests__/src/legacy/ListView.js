@@ -3,7 +3,7 @@ import ListViewWrapper from '../lib/wrappers/ListViewWrapper'
 
 describe('ListView rendering', function() {
   pushOptions({
-    defaultView: 'listWeek',
+    initialView: 'listWeek',
     now: '2016-08-20'
   })
 
@@ -475,7 +475,7 @@ describe('ListView rendering', function() {
   it('updates rendered events despite fetch range being lazy', function() {
     let calendar = initCalendar({
       now: '2016-09-12',
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       events: [
         { title: 'event1', start: '2016-09-12' }
       ]

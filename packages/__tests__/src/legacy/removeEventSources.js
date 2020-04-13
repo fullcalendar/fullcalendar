@@ -2,8 +2,8 @@ import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
 describe('removeEventSources', function() {
   pushOptions({
-    defaultDate: '2014-08-01',
-    defaultView: 'timeGridDay',
+    initialDate: '2014-08-01',
+    initialView: 'timeGridDay',
     eventSources: [
       buildEventSource(1),
       buildEventSource(2),

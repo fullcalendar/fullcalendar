@@ -3,12 +3,12 @@ import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
 describe('dayNumbers', function() {
   pushOptions({
-    defaultDate: '2018-01-01'
+    initialDate: '2018-01-01'
   })
 
   it('respects locale in month view', function() {
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       locale: arLocale
     })
     let dayGridViewWrapper = new DayGridViewWrapper(calendar).dayGrid

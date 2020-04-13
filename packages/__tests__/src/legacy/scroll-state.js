@@ -14,12 +14,12 @@ describe('scroll state', function() {
   })
 
   pushOptions({
-    defaultDate: '2015-02-20',
+    initialDate: '2015-02-20',
     contentHeight: 200,
     scrollTime: '00:00' // for timeGrid
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when in month view': 'dayGridMonth',
     'when in week view': 'timeGridWeek'
   }, function(viewName) {

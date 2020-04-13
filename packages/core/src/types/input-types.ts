@@ -95,7 +95,7 @@ export interface OptionsInputBase {
     ((arg: { date: Date, allDay: boolean, allSegs: any[], hiddenSegs: any[], jsEvent: MouseEvent, view: ViewApi }) => void),
   timeZone?: string | boolean
   now?: DateInput | (() => DateInput)
-  defaultView?: string
+  initialView?: string
   allDaySlot?: boolean
   allDayText?: string
   slotDuration?: DurationInput
@@ -108,7 +108,7 @@ export interface OptionsInputBase {
   slotEventOverlap?: boolean
   listDayFormat?: FormatterInput | boolean
   listDaySideFormat?: FormatterInput | boolean
-  defaultDate?: DateInput
+  initialDate?: DateInput
   nowIndicator?: boolean
   visibleRange?: ((currentDate: Date) => DateRangeInput) | DateRangeInput
   validRange?: DateRangeInput

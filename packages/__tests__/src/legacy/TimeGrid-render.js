@@ -2,7 +2,7 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('Agenda view rendering', function() {
   pushOptions({
-    defaultView: 'timeGridWeek'
+    initialView: 'timeGridWeek'
   })
 
   describe('when LTR', function() {

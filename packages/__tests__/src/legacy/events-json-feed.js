@@ -4,8 +4,8 @@ import { formatIsoTimeZoneOffset } from '../lib/datelib-utils'
 describe('events as a json feed', function() {
 
   pushOptions({
-    defaultDate: '2014-05-01',
-    defaultView: 'dayGridMonth'
+    initialDate: '2014-05-01',
+    initialView: 'dayGridMonth'
   })
 
   beforeEach(function() {

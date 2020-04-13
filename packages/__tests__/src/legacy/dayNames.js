@@ -15,7 +15,7 @@ describe('day names', function() {
 
   describe('when view is dayGridDay', function() {
     pushOptions({
-      defaultView: 'dayGridDay'
+      initialView: 'dayGridDay'
     })
 
     describe('when locale is default', function() {

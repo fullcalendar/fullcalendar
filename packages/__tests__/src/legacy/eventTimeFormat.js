@@ -3,7 +3,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('eventTimeFormat', function() {
   pushOptions({
-    defaultDate: '2014-06-04',
+    initialDate: '2014-06-04',
     events: [ {
       title: 'my event',
       start: '2014-06-04T15:00:00',
@@ -13,7 +13,7 @@ describe('eventTimeFormat', function() {
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     it('renders correctly when default', function() {
@@ -38,7 +38,7 @@ describe('eventTimeFormat', function() {
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     it('renders correctly when default', function() {
@@ -69,7 +69,7 @@ describe('eventTimeFormat', function() {
           duration: { days: 2 }
         }
       },
-      defaultView: 'dayGridTwoDay'
+      initialView: 'dayGridTwoDay'
     })
 
     it('defaults to no end time', function() {
@@ -80,7 +80,7 @@ describe('eventTimeFormat', function() {
 
   describe('when in dayGridDay view', function() {
     pushOptions({
-      defaultView: 'dayGridDay'
+      initialView: 'dayGridDay'
     })
 
     it('defaults to showing the end time', function() {

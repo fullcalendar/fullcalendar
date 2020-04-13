@@ -8,8 +8,8 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 describe('businessHours', function() {
   pushOptions({
     timeZone: 'UTC',
-    defaultDate: '2014-11-25',
-    defaultView: 'dayGridMonth',
+    initialDate: '2014-11-25',
+    initialView: 'dayGridMonth',
     businessHours: true
   })
 
@@ -54,7 +54,7 @@ describe('businessHours', function() {
 
       it('allows dynamic turning on', function() {
         let calendar = initCalendar({
-          defaultView: viewName,
+          initialView: viewName,
           businessHours: false
         })
         let calendarWrapper = new CalendarWrapper(calendar)
@@ -66,7 +66,7 @@ describe('businessHours', function() {
 
       it('allows dynamic turning off', function() {
         let calendar = initCalendar({
-          defaultView: viewName,
+          initialView: viewName,
           businessHours: true
         })
         let calendarWrapper = new CalendarWrapper(calendar)
@@ -83,8 +83,8 @@ describe('businessHours', function() {
 
     it('rendes two day-of-week groups', function() {
       let calendar = initCalendar({
-        defaultDate: '2014-12-07',
-        defaultView: 'timeGridWeek',
+        initialDate: '2014-12-07',
+        initialView: 'timeGridWeek',
         businessHours: [
           {
             daysOfWeek: [ 1, 2, 3 ], // mon, tue, wed
@@ -125,8 +125,8 @@ describe('businessHours', function() {
 
     it('wont\'t process businessHour items that omit dow', function() {
       let calendar = initCalendar({
-        defaultDate: '2014-12-07',
-        defaultView: 'timeGridWeek',
+        initialDate: '2014-12-07',
+        initialView: 'timeGridWeek',
         businessHours: [
           {
             // invalid
@@ -166,8 +166,8 @@ describe('businessHours', function() {
 
   it('will grey-out a totally non-business-hour view', function() {
     let calendar = initCalendar({
-      defaultDate: '2016-07-23', // sat
-      defaultView: 'timeGridDay',
+      initialDate: '2016-07-23', // sat
+      initialView: 'timeGridDay',
       businessHours: true
     })
 

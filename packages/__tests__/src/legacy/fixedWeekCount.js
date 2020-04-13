@@ -3,8 +3,8 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 describe('fixedWeekCount', function() {
 
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2014-07-01' // has 5 weeks
+    initialView: 'dayGridMonth',
+    initialDate: '2014-07-01' // has 5 weeks
   })
 
   describe('when true', function() {
@@ -35,7 +35,7 @@ describe('fixedWeekCount', function() {
     describe('regardless of value (' + bool + ')', function() {
       pushOptions({
         fixedWeekCount: bool,
-        defaultDate: '2014-08-01' // has 6 weeks
+        initialDate: '2014-08-01' // has 6 weeks
       })
 
       it('should render a 6-week month consistently', function() {

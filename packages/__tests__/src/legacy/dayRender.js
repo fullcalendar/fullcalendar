@@ -5,9 +5,9 @@ describe('dayCellDidMount', function() { // TODO: rename file
 
   it('is triggered upon initialization of a view, with correct parameters', function() {
     var options = {
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       fixedWeekCount: true,
-      defaultDate: '2014-05-01',
+      initialDate: '2014-05-01',
       dayCellDidMount: function(arg) {
         expect(arg.date instanceof Date).toEqual(true)
         expect(formatIsoDay(arg.date)).toEqual(arg.el.getAttribute('data-date'))
@@ -22,8 +22,8 @@ describe('dayCellDidMount', function() { // TODO: rename file
 
   it('is called when date range is changed', function() {
     var options = {
-      defaultView: 'dayGridWeek',
-      defaultDate: '2014-05-01',
+      initialView: 'dayGridWeek',
+      initialDate: '2014-05-01',
       dayCellDidMount: function(arg) { }
     }
 
@@ -36,8 +36,8 @@ describe('dayCellDidMount', function() { // TODO: rename file
 
   it('won\'t be called when date is navigated but remains in the current visible range', function() {
     var options = {
-      defaultView: 'dayGridWeek',
-      defaultDate: '2014-05-01',
+      initialView: 'dayGridWeek',
+      initialDate: '2014-05-01',
       dayCellDidMount: function(arg) { }
     }
 
@@ -50,9 +50,9 @@ describe('dayCellDidMount', function() { // TODO: rename file
 
   it('allows you to modify the element', function() {
     var options = {
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       fixedWeekCount: true,
-      defaultDate: '2014-05-01',
+      initialDate: '2014-05-01',
       dayCellDidMount: function(arg) {
         if (formatIsoDay(arg.date) === '2014-05-01') {
           arg.el.classList.add('mycustomclass')
@@ -69,8 +69,8 @@ describe('dayCellDidMount', function() { // TODO: rename file
   it('gets called for TimeGrid views', function() {
     var callCnt = 0
     var options = {
-      defaultView: 'timeGridWeek',
-      defaultDate: '2014-05-01',
+      initialView: 'timeGridWeek',
+      initialDate: '2014-05-01',
       allDaySlot: false, // turn off. fires its own dayCellDidMount
       dayCellDidMount(arg) {
         expect(arg.date instanceof Date).toBe(true)

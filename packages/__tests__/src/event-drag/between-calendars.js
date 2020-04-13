@@ -44,8 +44,8 @@ describe('dragging events between calendars', function() {
     calendar0 = new Calendar(el0, {
       plugins: [ InteractionPlugin, DayGridPlugin ],
       timeZone: 'UTC',
-      defaultDate: DEFAULT_DATE,
-      defaultView: 'dayGridMonth',
+      initialDate: DEFAULT_DATE,
+      initialView: 'dayGridMonth',
       editable: true,
       events: [
         { start: '2019-01-01', id: 'a' }
@@ -60,8 +60,8 @@ describe('dragging events between calendars', function() {
     calendar1 = new Calendar(el1, {
       plugins: [ InteractionPlugin, DayGridPlugin ],
       timeZone: 'UTC',
-      defaultDate: DEFAULT_DATE,
-      defaultView: 'dayGridMonth',
+      initialDate: DEFAULT_DATE,
+      initialView: 'dayGridMonth',
       editable: true,
       droppable: true,
       drop(info) {
@@ -108,8 +108,8 @@ describe('dragging events between calendars', function() {
       plugins: [ InteractionPlugin, TimeGridPlugin ],
       scrollTime: '00:00',
       timeZone: 'UTC',
-      defaultDate: DEFAULT_DATE,
-      defaultView: 'timeGridDay',
+      initialDate: DEFAULT_DATE,
+      initialView: 'timeGridDay',
       editable: true,
       events: [
         { start: '2019-01-01T00:00:00', id: 'a' }
@@ -120,8 +120,8 @@ describe('dragging events between calendars', function() {
       plugins: [ InteractionPlugin, TimeGridPlugin ],
       scrollTime: '00:00',
       timeZone: 'UTC',
-      defaultDate: DEFAULT_DATE,
-      defaultView: 'timeGridDay',
+      initialDate: DEFAULT_DATE,
+      initialView: 'timeGridDay',
       editable: true,
       droppable: true,
       eventReceive: function(info) {

@@ -2,8 +2,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('TimeGrid event rendering', function() {
   pushOptions({
-    defaultDate: '2014-08-23',
-    defaultView: 'timeGridWeek',
+    initialDate: '2014-08-23',
+    initialView: 'timeGridWeek',
     scrollTime: '00:00:00'
   })
 

@@ -5,7 +5,7 @@ describe('scrollToTime method', function() {
   it('accepts a object duration input', function() {
     let calendar = initCalendar({
       scrollTime: 0,
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
     let viewWrapper = new TimeGridViewWrapper(calendar)
 

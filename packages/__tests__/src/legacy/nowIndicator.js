@@ -5,7 +5,7 @@ describe('now indicator', function() {
   pushOptions({
     now: '2015-12-26T06:00:00',
     scrollTime: '00:00',
-    defaultView: 'timeGridWeek'
+    initialView: 'timeGridWeek'
   })
 
   it('doesn\'t render by default', function() {
@@ -26,7 +26,7 @@ describe('now indicator', function() {
 
       it('doesn\'t render when out of view', function() {
         let calendar = initCalendar({
-          defaultDate: '2015-12-27' // sun of next week
+          initialDate: '2015-12-27' // sun of next week
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
         expect(timeGridWrapper.hasNowIndicator()).toBe(false)

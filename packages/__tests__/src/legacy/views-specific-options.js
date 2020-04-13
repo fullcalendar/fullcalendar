@@ -9,7 +9,7 @@ describe('view-specific options', function() {
       center: 'title',
       right: 'dayGridMonth,dayGridWeek,dayGridDay,timeGridWeek,timeGridDay'
     },
-    defaultView: 'dayGridMonth',
+    initialView: 'dayGridMonth',
     titleFormat: function() { return 'default' },
     views: { }
   })

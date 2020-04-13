@@ -8,7 +8,7 @@ describe('dayHeaderFormat', function() { // TODO: rename file
 
   describe('when not set', function() {
     pushOptions({
-      defaultDate: '2014-05-11'
+      initialDate: '2014-05-11'
     })
 
     const VIEWS_WITH_FORMAT = [
@@ -32,7 +32,7 @@ describe('dayHeaderFormat', function() { // TODO: rename file
 
   describe('when dayHeaderFormat is set on a per-view basis', function() {
     pushOptions({
-      defaultDate: '2014-05-11',
+      initialDate: '2014-05-11',
       views: {
         month: { dayHeaderFormat: { weekday: 'long' } },
         day: { dayHeaderFormat: { weekday: 'long', month: 'long', day: 'numeric' } },
@@ -59,7 +59,7 @@ describe('dayHeaderFormat', function() { // TODO: rename file
 
   describe('when locale is French', function() {
     pushOptions({
-      defaultDate: '2014-05-11',
+      initialDate: '2014-05-11',
       locale: frLocale
     })
 
@@ -84,7 +84,7 @@ describe('dayHeaderFormat', function() { // TODO: rename file
 
   describe('when locale is en-gb', function() {
     pushOptions({
-      defaultDate: '2014-05-11',
+      initialDate: '2014-05-11',
       locale: enGbLocale
     })
 
@@ -109,7 +109,7 @@ describe('dayHeaderFormat', function() { // TODO: rename file
 
   describe('when locale is Korean', function() {
     pushOptions({
-      defaultDate: '2014-05-11',
+      initialDate: '2014-05-11',
       locale: koLocale
     })
 
@@ -142,8 +142,8 @@ describe('dayHeaderFormat', function() { // TODO: rename file
             duration: { years: 2 }
           }
         },
-        defaultView: 'multiYear',
-        defaultDate: '2014-12-25'
+        initialView: 'multiYear',
+        initialDate: '2014-12-25'
       })
       let header = new DayGridViewWrapper(calendar).header
       expect(header.getCellText(0)).toBe('Sun')
@@ -157,8 +157,8 @@ describe('dayHeaderFormat', function() { // TODO: rename file
             duration: { months: 2 }
           }
         },
-        defaultView: 'multiMonth',
-        defaultDate: '2014-12-25'
+        initialView: 'multiMonth',
+        initialDate: '2014-12-25'
       })
       let header = new DayGridViewWrapper(calendar).header
       expect(header.getCellText(0)).toBe('Sun')
@@ -172,8 +172,8 @@ describe('dayHeaderFormat', function() { // TODO: rename file
             duration: { weeks: 2 }
           }
         },
-        defaultView: 'multiWeek',
-        defaultDate: '2014-12-25'
+        initialView: 'multiWeek',
+        initialDate: '2014-12-25'
       })
       let header = new DayGridViewWrapper(calendar).header
       expect(header.getCellText(0)).toBe('Sun')
@@ -187,8 +187,8 @@ describe('dayHeaderFormat', function() { // TODO: rename file
             duration: { days: 2 }
           }
         },
-        defaultView: 'multiDay',
-        defaultDate: '2014-12-25'
+        initialView: 'multiDay',
+        initialDate: '2014-12-25'
       })
       let header = new DayGridViewWrapper(calendar).header
       expect(header.getCellText('2014-12-25')).toMatch(/^Thu 12[/ ]25$/)

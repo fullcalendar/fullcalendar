@@ -5,8 +5,8 @@ it('list view rerenders well', function(done) {
   let noEventsRenderCnt = 0
 
   let calendar = initCalendar({
-    defaultView: 'listWeek',
-    defaultDate: '2017-10-04',
+    initialView: 'listWeek',
+    initialDate: '2017-10-04',
     windowResizeDelay: 0,
     events: [
       { title: 'event 0', start: '2017-10-04' }

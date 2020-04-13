@@ -13,8 +13,8 @@ describe('more-link popover', function() { // TODO: rename file
   ]
 
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2014-08-01',
+    initialView: 'dayGridMonth',
+    initialDate: '2014-08-01',
     dayMaxEventRows: 3,
     events: testEvents,
     dragScroll: false, // don't do autoscrolling while dragging. close quarters in PhantomJS
@@ -23,7 +23,7 @@ describe('more-link popover', function() { // TODO: rename file
   })
 
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when in month view': 'dayGridMonth',
     'when in dayGridWeek view': 'dayGridWeek',
     'when in week view': 'timeGridWeek'
@@ -66,7 +66,7 @@ describe('more-link popover', function() { // TODO: rename file
   describe('when in month view', function() {
 
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     it('aligns with top of cell', function(done) {
@@ -123,7 +123,7 @@ describe('more-link popover', function() { // TODO: rename file
     // issue 2385
     it('orders events correctly regardless of ID', function(done) {
       let calendar = initCalendar({
-        defaultDate: '2012-03-22',
+        initialDate: '2012-03-22',
         dayMaxEventRows: 3,
         events: [
           {
@@ -192,7 +192,7 @@ describe('more-link popover', function() { // TODO: rename file
     // https://github.com/fullcalendar/fullcalendar/issues/3856
     it('displays multi-day events only once', function(done) {
       let calendar = initCalendar({
-        defaultDate: '2017-10-04',
+        initialDate: '2017-10-04',
         events: [
           {
             title: 'Long event',
@@ -247,7 +247,7 @@ describe('more-link popover', function() { // TODO: rename file
     // https://github.com/fullcalendar/fullcalendar/issues/4331
     it('displays events that were collapsed in previous days', function(done) {
       let calendar = initCalendar({
-        defaultDate: '2018-10-01',
+        initialDate: '2018-10-01',
         events: [
           {
             title: 'e1',
@@ -280,7 +280,7 @@ describe('more-link popover', function() { // TODO: rename file
 
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when in dayGridWeek view': 'dayGridWeek',
     'when in week view': 'timeGridWeek'
   }, function(viewName) {
@@ -440,7 +440,7 @@ describe('more-link popover', function() { // TODO: rename file
 
       it('should assume the new time, with a cleared end', function(done) {
         let calendar = initCalendar({
-          defaultView: 'timeGridWeek',
+          initialView: 'timeGridWeek',
           scrollTime: '00:00:00',
           eventDrop: function(arg) {
             expect(arg.event.start).toEqualDate('2014-07-30T03:00:00Z')

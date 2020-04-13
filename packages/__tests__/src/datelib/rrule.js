@@ -5,7 +5,7 @@ import { parseUtcDate, parseLocalDate } from '../lib/date-parsing'
 describe('rrule plugin', function() {
   pushOptions({
     plugins: [ RRulePlugin, DayGridPlugin ],
-    defaultView: 'dayGridMonth',
+    initialView: 'dayGridMonth',
     now: '2018-09-07',
     timeZone: 'UTC'
   })
@@ -66,7 +66,7 @@ describe('rrule plugin', function() {
 
   it('can expand monthly recurrence', function() {
     initCalendar({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       now: '2018-12-25T12:00:00',
       events: [ {
         rrule: {
@@ -107,8 +107,8 @@ describe('rrule plugin', function() {
   // https://github.com/fullcalendar/fullcalendar/issues/4596
   it('expands a range that starts exactly at the current view\'s start', function() {
     initCalendar({
-      defaultDate: '2019-04-02',
-      defaultView: 'dayGridDay',
+      initialDate: '2019-04-02',
+      initialView: 'dayGridDay',
       events: [
         {
           title: 'event with everyday with range',

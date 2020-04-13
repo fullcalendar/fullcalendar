@@ -7,7 +7,7 @@ import { intersectRects } from '../lib/geom'
 describe('allDay change', function() {
   pushOptions({
     timeZone: 'UTC',
-    defaultView: 'timeGridWeek',
+    initialView: 'timeGridWeek',
     now: '2018-09-03',
     scrollTime: 0,
     editable: true,

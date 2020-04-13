@@ -6,7 +6,7 @@ describe('visibleRange', function() {
 
   describe('when custom view with a flexible range', function() {
     pushOptions({
-      defaultView: 'timeGrid'
+      initialView: 'timeGrid'
     })
 
     describe('when given a valid date range', function() {
@@ -52,7 +52,7 @@ describe('visibleRange', function() {
               }
             }
           },
-          defaultView: 'myCustomView'
+          initialView: 'myCustomView'
         })
         expectActiveRange(startInput, endInput)
       })
@@ -70,7 +70,7 @@ describe('visibleRange', function() {
 
       it('works as a dynamic option', function() {
         initCalendar({
-          defaultView: 'dayGrid'
+          initialView: 'dayGrid'
         })
         currentCalendar.setOption('visibleRange', {
           start: startInput,
@@ -81,18 +81,18 @@ describe('visibleRange', function() {
     })
 
     describe('when a function', function() {
-      var defaultDateInput = '2017-06-08T12:30:00'
+      var initialDateInput = '2017-06-08T12:30:00'
 
-      it('receives the calendar\'s defaultDate, with local timezone, and emits local range', function() {
+      it('receives the calendar\'s initialDate, with local timezone, and emits local range', function() {
         var matched = false
 
         initCalendar({
           timeZone: 'local',
-          defaultDate: defaultDateInput,
+          initialDate: initialDateInput,
           visibleRange: function(date) {
             // this function will receive the date for prev/next,
             // which should be ignored. make sure just one call matches.
-            if (date.valueOf() === parseLocalDate(defaultDateInput).valueOf()) {
+            if (date.valueOf() === parseLocalDate(initialDateInput).valueOf()) {
               matched = true
             }
 
@@ -108,16 +108,16 @@ describe('visibleRange', function() {
         expectActiveRange(parseLocalDate('2017-06-07'), parseLocalDate('2017-06-10'))
       })
 
-      it('receives the calendar\'s defaultDate, with UTC timezone, and emits UTC range', function() {
+      it('receives the calendar\'s initialDate, with UTC timezone, and emits UTC range', function() {
         var matched = false
 
         initCalendar({
           timeZone: 'UTC',
-          defaultDate: defaultDateInput,
+          initialDate: initialDateInput,
           visibleRange: function(date) {
             // this function will receive the date for prev/next,
             // which should be ignored. make sure just one call matches.
-            if (date.valueOf() === parseUtcDate(defaultDateInput).valueOf()) {
+            if (date.valueOf() === parseUtcDate(initialDateInput).valueOf()) {
               matched = true
             }
 
@@ -138,7 +138,7 @@ describe('visibleRange', function() {
         initCalendar({
           dateIncrement: { days: 3 },
           timeZone: 'UTC',
-          defaultDate: defaultDateInput,
+          initialDate: initialDateInput,
           visibleRange: function(date) {
             return {
               start: addUtcDays(date, -1), // 2017-06-07T12:30:00 -> 2017-06-07
@@ -167,9 +167,9 @@ describe('visibleRange', function() {
           end: '2017-06-15'
         }
       }, function() {
-        it('defaults to the defaultDate', function() { // TODO: have it report an warning
+        it('defaults to the initialDate', function() { // TODO: have it report an warning
           initCalendar({
-            defaultDate: '2017-08-01'
+            initialDate: '2017-08-01'
           })
           expectActiveRange('2017-08-01', '2017-08-02')
         })
@@ -180,7 +180,7 @@ describe('visibleRange', function() {
 
       it('constrains an earlier current date to the start of visibleRange', function() {
         initCalendar({
-          defaultDate: '2017-06-25',
+          initialDate: '2017-06-25',
           visibleRange: {
             start: '2017-06-26',
             end: '2017-06-29'
@@ -192,7 +192,7 @@ describe('visibleRange', function() {
 
       it('constrains a later the current date to the start of visibleRange', function() {
         initCalendar({
-          defaultDate: '2017-07-01',
+          initialDate: '2017-07-01',
           visibleRange: {
             start: '2017-06-26',
             end: '2017-06-29'
@@ -206,7 +206,7 @@ describe('visibleRange', function() {
 
   describe('when a list view', function() {
     pushOptions({
-      defaultView: 'list',
+      initialView: 'list',
       visibleRange: {
         start: '2017-06-07',
         end: '2017-06-10'
@@ -224,8 +224,8 @@ describe('visibleRange', function() {
 
   describe('when custom view with fixed duration', function() {
     pushOptions({
-      defaultDate: '2015-06-08',
-      defaultView: 'timeGrid',
+      initialDate: '2015-06-08',
+      initialView: 'timeGrid',
       duration: { days: 3 }
     })
 
@@ -242,8 +242,8 @@ describe('visibleRange', function() {
 
   describe('when standard view', function() {
     pushOptions({
-      defaultDate: '2015-06-08',
-      defaultView: 'timeGridWeek'
+      initialDate: '2015-06-08',
+      initialView: 'timeGridWeek'
     })
 
     it('ignores the given visibleRange', function() {

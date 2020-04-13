@@ -34,8 +34,8 @@ describe('external event dragging', function() {
     // https://github.com/fullcalendar/fullcalendar/issues/4597
     it('should yield an event with an end', function(done) {
       let calendar = initCalendar({
-        defaultView: 'dayGridMonth',
-        defaultDate: '2019-04-01',
+        initialView: 'dayGridMonth',
+        initialDate: '2019-04-01',
         droppable: true,
         defaultAllDayEventDuration: { days: 2 },
         eventReceive(arg) {
@@ -59,8 +59,8 @@ describe('external event dragging', function() {
   it('provides eventAllow with a valid event with null start/end', function(done) {
     let called = false
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2019-04-01',
+      initialView: 'dayGridMonth',
+      initialDate: '2019-04-01',
       droppable: true,
       defaultAllDayEventDuration: { days: 2 },
       eventAllow(dropInfo, draggedEvent) {

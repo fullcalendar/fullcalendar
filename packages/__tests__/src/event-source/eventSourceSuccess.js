@@ -13,7 +13,7 @@ describe('eventSourceSuccess', function() {
   }
 
   pushOptions({
-    defaultDate: '2018-10-01'
+    initialDate: '2018-10-01'
   })
 
   it('massages event data with calendar-wide setting', function() {

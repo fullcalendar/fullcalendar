@@ -2,7 +2,7 @@ import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
 describe('print preview', function() {
   pushOptions({
-    defaultDate: '2019-04-08',
+    initialDate: '2019-04-08',
     scrollTime: '00:00',
     events: [
       { id: '2', start: '2019-04-08T05:00:00' },
@@ -13,7 +13,7 @@ describe('print preview', function() {
     }
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'with timeGrid view': 'timeGridDay',
     'with dayGrid view': 'dayGridDay'
   }, function() {

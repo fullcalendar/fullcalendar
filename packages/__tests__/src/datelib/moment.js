@@ -78,7 +78,7 @@ describe('moment plugin', function() {
 
     it('produces event time text', function() {
       let calendar = initCalendar({
-        defaultView: 'dayGridMonth',
+        initialView: 'dayGridMonth',
         now: '2018-09-06',
         displayEventEnd: false,
         eventTimeFormat: 'HH:mm:ss[!]',
@@ -158,7 +158,7 @@ describe('moment plugin', function() {
 
     it('produces title with titleRangeSeparator', function() {
       initCalendar({ // need to render the calendar to get view.title :(
-        defaultView: 'dayGridWeek',
+        initialView: 'dayGridWeek',
         now: '2018-09-06',
         titleFormat: 'MMMM {D} YY [yup]',
         titleRangeSeparator: ' to '

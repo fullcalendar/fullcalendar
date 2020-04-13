@@ -12,7 +12,7 @@ export { buildDayTableModel } from './DayTableView'
 export { DayTableView as DayGridView } // export as old name!
 
 export default createPlugin({
-  defaultView: 'dayGridMonth',
+  initialView: 'dayGridMonth',
   views: {
 
     dayGrid: {

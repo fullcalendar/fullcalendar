@@ -1,8 +1,8 @@
 describe('events as a function', function() {
 
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2014-05-01'
+    initialView: 'dayGridMonth',
+    initialDate: '2014-05-01'
   })
 
   function testEventFunctionParams(arg, callback) {

@@ -6,8 +6,8 @@ describe('events as a function', function() {
 
   it('requests the correct dates when days at the start/end of the month are hidden', function(done) {
     initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2013-06-01', // June 2013 has first day as Saturday, and last as Sunday!
+      initialView: 'dayGridMonth',
+      initialDate: '2013-06-01', // June 2013 has first day as Saturday, and last as Sunday!
       weekends: false,
       fixedWeekCount: false,
       events: function(arg, callback) {
@@ -22,8 +22,8 @@ describe('events as a function', function() {
 
   it('does not request dates excluded by showNonCurrentDates:false', function(done) {
     initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2013-06-01',
+      initialView: 'dayGridMonth',
+      initialDate: '2013-06-01',
       showNonCurrentDates: false,
       events: function(arg, callback) {
         expect(arg.start).toEqualDate('2013-06-01T00:00:00Z')
@@ -35,8 +35,8 @@ describe('events as a function', function() {
 
   it('requests a timed range when slotMinTime is negative', function(done) {
     initCalendar({
-      defaultView: 'timeGridWeek',
-      defaultDate: '2017-06-08',
+      initialView: 'timeGridWeek',
+      initialDate: '2017-06-08',
       slotMinTime: { hours: -2 },
       events: function(arg, callback) {
         expect(arg.start).toEqualDate('2017-06-03T22:00:00Z')
@@ -48,8 +48,8 @@ describe('events as a function', function() {
 
   it('requests a timed range when slotMaxTime exceeds 24 hours', function(done) {
     initCalendar({
-      defaultView: 'timeGridWeek',
-      defaultDate: '2017-06-08',
+      initialView: 'timeGridWeek',
+      initialDate: '2017-06-08',
       slotMaxTime: '26:00',
       events: function(arg, callback) {
         expect(arg.start).toEqualDate('2017-06-04T00:00:00Z')

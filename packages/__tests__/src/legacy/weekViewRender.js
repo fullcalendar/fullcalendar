@@ -6,7 +6,7 @@ describe('weekViewRender', function() {
 
   pushOptions({
     now: nowStr,
-    defaultView: 'timeGridWeek'
+    initialView: 'timeGridWeek'
   })
 
   describe('verify th class for today', function() {

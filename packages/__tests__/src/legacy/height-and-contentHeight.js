@@ -21,7 +21,7 @@ import '../lib/dom-misc'
       }
 
       pushOptions({
-        defaultDate: '2014-08-01'
+        initialDate: '2014-08-01'
       })
 
       beforeEach(function() {
@@ -77,7 +77,7 @@ import '../lib/dom-misc'
           describe('for ' + heightProp, function() {
             describe('when in month view', function() {
               pushOptions({
-                defaultView: 'dayGridMonth'
+                initialView: 'dayGridMonth'
               })
 
               heightPropDescriptions.forEach(function(testInfo) {
@@ -177,7 +177,7 @@ import '../lib/dom-misc'
             [ 'dayGridWeek', 'dayGridDay' ].forEach(function(viewName) {
               describe('in ' + viewName + ' view', function() {
                 pushOptions({
-                  defaultView: viewName
+                  initialView: viewName
                 })
 
                 heightPropDescriptions.forEach(function(testInfo) {
@@ -235,7 +235,7 @@ import '../lib/dom-misc'
             [ 'timeGridWeek', 'timeGridDay' ].forEach(function(viewName) {
               describe('in ' + viewName + ' view', function() {
                 pushOptions({
-                  defaultView: viewName
+                  initialView: viewName
                 })
 
                 describeOptions({

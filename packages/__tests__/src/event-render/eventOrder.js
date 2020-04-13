@@ -2,8 +2,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('eventOrder', function() {
   pushOptions({
-    defaultDate: '2018-01-01',
-    defaultView: 'dayGridMonth',
+    initialDate: '2018-01-01',
+    initialView: 'dayGridMonth',
     eventDidMount: function(arg) {
       arg.el.setAttribute('data-event-id', arg.event.id)
     }

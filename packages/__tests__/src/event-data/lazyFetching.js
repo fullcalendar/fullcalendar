@@ -2,8 +2,8 @@
 describe('lazyFetching', function() {
   pushOptions({
     timeZone: 'UTC',
-    defaultView: 'dayGridMonth',
-    defaultDate: '2017-10-04'
+    initialView: 'dayGridMonth',
+    initialDate: '2017-10-04'
   })
 
   describe('when on', function() {

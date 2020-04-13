@@ -2,8 +2,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('eventClick', function() {
   pushOptions({
-    defaultDate: '2018-08-31',
-    defaultView: 'dayGridMonth'
+    initialDate: '2018-08-31',
+    initialView: 'dayGridMonth'
   })
 
   it('receives correct args', function(done) {

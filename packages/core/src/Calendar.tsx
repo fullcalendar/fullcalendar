@@ -221,7 +221,7 @@ export default class Calendar {
     this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
     this.dispatch({
       type: 'SET_VIEW_TYPE',
-      viewType: this.opt('defaultView') || this.pluginSystem.hooks.defaultView
+      viewType: this.opt('initialView') || this.pluginSystem.hooks.initialView
     })
   }
 
@@ -417,7 +417,7 @@ export default class Calendar {
     }
 
     for (let name in normalUpdates) {
-      if (/^(defaultDate|defaultView)$/.test(name)) {
+      if (/^(initialDate|initialView)$/.test(name)) {
         // can't change date this way. use gotoDate instead
       } else {
         anyDifficultOptions = true // I guess all options are "difficult" ?
@@ -653,11 +653,11 @@ export default class Calendar {
 
 
   getInitialDate() {
-    let defaultDateInput = this.opt('defaultDate')
+    let initialDateInput = this.opt('initialDate')
 
     // compute the initial ambig-timezone date
-    if (defaultDateInput != null) {
-      return this.dateEnv.createMarker(defaultDateInput)
+    if (initialDateInput != null) {
+      return this.dateEnv.createMarker(initialDateInput)
     } else {
       return this.getNow() // getNow already returns unzoned
     }

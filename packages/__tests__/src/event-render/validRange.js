@@ -6,8 +6,8 @@ describe('validRange event rendering', function() {
 
     describe('when month view', function() {
       pushOptions({
-        defaultView: 'dayGridMonth',
-        defaultDate: '2017-06-01',
+        initialView: 'dayGridMonth',
+        initialDate: '2017-06-01',
         validRange: { start: '2017-06-07' }
       })
 
@@ -37,8 +37,8 @@ describe('validRange event rendering', function() {
 
     describe('when month view', function() {
       pushOptions({
-        defaultView: 'dayGridMonth',
-        defaultDate: '2017-06-01',
+        initialView: 'dayGridMonth',
+        initialDate: '2017-06-01',
         validRange: { end: '2017-06-07' }
       })
 

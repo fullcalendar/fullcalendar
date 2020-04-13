@@ -8,8 +8,8 @@ describe('addEventSource', function() {
   ]
 
   pushOptions({
-    defaultDate: '2014-06-24',
-    defaultView: 'dayGridMonth'
+    initialDate: '2014-06-24',
+    initialView: 'dayGridMonth'
   })
 
 

@@ -10,8 +10,8 @@ describe('daygrid view with updated dimensions', function() {
     $wrapper.width(200)
 
     let calendar = initCalendar({
-      defaultDate: '2019-04-01',
-      defaultView: 'dayGridMonth',
+      initialDate: '2019-04-01',
+      initialView: 'dayGridMonth',
       dateClick(arg) {
         expect(arg.date).toEqualDate('2019-04-02') // a Tues
         $wrapper.remove()

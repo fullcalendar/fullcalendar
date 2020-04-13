@@ -4,12 +4,12 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('next', function() {
   pushOptions({
-    defaultDate: '2017-06-08'
+    initialDate: '2017-06-08'
   })
 
   describe('when in week view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     describe('when dateIncrement not specified', function() {
@@ -41,7 +41,7 @@ describe('next', function() {
 
   describe('when in a month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     describe('when dateIncrement not specified', function() {
@@ -68,7 +68,7 @@ describe('next', function() {
 
   describe('when in custom three day view', function() {
     pushOptions({
-      defaultView: 'dayGrid',
+      initialView: 'dayGrid',
       duration: { days: 3 }
     })
 
@@ -134,13 +134,13 @@ describe('next', function() {
   describe('when in a custom two day view and weekends:false', function() {
     pushOptions({
       weekends: false,
-      defaultView: 'timeGrid',
+      initialView: 'timeGrid',
       duration: { days: 2 }
     })
 
     it('skips over weekends if there would be alignment with weekend', function() {
       initCalendar({
-        defaultDate: '2017-11-09'
+        initialDate: '2017-11-09'
       })
       currentCalendar.next()
     })

@@ -11,7 +11,7 @@ export { TimeSlatMeta, buildSlatMetas } from './TimeColsSlats'
 export { default as TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 export default createPlugin({
-  defaultView: 'timeGridWeek',
+  initialView: 'timeGridWeek',
   views: {
 
     timeGrid: {

@@ -8,7 +8,7 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 describe('eventDrop', function() {
   pushOptions({
     timeZone: 'UTC',
-    defaultDate: '2014-06-11',
+    initialDate: '2014-06-11',
     editable: true,
     dragScroll: false,
     longPressDelay: 100
@@ -16,7 +16,7 @@ describe('eventDrop', function() {
 
   describe('when in month view', function() {
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     // TODO: test that event's dragged via touch that don't wait long enough for longPressDelay
@@ -102,7 +102,7 @@ describe('eventDrop', function() {
     describe('when dragging an event back in time when duration not editable', function() {
       it('should work', function(done) {
         let calendar = initCalendarWithSpies({
-          defaultDate: '2019-01-16',
+          initialDate: '2019-01-16',
           eventDurationEditable: false,
           events: [ {
             title: 'event',
@@ -175,7 +175,7 @@ describe('eventDrop', function() {
 
   describe('when in timeGrid view', function() {
     pushOptions({
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     ;[ false, true ].forEach(function(isTouch) {

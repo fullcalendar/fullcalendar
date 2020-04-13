@@ -10,7 +10,7 @@
     var calendarEl = document.getElementById('calendar');
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
-      defaultDate: '2020-02-07',
+      initialDate: '2020-02-07',
       nowIndicator: true,
       editable: true,
       selectable: true,
@@ -21,7 +21,7 @@
         center: 'title',
         right: 'resourceTimelineDay,resourceTimelineThreeDays,timeGridWeek,dayGridMonth'
       },
-      defaultView: 'resourceTimelineDay',
+      initialView: 'resourceTimelineDay',
       views: {
         resourceTimelineThreeDays: {
           type: 'resourceTimeline',

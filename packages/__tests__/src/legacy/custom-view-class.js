@@ -57,8 +57,8 @@ describe('custom view class', function() { // TODO: rename file
           }
         })
       ],
-      defaultView: 'custom',
-      defaultDate: '2014-12-25', // will end up being a single-day view
+      initialView: 'custom',
+      initialDate: '2014-12-25', // will end up being a single-day view
       events: [
         {
           title: 'Holidays',

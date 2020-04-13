@@ -3,8 +3,8 @@ import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
 describe('unselectAuto', function() {
   pushOptions({
     selectable: true,
-    defaultDate: '2014-12-25',
-    defaultView: 'dayGridMonth'
+    initialDate: '2014-12-25',
+    initialView: 'dayGridMonth'
   })
 
   beforeEach(function() {

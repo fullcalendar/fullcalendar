@@ -12,7 +12,7 @@
 
     var srcCalendar = new FullCalendar.Calendar(srcCalendarEl, {
       editable: true,
-      defaultDate: '2020-02-12',
+      initialDate: '2020-02-12',
       events: [
         {
           title: 'event1',
@@ -31,7 +31,7 @@
     });
 
     var destCalendar = new FullCalendar.Calendar(destCalendarEl, {
-      defaultDate: '2020-02-12',
+      initialDate: '2020-02-12',
       editable: true,
       droppable: true, // will let it receive events!
       eventReceive: function(info) {

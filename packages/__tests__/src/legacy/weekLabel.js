@@ -10,7 +10,7 @@ describe('weekText', function() { // TODO: rename file
 
     describe('when views is ' + viewName, function() {
       pushOptions({
-        defaultView: viewName
+        initialView: viewName
       })
 
       it('renders correctly by default', function() {

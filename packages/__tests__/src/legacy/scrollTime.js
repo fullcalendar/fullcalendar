@@ -3,7 +3,7 @@ import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
 describe('scrollTime', function() {
 
   pushOptions({
-    defaultView: 'timeGridWeek'
+    initialView: 'timeGridWeek'
   })
 
   it('accepts a string Duration', function() {

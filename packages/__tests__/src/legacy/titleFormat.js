@@ -5,7 +5,7 @@ describe('titleFormat', function() {
 
   describe('when default', function() {
     pushOptions({
-      defaultDate: '2014-06-12',
+      initialDate: '2014-06-12',
       titleRangeSeparator: ' - '
     })
 
@@ -30,7 +30,7 @@ describe('titleFormat', function() {
 
   describe('when set on a per-view basis', function() {
     pushOptions({
-      defaultDate: '2014-06-12',
+      initialDate: '2014-06-12',
       titleRangeSeparator: ' - ',
       views: {
         month: { titleFormat: { year: 'numeric', month: 'long' } },
@@ -60,7 +60,7 @@ describe('titleFormat', function() {
 
   describe('when default and locale is French', function() {
     pushOptions({
-      defaultDate: '2014-06-12',
+      initialDate: '2014-06-12',
       titleRangeSeparator: ' - ',
       locale: frLocale
     })
@@ -94,8 +94,8 @@ describe('titleFormat', function() {
             duration: { years: 2 }
           }
         },
-        defaultView: 'multiYear',
-        defaultDate: '2014-12-25',
+        initialView: 'multiYear',
+        initialDate: '2014-12-25',
         titleRangeSeparator: ' - '
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -110,8 +110,8 @@ describe('titleFormat', function() {
             duration: { months: 2 }
           }
         },
-        defaultView: 'multiMonth',
-        defaultDate: '2014-12-25',
+        initialView: 'multiMonth',
+        initialDate: '2014-12-25',
         titleRangeSeparator: ' - '
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -126,8 +126,8 @@ describe('titleFormat', function() {
             duration: { weeks: 2 }
           }
         },
-        defaultView: 'multiWeek',
-        defaultDate: '2014-12-25',
+        initialView: 'multiWeek',
+        initialDate: '2014-12-25',
         titleRangeSeparator: ' - '
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -142,8 +142,8 @@ describe('titleFormat', function() {
             duration: { days: 2 }
           }
         },
-        defaultView: 'multiDay',
-        defaultDate: '2014-12-25',
+        initialView: 'multiDay',
+        initialDate: '2014-12-25',
         titleRangeSeparator: ' - '
       })
       let toolbarWrapper = new CalendarWrapper(calendar).toolbar
@@ -155,8 +155,8 @@ describe('titleFormat', function() {
 
     it('doesn\'t include hidden days in the title', function() {
       let calendar = initCalendar({
-        defaultView: 'timeGridWeek',
-        defaultDate: '2017-02-13',
+        initialView: 'timeGridWeek',
+        initialDate: '2017-02-13',
         weekends: false,
         titleRangeSeparator: ' - '
       })

@@ -10,7 +10,7 @@ describe('refetchEvents', function() {
         now: '2015-08-07',
         scrollTime: '00:00',
         height: 400, // makes this test more consistent across viewports
-        defaultView: 'timeGridDay',
+        initialView: 'timeGridDay',
         events: function(arg, callback) {
           setTimeout(function() {
             callback([
@@ -47,7 +47,7 @@ describe('refetchEvents', function() {
 
     pushOptions({
       now: '2015-08-07',
-      defaultView: 'timeGridWeek'
+      initialView: 'timeGridWeek'
     })
 
     beforeEach(function() {

@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
       center: 'title',
       right: 'resourceTimelineDay,resourceTimelineThreeDays,timeGridWeek,dayGridMonth,listWeek'
     },
-    defaultView: 'resourceTimelineDay',
+    initialView: 'resourceTimelineDay',
     views: {
       resourceTimelineThreeDays: {
         type: 'resourceTimeline',

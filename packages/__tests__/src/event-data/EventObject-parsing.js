@@ -4,7 +4,7 @@ describe('Event Object parsing', function() {
   it('records _id as an extended prop', function() {
     initCalendar({
       currentDate: '2017-09-05',
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       events: [
         { _id: 'a', start: '2017-09-05' }
       ]
@@ -16,8 +16,8 @@ describe('Event Object parsing', function() {
 
   it('parses an all-day event with timed same-day start/end', function() {
     initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2017-11-01',
+      initialView: 'dayGridMonth',
+      initialDate: '2017-11-01',
       timeZone: 'local',
       events: [
         {
@@ -37,8 +37,8 @@ describe('Event Object parsing', function() {
 
   xit('won\'t accept two events with the same ID', function() {
     initCalendar({
-      defaultView: 'dayGridDay',
-      defaultDate: '2018-01-01',
+      initialView: 'dayGridDay',
+      initialDate: '2018-01-01',
       events: [
         { id: '1', start: '2018-01-01', title: 'cool' },
         { id: '1', start: '2018-01-01' }

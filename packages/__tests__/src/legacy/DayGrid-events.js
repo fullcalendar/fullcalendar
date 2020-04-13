@@ -5,8 +5,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 
 describe('DayGrid event rendering', function() {
   pushOptions({
-    defaultDate: '2014-08-01', // 2014-07-27 - 2014-10-07 (excl)
-    defaultView: 'dayGridMonth'
+    initialDate: '2014-08-01', // 2014-07-27 - 2014-10-07 (excl)
+    initialView: 'dayGridMonth'
   })
 
   describe('when LTR', function() {

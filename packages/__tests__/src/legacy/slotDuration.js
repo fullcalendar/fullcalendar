@@ -9,7 +9,7 @@ describe('slotDuration', function() {
     describe('in week', function() {
       it('should have slots 1440/30 slots', function() {
         let calendar = initCalendar({
-          defaultView: 'timeGridWeek'
+          initialView: 'timeGridWeek'
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
         let slotCount = timeGridWrapper.getSlotEls().length
@@ -20,7 +20,7 @@ describe('slotDuration', function() {
     describe('in day', function() {
       it('should have slots 1440/30 slots', function() {
         let calendar = initCalendar({
-          defaultView: 'timeGridDay'
+          initialView: 'timeGridDay'
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
         let slotCount = timeGridWrapper.getSlotEls().length
@@ -34,7 +34,7 @@ describe('slotDuration', function() {
     describe('in week', function() {
       it('should have slots 1440/30 slots', function() {
         let calendar = initCalendar({
-          defaultView: 'timeGridWeek'
+          initialView: 'timeGridWeek'
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
         let slotCount = timeGridWrapper.getSlotEls().length
@@ -45,7 +45,7 @@ describe('slotDuration', function() {
     describe('in day', function() {
       it('should have slots 1440/30 slots', function() {
         let calendar = initCalendar({
-          defaultView: 'timeGridDay'
+          initialView: 'timeGridDay'
         })
         let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
         let slotCount = timeGridWrapper.getSlotEls().length
@@ -62,7 +62,7 @@ describe('slotDuration', function() {
       slotMinutesList.forEach(function(slotMinutes) {
         it('should have slots 1440/x slots', function() {
           let calendar = initCalendar({
-            defaultView: 'timeGridWeek',
+            initialView: 'timeGridWeek',
             slotDuration: { minutes: slotMinutes }
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid
@@ -77,7 +77,7 @@ describe('slotDuration', function() {
       slotMinutesList.forEach(function(slotMinutes) {
         it('should have slots 1440/x slots', function() {
           let calendar = initCalendar({
-            defaultView: 'timeGridDay',
+            initialView: 'timeGridDay',
             slotDuration: { minutes: slotMinutes }
           })
           let timeGridWrapper = new TimeGridViewWrapper(calendar).timeGrid

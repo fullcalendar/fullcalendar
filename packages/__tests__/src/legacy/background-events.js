@@ -6,12 +6,12 @@ import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
 
 describe('background events', function() {
   pushOptions({
-    defaultDate: '2014-11-04',
+    initialDate: '2014-11-04',
     scrollTime: '00:00'
   })
 
   describe('when in month view', function() {
-    pushOptions({ defaultView: 'dayGridMonth' })
+    pushOptions({ initialView: 'dayGridMonth' })
 
     describe('when LTR', function() {
 
@@ -294,7 +294,7 @@ describe('background events', function() {
       // disabled for v4
       xit('can be activated when rendering set on the source', function() {
         let calendar = initCalendar({
-          defaultView: 'dayGridMonth',
+          initialView: 'dayGridMonth',
           eventSources: [ {
             display: 'background',
             events: [ {
@@ -313,7 +313,7 @@ describe('background events', function() {
       // disabled for v4
       xit('can be activated when rendering set on the source', function() {
         let calendar = initCalendar({
-          defaultView: 'timeGridWeek',
+          initialView: 'timeGridWeek',
           eventSources: [ {
             display: 'background',
             events: [ {
@@ -330,7 +330,7 @@ describe('background events', function() {
   })
 
   describe('when in week view', function() {
-    pushOptions({ defaultView: 'timeGridWeek' })
+    pushOptions({ initialView: 'timeGridWeek' })
 
     describe('when LTR', function() {
 

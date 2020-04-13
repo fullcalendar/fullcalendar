@@ -3,10 +3,10 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('dayHeaderContent as html', function() { // TODO: rename file
   pushOptions({
-    defaultDate: '2014-05-11'
+    initialDate: '2014-05-11'
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when month view': 'dayGridMonth',
     'when timeGrid view': 'timeGridDay',
     'when dayGrid view': 'dayGridDay'
@@ -33,7 +33,7 @@ describe('dayHeaderContent as html', function() { // TODO: rename file
       let dates = []
 
       initCalendar({
-        defaultView: 'timeGridDay',
+        initialView: 'timeGridDay',
         dayHeaderContent: function(arg) {
           dates.push(arg.date)
         }

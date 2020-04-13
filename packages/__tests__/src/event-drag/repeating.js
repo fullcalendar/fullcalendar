@@ -5,8 +5,8 @@ import { filterVisibleEls } from '../lib/dom-misc'
 
 describe('event dragging on repeating events', function() {
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2017-02-12',
+    initialView: 'dayGridMonth',
+    initialDate: '2017-02-12',
     editable: true,
     events: [
       {

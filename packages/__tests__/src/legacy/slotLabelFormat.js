@@ -3,8 +3,8 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('slotLabelFormat', function() {
   pushOptions({
-    defaultDate: '2014-06-04',
-    defaultView: 'timeGridWeek'
+    initialDate: '2014-06-04',
+    initialView: 'timeGridWeek'
   })
 
 

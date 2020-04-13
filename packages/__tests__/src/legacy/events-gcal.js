@@ -26,8 +26,8 @@ describe('Google Calendar plugin', function() {
 
   pushOptions({
     plugins: [ GoogleCalendarPlugin, DayGridPlugin ],
-    defaultView: 'dayGridMonth',
-    defaultDate: DEFAULT_MONTH + '-01'
+    initialView: 'dayGridMonth',
+    initialDate: DEFAULT_MONTH + '-01'
   })
 
   beforeEach(function() {

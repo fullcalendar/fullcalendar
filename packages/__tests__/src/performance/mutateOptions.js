@@ -6,8 +6,8 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 function buildOptions() {
   return {
     plugins: [ timeGridPlugin ],
-    defaultView: 'timeGridWeek',
-    defaultDate: '2019-04-01',
+    initialView: 'timeGridWeek',
+    initialDate: '2019-04-01',
     scrollTime: '00:00',
     allDaySlot: true,
     events: [
@@ -65,7 +65,7 @@ describe('mutateOptions', function() {
     expect(calendarWrapper.getFirstDateEl()).toBe(dateEl)
   })
 
-  it('doesn\'t rerender anything for a defaultView change', function() {
+  it('doesn\'t rerender anything for a initialView change', function() {
     calendar = new Calendar($calendarEl[0], buildOptions())
     calendar.render()
 
@@ -73,7 +73,7 @@ describe('mutateOptions', function() {
     let dateEl = calendarWrapper.getFirstDateEl()
 
     calendar.mutateOptions({
-      defaultView: 'timeGridDay'
+      initialView: 'timeGridDay'
     })
 
     expect(calendar.view.type).toBe('timeGridWeek')

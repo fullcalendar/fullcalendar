@@ -2,7 +2,7 @@
 describe('eventWillUnmount', function() { // TODO: rename file
 
   pushOptions({
-    defaultDate: '2014-08-01'
+    initialDate: '2014-08-01'
   })
 
   function testSingleEvent(singleEventData, done) {
@@ -26,7 +26,7 @@ describe('eventWillUnmount', function() { // TODO: rename file
   describe('when in month view', function() { // for issue 2017
 
     pushOptions({
-      defaultView: 'dayGridMonth'
+      initialView: 'dayGridMonth'
     })
 
     it('gets called with removeEvents method', function(done) {
@@ -45,7 +45,7 @@ describe('eventWillUnmount', function() { // TODO: rename file
   describe('when in week view', function() { // for issue 2017
 
     pushOptions({
-      defaultView: 'timeGridWeek',
+      initialView: 'timeGridWeek',
       scrollTime: '00:00:00'
     })
 

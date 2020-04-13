@@ -3,8 +3,8 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('slotDuration', function() {
   pushOptions({
-    defaultDate: '2017-07-17',
-    defaultView: 'timeGridDay',
+    initialDate: '2017-07-17',
+    initialView: 'timeGridDay',
     scrollTime: 0,
     locale: 'en-GB', // for 00:00 instead of 24:00
     slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false }

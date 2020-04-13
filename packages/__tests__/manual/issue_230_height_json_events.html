@@ -9,19 +9,19 @@
 <script>
 
   $(document).ready(function() {
-  
+
     $('#calendar').fullCalendar({
       //year: 2009,
       //month: 10,
-      //date: 22, 
-      //defaultView: 'week', // error also occured with month view
+      //date: 22,
+      //initialView: 'week', // error also occured with month view
       editable: true,
       events: "../demos/json-events.php"
     });
-    
+
     $('#calendar').fullCalendar('option', 'height', $(window).height()-80);
     // shouldn't throw an error
-    
+
   });
 
 

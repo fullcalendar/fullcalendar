@@ -2,8 +2,8 @@ import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
 
 describe('footerToolbar rendering', function() { // TODO: rename file
   pushOptions({
-    defaultDate: '2014-06-04',
-    defaultView: 'timeGridWeek'
+    initialDate: '2014-06-04',
+    initialView: 'timeGridWeek'
   })
 
   describe('when supplying footerToolbar options', function() {

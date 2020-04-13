@@ -12,8 +12,8 @@ describe('locale', function() {
   it('works when certain locale has no FC settings defined', function() {
     let calendar = initCalendar({
       locale: 'en-asdf',
-      defaultView: 'timeGridWeek',
-      defaultDate: '2014-12-25',
+      initialView: 'timeGridWeek',
+      initialDate: '2014-12-25',
       events: [
         { title: 'Christmas', start: '2014-12-25T10:00:00' }
       ]
@@ -32,8 +32,8 @@ describe('locale', function() {
   it('allows dynamic setting', function() {
     let calendar = initCalendar({
       locale: 'es',
-      defaultDate: '2016-07-10',
-      defaultView: 'dayGridMonth'
+      initialDate: '2016-07-10',
+      initialView: 'dayGridMonth'
     })
     let toolbarWrapper = new CalendarWrapper(calendar).toolbar
 

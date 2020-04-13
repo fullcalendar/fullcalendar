@@ -1,7 +1,7 @@
 describe('events as an array', function() {
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2014-05-01'
+    initialView: 'dayGridMonth',
+    initialDate: '2014-05-01'
   })
 
   function getEventArray() {

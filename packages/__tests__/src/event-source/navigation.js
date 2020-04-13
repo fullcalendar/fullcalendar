@@ -6,8 +6,8 @@ describe('event fetching while date-navigating', function() {
   it('renders events when doing next() and then prev()', function(done) {
 
     let calendar = initCalendar({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2020-02-11',
+      initialView: 'dayGridMonth',
+      initialDate: '2020-02-11',
       events: function(arg, callback) {
         if (arg.startStr.indexOf('2020-01-26') === 0) { // for Feb
           setTimeout(function() {

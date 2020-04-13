@@ -3,8 +3,8 @@ import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
 describe('selectMirror', function() {
 
   pushOptions({
-    defaultDate: '2014-08-03',
-    defaultView: 'timeGridWeek',
+    initialDate: '2014-08-03',
+    initialView: 'timeGridWeek',
     scrollTime: '00:00:00',
     selectMirror: true
   })

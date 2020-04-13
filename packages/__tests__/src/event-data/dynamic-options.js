@@ -5,7 +5,7 @@ describe('setting option dynamically', function() {
     var fetchCnt = 0
 
     initCalendar({
-      defaultView: 'dayGridMonth',
+      initialView: 'dayGridMonth',
       events: function(arg, callback) {
         fetchCnt++
         callback([])

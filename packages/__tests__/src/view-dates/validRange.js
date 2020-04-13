@@ -4,12 +4,12 @@ import { parseUtcDate } from '../lib/date-parsing'
 describe('validRange', function() {
   pushOptions({
     timeZone: 'UTC',
-    defaultDate: '2017-06-08'
+    initialDate: '2017-06-08'
   })
 
   describe('when one week view', function() { // a view that has date-alignment by default
     pushOptions({
-      defaultView: 'timeGridWeek' // default range = 2017-06-04 - 2017-06-11
+      initialView: 'timeGridWeek' // default range = 2017-06-04 - 2017-06-11
     })
 
     describe('when default range is partially before validRange', function() {
@@ -104,7 +104,7 @@ describe('validRange', function() {
 
   describe('when a three-day view', function() { // a view with no alignment
     pushOptions({
-      defaultView: 'timeGrid',
+      initialView: 'timeGrid',
       duration: { days: 3 }
     })
 
@@ -133,8 +133,8 @@ describe('validRange', function() {
 
   describe('when hiddenDays causes no days to be active', function() {
     pushOptions({
-      defaultView: 'timeGridWeek',
-      defaultDate: '2017-10-04',
+      initialView: 'timeGridWeek',
+      initialDate: '2017-10-04',
       hiddenDays: [ 6 ], // Sunday, last day within natural week range
       validRange: {
         start: '2036-05-03',

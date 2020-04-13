@@ -3,8 +3,8 @@ describe('recurring events', function() {
 
   describe('when timed events in local timezone', function() {
     pushOptions({
-      defaultView: 'timeGridWeek',
-      defaultDate: '2017-07-03',
+      initialView: 'timeGridWeek',
+      initialDate: '2017-07-03',
       timeZone: 'local',
       events: [
         { startTime: '09:00', endTime: '11:00', daysOfWeek: [ 2, 4 ] }
@@ -26,8 +26,8 @@ describe('recurring events', function() {
 
   describe('when given recur range', function() {
     pushOptions({
-      defaultView: 'dayGridMonth',
-      defaultDate: '2017-07-03',
+      initialView: 'dayGridMonth',
+      initialDate: '2017-07-03',
       events: [
         { startTime: '09:00', endTime: '11:00', startRecur: '2017-07-05', endRecur: '2017-07-08' }
       ]
@@ -46,7 +46,7 @@ describe('recurring events', function() {
 
     describe('when current range is completely outside of recur-range', function() {
       pushOptions({
-        defaultDate: '2017-02-02'
+        initialDate: '2017-02-02'
       })
 
       it('won\'t render any events', function() {
@@ -59,8 +59,8 @@ describe('recurring events', function() {
 
   describe('when event has a duration', function() {
     pushOptions({
-      defaultView: 'dayGridWeek',
-      defaultDate: '2019-06-02',
+      initialView: 'dayGridWeek',
+      initialDate: '2019-06-02',
       events: [
         { daysOfWeek: [ 6 ], duration: { days: 2 } }
       ]

@@ -6,7 +6,7 @@ describe('allDaySlots', function() {
     describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var calendar = initCalendar({
-          defaultView: 'timeGridWeek'
+          initialView: 'timeGridWeek'
         })
         var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
         expect(dayGrid).toBeTruthy()
@@ -15,7 +15,7 @@ describe('allDaySlots', function() {
     describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var calendar = initCalendar({
-          defaultView: 'timeGridDay'
+          initialView: 'timeGridDay'
         })
         var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
         expect(dayGrid).toBeTruthy()
@@ -27,7 +27,7 @@ describe('allDaySlots', function() {
     describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var calendar = initCalendar({
-          defaultView: 'timeGridWeek',
+          initialView: 'timeGridWeek',
           allDaySlot: true
         })
         var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
@@ -37,7 +37,7 @@ describe('allDaySlots', function() {
     describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var calendar = initCalendar({
-          defaultView: 'timeGridDay',
+          initialView: 'timeGridDay',
           allDaySlot: true
         })
         var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
@@ -50,7 +50,7 @@ describe('allDaySlots', function() {
     describe('in week', function() {
       it('should default to having an allDaySlots table', function() {
         var calendar = initCalendar({
-          defaultView: 'timeGridWeek',
+          initialView: 'timeGridWeek',
           allDaySlot: false
         })
         var dayGrid = new TimeGridViewWrapper(calendar).dayGrid
@@ -60,7 +60,7 @@ describe('allDaySlots', function() {
     describe('in day', function() {
       it('should default to having an allDaySlots table', function() {
         var calendar = initCalendar({
-          defaultView: 'timeGridDay',
+          initialView: 'timeGridDay',
           allDaySlot: false
         })
         var dayGrid = new TimeGridViewWrapper(calendar).dayGrid

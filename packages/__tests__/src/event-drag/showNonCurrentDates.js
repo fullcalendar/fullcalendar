@@ -5,8 +5,8 @@ import { waitEventDrag } from '../lib/wrappers/interaction-util'
 
 describe('showNonCurrentDates event dragging', function() {
   pushOptions({
-    defaultView: 'dayGridMonth',
-    defaultDate: '2017-06-01',
+    initialView: 'dayGridMonth',
+    initialDate: '2017-06-01',
     showNonCurrentDates: false,
     events: [
       { start: '2017-06-07', end: '2017-06-10' }

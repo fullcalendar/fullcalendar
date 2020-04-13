@@ -8,7 +8,7 @@ import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('select callback', function() {
   pushOptions({
-    defaultDate: '2014-05-25',
+    initialDate: '2014-05-25',
     selectable: true,
     longPressDelay: 100
   })
@@ -20,7 +20,7 @@ describe('select callback', function() {
 
     describe('when in month view', function() {
       pushOptions({
-        defaultView: 'dayGridMonth'
+        initialView: 'dayGridMonth'
       })
 
       it('gets fired correctly when the user selects cells', function(done) {
@@ -101,7 +101,7 @@ describe('select callback', function() {
 
     describe('when in week view', function() {
       pushOptions({
-        defaultView: 'timeGridWeek'
+        initialView: 'timeGridWeek'
       })
 
       describe('when selecting all-day slots', function() {

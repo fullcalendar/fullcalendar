@@ -3,12 +3,12 @@ import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
 describe('displayEventEnd', function() {
 
   pushOptions({
-    defaultDate: '2014-06-13',
+    initialDate: '2014-06-13',
     timeZone: 'UTC',
     eventTimeFormat: { hour: 'numeric', minute: '2-digit' }
   })
 
-  describeOptions('defaultView', {
+  describeOptions('initialView', {
     'when in month view': 'dayGridMonth',
     'when in week view': 'timeGridWeek'
   }, function() {
