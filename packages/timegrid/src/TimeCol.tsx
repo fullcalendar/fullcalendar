@@ -38,8 +38,8 @@ export default class TimeCol extends BaseComponent<TimeColProps> {
       []
 
     let interactionAffectedInstances = // TODO: messy way to compute this
-      (props.eventDrag ? props.eventDrag.affectedInstances : null) ||
-      (props.eventResize ? props.eventResize.affectedInstances : null) ||
+      (props.eventDrag && props.eventDrag.segs.length ? props.eventDrag.affectedInstances : null) ||
+      (props.eventResize && props.eventResize.segs.length ? props.eventResize.affectedInstances : null) ||
       {}
 
     return (
