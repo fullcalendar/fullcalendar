@@ -60,6 +60,7 @@
 // (time and title are already display:inline b/c they're spans)
 
 .fc-daygrid-dot-event {
+  overflow: hidden;
   padding: 2px 0;
 
   .fc-event-title {
