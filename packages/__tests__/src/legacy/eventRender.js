@@ -21,7 +21,7 @@ describe('eventDidMount+eventContent', function() { // TODO: rename file
         let options = {
           eventContent(arg) {
             expect(typeof arg.event).toBe('object')
-            expect(arg.event.display).toBe('')
+            expect(arg.event.display).toBe('auto')
             expect(arg.event.start).toBeDefined()
             expect(typeof arg.view).toBe('object')
             expect(arg.isMirror).toBe(false)

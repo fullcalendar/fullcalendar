@@ -262,7 +262,7 @@ export default class EventApi {
   get allDay(): boolean { return this._def.allDay }
   get title(): string { return this._def.title }
   get url(): string { return this._def.url }
-  get display(): string { return this._def.ui.display }
+  get display(): string { return this._def.ui.display || 'auto' } // bad. just normalize the type earlier
   get startEditable(): boolean { return this._def.ui.startEditable }
   get durationEditable(): boolean { return this._def.ui.durationEditable }
   get constraint(): any { return this._def.ui.constraints[0] || null }
