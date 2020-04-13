@@ -19,7 +19,7 @@ import {
 import TableSeg, { splitSegsByFirstCol } from './TableSeg'
 import TableCell, { TableCellModel, MoreLinkArg } from './TableCell'
 import TableDotEvent from './TableDotEvent'
-import TableEvent from './TableEvent'
+import TableBlockEvent from './TableBlockEvent'
 import { computeFgSegPlacement } from './event-placement'
 import { isDotRendering } from './event-rendering'
 
@@ -270,7 +270,7 @@ export default class TableRow extends DateComponent<TableRowProps, TableRowState
                 defaultDisplayEventEnd={defaultDisplayEventEnd}
                 {...getSegMeta(seg, todayRange)}
               /> :
-              <TableEvent
+              <TableBlockEvent
                 seg={seg}
                 isDragging={isDragging}
                 isResizing={isResizing}

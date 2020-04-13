@@ -1,6 +1,6 @@
 import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent } from '@fullcalendar/core'
 import TableSeg from './TableSeg'
-import TableEvent from './TableEvent'
+import TableBlockEvent from './TableBlockEvent'
 import TableDotEvent from './TableDotEvent'
 import Popover from './Popover'
 import { isDotRendering } from './event-rendering'
@@ -66,7 +66,7 @@ export default class MorePopover extends DateComponent<MorePopoverProps> {
                       defaultDisplayEventEnd={false}
                       {...getSegMeta(seg, todayRange)}
                     /> :
-                    <TableEvent
+                    <TableBlockEvent
                       seg={seg}
                       isDragging={false}
                       isResizing={false}

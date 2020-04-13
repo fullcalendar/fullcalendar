@@ -2,13 +2,13 @@ import { h, StandardEvent, BaseComponent, MinimalEventProps } from '@fullcalenda
 import { DEFAULT_TABLE_EVENT_TIME_FORMAT } from './event-rendering'
 
 
-export interface TableEventProps extends MinimalEventProps {
+export interface TableBlockEventProps extends MinimalEventProps {
   defaultDisplayEventEnd: boolean
 }
 
-export default class TableEvent extends BaseComponent<TableEventProps> {
+export default class TableBlockEvent extends BaseComponent<TableBlockEventProps> {
 
-  render(props: TableEventProps) {
+  render(props: TableBlockEventProps) {
     return (
       <StandardEvent
         {...props}
