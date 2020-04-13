@@ -38,7 +38,7 @@ export interface EventUi {
 export type EventUiHash = { [defId: string]: EventUi }
 
 export const UNSCOPED_EVENT_UI_PROPS = {
-  display: String,
+  display: null, // TODO: string?
   editable: Boolean,
   startEditable: Boolean,
   durationEditable: Boolean,

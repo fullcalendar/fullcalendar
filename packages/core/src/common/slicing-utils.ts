@@ -8,7 +8,7 @@ import { DateSpan, fabricateEventRange } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { Duration } from '../datelib/duration'
 import { memoize } from '../util/memoize'
-import { DateMarker, addMs } from '../datelib/marker'
+import { DateMarker, addMs, addDays } from '../datelib/marker'
 import Calendar from '../Calendar'
 
 export interface SliceableProps {
@@ -40,6 +40,7 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
   private sliceEventResize = memoize(this._sliceInteraction)
 
   abstract sliceRange(dateRange: DateRange, ...extraArgs: ExtraArgs): SegType[]
+  protected forceDayIfListItem = false // hack
 
   sliceProps(
     props: SliceableProps,
@@ -192,7 +193,17 @@ export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[
     eventRange: EventRenderRange,
     extraArgs: ExtraArgs
   ): SegType[] {
-    let segs = this.sliceRange(eventRange.range, ...extraArgs)
+    let dateRange = eventRange.range
+
+    // hack to make multi-day events that are being force-displayed as list-items to take up only one day
+    if (this.forceDayIfListItem && eventRange.ui.display === 'list-item') {
+      dateRange = {
+        start: dateRange.start,
+        end: addDays(dateRange.start, 1)
+      }
+    }
+
+    let segs = this.sliceRange(dateRange, ...extraArgs)
 
     for (let seg of segs) {
       seg.eventRange = eventRange

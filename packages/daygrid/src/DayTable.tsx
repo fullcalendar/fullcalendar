@@ -113,6 +113,8 @@ export default class DayTable extends DateComponent<DayTableProps, ComponentCont
 
 export class DayTableSlicer extends Slicer<TableSeg, [DayTableModel]> {
 
+  forceDayIfListItem = true
+
   sliceRange(dateRange: DateRange, dayTableModel: DayTableModel): TableSeg[] {
     return dayTableModel.sliceRange(dateRange)
   }
