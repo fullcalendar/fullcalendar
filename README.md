@@ -10,4 +10,4 @@ A full-sized drag & drop JavaScript event calendar
 - [Changelog](CHANGELOG.md)
 - [License](LICENSE.txt)
 
-*From the blog*: [Changes in the Upcoming v5](https://fullcalendar.io/blog/2020/02/changes-in-the-upcoming-v5)
+Version 5 is coming soon. [Please read the blog](http://fullcalendar.test/blog)
