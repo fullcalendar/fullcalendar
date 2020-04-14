@@ -10,10 +10,12 @@ if (!/^(development|production)$/.test(process.env.BUILD)) {
 const buildModuleConfigs = require('./scripts/lib/rollup-modules')
 const buildBundleConfigs = require('./scripts/lib/rollup-bundles')
 const buildTestConfigs = require('./scripts/lib/rollup-tests')
+const buildDtsConfig = require('./scripts/lib/rollup-dts')
 
 
 module.exports = [
   ...buildModuleConfigs(isDev),
   ...buildBundleConfigs(isDev),
   ...buildTestConfigs()
+  // buildDtsConfig()
 ]

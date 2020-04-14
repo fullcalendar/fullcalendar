@@ -84,3 +84,30 @@ function betterCopyFile(srcPath, destPath) {
     return copyFile(srcPath, destPath)
   })
 }
+
+
+
+exports.mapHash = function(input, func) {
+  const output = {}
+
+  for (const key in input) {
+    if (hasOwnProperty.call(input, key)) {
+      output[key] = func(input[key], key)
+    }
+  }
+
+  return output
+}
+
+exports.mapHashViaPair = function(input, func) {
+  const output = {}
+
+  for (const key in input) {
+    if (hasOwnProperty.call(input, key)) {
+       let pair = func(input[key], key)
+       output[pair[0]] = pair[1]
+    }
+  }
+
+  return output
+}
