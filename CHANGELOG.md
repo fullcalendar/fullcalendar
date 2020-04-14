@@ -1,20 +1,22 @@
 
-v5.0.0-beta.2 (2020-04-13)
+v5.0.0-beta.2 (2020-04-14)
 --------------------------
 
 Changes since beta.1:
 - feature: sticky header dates and footer scrollbar
 - feature: daygrid events with times render differently by default, with a dot
+- feature: a `datesDidUpdate` callback
 - renamed options:
-  - `header` -> `headerToolbar`
-  - `footer` -> `footerToolbar`
   - `defaultView` -> `initialView`
   - `defaultDate` -> `initialDate`
+  - `header` -> `headerToolbar`
+  - `footer` -> `footerToolbar`
   - `allDayDefault` -> `defaultAllDay`
-  - `dir` -> `direction`
   - `eventRendering` -> `eventDisplay` (and `display` in event objects)
+  - `dir` -> `direction`
 - fix: sometimes event dragging and selecting broken after switching views (#5346)
 - fix: most likely fixed problem with infinite loop (#5352)
+- fix: timeline scrolling sometimes gets out of sync when using a scroll wheel (#4889)
 - fix: many other little bugfixes
 
 View the [full changelog](https://fullcalendar.io/docs/v5/upgrading-from-v4)
