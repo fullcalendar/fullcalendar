@@ -3,14 +3,14 @@ Huge thanks to these people:
 https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/fullcalendar/index.d.ts
 */
 
-import ViewApi from '../ViewApi'
+import { ViewApi } from '../ViewApi'
 import { EventSourceInput, EventInputTransformer } from '../structs/event-source'
 import { Duration, DurationInput } from '../datelib/duration'
 import { DateInput } from '../datelib/env'
 import { FormatterInput } from '../datelib/formatting'
 import { DateRangeInput } from '../datelib/date-range'
 import { BusinessHoursInput } from '../structs/business-hours'
-import EventApi from '../api/EventApi'
+import { EventApi } from '../api/EventApi'
 import { AllowFunc, ConstraintInput, OverlapFunc } from '../validation'
 import { PluginDef } from '../plugin-system'
 import { LocaleSingularArg, RawLocale } from '../datelib/locale'

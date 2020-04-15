@@ -5,7 +5,7 @@ import { createFormatter } from '../datelib/formatting'
 import { buildSegTimeText, EventMeta } from '../component/event-rendering'
 import { EventRoot, MinimalEventProps } from './EventRoot'
 import { Seg } from '../component/DateComponent'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentContext } from '../component/ComponentContext'
 
 
 export interface StandardEventProps extends MinimalEventProps {
@@ -20,7 +20,7 @@ export interface StandardEventProps extends MinimalEventProps {
 
 
 // should not be a purecomponent
-export default class StandardEvent extends BaseComponent<StandardEventProps> {
+export class StandardEvent extends BaseComponent<StandardEventProps> {
 
   render(props: StandardEventProps, state: {}, context: ComponentContext) {
     let { options } = context

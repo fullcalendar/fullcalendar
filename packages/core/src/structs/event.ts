@@ -1,6 +1,6 @@
 import { refineProps, guid } from '../util/misc'
 import { DateInput } from '../datelib/env'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'

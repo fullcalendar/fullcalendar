@@ -1,4 +1,4 @@
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { filterHash, mapHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
@@ -20,7 +20,7 @@ import { DateEnv } from '../datelib/env'
 import { EventUiHash } from '../component/event-ui'
 
 
-export default function(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, calendar: Calendar): EventStore {
+export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, calendar: Calendar): EventStore {
   switch (action.type) {
 
     case 'RECEIVE_EVENTS': // raw

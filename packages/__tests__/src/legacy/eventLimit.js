@@ -1,5 +1,5 @@
-import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { filterVisibleEls } from '../lib/dom-misc'
 
 describe('dayMaxEventRows', function() { // TODO: rename file

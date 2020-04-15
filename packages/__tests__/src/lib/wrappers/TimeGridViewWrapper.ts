@@ -1,9 +1,9 @@
-import ViewWrapper from './ViewWrapper'
-import TimeGridWrapper from './TimeGridWrapper'
-import DayGridWrapper from './DayGridWrapper'
-import DayHeaderWrapper from './DayHeaderWrapper'
+import { ViewWrapper } from './ViewWrapper'
+import { TimeGridWrapper } from './TimeGridWrapper'
+import { DayGridWrapper } from './DayGridWrapper'
+import { DayHeaderWrapper } from './DayHeaderWrapper'
 
-export default class TimeGridViewWrapper extends ViewWrapper {
+export class TimeGridViewWrapper extends ViewWrapper {
 
   constructor(calendar) {
     super(calendar, 'fc-timegrid')

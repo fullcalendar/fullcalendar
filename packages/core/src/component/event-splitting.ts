@@ -19,7 +19,7 @@ export interface SplittableProps {
 
 const EMPTY_EVENT_STORE = createEmptyEventStore() // for purecomponents. TODO: keep elsewhere
 
-export default abstract class Splitter<PropsType extends SplittableProps = SplittableProps> {
+export abstract class Splitter<PropsType extends SplittableProps = SplittableProps> {
 
   private getKeysForEventDefs = memoize(this._getKeysForEventDefs)
   private splitDateSelection = memoize(this._splitDateSpan)

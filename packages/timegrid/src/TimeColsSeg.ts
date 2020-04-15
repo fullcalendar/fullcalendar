@@ -4,7 +4,7 @@ import { DateMarker, Seg, EventSegUiInteractionState } from '@fullcalendar/core'
 // JUST A DATA STRUCTURE, not a component
 
 
-export default interface TimeColsSeg extends Seg {
+export interface TimeColsSeg extends Seg {
   col: number
   start: DateMarker
   end: DateMarker

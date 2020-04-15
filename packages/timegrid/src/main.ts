@@ -1,14 +1,14 @@
 import { createPlugin } from '@fullcalendar/core'
-import TimeColsView from './TimeColsView'
-import DayTimeColsView, { buildTimeColsModel } from './DayTimeColsView'
-import TimeColsSeg from './TimeColsSeg'
-import { default as DayTimeCols, DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
+import { TimeColsView } from './TimeColsView'
+import { DayTimeColsView, buildTimeColsModel } from './DayTimeColsView'
+import { TimeColsSeg } from './TimeColsSeg'
+import { DayTimeCols, DayTimeColsSlicer, buildDayRanges } from './DayTimeCols'
 import './main.scss'
 
 export { DayTimeCols, DayTimeColsView, TimeColsView, buildTimeColsModel, buildDayRanges, DayTimeColsSlicer, TimeColsSeg }
-export { default as TimeCols } from './TimeCols'
+export { TimeCols } from './TimeCols'
 export { TimeSlatMeta, buildSlatMetas } from './TimeColsSlats'
-export { default as TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+export { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 export default createPlugin({
   initialView: 'timeGridWeek',

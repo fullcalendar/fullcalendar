@@ -1,13 +1,13 @@
 import { Calendar } from '@fullcalendar/core'
-import MomentPlugin, { toMoment, toMomentDuration } from '@fullcalendar/moment'
-import DayGridPlugin from '@fullcalendar/daygrid'
+import momentPlugin, { toMoment, toMomentDuration } from '@fullcalendar/moment'
+import dayGridPlugin from '@fullcalendar/daygrid'
 import 'moment/locale/es' // only test spanish
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 
 describe('moment plugin', function() {
 
-  const PLUGINS = [ DayGridPlugin, MomentPlugin ]
+  const PLUGINS = [ dayGridPlugin, momentPlugin ]
   pushOptions({ plugins: PLUGINS })
 
   describe('toMoment', function() {
@@ -16,7 +16,7 @@ describe('moment plugin', function() {
 
       it('transfers UTC', function() {
         let calendar = new Calendar(document.createElement('div'), {
-          plugins: [ DayGridPlugin ],
+          plugins: [ dayGridPlugin ],
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'UTC'
         })
@@ -29,7 +29,7 @@ describe('moment plugin', function() {
 
       it('transfers local', function() {
         let calendar = new Calendar(document.createElement('div'), {
-          plugins: [ DayGridPlugin ],
+          plugins: [ dayGridPlugin ],
           events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
           timeZone: 'local'
         })
@@ -44,7 +44,7 @@ describe('moment plugin', function() {
 
     it('transfers locale', function() {
       let calendar = new Calendar(document.createElement('div'), {
-        plugins: [ DayGridPlugin ],
+        plugins: [ dayGridPlugin ],
         events: [ { start: '2018-09-05T12:00:00', end: '2018-09-05T18:00:00' } ],
         locale: 'es'
       })
@@ -59,7 +59,7 @@ describe('moment plugin', function() {
 
     it('converts correctly', function() {
       let calendar = new Calendar(document.createElement('div'), {
-        plugins: [ DayGridPlugin ],
+        plugins: [ dayGridPlugin ],
         defaultTimedEventDuration: '05:00',
         defaultAllDayEventDuration: { days: 3 }
       })

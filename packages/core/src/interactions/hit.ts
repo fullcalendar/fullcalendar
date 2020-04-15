@@ -1,4 +1,4 @@
-import DateComponent from '../component/DateComponent'
+import { DateComponent } from '../component/DateComponent'
 import { DateSpan } from '../structs/date-span'
 import { Rect } from '../util/geom'
 

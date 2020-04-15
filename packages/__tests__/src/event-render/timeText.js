@@ -1,5 +1,5 @@
 import { parseLocalDate } from '../lib/date-parsing'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('the time text on events', function() {

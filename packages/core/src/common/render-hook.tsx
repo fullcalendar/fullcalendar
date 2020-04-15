@@ -1,5 +1,5 @@
 import { Component, Ref, createRef, ComponentChildren, h, RefObject } from '../vdom'
-import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
+import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
 import { setRef } from '../vdom-util'
 import { isPropsEqual } from '../util/object'
 

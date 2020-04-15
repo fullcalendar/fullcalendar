@@ -2,14 +2,14 @@ import { DateRange } from '../datelib/date-range'
 import { getDayClassNames, getDateMeta, DateMeta } from '../component/date-rendering'
 import { DateMarker, addDays } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentContext } from '../component/ComponentContext'
 import { h } from '../vdom'
 import { __assign } from 'tslib'
 import { DateFormatter, formatDayString } from '../datelib/formatting'
 import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
 import { buildNavLinkData } from './nav-link'
-import ViewApi from '../ViewApi'
+import { ViewApi } from '../ViewApi'
 
 
 export interface TableDateCellProps {
@@ -34,7 +34,7 @@ export interface DateHeaderCellHookProps extends DateMeta { // is used publicly 
 const CLASS_NAME = 'fc-col-header-cell' // do the cushion too? no
 
 
-export default class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
+export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD name for this class now. used in the Header
 
   render(props: TableDateCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context

@@ -1,4 +1,4 @@
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { EventDef, EventInstance, NON_DATE_PROPS, DATE_PROPS } from '../structs/event'
 import { UNSCOPED_EVENT_UI_PROPS } from '../component/event-ui'
 import { EventMutation } from '../structs/event-mutation'
@@ -6,9 +6,9 @@ import { DateInput } from '../datelib/env'
 import { diffDates, computeAlignedDayRange } from '../util/misc'
 import { DurationInput, createDuration, durationsEqual } from '../datelib/duration'
 import { createFormatter, FormatterInput } from '../datelib/formatting'
-import EventSourceApi from './EventSourceApi'
+import { EventSourceApi } from './EventSourceApi'
 
-export default class EventApi {
+export class EventApi {
 
   _calendar: Calendar
   _def: EventDef

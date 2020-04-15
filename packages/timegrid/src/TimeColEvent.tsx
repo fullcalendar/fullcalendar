@@ -8,7 +8,7 @@ const DEFAULT_TIME_FORMAT = {
 }
 
 
-export default class TimeColEvent extends BaseComponent<MinimalEventProps> {
+export class TimeColEvent extends BaseComponent<MinimalEventProps> {
 
   render(props: MinimalEventProps) {
     return (

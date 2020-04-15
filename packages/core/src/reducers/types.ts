@@ -7,7 +7,7 @@ import { DateProfile } from '../DateProfileGenerator'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
 import { DateEnv } from '../datelib/env'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { DateMarker } from '../datelib/marker'
 
 export interface CalendarState {

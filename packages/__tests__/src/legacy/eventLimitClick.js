@@ -1,4 +1,4 @@
-import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
+import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
 
 describe('moreLinkClick', function() { // TODO: rename file
   pushOptions({

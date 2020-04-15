@@ -6,7 +6,7 @@ SEE ALSO:
 - visibleRange, dateAlignment, dateIncrement
 */
 
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('next button', function() {
   pushOptions({

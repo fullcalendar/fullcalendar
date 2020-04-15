@@ -5,7 +5,7 @@ An effect in which an element follows the movement of a pointer across the scree
 The moving element is a clone of some other element.
 Must call start + handleMove + stop.
 */
-export default class ElementMirror {
+export class ElementMirror {
 
   isVisible: boolean = false // must be explicitly enabled
   origScreenX?: number

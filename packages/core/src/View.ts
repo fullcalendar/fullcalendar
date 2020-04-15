@@ -1,4 +1,4 @@
-import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
+import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import { ViewSpec } from './structs/view-spec'
 import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'

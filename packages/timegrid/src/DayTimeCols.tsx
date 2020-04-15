@@ -18,8 +18,8 @@ import {
   CssDimValue,
   Duration
 } from '@fullcalendar/core'
-import TimeColsSeg from './TimeColsSeg'
-import TimeCols from './TimeCols'
+import { TimeColsSeg } from './TimeColsSeg'
+import { TimeCols } from './TimeCols'
 import { TimeSlatMeta } from './TimeColsSlats'
 
 
@@ -46,7 +46,7 @@ export interface DayTimeColsProps {
 }
 
 
-export default class DayTimeCols extends DateComponent<DayTimeColsProps> {
+export class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
   private buildDayRanges = memoize(buildDayRanges)
   private slicer = new DayTimeColsSlicer()

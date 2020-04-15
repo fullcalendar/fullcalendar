@@ -9,7 +9,7 @@ import {
   mapHash,
   ElementDragging
 } from '@fullcalendar/core'
-import OffsetTracker from '../OffsetTracker'
+import { OffsetTracker } from '../OffsetTracker'
 
 /*
 Tracks movement over multiple droppable areas (aka "hits")
@@ -24,7 +24,7 @@ emits:
 - (hitchange - again, to null, if ended over a hit)
 - dragend
 */
-export default class HitDragging {
+export class HitDragging {
 
   droppableStore: InteractionSettingsStore
   dragging: ElementDragging

@@ -1,5 +1,5 @@
 import arLocale from '@fullcalendar/core/locales/ar'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 describe('dayNumbers', function() {
   pushOptions({

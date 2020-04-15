@@ -1,5 +1,5 @@
 
-export default interface ViewApi {
+export interface ViewApi {
   type: string
   title: string
   activeStart: Date

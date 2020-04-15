@@ -3,7 +3,7 @@ import { EventSegUiInteractionState, Seg } from '@fullcalendar/core'
 
 // this is a DATA STRUCTURE, not a component
 
-export default interface TableSeg extends Seg {
+export interface TableSeg extends Seg {
   row: number
   firstCol: number
   lastCol: number

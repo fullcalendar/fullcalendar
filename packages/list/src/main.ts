@@ -1,5 +1,5 @@
 import { createPlugin } from '@fullcalendar/core'
-import ListView from './ListView'
+import { ListView } from './ListView'
 import './main.scss'
 
 export { ListView }

@@ -16,10 +16,10 @@ import {
   renderFill,
   isPropsEqual
 } from '@fullcalendar/core'
-import TableSeg, { splitSegsByFirstCol } from './TableSeg'
-import TableCell, { TableCellModel, MoreLinkArg } from './TableCell'
-import TableListItemEvent from './TableListItemEvent'
-import TableBlockEvent from './TableBlockEvent'
+import { TableSeg, splitSegsByFirstCol } from './TableSeg'
+import { TableCell, TableCellModel, MoreLinkArg } from './TableCell'
+import { TableListItemEvent } from './TableListItemEvent'
+import { TableBlockEvent } from './TableBlockEvent'
 import { computeFgSegPlacement } from './event-placement'
 import { hasListItemDisplay } from './event-rendering'
 
@@ -56,7 +56,7 @@ interface TableRowState {
 }
 
 
-export default class TableRow extends DateComponent<TableRowProps, TableRowState> {
+export class TableRow extends DateComponent<TableRowProps, TableRowState> {
 
   private cellElRefs = new RefMap<HTMLTableCellElement>() // the <td>
   private cellInnerElRefs = new RefMap<HTMLElement>() // the fc-daygrid-day-frame

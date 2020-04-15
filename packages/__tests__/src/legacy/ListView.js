@@ -1,5 +1,5 @@
 import frLocale from '@fullcalendar/core/locales/fr'
-import ListViewWrapper from '../lib/wrappers/ListViewWrapper'
+import { ListViewWrapper } from '../lib/wrappers/ListViewWrapper'
 
 describe('ListView rendering', function() {
   pushOptions({

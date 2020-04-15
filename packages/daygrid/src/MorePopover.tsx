@@ -1,8 +1,8 @@
 import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent } from '@fullcalendar/core'
-import TableSeg from './TableSeg'
-import TableBlockEvent from './TableBlockEvent'
-import TableListItemEvent from './TableListItemEvent'
-import Popover from './Popover'
+import { TableSeg } from './TableSeg'
+import { TableBlockEvent } from './TableBlockEvent'
+import { TableListItemEvent } from './TableListItemEvent'
+import { Popover } from './Popover'
 import { hasListItemDisplay } from './event-rendering'
 
 
@@ -18,7 +18,7 @@ export interface MorePopoverProps {
 }
 
 
-export default class MorePopover extends DateComponent<MorePopoverProps> {
+export class MorePopover extends DateComponent<MorePopoverProps> {
 
   private popoverEl: HTMLElement
 

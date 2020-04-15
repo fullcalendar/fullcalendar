@@ -17,7 +17,7 @@ approaches the edge.
 
 The caller must call start + handleMove + stop.
 */
-export default class AutoScroller {
+export class AutoScroller {
 
   // options that can be set by caller
   isEnabled: boolean = true

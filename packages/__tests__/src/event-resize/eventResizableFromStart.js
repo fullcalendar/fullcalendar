@@ -1,4 +1,4 @@
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { waitEventResize } from '../lib/wrappers/interaction-util'
 
 describe('eventResizableFromStart', function() {

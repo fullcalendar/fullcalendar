@@ -1,5 +1,5 @@
 import { Duration, createDuration } from './datelib/duration'
-import Calendar from './Calendar'
+import { Calendar } from './Calendar'
 import { __assign } from 'tslib'
 
 
@@ -11,7 +11,7 @@ export interface ScrollRequest {
 export type ScrollRequestHandler = (request: ScrollRequest) => boolean
 
 
-export default class ScrollResponder {
+export class ScrollResponder {
 
   queuedRequest: ScrollRequest
 

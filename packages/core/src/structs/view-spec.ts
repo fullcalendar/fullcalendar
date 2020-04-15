@@ -1,6 +1,6 @@
 import { ViewDef, compileViewDefs } from './view-def'
 import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInput } from '../datelib/duration'
-import OptionsManager from '../OptionsManager'
+import { OptionsManager } from '../OptionsManager'
 import { mapHash } from '../util/object'
 import { globalDefaults } from '../options'
 import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'

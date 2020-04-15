@@ -1,5 +1,5 @@
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 import { queryEventElInfo } from '../lib/wrappers/TimeGridWrapper'
 
 xdescribe('short event rendering with timeGridEventMinHeight', function() {

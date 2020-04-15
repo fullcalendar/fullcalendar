@@ -1,8 +1,8 @@
 // most other businessHours tests are in background-events.js
 
 import { doElsMatchSegs } from '../lib/segs'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('businessHours', function() {

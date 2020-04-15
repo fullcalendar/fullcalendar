@@ -1,9 +1,9 @@
 import { Calendar } from '@fullcalendar/core'
-import ViewWrapper from './ViewWrapper'
-import DayGridWrapper from './DayGridWrapper'
-import DayHeaderWrapper from './DayHeaderWrapper'
+import { ViewWrapper } from './ViewWrapper'
+import { DayGridWrapper } from './DayGridWrapper'
+import { DayHeaderWrapper } from './DayHeaderWrapper'
 
-export default class DayGridViewWrapper extends ViewWrapper {
+export class DayGridViewWrapper extends ViewWrapper {
 
   constructor(calendar: Calendar) {
     super(calendar, 'fc-daygrid')

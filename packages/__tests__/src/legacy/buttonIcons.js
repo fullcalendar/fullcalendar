@@ -1,10 +1,10 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import bootstrapPlugin from '@fullcalendar/bootstrap'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('buttonIcons', function() {
   pushOptions({
-    plugins: [ DayGridPlugin, BootstrapPlugin ],
+    plugins: [ dayGridPlugin, bootstrapPlugin ],
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',

@@ -1,8 +1,8 @@
-import ComponentContext, { ComponentContextType, buildContext } from './component/ComponentContext'
+import { ComponentContext, ComponentContextType, buildContext } from './component/ComponentContext'
 import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
-import Toolbar from './Toolbar'
-import DateProfileGenerator, { DateProfile } from './DateProfileGenerator'
+import { Toolbar } from './Toolbar'
+import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import { rangeContainsMarker } from './datelib/date-range'
 import { EventUiHash } from './component/event-ui'
 import { parseBusinessHours } from './structs/business-hours'
@@ -15,9 +15,9 @@ import { h, Fragment, createRef } from './vdom'
 import { BaseComponent } from './vdom-util'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
-import ViewContainer from './ViewContainer'
+import { ViewContainer } from './ViewContainer'
 import { CssDimValue } from './scrollgrid/util'
-import Theme from './theme/Theme'
+import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
 import { ViewComponent } from './structs/view-config'
 
@@ -36,7 +36,7 @@ interface CalendarComponentState {
 }
 
 
-export default class CalendarComponent extends BaseComponent<CalendarComponentProps, CalendarComponentState> {
+export class CalendarComponent extends BaseComponent<CalendarComponentProps, CalendarComponentState> {
 
   private buildViewContext = memoize(buildContext)
   private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.context.calendar))

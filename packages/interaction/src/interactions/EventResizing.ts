@@ -13,12 +13,12 @@ import {
   EventResizeJoinTransforms,
   Interaction, InteractionSettings, interactionSettingsToStore
 } from '@fullcalendar/core'
-import HitDragging, { isHitsEqual } from './HitDragging'
-import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
+import { HitDragging, isHitsEqual } from './HitDragging'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
 
 
-export default class EventDragging extends Interaction {
+export class EventResizing extends Interaction {
 
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging

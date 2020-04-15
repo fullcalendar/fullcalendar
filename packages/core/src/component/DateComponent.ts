@@ -36,7 +36,7 @@ PURPOSES:
 - hook up to fg, fill, and mirror renderers
 - interface for dragging and hits
 */
-export default abstract class DateComponent<Props={}, State={}> extends BaseComponent<Props, State> {
+export abstract class DateComponent<Props={}, State={}> extends BaseComponent<Props, State> {
 
   uid = guid()
 

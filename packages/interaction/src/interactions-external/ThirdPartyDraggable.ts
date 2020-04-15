@@ -1,5 +1,5 @@
-import ExternalElementDragging, { DragMetaGenerator } from './ExternalElementDragging'
-import InferredElementDragging from './InferredElementDragging'
+import { ExternalElementDragging, DragMetaGenerator } from './ExternalElementDragging'
+import { InferredElementDragging } from './InferredElementDragging'
 
 export interface ThirdPartyDraggableSettings {
   eventData?: DragMetaGenerator
@@ -11,7 +11,7 @@ export interface ThirdPartyDraggableSettings {
 Bridges third-party drag-n-drop systems with FullCalendar.
 Must be instantiated and destroyed by caller.
 */
-export default class ThirdPartyDraggable {
+export class ThirdPartyDraggable {
 
   dragging: InferredElementDragging
 

@@ -1,5 +1,4 @@
-import Calendar from '../Calendar'
-
+import { Calendar } from '../Calendar'
 import { EventInput } from './event'
 import { EventStore, parseEvents } from './event-store'
 

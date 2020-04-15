@@ -1,9 +1,9 @@
-import ViewWrapper from './ViewWrapper'
+import { ViewWrapper } from './ViewWrapper'
 import { Calendar, findElements } from '@fullcalendar/core'
 import { formatIsoDay } from '../datelib-utils'
 
 
-export default class ListViewWrapper extends ViewWrapper {
+export class ListViewWrapper extends ViewWrapper {
 
   static EVENT_DOT_CLASSNAME = 'fc-list-event-dot'
 

@@ -21,6 +21,6 @@ let eventSourceDef: EventSourceDef = {
   }
 }
 
-export default createPlugin({
+export const arrayEventSourcePlugin = createPlugin({
   eventSourceDefs: [ eventSourceDef ]
 })

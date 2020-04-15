@@ -1,6 +1,6 @@
 import { refineProps, guid } from '../util/misc'
 import { EventInput } from './event'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { EventUi, processUnscopedUiProps } from '../component/event-ui'

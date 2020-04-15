@@ -18,10 +18,10 @@ import {
   DateProfile,
   EventApi
 } from '@fullcalendar/core'
-import TableSeg, { splitSegsByRow, splitInteractionByRow } from './TableSeg'
-import TableRow from './TableRow'
+import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
+import { TableRow } from './TableRow'
 import { TableCellModel, MoreLinkArg } from './TableCell'
-import MorePopover from './MorePopover'
+import { MorePopover } from './MorePopover'
 
 
 export interface TableProps {
@@ -56,7 +56,7 @@ interface MorePopoverState extends MoreLinkArg {
 }
 
 
-export default class Table extends DateComponent<TableProps, TableState> {
+export class Table extends DateComponent<TableProps, TableState> {
 
   private splitBusinessHourSegs = memoize(splitSegsByRow)
   private splitBgEventSegs = memoize(splitSegsByRow)

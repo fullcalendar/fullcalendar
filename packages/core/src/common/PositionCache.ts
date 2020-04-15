@@ -4,7 +4,7 @@ Records offset information for a set of elements, relative to an origin element.
 Can record the left/right OR the top/bottom OR both.
 Provides methods for querying the cache by position.
 */
-export default class PositionCache {
+export class PositionCache {
 
   els: HTMLElement[] // assumed to be siblings
   originClientRect: ClientRect

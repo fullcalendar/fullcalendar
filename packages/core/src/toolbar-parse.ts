@@ -1,6 +1,6 @@
 import { ViewSpec } from './structs/view-spec'
-import Calendar from './Calendar'
-import Theme from './theme/Theme'
+import { Calendar } from './Calendar'
+import { Theme } from './theme/Theme'
 import { mapHash } from './util/object'
 
 export interface ToolbarModel {

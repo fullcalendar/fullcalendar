@@ -1,17 +1,15 @@
-import InteractionPlugin from '@fullcalendar/interaction'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import TimeGridPlugin from '@fullcalendar/timegrid'
-import ListPlugin from '@fullcalendar/list'
+import interactionPlugin from '@fullcalendar/interaction'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list'
 
-const plugins = [
-  InteractionPlugin,
-  DayGridPlugin,
-  TimeGridPlugin,
-  ListPlugin
+export const DEFAULT_PLUGINS = [
+  interactionPlugin,
+  dayGridPlugin,
+  timeGridPlugin,
+  listPlugin
 ]
 
 pushOptions({
-  plugins
+  DEFAULT_PLUGINS
 })
-
-export default plugins

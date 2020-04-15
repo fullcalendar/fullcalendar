@@ -19,7 +19,7 @@ const PADDING_FROM_VIEWPORT = 10
 const SCROLL_DEBOUNCE = 10
 
 
-export default class Popover extends BaseComponent<PopoverProps> {
+export class Popover extends BaseComponent<PopoverProps> {
 
   private rootEl: HTMLElement
   private repositioner = new DelayedRunner(this.updateSize.bind(this))

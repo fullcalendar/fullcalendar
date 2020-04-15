@@ -1,5 +1,5 @@
 import { listenToHoverBySelector } from '../util/dom-event'
-import EventApi from '../api/EventApi'
+import { EventApi } from '../api/EventApi'
 import { getElSeg } from '../component/event-rendering'
 import { Interaction, InteractionSettings } from './interaction'
 
@@ -7,7 +7,7 @@ import { Interaction, InteractionSettings } from './interaction'
 Triggers events and adds/removes core classNames when the user's pointer
 enters/leaves event-elements of a component.
 */
-export default class EventHovering extends Interaction {
+export class EventHovering extends Interaction {
 
   removeHoverListeners: () => void
   currentSegEl: HTMLElement

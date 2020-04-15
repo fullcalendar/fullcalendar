@@ -1,5 +1,5 @@
 import { PointerDragEvent, ElementDragging } from '@fullcalendar/core'
-import PointerDragging from '../dnd/PointerDragging'
+import { PointerDragging } from '../dnd/PointerDragging'
 
 /*
 Detects when a *THIRD-PARTY* drag-n-drop system interacts with elements.
@@ -7,7 +7,7 @@ The third-party system is responsible for drawing the visuals effects of the dra
 This class simply monitors for pointer movements and fires events.
 It also has the ability to hide the moving element (the "mirror") during the drag.
 */
-export default class InferredElementDragging extends ElementDragging {
+export class InferredElementDragging extends ElementDragging {
 
   pointer: PointerDragging
   shouldIgnoreMove: boolean = false

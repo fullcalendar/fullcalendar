@@ -1,5 +1,5 @@
 
-export default class Theme {
+export class Theme {
 
   // settings. default values are set after the class
   classes: any

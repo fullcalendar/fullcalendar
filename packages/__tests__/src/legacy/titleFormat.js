@@ -1,5 +1,5 @@
 import frLocale from '@fullcalendar/core/locales/fr'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('titleFormat', function() {
 

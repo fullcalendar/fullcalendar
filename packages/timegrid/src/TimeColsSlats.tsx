@@ -19,7 +19,7 @@ import {
   ComponentContextType,
   RenderHook
 } from '@fullcalendar/core'
-import TimeColsSlatsCoords from './TimeColsSlatsCoords'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 
 export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
@@ -52,7 +52,7 @@ for the horizontal "slats" that run width-wise. Has a time axis on a side. Depen
 */
 
 
-export default class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
+export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
 
   private rootElRef = createRef<HTMLDivElement>()
   private slatElRefs = new RefMap<HTMLTableRowElement>()

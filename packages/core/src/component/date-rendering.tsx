@@ -1,7 +1,7 @@
 import { DateMarker, DAY_IDS } from '../datelib/marker'
 import { rangeContainsMarker, DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
-import Theme from '../theme/Theme'
+import { Theme } from '../theme/Theme'
 
 
 export interface DateMeta {

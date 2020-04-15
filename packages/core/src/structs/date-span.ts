@@ -5,7 +5,7 @@ import { Duration } from '../datelib/duration'
 import { parseEventDef, createEventInstance } from './event'
 import { EventRenderRange, compileEventUi } from '../component/event-rendering'
 import { EventUiHash } from '../component/event-ui'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 
 /*
 A data-structure for a date-range that will be visually displayed.

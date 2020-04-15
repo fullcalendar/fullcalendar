@@ -17,10 +17,10 @@ import {
   Duration
 } from '@fullcalendar/core'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
-import TimeColsSlats, { TimeSlatMeta } from './TimeColsSlats'
-import TimeColsContent from './TimeColsContent'
-import TimeColsSlatsCoords from './TimeColsSlatsCoords'
-import TimeColsSeg from './TimeColsSeg'
+import { TimeColsSlats, TimeSlatMeta } from './TimeColsSlats'
+import { TimeColsContent } from './TimeColsContent'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+import { TimeColsSeg } from './TimeColsSeg'
 
 
 export interface TimeColsProps {
@@ -57,7 +57,7 @@ interface TimeColsState {
 /* A component that renders one or more columns of vertical time slots
 ----------------------------------------------------------------------------------------------------------------------*/
 
-export default class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
+export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
   private processSlotOptions = memoize(processSlotOptions)
   private scrollResponder: ScrollResponder

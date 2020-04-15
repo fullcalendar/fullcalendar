@@ -1,6 +1,6 @@
 /*
 USAGE:
-  import { default as EmitterMixin, EmitterInterface } from './EmitterMixin'
+  import { EmitterMixin, EmitterInterface } from './EmitterMixin'
 in class:
   on: EmitterInterface['on']
   one: EmitterInterface['one']
@@ -13,7 +13,7 @@ after class:
 */
 
 import { applyAll } from '../util/misc'
-import Mixin from './Mixin'
+import { Mixin } from './Mixin'
 
 export interface EmitterInterface {
   on(types, handler)
@@ -24,7 +24,7 @@ export interface EmitterInterface {
   hasHandlers(type)
 }
 
-export default class EmitterMixin extends Mixin implements EmitterInterface {
+export class EmitterMixin extends Mixin implements EmitterInterface {
 
   _handlers: any
   _oneHandlers: any

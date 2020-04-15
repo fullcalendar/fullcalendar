@@ -1,6 +1,6 @@
 import { DateMarker, addMs, startOfDay, addDays } from './datelib/marker'
 import { createDuration } from './datelib/duration'
-import ComponentContext, { ComponentContextType } from './component/ComponentContext'
+import { ComponentContext, ComponentContextType } from './component/ComponentContext'
 import { ComponentChildren, Component } from './vdom'
 import { DateRange } from './datelib/date-range'
 
@@ -16,7 +16,7 @@ interface NowTimerState {
 }
 
 
-export default class NowTimer extends Component<NowTimerProps, NowTimerState> {
+export class NowTimer extends Component<NowTimerProps, NowTimerState> {
 
   static contextType = ComponentContextType
   context: ComponentContext // do this for all components that use the context!!!

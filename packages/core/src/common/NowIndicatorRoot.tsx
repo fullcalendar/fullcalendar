@@ -1,6 +1,6 @@
 import { RenderHook, RenderHookPropsChildren } from './render-hook'
 import { DateMarker } from '../datelib/marker'
-import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
+import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
 import { h } from '../vdom'
 
 

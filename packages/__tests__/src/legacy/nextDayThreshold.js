@@ -1,5 +1,5 @@
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 describe('nextDayThreshold', function() {
 

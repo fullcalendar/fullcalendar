@@ -1,12 +1,12 @@
 import { PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore } from '@fullcalendar/core'
-import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
-import HitDragging, { isHitsEqual } from './HitDragging'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
+import { HitDragging, isHitsEqual } from './HitDragging'
 
 /*
 Monitors when the user clicks on a specific date/time of a component.
 A pointerdown+pointerup on the same "hit" constitutes a click.
 */
-export default class DateClicking extends Interaction {
+export class DateClicking extends Interaction {
 
   dragging: FeaturefulElementDragging
   hitDragging: HitDragging

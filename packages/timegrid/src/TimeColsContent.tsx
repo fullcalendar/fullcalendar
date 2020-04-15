@@ -14,9 +14,9 @@ import {
   NowIndicatorRoot
 } from '@fullcalendar/core'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
-import TimeColsSeg, { splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
-import TimeColsSlatsCoords from './TimeColsSlatsCoords'
-import TimeCol from './TimeCol'
+import { TimeColsSeg, splitSegsByCol, splitInteractionByCol } from './TimeColsSeg'
+import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
+import { TimeCol } from './TimeCol'
 
 
 export interface TimeColsContentProps {
@@ -42,7 +42,7 @@ export interface TimeColsContentProps {
 }
 
 
-export default class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TODO: rename
+export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TODO: rename
 
   private splitFgEventSegs = memoize(splitSegsByCol)
   private splitBgEventSegs = memoize(splitSegsByCol)

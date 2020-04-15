@@ -2,7 +2,7 @@ import { PositionCache, DateMarker, startOfDay, createDuration, asRoughMs, DateP
 import { TimeSlatMeta } from './TimeColsSlats'
 
 
-export default class TimeColsSlatsCoords {
+export class TimeColsSlatsCoords {
 
   constructor(
     public positions: PositionCache,

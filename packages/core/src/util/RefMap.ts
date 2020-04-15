@@ -4,7 +4,7 @@ import { hashValuesToArray, collectFromHash } from './object'
 TODO: somehow infer OtherArgs from masterCallback?
 TODO: infer RefType from masterCallback if provided
 */
-export default class RefMap<RefType> {
+export class RefMap<RefType> {
 
   public currentMap: { [key: string]: RefType } = {}
   private depths: { [key: string]: number } = {}

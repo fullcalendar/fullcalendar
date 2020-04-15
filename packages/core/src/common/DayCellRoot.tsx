@@ -2,11 +2,11 @@ import { Ref, ComponentChildren, h } from '../vdom'
 import { DateMarker } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentContext } from '../component/ComponentContext'
 import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
 import { formatDayString, createFormatter } from '../datelib/formatting'
 import { buildHookClassNameGenerator, MountHook, ContentHook } from './render-hook'
-import ViewApi from '../ViewApi'
+import { ViewApi } from '../ViewApi'
 import { BaseComponent } from '../vdom-util'
 
 

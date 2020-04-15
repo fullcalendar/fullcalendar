@@ -5,7 +5,7 @@ import {
   DateSpan
 } from '@fullcalendar/core'
 
-export default class AllDaySplitter extends Splitter {
+export class AllDaySplitter extends Splitter {
 
   getKeyInfo() {
     return {

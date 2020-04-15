@@ -1,4 +1,4 @@
-import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
 
 describe('footerToolbar navigation', function() { // TODO: rename file
   pushOptions({

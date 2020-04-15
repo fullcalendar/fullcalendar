@@ -1,4 +1,4 @@
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 
 describe('daygrid view with updated dimensions', function() {

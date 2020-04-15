@@ -1,4 +1,4 @@
-import ListenerCounter from '../lib/ListenerCounter'
+import { ListenerCounter } from '../lib/ListenerCounter'
 
 describe('destroy', function() {
 

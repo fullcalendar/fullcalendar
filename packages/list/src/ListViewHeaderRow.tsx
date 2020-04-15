@@ -15,7 +15,7 @@ interface HookProps extends DateHeaderCellHookProps { // doesn't enforce much si
 }
 
 
-export default class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
+export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
 
   render(props: ListViewHeaderRowProps, state: {}, context: ComponentContext) {

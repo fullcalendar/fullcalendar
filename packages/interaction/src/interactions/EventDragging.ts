@@ -14,12 +14,12 @@ import {
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers
 } from '@fullcalendar/core'
-import HitDragging, { isHitsEqual } from './HitDragging'
-import FeaturefulElementDragging from '../dnd/FeaturefulElementDragging'
+import { HitDragging, isHitsEqual } from './HitDragging'
+import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { __assign } from 'tslib'
 
 
-export default class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
+export class EventDragging extends Interaction { // TODO: rename to EventSelectingAndDragging
 
   // TODO: test this in IE11
   // QUESTION: why do we need it on the resizable???

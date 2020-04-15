@@ -1,8 +1,8 @@
 import { formatIsoDay } from './datelib-utils'
 import { parseMarker, addDays } from '@fullcalendar/core'
-import TimeGridViewWrapper from './wrappers/TimeGridViewWrapper'
-import DayGridViewWrapper from './wrappers/DayGridViewWrapper'
-import CalendarWrapper from './wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from './wrappers/TimeGridViewWrapper'
+import { DayGridViewWrapper } from './wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
 export function testEventDrag(options, dropDate, expectSuccess, callback, eventClassName) {
   options.editable = true

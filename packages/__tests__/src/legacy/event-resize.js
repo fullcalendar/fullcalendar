@@ -1,8 +1,8 @@
 import { createDuration } from '@fullcalendar/core'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 import { waitEventResize2 } from '../lib/wrappers/interaction-util'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('eventResize', function() {
   pushOptions({

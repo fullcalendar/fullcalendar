@@ -3,7 +3,7 @@ import {
   DateProfileGenerator, DateProfile,
   ComponentContext,
   DayHeader,
-  DaySeries,
+  DaySeriesModel,
   DayTableModel,
   memoize,
   ViewProps,
@@ -11,12 +11,12 @@ import {
   createDuration
 } from '@fullcalendar/core'
 import { DayTable } from '@fullcalendar/daygrid'
-import TimeColsView from './TimeColsView'
-import DayTimeCols from './DayTimeCols'
+import { TimeColsView } from './TimeColsView'
+import { DayTimeCols } from './DayTimeCols'
 import { buildSlatMetas } from './TimeColsSlats'
 
 
-export default class DayTimeColsView extends TimeColsView {
+export class DayTimeColsView extends TimeColsView {
 
   private buildTimeColsModel = memoize(buildTimeColsModel)
   private parseSlotDuration = memoize(createDuration)
@@ -85,7 +85,7 @@ export default class DayTimeColsView extends TimeColsView {
 
 
 export function buildTimeColsModel(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
-  let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
+  let daySeries = new DaySeriesModel(dateProfile.renderRange, dateProfileGenerator)
 
   return new DayTableModel(daySeries, false)
 }

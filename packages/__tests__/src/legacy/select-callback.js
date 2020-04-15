@@ -1,8 +1,8 @@
 import { Calendar } from '@fullcalendar/core'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import InteractionPlugin from '@fullcalendar/interaction'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 // UNFORTUNATELY, these tests are affected by the window height b/c of autoscrolling
 
@@ -330,7 +330,7 @@ describe('select callback', function() {
     let calendar = new Calendar(
       document.createElement('div'),
       {
-        plugins: [ InteractionPlugin, DayGridPlugin ],
+        plugins: [ interactionPlugin, dayGridPlugin ],
         now: '2018-12-25',
         select: function(info) {
           expect(info.startStr).toBe('2018-12-20')

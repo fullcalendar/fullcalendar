@@ -1,4 +1,4 @@
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { EventMutation } from '../structs/event-mutation'
 import { Hit } from './hit'
 import { EventDef } from '../structs/event'

@@ -1,4 +1,4 @@
-import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
 
 describe('event source remove', function() {
   pushOptions({

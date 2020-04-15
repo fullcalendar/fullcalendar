@@ -12,7 +12,7 @@ export interface DotTableEventProps {
   defaultDisplayEventEnd: boolean
 }
 
-export default class TableEvent extends BaseComponent<DotTableEventProps> {
+export class TableListItemEvent extends BaseComponent<DotTableEventProps> {
 
   render(props: DotTableEventProps, state: {}, context: ComponentContext) {
     let { options } = context

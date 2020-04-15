@@ -18,7 +18,7 @@ import {
   getStickyHeaderDates,
   getStickyFooterScrollbar
 } from '@fullcalendar/core'
-import AllDaySplitter from './AllDaySplitter'
+import { AllDaySplitter } from './AllDaySplitter'
 import { TimeSlatMeta, TimeColsAxisCell } from './TimeColsSlats'
 
 
@@ -31,7 +31,7 @@ const AUTO_ALL_DAY_MAX_EVENT_ROWS = 5
 // Is a manager for the TimeCols subcomponent and possibly the DayGrid subcomponent (if allDaySlot is on).
 // Responsible for managing width/height.
 
-export default abstract class TimeColsView extends DateComponent<ViewProps> {
+export abstract class TimeColsView extends DateComponent<ViewProps> {
 
   protected allDaySplitter = new AllDaySplitter() // for use by subclasses
 

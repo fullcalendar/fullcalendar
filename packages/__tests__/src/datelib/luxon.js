@@ -1,20 +1,20 @@
 import { Calendar } from '@fullcalendar/core'
 import esLocale from '@fullcalendar/core/locales/es'
-import LuxonPlugin, { toLuxonDateTime, toLuxonDuration } from '@fullcalendar/luxon'
-import DayGridPlugin from '@fullcalendar/daygrid'
+import luxonPlugin, { toLuxonDateTime, toLuxonDuration } from '@fullcalendar/luxon'
+import dayGridPlugin from '@fullcalendar/daygrid'
 import { testTimeZoneImpl } from '../lib/timeZoneImpl'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 
 describe('luxon plugin', function() {
 
-  const PLUGINS = [ LuxonPlugin, DayGridPlugin ] // for `new Calendar`
+  const PLUGINS = [ luxonPlugin, dayGridPlugin ] // for `new Calendar`
 
   pushOptions({ // for initCalendar
     plugins: PLUGINS
   })
 
-  testTimeZoneImpl(LuxonPlugin)
+  testTimeZoneImpl(luxonPlugin)
 
   describe('toLuxonDateTime', function() {
 

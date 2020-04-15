@@ -21,7 +21,7 @@ export interface ScrollerProps {
 const VISIBLE_HIDDEN_RE = /^(visible|hidden)$/
 
 
-export default class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLike {
+export class Scroller extends BaseComponent<ScrollerProps> implements ScrollerLike {
 
   private el: HTMLElement // TODO: just use this.base?
 

@@ -1,4 +1,4 @@
-import EmitterMixin from '../common/EmitterMixin'
+import { EmitterMixin } from '../common/EmitterMixin'
 
 /*
 An abstraction for a dragging interaction originating on an event.
@@ -13,7 +13,7 @@ subclasses must emit:
 - pointerup
 - dragend
 */
-export default abstract class ElementDragging { // TODO: rename to *Interface?
+export abstract class ElementDragging { // TODO: rename to *Interface?
 
   emitter: EmitterMixin
 

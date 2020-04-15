@@ -9,7 +9,7 @@ import { EventInteractionState } from '../interactions/event-interaction-state'
 import { Duration } from '../datelib/duration'
 import { memoize } from '../util/memoize'
 import { DateMarker, addMs, addDays } from '../datelib/marker'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 
 export interface SliceableProps {
   dateSelection: DateSpan
@@ -31,7 +31,7 @@ export interface SlicedProps<SegType extends Seg> {
   eventSelection: string
 }
 
-export default abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> {
+export abstract class Slicer<SegType extends Seg, ExtraArgs extends any[] = []> {
 
   private sliceBusinessHours = memoize(this._sliceBusinessHours)
   private sliceDateSelection = memoize(this._sliceDateSpan)

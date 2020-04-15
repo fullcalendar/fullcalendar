@@ -1,8 +1,8 @@
 import { VNode, h } from '../vdom'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentContext } from '../component/ComponentContext'
 import { BaseComponent, setRef } from '../vdom-util'
-import Scroller, { OverflowValue } from './Scroller'
-import RefMap from '../util/RefMap'
+import { Scroller, OverflowValue } from './Scroller'
+import { RefMap } from '../util/RefMap'
 import {
   ColProps, SectionConfig, renderMicroColGroup, computeShrinkWidth, getScrollGridClassNames, getSectionClassNames, getAllowYScrolling,
   renderChunkContent, getSectionHasLiquidHeight, ChunkConfig, hasShrinkWidth, CssDimValue,
@@ -34,7 +34,7 @@ interface SimpleScrollGridState {
 }
 
 
-export default class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, SimpleScrollGridState> {
+export class SimpleScrollGrid extends BaseComponent<SimpleScrollGridProps, SimpleScrollGridState> {
 
   processCols = memoize((a) => a, isColPropsEqual) // so we get same `cols` props every time
   renderMicroColGroup = memoize(renderMicroColGroup) // yucky to memoize VNodes, but much more efficient for consumers

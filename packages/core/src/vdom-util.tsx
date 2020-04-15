@@ -1,5 +1,5 @@
 import { Component, Ref } from './vdom'
-import ComponentContext, { ComponentContextType } from './component/ComponentContext'
+import { ComponentContext, ComponentContextType } from './component/ComponentContext'
 import { __assign } from 'tslib'
 import { compareObjs, EqualityFuncs, getUnequalProps } from './util/object'
 

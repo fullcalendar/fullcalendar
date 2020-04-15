@@ -1,5 +1,5 @@
 import { createPlugin } from '@fullcalendar/core'
-import DayGridPlugin from '@fullcalendar/daygrid'
+import dayGridPlugin from '@fullcalendar/daygrid'
 
 describe('view-specific options', function() {
 
@@ -126,7 +126,7 @@ describe('view-specific options', function() {
   it('views that explicitly extend others inherit options', function() {
     initCalendar({
       plugins: [
-        DayGridPlugin,
+        dayGridPlugin,
         createPlugin({
           views: {
             superBasic: {

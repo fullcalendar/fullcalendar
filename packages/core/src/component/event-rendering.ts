@@ -4,13 +4,13 @@ import { DateRange, invertRanges, intersectRanges, rangeContainsMarker } from '.
 import { Duration } from '../datelib/duration'
 import { computeVisibleDayRange, compareByFieldSpecs } from '../util/misc'
 import { Seg } from './DateComponent'
-import EventApi from '../api/EventApi'
+import { EventApi } from '../api/EventApi'
 import { EventUi, EventUiHash, combineEventUis } from './event-ui'
 import { mapHash } from '../util/object'
-import ComponentContext from './ComponentContext'
+import { ComponentContext } from './ComponentContext'
 import { DateFormatter } from '../datelib/formatting'
 import { DateMarker } from '../datelib/marker'
-import ViewApi from '../ViewApi'
+import { ViewApi } from '../ViewApi'
 
 
 export interface EventRenderRange extends EventTuple {

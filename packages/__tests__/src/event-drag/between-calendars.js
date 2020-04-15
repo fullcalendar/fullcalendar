@@ -1,11 +1,11 @@
 import { Calendar } from '@fullcalendar/core'
-import InteractionPlugin from '@fullcalendar/interaction'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import TimeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import { getRectCenter } from '../lib/geom'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('dragging events between calendars', function() {
@@ -42,7 +42,7 @@ describe('dragging events between calendars', function() {
     let eventAllowCalled = false
 
     calendar0 = new Calendar(el0, {
-      plugins: [ InteractionPlugin, DayGridPlugin ],
+      plugins: [ interactionPlugin, dayGridPlugin ],
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,
       initialView: 'dayGridMonth',
@@ -58,7 +58,7 @@ describe('dragging events between calendars', function() {
     })
 
     calendar1 = new Calendar(el1, {
-      plugins: [ InteractionPlugin, DayGridPlugin ],
+      plugins: [ interactionPlugin, dayGridPlugin ],
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,
       initialView: 'dayGridMonth',
@@ -105,7 +105,7 @@ describe('dragging events between calendars', function() {
   it('works between timeGrid views', function(done) {
 
     calendar0 = new Calendar(el0, {
-      plugins: [ InteractionPlugin, TimeGridPlugin ],
+      plugins: [ interactionPlugin, timeGridPlugin ],
       scrollTime: '00:00',
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,
@@ -117,7 +117,7 @@ describe('dragging events between calendars', function() {
     })
 
     calendar1 = new Calendar(el1, {
-      plugins: [ InteractionPlugin, TimeGridPlugin ],
+      plugins: [ interactionPlugin, timeGridPlugin ],
       scrollTime: '00:00',
       timeZone: 'UTC',
       initialDate: DEFAULT_DATE,

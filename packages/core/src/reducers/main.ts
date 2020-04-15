@@ -1,6 +1,6 @@
-import Calendar from '../Calendar'
-import reduceEventSources from './eventSources'
-import reduceEventStore from './eventStore'
+import { Calendar } from '../Calendar'
+import { reduceEventSources } from './eventSources'
+import { reduceEventStore } from './eventStore'
 import { DateProfile, isDateProfilesEqual } from '../DateProfileGenerator'
 import { DateSpan } from '../structs/date-span'
 import { EventInteractionState } from '../interactions/event-interaction-state'
@@ -9,7 +9,7 @@ import { EventSourceHash } from '../structs/event-source'
 import { DateMarker } from '../datelib/marker'
 import { rangeContainsMarker } from '../datelib/date-range'
 
-export default function(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
+export function reduce(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
 
   let viewType = reduceViewType(state.viewType, action)
   let dateProfile = reduceDateProfile(state.dateProfile, action, state.currentDate, viewType, calendar)

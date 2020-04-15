@@ -1,9 +1,9 @@
 import { findElements } from '@fullcalendar/core'
 import { formatIsoDay } from '../datelib-utils'
 import { getRectCenter, intersectRects, addPoints, subtractPoints } from '../geom'
-import CalendarWrapper from './CalendarWrapper'
+import { CalendarWrapper } from './CalendarWrapper'
 
-export default class DayGridWrapper {
+export class DayGridWrapper {
 
   static EVENT_IS_START_CLASSNAME = 'fc-event-start'
   static EVENT_IS_END_CLASSNAME = 'fc-event-end'

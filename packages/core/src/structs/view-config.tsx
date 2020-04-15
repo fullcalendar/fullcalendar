@@ -4,7 +4,7 @@ import { mapHash } from '../util/object'
 import { ComponentType, Component, h } from '../vdom'
 import { ViewRoot } from '../common/ViewRoot'
 import { RenderHook } from '../common/render-hook'
-import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
+import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
 
 /*
 A view-config represents information for either:

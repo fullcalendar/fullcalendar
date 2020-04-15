@@ -1,6 +1,6 @@
 import { VNode, h, Ref } from '../vdom'
 import { findElements } from '../util/dom-manip'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentContext } from '../component/ComponentContext'
 import { computeSmallestCellWidth } from '../util/misc'
 import { isPropsEqual } from '../util/object'
 import { isArraysEqual } from '../util/array'

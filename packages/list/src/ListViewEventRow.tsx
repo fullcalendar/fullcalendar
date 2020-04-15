@@ -11,7 +11,7 @@ const DEFAULT_TIME_FORMAT = {
 }
 
 
-export default class ListViewEventRow extends BaseComponent<MinimalEventProps> {
+export class ListViewEventRow extends BaseComponent<MinimalEventProps> {
 
   render(props: MinimalEventProps, state: {}, context: ComponentContext) {
     let { options } = context

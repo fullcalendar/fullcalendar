@@ -1,8 +1,8 @@
 import { removeLtrCharCodes } from '../lib/string'
 import { addDays } from '@fullcalendar/core'
 import { parseUtcDate } from '../lib/date-parsing'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 
 describe('day names', function() {

@@ -1,10 +1,10 @@
-import DayGridPlugin from '@fullcalendar/daygrid'
-import RRulePlugin from '@fullcalendar/rrule'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import rrulePlugin from '@fullcalendar/rrule'
 import { parseUtcDate, parseLocalDate } from '../lib/date-parsing'
 
 describe('rrule plugin', function() {
   pushOptions({
-    plugins: [ RRulePlugin, DayGridPlugin ],
+    plugins: [ rrulePlugin, dayGridPlugin ],
     initialView: 'dayGridMonth',
     now: '2018-09-07',
     timeZone: 'UTC'

@@ -1,5 +1,5 @@
 
-export default class Mixin {
+export class Mixin {
 
   // mix into a CLASS
   static mixInto(destClass) {

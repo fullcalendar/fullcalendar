@@ -48,6 +48,6 @@ let eventSourceDef: EventSourceDef = {
 
 }
 
-export default createPlugin({
+export const funcEventSourcePlugin = createPlugin({
   eventSourceDefs: [ eventSourceDef ]
 })

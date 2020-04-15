@@ -1,11 +1,11 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap'
-import TimeGridPlugin from '@fullcalendar/timegrid'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import bootstrapPlugin from '@fullcalendar/bootstrap'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('themeSystem', function() {
   pushOptions({
-    plugins: [ BootstrapPlugin, TimeGridPlugin ],
+    plugins: [ bootstrapPlugin, timeGridPlugin ],
     initialView: 'timeGridWeek',
     headerToolbar: {
       left: 'title',

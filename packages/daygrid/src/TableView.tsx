@@ -21,7 +21,7 @@ import {
 // It is responsible for managing width/height.
 
 
-export default abstract class TableView<State={}> extends DateComponent<ViewProps, State> {
+export abstract class TableView<State={}> extends DateComponent<ViewProps, State> {
 
   protected headerElRef: RefObject<HTMLTableCellElement> = createRef<HTMLTableCellElement>()
 

@@ -1,5 +1,5 @@
-import DayGridViewWrapper from "../lib/wrappers/DayGridViewWrapper"
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from "../lib/wrappers/DayGridViewWrapper"
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('hiddenDays', function() {
   const DOW_CLASSNAMES = CalendarWrapper.DOW_CLASSNAMES

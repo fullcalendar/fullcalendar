@@ -3,10 +3,10 @@ import {
   PointerDragEvent,
   elementClosest
 } from '@fullcalendar/core'
-import PointerDragging from '../dnd/PointerDragging'
-import EventDragging from './EventDragging'
+import { PointerDragging } from '../dnd/PointerDragging'
+import { EventDragging } from './EventDragging'
 
-export default class UnselectAuto {
+export class UnselectAuto {
 
   calendar: Calendar
   documentPointer: PointerDragging // for unfocusing

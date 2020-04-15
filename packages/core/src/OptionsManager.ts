@@ -4,7 +4,7 @@ import { organizeRawLocales, buildLocale } from './datelib/locale'
 import { __assign } from 'tslib'
 
 
-export default class OptionsManager {
+export class OptionsManager {
 
   localeDefaults: any // option defaults related to current locale
   overrides: any // option overrides given to the fullCalendar constructor

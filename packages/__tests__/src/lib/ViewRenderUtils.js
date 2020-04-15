@@ -1,6 +1,6 @@
 import { formatIsoDay } from './datelib-utils'
 import { addDays } from '@fullcalendar/core'
-import CalendarWrapper from './wrappers/CalendarWrapper'
+import { CalendarWrapper } from './wrappers/CalendarWrapper'
 
 
 export function expectDayRange(start, end) {

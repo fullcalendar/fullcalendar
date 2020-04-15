@@ -1,4 +1,4 @@
-import CalendarWrapper from "../lib/wrappers/CalendarWrapper"
+import { CalendarWrapper } from "../lib/wrappers/CalendarWrapper"
 
 describe('headerToolbar rendering', function() { // TODO: rename file
 

@@ -1,7 +1,7 @@
 import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../validation'
 import { parseClassName } from '../util/html'
 import { refineProps, capitaliseFirstLetter } from '../util/misc'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 
 // TODO: better called "EventSettings" or "EventConfig"
 // TODO: move this file into structs

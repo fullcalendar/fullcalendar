@@ -1,6 +1,6 @@
 import enGbLocale from '@fullcalendar/core/locales/en-gb'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('firstDay', function() {
 

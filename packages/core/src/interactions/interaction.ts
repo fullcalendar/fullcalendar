@@ -1,4 +1,4 @@
-import DateComponent from '../component/DateComponent'
+import { DateComponent } from '../component/DateComponent'
 
 
 export abstract class Interaction {

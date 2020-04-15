@@ -1,20 +1,20 @@
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { ResizeHandler } from '../Calendar'
-import ViewApi from '../ViewApi'
-import Theme from '../theme/Theme'
+import { ViewApi } from '../ViewApi'
+import { Theme } from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
 import { parseFieldSpecs } from '../util/misc'
 import { createDuration, Duration } from '../datelib/duration'
 import { PluginHooks } from '../plugin-system'
 import { createContext } from '../vdom'
 import { parseToolbars, ToolbarModel } from '../toolbar-parse'
-import ScrollResponder, { ScrollRequestHandler } from '../ScrollResponder'
+import { ScrollResponder, ScrollRequestHandler } from '../ScrollResponder'
 
 
 export const ComponentContextType = createContext<ComponentContext>({} as any) // for Components
 
 
-export default interface ComponentContext {
+export interface ComponentContext {
   calendar: Calendar
   pluginHooks: PluginHooks
   dateEnv: DateEnv

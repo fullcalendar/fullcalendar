@@ -1,6 +1,6 @@
-import Theme from './Theme'
+import { Theme } from './Theme'
 
-export default class StandardTheme extends Theme {
+export class StandardTheme extends Theme {
 }
 
 StandardTheme.prototype.classes = {

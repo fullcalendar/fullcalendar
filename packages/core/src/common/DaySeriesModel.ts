@@ -1,4 +1,4 @@
-import DateProfileGenerator from '../DateProfileGenerator'
+import { DateProfileGenerator } from '../DateProfileGenerator'
 import { DateMarker, addDays, diffDays } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
 
@@ -9,7 +9,7 @@ export interface DaySeriesSeg {
   isEnd: boolean
 }
 
-export default class DaySeriesModel {
+export class DaySeriesModel {
 
   cnt: number
   dates: DateMarker[] // whole-day dates for each column. left to right

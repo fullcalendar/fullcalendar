@@ -1,5 +1,5 @@
 import { RED_REGEX } from '../lib/dom-misc'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('event coloring', function() {
   pushOptions({

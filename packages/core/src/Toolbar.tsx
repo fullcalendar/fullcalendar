@@ -17,7 +17,7 @@ export interface ToolbarContent {
 }
 
 
-export default class Toolbar extends BaseComponent<ToolbarProps> {
+export class Toolbar extends BaseComponent<ToolbarProps> {
 
 
   render(props: ToolbarProps) {

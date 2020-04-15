@@ -1,4 +1,4 @@
-import TimeGridViewWrapper from "../lib/wrappers/TimeGridViewWrapper"
+import { TimeGridViewWrapper } from "../lib/wrappers/TimeGridViewWrapper"
 
 describe('weekViewRender', function() {
 

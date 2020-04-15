@@ -16,7 +16,7 @@ import {
   ElementDragging,
   ViewApi
 } from '@fullcalendar/core'
-import HitDragging from '../interactions/HitDragging'
+import { HitDragging } from '../interactions/HitDragging'
 import { __assign } from 'tslib'
 
 export type DragMetaGenerator = DragMetaInput | ((el: HTMLElement) => DragMetaInput)
@@ -33,7 +33,7 @@ Given an already instantiated draggable object for one-or-more elements,
 Interprets any dragging as an attempt to drag an events that lives outside
 of a calendar onto a calendar.
 */
-export default class ExternalElementDragging {
+export class ExternalElementDragging {
 
   hitDragging: HitDragging
   receivingCalendar: Calendar | null = null

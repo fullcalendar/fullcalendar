@@ -1,17 +1,17 @@
-import ListenerCounter from '../lib/ListenerCounter'
+import { ListenerCounter } from '../lib/ListenerCounter'
 import { Calendar } from '@fullcalendar/core'
-import InteractionPlugin, { ThirdPartyDraggable } from '@fullcalendar/interaction'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import TimeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin, { ThirdPartyDraggable } from '@fullcalendar/interaction'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import 'components-jqueryui' // for .sortable and .draggable
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('external drag and drop with jquery UI', function() {
   pushOptions({
-    plugins: [ InteractionPlugin, TimeGridPlugin, DayGridPlugin ],
+    plugins: [ interactionPlugin, timeGridPlugin, dayGridPlugin ],
     initialDate: '2014-08-23',
     initialView: 'dayGridMonth',
     droppable: true

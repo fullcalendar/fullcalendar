@@ -1,5 +1,5 @@
-import requestJson from '../util/requestJson'
-import Calendar from '../Calendar'
+import { requestJson } from '../util/requestJson'
+import { Calendar } from '../Calendar'
 import { EventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
 import { __assign } from 'tslib'
@@ -50,7 +50,7 @@ let eventSourceDef: EventSourceDef = {
 
 }
 
-export default createPlugin({
+export const jsonFeedEventSourcePlugin = createPlugin({
   eventSourceDefs: [ eventSourceDef ]
 })
 

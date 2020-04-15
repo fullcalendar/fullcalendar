@@ -14,7 +14,7 @@ export interface ViewContainerProps {
 
 
 // TODO: do function component?
-export default class ViewContainer extends BaseComponent<ViewContainerProps> {
+export class ViewContainer extends BaseComponent<ViewContainerProps> {
 
   render(props: ViewContainerProps) {
     let classNames = [

@@ -15,8 +15,8 @@ import {
   CssDimValue,
   Hit
 } from '@fullcalendar/core'
-import Table from './Table'
-import TableSeg from './TableSeg'
+import { Table } from './Table'
+import { TableSeg } from './TableSeg'
 
 
 export interface DayTableProps {
@@ -42,7 +42,7 @@ export interface DayTableProps {
   clientHeight: number | null
 }
 
-export default class DayTable extends DateComponent<DayTableProps, ComponentContext> {
+export class DayTable extends DateComponent<DayTableProps, ComponentContext> {
 
   private slicer = new DayTableSlicer()
   private tableRef = createRef<Table>()

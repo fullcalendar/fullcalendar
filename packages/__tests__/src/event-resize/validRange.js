@@ -1,5 +1,5 @@
 import * as EventResizeUtils from '../lib/EventResizeUtils'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 describe('validRange event resizing', function() {
 

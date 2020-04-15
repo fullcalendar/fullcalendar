@@ -19,7 +19,7 @@ emits:
 - pointermove
 - pointerup
 */
-export default class PointerDragging {
+export class PointerDragging {
 
   containerEl: EventTarget
   subjectEl: HTMLElement | null = null

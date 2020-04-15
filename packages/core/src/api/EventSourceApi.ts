@@ -1,7 +1,7 @@
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { EventSource } from '../structs/event-source'
 
-export default class EventSourceApi {
+export class EventSourceApi {
 
   calendar: Calendar
   internalEventSource: EventSource // rename?

@@ -1,12 +1,12 @@
 import { BaseComponent } from '../vdom-util'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentContext } from '../component/ComponentContext'
 import { DateMarker } from '../datelib/marker'
 import { DateProfile } from '../DateProfileGenerator'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
 import { VNode, h } from '../vdom'
-import TableDateCell, { TableDowCell } from './TableDateCell'
-import NowTimer from '../NowTimer'
+import { TableDateCell, TableDowCell } from './TableDateCell'
+import { NowTimer } from '../NowTimer'
 import { DateRange } from '../datelib/date-range'
 import { memoize } from '../util/memoize'
 
@@ -19,7 +19,7 @@ export interface DayHeaderProps {
 }
 
 
-export default class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename to DayHeaderTr?
+export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename to DayHeaderTr?
 
   createDayHeaderFormatter = memoize(createDayHeaderFormatter)
 

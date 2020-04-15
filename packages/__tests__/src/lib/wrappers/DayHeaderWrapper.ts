@@ -1,10 +1,10 @@
 import { findElements } from '@fullcalendar/core'
 import { parseIsoAsUtc, formatIsoDay } from '../datelib-utils'
 import { parseUtcDate } from '../date-parsing'
-import CalendarWrapper from './CalendarWrapper'
+import { CalendarWrapper } from './CalendarWrapper'
 
 
-export default class DayHeaderWrapper {
+export class DayHeaderWrapper {
 
   constructor(public el: HTMLElement) {
   }

@@ -1,5 +1,5 @@
 
-export default class ListenerCounter {
+export class ListenerCounter {
 
   constructor(el) {
     this.delta = 0

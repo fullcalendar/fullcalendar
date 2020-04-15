@@ -1,5 +1,5 @@
 import { expectActiveRange } from '../lib/ViewDateUtils'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 
 describe('next', function() {

@@ -1,10 +1,10 @@
-import BootstrapPlugin from '@fullcalendar/bootstrap'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import bootstrapPlugin from '@fullcalendar/bootstrap'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 describe('customButtons', function() {
   pushOptions({
-    plugins: [ BootstrapPlugin, DayGridPlugin ]
+    plugins: [ bootstrapPlugin, dayGridPlugin ]
   })
 
   it('can specify text', function() {

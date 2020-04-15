@@ -1,10 +1,10 @@
-import DayGridPlugin from '@fullcalendar/daygrid'
+import dayGridPlugin from '@fullcalendar/daygrid'
 
 export function testTimeZoneImpl(timeZoneImplPlugin) {
 
   describe('named tz implementation', function() {
     pushOptions({
-      plugins: [ timeZoneImplPlugin, DayGridPlugin ]
+      plugins: [ timeZoneImplPlugin, dayGridPlugin ]
     })
 
     it('computes correct offset for named timezone for View dates', function() {

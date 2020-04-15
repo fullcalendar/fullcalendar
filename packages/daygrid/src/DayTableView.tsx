@@ -6,15 +6,15 @@ import {
   DateProfile,
   ViewProps,
   memoize,
-  DaySeries,
+  DaySeriesModel,
   DayTableModel,
   ChunkContentCallbackArgs
 } from '@fullcalendar/core'
-import TableView from './TableView'
-import DayTable from './DayTable'
+import { TableView } from './TableView'
+import { DayTable } from './DayTable'
 
 
-export default class DayTableView extends TableView {
+export class DayTableView extends TableView {
 
   private buildDayTableModel = memoize(buildDayTableModel)
   private headerRef = createRef<DayHeader>()
@@ -68,7 +68,7 @@ export default class DayTableView extends TableView {
 
 
 export function buildDayTableModel(dateProfile: DateProfile, dateProfileGenerator: DateProfileGenerator) {
-  let daySeries = new DaySeries(dateProfile.renderRange, dateProfileGenerator)
+  let daySeries = new DaySeriesModel(dateProfile.renderRange, dateProfileGenerator)
 
   return new DayTableModel(
     daySeries,

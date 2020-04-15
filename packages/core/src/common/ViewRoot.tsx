@@ -1,7 +1,7 @@
 import { ViewSpec } from '../structs/view-spec'
 import { MountHook, buildHookClassNameGenerator } from './render-hook'
 import { ComponentChildren, h, Ref } from '../vdom'
-import ComponentContext from '../component/ComponentContext'
+import { ComponentContext } from '../component/ComponentContext'
 import { BaseComponent } from '../vdom-util'
 
 

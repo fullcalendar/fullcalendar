@@ -1,7 +1,7 @@
 import { Duration } from '../datelib/duration'
 import { EventStore, createEmptyEventStore } from './event-store'
 import { EventDef, EventInstance } from './event'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { computeAlignedDayRange } from '../util/misc'
 import { startOfDay } from '../datelib/marker'
 import { EventUiHash, EventUi } from '../component/event-ui'

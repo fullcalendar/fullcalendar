@@ -1,7 +1,7 @@
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import ListViewWrapper from '../lib/wrappers/ListViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { ListViewWrapper } from '../lib/wrappers/ListViewWrapper'
 import { addDays } from '@fullcalendar/core'
 
 describe('navLinks', function() {

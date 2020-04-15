@@ -1,5 +1,5 @@
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { waitEventDrag } from '../lib/wrappers/interaction-util'
 import { filterVisibleEls } from '../lib/dom-misc'
 

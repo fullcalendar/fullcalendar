@@ -1,5 +1,5 @@
 import ptBrLocale from '@fullcalendar/core/locales/pt-br'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('allDayText', function() {
 

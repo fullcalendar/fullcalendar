@@ -10,7 +10,7 @@ import {
 } from './event'
 import { EventSource } from './event-source'
 import { expandRecurringRanges } from './recurring-event'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 

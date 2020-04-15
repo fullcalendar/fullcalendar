@@ -3,7 +3,7 @@ import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, gr
 import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, rangesEqual } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
-import Calendar from './Calendar'
+import { Calendar } from './Calendar'
 import { computeVisibleDayRange } from './util/misc'
 
 
@@ -21,7 +21,7 @@ export interface DateProfile {
 }
 
 
-export default class DateProfileGenerator {
+export class DateProfileGenerator {
 
   viewSpec: ViewSpec
   slotMinTime: Duration

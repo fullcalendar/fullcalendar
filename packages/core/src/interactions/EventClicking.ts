@@ -1,5 +1,5 @@
 import { listenBySelector } from '../util/dom-event'
-import EventApi from '../api/EventApi'
+import { EventApi } from '../api/EventApi'
 import { elementClosest } from '../util/dom-manip'
 import { getElSeg } from '../component/event-rendering'
 import { Interaction, InteractionSettings } from './interaction'
@@ -7,7 +7,7 @@ import { Interaction, InteractionSettings } from './interaction'
 /*
 Detects when the user clicks on an event within a DateComponent
 */
-export default class EventClicking extends Interaction {
+export class EventClicking extends Interaction {
 
   constructor(settings: InteractionSettings) {
     super(settings)

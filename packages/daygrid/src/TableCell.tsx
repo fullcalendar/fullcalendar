@@ -19,7 +19,7 @@ import {
   addDays,
   intersectRanges,
 } from '@fullcalendar/core'
-import TableSeg from './TableSeg'
+import { TableSeg } from './TableSeg'
 
 
 export interface TableCellProps {
@@ -73,7 +73,7 @@ export interface HookProps {
 const DEFAULT_WEEK_NUM_FORMAT = { week: 'narrow' }
 
 
-export default class TableCell extends DateComponent<TableCellProps> {
+export class TableCell extends DateComponent<TableCellProps> {
 
 
   render(props: TableCellProps, state: {}, context: ComponentContext) {

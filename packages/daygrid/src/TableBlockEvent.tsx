@@ -6,7 +6,7 @@ export interface TableBlockEventProps extends MinimalEventProps {
   defaultDisplayEventEnd: boolean
 }
 
-export default class TableBlockEvent extends BaseComponent<TableBlockEventProps> {
+export class TableBlockEvent extends BaseComponent<TableBlockEventProps> {
 
   render(props: TableBlockEventProps) {
     return (

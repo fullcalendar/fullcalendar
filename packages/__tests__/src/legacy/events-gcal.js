@@ -1,7 +1,7 @@
-import GoogleCalendarPlugin from '@fullcalendar/google-calendar'
-import DayGridPlugin from '@fullcalendar/daygrid'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import googleCalendarPlugin from '@fullcalendar/google-calendar'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 // HACK: in our CI setup, requests to the google-calendar api were failing for some reason
 // (requests to other services were working however)
@@ -25,7 +25,7 @@ describe('Google Calendar plugin', function() {
   let oldConsoleWarn
 
   pushOptions({
-    plugins: [ GoogleCalendarPlugin, DayGridPlugin ],
+    plugins: [ googleCalendarPlugin, dayGridPlugin ],
     initialView: 'dayGridMonth',
     initialDate: DEFAULT_MONTH + '-01'
   })

@@ -3,7 +3,7 @@ import { Calendar } from './main'
 import { hashValuesToArray } from './util/object'
 import { EventSource } from './structs/event-source'
 
-export default createPlugin({
+export const changeHandlerPlugin = createPlugin({
   optionChangeHandlers: {
     events(events, calendar) {
       handleEventSources([ events ], calendar)

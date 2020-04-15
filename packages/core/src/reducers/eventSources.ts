@@ -1,12 +1,12 @@
 import { EventSource, EventSourceHash, doesSourceNeedRange } from '../structs/event-source'
-import Calendar from '../Calendar'
+import { Calendar } from '../Calendar'
 import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { Action } from './types'
 import { guid } from '../util/misc'
 
-export default function(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, calendar: Calendar): EventSourceHash {
+export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, calendar: Calendar): EventSourceHash {
   switch (action.type) {
 
     case 'ADD_EVENT_SOURCES': // already parsed

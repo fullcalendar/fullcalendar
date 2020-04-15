@@ -1,7 +1,7 @@
 import { PointerDragEvent, preventSelection, allowSelection, preventContextMenu, allowContextMenu, ElementDragging } from '@fullcalendar/core'
-import PointerDragging from './PointerDragging'
-import ElementMirror from './ElementMirror'
-import AutoScroller from './AutoScroller'
+import { PointerDragging } from './PointerDragging'
+import { ElementMirror } from './ElementMirror'
+import { AutoScroller } from './AutoScroller'
 
 /*
 Monitors dragging on an element. Has a number of high-level features:
@@ -9,7 +9,7 @@ Monitors dragging on an element. Has a number of high-level features:
 - minimum wait time ("delay") before dragging
 - a mirror element that follows the pointer
 */
-export default class FeaturefulElementDragging extends ElementDragging {
+export class FeaturefulElementDragging extends ElementDragging {
 
   pointer: PointerDragging
   mirror: ElementMirror

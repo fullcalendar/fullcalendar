@@ -1,4 +1,4 @@
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('slotMinTime', function() { // TODO: rename file
   pushOptions({

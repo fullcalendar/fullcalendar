@@ -1,7 +1,7 @@
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 import { waitEventResize } from '../lib/wrappers/interaction-util'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
 
 describe('event resize mirror', function() {
   pushOptions({

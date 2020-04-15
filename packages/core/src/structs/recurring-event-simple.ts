@@ -87,7 +87,7 @@ let recurring: RecurringType = {
 
 }
 
-export default createPlugin({
+export const simpleRecurringEventsPlugin = createPlugin({
   recurringTypes: [ recurring ]
 })
 

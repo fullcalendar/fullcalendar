@@ -1,4 +1,4 @@
-import TableSeg from './TableSeg'
+import { TableSeg } from './TableSeg'
 import { sortEventSegs } from '@fullcalendar/core'
 
 

@@ -1,5 +1,5 @@
 import esLocale from '@fullcalendar/core/locales/es'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('weekText', function() { // TODO: rename file
   pushOptions({

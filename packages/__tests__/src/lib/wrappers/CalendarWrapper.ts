@@ -1,7 +1,7 @@
 import { Calendar, findElements } from '@fullcalendar/core'
-import ToolbarWrapper from './ToolbarWrapper'
+import { ToolbarWrapper } from './ToolbarWrapper'
 
-export default class CalendarWrapper {
+export class CalendarWrapper {
 
   static EVENT_CLASSNAME = 'fc-event' // TODO: put this everywhere?
   static EVENT_IS_START_CLASSNAME = 'fc-event-start'

@@ -1,4 +1,4 @@
-import DaySeries from './DaySeriesModel'
+import { DaySeriesModel } from './DaySeriesModel'
 import { DateRange } from '../datelib/date-range'
 import { DateMarker } from '../datelib/marker'
 import { Seg } from '../component/DateComponent'
@@ -17,16 +17,16 @@ export interface DayTableCell {
   extraClassNames?: string[]
 }
 
-export default class DayTableModel {
+export class DayTableModel {
 
   rowCnt: number
   colCnt: number
   cells: DayTableCell[][]
   headerDates: DateMarker[]
 
-  private daySeries: DaySeries
+  private daySeries: DaySeriesModel
 
-  constructor(daySeries: DaySeries, breakOnWeeks: boolean) {
+  constructor(daySeries: DaySeriesModel, breakOnWeeks: boolean) {
     let { dates } = daySeries
     let daysPerRow
     let firstDay

@@ -1,5 +1,5 @@
 
-export default class ToolbarWrapper {
+export class ToolbarWrapper {
 
   constructor(private el: HTMLElement) {
   }

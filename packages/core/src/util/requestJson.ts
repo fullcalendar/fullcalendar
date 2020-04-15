@@ -1,5 +1,5 @@
 
-export default function requestJson(method: string, url: string, params: object, successCallback, failureCallback) {
+export function requestJson(method: string, url: string, params: object, successCallback, failureCallback) {
   method = method.toUpperCase()
 
   let body = null

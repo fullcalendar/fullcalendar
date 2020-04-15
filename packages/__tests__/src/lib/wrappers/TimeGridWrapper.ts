@@ -3,10 +3,10 @@ import { formatIsoDay, formatIsoTime, ensureDate } from '../datelib-utils'
 import { parseUtcDate } from '../date-parsing'
 import { getBoundingRect } from '../dom-geom'
 import { addPoints } from '../geom'
-import CalendarWrapper from './CalendarWrapper'
+import { CalendarWrapper } from './CalendarWrapper'
 
 
-export default class TimeGridWrapper {
+export class TimeGridWrapper {
 
   constructor(public el: HTMLElement) {
   }

@@ -1,8 +1,8 @@
 import frLocale from '@fullcalendar/core/locales/fr'
 import { createPlugin } from '@fullcalendar/core' // View
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
-import TimeGridViewWrapper from '../lib/wrappers/TimeGridViewWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
+import { TimeGridViewWrapper } from '../lib/wrappers/TimeGridViewWrapper'
 
 describe('custom view', function() {
 

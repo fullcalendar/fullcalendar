@@ -1,6 +1,6 @@
 import { directionallyTestSeg } from '../lib/DayGridEventRenderUtils'
-import DayGridViewWrapper from '../lib/wrappers/DayGridViewWrapper'
-import CalendarWrapper from '../lib/wrappers/CalendarWrapper'
+import { DayGridViewWrapper } from '../lib/wrappers/DayGridViewWrapper'
+import { CalendarWrapper } from '../lib/wrappers/CalendarWrapper'
 
 
 describe('DayGrid event rendering', function() {

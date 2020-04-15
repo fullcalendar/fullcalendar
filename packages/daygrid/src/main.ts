@@ -1,13 +1,13 @@
 import { createPlugin } from '@fullcalendar/core'
-import DayTableView from './DayTableView'
+import { DayTableView } from './DayTableView'
 import './main.scss'
-import TableDateProfileGenerator from './TableDateProfileGenerator'
+import { TableDateProfileGenerator } from './TableDateProfileGenerator'
 
-export { default as DayTable, DayTableSlicer } from './DayTable'
-export { default as Table } from './Table'
-export { default as TableSeg } from './TableSeg'
+export { DayTable, DayTableSlicer } from './DayTable'
+export { Table } from './Table'
+export { TableSeg } from './TableSeg'
 export { TableCellModel } from './TableCell'
-export { default as TableView } from './TableView'
+export { TableView } from './TableView'
 export { buildDayTableModel } from './DayTableView'
 export { DayTableView as DayGridView } // export as old name!
 

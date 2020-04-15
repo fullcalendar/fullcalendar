@@ -4,7 +4,7 @@ import {
   DateRange
 } from '@fullcalendar/core'
 
-export default class TableDateProfileGenerator extends DateProfileGenerator {
+export class TableDateProfileGenerator extends DateProfileGenerator {
 
 
   // Computes the date range that will be rendered.

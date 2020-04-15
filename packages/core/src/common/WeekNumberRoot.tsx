@@ -1,5 +1,5 @@
 import { createFormatter, FormatterInput } from '../datelib/formatting'
-import ComponentContext, { ComponentContextType } from '../component/ComponentContext'
+import { ComponentContext, ComponentContextType } from '../component/ComponentContext'
 import { DateMarker } from '../datelib/marker'
 import { RenderHook, RenderHookPropsChildren } from './render-hook'
 import { h } from '../vdom'
