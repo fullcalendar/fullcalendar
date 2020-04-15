@@ -32,7 +32,6 @@
     "clean": "rm -rf tmp archives && monorepo exec rm -rf dist && monorepo run clean",
     "tsc": "tsc -p tsconfig.json",
     "tsc:watch": "tsc -p tsconfig.json --sourceMap --watch",
-    "tsc:dts": "tsc -p tsconfig.dts.json",
     "sass": "sass --no-source-map `./scripts/sass-args.js`",
     "sass:watch": "sass --watch `./scripts/sass-args.js`",
     "rollup": "rollup -c --environment BUILD:production",

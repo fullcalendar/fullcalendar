@@ -16,6 +16,6 @@ const buildDtsConfig = require('./scripts/lib/rollup-dts')
 module.exports = [
   ...buildModuleConfigs(isDev),
   ...buildBundleConfigs(isDev),
-  ...buildTestConfigs()
-  // buildDtsConfig()
+  ...buildTestConfigs(),
+  buildDtsConfig()
 ]

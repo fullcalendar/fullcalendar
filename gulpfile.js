@@ -1,7 +1,6 @@
 const { parallel, series } = require('gulp')
 const { shellTask } = require('./scripts/lib/util')
 const { writePkgJsons } = require('./scripts/lib/pkg-json-write')
-const { bundlPkgDefs } = require('./scripts/lib/pkg-dts')
 const { writePkgReadmes } = require('./scripts/lib/pkg-readme')
 const { writePkgLicenses } = require('./scripts/lib/pkg-license')
 const { minifyJs, minifyCss } = require('./scripts/lib/minify') // combine into one task? make part of rollup?
@@ -10,11 +9,6 @@ const { archive } = require('./scripts/lib/archive')
 const { writeLocales, watchLocales } = require('./scripts/lib/locales')
 const { buildTestIndex } = require('./scripts/lib/tests-index')
 const { runTsc, runTscWatch } = require('./scripts/lib/tsc')
-
-const buildDts = exports.dts = series(
-  shellTask('npm:tsc:dts'), // generates granular .d.ts files
-  bundlPkgDefs // combines them
-)
 
 exports.lint = lint
 exports.archive = archive
@@ -33,8 +27,7 @@ exports.build = series(
   parallel(
     shellTask('npm:rollup'), // needs tsc, copied scss, generated locales
     writePkgLicenses,
-    writePkgReadmes,
-    buildDts
+    writePkgReadmes
   ),
   parallel(minifyJs, minifyCss)
 )
@@ -51,7 +44,6 @@ exports.watch = series(
       shellTask('npm:rollup:watch'), // needs tsc, copied scss, generated locales
       writePkgLicenses, // doesn't watch!
       writePkgReadmes, // doesn't watch!
-      buildDts, // doesn't watch!
       watchLocales // TODO: ignore initial
     )
   )
