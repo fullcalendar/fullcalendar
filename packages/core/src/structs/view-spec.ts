@@ -1,6 +1,6 @@
 import { ViewDef, compileViewDefs } from './view-def'
 import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInput } from '../datelib/duration'
-import { compileOptionsAdvanced } from '../OptionsManager'
+import { compileOptions } from '../OptionsManager'
 import { mapHash } from '../util/object'
 import { globalDefaults } from '../options'
 import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'
@@ -68,8 +68,8 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     }
   }
 
-  let queryButtonText = function(options) {
-    let buttonTextMap = options.buttonText || {}
+  let queryButtonText = function(optionsSubset) {
+    let buttonTextMap = optionsSubset.buttonText || {}
     let buttonTextKey = viewDef.defaults.buttonTextKey
 
     if (buttonTextKey != null && buttonTextMap[buttonTextKey] != null) {
@@ -85,7 +85,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     }
   }
 
-  let { combined, localeDefaults } = compileOptionsAdvanced(
+  let { options, localeDefaults } = compileOptions(
     optionOverrides,
     dynamicOptionOverrides,
     viewDef.defaults,
@@ -98,7 +98,7 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     duration,
     durationUnit,
     singleUnit,
-    options: combined,
+    options,
 
     buttonTextOverride:
       queryButtonText(dynamicOptionOverrides) ||

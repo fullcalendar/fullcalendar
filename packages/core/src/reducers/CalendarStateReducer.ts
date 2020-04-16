@@ -1,5 +1,5 @@
 
-import { organizeRawLocales, buildLocale, RawLocaleInfo } from '../datelib/locale'
+import { buildLocale, RawLocaleInfo } from '../datelib/locale'
 import { memoize } from '../util/memoize'
 import { Action, CalendarState } from './types'
 import { PluginHooks, buildPluginHooks } from '../plugin-system'
@@ -26,7 +26,6 @@ export class CalendarStateReducer {
 
   private compileOptions = memoize(compileOptions)
   private buildPluginHooks = memoize(buildPluginHooks)
-  private organizeRawLocales = memoize(organizeRawLocales)
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
   private buildViewSpecs = memoize(buildViewSpecs)
@@ -61,10 +60,10 @@ export class CalendarStateReducer {
         break
     }
 
-    let options = this.compileOptions(optionOverrides, dynamicOptionOverrides) // TODO: this is also done elsewhere
+    let { options, availableLocaleData } = this.compileOptions(optionOverrides, dynamicOptionOverrides)
+
     let pluginHooks = this.buildPluginHooks(options.plugins)
     let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides)
-    let availableLocaleData = this.organizeRawLocales(options.locales)
     let prevDateEnv = state.dateEnv
     let dateEnv = this.buildDateEnv(
       options.timeZone,
