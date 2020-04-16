@@ -102,7 +102,7 @@ describe('header rendering', function() {
 
     it('should not submit the form when clicking the button', function(done) {
       var unloadCalled = false
-      var el = $('<div id="calendar"/>')
+      var el = $('<div id="calendar"></div>')
         .wrap('<form action="https://google.com/"></form>')
         .appendTo('body')
 

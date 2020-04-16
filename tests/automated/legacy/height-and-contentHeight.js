@@ -19,7 +19,7 @@
       })
 
       beforeEach(function() {
-        calendarEl = $('<div />').appendTo('body').width(900)
+        calendarEl = $('<div></div>').appendTo('body').width(900)
       })
 
       afterEach(function() {
@@ -78,7 +78,7 @@
                 describe(testInfo.description, function() {
                   if (testInfo.heightWrapper) {
                     beforeEach(function() {
-                      calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
+                      calendarEl.wrap('<div class="calendar-container" style="height: 600px;"></div>')
                     })
                   }
 
@@ -180,7 +180,7 @@
                   describe(testInfo.description, function() {
                     if (testInfo.heightWrapper) {
                       beforeEach(function() {
-                        calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
+                        calendarEl.wrap('<div class="calendar-container" style="height: 600px;"></div>')
                       })
                     }
 
@@ -234,7 +234,7 @@
                     describe(testInfo.description, function() {
                       if (testInfo.heightWrapper) {
                         beforeEach(function() {
-                          calendarEl.wrap('<div class="calendar-container" style="height: 600px;" />')
+                          calendarEl.wrap('<div class="calendar-container" style="height: 600px;"></div>')
                         })
                       }
 

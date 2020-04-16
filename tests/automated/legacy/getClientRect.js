@@ -55,13 +55,13 @@ describe('getClientRect', function() {
   function defineTest(isScrolling, dir, cssProps, innerDims, dims) {
     it('computes correct dimensions', function() {
       var el = $(
-        '<div style="position:absolute" />'
+        '<div style="position:absolute"></div>'
       )
         .css('overflow', isScrolling ? 'scroll' : 'hidden')
         .css('direction', dir)
         .css(cssProps)
         .append(
-          $('<div style="position:relative" />').css(innerDims)
+          $('<div style="position:relative"></div>').css(innerDims)
         )
         .appendTo('body')
 

@@ -387,7 +387,7 @@ export default class Calendar {
       el.toggleClass('fc-rtl', opts.isRTL)
     })
 
-    this.contentEl = $("<div class='fc-view-container'/>").prependTo(el)
+    this.contentEl = $("<div class='fc-view-container'></div>").prependTo(el)
 
     this.initToolbars()
     this.renderHeader()
@@ -488,7 +488,7 @@ export default class Calendar {
 
       newView.startBatchRender() // so that setElement+setDate rendering are joined
       newView.setElement(
-        $("<div class='fc-view fc-" + viewType + "-view' />").appendTo(this.contentEl)
+        $("<div class='fc-view fc-" + viewType + "-view'></div>").appendTo(this.contentEl)
       )
 
       this.toolbarsManager.proxyCall('activateButton', viewType)

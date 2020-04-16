@@ -15,7 +15,7 @@ export default class DayGridHelperRenderer extends HelperRenderer {
     // inject each new event skeleton into each associated row
     this.component.rowEls.each(function(row, rowNode) {
       let rowEl = $(rowNode) // the .fc-row
-      let skeletonEl = $('<div class="fc-helper-skeleton"><table/></div>') // will be absolutely positioned
+      let skeletonEl = $('<div class="fc-helper-skeleton"><table></table></div>') // will be absolutely positioned
       let skeletonTopEl
       let skeletonTop
 

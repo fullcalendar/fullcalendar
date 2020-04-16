@@ -40,7 +40,7 @@ describe('ListView rendering', function() {
       it('filters events through eventRender', function() {
         var options = {}
         options.eventRender = function(event, el) {
-          el.find('.fc-event-dot').replaceWith('<span class="custom-icon" />')
+          el.find('.fc-event-dot').replaceWith('<span class="custom-icon"></span>')
         }
 
         initCalendar(options)
@@ -392,7 +392,7 @@ describe('ListView rendering', function() {
     })
 
     it('makes scrollbars', function() {
-      let $el = $('<div style="width:300px" />').appendTo('body')
+      let $el = $('<div style="width:300px"></div>').appendTo('body')
       initCalendar({
         header: false
       }, $el)
@@ -406,7 +406,7 @@ describe('ListView rendering', function() {
     })
 
     it('doesn\'t have scrollbars when height is \'auto\'', function() {
-      let $el = $('<div style="width:300px" />').appendTo('body')
+      let $el = $('<div style="width:300px"></div>').appendTo('body')
       initCalendar({
         header: false,
         height: 'auto'

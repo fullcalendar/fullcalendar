@@ -32,14 +32,14 @@ export default class Toolbar {
 
     if (sections) {
       if (!el) {
-        el = this.el = $("<div class='fc-toolbar " + this.toolbarOptions.extraClasses + "'/>")
+        el = this.el = $("<div class='fc-toolbar " + this.toolbarOptions.extraClasses + "'></div>")
       } else {
         el.empty()
       }
       el.append(this.renderSection('left'))
         .append(this.renderSection('right'))
         .append(this.renderSection('center'))
-        .append('<div class="fc-clear"/>')
+        .append('<div class="fc-clear"></div>')
     } else {
       this.removeElement()
     }
@@ -59,7 +59,7 @@ export default class Toolbar {
     let theme = calendar.theme
     let optionsManager = calendar.optionsManager
     let viewSpecManager = calendar.viewSpecManager
-    let sectionEl = $('<div class="fc-' + position + '"/>')
+    let sectionEl = $('<div class="fc-' + position + '"></div>')
     let buttonStr = this.toolbarOptions.layout[position]
     let calendarCustomButtons = optionsManager.get('customButtons') || {}
     let calendarButtonTextOverrides = optionsManager.overrides.buttonText || {}
@@ -192,7 +192,7 @@ export default class Toolbar {
         }
 
         if (groupChildren.length > 1) {
-          groupEl = $('<div/>')
+          groupEl = $('<div></div>')
           if (isOnlyButtons) {
             groupEl.addClass(theme.getClass('buttonGroup'))
           }

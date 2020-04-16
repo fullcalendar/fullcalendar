@@ -62,7 +62,7 @@ export default class Popover {
   render() {
     let options = this.options
 
-    this.el = $('<div class="fc-popover"/>')
+    this.el = $('<div class="fc-popover"></div>')
       .addClass(options.className || '')
       .css({
         // position initially to the top left to avoid creating scrollbars

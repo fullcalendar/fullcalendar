@@ -7,9 +7,9 @@
  * http://www.gnu.org/licenses/gpl.html
  *
  */
- 
+
 (function( $ ){
-	
+
 	$.fn.themeswitcher = function( options ) {
 		var switcherDiv = this, switcherOptions = {};
 		var settings = {
@@ -33,16 +33,16 @@
             cookieexpires: 365,
             cookiepath: '/'
     	};
-    	
+
     	if(options) {
 	    	//lowercase all options passed in
 	    	$.each(options, function(k,v){
 	    		switcherOptions[k.toLowerCase()] = v;
 	    	});
-	    	
+
 			$.extend( settings, switcherOptions );
     	}
-    	
+
     	if( ! settings.themes.length ){
     		var themes = [
     			{
@@ -169,11 +169,11 @@
     	}else{
     		var themes = settings.themes;
     	}
-    	
+
     	if( settings.additionalthemes.length ){
     		$.extend( themes, settings.additionalthemes );
     	}
-    	
+
     	// Switcher link
     	var switcherLinkStyle = {
     		"cursor": "pointer",
@@ -190,14 +190,14 @@
     		"outline": "0px" ,
     		"line-height": settings.buttonheight+"px"
     	}
-    	
+
     	if( settings.rounded ){
     		switcherLinkStyle['border-radius'] = "6px";
     		switcherLinkStyle['-moz-border-radius'] = "6px";
     		switcherLinkStyle['-webkit-border-radius'] = "6px";
     	}
-    	
-    	var switcherLink = $("<a/>")
+
+    	var switcherLink = $("<a></a>")
     		.addClass("jquery-ui-switcher-link")
     		.css(switcherLinkStyle)
     		.bind({
@@ -217,10 +217,10 @@
     				(!switcherDiv.find(".jquery-ui-switcher-list-hldr").is(":visible")) ? openSwitcher() : closeSwitcher();
     			}
     		});
-    	
-    	// Title & Icon for switcher link	
-    	var switcherTitle = $("<span/>").addClass("jquery-ui-switcher-title").appendTo(switcherLink);
-    	$("<span/>").addClass("jquery-ui-switcher-arrow")
+
+    	// Title & Icon for switcher link
+    	var switcherTitle = $("<span></span>").addClass("jquery-ui-switcher-title").appendTo(switcherLink);
+    	$("<span></span>").addClass("jquery-ui-switcher-arrow")
     		.css({
     			"float": "right",
     			"width": "16px",
@@ -228,19 +228,19 @@
     			"background": "url("+settings.imgpath+"icon_color_arrow.gif) no-repeat 50% 50%"
     		})
     		.appendTo(switcherLink);
-    		
+
     	// load the default theme or the theme stored in the cookie
     	if( $.cookie(settings.cookiename) ){
     		updateTheme( findTheme($.cookie(settings.cookiename)) );
-    		
+
     	}else if( settings.loadtheme.length ){
     		updateTheme( findTheme(settings.loadtheme) );
-    		
+
     	}else{
     		switcherTitle.text(settings.initialtext);
     	}
-    	
-    	var switcherListHldr = $("<div/>")
+
+    	var switcherListHldr = $("<div></div>")
     		.addClass("jquery-ui-switcher-list-hldr")
     		.css({
     			"width": eval(settings.width+8)+"px",
@@ -262,14 +262,14 @@
     				closeSwitcher();
     			}
     		});
-    		
+
     		if( settings.rounded ){
     			switcherListHldr.css("border-radius","0 0 6px 6px");
     			switcherListHldr.css("-moz-border-radius","0 0 6px 6px");
     			switcherListHldr.css("-webkit-border-radius","0 0 6px 6px");
     		}
-    		
-    	var switcherList = $("<ul/>")
+
+    	var switcherList = $("<ul></ul>")
     		.css({
     			"list-style": "none",
     			"margin": "0",
@@ -279,13 +279,13 @@
     			"height": settings.height+"px"
     		})
     		.appendTo(switcherListHldr);
-    	
+
     	// Iterate over themes and build links
     	$.each(themes, function(k,v){
     		var listItem = $("<li>")
     			.css("height","90px")
     			.appendTo(switcherList);
-    			
+
     		var listLink = $("<a>")
     			.css({
     				"display": "block",
@@ -310,7 +310,7 @@
     			.attr("href","#")
     			.data(v)
     			.appendTo(listItem);
-    			
+
     		var linkImg = $("<img>")
     			.attr("src", settings.imgpath + v.icon)
     			.attr("title",v.title)
@@ -320,7 +320,7 @@
     				"border": "1px solid #333"
     			})
     			.appendTo(listLink);
-    		
+
     		var linkText = $("<span>")
     			.css({
     				"float": "left",
@@ -330,14 +330,14 @@
     			.text(v.title)
     			.appendTo(listLink);
     	});
-    	
+
     	function updateTheme(data){
     		if( settings.onselect !== null )
     			settings.onselect();
-    		
+
     		switcherTitle.text(settings.buttonpretext +" "+ data.title);
-    		
-   			
+
+
 		var currentStyle = [];
 		var url = data.url;
 
@@ -354,20 +354,20 @@
 				.attr("type","text/css")
 				.attr("rel","stylesheet")
 				.attr("href", url);
-	 
+
 			style.appendTo("head");
 		}
-    		
-    		$.cookie(settings.cookiename, data.name, 
+
+    		$.cookie(settings.cookiename, data.name,
                 { expires: settings.cookieexpires, path: settings.cookiepath }
             );
-            
+
     		switcherDiv.find(".jquery-ui-switcher-title").text(settings.buttonpretext + " " + data.title);
-    		
+
     		if( settings.closeonselect )
     			closeSwitcher();
     	}
-    	
+
     	// Finds a theme[] based on a valid name or title
     	function findTheme(theme){
     		var result = null;
@@ -377,28 +377,28 @@
     				return false;
     			}
     		});
-    		
+
     		if( !result ){
     			return themes[0];
     		}
     		return result;
     	}
-    	
+
     	function openSwitcher(){
     		if( settings.onopen !== null )
     			settings.onopen();
-    			
+
     		switcherDiv.find(".jquery-ui-switcher-link").css({
     			"color": "#AAA",
     		    "background": "#000"
     		});
     		switcherDiv.find(".jquery-ui-switcher-list-hldr").slideDown("fast");
     	}
-    	
+
     	function closeSwitcher(){
     		if( settings.onclose !== null )
     			settings.onclose();
-    		
+
     		switcherDiv.find(".jquery-ui-switcher-list-hldr").slideUp("fast", function(){
     			switcherDiv.find(".jquery-ui-switcher-link").css({
     		    	"color":"#666",
@@ -406,15 +406,15 @@
     		    });
     		});
     	}
-    		
-    		
+
+
     	this.css("position","relative");
     	this.append(switcherLink);
     	this.append(switcherListHldr);
-    	
+
     	return this;
     }
-	
+
 })( jQuery );
 
 /*!

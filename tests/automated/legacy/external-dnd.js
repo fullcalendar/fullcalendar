@@ -335,7 +335,7 @@ describe('external drag and drop', function() {
         init()
         var el1 = $('#cal')
 
-        $('#cal').after('<div id="cal2"/>')
+        $('#cal').after('<div id="cal2"></div>')
         var el2 = $('#cal2').fullCalendar(options)
 
         var beforeCnt = countHandlers(document)

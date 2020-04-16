@@ -47,12 +47,12 @@ describe('getScrollbarWidths', function() {
   function defineTest(isScrolling, dir, cssProps) {
     it('computes correct widths', function() {
       var el = $(
-        '<div style="position:absolute" />'
+        '<div style="position:absolute"></div>'
       )
         .css('overflow', isScrolling ? 'scroll' : 'hidden')
         .css('direction', dir)
         .css(cssProps)
-        .append('<div style="position:relative;width:100px;height:100px" />')
+        .append('<div style="position:relative;width:100px;height:100px"></div>')
         .appendTo('body')
 
       var widths = getScrollbarWidths(el)

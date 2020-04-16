@@ -2,7 +2,7 @@
 describe('render method', function() {
 
   it('updates size of a previously hidden element', function() {
-    var $el = $('<div style="display:none" />').appendTo('body')
+    var $el = $('<div style="display:none"></div>').appendTo('body')
 
     initCalendar({
       defaultView: 'month',
