@@ -35,18 +35,16 @@ export class EventClicking extends Interaction {
       let hasUrlContainer = elementClosest(ev.target as HTMLElement, '.fc-event-forced-url')
       let url = hasUrlContainer ? (hasUrlContainer.querySelector('a[href]') as any).href : ''
 
-      calendar.publiclyTrigger('eventClick', [
-        {
-          el: segEl,
-          event: new EventApi(
-            component.context.calendar,
-            seg.eventRange.def,
-            seg.eventRange.instance
-          ),
-          jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-          view: viewApi
-        }
-      ])
+      calendar.emitter.trigger('eventClick', {
+        el: segEl,
+        event: new EventApi(
+          component.context.calendar,
+          seg.eventRange.def,
+          seg.eventRange.instance
+        ),
+        jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
+        view: viewApi
+      })
 
       if (url && !ev.defaultPrevented) {
         window.location.href = url

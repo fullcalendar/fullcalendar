@@ -61,18 +61,16 @@ export class EventHovering extends Interaction {
     let seg = getElSeg(segEl)!
 
     if (!ev || component.isValidSegDownEl(ev.target as HTMLElement)) {
-      calendar.publiclyTrigger(publicEvName, [
-        {
-          el: segEl,
-          event: new EventApi(
-            calendar,
-            seg.eventRange.def,
-            seg.eventRange.instance
-          ),
-          jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-          view: viewApi
-        }
-      ])
+      calendar.emitter.trigger(publicEvName, {
+        el: segEl,
+        event: new EventApi(
+          calendar,
+          seg.eventRange.def,
+          seg.eventRange.instance
+        ),
+        jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
+        view: viewApi
+      })
     }
   }
 

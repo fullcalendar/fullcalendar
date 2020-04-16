@@ -117,14 +117,12 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
     if (this.isDragging) {
       initialCalendar.unselect(ev) // unselect *date* selection
-      initialCalendar.publiclyTrigger('eventDragStart', [
-        {
-          el: this.subjectEl,
-          event: new EventApi(initialCalendar, eventRange.def, eventRange.instance),
-          jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-          view: context.viewApi
-        }
-      ])
+      initialCalendar.emitter.trigger('eventDragStart', {
+        el: this.subjectEl,
+        event: new EventApi(initialCalendar, eventRange.def, eventRange.instance),
+        jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
+        view: context.viewApi
+      })
     }
   }
 
@@ -231,14 +229,12 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
       this.clearDrag() // must happen after revert animation
 
-      initialCalendar.publiclyTrigger('eventDragStop', [
-        {
-          el: this.subjectEl,
-          event: eventApi,
-          jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-          view: initialView
-        }
-      ])
+      initialCalendar.emitter.trigger('eventDragStop', {
+        el: this.subjectEl,
+        event: eventApi,
+        jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
+        view: initialView
+      })
 
       if (validMutation) {
 
@@ -276,18 +272,16 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             view: initialView
           }
 
-          initialCalendar.publiclyTrigger('eventDrop', [ eventDropArg ])
+          initialCalendar.emitter.trigger('eventDrop', eventDropArg)
 
         // dropped in different calendar
         } else if (receivingCalendar) {
 
-          initialCalendar.publiclyTrigger('eventLeave', [
-            {
-              draggedEl: ev.subjectEl as HTMLElement,
-              event: eventApi,
-              view: initialView
-            }
-          ])
+          initialCalendar.emitter.trigger('eventLeave', {
+            draggedEl: ev.subjectEl as HTMLElement,
+            event: eventApi,
+            view: initialView
+          })
 
           initialCalendar.dispatch({
             type: 'REMOVE_EVENT_INSTANCES',
@@ -306,29 +300,26 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             })
           }
 
-          let dropArg = {
+          receivingCalendar.emitter.trigger('drop', {
             ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),
             draggedEl: ev.subjectEl as HTMLElement,
             jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
             view: finalHit.component.context.viewApi
-          }
-          receivingCalendar.publiclyTrigger('drop', [ dropArg ])
+          })
 
-          receivingCalendar.publiclyTrigger('eventReceive', [
-            {
-              draggedEl: ev.subjectEl as HTMLElement,
-              event: new EventApi( // the data AFTER the mutation
-                receivingCalendar,
-                mutatedRelevantEvents.defs[eventDef.defId],
-                mutatedRelevantEvents.instances[eventInstance.instanceId]
-              ),
-              view: finalHit.component.context.viewApi
-            }
-          ])
+          receivingCalendar.emitter.trigger('eventReceive', {
+            draggedEl: ev.subjectEl as HTMLElement,
+            event: new EventApi( // the data AFTER the mutation
+              receivingCalendar,
+              mutatedRelevantEvents.defs[eventDef.defId],
+              mutatedRelevantEvents.instances[eventInstance.instanceId]
+            ),
+            view: finalHit.component.context.viewApi
+          })
         }
 
       } else {
-        initialCalendar.publiclyTrigger('_noEventDrop')
+        initialCalendar.emitter.trigger('_noEventDrop')
       }
     }
 

@@ -135,7 +135,7 @@ export class ExternalElementDragging {
         jsEvent: pev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view: finalView
       }
-      receivingCalendar.publiclyTrigger('drop', [ arg ])
+      receivingCalendar.emitter.trigger('drop', arg)
 
       if (dragMeta.create) {
         receivingCalendar.dispatch({
@@ -151,17 +151,15 @@ export class ExternalElementDragging {
         }
 
         // signal that an external event landed
-        receivingCalendar.publiclyTrigger('eventReceive', [
-          {
-            draggedEl: pev.subjectEl as HTMLElement,
-            event: new EventApi(
-              receivingCalendar,
-              droppableEvent.def,
-              droppableEvent.instance
-            ),
-            view: finalView
-          }
-        ])
+        receivingCalendar.emitter.trigger('eventReceive', {
+          draggedEl: pev.subjectEl as HTMLElement,
+          event: new EventApi(
+            receivingCalendar,
+            droppableEvent.def,
+            droppableEvent.instance
+          ),
+          view: finalView
+        })
       }
     }
 

@@ -17,13 +17,13 @@ export class ScrollResponder {
 
 
   constructor(public calendar: Calendar, public execFunc: ScrollRequestHandler) {
-    calendar.on('scrollRequest', this.handleScrollRequest)
+    calendar.on('_scrollRequest', this.handleScrollRequest)
     this.fireInitialScroll()
   }
 
 
   detach() {
-    this.calendar.off('scrollRequest', this.handleScrollRequest)
+    this.calendar.off('_scrollRequest', this.handleScrollRequest)
   }
 
 

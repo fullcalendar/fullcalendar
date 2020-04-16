@@ -20,6 +20,7 @@ import { reduceDateSelection } from './date-selection'
 import { reduceSelectedEvent } from './selected-event'
 import { reduceEventDrag } from './event-drag'
 import { reduceEventResize } from './event-resize'
+import { EmitterMixin } from '../common/EmitterMixin'
 
 
 export class CalendarStateReducer {
@@ -32,7 +33,7 @@ export class CalendarStateReducer {
   private buildDateProfileGenerator = memoize(buildDateProfileGenerators)
 
 
-  reduce(state: CalendarState, action: Action, calendar: Calendar): CalendarState {
+  reduce(state: CalendarState, action: Action, emitter: EmitterMixin, calendar: Calendar): CalendarState {
     let optionOverrides = state.optionOverrides || {}
     let dynamicOptionOverrides = state.dynamicOptionOverrides || {}
 
@@ -61,6 +62,7 @@ export class CalendarStateReducer {
     }
 
     let { options, availableLocaleData } = this.compileOptions(optionOverrides, dynamicOptionOverrides)
+    emitter.setOptions(options)
 
     let pluginHooks = this.buildPluginHooks(options.plugins)
     let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides)
@@ -85,7 +87,7 @@ export class CalendarStateReducer {
     let dateProfile = reduceDateProfile(state.dateProfile, action, currentDate, dateProfileGenerator)
     currentDate = reduceCurrentDate(currentDate, action, dateProfile)
 
-    let eventSources = reduceEventSources(state.eventSources, action, dateProfile, pluginHooks, options, calendar)
+    let eventSources = reduceEventSources(state.eventSources, action, dateProfile, pluginHooks, options, emitter, calendar)
 
     let nextState = {
       ...state, // preserve previous state from plugin reducers

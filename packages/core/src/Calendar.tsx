@@ -1,4 +1,4 @@
-import { EmitterMixin, EmitterInterface } from './common/EmitterMixin'
+import { EmitterMixin } from './common/EmitterMixin'
 import { OptionsInput } from './types/input-types'
 import { DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
@@ -60,18 +60,6 @@ export type ResizeHandler = (force: boolean) => void
 
 export class Calendar {
 
-  // global handler registry
-  static on: EmitterInterface['on']
-  static off: EmitterInterface['off']
-  static trigger: EmitterInterface['trigger']
-
-  on: EmitterInterface['on']
-  one: EmitterInterface['one']
-  off: EmitterInterface['off']
-  trigger: EmitterInterface['trigger']
-  triggerWith: EmitterInterface['triggerWith']
-  hasHandlers: EmitterInterface['hasHandlers']
-
   // derived state
   // TODO: make these all private
   private buildEventUiSingleBase = memoize(buildEventUiSingleBase)
@@ -84,7 +72,7 @@ export class Calendar {
   public defaultTimedEventDuration: Duration
   public slotMinTime: Duration
   public slotMaxTime: Duration
-  private resizeHandlers: ResizeHandler[] = []
+  private resizeHandlers: ResizeHandler[] = [] // TODO: use emitter somehow?
   private toolbarConfig
 
   // interaction
@@ -94,6 +82,7 @@ export class Calendar {
   state: CalendarState = {} as any
   isRendering = false
   isRendered = false
+  emitter = new EmitterMixin(this) // TODO: rename to Emitter
   reducer: CalendarStateReducer
   renderRunner: DelayedRunner
   actionRunner: TaskRunner<Action> // guards against nested action calls
@@ -121,6 +110,7 @@ export class Calendar {
       }
     )
 
+    this.emitter.trigger('_init') // for tests
     this.dispatch({
       type: 'INIT',
       optionOverrides
@@ -180,17 +170,17 @@ export class Calendar {
 
   runAction(action: Action) {
     let oldState = this.state
-    let newState = this.state = this.reducer.reduce(this.state, action, this)
+    let newState = this.state = this.reducer.reduce(this.state, action, this.emitter, this)
 
     if (oldState && oldState.options !== newState.options) {
       this.updateDerivedOptions(newState.options)
     }
 
     if ((!oldState || !oldState.loadingLevel) && newState.loadingLevel) {
-      this.publiclyTrigger('loading', [ true ])
+      this.emitter.trigger('loading', true)
 
     } else if ((oldState && oldState.loadingLevel) && !newState.loadingLevel) {
-      this.publiclyTrigger('loading', [ false ])
+      this.emitter.trigger('loading', false)
     }
   }
 
@@ -261,6 +251,7 @@ export class Calendar {
         onClassNameChange={this.handleClassNames}
         onHeightChange={this.handleHeightChange}
         toolbarConfig={this.toolbarConfig}
+        emitter={this.emitter}
         calendar={this}
       />,
       this.el
@@ -276,7 +267,7 @@ export class Calendar {
       interaction.destroy()
     }
 
-    this.publiclyTrigger('_destroyed')
+    this.emitter.trigger('_destroyed')
   }
 
 
@@ -387,20 +378,13 @@ export class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  hasPublicHandlers(name): boolean {
-    return this.hasHandlers(name) ||
-      this.opt(name) // handler specified in options
+  on(handlerName: string, handler) {
+    this.emitter.on(handlerName, handler)
   }
 
 
-  publiclyTrigger(name, args?) {
-    let optHandler = this.opt(name)
-
-    this.triggerWith(name, this, args)
-
-    if (optHandler) {
-      return optHandler.apply(this, args)
-    }
+  off(handlerName: string, handler) {
+    this.emitter.off(handlerName, handler)
   }
 
 
@@ -620,7 +604,7 @@ export class Calendar {
 
   resizeRunner = new DelayedRunner(() => {
     this.triggerResizeHandlers(true) // should window resizes be considered "forced" ?
-    this.publiclyTrigger('windowResize')
+    this.emitter.trigger('windowResize')
   })
 
 
@@ -739,17 +723,16 @@ export class Calendar {
       jsEvent: pev ? pev.origEvent as MouseEvent : null, // Is this always a mouse event? See #4655
       view: this.view
     }
-    this.publiclyTrigger('select', [ arg ])
+
+    this.emitter.trigger('select', arg)
   }
 
 
   triggerDateUnselect(pev?: PointerDragEvent) {
-    this.publiclyTrigger('unselect', [
-      {
-        jsEvent: pev ? pev.origEvent : null,
-        view: this.view
-      }
-    ])
+    this.emitter.trigger('unselect', {
+      jsEvent: pev ? pev.origEvent : null,
+      view: this.view
+    })
   }
 
 
@@ -762,7 +745,7 @@ export class Calendar {
       view
     }
 
-    this.publiclyTrigger('dateClick', [ arg ])
+    this.emitter.trigger('dateClick', arg)
   }
 
 
@@ -1002,13 +985,12 @@ export class Calendar {
     let time = createDuration(timeInput)
 
     if (time) {
-      this.trigger('scrollRequest', { time })
+      this.emitter.trigger('_scrollRequest', { time })
     }
   }
 
 }
 
-EmitterMixin.mixInto(Calendar)
 
 
 // for memoizers

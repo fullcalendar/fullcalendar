@@ -182,7 +182,7 @@ export function applyAll(functions, thisObj, args) {
     let i
     let ret
     for (i = 0; i < functions.length; i++) {
-      ret = functions[i].apply(thisObj, args) || ret
+      ret = functions[i].apply(thisObj, args) || ret // will keep first results
     }
     return ret
   }

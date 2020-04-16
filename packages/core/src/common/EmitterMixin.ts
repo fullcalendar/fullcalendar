@@ -1,90 +1,55 @@
-/*
-USAGE:
-  import { EmitterMixin, EmitterInterface } from './EmitterMixin'
-in class:
-  on: EmitterInterface['on']
-  one: EmitterInterface['one']
-  off: EmitterInterface['off']
-  trigger: EmitterInterface['trigger']
-  triggerWith: EmitterInterface['triggerWith']
-  hasHandlers: EmitterInterface['hasHandlers']
-after class:
-  EmitterMixin.mixInto(TheClass)
-*/
-
 import { applyAll } from '../util/misc'
-import { Mixin } from './Mixin'
 
-export interface EmitterInterface {
-  on(types, handler)
-  one(types, handler)
-  off(types, handler)
-  trigger(type, ...args)
-  triggerWith(type, context, args)
-  hasHandlers(type)
-}
 
-export class EmitterMixin extends Mixin implements EmitterInterface {
+export class EmitterMixin {
 
-  _handlers: any
-  _oneHandlers: any
+  handlers: any = {}
+  options: any
+
+
+  constructor(private thisContext = null) {
+  }
+
+
+  setOptions(options) {
+    this.options = options
+  }
+
 
   on(type, handler) {
-    addToHash(
-      this._handlers || (this._handlers = {}),
-      type,
-      handler
-    )
-    return this // for chaining
+    addToHash(this.handlers, type, handler)
   }
 
-  // todo: add comments
-  one(type, handler) {
-    addToHash(
-      this._oneHandlers || (this._oneHandlers = {}),
-      type,
-      handler
-    )
-    return this // for chaining
-  }
 
   off(type, handler?) {
-    if (this._handlers) {
-      removeFromHash(this._handlers, type, handler)
-    }
-    if (this._oneHandlers) {
-      removeFromHash(this._oneHandlers, type, handler)
-    }
-    return this // for chaining
+    removeFromHash(this.handlers, type, handler)
   }
+
 
   trigger(type, ...args) {
-    this.triggerWith(type, this, args)
-    return this // for chaining
+    let res = applyAll(this.handlers[type], this.thisContext, args)
+
+    let handlerFromOptions = this.options && this.options[type]
+    if (handlerFromOptions) {
+      res = handlerFromOptions.apply(this.thisContext, args) || res // will keep first result
+    }
+
+    return res
   }
 
-  triggerWith(type, context, args) {
-    if (this._handlers) {
-      applyAll(this._handlers[type], context, args)
-    }
-    if (this._oneHandlers) {
-      applyAll(this._oneHandlers[type], context, args)
-      delete this._oneHandlers[type] // will never fire again
-    }
-    return this // for chaining
-  }
 
   hasHandlers(type) {
-    return (this._handlers && this._handlers[type] && this._handlers[type].length) ||
-      (this._oneHandlers && this._oneHandlers[type] && this._oneHandlers[type].length)
+    return this.handlers[type] && this.handlers[type].length
   }
 
 }
+
 
 function addToHash(hash, type, handler) {
   (hash[type] || (hash[type] = []))
     .push(handler)
 }
+
 
 function removeFromHash(hash, type, handler?) {
   if (handler) {

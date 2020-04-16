@@ -22,6 +22,7 @@ import { ViewComponent } from './structs/view-config'
 import { createFormatter } from './datelib/formatting'
 import { DateEnv } from './datelib/env'
 import { Calendar } from './Calendar'
+import { EmitterMixin } from './common/EmitterMixin'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -31,6 +32,7 @@ export interface CalendarComponentProps extends CalendarState {
   onClassNameChange?: (classNameHash) => void // will be fired with [] on cleanup
   onHeightChange?: (height: CssDimValue) => void // will be fired with '' on cleanup
   toolbarConfig
+  emitter: EmitterMixin
   calendar: Calendar
 }
 
@@ -149,13 +151,13 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     window.addEventListener('beforeprint', this.handleBeforePrint)
     window.addEventListener('afterprint', this.handleAfterPrint)
 
-    this.props.calendar.publiclyTrigger('datesDidUpdate')
+    this.props.emitter.trigger('datesDidUpdate')
   }
 
 
   componentDidUpdate(prevProps: CalendarComponentProps) {
     if (prevProps.dateProfile !== this.props.dateProfile) {
-      this.props.calendar.publiclyTrigger('datesDidUpdate')
+      this.props.emitter.trigger('datesDidUpdate')
     }
   }
 

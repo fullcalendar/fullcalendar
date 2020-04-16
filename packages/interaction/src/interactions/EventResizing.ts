@@ -80,14 +80,12 @@ export class EventResizing extends Interaction {
     this.draggingSeg = getElSeg(segEl)
 
     calendar.unselect()
-    calendar.publiclyTrigger('eventResizeStart', [
-      {
-        el: segEl,
-        event: new EventApi(calendar, eventRange.def, eventRange.instance),
-        jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-        view: viewApi
-      }
-    ])
+    calendar.emitter.trigger('eventResizeStart', {
+      el: segEl,
+      event: new EventApi(calendar, eventRange.def, eventRange.instance),
+      jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
+      view: viewApi
+    })
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
@@ -161,14 +159,12 @@ export class EventResizing extends Interaction {
     let relevantEvents = this.relevantEvents!
     let mutatedRelevantEvents = this.mutatedRelevantEvents!
 
-    calendar.publiclyTrigger('eventResizeStop', [
-      {
-        el: this.draggingSegEl,
-        event: eventApi,
-        jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-        view: viewApi
-      }
-    ])
+    calendar.emitter.trigger('eventResizeStop', {
+      el: this.draggingSegEl,
+      event: eventApi,
+      jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
+      view: viewApi
+    })
 
     if (this.validMutation) {
       calendar.dispatch({
@@ -176,30 +172,28 @@ export class EventResizing extends Interaction {
         eventStore: mutatedRelevantEvents
       })
 
-      calendar.publiclyTrigger('eventResize', [
-        {
-          el: this.draggingSegEl,
-          startDelta: this.validMutation.startDelta || createDuration(0),
-          endDelta: this.validMutation.endDelta || createDuration(0),
-          prevEvent: eventApi,
-          event: new EventApi( // the data AFTER the mutation
-            calendar,
-            mutatedRelevantEvents.defs[eventDef.defId],
-            eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
-          ),
-          revert: function() {
-            calendar.dispatch({
-              type: 'MERGE_EVENTS',
-              eventStore: relevantEvents
-            })
-          },
-          jsEvent: ev.origEvent,
-          view: viewApi
-        }
-      ])
+      calendar.emitter.trigger('eventResize', {
+        el: this.draggingSegEl,
+        startDelta: this.validMutation.startDelta || createDuration(0),
+        endDelta: this.validMutation.endDelta || createDuration(0),
+        prevEvent: eventApi,
+        event: new EventApi( // the data AFTER the mutation
+          calendar,
+          mutatedRelevantEvents.defs[eventDef.defId],
+          eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
+        ),
+        revert: function() {
+          calendar.dispatch({
+            type: 'MERGE_EVENTS',
+            eventStore: relevantEvents
+          })
+        },
+        jsEvent: ev.origEvent,
+        view: viewApi
+      })
 
     } else {
-      calendar.publiclyTrigger('_noEventResize')
+      calendar.emitter.trigger('_noEventResize')
     }
 
     // reset all internal state

@@ -192,16 +192,14 @@ export class Table extends DateComponent<TableProps, TableState> {
     if (typeof clickOption === 'function') {
       // the returned value can be an atomic option
       // TODO: weird how we don't use the `clickOption`
-      clickOption = calendar.publiclyTrigger('moreLinkClick', [
-        {
-          date: dateEnv.toDate(arg.date),
-          allDay: true,
-          allSegs: arg.allSegs.map(segForPublic),
-          hiddenSegs: arg.hiddenSegs.map(segForPublic),
-          jsEvent: arg.ev as MouseEvent, // TODO: better
-          view: viewApi
-        }
-      ])
+      clickOption = calendar.emitter.trigger('moreLinkClick', {
+        date: dateEnv.toDate(arg.date),
+        allDay: true,
+        allSegs: arg.allSegs.map(segForPublic),
+        hiddenSegs: arg.hiddenSegs.map(segForPublic),
+        jsEvent: arg.ev as MouseEvent, // TODO: better
+        view: viewApi
+      })
     }
 
     if (clickOption === 'popover') {

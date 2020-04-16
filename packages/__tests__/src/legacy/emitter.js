@@ -17,24 +17,6 @@ describe('emitter', function() {
     expect(handlers.something).toHaveBeenCalled()
   })
 
-  it('calls a handler with context and args', function() {
-    var customContext
-    customContext = {}
-    var o = new EmitterMixin()
-    var handlers = {
-      something: function(arg1, arg2) {
-        expect(this).toBe(customContext)
-        expect(arg1).toBe(2)
-        expect(arg2).toBe(3)
-      }
-    }
-    spyOn(handlers, 'something').and.callThrough()
-
-    o.on('something', handlers.something)
-    o.triggerWith('something', customContext, [ 2, 3 ])
-    expect(handlers.something).toHaveBeenCalled()
-  })
-
   it('unbinds with an exact reference', function() {
     var o = new EmitterMixin()
     var handlers = {
