@@ -1,4 +1,4 @@
-import { EmitterMixin } from './common/EmitterMixin'
+import { Emitter } from './common/Emitter'
 import { OptionsInput } from './types/input-types'
 import { DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
@@ -82,7 +82,7 @@ export class Calendar {
   state: CalendarState = {} as any
   isRendering = false
   isRendered = false
-  emitter = new EmitterMixin(this) // TODO: rename to Emitter
+  emitter = new Emitter(this)
   reducer: CalendarStateReducer
   renderRunner: DelayedRunner
   actionRunner: TaskRunner<Action> // guards against nested action calls

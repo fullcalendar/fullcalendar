@@ -6,9 +6,9 @@ import { DateProfile } from '../DateProfileGenerator'
 import { Action } from './types'
 import { guid } from '../util/misc'
 import { PluginHooks } from '../plugin-system'
-import { EmitterMixin } from '../common/EmitterMixin'
+import { Emitter } from '../common/Emitter'
 
-export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, pluginHooks: PluginHooks, rawOptions, emitter: EmitterMixin, calendar: Calendar): EventSourceHash {
+export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, pluginHooks: PluginHooks, rawOptions, emitter: Emitter, calendar: Calendar): EventSourceHash {
   let activeRange = dateProfile ? dateProfile.activeRange : null
 
   switch (action.type) {
@@ -78,7 +78,7 @@ export function reduceEventSources(eventSources: EventSourceHash, action: Action
 }
 
 
-function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, pluginHooks: PluginHooks, rawOptions, emitter: EmitterMixin, calendar: Calendar): EventSourceHash {
+function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, pluginHooks: PluginHooks, rawOptions, emitter: Emitter, calendar: Calendar): EventSourceHash {
   let hash: EventSourceHash = {}
 
   for (let source of sources) {
@@ -100,7 +100,7 @@ function removeSource(eventSourceHash: EventSourceHash, sourceId: string): Event
 }
 
 
-function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, pluginHooks: PluginHooks, rawOptions, emitter: EmitterMixin, calendar: Calendar): EventSourceHash {
+function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, pluginHooks: PluginHooks, rawOptions, emitter: Emitter, calendar: Calendar): EventSourceHash {
   return fetchSourcesByIds(
     sourceHash,
     filterHash(sourceHash, function(eventSource) {
@@ -133,7 +133,7 @@ function fetchSourcesByIds(
   sourceIdHash: { [sourceId: string]: any },
   fetchRange: DateRange,
   pluginHooks: PluginHooks,
-  emitter: EmitterMixin,
+  emitter: Emitter,
   calendar: Calendar
 ): EventSourceHash {
   let nextSources: EventSourceHash = {}
@@ -152,7 +152,7 @@ function fetchSourcesByIds(
 }
 
 
-function fetchSource(eventSource: EventSource, fetchRange: DateRange, pluginHooks: PluginHooks, emitter: EmitterMixin, calendar: Calendar) {
+function fetchSource(eventSource: EventSource, fetchRange: DateRange, pluginHooks: PluginHooks, emitter: Emitter, calendar: Calendar) {
   let sourceDef = pluginHooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = guid()
 

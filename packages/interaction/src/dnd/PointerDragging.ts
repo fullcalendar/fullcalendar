@@ -1,4 +1,4 @@
-import { config, elementClosest, EmitterMixin, PointerDragEvent } from '@fullcalendar/core'
+import { config, elementClosest, Emitter, PointerDragEvent } from '@fullcalendar/core'
 
 config.touchMouseIgnoreWait = 500
 
@@ -24,7 +24,7 @@ export class PointerDragging {
   containerEl: EventTarget
   subjectEl: HTMLElement | null = null
   downEl: HTMLElement | null = null
-  emitter: EmitterMixin
+  emitter: Emitter
 
   // options that can be directly assigned by caller
   selector: string = '' // will cause subjectEl in all emitted events to be this element
@@ -45,7 +45,7 @@ export class PointerDragging {
 
   constructor(containerEl: EventTarget) {
     this.containerEl = containerEl
-    this.emitter = new EmitterMixin()
+    this.emitter = new Emitter()
     containerEl.addEventListener('mousedown', this.handleMouseDown as EventListener)
     containerEl.addEventListener('touchstart', this.handleTouchStart as EventListener, { passive: true })
     listenerCreated()

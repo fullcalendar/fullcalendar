@@ -20,7 +20,7 @@ import { reduceDateSelection } from './date-selection'
 import { reduceSelectedEvent } from './selected-event'
 import { reduceEventDrag } from './event-drag'
 import { reduceEventResize } from './event-resize'
-import { EmitterMixin } from '../common/EmitterMixin'
+import { Emitter } from '../common/Emitter'
 
 
 export class CalendarStateReducer {
@@ -33,7 +33,7 @@ export class CalendarStateReducer {
   private buildDateProfileGenerator = memoize(buildDateProfileGenerators)
 
 
-  reduce(state: CalendarState, action: Action, emitter: EmitterMixin, calendar: Calendar): CalendarState {
+  reduce(state: CalendarState, action: Action, emitter: Emitter, calendar: Calendar): CalendarState {
     let optionOverrides = state.optionOverrides || {}
     let dynamicOptionOverrides = state.dynamicOptionOverrides || {}
 

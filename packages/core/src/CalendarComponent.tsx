@@ -22,7 +22,7 @@ import { ViewComponent } from './structs/view-config'
 import { createFormatter } from './datelib/formatting'
 import { DateEnv } from './datelib/env'
 import { Calendar } from './Calendar'
-import { EmitterMixin } from './common/EmitterMixin'
+import { Emitter } from './common/Emitter'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -32,7 +32,7 @@ export interface CalendarComponentProps extends CalendarState {
   onClassNameChange?: (classNameHash) => void // will be fired with [] on cleanup
   onHeightChange?: (height: CssDimValue) => void // will be fired with '' on cleanup
   toolbarConfig
-  emitter: EmitterMixin
+  emitter: Emitter
   calendar: Calendar
 }
 

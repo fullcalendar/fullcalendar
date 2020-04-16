@@ -1,7 +1,7 @@
 import { applyAll } from '../util/misc'
 
 
-export class EmitterMixin {
+export class Emitter {
 
   handlers: any = {}
   options: any

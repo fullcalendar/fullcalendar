@@ -1,5 +1,5 @@
 import {
-  EmitterMixin, PointerDragEvent,
+  Emitter, PointerDragEvent,
   isDateSpansEqual,
   computeRect,
   constrainPoint, intersectRects, getRectCenter, diffPoints, Point,
@@ -28,7 +28,7 @@ export class HitDragging {
 
   droppableStore: InteractionSettingsStore
   dragging: ElementDragging
-  emitter: EmitterMixin
+  emitter: Emitter
 
   // options that can be set by caller
   useSubjectCenter: boolean = false
@@ -51,7 +51,7 @@ export class HitDragging {
     dragging.emitter.on('dragend', this.handleDragEnd)
 
     this.dragging = dragging
-    this.emitter = new EmitterMixin()
+    this.emitter = new Emitter()
   }
 
   handlePointerDown = (ev: PointerDragEvent) => {

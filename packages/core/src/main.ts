@@ -83,7 +83,7 @@ export {
 
 export { unpromisify } from './util/promise'
 
-export { EmitterMixin } from './common/EmitterMixin'
+export { Emitter } from './common/Emitter'
 export { DateRange, rangeContainsMarker, intersectRanges, rangesEqual, rangesIntersect, rangeContainsRange } from './datelib/date-range'
 export { PositionCache } from './common/PositionCache'
 export { ScrollController, ElementScrollController, WindowScrollController } from './common/scroll-controller'
