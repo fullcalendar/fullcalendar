@@ -71,7 +71,7 @@ function createViewHookComponent(options) {
     return (
       <ComponentContextType.Consumer>
         {(context: ComponentContext) => (
-          <ViewRoot viewSpec={viewProps.viewSpec}>
+          <ViewRoot viewSpec={context.viewSpec}>
             {(rootElRef, viewClassNames) => {
               let hookProps = { ...viewProps, nextDayThreshold: context.nextDayThreshold }
               return (

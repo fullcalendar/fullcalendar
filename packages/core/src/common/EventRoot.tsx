@@ -47,7 +47,7 @@ export class EventRoot extends BaseComponent<EventRootProps> {
 
     let hookProps: EventMeta = {
       event: new EventApi(context.calendar, eventRange.def, eventRange.instance),
-      view: context.view,
+      view: context.viewApi,
       timeText: props.timeText,
       textColor: ui.textColor,
       backgroundColor: ui.backgroundColor,

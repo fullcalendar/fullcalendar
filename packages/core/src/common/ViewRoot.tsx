@@ -18,7 +18,7 @@ export class ViewRoot extends BaseComponent<ViewRootProps> {
 
 
   render(props: ViewRootProps, state: {}, context: ComponentContext) {
-    let hookProps = { view: context.view }
+    let hookProps = { view: context.viewApi }
     let customClassNames = this.buildClassNames(hookProps, context)
 
     return (

@@ -122,7 +122,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
           el: this.subjectEl,
           event: new EventApi(initialCalendar, eventRange.def, eventRange.instance),
           jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-          view: context.view
+          view: context.viewApi
         }
       ])
     }
@@ -158,7 +158,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         initialCalendar === receivingCalendar ||
         receivingOptions.editable && receivingOptions.droppable
       ) {
-        mutation = computeEventMutation(initialHit, hit, receivingCalendar.pluginSystem.hooks.eventDragMutationMassagers)
+        mutation = computeEventMutation(initialHit, hit, receivingCalendar.state.pluginHooks.eventDragMutationMassagers)
 
         if (mutation) {
           mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingCalendar.eventUiBases, mutation, receivingCalendar)
@@ -220,7 +220,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     if (this.isDragging) {
       let { context } = this.component
       let initialCalendar = context.calendar
-      let initialView = context.view
+      let initialView = context.viewApi
       let { receivingCalendar, validMutation } = this
       let eventDef = this.eventRange!.def
       let eventInstance = this.eventRange!.instance
@@ -252,7 +252,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
           let transformed: ReturnType<EventDropTransformers> = {}
 
-          for (let transformer of initialCalendar.pluginSystem.hooks.eventDropTransformers) {
+          for (let transformer of initialCalendar.state.pluginHooks.eventDropTransformers) {
             __assign(transformed, transformer(validMutation, initialCalendar))
           }
 
@@ -310,7 +310,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),
             draggedEl: ev.subjectEl as HTMLElement,
             jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-            view: finalHit.component.context.view
+            view: finalHit.component.context.viewApi
           }
           receivingCalendar.publiclyTrigger('drop', [ dropArg ])
 
@@ -322,7 +322,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
                 mutatedRelevantEvents.defs[eventDef.defId],
                 mutatedRelevantEvents.instances[eventInstance.instanceId]
               ),
-              view: finalHit.component.context.view
+              view: finalHit.component.context.viewApi
             }
           ])
         }

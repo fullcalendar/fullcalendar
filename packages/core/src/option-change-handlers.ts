@@ -1,4 +1,4 @@
-import { createPlugin, PluginDef } from './plugin-system'
+import { createPlugin } from './plugin-system'
 import { Calendar } from './main'
 import { hashValuesToArray } from './util/object'
 import { EventSource } from './structs/event-source'
@@ -8,8 +8,7 @@ export const changeHandlerPlugin = createPlugin({
     events(events, calendar) {
       handleEventSources([ events ], calendar)
     },
-    eventSources: handleEventSources,
-    plugins: handlePlugins
+    eventSources: handleEventSources
   }
 })
 
@@ -46,9 +45,4 @@ function handleEventSources(inputs, calendar: Calendar) {
   for (let newInput of newInputs) {
     calendar.addEventSource(newInput)
   }
-}
-
-// shortcoming: won't remove plugins
-function handlePlugins(pluginDefs: PluginDef[], calendar: Calendar) {
-  calendar.addPluginDefs(pluginDefs) // will gracefully handle duplicates
 }

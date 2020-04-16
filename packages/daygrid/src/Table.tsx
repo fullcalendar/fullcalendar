@@ -15,7 +15,6 @@ import {
   DateRange,
   NowTimer,
   DateMarker,
-  DateProfile,
   EventApi
 } from '@fullcalendar/core'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
@@ -27,7 +26,6 @@ import { MorePopover } from './MorePopover'
 export interface TableProps {
   elRef?: Ref<HTMLDivElement>
   cells: TableCellModel[][] // cells-BY-ROW
-  dateProfile: DateProfile
   renderRowIntro?: () => VNode
   colGroupNode: VNode
   tableMinWidth: CssDimValue
@@ -129,7 +127,7 @@ export class Table extends DateComponent<TableProps, TableState> {
                   showDayNumbers={rowCnt > 1}
                   showWeekNumbers={props.showWeekNumbers}
                   todayRange={todayRange}
-                  dateProfile={props.dateProfile}
+                  dateProfile={context.dateProfile}
                   cells={cells}
                   renderIntro={props.renderRowIntro}
                   businessHourSegs={businessHourSegsByRow[row]}
@@ -176,7 +174,7 @@ export class Table extends DateComponent<TableProps, TableState> {
 
 
   handleMoreLinkClick = (arg: MoreLinkArg) => { // TODO: bad names "more link click" versus "more click"
-    let { calendar, view, options, dateEnv } = this.context
+    let { calendar, viewApi, options, dateEnv } = this.context
     let clickOption = options.moreLinkClick
 
     function segForPublic(seg: TableSeg) {
@@ -201,7 +199,7 @@ export class Table extends DateComponent<TableProps, TableState> {
           allSegs: arg.allSegs.map(segForPublic),
           hiddenSegs: arg.hiddenSegs.map(segForPublic),
           jsEvent: arg.ev as MouseEvent, // TODO: better
-          view
+          view: viewApi
         }
       ])
     }

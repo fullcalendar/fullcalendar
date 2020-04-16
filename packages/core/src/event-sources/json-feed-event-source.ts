@@ -55,7 +55,7 @@ export const jsonFeedEventSourcePlugin = createPlugin({
 })
 
 function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Calendar) {
-  const dateEnv = calendar.dateEnv
+  const dateEnv = calendar.state.dateEnv
   let startParam
   let endParam
   let timeZoneParam

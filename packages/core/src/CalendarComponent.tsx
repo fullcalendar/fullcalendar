@@ -1,18 +1,17 @@
-import { ComponentContext, ComponentContextType, buildContext } from './component/ComponentContext'
+import { ComponentContextType, buildViewContext } from './component/ComponentContext'
 import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { Toolbar } from './Toolbar'
 import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
-import { rangeContainsMarker } from './datelib/date-range'
+import { rangeContainsMarker, DateRange } from './datelib/date-range'
 import { EventUiHash } from './component/event-ui'
 import { parseBusinessHours } from './structs/business-hours'
 import { memoize } from './util/memoize'
-import { DateMarker } from './datelib/marker'
+import { DateMarker, diffWholeDays } from './datelib/marker'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
-import { h, Fragment, createRef } from './vdom'
-import { BaseComponent } from './vdom-util'
+import { h, createRef, Component } from './vdom'
 import { buildDelegationHandler } from './util/dom-event'
 import { capitaliseFirstLetter } from './util/misc'
 import { ViewContainer } from './ViewContainer'
@@ -20,15 +19,19 @@ import { CssDimValue } from './scrollgrid/util'
 import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
 import { ViewComponent } from './structs/view-config'
+import { createFormatter } from './datelib/formatting'
+import { DateEnv } from './datelib/env'
+import { Calendar } from './Calendar'
 
 
 export interface CalendarComponentProps extends CalendarState {
   viewSpec: ViewSpec
   dateProfileGenerator: DateProfileGenerator // for the current view
   eventUiBases: EventUiHash
-  title: string
   onClassNameChange?: (classNameHash) => void // will be fired with [] on cleanup
   onHeightChange?: (height: CssDimValue) => void // will be fired with '' on cleanup
+  toolbarConfig
+  calendar: Calendar
 }
 
 interface CalendarComponentState {
@@ -36,10 +39,13 @@ interface CalendarComponentState {
 }
 
 
-export class CalendarComponent extends BaseComponent<CalendarComponentProps, CalendarComponentState> {
+export class CalendarComponent extends Component<CalendarComponentProps, CalendarComponentState> {
 
-  private buildViewContext = memoize(buildContext)
-  private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.context.calendar))
+  context: never
+
+  private computeTitle = memoize(computeTitle)
+  private buildViewContext = memoize(buildViewContext)
+  private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.props.calendar))
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
   private reportClassNames = memoize(reportClassNames)
@@ -59,16 +65,17 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
   /*
   renders INSIDE of an outer div
   */
-  render(props: CalendarComponentProps, state: CalendarComponentState, context: ComponentContext) {
-    let { calendar, options, headerToolbar, footerToolbar } = context
+  render(props: CalendarComponentProps, state: CalendarComponentState) {
+    let { toolbarConfig, theme, dateEnv, options, calendar } = props
+    let viewTitle = this.computeTitle(props.dateProfile, dateEnv, options)
 
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
       props.dateProfile,
       props.dateProfileGenerator,
       props.currentDate,
-      calendar.getNow(),
-      props.title
+      calendar.getNow(), // TODO: use NowTimer????
+      viewTitle
     )
 
     let calendarHeight: string | number = ''
@@ -88,20 +95,31 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
     }
 
     if (props.onClassNameChange) {
-      this.reportClassNames(props.onClassNameChange, state.forPrint, options.direction, context.theme)
+      this.reportClassNames(props.onClassNameChange, state.forPrint, options.direction, theme)
     }
 
     if (props.onHeightChange) {
       this.reportHeight(props.onHeightChange, calendarHeight)
     }
 
+    let viewContext = this.buildViewContext(
+      props.viewSpec,
+      viewTitle,
+      props.dateProfile,
+      props.dateProfileGenerator,
+      props.dateEnv,
+      props.pluginHooks,
+      props.theme,
+      props.calendar
+    )
+
     return (
-      <Fragment>
-        {headerToolbar &&
+      <ComponentContextType.Provider value={viewContext}>
+        {toolbarConfig.headerToolbar &&
           <Toolbar
             ref={this.headerRef}
             extraClassName='fc-header-toolbar'
-            model={headerToolbar}
+            model={toolbarConfig.headerToolbar}
             { ...toolbarProps }
           />
         }
@@ -111,18 +129,18 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
           aspectRatio={viewAspectRatio}
           onClick={this.handleNavLinkClick}
         >
-          {this.renderView(props, this.context)}
+          {this.renderView(props)}
           {this.buildAppendContent()}
         </ViewContainer>
-        {footerToolbar &&
+        {toolbarConfig.footerToolbar &&
           <Toolbar
             ref={this.footerRef}
             extraClassName='fc-footer-toolbar'
-            model={footerToolbar}
+            model={toolbarConfig.footerToolbar}
             { ...toolbarProps }
           />
         }
-      </Fragment>
+      </ComponentContextType.Provider>
     )
   }
 
@@ -131,13 +149,13 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
     window.addEventListener('beforeprint', this.handleBeforePrint)
     window.addEventListener('afterprint', this.handleAfterPrint)
 
-    this.context.calendar.publiclyTrigger('datesDidUpdate')
+    this.props.calendar.publiclyTrigger('datesDidUpdate')
   }
 
 
   componentDidUpdate(prevProps: CalendarComponentProps) {
     if (prevProps.dateProfile !== this.props.dateProfile) {
-      this.context.calendar.publiclyTrigger('datesDidUpdate')
+      this.props.calendar.publiclyTrigger('datesDidUpdate')
     }
   }
 
@@ -166,7 +184,7 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
 
 
   _handleNavLinkClick(ev: UIEvent, anchorEl: HTMLElement) {
-    let { dateEnv, calendar } = this.context
+    let { dateEnv, calendar } = this.props
 
     let navLinkOptions: any = anchorEl.getAttribute('data-navlink')
     navLinkOptions = navLinkOptions ? JSON.parse(navLinkOptions) : {}
@@ -191,7 +209,7 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
 
 
   buildAppendContent() {
-    let { pluginHooks, calendar } = this.context
+    let { pluginHooks, calendar } = this.props
 
     return pluginHooks.viewContainerAppends.map(
       (buildAppendContent) => buildAppendContent(calendar)
@@ -199,14 +217,11 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
   }
 
 
-  renderView(props: CalendarComponentProps, context: ComponentContext) {
-    let { pluginHooks, options } = context
+  renderView(props: CalendarComponentProps) {
+    let { pluginHooks, options } = props
     let { viewSpec } = props
 
     let viewProps: ViewProps = {
-      viewSpec,
-      dateProfileGenerator: props.dateProfileGenerator,
-      dateProfile: props.dateProfile,
       businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
       eventStore: props.eventStore,
       eventUiBases: props.eventUiBases,
@@ -227,24 +242,13 @@ export class CalendarComponent extends BaseComponent<CalendarComponentProps, Cal
       )
     }
 
-    let viewContext = this.buildViewContext(
-      context.calendar,
-      context.pluginHooks,
-      context.dateEnv,
-      context.theme,
-      context.view,
-      viewSpec.options
-    )
-
     let ViewComponent = viewSpec.component
 
     return (
-      <ComponentContextType.Provider value={viewContext}>
-        <ViewComponent
-          ref={this.viewRef}
-          { ...viewProps }
-          />
-      </ComponentContextType.Provider>
+      <ViewComponent
+        ref={this.viewRef}
+        { ...viewProps }
+      />
     )
   }
 
@@ -319,4 +323,56 @@ function buildViewPropTransformers(theClasses: ViewPropsTransformerClass[]) {
   return theClasses.map(function(theClass) {
     return new theClass()
   })
+}
+
+
+// Title and Date Formatting
+// -----------------------------------------------------------------------------------------------------------------
+
+
+// Computes what the title at the top of the calendar should be for this view
+function computeTitle(dateProfile, dateEnv: DateEnv, viewOptions) {
+  let range: DateRange
+
+  // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
+  if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
+    range = dateProfile.currentRange
+  } else { // for day units or smaller, use the actual day range
+    range = dateProfile.activeRange
+  }
+
+  return dateEnv.formatRange(
+    range.start,
+    range.end,
+    createFormatter(
+      viewOptions.titleFormat || computeTitleFormat(dateProfile),
+      viewOptions.titleRangeSeparator
+    ),
+    { isEndExclusive: dateProfile.isRangeAllDay }
+  )
+}
+
+
+// Generates the format string that should be used to generate the title for the current date range.
+// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
+function computeTitleFormat(dateProfile) {
+  let currentRangeUnit = dateProfile.currentRangeUnit
+
+  if (currentRangeUnit === 'year') {
+    return { year: 'numeric' }
+  } else if (currentRangeUnit === 'month') {
+    return { year: 'numeric', month: 'long' } // like "September 2014"
+  } else {
+    let days = diffWholeDays(
+      dateProfile.currentRange.start,
+      dateProfile.currentRange.end
+    )
+    if (days !== null && days > 1) {
+      // multi-day range. shorter, like "Sep 9 - 10 2014"
+      return { year: 'numeric', month: 'short', day: 'numeric' }
+    } else {
+      // one day. longer, like "September 9 2014"
+      return { year: 'numeric', month: 'long', day: 'numeric' }
+    }
+  }
 }

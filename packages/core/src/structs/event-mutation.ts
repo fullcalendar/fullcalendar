@@ -27,7 +27,7 @@ export function applyMutationToEventStore(eventStore: EventStore, eventConfigBas
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
 
-    dest.defs[defId] = applyMutationToEventDef(def, eventConfigs[defId], mutation, calendar.pluginSystem.hooks.eventDefMutationAppliers, calendar)
+    dest.defs[defId] = applyMutationToEventDef(def, eventConfigs[defId], mutation, calendar.state.pluginHooks.eventDefMutationAppliers, calendar)
   }
 
   for (let instanceId in eventStore.instances) {
@@ -86,7 +86,7 @@ function applyMutationToEventInstance(
   mutation: EventMutation,
   calendar: Calendar
 ): EventInstance {
-  let dateEnv = calendar.dateEnv
+  let dateEnv = calendar.state.dateEnv
   let forceAllDay = mutation.standardProps && mutation.standardProps.allDay === true
   let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
   let copy = { ...eventInstance } as EventInstance

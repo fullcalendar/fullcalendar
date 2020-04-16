@@ -7,7 +7,6 @@ import {
   DateMarker,
   BaseComponent,
   EventSegUiInteractionState,
-  DateProfile,
   memoize,
   CssDimValue,
   PositionCache,
@@ -24,7 +23,6 @@ import { TimeColsSeg } from './TimeColsSeg'
 
 
 export interface TimeColsProps {
-  dateProfile: DateProfile
   cells: TableCellModel[]
   slotDuration: Duration
   nowDate: DateMarker
@@ -65,8 +63,6 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
 
   render(props: TimeColsProps, state: TimeColsState) {
-    let { dateProfile } = props
-
     return (
       <div class='fc-timegrid-body' ref={props.rootElRef} style={{
         // these props are important to give this wrapper correct dimensions for interactions
@@ -75,7 +71,6 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
         minWidth: props.tableMinWidth
       }}>
         <TimeColsSlats
-          dateProfile={dateProfile}
           axis={props.axis}
           slatMetas={props.slatMetas}
           clientWidth={props.clientWidth}
@@ -86,7 +81,6 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
         />
         <TimeColsContent
           cells={props.cells}
-          dateProfile={props.dateProfile}
           axis={props.axis}
           businessHourSegs={props.businessHourSegs}
           bgEventSegs={props.bgEventSegs}
@@ -115,8 +109,9 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
   }
 
 
-  componentDidUpdate(prevProps: TimeColsProps) {
-    this.scrollResponder.update(this.props.dateProfile !== prevProps.dateProfile)
+  componentDidUpdate(prevProps: TimeColsProps, prevState: TimeColsState) {
+    let didContextUpdate = prevProps === this.props && prevState === this.state // only way to detect context change. if props/start didnt
+    this.scrollResponder.update(didContextUpdate) // if context changed, dateProfile probably changed
   }
 
 
@@ -155,7 +150,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
 
   positionToHit(positionLeft, positionTop) {
-    let { dateEnv, options } = this.context
+    let { dateProfile, dateEnv, options } = this.context
     let { colCoords } = this
     let { slatCoords } = this.state
     let { snapDuration, snapsPerSlot } = this.processSlotOptions(this.props.slotDuration, options.snapDuration)
@@ -172,7 +167,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
       let dayDate = this.props.cells[colIndex].date
       let time = addDurations(
-        this.props.dateProfile.slotMinTime,
+        dateProfile.slotMinTime,
         multiplyDuration(snapDuration, snapIndex)
       )
 

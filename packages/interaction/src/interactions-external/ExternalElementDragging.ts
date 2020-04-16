@@ -127,7 +127,7 @@ export class ExternalElementDragging {
 
     if (receivingCalendar && droppableEvent) {
       let finalHit = this.hitDragging.finalHit!
-      let finalView = finalHit.component.context.view
+      let finalView = finalHit.component.context.viewApi
       let dragMeta = this.dragMeta!
       let arg = {
         ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),
@@ -207,7 +207,7 @@ export class ExternalElementDragging {
 function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calendar: Calendar): EventTuple {
   let defProps = { ...dragMeta.leftoverProps }
 
-  for (let transform of calendar.pluginSystem.hooks.externalDefTransforms) {
+  for (let transform of calendar.state.pluginHooks.externalDefTransforms) {
     __assign(defProps, transform(dateSpan, dragMeta))
   }
 
@@ -224,11 +224,11 @@ function computeEventForDateSpan(dateSpan: DateSpan, dragMeta: DragMeta, calenda
   // only rely on time info if drop zone is all-day,
   // otherwise, we already know the time
   if (dateSpan.allDay && dragMeta.startTime) {
-    start = calendar.dateEnv.add(start, dragMeta.startTime)
+    start = calendar.state.dateEnv.add(start, dragMeta.startTime)
   }
 
   let end = dragMeta.duration ?
-    calendar.dateEnv.add(start, dragMeta.duration) :
+    calendar.state.dateEnv.add(start, dragMeta.duration) :
     calendar.getDefaultEventEnd(dateSpan.allDay, start)
 
   let instance = createEventInstance(def.defId, { start, end })

@@ -129,7 +129,6 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               date={cell.date}
               showDayNumber={props.showDayNumbers || showWeekNumber /* for spacing, we need to force day-numbers if week numbers */}
               showWeekNumber={showWeekNumber}
-              dateProfile={props.dateProfile}
               todayRange={props.todayRange}
               extraHookProps={cell.extraHookProps}
               extraDataAttrs={cell.extraDataAttrs}

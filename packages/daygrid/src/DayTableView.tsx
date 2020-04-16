@@ -22,14 +22,12 @@ export class DayTableView extends TableView {
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
-    let { options } = context
-    let { dateProfile } = props
-    let dayTableModel = this.buildDayTableModel(dateProfile, props.dateProfileGenerator)
+    let { options, dateProfile, dateProfileGenerator } = context
+    let dayTableModel = this.buildDayTableModel(dateProfile, dateProfileGenerator)
 
     let headerContent = options.dayHeaders &&
       <DayHeader
         ref={this.headerRef}
-        dateProfile={dateProfile}
         dates={dayTableModel.headerDates}
         datesRepDistinctDays={dayTableModel.rowCnt === 1}
       />
@@ -37,7 +35,6 @@ export class DayTableView extends TableView {
     let bodyContent = (contentArg: ChunkContentCallbackArgs) => (
       <DayTable
         ref={this.tableRef}
-        dateProfile={dateProfile}
         dayTableModel={dayTableModel}
         businessHours={props.businessHours}
         dateSelection={props.dateSelection}

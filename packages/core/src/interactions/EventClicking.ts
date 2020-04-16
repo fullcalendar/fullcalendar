@@ -22,7 +22,7 @@ export class EventClicking extends Interaction {
 
   handleSegClick = (ev: Event, segEl: HTMLElement) => {
     let { component } = this
-    let { calendar, view } = component.context
+    let { calendar, viewApi } = component.context
     let seg = getElSeg(segEl)
 
     if (
@@ -44,7 +44,7 @@ export class EventClicking extends Interaction {
             seg.eventRange.instance
           ),
           jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-          view
+          view: viewApi
         }
       ])
 

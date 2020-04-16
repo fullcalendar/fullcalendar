@@ -187,8 +187,8 @@ export class HitDragging {
             hit &&
             (
               // make sure the hit is within activeRange, meaning it's not a deal cell
-              !component.props.dateProfile || // hack for MorePopover
-              rangeContainsRange(component.props.dateProfile.activeRange, hit.dateSpan.range)
+              !component.context.dateProfile || // hack for MorePopover
+              rangeContainsRange(component.context.dateProfile.activeRange, hit.dateSpan.range)
             ) &&
             (!bestHit || hit.layer > bestHit.layer)
           ) {

@@ -1,5 +1,4 @@
-import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
-import { ViewSpec } from './structs/view-spec'
+import { DateProfile } from './DateProfileGenerator'
 import { EventStore } from './structs/event-store'
 import { EventUiHash } from './component/event-ui'
 import { sliceEventStore, EventRenderRange } from './component/event-rendering'
@@ -10,9 +9,6 @@ import { Duration } from './datelib/duration'
 
 
 export interface ViewProps {
-  viewSpec: ViewSpec
-  dateProfileGenerator: DateProfileGenerator
-  dateProfile: DateProfile
   businessHours: EventStore
   eventStore: EventStore
   eventUiBases: EventUiHash
@@ -31,7 +27,7 @@ export interface ViewProps {
 if nextDayThreshold is specified, slicing is done in an all-day fashion.
 you can get nextDayThreshold from context.nextDayThreshold
 */
-export function sliceEvents(props: ViewProps & { nextDayThreshold: Duration }, allDay?: boolean): EventRenderRange[] {
+export function sliceEvents(props: ViewProps & { dateProfile: DateProfile, nextDayThreshold: Duration }, allDay?: boolean): EventRenderRange[] {
   return sliceEventStore(
     props.eventStore,
     props.eventUiBases,

@@ -83,8 +83,8 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
   let recurringRes = parseRecurring(
     raw, // raw, but with single-event stuff stripped out
     defaultAllDay,
-    calendar.dateEnv,
-    calendar.pluginSystem.hooks.recurringTypes,
+    calendar.state.dateEnv,
+    calendar.state.pluginHooks.recurringTypes,
     leftovers0 // will populate with non-recurring props
   )
 
@@ -129,7 +129,7 @@ export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: 
   def.allDay = allDay
   def.hasEnd = hasEnd
 
-  for (let eventDefParser of calendar.pluginSystem.hooks.eventDefParsers) {
+  for (let eventDefParser of calendar.state.pluginHooks.eventDefParsers) {
     let newLeftovers = {}
     eventDefParser(def, leftovers, newLeftovers)
     leftovers = newLeftovers
@@ -173,7 +173,7 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: C
   let endMeta
   let endMarker = null
 
-  startMeta = calendar.dateEnv.createMarkerMeta(props.start)
+  startMeta = calendar.state.dateEnv.createMarkerMeta(props.start)
 
   if (startMeta) {
     startMarker = startMeta.marker
@@ -182,7 +182,7 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: C
   }
 
   if (props.end != null) {
-    endMeta = calendar.dateEnv.createMarkerMeta(props.end)
+    endMeta = calendar.state.dateEnv.createMarkerMeta(props.end)
   }
 
   if (allDay == null) {
@@ -216,7 +216,7 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: C
   } else if (!allowOpenRange) {
     hasEnd = calendar.opt('forceEventDuration') || false
 
-    endMarker = calendar.dateEnv.add(
+    endMarker = calendar.state.dateEnv.add(
       startMarker,
       allDay ?
         calendar.defaultAllDayEventDuration :

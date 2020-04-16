@@ -6,7 +6,6 @@ import {
   DateComponent,
   ComponentContext,
   CssDimValue,
-  DateProfile,
   DateRange,
   buildNavLinkData,
   DayCellHookProps,
@@ -38,7 +37,6 @@ export interface TableCellProps {
   moreMarginTop: number
   showDayNumber: boolean
   showWeekNumber: boolean
-  dateProfile: DateProfile
   todayRange: DateRange
   buildMoreLinkText: (num: number) => string
   onMoreClick?: (arg: MoreLinkArg) => void
@@ -84,7 +82,6 @@ export class TableCell extends DateComponent<TableCellProps> {
       <DayCellRoot
         date={date}
         todayRange={props.todayRange}
-        dateProfile={props.dateProfile}
         showDayNumber={props.showDayNumber}
         extraHookProps={props.extraHookProps}
         elRef={props.elRef}
@@ -114,7 +111,6 @@ export class TableCell extends DateComponent<TableCellProps> {
                 <TableCellTop
                   date={date}
                   showDayNumber={props.showDayNumber}
-                  dateProfile={props.dateProfile}
                   todayRange={props.todayRange}
                   extraHookProps={props.extraHookProps}
                 />
@@ -128,7 +124,7 @@ export class TableCell extends DateComponent<TableCellProps> {
                 {Boolean(props.moreCnt) &&
                   <div class='fc-daygrid-day-bottom' style={{ marginTop: props.moreMarginTop }}>
                     <RenderHook name='moreLink'
-                      hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.view }}
+                      hookProps={{ num: props.moreCnt, text: props.buildMoreLinkText(props.moreCnt), view: context.viewApi }}
                       defaultContent={renderMoreLinkInner}
                     >
                       {(rootElRef, classNames, innerElRef, innerContent) => (
@@ -218,7 +214,6 @@ function resliceDaySegs(segs, dayDate) {
 interface TableCellTopProps {
   date: DateMarker
   showDayNumber: boolean
-  dateProfile: DateProfile
   todayRange: DateRange
   extraHookProps?: object
 }
@@ -230,7 +225,6 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
       <DayCellContent
         date={props.date}
         todayRange={props.todayRange}
-        dateProfile={props.dateProfile}
         showDayNumber={props.showDayNumber}
         extraHookProps={props.extraHookProps}
         defaultContent={renderTopInner}

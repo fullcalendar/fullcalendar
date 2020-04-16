@@ -1,7 +1,6 @@
 import {
   h, VNode,
   BaseComponent,
-  DateProfile,
   ComponentContext,
   createDuration,
   asRoughMs,
@@ -31,7 +30,6 @@ export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
 }
 
 interface TimeColsSlatsContentProps {
-  dateProfile: DateProfile
   axis: boolean
   slatMetas: TimeSlatMeta[]
 }
@@ -112,7 +110,7 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
             false,
             true // vertical
           ),
-          props.dateProfile,
+          this.context.dateProfile,
           props.slatMetas
         )
       )
@@ -145,7 +143,7 @@ export class TimeColsSlatsBody extends BaseComponent<TimeColsSlatsBodyProps> {
           let hookProps = {
             time: slatMeta.time,
             date: context.dateEnv.toDate(slatMeta.date),
-            view: context.view
+            view: context.viewApi
           }
           let classNames = [
             'fc-timegrid-slot',
@@ -204,12 +202,12 @@ export function TimeColsAxisCell(props: TimeSlatMeta) {
           )
 
         } else {
-          let { dateEnv, options, view } = context
+          let { dateEnv, options, viewApi } = context
           let labelFormat = createFormatter(options.slotLabelFormat || DEFAULT_SLAT_LABEL_FORMAT) // TODO: optimize!!!
           let hookProps = {
             time: props.time,
             date: dateEnv.toDate(props.date),
-            view: view,
+            view: viewApi,
             text: dateEnv.format(props.date, labelFormat)
           }
 

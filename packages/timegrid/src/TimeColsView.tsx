@@ -94,7 +94,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     })
 
     return (
-      <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
+      <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
           <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <SimpleScrollGrid
@@ -203,7 +203,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     }
 
     return (
-      <ViewRoot viewSpec={props.viewSpec} elRef={this.rootElRef}>
+      <ViewRoot viewSpec={context.viewSpec} elRef={this.rootElRef}>
         {(rootElRef, classNames) => (
           <div class={[ 'fc-timegrid' ].concat(classNames).join(' ')} ref={rootElRef}>
             <ScrollGrid
@@ -249,8 +249,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
 
 
   renderHeadAxis = () => {
-    let { options } = this.context
-    let range = this.props.dateProfile.renderRange
+    let { options, dateProfile } = this.context
+    let range = dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
     let navLinkData = (options.navLinks && dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
       ? buildNavLinkData(range.start, 'week')
@@ -291,7 +291,7 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
     let { context } = this
     let hookProps = {
       text: context.options.allDayText,
-      view: context.view
+      view: context.viewApi
     }
 
     return (

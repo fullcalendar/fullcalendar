@@ -9,7 +9,7 @@ describe('datelib', function() {
   beforeEach(function() {
     enLocale = new Calendar(document.createElement('div'), { // HACK
       plugins: [ dayGridPlugin ]
-    }).dateEnv.locale
+    }).state.dateEnv.locale
   })
 
   describe('computeWeekNumber', function() {

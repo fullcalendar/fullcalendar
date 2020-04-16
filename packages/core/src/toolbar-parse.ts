@@ -31,11 +31,11 @@ function parseToolbar(raw, theme: Theme, isRtl: boolean, calendar: Calendar, vie
 BAD: querying icons and text here. should be done at render time
 */
 function parseSection(sectionStr: string, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarWidget[][] {
-  let optionsManager = calendar.optionsManager
-  let viewSpecs = calendar.viewSpecs
-  let calendarCustomButtons = optionsManager.computed.customButtons || {}
-  let calendarButtonTextOverrides = optionsManager.overrides.buttonText || {}
-  let calendarButtonText = optionsManager.computed.buttonText || {}
+  let calendarState = calendar.state
+  let { viewSpecs } = calendarState
+  let calendarCustomButtons = calendarState.options.customButtons || {}
+  let calendarButtonTextOverrides = calendarState.optionOverrides.buttonText || {}
+  let calendarButtonText = calendarState.options.buttonText || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
 
   return sectionSubstrs.map((buttonGroupStr, i): ToolbarWidget[] => {

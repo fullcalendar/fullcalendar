@@ -122,7 +122,7 @@ function buildTimeContent(seg: Seg, timeFormat: DateFormatter, context: Componen
     if (doAllDay) {
       let hookProps = {
         text: context.options.allDayText,
-        view: context.view
+        view: context.viewApi
       }
 
       return (

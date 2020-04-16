@@ -43,7 +43,7 @@ function isNewPropsValid(newProps, calendar: Calendar) {
     ...newProps
   }
 
-  return (calendar.pluginSystem.hooks.isPropsValid || isPropsValid)(props, calendar)
+  return (calendar.state.pluginHooks.isPropsValid || isPropsValid)(props, calendar)
 }
 
 export function isPropsValid(state: SplittableProps, calendar: Calendar, dateSpanMeta = {}, filterConfig?): boolean {

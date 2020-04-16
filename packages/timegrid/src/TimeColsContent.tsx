@@ -10,7 +10,6 @@ import {
   ComponentContext,
   memoize,
   DateRange,
-  DateProfile,
   NowIndicatorRoot
 } from '@fullcalendar/core'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
@@ -22,7 +21,6 @@ import { TimeCol } from './TimeCol'
 export interface TimeColsContentProps {
   axis: boolean
   cells: TableCellModel[]
-  dateProfile: DateProfile
   nowDate: DateMarker
   todayRange: DateRange
   businessHourSegs: TimeColsSeg[]
@@ -87,7 +85,6 @@ export class TimeColsContent extends BaseComponent<TimeColsContentProps> { // TO
                   key={cell.key}
                   elRef={this.cellElRefs.createRef(cell.key)}
                   date={cell.date}
-                  dateProfile={props.dateProfile}
                   nowDate={props.nowDate}
                   todayRange={props.todayRange}
                   extraHookProps={cell.extraHookProps}

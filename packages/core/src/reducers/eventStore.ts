@@ -20,8 +20,10 @@ import { DateEnv } from '../datelib/env'
 import { EventUiHash } from '../component/event-ui'
 
 
-export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, calendar: Calendar): EventStore {
+export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, dateEnv: DateEnv, prevDateEnv: DateEnv, calendar: Calendar): EventStore {
   switch (action.type) {
+    case 'INIT':
+      return createEmptyEventStore()
 
     case 'RECEIVE_EVENTS': // raw
       return receiveRawEvents(
@@ -54,8 +56,12 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
         return eventStore
       }
 
-    case 'CHANGE_TIMEZONE':
-      return rezoneDates(eventStore, action.oldDateEnv, calendar.dateEnv)
+    case 'SET_OPTION':
+      if (action.optionName === 'timeZone') {
+        return rezoneDates(eventStore, prevDateEnv, dateEnv)
+      } else {
+        return eventStore
+      }
 
     case 'MUTATE_EVENTS':
       return applyMutationToRelated(eventStore, action.instanceId, action.mutation, action.fromApi, calendar)

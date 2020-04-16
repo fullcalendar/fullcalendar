@@ -22,6 +22,7 @@ import { guid } from './util/misc'
 import { ComponentChildren } from './vdom'
 import { ScrollGridImpl } from './scrollgrid/ScrollGridImpl'
 import { ContentTypeHandlers } from './common/render-hook'
+import { globalPlugins } from './global-plugins'
 
 // TODO: easier way to add new hooks? need to update a million things
 
@@ -134,57 +135,58 @@ export function createPlugin(input: PluginDefInput): PluginDef {
   }
 }
 
-export class PluginSystem {
 
-  hooks: PluginHooks
-  addedHash: { [pluginId: string]: true }
-
-  constructor() {
-    this.hooks = {
-      reducers: [],
-      eventDefParsers: [],
-      isDraggableTransformers: [],
-      eventDragMutationMassagers: [],
-      eventDefMutationAppliers: [],
-      dateSelectionTransformers: [],
-      datePointTransforms: [],
-      dateSpanTransforms: [],
-      views: {},
-      viewPropsTransformers: [],
-      isPropsValid: null,
-      externalDefTransforms: [],
-      eventResizeJoinTransforms: [],
-      viewContainerAppends: [],
-      eventDropTransformers: [],
-      componentInteractions: [],
-      calendarInteractions: [],
-      themeClasses: {},
-      eventSourceDefs: [],
-      cmdFormatter: null,
-      recurringTypes: [],
-      namedTimeZonedImpl: null,
-      initialView: '',
-      elementDraggingImpl: null,
-      optionChangeHandlers: {},
-      scrollGridImpl: null,
-      contentTypeHandlers: {}
-    }
-    this.addedHash = {}
+export function buildPluginHooks(pluginDefs?: PluginDef[]): PluginHooks {
+  let isAdded: { [pluginId: string]: boolean } = {}
+  let hooks: PluginHooks = {
+    reducers: [],
+    eventDefParsers: [],
+    isDraggableTransformers: [],
+    eventDragMutationMassagers: [],
+    eventDefMutationAppliers: [],
+    dateSelectionTransformers: [],
+    datePointTransforms: [],
+    dateSpanTransforms: [],
+    views: {},
+    viewPropsTransformers: [],
+    isPropsValid: null,
+    externalDefTransforms: [],
+    eventResizeJoinTransforms: [],
+    viewContainerAppends: [],
+    eventDropTransformers: [],
+    componentInteractions: [],
+    calendarInteractions: [],
+    themeClasses: {},
+    eventSourceDefs: [],
+    cmdFormatter: null,
+    recurringTypes: [],
+    namedTimeZonedImpl: null,
+    initialView: '',
+    elementDraggingImpl: null,
+    optionChangeHandlers: {},
+    scrollGridImpl: null,
+    contentTypeHandlers: {}
   }
 
-  add(plugin: PluginDef) {
-    if (!this.addedHash[plugin.id]) {
-      this.addedHash[plugin.id] = true
-
-      for (let dep of plugin.deps) {
-        this.add(dep)
+  function addDefs(defs: PluginDef[]) {
+    for (let def of defs) {
+      if (!isAdded[def.id]) {
+        isAdded[def.id] = true
+        addDefs(def.deps)
+        hooks = combineHooks(hooks, def)
       }
-
-      this.hooks = combineHooks(this.hooks, plugin)
     }
   }
 
+  addDefs(globalPlugins)
+
+  if (pluginDefs) {
+    addDefs(pluginDefs)
+  }
+
+  return hooks
 }
+
 
 function combineHooks(hooks0: PluginHooks, hooks1: PluginHooks): PluginHooks {
   return {

@@ -8,8 +8,8 @@ export function toLuxonDateTime(date: Date, calendar: Calendar): LuxonDateTime {
   }
 
   return LuxonDateTime.fromJSDate(date, {
-    zone: calendar.dateEnv.timeZone,
-    locale: calendar.dateEnv.locale.codes[0]
+    zone: calendar.state.dateEnv.timeZone,
+    locale: calendar.state.dateEnv.locale.codes[0]
   })
 }
 
@@ -21,7 +21,7 @@ export function toLuxonDuration(duration: Duration, calendar: Calendar): LuxonDu
 
   return LuxonDuration.fromObject({
     ...duration,
-    locale: calendar.dateEnv.locale.codes[0]
+    locale: calendar.state.dateEnv.locale.codes[0]
   })
 }
 

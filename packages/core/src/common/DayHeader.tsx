@@ -1,7 +1,6 @@
 import { BaseComponent } from '../vdom-util'
 import { ComponentContext } from '../component/ComponentContext'
 import { DateMarker } from '../datelib/marker'
-import { DateProfile } from '../DateProfileGenerator'
 import { createFormatter } from '../datelib/formatting'
 import { computeFallbackHeaderFormat } from './table-utils'
 import { VNode, h } from '../vdom'
@@ -13,7 +12,6 @@ import { memoize } from '../util/memoize'
 
 export interface DayHeaderProps {
   dates: DateMarker[]
-  dateProfile: DateProfile
   datesRepDistinctDays: boolean
   renderIntro?: () => VNode
 }
@@ -43,7 +41,6 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
                 key={date.toISOString()}
                 date={date}
                 todayRange={todayRange}
-                dateProfile={props.dateProfile}
                 colCnt={dates.length}
                 dayHeaderFormat={dayHeaderFormat}
               /> :

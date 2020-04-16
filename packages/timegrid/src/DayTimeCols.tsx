@@ -24,7 +24,6 @@ import { TimeSlatMeta } from './TimeColsSlats'
 
 
 export interface DayTimeColsProps {
-  dateProfile: DateProfile | null
   dayTableModel: DayTableModel
   axis: boolean
   slotDuration: Duration
@@ -54,8 +53,8 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
 
   render(props: DayTimeColsProps, state: {}, context: ComponentContext) {
-    let { dateEnv, options, calendar } = context
-    let { dateProfile, dayTableModel } = props
+    let { dateEnv, options, calendar, dateProfile } = context
+    let { dayTableModel } = props
     let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
 
     // give it the first row of cells
@@ -67,7 +66,6 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             ref={this.timeColsRef}
             rootElRef={this.handleRootEl}
             {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
-            dateProfile={dateProfile}
             axis={props.axis}
             slatMetas={props.slatMetas}
             slotDuration={props.slotDuration}

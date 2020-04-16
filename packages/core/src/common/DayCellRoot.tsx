@@ -1,7 +1,6 @@
 import { Ref, ComponentChildren, h } from '../vdom'
 import { DateMarker } from '../datelib/marker'
 import { DateRange } from '../datelib/date-range'
-import { DateProfile } from '../DateProfileGenerator'
 import { ComponentContext } from '../component/ComponentContext'
 import { getDateMeta, getDayClassNames, DateMeta } from '../component/date-rendering'
 import { formatDayString, createFormatter } from '../datelib/formatting'
@@ -16,7 +15,6 @@ interface DayCellHookPropOrigin {
   date: DateMarker // generic
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
-  dateProfile?: DateProfile // for other/disabled days
 }
 
 export interface DayCellHookProps extends DateMeta {
@@ -30,7 +28,6 @@ export interface DayCellHookProps extends DateMeta {
 export interface DayCellRootProps {
   elRef?: Ref<any>
   date: DateMarker
-  dateProfile?: DateProfile // for other/disabled days
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
   extraHookProps?: object
@@ -50,7 +47,6 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
   render(props: DayCellRootProps, state: {}, context: ComponentContext) {
     let hookPropsOrigin: DayCellHookPropOrigin = {
       date: props.date,
-      dateProfile: props.dateProfile,
       todayRange: props.todayRange,
       showDayNumber: props.showDayNumber
     }
@@ -81,7 +77,6 @@ export class DayCellRoot extends BaseComponent<DayCellRootProps> {
 
 export interface DayCellContentProps {
   date: DateMarker
-  dateProfile?: DateProfile // for other/disabled days
   todayRange: DateRange
   showDayNumber?: boolean // defaults to false
   extraHookProps?: object
@@ -97,7 +92,6 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
   render(props: DayCellContentProps, state: {}, context: ComponentContext) {
     let hookPropsOrigin: DayCellHookPropOrigin = {
       date: props.date,
-      dateProfile: props.dateProfile,
       todayRange: props.todayRange,
       showDayNumber: props.showDayNumber
     }
@@ -119,11 +113,11 @@ export class DayCellContent extends BaseComponent<DayCellContentProps> {
 function massageHooksProps(input: DayCellHookPropOrigin, context: ComponentContext): DayCellHookProps {
   let { dateEnv } = context
   let { date } = input
-  let dayMeta = getDateMeta(date, input.todayRange, null, input.dateProfile)
+  let dayMeta = getDateMeta(date, input.todayRange, null, context.dateProfile)
 
   return {
     date: dateEnv.toDate(date),
-    view: context.view,
+    view: context.viewApi,
     ...dayMeta,
     dayNumberText: input.showDayNumber ? dateEnv.format(date, DAY_NUM_FORMAT) : ''
   }

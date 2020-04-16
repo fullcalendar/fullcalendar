@@ -17,7 +17,7 @@ export const NowIndicatorRoot = (props: NowIndicatorRootProps) => (
       let hookProps = {
         isAxis: props.isAxis,
         date: context.dateEnv.toDate(props.date),
-        view: context.view
+        view: context.viewApi
       }
 
       return (

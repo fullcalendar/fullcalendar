@@ -66,7 +66,7 @@ let eventSourceDef: EventSourceDef = {
         arg.range,
         apiKey,
         meta.data,
-        calendar.dateEnv
+        calendar.state.dateEnv
       )
 
       requestJson('GET', url, requestParams, function(body, xhr) {

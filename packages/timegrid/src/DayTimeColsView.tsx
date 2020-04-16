@@ -24,8 +24,7 @@ export class DayTimeColsView extends TimeColsView {
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
-    let { dateProfile, dateProfileGenerator } = props
-    let { nextDayThreshold, options, dateEnv } = context
+    let { nextDayThreshold, options, dateEnv, dateProfile, dateProfileGenerator } = context
     let dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator)
     let splitProps = this.allDaySplitter.splitProps(props)
     let slotDuration = this.parseSlotDuration(options.slotDuration)
@@ -34,7 +33,6 @@ export class DayTimeColsView extends TimeColsView {
 
     let headerContent = options.dayHeaders &&
       <DayHeader
-        dateProfile={dateProfile}
         dates={dayTableModel.headerDates}
         datesRepDistinctDays={true}
         renderIntro={dayMinWidth ? null : this.renderHeadAxis}
@@ -43,7 +41,6 @@ export class DayTimeColsView extends TimeColsView {
     let allDayContent = options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
       <DayTable
         {...splitProps['allDay']}
-        dateProfile={dateProfile}
         dayTableModel={dayTableModel}
         nextDayThreshold={nextDayThreshold}
         tableMinWidth={contentArg.tableMinWidth}
@@ -61,7 +58,6 @@ export class DayTimeColsView extends TimeColsView {
     let timeGridContent = (contentArg: ChunkContentCallbackArgs) => (
       <DayTimeCols
         {...splitProps['timed']}
-        dateProfile={dateProfile}
         dayTableModel={dayTableModel}
         axis={!dayMinWidth}
         slotDuration={slotDuration}

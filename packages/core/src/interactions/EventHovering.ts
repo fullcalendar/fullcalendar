@@ -57,7 +57,7 @@ export class EventHovering extends Interaction {
 
   triggerEvent(publicEvName: 'eventMouseEnter' | 'eventMouseLeave', ev: Event | null, segEl: HTMLElement) {
     let { component } = this
-    let { calendar, view } = component.context
+    let { calendar, viewApi } = component.context
     let seg = getElSeg(segEl)!
 
     if (!ev || component.isValidSegDownEl(ev.target as HTMLElement)) {
@@ -70,7 +70,7 @@ export class EventHovering extends Interaction {
             seg.eventRange.instance
           ),
           jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-          view
+          view: viewApi
         }
       ])
     }

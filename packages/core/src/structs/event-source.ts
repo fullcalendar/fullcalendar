@@ -5,6 +5,7 @@ import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { EventUi, processUnscopedUiProps } from '../component/event-ui'
 import { ConstraintInput, AllowFunc } from '../validation'
+import { PluginHooks } from '../plugin-system'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
@@ -108,14 +109,15 @@ const SIMPLE_SOURCE_PROPS = {
 }
 
 
-export function doesSourceNeedRange(eventSource: EventSource, calendar: Calendar) {
-  let defs = calendar.pluginSystem.hooks.eventSourceDefs
+export function doesSourceNeedRange(eventSource: EventSource, pluginHooks: PluginHooks) {
+  let defs = pluginHooks.eventSourceDefs
 
   return !defs[eventSource.sourceDefId].ignoreRange
 }
 
-export function parseEventSource(raw: EventSourceInput, calendar: Calendar): EventSource | null {
-  let defs = calendar.pluginSystem.hooks.eventSourceDefs
+
+export function parseEventSource(raw: EventSourceInput, pluginHooks: PluginHooks, calendar: Calendar): EventSource | null {
+  let defs = pluginHooks.eventSourceDefs
 
   for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
     let def = defs[i]
@@ -136,6 +138,7 @@ export function parseEventSource(raw: EventSourceInput, calendar: Calendar): Eve
 
   return null
 }
+
 
 function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, calendar: Calendar): EventSource {
   let leftovers0 = {}

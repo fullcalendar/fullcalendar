@@ -67,7 +67,7 @@ export class EventResizing extends Interaction {
   }
 
   handleDragStart = (ev: PointerDragEvent) => {
-    let { calendar, view } = this.component.context
+    let { calendar, viewApi } = this.component.context
     let eventRange = this.eventRange!
 
     this.relevantEvents = getRelevantEvents(
@@ -85,7 +85,7 @@ export class EventResizing extends Interaction {
         el: segEl,
         event: new EventApi(calendar, eventRange.def, eventRange.instance),
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-        view
+        view: viewApi
       }
     ])
   }
@@ -154,7 +154,7 @@ export class EventResizing extends Interaction {
   }
 
   handleDragEnd = (ev: PointerDragEvent) => {
-    let { calendar, view } = this.component.context
+    let { calendar, viewApi } = this.component.context
     let eventDef = this.eventRange!.def
     let eventInstance = this.eventRange!.instance
     let eventApi = new EventApi(calendar, eventDef, eventInstance)
@@ -166,7 +166,7 @@ export class EventResizing extends Interaction {
         el: this.draggingSegEl,
         event: eventApi,
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
-        view
+        view: viewApi
       }
     ])
 
@@ -194,7 +194,7 @@ export class EventResizing extends Interaction {
             })
           },
           jsEvent: ev.origEvent,
-          view
+          view: viewApi
         }
       ])
 

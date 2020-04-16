@@ -1,6 +1,5 @@
 import {
   h, createRef, VNode,
-  DateProfile,
   EventStore,
   EventUiHash,
   DateSpan,
@@ -20,7 +19,6 @@ import { TableSeg } from './TableSeg'
 
 
 export interface DayTableProps {
-  dateProfile: DateProfile
   dayTableModel: DayTableModel
   nextDayThreshold: Duration
   businessHours: EventStore
@@ -49,15 +47,14 @@ export class DayTable extends DateComponent<DayTableProps, ComponentContext> {
 
 
   render(props: DayTableProps, state: {}, context: ComponentContext) {
-    let { dateProfile, dayTableModel } = props
+    let { dayTableModel } = props
 
     return (
       <Table
         ref={this.tableRef}
         elRef={this.handleRootEl}
-        { ...this.slicer.sliceProps(props, dateProfile, props.nextDayThreshold, context.calendar, dayTableModel) }
+        { ...this.slicer.sliceProps(props, context.dateProfile, props.nextDayThreshold, context.calendar, dayTableModel) }
         cells={dayTableModel.cells}
-        dateProfile={dateProfile}
         colGroupNode={props.colGroupNode}
         tableMinWidth={props.tableMinWidth}
         renderRowIntro={props.renderRowIntro}

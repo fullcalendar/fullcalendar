@@ -1,4 +1,4 @@
-import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, DateProfile, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill } from '@fullcalendar/core'
+import { Ref, DateMarker, BaseComponent, ComponentContext, h, EventSegUiInteractionState, Seg, getSegMeta, DateRange, Fragment, DayCellRoot, NowIndicatorRoot, DayCellContent, BgEvent, renderFill } from '@fullcalendar/core'
 import { TimeColsSeg } from './TimeColsSeg'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 import { computeSegCoords, computeSegVerticals } from './event-placement'
@@ -8,7 +8,6 @@ import { TimeColEvent } from './TimeColEvent'
 export interface TimeColProps {
   elRef?: Ref<HTMLTableCellElement>
   date: DateMarker
-  dateProfile: DateProfile
   nowDate: DateMarker
   todayRange: DateRange
   extraDataAttrs?: any
@@ -43,7 +42,7 @@ export class TimeCol extends BaseComponent<TimeColProps> {
       {}
 
     return (
-      <DayCellRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps} dateProfile={props.dateProfile}>
+      <DayCellRoot elRef={props.elRef} date={props.date} todayRange={props.todayRange} extraHookProps={props.extraHookProps}>
         {(rootElRef, classNames, dataAttrs) => (
           <td
             ref={rootElRef}

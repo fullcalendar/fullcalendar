@@ -3,7 +3,6 @@ import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, gr
 import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, rangesEqual } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
-import { Calendar } from './Calendar'
 import { computeVisibleDayRange } from './util/misc'
 
 
@@ -23,22 +22,22 @@ export interface DateProfile {
 
 export class DateProfileGenerator {
 
-  viewSpec: ViewSpec
   slotMinTime: Duration
   slotMaxTime: Duration
   options: any
-  dateEnv: DateEnv
-  calendar: Calendar // avoid
   isHiddenDayHash: boolean[]
 
 
-  constructor(viewSpec: ViewSpec, calendar: Calendar) {
+  constructor(
+    protected viewSpec: ViewSpec,
+    protected dateEnv: DateEnv,
+    protected nowDate: DateMarker
+  ) {
     this.viewSpec = viewSpec
+
     this.options = viewSpec.options
-    this.slotMinTime = calendar.slotMinTime
-    this.slotMaxTime = calendar.slotMaxTime
-    this.dateEnv = calendar.dateEnv
-    this.calendar = calendar
+    this.slotMinTime = createDuration(viewSpec.options.slotMinTime)
+    this.slotMaxTime = createDuration(viewSpec.options.slotMaxTime)
 
     this.initHiddenDays()
   }
@@ -154,7 +153,7 @@ export class DateProfileGenerator {
   // Indicates the minimum/maximum dates to display.
   // not responsible for trimming hidden days.
   buildValidRange(): OpenDateRange {
-    return this.getRangeOption('validRange', this.calendar.getNow()) ||
+    return this.getRangeOption('validRange', this.nowDate) ||
       { start: null, end: null } // completely open-ended
   }
 

@@ -1,6 +1,6 @@
 import { ViewDef, compileViewDefs } from './view-def'
 import { Duration, createDuration, greatestDurationDenominator, getWeeksFromInput } from '../datelib/duration'
-import { OptionsManager } from '../OptionsManager'
+import { compileOptionsAdvanced } from '../OptionsManager'
 import { mapHash } from '../util/object'
 import { globalDefaults } from '../options'
 import { ViewConfigInputHash, parseViewConfigs, ViewConfigHash, ViewComponentType } from './view-config'
@@ -26,22 +26,24 @@ export interface ViewSpec {
 
 export type ViewSpecHash = { [viewType: string]: ViewSpec }
 
-export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionsManager: OptionsManager): ViewSpecHash {
+
+export function buildViewSpecs(defaultInputs: ViewConfigInputHash, optionOverrides, dynamicOptionOverrides): ViewSpecHash {
   let defaultConfigs = parseViewConfigs(defaultInputs)
-  let overrideConfigs = parseViewConfigs(optionsManager.overrides.views)
+  let overrideConfigs = parseViewConfigs(optionOverrides.views)
   let viewDefs = compileViewDefs(defaultConfigs, overrideConfigs)
 
   return mapHash(viewDefs, function(viewDef) {
-    return buildViewSpec(viewDef, overrideConfigs, optionsManager)
+    return buildViewSpec(viewDef, overrideConfigs, optionOverrides, dynamicOptionOverrides)
   })
 }
 
-function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, optionsManager: OptionsManager): ViewSpec {
+
+function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, optionOverrides, dynamicOptionOverrides): ViewSpec {
   let durationInput =
     viewDef.overrides.duration ||
     viewDef.defaults.duration ||
-    optionsManager.dynamicOverrides.duration ||
-    optionsManager.overrides.duration
+    dynamicOptionOverrides.duration ||
+    optionOverrides.duration
 
   let duration = null
   let durationUnit = ''
@@ -83,30 +85,28 @@ function buildViewSpec(viewDef: ViewDef, overrideConfigs: ViewConfigHash, option
     }
   }
 
+  let { combined, localeDefaults } = compileOptionsAdvanced(
+    optionOverrides,
+    dynamicOptionOverrides,
+    viewDef.defaults,
+    { ...singleUnitOverrides, ...viewDef.overrides }
+  )
+
   return {
     type: viewDef.type,
     component: viewDef.component,
     duration,
     durationUnit,
     singleUnit,
-
-    options: {
-      ...globalDefaults,
-      ...viewDef.defaults,
-      ...optionsManager.localeDefaults,
-      ...optionsManager.overrides,
-      ...singleUnitOverrides,
-      ...viewDef.overrides,
-      ...optionsManager.dynamicOverrides
-    },
+    options: combined,
 
     buttonTextOverride:
-      queryButtonText(optionsManager.dynamicOverrides) ||
-      queryButtonText(optionsManager.overrides) || // constructor-specified buttonText lookup hash takes precedence
+      queryButtonText(dynamicOptionOverrides) ||
+      queryButtonText(optionOverrides) || // constructor-specified buttonText lookup hash takes precedence
       viewDef.overrides.buttonText, // `buttonText` for view-specific options is a string
 
     buttonTextDefault:
-      queryButtonText(optionsManager.localeDefaults) ||
+      queryButtonText(localeDefaults) ||
       viewDef.defaults.buttonText ||
       queryButtonText(globalDefaults) ||
       viewDef.type // fall back to given view name

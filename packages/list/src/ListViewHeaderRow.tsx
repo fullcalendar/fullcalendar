@@ -33,7 +33,7 @@ export class ListViewHeaderRow extends BaseComponent<ListViewHeaderRowProps> {
 
     let hookProps: HookProps = {
       date: dateEnv.toDate(dayDate),
-      view: context.view,
+      view: context.viewApi,
       text,
       sideText,
       navLinkData,

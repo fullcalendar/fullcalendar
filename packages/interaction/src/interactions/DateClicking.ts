@@ -39,7 +39,7 @@ export class DateClicking extends Interaction {
   // won't even fire if moving was ignored
   handleDragEnd = (ev: PointerDragEvent) => {
     let { component } = this
-    let { calendar, view } = component.context
+    let { calendar, viewApi } = component.context
     let { pointer } = this.dragging
 
     if (!pointer.wasTouchScroll) {
@@ -49,7 +49,7 @@ export class DateClicking extends Interaction {
         calendar.triggerDateClick(
           initialHit.dateSpan,
           initialHit.dayEl,
-          view,
+          viewApi,
           ev.origEvent
         )
       }

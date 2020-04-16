@@ -1,7 +1,6 @@
 import { DateRange } from '../datelib/date-range'
 import { getDayClassNames, getDateMeta, DateMeta } from '../component/date-rendering'
 import { DateMarker, addDays } from '../datelib/marker'
-import { DateProfile } from '../DateProfileGenerator'
 import { ComponentContext } from '../component/ComponentContext'
 import { h } from '../vdom'
 import { __assign } from 'tslib'
@@ -14,7 +13,6 @@ import { ViewApi } from '../ViewApi'
 
 export interface TableDateCellProps {
   date: DateMarker
-  dateProfile: DateProfile
   todayRange: DateRange
   colCnt: number
   dayHeaderFormat: DateFormatter
@@ -39,7 +37,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
   render(props: TableDateCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
     let { date } = props
-    let dayMeta = getDateMeta(date, props.todayRange, null, props.dateProfile)
+    let dayMeta = getDateMeta(date, props.todayRange, null, context.dateProfile)
 
     let classNames = [ CLASS_NAME ].concat(
       getDayClassNames(dayMeta, context.theme)
@@ -53,7 +51,7 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
 
     let hookProps: DateHeaderCellHookProps = {
       date: dateEnv.toDate(date),
-      view: context.view,
+      view: context.viewApi,
       ...props.extraHookProps,
       text,
       ...dayMeta
@@ -127,7 +125,7 @@ export class TableDowCell extends BaseComponent<TableDowCellProps> {
     let hookProps: DateHeaderCellHookProps = {
       date,
       ...dateMeta,
-      view: context.view,
+      view: context.viewApi,
       ...props.extraHookProps,
       text
     }

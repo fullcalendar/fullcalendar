@@ -68,7 +68,7 @@ export class EventApi {
   }
 
   setStart(startInput: DateInput, options: { granularity?: string, maintainDuration?: boolean } = {}) {
-    let { dateEnv } = this._calendar
+    let { dateEnv } = this._calendar.state
     let start = dateEnv.createMarker(startInput)
 
     if (start && this._instance) { // TODO: warning if parsed bad
@@ -84,7 +84,7 @@ export class EventApi {
   }
 
   setEnd(endInput: DateInput | null, options: { granularity?: string } = {}) {
-    let { dateEnv } = this._calendar
+    let { dateEnv } = this._calendar.state
     let end
 
     if (endInput != null) {
@@ -106,7 +106,7 @@ export class EventApi {
   }
 
   setDates(startInput: DateInput, endInput: DateInput | null, options: { allDay?: boolean, granularity?: string } = {}) {
-    let { dateEnv } = this._calendar
+    let { dateEnv } = this._calendar.state
     let standardProps = { allDay: options.allDay } as any
     let start = dateEnv.createMarker(startInput)
     let end
@@ -190,7 +190,7 @@ export class EventApi {
   }
 
   formatRange(formatInput: FormatterInput) {
-    let { dateEnv } = this._calendar
+    let { dateEnv } = this._calendar.state
     let instance = this._instance
     let formatter = createFormatter(formatInput, this._calendar.opt('defaultRangeSeparator'))
 
@@ -245,13 +245,13 @@ export class EventApi {
 
   get start(): Date | null {
     return this._instance ?
-      this._calendar.dateEnv.toDate(this._instance.range.start) :
+      this._calendar.state.dateEnv.toDate(this._instance.range.start) :
       null
   }
 
   get end(): Date | null {
     return (this._instance && this._def.hasEnd) ?
-      this._calendar.dateEnv.toDate(this._instance.range.end) :
+      this._calendar.state.dateEnv.toDate(this._instance.range.end) :
       null
   }
 

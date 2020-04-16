@@ -1,17 +1,13 @@
 import { EmitterMixin, EmitterInterface } from './common/EmitterMixin'
-import { OptionsManager } from './OptionsManager'
 import { OptionsInput } from './types/input-types'
-import { buildLocale, organizeRawLocales, RawLocaleMap } from './datelib/locale'
-import { DateEnv, DateInput } from './datelib/env'
-import { DateMarker, startOfDay, diffWholeDays } from './datelib/marker'
+import { DateInput } from './datelib/env'
+import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { createDuration, DurationInput, Duration } from './datelib/duration'
-import { reduce } from './reducers/main'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
 import { memoize } from './util/memoize'
 import { mapHash, isPropsEqual } from './util/object'
-import { DateRangeInput, DateRange } from './datelib/date-range'
-import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
+import { DateRangeInput } from './datelib/date-range'
 import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
 import { EventInput, parseEvent, EventDefHash } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
@@ -19,8 +15,7 @@ import { EventSourceApi } from './api/EventSourceApi'
 import { EventApi } from './api/EventApi'
 import { createEmptyEventStore, eventTupleToStore, EventStore } from './structs/event-store'
 import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui'
-import { buildViewSpecs, ViewSpecHash, ViewSpec } from './structs/view-spec'
-import { PluginSystem, PluginHooks, PluginDef } from './plugin-system'
+import { ViewSpec } from './structs/view-spec'
 import { CalendarComponent } from './CalendarComponent'
 import { __assign } from 'tslib'
 import { DateComponent } from './component/DateComponent'
@@ -28,16 +23,16 @@ import { PointerDragEvent } from './interactions/pointer'
 import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore, InteractionClass } from './interactions/interaction'
 import { EventClicking } from './interactions/EventClicking'
 import { EventHovering } from './interactions/EventHovering'
-import { StandardTheme } from './theme/StandardTheme'
-import { ComponentContext, ComponentContextType, buildContext } from './component/ComponentContext'
 import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import { ViewApi } from './ViewApi'
-import { globalPlugins } from './global-plugins'
 import { removeExact } from './util/array'
 import { guid } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
 import { applyStyleProp } from './util/dom-manip'
+import { CalendarStateReducer } from './reducers/CalendarStateReducer'
+import { parseToolbars } from './toolbar-parse'
+import { getNow } from './reducers/current-date'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -77,95 +72,67 @@ export class Calendar {
   triggerWith: EmitterInterface['triggerWith']
   hasHandlers: EmitterInterface['hasHandlers']
 
-  // option-processing internals
-  // TODO: make these all private
-  public pluginSystem: PluginSystem
-  public optionsManager: OptionsManager
-  public viewSpecs: ViewSpecHash
-  public dateProfileGenerators: { [viewName: string]: DateProfileGenerator }
-
   // derived state
   // TODO: make these all private
-  private organizeRawLocales = memoize(organizeRawLocales)
-  private buildDateEnv = memoize(buildDateEnv)
-  private computeTitle = memoize(computeTitle)
-  private buildTheme = memoize(buildTheme)
-  private buildContext = memoize(buildContext)
   private buildEventUiSingleBase = memoize(buildEventUiSingleBase)
-  private buildSelectionConfig = memoize(buildSelectionConfig)
   private buildEventUiBySource = memoize(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
   private renderableEventStore: EventStore
   public eventUiBases: EventUiHash // needed for validation system
   public selectionConfig: EventUi // needed for validation system. doesn't need all the info EventUi provides. only validation-related
-  private availableRawLocales: RawLocaleMap
-  public context: ComponentContext
-  public dateEnv: DateEnv
   public defaultAllDayEventDuration: Duration
   public defaultTimedEventDuration: Duration
   public slotMinTime: Duration
   public slotMaxTime: Duration
   private resizeHandlers: ResizeHandler[] = []
+  private toolbarConfig
 
   // interaction
   calendarInteractions: CalendarInteraction[]
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
 
-  state: CalendarState
+  state: CalendarState = {} as any
   isRendering = false
   isRendered = false
+  reducer: CalendarStateReducer
   renderRunner: DelayedRunner
-  actionRunner: TaskRunner<Action> // for reducer. bad name
+  actionRunner: TaskRunner<Action> // guards against nested action calls
   el: HTMLElement
   currentClassNames: string[] = []
   componentRef = createRef<CalendarComponent>()
   view: ViewApi // public API
 
-  get component() { return this.componentRef.current }
+  get component() { return this.componentRef.current } // used to get view-specific business hours :(
 
 
-  constructor(el: HTMLElement, overrides?: OptionsInput) {
+  constructor(el: HTMLElement, optionOverrides: OptionsInput = {}) {
     this.el = el
 
-    let optionsManager = this.optionsManager = new OptionsManager(overrides || {})
-    this.pluginSystem = new PluginSystem()
+    this.reducer = new CalendarStateReducer()
 
     let renderRunner = this.renderRunner = new DelayedRunner(
       this.updateComponent.bind(this)
     )
 
-    let actionRunner = this.actionRunner = new TaskRunner(
+    this.actionRunner = new TaskRunner( // do we really need this in a runner?
       this.runAction.bind(this),
       () => {
-        this.updateDerivedState()
-        renderRunner.request(optionsManager.computed.rerenderDelay)
+        renderRunner.request(this.state.options.rerenderDelay)
       }
     )
-    actionRunner.pause()
 
-    // only do once. don't do in onOptionsChange. because can't remove plugins
-    this.addPluginDefs(
-      globalPlugins.concat(optionsManager.computed.plugins || [])
-    )
+    this.dispatch({
+      type: 'INIT',
+      optionOverrides
+    })
 
-    this.onOptionsChange()
-
-    this.publiclyTrigger('_init') // for tests
-    this.hydrate()
-    actionRunner.resume()
-
-    this.calendarInteractions = this.pluginSystem.hooks.calendarInteractions
+    // must go after INIT
+    this.calendarInteractions = this.state.pluginHooks.calendarInteractions
       .map((calendarInteractionClass) => {
         return new calendarInteractionClass(this)
       })
   }
 
-
-  addPluginDefs(pluginDefs: PluginDef[]) {
-    for (let pluginDef of pluginDefs) {
-      this.pluginSystem.add(pluginDef)
-    }
-  }
 
 
   // Public API for rendering
@@ -199,50 +166,6 @@ export class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  hydrate() {
-    this.state = this.buildInitialState()
-
-    let rawSources = this.opt('eventSources') || []
-    let singleRawSource = this.opt('events')
-    let sources = [] // parsed
-
-    if (singleRawSource) {
-      rawSources.unshift(singleRawSource)
-    }
-
-    for (let rawSource of rawSources) {
-      let source = parseEventSource(rawSource, this)
-      if (source) {
-        sources.push(source)
-      }
-    }
-
-    this.dispatch({ type: 'INIT' }) // pass in sources here?
-    this.dispatch({ type: 'ADD_EVENT_SOURCES', sources })
-    this.dispatch({
-      type: 'SET_VIEW_TYPE',
-      viewType: this.opt('initialView') || this.pluginSystem.hooks.initialView
-    })
-  }
-
-
-  buildInitialState(): CalendarState {
-    return {
-      viewType: null,
-      loadingLevel: 0,
-      eventSourceLoadingLevel: 0,
-      currentDate: this.getInitialDate(),
-      dateProfile: null,
-      eventSources: {},
-      eventStore: createEmptyEventStore(),
-      dateSelection: null,
-      eventSelection: '',
-      eventDrag: null,
-      eventResize: null
-    }
-  }
-
-
   dispatch(action: Action) {
     this.actionRunner.request(action)
 
@@ -257,11 +180,16 @@ export class Calendar {
 
   runAction(action: Action) {
     let oldState = this.state
-    let newState = this.state = reduce(this.state, action, this)
+    let newState = this.state = this.reducer.reduce(this.state, action, this)
 
-    if (!oldState.loadingLevel && newState.loadingLevel) {
+    if (oldState && oldState.options !== newState.options) {
+      this.updateDerivedOptions(newState.options)
+    }
+
+    if ((!oldState || !oldState.loadingLevel) && newState.loadingLevel) {
       this.publiclyTrigger('loading', [ true ])
-    } else if (oldState.loadingLevel && !newState.loadingLevel) {
+
+    } else if ((oldState && oldState.loadingLevel) && !newState.loadingLevel) {
       this.publiclyTrigger('loading', [ false ])
     }
   }
@@ -302,10 +230,9 @@ export class Calendar {
 
 
   renderComponent() {
-    let { context, state } = this
+    let { state } = this
     let { viewType } = state
-    let viewSpec = this.viewSpecs[viewType]
-    let viewApi = context.view
+    let viewSpec = state.viewSpecs[viewType]
 
     // if event sources are still loading and progressive rendering hasn't been enabled,
     // keep rendering the last fully loaded set of events
@@ -319,24 +246,23 @@ export class Calendar {
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
     render(
-      <ComponentContextType.Provider value={context}>
-        <CalendarComponent
-          ref={this.componentRef}
-          { ...state }
-          viewSpec={viewSpec}
-          dateProfileGenerator={this.dateProfileGenerators[viewType]}
-          dateProfile={state.dateProfile}
-          eventStore={renderableEventStore}
-          eventUiBases={eventUiBases}
-          dateSelection={state.dateSelection}
-          eventSelection={state.eventSelection}
-          eventDrag={state.eventDrag}
-          eventResize={state.eventResize}
-          title={viewApi.title}
-          onClassNameChange={this.handleClassNames}
-          onHeightChange={this.handleHeightChange}
-          />
-      </ComponentContextType.Provider>,
+      <CalendarComponent
+        ref={this.componentRef}
+        { ...state }
+        viewSpec={viewSpec}
+        dateProfileGenerator={state.dateProfileGenerator}
+        dateProfile={state.dateProfile}
+        eventStore={renderableEventStore}
+        eventUiBases={eventUiBases}
+        dateSelection={state.dateSelection}
+        eventSelection={state.eventSelection}
+        eventDrag={state.eventDrag}
+        eventResize={state.eventResize}
+        onClassNameChange={this.handleClassNames}
+        onHeightChange={this.handleHeightChange}
+        toolbarConfig={this.toolbarConfig}
+        calendar={this}
+      />,
       this.el
     )
     flushToDom()
@@ -379,34 +305,36 @@ export class Calendar {
 
 
   setOption(name: string, val) {
-    this.mutateOptions({ [name]: val }, [], true)
+    this.dispatch({
+      type: 'SET_OPTION',
+      optionName: name,
+      optionValue: val
+    })
   }
 
 
   getOption(name: string) { // getter, used externally
-    return this.optionsManager.computed[name]
+    return this.state.options[name]
   }
 
 
   opt(name: string) { // getter, used internally
-    return this.optionsManager.computed[name]
+    return this.state.options[name]
   }
 
 
   viewOpt(name: string) { // getter, used internally
-    return this.viewSpecs[this.state.viewType].options[name]
+    return this.state.viewSpecs[this.state.viewType].options[name]
   }
+
 
   /*
   handles option changes (like a diff)
   */
-  mutateOptions(updates, removals: string[] = [], isDynamic?: boolean) {
-    let changeHandlers = this.pluginSystem.hooks.optionChangeHandlers
+  mutateOptions(updates, removals: string[] = [], isDynamic = false) {
+    let changeHandlers = this.state.pluginHooks.optionChangeHandlers
     let normalUpdates = {}
     let specialUpdates = {}
-    let oldDateEnv = this.dateEnv // do this before onOptionsChange
-    let isTimeZoneDirty = false
-    let anyDifficultOptions = Boolean(removals.length) // pretty much all options are "difficult" :(
 
     for (let name in updates) {
       if (changeHandlers[name]) {
@@ -416,135 +344,42 @@ export class Calendar {
       }
     }
 
-    for (let name in normalUpdates) {
-      if (/^(initialDate|initialView)$/.test(name)) {
-        // can't change date this way. use gotoDate instead
-      } else {
-        anyDifficultOptions = true // I guess all options are "difficult" ?
-
-        if (name === 'timeZone') {
-          isTimeZoneDirty = true
-        }
-      }
-    }
-
-    this.optionsManager.mutate(normalUpdates, removals, isDynamic)
-
-    if (anyDifficultOptions) {
-      this.onOptionsChange()
-    }
-
     this.batchRendering(() => {
 
-      if (anyDifficultOptions) {
-
-        if (isTimeZoneDirty) {
-          this.dispatch({
-            type: 'CHANGE_TIMEZONE',
-            oldDateEnv
-          })
-        }
-
-        /* HACK
-        has the same effect as calling this.updateComponent()
-        but recomputes the state's dateProfile
-        */
-        this.dispatch({
-          type: 'SET_VIEW_TYPE',
-          viewType: this.state.viewType
-        })
-
-      }
+      this.dispatch({
+        type: 'MUTATE_OPTIONS',
+        updates: normalUpdates,
+        removals,
+        isDynamic
+      })
 
       // special updates
       for (let name in specialUpdates) {
         changeHandlers[name](specialUpdates[name], this)
       }
-
     })
   }
 
 
   /*
-  rebuilds things based off of a complete set of refined options
-  TODO: move all this to updateDerivedState, but hard because reducer depends on some values
+  only called when we know options changed
   */
-  onOptionsChange() {
-    let pluginHooks = this.pluginSystem.hooks
-    let rawOptions = this.optionsManager.computed
-
-    let availableLocaleData = this.organizeRawLocales(rawOptions.locales)
-    let dateEnv = this.buildDateEnv(rawOptions, pluginHooks, availableLocaleData)
-
-    this.availableRawLocales = availableLocaleData.map
-    this.dateEnv = dateEnv
-
-    // TODO: don't do every time
-    this.viewSpecs = buildViewSpecs(pluginHooks.views, this.optionsManager)
-
-    // needs to happen before dateProfileGenerators
+  updateDerivedOptions(rawOptions) {
     this.slotMinTime = createDuration(rawOptions.slotMinTime)
     this.slotMaxTime = createDuration(rawOptions.slotMaxTime)
-
-    // needs to happen after dateEnv assigned :( because DateProfileGenerator grabs onto reference
-    // TODO: don't do every time
-    this.dateProfileGenerators = mapHash(this.viewSpecs, (viewSpec) => {
-      let dateProfileGeneratorClass = viewSpec.options.dateProfileGeneratorClass || DateProfileGenerator
-      return new dateProfileGeneratorClass(viewSpec, this)
-    })
 
     // TODO: don't do every time
     this.defaultAllDayEventDuration = createDuration(rawOptions.defaultAllDayEventDuration)
     this.defaultTimedEventDuration = createDuration(rawOptions.defaultTimedEventDuration)
-  }
 
+    this.selectionConfig = buildSelectionConfig(rawOptions, this) // relies on dateEnv
 
-  /*
-  always executes after onOptionsChange
-  */
-  updateDerivedState() {
-    let pluginHooks = this.pluginSystem.hooks
-    let rawOptions = this.optionsManager.computed
-    let { dateEnv } = this
-    let { viewType, dateProfile } = this.state
-    let viewSpec = this.viewSpecs[viewType]
-
-    if (!viewSpec) {
-      throw new Error(`View type "${viewType}" is not valid`)
-    }
-
-    let theme = this.buildTheme(rawOptions, pluginHooks)
-    let title = this.computeTitle(dateProfile, dateEnv, viewSpec.options)
-    let viewApi = this.buildViewApi(viewType, title, dateProfile, dateEnv)
-    let context = this.buildContext(this, pluginHooks, dateEnv, theme, viewApi, rawOptions)
-
-    this.context = context
-    this.selectionConfig = this.buildSelectionConfig(rawOptions) // MUST happen after dateEnv assigned :(
-  }
-
-
-  /*
-  will only create a new instance when viewType is changed
-  */
-  buildViewApi(viewType: string, title: string, dateProfile: DateProfile, dateEnv: DateEnv) {
-    let { view } = this
-
-    if (!view || view.type !== viewType) {
-      view = this.view = { type: viewType } as ViewApi
-    }
-
-    view.title = title
-    view.activeStart = dateEnv.toDate(dateProfile.activeRange.start)
-    view.activeEnd = dateEnv.toDate(dateProfile.activeRange.end)
-    view.currentStart = dateEnv.toDate(dateProfile.currentRange.start)
-    view.currentEnd = dateEnv.toDate(dateProfile.currentRange.end)
-
-    return view
+    this.toolbarConfig = parseToolbars(rawOptions, this.state.theme, rawOptions.direction === 'rtl', this)
   }
 
 
   getAvailableLocaleCodes() {
-    return Object.keys(this.availableRawLocales)
+    return Object.keys(this.state.availableRawLocales)
   }
 
 
@@ -575,27 +410,41 @@ export class Calendar {
 
   // Returns a boolean about whether the view is okay to instantiate at some point
   isValidViewType(viewType: string): boolean {
-    return Boolean(this.viewSpecs[viewType])
+    return Boolean(this.state.viewSpecs[viewType])
   }
 
 
   changeView(viewType: string, dateOrRange?: DateRangeInput | DateInput) {
-    let dateMarker = null
+    this.batchRendering(() => {
+      this.unselect()
 
-    if (dateOrRange) {
-      if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
-        this.optionsManager.mutate({ visibleRange: dateOrRange }, []) // will not rerender
-        this.onOptionsChange() // ...but yuck
-      } else { // a date
-        dateMarker = this.dateEnv.createMarker(dateOrRange as DateInput) // just like gotoDate
+      if (dateOrRange) {
+
+        if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
+          this.dispatch({
+            type: 'SET_VIEW_TYPE',
+            viewType,
+          })
+          this.dispatch({
+            type: 'SET_OPTION',
+            optionName: 'visibleRange',
+            optionValue: dateOrRange
+          })
+
+        } else {
+          this.dispatch({
+            type: 'SET_VIEW_TYPE',
+            viewType,
+            dateMarker: this.state.dateEnv.createMarker(dateOrRange as DateInput)
+          })
+        }
+
+      } else {
+        this.dispatch({
+          type: 'SET_VIEW_TYPE',
+          viewType
+        })
       }
-    }
-
-    this.unselect()
-    this.dispatch({
-      type: 'SET_VIEW_TYPE',
-      viewType,
-      dateMarker
     })
   }
 
@@ -607,7 +456,7 @@ export class Calendar {
     let spec
 
     viewType = viewType || 'day' // day is default zoom
-    spec = this.viewSpecs[viewType] || this.getUnitViewSpec(viewType)
+    spec = this.state.viewSpecs[viewType] || this.getUnitViewSpec(viewType)
 
     this.unselect()
 
@@ -617,6 +466,7 @@ export class Calendar {
         viewType: spec.type,
         dateMarker
       })
+
     } else {
       this.dispatch({
         type: 'SET_DATE',
@@ -629,16 +479,17 @@ export class Calendar {
   // Given a duration singular unit, like "week" or "day", finds a matching view spec.
   // Preference is given to views that have corresponding buttons.
   getUnitViewSpec(unit: string): ViewSpec | null {
-    let viewTypes = [].concat(this.context.viewsWithButtons)
+    let { viewSpecs } = this.state
+    let viewTypes = [].concat(this.toolbarConfig.viewsWithButtons)
     let i
     let spec
 
-    for (let viewType in this.viewSpecs) {
+    for (let viewType in viewSpecs) {
       viewTypes.push(viewType)
     }
 
     for (i = 0; i < viewTypes.length; i++) {
-      spec = this.viewSpecs[viewTypes[i]]
+      spec = viewSpecs[viewTypes[i]]
       if (spec) {
         if (spec.singleUnit === unit) {
           return spec
@@ -650,18 +501,6 @@ export class Calendar {
 
   // Current Date
   // -----------------------------------------------------------------------------------------------------------------
-
-
-  getInitialDate() {
-    let initialDateInput = this.opt('initialDate')
-
-    // compute the initial ambig-timezone date
-    if (initialDateInput != null) {
-      return this.dateEnv.createMarker(initialDateInput)
-    } else {
-      return this.getNow() // getNow already returns unzoned
-    }
-  }
 
 
   prev() {
@@ -680,7 +519,7 @@ export class Calendar {
     this.unselect()
     this.dispatch({
       type: 'SET_DATE',
-      dateMarker: this.dateEnv.addYears(this.state.currentDate, -1)
+      dateMarker: this.state.dateEnv.addYears(this.state.currentDate, -1)
     })
   }
 
@@ -689,7 +528,7 @@ export class Calendar {
     this.unselect()
     this.dispatch({
       type: 'SET_DATE',
-      dateMarker: this.dateEnv.addYears(this.state.currentDate, 1)
+      dateMarker: this.state.dateEnv.addYears(this.state.currentDate, 1)
     })
   }
 
@@ -707,7 +546,7 @@ export class Calendar {
     this.unselect()
     this.dispatch({
       type: 'SET_DATE',
-      dateMarker: this.dateEnv.createMarker(zonedDateInput)
+      dateMarker: this.state.dateEnv.createMarker(zonedDateInput)
     })
   }
 
@@ -719,7 +558,7 @@ export class Calendar {
       this.unselect()
       this.dispatch({
         type: 'SET_DATE',
-        dateMarker: this.dateEnv.add(this.state.currentDate, delta)
+        dateMarker: this.state.dateEnv.add(this.state.currentDate, delta)
       })
     }
   }
@@ -727,7 +566,7 @@ export class Calendar {
 
   // for external API
   getDate(): Date {
-    return this.dateEnv.toDate(this.state.currentDate)
+    return this.state.dateEnv.toDate(this.state.currentDate)
   }
 
 
@@ -736,7 +575,8 @@ export class Calendar {
 
 
   formatDate(d: DateInput, formatter): string {
-    let { dateEnv } = this
+    let { dateEnv } = this.state
+
     return dateEnv.format(
       dateEnv.createMarker(d),
       createFormatter(formatter)
@@ -746,7 +586,8 @@ export class Calendar {
 
   // `settings` is for formatter AND isEndExclusive
   formatRange(d0: DateInput, d1: DateInput, settings) {
-    let { dateEnv } = this
+    let { dateEnv } = this.state
+
     return dateEnv.formatRange(
       dateEnv.createMarker(d0),
       dateEnv.createMarker(d1),
@@ -757,7 +598,8 @@ export class Calendar {
 
 
   formatIso(d: DateInput, omitTime?: boolean) {
-    let { dateEnv } = this
+    let { dateEnv } = this.state
+
     return dateEnv.formatIso(dateEnv.createMarker(d), { omitTime })
   }
 
@@ -778,12 +620,12 @@ export class Calendar {
 
   resizeRunner = new DelayedRunner(() => {
     this.triggerResizeHandlers(true) // should window resizes be considered "forced" ?
-    this.publiclyTrigger('windowResize', [ this.context.view ])
+    this.publiclyTrigger('windowResize')
   })
 
 
   handleWindowResize = (ev: UIEvent) => {
-    let { options } = this.context
+    let { options } = this.state
 
     if (
       options.handleWindowResize &&
@@ -822,7 +664,7 @@ export class Calendar {
       EventHovering
     ]
     let interactionClasses: InteractionClass[] = DEFAULT_INTERACTIONS.concat(
-      this.pluginSystem.hooks.componentInteractions
+      this.state.pluginHooks.componentInteractions
     )
     let interactions = interactionClasses.map((interactionClass) => {
       return new interactionClass(settings)
@@ -871,7 +713,7 @@ export class Calendar {
 
     let selection = parseDateSpan(
       selectionInput,
-      this.dateEnv,
+      this.state.dateEnv,
       createDuration({ days: 1 }) // TODO: cache this?
     )
 
@@ -927,11 +769,11 @@ export class Calendar {
   buildDatePointApi(dateSpan: DateSpan) {
     let props = {} as DatePointApi
 
-    for (let transform of this.pluginSystem.hooks.datePointTransforms) {
+    for (let transform of this.state.pluginHooks.datePointTransforms) {
       __assign(props, transform(dateSpan, this))
     }
 
-    __assign(props, buildDatePointApi(dateSpan, this.dateEnv))
+    __assign(props, buildDatePointApi(dateSpan, this.state.dateEnv))
 
     return props
   }
@@ -940,11 +782,11 @@ export class Calendar {
   buildDateSpanApi(dateSpan: DateSpan) {
     let props = {} as DateSpanApi
 
-    for (let transform of this.pluginSystem.hooks.dateSpanTransforms) {
+    for (let transform of this.state.pluginHooks.dateSpanTransforms) {
       __assign(props, transform(dateSpan, this))
     }
 
-    __assign(props, buildDateSpanApi(dateSpan, this.dateEnv))
+    __assign(props, buildDateSpanApi(dateSpan, this.state.dateEnv))
 
     return props
   }
@@ -956,17 +798,7 @@ export class Calendar {
 
   // Returns a DateMarker for the current date, as defined by the client's computer or from the `now` option
   getNow(): DateMarker {
-    let now = this.opt('now')
-
-    if (typeof now === 'function') {
-      now = now()
-    }
-
-    if (now == null) {
-      return this.dateEnv.createNowMarker()
-    }
-
-    return this.dateEnv.createMarker(now)
+    return getNow(this.state.options, this.state.dateEnv)
   }
 
 
@@ -981,9 +813,9 @@ export class Calendar {
 
     if (allDay) {
       end = startOfDay(end)
-      end = this.dateEnv.add(end, this.defaultAllDayEventDuration)
+      end = this.state.dateEnv.add(end, this.defaultAllDayEventDuration)
     } else {
-      end = this.dateEnv.add(end, this.defaultTimedEventDuration)
+      end = this.state.dateEnv.add(end, this.defaultTimedEventDuration)
     }
 
     return end
@@ -1141,7 +973,7 @@ export class Calendar {
       return sourceInput
     }
 
-    let eventSource = parseEventSource(sourceInput, this)
+    let eventSource = parseEventSource(sourceInput, this.state.pluginHooks, this)
 
     if (eventSource) { // TODO: error otherwise?
       this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [ eventSource ] })
@@ -1183,31 +1015,8 @@ EmitterMixin.mixInto(Calendar)
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function buildDateEnv(rawOptions: any, pluginHooks: PluginHooks, availableLocaleData) {
-  let locale = buildLocale(rawOptions.locale || availableLocaleData.defaultCode, availableLocaleData.map)
-
-  return new DateEnv({
-    calendarSystem: 'gregory', // TODO: make this a setting
-    timeZone: rawOptions.timeZone,
-    namedTimeZoneImpl: pluginHooks.namedTimeZonedImpl,
-    locale,
-    weekNumberCalculation: rawOptions.weekNumberCalculation,
-    firstDay: rawOptions.firstDay,
-    weekText: rawOptions.weekText,
-    cmdFormatter: pluginHooks.cmdFormatter
-  })
-}
-
-
-function buildTheme(rawOptions, pluginHooks: PluginHooks) {
-  let themeClass = pluginHooks.themeClasses[rawOptions.themeSystem] || StandardTheme
-
-  return new themeClass(rawOptions)
-}
-
-
-function buildSelectionConfig(this: Calendar, rawOptions) { // DANGEROUS: `this` context must be a Calendar
-  return processScopedUiProps('select', rawOptions, this)
+function buildSelectionConfig(rawOptions, calendar: Calendar) {
+  return processScopedUiProps('select', rawOptions, calendar)
 }
 
 
@@ -1238,56 +1047,4 @@ function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, 
   }
 
   return eventUiBases
-}
-
-
-// Title and Date Formatting
-// -----------------------------------------------------------------------------------------------------------------
-
-
-// Computes what the title at the top of the calendar should be for this view
-function computeTitle(dateProfile, dateEnv: DateEnv, viewOptions) {
-  let range: DateRange
-
-  // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-  if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
-    range = dateProfile.currentRange
-  } else { // for day units or smaller, use the actual day range
-    range = dateProfile.activeRange
-  }
-
-  return dateEnv.formatRange(
-    range.start,
-    range.end,
-    createFormatter(
-      viewOptions.titleFormat || computeTitleFormat(dateProfile),
-      viewOptions.titleRangeSeparator
-    ),
-    { isEndExclusive: dateProfile.isRangeAllDay }
-  )
-}
-
-
-// Generates the format string that should be used to generate the title for the current date range.
-// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-function computeTitleFormat(dateProfile) {
-  let currentRangeUnit = dateProfile.currentRangeUnit
-
-  if (currentRangeUnit === 'year') {
-    return { year: 'numeric' }
-  } else if (currentRangeUnit === 'month') {
-    return { year: 'numeric', month: 'long' } // like "September 2014"
-  } else {
-    let days = diffWholeDays(
-      dateProfile.currentRange.start,
-      dateProfile.currentRange.end
-    )
-    if (days !== null && days > 1) {
-      // multi-day range. shorter, like "Sep 9 - 10 2014"
-      return { year: 'numeric', month: 'short', day: 'numeric' }
-    } else {
-      // one day. longer, like "September 9 2014"
-      return { year: 'numeric', month: 'long', day: 'numeric' }
-    }
-  }
 }
