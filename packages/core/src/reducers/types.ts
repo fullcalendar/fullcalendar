@@ -11,15 +11,18 @@ import { RawLocaleMap } from '../datelib/locale'
 import { Theme } from '../theme/Theme'
 import { ViewSpecHash } from '../structs/view-spec'
 import { ReducerContext } from './ReducerContext'
+import { EventUiHash, EventUi } from '../component/event-ui'
 
 export interface CalendarState extends ReducerContext {
   eventSources: EventSourceHash
   eventSourceLoadingLevel: number
+  eventUiBases: EventUiHash
   loadingLevel: number
   viewType: string
   currentDate: DateMarker
   dateProfile: DateProfile | null // for the current view
   eventStore: EventStore
+  renderableEventStore: EventStore
   dateSelection: DateSpan | null
   eventSelection: string
   eventDrag: EventInteractionState | null
@@ -30,6 +33,8 @@ export interface CalendarState extends ReducerContext {
   theme: Theme
   dateProfileGenerator: DateProfileGenerator
   viewSpecs: ViewSpecHash
+  toolbarConfig
+  selectionConfig: EventUi
 }
 
 export type reducerFunc = (state: CalendarState, action: Action, context: ReducerContext) => CalendarState

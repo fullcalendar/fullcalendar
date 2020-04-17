@@ -3,18 +3,15 @@ import { OptionsInput } from './types/input-types'
 import { DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
-import { createDuration, DurationInput, Duration } from './datelib/duration'
+import { createDuration, DurationInput } from './datelib/duration'
 import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
-import { memoize } from './util/memoize'
-import { mapHash, isPropsEqual } from './util/object'
 import { DateRangeInput } from './datelib/date-range'
-import { EventSourceInput, parseEventSource, EventSourceHash } from './structs/event-source'
-import { EventInput, parseEvent, EventDefHash } from './structs/event'
+import { EventSourceInput, parseEventSource } from './structs/event-source'
+import { EventInput, parseEvent } from './structs/event'
 import { CalendarState, Action } from './reducers/types'
 import { EventSourceApi } from './api/EventSourceApi'
 import { EventApi } from './api/EventApi'
-import { createEmptyEventStore, eventTupleToStore, EventStore } from './structs/event-store'
-import { processScopedUiProps, EventUiHash, EventUi } from './component/event-ui'
+import { eventTupleToStore } from './structs/event-store'
 import { ViewSpec } from './structs/view-spec'
 import { CalendarComponent } from './CalendarComponent'
 import { __assign } from 'tslib'
@@ -30,9 +27,7 @@ import { removeExact } from './util/array'
 import { guid } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
 import { applyStyleProp } from './util/dom-manip'
-import { ReducerContext } from './reducers/ReducerContext'
 import { CalendarStateReducer } from './reducers/CalendarStateReducer'
-import { parseToolbars } from './toolbar-parse'
 import { getNow } from './reducers/current-date'
 
 
@@ -61,25 +56,6 @@ export type ResizeHandler = (force: boolean) => void
 
 export class Calendar {
 
-  // derived state
-  // TODO: make these all private
-  private buildEventUiSingleBase = memoize(buildEventUiSingleBase)
-  private buildEventUiBySource = memoize(buildEventUiBySource, isPropsEqual)
-  private buildEventUiBases = memoize(buildEventUiBases)
-  private renderableEventStore: EventStore
-  public eventUiBases: EventUiHash // needed for validation system
-  public selectionConfig: EventUi // needed for validation system. doesn't need all the info EventUi provides. only validation-related
-  public defaultAllDayEventDuration: Duration
-  public defaultTimedEventDuration: Duration
-  public slotMinTime: Duration
-  public slotMaxTime: Duration
-  private resizeHandlers: ResizeHandler[] = [] // TODO: use emitter somehow?
-  private toolbarConfig
-
-  // interaction
-  calendarInteractions: CalendarInteraction[]
-  interactionsStore: { [componentUid: string]: Interaction[] } = {}
-
   state: CalendarState = {} as any
   isRendering = false
   isRendered = false
@@ -91,6 +67,12 @@ export class Calendar {
   currentClassNames: string[] = []
   componentRef = createRef<CalendarComponent>()
   view: ViewApi // public API
+
+  // interaction
+  calendarInteractions: CalendarInteraction[]
+  interactionsStore: { [componentUid: string]: Interaction[] } = {}
+
+  private resizeHandlers: ResizeHandler[] = [] // TODO: use emitter somehow?
 
   get component() { return this.componentRef.current } // used to get view-specific business hours :(
 
@@ -133,7 +115,6 @@ export class Calendar {
   render() {
     if (!this.isRendering) {
       this.isRendering = true
-      this.renderableEventStore = createEmptyEventStore()
       this.renderRunner.request()
       window.addEventListener('resize', this.handleWindowResize)
     } else {
@@ -170,19 +151,7 @@ export class Calendar {
 
 
   runAction(action: Action) {
-    let oldState = this.state
-    let newState = this.state = this.reducer.reduce(this.state, action, this.emitter, this)
-
-    if (oldState && oldState.options !== newState.options) {
-      this.updateDerivedOptions(newState.options)
-    }
-
-    if ((!oldState || !oldState.loadingLevel) && newState.loadingLevel) {
-      this.emitter.trigger('loading', true)
-
-    } else if ((oldState && oldState.loadingLevel) && !newState.loadingLevel) {
-      this.emitter.trigger('loading', false)
-    }
+    this.state = this.reducer.reduce(this.state, action, this.emitter, this)
   }
 
 
@@ -225,17 +194,6 @@ export class Calendar {
     let { viewType } = state
     let viewSpec = state.viewSpecs[viewType]
 
-    // if event sources are still loading and progressive rendering hasn't been enabled,
-    // keep rendering the last fully loaded set of events
-    let renderableEventStore = this.renderableEventStore =
-      (state.eventSourceLoadingLevel && !this.opt('progressiveEventRendering')) ?
-        this.renderableEventStore :
-        state.eventStore
-
-    let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options, this.state)
-    let eventUiBySource = this.buildEventUiBySource(state.eventSources)
-    let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
-
     render(
       <CalendarComponent
         ref={this.componentRef}
@@ -243,15 +201,15 @@ export class Calendar {
         viewSpec={viewSpec}
         dateProfileGenerator={state.dateProfileGenerator}
         dateProfile={state.dateProfile}
-        eventStore={renderableEventStore}
-        eventUiBases={eventUiBases}
+        eventStore={state.renderableEventStore}
+        eventUiBases={state.eventUiBases}
         dateSelection={state.dateSelection}
         eventSelection={state.eventSelection}
         eventDrag={state.eventDrag}
         eventResize={state.eventResize}
         onClassNameChange={this.handleClassNames}
         onHeightChange={this.handleHeightChange}
-        toolbarConfig={this.toolbarConfig}
+        toolbarConfig={state.toolbarConfig}
         emitter={this.emitter}
         calendar={this}
       />,
@@ -353,23 +311,6 @@ export class Calendar {
   }
 
 
-  /*
-  only called when we know options changed
-  */
-  updateDerivedOptions(rawOptions) {
-    this.slotMinTime = createDuration(rawOptions.slotMinTime)
-    this.slotMaxTime = createDuration(rawOptions.slotMaxTime)
-
-    // TODO: don't do every time
-    this.defaultAllDayEventDuration = createDuration(rawOptions.defaultAllDayEventDuration)
-    this.defaultTimedEventDuration = createDuration(rawOptions.defaultTimedEventDuration)
-
-    this.selectionConfig = buildSelectionConfig(rawOptions, this.state)
-
-    this.toolbarConfig = parseToolbars(rawOptions, this.state.theme, rawOptions.direction === 'rtl', this)
-  }
-
-
   getAvailableLocaleCodes() {
     return Object.keys(this.state.availableRawLocales)
   }
@@ -464,8 +405,8 @@ export class Calendar {
   // Given a duration singular unit, like "week" or "day", finds a matching view spec.
   // Preference is given to views that have corresponding buttons.
   getUnitViewSpec(unit: string): ViewSpec | null {
-    let { viewSpecs } = this.state
-    let viewTypes = [].concat(this.toolbarConfig.viewsWithButtons)
+    let { viewSpecs, toolbarConfig } = this.state
+    let viewTypes = [].concat(toolbarConfig.viewsWithButtons)
     let i
     let spec
 
@@ -797,9 +738,9 @@ export class Calendar {
 
     if (allDay) {
       end = startOfDay(end)
-      end = this.state.dateEnv.add(end, this.defaultAllDayEventDuration)
+      end = this.state.dateEnv.add(end, this.state.computedOptions.defaultAllDayEventDuration)
     } else {
-      end = this.state.dateEnv.add(end, this.defaultTimedEventDuration)
+      end = this.state.dateEnv.add(end, this.state.computedOptions.defaultTimedEventDuration)
     }
 
     return end
@@ -990,44 +931,4 @@ export class Calendar {
     }
   }
 
-}
-
-
-
-// for memoizers
-// -----------------------------------------------------------------------------------------------------------------
-
-
-function buildSelectionConfig(rawOptions, context: ReducerContext) {
-  return processScopedUiProps('select', rawOptions, context)
-}
-
-
-function buildEventUiSingleBase(rawOptions, context: ReducerContext) {
-  if (rawOptions.editable) { // so 'editable' affected events
-    rawOptions = { ...rawOptions, eventEditable: true }
-  }
-  return processScopedUiProps('event', rawOptions, context)
-}
-
-
-function buildEventUiBySource(eventSources: EventSourceHash): EventUiHash {
-  return mapHash(eventSources, function(eventSource) {
-    return eventSource.ui
-  })
-}
-
-
-function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, eventUiBySource: EventUiHash) {
-  let eventUiBases: EventUiHash = { '': eventUiSingleBase }
-
-  for (let defId in eventDefs) {
-    let def = eventDefs[defId]
-
-    if (def.sourceId && eventUiBySource[def.sourceId]) {
-      eventUiBases[defId] = eventUiBySource[def.sourceId]
-    }
-  }
-
-  return eventUiBases
 }

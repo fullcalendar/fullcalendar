@@ -1,4 +1,4 @@
-import { ViewSpec } from './structs/view-spec'
+import { ViewSpec, ViewSpecHash } from './structs/view-spec'
 import { Calendar } from './Calendar'
 import { Theme } from './theme/Theme'
 import { mapHash } from './util/object'
@@ -14,28 +14,52 @@ export interface ToolbarWidget {
   buttonText?: any
 }
 
+
 // TODO: make separate parsing of headerToolbar/footerToolbar part of options-processing system
-export function parseToolbars(allOptions, theme: Theme, isRtl: boolean, calendar: Calendar) {
+export function parseToolbars(
+  options: any,
+  optionOverrides: any,
+  theme: Theme,
+  viewSpecs: ViewSpecHash,
+  calendar: Calendar
+) {
   let viewsWithButtons: string[] = []
-  let headerToolbar = allOptions.headerToolbar ? parseToolbar(allOptions.headerToolbar, theme, isRtl, calendar, viewsWithButtons) : null
-  let footerToolbar = allOptions.footerToolbar ? parseToolbar(allOptions.footerToolbar, theme, isRtl, calendar, viewsWithButtons) : null
+  let headerToolbar = options.headerToolbar ? parseToolbar(options.headerToolbar, options, optionOverrides, theme, viewSpecs, calendar, viewsWithButtons) : null
+  let footerToolbar = options.footerToolbar ? parseToolbar(options.footerToolbar, options, optionOverrides, theme, viewSpecs, calendar, viewsWithButtons) : null
 
   return { headerToolbar, footerToolbar, viewsWithButtons }
 }
 
-function parseToolbar(raw, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarModel {
-  return mapHash(raw, (rawSection: any) => parseSection(rawSection, theme, isRtl, calendar, viewsWithButtons))
+
+function parseToolbar(
+  sectionStrHash: { [sectionName: string]: string },
+  options: any,
+  optionOverrides: any,
+  theme: Theme,
+  viewSpecs: ViewSpecHash,
+  calendar: Calendar,
+  viewsWithButtons: string[] // dump side effects
+) : ToolbarModel {
+  return mapHash(sectionStrHash, (sectionStr) => parseSection(sectionStr, options, optionOverrides, theme, viewSpecs, calendar, viewsWithButtons))
 }
+
 
 /*
 BAD: querying icons and text here. should be done at render time
 */
-function parseSection(sectionStr: string, theme: Theme, isRtl: boolean, calendar: Calendar, viewsWithButtons: string[]): ToolbarWidget[][] {
-  let calendarState = calendar.state
-  let { viewSpecs } = calendarState
-  let calendarCustomButtons = calendarState.options.customButtons || {}
-  let calendarButtonTextOverrides = calendarState.optionOverrides.buttonText || {}
-  let calendarButtonText = calendarState.options.buttonText || {}
+function parseSection(
+  sectionStr: string,
+  options: any,
+  optionOverrides: any,
+  theme: Theme,
+  viewSpecs: ViewSpecHash,
+  calendar: Calendar,
+  viewsWithButtons: string[] // dump side effects
+): ToolbarWidget[][] {
+  let isRtl = options.direction === 'rtl'
+  let calendarCustomButtons = options.customButtons || {}
+  let calendarButtonTextOverrides = optionOverrides.buttonText || {}
+  let calendarButtonText = options.buttonText || {}
   let sectionSubstrs = sectionStr ? sectionStr.split(' ') : []
 
   return sectionSubstrs.map((buttonGroupStr, i): ToolbarWidget[] => {

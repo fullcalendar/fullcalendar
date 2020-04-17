@@ -7,8 +7,8 @@ import { compileOptions } from '../OptionsManager'
 import { Calendar } from '../Calendar'
 import { StandardTheme } from '../theme/StandardTheme'
 import { EventSourceHash } from '../structs/event-source'
-import { buildViewSpecs, ViewSpecHash } from '../structs/view-spec'
-import { mapHash } from '../util/object'
+import { buildViewSpecs, ViewSpecHash, ViewSpec } from '../structs/view-spec'
+import { mapHash, isPropsEqual } from '../util/object'
 import { DateProfileGenerator } from '../DateProfileGenerator'
 import { reduceViewType } from './view-type'
 import { reduceCurrentDate, getInitialDate, getNow } from './current-date'
@@ -21,6 +21,9 @@ import { reduceEventDrag } from './event-drag'
 import { reduceEventResize } from './event-resize'
 import { Emitter } from '../common/Emitter'
 import { ReducerContext, buildComputedOptions } from './ReducerContext'
+import { processScopedUiProps, EventUiHash, EventUi } from '../component/event-ui'
+import { EventDefHash } from '../structs/event'
+import { parseToolbars } from '../toolbar-parse'
 
 
 export class CalendarStateReducer {
@@ -32,6 +35,10 @@ export class CalendarStateReducer {
   private buildViewSpecs = memoize(buildViewSpecs)
   private buildDateProfileGenerator = memoize(buildDateProfileGenerators)
   private buildComputedOptions = memoize(buildComputedOptions)
+  private buildViewUiProps = memoize(buildViewUiProps)
+  private buildEventUiBySource = memoize(buildEventUiBySource, isPropsEqual)
+  private buildEventUiBases = memoize(buildEventUiBases)
+  private parseToolbars = memoize(parseToolbars)
 
 
   reduce(state: CalendarState, action: Action, emitter: Emitter, calendar: Calendar): CalendarState {
@@ -80,13 +87,14 @@ export class CalendarStateReducer {
     let dateProfileGenerators = this.buildDateProfileGenerator(viewSpecs, dateEnv)
     let theme = this.buildTheme(options, pluginHooks)
 
+    let dispatch = state.dispatch || calendar.dispatch.bind(calendar) // will reuse past functions! TODO: memoize? TODO: calendar should bind?
     let reducerContext: ReducerContext = {
       dateEnv,
       options,
       computedOptions: this.buildComputedOptions(options),
       pluginHooks,
       emitter,
-      dispatch: state.dispatch || calendar.dispatch.bind(calendar), // will reuse past functions! TODO: memoize? TODO: calendar should bind?
+      dispatch,
       calendar
     }
 
@@ -99,6 +107,33 @@ export class CalendarStateReducer {
     currentDate = reduceCurrentDate(currentDate, action, dateProfile)
 
     let eventSources = reduceEventSources(state.eventSources, action, dateProfile, reducerContext)
+    let eventSourceLoadingLevel = computeLoadingLevel(eventSources)
+    let eventStore = reduceEventStore(state.eventStore, action, eventSources, dateProfile, prevDateEnv, reducerContext)
+
+    let renderableEventStore =
+      (eventSourceLoadingLevel && !options.progressiveEventRendering) ?
+        (state.renderableEventStore || eventStore) : // try from previous state
+        eventStore
+
+    let { eventUiSingleBase, selectionConfig } = this.buildViewUiProps(
+      viewSpecs[viewType],
+      dateEnv,
+      pluginHooks,
+      emitter,
+      dispatch,
+      calendar
+    )
+    let eventUiBySource = this.buildEventUiBySource(eventSources)
+    let eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
+
+    let prevLoadingLevel = state.loadingLevel || 0
+    let loadingLevel = computeLoadingLevel(eventSources)
+
+    if (!prevLoadingLevel && loadingLevel) {
+      emitter.trigger('loading', true)
+    } else if (prevLoadingLevel && !loadingLevel) {
+      emitter.trigger('loading', false)
+    }
 
     let nextState: CalendarState = {
       ...(state as object), // preserve previous state from plugin reducers. tho remove type to make sure all data is provided right now
@@ -113,13 +148,17 @@ export class CalendarStateReducer {
       dateProfile,
       currentDate,
       eventSources,
-      eventStore: reduceEventStore(state.eventStore, action, eventSources, dateProfile, prevDateEnv, reducerContext),
+      eventStore,
+      renderableEventStore,
+      eventSourceLoadingLevel,
+      eventUiBases,
+      selectionConfig,
+      loadingLevel,
       dateSelection: reduceDateSelection(state.dateSelection, action),
       eventSelection: reduceSelectedEvent(state.eventSelection, action),
       eventDrag: reduceEventDrag(state.eventDrag, action),
       eventResize: reduceEventResize(state.eventResize, action),
-      eventSourceLoadingLevel: computeLoadingLevel(eventSources),
-      loadingLevel: computeLoadingLevel(eventSources)
+      toolbarConfig: this.parseToolbars(options, optionOverrides, theme, viewSpecs, calendar)
     }
 
     for (let reducerFunc of pluginHooks.reducers) {
@@ -128,6 +167,19 @@ export class CalendarStateReducer {
 
     return nextState
   }
+}
+
+
+function computeLoadingLevel(eventSources: EventSourceHash): number {
+  let cnt = 0
+
+  for (let sourceId in eventSources) {
+    if (eventSources[sourceId].isFetching) {
+      cnt++
+    }
+  }
+
+  return cnt
 }
 
 
@@ -171,14 +223,49 @@ function buildDateProfileGenerators(viewSpecs: ViewSpecHash, dateEnv: DateEnv) {
 }
 
 
-function computeLoadingLevel(eventSources: EventSourceHash): number {
-  let cnt = 0
+function buildViewUiProps(
+  viewSpec: ViewSpec,
+  dateEnv: DateEnv,
+  pluginHooks: PluginHooks,
+  emitter: Emitter,
+  dispatch: (action: Action) => void,
+  calendar: Calendar
+) {
+  let { options } = viewSpec
+  let reducerContext: ReducerContext = {
+    dateEnv,
+    options,
+    computedOptions: buildComputedOptions(options), // bad, REPEAT work
+    pluginHooks,
+    emitter,
+    dispatch,
+    calendar
+  }
 
-  for (let sourceId in eventSources) {
-    if (eventSources[sourceId].isFetching) {
-      cnt++
+  return {
+    eventUiSingleBase: processScopedUiProps('event', options, reducerContext),
+    selectionConfig: processScopedUiProps('select', options, reducerContext)
+  }
+}
+
+
+function buildEventUiBySource(eventSources: EventSourceHash): EventUiHash {
+  return mapHash(eventSources, function(eventSource) {
+    return eventSource.ui
+  })
+}
+
+
+function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, eventUiBySource: EventUiHash) {
+  let eventUiBases: EventUiHash = { '': eventUiSingleBase }
+
+  for (let defId in eventDefs) {
+    let def = eventDefs[defId]
+
+    if (def.sourceId && eventUiBySource[def.sourceId]) {
+      eventUiBases[defId] = eventUiBySource[def.sourceId]
     }
   }
 
-  return cnt
+  return eventUiBases
 }

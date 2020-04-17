@@ -65,8 +65,8 @@ describe('moment plugin', function() {
       })
 
       // hacky way to have a duration parsed
-      let timedDuration = toMomentDuration(calendar.defaultTimedEventDuration)
-      let allDayDuration = toMomentDuration(calendar.defaultAllDayEventDuration)
+      let timedDuration = toMomentDuration(calendar.state.computedOptions.defaultTimedEventDuration)
+      let allDayDuration = toMomentDuration(calendar.state.computedOptions.defaultAllDayEventDuration)
 
       expect(timedDuration.asHours()).toBe(5)
       expect(allDayDuration.asDays()).toBe(3)

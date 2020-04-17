@@ -159,7 +159,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         mutation = computeEventMutation(initialHit, hit, receivingContext.calendar.state.pluginHooks.eventDragMutationMassagers)
 
         if (mutation) {
-          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingContext.calendar.eventUiBases, mutation, receivingContext)
+          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingContext.calendar.state.eventUiBases, mutation, receivingContext)
           interaction.mutatedEvents = mutatedRelevantEvents
 
           if (!receivingComponent.isInteractionValid(interaction)) {

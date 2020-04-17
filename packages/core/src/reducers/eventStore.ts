@@ -175,7 +175,7 @@ function applyMutationToRelated(eventStore: EventStore, instanceId: string, muta
       textColor: '',
       classNames: []
     } } as EventUiHash :
-    context.calendar.eventUiBases
+    context.calendar.state.eventUiBases
 
 
   relevant = applyMutationToEventStore(relevant, eventConfigBase, mutation, context)

@@ -40,7 +40,7 @@ function isNewPropsValid(newProps, context: ReducerContext) {
     businessHours: viewComponent ? viewComponent.props.businessHours : createEmptyEventStore(), // why? yuck
     dateSelection: '',
     eventStore: calendar.state.eventStore,
-    eventUiBases: calendar.eventUiBases,
+    eventUiBases: calendar.state.eventUiBases,
     eventSelection: '',
     eventDrag: null,
     eventResize: null,
@@ -79,7 +79,7 @@ function isInteractionPropsValid(state: SplittableProps, context: ReducerContext
     subjectDefs,
     interaction.isEvent ?
       state.eventUiBases :
-      { '': calendar.selectionConfig } // if not a real event, validate as a selection
+      { '': calendar.state.selectionConfig } // if not a real event, validate as a selection
   )
 
   if (filterConfig) {
@@ -178,7 +178,7 @@ function isDateSelectionPropsValid(state: SplittableProps, context: ReducerConte
 
   let selection = state.dateSelection
   let selectionRange = selection.range
-  let { selectionConfig } = context.calendar
+  let { selectionConfig } = context.calendar.state
 
   if (filterConfig) {
     selectionConfig = filterConfig(selectionConfig)
