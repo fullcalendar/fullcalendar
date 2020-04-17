@@ -225,13 +225,13 @@ export interface EventMeta { // for *Content handlers
 
 
 export function computeSegDraggable(seg: Seg, context: ComponentContext) {
-  let { pluginHooks, calendar } = context
+  let { pluginHooks } = context
   let transformers = pluginHooks.isDraggableTransformers
   let { def, ui } = seg.eventRange
   let val = ui.startEditable
 
   for (let transformer of transformers) {
-    val = transformer(val, def, ui, calendar)
+    val = transformer(val, def, ui, context)
   }
 
   return val

@@ -5,14 +5,14 @@ import {
   startOfDay,
   elementClosest,
   EventStore, getRelevantEvents, createEmptyEventStore,
-  Calendar,
   EventInteractionState,
   diffDates, enableCursor, disableCursor,
   EventRenderRange, getElSeg,
   EventApi,
   eventDragMutationMassager,
   Interaction, InteractionSettings, interactionSettingsStore,
-  EventDropTransformers
+  EventDropTransformers,
+  ReducerContext
 } from '@fullcalendar/core'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -34,7 +34,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   isDragging: boolean = false
   eventRange: EventRenderRange | null = null
   relevantEvents: EventStore | null = null // the events being dragged
-  receivingCalendar: Calendar | null = null
+  receivingContext: ReducerContext | null = null
   validMutation: EventMutation | null = null
   mutatedRelevantEvents: EventStore | null = null
 
@@ -134,10 +134,10 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
     let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
-    let initialCalendar = this.component.context.calendar
+    let initialContext = this.component.context
 
     // states based on new hit
-    let receivingCalendar: Calendar | null = null
+    let receivingContext: ReducerContext | null = null
     let mutation: EventMutation | null = null
     let mutatedRelevantEvents: EventStore | null = null
     let isInvalid = false
@@ -149,17 +149,17 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
     if (hit) {
       let receivingComponent = hit.component
-      receivingCalendar = receivingComponent.context.calendar
-      let receivingOptions = receivingComponent.context.options
+      receivingContext = receivingComponent.context
+      let receivingOptions = receivingContext.options
 
       if (
-        initialCalendar === receivingCalendar ||
+        initialContext === receivingContext ||
         receivingOptions.editable && receivingOptions.droppable
       ) {
-        mutation = computeEventMutation(initialHit, hit, receivingCalendar.state.pluginHooks.eventDragMutationMassagers)
+        mutation = computeEventMutation(initialHit, hit, receivingContext.calendar.state.pluginHooks.eventDragMutationMassagers)
 
         if (mutation) {
-          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingCalendar.eventUiBases, mutation, receivingCalendar)
+          mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, receivingContext.calendar.eventUiBases, mutation, receivingContext)
           interaction.mutatedEvents = mutatedRelevantEvents
 
           if (!receivingComponent.isInteractionValid(interaction)) {
@@ -171,11 +171,11 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
           }
         }
       } else {
-        receivingCalendar = null
+        receivingContext = null
       }
     }
 
-    this.displayDrag(receivingCalendar, interaction)
+    this.displayDrag(receivingContext, interaction)
 
     if (!isInvalid) {
       enableCursor()
@@ -186,7 +186,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     if (!isFinal) {
 
       if (
-        initialCalendar === receivingCalendar && // TODO: write test for this
+        initialContext === receivingContext && // TODO: write test for this
         isHitsEqual(initialHit, hit)
       ) {
         mutation = null
@@ -201,7 +201,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       )
 
       // assign states based on new hit
-      this.receivingCalendar = receivingCalendar
+      this.receivingContext = receivingContext
       this.validMutation = mutation
       this.mutatedRelevantEvents = mutatedRelevantEvents
     }
@@ -216,20 +216,19 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   handleDragEnd = (ev: PointerDragEvent) => {
 
     if (this.isDragging) {
-      let { context } = this.component
-      let initialCalendar = context.calendar
-      let initialView = context.viewApi
-      let { receivingCalendar, validMutation } = this
+      let initialContext = this.component.context
+      let initialView = initialContext.viewApi
+      let { receivingContext, validMutation } = this
       let eventDef = this.eventRange!.def
       let eventInstance = this.eventRange!.instance
-      let eventApi = new EventApi(initialCalendar, eventDef, eventInstance)
+      let eventApi = new EventApi(initialContext.calendar, eventDef, eventInstance)
       let relevantEvents = this.relevantEvents!
       let mutatedRelevantEvents = this.mutatedRelevantEvents!
       let { finalHit } = this.hitDragging
 
       this.clearDrag() // must happen after revert animation
 
-      initialCalendar.emitter.trigger('eventDragStop', {
+      initialContext.emitter.trigger('eventDragStop', {
         el: this.subjectEl,
         event: eventApi,
         jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
@@ -239,17 +238,17 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
       if (validMutation) {
 
         // dropped within same calendar
-        if (receivingCalendar === initialCalendar) {
+        if (receivingContext === initialContext) {
 
-          initialCalendar.dispatch({
+          initialContext.dispatch({
             type: 'MERGE_EVENTS',
             eventStore: mutatedRelevantEvents
           })
 
           let transformed: ReturnType<EventDropTransformers> = {}
 
-          for (let transformer of initialCalendar.state.pluginHooks.eventDropTransformers) {
-            __assign(transformed, transformer(validMutation, initialCalendar))
+          for (let transformer of initialContext.calendar.state.pluginHooks.eventDropTransformers) {
+            __assign(transformed, transformer(validMutation, initialContext))
           }
 
           const eventDropArg = {
@@ -258,12 +257,12 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             delta: validMutation.datesDelta!,
             oldEvent: eventApi,
             event: new EventApi( // the data AFTER the mutation
-              initialCalendar,
+              initialContext.calendar,
               mutatedRelevantEvents.defs[eventDef.defId],
               eventInstance ? mutatedRelevantEvents.instances[eventInstance.instanceId] : null
             ),
             revert: function() {
-              initialCalendar.dispatch({
+              initialContext.dispatch({
                 type: 'MERGE_EVENTS',
                 eventStore: relevantEvents
               })
@@ -272,45 +271,45 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
             view: initialView
           }
 
-          initialCalendar.emitter.trigger('eventDrop', eventDropArg)
+          initialContext.emitter.trigger('eventDrop', eventDropArg)
 
         // dropped in different calendar
-        } else if (receivingCalendar) {
+        } else if (receivingContext) {
 
-          initialCalendar.emitter.trigger('eventLeave', {
+          initialContext.emitter.trigger('eventLeave', {
             draggedEl: ev.subjectEl as HTMLElement,
             event: eventApi,
             view: initialView
           })
 
-          initialCalendar.dispatch({
+          initialContext.dispatch({
             type: 'REMOVE_EVENT_INSTANCES',
             instances: this.mutatedRelevantEvents!.instances
           })
 
-          receivingCalendar.dispatch({
+          receivingContext.dispatch({
             type: 'MERGE_EVENTS',
             eventStore: this.mutatedRelevantEvents!
           })
 
           if (ev.isTouch) {
-            receivingCalendar.dispatch({
+            receivingContext.dispatch({
               type: 'SELECT_EVENT',
               eventInstanceId: eventInstance.instanceId
             })
           }
 
-          receivingCalendar.emitter.trigger('drop', {
-            ...receivingCalendar.buildDatePointApi(finalHit.dateSpan),
+          receivingContext.emitter.trigger('drop', {
+            ...receivingContext.calendar.buildDatePointApi(finalHit.dateSpan),
             draggedEl: ev.subjectEl as HTMLElement,
             jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
             view: finalHit.component.context.viewApi
           })
 
-          receivingCalendar.emitter.trigger('eventReceive', {
+          receivingContext.emitter.trigger('eventReceive', {
             draggedEl: ev.subjectEl as HTMLElement,
             event: new EventApi( // the data AFTER the mutation
-              receivingCalendar,
+              receivingContext.calendar,
               mutatedRelevantEvents.defs[eventDef.defId],
               mutatedRelevantEvents.instances[eventInstance.instanceId]
             ),
@@ -319,7 +318,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
         }
 
       } else {
-        initialCalendar.emitter.trigger('_noEventDrop')
+        initialContext.emitter.trigger('_noEventDrop')
       }
     }
 
@@ -327,17 +326,17 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
   }
 
   // render a drag state on the next receivingCalendar
-  displayDrag(nextCalendar: Calendar | null, state: EventInteractionState) {
-    let initialCalendar = this.component.context.calendar
-    let prevCalendar = this.receivingCalendar
+  displayDrag(nextContext: ReducerContext | null, state: EventInteractionState) {
+    let initialContext = this.component.context
+    let prevContext = this.receivingContext
 
     // does the previous calendar need to be cleared?
-    if (prevCalendar && prevCalendar !== nextCalendar) {
+    if (prevContext && prevContext !== nextContext) {
 
       // does the initial calendar need to be cleared?
       // if so, don't clear all the way. we still need to to hide the affectedEvents
-      if (prevCalendar === initialCalendar) {
-        prevCalendar.dispatch({
+      if (prevContext === initialContext) {
+        prevContext.dispatch({
           type: 'SET_EVENT_DRAG',
           state: {
             affectedEvents: state.affectedEvents,
@@ -348,25 +347,25 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
 
       // completely clear the old calendar if it wasn't the initial
       } else {
-        prevCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
+        prevContext.dispatch({ type: 'UNSET_EVENT_DRAG' })
       }
     }
 
-    if (nextCalendar) {
-      nextCalendar.dispatch({ type: 'SET_EVENT_DRAG', state })
+    if (nextContext) {
+      nextContext.dispatch({ type: 'SET_EVENT_DRAG', state })
     }
   }
 
   clearDrag() {
-    let initialCalendar = this.component.context.calendar
-    let { receivingCalendar } = this
+    let initialCalendar = this.component.context
+    let { receivingContext } = this
 
-    if (receivingCalendar) {
-      receivingCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
+    if (receivingContext) {
+      receivingContext.dispatch({ type: 'UNSET_EVENT_DRAG' })
     }
 
     // the initial calendar might have an dummy drag state from displayDrag
-    if (initialCalendar !== receivingCalendar) {
+    if (initialCalendar !== receivingContext) {
       initialCalendar.dispatch({ type: 'UNSET_EVENT_DRAG' })
     }
   }
@@ -376,7 +375,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
     this.isDragging = false
     this.eventRange = null
     this.relevantEvents = null
-    this.receivingCalendar = null
+    this.receivingContext = null
     this.validMutation = null
     this.mutatedRelevantEvents = null
   }

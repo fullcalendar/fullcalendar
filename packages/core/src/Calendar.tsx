@@ -30,6 +30,7 @@ import { removeExact } from './util/array'
 import { guid } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
 import { applyStyleProp } from './util/dom-manip'
+import { ReducerContext } from './reducers/ReducerContext'
 import { CalendarStateReducer } from './reducers/CalendarStateReducer'
 import { parseToolbars } from './toolbar-parse'
 import { getNow } from './reducers/current-date'
@@ -231,7 +232,7 @@ export class Calendar {
         this.renderableEventStore :
         state.eventStore
 
-    let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options)
+    let eventUiSingleBase = this.buildEventUiSingleBase(viewSpec.options, this.state)
     let eventUiBySource = this.buildEventUiBySource(state.eventSources)
     let eventUiBases = this.eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
@@ -363,7 +364,7 @@ export class Calendar {
     this.defaultAllDayEventDuration = createDuration(rawOptions.defaultAllDayEventDuration)
     this.defaultTimedEventDuration = createDuration(rawOptions.defaultTimedEventDuration)
 
-    this.selectionConfig = buildSelectionConfig(rawOptions, this) // relies on dateEnv
+    this.selectionConfig = buildSelectionConfig(rawOptions, this.state)
 
     this.toolbarConfig = parseToolbars(rawOptions, this.state.theme, rawOptions.direction === 'rtl', this)
   }
@@ -840,7 +841,7 @@ export class Calendar {
       }
     }
 
-    let tuple = parseEvent(eventInput, sourceId, this)
+    let tuple = parseEvent(eventInput, sourceId, this.state)
 
     if (tuple) {
 
@@ -956,7 +957,7 @@ export class Calendar {
       return sourceInput
     }
 
-    let eventSource = parseEventSource(sourceInput, this.state.pluginHooks, this)
+    let eventSource = parseEventSource(sourceInput, this.state)
 
     if (eventSource) { // TODO: error otherwise?
       this.dispatch({ type: 'ADD_EVENT_SOURCES', sources: [ eventSource ] })
@@ -997,16 +998,16 @@ export class Calendar {
 // -----------------------------------------------------------------------------------------------------------------
 
 
-function buildSelectionConfig(rawOptions, calendar: Calendar) {
-  return processScopedUiProps('select', rawOptions, calendar)
+function buildSelectionConfig(rawOptions, context: ReducerContext) {
+  return processScopedUiProps('select', rawOptions, context)
 }
 
 
-function buildEventUiSingleBase(this: Calendar, rawOptions) { // DANGEROUS: `this` context must be a Calendar
+function buildEventUiSingleBase(rawOptions, context: ReducerContext) {
   if (rawOptions.editable) { // so 'editable' affected events
     rawOptions = { ...rawOptions, eventEditable: true }
   }
-  return processScopedUiProps('event', rawOptions, this)
+  return processScopedUiProps('event', rawOptions, context)
 }
 
 

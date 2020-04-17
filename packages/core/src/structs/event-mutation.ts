@@ -1,11 +1,11 @@
 import { Duration } from '../datelib/duration'
 import { EventStore, createEmptyEventStore } from './event-store'
 import { EventDef, EventInstance } from './event'
-import { Calendar } from '../Calendar'
 import { computeAlignedDayRange } from '../util/misc'
 import { startOfDay } from '../datelib/marker'
 import { EventUiHash, EventUi } from '../component/event-ui'
 import { compileEventUis } from '../component/event-rendering'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 /*
 A data structure for how to modify an EventDef/EventInstance within an EventStore
@@ -20,30 +20,30 @@ export interface EventMutation {
 }
 
 // applies the mutation to ALL defs/instances within the event store
-export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, calendar: Calendar): EventStore {
+export function applyMutationToEventStore(eventStore: EventStore, eventConfigBase: EventUiHash, mutation: EventMutation, context: ReducerContext): EventStore {
   let eventConfigs = compileEventUis(eventStore.defs, eventConfigBase)
   let dest = createEmptyEventStore()
 
   for (let defId in eventStore.defs) {
     let def = eventStore.defs[defId]
 
-    dest.defs[defId] = applyMutationToEventDef(def, eventConfigs[defId], mutation, calendar.state.pluginHooks.eventDefMutationAppliers, calendar)
+    dest.defs[defId] = applyMutationToEventDef(def, eventConfigs[defId], mutation, context)
   }
 
   for (let instanceId in eventStore.instances) {
     let instance = eventStore.instances[instanceId]
     let def = dest.defs[instance.defId] // important to grab the newly modified def
 
-    dest.instances[instanceId] = applyMutationToEventInstance(instance, def, eventConfigs[instance.defId], mutation, calendar)
+    dest.instances[instanceId] = applyMutationToEventInstance(instance, def, eventConfigs[instance.defId], mutation, context)
   }
 
   return dest
 }
 
-export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutation, calendar: Calendar) => void
+export type eventDefMutationApplier = (eventDef: EventDef, mutation: EventMutation, context: ReducerContext) => void
 
 
-function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, appliers: eventDefMutationApplier[], calendar: Calendar): EventDef {
+function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutation: EventMutation, context: ReducerContext): EventDef {
   let standardProps = mutation.standardProps || {}
 
   // if hasEnd has not been specified, guess a good value based on deltas.
@@ -67,11 +67,11 @@ function applyMutationToEventDef(eventDef: EventDef, eventConfig: EventUi, mutat
     copy.extendedProps = { ...copy.extendedProps, ...mutation.extendedProps }
   }
 
-  for (let applier of appliers) {
-    applier(copy, mutation, calendar)
+  for (let applier of context.pluginHooks.eventDefMutationAppliers) {
+    applier(copy, mutation, context)
   }
 
-  if (!copy.hasEnd && calendar.opt('forceEventDuration')) {
+  if (!copy.hasEnd && context.options.forceEventDuration) {
     copy.hasEnd = true
   }
 
@@ -84,9 +84,9 @@ function applyMutationToEventInstance(
   eventDef: EventDef, // must first be modified by applyMutationToEventDef
   eventConfig: EventUi,
   mutation: EventMutation,
-  calendar: Calendar
+  context: ReducerContext
 ): EventInstance {
-  let dateEnv = calendar.state.dateEnv
+  let { dateEnv } = context
   let forceAllDay = mutation.standardProps && mutation.standardProps.allDay === true
   let clearEnd = mutation.standardProps && mutation.standardProps.hasEnd === false
   let copy = { ...eventInstance } as EventInstance
@@ -119,7 +119,7 @@ function applyMutationToEventInstance(
   if (clearEnd) {
     copy.range = {
       start: copy.range.start,
-      end: calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
+      end: context.calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
     }
   }
 
@@ -134,7 +134,7 @@ function applyMutationToEventInstance(
 
   // handle invalid durations
   if (copy.range.end < copy.range.start) {
-    copy.range.end = calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
+    copy.range.end = context.calendar.getDefaultEventEnd(eventDef.allDay, copy.range.start)
   }
 
   return copy

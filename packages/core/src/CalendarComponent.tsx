@@ -47,7 +47,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
   private computeTitle = memoize(computeTitle)
   private buildViewContext = memoize(buildViewContext)
-  private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.props.calendar))
+  private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.props))
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
   private reportClassNames = memoize(reportClassNames)
@@ -110,8 +110,10 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
       props.dateProfile,
       props.dateProfileGenerator,
       props.dateEnv,
-      props.pluginHooks,
       props.theme,
+      props.pluginHooks,
+      props.dispatch,
+      props.emitter,
       props.calendar
     )
 

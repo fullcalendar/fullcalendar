@@ -20,7 +20,6 @@ export interface ToolbarContent {
 
 export class Toolbar extends BaseComponent<ToolbarProps> {
 
-
   render(props: ToolbarProps) {
     let { model } = props
     let forceLtr = false

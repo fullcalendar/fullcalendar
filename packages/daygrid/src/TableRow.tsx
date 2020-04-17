@@ -86,7 +86,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
       state.segHeights,
       state.maxContentHeight,
       colCnt,
-      context.eventOrderSpecs
+      context.computedOptions.eventOrderSpecs
     )
 
     let selectedInstanceHash = // TODO: messy way to compute this

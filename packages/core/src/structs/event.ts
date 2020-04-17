@@ -1,12 +1,12 @@
 import { refineProps, guid } from '../util/misc'
 import { DateInput } from '../datelib/env'
-import { Calendar } from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { startOfDay } from '../datelib/marker'
 import { parseRecurring } from './recurring-event'
 import { Duration } from '../datelib/duration'
 import { UnscopedEventUiInput, EventUi, processUnscopedUiProps } from '../component/event-ui'
 import { __assign } from 'tslib'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 /*
 Utils for parsing event-input data. Each util parses a subset of the event-input's data.
@@ -77,19 +77,19 @@ export const DATE_PROPS = {
 }
 
 
-export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar, allowOpenRange?: boolean): EventTuple | null {
-  let defaultAllDay = computeIsdefaultAllDay(sourceId, calendar)
+export function parseEvent(raw: EventInput, sourceId: string, context: ReducerContext, allowOpenRange?: boolean): EventTuple | null {
+  let defaultAllDay = computeIsDefaultAllDay(sourceId, context)
   let leftovers0 = {}
   let recurringRes = parseRecurring(
     raw, // raw, but with single-event stuff stripped out
     defaultAllDay,
-    calendar.state.dateEnv,
-    calendar.state.pluginHooks.recurringTypes,
+    context.dateEnv,
+    context.pluginHooks.recurringTypes,
     leftovers0 // will populate with non-recurring props
   )
 
   if (recurringRes) {
-    let def = parseEventDef(leftovers0, sourceId, recurringRes.allDay, Boolean(recurringRes.duration), calendar)
+    let def = parseEventDef(leftovers0, sourceId, recurringRes.allDay, Boolean(recurringRes.duration), context)
 
     def.recurringDef = { // don't want all the props from recurringRes. TODO: more efficient way to do this
       typeId: recurringRes.typeId,
@@ -101,10 +101,10 @@ export function parseEvent(raw: EventInput, sourceId: string, calendar: Calendar
 
   } else {
     let leftovers1 = {}
-    let singleRes = parseSingle(raw, defaultAllDay, calendar, leftovers1, allowOpenRange)
+    let singleRes = parseSingle(raw, defaultAllDay, context, leftovers1, allowOpenRange)
 
     if (singleRes) {
-      let def = parseEventDef(leftovers1, sourceId, singleRes.allDay, singleRes.hasEnd, calendar)
+      let def = parseEventDef(leftovers1, sourceId, singleRes.allDay, singleRes.hasEnd, context)
       let instance = createEventInstance(def.defId, singleRes.range, singleRes.forcedStartTzo, singleRes.forcedEndTzo)
 
       return { def, instance }
@@ -120,16 +120,16 @@ Will NOT populate extendedProps with the leftover properties.
 Will NOT populate date-related props.
 The EventNonDateInput has been normalized (id => publicId, etc).
 */
-export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: boolean, hasEnd: boolean, calendar: Calendar): EventDef {
+export function parseEventDef(raw: EventNonDateInput, sourceId: string, allDay: boolean, hasEnd: boolean, context: ReducerContext): EventDef {
   let leftovers = {}
-  let def = pluckNonDateProps(raw, calendar, leftovers) as EventDef
+  let def = pluckNonDateProps(raw, context, leftovers) as EventDef
 
   def.defId = guid()
   def.sourceId = sourceId
   def.allDay = allDay
   def.hasEnd = hasEnd
 
-  for (let eventDefParser of calendar.state.pluginHooks.eventDefParsers) {
+  for (let eventDefParser of context.pluginHooks.eventDefParsers) {
     let newLeftovers = {}
     eventDefParser(def, leftovers, newLeftovers)
     leftovers = newLeftovers
@@ -164,7 +164,7 @@ export function createEventInstance(
 }
 
 
-function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: Calendar, leftovers?, allowOpenRange?: boolean) {
+function parseSingle(raw: EventInput, defaultAllDay: boolean | null, context: ReducerContext, leftovers?, allowOpenRange?: boolean) {
   let props = pluckDateProps(raw, leftovers)
   let allDay = props.allDay
   let startMeta
@@ -173,7 +173,7 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: C
   let endMeta
   let endMarker = null
 
-  startMeta = calendar.state.dateEnv.createMarkerMeta(props.start)
+  startMeta = context.dateEnv.createMarkerMeta(props.start)
 
   if (startMeta) {
     startMarker = startMeta.marker
@@ -182,7 +182,7 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: C
   }
 
   if (props.end != null) {
-    endMeta = calendar.state.dateEnv.createMarkerMeta(props.end)
+    endMeta = context.dateEnv.createMarkerMeta(props.end)
   }
 
   if (allDay == null) {
@@ -214,13 +214,13 @@ function parseSingle(raw: EventInput, defaultAllDay: boolean | null, calendar: C
   if (endMarker) {
     hasEnd = true
   } else if (!allowOpenRange) {
-    hasEnd = calendar.opt('forceEventDuration') || false
+    hasEnd = context.options.forceEventDuration || false
 
-    endMarker = calendar.state.dateEnv.add(
+    endMarker = context.dateEnv.add(
       startMarker,
       allDay ?
-        calendar.defaultAllDayEventDuration :
-        calendar.defaultTimedEventDuration
+        context.computedOptions.defaultAllDayEventDuration :
+        context.computedOptions.defaultTimedEventDuration
     )
   }
 
@@ -244,10 +244,10 @@ function pluckDateProps(raw: EventInput, leftovers: any) {
 }
 
 
-function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers?) {
+function pluckNonDateProps(raw: EventInput, context: ReducerContext, leftovers?) {
   let preLeftovers = {}
   let props = refineProps(raw, NON_DATE_PROPS, {}, preLeftovers)
-  let ui = processUnscopedUiProps(preLeftovers, calendar, leftovers)
+  let ui = processUnscopedUiProps(preLeftovers, context, leftovers)
 
   props.publicId = props.id
   delete props.id
@@ -258,16 +258,16 @@ function pluckNonDateProps(raw: EventInput, calendar: Calendar, leftovers?) {
 }
 
 
-function computeIsdefaultAllDay(sourceId: string, calendar: Calendar): boolean | null {
+function computeIsDefaultAllDay(sourceId: string, context: ReducerContext): boolean | null {
   let res = null
 
   if (sourceId) {
-    let source = calendar.state.eventSources[sourceId]
+    let source = context.calendar.state.eventSources[sourceId]
     res = source.defaultAllDay
   }
 
   if (res == null) {
-    res = calendar.opt('defaultAllDay')
+    res = context.options.defaultAllDay
   }
 
   return res

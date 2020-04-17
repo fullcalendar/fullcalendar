@@ -1,7 +1,7 @@
 import { Constraint, AllowFunc, normalizeConstraint, ConstraintInput } from '../validation'
 import { parseClassName } from '../util/html'
 import { refineProps, capitaliseFirstLetter } from '../util/misc'
-import { Calendar } from '../Calendar'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 // TODO: better called "EventSettings" or "EventConfig"
 // TODO: move this file into structs
@@ -53,9 +53,9 @@ export const UNSCOPED_EVENT_UI_PROPS = {
   textColor: String
 }
 
-export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar: Calendar, leftovers?): EventUi {
+export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, context: ReducerContext, leftovers?): EventUi {
   let props = refineProps(rawProps, UNSCOPED_EVENT_UI_PROPS, {}, leftovers)
-  let constraint = normalizeConstraint(props.constraint, calendar)
+  let constraint = normalizeConstraint(props.constraint, context)
 
   return {
     display: props.display,
@@ -71,7 +71,7 @@ export function processUnscopedUiProps(rawProps: UnscopedEventUiInput, calendar:
   }
 }
 
-export function processScopedUiProps(prefix: string, rawScoped: any, calendar: Calendar, leftovers?): EventUi {
+export function processScopedUiProps(prefix: string, rawScoped: any, context: ReducerContext, leftovers?): EventUi {
   let rawUnscoped = {} as any
   let wasFound = {} as any
 
@@ -93,7 +93,7 @@ export function processScopedUiProps(prefix: string, rawScoped: any, calendar: C
     }
   }
 
-  return processUnscopedUiProps(rawUnscoped, calendar)
+  return processUnscopedUiProps(rawUnscoped, context)
 }
 
 const EMPTY_EVENT_UI: EventUi = {

@@ -1,4 +1,3 @@
-
 import { buildLocale, RawLocaleInfo } from '../datelib/locale'
 import { memoize } from '../util/memoize'
 import { Action, CalendarState } from './types'
@@ -21,6 +20,7 @@ import { reduceSelectedEvent } from './selected-event'
 import { reduceEventDrag } from './event-drag'
 import { reduceEventResize } from './event-resize'
 import { Emitter } from '../common/Emitter'
+import { ReducerContext, buildComputedOptions } from './ReducerContext'
 
 
 export class CalendarStateReducer {
@@ -31,6 +31,7 @@ export class CalendarStateReducer {
   private buildTheme = memoize(buildTheme)
   private buildViewSpecs = memoize(buildViewSpecs)
   private buildDateProfileGenerator = memoize(buildDateProfileGenerators)
+  private buildComputedOptions = memoize(buildComputedOptions)
 
 
   reduce(state: CalendarState, action: Action, emitter: Emitter, calendar: Calendar): CalendarState {
@@ -66,7 +67,7 @@ export class CalendarStateReducer {
 
     let pluginHooks = this.buildPluginHooks(options.plugins)
     let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides)
-    let prevDateEnv = state.dateEnv
+    let prevDateEnv = state ? state.dateEnv : null
     let dateEnv = this.buildDateEnv(
       options.timeZone,
       options.locale,
@@ -79,6 +80,16 @@ export class CalendarStateReducer {
     let dateProfileGenerators = this.buildDateProfileGenerator(viewSpecs, dateEnv)
     let theme = this.buildTheme(options, pluginHooks)
 
+    let reducerContext: ReducerContext = {
+      dateEnv,
+      options,
+      computedOptions: this.buildComputedOptions(options),
+      pluginHooks,
+      emitter,
+      dispatch: state.dispatch || calendar.dispatch.bind(calendar), // will reuse past functions! TODO: memoize? TODO: calendar should bind?
+      calendar
+    }
+
     let viewType = state.viewType || options.initialView || pluginHooks.initialView // weird how we do INIT
     viewType = reduceViewType(viewType, action, pluginHooks.views)
 
@@ -87,15 +98,13 @@ export class CalendarStateReducer {
     let dateProfile = reduceDateProfile(state.dateProfile, action, currentDate, dateProfileGenerator)
     currentDate = reduceCurrentDate(currentDate, action, dateProfile)
 
-    let eventSources = reduceEventSources(state.eventSources, action, dateProfile, pluginHooks, options, emitter, calendar)
+    let eventSources = reduceEventSources(state.eventSources, action, dateProfile, reducerContext)
 
-    let nextState = {
-      ...state, // preserve previous state from plugin reducers
+    let nextState: CalendarState = {
+      ...(state as object), // preserve previous state from plugin reducers. tho remove type to make sure all data is provided right now
+      ...reducerContext,
       optionOverrides,
       dynamicOptionOverrides,
-      options,
-      dateEnv,
-      pluginHooks,
       availableRawLocales: availableLocaleData.map,
       theme,
       viewSpecs,
@@ -104,7 +113,7 @@ export class CalendarStateReducer {
       dateProfile,
       currentDate,
       eventSources,
-      eventStore: reduceEventStore(state.eventStore, action, eventSources, dateProfile, dateEnv, prevDateEnv, calendar),
+      eventStore: reduceEventStore(state.eventStore, action, eventSources, dateProfile, prevDateEnv, reducerContext),
       dateSelection: reduceDateSelection(state.dateSelection, action),
       eventSelection: reduceSelectedEvent(state.eventSelection, action),
       eventDrag: reduceEventDrag(state.eventDrag, action),
@@ -114,7 +123,7 @@ export class CalendarStateReducer {
     }
 
     for (let reducerFunc of pluginHooks.reducers) {
-      nextState = reducerFunc(nextState, action, options, calendar)
+      nextState = reducerFunc(nextState, action, reducerContext)
     }
 
     return nextState

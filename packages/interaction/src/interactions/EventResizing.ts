@@ -89,7 +89,7 @@ export class EventResizing extends Interaction {
   }
 
   handleHitUpdate = (hit: Hit | null, isFinal: boolean, ev: PointerDragEvent) => {
-    let { calendar, pluginHooks } = this.component.context
+    let { context } = this.component
     let relevantEvents = this.relevantEvents!
     let initialHit = this.hitDragging.initialHit!
     let eventInstance = this.eventRange.instance!
@@ -108,12 +108,12 @@ export class EventResizing extends Interaction {
         hit,
         (ev.subjectEl as HTMLElement).classList.contains('fc-event-resizer-start'),
         eventInstance.range,
-        pluginHooks.eventResizeJoinTransforms
+        context.pluginHooks.eventResizeJoinTransforms
       )
     }
 
     if (mutation) {
-      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, calendar.eventUiBases, mutation, calendar)
+      mutatedRelevantEvents = applyMutationToEventStore(relevantEvents, context.calendar.eventUiBases, mutation, context)
       interaction.mutatedEvents = mutatedRelevantEvents
 
       if (!this.component.isInteractionValid(interaction)) {
@@ -126,12 +126,12 @@ export class EventResizing extends Interaction {
     }
 
     if (mutatedRelevantEvents) {
-      calendar.dispatch({
+      context.dispatch({
         type: 'SET_EVENT_RESIZE',
         state: interaction
       })
     } else {
-      calendar.dispatch({ type: 'UNSET_EVENT_RESIZE' })
+      context.dispatch({ type: 'UNSET_EVENT_RESIZE' })
     }
 
     if (!isInvalid) {

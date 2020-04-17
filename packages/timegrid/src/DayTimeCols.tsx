@@ -53,7 +53,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
 
   render(props: DayTimeColsProps, state: {}, context: ComponentContext) {
-    let { dateEnv, options, calendar, dateProfile } = context
+    let { dateEnv, options, dateProfile } = context
     let { dayTableModel } = props
     let dayRanges = this.buildDayRanges(dayTableModel, dateProfile, dateEnv)
 
@@ -65,7 +65,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
           <TimeCols
             ref={this.timeColsRef}
             rootElRef={this.handleRootEl}
-            {...this.slicer.sliceProps(props, dateProfile, null, context.calendar, dayRanges)}
+            {...this.slicer.sliceProps(props, dateProfile, null, context, dayRanges)}
             axis={props.axis}
             slatMetas={props.slatMetas}
             slotDuration={props.slotDuration}
@@ -76,7 +76,7 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
             clientHeight={props.clientHeight}
             expandRows={props.expandRows}
             nowDate={nowDate}
-            nowIndicatorSegs={options.nowIndicator && this.slicer.sliceNowDate(nowDate, calendar, dayRanges)}
+            nowIndicatorSegs={options.nowIndicator && this.slicer.sliceNowDate(nowDate, context, dayRanges)}
             todayRange={todayRange}
             onScrollTopRequest={props.onScrollTopRequest}
             forPrint={props.forPrint}

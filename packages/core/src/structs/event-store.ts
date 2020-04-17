@@ -10,9 +10,9 @@ import {
 } from './event'
 import { EventSource } from './event-source'
 import { expandRecurringRanges } from './recurring-event'
-import { Calendar } from '../Calendar'
 import { filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 /*
 A data structure that encapsulates EventDefs and EventInstances.
@@ -28,13 +28,13 @@ export interface EventStore {
 export function parseEvents(
   rawEvents: EventInput[],
   sourceId: string,
-  calendar: Calendar,
+  context: ReducerContext,
   allowOpenRange?: boolean
 ): EventStore {
   let eventStore = createEmptyEventStore()
 
   for (let rawEvent of rawEvents) {
-    let tuple = parseEvent(rawEvent, sourceId, calendar, allowOpenRange)
+    let tuple = parseEvent(rawEvent, sourceId, context, allowOpenRange)
 
     if (tuple) {
       eventTupleToStore(tuple, eventStore)
@@ -54,8 +54,8 @@ export function eventTupleToStore(tuple: EventTuple, eventStore: EventStore = cr
   return eventStore
 }
 
-export function expandRecurring(eventStore: EventStore, framingRange: DateRange, calendar: Calendar): EventStore {
-  let dateEnv = calendar.state.dateEnv
+export function expandRecurring(eventStore: EventStore, framingRange: DateRange, context: ReducerContext): EventStore {
+  let { dateEnv, pluginHooks, computedOptions } = context
   let { defs, instances } = eventStore
 
   // remove existing recurring instances
@@ -71,11 +71,11 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
 
       if (!duration) {
         duration = def.allDay ?
-          calendar.defaultAllDayEventDuration :
-          calendar.defaultTimedEventDuration
+          computedOptions.defaultAllDayEventDuration :
+          computedOptions.defaultTimedEventDuration
       }
 
-      let starts = expandRecurringRanges(def, duration, framingRange, calendar.state.dateEnv, calendar.state.pluginHooks.recurringTypes)
+      let starts = expandRecurringRanges(def, duration, framingRange, dateEnv, pluginHooks.recurringTypes)
 
       for (let start of starts) {
         let instance = createEventInstance(defId, {
@@ -119,8 +119,8 @@ function isEventDefsGrouped(def0: EventDef, def1: EventDef): boolean {
   return Boolean(def0.groupId && def0.groupId === def1.groupId)
 }
 
-export function transformRawEvents(rawEvents, eventSource: EventSource, calendar: Calendar) {
-  let calEachTransform = calendar.opt('eventDataTransform')
+export function transformRawEvents(rawEvents, eventSource: EventSource, context: ReducerContext) {
+  let calEachTransform = context.options.eventDataTransform
   let sourceEachTransform = eventSource ? eventSource.eventDataTransform : null
 
   if (sourceEachTransform) {

@@ -65,7 +65,6 @@ export abstract class DateComponent<Props={}, State={}> extends BaseComponent<Pr
   // -----------------------------------------------------------------------------------------------------------------
 
   isInteractionValid(interaction: EventInteractionState) {
-    let { calendar } = this.context
     let dateProfile = (this.props as any).dateProfile // HACK
     let instances = interaction.mutatedEvents.instances
 
@@ -77,11 +76,10 @@ export abstract class DateComponent<Props={}, State={}> extends BaseComponent<Pr
       }
     }
 
-    return isInteractionValid(interaction, calendar)
+    return isInteractionValid(interaction, this.context)
   }
 
   isDateSelectionValid(selection: DateSpan): boolean {
-    let { calendar } = this.context
     let dateProfile = (this.props as any).dateProfile // HACK
 
     if (
@@ -91,7 +89,7 @@ export abstract class DateComponent<Props={}, State={}> extends BaseComponent<Pr
       return false
     }
 
-    return isDateSelectionValid(selection, calendar)
+    return isDateSelectionValid(selection, this.context)
   }
 
 

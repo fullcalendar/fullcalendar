@@ -138,6 +138,7 @@ export { DragMetaInput, DragMeta, parseDragMeta } from './structs/drag-meta'
 
 export { createPlugin, PluginDef, PluginDefInput, ViewPropsTransformer, ViewContainerAppend } from './plugin-system'
 export { reducerFunc, Action, CalendarState } from './reducers/types'
+export { ReducerContext } from './reducers/ReducerContext'
 export { CalendarComponentProps } from './CalendarComponent'
 
 export { DayHeader } from './common/DayHeader'

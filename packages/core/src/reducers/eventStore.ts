@@ -1,4 +1,3 @@
-import { Calendar } from '../Calendar'
 import { filterHash, mapHash } from '../util/object'
 import { EventMutation, applyMutationToEventStore } from '../structs/event-mutation'
 import { EventDef, EventInstance, EventInput, EventInstanceHash } from '../structs/event'
@@ -18,9 +17,10 @@ import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { DateEnv } from '../datelib/env'
 import { EventUiHash } from '../component/event-ui'
+import { ReducerContext } from './ReducerContext'
 
 
-export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, dateEnv: DateEnv, prevDateEnv: DateEnv, calendar: Calendar): EventStore {
+export function reduceEventStore(eventStore: EventStore, action: Action, eventSources: EventSourceHash, dateProfile: DateProfile, prevDateEnv: DateEnv, context: ReducerContext): EventStore {
   switch (action.type) {
     case 'INIT':
       return createEmptyEventStore()
@@ -32,7 +32,7 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
         action.fetchId,
         action.fetchRange,
         action.rawEvents,
-        calendar
+        context
       )
 
     case 'ADD_EVENTS': // already parsed, but not expanded
@@ -40,7 +40,7 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
         eventStore,
         action.eventStore, // new ones
         dateProfile ? dateProfile.activeRange : null,
-        calendar
+        context
       )
 
     case 'MERGE_EVENTS': // already parsed and expanded
@@ -51,20 +51,20 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
     case 'SET_DATE':
     case 'SET_VIEW_TYPE':
       if (dateProfile) {
-        return expandRecurring(eventStore, dateProfile.activeRange, calendar)
+        return expandRecurring(eventStore, dateProfile.activeRange, context)
       } else {
         return eventStore
       }
 
     case 'SET_OPTION':
       if (action.optionName === 'timeZone') {
-        return rezoneDates(eventStore, prevDateEnv, dateEnv)
+        return rezoneDates(eventStore, prevDateEnv, context.dateEnv)
       } else {
         return eventStore
       }
 
     case 'MUTATE_EVENTS':
-      return applyMutationToRelated(eventStore, action.instanceId, action.mutation, action.fromApi, calendar)
+      return applyMutationToRelated(eventStore, action.instanceId, action.mutation, action.fromApi, context)
 
     case 'REMOVE_EVENT_INSTANCES':
       return excludeInstances(eventStore, action.instances)
@@ -97,7 +97,7 @@ function receiveRawEvents(
   fetchId: string,
   fetchRange: DateRange | null,
   rawEvents: EventInput[],
-  calendar: Calendar
+  context: ReducerContext
 ): EventStore {
 
   if (
@@ -106,13 +106,13 @@ function receiveRawEvents(
   ) {
 
     let subset = parseEvents(
-      transformRawEvents(rawEvents, eventSource, calendar),
+      transformRawEvents(rawEvents, eventSource, context),
       eventSource.sourceId,
-      calendar
+      context
     )
 
     if (fetchRange) {
-      subset = expandRecurring(subset, fetchRange, calendar)
+      subset = expandRecurring(subset, fetchRange, context)
     }
 
     return mergeEventStores(
@@ -125,10 +125,10 @@ function receiveRawEvents(
 }
 
 
-function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateRange | null, calendar: Calendar): EventStore {
+function addEvent(eventStore: EventStore, subset: EventStore, expandRange: DateRange | null, context: ReducerContext): EventStore {
 
   if (expandRange) {
-    subset = expandRecurring(subset, expandRange, calendar)
+    subset = expandRecurring(subset, expandRange, context)
   }
 
   return mergeEventStores(eventStore, subset)
@@ -160,7 +160,7 @@ function rezoneDates(eventStore: EventStore, oldDateEnv: DateEnv, newDateEnv: Da
 }
 
 
-function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, fromApi: boolean, calendar: Calendar): EventStore {
+function applyMutationToRelated(eventStore: EventStore, instanceId: string, mutation: EventMutation, fromApi: boolean, context: ReducerContext): EventStore {
   let relevant = getRelevantEvents(eventStore, instanceId)
   let eventConfigBase = fromApi ?
     { '': { // HACK. always allow API to mutate events
@@ -175,10 +175,10 @@ function applyMutationToRelated(eventStore: EventStore, instanceId: string, muta
       textColor: '',
       classNames: []
     } } as EventUiHash :
-    calendar.eventUiBases
+    context.calendar.eventUiBases
 
 
-  relevant = applyMutationToEventStore(relevant, eventConfigBase, mutation, calendar)
+  relevant = applyMutationToEventStore(relevant, eventConfigBase, mutation, context)
 
   return mergeEventStores(eventStore, relevant)
 }

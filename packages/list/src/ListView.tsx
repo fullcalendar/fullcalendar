@@ -100,7 +100,7 @@ export class ListView extends DateComponent<ViewProps> {
 
 
   renderSegList(allSegs: Seg[], dayDates: DateMarker[]) {
-    let { theme, eventOrderSpecs } = this.context
+    let { theme, computedOptions } = this.context
     let segsByDay = groupSegsByDay(allSegs) // sparse array
 
     return (
@@ -120,7 +120,7 @@ export class ListView extends DateComponent<ViewProps> {
               />
             )
 
-            daySegs = sortEventSegs(daySegs, eventOrderSpecs)
+            daySegs = sortEventSegs(daySegs, computedOptions.eventOrderSpecs)
 
             for (let seg of daySegs) {
               innerNodes.push(
@@ -153,7 +153,7 @@ export class ListView extends DateComponent<ViewProps> {
         eventStore,
         eventUiBases,
         this.context.dateProfile.activeRange,
-        this.context.nextDayThreshold
+        this.context.computedOptions.nextDayThreshold
       ).fg,
       dayRanges
     )
@@ -172,7 +172,8 @@ export class ListView extends DateComponent<ViewProps> {
 
 
   eventRangeToSegs(eventRange: EventRenderRange, dayRanges: DateRange[]) {
-    let { dateEnv, nextDayThreshold } = this.context
+    let { dateEnv } = this.context
+    let { nextDayThreshold } = this.context.computedOptions
     let range = eventRange.range
     let allDay = eventRange.def.allDay
     let dayIndex

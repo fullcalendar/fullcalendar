@@ -5,7 +5,7 @@ import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { EventUi, processUnscopedUiProps } from '../component/event-ui'
 import { ConstraintInput, AllowFunc } from '../validation'
-import { PluginHooks } from '../plugin-system'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 /*
 Parsing and normalization of the EventSource data type, which defines how event data is fetched.
@@ -109,15 +109,15 @@ const SIMPLE_SOURCE_PROPS = {
 }
 
 
-export function doesSourceNeedRange(eventSource: EventSource, pluginHooks: PluginHooks) {
-  let defs = pluginHooks.eventSourceDefs
+export function doesSourceNeedRange(eventSource: EventSource, context: ReducerContext) {
+  let defs = context.pluginHooks.eventSourceDefs
 
   return !defs[eventSource.sourceDefId].ignoreRange
 }
 
 
-export function parseEventSource(raw: EventSourceInput, pluginHooks: PluginHooks, calendar: Calendar): EventSource | null {
-  let defs = pluginHooks.eventSourceDefs
+export function parseEventSource(raw: EventSourceInput, context: ReducerContext): EventSource | null {
+  let defs = context.pluginHooks.eventSourceDefs
 
   for (let i = defs.length - 1; i >= 0; i--) { // later-added plugins take precedence
     let def = defs[i]
@@ -128,7 +128,7 @@ export function parseEventSource(raw: EventSourceInput, pluginHooks: PluginHooks
         typeof raw === 'object' ? raw : {},
         meta,
         i,
-        calendar
+        context
       )
 
       res._raw = raw
@@ -140,11 +140,11 @@ export function parseEventSource(raw: EventSourceInput, pluginHooks: PluginHooks
 }
 
 
-function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, calendar: Calendar): EventSource {
+function parseEventSourceProps(raw: ExtendedEventSourceInput, meta: object, sourceDefId: number, context: ReducerContext): EventSource {
   let leftovers0 = {}
   let props = refineProps(raw, SIMPLE_SOURCE_PROPS, {}, leftovers0)
   let leftovers1 = {}
-  let ui = processUnscopedUiProps(leftovers0, calendar, leftovers1)
+  let ui = processUnscopedUiProps(leftovers0, context, leftovers1)
 
   props.isFetching = false
   props.latestFetchId = ''

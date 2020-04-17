@@ -1,6 +1,6 @@
-import { Calendar } from '../Calendar'
 import { EventInput } from './event'
 import { EventStore, parseEvents } from './event-store'
+import { ReducerContext } from '../reducers/ReducerContext'
 
 /*
 Utils for converting raw business hour input into an EventStore,
@@ -21,11 +21,11 @@ const DEF_DEFAULTS = {
 /*
 TODO: pass around as EventDefHash!!!
 */
-export function parseBusinessHours(input: BusinessHoursInput, calendar: Calendar): EventStore {
+export function parseBusinessHours(input: BusinessHoursInput, context: ReducerContext): EventStore {
   return parseEvents(
     refineInputs(input),
     '',
-    calendar
+    context
   )
 }
 

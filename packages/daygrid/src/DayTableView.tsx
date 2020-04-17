@@ -43,7 +43,7 @@ export class DayTableView extends TableView {
         eventSelection={props.eventSelection}
         eventDrag={props.eventDrag}
         eventResize={props.eventResize}
-        nextDayThreshold={context.nextDayThreshold}
+        nextDayThreshold={context.computedOptions.nextDayThreshold}
         colGroupNode={contentArg.tableColGroupNode}
         tableMinWidth={contentArg.tableMinWidth}
         dayMaxEvents={options.dayMaxEvents}

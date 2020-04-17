@@ -1,30 +1,26 @@
 import { EventSource, EventSourceHash, doesSourceNeedRange, parseEventSource } from '../structs/event-source'
-import { Calendar } from '../Calendar'
 import { arrayToHash, filterHash } from '../util/object'
 import { DateRange } from '../datelib/date-range'
 import { DateProfile } from '../DateProfileGenerator'
 import { Action } from './types'
 import { guid } from '../util/misc'
-import { PluginHooks } from '../plugin-system'
-import { Emitter } from '../common/Emitter'
+import { ReducerContext } from './ReducerContext'
 
-export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, pluginHooks: PluginHooks, rawOptions, emitter: Emitter, calendar: Calendar): EventSourceHash {
+
+export function reduceEventSources(eventSources: EventSourceHash, action: Action, dateProfile: DateProfile | null, context: ReducerContext): EventSourceHash {
   let activeRange = dateProfile ? dateProfile.activeRange : null
 
   switch (action.type) {
     case 'INIT':
       return addSources(
         eventSources,
-        parseInitialSources(action.optionOverrides, pluginHooks, calendar),
+        parseInitialSources(action.optionOverrides, context),
         activeRange,
-        pluginHooks,
-        rawOptions,
-        emitter,
-        calendar
+        context
       )
 
     case 'ADD_EVENT_SOURCES': // already parsed
-      return addSources(eventSources, action.sources, activeRange, pluginHooks, rawOptions, emitter, calendar)
+      return addSources(eventSources, action.sources, activeRange, context)
 
     case 'REMOVE_EVENT_SOURCE':
       return removeSource(eventSources, action.sourceId)
@@ -34,7 +30,7 @@ export function reduceEventSources(eventSources: EventSourceHash, action: Action
     case 'SET_DATE':
     case 'SET_VIEW_TYPE':
       if (dateProfile) {
-        return fetchDirtySources(eventSources, activeRange, pluginHooks, rawOptions, emitter, calendar)
+        return fetchDirtySources(eventSources, activeRange, context)
       } else {
         return eventSources
       }
@@ -44,22 +40,18 @@ export function reduceEventSources(eventSources: EventSourceHash, action: Action
         eventSources,
         (action as any).sourceIds ? // why no type?
           arrayToHash((action as any).sourceIds) :
-          excludeStaticSources(eventSources, pluginHooks),
+          excludeStaticSources(eventSources, context),
         activeRange,
-        pluginHooks,
-        emitter,
-        calendar
+        context
       )
 
     case 'SET_OPTION':
       if (action.optionName === 'timeZone') {
         return fetchSourcesByIds(
           eventSources,
-          excludeStaticSources(eventSources, pluginHooks),
+          excludeStaticSources(eventSources, context),
           activeRange,
-          pluginHooks,
-          emitter,
-          calendar
+          context
         )
       } else {
         return eventSources
@@ -78,7 +70,7 @@ export function reduceEventSources(eventSources: EventSourceHash, action: Action
 }
 
 
-function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, pluginHooks: PluginHooks, rawOptions, emitter: Emitter, calendar: Calendar): EventSourceHash {
+function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fetchRange: DateRange | null, context: ReducerContext): EventSourceHash {
   let hash: EventSourceHash = {}
 
   for (let source of sources) {
@@ -86,7 +78,7 @@ function addSources(eventSourceHash: EventSourceHash, sources: EventSource[], fe
   }
 
   if (fetchRange) {
-    hash = fetchDirtySources(hash, fetchRange, pluginHooks, rawOptions, emitter, calendar)
+    hash = fetchDirtySources(hash, fetchRange, context)
   }
 
   return { ...eventSourceHash, ...hash }
@@ -100,26 +92,25 @@ function removeSource(eventSourceHash: EventSourceHash, sourceId: string): Event
 }
 
 
-function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, pluginHooks: PluginHooks, rawOptions, emitter: Emitter, calendar: Calendar): EventSourceHash {
+function fetchDirtySources(sourceHash: EventSourceHash, fetchRange: DateRange, context: ReducerContext): EventSourceHash {
   return fetchSourcesByIds(
     sourceHash,
     filterHash(sourceHash, function(eventSource) {
-      return isSourceDirty(eventSource, fetchRange, rawOptions, pluginHooks)
+      return isSourceDirty(eventSource, fetchRange, context)
     }),
     fetchRange,
-    pluginHooks,
-    emitter,
-    calendar
+    context
   )
 }
 
 
-function isSourceDirty(eventSource: EventSource, fetchRange: DateRange, rawOptions, pluginHooks: PluginHooks) {
+function isSourceDirty(eventSource: EventSource, fetchRange: DateRange, context: ReducerContext) {
 
-  if (!doesSourceNeedRange(eventSource, pluginHooks)) {
+  if (!doesSourceNeedRange(eventSource, context)) {
     return !eventSource.latestFetchId
+
   } else {
-    return !rawOptions.lazyFetching ||
+    return !context.options.lazyFetching ||
       !eventSource.fetchRange ||
       eventSource.isFetching || // always cancel outdated in-progress fetches
       fetchRange.start < eventSource.fetchRange.start ||
@@ -132,9 +123,7 @@ function fetchSourcesByIds(
   prevSources: EventSourceHash,
   sourceIdHash: { [sourceId: string]: any },
   fetchRange: DateRange,
-  pluginHooks: PluginHooks,
-  emitter: Emitter,
-  calendar: Calendar
+  context: ReducerContext
 ): EventSourceHash {
   let nextSources: EventSourceHash = {}
 
@@ -142,7 +131,7 @@ function fetchSourcesByIds(
     let source = prevSources[sourceId]
 
     if (sourceIdHash[sourceId]) {
-      nextSources[sourceId] = fetchSource(source, fetchRange, pluginHooks, emitter, calendar)
+      nextSources[sourceId] = fetchSource(source, fetchRange, context)
     } else {
       nextSources[sourceId] = source
     }
@@ -152,14 +141,14 @@ function fetchSourcesByIds(
 }
 
 
-function fetchSource(eventSource: EventSource, fetchRange: DateRange, pluginHooks: PluginHooks, emitter: Emitter, calendar: Calendar) {
-  let sourceDef = pluginHooks.eventSourceDefs[eventSource.sourceDefId]
+function fetchSource(eventSource: EventSource, fetchRange: DateRange, context: ReducerContext) {
+  let sourceDef = context.pluginHooks.eventSourceDefs[eventSource.sourceDefId]
   let fetchId = guid()
 
   sourceDef.fetch(
     {
       eventSource,
-      calendar,
+      calendar: context.calendar,
       range: fetchRange
     },
     function(res) {
@@ -170,10 +159,10 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, pluginHook
         sourceSuccessRes = eventSource.success(rawEvents, res.xhr)
       }
 
-      let calSuccessRes = emitter.trigger('eventSourceSuccess', rawEvents, res.xhr)
+      let calSuccessRes = context.emitter.trigger('eventSourceSuccess', rawEvents, res.xhr)
       rawEvents = sourceSuccessRes || calSuccessRes || rawEvents
 
-      calendar.dispatch({
+      context.dispatch({
         type: 'RECEIVE_EVENTS',
         sourceId: eventSource.sourceId,
         fetchId,
@@ -188,9 +177,9 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, pluginHook
         eventSource.failure(error)
       }
 
-      emitter.trigger('eventSourceFailure', error)
+      context.emitter.trigger('eventSourceFailure', error)
 
-      calendar.dispatch({
+      context.dispatch({
         type: 'RECEIVE_EVENT_ERROR',
         sourceId: eventSource.sourceId,
         fetchId,
@@ -229,14 +218,14 @@ function receiveResponse(sourceHash: EventSourceHash, sourceId: string, fetchId:
 }
 
 
-function excludeStaticSources(eventSources: EventSourceHash, pluginHooks: PluginHooks): EventSourceHash {
+function excludeStaticSources(eventSources: EventSourceHash, context: ReducerContext): EventSourceHash {
   return filterHash(eventSources, function(eventSource) {
-    return doesSourceNeedRange(eventSource, pluginHooks)
+    return doesSourceNeedRange(eventSource, context)
   })
 }
 
 
-function parseInitialSources(rawOptions, pluginHooks, calendar: Calendar) {
+function parseInitialSources(rawOptions, context: ReducerContext) {
   let rawSources = rawOptions.eventSources || []
   let singleRawSource = rawOptions.events
   let sources = [] // parsed
@@ -246,7 +235,7 @@ function parseInitialSources(rawOptions, pluginHooks, calendar: Calendar) {
   }
 
   for (let rawSource of rawSources) {
-    let source = parseEventSource(rawSource, pluginHooks, calendar)
+    let source = parseEventSource(rawSource, context)
     if (source) {
       sources.push(source)
     }

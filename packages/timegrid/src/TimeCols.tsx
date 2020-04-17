@@ -1,6 +1,5 @@
 import {
   h, VNode, Ref,
-  createDuration,
   addDurations,
   multiplyDuration,
   wholeDivideDurations,
@@ -150,10 +149,10 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
 
   positionToHit(positionLeft, positionTop) {
-    let { dateProfile, dateEnv, options } = this.context
+    let { dateProfile, dateEnv, computedOptions } = this.context
     let { colCoords } = this
     let { slatCoords } = this.state
-    let { snapDuration, snapsPerSlot } = this.processSlotOptions(this.props.slotDuration, options.snapDuration)
+    let { snapDuration, snapsPerSlot } = this.processSlotOptions(this.props.slotDuration, computedOptions.snapDuration)
 
     let colIndex = colCoords.leftToIndex(positionLeft)
     let slatIndex = slatCoords.positions.topToIndex(positionTop)
@@ -194,8 +193,8 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 }
 
 
-function processSlotOptions(slotDuration: Duration, snapDurationInput) {
-  let snapDuration = snapDurationInput ? createDuration(snapDurationInput) : slotDuration
+function processSlotOptions(slotDuration: Duration, snapDurationOverride: Duration | null) {
+  let snapDuration = snapDurationOverride || slotDuration
   let snapsPerSlot = wholeDivideDurations(slotDuration, snapDuration)
 
   if (snapsPerSlot === null) {

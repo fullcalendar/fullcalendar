@@ -6,15 +6,13 @@ import { EventSource, EventSourceHash, EventSourceError } from '../structs/event
 import { DateProfile, DateProfileGenerator } from '../DateProfileGenerator'
 import { EventInteractionState } from '../interactions/event-interaction-state'
 import { DateSpan } from '../structs/date-span'
-import { DateEnv } from '../datelib/env'
-import { Calendar } from '../Calendar'
 import { DateMarker } from '../datelib/marker'
-import { PluginHooks } from '../plugin-system'
 import { RawLocaleMap } from '../datelib/locale'
 import { Theme } from '../theme/Theme'
 import { ViewSpecHash } from '../structs/view-spec'
+import { ReducerContext } from './ReducerContext'
 
-export interface CalendarState {
+export interface CalendarState extends ReducerContext {
   eventSources: EventSourceHash
   eventSourceLoadingLevel: number
   loadingLevel: number
@@ -26,18 +24,15 @@ export interface CalendarState {
   eventSelection: string
   eventDrag: EventInteractionState | null
   eventResize: EventInteractionState | null
-  options: any
   optionOverrides: any
   dynamicOptionOverrides: any
-  dateEnv: DateEnv
-  pluginHooks: PluginHooks
   availableRawLocales: RawLocaleMap
   theme: Theme
   dateProfileGenerator: DateProfileGenerator
   viewSpecs: ViewSpecHash
 }
 
-export type reducerFunc = (state: CalendarState, action: Action, rawOptions: any, calendar: Calendar) => CalendarState
+export type reducerFunc = (state: CalendarState, action: Action, context: ReducerContext) => CalendarState
 
 export type Action =
 
