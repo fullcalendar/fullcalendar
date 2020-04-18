@@ -179,7 +179,7 @@ export class EventApi {
     let maintainDuration = options.maintainDuration
 
     if (maintainDuration == null) {
-      maintainDuration = this._calendar.opt('allDayMaintainDuration')
+      maintainDuration = this._calendar.state.options.allDayMaintainDuration
     }
 
     if (this._def.allDay !== allDay) {
@@ -192,7 +192,7 @@ export class EventApi {
   formatRange(formatInput: FormatterInput) {
     let { dateEnv } = this._calendar.state
     let instance = this._instance
-    let formatter = createFormatter(formatInput, this._calendar.opt('defaultRangeSeparator'))
+    let formatter = createFormatter(formatInput, this._calendar.state.options.defaultRangeSeparator)
 
     if (this._def.hasEnd) {
       return dateEnv.formatRange(instance.range.start, instance.range.end, formatter, {

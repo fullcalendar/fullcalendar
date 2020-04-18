@@ -1,5 +1,5 @@
 import { Duration, createDuration } from './datelib/duration'
-import { Calendar } from './Calendar'
+import { ReducerContext } from './reducers/ReducerContext'
 import { __assign } from 'tslib'
 
 
@@ -16,14 +16,17 @@ export class ScrollResponder {
   queuedRequest: ScrollRequest
 
 
-  constructor(public calendar: Calendar, public execFunc: ScrollRequestHandler) {
-    calendar.on('_scrollRequest', this.handleScrollRequest)
+  constructor(
+    public execFunc: ScrollRequestHandler,
+    private context: ReducerContext
+  ) {
+    context.emitter.on('_scrollRequest', this.handleScrollRequest)
     this.fireInitialScroll()
   }
 
 
   detach() {
-    this.calendar.off('_scrollRequest', this.handleScrollRequest)
+    this.context.emitter.off('_scrollRequest', this.handleScrollRequest)
   }
 
 
@@ -38,7 +41,7 @@ export class ScrollResponder {
 
   private fireInitialScroll() {
     this.handleScrollRequest({
-      time: createDuration(this.calendar.viewOpt('scrollTime'))
+      time: createDuration(this.context.options.scrollTime)
     })
   }
 

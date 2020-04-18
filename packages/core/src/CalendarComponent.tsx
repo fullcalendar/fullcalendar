@@ -3,11 +3,11 @@ import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { Toolbar } from './Toolbar'
 import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
-import { rangeContainsMarker, DateRange } from './datelib/date-range'
+import { rangeContainsMarker } from './datelib/date-range'
 import { EventUiHash } from './component/event-ui'
 import { parseBusinessHours } from './structs/business-hours'
 import { memoize } from './util/memoize'
-import { DateMarker, diffWholeDays } from './datelib/marker'
+import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
 import { ViewPropsTransformerClass } from './plugin-system'
 import { __assign } from 'tslib'
@@ -19,8 +19,6 @@ import { CssDimValue } from './scrollgrid/util'
 import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
 import { ViewComponent } from './structs/view-config'
-import { createFormatter } from './datelib/formatting'
-import { DateEnv } from './datelib/env'
 import { Calendar } from './Calendar'
 import { Emitter } from './common/Emitter'
 
@@ -45,7 +43,6 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
   context: never
 
-  private computeTitle = memoize(computeTitle)
   private buildViewContext = memoize(buildViewContext)
   private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.props))
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
@@ -68,8 +65,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   renders INSIDE of an outer div
   */
   render(props: CalendarComponentProps, state: CalendarComponentState) {
-    let { toolbarConfig, theme, dateEnv, options, calendar } = props
-    let viewTitle = this.computeTitle(props.dateProfile, dateEnv, options)
+    let { toolbarConfig, theme, options, calendar } = props
 
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
@@ -77,7 +73,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
       props.dateProfileGenerator,
       props.currentDate,
       calendar.getNow(), // TODO: use NowTimer????
-      viewTitle
+      props.viewTitle
     )
 
     let calendarHeight: string | number = ''
@@ -106,7 +102,9 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
     let viewContext = this.buildViewContext(
       props.viewSpec,
-      viewTitle,
+      props.viewApi,
+      props.options,
+      props.computedOptions,
       props.dateProfile,
       props.dateProfileGenerator,
       props.dateEnv,
@@ -188,7 +186,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
 
   _handleNavLinkClick(ev: UIEvent, anchorEl: HTMLElement) {
-    let { dateEnv, calendar } = this.props
+    let { dateEnv, options, calendar } = this.props
 
     let navLinkOptions: any = anchorEl.getAttribute('data-navlink')
     navLinkOptions = navLinkOptions ? JSON.parse(navLinkOptions) : {}
@@ -197,7 +195,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     let viewType = navLinkOptions.type
 
     // property like "navLinkDayClick". might be a string or a function
-    let customAction = calendar.viewOpt('navLink' + capitaliseFirstLetter(viewType) + 'Click')
+    let customAction = options['navLink' + capitaliseFirstLetter(viewType) + 'Click']
 
     if (typeof customAction === 'function') {
       customAction(dateEnv.toDate(dateMarker), ev)
@@ -213,10 +211,10 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
 
   buildAppendContent() {
-    let { pluginHooks, calendar } = this.props
+    let { props } = this
 
-    return pluginHooks.viewContainerAppends.map(
-      (buildAppendContent) => buildAppendContent(calendar)
+    return props.pluginHooks.viewContainerAppends.map(
+      (buildAppendContent) => buildAppendContent(props)
     )
   }
 
@@ -226,7 +224,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     let { viewSpec } = props
 
     let viewProps: ViewProps = {
-      businessHours: this.parseBusinessHours(viewSpec.options.businessHours),
+      businessHours: this.parseBusinessHours(options.businessHours),
       eventStore: props.eventStore,
       eventUiBases: props.eventUiBases,
       dateSelection: props.dateSelection,
@@ -327,56 +325,4 @@ function buildViewPropTransformers(theClasses: ViewPropsTransformerClass[]) {
   return theClasses.map(function(theClass) {
     return new theClass()
   })
-}
-
-
-// Title and Date Formatting
-// -----------------------------------------------------------------------------------------------------------------
-
-
-// Computes what the title at the top of the calendar should be for this view
-function computeTitle(dateProfile, dateEnv: DateEnv, viewOptions) {
-  let range: DateRange
-
-  // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
-  if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
-    range = dateProfile.currentRange
-  } else { // for day units or smaller, use the actual day range
-    range = dateProfile.activeRange
-  }
-
-  return dateEnv.formatRange(
-    range.start,
-    range.end,
-    createFormatter(
-      viewOptions.titleFormat || computeTitleFormat(dateProfile),
-      viewOptions.titleRangeSeparator
-    ),
-    { isEndExclusive: dateProfile.isRangeAllDay }
-  )
-}
-
-
-// Generates the format string that should be used to generate the title for the current date range.
-// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
-function computeTitleFormat(dateProfile) {
-  let currentRangeUnit = dateProfile.currentRangeUnit
-
-  if (currentRangeUnit === 'year') {
-    return { year: 'numeric' }
-  } else if (currentRangeUnit === 'month') {
-    return { year: 'numeric', month: 'long' } // like "September 2014"
-  } else {
-    let days = diffWholeDays(
-      dateProfile.currentRange.start,
-      dateProfile.currentRange.end
-    )
-    if (days !== null && days > 1) {
-      // multi-day range. shorter, like "Sep 9 - 10 2014"
-      return { year: 'numeric', month: 'short', day: 'numeric' }
-    } else {
-      // one day. longer, like "September 9 2014"
-      return { year: 'numeric', month: 'long', day: 'numeric' }
-    }
-  }
 }

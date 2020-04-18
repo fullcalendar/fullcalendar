@@ -52,9 +52,9 @@ let eventSourceDef: EventSourceDef = {
   },
 
   fetch(arg, onSuccess, onFailure) {
-    let calendar = arg.calendar
+    let { dateEnv, options } = arg.context
     let meta = arg.eventSource.meta
-    let apiKey = meta.googleCalendarApiKey || calendar.opt('googleCalendarApiKey')
+    let apiKey = meta.googleCalendarApiKey || options.googleCalendarApiKey
 
     if (!apiKey) {
       onFailure({
@@ -66,7 +66,7 @@ let eventSourceDef: EventSourceDef = {
         arg.range,
         apiKey,
         meta.data,
-        calendar.state.dateEnv
+        dateEnv
       )
 
       requestJson('GET', url, requestParams, function(body, xhr) {

@@ -4,6 +4,7 @@ import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rang
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
 import { computeVisibleDayRange } from './util/misc'
+import { getNow } from './reducers/current-date'
 
 
 export interface DateProfile {
@@ -24,21 +25,18 @@ export class DateProfileGenerator {
 
   slotMinTime: Duration
   slotMaxTime: Duration
-  options: any
+  nowDate: DateMarker
   isHiddenDayHash: boolean[]
 
 
   constructor(
     protected viewSpec: ViewSpec,
-    protected dateEnv: DateEnv,
-    protected nowDate: DateMarker
+    protected options: any,
+    protected dateEnv: DateEnv
   ) {
-    this.viewSpec = viewSpec
-
-    this.options = viewSpec.options
-    this.slotMinTime = createDuration(viewSpec.options.slotMinTime)
-    this.slotMaxTime = createDuration(viewSpec.options.slotMaxTime)
-
+    this.slotMinTime = createDuration(options.slotMinTime)
+    this.slotMaxTime = createDuration(options.slotMaxTime)
+    this.nowDate = getNow(options, dateEnv)
     this.initHiddenDays()
   }
 
@@ -200,7 +198,7 @@ export class DateProfileGenerator {
     let start = range.start
     let end = range.end
 
-    if (this.viewSpec.options.usesMinMaxTime) {
+    if (this.viewSpec.optionDefaults.usesMinMaxTime) {
 
       // expand active range if slotMinTime is negative (why not when positive?)
       if (asRoughDays(slotMinTime) < 0) {

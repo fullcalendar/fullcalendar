@@ -1,5 +1,5 @@
 import { requestJson } from '../util/requestJson'
-import { Calendar } from '../Calendar'
+import { ReducerContext } from '../reducers/ReducerContext'
 import { EventSourceDef } from '../structs/event-source'
 import { DateRange } from '../datelib/date-range'
 import { __assign } from 'tslib'
@@ -35,7 +35,7 @@ let eventSourceDef: EventSourceDef = {
 
   fetch(arg, success, failure) {
     let meta: JsonFeedMeta = arg.eventSource.meta
-    let requestParams = buildRequestParams(meta, arg.range, arg.calendar)
+    let requestParams = buildRequestParams(meta, arg.range, arg.context)
 
     requestJson(
       meta.method, meta.url, requestParams,
@@ -54,8 +54,8 @@ export const jsonFeedEventSourcePlugin = createPlugin({
   eventSourceDefs: [ eventSourceDef ]
 })
 
-function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Calendar) {
-  const dateEnv = calendar.state.dateEnv
+function buildRequestParams(meta: JsonFeedMeta, range: DateRange, context: ReducerContext) {
+  let { dateEnv, options } = context
   let startParam
   let endParam
   let timeZoneParam
@@ -64,17 +64,17 @@ function buildRequestParams(meta: JsonFeedMeta, range: DateRange, calendar: Cale
 
   startParam = meta.startParam
   if (startParam == null) {
-    startParam = calendar.opt('startParam')
+    startParam = options.startParam
   }
 
   endParam = meta.endParam
   if (endParam == null) {
-    endParam = calendar.opt('endParam')
+    endParam = options.endParam
   }
 
   timeZoneParam = meta.timeZoneParam
   if (timeZoneParam == null) {
-    timeZoneParam = calendar.opt('timeZoneParam')
+    timeZoneParam = options.timeZoneParam
   }
 
   // retrieve any outbound GET/POST data from the options

@@ -9,11 +9,13 @@ import { DateSpan } from '../structs/date-span'
 import { DateMarker } from '../datelib/marker'
 import { RawLocaleMap } from '../datelib/locale'
 import { Theme } from '../theme/Theme'
-import { ViewSpecHash } from '../structs/view-spec'
+import { ViewSpecHash, ViewSpec } from '../structs/view-spec'
 import { ReducerContext } from './ReducerContext'
 import { EventUiHash, EventUi } from '../component/event-ui'
+import { ViewApi } from '../ViewApi'
 
 export interface CalendarState extends ReducerContext {
+  calendarOptions: any // NOTE: use `options` instead. view-specific
   eventSources: EventSourceHash
   eventSourceLoadingLevel: number
   eventUiBases: EventUiHash
@@ -35,6 +37,9 @@ export interface CalendarState extends ReducerContext {
   viewSpecs: ViewSpecHash
   toolbarConfig
   selectionConfig: EventUi
+  viewSpec: ViewSpec
+  viewTitle: string
+  viewApi: ViewApi
 }
 
 export type reducerFunc = (state: CalendarState, action: Action, context: ReducerContext) => CalendarState

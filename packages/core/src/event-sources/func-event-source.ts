@@ -28,7 +28,7 @@ let eventSourceDef: EventSourceDef = {
   },
 
   fetch(arg, success, failure) {
-    let dateEnv = arg.calendar.state.dateEnv
+    let dateEnv = arg.context.dateEnv
     let func = arg.eventSource.meta as EventSourceFunc
 
     unpromisify(

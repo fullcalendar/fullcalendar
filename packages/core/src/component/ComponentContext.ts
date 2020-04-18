@@ -1,5 +1,4 @@
 import { Calendar } from '../Calendar'
-import { ResizeHandler } from '../Calendar'
 import { ViewApi } from '../ViewApi'
 import { Theme } from '../theme/Theme'
 import { DateEnv } from '../datelib/env'
@@ -8,19 +7,19 @@ import { createContext } from '../vdom'
 import { ScrollResponder, ScrollRequestHandler } from '../ScrollResponder'
 import { DateProfile, DateProfileGenerator } from '../DateProfileGenerator'
 import { ViewSpec } from '../structs/view-spec'
-import { ReducerContext, buildComputedOptions } from '../reducers/ReducerContext'
+import { ReducerContext } from '../reducers/ReducerContext'
 import { Action } from '../reducers/types'
 import { Emitter } from '../common/Emitter'
 
-
 export const ComponentContextType = createContext<ComponentContext>({} as any) // for Components
+export type ResizeHandler = (force: boolean) => void
 
 // TODO: rename file
 // TODO: rename to ViewContext
 
 export interface ComponentContext extends ReducerContext {
-  isRtl: boolean
   theme: Theme
+  isRtl: boolean
   dateProfileGenerator: DateProfileGenerator
   dateProfile: DateProfile
   viewSpec: ViewSpec
@@ -30,10 +29,11 @@ export interface ComponentContext extends ReducerContext {
   createScrollResponder: (execFunc: ScrollRequestHandler) => ScrollResponder
 }
 
-
 export function buildViewContext(
   viewSpec: ViewSpec,
-  viewTitle: string,
+  viewApi: ViewApi,
+  options: any,
+  computedOptions: any,
   dateProfile: DateProfile,
   dateProfileGenerator: DateProfileGenerator,
   dateEnv: DateEnv,
@@ -43,38 +43,32 @@ export function buildViewContext(
   emitter: Emitter,
   calendar: Calendar
 ): ComponentContext {
-  let { options } = viewSpec
+  let reducerContext: ReducerContext = {
+    dateEnv,
+    options,
+    computedOptions,
+    pluginHooks,
+    emitter,
+    dispatch,
+    calendar
+  }
 
   return {
+    ...reducerContext,
     viewSpec,
-    viewApi: buildViewApi(viewSpec, viewTitle, dateProfile, dateEnv),
+    viewApi,
     dateProfile,
     dateProfileGenerator,
-    dateEnv,
-    isRtl: options.direction === 'rtl',
     theme,
-    options,
-    computedOptions: buildComputedOptions(options),
-    pluginHooks,
-    dispatch,
-    emitter,
-    calendar,
-    addResizeHandler: calendar.addResizeHandler,
-    removeResizeHandler: calendar.removeResizeHandler,
+    isRtl: options.direction === 'rtl',
+    addResizeHandler(handler: ResizeHandler) {
+      emitter.on('_resize', handler)
+    },
+    removeResizeHandler(handler: ResizeHandler) {
+      emitter.off('_resize', handler)
+    },
     createScrollResponder(execFunc: ScrollRequestHandler) {
-      return new ScrollResponder(calendar, execFunc)
+      return new ScrollResponder(execFunc, reducerContext)
     }
-  }
-}
-
-
-function buildViewApi(viewSpec: ViewSpec, viewTitle: string, dateProfile: DateProfile, dateEnv: DateEnv) {
-  return {
-    type: viewSpec.type,
-    title: viewTitle,
-    activeStart: dateEnv.toDate(dateProfile.activeRange.start),
-    activeEnd: dateEnv.toDate(dateProfile.activeRange.end),
-    currentStart: dateEnv.toDate(dateProfile.currentRange.start),
-    currentEnd: dateEnv.toDate(dateProfile.currentRange.end)
   }
 }

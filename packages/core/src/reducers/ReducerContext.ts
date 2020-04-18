@@ -13,8 +13,8 @@ export interface ReducerContext {
   computedOptions: ComputedOptions
   pluginHooks: PluginHooks
   emitter: Emitter
-  calendar: Calendar
   dispatch(action: Action): void
+  calendar: Calendar
 }
 
 export interface ComputedOptions {

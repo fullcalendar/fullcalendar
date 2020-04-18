@@ -1,11 +1,12 @@
 import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
 import { eventDefMutationApplier } from './structs/event-mutation'
-import { Calendar, DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './Calendar'
+import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './Calendar'
 import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
 import { CalendarComponentProps } from './CalendarComponent'
+import { ReducerContext } from './reducers/ReducerContext'
 import { isPropsValidTester } from './validation'
 import { eventDragMutationMassager, eventIsDraggableTransformer, EventDropTransformers } from './interactions/event-dragging'
 import { dateSelectionJoinTransformer } from './interactions/date-selecting'
@@ -98,7 +99,7 @@ export interface ViewPropsTransformer {
   transform(viewProps: ViewProps, viewSpec: ViewSpec, calendarProps: CalendarComponentProps, allOptions: any): any
 }
 
-export type ViewContainerAppend = (calendar: Calendar) => ComponentChildren
+export type ViewContainerAppend = (context: ReducerContext) => ComponentChildren
 
 
 export function createPlugin(input: PluginDefInput): PluginDef {

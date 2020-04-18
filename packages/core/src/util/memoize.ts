@@ -1,4 +1,5 @@
 import { isArraysEqual } from './array'
+import { isPropsEqual } from './object'
 
 
 export function memoize<Args extends any[], Res>(
@@ -29,6 +30,40 @@ export function memoize<Args extends any[], Res>(
     }
 
     currentArgs = newArgs
+
+    return currentRes
+  }
+}
+
+
+export function memoizeObjArg<Arg extends object, Res>(
+  workerFunc: (arg: Arg) => Res,
+  resEquality?: (res0: Res, res1: Res) => boolean,
+  teardownFunc?: (res: Res) => void
+): (arg: Arg) => Res {
+
+  let currentArg: Arg | undefined
+  let currentRes: Res | undefined
+
+  return function(newArg: Arg) {
+
+    if (!currentArg) {
+      currentRes = workerFunc.call(this, newArg)
+
+    } else if (!isPropsEqual(currentArg, newArg)) {
+
+      if (teardownFunc) {
+        teardownFunc(currentRes)
+      }
+
+      let res = workerFunc.call(this, newArg)
+
+      if (!resEquality || !resEquality(res, currentRes)) {
+        currentRes = res
+      }
+    }
+
+    currentArg = newArg
 
     return currentRes
   }

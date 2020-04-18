@@ -1,6 +1,5 @@
 import { refineProps, guid } from '../util/misc'
 import { EventInput } from './event'
-import { Calendar } from '../Calendar'
 import { DateRange } from '../datelib/date-range'
 import { EventSourceFunc } from '../event-sources/func-event-source'
 import { EventUi, processUnscopedUiProps } from '../component/event-ui'
@@ -87,8 +86,8 @@ export type EventSourceHash = { [sourceId: string]: EventSource }
 export type EventSourceFetcher = (
   arg: {
     eventSource: EventSource
-    calendar: Calendar
     range: DateRange
+    context: ReducerContext
   },
   success: (res: { rawEvents: EventInput[], xhr?: XMLHttpRequest }) => void,
   failure: (error: EventSourceError) => void

@@ -148,8 +148,8 @@ function fetchSource(eventSource: EventSource, fetchRange: DateRange, context: R
   sourceDef.fetch(
     {
       eventSource,
-      calendar: context.calendar,
-      range: fetchRange
+      range: fetchRange,
+      context
     },
     function(res) {
       let { rawEvents } = res

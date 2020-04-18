@@ -23,12 +23,12 @@ import { EventHovering } from './interactions/EventHovering'
 import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import { ViewApi } from './ViewApi'
-import { removeExact } from './util/array'
 import { guid } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
 import { applyStyleProp } from './util/dom-manip'
 import { CalendarStateReducer } from './reducers/CalendarStateReducer'
 import { getNow } from './reducers/current-date'
+import { ReducerContext } from './reducers/ReducerContext'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -46,12 +46,10 @@ export type DatePointTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
 
 export type CalendarInteraction = { destroy() }
-export type CalendarInteractionClass = { new(calendar: Calendar): CalendarInteraction }
+export type CalendarInteractionClass = { new(context: ReducerContext): CalendarInteraction }
 
 export type OptionChangeHandler = (propValue: any, calendar: Calendar) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
-
-export type ResizeHandler = (force: boolean) => void
 
 
 export class Calendar {
@@ -66,14 +64,12 @@ export class Calendar {
   el: HTMLElement
   currentClassNames: string[] = []
   componentRef = createRef<CalendarComponent>()
-  view: ViewApi // public API
 
   // interaction
   calendarInteractions: CalendarInteraction[]
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
 
-  private resizeHandlers: ResizeHandler[] = [] // TODO: use emitter somehow?
-
+  get view() { return this.state.viewApi } // for public API
   get component() { return this.componentRef.current } // used to get view-specific business hours :(
 
 
@@ -93,7 +89,6 @@ export class Calendar {
       }
     )
 
-    this.emitter.trigger('_init') // for tests
     this.dispatch({
       type: 'INIT',
       optionOverrides
@@ -102,7 +97,7 @@ export class Calendar {
     // must go after INIT
     this.calendarInteractions = this.state.pluginHooks.calendarInteractions
       .map((calendarInteractionClass) => {
-        return new calendarInteractionClass(this)
+        return new calendarInteractionClass(this.state)
       })
   }
 
@@ -138,7 +133,7 @@ export class Calendar {
   // -----------------------------------------------------------------------------------------------------------------
 
 
-  dispatch(action: Action) {
+  dispatch = (action: Action) => {
     this.actionRunner.request(action)
 
     // actions we know we want to render immediately. TODO: another param in dispatch instead?
@@ -264,17 +259,7 @@ export class Calendar {
 
 
   getOption(name: string) { // getter, used externally
-    return this.state.options[name]
-  }
-
-
-  opt(name: string) { // getter, used internally
-    return this.state.options[name]
-  }
-
-
-  viewOpt(name: string) { // getter, used internally
-    return this.state.viewSpecs[this.state.viewType].options[name]
+    return this.state.calendarOptions[name]
   }
 
 
@@ -512,12 +497,12 @@ export class Calendar {
 
   // `settings` is for formatter AND isEndExclusive
   formatRange(d0: DateInput, d1: DateInput, settings) {
-    let { dateEnv } = this.state
+    let { dateEnv, options } = this.state
 
     return dateEnv.formatRange(
       dateEnv.createMarker(d0),
       dateEnv.createMarker(d1),
-      createFormatter(settings, this.opt('defaultRangeSeparator')),
+      createFormatter(settings, options.defaultRangeSeparator),
       settings
     )
   }
@@ -535,7 +520,7 @@ export class Calendar {
 
 
   updateSize() { // public
-    this.triggerResizeHandlers(true)
+    this.emitter.trigger('_resize', true)
     flushToDom()
   }
 
@@ -545,7 +530,7 @@ export class Calendar {
 
 
   resizeRunner = new DelayedRunner(() => {
-    this.triggerResizeHandlers(true) // should window resizes be considered "forced" ?
+    this.emitter.trigger('_resize', true) // should window resizes be considered "forced" ?
     this.emitter.trigger('windowResize')
   })
 
@@ -558,23 +543,6 @@ export class Calendar {
       ev.target === window // avoid jqui events
     ) {
       this.resizeRunner.request(options.windowResizeDelay)
-    }
-  }
-
-
-  addResizeHandler = (handler: ResizeHandler) => {
-    this.resizeHandlers.push(handler)
-  }
-
-
-  removeResizeHandler = (handler: ResizeHandler) => {
-    removeExact(this.resizeHandlers, handler)
-  }
-
-
-  triggerResizeHandlers(forced: boolean) {
-    for (let handler of this.resizeHandlers) {
-      handler(forced)
     }
   }
 
@@ -663,7 +631,7 @@ export class Calendar {
     const arg = {
       ...this.buildDateSpanApi(selection),
       jsEvent: pev ? pev.origEvent as MouseEvent : null, // Is this always a mouse event? See #4655
-      view: this.view
+      view: this.state.viewApi
     }
 
     this.emitter.trigger('select', arg)
@@ -673,7 +641,7 @@ export class Calendar {
   triggerDateUnselect(pev?: PointerDragEvent) {
     this.emitter.trigger('unselect', {
       jsEvent: pev ? pev.origEvent : null,
-      view: this.view
+      view: this.state.viewApi
     })
   }
 
@@ -722,6 +690,7 @@ export class Calendar {
 
 
   // Returns a DateMarker for the current date, as defined by the client's computer or from the `now` option
+  // PRIVATE use only. doesn't zone the date.
   getNow(): DateMarker {
     return getNow(this.state.options, this.state.dateEnv)
   }

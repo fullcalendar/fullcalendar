@@ -1,17 +1,16 @@
-import { buildLocale, RawLocaleInfo } from '../datelib/locale'
-import { memoize } from '../util/memoize'
+import { buildLocale, RawLocaleInfo, organizeRawLocales } from '../datelib/locale'
+import { memoize, memoizeObjArg } from '../util/memoize'
 import { Action, CalendarState } from './types'
 import { PluginHooks, buildPluginHooks } from '../plugin-system'
 import { DateEnv } from '../datelib/env'
-import { compileOptions } from '../OptionsManager'
 import { Calendar } from '../Calendar'
 import { StandardTheme } from '../theme/StandardTheme'
 import { EventSourceHash } from '../structs/event-source'
-import { buildViewSpecs, ViewSpecHash, ViewSpec } from '../structs/view-spec'
+import { buildViewSpecs, ViewSpec } from '../structs/view-spec'
 import { mapHash, isPropsEqual } from '../util/object'
-import { DateProfileGenerator } from '../DateProfileGenerator'
+import { DateProfileGenerator, DateProfile } from '../DateProfileGenerator'
 import { reduceViewType } from './view-type'
-import { reduceCurrentDate, getInitialDate, getNow } from './current-date'
+import { reduceCurrentDate, getInitialDate } from './current-date'
 import { reduceDateProfile } from './date-profile'
 import { reduceEventSources } from './eventSources'
 import { reduceEventStore } from './eventStore'
@@ -24,21 +23,32 @@ import { ReducerContext, buildComputedOptions } from './ReducerContext'
 import { processScopedUiProps, EventUiHash, EventUi } from '../component/event-ui'
 import { EventDefHash } from '../structs/event'
 import { parseToolbars } from '../toolbar-parse'
+import { firstDefined } from '../util/misc'
+import { globalDefaults, mergeOptions } from '../options'
+import { diffWholeDays } from '../datelib/marker'
+import { createFormatter } from '../datelib/formatting'
+import { DateRange } from '../datelib/date-range'
+import { ViewApi } from '../ViewApi'
 
 
 export class CalendarStateReducer {
 
-  private compileOptions = memoize(compileOptions)
   private buildPluginHooks = memoize(buildPluginHooks)
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
   private buildViewSpecs = memoize(buildViewSpecs)
-  private buildDateProfileGenerator = memoize(buildDateProfileGenerators)
+  private buildDateProfileGenerator = memoize(buildDateProfileGenerator)
   private buildComputedOptions = memoize(buildComputedOptions)
-  private buildViewUiProps = memoize(buildViewUiProps)
+  private buildViewUiProps = memoizeObjArg(buildViewUiProps)
   private buildEventUiBySource = memoize(buildEventUiBySource, isPropsEqual)
   private buildEventUiBases = memoize(buildEventUiBases)
   private parseToolbars = memoize(parseToolbars)
+  private organizeRawLocales = memoize(organizeRawLocales)
+  private buildCalendarOptions = memoize(mergeOptionSets)
+  private buildViewOptions = memoize(mergeOptionSets)
+  private computeTitle = memoize(computeTitle)
+  private buildViewApi = memoize(buildViewApi)
+  private buildLocale = memoize(buildLocale)
 
 
   reduce(state: CalendarState, action: Action, emitter: Emitter, calendar: Calendar): CalendarState {
@@ -69,40 +79,75 @@ export class CalendarStateReducer {
         break
     }
 
-    let { options, availableLocaleData } = this.compileOptions(optionOverrides, dynamicOptionOverrides)
-    emitter.setOptions(options)
+    let locales = firstDefined( // explicit locale option given?
+      dynamicOptionOverrides.locales,
+      optionOverrides.locales,
+      globalDefaults.locales
+    )
 
-    let pluginHooks = this.buildPluginHooks(options.plugins)
-    let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides)
+    let locale = firstDefined( // explicit locales option given?
+      dynamicOptionOverrides.locale,
+      optionOverrides.locale,
+      globalDefaults.locale
+    )
+
+    let availableLocaleData = this.organizeRawLocales(locales)
+    let localeDefaults = this.buildLocale(locale || availableLocaleData.defaultCode, availableLocaleData.map).options
+
+    let calendarOptions = this.buildCalendarOptions( // NOTE: use viewOptions mostly instead
+      globalDefaults, // global defaults
+      localeDefaults,
+      optionOverrides,
+      dynamicOptionOverrides
+    )
+
+    let pluginHooks = this.buildPluginHooks(calendarOptions.plugins)
+
     let prevDateEnv = state ? state.dateEnv : null
     let dateEnv = this.buildDateEnv(
-      options.timeZone,
-      options.locale,
-      options.weekNumberCalculation,
-      options.firstDay,
-      options.weekText,
+      calendarOptions.timeZone,
+      calendarOptions.locale,
+      calendarOptions.weekNumberCalculation,
+      calendarOptions.firstDay,
+      calendarOptions.weekText,
       pluginHooks,
       availableLocaleData
     )
-    let dateProfileGenerators = this.buildDateProfileGenerator(viewSpecs, dateEnv)
-    let theme = this.buildTheme(options, pluginHooks)
+    let theme = this.buildTheme(calendarOptions, pluginHooks)
+
+    let viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides, localeDefaults)
+    let viewType = state.viewType || calendarOptions.initialView || pluginHooks.initialView // weird how we do INIT
+    viewType = reduceViewType(viewType, action, viewSpecs)
+    let viewSpec = viewSpecs[viewType]
+
+    let viewOptions = this.buildViewOptions( // merge defaults and overrides. lowest to highest precedence
+      globalDefaults, // global defaults
+      viewSpec.optionDefaults,
+      localeDefaults,
+      optionOverrides,
+      viewSpec.optionOverrides,
+      dynamicOptionOverrides
+    )
+
+    emitter.setOptions(viewOptions)
+
+    if (action.type === 'INIT') {
+      emitter.trigger('_init') // for tests. needs to happen after emitter.setOptions
+    }
 
     let dispatch = state.dispatch || calendar.dispatch.bind(calendar) // will reuse past functions! TODO: memoize? TODO: calendar should bind?
     let reducerContext: ReducerContext = {
       dateEnv,
-      options,
-      computedOptions: this.buildComputedOptions(options),
+      options: viewOptions,
+      computedOptions: this.buildComputedOptions(viewOptions),
       pluginHooks,
       emitter,
       dispatch,
       calendar
     }
 
-    let viewType = state.viewType || options.initialView || pluginHooks.initialView // weird how we do INIT
-    viewType = reduceViewType(viewType, action, pluginHooks.views)
-
-    let currentDate = state.currentDate || getInitialDate(options, dateEnv) // weird how we do INIT
-    let dateProfileGenerator = dateProfileGenerators[viewType]
+    let currentDate = state.currentDate || getInitialDate(viewOptions, dateEnv) // weird how we do INIT
+    let dateProfileGenerator = this.buildDateProfileGenerator(viewSpec, viewOptions, dateEnv)
     let dateProfile = reduceDateProfile(state.dateProfile, action, currentDate, dateProfileGenerator)
     currentDate = reduceCurrentDate(currentDate, action, dateProfile)
 
@@ -111,18 +156,11 @@ export class CalendarStateReducer {
     let eventStore = reduceEventStore(state.eventStore, action, eventSources, dateProfile, prevDateEnv, reducerContext)
 
     let renderableEventStore =
-      (eventSourceLoadingLevel && !options.progressiveEventRendering) ?
+      (eventSourceLoadingLevel && !viewOptions.progressiveEventRendering) ?
         (state.renderableEventStore || eventStore) : // try from previous state
         eventStore
 
-    let { eventUiSingleBase, selectionConfig } = this.buildViewUiProps(
-      viewSpecs[viewType],
-      dateEnv,
-      pluginHooks,
-      emitter,
-      dispatch,
-      calendar
-    )
+    let { eventUiSingleBase, selectionConfig } = this.buildViewUiProps(reducerContext)
     let eventUiBySource = this.buildEventUiBySource(eventSources)
     let eventUiBases = this.buildEventUiBases(renderableEventStore.defs, eventUiSingleBase, eventUiBySource)
 
@@ -135,9 +173,13 @@ export class CalendarStateReducer {
       emitter.trigger('loading', false)
     }
 
+    let viewTitle = this.computeTitle(dateProfile, viewOptions, dateEnv)
+    let viewApi = this.buildViewApi(viewSpec.type, dateProfile, viewTitle, viewOptions, dateEnv)
+
     let nextState: CalendarState = {
       ...(state as object), // preserve previous state from plugin reducers. tho remove type to make sure all data is provided right now
       ...reducerContext,
+      calendarOptions,
       optionOverrides,
       dynamicOptionOverrides,
       availableRawLocales: availableLocaleData.map,
@@ -158,7 +200,10 @@ export class CalendarStateReducer {
       eventSelection: reduceSelectedEvent(state.eventSelection, action),
       eventDrag: reduceEventDrag(state.eventDrag, action),
       eventResize: reduceEventResize(state.eventResize, action),
-      toolbarConfig: this.parseToolbars(options, optionOverrides, theme, viewSpecs, calendar)
+      toolbarConfig: this.parseToolbars(viewOptions, optionOverrides, theme, viewSpecs, calendar),
+      viewSpec,
+      viewTitle,
+      viewApi
     }
 
     for (let reducerFunc of pluginHooks.reducers) {
@@ -214,37 +259,22 @@ function buildTheme(rawOptions, pluginHooks: PluginHooks) {
 }
 
 
-function buildDateProfileGenerators(viewSpecs: ViewSpecHash, dateEnv: DateEnv) {
-  return mapHash(viewSpecs, (viewSpec) => {
-    let DateProfileGeneratorClass = viewSpec.options.dateProfileGeneratorClass || DateProfileGenerator
+function buildDateProfileGenerator(viewSpec: ViewSpec, viewOptions: any, dateEnv: DateEnv) {
+  let DateProfileGeneratorClass = viewSpec.optionDefaults.dateProfileGeneratorClass || DateProfileGenerator
 
-    return new DateProfileGeneratorClass(viewSpec, dateEnv, getNow(viewSpec.options, dateEnv))
-  })
+  return new DateProfileGeneratorClass(viewSpec, viewOptions, dateEnv)
 }
 
 
-function buildViewUiProps(
-  viewSpec: ViewSpec,
-  dateEnv: DateEnv,
-  pluginHooks: PluginHooks,
-  emitter: Emitter,
-  dispatch: (action: Action) => void,
-  calendar: Calendar
-) {
-  let { options } = viewSpec
-  let reducerContext: ReducerContext = {
-    dateEnv,
-    options,
-    computedOptions: buildComputedOptions(options), // bad, REPEAT work
-    pluginHooks,
-    emitter,
-    dispatch,
-    calendar
-  }
+function mergeOptionSets(...optionSets: any[]) {
+  return mergeOptions(optionSets)
+}
 
+
+function buildViewUiProps(reducerContext: ReducerContext) {
   return {
-    eventUiSingleBase: processScopedUiProps('event', options, reducerContext),
-    selectionConfig: processScopedUiProps('select', options, reducerContext)
+    eventUiSingleBase: processScopedUiProps('event', reducerContext.options, reducerContext),
+    selectionConfig: processScopedUiProps('select', reducerContext.options, reducerContext)
   }
 }
 
@@ -268,4 +298,67 @@ function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, 
   }
 
   return eventUiBases
+}
+
+
+function buildViewApi(
+  type: string,
+  dateProfile: DateProfile,
+  title: string,
+  options: any,
+  dateEnv: DateEnv
+) {
+  return new ViewApi(type, dateProfile, title, options, dateEnv)
+}
+
+
+// Title and Date Formatting
+// -----------------------------------------------------------------------------------------------------------------
+
+
+// Computes what the title at the top of the calendar should be for this view
+function computeTitle(dateProfile, viewOptions, dateEnv: DateEnv) {
+  let range: DateRange
+
+  // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
+  if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
+    range = dateProfile.currentRange
+  } else { // for day units or smaller, use the actual day range
+    range = dateProfile.activeRange
+  }
+
+  return dateEnv.formatRange(
+    range.start,
+    range.end,
+    createFormatter(
+      viewOptions.titleFormat || computeTitleFormat(dateProfile),
+      viewOptions.titleRangeSeparator
+    ),
+    { isEndExclusive: dateProfile.isRangeAllDay }
+  )
+}
+
+
+// Generates the format string that should be used to generate the title for the current date range.
+// Attempts to compute the most appropriate format if not explicitly specified with `titleFormat`.
+function computeTitleFormat(dateProfile) {
+  let currentRangeUnit = dateProfile.currentRangeUnit
+
+  if (currentRangeUnit === 'year') {
+    return { year: 'numeric' }
+  } else if (currentRangeUnit === 'month') {
+    return { year: 'numeric', month: 'long' } // like "September 2014"
+  } else {
+    let days = diffWholeDays(
+      dateProfile.currentRange.start,
+      dateProfile.currentRange.end
+    )
+    if (days !== null && days > 1) {
+      // multi-day range. shorter, like "Sep 9 - 10 2014"
+      return { year: 'numeric', month: 'short', day: 'numeric' }
+    } else {
+      // one day. longer, like "September 9 2014"
+      return { year: 'numeric', month: 'long', day: 'numeric' }
+    }
+  }
 }
