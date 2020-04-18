@@ -22,7 +22,8 @@ export class DayTimeColsView extends TimeColsView {
 
 
   render(props: ViewProps, state: {}, context: ComponentContext) {
-    let { options, computedOptions, dateEnv, dateProfile, dateProfileGenerator } = context
+    let { options, computedOptions, dateEnv, dateProfileGenerator } = context
+    let { dateProfile } = props
     let dayTableModel = this.buildTimeColsModel(dateProfile, dateProfileGenerator)
     let splitProps = this.allDaySplitter.splitProps(props)
     let slatMetas = this.buildSlatMetas(dateProfile.slotMinTime, dateProfile.slotMaxTime, options.slotLabelInterval, computedOptions.slotDuration, dateEnv)
@@ -31,6 +32,7 @@ export class DayTimeColsView extends TimeColsView {
     let headerContent = options.dayHeaders &&
       <DayHeader
         dates={dayTableModel.headerDates}
+        dateProfile={dateProfile}
         datesRepDistinctDays={true}
         renderIntro={dayMinWidth ? null : this.renderHeadAxis}
       />
@@ -38,6 +40,7 @@ export class DayTimeColsView extends TimeColsView {
     let allDayContent = options.allDaySlot && ((contentArg: ChunkContentCallbackArgs) => (
       <DayTable
         {...splitProps['allDay']}
+        dateProfile={dateProfile}
         dayTableModel={dayTableModel}
         nextDayThreshold={computedOptions.nextDayThreshold}
         tableMinWidth={contentArg.tableMinWidth}
@@ -56,6 +59,7 @@ export class DayTimeColsView extends TimeColsView {
       <DayTimeCols
         {...splitProps['timed']}
         dayTableModel={dayTableModel}
+        dateProfile={dateProfile}
         axis={!dayMinWidth}
         slotDuration={computedOptions.slotDuration}
         slatMetas={slatMetas}

@@ -16,12 +16,14 @@ import {
   DateMarker,
   DateEnv,
   ComponentContextType,
-  RenderHook
+  RenderHook,
+  DateProfile
 } from '@fullcalendar/core'
 import { TimeColsSlatsCoords } from './TimeColsSlatsCoords'
 
 
 export interface TimeColsSlatsProps extends TimeColsSlatsContentProps {
+  dateProfile: DateProfile
   clientWidth: number | null
   minHeight: CssDimValue
   tableMinWidth: CssDimValue
@@ -110,7 +112,7 @@ export class TimeColsSlats extends BaseComponent<TimeColsSlatsProps> {
             false,
             true // vertical
           ),
-          this.context.dateProfile,
+          this.props.dateProfile,
           props.slatMetas
         )
       )

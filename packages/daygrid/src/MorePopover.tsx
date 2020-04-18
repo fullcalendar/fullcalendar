@@ -1,4 +1,4 @@
-import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent } from '@fullcalendar/core'
+import { DateComponent, DateMarker, h, EventInstanceHash, ComponentContext, createFormatter, Hit, addDays, DateRange, getSegMeta, DayCellRoot, DayCellContent, DateProfile } from '@fullcalendar/core'
 import { TableSeg } from './TableSeg'
 import { TableBlockEvent } from './TableBlockEvent'
 import { TableListItemEvent } from './TableListItemEvent'
@@ -8,6 +8,7 @@ import { hasListItemDisplay } from './event-rendering'
 
 export interface MorePopoverProps {
   date: DateMarker
+  dateProfile: DateProfile
   segs: TableSeg[]
   selectedInstanceId: string
   hiddenInstances: EventInstanceHash
@@ -25,11 +26,11 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
 
   render(props: MorePopoverProps, state: {}, context: ComponentContext) {
     let { options, dateEnv } = context
-    let { date, hiddenInstances, todayRange } = props
+    let { date, hiddenInstances, todayRange, dateProfile } = props
     let title = dateEnv.format(date, createFormatter(options.dayPopoverFormat)) // TODO: cache formatter
 
     return (
-      <DayCellRoot date={date} todayRange={todayRange} elRef={this.handlePopoverEl}>
+      <DayCellRoot date={date} dateProfile={dateProfile} todayRange={todayRange} elRef={this.handlePopoverEl}>
         {(rootElRef, dayClassNames, dataAttrs) => (
           <Popover
             elRef={rootElRef}
@@ -40,7 +41,7 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
             alignmentEl={props.alignmentEl}
             topAlignmentEl={props.topAlignmentEl}
           >
-            <DayCellContent date={date} todayRange={todayRange}>
+            <DayCellContent date={date} dateProfile={dateProfile} todayRange={todayRange}>
               {(innerElRef, innerContent) => (
                 innerContent &&
                   <div class='fc-more-popover-misc' ref={innerElRef}>{innerContent}</div>

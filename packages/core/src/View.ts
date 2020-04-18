@@ -9,6 +9,7 @@ import { Duration } from './datelib/duration'
 
 
 export interface ViewProps {
+  dateProfile: DateProfile
   businessHours: EventStore
   eventStore: EventStore
   eventUiBases: EventUiHash

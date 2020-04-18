@@ -17,12 +17,14 @@ import {
   EventRenderRange,
   addDays,
   intersectRanges,
+  DateProfile,
 } from '@fullcalendar/core'
 import { TableSeg } from './TableSeg'
 
 
 export interface TableCellProps {
   date: DateMarker
+  dateProfile: DateProfile
   extraHookProps?: object
   extraDataAttrs?: object
   extraClassNames?: string[]
@@ -76,11 +78,12 @@ export class TableCell extends DateComponent<TableCellProps> {
 
   render(props: TableCellProps, state: {}, context: ComponentContext) {
     let { options } = context
-    let { date } = props
+    let { date, dateProfile } = props
 
     return (
       <DayCellRoot
         date={date}
+        dateProfile={dateProfile}
         todayRange={props.todayRange}
         showDayNumber={props.showDayNumber}
         extraHookProps={props.extraHookProps}
@@ -110,6 +113,7 @@ export class TableCell extends DateComponent<TableCellProps> {
               {!isDisabled &&
                 <TableCellTop
                   date={date}
+                  dateProfile={dateProfile}
                   showDayNumber={props.showDayNumber}
                   todayRange={props.todayRange}
                   extraHookProps={props.extraHookProps}
@@ -213,6 +217,7 @@ function resliceDaySegs(segs, dayDate) {
 
 interface TableCellTopProps {
   date: DateMarker
+  dateProfile: DateProfile
   showDayNumber: boolean
   todayRange: DateRange
   extraHookProps?: object
@@ -224,6 +229,7 @@ class TableCellTop extends BaseComponent<TableCellTopProps> {
     return (
       <DayCellContent
         date={props.date}
+        dateProfile={props.dateProfile}
         todayRange={props.todayRange}
         showDayNumber={props.showDayNumber}
         extraHookProps={props.extraHookProps}

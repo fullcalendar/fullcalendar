@@ -5,11 +5,12 @@ import { DateEnv } from '../datelib/env'
 import { PluginHooks } from '../plugin-system'
 import { createContext } from '../vdom'
 import { ScrollResponder, ScrollRequestHandler } from '../ScrollResponder'
-import { DateProfile, DateProfileGenerator } from '../DateProfileGenerator'
+import { DateProfileGenerator } from '../DateProfileGenerator'
 import { ViewSpec } from '../structs/view-spec'
 import { ReducerContext } from '../reducers/ReducerContext'
 import { Action } from '../reducers/types'
 import { Emitter } from '../common/Emitter'
+import { CalendarState } from '../reducers/types'
 
 export const ComponentContextType = createContext<ComponentContext>({} as any) // for Components
 export type ResizeHandler = (force: boolean) => void
@@ -21,7 +22,6 @@ export interface ComponentContext extends ReducerContext {
   theme: Theme
   isRtl: boolean
   dateProfileGenerator: DateProfileGenerator
-  dateProfile: DateProfile
   viewSpec: ViewSpec
   viewApi: ViewApi
   addResizeHandler: (handler: ResizeHandler) => void
@@ -57,7 +57,6 @@ export function buildViewContext(
     ...reducerContext,
     viewSpec,
     viewApi,
-    dateProfile,
     dateProfileGenerator,
     theme,
     isRtl: options.direction === 'rtl',

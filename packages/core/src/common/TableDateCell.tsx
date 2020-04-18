@@ -9,10 +9,12 @@ import { BaseComponent } from '../vdom-util'
 import { RenderHook } from './render-hook'
 import { buildNavLinkData } from './nav-link'
 import { ViewApi } from '../ViewApi'
+import { DateProfile } from 'fullcalendar'
 
 
 export interface TableDateCellProps {
   date: DateMarker
+  dateProfile: DateProfile
   todayRange: DateRange
   colCnt: number
   dayHeaderFormat: DateFormatter
@@ -36,8 +38,8 @@ export class TableDateCell extends BaseComponent<TableDateCellProps> { // BAD na
 
   render(props: TableDateCellProps, state: {}, context: ComponentContext) {
     let { dateEnv, options } = context
-    let { date } = props
-    let dayMeta = getDateMeta(date, props.todayRange, null, context.dateProfile)
+    let { date, dateProfile } = props
+    let dayMeta = getDateMeta(date, props.todayRange, null, dateProfile)
 
     let classNames = [ CLASS_NAME ].concat(
       getDayClassNames(dayMeta, context.theme)

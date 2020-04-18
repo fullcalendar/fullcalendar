@@ -12,7 +12,8 @@ import {
   ScrollResponder,
   ScrollRequest,
   DateRange,
-  Duration
+  Duration,
+  DateProfile
 } from '@fullcalendar/core'
 import { TableCellModel } from '@fullcalendar/daygrid' // TODO: good to use this interface?
 import { TimeColsSlats, TimeSlatMeta } from './TimeColsSlats'
@@ -23,6 +24,7 @@ import { TimeColsSeg } from './TimeColsSeg'
 
 export interface TimeColsProps {
   cells: TableCellModel[]
+  dateProfile: DateProfile
   slotDuration: Duration
   nowDate: DateMarker
   todayRange: DateRange
@@ -71,6 +73,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
       }}>
         <TimeColsSlats
           axis={props.axis}
+          dateProfile={props.dateProfile}
           slatMetas={props.slatMetas}
           clientWidth={props.clientWidth}
           minHeight={props.expandRows ? props.clientHeight : ''}
@@ -81,6 +84,7 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
         <TimeColsContent
           cells={props.cells}
           axis={props.axis}
+          dateProfile={props.dateProfile}
           businessHourSegs={props.businessHourSegs}
           bgEventSegs={props.bgEventSegs}
           fgEventSegs={props.fgEventSegs}
@@ -149,8 +153,9 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
 
 
   positionToHit(positionLeft, positionTop) {
-    let { dateProfile, dateEnv, computedOptions } = this.context
+    let { dateEnv, computedOptions } = this.context
     let { colCoords } = this
+    let { dateProfile } = this.props
     let { slatCoords } = this.state
     let { snapDuration, snapsPerSlot } = this.processSlotOptions(this.props.slotDuration, computedOptions.snapDuration)
 

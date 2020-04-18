@@ -8,9 +8,11 @@ import { TableDateCell, TableDowCell } from './TableDateCell'
 import { NowTimer } from '../NowTimer'
 import { DateRange } from '../datelib/date-range'
 import { memoize } from '../util/memoize'
+import { DateProfile } from 'fullcalendar'
 
 
 export interface DayHeaderProps {
+  dateProfile: DateProfile
   dates: DateMarker[]
   datesRepDistinctDays: boolean
   renderIntro?: () => VNode
@@ -23,7 +25,7 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
 
 
   render(props: DayHeaderProps, state: {}, context: ComponentContext) {
-    let { dates, datesRepDistinctDays } = props
+    let { dates, dateProfile, datesRepDistinctDays } = props
 
     let dayHeaderFormat = this.createDayHeaderFormatter(
       context.options.dayHeaderFormat,
@@ -40,6 +42,7 @@ export class DayHeader extends BaseComponent<DayHeaderProps> { // TODO: rename t
               <TableDateCell
                 key={date.toISOString()}
                 date={date}
+                dateProfile={dateProfile}
                 todayRange={todayRange}
                 colCnt={dates.length}
                 dayHeaderFormat={dayHeaderFormat}

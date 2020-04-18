@@ -43,7 +43,7 @@ export class ListView extends DateComponent<ViewProps> {
       context.options.stickyHeaderDates !== false ? 'fc-list-sticky' : ''
     ]
 
-    let { dayDates, dayRanges } = this.computeDateVars(context.dateProfile)
+    let { dayDates, dayRanges } = this.computeDateVars(props.dateProfile)
     let eventSegs = this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges)
 
     return (
@@ -152,7 +152,7 @@ export class ListView extends DateComponent<ViewProps> {
       sliceEventStore(
         eventStore,
         eventUiBases,
-        this.context.dateProfile.activeRange,
+        this.props.dateProfile.activeRange,
         this.context.computedOptions.nextDayThreshold
       ).fg,
       dayRanges

@@ -249,7 +249,8 @@ export abstract class TimeColsView extends DateComponent<ViewProps> {
 
 
   renderHeadAxis = () => {
-    let { options, dateProfile } = this.context
+    let { options } = this.context
+    let { dateProfile } = this.props
     let range = dateProfile.renderRange
     let dayCnt = diffDays(range.start, range.end)
     let navLinkData = (options.navLinks && dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)

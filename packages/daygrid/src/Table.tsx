@@ -15,7 +15,8 @@ import {
   DateRange,
   NowTimer,
   DateMarker,
-  EventApi
+  EventApi,
+  DateProfile
 } from '@fullcalendar/core'
 import { TableSeg, splitSegsByRow, splitInteractionByRow } from './TableSeg'
 import { TableRow } from './TableRow'
@@ -25,6 +26,7 @@ import { MorePopover } from './MorePopover'
 
 export interface TableProps {
   elRef?: Ref<HTMLDivElement>
+  dateProfile: DateProfile
   cells: TableCellModel[][] // cells-BY-ROW
   renderRowIntro?: () => VNode
   colGroupNode: VNode
@@ -70,7 +72,7 @@ export class Table extends DateComponent<TableProps, TableState> {
 
 
   render(props: TableProps, state: TableState, context: ComponentContext) {
-    let { dayMaxEventRows, dayMaxEvents, expandRows } = props
+    let { dateProfile, dayMaxEventRows, dayMaxEvents, expandRows } = props
     let { morePopoverState } = state
     let rowCnt = props.cells.length
 
@@ -127,7 +129,7 @@ export class Table extends DateComponent<TableProps, TableState> {
                   showDayNumbers={rowCnt > 1}
                   showWeekNumbers={props.showWeekNumbers}
                   todayRange={todayRange}
-                  dateProfile={context.dateProfile}
+                  dateProfile={dateProfile}
                   cells={cells}
                   renderIntro={props.renderRowIntro}
                   businessHourSegs={businessHourSegsByRow[row]}
@@ -149,6 +151,7 @@ export class Table extends DateComponent<TableProps, TableState> {
           (morePopoverState && morePopoverState.currentFgEventSegs === props.fgEventSegs) && // clear popover on event mod
             <MorePopover
               date={state.morePopoverState.date}
+              dateProfile={dateProfile}
               segs={state.morePopoverState.allSegs}
               alignmentEl={state.morePopoverState.dayEl}
               topAlignmentEl={rowCnt === 1 ? props.headerAlignElRef.current : null}

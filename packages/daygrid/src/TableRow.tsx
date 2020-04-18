@@ -126,6 +126,7 @@ export class TableRow extends DateComponent<TableRowProps, TableRowState> {
               key={cell.key}
               elRef={this.cellElRefs.createRef(cell.key)}
               innerElRef={this.cellInnerElRefs.createRef(cell.key) /* FF <td> problem, but okay to use for left/right. TODO: rename prop */}
+              dateProfile={props.dateProfile}
               date={cell.date}
               showDayNumber={props.showDayNumbers || showWeekNumber /* for spacing, we need to force day-numbers if week numbers */}
               showWeekNumber={showWeekNumber}

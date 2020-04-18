@@ -12,13 +12,15 @@ import {
   ComponentContext,
   RefObject,
   CssDimValue,
-  Hit
+  Hit,
+  DateProfile
 } from '@fullcalendar/core'
 import { Table } from './Table'
 import { TableSeg } from './TableSeg'
 
 
 export interface DayTableProps {
+  dateProfile: DateProfile,
   dayTableModel: DayTableModel
   nextDayThreshold: Duration
   businessHours: EventStore
@@ -53,7 +55,8 @@ export class DayTable extends DateComponent<DayTableProps, ComponentContext> {
       <Table
         ref={this.tableRef}
         elRef={this.handleRootEl}
-        { ...this.slicer.sliceProps(props, context.dateProfile, props.nextDayThreshold, context, dayTableModel) }
+        { ...this.slicer.sliceProps(props, props.dateProfile, props.nextDayThreshold, context, dayTableModel) }
+        dateProfile={props.dateProfile}
         cells={dayTableModel.cells}
         colGroupNode={props.colGroupNode}
         tableMinWidth={props.tableMinWidth}
