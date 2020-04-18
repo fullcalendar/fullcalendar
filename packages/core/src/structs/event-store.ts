@@ -59,6 +59,7 @@ export function expandRecurring(eventStore: EventStore, framingRange: DateRange,
   let { defs, instances } = eventStore
 
   // remove existing recurring instances
+  // TODO: bad. always expand events as a second step
   instances = filterHash(instances, function(instance: EventInstance) {
     return !defs[instance.defId].recurringDef
   })

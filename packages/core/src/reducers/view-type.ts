@@ -5,7 +5,7 @@ export function reduceViewType(viewType: string, action: Action, availableViewHa
   // for INIT, viewType will have already been set
 
   switch (action.type) {
-    case 'SET_VIEW_TYPE':
+    case 'CHANGE_VIEW_TYPE':
       return viewType = action.viewType
   }
 

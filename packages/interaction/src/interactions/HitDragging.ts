@@ -182,13 +182,13 @@ export class HitDragging {
           positionTop >= 0 && positionTop < height
         ) {
           let hit = component.queryHit(positionLeft, positionTop, width, height)
+          let dateProfile = component.context.getCurrentState().dateProfile
 
           if (
             hit &&
             (
               // make sure the hit is within activeRange, meaning it's not a deal cell
-              !component.context.dateProfile || // hack for MorePopover
-              rangeContainsRange(component.context.dateProfile.activeRange, hit.dateSpan.range)
+              rangeContainsRange(dateProfile.activeRange, hit.dateSpan.range)
             ) &&
             (!bestHit || hit.layer > bestHit.layer)
           ) {

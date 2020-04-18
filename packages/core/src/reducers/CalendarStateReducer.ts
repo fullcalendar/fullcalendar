@@ -29,6 +29,7 @@ import { diffWholeDays } from '../datelib/marker'
 import { createFormatter } from '../datelib/formatting'
 import { DateRange } from '../datelib/date-range'
 import { ViewApi } from '../ViewApi'
+import { parseBusinessHours } from '../structs/business-hours'
 
 
 export class CalendarStateReducer {
@@ -49,9 +50,10 @@ export class CalendarStateReducer {
   private computeTitle = memoize(computeTitle)
   private buildViewApi = memoize(buildViewApi)
   private buildLocale = memoize(buildLocale)
+  private parseContextBusinessHours = memoizeObjArg(parseContextBusinessHours)
 
 
-  reduce(state: CalendarState, action: Action, emitter: Emitter, calendar: Calendar): CalendarState {
+  reduce(state: CalendarState, action: Action, dispatch: (action: Action) => void, emitter: Emitter, getCurrentState: () => CalendarState, calendar: Calendar): CalendarState {
     let optionOverrides = state.optionOverrides || {}
     let dynamicOptionOverrides = state.dynamicOptionOverrides || {}
 
@@ -135,7 +137,6 @@ export class CalendarStateReducer {
       emitter.trigger('_init') // for tests. needs to happen after emitter.setOptions
     }
 
-    let dispatch = state.dispatch || calendar.dispatch.bind(calendar) // will reuse past functions! TODO: memoize? TODO: calendar should bind?
     let reducerContext: ReducerContext = {
       dateEnv,
       options: viewOptions,
@@ -143,6 +144,7 @@ export class CalendarStateReducer {
       pluginHooks,
       emitter,
       dispatch,
+      getCurrentState,
       calendar
     }
 
@@ -174,11 +176,12 @@ export class CalendarStateReducer {
     }
 
     let viewTitle = this.computeTitle(dateProfile, viewOptions, dateEnv)
-    let viewApi = this.buildViewApi(viewSpec.type, dateProfile, viewTitle, viewOptions, dateEnv)
+    let viewApi = this.buildViewApi(viewSpec.type, getCurrentState, dateEnv)
 
     let nextState: CalendarState = {
       ...(state as object), // preserve previous state from plugin reducers. tho remove type to make sure all data is provided right now
       ...reducerContext,
+      businessHours: this.parseContextBusinessHours(reducerContext),
       calendarOptions,
       optionOverrides,
       dynamicOptionOverrides,
@@ -303,12 +306,15 @@ function buildEventUiBases(eventDefs: EventDefHash, eventUiSingleBase: EventUi, 
 
 function buildViewApi(
   type: string,
-  dateProfile: DateProfile,
-  title: string,
-  options: any,
+  getCurrentState: () => CalendarState,
   dateEnv: DateEnv
 ) {
-  return new ViewApi(type, dateProfile, title, options, dateEnv)
+  return new ViewApi(type, getCurrentState, dateEnv)
+}
+
+
+function parseContextBusinessHours(context: ReducerContext) {
+  return parseBusinessHours(context.options.businessHours, context)
 }
 
 

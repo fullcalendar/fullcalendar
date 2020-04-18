@@ -5,7 +5,6 @@ import { Toolbar } from './Toolbar'
 import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import { rangeContainsMarker } from './datelib/date-range'
 import { EventUiHash } from './component/event-ui'
-import { parseBusinessHours } from './structs/business-hours'
 import { memoize } from './util/memoize'
 import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
@@ -44,7 +43,6 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   context: never
 
   private buildViewContext = memoize(buildViewContext)
-  private parseBusinessHours = memoize((input) => parseBusinessHours(input, this.props))
   private buildViewPropTransformers = memoize(buildViewPropTransformers)
   private buildToolbarProps = memoize(buildToolbarProps)
   private reportClassNames = memoize(reportClassNames)
@@ -53,8 +51,6 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
   private viewRef = createRef<ViewComponent>()
-
-  get view() { return this.viewRef.current }
 
   state = {
     forPrint: false
@@ -105,12 +101,12 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
       props.viewApi,
       props.options,
       props.computedOptions,
-      props.dateProfile,
       props.dateProfileGenerator,
       props.dateEnv,
       props.theme,
       props.pluginHooks,
       props.dispatch,
+      props.getCurrentState,
       props.emitter,
       props.calendar
     )

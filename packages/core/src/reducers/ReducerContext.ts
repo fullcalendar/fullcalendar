@@ -5,6 +5,7 @@ import { Calendar } from '../Calendar'
 import { Emitter } from '../common/Emitter'
 import { parseFieldSpecs } from '../util/misc'
 import { createDuration, Duration } from '../datelib/duration'
+import { CalendarState } from '../reducers/types'
 
 
 export interface ReducerContext {
@@ -14,6 +15,7 @@ export interface ReducerContext {
   pluginHooks: PluginHooks
   emitter: Emitter
   dispatch(action: Action): void
+  getCurrentState(): CalendarState
   calendar: Calendar
 }
 

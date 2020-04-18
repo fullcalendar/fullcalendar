@@ -70,7 +70,6 @@ export class Calendar {
   interactionsStore: { [componentUid: string]: Interaction[] } = {}
 
   get view() { return this.state.viewApi } // for public API
-  get component() { return this.componentRef.current } // used to get view-specific business hours :(
 
 
   constructor(el: HTMLElement, optionOverrides: OptionsInput = {}) {
@@ -94,7 +93,6 @@ export class Calendar {
       optionOverrides
     })
 
-    // must go after INIT
     this.calendarInteractions = this.state.pluginHooks.calendarInteractions
       .map((calendarInteractionClass) => {
         return new calendarInteractionClass(this.state)
@@ -146,7 +144,12 @@ export class Calendar {
 
 
   runAction(action: Action) {
-    this.state = this.reducer.reduce(this.state, action, this.emitter, this)
+    this.state = this.reducer.reduce(this.state, action, this.dispatch, this.emitter, this.getCurrentState, this)
+  }
+
+
+  getCurrentState = () => {
+    return this.state
   }
 
 
@@ -333,10 +336,10 @@ export class Calendar {
 
         if ((dateOrRange as DateRangeInput).start && (dateOrRange as DateRangeInput).end) { // a range
           this.dispatch({
-            type: 'SET_VIEW_TYPE',
+            type: 'CHANGE_VIEW_TYPE',
             viewType,
           })
-          this.dispatch({
+          this.dispatch({ // not very efficient to do two dispatches
             type: 'SET_OPTION',
             optionName: 'visibleRange',
             optionValue: dateOrRange
@@ -344,7 +347,7 @@ export class Calendar {
 
         } else {
           this.dispatch({
-            type: 'SET_VIEW_TYPE',
+            type: 'CHANGE_VIEW_TYPE',
             viewType,
             dateMarker: this.state.dateEnv.createMarker(dateOrRange as DateInput)
           })
@@ -352,7 +355,7 @@ export class Calendar {
 
       } else {
         this.dispatch({
-          type: 'SET_VIEW_TYPE',
+          type: 'CHANGE_VIEW_TYPE',
           viewType
         })
       }
@@ -373,14 +376,14 @@ export class Calendar {
 
     if (spec) {
       this.dispatch({
-        type: 'SET_VIEW_TYPE',
+        type: 'CHANGE_VIEW_TYPE',
         viewType: spec.type,
         dateMarker
       })
 
     } else {
       this.dispatch({
-        type: 'SET_DATE',
+        type: 'CHANGE_DATE',
         dateMarker
       })
     }
@@ -429,7 +432,7 @@ export class Calendar {
   prevYear() {
     this.unselect()
     this.dispatch({
-      type: 'SET_DATE',
+      type: 'CHANGE_DATE',
       dateMarker: this.state.dateEnv.addYears(this.state.currentDate, -1)
     })
   }
@@ -438,7 +441,7 @@ export class Calendar {
   nextYear() {
     this.unselect()
     this.dispatch({
-      type: 'SET_DATE',
+      type: 'CHANGE_DATE',
       dateMarker: this.state.dateEnv.addYears(this.state.currentDate, 1)
     })
   }
@@ -447,7 +450,7 @@ export class Calendar {
   today() {
     this.unselect()
     this.dispatch({
-      type: 'SET_DATE',
+      type: 'CHANGE_DATE',
       dateMarker: this.getNow()
     })
   }
@@ -456,7 +459,7 @@ export class Calendar {
   gotoDate(zonedDateInput) {
     this.unselect()
     this.dispatch({
-      type: 'SET_DATE',
+      type: 'CHANGE_DATE',
       dateMarker: this.state.dateEnv.createMarker(zonedDateInput)
     })
   }
@@ -468,7 +471,7 @@ export class Calendar {
     if (delta) { // else, warn about invalid input?
       this.unselect()
       this.dispatch({
-        type: 'SET_DATE',
+        type: 'CHANGE_DATE',
         dateMarker: this.state.dateEnv.add(this.state.currentDate, delta)
       })
     }

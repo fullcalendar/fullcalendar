@@ -1,32 +1,44 @@
-import { DateEnv } from './datelib/env';
-import { DateProfile } from './DateProfileGenerator';
+import { DateEnv } from './datelib/env'
+import { CalendarState } from 'fullcalendar'
 
-export interface ViewApi {
-  type: string
-  title: string
-  activeStart: Date
-  activeEnd: Date
-  currentStart: Date
-  currentEnd: Date
-}
 
-export class ViewApi {
+export class ViewApi { // always represents the current view
 
   constructor(
     public type: string,
-    dateProfile: DateProfile,
-    public title: string,
-    private options: any,
-    dateEnv: DateEnv
+    private getCurrentState: () => CalendarState,
+    private dateEnv: DateEnv
   ) {
-    this.activeStart = dateEnv.toDate(dateProfile.activeRange.start)
-    this.activeEnd = dateEnv.toDate(dateProfile.activeRange.end)
-    this.currentStart = dateEnv.toDate(dateProfile.currentRange.start)
-    this.currentEnd = dateEnv.toDate(dateProfile.currentRange.end)
   }
 
+
+  get title() {
+    return this.getCurrentState().viewTitle
+  }
+
+
+  get activeStart() {
+    return this.dateEnv.toDate(this.getCurrentState().dateProfile.activeRange.start)
+  }
+
+
+  get activeEnd() {
+    return this.dateEnv.toDate(this.getCurrentState().dateProfile.activeRange.end)
+  }
+
+
+  get currentStart() {
+    return this.dateEnv.toDate(this.getCurrentState().dateProfile.currentRange.start)
+  }
+
+
+  get currentEnd() {
+    return this.dateEnv.toDate(this.getCurrentState().dateProfile.currentRange.end)
+  }
+
+
   getOption(name: string) {
-    return this.options[name]
+    return this.getCurrentState().options[name] // are the view-specific options
   }
 
 }

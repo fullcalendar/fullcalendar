@@ -16,33 +16,26 @@ export function reduceDateProfile(currentDateProfile: DateProfile | null, action
       )
       break
 
-    case 'PREV':
-      newDateProfile = dateProfileGenerator.buildPrev(currentDateProfile, currentDate)
-      break
-
-    case 'NEXT':
-      newDateProfile = dateProfileGenerator.buildNext(currentDateProfile, currentDate)
-      break
-
-    case 'SET_DATE':
+    case 'CHANGE_DATE':
+    case 'CHANGE_VIEW_TYPE':
       if (
         !currentDateProfile.activeRange ||
-        !rangeContainsMarker(currentDateProfile.currentRange, action.dateMarker)
+        !rangeContainsMarker(currentDateProfile.currentRange, (action as any).dateMarker)
       ) {
         newDateProfile = dateProfileGenerator.build(
-          action.dateMarker,
+          action.dateMarker || currentDate,
           undefined,
           true // forceToValid
         )
       }
       break
 
-    case 'SET_VIEW_TYPE':
-      newDateProfile = dateProfileGenerator.build(
-        action.dateMarker || currentDate,
-        undefined,
-        true // forceToValid
-      )
+    case 'PREV':
+      newDateProfile = dateProfileGenerator.buildPrev(currentDateProfile, currentDate)
+      break
+
+    case 'NEXT':
+      newDateProfile = dateProfileGenerator.buildNext(currentDateProfile, currentDate)
       break
   }
 

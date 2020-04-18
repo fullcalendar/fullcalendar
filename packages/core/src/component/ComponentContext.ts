@@ -34,12 +34,12 @@ export function buildViewContext(
   viewApi: ViewApi,
   options: any,
   computedOptions: any,
-  dateProfile: DateProfile,
   dateProfileGenerator: DateProfileGenerator,
   dateEnv: DateEnv,
   theme: Theme,
   pluginHooks: PluginHooks,
   dispatch: (action: Action) => void,
+  getCurrentState: () => CalendarState,
   emitter: Emitter,
   calendar: Calendar
 ): ComponentContext {
@@ -50,6 +50,7 @@ export function buildViewContext(
     pluginHooks,
     emitter,
     dispatch,
+    getCurrentState,
     calendar
   }
 

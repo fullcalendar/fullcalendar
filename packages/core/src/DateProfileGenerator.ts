@@ -12,7 +12,7 @@ export interface DateProfile {
   currentRangeUnit: string
   isRangeAllDay: boolean
   validRange: OpenDateRange
-  activeRange: DateRange
+  activeRange: DateRange | null
   renderRange: DateRange
   slotMinTime: Duration
   slotMaxTime: Duration

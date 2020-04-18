@@ -8,21 +8,26 @@ export function reduceCurrentDate(currentDate: DateMarker, action: Action, dateP
   // on INIT, currentDate will already be set
 
   switch (action.type) {
+
+    case 'CHANGE_DATE':
+    case 'CHANGE_VIEW_TYPE':
+      if (action.dateMarker) {
+        currentDate = action.dateMarker
+      }
+      // fall through...
+    case 'INIT':
+      if (dateProfile.activeRange && !rangeContainsMarker(dateProfile.activeRange, currentDate)) {
+        return dateProfile.currentRange.start
+      } else {
+        return currentDate
+      }
+
     case 'PREV':
     case 'NEXT':
       if (!rangeContainsMarker(dateProfile.currentRange, currentDate)) {
         return dateProfile.currentRange.start
       } else {
         return currentDate
-      }
-
-    case 'SET_DATE':
-    case 'SET_VIEW_TYPE':
-      let newDate = action.dateMarker || currentDate
-      if (dateProfile.activeRange && !rangeContainsMarker(dateProfile.activeRange, newDate)) {
-        return dateProfile.currentRange.start
-      } else {
-        return newDate
       }
 
     default:

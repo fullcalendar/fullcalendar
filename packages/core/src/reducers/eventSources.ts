@@ -27,8 +27,8 @@ export function reduceEventSources(eventSources: EventSourceHash, action: Action
 
     case 'PREV': // TODO: how do we track all actions that affect dateProfile :(
     case 'NEXT':
-    case 'SET_DATE':
-    case 'SET_VIEW_TYPE':
+    case 'CHANGE_DATE':
+    case 'CHANGE_VIEW_TYPE':
       if (dateProfile) {
         return fetchDirtySources(eventSources, activeRange, context)
       } else {

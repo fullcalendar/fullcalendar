@@ -15,6 +15,7 @@ import { EventUiHash, EventUi } from '../component/event-ui'
 import { ViewApi } from '../ViewApi'
 
 export interface CalendarState extends ReducerContext {
+  businessHours: EventStore
   calendarOptions: any // NOTE: use `options` instead. view-specific
   eventSources: EventSourceHash
   eventSourceLoadingLevel: number
@@ -53,8 +54,8 @@ export type Action =
 
   { type: 'PREV' } |
   { type: 'NEXT' } |
-  { type: 'SET_DATE', dateMarker: DateMarker } |
-  { type: 'SET_VIEW_TYPE', viewType: string, dateMarker?: DateMarker } |
+  { type: 'CHANGE_DATE', dateMarker: DateMarker } |
+  { type: 'CHANGE_VIEW_TYPE', viewType: string, dateMarker?: DateMarker } |
 
   { type: 'SELECT_DATES', selection: DateSpan } |
   { type: 'UNSELECT_DATES' } |

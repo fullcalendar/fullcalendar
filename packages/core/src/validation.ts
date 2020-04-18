@@ -1,4 +1,4 @@
-import { EventStore, expandRecurring, filterEventStoreDefs, parseEvents, createEmptyEventStore } from './structs/event-store'
+import { EventStore, expandRecurring, filterEventStoreDefs, parseEvents } from './structs/event-store'
 import { DateSpan, DateSpanApi } from './structs/date-span'
 import { rangeContainsRange, rangesIntersect, DateRange, OpenDateRange } from './datelib/date-range'
 import { EventApi } from './api/EventApi'
@@ -33,21 +33,20 @@ export function isDateSelectionValid(dateSelection: DateSpan, context: ReducerCo
 
 
 function isNewPropsValid(newProps, context: ReducerContext) {
-  let { calendar } = context
-  let viewComponent = calendar.component.view
+  let calendarState = context.calendar.state
 
   let props = {
-    businessHours: viewComponent ? viewComponent.props.businessHours : createEmptyEventStore(), // why? yuck
+    businessHours: calendarState.businessHours,
     dateSelection: '',
-    eventStore: calendar.state.eventStore,
-    eventUiBases: calendar.state.eventUiBases,
+    eventStore: calendarState.eventStore,
+    eventUiBases: calendarState.eventUiBases,
     eventSelection: '',
     eventDrag: null,
     eventResize: null,
     ...newProps
   }
 
-  return (calendar.state.pluginHooks.isPropsValid || isPropsValid)(props, context)
+  return (context.pluginHooks.isPropsValid || isPropsValid)(props, context)
 }
 
 

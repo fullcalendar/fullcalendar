@@ -48,8 +48,8 @@ export function reduceEventStore(eventStore: EventStore, action: Action, eventSo
 
     case 'PREV': // TODO: how do we track all actions that affect dateProfile :(
     case 'NEXT':
-    case 'SET_DATE':
-    case 'SET_VIEW_TYPE':
+    case 'CHANGE_DATE':
+    case 'CHANGE_VIEW_TYPE':
       if (dateProfile) {
         return expandRecurring(eventStore, dateProfile.activeRange, context)
       } else {
