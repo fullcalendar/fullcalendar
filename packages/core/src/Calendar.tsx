@@ -179,6 +179,7 @@ export class Calendar {
       <CalendarComponent
         ref={this.componentRef}
         { ...state }
+        eventStore={state.renderableEventStore}
         onClassNameChange={this.handleClassNames}
         onHeightChange={this.handleHeightChange}
       />,
