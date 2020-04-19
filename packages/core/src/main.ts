@@ -90,7 +90,7 @@ export { ScrollController, ElementScrollController, WindowScrollController } fro
 export { Theme } from './theme/Theme'
 export { ComponentContext, ComponentContextType } from './component/ComponentContext'
 export { DateComponent, Seg, EventSegUiInteractionState } from './component/DateComponent'
-export { Calendar, DatePointTransform, DateSpanTransform, DateSelectionApi } from './Calendar'
+export { Calendar } from './Calendar'
 export { ViewProps, sliceEvents } from './View'
 export { ViewApi } from './ViewApi'
 
@@ -201,4 +201,4 @@ export { renderFill, BgEvent, BgEventProps } from './common/bg-fill'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'
-export { triggerDateSelect, triggerDateClick, buildDatePointApiWithContext } from './calendar-utils'
+export { triggerDateSelect, triggerDateClick, buildDatePointApiWithContext, DatePointTransform, DateSpanTransform, DateSelectionApi } from './calendar-utils'

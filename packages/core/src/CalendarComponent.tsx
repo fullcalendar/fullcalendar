@@ -22,7 +22,7 @@ import { DateComponent } from './component/DateComponent'
 import { EventClicking } from './interactions/EventClicking'
 import { EventHovering } from './interactions/EventHovering'
 import { getNow } from './reducers/current-date'
-import { CalendarInteraction } from './Calendar'
+import { CalendarInteraction } from './calendar-utils'
 import { DelayedRunner } from './util/runner'
 
 

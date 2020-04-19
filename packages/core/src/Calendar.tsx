@@ -4,7 +4,7 @@ import { DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { createDuration, DurationInput } from './datelib/duration'
-import { parseDateSpan, DateSpanInput, DateSpan, DateSpanApi, DatePointApi } from './structs/date-span'
+import { parseDateSpan, DateSpanInput } from './structs/date-span'
 import { DateRangeInput } from './datelib/date-range'
 import { EventSourceInput, parseEventSource } from './structs/event-source'
 import { EventInput, parseEvent } from './structs/event'
@@ -18,35 +18,12 @@ import { __assign } from 'tslib'
 import { PointerDragEvent } from './interactions/pointer'
 import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
-import { ViewApi } from './ViewApi'
 import { guid } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
 import { applyStyleProp } from './util/dom-manip'
 import { CalendarStateReducer } from './reducers/CalendarStateReducer'
 import { getNow } from './reducers/current-date'
-import { ReducerContext } from './reducers/ReducerContext'
 import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
-
-
-export interface DateClickApi extends DatePointApi {
-  dayEl: HTMLElement
-  jsEvent: UIEvent
-  view: ViewApi
-}
-
-export interface DateSelectionApi extends DateSpanApi {
-  jsEvent: UIEvent
-  view: ViewApi
-}
-
-export type DatePointTransform = (dateSpan: DateSpan, context: ReducerContext) => any
-export type DateSpanTransform = (dateSpan: DateSpan, context: ReducerContext) => any
-
-export type CalendarInteraction = { destroy() }
-export type CalendarInteractionClass = { new(context: ReducerContext): CalendarInteraction }
-
-export type OptionChangeHandler = (propValue: any, context: ReducerContext) => void
-export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
 
 export class Calendar {

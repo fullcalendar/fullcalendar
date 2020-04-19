@@ -5,6 +5,27 @@ import { __assign } from 'tslib'
 import { ViewApi } from './ViewApi'
 
 
+export interface DateClickApi extends DatePointApi {
+  dayEl: HTMLElement
+  jsEvent: UIEvent
+  view: ViewApi
+}
+
+export interface DateSelectionApi extends DateSpanApi {
+  jsEvent: UIEvent
+  view: ViewApi
+}
+
+export type DatePointTransform = (dateSpan: DateSpan, context: ReducerContext) => any
+export type DateSpanTransform = (dateSpan: DateSpan, context: ReducerContext) => any
+
+export type CalendarInteraction = { destroy() }
+export type CalendarInteractionClass = { new(context: ReducerContext): CalendarInteraction }
+
+export type OptionChangeHandler = (propValue: any, context: ReducerContext) => void
+export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
+
+
 export function triggerDateSelect(selection: DateSpan, pev: PointerDragEvent | null, context: ReducerContext & { viewApi?: ViewApi }) {
   const arg = {
     ...buildDateSpanApiWithContext(selection, context),

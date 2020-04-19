@@ -1,7 +1,7 @@
 import { reducerFunc } from './reducers/types'
 import { eventDefParserFunc } from './structs/event'
 import { eventDefMutationApplier } from './structs/event-mutation'
-import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './Calendar'
+import { DatePointTransform, DateSpanTransform, CalendarInteractionClass, OptionChangeHandlerMap } from './calendar-utils'
 import { ViewConfigInputHash } from './structs/view-config'
 import { ViewSpec } from './structs/view-spec'
 import { ViewProps } from './View'
