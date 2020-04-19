@@ -97,7 +97,6 @@ export class Calendar {
     if (!this.isRendering) {
       this.isRendering = true
       this.renderRunner.request()
-      window.addEventListener('resize', this.handleWindowResize)
     } else {
       // hack for RERENDERING
       this.setOption('renderId', guid())
@@ -109,8 +108,6 @@ export class Calendar {
     if (this.isRendering) {
       this.isRendering = false
       this.renderRunner.request()
-      this.resizeRunner.clear()
-      window.removeEventListener('resize', this.handleWindowResize)
     }
   }
 
@@ -487,28 +484,6 @@ export class Calendar {
   updateSize() { // public
     this.emitter.trigger('_resize', true)
     flushToDom()
-  }
-
-
-  // RE-Sizing
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  resizeRunner = new DelayedRunner(() => {
-    this.emitter.trigger('_resize', true) // should window resizes be considered "forced" ?
-    this.emitter.trigger('windowResize')
-  })
-
-
-  handleWindowResize = (ev: UIEvent) => {
-    let { options } = this.state
-
-    if (
-      options.handleWindowResize &&
-      ev.target === window // avoid jqui events
-    ) {
-      this.resizeRunner.request(options.windowResizeDelay)
-    }
   }
 
 

@@ -23,6 +23,7 @@ import { EventClicking } from './interactions/EventClicking'
 import { EventHovering } from './interactions/EventHovering'
 import { getNow } from './reducers/current-date'
 import { CalendarInteraction } from './Calendar'
+import { DelayedRunner } from './util/runner'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -154,6 +155,8 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
         return new calendarInteractionClass(props)
       })
 
+    window.addEventListener('resize', this.handleWindowResize)
+
     this.props.emitter.trigger('datesDidUpdate')
   }
 
@@ -168,6 +171,9 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   componentWillUnmount() {
     window.removeEventListener('beforeprint', this.handleBeforePrint)
     window.removeEventListener('afterprint', this.handleAfterPrint)
+
+    window.removeEventListener('resize', this.handleWindowResize)
+    this.resizeRunner.clear()
 
     for (let interaction of this.calendarInteractions) {
       interaction.destroy()
@@ -295,6 +301,28 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
 
     delete this.interactionsStore[component.uid]
     delete interactionSettingsStore[component.uid]
+  }
+
+
+  // Resizing
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  resizeRunner = new DelayedRunner(() => {
+    this.props.emitter.trigger('_resize', true) // should window resizes be considered "forced" ?
+    this.props.emitter.trigger('windowResize')
+  })
+
+
+  handleWindowResize = (ev: UIEvent) => {
+    let { options } = this.props
+
+    if (
+      options.handleWindowResize &&
+      ev.target === window // avoid jqui events
+    ) {
+      this.resizeRunner.request(options.windowResizeDelay)
+    }
   }
 
 }
