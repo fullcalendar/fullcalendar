@@ -16,7 +16,7 @@ import { ViewSpec } from './structs/view-spec'
 import { CalendarComponent } from './CalendarComponent'
 import { __assign } from 'tslib'
 import { PointerDragEvent } from './interactions/pointer'
-import { render, h, createRef, flushToDom } from './vdom'
+import { render, h, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import { guid } from './util/misc'
 import { CssDimValue } from './scrollgrid/util'
@@ -37,7 +37,6 @@ export class Calendar {
   actionRunner: TaskRunner<Action> // guards against nested action calls
   el: HTMLElement
   currentClassNames: string[] = []
-  componentRef = createRef<CalendarComponent>()
 
   get view() { return this.state.viewApi } // for public API
 
@@ -154,9 +153,7 @@ export class Calendar {
 
     render(
       <CalendarComponent
-        ref={this.componentRef}
-        { ...state }
-        eventStore={state.renderableEventStore}
+        {...state}
         onClassNameChange={this.handleClassNames}
         onHeightChange={this.handleHeightChange}
       />,

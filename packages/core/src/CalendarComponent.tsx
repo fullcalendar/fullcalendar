@@ -241,7 +241,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     let viewProps: ViewProps = {
       dateProfile: props.dateProfile,
       businessHours: props.businessHours,
-      eventStore: props.eventStore,
+      eventStore: props.renderableEventStore, // !
       eventUiBases: props.eventUiBases,
       dateSelection: props.dateSelection,
       eventSelection: props.eventSelection,
