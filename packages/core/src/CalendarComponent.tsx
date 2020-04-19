@@ -21,6 +21,7 @@ import { Interaction, InteractionSettingsInput, InteractionClass, parseInteracti
 import { DateComponent } from './component/DateComponent'
 import { EventClicking } from './interactions/EventClicking'
 import { EventHovering } from './interactions/EventHovering'
+import { getNow } from './reducers/current-date'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -57,14 +58,14 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   renders INSIDE of an outer div
   */
   render(props: CalendarComponentProps, state: CalendarComponentState) {
-    let { toolbarConfig, theme, options, calendar } = props
+    let { toolbarConfig, theme, options } = props
 
     let toolbarProps = this.buildToolbarProps(
       props.viewSpec,
       props.dateProfile,
       props.dateProfileGenerator,
       props.currentDate,
-      calendar.getNow(), // TODO: use NowTimer????
+      getNow(props), // TODO: use NowTimer????
       props.viewTitle
     )
 

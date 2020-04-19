@@ -2,6 +2,7 @@ import { DateMarker } from '../datelib/marker'
 import { Action } from './types'
 import { DateProfile } from '../DateProfileGenerator'
 import { rangeContainsMarker } from '../datelib/date-range'
+import { ReducerContext, DateEnv } from 'fullcalendar'
 
 
 export function reduceCurrentDate(currentDate: DateMarker, action: Action, dateProfile: DateProfile): DateMarker {
@@ -36,19 +37,24 @@ export function reduceCurrentDate(currentDate: DateMarker, action: Action, dateP
 }
 
 
-export function getInitialDate(options, dateEnv) { // NOT used in this reducer. TODO: do INIT in reducer
-  let initialDateInput = options.initialDate
+export function getInitialDate(context: ReducerContext) { // NOT used in this reducer. TODO: do INIT in reducer
+  let initialDateInput = context.options.initialDate
 
   // compute the initial ambig-timezone date
   if (initialDateInput != null) {
-    return dateEnv.createMarker(initialDateInput)
+    return context.dateEnv.createMarker(initialDateInput)
   } else {
-    return getNow(options, dateEnv) // getNow already returns unzoned
+    return getNow(context) // getNow already returns unzoned
   }
 }
 
 
-export function getNow(options, dateEnv) {
+export function getNow(context: ReducerContext) {
+  return _getNow(context.options, context.dateEnv)
+}
+
+
+export function _getNow(options, dateEnv: DateEnv) {
   let now = options.now
 
   if (typeof now === 'function') {

@@ -441,7 +441,7 @@ export class Calendar {
     this.unselect()
     this.dispatch({
       type: 'CHANGE_DATE',
-      dateMarker: this.getNow()
+      dateMarker: getNow(this.state)
     })
   }
 
@@ -584,17 +584,6 @@ export class Calendar {
       this.dispatch({ type: 'UNSELECT_DATES' })
       triggerDateUnselect(pev, this.state)
     }
-  }
-
-
-  // Date Utils
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  // Returns a DateMarker for the current date, as defined by the client's computer or from the `now` option
-  // PRIVATE use only. doesn't zone the date.
-  getNow(): DateMarker {
-    return getNow(this.state.options, this.state.dateEnv)
   }
 
 

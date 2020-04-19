@@ -4,7 +4,7 @@ import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rang
 import { ViewSpec } from './structs/view-spec'
 import { DateEnv } from './datelib/env'
 import { computeVisibleDayRange } from './util/misc'
-import { getNow } from './reducers/current-date'
+import { _getNow } from './reducers/current-date'
 
 
 export interface DateProfile {
@@ -36,7 +36,7 @@ export class DateProfileGenerator {
   ) {
     this.slotMinTime = createDuration(options.slotMinTime)
     this.slotMaxTime = createDuration(options.slotMaxTime)
-    this.nowDate = getNow(options, dateEnv)
+    this.nowDate = _getNow(options, dateEnv)
     this.initHiddenDays()
   }
 

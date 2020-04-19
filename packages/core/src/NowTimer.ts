@@ -3,6 +3,7 @@ import { createDuration } from './datelib/duration'
 import { ComponentContext, ComponentContextType } from './component/ComponentContext'
 import { ComponentChildren, Component } from './vdom'
 import { DateRange } from './datelib/date-range'
+import { getNow } from './reducers/current-date'
 
 
 export interface NowTimerProps {
@@ -29,7 +30,7 @@ export class NowTimer extends Component<NowTimerProps, NowTimerState> {
   constructor(props: NowTimerProps, context: ComponentContext) {
     super(props, context)
 
-    this.initialNowDate = context.calendar.getNow()
+    this.initialNowDate = getNow(context)
     this.initialNowQueriedMs = new Date().valueOf()
 
     this.state = this.computeTiming().currentState

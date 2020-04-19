@@ -148,7 +148,7 @@ export class CalendarStateReducer {
       calendar
     }
 
-    let currentDate = state.currentDate || getInitialDate(viewOptions, dateEnv) // weird how we do INIT
+    let currentDate = state.currentDate || getInitialDate(reducerContext) // weird how we do INIT
 
     let prevDateProfileGenerator = state.dateProfileGenerator
     let dateProfileGenerator = this.buildDateProfileGenerator(viewSpec, viewOptions, dateEnv)
