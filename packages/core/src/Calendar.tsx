@@ -62,9 +62,6 @@ export class Calendar {
   currentClassNames: string[] = []
   componentRef = createRef<CalendarComponent>()
 
-  // interaction
-  calendarInteractions: CalendarInteraction[] // this tooooo
-
   get view() { return this.state.viewApi } // for public API
 
 
@@ -88,11 +85,6 @@ export class Calendar {
       type: 'INIT',
       optionOverrides
     })
-
-    this.calendarInteractions = this.state.pluginHooks.calendarInteractions
-      .map((calendarInteractionClass) => {
-        return new calendarInteractionClass(this.state)
-      })
   }
 
 
@@ -185,27 +177,13 @@ export class Calendar {
 
   renderComponent() {
     let { state } = this
-    let { viewType } = state
-    let viewSpec = state.viewSpecs[viewType]
 
     render(
       <CalendarComponent
         ref={this.componentRef}
         { ...state }
-        viewSpec={viewSpec}
-        dateProfileGenerator={state.dateProfileGenerator}
-        dateProfile={state.dateProfile}
-        eventStore={state.renderableEventStore}
-        eventUiBases={state.eventUiBases}
-        dateSelection={state.dateSelection}
-        eventSelection={state.eventSelection}
-        eventDrag={state.eventDrag}
-        eventResize={state.eventResize}
         onClassNameChange={this.handleClassNames}
         onHeightChange={this.handleHeightChange}
-        toolbarConfig={state.toolbarConfig}
-        emitter={this.emitter}
-        calendar={this}
       />,
       this.el
     )
@@ -215,12 +193,6 @@ export class Calendar {
 
   destroyComponent() {
     render(null, this.el)
-
-    for (let interaction of this.calendarInteractions) {
-      interaction.destroy()
-    }
-
-    this.emitter.trigger('_destroyed')
   }
 
 

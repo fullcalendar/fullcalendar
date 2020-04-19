@@ -22,6 +22,7 @@ import { DateComponent } from './component/DateComponent'
 import { EventClicking } from './interactions/EventClicking'
 import { EventHovering } from './interactions/EventHovering'
 import { getNow } from './reducers/current-date'
+import { CalendarInteraction } from './Calendar'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -48,6 +49,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   private footerRef = createRef<Toolbar>()
   private viewRef = createRef<ViewComponent>()
   private interactionsStore: { [componentUid: string]: Interaction[] } = {}
+  private calendarInteractions: CalendarInteraction[]
 
   state = {
     forPrint: false
@@ -146,6 +148,12 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     window.addEventListener('beforeprint', this.handleBeforePrint)
     window.addEventListener('afterprint', this.handleAfterPrint)
 
+    let { props } = this
+    this.calendarInteractions = props.pluginHooks.calendarInteractions
+      .map((calendarInteractionClass) => {
+        return new calendarInteractionClass(props)
+      })
+
     this.props.emitter.trigger('datesDidUpdate')
   }
 
@@ -161,6 +169,10 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     window.removeEventListener('beforeprint', this.handleBeforePrint)
     window.removeEventListener('afterprint', this.handleAfterPrint)
 
+    for (let interaction of this.calendarInteractions) {
+      interaction.destroy()
+    }
+
     if (this.props.onClassNameChange) {
       this.props.onClassNameChange([])
     }
@@ -168,6 +180,8 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     if (this.props.onHeightChange) {
       this.props.onHeightChange('')
     }
+
+    this.props.emitter.trigger('_destroyed')
   }
 
 
