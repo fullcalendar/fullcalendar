@@ -4,7 +4,6 @@ import { ViewProps } from './View'
 import { Toolbar } from './Toolbar'
 import { DateProfileGenerator, DateProfile } from './DateProfileGenerator'
 import { rangeContainsMarker } from './datelib/date-range'
-import { EventUiHash } from './component/event-ui'
 import { memoize } from './util/memoize'
 import { DateMarker } from './datelib/marker'
 import { CalendarState } from './reducers/types'
@@ -18,19 +17,11 @@ import { CssDimValue } from './scrollgrid/util'
 import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
 import { ViewComponent } from './structs/view-config'
-import { Calendar } from './Calendar'
-import { Emitter } from './common/Emitter'
 
 
 export interface CalendarComponentProps extends CalendarState {
-  viewSpec: ViewSpec
-  dateProfileGenerator: DateProfileGenerator // for the current view
-  eventUiBases: EventUiHash
   onClassNameChange?: (classNameHash) => void // will be fired with [] on cleanup
   onHeightChange?: (height: CssDimValue) => void // will be fired with '' on cleanup
-  toolbarConfig
-  emitter: Emitter
-  calendar: Calendar
 }
 
 interface CalendarComponentState {
