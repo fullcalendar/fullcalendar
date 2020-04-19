@@ -17,6 +17,10 @@ import { CssDimValue } from './scrollgrid/util'
 import { Theme } from './theme/Theme'
 import { getCanVGrowWithinCell } from './util/table-styling'
 import { ViewComponent } from './structs/view-config'
+import { Interaction, InteractionSettingsInput, InteractionClass, parseInteractionSettings, interactionSettingsStore } from './interactions/interaction'
+import { DateComponent } from './component/DateComponent'
+import { EventClicking } from './interactions/EventClicking'
+import { EventHovering } from './interactions/EventHovering'
 
 
 export interface CalendarComponentProps extends CalendarState {
@@ -42,6 +46,7 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
   private headerRef = createRef<Toolbar>()
   private footerRef = createRef<Toolbar>()
   private viewRef = createRef<ViewComponent>()
+  private interactionsStore: { [componentUid: string]: Interaction[] } = {}
 
   state = {
     forPrint: false
@@ -99,7 +104,9 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
       props.dispatch,
       props.getCurrentState,
       props.emitter,
-      props.calendar
+      props.calendar,
+      this.registerInteractiveComponent,
+      this.unregisterInteractiveComponent
     )
 
     return (
@@ -242,6 +249,38 @@ export class CalendarComponent extends Component<CalendarComponentProps, Calenda
     )
   }
 
+
+  // Component Registration
+  // -----------------------------------------------------------------------------------------------------------------
+
+
+  registerInteractiveComponent = (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => {
+    let settings = parseInteractionSettings(component, settingsInput)
+    let DEFAULT_INTERACTIONS: InteractionClass[] = [
+      EventClicking,
+      EventHovering
+    ]
+    let interactionClasses: InteractionClass[] = DEFAULT_INTERACTIONS.concat(
+      this.props.pluginHooks.componentInteractions
+    )
+    let interactions = interactionClasses.map((interactionClass) => {
+      return new interactionClass(settings)
+    })
+
+    this.interactionsStore[component.uid] = interactions
+    interactionSettingsStore[component.uid] = settings
+  }
+
+
+  unregisterInteractiveComponent = (component: DateComponent<any>) => {
+
+    for (let listener of this.interactionsStore[component.uid]) {
+      listener.destroy()
+    }
+
+    delete this.interactionsStore[component.uid]
+    delete interactionSettingsStore[component.uid]
+  }
 
 }
 

@@ -90,12 +90,10 @@ export class DayTimeCols extends DateComponent<DayTimeColsProps> {
 
 
   handleRootEl = (rootEl: HTMLDivElement | null) => {
-    let { calendar } = this.context
-
     if (rootEl) {
-      calendar.registerInteractiveComponent(this, { el: rootEl })
+      this.context.registerInteractiveComponent(this, { el: rootEl })
     } else {
-      calendar.unregisterInteractiveComponent(this)
+      this.context.unregisterInteractiveComponent(this)
     }
   }
 

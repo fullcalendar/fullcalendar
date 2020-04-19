@@ -74,12 +74,10 @@ export class DayTable extends DateComponent<DayTableProps, ComponentContext> {
 
 
   handleRootEl = (rootEl: HTMLDivElement | null) => {
-    let { calendar } = this.context
-
     if (rootEl) {
-      calendar.registerInteractiveComponent(this, { el: rootEl })
+      this.context.registerInteractiveComponent(this, { el: rootEl })
     } else {
-      calendar.unregisterInteractiveComponent(this)
+      this.context.unregisterInteractiveComponent(this)
     }
   }
 

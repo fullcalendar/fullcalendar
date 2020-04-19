@@ -69,11 +69,11 @@ export class ListView extends DateComponent<ViewProps> {
 
   setRootEl = (rootEl: HTMLDivElement | null) => {
     if (rootEl) {
-      this.context.calendar.registerInteractiveComponent(this, { // TODO: make aware that it doesn't do Hits
+      this.context.registerInteractiveComponent(this, { // TODO: make aware that it doesn't do Hits
         el: rootEl
       })
     } else {
-      this.context.calendar.unregisterInteractiveComponent(this)
+      this.context.unregisterInteractiveComponent(this)
     }
   }
 

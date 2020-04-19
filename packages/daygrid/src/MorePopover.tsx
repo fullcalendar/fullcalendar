@@ -91,12 +91,12 @@ export class MorePopover extends DateComponent<MorePopoverProps> {
     this.popoverEl = popoverEl
 
     if (popoverEl) {
-      this.context.calendar.registerInteractiveComponent(this, {
+      this.context.registerInteractiveComponent(this, {
         el: popoverEl,
         useEventCenter: false
       })
     } else {
-      this.context.calendar.unregisterInteractiveComponent(this)
+      this.context.unregisterInteractiveComponent(this)
     }
   }
 

@@ -15,11 +15,7 @@ import { eventTupleToStore } from './structs/event-store'
 import { ViewSpec } from './structs/view-spec'
 import { CalendarComponent } from './CalendarComponent'
 import { __assign } from 'tslib'
-import { DateComponent } from './component/DateComponent'
 import { PointerDragEvent } from './interactions/pointer'
-import { InteractionSettingsInput, parseInteractionSettings, Interaction, interactionSettingsStore, InteractionClass } from './interactions/interaction'
-import { EventClicking } from './interactions/EventClicking'
-import { EventHovering } from './interactions/EventHovering'
 import { render, h, createRef, flushToDom } from './vdom'
 import { TaskRunner, DelayedRunner } from './util/runner'
 import { ViewApi } from './ViewApi'
@@ -67,8 +63,7 @@ export class Calendar {
   componentRef = createRef<CalendarComponent>()
 
   // interaction
-  calendarInteractions: CalendarInteraction[]
-  interactionsStore: { [componentUid: string]: Interaction[] } = {}
+  calendarInteractions: CalendarInteraction[] // this tooooo
 
   get view() { return this.state.viewApi } // for public API
 
@@ -387,7 +382,7 @@ export class Calendar {
 
   // Given a duration singular unit, like "week" or "day", finds a matching view spec.
   // Preference is given to views that have corresponding buttons.
-  getUnitViewSpec(unit: string): ViewSpec | null {
+  private getUnitViewSpec(unit: string): ViewSpec | null {
     let { viewSpecs, toolbarConfig } = this.state
     let viewTypes = [].concat(toolbarConfig.viewsWithButtons)
     let i
@@ -542,39 +537,6 @@ export class Calendar {
     ) {
       this.resizeRunner.request(options.windowResizeDelay)
     }
-  }
-
-
-  // Component Registration
-  // -----------------------------------------------------------------------------------------------------------------
-
-
-  registerInteractiveComponent(component: DateComponent<any>, settingsInput: InteractionSettingsInput) {
-    let settings = parseInteractionSettings(component, settingsInput)
-    let DEFAULT_INTERACTIONS: InteractionClass[] = [
-      EventClicking,
-      EventHovering
-    ]
-    let interactionClasses: InteractionClass[] = DEFAULT_INTERACTIONS.concat(
-      this.state.pluginHooks.componentInteractions
-    )
-    let interactions = interactionClasses.map((interactionClass) => {
-      return new interactionClass(settings)
-    })
-
-    this.interactionsStore[component.uid] = interactions
-    interactionSettingsStore[component.uid] = settings
-  }
-
-
-  unregisterInteractiveComponent(component: DateComponent<any>) {
-
-    for (let listener of this.interactionsStore[component.uid]) {
-      listener.destroy()
-    }
-
-    delete this.interactionsStore[component.uid]
-    delete interactionSettingsStore[component.uid]
   }
 
 

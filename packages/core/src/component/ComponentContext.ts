@@ -11,6 +11,8 @@ import { ReducerContext } from '../reducers/ReducerContext'
 import { Action } from '../reducers/types'
 import { Emitter } from '../common/Emitter'
 import { CalendarState } from '../reducers/types'
+import { InteractionSettingsInput } from '../interactions/interaction'
+import { DateComponent } from './DateComponent'
 
 export const ComponentContextType = createContext<ComponentContext>({} as any) // for Components
 export type ResizeHandler = (force: boolean) => void
@@ -27,6 +29,8 @@ export interface ComponentContext extends ReducerContext {
   addResizeHandler: (handler: ResizeHandler) => void
   removeResizeHandler: (handler: ResizeHandler) => void
   createScrollResponder: (execFunc: ScrollRequestHandler) => ScrollResponder
+  registerInteractiveComponent: (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => void
+  unregisterInteractiveComponent: (component: DateComponent<any>) => void
 }
 
 export function buildViewContext(
@@ -41,7 +45,9 @@ export function buildViewContext(
   dispatch: (action: Action) => void,
   getCurrentState: () => CalendarState,
   emitter: Emitter,
-  calendar: Calendar
+  calendar: Calendar,
+  registerInteractiveComponent: (component: DateComponent<any>, settingsInput: InteractionSettingsInput) => void,
+  unregisterInteractiveComponent: (component: DateComponent<any>) => void
 ): ComponentContext {
   let reducerContext: ReducerContext = {
     dateEnv,
@@ -69,6 +75,8 @@ export function buildViewContext(
     },
     createScrollResponder(execFunc: ScrollRequestHandler) {
       return new ScrollResponder(execFunc, reducerContext)
-    }
+    },
+    registerInteractiveComponent,
+    unregisterInteractiveComponent
   }
 }
