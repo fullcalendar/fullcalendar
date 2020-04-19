@@ -4,7 +4,7 @@ import { DateInput } from './datelib/env'
 import { DateMarker, startOfDay } from './datelib/marker'
 import { createFormatter } from './datelib/formatting'
 import { createDuration, DurationInput } from './datelib/duration'
-import { parseDateSpan, DateSpanInput, DateSpan, buildDateSpanApi, DateSpanApi, buildDatePointApi, DatePointApi } from './structs/date-span'
+import { parseDateSpan, DateSpanInput, DateSpan, DateSpanApi, DatePointApi } from './structs/date-span'
 import { DateRangeInput } from './datelib/date-range'
 import { EventSourceInput, parseEventSource } from './structs/event-source'
 import { EventInput, parseEvent } from './structs/event'
@@ -29,6 +29,7 @@ import { applyStyleProp } from './util/dom-manip'
 import { CalendarStateReducer } from './reducers/CalendarStateReducer'
 import { getNow } from './reducers/current-date'
 import { ReducerContext } from './reducers/ReducerContext'
+import { triggerDateSelect, triggerDateUnselect } from './calendar-utils'
 
 
 export interface DateClickApi extends DatePointApi {
@@ -42,13 +43,13 @@ export interface DateSelectionApi extends DateSpanApi {
   view: ViewApi
 }
 
-export type DatePointTransform = (dateSpan: DateSpan, calendar: Calendar) => any
-export type DateSpanTransform = (dateSpan: DateSpan, calendar: Calendar) => any
+export type DatePointTransform = (dateSpan: DateSpan, context: ReducerContext) => any
+export type DateSpanTransform = (dateSpan: DateSpan, context: ReducerContext) => any
 
 export type CalendarInteraction = { destroy() }
 export type CalendarInteractionClass = { new(context: ReducerContext): CalendarInteraction }
 
-export type OptionChangeHandler = (propValue: any, calendar: Calendar) => void
+export type OptionChangeHandler = (propValue: any, context: ReducerContext) => void
 export type OptionChangeHandlerMap = { [propName: string]: OptionChangeHandler }
 
 
@@ -293,7 +294,7 @@ export class Calendar {
 
       // special updates
       for (let name in specialUpdates) {
-        changeHandlers[name](specialUpdates[name], this)
+        changeHandlers[name](specialUpdates[name], this.state)
       }
     })
   }
@@ -320,12 +321,6 @@ export class Calendar {
 
   // View
   // -----------------------------------------------------------------------------------------------------------------
-
-
-  // Returns a boolean about whether the view is okay to instantiate at some point
-  isValidViewType(viewType: string): boolean {
-    return Boolean(this.state.viewSpecs[viewType])
-  }
 
 
   changeView(viewType: string, dateOrRange?: DateRangeInput | DateInput) {
@@ -616,7 +611,7 @@ export class Calendar {
 
     if (selection) { // throw parse error otherwise?
       this.dispatch({ type: 'SELECT_DATES', selection })
-      this.triggerDateSelect(selection)
+      triggerDateSelect(selection, null, this.state)
     }
   }
 
@@ -625,66 +620,8 @@ export class Calendar {
   unselect(pev?: PointerDragEvent) {
     if (this.state.dateSelection) {
       this.dispatch({ type: 'UNSELECT_DATES' })
-      this.triggerDateUnselect(pev)
+      triggerDateUnselect(pev, this.state)
     }
-  }
-
-
-  triggerDateSelect(selection: DateSpan, pev?: PointerDragEvent) {
-    const arg = {
-      ...this.buildDateSpanApi(selection),
-      jsEvent: pev ? pev.origEvent as MouseEvent : null, // Is this always a mouse event? See #4655
-      view: this.state.viewApi
-    }
-
-    this.emitter.trigger('select', arg)
-  }
-
-
-  triggerDateUnselect(pev?: PointerDragEvent) {
-    this.emitter.trigger('unselect', {
-      jsEvent: pev ? pev.origEvent : null,
-      view: this.state.viewApi
-    })
-  }
-
-
-  // TODO: receive pev?
-  triggerDateClick(dateSpan: DateSpan, dayEl: HTMLElement, view: ViewApi, ev: UIEvent) {
-    const arg = {
-      ...this.buildDatePointApi(dateSpan),
-      dayEl,
-      jsEvent: ev as MouseEvent, // Is this always a mouse event? See #4655
-      view
-    }
-
-    this.emitter.trigger('dateClick', arg)
-  }
-
-
-  buildDatePointApi(dateSpan: DateSpan) {
-    let props = {} as DatePointApi
-
-    for (let transform of this.state.pluginHooks.datePointTransforms) {
-      __assign(props, transform(dateSpan, this))
-    }
-
-    __assign(props, buildDatePointApi(dateSpan, this.state.dateEnv))
-
-    return props
-  }
-
-
-  buildDateSpanApi(dateSpan: DateSpan) {
-    let props = {} as DateSpanApi
-
-    for (let transform of this.state.pluginHooks.dateSpanTransforms) {
-      __assign(props, transform(dateSpan, this))
-    }
-
-    __assign(props, buildDateSpanApi(dateSpan, this.state.dateEnv))
-
-    return props
   }
 
 

@@ -1,4 +1,4 @@
-import { PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore } from '@fullcalendar/core'
+import { PointerDragEvent, Interaction, InteractionSettings, interactionSettingsToStore, triggerDateClick } from '@fullcalendar/core'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
 import { HitDragging, isHitsEqual } from './HitDragging'
 
@@ -39,18 +39,17 @@ export class DateClicking extends Interaction {
   // won't even fire if moving was ignored
   handleDragEnd = (ev: PointerDragEvent) => {
     let { component } = this
-    let { calendar, viewApi } = component.context
     let { pointer } = this.dragging
 
     if (!pointer.wasTouchScroll) {
       let { initialHit, finalHit } = this.hitDragging
 
       if (initialHit && finalHit && isHitsEqual(initialHit, finalHit)) {
-        calendar.triggerDateClick(
+        triggerDateClick(
           initialHit.dateSpan,
           initialHit.dayEl,
-          viewApi,
-          ev.origEvent
+          ev.origEvent,
+          component.context
         )
       }
     }

@@ -9,6 +9,7 @@ import { EventInteractionState } from './interactions/event-interaction-state'
 import { SplittableProps } from './component/event-splitting'
 import { mapHash } from './util/object'
 import { ReducerContext } from './reducers/ReducerContext'
+import { buildDateSpanApiWithContext } from './calendar-utils'
 
 // TODO: rename to "criteria" ?
 export type ConstraintInput = 'businessHours' | string | EventInput | EventInput[]
@@ -154,7 +155,7 @@ function isInteractionPropsValid(state: SplittableProps, context: ReducerContext
       }
 
       if (!subjectAllow(
-        calendar.buildDateSpanApi(subjectDateSpan),
+        buildDateSpanApiWithContext(subjectDateSpan, context),
         eventApi
       )) {
         return false
@@ -217,7 +218,7 @@ function isDateSelectionPropsValid(state: SplittableProps, context: ReducerConte
     let fullDateSpan = { ...dateSpanMeta, ...selection }
 
     if (!selectionAllow(
-      context.calendar.buildDateSpanApi(fullDateSpan),
+      buildDateSpanApiWithContext(fullDateSpan, context),
       null
     )) {
       return false

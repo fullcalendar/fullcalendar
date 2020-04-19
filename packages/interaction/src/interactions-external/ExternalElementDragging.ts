@@ -14,7 +14,8 @@ import {
   isInteractionValid,
   ElementDragging,
   ViewApi,
-  ReducerContext
+  ReducerContext,
+  buildDatePointApiWithContext
 } from '@fullcalendar/core'
 import { HitDragging } from '../interactions/HitDragging'
 import { __assign } from 'tslib'
@@ -130,7 +131,7 @@ export class ExternalElementDragging {
       let finalView = finalHit.component.context.viewApi
       let dragMeta = this.dragMeta!
       let arg = {
-        ...receivingContext.calendar.buildDatePointApi(finalHit.dateSpan),
+        ...buildDatePointApiWithContext(finalHit.dateSpan, receivingContext),
         draggedEl: pev.subjectEl as HTMLElement,
         jsEvent: pev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
         view: finalView

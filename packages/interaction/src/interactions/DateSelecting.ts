@@ -1,7 +1,8 @@
 import {
   compareNumbers, enableCursor, disableCursor, DateComponent, Hit,
   DateSpan, PointerDragEvent, dateSelectionJoinTransformer,
-  Interaction, InteractionSettings, interactionSettingsToStore
+  Interaction, InteractionSettings, interactionSettingsToStore,
+  triggerDateSelect
 } from '@fullcalendar/core'
 import { HitDragging } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -95,7 +96,7 @@ export class DateSelecting extends Interaction {
     if (this.dragSelection) {
 
       // selection is already rendered, so just need to report selection
-      this.component.context.calendar.triggerDateSelect(this.dragSelection, pev)
+      triggerDateSelect(this.dragSelection, pev, this.component.context)
 
       this.dragSelection = null
     }

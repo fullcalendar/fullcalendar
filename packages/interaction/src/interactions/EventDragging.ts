@@ -12,7 +12,8 @@ import {
   eventDragMutationMassager,
   Interaction, InteractionSettings, interactionSettingsStore,
   EventDropTransformers,
-  ReducerContext
+  ReducerContext,
+  buildDatePointApiWithContext
 } from '@fullcalendar/core'
 import { HitDragging, isHitsEqual } from './HitDragging'
 import { FeaturefulElementDragging } from '../dnd/FeaturefulElementDragging'
@@ -300,7 +301,7 @@ export class EventDragging extends Interaction { // TODO: rename to EventSelecti
           }
 
           receivingContext.emitter.trigger('drop', {
-            ...receivingContext.calendar.buildDatePointApi(finalHit.dateSpan),
+            ...buildDatePointApiWithContext(finalHit.dateSpan, receivingContext),
             draggedEl: ev.subjectEl as HTMLElement,
             jsEvent: ev.origEvent as MouseEvent, // Is this always a mouse event? See #4655
             view: finalHit.component.context.viewApi

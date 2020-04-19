@@ -201,3 +201,4 @@ export { renderFill, BgEvent, BgEventProps } from './common/bg-fill'
 export { WeekNumberRoot, WeekNumberRootProps } from './common/WeekNumberRoot'
 
 export { ViewRoot, ViewRootProps } from './common/ViewRoot'
+export { triggerDateSelect, triggerDateClick, buildDatePointApiWithContext } from './calendar-utils'
