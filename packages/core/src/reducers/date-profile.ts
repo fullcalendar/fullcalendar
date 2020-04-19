@@ -7,15 +7,9 @@ import { rangeContainsMarker } from '../datelib/date-range'
 export function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, currentDate: DateMarker, dateProfileGenerator: DateProfileGenerator): DateProfile {
   let newDateProfile: DateProfile
 
-  switch (action.type) {
-    case 'INIT':
-      newDateProfile = dateProfileGenerator.build(
-        currentDate,
-        undefined,
-        true // forceToValid
-      )
-      break
+  // the "INIT" will happen in CalendarStateReducer
 
+  switch (action.type) {
     case 'CHANGE_DATE':
     case 'CHANGE_VIEW_TYPE':
       if (

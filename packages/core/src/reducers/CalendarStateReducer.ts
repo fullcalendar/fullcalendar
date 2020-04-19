@@ -71,8 +71,8 @@ export class CalendarStateReducer {
 
         if (Object.keys(updates).length || removals.length) {
           let hash = isDynamic
-            ? (dynamicOptionOverrides = { ...dynamicOptionOverrides, updates })
-            : (optionOverrides = { ...optionOverrides, updates })
+            ? (dynamicOptionOverrides = { ...dynamicOptionOverrides, ...updates })
+            : (optionOverrides = { ...optionOverrides, ...updates })
 
           for (let removal of removals) {
             delete hash[removal]
@@ -149,8 +149,16 @@ export class CalendarStateReducer {
     }
 
     let currentDate = state.currentDate || getInitialDate(viewOptions, dateEnv) // weird how we do INIT
+
+    let prevDateProfileGenerator = state.dateProfileGenerator
     let dateProfileGenerator = this.buildDateProfileGenerator(viewSpec, viewOptions, dateEnv)
-    let dateProfile = reduceDateProfile(state.dateProfile, action, currentDate, dateProfileGenerator)
+    let dateProfile = state.dateProfile
+
+    if (prevDateProfileGenerator !== dateProfileGenerator) { // weird. happens for INIT as well
+      dateProfile = dateProfileGenerator.build(currentDate, undefined, true) // forceToValid=true
+    }
+
+    dateProfile = reduceDateProfile(dateProfile, action, currentDate, dateProfileGenerator)
     currentDate = reduceCurrentDate(currentDate, action, dateProfile)
 
     let eventSources = reduceEventSources(state.eventSources, action, dateProfile, reducerContext)
@@ -262,7 +270,7 @@ function buildTheme(rawOptions, pluginHooks: PluginHooks) {
 }
 
 
-function buildDateProfileGenerator(viewSpec: ViewSpec, viewOptions: any, dateEnv: DateEnv) {
+function buildDateProfileGenerator(viewSpec: ViewSpec, viewOptions: any, dateEnv: DateEnv): DateProfileGenerator {
   let DateProfileGeneratorClass = viewSpec.optionDefaults.dateProfileGeneratorClass || DateProfileGenerator
 
   return new DateProfileGeneratorClass(viewSpec, viewOptions, dateEnv)
