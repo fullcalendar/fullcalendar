@@ -49,8 +49,7 @@ export type Action =
 
   { type: 'INIT', optionOverrides: object } | // wont it create another rerender?
 
-  { type: 'SET_OPTION', optionName: string, optionValue: any } | // TODO: more strictly type
-  { type: 'MUTATE_OPTIONS', updates: object, removals: string[], isDynamic: boolean } |
+  { type: 'SET_OPTION', optionName: string, optionValue: any, isDynamic: boolean } | // TODO: more strictly type
 
   { type: 'PREV' } |
   { type: 'NEXT' } |

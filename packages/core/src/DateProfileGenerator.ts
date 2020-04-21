@@ -1,8 +1,8 @@
 import { DateMarker, startOfDay, addDays } from './datelib/marker'
-import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator, durationsEqual } from './datelib/duration'
-import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange, rangesEqual } from './datelib/date-range'
+import { Duration, createDuration, getWeeksFromInput, asRoughDays, asRoughMs, greatestDurationDenominator, DurationInput } from './datelib/duration'
+import { DateRange, OpenDateRange, constrainMarkerToRange, intersectRanges, rangesIntersect, parseRange } from './datelib/date-range'
 import { ViewSpec } from './structs/view-spec'
-import { DateEnv } from './datelib/env'
+import { DateEnv, DateInput } from './datelib/env'
 import { computeVisibleDayRange } from './util/date'
 import { _getNow } from './reducers/current-date'
 
@@ -20,8 +20,45 @@ export interface DateProfile {
   dateIncrement: Duration
 }
 
+export interface DateProfileGeneratorProps extends DateProfileOptions {
+  viewSpec: ViewSpec
+  dateEnv: DateEnv
+}
 
-export class DateProfileGenerator {
+export interface DateProfileOptions {
+  slotMinTime: DurationInput
+  slotMaxTime: DurationInput
+  showNonCurrentDates?: boolean
+  dayCount?: number
+  dateAlignment?: string
+  dateIncrement?: DurationInput
+  hiddenDays?: number[]
+  weekends?: boolean
+  now?: DateInput // for _getNow
+  validRange?: OpenDateRange // for getRangeOption
+  visibleRange?: OpenDateRange // for getRangeOption
+  monthMode?: boolean
+  fixedWeekCount?: number
+}
+
+export const DATE_PROFILE_OPTIONS: { [T in keyof DateProfileOptions]-?: boolean } = {
+  slotMinTime: true,
+  slotMaxTime: true,
+  showNonCurrentDates: true,
+  dayCount: true,
+  dateAlignment: true,
+  dateIncrement: true,
+  hiddenDays: true,
+  weekends: true,
+  now: true,
+  validRange: true,
+  visibleRange: true,
+  monthMode: true,
+  fixedWeekCount: true
+}
+
+
+export class DateProfileGenerator { // only publicly used for isHiddenDay :(
 
   slotMinTime: Duration
   slotMaxTime: Duration
@@ -29,14 +66,10 @@ export class DateProfileGenerator {
   isHiddenDayHash: boolean[]
 
 
-  constructor(
-    protected viewSpec: ViewSpec,
-    protected options: any,
-    protected dateEnv: DateEnv
-  ) {
-    this.slotMinTime = createDuration(options.slotMinTime)
-    this.slotMaxTime = createDuration(options.slotMaxTime)
-    this.nowDate = _getNow(options, dateEnv)
+  constructor(protected props: DateProfileGeneratorProps) {
+    this.slotMinTime = createDuration(props.slotMinTime)
+    this.slotMaxTime = createDuration(props.slotMaxTime)
+    this.nowDate = _getNow(props, props.dateEnv) // uses props.now. bad system
     this.initHiddenDays()
   }
 
@@ -46,35 +79,35 @@ export class DateProfileGenerator {
 
 
   // Builds a structure with info about what the dates/ranges will be for the "prev" view.
-  buildPrev(currentDateProfile: DateProfile, currentDate: DateMarker): DateProfile {
-    let { dateEnv } = this
+  buildPrev(currentDateProfile: DateProfile, currentDate: DateMarker, forceToValid?: boolean): DateProfile {
+    let { dateEnv } = this.props
 
     let prevDate = dateEnv.subtract(
       dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
       currentDateProfile.dateIncrement
     )
 
-    return this.build(prevDate, -1)
+    return this.build(prevDate, -1, forceToValid)
   }
 
 
   // Builds a structure with info about what the dates/ranges will be for the "next" view.
-  buildNext(currentDateProfile: DateProfile, currentDate: DateMarker): DateProfile {
-    let { dateEnv } = this
+  buildNext(currentDateProfile: DateProfile, currentDate: DateMarker, forceToValid?: boolean): DateProfile {
+    let { dateEnv } = this.props
 
     let nextDate = dateEnv.add(
       dateEnv.startOf(currentDate, currentDateProfile.currentRangeUnit), // important for start-of-month
       currentDateProfile.dateIncrement
     )
 
-    return this.build(nextDate, 1)
+    return this.build(nextDate, 1, forceToValid)
   }
 
 
   // Builds a structure holding dates/ranges for rendering around the given date.
   // Optional direction param indicates whether the date is being incremented/decremented
   // from its previous value. decremented = -1, incremented = 1 (default).
-  build(currentDate: DateMarker, direction?, forceToValid = false): DateProfile {
+  build(currentDate: DateMarker, direction?, forceToValid = true): DateProfile {
     let validRange: DateRange
     let currentInfo
     let isRangeAllDay
@@ -99,7 +132,7 @@ export class DateProfileGenerator {
     renderRange = this.trimHiddenDays(renderRange)
     activeRange = renderRange
 
-    if (!this.options.showNonCurrentDates) {
+    if (!this.props.showNonCurrentDates) {
       activeRange = intersectRanges(activeRange, currentInfo.range)
     }
 
@@ -161,7 +194,7 @@ export class DateProfileGenerator {
   // See build() for a description of `direction`.
   // Guaranteed to have `range` and `unit` properties. `duration` is optional.
   buildCurrentRangeInfo(date: DateMarker, direction) {
-    let { viewSpec, dateEnv } = this
+    let { viewSpec, dateEnv } = this.props
     let duration = null
     let unit = null
     let range = null
@@ -171,7 +204,7 @@ export class DateProfileGenerator {
       duration = viewSpec.duration
       unit = viewSpec.durationUnit
       range = this.buildRangeFromDuration(date, direction, duration, unit)
-    } else if ((dayCount = this.options.dayCount)) {
+    } else if ((dayCount = this.props.dayCount)) {
       unit = 'day'
       range = this.buildRangeFromDayCount(date, direction, dayCount)
     } else if ((range = this.buildCustomVisibleRange(date))) {
@@ -194,11 +227,12 @@ export class DateProfileGenerator {
   // Returns a new activeRange to have time values (un-ambiguate)
   // slotMinTime or slotMaxTime causes the range to expand.
   adjustActiveRange(range: DateRange) {
-    let { dateEnv, slotMinTime, slotMaxTime } = this
+    let { dateEnv, viewSpec } = this.props
+    let { slotMinTime, slotMaxTime } = this
     let start = range.start
     let end = range.end
 
-    if (this.viewSpec.optionDefaults.usesMinMaxTime) {
+    if (viewSpec.optionDefaults.usesMinMaxTime) {
 
       // expand active range if slotMinTime is negative (why not when positive?)
       if (asRoughDays(slotMinTime) < 0) {
@@ -221,8 +255,7 @@ export class DateProfileGenerator {
   // Builds the "current" range when it is specified as an explicit duration.
   // `unit` is the already-computed greatestDurationDenominator unit of duration.
   buildRangeFromDuration(date: DateMarker, direction, duration: Duration, unit) {
-    let { dateEnv } = this
-    let alignment = this.options.dateAlignment
+    let { dateEnv, dateAlignment } = this.props
     let dateIncrementInput
     let dateIncrementDuration
     let start: DateMarker
@@ -230,23 +263,23 @@ export class DateProfileGenerator {
     let res
 
     // compute what the alignment should be
-    if (!alignment) {
-      dateIncrementInput = this.options.dateIncrement
+    if (!dateAlignment) {
+      dateIncrementInput = this.props.dateIncrement
 
       if (dateIncrementInput) {
         dateIncrementDuration = createDuration(dateIncrementInput)
 
         // use the smaller of the two units
         if (asRoughMs(dateIncrementDuration) < asRoughMs(duration)) {
-          alignment = greatestDurationDenominator(
+          dateAlignment = greatestDurationDenominator(
             dateIncrementDuration,
             !getWeeksFromInput(dateIncrementInput)
           ).unit
         } else {
-          alignment = unit
+          dateAlignment = unit
         }
       } else {
-        alignment = unit
+        dateAlignment = unit
       }
     }
 
@@ -259,7 +292,7 @@ export class DateProfileGenerator {
     }
 
     function computeRes() {
-      start = dateEnv.startOf(date, alignment)
+      start = dateEnv.startOf(date, dateAlignment)
       end = dateEnv.add(start, duration)
       res = { start, end }
     }
@@ -278,14 +311,13 @@ export class DateProfileGenerator {
 
   // Builds the "current" range when a dayCount is specified.
   buildRangeFromDayCount(date: DateMarker, direction, dayCount) {
-    let { dateEnv } = this
-    let customAlignment = this.options.dateAlignment
+    let { dateEnv, dateAlignment } = this.props
     let runningCount = 0
     let start: DateMarker = date
     let end: DateMarker
 
-    if (customAlignment) {
-      start = dateEnv.startOf(start, customAlignment)
+    if (dateAlignment) {
+      start = dateEnv.startOf(start, dateAlignment)
     }
 
     start = startOfDay(start)
@@ -306,7 +338,7 @@ export class DateProfileGenerator {
   // Builds a normalized range object for the "visible" range,
   // which is a way to define the currentRange and activeRange at the same time.
   buildCustomVisibleRange(date: DateMarker) {
-    let { dateEnv } = this
+    let { dateEnv } = this.props
     let visibleRange = this.getRangeOption('visibleRange', dateEnv.toDate(date))
 
     if (visibleRange && (visibleRange.start == null || visibleRange.end == null)) {
@@ -328,12 +360,12 @@ export class DateProfileGenerator {
   // Compute the duration value that should be added/substracted to the current date
   // when a prev/next operation happens.
   buildDateIncrement(fallback): Duration {
-    let dateIncrementInput = this.options.dateIncrement
+    let dateIncrementInput = this.props.dateIncrement
     let customAlignment
 
     if (dateIncrementInput) {
       return createDuration(dateIncrementInput)
-    } else if ((customAlignment = this.options.dateAlignment)) {
+    } else if ((customAlignment = this.props.dateAlignment)) {
       return createDuration(1, customAlignment)
     } else if (fallback) {
       return fallback
@@ -347,14 +379,14 @@ export class DateProfileGenerator {
   // WARNING: passed-in arguments will be given to generator functions as-is and can cause side-effects.
   // Always clone your objects if you fear mutation.
   getRangeOption(name, ...otherArgs): OpenDateRange {
-    let val = this.options[name]
+    let val = this.props[name]
 
     if (typeof val === 'function') {
       val = val.apply(null, otherArgs)
     }
 
     if (val) {
-      val = parseRange(val, this.dateEnv)
+      val = parseRange(val, this.props.dateEnv)
     }
 
     if (val) {
@@ -371,12 +403,12 @@ export class DateProfileGenerator {
 
   // Initializes internal variables related to calculating hidden days-of-week
   initHiddenDays() {
-    let hiddenDays = this.options.hiddenDays || [] // array of day-of-week indices that are hidden
+    let hiddenDays = this.props.hiddenDays || [] // array of day-of-week indices that are hidden
     let isHiddenDayHash = [] // is the day-of-week hidden? (hash with day-of-week-index -> bool)
     let dayCnt = 0
     let i
 
-    if (this.options.weekends === false) {
+    if (this.props.weekends === false) {
       hiddenDays.push(0, 6) // 0=sunday, 6=saturday
     }
 
@@ -442,22 +474,4 @@ export class DateProfileGenerator {
     return date
   }
 
-}
-
-
-// TODO: find a way to avoid comparing DateProfiles. it's tedious
-export function isDateProfilesEqual(p0: DateProfile, p1: DateProfile) {
-  return rangesEqual(p0.validRange, p1.validRange) &&
-    rangesEqual(p0.activeRange, p1.activeRange) &&
-    rangesEqual(p0.renderRange, p1.renderRange) &&
-    durationsEqual(p0.slotMinTime, p1.slotMinTime) &&
-    durationsEqual(p0.slotMaxTime, p1.slotMaxTime)
-  /*
-  TODO: compare more?
-    currentRange: DateRange
-    currentRangeUnit: string
-    isRangeAllDay: boolean
-    isValid: boolean
-    dateIncrement: Duration
-  */
 }

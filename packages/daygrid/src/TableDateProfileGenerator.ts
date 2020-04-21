@@ -9,7 +9,7 @@ export class TableDateProfileGenerator extends DateProfileGenerator {
 
   // Computes the date range that will be rendered.
   buildRenderRange(currentRange, currentRangeUnit, isRangeAllDay): DateRange {
-    let { dateEnv } = this
+    let { dateEnv } = this.props
     let renderRange = super.buildRenderRange(currentRange, currentRangeUnit, isRangeAllDay)
     let start = renderRange.start
     let end = renderRange.end
@@ -28,8 +28,8 @@ export class TableDateProfileGenerator extends DateProfileGenerator {
 
     // ensure 6 weeks
     if (
-      this.options.monthMode &&
-      this.options.fixedWeekCount
+      this.props.monthMode &&
+      this.props.fixedWeekCount
     ) {
       let rowCnt = Math.ceil( // could be partial weeks due to hiddenDays
         diffWeeks(start, end)

@@ -336,9 +336,10 @@ function buildToolbarProps(
   now: DateMarker,
   title: string
 ) {
-  let todayInfo = dateProfileGenerator.build(now)
-  let prevInfo = dateProfileGenerator.buildPrev(dateProfile, currentDate)
-  let nextInfo = dateProfileGenerator.buildNext(dateProfile, currentDate)
+  // don't force any date-profiles to valid date profiles (the `false`) so that we can tell if it's invalid
+  let todayInfo = dateProfileGenerator.build(now, undefined, false) // TODO: need `undefined` or else INFINITE LOOP for some reason
+  let prevInfo = dateProfileGenerator.buildPrev(dateProfile, currentDate, false)
+  let nextInfo = dateProfileGenerator.buildNext(dateProfile, currentDate, false)
 
   return {
     title,

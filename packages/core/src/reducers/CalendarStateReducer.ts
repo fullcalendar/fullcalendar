@@ -7,9 +7,9 @@ import { DateEnv } from '../datelib/env'
 import { CalendarApi } from '../CalendarApi'
 import { StandardTheme } from '../theme/StandardTheme'
 import { EventSourceHash } from '../structs/event-source'
-import { buildViewSpecs, ViewSpec } from '../structs/view-spec'
+import { buildViewSpecs } from '../structs/view-spec'
 import { mapHash, isPropsEqual } from '../util/object'
-import { DateProfileGenerator } from '../DateProfileGenerator'
+import { DateProfileGenerator, DateProfileGeneratorProps } from '../DateProfileGenerator'
 import { reduceViewType } from './view-type'
 import { reduceCurrentDate, getInitialDate } from './current-date'
 import { reduceDateProfile } from './date-profile'
@@ -41,7 +41,7 @@ export class CalendarStateReducer {
   private buildDateEnv = memoize(buildDateEnv)
   private buildTheme = memoize(buildTheme)
   private buildViewSpecs = memoize(buildViewSpecs)
-  private buildDateProfileGenerator = memoize(buildDateProfileGenerator)
+  private buildDateProfileGenerator = memoizeObjArg(buildDateProfileGenerator)
   private buildComputedOptions = memoize(buildComputedOptions)
   private buildViewUiProps = memoizeObjArg(buildViewUiProps)
   private buildEventUiBySource = memoize(buildEventUiBySource, isPropsEqual)
@@ -123,20 +123,10 @@ export class CalendarStateReducer {
         break
 
       case 'SET_OPTION':
-        dynamicOptionOverrides = { ...dynamicOptionOverrides, [action.optionName]: action.optionValue }
-        break
-
-      case 'MUTATE_OPTIONS':
-        let { updates, removals, isDynamic } = action
-
-        if (Object.keys(updates).length || removals.length) {
-          let hash = isDynamic
-            ? (dynamicOptionOverrides = { ...dynamicOptionOverrides, ...updates })
-            : (optionOverrides = { ...optionOverrides, ...updates })
-
-          for (let removal of removals) {
-            delete hash[removal]
-          }
+        if (action.isDynamic) {
+          dynamicOptionOverrides = { ...dynamicOptionOverrides, [action.optionName]: action.optionValue }
+        } else {
+          optionOverrides = { ...optionOverrides, [action.optionName]: action.optionValue }
         }
         break
     }
@@ -163,9 +153,7 @@ export class CalendarStateReducer {
       dynamicOptionOverrides
     )
 
-    let pluginHooks = this.buildPluginHooks(
-      globalPlugins.concat(calendarOptions.plugins || [])
-    )
+    let pluginHooks = this.buildPluginHooks(calendarOptions.plugins, globalPlugins)
 
     let prevDateEnv = state ? state.dateEnv : null
     let dateEnv = this.buildDateEnv(
@@ -212,14 +200,25 @@ export class CalendarStateReducer {
 
     let currentDate = state.currentDate || getInitialDate(reducerContext) // weird how we do INIT
 
-    let prevDateProfileGenerator = state.dateProfileGenerator
-    let dateProfileGenerator = this.buildDateProfileGenerator(viewSpec, viewOptions, dateEnv)
+    let dateProfileGenerator = this.buildDateProfileGenerator({ // TODO: pluck based on DATE_PROFILE_OPTIONS?
+      viewSpec,
+      dateEnv,
+      slotMinTime: viewOptions.slotMinTime,
+      slotMaxTime: viewOptions.slotMaxTime,
+      showNonCurrentDates: viewOptions.showNonCurrentDates,
+      dayCount: viewOptions.dayCount,
+      dateAlignment: viewOptions.dateAlignment,
+      dateIncrement: viewOptions.dateIncrement,
+      hiddenDays: viewOptions.hiddenDays,
+      weekends: viewOptions.weekends,
+      now: viewOptions.now,
+      validRange: viewOptions.validRange,
+      visibleRange: viewOptions.visibleRange,
+      monthMode: viewOptions.monthMode,
+      fixedWeekCount: viewOptions.fixedWeekCount
+    })
+
     let dateProfile = state.dateProfile
-
-    if (prevDateProfileGenerator !== dateProfileGenerator) { // weird. happens for INIT as well
-      dateProfile = dateProfileGenerator.build(currentDate, undefined, true) // forceToValid=true
-    }
-
     dateProfile = reduceDateProfile(dateProfile, action, currentDate, dateProfileGenerator)
     currentDate = reduceCurrentDate(currentDate, action, dateProfile)
 
@@ -332,10 +331,10 @@ function buildTheme(rawOptions, pluginHooks: PluginHooks) {
 }
 
 
-function buildDateProfileGenerator(viewSpec: ViewSpec, viewOptions: any, dateEnv: DateEnv): DateProfileGenerator {
-  let DateProfileGeneratorClass = viewSpec.optionDefaults.dateProfileGeneratorClass || DateProfileGenerator
+function buildDateProfileGenerator(props: DateProfileGeneratorProps): DateProfileGenerator {
+  let DateProfileGeneratorClass = props.viewSpec.optionDefaults.dateProfileGeneratorClass || DateProfileGenerator
 
-  return new DateProfileGeneratorClass(viewSpec, viewOptions, dateEnv)
+  return new DateProfileGeneratorClass(props)
 }
 
 

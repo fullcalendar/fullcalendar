@@ -1,45 +1,46 @@
-import { DateProfile, DateProfileGenerator, isDateProfilesEqual } from '../DateProfileGenerator'
+import { DateProfile, DateProfileGenerator, DATE_PROFILE_OPTIONS } from '../DateProfileGenerator'
 import { Action } from './types'
 import { DateMarker } from '../datelib/marker'
 import { rangeContainsMarker } from '../datelib/date-range'
 
 
 export function reduceDateProfile(currentDateProfile: DateProfile | null, action: Action, currentDate: DateMarker, dateProfileGenerator: DateProfileGenerator): DateProfile {
-  let newDateProfile: DateProfile
-
-  // the "INIT" will happen in CalendarStateReducer
-
   switch (action.type) {
-    case 'CHANGE_DATE':
+    case 'INIT':
+      return dateProfileGenerator.build(currentDate)
+
     case 'CHANGE_VIEW_TYPE':
+      return dateProfileGenerator.build(action.dateMarker || currentDate)
+
+    case 'CHANGE_DATE':
       if (
         !currentDateProfile.activeRange ||
-        !rangeContainsMarker(currentDateProfile.currentRange, (action as any).dateMarker)
+        !rangeContainsMarker(currentDateProfile.currentRange, action.dateMarker) // don't move if date already in view
       ) {
-        newDateProfile = dateProfileGenerator.build(
-          action.dateMarker || currentDate,
-          undefined,
-          true // forceToValid
-        )
+        return dateProfileGenerator.build(action.dateMarker)
       }
       break
 
     case 'PREV':
-      newDateProfile = dateProfileGenerator.buildPrev(currentDateProfile, currentDate)
+      let dp0 = dateProfileGenerator.buildPrev(currentDateProfile, currentDate)
+      if (dp0.isValid) {
+        return dp0
+      }
       break
 
     case 'NEXT':
-      newDateProfile = dateProfileGenerator.buildNext(currentDateProfile, currentDate)
+      let dp1 = dateProfileGenerator.buildNext(currentDateProfile, currentDate)
+      if (dp1.isValid) {
+        return dp1
+      }
+      break
+
+    case 'SET_OPTION':
+      if (DATE_PROFILE_OPTIONS[action.optionName]) {
+        return dateProfileGenerator.build(currentDate) // dateProfileGenerator will be newly-created
+      }
       break
   }
 
-  if (
-    newDateProfile &&
-    newDateProfile.isValid &&
-    !(currentDateProfile && isDateProfilesEqual(currentDateProfile, newDateProfile))
-  ) {
-    return newDateProfile
-  } else {
-    return currentDateProfile
-  }
+  return currentDateProfile
 }

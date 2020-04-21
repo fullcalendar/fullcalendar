@@ -40,7 +40,7 @@ export function createPlugin(input: PluginDefInput): PluginDef {
 }
 
 
-export function buildPluginHooks(pluginDefs: PluginDef[]): PluginHooks {
+export function buildPluginHooks(pluginDefs: PluginDef[] | null, globalDefs: PluginDef[]): PluginHooks {
   let isAdded: { [pluginId: string]: boolean } = {}
   let hooks: PluginHooks = {
     reducers: [],
@@ -82,7 +82,11 @@ export function buildPluginHooks(pluginDefs: PluginDef[]): PluginHooks {
     }
   }
 
-  addDefs(pluginDefs)
+  if (pluginDefs) {
+    addDefs(pluginDefs)
+  }
+
+  addDefs(globalDefs)
 
   return hooks
 }

@@ -112,9 +112,8 @@ export class TimeCols extends BaseComponent<TimeColsProps, TimeColsState> {
   }
 
 
-  componentDidUpdate(prevProps: TimeColsProps, prevState: TimeColsState) {
-    let didContextUpdate = prevProps === this.props && prevState === this.state // only way to detect context change. if props/start didnt
-    this.scrollResponder.update(didContextUpdate) // if context changed, dateProfile probably changed
+  componentDidUpdate(prevProps: TimeColsProps) {
+    this.scrollResponder.update(prevProps.dateProfile !== this.props.dateProfile)
   }
 
 

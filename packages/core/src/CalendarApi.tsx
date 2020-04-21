@@ -55,7 +55,8 @@ export class CalendarApi {
     this.dispatch({
       type: 'SET_OPTION',
       optionName: name,
-      optionValue: val
+      optionValue: val,
+      isDynamic: true
     })
   }
 
@@ -74,22 +75,33 @@ export class CalendarApi {
     let normalUpdates = {}
     let specialUpdates = {}
 
-    for (let name in updates) {
-      if (changeHandlers[name]) {
-        specialUpdates[name] = updates[name]
+    for (let optionName in updates) {
+      if (changeHandlers[optionName]) {
+        specialUpdates[optionName] = updates[optionName]
       } else {
-        normalUpdates[name] = updates[name]
+        normalUpdates[optionName] = updates[optionName]
       }
     }
 
     this.batchRendering(() => {
 
-      this.dispatch({
-        type: 'MUTATE_OPTIONS',
-        updates: normalUpdates,
-        removals,
-        isDynamic
-      })
+      for (let optionName in updates) {
+        this.dispatch({
+          type: 'SET_OPTION',
+          optionName,
+          optionValue: updates[optionName],
+          isDynamic
+        })
+      }
+
+      for (let optionName of removals) {
+        this.dispatch({
+          type: 'SET_OPTION',
+          optionName,
+          optionValue: null,
+          isDynamic
+        })
+      }
 
       // special updates
       for (let name in specialUpdates) {
@@ -136,7 +148,8 @@ export class CalendarApi {
           this.dispatch({ // not very efficient to do two dispatches
             type: 'SET_OPTION',
             optionName: 'visibleRange',
-            optionValue: dateOrRange
+            optionValue: dateOrRange,
+            isDynamic: true
           })
 
         } else {
